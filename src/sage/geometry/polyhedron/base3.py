@@ -23,7 +23,7 @@ Excluding methods relying on :mod:`sage.graphs`.
 #       Copyright (C) 2019      Julian Ritter
 #       Copyright (C) 2019-2020 Laith Rastanawi
 #       Copyright (C) 2019-2020 Sophia Elia
-#       Copyright (C) 2019-2021 Jonathan Kliem <jonathan.kliem@fu-berlin.de>
+#       Copyright (C) 2019-2021 Jonathan Kliem <jonathan.kliem@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -604,7 +604,7 @@ class Polyhedron_base3(Polyhedron_base2):
               A 1-dimensional face of a Polyhedron in ZZ^4 defined as the convex hull of 2 vertices,
               A 1-dimensional face of a Polyhedron in ZZ^4 defined as the convex hull of 2 vertices]
 
-        Check that we catch incorrect algorithms:
+        Check that we catch incorrect algorithms::
 
              sage: list(P.face_generator(2, algorithm='integrate'))[:4]
              Traceback (most recent call last):
@@ -628,7 +628,6 @@ class Polyhedron_base3(Polyhedron_base2):
             deprecation(33646, "the keyword dual is deprecated; use algorithm instead")
             if 'dual' in kwds and dual is None:
                 dual = kwds['dual']
-
 
         from sage.geometry.polyhedron.combinatorial_polyhedron.face_iterator import FaceIterator_geom
         return FaceIterator_geom(self, output_dimension=face_dimension, dual=dual)

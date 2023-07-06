@@ -60,7 +60,6 @@ AUTHORS:
 import sage.misc.prandom as random
 import sage.modules.free_module_element as free_module_element
 import sage.rings.abc
-import sage.rings.number_field.number_field as number_field
 
 from sage.arith.functions import lcm
 from sage.arith.misc import bernoulli, kronecker, factor, gcd, fundamental_discriminant, euler_phi, valuation
@@ -77,7 +76,7 @@ from sage.rings.finite_rings.integer_mod import Mod
 from sage.rings.finite_rings.integer_mod_ring import IntegerModRing
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
-from sage.rings.number_field.number_field import CyclotomicField
+from sage.rings.number_field.number_field import CyclotomicField, NumberField, NumberField_generic
 from sage.rings.power_series_ring import PowerSeriesRing
 from sage.rings.rational_field import RationalField, QQ, is_RationalField
 from sage.rings.ring import is_Ring
@@ -1039,7 +1038,7 @@ class DirichletCharacter(MultiplicativeGroupElement):
             sage: psi.fixed_field()
             Number Field in a with defining polynomial x^5 + x^4 - 12*x^3 - 21*x^2 + x + 5
         """
-        return number_field.NumberField(self.fixed_field_polynomial(), 'a')
+        return NumberField(self.fixed_field_polynomial(), 'a')
 
     @cached_method
     def decomposition(self):
@@ -1903,7 +1902,7 @@ class DirichletCharacter(MultiplicativeGroupElement):
             K = IntegerModRing(p)
         elif self.order() <= 2:
             K = QQ
-        elif (isinstance(R, number_field.NumberField_generic)
+        elif (isinstance(R, NumberField_generic)
               and euler_phi(self.order()) < R.absolute_degree()):
             K = CyclotomicField(self.order())
         else:
@@ -2339,6 +2338,7 @@ class DirichletGroupFactory(UniqueFactory):
         sage: parent(val)
         Gaussian Integers in Cyclotomic Field of order 4 and degree 2
         sage: r4.residue_field(r4.ideal(29).factor()[0][0])(val)
+        doctest:warning ... DeprecationWarning: ...
         17
         sage: r4.residue_field(r4.ideal(29).factor()[0][0])(val) * GF(29)(3)
         22

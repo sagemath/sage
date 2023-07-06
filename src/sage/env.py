@@ -198,7 +198,8 @@ CONWAY_POLYNOMIALS_DATA_DIR = var("CONWAY_POLYNOMIALS_DATA_DIR", join(SAGE_SHARE
 GRAPHS_DATA_DIR = var("GRAPHS_DATA_DIR", join(SAGE_SHARE, "graphs"))
 ELLCURVE_DATA_DIR = var("ELLCURVE_DATA_DIR", join(SAGE_SHARE, "ellcurves"))
 POLYTOPE_DATA_DIR = var("POLYTOPE_DATA_DIR", join(SAGE_SHARE, "reflexive_polytopes"))
-GAP_ROOT_DIR = var("GAP_ROOT_DIR", join(SAGE_SHARE, "gap"))
+GAP_LIB_DIR = var("GAP_LIB_DIR", join(SAGE_LOCAL, "lib", "gap"))
+GAP_SHARE_DIR = var("GAP_SHARE_DIR", join(SAGE_SHARE, "gap"))
 THEBE_DIR = var("THEBE_DIR", join(SAGE_SHARE, "thebe"))
 COMBINATORIAL_DESIGN_DATA_DIR = var("COMBINATORIAL_DESIGN_DATA_DIR", join(SAGE_SHARE, "combinatorial_designs"))
 CREMONA_MINI_DATA_DIR = var("CREMONA_MINI_DATA_DIR", join(SAGE_SHARE, "cremona"))
@@ -230,12 +231,6 @@ NTL_LIBDIR = var("NTL_LIBDIR")
 LIE_INFO_DIR = var("LIE_INFO_DIR", join(SAGE_LOCAL, "lib", "LiE"))
 SINGULAR_BIN = var("SINGULAR_BIN") or "Singular"
 
-# The path to libSingular, to be passed to dlopen(). This will
-# typically be set to an absolute path in sage_conf, but the relative
-# fallback path here works on systems where dlopen() searches the
-# system's library locations.
-LIBSINGULAR_PATH = var("LIBSINGULAR_PATH", "libSingular.so")
-
 # OpenMP
 OPENMP_CFLAGS = var("OPENMP_CFLAGS", "")
 OPENMP_CXXFLAGS = var("OPENMP_CXXFLAGS", "")
@@ -255,81 +250,6 @@ if SAGE_GAP_MEMORY is not None:
     _gap_cmd += " -s " + SAGE_GAP_MEMORY + " -o " + SAGE_GAP_MEMORY
 SAGE_GAP_COMMAND = var('SAGE_GAP_COMMAND', _gap_cmd)
 
-
-def _get_shared_lib_path(*libnames: str) -> Optional[str]:
-    """
-    Return the full path to a shared library file installed in
-    ``$SAGE_LOCAL/lib`` or the directories associated with the
-    Python sysconfig.
-
-    This can also be passed more than one library name (e.g. for cases where
-    some library may have multiple names depending on the platform) in which
-    case the first one found is returned.
-
-    This supports most *NIX variants (in which ``lib<libname>.so`` is found
-    under ``$SAGE_LOCAL/lib``), macOS (same, but with the ``.dylib``
-    extension), and Cygwin (under ``$SAGE_LOCAL/bin/cyg<libname>.dll``,
-    or ``$SAGE_LOCAL/bin/cyg<libname>-*.dll`` for versioned DLLs).
-
-    For distributions like Debian that use a multiarch layout, we also try the
-    multiarch lib paths (i.e. ``/usr/lib/<arch>/``).
-
-    This returns ``None`` if no matching library file could be found.
-
-    EXAMPLES::
-
-        sage: from sage.env import _get_shared_lib_path
-        sage: "gap" in _get_shared_lib_path("gap")
-        True
-        sage: _get_shared_lib_path("an_absurd_lib") is None
-        True
-
-    """
-
-    for libname in libnames:
-        search_directories: List[Path] = []
-        patterns: List[str] = []
-        if sys.platform == 'cygwin':
-            # Later down we take the first matching DLL found, so search
-            # SAGE_LOCAL first so that it takes precedence
-            if SAGE_LOCAL:
-                search_directories.append(Path(SAGE_LOCAL) / 'bin')
-            search_directories.append(Path(sysconfig.get_config_var('BINDIR')))
-            # Note: The following is not very robust, since if there are multible
-            # versions for the same library this just selects one more or less
-            # at arbitrary. However, practically speaking, on Cygwin, there
-            # will only ever be one version
-            patterns = [f'cyg{libname}.dll', f'cyg{libname}-*.dll']
-        else:
-            if sys.platform == 'darwin':
-                ext = 'dylib'
-            else:
-                ext = 'so'
-
-            if SAGE_LOCAL:
-                search_directories.append(Path(SAGE_LOCAL) / 'lib')
-            libdir = sysconfig.get_config_var('LIBDIR')
-            if libdir is not None:
-                libdir = Path(libdir)
-                search_directories.append(libdir)
-
-                multiarchlib = sysconfig.get_config_var('MULTIARCH')
-                if multiarchlib is not None:
-                    search_directories.append(libdir / multiarchlib),
-
-            patterns = [f'lib{libname}.{ext}']
-
-        for directory in search_directories:
-            for pattern in patterns:
-                path = next(directory.glob(pattern), None)
-                if path is not None:
-                    return str(path.resolve())
-
-    # Just return None if no files were found
-    return None
-
-# locate libgap shared object
-GAP_SO = var("GAP_SO", _get_shared_lib_path("gap", ""))
 
 # post process
 if DOT_SAGE is not None and ' ' in DOT_SAGE:
@@ -384,17 +304,20 @@ def sage_include_directories(use_sources=False):
         sage: any(os.path.isfile(os.path.join(d, file)) for d in dirs)
         True
     """
-    import distutils.sysconfig
-
-    TOP = SAGE_SRC if use_sources else SAGE_LIB
-
-    dirs = [TOP,
-            distutils.sysconfig.get_python_inc()]
+    if use_sources:
+        dirs = [SAGE_SRC]
+    else:
+        import sage
+        dirs = [os.path.dirname(directory)
+                for directory in sage.__path__]
     try:
         import numpy
-        dirs.insert(1, numpy.get_include())
+        dirs.append(numpy.get_include())
     except ModuleNotFoundError:
         pass
+
+    dirs.append(sysconfig.get_config_var('INCLUDEPY'))
+
     return dirs
 
 def get_cblas_pc_module_name() -> str:

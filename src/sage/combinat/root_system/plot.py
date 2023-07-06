@@ -29,7 +29,7 @@ ambient space. It is generated from two hyperplanes at a 120 degree
 angle::
 
     sage: L = RootSystem(["A",2]).ambient_space()
-    sage: L.plot()
+    sage: L.plot()                                                                      # optional - sage.plot sage.symbolic
     Graphics object consisting of 13 graphics primitives
 
 .. PLOT::
@@ -56,7 +56,7 @@ should be of dimension `3` then? That's perfectly right. Here is the
 full picture in 3D::
 
     sage: L = RootSystem(["A",2]).ambient_space()
-    sage: L.plot(projection=False)
+    sage: L.plot(projection=False)                                                      # optional - sage.plot sage.symbolic
     Graphics3d Object
 
 .. PLOT::
@@ -72,7 +72,7 @@ essential information. The same projection is used by default in type
 `G_2`::
 
     sage: L = RootSystem(["G",2]).ambient_space()
-    sage: L.plot(reflection_hyperplanes="all")
+    sage: L.plot(reflection_hyperplanes="all")                                          # optional - sage.plot sage.symbolic
     Graphics object consisting of 21 graphics primitives
 
 .. PLOT::
@@ -107,7 +107,7 @@ unlike in the ambient space, a root is not necessarily orthogonal to
 its corresponding reflection hyperplane::
 
     sage: L = RootSystem(["A",2]).weight_space()
-    sage: L.plot(roots="all", reflection_hyperplanes="all").show(figsize=15)
+    sage: L.plot(roots="all", reflection_hyperplanes="all").show(figsize=15)            # optional - sage.plot sage.symbolic
 
 .. NOTE::
 
@@ -128,7 +128,7 @@ coordinates in the root lattice::
 
     sage: Q = RootSystem(["G",2]).root_space()
     sage: L = RootSystem(["G",2]).ambient_space()
-    sage: L.plot(roots=list(Q.positive_roots()), fundamental_weights=False)
+    sage: L.plot(roots=list(Q.positive_roots()), fundamental_weights=False)             # optional - sage.plot sage.symbolic
     Graphics object consisting of 17 graphics primitives
 
 .. PLOT::
@@ -149,7 +149,8 @@ eight dimensional ambient space onto 3D described on
     sage: L = RootSystem(["E",8]).ambient_space()
     sage: L.dimension()
     8
-    sage: L.plot(roots="all", reflection_hyperplanes=False, projection=lambda v: M*vector(v), labels=False) # long time
+    sage: L.plot(roots="all", reflection_hyperplanes=False,             # long time     # optional - sage.plot sage.symbolic
+    ....:        projection=lambda v: M*vector(v), labels=False)
     Graphics3d Object
 
 .. PLOT::
@@ -184,7 +185,8 @@ finite type, those really are the chambers) and the corresponding
 elements of the Weyl group. We enlarge a bit the bounding box to make
 sure everything fits in the picture::
 
-    sage: RootSystem(["G",2]).ambient_space().plot(alcoves=True, alcove_labels=True, bounding_box=5)
+    sage: RootSystem(["G",2]).ambient_space().plot(alcoves=True,                        # optional - sage.plot sage.symbolic
+    ....:                                          alcove_labels=True, bounding_box=5)
     Graphics object consisting of 37 graphics primitives
 
 .. PLOT::
@@ -194,7 +196,7 @@ sure everything fits in the picture::
 
 The same picture in 3D, for type `B_3`::
 
-    sage: RootSystem(["B",3]).ambient_space().plot(alcoves=True, alcove_labels=True)
+    sage: RootSystem(["B",3]).ambient_space().plot(alcoves=True, alcove_labels=True)    # optional - sage.plot sage.symbolic
     Graphics3d Object
 
 .. PLOT::
@@ -213,7 +215,7 @@ Alcove pictures for affine types
 We now draw the usual alcove picture for affine type `A_2^{(1)}`::
 
     sage: L = RootSystem(["A",2,1]).ambient_space()
-    sage: L.plot()                                     # long time
+    sage: L.plot()                                     # long time                      # optional - sage.plot sage.symbolic
     Graphics object consisting of 160 graphics primitives
 
 .. PLOT::
@@ -231,7 +233,7 @@ space. Those maps stabilize the so-called level `l` hyperplanes, and
 we are visualizing here what's happening at level `1`. Here is the
 full picture in 3D::
 
-    sage: L.plot(bounding_box=[[-3,3],[-3,3],[-1,1]], affine=False) # long time
+    sage: L.plot(bounding_box=[[-3,3],[-3,3],[-1,1]], affine=False)     # long time     # optional - sage.plot sage.symbolic
     Graphics3d Object
 
 .. PLOT::
@@ -246,7 +248,7 @@ barycentric projection kills the boring extra dimension for us.
 It's usually more readable to only draw the intersection of the
 reflection hyperplanes with the level `1` hyperplane::
 
-    sage: L.plot(affine=False, level=1)                # long time
+    sage: L.plot(affine=False, level=1)                                 # long time     # optional - sage.plot sage.symbolic
     Graphics3d Object
 
 .. PLOT::
@@ -259,7 +261,7 @@ the fact that the fundamental weights do not necessarily all live at
 level 1::
 
     sage: L = RootSystem(["G",2,1]).ambient_space()
-    sage: L.plot(affine=False, level=1)
+    sage: L.plot(affine=False, level=1)                                                 # optional - sage.plot sage.symbolic
     Graphics3d Object
 
 .. PLOT::
@@ -274,8 +276,8 @@ level 1::
     options of the :meth:`~sage.plot.plot3d.base.Graphics3d.show`
     method::
 
-        sage: p = L.plot(affine=False, level=1)
-        sage: p.show(aspect_ratio=[1,1,2], frame=False)
+        sage: p = L.plot(affine=False, level=1)                                         # optional - sage.plot sage.symbolic
+        sage: p.show(aspect_ratio=[1,1,2], frame=False)                                 # optional - sage.plot sage.symbolic
 
 .. TOPIC:: Exercise
 
@@ -289,7 +291,7 @@ share a wall if `u` and `v` are neighbors in the right Cayley graph:
 `u = vs_i`; the color of that wall is given by `i`::
 
     sage: L = RootSystem(["C",2,1]).ambient_space()
-    sage: L.plot(coroots="simple", alcove_labels=True) # long time
+    sage: L.plot(coroots="simple", alcove_labels=True)                  # long time     # optional - sage.plot sage.symbolic
     Graphics object consisting of 216 graphics primitives
 
 .. PLOT::
@@ -308,7 +310,7 @@ small height in the root poset::
     sage: positive_roots = RecursivelyEnumeratedSet(seed, succ, structure='graded')
     sage: it = iter(positive_roots)
     sage: first_positive_roots = [next(it) for i in range(10)]
-    sage: L.plot(roots=first_positive_roots, affine=False, alcoves=False)
+    sage: L.plot(roots=first_positive_roots, affine=False, alcoves=False)               # optional - sage.plot sage.symbolic
     Graphics object consisting of 24 graphics primitives
 
 .. PLOT::
@@ -346,11 +348,12 @@ Here is a polished solution for the first exercise::
     sage: positive_coroots = RecursivelyEnumeratedSet(seed, succ, structure='graded')
     sage: it = iter(positive_coroots)
     sage: first_positive_coroots = [next(it) for i in range(20)]
-    sage: p = L.plot(fundamental_chamber=True, reflection_hyperplanes=first_positive_coroots,
+    sage: p = L.plot(fundamental_chamber=True,                                          # optional - sage.plot sage.symbolic
+    ....:            reflection_hyperplanes=first_positive_coroots,
     ....:            affine=False, alcove_labels=1,
     ....:            bounding_box=[[-9,9],[-1,2]],
     ....:            projection=lambda x: matrix([[1,-1],[1,1]])*vector(x))
-    sage: p.show(figsize=20)                           # long time
+    sage: p.show(figsize=20)                                            # long time     # optional - sage.plot sage.symbolic
 
 
 Higher dimension affine pictures
@@ -360,7 +363,7 @@ We now do some plots for rank 4 affine types, at level 1. The space is
 tiled by the alcoves, each of which is a 3D simplex::
 
     sage: L = RootSystem(["A",3,1]).ambient_space()
-    sage: L.plot(reflection_hyperplanes=False, bounding_box=85/100) # long time
+    sage: L.plot(reflection_hyperplanes=False, bounding_box=85/100)     # long time     # optional - sage.plot sage.symbolic
     Graphics3d Object
 
 .. PLOT::
@@ -376,7 +379,7 @@ visualize. Here is the fundamental alcove, specified by an element of
 the Weyl group::
 
     sage: W = L.weyl_group()
-    sage: L.plot(reflection_hyperplanes=False, alcoves=[W.one()], bounding_box=2)
+    sage: L.plot(reflection_hyperplanes=False, alcoves=[W.one()], bounding_box=2)       # optional - sage.plot sage.symbolic
     Graphics3d Object
 
 .. PLOT::
@@ -390,7 +393,7 @@ and the fundamental polygon, specified by the coordinates of its
 center in the root lattice::
 
     sage: W = L.weyl_group()
-    sage: L.plot(reflection_hyperplanes=False, alcoves=[[0,0]], bounding_box=2)
+    sage: L.plot(reflection_hyperplanes=False, alcoves=[[0,0]], bounding_box=2)         # optional - sage.plot sage.symbolic
     Graphics3d Object
 
 .. PLOT::
@@ -409,11 +412,12 @@ which will be explained later on in this tutorial::
 
     sage: L = RootSystem(["B",3,1]).ambient_space()
     sage: W = L.weyl_group()
-    sage: alcoves = [~w for d in range(12) for w in W.affine_grassmannian_elements_of_given_length(d)]
-    sage: p = L.plot_fundamental_chamber("classical")
-    sage: p += L.plot_alcoves(alcoves=alcoves, wireframe=True)
-    sage: p += L.plot_fundamental_weights()
-    sage: p.show(frame=False)
+    sage: alcoves = [~w for d in range(12)
+    ....:            for w in W.affine_grassmannian_elements_of_given_length(d)]
+    sage: p = L.plot_fundamental_chamber("classical")                                   # optional - sage.plot sage.symbolic
+    sage: p += L.plot_alcoves(alcoves=alcoves, wireframe=True)                          # optional - sage.plot sage.symbolic
+    sage: p += L.plot_fundamental_weights()                                             # optional - sage.plot sage.symbolic
+    sage: p.show(frame=False)                                                           # optional - sage.plot sage.symbolic
 
 .. PLOT::
     :width: 300 px
@@ -448,7 +452,7 @@ reflections, on top of the weight lattice in affine type `A_{2,1}`::
 
     sage: L = RootSystem(["A",2,1]).ambient_space()
     sage: w1 = [0,2,1,2,0,2,1,0,2,1,2,1,2,0,2,0,1,2,0]
-    sage: L.plot(alcove_walk=w1, bounding_box=6)       # long time
+    sage: L.plot(alcove_walk=w1, bounding_box=6)       # long time                      # optional - sage.plot sage.symbolic
     Graphics object consisting of 535 graphics primitives
 
 .. PLOT::
@@ -463,7 +467,7 @@ colors? A single do-it-all plot method would be cumbersome; so
 instead, it is actually built on top of many methods (see the list
 below) that can be called independently and combined at will::
 
-    sage: L.plot_roots() + L.plot_reflection_hyperplanes()
+    sage: L.plot_roots() + L.plot_reflection_hyperplanes()                              # optional - sage.plot sage.symbolic
     Graphics object consisting of 12 graphics primitives
 
 .. PLOT::
@@ -479,9 +483,9 @@ below) that can be called independently and combined at will::
     tend to pollute the picture. Annoyingly they come back when
     combining them. Here is a workaround::
 
-        sage: p = L.plot_roots() + L.plot_reflection_hyperplanes()
-        sage: p.axes(False)
-        sage: p
+        sage: p = L.plot_roots() + L.plot_reflection_hyperplanes()                      # optional - sage.plot sage.symbolic
+        sage: p.axes(False)                                                             # optional - sage.plot sage.symbolic
+        sage: p                                                                         # optional - sage.plot sage.symbolic
         Graphics object consisting of 12 graphics primitives
 
     .. PLOT::
@@ -500,10 +504,12 @@ and pass it down to each piece. We use this to plot our two walks::
 
     sage: plot_options = L.plot_parse_options(bounding_box=[[-2,5],[-2,6]])
     sage: w2 = [2,1,2,0,2,0,2,1,2,0,1,2,1,2,1,0,1,2,0,2,0,1,2,0,2]
-    sage: p = L.plot_alcoves(plot_options=plot_options) # long time
-    sage: p += L.plot_alcove_walk(w1, color="green", plot_options=plot_options) # long time
-    sage: p += L.plot_alcove_walk(w2, color="orange", plot_options=plot_options) # long time
-    sage: p # long time
+    sage: p = L.plot_alcoves(plot_options=plot_options)                 # long time     # optional - sage.plot sage.symbolic
+    sage: p += L.plot_alcove_walk(w1, color="green",                    # long time     # optional - sage.plot sage.symbolic
+    ....:                         plot_options=plot_options)
+    sage: p += L.plot_alcove_walk(w2, color="orange",                   # long time     # optional - sage.plot sage.symbolic
+    ....:                         plot_options=plot_options)
+    sage: p                                                             # long time     # optional - sage.plot sage.symbolic
     Graphics object consisting of ... graphics primitives
 
 .. PLOT::
@@ -519,11 +525,12 @@ and pass it down to each piece. We use this to plot our two walks::
 
 And another with some foldings::
 
-    sage: p += L.plot_alcove_walk([0,1,2,0,2,0,1,2,0,1],
-    ....:                         foldings=[False, False, True, False, False, False, True, False, True, False],
+    sage: p += L.plot_alcove_walk([0,1,2,0,2,0,1,2,0,1],                                # optional - sage.plot sage.symbolic
+    ....:                         foldings=[False, False, True, False, False,
+    ....:                                   False, True, False, True, False],
     ....:                         color="purple")
-    sage: p.axes(False)
-    sage: p.show(figsize=20)
+    sage: p.axes(False)                                                                 # optional - sage.plot sage.symbolic
+    sage: p.show(figsize=20)                                                            # optional - sage.plot sage.symbolic
 
 .. PLOT::
     :width: 300 px
@@ -550,12 +557,13 @@ the translation by this weight::
     sage: t = 6*Lambda[1] - 2*Lambda[2] - 4*Lambda[0]
     sage: walk = L.reduced_word_of_translation(L(t))
     sage: plot_options = L.plot_parse_options(bounding_box=[[-2,5],[-2,5]])
-    sage: p = L.plot(plot_options=plot_options)        # long time
-    sage: p += L.plot_alcove_walk(walk, color="green", plot_options=plot_options) # long time
-    sage: p += plot_options.family_of_vectors({t: L(t)}) # long time
-    sage: plot_options.finalize(p) # long time
+    sage: p = L.plot(plot_options=plot_options)                         # long time     # optional - sage.plot sage.symbolic
+    sage: p += L.plot_alcove_walk(walk, color="green",                  # long time     # optional - sage.plot sage.symbolic
+    ....:                         plot_options=plot_options)
+    sage: p += plot_options.family_of_vectors({t: L(t)})                # long time     # optional - sage.plot sage.symbolic
+    sage: plot_options.finalize(p)                                      # long time     # optional - sage.plot sage.symbolic
     Graphics object consisting of ... graphics primitives
-    sage: p # long time
+    sage: p                                                             # long time     # optional - sage.plot sage.symbolic
     Graphics object consisting of ... graphics primitives
 
 .. PLOT::
@@ -583,7 +591,8 @@ We conclude with a rank `3 + 1` alcove walk::
 
     sage: L = RootSystem(["B",3,1]).ambient_space()
     sage: w3 = [0,2,1,3,2,0,2,1,0,2,3,1,2,1,3,2,0,2,0,1,2,0]
-    sage: L.plot_fundamental_weights() + L.plot_reflection_hyperplanes(bounding_box=2) + L.plot_alcove_walk(w3)
+    sage: (L.plot_fundamental_weights()                                                 # optional - sage.plot sage.symbolic
+    ....:   + L.plot_reflection_hyperplanes(bounding_box=2) + L.plot_alcove_walk(w3))
     Graphics3d Object
 
 .. PLOT::
@@ -610,7 +619,8 @@ We conclude with a rank `3 + 1` alcove walk::
         sage: L = RootSystem(["A",3,1]).ambient_space()
         sage: alcoves = cartesian_product([[0,1],[0,1],[0,1]])
         sage: color = lambda i: "black" if i==0 else None
-        sage: L.plot_alcoves(alcoves=alcoves, color=color, bounding_box=10,wireframe=True).show(frame=False) # long time
+        sage: L.plot_alcoves(alcoves=alcoves, color=color,              # long time     # optional - sage.plot sage.symbolic
+        ....:                bounding_box=10, wireframe=True).show(frame=False)
 
     .. PLOT::
         :width: 300 px
@@ -635,8 +645,9 @@ the right place. Behold! Coxeter graph paper!".
 Now you can create your own customized color Coxeter graph paper::
 
     sage: L = RootSystem(["C",2,1]).ambient_space()
-    sage: p = L.plot(bounding_box=[[-8,9],[-5,7]], coroots="simple") # long time (10 s)
-    sage: p # long time
+    sage: p = L.plot(bounding_box=[[-8,9],[-5,7]],                  # long time (10 s)  # optional - sage.plot sage.symbolic
+    ....:            coroots="simple")
+    sage: p                                                         # long time         # optional - sage.plot sage.symbolic
     Graphics object consisting of ... graphics primitives
 
 .. PLOT::
@@ -649,7 +660,7 @@ By default Sage's plot are bitmap pictures which would come out ugly
 if printed on paper. Instead, we recommend saving the picture in
 postscript or svg before printing it::
 
-    sage: p.save("C21paper.eps")        # not tested
+    sage: p.save("C21paper.eps")        # not tested                                    # optional - sage.plot sage.symbolic
 
 .. NOTE::
 
@@ -676,11 +687,11 @@ fundamental alcove::
     sage: W = L.weyl_group()
     sage: g = W.cayley_graph(side="right")
     sage: positions = {w: plot_options.projection(w.action(rho)) for w in W}
-    sage: p = L.plot_alcoves()
-    sage: p += g.plot(pos = positions, vertex_size=0,
+    sage: p = L.plot_alcoves()                                                          # optional - sage.plot sage.symbolic
+    sage: p += g.plot(pos=positions, vertex_size=0,                                     # optional - sage.plot sage.symbolic
     ....:             color_by_label=plot_options.color)
-    sage: p.axes(False)
-    sage: p
+    sage: p.axes(False)                                                                 # optional - sage.plot sage.symbolic
+    sage: p                                                                             # optional - sage.plot sage.symbolic
     Graphics object consisting of 30 graphics primitives
 
 .. PLOT::
@@ -707,9 +718,9 @@ The same picture for `A_3` gives a nice 3D permutohedron::
     sage: W = L.weyl_group()
     sage: g = W.cayley_graph(side="right")
     sage: positions = {w: plot_options.projection(w.action(rho)) for w in W}
-    sage: p = L.plot_roots()
-    sage: p += g.plot3d(pos3d=positions, color_by_label=plot_options.color)
-    sage: p
+    sage: p = L.plot_roots()                                                            # optional - sage.plot sage.symbolic
+    sage: p += g.plot3d(pos3d=positions, color_by_label=plot_options.color)             # optional - sage.plot sage.symbolic
+    sage: p                                                                             # optional - sage.plot sage.symbolic
     Graphics3d Object
 
 .. PLOT::
@@ -743,15 +754,15 @@ according to its weight::
 
     sage: C = crystals.Tableaux(["A",2], shape=[4,2])
     sage: L = C.weight_lattice_realization()
-    sage: plot_options = L.plot_parse_options()
+    sage: plot_options = L.plot_parse_options()                                         # optional - sage.plot sage.symbolic
 
     sage: g = C.digraph()
-    sage: positions = {x: plot_options.projection(x.weight()) for x in C}
-    sage: p = L.plot()
-    sage: p += g.plot(pos=positions,
+    sage: positions = {x: plot_options.projection(x.weight()) for x in C}               # optional - sage.plot sage.symbolic
+    sage: p = L.plot()                                                                  # optional - sage.plot sage.symbolic
+    sage: p += g.plot(pos=positions,                                                    # optional - sage.plot sage.symbolic
     ....:             color_by_label=plot_options.color, vertex_size=0)
-    sage: p.axes(False)
-    sage: p.show(figsize=15)
+    sage: p.axes(False)                                                                 # optional - sage.plot sage.symbolic
+    sage: p.show(figsize=15)                                                            # optional - sage.plot sage.symbolic
 
 .. PLOT::
     :width: 300 px
@@ -781,11 +792,11 @@ Here is an analogue picture in 3D::
     sage: L = C.weight_lattice_realization()
     sage: plot_options = L.plot_parse_options()
     sage: g = C.digraph()
-    sage: positions = {x:plot_options.projection(x.weight()) for x in C}
-    sage: p = L.plot(reflection_hyperplanes=False, fundamental_weights=False)
-    sage: p += g.plot3d(pos3d=positions, vertex_labels=True,
+    sage: positions = {x: plot_options.projection(x.weight()) for x in C}               # optional - sage.plot sage.symbolic
+    sage: p = L.plot(reflection_hyperplanes=False, fundamental_weights=False)           # optional - sage.plot sage.symbolic
+    sage: p += g.plot3d(pos3d=positions, vertex_labels=True,                            # optional - sage.plot sage.symbolic
     ....:               color_by_label=plot_options.color, edge_labels=True)
-    sage: p
+    sage: p                                                                             # optional - sage.plot sage.symbolic
     Graphics3d Object
 
 .. TOPIC:: Exercise
@@ -916,7 +927,7 @@ class PlotOptions():
 
         # Bounding box
         from sage.rings.real_mpfr import RR
-        from sage.geometry.polyhedron.all import Polyhedron
+        from sage.geometry.polyhedron.constructor import Polyhedron
         from itertools import product
         if bounding_box in RR:
             bounding_box = [[-bounding_box,bounding_box]] * self.dimension
@@ -1383,7 +1394,7 @@ class PlotOptions():
         """
         if color is None:
             return self.empty()
-        from sage.geometry.polyhedron.all import Polyhedron
+        from sage.geometry.polyhedron.constructor import Polyhedron
         # TODO: we currently convert lines into rays, which simplify a
         # bit the calculation of the intersection. But it would be
         # nice to benefit from the new ``lines`` option of Polyhedra
@@ -1393,8 +1404,8 @@ class PlotOptions():
         if self.level:
             old_rays = rays
             vertices = [self.intersection_at_level_1(ray) for ray in old_rays if ray.level() > 0]
-            rays     = [ray for ray in old_rays if ray.level() == 0]
-            rays    += [vertex - self.intersection_at_level_1(ray) for ray in old_rays if ray.level() < 0 for vertex in vertices]
+            rays = [ray for ray in old_rays if ray.level() == 0]
+            rays += [vertex - self.intersection_at_level_1(ray) for ray in old_rays if ray.level() < 0 for vertex in vertices]
         else:
             vertices = []
 
@@ -1404,7 +1415,7 @@ class PlotOptions():
         rays = [ ray for ray in rays if ray ] # Polyhedron does not accept yet zero rays
 
         # Build the polyhedron
-        p = Polyhedron(vertices=vertices, rays = rays)
+        p = Polyhedron(vertices=vertices, rays=rays)
         if as_polyhedron:
             return p
 
@@ -1417,7 +1428,7 @@ class PlotOptions():
                 q = q.translation(-center).dilation(ZZ(95)/ZZ(100)).translation(center)
             else:
                 options = dict(wireframe=False, line={"thickness":thickness})
-            result = q.plot(color = color, alpha=alpha, **options)
+            result = q.plot(color=color, alpha=alpha, **options)
             if label is not None:
                 # Put the label on the vertex having largest z, then y, then x coordinate.
                 vertices = sorted([vector(v) for v in q.vertices()],
@@ -1489,14 +1500,14 @@ class PlotOptions():
             text_label = "H_%s$" % (str(label))
         else:
             text_label = "$H_{%s}$" % (latex(label))
-        return self.cone(lines = basis, color = self.color(label), label=text_label,
+        return self.cone(lines=basis, color=self.color(label), label=text_label,
                          as_polyhedron=as_polyhedron)
 
 
 @cached_function
 def barycentric_projection_matrix(n, angle=0):
     r"""
-    Returns a family of `n+1` vectors evenly spaced in a real vector space of dimension `n`
+    Return a family of `n+1` vectors evenly spaced in a real vector space of dimension `n`.
 
     Those vectors are of norm `1`, the scalar product between any two
     vector is `1/n`, thus the distance between two tips is constant.
@@ -1530,25 +1541,25 @@ def barycentric_projection_matrix(n, angle=0):
 
     Three vectors in dimension 2::
 
-        sage: barycentric_projection_matrix(2)
+        sage: barycentric_projection_matrix(2)                                          # optional - sage.symbolic
         [ 1/2*sqrt(3) -1/2*sqrt(3)            0]
         [         1/2          1/2           -1]
 
     Four vectors in dimension 3::
 
-        sage: m = barycentric_projection_matrix(3); m
+        sage: m = barycentric_projection_matrix(3); m                                   # optional - sage.symbolic
         [ 1/3*sqrt(3)*sqrt(2) -1/3*sqrt(3)*sqrt(2)                    0                    0]
         [         1/3*sqrt(2)          1/3*sqrt(2)         -2/3*sqrt(2)                    0]
         [                 1/3                  1/3                  1/3                   -1]
 
     The columns give four vectors that sum up to zero::
 
-        sage: sum(m.columns())
+        sage: sum(m.columns())                                                          # optional - sage.symbolic
         (0, 0, 0)
 
     and have regular mutual angles::
 
-        sage: m.transpose()*m
+        sage: m.transpose()*m                                                           # optional - sage.symbolic
         [   1 -1/3 -1/3 -1/3]
         [-1/3    1 -1/3 -1/3]
         [-1/3 -1/3    1 -1/3]
@@ -1556,19 +1567,19 @@ def barycentric_projection_matrix(n, angle=0):
 
     Here is a plot of them::
 
-        sage: sum(arrow((0,0,0),x) for x in m.columns())
+        sage: sum(arrow((0,0,0),x) for x in m.columns())                                # optional - sage.plot sage.symbolic
         Graphics3d Object
 
     For 2D drawings of root systems, it is desirable to rotate the
     result to match with the usual conventions::
 
-        sage: barycentric_projection_matrix(2, angle=2*pi/3)
+        sage: barycentric_projection_matrix(2, angle=2*pi/3)                            # optional - sage.symbolic
         [         1/2           -1          1/2]
         [ 1/2*sqrt(3)            0 -1/2*sqrt(3)]
 
     TESTS::
 
-        sage: for n in range(1, 7):
+        sage: for n in range(1, 7):                                                     # optional - sage.symbolic
         ....:     m = barycentric_projection_matrix(n)
         ....:     assert sum(m.columns()).is_zero()
         ....:     assert matrix(QQ, n+1,n+1, lambda i,j: 1 if i==j else -1/n) == m.transpose()*m

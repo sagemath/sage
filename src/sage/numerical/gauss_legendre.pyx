@@ -63,7 +63,7 @@ def nodes_uncached(degree, prec):
 
      - ``degree`` -- integer. The number of nodes. Must be 3 or even.
 
-     - ``prec`` -- integer (minimal value 53). Binary precision with which the 
+     - ``prec`` -- integer (minimal value 53). Binary precision with which the
        nodes and weights are computed.
 
     OUTPUT:
@@ -108,7 +108,7 @@ def nodes_uncached(degree, prec):
         performance.
     """
     cdef long j,j1,n
-    cdef RealNumber r,t1,t2,t3,t4,a,w
+    cdef RealNumber r,t1,t2,t4,a,w
     cdef mpfr_t u,v
     cdef RealField_class R
     if prec < 53:
@@ -132,11 +132,11 @@ def nodes_uncached(degree, prec):
     else:
         nodes = []
         n = degree
-        for j in xrange(1, n // 2 + 1):
+        for j in range(1, n // 2 + 1):
             r = R(math.cos(math.pi*(j-0.25)/(n+0.5)))
             while True:
                 t1,t2=ONE,ZERO
-                for j1 in xrange(1,n+1):
+                for j1 in range(1,n+1):
                     mpfr_mul(u,r.value,t1.value,rnd)
                     mpfr_mul_si(u,u,2*j1-1,rnd)
                     mpfr_mul_si(v,t2.value,j1-1,rnd)
@@ -166,13 +166,13 @@ def nodes(degree, prec):
     Compute the integration nodes and weights for the Gauss-Legendre quadrature
     scheme, caching the output
 
-    Works by calling ``nodes_uncached``. 
+    Works by calling ``nodes_uncached``.
 
     INPUT:
 
      - ``degree`` -- integer. The number of nodes. Must be 3 or even.
 
-     - ``prec`` -- integer (minimal value 53). Binary precision with which the 
+     - ``prec`` -- integer (minimal value 53). Binary precision with which the
        nodes and weights are computed.
 
     OUTPUT:
@@ -250,10 +250,11 @@ def estimate_error(results, prec, epsilon):
         2.328235...e-10
     """
     if len(results)==2:
-        return max((results[0][i]-results[1][i]).abs() for i in xrange(len(results[0])))
+        return max((results[0][i]-results[1][i]).abs()
+                   for i in range(len(results[0])))
     e = []
-    ZERO = 0*epsilon
-    for i in xrange(len(results[0])):
+    ZERO = 0 * epsilon
+    for i in range(len(results[0])):
         try:
             if results[-1][i] == results[-2][i] == results[-3][i]:
                 e.append(0*epsilon)
@@ -271,10 +272,10 @@ def integrate_vector_N(f, prec, N=3):
     Integrate a one-argument vector-valued function numerically using Gauss-Legendre,
     setting the number of nodes.
 
-    This function uses the Gauss-Legendre quadrature scheme to approximate the 
+    This function uses the Gauss-Legendre quadrature scheme to approximate the
     integral `\int_0^1 f(t) \, dt`. It is different from ``integrate_vector``
     by using a specific number of nodes rather than targeting a specified error
-    bound on the result. 
+    bound on the result.
 
     INPUT:
 
@@ -284,9 +285,9 @@ def integrate_vector_N(f, prec, N=3):
 
      - ``N`` -- integer (default: 3). Number of nodes to use.
 
-     OUTPUT: 
+     OUTPUT:
 
-     Vector approximating value of the integral. 
+     Vector approximating value of the integral.
 
      EXAMPLES::
 
@@ -300,14 +301,14 @@ def integrate_vector_N(f, prec, N=3):
 
     .. NOTE::
 
-        The nodes and weights are calculated in the real field with ``prec`` 
+        The nodes and weights are calculated in the real field with ``prec``
         bits of precision. If the vector space in which ``f`` takes values
         is over a field which is incompatible with this field (e.g. a finite
-        field) then a TypeError occurs. 
+        field) then a TypeError occurs.
     """
-    # We use nodes_uncached, because caching takes up memory, and numerics in 
-    # Bruin-DisneyHogg-Gao suggest that caching provides little benefit in the 
-    # use in the Riemann surfaces module. 
+    # We use nodes_uncached, because caching takes up memory, and numerics in
+    # Bruin-DisneyHogg-Gao suggest that caching provides little benefit in the
+    # use in the Riemann surfaces module.
     nodelist = nodes_uncached(N, prec)
     I = nodelist[0][1]*f(nodelist[0][0])
     for i in range(1,len(nodelist)):

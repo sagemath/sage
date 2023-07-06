@@ -292,7 +292,7 @@ from typing import List
 from sage.misc.cachefunc import cached_method
 from sage.misc.lazy_attribute import lazy_attribute
 from sage.misc.misc_c import prod
-from sage.arith.all import binomial
+from sage.arith.misc import binomial
 from sage.categories.category import Category
 from sage.categories.sets_cat import Sets
 from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
@@ -433,7 +433,7 @@ def Poset(data=None, element_labels=None, cover_relations=False, linear_extensio
        With a function that identifies the cover relations: the set
        partitions of `\{1, 2, 3\}` ordered by refinement::
 
-          sage: elms = SetPartitions(3)
+          sage: elms = SetPartitions(3)                                                 # optional - sage.combinat
           sage: def fcn(A, B):
           ....:     if len(A) != len(B)+1:
           ....:         return False
@@ -441,7 +441,7 @@ def Poset(data=None, element_labels=None, cover_relations=False, linear_extensio
           ....:         if not any(set(a).issubset(b) for b in B):
           ....:             return False
           ....:     return True
-          sage: Poset((elms, fcn), cover_relations=True)
+          sage: Poset((elms, fcn), cover_relations=True)                                # optional - sage.combinat
           Finite poset containing 5 elements
 
     3. A dictionary of upper covers::
@@ -1350,7 +1350,7 @@ class FinitePoset(UniqueRepresentation, Parent):
             [1, 3, 5, 15]
             sage: H.edges(sort=True)
             [(1, 3, None), (1, 5, None), (3, 15, None), (5, 15, None)]
-            sage: H.set_latex_options(format="dot2tex")
+            sage: H.set_latex_options(format="dot2tex")                                 # optional - sage.plot
             sage: view(H)  # optional - dot2tex, not tested (opens external window)
         """
         G = DiGraph(self._hasse_diagram).relabel(self._list, inplace=False)
@@ -1396,8 +1396,8 @@ class FinitePoset(UniqueRepresentation, Parent):
             sage: P5._repr_()
             'Finite poset containing 7 elements'
 
-            sage: M = MeetSemilattice([[1,2],[3],[3]])
-            sage: M._repr_()
+            sage: M = MeetSemilattice([[1,2],[3],[3]])                                  # optional - sage.modules
+            sage: M._repr_()                                                            # optional - sage.modules
             'Finite meet-semilattice containing 3 elements'
         """
         s = "%s containing %s elements" % (self._desc, self._hasse_diagram.order())
@@ -1499,14 +1499,14 @@ class FinitePoset(UniqueRepresentation, Parent):
 
         TESTS::
 
-            sage: P = posets.PentagonPoset()
-            sage: P.sorted([], allow_incomparable=True, remove_duplicates=True)
+            sage: P = posets.PentagonPoset()                                            # optional - sage.modules
+            sage: P.sorted([], allow_incomparable=True, remove_duplicates=True)         # optional - sage.modules
             []
-            sage: P.sorted([], allow_incomparable=False, remove_duplicates=True)
+            sage: P.sorted([], allow_incomparable=False, remove_duplicates=True)        # optional - sage.modules
             []
-            sage: P.sorted([], allow_incomparable=True, remove_duplicates=False)
+            sage: P.sorted([], allow_incomparable=True, remove_duplicates=False)        # optional - sage.modules
             []
-            sage: P.sorted([], allow_incomparable=False, remove_duplicates=False)
+            sage: P.sorted([], allow_incomparable=False, remove_duplicates=False)       # optional - sage.modules
             []
         """
         v = [self._element_to_vertex(x) for x in l]
@@ -1616,7 +1616,7 @@ class FinitePoset(UniqueRepresentation, Parent):
             [1, 2, 3, 4, 6, 12]
             sage: L.cardinality()
             5
-            sage: L.list()
+            sage: L.list()                                                              # optional - sage.modules sage.rings.finite_rings
             [[1, 2, 3, 4, 6, 12],
              [1, 2, 4, 3, 6, 12],
              [1, 3, 2, 4, 6, 12],
@@ -1630,9 +1630,9 @@ class FinitePoset(UniqueRepresentation, Parent):
 
         With ``facade=True``, the elements of ``L`` are plain lists instead::
 
-            sage: L = P.linear_extensions(facade=True)
-            sage: l = L.an_element()
-            sage: type(l)
+            sage: L = P.linear_extensions(facade=True)                                  # optional - sage.modules sage.rings.finite_rings
+            sage: l = L.an_element()                                                    # optional - sage.modules sage.rings.finite_rings
+            sage: type(l)                                                               # optional - sage.modules sage.rings.finite_rings
             <class 'list'>
 
         .. WARNING::
@@ -1640,13 +1640,13 @@ class FinitePoset(UniqueRepresentation, Parent):
             In Sage <= 4.8, this function used to return a plain list
             of lists. To recover the previous functionality, please use::
 
-                sage: L = list(P.linear_extensions(facade=True)); L
+                sage: L = list(P.linear_extensions(facade=True)); L                     # optional - sage.modules sage.rings.finite_rings
                 [[1, 2, 3, 4, 6, 12],
                  [1, 2, 4, 3, 6, 12],
                  [1, 3, 2, 4, 6, 12],
                  [1, 3, 2, 6, 4, 12],
                  [1, 2, 3, 6, 4, 12]]
-                sage: type(L[0])
+                sage: type(L[0])                                                        # optional - sage.modules sage.rings.finite_rings
                 <class 'list'>
 
         .. SEEALSO:: :meth:`linear_extension`, :meth:`is_linear_extension`
@@ -1654,7 +1654,7 @@ class FinitePoset(UniqueRepresentation, Parent):
         TESTS::
 
             sage: D = Poset({ 0:[1,2], 1:[3], 2:[3,4] })
-            sage: list(D.linear_extensions())
+            sage: list(D.linear_extensions())                                           # optional - sage.modules sage.rings.finite_rings
             [[0, 1, 2, 3, 4], [0, 2, 1, 3, 4], [0, 2, 1, 4, 3], [0, 2, 4, 1, 3], [0, 1, 2, 4, 3]]
         """
         return self._lin_ext_type(self, facade=facade)
@@ -1678,19 +1678,19 @@ class FinitePoset(UniqueRepresentation, Parent):
         EXAMPLES::
 
             sage: P = posets.ChainPoset(5)
-            sage: P.spectrum(2)
+            sage: P.spectrum(2)                                                         # optional - sage.modules sage.rings.finite_rings
             [0, 0, 1, 0, 0]
 
             sage: P = posets.BooleanLattice(3)
-            sage: P.spectrum(5)
+            sage: P.spectrum(5)                                                         # optional - sage.modules sage.rings.finite_rings
             [0, 0, 0, 4, 12, 16, 16, 0]
 
-            sage: P = posets.YoungDiagramPoset(Partition([3,2,1]))
-            sage: P.spectrum((0,1))
+            sage: P = posets.YoungDiagramPoset(Partition([3,2,1]))                      # optional - sage.combinat
+            sage: P.spectrum((0,1))                                                     # optional - sage.combinat sage.modules sage.rings.finite_rings
             [0, 8, 6, 2, 0, 0]
 
             sage: P = posets.AntichainPoset(4)
-            sage: P.spectrum(3)
+            sage: P.spectrum(3)                                                         # optional - sage.modules sage.rings.finite_rings
             [6, 6, 6, 6]
 
         TESTS::
@@ -1826,7 +1826,7 @@ class FinitePoset(UniqueRepresentation, Parent):
              [1, 2, 4, 3, 6, 12],
              [1, 3, 2, 4, 6, 12],
              [1, 3, 2, 6, 4, 12]]
-            sage: list(P.linear_extensions())
+            sage: list(P.linear_extensions())                                           # optional - sage.modules sage.rings.finite_rings
             [[1, 2, 3, 4, 6, 12],
              [1, 2, 4, 3, 6, 12],
              [1, 3, 2, 4, 6, 12],
@@ -1932,35 +1932,36 @@ class FinitePoset(UniqueRepresentation, Parent):
         This function can be used without any parameters::
 
             sage: D12 = posets.DivisorLattice(12)
-            sage: D12.plot()
+            sage: D12.plot()                                                            # optional - sage.plot
             Graphics object consisting of 14 graphics primitives
 
         Just the abstract form of the poset; examples of relabeling::
 
-            sage: D12.plot(label_elements=False)
+            sage: D12.plot(label_elements=False)                                        # optional - sage.plot
             Graphics object consisting of 8 graphics primitives
             sage: d = {1: 0, 2: 'a', 3: 'b', 4: 'c', 6: 'd', 12: 1}
-            sage: D12.plot(element_labels=d)
+            sage: D12.plot(element_labels=d)                                            # optional - sage.plot
             Graphics object consisting of 14 graphics primitives
-            sage: d = {i:str(factor(i)) for i in D12}
-            sage: D12.plot(element_labels=d)
+            sage: d = {i: str(factor(i)) for i in D12}
+            sage: D12.plot(element_labels=d)                                            # optional - sage.plot
             Graphics object consisting of 14 graphics primitives
 
         Some settings for coverings::
 
             sage: d = {(a, b): b/a for a, b in D12.cover_relations()}
-            sage: D12.plot(cover_labels=d, cover_color='gray', cover_style='dotted')
+            sage: D12.plot(cover_labels=d, cover_color='gray', cover_style='dotted')    # optional - sage.plot
             Graphics object consisting of 21 graphics primitives
 
         To emphasize some elements and show some options::
 
-            sage: L = LatticePoset({0: [1, 2, 3, 4], 1: [12], 2: [6, 7],
+            sage: L = LatticePoset({0: [1, 2, 3, 4], 1: [12], 2: [6, 7],                # optional - sage.modules
             ....:                   3: [5, 9], 4: [5, 6, 10, 11], 5: [13],
             ....:                   6: [12], 7: [12, 8, 9], 8: [13], 9: [13],
             ....:                   10: [12], 11: [12], 12: [13]})
-            sage: F = L.frattini_sublattice()
-            sage: F_internal = [c for c in F.cover_relations() if c in L.cover_relations()]
-            sage: L.plot(figsize=12, border=True, element_shape='s',
+            sage: F = L.frattini_sublattice()                                           # optional - sage.modules
+            sage: F_internal = [c for c in F.cover_relations()                          # optional - sage.modules
+            ....:               if c in L.cover_relations()]
+            sage: L.plot(figsize=12, border=True, element_shape='s',                    # optional - sage.modules sage.plot
             ....:        element_size=400, element_color='white',
             ....:        element_colors={'blue': F, 'green': L.double_irreducibles()},
             ....:        cover_color='lightgray', cover_colors={'black': F_internal},
@@ -1971,51 +1972,51 @@ class FinitePoset(UniqueRepresentation, Parent):
 
         We check that ``label_elements`` and ``element_labels`` are honored::
 
-            sage: def get_plot_labels(P): return sorted(t.string for t in P if isinstance(t, sage.plot.text.Text))
+            sage: def get_plot_labels(P):
+            ....:     return sorted(t.string for t in P
+            ....:                   if isinstance(t, sage.plot.text.Text))
             sage: P1 = Poset({ 0:[1,2], 1:[3], 2:[3,4] })
             sage: P2 = Poset({ 0:[1,2], 1:[3], 2:[3,4] }, facade=True)
-            sage: get_plot_labels(P1.plot(label_elements=False))
+            sage: get_plot_labels(P1.plot(label_elements=False))                        # optional - sage.plot
             []
-            sage: get_plot_labels(P1.plot(label_elements=True))
+            sage: get_plot_labels(P1.plot(label_elements=True))                         # optional - sage.plot
             ['0', '1', '2', '3', '4']
             sage: element_labels = {0:'a', 1:'b', 2:'c', 3:'d', 4:'e'}
-            sage: get_plot_labels(P1.plot(element_labels=element_labels))
+            sage: get_plot_labels(P1.plot(element_labels=element_labels))               # optional - sage.plot
             ['a', 'b', 'c', 'd', 'e']
-            sage: get_plot_labels(P2.plot(element_labels=element_labels))
+            sage: get_plot_labels(P2.plot(element_labels=element_labels))               # optional - sage.plot
             ['a', 'b', 'c', 'd', 'e']
 
         The following checks that :trac:`18936` has been fixed and labels still work::
 
             sage: P = Poset({0: [1,2], 1:[3]})
             sage: heights = {1 : [0], 2 : [1], 3 : [2,3]}
-            sage: P.plot(heights=heights)
+            sage: P.plot(heights=heights)                                               # optional - sage.plot
             Graphics object consisting of 8 graphics primitives
             sage: elem_labels = {0 : 'a', 1 : 'b', 2 : 'c', 3 : 'd'}
-            sage: P.plot(element_labels=elem_labels, heights=heights)
+            sage: P.plot(element_labels=elem_labels, heights=heights)                   # optional - sage.plot
             Graphics object consisting of 8 graphics primitives
 
         The following checks that equal labels are allowed (:trac:`15206`)::
 
             sage: P = Poset({1: [2,3]})
-            sage: labs = {i: P.rank(i) for i in range(1, 4)}
-            sage: labs
+            sage: labs = {i: P.rank(i) for i in range(1, 4)}; labs
             {1: 0, 2: 1, 3: 1}
-            sage: P.plot(element_labels=labs)
+            sage: P.plot(element_labels=labs)                                           # optional - sage.plot
             Graphics object consisting of 6 graphics primitives
 
         The following checks that non-hashable labels are allowed (:trac:`15206`)::
 
             sage: P = Poset({1: [2,3]})
-            sage: labs = {1: [2, 3], 2: [], 3: []}
-            sage: labs
+            sage: labs = {1: [2, 3], 2: [], 3: []}; labs
             {1: [2, 3], 2: [], 3: []}
-            sage: P.plot(element_labels=labs)
+            sage: P.plot(element_labels=labs)                                           # optional - sage.plot
             Graphics object consisting of 6 graphics primitives
 
         Plot of the empty poset::
 
             sage: P = Poset({})
-            sage: P.plot()
+            sage: P.plot()                                                              # optional - sage.plot
             Graphics object consisting of 0 graphics primitives
         """
         graph = self.hasse_diagram()
@@ -2102,16 +2103,16 @@ class FinitePoset(UniqueRepresentation, Parent):
         EXAMPLES::
 
             sage: D = Poset({ 0:[1,2], 1:[3], 2:[3,4] })
-            sage: D.plot(label_elements=False)
+            sage: D.plot(label_elements=False)                                          # optional - sage.plot
             Graphics object consisting of 6 graphics primitives
-            sage: D.show()
+            sage: D.show()                                                              # optional - sage.plot
             sage: elm_labs = {0:'a', 1:'b', 2:'c', 3:'d', 4:'e'}
-            sage: D.show(element_labels=elm_labs)
+            sage: D.show(element_labels=elm_labs)                                       # optional - sage.plot
 
         One more example with cover labels::
 
-            sage: P = posets.PentagonPoset()
-            sage: P.show(cover_labels=lambda a, b: a - b)
+            sage: P = posets.PentagonPoset()                                            # optional - sage.modules
+            sage: P.show(cover_labels=lambda a, b: a - b)                               # optional - sage.modules sage.plot
 
         """
         # We split the arguments into those meant for plot() and those meant for show()
@@ -2286,8 +2287,8 @@ class FinitePoset(UniqueRepresentation, Parent):
             sage: P.diamonds()
             ([(0, 1, 2, 3)], True)
 
-            sage: P = posets.YoungDiagramPoset(Partition([3, 2, 2]))
-            sage: P.diamonds()
+            sage: P = posets.YoungDiagramPoset(Partition([3, 2, 2]))                    # optional - sage.combinat
+            sage: P.diamonds()                                                          # optional - sage.combinat
             ([((0, 0), (0, 1), (1, 0), (1, 1)), ((1, 0), (1, 1), (2, 0), (2, 1))], False)
         """
         diamonds, all_diamonds_completed = self._hasse_diagram.diamonds()
@@ -2327,23 +2328,23 @@ class FinitePoset(UniqueRepresentation, Parent):
         EXAMPLES::
 
             sage: D = Poset({1:[2,3], 2:[4], 3:[4]})
-            sage: D.meet(2, 3)
+            sage: D.meet(2, 3)                                                          # optional - sage.modules
             1
             sage: P = Poset({'a':['b', 'c'], 'b':['e', 'f'], 'c':['f', 'g'],
             ....:            'd':['f', 'g']})
-            sage: P.meet('a', 'b')
+            sage: P.meet('a', 'b')                                                      # optional - sage.modules
             'a'
-            sage: P.meet('e', 'a')
+            sage: P.meet('e', 'a')                                                      # optional - sage.modules
             'a'
-            sage: P.meet('c', 'b')
+            sage: P.meet('c', 'b')                                                      # optional - sage.modules
             'a'
-            sage: P.meet('e', 'f')
+            sage: P.meet('e', 'f')                                                      # optional - sage.modules
             'b'
-            sage: P.meet('e', 'g')
+            sage: P.meet('e', 'g')                                                      # optional - sage.modules
             'a'
-            sage: P.meet('c', 'd') is None
+            sage: P.meet('c', 'd') is None                                              # optional - sage.modules
             True
-            sage: P.meet('g', 'f') is None
+            sage: P.meet('g', 'f') is None                                              # optional - sage.modules
             True
         """
         i, j = map(self._element_to_vertex, (x, y))
@@ -2361,23 +2362,23 @@ class FinitePoset(UniqueRepresentation, Parent):
         EXAMPLES::
 
             sage: D = Poset({1:[2,3], 2:[4], 3:[4]})
-            sage: D.join(2, 3)
+            sage: D.join(2, 3)                                                          # optional - sage.modules
             4
             sage: P = Poset({'e':['b'], 'f':['b', 'c', 'd'], 'g':['c', 'd'],
             ....:            'b':['a'], 'c':['a']})
-            sage: P.join('a', 'b')
+            sage: P.join('a', 'b')                                                      # optional - sage.modules
             'a'
-            sage: P.join('e', 'a')
+            sage: P.join('e', 'a')                                                      # optional - sage.modules
             'a'
-            sage: P.join('c', 'b')
+            sage: P.join('c', 'b')                                                      # optional - sage.modules
             'a'
-            sage: P.join('e', 'f')
+            sage: P.join('e', 'f')                                                      # optional - sage.modules
             'b'
-            sage: P.join('e', 'g')
+            sage: P.join('e', 'g')                                                      # optional - sage.modules
             'a'
-            sage: P.join('c', 'd') is None
+            sage: P.join('c', 'd') is None                                              # optional - sage.modules
             True
-            sage: P.join('g', 'f') is None
+            sage: P.join('g', 'f') is None                                              # optional - sage.modules
             True
         """
         i, j = map(self._element_to_vertex, (x, y))
@@ -2415,8 +2416,8 @@ class FinitePoset(UniqueRepresentation, Parent):
             sage: D.is_d_complete()
             False
 
-            sage: P = Posets.YoungDiagramPoset(Partition([3, 2, 2]), dual=True)
-            sage: P.is_d_complete()
+            sage: P = Posets.YoungDiagramPoset(Partition([3, 2, 2]), dual=True)         # optional - sage.combinat
+            sage: P.is_d_complete()                                                     # optional - sage.combinat
             True
         """
         min_diamond = {}  # Maps max of double-tailed diamond to min of double-tailed diamond
@@ -2534,8 +2535,8 @@ class FinitePoset(UniqueRepresentation, Parent):
             sage: P.intervals_poset()
             Finite poset containing 3 elements
 
-            sage: P = posets.PentagonPoset()
-            sage: P.intervals_poset()
+            sage: P = posets.PentagonPoset()                                            # optional - sage.modules
+            sage: P.intervals_poset()                                                   # optional - sage.modules
             Finite lattice containing 13 elements
 
         TESTS::
@@ -2598,8 +2599,8 @@ class FinitePoset(UniqueRepresentation, Parent):
             sage: next(it), next(it)
             ([1, 1], [1, 2])
 
-            sage: P = posets.PentagonPoset()
-            sage: list(P.relations_iterator(strict=True))
+            sage: P = posets.PentagonPoset()                                            # optional - sage.modules
+            sage: list(P.relations_iterator(strict=True))                               # optional - sage.modules
             [[0, 1], [0, 2], [0, 4], [0, 3], [1, 4], [2, 3], [2, 4], [3, 4]]
 
         .. SEEALSO::
@@ -2634,8 +2635,8 @@ class FinitePoset(UniqueRepresentation, Parent):
 
         EXAMPLES::
 
-            sage: P = posets.PentagonPoset()
-            sage: P.relations_number()
+            sage: P = posets.PentagonPoset()                                            # optional - sage.modules
+            sage: P.relations_number()                                                  # optional - sage.modules
             13
 
             sage: posets.TamariLattice(4).relations_number()
@@ -2667,8 +2668,8 @@ class FinitePoset(UniqueRepresentation, Parent):
 
         EXAMPLES::
 
-            sage: P = posets.PentagonPoset()
-            sage: P.linear_intervals_count()
+            sage: P = posets.PentagonPoset()                                            # optional - sage.modules
+            sage: P.linear_intervals_count()                                            # optional - sage.modules
             [5, 5, 2]
             sage: P = posets.TamariLattice(4)
             sage: P.linear_intervals_count()
@@ -2713,12 +2714,12 @@ class FinitePoset(UniqueRepresentation, Parent):
 
         EXAMPLES::
 
-            sage: P = posets.PentagonPoset()
-            sage: P.is_linear_interval(0, 4)
+            sage: P = posets.PentagonPoset()                                            # optional - sage.modules
+            sage: P.is_linear_interval(0, 4)                                            # optional - sage.modules
             False
-            sage: P.is_linear_interval(0, 3)
+            sage: P.is_linear_interval(0, 3)                                            # optional - sage.modules
             True
-            sage: P.is_linear_interval(1, 3)
+            sage: P.is_linear_interval(1, 3)                                            # optional - sage.modules
             False
         """
         a = self._element_to_vertex(x)
@@ -2748,42 +2749,44 @@ class FinitePoset(UniqueRepresentation, Parent):
         EXAMPLES::
 
             sage: B3 = posets.BooleanLattice(3)
-            sage: B3.is_incomparable_chain_free(1, 3)
+            sage: B3.is_incomparable_chain_free(1, 3)                                   # optional - sage.modules
             True
-            sage: B3.is_incomparable_chain_free(2, 2)
+            sage: B3.is_incomparable_chain_free(2, 2)                                   # optional - sage.modules
             False
 
-            sage: IP6 = posets.IntegerPartitions(6)
-            sage: IP6.is_incomparable_chain_free(1, 3)
+            sage: IP6 = posets.IntegerPartitions(6)                                     # optional - sage.combinat
+            sage: IP6.is_incomparable_chain_free(1, 3)                                  # optional - sage.combinat sage.modules
             False
-            sage: IP6.is_incomparable_chain_free(2, 2)
+            sage: IP6.is_incomparable_chain_free(2, 2)                                  # optional - sage.combinat sage.modules
             True
 
         A list of pairs as an argument::
 
-            sage: B3.is_incomparable_chain_free([[1, 3], [2, 2]])
+            sage: B3.is_incomparable_chain_free([[1, 3], [2, 2]])                       # optional - sage.modules
             False
 
         We show how to get an incomparable chain pair::
 
-            sage: P = posets.PentagonPoset()
-            sage: chains_1_2 = Poset({0:[], 1:[2]})
-            sage: incomps = P.isomorphic_subposets(chains_1_2)[0]
-            sage: sorted(incomps.list()), incomps.cover_relations()
+            sage: P = posets.PentagonPoset()                                            # optional - sage.modules
+            sage: chains_1_2 = Poset({0:[], 1:[2]})                                     # optional - sage.modules
+            sage: incomps = P.isomorphic_subposets(chains_1_2)[0]                       # optional - sage.modules
+            sage: sorted(incomps.list()), incomps.cover_relations()                     # optional - sage.modules
             ([1, 2, 3], [[2, 3]])
 
         TESTS::
 
-            sage: Poset().is_incomparable_chain_free(1,1)  # Test empty poset
+            sage: Poset().is_incomparable_chain_free(1,1)  # Test empty poset           # optional - sage.modules
             True
 
-            sage: [len([p for p in Posets(n) if p.is_incomparable_chain_free(((3, 1), (2, 2)))]) for n in range(6)] # long time
+            sage: [len([p for p in Posets(n)  # long time                               # optional - sage.modules
+            ....:       if p.is_incomparable_chain_free(((3, 1), (2, 2)))])
+            ....:  for n in range(6)]
             [1, 1, 2, 5, 14, 42]
 
             sage: Q = Poset({0:[2], 1:[2], 2:[3], 3:[4], 4:[]})
-            sage: Q.is_incomparable_chain_free(2, 20/10)
+            sage: Q.is_incomparable_chain_free(2, 20/10)                                # optional - sage.modules
             True
-            sage: Q.is_incomparable_chain_free(2, pi)
+            sage: Q.is_incomparable_chain_free(2, pi)                                   # optional - sage.symbolic
             Traceback (most recent call last):
             ...
             TypeError: 2 and pi must be integers
@@ -2800,9 +2803,9 @@ class FinitePoset(UniqueRepresentation, Parent):
             Traceback (most recent call last):
             ...
             TypeError: [3, 1] and [2, 2] must be integers
-            sage: P.is_incomparable_chain_free([[3, 1], [2, 2]])
+            sage: P.is_incomparable_chain_free([[3, 1], [2, 2]])                        # optional - sage.modules
             True
-            sage: P.is_incomparable_chain_free(([3, 1], [2, 2]))
+            sage: P.is_incomparable_chain_free(([3, 1], [2, 2]))                        # optional - sage.modules
             True
             sage: P.is_incomparable_chain_free([3, 1], 2)
             Traceback (most recent call last):
@@ -3137,7 +3140,7 @@ class FinitePoset(UniqueRepresentation, Parent):
             sage: P = Poset({0: [1], 2: [3, 4], 4: [5, 6]})
             sage: P.height()
             3
-            sage: posets.PentagonPoset().height(certificate=True)
+            sage: posets.PentagonPoset().height(certificate=True)                       # optional - sage.modules
             (4, [0, 2, 3, 4])
 
         TESTS::
@@ -3183,14 +3186,14 @@ class FinitePoset(UniqueRepresentation, Parent):
 
             sage: D = Poset({1:[2,3], 2:[4], 3:[4]})
             sage: T = Poset({1:[2,3], 2:[4,5], 3:[6,7]})
-            sage: N5 = posets.PentagonPoset()
+            sage: N5 = posets.PentagonPoset()                                           # optional - sage.modules
 
-            sage: N5.has_isomorphic_subposet(T)
+            sage: N5.has_isomorphic_subposet(T)                                         # optional - sage.modules
             False
-            sage: N5.has_isomorphic_subposet(D)
+            sage: N5.has_isomorphic_subposet(D)                                         # optional - sage.modules
             True
 
-            sage: len([P for P in Posets(5) if P.has_isomorphic_subposet(D)])
+            sage: len([P for P in Posets(5) if P.has_isomorphic_subposet(D)])           # optional - sage.modules
             11
 
         """
@@ -3338,17 +3341,17 @@ class FinitePoset(UniqueRepresentation, Parent):
 
         TESTS::
 
-            sage: P = posets.PentagonPoset()
-            sage: P.is_antichain_of_poset([])
+            sage: P = posets.PentagonPoset()                                            # optional - sage.modules
+            sage: P.is_antichain_of_poset([])                                           # optional - sage.modules
             True
-            sage: P.is_antichain_of_poset([0])
+            sage: P.is_antichain_of_poset([0])                                          # optional - sage.modules
             True
-            sage: P.is_antichain_of_poset([1, 2, 1])
+            sage: P.is_antichain_of_poset([1, 2, 1])                                    # optional - sage.modules
             True
 
         Check :trac:`19078`::
 
-            sage: P.is_antichain_of_poset([0, 1, 'junk'])
+            sage: P.is_antichain_of_poset([0, 1, 'junk'])                               # optional - sage.modules
             Traceback (most recent call last):
             ...
             ValueError: element (=junk) not in poset
@@ -3701,17 +3704,17 @@ class FinitePoset(UniqueRepresentation, Parent):
 
         EXAMPLES::
 
-            sage: P = posets.PentagonPoset()
-            sage: P.magnitude()
+            sage: P = posets.PentagonPoset()                                            # optional - sage.modules
+            sage: P.magnitude()                                                         # optional - sage.libs.flint sage.modules
             1
 
-            sage: W = SymmetricGroup(4)
-            sage: P = W.noncrossing_partition_lattice().without_bounds()
-            sage: P.magnitude()
+            sage: W = SymmetricGroup(4)                                                 # optional - sage.groups
+            sage: P = W.noncrossing_partition_lattice().without_bounds()                # optional - sage.groups
+            sage: P.magnitude()                                                         # optional - sage.groups sage.libs.flint sage.modules
             -4
 
             sage: P = posets.TamariLattice(4).without_bounds()
-            sage: P.magnitude()
+            sage: P.magnitude()                                                         # optional - sage.libs.flint sage.modules
             0
 
         .. SEEALSO:: :meth:`order_complex`
@@ -3720,18 +3723,18 @@ class FinitePoset(UniqueRepresentation, Parent):
 
             sage: P1 = posets.RandomPoset(20, 0.05)
             sage: P2 = posets.RandomPoset(20, 0.05)
-            sage: m1 = P1.magnitude()
-            sage: m2 = P2.magnitude()
+            sage: m1 = P1.magnitude()                                                   # optional - sage.libs.flint sage.modules
+            sage: m2 = P2.magnitude()                                                   # optional - sage.libs.flint sage.modules
             sage: U = P1.disjoint_union(P2)
             sage: P = P1.product(P2)
-            sage: U.magnitude() == m1 + m2
+            sage: U.magnitude() == m1 + m2                                              # optional - sage.libs.flint sage.modules
             True
-            sage: P.magnitude() == m1*m2
+            sage: P.magnitude() == m1*m2                                                # optional - sage.libs.flint sage.modules
             True
 
-            sage: Poset({}).magnitude()
+            sage: Poset({}).magnitude()                                                 # optional - sage.libs.flint sage.modules
             0
-            sage: Poset({1:[]}).magnitude()
+            sage: Poset({1:[]}).magnitude()                                             # optional - sage.libs.flint sage.modules
             1
         """
         H = self._hasse_diagram
@@ -3862,10 +3865,10 @@ class FinitePoset(UniqueRepresentation, Parent):
             sage: P.is_jump_critical()
             True
 
-            sage: P = posets.PentagonPoset()
-            sage: P.is_jump_critical()
+            sage: P = posets.PentagonPoset()                                            # optional - sage.modules
+            sage: P.is_jump_critical()                                                  # optional - sage.modules
             False
-            sage: P.is_jump_critical(certificate=True)
+            sage: P.is_jump_critical(certificate=True)                                  # optional - sage.modules
             (False, 3)
 
         .. SEEALSO:: :meth:`jump_number`
@@ -4024,8 +4027,8 @@ class FinitePoset(UniqueRepresentation, Parent):
 
         EXAMPLES::
 
-            sage: P = posets.PentagonPoset()  # Not even ranked
-            sage: P.is_graded()
+            sage: P = posets.PentagonPoset()  # Not even ranked                         # optional - sage.modules
+            sage: P.is_graded()                                                         # optional - sage.modules
             False
 
             sage: P = Poset({1:[2, 3], 3:[4]})  # Ranked, but not graded
@@ -4214,20 +4217,20 @@ class FinitePoset(UniqueRepresentation, Parent):
             sage: x,y = (P.linear_extension()[0],P.linear_extension()[1])
             sage: P.moebius_function(x,y)
             -1
-            sage: M = P.moebius_function_matrix(); M
+            sage: M = P.moebius_function_matrix(); M                                    # optional - sage.libs.flint sage.modules
             [ 1 -1 -1 -1  2]
             [ 0  1  0  0 -1]
             [ 0  0  1  0 -1]
             [ 0  0  0  1 -1]
             [ 0  0  0  0  1]
-            sage: M[0,4]
+            sage: M[0,4]                                                                # optional - sage.libs.flint sage.modules
             2
-            sage: M[0,1]
+            sage: M[0,1]                                                                # optional - sage.libs.flint sage.modules
             -1
 
         We now demonstrate the usage of the optional parameters::
 
-            sage: P.moebius_function_matrix(ring=QQ, sparse=False).parent()
+            sage: P.moebius_function_matrix(ring=QQ, sparse=False).parent()             # optional - sage.libs.flint sage.modules
             Full MatrixSpace of 5 by 5 dense matrices over Rational Field
         """
         M = self._hasse_diagram.moebius_function_matrix()
@@ -4251,8 +4254,8 @@ class FinitePoset(UniqueRepresentation, Parent):
 
         EXAMPLES::
 
-            sage: P = Poset([[1,3,2],[4],[4,5,6],[6],[7],[7],[7],[]], facade = False)
-            sage: LEQM = P.lequal_matrix(); LEQM
+            sage: P = Poset([[1,3,2],[4],[4,5,6],[6],[7],[7],[7],[]], facade=False)
+            sage: LEQM = P.lequal_matrix(); LEQM                                        # optional - sage.modules
             [1 1 1 1 1 1 1 1]
             [0 1 0 1 0 0 0 1]
             [0 0 1 1 1 0 1 1]
@@ -4261,18 +4264,18 @@ class FinitePoset(UniqueRepresentation, Parent):
             [0 0 0 0 0 1 1 1]
             [0 0 0 0 0 0 1 1]
             [0 0 0 0 0 0 0 1]
-            sage: LEQM[1,3]
+            sage: LEQM[1,3]                                                             # optional - sage.modules
             1
             sage: P.linear_extension()[1] < P.linear_extension()[3]
             True
-            sage: LEQM[2,5]
+            sage: LEQM[2,5]                                                             # optional - sage.modules
             0
             sage: P.linear_extension()[2] < P.linear_extension()[5]
             False
 
         We now demonstrate the usage of the optional parameters::
 
-            sage: P.lequal_matrix(ring=QQ, sparse=False).parent()
+            sage: P.lequal_matrix(ring=QQ, sparse=False).parent()                       # optional - sage.libs.flint sage.modules
             Full MatrixSpace of 8 by 8 dense matrices over Rational Field
         """
         M = self._hasse_diagram.lequal_matrix(boolean=False)
@@ -4298,7 +4301,7 @@ class FinitePoset(UniqueRepresentation, Parent):
 
         EXAMPLES::
 
-            sage: posets.PentagonPoset().coxeter_transformation()
+            sage: posets.PentagonPoset().coxeter_transformation()                       # optional - sage.modules
             [ 0  0  0  0 -1]
             [ 0  0  0  1 -1]
             [ 0  1  0  0 -1]
@@ -4311,8 +4314,8 @@ class FinitePoset(UniqueRepresentation, Parent):
 
         TESTS::
 
-            sage: M = posets.PentagonPoset().coxeter_transformation()
-            sage: M ** 8 == 1
+            sage: M = posets.PentagonPoset().coxeter_transformation()                   # optional - sage.modules
+            sage: M ** 8 == 1                                                           # optional - sage.modules
             True
         """
         return self._hasse_diagram.coxeter_transformation()
@@ -4331,12 +4334,12 @@ class FinitePoset(UniqueRepresentation, Parent):
 
         EXAMPLES::
 
-            sage: P = posets.PentagonPoset()
-            sage: P.coxeter_polynomial()
+            sage: P = posets.PentagonPoset()                                            # optional - sage.modules
+            sage: P.coxeter_polynomial()                                                # optional - sage.modules
             x^5 + x^4 + x + 1
 
-            sage: p = posets.SymmetricGroupWeakOrderPoset(3)
-            sage: p.coxeter_polynomial()
+            sage: p = posets.SymmetricGroupWeakOrderPoset(3)                            # optional - sage.groups
+            sage: p.coxeter_polynomial()                                                # optional - sage.groups sage.modules
             x^6 + x^5 - x^3 + x + 1
 
         .. SEEALSO::
@@ -4371,28 +4374,28 @@ class FinitePoset(UniqueRepresentation, Parent):
 
         EXAMPLES::
 
-           sage: P = posets.PentagonPoset()
-           sage: P.coxeter_smith_form()
+           sage: P = posets.PentagonPoset()                                             # optional - sage.modules
+           sage: P.coxeter_smith_form()                                                 # optional - sage.modules sage.libs.singular
            [1, 1, 1, 1, x^5 + x^4 + x + 1]
 
            sage: P = posets.DiamondPoset(7)
-           sage: prod(P.coxeter_smith_form()) == P.coxeter_polynomial()
+           sage: prod(P.coxeter_smith_form()) == P.coxeter_polynomial()                 # optional - sage.modules sage.libs.singular
            True
 
         TESTS::
 
-           sage: P = posets.PentagonPoset()
-           sage: P.coxeter_smith_form(algorithm='sage')
+           sage: P = posets.PentagonPoset()                                             # optional - sage.modules
+           sage: P.coxeter_smith_form(algorithm='sage')                                 # optional - sage.modules
            [1, 1, 1, 1, x^5 + x^4 + x + 1]
-           sage: P.coxeter_smith_form(algorithm='gap')
+           sage: P.coxeter_smith_form(algorithm='gap')                                  # optional - sage.libs.gap sage.modules
            [1, 1, 1, 1, x^5 + x^4 + x + 1]
-           sage: P.coxeter_smith_form(algorithm='pari')
+           sage: P.coxeter_smith_form(algorithm='pari')                                 # optional - sage.libs.pari sage.modules
            [1, 1, 1, 1, x^5 + x^4 + x + 1]
-           sage: P.coxeter_smith_form(algorithm='fricas')  # optional - fricas
+           sage: P.coxeter_smith_form(algorithm='fricas')  # optional - fricas          # optional - sage.modules
            [1, 1, 1, 1, x^5 + x^4 + x + 1]
-           sage: P.coxeter_smith_form(algorithm='maple')  # optional - maple
+           sage: P.coxeter_smith_form(algorithm='maple')   # optional - maple           # optional - sage.modules
            [1, 1, 1, 1, x^5 + x^4 + x + 1]
-           sage: P.coxeter_smith_form(algorithm='magma')  # optional - magma
+           sage: P.coxeter_smith_form(algorithm='magma')   # optional - magma           # optional - sage.modules
            [1, 1, 1, 1, x^5 + x^4 + x + 1]
 
         .. SEEALSO::
@@ -4468,15 +4471,15 @@ class FinitePoset(UniqueRepresentation, Parent):
         EXAMPLES::
 
             sage: P = Poset({1:[2, 3, 4], 2:[5, 6], 3:[6], 4:[6, 7]})
-            sage: P.is_meet_semilattice()
+            sage: P.is_meet_semilattice()                                               # optional - sage.modules
             True
 
             sage: Q = P.dual()
-            sage: Q.is_meet_semilattice()
+            sage: Q.is_meet_semilattice()                                               # optional - sage.modules
             False
 
-            sage: V = posets.IntegerPartitions(5)
-            sage: V.is_meet_semilattice(certificate=True)
+            sage: V = posets.IntegerPartitions(5)                                       # optional - sage.combinat
+            sage: V.is_meet_semilattice(certificate=True)                               # optional - sage.combinat sage.modules
             (False, ((2, 2, 1), (3, 1, 1)))
 
         .. SEEALSO::
@@ -4486,13 +4489,13 @@ class FinitePoset(UniqueRepresentation, Parent):
 
         TESTS::
 
-            sage: Poset().is_meet_semilattice()  # Test empty lattice
+            sage: Poset().is_meet_semilattice()  # Test empty lattice                   # optional - sage.modules
             True
-            sage: len([P for P in Posets(4) if P.is_meet_semilattice()])
+            sage: len([P for P in Posets(4) if P.is_meet_semilattice()])                # optional - sage.modules
             5
 
             sage: P = Poset({1: [2], 3: []})
-            sage: P.is_meet_semilattice(certificate=True)
+            sage: P.is_meet_semilattice(certificate=True)                               # optional - sage.modules
             (False, (3, 1))
         """
         from sage.combinat.posets.hasse_diagram import LatticeError
@@ -4541,13 +4544,13 @@ class FinitePoset(UniqueRepresentation, Parent):
         EXAMPLES::
 
             sage: P = Poset([[1,3,2], [4], [4,5,6], [6], [7], [7], [7], []])
-            sage: P.is_join_semilattice()
+            sage: P.is_join_semilattice()                                               # optional - sage.modules
             True
 
             sage: P = Poset({1:[3, 4], 2:[3, 4], 3:[5], 4:[5]})
-            sage: P.is_join_semilattice()
+            sage: P.is_join_semilattice()                                               # optional - sage.modules
             False
-            sage: P.is_join_semilattice(certificate=True)
+            sage: P.is_join_semilattice(certificate=True)                               # optional - sage.modules
             (False, (2, 1))
 
         .. SEEALSO::
@@ -4557,13 +4560,13 @@ class FinitePoset(UniqueRepresentation, Parent):
 
         TESTS::
 
-            sage: Poset().is_join_semilattice()  # Test empty lattice
+            sage: Poset().is_join_semilattice()  # Test empty lattice                   # optional - sage.modules
             True
-            sage: len([P for P in Posets(4) if P.is_join_semilattice()])
+            sage: len([P for P in Posets(4) if P.is_join_semilattice()])                # optional - sage.modules
             5
 
             sage: X = Poset({1: [3], 2: [3], 3: [4, 5]})
-            sage: X.is_join_semilattice(certificate=True)
+            sage: X.is_join_semilattice(certificate=True)                               # optional - sage.modules
             (False, (5, 4))
         """
         from sage.combinat.posets.hasse_diagram import LatticeError
@@ -4631,8 +4634,8 @@ class FinitePoset(UniqueRepresentation, Parent):
         EXAMPLES::
 
             sage: D = Poset({1:[2,3], 2:[4], 3:[4]})
-            sage: N5 = posets.PentagonPoset()
-            sage: for P in N5.isomorphic_subposets_iterator(D):
+            sage: N5 = posets.PentagonPoset()                                           # optional - sage.modules
+            sage: for P in N5.isomorphic_subposets_iterator(D):                         # optional - sage.modules
             ....:     print(P.cover_relations())
             [[0, 1], [0, 2], [1, 4], [2, 4]]
             [[0, 1], [0, 3], [1, 4], [3, 4]]
@@ -4671,15 +4674,15 @@ class FinitePoset(UniqueRepresentation, Parent):
 
             sage: C2 = Poset({0:[1]})
             sage: C3 = Poset({'a':['b'], 'b':['c']})
-            sage: L = sorted(x.cover_relations() for x in C3.isomorphic_subposets(C2))
-            sage: for x in L: print(x)
+            sage: L = sorted(x.cover_relations() for x in C3.isomorphic_subposets(C2))  # optional - sage.modules
+            sage: for x in L: print(x)                                                  # optional - sage.modules
             [['a', 'b']]
             [['a', 'c']]
             [['b', 'c']]
 
             sage: D = Poset({1:[2,3], 2:[4], 3:[4]})
-            sage: N5 = posets.PentagonPoset()
-            sage: len(N5.isomorphic_subposets(D))
+            sage: N5 = posets.PentagonPoset()                                           # optional - sage.modules
+            sage: len(N5.isomorphic_subposets(D))                                       # optional - sage.modules
             2
 
         .. NOTE::
@@ -4716,19 +4719,19 @@ class FinitePoset(UniqueRepresentation, Parent):
 
         EXAMPLES::
 
-            sage: A = posets.PentagonPoset().antichains(); A
+            sage: A = posets.PentagonPoset().antichains(); A                            # optional - sage.modules
             Set of antichains of Finite lattice containing 5 elements
-            sage: list(A)
+            sage: list(A)                                                               # optional - sage.modules
             [[], [0], [1], [1, 2], [1, 3], [2], [3], [4]]
-            sage: A.cardinality()
+            sage: A.cardinality()                                                       # optional - sage.modules
             8
-            sage: A[3]
+            sage: A[3]                                                                  # optional - sage.modules
             [1, 2]
 
         To get the antichains as, say, sets, one may use the
         ``element_constructor`` option::
 
-            sage: list(posets.ChainPoset(3).antichains(element_constructor=set))
+            sage: list(posets.ChainPoset(3).antichains(element_constructor=set))        # optional - sage.modules
             [set(), {0}, {1}, {2}]
 
         To get the antichains of a given size one can currently use::
@@ -4771,9 +4774,9 @@ class FinitePoset(UniqueRepresentation, Parent):
 
         EXAMPLES::
 
-            sage: it = posets.PentagonPoset().antichains_iterator(); it
+            sage: it = posets.PentagonPoset().antichains_iterator(); it                 # optional - sage.modules
             <generator object ...antichains_iterator at ...>
-            sage: next(it), next(it)
+            sage: next(it), next(it)                                                    # optional - sage.modules
             ([], [4])
 
         .. SEEALSO:: :meth:`antichains`
@@ -4925,10 +4928,12 @@ class FinitePoset(UniqueRepresentation, Parent):
 
         EXAMPLES::
 
-            sage: C = posets.PentagonPoset().chains(); C
+            sage: C = posets.PentagonPoset().chains(); C                                # optional - sage.modules
             Set of chains of Finite lattice containing 5 elements
-            sage: list(C)
-            [[], [0], [0, 1], [0, 1, 4], [0, 2], [0, 2, 3], [0, 2, 3, 4], [0, 2, 4], [0, 3], [0, 3, 4], [0, 4], [1], [1, 4], [2], [2, 3], [2, 3, 4], [2, 4], [3], [3, 4], [4]]
+            sage: list(C)                                                               # optional - sage.modules
+            [[], [0], [0, 1], [0, 1, 4], [0, 2], [0, 2, 3], [0, 2, 3, 4], [0, 2, 4],
+             [0, 3], [0, 3, 4], [0, 4], [1], [1, 4], [2], [2, 3], [2, 3, 4], [2, 4],
+             [3], [3, 4], [4]]
 
         Exclusion of elements, tuple (instead of list) as constructor::
 
@@ -4938,12 +4943,12 @@ class FinitePoset(UniqueRepresentation, Parent):
 
         To get the chains of a given size one can currently use::
 
-            sage: list(C.elements_of_depth_iterator(2))
+            sage: list(C.elements_of_depth_iterator(2))                                 # optional - sage.modules
             [[0, 1], [0, 2], [0, 3], [0, 4], [1, 4], [2, 3], [2, 4], [3, 4]]
 
         Eventually the following syntax will be accepted::
 
-            sage: C.subset(size = 2) # todo: not implemented
+            sage: C.subset(size = 2)  # todo: not implemented                           # optional - sage.modules
 
         .. SEEALSO:: :meth:`maximal_chains`, :meth:`antichains`
         """
@@ -5107,23 +5112,23 @@ class FinitePoset(UniqueRepresentation, Parent):
 
             sage: P = posets.ChainPoset(3)
             sage: Q = posets.ChainPoset(4)
-            sage: PQ = P.product(Q) ; PQ
+            sage: PQ = P.product(Q) ; PQ                                                # optional - sage.modules
             Finite lattice containing 12 elements
-            sage: len(PQ.cover_relations())
+            sage: len(PQ.cover_relations())                                             # optional - sage.modules
             17
-            sage: Q.product(P).is_isomorphic(PQ)
+            sage: Q.product(P).is_isomorphic(PQ)                                        # optional - sage.modules
             True
 
             sage: P = posets.BooleanLattice(2)
-            sage: Q = P.product(P)
-            sage: Q.is_isomorphic(posets.BooleanLattice(4))
+            sage: Q = P.product(P)                                                      # optional - sage.modules
+            sage: Q.is_isomorphic(posets.BooleanLattice(4))                             # optional - sage.modules
             True
 
         One can also simply use `*`::
 
             sage: P = posets.ChainPoset(2)
             sage: Q = posets.ChainPoset(3)
-            sage: P*Q
+            sage: P*Q                                                                   # optional - sage.modules
             Finite lattice containing 6 elements
 
         .. SEEALSO::
@@ -5132,15 +5137,15 @@ class FinitePoset(UniqueRepresentation, Parent):
 
         TESTS::
 
-            sage: Poset({0: [1]}).product(Poset())  # Product with empty poset
+            sage: Poset({0: [1]}).product(Poset())  # Product with empty poset          # optional - sage.modules
             Finite poset containing 0 elements
-            sage: Poset().product(Poset())  # Product of two empty poset
+            sage: Poset().product(Poset())  # Product of two empty poset                # optional - sage.modules
             Finite poset containing 0 elements
 
         We check that :trac:`19113` is fixed::
 
-            sage: L = LatticePoset({1: []})
-            sage: type(L) == type(L.product(L))
+            sage: L = LatticePoset({1: []})                                             # optional - sage.modules
+            sage: type(L) == type(L.product(L))                                         # optional - sage.modules
             True
         """
         from sage.combinat.posets.lattices import LatticePoset, \
@@ -5230,9 +5235,9 @@ class FinitePoset(UniqueRepresentation, Parent):
 
         EXAMPLES::
 
-            sage: P = posets.PentagonPoset()
-            sage: Q = P*P
-            sage: Q.factor()
+            sage: P = posets.PentagonPoset()                                            # optional - sage.modules
+            sage: Q = P*P                                                               # optional - sage.modules
+            sage: Q.factor()                                                            # optional - sage.modules
             [Finite poset containing 5 elements,
             Finite poset containing 5 elements]
 
@@ -5240,12 +5245,12 @@ class FinitePoset(UniqueRepresentation, Parent):
             sage: P2 = posets.ChainPoset(7)
             sage: P1.factor()
             [Finite lattice containing 3 elements]
-            sage: (P1 * P2).factor()
+            sage: (P1 * P2).factor()                                                    # optional - sage.modules
             [Finite poset containing 7 elements,
             Finite poset containing 3 elements]
 
             sage: P = posets.TamariLattice(4)
-            sage: (P*P).factor()
+            sage: (P*P).factor()                                                        # optional - sage.modules
             [Finite poset containing 14 elements,
             Finite poset containing 14 elements]
 
@@ -5367,9 +5372,9 @@ class FinitePoset(UniqueRepresentation, Parent):
             sage: P.cover_relations()
             [[2, 3], [0, 1]]
 
-            sage: N5 = posets.PentagonPoset(); N5
+            sage: N5 = posets.PentagonPoset(); N5                                       # optional - sage.modules
             Finite lattice containing 5 elements
-            sage: N5.disjoint_union(N5)  # Union of lattices is not a lattice
+            sage: N5.disjoint_union(N5)  # Union of lattices is not a lattice           # optional - sage.modules
             Finite poset containing 10 elements
 
         We show how to get literally direct sum with elements untouched::
@@ -5382,9 +5387,9 @@ class FinitePoset(UniqueRepresentation, Parent):
 
         TESTS::
 
-            sage: N5 = posets.PentagonPoset()
+            sage: N5 = posets.PentagonPoset()                                           # optional - sage.modules
             sage: P0 = Poset()
-            sage: N5.disjoint_union(P0).is_isomorphic(N5)
+            sage: N5.disjoint_union(P0).is_isomorphic(N5)                               # optional - sage.modules
             True
             sage: P0.disjoint_union(P0)
             Finite poset containing 0 elements
@@ -5446,11 +5451,11 @@ class FinitePoset(UniqueRepresentation, Parent):
             ...
             ValueError: labels must be either 'pairs' or 'integers'
 
-            sage: N5 = posets.PentagonPoset()
+            sage: N5 = posets.PentagonPoset()                                           # optional - sage.modules
             sage: P0 = Poset()
-            sage: N5.ordinal_product(P0) == P0
+            sage: N5.ordinal_product(P0) == P0                                          # optional - sage.modules
             True
-            sage: P0.ordinal_product(N5) == P0
+            sage: P0.ordinal_product(N5) == P0                                          # optional - sage.modules
             True
             sage: P0.ordinal_product(P0) == P0
             True
@@ -5464,7 +5469,7 @@ class FinitePoset(UniqueRepresentation, Parent):
             sage: C3 = posets.ChainPoset(3)
             sage: C4 = posets.ChainPoset(4)
             sage: C12 = posets.ChainPoset(12)
-            sage: C3.ordinal_product(C4).is_isomorphic(C12)
+            sage: C3.ordinal_product(C4).is_isomorphic(C12)                             # optional - sage.modules
             True
         """
         from sage.combinat.posets.lattices import LatticePoset, \
@@ -5541,15 +5546,15 @@ class FinitePoset(UniqueRepresentation, Parent):
 
             sage: P = Poset({1:[2]}); P
             Finite poset containing 2 elements
-            sage: JL = JoinSemilattice({1:[2]}); JL
+            sage: JL = JoinSemilattice({1:[2]}); JL                                     # optional - sage.modules
             Finite join-semilattice containing 2 elements
-            sage: L = LatticePoset({1:[2]}); L
+            sage: L = LatticePoset({1:[2]}); L                                          # optional - sage.modules
             Finite lattice containing 2 elements
-            sage: P.ordinal_sum(L)
+            sage: P.ordinal_sum(L)                                                      # optional - sage.modules
             Finite poset containing 4 elements
-            sage: L.ordinal_sum(JL)
+            sage: L.ordinal_sum(JL)                                                     # optional - sage.modules
             Finite join-semilattice containing 4 elements
-            sage: L.ordinal_sum(L)
+            sage: L.ordinal_sum(L)                                                      # optional - sage.modules
             Finite lattice containing 4 elements
 
         .. SEEALSO::
@@ -5559,11 +5564,11 @@ class FinitePoset(UniqueRepresentation, Parent):
 
         TESTS::
 
-            sage: N5 = posets.PentagonPoset()
+            sage: N5 = posets.PentagonPoset()                                           # optional - sage.modules
             sage: P0 = LatticePoset({})
-            sage: N5.ordinal_sum(P0).is_isomorphic(N5)
+            sage: N5.ordinal_sum(P0).is_isomorphic(N5)                                  # optional - sage.modules
             True
-            sage: P0.ordinal_sum(P0)
+            sage: P0.ordinal_sum(P0)                                                    # optional - sage.modules
             Finite lattice containing 0 elements
         """
         from sage.combinat.posets.lattices import LatticePoset, \
@@ -5630,7 +5635,7 @@ class FinitePoset(UniqueRepresentation, Parent):
             sage: B3 = posets.BooleanLattice(3)
             sage: P = B2.star_product(B3); P
             Finite poset containing 10 elements
-            sage: P.is_eulerian()
+            sage: P.is_eulerian()                                                       # optional - sage.libs.flint sage.modules
             True
 
         We can get elements as pairs or as integers::
@@ -5721,10 +5726,11 @@ class FinitePoset(UniqueRepresentation, Parent):
         EXAMPLES::
 
             sage: N = Poset({1: [3, 4], 2: [4]})
-            sage: P = {1: posets.PentagonPoset(), 2: N, 3: posets.ChainPoset(3), 4: posets.AntichainPoset(4)}
-            sage: NP = N.lexicographic_sum(P); NP
+            sage: P = {1: posets.PentagonPoset(), 2: N,                                 # optional - sage.modules
+            ....:      3: posets.ChainPoset(3), 4: posets.AntichainPoset(4)}
+            sage: NP = N.lexicographic_sum(P); NP                                       # optional - sage.modules
             Finite poset containing 16 elements
-            sage: sorted(NP.minimal_elements())
+            sage: sorted(NP.minimal_elements())                                         # optional - sage.modules
             [(1, 0), (2, 1), (2, 2)]
 
         TESTS::
@@ -5807,10 +5813,10 @@ class FinitePoset(UniqueRepresentation, Parent):
         join-semilattice and vice versa. Also the dual of a (non-)facade poset
         is again (non-)facade::
 
-            sage: V = MeetSemilattice({1: [2, 3]}, facade=False)
-            sage: A = V.dual(); A
+            sage: V = MeetSemilattice({1: [2, 3]}, facade=False)                        # optional - sage.modules
+            sage: A = V.dual(); A                                                       # optional - sage.modules
             Finite join-semilattice containing 3 elements
-            sage: A(2) < A(1)
+            sage: A(2) < A(1)                                                           # optional - sage.modules
             True
 
         .. SEEALSO:: :meth:`~sage.categories.finite_posets.FinitePosets.ParentMethods.is_self_dual`
@@ -5863,12 +5869,12 @@ class FinitePoset(UniqueRepresentation, Parent):
             sage: Y.cover_relations()
             [[-1, 0], [0, 1], [0, 2]]
 
-            sage: P = posets.PentagonPoset()  # A lattice
-            sage: P.with_bounds()
+            sage: P = posets.PentagonPoset()  # A lattice                               # optional - sage.modules
+            sage: P.with_bounds()                                                       # optional - sage.modules
             Finite lattice containing 7 elements
 
-            sage: P = posets.PentagonPoset(facade=False)
-            sage: P.with_bounds()
+            sage: P = posets.PentagonPoset(facade=False)                                # optional - sage.modules
+            sage: P.with_bounds()                                                       # optional - sage.modules
             Finite lattice containing 7 elements
 
         .. SEEALSO::
@@ -5881,58 +5887,58 @@ class FinitePoset(UniqueRepresentation, Parent):
             sage: P.cover_relations()
             [['bottom', 'top']]
 
-            sage: L = LatticePoset({}).with_bounds(); L
+            sage: L = LatticePoset({}).with_bounds(); L                                 # optional - sage.modules
             Finite lattice containing 2 elements
-            sage: L.meet_irreducibles()  # Issue 21543
+            sage: L.meet_irreducibles()  # Issue 21543                                  # optional - sage.modules
             ['bottom']
 
             sage: Poset().with_bounds((None, 1))
             Finite poset containing 1 elements
-            sage: LatticePoset().with_bounds((None, 1))
+            sage: LatticePoset().with_bounds((None, 1))                                 # optional - sage.modules
             Finite lattice containing 1 elements
-            sage: MeetSemilattice().with_bounds((None, 1))
+            sage: MeetSemilattice().with_bounds((None, 1))                              # optional - sage.modules
             Finite lattice containing 1 elements
-            sage: JoinSemilattice().with_bounds((None, 1))
+            sage: JoinSemilattice().with_bounds((None, 1))                              # optional - sage.modules
             Finite join-semilattice containing 1 elements
             sage: Poset().with_bounds((1, None))
             Finite poset containing 1 elements
-            sage: LatticePoset().with_bounds((1, None))
+            sage: LatticePoset().with_bounds((1, None))                                 # optional - sage.modules
             Finite lattice containing 1 elements
-            sage: MeetSemilattice().with_bounds((1, None))
+            sage: MeetSemilattice().with_bounds((1, None))                              # optional - sage.modules
             Finite meet-semilattice containing 1 elements
-            sage: JoinSemilattice().with_bounds((1, None))
+            sage: JoinSemilattice().with_bounds((1, None))                              # optional - sage.modules
             Finite lattice containing 1 elements
 
             sage: P = Poset({0: []})
-            sage: L = LatticePoset({0: []})
-            sage: ML = MeetSemilattice({0: []})
-            sage: JL = JoinSemilattice({0: []})
+            sage: L = LatticePoset({0: []})                                             # optional - sage.modules
+            sage: ML = MeetSemilattice({0: []})                                         # optional - sage.modules
+            sage: JL = JoinSemilattice({0: []})                                         # optional - sage.modules
             sage: P.with_bounds((None, None))
             Finite poset containing 1 elements
-            sage: L.with_bounds((None, None))
+            sage: L.with_bounds((None, None))                                           # optional - sage.modules
             Finite lattice containing 1 elements
-            sage: ML.with_bounds((None, None))
+            sage: ML.with_bounds((None, None))                                          # optional - sage.modules
             Finite meet-semilattice containing 1 elements
-            sage: JL.with_bounds((None, None))
+            sage: JL.with_bounds((None, None))                                          # optional - sage.modules
             Finite join-semilattice containing 1 elements
             sage: P.with_bounds((1, None))
             Finite poset containing 2 elements
-            sage: L.with_bounds((1, None))
+            sage: L.with_bounds((1, None))                                              # optional - sage.modules
             Finite lattice containing 2 elements
-            sage: ML.with_bounds((1, None))
+            sage: ML.with_bounds((1, None))                                             # optional - sage.modules
             Finite meet-semilattice containing 2 elements
-            sage: JL.with_bounds((1, None))
+            sage: JL.with_bounds((1, None))                                             # optional - sage.modules
             Finite lattice containing 2 elements
             sage: P.with_bounds((None, 1))
             Finite poset containing 2 elements
-            sage: L.with_bounds((None, 1))
+            sage: L.with_bounds((None, 1))                                              # optional - sage.modules
             Finite lattice containing 2 elements
-            sage: ML.with_bounds((None, 1))
+            sage: ML.with_bounds((None, 1))                                             # optional - sage.modules
             Finite lattice containing 2 elements
-            sage: JL.with_bounds((None, 1))
+            sage: JL.with_bounds((None, 1))                                             # optional - sage.modules
             Finite join-semilattice containing 2 elements
 
-            sage: posets.PentagonPoset().with_bounds(labels=(4, 5))
+            sage: posets.PentagonPoset().with_bounds(labels=(4, 5))                     # optional - sage.modules
             Traceback (most recent call last):
             ...
             ValueError: the poset already has element 4
@@ -5991,10 +5997,10 @@ class FinitePoset(UniqueRepresentation, Parent):
 
         EXAMPLES::
 
-            sage: P = posets.PentagonPoset()
-            sage: Q = P.without_bounds(); Q
+            sage: P = posets.PentagonPoset()                                            # optional - sage.modules
+            sage: Q = P.without_bounds(); Q                                             # optional - sage.modules
             Finite poset containing 3 elements
-            sage: Q.cover_relations()
+            sage: Q.cover_relations()                                                   # optional - sage.modules
             [[2, 3]]
 
             sage: P = posets.DiamondPoset(5)
@@ -6086,27 +6092,27 @@ class FinitePoset(UniqueRepresentation, Parent):
 
         Relabeling using a list::
 
-            sage: P = posets.PentagonPoset()
-            sage: list(P)
+            sage: P = posets.PentagonPoset()                                            # optional - sage.modules
+            sage: list(P)                                                               # optional - sage.modules
             [0, 1, 2, 3, 4]
-            sage: P.cover_relations()
+            sage: P.cover_relations()                                                   # optional - sage.modules
             [[0, 1], [0, 2], [1, 4], [2, 3], [3, 4]]
-            sage: Q = P.relabel(list('abcde'))
-            sage: Q.cover_relations()
+            sage: Q = P.relabel(list('abcde'))                                          # optional - sage.modules
+            sage: Q.cover_relations()                                                   # optional - sage.modules
             [['a', 'b'], ['a', 'c'], ['b', 'e'], ['c', 'd'], ['d', 'e']]
 
         Default behaviour is increasing relabeling::
 
             sage: a2 = posets.ChainPoset(2)
-            sage: P = a2 * a2
-            sage: Q = P.relabel()
-            sage: Q.cover_relations()
+            sage: P = a2 * a2                                                           # optional - sage.modules
+            sage: Q = P.relabel()                                                       # optional - sage.modules
+            sage: Q.cover_relations()                                                   # optional - sage.modules
             [[0, 1], [0, 2], [1, 3], [2, 3]]
 
         Relabeling a (semi)lattice gives a (semi)lattice::
 
-            sage: P = JoinSemilattice({0: [1]})
-            sage: P.relabel(lambda n: n+1)
+            sage: P = JoinSemilattice({0: [1]})                                         # optional - sage.modules
+            sage: P.relabel(lambda n: n+1)                                              # optional - sage.modules
             Finite join-semilattice containing 2 elements
 
         .. NOTE::
@@ -6145,7 +6151,8 @@ class FinitePoset(UniqueRepresentation, Parent):
             True
         """
         from sage.combinat.posets.lattices import (FiniteLatticePoset,
-             FiniteMeetSemilattice, FiniteJoinSemilattice)
+                                                   FiniteMeetSemilattice,
+                                                   FiniteJoinSemilattice)
 
         if isinstance(self, FiniteLatticePoset):
             constructor = FiniteLatticePoset
@@ -6206,10 +6213,10 @@ class FinitePoset(UniqueRepresentation, Parent):
 
             sage: D = DiGraph({'a':['b','c']})
             sage: P = Poset(D)
-            sage: ML = MeetSemilattice(D)
+            sage: ML = MeetSemilattice(D)                                               # optional - sage.modules
             sage: P.canonical_label()
             Finite poset containing 3 elements
-            sage: ML.canonical_label()
+            sage: ML.canonical_label()                                                  # optional - sage.modules
             Finite meet-semilattice containing 3 elements
 
         .. SEEALSO::
@@ -6286,8 +6293,8 @@ class FinitePoset(UniqueRepresentation, Parent):
 
         (Semi)lattice remains (semi)lattice with new linear extension::
 
-            sage: L = LatticePoset(P)
-            sage: Q = L.with_linear_extension([1,3,2,6,4,12]); Q
+            sage: L = LatticePoset(P)                                                   # optional - sage.modules
+            sage: Q = L.with_linear_extension([1,3,2,6,4,12]); Q                        # optional - sage.modules
             Finite lattice containing 6 elements with distinguished linear extension
 
         .. NOTE::
@@ -6347,9 +6354,9 @@ class FinitePoset(UniqueRepresentation, Parent):
 
         A subposet of a non-facade poset is again a non-facade poset::
 
-            sage: P = posets.PentagonPoset(facade=False)
-            sage: Q = P.subposet([0, 1, 2, 4])
-            sage: Q(1) < Q(2)
+            sage: P = posets.PentagonPoset(facade=False)                                # optional - sage.modules
+            sage: Q = P.subposet([0, 1, 2, 4])                                          # optional - sage.modules
+            sage: Q(1) < Q(2)                                                           # optional - sage.modules
             False
 
         TESTS::
@@ -6406,8 +6413,8 @@ class FinitePoset(UniqueRepresentation, Parent):
 
         TESTS::
 
-            sage: P = posets.IntegerPartitions(4)
-            sage: P.random_subposet(1) == P
+            sage: P = posets.IntegerPartitions(4)                                       # optional - sage.combinat
+            sage: P.random_subposet(1) == P                                             # optional - sage.combinat
             True
         """
         from sage.misc.randstate import current_randstate
@@ -6703,16 +6710,16 @@ class FinitePoset(UniqueRepresentation, Parent):
         EXAMPLES::
 
             sage: P = Poset((divisors(1000), attrcall("divides")))
-            sage: P.order_ideal_plot([20, 25])
+            sage: P.order_ideal_plot([20, 25])                                          # optional - sage.plot
             Graphics object consisting of 41 graphics primitives
 
         TESTS::
 
             sage: P = Poset()  # Test empty poset
-            sage: P.order_ideal_plot([])
+            sage: P.order_ideal_plot([])                                                # optional - sage.plot
             Graphics object consisting of 0 graphics primitives
             sage: C = posets.ChainPoset(5)
-            sage: C.order_ideal_plot([])
+            sage: C.order_ideal_plot([])                                                # optional - sage.plot
             Graphics object consisting of 10 graphics primitives
         """
         order_ideal = self.order_ideal(elements)
@@ -6750,7 +6757,7 @@ class FinitePoset(UniqueRepresentation, Parent):
         """
         return [self._vertex_to_element(w)
                 for w in self._hasse_diagram.interval(
-                        self._element_to_vertex(x), self._element_to_vertex(y))]
+                    self._element_to_vertex(x), self._element_to_vertex(y))]
 
     def closed_interval(self, x, y):
         r"""
@@ -6898,25 +6905,25 @@ class FinitePoset(UniqueRepresentation, Parent):
         EXAMPLES::
 
             sage: N = Poset({1: [3, 4], 2: [4]})
-            sage: G = N.linear_extensions_graph(); G
+            sage: G = N.linear_extensions_graph(); G                                    # optional - sage.modules
             Graph on 5 vertices
-            sage: G.neighbors(N.linear_extension([1,2,3,4]))
+            sage: G.neighbors(N.linear_extension([1,2,3,4]))                            # optional - sage.modules
             [[2, 1, 3, 4], [1, 3, 2, 4], [1, 2, 4, 3]]
 
             sage: chevron = Poset({1: [2, 6], 2: [3], 4: [3, 5], 6: [5]})
-            sage: G = chevron.linear_extensions_graph(); G
+            sage: G = chevron.linear_extensions_graph(); G                              # optional - sage.modules
             Graph on 22 vertices
-            sage: G.size()
+            sage: G.size()                                                              # optional - sage.modules
             36
 
         TESTS::
 
-            sage: Poset().linear_extensions_graph()
+            sage: Poset().linear_extensions_graph()                                     # optional - sage.modules
             Graph on 1 vertex
 
             sage: A4 = posets.AntichainPoset(4)
-            sage: G = A4.linear_extensions_graph()
-            sage: G.is_regular()
+            sage: G = A4.linear_extensions_graph()                                      # optional - sage.modules
+            sage: G.is_regular()                                                        # optional - sage.modules
             True
         """
         from sage.graphs.graph import Graph
@@ -6945,7 +6952,7 @@ class FinitePoset(UniqueRepresentation, Parent):
             sage: [sorted(anti) for anti in P.maximal_antichains()]
             [['a'], ['b', 'c'], ['c', 'd', 'e']]
 
-            sage: posets.PentagonPoset().maximal_antichains()
+            sage: posets.PentagonPoset().maximal_antichains()                           # optional - sage.modules
             [[0], [1, 2], [1, 3], [4]]
 
         .. SEEALSO:: :meth:`antichains`, :meth:`maximal_chains`
@@ -7080,10 +7087,10 @@ class FinitePoset(UniqueRepresentation, Parent):
             Simplicial complex with vertex set (0, 1, 2, 3, 4, 5, 6, 7) and 6 facets
             sage: S.f_vector()
             [1, 8, 19, 18, 6]
-            sage: S.homology()      # S is contractible
+            sage: S.homology()      # S is contractible                                 # optional - sage.modules
             {0: 0, 1: 0, 2: 0, 3: 0}
             sage: Q = P.subposet([1,2,3,4,5,6])
-            sage: Q.order_complex().homology()    # a circle
+            sage: Q.order_complex().homology()    # a circle                            # optional - sage.modules
             {0: 0, 1: Z}
 
             sage: P = Poset((divisors(15), attrcall("divides")), facade = True)
@@ -7137,17 +7144,17 @@ class FinitePoset(UniqueRepresentation, Parent):
         EXAMPLES::
 
             sage: P = posets.AntichainPoset(3)
-            sage: Q = P.order_polytope();Q
+            sage: Q = P.order_polytope(); Q                                             # optional - sage.geometry.polyhedron
             A 3-dimensional polyhedron in ZZ^3 defined as the convex hull of 8 vertices
-            sage: P = posets.PentagonPoset()
-            sage: Q = P.order_polytope();Q
+            sage: P = posets.PentagonPoset()                                            # optional - sage.modules
+            sage: Q = P.order_polytope(); Q                                             # optional - sage.modules sage.geometry.polyhedron
             A 5-dimensional polyhedron in ZZ^5 defined as the convex hull of 8 vertices
 
             sage: P = Poset([[1,2,3],[[1,2],[1,3]]])
-            sage: Q = P.order_polytope()
-            sage: Q.contains((1,0,0))
+            sage: Q = P.order_polytope()                                                # optional - sage.geometry.polyhedron
+            sage: Q.contains((1,0,0))                                                   # optional - sage.geometry.polyhedron
             False
-            sage: Q.contains((0,1,1))
+            sage: Q.contains((0,1,1))                                                   # optional - sage.geometry.polyhedron
             True
         """
         from sage.geometry.polyhedron.constructor import Polyhedron
@@ -7183,15 +7190,15 @@ class FinitePoset(UniqueRepresentation, Parent):
         EXAMPLES::
 
             sage: P = posets.AntichainPoset(3)
-            sage: Q = P.chain_polytope();Q
+            sage: Q = P.chain_polytope();Q                                              # optional - sage.geometry.polyhedron
             A 3-dimensional polyhedron in ZZ^3 defined as the convex hull of 8 vertices
-            sage: P = posets.PentagonPoset()
-            sage: Q = P.chain_polytope();Q
+            sage: P = posets.PentagonPoset()                                            # optional - sage.modules
+            sage: Q = P.chain_polytope();Q                                              # optional - sage.modules sage.geometry.polyhedron
             A 5-dimensional polyhedron in ZZ^5 defined as the convex hull of 8 vertices
         """
         from sage.geometry.polyhedron.constructor import Polyhedron
         ineqs = [[1] + [-ZZ(j in chain) for j in self]
-               for chain in self.maximal_chains_iterator()]
+                 for chain in self.maximal_chains_iterator()]
         for i in self:
             ineqs += [[0] + [ZZ(j == i) for j in self]]
         return Polyhedron(ieqs=ineqs, base_ring=ZZ)
@@ -7227,8 +7234,8 @@ class FinitePoset(UniqueRepresentation, Parent):
             sage: posets.ChainPoset(3).zeta_polynomial()
             1/2*q^2 + 1/2*q
 
-            sage: P = posets.PentagonPoset()
-            sage: P.zeta_polynomial()
+            sage: P = posets.PentagonPoset()                                            # optional - sage.modules
+            sage: P.zeta_polynomial()                                                   # optional - sage.modules
             1/6*q^3 + q^2 - 1/6*q
 
             sage: P = posets.DiamondPoset(5)
@@ -7279,13 +7286,13 @@ class FinitePoset(UniqueRepresentation, Parent):
         EXAMPLES::
 
             sage: P = posets.DiamondPoset(5)
-            sage: P.M_triangle()
+            sage: P.M_triangle()                                                        # optional - sage.combinat
             M: x^2*y^2 - 3*x*y^2 + 3*x*y + 2*y^2 - 3*y + 1
 
         TESTS::
 
-            sage: P = posets.PentagonPoset()
-            sage: P.M_triangle()
+            sage: P = posets.PentagonPoset()                                            # optional - sage.modules
+            sage: P.M_triangle()                                                        # optional - sage.combinat sage.modules
             Traceback (most recent call last):
             ...
             ValueError: the poset is not graded
@@ -7295,10 +7302,10 @@ class FinitePoset(UniqueRepresentation, Parent):
         rk = hasse.rank_function()
         if rk is None:
             raise ValueError('the poset is not graded')
-        x, y = polygen(ZZ, 'x,y')
-        p = sum(hasse.moebius_function(a, b) * x**rk(a) * y**rk(b)
-                for a in hasse
-                for b in hasse.principal_order_filter(a))
+        ring = PolynomialRing(ZZ, 'x,y')
+        p = ring.sum(hasse.moebius_function(a, b) * ring.monomial(rk(a), rk(b))
+                     for a in hasse
+                     for b in hasse.principal_order_filter(a))
         return M_triangle(p)
 
     def f_polynomial(self):
@@ -7391,8 +7398,8 @@ class FinitePoset(UniqueRepresentation, Parent):
 
         EXAMPLES::
 
-            sage: P = posets.AntichainPoset(3).order_ideals_lattice()
-            sage: P.h_polynomial()
+            sage: P = posets.AntichainPoset(3).order_ideals_lattice()                   # optional - sage.modules
+            sage: P.h_polynomial()                                                      # optional - sage.modules
             q^3 + 4*q^2 + q
             sage: P = posets.DiamondPoset(5)
             sage: P.h_polynomial()
@@ -7407,6 +7414,7 @@ class FinitePoset(UniqueRepresentation, Parent):
             :meth:`sage.topology.simplicial_complex.SimplicialComplex.h_vector`
         """
         q = polygen(ZZ, 'q')
+        ring = q.parent()
         hasse = self._hasse_diagram
         if len(hasse) == 1:
             return q.parent().one()
@@ -7414,10 +7422,11 @@ class FinitePoset(UniqueRepresentation, Parent):
         mini = hasse.bottom()
         if (mini is None) or (maxi is None):
             raise ValueError("the poset is not bounded")
-        f = sum(q**(len(ch)) for ch in hasse.chains(exclude=[mini, maxi]))
+        f = ring.sum(ring.monomial(len(ch))
+                     for ch in hasse.chains(exclude=[mini, maxi]))
         d = f.degree()
         f = (1 - q)**d * q * f(q=q / (1 - q))
-        return q.parent(f)
+        return ring(f)
 
     def flag_f_polynomial(self):
         r"""
@@ -7607,16 +7616,16 @@ class FinitePoset(UniqueRepresentation, Parent):
             sage: P.characteristic_polynomial()
             1
         """
-        hasse = self._hasse_diagram
-        rk = hasse.rank_function()
+        H = self._hasse_diagram
+        rk = H.rank_function()
         if not self.is_graded():
             raise ValueError("the poset is not graded")
         if not self.has_bottom():
-            raise ValueError("the poset has not a bottom element")
-        n = rk(hasse.maximal_elements()[0])
-        x0 = hasse.minimal_elements()[0]
-        q = polygen(ZZ, 'q')
-        return sum(hasse.moebius_function(x0, x) * q**(n - rk(x)) for x in hasse)
+            raise ValueError("the poset does not have a bottom element")
+        n = rk(H.maximal_elements()[0])
+        ring = PolynomialRing(ZZ, 'q')
+        return ring.sum(H.bottom_moebius_function(x) * ring.monomial(n - rk(x))
+                        for x in H)
 
     def chain_polynomial(self):
         """
@@ -7690,13 +7699,13 @@ class FinitePoset(UniqueRepresentation, Parent):
         EXAMPLES::
 
             sage: P = posets.AntichainPoset(3)
-            sage: P.order_polynomial()
+            sage: P.order_polynomial()                                                  # optional - sage.modules sage.rings.finite_rings
             q^3
 
             sage: P = posets.ChainPoset(3)
-            sage: f = P.order_polynomial(); f
+            sage: f = P.order_polynomial(); f                                           # optional - sage.modules sage.rings.finite_rings
             1/6*q^3 + 1/2*q^2 + 1/3*q
-            sage: [f(i) for i in range(4)]
+            sage: [f(i) for i in range(4)]                                              # optional - sage.modules sage.rings.finite_rings
             [0, 1, 4, 10]
 
         .. SEEALSO:: :meth:`order_polytope`
@@ -7722,8 +7731,8 @@ class FinitePoset(UniqueRepresentation, Parent):
 
         EXAMPLES::
 
-            sage: P = posets.PentagonPoset()
-            sage: P.degree_polynomial()
+            sage: P = posets.PentagonPoset()                                            # optional - sage.modules
+            sage: P.degree_polynomial()                                                 # optional - sage.modules
             x^2 + 3*x*y + y^2
 
             sage: P = posets.BooleanLattice(4)
@@ -7965,17 +7974,17 @@ class FinitePoset(UniqueRepresentation, Parent):
             sage: P.is_slender()
             False
 
-            sage: W = WeylGroup(['A', 2])
-            sage: G = W.bruhat_poset()
-            sage: G.is_slender()
+            sage: W = WeylGroup(['A', 2])                                               # optional - sage.groups
+            sage: G = W.bruhat_poset()                                                  # optional - sage.groups
+            sage: G.is_slender()                                                        # optional - sage.groups
             True
-            sage: W = WeylGroup(['A', 3])
-            sage: G = W.bruhat_poset()
-            sage: G.is_slender()
+            sage: W = WeylGroup(['A', 3])                                               # optional - sage.groups
+            sage: G = W.bruhat_poset()                                                  # optional - sage.groups
+            sage: G.is_slender()                                                        # optional - sage.groups
             True
 
-            sage: P = posets.IntegerPartitions(6)
-            sage: P.is_slender(certificate=True)
+            sage: P = posets.IntegerPartitions(6)                                       # optional - sage.combinat
+            sage: P.is_slender(certificate=True)                                        # optional - sage.combinat
             (False, ((6,), (3, 2, 1)))
 
         TESTS::
@@ -8019,7 +8028,7 @@ class FinitePoset(UniqueRepresentation, Parent):
 
         EXAMPLES::
 
-            sage: posets.SetPartitions(3).is_sperner()
+            sage: posets.SetPartitions(3).is_sperner()                                  # optional - sage.combinat
             True
 
             sage: P = Poset({0:[3,4,5],1:[5],2:[5]})
@@ -8028,7 +8037,7 @@ class FinitePoset(UniqueRepresentation, Parent):
 
         TESTS::
 
-            sage: posets.PentagonPoset().is_sperner()
+            sage: posets.PentagonPoset().is_sperner()                                   # optional - sage.modules
             Traceback (most recent call last):
             ...
             ValueError: the poset is not ranked
@@ -8075,33 +8084,33 @@ class FinitePoset(UniqueRepresentation, Parent):
 
             sage: P = Poset({0: [1, 2, 3], 1: [4, 5], 2: [4, 6], 3: [5, 6],
             ....:            4: [7, 8], 5: [7, 8], 6: [7, 8], 7: [9], 8: [9]})
-            sage: P.is_eulerian()
+            sage: P.is_eulerian()                                                       # optional - sage.modules sage.rings.finite_rings
             True
             sage: P = Poset({0: [1, 2, 3], 1: [4, 5, 6], 2: [4, 6], 3: [5,6],
             ....:            4: [7], 5:[7], 6:[7]})
-            sage: P.is_eulerian()
+            sage: P.is_eulerian()                                                       # optional - sage.modules sage.rings.finite_rings
             False
 
         Canonical examples of Eulerian posets are the face lattices of
         convex polytopes::
 
-            sage: P = polytopes.cube().face_lattice()
-            sage: P.is_eulerian()
+            sage: P = polytopes.cube().face_lattice()                                   # optional - sage.geometry.polyhedron
+            sage: P.is_eulerian()                                                       # optional - sage.geometry.polyhedron sage.rings.finite_rings
             True
 
         A poset that is 3- but not 4-eulerian::
 
             sage: P = Poset(DiGraph('MWW@_?W?@_?W??@??O@_?W?@_?W?@??O??')); P
             Finite poset containing 14 elements
-            sage: P.is_eulerian(k=3)
+            sage: P.is_eulerian(k=3)                                                    # optional - sage.modules
             True
-            sage: P.is_eulerian(k=4)
+            sage: P.is_eulerian(k=4)                                                    # optional - sage.modules
             False
 
         Getting an interval that is not Eulerian::
 
             sage: P = posets.DivisorLattice(12)
-            sage: P.is_eulerian(certificate=True)
+            sage: P.is_eulerian(certificate=True)                                       # optional - sage.modules
             (False, (1, 4))
 
         TESTS::
@@ -8111,15 +8120,15 @@ class FinitePoset(UniqueRepresentation, Parent):
             ...
             ValueError: the poset is not bounded
 
-            sage: Poset({1: []}).is_eulerian()
+            sage: Poset({1: []}).is_eulerian()                                          # optional - sage.modules
             True
 
-            sage: posets.PentagonPoset().is_eulerian()
+            sage: posets.PentagonPoset().is_eulerian()                                  # optional - sage.modules
             Traceback (most recent call last):
             ...
             ValueError: the poset is not graded
 
-            sage: posets.BooleanLattice(3).is_eulerian(k=123, certificate=True)
+            sage: posets.BooleanLattice(3).is_eulerian(k=123, certificate=True)         # optional - sage.modules
             (True, None)
         """
         if k is not None:
@@ -8365,17 +8374,18 @@ class FinitePoset(UniqueRepresentation, Parent):
 
         EXAMPLES::
 
-            sage: P = Poset([[3,2,1],[[3,1],[2,1]]])
-            sage: P.greene_shape()
+            sage: P = Poset([[3,2,1], [[3,1],[2,1]]])
+            sage: P.greene_shape()                                                      # optional - sage.combinat
             [2, 1]
-            sage: P = Poset([[1,2,3,4],[[1,4],[2,4],[4,3]]])
-            sage: P.greene_shape()
+            sage: P = Poset([[1,2,3,4], [[1,4],[2,4],[4,3]]])
+            sage: P.greene_shape()                                                      # optional - sage.combinat
             [3, 1]
-            sage: P = Poset([[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22],[[1,4],[2,4],[4,3]]])
-            sage: P.greene_shape()
+            sage: P = Poset([[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22],
+            ....:            [[1,4],[2,4],[4,3]]])
+            sage: P.greene_shape()                                                      # optional - sage.combinat
             [3, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
             sage: P = Poset([[],[]])
-            sage: P.greene_shape()
+            sage: P.greene_shape()                                                      # optional - sage.combinat
             []
 
         AUTHOR:
@@ -8458,34 +8468,42 @@ class FinitePoset(UniqueRepresentation, Parent):
         EXAMPLES::
 
             sage: P = Poset([[1,2,3,4],[[1,4],[2,4],[4,3]]])
-            sage: FP = P.p_partition_enumerator((3,1,2,4), QQ, check=True); FP
+            sage: FP = P.p_partition_enumerator((3,1,2,4), QQ, check=True); FP          # optional - sage.combinat
             2*M[1, 1, 1, 1] + 2*M[1, 2, 1] + M[2, 1, 1] + M[3, 1]
 
-            sage: expansion = FP.expand(5)
-            sage: xs = expansion.parent().gens()
-            sage: expansion == sum([xs[a]*xs[b]*xs[c]*xs[d] for a in range(5) for b in range(5) for c in range(5) for d in range(5) if a <= b and c <= b and b < d])
+            sage: expansion = FP.expand(5)                                              # optional - sage.combinat
+            sage: xs = expansion.parent().gens()                                        # optional - sage.combinat
+            sage: expansion == sum(xs[a]*xs[b]*xs[c]*xs[d]                              # optional - sage.combinat
+            ....:                  for a in range(5) for b in range(5)
+            ....:                  for c in range(5) for d in range(5)
+            ....:                  if a <= b and c <= b and b < d)
             True
 
             sage: P = Poset([[],[]])
-            sage: FP = P.p_partition_enumerator((), QQ, check=True); FP
+            sage: FP = P.p_partition_enumerator((), QQ, check=True); FP                 # optional - sage.combinat
             M[]
 
         With the ``weights`` parameter::
 
             sage: P = Poset([[1,2,3,4],[[1,4],[2,4],[4,3]]])
-            sage: FP = P.p_partition_enumerator((3,1,2,4), QQ, weights={1: 1, 2: 2, 3: 1, 4: 1}, check=True); FP
+            sage: FP = P.p_partition_enumerator((3,1,2,4), QQ,                          # optional - sage.combinat
+            ....:          weights={1: 1, 2: 2, 3: 1, 4: 1}, check=True); FP
             M[1, 2, 1, 1] + M[1, 3, 1] + M[2, 1, 1, 1] + M[2, 2, 1] + M[3, 1, 1] + M[4, 1]
-            sage: FP = P.p_partition_enumerator((3,1,2,4), QQ, weights={2: 2}, check=True); FP
+            sage: FP = P.p_partition_enumerator((3,1,2,4), QQ,                          # optional - sage.combinat
+            ....:          weights={2: 2}, check=True); FP
             M[1, 2, 1, 1] + M[1, 3, 1] + M[2, 1, 1, 1] + M[2, 2, 1] + M[3, 1, 1] + M[4, 1]
 
             sage: P = Poset([['a','b','c'], [['a','b'], ['a','c']]])
-            sage: FP = P.p_partition_enumerator(('b','c','a'), QQ, weights={'a': 3, 'b': 5, 'c': 7}, check=True); FP
+            sage: FP = P.p_partition_enumerator(('b','c','a'), QQ,                      # optional - sage.combinat
+            ....:          weights={'a': 3, 'b': 5, 'c': 7}, check=True); FP
             M[3, 5, 7] + M[3, 7, 5] + M[3, 12]
 
             sage: P = Poset([['a','b','c'], [['a','c'], ['b','c']]])
-            sage: FP = P.p_partition_enumerator(('b','c','a'), QQ, weights={'a': 3, 'b': 5, 'c': 7}, check=True); FP
+            sage: FP = P.p_partition_enumerator(('b','c','a'), QQ,                      # optional - sage.combinat
+            ....:          weights={'a': 3, 'b': 5, 'c': 7}, check=True); FP
             M[3, 5, 7] + M[3, 12] + M[5, 3, 7] + M[8, 7]
-            sage: FP = P.p_partition_enumerator(('a','b','c'), QQ, weights={'a': 3, 'b': 5, 'c': 7}, check=True); FP
+            sage: FP = P.p_partition_enumerator(('a','b','c'), QQ,                      # optional - sage.combinat
+            ....:          weights={'a': 3, 'b': 5, 'c': 7}, check=True); FP
             M[3, 5, 7] + M[3, 12] + M[5, 3, 7] + M[5, 10] + M[8, 7] + M[15]
         """
         if check:
@@ -8567,18 +8585,18 @@ class FinitePoset(UniqueRepresentation, Parent):
 
         EXAMPLES::
 
-            sage: P = posets.PentagonPoset()
-            sage: P.completion_by_cuts().is_isomorphic(P)
+            sage: P = posets.PentagonPoset()                                            # optional - sage.modules
+            sage: P.completion_by_cuts().is_isomorphic(P)                               # optional - sage.modules
             True
 
             sage: Y = Poset({1: [2], 2: [3, 4]})
-            sage: trafficsign = LatticePoset({1: [2], 2: [3, 4], 3: [5], 4: [5]})
-            sage: L = Y.completion_by_cuts()
-            sage: L.is_isomorphic(trafficsign)
+            sage: trafficsign = LatticePoset({1: [2], 2: [3, 4], 3: [5], 4: [5]})       # optional - sage.modules
+            sage: L = Y.completion_by_cuts()                                            # optional - sage.modules
+            sage: L.is_isomorphic(trafficsign)                                          # optional - sage.modules
             True
 
             sage: P = posets.SymmetricGroupBruhatOrderPoset(3)
-            sage: Q = P.completion_by_cuts(); Q
+            sage: Q = P.completion_by_cuts(); Q                                         # optional - sage.modules
             Finite lattice containing 7 elements
 
         .. SEEALSO::
@@ -8607,7 +8625,7 @@ class FinitePoset(UniqueRepresentation, Parent):
         EXAMPLES::
 
             sage: P = posets.BooleanLattice(4)
-            sage: P.incidence_algebra(QQ)
+            sage: P.incidence_algebra(QQ)                                               # optional - sage.modules
             Incidence algebra of Finite lattice containing 16 elements
              over Rational Field
         """
@@ -8729,7 +8747,7 @@ class FinitePoset(UniqueRepresentation, Parent):
             sage: y = '3421'
             sage: L.kazhdan_lusztig_polynomial(x, y)
             -q + 1
-            sage: L.kazhdan_lusztig_polynomial(x, y, var('t'))
+            sage: L.kazhdan_lusztig_polynomial(x, y, var('t'))                          # optional - sage.symbolic
             -t + 1
 
         AUTHORS:
@@ -8813,7 +8831,7 @@ class FinitePoset(UniqueRepresentation, Parent):
             sage: libgap(P)  # optional - gap_packages
             <A poset on 5 points>
             sage: A = libgap(GF(2)).PosetAlgebra(P); A  # optional - gap_packages
-            <GF(2)[<quiver with 5 vertices and 5 arrows>]/<two-sided ideal in <GF(2)[<quiver with 5 vertices and 5 arrows>]>, (1 generators)>>
+            <GF(2)[<quiver with 5 vertices and 5 arrows>]/<two-sided ideal in <GF(2)[<quiver with 5 vertices and 5 arrows>]>, (1 generator)>>
             sage: A.Dimension()  # optional - gap_packages
             13
         """
@@ -8831,8 +8849,8 @@ class FinitePoset(UniqueRepresentation, Parent):
 
         EXAMPLES::
 
-            sage: P = posets.PentagonPoset()
-            sage: P._macaulay2_init_()
+            sage: P = posets.PentagonPoset()                                            # optional - sage.modules
+            sage: P._macaulay2_init_()                                                  # optional - sage.modules
             'needsPackage "Posets";poset({0,1,2,3,4},{{0,1},{0,2},{1,4},{2,3},{3,4}})'
 
             sage: P = Poset({1:[2],2:[]})
@@ -8901,9 +8919,9 @@ class FinitePosets_n(UniqueRepresentation, Parent):
         """
         EXAMPLES::
 
-            sage: posets.PentagonPoset() in Posets(5)
+            sage: posets.PentagonPoset() in Posets(5)                                   # optional - sage.modules
             True
-            sage: posets.PentagonPoset() in Posets(3)
+            sage: posets.PentagonPoset() in Posets(3)                                   # optional - sage.modules
             False
             sage: 1 in Posets(3)
             False
@@ -8954,8 +8972,8 @@ class FinitePosets_n(UniqueRepresentation, Parent):
         # Obtained from The On-Line Encyclopedia of Integer Sequences;
         # this is sequence number A000112.
         known_values = [1, 1, 2, 5, 16, 63, 318, 2045, 16999, 183231,
-                2567284, 46749427, 1104891746, 33823827452, 1338193159771,
-                68275077901156, 4483130665195087]
+                        2567284, 46749427, 1104891746, 33823827452, 1338193159771,
+                        68275077901156, 4483130665195087]
         if not from_iterator and self._n < len(known_values):
             return Integer(known_values[self._n])
         else:

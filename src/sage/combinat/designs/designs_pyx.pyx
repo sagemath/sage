@@ -379,16 +379,16 @@ def is_group_divisible_design(groups,blocks,v,G=None,K=None,lambd=1,verbose=Fals
     EXAMPLES::
 
         sage: from sage.combinat.designs.designs_pyx import is_group_divisible_design
-        sage: TD = designs.transversal_design(4,10)
-        sage: groups = [list(range(i*10,(i+1)*10)) for i in range(4)]
-        sage: is_group_divisible_design(groups,TD,40,lambd=1)
+        sage: TD = designs.transversal_design(4,10)                                     # optional - sage.modules
+        sage: groups = [list(range(i*10,(i+1)*10)) for i in range(4)]                   # optional - sage.modules
+        sage: is_group_divisible_design(groups,TD,40,lambd=1)                           # optional - sage.modules
         True
 
     TESTS::
 
-        sage: TD = designs.transversal_design(4,10)
-        sage: groups = [list(range(i*10,(i+1)*10)) for i in range(4)]
-        sage: is_group_divisible_design(groups,TD,40,lambd=2,verbose=True)
+        sage: TD = designs.transversal_design(4,10)                                     # optional - sage.modules
+        sage: groups = [list(range(i*10,(i+1)*10)) for i in range(4)]                   # optional - sage.modules
+        sage: is_group_divisible_design(groups, TD, 40, lambd=2, verbose=True)          # optional - sage.modules
         the pair (0,10) has been seen 1 times but lambda=2
         False
         sage: is_group_divisible_design([[1,2],[3,4]],[[1,2]],40,lambd=1,verbose=True)
@@ -420,7 +420,7 @@ def is_group_divisible_design(groups,blocks,v,G=None,K=None,lambd=1,verbose=Fals
         (True, [[0], [1], [2], [3], [4], [5], [6], [7], [8], [9], [10], [11], [12]])
     """
     cdef int n = v
-    cdef int i,ii,j,jj,s,isok
+    cdef int i,ii,j,jj,s
     cdef int l = lambd
     cdef bint guess_groups = groups is None
 
@@ -558,18 +558,18 @@ def is_pairwise_balanced_design(blocks,v,K=None,lambd=1,verbose=False):
         sage: sts = designs.steiner_triple_system(9)
         sage: is_pairwise_balanced_design(sts,9,[3],1)
         True
-        sage: TD = designs.transversal_design(4,10).blocks()
-        sage: groups = [list(range(i*10,(i+1)*10)) for i in range(4)]
-        sage: is_pairwise_balanced_design(TD+groups,40,[4,10],1,verbose=True)
+        sage: TD = designs.transversal_design(4,10).blocks()                            # optional - sage.modules
+        sage: groups = [list(range(i*10,(i+1)*10)) for i in range(4)]                   # optional - sage.modules
+        sage: is_pairwise_balanced_design(TD + groups, 40, [4,10], 1, verbose=True)     # optional - sage.modules
         True
 
     TESTS::
 
         sage: from sage.combinat.designs.designs_pyx import is_pairwise_balanced_design
-        sage: is_pairwise_balanced_design(TD+groups,40,[4,10],2,verbose=True)
+        sage: is_pairwise_balanced_design(TD + groups, 40, [4,10], 2, verbose=True)     # optional - sage.modules
         the pair (0,1) has been seen 1 times but lambda=2
         False
-        sage: is_pairwise_balanced_design(TD+groups,40,[10],1,verbose=True)
+        sage: is_pairwise_balanced_design(TD + groups, 40, [10], 1, verbose=True)       # optional - sage.modules
         a block has size 4 while K=[10]
         False
         sage: is_pairwise_balanced_design([[2,2]],40,[2],1,verbose=True)
@@ -682,39 +682,40 @@ def is_difference_matrix(M,G,k,lmbda=1,verbose=False):
 
         sage: from sage.combinat.designs.designs_pyx import is_difference_matrix
         sage: q = 3**3
-        sage: F = GF(q,'x')
-        sage: M = [[x*y for y in F] for x in F]
-        sage: is_difference_matrix(M,F,q,verbose=1)
+        sage: F = GF(q,'x')                                                             # optional - sage.rings.finite_rings
+        sage: M = [[x*y for y in F] for x in F]                                         # optional - sage.rings.finite_rings
+        sage: is_difference_matrix(M,F,q,verbose=1)                                     # optional - sage.rings.finite_rings
         True
 
         sage: B = [[0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
         ....:      [0, 1, 2, 3, 4, 2, 3, 4, 0, 1],
         ....:      [0, 2, 4, 1, 3, 3, 0, 2, 4, 1]]
-        sage: G = GF(5)
-        sage: B = [[G(b) for b in R] for R in B]
-        sage: is_difference_matrix(list(zip(*B)),G,3,2)
+        sage: G = GF(5)                                                                 # optional - sage.rings.finite_rings
+        sage: B = [[G(b) for b in R] for R in B]                                        # optional - sage.rings.finite_rings
+        sage: is_difference_matrix(list(zip(*B)),G,3,2)                                 # optional - sage.rings.finite_rings
         True
 
     Bad input::
 
-        sage: for R in M: R.append(None)
-        sage: is_difference_matrix(M,F,q,verbose=1)
+        sage: for R in M: R.append(None)                                                # optional - sage.rings.finite_rings
+        sage: is_difference_matrix(M,F,q,verbose=1)                                     # optional - sage.rings.finite_rings
         The matrix has 28 columns but k=27
         False
-        sage: for R in M: _=R.pop(-1)
-        sage: M.append([None]*3**3)
-        sage: is_difference_matrix(M,F,q,verbose=1)
+        sage: for R in M: _=R.pop(-1)                                                   # optional - sage.rings.finite_rings
+        sage: M.append([None]*3**3)                                                     # optional - sage.rings.finite_rings
+        sage: is_difference_matrix(M,F,q,verbose=1)                                     # optional - sage.rings.finite_rings
         The matrix has 28 rows instead of lambda(|G|-1+2u)+mu=1(27-1+2.0)+1=27
         False
-        sage: _= M.pop(-1)
-        sage: for R in M: R[-1] = 0
-        sage: is_difference_matrix(M,F,q,verbose=1)
+        sage: _= M.pop(-1)                                                              # optional - sage.rings.finite_rings
+        sage: for R in M: R[-1] = 0                                                     # optional - sage.rings.finite_rings
+        sage: is_difference_matrix(M,F,q,verbose=1)                                     # optional - sage.rings.finite_rings
         Columns 0 and 26 generate 0 exactly 27 times instead of the expected mu(=1)
         False
-        sage: for R in M: R[-1] = 1
-        sage: M[-1][-1] = 0
-        sage: is_difference_matrix(M,F,q,verbose=1)
-        Columns 0 and 26 do not generate all elements of G exactly lambda(=1) times. The element x appeared 0 times as a difference.
+        sage: for R in M: R[-1] = 1                                                     # optional - sage.rings.finite_rings
+        sage: M[-1][-1] = 0                                                             # optional - sage.rings.finite_rings
+        sage: is_difference_matrix(M,F,q,verbose=1)                                     # optional - sage.rings.finite_rings
+        Columns 0 and 26 do not generate all elements of G exactly lambda(=1) times.
+        The element x appeared 0 times as a difference.
         False
     """
     return is_quasi_difference_matrix(M,G,k,lmbda=lmbda,mu=lmbda,u=0,verbose=verbose)
@@ -755,17 +756,17 @@ def is_quasi_difference_matrix(M,G,int k,int lmbda,int mu,int u,verbose=False):
 
         sage: from sage.combinat.designs.designs_pyx import is_quasi_difference_matrix
         sage: q = 3**3
-        sage: F = GF(q,'x')
-        sage: M = [[x*y for y in F] for x in F]
-        sage: is_quasi_difference_matrix(M,F,q,1,1,0,verbose=1)
+        sage: F = GF(q,'x')                                                             # optional - sage.rings.finite_rings
+        sage: M = [[x*y for y in F] for x in F]                                         # optional - sage.rings.finite_rings
+        sage: is_quasi_difference_matrix(M,F,q,1,1,0,verbose=1)                         # optional - sage.rings.finite_rings
         True
 
         sage: B = [[0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
         ....:      [0, 1, 2, 3, 4, 2, 3, 4, 0, 1],
         ....:      [0, 2, 4, 1, 3, 3, 0, 2, 4, 1]]
-        sage: G = GF(5)
-        sage: B = [[G(b) for b in R] for R in B]
-        sage: is_quasi_difference_matrix(list(zip(*B)),G,3,2,2,0)
+        sage: G = GF(5)                                                                 # optional - sage.rings.finite_rings
+        sage: B = [[G(b) for b in R] for R in B]                                        # optional - sage.rings.finite_rings
+        sage: is_quasi_difference_matrix(list(zip(*B)),G,3,2,2,0)                       # optional - sage.rings.finite_rings
         True
 
     A quasi-difference matrix from the database::

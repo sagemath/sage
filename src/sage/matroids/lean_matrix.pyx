@@ -1,3 +1,4 @@
+# sage.doctest: optional - sage.rings.finite_rings
 # cython: profile=True
 """
 Lean matrices
@@ -37,7 +38,9 @@ from cysignals.signals cimport sig_on, sig_off
 
 from sage.data_structures.bitset_base cimport *
 from sage.matrix.matrix2 cimport Matrix
-from sage.rings.all import ZZ, FiniteField, GF, QQ
+from sage.rings.integer_ring import ZZ
+from sage.rings.finite_rings.finite_field_constructor import FiniteField as GF
+from sage.rings.rational_field import QQ
 from sage.rings.integer cimport Integer
 from sage.rings.rational cimport Rational
 from sage.libs.gmp.mpq cimport *
@@ -300,7 +303,7 @@ cdef class LeanMatrix:
             This is different from what matroid theorists tend to call a
             pivot, as it does not involve a column exchange!
         """
-        cdef long i, j
+        cdef long i
         self.rescale_row_c(x, self.get_unsafe(x, y) ** (-1), 0)
         for i from 0 <= i < self._nrows:
             s = self.get_unsafe(i, y)
@@ -337,7 +340,7 @@ cdef class LeanMatrix:
         """
         Get coordinates of nonzero entries of row ``r``.
         """
-        return [i for i in xrange(self._ncols) if self.is_nonzero(r, i)]
+        return [i for i in range(self._ncols) if self.is_nonzero(r, i)]
 
     cdef LeanMatrix transpose(self):
         """
@@ -488,7 +491,7 @@ cdef class LeanMatrix:
         """
         return self.copy()
 
-    def __deepcopy__(self, memo={}):
+    def __deepcopy__(self, memo=None):
         """
         Return a deep copy of ``self``.
 
@@ -543,7 +546,7 @@ cdef class LeanMatrix:
         - `True, E` -- if there exist a ``m``-separator ``E``.
 
         """
-        for z in xrange(self.ncols()):
+        for z in range(self.ncols()):
             if z in P_cols+Q_cols:
                 continue
             sol,cert = self.shifting(P_rows,P_cols,Q_rows,Q_cols,z,None,m)
@@ -608,22 +611,22 @@ cdef class LeanMatrix:
         if len(X_1) + len(Y_1) < m:
             return False, None
 
-        cdef set X=set(xrange(self.nrows()))
-        cdef set Y=set(xrange(self.ncols()))
+        cdef set X=set(range(self.nrows()))
+        cdef set Y=set(range(self.ncols()))
 
         cdef set X_3 = X-set(X_1+X_2)
         cdef set Y_3 = Y-set(Y_1+Y_2)
 
         cdef list lU_2 = sorted(list(U_2))
         cdef list lV_2 = sorted(list(V_2))
-        cdef dict rU = dict(zip(lU_2,xrange(len(U_2))))
-        cdef dict rV = dict(zip(lV_2,xrange(len(V_2))))
+        cdef dict rU = dict(zip(lU_2,range(len(U_2))))
+        cdef dict rV = dict(zip(lV_2,range(len(V_2))))
 
         # find a unique representation of every column in U_1xY_3 using columns in U_1xV_2
-        B = self.matrix_from_rows_and_columns(list(U_1), xrange(len(Y)))
+        B = self.matrix_from_rows_and_columns(list(U_1), range(len(Y)))
         B.gauss_jordan_reduce(lV_2)
         # find a unique representation of every rows in X_3xV_1 using rows in U_2xV_1
-        BT = self.matrix_from_rows_and_columns(xrange(len(X)),list(V_1)).transpose()
+        BT = self.matrix_from_rows_and_columns(range(len(X)),list(V_1)).transpose()
         BT.gauss_jordan_reduce(lU_2)
 
         cdef set X_p = set(X_1)
@@ -779,7 +782,6 @@ cdef class GenericMatrix(LeanMatrix):
         Warning: assumes ``M`` is a GenericMatrix instance!
         """
         cdef GenericMatrix A
-        cdef long i, j
         A = GenericMatrix(0, 0, ring=self._base_ring)
         A._entries = self._entries + ((<GenericMatrix>M)._entries)
         A._nrows = self._nrows + M.nrows()
@@ -984,7 +986,7 @@ cdef class BinaryMatrix(LeanMatrix):
         EXAMPLES::
 
             sage: from sage.matroids.lean_matrix import *
-            sage: A = BinaryMatrix(2, 2, Matrix(GF(4, 'x'), [[0, 0], [0, 0]]))  # Indirect doctest
+            sage: A = BinaryMatrix(2, 2, Matrix(GF(4, 'x'), [[0, 0], [0, 0]]))  # indirect doctest
             sage: A.nrows()
             2
         """
@@ -1008,7 +1010,7 @@ cdef class BinaryMatrix(LeanMatrix):
         EXAMPLES::
 
             sage: from sage.matroids.lean_matrix import *
-            sage: A = BinaryMatrix(2, 2, Matrix(GF(4, 'x'), [[0, 0], [0, 0]]))  # Indirect doctest
+            sage: A = BinaryMatrix(2, 2, Matrix(GF(4, 'x'), [[0, 0], [0, 0]]))  # indirect doctest
             sage: A.nrows()
             2
         """
@@ -1142,7 +1144,7 @@ cdef class BinaryMatrix(LeanMatrix):
         """
         Return the matrix obtained by prepending an identity matrix. Special case of ``augment``.
         """
-        cdef long i, j
+        cdef long i
         cdef BinaryMatrix A = BinaryMatrix(self._nrows, self._ncols + self._nrows)
         for i from 0 <= i < self._nrows:
             bitset_lshift(A._M[i], self._M[i], self._nrows)
@@ -1211,7 +1213,7 @@ cdef class BinaryMatrix(LeanMatrix):
             This is different from what matroid theorists tend to call a
             pivot, as it does not involve a column exchange!
         """
-        cdef long i, j
+        cdef long i
         for i from 0 <= i < self._nrows:
             if bitset_in(self._M[i], y) and i != x:
                 bitset_symmetric_difference(self._M[i], self._M[i], self._M[x])
@@ -1348,17 +1350,17 @@ cdef class BinaryMatrix(LeanMatrix):
         bitset_complement(mask, mask)
         # copy relevant part of this matrix into A
         cdef bitset_t row, row2
-        for r in xrange(len(rows)):
+        for r in range(len(rows)):
             row = self._M[rows[r]]
             row2 = A._M[r]
             bitset_intersection(row2, row, mask) # yes, this is safe
-            for g in xrange(lg):
+            for g in range(lg):
                 if bitset_in(row, cols[g]):
                     bitset_add(row2, gaps[g])
         # record order of the columns in list `order`
-        cdef list order = list(xrange(lc))
+        cdef list order = list(range(lc))
         g = 0
-        for g in xrange(lg):
+        for g in range(lg):
             order[gaps[g]] = cols[g]
         # free up the two arrays and the bitset
         sig_free(gaps)
@@ -1420,7 +1422,7 @@ cdef class BinaryMatrix(LeanMatrix):
         Helper method for isomorphism test.
         """
         cdef BinaryMatrix Q
-        cdef long i, r
+        cdef long i
         Q = BinaryMatrix(self._nrows + 1, self._ncols)
         for i from 0 <= i < self._nrows:
             bitset_copy(Q._M[i], self._M[i])
@@ -1593,7 +1595,7 @@ cdef class TernaryMatrix(LeanMatrix):
         EXAMPLES::
 
             sage: from sage.matroids.lean_matrix import *
-            sage: A = TernaryMatrix(2, 2, Matrix(GF(4, 'x'), [[0, 0], [0, 0]]))  # Indirect doctest
+            sage: A = TernaryMatrix(2, 2, Matrix(GF(4, 'x'), [[0, 0], [0, 0]]))  # indirect doctest
             sage: A.nrows()
             2
         """
@@ -1631,7 +1633,7 @@ cdef class TernaryMatrix(LeanMatrix):
         EXAMPLES::
 
             sage: from sage.matroids.lean_matrix import *
-            sage: A = TernaryMatrix(2, 2, Matrix(GF(4, 'x'), [[0, 0], [0, 0]]))  # Indirect doctest
+            sage: A = TernaryMatrix(2, 2, Matrix(GF(4, 'x'), [[0, 0], [0, 0]]))  # indirect doctest
             sage: A.nrows()
             2
         """
@@ -1792,7 +1794,7 @@ cdef class TernaryMatrix(LeanMatrix):
 
         Special case of ``augment``.
         """
-        cdef long i, j
+        cdef long i
         cdef TernaryMatrix A = TernaryMatrix(self._nrows, self._ncols + self._nrows)
         for i from 0 <= i < self._nrows:
             bitset_lshift(A._M0[i], self._M0[i], self._nrows)
@@ -1932,7 +1934,7 @@ cdef class TernaryMatrix(LeanMatrix):
             This is different from what matroid theorists tend to call a
             pivot, as it does not involve a column exchange!
         """
-        cdef long i, j
+        cdef long i
         if self._is_negative(x, y):
             self._row_negate(x)
         for i from 0 <= i < self._nrows:
@@ -2025,14 +2027,14 @@ cdef class TernaryMatrix(LeanMatrix):
         # copy relevant part of this matrix into A
         cdef bitset_t row0, row1, row0_2, row1_2
         cdef mp_bitcnt_t p, q
-        for r in xrange(len(rows)):
+        for r in range(len(rows)):
             row0 = self._M0[rows[r]]
             row1 = self._M1[rows[r]]
             row0_2 = A._M0[r]
             row1_2 = A._M1[r]
             bitset_intersection(row0_2, row0, mask) # yes, this is safe
             bitset_intersection(row1_2, row1, mask) # yes, this is safe
-            for g in xrange(lg):
+            for g in range(lg):
                 p = cols[g]
                 if bitset_in(row0, p):
                     q = gaps[g]
@@ -2040,9 +2042,9 @@ cdef class TernaryMatrix(LeanMatrix):
                     if bitset_in(row1, p):
                         bitset_add(row1_2, q)
         # record order of the columns in list `order`
-        cdef list order = list(xrange(lc))
+        cdef list order = list(range(lc))
         g = 0
-        for g in xrange(lg):
+        for g in range(lg):
             order[gaps[g]] = cols[g]
         # free up the two arrays and the bitset
         sig_free(gaps)
@@ -2152,7 +2154,7 @@ cdef class QuaternaryMatrix(LeanMatrix):
         EXAMPLES::
 
             sage: from sage.matroids.lean_matrix import *
-            sage: A = QuaternaryMatrix(2, 2, Matrix(GF(4, 'x'), [[0, 0], [0, 0]]))  # Indirect doctest
+            sage: A = QuaternaryMatrix(2, 2, Matrix(GF(4, 'x'), [[0, 0], [0, 0]]))  # indirect doctest
             sage: A.nrows()
             2
         """
@@ -2183,7 +2185,7 @@ cdef class QuaternaryMatrix(LeanMatrix):
         EXAMPLES::
 
             sage: from sage.matroids.lean_matrix import *
-            sage: A = QuaternaryMatrix(2, 2, Matrix(GF(4, 'x'), [[0, 0], [0, 0]]))  # Indirect doctest
+            sage: A = QuaternaryMatrix(2, 2, Matrix(GF(4, 'x'), [[0, 0], [0, 0]]))  # indirect doctest
             sage: A.nrows()
             2
         """
@@ -2232,7 +2234,7 @@ cdef class QuaternaryMatrix(LeanMatrix):
         EXAMPLES::
 
             sage: from sage.matroids.lean_matrix import *
-            sage: A = QuaternaryMatrix(2, 2, Matrix(GF(4, 'x'), [[0, 0], [0, 0]]))  # Indirect doctest
+            sage: A = QuaternaryMatrix(2, 2, Matrix(GF(4, 'x'), [[0, 0], [0, 0]]))  # indirect doctest
             sage: A.nrows()
             2
             sage: A = None
@@ -2393,7 +2395,7 @@ cdef class QuaternaryMatrix(LeanMatrix):
         Return the matrix obtained by prepending an identity matrix. Special
         case of ``augment``.
         """
-        cdef long i, j
+        cdef long i
         cdef QuaternaryMatrix A = QuaternaryMatrix(self._nrows, self._ncols + self._nrows, ring=self._gf4)
         for i from 0 <= i < self._nrows:
             bitset_lshift(A._M0[i], self._M0[i], self._nrows)
@@ -2519,7 +2521,7 @@ cdef class QuaternaryMatrix(LeanMatrix):
             This is different from what matroid theorists tend to call a
             pivot, as it does not involve a column exchange!
         """
-        cdef long i, j
+        cdef long i
         self._row_div(x, self.get(x, y))
         for i from 0 <= i < self._nrows:
             if self.is_nonzero(i, y) and i != x:
@@ -2609,14 +2611,14 @@ cdef class QuaternaryMatrix(LeanMatrix):
         # copy relevant part of this matrix into A
         cdef bitset_t row0, row1, row0_2, row1_2
         cdef mp_bitcnt_t p, q
-        for r in xrange(len(rows)):
+        for r in range(len(rows)):
             row0 = self._M0[rows[r]]
             row1 = self._M1[rows[r]]
             row0_2 = A._M0[r]
             row1_2 = A._M1[r]
             bitset_intersection(row0_2, row0, mask) # yes, this is safe
             bitset_intersection(row1_2, row1, mask)
-            for g in xrange(lg):
+            for g in range(lg):
                 p = cols[g]
                 q = gaps[g]
                 if bitset_in(row0, p):
@@ -2624,9 +2626,9 @@ cdef class QuaternaryMatrix(LeanMatrix):
                 if bitset_in(row1, p):
                     bitset_add(row1_2, q)
         # record order of the columns in list `order`
-        cdef list order = list(xrange(lc))
+        cdef list order = list(range(lc))
         g = 0
-        for g in xrange(lg):
+        for g in range(lg):
             order[gaps[g]] = cols[g]
         # free up the two arrays and the bitset
         sig_free(gaps)
@@ -2773,8 +2775,8 @@ cdef class PlusMinusOneMatrix(LeanMatrix):
 
     EXAMPLES::
 
-        sage: M = Matroid(graphs.CompleteGraph(4).incidence_matrix(oriented=True),
-        ....:             regular=True)  # indirect doctest
+        sage: M = Matroid(graphs.CompleteGraph(4).incidence_matrix(oriented=True),  # indirect doctest
+        ....:             regular=True)
         sage: M.is_isomorphic(matroids.Wheel(3))
         True
     """
@@ -2785,7 +2787,7 @@ cdef class PlusMinusOneMatrix(LeanMatrix):
         EXAMPLES::
 
             sage: from sage.matroids.lean_matrix import *
-            sage: A = PlusMinusOneMatrix(2, 2, Matrix(GF(4, 'x'), [[0, 0], [0, 0]]))  # Indirect doctest
+            sage: A = PlusMinusOneMatrix(2, 2, Matrix(GF(4, 'x'), [[0, 0], [0, 0]]))  # indirect doctest
             sage: A.nrows()
             2
         """
@@ -2827,7 +2829,7 @@ cdef class PlusMinusOneMatrix(LeanMatrix):
         EXAMPLES::
 
             sage: from sage.matroids.lean_matrix import *
-            sage: A = PlusMinusOneMatrix(2, 2, Matrix(GF(4, 'x'), [[0, 0], [0, 0]]))  # Indirect doctest
+            sage: A = PlusMinusOneMatrix(2, 2, Matrix(GF(4, 'x'), [[0, 0], [0, 0]]))  # indirect doctest
             sage: A.nrows()
             2
             sage: A = None
@@ -3044,7 +3046,7 @@ cdef class PlusMinusOneMatrix(LeanMatrix):
             This is different from what matroid theorists tend to call a
             pivot, as it does not involve a column exchange!
         """
-        cdef long i, j
+        cdef long i
         cdef int a, s
         a = self.get(x, y)  # 1 or -1, so inverse is equal to itself
         self.rescale_row_c(x, a, 0)
@@ -3529,7 +3531,7 @@ cdef class RationalMatrix(LeanMatrix):
             This is different from what matroid theorists tend to call a
             pivot, as it does not involve a column exchange!
         """
-        cdef long i, j
+        cdef long i
         cdef mpq_t t
         mpq_init(t)
         mpq_inv(t, self._entries[self.index(x, y)])

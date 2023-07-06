@@ -389,7 +389,7 @@ class suboptions():
             [('arrow_options', {'size': 5})]
 
          Demonstrate that the introspected argument specification of the
-         wrapped function is updated (see :trac:`9976`).
+         wrapped function is updated (see :trac:`9976`)::
 
             sage: from sage.misc.sageinspect import sage_getargspec
             sage: sage_getargspec(f)

@@ -48,6 +48,7 @@ import sage.matrix.matrix_space as matrix_space
 
 from .finite_subgroup import TorsionPoint
 
+
 class Morphism_abstract(sage.modules.matrix_morphism.MatrixMorphism_abstract):
     """
     A morphism between modular abelian varieties.
@@ -184,7 +185,6 @@ class Morphism_abstract(sage.modules.matrix_morphism.MatrixMorphism_abstract):
             self.__cokernel = C
             return C
 
-
     def kernel(self):
         """
         Return the kernel of this morphism.
@@ -246,7 +246,6 @@ class Morphism_abstract(sage.modules.matrix_morphism.MatrixMorphism_abstract):
 
         return K, abvar
 
-
     def factor_out_component_group(self):
         r"""
         View self as a morphism `f:A \to B`. Then `\ker(f)`
@@ -286,7 +285,7 @@ class Morphism_abstract(sage.modules.matrix_morphism.MatrixMorphism_abstract):
             L = A.image()
             # Saturate the image of the matrix corresponding to self.
             Lsat = L.saturation()
-            if L == Lsat: # easy case
+            if L == Lsat:  # easy case
                 self.__factor_out = self
                 return self
             # Now find a matrix whose rows map exactly onto the
@@ -308,9 +307,9 @@ class Morphism_abstract(sage.modules.matrix_morphism.MatrixMorphism_abstract):
             #     R/L' = (M+L')/L' = M/(L'/\M) = M/Lsat
             # which is torsion free!
 
-            Q      = self.codomain()
-            M      = Q.lattice()
-            one_over_n = ZZ(1)/n
+            Q = self.codomain()
+            M = Q.lattice()
+            one_over_n = ZZ.one() / n
             Lprime = (one_over_n * self.matrix() * M.basis_matrix()).row_module(ZZ)
 
             # This R is a lattice in the ambient space for B.
@@ -546,7 +545,7 @@ class Morphism_abstract(sage.modules.matrix_morphism.MatrixMorphism_abstract):
         B = G._relative_basis_matrix() * self.restrict_domain(G.abelian_variety()).matrix() * self.codomain().lattice().basis_matrix()
         lattice = B.row_module(ZZ)
         return self.codomain().finite_subgroup(lattice,
-                             field_of_definition=G.field_of_definition())
+            field_of_definition=G.field_of_definition())
 
     def _image_of_abvar(self, A):
         """
@@ -654,10 +653,11 @@ class Morphism(Morphism_abstract, sage.modules.matrix_morphism.MatrixMorphism):
 
         L = self.domain().lattice()
         B = sub.lattice().basis()
-        ims = sum([ (L(b)*self.matrix()).list() for b in B], [])
+        ims = sum(((L(b) * self.matrix()).list() for b in B), [])
         MS = matrix_space.MatrixSpace(self.base_ring(), len(B), self.codomain().rank())
         H = sub.Hom(self.codomain(), self.category_for())
         return H(MS(ims))
+
 
 class DegeneracyMap(Morphism):
     def __init__(self, parent, A, t, side="left"):
@@ -714,7 +714,8 @@ class DegeneracyMap(Morphism):
             sage: J0(22).degeneracy_map(44)._repr_()
             'Degeneracy map from Abelian variety J0(22) of dimension 2 to Abelian variety J0(44) of dimension 4 defined by [1]'
         """
-        return "Degeneracy map from %s to %s defined by %s"%(self.domain(), self.codomain(), self._t)
+        return "Degeneracy map from %s to %s defined by %s" % (self.domain(), self.codomain(), self._t)
+
 
 class HeckeOperator(Morphism):
     """
@@ -761,7 +762,7 @@ class HeckeOperator(Morphism):
             sage: J.hecke_operator(2)._repr_()
             'Hecke operator T_2 on Abelian variety J0(37) of dimension 2'
         """
-        return "Hecke operator T_%s on %s"%(self.__n, self.__abvar)
+        return "Hecke operator T_%s on %s" % (self.__n, self.__abvar)
 
     def index(self):
         """

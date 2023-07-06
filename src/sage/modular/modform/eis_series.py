@@ -14,7 +14,7 @@ Eisenstein series
 
 from sage.arith.functions import lcm
 from sage.arith.misc import bernoulli, divisors, is_squarefree
-from sage.misc.misc import cputime
+from sage.misc.timing import cputime
 from sage.modular.arithgroup.congroup_gammaH import GammaH_class
 from sage.modular.dirichlet import DirichletGroup
 from sage.rings.integer import Integer
@@ -242,7 +242,6 @@ def __find_eisen_chars(character, k):
                     for t in divisors(N//(f**2)):
                         V.insert(0, (chi, chi_inv, t))
         return V
-
 
     eps = character
     if eps(-1) != (-1)**k:

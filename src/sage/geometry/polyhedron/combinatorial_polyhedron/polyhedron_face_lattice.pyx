@@ -51,13 +51,13 @@ AUTHOR:
 """
 
 #*****************************************************************************
-#       Copyright (C) 2019 Jonathan Kliem <jonathan.kliem@fu-berlin.de>
+#       Copyright (C) 2019 Jonathan Kliem <jonathan.kliem@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 #*****************************************************************************
 
 from .conversions \
@@ -66,7 +66,6 @@ from .conversions \
 
 from .conversions cimport bit_rep_to_Vrep_list
 
-from sage.rings.integer        cimport smallInteger
 from .base                     cimport CombinatorialPolyhedron
 from .face_iterator            cimport FaceIterator
 from .face_list_data_structure cimport *
@@ -100,7 +99,8 @@ cdef class PolyhedronFaceLattice:
 
         sage: P = polytopes.Birkhoff_polytope(3)
         sage: C = CombinatorialPolyhedron(P)
-        sage: C.face_lattice() # indirect doctests
+        sage: C._record_all_faces()  # indirect doctests
+        sage: C.face_lattice()                                                          # optional - sage.combinat
         Finite lattice containing 50 elements
 
     ALGORITHM:
@@ -215,7 +215,7 @@ cdef class PolyhedronFaceLattice:
             sage: P = polytopes.cube()
             sage: C = CombinatorialPolyhedron(P)
             sage: C._record_all_faces() # indirect doctests
-            sage: C.face_lattice()
+            sage: C.face_lattice()                                                      # optional - sage.combinat
             Finite lattice containing 28 elements
 
             sage: TestSuite(sage.geometry.polyhedron.combinatorial_polyhedron.polyhedron_face_lattice.PolyhedronFaceLattice).run()

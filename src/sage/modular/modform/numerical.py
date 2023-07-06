@@ -19,7 +19,7 @@ from sage.misc.cachefunc         import cached_method
 from sage.misc.prandom           import randint
 from sage.modular.arithgroup.all import Gamma0
 from sage.modular.modsym.all     import ModularSymbols
-from sage.modules.all            import vector
+from sage.modules.free_module_element import free_module_element as vector
 from sage.rings.complex_double   import CDF
 from sage.rings.integer          import Integer
 from sage.rings.rational_field   import QQ
@@ -104,7 +104,7 @@ class NumericalEigenforms(SageObject):
         """
         if isinstance(group, (int, Integer)):
             group = Gamma0(Integer(group))
-        self._group  = group
+        self._group = group
         self._weight = Integer(weight)
         self._tp = tp
         if self._weight < 2:
@@ -286,8 +286,6 @@ class NumericalEigenforms(SageObject):
         x = (CDF**E.nrows()).zero_vector()
         if E.nrows() == 0:
             return x
-
-
 
         def best_row(M):
             """

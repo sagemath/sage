@@ -109,9 +109,6 @@ Check that :trac:`13569` is fixed::
 # ****************************************************************************
 
 import copy
-import random
-
-import sage.groups.old as group
 
 from libc.stdlib cimport qsort
 
@@ -121,13 +118,13 @@ from cpython.list cimport *
 from cypari2.gen cimport Gen
 
 from sage.ext.stdsage cimport HAS_DICTIONARY
-from sage.rings.all      import ZZ, Integer
-from sage.rings.polynomial.polynomial_element import is_Polynomial
-from sage.rings.polynomial.multi_polynomial import is_MPolynomial
+from sage.rings.integer_ring import ZZ
+from sage.rings.integer import Integer
+from sage.rings.polynomial.multi_polynomial import MPolynomial
+from sage.rings.polynomial.polynomial_element import Polynomial
 from sage.structure.element import is_Matrix
-from sage.matrix.all     import MatrixSpace
+from sage.matrix.matrix_space import MatrixSpace
 from sage.sets.finite_enumerated_set import FiniteEnumeratedSet
-import sage.structure.coerce as coerce
 from sage.structure.richcmp cimport richcmp_not_equal, rich_to_bool
 from sage.structure.coerce cimport coercion_model
 from sage.interfaces.abc import GpElement
@@ -136,12 +133,12 @@ import sage.interfaces.abc
 
 from sage.libs.gap.libgap import libgap
 from sage.libs.gap.gap_includes cimport (UInt, UInt2, UInt4, T_PERM2, T_PERM4,
-        NEW_PERM2, NEW_PERM4, TNUM_OBJ, DEG_PERM2, DEG_PERM4, CONST_ADDR_PERM2,
-        CONST_ADDR_PERM4, ADDR_PERM2, ADDR_PERM4)
+        NEW_PERM2, TNUM_OBJ, DEG_PERM2, DEG_PERM4, CONST_ADDR_PERM2,
+        CONST_ADDR_PERM4, ADDR_PERM2)
 from sage.libs.gap.util cimport initialize
 from sage.libs.gap.element cimport (GapElement, GapElement_List,
         GapElement_String, GapElement_Permutation, make_GapElement_Permutation)
-from sage.libs.gap.gap_includes cimport Obj, INT_INTOBJ, ELM_LIST
+from sage.libs.gap.gap_includes cimport Obj, GAP_ValueInt, ELM_LIST
 
 import operator
 
@@ -1233,12 +1230,12 @@ cdef class PermutationGroupElement(MultiplicativeGroupElement):
         """
         if not self_on_left:
             left = x
-            if is_Polynomial(left):
+            if isinstance(left, Polynomial):
                 if self != 1:
                     raise ValueError("%s does not act on %s" % (self,
                                                                 left.parent()))
                 return left
-            elif is_MPolynomial(left):
+            elif isinstance(left, MPolynomial):
                 R = left.parent()
                 vars = R.gens()
                 try:
@@ -1364,7 +1361,7 @@ cdef class PermutationGroupElement(MultiplicativeGroupElement):
         assert vn <= self.n
 
         for i in range(vn):
-            j = INT_INTOBJ(ELM_LIST(obj, i+1))
+            j = GAP_ValueInt(ELM_LIST(obj, i+1))
             new.perm[i] = j - 1
         for i in range(vn, self.n):
             new.perm[i] = i

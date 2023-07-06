@@ -194,19 +194,27 @@ tensor ``t`` acts on pairs formed by a linear form and a module element::
 # *****************************************************************************
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Dict
+from typing import TYPE_CHECKING, Dict, Optional, Union
 
-from sage.rings.integer import Integer
-from sage.structure.element import ModuleElementWithMutability
-from sage.tensor.modules.comp import (Components, CompWithSym, CompFullySym,
-                                      CompFullyAntiSym)
-from sage.tensor.modules.tensor_with_indices import TensorWithIndices
 from sage.parallel.decorate import parallel
 from sage.parallel.parallelism import Parallelism
+from sage.rings.integer import Integer
+from sage.structure.element import ModuleElementWithMutability
+from sage.tensor.modules.comp import (
+    CompFullyAntiSym,
+    CompFullySym,
+    Components,
+    CompWithSym,
+)
+from sage.tensor.modules.tensor_with_indices import TensorWithIndices
 
 if TYPE_CHECKING:
+    from sage.symbolic.expression import Expression
     from sage.tensor.modules.finite_rank_free_module import FiniteRankFreeModule
     from sage.tensor.modules.free_module_basis import FreeModuleBasis
+    from sage.manifolds.differentiable.metric import PseudoRiemannianMetric
+    from sage.manifolds.differentiable.poisson_tensor import PoissonTensorField
+    from sage.manifolds.differentiable.symplectic_form import SymplecticForm
 
 
 class FreeModuleTensor(ModuleElementWithMutability):
@@ -264,8 +272,8 @@ class FreeModuleTensor(ModuleElementWithMutability):
         self,
         fmodule: FiniteRankFreeModule,
         tensor_type,
-        name=None,
-        latex_name=None,
+        name: Optional[str] = None,
+        latex_name: Optional[str] = None,
         sym=None,
         antisym=None,
         parent=None,
@@ -891,7 +899,7 @@ class FreeModuleTensor(ModuleElementWithMutability):
                                         only_nonzero=only_nonzero,
                                         only_nonredundant=only_nonredundant)
 
-    def set_name(self, name=None, latex_name=None):
+    def set_name(self, name: Optional[str] = None, latex_name: Optional[str] = None):
         r"""
         Set (or change) the text name and LaTeX name of ``self``.
 
@@ -1143,7 +1151,6 @@ class FreeModuleTensor(ModuleElementWithMutability):
                 for ii,val in paral_newcomp(listParalInput):
                     for jj in val:
                         new_comp[[jj[0]]] = jj[1]
-
 
             else:
                 # Sequential computation
@@ -1555,7 +1562,6 @@ class FreeModuleTensor(ModuleElementWithMutability):
             else:
                 basis = self._fmodule._def_basis
         return self.comp(basis)[args]
-
 
     def __setitem__(self, args, value):
         r"""
@@ -2262,7 +2268,7 @@ class FreeModuleTensor(ModuleElementWithMutability):
             result._components[basis] = self._components[basis] / other
         return result
 
-    def __call__(self, *args):
+    def __call__(self, *args) -> Expression:
         r"""
         The tensor acting on linear forms and module elements as a multilinear
         map.
@@ -2442,9 +2448,19 @@ class FreeModuleTensor(ModuleElementWithMutability):
             res._latex_name = res_latex
         return res
 
-    def trace(self, pos1=0, pos2=1):
+    def trace(
+        self,
+        pos1: int = 0,
+        pos2: int = 1,
+        using: Optional[
+            Union[PseudoRiemannianMetric, SymplecticForm, PoissonTensorField]
+        ] = None,
+    ):
         r"""
         Trace (contraction) on two slots of the tensor.
+
+        If a non-degenerate form is provided, the trace of a type-`(0,2)` tensor
+        is computed by first raising the last index.
 
         INPUT:
 
@@ -2454,6 +2470,8 @@ class FreeModuleTensor(ModuleElementWithMutability):
         - ``pos2`` -- (default: 1) position of the second index for the
           contraction, with the same convention as for ``pos1``; the variance
           type of ``pos2`` must be opposite to that of ``pos1``
+
+        - ``using`` -- (default: ``None``) a non-degenerate form
 
         OUTPUT:
 
@@ -2497,7 +2515,7 @@ class FreeModuleTensor(ModuleElementWithMutability):
 
         The contraction on two slots having the same tensor type cannot occur::
 
-            sage: b =  M.tensor((2,0), name='b') ; b
+            sage: b = M.tensor((2,0), name='b') ; b
             Type-(2,0) tensor b on the Rank-3 free module M over the Integer Ring
             sage: b[:] = [[1,2,3], [4,5,6], [7,8,9]]
             sage: b.trace(0,1)
@@ -2565,6 +2583,13 @@ class FreeModuleTensor(ModuleElementWithMutability):
             True
 
         """
+        if using is not None:
+            if self.tensor_type() != (0, 2):
+                raise ValueError(
+                    "trace with respect to a non-degenerate form is only defined for type-(0,2) tensor"
+                )
+            return self.up(using, 1).trace()
+
         # The indices at pos1 and pos2 must be of different types:
         k_con = self._tensor_type[0]
         l_cov = self._tensor_type[1]
@@ -3074,7 +3099,6 @@ class FreeModuleTensor(ModuleElementWithMutability):
             basis = self.pick_a_basis()
         res_comp = self._components[basis].symmetrize(*pos)
         return self._fmodule.tensor_from_comp(self._tensor_type, res_comp)
-
 
     def antisymmetrize(self, *pos, **kwargs):
         r"""

@@ -26,20 +26,22 @@ This provides pre-built simplicial sets:
 - the Hopf map: this is a pre-built morphism, from which one can
   extract its domain, codomain, mapping cone, etc.
 
+- the complex of a group presentation.
+
 All of these examples are accessible by typing
 ``simplicial_sets.NAME``, where ``NAME`` is the name of the
 example. Type ``simplicial_sets.[TAB]`` for a complete list.
 
 EXAMPLES::
 
-    sage: RP10 = simplicial_sets.RealProjectiveSpace(8)
-    sage: RP10.homology()
+    sage: RP10 = simplicial_sets.RealProjectiveSpace(8)                                 # optional - sage.groups
+    sage: RP10.homology()                                                               # optional - sage.groups sage.modules
     {0: 0, 1: C2, 2: 0, 3: C2, 4: 0, 5: C2, 6: 0, 7: C2, 8: 0}
 
     sage: eta = simplicial_sets.HopfMap()
     sage: S3 = eta.domain()
     sage: S2 = eta.codomain()
-    sage: S3.wedge(S2).homology()
+    sage: S3.wedge(S2).homology()                                                       # optional - sage.graphs sage.modules
     {0: 0, 1: 0, 2: Z, 3: Z}
 """
 
@@ -48,4 +50,4 @@ from .simplicial_set_examples import (Sphere, ClassifyingSpace,
                                       KleinBottle, Torus,
                                       Simplex, Horn, Point,
                                       ComplexProjectiveSpace,
-                                      HopfMap)
+                                      HopfMap, PresentationComplex)

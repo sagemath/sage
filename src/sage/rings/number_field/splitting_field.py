@@ -20,8 +20,8 @@ AUTHORS:
 
 from sage.rings.integer import Integer
 from sage.arith.misc import factorial
-from sage.rings.number_field.all import NumberField
-from sage.rings.polynomial.all import PolynomialRing
+from sage.rings.number_field.number_field import NumberField
+from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.rational_field import RationalField, is_RationalField
 from sage.libs.pari.all import pari, PariError
 
@@ -340,7 +340,7 @@ def splitting_field(poly, name, map=False, degree_multiple=None, abort_degree=No
           To:   Number Field in x with defining polynomial x
           Defn: 1 |--> 1)
     """
-    from sage.misc.misc import cputime
+    from sage.misc.timing import cputime
     from sage.misc.verbose import verbose
 
     degree_multiple = Integer(degree_multiple or 0)

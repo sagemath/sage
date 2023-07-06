@@ -258,8 +258,8 @@ class DisjointUnionEnumeratedSets(UniqueRepresentation, Parent):
         """
         # facade  = options.pop('facade', True);
         # keepkey = options.pop('keepkey', False);
-        assert(isinstance(facade, bool))
-        assert(isinstance(keepkey, bool))
+        assert isinstance(facade, bool)
+        assert isinstance(keepkey, bool)
         return super().__classcall__(
             cls, Family(fam),
             facade=facade, keepkey=keepkey, category=category)
@@ -313,7 +313,6 @@ class DisjointUnionEnumeratedSets(UniqueRepresentation, Parent):
         """
         return "Disjoint union of %s"%self._family
 
-
     def _is_a(self, x):
         """
         Check if a Sage object ``x`` belongs to ``self``.
@@ -339,7 +338,6 @@ class DisjointUnionEnumeratedSets(UniqueRepresentation, Parent):
             if self._family.cardinality() == Infinity:
                 warn("%s is an infinite union\nThe default implementation of __contains__ can loop forever. Please overload it."%(self))
             return any(x in a for a in self._family)
-
 
     def __contains__(self, x):
         """

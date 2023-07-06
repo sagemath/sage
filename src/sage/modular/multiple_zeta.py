@@ -165,9 +165,11 @@ REFERENCES:
 #
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
+from __future__ import annotations
 import numbers
+from typing import Iterator
 
-from sage.structure.unique_representation import UniqueRepresentation
+from sage.misc.fast_methods import Singleton
 from sage.structure.richcmp import op_EQ, op_NE
 from sage.structure.element import parent
 from sage.categories.cartesian_product import cartesian_product
@@ -208,7 +210,7 @@ B_data = [[], [], [(2,)], [(3,)], [], [(5,)], [], [(7,)], [(3, 5)], [(9,)],
 Words10 = Words((1, 0), infinite=False)
 
 
-def coproduct_iterator(paire):
+def coproduct_iterator(paire) -> Iterator[list]:
     """
     Return an iterator for terms in the coproduct.
 
@@ -248,7 +250,7 @@ def coproduct_iterator(paire):
                                            tail[step:]))
 
 
-def composition_to_iterated(w, reverse=False):
+def composition_to_iterated(w, reverse=False) -> tuple[int, ...]:
     """
     Convert a composition to a word in 0 and 1.
 
@@ -279,7 +281,7 @@ def composition_to_iterated(w, reverse=False):
     return word
 
 
-def iterated_to_composition(w, reverse=False):
+def iterated_to_composition(w, reverse=False) -> tuple[int, ...]:
     """
     Convert a word in 0 and 1 to a composition.
 
@@ -313,7 +315,7 @@ def iterated_to_composition(w, reverse=False):
     return tuple(b) if reverse else tuple(reversed(b))
 
 
-def dual_composition(c):
+def dual_composition(c) -> tuple[int, ...]:
     """
     Return the dual composition of ``c``.
 
@@ -380,7 +382,7 @@ def minimize_term(w, cf):
 
 # numerical values
 
-class MultizetaValues(UniqueRepresentation):
+class MultizetaValues(Singleton):
     """
     Custom cache for numerical values of multiple zetas.
 
@@ -428,7 +430,7 @@ class MultizetaValues(UniqueRepresentation):
         self.prec = 0
         self.reset()
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         r"""
         TESTS::
 
@@ -545,7 +547,7 @@ class MultizetaValues(UniqueRepresentation):
 Values = MultizetaValues()
 
 
-def extend_multiplicative_basis(B, n):
+def extend_multiplicative_basis(B, n) -> Iterator:
     """
     Extend a multiplicative basis into a basis.
 
@@ -573,8 +575,7 @@ def extend_multiplicative_basis(B, n):
         [((7,),), ((5,), (2,)), ((3,), (2,), (2,))]
     """
     for pi in Partitions(n, min_part=2):
-        for liste in cartesian_product([B[i] for i in pi]):
-            yield liste
+        yield from cartesian_product([B[i] for i in pi])
 
 
 # several classes for the algebra of MZV
@@ -663,7 +664,7 @@ class Multizetas(CombinatorialFreeModule):
         W = Words(PositiveIntegers(), infinite=False)
         CombinatorialFreeModule.__init__(self, R, W, prefix="Z", category=cat)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation of the algebra.
 
@@ -675,7 +676,7 @@ class Multizetas(CombinatorialFreeModule):
         txt = "Algebra of motivic multiple zeta values indexed by compositions over {}"
         return txt.format(self.base_ring())
 
-    def _repr_term(self, m):
+    def _repr_term(self, m) -> str:
         """
         Return a custom string representation for the monomials.
 
@@ -686,7 +687,7 @@ class Multizetas(CombinatorialFreeModule):
         """
         return "ζ(" + ','.join(str(letter) for letter in m) + ")"
 
-    def _latex_term(self, m):
+    def _latex_term(self, m) -> str:
         r"""
         Return a custom latex representation for the monomials.
 
@@ -712,7 +713,7 @@ class Multizetas(CombinatorialFreeModule):
         """
         return self.basis().keys()([], check=False)
 
-    def some_elements(self):
+    def some_elements(self) -> tuple:
         r"""
         Return some elements of the algebra.
 
@@ -746,21 +747,22 @@ class Multizetas(CombinatorialFreeModule):
 
         INPUT:
 
-        - ``w1``, ``w2`` -- compositions
+        - ``w1``, ``w2`` -- compositions as words
 
         EXAMPLES::
 
             sage: M = Multizetas(QQ)
-            sage: M.product_on_basis([2],[2])
+            sage: W = M.basis().keys()
+            sage: M.product_on_basis(W([2]),W([2]))
             4*ζ(1,3) + 2*ζ(2,2)
             sage: x = M((2,))
             sage: x*x
             4*ζ(1,3) + 2*ζ(2,2)
         """
         if not w1:
-            return self(w2)
+            return self._monomial(w2)
         if not w2:
-            return self(w1)
+            return self._monomial(w1)
         p1 = self.iterated_on_basis(w1)
         p2 = self.iterated_on_basis(w2)
         p1p2 = p1 * p2
@@ -938,7 +940,7 @@ class Multizetas(CombinatorialFreeModule):
             return x.composition()
         raise TypeError('invalid input for building a multizeta value')
 
-    def algebra_generators(self, n):
+    def algebra_generators(self, n) -> list:
         """
         Return a set of multiplicative generators in weight ``n``.
 
@@ -956,9 +958,10 @@ class Multizetas(CombinatorialFreeModule):
             sage: M.algebra_generators(8)
             [ζ(3,5)]
         """
-        return [self(b) for b in B_data[n]]
+        W = self.basis().keys()
+        return [self._monomial(W(b, check=False)) for b in B_data[n]]
 
-    def basis_data(self, basering, n):
+    def basis_data(self, basering, n) -> Iterator:
         """
         Return an iterator for a basis in weight ``n``.
 
@@ -975,9 +978,11 @@ class Multizetas(CombinatorialFreeModule):
             [4*ζ(1,3) + 2*ζ(2,2)]
         """
         basis_MZV = extend_multiplicative_basis(B_data, n)
-        return (prod(self(compo) for compo in term) for term in basis_MZV)
+        W = self.basis().keys()
+        return (prod(self._monomial(W(compo, check=False))
+                     for compo in term) for term in basis_MZV)
 
-    def basis_brown(self, n):
+    def basis_brown(self, n) -> list:
         r"""
         Return a basis of the algebra of multiple zeta values in weight ``n``.
 
@@ -1002,7 +1007,8 @@ class Multizetas(CombinatorialFreeModule):
             sage: M.basis_brown(6)
             [ζ(3,3), ζ(2,2,2)]
         """
-        return [self(tuple(c))
+        W = self.basis().keys()
+        return [self._monomial(W(tuple(c), check=False))
                 for c in IntegerVectors(n, min_part=2, max_part=3)]
 
     @cached_method
@@ -1042,6 +1048,7 @@ class Multizetas(CombinatorialFreeModule):
         if d == 1:
             return []
 
+        W = self.basis().keys()
         Values.reset(max_weight=d)
         dim = len(self((d,)).phi_as_vector())
         V = VectorSpace(QQ, dim)
@@ -1057,14 +1064,15 @@ class Multizetas(CombinatorialFreeModule):
                 else:
                     if c[0] == 1:
                         continue
-                    c = tuple(c[::-1])
-                v = self(c).phi_as_vector()
+                    c = c[::-1]
+                mon_c = self._monomial(W(c, check=False))
+                v = mon_c.phi_as_vector()
                 if v in U:
                     continue
                 U = V.subspace(U.basis() + [v])
-                basis.append(c)
+                basis.append(mon_c)
             k += 1
-        return [self(c) for c in basis]
+        return basis
 
     class Element(CombinatorialFreeModule.Element):
         def iterated(self):
@@ -1083,8 +1091,14 @@ class Multizetas(CombinatorialFreeModule):
             return self.parent().iterated(self)
 
         def single_valued(self):
-            """
+            r"""
             Return the single-valued version of ``self``.
+
+            This is the projection map onto the sub-algebra of
+            single-valued motivic multiple zeta values, as defined by
+            F. Brown in [Bro2013]_.
+
+            This morphism of algebras sends in particular `\zeta(2)` to `0`.
 
             EXAMPLES::
 
@@ -1108,13 +1122,7 @@ class Multizetas(CombinatorialFreeModule):
                 sage: Z(5,3).single_valued() == 14*Z(3)*Z(5)
                 True
             """
-            phi_im = self.phi()
-            zin = phi_im.parent()
-            phi_no_f2 = phi_im.without_f2()
-            sv = zin.sum_of_terms(((0, w), cf)
-                                  for (a, b), cf in phi_no_f2.coproduct()
-                                  for w in shuffle(a[1], b[1].reversal(), False))
-            return rho_inverse(sv)
+            return rho_inverse(self.phi().single_valued())
 
         def simplify(self):
             """
@@ -1175,7 +1183,7 @@ class Multizetas(CombinatorialFreeModule):
                     result += sum(x * z for x, z in zip(P.solve_left(v), Bd))
             return result
 
-        def __bool__(self):
+        def __bool__(self) -> bool:
             r"""
             EXAMPLES::
 
@@ -1186,7 +1194,7 @@ class Multizetas(CombinatorialFreeModule):
             """
             return bool(self.iterated())
 
-        def is_zero(self):
+        def is_zero(self) -> bool:
             r"""
             Return whether this element is zero.
 
@@ -1210,7 +1218,7 @@ class Multizetas(CombinatorialFreeModule):
             """
             return not self
 
-        def _richcmp_(self, other, op):
+        def _richcmp_(self, other, op) -> bool:
             """
             Comparison.
 
@@ -1414,7 +1422,7 @@ class Multizetas_iterated(CombinatorialFreeModule):
         CombinatorialFreeModule.__init__(self, R, Words10, prefix="I",
                                          category=cat)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation for the ring.
 
@@ -1427,7 +1435,7 @@ class Multizetas_iterated(CombinatorialFreeModule):
         """
         return f"Algebra of motivic multiple zeta values as convergent iterated integrals over {self.base_ring()}"
 
-    def _repr_term(self, m):
+    def _repr_term(self, m) -> str:
         """
         Return a custom string representation for the monomials.
 
@@ -1650,7 +1658,7 @@ class Multizetas_iterated(CombinatorialFreeModule):
             -I(11010)
         """
         rev = [1 - x for x in reversed(w)]
-        image = self(self.basis().keys()(rev, check=False))
+        image = self._monomial(self.basis().keys()(rev, check=False))
         return -image if len(w) % 2 else image
 
     def degree_on_basis(self, w):
@@ -1967,7 +1975,7 @@ class Multizetas_iterated(CombinatorialFreeModule):
             """
             return self.parent().phi(self)
 
-        def __bool__(self):
+        def __bool__(self) -> bool:
             r"""
             TESTS::
 
@@ -1989,7 +1997,7 @@ class Multizetas_iterated(CombinatorialFreeModule):
                     return True
             return False
 
-        def is_zero(self):
+        def is_zero(self) -> bool:
             r"""
             Return whether this element is zero.
 
@@ -2006,7 +2014,7 @@ class Multizetas_iterated(CombinatorialFreeModule):
             """
             return not self
 
-        def _richcmp_(self, other, op):
+        def _richcmp_(self, other, op) -> bool:
             """
             Test for equality.
 
@@ -2072,7 +2080,7 @@ class All_iterated(CombinatorialFreeModule):
             raise TypeError("argument R must be a ring")
         CombinatorialFreeModule.__init__(self, R, Words10, prefix="I")
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of the module.
 
@@ -2085,7 +2093,7 @@ class All_iterated(CombinatorialFreeModule):
         txt = "Space of motivic multiple zeta values as general iterated integrals over {}"
         return txt.format(self.base_ring())
 
-    def _repr_term(self, m):
+    def _repr_term(self, m) -> str:
         """
         Return a custom string representation for the monomials.
 
@@ -2158,10 +2166,11 @@ class All_iterated(CombinatorialFreeModule):
             sage: M.dual_on_basis(x)
             -I(0;010;1)
         """
+        W = self.basis().keys()
         if w[-2] == 0:
-            return self(w)
+            return self._monomial(w)
         rev = [1 - x for x in reversed(w)]
-        image = self(self.basis().keys()(rev, check=False))
+        image = self._monomial(W(rev, check=False))
         return -image if len(w) % 2 else image
 
     @lazy_attribute
@@ -2204,7 +2213,7 @@ class All_iterated(CombinatorialFreeModule):
             I(0;011;1)
         """
         if w[0] == 0 and w[-1] == 1:
-            return self(w)
+            return self._monomial(w)
         W = self.basis().keys()
         image = self._monomial(W(list(reversed(w)), check=False))
         return -image if len(w) % 2 else image
@@ -2254,8 +2263,9 @@ class All_iterated(CombinatorialFreeModule):
             I(0;110;1)
         """
         if w[1] == 1:
-            return self(w)
+            return self._monomial(w)
 
+        W = self.basis().keys()
         n_zeros = []
         k = 0
         for x in w[1:-1]:
@@ -2276,7 +2286,8 @@ class All_iterated(CombinatorialFreeModule):
             indice = [0]
             for nj, ij in zip(n_zeros, idx):
                 indice += [1] + [0] * (nj + ij - 1)
-            resu += coeff * self(indice + [1])
+            resu += coeff * self._monomial(W(tuple(indice + [1]),
+                                             check=False))
         return (-1)**k * resu  # attention au signe
 
     @lazy_attribute

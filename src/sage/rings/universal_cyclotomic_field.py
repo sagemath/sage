@@ -163,11 +163,14 @@ AUTHORS:
 - Sebastian Oehms (2019): add :meth:`_factor_univariate_polynomial` (see :trac:`28631`)
 """
 
+import sage.rings.abc
+
 from sage.misc.cachefunc import cached_method
 
 from sage.structure.richcmp import rich_to_bool
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.structure.element import FieldElement, parent
+
 from sage.structure.coerce import py_scalar_to_element
 from sage.categories.morphism import Morphism
 from sage.rings.ring import Field
@@ -176,6 +179,7 @@ from sage.rings.integer import Integer
 from sage.rings.rational import Rational
 
 from sage.rings.integer_ring import ZZ
+from sage.rings.number_field.number_field_element_base import NumberFieldElement_base
 from sage.rings.rational_field import QQ
 from sage.rings.infinity import Infinity
 from sage.rings.qqbar import AA, QQbar
@@ -331,8 +335,6 @@ class UniversalCyclotomicFieldElement(FieldElement):
             [False, True, True, True]
         """
         return bool(self._obj)
-
-
 
     def __reduce__(self):
         r"""
@@ -521,14 +523,14 @@ class UniversalCyclotomicFieldElement(FieldElement):
         r"""
         TESTS::
 
-            sage: SR(E(7))
+            sage: SR(E(7))                                                              # optional - sage.symbolic
             e^(2/7*I*pi)
-            sage: SR(E(5) + 2*E(5,2) + 3*E(5,3))
+            sage: SR(E(5) + 2*E(5,2) + 3*E(5,3))                                        # optional - sage.symbolic
             -sqrt(5) + 1/4*I*sqrt(2*sqrt(5) + 10) - 1/4*I*sqrt(-2*sqrt(5) + 10) - 3/2
 
         Test that the bug reported in :trac:`19912` has been fixed::
 
-            sage: SR(1+E(4))
+            sage: SR(1+E(4))                                                            # optional - sage.symbolic
             I + 1
         """
         from sage.symbolic.constants import pi, I
@@ -1281,7 +1283,7 @@ class UniversalCyclotomicFieldElement(FieldElement):
         return QQ[var](QQ['x_1'](str(gap_p)))
 
 
-class UniversalCyclotomicField(UniqueRepresentation, Field):
+class UniversalCyclotomicField(UniqueRepresentation, sage.rings.abc.UniversalCyclotomicField):
     r"""
     The universal cyclotomic field.
 
@@ -1537,8 +1539,7 @@ class UniversalCyclotomicField(UniqueRepresentation, Field):
         import sage.rings.abc
         P = parent(elt)
         if isinstance(P, sage.rings.abc.NumberField_cyclotomic):
-            from sage.rings.number_field.number_field_element import NumberFieldElement
-            if isinstance(elt, NumberFieldElement):
+            if isinstance(elt, NumberFieldElement_base):
                 from sage.rings.number_field.number_field import CyclotomicField
                 n = P.gen().multiplicative_order()
                 elt = CyclotomicField(n)(elt)

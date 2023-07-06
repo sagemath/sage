@@ -106,16 +106,16 @@ covered here.
              5: [7, 8], 6: [8,9], 7: [9]}
        sage: G = Graph(d); G
        Graph on 10 vertices
-       sage: G.plot().show()    # or G.show()
+       sage: G.plot().show()    # or G.show()                                           # optional - sage.plot
 
 - A NetworkX graph:
 
    ::
 
-       sage: import networkx
-       sage: K = networkx.complete_bipartite_graph(12,7)
-       sage: G = Graph(K)
-       sage: G.degree()
+       sage: import networkx                                                            # optional - networkx
+       sage: K = networkx.complete_bipartite_graph(12,7)                                # optional - networkx
+       sage: G = Graph(K)                                                               # optional - networkx
+       sage: G.degree()                                                                 # optional - networkx
        [7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 12, 12, 12, 12, 12, 12, 12]
 
 - graph6 or sparse6 format:
@@ -125,7 +125,7 @@ covered here.
        sage: s = ':I`AKGsaOs`cI]Gb~'
        sage: G = Graph(s, sparse=True); G
        Looped multi-graph on 10 vertices
-       sage: G.plot().show()    # or G.show()
+       sage: G.plot().show()    # or G.show()                                           # optional - sage.plot
 
    Note that the ``\`` character is an escape character in Python, and also a
    character used by graph6 strings:
@@ -142,7 +142,7 @@ covered here.
    ::
 
        sage: G = Graph('Ihe\\n@GUA')
-       sage: G.plot().show()    # or G.show()
+       sage: G.plot().show()    # or G.show()                                           # optional - sage.plot
 
 - adjacency matrix: In an adjacency matrix, each column and each row represent a
    vertex. If a 1 shows up in row `i`, column `j`, there is an edge `(i,j)`.
@@ -166,7 +166,7 @@ covered here.
        [0 0 0 0 1 0 1 1 0 0]
        sage: G = Graph(M); G
        Graph on 10 vertices
-       sage: G.plot().show()    # or G.show()
+       sage: G.plot().show()    # or G.show()                                           # optional - sage.plot
 
 - incidence matrix: In an incidence matrix, each row represents a vertex and
    each column represents an edge.
@@ -196,7 +196,7 @@ covered here.
        [ 0  0  0  0  0  0  1 -1  0  0  0  0  0  0  1]
        sage: G = Graph(M); G
        Graph on 10 vertices
-       sage: G.plot().show()    # or G.show()
+       sage: G.plot().show()    # or G.show()                                           # optional - sage.plot
        sage: DiGraph(matrix(2,[0,0,-1,1]), format="incidence_matrix")
        Traceback (most recent call last):
        ...
@@ -254,7 +254,7 @@ see how people usually visualize these graphs.
 ::
 
     sage: G = graphs.PetersenGraph()
-    sage: G.plot().show()    # or G.show()
+    sage: G.plot().show()    # or G.show()                                              # optional - sage.plot
     sage: G.degree_histogram()
     [0, 0, 0, 10]
     sage: G.adjacency_matrix()
@@ -272,7 +272,7 @@ see how people usually visualize these graphs.
 ::
 
     sage: S = G.subgraph([0,1,2,3])
-    sage: S.plot().show()    # or S.show()
+    sage: S.plot().show()    # or S.show()                                              # optional - sage.plot
     sage: S.density()
     1/2
 
@@ -280,7 +280,7 @@ see how people usually visualize these graphs.
 
     sage: G = GraphQuery(display_cols=['graph6'], num_vertices=7, diameter=5)
     sage: L = G.get_graphs_list()
-    sage: graphs_list.show_graphs(L)
+    sage: graphs_list.show_graphs(L)                                                    # optional - sage.plot
 
 .. _Graph:labels:
 
@@ -349,7 +349,7 @@ individually by iterating through the results ::
 
 Show each graph as you iterate through the results::
 
-    sage: for g in Q:
+    sage: for g in Q:                                                                   # optional - sage.plot
     ....:     show(g)
 
 Visualization
@@ -359,11 +359,11 @@ To see a graph `G` you are working with, there are three main options. You can
 view the graph in two dimensions via matplotlib with ``show()``. ::
 
     sage: G = graphs.RandomGNP(15,.3)
-    sage: G.show()
+    sage: G.show()                                                                      # optional - sage.plot
 
 And you can view it in three dimensions via jmol with ``show3d()``. ::
 
-    sage: G.show3d()
+    sage: G.show3d()                                                                    # optional - sage.plot
 
 Or it can be rendered with `\LaTeX`.  This requires the right additions to a
 standard `\mbox{\rm\TeX}` installation.  Then standard Sage commands, such as
@@ -422,8 +422,9 @@ from sage.graphs.digraph import DiGraph
 from sage.graphs.independent_sets import IndependentSets
 from sage.misc.rest_index_of_methods import doc_index, gen_thematic_rest_table_index
 from sage.graphs.views import EdgesView
+from sage.parallel.decorate import parallel
 
-from sage.misc.lazy_import import lazy_import
+from sage.misc.lazy_import import lazy_import, LazyImport
 from sage.features import PythonModule
 lazy_import('sage.graphs.mcqd', ['mcqd'],
             feature=PythonModule('sage.graphs.mcqd', spkg='mcqd'))
@@ -569,6 +570,11 @@ class Graph(GenericGraph):
     - ``immutable`` -- boolean (default: ``False``); whether to create a
       immutable graph. Note that ``immutable=True`` is actually a shortcut for
       ``data_structure='static_sparse'``. Set to ``False`` by default.
+
+    - ``hash_labels`` -- boolean (default: ``None``); whether to include edge
+      labels during hashing. This parameter defaults to ``True`` if the graph is
+      weighted. This parameter is ignored if the graph is mutable.
+      Beware that trying to hash unhashable labels will raise an error.
 
     - ``vertex_labels`` -- boolean (default: ``True``); whether to allow any
       object as a vertex (slower), or only the integers `0,...,n-1`, where `n`
@@ -795,16 +801,16 @@ class Graph(GenericGraph):
 
     #. A NetworkX MultiGraph::
 
-          sage: import networkx
-          sage: g = networkx.MultiGraph({0:[1,2,3], 2:[4]})
-          sage: Graph(g)
+          sage: import networkx                                                         # optional - networkx
+          sage: g = networkx.MultiGraph({0:[1,2,3], 2:[4]})                             # optional - networkx
+          sage: Graph(g)                                                                # optional - networkx
           Multi-graph on 5 vertices
 
     #. A NetworkX graph::
 
-           sage: import networkx
-           sage: g = networkx.Graph({0:[1,2,3], 2:[4]})
-           sage: DiGraph(g)
+           sage: import networkx                                                        # optional - networkx
+           sage: g = networkx.Graph({0:[1,2,3], 2:[4]})                                 # optional - networkx
+           sage: DiGraph(g)                                                             # optional - networkx
            Digraph on 5 vertices
 
     #. An igraph Graph (see also
@@ -910,7 +916,7 @@ class Graph(GenericGraph):
                  weighted=None, data_structure="sparse",
                  vertex_labels=True, name=None,
                  multiedges=None, convert_empty_dict_labels_to_None=None,
-                 sparse=True, immutable=False):
+                 sparse=True, immutable=False, hash_labels=None):
         """
         TESTS::
 
@@ -1252,6 +1258,10 @@ class Graph(GenericGraph):
         if weighted is None:
             weighted = False
         self._weighted = getattr(self, '_weighted', weighted)
+
+        if hash_labels is None and hasattr(data, '_hash_labels'):
+            hash_labels = data._hash_labels
+        self._hash_labels = hash_labels
 
         self._pos = copy(pos)
 
@@ -2669,7 +2679,6 @@ class Graph(GenericGraph):
 
         return self_complement.is_odd_hole_free(certificate=certificate)
 
-
     @doc_index("Graph properties")
     def is_edge_transitive(self):
         r"""
@@ -2887,7 +2896,6 @@ class Graph(GenericGraph):
             elif deg != 2:
                 return False
         return deg_one_counter == 2 and seen_counter == order
-
 
     @doc_index("Connectivity, orientations, trees")
     def degree_constrained_subgraph(self, bounds, solver=None, verbose=0,
@@ -3659,24 +3667,29 @@ class Graph(GenericGraph):
 
         INPUT:
 
-        - ``algorithm`` -- Select an algorithm from the following supported
+        - ``algorithm`` -- string (default: ``"DLX"``); one of the following
           algorithms:
 
-          - If ``algorithm="DLX"`` (default), the chromatic number is computed
-            using the dancing link algorithm. It is inefficient speedwise to
-            compute the chromatic number through the dancing link algorithm
-            because this algorithm computes *all* the possible colorings to
-            check that one exists.
+          - ``"DLX"`` (default): the chromatic number is computed using the
+            dancing link algorithm. It is inefficient speedwise to compute the
+            chromatic number through the dancing link algorithm because this
+            algorithm computes *all* the possible colorings to check that one
+            exists.
 
-          - If ``algorithm="CP"``, the chromatic number is computed using the
-            coefficients of the chromatic polynomial. Again, this method is
-            inefficient in terms of speed and it only useful for small graphs.
+          - ``"CP"``: the chromatic number is computed using the coefficients of
+            the chromatic polynomial. Again, this method is inefficient in terms
+            of speed and it only useful for small graphs.
 
-          - If ``algorithm="MILP"``, the chromatic number is computed using a
-            mixed integer linear program. The performance of this implementation
-            is affected by whether optional MILP solvers have been installed
-            (see the :mod:`MILP module <sage.numerical.mip>`, or Sage's tutorial
-            on Linear Programming).
+          - ``"MILP"``: the chromatic number is computed using a mixed integer
+            linear program. The performance of this implementation is affected
+            by whether optional MILP solvers have been installed (see the
+            :mod:`MILP module <sage.numerical.mip>`, or Sage's tutorial on
+            Linear Programming).
+
+          - ``"parallel"``: all the above algorithms are executed in parallel
+            and the result is returned as soon as one algorithm ends. Observe
+            that the speed of the above algorithms depends on the size and
+            structure of the graph.
 
         - ``solver`` -- string (default: ``None``); specify a Mixed Integer
           Linear Programming (MILP) solver to be used. If set to ``None``, the
@@ -3706,6 +3719,8 @@ class Graph(GenericGraph):
             sage: G.chromatic_number(algorithm="MILP")
             3
             sage: G.chromatic_number(algorithm="CP")
+            3
+            sage: G.chromatic_number(algorithm="parallel")
             3
 
         A bipartite graph has (by definition) chromatic number 2::
@@ -3745,42 +3760,47 @@ class Graph(GenericGraph):
             0
             sage: G.chromatic_number(algorithm="CP")
             0
+            sage: G.chromatic_number(algorithm="parallel")
+            0
 
             sage: G = Graph({0: [1, 2, 3], 1: [2]})
             sage: G.chromatic_number(algorithm="foo")
             Traceback (most recent call last):
             ...
-            ValueError: The 'algorithm' keyword must be set to either 'DLX', 'MILP' or 'CP'.
+            ValueError: the 'algorithm' keyword must be set to either 'DLX', 'MILP', 'CP' or 'parallel'
 
-        Test on a random graph (:trac:`33559`)::
+        Test on a random graph (:trac:`33559`, modified in :trac:`12379`)::
 
             sage: G = graphs.RandomGNP(15, .2)
-            sage: c1 = G.chromatic_number(algorithm='DLX')
-            sage: c2 = G.chromatic_number(algorithm='MILP')
-            sage: c3 = G.chromatic_number(algorithm='CP')
-            sage: c1 == c2 and c2 == c3
+            sage: algorithms = ['DLX', 'MILP', 'CP', 'parallel']
+            sage: len(set([G.chromatic_number(algorithm=algo) for algo in algorithms])) == 1
             True
         """
         self._scream_if_not_simple(allow_multiple_edges=True)
-        # default built-in algorithm; bad performance
         if algorithm == "DLX":
             from sage.graphs.graph_coloring import chromatic_number
             return chromatic_number(self)
-        # Algorithm with good performance, but requires an optional
-        # package: choose any of GLPK or CBC.
         elif algorithm == "MILP":
             from sage.graphs.graph_coloring import vertex_coloring
             return vertex_coloring(self, value_only=True, solver=solver, verbose=verbose,
                                    integrality_tolerance=integrality_tolerance)
-        # another algorithm with bad performance; only good for small graphs
         elif algorithm == "CP":
             f = self.chromatic_polynomial()
             i = 0
             while not f(i):
                 i += 1
             return i
+        elif algorithm == "parallel":
+            def use_all(algorithms):
+                @parallel(len(algorithms), verbose=False)
+                def func(alg):
+                    return self.chromatic_number(algorithm=alg, solver=solver, verbose=verbose,
+                                                 integrality_tolerance=integrality_tolerance)
+                for input, output in func(algorithms):
+                    return output
+            return use_all(['DLX', 'MILP', 'CP'])
         else:
-            raise ValueError("The 'algorithm' keyword must be set to either 'DLX', 'MILP' or 'CP'.")
+            raise ValueError("the 'algorithm' keyword must be set to either 'DLX', 'MILP', 'CP' or 'parallel'")
 
     @doc_index("Coloring")
     def coloring(self, algorithm="DLX", hex_colors=False, solver=None, verbose=0,
@@ -3835,14 +3855,14 @@ class Graph(GenericGraph):
             True
             sage: are_equal_colorings(P, Q)
             True
-            sage: G.plot(partition=P)
+            sage: G.plot(partition=P)                                                   # optional - sage.plot
             Graphics object consisting of 16 graphics primitives
             sage: G.coloring(hex_colors=True, algorithm="MILP")
             {'#0000ff': [4], '#00ff00': [0, 6, 5], '#ff0000': [2, 1, 3]}
             sage: H = G.coloring(hex_colors=True, algorithm="DLX")
             sage: H
             {'#0000ff': [4], '#00ff00': [1, 2, 3], '#ff0000': [0, 5, 6]}
-            sage: G.plot(vertex_colors=H)
+            sage: G.plot(vertex_colors=H)                                               # optional - sage.plot
             Graphics object consisting of 16 graphics primitives
 
         .. PLOT::
@@ -3926,7 +3946,7 @@ class Graph(GenericGraph):
         """
         from sage.combinat.sf.sf import SymmetricFunctions
         from sage.combinat.partition import _Partitions
-        from sage.misc.misc import powerset
+        from sage.combinat.subset import powerset
         if R is None:
             R = ZZ
         p = SymmetricFunctions(R).p()
@@ -4666,9 +4686,30 @@ class Graph(GenericGraph):
             sage: mad_g = g.maximum_average_degree(value_only=False)
             sage: g.is_isomorphic(mad_g)
             True
+
+        TESTS:
+
+        Check corner cases::
+
+            sage: Graph().maximum_average_degree(value_only=True)
+            0
+            sage: Graph().maximum_average_degree(value_only=False)
+            Graph on 0 vertices
+            sage: Graph(1).maximum_average_degree(value_only=True)
+            0
+            sage: Graph(1).maximum_average_degree(value_only=False)
+            Graph on 1 vertex
+            sage: Graph(2).maximum_average_degree(value_only=True)
+            0
+            sage: Graph(2).maximum_average_degree(value_only=False)
+            Graph on 1 vertex
         """
         self._scream_if_not_simple()
         g = self
+        if not g:
+            return ZZ.zero() if value_only else g.parent()()
+        elif not g.size():
+            return ZZ.zero() if value_only else g.parent()([[next(g.vertex_iterator())], []])
         from sage.numerical.mip import MixedIntegerLinearProgram
 
         p = MixedIntegerLinearProgram(maximization=True, solver=solver)
@@ -5908,13 +5949,13 @@ class Graph(GenericGraph):
 
         :trac:`22424`::
 
-            sage: G1=graphs.RandomGNP(5,0.5)
-            sage: gp1 = G1.graphplot(save_pos=True)
-            sage: G2=G1.to_directed()
+            sage: G1 = graphs.RandomGNP(5,0.5)
+            sage: gp1 = G1.graphplot(save_pos=True)                                     # optional - sage.plot
+            sage: G2 = G1.to_directed()
             sage: G2.delete_vertex(0)
             sage: G2.add_vertex(5)
-            sage: gp2 = G2.graphplot()
-            sage: gp1 = G1.graphplot()
+            sage: gp2 = G2.graphplot()                                                  # optional - sage.plot
+            sage: gp1 = G1.graphplot()                                                  # optional - sage.plot
 
         Vertex labels will be retained (:trac:`14708`)::
 
@@ -6504,7 +6545,7 @@ class Graph(GenericGraph):
              [2, 6], [2, 8], [3, 4], [3, 7], [3, 9], [4, 5], [4, 8], [5, 10],
              [5, 11], [6, 10], [6, 11], [7, 8], [7, 11], [8, 10], [9, 10], [9, 11]]
             sage: G = Graph({0:[1,2,3], 1:[2], 3:[0,1]})
-            sage: G.show(figsize=[2, 2])
+            sage: G.show(figsize=[2, 2])                                                # optional - sage.plot
             sage: G.cliques_maximal()
             [[0, 1, 2], [0, 1, 3]]
             sage: C = graphs.PetersenGraph()
@@ -6679,7 +6720,7 @@ class Graph(GenericGraph):
             sage: C.clique_number()
             4
             sage: G = Graph({0:[1,2,3], 1:[2], 3:[0,1]})
-            sage: G.show(figsize=[2,2])
+            sage: G.show(figsize=[2,2])                                                 # optional - sage.plot
             sage: G.clique_number()
             3
 
@@ -6690,12 +6731,14 @@ class Graph(GenericGraph):
 
         A non-empty graph without edges has a clique number of 1::
 
-            sage: all((i*graphs.CompleteGraph(1)).clique_number() == 1 for i in range(1,15))
+            sage: all((i*graphs.CompleteGraph(1)).clique_number() == 1
+            ....:     for i in range(1,15))
             True
 
         A complete multipartite graph with k parts has clique number k::
 
-            sage: all((i*graphs.CompleteMultipartiteGraph(i*[5])).clique_number() == i for i in range(1,6))
+            sage: all((i*graphs.CompleteMultipartiteGraph(i*[5])).clique_number() == i
+            ....:     for i in range(1,6))
             True
 
         TESTS::
@@ -6704,9 +6747,9 @@ class Graph(GenericGraph):
             sage: g.clique_number(algorithm="MILP")
             2
             sage: for i in range(10):                                            # optional - mcqd
-            ....:     g = graphs.RandomGNP(15,.5)                                # optional - mcqd
-            ....:     if g.clique_number() != g.clique_number(algorithm="mcqd"): # optional - mcqd
-            ....:         print("This is dead wrong !")                          # optional - mcqd
+            ....:     g = graphs.RandomGNP(15,.5)
+            ....:     if g.clique_number() != g.clique_number(algorithm="mcqd"):
+            ....:         print("This is dead wrong !")
         """
         self._scream_if_not_simple(allow_loops=False)
         if algorithm == "Cliquer":
@@ -6758,13 +6801,26 @@ class Graph(GenericGraph):
             {(0, 0): 2, (0, 1): 3, (0, 2): 2, (1, 0): 2, (1, 1): 3, (1, 2): 2}
             sage: F.cliques_number_of(vertices=[(0, 1), (1, 2)])
             {(0, 1): 3, (1, 2): 2}
+            sage: F.cliques_number_of(vertices=(0, 1))
+            3
             sage: G = Graph({0:[1,2,3], 1:[2], 3:[0,1]})
-            sage: G.show(figsize=[2,2])
+            sage: G.show(figsize=[2,2])                                                 # optional - sage.plot
             sage: G.cliques_number_of()
             {0: 2, 1: 2, 2: 1, 3: 1}
         """
-        import networkx
-        return networkx.number_of_cliques(self.networkx_graph(), vertices, cliques)
+        if cliques is None:
+            cliques = self.cliques_maximal()
+
+        if vertices in self:  # single vertex
+            return sum(1 for c in cliques if vertices in c)
+
+        from collections import Counter
+        count = Counter()
+
+        for c in cliques:
+            count.update(c)
+
+        return {v : count[v] for v in vertices or self}
 
     @doc_index("Clique-related methods")
     def cliques_get_max_clique_graph(self):
@@ -6784,14 +6840,14 @@ class Graph(GenericGraph):
 
         EXAMPLES::
 
-            sage: (graphs.ChvatalGraph()).cliques_get_max_clique_graph()
+            sage: MCG = graphs.ChvatalGraph().cliques_get_max_clique_graph(); MCG
             Graph on 24 vertices
-            sage: ((graphs.ChvatalGraph()).cliques_get_max_clique_graph()).show(figsize=[2,2], vertex_size=20, vertex_labels=False)
+            sage: MCG.show(figsize=[2,2], vertex_size=20, vertex_labels=False)          # optional - sage.plot
             sage: G = Graph({0:[1,2,3], 1:[2], 3:[0,1]})
-            sage: G.show(figsize=[2,2])
+            sage: G.show(figsize=[2,2])                                                 # optional - sage.plot
             sage: G.cliques_get_max_clique_graph()
             Graph on 2 vertices
-            sage: (G.cliques_get_max_clique_graph()).show(figsize=[2,2])
+            sage: G.cliques_get_max_clique_graph().show(figsize=[2,2])                  # optional - sage.plot
         """
         import networkx
         return Graph(networkx.make_max_clique_graph(self.networkx_graph(), create_using=networkx.MultiGraph()),
@@ -6812,14 +6868,14 @@ class Graph(GenericGraph):
 
         EXAMPLES::
 
-            sage: (graphs.ChvatalGraph()).cliques_get_clique_bipartite()
+            sage: CBG = graphs.ChvatalGraph().cliques_get_clique_bipartite(); CBG
             Bipartite graph on 36 vertices
-            sage: ((graphs.ChvatalGraph()).cliques_get_clique_bipartite()).show(figsize=[2,2], vertex_size=20, vertex_labels=False)
+            sage: CBG.show(figsize=[2,2], vertex_size=20, vertex_labels=False)          # optional - sage.plot
             sage: G = Graph({0:[1,2,3], 1:[2], 3:[0,1]})
-            sage: G.show(figsize=[2,2])
+            sage: G.show(figsize=[2,2])                                                 # optional - sage.plot
             sage: G.cliques_get_clique_bipartite()
             Bipartite graph on 6 vertices
-            sage: (G.cliques_get_clique_bipartite()).show(figsize=[2,2])
+            sage: G.cliques_get_clique_bipartite().show(figsize=[2,2])                  # optional - sage.plot
         """
         from .bipartite_graph import BipartiteGraph
         import networkx
@@ -7389,7 +7445,7 @@ class Graph(GenericGraph):
 
         .. NOTE::
 
-            Currently only implemented for undirected graphs. Use to_undirected
+            Currently only implemented for undirected graphs. Use :meth:`to_undirected`
             to convert a digraph to an undirected graph.
 
         INPUT:
@@ -7410,21 +7466,20 @@ class Graph(GenericGraph):
         EXAMPLES::
 
             sage: C = Graph('DJ{')
-            sage: C.cliques_vertex_clique_number()
+            sage: C.cliques_vertex_clique_number()                                      # optional - sage.plot
             {0: 2, 1: 4, 2: 4, 3: 4, 4: 4}
-            sage: E = C.cliques_maximal()
-            sage: E
+            sage: E = C.cliques_maximal(); E
             [[0, 4], [1, 2, 3, 4]]
-            sage: C.cliques_vertex_clique_number(cliques=E,algorithm="networkx")
+            sage: C.cliques_vertex_clique_number(cliques=E, algorithm="networkx")       # optional - sage.plot
             {0: 2, 1: 4, 2: 4, 3: 4, 4: 4}
             sage: F = graphs.Grid2dGraph(2,3)
-            sage: F.cliques_vertex_clique_number(algorithm="networkx")
+            sage: F.cliques_vertex_clique_number(algorithm="networkx")                  # optional - sage.plot
             {(0, 0): 2, (0, 1): 2, (0, 2): 2, (1, 0): 2, (1, 1): 2, (1, 2): 2}
-            sage: F.cliques_vertex_clique_number(vertices=[(0, 1), (1, 2)])
+            sage: F.cliques_vertex_clique_number(vertices=[(0, 1), (1, 2)])             # optional - sage.plot
             {(0, 1): 2, (1, 2): 2}
             sage: G = Graph({0:[1,2,3], 1:[2], 3:[0,1]})
-            sage: G.show(figsize=[2,2])
-            sage: G.cliques_vertex_clique_number()
+            sage: G.show(figsize=[2,2])                                                 # optional - sage.plot
+            sage: G.cliques_vertex_clique_number()                                      # optional - sage.plot
             {0: 3, 1: 3, 2: 3, 3: 3}
         """
         if algorithm == "cliquer":
@@ -7465,17 +7520,32 @@ class Graph(GenericGraph):
 
             sage: C = Graph('DJ{')
             sage: C.cliques_containing_vertex()
-            {0: [[4, 0]], 1: [[4, 1, 2, 3]], 2: [[4, 1, 2, 3]], 3: [[4, 1, 2, 3]], 4: [[4, 0], [4, 1, 2, 3]]}
+            {0: [[0, 4]],
+             1: [[1, 2, 3, 4]],
+             2: [[1, 2, 3, 4]],
+             3: [[1, 2, 3, 4]],
+             4: [[0, 4], [1, 2, 3, 4]]}
+            sage: C.cliques_containing_vertex(4)
+            [[0, 4], [1, 2, 3, 4]]
+            sage: C.cliques_containing_vertex([0, 1])
+            {0: [[0, 4]], 1: [[1, 2, 3, 4]]}
             sage: E = C.cliques_maximal()
             sage: E
             [[0, 4], [1, 2, 3, 4]]
             sage: C.cliques_containing_vertex(cliques=E)
-            {0: [[0, 4]], 1: [[1, 2, 3, 4]], 2: [[1, 2, 3, 4]], 3: [[1, 2, 3, 4]], 4: [[0, 4], [1, 2, 3, 4]]}
+            {0: [[0, 4]],
+             1: [[1, 2, 3, 4]],
+             2: [[1, 2, 3, 4]],
+             3: [[1, 2, 3, 4]],
+             4: [[0, 4], [1, 2, 3, 4]]}
 
             sage: G = Graph({0:[1,2,3], 1:[2], 3:[0,1]})
-            sage: G.show(figsize=[2,2])
+            sage: G.show(figsize=[2,2])                                                 # optional - sage.plot
             sage: G.cliques_containing_vertex()
-            {0: [[0, 1, 2], [0, 1, 3]], 1: [[0, 1, 2], [0, 1, 3]], 2: [[0, 1, 2]], 3: [[0, 1, 3]]}
+            {0: [[0, 1, 2], [0, 1, 3]],
+             1: [[0, 1, 2], [0, 1, 3]],
+             2: [[0, 1, 2]],
+             3: [[0, 1, 3]]}
 
         Since each clique of a 2 dimensional grid corresponds to an edge, the
         number of cliques in which a vertex is involved equals its degree::
@@ -7490,8 +7560,20 @@ class Graph(GenericGraph):
             sage: sorted(sorted(x for x in L) for L in d[(0, 1)])
             [[(0, 0), (0, 1)], [(0, 1), (0, 2)], [(0, 1), (1, 1)]]
         """
-        import networkx
-        return networkx.cliques_containing_node(self.networkx_graph(), vertices, cliques)
+        if cliques is None:
+            cliques = self.cliques_maximal()
+
+        if vertices in self:  # single vertex
+            return [c for c in cliques if vertices in c]
+
+        from collections import defaultdict
+        d = defaultdict(list)
+
+        for c in cliques:
+            for v in c:
+                d[v].append(c)
+
+        return {v : d[v] for v in vertices or self}
 
     @doc_index("Clique-related methods")
     def clique_complex(self):
@@ -8487,7 +8569,7 @@ class Graph(GenericGraph):
 
             sage: g = graphs.CirculantGraph(24, [7, 11])
             sage: cl = g.two_factor_petersen()
-            sage: g.plot(edge_colors={'black':cl[0], 'red':cl[1]})
+            sage: g.plot(edge_colors={'black':cl[0], 'red':cl[1]})                      # optional - sage.plot
             Graphics object consisting of 73 graphics primitives
 
         """
@@ -9940,13 +10022,15 @@ class Graph(GenericGraph):
     # Aliases to functions defined in other modules
     from sage.graphs.weakly_chordal import is_long_hole_free, is_long_antihole_free, is_weakly_chordal
     from sage.graphs.asteroidal_triples import is_asteroidal_triple_free
-    from sage.graphs.chrompoly import chromatic_polynomial
+    chromatic_polynomial = LazyImport('sage.graphs.chrompoly', 'chromatic_polynomial', at_startup=True)
     from sage.graphs.graph_decompositions.rankwidth import rank_decomposition
     from sage.graphs.graph_decompositions.tree_decomposition import treewidth
     from sage.graphs.graph_decompositions.vertex_separation import pathwidth
     from sage.graphs.graph_decompositions.tree_decomposition import treelength
     from sage.graphs.graph_decompositions.clique_separators import atoms_and_clique_separators
-    from sage.graphs.matchpoly import matching_polynomial
+    from sage.graphs.graph_decompositions.bandwidth import bandwidth
+    from sage.graphs.graph_decompositions.cutwidth import cutwidth
+    matching_polynomial = LazyImport('sage.graphs.matchpoly', 'matching_polynomial', at_startup=True)
     from sage.graphs.cliquer import all_max_clique as cliques_maximum
     from sage.graphs.cliquer import all_cliques
     from sage.graphs.spanning_tree import random_spanning_tree
@@ -9963,7 +10047,7 @@ class Graph(GenericGraph):
     from sage.graphs.connectivity import is_triconnected
     from sage.graphs.comparability import is_comparability
     from sage.graphs.comparability import is_permutation
-    from sage.graphs.convexity_properties import geodetic_closure
+    geodetic_closure = LazyImport('sage.graphs.convexity_properties', 'geodetic_closure', at_startup=True)
     from sage.graphs.domination import is_dominating
     from sage.graphs.domination import is_redundant
     from sage.graphs.domination import private_neighbors

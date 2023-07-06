@@ -31,7 +31,7 @@ from __future__ import print_function, division
 
 def krawtchouk(n, q, l, x, check=True):
     r"""
-    Compute ``K^{n,q}_l(x)``, the Krawtchouk (a.k.a. Kravchuk) polynomial.
+    Compute `K^{n,q}_l(x)`, the Krawtchouk (a.k.a. Kravchuk) polynomial.
 
     See :wikipedia:`Kravchuk_polynomials`.
 
@@ -102,7 +102,7 @@ def krawtchouk(n, q, l, x, check=True):
         ...
         TypeError: no conversion of this rational to integer
     """
-    from sage.arith.all import binomial
+    from sage.arith.misc import binomial
     from sage.arith.srange import srange
     # Use the expression in equation (55) of MacWilliams & Sloane, pg 151
     # We write jth term = some_factor * (j-1)th term
@@ -121,7 +121,7 @@ def krawtchouk(n, q, l, x, check=True):
 
 def eberlein(n, w, k, u, check=True):
     r"""
-    Compute ``E^{n,l}_k(x)``, the Eberlein polynomial.
+    Compute `E^{w,n}_k(x)`, the Eberlein polynomial.
 
     See :wikipedia:`Eberlein_polynomials`.
 
@@ -171,7 +171,7 @@ def eberlein(n, w, k, u, check=True):
         TypeError: either m or x-m must be an integer
 
     """
-    from sage.arith.all import binomial
+    from sage.arith.misc import binomial
     from sage.arith.srange import srange
 
     if 2*w > n:
@@ -275,7 +275,7 @@ def _delsarte_cwc_LP_building(n, d, w, solver, isinteger):
 
     """
     from sage.numerical.mip import MixedIntegerLinearProgram
-    from sage.arith.all import binomial
+    from sage.arith.misc import binomial
 
     p = MixedIntegerLinearProgram(maximization=True, solver=solver)
     A = p.new_variable(integer=isinteger, nonnegative=True)
@@ -399,7 +399,7 @@ def delsarte_bound_hamming_space(n, d, q, return_data=False, solver="PPL", isint
 
     EXAMPLES:
 
-    The bound on the size of the `F_2`-codes of length 11 and minimal distance 6::
+    The bound on the size of the `\GF{2}`-codes of length 11 and minimal distance 6::
 
        sage: codes.bounds.delsarte_bound_hamming_space(11, 6, 2)
        12
@@ -407,7 +407,7 @@ def delsarte_bound_hamming_space(n, d, q, return_data=False, solver="PPL", isint
        sage: [j for i,j in p.get_values(a).items()]
        [1, 0, 0, 0, 0, 0, 11, 0, 0, 0, 0, 0]
 
-    The bound on the size of the `F_2`-codes of length 24 and minimal distance
+    The bound on the size of the `\GF{2}`-codes of length 24 and minimal distance
     8, i.e. parameters of the extended binary Golay code::
 
        sage: a,p,x = codes.bounds.delsarte_bound_hamming_space(24,8,2,return_data=True)
@@ -416,7 +416,7 @@ def delsarte_bound_hamming_space(n, d, q, return_data=False, solver="PPL", isint
        sage: [j for i,j in p.get_values(a).items()]
        [1, 0, 0, 0, 0, 0, 0, 0, 759, 0, 0, 0, 2576, 0, 0, 0, 759, 0, 0, 0, 0, 0, 0, 0, 1]
 
-    The bound on the size of `F_4`-codes of length 11 and minimal distance 3::
+    The bound on the size of `\GF{4}`-codes of length 11 and minimal distance 3::
 
        sage: codes.bounds.delsarte_bound_hamming_space(11,3,4)
        327680/3
@@ -457,10 +457,10 @@ def delsarte_bound_hamming_space(n, d, q, return_data=False, solver="PPL", isint
 
 def delsarte_bound_additive_hamming_space(n, d, q, d_star=1, q_base=0, return_data=False, solver="PPL", isinteger=False):
     r"""
-   Find a modified Delsarte bound on additive codes in Hamming space ``H_q^n`` of minimal distance ``d``
+   Find a modified Delsarte bound on additive codes in Hamming space `H_q^n` of minimal distance `d`
 
    Find the Delsarte LP bound on ``F_{q_base}``-dimension of additive codes in
-   Hamming space ``H_q^n`` of minimal distance ``d`` with minimal distance of the dual
+   Hamming space `H_q^n` of minimal distance ``d`` with minimal distance of the dual
    code at least ``d_star``.  If ``q_base`` is set to
    non-zero, then  ``q`` is a power of ``q_base``, and the code is, formally, linear over
    ``F_{q_base}``. Otherwise it is assumed that ``q_base==q``.
@@ -485,7 +485,7 @@ def delsarte_bound_additive_hamming_space(n, d, q, d_star=1, q_base=0, return_da
      data.  ``W`` need not be a weight distribution of a code, or,
      if ``isinteger==False``, even have integer entries.
 
-   - ``solver`` -- the LP/ILP solver to be used. Defaults to ``PPL``. It is arbitrary
+   - ``solver`` -- the LP/ILP solver to be used. Defaults to ``'PPL'``. It is arbitrary
      precision, thus there will be no rounding errors. With other solvers
      (see :class:`MixedIntegerLinearProgram` for the list), you are on your own!
 
@@ -494,7 +494,7 @@ def delsarte_bound_additive_hamming_space(n, d, q, d_star=1, q_base=0, return_da
 
    EXAMPLES:
 
-   The bound on dimension of linear `F_2`-codes of length 11 and minimal distance 6::
+   The bound on dimension of linear `\GF{2}`-codes of length 11 and minimal distance 6::
 
        sage: codes.bounds.delsarte_bound_additive_hamming_space(11, 6, 2)
        3
@@ -503,12 +503,12 @@ def delsarte_bound_additive_hamming_space(n, d, q, d_star=1, q_base=0, return_da
        sage: [j for i,j in p.get_values(a).items()]
        [1, 0, 0, 0, 0, 0, 5, 2, 0, 0, 0, 0]
 
-   The bound on the dimension of linear `F_4`-codes of length 11 and minimal distance 3::
+   The bound on the dimension of linear `\GF{4}`-codes of length 11 and minimal distance 3::
 
        sage: codes.bounds.delsarte_bound_additive_hamming_space(11,3,4)
        8
 
-   The bound on the `F_2`-dimension of additive `F_4`-codes of length 11 and minimal
+   The bound on the `\GF{2}`-dimension of additive `\GF{4}`-codes of length 11 and minimal
    distance 3::
 
        sage: codes.bounds.delsarte_bound_additive_hamming_space(11,3,4,q_base=2)
@@ -602,7 +602,6 @@ def _delsarte_Q_LP_building(q, d, solver, isinteger):
     EXAMPLES::
 
         sage: from sage.coding.delsarte_bounds import _delsarte_Q_LP_building
-        sage: from sage.all import *
         sage: q = Matrix([[codes.bounds.krawtchouk(6,2,i,j) for j in range(7)] for i in range(7)])
         sage: _, p = _delsarte_Q_LP_building(q, 2, "PPL", False)
         sage: p.show()
@@ -680,9 +679,10 @@ def delsarte_bound_Q_matrix(q, d, return_data=False, solver="PPL", isinteger=Fal
 
     EXAMPLES:
 
-    The bound on dimension of linear `F_2`-codes of length 10 and minimal distance 6::
+    The bound on dimension of linear `\GF{2}`-codes of length 10 and minimal distance 6::
 
-        sage: q_matrix = Matrix([[codes.bounds.krawtchouk(10,2,i,j) for i in range(11)] for j in range(11)])
+        sage: q_matrix = Matrix([[codes.bounds.krawtchouk(10,2,i,j) for i in range(11)]
+        ....:                    for j in range(11)])
         sage: codes.bounds.delsarte_bound_Q_matrix(q_matrix, 6)
         2
 

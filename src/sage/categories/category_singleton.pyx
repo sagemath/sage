@@ -9,13 +9,11 @@ Singleton categories
 #                  https://www.gnu.org/licenses/
 # *****************************************************************************
 
-from sage.misc.cachefunc import cached_method, cached_function
 from sage.misc.constant_function import ConstantFunction
-from sage.misc.lazy_attribute import lazy_attribute, lazy_class_attribute
+from sage.misc.lazy_attribute import lazy_class_attribute
 from sage.categories.category import Category
 from sage.structure.category_object cimport CategoryObject
 from sage.structure.dynamic_class import DynamicMetaclass
-from sage.structure.unique_representation import UniqueRepresentation
 
 from cpython.type cimport PyType_IsSubtype
 
@@ -82,6 +80,7 @@ cdef class Category_contains_method_by_parent_class:
                 return PyType_IsSubtype(<type>(x.category().parent_class), self._parent_class_of_category)
             except AttributeError:
                 return False
+
 
 class Category_singleton(Category):
     """

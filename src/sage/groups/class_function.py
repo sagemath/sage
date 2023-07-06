@@ -27,7 +27,7 @@ from sage.structure.sage_object import SageObject
 from sage.structure.richcmp import richcmp, richcmp_method
 from sage.interfaces.gap import gap
 from sage.rings.integer import Integer
-from sage.rings.all import CyclotomicField
+from sage.rings.number_field.number_field import CyclotomicField
 from sage.libs.gap.element import GapElement
 from sage.libs.gap.libgap import libgap
 from sage.libs.gap.element import GapElement as LibGapElement
@@ -72,7 +72,6 @@ def ClassFunction(group, values):
         return ClassFunction_libgap(group, values)
 
     return ClassFunction_gap(group, values)
-
 
 
 #####################################################################
@@ -245,7 +244,6 @@ class ClassFunction_gap(SageObject):
         """
         return ClassFunction_gap, (self._group, self.values())
 
-
     def domain(self):
         r"""
         Returns the domain of the self.
@@ -260,7 +258,6 @@ class ClassFunction_gap(SageObject):
             Symmetric group of order 4! as a permutation group
         """
         return self._group
-
 
     def __call__(self, g):
         """
@@ -292,7 +289,6 @@ class ClassFunction_gap(SageObject):
         """
         return self._base_ring(gap(g)._operation("^", self._gap_classfunction))
 
-
     def __add__(self, other):
         r"""
         Returns the sum of the characters self and other.
@@ -319,7 +315,6 @@ class ClassFunction_gap(SageObject):
             raise NotImplementedError
         s = self._gap_classfunction + other._gap_classfunction
         return ClassFunction(self._group, s)
-
 
     def __sub__(self, other):
         r"""
@@ -349,7 +344,6 @@ class ClassFunction_gap(SageObject):
             raise NotImplementedError
         s = self._gap_classfunction - other._gap_classfunction
         return ClassFunction(self._group, s)
-
 
     def __mul__(self, other):
         r"""
@@ -400,7 +394,6 @@ class ClassFunction_gap(SageObject):
         else:
             return ClassFunction(self._group, other * self._gap_classfunction)
 
-
     def __rmul__(self, other):
         r"""
         Return the reverse multiplication of ``self`` and ``other``.
@@ -438,7 +431,6 @@ class ClassFunction_gap(SageObject):
         """
         return ClassFunction(self._group, self._gap_classfunction)
 
-
     def __neg__(self):
         r"""
         Return the additive inverse of ``self``.
@@ -459,7 +451,6 @@ class ClassFunction_gap(SageObject):
         """
         return ClassFunction(self._group, -self._gap_classfunction)
 
-
     def __pow__(self, other):
         r"""
         Returns the product of self with itself other times.
@@ -476,7 +467,6 @@ class ClassFunction_gap(SageObject):
         if not isinstance(other, (int,Integer)):
             raise NotImplementedError
         return ClassFunction(self._group, self._gap_classfunction ** other)
-
 
     def symmetric_power(self, n):
         r"""
@@ -503,7 +493,6 @@ class ClassFunction_gap(SageObject):
         n = Integer(n)
         tbl = gap.UnderlyingCharacterTable(self)
         return ClassFunction(self._group, gap.SymmetricParts(tbl,[self],n)[1])
-
 
     def exterior_power(self, n):
         r"""
@@ -533,7 +522,6 @@ class ClassFunction_gap(SageObject):
         tbl = gap.UnderlyingCharacterTable(self)
         return ClassFunction(self._group, gap.AntiSymmetricParts(tbl,[self],n)[1])
 
-
     def scalar_product(self, other):
         r"""
         Returns the scalar product of self with other.
@@ -551,7 +539,6 @@ class ClassFunction_gap(SageObject):
         """
         return self._gap_classfunction.ScalarProduct(other)
 
-
     def is_irreducible(self):
         r"""
         Returns True if self cannot be written as the sum of two nonzero
@@ -566,7 +553,6 @@ class ClassFunction_gap(SageObject):
         """
         return bool(self._gap_classfunction.IsIrreducible())
 
-
     def degree(self):
         r"""
         Returns the degree of the character self.
@@ -579,7 +565,6 @@ class ClassFunction_gap(SageObject):
             [1, 4, 5, 6, 5, 4, 1]
         """
         return Integer(self._gap_classfunction.DegreeOfCharacter())
-
 
     def irreducible_constituents(self):
         r"""
@@ -615,7 +600,6 @@ class ClassFunction_gap(SageObject):
         L = self._gap_classfunction.ConstituentsOfCharacter()
         return tuple(ClassFunction(self._group, list(l)) for l in L)
 
-
     def decompose(self):
         r"""
         Returns a list of the characters that appear in the decomposition
@@ -634,7 +618,6 @@ class ClassFunction_gap(SageObject):
             L.append((self.scalar_product(irr), irr))
         return tuple(L)
 
-
     def norm(self):
         r"""
         Returns the norm of self.
@@ -646,7 +629,6 @@ class ClassFunction_gap(SageObject):
             [1, 1, 1, 1, 1]
         """
         return self._gap_classfunction.Norm()
-
 
     def values(self):
         r"""
@@ -676,7 +658,6 @@ class ClassFunction_gap(SageObject):
         """
         return list(self)
 
-
     def central_character(self):
         r"""
         Returns the central character of self.
@@ -688,7 +669,6 @@ class ClassFunction_gap(SageObject):
             [1, 6, 3, 8, 6]
         """
         return ClassFunction(self._group, self._gap_classfunction.CentralCharacter())
-
 
     def determinant_character(self):
         r"""
@@ -702,7 +682,6 @@ class ClassFunction_gap(SageObject):
         """
         return ClassFunction(self._group, self._gap_classfunction.DeterminantOfCharacter())
 
-
     def tensor_product(self, other):
         r"""
         EXAMPLES::
@@ -713,7 +692,6 @@ class ClassFunction_gap(SageObject):
             [1, -1, 1]
         """
         return ClassFunction(self._group, gap.Tensored([self],[other])[1])
-
 
     def restrict(self, H):
         r"""
@@ -740,7 +718,6 @@ class ClassFunction_gap(SageObject):
         """
         rest = self._gap_classfunction.RestrictedClassFunction(H._gap_())
         return ClassFunction(H, rest)
-
 
     def induct(self, G):
         r"""
@@ -769,7 +746,6 @@ class ClassFunction_gap(SageObject):
         """
         rest = self._gap_classfunction.InducedClassFunction(G._gap_())
         return ClassFunction(G, rest)
-
 
     def adams_operation(self, k):
         r"""
@@ -807,10 +783,6 @@ class ClassFunction_gap(SageObject):
         """
         reprs = self._group.conjugacy_classes_representatives()
         return ClassFunction(self._group, [self(x**k) for x in reprs])
-
-
-
-
 
 
 #####################################################################
@@ -862,7 +834,6 @@ class ClassFunction_libgap(SageObject):
         e = self._gap_classfunction.Conductor().sage()
         self._base_ring = CyclotomicField(e)
 
-
     def gap(self):
         r"""
         Return the underlying LibGAP element.
@@ -884,7 +855,6 @@ class ClassFunction_libgap(SageObject):
 
     _libgap_ = _gap_ = gap
 
-
     def _repr_(self):
         r"""
         Return a string representation.
@@ -901,7 +871,6 @@ class ClassFunction_libgap(SageObject):
             Character of Symmetric group of order 4! as a permutation group
         """
         return "Character of %s" % repr(self._group)
-
 
     def __iter__(self):
         r"""
@@ -966,7 +935,6 @@ class ClassFunction_libgap(SageObject):
         """
         return ClassFunction_libgap, (self._group, self.values())
 
-
     def domain(self):
         r"""
         Return the domain of ``self``.
@@ -981,7 +949,6 @@ class ClassFunction_libgap(SageObject):
             Symmetric group of order 4! as a permutation group
         """
         return self._group
-
 
     def __call__(self, g):
         """
@@ -1015,7 +982,6 @@ class ClassFunction_libgap(SageObject):
         value = g.gap() ** self.gap()
         return value.sage(self._base_ring)
 
-
     def __add__(self, other):
         r"""
         Return the sum of the characters ``self`` and ``other``.
@@ -1042,7 +1008,6 @@ class ClassFunction_libgap(SageObject):
             raise NotImplementedError
         s = self._gap_classfunction + other._gap_classfunction
         return ClassFunction(self._group, s)
-
 
     def __sub__(self, other):
         r"""
@@ -1072,7 +1037,6 @@ class ClassFunction_libgap(SageObject):
             raise NotImplementedError
         s = self._gap_classfunction - other._gap_classfunction
         return ClassFunction(self._group, s)
-
 
     def __mul__(self, other):
         r"""
@@ -1123,7 +1087,6 @@ class ClassFunction_libgap(SageObject):
         else:
             return ClassFunction(self._group, other * self._gap_classfunction)
 
-
     def __rmul__(self, other):
         r"""
         Return the reverse multiplication of ``self`` and ``other``.
@@ -1140,7 +1103,6 @@ class ClassFunction_libgap(SageObject):
             [12, 4, -4, 0, -4]
         """
         return self.__mul__(other)
-
 
     def __pos__(self):
         r"""
@@ -1162,7 +1124,6 @@ class ClassFunction_libgap(SageObject):
         """
         return ClassFunction(self._group, self._gap_classfunction)
 
-
     def __neg__(self):
         r"""
         Return the additive inverse of ``self``.
@@ -1183,7 +1144,6 @@ class ClassFunction_libgap(SageObject):
         """
         return ClassFunction(self._group, -self._gap_classfunction)
 
-
     def __pow__(self, other):
         r"""
         Return the product of ``self`` with itself ``other`` times.
@@ -1200,7 +1160,6 @@ class ClassFunction_libgap(SageObject):
         if not isinstance(other, (int,Integer)):
             raise NotImplementedError
         return ClassFunction(self._group, self._gap_classfunction ** other)
-
 
     def symmetric_power(self, n):
         r"""
@@ -1227,7 +1186,6 @@ class ClassFunction_libgap(SageObject):
         n = Integer(n)
         tbl = self._gap_classfunction.UnderlyingCharacterTable(self)
         return ClassFunction(self._group, tbl.SymmetricParts([self],n)[1])
-
 
     def exterior_power(self, n):
         r"""
@@ -1257,7 +1215,6 @@ class ClassFunction_libgap(SageObject):
         tbl = self._gap_classfunction.UnderlyingCharacterTable(self)
         return ClassFunction(self._group, tbl.AntiSymmetricParts([self],n)[1])
 
-
     def scalar_product(self, other):
         r"""
         Return the scalar product of ``self`` with ``other``.
@@ -1275,7 +1232,6 @@ class ClassFunction_libgap(SageObject):
         """
         return self._gap_classfunction.ScalarProduct(other).sage()
 
-
     def is_irreducible(self):
         r"""
         Return ``True`` if ``self`` cannot be written as the sum of two nonzero
@@ -1290,7 +1246,6 @@ class ClassFunction_libgap(SageObject):
         """
         return self._gap_classfunction.IsIrreducible().sage()
 
-
     def degree(self):
         r"""
         Return the degree of the character ``self``.
@@ -1303,7 +1258,6 @@ class ClassFunction_libgap(SageObject):
             [1, 4, 5, 6, 5, 4, 1]
         """
         return self._gap_classfunction.DegreeOfCharacter().sage()
-
 
     def irreducible_constituents(self):
         r"""
@@ -1340,7 +1294,6 @@ class ClassFunction_libgap(SageObject):
         L = self._gap_classfunction.ConstituentsOfCharacter()
         return tuple(ClassFunction_libgap(self._group, l) for l in L)
 
-
     def decompose(self):
         r"""
         Return a list of the characters that appear in the decomposition
@@ -1359,7 +1312,6 @@ class ClassFunction_libgap(SageObject):
             L.append((self.scalar_product(irr), irr))
         return tuple(L)
 
-
     def norm(self):
         r"""
         Return the norm of ``self``.
@@ -1371,7 +1323,6 @@ class ClassFunction_libgap(SageObject):
             [1, 1, 1, 1, 1]
         """
         return self._gap_classfunction.Norm().sage()
-
 
     def values(self):
         r"""
@@ -1401,7 +1352,6 @@ class ClassFunction_libgap(SageObject):
         """
         return list(self)
 
-
     def central_character(self):
         r"""
         Return the central character of ``self``.
@@ -1414,7 +1364,6 @@ class ClassFunction_libgap(SageObject):
         """
         return ClassFunction(self._group, self._gap_classfunction.CentralCharacter())
 
-
     def determinant_character(self):
         r"""
         Return the determinant character of ``self``.
@@ -1426,7 +1375,6 @@ class ClassFunction_libgap(SageObject):
             [1, -1, 1, 1, -1]
         """
         return ClassFunction(self._group, self._gap_classfunction.DeterminantOfCharacter())
-
 
     def tensor_product(self, other):
         r"""
@@ -1441,7 +1389,6 @@ class ClassFunction_libgap(SageObject):
         """
         product = libgap.Tensored([self], [other])
         return ClassFunction(self._group, product[0])
-
 
     def restrict(self, H):
         r"""
@@ -1473,7 +1420,6 @@ class ClassFunction_libgap(SageObject):
             gapH = libgap(H)
         rest = self._gap_classfunction.RestrictedClassFunction(gapH)
         return ClassFunction(H, rest)
-
 
     def induct(self, G):
         r"""
@@ -1507,7 +1453,6 @@ class ClassFunction_libgap(SageObject):
             gapG = libgap(G)
         ind = self._gap_classfunction.InducedClassFunction(gapG)
         return ClassFunction(G, ind)
-
 
     def adams_operation(self, k):
         r"""

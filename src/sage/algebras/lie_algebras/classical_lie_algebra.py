@@ -147,9 +147,10 @@ class ClassicalMatrixLieAlgebra(MatrixLieAlgebraFromAssociative):
             2
         """
         n = len(e)
-        names = ['e%s'%i for i in range(1, n+1)]
-        names += ['f%s'%i for i in range(1, n+1)]
-        names += ['h%s'%i for i in range(1, n+1)]
+        I = ct.index_set()
+        names = ['e%s' % i for i in I]
+        names += ['f%s' % i for i in I]
+        names += ['h%s' % i for i in I]
         category = LieAlgebras(R).FiniteDimensional().WithBasis()
         from sage.sets.finite_enumerated_set import FiniteEnumeratedSet
         index_set = FiniteEnumeratedSet(names)
@@ -162,10 +163,9 @@ class ClassicalMatrixLieAlgebra(MatrixLieAlgebraFromAssociative):
         self._sparse = sparse
 
         gens = tuple(self.gens())
-        i_set = ct.index_set()
-        self._e = Family(dict( (i, gens[c]) for c,i in enumerate(i_set) ))
-        self._f = Family(dict( (i, gens[n+c]) for c,i in enumerate(i_set) ))
-        self._h = Family(dict( (i, gens[2*n+c]) for c,i in enumerate(i_set) ))
+        self._e = Family({i: gens[c] for c, i in enumerate(I)})
+        self._f = Family({i: gens[n+c] for c, i in enumerate(I)})
+        self._h = Family({i: gens[2*n+c] for c, i in enumerate(I)})
 
     def e(self, i):
         r"""
@@ -392,7 +392,7 @@ class ClassicalMatrixLieAlgebra(MatrixLieAlgebraFromAssociative):
                      for i in range(cur_mat.rank())]
         return Family(basis)
 
-    def affine(self, kac_moody=False):
+    def affine(self, kac_moody=True):
         """
         Return the affine (Kac-Moody) Lie algebra of ``self``.
 
@@ -403,9 +403,11 @@ class ClassicalMatrixLieAlgebra(MatrixLieAlgebraFromAssociative):
             Special orthogonal Lie algebra of rank 5 over Rational Field
             sage: so5.affine()
             Affine Special orthogonal Kac-Moody algebra of rank 5 over Rational Field
+            sage: so5.affine(False)
+            Affine Special orthogonal Lie algebra of rank 5 over Rational Field
         """
         from sage.algebras.lie_algebras.affine_lie_algebra import AffineLieAlgebra
-        return AffineLieAlgebra(self, kac_moody)
+        return AffineLieAlgebra(self, kac_moody=kac_moody)
 
 
 class gl(MatrixLieAlgebraFromAssociative):
@@ -629,9 +631,34 @@ class so(ClassicalMatrixLieAlgebra):
     r"""
     The matrix Lie algebra `\mathfrak{so}_n`.
 
-    The Lie algebra `\mathfrak{so}_n`, which consists of all real
-    anti-symmetric `n \times n` matrices. This is the Lie algebra of
-    type `B_{(n-1)/2}` or `D_{n/2}` if `n` is odd or even respectively.
+    The Lie algebra `\mathfrak{so}_n`, which is isomorphic to the
+    Lie algebra of all anti-symmetric `n \times n` matrices.
+    The implementation here uses a different bilinear form and follows
+    the description in Chapter 8 of [HK2002]_. More precisely, this
+    is the set of matrices:
+
+    .. MATH::
+
+        \begin{pmatrix}
+        A & B \\
+        C & D
+        \end{pmatrix}
+
+    such that `A^t = -D`, `B^t = -B`, `C^t = -C` for `n` even and
+
+    .. MATH::
+
+        \begin{pmatrix}
+        A & B & a \\
+        C & D & b \\
+        c & d & 0
+        \end{pmatrix}
+
+    such that `A^t = -D`, `B^t = -B`, `C^t = -C`, `a^t = -d`,
+    and `b^t = -c` for `n` odd.
+
+    This is the Lie algebra of type `B_{(n-1)/2}` or `D_{n/2}` if `n`
+    is odd or even respectively.
     """
     def __init__(self, R, n):
         """
@@ -647,25 +674,26 @@ class so(ClassicalMatrixLieAlgebra):
         MS = MatrixSpace(R, n)
         one = R.one()
         self._n = n
-        if n % 2 == 0: # Even
-            m = n / 2 - 1 # -1 for indexing
+        if n % 2 == 0:  # Even
+            m = n // 2 - 1  # -1 for indexing
             n -= 1
-            e = [MS({(m-1,n):one, (m,n-1):-one})]
-            f = [MS({(n,m-1):one, (n-1,m):-one})]
-            h = [MS({(m-1,m-1):one, (m,m):one, (n-1,n-1):-one, (n,n):-one})]
+            e = [MS({(m-1, n): one, (m, n-1): -one})]
+            f = [MS({(n, m-1): one, (n-1, m): -one})]
+            h = [MS({(m-1, m-1): one, (m, m): one, (n-1, n-1): -one, (n, n): -one})]
             m += 1
             ct = CartanType(['D', m])
-        else: # Odd
-            m = (n-1) / 2 - 1 # -1 for indexing
+        else:  # Odd
+            m = (n-1) // 2 - 1  # -1 for indexing
             n -= 1
-            e = [MS({(m,n):2, (n,n-1):-2})]
-            f = [MS({(n,m):one, (n-1,n):-one})]
-            h = [MS({(m,m):2, (n-1,n-1):-2})]
+            e = [MS({(m, n): 2, (n, n-1): -2})]
+            f = [MS({(n, m): one, (n-1, n): -one})]
+            h = [MS({(m, m): 2, (n-1, n-1): -2})]
             m += 1
             ct = CartanType(['B', m])
-        e = [MS({(i,i+1):one, (m+i+1,m+i):-one}) for i in range(m-1)] + e
-        f = [MS({(i+1,i):one, (m+i,m+i+1):-one}) for i in range(m-1)] + f
-        h = [MS({(i,i):one, (i+1,i+1):-one, (m+i,m+i):-one, (m+i+1,m+i+1):one}) for i in range(m-1)] + h
+        e = [MS({(i, i+1): one, (m+i+1, m+i): -one}) for i in range(m-1)] + e
+        f = [MS({(i+1, i): one, (m+i, m+i+1): -one}) for i in range(m-1)] + f
+        h = [MS({(i, i): one, (i+1, i+1): -one, (m+i, m+i): -one, (m+i+1, m+i+1): one})
+             for i in range(m-1)] + h
         ClassicalMatrixLieAlgebra.__init__(self, R, ct, e, f, h)
 
     def _repr_(self):
@@ -735,10 +763,10 @@ class so(ClassicalMatrixLieAlgebra):
         i = self.index_set().index(i)
         if i == len(self.index_set()) - 1:
             if self._n % 2 == 0:
-                return h[i-1,i-1] + h[i,i]
+                return h[i-1, i-1] + h[i, i]
             # otherwise we are odd
-            return h[i,i]
-        return h[i,i] - h[i+1,i+1]
+            return h[i, i]
+        return h[i, i] - h[i+1, i+1]
 
 class sp(ClassicalMatrixLieAlgebra):
     r"""
@@ -938,8 +966,8 @@ class e8(ExceptionalMatrixLieAlgebra):
 
         TESTS::
 
-            sage: g = LieAlgebra(QQ, cartan_type=['E', 8], representation='matrix')
-            sage: g
+            sage: g = LieAlgebra(QQ, cartan_type=['E', 8], representation='matrix')  # long time
+            sage: g  # long time
             Simple matrix Lie algebra of type ['E', 8] over Rational Field
 
         We skip the not implemented methods test as it takes too much time::
@@ -959,7 +987,7 @@ class e8(ExceptionalMatrixLieAlgebra):
 
         EXAMPLES::
 
-            sage: g = LieAlgebra(QQ, cartan_type=['E', 8], representation='matrix')
+            sage: g = LieAlgebra(QQ, cartan_type=['E', 8], representation='matrix')  # long time
             sage: len(g.basis())  # long time
             248
         """
@@ -1535,22 +1563,27 @@ class LieAlgebraChevalleyBasis(LieAlgebraWithStructureCoefficients):
     .. MATH::
 
         \begin{aligned}
-        [h_i, h_j] & = 0
-        \\ [h_i, e_{\beta}] & = A_{\alpha_i, \beta} e_{\beta}
-        \\ [e_{\beta}, e_{-\beta}] & = \sum_i A_{\beta, \alpha_i} h_i
+        [h_i, h_j] & = 0,
+        \\ [h_i, e_{\beta}] & = A_{\alpha_i, \beta} e_{\beta},
+        \\ [e_{\beta}, e_{-\beta}] & = \sum_i A_{\beta, \alpha_i} h_i,
         \\ [e_{\beta}, e_{\gamma}] & = \begin{cases}
-        N_{\beta,\gamma} e_{\beta + \gamma} & \beta + \gamma \in \Phi \\
-        0 & \text{otherwise.} \end{cases}
+        N_{\beta,\gamma} e_{\beta + \gamma} & \beta + \gamma \in \Phi, \\
+        0 & \text{otherwise,} \end{cases}
         \end{aligned}
 
-    where `A_{\alpha, \beta} = \frac{2 (\alpha, \beta)}{(\alpha, \alpha)}` and
-    `N_{\alpha, \beta}` is the maximum such that
+    where `A_{\alpha, \beta} = \frac{2 (\alpha, \beta)}{(\alpha, \alpha)}`
+    and `N_{\alpha, \beta}` is the maximum such that
     `\alpha - N_{\alpha, \beta} \beta \in \Phi`.
 
     For computing the signs of the coefficients, see Section 3 of [CMT2003]_.
+
+    .. SEEALSO::
+
+        For simply-laced types, an alternative construction using an asymmetry
+        function is given by :class:`LieAlgebraChevalleyBasis_simply_laced`.
     """
     @staticmethod
-    def __classcall_private__(cls, R, cartan_type):
+    def __classcall_private__(cls, R, cartan_type, epsilon=None):
         """
         Normalize ``self`` to ensure a unique representation.
 
@@ -1561,11 +1594,50 @@ class LieAlgebraChevalleyBasis(LieAlgebraWithStructureCoefficients):
             sage: L3 = LieAlgebra(QQ, cartan_type=CartanMatrix(['A', 2]))
             sage: L1 is L2 and L2 is L3
             True
+
+
+            sage: L = LieAlgebra(QQ, cartan_type=['A', 2], epsilon=[(1,2)])
+            sage: type(L)
+            <class '...LieAlgebraChevalleyBasis_simply_laced_with_category'>
+            sage: L = LieAlgebra(QQ, cartan_type=['A', 1], epsilon=[])
+            sage: type(L)
+            <class '...LieAlgebraChevalleyBasis_simply_laced_with_category'>
+
+            sage: L = LieAlgebra(QQ, cartan_type=['A', 2], epsilon=[(2,3)])
+            Traceback (most recent call last):
+            ...
+            ValueError: not a valid Dynkin orientation
+            sage: L = LieAlgebra(QQ, cartan_type=['A', 2], epsilon=[(1,2), (2,1)])
+            Traceback (most recent call last):
+            ...
+            ValueError: not a valid Dynkin orientation
+            sage: L = LieAlgebra(QQ, cartan_type=['A', 2], epsilon=[(1,2), (1,1)])
+            Traceback (most recent call last):
+            ...
+            ValueError: not a valid Dynkin orientation
+            sage: L = LieAlgebra(QQ, cartan_type=['A', 1], epsilon=[(1,1)])
+            Traceback (most recent call last):
+            ...
+            ValueError: not a valid Dynkin orientation
         """
         if isinstance(cartan_type, (CartanMatrix, DynkinDiagram_class)):
             cartan_type = cartan_type.cartan_type()
         else:
             cartan_type = CartanType(cartan_type)
+        if epsilon is not None:
+            if not cartan_type.is_simply_laced():
+                raise ValueError("the Cartan type must be simply-laced with an asymmetry function")
+            epsilon = frozenset([tuple(p) for p in epsilon])
+            if cartan_type.rank() == 1:
+                if epsilon:
+                    raise ValueError("not a valid Dynkin orientation")
+            else:
+                from sage.graphs.graph import Graph
+                G = Graph(epsilon, multiedges=True, loops=True, format="list_of_edges")
+                if (G.has_multiple_edges() or G.has_loops()
+                    or cartan_type.dynkin_diagram().to_undirected() != G.to_simple()):
+                    raise ValueError("not a valid Dynkin orientation")
+            return LieAlgebraChevalleyBasis_simply_laced(R, cartan_type, epsilon)
         return super().__classcall__(cls, R, cartan_type)
 
     def __init__(self, R, cartan_type):
@@ -1579,14 +1651,52 @@ class LieAlgebraChevalleyBasis(LieAlgebraWithStructureCoefficients):
         """
         self._cartan_type = cartan_type
         self._Q = cartan_type.root_system().root_lattice()
-        alpha = self._Q.simple_roots()
         p_roots = list(self._Q.positive_roots_by_height())
         n_roots = [-x for x in p_roots]
         self._p_roots_index = OrderedDict((al, i)
                                           for i, al in enumerate(p_roots))
+
+        alphacheck = self._Q.simple_coroots()
+        # We pass p_roots and n_roots so we don't have to reconstruct them
+        s_coeffs = self._construct_struct_coeffs(R, p_roots)
+
+        # Make sure a < b for all (a, b) in the coefficients and flip if necessary
+        for k in list(s_coeffs):
+            a, b = k
+            if self._basis_key(a) > self._basis_key(b):
+                s_coeffs[(b, a)] = [(index, -v) for index, v in s_coeffs[k].items()]
+                del s_coeffs[k]
+            else:
+                s_coeffs[k] = s_coeffs[k].items()
+
+        I = self._cartan_type.index_set()
+        names = ['e{}'.format(i) for i in I]
+        names += ['f{}'.format(i) for i in I]
+        names += ['h{}'.format(i) for i in I]
+        category = TriangularKacMoodyAlgebras(R).FiniteDimensional()
+        index_set = p_roots + list(alphacheck) + n_roots
+        self._cartan_indices = range(len(p_roots), len(p_roots) + len(alphacheck))
+        names = tuple(names)
+        from sage.sets.finite_enumerated_set import FiniteEnumeratedSet
+        index_set = FiniteEnumeratedSet(index_set)
+        LieAlgebraWithStructureCoefficients.__init__(self, R, s_coeffs, names, index_set,
+                                                     category, prefix='E', bracket='[',
+                                                     sorting_key=self._basis_key)
+
+    def _construct_struct_coeffs(self, R, p_roots):
+        """
+        Construct the structure coefficients of ``self``.
+
+        EXAMPLES::
+
+            sage: L = LieAlgebra(QQ, cartan_type=['A',1], epsilon=[])
+            sage: sorted(L._construct_struct_coeffs(QQ, list(L._Q.positive_roots())).items(), key=str)
+            [((alpha[1], -alpha[1]), {alphacheck[1]: 1}),
+             ((alpha[1], alphacheck[1]), {alpha[1]: -2}),
+             ((alphacheck[1], -alpha[1]), {-alpha[1]: -2})]
+        """
         alphacheck = self._Q.simple_coroots()
         roots = frozenset(self._Q.roots())
-        num_sroots = len(alpha)
         one = R.one()
 
         # Determine the signs for the structure coefficients from the root system
@@ -1652,8 +1762,8 @@ class LieAlgebraChevalleyBasis(LieAlgebraWithStructureCoefficients):
             # [e_r, e_s] and [e_r, f_s] with r != +/-s
             # We assume s is positive, as otherwise we negate
             #   both r and s and the resulting coefficient
-            for j, s in enumerate(p_roots[i+1:]):
-                j += i+1 # Offset
+            for j, s in enumerate(p_roots[i+1:], start=i+1):
+                #j += i + 1  # Offset
                 # Since h(s) >= h(r), we have s - r > 0 when s - r is a root
                 # [f_r, e_s]
                 if s - r in p_roots:
@@ -1674,26 +1784,7 @@ class LieAlgebraChevalleyBasis(LieAlgebraWithStructureCoefficients):
                     s_coeffs[(r, s)] = {a: c}
                     s_coeffs[(-r, -s)] = {-a: -c}
 
-        # Lastly, make sure a < b for all (a, b) in the coefficients and flip if necessary
-        for k in list(s_coeffs):
-            a, b = k[0], k[1]
-            if self._basis_key(a) > self._basis_key(b):
-                s_coeffs[(b, a)] = [(index, -v) for index, v in s_coeffs[k].items()]
-                del s_coeffs[k]
-            else:
-                s_coeffs[k] = s_coeffs[k].items()
-
-        names = ['e{}'.format(i) for i in range(1, num_sroots+1)]
-        names += ['f{}'.format(i) for i in range(1, num_sroots+1)]
-        names += ['h{}'.format(i) for i in range(1, num_sroots+1)]
-        category = TriangularKacMoodyAlgebras(R).FiniteDimensional()
-        index_set = p_roots + list(alphacheck) + n_roots
-        names = tuple(names)
-        from sage.sets.finite_enumerated_set import FiniteEnumeratedSet
-        index_set = FiniteEnumeratedSet(index_set)
-        LieAlgebraWithStructureCoefficients.__init__(self, R, s_coeffs, names, index_set,
-                                                     category, prefix='E', bracket='[',
-                                                     sorting_key=self._basis_key)
+        return s_coeffs
 
     def _repr_(self):
         """
@@ -1897,8 +1988,8 @@ class LieAlgebraChevalleyBasis(LieAlgebraWithStructureCoefficients):
         alc = wt.parent().simple_coroots()
         return R(wt.scalar( alc[aci[m]] ))
 
-    def affine(self, kac_moody=False):
-        """
+    def affine(self, kac_moody=True):
+        r"""
         Return the affine Lie algebra of ``self``.
 
         EXAMPLES::
@@ -1908,14 +1999,20 @@ class LieAlgebraChevalleyBasis(LieAlgebraWithStructureCoefficients):
             Lie algebra of ['C', 3] in the Chevalley basis
             sage: sp6.affine()
             Affine Kac-Moody algebra of ['C', 3] in the Chevalley basis
+
+            sage: L = LieAlgebra(QQ, cartan_type=['A',3], epsilon=[(1,2),(3,2)])
+            sage: L.affine(False)
+            Affine Lie algebra of ['A', 3] in the Chevalley basis
+            sage: L.affine(True)
+            Affine Kac-Moody algebra of ['A', 3] in the Chevalley basis
         """
         from sage.algebras.lie_algebras.affine_lie_algebra import AffineLieAlgebra
-        return AffineLieAlgebra(self, kac_moody)
+        return AffineLieAlgebra(self, kac_moody=kac_moody)
 
     # Useful in creating the UEA
     @cached_method
     def indices_to_positive_roots_map(self):
-        """
+        r"""
         Return the map from indices to positive roots.
 
         EXAMPLES::
@@ -2006,7 +2103,7 @@ class LieAlgebraChevalleyBasis(LieAlgebraWithStructureCoefficients):
 
     @cached_method
     def gens(self):
-        """
+        r"""
         Return the generators of ``self`` in the order of `e_i`, `f_i`,
         and `h_i`.
 
@@ -2052,3 +2149,303 @@ class LieAlgebraChevalleyBasis(LieAlgebraWithStructureCoefficients):
         if pos:
             return B[theta]
         return B[-theta]
+
+    @cached_method
+    def killing_form_matrix(self):
+        r"""
+        Return the matrix of the Killing form of ``self``.
+
+        The rows and the columns of this matrix are indexed by the
+        elements of the basis of ``self`` (in the order provided by
+        :meth:`basis`).
+
+        EXAMPLES::
+
+            sage: g = LieAlgebra(QQ, cartan_type=['A', 2])
+            sage: g.killing_form_matrix()
+            [ 0  0  0  0  0  6  0  0]
+            [ 0  0  0  0  0  0  6  0]
+            [ 0  0  0  0  0  0  0  6]
+            [ 0  0  0 12 -6  0  0  0]
+            [ 0  0  0 -6 12  0  0  0]
+            [ 6  0  0  0  0  0  0  0]
+            [ 0  6  0  0  0  0  0  0]
+            [ 0  0  6  0  0  0  0  0]
+        """
+        B = self.basis()
+        Q = self._Q
+        from sage.matrix.constructor import matrix
+        ret = matrix.zero(self.base_ring(), self._M.rank())
+        keys = list(B.keys())
+        for i, a in enumerate(keys):
+            for j, b in enumerate(keys[i:], start=i):
+                if ((a in Q) != (b in Q)) or (a in Q and a + b):
+                    continue
+                # either a and b are both coroots or a + b == 0
+                temp = self.killing_matrix(B[a], B[b]).trace()
+                ret[i, j] = temp
+                ret[j, i] = temp
+        ret.set_immutable()
+        return ret
+
+    def killing_form(self, x, y):
+        r"""
+        Return the Killing form on ``x`` and ``y``, where ``x``
+        and ``y`` are two elements of ``self``.
+
+        The Killing form is defined as
+
+        .. MATH::
+
+            \langle x \mid y \rangle
+            = \operatorname{tr}\left( \operatorname{ad}_x
+            \circ \operatorname{ad}_y \right).
+
+        EXAMPLES::
+
+            sage: L = LieAlgebra(QQ, cartan_type=['A', 2])
+            sage: L.killing_form(L.an_element(), L.an_element())
+            36
+            sage: B = L.basis()
+            sage: matrix([[L.killing_form(a, b) for a in B] for b in B])
+            [ 0  0  0  0  0  6  0  0]
+            [ 0  0  0  0  0  0  6  0]
+            [ 0  0  0  0  0  0  0  6]
+            [ 0  0  0 12 -6  0  0  0]
+            [ 0  0  0 -6 12  0  0  0]
+            [ 6  0  0  0  0  0  0  0]
+            [ 0  6  0  0  0  0  0  0]
+            [ 0  0  6  0  0  0  0  0]
+        """
+        return x.value * self.killing_form_matrix() * y.value
+
+
+class LieAlgebraChevalleyBasis_simply_laced(LieAlgebraChevalleyBasis):
+    r"""
+    A finite dimensional simply-laced Lie algebra in the Chevalley basis
+    with structure coefficients given by an orientation of the Dynkin
+    diagram.
+
+    We follow Chapter 7.7 of [Ka1990]_, where the structure coefficients
+    are given by an :meth:`asymmetry function <asymmetry_function>` defined by
+    `\varepsilon(\alpha_i, \alpha_j) = -1` if there is an arrow `i \to j` in
+    the Dynkin quiver (an orientation of the Dynkin diagram). However we twist
+    `E_{\alpha}` by `\mathrm{sign}(\alpha)` so that `F_i = E_{-\alpha_i}`
+    rather than its negative.
+
+    EXAMPLES::
+
+        sage: L = LieAlgebra(QQ, cartan_type=['A', 2], epsilon=[(2, 1)])
+        sage: L.e(1).bracket(L.e(2))
+        E[alpha[1] + alpha[2]]
+
+        sage: L = LieAlgebra(QQ, cartan_type=['A', 2], epsilon=[(1, 2)])
+        sage: L.e(1).bracket(L.e(2))
+        -E[alpha[1] + alpha[2]]
+    """
+    def __init__(self, R, cartan_type, epsilon):
+        """
+        Initialize ``self``.
+
+        TESTS::
+
+            sage: L = LieAlgebra(QQ, cartan_type=['A', 2], epsilon=[(2,1)])
+            sage: TestSuite(L).run(elements=list(L.basis()))
+            sage: L = LieAlgebra(QQ, cartan_type=['D', 4], epsilon=[(2,1), (3,2), (4,2)])
+            sage: TestSuite(L).run(elements=list(L.basis()))  # long time
+        """
+        self._epsilon = epsilon
+        super().__init__(R, cartan_type)
+
+    def _construct_struct_coeffs(self, R, p_roots):
+        r"""
+        Construct the structure coefficients of ``self``.
+
+        EXAMPLES::
+
+            sage: L = LieAlgebra(QQ, cartan_type=['A',1], epsilon=[])
+            sage: sorted(L._construct_struct_coeffs(QQ, list(L._Q.positive_roots())).items(), key=str)
+            [((alpha[1], -alpha[1]), {alphacheck[1]: 1}),
+             ((alpha[1], alphacheck[1]), {alpha[1]: -2}),
+             ((alphacheck[1], -alpha[1]), {-alpha[1]: -2})]
+        """
+        p_roots_set = set(p_roots)
+        alphacheck = self._Q.simple_coroots()
+
+        s_coeffs = {}
+        for i, r in enumerate(p_roots):
+            # [e_r, h_i] and [h_i, f_r]
+            for ac in alphacheck:
+                c = r.scalar(ac)
+                if c == 0:
+                    continue
+                s_coeffs[(r, ac)] = {r: -c}
+                s_coeffs[(ac, -r)] = {-r: -c}
+
+            # [e_r, f_r]
+            s_coeffs[(r, -r)] = {alphacheck[j]: c
+                                 for j, c in r.associated_coroot()}
+
+            # [e_r, e_s] and [e_r, f_s] with r != +/-s
+            # We assume s is positive, as otherwise we negate
+            #   both r and s and the resulting coefficient
+            for j, s in enumerate(p_roots[i+1:], start=i+1):
+                if r + s in p_roots_set:
+                    coeff = R.prod((-1)**(ca*cb) if (ii, jj) in self._epsilon or ii == jj else 1
+                                   for ii, ca in r._monomial_coefficients.items()
+                                   for jj, cb in s._monomial_coefficients.items())
+                    s_coeffs[r, s] = {r+s: coeff}
+                    ht = sum(r.coefficients()) + sum(s.coefficients())
+                    s_coeffs[-r, -s] = {-r-s: -coeff}
+                if r - s in p_roots_set or s - r in p_roots_set:
+                    coeff = R.prod((-1)**(ca*cb) if (ii, jj) in self._epsilon or ii == jj else 1
+                                   for ii, ca in r._monomial_coefficients.items()
+                                   for jj, cb in s._monomial_coefficients.items())
+                    if r - s in p_roots_set:
+                        s_coeffs[r, -s] = {r-s: -coeff}
+                        s_coeffs[-r, s] = {s-r: coeff}
+                    else:
+                        s_coeffs[r, -s] = {r-s: coeff}
+                        s_coeffs[-r, s] = {s-r: -coeff}
+
+        return s_coeffs
+
+    def asymmetry_function(self):
+        r"""
+        Return the asymmetry function of ``self``.
+
+        An *asymmetry function* is a function `\varepsilon : Q \times Q
+        \to \{1, -1\}` that satisfies the following properties:
+
+        1. `\varepsilon(\alpha, \alpha) = (-1)^{(\alpha|\alpha)/2}`
+        2. bimultiplicativity `\varepsilon(alpha + \alpha', \beta) =
+           \varepsilon(\alpha, \beta) \varepsilon(\alpha', \beta)` and
+           `\varepsilon(alpha, \beta + \beta') =
+           \varepsilon(\alpha, \beta) \varepsilon(\alpha', \beta)`,
+
+        where `(\alpha | \beta)` is the symmetric bilinear form on `Q` given
+        by the Cartan matrix. Some consequences of these properties are that
+        `\varepsilon(\alpha, 0) = \varepsilon(0, \beta) = 1` and
+        `varepsilon(\alpha, \beta) \varepsilon(\beta, \alpha) =
+        (-1)^{(\alpha|\beta)}`.
+
+        OUTPUT:
+
+        The asymmetry function as a ``dict`` consisting of pairs of all of
+        the roots of `Q` and `0`.
+
+        EXAMPLES::
+
+            sage: L = LieAlgebra(QQ, cartan_type=['A',2], epsilon=[(2,1)])
+            sage: ep = L.asymmetry_function()
+            sage: al = L.cartan_type().root_system().root_lattice().simple_roots()
+            sage: ep[al[1], al[2]]
+            1
+            sage: ep[al[2],al[1]]
+            -1
+
+            sage: L = LieAlgebra(QQ, cartan_type=['A',2], epsilon=[(1,2)])
+            sage: ep = L.asymmetry_function()
+            sage: al = L.cartan_type().root_system().root_lattice().simple_roots()
+            sage: ep[al[1], al[2]]
+            -1
+            sage: ep[al[2],al[1]]
+            1
+        """
+        roots = set(self._Q.roots())
+        al = self._Q.simple_roots()
+
+        ep = {(r, r): (-1)**(r.scalar(r.associated_coroot()) // 2) for r in roots}
+        next_level = set()
+        for i in self._Q.index_set():
+            # ep[i,0] = ep[i,-j] * ep[i,j] = ep[i,0]^2
+            # => ep[i,0] = 1 = ep[i,-j] * ep[i,j]
+            # => ep[-i,0] = 1 = ep[-i,-j] * ep[-i,j]
+            ep[al[i], self._Q.zero()] = 1
+            ep[-al[i], self._Q.zero()] = 1
+            for j in self._Q.index_set():
+                if i == j or (i, j) in self._epsilon:
+                    ep[al[i], al[j]] = -1
+                else:
+                    ep[al[i], al[j]] = 1
+                next_level.add((al[i], al[j]))
+                ep[al[i], -al[j]] = ep[al[i], al[j]]
+                next_level.add((al[i], -al[j]))
+                ep[-al[i], al[j]] = ep[al[i], al[j]]
+                next_level.add((-al[i], al[j]))
+                ep[-al[i], -al[j]] = ep[al[i], al[j]]
+                next_level.add((-al[i], -al[j]))
+
+        while next_level:
+            cur = next_level
+            next_level = set()
+            for r, s in cur:
+                for a in al:
+                    prev = r
+                    temp = r + a
+                    while temp in roots or temp == 0:
+                        if (temp, s) in ep:
+                            break
+                        next_level.add((temp, s))
+                        ep[temp, s] = ep[prev, s] * ep[a, s]
+                        prev = temp
+                        temp += a
+
+                    prev = r
+                    temp = r - a
+                    while temp in roots or temp == 0:
+                        if (temp, s) in ep:
+                            break
+                        next_level.add((temp, s))
+                        ep[temp, s] = ep[prev, s] * ep[-a, s]
+                        prev = temp
+                        temp -= a
+
+                    prev = s
+                    temp = s + a
+                    while temp in roots or temp == 0:
+                        if (r, temp) in ep:
+                            break
+                        next_level.add((r, temp))
+                        ep[r, temp] = ep[r, prev] * ep[r, a]
+                        prev = temp
+                        temp += a
+
+                    prev = s
+                    temp = s - a
+                    while temp in roots or temp == 0:
+                        if (r, temp) in ep:
+                            break
+                        next_level.add((r, temp))
+                        ep[r, temp] = ep[r, prev] * ep[r, -a]
+                        prev = temp
+                        temp -= a
+
+        return ep
+
+    def _test_structure_coeffs(self, **options):
+        r"""
+        Check the structure coefficients using the :meth:`asymmetry_function`.
+
+        EXAMPLES::
+
+            sage: L = LieAlgebra(ZZ, cartan_type=['A',4], epsilon=[(1,2), (3,2), (3,4)])
+            sage: L._test_structure_coeffs()
+        """
+        tester = self._tester(**options)
+
+        ep = self.asymmetry_function()
+
+        roots = set(self._Q.roots())
+        p_roots = set(self._Q.positive_roots())
+        B = self.basis()
+        for r in roots:
+            for s in roots:
+                if r + s not in roots:
+                    continue
+                x = B[r].bracket(B[s])
+                tester.assertEqual(list(x.support()), [r+s], f"[{r}, {s}] = {x} is not a root vector")
+                sign = 1 if (r in p_roots) == (s in p_roots) else -1
+                if (r + s) not in p_roots:
+                    sign = -sign
+                tester.assertEqual(x[r+s], sign * ep[r, s], f"[{r}, {s}] = {x[r+s]} != {sign*ep[r,s]}")

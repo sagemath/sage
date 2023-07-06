@@ -24,7 +24,7 @@ AUTHORS:
 #
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from sage.arith.all import factorial, multinomial
+from sage.arith.misc import factorial, multinomial
 from sage.categories.cartesian_product import cartesian_product
 from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
 from sage.categories.infinite_enumerated_sets import InfiniteEnumeratedSets
@@ -1114,6 +1114,13 @@ class OrderedSetPartitions_s(OrderedSetPartitions):
              [{1, 3}, {2}],
              [{2, 3}, {1}],
              [{1, 2, 3}]]
+
+        TESTS:
+
+        Test for :issue:`35654`::
+
+            sage: OrderedSetPartitions(set(),[0,0,0]).list()
+            [[{}, {}, {}]]
         """
         for x in Compositions(len(self._set)):
             for z in OrderedSetPartitions(self._set, x):
@@ -1379,11 +1386,18 @@ def multiset_permutation_next_lex(l):
         [2, 1, 0, 0, 1]
         [2, 1, 0, 1, 0]
         [2, 1, 1, 0, 0]
+
+    TESTS:
+
+    Test for :issue:`35654`::
+
+        sage: multiset_permutation_next_lex([])
+        0
     """
     i = len(l) - 2
     while i >= 0 and l[i] >= l[i + 1]:
         i -= 1
-    if i == -1:
+    if i <= -1:
         return 0
     j = len(l) - 1
     while l[j] <= l[i]:

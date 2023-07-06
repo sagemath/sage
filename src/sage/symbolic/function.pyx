@@ -918,7 +918,7 @@ cdef class BuiltinFunction(Function):
         return [arg]
 
     def __call__(self, *args, bint coerce=True, bint hold=False,
-            bint dont_call_method_on_arg=False):
+                 bint dont_call_method_on_arg=False):
         r"""
         Evaluate this function on the given arguments and return the result.
 

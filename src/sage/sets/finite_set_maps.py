@@ -156,7 +156,7 @@ class FiniteSetMaps(UniqueRepresentation, Parent):
         sage: TestSuite(FiniteSetMaps([], [1, 2])).run()
     """
     @staticmethod
-    def __classcall_private__(cls, domain, codomain = None, action = "left", category = None):
+    def __classcall_private__(cls, domain, codomain=None, action="left", category=None):
         """
         TESTS::
 
@@ -305,7 +305,7 @@ class FiniteSetMaps_MN(FiniteSetMaps):
 
         An exception :class:`~sage.categories.sets_cat.EmptySetError`
         is raised if this set is empty, that is if the codomain is
-        empty and the domain is not.
+        empty and the domain is not. ::
 
             sage: M = FiniteSetMaps(4, 0)
             sage: M.cardinality()

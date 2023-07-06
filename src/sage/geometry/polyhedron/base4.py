@@ -24,7 +24,7 @@ Define methods relying on :mod:`sage.graphs`.
 #       Copyright (C) 2019      Julian Ritter
 #       Copyright (C) 2019-2020 Laith Rastanawi
 #       Copyright (C) 2019-2020 Sophia Elia
-#       Copyright (C) 2019-2021 Jonathan Kliem <jonathan.kliem@fu-berlin.de>
+#       Copyright (C) 2019-2021 Jonathan Kliem <jonathan.kliem@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -1225,7 +1225,7 @@ class Polyhedron_base4(Polyhedron_base3):
             True
             sage: polytopes.cube().is_self_dual()
             False
-            sage: polytopes.hypersimplex(5,2).is_self_dual()
+            sage: polytopes.hypersimplex(5,2).is_self_dual()                            # optional - sage.combinat
             False
             sage: P = Polyhedron(vertices=[[1/2, 1/3]], rays=[[1, 1]]).is_self_dual()
             Traceback (most recent call last):

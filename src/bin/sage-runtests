@@ -52,6 +52,10 @@ if __name__ == "__main__":
              'if set to "all", then all tests will be run; '
              'use "!FEATURE" to disable tests marked "# optional - FEATURE". '
              'Note that "!" needs to be quoted or escaped in the shell.')
+    parser.add_argument("--hide", metavar="FEATURES", default="",
+        help='run tests pretending that the software listed in FEATURES (separated by commas) is not installed; '
+             'if "all" is listed, will also hide features corresponding to all optional or experimental packages; '
+             'if "optional" is listed, will also hide features corresponding to optional packages.')
     parser.add_argument("--randorder", type=int, metavar="SEED", help="randomize order of tests")
     parser.add_argument("--random-seed", dest="random_seed", type=int, metavar="SEED", help="random seed (integer) for fuzzing doctests",
                         default=os.environ.get("SAGE_DOCTEST_RANDOM_SEED"))
@@ -174,7 +178,8 @@ if __name__ == "__main__":
         filenames = [f for f in args.filenames
                      if f.endswith("_test.py") or not os.path.isfile(f)]
         if filenames or not args.filenames:
-            exit_code_pytest = pytest.main(pytest_options + filenames)
+            print(f"Running pytest on {filenames} with options {pytest_options}")
+            exit_code_pytest = pytest.main(filenames + pytest_options)
             if exit_code_pytest == 5:
                 # Exit code 5 means there were no test files, pass in this case
                 exit_code_pytest = 0

@@ -35,9 +35,14 @@ Pickling test::
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.arith.all import (hilbert_conductor_inverse, hilbert_conductor,
-                            factor, gcd, kronecker_symbol, valuation)
-from sage.rings.all import RR, Integer
+from sage.arith.misc import (hilbert_conductor_inverse,
+                             hilbert_conductor,
+                             factor,
+                             gcd,
+                             kronecker as kronecker_symbol,
+                             valuation)
+from sage.rings.real_mpfr import RR
+from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational import Rational
 from sage.rings.finite_rings.finite_field_constructor import GF
@@ -46,7 +51,7 @@ from sage.rings.ring import Algebra
 from sage.rings.ideal import Ideal_fractional
 from sage.rings.rational_field import is_RationalField, QQ
 from sage.rings.infinity import infinity
-from sage.rings.number_field.number_field import is_NumberField
+from sage.rings.number_field.number_field_base import NumberField
 from sage.rings.power_series_ring import PowerSeriesRing
 from sage.structure.category_object import normalize_names
 from sage.structure.parent import Parent
@@ -657,7 +662,7 @@ class QuaternionAlgebra_ab(QuaternionAlgebra_abstract):
         self._b = b
         if is_RationalField(base_ring) and a.denominator() == 1 == b.denominator():
             self.Element = QuaternionAlgebraElement_rational_field
-        elif (is_NumberField(base_ring) and base_ring.degree() > 2 and base_ring.is_absolute() and
+        elif (isinstance(base_ring, NumberField) and base_ring.degree() > 2 and base_ring.is_absolute() and
               a.denominator() == 1 == b.denominator() and base_ring.defining_polynomial().is_monic()):
             # This QuaternionAlgebraElement_number_field class is not
             # designed to work with elements of a quadratic field.  To
@@ -1026,8 +1031,9 @@ class QuaternionAlgebra_ab(QuaternionAlgebra_abstract):
             sage: QuaternionAlgebra(19).discriminant()
             19
 
-            sage: F.<a> = NumberField(x^2-x-1)
-            sage: B.<i,j,k> = QuaternionAlgebra(F, 2*a,F(-1))
+            sage: x = polygen(ZZ, 'x')
+            sage: F.<a> = NumberField(x^2 - x - 1)
+            sage: B.<i,j,k> = QuaternionAlgebra(F, 2*a, F(-1))
             sage: B.discriminant()
             Fractional ideal (2)
 
@@ -1337,8 +1343,8 @@ class QuaternionOrder(Parent):
             sage: type(R)
             <class 'sage.algebras.quatalg.quaternion_algebra.QuaternionOrder_with_category'>
 
-            Over QQ and number fields it is checked whether the given
-            basis actually gives an order (as a module over the maximal order):
+        Over QQ and number fields it is checked whether the given
+        basis actually gives an order (as a module over the maximal order)::
 
             sage: A.<i,j,k> = QuaternionAlgebra(-1,-1)
             sage: A.quaternion_order([1,i,j,i-j])
@@ -1394,8 +1400,8 @@ class QuaternionOrder(Parent):
                     raise ValueError("lattice must contain 1")
 
                 # check if multiplicatively closed
-                M1 = basis_for_quaternion_lattice(basis)
-                M2 = basis_for_quaternion_lattice(list(basis) + [x * y for x in basis for y in basis])
+                M1 = basis_for_quaternion_lattice(basis, reverse=False)
+                M2 = basis_for_quaternion_lattice(list(basis) + [x * y for x in basis for y in basis], reverse=False)
                 if M1 != M2:
                     raise ValueError("given lattice must be a ring")
 
@@ -2543,7 +2549,7 @@ class QuaternionFractionalIdeal_rational(QuaternionFractionalIdeal):
         # if self.__right_order == right.__left_order:
         #     left_order = self.__left_order
         #     right_order = right.__right_order
-        basis = tuple(basis_for_quaternion_lattice(gens))
+        basis = tuple(basis_for_quaternion_lattice(gens, reverse=False))
         A = self.quaternion_algebra()
         return A.ideal(basis, check=False)
 
@@ -2686,7 +2692,7 @@ class QuaternionFractionalIdeal_rational(QuaternionFractionalIdeal):
         """
         Jbar = [b.conjugate() for b in J.basis()]
         gens = [a * b for a in self.basis() for b in Jbar]
-        basis = tuple(basis_for_quaternion_lattice(gens))
+        basis = tuple(basis_for_quaternion_lattice(gens, reverse=False))
         R = self.quaternion_algebra()
         return R.ideal(basis, check=False)
 
@@ -2894,7 +2900,7 @@ class QuaternionFractionalIdeal_rational(QuaternionFractionalIdeal):
 #######################################################################
 
 
-def basis_for_quaternion_lattice(gens, reverse=False):
+def basis_for_quaternion_lattice(gens, reverse=None):
     r"""
     Return a basis for the `\ZZ`-lattice in a quaternion algebra
     spanned by the given gens.
@@ -2913,12 +2919,18 @@ def basis_for_quaternion_lattice(gens, reverse=False):
         sage: from sage.algebras.quatalg.quaternion_algebra import basis_for_quaternion_lattice
         sage: A.<i,j,k> = QuaternionAlgebra(-1,-7)
         sage: basis_for_quaternion_lattice([i+j, i-j, 2*k, A(1/3)])
+        doctest:warning ... DeprecationWarning: ...
         [1/3, i + j, 2*j, 2*k]
 
         sage: basis_for_quaternion_lattice([A(1),i,j,k])
         [1, i, j, k]
 
     """
+    if reverse is None:
+        from sage.misc.superseded import deprecation
+        deprecation(34880, 'The default value for the "reverse" argument to basis_for_quaternion_lattice() will'
+                           ' change from False to True. Pass the argument explicitly to silence this warning.')
+        reverse = False
     if not gens:
         return []
     Z, d = quaternion_algebra_cython.integral_matrix_and_denom_from_rational_quaternions(gens, reverse)

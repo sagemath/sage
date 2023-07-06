@@ -38,7 +38,7 @@ from sage.combinat.alternating_sign_matrix import AlternatingSignMatrix
 
 from sage.misc.decorators import options
 from sage.matrix.constructor import matrix
-from sage.arith.all import factorial
+from sage.arith.misc import factorial
 from sage.rings.integer import Integer
 from sage.misc.misc_c import prod
 
@@ -157,7 +157,7 @@ class FullyPackedLoop(Element, metaclass=InheritComparisonClasscallMetaclass):
 
     The class also has a plot method::
 
-        sage: fpl.plot()
+        sage: fpl.plot()                                                                # optional - sage.plot
         Graphics object consisting of 3 graphics primitives
 
     which gives:
@@ -468,7 +468,7 @@ class FullyPackedLoop(Element, metaclass=InheritComparisonClasscallMetaclass):
         sage: fpl = FullyPackedLoop((1, 2, 3))
         Traceback (most recent call last):
         ...
-        ValueError: The alternating sign matrices must be square
+        ValueError: the alternating sign matrices must be square
 
         sage: SVM = SixVertexModel(3)[0]
         sage: FullyPackedLoop(SVM)
@@ -781,7 +781,7 @@ class FullyPackedLoop(Element, metaclass=InheritComparisonClasscallMetaclass):
 
             sage: A = AlternatingSignMatrix([[0, 1, 0], [1, -1, 1], [0, 1, 0]])
             sage: fpl = FullyPackedLoop(A)
-            sage: fpl.plot()
+            sage: fpl.plot()                                                            # optional - sage.plot
             Graphics object consisting of 3 graphics primitives
 
         The resulting graphics is as follows
@@ -798,7 +798,7 @@ class FullyPackedLoop(Element, metaclass=InheritComparisonClasscallMetaclass):
 
             sage: A = AlternatingSignMatrix([[0, 1, 0], [1, -1, 1], [0, 1, 0]])
             sage: fpl = FullyPackedLoop(A)
-            sage: fpl.plot(link_color_map='rainbow')
+            sage: fpl.plot(link_color_map='rainbow')                                    # optional - sage.plot
             Graphics object consisting of 3 graphics primitives
 
         .. PLOT::
@@ -811,8 +811,9 @@ class FullyPackedLoop(Element, metaclass=InheritComparisonClasscallMetaclass):
 
         You can plot the 42 fully packed loops of size `4 \times 4` using::
 
-            sage: G = [fpl.plot(link_color_map='winter', loop_color='black') for fpl in FullyPackedLoops(4)]
-            sage: graphics_array(G, 7, 6)
+            sage: G = [fpl.plot(link_color_map='winter', loop_color='black')            # optional - sage.plot
+            ....:      for fpl in FullyPackedLoops(4)]
+            sage: graphics_array(G, 7, 6)                                               # optional - sage.plot
             Graphics Array of size 7 x 6
 
         .. PLOT::
@@ -833,7 +834,7 @@ class FullyPackedLoop(Element, metaclass=InheritComparisonClasscallMetaclass):
             ....: 00000000+-0000+00000000000000+0000000000"
             sage: a = matrix(20, [{'0':0, '+':1, '-': -1}[i] for i in s])
             sage: fpl = FullyPackedLoop(a)
-            sage: fpl.plot(loop_fill=True, loop_color_map='rainbow')
+            sage: fpl.plot(loop_fill=True, loop_color_map='rainbow')                    # optional - sage.plot
             Graphics object consisting of 27 graphics primitives
 
         .. PLOT::
@@ -881,9 +882,9 @@ class FullyPackedLoop(Element, metaclass=InheritComparisonClasscallMetaclass):
         squares = set((i,j) for i in range(n) for j in range(n))
 
         colors = _make_color_list(2*n,
-                colors = link_options.pop('colors', None),
-                color_map = link_options.pop('color_map', None),
-                randomize = link_options.pop('color_randomize', False))
+                colors=link_options.pop('colors', None),
+                color_map=link_options.pop('color_map', None),
+                randomize=link_options.pop('color_randomize', False))
 
         G = Graphics()
         for i in range(2*n):
@@ -910,9 +911,9 @@ class FullyPackedLoop(Element, metaclass=InheritComparisonClasscallMetaclass):
 
         if loop:
             colors = _make_color_list(len(loops),
-                    colors = loop_options.pop('colors', None),
-                    color_map = loop_options.pop('color_map', None),
-                    randomize = loop_options.pop('color_randomize', False))
+                    colors=loop_options.pop('colors', None),
+                    color_map=loop_options.pop('color_map', None),
+                    randomize=loop_options.pop('color_randomize', False))
 
             fill = loop_options.pop('fill')
 

@@ -4,7 +4,7 @@ Local Density Interfaces
 # // This is needed in the filter for primitivity...
 # #include "../max-min.h"
 
-from sage.arith.all import valuation
+from sage.arith.misc import valuation
 from sage.rings.rational_field import QQ
 
 
@@ -20,12 +20,10 @@ def local_density(self, p, m):
 
     INPUT:
 
-    - `p` -- a prime number > 0
-    - `m` -- an integer
+    - ``p`` -- a prime number > 0
+    - ``m`` -- an integer
 
-    OUTPUT:
-
-    a rational number
+    OUTPUT: a rational number
 
     EXAMPLES::
 
@@ -57,7 +55,6 @@ def local_density(self, p, m):
     if ((m != 0) and (valuation(m,p) < p_valuation)):   # Note: The (m != 0) condition protects taking the valuation of zero.
         return QQ(0)
 
-
     # If the form is imprimitive, rescale it and call the local density routine
     p_adjustment = QQ(1) / p**p_valuation
     m_prim = QQ(m) / p**p_valuation
@@ -69,7 +66,7 @@ def local_density(self, p, m):
 
 def local_primitive_density(self, p, m):
     """
-    Gives the local primitive density -- should be called by the user. =)
+    Return the local primitive density -- should be called by the user. =)
 
     NOTE: This screens for imprimitive forms, and puts the
     quadratic form in local normal form, which is a *requirement* of
@@ -77,12 +74,10 @@ def local_primitive_density(self, p, m):
 
     INPUT:
 
-        `p` -- a prime number > 0
-        `m` -- an integer
+    - ``p`` -- a prime number > 0
+    - ``m`` -- an integer
 
-    OUTPUT:
-
-        a rational number
+    OUTPUT: a rational number
 
     EXAMPLES::
 
@@ -97,7 +92,7 @@ def local_primitive_density(self, p, m):
         [ * 10 5 6 ]
         [ * * 15 8 ]
         [ * * * 20 ]
-        sage: Q.theta_series(20)
+        sage: Q.theta_series(20)                                                    # optional - sage.libs.pari
         1 + 2*q^5 + 2*q^10 + 2*q^14 + 2*q^15 + 2*q^16 + 2*q^18 + O(q^20)
         sage: Q.local_normal_form(2)
         Quadratic form in 4 variables over Integer Ring with coefficients:
@@ -115,7 +110,6 @@ def local_primitive_density(self, p, m):
         3/4
         sage: Q.local_density(2, 5)
         3/4
-
     """
     n = self.dim()
     if n == 0:
@@ -132,7 +126,6 @@ def local_primitive_density(self, p, m):
     # If m is less p-divisible than the matrix, return zero
     if ((m != 0) and (valuation(m,p) < p_valuation)):   # Note: The (m != 0) condition protects taking the valuation of zero.
         return QQ(0)
-
 
     # If the form is imprimitive, rescale it and call the local density routine
     p_adjustment = QQ(1) / p**p_valuation

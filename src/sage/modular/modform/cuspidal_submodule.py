@@ -174,15 +174,16 @@ class CuspidalSubmodule(ModularFormsSubmodule):
         A = self.ambient_module()
         return A.modular_symbols(sign).cuspidal_submodule()
 
-
     def change_ring(self, R):
         r"""
-        Change the base ring of self to R, when this makes sense. This differs
-        from :meth:`~sage.modular.modform.space.ModularFormsSpace.base_extend`
-        in that there may not be a canonical map from self to the new space, as
-        in the first example below. If this space has a character then this may
-        fail when the character cannot be defined over R, as in the second
-        example.
+        Change the base ring of ``self`` to ``R``, when this makes sense.
+
+        This differs from
+        :meth:`~sage.modular.modform.space.ModularFormsSpace.base_extend`
+        in that there may not be a canonical map from ``self`` to the new
+        space, as in the first example below. If this space has a
+        character then this may fail when the character cannot be
+        defined over ``R``, as in the second example.
 
         EXAMPLES::
 
@@ -378,7 +379,7 @@ class CuspidalSubmodule_wt1_gH(CuspidalSubmodule):
         A more elaborate example (two Galois-conjugate characters each giving a
         2-dimensional space)::
 
-            sage: CuspForms(GammaH(124, [85]), 1).q_expansion_basis()
+            sage: CuspForms(GammaH(124, [85]), 1).q_expansion_basis()  # long time
             [
             q - q^4 - q^6 + O(q^7),
             q^2 + O(q^7),

@@ -243,7 +243,6 @@ class MatrixPlot(GraphicPrimitive):
         subplot.xaxis.set_ticks_position('both') #only tick marks, not tick labels
 
 
-
 @suboptions('colorbar', orientation='vertical', format=None)
 @suboptions('subdivision',boundaries=None, style=None)
 @options(aspect_ratio=1, axes=False, cmap='Greys', colorbar=False,
@@ -585,12 +584,11 @@ def matrix_plot(mat, xrange=None, yrange=None, **options):
     else:
         sparse = False
 
-
     try:
         if sparse:
             xy_data_array = mat
         else:
-            xy_data_array = np.asarray(mat, dtype = float)
+            xy_data_array = np.asarray(mat, dtype=float)
     except TypeError:
         raise TypeError("mat must be a Matrix or a two dimensional array")
     except ValueError:

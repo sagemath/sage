@@ -746,12 +746,12 @@ class MaximaAbstract(ExtraTabCompletion, Interface):
         """
         tmin = trange[0]
         tmax = trange[1]
-        cmd = "plot2d([parametric, %s, %s, [%s, %s, %s], [nticks, %s]]"%( \
-                   r[0], r[1], var, tmin, tmax, nticks)
+        cmd = "plot2d([parametric, %s, %s, [%s, %s, %s], [nticks, %s]]" % (
+            r[0], r[1], var, tmin, tmax, nticks)
         if options is None:
             cmd += ")"
         else:
-            cmd += ", %s)"%options
+            cmd += ", %s)" % options
         self(cmd)
 
     def plot3d(self, *args):
@@ -856,9 +856,9 @@ class MaximaAbstract(ExtraTabCompletion, Interface):
             sage: maxima.de_solve('diff(y,x,2) + 3*x = y', ['x','y'])
             y = %k1*%e^x+%k2*%e^-x+3*x
             sage: maxima.de_solve('diff(y,x) + 3*x = y', ['x','y'])
-            y = (%c-3*((-x)-1)*%e^-x)*%e^x
+            y = (%c-3*(...-x...-1)*%e^-x)*%e^x
             sage: maxima.de_solve('diff(y,x) + 3*x = y', ['x','y'],[1,1])
-            y = -%e^-1*(5*%e^x-3*%e*x-3*%e)
+            y = -...%e^-1*(5*%e^x-3*%e*x-3*%e)...
         """
         if not isinstance(vars, str):
             str_vars = '%s, %s'%(vars[1], vars[0])
@@ -947,17 +947,17 @@ class MaximaAbstract(ExtraTabCompletion, Interface):
         """
         eqs = "["
         for i in range(len(eqns)):
-            if i<len(eqns)-1:
-                eqs = eqs + eqns[i]+","
-            if  i==len(eqns)-1:
-                eqs = eqs + eqns[i]+"]"
+            if i < len(eqns) - 1:
+                eqs = eqs + eqns[i] + ","
+            if i == len(eqns) - 1:
+                eqs = eqs + eqns[i] + "]"
         vrs = "["
         for i in range(len(vars)):
-            if i<len(vars)-1:
-                vrs = vrs + vars[i]+","
-            if  i==len(vars)-1:
-                vrs = vrs + vars[i]+"]"
-        return self('linsolve(%s, %s)'%(eqs, vrs))
+            if i < len(vars) - 1:
+                vrs = vrs + vars[i] + ","
+            if i == len(vars) - 1:
+                vrs = vrs + vars[i] + "]"
+        return self('linsolve(%s, %s)' % (eqs, vrs))
 
     def unit_quadratic_integer(self, n):
         r"""
@@ -1032,7 +1032,6 @@ class MaximaAbstract(ExtraTabCompletion, Interface):
         else:
             cmd += ', %s)'%options
         self(cmd)
-
 
     def plot_multilist(self, pts_list, options=None):
         r"""
@@ -1573,8 +1572,9 @@ class MaximaAbstractElement(ExtraTabCompletion, InterfaceElement):
 
         ::
 
-            sage: f = maxima('exp(x^2)').integral('x',0,1); f
-            -(sqrt(%pi)*%i*erf(%i))/2
+            sage: f = maxima('exp(x^2)').integral('x',0,1)
+            sage: f.sage()
+            -1/2*I*sqrt(pi)*erf(I)
             sage: f.numer()
             1.46265174590718...
         """
@@ -1846,7 +1846,7 @@ class MaximaAbstractElement(ExtraTabCompletion, InterfaceElement):
             [  3 3/2   1 3/4]
             [  4   2 4/3   1]
         """
-        from sage.matrix.all import MatrixSpace
+        from sage.matrix.matrix_space import MatrixSpace
         self._check_valid()
         P = self.parent()
         nrows = int(P.eval('length(%s)'%self.name()))

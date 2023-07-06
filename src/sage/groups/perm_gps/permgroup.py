@@ -141,7 +141,8 @@ from functools import wraps
 from sage.misc.randstate import current_randstate
 from sage.groups.group import FiniteGroup
 
-from sage.rings.all import QQ, Integer
+from sage.rings.rational_field import QQ
+from sage.rings.integer import Integer
 from sage.interfaces.abc import ExpectElement, GapElement
 from sage.libs.gap.libgap import libgap
 from sage.libs.gap.element import GapElement as LibGapElement
@@ -151,7 +152,7 @@ from sage.groups.abelian_gps.abelian_group import AbelianGroup
 from sage.misc.cachefunc import cached_method
 from sage.groups.class_function import ClassFunction_libgap
 from sage.sets.finite_enumerated_set import FiniteEnumeratedSet
-from sage.categories.all import FiniteEnumeratedSets
+from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
 from sage.groups.conjugacy_classes import ConjugacyClassGAP
 from sage.structure.richcmp import (richcmp_method,
                                     richcmp, rich_to_bool, op_EQ, op_NE)
@@ -195,7 +196,7 @@ def hap_decorator(f):
     @wraps(f)
     def wrapped(self, n, p=0):
         load_hap()
-        from sage.arith.all import is_prime
+        from sage.arith.misc import is_prime
         if not (p == 0 or is_prime(p)):
             raise ValueError("p must be 0 or prime")
 
@@ -654,7 +655,7 @@ class PermutationGroup_generic(FiniteGroup):
 
         TESTS:
 
-        see that this method does not harm pickling:
+        see that this method does not harm pickling::
 
             sage: A4 = PermutationGroup([[(1,2,3)],[(2,3,4)]])
             sage: A4.gap()
@@ -662,7 +663,7 @@ class PermutationGroup_generic(FiniteGroup):
             sage: TestSuite(A4).run()
 
         the following test shows, that support for the ``self._libgap``
-        attribute is needed in the constructor of the class:
+        attribute is needed in the constructor of the class::
 
             sage: PG = PGU(6,2)
             sage: g, h = PG.gens()
@@ -926,7 +927,7 @@ class PermutationGroup_generic(FiniteGroup):
            sage: f = PG._coerce_map_from_(MG)
            sage: mg = MG.an_element()
            sage: p = f(mg); p
-           (2,33,32,23,31,55)(3,49,38,44,40,28)(4,17,59,62,58,46)(5,21,47,20,43,8)(6,53,50)(7,37,12,57,14,29)(9,41,56,34,64,10)(11,25,19)(13,61,26,51,22,15)(16,45,36)(18,27,35,48,52,54)(24,63,42)(30,39,60)
+           (1,2,6,19,35,33)(3,9,26,14,31,23)(4,13,5)(7,22,17)(8,24,12)(10,16,32,27,20,28)(11,30,18)(15,25,36,34,29,21)
            sage: PG(p._gap_()) == p
            True
 
@@ -972,12 +973,12 @@ class PermutationGroup_generic(FiniteGroup):
             sage: P = G.as_permutation_group(algorithm='smaller', seed=5)
             sage: P1 = G.as_permutation_group()
             sage: P == P1
-            False
+            True
             sage: g1, g2, g3 = G.gens()
             sage: P(g1*g2)
-            (1,3,7,12)(2,4,8,10)(5,11)(6,9)
+            (1,4,13,11)(2,5,14,18)(3,15,8,16)(6,7)(9,20,19,12)(10,17)
             sage: P1(g1*g2)
-            (2,29,25,68)(3,57,13,54)(4,11,72,37)(5,39,60,23)(6,64,75,63)(7,21,50,73)(8,46,38,32)(9,74,35,18)(10,44,49,48)(12,16,34,71)(14,79,27,40)(15,26)(17,62,59,76)(19,78,70,65)(20,22,58,51)(24,33,36,43)(28,81,80,52)(30,53,56,69)(31,61)(41,42,67,55)(45,77)(47,66)
+            (1,4,13,11)(2,5,14,18)(3,15,8,16)(6,7)(9,20,19,12)(10,17)
 
         Another check for :trac:`5583`::
 
@@ -1302,7 +1303,7 @@ class PermutationGroup_generic(FiniteGroup):
             sage: G.gens_small() # random
             [('b','c'), ('a','c','b')] ## (on 64-bit Linux)
             [('a','b'), ('a','c','b')] ## (on Solaris)
-            sage: len(G.gens_small()) == 2
+            sage: len(G.gens_small()) == 2 # random
             True
         """
         gens = self._libgap_().SmallGeneratingSet()
@@ -2936,7 +2937,6 @@ class PermutationGroup_generic(FiniteGroup):
         gens = [gen.sage() for gen in libgap_group.GeneratorsOfGroup()]
         return self.subgroup(gens=gens, gap_group=libgap_group)
 
-
     def as_finitely_presented_group(self, reduced=False):
         """
         Return a finitely presented group isomorphic to ``self``.
@@ -3421,13 +3421,13 @@ class PermutationGroup_generic(FiniteGroup):
         irrG = G.Irr()
         ct   = [[irrG[i, j] for j in range(n)] for i in range(n)]
 
-        from sage.rings.all import CyclotomicField
+        from sage.rings.number_field.number_field import CyclotomicField
         e = irrG.Flat().Conductor()
         K = CyclotomicField(e)
         ct = [[K(x) for x in v] for v in ct]
 
         # Finally return the result as a matrix.
-        from sage.matrix.all import MatrixSpace
+        from sage.matrix.matrix_space import MatrixSpace
         MS = MatrixSpace(K, n)
         return MS(ct)
 
@@ -4370,15 +4370,21 @@ class PermutationGroup_generic(FiniteGroup):
 
         ::
 
-            sage: G = PermutationGroup([[(1,2,3,4,5)],[(1,2)]]) #S_5 on [1..5]
-            sage: G.is_transitive([1,4,5])
+            sage: G = PermutationGroup([[(1,2,3,4,5)],[(1,2)],[(6,7)]])
+            sage: G.is_transitive([1,2,3,4,5])
             True
-            sage: G.is_transitive([2..6])
+            sage: G.is_transitive([1..7])
             False
             sage: G.is_transitive(G.non_fixed_points())
-            True
+            False
             sage: H = PermutationGroup([[(1,2,3)],[(4,5,6)]])
             sage: H.is_transitive(H.non_fixed_points())
+            False
+
+        If `G` does not act on the domain, it always returns ``False``::
+
+            sage: G = PermutationGroup([[(1,2,3,4,5)],[(1,2)]]) #S_5 on [1..5]
+            sage: G.is_transitive([1,4,5])
             False
 
         Note that this differs from the definition in GAP, where
@@ -4436,11 +4442,15 @@ class PermutationGroup_generic(FiniteGroup):
             sage: G = PermutationGroup([[(1,2,3,4)],[(2,4)]])
             sage: G.is_primitive([1..4])
             False
-            sage: G.is_primitive([1,2,3])
-            True
             sage: G = PermutationGroup([[(3,4,5,6)],[(3,4)]]) #S_4 on [3..6]
             sage: G.is_primitive(G.non_fixed_points())
             True
+
+        If `G` does not act on the domain, it always returns ``False``::
+
+            sage: G = PermutationGroup([[(1,2,3,4)],[(2,4)]])
+            sage: G.is_primitive([1,2,3])
+            False
 
         """
         #If the domain is not a subset of self.domain(), then the
@@ -4517,7 +4527,6 @@ class PermutationGroup_generic(FiniteGroup):
         except ValueError:
             return False
         return bool(self._libgap_().IsRegular(domain))
-
 
     def normalizes(self, other):
         r"""
@@ -4742,7 +4751,7 @@ class PermutationGroup_generic(FiniteGroup):
 
         """
         load_hap()
-        from sage.arith.all import is_prime
+        from sage.arith.misc import is_prime
         if not (p == 0 or is_prime(p)):
             raise ValueError("p must be 0 or prime")
 
@@ -4752,7 +4761,6 @@ class PermutationGroup_generic(FiniteGroup):
         dd = ff.DenominatorOfRationalFunction()
         return (R(str(nn).replace('x_1', 'x')) /
                 R(str(dd).replace('x_1', 'x')))
-
 
     def sylow_subgroup(self, p):
         """
@@ -4802,6 +4810,7 @@ class PermutationGroup_generic(FiniteGroup):
         return [self.subgroup(gap_group=group) for group in UCS]
 
     from sage.groups.generic import structure_description
+
     def sign_representation(self, base_ring=None, side="twosided"):
         r"""
         Return the sign representation of ``self`` over ``base_ring``.
@@ -4823,7 +4832,6 @@ class PermutationGroup_generic(FiniteGroup):
             base_ring = ZZ
         from sage.modules.with_basis.representation import SignRepresentationPermgroup
         return SignRepresentationPermgroup(self, base_ring)
-
 
 
 class PermutationGroup_subgroup(PermutationGroup_generic):
@@ -5058,7 +5066,6 @@ class PermutationGroup_subgroup(PermutationGroup_generic):
             True
         """
         return self._ambient_group
-
 
     def is_normal(self, other=None):
         """

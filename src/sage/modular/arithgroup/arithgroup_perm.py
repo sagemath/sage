@@ -395,7 +395,7 @@ def ArithmeticSubgroup_Permutation(
                 S3 = L * ~R
         elif S2 is not None: # initialize from L,S2
             if S3 is None:
-                S3 =  ~S2 * ~L
+                S3 = ~S2 * ~L
             if R is None:
                 R = ~S2 * ~L * S2
         elif S3 is not None: # initialize from L,S3
@@ -1216,11 +1216,10 @@ class ArithmeticSubgroup_Permutation_class(ArithmeticSubgroup):
             Looped multi-digraph on 2 vertices
         """
         from sage.graphs.digraph import DiGraph
-        res = DiGraph(multiedges=True,loops=True)
+        res = DiGraph(multiedges=True, loops=True)
         res.add_vertices(list(range(self.index())))
 
-
-        if right_cosets: # invert the permutations
+        if right_cosets:  # invert the permutations
             S2 = [None]*self.index()
             S3 = [None]*self.index()
             L = [None]*self.index()

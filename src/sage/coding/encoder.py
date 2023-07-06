@@ -1,3 +1,4 @@
+# sage.doctest: optional - sage.modules sage.rings.finite_rings
 r"""
 Encoders
 
@@ -143,7 +144,8 @@ class Encoder(SageObject):
 
         EXAMPLES::
 
-            sage: G = Matrix(GF(2), [[1,1,1,0,0,0,0],[1,0,0,1,1,0,0],[0,1,0,1,0,1,0],[1,1,0,1,0,0,1]])
+            sage: G = Matrix(GF(2), [[1,1,1,0,0,0,0], [1,0,0,1,1,0,0],
+            ....:                    [0,1,0,1,0,1,0], [1,1,0,1,0,0,1]])
             sage: C = LinearCode(G)
             sage: word = vector(GF(2), (0, 1, 1, 0))
             sage: E = codes.encoders.LinearCodeGeneratorMatrixEncoder(C)
@@ -156,7 +158,8 @@ class Encoder(SageObject):
             sage: E.encode(word)
             Traceback (most recent call last):
             ...
-            ValueError: The value to encode must be in Vector space of dimension 4 over Finite Field of size 2
+            ValueError: The value to encode must be in
+            Vector space of dimension 4 over Finite Field of size 2
         """
         M = self.message_space()
         if word not in M:
@@ -194,7 +197,6 @@ class Encoder(SageObject):
         """
         return self.encode(m)
 
-
     def unencode(self, c, nocheck=False):
         r"""
         Return the message corresponding to the codeword ``c``.
@@ -216,7 +218,8 @@ class Encoder(SageObject):
 
         EXAMPLES::
 
-            sage: G = Matrix(GF(2), [[1,1,1,0,0,0,0],[1,0,0,1,1,0,0],[0,1,0,1,0,1,0],[1,1,0,1,0,0,1]])
+            sage: G = Matrix(GF(2), [[1,1,1,0,0,0,0], [1,0,0,1,1,0,0],
+            ....:                    [0,1,0,1,0,1,0], [1,1,0,1,0,0,1]])
             sage: C = LinearCode(G)
             sage: c = vector(GF(2), (1, 1, 0, 0, 1, 1, 0))
             sage: c in C
@@ -300,7 +303,8 @@ class Encoder(SageObject):
 
         EXAMPLES::
 
-            sage: G = Matrix(GF(2), [[1,1,1,0,0,0,0],[1,0,0,1,1,0,0],[0,1,0,1,0,1,0],[1,1,0,1,0,0,1]])
+            sage: G = Matrix(GF(2), [[1,1,1,0,0,0,0], [1,0,0,1,1,0,0],
+            ....:                    [0,1,0,1,0,1,0], [1,1,0,1,0,0,1]])
             sage: C = LinearCode(G)
             sage: c = vector(GF(2), (1, 1, 0, 0, 1, 1, 0))
             sage: c in C
@@ -333,7 +337,8 @@ class Encoder(SageObject):
 
         EXAMPLES::
 
-            sage: G = Matrix(GF(2), [[1,1,1,0,0,0,0],[1,0,0,1,1,0,0],[0,1,0,1,0,1,0],[1,1,0,1,0,0,1]])
+            sage: G = Matrix(GF(2), [[1,1,1,0,0,0,0], [1,0,0,1,1,0,0],
+            ....:                    [0,1,0,1,0,1,0], [1,1,0,1,0,0,1]])
             sage: C = LinearCode(G)
             sage: E = C.encoder()
             sage: E.code() == C
@@ -349,7 +354,8 @@ class Encoder(SageObject):
 
         EXAMPLES::
 
-            sage: G = Matrix(GF(2), [[1,1,1,0,0,0,0],[1,0,0,1,1,0,0],[0,1,0,1,0,1,0],[1,1,0,1,0,0,1]])
+            sage: G = Matrix(GF(2), [[1,1,1,0,0,0,0], [1,0,0,1,1,0,0],
+            ....:                    [0,1,0,1,0,1,0], [1,1,0,1,0,0,1]])
             sage: C = LinearCode(G)
             sage: E = C.encoder()
             sage: E.message_space()
@@ -357,7 +363,7 @@ class Encoder(SageObject):
         """
         return self.code().base_field()**(self.code().dimension())
 
-    @abstract_method(optional = True)
+    @abstract_method(optional=True)
     def generator_matrix(self):
         r"""
         Returns a generator matrix of the associated code of ``self``.
@@ -369,7 +375,8 @@ class Encoder(SageObject):
 
         EXAMPLES::
 
-            sage: G = Matrix(GF(2), [[1,1,1,0,0,0,0],[1,0,0,1,1,0,0],[0,1,0,1,0,1,0],[1,1,0,1,0,0,1]])
+            sage: G = Matrix(GF(2), [[1,1,1,0,0,0,0], [1,0,0,1,1,0,0],
+            ....:                    [0,1,0,1,0,1,0], [1,1,0,1,0,0,1]])
             sage: C = LinearCode(G)
             sage: E = C.encoder()
             sage: E.generator_matrix()

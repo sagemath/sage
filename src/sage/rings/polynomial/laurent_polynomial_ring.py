@@ -20,7 +20,7 @@ TESTS::
 
     sage: A.<Y> = QQ[]
     sage: R.<X> = LaurentPolynomialRing(A)
-    sage: matrix(R,2,2,[X,0,0,1])
+    sage: matrix(R,2,2,[X,0,0,1])                                                       # optional - sage.modules
     [X 0]
     [0 1]
 
@@ -42,32 +42,39 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.structure.element import parent
-from sage.structure.parent import Parent
-from sage.rings.infinity import infinity
+from sage.misc.lazy_import import LazyImport
+from sage.rings.polynomial.laurent_polynomial import LaurentPolynomial, LaurentPolynomial_univariate
+from sage.rings.polynomial.laurent_polynomial_ring_base import LaurentPolynomialRing_generic
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
-from sage.misc.latex import latex
-from sage.rings.polynomial.laurent_polynomial import LaurentPolynomial_mpair, LaurentPolynomial_univariate
-from sage.rings.ring import CommutativeRing
+from sage.structure.element import parent
 
-import sage.rings.polynomial.laurent_polynomial_ideal as lp_ideal
 
 def is_LaurentPolynomialRing(R):
     """
-    Returns True if and only if R is a Laurent polynomial ring.
+    Return ``True`` if and only if R is a Laurent polynomial ring.
 
     EXAMPLES::
 
         sage: from sage.rings.polynomial.laurent_polynomial_ring import is_LaurentPolynomialRing
-        sage: P = PolynomialRing(QQ,2,'x')
+        sage: P = PolynomialRing(QQ, 2, 'x')
         sage: is_LaurentPolynomialRing(P)
+        doctest:warning...
+        DeprecationWarning: is_LaurentPolynomialRing is deprecated; use isinstance(...,
+        sage.rings.polynomial.laurent_polynomial_ring_base.LaurentPolynomialRing_generic) instead
+        See https://github.com/sagemath/sage/issues/35229 for details.
         False
 
-        sage: R = LaurentPolynomialRing(QQ,3,'x')
-        sage: is_LaurentPolynomialRing(R)
+        sage: R = LaurentPolynomialRing(QQ,3,'x')                                       # optional - sage.modules
+        sage: is_LaurentPolynomialRing(R)                                               # optional - sage.modules
         True
     """
+    from sage.misc.superseded import deprecation
+    deprecation(35229,
+                "is_LaurentPolynomialRing is deprecated; use "
+                "isinstance(..., sage.rings.polynomial.laurent_polynomial_ring_base."
+                "LaurentPolynomialRing_generic) instead")
     return isinstance(R, LaurentPolynomialRing_generic)
+
 
 _cache = {}
 def LaurentPolynomialRing(base_ring, *args, **kwds):
@@ -82,7 +89,7 @@ def LaurentPolynomialRing(base_ring, *args, **kwds):
     3. ``LaurentPolynomialRing(base_ring, name, n, order='degrevlex')``
     4. ``LaurentPolynomialRing(base_ring, n, name, order='degrevlex')``
 
-    The optional arguments sparse and order *must* be explicitly
+    The optional arguments ``sparse`` and ``order`` *must* be explicitly
     named, and the other arguments must be given positionally.
 
     INPUT:
@@ -95,10 +102,10 @@ def LaurentPolynomialRing(base_ring, *args, **kwds):
     - ``order`` -- string or
       :class:`~sage.rings.polynomial.term_order.TermOrder`, e.g.,
 
-        - ``'degrevlex'`` (default) -- degree reverse lexicographic
-        - ``'lex'`` -- lexicographic
-        - ``'deglex'`` -- degree lexicographic
-        - ``TermOrder('deglex',3) + TermOrder('deglex',3)`` -- block ordering
+      - ``'degrevlex'`` (default) -- degree reverse lexicographic
+      - ``'lex'`` -- lexicographic
+      - ``'deglex'`` -- degree lexicographic
+      - ``TermOrder('deglex',3) + TermOrder('deglex',3)`` -- block ordering
 
     OUTPUT:
 
@@ -114,9 +121,9 @@ def LaurentPolynomialRing(base_ring, *args, **kwds):
 
     ::
 
-        sage: R.<x,y> = LaurentPolynomialRing(QQ,2); R
+        sage: R.<x,y> = LaurentPolynomialRing(QQ, 2); R                                 # optional - sage.modules
         Multivariate Laurent Polynomial Ring in x, y over Rational Field
-        sage: f = x^2 - 2*y^-2
+        sage: f = x^2 - 2*y^-2                                                          # optional - sage.modules
 
     You can't just globally change the names of those variables.
     This is because objects all over Sage could have pointers to
@@ -124,7 +131,7 @@ def LaurentPolynomialRing(base_ring, *args, **kwds):
 
     ::
 
-        sage: R._assign_names(['z','w'])
+        sage: R._assign_names(['z','w'])                                                # optional - sage.modules
         Traceback (most recent call last):
         ...
         ValueError: variable names cannot be changed after object creation.
@@ -156,8 +163,9 @@ def LaurentPolynomialRing(base_ring, *args, **kwds):
            sage: R.<abc> = LaurentPolynomialRing(QQ, sparse=True); R
            Univariate Laurent Polynomial Ring in abc over Rational Field
 
-           sage: R.<w> = LaurentPolynomialRing(PolynomialRing(GF(7),'k')); R
-           Univariate Laurent Polynomial Ring in w over Univariate Polynomial Ring in k over Finite Field of size 7
+           sage: R.<w> = LaurentPolynomialRing(PolynomialRing(GF(7),'k')); R            # optional - sage.rings.finite_rings
+           Univariate Laurent Polynomial Ring in w over
+            Univariate Polynomial Ring in k over Finite Field of size 7
 
        Rings with different variables are different::
 
@@ -168,31 +176,31 @@ def LaurentPolynomialRing(base_ring, *args, **kwds):
 
        ::
 
-           sage: R = LaurentPolynomialRing(QQ, 'a,b,c'); R
+           sage: R = LaurentPolynomialRing(QQ, 'a,b,c'); R                              # optional - sage.modules
            Multivariate Laurent Polynomial Ring in a, b, c over Rational Field
 
-           sage: S = LaurentPolynomialRing(QQ, ['a','b','c']); S
+           sage: S = LaurentPolynomialRing(QQ, ['a','b','c']); S                        # optional - sage.modules
            Multivariate Laurent Polynomial Ring in a, b, c over Rational Field
 
-           sage: T = LaurentPolynomialRing(QQ, ('a','b','c')); T
+           sage: T = LaurentPolynomialRing(QQ, ('a','b','c')); T                        # optional - sage.modules
            Multivariate Laurent Polynomial Ring in a, b, c over Rational Field
 
        All three rings are identical.
 
        ::
 
-           sage: (R is S) and  (S is T)
+           sage: (R is S) and  (S is T)                                                 # optional - sage.modules
            True
 
        There is a unique Laurent polynomial ring with each term order::
 
-           sage: R = LaurentPolynomialRing(QQ, 'x,y,z', order='degrevlex'); R
+           sage: R = LaurentPolynomialRing(QQ, 'x,y,z', order='degrevlex'); R           # optional - sage.modules
            Multivariate Laurent Polynomial Ring in x, y, z over Rational Field
-           sage: S = LaurentPolynomialRing(QQ, 'x,y,z', order='invlex'); S
+           sage: S = LaurentPolynomialRing(QQ, 'x,y,z', order='invlex'); S              # optional - sage.modules
            Multivariate Laurent Polynomial Ring in x, y, z over Rational Field
-           sage: S is LaurentPolynomialRing(QQ, 'x,y,z', order='invlex')
+           sage: S is LaurentPolynomialRing(QQ, 'x,y,z', order='invlex')                # optional - sage.modules
            True
-           sage: R == S
+           sage: R == S                                                                 # optional - sage.modules
            False
 
 
@@ -203,24 +211,27 @@ def LaurentPolynomialRing(base_ring, *args, **kwds):
 
        ::
 
-           sage: LaurentPolynomialRing(QQ, 'x', 10)
-           Multivariate Laurent Polynomial Ring in x0, x1, x2, x3, x4, x5, x6, x7, x8, x9 over Rational Field
+           sage: LaurentPolynomialRing(QQ, 'x', 10)                                     # optional - sage.modules
+           Multivariate Laurent Polynomial Ring in x0, x1, x2, x3, x4, x5, x6, x7, x8, x9
+            over Rational Field
 
-           sage: LaurentPolynomialRing(GF(7), 'y', 5)
-           Multivariate Laurent Polynomial Ring in y0, y1, y2, y3, y4 over Finite Field of size 7
+           sage: LaurentPolynomialRing(GF(7), 'y', 5)                                   # optional - sage.modules sage.rings.finite_rings
+           Multivariate Laurent Polynomial Ring in y0, y1, y2, y3, y4
+            over Finite Field of size 7
 
-           sage: LaurentPolynomialRing(QQ, 'y', 3, sparse=True)
+           sage: LaurentPolynomialRing(QQ, 'y', 3, sparse=True)                         # optional - sage.modules
            Multivariate Laurent Polynomial Ring in y0, y1, y2 over Rational Field
 
        By calling the
        :meth:`~sage.structure.category_object.CategoryObject.inject_variables`
        method, all those variable names are available for interactive use::
 
-           sage: R = LaurentPolynomialRing(GF(7),15,'w'); R
-           Multivariate Laurent Polynomial Ring in w0, w1, w2, w3, w4, w5, w6, w7, w8, w9, w10, w11, w12, w13, w14 over Finite Field of size 7
-           sage: R.inject_variables()
+           sage: R = LaurentPolynomialRing(GF(7), 15, 'w'); R                           # optional - sage.modules sage.rings.finite_rings
+           Multivariate Laurent Polynomial Ring in w0, w1, w2, w3, w4, w5, w6, w7,
+            w8, w9, w10, w11, w12, w13, w14 over Finite Field of size 7
+           sage: R.inject_variables()                                                   # optional - sage.modules sage.rings.finite_rings
            Defining w0, w1, w2, w3, w4, w5, w6, w7, w8, w9, w10, w11, w12, w13, w14
-           sage: (w0 + 2*w8 + w13)^2
+           sage: (w0 + 2*w8 + w13)^2                                                    # optional - sage.modules sage.rings.finite_rings
            w0^2 + 4*w0*w8 + 4*w8^2 + 2*w0*w13 + 4*w8*w13 + w13^2
     """
     from sage.rings.polynomial.polynomial_ring import is_PolynomialRing
@@ -343,12 +354,12 @@ def _split_laurent_polynomial_dict_(P, M, d):
 
     TESTS::
 
-        sage: L.<a, b, c, d> = LaurentPolynomialRing(ZZ)
-        sage: M = LaurentPolynomialRing(ZZ, 'c, d')
-        sage: N = LaurentPolynomialRing(M, 'a, b')
-        sage: M(c/d + 1/c)  # indirect doctest
+        sage: L.<a, b, c, d> = LaurentPolynomialRing(ZZ)                                # optional - sage.modules
+        sage: M = LaurentPolynomialRing(ZZ, 'c, d')                                     # optional - sage.modules
+        sage: N = LaurentPolynomialRing(M, 'a, b')                                      # optional - sage.modules
+        sage: M(c/d + 1/c)  # indirect doctest                                          # optional - sage.modules
         c*d^-1 + c^-1
-        sage: N(a + b/c/d + 1/b)  # indirect doctest
+        sage: N(a + b/c/d + 1/b)  # indirect doctest                                    # optional - sage.modules
         a + (c^-1*d^-1)*b + b^-1
     """
     vars_P = P.variable_names()
@@ -400,10 +411,10 @@ def from_fraction_field(L, x):
     EXAMPLES::
 
         sage: from sage.rings.polynomial.laurent_polynomial_ring import from_fraction_field
-        sage: L.<x, y> = LaurentPolynomialRing(ZZ)
-        sage: F = L.fraction_field()
-        sage: xi = F(~x)
-        sage: from_fraction_field(L, xi) == ~x
+        sage: L.<x, y> = LaurentPolynomialRing(ZZ)                                      # optional - sage.modules
+        sage: F = L.fraction_field()                                                    # optional - sage.modules
+        sage: xi = F(~x)                                                                # optional - sage.modules
+        sage: from_fraction_field(L, xi) == ~x                                          # optional - sage.modules
         True
     """
     d = L(x.denominator())
@@ -413,495 +424,6 @@ def from_fraction_field(L, x):
     else:
         raise TypeError("fraction must have unit denominator")
 
-class LaurentPolynomialRing_generic(CommutativeRing, Parent):
-    """
-    Laurent polynomial ring (base class).
-
-    EXAMPLES:
-
-    This base class inherits from :class:`~sage.rings.ring.CommutativeRing`.
-    Since :trac:`11900`, it is also initialised as such::
-
-        sage: R.<x1,x2> = LaurentPolynomialRing(QQ)
-        sage: R.category()
-        Join of Category of unique factorization domains and Category of commutative algebras over (number fields and quotient fields and metric spaces) and Category of infinite sets
-        sage: TestSuite(R).run()
-
-    """
-    def __init__(self, R):
-        """
-        EXAMPLES::
-
-            sage: R = LaurentPolynomialRing(QQ,2,'x')
-            sage: R == loads(dumps(R))
-            True
-        """
-        self._n = R.ngens()
-        self._R = R
-        names = R.variable_names()
-        self._one_element = self.element_class(self, R.one())
-        CommutativeRing.__init__(self, R.base_ring(), names=names,
-                                 category=R.category())
-
-    def ngens(self):
-        """
-        Return the number of generators of ``self``.
-
-        EXAMPLES::
-
-            sage: LaurentPolynomialRing(QQ,2,'x').ngens()
-            2
-            sage: LaurentPolynomialRing(QQ,1,'x').ngens()
-            1
-        """
-        return self._n
-
-    def gen(self, i=0):
-        r"""
-        Returns the `i^{th}` generator of self.  If i is not specified, then
-        the first generator will be returned.
-
-        EXAMPLES::
-
-            sage: LaurentPolynomialRing(QQ,2,'x').gen()
-            x0
-            sage: LaurentPolynomialRing(QQ,2,'x').gen(0)
-            x0
-            sage: LaurentPolynomialRing(QQ,2,'x').gen(1)
-            x1
-
-        TESTS::
-
-            sage: LaurentPolynomialRing(QQ,2,'x').gen(3)
-            Traceback (most recent call last):
-            ...
-            ValueError: generator not defined
-        """
-        if i < 0 or i >= self._n:
-            raise ValueError("generator not defined")
-        try:
-            return self.__generators[i]
-        except AttributeError:
-            self.__generators = tuple(self(x) for x in self._R.gens())
-            return self.__generators[i]
-
-
-    def variable_names_recursive(self, depth=infinity):
-        r"""
-        Return the list of variable names of this ring and its base rings,
-        as if it were a single multi-variate Laurent polynomial.
-
-        INPUT:
-
-        - ``depth`` -- an integer or :mod:`Infinity <sage.rings.infinity>`.
-
-        OUTPUT:
-
-        A tuple of strings.
-
-        EXAMPLES::
-
-            sage: T = LaurentPolynomialRing(QQ, 'x')
-            sage: S = LaurentPolynomialRing(T, 'y')
-            sage: R = LaurentPolynomialRing(S, 'z')
-            sage: R.variable_names_recursive()
-            ('x', 'y', 'z')
-            sage: R.variable_names_recursive(2)
-            ('y', 'z')
-        """
-        if depth <= 0:
-            return ()
-        if depth == 1:
-            return self.variable_names()
-        my_vars = self.variable_names()
-        try:
-            return self.base_ring().variable_names_recursive(depth - len(my_vars)) + my_vars
-        except AttributeError:
-            return my_vars
-
-    def is_integral_domain(self, proof=True):
-        """
-        Returns True if self is an integral domain.
-
-        EXAMPLES::
-
-            sage: LaurentPolynomialRing(QQ,2,'x').is_integral_domain()
-            True
-
-        The following used to fail; see :trac:`7530`::
-
-            sage: L = LaurentPolynomialRing(ZZ, 'X')
-            sage: L['Y']
-            Univariate Polynomial Ring in Y over Univariate Laurent Polynomial Ring in X over Integer Ring
-        """
-        return self.base_ring().is_integral_domain(proof)
-
-    def is_noetherian(self):
-        """
-        Returns True if self is Noetherian.
-
-        EXAMPLES::
-
-            sage: LaurentPolynomialRing(QQ,2,'x').is_noetherian()
-            Traceback (most recent call last):
-            ...
-            NotImplementedError
-        """
-        raise NotImplementedError
-
-    def construction(self):
-        """
-        Return the construction of ``self``.
-
-        EXAMPLES::
-
-            sage: LaurentPolynomialRing(QQ,2,'x,y').construction()
-            (LaurentPolynomialFunctor,
-            Univariate Laurent Polynomial Ring in x over Rational Field)
-
-        """
-        from sage.categories.pushout import LaurentPolynomialFunctor
-        vars = self.variable_names()
-        if len(vars) == 1:
-            return LaurentPolynomialFunctor(vars[0], False), self.base_ring()
-        else:
-            return LaurentPolynomialFunctor(vars[-1], True), LaurentPolynomialRing(self.base_ring(), vars[:-1])
-
-    def completion(self, p, prec=20, extras=None):
-        """
-        EXAMPLES::
-
-            sage: P.<x>=LaurentPolynomialRing(QQ)
-            sage: P
-            Univariate Laurent Polynomial Ring in x over Rational Field
-            sage: PP=P.completion(x)
-            sage: PP
-            Laurent Series Ring in x over Rational Field
-            sage: f=1-1/x
-            sage: PP(f)
-            -x^-1 + 1
-            sage: 1/PP(f)
-            -x - x^2 - x^3 - x^4 - x^5 - x^6 - x^7 - x^8 - x^9 - x^10 - x^11 - x^12 - x^13 - x^14 - x^15 - x^16 - x^17 - x^18 - x^19 - x^20 + O(x^21)
-
-        TESTS:
-
-        Check that the precision is taken into account (:trac:`24431`)::
-
-            sage: L = LaurentPolynomialRing(QQ, 'x')
-            sage: L.completion('x', 100).default_prec()
-            100
-            sage: L.completion('x', 20).default_prec()
-            20
-        """
-        if str(p) == self._names[0] and self._n == 1:
-            from sage.rings.laurent_series_ring import LaurentSeriesRing
-            R = self.polynomial_ring().completion(self._names[0], prec)
-            return LaurentSeriesRing(R)
-        else:
-            raise TypeError("Cannot complete %s with respect to %s" % (self, p))
-
-    def remove_var(self, var):
-        """
-        EXAMPLES::
-
-            sage: R = LaurentPolynomialRing(QQ,'x,y,z')
-            sage: R.remove_var('x')
-            Multivariate Laurent Polynomial Ring in y, z over Rational Field
-            sage: R.remove_var('x').remove_var('y')
-            Univariate Laurent Polynomial Ring in z over Rational Field
-        """
-        vars = list(self.variable_names())
-        vars.remove(str(var))
-        return LaurentPolynomialRing(self.base_ring(), vars)
-
-    def _coerce_map_from_(self, R):
-        """
-        EXAMPLES::
-
-            sage: L.<x,y> = LaurentPolynomialRing(QQ)
-            sage: L.coerce_map_from(QQ)
-            Generic morphism:
-              From: Rational Field
-              To:   Multivariate Laurent Polynomial Ring in x, y over Rational Field
-
-        Let us check that coercion between Laurent Polynomials over
-        different base rings works (:trac:`15345`)::
-
-            sage: R = LaurentPolynomialRing(ZZ, 'x')
-            sage: T = LaurentPolynomialRing(QQ, 'x')
-            sage: R.gen() + 3*T.gen()
-            4*x
-        """
-        if R is self._R:
-            return self._generic_coerce_map(R)
-        f = self._coerce_map_via([self._R], R)
-        if f is not None:
-            return f
-        if (isinstance(R, LaurentPolynomialRing_generic)
-            and self._R.has_coerce_map_from(R._R)):
-            return self._generic_coerce_map(R)
-
-    def __eq__(self, right):
-        """
-        Check whether ``self`` is equal to ``right``.
-
-        EXAMPLES::
-
-            sage: R = LaurentPolynomialRing(QQ,'x,y,z')
-            sage: P = LaurentPolynomialRing(ZZ,'x,y,z')
-            sage: Q = LaurentPolynomialRing(QQ,'x,y')
-
-            sage: R == R
-            True
-            sage: R == Q
-            False
-            sage: Q == P
-            False
-            sage: P == R
-            False
-        """
-        if type(self) != type(right):
-            return False
-        return self._R == right._R
-
-    def __ne__(self, other):
-        """
-        Check whether ``self`` is not equal to ``other``.
-
-        EXAMPLES::
-
-            sage: R = LaurentPolynomialRing(QQ,'x,y,z')
-            sage: P = LaurentPolynomialRing(ZZ,'x,y,z')
-            sage: Q = LaurentPolynomialRing(QQ,'x,y')
-
-            sage: R != R
-            False
-            sage: R != Q
-            True
-            sage: Q != P
-            True
-            sage: P != R
-            True
-        """
-        return not (self == other)
-
-    def __hash__(self):
-        """
-        Return the hash of ``self``.
-
-        EXAMPLES::
-
-            sage: h1 = hash(LaurentPolynomialRing(ZZ,'x,y,z'))
-            sage: h2 = hash(LaurentPolynomialRing(ZZ,'x,y,z'))
-            sage: h3 = hash(LaurentPolynomialRing(QQ,'x,y,z'))
-            sage: h4 = hash(LaurentPolynomialRing(ZZ,'x,y'))
-            sage: h1 == h2 and h1 != h3 and h1 != h4
-            True
-        """
-        return hash(self._R) ^ 12059065606945654693
-
-    def _latex_(self):
-        r"""
-        EXAMPLES::
-
-            sage: latex(LaurentPolynomialRing(QQ,2,'x'))
-            \Bold{Q}[x_{0}^{\pm 1}, x_{1}^{\pm 1}]
-        """
-        vars = ', '.join(a + r'^{\pm 1}' for a in self.latex_variable_names())
-        return "%s[%s]" % (latex(self.base_ring()), vars)
-
-    def _ideal_class_(self, n=0):
-        """
-        EXAMPLES::
-
-            sage: LaurentPolynomialRing(QQ,2,'x')._ideal_class_()
-            Traceback (most recent call last):
-            ...
-            NotImplementedError
-        """
-        # One may eventually want ideal classes in these guys.
-        raise NotImplementedError
-
-    def ideal(self, *args, **kwds):
-        """
-        EXAMPLES::
-
-            sage: LaurentPolynomialRing(QQ,2,'x').ideal([1])
-            Ideal (1) of Multivariate Laurent Polynomial Ring in x0, x1 over Rational Field
-
-        TESTS:
-
-        check that :trac:`26421` is fixed:
-
-            sage: R.<t> = LaurentPolynomialRing(ZZ)
-            sage: P.<x> = PolynomialRing(R)
-            sage: p = x-t
-            sage: p.content_ideal()    # indirect doctest
-            Ideal (-t, 1) of Univariate Laurent Polynomial Ring in t over Integer Ring
-        """
-        return lp_ideal.LaurentPolynomialIdeal(self, *args, **kwds)
-
-    def _is_valid_homomorphism_(self, codomain, im_gens, base_map=None):
-        """
-        EXAMPLES::
-
-            sage: T.<t> = ZZ[]
-            sage: K.<i> = NumberField(t^2 + 1)
-            sage: L.<x,y> = LaurentPolynomialRing(K)
-            sage: L._is_valid_homomorphism_(K, (K(1/2), K(3/2)))
-            True
-            sage: Q5 = Qp(5); i5 = Q5(-1).sqrt()
-            sage: L._is_valid_homomorphism_(Q5, (Q5(1/2), Q5(3/2))) # no coercion
-            False
-            sage: L._is_valid_homomorphism_(Q5, (Q5(1/2), Q5(3/2)), base_map=K.hom([i5]))
-            True
-        """
-        if base_map is None and not codomain.has_coerce_map_from(self.base_ring()):
-            # we need that elements of the base ring
-            # canonically coerce into codomain.
-            return False
-        for a in im_gens:
-            # in addition, the image of each generator must be invertible.
-            if not a.is_unit():
-                return False
-        return True
-
-    def term_order(self):
-        """
-        Returns the term order of self.
-
-        EXAMPLES::
-
-            sage: LaurentPolynomialRing(QQ,2,'x').term_order()
-            Degree reverse lexicographic term order
-
-        """
-        return self._R.term_order()
-
-    def is_finite(self):
-        """
-        EXAMPLES::
-
-            sage: LaurentPolynomialRing(QQ,2,'x').is_finite()
-            False
-
-        """
-        return False
-
-    def is_field(self, proof = True):
-        """
-        EXAMPLES::
-
-            sage: LaurentPolynomialRing(QQ,2,'x').is_field()
-            False
-        """
-        return False
-
-    def polynomial_ring(self):
-        """
-        Returns the polynomial ring associated with self.
-
-        EXAMPLES::
-
-            sage: LaurentPolynomialRing(QQ,2,'x').polynomial_ring()
-            Multivariate Polynomial Ring in x0, x1 over Rational Field
-            sage: LaurentPolynomialRing(QQ,1,'x').polynomial_ring()
-            Multivariate Polynomial Ring in x over Rational Field
-        """
-        return self._R
-
-    def characteristic(self):
-        """
-        Returns the characteristic of the base ring.
-
-        EXAMPLES::
-
-            sage: LaurentPolynomialRing(QQ,2,'x').characteristic()
-            0
-            sage: LaurentPolynomialRing(GF(3),2,'x').characteristic()
-            3
-
-        """
-        return self.base_ring().characteristic()
-
-    def krull_dimension(self):
-        """
-        EXAMPLES::
-
-            sage: LaurentPolynomialRing(QQ,2,'x').krull_dimension()
-            Traceback (most recent call last):
-            ...
-            NotImplementedError
-        """
-        raise NotImplementedError
-
-    def random_element(self, low_degree = -2, high_degree = 2, terms = 5, choose_degree=False,*args, **kwds):
-        """
-        EXAMPLES::
-
-            sage: LaurentPolynomialRing(QQ,2,'x').random_element()
-            Traceback (most recent call last):
-            ...
-            NotImplementedError
-        """
-        raise NotImplementedError
-
-    def is_exact(self):
-        """
-        Returns True if the base ring is exact.
-
-        EXAMPLES::
-
-            sage: LaurentPolynomialRing(QQ,2,'x').is_exact()
-            True
-            sage: LaurentPolynomialRing(RDF,2,'x').is_exact()
-            False
-        """
-        return self.base_ring().is_exact()
-
-    def change_ring(self, base_ring=None, names=None, sparse=False, order=None):
-        """
-        EXAMPLES::
-
-            sage: R = LaurentPolynomialRing(QQ,2,'x')
-            sage: R.change_ring(ZZ)
-            Multivariate Laurent Polynomial Ring in x0, x1 over Integer Ring
-
-        Check that the distinction between a univariate ring and a multivariate ring with one
-        generator is preserved::
-
-            sage: P.<x> = LaurentPolynomialRing(QQ, 1)
-            sage: P
-            Multivariate Laurent Polynomial Ring in x over Rational Field
-            sage: K.<i> = CyclotomicField(4)
-            sage: P.change_ring(K)
-            Multivariate Laurent Polynomial Ring in x over Cyclotomic Field of order 4 and degree 2
-        """
-        if base_ring is None:
-            base_ring = self.base_ring()
-        if names is None:
-            names = self.variable_names()
-        if isinstance(self, LaurentPolynomialRing_univariate):
-            return LaurentPolynomialRing(base_ring, names[0], sparse = sparse)
-
-        if order is None:
-            order = self.polynomial_ring().term_order()
-        return LaurentPolynomialRing(base_ring, self._n, names, order = order)
-
-    def fraction_field(self):
-        """
-        The fraction field is the same as the fraction field of the
-        polynomial ring.
-
-        EXAMPLES::
-
-            sage: L.<x> = LaurentPolynomialRing(QQ)
-            sage: L.fraction_field()
-            Fraction Field of Univariate Polynomial Ring in x over Rational Field
-            sage: (x^-1 + 2) / (x - 1)
-            (2*x + 1)/(x^2 - x)
-        """
-        return self.polynomial_ring().fraction_field()
 
 class LaurentPolynomialRing_univariate(LaurentPolynomialRing_generic):
     def __init__(self, R):
@@ -959,22 +481,22 @@ class LaurentPolynomialRing_univariate(LaurentPolynomialRing_generic):
             sage: U = LaurentPolynomialRing(QQ, 'a')
             sage: V = LaurentPolynomialRing(QQ, 'c')
             sage: L.<a, b, c, d> = LaurentPolynomialRing(QQ)
-            sage: M = LaurentPolynomialRing(QQ, 'c, d')
-            sage: Mc, Md = M.gens()
-            sage: N = LaurentPolynomialRing(M, 'a, b')
-            sage: Na, Nb = N.gens()
-            sage: U(Na)
+            sage: M = LaurentPolynomialRing(QQ, 'c, d')                                 # optional - sage.modules
+            sage: Mc, Md = M.gens()                                                     # optional - sage.modules
+            sage: N = LaurentPolynomialRing(M, 'a, b')                                  # optional - sage.modules
+            sage: Na, Nb = N.gens()                                                     # optional - sage.modules
+            sage: U(Na)                                                                 # optional - sage.modules
             a
-            sage: V(Mc)
+            sage: V(Mc)                                                                 # optional - sage.modules
             c
 
-            sage: M(L(0))
+            sage: M(L(0))                                                               # optional - sage.modules
             0
-            sage: N(L(0))
+            sage: N(L(0))                                                               # optional - sage.modules
             0
-            sage: L(M(0))
+            sage: L(M(0))                                                               # optional - sage.modules
             0
-            sage: L(N(0))
+            sage: L(N(0))                                                               # optional - sage.modules
             0
 
         ::
@@ -986,8 +508,8 @@ class LaurentPolynomialRing_univariate(LaurentPolynomialRing_generic):
             sage: C.<c> = LaurentPolynomialRing(B)
             sage: B(C(b))
             b
-            sage: D.<d, e> = LaurentPolynomialRing(B)
-            sage: B(D(b))
+            sage: D.<d, e> = LaurentPolynomialRing(B)                                   # optional - sage.modules
+            sage: B(D(b))                                                               # optional - sage.modules
             b
 
         TESTS:
@@ -1009,7 +531,7 @@ class LaurentPolynomialRing_univariate(LaurentPolynomialRing_generic):
         if isinstance(x, Expression):
             return x.laurent_polynomial(ring=self)
 
-        elif isinstance(x, (LaurentPolynomial_univariate, LaurentPolynomial_mpair)):
+        elif isinstance(x, LaurentPolynomial):
             P = x.parent()
             if set(self.variable_names()) & set(P.variable_names()):
                 if isinstance(x, LaurentPolynomial_univariate):
@@ -1050,16 +572,17 @@ class LaurentPolynomialRing_univariate(LaurentPolynomialRing_generic):
         """
         return LaurentPolynomialRing_univariate, (self._R,)
 
+
 class LaurentPolynomialRing_mpair(LaurentPolynomialRing_generic):
     def __init__(self, R):
         """
         EXAMPLES::
 
-            sage: L = LaurentPolynomialRing(QQ,2,'x')
-            sage: type(L)
+            sage: L = LaurentPolynomialRing(QQ,2,'x')                                   # optional - sage.modules
+            sage: type(L)                                                               # optional - sage.modules
             <class
             'sage.rings.polynomial.laurent_polynomial_ring.LaurentPolynomialRing_mpair_with_category'>
-            sage: L == loads(dumps(L))
+            sage: L == loads(dumps(L))                                                  # optional - sage.modules
             True
         """
         if R.ngens() <= 0:
@@ -1068,15 +591,15 @@ class LaurentPolynomialRing_mpair(LaurentPolynomialRing_generic):
             raise ValueError("base ring must be an integral domain")
         LaurentPolynomialRing_generic.__init__(self, R)
 
-    Element = LaurentPolynomial_mpair
+    Element = LazyImport('sage.rings.polynomial.laurent_polynomial_mpair', 'LaurentPolynomial_mpair')
 
     def _repr_(self):
         """
         TESTS::
 
-            sage: LaurentPolynomialRing(QQ,2,'x').__repr__()
+            sage: LaurentPolynomialRing(QQ,2,'x').__repr__()                            # optional - sage.modules
             'Multivariate Laurent Polynomial Ring in x0, x1 over Rational Field'
-            sage: LaurentPolynomialRing(QQ,1,'x').__repr__()
+            sage: LaurentPolynomialRing(QQ,1,'x').__repr__()                            # optional - sage.modules
             'Multivariate Laurent Polynomial Ring in x over Rational Field'
         """
         return "Multivariate Laurent Polynomial Ring in %s over %s"%(", ".join(self._R.variable_names()), self._R.base_ring())
@@ -1087,21 +610,21 @@ class LaurentPolynomialRing_mpair(LaurentPolynomialRing_generic):
 
         EXAMPLES::
 
-            sage: L = LaurentPolynomialRing(QQ, 'x', 2)
-            sage: L.monomial(-3, 5)
+            sage: L = LaurentPolynomialRing(QQ, 'x', 2)                                 # optional - sage.modules
+            sage: L.monomial(-3, 5)                                                     # optional - sage.modules
             x0^-3*x1^5
-            sage: L.monomial(1, 1)
+            sage: L.monomial(1, 1)                                                      # optional - sage.modules
             x0*x1
-            sage: L.monomial(0, 0)
+            sage: L.monomial(0, 0)                                                      # optional - sage.modules
             1
-            sage: L.monomial(-2, -3)
+            sage: L.monomial(-2, -3)                                                    # optional - sage.modules
             x0^-2*x1^-3
 
-            sage: x0, x1 = L.gens()
-            sage: L.monomial(-1, 2) == x0^-1 * x1^2
+            sage: x0, x1 = L.gens()                                                     # optional - sage.modules
+            sage: L.monomial(-1, 2) == x0^-1 * x1^2                                     # optional - sage.modules
             True
 
-            sage: L.monomial(1, 2, 3)
+            sage: L.monomial(1, 2, 3)                                                   # optional - sage.modules
             Traceback (most recent call last):
             ...
             TypeError: tuple key must have same length as ngens
@@ -1117,96 +640,96 @@ class LaurentPolynomialRing_mpair(LaurentPolynomialRing_generic):
         """
         EXAMPLES::
 
-            sage: L = LaurentPolynomialRing(QQ,2,'x')
-            sage: L(1/2)
+            sage: L = LaurentPolynomialRing(QQ,2,'x')                                   # optional - sage.modules
+            sage: L(1/2)                                                                # optional - sage.modules
             1/2
 
-            sage: M = LaurentPolynomialRing(QQ, 'x, y')
-            sage: var('x, y')
+            sage: M = LaurentPolynomialRing(QQ, 'x, y')                                 # optional - sage.modules
+            sage: var('x, y')                                                           # optional - sage.modules
             (x, y)
-            sage: M(x/y + 3/x)
+            sage: M(x/y + 3/x)                                                          # optional - sage.modules
             x*y^-1 + 3*x^-1
 
         ::
 
-            sage: M(exp(x))
+            sage: M(exp(x))                                                             # optional - sage.modules
             Traceback (most recent call last):
             ...
             TypeError: unable to convert e^x to a rational
 
         ::
 
-            sage: L.<a, b, c, d> = LaurentPolynomialRing(QQ)
-            sage: M = LaurentPolynomialRing(QQ, 'c, d')
-            sage: Mc, Md = M.gens()
-            sage: N = LaurentPolynomialRing(M, 'a, b')
-            sage: Na, Nb = N.gens()
-            sage: M(c/d)
+            sage: L.<a, b, c, d> = LaurentPolynomialRing(QQ)                            # optional - sage.modules
+            sage: M = LaurentPolynomialRing(QQ, 'c, d')                                 # optional - sage.modules
+            sage: Mc, Md = M.gens()                                                     # optional - sage.modules
+            sage: N = LaurentPolynomialRing(M, 'a, b')                                  # optional - sage.modules
+            sage: Na, Nb = N.gens()                                                     # optional - sage.modules
+            sage: M(c/d)                                                                # optional - sage.modules
             c*d^-1
-            sage: N(a*b/c/d)
+            sage: N(a*b/c/d)                                                            # optional - sage.modules
             (c^-1*d^-1)*a*b
-            sage: N(c/d)
+            sage: N(c/d)                                                                # optional - sage.modules
             c*d^-1
-            sage: L(Mc)
+            sage: L(Mc)                                                                 # optional - sage.modules
             c
-            sage: L(Nb)
+            sage: L(Nb)                                                                 # optional - sage.modules
             b
 
-            sage: M(L(0))
+            sage: M(L(0))                                                               # optional - sage.modules
             0
-            sage: N(L(0))
+            sage: N(L(0))                                                               # optional - sage.modules
             0
-            sage: L(M(0))
+            sage: L(M(0))                                                               # optional - sage.modules
             0
-            sage: L(N(0))
+            sage: L(N(0))                                                               # optional - sage.modules
             0
 
             sage: U = LaurentPolynomialRing(QQ, 'a')
             sage: Ua = U.gen()
             sage: V = LaurentPolynomialRing(QQ, 'c')
             sage: Vc = V.gen()
-            sage: L(Ua)
+            sage: L(Ua)                                                                 # optional - sage.modules
             a
-            sage: L(Vc)
+            sage: L(Vc)                                                                 # optional - sage.modules
             c
-            sage: N(Ua)
+            sage: N(Ua)                                                                 # optional - sage.modules
             a
-            sage: M(Vc)
+            sage: M(Vc)                                                                 # optional - sage.modules
             c
 
-            sage: P = LaurentPolynomialRing(QQ, 'a, b')
-            sage: Q = LaurentPolynomialRing(P, 'c, d')
-            sage: Q(P.0)
+            sage: P = LaurentPolynomialRing(QQ, 'a, b')                                 # optional - sage.modules
+            sage: Q = LaurentPolynomialRing(P, 'c, d')                                  # optional - sage.modules
+            sage: Q(P.0)                                                                # optional - sage.modules
             a
 
         ::
 
             sage: A.<a> = LaurentPolynomialRing(QQ)
             sage: B.<b> = LaurentPolynomialRing(A)
-            sage: C = LaurentPolynomialRing(QQ, 'a, b')
-            sage: C(B({1: a}))
+            sage: C = LaurentPolynomialRing(QQ, 'a, b')                                 # optional - sage.modules
+            sage: C(B({1: a}))                                                          # optional - sage.modules
             a*b
-            sage: D.<d, e> = LaurentPolynomialRing(B)
-            sage: F.<f, g> = LaurentPolynomialRing(D)
-            sage: D(F(d*e))
+            sage: D.<d, e> = LaurentPolynomialRing(B)                                   # optional - sage.modules
+            sage: F.<f, g> = LaurentPolynomialRing(D)                                   # optional - sage.modules
+            sage: D(F(d*e))                                                             # optional - sage.modules
             d*e
 
         ::
 
             sage: from sage.rings.polynomial.polydict import ETuple
-            sage: R.<x,y,z> = LaurentPolynomialRing(QQ)
-            sage: mon = ETuple({}, int(3))
-            sage: P = R.polynomial_ring()
-            sage: R(sum(P.gens()), mon)
+            sage: R.<x,y,z> = LaurentPolynomialRing(QQ)                                 # optional - sage.modules
+            sage: mon = ETuple({}, int(3))                                              # optional - sage.modules
+            sage: P = R.polynomial_ring()                                               # optional - sage.modules
+            sage: R(sum(P.gens()), mon)                                                 # optional - sage.modules
             x + y + z
-            sage: R(sum(P.gens()), (-1,-1,-1))
+            sage: R(sum(P.gens()), (-1,-1,-1))                                          # optional - sage.modules
             y^-1*z^-1 + x^-1*z^-1 + x^-1*y^-1
 
         ::
 
-            sage: RL = R.localization(x+1)
-            sage: xi = RL(~x)
-            sage: R(xi) == ~x     # indirect doctests
+            sage: RL = R.localization(x+1)                                              # optional - sage.modules
+            sage: xi = RL(~x)                                                           # optional - sage.modules
+            sage: R(xi) == ~x     # indirect doctests                                   # optional - sage.modules
             True
         """
         from sage.structure.element import Expression
@@ -1224,7 +747,7 @@ class LaurentPolynomialRing_mpair(LaurentPolynomialRing_generic):
         elif isinstance(x, Expression):
             return x.laurent_polynomial(ring=self)
 
-        elif isinstance(x, (LaurentPolynomial_univariate, LaurentPolynomial_mpair)):
+        elif isinstance(x, LaurentPolynomial):
             if self.variable_names() == P.variable_names():
                 # No special processing needed here;
                 #   handled by LaurentPolynomial_mpair.__init__
@@ -1263,8 +786,8 @@ class LaurentPolynomialRing_mpair(LaurentPolynomialRing_generic):
 
         EXAMPLES::
 
-            sage: L = LaurentPolynomialRing(QQ, 2, 'x')
-            sage: loads(dumps(L)) == L
+            sage: L = LaurentPolynomialRing(QQ, 2, 'x')                                 # optional - sage.modules
+            sage: loads(dumps(L)) == L                                                  # optional - sage.modules
             True
         """
         return LaurentPolynomialRing_mpair, (self._R,)

@@ -168,7 +168,7 @@ def HighestWeightCrystal(dominant_weight, model=None):
 
     Check that the correct crystal is constructed for the fundamental weights::
 
-        sage: for ct in CartanType.samples(finite=True, crystallographic=True):
+        sage: for ct in CartanType.samples(finite=True, crystallographic=True):  # long time
         ....:     L = ct.root_system().weight_lattice()
         ....:     La = L.fundamental_weights()
         ....:     for model in ['Tableaux', 'NakajimaMonomials', 'AlcovePaths', 'RiggedConfigurations']:
@@ -288,7 +288,7 @@ class FiniteDimensionalHighestWeightCrystal_TypeE(TensorProductOfCrystals):
         self._highest_weight = dominant_weight
         assert dominant_weight.is_dominant()
         self.rename()
-        Parent.__init__(self, category = ClassicalCrystals())
+        Parent.__init__(self, category=ClassicalCrystals())
         self.module_generators = [self.module_generator()]
 
     def _repr_(self):
@@ -377,7 +377,7 @@ class FiniteDimensionalHighestWeightCrystal_TypeE6(FiniteDimensionalHighestWeigh
             2430
         """
         B1 = CrystalOfLetters(['E',6])
-        B6 = CrystalOfLetters(['E',6], dual = True)
+        B6 = CrystalOfLetters(['E',6], dual=True)
         self.column_crystal = {1 : B1, 6 : B6,
                                4 : TensorProductOfCrystals(B1,B1,B1,generators=[[B1([-3,4]),B1([-1,3]),B1([1])]]),
                                3 : TensorProductOfCrystals(B1,B1,generators=[[B1([-1,3]),B1([1])]]),

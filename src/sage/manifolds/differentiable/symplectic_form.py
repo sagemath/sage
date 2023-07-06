@@ -185,7 +185,7 @@ class SymplecticForm(DiffForm):
         return type(self)(
             self._vmodule,
             "unnamed symplectic form",
-            latex_name=r"\mbox{unnamed symplectic form}",
+            latex_name=r"\text{unnamed symplectic form}",
         )
 
     def _init_derived(self):
@@ -290,9 +290,9 @@ class SymplecticForm(DiffForm):
 
             sage: from sage.manifolds.differentiable.symplectic_form import SymplecticForm
             sage: M = manifolds.Sphere(2, coordinates='stereographic')
-            sage: vol_form = M.induced_metric().volume_form()
-            sage: omega = SymplecticForm.wrap(vol_form, 'omega', r'\omega')
-            sage: omega.display()
+            sage: vol_form = M.induced_metric().volume_form()                   # long time
+            sage: omega = SymplecticForm.wrap(vol_form, 'omega', r'\omega')     # long time
+            sage: omega.display()                                               # long time
             omega = -4/(y1^4 + y2^4 + 2*(y1^2 + 1)*y2^2 + 2*y1^2 + 1) dy1∧dy2
         """
         if form.degree() != 2:
@@ -575,10 +575,10 @@ class SymplecticForm(DiffForm):
             sage: omega = M.symplectic_form()
             sage: a = M.one_form(1, 0, name='a')
             sage: omega.hodge_star(a).display()
-            *a = -dq
+            *a = dq
             sage: b = M.one_form(0, 1, name='b')
             sage: omega.hodge_star(b).display()
-            *b = -dp
+            *b = dp
             sage: f = M.scalar_field(1, name='f')
             sage: omega.hodge_star(f).display()
             *f = -dq∧dp
@@ -587,6 +587,54 @@ class SymplecticForm(DiffForm):
                (q, p) ↦ 1
         """
         return pform.hodge_dual(self)
+
+    def on_forms(self, first: DiffForm, second: DiffForm) -> DiffScalarField:
+        r"""
+        Return the contraction of the two forms with respect to the symplectic form.
+
+        The symplectic form `\omega` gives rise to a bilinear form,
+        also denoted by `\omega` on the space of `1`-forms by
+
+        .. MATH::
+            \omega(\alpha, \beta) = \omega(\alpha^\sharp, \beta^\sharp),
+
+        where `\alpha^\sharp` is the dual of `\alpha` with respect to `\omega`, see
+        :meth:`~sage.manifolds.differentiable.tensor_field.TensorField.up`.
+        This bilinear form induces a bilinear form on the space of all forms determined
+        by its value on decomposable elements as:
+
+        .. MATH::
+            \omega(\alpha_1 \wedge \ldots \wedge\alpha_p, \beta_1 \wedge \ldots \wedge\beta_p)
+            = det(\omega(\alpha_i, \beta_j)).
+
+        INPUT:
+
+        - ``first`` -- a `p`-form `\alpha`
+        - ``second`` -- a `p`-form `\beta`
+
+        OUTPUT:
+
+        - the scalar field `\omega(\alpha, \beta)`
+
+        EXAMPLES:
+
+            sage: M = manifolds.StandardSymplecticSpace(2)
+            sage: omega = M.symplectic_form()
+            sage: a = M.one_form(1, 0, name='a')
+            sage: b = M.one_form(0, 1, name='b')
+            sage: omega.on_forms(a, b).display()
+            R2 → ℝ
+            (q, p) ↦ -1
+        """
+        from sage.arith.misc import factorial
+
+        if first.degree() != second.degree():
+            raise ValueError("the two forms must have the same degree")
+
+        all_positions = range(first.degree())
+        return first.contract(
+            *all_positions, second.up(self), *all_positions
+        ) / factorial(first.degree())
 
 
 class SymplecticFormParal(SymplecticForm, DiffFormParal):

@@ -661,10 +661,10 @@ class SymmetricFunctionAlgebra_schur(classical.SymmetricFunctionAlgebra_classica
                 q^4 + q^3 + 2*q^2 + q + 1
 
                 sage: x = 3*s[2,2] + 2*s[1] + 1
-                sage: x.principal_specialization(3, q=var("q"))
+                sage: x.principal_specialization(3, q=var("q"))                         # optional - sage.symbolic
                 3*(q^4 - 1)*(q^3 - 1)*q^2/((q^2 - 1)*(q - 1)) + 2*(q^3 - 1)/(q - 1) + 1
 
-                sage: x.principal_specialization(q=var("q"))
+                sage: x.principal_specialization(q=var("q"))                            # optional - sage.symbolic
                 -2/(q - 1) + 3*q^2/((q^3 - 1)*(q^2 - 1)^2*(q - 1)) + 1
 
             TESTS::
@@ -805,7 +805,7 @@ class SymmetricFunctionAlgebra_schur(classical.SymmetricFunctionAlgebra_classica
 
             We also support the `q`-exponential_specialization::
 
-                sage: factor(s[3].exponential_specialization(q=var("q"), t=var("t")))
+                sage: factor(s[3].exponential_specialization(q=var("q"), t=var("t")))   # optional - sage.symbolic
                 t^3/((q^2 + q + 1)*(q + 1))
 
             TESTS::

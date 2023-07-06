@@ -58,7 +58,7 @@ AUTHOR:
 """
 
 #*****************************************************************************
-#       Copyright (C) 2019 Jonathan Kliem <jonathan.kliem@fu-berlin.de>
+#       Copyright (C) 2019 Jonathan Kliem <jonathan.kliem@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -69,13 +69,10 @@ AUTHOR:
 
 from memory_allocator                 cimport MemoryAllocator
 
-from sage.structure.element import is_Matrix
 from sage.matrix.matrix_dense cimport Matrix_dense
 
 from .list_of_faces                   cimport ListOfFaces
 from .face_data_structure             cimport face_next_atom, face_add_atom_safe, facet_set_coatom, face_clear
-from .face_list_data_structure        cimport face_list_t
-
 
 cdef extern from "Python.h":
     int unlikely(int) nogil  # Defined by Cython

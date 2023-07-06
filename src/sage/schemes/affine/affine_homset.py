@@ -41,7 +41,7 @@ from sage.rings.cc import CC
 from sage.rings.rational_field import is_RationalField
 from sage.categories.fields import Fields
 from sage.categories.number_fields import NumberFields
-from sage.rings.finite_rings.finite_field_constructor import is_FiniteField
+from sage.rings.finite_rings.finite_field_base import FiniteField
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.schemes.generic.homset import SchemeHomset_points, SchemeHomset_generic
 
@@ -210,14 +210,14 @@ class SchemeHomset_points_affine(SchemeHomset_points):
         EXAMPLES: The bug reported at #11526 is fixed::
 
             sage: A2 = AffineSpace(ZZ, 2)
-            sage: F = GF(3)
-            sage: A2(F).points()
+            sage: F = GF(3)                                                             # optional - sage.rings.finite_rings
+            sage: A2(F).points()                                                        # optional - sage.rings.finite_rings
             [(0, 0), (0, 1), (0, 2), (1, 0), (1, 1), (1, 2), (2, 0), (2, 1), (2, 2)]
 
         ::
 
             sage: A.<x,y> = ZZ[]
-            sage: I = A.ideal(x^2-y^2-1)
+            sage: I = A.ideal(x^2 - y^2 - 1)
             sage: V = AffineSpace(ZZ, 2)
             sage: X = V.subscheme(I)
             sage: M = X(ZZ)
@@ -227,9 +227,9 @@ class SchemeHomset_points_affine(SchemeHomset_points):
         ::
 
             sage: u = QQ['u'].0
-            sage: K.<v> = NumberField(u^2 + 3)
-            sage: A.<x,y> = AffineSpace(K, 2)
-            sage: len(A(K).points(bound=2))
+            sage: K.<v> = NumberField(u^2 + 3)                                          # optional - sage.rings.number_field
+            sage: A.<x,y> = AffineSpace(K, 2)                                           # optional - sage.rings.number_field
+            sage: len(A(K).points(bound=2))                                             # optional - sage.rings.number_field
             1849
 
         ::
@@ -244,16 +244,20 @@ class SchemeHomset_points_affine(SchemeHomset_points):
             sage: A.<x,y> = AffineSpace(CC, 2)
             sage: E = A.subscheme([y^3 - x^3 - x^2, x*y])
             sage: E(A.base_ring()).points()
-            verbose 0 (...: affine_homset.py, points) Warning: computations in the numerical fields are inexact;points may be computed partially or incorrectly.
+            verbose 0 (...: affine_homset.py, points)
+            Warning: computations in the numerical fields are inexact;points
+            may be computed partially or incorrectly.
             [(-1.00000000000000, 0.000000000000000),
-            (0.000000000000000, 0.000000000000000)]
+             (0.000000000000000, 0.000000000000000)]
 
         ::
 
             sage: A.<x1,x2> = AffineSpace(CDF, 2)
             sage: E = A.subscheme([x1^2 + x2^2 + x1*x2, x1 + x2])
             sage: E(A.base_ring()).points()
-            verbose 0 (...: affine_homset.py, points) Warning: computations in the numerical fields are inexact;points may be computed partially or incorrectly.
+            verbose 0 (...: affine_homset.py, points)
+            Warning: computations in the numerical fields are inexact;points
+            may be computed partially or incorrectly.
             [(0.0, 0.0)]
         """
         from sage.schemes.affine.affine_space import is_AffineSpace
@@ -354,7 +358,7 @@ class SchemeHomset_points_affine(SchemeHomset_points):
                 raise TypeError("a positive bound B (= %s) must be specified"%B)
             from sage.schemes.affine.affine_rational_point import enum_affine_number_field
             return enum_affine_number_field(self, bound=B, tolerance=tol, precision=prec)
-        elif is_FiniteField(R):
+        elif isinstance(R, FiniteField):
             from sage.schemes.affine.affine_rational_point import enum_affine_finite_field
             return enum_affine_finite_field(self)
         else:
@@ -388,14 +392,14 @@ class SchemeHomset_points_affine(SchemeHomset_points):
 
         EXAMPLES::
 
-            sage: K.<v> = QuadraticField(3)
-            sage: A.<x,y> = AffineSpace(K, 2)
-            sage: X = A.subscheme([x^3 - v^2*y, y - v*x^2 + 3])
-            sage: L = X(K).numerical_points(F=RR); L  # abs tol 1e-14
+            sage: K.<v> = QuadraticField(3)                                             # optional - sage.rings.number_field
+            sage: A.<x,y> = AffineSpace(K, 2)                                           # optional - sage.rings.number_field
+            sage: X = A.subscheme([x^3 - v^2*y, y - v*x^2 + 3])                         # optional - sage.rings.number_field
+            sage: L = X(K).numerical_points(F=RR); L  # abs tol 1e-14                   # optional - sage.rings.number_field
             [(-1.18738247880014, -0.558021142104134),
              (1.57693558184861, 1.30713548084184),
              (4.80659931965815, 37.0162574656220)]
-            sage: L[0].codomain()
+            sage: L[0].codomain()                                                       # optional - sage.rings.number_field
             Affine Space of dimension 2 over Real Field with 53 bits of precision
 
         ::

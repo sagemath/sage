@@ -225,21 +225,21 @@ cdef class CCSpline:
         cdef int N, i, k
         N = len(pts)
         yvec = np.zeros(N, dtype=np.complex128)
-        for i in xrange(N):
+        for i in range(N):
             yvec[i] = 3 * (pts[(i - 1) % N] - 2*pts[i] + pts[(i + 1) % N])
         bmat = np.zeros([N, N], dtype=np.complex128)
-        for i in xrange(N):
+        for i in range(N):
             bmat[i, i] = 4
             bmat[(i - 1) % N, i] = 1
             bmat[(i + 1) % N, i] = 1
         bvec = (np.linalg.solve(bmat, yvec))
         cvec = np.zeros(N, dtype=np.complex128)
-        for i in xrange(N):
+        for i in range(N):
             cvec[i] = (pts[(i + 1) % N] - pts[i] - 1.0/3.0 *
                        bvec[(i + 1) % N] - 2./3. * bvec[i])
         dvec = np.array(pts, dtype=np.complex128)
         avec = np.zeros(N, dtype=np.complex128)
-        for i in xrange(N):
+        for i in range(N):
             avec[i] = 1.0/3.0 * (bvec[(i + 1) % N] - bvec[i])
         self.avec = avec
         self.bvec = bvec

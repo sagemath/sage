@@ -512,7 +512,7 @@ class R(ExtraTabCompletion, Interface):
              sage: my_r._initialized  # optional - rpy2
              True
 
-        And on package import:
+        And on package import::
 
              sage: my_r = R()  # optional - rpy2
              sage: my_r._initialized  # optional - rpy2
@@ -521,7 +521,7 @@ class R(ExtraTabCompletion, Interface):
              sage: my_r._initialized  # optional - rpy2
              True
 
-        And when fetching help pages:
+        And when fetching help pages::
 
              sage: my_r = R()  # optional - rpy2
              sage: my_r._initialized  # optional - rpy2
@@ -723,7 +723,6 @@ class R(ExtraTabCompletion, Interface):
             if attrname[:1] == "_":
                 raise AttributeError("Attribute {} is not allowed to start with an underscore.".format(attrname))
             return RFunction(self, attrname)
-
 
     def _read_in_file_command(self, filename):
         r"""
@@ -1324,7 +1323,6 @@ class R(ExtraTabCompletion, Interface):
         self._lazy_init()
         return str(robjects.r(code)).rstrip()
 
-
     def _r_to_sage_name(self, s):
         """
         Returns a Sage/Python identifier from an R one.  This involves
@@ -1801,7 +1799,6 @@ class RElement(ExtraTabCompletion, InterfaceElement):
         with localconverter(P._r_to_sage_converter) as cv:
             parsed = robjects.r(self.name())
             return parsed
-
 
     def _latex_(self):
         r"""

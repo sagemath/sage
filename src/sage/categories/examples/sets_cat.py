@@ -1,3 +1,4 @@
+# sage.doctest: optional - sage.libs.pari
 """
 Examples of sets
 """
@@ -149,9 +150,6 @@ class PrimeNumbers(UniqueRepresentation, Parent):
     element_class = Integer
 
 
-
-
-
 from sage.misc.abstract_method import abstract_method
 class PrimeNumbers_Abstract(UniqueRepresentation, Parent):
     """
@@ -160,7 +158,7 @@ class PrimeNumbers_Abstract(UniqueRepresentation, Parent):
     datastructure will then be constructed by inheriting from
     :class:`PrimeNumbers_Abstract`.
 
-    This is used by:
+    This is used by::
 
         sage: P = Sets().example("facade")
         sage: P = Sets().example("inherits")
@@ -541,6 +539,7 @@ class PrimeNumbers_Wrapper(PrimeNumbers_Abstract):
         return self.element_class(self, Integer(e))
 
     from sage.structure.element_wrapper import ElementWrapper
+
     class Element (ElementWrapper, PrimeNumbers_Abstract.Element):
         def _integer_(self, IntRing):
             """
@@ -554,9 +553,6 @@ class PrimeNumbers_Wrapper(PrimeNumbers_Abstract):
                 47
             """
             return IntRing(self.value)
-
-
-
 
 
 #*************************************************************************#

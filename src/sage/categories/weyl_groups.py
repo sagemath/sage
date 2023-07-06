@@ -1,3 +1,4 @@
+# sage.doctest: optional - sage.combinat sage.groups
 r"""
 Weyl Groups
 """
@@ -182,13 +183,15 @@ class WeylGroups(Category_singleton):
                 sage: x = W.from_reduced_word([1])
                 sage: y = W.w0
                 sage: W.bruhat_cone(x, y)
-                A 2-dimensional polyhedron in QQ^3 defined as the convex hull of 1 vertex and 2 rays
+                A 2-dimensional polyhedron in QQ^3
+                 defined as the convex hull of 1 vertex and 2 rays
 
                 sage: W = WeylGroup(['E',6])
                 sage: x = W.one()
                 sage: y = W.w0
                 sage: W.bruhat_cone(x, y, side='lower')
-                A 6-dimensional polyhedron in QQ^8 defined as the convex hull of 1 vertex and 6 rays
+                A 6-dimensional polyhedron in QQ^8
+                 defined as the convex hull of 1 vertex and 6 rays
 
             TESTS::
 
@@ -242,7 +245,9 @@ class WeylGroups(Category_singleton):
                 sage: W = WeylGroup(['A',3], prefix="s")
                 sage: g = W.quantum_bruhat_graph((1,3))
                 sage: g
-                Parabolic Quantum Bruhat Graph of Weyl Group of type ['A', 3] (as a matrix group acting on the ambient space) for nodes (1, 3): Digraph on 6 vertices
+                Parabolic Quantum Bruhat Graph of Weyl Group of type ['A', 3]
+                 (as a matrix group acting on the ambient space)
+                 for nodes (1, 3): Digraph on 6 vertices
                 sage: g.vertices(sort=True)
                 [s2*s3*s1*s2, s3*s1*s2, s1*s2, s3*s2, s2, 1]
                 sage: g.edges(sort=True)
@@ -349,7 +354,6 @@ class WeylGroups(Category_singleton):
 
             return self in self.parent().pieri_factors()
 
-
         def left_pieri_factorizations(self, max_length=None):
             r"""
             Returns all factorizations of ``self`` as `uv`, where `u`
@@ -386,14 +390,16 @@ class WeylGroups(Category_singleton):
                 3
                 sage: W.from_reduced_word([1,2]).left_pieri_factorizations().cardinality()
                 2
-                sage: [W.from_reduced_word([1,2]).left_pieri_factorizations(max_length=i).cardinality() for i in [-1, 0, 1, 2]]
+                sage: [W.from_reduced_word([1,2]).left_pieri_factorizations(max_length=i).cardinality()
+                ....:  for i in [-1, 0, 1, 2]]
                 [0, 1, 2, 2]
 
                 sage: W = WeylGroup(['C',4,1])
                 sage: w = W.from_reduced_word([0,3,2,1,0])
                 sage: w.left_pieri_factorizations().cardinality()
                 7
-                sage: [(u.reduced_word(),v.reduced_word()) for (u,v) in w.left_pieri_factorizations()]
+                sage: [(u.reduced_word(),v.reduced_word())
+                ....:  for (u,v) in w.left_pieri_factorizations()]
                 [([], [3, 2, 0, 1, 0]),
                 ([0], [3, 2, 1, 0]),
                 ([3], [2, 0, 1, 0]),
@@ -461,9 +467,11 @@ class WeylGroups(Category_singleton):
                 2*x1^3 + x1*x2
                 sage: W.from_reduced_word([1,2,1,0]).stanley_symmetric_function_as_polynomial()
                 3*x1^4 + 2*x1^2*x2 + x2^2 + x1*x3
-                sage: W.from_reduced_word([1,2,3,1,2,1,0]).stanley_symmetric_function_as_polynomial() # long time
+                sage: x = W.from_reduced_word([1,2,3,1,2,1,0])
+                sage: x.stanley_symmetric_function_as_polynomial()  # long time
                 22*x1^7 + 11*x1^5*x2 + 5*x1^3*x2^2 + 3*x1^4*x3 + 2*x1*x2^3 + x1^2*x2*x3
-                sage: W.from_reduced_word([3,1,2,0,3,1,0]).stanley_symmetric_function_as_polynomial() # long time
+                sage: y = W.from_reduced_word([3,1,2,0,3,1,0])
+                sage: y.stanley_symmetric_function_as_polynomial()  # long time
                 8*x1^7 + 4*x1^5*x2 + 2*x1^3*x2^2 + x1*x2^3
 
                 sage: W = WeylGroup(['C',3,1])
@@ -494,7 +502,6 @@ class WeylGroups(Category_singleton):
                            for (u,v) in self.left_pieri_factorizations(max_length)
                            if u != W.one()))
 
-
         def stanley_symmetric_function(self):
             r"""
             Return the affine Stanley symmetric function indexed by ``self``.
@@ -518,10 +525,12 @@ class WeylGroups(Category_singleton):
 
                 sage: W = WeylGroup(['A', 3, 1])
                 sage: W.from_reduced_word([3,1,2,0,3,1,0]).stanley_symmetric_function()
-                8*m[1, 1, 1, 1, 1, 1, 1] + 4*m[2, 1, 1, 1, 1, 1] + 2*m[2, 2, 1, 1, 1] + m[2, 2, 2, 1]
+                8*m[1, 1, 1, 1, 1, 1, 1] + 4*m[2, 1, 1, 1, 1, 1]
+                + 2*m[2, 2, 1, 1, 1] + m[2, 2, 2, 1]
                 sage: A = AffinePermutationGroup(['A',3,1])
                 sage: A.from_reduced_word([3,1,2,0,3,1,0]).stanley_symmetric_function()
-                8*m[1, 1, 1, 1, 1, 1, 1] + 4*m[2, 1, 1, 1, 1, 1] + 2*m[2, 2, 1, 1, 1] + m[2, 2, 2, 1]
+                8*m[1, 1, 1, 1, 1, 1, 1] + 4*m[2, 1, 1, 1, 1, 1]
+                + 2*m[2, 2, 1, 1, 1] + m[2, 2, 2, 1]
 
                 sage: W = WeylGroup(['C',3,1])
                 sage: W.from_reduced_word([0,2,1,0]).stanley_symmetric_function()
@@ -539,10 +548,11 @@ class WeylGroups(Category_singleton):
                 sage: A = AffinePermutationGroup(['A',4,1])
                 sage: a = A([-2,0,1,4,12])
                 sage: a.stanley_symmetric_function()
-                6*m[1, 1, 1, 1, 1, 1, 1, 1] + 5*m[2, 1, 1, 1, 1, 1, 1] + 4*m[2, 2, 1, 1, 1, 1]
-                + 3*m[2, 2, 2, 1, 1] + 2*m[2, 2, 2, 2] + 4*m[3, 1, 1, 1, 1, 1] + 3*m[3, 2, 1, 1, 1]
-                + 2*m[3, 2, 2, 1] + 2*m[3, 3, 1, 1] + m[3, 3, 2] + 3*m[4, 1, 1, 1, 1] + 2*m[4, 2, 1, 1]
-                + m[4, 2, 2] + m[4, 3, 1]
+                6*m[1, 1, 1, 1, 1, 1, 1, 1] + 5*m[2, 1, 1, 1, 1, 1, 1]
+                + 4*m[2, 2, 1, 1, 1, 1] + 3*m[2, 2, 2, 1, 1] + 2*m[2, 2, 2, 2]
+                + 4*m[3, 1, 1, 1, 1, 1] + 3*m[3, 2, 1, 1, 1] + 2*m[3, 2, 2, 1]
+                + 2*m[3, 3, 1, 1] + m[3, 3, 2] + 3*m[4, 1, 1, 1, 1]
+                + 2*m[4, 2, 1, 1] + m[4, 2, 2] + m[4, 3, 1]
 
             One more example (:trac:`14095`)::
 
@@ -809,7 +819,8 @@ class WeylGroups(Category_singleton):
                 sage: w.quantum_bruhat_successors([1,3])
                 Traceback (most recent call last):
                 ...
-                ValueError: s2*s3 is not of minimum length in its coset of the parabolic subgroup generated by the reflections (1, 3)
+                ValueError: s2*s3 is not of minimum length in its coset
+                of the parabolic subgroup generated by the reflections (1, 3)
             """
             W = self.parent()
             if not W.cartan_type().is_finite():

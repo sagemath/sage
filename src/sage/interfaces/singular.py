@@ -1656,15 +1656,19 @@ class SingularElement(ExtraTabCompletion, ExpectElement, sage.interfaces.abc.Sin
             br = ZZ
             is_extension = False
         elif charstr[0] in ['0', 'QQ']:
-            from sage.all import QQ
+            from sage.rings.rational_field import QQ
             br = QQ
         elif charstr[0].startswith('Float'):
-            from sage.all import RealField, ceil, log
+            from sage.rings.real_mpfr import RealField
+            from sage.functions.other import ceil
+            from sage.misc.functional import log
             prec = singular.eval('ringlist(basering)[1][2][1]')
             br = RealField(ceil((ZZ(prec)+1)/log(2,10)))
             is_extension = False
         elif charstr[0]=='complex':
-            from sage.all import ComplexField, ceil, log
+            from sage.rings.complex_mpfr import ComplexField
+            from sage.functions.other import ceil
+            from sage.misc.functional import log
             prec = singular.eval('ringlist(basering)[1][2][1]')
             br = ComplexField(ceil((ZZ(prec)+1)/log(2,10)))
             is_extension = False
@@ -1684,7 +1688,7 @@ class SingularElement(ExtraTabCompletion, ExpectElement, sage.interfaces.abc.Sin
         if is_extension:
             minpoly = singular.eval('minpoly')
             if minpoly == '0':
-                from sage.all import Frac
+                from sage.rings.fraction_field import FractionField as Frac
                 BR = Frac(br[charstr[1]])
             else:
                 is_short = singular.eval('short')
@@ -1701,7 +1705,7 @@ class SingularElement(ExtraTabCompletion, ExpectElement, sage.interfaces.abc.Sin
         # Now, we form the polynomial ring over BR with the given variables,
         # using Singular's term order
         from sage.rings.polynomial.term_order import termorder_from_singular
-        from sage.all import PolynomialRing
+        from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
         # Meanwhile Singulars quotient rings are also of 'ring' type, not 'qring' as it was in the past.
         # To find out if a singular ring is a quotient ring or not checking for ring type does not help
         # and instead of that we check if the quotient ring is zero or not:
@@ -1841,14 +1845,14 @@ class SingularElement(ExtraTabCompletion, ExpectElement, sage.interfaces.abc.Sin
                 out = R(self)
                 self.parent().eval('short=%s'%is_short)
                 return out
-            singular_poly_list = self.parent().eval("string(coef(%s,%s))" % (\
-                    self.name(),variable_str)).split(",")
+            singular_poly_list = self.parent().eval("string(coef(%s,%s))" % (
+                self.name(),variable_str)).split(",")
             self.parent().eval('short=%s'%is_short)
         else:
             if isinstance(R, MPolynomialRing_libsingular):
                 return R(self)
-            singular_poly_list = self.parent().eval("string(coef(%s,%s))" % (\
-                    self.name(),variable_str)).split(",")
+            singular_poly_list = self.parent().eval("string(coef(%s,%s))" % (
+                self.name(),variable_str)).split(",")
 
         # Directly treat constants
         if singular_poly_list[0] in ['1', '(1.000e+00)']:
@@ -1902,7 +1906,7 @@ class SingularElement(ExtraTabCompletion, ExpectElement, sage.interfaces.abc.Sin
                 exp = int(0)
 
                 if monomial not in ['1', '(1.000e+00)']:
-                    term =  monomial.split("^")
+                    term = monomial.split("^")
                     if len(term)==int(2):
                         exp = int(term[1])
                     else:
@@ -2056,7 +2060,7 @@ class SingularElement(ExtraTabCompletion, ExpectElement, sage.interfaces.abc.Sin
         elif typ == 'intmat':
             from sage.matrix.constructor import matrix
             from sage.rings.integer_ring import ZZ
-            A =  matrix(ZZ, int(self.nrows()), int(self.ncols()))
+            A = matrix(ZZ, int(self.nrows()), int(self.ncols()))
             for i in range(A.nrows()):
                 for j in range(A.ncols()):
                     A[i,j] = sage.rings.integer.Integer(str(self[i+1,j+1]))
@@ -2401,7 +2405,7 @@ def generate_docstring_dictionary():
                     a, b = m.groups()
                     node_names[a] = b.strip()
 
-            if line == "6 Index\n":
+            if line in ("6 Index\n", "F Index\n"):
                 in_node = False
 
     nodes[curr_node] = "".join(L)  # last node
@@ -2492,7 +2496,7 @@ class SingularGBLogPrettyPrinter:
     cri_hilb = re.compile("h")          # used Hilbert series criterion
     hig_corn = re.compile(r"H\(\d+\)")   # found a 'highest corner' of degree d, no need to consider higher degrees
     num_crit = re.compile(r"\(\d+\)")    # n critical pairs are still to be reduced
-    red_num =  re.compile(r"\(S:\d+\)")  # doing complete reduction of n elements
+    red_num = re.compile(r"\(S:\d+\)")  # doing complete reduction of n elements
     deg_lead = re.compile(r"\d+")        # the degree of the leading terms is currently d
 
     # SlimGB

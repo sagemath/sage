@@ -11,14 +11,14 @@ AUTHORS:
    ``J_inv_ZZ`` is the main function used to determine all Fourier expansions.
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2013-2014 Jonas Jermann <jjermann2@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.arith.misc import bernoulli, sigma, rising_factorial
 from sage.misc.cachefunc import cached_method
@@ -115,9 +115,9 @@ class MFSeriesConstructor(SageObject, UniqueRepresentation):
             Power series constructor for Hecke modular forms for n=+Infinity with (basic series) precision 10
         """
 
-        self._group          = group
-        self._prec           = prec
-        self._series_ring    = PowerSeriesRing(QQ,'q',default_prec=self._prec)
+        self._group = group
+        self._prec = prec
+        self._series_ring = PowerSeriesRing(QQ,'q',default_prec=self._prec)
 
     def _repr_(self):
         r"""
@@ -210,7 +210,7 @@ class MFSeriesConstructor(SageObject, UniqueRepresentation):
             q^-1 + 3/8 + 69/1024*q + O(q^2)
         """
 
-        F1       = lambda a,b:   self._series_ring(
+        F1 = lambda a,b:   self._series_ring(
                        [ ZZ(0) ]
                        + [
                            rising_factorial(a,k) * rising_factorial(b,k) / (ZZ(k).factorial())**2
@@ -222,23 +222,23 @@ class MFSeriesConstructor(SageObject, UniqueRepresentation):
                        ZZ(self._prec+1)
                    )
 
-        F        = lambda a,b,c: self._series_ring(
+        F = lambda a,b,c: self._series_ring(
                        [
                          rising_factorial(a,k) * rising_factorial(b,k) / rising_factorial(c,k) / ZZ(k).factorial()
                          for k in range(ZZ(0), ZZ(self._prec+1))
                        ],
                        ZZ(self._prec+1)
                    )
-        a        = self._group.alpha()
-        b        = self._group.beta()
-        Phi      = F1(a,b) / F(a,b,ZZ(1))
-        q        = self._series_ring.gen()
+        a = self._group.alpha()
+        b = self._group.beta()
+        Phi = F1(a,b) / F(a,b,ZZ(1))
+        q = self._series_ring.gen()
 
         # the current implementation of power series reversion is slow
         # J_inv_ZZ = ZZ(1) / ((q*Phi.exp()).reverse())
 
-        temp_f   = (q*Phi.exp()).polynomial()
-        new_f    = temp_f.revert_series(temp_f.degree()+1)
+        temp_f = (q*Phi.exp()).polynomial()
+        new_f = temp_f.revert_series(temp_f.degree()+1)
         J_inv_ZZ = ZZ(1) / (new_f + O(q**(temp_f.degree()+1)))
 
         return J_inv_ZZ
@@ -341,7 +341,7 @@ class MFSeriesConstructor(SageObject, UniqueRepresentation):
         if (n == infinity):
             f_inf_ZZ = ((-q*self.J_inv_ZZ().derivative())**2/(self.J_inv_ZZ()**2*(self.J_inv_ZZ()-1))).power_series()
         else:
-            temp_expr  = ((-q*self.J_inv_ZZ().derivative())**(2*n)/(self.J_inv_ZZ()**(2*n-2)*(self.J_inv_ZZ()-1)**n)/q**(n-2)).power_series()
+            temp_expr = ((-q*self.J_inv_ZZ().derivative())**(2*n)/(self.J_inv_ZZ()**(2*n-2)*(self.J_inv_ZZ()-1)**n)/q**(n-2)).power_series()
             f_inf_ZZ = (temp_expr.log()/(n-2)).exp()*q
         return f_inf_ZZ
 
@@ -369,17 +369,15 @@ class MFSeriesConstructor(SageObject, UniqueRepresentation):
             sage: MFSeriesConstructor(group=infinity, prec=3).G_inv_ZZ()
             q^-1 - 1/8 - 59/1024*q + O(q^2)
         """
-
         n = self.hecke_n()
         # Note that G_inv is not a weakly holomorphic form (because of the behavior at -1)
-        if (n == infinity):
+        if n == infinity:
             q = self._series_ring.gen()
             temp_expr = (self.J_inv_ZZ()/self.f_inf_ZZ()*q**2).power_series()
             return 1/q*self.f_i_ZZ()*(temp_expr.log()/2).exp()
         elif (ZZ(2).divides(n)):
             return self.f_i_ZZ()*(self.f_rho_ZZ()**(ZZ(n/ZZ(2))))/self.f_inf_ZZ()
         else:
-            #return self._qseries_ring([])
             raise ValueError("G_inv doesn't exist for n={}.".format(self.hecke_n()))
 
     @cached_method
@@ -563,7 +561,7 @@ class MFSeriesConstructor(SageObject, UniqueRepresentation):
         if k == 0:
             return self._series_ring(1)
 
-        M    = ZZ(self.group().lam()**2)
+        M = ZZ(self.group().lam()**2)
         lamk = M**(ZZ(k/2))
         dval = self.group().dvalue()
 
@@ -575,7 +573,7 @@ class MFSeriesConstructor(SageObject, UniqueRepresentation):
                 return ZZ(1)
 
             factor = -2*k / QQ(bernoulli(k)) / lamk
-            sum1   = sigma(m, k-1)
+            sum1 = sigma(m, k-1)
             if M.divides(m):
                 sum2 = (lamk-1) * sigma(ZZ(m/M), k-1)
             else:

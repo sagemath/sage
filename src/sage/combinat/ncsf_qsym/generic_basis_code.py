@@ -34,7 +34,7 @@ from sage.combinat.composition import Compositions, Composition
 from sage.combinat.partition import Partition
 from sage.combinat.permutation import Permutations
 from sage.rings.integer import Integer
-from sage.categories.all import AlgebrasWithBasis
+from sage.categories.algebras_with_basis import AlgebrasWithBasis
 from sage.misc.lazy_attribute import lazy_attribute
 from sage.misc.abstract_method import abstract_method
 from sage.categories.category_types import Category_over_base_ring
@@ -234,7 +234,7 @@ class BasesOfQSymOrNCSF(Category_realization_of_parent):
             return (-ring.one())**(n)*self.sum_of_terms(
                 (compo, ring((-1)**(len(compo)))) for compo in Compositions(n) )
 
-        def alternating_sum_of_finer_compositions(self, composition, conjugate = False):
+        def alternating_sum_of_finer_compositions(self, composition, conjugate=False):
             """
             Return the alternating sum of finer compositions in a basis of the
             non-commutative symmetric functions.
@@ -472,8 +472,9 @@ class BasesOfQSymOrNCSF(Category_realization_of_parent):
                 x = self(x)
                 y = self.dual()(y)
                 v = 1 if side == 'left' else 0
-                return self.sum(coeff * y[IJ[1-v]] * self[IJ[v]] \
-                                for (IJ, coeff) in x.coproduct() if IJ[1-v] in y.support())
+                return self.sum(coeff * y[IJ[1-v]] * self[IJ[v]]
+                                for (IJ, coeff) in x.coproduct()
+                                if IJ[1-v] in y.support())
             else:
                 return self._skew_by_coercion(x, y, side=side)
 
@@ -710,9 +711,9 @@ class BasesOfQSymOrNCSF(Category_realization_of_parent):
             # TODO: generalize to keys indexing the basis of the graded component
             from sage.combinat.composition import Compositions
             return matrix(self.base_ring(),
-                    [[self.duality_pairing(self[I], basis[J]) \
-                            for J in Compositions(degree)] \
-                            for I in Compositions(degree)])
+                          [[self.duality_pairing(self[I], basis[J])
+                            for J in Compositions(degree)]
+                           for I in Compositions(degree)])
 
         def counit_on_basis(self, I):
             r"""
@@ -995,7 +996,7 @@ class AlgebraMorphism(ModuleMorphismByLinearity): # Find a better name
     A class for algebra morphism defined on a free algebra from the image of the generators
     """
 
-    def __init__(self, domain, on_generators, position = 0, codomain = None, category = None, anti = False):
+    def __init__(self, domain, on_generators, position=0, codomain=None, category=None, anti=False):
         """
         Given a map on the multiplicative basis of a free algebra, this method
         returns the algebra morphism that is the linear extension of its image

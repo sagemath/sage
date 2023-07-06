@@ -37,7 +37,7 @@ We can also create endomorphisms::
 
 from sage.rings.homset import RingHomset_generic
 from sage.rings.finite_rings.hom_finite_field import FiniteFieldHomomorphism_generic
-from sage.rings.finite_rings.finite_field_base import is_FiniteField
+from sage.rings.finite_rings.finite_field_base import FiniteField
 from sage.rings.integer import Integer
 from sage.rings.morphism import RingHomomorphism_im_gens
 from sage.structure.sequence import Sequence
@@ -96,7 +96,7 @@ class FiniteFieldHomset(RingHomset_generic):
             if self.domain().degree() == 1:
                 from sage.rings.finite_rings.hom_prime_finite_field import FiniteFieldHomomorphism_prime
                 return FiniteFieldHomomorphism_prime(self, im_gens, base_map=base_map, check=check)
-            if is_FiniteField(self.codomain()):
+            if isinstance(self.codomain(), FiniteField):
                 return FiniteFieldHomomorphism_generic(self, im_gens, base_map=base_map, check=check)
             # Currently, FiniteFieldHomomorphism_generic does not work if
             # the codomain is not derived from the finite field base class;

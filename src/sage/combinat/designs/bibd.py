@@ -50,12 +50,16 @@ Functions
 ---------
 """
 
+from sage.arith.misc import binomial, is_prime_power, is_square
 from sage.categories.sets_cat import EmptySetError
+from sage.misc.lazy_import import lazy_import
 from sage.misc.unknown import Unknown
+
 from .design_catalog import transversal_design  # type:ignore
-from sage.arith.all import binomial, is_prime_power
-from .group_divisible_designs import GroupDivisibleDesign
 from .designs_pyx import is_pairwise_balanced_design
+from .group_divisible_designs import GroupDivisibleDesign
+
+lazy_import('sage.schemes.plane_conics.constructor', 'Conic')
 
 
 def biplane(n, existence=False):
@@ -84,7 +88,7 @@ def biplane(n, existence=False):
 
     EXAMPLES::
 
-        sage: designs.biplane(4)
+        sage: designs.biplane(4)                                                        # optional - sage.rings.finite_rings
         (16,6,2)-Balanced Incomplete Block Design
         sage: designs.biplane(7, existence=True)
         True
@@ -333,7 +337,6 @@ def balanced_incomplete_block_design(v, k, lambd=1, existence=False, use_LJCR=Fa
                 else:
                     return BIBD(B.ground_set(), B.blocks(), k=k, lambd=1, copy=False)
 
-
     if ( (k+lambd)*(k+lambd-1) == lambd*(v+k+lambd-1) and
          balanced_incomplete_block_design(v+k+lambd, k+lambd, lambd, existence=True) is True):
         # By removing a block and all points of that block from the
@@ -414,8 +417,6 @@ def BruckRyserChowla_check(v, k, lambd):
         True
 
     """
-    from sage.arith.misc import is_square
-    from sage.schemes.plane_conics.constructor import Conic
     from sage.rings.rational_field import QQ
 
     # design is not symmetric
@@ -661,7 +662,6 @@ def BIBD_from_TD(v,k,existence=False):
     return BIBD
 
 
-
 def BIBD_from_difference_family(G, D, lambd=None, check=True):
     r"""
     Return the BIBD associated to the difference family ``D`` on the group ``G``.
@@ -774,8 +774,8 @@ def v_4_1_BIBD(v, check=True):
 
         sage: from sage.combinat.designs.bibd import v_4_1_BIBD  # long time
         sage: for n in range(13,100):                            # long time
-        ....:    if n%12 in [1,4]:                               # long time
-        ....:       _ = v_4_1_BIBD(n, check = True)              # long time
+        ....:    if n%12 in [1,4]:
+        ....:       _ = v_4_1_BIBD(n, check = True)
 
     TESTS:
 
@@ -789,8 +789,8 @@ def v_4_1_BIBD(v, check=True):
     Check some larger `(v,4,1)`-BIBD (see :trac:`17557`)::
 
         sage: for v in range(400):                                      # long time
-        ....:     if v%12 in [1,4]:                                     # long time
-        ....:         _ = designs.balanced_incomplete_block_design(v,4) # long time
+        ....:     if v%12 in [1,4]:
+        ....:         _ = designs.balanced_incomplete_block_design(v,4)
     """
     k = 4
     if v == 0:
@@ -1038,7 +1038,7 @@ def _PBD_4_5_8_9_12_closure(B):
     BB = []
     for X in B:
         if len(X) not in [4,5,8,9,12]:
-            PBD = PBD_4_5_8_9_12(len(X), check = False)
+            PBD = PBD_4_5_8_9_12(len(X), check=False)
             X = [[X[i] for i in XX] for XX in PBD]
             BB.extend(X)
         else:
@@ -1264,7 +1264,7 @@ def BIBD_5q_5_for_q_prime_power(q):
 
         sage: from sage.combinat.designs.bibd import BIBD_5q_5_for_q_prime_power
         sage: for q in [25, 45, 65, 85, 125, 145, 185, 205, 305, 405, 605]: # long time
-        ....:     _ = BIBD_5q_5_for_q_prime_power(q/5)                      # long time
+        ....:     _ = BIBD_5q_5_for_q_prime_power(q/5)
     """
     from sage.rings.finite_rings.finite_field_constructor import FiniteField
 
@@ -1316,14 +1316,14 @@ def BIBD_from_arc_in_desarguesian_projective_plane(n,k,existence=False):
 
         sage: from sage.combinat.designs.bibd import BIBD_from_arc_in_desarguesian_projective_plane
         sage: from sage.combinat.designs.bibd import BalancedIncompleteBlockDesign
-        sage: D = BIBD_from_arc_in_desarguesian_projective_plane(232,8)
-        sage: BalancedIncompleteBlockDesign(232,D)
+        sage: D = BIBD_from_arc_in_desarguesian_projective_plane(232,8)                 # optional - sage.libs.gap sage.modules sage.rings.finite_rings
+        sage: BalancedIncompleteBlockDesign(232,D)                                      # optional - sage.libs.gap sage.modules sage.rings.finite_rings
         (232,8,1)-Balanced Incomplete Block Design
 
     A `(120,8,1)`-BIBD::
 
-        sage: D = BIBD_from_arc_in_desarguesian_projective_plane(120,8)
-        sage: BalancedIncompleteBlockDesign(120,D)
+        sage: D = BIBD_from_arc_in_desarguesian_projective_plane(120,8)                 # optional - sage.libs.gap sage.modules sage.rings.finite_rings
+        sage: BalancedIncompleteBlockDesign(120,D)                                      # optional - sage.libs.gap sage.modules sage.rings.finite_rings
         (120,8,1)-Balanced Incomplete Block Design
 
     Other parameters::
@@ -1374,15 +1374,15 @@ def BIBD_from_arc_in_desarguesian_projective_plane(n,k,existence=False):
     from sage.libs.gap.libgap import libgap
     from sage.matrix.constructor import Matrix
 
-    K   = GF(q,'a')
+    K = GF(q,'a')
     one = K.one()
 
     # An irreducible quadratic form over K[X,Y]
     GO = libgap.GeneralOrthogonalGroup(-1,2,q)
-    M  = libgap.InvariantQuadraticForm(GO)['matrix']
-    M  = Matrix(M)
-    M  = M.change_ring(K)
-    Q  = lambda xx,yy : M[0,0]*xx**2+(M[0,1]+M[1,0])*xx*yy+M[1,1]*yy**2
+    M = libgap.InvariantQuadraticForm(GO)['matrix']
+    M = Matrix(M)
+    M = M.change_ring(K)
+    Q = lambda xx,yy : M[0,0]*xx**2+(M[0,1]+M[1,0])*xx*yy+M[1,1]*yy**2
 
     # Here, the additive subgroup H (of order n) of K mentioned in
     # [Denniston69] is the set of all elements of K of degree < log_n

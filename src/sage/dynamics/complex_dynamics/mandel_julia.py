@@ -167,7 +167,7 @@ def mandelbrot_plot(f=None, **kwds):
         sage: B.<c> = CC[]
         sage: R.<z> = B[]
         sage: f = z^5 + c
-        sage: mandelbrot_plot(f)
+        sage: mandelbrot_plot(f)  # long time
         500x500px 24-bit RGB image
 
     When the polynomial is defined over a multivariate polynomial ring it is
@@ -175,7 +175,7 @@ def mandelbrot_plot(f=None, **kwds):
 
         sage: R.<a,b> = CC[]
         sage: f = a^2 + b^3
-        sage: mandelbrot_plot(f, parameter=b)
+        sage: mandelbrot_plot(f, parameter=b)  # long time
         500x500px 24-bit RGB image
 
     Interact functionality is not implemented for general polynomial maps::
@@ -206,21 +206,21 @@ def mandelbrot_plot(f=None, **kwds):
 
     from ipywidgets.widgets import FloatSlider, IntSlider, ColorPicker, interact
     widgets = dict(
-                   x_center = FloatSlider(min=-1.0, max=1.0, step=EPS,
+                   x_center=FloatSlider(min=-1.0, max=1.0, step=EPS,
                                           value=x_center, description="Real center"),
-                   y_center = FloatSlider(min=-1.0, max=1.0, step=EPS,
+                   y_center=FloatSlider(min=-1.0, max=1.0, step=EPS,
                                           value=y_center, description="Imag center"),
-                   image_width = FloatSlider(min=EPS, max=4.0, step=EPS,
+                   image_width=FloatSlider(min=EPS, max=4.0, step=EPS,
                                              value=image_width, description="Width"),
-                   max_iteration = IntSlider(min=0, max=1000,
+                   max_iteration=IntSlider(min=0, max=1000,
                                              value=max_iteration, description="Iterations"),
-                   pixel_count = IntSlider(min=10, max=1000,
+                   pixel_count=IntSlider(min=10, max=1000,
                                            value=pixel_count, description="Pixels"),
-                   level_sep = IntSlider(min=1, max=20,
+                   level_sep=IntSlider(min=1, max=20,
                                          value=level_sep, description="Color sep"),
-                   color_num = IntSlider(min=1, max=100,
+                   color_num=IntSlider(min=1, max=100,
                                          value=number_of_colors, description="# Colors"),
-                   base_color = ColorPicker(value=Color(base_color).html_color(),
+                   base_color=ColorPicker(value=Color(base_color).html_color(),
                                             description="Base color"),
                    )
 
@@ -593,7 +593,7 @@ def julia_plot(f=None, **kwds):
 
         sage: R.<z> = CC[]
         sage: f = z^3 - z + 1
-        sage: julia_plot(f)
+        sage: julia_plot(f)  # long time
         500x500px 24-bit RGB image
 
     To display an interactive plot of the Julia set in the Notebook,
@@ -729,25 +729,25 @@ def julia_plot(f=None, **kwds):
             from ipywidgets.widgets import FloatSlider, IntSlider, \
                                            ColorPicker, interact
             widgets = dict(
-                c_real = FloatSlider(min=-2.0, max=2.0, step=EPS,
+                c_real=FloatSlider(min=-2.0, max=2.0, step=EPS,
                                   value=c_real, description="Real c"),
-                c_imag = FloatSlider(min=-2.0, max=2.0, step=EPS,
+                c_imag=FloatSlider(min=-2.0, max=2.0, step=EPS,
                                   value=c_imag, description="Imag c"),
-                x_center = FloatSlider(min=-1.0, max=1.0, step=EPS,
+                x_center=FloatSlider(min=-1.0, max=1.0, step=EPS,
                                   value=x_center, description="Real center"),
-                y_center = FloatSlider(min=-1.0, max=1.0, step=EPS,
+                y_center=FloatSlider(min=-1.0, max=1.0, step=EPS,
                                   value=y_center, description="Imag center"),
-                image_width = FloatSlider(min=EPS, max=4.0, step=EPS,
+                image_width=FloatSlider(min=EPS, max=4.0, step=EPS,
                                   value=image_width, description="Width"),
-                max_iteration = IntSlider(min=0, max=1000,
+                max_iteration=IntSlider(min=0, max=1000,
                                   value=max_iteration, description="Iterations"),
-                pixel_count = IntSlider(min=10, max=1000,
+                pixel_count=IntSlider(min=10, max=1000,
                                   value=pixel_count, description="Pixels"),
-                level_sep = IntSlider(min=1, max=20,
+                level_sep=IntSlider(min=1, max=20,
                                   value=level_sep, description="Color sep"),
-                color_num = IntSlider(min=1, max=100,
+                color_num=IntSlider(min=1, max=100,
                                   value=number_of_colors, description="# Colors"),
-                base_color = ColorPicker(value=base_color.html_color(),
+                base_color=ColorPicker(value=base_color.html_color(),
                                          description="Base color"),
             )
             if mandelbrot:

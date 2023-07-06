@@ -1,3 +1,4 @@
+# sage.doctest: optional - sage.groups
 r"""
 Spinor genus computations.
 
@@ -27,7 +28,8 @@ AUTHORS:
 
 from sage.groups.abelian_gps.abelian_group_gap import (AbelianGroupGap,
                                                        AbelianGroupElement_gap)
-from sage.rings.all import ZZ, QQ
+from sage.rings.integer_ring import ZZ
+from sage.rings.rational_field import QQ
 
 
 class SpinorOperator(AbelianGroupElement_gap):
@@ -200,7 +202,7 @@ class SpinorOperators(AbelianGroupGap):
 
         OUTPUT:
 
-        If a prime `p` is given the method returns
+        If a prime `p` is given, the method returns
         `\Delta_p(r)`
         otherwise returns `\Delta(r)`
         where both are as defined by Conway-Sloane in

@@ -120,7 +120,6 @@ class FGP_Element(ModuleElement):
         """
         return self._x
 
-
     def __neg__(self):
         """
         EXAMPLES::
@@ -134,7 +133,6 @@ class FGP_Element(ModuleElement):
         """
         P = self.parent()
         return P.element_class(P, -self._x)
-
 
     def _add_(self, other):
         """
@@ -156,7 +154,7 @@ class FGP_Element(ModuleElement):
             sage: 0 + x
             (1, 0)
 
-        We test canonical coercion from V and W.
+        We test canonical coercion from V and W::
 
             sage: Q.0 + V.0
             (1, 8)
@@ -169,7 +167,6 @@ class FGP_Element(ModuleElement):
         """
         P = self.parent()
         return P.element_class(P, self._x + other._x)
-
 
     def _sub_(self, other):
         """
@@ -189,7 +186,6 @@ class FGP_Element(ModuleElement):
         """
         P = self.parent()
         return P.element_class(P, self._x - other._x)
-
 
     def _rmul_(self, c):
         """
@@ -292,7 +288,6 @@ class FGP_Element(ModuleElement):
             '(0, 11)'
         """
         return repr(self.vector())
-
 
     def __getitem__(self, *args):
         """

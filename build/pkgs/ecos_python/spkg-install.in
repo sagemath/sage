@@ -1,0 +1,3 @@
+cd src
+# --no-build-isolation to ignore the numpy version pin in pyproject.toml
+sdh_pip_install --no-build-isolation .

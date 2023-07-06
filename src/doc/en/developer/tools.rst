@@ -5,7 +5,7 @@
 .. _chapter-tools:
 
 ========================================
-Additional development and testing tools
+Additional Development and Testing Tools
 ========================================
 
 .. _section-tools-tox:
@@ -13,7 +13,7 @@ Additional development and testing tools
 Tox
 ===
 
-`Tox <https://tox.readthedocs.io/en/latest/>`_ is a popular package that is
+`tox <https://tox.readthedocs.io/en/latest/>`_ is a popular package that is
 used by a large number of Python projects as the standard entry point
 for testing and linting.
 
@@ -59,7 +59,10 @@ available::
         pycodestyle-minimal    -- check against Sage's minimal style conventions
         relint                 -- check whether some forbidden patterns appear
                                   (includes all patchbot pattern-exclusion plugins)
+        rst                    -- validate Python docstrings markup as reStructuredText
         codespell              -- check for misspelled words in source code
+        cython-lint            -- Check Cython files for code style
+        pyright                -- run the static typing checker pyright
         pycodestyle            -- check against the Python style conventions of PEP8
      -p auto          -- run test environments in parallel
      --help           -- show tox help
@@ -156,18 +159,18 @@ more thorough check::
   ___________ summary ____________
   ERROR:   pycodestyle: commands failed
 
-When preparing a branch for a Sage ticket that adds new code,
+When preparing a branch for a PR that adds new code,
 developers should verify that ``./sage -tox -e pycodestyle`` does not
 issue warnings for the added code.  This will avoid later cleanup
-tickets as the Sage codebase is moving toward full PEP 8 compliance.
+PRs as the Sage codebase is moving toward full PEP 8 compliance.
 
 On the other hand, it is usually not advisable to mix coding-style
-fixes with productive changes on the same ticket because this would
+fixes with productive changes on the same PR because this would
 makes it harder for reviewers to evaluate the changes.
 
 By passing the options ``--count -qq`` we can reduce the output to
 only show the number of style violation warnings.  This can be helpful
-for planning work on coding-style clean-up tickets that focus on one
+for planning work on coding-style clean-up PRs that focus on one
 or a few related issues::
 
   $ ./sage -tox -e pycodestyle -- --count -qq src/sage
@@ -199,14 +202,22 @@ or a few related issues::
 - VS Code: The minimal version of pycodestyle is activated by default in
   ``SAGE_ROOT/.vscode/settings.json`` (the corresponding setting is
   ``"python.linting.pycodestyleEnabled": true``). Note that the
-  ``settings.json`` file is not ignored by git so be aware to keep it in sync
-  with the trac repo. For further details, see the
+  ``settings.json`` file is not ignored by Git so be aware to keep it in sync
+  with the Sage repo on GitHub. For further details, see the
   `official VS Code documentation <https://code.visualstudio.com/docs/python/linting>`__.
 
 *Configuration:* ``[pycodestyle]`` block in ``SAGE_ROOT/src/tox.ini``
 
 *Documentation:* https://pycodestyle.pycqa.org/en/latest/index.html
 
+
+.. _section-tools-cython-lint:
+
+Cython-lint
+===========
+
+`Cython-lint <https://pypi.org/project/cython-lint/>`_ checks Cython source files
+for coding style.
 
 .. _section-tools-relint:
 

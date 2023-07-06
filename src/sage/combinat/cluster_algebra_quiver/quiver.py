@@ -549,16 +549,17 @@ class ClusterQuiver(SageObject):
         EXAMPLES::
 
             sage: Q = ClusterQuiver(['A',5])
-            sage: Q.plot()
+            sage: Q.plot()                                                              # optional - sage.plot sage.symbolic
             Graphics object consisting of 15 graphics primitives
-            sage: Q.plot(circular=True)
+            sage: Q.plot(circular=True)                                                 # optional - sage.plot sage.symbolic
             Graphics object consisting of 15 graphics primitives
-            sage: Q.plot(circular=True, mark=1)
+            sage: Q.plot(circular=True, mark=1)                                         # optional - sage.plot sage.symbolic
             Graphics object consisting of 15 graphics primitives
         """
         from sage.plot.colors import rainbow
         from sage.graphs.graph_generators import GraphGenerators
-        from sage.all import e, pi, I
+        from sage.symbolic.constants import e, pi
+        from sage.rings.imaginary_unit import I
         graphs = GraphGenerators()
         # returns positions for graph vertices on two concentric cycles with radius 1 and 2
 
@@ -698,7 +699,7 @@ class ClusterQuiver(SageObject):
         TESTS::
 
             sage: S = ClusterQuiver(['A',4])
-            sage: S.interact()
+            sage: S.interact()                                                          # optional - sage.plot sage.symbolic
             ...VBox(children=...
         """
         return cluster_interact(self, fig_size, circular, kind="quiver")
@@ -716,7 +717,7 @@ class ClusterQuiver(SageObject):
 
             sage: Q = ClusterQuiver(['F',4,[1,2]])
             sage: import tempfile
-            sage: with tempfile.NamedTemporaryFile(suffix=".png") as f:
+            sage: with tempfile.NamedTemporaryFile(suffix=".png") as f:                 # optional - sage.plot sage.symbolic
             ....:     Q.save_image(f.name)
         """
         graph_plot = self.plot(circular=circular)
@@ -741,7 +742,7 @@ class ClusterQuiver(SageObject):
 
             sage: Q = ClusterQuiver(['F',4,[1,2]])
             sage: import tempfile
-            sage: with tempfile.NamedTemporaryFile(suffix=".qmu") as f:
+            sage: with tempfile.NamedTemporaryFile(suffix=".qmu") as f:                 # optional - sage.plot sage.symbolic
             ....:     Q.qmu_save(f.name)
 
         Make sure we can save quivers with `m != n` frozen variables, see :trac:`14851`::
@@ -750,7 +751,7 @@ class ClusterQuiver(SageObject):
             sage: T1 = S.principal_extension()
             sage: Q = T1.quiver()
             sage: import tempfile
-            sage: with tempfile.NamedTemporaryFile(suffix=".qmu") as f:
+            sage: with tempfile.NamedTemporaryFile(suffix=".qmu") as f:                 # optional - sage.plot sage.symbolic
             ....:     Q.qmu_save(f.name)
         """
         M = self.b_matrix()
@@ -1474,14 +1475,16 @@ class ClusterQuiver(SageObject):
         INPUT:
 
         - ``sequence`` -- a list or tuple of vertices of ``self``.
-        - ``show_sequence`` -- (default: False) if True, a png containing the mutation sequence is shown.
+        - ``show_sequence`` -- (default: ``False``) if ``True``, a png containing the mutation sequence is shown.
         - ``fig_size`` -- (default: 1.2) factor by which the size of the sequence is expanded.
 
         EXAMPLES::
 
             sage: Q = ClusterQuiver(['A',4])
             sage: seq = Q.mutation_sequence([0,1]); seq
-            [Quiver on 4 vertices of type ['A', 4], Quiver on 4 vertices of type ['A', 4], Quiver on 4 vertices of type ['A', 4]]
+            [Quiver on 4 vertices of type ['A', 4],
+             Quiver on 4 vertices of type ['A', 4],
+             Quiver on 4 vertices of type ['A', 4]]
             sage: [T.b_matrix() for T in seq]
             [
             [ 0  1  0  0]  [ 0 -1  0  0]  [ 0  1 -1  0]
@@ -1490,8 +1493,6 @@ class ClusterQuiver(SageObject):
             [ 0  0 -1  0], [ 0  0 -1  0], [ 0  0 -1  0]
             ]
         """
-        from sage.plot.plot import Graphics
-        from sage.plot.text import text
         n = self._n
         m = self._m
         if m == 0:
@@ -1519,9 +1520,13 @@ class ClusterQuiver(SageObject):
             quiver_sequence.append( copy( quiver ) )
 
         if show_sequence:
+            from sage.plot.plot import Graphics
+            from sage.plot.text import text
+
             def _plot_arrow( v, k, center=(0,0) ):
                 return text(r"$\longleftrightarrow$",(center[0],center[1]), fontsize=25) + text(r"$\mu_"+str(v)+"$",(center[0],center[1]+0.15), fontsize=15) \
                     + text("$"+str(k)+"$",(center[0],center[1]-0.2), fontsize=15)
+
             plot_sequence = [ quiver_sequence[i].plot( circular=True, center=(i*width_factor,0) ) for i in range(len(quiver_sequence)) ]
             arrow_sequence = [ _plot_arrow( sequence[i],i+1,center=((i+0.5)*width_factor,0) ) for i in range(len(sequence)) ]
             sequence = []

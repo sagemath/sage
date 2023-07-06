@@ -396,9 +396,9 @@ class ModuleMorphismByLinearity(ModuleMorphism):
             Add more tests for multi-parameter module morphisms.
         """
         before = args[0:self._position]
-        after = args[self._position+1:len(args)]
+        after = args[self._position + 1:len(args)]
         x = args[self._position]
-        assert(x.parent() is self.domain())
+        assert x.parent() is self.domain()
 
         mc = x.monomial_coefficients(copy=False)
         if self._is_module_with_basis_over_same_base_ring:
@@ -689,7 +689,6 @@ class TriangularModuleMorphism(ModuleMorphism):
                                   }.get
 
         self._inverse_on_support = inverse_on_support
-
 
         if invertible is None and (domain.basis().keys() == codomain.basis().keys()) and \
            (self._inverse_on_support==identity or domain in Modules.FiniteDimensional):
@@ -1128,7 +1127,7 @@ class TriangularModuleMorphism(ModuleMorphism):
             raise NotImplementedError("cokernel_basis_indices implemented only for morphisms with a finite dimensional codomain")
         return [i for i in self.codomain().basis().keys() if self._inverse_on_support(i) is None]
 
-    def cokernel_projection(self, category = None):
+    def cokernel_projection(self, category=None):
         """
         Return a projection on the co-kernel of ``self``.
 
@@ -1518,7 +1517,7 @@ class DiagonalModuleMorphism(ModuleMorphismByLinearity):
         """
         return self.codomain().module_morphism(
             diagonal=pointwise_inverse_function(self._diagonal),
-            codomain=self.domain(), category = self.category_for())
+            codomain=self.domain(), category=self.category_for())
 
 
 def pointwise_inverse_function(f):

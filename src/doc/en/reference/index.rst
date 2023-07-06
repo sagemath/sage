@@ -1,8 +1,8 @@
 .. _reference-manual:
 
-*************************************
-Welcome to the Sage Reference Manual!
-*************************************
+********************************
+Welcome to Sage Reference Manual
+********************************
 
 Here you find documentation for all of `Sage <http://www.sagemath.org/>`_'s
 features, illustrated with lots of examples.  A thematic index follows.
@@ -115,6 +115,7 @@ Number Fields, Function Fields, and Valuations
 * :doc:`Number Fields <number_fields/index>`
 * :doc:`Function Fields <function_fields/index>`
 * :doc:`Discrete Valuations <valuations/index>`
+* :doc:`Drinfeld Modules <drinfeld_modules/index>`
 
 Number Theory
 -------------
