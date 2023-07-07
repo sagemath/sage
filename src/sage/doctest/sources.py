@@ -809,9 +809,11 @@ class FileDocTestSource(DocTestSource):
     def _test_enough_doctests(self, check_extras=True, verbose=True):
         r"""
         This function checks to see that the doctests are not getting
-        unexpectedly skipped.  It uses a different (and simpler) code
-        path than the doctest creation functions, so there are a few
-        files in Sage that it counts incorrectly.
+        unexpectedly skipped.
+
+        It uses a different (and simpler) code path than the doctest
+        creation functions. In particular, it does not understand
+        file-level and block-level # optional / needs tags.
 
         INPUT:
 
@@ -824,13 +826,14 @@ class FileDocTestSource(DocTestSource):
 
         TESTS::
 
+            sage: # not tested (because the output will change when source files are changed)
             sage: from sage.doctest.control import DocTestDefaults
             sage: from sage.doctest.sources import FileDocTestSource
             sage: from sage.env import SAGE_SRC
             sage: cwd = os.getcwd()
             sage: os.chdir(SAGE_SRC)
             sage: import itertools
-            sage: for path, dirs, files in itertools.chain(os.walk('sage'), os.walk('doc')): # long time
+            sage: for path, dirs, files in itertools.chain(os.walk('sage'), os.walk('doc')):
             ....:     path = os.path.relpath(path)
             ....:     dirs.sort(); files.sort()
             ....:     for F in files:
