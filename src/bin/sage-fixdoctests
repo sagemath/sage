@@ -14,6 +14,22 @@ AUTHORS::
   situations when either the expected output or computed output are empty.
   Added doctest to sage.tests.cmdline
 """
+
+# ****************************************************************************
+#       Copyright (C) 2006 William Stein
+#                     2009 Nicolas M. Thiery
+#                     2013 Andrew Mathas
+#                     2014 Volker Braun
+#                     2020 Jonathan Kliem
+#                     2021 Frédéric Chapoton
+#                     2023 Matthias Koeppe
+#
+#  Distributed under the terms of the GNU General Public License (GPL)
+#  as published by the Free Software Foundation; either version 2 of
+#  the License, or (at your option) any later version.
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
+
 import itertools
 import os
 import re
