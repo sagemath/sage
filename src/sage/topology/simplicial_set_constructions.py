@@ -170,7 +170,7 @@ class SubSimplicialSet(SimplicialSet_finite, UniqueRepresentation):
         if ambient is None:
             ambient = self
         if (ambient.is_pointed()
-            and hasattr(ambient, '_basepoint')
+                and hasattr(ambient, '_basepoint')
                 and ambient.base_point() in data):
             SimplicialSet_finite.__init__(self, data, base_point=ambient.base_point())
         else:
@@ -500,7 +500,7 @@ class PullbackOfSimplicialSets_finite(PullbackOfSimplicialSets, SimplicialSet_fi
         # the product.
         translate = {}
         for simplices in itertools.product(*nondegen):
-            dims = [_.dimension() for _ in simplices]
+            dims = [s.dimension() for s in simplices]
             dim_max = max(dims)
             sum_dims = sum(dims)
             for d in range(dim_max, sum_dims + 1):
