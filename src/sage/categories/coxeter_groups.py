@@ -251,6 +251,53 @@ class CoxeterGroups(Category_singleton):
             rels = self.braid_relations()
             return F / [prod(S[I.index(i)] for i in l) * prod(S[I.index(i)]**-1 for i in reversed(r)) for l, r in rels]
 
+        def braid_orbit_iter(self, word):
+            r"""
+            Iterate over the braid orbit of a word ``word`` of indices.
+
+            The input word does not need to be a reduced expression of
+            an element.
+
+            INPUT:
+
+            - ``word``: a list (or iterable) of indices in
+              ``self.index_set()``
+
+            OUTPUT:
+
+            all lists that can be obtained from
+            ``word`` by replacements of braid relations
+
+            EXAMPLES::
+
+                sage: W = CoxeterGroups().example()
+                sage: sorted(W.braid_orbit_iter([0, 1, 2, 1]))                # optional - sage.combinat sage.groups
+                [[0, 1, 2, 1], [0, 2, 1, 2], [2, 0, 1, 2]]
+            """
+            word = list(word)
+            from sage.combinat.root_system.braid_orbit import BraidOrbit
+
+            braid_rels = self.braid_relations()
+            I = self.index_set()
+
+            from sage.rings.integer_ring import ZZ
+            be_careful = any(i not in ZZ for i in I)
+
+            if be_careful:
+                Iinv = {i: j for j, i in enumerate(I)}
+                word = [Iinv[i] for i in word]
+                braid_rels = [[[Iinv[i] for i in l],
+                               [Iinv[i] for i in r]] for l, r in braid_rels]
+
+            orb = BraidOrbit(word, braid_rels)
+
+            if be_careful:
+                for word in orb:
+                    yield [I[i] for i in word]
+            else:
+                for I in orb:
+                    yield list(I)
+
         def braid_orbit(self, word):
             r"""
             Return the braid orbit of a word ``word`` of indices.
@@ -314,26 +361,7 @@ class CoxeterGroups(Category_singleton):
 
                 :meth:`.reduced_words`
             """
-            word = list(word)
-            from sage.combinat.root_system.braid_orbit import BraidOrbit
-
-            braid_rels = self.braid_relations()
-            I = self.index_set()
-
-            from sage.rings.integer_ring import ZZ
-            be_careful = any(i not in ZZ for i in I)
-
-            if be_careful:
-                Iinv = {i: j for j, i in enumerate(I)}
-                word = [Iinv[i] for i in word]
-                braid_rels = [[[Iinv[i] for i in l],
-                               [Iinv[i] for i in r]] for l, r in braid_rels]
-
-            orb = BraidOrbit(word, braid_rels)
-
-            if be_careful:
-                return [[I[i] for i in word] for word in orb]
-            return [list(I) for I in orb]
+            return list(self.braid_orbit_iter(word))
 
         def __iter__(self):
             r"""
@@ -1543,11 +1571,11 @@ class CoxeterGroups(Category_singleton):
             EXAMPLES::
 
                 sage: W = CoxeterGroup(['A', 3])
-                sage: len([1 for w in W if w.is_fully_commutative()]
-                ?True
+                sage: len([1 for w in W if w.is_fully_commutative()])
+                14
                 sage: W = CoxeterGroup(['B', 3])
-                sage: len([1 for w in W if w.is_fully_commutative()]
-                ?True
+                sage: len([1 for w in W if w.is_fully_commutative()])
+                24
             """
             matrix = self.parent().coxeter_matrix()
 
@@ -1568,7 +1596,7 @@ class CoxeterGroups(Category_singleton):
                 return False
 
             return not any(contains_long_braid(word)
-                           for word in self.reduced_words())
+                           for word in self.reduced_words_iter())
 
         def reduced_word_reverse_iterator(self):
             """
@@ -1630,6 +1658,31 @@ class CoxeterGroups(Category_singleton):
             result = list(self.reduced_word_reverse_iterator())
             return list(reversed(result))
 
+        def reduced_words_iter(self):
+            r"""
+            Iterate over all reduced words for ``self``.
+
+            See :meth:`reduced_word` for the definition of a reduced
+            word.
+
+            The algorithm uses the Matsumoto property that any two
+            reduced expressions are related by braid relations, see
+            Theorem 3.3.1(ii) in [BB2005]_.
+
+            .. SEEALSO::
+
+                :meth:`braid_orbit_iter`
+
+            EXAMPLES::
+
+                sage: W = CoxeterGroups().example()
+                sage: s = W.simple_reflections()
+                sage: w = s[0] * s[2]
+                sage: sorted(w.reduced_words_iter())                                    # optional - sage.combinat
+                [[0, 2], [2, 0]]
+            """
+            return self.parent().braid_orbit_iter(self.reduced_word())
+
         def reduced_words(self):
             r"""
             Return all reduced words for ``self``.
@@ -1689,7 +1742,7 @@ class CoxeterGroups(Category_singleton):
                 :meth:`.reduced_word`, :meth:`.reduced_word_reverse_iterator`,
                 :meth:`length`, :meth:`reduced_word_graph`
             """
-            return self.parent().braid_orbit(self.reduced_word())
+            return list(self.reduced_words_iter())
 
         def support(self):
             r"""
