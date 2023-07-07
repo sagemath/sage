@@ -1163,7 +1163,7 @@ class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
         elif R in NumberFields():
             # True for the rational field as well, so check is_RationalField first
             field_type = True
-        elif ((R is ZZ) or isinstance(R, Order)) and R.is_integrally_closed(): # Ensure maximal order
+        elif (R is ZZ) or (isinstance(R, Order) and R.is_integrally_closed()): # Ensure ring of integers / maximal order
             is_ring_of_ints = True
         else:
             raise NotImplementedError("self must be a projective space over a number field or a ring of integers")
@@ -1182,7 +1182,7 @@ class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
 
             # Field of fraction is the rational field
             if fraction_field == QQ:
-                return ZZ_points_of_bounded_height(dim, bound)
+                return ZZ_points_of_bounded_height(self, dim, bound)
 
             # Field of fraction is a number field
             r1, r2 = fraction_field.signature()
@@ -1194,9 +1194,9 @@ class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
                 deg = fraction_field.degree()
 
             if deg == 2 and r == 0:
-                return IQ_points_of_bounded_height(self, fraction_field, dim, bound, normalize=True)
+                return IQ_points_of_bounded_height(self, fraction_field, dim, bound)
 
-            return points_of_bounded_height(self, fraction_field, dim, bound, prec, normalize=True)
+            return points_of_bounded_height(self, fraction_field, dim, bound, prec)
 
         # When R is a field
         if field_type:
@@ -1214,7 +1214,7 @@ class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
 
             return points_of_bounded_height(self, R, dim, bound, prec)
         else:
-            return QQ_points_of_bounded_height(dim, bound)
+            return QQ_points_of_bounded_height(self, dim, bound)
 
     def affine_patch(self, i, AA=None):
         r"""
