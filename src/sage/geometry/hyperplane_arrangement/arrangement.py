@@ -975,6 +975,113 @@ class HyperplaneArrangementElement(Element):
         poincare = (-x)**self.dimension() * charpoly(-QQ(1)/x)
         return R(poincare)
 
+    @cached_method
+    def cocharacteristic_polynomial(self):
+        r"""
+        Return the cocharacteristic polynomial of ``self``.
+
+        The cocharacteristic polynomial of a hyperplane arrangement `A`
+        is defined by
+
+        .. MATH::
+
+            \Psi_A(z) := sum_{X \in L} |\mu(B,X)| z^{\dim X},
+
+        where `L` is the intersection poset of `A`, `B` is the minimal
+        element of `L` and `\mu` is the Möbius function of `L`.
+
+        OUTPUT:
+
+        The cocharacteristic polynomial in `\ZZ[z]`.
+
+        EXAMPLES::
+
+            sage: A = hyperplane_arrangements.coordinate(2)
+            sage: A.cocharacteristic_polynomial()
+            z^2 + 2*z + 1
+            sage: B = hyperplane_arrangements.braid(3)
+            sage: B.cocharacteristic_polynomial()
+            z^3 + 3*z^2 + 2*z
+
+        TESTS::
+
+            sage: I = hyperplane_arrangements.Ish(2)
+            sage: I.is_central()
+            False
+            sage: I.cocharacteristic_polynomial()
+            Traceback (most recent call last):
+            ...
+            ValueError: only defined for central hyperplane arrangements
+        """
+        if not self.is_central():
+            raise ValueError("only defined for central hyperplane arrangements")
+
+        from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+        R = PolynomialRing(ZZ, 'z')
+        z = R.gen()
+        L = self.intersection_poset(element_label="subspace")
+        B = L.minimal_elements()[0]
+        return R.sum(abs(L.moebius_function(B, X)) * z**X.dimension()
+                     for X in L)
+
+    @cached_method
+    def primitive_eulerian_polynomial(self):
+        r"""
+        Return the primitive Eulerian polynomial of ``self``.
+
+        The primitive Eulerian polynomial of a hyperplane arrangement `A`
+        is defined [BHS2023]_ by
+
+        .. MATH::
+
+            P_A(z) := sum_{X \in L} |\mu(B,X)| (z - 1)^{\codim X},
+
+        where `L` is the intersection poset of `A`, `B` is the minimal
+        element of `L` and `\mu` is the Möbius function of `L`.
+
+        OUTPUT:
+
+        The primitive Eulerian polynomial in `\ZZ[z]`.
+
+        EXAMPLES::
+
+            sage: A = hyperplane_arrangements.coordinate(2)
+            sage: A.primitive_eulerian_polynomial()
+            z^2
+            sage: B = hyperplane_arrangements.braid(3)
+            sage: B.primitive_eulerian_polynomial()
+            2*z^2 - z
+
+        We verify Equation (4) in [BHS2023]_ on some examples::
+
+            sage: R.<x> = ZZ[]
+            sage: Arr = [hyperplane_arrangements.braid(n) for n in range(2,6)]
+            sage: all(R(A.cocharacteristic_polynomial()(1/(x-1)) * (x-1)^A.dimension())
+            ....:     == R(A.primitive_eulerian_polynomial()) for A in Arr)
+            True
+
+        TESTS::
+
+            sage: I = hyperplane_arrangements.Ish(2)
+            sage: I.is_central()
+            False
+            sage: I.primitive_eulerian_polynomial()
+            Traceback (most recent call last):
+            ...
+            ValueError: only defined for central hyperplane arrangements
+        """
+        if not self.is_central():
+            raise ValueError("only defined for central hyperplane arrangements")
+
+        from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+        R = PolynomialRing(ZZ, 'z')
+        z = R.gen()
+        L = self.intersection_poset(element_label="subspace")
+        B = L.minimal_elements()[0]
+        n = self.dimension()
+        return R.sum(abs(L.moebius_function(B, X)) * (z - 1)**(n-X.dimension())
+                     for X in L)
+
     def deletion(self, hyperplanes):
         r"""
         Return the hyperplane arrangement obtained by removing ``h``.
