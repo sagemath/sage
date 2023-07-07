@@ -18,7 +18,7 @@ other classes implementing solvers.
 #*****************************************************************************
 
 from sage.matrix.constructor import Matrix
-from sage.matrix.constructor import Vector
+#from sage.matrix.constructor import Vector
 from .generic_backend cimport GenericBackend
 import numpy
 
@@ -156,7 +156,7 @@ cdef class MatrixBackend(GenericBackend):
         """
         if obj is None:
             obj = 0.0
-        self.G_matrix.augment(Vector([0 for i in range(self.nrows())]))
+        self.G_matrix.augment(Matrix([0 for i in range(self.nrows())]))
         self.col_lower_bound.augment(lower_bound)
         self.col_upper_bound.augment(upper_bound)
         self.objective_function.augment(obj)
@@ -323,7 +323,7 @@ cdef class MatrixBackend(GenericBackend):
         """
         column = []
         for _ in indices:
-            column.augment(Vector([0.0]))
+            column.augment(Matrix([0.0]))
 
         for idx, ind in enumerate(indices):
             column[ind] = coeffs[idx]
@@ -371,7 +371,7 @@ cdef class MatrixBackend(GenericBackend):
             while c[0] > len(self.G_matrix) - 1:
                 self.add_variable()
         for i in range(len(self.G_matrix)):
-            self.G_matrix[i].augment(Vector([0.0]))
+            self.G_matrix[i].augment(Matrix([0.0]))
         for c in coefficients:
             self.G_matrix[c[0]][-1] = c[1]
 
