@@ -97,6 +97,8 @@ TESTS::
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
+import sage.rings.abc
+
 from sage.misc.lazy_import import lazy_import
 from sage.modular.abvar.torsion_point import TorsionPoint
 from sage.modules.module import Module
