@@ -39,6 +39,7 @@ cdef class MatrixBackend(GenericBackend):
         sage: p                                                     
         Mixed Integer Program (no objective, 0 variables, 0 constraints)
     """
+    # def __cinit__(self, maximization = True, base_ring=None, numpy_implementation = False):
     def __cinit__(self, maximization = True, base_ring=None):
         """
         Cython constructor
@@ -51,17 +52,26 @@ cdef class MatrixBackend(GenericBackend):
 """
 
         #Sage Matrix and Vector instead of Python lists
-        self.objective_function = Vector(QQ, [])
+
+        if base_ring is None:
+            from sage.rings.rational_field import QQ
+            base_ring = QQ
+
+        self.objective_function = Matrix(QQ, [])
+        #if numpy_implementation = True:
+        #    self.G_matrix = Matrix(QQ, [], implementation = "numpy")
+        #else:
         self.G_matrix = Matrix(QQ, [])
+
 
         self.prob_name = ''
         self.obj_constant_term = 0
         self.is_maximize = 1
 
-        self.row_lower_bound = Vector(QQ, [])
-        self.row_upper_bound = Vector(QQ, [])
-        self.col_lower_bound = Vector(QQ, [])
-        self.col_upper_bound = Vector(QQ, [])
+        self.row_lower_bound = Matrix(QQ, [])
+        self.row_upper_bound = Matrix(QQ, [])
+        self.col_lower_bound = Matrix(QQ, [])
+        self.col_upper_bound = Matrix(QQ, [])
 
         self.row_name_var = []
         self.col_name_var = []
@@ -74,9 +84,6 @@ cdef class MatrixBackend(GenericBackend):
         else:
             self.set_sense(-1)
 
-        if base_ring is None:
-            from sage.rings.rational_field import QQ
-            base_ring = QQ
         self._base_ring = base_ring
 
     cpdef base_ring(self):
@@ -735,5 +742,3 @@ cdef class MatrixBackend(GenericBackend):
             self.col_lower_bound[index] = value
         else:
             return self.col_lower_bound[index]
-
-#cdef class NumpyMatrixBackend(MatrixBackend):
