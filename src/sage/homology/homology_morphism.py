@@ -319,8 +319,8 @@ class InducedHomologyMorphism(Morphism):
             False
         """
         if (self._map.domain() != other._map.domain()
-            or self._map.codomain() != other._map.codomain()
-            or self.base_ring() != other.base_ring()
+                or self._map.codomain() != other._map.codomain()
+                or self.base_ring() != other.base_ring()
                 or self._cohomology != other._cohomology):
             return False
         dim = min(self._map.domain().dimension(), self._map.codomain().dimension())
@@ -345,7 +345,7 @@ class InducedHomologyMorphism(Morphism):
         """
         return self.to_matrix().is_one()
 
-    def is_surjective(self):
+    def is_surjective(self) -> bool:
         """
         Return ``True`` if this map is surjective on (co)homology.
 
@@ -363,7 +363,7 @@ class InducedHomologyMorphism(Morphism):
         m = self.to_matrix()
         return m.rank() == m.nrows()
 
-    def is_injective(self):
+    def is_injective(self) -> bool:
         """
         Return ``True`` if this map is injective on (co)homology.
 
