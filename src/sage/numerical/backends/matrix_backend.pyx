@@ -39,8 +39,8 @@ cdef class MatrixBackend(GenericBackend):
         sage: p                                                     
         Mixed Integer Program (no objective, 0 variables, 0 constraints)
     """
-    # def __cinit__(self, maximization = True, base_ring=None, numpy_implementation = False):
-    def __cinit__(self, maximization = True, base_ring=None):
+    def __cinit__(self, maximization = True, base_ring=None, numpy_implementation = False):
+    #def __cinit__(self, maximization = True, base_ring=None):
         """
         Cython constructor
 
@@ -49,29 +49,33 @@ cdef class MatrixBackend(GenericBackend):
             sage: from sage.numerical.backends.generic_backend import get_solver
             sage: p = get_solver(solver = "Matrix")                 
 
-"""
+        """
 
         #Sage Matrix and Vector instead of Python lists
-
-        if base_ring is None:
-            from sage.rings.rational_field import QQ
-            base_ring = QQ
-
-        self.objective_function = Matrix(QQ, [])
-        #if numpy_implementation = True:
-        #    self.G_matrix = Matrix(QQ, [], implementation = "numpy")
-        #else:
-        self.G_matrix = Matrix(QQ, [])
-
 
         self.prob_name = ''
         self.obj_constant_term = 0
         self.is_maximize = 1
 
-        self.row_lower_bound = Matrix(QQ, [])
-        self.row_upper_bound = Matrix(QQ, [])
-        self.col_lower_bound = Matrix(QQ, [])
-        self.col_upper_bound = Matrix(QQ, [])
+        if base_ring is None:
+            from sage.rings.rational_field import QQ
+            base_ring = QQ
+
+        if numpy_implementation == True:
+            self.objective_function = Matrix(QQ, [], implementation = "numpy")
+            self.G_matrix = Matrix(QQ, [], implementation = "numpy")
+            self.G_matrix = Matrix(QQ, [], implementation = "numpy")
+            self.row_lower_bound = Matrix(QQ, [], implementation = "numpy")
+            self.row_upper_bound = Matrix(QQ, [], implementation = "numpy")
+            self.col_lower_bound = Matrix(QQ, [], implementation = "numpy")
+            self.col_upper_bound = Matrix(QQ, [], implementation = "numpy")
+        else:
+            self.objective_function = Matrix(QQ, [])
+            self.G_matrix = Matrix(QQ, [])
+            self.row_lower_bound = Matrix(QQ, [])
+            self.row_upper_bound = Matrix(QQ, [])
+            self.col_lower_bound = Matrix(QQ, [])
+            self.col_upper_bound = Matrix(QQ, [])
 
         self.row_name_var = []
         self.col_name_var = []
