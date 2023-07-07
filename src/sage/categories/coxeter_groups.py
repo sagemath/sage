@@ -1493,7 +1493,7 @@ class CoxeterGroups(Category_singleton):
             return [i for i in index_set if self.has_descent(i, side=side,
                                                              positive=positive)]
 
-        def is_grassmannian(self, side="right"):
+        def is_grassmannian(self, side="right") -> bool:
             """
             Return whether ``self`` is Grassmannian.
 
@@ -1528,6 +1528,47 @@ class CoxeterGroups(Category_singleton):
                 True
             """
             return len(self.descents(side=side)) <= 1
+
+        def is_fully_commutative(self) -> bool:
+            r"""
+            Check if ``self`` is a fully-commutative element.
+
+            We use the characterization that
+            an element `w` in a Coxeter system `(W,S)` is
+            fully-commutative if and only if for every pair of
+            generators `s,t \in S` for which `m(s,t)>2`, no reduced
+            word of `w` contains the 'braid' word `sts...` of length
+            `m(s,t)` as a contiguous subword. See [Ste1996]_.
+
+            EXAMPLES::
+
+                sage: W = CoxeterGroup(['A', 3])
+                sage: len([1 for w in W if w.is_fully_commutative()]
+                ?True
+                sage: W = CoxeterGroup(['B', 3])
+                sage: len([1 for w in W if w.is_fully_commutative()]
+                ?True
+            """
+            matrix = self.parent().coxeter_matrix()
+
+            def contains_long_braid(w):
+                # This detects 'braid' subwords.
+                # TODO: optimisation
+                if len(w) <= 2:
+                    return False
+                for i in range(len(w) - 2):
+                    a = w[i]
+                    b = w[i + 1]
+                    m = matrix[a, b]
+                    if m > 2 and i + m <= len(w):
+                        ab = [a, b]
+                        if all(wj == ab[j % 2]
+                               for j, wj in enumerate(w[i:i + m])):
+                            return True
+                return False
+
+            return not any(contains_long_braid(word)
+                           for word in self.reduced_words())
 
         def reduced_word_reverse_iterator(self):
             """
