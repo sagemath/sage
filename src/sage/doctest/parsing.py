@@ -13,9 +13,19 @@ AUTHORS:
 """
 
 # ****************************************************************************
-#       Copyright (C) 2012 David Roe <roed.math@gmail.com>
-#                          Robert Bradshaw <robertwb@gmail.com>
-#                          William Stein <wstein@gmail.com>
+#       Copyright (C) 2012-2018 David Roe <roed.math@gmail.com>
+#                     2012      Robert Bradshaw <robertwb@gmail.com>
+#                     2012      William Stein <wstein@gmail.com>
+#                     2013      R. Andrew Ohana
+#                     2013      Volker Braun
+#                     2013-2018 Jeroen Demeyer <jdemeyer@cage.ugent.be>
+#                     2016-2021 Frédéric Chapoton
+#                     2017-2018 Erik M. Bray
+#                     2020      Marc Mezzarobba
+#                     2020-2023 Matthias Koeppe
+#                     2022      John H. Palmieri
+#                     2022      Sébastien Labbé
+#                     2023      Kwankyu Lee
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of

@@ -10,9 +10,17 @@ AUTHORS:
 """
 
 # ****************************************************************************
-#       Copyright (C) 2012 David Roe <roed.math@gmail.com>
-#                          Robert Bradshaw <robertwb@gmail.com>
-#                          William Stein <wstein@gmail.com>
+#       Copyright (C) 2012-2013 David Roe <roed.math@gmail.com>
+#                     2012      Robert Bradshaw <robertwb@gmail.com>
+#                     2012      William Stein <wstein@gmail.com>
+#                     2013      R. Andrew Ohana
+#                     2013-2017 Jeroen Demeyer <jdemeyer@cage.ugent.be>
+#                     2013-2019 John H. Palmieri
+#                     2014      Volker Braun
+#                     2014-2022 Frédéric Chapoton
+#                     2017      Erik M. Bray
+#                     2021      Sébastien Labbé
+#                     2021-2023 Matthias Koeppe
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #
