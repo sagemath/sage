@@ -719,10 +719,10 @@ class DrinfeldModule(Parent, UniqueRepresentation):
 
     def _Hom_(self, other, category):
         r"""
-        Return ``DrinfeldModuleHomset(self, other, category)``.
+        Return the set of morphisms from ``self`` to ``other``.
 
         Validity of the input is checked at the instantiation of
-        ``DrinfeldModuleHomset``. ``self`` and ``other`` only need be in
+        ``DrinfeldModuleHomset``; ``self`` and ``other`` only need be in
         the same category.
 
         INPUT:
@@ -1196,8 +1196,8 @@ class DrinfeldModule(Parent, UniqueRepresentation):
 
     def is_isomorphic(self, other, absolutely=False):
         r"""
-        Return ``True`` if this Drinfeld module is isomorphic to
-        ``other``.
+        Return ``True`` if this Drinfeld module is isomorphic to ``other``;
+        return ``False`` otherwise.
 
         INPUT:
 
@@ -1296,6 +1296,13 @@ class DrinfeldModule(Parent, UniqueRepresentation):
         r = self.rank()
         if other.rank() != r:
             return False
+        # Check if there exists u such that u*self_X = other_X*u:
+        # if self_X = a_0 + a_1*t + ... + a_r*t^r
+        # and other_x = b_0 + b_1*t + ... + b_r*t^r
+        # this reduced to finding solution of the system:
+        #   b_i * u^(q^i - 1) = a_i  (0 <= i <= r)
+        # which, using gcds, can be reduced to a unique equation
+        # of the form u^e = ue.
         q = self._Fq.cardinality()
         A = self.gen()
         B = other.gen()
@@ -1318,6 +1325,10 @@ class DrinfeldModule(Parent, UniqueRepresentation):
                 f = (q**i - 1) // e
                 if A[i] != B[i] * ue**f:
                     return False
+        # Solve the equation u^e = ue
+        # - when absolutely=True, on the algebraic closure (then a
+        #   solution always exists)
+        # - when absolutely=False, on the ground field.
         if absolutely:
             return True
         else:
@@ -1737,6 +1748,8 @@ class DrinfeldModule(Parent, UniqueRepresentation):
             Endomorphism of Drinfeld module defined by T |--> z*t^3 + t^2 + z
               Defn: z*t^3 + t^2 + z
 
+        ::
+
             sage: phi.hom(T^2 + 1)
             Endomorphism of Drinfeld module defined by T |--> z*t^3 + t^2 + z
               Defn: z^2*t^6 + (3*z^2 + z + 1)*t^5 + t^4 + 2*z^2*t^3 + (3*z^2 + z + 1)*t^2 + z^2 + 1
@@ -1774,6 +1787,13 @@ class DrinfeldModule(Parent, UniqueRepresentation):
             ...
             ValueError: the input does not define an isogeny
 
+        ::
+
+            sage: phi.hom(t + 1, codomain=phi)
+            Traceback (most recent call last):
+            ...
+            ValueError: Ore polynomial does not define a morphism
+
         """
         # When `x` is in the function ring (or something that coerces to it):
         if self.function_ring().has_coerce_map_from(x.parent()):
@@ -1791,3 +1811,36 @@ class DrinfeldModule(Parent, UniqueRepresentation):
         # It's not straightforward because `left_divides` does not
         # work currently because Sage does not know how to invert the
         # Frobenius endomorphism; this is due to the RingExtension stuff.
+
+    def scalar_multiplication(self, x):
+        r"""
+        Return the endomorphism of this Drinfeld module, which is
+        the multiplication by `x`, i.e. the isogeny defined by the
+        Ore polynomial `\phi_x`.
+
+        INPUT:
+
+        - ``x`` -- an element in the ring of functions
+
+        EXAMPLES::
+
+            sage: Fq = GF(5)
+            sage: A.<T> = Fq[]
+            sage: K.<z> = Fq.extension(3)
+            sage: phi = DrinfeldModule(A, [z, 0, 1, z])
+            sage: phi
+            Drinfeld module defined by T |--> z*t^3 + t^2 + z
+            sage: phi.hom(T)
+            Endomorphism of Drinfeld module defined by T |--> z*t^3 + t^2 + z
+              Defn: z*t^3 + t^2 + z
+
+        ::
+
+            sage: phi.hom(T^2 + 1)
+            Endomorphism of Drinfeld module defined by T |--> z*t^3 + t^2 + z
+              Defn: z^2*t^6 + (3*z^2 + z + 1)*t^5 + t^4 + 2*z^2*t^3 + (3*z^2 + z + 1)*t^2 + z^2 + 1
+
+        """
+        if not self.function_ring().has_coerce_map_from(x.parent()):
+            raise ValueError("%s is not element of the function ring" % x)
+        return self.Hom(self)(x)

@@ -407,6 +407,8 @@ class FiniteDrinfeldModule(DrinfeldModule):
             ...
             ValueError: input must be in the image of the Drinfeld module
 
+        ::
+
             sage: phi.invert(t^4 + t^2 + 1)
             Traceback (most recent call last):
             ...
@@ -475,6 +477,7 @@ class FiniteDrinfeldModule(DrinfeldModule):
         mat = Matrix(mat_rows)
         vec = vector([ore_pol[r*j] for j in range(k+1)])
         coeffs_K = list(mat.inverse() * vec)
+        # Cast the coefficients to Fq
         try:
             coeffs_Fq = [K(c).in_base() for c in coeffs_K]
             pre_image = A(coeffs_Fq)
