@@ -49,19 +49,19 @@ U = (0, 1)
 D = (0, -1)
 
 FPL_edges = (
-#   0 UD   1 RD,  2 UR,  3 LR,  4 LD   5 LU
-   ((D,U), (L,D), (D,R), (R,L), (L,U), (R,U)),  # even
-   ((R,L), (R,U), (L,U), (D,U), (D,R), (L,D))   # odd
-   )
+    # 0 UD    1 RD,   2 UR,   3 LR,   4 LD    5 LU
+    ((D, U), (L, D), (D, R), (R, L), (L, U), (R, U)),  # even
+    ((R, L), (R, U), (L, U), (D, U), (D, R), (L, D))   # odd
+)
 
 FPL_turns = (
-# 0 UD          1 RD          2 UR          3 LR          4 LD          5 LU
- ({U: U, D: D}, {R: D, U: L}, {U: R, L: D}, {L: L, R: R}, {R: U, D: L}, {L: U, D: R}), # even
- ({L: L, R: R}, {L: U, D: R}, {R: U, D: L}, {U: U, D: D}, {U: R, L: D}, {R: D, U: L})  # odd
- )
+    # 0 UD          1 RD          2 UR          3 LR          4 LD          5 LU
+    ({U: U, D: D}, {R: D, U: L}, {U: R, L: D}, {L: L, R: R}, {R: U, D: L}, {L: U, D: R}),  # even
+    ({L: L, R: R}, {L: U, D: R}, {R: U, D: L}, {U: U, D: D}, {U: R, L: D}, {R: D, U: L})   # odd
+)
 
 
-def _make_color_list(n, colors=None,  color_map=None, randomize=False):
+def _make_color_list(n, colors=None, color_map=None, randomize=False):
     r"""
     TESTS::
 
@@ -530,7 +530,7 @@ class FullyPackedLoop(Element, metaclass=InheritComparisonClasscallMetaclass):
             M = generator.to_alternating_sign_matrix().to_matrix()
             AlternatingSignMatrix(M)
             SVM = generator
-        else: # Not ASM nor SVM
+        else:  # Not ASM nor SVM
             try:
                 SVM = AlternatingSignMatrix(generator).to_six_vertex_model()
             except (TypeError, ValueError):
@@ -608,22 +608,22 @@ class FullyPackedLoop(Element, metaclass=InheritComparisonClasscallMetaclass):
         # List are in the order of URDL
         # One set of rules for how to draw around even vertex, one set of rules for odd vertex
         n = len(self._six_vertex_model) - 1
-        ascii1 = [[r'     ', ' -', r'     ', '- '], # LR
-                 [r'  |  ', '  ', r'     ', '- '], # LU
-                 [r'     ', '  ', r'  |  ', '- '], # LD
-                 [r'  |  ', '  ', r'  |  ', '  '], # UD
-                 [r'  |  ', ' -', r'     ', '  '], # UR
-                 [r'     ', ' -', r'  |  ', '  ']] # RD
+        ascii1 = [[r'     ', ' -', r'     ', '- '],  # LR
+                 [r'  |  ', '  ', r'     ', '- '],  # LU
+                 [r'     ', '  ', r'  |  ', '- '],  # LD
+                 [r'  |  ', '  ', r'  |  ', '  '],  # UD
+                 [r'  |  ', ' -', r'     ', '  '],  # UR
+                 [r'     ', ' -', r'  |  ', '  ']]  # RD
 
-        ascii2 = [[r'  |  ', '  ', r'  |  ', '  '], # LR
-                 [r'     ', ' -', r'  |  ', '  '], # LU
-                 [r'  |  ', ' -', r'     ', '  '], # LD
-                 [r'     ', ' -', r'     ', '- '], # UD
-                 [r'     ', '  ', r'  |  ', '- '], # UR
-                 [r'  |  ', '  ', r'     ', '- ']] # RD
+        ascii2 = [[r'  |  ', '  ', r'  |  ', '  '],  # LR
+                 [r'     ', ' -', r'  |  ', '  '],  # LU
+                 [r'  |  ', ' -', r'     ', '  '],  # LD
+                 [r'     ', ' -', r'     ', '- '],  # UD
+                 [r'     ', '  ', r'  |  ', '- '],  # UR
+                 [r'  |  ', '  ', r'     ', '- ']]  # RD
         ret = '  '
         # Do the top line
-        for i,entry in enumerate(self._six_vertex_model[0]):
+        for i, entry in enumerate(self._six_vertex_model[0]):
             if i % 2 == 0:
                 ret += '  |  '
             else:
@@ -632,10 +632,10 @@ class FullyPackedLoop(Element, metaclass=InheritComparisonClasscallMetaclass):
         plus_sign = '+'
 
         # Do the meat of the ascii art
-        for j,row in enumerate(self._six_vertex_model):
+        for j, row in enumerate(self._six_vertex_model):
             ret += '\n  '
             # Do the top row
-            for i,entry in enumerate(row):
+            for i, entry in enumerate(row):
                 if (i + j) % 2 == 0:
                     ret += ascii1[entry][0]
                 else:
@@ -643,36 +643,36 @@ class FullyPackedLoop(Element, metaclass=InheritComparisonClasscallMetaclass):
             ret += '\n'
 
             # Do the left-most entry
-            if (j) % 2 == 0:
+            if j % 2 == 0:
                 ret += '  '
             else:
                 ret += ' -'
 
             # Do the middle row
-            for i,entry in enumerate(row):
+            for i, entry in enumerate(row):
                 if (i + j) % 2 == 0:
                     ret += ascii1[entry][3] + plus_sign + ascii1[entry][1]
                 else:
                     ret += ascii2[entry][3] + plus_sign + ascii2[entry][1]
 
             # Do the right-most entry
-            if (j+n) % 2 ==0:
+            if (j+n) % 2 == 0:
                 ret += '  '
             else:
                 ret += '- '
 
             # Do the bottom row
             ret += '\n  '
-            for i,entry in enumerate(row):
-                if (i + j) % 2 ==0:
+            for i, entry in enumerate(row):
+                if (i + j) % 2 == 0:
                     ret += ascii1[entry][2]
                 else:
                     ret += ascii2[entry][2]
 
         # Do the bottom line
         ret += '\n  '
-        for i,entry in enumerate(self._six_vertex_model[-1]):
-            if (i+n+1) % 2 ==0:
+        for i, entry in enumerate(self._six_vertex_model[-1]):
+            if (i+n+1) % 2 == 0:
                 ret += '     '
             else:
                 ret += '  |  '
@@ -879,7 +879,7 @@ class FullyPackedLoop(Element, metaclass=InheritComparisonClasscallMetaclass):
         unrank = self.parent()._boundary
         seen = [False] * (2*n)
 
-        squares = set((i,j) for i in range(n) for j in range(n))
+        squares = set((i, j) for i in range(n) for j in range(n))
 
         colors = _make_color_list(2*n,
                 colors=link_options.pop('colors', None),
@@ -922,7 +922,7 @@ class FullyPackedLoop(Element, metaclass=InheritComparisonClasscallMetaclass):
                     loop_options['color'] = colors.pop()
 
                 # make it upside down
-                orbit = [(j, n - i - 1) for i,j in orbit]
+                orbit = [(j, n - i - 1) for i, j in orbit]
 
                 if fill:
                     G += polygon2d(orbit, **loop_options)
@@ -1025,13 +1025,13 @@ class FullyPackedLoop(Element, metaclass=InheritComparisonClasscallMetaclass):
                 raise RuntimeError
 
         if i == -1 or j == -1 or i == n or j == n:
-            i0,j0 = orbit[0]
+            i0, j0 = orbit[0]
             if d0 is None and i0 != -1 and i0 != n and j0 != -1 and j0 != n:
                 # only half of a link -> compute the other half
-                i1,j1 = orbit[1]
+                i1, j1 = orbit[1]
                 d = (i0-i1, j0-j1)
                 orbit2 = self._link_or_loop_from(orbit[1], d)
-                assert orbit2[0] == (i1,j1) and orbit2[1] == (i0,j0)
+                assert orbit2[0] == (i1, j1) and orbit2[1] == (i0, j0)
                 return orbit2[:1:-1] + orbit
             return orbit
         else:
@@ -1156,7 +1156,7 @@ class FullyPackedLoop(Element, metaclass=InheritComparisonClasscallMetaclass):
             if seen[k]:
                 continue
 
-            i,j = unrank(k)
+            i, j = unrank(k)
 
             # initial direction
             if i == -1:
@@ -1180,7 +1180,7 @@ class FullyPackedLoop(Element, metaclass=InheritComparisonClasscallMetaclass):
                 d = FPL_turns[parity][conf][d]
 
             # update seen and link_pattern
-            l = rank((i,j))
+            l = rank((i, j))
             seen[k] = seen[l] = True
             link_pattern.append((k+1, l+1))
 
@@ -1294,7 +1294,7 @@ class FullyPackedLoops(Parent, UniqueRepresentation):
             sage: FPLs = FullyPackedLoops(4); FPLs
             Fully packed loops on a 4x4 grid
         """
-        return "Fully packed loops on a %sx%s grid" % (self._n,self._n)
+        return "Fully packed loops on a %sx%s grid" % (self._n, self._n)
 
     def __contains__(self, fpl):
         """
@@ -1368,7 +1368,7 @@ class FullyPackedLoops(Parent, UniqueRepresentation):
         if isinstance(generator, AlternatingSignMatrix):
             SVM = generator.to_six_vertex_model()
         elif isinstance(generator, SquareIceModel.Element) or \
-        isinstance(generator, SixVertexConfiguration):
+                isinstance(generator, SixVertexConfiguration):
             SVM = generator
         else:  # Not ASM nor SVM
             try:
@@ -1410,8 +1410,8 @@ class FullyPackedLoops(Parent, UniqueRepresentation):
             sage: [AlternatingSignMatrices(n).cardinality() for n in range(11)]
             [1, 1, 2, 7, 42, 429, 7436, 218348, 10850216, 911835460, 129534272700]
         """
-        return Integer(prod( [ factorial(3*k+1)/factorial(self._n+k)
-                       for k in range(self._n)] ))
+        return Integer(prod([factorial(3*k+1)/factorial(self._n+k)
+                       for k in range(self._n)]))
 
     def _an_element_(self):
         """
@@ -1433,9 +1433,9 @@ class FullyPackedLoops(Parent, UniqueRepresentation):
                 |         |
                 |         |
         """
-        #ASM = AlternatingSignMatrix(matrix.identity(self._n))
-        #SVM = ASM.to_six_vertex_model()
-        SVM = SixVertexModel(self._n,boundary_conditions='ice').an_element()
+        # ASM = AlternatingSignMatrix(matrix.identity(self._n))
+        # SVM = ASM.to_six_vertex_model()
+        SVM = SixVertexModel(self._n, boundary_conditions='ice').an_element()
         return self.element_class(self, SVM)
 
     def _boundary(self, k):
@@ -1457,19 +1457,19 @@ class FullyPackedLoops(Parent, UniqueRepresentation):
             True
         """
         n = self._n
-        n_LR = n//2 if n%2 == 0 else (n+1) // 2
-        n_TB = n//2 if n%2 == 0 else (n-1) // 2
+        n_LR = n//2 if n % 2 == 0 else (n+1) // 2
+        n_TB = n//2 if n % 2 == 0 else (n-1) // 2
         if k < n_LR:
             return (-1, 2*k)
         k -= n_LR
         if k < n_TB:
-            return (n%2 + 2*k, n)
+            return (n % 2 + 2*k, n)
         k -= n_TB
         if k < n_LR:
             return (n, n - 1 - 2*k)
         k -= n_LR
         if k < n_TB:
-            return (n - 1 - n%2 - 2*k, -1)
+            return (n - 1 - n % 2 - 2*k, -1)
 
     def _boundary_index(self, pos):
         r"""
