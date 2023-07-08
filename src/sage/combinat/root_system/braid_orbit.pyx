@@ -74,7 +74,7 @@ cpdef set BraidOrbit(list word, list rels):
     return words
 
 
-cpdef bint is_full_commutative(list word, list rels):
+cpdef bint is_fully_commutative(list word, list rels):
     r"""
     Check if the braid orbit of ``word`` is using a braid relation.
 
@@ -90,10 +90,10 @@ cpdef bint is_full_commutative(list word, list rels):
         sage: from sage.combinat.root_system.braid_orbit import is_fully_commutative
         sage: rels = [[[2, 1, 2], [1, 2, 1]], [[3, 1], [1, 3]], [[3, 2, 3], [2, 3, 2]]]
         sage: word = [1,2,1,3,2,1]
-        sage: is_fully_commutative(word, rels))
+        sage: is_fully_commutative(word, rels)
         False
         sage: word = [1,2,3]
-        sage: is_fully_commutative(word, rels))
+        sage: is_fully_commutative(word, rels)
         True
     """
     cdef int i, l, rel_l, loop_ind, list_len
