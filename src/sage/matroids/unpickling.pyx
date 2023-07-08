@@ -271,11 +271,11 @@ def unpickle_quaternary_matrix(version, data):
     EXAMPLES::
 
         sage: from sage.matroids.lean_matrix import *
-        sage: A = QuaternaryMatrix(2, 5, ring=GF(4, 'x'))                               # optional - sage.rings.finite_rings
-        sage: A == loads(dumps(A))  # indirect doctest                                  # optional - sage.rings.finite_rings
+        sage: A = QuaternaryMatrix(2, 5, ring=GF(4, 'x'))                               # needs sage.rings.finite_rings
+        sage: A == loads(dumps(A))  # indirect doctest                                  # needs sage.rings.finite_rings
         True
-        sage: C = QuaternaryMatrix(2, 2, Matrix(GF(4, 'x'), [[1, 1], [0, 1]]))          # optional - sage.rings.finite_rings
-        sage: C == loads(dumps(C))                                                      # optional - sage.rings.finite_rings
+        sage: C = QuaternaryMatrix(2, 2, Matrix(GF(4, 'x'), [[1, 1], [0, 1]]))          # needs sage.rings.finite_rings
+        sage: C == loads(dumps(C))                                                      # needs sage.rings.finite_rings
         True
     """
     cdef QuaternaryMatrix A
@@ -537,9 +537,9 @@ def unpickle_quaternary_matroid(version, data):
         sage: M.rename("U34")
         sage: loads(dumps(M))
         U34
-        sage: M = QuaternaryMatroid(Matrix(GF(4, 'x'), [[1, 0, 1],                      # optional - sage.rings.finite_rings
+        sage: M = QuaternaryMatroid(Matrix(GF(4, 'x'), [[1, 0, 1],                      # needs sage.rings.finite_rings
         ....:                                           [1, 0, 1]]))
-        sage: loads(dumps(M)).representation()                                          # optional - sage.rings.finite_rings
+        sage: loads(dumps(M)).representation()                                          # needs sage.rings.finite_rings
         [1 0 1]
         [1 0 1]
     """
@@ -672,8 +672,8 @@ def unpickle_graphic_matroid(version, data):
 
     EXAMPLES::
 
-        sage: M = Matroid(graphs.DiamondGraph())                                        # optional - sage.graphs
-        sage: M == loads(dumps(M))                                                      # optional - sage.graphs
+        sage: M = Matroid(graphs.DiamondGraph())                                        # needs sage.graphs
+        sage: M == loads(dumps(M))                                                      # needs sage.graphs
         True
     """
     if version != 0:

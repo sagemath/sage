@@ -6252,20 +6252,22 @@ cdef class Matroid(SageObject):
 
         EXAMPLES::
 
-            sage: PR = RootSystem(['A',4]).root_lattice().positive_roots()              # needs sage.combinat
-            sage: m = matrix([x.to_vector() for x in PR]).transpose()                   # needs sage.combinat
-            sage: M = Matroid(m)                                                        # needs sage.combinat
-            sage: M.is_k_closed(3)                                                      # needs sage.combinat
+            sage: # needs sage.combinat
+            sage: PR = RootSystem(['A',4]).root_lattice().positive_roots()
+            sage: m = matrix([x.to_vector() for x in PR]).transpose()
+            sage: M = Matroid(m)
+            sage: M.is_k_closed(3)
             True
-            sage: M.is_k_closed(4)                                                      # needs sage.combinat
+            sage: M.is_k_closed(4)
             True
 
-            sage: PR = RootSystem(['D',4]).root_lattice().positive_roots()              # needs sage.combinat
-            sage: m = matrix([x.to_vector() for x in PR]).transpose()                   # needs sage.combinat
-            sage: M = Matroid(m)                                                        # needs sage.combinat
-            sage: M.is_k_closed(3)                                                      # needs sage.combinat
+            sage: # needs sage.combinat
+            sage: PR = RootSystem(['D',4]).root_lattice().positive_roots()
+            sage: m = matrix([x.to_vector() for x in PR]).transpose()
+            sage: M = Matroid(m)
+            sage: M.is_k_closed(3)
             False
-            sage: M.is_k_closed(4)                                                      # needs sage.combinat
+            sage: M.is_k_closed(4)
             True
         """
         G = self.groundset()
@@ -7645,14 +7647,14 @@ cdef class Matroid(SageObject):
 
         Next we get the non-trivial generators and do some computations::
 
-            sage: # needs sage.libs.singular
-            sage: G = A.gens()[6:]                                                      # needs sage.rings.finite_rings
-            sage: Ag, Aabf, Aace, Aadg, Abcd, Abeg, Acfg, Adef = G                      # needs sage.rings.finite_rings
-            sage: Ag * Ag                                                               # needs sage.rings.finite_rings
+            sage: # needs sage.libs.singular sage.rings.finite_rings
+            sage: G = A.gens()[6:]
+            sage: Ag, Aabf, Aace, Aadg, Abcd, Abeg, Acfg, Adef = G
+            sage: Ag * Ag
             2*Adef^2
-            sage: Ag * Abeg                                                             # needs sage.rings.finite_rings
+            sage: Ag * Abeg
             -Adef^2
-            sage: matrix([[x * y for x in G] for y in G])                               # needs sage.rings.finite_rings
+            sage: matrix([[x * y for x in G] for y in G])
             [2*Adef^2        0        0  -Adef^2        0  -Adef^2  -Adef^2        0]
             [       0   Adef^2        0        0        0        0        0        0]
             [       0        0   Adef^2        0        0        0        0        0]
