@@ -522,7 +522,7 @@ class FilteredSimplicialComplex(SageObject):
 
             sage: int_list2 = [[],[]]
             sage: X._add_interval(Simplex([1, 2]), None, int_list2)                     # needs sage.modules sage.rings.finite_rings
-            sage: int_list2[1]                                                          # needs sage.modules sage.rings.finite_rings
+            sage: int_list2[1]
             [(10, +Infinity)]
         """
         # figure out dimension of homology element

@@ -109,7 +109,7 @@ simplicial complex::
     sage: x0, x1, x2, x3 = X.stanley_reisner_ring().gens()                              # needs sage.libs.singular
     sage: x0*x2 == x1*x3 == 0                                                           # needs sage.libs.singular
     True
-    sage: X.is_pure()                                                                   # needs sage.libs.singular
+    sage: X.is_pure()
     True
 
 Mutability (see :trac:`12587`)::
@@ -917,7 +917,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
     or e.g. the simplicial complex of all 168 hyperovals of the projective plane of order 4::
 
         sage: l = designs.ProjectiveGeometryDesign(2, 1, GF(4,name='a'))                # needs sage.rings.finite_rings
-        sage: f = lambda S: not any(len(set(S).intersection(x))>2 for x in l)           # needs sage.rings.finite_rings
+        sage: f = lambda S: not any(len(set(S).intersection(x))>2 for x in l)
         sage: SimplicialComplex(from_characteristic_function=(f, l.ground_set()))       # needs sage.rings.finite_rings
         Simplicial complex with 21 vertices and 168 facets
 
@@ -2498,7 +2498,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
 
         EXAMPLES::
 
-            sage: RP2 = simplicial_complexes.RealProjectivePlane()                      # needs sage.rings.finite_rings
+            sage: RP2 = simplicial_complexes.RealProjectivePlane()
             sage: phi, M = RP2.algebraic_topological_model(GF(2))                       # needs sage.rings.finite_rings
             sage: M.homology()                                                          # needs sage.modules sage.rings.finite_rings
             {0: Vector space of dimension 1 over Finite Field of size 2,
@@ -2591,8 +2591,8 @@ class SimplicialComplex(Parent, GenericCellComplex):
             sage: T = SimplicialComplex([range(1,5)]).n_skeleton(1)
             sage: _ = T.faces()       # populate the _faces attribute
             sage: _ = T.homology()    # add more to _faces                              # needs sage.modules
-            sage: T.add_face((1,2,3))                                                   # needs sage.modules
-            sage: all(Simplex((1,2,3)) in T._faces[L][2] for L in T._faces)             # needs sage.modules
+            sage: T.add_face((1,2,3))
+            sage: all(Simplex((1,2,3)) in T._faces[L][2] for L in T._faces)
             True
 
         Check that the ``__enlarged`` cache is treated correctly
@@ -2601,7 +2601,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
             sage: T = SimplicialComplex([range(1,5)]).n_skeleton(1)
             sage: T.homology()  # to populate the __enlarged attribute                  # needs sage.modules
             {0: 0, 1: Z x Z x Z}
-            sage: T.add_face([1,2,3])                                                   # needs sage.modules
+            sage: T.add_face([1,2,3])
             sage: len(T._SimplicialComplex__enlarged) > 0                               # needs sage.modules
             True
 
@@ -2727,12 +2727,12 @@ class SimplicialComplex(Parent, GenericCellComplex):
             sage: T = SimplicialComplex([range(1,5)]).n_skeleton(1)
             sage: _ = T.faces()     # populate the _faces attribute
             sage: _ = T.homology()  # add more to _faces                                # needs sage.modules
-            sage: T.add_face((1,2,3))                                                   # needs sage.modules
-            sage: T.remove_face((1,2,3))                                                # needs sage.modules
+            sage: T.add_face((1,2,3))
+            sage: T.remove_face((1,2,3))
             sage: len(T._faces)                                                         # needs sage.modules
             2
-            sage: T.remove_face((1,2))                                                  # needs sage.modules
-            sage: len(T._faces)                                                         # needs sage.modules
+            sage: T.remove_face((1,2))
+            sage: len(T._faces)
             1
 
         Check that the face to be removed can be given with a
@@ -3611,7 +3611,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
         EXAMPLES::
 
             sage: triangle = SimplicialComplex([[0,1], [1,2], [0, 2]])
-            sage: hexagon = triangle.barycentric_subdivision(); hexagon                 # needs sage.combinat
+            sage: hexagon = triangle.barycentric_subdivision(); hexagon
             Simplicial complex with 6 vertices and 6 facets
             sage: hexagon.homology(1) == triangle.homology(1)                           # needs sage.combinat sage.modules
             True
@@ -4701,7 +4701,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
             sage: X = SimplicialComplex([[1,2], [1,4], [3,4], [2,5]])
             sage: X.is_balanced()
             True
-            sage: sorted(X.is_balanced(certificate=True))       # optional - sa
+            sage: sorted(X.is_balanced(certificate=True))
             [[1, 3, 5], [2, 4]]
             sage: X = SimplicialComplex([[1,2], [1,4], [3,4], [2,4]])
             sage: X.is_balanced()
@@ -4910,9 +4910,9 @@ class SimplicialComplex(Parent, GenericCellComplex):
             2
             sage: X.bigraded_betti_number(-1, 8)                                        # needs sage.modules
             0
-            sage: X.bigraded_betti_number(-2, 5)                                        # needs sage.modules
+            sage: X.bigraded_betti_number(-2, 5)
             0
-            sage: X.bigraded_betti_number(0, 0)                                         # needs sage.modules
+            sage: X.bigraded_betti_number(0, 0)
             1
             sage: sorted(X.bigraded_betti_numbers().items(), reverse=True)              # needs sage.modules
             [((0, 0), 1), ((-1, 6), 1), ((-1, 4), 2), ((-2, 8), 1), ((-2, 6), 1)]

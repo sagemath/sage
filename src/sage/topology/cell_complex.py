@@ -741,7 +741,7 @@ class GenericCellComplex(SageObject):
             Cubical complex with 168 vertices and 1512 cubes
             sage: P.euler_characteristic()
             0
-            sage: P.is_acyclic()                                                        # needs sage.modules
+            sage: P.is_acyclic()
             False
         """
         if self.euler_characteristic() != 1:
@@ -1041,13 +1041,13 @@ class GenericCellComplex(SageObject):
 
         EXAMPLES::
 
-            sage: P = SimplicialComplex([[0, 1], [1,2], [2,3]]).face_poset(); P         # needs sage.combinat
+            sage: P = SimplicialComplex([[0, 1], [1,2], [2,3]]).face_poset(); P
             Finite poset containing 7 elements
-            sage: sorted(P.list())                                                      # needs sage.combinat
+            sage: sorted(P.list())
             [(0,), (0, 1), (1,), (1, 2), (2,), (2, 3), (3,)]
 
             sage: S2 = cubical_complexes.Sphere(2)
-            sage: S2.face_poset()                                                       # needs sage.combinat
+            sage: S2.face_poset()
             Finite poset containing 26 elements
         """
         from sage.combinat.posets.posets import Poset

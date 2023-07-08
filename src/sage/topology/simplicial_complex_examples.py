@@ -1342,7 +1342,7 @@ def SumComplex(n, A):
         Sum complex on vertices Z/19Z associated to {0, 1, 4}
         sage: S.homology(1)                                                             # needs sage.modules
         C5670599
-        sage: factor(5670599)                                                           # needs sage.libs.pari
+        sage: factor(5670599)
         11 * 191 * 2699
         sage: S = simplicial_complexes.SumComplex(31, [0, 1, 4]); S
         Sum complex on vertices Z/31Z associated to {0, 1, 4}

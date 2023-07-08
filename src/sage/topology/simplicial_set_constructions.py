@@ -978,7 +978,7 @@ class ProductOfSimplicialSets(PullbackOfSimplicialSets, Factors):
             sage: K = simplicial_sets.KleinBottle()
             sage: G = groups.misc.MultiplicativeAbelian([2])                            # needs sage.groups
             sage: B = simplicial_sets.ClassifyingSpace(G)                               # needs sage.groups
-            sage: S2.product(S2)                                                        # needs sage.groups
+            sage: S2.product(S2)
             S^2 x S^2
             sage: S2.product(K, B)                                                      # needs sage.groups
             S^2 x Klein bottle x Classifying space of Multiplicative Abelian group isomorphic to C2
@@ -1966,7 +1966,7 @@ class SmashProductOfSimplicialSets_finite(QuotientOfSimplicialSet_finite,
         EXAMPLES::
 
             sage: RP4 = simplicial_sets.RealProjectiveSpace(4)                          # needs sage.groups
-            sage: S1 = simplicial_sets.Sphere(1)                                        # needs sage.groups
+            sage: S1 = simplicial_sets.Sphere(1)
             sage: S1.smash_product(RP4, S1)                                             # needs sage.groups
             Smash product: (S^1 ^ RP^4 ^ S^1)
         """
@@ -1982,7 +1982,7 @@ class SmashProductOfSimplicialSets_finite(QuotientOfSimplicialSet_finite,
         EXAMPLES::
 
             sage: RP4 = simplicial_sets.RealProjectiveSpace(4)                          # needs sage.groups
-            sage: S1 = simplicial_sets.Sphere(1)                                        # needs sage.groups
+            sage: S1 = simplicial_sets.Sphere(1)
             sage: latex(S1.smash_product(RP4, S1))                                      # needs sage.groups
             S^{1} \wedge RP^{4} \wedge S^{1}
         """
@@ -2088,7 +2088,7 @@ class WedgeOfSimplicialSets(PushoutOfSimplicialSets, Factors):
         EXAMPLES::
 
             sage: RP4 = simplicial_sets.RealProjectiveSpace(4)                          # needs sage.groups
-            sage: S1 = simplicial_sets.Sphere(1)                                        # needs sage.groups
+            sage: S1 = simplicial_sets.Sphere(1)
             sage: latex(S1.wedge(RP4, S1))                                              # needs sage.groups
             S^{1} \vee RP^{4} \vee S^{1}
         """
