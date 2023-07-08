@@ -10,8 +10,11 @@ AUTHORS:
 
 # ****************************************************************************
 #       Copyright (C) 2012 David Roe <roed.math@gmail.com>
-#                          Robert Bradshaw <robertwb@gmail.com>
-#                          William Stein <wstein@gmail.com>
+#                     2012 Robert Bradshaw <robertwb@gmail.com>
+#                     2012 William Stein <wstein@gmail.com>
+#                     2013 Jeroen Demeyer <jdemeyer@cage.ugent.be>
+#                     2014 Volker Braun
+#                     2017 Frédéric Chapoton
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of

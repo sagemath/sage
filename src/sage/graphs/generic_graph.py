@@ -10513,14 +10513,14 @@ class GenericGraph(GenericGraph_pyx):
              4: 0.3063198690713853,
              5: 0.1700057609707141,
              6: 0.05390084497706962}
-            sage: G.pagerank(algorithm="Scipy")                     # abs tol 1e-9      # needs networkx scipy
+            sage: G.pagerank(algorithm="Scipy")                     # abs tol 1e-9      # needs scipy
             {1: 0.16112205885619563,
              2: 0.1619531043247219,
              3: 0.16112205885619563,
              4: 0.2374999999999999,
              5: 0.17775588228760858,
              6: 0.100546895675278}
-            sage: G.pagerank(algorithm="Scipy", by_weight=True)     # abs tol 1e-9      # needs networkx scipy
+            sage: G.pagerank(algorithm="Scipy", by_weight=True)     # abs tol 1e-9      # needs scipy
             {1: 0.16459583718588994,
              2: 0.13977928595154515,
              3: 0.16539840184339605,
@@ -15285,7 +15285,8 @@ class GenericGraph(GenericGraph_pyx):
 
             sage: # needs networkx
             sage: G = graphs.RandomGNM(10,20)
-            sage: impls = ['boost', 'sparse_copy', 'dense_copy', 'networkx']
+            sage: impls = ['boost', 'sparse_copy', 'dense_copy']
+            sage: impls += ['networkx']                                                 # needs networkx
             sage: coeffs = [G.clustering_average(implementation=impl)
             ....:           for impl in impls]
             sage: max(coeffs) - min(coeffs)  # tol abs 1e-12
@@ -23084,7 +23085,7 @@ class GenericGraph(GenericGraph_pyx):
             sage: # optional - bliss
             sage: G = graphs.HallJankoGraph()
             sage: A1 = G.automorphism_group()                                           # needs sage.groups
-            sage: A2 = G.automorphism_group(algorithm='bliss')
+            sage: A2 = G.automorphism_group(algorithm='bliss')                          # needs sage.groups
             sage: A1.is_isomorphic(A2)                                                  # needs sage.groups
             True
 

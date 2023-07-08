@@ -22,10 +22,22 @@ AUTHORS:
 """
 
 # ****************************************************************************
-#       Copyright (C) 2012 David Roe <roed.math@gmail.com>
-#                          Robert Bradshaw <robertwb@gmail.com>
-#                          William Stein <wstein@gmail.com>
-#       Copyright (C) 2013-2015 Jeroen Demeyer <jdemeyer@cage.ugent.be>
+#       Copyright (C) 2012-2013 David Roe <roed.math@gmail.com>
+#                     2012      Robert Bradshaw <robertwb@gmail.com>
+#                     2012      William Stein <wstein@gmail.com>
+#                     2013      R. Andrew Ohana
+#                     2013-2018 Jeroen Demeyer <jdemeyer@cage.ugent.be>
+#                     2013-2020 John H. Palmieri
+#                     2013-2017 Volker Braun
+#                     2014      André Apitzsch
+#                     2014      Darij Grinberg
+#                     2016-2021 Frédéric Chapoton
+#                     2017-2019 Erik M. Bray
+#                     2018      Julian Rüth
+#                     2020      Jonathan Kliem
+#                     2020-2023 Matthias Koeppe
+#                     2022      Markus Wageringel
+#                     2022      Michael Orlitzky
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of

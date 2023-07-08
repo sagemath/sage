@@ -210,7 +210,7 @@ Adding a border in the options avoids cropping the vertices of a graph::
     sage: s2 = latex(g)   # takes 3s but the result is cached           # optional - latex, needs sage.graphs
     sage: t2 = TikzPicture(s2, standalone_config=["border=4mm"],        # optional - latex, needs sage.graphs
     ....:                 usepackage=['tkz-graph'])
-    sage: _ = t2.pdf()    # not tested
+    sage: _ = t2.pdf()    # not tested, needs sage.graphs
 
 The current latex representation of a transducer is a tikzpicture using
 the tikz library automata. The string can be used as input::
@@ -1570,7 +1570,7 @@ class TikzPicture(Standalone):
 
         Using ``merge_multiedges``::
 
-            sage: # needs sage.symbolic
+            sage: # needs sage.modules sage.symbolic
             sage: alpha = var('alpha')
             sage: m = matrix(2, range(4)); m.set_immutable()                                                            # needs sage.modules
             sage: G = DiGraph([(0,1,alpha), (0,1,0), (0,2,9), (0,2,m)], multiedges=True)            # needs sage.graphs sage.modules
@@ -1690,6 +1690,7 @@ class TikzPicture(Standalone):
 
         ::
 
+            sage: # needs sage.graphs
             sage: edges = [(0,0,'a'),(0,1,'b'),(0,1,'c')]
             sage: kwds = dict(format='list_of_edges', loops=True, multiedges=True)
             sage: G = DiGraph(edges, **kwds)                                            # needs sage.graphs
