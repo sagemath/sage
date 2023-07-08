@@ -118,13 +118,13 @@ cdef char *capture_stdout(Obj func, Obj obj):
         GAP_Enter()
         s = NEW_STRING(0)
         output_text_string = GAP_ValueGlobalVariable("OutputTextString")
-        stream = CALL_2ARGS(output_text_string, s, GAP_True)
+        stream = GAP_CallFunc2Args(output_text_string, s, GAP_True)
 
         l = GAP_NewPlist(1)
         GAP_AssList(l, 1, obj)
 
         CALL_WITH_STREAM = GAP_ValueGlobalVariable("CALL_WITH_STREAM")
-        CALL_3ARGS(CALL_WITH_STREAM, stream, func, l)
+        GAP_CallFunc3Args(CALL_WITH_STREAM, stream, func, l)
         return GAP_CSTR_STRING(s)
     finally:
         GAP_Leave()
