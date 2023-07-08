@@ -36,24 +36,15 @@ Functions
 # ****************************************************************************
 
 from sage.matrix.constructor import Matrix
-from sage.graphs.graph_generators import graphs
-
-from sage.rings.integer_ring import ZZ
-
-import sage.matroids.matroid
-import sage.matroids.basis_exchange_matroid
 from sage.matroids.basis_matroid import BasisMatroid
 from sage.matroids.circuit_closures_matroid import CircuitClosuresMatroid
+from sage.matroids.constructor import Matroid
 from sage.matroids.linear_matroid import (LinearMatroid, RegularMatroid,
                                           BinaryMatroid, TernaryMatroid,
                                           QuaternaryMatroid)
 from sage.matroids.rank_matroid import RankMatroid
-from sage.matroids.constructor import Matroid
 from sage.misc.lazy_import import lazy_import
-
-lazy_import('sage.rings.finite_rings.finite_field_constructor', 'GF')
-lazy_import('sage.schemes.projective.projective_space', 'ProjectiveSpace')
-
+from sage.rings.integer_ring import ZZ
 
 # The order is the same as in Oxley.
 
