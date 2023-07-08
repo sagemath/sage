@@ -72,7 +72,7 @@ __import__("sage.all", globals(), locals(), ["*"])
 # Keep in sync with SAGE_ROOT/src/.relint.yml (namespace_pkg_all_import)
 
 default_package_regex = (r"sage("
-                         r"|[.](arith|categories|combinat|crypto|databases|data_structures|dynamics|ext|game_theory|games|graphs|groups|interfaces|manifolds|matrix|matroids|misc|modules|monoids|numerical|probability|quadratic_forms|quivers|rings|sat|schemes|sets|stats|tensor)[a-z0-9_.]*|[.]libs"
+                         r"|[.](arith|categories|combinat|crypto|databases|data_structures|dynamics|ext|game_theory|games|geometry|graphs|groups|interfaces|manifolds|matrix|matroids|misc|modules|monoids|numerical|probability|quadratic_forms|quivers|rings|sat|schemes|sets|stats|tensor)[a-z0-9_.]*|[.]libs"
                          r")[.]all")
 
 

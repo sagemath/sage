@@ -902,10 +902,10 @@ class Magmas(Category_singleton):
 
                 sage: from sage.categories.examples.finite_semigroups import LeftRegularBand
                 sage: L = LeftRegularBand(('a', 'b'))
-                sage: T = L.multiplication_table(names='digits')                        # optional - sage.matrix
-                sage: T.column_keys()                                                   # optional - sage.matrix
+                sage: T = L.multiplication_table(names='digits')                        # optional - sage.modules
+                sage: T.column_keys()                                                   # optional - sage.modules
                 ('a', 'ab', 'b', 'ba')
-                sage: T                                                                 # optional - sage.matrix
+                sage: T                                                                 # optional - sage.modules
                 *  0 1 2 3
                  +--------
                 0| 0 1 1 1
@@ -918,7 +918,7 @@ class Magmas(Category_singleton):
 
                 sage: L = LeftRegularBand(('a', 'b', 'c'))
                 sage: elts = sorted(L.list())
-                sage: L.multiplication_table(elements=elts)                             # optional - sage.matrix
+                sage: L.multiplication_table(elements=elts)                             # optional - sage.modules
                 *  a b c d e f g h i j k l m n o
                  +------------------------------
                 a| a b c d e b b c c c d d e e e
@@ -947,7 +947,7 @@ class Magmas(Category_singleton):
 
                 sage: L = LeftRegularBand(('a','b','c'))
                 sage: elts=['a', 'c', 'ac', 'ca']
-                sage: L.multiplication_table(names='elements', elements=elts)           # optional - sage.matrix
+                sage: L.multiplication_table(names='elements', elements=elts)           # optional - sage.modules
                    *   'a'  'c' 'ac' 'ca'
                     +--------------------
                  'a'|  'a' 'ac' 'ac' 'ac'
@@ -961,15 +961,15 @@ class Magmas(Category_singleton):
             comprehensive documentation. ::
 
                 sage: G = AlternatingGroup(3)                                           # optional - sage.groups
-                sage: T = G.multiplication_table()                                      # optional - sage.groups sage.matrix
-                sage: T.column_keys()                                                   # optional - sage.groups sage.matrix
+                sage: T = G.multiplication_table()                                      # optional - sage.groups sage.modules
+                sage: T.column_keys()                                                   # optional - sage.groups sage.modules
                 ((), (1,2,3), (1,3,2))
-                sage: T.translation()                                                   # optional - sage.groups sage.matrix
+                sage: T.translation()                                                   # optional - sage.groups sage.modules
                 {'a': (), 'b': (1,2,3), 'c': (1,3,2)}
-                sage: T.change_names(['x', 'y', 'z'])                                   # optional - sage.groups sage.matrix
-                sage: T.translation()                                                   # optional - sage.groups sage.matrix
+                sage: T.change_names(['x', 'y', 'z'])                                   # optional - sage.groups sage.modules
+                sage: T.translation()                                                   # optional - sage.groups sage.modules
                 {'x': (), 'y': (1,2,3), 'z': (1,3,2)}
-                sage: T                                                                 # optional - sage.groups sage.matrix
+                sage: T                                                                 # optional - sage.groups sage.modules
                 *  x y z
                  +------
                 x| x y z

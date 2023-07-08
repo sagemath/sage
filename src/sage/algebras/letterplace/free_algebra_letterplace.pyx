@@ -594,7 +594,7 @@ cdef class FreeAlgebra_letterplace(Algebra):
         cdef list tmp
         for i from 0<=i<nblocks:
             base = i*ngens
-            tmp = [(j,E[base+j]) for j in xrange(ngens) if E[base+j]]
+            tmp = [(j,E[base+j]) for j in range(ngens) if E[base+j]]
             if not tmp:
                 continue
             var_ind, exp = tmp[0]
@@ -627,7 +627,7 @@ cdef class FreeAlgebra_letterplace(Algebra):
         cdef list names = self.latex_variable_names()
         for i from 0<=i<nblocks:
             base = i*ngens
-            tmp = [(j,E[base+j]) for j in xrange(ngens) if E[base+j]]
+            tmp = [(j,E[base+j]) for j in range(ngens) if E[base+j]]
             if not tmp:
                 continue
             var_ind, exp = tmp[0]

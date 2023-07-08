@@ -465,40 +465,88 @@ def fast_callable(x, domain=None, vars=None,
         etb = ExpressionTreeBuilder(vars=vars, domain=domain)
         et = x._fast_callable_(etb)
 
-    if isinstance(domain, sage.rings.abc.RealField):
-        from sage.ext.interpreters.wrapper_rr import Wrapper_rr as builder
-        str = InstructionStream(sage.ext.interpreters.wrapper_rr.metadata,
-                                len(vars),
-                                domain)
+    builder, str = _builder_and_stream(vars=vars, domain=domain)
 
-    elif isinstance(domain, sage.rings.abc.ComplexField):
-        from sage.ext.interpreters.wrapper_cc import Wrapper_cc as builder
-        str = InstructionStream(sage.ext.interpreters.wrapper_cc.metadata,
-                                len(vars),
-                                domain)
-
-    elif isinstance(domain, sage.rings.abc.RealDoubleField) or domain is float:
-        from sage.ext.interpreters.wrapper_rdf import Wrapper_rdf as builder
-        str = InstructionStream(sage.ext.interpreters.wrapper_rdf.metadata,
-                                len(vars),
-                                domain)
-    elif isinstance(domain, sage.rings.abc.ComplexDoubleField):
-        from sage.ext.interpreters.wrapper_cdf import Wrapper_cdf as builder
-        str = InstructionStream(sage.ext.interpreters.wrapper_cdf.metadata,
-                                len(vars),
-                                domain)
-    elif domain is None:
-        from sage.ext.interpreters.wrapper_py import Wrapper_py as builder
-        str = InstructionStream(sage.ext.interpreters.wrapper_py.metadata,
-                                len(vars))
-    else:
-        from sage.ext.interpreters.wrapper_el import Wrapper_el as builder
-        str = InstructionStream(sage.ext.interpreters.wrapper_el.metadata,
-                                len(vars),
-                                domain)
     generate_code(et, str)
     str.instr('return')
     return builder(str.get_current())
+
+
+def _builder_and_stream(vars, domain):
+    r"""
+    Return a builder and a stream.
+
+    This is an internal function used only once, by :func:`fast_callable`.
+
+    INPUT:
+
+    - ``vars`` -- a sequence of variable names
+
+    - ``domain`` -- a Sage parent or Python type or ``None``; if non-``None``,
+      all arithmetic is done in that domain
+
+    OUTPUT: A :class:`Wrapper`, an class:`InstructionStream`
+
+    EXAMPLES::
+
+        sage: from sage.ext.fast_callable import _builder_and_stream
+        sage: _builder_and_stream(["x", "y"], ZZ)
+        (<class 'sage.ext.interpreters.wrapper_el.Wrapper_el'>,
+         <sage.ext.fast_callable.InstructionStream object at 0x...>)
+        sage: _builder_and_stream(["x", "y"], RR)                                       # optional - sage.rings.real_mpfr
+        (<class 'sage.ext.interpreters.wrapper_rr.Wrapper_rr'>,
+         <sage.ext.fast_callable.InstructionStream object at 0x...>)
+
+    Modularized test with sagemath-categories after :issue:`35095`, which has
+    (a basic version of) ``RDF`` but not the specialized interpreter for it.
+    In this case, the function falls back to using the :class:`Element`
+    interpreter::
+
+        sage: domain = RDF
+        sage: from sage.structure.element import Element as domain                      # optional - sage.modules
+        sage: _builder_and_stream(["x", "y"], domain)
+        (<class 'sage.ext.interpreters.wrapper_el.Wrapper_el'>,
+         <sage.ext.fast_callable.InstructionStream object at 0x...>)
+    """
+    if isinstance(domain, sage.rings.abc.RealField):
+        try:
+            from sage.ext.interpreters.wrapper_rr import metadata, Wrapper_rr as builder
+        except ImportError:
+            pass
+        else:
+            return builder, InstructionStream(metadata, len(vars), domain)
+
+    if isinstance(domain, sage.rings.abc.ComplexField):
+        try:
+            from sage.ext.interpreters.wrapper_cc import metadata, Wrapper_cc as builder
+        except ImportError:
+            pass
+        else:
+            return builder, InstructionStream(metadata, len(vars), domain)
+
+    if isinstance(domain, sage.rings.abc.RealDoubleField) or domain is float:
+        try:
+            from sage.ext.interpreters.wrapper_rdf import metadata, Wrapper_rdf as builder
+        except ImportError:
+            pass
+        else:
+            return builder, InstructionStream(metadata, len(vars), domain)
+
+    if isinstance(domain, sage.rings.abc.ComplexDoubleField):
+        try:
+            from sage.ext.interpreters.wrapper_cdf import metadata, Wrapper_cdf as builder
+        except ImportError:
+            pass
+        else:
+            return builder, InstructionStream(metadata, len(vars), domain)
+
+    if domain is None:
+        from sage.ext.interpreters.wrapper_py import metadata, Wrapper_py as builder
+        return builder, InstructionStream(metadata, len(vars))
+
+    from sage.ext.interpreters.wrapper_el import metadata, Wrapper_el as builder
+    return builder, InstructionStream(metadata, len(vars), domain)
+
 
 def function_name(fn):
     r"""

@@ -6,9 +6,8 @@ from .all__sagemath_environment import *
 from .all__sagemath_repl import *
 
 from .misc import (BackslashOperator,
-                  cputime,
                   exists, forall, is_iterator,
-                  random_sublist, walltime,
+                  random_sublist,
                   pad_zeros,
                   SAGE_DB,
                    newton_method_sizes, compose,
@@ -124,6 +123,8 @@ from .latex import LatexExpr, latex, view
 from .randstate import seed, set_random_seed, initial_seed, current_randstate
 
 from .prandom import *
+
+from .timing import walltime, cputime
 
 from .explain_pickle import explain_pickle, unpickle_newobj, unpickle_global, unpickle_build, unpickle_instantiate, unpickle_persistent, unpickle_extension, unpickle_appends
 

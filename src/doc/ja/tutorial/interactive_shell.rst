@@ -353,33 +353,6 @@ IPythonトリック
 <http://ipython.scipy.org/moin/Documentation>`_ を読んみてほしい．
 そのかわり，ここではIPythonの「マジックコマンド」と呼ばれる，お便利なトリックをいくつか紹介させていただこう:
 
-- ``%bg`` を使えばコマンドをバックグラウンドで実行し， 結果には ``jobs`` でアクセスすることができる．(この機能は ``not tested`` とコメントされている．というのは ``%bg`` 書法がSageの自動テスト機能とは余り相性が良くないからだ．ユーザ各自が入力してやれば，その通り動作するはずである．もちろん，この機能が最も役立つのは実行に時間のかかるコマンドと組み合わせる場合である．)
-
-  使用例を以下に示す．
-
-  ::
-
-    sage: def quick(m): return 2*m
-    sage: %bg quick(20)  # not tested
-    Starting job # 0 in a separate thread.
-    sage: jobs.status()  # not tested
-    Completed jobs:
-    0 : quick(20)
-    sage: jobs[0].result  # the actual answer, not tested
-    40
-
-  バックグラウンドに送られるジョブはSageの前処理パーサを経由しないことに注意 -- 詳細は :ref:`section-mathannoy` 節を参照されたい．
-  パーサを通すための(不器用であるけれども)１つの方法は
-
-  ::
-
-    sage: %bg eval(preparse('quick(20)')) # not tested
-
-  とすることだろう．
-
-  ただし，より安全で簡単なのは前処理パーサを必要としないコマンドで ``%bg`` を使うことだろう．
-
-
 - ``%edit`` (``%ed`` や ``ed`` でもいい)を使ってエディタを起動すれば，複雑なコードの入力が楽になる．
   Sageの使用前に，環境変数 :envvar:`EDITOR` に好みのエディタ名を設定しておこう(``export EDITOR=/usr/bin/emacs`` または ``export EDITOR=/usr/bin/vim`` とするか， ``.profile`` ファイルなどで同様の設定をする)．
   するとSageプロンプトで ``%edit`` を実行すれば設定したエディタが起動する．そのエディタで関数

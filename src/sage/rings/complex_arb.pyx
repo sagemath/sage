@@ -3928,7 +3928,7 @@ cdef class ComplexBall(RingElement):
         cdef acb_ptr vec_a = _acb_vec_init(p - s)
         cdef acb_ptr vec_b = _acb_vec_init(q + 1 - s)
         cdef long j = 0
-        for i in xrange(p):
+        for i in range(p):
             if i != i1:
                 tmp = self._parent.coerce(a[i])
                 acb_set(&(vec_a[j]), tmp.value)

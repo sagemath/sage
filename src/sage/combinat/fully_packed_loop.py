@@ -157,7 +157,7 @@ class FullyPackedLoop(Element, metaclass=InheritComparisonClasscallMetaclass):
 
     The class also has a plot method::
 
-        sage: fpl.plot()
+        sage: fpl.plot()                                                                # optional - sage.plot
         Graphics object consisting of 3 graphics primitives
 
     which gives:
@@ -781,7 +781,7 @@ class FullyPackedLoop(Element, metaclass=InheritComparisonClasscallMetaclass):
 
             sage: A = AlternatingSignMatrix([[0, 1, 0], [1, -1, 1], [0, 1, 0]])
             sage: fpl = FullyPackedLoop(A)
-            sage: fpl.plot()
+            sage: fpl.plot()                                                            # optional - sage.plot
             Graphics object consisting of 3 graphics primitives
 
         The resulting graphics is as follows
@@ -798,7 +798,7 @@ class FullyPackedLoop(Element, metaclass=InheritComparisonClasscallMetaclass):
 
             sage: A = AlternatingSignMatrix([[0, 1, 0], [1, -1, 1], [0, 1, 0]])
             sage: fpl = FullyPackedLoop(A)
-            sage: fpl.plot(link_color_map='rainbow')
+            sage: fpl.plot(link_color_map='rainbow')                                    # optional - sage.plot
             Graphics object consisting of 3 graphics primitives
 
         .. PLOT::
@@ -811,8 +811,9 @@ class FullyPackedLoop(Element, metaclass=InheritComparisonClasscallMetaclass):
 
         You can plot the 42 fully packed loops of size `4 \times 4` using::
 
-            sage: G = [fpl.plot(link_color_map='winter', loop_color='black') for fpl in FullyPackedLoops(4)]
-            sage: graphics_array(G, 7, 6)
+            sage: G = [fpl.plot(link_color_map='winter', loop_color='black')            # optional - sage.plot
+            ....:      for fpl in FullyPackedLoops(4)]
+            sage: graphics_array(G, 7, 6)                                               # optional - sage.plot
             Graphics Array of size 7 x 6
 
         .. PLOT::
@@ -833,7 +834,7 @@ class FullyPackedLoop(Element, metaclass=InheritComparisonClasscallMetaclass):
             ....: 00000000+-0000+00000000000000+0000000000"
             sage: a = matrix(20, [{'0':0, '+':1, '-': -1}[i] for i in s])
             sage: fpl = FullyPackedLoop(a)
-            sage: fpl.plot(loop_fill=True, loop_color_map='rainbow')
+            sage: fpl.plot(loop_fill=True, loop_color_map='rainbow')                    # optional - sage.plot
             Graphics object consisting of 27 graphics primitives
 
         .. PLOT::
