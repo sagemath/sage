@@ -366,7 +366,7 @@ compare equal::
     Ring endomorphism of Univariate Quotient Polynomial Ring in a
      over Finite Field of size 2 with modulus x^2 + x + 1
       Defn: a |--> a
-    sage: phi3 = RingHomomorphism_from_base(H, R.hom([x])); phi3                        # optional - sage.rings.finite_rings
+    sage: phi3 = RingHomomorphism_from_base(H, R.hom([x])); phi3                        # optional - sage.rings.finite_rings sage.libs.ntl
     Ring endomorphism of Univariate Quotient Polynomial Ring in a
      over Finite Field of size 2 with modulus x^2 + x + 1
       Defn: Induced from base ring by

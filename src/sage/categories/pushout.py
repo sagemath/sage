@@ -441,7 +441,7 @@ class CompositeConstructionFunctor(ConstructionFunctor):
         True
         sage: F == CompositeConstructionFunctor(*F.all)
         True
-        sage: F(GF(2)['t'])                                                             # optional - sage.rings.finite_rings
+        sage: F(GF(2)['t'])                                                             # needs sage.libs.ntl
         Univariate Polynomial Ring in y
          over Fraction Field of Univariate Polynomial Ring in x
           over Fraction Field of Univariate Polynomial Ring in t
@@ -1874,12 +1874,14 @@ class VectorFunctor(ConstructionFunctor):
 
     EXAMPLES::
 
+        sage: # optional - sage.modules
         sage: F = (ZZ^3).construction()[0]                                              # optional - sage.modules
         sage: F                                                                         # optional - sage.modules
         VectorFunctor
-        sage: F(GF(2)['t'])                                                             # optional - sage.rings.finite_rings sage.modules
+        sage: F(GF(2)['t'])                                                             # optional - sage.libs.ntl
         Ambient free module of rank 3
-         over the principal ideal domain Univariate Polynomial Ring in t over Finite Field of size 2 (using GF2X)
+         over the principal ideal domain Univariate Polynomial Ring in t
+          over Finite Field of size 2 (using GF2X)
     """
     rank = 10 # ranking of functor, not rank of module.
     # This coincides with the rank of the matrix construction functor, but this is OK since they cannot both be applied in any order
