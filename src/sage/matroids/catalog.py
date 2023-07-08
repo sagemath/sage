@@ -758,17 +758,18 @@ def CompleteGraphic(n):
 
     EXAMPLES::
 
+        sage: # needs sage.graphs
         sage: from sage.matroids.advanced import setprint
-        sage: M = matroids.CompleteGraphic(5); M                                        # needs sage.graphs
+        sage: M = matroids.CompleteGraphic(5); M
         M(K5): Graphic matroid of rank 4 on 10 elements
-        sage: M.has_minor(matroids.Uniform(2, 4))                                       # needs sage.graphs
+        sage: M.has_minor(matroids.Uniform(2, 4))
         False
-        sage: simplify(M.contract(randrange(0,                                          # needs sage.graphs
+        sage: simplify(M.contract(randrange(0,
         ....:                 10))).is_isomorphic(matroids.CompleteGraphic(4))
         True
-        sage: setprint(M.closure([0, 2, 4, 5]))                                         # needs sage.graphs
+        sage: setprint(M.closure([0, 2, 4, 5]))
         {0, 1, 2, 4, 5, 7}
-        sage: M.is_valid()                                                              # needs sage.graphs
+        sage: M.is_valid()
         True
     """
     M = Matroid(groundset=list(range((n * (n - 1)) // 2)),
