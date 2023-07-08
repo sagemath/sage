@@ -1266,13 +1266,13 @@ class PolynomialRing_general(ring.Algebra):
 
     def is_field(self, proof=True):
         """
-        Return False, since polynomial rings are never fields.
+        Return ``False``, since polynomial rings are never fields.
 
         EXAMPLES::
 
-            sage: R.<z> = Integers(2)[]; R
+            sage: R.<z> = Integers(2)[]; R                                              # needs sage.libs.ntl
             Univariate Polynomial Ring in z over Ring of integers modulo 2 (using GF2X)
-            sage: R.is_field()
+            sage: R.is_field()                                                          # needs sage.libs.ntl
             False
         """
         return False
@@ -3251,7 +3251,7 @@ class PolynomialRing_dense_mod_n(PolynomialRing_commutative):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
+            sage: # needs sage.libs.ntl
             sage: R.<t> = GF(2)[]
             sage: k.<a> = R.residue_field(t^3 + t + 1); k
             Residue field in a
@@ -3301,9 +3301,9 @@ class PolynomialRing_dense_mod_p(PolynomialRing_dense_finite_field,
         """
         TESTS::
 
-            sage: P = GF(2)['x']; P                                                     # needs sage.rings.finite_rings
+            sage: P = GF(2)['x']; P                                                     # needs sage.libs.ntl
             Univariate Polynomial Ring in x over Finite Field of size 2 (using GF2X)
-            sage: type(P.gen())                                                         # needs sage.rings.finite_rings
+            sage: type(P.gen())                                                         # needs sage.libs.ntl
             <class 'sage.rings.polynomial.polynomial_gf2x.Polynomial_GF2X'>
 
             sage: from sage.rings.polynomial.polynomial_ring import PolynomialRing_dense_mod_p
@@ -3371,19 +3371,20 @@ class PolynomialRing_dense_mod_p(PolynomialRing_dense_finite_field,
         """
         TESTS::
 
-            sage: # needs sage.rings.finite_rings
+            sage: # needs sage.libs.ntl
             sage: PolynomialRing(GF(2), 'x', implementation="GF2X")
             Univariate Polynomial Ring in x over Finite Field of size 2 (using GF2X)
             sage: PolynomialRing(GF(2), 'x', implementation="NTL")
             Univariate Polynomial Ring in x over Finite Field of size 2 (using GF2X)
             sage: PolynomialRing(GF(2), 'x', implementation=None)
             Univariate Polynomial Ring in x over Finite Field of size 2 (using GF2X)
-            sage: PolynomialRing(GF(2), 'x', implementation="FLINT")
-            Univariate Polynomial Ring in x over Finite Field of size 2
             sage: PolynomialRing(GF(3), 'x', implementation="GF2X")
             Traceback (most recent call last):
             ...
             ValueError: GF2X only supports modulus 2
+
+            sage: PolynomialRing(GF(2), 'x', implementation="FLINT")                    # needs sage.libs.flint
+            Univariate Polynomial Ring in x over Finite Field of size 2
         """
         if sparse:
             return NotImplemented

@@ -3719,7 +3719,7 @@ cdef class BooleanPolynomial(MPolynomial):
             sage: g = R(1)
             sage: h = g.univariate_polynomial(); h
             1
-            sage: h.parent()
+            sage: h.parent()                                                            # needs sage.libs.ntl
             Univariate Polynomial Ring in x over Finite Field of size 2 (using GF2X)
         """
         if not self.is_univariate():
