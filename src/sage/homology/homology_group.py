@@ -114,13 +114,13 @@ class HomologyGroup_class(AdditiveAbelianGroup_fixed_gens):
         eldv = self._original_invts
         if len(eldv) == 0:
             return "0"
-        rank = len([1 for x in eldv if x == 0])
+        rank = len([x for x in eldv if x == 0])
         torsion = sorted(x for x in eldv if x)
         if rank > 4:
             g = ["\\ZZ^{{{}}}".format(rank)]
         else:
             g = ["\\ZZ"] * rank
-        if len(torsion) != 0:
+        if torsion:
             printed = []
             for t in torsion:
                 numfac = torsion.count(t)
