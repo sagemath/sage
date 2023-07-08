@@ -270,12 +270,13 @@ def unpickle_quaternary_matrix(version, data):
 
     EXAMPLES::
 
+        sage: # needs sage.rings.finite_rings
         sage: from sage.matroids.lean_matrix import *
-        sage: A = QuaternaryMatrix(2, 5, ring=GF(4, 'x'))                               # needs sage.rings.finite_rings
-        sage: A == loads(dumps(A))  # indirect doctest                                  # needs sage.rings.finite_rings
+        sage: A = QuaternaryMatrix(2, 5, ring=GF(4, 'x'))
+        sage: A == loads(dumps(A))  # indirect doctest
         True
-        sage: C = QuaternaryMatrix(2, 2, Matrix(GF(4, 'x'), [[1, 1], [0, 1]]))          # needs sage.rings.finite_rings
-        sage: C == loads(dumps(C))                                                      # needs sage.rings.finite_rings
+        sage: C = QuaternaryMatrix(2, 2, Matrix(GF(4, 'x'), [[1, 1], [0, 1]]))
+        sage: C == loads(dumps(C))
         True
     """
     cdef QuaternaryMatrix A

@@ -3075,11 +3075,12 @@ cdef class Matroid(SageObject):
             sage: G = SymmetricGroup(3);                                                # needs sage.groups
             sage: OSG = M.orlik_solomon_algebra(QQ, invariant=G)                        # needs sage.groups
 
-            sage: G = SymmetricGroup(4)                                                 # needs sage.groups
+            sage: # needs sage.groups
+            sage: G = SymmetricGroup(4)
             sage: action = lambda g,x: g(x+1)-1
-            sage: OSG1 = M.orlik_solomon_algebra(QQ, invariant=(G,action))              # needs sage.groups
-            sage: OSG2 = M.orlik_solomon_algebra(QQ, invariant=(action,G))              # needs sage.groups
-            sage: OSG1 is OSG2                                                          # needs sage.groups
+            sage: OSG1 = M.orlik_solomon_algebra(QQ, invariant=(G,action))
+            sage: OSG2 = M.orlik_solomon_algebra(QQ, invariant=(action,G))
+            sage: OSG1 is OSG2
             True
 
         """
