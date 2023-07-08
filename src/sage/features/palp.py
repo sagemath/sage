@@ -36,11 +36,11 @@ class PalpExecutable(Executable):
         if suff:
             Executable.__init__(self, f"palp_{palpprog}_{suff}d",
                                 executable=f"{palpprog}-{suff}d.x",
-                                spkg="palp")
+                                spkg="palp", type="standard")
         else:
             Executable.__init__(self, f"palp_{palpprog}",
                                 executable=f"{palpprog}.x",
-                                spkg="palp")
+                                spkg="palp", type="standard")
 
 class Palp(JoinFeature):
     r"""

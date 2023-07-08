@@ -31,6 +31,7 @@ class MemoryChunkCCRetval(MemoryChunk):
         EXAMPLES::
 
             sage: from sage_setup.autogen.interpreters import *
+            sage: from sage_setup.autogen.interpreters.specs.cc import *
             sage: mc = MemoryChunkCCRetval('retval', ty_mpc)
             sage: mc.declare_class_members()
             ''
@@ -45,6 +46,7 @@ class MemoryChunkCCRetval(MemoryChunk):
         EXAMPLES::
 
             sage: from sage_setup.autogen.interpreters import *
+            sage: from sage_setup.autogen.interpreters.specs.cc import *
             sage: mc = MemoryChunkCCRetval('retval', ty_mpc)
             sage: mc.declare_call_locals()
             '        cdef ComplexNumber retval = (self.domain_element._new())\n'
@@ -62,6 +64,7 @@ class MemoryChunkCCRetval(MemoryChunk):
         EXAMPLES::
 
             sage: from sage_setup.autogen.interpreters import *
+            sage: from sage_setup.autogen.interpreters.specs.cc import *
             sage: mc = MemoryChunkCCRetval('retval', ty_mpc)
             sage: mc.declare_parameter()
             'mpc_t retval'
@@ -76,6 +79,7 @@ class MemoryChunkCCRetval(MemoryChunk):
         EXAMPLES::
 
             sage: from sage_setup.autogen.interpreters import *
+            sage: from sage_setup.autogen.interpreters.specs.cc import *
             sage: mc = MemoryChunkCCRetval('retval', ty_mpc)
             sage: mc.pass_argument()
             '(<mpc_t>(retval.__re))'
@@ -90,6 +94,7 @@ class MemoryChunkCCRetval(MemoryChunk):
         EXAMPLES::
 
             sage: from sage_setup.autogen.interpreters import *
+            sage: from sage_setup.autogen.interpreters.specs.cc import *
             sage: mc = MemoryChunkCCRetval('retval', ty_mpc)
             sage: mc.pass_call_c_argument()
             'result'
@@ -111,6 +116,7 @@ class CCInterpreter(StackInterpreter):
         EXAMPLES::
 
             sage: from sage_setup.autogen.interpreters import *
+            sage: from sage_setup.autogen.interpreters.specs.cc import *
             sage: interp = CCInterpreter()
             sage: interp.name
             'cc'

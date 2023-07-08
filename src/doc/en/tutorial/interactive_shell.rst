@@ -383,33 +383,6 @@ IPython documentation <http://ipython.scipy.org/moin/Documentation>`_.
 Meanwhile, here are some fun tricks -- these are called "Magic
 commands" in IPython:
 
-- You can use ``%bg`` to run a command in the background, and then use
-  ``jobs`` to access the results, as follows.  (The comments ``not
-  tested`` are here because the ``%bg`` syntax doesn't work well with
-  Sage's automatic testing facility.  If you type this in yourself, it
-  should work as written.  This is of course most useful with commands
-  which take a while to complete.)
-
-  ::
-
-    sage: def quick(m): return 2*m
-    sage: %bg quick(20)  # not tested
-    Starting job # 0 in a separate thread.
-    sage: jobs.status()  # not tested
-    Completed jobs:
-    0 : quick(20)
-    sage: jobs[0].result  # the actual answer, not tested
-    40
-
-  Note that jobs run in the background don't use the Sage preparser --
-  see :ref:`section-mathannoy` for more information.  One
-  (perhaps awkward) way to get around this would be to run ::
-
-    sage: %bg eval(preparse('quick(20)')) # not tested
-
-  It is safer and easier, though, to just use ``%bg`` on commands
-  which don't require the preparser.
-
 - You can use ``%edit`` (or ``%ed`` or ``ed``) to open an editor, if
   you want to type in some complex code.  Before you start Sage, make
   sure that the :envvar:`EDITOR` environment variable is set to your

@@ -253,7 +253,7 @@ from sage.geometry.toric_plotter import ToricPlotter
 from sage.graphs.digraph import DiGraph
 from sage.matrix.constructor import matrix
 from sage.misc.cachefunc import cached_method
-from sage.misc.misc import walltime
+from sage.misc.timing import walltime
 from sage.misc.misc_c import prod
 from sage.modules.free_module import span
 from sage.modules.free_module_element import vector

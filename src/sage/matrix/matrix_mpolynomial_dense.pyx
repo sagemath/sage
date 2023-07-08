@@ -265,13 +265,13 @@ cdef class Matrix_mpolynomial_dense(Matrix_generic_dense):
             m = len(E)
             n = len(E[0])
 
-            for r in xrange(m):
+            for r in range(m):
                 for c in range(n):
                     self.set_unsafe(r, c, E[r][c])
-                for c in xrange(n, self.ncols()):
+                for c in range(n, self.ncols()):
                     self.set_unsafe(r, c, R._zero_element)
-            for r in xrange(m, self.nrows()):
-                for c in xrange(self.ncols()):
+            for r in range(m, self.nrows()):
+                for c in range(self.ncols()):
                     self.set_unsafe(r, c, R._zero_element)
 
             from sage.rings.integer_ring import ZZ
