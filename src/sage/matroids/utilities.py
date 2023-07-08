@@ -26,15 +26,10 @@ AUTHORS:
 
 from collections.abc import Iterable
 from sage.matrix.constructor import Matrix
-from sage.rings.finite_rings.finite_field_constructor import GF
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
-from sage.graphs.graph import Graph
-from sage.graphs.bipartite_graph import BipartiteGraph
 from sage.structure.all import SageObject
-from sage.graphs.spanning_tree import kruskal
 from operator import itemgetter
-from sage.rings.number_field.number_field import NumberField
 
 
 def setprint(X):
@@ -279,6 +274,9 @@ def make_regular_matroid_from_matroid(matroid):
     M = matroid
     if isinstance(M, sage.matroids.linear_matroid.RegularMatroid):
         return M
+
+    from sage.graphs.bipartite_graph import BipartiteGraph
+
     rk = M.full_rank()
     # First create a reduced 0-1 matrix
     B = list(M.basis())
@@ -384,6 +382,9 @@ def spanning_forest(M):
         sage: len(spanning_forest(matrix([[0,0,1],[0,1,0],[0,1,0]])))                   # needs sage.graphs
         3
     """
+    from sage.graphs.graph import Graph
+    from sage.graphs.spanning_tree import kruskal
+
     # Given a matrix, produce a spanning tree
     G = Graph()
     m = M.ncols()
@@ -424,6 +425,7 @@ def spanning_stars(M):
         sage: Graph([(x+3, y) for x,y in edges]).is_connected()                         # needs sage.graphs
         True
     """
+    from sage.graphs.graph import Graph
 
     G = Graph()
     m = M.ncols()
@@ -557,6 +559,8 @@ def lift_cross_ratios(A, lift_map=None):
         True
 
     """
+    from sage.graphs.graph import Graph
+
     for s, t in lift_map.items():
         source_ring = s.parent()
         target_ring = t.parent()
@@ -707,11 +711,15 @@ def lift_map(target):
         ....:                 print('not a proper lift map')
 
     """
+    from sage.rings.finite_rings.finite_field_constructor import GF
+
     if target == "reg":
         R = GF(3)
         return {R(1): ZZ(1)}
 
     if target == "sru":
+        from sage.rings.number_field.number_field import NumberField
+
         R = GF(7)
         z = ZZ['z'].gen()
         S = NumberField(z * z - z + 1, 'z')
@@ -723,6 +731,8 @@ def lift_map(target):
         return {R(1): QQ(1), R(-1): QQ(-1), R(2): QQ(2), R(6): QQ((1, 2))}
 
     if target == "gm":
+        from sage.rings.number_field.number_field import NumberField
+
         R = GF(19)
         t = QQ['t'].gen()
         G = NumberField(t * t - t - 1, 't')

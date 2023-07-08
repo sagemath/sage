@@ -2844,8 +2844,7 @@ cdef class LinearMatroid(BasisExchangeMatroid):
         EXAMPLES::
 
             sage: M = matroids.Wheel(3)
-            sage: OS = M.orlik_terao_algebra()
-            sage: OS
+            sage: OS = M.orlik_terao_algebra(); OS
             Orlik-Terao algebra of Wheel(3):
              Regular matroid of rank 3 on 6 elements with 16 bases
              over Integer Ring

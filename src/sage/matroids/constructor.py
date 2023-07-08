@@ -103,7 +103,6 @@ Functions
 
 from itertools import combinations
 from sage.matrix.constructor import Matrix
-from sage.graphs.graph import Graph
 from sage.structure.element import is_Matrix
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
@@ -493,7 +492,7 @@ def Matroid(groundset=None, data=None, **kwds):
             ....:         matrix=[[1, 1, 0], [1, 0, 1], [0, 1, 1]],
             ....:         field=GF(4, 'x'))
             Quaternary matroid of rank 3 on 6 elements
-            sage: Matroid([0, 1, 2, 3, 4, 5],
+            sage: Matroid([0, 1, 2, 3, 4, 5],                                           # needs sage.graphs
             ....:         matrix=[[1, 1, 0], [1, 0, 1], [0, 1, 1]],
             ....:         field=GF(2), regular=True)
             Regular matroid of rank 3 on 6 elements with 16 bases
@@ -628,25 +627,25 @@ def Matroid(groundset=None, data=None, **kwds):
     increase speed, this check can be skipped::
 
         sage: M = matroids.named_matroids.Fano()
-        sage: N = Matroid(M, regular=True)
+        sage: N = Matroid(M, regular=True)                                              # needs sage.graphs
         Traceback (most recent call last):
         ...
         ValueError: input is not a valid regular matroid
-        sage: N = Matroid(M, regular=True, check=False); N
+        sage: N = Matroid(M, regular=True, check=False); N                              # needs sage.graphs
         Regular matroid of rank 3 on 7 elements with 32 bases
 
-        sage: N.is_valid()
+        sage: N.is_valid()                                                              # needs sage.graphs
         False
 
     Sometimes the output is regular, but represents a different matroid
     from the one you intended::
 
         sage: M = Matroid(Matrix(GF(3), [[1, 0, 1, 1], [0, 1, 1, 2]]))
-        sage: N = Matroid(Matrix(GF(3), [[1, 0, 1, 1], [0, 1, 1, 2]]),
+        sage: N = Matroid(Matrix(GF(3), [[1, 0, 1, 1], [0, 1, 1, 2]]),                  # needs sage.graphs
         ....:             regular=True)
-        sage: N.is_valid()
+        sage: N.is_valid()                                                              # needs sage.graphs
         True
-        sage: N.is_isomorphic(M)
+        sage: N.is_isomorphic(M)                                                        # needs sage.graphs
         False
 
     TESTS::
@@ -711,7 +710,11 @@ def Matroid(groundset=None, data=None, **kwds):
             groundset = None
 
     if key is None:
-        if isinstance(data, sage.graphs.graph.Graph):
+        try:
+            from sage.graphs.graph import Graph
+        except ImportError:
+            Graph = ()
+        if isinstance(data, Graph):
             key = 'graph'
         elif is_Matrix(data):
             key = 'matrix'
@@ -772,6 +775,8 @@ def Matroid(groundset=None, data=None, **kwds):
     # Graphs:
 
     elif key == 'graph':
+        from sage.graphs.graph import Graph
+
         if isinstance(data, sage.graphs.generic_graph.GenericGraph):
             G = data
         else:
