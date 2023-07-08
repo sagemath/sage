@@ -114,7 +114,7 @@ cdef class MPolynomialRing_base(sage.rings.ring.CommutativeRing):
             False
         """
         return self.base_ring().is_integral_domain(proof)
-    
+
     cpdef _get_action_(self, G, op, bint self_on_left):
         """
         EXAMPLES::
@@ -141,7 +141,7 @@ cdef class MPolynomialRing_base(sage.rings.ring.CommutativeRing):
         """
 
         from sage.groups.matrix_gps.matrix_group import MatrixGroup_generic
-        if isinstance(G, MatrixGroup_generic) and self.base_ring().has_coerce_map_from(G.base_ring()) and op==matmul and not self_on_left:            
+        if isinstance(G, MatrixGroup_generic) and self.base_ring().has_coerce_map_from(G.base_ring()) and op==matmul and not self_on_left:
             return MatrixPolynomialAction(G, self)
         return super(MPolynomialRing_base, self)._get_action_(G, op, self_on_left)
 
@@ -1828,11 +1828,11 @@ class MatrixPolynomialAction(Action):
         self._poly_vars = PR.gens()
         self._vars_vector = MatrixConstructor(self._poly_vars).transpose()
         super().__init__(MS, PR, op=matmul)
-    
+
     def _act_(self, mat, polynomial):
         assert mat.base_ring()==polynomial.base_ring()
         polynomial_vars=polynomial.parent().gens()
         vars_to_sub_module_context=mat*MatrixConstructor(polynomial_vars).transpose()
-        vars_to_sub_ring_context=map(PolynomialRing(mat.base_ring(), polynomial_vars), vars_to_sub_module_context)            
+        vars_to_sub_ring_context=map(PolynomialRing(mat.base_ring(), polynomial_vars), vars_to_sub_module_context)
         substitution_dict={v:s for v,s in zip(polynomial_vars, vars_to_sub_ring_context)}
         return polynomial.subs(substitution_dict)

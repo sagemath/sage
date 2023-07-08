@@ -5845,14 +5845,3 @@ cdef inline MPolynomial_libsingular new_MP(MPolynomialRing_libsingular parent, p
 
 cdef poly *MPolynomial_libsingular_get_element(object self):
     return (<MPolynomial_libsingular>self)._poly
-
-# class MatrixPolynomialAction(Action):
-#     def __init__(self, MS, PR):
-#         self._poly_vars = PR.gens()
-#         self._vars_vector = MatrixConstructor(self._poly_vars).transpose()
-#         super().__init__(MS, PR, op=matmul)
-
-#     def _act_(self, mat, poly):
-#         vars_to_sub = MatrixConstructor(poly.base_ring(), mat) * self._vars_vector
-#         substitution_dict = {v: s for v, s in zip(self._poly_vars, vars_to_sub)}
-#         return poly.subs(substitution_dict)
