@@ -1577,26 +1577,23 @@ class CoxeterGroups(Category_singleton):
                 sage: len([1 for w in W if w.is_fully_commutative()])
                 24
             """
-            matrix = self.parent().coxeter_matrix()
+            word = self.reduced_word()
+            from sage.combinat.root_system.braid_orbit import is_fully_commutative as is_fully_comm
 
-            def contains_long_braid(w):
-                # This detects 'braid' subwords.
-                # TODO: optimisation
-                if len(w) <= 2:
-                    return False
-                for i in range(len(w) - 2):
-                    a = w[i]
-                    b = w[i + 1]
-                    m = matrix[a, b]
-                    if m > 2 and i + m <= len(w):
-                        ab = [a, b]
-                        if all(wj == ab[j % 2]
-                               for j, wj in enumerate(w[i:i + m])):
-                            return True
-                return False
+            group = self.parent()
+            braid_rels = group.braid_relations()
+            I = group.index_set()
 
-            return not any(contains_long_braid(word)
-                           for word in self.reduced_words_iter())
+            from sage.rings.integer_ring import ZZ
+            be_careful = any(i not in ZZ for i in I)
+
+            if be_careful:
+                Iinv = {i: j for j, i in enumerate(I)}
+                word = [Iinv[i] for i in word]
+                braid_rels = [[[Iinv[i] for i in l],
+                               [Iinv[i] for i in r]] for l, r in braid_rels]
+
+            return is_fully_comm(word, braid_rels)
 
         def reduced_word_reverse_iterator(self):
             """
