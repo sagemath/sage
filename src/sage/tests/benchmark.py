@@ -29,7 +29,7 @@ from sage.interfaces.singular import singular
 from sage.libs.pari import pari
 from sage.matrix.matrix_space import MatrixSpace
 from sage.misc.functional import log
-from sage.misc.misc import cputime, walltime
+from sage.misc.timing import cputime, walltime
 from sage.modular.modsym.modsym import ModularSymbols
 from sage.rings.complex_mpfr import ComplexField
 from sage.rings.finite_rings.finite_field_constructor import GF
