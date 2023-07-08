@@ -904,10 +904,18 @@ class FinitelyGeneratedMatrixGroup_gap(MatrixGroup_gap):
                 if len(inv) == ms[deg]:
                     break
         return list(inv)
-    
-def _new_invariant_is_linearly_independent(F, inv, R):
-    if len(inv)==0: return True
-    try:
-        return PolynomialSequence(R, inv).coefficient_matrix()[0].rank() != PolynomialSequence(R, list(inv)+[F]).coefficient_matrix()[0].rank()
-    except ValueError:
+
+def _new_invariant_is_linearly_independent(F, invariants, R):
+    """
+    EXAMPLES ::
+        sage: gens = [matrix(QQ, [[-1,1],[-1,0]]), matrix(QQ, [[0,1],[1,0]])]
+        sage: G = MatrixGroup(gens)
+        sage: s = Sequence(G.invariants_of_degree(14))
+        sage: s.coefficient_matrix()[0].rank()
+        3
+        sage: len(s)
+        3
+    """
+    if len(invariants)==0:
         return True
+    return PolynomialSequence(invariants).coefficient_matrix()[0].rank() != PolynomialSequence(list(invariants)+[F]).coefficient_matrix()[0].rank()
