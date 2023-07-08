@@ -273,7 +273,7 @@ class FunctionFieldMaximalOrder_rational(FunctionFieldMaximalOrder):
             sage: k.<a> = GF(2)                                                                     # optional - sage.rings.finite_rings
             sage: F.<x> = FunctionField(k)                                                          # optional - sage.rings.finite_rings
             sage: O = F.maximal_order()                                                             # optional - sage.rings.finite_rings
-            sage: O._ring                                                                           # optional - sage.rings.finite_rings
+            sage: O._ring                                                                           # optional - sage.rings.finite_rings sage.libs.ntl
             Univariate Polynomial Ring in x over Finite Field of size 2 (using GF2X)
             sage: f = x^3 + x + 1                                                                   # optional - sage.rings.finite_rings
             sage: _f = f.numerator()                                                                # optional - sage.rings.finite_rings
