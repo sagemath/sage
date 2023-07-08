@@ -1453,7 +1453,7 @@ class DeltaComplex(GenericCellComplex):
         EXAMPLES::
 
             sage: T = delta_complexes.Torus()
-            sage: T.face_poset()                                                        # needs sage.combinat
+            sage: T.face_poset()
             Finite poset containing 6 elements
         """
         from sage.combinat.posets.posets import Poset

@@ -2606,15 +2606,15 @@ class SimplicialSet_arbitrary(Parent):
               To:   Wedge: (S^1 v S^1 x S^1)
               Defn: [v_0, sigma_1] --> [*, sigma_1]
 
-            sage: f = S1.Hom(T)({S1.n_cells(0)[0]: K.n_cells(0)[0],                     # needs sage.modules
+            sage: f = S1.Hom(T)({S1.n_cells(0)[0]: K.n_cells(0)[0],
             ....:                S1.n_cells(1)[0]: K.n_cells(1)[0]})
 
         The maps `f: S^1 \to T` and `1: T \to T` induce a map `S^1 \vee T \to T`::
 
-            sage: g = W.universal_property(f, Hom(T,T).identity())                      # needs sage.modules
-            sage: g.domain() == W                                                       # needs sage.modules
+            sage: g = W.universal_property(f, Hom(T,T).identity())
+            sage: g.domain() == W
             True
-            sage: g.codomain() == T                                                     # needs sage.modules
+            sage: g.codomain() == T
             True
 
         TESTS::
@@ -3664,7 +3664,7 @@ class SimplicialSet_finite(SimplicialSet_arbitrary, GenericCellComplex):
             sage: T = simplicial_complexes.Torus()
             sage: T.homology() == SimplicialSet(T).homology()                           # needs sage.modules
             True
-            sage: RP2 = delta_complexes.RealProjectivePlane()                           # needs sage.groups sage.modules
+            sage: RP2 = delta_complexes.RealProjectivePlane()
             sage: RP2.homology() == SimplicialSet(RP2).homology()                       # needs sage.groups sage.modules
             True
             sage: cohoRP2 = RP2.cohomology(base_ring=GF(2))                             # needs sage.groups sage.modules sage.rings.finite_rings
