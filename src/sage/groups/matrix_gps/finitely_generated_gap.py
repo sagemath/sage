@@ -905,7 +905,7 @@ class FinitelyGeneratedMatrixGroup_gap(MatrixGroup_gap):
                     break
         return list(inv)
 
-def _new_invariant_is_linearly_independent(F, invariants, R):
+def _new_invariant_is_linearly_independent(F, invariants):
     """
     EXAMPLES ::
         sage: gens = [matrix(QQ, [[-1,1],[-1,0]]), matrix(QQ, [[0,1],[1,0]])]
