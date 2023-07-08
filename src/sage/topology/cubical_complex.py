@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# sage.doctest: needs sage.graphs
 r"""
 Finite cubical complexes
 
@@ -46,11 +46,11 @@ interval `[0,0]` with the unit interval `[2,3]`: this is the line
 segment in the plane from `(0,2)` to `(0,3)`.  We could form a
 topologically equivalent space by inserting some degenerate simplices::
 
-    sage: S1.homology()                                                                 # optional - sage.modules
+    sage: S1.homology()                                                                 # needs sage.modules
     {0: 0, 1: Z}
     sage: X = CubicalComplex([([0,0], [2,3], [2]), ([0,1], [3,3], [2]),
     ....:                     ([0,1], [2,2], [2]), ([1,1], [2,3], [2])])
-    sage: X.homology()                                                                  # optional - sage.modules
+    sage: X.homology()                                                                  # needs sage.modules
     {0: 0, 1: Z}
 
 Topologically, the cubical complex ``X`` consists of four edges of a
@@ -778,7 +778,7 @@ class CubicalComplex(GenericCellComplex):
         sage: S1 = CubicalComplex([([0,0], [2,3]), ([0,1], [3,3]),
         ....:                      ([0,1], [2,2]), ([1,1], [2,3])]); S1
         Cubical complex with 4 vertices and 8 cubes
-        sage: S1.homology()                                                             # optional - sage.modules
+        sage: S1.homology()                                                             # needs sage.modules
         {0: 0, 1: Z}
 
     A set of five points and its product with ``S1``::
@@ -786,18 +786,18 @@ class CubicalComplex(GenericCellComplex):
         sage: pts = CubicalComplex([([0],), ([3],), ([6],), ([-12],), ([5],)])
         sage: pts
         Cubical complex with 5 vertices and 5 cubes
-        sage: pts.homology()                                                            # optional - sage.modules
+        sage: pts.homology()                                                            # needs sage.modules
         {0: Z x Z x Z x Z}
         sage: X = S1.product(pts); X
         Cubical complex with 20 vertices and 40 cubes
-        sage: X.homology()                                                              # optional - sage.modules
+        sage: X.homology()                                                              # needs sage.modules
         {0: Z x Z x Z x Z, 1: Z^5}
 
     Converting a simplicial complex to a cubical complex::
 
         sage: S2 = simplicial_complexes.Sphere(2)
         sage: C2 = CubicalComplex(S2)
-        sage: all(C2.homology(n) == S2.homology(n) for n in range(3))                   # optional - sage.modules
+        sage: all(C2.homology(n) == S2.homology(n) for n in range(3))                   # needs sage.modules
         True
 
     You can get the set of maximal cells or a dictionary of all cells::
@@ -834,14 +834,14 @@ class CubicalComplex(GenericCellComplex):
 
         sage: T = S1.product(S1); T
         Cubical complex with 16 vertices and 64 cubes
-        sage: T.chain_complex()                                                         # optional - sage.modules
+        sage: T.chain_complex()                                                         # needs sage.modules
         Chain complex with at most 3 nonzero terms over Integer Ring
-        sage: T.homology(base_ring=QQ)                                                  # optional - sage.modules
+        sage: T.homology(base_ring=QQ)                                                  # needs sage.modules
         {0: Vector space of dimension 0 over Rational Field,
          1: Vector space of dimension 2 over Rational Field,
          2: Vector space of dimension 1 over Rational Field}
         sage: RP2 = cubical_complexes.RealProjectivePlane()
-        sage: RP2.cohomology(dim=[1, 2], base_ring=GF(2))                               # optional - sage.modules sage.rings.finite_rings
+        sage: RP2.cohomology(dim=[1, 2], base_ring=GF(2))                               # needs sage.modules sage.rings.finite_rings
         {1: Vector space of dimension 1 over Finite Field of size 2,
          2: Vector space of dimension 1 over Finite Field of size 2}
 
@@ -1171,19 +1171,19 @@ class CubicalComplex(GenericCellComplex):
         EXAMPLES::
 
             sage: S2 = cubical_complexes.Sphere(2)
-            sage: S2.chain_complex()                                                    # optional - sage.modules
+            sage: S2.chain_complex()                                                    # needs sage.modules
             Chain complex with at most 3 nonzero terms over Integer Ring
             sage: Prod = S2.product(S2); Prod
             Cubical complex with 64 vertices and 676 cubes
-            sage: Prod.chain_complex()                                                  # optional - sage.modules
+            sage: Prod.chain_complex()                                                  # needs sage.modules
             Chain complex with at most 5 nonzero terms over Integer Ring
-            sage: Prod.chain_complex(base_ring=QQ)                                      # optional - sage.modules
+            sage: Prod.chain_complex(base_ring=QQ)                                      # needs sage.modules
             Chain complex with at most 5 nonzero terms over Rational Field
             sage: C1 = cubical_complexes.Cube(1)
             sage: S0 = cubical_complexes.Sphere(0)
-            sage: C1.chain_complex(subcomplex=S0)                                       # optional - sage.modules
+            sage: C1.chain_complex(subcomplex=S0)                                       # needs sage.modules
             Chain complex with at most 1 nonzero terms over Integer Ring
-            sage: C1.homology(subcomplex=S0)                                            # optional - sage.modules
+            sage: C1.homology(subcomplex=S0)                                            # needs sage.modules
             {0: 0, 1: Z}
 
         Check that :trac:`32203` has been fixed::
@@ -1191,7 +1191,7 @@ class CubicalComplex(GenericCellComplex):
             sage: Square = CubicalComplex([([0,1],[0,1])])
             sage: EdgesLTR = CubicalComplex([([0,0],[0,1]),([0,1],[1,1]),([1,1],[0,1])])
             sage: EdgesLBR = CubicalComplex([([0,0],[0,1]),([0,1],[0,0]),([1,1],[0,1])])
-            sage: Square.homology(subcomplex=EdgesLTR)[2] == Square.homology(subcomplex=EdgesLBR)[2]    # optional - sage.modules
+            sage: Square.homology(subcomplex=EdgesLTR)[2] == Square.homology(subcomplex=EdgesLBR)[2]                    # needs sage.modules
             True
         """
         from sage.homology.chain_complex import ChainComplex
@@ -1334,7 +1334,7 @@ class CubicalComplex(GenericCellComplex):
 
         EXAMPLES::
 
-            sage: cubical_complexes.Sphere(2).graph()                                   # optional - sage.graphs
+            sage: cubical_complexes.Sphere(2).graph()
             Graph on 8 vertices
         """
         from sage.graphs.graph import Graph
@@ -1482,7 +1482,7 @@ class CubicalComplex(GenericCellComplex):
 
             sage: S1 = cubical_complexes.Sphere(1)
             sage: S2 = cubical_complexes.Sphere(2)
-            sage: S1.disjoint_union(S2).homology()                                      # optional - sage.modules
+            sage: S1.disjoint_union(S2).homology()                                      # needs sage.modules
             {0: Z, 1: Z, 2: Z}
         """
         embedded_left = len(tuple(self.maximal_cells()[0]))
@@ -1517,7 +1517,7 @@ class CubicalComplex(GenericCellComplex):
 
             sage: S1 = cubical_complexes.Sphere(1)
             sage: S2 = cubical_complexes.Sphere(2)
-            sage: S1.wedge(S2).homology()                                               # optional - sage.modules
+            sage: S1.wedge(S2).homology()                                               # needs sage.modules
             {0: 0, 1: Z, 2: Z}
         """
         embedded_left = len(tuple(self.maximal_cells()[0]))
@@ -1553,12 +1553,12 @@ class CubicalComplex(GenericCellComplex):
 
             sage: T = cubical_complexes.Torus()
             sage: S2 = cubical_complexes.Sphere(2)
-            sage: T.connected_sum(S2).cohomology() == T.cohomology()                    # optional - sage.modules
+            sage: T.connected_sum(S2).cohomology() == T.cohomology()                    # needs sage.modules
             True
             sage: RP2 = cubical_complexes.RealProjectivePlane()
-            sage: T.connected_sum(RP2).homology(1)                                      # optional - sage.modules
+            sage: T.connected_sum(RP2).homology(1)                                      # needs sage.modules
             Z x Z x C2
-            sage: RP2.connected_sum(RP2).connected_sum(RP2).homology(1)                 # optional - sage.modules
+            sage: RP2.connected_sum(RP2).connected_sum(RP2).homology(1)                 # needs sage.modules
             Z x Z x C2
         """
         # connected_sum: first check whether the complexes are pure
@@ -1674,14 +1674,14 @@ class CubicalComplex(GenericCellComplex):
         EXAMPLES::
 
             sage: RP2 = cubical_complexes.RealProjectivePlane()
-            sage: phi, M = RP2.algebraic_topological_model(GF(2))                       # optional - sage.rings.finite_rings
-            sage: M.homology()                                                          # optional - sage.modules sage.rings.finite_rings
+            sage: phi, M = RP2.algebraic_topological_model(GF(2))                       # needs sage.rings.finite_rings
+            sage: M.homology()                                                          # needs sage.modules sage.rings.finite_rings
             {0: Vector space of dimension 1 over Finite Field of size 2,
              1: Vector space of dimension 1 over Finite Field of size 2,
              2: Vector space of dimension 1 over Finite Field of size 2}
             sage: T = cubical_complexes.Torus()
-            sage: phi, M = T.algebraic_topological_model(QQ)                            # optional - sage.modules
-            sage: M.homology()                                                          # optional - sage.modules
+            sage: phi, M = T.algebraic_topological_model(QQ)                            # needs sage.modules
+            sage: M.homology()                                                          # needs sage.modules
             {0: Vector space of dimension 1 over Rational Field,
              1: Vector space of dimension 2 over Rational Field,
              2: Vector space of dimension 1 over Rational Field}
@@ -1757,7 +1757,7 @@ class CubicalComplex(GenericCellComplex):
 
             sage: Ts = T._simplicial_(); Ts
             Simplicial complex with 16 vertices and 32 facets
-            sage: T.homology() == Ts.homology()                                         # optional - sage.modules
+            sage: T.homology() == Ts.homology()                                         # needs sage.modules
             True
 
         Each `n`-dimensional cube produces `n!` `n`-simplices::
