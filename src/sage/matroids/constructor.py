@@ -350,28 +350,30 @@ def Matroid(groundset=None, data=None, **kwds):
         If there are no edges in parallel, and is not a complete list of labels,
         or the labels are not unique, then vertex tuples are used::
 
-            sage: G = Graph([(0, 1, 'a'), (0, 2, 'b'), (1, 2, 'b')])                    # needs sage.graphs
-            sage: M = Matroid(G)                                                        # needs sage.graphs
-            sage: sorted(M.groundset())                                                 # needs sage.graphs
+            sage: # needs sage.graphs
+            sage: G = Graph([(0, 1, 'a'), (0, 2, 'b'), (1, 2, 'b')])
+            sage: M = Matroid(G)
+            sage: sorted(M.groundset())
             [(0, 1), (0, 2), (1, 2)]
-            sage: H = Graph([(0, 1, 'a'), (0, 2, 'b'), (1, 2, 'b'), (1, 2, 'c')],       # needs sage.graphs
+            sage: H = Graph([(0, 1, 'a'), (0, 2, 'b'), (1, 2, 'b'), (1, 2, 'c')],
             ....:           multiedges=True)
-            sage: N = Matroid(H)                                                        # needs sage.graphs
-            sage: sorted(N.groundset())                                                 # needs sage.graphs
+            sage: N = Matroid(H)
+            sage: sorted(N.groundset())
             [0, 1, 2, 3]
 
         The GraphicMatroid object forces its graph to be connected. If a
         disconnected graph is used as input, it will connect the components::
 
-            sage: G1 = graphs.CycleGraph(3); G2 = graphs.DiamondGraph()                 # needs sage.graphs
-            sage: G = G1.disjoint_union(G2)                                             # needs sage.graphs
-            sage: M = Matroid(G); M                                                     # needs sage.graphs
+            sage: # needs sage.graphs
+            sage: G1 = graphs.CycleGraph(3); G2 = graphs.DiamondGraph()
+            sage: G = G1.disjoint_union(G2)
+            sage: M = Matroid(G); M
             Graphic matroid of rank 5 on 8 elements
-            sage: M.graph()                                                             # needs sage.graphs
+            sage: M.graph()
             Looped multi-graph on 6 vertices
-            sage: M.graph().is_connected()                                              # needs sage.graphs
+            sage: M.graph().is_connected()
             True
-            sage: M.is_connected()                                                      # needs sage.graphs
+            sage: M.is_connected()
             False
 
 

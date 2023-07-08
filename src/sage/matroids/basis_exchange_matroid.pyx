@@ -1715,7 +1715,7 @@ cdef class BasisExchangeMatroid(Matroid):
         EXAMPLES::
 
             sage: M = matroids.named_matroids.N1()
-            sage: binomial(M.size(), M.full_rank())-M.bases_count()                     # optional - sage.symbolic
+            sage: binomial(M.size(), M.full_rank())-M.bases_count()                     # needs sage.symbolic
             68
             sage: len([B for B in M.nonbases()])
             68
@@ -2195,9 +2195,9 @@ cdef class BasisExchangeMatroid(Matroid):
 
             sage: from sage.matroids.advanced import *
             sage: M1 = matroids.Wheel(3)
-            sage: M2 = matroids.CompleteGraphic(4)                                      # optional - sage.graphs
-            sage: morphism = M1._isomorphism(M2)                                        # optional - sage.graphs
-            sage: M1._is_isomorphism(M2, morphism)                                      # optional - sage.graphs
+            sage: M2 = matroids.CompleteGraphic(4)                                      # needs sage.graphs
+            sage: morphism = M1._isomorphism(M2)                                        # needs sage.graphs
+            sage: M1._is_isomorphism(M2, morphism)                                      # needs sage.graphs
             True
             sage: M1 = matroids.named_matroids.Fano()
             sage: M2 = matroids.named_matroids.NonFano()
@@ -2289,10 +2289,10 @@ cdef class BasisExchangeMatroid(Matroid):
 
             sage: from sage.matroids.advanced import *
             sage: M1 = BasisMatroid(matroids.Wheel(3))
-            sage: M2 = matroids.CompleteGraphic(4)                                      # optional - sage.graphs
-            sage: M1._is_isomorphic(M2)                                                 # optional - sage.graphs
+            sage: M2 = matroids.CompleteGraphic(4)                                      # needs sage.graphs
+            sage: M1._is_isomorphic(M2)                                                 # needs sage.graphs
             True
-            sage: M1._is_isomorphic(M2, certificate=True)                               # optional - sage.graphs
+            sage: M1._is_isomorphic(M2, certificate=True)                               # needs sage.graphs
             (True, {0: 0, 1: 1, 2: 2, 3: 3, 4: 5, 5: 4})
             sage: M1 = BasisMatroid(matroids.named_matroids.Fano())
             sage: M2 = matroids.named_matroids.NonFano()

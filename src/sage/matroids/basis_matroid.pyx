@@ -975,9 +975,9 @@ cdef class BasisMatroid(BasisExchangeMatroid):
 
             sage: from sage.matroids.advanced import *
             sage: M = BasisMatroid(matroids.Wheel(3))
-            sage: N = BasisMatroid(matroids.CompleteGraphic(4))                         # optional - sage.graphs
-            sage: morphism = M._isomorphism(N)                                          # optional - sage.graphs
-            sage: M._is_isomorphism(N, morphism)                                        # optional - sage.graphs
+            sage: N = BasisMatroid(matroids.CompleteGraphic(4))                         # needs sage.graphs
+            sage: morphism = M._isomorphism(N)                                          # needs sage.graphs
+            sage: M._is_isomorphism(N, morphism)                                        # needs sage.graphs
             True
             sage: M = BasisMatroid(matroids.named_matroids.NonFano())
             sage: N = BasisMatroid(matroids.named_matroids.Fano())

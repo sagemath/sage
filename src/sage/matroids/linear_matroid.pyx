@@ -575,7 +575,7 @@ cdef class LinearMatroid(BasisExchangeMatroid):
             sage: R = GF(7)
             sage: A = Matrix(R, [[1, 0, 6, 1, 2],[6, 1, 0, 0, 1],[0, 6, 3, 6, 0]])
             sage: M = LinearMatroid(reduced_matrix=A)
-            sage: M.representation(lift_map=lift_map('sru'))                            # optional - sage.rings.finite_rings
+            sage: M.representation(lift_map=lift_map('sru'))                            # needs sage.rings.finite_rings
             [     1      0      0      1      0      1      1      1]
             [     0      1      0 -z + 1      1      0      0      1]
             [     0      0      1      0     -z      z      1      0]
@@ -1091,7 +1091,7 @@ cdef class LinearMatroid(BasisExchangeMatroid):
             object has no attribute '_invariant'
             sage: M1._fast_isom_test(M3) is None
             True
-            sage: Matroid(graphs.WheelGraph(6), regular=True)._fast_isom_test(          # optional - sage.graphs
+            sage: Matroid(graphs.WheelGraph(6), regular=True)._fast_isom_test(          # needs sage.graphs
             ....:                                           matroids.Wheel(5))
             True
         """
@@ -1126,8 +1126,8 @@ cdef class LinearMatroid(BasisExchangeMatroid):
         EXAMPLES::
 
             sage: M1 = matroids.Wheel(3)
-            sage: M2 = Matroid(graphs.CompleteGraph(4), regular=True)                   # optional - sage.graphs
-            sage: M1.is_field_isomorphic(M2)                                            # optional - sage.graphs
+            sage: M2 = Matroid(graphs.CompleteGraph(4), regular=True)                   # needs sage.graphs
+            sage: M1.is_field_isomorphic(M2)                                            # needs sage.graphs
             True
             sage: M3 = Matroid(bases=M1.bases())
             sage: M1.is_field_isomorphic(M3)
@@ -1706,8 +1706,8 @@ cdef class LinearMatroid(BasisExchangeMatroid):
             ....:                            [0, 0, 1, 3, 2, 5]]))
             sage: sorted(M.cross_ratios())
             [2, 3, 4, 5, 6]
-            sage: M = Matroid(graphs.CompleteGraph(5), regular=True)                    # optional - sage.graphs
-            sage: M.cross_ratios()                                                      # optional - sage.graphs
+            sage: M = Matroid(graphs.CompleteGraph(5), regular=True)                    # needs sage.graphs
+            sage: M.cross_ratios()                                                      # needs sage.graphs
             set()
         """
         if hyperlines is None:
@@ -2662,25 +2662,26 @@ cdef class LinearMatroid(BasisExchangeMatroid):
 
         EXAMPLES::
 
-            sage: matroids.Uniform(2, 3)._is_3connected_shifting()                      # optional - sage.graphs
+            sage: # needs sage.graphs
+            sage: matroids.Uniform(2, 3)._is_3connected_shifting()
             True
-            sage: M = Matroid(ring=QQ, matrix=[[1, 0, 0, 1, 1, 0],                      # optional - sage.graphs
+            sage: M = Matroid(ring=QQ, matrix=[[1, 0, 0, 1, 1, 0],
             ....:                              [0, 1, 0, 1, 2, 0],
             ....:                              [0, 0, 1, 0, 0, 1]])
-            sage: M._is_3connected_shifting()                                           # optional - sage.graphs
+            sage: M._is_3connected_shifting()
             False
-            sage: N = Matroid(circuit_closures={2: ['abc', 'cdef'],                     # optional - sage.graphs
+            sage: N = Matroid(circuit_closures={2: ['abc', 'cdef'],
             ....:                               3: ['abcdef']},
             ....:             groundset='abcdef')
-            sage: N._is_3connected_shifting()                                           # optional - sage.graphs
+            sage: N._is_3connected_shifting()
             False
-            sage: matroids.named_matroids.BetsyRoss()._is_3connected_shifting()         # optional - sage.graphs
+            sage: matroids.named_matroids.BetsyRoss()._is_3connected_shifting()
             True
-            sage: M = matroids.named_matroids.R6()                                      # optional - sage.graphs
-            sage: M._is_3connected_shifting()                                           # optional - sage.graphs sage.rings.finite_rings
+            sage: M = matroids.named_matroids.R6()
+            sage: M._is_3connected_shifting()                                           # needs sage.rings.finite_rings
             False
-            sage: B, X = M._is_3connected_shifting(True)                                # optional - sage.graphs sage.rings.finite_rings
-            sage: M.connectivity(X) < 3                                                 # optional - sage.graphs sage.rings.finite_rings
+            sage: B, X = M._is_3connected_shifting(True)                                # needs sage.rings.finite_rings
+            sage: M.connectivity(X) < 3                                                 # needs sage.rings.finite_rings
             True
         """
         if not self.is_connected():
@@ -2741,17 +2742,17 @@ cdef class LinearMatroid(BasisExchangeMatroid):
         EXAMPLES::
 
             sage: M = matroids.Uniform(2, 6)
-            sage: B, X = M._is_4connected_shifting(True)                                # optional - sage.graphs
-            sage: (B, M.connectivity(X)<=3)                                             # optional - sage.graphs
+            sage: B, X = M._is_4connected_shifting(True)                                # needs sage.graphs
+            sage: (B, M.connectivity(X)<=3)                                             # needs sage.graphs
             (False, True)
-            sage: matroids.Uniform(4, 8)._is_4connected_shifting()                      # optional - sage.graphs
+            sage: matroids.Uniform(4, 8)._is_4connected_shifting()                      # needs sage.graphs
             True
             sage: M = Matroid(field=GF(2), matrix=[[1,0,0,1,0,1,1,0,0,1,1,1],
             ....:                                  [0,1,0,1,0,1,0,1,0,0,0,1],
             ....:                                  [0,0,1,1,0,0,1,1,0,1,0,1],
             ....:                                  [0,0,0,0,1,1,1,1,0,0,1,1],
             ....:                                  [0,0,0,0,0,0,0,0,1,1,1,1]])
-            sage: M._is_4connected_shifting()                                           # optional - sage.graphs
+            sage: M._is_4connected_shifting()                                           # needs sage.graphs
             True
         """
         if self.rank()>self.size()-self.rank():
@@ -2852,14 +2853,15 @@ cdef class LinearMatroid(BasisExchangeMatroid):
             sage: M.orlik_terao_algebra(QQ).base_ring()
             Rational Field
 
-            sage: G = SymmetricGroup(3);                                                # optional - sage.groups
-            sage: OTG = M.orlik_terao_algebra(QQ, invariant=G)                          # optional - sage.groups
+            sage: G = SymmetricGroup(3);                                                # needs sage.groups
+            sage: OTG = M.orlik_terao_algebra(QQ, invariant=G)                          # needs sage.groups
 
-            sage: G = SymmetricGroup(4)                                                 # optional - sage.groups
-            sage: action = lambda g, x: g(x + 1) - 1                                    # optional - sage.groups
-            sage: OTG1 = M.orlik_terao_algebra(QQ, invariant=(G,action))                # optional - sage.groups
-            sage: OTG2 = M.orlik_terao_algebra(QQ, invariant=(action,G))                # optional - sage.groups
-            sage: OTG1 is OTG2                                                          # optional - sage.groups
+            sage: # needs sage.groups
+            sage: G = SymmetricGroup(4)
+            sage: action = lambda g, x: g(x + 1) - 1
+            sage: OTG1 = M.orlik_terao_algebra(QQ, invariant=(G,action))
+            sage: OTG2 = M.orlik_terao_algebra(QQ, invariant=(action,G))
+            sage: OTG1 is OTG2
             True
 
         """
@@ -3705,7 +3707,7 @@ cdef class BinaryMatroid(LinearMatroid):
         2 x 12 BinaryMatrix
         [110011001100]
         [001100110011]
-        sage: sorted(Npp._matrix_().rows())                                             # optional - sage.rings.finite_rings
+        sage: sorted(Npp._matrix_().rows())                                             # needs sage.rings.finite_rings
         [(1, 1, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0), (0, 0, 1, 1, 0, 0, 1, 1, 0, 0, 1, 1)]
         """
         if self._eq_part is None:
@@ -3811,12 +3813,12 @@ cdef class BinaryMatroid(LinearMatroid):
             ....:                                 reduced=True, labels=False))
             sage: M.is_graphic()
             False
-            sage: K5 = Matroid(graphs.CompleteGraph(5), regular=True)                   # optional - sage.graphs
-            sage: M = Matroid(ring=GF(2), reduced_matrix=K5.representation(             # optional - sage.graphs sage.rings.finite_rings
+            sage: K5 = Matroid(graphs.CompleteGraph(5), regular=True)                   # needs sage.graphs
+            sage: M = Matroid(ring=GF(2), reduced_matrix=K5.representation(             # needs sage.graphs sage.rings.finite_rings
             ....:                                 reduced=True, labels=False))
-            sage: M.is_graphic()                                                        # optional - sage.graphs sage.rings.finite_rings
+            sage: M.is_graphic()                                                        # needs sage.graphs sage.rings.finite_rings
             True
-            sage: M.dual().is_graphic()                                                 # optional - sage.graphs
+            sage: M.dual().is_graphic()                                                 # needs sage.graphs
             False
 
         ALGORITHM:
@@ -4114,8 +4116,8 @@ cdef class TernaryMatroid(LinearMatroid):
         sage: sorted(M.groundset())
         ['a', 'b', 'c', 'd']
         sage: B = Matrix(GF(2), 2, 2, [[1, 1], [1, 1]])
-        sage: N = Matroid(ring=GF(3), reduced_matrix=B, groundset='abcd')               # optional - sage.rings.finite_rings
-        sage: M == N                                                                    # optional - sage.rings.finite_rings
+        sage: N = Matroid(ring=GF(3), reduced_matrix=B, groundset='abcd')               # needs sage.rings.finite_rings
+        sage: M == N                                                                    # needs sage.rings.finite_rings
         True
     """
     def __init__(self, matrix=None, groundset=None, reduced_matrix=None, ring=None, keep_initial_representation=True, basis=None):
@@ -4923,11 +4925,11 @@ cdef class TernaryMatroid(LinearMatroid):
 
             sage: from sage.matroids.advanced import *
             sage: X_bin = matroids.named_matroids.Fano().representation()
-            sage: X = Matrix(GF(3), X_bin)                                              # optional - sage.rings.finite_rings
-            sage: M = TernaryMatroid(matrix=X).dual()                                   # optional - sage.rings.finite_rings
+            sage: X = Matrix(GF(3), X_bin)                                              # needs sage.rings.finite_rings
+            sage: M = TernaryMatroid(matrix=X).dual()                                   # needs sage.rings.finite_rings
             sage: B = list(M.bases())
             sage: N = loads(dumps(M))
-            sage: N.closure(frozenset({3}))                                             # optional - sage.rings.finite_rings
+            sage: N.closure(frozenset({3}))                                             # needs sage.rings.finite_rings
             frozenset({3})
             sage: N.is_isomorphic(M)
             True
@@ -5002,25 +5004,26 @@ cdef class QuaternaryMatroid(LinearMatroid):
 
     EXAMPLES::
 
-        sage: GF4 = GF(4, 'x')                                                          # optional - sage.rings.finite_rings
-        sage: x = GF4.gens()[0]                                                         # optional - sage.rings.finite_rings
-        sage: A = Matrix(GF4, 2, 4, [[1, 0, 1, 1], [0, 1, 1, x]])                       # optional - sage.rings.finite_rings
-        sage: M = Matroid(A)                                                            # optional - sage.rings.finite_rings
-        sage: M                                                                         # optional - sage.rings.finite_rings
+        sage: # needs sage.rings.finite_rings
+        sage: GF4 = GF(4, 'x')
+        sage: x = GF4.gens()[0]
+        sage: A = Matrix(GF4, 2, 4, [[1, 0, 1, 1], [0, 1, 1, x]])
+        sage: M = Matroid(A)
+        sage: M
         Quaternary matroid of rank 2 on 4 elements
-        sage: sorted(M.groundset())                                                     # optional - sage.rings.finite_rings
+        sage: sorted(M.groundset())
         [0, 1, 2, 3]
-        sage: Matrix(M)                                                                 # optional - sage.rings.finite_rings
+        sage: Matrix(M)
         [1 0 1 1]
         [0 1 1 x]
-        sage: M = Matroid(matrix=A, groundset='abcd')                                   # optional - sage.rings.finite_rings
-        sage: sorted(M.groundset())                                                     # optional - sage.rings.finite_rings
+        sage: M = Matroid(matrix=A, groundset='abcd')
+        sage: sorted(M.groundset())
         ['a', 'b', 'c', 'd']
-        sage: GF4p = GF(4, 'y')                                                         # optional - sage.rings.finite_rings
-        sage: y = GF4p.gens()[0]                                                        # optional - sage.rings.finite_rings
-        sage: B = Matrix(GF4p, 2, 2, [[1, 1], [1, y]])                                  # optional - sage.rings.finite_rings
-        sage: N = Matroid(reduced_matrix=B, groundset='abcd')                           # optional - sage.rings.finite_rings
-        sage: M == N                                                                    # optional - sage.rings.finite_rings
+        sage: GF4p = GF(4, 'y')
+        sage: y = GF4p.gens()[0]
+        sage: B = Matrix(GF4p, 2, 2, [[1, 1], [1, y]])
+        sage: N = Matroid(reduced_matrix=B, groundset='abcd')
+        sage: M == N
         False
     """
     def __init__(self, matrix=None, groundset=None, reduced_matrix=None, ring=None, keep_initial_representation=True, basis=None):
@@ -5036,7 +5039,7 @@ cdef class QuaternaryMatroid(LinearMatroid):
         EXAMPLES::
 
             sage: from sage.matroids.advanced import *
-            sage: QuaternaryMatroid(matrix=Matrix(GF(4, 'x'),         # indirect doctest # optional - sage.rings.finite_rings
+            sage: QuaternaryMatroid(matrix=Matrix(GF(4, 'x'),         # indirect doctest            # needs sage.rings.finite_rings
             ....:                                 [[1, 0, 1, 1, 1],
             ....:                                  [0, 1, 1, 1, 1]]))
             Quaternary matroid of rank 2 on 5 elements
@@ -5098,9 +5101,9 @@ cdef class QuaternaryMatroid(LinearMatroid):
 
         EXAMPLES::
 
-            sage: M = Matroid(ring=GF(4, 'y'), reduced_matrix=[[1, 0, 1],               # optional - sage.rings.finite_rings
+            sage: M = Matroid(ring=GF(4, 'y'), reduced_matrix=[[1, 0, 1],               # needs sage.rings.finite_rings
             ....:                                              [0, 1, 1]])
-            sage: M.base_ring()                                                         # optional - sage.rings.finite_rings
+            sage: M.base_ring()                                                         # needs sage.rings.finite_rings
             Finite Field in y of size 2^2
         """
         return (<QuaternaryMatrix>self._A).base_ring()
@@ -5112,9 +5115,9 @@ cdef class QuaternaryMatroid(LinearMatroid):
 
         EXAMPLES::
 
-            sage: M = Matroid(ring=GF(4, 'y'), reduced_matrix=[[1, 0, 1],               # optional - sage.rings.finite_rings
+            sage: M = Matroid(ring=GF(4, 'y'), reduced_matrix=[[1, 0, 1],               # needs sage.rings.finite_rings
             ....:                                              [0, 1, 1]])
-            sage: M.characteristic()                                                    # optional - sage.rings.finite_rings
+            sage: M.characteristic()                                                    # needs sage.rings.finite_rings
             2
         """
         return 2
@@ -5175,9 +5178,9 @@ cdef class QuaternaryMatroid(LinearMatroid):
 
         EXAMPLES::
 
-            sage: M = Matroid(ring=GF(4, 'x'), matrix=[[1, 0, 1], [0, 1, 1]])           # optional - sage.rings.finite_rings
-            sage: M.rename()                                                            # optional - sage.rings.finite_rings
-            sage: repr(M)  # indirect doctest                                           # optional - sage.rings.finite_rings
+            sage: M = Matroid(ring=GF(4, 'x'), matrix=[[1, 0, 1], [0, 1, 1]])           # needs sage.rings.finite_rings
+            sage: M.rename()                                                            # needs sage.rings.finite_rings
+            sage: repr(M)  # indirect doctest                                           # needs sage.rings.finite_rings
             'Quaternary matroid of rank 2 on 3 elements'
         """
         S = "Quaternary matroid of rank " + str(self.rank()) + " on " + str(self.size()) + " elements"
@@ -5201,13 +5204,14 @@ cdef class QuaternaryMatroid(LinearMatroid):
 
         EXAMPLES::
 
-            sage: M = matroids.named_matroids.Q10()                                     # optional - sage.rings.finite_rings
-            sage: A = M._reduced_representation('efghi')                                # optional - sage.rings.finite_rings
-            sage: R, C = M._current_rows_cols()                                         # optional - sage.rings.finite_rings
-            sage: (sorted(R), sorted(C))                                                # optional - sage.rings.finite_rings
+            sage: # needs sage.rings.finite_rings
+            sage: M = matroids.named_matroids.Q10()
+            sage: A = M._reduced_representation('efghi')
+            sage: R, C = M._current_rows_cols()
+            sage: (sorted(R), sorted(C))
             (['e', 'f', 'g', 'h', 'i'], ['a', 'b', 'c', 'd', 'j'])
-            sage: R, C = M._current_rows_cols(B='abcde')                                # optional - sage.rings.finite_rings
-            sage: (sorted(R), sorted(C))                                                # optional - sage.rings.finite_rings
+            sage: R, C = M._current_rows_cols(B='abcde')
+            sage: (sorted(R), sorted(C))
             (['a', 'b', 'c', 'd', 'e'], ['f', 'g', 'h', 'i', 'j'])
 
         """
@@ -5249,15 +5253,15 @@ cdef class QuaternaryMatroid(LinearMatroid):
 
         EXAMPLES::
 
-            sage: M = matroids.named_matroids.Q10()                                     # optional - sage.rings.finite_rings
-            sage: M._basic_representation()                                             # optional - sage.rings.finite_rings
+            sage: M = matroids.named_matroids.Q10()                                     # needs sage.rings.finite_rings
+            sage: M._basic_representation()                                             # needs sage.rings.finite_rings
             5 x 10 QuaternaryMatrix
             [100001x00y]
             [01000y1x00]
             [001000y1x0]
             [0001000y1x]
             [00001x00y1]
-            sage: matrix(M._basic_representation('efghi'))                              # optional - sage.rings.finite_rings
+            sage: matrix(M._basic_representation('efghi'))                              # needs sage.rings.finite_rings
             [    1     0 x + 1     1     0     1     0     0     0     1]
             [    x x + 1     0     0     0     0     0     1     0     1]
             [    0     0     x x + 1     0     0     1     0     0     1]
@@ -5292,15 +5296,15 @@ cdef class QuaternaryMatroid(LinearMatroid):
 
         EXAMPLES::
 
-            sage: M = matroids.named_matroids.Q10()                                     # optional - sage.rings.finite_rings
-            sage: M._reduced_representation()                                           # optional - sage.rings.finite_rings
+            sage: M = matroids.named_matroids.Q10()                                     # needs sage.rings.finite_rings
+            sage: M._reduced_representation()                                           # needs sage.rings.finite_rings
             5 x 5 QuaternaryMatrix
             [1x00y]
             [y1x00]
             [0y1x0]
             [00y1x]
             [x00y1]
-            sage: matrix(M._reduced_representation('efghi'))                            # optional - sage.rings.finite_rings
+            sage: matrix(M._reduced_representation('efghi'))                            # needs sage.rings.finite_rings
             [    1     0 x + 1     1     1]
             [    x x + 1     0     0     1]
             [    0     0     x x + 1     1]
@@ -5320,8 +5324,8 @@ cdef class QuaternaryMatroid(LinearMatroid):
 
         EXAMPLES::
 
-            sage: M = matroids.named_matroids.Q10()                                     # optional - sage.rings.finite_rings
-            sage: M._invariant()  # indirect doctest                                    # optional - sage.rings.finite_rings
+            sage: M = matroids.named_matroids.Q10()                                     # needs sage.rings.finite_rings
+            sage: M._invariant()  # indirect doctest                                    # needs sage.rings.finite_rings
             (0, 0, 5, 5, 20, 10, 25)
         """
         cdef QuaternaryMatrix Q, QT
@@ -5399,8 +5403,8 @@ cdef class QuaternaryMatroid(LinearMatroid):
 
         EXAMPLES::
 
-            sage: M = matroids.named_matroids.Q10()                                     # optional - sage.rings.finite_rings
-            sage: M._invariant()                                                        # optional - sage.rings.finite_rings
+            sage: M = matroids.named_matroids.Q10()                                     # needs sage.rings.finite_rings
+            sage: M._invariant()                                                        # needs sage.rings.finite_rings
             (0, 0, 5, 5, 20, 10, 25)
 
         """
@@ -5427,8 +5431,8 @@ cdef class QuaternaryMatroid(LinearMatroid):
 
         EXAMPLES::
 
-            sage: M = matroids.named_matroids.Q10()                                     # optional - sage.rings.finite_rings
-            sage: M.bicycle_dimension()                                                 # optional - sage.rings.finite_rings
+            sage: M = matroids.named_matroids.Q10()                                     # needs sage.rings.finite_rings
+            sage: M.bicycle_dimension()                                                 # needs sage.rings.finite_rings
             0
         """
         if self._q_invariant is None:
@@ -5454,14 +5458,15 @@ cdef class QuaternaryMatroid(LinearMatroid):
 
         EXAMPLES::
 
-            sage: M = matroids.named_matroids.Q10()\'a'                                 # optional - sage.rings.finite_rings
-            sage: for F in M._principal_tripartition(): print(sorted(F))                # optional - sage.rings.finite_rings
+            sage: # needs sage.rings.finite_rings
+            sage: M = matroids.named_matroids.Q10()\'a'
+            sage: for F in M._principal_tripartition(): print(sorted(F))
             ['b', 'c', 'd', 'e', 'h', 'i']
             ['f', 'g', 'j']
             []
-            sage: M.bicycle_dimension()                                                 # optional - sage.rings.finite_rings
+            sage: M.bicycle_dimension()
             1
-            sage: for i in [-1, 0, 1]:                                                  # optional - sage.rings.finite_rings
+            sage: for i in [-1, 0, 1]:
             ....:     print(sorted(e for e in M.groundset()
             ....:                  if (M\e).bicycle_dimension() == 1 + i))
             ['b', 'c', 'd', 'e', 'h', 'i']
@@ -5492,9 +5497,9 @@ cdef class QuaternaryMatroid(LinearMatroid):
 
         EXAMPLES::
 
-           sage: M = matroids.named_matroids.Q10()\'a'                                  # optional - sage.rings.finite_rings
-           sage: N = matroids.named_matroids.Q10()\'b'                                  # optional - sage.rings.finite_rings
-           sage: M._fast_isom_test(N) is None                                           # optional - sage.rings.finite_rings
+           sage: M = matroids.named_matroids.Q10()\'a'                                  # needs sage.rings.finite_rings
+           sage: N = matroids.named_matroids.Q10()\'b'                                  # needs sage.rings.finite_rings
+           sage: M._fast_isom_test(N) is None                                           # needs sage.rings.finite_rings
            True
         """
         if self._invariant() != other._invariant():
@@ -5528,9 +5533,9 @@ cdef class QuaternaryMatroid(LinearMatroid):
 
         EXAMPLES::
 
-            sage: M = matroids.named_matroids.Q10()                                     # optional - sage.rings.finite_rings
-            sage: N = M._minor(contractions=set(['a']), deletions=set([]))              # optional - sage.rings.finite_rings
-            sage: N._minor(contractions=set([]), deletions=set(['b', 'c']))             # optional - sage.rings.finite_rings
+            sage: M = matroids.named_matroids.Q10()                                     # needs sage.rings.finite_rings
+            sage: N = M._minor(contractions=set(['a']), deletions=set([]))              # needs sage.rings.finite_rings
+            sage: N._minor(contractions=set([]), deletions=set(['b', 'c']))             # needs sage.rings.finite_rings
             Quaternary matroid of rank 4 on 7 elements
         """
         self._move_current_basis(contractions, deletions)
@@ -5557,8 +5562,8 @@ cdef class QuaternaryMatroid(LinearMatroid):
 
         EXAMPLES::
 
-            sage: M = Matroid(Matrix(GF(4, 'x'), [[]]))                                 # optional - sage.rings.finite_rings
-            sage: M.is_valid()                                                          # optional - sage.rings.finite_rings
+            sage: M = Matroid(Matrix(GF(4, 'x'), [[]]))                                 # needs sage.rings.finite_rings
+            sage: M.is_valid()                                                          # needs sage.rings.finite_rings
             True
         """
         return True
@@ -5569,10 +5574,10 @@ cdef class QuaternaryMatroid(LinearMatroid):
 
         EXAMPLES::
 
-            sage: M = Matroid(Matrix(GF(4, 'x'), [[1, 0, 0, 1, 1],                      # optional - sage.rings.finite_rings
+            sage: M = Matroid(Matrix(GF(4, 'x'), [[1, 0, 0, 1, 1],                      # needs sage.rings.finite_rings
             ....:        [0, 1, 0, 1, 2], [0, 0, 1, 1, 3]]))
-            sage: N = copy(M)  # indirect doctest                                       # optional - sage.rings.finite_rings
-            sage: M == N                                                                # optional - sage.rings.finite_rings
+            sage: N = copy(M)  # indirect doctest                                       # needs sage.rings.finite_rings
+            sage: M == N                                                                # needs sage.rings.finite_rings
             True
         """
         cdef QuaternaryMatroid N
@@ -5593,10 +5598,10 @@ cdef class QuaternaryMatroid(LinearMatroid):
 
         EXAMPLES::
 
-            sage: M = Matroid(Matrix(GF(4, 'x'), [[1, 0, 0, 1, 1],                      # optional - sage.rings.finite_rings
+            sage: M = Matroid(Matrix(GF(4, 'x'), [[1, 0, 0, 1, 1],                      # needs sage.rings.finite_rings
             ....:               [0, 1, 0, 1, 2], [0, 0, 1, 1, -1]]))
-            sage: N = deepcopy(M)  # indirect doctest                                   # optional - sage.rings.finite_rings
-            sage: M == N                                                                # optional - sage.rings.finite_rings
+            sage: N = deepcopy(M)  # indirect doctest                                   # needs sage.rings.finite_rings
+            sage: M == N                                                                # needs sage.rings.finite_rings
             True
         """
         from copy import deepcopy
@@ -5632,12 +5637,13 @@ cdef class QuaternaryMatroid(LinearMatroid):
 
         EXAMPLES::
 
-            sage: M = Matroid(Matrix(GF(4, 'x'), [[1, 0, 0, 1], [0, 1, 0, 1],           # optional - sage.rings.finite_rings
+            sage: # needs sage.rings.finite_rings
+            sage: M = Matroid(Matrix(GF(4, 'x'), [[1, 0, 0, 1], [0, 1, 0, 1],
             ....:            [0, 0, 1, 1]]))
-            sage: M == loads(dumps(M))  # indirect doctest                              # optional - sage.rings.finite_rings
+            sage: M == loads(dumps(M))  # indirect doctest
             True
-            sage: M.rename("U34")                                                       # optional - sage.rings.finite_rings
-            sage: loads(dumps(M))                                                       # optional - sage.rings.finite_rings
+            sage: M.rename("U34")
+            sage: loads(dumps(M))
             U34
 
         TESTS:
@@ -5646,13 +5652,13 @@ cdef class QuaternaryMatroid(LinearMatroid):
 
             sage: from sage.matroids.advanced import QuaternaryMatroid
             sage: X_bin = matroids.named_matroids.Fano().representation()
-            sage: X = Matrix(GF(4), X_bin)                                              # optional - sage.rings.finite_rings
-            sage: M = QuaternaryMatroid(matrix=X).dual()                                # optional - sage.rings.finite_rings
-            sage: B = list(M.bases())                                                   # optional - sage.rings.finite_rings
-            sage: N = loads(dumps(M))                                                   # optional - sage.rings.finite_rings
-            sage: N.closure(frozenset({3}))                                             # optional - sage.rings.finite_rings
+            sage: X = Matrix(GF(4), X_bin)                                              # needs sage.rings.finite_rings
+            sage: M = QuaternaryMatroid(matrix=X).dual()                                # needs sage.rings.finite_rings
+            sage: B = list(M.bases())                                                   # needs sage.rings.finite_rings
+            sage: N = loads(dumps(M))                                                   # needs sage.rings.finite_rings
+            sage: N.closure(frozenset({3}))                                             # needs sage.rings.finite_rings
             frozenset({3})
-            sage: N.is_isomorphic(M)                                                    # optional - sage.rings.finite_rings
+            sage: N.is_isomorphic(M)                                                    # needs sage.rings.finite_rings
             True
         """
         import sage.matroids.unpickling
@@ -5733,15 +5739,15 @@ cdef class RegularMatroid(LinearMatroid):
     EXAMPLES::
 
         sage: A = Matrix(ZZ, 2, 4, [[1, 0, 1, 1], [0, 1, 1, 1]])
-        sage: M = Matroid(A, regular=True); M                                           # optional - sage.graphs
+        sage: M = Matroid(A, regular=True); M                                           # needs sage.graphs
         Regular matroid of rank 2 on 4 elements with 5 bases
-        sage: sorted(M.groundset())                                                     # optional - sage.graphs
+        sage: sorted(M.groundset())                                                     # needs sage.graphs
         [0, 1, 2, 3]
-        sage: Matrix(M)                                                                 # optional - sage.graphs
+        sage: Matrix(M)                                                                 # needs sage.graphs
         [1 0 1 1]
         [0 1 1 1]
-        sage: M = Matroid(matrix=A, groundset='abcd', regular=True)                     # optional - sage.graphs
-        sage: sorted(M.groundset())                                                     # optional - sage.graphs
+        sage: M = Matroid(matrix=A, groundset='abcd', regular=True)                     # needs sage.graphs
+        sage: sorted(M.groundset())                                                     # needs sage.graphs
         ['a', 'b', 'c', 'd']
     """
     def __init__(self, matrix=None, groundset=None, reduced_matrix=None, ring=None, keep_initial_representation=True):
@@ -5757,7 +5763,7 @@ cdef class RegularMatroid(LinearMatroid):
         EXAMPLES::
 
             sage: from sage.matroids.advanced import *
-            sage: RegularMatroid(matrix=Matrix(ZZ, [[1, 0, 1, 1, 1],    # indirect doctest # optional - sage.graphs
+            sage: RegularMatroid(matrix=Matrix(ZZ, [[1, 0, 1, 1, 1],    # indirect doctest          # needs sage.graphs
             ....:                                   [0, 1, 1, 1, 1]]))
             Regular matroid of rank 2 on 5 elements with 7 bases
         """
@@ -5896,8 +5902,8 @@ cdef class RegularMatroid(LinearMatroid):
 
         EXAMPLES::
 
-            sage: M = Matroid(graphs.CompleteGraph(5), regular=True)                    # optional - sage.graphs
-            sage: M.bases_count()                                                       # optional - sage.graphs
+            sage: M = Matroid(graphs.CompleteGraph(5), regular=True)                    # needs sage.graphs
+            sage: M.bases_count()                                                       # needs sage.graphs
             125
 
         ALGORITHM:
@@ -6024,8 +6030,8 @@ cdef class RegularMatroid(LinearMatroid):
         EXAMPLES::
 
             sage: M = matroids.named_matroids.R10()
-            sage: PV, tups, G = M._hypergraph()                                         # optional - sage.graphs
-            sage: G                                                                     # optional - sage.graphs
+            sage: PV, tups, G = M._hypergraph()                                         # needs sage.graphs
+            sage: G                                                                     # needs sage.graphs
             Digraph on 55 vertices
         """
         # NEW VERSION, Uses Sage'S Graph Isomorphism
@@ -6106,11 +6112,11 @@ cdef class RegularMatroid(LinearMatroid):
         EXAMPLES::
 
             sage: M1 = matroids.Wheel(3)
-            sage: M2 = Matroid(groundset=list(range(6)),                                # optional - sage.graphs
+            sage: M2 = Matroid(groundset=list(range(6)),                                # needs sage.graphs
             ....:              graph=graphs.CompleteGraph(4), regular=True)
-            sage: M1._is_isomorphic(M2)                                                 # optional - sage.graphs
+            sage: M1._is_isomorphic(M2)                                                 # needs sage.graphs
             True
-            sage: M1._is_isomorphic(M2, certificate=True)                               # optional - sage.graphs
+            sage: M1._is_isomorphic(M2, certificate=True)                               # needs sage.graphs
             (True, {0: 0, 1: 1, 2: 2, 3: 3, 4: 5, 5: 4})
 
             sage: M1 = matroids.Wheel(3)
@@ -6178,7 +6184,7 @@ cdef class RegularMatroid(LinearMatroid):
 
            sage: M = matroids.named_matroids.R10()\'a'
            sage: N = matroids.named_matroids.R10()\'b'
-           sage: M._fast_isom_test(N)                                                   # optional - sage.graphs
+           sage: M._fast_isom_test(N)                                                   # needs sage.graphs
            True
         """
         if self.bases_count() != other.bases_count():
@@ -6209,9 +6215,9 @@ cdef class RegularMatroid(LinearMatroid):
 
         Check that :trac:`22263` was fixed::
 
-            sage: m1 = Matroid(graph='H?ABC~}')                                         # optional - sage.graphs
-            sage: m2 = Matroid(graph='H?ACNr}')                                         # optional - sage.graphs
-            sage: m1.is_isomorphic(m2)                                                  # optional - sage.graphs
+            sage: m1 = Matroid(graph='H?ABC~}')                                         # needs sage.graphs
+            sage: m2 = Matroid(graph='H?ACNr}')                                         # needs sage.graphs
+            sage: m1.is_isomorphic(m2)                                                  # needs sage.graphs
             False
         """
         from sage.groups.perm_gps.partn_ref.refinement_graphs import isomorphic
@@ -6333,10 +6339,10 @@ cdef class RegularMatroid(LinearMatroid):
             sage: M = matroids.named_matroids.R10()
             sage: M.is_graphic()
             False
-            sage: M = Matroid(graphs.CompleteGraph(5), regular=True)                    # optional - sage.graphs
-            sage: M.is_graphic()                                                        # optional - sage.graphs sage.rings.finite_rings
+            sage: M = Matroid(graphs.CompleteGraph(5), regular=True)                    # needs sage.graphs
+            sage: M.is_graphic()                                                        # needs sage.graphs sage.rings.finite_rings
             True
-            sage: M.dual().is_graphic()                                                 # optional - sage.graphs
+            sage: M.dual().is_graphic()                                                 # needs sage.graphs
             False
 
         ALGORITHM:
@@ -6362,14 +6368,15 @@ cdef class RegularMatroid(LinearMatroid):
 
         EXAMPLES::
 
-            sage: M = Matroid(Matrix(ZZ, [[1, 0, 0, 1, 1, 0, 1],                        # optional - sage.graphs
+            sage: # needs sage.graphs
+            sage: M = Matroid(Matrix(ZZ, [[1, 0, 0, 1, 1, 0, 1],
             ....:                         [0, 1, 0, 1, 0, 1, 1],
             ....:                         [0, 0, 1, 0, 1, 1, 1]]),
             ....:             regular=True, check=False)
-            sage: M.is_valid()                                                          # optional - sage.graphs
+            sage: M.is_valid()
             False
-            sage: M = Matroid(graphs.PetersenGraph())                                   # optional - sage.graphs
-            sage: M.is_valid()                                                          # optional - sage.graphs
+            sage: M = Matroid(graphs.PetersenGraph())
+            sage: M.is_valid()
             True
         """
         M = LinearMatroid(ring=QQ, reduced_matrix=self.representation(self.basis(), True, False))
