@@ -116,7 +116,6 @@ cdef extern from "gap/objects.h" nogil:
         T_PERM2
         T_PERM4
         T_BOOL
-        T_CHAR
         T_FUNCTION
         T_COMOBJ
         T_POSOBJ
