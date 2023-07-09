@@ -841,7 +841,7 @@ class CubicalComplex(GenericCellComplex):
          1: Vector space of dimension 2 over Rational Field,
          2: Vector space of dimension 1 over Rational Field}
         sage: RP2 = cubical_complexes.RealProjectivePlane()
-        sage: RP2.cohomology(dim=[1, 2], base_ring=GF(2))                               # needs sage.modules sage.rings.finite_rings
+        sage: RP2.cohomology(dim=[1, 2], base_ring=GF(2))                               # needs sage.modules
         {1: Vector space of dimension 1 over Finite Field of size 2,
          2: Vector space of dimension 1 over Finite Field of size 2}
 
@@ -1674,8 +1674,8 @@ class CubicalComplex(GenericCellComplex):
         EXAMPLES::
 
             sage: RP2 = cubical_complexes.RealProjectivePlane()
-            sage: phi, M = RP2.algebraic_topological_model(GF(2))                       # needs sage.rings.finite_rings
-            sage: M.homology()                                                          # needs sage.modules sage.rings.finite_rings
+            sage: phi, M = RP2.algebraic_topological_model(GF(2))
+            sage: M.homology()                                                          # needs sage.modules
             {0: Vector space of dimension 1 over Finite Field of size 2,
              1: Vector space of dimension 1 over Finite Field of size 2,
              2: Vector space of dimension 1 over Finite Field of size 2}

@@ -1398,8 +1398,8 @@ class SimplicialSetMorphism(Morphism):
             [1|0]
             [-+-]
             [0|2]
-            sage: g3 = f.induced_homology_morphism(base_ring=GF(3), cohomology=True)    # needs sage.modules sage.rings.finite_rings
-            sage: g3.to_matrix()                                                        # needs sage.modules sage.rings.finite_rings
+            sage: g3 = f.induced_homology_morphism(base_ring=GF(3), cohomology=True)    # needs sage.modules
+            sage: g3.to_matrix()                                                        # needs sage.modules
             [1|0]
             [-+-]
             [0|2]

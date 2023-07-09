@@ -45,8 +45,9 @@ def random_chain_complex(level=1):
 
     EXAMPLES::
 
-        sage: from sage.homology.tests import random_chain_complex                      # needs sage.modules
-        sage: C = random_chain_complex()                                                # needs sage.modules
+        sage: # needs sage.modules
+        sage: from sage.homology.tests import random_chain_complex
+        sage: C = random_chain_complex()
         sage: C  # random
         Chain complex with at most ... nonzero terms over Integer Ring
         sage: len(C.nonzero_degrees()) in [0, 1, 2]
@@ -115,9 +116,9 @@ def random_simplicial_complex(level=1, p=0.5):
 
         sage: from sage.homology.tests import random_simplicial_complex                 # needs sage.modules
         sage: X = random_simplicial_complex()                                           # needs sage.modules
-        sage: X # random
+        sage: X # random                                                                # needs sage.modules
         Simplicial complex with vertex set (0, 1, 2, 3, 4, 5, 6, 7) and 31 facets
-        sage: X.dimension() < 11
+        sage: X.dimension() < 11                                                        # needs sage.modules
         True
     """
     n = randint(2, 4*level)

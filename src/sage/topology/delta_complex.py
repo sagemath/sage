@@ -954,7 +954,7 @@ class DeltaComplex(GenericCellComplex):
             C2
             sage: X.homology(4)                                                         # needs sage.modules
             0
-            sage: X.homology(base_ring=GF(2))                                           # needs sage.modules sage.rings.finite_rings
+            sage: X.homology(base_ring=GF(2))                                           # needs sage.modules
             {0: Vector space of dimension 0 over Finite Field of size 2,
              1: Vector space of dimension 4 over Finite Field of size 2,
              2: Vector space of dimension 6 over Finite Field of size 2,
@@ -1584,8 +1584,8 @@ class DeltaComplex(GenericCellComplex):
         EXAMPLES::
 
             sage: RP2 = delta_complexes.RealProjectivePlane()
-            sage: phi, M = RP2.algebraic_topological_model(GF(2))                       # needs sage.modules sage.rings.finite_rings
-            sage: M.homology()                                                          # needs sage.modules sage.rings.finite_rings
+            sage: phi, M = RP2.algebraic_topological_model(GF(2))                       # needs sage.modules
+            sage: M.homology()                                                          # needs sage.modules
             {0: Vector space of dimension 1 over Finite Field of size 2,
              1: Vector space of dimension 1 over Finite Field of size 2,
              2: Vector space of dimension 1 over Finite Field of size 2}
@@ -1652,7 +1652,7 @@ class DeltaComplexExamples():
 
         EXAMPLES::
 
-            sage: delta_complexes.Sphere(4).cohomology(4, base_ring=GF(3))              # needs sage.modules sage.rings.finite_rings
+            sage: delta_complexes.Sphere(4).cohomology(4, base_ring=GF(3))              # needs sage.modules
             Vector space of dimension 1 over Finite Field of size 3
         """
         if n == 1:
@@ -1689,9 +1689,9 @@ class DeltaComplexExamples():
             0
             sage: P.cohomology(2)                                                       # needs sage.modules
             C2
-            sage: P.cohomology(dim=1, base_ring=GF(2))                                  # needs sage.modules sage.rings.finite_rings
+            sage: P.cohomology(dim=1, base_ring=GF(2))                                  # needs sage.modules
             Vector space of dimension 1 over Finite Field of size 2
-            sage: P.cohomology(dim=2, base_ring=GF(2))                                  # needs sage.modules sage.rings.finite_rings
+            sage: P.cohomology(dim=2, base_ring=GF(2))                                  # needs sage.modules
             Vector space of dimension 1 over Finite Field of size 2
         """
         return DeltaComplex((((), ()), ((1, 0), (1, 0), (0, 0)),

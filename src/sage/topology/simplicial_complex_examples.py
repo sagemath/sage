@@ -390,9 +390,9 @@ def RealProjectivePlane():
         0
         sage: P.cohomology(2)                                                           # needs sage.modules
         C2
-        sage: P.cohomology(1, base_ring=GF(2))                                          # needs sage.modules sage.rings.finite_rings
+        sage: P.cohomology(1, base_ring=GF(2))                                          # needs sage.modules
         Vector space of dimension 1 over Finite Field of size 2
-        sage: P.cohomology(2, base_ring=GF(2))                                          # needs sage.modules sage.rings.finite_rings
+        sage: P.cohomology(2, base_ring=GF(2))                                          # needs sage.modules
         Vector space of dimension 1 over Finite Field of size 2
     """
     return UniqueSimplicialComplex([[0, 1, 2], [0, 2, 3], [0, 1, 5], [0, 4, 5],
