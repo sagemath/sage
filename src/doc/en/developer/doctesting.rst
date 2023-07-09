@@ -1516,7 +1516,7 @@ Managing ``# optional`` and ``# needs`` tags
 
 When a file uses a ``# sage.doctest: optional/needs FEATURE`` directive, the
 doctest fixer automatically removes the redundant ``# optional/needs FEATURE``
-tags from all ``sage:`` lines. Likewise, when a codeblock-scoped tag
+tags from all ``sage:`` lines. Likewise, when a block-scoped tag
 ``sage: # optional/needs FEATURE`` is used, then the doctest fixer removes
 redundant tags from all doctests in this scope. For example::
 

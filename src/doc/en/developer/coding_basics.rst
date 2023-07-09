@@ -1267,7 +1267,7 @@ framework. Here is a comprehensive list:
         chOMP``.
 
   If ``# optional`` or ``# needs`` is placed right after the ``sage:`` prompt,
-  it is a codeblock-scoped tag, which applies to all doctest lines until
+  it is a block-scoped tag, which applies to all doctest lines until
   a blank line is encountered.
 
   These tags can also be applied to an entire file. If one of the first 10 lines
