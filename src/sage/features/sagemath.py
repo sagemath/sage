@@ -729,8 +729,8 @@ class sage__rings__number_field(JoinFeature):
         sage: CC(zeta)
         0.913545457642601 + 0.406736643075800*I
 
-    Doctests that make use of the Algebraic Field ``QQbar``, the Algebraic Real Field ``AA``,
-    or the Universal Cyclotomic Field should be marked likewise::
+    Doctests that make use of the algebraic field ``QQbar``, the algebraic real field ``AA``,
+    or the universal cyclotomic field should be marked likewise::
 
         sage: # needs sage.rings.number_field
         sage: AA(-1)^(1/3)
