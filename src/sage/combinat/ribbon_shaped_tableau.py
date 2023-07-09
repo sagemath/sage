@@ -112,7 +112,7 @@ class RibbonShapedTableau(SkewTableau):
             sage: TestSuite(R).run()
         """
         if not isinstance(t, SkewTableau):
-            # scrubing None
+            # scrubbing None
             t = [[i for i in row if i is not None] for row in t]
 
             st = []

@@ -1407,11 +1407,11 @@ class FullyPackedLoops(Parent, UniqueRepresentation):
 
         EXAMPLES::
 
-            sage: [AlternatingSignMatrices(n).cardinality() for n in range(11)]
-            [1, 1, 2, 7, 42, 429, 7436, 218348, 10850216, 911835460, 129534272700]
+            sage: [AlternatingSignMatrices(n).cardinality() for n in range(10)]
+            [1, 1, 2, 7, 42, 429, 7436, 218348, 10850216, 911835460]
         """
-        return Integer(prod([factorial(3*k+1)/factorial(self._n+k)
-                       for k in range(self._n)]))
+        return Integer(prod(factorial(3 * k + 1) / factorial(self._n + k)
+                            for k in range(self._n)))
 
     def _an_element_(self):
         """

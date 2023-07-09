@@ -127,7 +127,7 @@ def subsets_with_hereditary_property(f, X, max_obstruction_size=None, ncpus=1):
 
     def explore_neighbors(s):
         r"""
-        Explores the successors of a set s.
+        Explore the successors of a set s.
 
         The successors of a set s are all the sets s+[i] where max(s)<i. This
         function returns them all as a partition `(yes_sets,no_sets)`.
