@@ -1269,7 +1269,8 @@ cdef class NumberFieldElement(NumberFieldElement_base):
 
     def round(self):
         r"""
-        Return the round (nearest integer) of this number field element.
+        Return the round (nearest integer) of this number field element. In case
+        of ties, this relies on the default rounding for rational numbers.
 
         EXAMPLES::
 

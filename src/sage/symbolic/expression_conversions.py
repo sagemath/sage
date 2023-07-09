@@ -587,7 +587,7 @@ class InterfaceInit(Converter):
             raise NotImplementedError
         args = ex.operands()
         if (not all(isinstance(v, Expression) and v.is_symbol() for v in args) or
-            len(args) != len(set(args))):
+                len(args) != len(set(args))):
             # An evaluated derivative of the form f'(1) is not a
             # symbolic variable, yet we would like to treat it like
             # one. So, we replace the argument `1` with a temporary
@@ -819,7 +819,7 @@ class FriCASConverter(InterfaceInit):
         params_set = set(params)
         mult = ",".join(str(params.count(i)) for i in params_set)
         if (not all(isinstance(v, Expression) and v.is_symbol() for v in args) or
-            len(args) != len(set(args))):
+                len(args) != len(set(args))):
             # An evaluated derivative of the form f'(1) is not a
             # symbolic variable, yet we would like to treat it like
             # one. So, we replace the argument `1` with a temporary

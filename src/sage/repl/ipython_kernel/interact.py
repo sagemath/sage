@@ -46,12 +46,18 @@ EXAMPLES::
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from ipywidgets.widgets import SelectionSlider, ValueWidget, ToggleButtons
-from ipywidgets.widgets.interaction import interactive, signature
 from collections import OrderedDict
 from collections.abc import Iterable, Iterator
-from .widgets import EvalText, SageColorPicker
+
+from ipywidgets.widgets import SelectionSlider, ValueWidget, ToggleButtons
+from ipywidgets.widgets.interaction import interactive, signature
+
+import sage.rings.abc
+
 from sage.structure.element import parent, Matrix
+
+from .widgets import EvalText, SageColorPicker
+from .widgets_sagenb import input_grid
 
 
 class sage_interactive(interactive):

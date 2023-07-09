@@ -4828,6 +4828,13 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
             (-3, 5)
             sage: (-64).perfect_power()                                                 # optional - sage.libs.pari
             (-4, 3)
+
+        TESTS::
+
+            sage: 4.perfect_power()
+            (2, 2)
+            sage: 256.perfect_power()
+            (2, 8)
         """
         cdef long n
         # Fast PARI-free path
@@ -5178,6 +5185,15 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
             sage: n = 150607571^14
             sage: n.is_prime_power()                                                    # optional - sage.libs.pari
             True
+
+        TESTS::
+
+            sage: 2.is_prime_power(get_data=True)
+            (2, 1)
+            sage: 4.is_prime_power(get_data=True)
+            (2, 2)
+            sage: 512.is_prime_power(get_data=True)
+            (2, 9)
         """
         cdef long n
 

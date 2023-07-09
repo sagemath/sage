@@ -69,6 +69,13 @@ cdef extern from "gap/libgap-api.h" nogil:
     cdef Obj GAP_True
     cdef Obj GAP_False
 
+    Obj GAP_CallFuncList(Obj func, Obj args);
+    Obj GAP_CallFuncArray(Obj func, UInt narg, Obj * args);
+    Obj GAP_CallFunc0Args(Obj func);
+    Obj GAP_CallFunc1Args(Obj func, Obj a1);
+    Obj GAP_CallFunc2Args(Obj func, Obj a1, Obj a2);
+    Obj GAP_CallFunc3Args(Obj func, Obj a1, Obj a2, Obj a3);
+
     bint GAP_IsMacFloat(Obj obj)
     double GAP_ValueMacFloat(Obj obj)
 
@@ -117,7 +124,6 @@ cdef extern from "gap/objects.h" nogil:
         T_PERM2
         T_PERM4
         T_BOOL
-        T_CHAR
         T_FUNCTION
         T_COMOBJ
         T_POSOBJ

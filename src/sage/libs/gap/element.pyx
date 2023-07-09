@@ -119,13 +119,13 @@ cdef char *capture_stdout(Obj func, Obj obj):
         GAP_Enter()
         s = NEW_STRING(0)
         output_text_string = GAP_ValueGlobalVariable("OutputTextString")
-        stream = CALL_2ARGS(output_text_string, s, GAP_True)
+        stream = GAP_CallFunc2Args(output_text_string, s, GAP_True)
 
         l = GAP_NewPlist(1)
         GAP_AssList(l, 1, obj)
 
         CALL_WITH_STREAM = GAP_ValueGlobalVariable("CALL_WITH_STREAM")
-        CALL_3ARGS(CALL_WITH_STREAM, stream, func, l)
+        GAP_CallFunc3Args(CALL_WITH_STREAM, stream, func, l)
         return GAP_CSTR_STRING(s)
     finally:
         GAP_Leave()
@@ -263,9 +263,9 @@ cdef GapElement make_any_gap_element(parent, Obj obj):
 
     TESTS::
 
-        sage: T_CHAR = libgap.eval("'c'");  T_CHAR
+        sage: x = libgap.eval("'c'");  x
         "c"
-        sage: type(T_CHAR)
+        sage: type(x)
         <class 'sage.libs.gap.element.GapElement_String'>
 
         sage: libgap.eval("['a', 'b', 'c']")   # gap strings are also lists of chars
@@ -321,7 +321,7 @@ cdef GapElement make_any_gap_element(parent, Obj obj):
             return make_GapElement_String(parent, obj)
         elif GAP_IsList(obj):
             return make_GapElement_List(parent, obj)
-        elif num == T_CHAR:
+        elif GAP_ValueOfChar(obj) != -1:
             ch = make_GapElement(parent, obj).IntChar().sage()
             return make_GapElement_String(parent, make_gap_string(chr(ch)))
         result = make_GapElement(parent, obj)

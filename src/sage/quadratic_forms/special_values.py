@@ -194,8 +194,8 @@ def QuadraticBernoulliNumber(k, d):
     bp = bernoulli_polynomial(x, k)
 
     # Make the k-th quadratic Bernoulli number
-    total = sum([kronecker_symbol(d1, i) * bp(i/f)  for i in range(f)])
-    total *= (f ** (k-1))
+    total = sum([kronecker_symbol(d1, i) * bp(i / f) for i in range(f)])
+    total *= f**(k - 1)
 
     return total
 

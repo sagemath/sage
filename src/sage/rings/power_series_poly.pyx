@@ -1126,11 +1126,6 @@ cdef class PowerSeries_poly(PowerSeries):
 
         a ratio of two polynomials
 
-        .. WARNING::
-
-            The current implementation uses a very slow algorithm and is not
-            suitable for high orders.
-
         ALGORITHM:
 
         This method uses the formula as a quotient of two determinants.

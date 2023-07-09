@@ -330,7 +330,6 @@ cdef class dancing_linksWrapper:
         """
         return PyObject_RichCompare(left._rows, right._rows, op)
 
-
     def get_solution(self):
         """
         Return the current solution.
@@ -473,7 +472,7 @@ cdef class dancing_linksWrapper:
         from copy import copy
         rows = copy(self._rows)
         ncols = self.ncols()
-        for i,row_index in enumerate(indices):
+        for i, row_index in enumerate(indices):
             # in the line below we want the creation of a new list
             rows[row_index] = rows[row_index] + [ncols+i]
         return dlx_solver(rows)
@@ -546,8 +545,8 @@ cdef class dancing_linksWrapper:
         if not 0 <= column < self.ncols():
             raise ValueError("column(={}) must be in range(ncols) "
                              "where ncols={}".format(column, self.ncols()))
-        indices = [i for (i,row) in enumerate(self._rows) if column in row]
-        return {i:self.restrict([i]) for i in indices}
+        indices = (i for i, row in enumerate(self._rows) if column in row)
+        return {i: self.restrict([i]) for i in indices}
 
     def solutions_iterator(self):
         r"""
@@ -792,7 +791,7 @@ cdef class dancing_linksWrapper:
                 L.append(dlx.get_solution())
             return L
 
-        indices = [i for (i,row) in enumerate(self._rows) if column in row]
+        indices = [i for i, row in enumerate(self._rows) if column in row]
         L = []
         for (args_kwds, val) in all_solutions(indices):
             L.extend(val)
@@ -892,7 +891,7 @@ cdef class dancing_linksWrapper:
                 N += 1
             return N
 
-        indices = [i for (i,row) in enumerate(self._rows) if column in row]
+        indices = [i for i, row in enumerate(self._rows) if column in row]
         return sum(val for (args_kwds, val) in nb_sol(indices))
 
     @cached_method
@@ -935,7 +934,7 @@ cdef class dancing_linksWrapper:
         # Note that row number i is associated to SAT variable i+1 to
         # avoid a variable zero
         columns = [[] for _ in range(self.ncols())]
-        for i,row in enumerate(self.rows(), start=1):
+        for i, row in enumerate(self.rows(), start=1):
             for a in row:
                 columns[a].append(i)
 
@@ -946,8 +945,8 @@ cdef class dancing_linksWrapper:
         # At most one 1 in each column
         import itertools
         for clause in columns:
-            for p,q in itertools.combinations(clause, 2):
-                sub_clause = [-p,-q]
+            for p, q in itertools.combinations(clause, 2):
+                sub_clause = [-p, -q]
                 s.add_clause(sub_clause)
 
         return s
@@ -995,13 +994,12 @@ cdef class dancing_linksWrapper:
             sage: d = dlx_solver(rows)
             sage: d.one_solution_using_sat_solver() is None                             # optional - sage.sat
             True
-
         """
         sat_solver = self.to_sat_solver(solver)
         solution = sat_solver()
         if not solution:
             return None
-        return [key for (key,val) in enumerate(solution, start=-1) if val]
+        return [key for key, val in enumerate(solution, start=-1) if val]
 
     @cached_method
     def to_milp(self, solver=None):
@@ -1123,18 +1121,17 @@ cdef class dancing_linksWrapper:
             sage: d = dlx_solver(rows)
             sage: d.one_solution_using_milp_solver() is None                            # optional - sage.numerical.mip
             True
-
         """
         from sage.numerical.mip import MIPSolverException
-        p,x = self.to_milp(solver)
+        p, x = self.to_milp(solver)
         try:
             p.solve()
         except MIPSolverException:
             return None
-        else:
-            soln = p.get_values(x, convert=bool, tolerance=integrality_tolerance)
-            support = sorted(key for key in soln if soln[key])
-            return support
+
+        soln = p.get_values(x, convert=bool, tolerance=integrality_tolerance)
+        return sorted(key for key in soln if soln[key])
+
 
 def dlx_solver(rows):
     """

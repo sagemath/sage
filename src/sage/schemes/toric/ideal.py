@@ -228,9 +228,9 @@ class ToricIdeal(MPolynomialIdeal):
         """
         self._A = matrix(ZZ, A)
         if polynomial_ring:
-            if (names!='z') or (base_ring is not QQ):
+            if names != 'z' or base_ring is not QQ:
                 raise ValueError('you must not specify both variable names and a polynomial ring')
-            self._names = [str(_) for _ in polynomial_ring.gens()]
+            self._names = [str(g) for g in polynomial_ring.gens()]
             self._base_ring = polynomial_ring.base_ring()
             ring = polynomial_ring
         else:
@@ -238,7 +238,7 @@ class ToricIdeal(MPolynomialIdeal):
             self._base_ring = base_ring
             ring = self._init_ring('degrevlex')
 
-        if algorithm=='HostenSturmfels':
+        if algorithm == 'HostenSturmfels':
             ideal = self._ideal_HostenSturmfels()
         else:
             raise ValueError(f'algorithm = {algorithm} is not known')
@@ -397,9 +397,9 @@ class ToricIdeal(MPolynomialIdeal):
         """
         N = self.nvariables()
         y = list(ring.gens())
-        x = [ y[i-n] for i in range(N) ]
-        y_to_x = dict(zip(x,y))
-        x_to_y = dict(zip(y,x))
+        x = [y[i - n] for i in range(N)]
+        y_to_x = dict(zip(x, y))
+        x_to_y = dict(zip(y, x))
         # swap variables such that the n-th variable becomes the last one
         J = ideal.subs(y_to_x)
 
@@ -411,7 +411,7 @@ class ToricIdeal(MPolynomialIdeal):
         # x_n = y[0]   # the cheapest variable in the revlex order
         def subtract(e, power):
             l = list(e)
-            return tuple([l[0]-power] + l[1:])
+            return tuple([l[0] - power] + l[1:])
 
         def divide_by_x_n(p):
             d_old = p.dict()

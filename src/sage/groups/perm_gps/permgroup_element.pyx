@@ -453,7 +453,6 @@ cdef class PermutationGroupElement(MultiplicativeGroupElement):
             ValueError: permutation (1,2) not in Permutation Group with generators [(1,2,3)]
         """
         cdef int i, degree = parent.degree()
-        cdef PermutationGroupElement g_pge
         self._parent = parent
         self._alloc(degree)
 
@@ -1574,8 +1573,9 @@ cdef class PermutationGroupElement(MultiplicativeGroupElement):
         cdef int cycle_len
         cdef int i, k
         cdef bint* seen = <bint *>sig_malloc(sizeof(bint) * self.n)
-        for i from 0 <= i < self.n: seen[i] = 0
-        for i from 0 <= i < self.n:
+        for i in range(self.n):
+            seen[i] = 0
+        for i in range(self.n):
             if seen[i] or self.perm[i] == i:
                 continue
             k = self.perm[i]
@@ -1648,8 +1648,9 @@ cdef class PermutationGroupElement(MultiplicativeGroupElement):
         cdef int cycle_len_sum = 0
         cdef int i, k
         cdef bint* seen = <bint *>sig_malloc(sizeof(bint) * self.n)
-        for i from 0 <= i < self.n: seen[i] = 0
-        for i from 0 <= i < self.n:
+        for i in range(self.n):
+            seen[i] = 0
+        for i in range(self.n):
             if seen[i] or self.perm[i] == i:
                 continue
             k = self.perm[i]
@@ -1723,12 +1724,14 @@ cdef class PermutationGroupElement(MultiplicativeGroupElement):
         cdef PermutationGroupElement cycle
         cdef int i, j, k, next_k
         cdef bint* seen = <bint *>sig_malloc(sizeof(bint) * self.n)
-        for i from 0 <= i < self.n: seen[i] = 0
-        for i from 0 <= i < self.n:
+        for i in range(self.n):
+            seen[i] = 0
+        for i in range(self.n):
             if seen[i] or self.perm[i] == i:
                 continue
             cycle = self._new_c()
-            for j from 0 <= j < self.n: cycle.perm[j] = j
+            for j in range(self.n):
+                cycle.perm[j] = j
             k = cycle.perm[i] = self.perm[i]
             while k != i:
                 seen[k] = 1
@@ -1774,8 +1777,9 @@ cdef class PermutationGroupElement(MultiplicativeGroupElement):
         L = []
         cdef int i, k
         cdef bint* seen = <bint *>sig_malloc(sizeof(bint) * self.n)
-        for i from 0 <= i < self.n: seen[i] = 0
-        for i from 0 <= i < self.n:
+        for i in range(self.n):
+            seen[i] = 0
+        for i in range(self.n):
             if seen[i]:
                 continue
             if self.perm[i] == i:

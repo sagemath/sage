@@ -1639,10 +1639,10 @@ def laplace(ex, t, s, algorithm='maxima'):
         -91/2*e^(4*t) + 629/2*e^(-4*t) + 1
         sage: yt
         91/8*e^(4*t) + 629/8*e^(-4*t)
-        sage: p1 = plot(xt, 0, 1/2, rgbcolor=(1,0,0))                                   # optional - sage.plot
-        sage: p2 = plot(yt, 0, 1/2, rgbcolor=(0,1,0))                                   # optional - sage.plot
+        sage: p1 = plot(xt, 0, 1/2, rgbcolor=(1,0,0))                                   # needs sage.plot
+        sage: p2 = plot(yt, 0, 1/2, rgbcolor=(0,1,0))                                   # needs sage.plot
         sage: import tempfile
-        sage: with tempfile.NamedTemporaryFile(suffix=".png") as f:                     # optional - sage.plot
+        sage: with tempfile.NamedTemporaryFile(suffix=".png") as f:                     # needs sage.plot
         ....:     (p1 + p2).save(f.name)
 
     Another example::

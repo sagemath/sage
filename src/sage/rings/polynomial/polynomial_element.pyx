@@ -1988,6 +1988,12 @@ cdef class Polynomial(CommutativePolynomial):
             False
             sage: R(0).is_square()
             True
+
+        Make sure :trac:`35860` is fixed::
+
+            sage: S.<x> = PolynomialRing(ZZ)
+            sage: is_square(S(1), True)[1].parent()
+            Univariate Polynomial Ring in x over Integer Ring
         """
         if self.is_zero():
             return (True, self) if root else True
@@ -2000,7 +2006,7 @@ cdef class Polynomial(CommutativePolynomial):
         u = self._parent.base_ring()(f.unit())
 
         if all(a[1] % 2 == 0 for a in f) and u.is_square():
-            g = u.sqrt()
+            g = self._parent(u.sqrt())
             for a in f:
                 g *= a[0] ** (a[1] // 2)
             return (True, g) if root else True

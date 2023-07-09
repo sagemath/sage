@@ -69,14 +69,16 @@ def FastFourierTransform(size, base_ring=None):
         ....:    a[128-i] = 1
         sage: a[:6:2]
         [(0.0, 0.0), (1.0, 0.0), (1.0, 0.0)]
-        sage: a.plot().show(ymin=0)                                                     # optional - sage.plot
+        sage: a.plot().show(ymin=0)                                                     # needs sage.plot
         sage: a.forward_transform()
-        sage: a.plot().show()                                                           # optional - sage.plot
+        sage: a.plot().show()                                                           # needs sage.plot
 
     """
     return FastFourierTransform_complex(int(size))
 
+
 FFT = FastFourierTransform
+
 
 cdef class FastFourierTransform_base:
     pass
@@ -241,7 +243,7 @@ cdef class FastFourierTransform_complex(FastFourierTransform_base):
         EXAMPLES::
 
             sage: a = FastFourierTransform(4)
-            sage: a._plot_polar(0,2)                                                    # optional - sage.plot
+            sage: a._plot_polar(0,2)                                                    # needs sage.plot
             Graphics object consisting of 2 graphics primitives
 
         """
@@ -259,7 +261,7 @@ cdef class FastFourierTransform_complex(FastFourierTransform_base):
             z = self.data[2*i] + I*self.data[2*i+1]
             mag = z.abs()
             arg = z.arg()*s
-            v.append(point((i,mag), hue=arg, **args))
+            v.append(point((i, mag), hue=arg, **args))
         return sum(v)
 
     def _plot_rect(self, xmin, xmax, **args):
@@ -281,20 +283,19 @@ cdef class FastFourierTransform_complex(FastFourierTransform_base):
         EXAMPLES::
 
             sage: a = FastFourierTransform(4)
-            sage: a._plot_rect(0,3)                                                     # optional - sage.plot
+            sage: a._plot_rect(0,3)                                                     # needs sage.plot
             Graphics object consisting of 3 graphics primitives
-
         """
         from sage.plot.point import point
 
         cdef int i
-        cdef double pr_x, x, h
+        cdef double x, h
         v = []
 
-        for i from xmin <= i < xmax:
+        for i in range(xmin, xmax):
             x = self.data[2*i]
             h = self.data[2*i+1]
-            v.append(point((i,x), hue=h, **args))
+            v.append(point((i, x), hue=h, **args))
         return sum(v)
 
     def plot(self, style='rect', xmin=None, xmax=None, **args):
@@ -302,10 +303,12 @@ cdef class FastFourierTransform_complex(FastFourierTransform_base):
         Plot a slice of the array.
 
         - ``style`` -- Style of the plot, options are ``"rect"`` or ``"polar"``
+
           - ``rect`` -- height represents real part, color represents
             imaginary part.
           - ``polar`` -- height represents absolute value, color
             represents argument.
+
         - ``xmin`` -- The lower bound of the slice to plot. 0 by default.
         - ``xmax`` -- The upper bound of the slice to plot. ``len(self)`` by default.
         - ``**args`` -- passed on to the line plotting function.
@@ -318,11 +321,11 @@ cdef class FastFourierTransform_complex(FastFourierTransform_base):
 
             sage: a = FastFourierTransform(16)
             sage: for i in range(16): a[i] = (random(),random())
-            sage: A = plot(a)                                                           # optional - sage.plot
-            sage: B = plot(a, style='polar')                                            # optional - sage.plot
-            sage: type(A)                                                               # optional - sage.plot
+            sage: A = plot(a)                                                           # needs sage.plot
+            sage: B = plot(a, style='polar')                                            # needs sage.plot
+            sage: type(A)                                                               # needs sage.plot
             <class 'sage.plot.graphics.Graphics'>
-            sage: type(B)                                                               # optional - sage.plot
+            sage: type(B)                                                               # needs sage.plot
             <class 'sage.plot.graphics.Graphics'>
             sage: a = FastFourierTransform(125)
             sage: b = FastFourierTransform(125)
@@ -330,7 +333,7 @@ cdef class FastFourierTransform_complex(FastFourierTransform_base):
             sage: for i in range(1, 60): b[i]=1
             sage: a.forward_transform()
             sage: a.inverse_transform()
-            sage: a.plot() + b.plot()                                                   # optional - sage.plot
+            sage: a.plot() + b.plot()                                                   # needs sage.plot
             Graphics object consisting of 250 graphics primitives
 
         """
@@ -408,7 +411,7 @@ cdef class FastFourierTransform_complex(FastFourierTransform_base):
             sage: for i in range(1, 60): b[i]=1
             sage: a.forward_transform()
             sage: a.inverse_transform()
-            sage: a.plot() + b.plot()                                                   # optional - sage.plot
+            sage: a.plot() + b.plot()                                                   # needs sage.plot
             Graphics object consisting of 250 graphics primitives
             sage: abs(sum([CDF(a[i])-CDF(b[i]) for i in range(125)])) < 2**-16
             True
@@ -421,7 +424,7 @@ cdef class FastFourierTransform_complex(FastFourierTransform_base):
             sage: for i in range(1, 60): b[i]=1
             sage: a.forward_transform()
             sage: a.inverse_transform()
-            sage: a.plot() + b.plot()                                                   # optional - sage.plot
+            sage: a.plot() + b.plot()                                                   # needs sage.plot
             Graphics object consisting of 256 graphics primitives
 
         """
@@ -459,7 +462,7 @@ cdef class FastFourierTransform_complex(FastFourierTransform_base):
             sage: for i in range(1, 60): b[i]=1
             sage: a.forward_transform()
             sage: a.backward_transform()
-            sage: (a.plot() + b.plot()).show(ymin=0)  # long time (2s on sage.math, 2011)   # optional - sage.plot
+            sage: (a.plot() + b.plot()).show(ymin=0)    # long time (2s on sage.math, 2011), needs sage.plot
             sage: abs(sum([CDF(a[i])/125-CDF(b[i]) for i in range(125)])) < 2**-16
             True
 
@@ -471,7 +474,7 @@ cdef class FastFourierTransform_complex(FastFourierTransform_base):
             sage: for i in range(1, 60): b[i]=1
             sage: a.forward_transform()
             sage: a.backward_transform()
-            sage: (a.plot() + b.plot()).show(ymin=0)                                        # optional - sage.plot
+            sage: (a.plot() + b.plot()).show(ymin=0)                                    # needs sage.plot
         """
         cdef gsl_fft_complex_wavetable * wt
         cdef gsl_fft_complex_workspace * mem

@@ -55,9 +55,9 @@ cdef class Spline:
 
     This example is in the GSL documentation::
 
-        sage: v = [(i + sin(i)/2, i+cos(i^2)) for i in range(10)]                       # optional - sage.symbolic
-        sage: s = spline(v)                                                             # optional - sage.symbolic
-        sage: show(point(v) + plot(s,0,9, hue=.8))                                      # optional - sage.plot sage.symbolic
+        sage: v = [(i + RDF(i).sin()/2, i + RDF(i^2).cos()) for i in range(10)]
+        sage: s = spline(v)
+        sage: show(point(v) + plot(s,0,9, hue=.8))                                      # needs sage.plot
 
     We compute the area underneath the spline::
 
@@ -76,14 +76,14 @@ cdef class Spline:
 
     We compute the first and second-order derivatives at a few points::
 
-        sage: s.derivative(5)                                                           # optional - sage.symbolic
-        -0.16230085261803...
-        sage: s.derivative(6)                                                           # optional - sage.symbolic
-        0.20997986285714...
-        sage: s.derivative(5, order=2)                                                  # optional - sage.symbolic
-        -3.08747074561380...
-        sage: s.derivative(6, order=2)                                                  # optional - sage.symbolic
-        2.61876848274853...
+        sage: s.derivative(5)
+        -0.1623008526180...
+        sage: s.derivative(6)
+        0.2099798628571...
+        sage: s.derivative(5, order=2)
+        -3.0874707456138...
+        sage: s.derivative(6, order=2)
+        2.6187684827485...
 
     Only the first two derivatives are supported::
 
@@ -92,7 +92,7 @@ cdef class Spline:
         ...
         ValueError: Order of derivative must be 1 or 2.
     """
-    def __init__(self, v=[]):
+    def __init__(self, v=None):
         """
         EXAMPLES::
 
@@ -101,7 +101,7 @@ cdef class Spline:
             sage: type(S)
             <class 'sage.calculus.interpolation.Spline'>
         """
-        self.v = list(v)
+        self.v = [] if v is None else list(v)
         self.started = 0
 
     def __dealloc__(self):
@@ -136,7 +136,7 @@ cdef class Spline:
             self.v[i] = xy
         else:
             for j from len(self.v) <= j <= i:
-                self.v.append((0,0))
+                self.v.append((0, 0))
             self.v[i] = xy
         self.stop_interp()
 

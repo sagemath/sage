@@ -24,7 +24,7 @@ REFERENCE:
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 #*****************************************************************************
 
 from sage.data_structures.bitset_base cimport *
@@ -64,16 +64,18 @@ cdef class LinearBinaryCodeStruct(BinaryCodeStruct):
             raise MemoryError
 
         cdef bint memerr = 0
-        for i from 0 <= i < self.dimension:
-            try: bitset_init(&self.basis[i], self.degree)
+        for i in range(self.dimension):
+            try:
+                bitset_init(&self.basis[i], self.degree)
             except MemoryError:
                 for j from 0 <= j < i:
                     bitset_free(&self.basis[j])
                 memerr = 1
                 break
         if not memerr:
-            for i from 0 <= i < 2*self.dimension+2:
-                try: bitset_init(&self.scratch_bitsets[i], self.degree)
+            for i in range(2*self.dimension+2):
+                try:
+                    bitset_init(&self.scratch_bitsets[i], self.degree)
                 except MemoryError:
                     for j from 0 <= j < i:
                         bitset_free(&self.scratch_bitsets[j])
@@ -82,7 +84,8 @@ cdef class LinearBinaryCodeStruct(BinaryCodeStruct):
                     memerr = 1
                     break
         if not memerr:
-            try: bitset_init(self.alpha_is_wd, self.nwords + self.degree)
+            try:
+                bitset_init(self.alpha_is_wd, self.nwords + self.degree)
             except MemoryError:
                 for j from 0 <= j < 2*self.dimension+2:
                     bitset_free(&self.scratch_bitsets[j])
@@ -99,7 +102,7 @@ cdef class LinearBinaryCodeStruct(BinaryCodeStruct):
             for j from 0 <= j < self.dimension:
                 bitset_zero(&self.basis[j])
 
-        for i,j in matrix.nonzero_positions():
+        for i, j in matrix.nonzero_positions():
             bitset_set(&self.basis[i], j)
 
         self.output = NULL
@@ -266,11 +269,11 @@ cdef class LinearBinaryCodeStruct(BinaryCodeStruct):
         if self.output is NULL:
             self.run()
         generators = []
-        for i from 0 <= i < self.output.num_gens:
+        for i in range(self.output.num_gens):
             generators.append([self.output.generators[i*self.degree + j] for j from 0 <= j < self.degree])
         order = Integer()
         SC_order(self.output.group, 0, order.value)
-        base = [self.output.group.base_orbits[i][0] for i from 0 <= i < self.output.group.base_size]
+        base = [self.output.group.base_orbits[i][0] for i in range(self.output.group.base_size)]
         return generators, order, base
 
     def canonical_relabeling(self):
@@ -295,7 +298,7 @@ cdef class LinearBinaryCodeStruct(BinaryCodeStruct):
         cdef int i
         if self.output is NULL:
             self.run()
-        return [self.output.relabeling[i] for i from 0 <= i < self.degree]
+        return [self.output.relabeling[i] for i in range(self.degree)]
 
     def is_isomorphic(self, LinearBinaryCodeStruct other):
         """
@@ -323,7 +326,7 @@ cdef class LinearBinaryCodeStruct(BinaryCodeStruct):
             sig_free(ordering)
             sig_free(output)
             raise MemoryError
-        for i from 0 <= i < n:
+        for i in range(n):
             ordering[i] = i
         self.first_time = 1
         other.first_time = 1
@@ -333,7 +336,7 @@ cdef class LinearBinaryCodeStruct(BinaryCodeStruct):
         PS_dealloc(part)
         sig_free(ordering)
         if isomorphic:
-            output_py = [output[i] for i from 0 <= i < n]
+            output_py = [output[i] for i in range(n)]
         else:
             output_py = False
         sig_free(output)
@@ -392,16 +395,18 @@ cdef class NonlinearBinaryCodeStruct(BinaryCodeStruct):
             raise MemoryError
 
         cdef bint memerr = 0
-        for i from 0 <= i < self.nwords:
-            try: bitset_init(&self.words[i], self.degree)
+        for i in range(self.nwords):
+            try:
+                bitset_init(&self.words[i], self.degree)
             except MemoryError:
                 for j from 0 <= j < i:
                     bitset_free(&self.words[j])
                 memerr = 1
                 break
         if not memerr:
-            for i from 0 <= i < 4*self.nwords:
-                try: bitset_init(&self.scratch_bitsets[i], self.degree)
+            for i in range(4*self.nwords):
+                try:
+                    bitset_init(&self.scratch_bitsets[i], self.degree)
                 except MemoryError:
                     for j from 0 <= j < i:
                         bitset_free(&self.scratch_bitsets[j])
@@ -410,7 +415,8 @@ cdef class NonlinearBinaryCodeStruct(BinaryCodeStruct):
                     memerr = 1
                     break
         if not memerr:
-            try: bitset_init(&self.scratch_bitsets[4*self.nwords], self.nwords)
+            try:
+                bitset_init(&self.scratch_bitsets[4*self.nwords], self.nwords)
             except MemoryError:
                 for j from 0 <= j < 4*self.nwords:
                     bitset_free(&self.scratch_bitsets[j])
@@ -418,7 +424,8 @@ cdef class NonlinearBinaryCodeStruct(BinaryCodeStruct):
                     bitset_free(&self.words[j])
                 memerr = 1
         if not memerr:
-            try: bitset_init(self.alpha_is_wd, self.nwords + self.degree)
+            try:
+                bitset_init(self.alpha_is_wd, self.nwords + self.degree)
             except MemoryError:
                 for j from 0 <= j < 4*self.nwords + 1:
                     bitset_free(&self.scratch_bitsets[j])
@@ -436,7 +443,7 @@ cdef class NonlinearBinaryCodeStruct(BinaryCodeStruct):
                 bitset_zero(&self.words[j])
 
         if is_Matrix(arg):
-            for i,j in arg.nonzero_positions():
+            for i, j in arg.nonzero_positions():
                 bitset_set(&self.words[i], j)
 
         self.output = NULL
@@ -535,11 +542,11 @@ cdef class NonlinearBinaryCodeStruct(BinaryCodeStruct):
         if self.output is NULL:
             self.run()
         generators = []
-        for i from 0 <= i < self.output.num_gens:
+        for i in range(self.output.num_gens):
             generators.append([self.output.generators[i*self.degree + j] for j from 0 <= j < self.degree])
         order = Integer()
         SC_order(self.output.group, 0, order.value)
-        base = [self.output.group.base_orbits[i][0] for i from 0 <= i < self.output.group.base_size]
+        base = [self.output.group.base_orbits[i][0] for i in range(self.output.group.base_size)]
         return generators, order, base
 
     def canonical_relabeling(self):
@@ -558,7 +565,7 @@ cdef class NonlinearBinaryCodeStruct(BinaryCodeStruct):
         cdef int i
         if self.output is NULL:
             self.run()
-        return [self.output.relabeling[i] for i from 0 <= i < self.degree]
+        return [self.output.relabeling[i] for i in range(self.degree)]
 
     def is_isomorphic(self, NonlinearBinaryCodeStruct other):
         """
@@ -586,7 +593,7 @@ cdef class NonlinearBinaryCodeStruct(BinaryCodeStruct):
             sig_free(ordering)
             sig_free(output)
             raise MemoryError
-        for i from 0 <= i < n:
+        for i in range(n):
             ordering[i] = i
         self.first_time = 1
         other.first_time = 1
@@ -596,7 +603,7 @@ cdef class NonlinearBinaryCodeStruct(BinaryCodeStruct):
         PS_dealloc(part)
         sig_free(ordering)
         if isomorphic:
-            output_py = [output[i] for i from 0 <= i < n]
+            output_py = [output[i] for i in range(n)]
         else:
             output_py = False
         sig_free(output)
@@ -1064,7 +1071,6 @@ def random_tests(num=50, n_max=50, k_max=6, nwords_max=200, perms_per_code=10, d
         sage: sage.groups.perm_gps.partn_ref.refinement_binary.random_tests()  # long time (up to 5s on sage.math, 2012)
         All passed: ... random tests on ... codes.
     """
-    from sage.misc.timing import walltime
     from sage.misc.prandom import random, randint
     from sage.combinat.permutation import Permutations
     from sage.matrix.constructor import random_matrix, matrix
