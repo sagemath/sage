@@ -50,10 +50,10 @@ def polygon_spline(pts):
         sage: ps = polygon_spline(pts)
         sage: fx = lambda x: ps.value(x).real
         sage: fy = lambda x: ps.value(x).imag
-        sage: show(parametric_plot((fx, fy), (0, 2*pi)))                                # optional - sage.plot
+        sage: show(parametric_plot((fx, fy), (0, 2*pi)))                                # needs sage.plot
         sage: m = Riemann_Map([lambda x: ps.value(real(x))],
         ....:                 [lambda x: ps.derivative(real(x))], 0)
-        sage: show(m.plot_colored() + m.plot_spiderweb())                               # optional - sage.plot
+        sage: show(m.plot_colored() + m.plot_spiderweb())                               # needs sage.plot
 
     Polygon approximation of an circle::
 
@@ -186,10 +186,10 @@ def complex_cubic_spline(pts):
         sage: fx = lambda x: cs.value(x).real
         sage: fy = lambda x: cs.value(x).imag
         sage: from math import pi
-        sage: show(parametric_plot((fx, fy), (0, 2*pi)))                                # optional - sage.plot
+        sage: show(parametric_plot((fx, fy), (0, 2*pi)))                                # needs sage.plot
         sage: m = Riemann_Map([lambda x: cs.value(real(x))],
         ....:                 [lambda x: cs.derivative(real(x))], 0)
-        sage: show(m.plot_colored() + m.plot_spiderweb())                               # optional - sage.plot
+        sage: show(m.plot_colored() + m.plot_spiderweb())                               # needs sage.plot
 
     Polygon approximation of a circle::
 

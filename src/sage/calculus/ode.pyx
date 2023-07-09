@@ -247,7 +247,7 @@ class ode_solver():
         sage: T.jacobian = j_1
         sage: T.ode_solve(y_0=[1,0], t_span=[0,100], params=[10.0], num_points=1000)
         sage: import tempfile
-        sage: with tempfile.NamedTemporaryFile(suffix=".png") as f:                     # optional - sage.plot
+        sage: with tempfile.NamedTemporaryFile(suffix=".png") as f:                     # needs sage.plot
         ....:     T.plot_solution(filename=f.name)
 
     The solver line is equivalent to::
@@ -272,7 +272,7 @@ class ode_solver():
 
     By default ``T.plot_solution()`` plots the `y_0`; to plot general `y_i`, use::
 
-        sage: with tempfile.NamedTemporaryFile(suffix=".png") as f:                     # optional - sage.plot
+        sage: with tempfile.NamedTemporaryFile(suffix=".png") as f:                     # needs sage.plot
         ....:     T.plot_solution(i=0, filename=f.name)
         ....:     T.plot_solution(i=1, filename=f.name)
         ....:     T.plot_solution(i=2, filename=f.name)
@@ -283,11 +283,11 @@ class ode_solver():
     argument ``i``. ::
 
         sage: f = T.interpolate_solution()
-        sage: plot(f,0,12).show()                                                       # optional - sage.plot
+        sage: plot(f,0,12).show()                                                       # needs sage.plot
         sage: f = T.interpolate_solution(i=1)
-        sage: plot(f,0,12).show()                                                       # optional - sage.plot
+        sage: plot(f,0,12).show()                                                       # needs sage.plot
         sage: f = T.interpolate_solution(i=2)
-        sage: plot(f,0,12).show()                                                       # optional - sage.plot
+        sage: plot(f,0,12).show()                                                       # needs sage.plot
         sage: f = T.interpolate_solution()
         sage: from math import pi
         sage: f(pi)
@@ -335,14 +335,15 @@ class ode_solver():
     following (WARNING: the following is *not* automatically
     doctested)::
 
-        sage: T = ode_solver()                               # not tested
-        sage: T.algorithm = "bsimp"                          # not tested
-        sage: vander = van_der_pol()                         # not tested
-        sage: T.function = vander                            # not tested
-        sage: T.ode_solve(y_0=[1, 0], t_span=[0, 2000],      # not tested
+        sage: # not tested
+        sage: T = ode_solver()
+        sage: T.algorithm = "bsimp"
+        sage: vander = van_der_pol()
+        sage: T.function = vander
+        sage: T.ode_solve(y_0=[1, 0], t_span=[0, 2000],
         ....:             num_points=1000)
-        sage: from tempfile import NamedTemporaryFile        # not tested
-        sage: with NamedTemporaryFile(suffix=".png") as f:   # not tested
+        sage: from tempfile import NamedTemporaryFile
+        sage: with NamedTemporaryFile(suffix=".png") as f:
         ....:     T.plot_solution(i=0, filename=f.name)
 
     """
@@ -392,11 +393,11 @@ class ode_solver():
             sage: T.function = lambda t,y: [cos(y[0]) * sin(t)]
             sage: T.jacobian = lambda t,y: [[-sin(y[0]) * sin(t)]]
             sage: T.ode_solve(y_0=[1],t_span=[0,20],num_points=1000)
-            sage: T.plot_solution()                                                     # optional - sage.plot
+            sage: T.plot_solution()                                                     # needs sage.plot
 
         And with some options::
 
-            sage: T.plot_solution(color='red', axes_labels=["t", "x(t)"])               # optional - sage.plot
+            sage: T.plot_solution(color='red', axes_labels=["t", "x(t)"])               # needs sage.plot
         """
         if interpolate:
             from sage.plot.line import line2d

@@ -64,27 +64,27 @@ def WaveletTransform(n, wavelet_type, wavelet_k):
         sage: for i in range(1, 11):
         ....:     a[i] = 1
         ....:     a[128-i] = 1
-        sage: a.plot().show(ymin=0)                                                     # optional - sage.plot
+        sage: a.plot().show(ymin=0)                                                     # needs sage.plot
         sage: a.forward_transform()
-        sage: a.plot().show()                                                           # optional - sage.plot
+        sage: a.plot().show()                                                           # needs sage.plot
         sage: a = WaveletTransform(128,'haar',2)
         sage: for i in range(1, 11): a[i] = 1; a[128-i] = 1
         sage: a.forward_transform()
-        sage: a.plot().show(ymin=0)                                                     # optional - sage.plot
+        sage: a.plot().show(ymin=0)                                                     # needs sage.plot
         sage: a = WaveletTransform(128,'bspline_centered',103)
         sage: for i in range(1, 11): a[i] = 1; a[100+i] = 1
         sage: a.forward_transform()
-        sage: a.plot().show(ymin=0)                                                     # optional - sage.plot
+        sage: a.plot().show(ymin=0)                                                     # needs sage.plot
 
     This example gives a simple example of wavelet compression::
 
         sage: a = DWT(2048,'daubechies',6)
-        sage: for i in range(2048): a[i]=float(sin((i*5/2048)**2))                      # optional - sage.symbolic
-        sage: a.plot().show()  # long time (7s on sage.math, 2011)                      # optional - sage.plot sage.symbolic
-        sage: a.forward_transform()                                                     # optional - sage.symbolic
-        sage: for i in range(1800): a[2048-i-1] = 0                                     # optional - sage.symbolic
-        sage: a.backward_transform()                                                    # optional - sage.symbolic
-        sage: a.plot().show()  # long time (7s on sage.math, 2011)                      # optional - sage.plot sage.symbolic
+        sage: for i in range(2048): a[i]=float(sin((i*5/2048)**2))                      # needs sage.symbolic
+        sage: a.plot().show()                   # long time (7s on sage.math, 2011), needs sage.plot sage.symbolic
+        sage: a.forward_transform()                                                     # needs sage.symbolic
+        sage: for i in range(1800): a[2048-i-1] = 0                                     # needs sage.symbolic
+        sage: a.backward_transform()                                                    # needs sage.symbolic
+        sage: a.plot().show()                   # long time (7s on sage.math, 2011), needs sage.plot sage.symbolic
     """
     cdef size_t _n, _k
     _n = int(n)

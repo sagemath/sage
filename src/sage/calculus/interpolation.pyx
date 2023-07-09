@@ -57,7 +57,7 @@ cdef class Spline:
 
         sage: v = [(i + RDF(i).sin()/2, i + RDF(i^2).cos()) for i in range(10)]
         sage: s = spline(v)
-        sage: show(point(v) + plot(s,0,9, hue=.8))                                      # optional - sage.plot
+        sage: show(point(v) + plot(s,0,9, hue=.8))                                      # needs sage.plot
 
     We compute the area underneath the spline::
 

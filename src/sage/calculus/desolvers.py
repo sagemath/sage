@@ -874,8 +874,8 @@ def desolve_system(des, vars, ics=None, ivar=None, algorithm="maxima"):
 
     ::
 
-        sage: P1 = plot([solx,soly], (0,1))                                             # optional - sage.plot
-        sage: P2 = parametric_plot((solx,soly), (0,1))                                  # optional - sage.plot
+        sage: P1 = plot([solx,soly], (0,1))                                             # needs sage.plot
+        sage: P2 = parametric_plot((solx,soly), (0,1))                                  # needs sage.plot
 
     Now type ``show(P1)``, ``show(P2)`` to view these plots.
 
@@ -1014,9 +1014,9 @@ def eulers_method(f, x0, y0, h, x1, algorithm="table"):
     ::
 
         sage: pts = eulers_method(5*x+y-5,0,1,1/2,1,algorithm="none")
-        sage: P1 = list_plot(pts)                                                       # optional - sage.plot
-        sage: P2 = line(pts)                                                            # optional - sage.plot
-        sage: (P1 + P2).show()                                                          # optional - sage.plot
+        sage: P1 = list_plot(pts)                                                       # needs sage.plot
+        sage: P2 = line(pts)                                                            # needs sage.plot
+        sage: (P1 + P2).show()                                                          # needs sage.plot
 
     AUTHORS:
 
@@ -1164,7 +1164,7 @@ def eulers_method_2x2_plot(f, g, t0, x0, y0, h, t1):
 
         sage: from sage.calculus.desolvers import eulers_method_2x2_plot
         sage: f = lambda z : z[2]; g = lambda z : -sin(z[1])
-        sage: P = eulers_method_2x2_plot(f,g, 0.0, 0.75, 0.0, 0.1, 1.0)                 # optional - sage.plot
+        sage: P = eulers_method_2x2_plot(f,g, 0.0, 0.75, 0.0, 0.1, 1.0)                 # needs sage.plot
     """
     from sage.plot.line import line
 
@@ -1435,10 +1435,10 @@ def desolve_system_rk4(des, vars, ics=None, ivar=None, end_points=None, step=0.1
         sage: P = desolve_system_rk4([x*(1-y),-y*(1-x)], [x,y], ics=[0,0.5,2],
         ....:                        ivar=t, end_points=20)
         sage: Q = [[i,j] for i,j,k in P]
-        sage: LP = list_plot(Q)                                                         # optional - sage.plot
+        sage: LP = list_plot(Q)                                                         # needs sage.plot
 
         sage: Q = [[j,k] for i,j,k in P]
-        sage: LP = list_plot(Q)                                                         # optional - sage.plot
+        sage: LP = list_plot(Q)                                                         # needs sage.plot
 
     ALGORITHM:
 
@@ -1574,9 +1574,9 @@ def desolve_odeint(des, ics, times, dvars, ivar=None, compute_jac=False, args=()
         sage: from sage.calculus.desolvers import desolve_odeint
         sage: x,y = var('x,y')
         sage: f = [x*(1-y), -y*(1-x)]
-        sage: sol = desolve_odeint(f, [0.5,2], srange(0,10,0.1), [x,y])                 # optional - scipy
-        sage: p = line(zip(sol[:,0],sol[:,1]))                                          # optional - sage.plot
-        sage: p.show()                                                                  # optional - sage.plot
+        sage: sol = desolve_odeint(f, [0.5,2], srange(0,10,0.1), [x,y])                 # needs scipy
+        sage: p = line(zip(sol[:,0],sol[:,1]))                                          # needs scipy sage.plot
+        sage: p.show()                                                                  # needs sage.plot
 
     Lorenz Equations::
 
@@ -1590,7 +1590,7 @@ def desolve_odeint(des, ics, times, dvars, ivar=None, compute_jac=False, args=()
         sage: # Time and initial conditions
         sage: times = srange(0,50.05,0.05)
         sage: ics = [0,1,1]
-        sage: sol = desolve_odeint(lorenz, ics, times, [x,y,z],                         # optional - scipy
+        sage: sol = desolve_odeint(lorenz, ics, times, [x,y,z],                         # needs scipy
         ....:                      rtol=1e-13, atol=1e-14)
 
     One-dimensional stiff system::
@@ -1600,10 +1600,10 @@ def desolve_odeint(des, ics, times, dvars, ivar=None, compute_jac=False, args=()
         sage: f = y^2*(1-y)
         sage: ic = epsilon
         sage: t = srange(0,2/epsilon,1)
-        sage: sol = desolve_odeint(f, ic, t, y,                                         # optional - scipy
+        sage: sol = desolve_odeint(f, ic, t, y,                                         # needs scipy
         ....:                      rtol=1e-9, atol=1e-10, compute_jac=True)
-        sage: p = points(zip(t,sol[:,0]))                                               # optional - scipy sage.plot
-        sage: p.show()                                                                  # optional - scipy sage.plot
+        sage: p = points(zip(t,sol[:,0]))                                               # needs scipy sage.plot
+        sage: p.show()                                                                  # needs scipy sage.plot
 
     Another stiff system with some optional parameters with no
     default value::
@@ -1616,7 +1616,7 @@ def desolve_odeint(des, ics, times, dvars, ivar=None, compute_jac=False, args=()
         sage: ci = [0.2,0.4,0.7]
         sage: t = srange(0,10,0.01)
         sage: v = [y1,y2,y3]
-        sage: sol = desolve_odeint(f, ci, t, v, rtol=1e-3, atol=1e-4,                   # optional - scipy
+        sage: sol = desolve_odeint(f, ci, t, v, rtol=1e-3, atol=1e-4,                   # needs scipy
         ....:                      h0=0.1, hmax=1, hmin=1e-4, mxstep=1000, mxords=17)
 
     AUTHOR:
