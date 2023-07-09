@@ -182,7 +182,7 @@ cdef inline format_pmesh_face(face_c face, int has_color):
                 r = sprintf_5i(ss, "%d\n%d\n%d\n%d\n%d", has_color * 4,
                                face.vertices[0],
                                face.vertices[i],
-                               face.vertices[i + 1], 
+                               face.vertices[i + 1],
                                face.vertices[0])
                 PyList_Append(all, PyBytes_FromStringAndSize(ss, r))
         else:
