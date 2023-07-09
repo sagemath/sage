@@ -56,6 +56,7 @@ EXAMPLES::
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
+from sage.misc.cachefunc import cached_method
 from sage.homology.homology_group import HomologyGroup
 from sage.rings.integer_ring import ZZ
 from sage.structure.sage_object import SageObject
@@ -90,8 +91,8 @@ class MomentAngleComplex(SageObject): # should this inherit SimplicialComplex?
 
     :param simplicial_complex: the corresponding simplicial complex
     :type simplicial_complex: a simplicial complex, or a list of facets that defines a simplicial complex
-    :param construct: see below
-    :type construct: boolean; optional, default ``False``
+    :param create_complex: see below
+    :type create_complex: boolean; optional, default ``False``
     :return: the associated moment-angle complex
 
     ``simplicial_complex`` must be an intance of
@@ -99,7 +100,7 @@ class MomentAngleComplex(SageObject): # should this inherit SimplicialComplex?
     list of facets, which represents the simplicial complex whose
     moment-angle complex we wish to create.
 
-    If ``construct`` is ``True``, we also explicitly compute the
+    If ``create_complex`` is ``True``, we also explicitly compute the
     moment-angle complex, with the construction described above.
 
     .. WARNING::
@@ -114,7 +115,7 @@ class MomentAngleComplex(SageObject): # should this inherit SimplicialComplex?
 
     def __init__(self,
                  simplicial_complex,
-                 construct=False):
+                 create_complex=False):
         """
         Define a moment-angle complex. See :class:`MomentAngleComplex`
         for full documentation.
@@ -143,9 +144,8 @@ class MomentAngleComplex(SageObject): # should this inherit SimplicialComplex?
 
             self._components[facet] = Y
 
-        self._constructed = False
-        if construct:
-            self.construct()
+        if create_complex:
+            self.create_complex()
 
     def __eq__(self, other):
         """
@@ -185,19 +185,15 @@ class MomentAngleComplex(SageObject): # should this inherit SimplicialComplex?
         """
         return "Moment angle complex over a " + self._simplicial_complex._repr_().lower()
 
-    # a better name for this method, also mark it cached
-    # also, remove the _constructed attribute
-    def construct(self):
+    @cached_method
+    def create_complex(self):
         """
-        Construct the moment-angle complex as a simplicial complex.
+        Create the moment-angle complex as a simplicial complex.
 
         EXAMPLES::
 
         <Lots and lots of examples>
         """
-        if self._constructed:
-            return
-
         n = len(self._simplicial_complex.vertices())
         D = [cubical_complexes.Cube(2)] * n
         S = [cubical_complexes.Sphere(1)] * n
@@ -210,8 +206,6 @@ class MomentAngleComplex(SageObject): # should this inherit SimplicialComplex?
                 x = x.product(y)
 
             self._moment_angle_complex = union(self._moment_angle_complex, x)
-
-        self._constructed = True
 
     def components(self):
         """
@@ -242,8 +236,8 @@ class MomentAngleComplex(SageObject): # should this inherit SimplicialComplex?
 
         <Lots and lots of examples>
         """
-        if not self._constructed:
-            raise ValueError("the moment-angle complex is not constructed")
+        if self._moment_angle_complex is None:
+            raise ValueError("the moment-angle complex is not created")
 
         return self._moment_angle_complex.homology(dim, base_ring, subcomplex,
                  generators, cohomology, algorithm,
@@ -317,5 +311,28 @@ class MomentAngleComplex(SageObject): # should this inherit SimplicialComplex?
         # needs work
         return out
 
+    def cohomology(self, base_ring=ZZ):
+        """
+        Return the cohomology groups of ``self``, computed
+        using Hochter's formula.
 
+        EXAMPLES::
 
+        <Lots and lots of examples>
+        """
+        def cohomology_group(l):
+            from sage.sets.cartesian_product import cartesian_product
+
+            vertices = self._simplicial_complex.vertices()
+            n = len(vertices)
+            homology_groups = []
+
+            for j in range(n+1):
+             for x in combinations(vertices, j):
+                 S = self._simplicial_complex.generated_subcomplex(x)
+                 homology_groups.append(S.homology(l-j-1, base_ring=base_ring))
+                 return cartesian_product(homology_groups)
+                 print(homology_groups)
+                 
+        for i in range(5):
+            print(cohomology_group(i))
