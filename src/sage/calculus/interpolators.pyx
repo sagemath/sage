@@ -29,6 +29,7 @@ cimport numpy as np
 from math import pi
 cdef double TWOPI = 2*pi
 
+
 def polygon_spline(pts):
     """
     Creates a polygon from a set of complex or `(x,y)` points. The polygon
@@ -60,6 +61,7 @@ def polygon_spline(pts):
         (-0.0470303661...+0.1520363883...j)
     """
     return PSpline(pts)
+
 
 cdef class PSpline:
     """
@@ -160,6 +162,7 @@ cdef class PSpline:
         pt2 = self.pts[(int(t1) + 1) % self.N]
         return (pt2 - pt1) * self.N / TWOPI
 
+
 def complex_cubic_spline(pts):
     """
     Creates a cubic spline interpolated figure from a set of complex or
@@ -192,6 +195,7 @@ def complex_cubic_spline(pts):
     """
     return CCSpline(pts)
 
+
 cdef class CCSpline:
     """
     A ``CCSpline`` object contains a cubic interpolation of a figure
@@ -209,7 +213,7 @@ cdef class CCSpline:
         (0.9549296...-0.9549296...j)
     """
     cdef int N
-    cdef np.ndarray avec,bvec,cvec,dvec
+    cdef np.ndarray avec, bvec, cvec, dvec
 
     #standard cubic interpolation method
     def __init__(self, pts):
@@ -222,7 +226,7 @@ cdef class CCSpline:
         if isinstance(pts[0], tuple):
             pts = np.array(
                 [complex(pt[0], pt[1]) for pt in pts], dtype=np.complex128)
-        cdef int N, i, k
+        cdef int N, i
         N = len(pts)
         yvec = np.zeros(N, dtype=np.complex128)
         for i in range(N):
