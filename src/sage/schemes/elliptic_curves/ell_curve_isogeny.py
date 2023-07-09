@@ -483,13 +483,13 @@ def compute_codomain_kohel(E, kernel):
 
             v, w = compute_vw_kohel_even_deg1(x0, y0, a1, a2, a4)
 
-        elif n == 3: # psi_2tor is the full 2-division polynomial
+        elif n == 3:  # psi_2tor is the full 2-division polynomial
 
             b2, b4, _, _ = E.b_invariants()
 
-            s1 = -psi_2tor[n-1]
-            s2 =  psi_2tor[n-2]
-            s3 = -psi_2tor[n-3]
+            s1 = -psi_2tor[n - 1]
+            s2 = psi_2tor[n - 2]
+            s3 = -psi_2tor[n - 3]
 
             v, w = compute_vw_kohel_even_deg3(b2, b4, s1, s2, s3)
 
@@ -499,9 +499,9 @@ def compute_codomain_kohel(E, kernel):
 
         b2, b4, b6, _ = E.b_invariants()
 
-        s1 = -psi[n-1] if n >= 1 else 0
-        s2 =  psi[n-2] if n >= 2 else 0
-        s3 = -psi[n-3] if n >= 3 else 0
+        s1 = -psi[n - 1] if n >= 1 else 0
+        s2 = psi[n - 2] if n >= 2 else 0
+        s3 = -psi[n - 3] if n >= 3 else 0
 
         # initializing these allows us to calculate E2.
         v, w = compute_vw_kohel_odd(b2, b4, b6, s1, s2, s3, n)
@@ -769,6 +769,7 @@ class EllipticCurveIsogeny(EllipticCurveHom):
 
         sage: E = EllipticCurve('11a1')
         sage: P_list = E.torsion_points()
+        sage: x = polygen(ZZ, 'x')
         sage: K.<alpha> = NumberField(x^3 - 2* x^2 - 40*x - 158)                        # optional - sage.rings.number_field
         sage: EK = E.change_ring(K)                                                     # optional - sage.rings.number_field
         sage: P_list = [EK(P) for P in P_list]                                          # optional - sage.rings.number_field
@@ -889,15 +890,16 @@ class EllipticCurveIsogeny(EllipticCurveHom):
     Examples over relative number fields used not to work (see :trac:`16779`)::
 
         sage: pol26 = hilbert_class_polynomial(-4*26)
-        sage: pol = NumberField(pol26,'a').optimized_representation()[0].polynomial()   # optional - sage.rings.number_field
-        sage: K.<a> = NumberField(pol)                                                  # optional - sage.rings.number_field
-        sage: j = pol26.roots(K)[0][0]                                                  # optional - sage.rings.number_field
-        sage: E = EllipticCurve(j=j)                                                    # optional - sage.rings.number_field
-        sage: L.<b> = K.extension(x^2 + 26)                                             # optional - sage.rings.number_field
-        sage: EL = E.change_ring(L)                                                     # optional - sage.rings.number_field
-        sage: iso2 = EL.isogenies_prime_degree(2); len(iso2)                            # optional - sage.rings.number_field
+        sage: F = NumberField(pol26,'a')                            # long time         # optional - sage.rings.number_field
+        sage: pol = F.optimized_representation()[0].polynomial()    # long time         # optional - sage.rings.number_field
+        sage: K.<a> = NumberField(pol)                              # long time         # optional - sage.rings.number_field
+        sage: j = pol26.roots(K)[0][0]                              # long time         # optional - sage.rings.number_field
+        sage: E = EllipticCurve(j=j)                                # long time         # optional - sage.rings.number_field
+        sage: L.<b> = K.extension(x^2 + 26)                         # long time         # optional - sage.rings.number_field
+        sage: EL = E.change_ring(L)                                 # long time         # optional - sage.rings.number_field
+        sage: iso2 = EL.isogenies_prime_degree(2); len(iso2)        # long time         # optional - sage.rings.number_field
         1
-        sage: iso3 = EL.isogenies_prime_degree(3); len(iso3)                            # optional - sage.rings.number_field
+        sage: iso3 = EL.isogenies_prime_degree(3); len(iso3)        # long time         # optional - sage.rings.number_field
         2
 
     Examples over function fields used not to work (see :trac:`11327`)::
@@ -985,7 +987,6 @@ class EllipticCurveIsogeny(EllipticCurveHom):
 
     __inner_kernel_polynomial = None # the inner kernel polynomial (ignoring preisomorphism)
 
-
     #
     # member variables common to Velu's formula
     #
@@ -997,14 +998,12 @@ class EllipticCurveIsogeny(EllipticCurveHom):
     __v = None
     __w = None
 
-
     #
     # member variables specific to Kohel's algorithm.
     #
     __psi = None # psi polynomial
     __phi = None # phi polynomial
     __omega = None # omega polynomial, an element of k[x][y]
-
 
     #
     # Python Special Functions
@@ -1203,6 +1202,7 @@ class EllipticCurveIsogeny(EllipticCurveHom):
 
         Tests for :trac:`10888`::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<th> = NumberField(x^2 + 3)                                         # optional - sage.rings.number_field
             sage: E = EllipticCurve(K, [7,0])                                           # optional - sage.rings.number_field
             sage: phi = E.isogeny(E(0,0))                                               # optional - sage.rings.number_field
@@ -1477,7 +1477,6 @@ class EllipticCurveIsogeny(EllipticCurveHom):
         fx,fy = self.rational_maps()
         return fr'\left( {fx._latex_()} , {fy._latex_()} \right)'
 
-
     ###########################
     # Private Common Functions
     ###########################
@@ -1695,7 +1694,6 @@ class EllipticCurveIsogeny(EllipticCurveHom):
 
         self.__ratl_maps = self.__xfield(X_map), self.__xyfield(Y_map)
 
-
     def __init_kernel_polynomial(self):
         r"""
         Private function that initializes the kernel polynomial (if
@@ -1897,7 +1895,7 @@ class EllipticCurveIsogeny(EllipticCurveHom):
                to Elliptic Curve defined by y^2 = x^3 + 80816485163488178037199320944019099858815874115367810482828676054000067654558381377552245721755005198633191074893*x + 301497584865165444049833326660609767433467459033532853758006118022998267706948164646650354324860226263546558337993
                   over Finite Field of size 461742260113997803268895001173557974278278194575766957660028841364655249961609425998827452443620996655395008156411
         """
-        if self.__check :
+        if self.__check:
             for P in kernel_gens:
                 if not P.has_finite_order():
                     raise ValueError("given kernel contains point of infinite order")
@@ -2251,7 +2249,6 @@ class EllipticCurveIsogeny(EllipticCurveHom):
 
             phi, omega, v, w, _, d = self.__init_odd_kernel_polynomial(E, psi)
 
-
         #
         # Set up the necessary instance variables
         #
@@ -2342,7 +2339,7 @@ class EllipticCurveIsogeny(EllipticCurveHom):
             (x^7 + 5*x^6 + 2*x^5 + 6*x^4 + 3*x^3 + 5*x^2 + 6*x + 3, (x^9 + 4*x^8 + 2*x^7 + 4*x^3 + 2*x^2 + x + 6)*y, 1, 6, 3, 4)
         """
         # check if the polynomial really divides the two_torsion_polynomial
-        if self.__check and E.division_polynomial(2, x=self.__poly_ring.gen()) % psi_G != 0 :
+        if self.__check and E.division_polynomial(2, x=self.__poly_ring.gen()) % psi_G != 0:
             raise ValueError(f"the polynomial {psi_G} does not define a finite subgroup of {E}")
 
         n = psi_G.degree() # 1 or 3
@@ -2368,9 +2365,9 @@ class EllipticCurveIsogeny(EllipticCurveHom):
             omega = (y*psi_G**2 - v*(a1*psi_G + (y - y0)))*psi_G
 
         elif n == 3:
-            s1 = -psi_G[n-1]
-            s2 =  psi_G[n-2]
-            s3 = -psi_G[n-3]
+            s1 = -psi_G[n - 1]
+            s2 = psi_G[n - 2]
+            s3 = -psi_G[n - 3]
 
             psi_G_pr = psi_G.derivative()
             psi_G_prpr = psi_G_pr.derivative()
@@ -2867,7 +2864,6 @@ class EllipticCurveIsogeny(EllipticCurveHom):
             self.__init_kernel_polynomial()
         return self.__kernel_polynomial
 
-
     def is_separable(self):
         r"""
         Determine whether or not this isogeny is separable.
@@ -2890,7 +2886,6 @@ class EllipticCurveIsogeny(EllipticCurveHom):
             True
         """
         return True
-
 
     def _set_pre_isomorphism(self, preWI):
         """
@@ -2980,7 +2975,6 @@ class EllipticCurveIsogeny(EllipticCurveHom):
 
         self.__set_pre_isomorphism(domain, isom)
 
-
     def _set_post_isomorphism(self, postWI):
         """
         Modify this isogeny by post-composing with a
@@ -3043,7 +3037,6 @@ class EllipticCurveIsogeny(EllipticCurveHom):
         self.__clear_cached_values()
 
         self.__set_post_isomorphism(codomain, isom)
-
 
     def dual(self):
         r"""
@@ -3268,7 +3261,6 @@ class EllipticCurveIsogeny(EllipticCurveHom):
             phi_hat._set_post_isomorphism(post_iso)
             phi_hat.__perform_inheritance_housekeeping()
             return phi_hat
-
 
     @staticmethod
     def _composition_impl(left, right):

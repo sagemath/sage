@@ -140,6 +140,7 @@ fields can be found in Section 4.6 of [Rüt2014]_. Most of this was originally
 developed for number fields in [Mac1936I]_ and [Mac1936II]_.
 
 """
+
 # ****************************************************************************
 #       Copyright (C) 2016-2018 Julian Rüth <julian.rueth@fsfe.org>
 #
@@ -148,6 +149,7 @@ developed for number fields in [Mac1936I]_ and [Mac1936II]_.
 #  the License, or (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
+
 from sage.structure.factory import UniqueFactory
 from sage.rings.rational_field import QQ
 from sage.misc.cachefunc import cached_method
@@ -600,6 +602,7 @@ class RationalFunctionFieldValuation_base(FunctionFieldValuation_base):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<a> = NumberField(x^3 + 6)                                                                          # optional - sage.rings.number_field
             sage: v = K.valuation(2)                                                                                    # optional - sage.rings.number_field
             sage: R.<x> = K[]                                                                                           # optional - sage.rings.number_field

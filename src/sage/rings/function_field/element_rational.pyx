@@ -2,18 +2,26 @@ r"""
 Elements of function fields: rational
 """
 
-#*****************************************************************************
-#       Copyright (C) 2023 Kwankyu Lee <ekwankyu@gmail.com>
+# *****************************************************************************
+#       Copyright (C) 2010      William Stein <wstein@gmail.com>
+#                     2010      Robert Bradshaw <robertwb@math.washington.edu>
+#                     2011-2020 Julian Rueth <julian.rueth@gmail.com>
+#                     2011      Maarten Derickx <m.derickx.student@gmail.com>
+#                     2015      Nils Bruin
+#                     2016      Frédéric Chapoton
+#                     2017-2019 Kwankyu Lee
+#                     2018-2020 Travis Scrimshaw
+#                     2019      Brent Baccala
+#                     2021      Saher Amasha
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# *****************************************************************************
 
-from sage.misc.cachefunc import cached_method
 from sage.structure.richcmp cimport richcmp, richcmp_not_equal
-from sage.structure.element cimport FieldElement, RingElement, ModuleElement, Element
+from sage.structure.element cimport FieldElement
 
 from sage.rings.function_field.element cimport FunctionFieldElement
 
@@ -106,7 +114,7 @@ cdef class FunctionFieldElement_rational(FunctionFieldElement):
 
     def __bool__(self):
         """
-        Return True if the element is not zero.
+        Return ``True`` if the element is not zero.
 
         EXAMPLES::
 
@@ -494,9 +502,8 @@ cdef class FunctionFieldElement_rational(FunctionFieldElement):
             -1/2*x + 1/2
             sage: (t*(x+1) - 1) in I
             True
-
         """
-        assert  len(I.gens()) == 1
+        assert len(I.gens()) == 1
         f = I.gens()[0]._x
         assert f.denominator() == 1
         assert self._x.denominator() == 1

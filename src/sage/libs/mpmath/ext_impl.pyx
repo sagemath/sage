@@ -1898,7 +1898,7 @@ cdef MPF_complex_pow_re(MPF *zre, MPF *zim, MPF *xre, MPF *xim, MPF *y, MPopts o
     xret = MPF_to_tuple(xre)
     ximt = MPF_to_tuple(xim)
     yret = MPF_to_tuple(y)
-    from mpmath.libmp import mpc_pow_mpf, fzero
+    from mpmath.libmp import mpc_pow_mpf
     vr, vi = mpc_pow_mpf((xret, ximt), yret,
                          opts.prec, rndmode_to_python(opts.rounding))
     MPF_set_tuple(zre, vr)

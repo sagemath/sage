@@ -18,7 +18,7 @@ from .join_feature import JoinFeature
 
 class Tdlib(JoinFeature):
     r"""
-    A :class:`~sage.features.Feature` describing the presence of the ``tdlib``.
+    A :class:`~sage.features.Feature` describing the presence of the SageMath interface to the :ref:`tdlib <spkg_tdlib>` library.
     """
     def __init__(self):
         r"""

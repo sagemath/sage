@@ -47,7 +47,7 @@ AUTHORS:
 
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2016-2022 Kwankyu Lee <ekwankyu@gmail.com>
 #                     2019      Brent Baccala
 #                     2021      Jonathan Kliem
@@ -56,7 +56,7 @@ AUTHORS:
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
 #                  http://www.gnu.org/licenses/
-#*****************************************************************************
+# ****************************************************************************
 
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.structure.parent import Parent
@@ -342,7 +342,7 @@ class PlaceSet(UniqueRepresentation, Parent):
             sage: TestSuite(places).run()                                               # optional - sage.rings.finite_rings sage.rings.function_field
         """
         self.Element = field._place_class
-        Parent.__init__(self, category = Sets().Infinite())
+        Parent.__init__(self, category=Sets().Infinite())
 
         self._field = field
 

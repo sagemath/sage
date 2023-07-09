@@ -43,7 +43,6 @@ def canonical_parameters(ambient_space, basis, check=True):
          (q + 30*q^2 + 333*q^3 + 1444*q^4 + O(q^5),
           1 + 26208*q^3 + 530712*q^4 + O(q^5)))
     """
-
     if check:
         coord_matrix = matrix([ambient_space(v).ambient_coordinate_vector() for v in basis])
         pivots = coord_matrix.transpose().pivots()
@@ -54,6 +53,7 @@ def canonical_parameters(ambient_space, basis, check=True):
         basis = tuple(basis)
 
     return (ambient_space, basis)
+
 
 def ModularFormsSubSpace(*args, **kwargs):
     r"""
@@ -203,7 +203,6 @@ class SubSpaceForms(FormsSpace_abstract, Module, UniqueRepresentation):
             sage: subspace.gens()
             [q + 24*q^2 + O(q^3), q - 24*q^2 + O(q^3), q - 8*q^2 + O(q^3)]
         """
-
         FormsSpace_abstract.__init__(self, group=ambient_space.group(), base_ring=ambient_space.base_ring(), k=ambient_space.weight(), ep=ambient_space.ep(), n=ambient_space.hecke_n())
         Module.__init__(self, base=ambient_space.base_ring())
 
@@ -213,7 +212,7 @@ class SubSpaceForms(FormsSpace_abstract, Module, UniqueRepresentation):
         self._gens = [self._element_constructor_(v) for v in basis]
         self._module = ambient_space._module.submodule([ambient_space.coordinate_vector(v) for v in basis])
         # TODO: get the analytic type from the basis
-        #self._analytic_type=self.AT(["quasi", "mero"])
+        # self._analytic_type=self.AT(["quasi", "mero"])
         self._analytic_type = ambient_space._analytic_type
 
     def _repr_(self):

@@ -115,7 +115,7 @@ from sage.structure.element cimport (Element, Vector, Matrix,
 from sage.matrix.matrix_dense cimport Matrix_dense
 from sage.matrix.matrix_integer_dense cimport Matrix_integer_dense
 from sage.rings.finite_rings.integer_mod cimport IntegerMod_int, IntegerMod_abstract
-from sage.misc.misc import cputime
+from sage.misc.timing import cputime
 from sage.misc.verbose import verbose, get_verbose
 from sage.rings.integer cimport Integer
 from sage.rings.integer_ring import ZZ
@@ -221,9 +221,14 @@ cdef inline linbox_echelonize_efd(celement modulus, celement* entries, Py_ssize_
         return 0,[]
 
     cdef ModField *F = new ModField(<long>modulus)
-    cdef DenseMatrix *A = new DenseMatrix(F[0], <ModField.Element*>entries,<Py_ssize_t>nrows, <Py_ssize_t>ncols)
-    cdef Py_ssize_t r = reducedRowEchelonize(A[0])
+    cdef DenseMatrix *A = new DenseMatrix(F[0], nrows, ncols)
+
     cdef Py_ssize_t i,j
+    for i in range(nrows):
+        for j in range(ncols):
+            A.setEntry(i, j, entries[i*ncols+j])
+
+    cdef Py_ssize_t r = reducedRowEchelonize(A[0])
     for i in range(nrows):
         for j in range(ncols):
             entries[i*ncols+j] = <celement>A.getEntry(i,j)

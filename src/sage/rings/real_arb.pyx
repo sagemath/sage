@@ -175,11 +175,11 @@ TESTS::
 
 ::
 
-    sage: SR.coerce(RBF(0.42))
+    sage: SR.coerce(RBF(0.42))                                                          # optional - sage.symbolic
     [0.4200000000000000 +/- ...e-17]
-    sage: RBF(0.42) + SR(1)
+    sage: RBF(0.42) + SR(1)                                                             # optional - sage.symbolic
     [1.420000000000000 +/- ...e-16]
-    sage: _.parent()
+    sage: _.parent()                                                                    # optional - sage.symbolic
     Symbolic Ring
 
 Classes and Methods
@@ -217,12 +217,11 @@ from sage.libs.mpfi cimport *
 from sage.libs.mpfr cimport *
 from sage.libs.mpfr cimport MPFR_RNDN, MPFR_RNDU, MPFR_RNDD, MPFR_RNDZ
 
-from sage.structure.element cimport Element, ModuleElement, RingElement
+from sage.structure.element cimport Element, RingElement
 from sage.rings.ring cimport Field
 import sage.rings.abc
 from sage.rings.integer cimport Integer
 from sage.rings.rational cimport Rational
-from sage.rings.real_double cimport RealDoubleElement
 from sage.rings.real_mpfr cimport RealField_class, RealField, RealNumber
 from sage.arith.long cimport is_small_python_int
 
@@ -339,7 +338,7 @@ class RealBallField(UniqueRepresentation, sage.rings.abc.RealBallField):
 
     ::
 
-        sage: (1/2*RBF(1)) + AA(sqrt(2)) - 1 + polygen(QQ, 'x')
+        sage: (1/2*RBF(1)) + AA(sqrt(2)) - 1 + polygen(QQ, 'x')                         # optional - sage.symbolic
         x + [0.914213562373095 +/- ...e-16]
 
     TESTS::
@@ -457,7 +456,7 @@ class RealBallField(UniqueRepresentation, sage.rings.abc.RealBallField):
             False
             sage: RealBallField().has_coerce_map_from(RIF)
             False
-            sage: RealBallField().has_coerce_map_from(SR)
+            sage: RealBallField().has_coerce_map_from(SR)                               # optional - sage.symbolic
             False
             sage: RealBallField().has_coerce_map_from(RR)
             False
@@ -1657,7 +1656,6 @@ cdef class RealBall(RingElement):
             0.250000000000000
         """
         cdef RealNumber left, mid, right
-        cdef long prec = field.precision()
         cdef int sl, sr
         if (field.rnd == MPFR_RNDN or
                 field.rnd == MPFR_RNDZ and arb_contains_zero(self.value)):
@@ -2067,7 +2065,7 @@ cdef class RealBall(RingElement):
 
         EXAMPLES:
 
-        It is possible to create balls whose midpoint is more precise that
+        It is possible to create balls whose midpoint is more precise than
         their parent's nominal precision (see :mod:`~sage.rings.real_arb` for
         more information)::
 
@@ -2429,22 +2427,21 @@ cdef class RealBall(RingElement):
             False
         """
         cdef RealBall lt, rt
-        cdef arb_t difference
 
         lt = left
         rt = right
 
         if op == Py_EQ:
             return arb_eq(lt.value, rt.value)
-        elif op == Py_NE:
+        if op == Py_NE:
             return arb_ne(lt.value, rt.value)
-        elif op == Py_GT:
+        if op == Py_GT:
             return arb_gt(lt.value, rt.value)
-        elif op == Py_LT:
+        if op == Py_LT:
             return arb_lt(lt.value, rt.value)
-        elif op == Py_GE:
+        if op == Py_GE:
             return arb_ge(lt.value, rt.value)
-        elif op == Py_LE:
+        if op == Py_LE:
             return arb_le(lt.value, rt.value)
 
     def min(self, *others):
@@ -2521,7 +2518,7 @@ cdef class RealBall(RingElement):
 
     def is_finite(self):
         """
-        Return True iff the midpoint and radius of this ball are both
+        Return ``True`` iff the midpoint and radius of this ball are both
         finite floating-point numbers, i.e. not infinities or NaN.
 
         EXAMPLES::
@@ -2535,7 +2532,7 @@ cdef class RealBall(RingElement):
 
     def identical(self, RealBall other):
         """
-        Return True iff ``self`` and ``other`` are equal as balls, i.e.
+        Return ``True`` iff ``self`` and ``other`` are equal as balls, i.e.
         have both the same midpoint and radius.
 
         Note that this is not the same thing as testing whether both ``self``
@@ -2558,7 +2555,7 @@ cdef class RealBall(RingElement):
 
     def overlaps(self, RealBall other):
         """
-        Return True iff ``self`` and ``other`` have some point in common.
+        Return ``True`` iff ``self`` and ``other`` have some point in common.
 
         If either ``self`` or ``other`` contains NaN, this method always
         returns nonzero (as a NaN could be anything, it could in particular
@@ -2641,7 +2638,7 @@ cdef class RealBall(RingElement):
 
     def __contains__(self, other):
         """
-        Return True if ``other`` can be verified to be contained in ``self``.
+        Return ``True`` if ``other`` can be verified to be contained in ``self``.
 
         The test is done using interval arithmetic with a precision determined
         by the parent of ``self`` and may return false negatives.

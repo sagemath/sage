@@ -145,4 +145,3 @@ cdef inline double sin_face_angle(face_c F, face_c E, point_c* vlist):
     face_c_normal(&nE, E, vlist)
     cdef double dot = point_c_dot(nF, nE)
     return math.sqrt(1-(dot*dot)/(point_c_dot(nF, nF)*point_c_dot(nE, nE)))
-

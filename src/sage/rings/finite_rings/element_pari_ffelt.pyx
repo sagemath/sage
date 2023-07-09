@@ -16,7 +16,6 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from cysignals.memory cimport sig_free
 from cysignals.signals cimport sig_on, sig_off
 
 from cypari2.paridecl cimport *
@@ -34,7 +33,6 @@ from sage.rings.integer cimport Integer
 from sage.rings.polynomial.polynomial_element import Polynomial
 from sage.rings.polynomial.multi_polynomial_element import MPolynomial
 from sage.rings.rational import Rational
-from sage.structure.element cimport Element, ModuleElement, RingElement
 from sage.structure.richcmp cimport rich_to_bool
 
 
@@ -470,13 +468,13 @@ cdef class FiniteFieldElement_pari_ffelt(FinitePolyExtElement):
             if t == t_FF_FpXQ:
                 f = cgetg(n + 2, t_POL)
                 set_gel(f, 1, gmael(g, 2, 1))
-                for i in xrange(n):
+                for i in range(n):
                     xi = Integer(x[i])
                     set_gel(f, i + 2, _new_GEN_from_mpz_t(xi.value))
             elif t == t_FF_Flxq or t == t_FF_F2xq:
                 f = cgetg(n + 2, t_VECSMALL)
                 set_gel(f, 1, gmael(g, 2, 1))
-                for i in xrange(n):
+                for i in range(n):
                     set_uel(f, i + 2, x[i])
                 if t == t_FF_F2xq:
                     f = Flx_to_F2x(f)

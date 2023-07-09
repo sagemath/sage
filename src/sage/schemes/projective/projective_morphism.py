@@ -792,25 +792,24 @@ class SchemeMorphism_polynomial_projective_space(SchemeMorphism_polynomial):
 
     def normalize_coordinates(self, **kwds):
         """
-        Ensures that this morphism has integral coefficients, and,
-        if the coordinate ring has a GCD, then it ensures that the
+        Ensures that this morphism has integral coefficients.
+        If the coordinate ring has a GCD, then it ensures that the
         coefficients have no common factor.
 
-        Also, makes the leading coefficients of the first polynomial
+        It also makes the leading coefficients of the first polynomial
         positive (if positive has meaning in the coordinate ring).
         This is done in place.
 
-        When ``ideal`` or ``valuation`` is specified,
-        normalization occurs with respect to the absolute value
-        defined by the ``ideal`` or ``valuation``. That is, the
-        coefficients are scaled such that one coefficient has
-        absolute value 1 while the others have absolute value
-        less than or equal to 1. Only supported when the base
-        ring is a number field.
+        When ``ideal`` or ``valuation`` is specified, normalization occurs
+        with respect to the absolute value defined by the ``ideal`` or
+        ``valuation``. That is, the coefficients are scaled such that
+        one coefficient has absolute value 1 while the others have
+        absolute value less than or equal to 1.
+        Only supported when the base ring is a number field.
 
         INPUT:
 
-        keywords:
+        kwds:
 
         - ``ideal`` -- (optional) a prime ideal of the base ring of this
           morphism.
@@ -915,8 +914,33 @@ class SchemeMorphism_polynomial_projective_space(SchemeMorphism_polynomial):
              3-adic Field with capped relative precision 20
               Defn: Defined on coordinates by sending (x : y) to
                     (x^2 + (2 + O(3^20))*y^2 : (3 + O(3^21))*x*y)
+
+        Check that #35797 is fixed::
+
+            sage: R.<x> = QQ[]
+            sage: K.<a> = NumberField(3*x^2 + 1)
+            sage: P.<z,w> = ProjectiveSpace(K, 1)
+            sage: f = DynamicalSystem_projective([a*(z^2 + w^2), z*w])
+            sage: f.normalize_coordinates(); f
+            Dynamical System of Projective Space of dimension 1 over
+            Number Field in a with defining polynomial 3*x^2 + 1
+            Defn: Defined on coordinates by sending (z : w) to
+                ((-3/2*a + 1/2)*z^2 + (-3/2*a + 1/2)*w^2 : (-3/2*a - 3/2)*z*w)
+
+        ::
+
+            sage: R.<a,b> = QQ[]
+            sage: P.<x,y,z> = ProjectiveSpace(FractionField(R), 2)
+            sage: H = End(P)
+            sage: f = H([a/b*(x*z + y^2)*x^2, a*b*(x*z + y^2)*y^2, a*(x*z + y^2)*z^2])
+            sage: f.normalize_coordinates(); f
+            Scheme endomorphism of Projective Space of dimension 2 over Fraction
+            Field of Multivariate Polynomial Ring in a, b over Rational Field
+            Defn: Defined on coordinates by sending (x : y : z) to
+                (x^2 : (b^2)*y^2 : b*z^2)
         """
-        # if ideal or valuation is specified, we scale according the norm defined by the ideal/valuation
+        # If ideal or valuation is specified, we scale according the norm
+        # defined by the ideal/valuation
         ideal = kwds.pop('ideal', None)
         if ideal is not None:
             from sage.rings.number_field.number_field_ideal import NumberFieldFractionalIdeal
@@ -948,6 +972,7 @@ class SchemeMorphism_polynomial_projective_space(SchemeMorphism_polynomial):
             min_val = min(valuations)
             self.scale_by(uniformizer**(-1 * min_val))
             return
+
         valuation = kwds.pop('valuation', None)
         if valuation is not None:
             from sage.rings.padics.padic_valuation import pAdicValuation_base
@@ -967,12 +992,20 @@ class SchemeMorphism_polynomial_projective_space(SchemeMorphism_polynomial):
             self.scale_by(uniformizer**(-1 * min_val))
             return
 
-        # clear any denominators from the coefficients
         N = self.codomain().ambient_space().dimension_relative() + 1
-        LCM = lcm([self[i].denominator() for i in range(N)])
-        self.scale_by(LCM)
 
         R = self.domain().base_ring()
+
+        # Clear any denominators from the coefficients
+        if R in NumberFields():
+            if R.maximal_order() is ZZ:
+                denom = lcm([self[i].denominator() for i in range(N)])
+            else:
+                denom = R.ideal([c for poly in self for c in poly.coefficients()]).norm().denominator()
+
+            self.scale_by(denom)
+        else:
+            self.scale_by(lcm([self[i].denominator() for i in range(N)]))
 
         # There are cases, such as the example above over GF(7),
         # where we want to compute GCDs, but NOT in the case
@@ -993,7 +1026,7 @@ class SchemeMorphism_polynomial_projective_space(SchemeMorphism_polynomial):
         if GCD != 1:
             self.scale_by(R(1) / GCD)
 
-        # scales by 1/gcd of the coefficients.
+        # Scale by 1/GCD of the coefficients.
         if R in _NumberFields:
             O = R.maximal_order()
         elif isinstance(R, FiniteField):
@@ -1008,8 +1041,9 @@ class SchemeMorphism_polynomial_projective_space(SchemeMorphism_polynomial):
 
         if GCD != 1:
             self.scale_by(1 / GCD)
+
+        # If R is not p-adic, we make the first coordinate positive
         from sage.rings.padics.padic_base_generic import pAdicGeneric
-        # if R is not padic, we make the first coordinate positive
         if not isinstance(R, pAdicGeneric):
             if self[0].lc() < 0:
                 self.scale_by(-1)

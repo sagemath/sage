@@ -777,7 +777,7 @@ cdef class CoxGroupElement:
         """
         if isinstance(i, slice):
             #Get the start, stop, and step from the slice
-            return [self[ii] for ii in xrange(*i.indices(len(self)))]
+            return [self[ii] for ii in range(*i.indices(len(self)))]
         if i < 0:
             i += len(self)
         if i >= len(self):
@@ -873,7 +873,7 @@ cdef class CoxGroupElement:
             sage: [a for a in w]                                # optional - coxeter3
             [1, 2, 3]
         """
-        return (self[i] for i in xrange(len(self)))
+        return (self[i] for i in range(len(self)))
 
     def __len__(self):
         """

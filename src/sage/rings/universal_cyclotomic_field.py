@@ -163,6 +163,8 @@ AUTHORS:
 - Sebastian Oehms (2019): add :meth:`_factor_univariate_polynomial` (see :trac:`28631`)
 """
 
+import sage.rings.abc
+
 from sage.misc.cachefunc import cached_method
 
 from sage.structure.richcmp import rich_to_bool
@@ -521,14 +523,14 @@ class UniversalCyclotomicFieldElement(FieldElement):
         r"""
         TESTS::
 
-            sage: SR(E(7))
+            sage: SR(E(7))                                                              # optional - sage.symbolic
             e^(2/7*I*pi)
-            sage: SR(E(5) + 2*E(5,2) + 3*E(5,3))
+            sage: SR(E(5) + 2*E(5,2) + 3*E(5,3))                                        # optional - sage.symbolic
             -sqrt(5) + 1/4*I*sqrt(2*sqrt(5) + 10) - 1/4*I*sqrt(-2*sqrt(5) + 10) - 3/2
 
         Test that the bug reported in :trac:`19912` has been fixed::
 
-            sage: SR(1+E(4))
+            sage: SR(1+E(4))                                                            # optional - sage.symbolic
             I + 1
         """
         from sage.symbolic.constants import pi, I
@@ -1281,7 +1283,7 @@ class UniversalCyclotomicFieldElement(FieldElement):
         return QQ[var](QQ['x_1'](str(gap_p)))
 
 
-class UniversalCyclotomicField(UniqueRepresentation, Field):
+class UniversalCyclotomicField(UniqueRepresentation, sage.rings.abc.UniversalCyclotomicField):
     r"""
     The universal cyclotomic field.
 

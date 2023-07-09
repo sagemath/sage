@@ -1905,7 +1905,7 @@ class pAdicAutomorphicFormElement(ModuleElement):
         - Marc Masdeu (2012-02-20)
         """
         E = self.parent()._source._BT.get_balls(center, level)
-        R1 = LaurentSeriesRing(f.base_ring(), 'r1', default_prec = self.parent()._U.base_ring().precision_cap() + 1)
+        R1 = LaurentSeriesRing(f.base_ring(), 'r1', default_prec=self.parent()._U.base_ring().precision_cap() + 1)
         R2 = PolynomialRing(f.base_ring(), 'x')
         x = R2.gen()
         value = 0
@@ -2605,7 +2605,7 @@ class pAdicAutomorphicForms(Module, UniqueRepresentation):
                 m = M[ii]
                 for v in Si:
                     s += 1
-                    g = self._Sigma0(m.adjugate() * self._source.embed_quaternion(v[0], prec=self._prec).adjugate() * m,check = False)
+                    g = self._Sigma0(m.adjugate() * self._source.embed_quaternion(v[0], prec=self._prec).adjugate() * m,check=False)
                     newFi += g * x
                 newF.append((QQ(1) / s) * newFi)
             else:
