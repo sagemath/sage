@@ -946,7 +946,7 @@ class ProductOfSimplicialSets(PullbackOfSimplicialSets, Factors):
 
             sage: K.factor(0, as_subset=True)
             Simplicial set with 2 non-degenerate simplices
-            sage: K.factor(0, as_subset=True).homology()                                # needs sage.groups
+            sage: K.factor(0, as_subset=True).homology()
             {0: 0, 1: 0, 2: Z}
 
             sage: K.factor(0) is S2
@@ -1087,7 +1087,7 @@ class ProductOfSimplicialSets_finite(ProductOfSimplicialSets, PullbackOfSimplici
             sage: W = P.wedge_as_subset()
             sage: W.nondegenerate_simplices()
             [(v, w), (e, s_0 w), (s_0 v, f)]
-            sage: W.homology()                                                          # needs sage.groups
+            sage: W.homology()
             {0: 0, 1: Z x Z}
         """
         basept_factors = [sset.base_point() for sset in self.factors()]
@@ -1119,7 +1119,7 @@ class ProductOfSimplicialSets_finite(ProductOfSimplicialSets, PullbackOfSimplici
             sage: S1 = simplicial_sets.Sphere(1)
             sage: X = S1.product(S1, S1)
             sage: W = X.fat_wedge_as_subset()
-            sage: W.homology()                                                          # needs sage.groups
+            sage: W.homology()
             {0: 0, 1: Z x Z x Z, 2: Z x Z x Z}
         """
         basept_factors = [sset.base_point() for sset in self.factors()]

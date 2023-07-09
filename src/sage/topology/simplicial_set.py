@@ -3665,10 +3665,10 @@ class SimplicialSet_finite(SimplicialSet_arbitrary, GenericCellComplex):
             sage: T.homology() == SimplicialSet(T).homology()                           # needs sage.modules
             True
             sage: RP2 = delta_complexes.RealProjectivePlane()
-            sage: RP2.homology() == SimplicialSet(RP2).homology()                       # needs sage.groups sage.modules
+            sage: RP2.homology() == SimplicialSet(RP2).homology()                       # needs sage.modules
             True
-            sage: cohoRP2 = RP2.cohomology(base_ring=GF(2))                             # needs sage.groups sage.modules sage.rings.finite_rings
-            sage: cohoRP2 == SimplicialSet(RP2).cohomology(base_ring=GF(2))             # needs sage.groups sage.modules sage.rings.finite_rings
+            sage: cohoRP2 = RP2.cohomology(base_ring=GF(2))                             # needs sage.modules
+            sage: cohoRP2 == SimplicialSet(RP2).cohomology(base_ring=GF(2))             # needs sage.modules
             True
         """
         from sage.homology.chain_complex import ChainComplex

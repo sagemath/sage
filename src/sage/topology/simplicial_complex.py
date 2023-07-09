@@ -2329,7 +2329,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
             {0: 0, 1: 0, 2: Z}
             sage: sphere._homology_(reduced=False)                                      # needs sage.modules
             {0: Z, 1: 0, 2: Z}
-            sage: sphere._homology_(base_ring=GF(2), reduced=False)                     # needs sage.modules sage.rings.finite_rings
+            sage: sphere._homology_(base_ring=GF(2), reduced=False)                     # needs sage.modules
             {0: Vector space of dimension 1 over Finite Field of size 2,
              1: Vector space of dimension 0 over Finite Field of size 2,
              2: Vector space of dimension 1 over Finite Field of size 2}
@@ -2498,8 +2498,8 @@ class SimplicialComplex(Parent, GenericCellComplex):
         EXAMPLES::
 
             sage: RP2 = simplicial_complexes.RealProjectivePlane()
-            sage: phi, M = RP2.algebraic_topological_model(GF(2))                       # needs sage.rings.finite_rings
-            sage: M.homology()                                                          # needs sage.modules sage.rings.finite_rings
+            sage: phi, M = RP2.algebraic_topological_model(GF(2))
+            sage: M.homology()                                                          # needs sage.modules
             {0: Vector space of dimension 1 over Finite Field of size 2,
              1: Vector space of dimension 1 over Finite Field of size 2,
              2: Vector space of dimension 1 over Finite Field of size 2}
@@ -3612,7 +3612,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
             sage: triangle = SimplicialComplex([[0,1], [1,2], [0, 2]])
             sage: hexagon = triangle.barycentric_subdivision(); hexagon
             Simplicial complex with 6 vertices and 6 facets
-            sage: hexagon.homology(1) == triangle.homology(1)                           # needs sage.combinat sage.modules
+            sage: hexagon.homology(1) == triangle.homology(1)                           # needs sage.modules
             True
 
         Barycentric subdivisions can get quite large, since each
