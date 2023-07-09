@@ -710,9 +710,9 @@ cdef class ParametricSurface(IndexFaceSet):
 
                 res = self.vs
                 if fast_y:  # must be Wrapper_rdf
-                    for i from 0 <= i < m:
+                    for i in range(m):
                         uv[0] = ulist[i]
-                        for j from 0 <= j < n:
+                        for j in range(n):
                             sig_check()
                             uv[1] = vlist[j]
                             (<Wrapper_rdf>fy).call_c(uv, &res.y)
