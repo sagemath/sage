@@ -185,7 +185,7 @@ class sage__libs__flint(JoinFeature):
         JoinFeature.__init__(self, 'sage.libs.flint',
                              [PythonModule('sage.libs.flint.flint'),
                               PythonModule('sage.libs.arb.arith')],
-                             spkg='sagemath_flint', type='standard')
+                             type='standard')
 
 
 class sage__libs__ntl(JoinFeature):
@@ -209,7 +209,7 @@ class sage__libs__ntl(JoinFeature):
         """
         JoinFeature.__init__(self, 'sage.libs.ntl',
                              [PythonModule('sage.libs.ntl.convert')],
-                             spkg='sagemath_ntl', type='standard')
+                             type='standard')
 
 
 class sage__libs__pari(JoinFeature):
@@ -232,7 +232,7 @@ class sage__libs__pari(JoinFeature):
         """
         JoinFeature.__init__(self, 'sage.libs.pari',
                              [PythonModule('sage.libs.pari.convert_sage')],
-                             spkg='sagemath_pari', type='standard')
+                             type='standard')
 
 
 class sage__modules(JoinFeature):
