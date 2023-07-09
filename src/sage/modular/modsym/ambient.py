@@ -25,8 +25,6 @@ instantiated.  There are five derived classes:
 - ``ModularSymbolsAmbient_wtk_eps``, for modular symbols of general
   weight `k` and character `\epsilon`.
 
-
-
 EXAMPLES:
 
 We compute a space of modular symbols modulo 2. The dimension is
@@ -443,14 +441,12 @@ class ModularSymbolsAmbient(ModularSymbolsSpace, AmbientHeckeModule):
             (1,35)
             sage: M([Cusp(1/2),Cusp(0)])
             (1,35)
-
-
         """
         if isinstance(x, FreeModuleElement):
             if x.degree() != self.dimension():
-                raise TypeError("Incompatible degrees: x has degree %s\
-                but modular symbols space has dimension %s" % (
-                    x.degree(), self.dimension()))
+                raise TypeError("Incompatible degrees: x has degree "
+                                f"{x.degree()} but modular symbols space has "
+                                f"dimension {self.dimension()}")
             return self.element_class(self, x)
 
         elif isinstance(x, (ManinSymbol, element.ModularSymbolsElement)):
@@ -534,7 +530,6 @@ class ModularSymbolsAmbient(ModularSymbolsSpace, AmbientHeckeModule):
             [0 0 0 1]
             [0 1 0 0]
             [0 1 0 0]
-
         """
         if not isinstance(g, list):
             raise TypeError("g must be a list")
@@ -573,7 +568,7 @@ class ModularSymbolsAmbient(ModularSymbolsSpace, AmbientHeckeModule):
                 if x[0] < 0 or x[0] > self.weight() - 2:
                     raise ValueError("The first entry of the tuple (=%s)\
                         must be an integer between 0 and k-2 (=%s)." % (
-                        x, self.weight()-2))
+                        x, self.weight() - 2))
             else:
                 raise ValueError("x (=%s) must be of length 2 or 3" % x)
         # end check
@@ -599,7 +594,7 @@ class ModularSymbolsAmbient(ModularSymbolsSpace, AmbientHeckeModule):
 
         - ``alpha`` (rational or Infinity) -- a cusp
 
-        - ``i`` (int, default 0) -- the degree of the symbol.
+        - ``i`` (int, default 0) -- the degree of the symbol
 
         OUTPUT:
 
@@ -659,7 +654,7 @@ class ModularSymbolsAmbient(ModularSymbolsSpace, AmbientHeckeModule):
                 # method 1: write out solution. this is currently
                 # incorrect, because it ends up doing 0^0 in the sum,
                 # so I'll fix it and do timings soon.
-#                for s in range(0,self.weight()-two+1):
+#                for s in range(self.weight()-two+1):
 #                    coeff = sum([ binomial(i,t)*binomial(self.weight()-two-i,s-t)*
 #                                  x**t * y**(i-t) * z**(s-t) *
 #                                  w**(self.weight()-two-i-s+t) for t in range(0,s) ])
@@ -3744,8 +3739,8 @@ class ModularSymbolsAmbient_wtk_eps(ModularSymbolsAmbient):
             i = s.i
             # We apply each matrix in H according to the above formula
             for h in H:
-                hg = h*g
-                z += eps(h[0, 0])*M((i, hg[1, 0], hg[1, 1]))
+                hg = h * g
+                z += eps(h[0, 0]) * M((i, hg[1, 0], hg[1, 1]))
             rows.append(z.element())
         A = MS(rows)
         return A
