@@ -77,7 +77,9 @@ def FastFourierTransform(size, base_ring=None):
     """
     return FastFourierTransform_complex(int(size))
 
+
 FFT = FastFourierTransform
+
 
 cdef class FastFourierTransform_base:
     pass
@@ -250,15 +252,15 @@ cdef class FastFourierTransform_complex(FastFourierTransform_base):
         cdef int i
         v = []
 
-        pi    = sage.symbolic.constants.pi.n()
-        I     = sage.symbolic.constants.I.n()
-        s = 1/(3*pi)   # so arg gets scaled between -1/3 and 1/3.
+        pi = sage.symbolic.constants.pi.n()
+        I = sage.symbolic.constants.I.n()
+        s = 1/(3*pi)   # so arg gets scaled between -1/3 and 1/3
 
         for i from xmin <= i < xmax:
             z = self.data[2*i] + I*self.data[2*i+1]
             mag = z.abs()
             arg = z.arg()*s
-            v.append(point((i,mag), hue=arg, **args))
+            v.append(point((i, mag), hue=arg, **args))
         return sum(v)
 
     def _plot_rect(self, xmin, xmax, **args):
@@ -282,18 +284,17 @@ cdef class FastFourierTransform_complex(FastFourierTransform_base):
             sage: a = FastFourierTransform(4)
             sage: a._plot_rect(0,3)
             Graphics object consisting of 3 graphics primitives
-
         """
         cdef int i
-        cdef double pr_x, x, h
+        cdef double x, h
         v = []
 
         point = sage.plot.all.point
 
-        for i from xmin <= i < xmax:
+        for i in range(xmin, xmax):
             x = self.data[2*i]
             h = self.data[2*i+1]
-            v.append(point((i,x), hue=h, **args))
+            v.append(point((i, x), hue=h, **args))
         return sum(v)
 
     def plot(self, style='rect', xmin=None, xmax=None, **args):
