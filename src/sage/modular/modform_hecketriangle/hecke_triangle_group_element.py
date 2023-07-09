@@ -27,7 +27,7 @@ from sage.rings.integer_ring import ZZ
 from sage.rings.infinity import infinity
 from sage.rings.cc import CC
 
-lazy_import('sage.rings.qqbar', ['AA', 'QQbar'])
+lazy_import('sage.rings.qqbar', 'AA')
 
 from sage.groups.matrix_gps.group_element import MatrixGroupElement_generic
 
@@ -774,6 +774,8 @@ class HeckeTriangleGroupElement(MatrixGroupElement_generic):
         if self.is_elliptic():
             if self.parent().n() == infinity:
                 raise NotImplementedError
+
+            from sage.rings.qqbar import QQbar
 
             emb = self.root_extension_embedding(QQbar)
             p = self.fixed_points()[0]

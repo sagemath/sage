@@ -81,6 +81,7 @@ from sage.rings.infinity import Infinity as oo
 from sage.rings.integer_ring import ZZ, IntegerRing
 from sage.rings.rational_field import QQ
 from sage.rings.integer import Integer
+from sage.rings.real_mpfi import RealIntervalField
 from sage.rings.real_mpfr import RealField
 from sage.rings.complex_mpfr import ComplexField
 from sage.rings.rational_field import RationalField

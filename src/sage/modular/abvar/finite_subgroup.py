@@ -113,8 +113,6 @@ from sage.arith.functions import lcm
 from sage.misc.misc_c import prod
 from sage.structure.element import coercion_model
 
-lazy_import('sage.rings.qqbar', 'QQbar')
-
 
 @richcmp_method
 class FiniteSubgroup(Module):
@@ -754,6 +752,8 @@ class FiniteSubgroup(Module):
             sage: H == G.subgroup([[1/11,0,0,0]])
             True
         """
+        from sage.rings.qqbar import QQbar
+
         if not isinstance(gens, (tuple, list)):
             raise TypeError("gens must be a list or tuple")
         A = self.abelian_variety()
@@ -846,7 +846,7 @@ class FiniteSubgroup_lattice(FiniteSubgroup):
             Finite subgroup with invariants [15] over QQbar of Abelian variety J0(11) of dimension 1
         """
         if field_of_definition is None:
-            field_of_definition = QQbar
+            from sage.rings.qqbar import QQbar as field_of_definition
         if check:
             from .abvar import is_ModularAbelianVariety
             if not is_FreeModule(lattice) or lattice.base_ring() != ZZ:
