@@ -163,7 +163,6 @@ Check that :issue:`35653` is fixed::
     [  0 1/x]
 """
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
-from sage.structure.element cimport ModuleElement, RingElement, Element
 from sage.structure.factorization import Factorization
 
 from .matrix_generic_sparse cimport Matrix_generic_sparse
@@ -171,7 +170,7 @@ from .constructor import matrix
 
 cdef maxima
 
-from sage.calculus.calculus import symbolic_expression_from_maxima_string, maxima
+from sage.calculus.calculus import maxima
 
 cdef class Matrix_symbolic_sparse(Matrix_generic_sparse):
     def echelonize(self, **kwds):
@@ -583,7 +582,7 @@ cdef class Matrix_symbolic_sparse(Matrix_generic_sparse):
         if mp is None:
             mp = self._maxima_lib_().jordan().minimalPoly().expand()
             d = mp.hipow('x')
-            mp = [mp.coeff('x', i) for i in xrange(int(d) + 1)]
+            mp = [mp.coeff('x', i) for i in range(int(d) + 1)]
             mp = PolynomialRing(self.base_ring(), 'x')(mp)
             self.cache('minpoly', mp)
         return mp.change_variable_name(var)
@@ -719,7 +718,7 @@ cdef class Matrix_symbolic_sparse(Matrix_generic_sparse):
         J = matrix(jordan_info.dispJordan()._sage_(), sparse=True)
         if subdivide:
             v = [x[1] for x in jordan_info]
-            w = [sum(v[0:i]) for i in xrange(1, len(v))]
+            w = [sum(v[0:i]) for i in range(1, len(v))]
             J.subdivide(w, w)
         if transformation:
             P = A.diag_mode_matrix(jordan_info)._sage_()

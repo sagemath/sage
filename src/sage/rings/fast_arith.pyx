@@ -146,7 +146,6 @@ cpdef prime_range(start, stop=None, algorithm=None, bint py_ints=False):
     - Kevin Stueve (added primes iterator option) 2010-10-16
     - Robert Bradshaw (speedup using Pari prime table, py_ints option)
     """
-    cdef Integer z
     # input to pari.init_primes cannot be greater than 436273290 (hardcoded bound)
     DEF init_primes_max = 436273290
     DEF small_prime_max = 436273009  #  a prime < init_primes_max (preferably the largest)

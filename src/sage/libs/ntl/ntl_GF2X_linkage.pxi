@@ -181,7 +181,7 @@ cdef inline int celement_cmp(GF2X_c *a, GF2X_c *b, long parent) except -2:
     elif diff < 0:
         return -1
     else:
-        for i in xrange(GF2X_NumBits(a[0])-1, -1, -1):
+        for i in range(GF2X_NumBits(a[0])-1, -1, -1):
             ca = GF2_conv_to_long(GF2X_coeff(a[0], i))
             cb = GF2_conv_to_long(GF2X_coeff(b[0], i))
             if ca < cb:

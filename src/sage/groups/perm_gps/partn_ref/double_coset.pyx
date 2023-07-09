@@ -111,9 +111,10 @@ cdef int compare_perms(int *gamma_1, int *gamma_2, void *S1, void *S2, int degre
     cdef list MS1 = <list> S1
     cdef list MS2 = <list> S2
     cdef int i, j
-    for i from 0 <= i < degree:
+    for i in range(degree):
         j = int_cmp(MS1[gamma_1[i]], MS2[gamma_2[i]])
-        if j != 0: return j
+        if j != 0:
+            return j
     return 0
 
 def coset_eq(list perm1=[0,1,2,3,4,5], list perm2=[1,2,3,4,5,0], list gens=[[1,2,3,4,5,0]]):
@@ -352,8 +353,8 @@ cdef int double_coset(void *S1, void *S2, PartitionStack *partition1, int *order
     cdef StabilizerChain *tmp_gp
 
     cdef int i, j, k, ell, b
-    cdef bint discrete, automorphism, update_label
-    cdef bint backtrack, new_vertex, narrow, mem_err = 0
+    cdef bint automorphism
+    cdef bint new_vertex, mem_err = 0
 
     if n == 0:
         return 0
@@ -592,7 +593,7 @@ cdef int double_coset(void *S1, void *S2, PartitionStack *partition1, int *order
                     # (same!) primary orbit, then all children of the first
                     # stack at this point are equivalent.
                     j = 0
-                    for i from 0 <= i < n:
+                    for i in range(n):
                         if bitset_check(vertices_to_split[current_ps.depth], i):
                             j += 1
                     if j == subgroup_primary_orbit_size and first_kids_are_same == current_ps.depth+1:
@@ -609,7 +610,6 @@ cdef int double_coset(void *S1, void *S2, PartitionStack *partition1, int *order
 
         # II. Refine down to a discrete partition, or until
         # we leave the part of the tree we are interested in
-        discrete = 0
         while True:
             i = current_ps.depth
             while True:
@@ -643,7 +643,8 @@ cdef int double_coset(void *S1, void *S2, PartitionStack *partition1, int *order
                         possible = 1
                         vertices_determining_current_stack[i] = j
                         current_ps.depth -= 1 # reset for next refinement
-                else: break
+                else:
+                    break
             if not possible:
                 break
             if PS_is_discrete(current_ps):
@@ -683,7 +684,7 @@ cdef int double_coset(void *S1, void *S2, PartitionStack *partition1, int *order
                 index_in_fp_and_mcr += 1
             bitset_zero(fixed_points_of_generators[index_in_fp_and_mcr])
             bitset_zero(minimal_cell_reps_of_generators[index_in_fp_and_mcr])
-            for i from 0 <= i < n:
+            for i in range(n):
                 if permutation[i] == i:
                     bitset_set(fixed_points_of_generators[index_in_fp_and_mcr], i)
                     bitset_set(minimal_cell_reps_of_generators[index_in_fp_and_mcr], i)
@@ -692,7 +693,8 @@ cdef int double_coset(void *S1, void *S2, PartitionStack *partition1, int *order
                     k = i
                     j = permutation[i]
                     while j != i:
-                        if j < k: k = j
+                        if j < k:
+                            k = j
                         j = permutation[j]
                     if k == i:
                         bitset_set(minimal_cell_reps_of_generators[index_in_fp_and_mcr], i)

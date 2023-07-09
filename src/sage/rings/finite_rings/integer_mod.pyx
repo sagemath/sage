@@ -147,7 +147,6 @@ def Mod(n, m, parent=None):
         return n
 
     # m is non-zero, so return n mod m
-    cdef IntegerMod_abstract x
     if parent is None:
         from .integer_mod_ring import IntegerModRing
         parent = IntegerModRing(m)
@@ -1233,7 +1232,7 @@ cdef class IntegerMod_abstract(FiniteRingElement):
             if all and e > 1 and not self.is_unit():
                 if self.is_zero():
                     # All multiples of p^ciel(e/2) vanish
-                    return [self._parent(x) for x in xrange(0, self.__modulus.sageInteger, p**((e+1)/2))]
+                    return [self._parent(x) for x in range(0, self.__modulus.sageInteger, p**((e+1)/2))]
                 else:
                     z = self.lift()
                     val = z.valuation(p)/2  # square => valuation is even
@@ -1255,7 +1254,7 @@ cdef class IntegerMod_abstract(FiniteRingElement):
                     p_exp = p**exp
                     w = [self._parent(a.lift() * p_val + b)
                             for a in u.sqrt(all=True)
-                            for b in xrange(0, self.__modulus.sageInteger, p_exp)]
+                            for b in range(0, self.__modulus.sageInteger, p_exp)]
                     if p == 2:
                         w = list(set(w))
                     w.sort()
@@ -1524,7 +1523,6 @@ cdef class IntegerMod_abstract(FiniteRingElement):
                     return K(p**(pval // n) * mod(upart, p**(k-pval)).nth_root(n, algorithm=algorithm).lift())
             from sage.rings.padics.factory import ZpFM
             R = ZpFM(p,k)
-            self_orig = self
             if p == 2:
                 sign = [1]
                 if self % 4 == 3:
@@ -4033,9 +4031,6 @@ cpdef square_root_mod_prime(IntegerMod_abstract a, p=None):
     cdef int p_mod_16 = p % 16
     cdef double bits = log2(float(p))
     cdef long r, m
-
-    cdef Integer resZ
-
 
     if p_mod_16 % 2 == 0:  # p == 2
         return a

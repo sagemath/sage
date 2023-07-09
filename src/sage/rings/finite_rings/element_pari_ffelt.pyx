@@ -470,13 +470,13 @@ cdef class FiniteFieldElement_pari_ffelt(FinitePolyExtElement):
             if t == t_FF_FpXQ:
                 f = cgetg(n + 2, t_POL)
                 set_gel(f, 1, gmael(g, 2, 1))
-                for i in xrange(n):
+                for i in range(n):
                     xi = Integer(x[i])
                     set_gel(f, i + 2, _new_GEN_from_mpz_t(xi.value))
             elif t == t_FF_Flxq or t == t_FF_F2xq:
                 f = cgetg(n + 2, t_VECSMALL)
                 set_gel(f, 1, gmael(g, 2, 1))
-                for i in xrange(n):
+                for i in range(n):
                     set_uel(f, i + 2, x[i])
                 if t == t_FF_F2xq:
                     f = Flx_to_F2x(f)

@@ -106,12 +106,12 @@ def isomorphic(G1, G2, partn, ordering2, dig, use_indicator_function, sparse=Fal
             else:
                 G = DenseGraph(n)
             if G_in.is_directed():
-                for i,j in G_in.edge_iterator(labels=False):
-                    G.add_arc(i,j)
+                for i, j in G_in.edge_iterator(labels=False):
+                    G.add_arc(i, j)
             else:
-                for i,j in G_in.edge_iterator(labels=False):
-                    G.add_arc(i,j)
-                    G.add_arc(j,i)
+                for i, j in G_in.edge_iterator(labels=False):
+                    G.add_arc(i, j)
+                    G.add_arc(j, i)
         elif isinstance(G_in, CGraph):
             G = <CGraph> G_in
             if n == -1:
@@ -119,18 +119,23 @@ def isomorphic(G1, G2, partn, ordering2, dig, use_indicator_function, sparse=Fal
             elif n != <int>G.num_verts:
                 return False
             if not loops:
-                for i from 0 <= i < n:
+                for i in range(n):
                     if G.has_arc_unsafe(i,i):
                         loops = 1
             to = {}
-            for a in G.verts(): to[a]=a
+            for a in G.verts():
+                to[a] = a
             frm = to
             if first:
                 partition = partn
         else:
             raise TypeError("G must be a Sage graph")
-        if first: frm1=frm;to1=to
-        else: frm2=frm;to2=to
+        if first:
+            frm1 = frm
+            to1 = to
+        else:
+            frm2 = frm
+            to2 = to
         GS.G = G
         GS.directed = 1 if dig else 0
         GS.loops = 1
@@ -400,21 +405,22 @@ def search_tree(G_in, partition, lab=True, dig=False, dict_rep=False, certificat
         else:
             G = DenseGraph(n)
         if G_in.is_directed():
-            for i,j in G_in.edge_iterator(labels=False):
-                G.add_arc(i,j)
+            for i, j in G_in.edge_iterator(labels=False):
+                G.add_arc(i, j)
         else:
-            for i,j in G_in.edge_iterator(labels=False):
-                G.add_arc(i,j)
-                G.add_arc(j,i)
+            for i, j in G_in.edge_iterator(labels=False):
+                G.add_arc(i, j)
+                G.add_arc(j, i)
     elif isinstance(G_in, CGraph):
         G = <CGraph> G_in
         n = G.num_verts
         loops = 0
-        for i from 0 <= i < n:
-            if G.has_arc_unsafe(i,i):
+        for i in range(n):
+            if G.has_arc_unsafe(i, i):
                 loops = 1
         to = {}
-        for a in G.verts(): to[a]=a
+        for a in G.verts():
+            to[a] = a
         frm = to
     else:
         raise TypeError("G must be a Sage graph")
@@ -933,7 +939,8 @@ def orbit_partition(gamma, list_perm=False):
         l = []
         for i in range(1,n+1):
             orb = gamma.orbit(i)
-            if orb not in l: l.append(orb)
+            if orb not in l:
+                l.append(orb)
         for i in l:
             for j in range(len(i)):
                 if i[j] == n:
@@ -1081,7 +1088,8 @@ cdef void *dg_edge_gen_next(void *data, int *degree, bint *mem_err):
         else:
             u = bitset_first(&edge_candidate.bits)
             v = bitset_next(&edge_candidate.bits, u+1)
-            if v == -1: v = u
+            if v == -1:
+                v = u
             if graph.G.has_arc_unsafe(u, v):
                 reject = 1
         if not reject:
@@ -1351,7 +1359,8 @@ def generate_dense_graphs_edge_addition(int n, bint loops, G=None, depth=None,
     if construct:
         while True:
             thing = graph_iterator.next(graph_iterator.data, NULL, &mem_err)
-            if thing is NULL: break
+            if thing is NULL:
+                break
             ODG = (<GraphStruct>thing).G
             G = Graph(0, implementation='c_graph', sparse=False)
             DG = DenseGraph(ODG.active_vertices.size, extra_vertices=0)
@@ -1361,7 +1370,8 @@ def generate_dense_graphs_edge_addition(int n, bint loops, G=None, depth=None,
     else:
         while True:
             thing = graph_iterator.next(graph_iterator.data, NULL, &mem_err)
-            if thing is NULL: break
+            if thing is NULL:
+                break
             number += 1
 
     free_dg_edge_gen(graph_iterator)
@@ -1626,7 +1636,8 @@ def generate_dense_graphs_vert_addition(int n, base_G=None,
     if construct:
         while True:
             thing = graph_iterator.next(graph_iterator.data, NULL, &mem_err)
-            if thing is NULL: break
+            if thing is NULL:
+                break
             ODG = (<GraphStruct>thing).G
             G = Graph(0, implementation='c_graph', sparse=False)
             DG = DenseGraph(ODG.active_vertices.size, extra_vertices=0)
@@ -1636,7 +1647,8 @@ def generate_dense_graphs_vert_addition(int n, base_G=None,
     else:
         while True:
             thing = graph_iterator.next(graph_iterator.data, NULL, &mem_err)
-            if thing is NULL: break
+            if thing is NULL:
+                break
             number += 1
 
     free_dg_vert_gen(graph_iterator)

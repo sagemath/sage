@@ -615,7 +615,7 @@ class Diagrams(UniqueRepresentation, Parent):
         """
         from sage.sets.non_negative_integers import NonNegativeIntegers
         from sage.categories.cartesian_product import cartesian_product
-        from sage.misc.misc import subsets
+        from sage.combinat.subset import subsets
         # the product of positive integers automatically implements an
         # an enumeration which allows us to get out of the first column
         N = NonNegativeIntegers()
@@ -777,17 +777,17 @@ class Diagrams(UniqueRepresentation, Parent):
 
         EXAMPLES::
 
-            sage: M = matrix([[1,0,1,1],[0,1,1,0]])
+            sage: M = matrix([[1,0,1,1],[0,1,1,0]])                                     # optional - sage.modules
             sage: from sage.combinat.diagram import Diagrams
-            sage: Diagrams()(M).pp()
+            sage: Diagrams()(M).pp()                                                    # optional - sage.modules
             O . O O
             . O O .
-            sage: Diagrams().from_zero_one_matrix(M).pp()
+            sage: Diagrams().from_zero_one_matrix(M).pp()                               # optional - sage.modules
             O . O O
             . O O .
 
-            sage: M = matrix([[1, 0, 0], [1, 0, 0], [0, 0, 0]])
-            sage: Diagrams()(M).pp()
+            sage: M = matrix([[1, 0, 0], [1, 0, 0], [0, 0, 0]])                         # optional - sage.modules
+            sage: Diagrams()(M).pp()                                                    # optional - sage.modules
             O . .
             O . .
             . . .
@@ -1435,7 +1435,7 @@ class NorthwestDiagrams(Diagrams):
 
         EXAMPLES::
 
-            sage: p = ParallelogramPolyomino([[0, 0, 1, 0, 0, 0, 1, 1],
+            sage: p = ParallelogramPolyomino([[0, 0, 1, 0, 0, 0, 1, 1],                 # optional - sage.modules
             ....:                              [1, 1, 0, 1, 0, 0, 0, 0]])
             sage: from sage.combinat.diagram import NorthwestDiagrams
             sage: NorthwestDiagrams().from_parallelogram_polyomino(p).pp()

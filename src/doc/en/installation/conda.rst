@@ -178,3 +178,8 @@ After editing any Cython files, rebuild the Sage library using::
 In order to update the conda environment later, you can run::
 
   $ mamba env update --file src/environment-dev.yml --name sage-dev
+
+To build the documentation, use::
+
+  $ pip install --no-build-isolation -v -v --editable ./pkgs/sage-docbuild
+  $ sage --docbuild all html

@@ -50,12 +50,16 @@ Functions
 ---------
 """
 
+from sage.arith.misc import binomial, is_prime_power, is_square
 from sage.categories.sets_cat import EmptySetError
+from sage.misc.lazy_import import lazy_import
 from sage.misc.unknown import Unknown
+
 from .design_catalog import transversal_design  # type:ignore
-from sage.arith.misc import binomial, is_prime_power
-from .group_divisible_designs import GroupDivisibleDesign
 from .designs_pyx import is_pairwise_balanced_design
+from .group_divisible_designs import GroupDivisibleDesign
+
+lazy_import('sage.schemes.plane_conics.constructor', 'Conic')
 
 
 def biplane(n, existence=False):
@@ -84,7 +88,7 @@ def biplane(n, existence=False):
 
     EXAMPLES::
 
-        sage: designs.biplane(4)
+        sage: designs.biplane(4)                                                        # optional - sage.rings.finite_rings
         (16,6,2)-Balanced Incomplete Block Design
         sage: designs.biplane(7, existence=True)
         True
@@ -413,8 +417,6 @@ def BruckRyserChowla_check(v, k, lambd):
         True
 
     """
-    from sage.arith.misc import is_square
-    from sage.schemes.plane_conics.constructor import Conic
     from sage.rings.rational_field import QQ
 
     # design is not symmetric
@@ -1314,14 +1316,14 @@ def BIBD_from_arc_in_desarguesian_projective_plane(n,k,existence=False):
 
         sage: from sage.combinat.designs.bibd import BIBD_from_arc_in_desarguesian_projective_plane
         sage: from sage.combinat.designs.bibd import BalancedIncompleteBlockDesign
-        sage: D = BIBD_from_arc_in_desarguesian_projective_plane(232,8)
-        sage: BalancedIncompleteBlockDesign(232,D)
+        sage: D = BIBD_from_arc_in_desarguesian_projective_plane(232,8)                 # optional - sage.libs.gap sage.modules sage.rings.finite_rings
+        sage: BalancedIncompleteBlockDesign(232,D)                                      # optional - sage.libs.gap sage.modules sage.rings.finite_rings
         (232,8,1)-Balanced Incomplete Block Design
 
     A `(120,8,1)`-BIBD::
 
-        sage: D = BIBD_from_arc_in_desarguesian_projective_plane(120,8)
-        sage: BalancedIncompleteBlockDesign(120,D)
+        sage: D = BIBD_from_arc_in_desarguesian_projective_plane(120,8)                 # optional - sage.libs.gap sage.modules sage.rings.finite_rings
+        sage: BalancedIncompleteBlockDesign(120,D)                                      # optional - sage.libs.gap sage.modules sage.rings.finite_rings
         (120,8,1)-Balanced Incomplete Block Design
 
     Other parameters::

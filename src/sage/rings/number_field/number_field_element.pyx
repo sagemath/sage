@@ -194,9 +194,9 @@ def _inverse_mod_generic(elt, I):
         raise ZeroDivisionError("%s is not invertible modulo %s" % (elt, I))
     v = R.coordinates(1)
     y = R(0)
-    for j in xrange(n):
+    for j in range(n):
         if v[j] != 0:
-            y += v[j] * sum([b[j,i+n] * B[i] for i in xrange(n)])
+            y += v[j] * sum([b[j,i+n] * B[i] for i in range(n)])
     return I.small_residue(y)
 
 
@@ -1269,7 +1269,8 @@ cdef class NumberFieldElement(NumberFieldElement_base):
 
     def round(self):
         r"""
-        Return the round (nearest integer) of this number field element.
+        Return the round (nearest integer) of this number field element. In case
+        of ties, this relies on the default rounding for rational numbers.
 
         EXAMPLES::
 
@@ -1515,8 +1516,8 @@ cdef class NumberFieldElement(NumberFieldElement_base):
             ArithmeticError: vector is not in free module
         """
         K = self.number_field()
-        V, from_V, to_V = K.absolute_vector_space()
-        h = K(1)
+        V, _, to_V = K.absolute_vector_space()
+        h = K.one()
         B = [to_V(h)]
         f = self.absolute_minpoly()
         for i in range(f.degree()-1):
@@ -2042,7 +2043,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
         element_fac = [(P.gens_reduced()[0],e) for P,e in fac]
         # Compute the product of the p^e to figure out the unit
         from sage.misc.misc_c import prod
-        element_product = prod([p**e for p,e in element_fac], K(1))
+        element_product = prod([p**e for p,e in element_fac], K.one())
         from sage.structure.all import Factorization
         return Factorization(element_fac, unit=self/element_product)
 
@@ -3406,13 +3407,12 @@ cdef class NumberFieldElement(NumberFieldElement_base):
             12
             sage: z^12==1 and z^6!=1 and z^4!=1
             True
-
         """
         if self.__multiplicative_order is None:
             from .number_field import NumberField_cyclotomic
             if self.is_rational():
                 if self.is_one():
-                    self.__multiplicative_order = ZZ(1)
+                    self.__multiplicative_order = ZZ.one()
                 elif (-self).is_one():
                     self.__multiplicative_order = ZZ(2)
                 else:
@@ -4380,7 +4380,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
             ## the variable name is irrelevant below, because the
             ## matrix is over QQ
             F = K.absolute_field('alpha')
-            from_f, to_F = F.structure()
+            _, to_F = F.structure()
             return to_F(self).matrix()
 
         alpha = L.primitive_element()
@@ -4393,7 +4393,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
         M = K.relativize(beta, (K.variable_name()+'0', L.variable_name()+'0') )
 
         # Carry self over to M.
-        from_M, to_M = M.structure()
+        _, to_M = M.structure()
         try:
             z = to_M(self)
         except Exception:
