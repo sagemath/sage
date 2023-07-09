@@ -71,9 +71,10 @@ from itertools import combinations
 # - and a lot more ...
 # - add literature to bibliography?
 # - golod decomposition
-# - cohomology ring (Buchstaber 154, 155) -- consequence of hochter's formula
+# - cohomology ring (Buchstaber 154, 155) -- consequence of hochter's formula (cartesian product)
 # - polyhedral products and real moment-angle complexes?
 # - return for odd dimensional simplicial complexes in golod_decomposition?
+# - explicitly state the vertices?
 
 def union(c1, c2):
     facets = []
@@ -184,6 +185,8 @@ class MomentAngleComplex(SageObject): # should this inherit SimplicialComplex?
         """
         return "Moment angle complex over a " + self._simplicial_complex._repr_().lower()
 
+    # a better name for this method, also mark it cached
+    # also, remove the _constructed attribute
     def construct(self):
         """
         Construct the moment-angle complex as a simplicial complex.
