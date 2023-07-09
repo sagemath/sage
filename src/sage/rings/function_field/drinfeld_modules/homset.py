@@ -33,8 +33,39 @@ from sage.structure.parent import Parent
 class DrinfeldModuleMorphismAction(Action):
     r"""
     Action of the function ring on the homset of a Drinfeld module.
-    """
 
+    EXAMPLES::
+
+        sage: Fq = GF(5)
+        sage: A.<T> = Fq[]
+        sage: K.<z> = Fq.extension(3)
+        sage: phi = DrinfeldModule(A, [z, 1, z])
+        sage: psi = DrinfeldModule(A, [z, z^2 + 4*z + 3, 2*z^2 + 4*z + 4])
+        sage: H = Hom(phi, psi)
+        sage: t = phi.ore_variable()
+        sage: f = H(t + 2)
+
+    Left action::
+
+        sage: (T + 1) * f
+        Drinfeld Module morphism:
+          From: Drinfeld module defined by T |--> z*t^2 + t + z
+          To:   Drinfeld module defined by T |--> (2*z^2 + 4*z + 4)*t^2 + (z^2 + 4*z + 3)*t + z
+          Defn: (2*z^2 + 4*z + 4)*t^3 + (2*z + 1)*t^2 + (2*z^2 + 4*z + 2)*t + 2*z + 2
+
+    Right action currently does not work (it is a known bug, due to an
+    incompatibility between multiplication of morphisms and the coercion
+    system)::
+
+        sage: f * (T + 1)
+        Traceback (most recent call last):
+        ...
+        TypeError: right (=T + 1) must be a map to multiply it by Drinfeld Module morphism:
+          From: Drinfeld module defined by T |--> z*t^2 + t + z
+          To:   Drinfeld module defined by T |--> (2*z^2 + 4*z + 4)*t^2 + (z^2 + 4*z + 3)*t + z
+          Defn: t + 2
+
+    """
     def __init__(self, A, H, is_left, op):
         r"""
         Initialize this action.
@@ -349,8 +380,6 @@ class DrinfeldModuleHomset(Homset):
         Return the Drinfeld module morphism defined by the given Ore
         polynomial.
 
-        INPUT: an Ore polynomial
-
         EXAMPLES::
 
             sage: Fq = GF(27)
@@ -364,6 +393,13 @@ class DrinfeldModuleHomset(Homset):
             sage: identity_morphism = E(1)
             sage: identity_morphism
             Identity morphism of Drinfeld module defined by T |--> 2*t^2 + z6*t + z6
+
+        ::
+
+            sage: scalar_multiplication = E(T)
+            sage: scalar_multiplication
+            Endomorphism of Drinfeld module defined by T |--> 2*t^2 + z6*t + z6
+              Defn: 2*t^2 + z6*t + z6
 
         ::
 

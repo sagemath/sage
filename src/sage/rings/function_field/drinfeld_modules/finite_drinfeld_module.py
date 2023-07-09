@@ -487,13 +487,43 @@ class FiniteDrinfeldModule(DrinfeldModule):
             pass
         raise ValueError('input must be in the image of the Drinfeld module')
 
+    def is_supersingular(self):
+        r"""
+        Return ``True`` if this Drinfeld module is supersingular.
+
+        A Drinfeld module is supersingular if and only if its
+        height equals its rank.
+
+        EXAMPLES::
+
+            sage: Fq = GF(343)
+            sage: A.<T> = Fq[]
+            sage: K.<z6> = Fq.extension(2)
+            sage: phi = DrinfeldModule(A, [1, 0, z6])
+            sage: phi.is_supersingular()
+            True
+            sage: phi(phi.characteristic())   # Purely inseparable
+            z6*t^2
+
+        In rank two, a Drinfeld module is either ordinary or
+        supersinguler. In higher ranks, it could be neither of
+        the two::
+
+            sage: psi = DrinfeldModule(A, [1, 0, z6, z6])
+            sage: psi.is_ordinary()
+            False
+            sage: psi.is_supersingular()
+            False
+
+        """
+        return self.height() == self.rank()
+
     def is_ordinary(self):
         r"""
-        Return ``True`` if the Drinfeld module is ordinary; raise a
-        NotImplementedError if the rank is not two.
+        Return ``True`` if this Drinfeld module is ordinary.
 
-        A rank two Drinfeld module is *ordinary* if and only if it is
-        not supersingular; see :meth:`is_supersingular`.
+        A Drinfeld module is supersingular if and only if its
+        height is one.
 
         EXAMPLES::
 
@@ -503,9 +533,12 @@ class FiniteDrinfeldModule(DrinfeldModule):
             sage: phi = DrinfeldModule(A, [1, 0, z6])
             sage: phi.is_ordinary()
             False
-            sage: phi_p = phi(phi.characteristic())
-            sage: phi_p  # Purely inseparable
-            z6*t^2
+
+        ::
+
+            sage: phi = DrinfeldModule(A, [1, z6, 0, z6])
+            sage: phi.is_ordinary()
+            True
+
         """
-        self._check_rank_two()
-        return not self.is_supersingular()
+        return self.height() == 1

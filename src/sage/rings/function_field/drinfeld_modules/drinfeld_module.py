@@ -1341,27 +1341,6 @@ class DrinfeldModule(Parent, UniqueRepresentation):
                 raise NotImplementedError(f"cannot solve the equation u^{e} == {ue}")
             return True
 
-    def is_supersingular(self):
-        r"""
-        Return ``True`` if the Drinfeld module is supersingular.
-
-        A Drinfeld module is supersingular if and only if its
-        height equals its rank.
-
-        EXAMPLES::
-
-            sage: Fq = GF(343)
-            sage: A.<T> = Fq[]
-            sage: K.<z6> = Fq.extension(2)
-            sage: phi = DrinfeldModule(A, [1, 0, z6])
-            sage: phi.is_supersingular()
-            True
-            sage: phi(phi.characteristic()) # Purely inseparable
-            z6*t^2
-
-        """
-        return self.height() == self.rank()
-
     def is_finite(self) -> bool:
         r"""
         Return ``True`` if this Drinfeld module is finite,

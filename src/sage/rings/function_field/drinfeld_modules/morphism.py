@@ -135,8 +135,9 @@ class DrinfeldModuleMorphism(Morphism, UniqueRepresentation,
 
         - ``parent`` -- the Drinfeld module homset
 
-        - ``x`` -- the Ore polynomial defining the morphism or a
-          DrinfeldModuleMorphism
+        - ``x`` -- a morphism of Drinfeld modules or an element
+          (either an Ore polynomial or an element in the base
+          ring) defining it
 
         TESTS::
 
@@ -144,8 +145,14 @@ class DrinfeldModuleMorphism(Morphism, UniqueRepresentation,
             sage: A.<T> = Fq[]
             sage: K.<z6> = Fq.extension(6)
             sage: phi = DrinfeldModule(A, [z6, 1, 1])
-            sage: psi = DrinfeldModule(A, [z6, z6^4 + z6^2 + 1, 1])
+            sage: End(phi)(T + 1)
+            Endomorphism of Drinfeld module defined by T |--> t^2 + t + z6
+              Defn: t^2 + t + z6 + 1
+
+        ::
+
             sage: t = phi.ore_polring().gen()
+            sage: psi = DrinfeldModule(A, [z6, z6^4 + z6^2 + 1, 1])
             sage: morphism = Hom(phi, psi)(t + z6^5 + z6^2 + 1)
             sage: morphism is Hom(phi, psi)(morphism)
             True
