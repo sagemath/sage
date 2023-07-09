@@ -921,7 +921,7 @@ If you want Sage to detect external software or other capabilities
 (such as magma, latex, internet) automatically and run all of the
 relevant tests, then add ``external``::
 
-    [roed@sage sage-6.0]$ $ ./sage -t --optional=external src/sage/rings/real_mpfr.pyx
+    [roed@sage sage-6.0]$ ./sage -t --optional=external src/sage/rings/real_mpfr.pyx
     Running doctests with ID 2016-03-16-14-10-21-af2ebb67.
     Using --optional=external
     External software to be detected: cplex,gurobi,internet,latex,macaulay2,magma,maple,mathematica,matlab,octave,scilab
