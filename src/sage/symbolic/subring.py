@@ -403,10 +403,6 @@ class GenericSymbolicSubring(SymbolicRing):
             sage: C.has_coerce_map_from(SR)  # indirect doctest
             False
         """
-        if P == SR:
-            # Workaround; can be deleted once #19231 is fixed
-            return False
-
         from sage.rings.infinity import InfinityRing
         from sage.rings.qqbar import AA, QQbar
         from sage.rings.real_lazy import RLF, CLF
@@ -414,18 +410,18 @@ class GenericSymbolicSubring(SymbolicRing):
         if isinstance(P, type):
             return SR._coerce_map_from_(P)
 
-        elif RLF.has_coerce_map_from(P) or \
-             CLF.has_coerce_map_from(P) or \
-             AA.has_coerce_map_from(P) or \
-             QQbar.has_coerce_map_from(P):
+        if RLF.has_coerce_map_from(P) or \
+           CLF.has_coerce_map_from(P) or \
+           AA.has_coerce_map_from(P) or \
+           QQbar.has_coerce_map_from(P):
             return True
 
-        elif (P is InfinityRing or
-              isinstance(P, (sage.rings.abc.RealIntervalField,
-                             sage.rings.abc.ComplexIntervalField))):
+        if (P is InfinityRing or
+            isinstance(P, (sage.rings.abc.RealIntervalField,
+                           sage.rings.abc.ComplexIntervalField))):
             return True
 
-        elif P._is_numerical():
+        if P._is_numerical():
             return P not in (RLF, CLF, AA, QQbar)
 
     def __eq__(self, other):

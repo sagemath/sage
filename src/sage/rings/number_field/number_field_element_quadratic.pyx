@@ -2331,7 +2331,8 @@ cdef class NumberFieldElement_quadratic(NumberFieldElement_absolute):
 
     def round(self):
         r"""
-        Returns the round (nearest integer).
+        Return the round (nearest integer) of this number field element. In case
+        of ties, this relies on the default rounding for rational numbers.
 
         EXAMPLES::
 
@@ -2353,12 +2354,14 @@ cdef class NumberFieldElement_quadratic(NumberFieldElement_absolute):
             sage: for _ in range(100):
             ....:    a = QQ.random_element(1000,20)
             ....:    b = QQ.random_element(1000,20)
-            ....:    assert round(a) == round(K2(a)), a
-            ....:    assert round(a) == round(K3(a)), a
-            ....:    assert round(a) == round(K5(a)), a
+            ....:    assert a.round() == round(K2(a)), a
+            ....:    assert a.round() == round(K3(a)), a
+            ....:    assert a.round() == round(K5(a)), a
             ....:    assert round(a+b*sqrt(2.)) == round(a+b*sqrt2), (a, b)
             ....:    assert round(a+b*sqrt(3.)) == round(a+b*sqrt3), (a, b)
             ....:    assert round(a+b*sqrt(5.)) == round(a+b*sqrt5), (a, b)
+            doctest...: DeprecationWarning: the default rounding for rationals, currently `away`, will be changed to `even`.
+            See https://github.com/sagemath/sage/issues/35473 for details.
         """
         n = self.floor()
         test = 2 * (self - n).abs()
