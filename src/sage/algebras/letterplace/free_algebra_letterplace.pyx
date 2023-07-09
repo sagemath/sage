@@ -861,7 +861,7 @@ cdef class FreeAlgebra_letterplace(Algebra):
             (2)*y*y*y + z*z + t*y
 
         """
-        if isinstance(x, basestring):
+        if isinstance(x, str):
             from sage.misc.sage_eval import sage_eval
             return sage_eval(x, locals=self.gens_dict())
         try:
