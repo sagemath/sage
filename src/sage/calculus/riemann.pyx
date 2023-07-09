@@ -294,7 +294,9 @@ cdef class Riemann_Map:
     cdef _generate_theta_array(self):
         """
         Generates the essential data for the Riemann map, primarily the
-        Szego kernel and boundary correspondence.  See [KT1986]_ for the algorithm.
+        Szegő kernel and boundary correspondence.
+
+        See [KT1986]_ for the algorithm.
 
         TESTS::
 
@@ -302,16 +304,16 @@ cdef class Riemann_Map:
             sage: fprime(t) = I*e^(I*t) + 0.5*I*e^(-I*t)
             sage: m = Riemann_Map([f], [fprime], 0, N = 10)
         """
-        cdef np.ndarray[COMPLEX_T,ndim =1] cp = self.cps.flatten()
-        cdef np.ndarray[COMPLEX_T,ndim =1] dp = self.dps.flatten()
+        cdef np.ndarray[COMPLEX_T, ndim=1] cp = self.cps.flatten()
+        cdef np.ndarray[COMPLEX_T, ndim=1] dp = self.dps.flatten()
         cdef int N = self.N
         cdef int NB = N * self.B
         cdef int B = self.B
         cdef int i, k
         cdef FLOAT_T saa, t0
         cdef np.ndarray[FLOAT_T, ndim=1] adp, sadp
-        cdef np.ndarray[COMPLEX_T,ndim =1] h, hconj, g, normalized_dp, C, phi
-        cdef np.ndarray[COMPLEX_T,ndim =2] K
+        cdef np.ndarray[COMPLEX_T, ndim=1] h, hconj, g, normalized_dp, C, phi
+        cdef np.ndarray[COMPLEX_T, ndim=2] K
         cdef np.ndarray[FLOAT_T, ndim=2] theta_array
         # Setting things up to use the Nystrom method
         adp = abs(dp)

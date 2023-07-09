@@ -446,7 +446,6 @@ class ode_solver():
                 wrapper.the_parameters = self.params
             wrapper.y_n = dim
 
-
         cdef double t
         cdef double t_end
         cdef double *y
@@ -488,13 +487,11 @@ class ode_solver():
         else:
             raise TypeError("algorithm not valid")
 
-
         cdef gsl_odeiv_step * s
         s  = gsl_odeiv_step_alloc (T, dim)
         if s==NULL:
             sig_free(y)
             raise MemoryError("error setting up solver")
-
 
         cdef gsl_odeiv_control * c
 
@@ -517,7 +514,6 @@ class ode_solver():
             sig_free(scale_abs_array)
             raise MemoryError("error setting up solver")
 
-
         cdef gsl_odeiv_evolve * e
         e  = gsl_odeiv_evolve_alloc(dim)
 
@@ -527,7 +523,6 @@ class ode_solver():
             sig_free(y)
             sig_free(scale_abs_array)
             raise MemoryError("error setting up solver")
-
 
         cdef gsl_odeiv_system sys
         if type:               # The user has passed a class with a compiled function, use that for the system
@@ -540,7 +535,6 @@ class ode_solver():
             sys.jacobian = c_jac
             sys.params = <void *> wrapper
         sys.dimension = dim
-
 
         cdef int status
         import copy
@@ -603,12 +597,11 @@ class ode_solver():
                         sig_free(scale_abs_array)
                         raise ValueError("error solving")
 
-                for j from 0<=j<dim:
-                    v[j]=<double> y[j]
-                result.append( (t,copy.copy(v)) )
+                for j in range(dim):
+                    v[j] = <double> y[j]
+                result.append((t, copy.copy(v)))
 
-                t=self.t_span[i]
-
+                t = self.t_span[i]
 
         gsl_odeiv_evolve_free (e)
         gsl_odeiv_control_free (c)

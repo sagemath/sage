@@ -194,7 +194,6 @@ cdef class MultiModularBasis_base():
           the allowed interval; we will not return a prime in
           known_primes.
         """
-        cdef Py_ssize_t i
         cdef mod_int p
         while True:
             if len(known_primes) >= self._num_primes:
@@ -372,11 +371,10 @@ cdef class MultiModularBasis_base():
             return self.n
 
         # find new prime moduli
-        cdef int i
         new_moduli = []
         new_partial_products = []
-        cdef Integer M # keeps current height
-        cdef mod_int p # keeps current prime moduli
+        cdef Integer M  # keeps current height
+        cdef mod_int p  # keeps current prime moduli
 
         if self.n == 0:
             M = smallInteger(1)
@@ -632,7 +630,6 @@ cdef class MultiModularBasis_base():
             # normalize to be between -prod/2 and prod/2.
             if mpz_cmp(z[j], self.half_product) > 0:
                 mpz_sub(z[j], z[j], self.product)
-
 
         cdef Integer zz
         zz = PY_NEW(Integer)

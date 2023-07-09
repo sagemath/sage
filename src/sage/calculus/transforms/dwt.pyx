@@ -21,6 +21,7 @@ AUTHOR:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
+
 def WaveletTransform(n, wavelet_type, wavelet_k):
     r"""
     This function initializes an GSLDoubleArray of length n which
@@ -94,7 +95,9 @@ def WaveletTransform(n, wavelet_type, wavelet_k):
         raise NotImplementedError("discrete wavelet transform only implemented when n is a 2-power")
     return DiscreteWaveletTransform(_n,1,wavelet_type,_k)
 
+
 DWT = WaveletTransform
+
 
 cdef class DiscreteWaveletTransform(GSLDoubleArray):
     """
@@ -151,6 +154,6 @@ cdef class DiscreteWaveletTransform(GSLDoubleArray):
 
 
 def is2pow(unsigned int n):
-    while n != 0 and n%2 == 0:
+    while n and not n % 2:
         n = n >> 1
     return n == 1
