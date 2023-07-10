@@ -1888,7 +1888,8 @@ class Func_assoc_legendre_Q(BuiltinFunction):
             1/4*sqrt(2)*(36*pi - 36*I*log(2) + 25*I)
         """
         BuiltinFunction.__init__(self, "gen_legendre_Q", nargs=3, latex_name=r"Q",
-                                 conversions={'maxima': 'assoc_legendre_q', 'mathematica': 'LegendreQ',
+                                 conversions={'maxima': 'assoc_legendre_q',
+                                              'mathematica': 'LegendreQ',
                                               'maple': 'LegendreQ'})
 
     def _eval_(self, n, m, x, *args, **kwds):
@@ -2339,8 +2340,10 @@ class Func_ultraspherical(GinacFunction):
             gegenbauer(x, x, x)
         """
         GinacFunction.__init__(self, "gegenbauer", nargs=3, latex_name=r"C",
-                               conversions={'maxima': 'ultraspherical', 'mathematica': 'GegenbauerC',
-                                            'maple': 'GegenbauerC', 'sympy': 'gegenbauer'})
+                               conversions={'maxima': 'ultraspherical',
+                                            'mathematica': 'GegenbauerC',
+                                            'maple': 'GegenbauerC',
+                                            'sympy': 'gegenbauer'})
 
 
 ultraspherical = Func_ultraspherical()
@@ -2523,8 +2526,10 @@ class Func_gen_laguerre(OrthogonalFunction):
             gen_laguerre(_SAGE_VAR_n,_SAGE_VAR_a, gen_laguerre(_SAGE_VAR_n,_SAGE_VAR_a,_SAGE_VAR_x))
         """
         OrthogonalFunction.__init__(self, "gen_laguerre", nargs=3, latex_name=r"L",
-                                    conversions={'maxima': 'gen_laguerre', 'mathematica': 'LaguerreL',
-                                                 'maple': 'LaguerreL', 'sympy': 'assoc_laguerre'})
+                                    conversions={'maxima': 'gen_laguerre',
+                                                 'mathematica': 'LaguerreL',
+                                                 'maple': 'LaguerreL',
+                                                 'sympy': 'assoc_laguerre'})
 
     def _eval_(self, n, a, x, *args, **kwds):
         r"""
