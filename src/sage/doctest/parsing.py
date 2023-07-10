@@ -228,7 +228,7 @@ def parse_optional_tags(string, *, return_string_sans_tags=False):
                          for m in tag_with_explanation_regex.finditer(m.group('tags'))})
 
     if return_string_sans_tags:
-        is_persistent = tags and first_line_sans_comments.strip() == 'sage:' and not rest  # persistent (block-scoped) annotation
+        is_persistent = tags and first_line_sans_comments.strip() == 'sage:' and not rest  # persistent (block-scoped) tag
         return tags, (first_line + '\n' + rest%literals if rest is not None
                       else first_line), is_persistent
     else:
@@ -451,7 +451,7 @@ def update_optional_tags(line, tags=None, *, add_tags=None, remove_tags=None, fo
         |    sage: aligned_with_above()                                  # optional - 4ti2
         |    sage: also_already_aligned()                                                                                        # needs scipy
 
-    Rewriting a persistent (block-scoped) annotation::
+    Rewriting a persistent (block-scoped) tag::
 
         sage: print_with_ruler([
         ....:     update_optional_tags('    sage:    #opt' 'ional:magma sage.symbolic',

@@ -158,7 +158,7 @@ def process_block(block, src_in_lines, file_optional_tags):
         src_in_lines[first_line_num - 1] = update_optional_tags(src_in_lines[first_line_num - 1],
                                                                 add_tags=optional)
 
-    if m := re.search(r"annotation '# (optional|needs)[-: ]([^;']*)' may no longer be needed", block):
+    if m := re.search(r"tag '# (optional|needs)[-: ]([^;']*)' may no longer be needed", block):
         optional = m.group(2).split()
         src_in_lines[first_line_num - 1] = update_optional_tags(src_in_lines[first_line_num - 1],
                                                                 remove_tags=optional)
@@ -376,7 +376,7 @@ for input, output in zip(inputs, outputs):
                                                 if explanation or tag not in file_optional_tags}
                     line = update_optional_tags(line, tags=persistent_optional_tags, force_rewrite='standard')
                     if not line.rstrip():
-                        # persistent (block-scoped or file-scoped) annotation was removed, so remove the whole line
+                        # persistent (block-scoped or file-scoped) tag was removed, so remove the whole line
                         line = None
                 else:
                     tags = {tag: explanation
