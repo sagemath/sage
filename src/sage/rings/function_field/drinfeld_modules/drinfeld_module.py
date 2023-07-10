@@ -1299,7 +1299,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
         # Check if there exists u such that u*self_X = other_X*u:
         # if self_X = a_0 + a_1*t + ... + a_r*t^r
         # and other_x = b_0 + b_1*t + ... + b_r*t^r
-        # this reduced to finding solution of the system:
+        # this reduces to find a solution of the system:
         #   b_i * u^(q^i - 1) = a_i  (0 <= i <= r)
         # which, using gcds, can be reduced to a unique equation
         # of the form u^e = ue.
@@ -1326,9 +1326,9 @@ class DrinfeldModule(Parent, UniqueRepresentation):
                 if A[i] != B[i] * ue**f:
                     return False
         # Solve the equation u^e = ue
-        # - when absolutely=True, on the algebraic closure (then a
+        # - when absolutely=True, over the algebraic closure (then a
         #   solution always exists)
-        # - when absolutely=False, on the ground field.
+        # - when absolutely=False, over the ground field.
         if absolutely:
             return True
         else:

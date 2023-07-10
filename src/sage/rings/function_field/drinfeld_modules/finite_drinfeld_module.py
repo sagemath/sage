@@ -522,7 +522,7 @@ class FiniteDrinfeldModule(DrinfeldModule):
         r"""
         Return ``True`` if this Drinfeld module is ordinary.
 
-        A Drinfeld module is supersingular if and only if its
+        A Drinfeld module is ordinary if and only if its
         height is one.
 
         EXAMPLES::
