@@ -17,7 +17,7 @@ other classes implementing solvers.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from sage.matrix.constructor import Matrix
+from sage.matrix.constructor import Matrix as matrix
 #from sage.matrix.constructor import Vector
 from .generic_backend cimport GenericBackend
 import numpy
@@ -66,12 +66,12 @@ cdef class MatrixBackend(GenericBackend):
         else:
             kwds = {}
 
-        self.objective_function = Matrix(QQ, [], **kwds)
-        self.G_matrix = Matrix(QQ, [], **kwds)
-        self.row_lower_bound = Matrix(QQ, [], **kwds)
-        self.row_upper_bound = Matrix(QQ, [], **kwds)
-        self.col_lower_bound = Matrix(QQ, [], **kwds)
-        self.col_upper_bound = Matrix(QQ, [], **kwds)
+        self.objective_function = matrix(base_ring, [], **kwds)
+        self.G_matrix = matrix(base_ring, [], **kwds)
+        self.row_lower_bound = matrix(base_ring, [], **kwds)
+        self.row_upper_bound = matrix(base_ring, [], **kwds)
+        self.col_lower_bound = matrix(base_ring, [], **kwds)
+        self.col_upper_bound = matrix(base_ring, [], **kwds)
 
         self.row_name_var = []
         self.col_name_var = []
@@ -152,7 +152,7 @@ cdef class MatrixBackend(GenericBackend):
         """
         if obj is None:
             obj = 0.0
-        self.G_matrix.augment(Matrix([0 for i in range(self.nrows())]))
+        self.G_matrix.augment(matrix([0 for i in range(self.nrows())]))
         self.col_lower_bound.augment(lower_bound)
         self.col_upper_bound.augment(upper_bound)
         self.objective_function.augment(obj)
@@ -319,7 +319,7 @@ cdef class MatrixBackend(GenericBackend):
         """
         column = []
         for _ in indices:
-            column.augment(Matrix([0.0]))
+            column.augment(matrix([0.0]))
 
         for idx, ind in enumerate(indices):
             column[ind] = coeffs[idx]
@@ -367,7 +367,7 @@ cdef class MatrixBackend(GenericBackend):
             while c[0] > len(self.G_matrix) - 1:
                 self.add_variable()
         for i in range(len(self.G_matrix)):
-            self.G_matrix[i].augment(Matrix([0.0]))
+            self.G_matrix[i].augment(matrix([0.0]))
         for c in coefficients:
             self.G_matrix[c[0]][-1] = c[1]
 
