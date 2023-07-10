@@ -646,9 +646,9 @@ cdef class GapElement(RingElement):
         """
         cdef bint result = False
         cdef GapElement c_other
-        if isinstance(other, GapElement)
+        if isinstance(other, GapElement):
             c_other = <GapElement>other
-        else
+        else:
             libgap = self.parent()
             c_other = <GapElement>(libgap(other))
 
