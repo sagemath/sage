@@ -316,12 +316,13 @@ else:
 if not args.no_test:
     executable = f'{os.path.relpath(args.venv)}/bin/sage' if args.venv else 'sage'
     environment_args = f'--environment {args.environment} ' if args.environment != runtest_default_environment else ''
+    long_args = f'--long ' if args.long else ''
     probe_args = f'--probe {shlex.quote(args.probe)} ' if args.probe else ''
     lib_args = f'--only-lib ' if args.venv else ''
     doc_file = tmp_filename()
     if args.venv or environment_args:
        input = os.path.join(os.path.relpath(SAGE_ROOT), 'src', 'sage', 'version.py')
-       cmdline = f'{shlex.quote(executable)} -t {environment_args}{probe_args}{lib_args}{shlex.quote(input)}'
+       cmdline = f'{shlex.quote(executable)} -t {environment_args}{long_args}{probe_args}{lib_args}{shlex.quote(input)}'
        print(f'Running "{cmdline}"')
        if status := os.waitstatus_to_exitcode(os.system(f'{cmdline} > {shlex.quote(doc_file)}')):
            print(f'Doctester exited with error status {status}')
@@ -335,7 +336,7 @@ for input, output in zip(inputs, outputs):
         doc_out = ''
     else:
         # Run the doctester, putting the output of the test into sage's temporary directory
-        cmdline = f'{shlex.quote(executable)} -t {environment_args}{probe_args}{lib_args}{shlex.quote(input)}'
+        cmdline = f'{shlex.quote(executable)} -t {environment_args}{long_args}{probe_args}{lib_args}{shlex.quote(input)}'
         print(f'Running "{cmdline}"')
         os.system(f'{cmdline} > {shlex.quote(doc_file)}')
 
