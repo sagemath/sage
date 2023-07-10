@@ -1547,6 +1547,54 @@ is automatically transformed to::
 The doctest fixer also aligns the ``# optional/needs FEATURE`` tags on
 individual doctests at a fixed set of tab stops.
 
+The doctester may issue style warnings when ``# optional/needs`` tags are
+repeated on a whole block of doctests, suggesting to use a block-scoped tag
+instead. The doctest fixer makes these changes automatically.
+
+There are situations in which the doctester and doctest fixer show too
+much restraint and a manual intervention would improve the formatting
+of the doctests. In the example below, the doctester does not issue a
+style warning because the first doctest line does not carry the ``# needs``
+tag::
+
+  | EXAMPLES::
+  |
+  |     sage: set_verbose(-1)
+  |     sage: P.<x,y,z> = ProjectiveSpace(QQbar, 2)     # needs sage.rings.number_field
+  |     sage: C = Curve([x^3*y + 2*x^2*y^2 + x*y^3      # needs sage.rings.number_field
+  |     ....:             + x^3*z + 7*x^2*y*z
+  |     ....:             + 14*x*y^2*z + 9*y^3*z], P)
+  |     sage: Q = P([0,0,1])                            # needs sage.rings.number_field
+  |     sage: C.tangents(Q)                             # needs sage.rings.number_field
+  |     [x + 4.147899035704788?*y,
+  |      x + (1.426050482147607? + 0.3689894074818041?*I)*y,
+  |      x + (1.426050482147607? - 0.3689894074818041?*I)*y]
+
+To change this example, there are two approaches:
+
+#. Just add the line ``sage: # needs sage.rings.number_field`` at
+   the beginning and run the doctest fixer, which will remove the tags on the individual
+   doctests that have now become redundant.
+
+#. Insert a blank line after the first doctest line, splitting the block into two.
+   Now the ``# needs`` tag is repeated on the whole second block, so running the doctest
+   fixer will add a block-scoped tag and remove the individual tags::
+
+     | EXAMPLES::
+     |
+     |     sage: set_verbose(-1)
+     |
+     |     sage: # needs sage.rings.number_field
+     |     sage: P.<x,y,z> = ProjectiveSpace(QQbar, 2)
+     |     sage: C = Curve([x^3*y + 2*x^2*y^2 + x*y^3
+     |     ....:             + x^3*z + 7*x^2*y*z
+     |     ....:             + 14*x*y^2*z + 9*y^3*z], P)
+     |     sage: Q = P([0,0,1])
+     |     sage: C.tangents(Q)
+     |     [x + 4.147899035704788?*y,
+     |      x + (1.426050482147607? + 0.3689894074818041?*I)*y,
+     |      x + (1.426050482147607? - 0.3689894074818041?*I)*y]
+
 In places where the doctester issues a doctest dataflow warning
 (``Variable ... referenced here was set only in doctest marked '# optional - FEATURE'``),
 the doctest fixer automatically adds the missing ``# optional/needs`` tags.
