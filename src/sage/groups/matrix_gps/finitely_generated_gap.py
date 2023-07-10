@@ -899,7 +899,7 @@ class FinitelyGeneratedMatrixGroup_gap(MatrixGroup_gap):
         inv = set()
         for e in IntegerVectors(deg, D):
             F = self.reynolds_operator(R.monomial(*e), chi=chi)
-            if not F.is_zero() and _new_invariant_is_linearly_independent((F:=F/F.lc()), inv, R):
+            if not F.is_zero() and _new_invariant_is_linearly_independent((F:=F/F.lc()), inv):
                 inv.add(F)
                 if len(inv) == ms[deg]:
                     break
