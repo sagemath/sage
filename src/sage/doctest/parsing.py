@@ -426,7 +426,7 @@ def update_optional_tags(line, tags=None, *, add_tags=None, remove_tags=None, fo
     When no tags are changed, by default, the unchanged input is returned.
     We can force a rewrite; unconditionally or whenever standard tags are involved.
     But even when forced, if comments are already aligned at one of the standard alignment columns,
-    this alignment is kept even if we would normally realign farther to the left.
+    this alignment is kept even if we would normally realign farther to the left::
 
         sage: print_with_ruler([
         ....:     update_optional_tags('    sage: unforced()       # opt' 'ional - latte_int'),
