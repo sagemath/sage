@@ -219,24 +219,25 @@ class Factorization(SageObject):
 
         INPUT:
 
-        - ``x`` - a list of pairs (p, e) with e an integer;
-          otherwise a TypeError is raised
+        - ``x`` -- a list of pairs (p, e) with e an integer;
+          otherwise a :class:`TypeError` is raised
 
-        - ``unit`` - (default: 1) the unit part of the factorization.
+        - ``unit`` -- (default: 1) the unit part of the factorization.
 
-        - ``cr`` - (default: False) if True, print the factorization with
-          carriage returns between factors.
+        - ``cr`` -- (default: ``False``) if ``True``, print the factorization
+          with carriage returns between factors.
 
-        - ``sort`` - (default: True) if True, sort the factors by calling
-          the sort function ``self.sort()`` after creating the factorization
+        - ``sort`` - (default: ``True``) if ``True``, sort the factors by
+          calling the sort function ``self.sort()`` after creating
+          the factorization
 
-        - ``simplify`` - (default: True) if True, remove duplicate
+        - ``simplify`` - (default: ``True``) if ``True``, remove duplicate
           factors from the factorization.  See the documentation for
           self.simplify.
 
         OUTPUT:
 
-        - a Factorization object
+        a Factorization object
 
         EXAMPLES:
 
@@ -319,7 +320,7 @@ class Factorization(SageObject):
 
     def __getitem__(self, i):
         """
-        Return `i^{th}` factor of self.
+        Return `i^{th}` factor of ``self``.
 
         EXAMPLES::
 
@@ -340,7 +341,7 @@ class Factorization(SageObject):
 
     def __setitem__(self, i, v):
         """
-        Set the `i^{th}` factor of self.
+        Set the `i^{th}` factor of ``self``.
 
         .. warning::
 
@@ -359,7 +360,7 @@ class Factorization(SageObject):
 
     def __len__(self):
         """
-        Return the number of prime factors of self, not counting
+        Return the number of prime factors of ``self``, not counting
         the unit part.
 
         EXAMPLES::
@@ -435,11 +436,11 @@ class Factorization(SageObject):
 
     def __copy__(self):
         r"""
-        Return a copy of self.
+        Return a copy of ``self``.
 
         This is *not* a deepcopy -- only references to the factors are
         returned, not copies of them.  Use ``deepcopy(self)`` if you need
-        a deep copy of self.
+        a deep copy of ``self``.
 
         EXAMPLES:
 
@@ -469,7 +470,7 @@ class Factorization(SageObject):
 
     def __deepcopy__(self, memo):
         r"""
-        Return a deep copy of self.
+        Return a deep copy of ``self``.
 
         EXAMPLES:
 
@@ -537,7 +538,7 @@ class Factorization(SageObject):
 
     def base_change(self, U):
         """
-        Return the factorization self, with its factors (including the
+        Return the factorization ``self``, with its factors (including the
         unit part) coerced into the universe `U`.
 
         EXAMPLES::
@@ -549,7 +550,7 @@ class Factorization(SageObject):
             sage: F.base_change(P).universe()
             Univariate Polynomial Ring in x over Integer Ring
 
-        This method will return a TypeError if the coercion is not
+        This method will return a :class:`TypeError` if the coercion is not
         possible::
 
             sage: g = x^2 - 1
@@ -571,7 +572,7 @@ class Factorization(SageObject):
 
     def is_commutative(self) -> bool:
         """
-        Return True if my factors commute.
+        Return ``True`` if my factors commute.
 
         EXAMPLES::
 
@@ -650,7 +651,7 @@ class Factorization(SageObject):
 
         INPUT:
 
-        - ``key`` - (default: ``None``) comparison key
+        - ``key`` -- (default: ``None``) comparison key
 
         OUTPUT:
 
@@ -800,7 +801,7 @@ class Factorization(SageObject):
             sage: f
             factorization of -100
 
-        However _repr_ always prints normally::
+        However ``_repr_`` always prints normally::
 
             sage: f._repr_()
             '-1 * 2^2 * 5^2'
@@ -924,7 +925,7 @@ class Factorization(SageObject):
 
     def __add__(self, other):
         """
-        Return the (unfactored) sum of self and other.
+        Return the (unfactored) sum of ``self`` and ``other``.
 
         EXAMPLES::
 
@@ -941,7 +942,7 @@ class Factorization(SageObject):
 
     def __sub__(self, other):
         """
-        Return the (unfactored) difference of self and other.
+        Return the (unfactored) difference of ``self`` and ``other``.
 
         EXAMPLES::
 
@@ -956,7 +957,7 @@ class Factorization(SageObject):
 
     def __radd__(self, left):
         """
-        Return the (unfactored) sum of self and left.
+        Return the (unfactored) sum of ``self`` and ``left``.
 
         EXAMPLES::
 
@@ -967,7 +968,7 @@ class Factorization(SageObject):
 
     def __rsub__(self, left):
         """
-        Return the (unfactored) difference of left and self.
+        Return the (unfactored) difference of ``left`` and ``self``.
 
         EXAMPLES::
 
@@ -995,7 +996,7 @@ class Factorization(SageObject):
 
     def __rmul__(self, left):
         """
-        Return the product left * self, where left is not a Factorization.
+        Return the product ``left * self``, where ``left`` is not a Factorization.
 
         EXAMPLES::
 
@@ -1028,7 +1029,7 @@ class Factorization(SageObject):
 
         If the two factorizations have different universes, this
         method will attempt to find a common universe for the
-        product.  A TypeError is raised if this is impossible.
+        product.  A :class:`TypeError` is raised if this is impossible.
 
         EXAMPLES::
 
@@ -1179,6 +1180,8 @@ class Factorization(SageObject):
         """
         Implement the substitution.
 
+        This is assuming that each term can be substituted.
+
         There is another mechanism for substitution
         in symbolic products.
 
@@ -1240,7 +1243,7 @@ class Factorization(SageObject):
 
         If the two factorizations have different universes, this
         method will attempt to find a common universe for the
-        gcd.  A TypeError is raised if this is impossible.
+        gcd.  A :class:`TypeError` is raised if this is impossible.
 
         EXAMPLES::
 
@@ -1282,7 +1285,7 @@ class Factorization(SageObject):
 
         If the two factorizations have different universes, this
         method will attempt to find a common universe for the
-        lcm.  A TypeError is raised if this is impossible.
+        lcm.  A :class:`TypeError` is raised if this is impossible.
 
         EXAMPLES::
 
@@ -1320,7 +1323,7 @@ class Factorization(SageObject):
 
     def is_integral(self) -> bool:
         r"""
-        Return True iff all exponents of this Factorization are non-negative.
+        Return whether all exponents of this Factorization are non-negative.
 
         EXAMPLES::
 
@@ -1338,11 +1341,11 @@ class Factorization(SageObject):
 
     def radical(self):
         """
-        Return the factorization of the radical of the value of self.
+        Return the factorization of the radical of the value of ``self``.
 
         First, check that all exponents in the factorization are
-        positive, raise ValueError otherwise.  If all exponents are
-        positive, return self with all exponents set to 1 and with the
+        positive, raise :class:`ValueError` otherwise.  If all exponents are
+        positive, return ``self`` with all exponents set to 1 and with the
         unit set to 1.
 
         EXAMPLES::
@@ -1358,18 +1361,18 @@ class Factorization(SageObject):
         """
         if not all(e > 0 for _, e in self.__x):
             raise ValueError("all exponents in the factorization must be positive")
-        return Factorization([(p, 1) for p, e in self.__x], unit=self.unit().parent()(1),
+        return Factorization([(p, 1) for p, _ in self.__x], unit=self.unit().parent()(1),
                              cr=self.__cr, sort=False, simplify=False)
 
     def radical_value(self):
         """
-        Return the product of the prime factors in self.
+        Return the product of the prime factors in ``self``.
 
         First, check that all exponents in the factorization are
-        positive, raise ValueError otherwise.  If all exponents are
-        positive, return the product of the prime factors in self.
+        positive, raise :class:`ValueError` otherwise.  If all exponents are
+        positive, return the product of the prime factors in ``self``.
         This should be functionally equivalent to
-        self.radical().value()
+        ``self.radical().value()``.
 
         EXAMPLES::
 
