@@ -61,21 +61,17 @@ cdef class MatrixBackend(GenericBackend):
             from sage.rings.rational_field import QQ
             base_ring = QQ
 
-        if numpy_implementation == True:
-            self.objective_function = Matrix(QQ, [], implementation = "numpy")
-            self.G_matrix = Matrix(QQ, [], implementation = "numpy")
-            self.G_matrix = Matrix(QQ, [], implementation = "numpy")
-            self.row_lower_bound = Matrix(QQ, [], implementation = "numpy")
-            self.row_upper_bound = Matrix(QQ, [], implementation = "numpy")
-            self.col_lower_bound = Matrix(QQ, [], implementation = "numpy")
-            self.col_upper_bound = Matrix(QQ, [], implementation = "numpy")
+        if numpy_implementation:
+            kwds = dict(implementation = "numpy")
         else:
-            self.objective_function = Matrix(QQ, [])
-            self.G_matrix = Matrix(QQ, [])
-            self.row_lower_bound = Matrix(QQ, [])
-            self.row_upper_bound = Matrix(QQ, [])
-            self.col_lower_bound = Matrix(QQ, [])
-            self.col_upper_bound = Matrix(QQ, [])
+            kwds = {}
+
+        self.objective_function = Matrix(QQ, [], **kwds)
+        self.G_matrix = Matrix(QQ, [], **kwds)
+        self.row_lower_bound = Matrix(QQ, [], **kwds)
+        self.row_upper_bound = Matrix(QQ, [], **kwds)
+        self.col_lower_bound = Matrix(QQ, [], **kwds)
+        self.col_upper_bound = Matrix(QQ, [], **kwds)
 
         self.row_name_var = []
         self.col_name_var = []
