@@ -118,7 +118,8 @@ def parse_optional_tags(string, *, return_string_sans_tags=False):
     - ``'py2'``
     - ``'arb216'``
     - ``'arb218'``
-    - ``'optional - PKG_NAME...'`` -- the dictionary will just have the key ``'PKG_NAME'``
+    - ``'optional - FEATURE...'`` or ``'needs FEATURE...'`` --
+      the dictionary will just have the key ``'FEATURE'``
 
     The values, if non-``None``, are strings with optional explanations
     for a tag, which may appear in parentheses after the tag in ``string``.
