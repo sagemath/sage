@@ -1011,7 +1011,6 @@ class SageDocTestParser(doctest.DocTestParser):
             ....:               else (getattr(x, 'warnings', None), x.sage_source, x.source)
             ....:             for x in DTP.parse(test_string)]
 
-            sage: # optional - guava
             sage: parse('sage: 1 # optional guava mango\nsage: 2 # optional guava\nsage: 3 # optional guava\nsage: 4 # optional guava\nsage: 5 # optional guava\n\nsage: 11 # optional guava')
             ['',
              (["Consider using a block-scoped tag by inserting the line 'sage: # optional - guava' just before this line to avoid repeating the tag 5 times"],
@@ -1029,7 +1028,6 @@ class SageDocTestParser(doctest.DocTestParser):
              (None, '11 # optional guava\n', 'Integer(11) # optional guava\n'),
              '']
 
-            sage: # optional - guava
             sage: parse('sage: 1 # optional guava\nsage: 2 # optional guava mango\nsage: 3 # optional guava\nsage: 4 # optional guava\nsage: 5 # optional guava\n')
             ['',
              (["Consider using a block-scoped tag by inserting the line 'sage: # optional - guava' just before this line to avoid repeating the tag 5 times"],
