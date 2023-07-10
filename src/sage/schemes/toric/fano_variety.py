@@ -107,15 +107,14 @@ implementing them on your own as a patch for inclusion!
 # The first example of the tutorial is taken from
 # CPRFanoToricVariety_field.anticanonical_hypersurface
 
-
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2010 Andrey Novoseltsev <novoselt@gmail.com>
 #       Copyright (C) 2010 William Stein <wstein@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 import re
 
@@ -527,7 +526,7 @@ def CPRFanoToricVariety(Delta=None,
             raise ValueError("the origin (point #%d) cannot be used for a "
                 "coordinate!\nGot: %s"
                 % (Delta_polar.origin(), coordinate_points))
-    point_to_ray = dict()
+    point_to_ray = {}
     for n, point in enumerate(coordinate_points):
         point_to_ray[point] = n
     # This can be simplified if LatticePolytopeClass is adjusted.
@@ -568,7 +567,7 @@ def CPRFanoToricVariety(Delta=None,
                         make_simplicial=make_simplicial)
     # Now create yet another fan making sure that the order of the rays is
     # the same as requested (it is a bit difficult to get it from the start)
-    trans = dict()
+    trans = {}
     for n, ray in enumerate(fan.rays()):
         trans[n] = rays.index(ray)
     cones = tuple(tuple(sorted(trans[r] for r in cone.ambient_ray_indices()))
@@ -1147,7 +1146,7 @@ class CPRFanoToricVariety_field(ToricVariety_field):
             Delta_polar = LatticePolytope(fan.rays())
 
             points = Delta_polar.points()
-            point_to_ray = dict()
+            point_to_ray = {}
             coordinate_points = []
             for ray_index, ray in enumerate(fan.rays()):
                 point = points.index(ray)
@@ -1230,7 +1229,7 @@ class CPRFanoToricVariety_field(ToricVariety_field):
                              "subdivision!" % Delta_polar.origin())
         if new_points:
             coordinate_points = coordinate_points + new_points
-            point_to_ray = dict()
+            point_to_ray = {}
             for n, point in enumerate(coordinate_points):
                 point_to_ray[point] = n
         else:
