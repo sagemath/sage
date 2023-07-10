@@ -18,10 +18,11 @@ Maps between them
    :maxdepth: 1
 
    sage/schemes/elliptic_curves/hom
+   sage/schemes/elliptic_curves/hom_composite
+   sage/schemes/elliptic_curves/hom_sum
    sage/schemes/elliptic_curves/weierstrass_morphism
    sage/schemes/elliptic_curves/ell_curve_isogeny
    sage/schemes/elliptic_curves/hom_velusqrt
-   sage/schemes/elliptic_curves/hom_composite
    sage/schemes/elliptic_curves/hom_scalar
    sage/schemes/elliptic_curves/hom_frobenius
    sage/schemes/elliptic_curves/isogeny_small_degree

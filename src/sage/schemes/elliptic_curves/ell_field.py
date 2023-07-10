@@ -2049,13 +2049,13 @@ def compute_model(E, name):
 
     raise NotImplementedError(f'cannot compute {name} model')
 
-def point_of_order(E, l):
+def point_of_order(E, n):
     r"""
     Given an elliptic curve `E` over a finite field or a number field
-    and an integer `\ell \geq 1`, construct a point of order `\ell` on `E`,
+    and an integer `n \geq 1`, construct a point of order `n` on `E`,
     possibly defined over an extension of the base field of `E`.
 
-    Currently only prime values of `\ell` are supported.
+    Currently only prime powers `n` are supported.
 
     EXAMPLES::
 
@@ -2072,16 +2072,36 @@ def point_of_order(E, l):
 
     ::
 
+        sage: Q = point_of_order(E, 8); Q
+        (69*x^5 + 24*x^4 + 100*x^3 + 65*x^2 + 88*x + 97 : 65*x^5 + 28*x^4 + 5*x^3 + 45*x^2 + 42*x + 18 : 1)
+        sage: 8*Q == 0 and 4*Q != 0
+        True
+
+    ::
+
         sage: from sage.schemes.elliptic_curves.ell_field import point_of_order
         sage: E = EllipticCurve(QQ, [7,7])
         sage: P = point_of_order(E, 3); P  # random
         (x : -Y : 1)
         sage: P.base_ring()
         Number Field in Y with defining polynomial Y^2 - x^3 - 7*x - 7 over its base field
+        sage: P.base_ring().base_field()
+        Number Field in x with defining polynomial x^4 + 14*x^2 + 28*x - 49/3
         sage: P.order()
         3
         sage: P.curve().a_invariants()
         (0, 0, 0, 7, 7)
+
+    ::
+
+        sage: Q = point_of_order(E, 4); Q  # random
+        (x : Y : 1)
+        sage: Q.base_ring()
+        Number Field in Y with defining polynomial Y^2 - x^3 - 7*x - 7 over its base field
+        sage: Q.base_ring().base_field()
+        Number Field in x with defining polynomial x^6 + 35*x^4 + 140*x^3 - 245*x^2 - 196*x - 735
+        sage: Q.order()
+        4
     """
     # Construct the field extension defined by the given polynomial,
     # in such a way that the result is recognized by Sage as a field.
@@ -2094,14 +2114,15 @@ def point_of_order(E, l):
             return poly.splitting_field(rng.variable_name())
         return fld.extension(poly, rng.variable_name())
 
-    l = ZZ(l)
-    if l == 1:
+    n = ZZ(n)
+    if n == 1:
         return E(0)
 
-    if not l.is_prime():
-        raise NotImplementedError('composite orders are currently unsupported')
+    l,m = n.is_prime_power(get_data=True)
+    if not m:
+        raise NotImplementedError('only prime-power orders are currently supported')
 
-    xpoly = E.division_polynomial(l)
+    xpoly = E.division_polynomial(n) // E.division_polynomial(n//l)
     if xpoly.degree() < 1:  # supersingular and l == p
         raise ValueError('curve does not have any points of the specified order')
 
@@ -2116,4 +2137,6 @@ def point_of_order(E, l):
         xx = FF(xx)
 
     EE = E.change_ring(FF)
-    return EE.lift_x(xx)
+    pt = EE.lift_x(xx)
+    pt.set_order(n, check=False)
+    return pt
