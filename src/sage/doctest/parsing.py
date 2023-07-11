@@ -442,6 +442,10 @@ def update_optional_tags(line, tags=None, *, add_tags=None, remove_tags=None, fo
         ....:                          force_rewrite=True),
         ....:     update_optional_tags('    sage: also_already_aligned()                                                                                        # ne' 'eds scipy',
         ....:                          force_rewrite='standard'),
+        ....:     update_optional_tags('    sage: two_columns_first_preserved()         # long time                             # ne' 'eds scipy',
+        ....:                          force_rewrite='standard'),
+        ....:     update_optional_tags('    sage: two_columns_first_preserved()                 # long time                                 # ne' 'eds scipy',
+        ....:                          force_rewrite='standard'),
         ....: ])
         |                                                V       V       V       V       V   V   v           v                   v                                       v
         |    sage: unforced()       # optional - latte_int
@@ -451,6 +455,8 @@ def update_optional_tags(line, tags=None, *, add_tags=None, remove_tags=None, fo
         |    sage: aligned_with_below()                                  # optional - 4ti2
         |    sage: aligned_with_above()                                  # optional - 4ti2
         |    sage: also_already_aligned()                                                                                        # needs scipy
+        |    sage: two_columns_first_preserved()         # long time                             # needs scipy
+        |    sage: two_columns_first_preserved()                 # long time                     # needs scipy
 
     Rewriting a persistent (block-scoped) tag::
 
@@ -517,21 +523,21 @@ def update_optional_tags(line, tags=None, *, add_tags=None, remove_tags=None, fo
                     break
             line += '  '
 
-            if (group['optional'] or group['special']) and (group['standard'] or group['sage']):
-                # Try if two-column mode works better
-                first_part = unparse_optional_tags({tag: explanation
-                                                    for tag, explanation in new_tags.items()
-                                                    if (tag in group['optional']
-                                                        or tag in group['special'])})
-                column = standard_tag_columns[0]
-                if len(line + first_part) + 8 <= column:
-                    line += first_part
-                    line += ' ' * (column - len(line))
-                    line += unparse_optional_tags({tag: explanation
-                                                   for tag, explanation in new_tags.items()
-                                                   if not (tag in group['optional']
-                                                           or tag in group['special'])})
-                    return line.rstrip()
+        if (group['optional'] or group['special']) and (group['standard'] or group['sage']):
+            # Try if two-column mode works better
+            first_part = unparse_optional_tags({tag: explanation
+                                                for tag, explanation in new_tags.items()
+                                                if (tag in group['optional']
+                                                    or tag in group['special'])})
+            column = standard_tag_columns[0]
+            if len(line + first_part) + 8 <= column:
+                line += first_part
+                line += ' ' * (column - len(line))
+                line += unparse_optional_tags({tag: explanation
+                                               for tag, explanation in new_tags.items()
+                                               if not (tag in group['optional']
+                                                       or tag in group['special'])})
+                return line.rstrip()
 
     line += unparse_optional_tags(new_tags)
     return line
