@@ -59,6 +59,7 @@ EXAMPLES::
 from sage.misc.cachefunc import cached_method
 from sage.homology.homology_group import HomologyGroup
 from sage.rings.integer_ring import ZZ
+from sage.rings.rational_field import QQ
 from sage.structure.sage_object import SageObject
 from .cubical_complex import CubicalComplex, cubical_complexes
 from .simplicial_complex import SimplicialComplex, copy
@@ -72,10 +73,12 @@ from itertools import combinations
 # - and a lot more ...
 # - add literature to bibliography?
 # - golod decomposition
-# - cohomology ring (Buchstaber 154, 155) -- consequence of hochter's formula (cartesian product)
 # - polyhedral products and real moment-angle complexes?
 # - return for odd dimensional simplicial complexes in golod_decomposition?
 # - explicitly state the vertices?
+# - add product using join of simplicial complexes
+# - a lot of things follow from the homology and cohomology - euler, bigraded betti ...
+# - mark copies of code?
 
 def union(c1, c2):
     facets = []
@@ -329,6 +332,8 @@ class MomentAngleComplex(SageObject): # should this inherit SimplicialComplex?
         return out
 
     #expand the docstring here
+    #works only for ZZ
+    # should direct sum be implemented differently here?
     def homology(self, dim=None, base_ring=ZZ, cohomology=False,
                  algorithm='pari', verbose=False, reduced=True):
         """
@@ -348,11 +353,19 @@ class MomentAngleComplex(SageObject): # should this inherit SimplicialComplex?
             for j in range(n+1):
                 for x in combinations(vertices, j):
                     S = self._simplicial_complex.generated_subcomplex(x, is_mutable=False)
-                    invfac.extend(S.homology(l-j-1, base_ring=base_ring,
-                                             cohomology=cohomology, algorithm=algorithm,
-                                             verbose=verbose, reduced=reduced)._original_invts)
+                    if base_ring.is_field():
+                        invfac.append(S.homology(l-j-1, base_ring=base_ring,
+                                                 cohomology=cohomology, algorithm=algorithm,
+                                                 verbose=verbose, reduced=reduced).dimension())
+                    else:
+                        invfac.extend(S.homology(l-j-1, base_ring=base_ring,
+                                                 cohomology=cohomology, algorithm=algorithm,
+                                                 verbose=verbose, reduced=reduced)._original_invts)
 
             m = len(invfac)
+            if base_ring.is_field():
+                return HomologyGroup(sum(invfac), base_ring)
+
             return HomologyGroup(m, base_ring, invfac)
 
         if dim is not None:
@@ -364,7 +377,7 @@ class MomentAngleComplex(SageObject): # should this inherit SimplicialComplex?
                 high = dim
             dims = range(low, high + 1)
         else:
-            dims = range(self.dimension()+1) # is this the correct dimension
+            dims = range(self.dimension()+1)
 
         answer = {i : homology_group(i) for i in dims}
         return answer
@@ -380,3 +393,34 @@ class MomentAngleComplex(SageObject): # should this inherit SimplicialComplex?
         """
         return self.homology(dim=dim, cohomology=True, base_ring=base_ring,
                              algorithm=algorithm, verbose=verbose, reduced=reduced)
+
+    def betti(self, dim=None):
+        r"""
+        The Betti numbers of this moment-angle complex as a dictionary
+        (or a single Betti number, if only one dimension is given):
+        the ith Betti number is the rank of the ith homology group.
+
+        :param dim: If ``None``, then return every Betti number, as
+           a dictionary with keys the non-negative integers.  If
+           ``dim`` is an integer or list, return the Betti number for
+           each given dimension.  (Actually, if ``dim`` is a list,
+           return the Betti numbers, as a dictionary, in the range
+           from ``min(dim)`` to ``max(dim)``.  If ``dim`` is a number,
+           return the Betti number in that dimension.)
+        :type dim: integer or list of integers or ``None``; optional,
+           default ``None``
+
+        EXAMPLES:
+
+        <Lots and lots of examples>
+        """
+        dict = {}
+        H = self.homology(base_ring=QQ)
+        try:
+            for n in H.keys():
+                dict[n] = H[n].dimension()
+                if n == 0:
+                    dict[n] += 1
+            return dict
+        except AttributeError:
+            return H.dimension()
