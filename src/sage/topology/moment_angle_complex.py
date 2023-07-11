@@ -212,7 +212,7 @@ class MomentAngleComplex(SageObject): # should this inherit SimplicialComplex?
         Return the dictionary of components of ``self``, indexed by facets
         of the simplicial complex.
 
-        The values are lists, representing spheres and disks described in the 
+        The values are lists, representing spheres and disks described in the
         construction of the moment-angle complex.
 
         EXAMPLES::
@@ -221,27 +221,45 @@ class MomentAngleComplex(SageObject): # should this inherit SimplicialComplex?
         """
 
         return self._components
-        
-    def homology(self, dim=None, base_ring=ZZ, subcomplex=None,
-                 generators=False, cohomology=False, algorithm='pari',
-                 verbose=False, reduced=True, **kwds):
-        """
-        The (reduced) homology of this moment-angle complex.
 
+    #def homology(self, dim=None, base_ring=ZZ, subcomplex=None,
+                 #generators=False, cohomology=False, algorithm='pari',
+                 #verbose=False, reduced=True, **kwds):
+        #"""
+        #The (reduced) homology of this moment-angle complex.
+#
+#
+        #.. SEEALSO::
+            #:meth:`~sage.topology.cell_complex.homology`
+#
+        #EXAMPLES::
+#
+        #<Lots and lots of examples>
+        #"""
+        #if self._moment_angle_complex is None:
+            #raise ValueError("the moment-angle complex is not created")
+#
+        #return self._moment_angle_complex.homology(dim, base_ring, subcomplex,
+                 #generators, cohomology, algorithm,
+                 #verbose, reduced, **kwds)
 
-        .. SEEALSO::
-            :meth:`~sage.topology.cell_complex.homology`
+    def dimension(self):
+        r"""
+        The dimension of this moment-angle complex.
+
+        The dimension of a moment-angle complex is the dimension
+        of the constructed (cubical) complex. It is not difficult to
+        see that this turns out to be `m+n+1`, where `m` is the number
+        of vertices and `n` is the dimension of the associated simplicial
+        complex.
 
         EXAMPLES::
 
         <Lots and lots of examples>
         """
-        if self._moment_angle_complex is None:
-            raise ValueError("the moment-angle complex is not created")
-
-        return self._moment_angle_complex.homology(dim, base_ring, subcomplex,
-                 generators, cohomology, algorithm,
-                 verbose, reduced, **kwds)
+        number_of_vertices = len(self._simplicial_complex.vertices())
+        dim = self._simplicial_complex.dimension()
+        return number_of_vertices + dim + 1
 
     def trivial_massey_product(self):
         """
@@ -273,6 +291,7 @@ class MomentAngleComplex(SageObject): # should this inherit SimplicialComplex?
 
         return not any(G.subgraph_search(g) is not None for g in obstruction_graphs)
 
+    #needs work
     def golod_decomposition(self):
         """
         Determine whether ``self`` can be written (is homeomorphic) to a
@@ -306,33 +325,58 @@ class MomentAngleComplex(SageObject): # should this inherit SimplicialComplex?
                 c2 = " x S^" + str(D[num][i])
 
             out = out + " #(" + c1 + c2 + ")^" + str(num)
-
-
         # needs work
         return out
 
-    def cohomology(self, base_ring=ZZ):
+    #expand the docstring here
+    def homology(self, dim=None, base_ring=ZZ, cohomology=False,
+                 algorithm='pari', verbose=False, reduced=True):
         """
-        Return the cohomology groups of ``self``, computed
+        The reduced homology groups of ``self``, computed
         using Hochter's formula.
 
         EXAMPLES::
 
         <Lots and lots of examples>
         """
-        def cohomology_group(l):
-            from sage.sets.cartesian_product import cartesian_product
-
+        def homology_group(l):
+            self._simplicial_complex.set_immutable()
             vertices = self._simplicial_complex.vertices()
             n = len(vertices)
-            homology_groups = []
+            invfac = []
 
             for j in range(n+1):
-             for x in combinations(vertices, j):
-                 S = self._simplicial_complex.generated_subcomplex(x)
-                 homology_groups.append(S.homology(l-j-1, base_ring=base_ring))
-                 return cartesian_product(homology_groups)
-                 print(homology_groups)
-                 
-        for i in range(5):
-            print(cohomology_group(i))
+                for x in combinations(vertices, j):
+                    S = self._simplicial_complex.generated_subcomplex(x, is_mutable=False)
+                    invfac.extend(S.homology(l-j-1, base_ring=base_ring,
+                                             cohomology=cohomology, algorithm=algorithm,
+                                             verbose=verbose, reduced=reduced)._original_invts)
+
+            m = len(invfac)
+            return HomologyGroup(m, base_ring, invfac)
+
+        if dim is not None:
+            if isinstance(dim, (list, tuple, range)):
+                low = min(dim)
+                high = max(dim)
+            else:
+                low = dim
+                high = dim
+            dims = range(low, high + 1)
+        else:
+            dims = range(self.dimension()+1) # is this the correct dimension
+
+        answer = {i : homology_group(i) for i in dims}
+        return answer
+
+    def cohomology(self, dim=None, base_ring=ZZ, algorithm='pari',
+                 verbose=False, reduced=True):
+        r"""
+        The reduced cohomology of this moment-angle complex.
+
+        EXAMPLES::
+
+        <Lots and lots of examples>
+        """
+        return self.homology(dim=dim, cohomology=True, base_ring=base_ring,
+                             algorithm=algorithm, verbose=verbose, reduced=reduced)
