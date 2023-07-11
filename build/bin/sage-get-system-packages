@@ -12,16 +12,16 @@ if [ -z "$SAGE_ROOT" ]; then
 fi
 case "$SYSTEM" in
     install-requires)
-        # Collect install-requires.txt and output it in the format
+        # Collect install-requires.txt (falling back to requirements.txt) and output it in the format
         # needed by setup.cfg [options] install_requires=
-        SYSTEM_PACKAGES_FILE_NAMES="install-requires.txt"
+        SYSTEM_PACKAGES_FILE_NAMES="install-requires.txt requirements.txt"
         STRIP_COMMENTS="sed s/#.*//;/^[[:space:]]*$/d;"
         COLLECT=
         ;;
     install-requires-toml)
-        # Collect install-requires.txt and output it in the format
+        # Collect install-requires.txt (falling back to requirements.txt) and output it in the format
         # needed by pyproject.toml [build-system] requires=
-        SYSTEM_PACKAGES_FILE_NAMES="install-requires.txt"
+        SYSTEM_PACKAGES_FILE_NAMES="install-requires.txt requirements.txt"
         STRIP_COMMENTS="sed s/#.*//;/^[[:space:]]*$/d;s/^/'/;s/$/',/;"
         COLLECT=
         ;;
