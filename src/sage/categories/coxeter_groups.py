@@ -1561,10 +1561,9 @@ class CoxeterGroups(Category_singleton):
             r"""
             Check if ``self`` is a fully-commutative element.
 
-            We use the characterization that
-            an element `w` in a Coxeter system `(W,S)` is
-            fully-commutative if and only if for every pair of
-            generators `s,t \in S` for which `m(s,t)>2`, no reduced
+            We use the characterization that an element `w` in a Coxeter
+            system `(W,S)` is fully-commutative if and only if for every pair
+            of generators `s,t \in S` for which `m(s,t)>2`, no reduced
             word of `w` contains the 'braid' word `sts...` of length
             `m(s,t)` as a contiguous subword. See [Ste1996]_.
 
@@ -1576,6 +1575,12 @@ class CoxeterGroups(Category_singleton):
                 sage: W = CoxeterGroup(['B', 3])
                 sage: len([1 for w in W if w.is_fully_commutative()])
                 24
+
+            TESTS::
+
+                sage: W = CoxeterGroup(['A', 2], index_set=['u','v'])
+                sage: len([1 for w in W if w.is_fully_commutative()])
+                5
             """
             word = self.reduced_word()
             from sage.combinat.root_system.braid_orbit import is_fully_commutative as is_fully_comm
