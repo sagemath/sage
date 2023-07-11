@@ -1578,9 +1578,9 @@ class CoxeterGroups(Category_singleton):
 
             TESTS::
 
-                sage: W = CoxeterGroup(['A', 2], index_set=['u','v'])
+                sage: W = CoxeterGroup(matrix(2,2,[1,7,7,1]),index_set='ab')
                 sage: len([1 for w in W if w.is_fully_commutative()])
-                5
+                13
             """
             word = self.reduced_word()
             from sage.combinat.root_system.braid_orbit import is_fully_commutative as is_fully_comm
