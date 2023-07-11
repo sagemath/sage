@@ -590,21 +590,33 @@ def process_mathtt(s):
     return s
 
 
-def process_optional_annotations(s):
+def process_optional_doctest_tags(s):
     r"""
-    Remove ``# optional`` annotations for present features from docstring ``s``.
-    """
-    lines = s.split('\n')
+    Remove ``# optional/needs`` doctest tags for present features from docstring ``s``.
 
+    EXAMPLES:
+
+        sage: from sage.misc.sagedoc import process_optional_doctest_tags
+        sage: process_optional_doctest_tags("sage: # needs sage.rings.finite_rings\nsage: K.<x> = FunctionField(GF(5^2,'a')); K\nRational function field in x over Finite Field in a of size 5^2")  # needs sage.rings.finite_rings
+        "sage: K.<x> = FunctionField(GF(5^2,'a')); K\nRational function field in x over Finite Field in a of size 5^2"
+    """
+    import io
     from sage.doctest.external import available_software
     from sage.doctest.parsing import parse_optional_tags, update_optional_tags
 
-    for i, line in enumerate(lines):
-        if re.match(' *sage: .*#', line):
-            tags = parse_optional_tags(line)
-            lines[i] = update_optional_tags(line, remove_tags=[tag for tag in tags
-                                                               if tag in available_software])
-    return '\n'.join(lines)
+    start = 0
+    with io.StringIO() as output:
+        for m in re.finditer('( *sage: *.*#.*)\n', s):
+            output.write(s[start:m.start(0)])
+            line = m.group(1)
+            tags = [tag for tag in parse_optional_tags(line)
+                    if tag not in available_software]
+            line = update_optional_tags(line, tags=tags)
+            if not re.fullmatch(' *sage: *', line):
+                print(line, file=output)
+            start = m.end(0)
+        output.write(s[start:])
+        return output.getvalue()
 
 
 def format(s, embedded=False):
@@ -788,7 +800,7 @@ def format(s, embedded=False):
         s = detex(s, embedded=embedded)
 
     if not embedded:
-        s = process_optional_annotations(s)
+        s = process_optional_doctest_tags(s)
 
     return s
 
