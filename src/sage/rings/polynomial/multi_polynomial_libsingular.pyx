@@ -441,7 +441,7 @@ cdef class MPolynomialRing_libsingular(MPolynomialRing_base):
             sage: del Q                                                                 # optional - sage.rings.finite_rings
             sage: del p                                                                 # optional - sage.rings.finite_rings
             sage: del q                                                                 # optional - sage.rings.finite_rings
-            sage: gc.collect()
+            sage: gc.collect()  # random output
             sage: len(ring_refcount_dict) == n                                          # optional - sage.rings.finite_rings
             False
         """
