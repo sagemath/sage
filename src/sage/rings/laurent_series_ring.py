@@ -405,6 +405,7 @@ class LaurentSeriesRing(UniqueRepresentation, CommutativeRing):
         EXAMPLES::
 
             sage: R.<u> = LaurentSeriesRing(Qp(5, 10))                                  # optional - sage.rings.padics
+            sage: S.<t> = LaurentSeriesRing(RationalField())                            # optional - sage.rings.padics
             sage: R(t + t^2 + O(t^3))                                                   # optional - sage.rings.padics
             (1 + O(5^10))*u + (1 + O(5^10))*u^2 + O(u^3)
             sage: R(t + t^2 + O(t^3), prec=2)                                           # optional - sage.rings.padics
