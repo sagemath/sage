@@ -257,14 +257,19 @@ cdef class LazyImport():
             if finish_startup_called:
                 warn(f"Option ``at_startup=True`` for lazy import {self._name} not needed anymore")
 
+        feature = self._feature
         try:
             self._object = getattr(__import__(self._module, {}, {}, [self._name]), self._name)
         except ImportError as e:
-            if self._feature:
+            if feature:
                 # Avoid warnings from static type checkers by explicitly importing FeatureNotPresentError.
                 from sage.features import FeatureNotPresentError
-                raise FeatureNotPresentError(self._feature, reason=f'Importing {self._name} failed: {e}')
+                raise FeatureNotPresentError(feature, reason=f'Importing {self._name} failed: {e}')
             raise
+
+        if feature:
+            # for the case that the feature is hidden
+            feature.require()
 
         if self._deprecation is not None:
             from sage.misc.superseded import deprecation_cython as deprecation
@@ -1084,7 +1089,7 @@ def lazy_import(module, names, as_=None, *,
     An example of an import relying on a feature::
 
         sage: from sage.features import PythonModule
-        sage: lazy_import('ppl', 'equation', feature=PythonModule('ppl', spkg='pplpy'))
+        sage: lazy_import('ppl', 'equation', feature=PythonModule('ppl', spkg='pplpy', type='standard'))
         sage: equation
         <built-in function equation>
         sage: lazy_import('PyNormaliz', 'NmzListConeProperties', feature=PythonModule('PyNormaliz', spkg='pynormaliz'))  # optional - pynormaliz
