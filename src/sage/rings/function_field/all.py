@@ -1,4 +1,5 @@
 from .all__sagemath_modules import *
+from .all__sagemath_symbolics import *
 
 from sage.misc.lazy_import import lazy_import
 

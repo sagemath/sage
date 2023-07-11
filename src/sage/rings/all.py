@@ -47,6 +47,9 @@ from .finite_rings.all import *
 # Number field
 from .number_field.all import *
 
+# Function field
+from .function_field.all import *
+
 # Finite residue fields
 from .finite_rings.residue_field import ResidueField
 
