@@ -143,7 +143,7 @@ def process_block(block, src_in_lines, file_optional_tags):
 
     if m := re.search(r"using.*block-scoped tag.*'(sage: .*)'.*to avoid repeating the tag", block):
         indent = (len(src_in_lines[first_line_num - 1]) - len(src_in_lines[first_line_num - 1].lstrip()))
-        src_in_lines[line_num - 1] = ' ' * indent + m.group(1) + '\n' + src_in_lines[line_num - 1]
+        src_in_lines[line_num - 2] += '\n' + ' ' * indent + m.group(1)
 
     if m := re.search(r"updating.*block-scoped tag.*'sage: (.*)'.*to avoid repeating the tag", block):
         src_in_lines[first_line_num - 1] = update_optional_tags(src_in_lines[first_line_num - 1],
