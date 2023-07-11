@@ -471,7 +471,6 @@ def aut_gp_and_can_lab_python(S, partition, n,
     """
     obj_wrapper = PythonObjectWrapper(S, all_children_are_equivalent, refine_and_return_invariant, compare_structures, n)
     cdef aut_gp_and_can_lab *output
-    cdef PythonPartitionStack Py_PS = PythonPartitionStack(n)
     cdef int i, j
     cdef Integer I
 
@@ -486,11 +485,11 @@ def aut_gp_and_can_lab_python(S, partition, n,
         canonical_label, NULL, NULL, NULL)
 
     list_of_gens = []
-    for i from 0 <= i < output.num_gens:
-        list_of_gens.append([output.generators[j+i*n] for j from 0 <= j < n])
+    for i in range(output.num_gens):
+        list_of_gens.append([output.generators[j+i*n] for j in range(n)])
     return_tuple = [list_of_gens]
     if canonical_label:
-        return_tuple.append([output.relabeling[i] for i from 0 <= i < n])
+        return_tuple.append([output.relabeling[i] for i in range(n)])
     if base:
         return_tuple.append([output.group.base_orbits[i][0] for i from 0 <= i < output.group.base_size])
     if order:
