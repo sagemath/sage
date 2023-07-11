@@ -621,7 +621,7 @@ class Cusp(Element):
             if C % (M * v1 * v2) == 0:
                 k = - C // (M * v1 * v2)
             else:
-                k = - (C / (M * v1 * v2)).round()
+                k = - (C / (M * v1 * v2)).round("away")
 
             s1pp = s1p + k * M * v1
             # C += k*M*v1*v2  # is now the smallest in absolute value
