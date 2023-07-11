@@ -1202,6 +1202,25 @@ class Factorization(SageObject):
             x * x^2 * x^3
             sage: F(x=y+x)
             (x + y) * y^2 * (x + y)^3
+
+        TESTS::
+
+            sage: R.<x,y> = PolynomialRing(QQ, 2)
+            sage: F = Factorization([(x-2,3), (y+3, 2)])
+            sage: F(x=2)
+            0
+
+            sage: QQt = QQ['t'].fraction_field()
+            sage: t = QQt.gen()
+            sage: R.<x> = PolynomialRing(QQt, 1)
+            sage: F = Factorization([(x,3), (x+t, 2)], unit=QQt.gen())
+            sage: F(t=0)
+            0
+
+            sage: R.<x> = LaurentPolynomialRing(QQ, 1)
+            sage: F = ((x+2)/x**3).factor()
+            sage: F(x=4)
+            1/64 * 6
         """
         unit = self.__unit.subs(*args, **kwds)
         if unit == 0:
