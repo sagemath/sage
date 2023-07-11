@@ -442,9 +442,9 @@ def update_optional_tags(line, tags=None, *, add_tags=None, remove_tags=None, fo
         ....:                          force_rewrite=True),
         ....:     update_optional_tags('    sage: also_already_aligned()                                                                                        # ne' 'eds scipy',
         ....:                          force_rewrite='standard'),
-        ....:     update_optional_tags('    sage: two_columns_first_preserved()         # long time                             # ne' 'eds scipy',
+        ....:     update_optional_tags('    sage: two_columns_first_preserved()         # lo' 'ng time                             # ne' 'eds scipy',
         ....:                          force_rewrite='standard'),
-        ....:     update_optional_tags('    sage: two_columns_first_preserved()                 # long time                                 # ne' 'eds scipy',
+        ....:     update_optional_tags('    sage: two_columns_first_preserved()                 # lo' 'ng time                                 # ne' 'eds scipy',
         ....:                          force_rewrite='standard'),
         ....: ])
         |                                                V       V       V       V       V   V   v           v                   v                                       v
