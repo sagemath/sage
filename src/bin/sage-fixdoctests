@@ -307,6 +307,8 @@ def process_block(block, src_in_lines, file_optional_tags):
 # set input and output files
 if len(args.filename) == 2 and not args.overwrite and not args.no_overwrite:
     inputs, outputs = [args.filename[0]], [args.filename[1]]
+    print("sage-fixdoctests: When passing two filenames, the second one is taken as an output filename; "
+          "this is deprecated. To pass two input filenames, use the option --overwrite.")
 elif args.no_overwrite:
     inputs, outputs = args.filename, [input + ".fixed" for input in args.filename]
 else:
