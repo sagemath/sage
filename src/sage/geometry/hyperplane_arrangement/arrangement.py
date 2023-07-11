@@ -1001,7 +1001,7 @@ class HyperplaneArrangementElement(Element):
             z^2 + 2*z + 1
             sage: B = hyperplane_arrangements.braid(3)
             sage: B.cocharacteristic_polynomial()
-            z^3 + 3*z^2 + 2*z
+            2*z^3 + 3*z^2 + z
 
         TESTS::
 
@@ -1019,7 +1019,7 @@ class HyperplaneArrangementElement(Element):
         from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
         R = PolynomialRing(ZZ, 'z')
         z = R.gen()
-        L = self.intersection_poset(element_label="subspace")
+        L = self.intersection_poset(element_label="subspace").dual()
         B = L.minimal_elements()[0]
         return R.sum(abs(L.moebius_function(B, X)) * z**X.dimension()
                      for X in L)
@@ -1050,7 +1050,28 @@ class HyperplaneArrangementElement(Element):
             z^2
             sage: B = hyperplane_arrangements.braid(3)
             sage: B.primitive_eulerian_polynomial()
-            2*z^2 - z
+            z^2 + z
+
+            sage: H = hyperplane_arrangements.Shi(['B',2]).cone()
+            sage: H.is_simplicial()
+            False
+            sage: H.primitive_eulerian_polynomial()
+            z^3 + 11*z^2 + 4*z
+
+            sage: H = hyperplane_arrangements.graphical(graphs.CycleGraph(4))
+            sage: H.primitive_eulerian_polynomial()
+            z^3 + 3*z^2 - z
+
+        We verify Example 2.4 in [BHS2023]_ for `k = 2,3,4,5`::
+
+            sage: R.<x,y> = HyperplaneArrangements(QQ)
+            sage: for k in range(2,6):
+            ....:     H = R([x+j*y for j in range(k)])
+            ....:     H.primitive_eulerian_polynomial()
+            z^2
+            z^2 + z
+            z^2 + 2*z
+            z^2 + 3*z
 
         We verify Equation (4) in [BHS2023]_ on some examples::
 
@@ -1059,6 +1080,47 @@ class HyperplaneArrangementElement(Element):
             sage: all(R(A.cocharacteristic_polynomial()(1/(x-1)) * (x-1)^A.dimension())
             ....:     == R(A.primitive_eulerian_polynomial()) for A in Arr)
             True
+
+        We compute types `H_3` and `F_4` in Table 1 of [BHS2023]_::
+
+            sage: W = CoxeterGroup(['H',3], implementation="matrix")
+            sage: A = HyperplaneArrangements(W.base_ring(), tuple(f'x{s}' for s in range(W.rank())))
+            sage: H = A([[0] + list(r) for r in W.positive_roots()])
+            sage: H.is_simplicial()
+            True
+            sage: H.primitive_eulerian_polynomial()
+            z^3 + 28*z^2 + 16*z
+
+            sage: W = CoxeterGroup(['F',4], implementation="permutation")
+            sage: A = HyperplaneArrangements(QQ, tuple(f'x{s}' for s in range(W.rank())))
+            sage: H = A([[0] + list(r) for r in W.positive_roots()])
+            sage: H.primitive_eulerian_polynomial()  # long time
+            z^4 + 116*z^3 + 220*z^2 + 48*z
+
+        We verify Proposition 2.5 in [BHS2023]_ on the braid arrangement
+        `B_k` for `k = 2,3,4,5`::
+
+            sage: B = [hyperplane_arrangements.braid(k) for k in range(2,6)]
+            sage: all(H.is_simplicial() for H in B)
+            True
+            sage: all(c > 0 for H in B for c in H.primitive_eulerian_polynomial().coefficients())
+            True
+
+        We verify Example 9.4 in [BHS2023]_ showing a hyperplane arrangemen
+        whose primitive Eulerian polynomial does not have real roots (in
+        general, the graphical arrangement of a cycle graph corresponds
+        to the arrangements in Example 9.4)::
+
+            sage: H = hyperplane_arrangements.graphical(graphs.CycleGraph(5))
+            sage: pep = H.primitive_eulerian_polynomial(); pep
+            z^4 + 6*z^3 - 4*z^2 + z
+            sage: pep.roots(QQbar)
+            [(-6.626418492719221?, 1),
+             (0, 1),
+             (0.3132092463596102? - 0.2298065541510677?*I, 1),
+             (0.3132092463596102? + 0.2298065541510677?*I, 1)]
+            sage: pep.roots(AA)
+            [(-6.626418492719221?, 1), (0, 1)]
 
         TESTS::
 
@@ -1076,7 +1138,7 @@ class HyperplaneArrangementElement(Element):
         from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
         R = PolynomialRing(ZZ, 'z')
         z = R.gen()
-        L = self.intersection_poset(element_label="subspace")
+        L = self.intersection_poset(element_label="subspace").dual()
         B = L.minimal_elements()[0]
         n = self.dimension()
         return R.sum(abs(L.moebius_function(B, X)) * (z - 1)**(n-X.dimension())
