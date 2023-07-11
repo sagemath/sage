@@ -119,7 +119,6 @@ from sage.structure.richcmp import richcmp_method, richcmp, richcmp_not_equal
 
 lazy_import('sage.libs.pari.all', 'pari')
 lazy_import('sage.rings.number_field.number_field', 'refine_embedding')
-lazy_import('sage.rings.qqbar', ['AA', 'QQbar'])
 
 
 class PeriodLattice(FreeModule_generic_pid):
@@ -211,6 +210,8 @@ class PeriodLattice_ell(PeriodLattice):
             sage: L == loads(dumps(L))                                                  # needs sage.rings.number_field
             True
         """
+        from sage.rings.qqbar import AA, QQbar
+
         # First we cache the elliptic curve with this period lattice:
 
         self.E = E
