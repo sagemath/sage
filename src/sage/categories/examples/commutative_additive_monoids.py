@@ -10,7 +10,7 @@ Examples of commutative additive monoids
 
 from sage.misc.cachefunc import cached_method
 from sage.structure.parent import Parent
-from sage.categories.all import CommutativeAdditiveMonoids
+from sage.categories.commutative_additive_monoids import CommutativeAdditiveMonoids
 from .commutative_additive_semigroups import FreeCommutativeAdditiveSemigroup
 
 class FreeCommutativeAdditiveMonoid(FreeCommutativeAdditiveSemigroup):
@@ -124,7 +124,7 @@ class FreeCommutativeAdditiveMonoid(FreeCommutativeAdditiveSemigroup):
                 sage: [bool(m) for m in M.additive_semigroup_generators()]
                 [True, True, True, True]
             """
-            return any(x for x in self.value.values())
+            return any(self.value.values())
 
 
 Example = FreeCommutativeAdditiveMonoid

@@ -22,7 +22,7 @@ from multiprocessing import shared_memory
 from sage.algebras.fusion_rings.poly_tup_engine cimport poly_to_tup, tup_fixes_sq, _flatten_coeffs
 from sage.rings.integer cimport Integer
 from sage.rings.rational cimport Rational
-from sage.rings.polynomial.multi_polynomial_libsingular cimport MPolynomial_libsingular
+from sage.rings.polynomial.multi_polynomial cimport MPolynomial_libsingular
 from sage.rings.polynomial.polydict cimport ETuple
 
 import numpy as np
@@ -96,7 +96,7 @@ cdef class KSHandler:
         sage: ks.shm.unlink()
         sage: f.shutdown_worker_pool()
     """
-    def __init__(self, n_slots, field, use_mp=False, init_data={}, name=None):
+    def __init__(self, n_slots, field, use_mp=False, init_data=None, name=None):
         r"""
         Initialize ``self``.
 
@@ -115,6 +115,8 @@ cdef class KSHandler:
             sage: f.shutdown_worker_pool()
         """
         cdef int n, d
+        if init_data is None:
+            init_data = {}
         self.field = field
         n = n_slots
         d = self.field.degree()
@@ -342,6 +344,7 @@ cdef class KSHandler:
             if self.ks_dat['known'][i]:
                 yield i, self.get(i)
 
+
 def make_KSHandler(n_slots, field, init_data):
     r"""
     Provide pickling / unpickling support for :class:`KSHandler`.
@@ -357,6 +360,7 @@ def make_KSHandler(n_slots, field, init_data):
         True
     """
     return KSHandler(n_slots, field, init_data=init_data)
+
 
 cdef class FvarsHandler:
     r"""
@@ -451,7 +455,8 @@ cdef class FvarsHandler:
         sage: fvars.shm.unlink()
         sage: f.shutdown_worker_pool()
     """
-    def __init__(self, n_slots, field, idx_to_sextuple, init_data={}, use_mp=0,
+    def __init__(self, n_slots, field, idx_to_sextuple, init_data=None,
+                 use_mp=0,
                  pids_name=None, name=None, max_terms=20, n_bytes=32):
         r"""
         Initialize ``self``.
@@ -477,6 +482,8 @@ cdef class FvarsHandler:
         self.bytes = n_bytes
         cdef int slots = self.bytes // 8
         cdef int n_proc = use_mp + 1
+        if init_data is None:
+            init_data = {}
         self.fvars_t = np.dtype([
             ('modified', np.int8, (n_proc, )),
             ('ticks', 'u1', (max_terms, )),
@@ -575,7 +582,7 @@ cdef class FvarsHandler:
                 return self.obj_cache[idx]
         cdef ETuple e, exp
         cdef int count, nnz
-        cdef Integer d, num
+        cdef Integer num
         cdef list poly_tup, rats
         cdef NumberFieldElement_absolute cyc_coeff
         cdef Py_ssize_t cum, i, j, k
@@ -753,6 +760,7 @@ cdef class FvarsHandler:
         for sextuple in self.sext_to_idx:
             yield sextuple, self[sextuple]
 
+
 def make_FvarsHandler(n, field, idx_map, init_data):
     r"""
     Provide pickling / unpickling support for :class:`FvarsHandler`.
@@ -773,4 +781,3 @@ def make_FvarsHandler(n, field, idx_map, init_data):
         sage: f.shutdown_worker_pool()
     """
     return FvarsHandler(n, field, idx_map, init_data=init_data)
-

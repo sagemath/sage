@@ -560,7 +560,7 @@ class IntegerListsLex(IntegerLists, metaclass=ClasscallMetaclass):
 
     ::
 
-        sage: Partitions(2, max_slope=-1, length=2).list()
+        sage: Partitions(2, max_slope=-1, length=2).list()                              # optional - sage.combinat
         []
         sage: list(IntegerListsLex(0, floor=ConstantFunction(1), min_slope=0))
         [[]]
@@ -1215,9 +1215,9 @@ class IntegerListsLexIter(builtins.object):
         max_sum = self.backend.max_sum
         min_length = self.backend.min_length
         max_length = self.backend.max_length
-        if  self._j+1 >= max_length:
+        if self._j + 1 >= max_length:
             return False
-        if self._j+1 >= min_length and self._current_sum == max_sum:
+        if self._j + 1 >= min_length and self._current_sum == max_sum:
             # Cannot add trailing zeroes
             return False
 

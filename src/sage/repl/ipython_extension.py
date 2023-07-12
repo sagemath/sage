@@ -197,9 +197,10 @@ class SageMagics(Magics):
         self.shell.readline_startup_hook(pre_readline)
         self.shell.pre_readline = pre_readline
 
-        print('Interactively loading "%s"'%args)
+        print('Interactively loading "%s"' % args)
 
     _magic_display_status = 'simple'
+
     @line_magic
     def display(self, args):
         r"""
@@ -405,7 +406,7 @@ class SageMagics(Magics):
             ....: C END FILE FIB1.F
             ....: ''')
             sage: fib
-            <fortran object>
+            <fortran ...>
             sage: from numpy import array
             sage: a = array(range(10), dtype=float)
             sage: fib(a, 10)

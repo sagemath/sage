@@ -1,3 +1,4 @@
+# sage.doctest: optional - sage.libs.pari
 """
 Solving quadratic equations
 
@@ -26,7 +27,9 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from sage.rings.all import ZZ, QQ, Integer
+from sage.rings.integer_ring import ZZ
+from sage.rings.rational_field import QQ
+from sage.rings.integer import Integer
 from sage.modules.free_module_element import vector
 from sage.matrix.constructor import Matrix
 
@@ -44,7 +47,7 @@ def qfsolve(G):
 
     ALGORITHM:
 
-    Uses PARI/GP function ``qfsolve``.
+    Uses PARI/GP function :pari:`qfsolve`.
 
     EXAMPLES::
 
@@ -79,23 +82,23 @@ def qfsolve(G):
 
 def qfparam(G, sol):
     r"""
-    Parametrizes the conic defined by the matrix ``G``.
+    Parametrize the conic defined by the matrix `G`.
 
     INPUT:
 
-     - ``G`` -- a `3 \times 3`-matrix over `\QQ`.
+    - ``G`` -- a `3 \times 3`-matrix over `\QQ`
 
-     - ``sol`` -- a triple of rational numbers providing a solution
-       to sol*G*sol^t = 0.
+    - ``sol`` -- a triple of rational numbers providing a solution
+      to `x\cdot G\cdot x^t = 0`
 
     OUTPUT:
 
     A triple of polynomials that parametrizes all solutions of
-    x*G*x^t = 0 up to scaling.
+    `x\cdot G\cdot x^t = 0` up to scaling.
 
     ALGORITHM:
 
-    Uses PARI/GP function ``qfparam``.
+    Uses PARI/GP function :pari:`qfparam`.
 
     EXAMPLES::
 
@@ -108,7 +111,8 @@ def qfparam(G, sol):
         sage: ret = qfparam(M, sol); ret
         (-12*t^2 - 1, 24*t, 24)
         sage: ret.parent()
-        Ambient free module of rank 3 over the principal ideal domain Univariate Polynomial Ring in t over Rational Field
+        Ambient free module of rank 3 over the principal ideal domain
+         Univariate Polynomial Ring in t over Rational Field
     """
     R = QQ['t']
     mat = G.__pari__().qfparam(sol)
@@ -122,15 +126,13 @@ def solve(self, c=0):
 
     INPUT:
 
-    - ``c`` -- (default: 0) a rational number.
+    - ``c`` -- (default: 0) a rational number
 
-    OUTPUT:
-
-    - A non-zero vector `x` satisfying ``self(x) == c``.
+    OUTPUT: A non-zero vector `x` satisfying ``self(x) == c``.
 
     ALGORITHM:
 
-    Uses PARI's qfsolve(). Algorithm described by Jeroen Demeyer; see comments on :trac:`19112`
+    Uses PARI's :pari:`qfsolve`. Algorithm described by Jeroen Demeyer; see comments on :trac:`19112`
 
     EXAMPLES::
 

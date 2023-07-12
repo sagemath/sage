@@ -158,10 +158,9 @@ class EnumeratedSetFromIterator(Parent):
             sage: TestSuite(S).run()
         """
         if category is not None:
-            Parent.__init__(self, facade = True, category = category)
+            Parent.__init__(self, facade=True, category=category)
         else:
-            Parent.__init__(self, facade = True, category = EnumeratedSets())
-
+            Parent.__init__(self, facade=True, category=EnumeratedSets())
 
         if name is not None:
             self.rename(name)
@@ -461,7 +460,7 @@ class Decorator():
             sage: print(sage_getdoc(d))   # indirect doctest
                Test whether "self" is prime.
             ...
-               Calls the PARI "isprime" function.
+               Calls the PARI ...isprime...
         """
         # Duplicates sage.misc.cachefunc.CachedFunction._instancedoc_
         from sage.misc.sageinspect import sage_getsourcelines, sage_getfile_relative, _extract_embedded_position
@@ -946,8 +945,8 @@ class EnumeratedSetFromIterator_method_decorator():
         TESTS::
 
             sage: from sage.sets.set_from_iterator import set_from_method
-            sage: class A:
-            ....:  @set_from_method()    # indirect doctest
+            sage: class A:                # indirect doctest
+            ....:  @set_from_method()
             ....:  def f(self):
             ....:      return xsrange(3)
             sage: a = A()
@@ -991,7 +990,8 @@ class DummyExampleForPicklingTest:
         {10, 11, 12, 13, 14, ...}
     """
     start = 10
-    stop  = 100
+    stop = 100
+
     @set_from_method
     def f(self):
         r"""

@@ -1,3 +1,4 @@
+# sage.doctest: optional - sage.libs.pari
 """
 Automorphisms of Quadratic Forms
 """
@@ -8,19 +9,18 @@ Automorphisms of Quadratic Forms
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 from sage.misc.cachefunc import cached_method
-from sage.libs.pari.all import pari
 from sage.matrix.constructor import Matrix
 from sage.rings.integer_ring import ZZ
 
-from sage.modules.all import FreeModule
+from sage.modules.free_module import FreeModule
 from sage.modules.free_module_element import vector
-from sage.arith.all import GCD
+from sage.arith.misc import GCD
 
 
 @cached_method
 def basis_of_short_vectors(self, show_lengths=False):
     r"""
-    Return a basis for `\ZZ^n` made of vectors with minimal lengths Q(`v`).
+    Return a basis for `\ZZ^n` made of vectors with minimal lengths `Q(v)`.
 
     OUTPUT:
 
@@ -101,11 +101,11 @@ def basis_of_short_vectors(self, show_lengths=False):
 def short_vector_list_up_to_length(self, len_bound, up_to_sign_flag=False):
     """
     Return a list of lists of short vectors `v`, sorted by length, with
-    Q(`v`) < len_bound.
+    `Q(v) <` ``len_bound``.
 
     INPUT:
 
-    - ``len_bound`` -- bound for the length of the vectors.
+    - ``len_bound`` -- bound for the length of the vectors
 
     - ``up_to_sign_flag`` -- (default: ``False``) if set to True, then
       only one of the vectors of the pair `[v, -v]` is listed.
@@ -186,6 +186,8 @@ def short_vector_list_up_to_length(self, len_bound, up_to_sign_flag=False):
         raise ValueError("Quadratic form must be positive definite "
                          "in order to enumerate short vectors")
 
+    from sage.libs.pari.all import pari
+
     if len_bound <= 0:
         return []
 
@@ -224,8 +226,8 @@ def short_vector_list_up_to_length(self, len_bound, up_to_sign_flag=False):
 def short_primitive_vector_list_up_to_length(self, len_bound, up_to_sign_flag=False):
     r"""
     Return a list of lists of short primitive vectors `v`, sorted by length, with
-    Q(`v`) < len_bound.  The list in output `[i]` indexes all vectors of
-    length `i`.  If the up_to_sign_flag is set to ``True``, then only one of
+    `Q(v) <` ``len_bound``.  The list in output `[i]` indexes all vectors of
+    length `i`.  If the ``up_to_sign_flag`` is set to ``True``, then only one of
     the vectors of the pair `[v, -v]` is listed.
 
     .. NOTE::
@@ -374,13 +376,11 @@ def automorphisms(self):
 
 
 def number_of_automorphisms(self):
-    """
-    Return the number of automorphisms (of det 1 and -1) of
+    r"""
+    Return the number of automorphisms (of det `1` and `-1`) of
     the quadratic form.
 
-    OUTPUT:
-
-    an integer >= 2.
+    OUTPUT: an integer `\geq 2`.
 
     EXAMPLES::
 
@@ -404,13 +404,13 @@ def number_of_automorphisms(self):
 
 
 def set_number_of_automorphisms(self, num_autos):
-    """
+    r"""
     Set the number of automorphisms to be the value given.  No error
     checking is performed, to this may lead to erroneous results.
 
     The fact that this result was set externally is recorded in the
     internal list of external initializations, accessible by the
-    method list_external_initializations().
+    method :meth:`list_external_initializations`.
 
     OUTPUT: None
 

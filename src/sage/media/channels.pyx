@@ -13,7 +13,7 @@ def _separate_channels(_data, _width, _nchannels):
 
     cdef int l = len(_data) / (width)
 
-    channel_data = [[] for i in xrange(nchannels)]
+    channel_data = [[] for i in range(nchannels)]
     if width == 1:
         # handle the one byte case
 

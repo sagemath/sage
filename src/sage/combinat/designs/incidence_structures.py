@@ -39,10 +39,13 @@ Methods
 #                    https://www.gnu.org/licenses/                          #
 # **************************************************************************
 from __future__ import annotations
-from sage.rings.integer import Integer
+
 from sage.misc.latex import latex
+from sage.misc.lazy_import import lazy_import
+from sage.rings.integer import Integer
 from sage.sets.set import Set
-from sage.libs.gap.libgap import libgap
+
+lazy_import('sage.libs.gap.libgap', 'libgap')
 
 
 class IncidenceStructure():
@@ -173,7 +176,6 @@ class IncidenceStructure():
             sage: IncidenceStructure([])
             Incidence structure with 0 points and 0 blocks
         """
-        from sage.matrix.constructor import matrix
         from sage.structure.element import Matrix
 
         # Reformatting input
@@ -189,6 +191,7 @@ class IncidenceStructure():
             assert incidence_matrix is None, "'incidence_matrix' cannot be defined when 'points' is defined"
 
         if incidence_matrix:
+            from sage.matrix.constructor import matrix
             M = matrix(incidence_matrix)
             v = M.nrows()
             self._points = list(range(v))
@@ -433,20 +436,21 @@ class IncidenceStructure():
 
         TESTS::
 
-            sage: IS  = IncidenceStructure([["A",5,pi],["A",5,"Wouhou"],["A","Wouhou",(9,9)],[pi,12]])
-            sage: IS2 = IS.copy()
-            sage: IS2.relabel(IS2.canonical_label())
-            sage: IS.is_isomorphic(IS2)
+            sage: IS  = IncidenceStructure([["A",5,pi],["A",5,"Wouhou"],                # optional - sage.symbolic
+            ....:                           ["A","Wouhou",(9,9)],[pi,12]])
+            sage: IS2 = IS.copy()                                                       # optional - sage.symbolic
+            sage: IS2.relabel(IS2.canonical_label())                                    # optional - sage.symbolic
+            sage: IS.is_isomorphic(IS2)                                                 # optional - sage.symbolic
             True
-            sage: canon = IS.is_isomorphic(IS2,certificate=True)
-            sage: IS.relabel(canon)
-            sage: IS==IS2
+            sage: canon = IS.is_isomorphic(IS2, certificate=True)                       # optional - sage.symbolic
+            sage: IS.relabel(canon)                                                     # optional - sage.symbolic
+            sage: IS==IS2                                                               # optional - sage.symbolic
             True
 
             sage: IS2 = IncidenceStructure([[1,2]])
-            sage: IS2.is_isomorphic(IS)
+            sage: IS2.is_isomorphic(IS)                                                 # optional - sage.symbolic
             False
-            sage: IS2.is_isomorphic(IS,certificate=True)
+            sage: IS2.is_isomorphic(IS, certificate=True)                               # optional - sage.symbolic
             {}
 
         Checking whether two :class:`IncidenceStructure` are isomorphic
@@ -454,7 +458,7 @@ class IncidenceStructure():
         subsequent calls to :meth:`is_isomorphic` will be faster::
 
             sage: IS1 = designs.projective_plane(3)
-            sage: IS2 = IS1.relabel(Permutations(IS1.ground_set()).random_element(),inplace=False)
+            sage: IS2 = IS1.relabel(Permutations(IS1.ground_set()).random_element(), inplace=False)
             sage: IS2 = IncidenceStructure(IS2.blocks())
             sage: IS1._canonical_label is None and IS2._canonical_label is None
             True
@@ -1577,7 +1581,7 @@ class IncidenceStructure():
             sage: I.is_t_design(return_parameters=True)
             (False, (0, 0, 0, 0))
         """
-        from sage.arith.all import binomial
+        from sage.arith.misc import binomial
 
         # Missing parameters ?
         if v is None:
@@ -2000,7 +2004,6 @@ class IncidenceStructure():
         else:
             return True
 
-
     def coloring(self, k=None, solver=None, verbose=0,
                  *, integrality_tolerance=1e-3):
         r"""
@@ -2070,7 +2073,7 @@ class IncidenceStructure():
             raise RuntimeError("No coloring can be defined "
                                "when there is a set of size 1")
         elif k == 1:
-            if any(x for x in self._blocks):
+            if any(self._blocks):
                 raise ValueError("This hypergraph contains a set. "
                                  "It is not 1-chromatic")
             return [self.ground_set()]
@@ -2173,7 +2176,7 @@ class IncidenceStructure():
             for x in s:
                 g.add_edge((0, s), (1, x))
 
-        _ = g.plot(iterations = 50000,save_pos=True)
+        _ = g.plot(iterations=50000,save_pos=True)
 
         # The values are rounded as TikZ does not like accuracy.
         return {k[1]: (round(x, 3), round(y, 3))
@@ -2202,7 +2205,7 @@ class IncidenceStructure():
             # verify that :trac:`30976` is fixed
             sage: IS = IncidenceStructure([1,2,3], [[1,2], [2,3]])
             sage: if latex.has_file("tikz.sty"):          # optional - latex
-            ....:     IS._latex_()                        # optional - latex
+            ....:     IS._latex_()
             ...UserWarning:
             The hypergraph is drawn as a set of closed curves...
             \begin{tikzpicture}...
@@ -2258,7 +2261,7 @@ class IncidenceStructure():
             # "center", i.e. the vertex representing the set s
             cx, cy = pos[Set(s)]
             s = [pos[_] for _ in s]
-            s = sorted(s, key = lambda x_y: arctan2(x_y[0] - cx, x_y[1] - cy))
+            s = sorted(s, key=lambda x_y: arctan2(x_y[0] - cx, x_y[1] - cy))
 
             for x in s:
                 tex += str(x)+" "

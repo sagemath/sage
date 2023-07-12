@@ -283,7 +283,8 @@ class OverconvergentModularFormsSpace(Module):
 
     TESTS::
 
-        sage: K.<w> = Qp(13).extension(x^2-13); M = OverconvergentModularForms(13, 20, radius=1/2, base_ring=K)
+        sage: x = polygen(ZZ, 'x')
+        sage: K.<w> = Qp(13).extension(x^2 - 13); M = OverconvergentModularForms(13, 20, radius=1/2, base_ring=K)
         sage: M is loads(dumps(M))
         True
     """
@@ -357,6 +358,7 @@ class OverconvergentModularFormsSpace(Module):
             sage: M._set_radius(1/3); M
             Space of 3-adic 1/3-overconvergent modular forms of weight-character 2 over Rational Field
 
+            sage: x = polygen(ZZ, 'x')
             sage: L.<w> = Qp(3).extension(x^5 - 3)
             sage: OverconvergentModularForms(3, 2, 1/30, base_ring=L).normalising_factor() # indirect doctest
             w + O(w^101)
@@ -424,7 +426,8 @@ class OverconvergentModularFormsSpace(Module):
 
         EXAMPLES::
 
-            sage: M = OverconvergentModularForms(2, 0, 1/2, base_ring = Qp(2))
+            sage: M = OverconvergentModularForms(2, 0, 1/2, base_ring=Qp(2))
+            sage: x = polygen(ZZ, 'x')
             sage: M.base_extend(Qp(2).extension(x^2 - 2, names="w"))
             Space of 2-adic 1/2-overconvergent modular forms of weight-character 0 over 2-adic Eisenstein Extension ...
             sage: M.base_extend(QQ)
@@ -490,6 +493,7 @@ class OverconvergentModularFormsSpace(Module):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: L.<w> = Qp(7).extension(x^2 - 7)
             sage: OverconvergentModularForms(7, 0, 1/4, base_ring=L).normalising_factor()
             w + O(w^41)
@@ -555,6 +559,7 @@ class OverconvergentModularFormsSpace(Module):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: L.<w> = Qp(7).extension(x^2 - 7)
             sage: OverconvergentModularForms(7, 0, 1/4, base_ring=L)._params()
             (7,
@@ -573,6 +578,7 @@ class OverconvergentModularFormsSpace(Module):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: L.<w> = Qp(7).extension(x^2 - 7)
             sage: OverconvergentModularForms(7, 0, 1/4, base_ring=L).__reduce__()
             (<function OverconvergentModularForms at ...>,
@@ -778,7 +784,9 @@ class OverconvergentModularFormsSpace(Module):
 
         EXAMPLES::
 
-            sage: K.<w> = Qp(13).extension(x^2-13); M = OverconvergentModularForms(13, 20, radius=1/2, base_ring=K)
+            sage: x = polygen(ZZ, 'x')
+            sage: K.<w> = Qp(13).extension(x^2 - 13)
+            sage: M = OverconvergentModularForms(13, 20, radius=1/2, base_ring=K)
             sage: K.zero()
             0
         """
@@ -851,10 +859,9 @@ class OverconvergentModularFormsSpace(Module):
             return self.base_extend(x.base_ring()).coordinate_vector(x)
 
         if x.parent() != self:
-                x = self(x)
+            x = self(x)
 
         return vector(self.base_ring(), x.gexp().padded_list(x.gexp().prec()))
-
 
     ##########################################################
     # Pointless routines required by parent class definition #
@@ -926,13 +933,11 @@ class OverconvergentModularFormsSpace(Module):
         else:
             return hecke_operator_on_qexp(f, m, self.weight().k(), eps=self.weight().chi())
 
-
-
     def _convert_to_basis(self, qexp):
         r"""
         Given a `q`-expansion, converts it to a vector in the basis of this
         space, to the maximum possible precision (which is the minimum of the
-        `q`-adic precision of the `q`-expansion and the precision of self).
+        `q`-adic precision of the `q`-expansion and the precision of ``self``).
 
         EXAMPLES::
 
@@ -946,8 +951,8 @@ class OverconvergentModularFormsSpace(Module):
         g = self._gsr.gen()
         answer = self._gsr(0)
         for i in range(n):
-            assert(x.valuation() >= i)
-            answer += (x[i] / self._basis_cache[i][i])*g**i
+            assert x.valuation() >= i
+            answer += (x[i] / self._basis_cache[i][i]) * g**i
             x = x - self._basis_cache[i] * answer[i]
         return answer + O(g**n)
 
@@ -1013,7 +1018,6 @@ class OverconvergentModularFormsSpace(Module):
                             if j <= self.prime() * i:
                                 raise ValueError("n is too large computing initial conds: can't work out u[%s,%s]" % (i,j))
                         mat[i,j] = 0
-
 
                 else:
                     l = self._convert_to_basis(self.hecke_operator(self._basis_cache[j], m))
@@ -1210,7 +1214,6 @@ class OverconvergentModularFormsSpace(Module):
         self._cached_recurrence_matrix.set_immutable()
         return self._cached_recurrence_matrix
 
-
     def _discover_recurrence_matrix(self, use_smithline=True):
         r"""
         Does hard work of calculating recurrence matrix, which is cached to avoid doing this every time.
@@ -1296,7 +1299,9 @@ class OverconvergentModularFormElement(ModuleElement):
 
     EXAMPLES::
 
-        sage: K.<w> = Qp(5).extension(x^7 - 5); s = OverconvergentModularForms(5, 6, 1/21, base_ring=K).0
+        sage: x = polygen(ZZ, 'x')
+        sage: K.<w> = Qp(5).extension(x^7 - 5)
+        sage: s = OverconvergentModularForms(5, 6, 1/21, base_ring=K).0
         sage: s == loads(dumps(s))
         True
     """
@@ -1329,10 +1334,11 @@ class OverconvergentModularFormElement(ModuleElement):
         self._eigenvalue = None
         self._slope = None
 
-
     def _add_(self, other):
         r"""
-        Add self to other (where other has the same parent as self).
+        Add ``self`` to ``other``.
+
+        Here ``other`` has the same parent as ``self``.
 
         EXAMPLES::
 
@@ -1663,7 +1669,9 @@ class OverconvergentModularFormElement(ModuleElement):
 
         EXAMPLES::
 
-            sage: M = OverconvergentModularForms(13, 10, 1/2, base_ring = Qp(13).extension(x^2 - 13,names='a'))
+            sage: x = polygen(ZZ, 'x')
+            sage: R = Qp(13).extension(x^2 - 13, names='a')
+            sage: M = OverconvergentModularForms(13, 10, 1/2, base_ring=R)
             sage: M.gen(0).weight()
             10
         """
@@ -1676,7 +1684,9 @@ class OverconvergentModularFormElement(ModuleElement):
 
         EXAMPLES::
 
-            sage: M = OverconvergentModularForms(13, 10, 1/2, base_ring = Qp(13).extension(x^2 - 13,names='a'))
+            sage: x = polygen(ZZ, 'x')
+            sage: R = Qp(13).extension(x^2 - 13, names='a')
+            sage: M = OverconvergentModularForms(13, 10, 1/2, base_ring=R)
             sage: M.gen(0).additive_order()
             +Infinity
             sage: M(0).additive_order()

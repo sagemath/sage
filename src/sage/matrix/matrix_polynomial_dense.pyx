@@ -39,7 +39,6 @@ AUTHORS:
 
 from sage.matrix.matrix_generic_dense cimport Matrix_generic_dense
 from sage.matrix.matrix2 cimport Matrix
-from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
 
 
@@ -224,7 +223,7 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
             return self.apply_map(lambda x: x.degree())
         from sage.matrix.constructor import matrix
         zero_degree = min(shifts) - 1
-        if row_wise: 
+        if row_wise:
             return matrix( ZZ, [[ self[i,j].degree() + shifts[j]
                 if self[i,j] != 0 else zero_degree
                 for j in range(self.ncols()) ] for i in range(self.nrows())] )
@@ -1116,7 +1115,7 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
 
         The row degrees of an empty matrix (`0\times n` or `m\times 0`) is
         not defined::
-            
+
             sage: M = Matrix( pR, 0, 3 )
             sage: M.row_degrees()
             Traceback (most recent call last):
@@ -1215,7 +1214,7 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
         n}`. Working row-wise and without shifts, its leading matrix is the
         matrix in `\Bold{K}^{m \times n}` formed by the leading coefficients of
         the entries of `M` which reach the degree of the corresponding row.
-  
+
         More precisely, if working row-wise, let `s_1,\ldots,s_n \in \ZZ`
         be a shift, and let `(d_1,\ldots,d_m)` denote the shifted row degrees of
         `M`. Then, the shifted leading matrix of `M` is the matrix in
@@ -1239,7 +1238,7 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
         OUTPUT: a matrix over the base field.
 
         REFERENCES:
-        
+
         [Wol1974]_ (Section 2.5, without shifts) and [VBB1992]_ (Section 3).
 
         EXAMPLES::
@@ -1335,7 +1334,7 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
             False
 
         .. SEEALSO::
-        
+
             :meth:`is_popov` .
         """
         if include_zero_vectors:
@@ -1385,7 +1384,7 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
         OUTPUT: a boolean value.
 
         REFERENCES:
-        
+
         [Wol1974]_ (Section 2.5, without shifts) and [VBB1992]_ (Section 3).
 
         EXAMPLES::
@@ -1441,7 +1440,7 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
         this vector is the index `j` of the rightmost nonzero entry `p_j` such
         that `\deg(p_j) + s_j` is equal to the shifted row degree of the vector.
         Then the pivot degree of the vector is the degree `\deg(p_j)`.
-        
+
         For the zero row, both the leading positions and degree are `-1`.  For
         a `m \times n` polynomial matrix, the leading positions and pivot
         degrees are the two lists containing the leading positions and the
@@ -1465,7 +1464,7 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
         of integers otherwise.
 
         REFERENCES:
-        
+
         [Kai1980]_ (Section 6.7.2, without shifts).
 
         EXAMPLES::
@@ -1541,7 +1540,7 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
                 self[i,pivot_index[i]].degree())
                 for i in range(self.nrows()) ]
             return (pivot_index,pivot_degree) if return_degree else pivot_index
-                    
+
         # now in the column-wise case
         column_degrees = self.column_degrees(shifts)
         if shifts is None:
@@ -1595,7 +1594,7 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
         OUTPUT: a boolean.
 
         REFERENCES:
-        
+
         [Kai1980]_ (Section 6.7.2, square case without shifts), [MS2003]_
         (without shifts), [BLV1999]_ .
 
@@ -1646,7 +1645,7 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
             sage: M = Matrix([
             ....:   [      6*x+4,       0,             5*x+1, 0],
             ....:   [          2, 5*x + 1,       6*x^2+3*x+1, 0],
-            ....:   [2*x^2+5*x+5,       1, 2*x^3+4*x^2+6*x+4, 0] 
+            ....:   [2*x^2+5*x+5,       1, 2*x^3+4*x^2+6*x+4, 0]
             ....:   ])
             sage: M.is_weak_popov(shifts=[2,1,0], row_wise=False, ordered=True)
             True
@@ -1663,20 +1662,29 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
         if self.ncols() == 0 or self.nrows() == 0:
             return self._is_empty_popov(row_wise)
         leading_positions = self.leading_positions(shifts, row_wise)
-        # here, it will be convenient to have leading position
-        # larger than ncols for zero/empty rows
-        leading_positions = [pos if pos>=0 else self.ncols() + 1 for pos in leading_positions]
+        # here, because of the below sorting and of the convention that zero
+        # rows (resp. columns) are at the bottom (resp. right) of the matrix in
+        # the row-wise case (resp. column-wise case), it will be convenient to
+        # have leading position ncols (resp. nrows) for these zero vectors
+        pos_zero_vec = self.ncols() if row_wise else self.nrows()
+        leading_positions = [pos if pos>=0 else pos_zero_vec + 1 \
+                                         for pos in leading_positions]
         # leading positions should not have duplicates, which is equivalent to:
         # once sorted, it doesn't contain a pair of equal successive entries
         if not ordered:
             leading_positions.sort()
         # check that there is no zero vector, if it is forbidden
-        if leading_positions[-1] > self.ncols() and not include_zero_vectors:
+        # (in the ordered case, even though we have not sorted, this test of
+        # the last leading position is sufficient: in any case, if there is a
+        # zero vector followed by a nonzero one, the testing loop below will
+        # return False)
+        if leading_positions[-1] > pos_zero_vec and not include_zero_vectors:
             return False
-        # now leading_positions is nondecreasing: it remains to test whether
-        # it is strictly increasing (at least until the zero rows part)
+        # it remains to test whether leading_positions is strictly increasing
+        # until it reaches a zero vector (note this also checks that there is
+        # no zero vector encountered after a nonzero one)
         for index,next_leading_position in enumerate(leading_positions[1:]):
-            if next_leading_position <= self.ncols() and \
+            if next_leading_position <= pos_zero_vec and \
                     next_leading_position <= leading_positions[index]:
                 return False
         return True
@@ -1724,7 +1732,7 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
         OUTPUT: a boolean.
 
         REFERENCES:
-        
+
         For the square case, without shifts: [Pop1972]_ and [Kai1980]_ (Section
         6.7.2). For the general case: [BLV2006]_ .
 
@@ -1908,7 +1916,7 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
             False
 
         .. SEEALSO::
-        
+
             :meth:`hermite_form` .
         """
         # shift for lower echelon
@@ -2564,7 +2572,7 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
         - the Hermite normal form `H` of this matrix `A` .
 
         - (optional) transformation matrix `U` such that `UA = H` .
- 
+
         EXAMPLES::
 
             sage: M.<x> = GF(7)[]
@@ -2594,7 +2602,7 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
             True
 
         .. SEEALSO::
-        
+
             :meth:`is_hermite` ,
             :meth:`popov_form` .
         """
@@ -2923,7 +2931,7 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
             return (self.parent().zero().__copy__(), self)
         # Step 1: reverse input matrices
         # Brev = B(1/x) diag(x^(cdeg[i]))
-        # Arev = A(1/x) diag(x^(d+cdeg[i]-1)) 
+        # Arev = A(1/x) diag(x^(d+cdeg[i]-1))
         Brev = B.reverse(degree=cdeg, row_wise=False)
         Arev = self.reverse(degree=[d+c-1 for c in cdeg], row_wise=False)
         # Step 2: compute quotient
@@ -2953,7 +2961,7 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
         and such a quotient and remainder is returned by the method. Or this
         matrix equation has no solution and this method fails: this raises
         ``ValueError``; however this is not a proof that there is no valid
-        division with remainder (see the last example below). 
+        division with remainder (see the last example below).
 
         EXAMPLES::
 
@@ -3245,12 +3253,12 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
         Return ``True`` if and only if this matrix is an approximant basis in
         ``shifts``-ordered weak Popov form for the polynomial matrix ``pmat``
         at order ``order``.
-        
+
         If ``normal_form`` is ``True``, then the polynomial matrix must
         furthermore be in ``shifts``-Popov form. An error is raised if the
         input dimensions are not sound. If a single integer is provided for
         ``order``, then it is interpreted as a list of repeated integers with
-        this value. (See :meth:`minimal_approximant_basis` for definitions and 
+        this value. (See :meth:`minimal_approximant_basis` for definitions and
         more details.)
 
         INPUT:
@@ -3327,14 +3335,14 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
             sage: appbas.is_minimal_approximant_basis(pmat, [8,8], shifts)
             Traceback (most recent call last):
             ...
-            ValueError: order length should be the column dimension 
+            ValueError: order length should be the column dimension
                         of the input matrix
 
             sage: appbas.is_minimal_approximant_basis(pmat, \
                     order, shifts, row_wise=False)
             Traceback (most recent call last):
             ...
-            ValueError: shifts length should be the column dimension 
+            ValueError: shifts length should be the column dimension
                         of the input matrix
 
             sage: Matrix(pR, [x^8]).is_minimal_approximant_basis(pmat, 8)
@@ -3612,7 +3620,7 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
     def _approximant_basis_iterative(self, order, shifts):
         r"""
         Return a ``shifts``-ordered weak Popov approximant basis for this
-        polynomial matrix at order ``order`` 
+        polynomial matrix at order ``order``
         (see :meth:`minimal_approximant_basis` for definitions).
 
         The output basis is considered row-wise, that is, its rows are
@@ -3938,10 +3946,32 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
             [  6*x 6*x^2]
             [    1     0]
             [    0     1]
+
+        Some particular cases (matrix is zero, dimension is zero, column is zero)::
+
+            sage: Matrix(pR, 2, 1).minimal_kernel_basis()
+            [1 0]
+            [0 1]
+
+            sage: Matrix(pR, 2, 0).minimal_kernel_basis()
+            [1 0]
+            [0 1]
+
+            sage: Matrix(pR, 0, 2).minimal_kernel_basis()
+            []
+
+            sage: Matrix(pR, 3, 2, [[1,0],[1,0],[1,0]]).minimal_kernel_basis()
+            [6 1 0]
+            [6 0 1]
+
+            sage: Matrix(pR, 3, 2, [[x,0],[1,0],[x+1,0]]).minimal_kernel_basis()
+            [6 x 0]
+            [6 6 1]
         """
+        from sage.matrix.constructor import matrix
+
         m = self.nrows()
         n = self.ncols()
-        d = self.degree()
 
         # set default shifts / check shifts dimension
         if shifts is None:
@@ -3953,14 +3983,16 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
 
         # compute kernel basis
         if row_wise:
-            if d is -1: # matrix is zero
-                from sage.matrix.constructor import matrix
+            if m <= n and self.constant_matrix().rank() == m:
+                # early exit: kernel is empty; note: this covers the case m==0
+                return matrix(self.base_ring(), 0, m)
+
+            if n == 0: # early exit: kernel is identity
                 return matrix.identity(self.base_ring(), m, m)
 
-            if m <= n and self.constant_matrix().rank() == m:
-                # early exit: kernel is empty
-                from sage.matrix.constructor import matrix
-                return matrix(self.base_ring(), 0, m)
+            d = self.degree() # well defined since m > 0 and n > 0
+            if d == -1: # matrix is zero: kernel is identity
+                return matrix.identity(self.base_ring(), m, m)
 
             # degree bounds on the kernel basis
             degree_bound = min(m,n)*d+max(shifts)
@@ -3970,23 +4002,36 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
             orders = self.column_degrees(degree_bounds)
             for i in range(n): orders[i] = orders[i]+1
 
+            # note: minimal_approximant_basis requires orders[i] > 0
+            # -> if d>0, then degree_bounds > 0 entry-wise and this tuple
+            # `orders` already has all entries strictly positive
+            # -> if d==0, then `orders[i]` is zero exactly when the column i
+            # of self is zero; we may as well take orders[i] == 1 for such
+            # columns which do not influence the left kernel
+            if d == 0:
+                for i in range(n):
+                    if orders[i] == 0:
+                        orders[i] = 1
+
             # compute approximant basis and retrieve kernel rows
             P = self.minimal_approximant_basis(orders,shifts,True,normal_form)
             row_indices = []
             for i in range(m):
-                if P[i,i].degree() + shifts[i] <= degree_bound:
+                if P[i, i].degree() + shifts[i] <= degree_bound:
                     row_indices.append(i)
             return P[row_indices,:]
 
         else:
-            if d is -1: # matrix is zero
-                from sage.matrix.constructor import matrix
+            if n <= m and self.constant_matrix().rank() == n:
+                # early exit: kernel is empty; this covers the case n==0
+                return matrix(self.base_ring(), n, 0)
+
+            if m == 0: # early exit: kernel is identity
                 return matrix.identity(self.base_ring(), n, n)
 
-            if n <= m and self.constant_matrix().rank() == n:
-                # early exit: kernel is empty
-                from sage.matrix.constructor import matrix
-                return matrix(self.base_ring(), n, 0)
+            d = self.degree() # well defined since m > 0 and n > 0
+            if d == -1: # matrix is zero
+                return matrix.identity(self.base_ring(), n, n)
 
             # degree bounds on the kernel basis
             degree_bound = min(m,n)*d+max(shifts)
@@ -3996,10 +4041,21 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
             orders = self.row_degrees(degree_bounds)
             for i in range(m): orders[i] = orders[i]+1
 
+            # note: minimal_approximant_basis requires orders[i] > 0
+            # -> if d>0, then degree_bounds > 0 entry-wise and this tuple
+            # `orders` already has all entries strictly positive
+            # -> if d==0, then `orders[i]` is zero exactly when the row i
+            # of self is zero; we may as well take orders[i] == 1 for such
+            # rows which do not influence the right kernel
+            if d == 0:
+                for i in range(m):
+                    if orders[i] == 0:
+                        orders[i] = 1
+
             # compute approximant basis and retrieve kernel columns
             P = self.minimal_approximant_basis(orders,shifts,False,normal_form)
             column_indices = []
             for j in range(n):
-                if P[j,j].degree() + shifts[j] <= degree_bound:
+                if P[j, j].degree() + shifts[j] <= degree_bound:
                     column_indices.append(j)
             return P[:,column_indices]

@@ -1,3 +1,4 @@
+# sage.doctest: optional - sage.combinat sage.groups
 r"""
 Examples of finite Coxeter groups
 """
@@ -11,7 +12,7 @@ Examples of finite Coxeter groups
 from sage.misc.cachefunc import cached_method
 from sage.structure.parent import Parent
 from sage.structure.element_wrapper import ElementWrapper
-from sage.categories.all import FiniteCoxeterGroups
+from sage.categories.finite_coxeter_groups import FiniteCoxeterGroups
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.misc.functional import is_odd, is_even
 from sage.combinat.root_system.coxeter_matrix import CoxeterMatrix

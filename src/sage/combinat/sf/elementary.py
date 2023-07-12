@@ -17,11 +17,12 @@ Elementary symmetric functions
 #
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from . import multiplicative, classical
+from sage.arith.misc import binomial, factorial
 from sage.combinat.partition import Partition
+from sage.combinat.sf import multiplicative, classical
 from sage.misc.misc_c import prod
-from sage.arith.all import factorial, binomial
 from sage.rings.infinity import infinity
+
 
 ###################################
 #                                 #
@@ -369,7 +370,7 @@ class SymmetricFunctionAlgebra_elementary(multiplicative.SymmetricFunctionAlgebr
             By default, we return a rational functions in `q`.  Sometimes
             it is better to obtain an element of the symbolic ring::
 
-                sage: x.principal_specialization(q=var("q"))
+                sage: x.principal_specialization(q=var("q"))                            # optional - sage.symbolic
                 -3*q/((q^2 - 1)*(q - 1)^2) - 5/(q - 1)^3 + 1
 
             TESTS::
@@ -467,7 +468,7 @@ class SymmetricFunctionAlgebra_elementary(multiplicative.SymmetricFunctionAlgebr
                 sage: x.exponential_specialization()
                 1/12*t^5
                 sage: x = 5*e[2] + 3*e[1] + 1
-                sage: x.exponential_specialization(t=var("t"), q=var("q"))
+                sage: x.exponential_specialization(t=var("t"), q=var("q"))              # optional - sage.symbolic
                 5*q*t^2/(q + 1) + 3*t + 1
 
             TESTS::

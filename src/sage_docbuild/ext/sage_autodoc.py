@@ -31,6 +31,7 @@ AUTHORS:
 - Kwankyu Lee (2018-12-26, 2022-11-08): rebased on the latest sphinx.ext.autodoc
 
 """
+from __future__ import annotations
 
 import re
 import warnings
@@ -44,7 +45,6 @@ from docutils.statemachine import StringList
 import sphinx
 from sphinx.application import Sphinx
 from sphinx.config import ENUM, Config
-from sphinx.deprecation import RemovedInSphinx60Warning
 from sphinx.environment import BuildEnvironment
 from sphinx.ext.autodoc.importer import (get_class_members, get_object_members, import_module,
                                          import_object)
@@ -56,7 +56,11 @@ from sphinx.util.docstrings import prepare_docstring, separate_metadata
 from sphinx.util.inspect import (evaluate_signature, getdoc, object_description, safe_getattr,
                                  stringify_signature)
 from sphinx.util.typing import OptionSpec, get_type_hints, restify
-from sphinx.util.typing import stringify as stringify_typehint
+
+try:
+    from sphinx.util.typing import stringify_annotation
+except ImportError:
+    from sphinx.util.typing import stringify as stringify_annotation
 
 # ------------------------------------------------------------------
 from sage.misc.sageinspect import (sage_getdoc_original,
@@ -646,32 +650,13 @@ class Documenter:
                 self.add_line(line, src[0], src[1])
 
     def get_object_members(self, want_all: bool) -> Tuple[bool, ObjectMembers]:
-        """Return ``(members_check_module, members)`` where ``members`` is a
-        list of ``(membername, member)`` pairs of the members of *self.object*.
+        """Return `(members_check_module, members)` where `members` is a
+        list of `(membername, member)` pairs of the members of *self.object*.
 
         If *want_all* is True, return all members.  Else, only return those
         members given by *self.options.members* (which may also be None).
         """
-        warnings.warn('The implementation of Documenter.get_object_members() will be '
-                      'removed from Sphinx-6.0.', RemovedInSphinx60Warning)
-        members = get_object_members(self.object, self.objpath, self.get_attr, self.analyzer)
-        if not want_all:
-            if not self.options.members:
-                return False, []  # type: ignore
-            # specific members given
-            selected = []
-            for name in self.options.members:
-                if name in members:
-                    selected.append((name, members[name].value))
-                else:
-                    logger.warning(__('missing attribute %s in object %s') %
-                                   (name, self.fullname), type='autodoc')
-            return False, selected
-        elif self.options.inherited_members:
-            return False, [(m.name, m.value) for m in members.values()]
-        else:
-            return False, [(m.name, m.value) for m in members.values()
-                           if m.directly_defined]
+        raise NotImplementedError('must be implemented in subclasses')
 
     def filter_members(self, members: ObjectMembers, want_all: bool
                        ) -> List[Tuple[str, Any, bool]]:
@@ -720,7 +705,7 @@ class Documenter:
             try:
                 membername, member = obj
                 # ---------------------------------------------------
-                # Trac #17455: Immediately skip lazy imports to avoid
+                # Issue #17455: Immediately skip lazy imports to avoid
                 # deprecation messages.
                 from sage.misc.lazy_import import LazyImport
                 if isinstance(member, LazyImport):
@@ -1319,7 +1304,7 @@ class FunctionDocumenter(DocstringSignatureMixin, ModuleLevelDocumenter):  # typ
         # does not support bound methods exported at the module level
         if is_function_or_cython_function(member) or inspect.isbuiltin(member):
             return True
-        # Trac #9976: It can be documented if it is a genuine function.
+        # Issue #9976: It can be documented if it is a genuine function.
         # Often, a class instance has the same documentation as its class,
         # and then we typically want to document the class and not the
         # instance.  However, there is an exception: CachedFunction(f) returns
@@ -1339,7 +1324,7 @@ class FunctionDocumenter(DocstringSignatureMixin, ModuleLevelDocumenter):  # typ
         try:
             self.env.app.emit('autodoc-before-process-signature', self.object, False)
             # ----------------------------------------------------------------
-            # Trac #9976: Support the _sage_argspec_ attribute which makes it
+            # Issue #9976: Support the _sage_argspec_ attribute which makes it
             # possible to get argument specification of decorated callables in
             # documentation correct. See e.g. sage.misc.decorators.sage_wraps
             obj = self.object
@@ -1543,7 +1528,7 @@ class ClassDocumenter(DocstringSignatureMixin, ModuleLevelDocumenter):  # type: 
             if hasattr(self.object, '__name__'):
                 self.doc_as_attr = (self.objpath[-1] != self.object.__name__)
             # -------------------------------------------------------------------
-            # Trac #27692, #7448: The original goal of this was that if some
+            # Issue #27692, #7448: The original goal of this was that if some
             # class is aliased, the alias is generated as a link rather than
             # duplicated. For example in
             #
@@ -2050,9 +2035,9 @@ class TypeVarMixin(DataDocumenterMixinBase):
             attrs = [repr(self.object.__name__)]
             for constraint in self.object.__constraints__:
                 if self.config.autodoc_typehints_format == "short":
-                    attrs.append(stringify_typehint(constraint, "smart"))
+                    attrs.append(stringify_annotation(constraint, "smart"))
                 else:
-                    attrs.append(stringify_typehint(constraint))
+                    attrs.append(stringify_annotation(constraint))
             if self.object.__bound__:
                 if self.config.autodoc_typehints_format == "short":
                     bound = restify(self.object.__bound__, "smart")
@@ -2175,10 +2160,10 @@ class DataDocumenter(GenericAliasMixin, NewTypeMixin, TypeVarMixin,
                                              self.config.autodoc_type_aliases)
                 if self.objpath[-1] in annotations:
                     if self.config.autodoc_typehints_format == "short":
-                        objrepr = stringify_typehint(annotations.get(self.objpath[-1]),
+                        objrepr = stringify_annotation(annotations.get(self.objpath[-1]),
                                                      "smart")
                     else:
-                        objrepr = stringify_typehint(annotations.get(self.objpath[-1]))
+                        objrepr = stringify_annotation(annotations.get(self.objpath[-1]))
                     self.add_line('   :type: ' + objrepr, sourcename)
 
             try:
@@ -2286,7 +2271,7 @@ class MethodDocumenter(DocstringSignatureMixin, ClassLevelDocumenter):  # type: 
             kwargs.setdefault('unqualified_typehints', True)
 
         # -----------------------------------------------------------------
-        # Trac #9976: Support the _sage_argspec_ attribute which makes it
+        # Issue #9976: Support the _sage_argspec_ attribute which makes it
         # possible to get argument specification of decorated callables in
         # documentation correct.  See e.g. sage.misc.decorators.sage_wraps.
         #
@@ -2337,7 +2322,7 @@ class MethodDocumenter(DocstringSignatureMixin, ClassLevelDocumenter):  # type: 
         pass
 
     # ------------------------------------------------------------------------
-    # Trac #34730: The format_signature() of the class MethodDocumenter
+    # Issue #34730: The format_signature() of the class MethodDocumenter
     # supports overloaded methods via inspect.signature(), which does not work
     # with Sage yet. Hence the method was removed from here.
     # ------------------------------------------------------------------------
@@ -2493,16 +2478,6 @@ class SlotsMixin(DataDocumenterMixinBase):
                 return []
         else:
             return super().get_doc()  # type: ignore
-
-    @property
-    def _datadescriptor(self) -> bool:
-        warnings.warn('AttributeDocumenter._datadescriptor() is deprecated.',
-                      RemovedInSphinx60Warning)
-        if self.object is SLOTSATTR:
-            return True
-        else:
-            return False
-
 
 class RuntimeInstanceAttributeMixin(DataDocumenterMixinBase):
     """
@@ -2666,7 +2641,7 @@ class AttributeDocumenter(GenericAliasMixin, NewTypeMixin, SlotsMixin,  # type: 
         if isinstance(parent, ModuleDocumenter):
             return False
         # ---------------------------------------------------------------------
-        # Trac #34730: Do not pass objects of the class CachedMethodCaller as
+        # Issue #34730: Do not pass objects of the class CachedMethodCaller as
         # attributes.
         #
         #   sage: from sphinx.util import inspect
@@ -2681,7 +2656,7 @@ class AttributeDocumenter(GenericAliasMixin, NewTypeMixin, SlotsMixin,  # type: 
         #
         if inspect.isattributedescriptor(member) and not inspect.isroutine(member):
             return True
-        # Trac #26522: Pass objects of classes that inherit ClasscallMetaclass
+        # Issue #26522: Pass objects of classes that inherit ClasscallMetaclass
         # as attributes rather than method descriptors.
         from sage.misc.classcall_metaclass import ClasscallMetaclass
         if isinstance(type(member), ClasscallMetaclass):
@@ -2756,10 +2731,10 @@ class AttributeDocumenter(GenericAliasMixin, NewTypeMixin, SlotsMixin,  # type: 
                                              self.config.autodoc_type_aliases)
                 if self.objpath[-1] in annotations:
                     if self.config.autodoc_typehints_format == "short":
-                        objrepr = stringify_typehint(annotations.get(self.objpath[-1]),
+                        objrepr = stringify_annotation(annotations.get(self.objpath[-1]),
                                                      "smart")
                     else:
-                        objrepr = stringify_typehint(annotations.get(self.objpath[-1]))
+                        objrepr = stringify_annotation(annotations.get(self.objpath[-1]))
                     self.add_line('   :type: ' + objrepr, sourcename)
 
             try:
@@ -2884,9 +2859,9 @@ class PropertyDocumenter(DocstringStripSignatureMixin, ClassLevelDocumenter):  #
                                               type_aliases=self.config.autodoc_type_aliases)
                 if signature.return_annotation is not Parameter.empty:
                     if self.config.autodoc_typehints_format == "short":
-                        objrepr = stringify_typehint(signature.return_annotation, "smart")
+                        objrepr = stringify_annotation(signature.return_annotation, "smart")
                     else:
-                        objrepr = stringify_typehint(signature.return_annotation)
+                        objrepr = stringify_annotation(signature.return_annotation)
                     self.add_line('   :type: ' + objrepr, sourcename)
             except TypeError as exc:
                 logger.warning(__("Failed to get a function signature for %s: %s"),

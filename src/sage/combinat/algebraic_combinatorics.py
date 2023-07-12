@@ -39,8 +39,10 @@ Combinatorial Representation Theory
 - :ref:`sage.combinat.cluster_algebra_quiver.all`
 - :class:`~sage.combinat.kazhdan_lusztig.KazhdanLusztigPolynomial`
 - :class:`~sage.combinat.symmetric_group_representations.SymmetricGroupRepresentation`
+- :class:`~sage.combinat.specht_module.SpechtModule`
 - :ref:`sage.combinat.yang_baxter_graph`
 - :ref:`sage.combinat.hall_polynomial`
+- :ref:`sage.combinat.key_polynomial`
 
 Operads and their algebras
 --------------------------

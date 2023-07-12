@@ -15,9 +15,8 @@ from sage.matrix.matrix0 cimport Matrix
 from sage.misc.cachefunc import cached_method
 from sage.misc.functional import is_even
 from sage.misc.misc_c import prod as mul
-from sage.misc.superseded import deprecated_function_alias
 from sage.modules.free_module_element import vector
-from sage.rings.finite_rings.element_base import is_FiniteFieldElement
+from sage.rings.finite_rings.finite_field_base import FiniteField
 from sage.rings.finite_rings.finite_field_constructor import FiniteField as GF
 from sage.rings.ideal import FieldIdeal, Ideal
 from sage.rings.integer_ring import ZZ
@@ -173,12 +172,12 @@ cdef class SBox(SageObject):
             sage: S.output_size()
             3
         """
-        from sage.rings.polynomial.polynomial_element import is_Polynomial
+        from sage.rings.polynomial.polynomial_element import Polynomial
 
         if "S" in kwargs:
             args = kwargs["S"]
 
-        if len(args) == 1 and is_Polynomial(args[0]):
+        if len(args) == 1 and isinstance(args[0], Polynomial):
             # SBox defined via Univariate Polynomial, compute lookup table
             # by evaluating the polynomial on every base_ring element
             poly = args[0]
@@ -195,7 +194,7 @@ cdef class SBox(SageObject):
 
         _S_list = []
         for e in S:
-            if is_FiniteFieldElement(e):
+            if isinstance(e, Element) and isinstance(e.parent(), FiniteField):
                 e = e.polynomial().change_ring(ZZ).subs(e.parent().characteristic())
             _S_list.append(e)
         S = _S_list
@@ -940,13 +939,11 @@ cdef class SBox(SageObject):
         Check that :trac:`22453` is fixed::
 
             sage: from sage.crypto.sboxes import AES
-            sage: aes_polys = AES.polynomials()
-            sage: p = aes_polys[0].parent("x3*y0 + x5*y0 + x7*y0 + x6*y1 + x2*y2"
-            ....:                         " + x3*y2 + x4*y2 + x2*y3 + x3*y3 +"
-            ....:                         " x5*y4 + x6*y4 + x3*y5 + x4*y5 + x4*y7"
-            ....:                         " + x2 + x3 + y2 + y3 + y4 + 1")
-            sage: p in aes_polys
-            True
+            sage: aes_polys = AES.polynomials()  # long time
+            sage: aes_polys[3]                   # long time
+            x3*y0 + x5*y0 + x7*y0 + x6*y1 + x2*y2 + x3*y2 + x4*y2
+                  + x2*y3 + x3*y3 + x5*y4 + x6*y4 + x3*y5 + x4*y5
+                  + x4*y7 + x2 + x3 + y2 + y3 + y4 + 1
         """
         cdef Py_ssize_t m = self.m
         cdef Py_ssize_t n = self.n
@@ -1412,6 +1409,12 @@ cdef class SBox(SageObject):
             sage: S = SBox([12,5,6,11,9,0,10,13,3,14,15,8,4,7,1,2])
             sage: S.linear_branch_number()
             2
+
+        TESTS::
+
+            sage: f = SBox([0, 2, 0, 6, 2, 2, 3, 7])
+            sage: f.linear_branch_number()
+            1
         """
         cdef Py_ssize_t m = self.m
         cdef Py_ssize_t n = self.n
@@ -1419,8 +1422,8 @@ cdef class SBox(SageObject):
         cdef Py_ssize_t ret = (1 << m) + (1 << n)
 
         cdef Py_ssize_t a, b, w
-        for a in range(1, 1 << m):
-            for b in range(1 << n):
+        for a in range(1 << m):
+            for b in range(1, 1 << n):
                 if lat.get_unsafe(a, b) != 0:
                     w = hamming_weight(a) + hamming_weight(b)
                     if w < ret:

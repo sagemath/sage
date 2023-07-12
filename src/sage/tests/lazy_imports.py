@@ -9,7 +9,7 @@ on purpose because it does print stuff, see :trac:`31655`.::
     sage: for name, obj in sorted(G.items()):
     ....:     if name == 'libgiac':
     ....:          continue
-    ....:     if type(obj) is LazyImport and obj._get_deprecation_ticket() == 0:
+    ....:     if type(obj) is LazyImport and obj._get_deprecation_issue() == 0:
     ....:         try:
     ....:             _ = obj._get_object()
     ....:         except Exception as e:
@@ -19,7 +19,7 @@ Check that all deprecated lazy imports resolve correctly::
 
     sage: import warnings
     sage: for name, obj in sorted(G.items()):
-    ....:     if type(obj) is LazyImport and obj._get_deprecation_ticket() != 0:
+    ....:     if type(obj) is LazyImport and obj._get_deprecation_issue() != 0:
     ....:         with warnings.catch_warnings(record=True) as w:
     ....:             _ = obj._get_object()
     ....:             assert w[0].category == DeprecationWarning

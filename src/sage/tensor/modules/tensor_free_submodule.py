@@ -179,7 +179,7 @@ class TensorFreeSubmodule_sym(TensorFreeModule):
                                                category=category, ambient=ambient)
 
     def construction(self):
-        # TODO: Define the symmetry group and its action (https://trac.sagemath.org/ticket/34495),
+        # TODO: Define the symmetry group and its action (https://github.com/sagemath/sage/issues/34495),
         # return the construction functor for invariant subobjects.
         r"""
         Return the functorial construction of ``self``.

@@ -48,7 +48,7 @@ are also available directly using the catalogue of posets, as follows::
 # ****************************************************************************
 from __future__ import annotations
 from sage.combinat.posets.lattices import LatticePoset, MeetSemilattice
-from sage.arith.all import gcd
+from sage.arith.misc import gcd
 
 
 def paths_in_triangle(i, j, a, b) -> list[tuple[int, ...]]:

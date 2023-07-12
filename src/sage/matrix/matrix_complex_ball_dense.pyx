@@ -23,8 +23,7 @@ TESTS::
     sage: loads(dumps(mat)).identical(mat)
     True
 """
-
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2014 Clemens Heuberger <clemens.heuberger@aau.at>
 #
 # This program is free software: you can redistribute it and/or modify
@@ -32,8 +31,7 @@ TESTS::
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
-#*****************************************************************************
-
+# ****************************************************************************
 from cpython.object cimport Py_EQ, Py_NE
 from cysignals.signals cimport sig_on, sig_str, sig_off
 
@@ -42,9 +40,7 @@ from sage.libs.arb.acb cimport *
 from sage.libs.arb.acb_mat cimport *
 from sage.libs.gmp.mpz cimport mpz_fits_ulong_p, mpz_get_ui
 from sage.matrix.constructor import matrix
-from sage.matrix.matrix_generic_sparse cimport Matrix_generic_sparse
 from .args cimport SparseEntry, MatrixArgs_init
-from sage.rings.complex_interval_field import ComplexIntervalField_class, ComplexIntervalField
 from sage.rings.complex_interval cimport ComplexIntervalFieldElement
 from sage.rings.complex_arb cimport (
     ComplexBall,
@@ -52,12 +48,11 @@ from sage.rings.complex_arb cimport (
     acb_to_ComplexIntervalFieldElement)
 from sage.rings.integer cimport Integer
 from sage.rings.polynomial.polynomial_complex_arb cimport Polynomial_complex_arb
-from sage.structure.element cimport Element, RingElement, Matrix
+from sage.structure.element cimport Element, Matrix
 from sage.structure.parent cimport Parent
 from sage.structure.sequence import Sequence
 
 from sage.misc.superseded import experimental
-from sage.rings.integer_ring import ZZ
 from sage.rings.polynomial import polynomial_ring_constructor
 
 
@@ -75,7 +70,7 @@ cdef void matrix_to_acb_mat(acb_mat_t target, source):
 
     None.
     """
-    cdef unsigned long nrows, ncols, r, c, precision
+    cdef unsigned long nrows, ncols, r, c
 
     nrows = acb_mat_nrows(target)
     ncols = acb_mat_ncols(target)
@@ -92,8 +87,7 @@ cdef ComplexIntervalFieldElement _to_CIF(acb_t source, ComplexIntervalFieldEleme
         result, source)
     return result
 
-cdef Matrix_generic_dense acb_mat_to_matrix(
-    acb_mat_t source, Parent CIF):
+cdef Matrix_generic_dense acb_mat_to_matrix(acb_mat_t source, Parent CIF):
     """
     Convert an ``acb_mat_t`` to a matrix containing :class:`ComplexIntervalFieldElement`.
 
@@ -674,7 +668,7 @@ cdef class Matrix_complex_ball_dense(Matrix_dense):
         sig_off()
         return res
 
-    @experimental(trac_number=30393)
+    @experimental(issue_number=30393)
     def eigenvalues(self, other=None, *, extend=None):
         r"""
         (Experimental.) Compute rigorous enclosures of the eigenvalues of this matrix.
@@ -750,7 +744,7 @@ cdef class Matrix_complex_ball_dense(Matrix_dense):
             _acb_vec_clear(eigval_approx, n)
         return Sequence(res)
 
-    @experimental(trac_number=30393)
+    @experimental(issue_number=30393)
     def eigenvectors_right_approx(self, other=None, *, extend=None):
         r"""
         (Experimental.) Compute *non-rigorous* approximations of the
@@ -776,7 +770,7 @@ cdef class Matrix_complex_ball_dense(Matrix_dense):
         EXAMPLES::
 
             sage: from sage.matrix.benchmark import hilbert_matrix
-            sage: mat = hilbert_matrix(3).change_ring(CBF) 
+            sage: mat = hilbert_matrix(3).change_ring(CBF)
             sage: eigval, eigvec, _ = mat.eigenvectors_right_approx()[0]
             doctest:...: FutureWarning: This class/method/function is marked as experimental.
             ...
@@ -804,9 +798,9 @@ cdef class Matrix_complex_ball_dense(Matrix_dense):
             eigval = _acb_vec_to_list(_eigval, n, self._parent._base)
         finally:
             _acb_vec_clear(_eigval, n)
-        return [(l, [v], 1) for l, v in zip(eigval, eigvec.columns())]
+        return [(val, [vec], 1) for val, vec in zip(eigval, eigvec.columns())]
 
-    @experimental(trac_number=30393)
+    @experimental(issue_number=30393)
     def eigenvectors_right(self, other=None, *, extend=None):
         r"""
         (Experimental.) Compute rigorous enclosures of the eigenvalues and
@@ -834,7 +828,7 @@ cdef class Matrix_complex_ball_dense(Matrix_dense):
         EXAMPLES::
 
             sage: from sage.matrix.benchmark import hilbert_matrix
-            sage: mat = hilbert_matrix(3).change_ring(CBF) 
+            sage: mat = hilbert_matrix(3).change_ring(CBF)
             sage: eigval, eigvec, _ = mat.eigenvectors_right()[0]
             doctest:...: FutureWarning: This class/method/function is marked as experimental.
             ...
@@ -867,7 +861,7 @@ cdef class Matrix_complex_ball_dense(Matrix_dense):
             acb_mat_clear(eigvec_approx)
             _acb_vec_clear(_eigval, n)
             _acb_vec_clear(eigval_approx, n)
-        return [(l, [v], 1) for l, v in zip(eigval, eigvec.columns())]
+        return [(val, [vec], 1) for val, vec in zip(eigval, eigvec.columns())]
 
     def eigenvectors_left_approx(self, other=None, *, extend=None):
         r"""

@@ -22,7 +22,7 @@ def setenv():
     if 'ARCHFLAGS' not in os.environ and SAGE_ARCHFLAGS != "unset":
         os.environ['ARCHFLAGS'] = SAGE_ARCHFLAGS
     _environ_prepend('PKG_CONFIG_PATH', SAGE_PKG_CONFIG_PATH)
-    # Trac #32057: As sage.env gives SAGE_LOCAL a fallback value from SAGE_VENV,
+    # Issue #32057: As sage.env gives SAGE_LOCAL a fallback value from SAGE_VENV,
     # SAGE_LOCAL is never unset.  So we only set it if it differs from SAGE_VENV.
     # We assume that compiling/linking against libraries installed in SAGE_VENV
     # works -- that's the responsibility of the venv activation, not ours.

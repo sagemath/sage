@@ -35,7 +35,7 @@ with a different numerator and/or a different denominator::
     sage: g
     (d - 1/t)^(-1) * t
 
-The left numerator and right denominator are accessible as follows:
+The left numerator and right denominator are accessible as follows::
 
     sage: g.left_numerator()
     t
@@ -354,7 +354,6 @@ class OreFunctionField(Algebra, UniqueRepresentation):
             5
         """
         return self.base_ring().characteristic()
-
 
     def twisting_morphism(self, n=1):
         r"""

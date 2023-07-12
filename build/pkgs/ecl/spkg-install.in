@@ -2,7 +2,7 @@ cd src
 
 if [ "$UNAME" = "CYGWIN" ]; then
     # Some of ECL's sources rely on GNU-isms that are allowed by default on
-    # most glibcs, but not in newlib; https://trac.sagemath.org/ticket/25057
+    # most glibcs, but not in newlib; https://github.com/sagemath/sage/issues/25057
     CFLAGS="$CFLAGS -D_GNU_SOURCE"
     CXXFLAGS="$CXXFLAGS -D_GNU_SOURCE"
 fi
@@ -31,18 +31,6 @@ cp "$SAGE_ROOT"/config/config.* src
 
 if [ x"$SAGE_SPKG_INSTALL_DOCS" != xyes ] ; then
     ECL_CONFIGURE="$ECL_CONFIGURE --enable-manual=no"
-else
-    # ECL 2020 needs modern makeinfo
-    command -v texi2any >/dev/null 2>&1
-    if [ $? -ne 0 ]; then # texi2any not found -> makeinfo too old, if present
-        ECL_CONFIGURE="$ECL_CONFIGURE --enable-manual=no"
-    else
-        if makeinfo -c foo 2>&1 | grep -q invalid; then
-            # makeinfo found but does not support all options that ecl
-            # likes to use
-            ECL_CONFIGURE="$ECL_CONFIGURE --enable-manual=no"
-        fi
-    fi
 fi
 
 sdh_configure $SAGE_CONFIGURE_GMP \

@@ -322,7 +322,7 @@ def dynamic_class(name, bases, cls=None, reduction=None, doccls=None,
         name = str(name)
     except UnicodeEncodeError:
         pass
-    assert(isinstance(name, str))
+    assert isinstance(name, str)
     #    assert(cls is None or issubtype(type(cls), type) or type(cls) is classobj)
     if cache is True:
         return dynamic_class_internal(name, bases, cls, reduction, doccls, prepend_cls_bases)
@@ -522,7 +522,7 @@ class DynamicInheritComparisonClasscallMetaclass(DynamicMetaclass, InheritCompar
     pass
 
 
-# This registers the appropriate reduction methods (see Trac #5985)
+# This registers the appropriate reduction methods (see Issue #5985)
 for M in [DynamicMetaclass,
           DynamicClasscallMetaclass,
           DynamicInheritComparisonMetaclass,

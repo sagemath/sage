@@ -230,10 +230,10 @@ specified if given a non-interval and an interval::
 
 TESTS::
 
-    sage: import numpy
-    sage: RIF(2) == numpy.int8('2')
+    sage: import numpy                                                                  # optional - numpy
+    sage: RIF(2) == numpy.int8('2')                                                     # optional - numpy
     True
-    sage: numpy.int8('2') == RIF(2)
+    sage: numpy.int8('2') == RIF(2)                                                     # optional - numpy
     True
     sage: RIF(0,1) < float('2')
     Traceback (most recent call last):
@@ -264,7 +264,7 @@ from sage.libs.mpfi cimport *
 from sage.arith.constants cimport LOG_TEN_TWO_PLUS_EPSILON
 
 cimport sage.structure.element
-from sage.structure.element cimport RingElement, Element, ModuleElement
+from sage.structure.element cimport RingElement, Element
 from sage.structure.element cimport have_same_parent
 from sage.structure.parent cimport Parent
 from sage.structure.richcmp cimport richcmp
@@ -272,14 +272,10 @@ from sage.structure.richcmp cimport richcmp
 from .convert.mpfi cimport mpfi_set_sage
 from .real_mpfr cimport RealField_class, RealNumber, RealField
 from .integer cimport Integer
-from .real_double cimport RealDoubleElement
-from .real_double import RDF
 from .integer_ring import ZZ
 from .rational_field import QQ
-from sage.categories.morphism cimport Map
 
 cimport sage.rings.abc
-cimport sage.rings.real_mpfr as real_mpfr
 
 import math  # for log
 import sys
@@ -1284,7 +1280,7 @@ cdef class RealIntervalFieldElement(RingElement):
         """
         return (__create__RealIntervalFieldElement_version1, (self._parent, self.upper(), self.lower()))
 
-    def  __dealloc__(self):
+    def __dealloc__(self):
         """
         Deallocate ``self``.
 
@@ -2586,7 +2582,7 @@ cdef class RealIntervalFieldElement(RingElement):
             sage: RIF(1) + RR(1)
             doctest:...:
             DeprecationWarning: automatic conversions from floating-point numbers to intervals are deprecated
-            See http://trac.sagemath.org/15114 for details.
+            See https://github.com/sagemath/sage/issues/15114 for details.
             2
             sage: import warnings; warnings.resetwarnings()
         """
@@ -2610,7 +2606,7 @@ cdef class RealIntervalFieldElement(RingElement):
             sage: RIF(2) - RR(1)
             doctest:...:
             DeprecationWarning: automatic conversions from floating-point numbers to intervals are deprecated
-            See http://trac.sagemath.org/15114 for details.
+            See https://github.com/sagemath/sage/issues/15114 for details.
             1
             sage: import warnings; warnings.resetwarnings()
         """
@@ -2634,7 +2630,7 @@ cdef class RealIntervalFieldElement(RingElement):
             sage: RIF(1) * RR(1)
             doctest:...:
             DeprecationWarning: automatic conversions from floating-point numbers to intervals are deprecated
-            See http://trac.sagemath.org/15114 for details.
+            See https://github.com/sagemath/sage/issues/15114 for details.
             1
             sage: import warnings; warnings.resetwarnings()
         """
@@ -2658,7 +2654,7 @@ cdef class RealIntervalFieldElement(RingElement):
             sage: RIF(1) / RR(1/2)
             doctest:...:
             DeprecationWarning: automatic conversions from floating-point numbers to intervals are deprecated
-            See http://trac.sagemath.org/15114 for details.
+            See https://github.com/sagemath/sage/issues/15114 for details.
             2
             sage: import warnings; warnings.resetwarnings()
         """
@@ -2935,8 +2931,9 @@ cdef class RealIntervalFieldElement(RingElement):
 
     def __rshift__(x, y):
         """
-        Returns `x / 2^y`, for `y` an integer. Much faster
-        than an ordinary division.
+        Return `x / 2^y`, for `y` an integer.
+
+        Much faster than an ordinary division.
 
         EXAMPLES::
 
@@ -5356,7 +5353,8 @@ def __create__RealIntervalField_version0(prec, sci_not):
     """
     return RealIntervalField(prec, sci_not)
 
-## Keep all old versions!!!
+
+# Keep all old versions!!!
 def __create__RealIntervalFieldElement_version0(parent, x, base=10):
     """
     For pickling.
@@ -5367,6 +5365,7 @@ def __create__RealIntervalFieldElement_version0(parent, x, base=10):
         2.2000000000000002?
     """
     return RealIntervalFieldElement(parent, x, base=base)
+
 
 def __create__RealIntervalFieldElement_version1(parent, lower, upper):
     """

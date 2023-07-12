@@ -1,3 +1,4 @@
+# sage.doctest: optional - sage.modules
 r"""
 Examples of graded connected Hopf algebras with basis
 """
@@ -43,7 +44,6 @@ class GradedConnectedCombinatorialHopfAlgebraWithPrimitiveGenerator(Combinatoria
         """
         CombinatorialFreeModule.__init__(self, base_ring, NonNegativeIntegers(),
                                          category=GradedHopfAlgebrasWithBasis(base_ring).Connected())
-
 
     @cached_method
     def one_basis(self):

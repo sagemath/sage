@@ -64,7 +64,7 @@ you can run these commands with typeset mode on (``%display typeset``) and get
 
 Since it has only two variables, we can solve it graphically::
 
-    sage: P.plot()
+    sage: P.plot()                                                                      # optional - sage.plot
     Graphics object consisting of 19 graphics primitives
 
 
@@ -182,20 +182,25 @@ import re
 from copy import copy
 
 from sage.misc.abstract_method import abstract_method
-from sage.geometry.all import Polyhedron
-from sage.matrix.all import (column_matrix,
-                             identity_matrix,
-                             matrix,
-                             random_matrix)
+from sage.geometry.polyhedron.constructor import Polyhedron
+from sage.matrix.special import column_matrix
+from sage.matrix.special import identity_matrix
+from sage.matrix.constructor import Matrix as matrix
+from sage.matrix.special import random_matrix
 from sage.misc.latex import LatexExpr, latex
 from sage.misc.cachefunc import cached_function, cached_method
 from sage.misc.prandom import randint, random
 from sage.misc.html import HtmlFragment
 from sage.misc.misc import get_main_globals
-from sage.modules.all import random_vector, vector
+from sage.modules.free_module_element import random_vector
+from sage.modules.free_module_element import free_module_element as vector
 from sage.misc.lazy_import import lazy_import
 lazy_import("sage.plot.all", ["Graphics", "arrow", "line", "point", "rainbow", "text"])
-from sage.rings.all import Infinity, PolynomialRing, QQ, RDF, ZZ
+from sage.rings.infinity import Infinity
+from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+from sage.rings.rational_field import QQ
+from sage.rings.real_double import RDF
+from sage.rings.integer_ring import ZZ
 from sage.structure.all import SageObject
 from sage.symbolic.ring import SR
 
@@ -785,7 +790,7 @@ class InteractiveLPProblem(SageObject):
                                 latex(xj), r"\geq" if vt == ">=" else r"\leq")
                             for xj, vt in zip(x, self._variable_types) if vt))
         lines.append(r"\end{array}")
-        return  "\n".join(lines)
+        return "\n".join(lines)
 
     def _repr_(self):
         r"""
@@ -1529,19 +1534,19 @@ class InteractiveLPProblem(SageObject):
             sage: b = (1000, 1500)
             sage: c = (10, 5)
             sage: P = InteractiveLPProblem(A, b, c, ["C", "B"], variable_type=">=")
-            sage: p = P.plot()
-            sage: p.show()
+            sage: p = P.plot()                                                          # optional - sage.plot
+            sage: p.show()                                                              # optional - sage.plot
 
         In this case the plot works better with the following axes ranges::
 
-            sage: p = P.plot(0, 1000, 0, 1500)
-            sage: p.show()
+            sage: p = P.plot(0, 1000, 0, 1500)                                          # optional - sage.plot
+            sage: p.show()                                                              # optional - sage.plot
 
         TESTS:
 
         We check that zero objective can be dealt with::
 
-            sage: InteractiveLPProblem(A, b, (0, 0), ["C", "B"], variable_type=">=").plot()
+            sage: InteractiveLPProblem(A, b, (0, 0), ["C", "B"], variable_type=">=").plot()         # optional - sage.plot
             Graphics object consisting of 8 graphics primitives
         """
         FP = self.plot_feasible_set(*args, **kwds)
@@ -1606,13 +1611,13 @@ class InteractiveLPProblem(SageObject):
             sage: b = (1000, 1500)
             sage: c = (10, 5)
             sage: P = InteractiveLPProblem(A, b, c, ["C", "B"], variable_type=">=")
-            sage: p = P.plot_feasible_set()
-            sage: p.show()
+            sage: p = P.plot_feasible_set()                                             # optional - sage.plot
+            sage: p.show()                                                              # optional - sage.plot
 
         In this case the plot works better with the following axes ranges::
 
-            sage: p = P.plot_feasible_set(0, 1000, 0, 1500)
-            sage: p.show()
+            sage: p = P.plot_feasible_set(0, 1000, 0, 1500)                             # optional - sage.plot
+            sage: p.show()                                                              # optional - sage.plot
         """
         if self.n() != 2:
             raise ValueError("only problems with 2 variables can be plotted")
@@ -4037,7 +4042,7 @@ class LPDictionary(LPAbstractDictionary):
             e = 2 * tuple(N).index(self._entering) + 4
             for i, lin in enumerate(lines):
                 lin = lin[:-2].split("&")
-                # Trac #30809: The MathJaX version of \color takes an argument
+                # Issue #30809: The MathJaX version of \color takes an argument
                 if len(lin) > 1:
                     lin[e] = r"\color{green}{%s}" % (lin[e],)
                     lines[i] = "&".join(lin) + r"\\"
@@ -4505,7 +4510,7 @@ class LPRevisedDictionary(LPAbstractDictionary):
                              "for auxiliary problems")
         super().__init__()
         self._problem = problem
-        R =  problem.coordinate_ring()
+        R = problem.coordinate_ring()
         self._x_B = vector(R, [variable(R, v) for v in basic_variables])
 
     def __eq__(self, other):
@@ -4606,7 +4611,7 @@ class LPRevisedDictionary(LPAbstractDictionary):
             headers.append("B^{-1} A_{%s}" % latex(entering))
         if show_ratios:
             headers.append(r"\hbox{Ratio}")
-        lines.append(" & ".join(headers) +  r" \\")
+        lines.append(" & ".join(headers) + r" \\")
         lines.append(r"\hline")
         Bi = self.B_inverse()
         c_B = self.c_B()
@@ -4630,7 +4635,7 @@ class LPRevisedDictionary(LPAbstractDictionary):
                 for j, t in enumerate(terms):
                     if j == m + 2:
                         continue
-                    # Trac #30809: The MathJaX version of \color takes an argument
+                    # Issue #30809: The MathJaX version of \color takes an argument
                     terms[j] = r"\color{red}{" + t + "}"
             lines.append(" & ".join(terms) + r" \\")
         lines.append(r"\end{array}")

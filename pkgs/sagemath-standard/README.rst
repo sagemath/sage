@@ -28,4 +28,4 @@ for partial lists for various systems.
 
 The connection to the system environment is facilitated through the https://pypi.org/project/sage-conf/ distribution package.
 
-A modularization effort is in progress with the goal of making it possible to install parts of the Sage Library with fewer prerequisites. https://trac.sagemath.org/ticket/29705
+A modularization effort is in progress with the goal of making it possible to install parts of the Sage Library with fewer prerequisites. https://github.com/sagemath/sage/issues/29705

@@ -635,7 +635,7 @@ from collections.abc import MutableMapping
 from itertools import product
 from .parser import Parser
 from sage.misc.latex import latex
-from sage.misc.misc import powerset
+from sage.combinat.subset import powerset
 from sage.rings.rational_field import QQ
 from sage.structure.sage_object import SageObject
 from sage.matrix.constructor import matrix
@@ -2247,7 +2247,7 @@ class NormalFormGame(SageObject, MutableMapping):
             doctest:warning...
             DeprecationWarning: NormalFormGame._Hrepresentation is deprecated as it
             creates the legacy input format. Use NormalFormGame._lrs_nash_format instead
-            See https://trac.sagemath.org/27745 for details.
+            See https://github.com/sagemath/sage/issues/27745 for details.
             H-representation
             linearity 1 5
             begin
@@ -2341,7 +2341,7 @@ class NormalFormGame(SageObject, MutableMapping):
             doctest:warning...
             DeprecationWarning: NormalFormGame._Hrepresentation is deprecated as it
             creates the legacy input format. Use NormalFormGame._lrs_nash_format instead
-            See https://trac.sagemath.org/27745 for details.
+            See https://github.com/sagemath/sage/issues/27745 for details.
             sage: print('*game: player 1\n', legacy_format[0])
             *game: player 1
             H-representation
@@ -2743,8 +2743,8 @@ class NormalFormGame(SageObject, MutableMapping):
             sage: g._is_degenerate_pure()
             True
 
-            Whilst this game is not degenerate in pure strategies, it is
-            actually degenerate, but only in mixed strategies.
+        Whilst this game is not degenerate in pure strategies, it is
+        actually degenerate, but only in mixed strategies::
 
             sage: A = matrix([[3, 0], [0, 3], [1.5, 1.5]])
             sage: B = matrix([[4, 3], [2, 6], [3, 1]])

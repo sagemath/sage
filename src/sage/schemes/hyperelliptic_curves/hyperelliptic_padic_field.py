@@ -12,8 +12,15 @@ Hyperelliptic curves over a `p`-adic field
 # ****************************************************************************
 
 
-from sage.rings.all import (PowerSeriesRing, PolynomialRing, ZZ, QQ,
-                            pAdicField, GF, RR, RationalField, Infinity)
+from sage.rings.power_series_ring import PowerSeriesRing
+from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+from sage.rings.integer_ring import ZZ
+from sage.rings.rational_field import QQ
+from sage.rings.padics.factory import Qp as pAdicField
+from sage.rings.finite_rings.finite_field_constructor import FiniteField as GF
+from sage.rings.real_mpfr import RR
+from sage.rings.rational_field import RationalField
+from sage.rings.infinity import Infinity
 from sage.functions.log import log
 from sage.modules.free_module import VectorSpace
 from sage.matrix.constructor import matrix
@@ -663,7 +670,6 @@ class HyperellipticCurve_padic_field(hyperelliptic_generic.HyperellipticCurve_ge
             return TP_to_TQ
 
     coleman_integrals_on_basis_hyperelliptic = coleman_integrals_on_basis
-
 
 #    def invariant_differential(self):
 #        """

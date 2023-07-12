@@ -1,18 +1,19 @@
 r"""
 Unique factorization domains
 """
-#*****************************************************************************
+# ****************************************************************************
 #  Copyright (C) 2008 Teresa Gomez-Diaz (CNRS) <Teresa.Gomez-Diaz@univ-mlv.fr>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
-#                  http://www.gnu.org/licenses/
-#******************************************************************************
+#                  https://www.gnu.org/licenses/
+# *****************************************************************************
 
 from sage.misc.lazy_attribute import lazy_class_attribute
 from sage.misc.misc_c import prod
 from sage.categories.category_singleton import Category_singleton
 from sage.categories.category_singleton import Category_contains_method_by_parent_class
 from sage.categories.gcd_domains import GcdDomains
+
 
 class UniqueFactorizationDomains(Category_singleton):
     """
@@ -64,7 +65,7 @@ class UniqueFactorizationDomains(Category_singleton):
         """
         EXAMPLES::
 
-            sage: GF(4, "a") in UniqueFactorizationDomains()
+            sage: GF(4, "a") in UniqueFactorizationDomains()                            # optional - sage.rings.finite_rings
             True
             sage: QQ in UniqueFactorizationDomains()
             True
@@ -122,7 +123,8 @@ class UniqueFactorizationDomains(Category_singleton):
 
             EXAMPLES::
 
-                sage: Parent(QQ,category=UniqueFactorizationDomains()).is_unique_factorization_domain()
+                sage: UFD = UniqueFactorizationDomains()
+                sage: Parent(QQ, category=UFD).is_unique_factorization_domain()
                 True
 
             """
@@ -153,16 +155,17 @@ class UniqueFactorizationDomains(Category_singleton):
                 sage: q = (-x^2 - 4*x - 5)*T^2 + (6*x^2 + x + 1)*T + 2*x^2 - x
                 sage: quo,rem=p.pseudo_quo_rem(q); quo,rem
                 ((3*x^4 + 13*x^3 + 19*x^2 + 5*x)*T + 18*x^4 + 12*x^3 + 16*x^2 + 16*x,
-                 (-113*x^6 - 106*x^5 - 133*x^4 - 101*x^3 - 42*x^2 - 41*x)*T - 34*x^6 + 13*x^5 + 54*x^4 + 126*x^3 + 134*x^2 - 5*x - 50)
+                 (-113*x^6 - 106*x^5 - 133*x^4 - 101*x^3 - 42*x^2 - 41*x)*T
+                         - 34*x^6 + 13*x^5 + 54*x^4 + 126*x^3 + 134*x^2 - 5*x - 50)
                 sage: (-x^2 - 4*x - 5)^(3-2+1) * p == quo*q + rem
                 True
 
             Check that :trac:`23620` has been resolved::
 
-                sage: R.<x> = ZpFM(2)[]
-                sage: f = 2*x + 2
-                sage: g = 4*x + 2
-                sage: f.gcd(g).parent() is R
+                sage: R.<x> = ZpFM(2)[]                                                 # optional - sage.rings.padics
+                sage: f = 2*x + 2                                                       # optional - sage.rings.padics
+                sage: g = 4*x + 2                                                       # optional - sage.rings.padics
+                sage: f.gcd(g).parent() is R                                            # optional - sage.rings.padics
                 True
 
             """
@@ -242,7 +245,7 @@ class UniqueFactorizationDomains(Category_singleton):
                 sage: Integer(0).radical()
                 Traceback (most recent call last):
                 ...
-                ArithmeticError: Radical of 0 not defined.
+                ArithmeticError: radical of 0 is not defined
 
             The next example shows how to compute the radical of a number,
             assuming no prime > 100000 has exponent > 1 in the factorization::
@@ -259,7 +262,7 @@ class UniqueFactorizationDomains(Category_singleton):
                 10
             """
             if self.is_zero():
-                raise ArithmeticError("Radical of 0 not defined.")
+                raise ArithmeticError("radical of 0 is not defined")
             try:
                 decomp = self.squarefree_decomposition()
             except AttributeError:

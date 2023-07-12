@@ -2,7 +2,7 @@ r"""
 Convert PARI objects to Sage types
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2016 Jeroen Demeyer <jdemeyer@cage.ugent.be>
 #       Copyright (C) 2016 Luca De Feo <luca.defeo@polytechnique.edu>
 #       Copyright (C) 2016 Vincent Delecroix <vincent.delecroix@u-bordeaux.fr>
@@ -11,8 +11,8 @@ Convert PARI objects to Sage types
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from cysignals.signals cimport sig_on, sig_off
 
@@ -20,9 +20,7 @@ from cypari2.types cimport (GEN, typ, t_INT, t_FRAC, t_REAL, t_COMPLEX,
                             t_INTMOD, t_PADIC, t_INFINITY, t_VEC, t_COL,
                             t_VECSMALL, t_MAT, t_STR,
                             lg, precp)
-from cypari2.pari_instance cimport prec_words_to_bits
 from cypari2.paridecl cimport *
-from cypari2.gen cimport objtogen
 from cypari2.stack cimport new_gen
 from .convert_gmp cimport INT_to_mpz, new_gen_from_mpz_t, new_gen_from_mpq_t, INTFRAC_to_mpq
 
@@ -30,7 +28,9 @@ from sage.ext.stdsage cimport PY_NEW
 from sage.libs.gmp.mpz cimport mpz_fits_slong_p, mpz_sgn, mpz_get_ui, mpz_set, mpz_set_si, mpz_set_ui
 from sage.libs.gmp.mpq cimport mpq_denref, mpq_numref
 from sage.rings.integer cimport smallInteger
-from sage.rings.all import RealField, ComplexField, QuadraticField
+from sage.rings.real_mpfr import RealField
+from sage.rings.complex_mpfr import ComplexField
+from sage.rings.number_field.number_field import QuadraticField
 from sage.matrix.args cimport (MatrixArgs, MA_ENTRIES_SEQ_SEQ,
                                MA_ENTRIES_SEQ_FLAT, MA_ENTRIES_CALLABLE,
                                MA_ENTRIES_UNKNOWN, MA_ENTRIES_SCALAR)
@@ -352,7 +352,7 @@ cpdef set_integer_from_gen(Integer self, Gen x):
             break
         elif paritype == t_PADIC:
             if x._valp() < 0:
-                raise TypeError("Cannot convert p-adic with negative valuation to an integer")
+                raise TypeError("cannot convert p-adic with negative valuation to an integer")
             # Lifting a PADIC yields an integer
             x = x.lift()
             break

@@ -34,13 +34,10 @@ AUTHORS:
 # (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ***************************************************************************
-
 from cysignals.memory cimport check_realloc, check_malloc, sig_free
 from cpython.bytes cimport PyBytes_AsString, PyBytes_FromStringAndSize
 from cysignals.signals cimport sig_on, sig_off, sig_check
 cimport cython
-
-import os
 
 ####################
 #
@@ -53,12 +50,10 @@ from sage.cpython.string import FS_ENCODING
 from sage.rings.integer import Integer
 from sage.rings.finite_rings.finite_field_constructor import GF
 from sage.rings.finite_rings.integer_mod import IntegerMod_int
-from sage.matrix.constructor import random_matrix
 from sage.matrix.matrix_space import MatrixSpace
 from sage.misc.randstate import current_randstate
 from sage.misc.randstate cimport randstate
-from sage.misc.cachefunc import cached_method, cached_function
-from sage.structure.element cimport Element, ModuleElement, RingElement, Matrix
+from sage.structure.element cimport Element, Matrix
 from sage.structure.richcmp import rich_to_bool
 from .args cimport MatrixArgs_init
 
@@ -1884,7 +1879,7 @@ def mtx_unpickle(f, int nr, int nc, data, bint m):
         doctest:warning
         ...
         DeprecationWarning: Reading this pickle may be machine dependent
-        See http://trac.sagemath.org/23411 for details.
+        See https://github.com/sagemath/sage/issues/23411 for details.
         True
 
     Unpickling would even work in the case that the machine creating

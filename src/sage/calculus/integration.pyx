@@ -457,6 +457,11 @@ def monte_carlo_integral(func, xl, xu, size_t calls, algorithm='plain',
       * 'vegas' -- The VEGAS algorithm of Lepage is based on importance
         sampling.
 
+    OUTPUT:
+
+    A tuple whose first component is the approximated integral and whose second
+    component is an error estimate.
+
     EXAMPLES::
 
         sage: x, y = SR.var('x,y')

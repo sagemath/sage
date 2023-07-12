@@ -9,7 +9,7 @@ Check that gamma function imports are deprecated (:trac:`24411`)::
     sage: beta(x, x)
     doctest:warning...: DeprecationWarning:
     Importing beta from here is deprecated; please use "from sage.functions.gamma import beta" instead.
-    See http://trac.sagemath.org/24411 for details.
+    See https://github.com/sagemath/sage/issues/24411 for details.
     beta(x, x)
 """
 
@@ -498,10 +498,10 @@ class Function_floor(BuiltinFunction):
             <class 'sage.rings.integer.Integer'>
             sage: var('x')
             x
-            sage: a = floor(5.4 + x); a
-            floor(x + 5.40000000000000)
+            sage: a = floor(5.25 + x); a
+            floor(x + 5.25000000000000)
             sage: a.simplify()
-            floor(x + 0.4000000000000004) + 5
+            floor(x + 0.25) + 5
             sage: a(x=2)
             7
 
@@ -1819,10 +1819,10 @@ class Function_prod(BuiltinFunction):
             product(sin(m), m, 1, n)
             sage: isinstance(r.operator(), sage.functions.other.Function_prod)
             True
-            sage: r = sympy(sprod(sin(m), m, 1, n)).sage(); r # known bug
+            sage: r = sympy(sprod(sin(m), m, 1, n)).sage(); r  # known bug
             product(sin(m), m, 1, n)
-            sage: isinstance(r.operator(),
-            ....:     sage.functions.other.Function_prod) # known bug
+            sage: isinstance(r.operator(),                     # known bug
+            ....:     sage.functions.other.Function_prod)
             True
             sage: giac(sprod(m, m, 1, n)).sage()
             factorial(n)

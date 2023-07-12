@@ -84,9 +84,10 @@ class FriezePattern(PathTableau, metaclass=InheritComparisonClasscallMetaclass):
 
     This constructs the examples from [HJ18]_::
 
-        sage: K.<sqrt3> = NumberField(x^2-3)
-        sage: t = path_tableaux.FriezePattern([1,sqrt3,2,sqrt3,1,1], field=K)
-        sage: path_tableaux.CylindricalDiagram(t)
+        sage: x = polygen(ZZ, 'x')
+        sage: K.<sqrt3> = NumberField(x^2 - 3)                                          # optional - sage.rings.number_field
+        sage: t = path_tableaux.FriezePattern([1,sqrt3,2,sqrt3,1,1], field=K)           # optional - sage.rings.number_field
+        sage: path_tableaux.CylindricalDiagram(t)                                       # optional - sage.rings.number_field
         [        0,         1,     sqrt3,         2,     sqrt3,         1,         1,         0]
         [         ,         0,         1,     sqrt3,         2,     sqrt3, sqrt3 + 1,         1,         0]
         [         ,          ,         0,         1,     sqrt3,         2, sqrt3 + 2,     sqrt3,         1,         0]
@@ -96,11 +97,12 @@ class FriezePattern(PathTableau, metaclass=InheritComparisonClasscallMetaclass):
         [         ,          ,          ,          ,          ,          ,         0,         1, sqrt3 + 1, sqrt3 + 2, sqrt3 + 2, sqrt3 + 1,         1,         0]
         [         ,          ,          ,          ,          ,          ,          ,         0,         1,     sqrt3,         2,     sqrt3,         1,         1,         0]
 
-        sage: TestSuite(t).run()
+        sage: TestSuite(t).run()                                                        # optional - sage.rings.number_field
 
-        sage: K.<sqrt2> = NumberField(x^2-2)
-        sage: t = path_tableaux.FriezePattern([1,sqrt2,1,sqrt2,3,2*sqrt2,5,3*sqrt2,1], field=K)
-        sage: path_tableaux.CylindricalDiagram(t)
+        sage: K.<sqrt2> = NumberField(x^2 - 2)                                          # optional - sage.rings.number_field
+        sage: t = path_tableaux.FriezePattern([1,sqrt2,1,sqrt2,3,2*sqrt2,5,3*sqrt2,1],  # optional - sage.rings.number_field
+        ....:                                 field=K)
+        sage: path_tableaux.CylindricalDiagram(t)                                       # optional - sage.rings.number_field
         [      0,       1,   sqrt2,       1,   sqrt2,       3, 2*sqrt2,       5, 3*sqrt2,       1,       0]
         [       ,       0,       1,   sqrt2,       3, 5*sqrt2,       7, 9*sqrt2,      11, 2*sqrt2,       1,       0]
         [       ,        ,       0,       1, 2*sqrt2,       7, 5*sqrt2,      13, 8*sqrt2,       3,   sqrt2,       1,       0]
@@ -113,7 +115,7 @@ class FriezePattern(PathTableau, metaclass=InheritComparisonClasscallMetaclass):
         [       ,        ,        ,        ,        ,        ,        ,        ,        ,       0,       1, 2*sqrt2,       3,   sqrt2,       1,   sqrt2,       1,   sqrt2,       1,       0]
         [       ,        ,        ,        ,        ,        ,        ,        ,        ,        ,       0,       1,   sqrt2,       1,   sqrt2,       3, 2*sqrt2,       5, 3*sqrt2,       1,       0]
 
-        sage: TestSuite(t).run()
+        sage: TestSuite(t).run()                                                        # optional - sage.rings.number_field
     """
     @staticmethod
     def __classcall_private__(cls, fp, field=QQ):
@@ -132,13 +134,14 @@ class FriezePattern(PathTableau, metaclass=InheritComparisonClasscallMetaclass):
             ...
             ValueError: invalid input 2
 
-            sage: K.<sqrt3> = NumberField(x^2-3)
-            sage: t = path_tableaux.FriezePattern([1,sqrt3,2,sqrt3,1,1])
+            sage: x = polygen(ZZ, 'x')
+            sage: K.<sqrt3> = NumberField(x^2 - 3)                                      # optional - sage.rings.number_field
+            sage: t = path_tableaux.FriezePattern([1,sqrt3,2,sqrt3,1,1])                # optional - sage.rings.number_field
             Traceback (most recent call last):
             ...
             ValueError: [1, sqrt3, 2, sqrt3, 1, 1] is not a sequence in the field Rational Field
 
-            sage: path_tableaux.FriezePattern([1,2,1,2,3,1],field=Integers())
+            sage: path_tableaux.FriezePattern([1,2,1,2,3,1], field=Integers())
             Traceback (most recent call last):
             ...
             ValueError: Integer Ring must be a field
@@ -274,8 +277,9 @@ class FriezePattern(PathTableau, metaclass=InheritComparisonClasscallMetaclass):
             sage: path_tableaux.FriezePattern([1,-3,4,5,1]).is_positive()
             False
 
-            sage: K.<sqrt3> = NumberField(x^2-3)
-            sage: path_tableaux.FriezePattern([1,sqrt3,1],K).is_positive()
+            sage: x = polygen(ZZ, 'x')
+            sage: K.<sqrt3> = NumberField(x^2 - 3)                                      # optional - sage.rings.number_field
+            sage: path_tableaux.FriezePattern([1,sqrt3,1], K).is_positive()             # optional - sage.rings.number_field
             True
         """
         return all(a > 0 for a in self[1:-1])
@@ -295,7 +299,8 @@ class FriezePattern(PathTableau, metaclass=InheritComparisonClasscallMetaclass):
         """
         n = len(self)
         cd = CylindricalDiagram(self).diagram
-        return all(all(k in ZZ for k in a[i+1:n+i-2]) for i, a in enumerate(cd))
+        return all(k in ZZ for i, a in enumerate(cd)
+                   for k in a[i + 1:n + i - 2])
 
     def triangulation(self):
         r"""
@@ -311,14 +316,17 @@ class FriezePattern(PathTableau, metaclass=InheritComparisonClasscallMetaclass):
 
         EXAMPLES::
 
-            sage: path_tableaux.FriezePattern([1,2,7,5,3,7,4,1]).triangulation()
+            sage: path_tableaux.FriezePattern([1,2,7,5,3,7,4,1]).triangulation()        # optional - sage.plot sage.symbolic
             Graphics object consisting of 25 graphics primitives
 
-            sage: path_tableaux.FriezePattern([1,2,1/7,5,3]).triangulation()
+            sage: path_tableaux.FriezePattern([1,2,1/7,5,3]).triangulation()            # optional - sage.plot sage.symbolic
             Graphics object consisting of 12 graphics primitives
 
-            sage: K.<sqrt2> = NumberField(x^2-2)
-            sage: path_tableaux.FriezePattern([1,sqrt2,1,sqrt2,3,2*sqrt2,5,3*sqrt2,1], field=K).triangulation()
+
+            sage: x = polygen(ZZ, 'x')
+            sage: K.<sqrt2> = NumberField(x^2 - 2)                                      # optional - sage.rings.number_field
+            sage: path_tableaux.FriezePattern([1,sqrt2,1,sqrt2,3,2*sqrt2,5,3*sqrt2,1],  # optional - sage.plot sage.rings.number_field sage.symbolic
+            ....:                             field=K).triangulation()
             Graphics object consisting of 24 graphics primitives
         """
         n = len(self)-1
@@ -327,7 +335,7 @@ class FriezePattern(PathTableau, metaclass=InheritComparisonClasscallMetaclass):
         from sage.plot.line import line
         from sage.plot.text import text
         from sage.functions.trig import sin, cos
-        from sage.all import pi
+        from sage.symbolic.constants import pi
         G = Graphics()
         G.set_aspect_ratio(1.0)
 
@@ -371,17 +379,17 @@ class FriezePattern(PathTableau, metaclass=InheritComparisonClasscallMetaclass):
         EXAMPLES::
 
             sage: t = path_tableaux.FriezePattern([1,2,7,5,3,7,4,1])
-            sage: t.plot()
+            sage: t.plot()                                                              # optional - sage.plot sage.symbolic
             Graphics object consisting of 18 graphics primitives
 
-            sage: t.plot(model='UHP')
+            sage: t.plot(model='UHP')                                                   # optional - sage.plot sage.symbolic
             Graphics object consisting of 18 graphics primitives
 
-            sage: t.plot(model='PD')
+            sage: t.plot(model='PD')                                                    # optional - sage.plot sage.symbolic
             Traceback (most recent call last):
             ...
             TypeError: '>' not supported between instances of 'NotANumber' and 'Pi'
-            sage: t.plot(model='KM')
+            sage: t.plot(model='KM')                                                    # optional - sage.plot sage.symbolic
             Graphics object consisting of 18 graphics primitives
         """
         from sage.geometry.hyperbolic_space.hyperbolic_interface import HyperbolicPlane

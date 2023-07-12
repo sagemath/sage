@@ -1,3 +1,4 @@
+# sage.doctest: optional - sage.modules
 r"""
 Example of a finite dimensional algebra with basis
 """
@@ -9,7 +10,7 @@ Example of a finite dimensional algebra with basis
 #*****************************************************************************
 
 from sage.misc.cachefunc import cached_method
-from sage.categories.all import FiniteDimensionalAlgebrasWithBasis
+from sage.categories.finite_dimensional_algebras_with_basis import FiniteDimensionalAlgebrasWithBasis
 from sage.combinat.free_module import CombinatorialFreeModule
 
 

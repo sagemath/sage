@@ -16,4 +16,7 @@ fi
 set -e
 
 cd pkgs/sage-conf_pypi
-python3 -u setup.py --no-user-cfg sdist --dist-dir "$SAGE_DISTFILES"
+# Get rid of old *.egg-info/SOURCES.txt
+rm -Rf *.egg-info
+
+python3 -m build --sdist --no-isolation --skip-dependency-check --outdir "$SAGE_DISTFILES"

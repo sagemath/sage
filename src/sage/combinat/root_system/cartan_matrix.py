@@ -32,7 +32,7 @@ from sage.structure.element import is_Matrix
 from sage.matrix.matrix_space import MatrixSpace
 from sage.misc.inherit_comparison import InheritComparisonClasscallMetaclass
 from sage.misc.classcall_metaclass import typecall
-from sage.misc.misc import powerset
+from sage.combinat.subset import powerset
 from sage.matrix.matrix_integer_sparse import Matrix_integer_sparse
 from sage.rings.integer_ring import ZZ
 from sage.combinat.root_system.cartan_type import CartanType, CartanType_abstract
@@ -489,7 +489,7 @@ class CartanMatrix(Matrix_integer_sparse, CartanType_abstract,
         iset = self.index_set()
         # The result from is_symmetrizable needs to be scaled
         # to integer coefficients
-        from sage.arith.all import LCM
+        from sage.arith.functions import lcm as LCM
         from sage.rings.rational_field import QQ
         scalar = LCM([QQ(x).denominator() for x in sym])
         return Family( {iset[i]: ZZ(val*scalar) for i, val in enumerate(sym)} )

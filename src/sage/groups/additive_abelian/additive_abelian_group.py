@@ -143,7 +143,6 @@ def cover_and_relations_from_invariants(invs):
     return (A, B)
 
 
-
 class AdditiveAbelianGroupElement(FGP_Element):
     """
     An element of an :class:`AdditiveAbelianGroup_class`.
@@ -352,9 +351,9 @@ class AdditiveAbelianGroup_class(FGP_Module_class, AbelianGroup):
             1
         """
         if not self.invariants():
-            return 1
+            return ZZ(1)
         else:
-            ann =  self.annihilator().gen()
+            ann = self.annihilator().gen()
             if ann:
                 return ann
             return ZZ(0)

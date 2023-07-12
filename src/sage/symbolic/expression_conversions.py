@@ -18,12 +18,11 @@ overridden by subclasses.
 from operator import eq, ne, gt, lt, ge, le, mul, pow, neg, add, truediv
 from functools import reduce
 
-from sage.rings.rational_field import QQ
 from sage.symbolic.ring import SR
 from sage.structure.element import Expression
 from sage.functions.all import exp
 from sage.symbolic.operators import arithmetic_operators, relation_operators, FDerivativeOperator, add_vararg, mul_vararg
-from sage.rings.number_field.number_field_element_quadratic import NumberFieldElement_gaussian
+from sage.rings.number_field.number_field_element_base import NumberFieldElement_base
 from sage.rings.universal_cyclotomic_field import UniversalCyclotomicField
 
 
@@ -441,9 +440,10 @@ class InterfaceInit(Converter):
             sage: ii.pyobject(pi, pi.pyobject())
             'Pi'
         """
-        if (self.interface.name() in ['pari', 'gp'] and
-            isinstance(obj, NumberFieldElement_gaussian)):
-            return repr(obj)
+        if (self.interface.name() in ['pari', 'gp'] and isinstance(obj, NumberFieldElement_base)):
+            from sage.rings.number_field.number_field_element_quadratic import NumberFieldElement_gaussian
+            if isinstance(obj, NumberFieldElement_gaussian):
+                return repr(obj)
         try:
             return getattr(obj, self.name_init)()
         except AttributeError:
@@ -578,12 +578,11 @@ class InterfaceInit(Converter):
         """
         # This code should probably be moved into the interface
         # object in a nice way.
-        from sage.symbolic.ring import is_SymbolicVariable
         if self.name_init != "_maxima_init_":
             raise NotImplementedError
         args = ex.operands()
-        if (not all(is_SymbolicVariable(v) for v in args) or
-            len(args) != len(set(args))):
+        if (not all(isinstance(v, Expression) and v.is_symbol() for v in args) or
+                len(args) != len(set(args))):
             # An evaluated derivative of the form f'(1) is not a
             # symbolic variable, yet we would like to treat it like
             # one. So, we replace the argument `1` with a temporary
@@ -1020,10 +1019,13 @@ class FriCASConverter(InterfaceInit):
         """
         try:
             result = getattr(obj, self.name_init)()
-            if isinstance(obj, NumberFieldElement_gaussian):
-                return "((%s)::EXPR COMPLEX INT)" % result
         except AttributeError:
             result = repr(obj)
+        else:
+            if isinstance(obj, NumberFieldElement_base):
+                from sage.rings.number_field.number_field_element_quadratic import NumberFieldElement_gaussian
+                if isinstance(obj, NumberFieldElement_gaussian):
+                    return "((%s)::EXPR COMPLEX INT)" % result
         return "((%s)::EXPR INT)" % result
 
     def symbol(self, ex):
@@ -1099,13 +1101,12 @@ class FriCASConverter(InterfaceInit):
              ,1,1,2
 
         """
-        from sage.symbolic.ring import is_SymbolicVariable
         args = ex.operands()  # the arguments the derivative is evaluated at
         params = operator.parameter_set()
         params_set = set(params)
         mult = ",".join(str(params.count(i)) for i in params_set)
-        if (not all(is_SymbolicVariable(v) for v in args) or
-            len(args) != len(set(args))):
+        if (not all(isinstance(v, Expression) and v.is_symbol() for v in args) or
+                len(args) != len(set(args))):
             # An evaluated derivative of the form f'(1) is not a
             # symbolic variable, yet we would like to treat it like
             # one. So, we replace the argument `1` with a temporary
@@ -1222,6 +1223,8 @@ class AlgebraicConverter(Converter):
 
         if operator is pow:
             from sage.symbolic.constants import e, pi, I
+            from sage.rings.rational_field import QQ
+
             base, expt = ex.operands()
             if base == e and expt / (pi * I) in QQ:
                 return exp(expt)._algebraic_(self.field)
@@ -1240,6 +1243,16 @@ class AlgebraicConverter(Converter):
             0.500000000000000? + 0.866025403784439?*I
             sage: a.composition(sin(pi/7), sin)
             0.4338837391175581? + 0.?e-18*I
+
+            sage: x = SR.var('x')
+            sage: a.composition(complex_root_of(x^3 - x^2 - x - 1, 0), complex_root_of)
+            1.839286755214161?
+            sage: a.composition(complex_root_of(x^5 - 1, 3), complex_root_of)
+            0.3090169943749474? - 0.9510565162951536?*I
+            sage: a.composition(complex_root_of(x^2 + 1, 0), complex_root_of)
+            1.?e-684 - 0.9999999999999999?*I
+            sage: a.composition(complex_root_of(x^2 + 1, 1), complex_root_of)
+            1.?e-684 + 0.9999999999999999?*I
 
         TESTS::
 
@@ -1283,7 +1296,11 @@ class AlgebraicConverter(Converter):
             ValueError: unable to represent as an algebraic number
         """
         func = operator
-        operand, = ex.operands()
+        operands = ex.operands()
+        if len(operands) == 1:
+            operand = operands[0]
+        else:
+            operand = None
 
         if isinstance(self.field, UniversalCyclotomicField):
             QQbar = self.field
@@ -1291,6 +1308,7 @@ class AlgebraicConverter(Converter):
         else:
             QQbar = self.field.algebraic_closure()
             hold = False
+
         zeta = QQbar.zeta
         # Note that comparing functions themselves goes via maxima, and is SLOW
         func_name = repr(func)
@@ -1300,12 +1318,14 @@ class AlgebraicConverter(Converter):
             if not (SR(-1).sqrt() * operand).is_real():
                 raise ValueError("unable to represent as an algebraic number")
             # Coerce (not convert, see #22571) arg to a rational
+            from sage.rings.rational_field import QQ
             arg = operand.imag()/(2*ex.parent().pi())
             try:
                 rat_arg = QQ.coerce(arg.pyobject())
             except TypeError:
                 raise TypeError("unable to convert %r to %s" % (ex, self.field))
             res = zeta(rat_arg.denom())**rat_arg.numer()
+            return self.field(res)
         elif func_name in ['sin', 'cos', 'tan']:
             exp_ia = exp(SR(-1).sqrt() * operand, hold=hold)._algebraic_(QQbar)
             if func_name == 'sin':
@@ -1314,6 +1334,7 @@ class AlgebraicConverter(Converter):
                 res = (exp_ia + ~exp_ia) / 2
             else:
                 res = -zeta(4) * (exp_ia - ~exp_ia) / (exp_ia + ~exp_ia)
+            return self.field(res)
         elif func_name in ['sinh', 'cosh', 'tanh']:
             if not (SR(-1).sqrt()*operand).is_real():
                 raise ValueError("unable to represent as an algebraic number")
@@ -1324,16 +1345,25 @@ class AlgebraicConverter(Converter):
                 res = (exp_a + ~exp_a) / 2
             else:
                 res = (exp_a - ~exp_a) / (exp_a + ~exp_a)
+            return self.field(res)
         elif func_name in self.reciprocal_trig_functions:
             res = ~self.reciprocal_trig_functions[func_name](operand)._algebraic_(QQbar)
-        else:
+            return self.field(res)
+        elif func_name == 'complex_root_of':
+            cr = ex._sympy_()
+            poly = cr.poly._sage_()
+            interval = cr._get_interval()._sage_()
+            return self.field.polynomial_root(poly, interval)
+        elif operand is not None:
             res = func(operand._algebraic_(self.field))
             # We have to handle the case where we get the same symbolic
             # expression back.  For example, QQbar(zeta(7)).  See
-            # ticket #12665.
+            # issue #12665.
             if (res - ex).is_trivial_zero():
                 raise TypeError("unable to convert %r to %s" % (ex, self.field))
-        return self.field(res)
+            return self.field(res)
+
+        raise ValueError("unable to represent as an algebraic number")
 
 
 def algebraic(ex, field):
@@ -2198,8 +2228,7 @@ class Exponentialize(ExpressionTreeWalker):
     from sage.functions.hyperbolic import sinh, cosh, sech, csch, tanh, coth
     from sage.functions.log import exp
     from sage.functions.trig import sin, cos, sec, csc, tan, cot
-    from sage.rings.imaginary_unit import I
-    from sage.symbolic.constants import e
+    from sage.symbolic.constants import e, I
     from sage.rings.integer import Integer
     from sage.symbolic.ring import SR
     from sage.calculus.var import function

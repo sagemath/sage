@@ -336,7 +336,6 @@ class Function_exp_integral_e1(BuiltinFunction):
         import mpmath
         return mpmath_utils_call(mpmath.e1, z, parent=parent)
 
-
     def _print_latex_(self, z):
         r"""
         Custom ``_print_latex_`` method.
@@ -602,8 +601,8 @@ class Function_log_integral_offset(BuiltinFunction):
         1/log(x)
         sage: f.integrate(x)
         -x*log_integral(2) + x*log_integral(x) - Ei(2*log(x))
-        sage: Li(x).integrate(x,2.0,4.5)
-        -2.5*log_integral(2) + 5.799321147411334
+        sage: Li(x).integrate(x,2.0,4.5).n(digits=10)
+        3.186411697
         sage: N(f.integrate(x,2.0,3.0))   # abs tol 1e-15
         0.601621785860587
 
@@ -1312,7 +1311,7 @@ Chi = cosh_integral = Function_cosh_integral()
 
 ###################################################################
 # Code below here was moved from sage/functions/transcendental.py
-# This occurred as part of Trac #11143.
+# This occurred as part of Issue #11143.
 ###################################################################
 
 # This class has a name which is not specific enough

@@ -412,7 +412,7 @@ class Polyhedron_ZZ(Polyhedron_QQ):
             t^6 + 6*t^5 + 15*t^4 + 20*t^3 + 15*t^2 + 6*t + 1
 
             sage: def hypercube(d):
-            ....:     return Polyhedron(vertices=list(product([0,1],repeat=d)),backend='normaliz') # optional - pynormaliz
+            ....:     return Polyhedron(vertices=list(product([0,1],repeat=d)),backend='normaliz')
             sage: hypercube(3).ehrhart_polynomial(engine='normaliz') # optional - pynormaliz
             t^3 + 3*t^2 + 3*t + 1
             sage: hypercube(4).ehrhart_polynomial(engine='normaliz') # optional - pynormaliz
@@ -511,14 +511,14 @@ class Polyhedron_ZZ(Polyhedron_QQ):
         if not self.has_IP_property():
             raise ValueError('The polytope must have the IP property.')
 
-        vertices = tuple( ieq.A()/ieq.b() for
-                          ieq in self.inequality_generator() )
+        vertices = tuple(ieq.A() / ieq.b() for
+                         ieq in self.inequality_generator())
 
         ieqs = ((1,) + tuple(v[:]) for v in self.vertices())
 
         pref_rep = 'Hrep' if self.n_vertices() <= self.n_inequalities() else 'Vrep'
 
-        if all( all(v_i in ZZ for v_i in v) for v in vertices):
+        if all(v_i in ZZ for v in vertices for v_i in v):
             parent = self.parent()
             vertices = (v.change_ring(ZZ) for v in vertices)
         else:

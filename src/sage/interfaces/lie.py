@@ -891,7 +891,7 @@ def is_LiEElement(x) -> bool:
         sage: from sage.interfaces.lie import is_LiEElement
         sage: is_LiEElement(2)
         doctest:...: DeprecationWarning: the function is_LiEElement is deprecated; use isinstance(x, sage.interfaces.abc.LiEElement) instead
-        See https://trac.sagemath.org/34804 for details.
+        See https://github.com/sagemath/sage/issues/34804 for details.
         False
         sage: l = lie(2) # optional - lie
         sage: is_LiEElement(l) # optional - lie

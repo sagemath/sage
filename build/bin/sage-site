@@ -184,7 +184,7 @@ if [ "$1" = '-i' ]; then
     for PKG in $PACKAGES; do
         echo
         # Check that $PKG is actually a Makefile target
-        # See https://trac.sagemath.org/ticket/25078
+        # See https://github.com/sagemath/sage/issues/25078
         if ! echo "$ALL_TARGETS" | grep "^${PKG}$" >/dev/null; then
             echo >&2 "Error: package '$PKG' not found"
             echo >&2 "Note: if it is an old-style package, installing these is no longer supported"

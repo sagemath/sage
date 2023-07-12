@@ -13,14 +13,14 @@ Descent on elliptic curves over `\QQ` with a 2-isogeny
 # ***************************************************************************
 
 from cysignals.memory cimport sig_malloc, sig_free
-from cysignals.signals cimport sig_on, sig_off
+from cysignals.signals cimport sig_on
 
 from sage.rings.integer_ring import ZZ
 from sage.rings.polynomial.polynomial_ring import polygen
 cdef object x_ZZ = polygen(ZZ)
 from sage.rings.polynomial.real_roots import real_roots
-from sage.arith.all import prime_divisors
-from sage.all import ntl
+from sage.arith.misc import prime_divisors
+import sage.libs.ntl.all as ntl
 
 from sage.rings.integer cimport Integer
 from sage.libs.gmp.mpz cimport *

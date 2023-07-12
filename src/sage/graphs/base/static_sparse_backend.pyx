@@ -446,17 +446,17 @@ cdef class StaticSparseBackend(CGraphBackend):
 
         ::
 
-            sage: g = DiGraph(digraphs.DeBruijn(4, 3), data_structure="static_sparse")
-            sage: gi = DiGraph(g, data_structure="static_sparse")
-            sage: gi.edges(sort=True)[0]
+            sage: g = DiGraph(digraphs.DeBruijn(4, 3), data_structure="static_sparse")  # optional - sage.combinat
+            sage: gi = DiGraph(g, data_structure="static_sparse")                       # optional - sage.combinat
+            sage: gi.edges(sort=True)[0]                                                # optional - sage.combinat
             ('000', '000', '0')
-            sage: sorted(gi.edges_incident('111'))
+            sage: sorted(gi.edges_incident('111'))                                      # optional - sage.combinat
             [('111', '110', '0'),
             ('111', '111', '1'),
             ('111', '112', '2'),
             ('111', '113', '3')]
 
-            sage: set(g.edges(sort=False)) == set(gi.edges(sort=False))
+            sage: set(g.edges(sort=False)) == set(gi.edges(sort=False))                 # optional - sage.combinat
             True
 
         ::
@@ -671,10 +671,10 @@ cdef class StaticSparseBackend(CGraphBackend):
         ::
 
             sage: from sage.graphs.base.static_sparse_backend import StaticSparseBackend
-            sage: g = StaticSparseBackend(digraphs.DeBruijn(3, 2))
-            sage: g.has_edge('00', '01', '1')
+            sage: g = StaticSparseBackend(digraphs.DeBruijn(3, 2))                      # optional - sage.combinat
+            sage: g.has_edge('00', '01', '1')                                           # optional - sage.combinat
             True
-            sage: g.has_edge('00', '01', '0')
+            sage: g.has_edge('00', '01', '0')                                           # optional - sage.combinat
             False
         """
         try:
@@ -684,7 +684,6 @@ cdef class StaticSparseBackend(CGraphBackend):
             raise LookupError("one of the two vertices does not belong to the graph")
 
         cdef StaticSparseCGraph cg = self._cg
-        cdef list l
 
         cdef uint32_t * edge = has_edge(cg.g, u, v)
         if not edge:
@@ -696,9 +695,7 @@ cdef class StaticSparseBackend(CGraphBackend):
         # all labels.
         if self.multiple_edges(None):
             return self._all_edge_labels(u, v, edge)
-
-        else:
-            return edge_label(cg.g, edge)
+        return edge_label(cg.g, edge)
 
     cdef inline list _all_edge_labels(self, int u, int v, uint32_t* edge=NULL):
         """
@@ -1079,7 +1076,7 @@ cdef class StaticSparseBackend(CGraphBackend):
           - ``2`` -- as ``1`` but ignore the labels
         """
         cdef object v, l
-        cdef int u_int, prev_u_int, v_int, l_int, l_int_other, tmp
+        cdef int u_int, prev_u_int, v_int, l_int_other, tmp
         cdef StaticSparseCGraph cg = self._cg
         cdef CGraph cg_other = other.cg()
         cdef list b_vertices_2
@@ -1310,7 +1307,7 @@ cdef class StaticSparseBackend(CGraphBackend):
 
         TESTS:
 
-        Ticket :trac:`25550` is fixed::
+        Issue :trac:`25550` is fixed::
 
             sage: g = DiGraph({0: [1]}, immutable=True)
             sage: g.neighbors(1)

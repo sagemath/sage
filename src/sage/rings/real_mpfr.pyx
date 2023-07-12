@@ -132,9 +132,9 @@ from sage.misc.randstate cimport randstate, current_randstate
 from sage.cpython.string cimport char_to_str, str_to_bytes
 from sage.misc.superseded import deprecation_cython as deprecation
 
-from sage.structure.element cimport RingElement, Element, ModuleElement
+from sage.structure.element cimport Element
 from sage.structure.element cimport have_same_parent
-from sage.structure.richcmp cimport rich_to_bool_sgn, rich_to_bool
+from sage.structure.richcmp cimport rich_to_bool_sgn
 cdef bin_op
 from sage.structure.element import bin_op
 
@@ -153,10 +153,6 @@ from .rational cimport Rational
 
 from sage.categories.map cimport Map
 
-cdef ZZ, QQ, RDF
-from .integer_ring import ZZ
-from .rational_field import QQ
-from .real_double import RDF
 from .real_double cimport RealDoubleElement
 
 import sage.rings.rational_field
@@ -217,7 +213,7 @@ def mpfr_prec_min():
     """
     return MPFR_PREC_MIN
 
-# see Trac #11666 for the origin of this magical constant
+# see Issue #11666 for the origin of this magical constant
 def mpfr_prec_max():
     """
     Return the mpfr variable ``MPFR_PREC_MAX``.
@@ -725,10 +721,14 @@ cdef class RealField_class(sage.rings.abc.RealField):
 
             sage: 1.0 - ZZ(1) - int(1) - 1 - QQ(1) - RealField(100)(1) - AA(1) - RLF(1)
             -6.00000000000000
-            sage: R = RR['x']   # Hold reference to avoid garbage collection, see Trac #24709
+            sage: R = RR['x']   # Hold reference to avoid garbage collection, see Issue #24709
             sage: R.get_action(ZZ)
             Right scalar multiplication by Integer Ring on Univariate Polynomial Ring in x over Real Field with 53 bits of precision
         """
+        from .integer_ring import ZZ
+        from .rational_field import QQ
+        from .real_double import RDF
+
         if S is ZZ:
             return ZZtoRR(ZZ, self)
         elif S is QQ:
@@ -1438,12 +1438,12 @@ cdef class RealNumber(sage.structure.element.RingElement):
 
         EXAMPLES::
 
-            sage: import numpy
-            sage: numpy.arange(10.0)
+            sage: import numpy                                                          # optional - numpy
+            sage: numpy.arange(10.0)                                                    # optional - numpy
             array([0., 1., 2., 3., 4., 5., 6., 7., 8., 9.])
-            sage: numpy.array([1.0, 1.1, 1.2]).dtype
+            sage: numpy.array([1.0, 1.1, 1.2]).dtype                                    # optional - numpy
             dtype('float64')
-            sage: numpy.array([1.000000000000000000000000000000000000]).dtype
+            sage: numpy.array([1.000000000000000000000000000000000000]).dtype           # optional - numpy
             dtype('O')
         """
         if (<RealField_class>self._parent).__prec <= 53:
@@ -1570,7 +1570,7 @@ cdef class RealNumber(sage.structure.element.RingElement):
         s = self.str(32, no_sci=False, e='@')
         return (__create__RealNumber_version0, (self._parent, s, 32))
 
-    def  __dealloc__(self):
+    def __dealloc__(self):
         if self._parent is not None:
             mpfr_clear(self.value)
 
@@ -1872,6 +1872,8 @@ cdef class RealNumber(sage.structure.element.RingElement):
             sage: RealField(100)(2).imag()
             0
         """
+        from .integer_ring import ZZ
+
         return ZZ(0)
 
     def str(self, int base=10, size_t digits=0, *, no_sci=None,
@@ -2247,7 +2249,7 @@ cdef class RealNumber(sage.structure.element.RingElement):
             100000000000000000
         """
         if not mpfr_number_p(self.value):
-            raise ValueError('Cannot convert infinity or NaN to Sage Integer')
+            raise ValueError('cannot convert infinity or NaN to Sage Integer')
 
         cdef Integer z = Integer()
         mpfr_get_z(z.value, self.value, MPFR_RNDZ)
@@ -2377,7 +2379,7 @@ cdef class RealNumber(sage.structure.element.RingElement):
             sage: RR(1) + RIF(1)
             doctest:...:
             DeprecationWarning: automatic conversions from floating-point numbers to intervals are deprecated
-            See http://trac.sagemath.org/15114 for details.
+            See https://github.com/sagemath/sage/issues/15114 for details.
             2
             sage: import warnings; warnings.resetwarnings()
         """
@@ -2398,7 +2400,7 @@ cdef class RealNumber(sage.structure.element.RingElement):
             sage: RR(2) - RIF(1)
             doctest:...:
             DeprecationWarning: automatic conversions from floating-point numbers to intervals are deprecated
-            See http://trac.sagemath.org/15114 for details.
+            See https://github.com/sagemath/sage/issues/15114 for details.
             1
             sage: import warnings; warnings.resetwarnings()
         """
@@ -2419,7 +2421,7 @@ cdef class RealNumber(sage.structure.element.RingElement):
             sage: RR(1) * RIF(1)
             doctest:...:
             DeprecationWarning: automatic conversions from floating-point numbers to intervals are deprecated
-            See http://trac.sagemath.org/15114 for details.
+            See https://github.com/sagemath/sage/issues/15114 for details.
             1
             sage: import warnings; warnings.resetwarnings()
         """
@@ -2440,7 +2442,7 @@ cdef class RealNumber(sage.structure.element.RingElement):
             sage: RR(1) / RIF(1/2)
             doctest:...:
             DeprecationWarning: automatic conversions from floating-point numbers to intervals are deprecated
-            See http://trac.sagemath.org/15114 for details.
+            See https://github.com/sagemath/sage/issues/15114 for details.
             2
             sage: import warnings; warnings.resetwarnings()
         """
@@ -2990,8 +2992,12 @@ cdef class RealNumber(sage.structure.element.RingElement):
 
     def round(self):
         """
-         Rounds ``self`` to the nearest integer. The rounding mode of the
-         parent field has no effect on this function.
+         Round ``self`` to the nearest representable integer, rounding halfway
+         cases away from zero.
+
+         .. NOTE::
+
+             The rounding mode of the parent field does not affect the result.
 
          EXAMPLES::
 
@@ -3236,7 +3242,7 @@ cdef class RealNumber(sage.structure.element.RingElement):
             <... 'int'>
         """
         if not mpfr_number_p(self.value):
-            raise ValueError('Cannot convert infinity or NaN to Python int')
+            raise ValueError('cannot convert infinity or NaN to Python int')
 
         cdef Integer z = Integer()
         mpfr_get_z(z.value, self.value, MPFR_RNDZ)
@@ -3352,7 +3358,7 @@ cdef class RealNumber(sage.structure.element.RingElement):
         # as subject-to-change.
 
         if mpfr_nan_p(self.value) or mpfr_inf_p(self.value):
-            raise ValueError('Cannot convert NaN or infinity to Pari float')
+            raise ValueError('cannot convert NaN or infinity to Pari float')
 
         # wordsize for PARI
         cdef unsigned long wordsize = sizeof(long)*8
@@ -3678,14 +3684,14 @@ cdef class RealNumber(sage.structure.element.RingElement):
             sage: RR('nan').simplest_rational()
             Traceback (most recent call last):
             ...
-            ValueError: Cannot convert NaN or infinity to rational number
+            ValueError: cannot convert NaN or infinity to rational number
             sage: RR('-infinity').simplest_rational()
             Traceback (most recent call last):
             ...
-            ValueError: Cannot convert NaN or infinity to rational number
+            ValueError: cannot convert NaN or infinity to rational number
         """
         if not mpfr_number_p(self.value):
-            raise ValueError('Cannot convert NaN or infinity to rational number')
+            raise ValueError('cannot convert NaN or infinity to rational number')
 
         if mpfr_zero_p(self.value):
             return Rational(0)
@@ -3784,23 +3790,23 @@ cdef class RealNumber(sage.structure.element.RingElement):
             sage: RR('nan').nearby_rational(max_denominator=1000)
             Traceback (most recent call last):
             ...
-            ValueError: Cannot convert NaN or infinity to rational number
+            ValueError: cannot convert NaN or infinity to rational number
             sage: RR('nan').nearby_rational(max_error=0.01)
             Traceback (most recent call last):
             ...
-            ValueError: Cannot convert NaN or infinity to rational number
+            ValueError: cannot convert NaN or infinity to rational number
             sage: RR(oo).nearby_rational(max_denominator=1000)
             Traceback (most recent call last):
             ...
-            ValueError: Cannot convert NaN or infinity to rational number
+            ValueError: cannot convert NaN or infinity to rational number
             sage: RR(oo).nearby_rational(max_error=0.01)
             Traceback (most recent call last):
             ...
-            ValueError: Cannot convert NaN or infinity to rational number
+            ValueError: cannot convert NaN or infinity to rational number
         """
 
         if not mpfr_number_p(self.value):
-            raise ValueError('Cannot convert NaN or infinity to rational number')
+            raise ValueError('cannot convert NaN or infinity to rational number')
 
         if ((max_error is None and max_denominator is None) or
             (max_error is not None and max_denominator is not None)):
@@ -5854,21 +5860,20 @@ def create_RealNumber(s, int base=10, int pad=0, rnd="RNDN", int min_prec=53):
 
     # Check for a valid base
     if base < 2 or base > 62:
-        raise ValueError("base (=%s) must be an integer between 2 and 62"%base)
+        raise ValueError(f"base (={base}) must be an integer between 2 and 62")
 
     if base == 10 and min_prec == 53 and len(s) <= 15 and rnd == "RNDN":
         R = RR
     else:
         # For bases 15 and up, treat 'e' as digit
         if base <= 14 and ('e' in s or 'E' in s):
-            #Figure out the exponent
-            index = max( s.find('e'), s.find('E') )
-            exponent = int(s[index+1:])
+            # Figure out the exponent
+            index = max(s.find('e'), s.find('E'))
             mantissa = s[:index]
         else:
             mantissa = s
 
-        #Find the first nonzero entry in rest
+        # Find the first nonzero entry in rest
         sigfig_mantissa = mantissa.lstrip('-0.')
         sigfigs = len(sigfig_mantissa) - ('.' in sigfig_mantissa)
 
@@ -5896,7 +5901,7 @@ def is_RealField(x):
         doctest:warning...
         DeprecationWarning: is_RealField is deprecated;
         use isinstance(..., sage.rings.abc.RealField) instead
-        See https://trac.sagemath.org/32610 for details.
+        See https://github.com/sagemath/sage/issues/32610 for details.
         True
         sage: sage.rings.real_mpfr.is_RealField(CC)
         False
@@ -6102,10 +6107,10 @@ def create_RealField(*args, **kwds):
         sage: from sage.rings.real_mpfr import create_RealField
         sage: create_RealField()
         doctest:...: DeprecationWarning: Please import create_RealField from sage.rings.real_field
-        See http://trac.sagemath.org/24511 for details.
+        See https://github.com/sagemath/sage/issues/24511 for details.
         Real Field with 53 bits of precision
     """
-    #deprecation has already been imported in this file
+    # deprecation has already been imported in this file
     deprecation(24511, "Please import create_RealField from sage.rings.real_field")
     from sage.rings.real_field import create_RealField as cr
     return cr(*args, **kwds)

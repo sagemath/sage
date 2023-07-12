@@ -11,7 +11,7 @@ TESTS::
 
     sage: R = ZpLC(2)
     doctest:...: FutureWarning: This class/method/function is marked as experimental. It, its functionality or its interface might change without a formal deprecation.
-    See http://trac.sagemath.org/23505 for details.
+    See https://github.com/sagemath/sage/issues/23505 for details.
     sage: R = ZpLF(2)
     sage: R = QpLC(2)
     sage: R = QpLF(2)
@@ -35,7 +35,7 @@ from sage.rings.integer import Integer
 from sage.rings.infinity import Infinity
 from sage.structure.factorization import Factorization
 from sage.rings.integer_ring import ZZ
-from sage.rings.polynomial.polynomial_element import is_Polynomial
+from sage.rings.polynomial.polynomial_element import Polynomial
 from sage.structure.element import is_Element
 from .padic_base_leaves import (pAdicRingCappedRelative,
                                 pAdicRingCappedAbsolute,
@@ -161,7 +161,7 @@ def _canonicalize_show_prec(type, print_mode, show_prec=None):
 
 def get_key_base(p, prec, type, print_mode, names, ram_name, print_pos, print_sep, print_alphabet, print_max_terms, show_prec, check, valid_types, label=None):
     r"""
-    This implements create_key for Zp and Qp: moving it here prevents code duplication.
+    This implements ``create_key`` for ``Zp`` and ``Qp``: moving it here prevents code duplication.
 
     It fills in unspecified values and checks for contradictions in the input.  It also standardizes irrelevant options so that duplicate parents are not created.
 
@@ -468,7 +468,9 @@ class Qp_class(UniqueFactory):
         sage: R = Qp(5, print_mode='series'); a = R(70700); a
         3*5^2 + 3*5^4 + 2*5^5 + 4*5^6 + O(5^22)
         sage: b = R(-70700); b
-        2*5^2 + 4*5^3 + 5^4 + 2*5^5 + 4*5^7 + 4*5^8 + 4*5^9 + 4*5^10 + 4*5^11 + 4*5^12 + 4*5^13 + 4*5^14 + 4*5^15 + 4*5^16 + 4*5^17 + 4*5^18 + 4*5^19 + 4*5^20 + 4*5^21 + O(5^22)
+        2*5^2 + 4*5^3 + 5^4 + 2*5^5 + 4*5^7 + 4*5^8 + 4*5^9 + 4*5^10 + 4*5^11
+         + 4*5^12 + 4*5^13 + 4*5^14 + 4*5^15 + 4*5^16 + 4*5^17 + 4*5^18
+         + 4*5^19 + 4*5^20 + 4*5^21 + O(5^22)
 
       *print_pos* controls whether negatives can be used in the
       coefficients of powers of `p`. ::
@@ -721,10 +723,10 @@ class Qp_class(UniqueFactory):
         sage: K = Qp(15, check=False); a = K(999); a
         9 + 6*15 + 4*15^2 + O(15^20)
     """
-    def create_key(self, p, prec = None, type = 'capped-rel', print_mode = None,
-                   names = None, ram_name = None, print_pos = None,
-                   print_sep = None, print_alphabet = None, print_max_terms = None, show_prec = None, check = True,
-                   label = None):   # specific to Lattice precision
+    def create_key(self, p, prec=None, type='capped-rel', print_mode=None,
+                   names=None, ram_name=None, print_pos=None,
+                   print_sep=None, print_alphabet=None, print_max_terms=None, show_prec=None, check=True,
+                   label=None):   # specific to Lattice precision
         r"""
         Creates a key from input parameters for ``Qp``.
 
@@ -820,10 +822,10 @@ Qp = Qp_class("Qp")
 # Qq -- unramified extensions
 ######################################################
 
-def Qq(q, prec = None, type = 'capped-rel', modulus = None, names=None,
-          print_mode=None, ram_name = None, res_name = None, print_pos = None,
-       print_sep = None, print_max_ram_terms = None,
-       print_max_unram_terms = None, print_max_terse_terms = None, show_prec=None, check = True, implementation = 'FLINT'):
+def Qq(q, prec=None, type='capped-rel', modulus=None, names=None,
+          print_mode=None, ram_name=None, res_name=None, print_pos=None,
+       print_sep=None, print_max_ram_terms=None,
+       print_max_unram_terms=None, print_max_terse_terms=None, show_prec=None, check=True, implementation='FLINT'):
     r"""
     Given a prime power `q = p^n`, return the unique unramified
     extension of `\QQ_p` of degree `n`.
@@ -832,7 +834,7 @@ def Qq(q, prec = None, type = 'capped-rel', modulus = None, names=None,
 
     - ``q`` -- integer, list, tuple or ``Factorization`` object. If ``q`` is an
       integer, it is the prime power `q` in `\QQ_q`. If ``q`` is a
-      ``Factorization`` object, it is the factorization of the prime power `q`.
+      :class:`Factorization` object, it is the factorization of the prime power `q`.
       As a tuple it is the pair ``(p, n)``, and as a list it is a single
       element list ``[(p, n)]``.
 
@@ -860,7 +862,7 @@ def Qq(q, prec = None, type = 'capped-rel', modulus = None, names=None,
 
     - ``res_name`` -- string (defaults to ``None``, which corresponds to
       adding a ``'0'`` to the end of the name).  Controls how elements of
-      the reside field print.
+      the residue field print.
 
     - ``print_pos`` -- bool (default ``None``) Whether to only use positive
       integers in the representations of elements. See PRINTING below.
@@ -1012,9 +1014,15 @@ def Qq(q, prec = None, type = 'capped-rel', modulus = None, names=None,
         sage: R.<a> = Qq(9, 20, 'capped-rel', print_mode='series'); (1+2*a)^4
         2 + (2*a + 2)*3 + (2*a + 1)*3^2 + O(3^20)
         sage: -3*(1+2*a)^4
-        3 + a*3^2 + 3^3 + (2*a + 2)*3^4 + (2*a + 2)*3^5 + (2*a + 2)*3^6 + (2*a + 2)*3^7 + (2*a + 2)*3^8 + (2*a + 2)*3^9 + (2*a + 2)*3^10 + (2*a + 2)*3^11 + (2*a + 2)*3^12 + (2*a + 2)*3^13 + (2*a + 2)*3^14 + (2*a + 2)*3^15 + (2*a + 2)*3^16 + (2*a + 2)*3^17 + (2*a + 2)*3^18 + (2*a + 2)*3^19 + (2*a + 2)*3^20 + O(3^21)
+        3 + a*3^2 + 3^3 + (2*a + 2)*3^4 + (2*a + 2)*3^5 + (2*a + 2)*3^6 + (2*a + 2)*3^7
+         + (2*a + 2)*3^8 + (2*a + 2)*3^9 + (2*a + 2)*3^10 + (2*a + 2)*3^11
+         + (2*a + 2)*3^12 + (2*a + 2)*3^13 + (2*a + 2)*3^14 + (2*a + 2)*3^15
+         + (2*a + 2)*3^16 + (2*a + 2)*3^17 + (2*a + 2)*3^18 + (2*a + 2)*3^19
+         + (2*a + 2)*3^20 + O(3^21)
         sage: ~(3*a+18)
-        (a + 2)*3^-1 + 1 + 2*3 + (a + 1)*3^2 + 3^3 + 2*3^4 + (a + 1)*3^5 + 3^6 + 2*3^7 + (a + 1)*3^8 + 3^9 + 2*3^10 + (a + 1)*3^11 + 3^12 + 2*3^13 + (a + 1)*3^14 + 3^15 + 2*3^16 + (a + 1)*3^17 + 3^18 + O(3^19)
+        (a + 2)*3^-1 + 1 + 2*3 + (a + 1)*3^2 + 3^3 + 2*3^4 + (a + 1)*3^5 + 3^6 + 2*3^7
+         + (a + 1)*3^8 + 3^9 + 2*3^10 + (a + 1)*3^11 + 3^12 + 2*3^13 + (a + 1)*3^14
+         + 3^15 + 2*3^16 + (a + 1)*3^17 + 3^18 + O(3^19)
 
       *print_pos* controls whether negatives can be used in the
       coefficients of powers of `p`. ::
@@ -1074,7 +1082,8 @@ def Qq(q, prec = None, type = 'capped-rel', modulus = None, names=None,
       *print_pos* controls whether to use a balanced representation or
       not. ::
 
-        sage: S.<a> = Qq(9, 7, print_mode='val-unit', print_pos=False); b = (1+3*a)^9 - 1; b
+        sage: S.<a> = Qq(9, 7, print_mode='val-unit', print_pos=False)
+        sage: b = (1+3*a)^9 - 1; b
         3^3 * (15 - 17*a) + O(3^7)
         sage: ~b
         3^-3 * (-40 + a) + O(3)
@@ -1082,15 +1091,19 @@ def Qq(q, prec = None, type = 'capped-rel', modulus = None, names=None,
       *ram_name* affects how the prime is printed. ::
 
         sage: A.<x> = Qp(next_prime(10^6), print_mode='val-unit')[]
-        sage: T.<a> = Qq(next_prime(10^6)^3, 4, print_mode='val-unit', ram_name='p', modulus=x^3+385831*x^2+106556*x+321036); b = ~(next_prime(10^6)^2*(a^2 + a - 4)); b
-        p^-2 * (503009563508519137754940 + 704413692798200940253892*a + 968097057817740999537581*a^2) + O(p^2)
+        sage: T.<a> = Qq(next_prime(10^6)^3, 4, print_mode='val-unit', ram_name='p',
+        ....:            modulus=x^3+385831*x^2+106556*x+321036)
+        sage: b = ~(next_prime(10^6)^2*(a^2 + a - 4)); b
+        p^-2 * (503009563508519137754940 + 704413692798200940253892*a
+                 + 968097057817740999537581*a^2) + O(p^2)
         sage: b * (a^2 + a - 4)
         p^-2 * 1 + O(p^2)
 
       *print_max_terse_terms* controls how many terms of the polynomial
       appear in the unit part. ::
 
-        sage: U.<a> = Qq(17^4, 6, print_mode='val-unit', print_max_terse_terms=3); b = ~(17*(a^3-a+14)); b
+        sage: U.<a> = Qq(17^4, 6, print_mode='val-unit', print_max_terse_terms=3)
+        sage: b = ~(17*(a^3-a+14)); b
         17^-1 * (22110411 + 11317400*a + 20656972*a^2 + ...) + O(17^5)
         sage: b*17*(a^3-a+14)
         1 + O(17^6)
@@ -1176,7 +1189,8 @@ def Qq(q, prec = None, type = 'capped-rel', modulus = None, names=None,
        series, but more compactly. ::
 
         sage: R.<a> = Qq(125); (a+5)^6
-        (4*a^2 + 3*a + 4) + (3*a^2 + 2*a)*5 + (a^2 + a + 1)*5^2 + (3*a + 2)*5^3 + (3*a^2 + a + 3)*5^4 + (2*a^2 + 3*a + 2)*5^5 + O(5^20)
+        (4*a^2 + 3*a + 4) + (3*a^2 + 2*a)*5 + (a^2 + a + 1)*5^2 + (3*a + 2)*5^3
+         + (3*a^2 + a + 3)*5^4 + (2*a^2 + 3*a + 2)*5^5 + O(5^20)
         sage: R.<a> = Qq(125, print_mode='bars', prec=8); repr((a+5)^6)
         '...[2, 3, 2]|[3, 1, 3]|[2, 3]|[1, 1, 1]|[0, 2, 3]|[4, 3, 4]'
         sage: repr((a-5)^6)
@@ -1267,14 +1281,16 @@ def Qq(q, prec = None, type = 'capped-rel', modulus = None, names=None,
         sage: p = next_prime(2^123)
         sage: k = Qp(p)
         sage: R.<x> = k[]
-        sage: K = Qq([(p, 5)], modulus=x^5+x+4, names='a', ram_name='p', print_pos=False, check=False)
+        sage: K = Qq([(p, 5)], modulus=x^5+x+4, names='a', ram_name='p',
+        ....:        print_pos=False, check=False)
         sage: K.0^5
         (-a - 4) + O(p^20)
 
     In tests on ``sage.math.washington.edu``, the creation of ``K`` as above took an
     average of 1.58ms, while::
 
-        sage: K = Qq(p^5, modulus=x^5+x+4, names='a', ram_name='p', print_pos=False, check=True)
+        sage: K = Qq(p^5, modulus=x^5+x+4, names='a', ram_name='p',
+        ....:        print_pos=False, check=True)
 
     took an average of 24.5ms.  Of course, with smaller primes these
     savings disappear.
@@ -1364,11 +1380,11 @@ def Qq(q, prec = None, type = 'capped-rel', modulus = None, names=None,
 # Short constructor names for different types
 ######################################################
 
-def QpCR(p, prec = None, *args, **kwds):
+def QpCR(p, prec=None, *args, **kwds):
     r"""
     A shortcut function to create capped relative `p`-adic fields.
 
-    Same functionality as ``Qp``.  See documentation for ``Qp`` for a
+    Same functionality as :func:`Qp`.  See documentation for :func:`Qp` for a
     description of the input parameters.
 
     EXAMPLES::
@@ -1378,11 +1394,11 @@ def QpCR(p, prec = None, *args, **kwds):
     """
     return Qp(p, prec, 'capped-rel', *args, **kwds)
 
-def QpFP(p, prec = None, *args, **kwds):
+def QpFP(p, prec=None, *args, **kwds):
     r"""
     A shortcut function to create floating point `p`-adic fields.
 
-    Same functionality as ``Qp``.  See documentation for ``Qp`` for a
+    Same functionality as :func:`Qp`.  See documentation for :func:`Qp` for a
     description of the input parameters.
 
     EXAMPLES::
@@ -1392,12 +1408,12 @@ def QpFP(p, prec = None, *args, **kwds):
     """
     return Qp(p, prec, 'floating-point', *args, **kwds)
 
-def QqCR(q, prec = None, *args, **kwds):
+def QqCR(q, prec=None, *args, **kwds):
     r"""
     A shortcut function to create capped relative unramified `p`-adic
     fields.
 
-    Same functionality as ``Qq``.  See documentation for ``Qq`` for a
+    Same functionality as :func:`Qq`.  See documentation for :func:`Qq` for a
     description of the input parameters.
 
     EXAMPLES::
@@ -1407,12 +1423,12 @@ def QqCR(q, prec = None, *args, **kwds):
     """
     return Qq(q, prec, 'capped-rel', *args, **kwds)
 
-def QqFP(q, prec = None, *args, **kwds):
+def QqFP(q, prec=None, *args, **kwds):
     r"""
     A shortcut function to create floating point unramified `p`-adic
     fields.
 
-    Same functionality as ``Qq``.  See documentation for ``Qq`` for a
+    Same functionality as :func:`Qq`.  See documentation for :func:`Qq` for a
     description of the input parameters.
 
     EXAMPLES::
@@ -1423,7 +1439,7 @@ def QqFP(q, prec = None, *args, **kwds):
     return Qq(q, prec, 'floating-point', *args, **kwds)
 
 @experimental(23505)
-def QpLC(p, prec = None, *args, **kwds):
+def QpLC(p, prec=None, *args, **kwds):
     r"""
     A shortcut function to create `p`-adic fields with lattice precision.
 
@@ -1438,7 +1454,7 @@ def QpLC(p, prec = None, *args, **kwds):
     return Qp(p, prec, 'lattice-cap', *args, **kwds)
 
 @experimental(23505)
-def QpLF(p, prec = None, *args, **kwds):
+def QpLF(p, prec=None, *args, **kwds):
     r"""
     A shortcut function to create `p`-adic fields with lattice precision.
 
@@ -1486,22 +1502,22 @@ class Zp_class(UniqueFactory):
     - ``prec`` -- integer (default: ``20``) the precision cap of the
       ring.  In the lattice capped case, ``prec`` can either be a
       pair (``relative_cap``, ``absolute_cap``) or an integer
-      (understood at relative cap).
+      (understood as relative cap).
       In the relaxed case, ``prec`` can be either a
       pair (``default_prec``, ``halting_prec``) or an integer
-      (understood at default precision).
+      (understood as default precision).
       Except for the fixed modulus and floating point cases, individual elements
       keep track of their own precision.  See TYPES and PRECISION
       below.
 
     - ``type`` -- string (default: ``'capped-rel'``) Valid types are
       ``'capped-rel'``, ``'capped-abs'``, ``'fixed-mod'``,
-      ``'floating-point'``, ``'lattice-cap'``, ``'lattice-float'``, ``'relaxed'``
-      See TYPES and PRECISION below
+      ``'floating-point'``, ``'lattice-cap'``, ``'lattice-float'``, ``'relaxed'``.
+      See TYPES and PRECISION below.
 
     - ``print_mode`` -- string (default: ``None``).  Valid modes are
       ``'series'``, ``'val-unit'``, ``'terse'``, ``'digits'``, and
-      ``'bars'``. See PRINTING below
+      ``'bars'``. See PRINTING below.
 
     - ``names`` -- string or tuple (defaults to a string
       representation of `p`).  What to use whenever `p` is printed.
@@ -1630,7 +1646,7 @@ class Zp_class(UniqueFactory):
     There are many different ways to print `p`-adic elements.  The
     way elements of a given ring print is controlled by options
     passed in at the creation of the ring.  There are five basic
-    printing modes (series, val-unit, terse, digits and bars), as
+    printing modes (``'series'``, ``'val-unit'``, ``'terse'``, ``'digits'`` and ``'bars'``), as
     well as various options that either hide some information in
     the print representation or sometimes make print
     representations more compact.  Note that the printing options
@@ -1641,7 +1657,9 @@ class Zp_class(UniqueFactory):
         sage: R = Zp(5, print_mode='series'); a = R(70700); a
         3*5^2 + 3*5^4 + 2*5^5 + 4*5^6 + O(5^22)
         sage: b = R(-70700); b
-        2*5^2 + 4*5^3 + 5^4 + 2*5^5 + 4*5^7 + 4*5^8 + 4*5^9 + 4*5^10 + 4*5^11 + 4*5^12 + 4*5^13 + 4*5^14 + 4*5^15 + 4*5^16 + 4*5^17 + 4*5^18 + 4*5^19 + 4*5^20 + 4*5^21 + O(5^22)
+        2*5^2 + 4*5^3 + 5^4 + 2*5^5 + 4*5^7 + 4*5^8 + 4*5^9 + 4*5^10 + 4*5^11
+         + 4*5^12 + 4*5^13 + 4*5^14 + 4*5^15 + 4*5^16 + 4*5^17 + 4*5^18
+         + 4*5^19 + 4*5^20 + 4*5^21 + O(5^22)
 
       *print_pos* controls whether negatives can be used in the
       coefficients of powers of `p`. ::
@@ -1768,12 +1786,13 @@ class Zp_class(UniqueFactory):
       greater than 9.  Defaults to
       ('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z')::
 
-        sage: T = Zp(5, print_mode='digits', print_alphabet=('1','2','3','4','5')); repr(T(-70700))
+        sage: T = Zp(5, print_mode='digits', print_alphabet=('1','2','3','4','5'))
+        sage: repr(T(-70700))
         '...5555555555555551325311'
 
       *show_prec* determines how the precision is printed.
-      It can be either 'none' (or equivalently ``False``), 'dots'
-      (or equivalently ``True``) or 'bigoh'.
+      It can be either ``'none'`` (or equivalently ``False``), ``'dots'``
+      (or equivalently ``True``) or ``'bigoh'``.
       The default is ``False`` for the ``'floating-point'`` and
       ``'fixed-mod'`` types and ``True`` for all other types. ::
 
@@ -1802,7 +1821,7 @@ class Zp_class(UniqueFactory):
 
       *print_pos* controls whether the digits can be negative. ::
 
-        sage: S = Zp(5, print_mode='bars',print_pos=False); b = S(-70700); repr(b)
+        sage: S = Zp(5, print_mode='bars', print_pos=False); b = S(-70700); repr(b)
         '...-1|0|2|2|-1|2|0|0'
 
       *print_max_terms* limits the number of digits that are printed. ::
@@ -1835,7 +1854,7 @@ class Zp_class(UniqueFactory):
 
     EXAMPLES:
 
-    We allow non-prime `p`, but only if ``check = False``.  Note that some
+    We allow non-prime `p`, but only if ``check=False``.  Note that some
     features will not work. ::
 
         sage: K = Zp(15, check=False); a = K(999); a
@@ -1857,7 +1876,8 @@ class Zp_class(UniqueFactory):
     It works even with a fairly huge cap::
 
         sage: Zp(next_prime(10^50), 100000)
-        100000000000000000000000000000000000000000000000151-adic Ring with capped relative precision 100000
+        100000000000000000000000000000000000000000000000151-adic Ring
+         with capped relative precision 100000
 
     We create each type of ring::
 
@@ -1910,14 +1930,14 @@ class Zp_class(UniqueFactory):
         sage: a + b
         1 + 5 + O(5^10)
     """
-    def create_key(self, p, prec = None, type = 'capped-rel', print_mode = None,
-                   names = None, ram_name = None, print_pos = None, print_sep = None, print_alphabet = None,
-                   print_max_terms = None, show_prec = None, check = True,
-                   label = None):
+    def create_key(self, p, prec=None, type='capped-rel', print_mode=None,
+                   names=None, ram_name=None, print_pos=None, print_sep=None, print_alphabet=None,
+                   print_max_terms=None, show_prec=None, check=True,
+                   label=None):
         r"""
         Creates a key from input parameters for ``Zp``.
 
-        See the documentation for ``Zp`` for more information.
+        See the documentation for :func:`Zp` for more information.
 
         TESTS::
 
@@ -1955,7 +1975,7 @@ class Zp_class(UniqueFactory):
         r"""
         Creates an object using a given key.
 
-        See the documentation for ``Zp`` for more information.
+        See the documentation for :func:`Zp` for more information.
 
         TESTS::
 
@@ -2014,10 +2034,10 @@ Zp = Zp_class("Zp")
 # Zq -- unramified extensions
 ######################################################
 
-def Zq(q, prec = None, type = 'capped-rel', modulus = None, names=None,
-          print_mode=None, ram_name = None, res_name = None, print_pos = None,
-       print_sep = None, print_max_ram_terms = None,
-       print_max_unram_terms = None, print_max_terse_terms = None, show_prec = None, check = True, implementation = 'FLINT'):
+def Zq(q, prec=None, type='capped-rel', modulus=None, names=None,
+          print_mode=None, ram_name=None, res_name=None, print_pos=None,
+       print_sep=None, print_max_ram_terms=None,
+       print_max_unram_terms=None, print_max_terse_terms=None, show_prec=None, check=True, implementation='FLINT'):
     r"""
     Given a prime power `q = p^n`, return the unique unramified
     extension of `\ZZ_p` of degree `n`.
@@ -2025,7 +2045,7 @@ def Zq(q, prec = None, type = 'capped-rel', modulus = None, names=None,
     INPUT:
 
     - ``q`` -- integer, list or tuple: the prime power in `\QQ_q`.  Or a
-      factorization object, single element list ``[(p, n)]`` where ``p`` is
+      :class:`Factorization` object, single element list ``[(p, n)]`` where ``p`` is
       a prime and ``n`` a positive integer, or the pair ``(p, n)``.
 
     - ``prec`` -- integer (default: ``20``) the precision cap of the
@@ -2034,9 +2054,9 @@ def Zq(q, prec = None, type = 'capped-rel', modulus = None, names=None,
 
     - ``type`` -- string (default: ``'capped-rel'``) Valid types are
       ``'capped-abs'``, ``'capped-rel'``, ``'fixed-mod'``, and
-      ``'floating-point'``.  See TYPES and PRECISION below
+      ``'floating-point'``.  See TYPES and PRECISION below.
 
-    - modulus -- polynomial (default None) A polynomial defining an
+    - ``modulus`` -- polynomial (default None) A polynomial defining an
       unramified extension of `\ZZ_p`.  See MODULUS below.
 
     - ``names`` -- string or tuple (``None`` is only allowed when
@@ -2047,12 +2067,12 @@ def Zq(q, prec = None, type = 'capped-rel', modulus = None, names=None,
       ``'val-unit'``, ``'terse'``, and ``'bars'``. See PRINTING below.
 
     - ``ram_name`` -- string (defaults to string representation of `p` if
-      None).  ``ram_name`` controls how the prime is printed. See PRINTING
+      ``None``).  ``ram_name`` controls how the prime is printed. See PRINTING
       below.
 
     - ``res_name`` -- string (defaults to ``None``, which corresponds
       to adding a ``'0'`` to the end of the name).  Controls how
-      elements of the reside field print.
+      elements of the residue field print.
 
     - ``print_pos`` -- bool (default ``None``) Whether to only use
       positive integers in the representations of elements. See
@@ -2077,12 +2097,12 @@ def Zq(q, prec = None, type = 'capped-rel', modulus = None, names=None,
 
     - ``check`` -- bool (default ``True``) whether to check inputs.
 
-    - ``implementation`` -- string (default ``FLINT``) which
-      implementation to use.  ``NTL`` is the other option.
+    - ``implementation`` -- string (default ``'FLINT'``) which
+      implementation to use.  ``'NTL'`` is the other option.
 
     OUTPUT:
 
-    - The corresponding unramified `p`-adic ring.
+    The corresponding unramified `p`-adic ring.
 
     TYPES AND PRECISION:
 
@@ -2284,7 +2304,7 @@ def Zq(q, prec = None, type = 'capped-rel', modulus = None, names=None,
         '(...)*2 + (...)*2^2 + (...)*2^3 + (...)*2^4 + (...)*2^5 + (...)*2^6 + (...)*2^7 + O(2^8)'
 
       *show_prec* determines how the precision is printed.
-      It can be either 'none' (or equivalently ``False``), 'bigoh'
+      It can be either ``'none'`` (or equivalently ``False``), ``'bigoh'``
       (or equivalently ``True``).
       The default is ``False`` for the ``'floating-point'`` and
       ``'fixed-mod'`` types and ``True`` for all other types. ::
@@ -2317,19 +2337,23 @@ def Zq(q, prec = None, type = 'capped-rel', modulus = None, names=None,
       *ram_name* affects how the prime is printed. ::
 
         sage: A.<x> = Zp(next_prime(10^6), print_mode='val-unit')[]
-        sage: T.<a> = Zq(next_prime(10^6)^3, 4, print_mode='val-unit', ram_name='p', modulus=x^3+385831*x^2+106556*x+321036); b = (next_prime(10^6)^2*(a^2 + a - 4)^4); b
-        p^2 * (87996187118837557387483 + 246348888344392418464080*a + 1353538653775332610349*a^2) + O(p^6)
+        sage: T.<a> = Zq(next_prime(10^6)^3, 4, print_mode='val-unit', ram_name='p',
+        ....:            modulus=x^3+385831*x^2+106556*x+321036)
+        sage: b = next_prime(10^6)^2*(a^2 + a - 4)^4; b
+        p^2 * (87996187118837557387483 + 246348888344392418464080*a + 1353538653775332610349*a^2)
+         + O(p^6)
         sage: b * (a^2 + a - 4)^-4
         p^2 * 1 + O(p^6)
 
       *print_max_terse_terms* controls how many terms of the polynomial
       appear in the unit part. ::
 
-        sage: U.<a> = Zq(17^4, 6, print_mode='val-unit', print_max_terse_terms=3); b = (17*(a^3-a+14)^6); b
+        sage: U.<a> = Zq(17^4, 6, print_mode='val-unit', print_max_terse_terms=3)
+        sage: b = 17*(a^3-a+14)^6; b
         17 * (12131797 + 12076378*a + 10809706*a^2 + ...) + O(17^7)
 
       *show_prec* determines how the precision is printed.
-      It can be either 'none' (or equivalently ``False``), 'bigoh'
+      It can be either ``'none'`` (or equivalently ``False``), ``'bigoh'``
       (or equivalently ``True``).
       The default is ``False`` for the ``'floating-point'`` and
       ``'fixed-mod'`` types and ``True`` for all other types. ::
@@ -2386,7 +2410,7 @@ def Zq(q, prec = None, type = 'capped-rel', modulus = None, names=None,
         106251/5^6 + 49994/5^5*a + ... + O(5^14)
 
       *show_prec* determines how the precision is printed.
-      It can be either 'none' (or equivalently ``False``), 'bigoh'
+      It can be either ``'none'`` (or equivalently ``False``), ``'bigoh'``
       (or equivalently ``True``).
       The default is ``False`` for the ``'floating-point'`` and
       ``'fixed-mod'`` types and ``True`` for all other types. ::
@@ -2410,7 +2434,8 @@ def Zq(q, prec = None, type = 'capped-rel', modulus = None, names=None,
        but more compactly. ::
 
         sage: R.<a> = Zq(125); (a+5)^6
-        (4*a^2 + 3*a + 4) + (3*a^2 + 2*a)*5 + (a^2 + a + 1)*5^2 + (3*a + 2)*5^3 + (3*a^2 + a + 3)*5^4 + (2*a^2 + 3*a + 2)*5^5 + O(5^20)
+        (4*a^2 + 3*a + 4) + (3*a^2 + 2*a)*5 + (a^2 + a + 1)*5^2 + (3*a + 2)*5^3
+         + (3*a^2 + a + 3)*5^4 + (2*a^2 + 3*a + 2)*5^5 + O(5^20)
         sage: R.<a> = Zq(125, print_mode='bars', prec=8); repr((a+5)^6)
         '...[2, 3, 2]|[3, 1, 3]|[2, 3]|[1, 1, 1]|[0, 2, 3]|[4, 3, 4]'
         sage: repr((a-5)^6)
@@ -2464,8 +2489,8 @@ def Zq(q, prec = None, type = 'capped-rel', modulus = None, names=None,
         '...[...][...][...][...][][...][...]'
 
       *show_prec* determines how the precision is printed.
-      It can be either 'none' (or equivalently ``False``), 'dots'
-      (or equivalently ``True``) or 'bigoh'.
+      It can be either ``'none'`` (or equivalently ``False``), ``'dots'``
+      (or equivalently ``True``) or ``'bigoh'``.
       The default is ``False`` for the ``'floating-point'`` and
       ``'fixed-mod'`` types and ``True`` for all other types. ::
 
@@ -2481,7 +2506,7 @@ def Zq(q, prec = None, type = 'capped-rel', modulus = None, names=None,
 
     EXAMPLES:
 
-    Unlike for ``Zp``, you can't create ``Zq(N)`` when ``N`` is not a prime power.
+    Unlike for :func:`Zp`, you can't create ``Zq(N)`` when ``N`` is not a prime power.
 
     However, you can use ``check=False`` to pass in a pair in order to not
     have to factor.  If you do so, you need to use names explicitly
@@ -2490,14 +2515,16 @@ def Zq(q, prec = None, type = 'capped-rel', modulus = None, names=None,
         sage: p = next_prime(2^123)
         sage: k = Zp(p)
         sage: R.<x> = k[]
-        sage: K = Zq([(p, 5)], modulus=x^5+x+4, names='a', ram_name='p', print_pos=False, check=False)
+        sage: K = Zq([(p, 5)], modulus=x^5+x+4, names='a', ram_name='p',
+        ....:        print_pos=False, check=False)
         sage: K.0^5
         (-a - 4) + O(p^20)
 
     In tests on sage.math, the creation of ``K`` as above took an average
     of 1.58ms, while::
 
-        sage: K = Zq(p^5, modulus=x^5+x+4, names='a', ram_name='p', print_pos=False, check=True)
+        sage: K = Zq(p^5, modulus=x^5+x+4, names='a', ram_name='p',
+        ....:        print_pos=False, check=True)
 
     took an average of 24.5ms.  Of course, with smaller primes these
     savings disappear.
@@ -2535,7 +2562,7 @@ def Zq(q, prec = None, type = 'capped-rel', modulus = None, names=None,
         if isinstance(names, (list, tuple)):
             names = names[0]
         from sage.structure.element import Expression
-        if not (modulus is None or is_Polynomial(modulus) or isinstance(modulus, Expression)):
+        if not (modulus is None or isinstance(modulus, Polynomial) or isinstance(modulus, Expression)):
             raise TypeError("modulus must be a polynomial")
         if names is not None and not isinstance(names, str):
             names = str(names)
@@ -2572,11 +2599,11 @@ def Zq(q, prec = None, type = 'capped-rel', modulus = None, names=None,
 # Short constructor names for different types
 ######################################################
 
-def ZpCR(p, prec = None, *args, **kwds):
+def ZpCR(p, prec=None, *args, **kwds):
     r"""
     A shortcut function to create capped relative `p`-adic rings.
 
-    Same functionality as ``Zp``.  See documentation for ``Zp`` for a
+    Same functionality as :func:`Zp`.  See documentation for :func:`Zp` for a
     description of the input parameters.
 
     EXAMPLES::
@@ -2586,7 +2613,7 @@ def ZpCR(p, prec = None, *args, **kwds):
     """
     return Zp(p, prec, 'capped-rel', *args, **kwds)
 
-def ZpCA(p, prec = None, *args, **kwds):
+def ZpCA(p, prec=None, *args, **kwds):
     r"""
     A shortcut function to create capped absolute `p`-adic rings.
 
@@ -2599,7 +2626,7 @@ def ZpCA(p, prec = None, *args, **kwds):
     """
     return Zp(p, prec, 'capped-abs', *args, **kwds)
 
-def ZpFM(p, prec = None, *args, **kwds):
+def ZpFM(p, prec=None, *args, **kwds):
     r"""
     A shortcut function to create fixed modulus `p`-adic rings.
 
@@ -2612,11 +2639,11 @@ def ZpFM(p, prec = None, *args, **kwds):
     """
     return Zp(p, prec, 'fixed-mod', *args, **kwds)
 
-def ZpFP(p, prec = None, *args, **kwds):
+def ZpFP(p, prec=None, *args, **kwds):
     r"""
     A shortcut function to create floating point `p`-adic rings.
 
-    Same functionality as ``Zp``.  See documentation for ``Zp`` for a
+    Same functionality as :func:`Zp`.  See documentation for :func:`Zp` for a
     description of the input parameters.
 
     EXAMPLES::
@@ -2626,11 +2653,11 @@ def ZpFP(p, prec = None, *args, **kwds):
     """
     return Zp(p, prec, 'floating-point', *args, **kwds)
 
-def ZqCR(q, prec = None, *args, **kwds):
+def ZqCR(q, prec=None, *args, **kwds):
     r"""
     A shortcut function to create capped relative unramified `p`-adic rings.
 
-    Same functionality as ``Zq``.  See documentation for ``Zq`` for a
+    Same functionality as :func:`Zq`.  See documentation for :func:`Zq` for a
     description of the input parameters.
 
     EXAMPLES::
@@ -2640,7 +2667,7 @@ def ZqCR(q, prec = None, *args, **kwds):
     """
     return Zq(q, prec, 'capped-rel', *args, **kwds)
 
-def ZqCA(q, prec = None, *args, **kwds):
+def ZqCA(q, prec=None, *args, **kwds):
     r"""
     A shortcut function to create capped absolute unramified `p`-adic rings.
 
@@ -2653,7 +2680,7 @@ def ZqCA(q, prec = None, *args, **kwds):
     """
     return Zq(q, prec, 'capped-abs', *args, **kwds)
 
-def ZqFM(q, prec = None, *args, **kwds):
+def ZqFM(q, prec=None, *args, **kwds):
     r"""
     A shortcut function to create fixed modulus unramified `p`-adic rings.
 
@@ -2666,11 +2693,11 @@ def ZqFM(q, prec = None, *args, **kwds):
     """
     return Zq(q, prec, 'fixed-mod', *args, **kwds)
 
-def ZqFP(q, prec = None, *args, **kwds):
+def ZqFP(q, prec=None, *args, **kwds):
     r"""
     A shortcut function to create floating point unramified `p`-adic rings.
 
-    Same functionality as ``Zq``.  See documentation for ``Zq`` for a
+    Same functionality as :func:`Zq`.  See documentation for :func:`Zq` for a
     description of the input parameters.
 
     EXAMPLES::
@@ -3019,7 +3046,7 @@ def ZpER(p, prec=None, halt=None, secure=False, *args, **kwds):
         40
 
     However, both the default precision and the halting precision can be
-    customized at the creation of the parent as follows:
+    customized at the creation of the parent as follows::
 
         sage: S = ZpER(5, prec=10, halt=100)
         sage: S.default_prec()
@@ -3110,7 +3137,7 @@ def ZpER(p, prec=None, halt=None, secure=False, *args, **kwds):
         sage: a == aa
         False
 
-    This annoying situation, where the output of `a == aa` may change
+    This annoying situation, where the output of ``a == aa`` may change
     depending on previous computations, cannot occur when the parent is
     created with ``secure=True``.
     Indeed, in this case, if the equality cannot be decided, an error
@@ -3202,22 +3229,22 @@ class pAdicExtension_class(UniqueFactory):
 
         sage: R = Zp(5,3)
         sage: S.<x> = ZZ[]
-        sage: W.<w> = pAdicExtension(R, x^4-15)
+        sage: W.<w> = pAdicExtension(R, x^4 - 15)
         sage: W
         5-adic Eisenstein Extension Ring in w defined by x^4 - 15
         sage: W.precision_cap()
         12
     """
-    def create_key_and_extra_args(self, base, modulus, prec = None, print_mode = None,
-                                  names = None, var_name = None, res_name = None,
-                                  unram_name = None, ram_name = None, print_pos = None,
-                                  print_sep = None, print_alphabet = None, print_max_ram_terms = None,
-                                  print_max_unram_terms = None, print_max_terse_terms = None,
-                                  show_prec = None, check = True, unram = False, implementation='FLINT'):
+    def create_key_and_extra_args(self, base, modulus, prec=None, print_mode=None,
+                                  names=None, var_name=None, res_name=None,
+                                  unram_name=None, ram_name=None, print_pos=None,
+                                  print_sep=None, print_alphabet=None, print_max_ram_terms=None,
+                                  print_max_unram_terms=None, print_max_terse_terms=None,
+                                  show_prec=None, check=True, unram=False, implementation='FLINT'):
         r"""
-        Creates a key from input parameters for pAdicExtension.
+        Creates a key from input parameters for :class:`pAdicExtension`.
 
-        See the documentation for ``Qq`` for more information.
+        See the documentation for :func:`Qq` for more information.
 
         TESTS::
 
@@ -3278,7 +3305,7 @@ class pAdicExtension_class(UniqueFactory):
                     raise ValueError("symbolic expression must be in only one variable")
                 exact_modulus = modulus.polynomial(base.exact_field())
                 approx_modulus = modulus.polynomial(base)
-            elif is_Polynomial(modulus):
+            elif isinstance(modulus, Polynomial):
                 if modulus.parent().ngens() != 1:
                     raise ValueError("must use univariate polynomial")
                 exact_modulus = modulus.change_ring(base.exact_field())
@@ -3362,7 +3389,7 @@ class pAdicExtension_class(UniqueFactory):
         r"""
         Creates an object using a given key.
 
-        See the documentation for pAdicExtension for more information.
+        See the documentation for :class:`pAdicExtension` for more information.
 
         TESTS::
 
@@ -3381,7 +3408,7 @@ class pAdicExtension_class(UniqueFactory):
             from sage.structure.element import Expression
             if isinstance(premodulus, Expression):
                 exact_modulus = premodulus.polynomial(base.exact_field())
-            elif is_Polynomial(premodulus):
+            elif isinstance(premodulus, Polynomial):
                 exact_modulus = premodulus.change_ring(base.exact_field())
             show_prec = None
         else:
@@ -3425,11 +3452,12 @@ def split(poly, prec):
 
         sage: k = Qp(13)
         sage: x = polygen(k)
-        sage: f = x^2+1
+        sage: f = x^2 + 1
         sage: sage.rings.padics.factory.split(f, 10)
         Traceback (most recent call last):
         ...
-        NotImplementedError: Extensions by general polynomials not yet supported. Please use an unramified or Eisenstein polynomial.
+        NotImplementedError: Extensions by general polynomials not yet supported.
+        Please use an unramified or Eisenstein polynomial.
 
     TESTS:
 
@@ -3463,24 +3491,24 @@ def truncate_to_prec(poly, R, absprec):
 
 def krasner_check(poly, prec):
     r"""
-    Returns True iff poly determines a unique isomorphism class of
-    extensions at precision prec.
+    Return ``True`` iff ``poly`` determines a unique isomorphism class of
+    extensions at precision ``prec``.
 
-    Currently just returns True (thus allowing extensions that are not
+    Currently just returns ``True`` (thus allowing extensions that are not
     defined to high enough precision in order to specify them up to
     isomorphism).  This will change in the future.
 
     EXAMPLES::
 
         sage: from sage.rings.padics.factory import krasner_check
-        sage: krasner_check(1,2) #this is a stupid example.
+        sage: krasner_check(1,2)  # this is a stupid example.
         True
     """
     return True #This needs to be implemented
 
 def is_eisenstein(poly):
     r"""
-    Returns True iff this monic polynomial is Eisenstein.
+    Return ``True`` iff this monic polynomial is Eisenstein.
 
     A polynomial is Eisenstein if it is monic, the constant term has
     valuation 1 and all other terms have positive valuation.
@@ -3508,7 +3536,7 @@ def is_eisenstein(poly):
 
 def is_unramified(poly):
     r"""
-    Returns true iff this monic polynomial is unramified.
+    Return ``True`` iff this monic polynomial is unramified.
 
     A polynomial is unramified if its reduction modulo the maximal
     ideal is irreducible.

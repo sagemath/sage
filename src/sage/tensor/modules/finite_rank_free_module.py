@@ -929,7 +929,7 @@ class FiniteRankFreeModule_abstract(UniqueRepresentation, ReflexiveModule_abstra
             try:
                 codomain_rank = codomain.rank()
             except AttributeError:
-                # https://trac.sagemath.org/ticket/34445: MatrixSpace does not have rank
+                # https://github.com/sagemath/sage/issues/34445: MatrixSpace does not have rank
                 codomain_rank = codomain.dimension()
             if codomain_rank != self.rank():
                 raise ValueError("domain and codomain must have the same rank")
@@ -2164,7 +2164,7 @@ class FiniteRankFreeModule(ReflexiveModule_base, FiniteRankFreeModule_abstract):
             sage: M.tensor((3,0), antisym=[[]])
             Type-(3,0) tensor on the Rank-3 free module M over the Integer Ring
         """
-        # Until https://trac.sagemath.org/ticket/30373 is done,
+        # Until https://github.com/sagemath/sage/issues/30373 is done,
         # TensorProductFunctor._functor_name is "tensor", so this method
         # also needs to double as the tensor product construction
         if isinstance(args[0], Parent):

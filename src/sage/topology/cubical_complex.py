@@ -26,7 +26,8 @@ we could take for example the four line segments in the plane from
 `(0,2)` to `(0,3)` to `(1,3)` to `(1,2)` to `(0,2)`.  In Sage, this is
 done with the following command::
 
-    sage: S1 = CubicalComplex([([0,0], [2,3]), ([0,1], [3,3]), ([0,1], [2,2]), ([1,1], [2,3])]); S1
+    sage: S1 = CubicalComplex([([0,0], [2,3]), ([0,1], [3,3]),
+    ....:                      ([0,1], [2,2]), ([1,1], [2,3])]); S1
     Cubical complex with 4 vertices and 8 cubes
 
 The argument to ``CubicalComplex`` is a list of the maximal "cubes" in
@@ -47,7 +48,8 @@ topologically equivalent space by inserting some degenerate simplices::
 
     sage: S1.homology()
     {0: 0, 1: Z}
-    sage: X = CubicalComplex([([0,0], [2,3], [2]), ([0,1], [3,3], [2]), ([0,1], [2,2], [2]), ([1,1], [2,3], [2])])
+    sage: X = CubicalComplex([([0,0], [2,3], [2]), ([0,1], [3,3], [2]),
+    ....:                     ([0,1], [2,2], [2]), ([1,1], [2,3], [2])])
     sage: X.homology()
     {0: 0, 1: Z}
 
@@ -74,8 +76,6 @@ from sage.sets.set import Set
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
 from sage.matrix.constructor import matrix
-from sage.homology.chain_complex import ChainComplex
-from sage.graphs.graph import Graph
 from sage.misc.cachefunc import cached_method
 from sage.misc.superseded import deprecation
 from functools import total_ordering
@@ -773,8 +773,8 @@ class CubicalComplex(GenericCellComplex):
     A "circle" (four edges connecting the vertices (0,2), (0,3),
     (1,2), and (1,3))::
 
-        sage: S1 = CubicalComplex([([0,0], [2,3]), ([0,1], [3,3]), ([0,1], [2,2]), ([1,1], [2,3])])
-        sage: S1
+        sage: S1 = CubicalComplex([([0,0], [2,3]), ([0,1], [3,3]),
+        ....:                      ([0,1], [2,2]), ([1,1], [2,3])]); S1
         Cubical complex with 4 vertices and 8 cubes
         sage: S1.homology()
         {0: 0, 1: Z}
@@ -834,12 +834,12 @@ class CubicalComplex(GenericCellComplex):
         Cubical complex with 16 vertices and 64 cubes
         sage: T.chain_complex()
         Chain complex with at most 3 nonzero terms over Integer Ring
-        sage: T.homology(base_ring=QQ)
+        sage: T.homology(base_ring=QQ)                                                  # optional - sage.modules
         {0: Vector space of dimension 0 over Rational Field,
          1: Vector space of dimension 2 over Rational Field,
          2: Vector space of dimension 1 over Rational Field}
         sage: RP2 = cubical_complexes.RealProjectivePlane()
-        sage: RP2.cohomology(dim=[1, 2], base_ring=GF(2))
+        sage: RP2.cohomology(dim=[1, 2], base_ring=GF(2))                               # optional - sage.modules sage.rings.finite_rings
         {1: Vector space of dimension 1 over Finite Field of size 2,
          2: Vector space of dimension 1 over Finite Field of size 2}
 
@@ -1192,6 +1192,8 @@ class CubicalComplex(GenericCellComplex):
             sage: Square.homology(subcomplex=EdgesLTR)[2] == Square.homology(subcomplex=EdgesLBR)[2]
             True
         """
+        from sage.homology.chain_complex import ChainComplex
+
         # initialize subcomplex
         if subcomplex is None:
             subcomplex = CubicalComplex()
@@ -1330,9 +1332,11 @@ class CubicalComplex(GenericCellComplex):
 
         EXAMPLES::
 
-            sage: cubical_complexes.Sphere(2).graph()
+            sage: cubical_complexes.Sphere(2).graph()                                   # optional - sage.graphs
             Graph on 8 vertices
         """
+        from sage.graphs.graph import Graph
+
         data = {}
         vertex_dict = {}
         i = 0
@@ -1547,12 +1551,12 @@ class CubicalComplex(GenericCellComplex):
 
             sage: T = cubical_complexes.Torus()
             sage: S2 = cubical_complexes.Sphere(2)
-            sage: T.connected_sum(S2).cohomology() == T.cohomology()
+            sage: T.connected_sum(S2).cohomology() == T.cohomology()                    # optional - sage.modules
             True
             sage: RP2 = cubical_complexes.RealProjectivePlane()
-            sage: T.connected_sum(RP2).homology(1)
+            sage: T.connected_sum(RP2).homology(1)                                      # optional - sage.modules
             Z x Z x C2
-            sage: RP2.connected_sum(RP2).connected_sum(RP2).homology(1)
+            sage: RP2.connected_sum(RP2).connected_sum(RP2).homology(1)                 # optional - sage.modules
             Z x Z x C2
         """
         # connected_sum: first check whether the complexes are pure
@@ -1668,14 +1672,14 @@ class CubicalComplex(GenericCellComplex):
         EXAMPLES::
 
             sage: RP2 = cubical_complexes.RealProjectivePlane()
-            sage: phi, M = RP2.algebraic_topological_model(GF(2))
-            sage: M.homology()
+            sage: phi, M = RP2.algebraic_topological_model(GF(2))                       # optional - sage.rings.finite_rings
+            sage: M.homology()                                                          # optional - sage.modules sage.rings.finite_rings
             {0: Vector space of dimension 1 over Finite Field of size 2,
              1: Vector space of dimension 1 over Finite Field of size 2,
              2: Vector space of dimension 1 over Finite Field of size 2}
             sage: T = cubical_complexes.Torus()
             sage: phi, M = T.algebraic_topological_model(QQ)
-            sage: M.homology()
+            sage: M.homology()                                                          # optional - sage.modules
             {0: Vector space of dimension 1 over Rational Field,
              1: Vector space of dimension 2 over Rational Field,
              2: Vector space of dimension 1 over Rational Field}
@@ -1699,7 +1703,7 @@ class CubicalComplex(GenericCellComplex):
             {[0,0] x [0,1] x [0,1]}
             sage: C._chomp_repr_()
             doctest:...: DeprecationWarning: the CHomP interface is deprecated; hence so is this function
-            See https://trac.sagemath.org/33777 for details.
+            See https://github.com/sagemath/sage/issues/33777 for details.
             '[0,0] x [0,1] x [0,1]\n'
         """
         deprecation(33777, "the CHomP interface is deprecated; hence so is this function")

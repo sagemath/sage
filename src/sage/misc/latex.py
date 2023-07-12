@@ -409,7 +409,7 @@ def float_function(x):
         sage: latex(float(2e-13))
         2 \times 10^{-13}
     """
-    from sage.all import RDF
+    from sage.rings.real_double import RDF
     return latex(RDF(x))
 
 
@@ -647,6 +647,7 @@ def latex_extra_preamble():
         \newcommand{\RLF}{\Bold{R}}
         \newcommand{\SL}{\mathrm{SL}}
         \newcommand{\PSL}{\mathrm{PSL}}
+        \newcommand{\lcm}{\mathop{\operatorname{lcm}}}
         \newcommand{\Bold}[1]{\mathbf{#1}}
         <BLANKLINE>
     """
@@ -2067,9 +2068,9 @@ def repr_lincomb(symbols, coeffs):
     Verify that :trac:`17299` (latex representation of modular symbols)
     is fixed::
 
-        sage: x = EllipticCurve('64a1').modular_symbol_space(sign=1).basis()[0]
+        sage: x = EllipticCurve('64a1').modular_symbol_space(sign=1).basis()[0]         # optional - sage.schemes
         sage: from sage.misc.latex import repr_lincomb
-        sage: latex(x.modular_symbol_rep())
+        sage: latex(x.modular_symbol_rep())                                             # optional - sage.schemes
         \left\{\frac{-3}{11}, \frac{-1}{4}\right\} - \left\{\frac{3}{13}, \frac{1}{4}\right\}
 
     Verify that it works when the symbols are numbers::

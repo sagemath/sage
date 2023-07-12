@@ -48,7 +48,7 @@ class Mime():
             sage: from sage.structure.graphics_file import Mime
             doctest:warning...
             DeprecationWarning: the module sage.structure.graphics_file is deprecated
-            See https://trac.sagemath.org/32988 for details.
+            See https://github.com/sagemath/sage/issues/32988 for details.
             sage: Mime.validate('image/png')
             'image/png'
             sage: Mime.validate('foo/bar')

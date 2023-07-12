@@ -60,7 +60,7 @@ def is_ComplexIntervalField(x):
         doctest:warning...
         DeprecationWarning: is_ComplexIntervalField is deprecated;
         use isinstance(..., sage.rings.abc.ComplexIntervalField) instead
-        See https://trac.sagemath.org/32612 for details.
+        See https://github.com/sagemath/sage/issues/32612 for details.
         True
         sage: is_CIF(CC)
         False
@@ -627,7 +627,7 @@ class ComplexIntervalField_class(sage.rings.abc.ComplexIntervalField):
         im = rand(*args, **kwds)
         return self.element_class(self, re, im)
 
-    def is_field(self, proof = True):
+    def is_field(self, proof=True):
         """
         Return ``True``, since the complex numbers are a field.
 

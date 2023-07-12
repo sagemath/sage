@@ -204,7 +204,7 @@ Experiment by running the following code several times::
 
     sage: m = random_prime(10000)
     sage: n = random_prime(10000)
-    sage: euler_phi(m*n) == euler_phi(m) * euler_phi(n)
+    sage: euler_phi(m*n) == euler_phi(m) * euler_phi(n) or m == n
     True
 
 Feel a conjecture coming on?  Can you generalize this result?

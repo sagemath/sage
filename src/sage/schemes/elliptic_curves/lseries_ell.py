@@ -23,7 +23,8 @@ AUTHORS:
 #*****************************************************************************
 
 from sage.structure.sage_object import SageObject
-from sage.rings.all import RealField, RationalField
+from sage.rings.real_mpfr import RealField
+from sage.rings.rational_field import RationalField
 from math import sqrt, log, ceil
 import sage.functions.exp_integral as exp_integral
 from sage.misc.verbose import verbose
@@ -41,7 +42,8 @@ class Lseries_ell(SageObject):
         EXAMPLES::
 
             sage: EllipticCurve([1..5]).lseries()
-            Complex L-series of the Elliptic Curve defined by y^2 + x*y + 3*y = x^3 + 2*x^2 + 4*x + 5 over Rational Field
+            Complex L-series of the Elliptic Curve
+             defined by y^2 + x*y + 3*y = x^3 + 2*x^2 + 4*x + 5 over Rational Field
         """
         self.__E = E
 
@@ -96,7 +98,7 @@ class Lseries_ell(SageObject):
             sage: L._repr_()
             'Complex L-series of the Elliptic Curve defined by y^2 + y = x^3 - x over Rational Field'
         """
-        return "Complex L-series of the %s"%self.__E
+        return "Complex L-series of the %s" % self.__E
 
     def dokchitser(self, prec=53,
                    max_imaginary_part=0,
@@ -934,7 +936,8 @@ class Lseries_ell(SageObject):
 
             sage: E = EllipticCurve("5077a")
             sage: E.lseries().zero_sums()
-            Zero sum estimator for L-function attached to Elliptic Curve defined by y^2 + y = x^3 - 7*x + 6 over Rational Field
+            Zero sum estimator for L-function attached to
+             Elliptic Curve defined by y^2 + y = x^3 - 7*x + 6 over Rational Field
         """
         from sage.lfunctions.zero_sums import LFunctionZeroSum
         return LFunctionZeroSum(self.__E, N=N)

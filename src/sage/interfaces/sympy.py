@@ -65,6 +65,17 @@ def _sympysage_float(self):
     from sage.rings.real_mpfr import create_RealNumber
     return create_RealNumber(str(self))
 
+def _sympysage_integer_ring(self):
+    r"""
+    EXAMPLES::
+
+        sage: import sympy
+        sage: sympy.ZZ._sage_()
+        Integer Ring
+    """
+    from sage.rings.integer_ring import ZZ
+    return ZZ
+
 def _sympysage_integer(self):
     """
     EXAMPLES::
@@ -89,6 +100,121 @@ def _sympysage_rational(self):
     from sage.rings.integer import Integer
     from sage.rings.rational import Rational
     return Rational((Integer(self.p), Integer(self.q)))
+
+def _sympysage_rational_field(self):
+    r"""
+    EXAMPLES::
+
+        sage: import sympy
+        sage: sympy.QQ._sage_()
+        Rational Field
+    """
+    from sage.rings.rational_field import QQ
+    return QQ
+
+def _sympysage_real_interval(self):
+    r"""
+    EXAMPLES::
+
+        sage: from sage.interfaces.sympy import sympy_init
+        sage: sympy_init()
+
+        sage: from sympy import CRootOf
+        sage: from sympy.abc import x
+        sage: root = CRootOf(x**3 - x^2 - x - 1, 0)
+        sage: interval = root._get_interval()
+        sage: interval._sage_()
+        2.?
+        sage: interval._sage_().parent()
+        Real Interval Field with 1024 bits of precision
+    """
+    # NOTE: this is a very approximate conversion as we do not consider any
+    # potential issue with precision
+    # Just to be (a little bit) safe, we set it to 1024
+    from sage.rings.real_mpfi import RealIntervalField
+    RIF = RealIntervalField(1024)
+    # NOTE: we call fraction_field since sympy stores mpq even
+    # for integral entries
+    domain = self.dom._sage_().fraction_field()
+    return RIF(domain(self.a)).union(RIF(domain(self.b)))
+
+def _sympysage_complex_interval(self):
+    r"""
+    EXAMPLES::
+
+        sage: from sage.interfaces.sympy import sympy_init
+        sage: sympy_init()
+
+        sage: from sympy import CRootOf
+        sage: from sympy.abc import x
+        sage: root = CRootOf(x**10 - 2*x + 3, 9)
+        sage: interval = root._get_interval()
+        sage: interval._sage_()
+        0.1? + 1.2?*I
+        sage: interval._sage_().parent()
+        Complex Interval Field with 1024 bits of precision
+    """
+    # NOTE: this is a very approximate conversion as we do not consider any
+    # potential issue with precision
+    # Just to be (a little bit) safe, we set it to 1024
+    from sage.rings.complex_interval_field import ComplexIntervalField
+    CIF = ComplexIntervalField(1024)
+    # NOTE: we call fraction_field since sympy stores mpq even
+    # for integral entries
+    domain = self.dom._sage_().fraction_field()
+    return CIF(domain(self.ax), domain(self.ay)).union(CIF(domain(self.bx), domain(self.by)))
+
+def _sympysage_polynomial_ring(self):
+    r"""
+    EXAMPLES::
+
+        sage: from sage.interfaces.sympy import sympy_init
+        sage: sympy_init()
+
+        sage: import sympy
+        sage: ZZx = sympy.PolynomialRing(sympy.ZZ, 'x')
+        sage: ZZx._sage_()
+        Univariate Polynomial Ring in x over Integer Ring
+
+        sage: ZZxy = sympy.PolynomialRing(ZZx, 'y')
+        sage: ZZxy._sage_()
+        Univariate Polynomial Ring in y over Univariate Polynomial Ring in x over Integer Ring
+    """
+    base_ring = self.domain._sage_()
+    variables = ','.join(map(str, self.gens))
+    return base_ring[variables]
+
+def _sympysage_polynomial(self):
+    r"""
+    EXAMPLES::
+
+        sage: from sage.interfaces.sympy import sympy_init
+        sage: sympy_init()
+
+        sage: import sympy
+        sage: from sympy.abc import x, y
+        sage: p = sympy.Poly(x*(x**2 + x - 1)**2)
+        sage: p._sage_()
+        x^5 + 2*x^4 - x^3 - 2*x^2 + x
+        sage: p._sage_().parent()
+        Univariate Polynomial Ring in x over Integer Ring
+
+        sage: p = sympy.Poly(y*x**2 + x*y + 1)
+        sage: p._sage_()
+        x^2*y + x*y + 1
+        sage: p._sage_().parent()
+        Multivariate Polynomial Ring in x, y over Integer Ring
+
+        sage: p = sympy.Poly(y*x**2 + x*y + 1, x)
+        sage: p._sage_()
+        y*x^2 + y*x + 1
+        sage: p._sage_().parent()
+        Univariate Polynomial Ring in x over Univariate Polynomial Ring in y over Integer Ring
+    """
+    base_ring = self.domain._sage_()
+    variables = ','.join(map(str, self.gens))
+    R = base_ring[variables]
+    return R.sum(base_ring(coeff) * R.monomial(*exp) for exp, coeff in self.rep.terms(order=None))
 
 def _sympysage_pinfty(self):
     """
@@ -453,7 +579,7 @@ def _sympysage_rf(self):
         sage: assert rising_factorial(x,y)._sympy_() == rfxy.rewrite('gamma', piecewise=False)
         sage: assert rising_factorial(x,y) == rfxy._sage_()
     """
-    from sage.arith.all import rising_factorial
+    from sage.arith.misc import rising_factorial
     return rising_factorial(self.args[0]._sage_(), self.args[1]._sage_())
 
 def _sympysage_ff(self):
@@ -466,7 +592,7 @@ def _sympysage_ff(self):
         sage: assert falling_factorial(x,y)._sympy_() == ffxy.rewrite('gamma') # known bug
         sage: assert falling_factorial(x,y) == ffxy._sage_()
     """
-    from sage.arith.all import falling_factorial
+    from sage.arith.misc import falling_factorial
     return falling_factorial(self.args[0]._sage_(), self.args[1]._sage_())
 
 def _sympysage_lgamma(self):
@@ -938,13 +1064,24 @@ def sympy_init():
     from sympy.functions.special.tensor_functions import KroneckerDelta
     from sympy.logic.boolalg import BooleanTrue, BooleanFalse
     from sympy.integrals.integrals import Integral
+    from sympy.polys import Poly
+    from sympy.polys.domains.integerring import IntegerRing
+    from sympy.polys.domains.rationalfield import RationalField
+    from sympy.polys.domains.polynomialring import PolynomialRing
     from sympy.polys.rootoftools import CRootOf
+    from sympy.polys.rootisolation import RealInterval, ComplexInterval
     from sympy.series.order import Order
     from sympy.matrices import ImmutableMatrix, ImmutableSparseMatrix, Matrix, SparseMatrix
 
     Float._sage_ = _sympysage_float
     Integer._sage_ = _sympysage_integer
     Rational._sage_ = _sympysage_rational
+    RealInterval._sage_ = _sympysage_real_interval
+    ComplexInterval._sage_ = _sympysage_complex_interval
+    IntegerRing._sage_ = _sympysage_integer_ring
+    RationalField._sage_ = _sympysage_rational_field
+    PolynomialRing._sage_ = _sympysage_polynomial_ring
+    Poly._sage_ = _sympysage_polynomial
     Infinity._sage_ = _sympysage_pinfty
     NegativeInfinity._sage_ = _sympysage_ninfty
     ComplexInfinity._sage_ = _sympysage_uinfty

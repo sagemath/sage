@@ -11,6 +11,7 @@ TESTS:
 
 Standard test of pickleability::
 
+    sage: x = polygen(ZZ, 'x')
     sage: G = NumberField(x^3 + 2, 'alpha').galois_group(names='beta'); G
     Galois group 3T2 (S3) with order 6 of x^3 + 2
     sage: G == loads(dumps(G))
@@ -48,8 +49,9 @@ class GaloisGroup_v1(SageObject):
         sage: K = QQ[2^(1/3)]
         sage: G = GaloisGroup_v1(K.absolute_polynomial().galois_group(pari_group=True), K); G
         ...DeprecationWarning: GaloisGroup_v1 is deprecated; please use GaloisGroup_v2
-        See https://trac.sagemath.org/28782 for details.
-        Galois group PARI group [6, -1, 2, "S3"] of degree 3 of the Number Field in a with defining polynomial x^3 - 2 with a = 1.259921049894873?
+        See https://github.com/sagemath/sage/issues/28782 for details.
+        Galois group PARI group [6, -1, 2, "S3"] of degree 3 of the
+         Number Field in a with defining polynomial x^3 - 2 with a = 1.259921049894873?
         sage: G.order()
         6
         sage: G.group()
@@ -65,11 +67,13 @@ class GaloisGroup_v1(SageObject):
         EXAMPLES::
 
             sage: from sage.rings.number_field.galois_group import GaloisGroup_v1
+            sage: x = polygen(ZZ, 'x')
             sage: K = NumberField([x^2 + 1, x^2 + 2],'a')
             sage: GaloisGroup_v1(K.absolute_polynomial().galois_group(pari_group=True), K)
             ...DeprecationWarning: GaloisGroup_v1 is deprecated; please use GaloisGroup_v2
-            See https://trac.sagemath.org/28782 for details.
-            Galois group PARI group [4, 1, 2, "E(4) = 2[x]2"] of degree 4 of the Number Field in a0 with defining polynomial x^2 + 1 over its base field
+            See https://github.com/sagemath/sage/issues/28782 for details.
+            Galois group PARI group [4, 1, 2, "E(4) = 2[x]2"] of degree 4 of the
+             Number Field in a0 with defining polynomial x^2 + 1 over its base field
         """
         deprecation(28782, "GaloisGroup_v1 is deprecated; please use GaloisGroup_v2")
         self.__group = group
@@ -87,10 +91,11 @@ class GaloisGroup_v1(SageObject):
         EXAMPLES::
 
             sage: from sage.rings.number_field.galois_group import GaloisGroup_v1
+            sage: x = polygen(ZZ, 'x')
             sage: K = NumberField(x^3 + 2, 'alpha')
             sage: G = GaloisGroup_v1(K.absolute_polynomial().galois_group(pari_group=True), K)
             ...DeprecationWarning: GaloisGroup_v1 is deprecated; please use GaloisGroup_v2
-            See https://trac.sagemath.org/28782 for details.
+            See https://github.com/sagemath/sage/issues/28782 for details.
             sage: L = QQ[sqrt(2)]
             sage: H = GaloisGroup_v1(L.absolute_polynomial().galois_group(pari_group=True), L)
             sage: H == G
@@ -115,10 +120,11 @@ class GaloisGroup_v1(SageObject):
         EXAMPLES::
 
             sage: from sage.rings.number_field.galois_group import GaloisGroup_v1
+            sage: x = polygen(ZZ, 'x')
             sage: K = NumberField(x^3 + 2, 'alpha')
             sage: G = GaloisGroup_v1(K.absolute_polynomial().galois_group(pari_group=True), K)
             ...DeprecationWarning: GaloisGroup_v1 is deprecated; please use GaloisGroup_v2
-            See https://trac.sagemath.org/28782 for details.
+            See https://github.com/sagemath/sage/issues/28782 for details.
             sage: L = QQ[sqrt(2)]
             sage: H = GaloisGroup_v1(L.absolute_polynomial().galois_group(pari_group=True), L)
             sage: H != G
@@ -137,10 +143,11 @@ class GaloisGroup_v1(SageObject):
         EXAMPLES::
 
             sage: from sage.rings.number_field.galois_group import GaloisGroup_v1
+            sage: x = polygen(ZZ, 'x')
             sage: K = NumberField(x^4 + 2*x + 2, 'a')
             sage: G = GaloisGroup_v1(K.absolute_polynomial().galois_group(pari_group=True), K)
             ...DeprecationWarning: GaloisGroup_v1 is deprecated; please use GaloisGroup_v2
-            See https://trac.sagemath.org/28782 for details.
+            See https://github.com/sagemath/sage/issues/28782 for details.
             sage: G.__repr__()
             'Galois group PARI group [24, -1, 5, "S4"] of degree 4 of the Number Field in a with defining polynomial x^4 + 2*x + 2'
         """
@@ -154,10 +161,11 @@ class GaloisGroup_v1(SageObject):
         EXAMPLES::
 
             sage: from sage.rings.number_field.galois_group import GaloisGroup_v1
+            sage: x = polygen(ZZ, 'x')
             sage: K = NumberField(x^3 + 2*x + 2, 'theta')
             sage: G = GaloisGroup_v1(K.absolute_polynomial().galois_group(pari_group=True), K)
             ...DeprecationWarning: GaloisGroup_v1 is deprecated; please use GaloisGroup_v2
-            See https://trac.sagemath.org/28782 for details.
+            See https://github.com/sagemath/sage/issues/28782 for details.
             sage: H = G.group(); H
             PARI group [6, -1, 2, "S3"] of degree 3
             sage: P = H.permutation_group(); P
@@ -174,11 +182,13 @@ class GaloisGroup_v1(SageObject):
         EXAMPLES::
 
             sage: from sage.rings.number_field.galois_group import GaloisGroup_v1
+            sage: x = polygen(ZZ, 'x')
             sage: K = NumberField(x^5 + 2, 'theta_1')
             sage: G = GaloisGroup_v1(K.absolute_polynomial().galois_group(pari_group=True), K); G
             ...DeprecationWarning: GaloisGroup_v1 is deprecated; please use GaloisGroup_v2
-            See https://trac.sagemath.org/28782 for details.
-            Galois group PARI group [20, -1, 3, "F(5) = 5:4"] of degree 5 of the Number Field in theta_1 with defining polynomial x^5 + 2
+            See https://github.com/sagemath/sage/issues/28782 for details.
+            Galois group PARI group [20, -1, 3, "F(5) = 5:4"] of degree 5 of the
+             Number Field in theta_1 with defining polynomial x^5 + 2
             sage: G.order()
             20
         """
@@ -191,11 +201,13 @@ class GaloisGroup_v1(SageObject):
         EXAMPLES::
 
             sage: from sage.rings.number_field.galois_group import GaloisGroup_v1
+            sage: x = polygen(ZZ, 'x')
             sage: K = NumberField(x^6 + 2, 't')
             sage: G = GaloisGroup_v1(K.absolute_polynomial().galois_group(pari_group=True), K); G
             ...DeprecationWarning: GaloisGroup_v1 is deprecated; please use GaloisGroup_v2
-            See https://trac.sagemath.org/28782 for details.
-            Galois group PARI group [12, -1, 3, "D(6) = S(3)[x]2"] of degree 6 of the Number Field in t with defining polynomial x^6 + 2
+            See https://github.com/sagemath/sage/issues/28782 for details.
+            Galois group PARI group [12, -1, 3, "D(6) = S(3)[x]2"] of degree 6 of the
+             Number Field in t with defining polynomial x^6 + 2
             sage: G.number_field()
             Number Field in t with defining polynomial x^6 + 2
         """
@@ -208,10 +220,10 @@ class GaloisGroup_v2(GaloisGroup_perm):
 
     .. NOTE::
 
-        We define the Galois group of a non-normal field K to be the
-        Galois group of its Galois closure L, and elements are stored as
-        permutations of the roots of the defining polynomial of L, *not* as
-        permutations of the roots (in L) of the defining polynomial of K. The
+        We define the Galois group of a non-normal field `K` to be the
+        Galois group of its Galois closure `L`, and elements are stored as
+        permutations of the roots of the defining polynomial of `L`, *not* as
+        permutations of the roots (in `L`) of the defining polynomial of `K`. The
         latter would probably be preferable, but is harder to implement. Thus
         the permutation group that is returned is always simply-transitive.
 
@@ -220,9 +232,11 @@ class GaloisGroup_v2(GaloisGroup_perm):
 
     EXAMPLES::
 
+        sage: x = polygen(ZZ, 'x')
         sage: G = NumberField(x^3 - x - 1, 'a').galois_closure('b').galois_group()
         sage: G.subgroup([G([(1,2,3),(4,5,6)])])
-        Subgroup generated by [(1,2,3)(4,5,6)] of (Galois group 6T2 ([3]2) with order 6 of x^6 - 6*x^4 + 9*x^2 + 23)
+        Subgroup generated by [(1,2,3)(4,5,6)] of
+         (Galois group 6T2 ([3]2) with order 6 of x^6 - 6*x^4 + 9*x^2 + 23)
 
     Subgroups can be specified using generators (:trac:`26816`)::
 
@@ -258,6 +272,7 @@ class GaloisGroup_v2(GaloisGroup_perm):
 
         You can specify the variable name for the Galois closure::
 
+            sage: x = polygen(ZZ, 'x')
             sage: G = NumberField(x^3 - 2, 'b').galois_group(names="c"); G
             Galois group 3T2 (S3) with order 6 of x^3 - 2
             sage: G._galois_closure
@@ -300,6 +315,7 @@ class GaloisGroup_v2(GaloisGroup_perm):
         EXAMPLES::
 
             sage: R.<x> = ZZ[]
+            sage: x = polygen(ZZ, 'x')
             sage: K.<a> = NumberField(x^3 + 2*x + 2)
             sage: G = K.galois_group()
             sage: G._pol_galgp()
@@ -314,19 +330,21 @@ class GaloisGroup_v2(GaloisGroup_perm):
 
     def group(self):
         """
-        While GaloisGroup_v1 is being deprecated, this provides public access to the Pari/GAP group
+        While :class:`GaloisGroup_v1` is being deprecated, this provides public access to the PARI/GAP group
         in order to keep all aspects of that API.
 
         EXAMPLES::
 
             sage: R.<x> = ZZ[]
+            sage: x = polygen(ZZ, 'x')
             sage: K.<a> = NumberField(x^3 + 2*x + 2)
             sage: G = K.galois_group(type="pari")
             ...DeprecationWarning: the different Galois types have been merged into one class
-            See https://trac.sagemath.org/28782 for details.
+            See https://github.com/sagemath/sage/issues/28782 for details.
             sage: G.group()
-            ...DeprecationWarning: the group method is deprecated; you can use _pol_galgp if you really need it
-            See https://trac.sagemath.org/28782 for details.
+            ...DeprecationWarning: the group method is deprecated;
+            you can use _pol_galgp if you really need it
+            See https://github.com/sagemath/sage/issues/28782 for details.
             PARI group [6, -1, 2, "S3"] of degree 3
         """
         deprecation(28782, "the group method is deprecated; you can use _pol_galgp if you really need it")
@@ -340,6 +358,7 @@ class GaloisGroup_v2(GaloisGroup_perm):
         EXAMPLES::
 
             sage: R.<x> = ZZ[]
+            sage: x = polygen(ZZ, 'x')
             sage: K.<a> = NumberField(x^3 + 2*x + 2)
             sage: G = K.galois_group()
             sage: G.order()
@@ -359,10 +378,12 @@ class GaloisGroup_v2(GaloisGroup_perm):
         EXAMPLES::
 
             sage: R.<x> = ZZ[]
+            sage: x = polygen(ZZ, 'x')
             sage: K.<a> = NumberField(x^3 + 2*x + 2)
             sage: G = K.galois_group()
             sage: G.easy_order()
             6
+            sage: x = polygen(ZZ, 'x')
             sage: L.<b> = NumberField(x^72 + 2*x + 2)
             sage: H = L.galois_group()
             sage: H.easy_order()
@@ -379,7 +400,7 @@ class GaloisGroup_v2(GaloisGroup_perm):
     @cached_method(key=_alg_key)
     def transitive_number(self, algorithm=None, recompute=False):
         """
-        Regardless of the value of ``gc_numbering``, this gives the transitive number
+        Regardless of the value of ``gc_numbering``, give the transitive number
         for the action on the roots of the defining polynomial of the original number field,
         not the Galois closure.
 
@@ -391,10 +412,12 @@ class GaloisGroup_v2(GaloisGroup_perm):
         EXAMPLES::
 
             sage: R.<x> = ZZ[]
+            sage: x = polygen(ZZ, 'x')
             sage: K.<a> = NumberField(x^3 + 2*x + 2)
             sage: G = K.galois_group()
             sage: G.transitive_number()
             2
+            sage: x = polygen(ZZ, 'x')
             sage: L.<b> = NumberField(x^13 + 2*x + 2)
             sage: H = L.galois_group(algorithm="gap")
             sage: H.transitive_number() # optional - gap_packages
@@ -413,11 +436,12 @@ class GaloisGroup_v2(GaloisGroup_perm):
 
     def pari_label(self):
         """
-        Return the label assigned by Pari for this Galois group, an attempt at giving a human readable description of the group.
+        Return the label assigned by PARI for this Galois group, an attempt at giving a human readable description of the group.
 
         EXAMPLES::
 
             sage: R.<x> = ZZ[]
+            sage: x = polygen(ZZ, 'x')
             sage: K.<a> = NumberField(x^8 - x^5 + x^4 - x^3 + 1)
             sage: G = K.galois_group()
             sage: G.transitive_label()
@@ -430,11 +454,12 @@ class GaloisGroup_v2(GaloisGroup_perm):
     @cached_method
     def signature(self):
         """
-        Return 1 if contained in the alternating group, -1 otherwise.
+        Return `1` if contained in the alternating group, `-1` otherwise.
 
         EXAMPLES::
 
             sage: R.<x> = ZZ[]
+            sage: x = polygen(ZZ, 'x')
             sage: K.<a> = NumberField(x^3 - 2)
             sage: K.galois_group().signature()
             -1
@@ -455,11 +480,12 @@ class GaloisGroup_v2(GaloisGroup_perm):
     @lazy_attribute
     def _gcdata(self):
         """
-        Return the galois closure, together with the embedding of the top field into it
+        Return the Galois closure, together with the embedding of the top field into it
 
         EXAMPLES::
 
             sage: R.<x> = ZZ[]
+            sage: x = polygen(ZZ, 'x')
             sage: K.<a> = NumberField(x^3 - 2)
             sage: G = K.galois_group()
             sage: G._gcdata
@@ -477,7 +503,7 @@ class GaloisGroup_v2(GaloisGroup_perm):
             sage: L.<b> = NumberField(x^2 - x + 17*a)
             sage: G = L.galois_group()
             ...DeprecationWarning: Use .absolute_field().galois_group() if you want the Galois group of the absolute field
-            See https://trac.sagemath.org/28782 for details.
+            See https://github.com/sagemath/sage/issues/28782 for details.
             sage: M, emb = G._gcdata
             sage: emb.domain() is L
             True
@@ -506,11 +532,12 @@ class GaloisGroup_v2(GaloisGroup_perm):
     @lazy_attribute
     def _pari_data(self):
         """
-        Return the corresponding Pari Galois group structure.
+        Return the corresponding PARI Galois group structure.
 
         EXAMPLES::
 
             sage: R.<x> = ZZ[]
+            sage: x = polygen(ZZ, 'x')
             sage: K.<a> = NumberField(x^3 - 2)
             sage: G = K.galois_group()
             sage: G._pari_data
@@ -526,6 +553,7 @@ class GaloisGroup_v2(GaloisGroup_perm):
         EXAMPLES::
 
             sage: R.<x> = ZZ[]
+            sage: x = polygen(ZZ, 'x')
             sage: K.<a> = NumberField(x^3 - 2)
             sage: G = K.galois_group()
             sage: G._elts
@@ -548,12 +576,13 @@ class GaloisGroup_v2(GaloisGroup_perm):
     @lazy_attribute
     def _gens(self):
         """
-        Computes the generators as permutations.
+        Compute the generators as permutations.
 
         EXAMPLES::
 
             sage: R.<x> = ZZ[]
-            sage: K.<a> = NumberField(x^5-2)
+            sage: x = polygen(ZZ, 'x')
+            sage: K.<a> = NumberField(x^5 - 2)
             sage: G = K.galois_group(gc_numbering=False); G
             Galois group 5T3 (5:4) with order 20 of x^5 - 2
             sage: G._gens
@@ -641,10 +670,11 @@ class GaloisGroup_v2(GaloisGroup_perm):
 
     def is_galois(self):
         r"""
-        Whether the underlying number field is Galois
+        Whether the underlying number field is Galois.
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: NumberField(x^3 - x + 1,'a').galois_group(names='b').is_galois()
             False
             sage: NumberField(x^2 - x + 1,'a').galois_group().is_galois()
@@ -666,6 +696,7 @@ class GaloisGroup_v2(GaloisGroup_perm):
             sage: G = QuadraticField(-23, 'a').galois_group()
             sage: G._repr_()
             'Galois group 2T1 (S2) with order 2 of x^2 + 23'
+            sage: x = polygen(ZZ, 'x')
             sage: G = NumberField(x^3 - 2, 'a').galois_group(names='b')
             sage: G._repr_()
             'Galois group 3T2 (S3) with order 6 of x^3 - 2'
@@ -689,6 +720,7 @@ class GaloisGroup_v2(GaloisGroup_perm):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K = NumberField(x^3 - x + 1, 'a')
             sage: K.galois_group(names='b').number_field() is K
             True
@@ -697,10 +729,11 @@ class GaloisGroup_v2(GaloisGroup_perm):
 
     def list(self):
         r"""
-        List of the elements of self.
+        List of the elements of ``self``.
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: NumberField(x^3 - 3*x + 1,'a').galois_group().list()
             [(), (1,2,3), (1,3,2)]
         """
@@ -708,21 +741,23 @@ class GaloisGroup_v2(GaloisGroup_perm):
 
     def unrank(self, i):
         r"""
-        Return the ``i``-th element of ``self``.
+        Return the `i`-th element of ``self``.
 
         INPUT:
 
-        - ``i`` -- integer between ``0`` and ``n-1`` where
-          ``n`` is the cardinality of this set
+        - ``i`` -- integer between `0` and `n-1` where
+          `n` is the cardinality of this set
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: G = NumberField(x^3 - 3*x + 1,'a').galois_group()
             sage: [G.unrank(i) for i in range(G.cardinality())]
             [(), (1,2,3), (1,3,2)]
 
         TESTS::
 
+            sage: x = polygen(ZZ, 'x')
             sage: G = NumberField(x^3 - 3*x + 1,'a').galois_group()
             sage: L = [G.unrank(i) for i in range(G.cardinality())]
             sage: L == G.list()
@@ -736,6 +771,7 @@ class GaloisGroup_v2(GaloisGroup_perm):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: G = NumberField(x^3 - 3*x + 1,'a').galois_group()
             sage: list(G) == G.list()
             True
@@ -765,6 +801,7 @@ class GaloisGroup_v2(GaloisGroup_perm):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<a> = NumberField(x^4 - 2*x^2 + 2,'b').galois_closure()
             sage: P = K.ideal([17, a^2])
             sage: G = K.galois_group()
@@ -777,22 +814,24 @@ class GaloisGroup_v2(GaloisGroup_perm):
 
     def decomposition_group(self, P):
         r"""
-        Decomposition group of a prime ideal P, i.e. the subgroup of elements
-        that map P to itself. This is the same as the Galois group of the
-        extension of local fields obtained by completing at P.
+        Decomposition group of a prime ideal `P`, i.e., the subgroup of elements
+        that map `P` to itself. This is the same as the Galois group of the
+        extension of local fields obtained by completing at `P`.
 
-        This function will raise an error if P is not prime or the given number
+        This function will raise an error if `P` is not prime or the given number
         field is not Galois.
 
-        P can also be an infinite prime, i.e. an embedding into `\RR` or `\CC`.
+        `P` can also be an infinite prime, i.e., an embedding into `\RR` or `\CC`.
 
         EXAMPLES::
 
-            sage: K.<a> = NumberField(x^4 - 2*x^2 + 2,'b').galois_closure()
+            sage: x = polygen(ZZ, 'x')
+            sage: K.<a> = NumberField(x^4 - 2*x^2 + 2, 'b').galois_closure()
             sage: P = K.ideal([17, a^2])
             sage: G = K.galois_group()
             sage: G.decomposition_group(P)
-            Subgroup generated by [(1,8)(2,7)(3,6)(4,5)] of (Galois group 8T4 ([4]2) with order 8 of x^8 - 20*x^6 + 104*x^4 - 40*x^2 + 1156)
+            Subgroup generated by [(1,8)(2,7)(3,6)(4,5)] of
+             (Galois group 8T4 ([4]2) with order 8 of x^8 - 20*x^6 + 104*x^4 - 40*x^2 + 1156)
             sage: G.decomposition_group(P^2)
             Traceback (most recent call last):
             ...
@@ -804,7 +843,8 @@ class GaloisGroup_v2(GaloisGroup_perm):
 
         An example with an infinite place::
 
-            sage: L.<b> = NumberField(x^3 - 2,'a').galois_closure(); G=L.galois_group()
+            sage: x = polygen(ZZ, 'x')
+            sage: L.<b> = NumberField(x^3 - 2,'a').galois_closure(); G = L.galois_group()
             sage: x = L.places()[0]
             sage: G.decomposition_group(x).order()
             2
@@ -822,8 +862,8 @@ class GaloisGroup_v2(GaloisGroup_perm):
 
     def complex_conjugation(self, P=None):
         """
-        Return the unique element of self corresponding to complex conjugation,
-        for a specified embedding P into the complex numbers. If P is not
+        Return the unique element of ``self`` corresponding to complex conjugation,
+        for a specified embedding `P` into the complex numbers. If `P` is not
         specified, use the "standard" embedding, whenever that is well-defined.
 
         EXAMPLES::
@@ -838,7 +878,8 @@ class GaloisGroup_v2(GaloisGroup_perm):
         An example where the field is not CM, so complex conjugation really
         depends on the choice of embedding::
 
-            sage: L = NumberField(x^6 + 40*x^3 + 1372,'a')
+            sage: x = polygen(ZZ, 'x')
+            sage: L = NumberField(x^6 + 40*x^3 + 1372, 'a')
             sage: G = L.galois_group()
             sage: [G.complex_conjugation(x) for x in L.places()]
             [(1,3)(2,6)(4,5), (1,5)(2,4)(3,6), (1,2)(3,4)(5,6)]
@@ -865,17 +906,19 @@ class GaloisGroup_v2(GaloisGroup_perm):
 
     def ramification_group(self, P, v):
         """
-        Return the vth ramification group of self for the prime P, i.e. the set
-        of elements s of self such that s acts trivially modulo P^(v+1). This
+        Return the `v`-th ramification group of ``self`` for the prime `P`, i.e., the set
+        of elements `s` of ``self`` such that `s` acts trivially modulo `P^{(v+1)}`. This
         is only defined for Galois fields.
 
         EXAMPLES::
 
-            sage: K.<b> = NumberField(x^3 - 3,'a').galois_closure()
+            sage: x = polygen(ZZ, 'x')
+            sage: K.<b> = NumberField(x^3 - 3, 'a').galois_closure()
             sage: G=K.galois_group()
             sage: P = K.primes_above(3)[0]
             sage: G.ramification_group(P, 3)
-            Subgroup generated by [(1,2,4)(3,5,6)] of (Galois group 6T2 ([3]2) with order 6 of x^6 + 243)
+            Subgroup generated by [(1,2,4)(3,5,6)] of
+             (Galois group 6T2 ([3]2) with order 6 of x^6 + 243)
             sage: G.ramification_group(P, 5)
             Subgroup generated by [()] of (Galois group 6T2 ([3]2) with order 6 of x^6 + 243)
         """
@@ -891,12 +934,13 @@ class GaloisGroup_v2(GaloisGroup_perm):
 
     def inertia_group(self, P):
         """
-        Return the inertia group of the prime P, i.e. the group of elements acting
-        trivially modulo P. This is just the 0th ramification group of P.
+        Return the inertia group of the prime `P`, i.e., the group of elements acting
+        trivially modulo `P`. This is just the 0th ramification group of `P`.
 
         EXAMPLES::
 
-            sage: K.<b> = NumberField(x^2 - 3,'a')
+            sage: x = polygen(ZZ, 'x')
+            sage: K.<b> = NumberField(x^2 - 3, 'a')
             sage: G = K.galois_group()
             sage: G.inertia_group(K.primes_above(2)[0])
             Subgroup generated by [(1,2)] of (Galois group 2T1 (S2) with order 2 of x^2 - 3)
@@ -909,18 +953,21 @@ class GaloisGroup_v2(GaloisGroup_perm):
 
     def ramification_breaks(self, P):
         r"""
-        Return the set of ramification breaks of the prime ideal P, i.e. the
-        set of indices i such that the ramification group `G_{i+1} \ne G_{i}`.
+        Return the set of ramification breaks of the prime ideal `P`, i.e., the
+        set of indices `i` such that the ramification group `G_{i+1} \ne G_{i}`.
         This is only defined for Galois fields.
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<b> = NumberField(x^8 - 20*x^6 + 104*x^4 - 40*x^2 + 1156)
             sage: G = K.galois_group()
             sage: P = K.primes_above(2)[0]
             sage: G.ramification_breaks(P)
             {1, 3, 5}
-            sage: min( [ G.ramification_group(P, i).order() / G.ramification_group(P, i+1).order() for i in G.ramification_breaks(P)] )
+            sage: min(G.ramification_group(P, i).order()
+            ....:         / G.ramification_group(P, i + 1).order()
+            ....:     for i in G.ramification_breaks(P))
             2
         """
         if not self.is_galois():
@@ -934,17 +981,19 @@ class GaloisGroup_v2(GaloisGroup_perm):
     def artin_symbol(self, P):
         r"""
         Return the Artin symbol `\left(\frac{K /
-        \QQ}{\mathfrak{P}}\right)`, where K is the number field of self,
+        \QQ}{\mathfrak{P}}\right)`, where `K` is the number field of ``self``,
         and `\mathfrak{P}` is an unramified prime ideal. This is the unique
-        element s of the decomposition group of `\mathfrak{P}` such that `s(x) = x^p \bmod
-        \mathfrak{P}`, where p is the residue characteristic of `\mathfrak{P}`.
+        element `s` of the decomposition group of `\mathfrak{P}` such that `s(x) = x^p \bmod
+        \mathfrak{P}`, where `p` is the residue characteristic of `\mathfrak{P}`.
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<b> = NumberField(x^4 - 2*x^2 + 2, 'a').galois_closure()
             sage: G = K.galois_group()
             sage: [G.artin_symbol(P) for P in K.primes_above(7)]
-            [(1,4)(2,3)(5,8)(6,7), (1,4)(2,3)(5,8)(6,7), (1,5)(2,6)(3,7)(4,8), (1,5)(2,6)(3,7)(4,8)]
+            [(1,4)(2,3)(5,8)(6,7), (1,4)(2,3)(5,8)(6,7),
+             (1,5)(2,6)(3,7)(4,8), (1,5)(2,6)(3,7)(4,8)]
             sage: G.artin_symbol(17)
             Traceback (most recent call last):
             ...
@@ -990,18 +1039,20 @@ class GaloisGroup_subgroup(GaloisSubgroup_perm):
 
     - ``category`` -- the category for this object
 
-    - ``canonicalize`` -- if true, sorts and removes duplicates
+    - ``canonicalize`` -- if ``True``, sorts and removes duplicates
 
     - ``check`` -- whether to check that generators actually lie in the ambient group
 
     EXAMPLES::
 
         sage: from sage.rings.number_field.galois_group import GaloisGroup_subgroup
+            sage: x = polygen(ZZ, 'x')
         sage: G = NumberField(x^3 - x - 1, 'a').galois_closure('b').galois_group()
         sage: GaloisGroup_subgroup( G, [G([(1,2,3),(4,5,6)])])
-        Subgroup generated by [(1,2,3)(4,5,6)] of (Galois group 6T2 ([3]2) with order 6 of x^6 - 6*x^4 + 9*x^2 + 23)
+        Subgroup generated by [(1,2,3)(4,5,6)] of
+         (Galois group 6T2 ([3]2) with order 6 of x^6 - 6*x^4 + 9*x^2 + 23)
 
-        sage: K.<a> = NumberField(x^6-3*x^2-1)
+        sage: K.<a> = NumberField(x^6 - 3*x^2 - 1)
         sage: L.<b> = K.galois_closure()
         sage: G = L.galois_group()
         sage: P = L.primes_above(3)[0]
@@ -1012,7 +1063,8 @@ class GaloisGroup_subgroup(GaloisSubgroup_perm):
         sage: G = NumberField(x^3 - x - 1, 'a').galois_closure('b').galois_group()
         sage: H = G.subgroup([G([(1,2,3),(4,5,6)])])
         sage: H
-        Subgroup generated by [(1,2,3)(4,5,6)] of (Galois group 6T2 ([3]2) with order 6 of x^6 - 6*x^4 + 9*x^2 + 23)
+        Subgroup generated by [(1,2,3)(4,5,6)] of
+         (Galois group 6T2 ([3]2) with order 6 of x^6 - 6*x^4 + 9*x^2 + 23)
 
     TESTS:
 
@@ -1030,10 +1082,11 @@ class GaloisGroup_subgroup(GaloisSubgroup_perm):
     @lazy_attribute
     def _pari_data(self):
         """
-        Access to Pari information for the ambient Galois group.
+        Access to PARI information for the ambient Galois group.
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: L.<a> = NumberField(x^4 + 1)
             sage: G = L.galois_group()
             sage: H = G.decomposition_group(L.primes_above(3)[0])
@@ -1052,13 +1105,14 @@ class GaloisGroup_subgroup(GaloisSubgroup_perm):
         - ``name`` -- a variable name for the new field.
 
         - ``polred`` -- whether to optimize the generator of the newly created field
-            for a simpler polynomial, using pari's polredbest.
+            for a simpler polynomial, using PARI's :pari:`polredbest`.
             Defaults to ``True`` when the degree of the fixed field is at most 8.
 
         - ``threshold`` -- positive number; polred only performed if the cost is at most this threshold
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: L.<a> = NumberField(x^4 + 1)
             sage: G = L.galois_group()
             sage: H = G.decomposition_group(L.primes_above(3)[0])
@@ -1077,20 +1131,23 @@ class GaloisGroup_subgroup(GaloisSubgroup_perm):
             sage: sigma, tau = G.gens()
             sage: H = G.subgroup([tau])
             sage: H.fixed_field(polred=False)
-            (Number Field in a0 with defining polynomial x^2 + 84375 with a0 = 5*ac^5 + 25*ac^3,
+            (Number Field in a0 with defining polynomial x^2 + 84375
+              with a0 = 5*ac^5 + 25*ac^3,
              Ring morphism:
-               From: Number Field in a0 with defining polynomial x^2 + 84375 with a0 = 5*ac^5 + 25*ac^3
+               From: Number Field in a0 with defining polynomial x^2 + 84375
+                     with a0 = 5*ac^5 + 25*ac^3
                To:   Number Field in ac with defining polynomial x^10 + 10*x^8 + 25*x^6 + 3375
                Defn: a0 |--> 5*ac^5 + 25*ac^3)
             sage: H.fixed_field(polred=True)
-            (Number Field in a0 with defining polynomial x^2 - x + 4 with a0 = -1/30*ac^5 - 1/6*ac^3 + 1/2,
+            (Number Field in a0 with defining polynomial x^2 - x + 4
+              with a0 = -1/30*ac^5 - 1/6*ac^3 + 1/2,
              Ring morphism:
-               From: Number Field in a0 with defining polynomial x^2 - x + 4 with a0 = -1/30*ac^5 - 1/6*ac^3 + 1/2
+               From: Number Field in a0 with defining polynomial x^2 - x + 4
+                     with a0 = -1/30*ac^5 - 1/6*ac^3 + 1/2
                To:   Number Field in ac with defining polynomial x^10 + 10*x^8 + 25*x^6 + 3375
                Defn: a0 |--> -1/30*ac^5 - 1/6*ac^3 + 1/2)
             sage: G.splitting_field()
             Number Field in ac with defining polynomial x^10 + 10*x^8 + 25*x^6 + 3375
-
 
         An embedding is returned also if the subgroup is trivial
         (:trac:`26817`)::
@@ -1098,7 +1155,8 @@ class GaloisGroup_subgroup(GaloisSubgroup_perm):
             sage: H = G.subgroup([])
             sage: H.fixed_field()
             (Number Field in ac with defining polynomial x^10 + 10*x^8 + 25*x^6 + 3375,
-             Identity endomorphism of Number Field in ac with defining polynomial x^10 + 10*x^8 + 25*x^6 + 3375)
+             Identity endomorphism of
+              Number Field in ac with defining polynomial x^10 + 10*x^8 + 25*x^6 + 3375)
         """
         G = self._ambient_group
         L = G._galois_closure
@@ -1138,6 +1196,7 @@ class GaloisGroupElement(PermutationGroupElement):
         sage: G[1](w + 2)
         -w + 2
 
+        sage: x = polygen(ZZ, 'x')
         sage: L.<v> = NumberField(x^3 - 2); G = L.galois_group(names='y')
         sage: G[4]
         (1,5)(2,4)(3,6)
@@ -1151,14 +1210,15 @@ class GaloisGroupElement(PermutationGroupElement):
     @cached_method
     def as_hom(self):
         r"""
-        Return the homomorphism L -> L corresponding to self, where L is the
+        Return the homomorphism `L \to L` corresponding to ``self``, where `L` is the
         Galois closure of the ambient number field.
 
         EXAMPLES::
 
             sage: G = QuadraticField(-7,'w').galois_group()
             sage: G[1].as_hom()
-            Ring endomorphism of Number Field in w with defining polynomial x^2 + 7 with w = 2.645751311064591?*I
+            Ring endomorphism of Number Field in w with defining polynomial x^2 + 7
+             with w = 2.645751311064591?*I
               Defn: w |--> -w
 
         TESTS:
@@ -1167,6 +1227,7 @@ class GaloisGroupElement(PermutationGroupElement):
         polynomials are supported (:trac:`252`)::
 
             sage: R.<x> = QQ[]
+            sage: x = polygen(ZZ, 'x')
             sage: f = 7/9*x^3 + 7/3*x^2 - 56*x + 123
             sage: K.<a> = NumberField(f)
             sage: G = K.galois_group()
@@ -1206,11 +1267,12 @@ class GaloisGroupElement(PermutationGroupElement):
 
     def ramification_degree(self, P):
         """
-        Return the greatest value of v such that s acts trivially modulo P^v.
-        Should only be used if P is prime and s is in the decomposition group of P.
+        Return the greatest value of `v` such that `s` acts trivially modulo `P^v`.
+        Should only be used if `P` is prime and `s` is in the decomposition group of `P`.
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<b> = NumberField(x^3 - 3, 'a').galois_closure()
             sage: G = K.galois_group()
             sage: P = K.primes_above(3)[0]

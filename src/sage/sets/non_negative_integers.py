@@ -80,7 +80,7 @@ class NonNegativeIntegers(UniqueRepresentation, Parent):
             sage: TestSuite(NN).run()
         """
         from sage.rings.integer_ring import ZZ
-        Parent.__init__(self, facade = ZZ, category = InfiniteEnumeratedSets().or_subcategory(category) )
+        Parent.__init__(self, facade=ZZ, category=InfiniteEnumeratedSets().or_subcategory(category) )
 
     def _repr_(self):
         """
@@ -115,7 +115,7 @@ class NonNegativeIntegers(UniqueRepresentation, Parent):
         """
         try:
             i = Integer(elt)
-            return  i >= Integer(0) and i == elt
+            return i >= Integer(0) and i == elt
         except (TypeError, ValueError):
             return False
 

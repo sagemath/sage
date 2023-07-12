@@ -44,7 +44,7 @@ AUTHORS:
 from sage.structure.sequence import Sequence
 
 
-def  _nonperiodic_autocorrelation(sequences, j):
+def _nonperiodic_autocorrelation(sequences, j):
     r"""
     Compute the nonperiodic autocorrelation of a familiy of sequences.
 
@@ -214,7 +214,6 @@ def is_T_sequences_set(sequences, verbose=False):
         if verbose:
             print(f"T-Sequence should contain 4 sequences, found {len(sequences)} instead")
         return False
-
 
     t = len(sequences[0])
 
@@ -521,7 +520,7 @@ def T_sequences_smallcases(t, existence=False, check=True):
     if t in db:
         if existence:
             return True
-        sequences =  list(map(Sequence, db[t]))
+        sequences = list(map(Sequence, db[t]))
         if check:
             assert is_T_sequences_set(sequences)
         return sequences
@@ -683,7 +682,6 @@ def is_base_sequences_tuple(base_sequences, verbose=False):
                 if verbose:
                     print(f'Base sequences should only contiain -1, +1, found {el}')
                 return False
-
 
     for j in range(1, n+p):
         autocorr = _nonperiodic_autocorrelation(A, j) + _nonperiodic_autocorrelation(B, j) + _nonperiodic_autocorrelation(C, j) + _nonperiodic_autocorrelation(D, j)

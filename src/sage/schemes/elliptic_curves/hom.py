@@ -21,6 +21,8 @@ AUTHORS:
 
 - Lorenz Panny (2021): Refactor isogenies and isomorphisms into
   the common :class:`EllipticCurveHom` interface.
+
+- Lorenz Panny (2022): :meth:`~EllipticCurveHom.matrix_on_subgroup`
 """
 from sage.misc.cachefunc import cached_method
 from sage.structure.richcmp import richcmp_not_equal, richcmp, op_EQ, op_NE
@@ -54,7 +56,7 @@ class EllipticCurveHom(Morphism):
               From: Elliptic Curve defined by y^2 = x^3 + 5*x + 5 over Finite Field in z2 of size 257^2
               To:   Elliptic Curve defined by y^2 = x^3 + 151*x + 22 over Finite Field in z2 of size 257^2
             sage: E.isogeny(P, algorithm='velusqrt')  # indirect doctest
-            Elliptic-curve isogeny (using √élu) of degree 127:
+            Elliptic-curve isogeny (using square-root Vélu) of degree 127:
               From: Elliptic Curve defined by y^2 = x^3 + 5*x + 5 over Finite Field in z2 of size 257^2
               To:   Elliptic Curve defined by y^2 = x^3 + 119*x + 231 over Finite Field in z2 of size 257^2
             sage: E.montgomery_model(morphism=True)   # indirect doctest
@@ -73,7 +75,7 @@ class EllipticCurveHom(Morphism):
             self._domain._fetch_cached_order(self._codomain)
 
     def _repr_type(self):
-        """
+        r"""
         Return a textual representation of what kind of morphism
         this is. Used by :meth:`Morphism._repr_`.
 
@@ -87,7 +89,7 @@ class EllipticCurveHom(Morphism):
 
     @staticmethod
     def _composition_impl(left, right):
-        """
+        r"""
         Called by :meth:`_composition_`.
 
         TESTS::
@@ -99,7 +101,7 @@ class EllipticCurveHom(Morphism):
         return NotImplemented
 
     def _composition_(self, other, homset):
-        """
+        r"""
         Return the composition of this elliptic-curve morphism
         with another elliptic-curve morphism.
 
@@ -131,7 +133,7 @@ class EllipticCurveHom(Morphism):
 
     @staticmethod
     def _comparison_impl(left, right, op):
-        """
+        r"""
         Called by :meth:`_richcmp_`.
 
         TESTS::
@@ -202,7 +204,7 @@ class EllipticCurveHom(Morphism):
         if op == op_NE:
             return not self._richcmp_(other, op_EQ)
 
-        # We first compare domain, codomain, and degree; cf. Trac #11327
+        # We first compare domain, codomain, and degree; cf. Issue #11327
 
         lx, rx = self.domain(), other.domain()
         if lx != rx:
@@ -226,7 +228,7 @@ class EllipticCurveHom(Morphism):
         if ret is not NotImplemented:
             return ret
 
-        # If not, fall back to comparing rational maps; cf. Trac #11327
+        # If not, fall back to comparing rational maps; cf. Issue #11327
 
         return richcmp(self.rational_maps(), other.rational_maps(), op)
 
@@ -624,7 +626,7 @@ class EllipticCurveHom(Morphism):
         return self.degree() == 1
 
     def is_zero(self):
-        """
+        r"""
         Check whether this elliptic-curve morphism is the zero map.
 
         .. NOTE::
@@ -662,7 +664,7 @@ class EllipticCurveHom(Morphism):
 
     @cached_method
     def __hash__(self):
-        """
+        r"""
         Return a hash value for this elliptic-curve morphism.
 
         ALGORITHM:
@@ -722,6 +724,128 @@ class EllipticCurveHom(Morphism):
         Y_affine = Curve(self.codomain()).affine_patch(2)
         return X_affine.hom(self.rational_maps(), Y_affine).homogenize(2)
 
+    def matrix_on_subgroup(self, domain_gens, codomain_gens=None):
+        r"""
+        Return the matrix by which this isogeny acts on the
+        `n`-torsion subgroup with respect to the given bases.
+
+        INPUT:
+
+        - ``domain_gens`` -- basis `(P,Q)` of some `n`-torsion
+          subgroup on the domain of this elliptic-curve morphism
+
+        - ``codomain_gens`` -- basis `(R,S)` of the `n`-torsion
+          on the codomain of this morphism, or (default) ``None``
+          if ``self`` is an endomorphism
+
+        OUTPUT:
+
+        A `2\times 2` matrix `M` over `\ZZ/n`, such that the
+        image of any point `[a]P + [b]Q` under this morphism
+        equals `[c]R + [d]S` where `(c\ d)^T = (a\ b) M`.
+
+        EXAMPLES::
+
+            sage: F.<i> = GF(419^2, modulus=[1,0,1])
+            sage: E = EllipticCurve(F, [1,0])
+            sage: P = E(3, 176*i)
+            sage: Q = E(i+7, 67*i+48)
+            sage: P.weil_pairing(Q, 420).multiplicative_order()
+            420
+            sage: iota = E.automorphisms()[2]; iota
+            Elliptic-curve endomorphism of Elliptic Curve defined by y^2 = x^3 + x over Finite Field in i of size 419^2
+              Via:  (u,r,s,t) = (i, 0, 0, 0)
+            sage: iota^2 == E.scalar_multiplication(-1)
+            True
+            sage: mat = iota.matrix_on_subgroup((P,Q)); mat
+            [301 386]
+            [ 83 119]
+            sage: mat.parent()
+            Full MatrixSpace of 2 by 2 dense matrices over Ring of integers modulo 420
+            sage: iota(P) == 301*P + 386*Q
+            True
+            sage: iota(Q) == 83*P + 119*Q
+            True
+            sage: a,b = 123, 456
+            sage: c,d = vector((a,b)) * mat; (c,d)
+            (111, 102)
+            sage: iota(a*P + b*Q) == c*P + d*Q
+            True
+
+        One important application of this is to compute generators of
+        the kernel subgroup of an isogeny, when the `n`-torsion subgroup
+        containing the kernel is accessible::
+
+            sage: K = E(83*i-16, 9*i-147)
+            sage: K.order()
+            7
+            sage: phi = E.isogeny(K)
+            sage: R,S = phi.codomain().gens()
+            sage: mat = phi.matrix_on_subgroup((P,Q), (R,S))
+            sage: mat  # random -- depends on R,S
+            [124 263]
+            [115 141]
+            sage: kermat = mat.left_kernel_matrix(); kermat
+            [300  60]
+            sage: ker = [ZZ(v[0])*P + ZZ(v[1])*Q for v in kermat]
+            sage: {phi(T) for T in ker}
+            {(0 : 1 : 0)}
+            sage: phi == E.isogeny(ker)
+            True
+
+        We can also compute the matrix of a Frobenius endomorphism
+        (:class:`~sage.schemes.elliptic_curves.hom_frobenius.EllipticCurveHom_frobenius`)
+        on a large enough subgroup to verify point-counting results::
+
+            sage: F.<a> = GF((101, 36))
+            sage: E = EllipticCurve(GF(101), [1,1])
+            sage: EE = E.change_ring(F)
+            sage: P,Q = EE.torsion_basis(37)
+            sage: pi = EE.frobenius_isogeny()
+            sage: M = pi.matrix_on_subgroup((P,Q))
+            sage: M.parent()
+            Full MatrixSpace of 2 by 2 dense matrices over Ring of integers modulo 37
+            sage: M.trace()
+            34
+            sage: E.trace_of_frobenius()
+            -3
+
+        .. SEEALSO::
+
+            To compute a basis of the `n`-torsion, you may use
+            :meth:`~sage.schemes.elliptic_curves.ell_finite_field.EllipticCurve_finite_field.torsion_basis`.
+        """
+        if codomain_gens is None:
+            if not self.is_endomorphism():
+                raise ValueError('basis of codomain subgroup is required for non-endomorphisms')
+            codomain_gens = domain_gens
+
+        P,Q = domain_gens
+        R,S = codomain_gens
+
+        ords = {P.order() for P in (P,Q,R,S)}
+        if len(ords) != 1:
+            #TODO: Is there some meaningful way to lift this restriction?
+            raise ValueError('generator points must all have the same order')
+        n, = ords
+
+        if P.weil_pairing(Q, n).multiplicative_order() != n:
+            raise ValueError('generator points on domain are not independent')
+        if R.weil_pairing(S, n).multiplicative_order() != n:
+            raise ValueError('generator points on codomain are not independent')
+
+        imP = self(P)
+        imQ = self(Q)
+
+        from sage.groups.additive_abelian.additive_abelian_wrapper import AdditiveAbelianGroupWrapper
+        H = AdditiveAbelianGroupWrapper(self.codomain().point_homset(), [R,S], [n,n])
+        vecP = H.discrete_log(imP)
+        vecQ = H.discrete_log(imQ)
+
+        from sage.matrix.constructor import matrix
+        from sage.rings.finite_rings.integer_mod_ring import Zmod
+        return matrix(Zmod(n), [vecP, vecQ])
+
 
 def compare_via_evaluation(left, right):
     r"""
@@ -775,7 +899,7 @@ def compare_via_evaluation(left, right):
         d = left.degree()
         e = integer_floor(1 + 2 * (2*d.sqrt() + 1).log(q))  # from Hasse bound
         e = next(i for i, n in enumerate(E.count_points(e+1), 1) if n > 4*d)
-        EE = E.base_extend(F.extension(e))
+        EE = E.base_extend(F.extension(e, 'U'))  # named extension is faster
         Ps = EE.gens()
         return all(left._eval(P) == right._eval(P) for P in Ps)
     elif isinstance(F, number_field_base.NumberField):
@@ -821,6 +945,7 @@ def find_post_isomorphism(phi, psi):
 
         sage: from sage.schemes.elliptic_curves.weierstrass_morphism import WeierstrassIsomorphism
         sage: from sage.schemes.elliptic_curves.hom_composite import EllipticCurveHom_composite
+        sage: x = polygen(ZZ, 'x')
         sage: F.<i> = GF(883^2, modulus=x^2+1)
         sage: E = EllipticCurve(F, [1,0])
         sage: P = E.lift_x(117)
@@ -857,7 +982,7 @@ def find_post_isomorphism(phi, psi):
                 if len(isos) <= 1:
                     break
             else:
-                E = E.base_extend(E.base_field().extension(2))
+                E = E.base_extend(E.base_field().extension(2, 'U'))  # named extension is faster
 
     elif isinstance(F, number_field_base.NumberField):
         for _ in range(100):

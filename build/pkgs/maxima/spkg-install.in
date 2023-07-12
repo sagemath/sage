@@ -1,6 +1,6 @@
 # Sometimes, ECL gives interactive prompts when something goes wrong
 # during the build. Avoid this by redirecting stdin from /dev/null.
-# See http://trac.sagemath.org/sage_trac/ticket/11884#comment:34
+# See https://github.com/sagemath/sage/issues/11884#comment:34
 exec </dev/null
 
 
@@ -20,6 +20,10 @@ cd src/
 # Use newer version of config.guess and config.sub (see Trac #19734)
 cp "$SAGE_ROOT"/config/config.* .
 
+# Patch out bad 'multiple targets' rule
+# https://github.com/sagemath/sage/pull/35619#issuecomment-1567351409
+sed -i.bak 's/^maxima_singlepage.html //' doc/info/Makefile.in
+
 # Note that maxima configure checks for git and, if it finds it, uses
 # versions information from the repo. See #15529. We disable this with
 # git_found=false
@@ -27,28 +31,6 @@ cp "$SAGE_ROOT"/config/config.* .
 echo
 echo "Now configuring Maxima..."
 sdh_configure --enable-ecl git_found=false
-
-# Note the following is regression in maxima build system
-# see https://sourceforge.net/p/maxima/bugs/3278/
-# and https://sourceforge.net/p/maxima/bugs/2878/
-# For the previous time it was fixed.
-#---------------------------------------------------------------
-# Touching html and info file to avoid to regenerate them.
-# This must be done after configuration since the timestamp need
-# to be later than include-maxima.texi which is generated at
-# configuration time
-for i in doc/info/*.html ; do
-    touch "${i}"
-done
-touch doc/info/maxima.info*
-# Maxima 5.44.0 build_html.sh is not compatible with makeinfo 4.8
-# (which is /usr/bin/makeinfo on macOS).  #30063
-# Do not build the HTML docs unless the user asks for it,
-# in which case it is their problem to install a better
-# makeinfo version.
-if [[ "$SAGE_SPKG_INSTALL_DOCS" != yes ]] ; then
-touch doc/info/maxima_toc.html interfaces/xmaxima/doc/xmaxima.html
-fi
 
 #---------------------------------------------------------------
 

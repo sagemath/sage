@@ -109,13 +109,13 @@ from libc.stdio cimport snprintf
 
 from sage.modules.vector_modn_dense cimport Vector_modn_dense
 
-from sage.arith.all import is_prime
+from sage.arith.misc import is_prime
 from sage.structure.element cimport (Element, Vector, Matrix,
         ModuleElement, RingElement)
 from sage.matrix.matrix_dense cimport Matrix_dense
 from sage.matrix.matrix_integer_dense cimport Matrix_integer_dense
 from sage.rings.finite_rings.integer_mod cimport IntegerMod_int, IntegerMod_abstract
-from sage.misc.misc import cputime
+from sage.misc.timing import cputime
 from sage.misc.verbose import verbose, get_verbose
 from sage.rings.integer cimport Integer
 from sage.rings.integer_ring import ZZ
@@ -221,9 +221,14 @@ cdef inline linbox_echelonize_efd(celement modulus, celement* entries, Py_ssize_
         return 0,[]
 
     cdef ModField *F = new ModField(<long>modulus)
-    cdef DenseMatrix *A = new DenseMatrix(F[0], <ModField.Element*>entries,<Py_ssize_t>nrows, <Py_ssize_t>ncols)
-    cdef Py_ssize_t r = reducedRowEchelonize(A[0])
+    cdef DenseMatrix *A = new DenseMatrix(F[0], nrows, ncols)
+
     cdef Py_ssize_t i,j
+    for i in range(nrows):
+        for j in range(ncols):
+            A.setEntry(i, j, entries[i*ncols+j])
+
+    cdef Py_ssize_t r = reducedRowEchelonize(A[0])
     for i in range(nrows):
         for j in range(ncols):
             entries[i*ncols+j] = <celement>A.getEntry(i,j)
@@ -1840,7 +1845,11 @@ cdef class Matrix_modn_dense_template(Matrix_dense):
     def right_kernel_matrix(self, algorithm='linbox', basis='echelon'):
         r"""
         Returns a matrix whose rows form a basis for the right kernel
-        of ``self``, where ``self`` is a matrix over a (small) finite field.
+        of ``self``.
+
+        If the base ring is the ring of integers modulo a composite,
+        the keyword arguments are ignored and the computation is
+        delegated to :meth:`Matrix_dense.right_kernel_matrix`.
 
         INPUT:
 
@@ -1894,7 +1903,10 @@ cdef class Matrix_modn_dense_template(Matrix_dense):
             [0 0 0 0]
         """
         if self.fetch('in_echelon_form') is None:
-            self = self.echelon_form(algorithm=algorithm)
+            try:
+                self = self.echelon_form(algorithm=algorithm)
+            except NotImplementedError:  # composite modulus
+                return Matrix_dense.right_kernel_matrix(self)
 
         cdef Py_ssize_t r = self.rank()
         cdef Py_ssize_t nrows = self._nrows

@@ -68,7 +68,6 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-import operator
 from cpython.object cimport Py_NE
 
 from sage.misc.randstate cimport randstate, current_randstate
@@ -83,7 +82,7 @@ import sage.rings.abc
 cimport sage.rings.ring
 cimport sage.rings.integer
 
-from sage.structure.element cimport RingElement, Element, ModuleElement, FieldElement
+from sage.structure.element cimport Element, FieldElement
 from sage.structure.parent  cimport Parent
 from sage.structure.parent_gens import ParentWithGens
 from sage.structure.richcmp cimport rich_to_bool
@@ -131,7 +130,7 @@ def is_ComplexDoubleField(x):
         doctest:warning...
         DeprecationWarning: is_ComplexDoubleField is deprecated;
         use isinstance(..., sage.rings.abc.ComplexDoubleField) instead
-        See https://trac.sagemath.org/32610 for details.
+        See https://github.com/sagemath/sage/issues/32610 for details.
         True
         sage: is_ComplexDoubleField(ComplexField(53))
         False
@@ -473,13 +472,13 @@ cdef class ComplexDoubleField_class(sage.rings.abc.ComplexDoubleField):
 
         EXAMPLES::
 
-            sage: CDF._magma_init_(magma) # optional - magma
+            sage: CDF._magma_init_(magma)                       # optional - magma
             'ComplexField(53 : Bits := true)'
-            sage: magma(CDF) # optional - magma
+            sage: magma(CDF)                                    # optional - magma
             Complex field of precision 15
             sage: floor(RR(log(2**53, 10)))
             15
-            sage: magma(CDF).sage() # optional - magma
+            sage: magma(CDF).sage()                             # optional - magma
             Complex Field with 53 bits of precision
         """
         return "ComplexField(%s : Bits := true)" % self.prec()
@@ -1565,7 +1564,7 @@ cdef class ComplexDoubleElement(FieldElement):
 
     def is_integer(self):
         """
-        Returns True if this number is a integer
+        Return ``True`` if this number is a integer
 
         EXAMPLES::
 
@@ -2482,7 +2481,7 @@ cdef class ComplexDoubleElement(FieldElement):
             sage: CDF(1,5).algdep(2)
             x^2 - 2*x + 26
         """
-        from sage.arith.all import algdep
+        from sage.arith.misc import algdep
         return algdep(self, n)
 
 cdef class FloatToCDF(Morphism):
@@ -2570,11 +2569,11 @@ cdef class ComplexToCDF(Morphism):
 
     EXAMPLES::
 
-        sage: import numpy
-        sage: f = CDF.coerce_map_from(numpy.complex_)
-        sage: f(numpy.complex_(I))
+        sage: import numpy                                                              # optional - numpy
+        sage: f = CDF.coerce_map_from(numpy.complex_)                                   # optional - numpy
+        sage: f(numpy.complex_(I))                                                      # optional - numpy
         1.0*I
-        sage: f(numpy.complex_(I)).parent()
+        sage: f(numpy.complex_(I)).parent()                                             # optional - numpy
         Complex Double Field
     """
     def __init__(self, R):
@@ -2590,8 +2589,8 @@ cdef class ComplexToCDF(Morphism):
 
         EXAMPLES::
 
-            sage: import numpy
-            sage: CDF(numpy.complex_(I))    # indirect doctest
+            sage: import numpy                                                          # optional - numpy
+            sage: CDF(numpy.complex_(I))    # indirect doctest                          # optional - numpy
             1.0*I
         """
         cdef ComplexDoubleElement z = <ComplexDoubleElement>ComplexDoubleElement.__new__(ComplexDoubleElement)
@@ -2604,9 +2603,9 @@ cdef class ComplexToCDF(Morphism):
 
         EXAMPLES::
 
-            sage: import numpy
-            sage: f = sage.rings.complex_double.ComplexToCDF(numpy.complex_)
-            sage: f._repr_type()
+            sage: import numpy                                                          # optional - numpy
+            sage: f = sage.rings.complex_double.ComplexToCDF(numpy.complex_)            # optional - numpy
+            sage: f._repr_type()                                                        # optional - numpy
             'Native'
         """
         return "Native"

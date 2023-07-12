@@ -315,6 +315,11 @@ class DiGraph(GenericGraph):
       immutable digraph. Note that ``immutable=True`` is actually a shortcut for
       ``data_structure='static_sparse'``.
 
+    - ``hash_labels`` -- boolean (default: ``None``); whether to include edge
+      labels during hashing. This parameter defaults to ``True`` if the digraph
+      is weighted. This parameter is ignored if the digraph is mutable.
+      Beware that trying to hash unhashable labels will raise an error.
+
     - ``vertex_labels`` -- boolean (default: ``True``); whether to allow any
       object as a vertex (slower), or only the integers `0,...,n-1`, where `n`
       is the number of vertices.
@@ -352,7 +357,7 @@ class DiGraph(GenericGraph):
             sage: g = DiGraph([[1..12], lambda i,j: i != j and i.divides(j)])
             sage: g.vertices(sort=True)
             [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
-            sage: g.adjacency_matrix()
+            sage: g.adjacency_matrix()                                                  # optional - sage.modules
             [0 1 1 1 1 1 1 1 1 1 1 1]
             [0 0 0 1 0 1 0 1 0 1 0 1]
             [0 0 0 0 0 1 0 0 1 0 0 1]
@@ -372,34 +377,36 @@ class DiGraph(GenericGraph):
 
        - an adjacency matrix::
 
-            sage: M = Matrix([[0, 1, 1, 1, 0],[0, 0, 0, 0, 0],[0, 0, 0, 0, 1],[0, 0, 0, 0, 0],[0, 0, 0, 0, 0]]); M
+            sage: M = Matrix([[0, 1, 1, 1, 0], [0, 0, 0, 0, 0],                         # optional - sage.modules
+            ....:             [0, 0, 0, 0, 1], [0, 0, 0, 0, 0], [0, 0, 0, 0, 0]]); M
             [0 1 1 1 0]
             [0 0 0 0 0]
             [0 0 0 0 1]
             [0 0 0 0 0]
             [0 0 0 0 0]
-            sage: DiGraph(M)
+            sage: DiGraph(M)                                                            # optional - sage.modules
             Digraph on 5 vertices
 
-            sage: M = Matrix([[0,1,-1],[-1,0,-1/2],[1,1/2,0]]); M
+            sage: M = Matrix([[0,1,-1], [-1,0,-1/2], [1,1/2,0]]); M                     # optional - sage.modules
             [   0    1   -1]
             [  -1    0 -1/2]
             [   1  1/2    0]
-            sage: G = DiGraph(M,sparse=True,weighted=True); G
+            sage: G = DiGraph(M, sparse=True, weighted=True); G                         # optional - sage.modules
             Digraph on 3 vertices
-            sage: G.weighted()
+            sage: G.weighted()                                                          # optional - sage.modules
             True
 
        - an incidence matrix::
 
-            sage: M = Matrix(6, [-1,0,0,0,1, 1,-1,0,0,0, 0,1,-1,0,0, 0,0,1,-1,0, 0,0,0,1,-1, 0,0,0,0,0]); M
+            sage: M = Matrix(6, [-1,0,0,0,1, 1,-1,0,0,0, 0,1,-1,0,0,                    # optional - sage.modules
+            ....:                0,0,1,-1,0, 0,0,0,1,-1, 0,0,0,0,0]); M
             [-1  0  0  0  1]
             [ 1 -1  0  0  0]
             [ 0  1 -1  0  0]
             [ 0  0  1 -1  0]
             [ 0  0  0  1 -1]
             [ 0  0  0  0  0]
-            sage: DiGraph(M)
+            sage: DiGraph(M)                                                            # optional - sage.modules
             Digraph on 6 vertices
 
     #. A ``dig6`` string: Sage automatically recognizes whether a string is in
@@ -422,17 +429,17 @@ class DiGraph(GenericGraph):
 
     #. A NetworkX MultiDiGraph::
 
-            sage: import networkx
-            sage: g = networkx.MultiDiGraph({0: [1, 2, 3], 2: [4]})
-            sage: DiGraph(g)
+            sage: import networkx                                                       # optional - networkx
+            sage: g = networkx.MultiDiGraph({0: [1, 2, 3], 2: [4]})                     # optional - networkx
+            sage: DiGraph(g)                                                            # optional - networkx
             Multi-digraph on 5 vertices
 
 
     #. A NetworkX digraph::
 
-            sage: import networkx
-            sage: g = networkx.DiGraph({0: [1, 2, 3], 2: [4]})
-            sage: DiGraph(g)
+            sage: import networkx                                                       # optional - networkx
+            sage: g = networkx.DiGraph({0: [1, 2, 3], 2: [4]})                          # optional - networkx
+            sage: DiGraph(g)                                                            # optional - networkx
             Digraph on 5 vertices
 
     #. An igraph directed Graph (see also
@@ -472,18 +479,18 @@ class DiGraph(GenericGraph):
     Demonstrate that digraphs using the static backend are equal to mutable
     graphs but can be used as dictionary keys::
 
-        sage: import networkx
-        sage: g = networkx.DiGraph({0:[1,2,3], 2:[4]})
-        sage: G = DiGraph(g)
-        sage: G_imm = DiGraph(G, data_structure="static_sparse")
-        sage: H_imm = DiGraph(G, data_structure="static_sparse")
-        sage: H_imm is G_imm
+        sage: import networkx                                                           # optional - networkx
+        sage: g = networkx.DiGraph({0:[1,2,3], 2:[4]})                                  # optional - networkx
+        sage: G = DiGraph(g)                                                            # optional - networkx
+        sage: G_imm = DiGraph(G, data_structure="static_sparse")                        # optional - networkx
+        sage: H_imm = DiGraph(G, data_structure="static_sparse")                        # optional - networkx
+        sage: H_imm is G_imm                                                            # optional - networkx
         False
-        sage: H_imm == G_imm == G
+        sage: H_imm == G_imm == G                                                       # optional - networkx
         True
-        sage: {G_imm:1}[H_imm]
+        sage: {G_imm:1}[H_imm]                                                          # optional - networkx
         1
-        sage: {G_imm:1}[G]
+        sage: {G_imm:1}[G]                                                              # optional - networkx
         Traceback (most recent call last):
         ...
         TypeError: This graph is mutable, and thus not hashable. Create an
@@ -493,10 +500,10 @@ class DiGraph(GenericGraph):
     specifying the ``immutable`` optional argument (not only by
     ``data_structure='static_sparse'`` as above)::
 
-        sage: J_imm = DiGraph(G, immutable=True)
-        sage: J_imm == G_imm
+        sage: J_imm = DiGraph(G, immutable=True)                                        # optional - networkx
+        sage: J_imm == G_imm                                                            # optional - networkx
         True
-        sage: type(J_imm._backend) == type(G_imm._backend)
+        sage: type(J_imm._backend) == type(G_imm._backend)                              # optional - networkx
         True
 
     From a list of vertices and a list of edges::
@@ -508,7 +515,7 @@ class DiGraph(GenericGraph):
 
     Check that :trac:`27505` is fixed::
 
-        sage: DiGraph(DiGraph().networkx_graph(), weighted=None, format='NX')
+        sage: DiGraph(DiGraph().networkx_graph(), weighted=None, format='NX')           # optional - networkx
         Digraph on 0 vertices
     """
     _directed = True
@@ -517,7 +524,7 @@ class DiGraph(GenericGraph):
                  weighted=None, data_structure="sparse",
                  vertex_labels=True, name=None,
                  multiedges=None, convert_empty_dict_labels_to_None=None,
-                 sparse=True, immutable=False):
+                 sparse=True, immutable=False, hash_labels=None):
         """
         TESTS::
 
@@ -525,12 +532,12 @@ class DiGraph(GenericGraph):
             sage: loads(dumps(D)) == D
             True
 
-            sage: a = matrix(2,2,[1,2,0,1])
-            sage: DiGraph(a,sparse=True).adjacency_matrix() == a
+            sage: a = matrix(2,2,[1,2,0,1])                                             # optional - sage.modules
+            sage: DiGraph(a, sparse=True).adjacency_matrix() == a                       # optional - sage.modules
             True
 
-            sage: a = matrix(2,2,[3,2,0,1])
-            sage: DiGraph(a,sparse=True).adjacency_matrix() == a
+            sage: a = matrix(2,2,[3,2,0,1])                                             # optional - sage.modules
+            sage: DiGraph(a, sparse=True).adjacency_matrix() == a                       # optional - sage.modules
             True
 
         The positions are copied when the DiGraph is built from another DiGraph
@@ -570,11 +577,12 @@ class DiGraph(GenericGraph):
 
         Problem with weighted adjacency matrix (:trac:`13919`)::
 
-            sage: B = {0:{1:2,2:5,3:4},1:{2:2,4:7},2:{3:1,4:4,5:3},3:{5:4},4:{5:1,6:5},5:{4:1,6:7,5:1}}
+            sage: B = {0:{1:2,2:5,3:4},1:{2:2,4:7},2:{3:1,4:4,5:3},
+            ....:      3:{5:4},4:{5:1,6:5},5:{4:1,6:7,5:1}}
             sage: grafo3 = DiGraph(B, weighted=True)
-            sage: matad = grafo3.weighted_adjacency_matrix()
-            sage: grafo4 = DiGraph(matad, format="adjacency_matrix", weighted=True)
-            sage: grafo4.shortest_path(0, 6, by_weight=True)
+            sage: matad = grafo3.weighted_adjacency_matrix()                            # optional - sage.modules
+            sage: grafo4 = DiGraph(matad, format="adjacency_matrix", weighted=True)     # optional - sage.modules
+            sage: grafo4.shortest_path(0, 6, by_weight=True)                            # optional - sage.modules
             [0, 1, 2, 5, 4, 6]
 
         Building a DiGraph with ``immutable=False`` returns a mutable graph::
@@ -842,6 +850,10 @@ class DiGraph(GenericGraph):
         # weighted, multiedges, loops, verts and num_verts should now be set
         self._weighted = weighted
 
+        if hash_labels is None and hasattr(data, '_hash_labels'):
+            hash_labels = data._hash_labels
+        self._hash_labels = hash_labels
+
         self._pos = copy(pos)
 
         if format != 'DiGraph' or name is not None:
@@ -856,6 +868,7 @@ class DiGraph(GenericGraph):
             self._immutable = True
 
     # Formats
+
     def dig6_string(self):
         r"""
         Return the ``dig6`` representation of the digraph as an ASCII string.
@@ -941,7 +954,7 @@ class DiGraph(GenericGraph):
         At first, the following graph is acyclic::
 
             sage: D = DiGraph({0:[1, 2, 3], 4:[2, 5], 1:[8], 2:[7], 3:[7], 5:[6,7], 7:[8], 6:[9], 8:[10], 9:[10]})
-            sage: D.plot(layout='circular').show()
+            sage: D.plot(layout='circular').show()                                      # optional - sage.plot
             sage: D.is_directed_acyclic()
             True
 
@@ -977,7 +990,7 @@ class DiGraph(GenericGraph):
             ....:  return h
             ...
             sage: all(random_acyclic(100, .2).is_directed_acyclic()    # long time
-            ....:      for i in range(50))                             # long time
+            ....:      for i in range(50))
             True
 
         TESTS:
@@ -1444,8 +1457,8 @@ class DiGraph(GenericGraph):
 
         EXAMPLES::
 
-            sage: G = posets.PentagonPoset().hasse_diagram()
-            sage: G.degree_polynomial()
+            sage: G = posets.PentagonPoset().hasse_diagram()                            # optional - sage.matrix
+            sage: G.degree_polynomial()                                                 # optional - sage.matrix
             x^2 + 3*x*y + y^2
 
             sage: G = posets.BooleanLattice(4).hasse_diagram()
@@ -1567,7 +1580,7 @@ class DiGraph(GenericGraph):
 
         TESTS:
 
-        Comparing with/without constraint generation. Also double-checks ticket
+        Comparing with/without constraint generation. Also double-checks issue
         :trac:`12833`::
 
             sage: for i in range(20):
@@ -2058,9 +2071,10 @@ class DiGraph(GenericGraph):
             [(0, 5, None), (1, 0, None), (2, 1, None),
              (3, 2, None), (4, 3, None), (5, 4, None)]
 
-            sage: D = digraphs.Kautz(2, 3)
-            sage: Dr = D.reverse_edges(D.edges(sort=True), inplace=False, multiedges=True)
-            sage: Dr.edges(sort=True) == D.reverse().edges(sort=True)
+            sage: D = digraphs.Kautz(2, 3)                                              # optional - sage.combinat
+            sage: Dr = D.reverse_edges(D.edges(sort=True), inplace=False,               # optional - sage.combinat
+            ....:                      multiedges=True)
+            sage: Dr.edges(sort=True) == D.reverse().edges(sort=True)                   # optional - sage.combinat
             True
         """
         tempG = self if inplace else copy(self)
@@ -2163,37 +2177,37 @@ class DiGraph(GenericGraph):
             sage: G.eccentricity(with_labels=True)
             {0: 0}
             sage: G = DiGraph([(0,1,2), (1,2,3), (2,0,2)])
-            sage: G.eccentricity(algorithm = 'BFS')
+            sage: G.eccentricity(algorithm='BFS')
             [2, 2, 2]
-            sage: G.eccentricity(algorithm = 'Floyd-Warshall-Cython')
+            sage: G.eccentricity(algorithm='Floyd-Warshall-Cython')
             [2, 2, 2]
-            sage: G.eccentricity(by_weight = True, algorithm = 'Dijkstra_NetworkX')
+            sage: G.eccentricity(by_weight=True, algorithm='Dijkstra_NetworkX')         # optional - networkx
             [5, 5, 4]
-            sage: G.eccentricity(by_weight = True, algorithm = 'Dijkstra_Boost')
+            sage: G.eccentricity(by_weight=True, algorithm='Dijkstra_Boost')
             [5, 5, 4]
-            sage: G.eccentricity(by_weight = True, algorithm = 'Johnson_Boost')
+            sage: G.eccentricity(by_weight=True, algorithm='Johnson_Boost')
             [5, 5, 4]
-            sage: G.eccentricity(by_weight = True, algorithm = 'Floyd-Warshall-Python')
+            sage: G.eccentricity(by_weight=True, algorithm='Floyd-Warshall-Python')
             [5, 5, 4]
-            sage: G.eccentricity(dist_dict = G.shortest_path_all_pairs(by_weight = True)[0])
+            sage: G.eccentricity(dist_dict=G.shortest_path_all_pairs(by_weight=True)[0])
             [5, 5, 4]
 
         TESTS:
 
         A non-implemented algorithm::
 
-            sage: G.eccentricity(algorithm = 'boh')
+            sage: G.eccentricity(algorithm='boh')
             Traceback (most recent call last):
             ...
             ValueError: unknown algorithm "boh"
 
         An algorithm that does not work with edge weights::
 
-            sage: G.eccentricity(by_weight = True, algorithm = 'BFS')
+            sage: G.eccentricity(by_weight=True, algorithm='BFS')
             Traceback (most recent call last):
             ...
             ValueError: algorithm 'BFS' does not work with weights
-            sage: G.eccentricity(by_weight = True, algorithm = 'Floyd-Warshall-Cython')
+            sage: G.eccentricity(by_weight=True, algorithm='Floyd-Warshall-Cython')
             Traceback (most recent call last):
             ...
             ValueError: algorithm 'Floyd-Warshall-Cython' does not work with weights
@@ -2201,15 +2215,15 @@ class DiGraph(GenericGraph):
         An algorithm that computes the all-pair-shortest-paths when not all
         vertices are needed::
 
-            sage: G.eccentricity(0, algorithm = 'Floyd-Warshall-Cython')
+            sage: G.eccentricity(0, algorithm='Floyd-Warshall-Cython')
             Traceback (most recent call last):
             ...
             ValueError: algorithm 'Floyd-Warshall-Cython' works only if all eccentricities are needed
-            sage: G.eccentricity(0, algorithm = 'Floyd-Warshall-Python')
+            sage: G.eccentricity(0, algorithm='Floyd-Warshall-Python')
             Traceback (most recent call last):
             ...
             ValueError: algorithm 'Floyd-Warshall-Python' works only if all eccentricities are needed
-            sage: G.eccentricity(0, algorithm = 'Johnson_Boost')
+            sage: G.eccentricity(0, algorithm='Johnson_Boost')
             Traceback (most recent call last):
             ...
             ValueError: algorithm 'Johnson_Boost' works only if all eccentricities are needed
@@ -2249,7 +2263,7 @@ class DiGraph(GenericGraph):
                 if with_labels:
                     return dict(zip(v, eccentricity(self, algorithm=algo, vertex_list=v)))
                 else:
-                    return eccentricity(self, algorithm=algo)
+                    return eccentricity(self, algorithm=algo, vertex_list=v)
 
             if algorithm in ['Floyd-Warshall-Python', 'Floyd-Warshall-Cython', 'Johnson_Boost']:
                 dist_dict = self.shortest_path_all_pairs(by_weight=by_weight, algorithm=algorithm,
@@ -2343,11 +2357,17 @@ class DiGraph(GenericGraph):
             Traceback (most recent call last):
             ...
             ValueError: radius is not defined for the empty DiGraph
+
+        Check that :trac:`35300` is fixed::
+
+            sage: H = DiGraph([[42, 'John'], [(42, 'John')]])
+            sage: H.radius()
+            1
         """
         if not self.order():
             raise ValueError("radius is not defined for the empty DiGraph")
 
-        return min(self.eccentricity(v=None, by_weight=by_weight,
+        return min(self.eccentricity(v=list(self), by_weight=by_weight,
                                      weight_function=weight_function,
                                      check_weight=check_weight,
                                      algorithm=algorithm))
@@ -2426,11 +2446,11 @@ class DiGraph(GenericGraph):
 
         EXAMPLES::
 
-            sage: G = digraphs.DeBruijn(5,4)
-            sage: G.diameter()
+            sage: G = digraphs.DeBruijn(5,4)                                            # optional - sage.combinat
+            sage: G.diameter()                                                          # optional - sage.combinat
             4
-            sage: G = digraphs.GeneralizedDeBruijn(9, 3)
-            sage: G.diameter()
+            sage: G = digraphs.GeneralizedDeBruijn(9, 3)                                # optional - sage.combinat
+            sage: G.diameter()                                                          # optional - sage.combinat
             2
 
         TESTS::
@@ -2476,6 +2496,15 @@ class DiGraph(GenericGraph):
             3
             sage: G.diameter(algorithm='DiFUB', by_weight=True)
             3.0
+
+        Check that :trac:`35300` is fixed::
+
+            sage: H = DiGraph([[42, 'John'], [(42, 'John')]])
+            sage: H.diameter()
+            +Infinity
+            sage: H.add_edge('John', 42)
+            sage: H.diameter()
+            1
         """
         if not self.order():
             raise ValueError("diameter is not defined for the empty DiGraph")
@@ -2507,7 +2536,7 @@ class DiGraph(GenericGraph):
             from sage.graphs.distances_all_pairs import diameter
             return diameter(self, algorithm='standard')
 
-        return max(self.eccentricity(v=None, by_weight=by_weight,
+        return max(self.eccentricity(v=list(self), by_weight=by_weight,
                                      weight_function=weight_function,
                                      check_weight=False,
                                      algorithm=algorithm))
@@ -3115,7 +3144,7 @@ class DiGraph(GenericGraph):
 
             sage: D = DiGraph({0: [1, 2, 3], 4: [2, 5], 1: [8], 2: [7], 3: [7],
             ....:   5: [6, 7], 7: [8], 6: [9], 8: [10], 9: [10]})
-            sage: D.plot(layout='circular').show()
+            sage: D.plot(layout='circular').show()                                      # optional - sage.plot
             sage: D.topological_sort()
             [4, 5, 6, 9, 0, 1, 2, 3, 7, 8, 10]
 
@@ -3127,9 +3156,10 @@ class DiGraph(GenericGraph):
 
         Using the NetworkX implementation ::
 
-            sage: s = list(D.topological_sort(implementation="NetworkX")); s # random
+            sage: s = list(D.topological_sort(implementation="NetworkX")); s  # random  # optional - networkx
             [0, 4, 1, 3, 2, 5, 6, 9, 7, 8, 10]
-            sage: all(s.index(u) < s.index(v) for u, v in D.edges(sort=False, labels=False))
+            sage: all(s.index(u) < s.index(v)                                           # optional - networkx
+            ....:     for u, v in D.edges(sort=False, labels=False))
             True
 
         ::
@@ -3195,9 +3225,10 @@ class DiGraph(GenericGraph):
         EXAMPLES::
 
             sage: D = DiGraph({0: [1, 2], 1: [3], 2: [3, 4]})
-            sage: D.plot(layout='circular').show()
-            sage: list(D.topological_sort_generator())
-            [[0, 1, 2, 3, 4], [0, 2, 1, 3, 4], [0, 2, 1, 4, 3], [0, 2, 4, 1, 3], [0, 1, 2, 4, 3]]
+            sage: D.plot(layout='circular').show()                                      # optional - sage.plot
+            sage: list(D.topological_sort_generator())                                  # optional - sage.modules sage.rings.finite_rings
+            [[0, 1, 2, 3, 4], [0, 2, 1, 3, 4], [0, 2, 1, 4, 3],
+             [0, 2, 4, 1, 3], [0, 1, 2, 4, 3]]
 
         ::
 
@@ -3472,7 +3503,7 @@ class DiGraph(GenericGraph):
 
             :meth:`is_aperiodic`
         """
-        from sage.arith.all import gcd
+        from sage.arith.misc import GCD as gcd
 
         g = 0
 
@@ -3561,7 +3592,7 @@ class DiGraph(GenericGraph):
             Flow polytopes can also be built through the ``polytopes.<tab>``
             object::
 
-                sage: polytopes.flow_polytope(digraphs.Path(5))
+                sage: polytopes.flow_polytope(digraphs.Path(5))                         # optional - sage.geometry.polyhedron
                 A 0-dimensional polyhedron in QQ^4 defined as the convex hull of 1 vertex
 
         EXAMPLES:
@@ -3569,26 +3600,26 @@ class DiGraph(GenericGraph):
         A commutative square::
 
             sage: G = DiGraph({1: [2, 3], 2: [4], 3: [4]})
-            sage: fl = G.flow_polytope(); fl
+            sage: fl = G.flow_polytope(); fl                                            # optional - sage.geometry.polyhedron
             A 1-dimensional polyhedron in QQ^4 defined as the convex hull
             of 2 vertices
-            sage: fl.vertices()
+            sage: fl.vertices()                                                         # optional - sage.geometry.polyhedron
             (A vertex at (0, 1, 0, 1), A vertex at (1, 0, 1, 0))
 
         Using a different order for the edges of the graph::
 
-            sage: fl = G.flow_polytope(edges=G.edges(key=lambda x: x[0] - x[1])); fl
+            sage: fl = G.flow_polytope(edges=G.edges(key=lambda x: x[0] - x[1])); fl    # optional - sage.geometry.polyhedron
             A 1-dimensional polyhedron in QQ^4 defined as the convex hull of 2 vertices
-            sage: fl.vertices()
+            sage: fl.vertices()                                                         # optional - sage.geometry.polyhedron
             (A vertex at (0, 1, 1, 0), A vertex at (1, 0, 0, 1))
 
         A tournament on 4 vertices::
 
             sage: H = digraphs.TransitiveTournament(4)
-            sage: fl = H.flow_polytope(); fl
+            sage: fl = H.flow_polytope(); fl                                            # optional - sage.geometry.polyhedron
             A 3-dimensional polyhedron in QQ^6 defined as the convex hull
             of 4 vertices
-            sage: fl.vertices()
+            sage: fl.vertices()                                                         # optional - sage.geometry.polyhedron
             (A vertex at (0, 0, 1, 0, 0, 0),
              A vertex at (0, 1, 0, 0, 0, 1),
              A vertex at (1, 0, 0, 0, 1, 0),
@@ -3596,41 +3627,40 @@ class DiGraph(GenericGraph):
 
         Restricting to a subset of the edges::
 
-            sage: fl = H.flow_polytope(edges=[(0, 1, None), (1, 2, None),
-            ....:                             (2, 3, None), (0, 3, None)])
-            sage: fl
+            sage: fl = H.flow_polytope(edges=[(0, 1, None), (1, 2, None),               # optional - sage.geometry.polyhedron
+            ....:                             (2, 3, None), (0, 3, None)]); fl
             A 1-dimensional polyhedron in QQ^4 defined as the convex hull
             of 2 vertices
-            sage: fl.vertices()
+            sage: fl.vertices()                                                         # optional - sage.geometry.polyhedron
             (A vertex at (0, 0, 0, 1), A vertex at (1, 1, 1, 0))
 
         Using a different choice of sources and sinks::
 
-            sage: fl = H.flow_polytope(ends=([1], [3])); fl
+            sage: fl = H.flow_polytope(ends=([1], [3])); fl                             # optional - sage.geometry.polyhedron
             A 1-dimensional polyhedron in QQ^6 defined as the convex hull
             of 2 vertices
-            sage: fl.vertices()
+            sage: fl.vertices()                                                         # optional - sage.geometry.polyhedron
             (A vertex at (0, 0, 0, 1, 0, 1), A vertex at (0, 0, 0, 0, 1, 0))
-            sage: fl = H.flow_polytope(ends=([0, 1], [3])); fl
+            sage: fl = H.flow_polytope(ends=([0, 1], [3])); fl                          # optional - sage.geometry.polyhedron
             The empty polyhedron in QQ^6
-            sage: fl = H.flow_polytope(ends=([3], [0])); fl
+            sage: fl = H.flow_polytope(ends=([3], [0])); fl                             # optional - sage.geometry.polyhedron
             The empty polyhedron in QQ^6
-            sage: fl = H.flow_polytope(ends=([0, 1], [2, 3])); fl
+            sage: fl = H.flow_polytope(ends=([0, 1], [2, 3])); fl                       # optional - sage.geometry.polyhedron
             A 3-dimensional polyhedron in QQ^6 defined as the convex hull
             of 5 vertices
-            sage: fl.vertices()
+            sage: fl.vertices()                                                         # optional - sage.geometry.polyhedron
             (A vertex at (0, 0, 1, 1, 0, 0),
              A vertex at (0, 1, 0, 0, 1, 0),
              A vertex at (1, 0, 0, 2, 0, 1),
              A vertex at (1, 0, 0, 1, 1, 0),
              A vertex at (0, 1, 0, 1, 0, 1))
-            sage: fl = H.flow_polytope(edges=[(0, 1, None), (1, 2, None),
+            sage: fl = H.flow_polytope(edges=[(0, 1, None), (1, 2, None),               # optional - sage.geometry.polyhedron
             ....:                             (2, 3, None), (0, 2, None),
             ....:                             (1, 3, None)],
             ....:                      ends=([0, 1], [2, 3])); fl
             A 2-dimensional polyhedron in QQ^5 defined as the convex hull
             of 4 vertices
-            sage: fl.vertices()
+            sage: fl.vertices()                                                         # optional - sage.geometry.polyhedron
             (A vertex at (0, 0, 0, 1, 1),
              A vertex at (1, 2, 1, 0, 0),
              A vertex at (1, 1, 0, 0, 1),
@@ -3639,27 +3669,25 @@ class DiGraph(GenericGraph):
         A digraph with one source and two sinks::
 
             sage: Y = DiGraph({1: [2], 2: [3, 4]})
-            sage: Y.flow_polytope()
+            sage: Y.flow_polytope()                                                     # optional - sage.geometry.polyhedron
             The empty polyhedron in QQ^3
 
         A digraph with one vertex and no edge::
 
             sage: Z = DiGraph({1: []})
-            sage: Z.flow_polytope()
+            sage: Z.flow_polytope()                                                     # optional - sage.geometry.polyhedron
             A 0-dimensional polyhedron in QQ^0 defined as the convex hull
             of 1 vertex
 
         A digraph with multiple edges (:trac:`28837`)::
 
-            sage: G = DiGraph([(0, 1), (0,1)], multiedges=True)
-            sage: G
+            sage: G = DiGraph([(0, 1), (0,1)], multiedges=True); G
             Multi-digraph on 2 vertices
-            sage: P = G.flow_polytope()
-            sage: P
+            sage: P = G.flow_polytope(); P                                              # optional - sage.geometry.polyhedron
             A 1-dimensional polyhedron in QQ^2 defined as the convex hull of 2 vertices
-            sage: P.vertices()
+            sage: P.vertices()                                                          # optional - sage.geometry.polyhedron
             (A vertex at (1, 0), A vertex at (0, 1))
-            sage: P.lines()
+            sage: P.lines()                                                             # optional - sage.geometry.polyhedron
             ()
         """
         from sage.geometry.polyhedron.constructor import Polyhedron

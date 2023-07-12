@@ -186,7 +186,7 @@ class CartanType(cartan_type.CartanType_decorator):
             # FIXME: Remove the is_crystallographic (and the short-circuiting
             #   super) check once the non-crystallographic finite types
             #   (i.e., H_3, H_4, I_2(p)) have an implementation of an
-            #   ambient space. See ticket #24892.
+            #   ambient space. See issue #24892.
             self.__class__ = CartanType_finite
         elif type.is_affine():
             self.__class__ = CartanType_affine
@@ -229,7 +229,7 @@ class CartanType(cartan_type.CartanType_decorator):
                 return 'D4^3'
             return "['D', 4, 3]"
         relab = pformat(self._relabelling)
-        return self._type._repr_(compact = compact) + " relabelled by {}".format(relab)
+        return self._type._repr_(compact=compact) + " relabelled by {}".format(relab)
 
     def _latex_(self):
         r"""

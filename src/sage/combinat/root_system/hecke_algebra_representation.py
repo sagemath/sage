@@ -357,7 +357,7 @@ class HeckeAlgebraRepresentation(WithEqualityById, SageObject):
             sage: q1, q2 = K.gens()
             sage: KW = W.algebra(K)
             sage: x = KW.an_element(); x
-            123 + 3*32 + 2*3 + e
+            123 + 3*2312 + 2*31 + e
 
             sage: T = KW.demazure_lusztig_operators(q1,q2)
             sage: T12 = T.Tw( (1,2) )
@@ -392,7 +392,7 @@ class HeckeAlgebraRepresentation(WithEqualityById, SageObject):
         """
         word = self.straighten_word(word)
         result = self._domain.module_morphism(functools.partial(self.on_basis, word=word, signs=signs, scalar=scalar),
-                                            codomain = self._domain)
+                                            codomain=self._domain)
         # For debugging purpose, make the parameters easily accessible:
         result.word = word
         result.signs = signs
@@ -802,7 +802,7 @@ class CherednikOperatorsEigenvectors(UniqueRepresentation, SageObject):
         classical operators `T_1, \ldots, T_n` from `T` and `T_Y` coincide.
     """
 
-    def __init__(self, T, T_Y = None, normalized = True):
+    def __init__(self, T, T_Y=None, normalized=True):
         r"""
         INPUT:
 

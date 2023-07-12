@@ -792,7 +792,7 @@ def is_KashElement(x):
         sage: from sage.interfaces.kash import is_KashElement
         sage: is_KashElement(2)
         doctest:...: DeprecationWarning: the function is_KashElement is deprecated; use isinstance(x, sage.interfaces.abc.KashElement) instead
-        See https://trac.sagemath.org/34804 for details.
+        See https://github.com/sagemath/sage/issues/34804 for details.
         False
         sage: is_KashElement(kash(2))  # optional - kash
         True

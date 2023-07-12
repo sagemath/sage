@@ -46,7 +46,7 @@ class HeckeModules(Category_module):
 
         sage: HeckeModules(IntegerRing())
         Category of Hecke modules over Integer Ring
-        sage: HeckeModules(FiniteField(5))
+        sage: HeckeModules(FiniteField(5))                                              # optional - sage.rings.finite_rings
         Category of Hecke modules over Finite Field of size 5
 
     The base ring doesn't have to be a principal ideal domain::
@@ -64,7 +64,7 @@ class HeckeModules(Category_module):
 
             sage: TestSuite(HeckeModules(ZZ)).run()
 
-            sage: HeckeModules(Partitions(3)).run()
+            sage: HeckeModules(Partitions(3)).run()                                     # optional - sage.combinat
             Traceback (most recent call last):
             ...
             TypeError: R (=Partitions of the integer 3) must be a commutative ring
@@ -83,7 +83,6 @@ class HeckeModules(Category_module):
         """
         R = self.base_ring()
         return [ModulesWithBasis(R)]
-
 
     def _repr_object_names(self):
         """
@@ -104,7 +103,7 @@ class HeckeModules(Category_module):
 
         def _Hom_(self, Y, category):
             r"""
-            Returns the homset from ``self`` to ``Y`` in the category ``category``
+            Return the homset from ``self`` to ``Y`` in the category ``category``
 
             INPUT:
 
@@ -122,12 +121,15 @@ class HeckeModules(Category_module):
 
             EXAMPLES::
 
-                sage: M = ModularForms(Gamma0(7), 4)
-                sage: H = M._Hom_(M, category = HeckeModules(QQ)); H
-                Set of Morphisms from Modular Forms space of dimension 3 for Congruence Subgroup Gamma0(7) of weight 4 over Rational Field to Modular Forms space of dimension 3 for Congruence Subgroup Gamma0(7) of weight 4 over Rational Field in Category of Hecke modules over Rational Field
-                sage: H.__class__
+                sage: M = ModularForms(Gamma0(7), 4)                                    # optional - sage.modular
+                sage: H = M._Hom_(M, category=HeckeModules(QQ)); H                      # optional - sage.modular
+                Set of Morphisms
+                 from Modular Forms space of dimension 3 for Congruence Subgroup Gamma0(7) of weight 4 over Rational Field
+                   to Modular Forms space of dimension 3 for Congruence Subgroup Gamma0(7) of weight 4 over Rational Field
+                   in Category of Hecke modules over Rational Field
+                sage: H.__class__                                                       # optional - sage.modular
                 <class 'sage.modular.hecke.homspace.HeckeModuleHomspace_with_category'>
-                sage: TestSuite(H).run(skip=["_test_elements", "_test_an_element", "_test_elements_eq",
+                sage: TestSuite(H).run(skip=["_test_elements", "_test_an_element", "_test_elements_eq",     # optional - sage.modular
                 ....:                        "_test_elements_eq_reflexive", "_test_elements_eq_transitive",
                 ....:                        "_test_elements_eq_symmetric", "_test_elements_neq", "_test_some_elements",
                 ....:                        "_test_zero", "_test_additive_associativity",
@@ -140,10 +142,11 @@ class HeckeModules(Category_module):
 
             TESTS::
 
-                sage: H = M._Hom_(M, category = HeckeModules(GF(5))); H
+                sage: H = M._Hom_(M, category=HeckeModules(GF(5))); H                   # optional - sage.modular sage.rings.finite_rings
                 Traceback (most recent call last):
                 ...
-                TypeError: Category of Hecke modules over Finite Field of size 5 is not a subcategory of Category of Hecke modules over Rational Field
+                TypeError: Category of Hecke modules over Finite Field of size 5
+                is not a subcategory of Category of Hecke modules over Rational Field
             """
             # TODO: double check that it's the correct HeckeModules category below:
             if category is not None and not category.is_subcategory(HeckeModules(self.base_ring())):

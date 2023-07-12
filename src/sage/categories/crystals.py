@@ -1,3 +1,4 @@
+# sage.doctest: optional - sage.graphs sage.combinat
 r"""
 Crystals
 
@@ -387,7 +388,6 @@ class Crystals(Category_singleton):
             from sage.sets.recursively_enumerated_set import RecursivelyEnumeratedSet
             R = RecursivelyEnumeratedSet(self.module_generators, succ, structure=None)
             return R.breadth_first_search_iterator(max_depth)
-
 
         def subcrystal(self, index_set=None, generators=None, max_depth=float("inf"),
                        direction="both", contained=None,

@@ -26,7 +26,6 @@ from sage.structure.sage_object cimport SageObject
 from sage.structure.parent cimport Parent
 from sage.categories.sets_cat import Sets
 from sage.matrix.constructor import matrix
-from sage.misc.cachefunc import cached_method
 
 from .functions cimport binomial
 from .triangulations cimport \
@@ -835,23 +834,21 @@ cdef class PointConfiguration_base(Parent):
         simplex = []
         cdef int l = 0
         cdef int n = self.n_points()
-        cdef int d = self.dim()+1
+        cdef int d = self.dim() + 1
         cdef int k, b
-        for k in range(1,d):
+        for k in range(1, d):
             l += 1
-            i = l
             j = 1
-            b = binomial(n-l,d-k)
-            while (s>b) and (b>0):
+            b = binomial(n - l, d - k)
+            while s > b > 0:
                 j += 1
                 l += 1
                 s -= b
-                b = binomial(n-l,d-k)
-            simplex.append(l-1)
-        simplex.append(s+l-1)
+                b = binomial(n - l, d - k)
+            simplex.append(l - 1)
+        simplex.append(s + l - 1)
         assert len(simplex) == d
         return tuple(simplex)
-
 
 
 ########################################################################

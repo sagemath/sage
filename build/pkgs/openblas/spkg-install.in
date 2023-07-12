@@ -34,7 +34,7 @@ fi
 
 echo "Building OpenBLAS: $MAKE $OPENBLAS_CONFIGURE"
 
-# Ensure USE_TLS=1 ; see https://trac.sagemath.org/ticket/27256
+# Ensure USE_TLS=1 ; see https://github.com/sagemath/sage/issues/27256
 OPENBLAS_CONFIGURE="$OPENBLAS_CONFIGURE USE_TLS=1"
 
 if ! (sdh_make libs netlib shared $OPENBLAS_CONFIGURE); then
@@ -51,7 +51,7 @@ if ! (sdh_make libs netlib shared $OPENBLAS_CONFIGURE); then
     fi
 fi
 
-# See https://trac.sagemath.org/ticket/30335
+# See https://github.com/sagemath/sage/issues/30335
 rm -f "$SAGE_LOCAL/lib/pkgconfig/cblas.pc" "$SAGE_LOCAL/lib/pkgconfig/blas.pc" "$SAGE_LOCAL/lib/pkgconfig/lapack.pc"
 
 sdh_make_install PREFIX="$SAGE_LOCAL" NO_STATIC=1 $OPENBLAS_CONFIGURE

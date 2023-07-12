@@ -1,8 +1,7 @@
+# pylint: disable=missing-function-docstring
 from _pytest.fixtures import FixtureRequest
 import pytest
 
-# TODO: Remove sage.all import as soon as it's no longer necessary to load everything upfront
-import sage.all
 from sage.manifolds.manifold import Manifold
 from sage.manifolds.differentiable.manifold import DifferentiableManifold
 from sage.manifolds.differentiable.examples.sphere import Sphere
@@ -125,6 +124,39 @@ class TestCoherenceOfFormulas:
             omega.hamiltonian_vector_field(g)
         ) == omega.hamiltonian_vector_field(omega.poisson_bracket(f, g))
 
+    def test_hodge_star_of_one_is_volume(
+        self, M: DifferentiableManifold, omega: SymplecticForm
+    ):
+        assert M.one_scalar_field().hodge_dual(omega) == omega.volume_form()
+
+    def test_hodge_star_of_volume_is_one(
+        self, M: DifferentiableManifold, omega: SymplecticForm
+    ):
+        assert omega.volume_form().hodge_dual(omega) == M.one_scalar_field()
+
+    def test_trace_of_two_form_is_given_using_contraction_with_omega(
+        self, M: DifferentiableManifold, omega: SymplecticForm
+    ):
+        a = M.diff_form(2)
+        a[1,2] = 3
+        assert a.trace(using=omega) == a.up(omega, 1).trace()
+
+    def test_omega_on_forms_is_determinant_for_decomposables(
+        self, M: DifferentiableManifold, omega: SymplecticForm
+    ):
+        a = M.one_form(1,2)
+        b = M.one_form(3,4)
+        c = M.one_form(5,6)
+        d = M.one_form(7,8)
+
+        assert omega.on_forms(a.wedge(b), c.wedge(d)) == omega.on_forms(a,c) * omega.on_forms(b, d) - omega.on_forms(a,d) * omega.on_forms(b,c)
+
+    def test_omega_on_one_forms_is_omega_on_dual_vectors(
+        self, M: DifferentiableManifold, omega: SymplecticForm
+    ):
+        a = M.one_form(1,2)
+        b = M.one_form(3,4)
+        assert omega.on_forms(a, b) == omega(a.up(omega), b.up(omega))
 
 def generic_scalar_field(M: DifferentiableManifold, name: str) -> DiffScalarField:
     chart_functions = {chart: function(name)(*chart[:]) for chart in M.atlas()}
@@ -158,3 +190,29 @@ class TestR2VectorSpace:
         X = M.vector_field(1, 2, name="X")
         assert str(X.display()) == r"X = e_q + 2 e_p"
         assert str(omega.flat(X).display()) == r"X_flat = 2 dq - dp"
+
+    def test_hodge_star(self, M: StandardSymplecticSpace, omega: SymplecticForm):
+        # Standard basis
+        e = M.one_form(0,1, name='e')
+        f = M.one_form(1,0, name='f')
+        assert e.wedge(f) == omega
+
+        assert M.one_scalar_field().hodge_dual(omega) == omega
+        assert e.hodge_dual(omega) == e
+        assert f.hodge_dual(omega) == f
+        assert omega.hodge_dual(omega) == M.one_scalar_field()
+
+    def test_omega_on_one_forms(self, M: StandardSymplecticSpace, omega: SymplecticForm):
+        # Standard basis
+        e = M.one_form(0,1, name='e')
+        f = M.one_form(1,0, name='f')
+        assert e.wedge(f) == omega
+
+        assert omega.on_forms(e, f) == 1
+
+    def test_hodge_star_is_given_using_omega_on_forms(
+        self, M: StandardSymplecticSpace, omega: SymplecticForm
+    ):
+        a = M.one_form(1,2)
+        b = M.one_form(3,4)
+        assert a.wedge(b.hodge_dual(omega)) == omega.on_forms(a, b) * omega.volume_form()

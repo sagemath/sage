@@ -1,3 +1,4 @@
+# sage.doctest: optional - sage.modules
 """
 Ideals of non-commutative rings
 
@@ -385,7 +386,7 @@ class Ideal_nc(Ideal_generic):
              of Full MatrixSpace of 2 by 2 dense matrices over Rational Field
 
             sage: IL * IR
-            Twosided Ideal 
+            Twosided Ideal
             (
               [0 3]
               [0 0]

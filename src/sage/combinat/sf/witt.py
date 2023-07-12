@@ -757,7 +757,7 @@ class SymmetricFunctionAlgebra_witt(multiplicative.SymmetricFunctionAlgebra_mult
         """
         l = len(self._p_transition_matrices)
         if l <= n:
-            from sage.arith.all import divisors
+            from sage.arith.misc import divisors
             from sage.combinat.partition import Partition
             from sage.misc.cachefunc import cached_function
 
@@ -1149,7 +1149,7 @@ class SymmetricFunctionAlgebra_witt(multiplicative.SymmetricFunctionAlgebra_mult
             return result
 
         if parent_name == "powersum":
-            from sage.arith.all import divisors
+            from sage.arith.misc import divisors
             from sage.combinat.partition import Partition
 
             @cached_function

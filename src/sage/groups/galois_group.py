@@ -122,6 +122,7 @@ class _GMixin:
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K = NumberField(x^3 - x + 1, 'a')
             sage: K.galois_group(names='b').splitting_field()
             Number Field in b with defining polynomial x^6 - 6*x^4 + 9*x^2 + 23
@@ -219,7 +220,7 @@ class _GaloisMixin(_GMixin):
             doctest:warning
             ...
             DeprecationWarning: Use .absolute_field().galois_group() if you want the Galois group of the absolute field
-            See https://trac.sagemath.org/28782 for details.
+            See https://github.com/sagemath/sage/issues/28782 for details.
             sage: GK._field_degree
             3
 
@@ -282,6 +283,7 @@ class _SubGaloisMixin(_GMixin):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: L.<a> = NumberField(x^4 + 1)
             sage: G = L.galois_group()
             sage: H = G.decomposition_group(L.primes_above(3)[0])
@@ -321,6 +323,7 @@ class _SubGaloisMixin(_GMixin):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: L.<a> = NumberField(x^4 + 1)
             sage: G = L.galois_group()
             sage: H = G.decomposition_group(L.primes_above(3)[0])

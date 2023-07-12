@@ -69,7 +69,7 @@ approach is still needed for cpdef methods::
     sage: cython_code = ['cpdef test_meth(self,x):',
     ....: '    "some doc for a wrapped cython method"',
     ....: '    return -x',
-    ....: 'from sage.all import cached_method',
+    ....: 'from sage.misc.cachefunc import cached_method',
     ....: 'from sage.structure.parent cimport Parent',
     ....: 'cdef class MyClass(Parent):',
     ....: '    @cached_method',
@@ -107,7 +107,10 @@ By :trac:`11115`, even if a parent does not allow attribute
 assignment, it can inherit a cached method from the parent class of a
 category (previously, the cache would have been broken)::
 
-    sage: cython_code = ["from sage.all import cached_method, cached_in_parent_method, Category, Objects",
+    sage: cython_code = ["from sage.misc.cachefunc import cached_method",
+    ....: "from sage.misc.cachefunc import cached_in_parent_method",
+    ....: "from sage.categories.category import Category",
+    ....: "from sage.categories.objects import Objects",
     ....: "class MyCategory(Category):",
     ....: "    @cached_method",
     ....: "    def super_categories(self):",
@@ -847,6 +850,7 @@ cdef class CachedFunction():
             sage: I = P*[x,y]
             sage: from sage.misc.sageinspect import sage_getdoc
             sage: print(sage_getdoc(I.groebner_basis)) # indirect doctest
+            WARNING: the enclosing module is marked...
                Return the reduced Groebner basis of this ideal.
             ...
 
@@ -1875,7 +1879,7 @@ cdef class CachedMethodCaller(CachedFunction):
 
             sage: a.g(5) is a.f(5)
             doctest:...: DeprecationWarning: g is deprecated. Please use f instead.
-            See http://trac.sagemath.org/57 for details.
+            See https://github.com/sagemath/sage/issues/57 for details.
             True
             sage: Foo.g(a, 5) is a.f(5)
             True
@@ -2482,12 +2486,12 @@ cdef class GloballyCachedMethodCaller(CachedMethodCaller):
 
             sage: class MyParent(Parent):
             ....:     pass
-            sage: class MyElement():
+            sage: class MyElement():           # indirect doctest
             ....:     def __init__(self, x):
             ....:         self.x = x
             ....:     def parent(self):
             ....:         return MyParent()
-            ....:     @cached_in_parent_method  #indirect doctest
+            ....:     @cached_in_parent_method
             ....:     def f(self):
             ....:         return self.x^2
             sage: a = MyElement(2)
@@ -2707,7 +2711,7 @@ cdef class CachedMethod():
 
             sage: a.g() is a.f()
             doctest:...: DeprecationWarning: g is deprecated. Please use f instead.
-            See http://trac.sagemath.org/57 for details.
+            See https://github.com/sagemath/sage/issues/57 for details.
             True
             sage: Foo.g(a) is a.f()
             True
@@ -3121,13 +3125,13 @@ cdef class CachedInParentMethod(CachedMethod):
 
             sage: class MyParent(Parent):
             ....:     pass
-            sage: class Foo:
+            sage: class Foo:                         # indirect doctest
             ....:     def __init__(self, x):
             ....:         self._x = x
             ....:         self._parent = MyParent()
             ....:     def parent(self):
             ....:         return self._parent
-            ....:     @cached_in_parent_method  #indirect doctest
+            ....:     @cached_in_parent_method
             ....:     def f(self):
             ....:         return self._x^2
             sage: a = Foo(2)
@@ -3703,8 +3707,9 @@ class disk_cached_function:
             sage: dir = tmp_dir()
             sage: @disk_cached_function(dir)
             ....: def foo(x): return ModularSymbols(x)
-            sage: foo(389)
-            Modular Symbols space of dimension 65 for Gamma_0(389) of weight 2 with sign 0 over Rational Field
+            sage: foo(389)                                                              # optional - sage.modular
+            Modular Symbols space of dimension 65 for Gamma_0(389) of weight 2
+             with sign 0 over Rational Field
         """
         return DiskCachedFunction(f, self._dir, memory_cache=self._memory_cache, key=self._key)
 

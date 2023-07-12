@@ -1,3 +1,4 @@
+# sage.doctest: optional - sage.modules sage.rings.finite_rings
 r"""
 Gabidulin Code
 
@@ -499,7 +500,8 @@ class GabidulinVectorEvaluationEncoder(Encoder):
             sage: Fqm = GF(2^9)
             sage: Fq = GF(2^3)
             sage: C = codes.GabidulinCode(Fqm, 3, 3, Fq)
-            sage: list(C.generator_matrix().row(1)) == [C.evaluation_points()[i]**(2**3) for i in range(3)]
+            sage: (list(C.generator_matrix().row(1))
+            ....:   == [C.evaluation_points()[i]**(2**3) for i in range(3)])
             True
         """
         from functools import reduce
@@ -543,8 +545,9 @@ class GabidulinPolynomialEvaluationEncoder(Encoder):
         sage: z9 = Fqm.gen()
         sage: p = (z9^6 + z9^2 + z9 + 1)*x + z9^7 + z9^5 + z9^4 + z9^2
         sage: vector(p.multi_point_evaluation(C.evaluation_points()))
-        doctest:...: FutureWarning: This class/method/function is marked as experimental. It, its functionality or its interface might change without a formal deprecation.
-        See http://trac.sagemath.org/13215 for details.
+        doctest:...: FutureWarning: This class/method/function is marked as experimental.
+        It, its functionality or its interface might change without a formal deprecation.
+        See https://github.com/sagemath/sage/issues/13215 for details.
         (z9^7 + z9^6 + z9^5 + z9^4 + z9 + 1, z9^6 + z9^5 + z9^3 + z9)
 
     EXAMPLES::
@@ -554,13 +557,15 @@ class GabidulinPolynomialEvaluationEncoder(Encoder):
         sage: C = codes.GabidulinCode(Fqm, 2, 2, Fq)
         sage: E = codes.encoders.GabidulinPolynomialEvaluationEncoder(C)
         sage: E
-        Polynomial evaluation style encoder for [2, 2, 1] linear Gabidulin code over GF(16)/GF(4)
+        Polynomial evaluation style encoder for
+         [2, 2, 1] linear Gabidulin code over GF(16)/GF(4)
 
     Alternatively, we can construct the encoder from ``C`` directly::
 
         sage: E = C.encoder("PolynomialEvaluation")
         sage: E
-        Polynomial evaluation style encoder for [2, 2, 1] linear Gabidulin code over GF(16)/GF(4)
+        Polynomial evaluation style encoder for
+         [2, 2, 1] linear Gabidulin code over GF(16)/GF(4)
     """
 
     def __init__(self, code):
@@ -655,7 +660,8 @@ class GabidulinPolynomialEvaluationEncoder(Encoder):
             sage: C = codes.GabidulinCode(Fqm, 4, 4, Fq)
             sage: E = codes.encoders.GabidulinPolynomialEvaluationEncoder(C)
             sage: E.message_space()
-            Ore Polynomial Ring in x over Finite Field in z20 of size 5^20 twisted by z20 |--> z20^(5^4)
+            Ore Polynomial Ring in x over Finite Field in z20 of size 5^20
+             twisted by z20 |--> z20^(5^4)
         """
         C = self.code()
         return C.base_field()['x', C.twisting_homomorphism()]

@@ -42,7 +42,7 @@ from sage.structure.element cimport parent
 
 cdef long maxordp = (1L << (sizeof(long) * 8 - 2)) - 1
 cdef long minusmaxordp = -maxordp
-# The following Integer (resp. Rational) is used so that 
+# The following Integer (resp. Rational) is used so that
 # the functions here don't need to initialize an mpz_t (resp. mpq_t)
 cdef Integer temp = PY_NEW(Integer)
 cdef Rational rat_temp = PY_NEW(Rational)

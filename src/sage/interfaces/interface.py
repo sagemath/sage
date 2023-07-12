@@ -709,7 +709,6 @@ class InterfaceFunctionElement(SageObject):
         return M.help(self._name)
 
 
-
 def is_InterfaceElement(x):
     """
     Return True if ``x`` is of type :class:`InterfaceElement`.
@@ -719,7 +718,7 @@ def is_InterfaceElement(x):
         sage: from sage.interfaces.interface import is_InterfaceElement
         sage: is_InterfaceElement(2)
         doctest:...: DeprecationWarning: the function is_InterfaceElement is deprecated; use isinstance(x, sage.interfaces.abc.InterfaceElement) instead
-        See https://trac.sagemath.org/34804 for details.
+        See https://github.com/sagemath/sage/issues/34804 for details.
         False
     """
     from sage.misc.superseded import deprecation
@@ -880,7 +879,7 @@ class InterfaceElement(Element):
         `"'abc'"` instead. That is dependant on the Elements `is_string` function to
         be implemented correctly. This has gone wrong in the past and remained uncaught
         by the doctests because the original identifier was reused. This test makes sure
-        that does not happen again:
+        that does not happen again::
 
             sage: a = r("'abc'")                                                  # optional - rpy2
             sage: b = dumps(a)                                                    # optional - rpy2
@@ -1099,7 +1098,6 @@ class InterfaceElement(Element):
             return sage.misc.sage_eval.sage_eval(string)
         except Exception:
             raise NotImplementedError("Unable to parse output: %s" % string)
-
 
     def sage(self, *args, **kwds):
         """
@@ -1581,20 +1579,20 @@ class InterfaceElement(Element):
         ::
 
             sage: f = maxima.function('x','sin(x)')
-            sage: g = maxima('-cos(x)') # not a function!
+            sage: g = maxima('cos(x)') # not a function!
             sage: f*g
-            -cos(x)*sin(x)
+            cos(x)*sin(x)
             sage: _(2)
-            -cos(2)*sin(2)
+            cos(2)*sin(2)
 
         ::
 
             sage: f = maxima.function('x','sin(x)')
-            sage: g = maxima('-cos(x)')
+            sage: g = maxima('cos(x)')
             sage: g*f
-            -cos(x)*sin(x)
+            cos(x)*sin(x)
             sage: _(2)
-            -cos(2)*sin(2)
+            cos(2)*sin(2)
             sage: 2*f
             2*sin(x)
         """
@@ -1614,20 +1612,20 @@ class InterfaceElement(Element):
         ::
 
             sage: f = maxima.function('x','sin(x)')
-            sage: g = maxima('-cos(x)')
+            sage: g = maxima('cos(x)')
             sage: f/g
-            -sin(x)/cos(x)
+            sin(x)/cos(x)
             sage: _(2)
-            -sin(2)/cos(2)
+            sin(2)/cos(2)
 
         ::
 
             sage: f = maxima.function('x','sin(x)')
-            sage: g = maxima('-cos(x)')
+            sage: g = maxima('cos(x)')
             sage: g/f
-            -cos(x)/sin(x)
+            cos(x)/sin(x)
             sage: _(2)
-            -cos(2)/sin(2)
+            cos(2)/sin(2)
             sage: 2/f
             2/sin(x)
         """

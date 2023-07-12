@@ -145,7 +145,6 @@ def builder_helper(type):
         else:
             options += ' -D multidoc_first_pass=1'
 
-
         build_command = '-b %s -d %s %s %s %s' % (type, self._doctrees_dir(),
                                                   options, self.dir,
                                                   output_dir)
@@ -386,7 +385,7 @@ class AllBuilder():
         # build the other documents in parallel
         L = [(doc, name, kwds) + args for doc in others]
 
-        # Trac #31344: Work around crashes from multiprocessing
+        # Issue #31344: Work around crashes from multiprocessing
         if sys.platform == 'darwin':
             for target in L:
                 build_other_doc(target)

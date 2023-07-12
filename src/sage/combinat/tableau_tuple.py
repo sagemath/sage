@@ -228,7 +228,7 @@ from sage.misc.flatten import flatten
 from sage.misc.lazy_attribute import lazy_attribute
 from sage.misc.misc_c import prod
 from sage.misc.prandom import randint
-from sage.arith.all import factorial
+from sage.arith.misc import factorial
 from sage.rings.finite_rings.integer_mod_ring import IntegerModRing
 from sage.rings.integer import Integer
 from sage.rings.semirings.non_negative_integer_semiring import NN
@@ -635,7 +635,7 @@ class TableauTuple(CombinatorialElement):
             sage: t(3,3,3)
             Traceback (most recent call last):
             ...
-            IndexError: The cell (3, 3, 3) is not contained in the tableau
+            IndexError: the cell (3, 3, 3) is not contained in the tableau
         """
         if isinstance(cell[0], (int, Integer)):
             k, r, c = cell[0], cell[1], cell[2]
@@ -644,7 +644,7 @@ class TableauTuple(CombinatorialElement):
         try:
             return self[k][r][c]
         except IndexError:
-            raise IndexError("The cell (%s, %s, %s) is not contained in the tableau" % (k, r, c))
+            raise IndexError("the cell (%s, %s, %s) is not contained in the tableau" % (k, r, c))
 
     def level(self):
         """

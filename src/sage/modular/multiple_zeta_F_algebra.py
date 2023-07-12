@@ -11,6 +11,10 @@ the ring of motivic multiple zeta values.
 Here we provide a basic direct implementation, endowed with the
 motivic coproduct.
 
+The similar algebra where the shuffle algebra has generators
+`f_1, f_3, f_5, \ldots` is now also available. The implementation is even more
+general, allowing any positive odd integer as start index.
+
 AUTHORS:
 
 - Frédéric Chapoton (2022-09): Initial version
@@ -31,6 +35,7 @@ from sage.categories.bialgebras_with_basis import BialgebrasWithBasis
 from sage.combinat.free_module import CombinatorialFreeModule
 from sage.combinat.words.words import Words
 from sage.combinat.words.finite_word import FiniteWord_class
+from sage.combinat.words.shuffle_product import ShuffleProduct_w1w2 as shuffle
 from sage.misc.cachefunc import cached_method
 from sage.misc.lazy_attribute import lazy_attribute
 from sage.sets.integer_range import IntegerRange
@@ -40,39 +45,64 @@ from sage.rings.infinity import Infinity
 from sage.modules.free_module_element import vector
 
 
-# the indexing set: (integer power of f_2, word in 3, 5, 7,...)
-W_Odds = Words(IntegerRange(3, Infinity, 2), infinite=False)
+def W_Odds(start=3):
+    r"""
+    Indexing set for the odd generators.
+
+    This is the set of pairs
+    (integer power of `f_2`, word in `s, s+2, s+4, \ldots`)
+    where `s` is the chosen odd start index.
+
+    INPUT:
+
+    - ``start`` -- (default: ``3``) odd start index for odd generators
+
+    EXAMPLES::
+
+        sage: from sage.modular.multiple_zeta_F_algebra import W_Odds
+        sage: W_Odds(3)
+        Finite words over {3, 5, ...}
+    """
+    return Words(IntegerRange(start, Infinity, 2), infinite=False)
 
 
 def str_to_index(x: str) -> tuple:
-    """
+    r"""
     Convert a string to an index.
 
-    Every letter "2" contributes to the power of `f_2`. Other letters
-    define a word in `f_3`, `f_5`, ...
+    Every letter ``"2"`` contributes to the power of `f_2`. Other letters
+    are odd and define a word in `f_1, f_3, f_5, \ldots`
 
-    Usually the letters "2" form a prefix of the input.
+    Usually the letters ``"2"`` form a prefix of the input.
 
     EXAMPLES::
 
         sage: from sage.modular.multiple_zeta_F_algebra import str_to_index
         sage: str_to_index("22357")
         (2, [3, 5, 7])
+
+        sage: str_to_index("22317")
+        (2, [3, 1, 7])
     """
     p = x.count("2")
     w = [int(i) for i in x if i != '2']
     return (p, w)
 
 
-def basis_f_odd_iterator(n) -> Iterator[tuple]:
-    """
-    Return an iterator over compositions of ``n`` with parts in ``(3,5,7,...)``
+def basis_f_odd_iterator(n, start=3) -> Iterator[tuple]:
+    r"""
+    Return an iterator over compositions of ``n`` with odd parts.
 
-    This is used to index a basis.
+    Let `s` be the chosen odd start index. The allowed parts are the
+    odd integers at least equal to `s`, in the set `s,s+2,s+4,s+6,\ldots`.
+
+    This set of compositions is used to index a basis.
 
     INPUT:
 
     - ``n`` -- an integer
+
+    - ``start`` -- (default: ``3``) odd integer, start index for odd generators
 
     EXAMPLES::
 
@@ -93,27 +123,30 @@ def basis_f_odd_iterator(n) -> Iterator[tuple]:
     if n == 0:
         yield tuple()
         return
-    if n == 1:
-        return
-    if n % 2:
+    if n % 2 and n >= start:
         yield (n,)
-    for k in range(3, n, 2):
-        for start in basis_f_odd_iterator(n - k):
-            yield start + (k, )
+    for k in range(start, n, 2):
+        for word in basis_f_odd_iterator(n - k, start=start):
+            yield word + (k, )
 
 
-def basis_f_iterator(n) -> Iterator[tuple]:
-    """
-    Return an iterator over decompositions of ``n`` using ``2,3,5,7,9,...``.
+def basis_f_iterator(n, start=3) -> Iterator[tuple]:
+    r"""
+    Return an iterator for decompositions of ``n`` using ``2`` and odd integers.
+
+    Let `s` be the chosen odd start index. The allowed odd parts are the
+    odd integers at least equal to `s`, in the set `s,s+2,s+4,s+6,\ldots`.
 
     The means that each term is made of a power of 2 and a composition
-    of the remaining integer with parts in ``(3,5,7,...)``
+    of the remaining integer with parts in `(s,s+2,s+4,\ldots)`.
 
     This set is indexing a basis of the homogeneous component of weight ``n``.
 
     INPUT:
 
     - ``n`` -- an integer
+
+    - ``start`` -- (default: ``3``) odd start index for odd generators
 
     Each term is returned as a pair (integer, word) where
     the integer is the exponent of 2.
@@ -144,21 +177,27 @@ def basis_f_iterator(n) -> Iterator[tuple]:
 
         sage: list(basis_f_iterator(0))
         [(0, word: )]
+        sage: list(basis_f_iterator(3, start=1))
+        [(0, word: 3), (0, word: 111), (1, word: 1)]
     """
-    if n and n < 2:
-        return
+    wodds = W_Odds(start)
     for k in range(n // 2 + 1):
-        for start in basis_f_odd_iterator(n - 2 * k):
-            yield (k, W_Odds(start, check=False))
+        for word in basis_f_odd_iterator(n - 2 * k, start):
+            yield (k, wodds(word, check=False))
 
 
-def morphism_constructor(data: dict):
-    """
+def morphism_constructor(data: dict, start=3):
+    r"""
     Build a morphism from the F-algebra to some codomain.
+
+    Let `s` be the chosen odd start index.
 
     INPUT:
 
-    a dictionary containing the images of `f_2`, `f_3`, `f_5`, `f_7`, ...
+    - ``data`` -- a dictionary with integer keys containing the images of
+      `f_2, f_s, f_{s+2}, f_{s+4}, \ldots`
+
+    - ``start`` -- (default: 3) start index for odd generators
 
     OUTPUT:
 
@@ -171,10 +210,10 @@ def morphism_constructor(data: dict):
     EXAMPLES::
 
         sage: from sage.modular.multiple_zeta_F_algebra import F_algebra, morphism_constructor
-        sage: F = F_algebra(QQ)
         sage: Z = Multizeta
         sage: D = {2: Z(2), 3: Z(3)}
         sage: rho = morphism_constructor(D)
+        sage: F = rho.domain()
         sage: rho(F("2"))
         ζ(2)
         sage: rho(F("3"))
@@ -186,7 +225,7 @@ def morphism_constructor(data: dict):
     """
     im_f2 = data[2]
     codomain = im_f2.parent()
-    domain = F_algebra(codomain.base_ring())
+    domain = F_algebra(codomain.base_ring(), start=start)
 
     def morphism_on_basis(pw):
         p, w = pw
@@ -210,6 +249,8 @@ class F_algebra(CombinatorialFreeModule):
 
     - ``R`` -- ring
 
+    - ``start`` -- (default: ``3``) odd start index for odd generators
+
     EXAMPLES::
 
         sage: from sage.modular.multiple_zeta_F_algebra import F_algebra
@@ -228,9 +269,15 @@ class F_algebra(CombinatorialFreeModule):
         sage: s = f2*f3+f5; s
         f5 + f2*f3
     """
-    def __init__(self, R):
+    def __init__(self, R, start=3):
         r"""
         Initialize ``self``.
+
+        INPUT:
+
+        - ``R`` -- base ring
+
+        - ``start`` -- (default: ``3``) odd start index for odd generators
 
         EXAMPLES::
 
@@ -247,18 +294,21 @@ class F_algebra(CombinatorialFreeModule):
         """
         if R not in Rings():
             raise TypeError("argument R must be a ring")
-        Indices = NonNegativeIntegers().cartesian_product(W_Odds)
+        if not start % 2 and start > 0:
+            raise ValueError("argument start must be odd and positive")
+        self._start = start
+        Indices = NonNegativeIntegers().cartesian_product(W_Odds(start))
         cat = BialgebrasWithBasis(R).Commutative().Graded()
         CombinatorialFreeModule.__init__(self, R, Indices,
                                          latex_prefix="", prefix='f',
                                          category=cat)
 
     def _repr_term(self, pw) -> str:
-        """
+        r"""
         Return the custom representation of terms.
 
         Each monomial is written as a power of `f_2` times a word
-        in `f_3`, `f_5`, ...
+        in `f_1, f_3, f_5, \ldots`.
 
         EXAMPLES::
 
@@ -267,7 +317,7 @@ class F_algebra(CombinatorialFreeModule):
             sage: f2 = F.gen(2)
             sage: f3 = F.gen(3)
             sage: f5 = F.gen(5)
-            sage: f2*f3+f5+f2**2
+            sage: f2*f3+f5+f2**2  # indirect doctest
             f5 + f2*f3 + f2^2
         """
         p, w = pw
@@ -323,7 +373,7 @@ class F_algebra(CombinatorialFreeModule):
             sage: from sage.modular.multiple_zeta_F_algebra import F_algebra
             sage: A = F_algebra(QQ)
             sage: W = A.basis().keys()
-            sage: A.product(A("23"), A("25"))
+            sage: A.product(A("23"), A("25"))  # indirect doctest
             f2^2*f3f5 + f2^2*f5f3
         """
         p1, w1 = pw1
@@ -346,7 +396,7 @@ class F_algebra(CombinatorialFreeModule):
             sage: from sage.modular.multiple_zeta_F_algebra import F_algebra
             sage: A = F_algebra(QQ)
             sage: W = A.basis().keys()
-            sage: t = A.half_product(A("23"), A("25")); t
+            sage: t = A.half_product(A("23"), A("25")); t  # indirect doctest
             f2^2*f3f5
 
         TESTS::
@@ -404,7 +454,7 @@ class F_algebra(CombinatorialFreeModule):
         f2 = self.monomial(self._indices((1, [])))
         if i == 2:
             return f2
-        # now i odd >= 3
+        # now i odd >= start
         if i % 2:
             return self.monomial(self._indices((0, [i])))
         # now powers of f2
@@ -529,7 +579,7 @@ class F_algebra(CombinatorialFreeModule):
         if isinstance(vec, (list, tuple)):
             vec = vector(vec)
         return self.sum(cf * self.monomial(bi)
-                        for cf, bi in zip(vec, basis_f_iterator(N)))
+                        for cf, bi in zip(vec, basis_f_iterator(N, self._start)))
 
     def _element_constructor_(self, x):
         r"""
@@ -705,7 +755,7 @@ class F_algebra(CombinatorialFreeModule):
             a, b = next(iter(self))[0]
             N = 2 * a + sum(int(x) for x in b)
             return vector(BR, [self.coefficient(b)
-                               for b in basis_f_iterator(N)])
+                               for b in basis_f_iterator(N, F._start)])
 
         def without_f2(self):
             """
@@ -715,9 +765,30 @@ class F_algebra(CombinatorialFreeModule):
 
                 sage: from sage.modular.multiple_zeta_F_algebra import F_algebra
                 sage: F = F_algebra(QQ)
-                sage: t = 4*F("35")+F("27")
+                sage: t = 4 * F("35") + F("27")
                 sage: t.without_f2()
                 4*f3f5
             """
             F = self.parent()
             return F._from_dict({(0, w): cf for (p, w), cf in self if not p})
+
+        def single_valued(self):
+            """
+            Return the single-valued version of ``self``.
+
+            EXAMPLES::
+
+                sage: from sage.modular.multiple_zeta_F_algebra import F_algebra
+                sage: F = F_algebra(QQ)
+                sage: t = 4 * F("2") + F("3")
+                sage: t.single_valued()
+                2*f3
+                sage: t = 4 * F("35") + F("27")
+                sage: t.single_valued()
+                8*f3f5 + 8*f5f3
+            """
+            F = self.parent()
+            no_f2 = self.without_f2()
+            return F.sum_of_terms(((0, w), cf)
+                                  for (a, b), cf in no_f2.coproduct()
+                                  for w in shuffle(a[1], b[1].reversal(), False))

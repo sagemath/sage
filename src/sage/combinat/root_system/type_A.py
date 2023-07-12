@@ -28,16 +28,16 @@ class AmbientSpace(ambient_space.AmbientSpace):
 
         sage: L = RootSystem(["A",2]).ambient_space()
         sage: e = L.basis()
-        sage: L._plot_projection(e[0])
+        sage: L._plot_projection(e[0])                                                  # optional - sage.symbolic
         (1/2, 989/1142)
-        sage: L._plot_projection(e[1])
+        sage: L._plot_projection(e[1])                                                  # optional - sage.symbolic
         (-1, 0)
-        sage: L._plot_projection(e[2])
+        sage: L._plot_projection(e[2])                                                  # optional - sage.symbolic
         (1/2, -989/1142)
         sage: L = RootSystem(["A",3]).ambient_space()
         sage: l = L.an_element(); l
         (2, 2, 3, 0)
-        sage: L._plot_projection(l)
+        sage: L._plot_projection(l)                                                     # optional - sage.symbolic
         (0, -1121/1189, 7/3)
 
     .. SEEALSO::
@@ -335,7 +335,7 @@ class CartanType(CartanType_standard_finite, CartanType_simply_laced, CartanType
             return ""
         if node is None:
             node = self._ascii_art_node
-        ret  = "---".join(node(label(i)) for i in range(1,n+1)) + "\n"
+        ret = "---".join(node(label(i)) for i in range(1,n+1)) + "\n"
         ret += "".join("{!s:4}".format(label(i)) for i in range(1,n+1))
         return ret
 

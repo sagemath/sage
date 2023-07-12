@@ -59,6 +59,7 @@ Advanced options::
 import logging
 import argparse
 import os
+import shlex
 import sys
 import sphinx.ext.intersphinx
 from sage.env import SAGE_DOC_SRC
@@ -441,6 +442,9 @@ def main():
     if not name or not typ:
         parser.print_help()
         sys.exit(1)
+    elif name == 'all':
+        sys.exit(os.system(f'cd {shlex.quote(SAGE_DOC_SRC)} '
+                           f'&& ${{MAKE:-make}} -j${{SAGE_NUM_THREADS_PARALLEL:-1}} doc-{typ}'))
 
     # Set up module-wide logging.
     setup_logger(args.verbose, args.color)
@@ -480,8 +484,8 @@ def main():
     if not args.no_prune_empty_dirs:
         # Delete empty directories. This is needed in particular for empty
         # directories due to "git checkout" which never deletes empty
-        # directories it leaves behind. See Trac #20010.
-        # Trac #31948: This is not parallelization-safe; use the option
+        # directories it leaves behind. See Issue #20010.
+        # Issue #31948: This is not parallelization-safe; use the option
         # --no-prune-empty-dirs to turn it off
         for dirpath, dirnames, filenames in os.walk(SAGE_DOC_SRC, topdown=False):
             if not dirnames + filenames:

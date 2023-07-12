@@ -22,22 +22,23 @@ AUTHORS:
 from copy import copy, deepcopy
 from itertools import permutations, combinations, product
 
+from sage.arith.functions import lcm
+from sage.arith.misc import CRT, divisors, gcd, is_square
+from sage.combinat.permutation import Arrangements
 from sage.combinat.subset import Subsets
-from sage.misc.functional import sqrt
 from sage.matrix.constructor import matrix
-from sage.structure.element import is_Matrix
+from sage.misc.functional import sqrt
 from sage.misc.misc_c import prod
+from sage.parallel.use_fork import p_iter_fork
 from sage.rings.finite_rings.finite_field_constructor import GF
 from sage.rings.finite_rings.integer_mod_ring import Integers
 from sage.rings.integer_ring import ZZ
 from sage.rings.number_field.number_field import NumberField
-from sage.arith.all import gcd, lcm, CRT, is_square, divisors
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.rational_field import QQ
 from sage.sets.primes import Primes
 from sage.sets.set import Set
-from sage.combinat.permutation import Arrangements
-from sage.parallel.use_fork import p_iter_fork
+from sage.structure.element import is_Matrix
 
 
 def automorphism_group_QQ_fixedpoints(rational_function, return_functions=False, iso_type=False):
@@ -125,7 +126,7 @@ def automorphism_group_QQ_fixedpoints(rational_function, return_functions=False,
     else:
         elements = [matrix(F, 2, [1,0,0,1])]
 
-    rational_roots = h.roots(multiplicities = False)
+    rational_roots = h.roots(multiplicities=False)
 
     min_poly = 1
 
@@ -742,7 +743,7 @@ def automorphism_group_QQ_CRT(rational_function, prime_lower_bound=4, return_fun
             # compute automorphisms mod p
             phi_p = f.change_ring(GF(p))/g.change_ring(GF(p))
             sorted_automorphisms = automorphism_group_FF(phi_p)
-            sorted_automorphisms.sort(key = PGL_order)
+            sorted_automorphisms.sort(key=PGL_order)
             orders = [PGL_order(A) for A in sorted_automorphisms]
 
             automorphisms.append(sorted_automorphisms)

@@ -22,6 +22,7 @@ Comprehensive Module List
     sage/combinat/alternating_sign_matrix
     sage/combinat/backtrack
     sage/combinat/baxter_permutations
+    sage/combinat/bijectionist
     sage/combinat/binary_recurrence_sequences
     sage/combinat/binary_tree
     sage/combinat/blob_algebra
@@ -145,6 +146,7 @@ Comprehensive Module List
     sage/combinat/k_regular_sequence
     sage/combinat/k_tableau
     sage/combinat/kazhdan_lusztig
+    sage/combinat/key_polynomial
     sage/combinat/knutson_tao_puzzles
     sage/combinat/matrices/all
     sage/combinat/matrices/dancing_links
@@ -289,6 +291,7 @@ Comprehensive Module List
     sage/combinat/rsk
     sage/combinat/schubert_polynomial
     sage/combinat/set_partition
+    sage/combinat/set_partition_iterator
     sage/combinat/set_partition_ordered
     sage/combinat/sf/all
     sage/combinat/sf/character
@@ -344,6 +347,7 @@ Comprehensive Module List
     sage/combinat/species/structure
     sage/combinat/species/subset_species
     sage/combinat/species/sum_species
+    sage/combinat/specht_module
     sage/combinat/subset
     sage/combinat/subsets_hereditary
     sage/combinat/subsets_pairwise
@@ -365,7 +369,7 @@ Comprehensive Module List
     sage/combinat/tutorial
     sage/combinat/vector_partition
     sage/combinat/words/abstract_word
-    sage/combinat/words
+    sage/combinat/words/all
     sage/combinat/words/alphabet
     sage/combinat/words/finite_word
     sage/combinat/words/infinite_word

@@ -19,8 +19,11 @@ Examples from :trac:`9908`::
     sage: sum(((2*I)^x/(x^3 + 1)*(1/4)^x), x, 0, oo)
     hypergeometric((1, 1, -1/2*I*sqrt(3) - 1/2, 1/2*I*sqrt(3) - 1/2),...
     (2, -1/2*I*sqrt(3) + 1/2, 1/2*I*sqrt(3) + 1/2), 1/2*I)
-    sage: sum((-1)^x/((2*x + 1)*factorial(2*x + 1)), x, 0, oo)
+    sage: res = sum((-1)^x/((2*x + 1)*factorial(2*x + 1)), x, 0, oo)
+    sage: res  # not tested - depends on maxima version
     hypergeometric((1/2,), (3/2, 3/2), -1/4)
+    sage: res in [hypergeometric((1/2,), (3/2, 3/2), -1/4), sin_integral(1)]
+    True
 
 Simplification (note that ``simplify_full`` does not yet call
 ``simplify_hypergeometric``)::
@@ -162,27 +165,27 @@ Series expansions of confluent hypergeometric functions::
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
+from functools import reduce
+
+from sage.arith.misc import binomial, factorial, rising_factorial
+from sage.calculus.functional import derivative
+from sage.functions.error import erf
+from sage.functions.gamma import gamma
+from sage.functions.hyperbolic import cosh, sinh
+from sage.functions.log import exp, log
+from sage.functions.other import sqrt, real_part
+from sage.libs.mpmath import utils as mpmath_utils
+from sage.misc.latex import latex
+from sage.misc.misc_c import prod
+from sage.rings.infinity import Infinity
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
-from sage.rings.infinity import Infinity
-from sage.arith.all import binomial, rising_factorial, factorial
+from sage.structure.element import get_coercion_model
 from sage.symbolic.constants import pi
+from sage.symbolic.expression import Expression
 from sage.symbolic.function import BuiltinFunction
 from sage.symbolic.ring import SR
-from sage.structure.element import get_coercion_model
-from sage.misc.latex import latex
-from sage.misc.misc_c import prod
-from sage.libs.mpmath import utils as mpmath_utils
-from sage.symbolic.expression import Expression
-from sage.calculus.functional import derivative
-from functools import reduce
-
-from .gamma import gamma
-from .other import sqrt, real_part
-from .log import exp, log
-from .hyperbolic import cosh, sinh
-from .error import erf
 
 
 def rational_param_as_tuple(x):

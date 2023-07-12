@@ -155,7 +155,8 @@ def find_root(f, a, b, xtol=10e-13, rtol=2.0**-50, maxiter=100, full_output=Fals
         b = max(s_1, s_2)
 
     import scipy.optimize
-    brentqRes = scipy.optimize.brentq(f, a, b,
+    g = lambda x: float(f(x))
+    brentqRes = scipy.optimize.brentq(g, a, b,
                                  full_output=full_output, xtol=xtol, rtol=rtol, maxiter=maxiter)
     # A check following :trac:`4942`, to ensure we actually found a root
     # Maybe should use a different tolerance here?
@@ -618,7 +619,7 @@ def linear_program(c, G, h, A=None, b=None, solver=None):
         sage: sol=linear_program(c,G,h)                                                # optional - cvxopt
         doctest:warning...
         DeprecationWarning: linear_program is deprecated; use MixedIntegerLinearProgram instead
-        See https://trac.sagemath.org/32226 for details.
+        See https://github.com/sagemath/sage/issues/32226 for details.
         sage: sol['x']                                                                 # optional - cvxopt
         (0.999..., 1.000...)
 
@@ -675,7 +676,7 @@ def linear_program(c, G, h, A=None, b=None, solver=None):
             'x': x, 's': s, 'y': y, 'z': z, 'status': status}
 
 
-def find_fit(data, model, initial_guess = None, parameters = None, variables = None, solution_dict = False):
+def find_fit(data, model, initial_guess=None, parameters=None, variables=None, solution_dict=False):
     r"""
     Finds numerical estimates for the parameters of the function model to
     give a best fit to data.
@@ -754,7 +755,7 @@ def find_fit(data, model, initial_guess = None, parameters = None, variables = N
 
     if not isinstance(data, numpy.ndarray):
         try:
-            data = numpy.array(data, dtype = float)
+            data = numpy.array(data, dtype=float)
         except (ValueError, TypeError):
             raise TypeError("data has to be a list of lists, a matrix, or a numpy array")
     elif data.dtype == object:
@@ -785,7 +786,7 @@ def find_fit(data, model, initial_guess = None, parameters = None, variables = N
 
     if not isinstance(initial_guess, numpy.ndarray):
         try:
-            initial_guess = numpy.array(initial_guess, dtype = float)
+            initial_guess = numpy.array(initial_guess, dtype=float)
         except (ValueError, TypeError):
             raise TypeError("initial_guess has to be a list, tuple, or numpy array")
     elif initial_guess.dtype == object:

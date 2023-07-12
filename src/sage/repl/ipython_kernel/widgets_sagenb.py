@@ -29,12 +29,12 @@ EXAMPLES::
 # ****************************************************************************
 
 from ipywidgets.widgets import (IntSlider, IntRangeSlider, FloatSlider,
-        FloatRangeSlider, SelectionSlider,
-        Checkbox, ToggleButtons, Dropdown)
+                                FloatRangeSlider, SelectionSlider,
+                                Checkbox, ToggleButtons, Dropdown)
 from .widgets import (TransformText, TransformTextarea,
-        TransformIntSlider, TransformIntRangeSlider,
-        TransformFloatSlider, TransformFloatRangeSlider,
-        EvalText, EvalTextarea, SageColorPicker, Grid)
+                      TransformIntSlider, TransformIntRangeSlider,
+                      TransformFloatSlider, TransformFloatRangeSlider,
+                      EvalText, EvalTextarea, SageColorPicker, Grid)
 from ipywidgets.widgets.interaction import _get_min_max_value
 from collections.abc import Iterable, Sequence
 from numbers import Integral, Rational, Real
@@ -43,9 +43,9 @@ from sage.structure.all import parent
 from sage.arith.srange import srange
 import sage.rings.abc
 
-Color = None
-
 from .widgets import HTMLText as text_control
+
+Color = None
 
 
 def input_box(default=None, label=None, type=None, width=80, height=1):
@@ -91,7 +91,7 @@ def input_box(default=None, label=None, type=None, width=80, height=1):
         9
 
     With a different ``type``, the text is evaluated and ``type`` is
-    called on it:
+    called on it::
 
         sage: w = input_box("4+5", type=float)
         sage: w
@@ -153,7 +153,7 @@ def input_box(default=None, label=None, type=None, width=80, height=1):
     if label is not None:
         kwds["description"] = label
     w = cls(**kwds)
-    w.layout.max_width = str(width+1) + "em"
+    w.layout.max_width = str(width + 1) + "em"
     return w
 
 
@@ -470,7 +470,7 @@ def selector(values, label=None, default=None, nrows=None, ncols=None, width=Non
         sage: selector([(1,"one"), (2,"two"), (3,"three")], buttons=True)
         ToggleButtons(options=(('one', 1), ('two', 2), ('three', 3)), value=1)
 
-    The values can be any kind of object:
+    The values can be any kind of object::
 
         sage: selector([sin(x^2), GF(29), EllipticCurve('37a1')])
         Dropdown(options=(sin(x^2), Finite Field of size 29, Elliptic Curve defined by y^2 + y = x^3 - x over Rational Field), value=sin(x^2))

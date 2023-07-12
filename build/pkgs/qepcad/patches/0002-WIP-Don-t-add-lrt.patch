@@ -18,7 +18,7 @@ index d184650..f13113b 100644
 +LIBS = -lreadline
 +
 +# On macOS, librt is not available,
-+# see https://trac.sagemath.org/ticket/28388
++# see https://github.com/sagemath/sage/issues/28388
 +#ifeq ($(findstring darwin,${OSTYPE}),)
 +#LIBS += -lrt
 +#endif
