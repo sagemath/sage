@@ -132,7 +132,7 @@ class MinorMatroid(Matroid):
         EXAMPLES::
 
             sage: from sage.matroids.advanced import *
-            sage: M = MinorMatroid(matroids.named_matroids.Fano(),
+            sage: M = MinorMatroid(matroids.named_matroids.Fano(),  # indirect doctest
             ....:                  contractions=set(), deletions=set(['g']))
             sage: M.is_isomorphic(matroids.Wheel(3))
             True
@@ -427,7 +427,7 @@ class MinorMatroid(Matroid):
             sage: M1 = MinorMatroid(M, set('ab'), set('f'))
             sage: M2 = MinorMatroid(M, set('af'), set('b'))
             sage: M3 = MinorMatroid(M, set('a'), set('f'))._minor(set('b'), set())
-            sage: M1 == M2
+            sage: M1 == M2  # indirect doctest
             False
             sage: M1.equals(M2)
             True
@@ -459,7 +459,7 @@ class MinorMatroid(Matroid):
             sage: M1 = MinorMatroid(M, set('ab'), set('f'))
             sage: M2 = MinorMatroid(M, set('af'), set('b'))
             sage: M3 = MinorMatroid(M, set('a'), set('f'))._minor(set('b'), set())
-            sage: M1 != M2
+            sage: M1 != M2  # indirect doctest
             True
             sage: M1.equals(M2)
             True
