@@ -1538,14 +1538,13 @@ class IncidenceStructure():
 
         Some examples of Witt designs that need the gap database::
 
-            sage: # optional - gap_packages
-            sage: BD = designs.WittDesign(9)
-            sage: BD.is_t_design(2,9,3,1)
+            sage: BD = designs.WittDesign(9)         # optional - gap_packages
+            sage: BD.is_t_design(2,9,3,1)            # optional - gap_packages
             True
-            sage: W12 = designs.WittDesign(12)
-            sage: W12.is_t_design(5,12,6,1)
+            sage: W12 = designs.WittDesign(12)       # optional - gap_packages
+            sage: W12.is_t_design(5,12,6,1)          # optional - gap_packages
             True
-            sage: W12.is_t_design(4)
+            sage: W12.is_t_design(4)                 # optional - gap_packages
             True
 
         Further examples::
