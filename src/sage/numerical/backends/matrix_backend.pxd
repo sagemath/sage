@@ -11,7 +11,7 @@ cdef class MatrixBackend(GenericBackend):
     cdef Matrix row_lower_bound
     cdef Matrix row_upper_bound
     cdef Matrix col_lower_bound
-    cdef Matrix col_upper_bound
+    cdef object col_upper_bound
 
     cdef list row_name_var
     cdef list col_name_var
@@ -20,4 +20,4 @@ cdef class MatrixBackend(GenericBackend):
     cdef list is_binary
     cdef list is_continuous
 
-    cdef Matrix _base_ring
+    cdef object _base_ring

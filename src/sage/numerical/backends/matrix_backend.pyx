@@ -18,7 +18,6 @@ other classes implementing solvers.
 #*****************************************************************************
 
 from sage.matrix.constructor import Matrix as matrix
-#from sage.matrix.constructor import Vector
 from .generic_backend cimport GenericBackend
 import numpy
 
@@ -160,7 +159,7 @@ cdef class MatrixBackend(GenericBackend):
         self.is_binary.append(binary)
         self.is_continuous.append(continuous)
         self.is_integer.append(integer)
-        return len(self.objective_function) - 1
+        return self.objective_function.dimensions()[0] - 1
 
     cpdef set_variable_type(self, int variable, int vtype):
         """
@@ -393,7 +392,7 @@ cdef class MatrixBackend(GenericBackend):
             2
         """
 
-        return len(self.objective_function)
+        return self.objective_function.dimensions()[0]
 
     cpdef int nrows(self):
         """
@@ -411,7 +410,7 @@ cdef class MatrixBackend(GenericBackend):
             sage: p.nrows()                                         
             2
         """
-        return len(self.row_upper_bound)
+        return self.row_upper_bound.dimensions()[0]
 
 
     cpdef bint is_maximization(self):
