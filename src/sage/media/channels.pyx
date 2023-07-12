@@ -23,7 +23,7 @@ def _separate_channels(_data, _width, _nchannels):
 
     elif width == 2:
         # a = 32768
-        for n in range(l):
+        for n in range(ell):
             # compute the value as an integer
             x = <int> (data[2*n]) + 256 * <int>(data[2 * n + 1])
             # x -= 65536*(x > a)
