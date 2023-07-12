@@ -1238,7 +1238,7 @@ class IncidenceStructure():
 
         TESTS::
 
-            sage: Hypergraph(5, [[1, 2, 3], [2, 3]]).is_berge_cyclic()                  # needs sage.modules
+            sage: Hypergraph(5, [[1, 2, 3], [2, 3]]).is_berge_cyclic()
             Traceback (most recent call last):
             ...
             TypeError: Berge cycles are defined for uniform hypergraphs only

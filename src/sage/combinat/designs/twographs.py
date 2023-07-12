@@ -218,7 +218,7 @@ def is_twograph(T):
 
     a non-regular 2-uniform hypergraph which is a two-graph::
 
-        sage: is_twograph(TwoGraph([[1,2,3],[1,2,4]]))                                  # needs sage.modules
+        sage: is_twograph(TwoGraph([[1,2,3],[1,2,4]]))
         True
 
     TESTS:

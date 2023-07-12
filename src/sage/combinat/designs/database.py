@@ -107,7 +107,7 @@ def MOLS_10_2():
 
     The design is available from the general constructor::
 
-        sage: designs.orthogonal_arrays.is_available(2,10)                              # needs sage.modules
+        sage: designs.orthogonal_arrays.is_available(2,10)
         True
     """
     from sage.matrix.constructor import Matrix
