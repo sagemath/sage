@@ -1,3 +1,4 @@
+# sage.doctest: optional - sage.libs.gap
 r"""
 Database of generalised quadrangles with spread
 

@@ -291,9 +291,9 @@ def twograph_descendant(G, v, name=None):
         sage: twograph_descendant(T8, v).is_strongly_regular(parameters=True)
         (27, 16, 10, 8)
         sage: p = graphs.PetersenGraph()
-        sage: twograph_descendant(p,5)
+        sage: twograph_descendant(p, 5)
         Graph on 9 vertices
-        sage: twograph_descendant(p,5,name=True)
+        sage: twograph_descendant(p, 5, name=True)
         descendant of Petersen graph at 5: Graph on 9 vertices
     """
     G = G.seidel_switching(G.neighbors(v),inplace=False)

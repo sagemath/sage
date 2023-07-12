@@ -1547,6 +1547,7 @@ def relative_difference_set_from_homomorphism(q, N, d, check=True, return_group=
         return G2, second_diff_set
     return second_diff_set
 
+
 def is_relative_difference_set(R, G, H, params, verbose=False):
     r"""
     Check if ``R`` is a difference set of ``G`` relative to ``H``, with the given parameters.
