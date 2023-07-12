@@ -1491,10 +1491,10 @@ def relative_difference_set_from_homomorphism(q, N, d, check=True, return_group=
     EXAMPLES::
 
         sage: from sage.combinat.designs.difference_family import relative_difference_set_from_homomorphism
-        sage: relative_difference_set_from_homomorphism(7, 2, 3)                        # needs sage.modules sage.rings.finite_rings
+        sage: relative_difference_set_from_homomorphism(7, 2, 3)        # random        # needs sage.modules sage.rings.finite_rings
         [(0), (3), (4), (2), (13), (7), (14)]
-        sage: relative_difference_set_from_homomorphism(9, 2, 4, check=False,           # needs sage.modules sage.rings.finite_rings
-        ....:                                           return_group=True)
+        sage: relative_difference_set_from_homomorphism(9, 2, 4,        # random        # needs sage.modules sage.rings.finite_rings
+        ....:                                           check=False, return_group=True)
         (Additive abelian group isomorphic to Z/80,
          [(0), (4), (6), (13), (7), (12), (15), (8), (9)])
         sage: relative_difference_set_from_homomorphism(9, 2, 5)                        # needs sage.modules sage.rings.finite_rings
