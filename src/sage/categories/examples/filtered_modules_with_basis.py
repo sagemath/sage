@@ -34,7 +34,7 @@ class FilteredPartitionModule(CombinatorialFreeModule):
 
       ::
 
-          sage: A = ModulesWithBasis(QQ).Filtered().example()
+          sage: A = ModulesWithBasis(QQ).Filtered().example()                           # needs sage.modules
 
     - If the algebra is called ``A``, then its basis function is
       stored as ``A.basis``.  Thus the function can be used to
@@ -85,7 +85,7 @@ class FilteredPartitionModule(CombinatorialFreeModule):
         """
         EXAMPLES::
 
-            sage: A = ModulesWithBasis(QQ).Filtered().example(); A
+            sage: A = ModulesWithBasis(QQ).Filtered().example(); A                      # needs sage.modules
             An example of a filtered module with basis: the free module on partitions over Rational Field
             sage: TestSuite(A).run()
         """
@@ -111,7 +111,7 @@ class FilteredPartitionModule(CombinatorialFreeModule):
 
         EXAMPLES::
 
-            sage: A = ModulesWithBasis(QQ).Filtered().example()
+            sage: A = ModulesWithBasis(QQ).Filtered().example()                         # needs sage.modules
             sage: A.degree_on_basis(Partition((2,1)))
             3
             sage: A.degree_on_basis(Partition((4,2,1,1,1,1)))
@@ -127,7 +127,7 @@ class FilteredPartitionModule(CombinatorialFreeModule):
 
         EXAMPLES::
 
-            sage: ModulesWithBasis(QQ).Filtered().example()  # indirect doctest
+            sage: ModulesWithBasis(QQ).Filtered().example()  # indirect doctest         # needs sage.modules
             An example of a filtered module with basis: the free module on partitions over Rational Field
         """
         return "An example of a filtered module with basis: the free module on partitions over %s" % self.base_ring()
@@ -142,7 +142,7 @@ class FilteredPartitionModule(CombinatorialFreeModule):
 
         EXAMPLES::
 
-            sage: A = ModulesWithBasis(QQ).Filtered().example()
+            sage: A = ModulesWithBasis(QQ).Filtered().example()                         # needs sage.modules
             sage: A._repr_term(Partition((4,2,1)))
             'P[4, 2, 1]'
         """

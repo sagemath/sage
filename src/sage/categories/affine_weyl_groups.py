@@ -34,9 +34,9 @@ class AffineWeylGroups(Category_singleton):
 
         sage: C.example()
         NotImplemented
-        sage: W = WeylGroup(["A", 4, 1]); W                                             # optional - sage.combinat sage.groups
+        sage: W = WeylGroup(["A", 4, 1]); W                                             # needs sage.combinat sage.groups
         Weyl Group of type ['A', 4, 1] (as a matrix group acting on the root space)
-        sage: W.category()                                                              # optional - sage.combinat sage.groups
+        sage: W.category()                                                              # needs sage.combinat sage.groups
         Category of irreducible affine weyl groups
 
     TESTS::
@@ -81,8 +81,8 @@ class AffineWeylGroups(Category_singleton):
 
             EXAMPLES::
 
-                sage: W = WeylGroup(['A', 3, 1])                                        # optional - sage.combinat sage.groups
-                sage: W.special_node()                                                  # optional - sage.combinat sage.groups
+                sage: W = WeylGroup(['A', 3, 1])                                        # needs sage.combinat sage.groups
+                sage: W.special_node()                                                  # needs sage.combinat sage.groups
                 0
             """
             return self.cartan_type().special_node()
@@ -95,8 +95,8 @@ class AffineWeylGroups(Category_singleton):
 
             EXAMPLES::
 
-                sage: W = WeylGroup(['A', 3, 1])                                        # optional - sage.combinat sage.groups
-                sage: [x.reduced_word()                                                 # optional - sage.combinat sage.groups
+                sage: W = WeylGroup(['A', 3, 1])                                        # needs sage.combinat sage.groups
+                sage: [x.reduced_word()                                                 # needs sage.combinat sage.groups
                 ....:  for x in W.affine_grassmannian_elements_of_given_length(3)]
                 [[2, 1, 0], [3, 1, 0], [2, 3, 0]]
 
@@ -137,14 +137,15 @@ class AffineWeylGroups(Category_singleton):
 
             EXAMPLES::
 
-                sage: W = WeylGroup(['A', 3, 1])                                        # optional - sage.combinat sage.groups
-                sage: w = W.from_reduced_word([2,1,0])                                  # optional - sage.combinat sage.groups
-                sage: w.is_affine_grassmannian()                                        # optional - sage.combinat sage.groups
+                sage: # needs sage.combinat sage.groups
+                sage: W = WeylGroup(['A', 3, 1])
+                sage: w = W.from_reduced_word([2,1,0])
+                sage: w.is_affine_grassmannian()
                 True
-                sage: w = W.from_reduced_word([2,0])                                    # optional - sage.combinat sage.groups
-                sage: w.is_affine_grassmannian()                                        # optional - sage.combinat sage.groups
+                sage: w = W.from_reduced_word([2,0])
+                sage: w.is_affine_grassmannian()
                 False
-                sage: W.one().is_affine_grassmannian()                                  # optional - sage.combinat sage.groups
+                sage: W.one().is_affine_grassmannian()
                 True
             """
             D = self.descents()
@@ -169,17 +170,18 @@ class AffineWeylGroups(Category_singleton):
 
             EXAMPLES::
 
-                sage: W = WeylGroup(['A', 2, 1])                                        # optional - sage.combinat sage.groups
-                sage: w = W.from_reduced_word([0,2,1,0])                                # optional - sage.combinat sage.groups
-                sage: la = w.affine_grassmannian_to_core(); la                          # optional - sage.combinat sage.groups
+                sage: # needs sage.combinat sage.groups
+                sage: W = WeylGroup(['A', 2, 1])
+                sage: w = W.from_reduced_word([0,2,1,0])
+                sage: la = w.affine_grassmannian_to_core(); la
                 [4, 2]
-                sage: type(la)                                                          # optional - sage.combinat sage.groups
+                sage: type(la)
                 <class 'sage.combinat.core.Cores_length_with_category.element_class'>
-                sage: la.to_grassmannian() == w                                         # optional - sage.combinat sage.groups
+                sage: la.to_grassmannian() == w
                 True
 
-                sage: w = W.from_reduced_word([0,2,1])                                  # optional - sage.combinat sage.groups
-                sage: w.affine_grassmannian_to_core()                                   # optional - sage.combinat sage.groups
+                sage: w = W.from_reduced_word([0,2,1])                                  # needs sage.combinat sage.groups
+                sage: w.affine_grassmannian_to_core()                                   # needs sage.combinat sage.groups
                 Traceback (most recent call last):
                 ...
                 ValueError: this only works on type 'A' affine Grassmannian elements
@@ -215,11 +217,11 @@ class AffineWeylGroups(Category_singleton):
             EXAMPLES::
 
                 sage: k = 2
-                sage: W = WeylGroup(['A', k, 1])                                        # optional - sage.combinat sage.groups
-                sage: w = W.from_reduced_word([0,2,1,0])                                # optional - sage.combinat sage.groups
-                sage: la = w.affine_grassmannian_to_partition(); la                     # optional - sage.combinat sage.groups
+                sage: W = WeylGroup(['A', k, 1])                                        # needs sage.combinat sage.groups
+                sage: w = W.from_reduced_word([0,2,1,0])                                # needs sage.combinat sage.groups
+                sage: la = w.affine_grassmannian_to_partition(); la                     # needs sage.combinat sage.groups
                 [2, 2]
-                sage: la.from_kbounded_to_grassmannian(k) == w                          # optional - sage.combinat sage.groups
+                sage: la.from_kbounded_to_grassmannian(k) == w                          # needs sage.combinat sage.groups
                 True
             """
             return self.affine_grassmannian_to_core().to_bounded_partition()

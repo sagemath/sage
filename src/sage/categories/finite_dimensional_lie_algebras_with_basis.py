@@ -163,10 +163,11 @@ class FiniteDimensionalLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
 
             EXAMPLES::
 
-                sage: G = SymmetricGroup(3)                                             # needs sage.groups
-                sage: S = GroupAlgebra(G, QQ)                                           # needs sage.groups sage.modules
-                sage: L = LieAlgebra(associative=S)                                     # needs sage.groups sage.modules
-                sage: [L._basis_key_inverse[k] for k in L._basis_ordering]              # needs sage.groups sage.modules
+                sage: # needs sage.groups
+                sage: G = SymmetricGroup(3)
+                sage: S = GroupAlgebra(G, QQ)                                           # needs sage.modules
+                sage: L = LieAlgebra(associative=S)                                     # needs sage.modules
+                sage: [L._basis_key_inverse[k] for k in L._basis_ordering]              # needs sage.modules
                 [0, 1, 2, 3, 4, 5]
             """
             return {k: i for i,k in enumerate(self._basis_ordering)}
@@ -186,7 +187,7 @@ class FiniteDimensionalLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
             ::
 
                 sage: L = lie_algebras.sl(QQ, 2)                                        # needs sage.groups sage.modules
-                sage: def neg_key(x):                                                   # needs sage.groups sage.modules
+                sage: def neg_key(x):
                 ....:     return -L.basis().keys().index(x)
                 sage: PBW = L.pbw_basis(basis_key=neg_key)                              # needs sage.groups sage.modules
                 sage: prod(PBW.gens())  # indirect doctest                              # needs sage.groups sage.modules
@@ -196,15 +197,16 @@ class FiniteDimensionalLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
 
             Check that :trac:`23266` is fixed::
 
-                sage: sl2 = lie_algebras.sl(QQ, 2, 'matrix')                            # needs sage.groups sage.modules
-                sage: sl2.indices()                                                     # needs sage.groups sage.modules
+                sage: # needs sage.groups sage.modules
+                sage: sl2 = lie_algebras.sl(QQ, 2, 'matrix')
+                sage: sl2.indices()
                 {'e1', 'f1', 'h1'}
-                sage: type(sl2.basis().keys())                                          # needs sage.groups sage.modules
+                sage: type(sl2.basis().keys())
                 <class 'list'>
-                sage: Usl2 = sl2.pbw_basis()                                            # needs sage.groups sage.modules
-                sage: Usl2._basis_key(2)                                                # needs sage.groups sage.modules
+                sage: Usl2 = sl2.pbw_basis()
+                sage: Usl2._basis_key(2)
                 2
-                sage: Usl2._basis_key(3)                                                # needs sage.groups sage.modules
+                sage: Usl2._basis_key(3)
                 Traceback (most recent call last):
                 ...
                 KeyError: 3
@@ -358,10 +360,11 @@ class FiniteDimensionalLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
 
             ::
 
-                sage: G = SymmetricGroup(3)                                             # needs sage.groups
-                sage: S = GroupAlgebra(G, QQ)                                           # needs sage.groups sage.modules
-                sage: L = LieAlgebra(associative=S)                                     # needs sage.combinat sage.groups sage.modules
-                sage: L.structure_coefficients()                                        # needs sage.combinat sage.groups sage.modules
+                sage: # needs sage.groups
+                sage: G = SymmetricGroup(3)
+                sage: S = GroupAlgebra(G, QQ)                                           # needs sage.modules
+                sage: L = LieAlgebra(associative=S)                                     # needs sage.combinat sage.modules
+                sage: L.structure_coefficients()                                        # needs sage.combinat sage.modules
                 Finite family {((2,3), (1,2)): (1,2,3) - (1,3,2),
                                ((2,3), (1,3)): -(1,2,3) + (1,3,2),
                                ((1,2,3), (2,3)): -(1,2) + (1,3),

@@ -473,16 +473,17 @@ class AdditiveMagmas(Category_singleton):
                 r"""
                 EXAMPLES::
 
-                    sage: G5 = GF(5); G8 = GF(4, 'x'); GG = G5.cartesian_product(G8)    # needs sage.rings.finite_rings
-                    sage: e = GG((G5(1), G8.primitive_element())); e                    # needs sage.rings.finite_rings
+                    sage: # needs sage.rings.finite_rings
+                    sage: G5 = GF(5); G8 = GF(4, 'x'); GG = G5.cartesian_product(G8)
+                    sage: e = GG((G5(1), G8.primitive_element())); e
                     (1, x)
-                    sage: e + e                                                         # needs sage.rings.finite_rings
+                    sage: e + e
                     (2, 0)
-                    sage: e = groups.misc.AdditiveCyclic(8)                             # needs sage.rings.finite_rings
-                    sage: x = e.cartesian_product(e)((e(1), e(2)))                      # needs sage.rings.finite_rings
-                    sage: x                                                             # needs sage.rings.finite_rings
+                    sage: e = groups.misc.AdditiveCyclic(8)
+                    sage: x = e.cartesian_product(e)((e(1), e(2)))
+                    sage: x
                     (1, 2)
-                    sage: 4 * x                                                         # needs sage.rings.finite_rings
+                    sage: 4 * x
                     (4, 0)
                 """
                 return self.parent()._cartesian_product_of_elements(
@@ -841,14 +842,15 @@ class AdditiveMagmas(Category_singleton):
 
                 TESTS::
 
-                    sage: F = CombinatorialFreeModule(ZZ, ['a', 'b'])                   # needs sage.modules
-                    sage: a, b = F.gens()                                               # needs sage.modules
-                    sage: FF = cartesian_product((F, F))                                # needs sage.modules
-                    sage: x = cartesian_product([a, 2*a-3*b]); x                        # needs sage.modules
+                    sage: # needs sage.modules
+                    sage: F = CombinatorialFreeModule(ZZ, ['a', 'b'])
+                    sage: a, b = F.gens()
+                    sage: FF = cartesian_product((F, F))
+                    sage: x = cartesian_product([a, 2*a-3*b]); x
                     B[(0, 'a')] + 2*B[(1, 'a')] - 3*B[(1, 'b')]
-                    sage: x.parent() is FF                                              # needs sage.modules
+                    sage: x.parent() is FF
                     True
-                    sage: -x                                                            # needs sage.modules
+                    sage: -x
                     -B[(0, 'a')] - 2*B[(1, 'a')] + 3*B[(1, 'b')]
                 """
                 return self._neg_()

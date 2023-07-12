@@ -35,7 +35,7 @@ class GradedPartitionModule(CombinatorialFreeModule):
 
       ::
 
-          sage: A = GradedModulesWithBasis(QQ).example()
+          sage: A = GradedModulesWithBasis(QQ).example()                                # needs sage.modules
 
     - A basis function - this module is graded by the non-negative
       integers, so there is a function defined in this module,
@@ -99,7 +99,7 @@ class GradedPartitionModule(CombinatorialFreeModule):
         """
         EXAMPLES::
 
-            sage: A = GradedModulesWithBasis(QQ).example(); A
+            sage: A = GradedModulesWithBasis(QQ).example(); A                           # needs sage.modules
             An example of a graded module with basis: the free module on partitions over Rational Field
             sage: TestSuite(A).run()
         """
@@ -125,7 +125,7 @@ class GradedPartitionModule(CombinatorialFreeModule):
 
         EXAMPLES::
 
-            sage: A = GradedModulesWithBasis(QQ).example()
+            sage: A = GradedModulesWithBasis(QQ).example()                              # needs sage.modules
             sage: A.degree_on_basis(Partition((2,1)))
             3
             sage: A.degree_on_basis(Partition((4,2,1,1,1,1)))
@@ -141,7 +141,7 @@ class GradedPartitionModule(CombinatorialFreeModule):
 
         EXAMPLES::
 
-            sage: GradedModulesWithBasis(QQ).example()  # indirect doctest
+            sage: GradedModulesWithBasis(QQ).example()  # indirect doctest              # needs sage.modules
             An example of a graded module with basis: the free module on partitions over Rational Field
         """
         return "An example of a graded module with basis: the free module on partitions over %s" % self.base_ring()
@@ -156,7 +156,7 @@ class GradedPartitionModule(CombinatorialFreeModule):
 
         EXAMPLES::
 
-            sage: A = GradedModulesWithBasis(QQ).example()
+            sage: A = GradedModulesWithBasis(QQ).example()                              # needs sage.modules
             sage: A._repr_term(Partition((4,2,1)))
             'P[4, 2, 1]'
         """

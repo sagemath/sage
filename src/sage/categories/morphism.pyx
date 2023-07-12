@@ -76,18 +76,18 @@ cdef class Morphism(Map):
 
         TESTS::
 
-            sage: K = CyclotomicField(12)                                               # optional - sage.rings.number_field
-            sage: L = CyclotomicField(132)                                              # optional - sage.rings.number_field
-            sage: phi = L._internal_coerce_map_from(K); phi                             # optional - sage.rings.number_field
+            sage: K = CyclotomicField(12)                                               # needs sage.rings.number_field
+            sage: L = CyclotomicField(132)                                              # needs sage.rings.number_field
+            sage: phi = L._internal_coerce_map_from(K); phi                             # needs sage.rings.number_field
             (map internal to coercion system -- copy before use)
             Generic morphism:
               From: Cyclotomic Field of order 12 and degree 4
               To:   Cyclotomic Field of order 132 and degree 40
 
-            sage: del K                                                                 # optional - sage.rings.number_field
+            sage: del K                                                                 # needs sage.rings.number_field
             sage: import gc
             sage: _ = gc.collect()
-            sage: phi                                                                   # optional - sage.rings.number_field
+            sage: phi                                                                   # needs sage.rings.number_field
             Defunct morphism
         """
         D = self.domain()
@@ -182,10 +182,11 @@ cdef class Morphism(Map):
              and left modules over (euclidean domains
              and infinite enumerated sets and metric spaces)
 
-            sage: K = CyclotomicField(12)                                               # optional - sage.rings.number_field
-            sage: L = CyclotomicField(132)                                              # optional - sage.rings.number_field
-            sage: phi = L._internal_coerce_map_from(K)                                  # optional - sage.rings.number_field
-            sage: phi.category()                                                        # optional - sage.rings.number_field
+            sage: # needs sage.rings.number_field
+            sage: K = CyclotomicField(12)
+            sage: L = CyclotomicField(132)
+            sage: phi = L._internal_coerce_map_from(K)
+            sage: phi.category()
             Category of homsets of number fields
         """
         # Should it be Category of elements of ...?
@@ -202,10 +203,11 @@ cdef class Morphism(Map):
             sage: f.is_endomorphism()
             True
 
-            sage: K = CyclotomicField(12)                                               # optional - sage.rings.number_field
-            sage: L = CyclotomicField(132)                                              # optional - sage.rings.number_field
-            sage: phi = L._internal_coerce_map_from(K)                                  # optional - sage.rings.number_field
-            sage: phi.is_endomorphism()                                                 # optional - sage.rings.number_field
+            sage: # needs sage.rings.number_field
+            sage: K = CyclotomicField(12)
+            sage: L = CyclotomicField(132)
+            sage: phi = L._internal_coerce_map_from(K)
+            sage: phi.is_endomorphism()
             False
         """
         return self.parent().is_endomorphism_set()
@@ -304,14 +306,15 @@ cdef class Morphism(Map):
         Let us declare a conversion from the symmetric group to `\ZZ`
         through the sign map::
 
-            sage: S = SymmetricGroup(4)                                                 # optional - sage.groups
-            sage: phi = Hom(S, ZZ)(lambda x: ZZ(x.sign()))                              # optional - sage.groups
-            sage: x = S.an_element(); x                                                 # optional - sage.groups
+            sage: # needs sage.groups
+            sage: S = SymmetricGroup(4)
+            sage: phi = Hom(S, ZZ)(lambda x: ZZ(x.sign()))
+            sage: x = S.an_element(); x
             (2,3,4)
-            sage: phi(x)                                                                # optional - sage.groups
+            sage: phi(x)
             1
-            sage: phi.register_as_conversion()                                          # optional - sage.groups
-            sage: ZZ(x)                                                                 # optional - sage.groups
+            sage: phi.register_as_conversion()
+            sage: ZZ(x)
             1
         """
         self._codomain.register_conversion(self)
@@ -350,11 +353,12 @@ cdef class Morphism(Map):
 
         TESTS::
 
+            sage: # needs sage.combinat
             sage: from sage.categories.morphism import SetMorphism
-            sage: E = End(Partitions(5))                                                # optional - sage.combinat
-            sage: f = E.identity()                                                      # optional - sage.combinat
-            sage: g = SetMorphism(E, lambda x: x)                                       # optional - sage.combinat
-            sage: f == g                                                                # optional - sage.combinat
+            sage: E = End(Partitions(5))
+            sage: f = E.identity()
+            sage: g = SetMorphism(E, lambda x: x)
+            sage: f == g
             Traceback (most recent call last):
             ...
             NotImplementedError: unable to compare morphisms of type <... 'sage.categories.morphism.IdentityMorphism'>
@@ -362,16 +366,16 @@ cdef class Morphism(Map):
 
         We check that :trac:`28617` is fixed::
 
-            sage: FF = GF(2^20)                                                         # optional - sage.libs.combinat
-            sage: f = FF.frobenius_endomorphism()                                       # optional - sage.libs.combinat
-            sage: f == FF.frobenius_endomorphism()                                      # optional - sage.libs.combinat
+            sage: FF = GF(2^20)                                                         # needs sage.libs.combinat
+            sage: f = FF.frobenius_endomorphism()                                       # needs sage.libs.combinat
+            sage: f == FF.frobenius_endomorphism()                                      # needs sage.libs.combinat
             True
 
         and that :trac:`29632` is fixed::
 
-            sage: R.<x,y> = QuadraticField(-1)[]                                        # optional - sage.rings.number_field
-            sage: f = R.hom(R.gens(), R)                                                # optional - sage.rings.number_field
-            sage: f.is_identity()                                                       # optional - sage.rings.number_field
+            sage: R.<x,y> = QuadraticField(-1)[]                                        # needs sage.rings.number_field
+            sage: f = R.hom(R.gens(), R)                                                # needs sage.rings.number_field
+            sage: f.is_identity()                                                       # needs sage.rings.number_field
             True
         """
         if self is other:
@@ -507,17 +511,18 @@ cdef class IdentityMorphism(Morphism):
 
         EXAMPLES::
 
-            sage: E = End(Partitions(5))                                                # optional - sage.combinat
-            sage: E.identity().is_identity()                                            # optional - sage.combinat
+            sage: E = End(Partitions(5))                                                # needs sage.combinat
+            sage: E.identity().is_identity()                                            # needs sage.combinat
             True
 
         Check that :trac:`15478` is fixed::
 
-            sage: K.<z> = GF(4)                                                         # optional - sage.rings.finite_rings
-            sage: phi = End(K)([z^2])                                                   # optional - sage.rings.finite_rings
-            sage: R.<t> = K[]                                                           # optional - sage.rings.finite_rings
-            sage: psi = End(R)(phi)                                                     # optional - sage.rings.finite_rings
-            sage: psi.is_identity()                                                     # optional - sage.rings.finite_rings
+            sage: # needs sage.rings.finite_rings
+            sage: K.<z> = GF(4)
+            sage: phi = End(K)([z^2])
+            sage: R.<t> = K[]
+            sage: psi = End(R)(phi)
+            sage: psi.is_identity()
             False
         """
         return True

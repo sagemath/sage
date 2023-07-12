@@ -111,7 +111,7 @@ class FiniteComplexReflectionGroups(CategoryWithAxiom):
 
                 sage: CoxeterGroups().Finite().is_subcategory(C)
                 True
-                sage: SymmetricGroup(3) in C                                            # optional - sage.groups
+                sage: SymmetricGroup(3) in C                                            # needs sage.groups
                 True
 
             .. NOTE::
@@ -126,7 +126,7 @@ class FiniteComplexReflectionGroups(CategoryWithAxiom):
 
                 sage: TestSuite(W).run()                   # optional - gap3
                 sage: C = ComplexReflectionGroups().Finite().WellGenerated()
-                sage: TestSuite(C).run()                   # optional - gap3
+                sage: TestSuite(C).run()
                 sage: CoxeterGroups().Finite().WellGenerated.__module__
                 'sage.categories.finite_complex_reflection_groups'
 
@@ -149,12 +149,12 @@ class FiniteComplexReflectionGroups(CategoryWithAxiom):
 
             EXAMPLES::
 
-                sage: W = ColoredPermutations(1,4)                                      # optional - sage.combinat sage.groups
-                sage: W.degrees()                                                       # optional - sage.combinat sage.groups
+                sage: W = ColoredPermutations(1,4)                                      # needs sage.combinat
+                sage: W.degrees()                                                       # needs sage.combinat
                 (2, 3, 4)
 
-                sage: W = ColoredPermutations(3,3)                                      # optional - sage.combinat sage.groups
-                sage: W.degrees()                                                       # optional - sage.combinat sage.groups
+                sage: W = ColoredPermutations(3,3)                                      # needs sage.combinat
+                sage: W.degrees()                                                       # needs sage.combinat
                 (3, 6, 9)
 
                 sage: W = ReflectionGroup(31)              # optional - gap3
@@ -171,12 +171,12 @@ class FiniteComplexReflectionGroups(CategoryWithAxiom):
 
             EXAMPLES::
 
-                sage: W = ColoredPermutations(1,4)                                      # optional - sage.combinat sage.groups
-                sage: W.codegrees()                                                     # optional - sage.combinat sage.groups
+                sage: W = ColoredPermutations(1,4)                                      # needs sage.combinat
+                sage: W.codegrees()                                                     # needs sage.combinat
                 (2, 1, 0)
 
-                sage: W = ColoredPermutations(3,3)                                      # optional - sage.combinat sage.groups
-                sage: W.codegrees()                                                     # optional - sage.combinat sage.groups
+                sage: W = ColoredPermutations(3,3)                                      # needs sage.combinat
+                sage: W.codegrees()                                                     # needs sage.combinat
                 (6, 3, 0)
 
                 sage: W = ReflectionGroup(31)              # optional - gap3
@@ -199,27 +199,27 @@ class FiniteComplexReflectionGroups(CategoryWithAxiom):
                 Reducible real reflection group of rank 4 and type A2 x B2
                 sage: W._test_degrees()                    # optional - gap3
 
-                sage: W = SymmetricGroup(5)                                             # optional - sage.groups
-                sage: W._test_degrees()                                                 # optional - sage.groups
+                sage: W = SymmetricGroup(5)                                             # needs sage.groups
+                sage: W._test_degrees()                                                 # needs sage.groups
 
             We now break the implementation of W.degrees and check that this is caught::
 
-                sage: W.degrees = lambda: (1/1,5)                                       # optional - sage.groups
-                sage: W._test_degrees()                                                 # optional - sage.groups
+                sage: W.degrees = lambda: (1/1,5)                                       # needs sage.groups
+                sage: W._test_degrees()                                                 # needs sage.groups
                 Traceback (most recent call last):
                 ...
                 AssertionError: the degrees should be integers
 
-                sage: W.degrees = lambda: (1,2,3)                                       # optional - sage.groups
-                sage: W._test_degrees()                                                 # optional - sage.groups
+                sage: W.degrees = lambda: (1,2,3)                                       # needs sage.groups
+                sage: W._test_degrees()                                                 # needs sage.groups
                 Traceback (most recent call last):
                 ...
                 AssertionError: the degrees should be larger than 2
 
             We restore W to its normal state::
 
-                sage: del W.degrees                                                     # optional - sage.groups
-                sage: W._test_degrees()                                                 # optional - sage.groups
+                sage: del W.degrees                                                     # needs sage.groups
+                sage: W._test_degrees()                                                 # needs sage.groups
 
             See the documentation for :class:`TestSuite` for more information.
             """
@@ -254,27 +254,27 @@ class FiniteComplexReflectionGroups(CategoryWithAxiom):
                 Reducible real reflection group of rank 4 and type A2 x B2
                 sage: W._test_codegrees()                  # optional - gap3
 
-                sage: W = SymmetricGroup(5)                                             # optional - sage.groups
-                sage: W._test_codegrees()                                               # optional - sage.groups
+                sage: W = SymmetricGroup(5)                                             # needs sage.groups
+                sage: W._test_codegrees()                                               # needs sage.groups
 
             We now break the implementation of W.degrees and check that this is caught::
 
-                sage: W.codegrees = lambda: (1/1,5)                                     # optional - sage.groups
-                sage: W._test_codegrees()                                               # optional - sage.groups
+                sage: W.codegrees = lambda: (1/1,5)                                     # needs sage.groups
+                sage: W._test_codegrees()                                               # needs sage.groups
                 Traceback (most recent call last):
                 ...
                 AssertionError: the codegrees should be integers
 
-                sage: W.codegrees = lambda: (2,1,-1)                                    # optional - sage.groups
-                sage: W._test_codegrees()                                               # optional - sage.groups
+                sage: W.codegrees = lambda: (2,1,-1)                                    # needs sage.groups
+                sage: W._test_codegrees()                                               # needs sage.groups
                 Traceback (most recent call last):
                 ...
                 AssertionError: the codegrees should be nonnegative
 
             We restore W to its normal state::
 
-                sage: del W.codegrees                                                   # optional - sage.groups
-                sage: W._test_codegrees()                                               # optional - sage.groups
+                sage: del W.codegrees                                                   # needs sage.groups
+                sage: W._test_codegrees()                                               # needs sage.groups
 
             See the documentation for :class:`TestSuite` for more information.
             """
@@ -311,14 +311,14 @@ class FiniteComplexReflectionGroups(CategoryWithAxiom):
 
             EXAMPLES::
 
-                sage: W = ColoredPermutations(1,3)                                      # optional - sage.combinat sage.groups
-                sage: W.number_of_reflection_hyperplanes()                              # optional - sage.combinat sage.groups
+                sage: W = ColoredPermutations(1,3)                                      # needs sage.combinat
+                sage: W.number_of_reflection_hyperplanes()                              # needs sage.combinat
                 3
-                sage: W = ColoredPermutations(2,3)                                      # optional - sage.combinat sage.groups
-                sage: W.number_of_reflection_hyperplanes()                              # optional - sage.combinat sage.groups
+                sage: W = ColoredPermutations(2,3)                                      # needs sage.combinat
+                sage: W.number_of_reflection_hyperplanes()                              # needs sage.combinat
                 9
-                sage: W = ColoredPermutations(4,3)                                      # optional - sage.combinat sage.groups
-                sage: W.number_of_reflection_hyperplanes()                              # optional - sage.combinat sage.groups
+                sage: W = ColoredPermutations(4,3)                                      # needs sage.combinat
+                sage: W.number_of_reflection_hyperplanes()                              # needs sage.combinat
                 15
                 sage: W = ReflectionGroup((4,2,3))          # optional - gap3
                 sage: W.number_of_reflection_hyperplanes()  # optional - gap3
@@ -342,21 +342,22 @@ class FiniteComplexReflectionGroups(CategoryWithAxiom):
 
             EXAMPLES::
 
-                sage: [SymmetricGroup(i).number_of_reflections()                        # optional - sage.groups
+                sage: [SymmetricGroup(i).number_of_reflections()                        # needs sage.groups
                 ....:  for i in range(int(8))]
                 [0, 0, 1, 3, 6, 10, 15, 21]
 
-                sage: W = ColoredPermutations(1,3)                                      # optional - sage.combinat sage.groups
-                sage: W.number_of_reflections()                                         # optional - sage.combinat sage.groups
+                sage: # needs sage.combinat sage.groups
+                sage: W = ColoredPermutations(1,3)
+                sage: W.number_of_reflections()
                 3
-                sage: W = ColoredPermutations(2,3)                                      # optional - sage.combinat sage.groups
-                sage: W.number_of_reflections()                                         # optional - sage.combinat sage.groups
+                sage: W = ColoredPermutations(2,3)
+                sage: W.number_of_reflections()
                 9
-                sage: W = ColoredPermutations(4,3)                                      # optional - sage.combinat sage.groups
-                sage: W.number_of_reflections()                                         # optional - sage.combinat sage.groups
+                sage: W = ColoredPermutations(4,3)
+                sage: W.number_of_reflections()
                 21
-                sage: W = ReflectionGroup((4,2,3))         # optional - gap3            # optional - sage.combinat sage.groups
-                sage: W.number_of_reflections()            # optional - gap3            # optional - sage.combinat sage.groups
+                sage: W = ReflectionGroup((4,2,3))      # optional - gap3
+                sage: W.number_of_reflections()         # optional - gap3
                 15
             """
             from sage.rings.integer_ring import ZZ
@@ -377,17 +378,18 @@ class FiniteComplexReflectionGroups(CategoryWithAxiom):
 
             EXAMPLES::
 
-                sage: W = ColoredPermutations(1,3)                                      # optional - sage.combinat sage.groups
-                sage: W.rank()                                                          # optional - sage.combinat sage.groups
+                sage: # needs sage.combinat sage.groups
+                sage: W = ColoredPermutations(1,3)
+                sage: W.rank()
                 2
-                sage: W = ColoredPermutations(2,3)                                      # optional - sage.combinat sage.groups
-                sage: W.rank()                                                          # optional - sage.combinat sage.groups
+                sage: W = ColoredPermutations(2,3)
+                sage: W.rank()
                 3
-                sage: W = ColoredPermutations(4,3)                                      # optional - sage.combinat sage.groups
-                sage: W.rank()                                                          # optional - sage.combinat sage.groups
+                sage: W = ColoredPermutations(4,3)
+                sage: W.rank()
                 3
-                sage: W = ReflectionGroup((4,2,3))         # optional - gap3            # optional - sage.combinat sage.groups
-                sage: W.rank()                             # optional - gap3            # optional - sage.combinat sage.groups
+                sage: W = ReflectionGroup((4,2,3))      # optional - gap3
+                sage: W.rank()                  # optional - gap3
                 3
             """
             return len(self.degrees())
@@ -401,17 +403,18 @@ class FiniteComplexReflectionGroups(CategoryWithAxiom):
 
             EXAMPLES::
 
-                sage: W = ColoredPermutations(1,3)                                      # optional - sage.combinat sage.groups
-                sage: W.cardinality()                                                   # optional - sage.combinat sage.groups
+                sage: # needs sage.combinat sage.groups
+                sage: W = ColoredPermutations(1,3)
+                sage: W.cardinality()
                 6
-                sage: W = ColoredPermutations(2,3)                                      # optional - sage.combinat sage.groups
-                sage: W.cardinality()                                                   # optional - sage.combinat sage.groups
+                sage: W = ColoredPermutations(2,3)
+                sage: W.cardinality()
                 48
-                sage: W = ColoredPermutations(4,3)                                      # optional - sage.combinat sage.groups
-                sage: W.cardinality()                                                   # optional - sage.combinat sage.groups
+                sage: W = ColoredPermutations(4,3)
+                sage: W.cardinality()
                 384
-                sage: W = ReflectionGroup((4,2,3))         # optional - gap3            # optional - sage.combinat sage.groups
-                sage: W.cardinality()                      # optional - gap3            # optional - sage.combinat sage.groups
+                sage: W = ReflectionGroup((4,2,3))      # optional - gap3
+                sage: W.cardinality()           # optional - gap3
                 192
             """
             from sage.rings.integer_ring import ZZ
@@ -439,20 +442,20 @@ class FiniteComplexReflectionGroups(CategoryWithAxiom):
 
             EXAMPLES::
 
-                sage: W = ColoredPermutations(1,3)                                      # optional - sage.combinat sage.groups
-                sage: W.is_well_generated()                                             # optional - sage.combinat sage.groups
+                sage: W = ColoredPermutations(1,3)                                      # needs sage.combinat
+                sage: W.is_well_generated()                                             # needs sage.combinat
                 True
 
-                sage: W = ColoredPermutations(4,3)                                      # optional - sage.combinat sage.groups
-                sage: W.is_well_generated()                                             # optional - sage.combinat sage.groups
+                sage: W = ColoredPermutations(4,3)                                      # needs sage.combinat
+                sage: W.is_well_generated()                                             # needs sage.combinat
                 True
 
-                sage: W = ReflectionGroup((4,2,3))         # optional - gap3            # optional - sage.combinat sage.groups
-                sage: W.is_well_generated()                # optional - gap3            # optional - sage.combinat sage.groups
+                sage: W = ReflectionGroup((4,2,3))      # optional - gap3               # needs sage.combinat sage.groups
+                sage: W.is_well_generated()     # optional - gap3                       # needs sage.combinat sage.groups
                 False
 
-                sage: W = ReflectionGroup((4,4,3))         # optional - gap3            # optional - sage.combinat sage.groups
-                sage: W.is_well_generated()                # optional - gap3            # optional - sage.combinat sage.groups
+                sage: W = ReflectionGroup((4,4,3))      # optional - gap3               # needs sage.combinat sage.groups
+                sage: W.is_well_generated()     # optional - gap3                       # needs sage.combinat
                 True
             """
             return self.number_of_simple_reflections() == self.rank()
@@ -474,12 +477,12 @@ class FiniteComplexReflectionGroups(CategoryWithAxiom):
 
             EXAMPLES::
 
-                sage: W = ColoredPermutations(1,3)                                      # optional - sage.combinat sage.groups
-                sage: W.is_real()                                                       # optional - sage.combinat sage.groups
+                sage: W = ColoredPermutations(1,3)                                      # needs sage.combinat
+                sage: W.is_real()                                                       # needs sage.combinat
                 True
 
-                sage: W = ColoredPermutations(4,3)                                      # optional - sage.combinat sage.groups
-                sage: W.is_real()                                                       # optional - sage.combinat sage.groups
+                sage: W = ColoredPermutations(4,3)                                      # needs sage.combinat
+                sage: W.is_real()                                                       # needs sage.combinat sage.groups
                 False
 
             .. TODO::
@@ -544,8 +547,8 @@ class FiniteComplexReflectionGroups(CategoryWithAxiom):
                 [0 1], [ 0 -1], [ 1  1], [ 1  0], [-1 -1], [-1  0]
                 ]
 
-                sage: W = ColoredPermutations(1,3)                                      # optional - sage.combinat sage.groups
-                sage: [t.to_matrix() for t in W]                                        # optional - sage.combinat sage.groups
+                sage: W = ColoredPermutations(1,3)                                      # needs sage.combinat
+                sage: [t.to_matrix() for t in W]                                        # needs sage.combinat sage.groups
                 [
                 [1 0 0]  [1 0 0]  [0 1 0]  [0 0 1]  [0 1 0]  [0 0 1]
                 [0 1 0]  [0 0 1]  [1 0 0]  [1 0 0]  [0 0 1]  [0 1 0]
@@ -555,8 +558,8 @@ class FiniteComplexReflectionGroups(CategoryWithAxiom):
             A different representation is given by the
             colored permutations::
 
-                sage: W = ColoredPermutations(3, 1)                                     # optional - sage.combinat sage.groups
-                sage: [t.to_matrix() for t in W]                                        # optional - sage.combinat sage.groups
+                sage: W = ColoredPermutations(3, 1)                                     # needs sage.combinat
+                sage: [t.to_matrix() for t in W]                                        # needs sage.combinat sage.groups
                 [[1], [zeta3], [-zeta3 - 1]]
             """
 
@@ -582,9 +585,9 @@ class FiniteComplexReflectionGroups(CategoryWithAxiom):
 
             EXAMPLES::
 
-                sage: W = ColoredPermutations(1,3); W                                   # optional - sage.combinat sage.groups
+                sage: W = ColoredPermutations(1,3); W                                   # needs sage.combinat
                 1-colored permutations of size 3
-                sage: [t.character_value() for t in W]                                  # optional - sage.combinat sage.groups
+                sage: [t.character_value() for t in W]                                  # needs sage.combinat sage.groups
                 [3, 1, 1, 0, 0, 1]
 
             Note that this could be a different (faithful)
@@ -596,14 +599,14 @@ class FiniteComplexReflectionGroups(CategoryWithAxiom):
                 sage: [t.character_value() for t in W]     # optional - gap3
                 [2, 0, 0, -1, -1, 0]
 
-                sage: W = ColoredPermutations(2,2); W                                   # optional - sage.combinat sage.groups
+                sage: W = ColoredPermutations(2,2); W                                   # needs sage.combinat
                 2-colored permutations of size 2
-                sage: [t.character_value() for t in W]                                  # optional - sage.combinat sage.groups
+                sage: [t.character_value() for t in W]                                  # needs sage.combinat sage.groups
                 [2, 0, 0, -2, 0, 0, 0, 0]
 
-                sage: W = ColoredPermutations(3,1); W                                   # optional - sage.combinat sage.groups
+                sage: W = ColoredPermutations(3,1); W                                   # needs sage.combinat
                 3-colored permutations of size 1
-                sage: [t.character_value() for t in W]                                  # optional - sage.combinat sage.groups
+                sage: [t.character_value() for t in W]                                  # needs sage.combinat sage.groups
                 [1, zeta3, -zeta3 - 1]
             """
             return self.to_matrix().trace()
@@ -750,12 +753,12 @@ class FiniteComplexReflectionGroups(CategoryWithAxiom):
                     ....:        for w in W.absolute_order_ideal(W.from_reduced_word([2])))
                     [[], [2]]
 
-                    sage: W = CoxeterGroup(['A', 3])                                    # optional - sage.combinat sage.groups
-                    sage: len(list(W.absolute_order_ideal()))                           # optional - sage.combinat sage.groups
+                    sage: W = CoxeterGroup(['A', 3])                                    # needs sage.combinat sage.groups
+                    sage: len(list(W.absolute_order_ideal()))                           # needs sage.combinat sage.groups
                     14
 
-                    sage: W = CoxeterGroup(['A', 2])                                    # optional - sage.combinat sage.groups
-                    sage: for (w, l) in W.absolute_order_ideal(return_lengths=True):    # optional - sage.combinat sage.groups
+                    sage: W = CoxeterGroup(['A', 2])                                    # needs sage.combinat sage.groups
+                    sage: for (w, l) in W.absolute_order_ideal(return_lengths=True):    # needs sage.combinat sage.groups
                     ....:     print(w.reduced_word(), l)
                     [1, 2] 2
                     [1, 2, 1] 1
@@ -822,12 +825,12 @@ class FiniteComplexReflectionGroups(CategoryWithAxiom):
 
                 EXAMPLES::
 
-                    sage: W = SymmetricGroup(4)                                         # optional - sage.combinat sage.groups
-                    sage: W.noncrossing_partition_lattice()                             # optional - sage.combinat sage.groups
+                    sage: W = SymmetricGroup(4)                                         # needs sage.combinat sage.groups
+                    sage: W.noncrossing_partition_lattice()                             # needs sage.combinat sage.groups
                     Finite lattice containing 14 elements
 
-                    sage: W = WeylGroup(['G', 2])                                       # optional - sage.combinat sage.groups
-                    sage: W.noncrossing_partition_lattice()                             # optional - sage.combinat sage.groups
+                    sage: W = WeylGroup(['G', 2])                                       # needs sage.combinat sage.groups
+                    sage: W.noncrossing_partition_lattice()                             # needs sage.combinat sage.groups
                     Finite lattice containing 8 elements
 
                     sage: W = ReflectionGroup((1,1,3))     # optional - gap3
@@ -982,14 +985,15 @@ class FiniteComplexReflectionGroups(CategoryWithAxiom):
 
                 TESTS::
 
-                    sage: W1 = CoxeterGroup(['A', 2])                                   # optional - sage.combinat sage.groups
-                    sage: W2 = WeylGroup(['A', 2])                                      # optional - sage.combinat sage.groups
-                    sage: W3 = SymmetricGroup(3)                                        # optional - sage.combinat sage.groups
-                    sage: W1.absolute_poset()                                           # optional - sage.combinat sage.groups
+                    sage: # needs sage.combinat sage.groups
+                    sage: W1 = CoxeterGroup(['A', 2])
+                    sage: W2 = WeylGroup(['A', 2])
+                    sage: W3 = SymmetricGroup(3)
+                    sage: W1.absolute_poset()
                     Finite poset containing 6 elements
-                    sage: W2.absolute_poset()                                           # optional - sage.combinat sage.groups
+                    sage: W2.absolute_poset()
                     Finite poset containing 6 elements
-                    sage: W3.absolute_poset()                                           # optional - sage.combinat sage.groups
+                    sage: W3.absolute_poset()
                     Finite poset containing 6 elements
                 """
                 return self.noncrossing_partition_lattice(L=tuple(self), in_unitary_group=in_unitary_group)
@@ -1084,7 +1088,7 @@ class FiniteComplexReflectionGroups(CategoryWithAxiom):
 
                     sage: from sage.categories.complex_reflection_groups import ComplexReflectionGroups
                     sage: C = ComplexReflectionGroups().Finite().WellGenerated().Irreducible()
-                    sage: C.example()                                                   # optional - sage.combinat sage.groups
+                    sage: C.example()                                                   # needs sage.combinat
                     4-colored permutations of size 3
                 """
                 from sage.combinat.colored_permutations import ColoredPermutations
@@ -1109,12 +1113,12 @@ class FiniteComplexReflectionGroups(CategoryWithAxiom):
 
                     EXAMPLES::
 
-                        sage: W = ColoredPermutations(1,3)                              # optional - sage.combinat sage.groups
-                        sage: W.coxeter_number()                                        # optional - sage.combinat sage.groups
+                        sage: W = ColoredPermutations(1,3)                              # needs sage.combinat
+                        sage: W.coxeter_number()                                        # needs sage.combinat
                         3
 
-                        sage: W = ColoredPermutations(4,3)                              # optional - sage.combinat sage.groups
-                        sage: W.coxeter_number()                                        # optional - sage.combinat sage.groups
+                        sage: W = ColoredPermutations(4,3)                              # needs sage.combinat
+                        sage: W.coxeter_number()                                        # needs sage.combinat
                         12
 
                         sage: W = ReflectionGroup((4,4,3))  # optional - gap3
@@ -1130,20 +1134,20 @@ class FiniteComplexReflectionGroups(CategoryWithAxiom):
 
                     EXAMPLES::
 
-                        sage: W = Permutations(4)                                       # optional - sage.combinat sage.groups
-                        sage: W.number_of_reflections_of_full_support()                 # optional - sage.combinat sage.groups
+                        sage: W = Permutations(4)
+                        sage: W.number_of_reflections_of_full_support()
                         1
 
-                        sage: W = ColoredPermutations(1,4)                              # optional - sage.combinat sage.groups
-                        sage: W.number_of_reflections_of_full_support()                 # optional - sage.combinat sage.groups
+                        sage: W = ColoredPermutations(1,4)                              # needs sage.combinat
+                        sage: W.number_of_reflections_of_full_support()
                         1
 
-                        sage: W = CoxeterGroup("B3")                                    # optional - sage.combinat sage.groups
-                        sage: W.number_of_reflections_of_full_support()                 # optional - sage.combinat sage.groups
+                        sage: W = CoxeterGroup("B3")                                    # needs sage.combinat sage.groups
+                        sage: W.number_of_reflections_of_full_support()                 # needs sage.combinat sage.groups
                         3
 
-                        sage: W = ColoredPermutations(3,3)                              # optional - sage.combinat sage.groups
-                        sage: W.number_of_reflections_of_full_support()                 # optional - sage.combinat sage.groups
+                        sage: W = ColoredPermutations(3,3)                              # needs sage.combinat
+                        sage: W.number_of_reflections_of_full_support()                 # needs sage.combinat
                         3
                     """
                     n = self.rank()
@@ -1175,18 +1179,18 @@ class FiniteComplexReflectionGroups(CategoryWithAxiom):
 
                     EXAMPLES::
 
-                        sage: W = ColoredPermutations(1,3)                              # optional - sage.combinat sage.groups
-                        sage: [W.rational_catalan_number(p) for p in [5,7,8]]           # optional - sage.combinat sage.groups
+                        sage: W = ColoredPermutations(1,3)                              # needs sage.combinat
+                        sage: [W.rational_catalan_number(p) for p in [5,7,8]]           # needs sage.combinat
                         [7, 12, 15]
 
-                        sage: W = ColoredPermutations(2,2)                              # optional - sage.combinat sage.groups
-                        sage: [W.rational_catalan_number(p) for p in [7,9,11]]          # optional - sage.combinat sage.groups
+                        sage: W = ColoredPermutations(2,2)                              # needs sage.combinat
+                        sage: [W.rational_catalan_number(p) for p in [7,9,11]]          # needs sage.combinat
                         [10, 15, 21]
 
                     TESTS::
 
-                        sage: W = ColoredPermutations(1,4)                              # optional - sage.combinat sage.groups
-                        sage: W.rational_catalan_number(3, polynomial=True)             # optional - sage.combinat sage.groups
+                        sage: W = ColoredPermutations(1,4)                              # needs sage.combinat
+                        sage: W.rational_catalan_number(3, polynomial=True)             # needs sage.combinat
                         q^6 + q^4 + q^3 + q^2 + 1
                     """
                     from sage.arith.misc import GCD as gcd
@@ -1243,37 +1247,38 @@ class FiniteComplexReflectionGroups(CategoryWithAxiom):
 
                     EXAMPLES::
 
-                        sage: W = ColoredPermutations(1,3)                              # optional - sage.combinat sage.groups
-                        sage: [W.fuss_catalan_number(i) for i in [1,2,3]]               # optional - sage.combinat sage.groups
+                        sage: W = ColoredPermutations(1,3)                              # needs sage.combinat
+                        sage: [W.fuss_catalan_number(i) for i in [1,2,3]]               # needs sage.combinat
                         [5, 12, 22]
 
-                        sage: W = ColoredPermutations(1,4)                              # optional - sage.combinat sage.groups
-                        sage: [W.fuss_catalan_number(i) for i in [1,2,3]]               # optional - sage.combinat sage.groups
+                        sage: W = ColoredPermutations(1,4)                              # needs sage.combinat
+                        sage: [W.fuss_catalan_number(i) for i in [1,2,3]]               # needs sage.combinat
                         [14, 55, 140]
 
-                        sage: W = ColoredPermutations(1,5)                              # optional - sage.combinat sage.groups
-                        sage: [W.fuss_catalan_number(i) for i in [1,2,3]]               # optional - sage.combinat sage.groups
+                        sage: W = ColoredPermutations(1,5)                              # needs sage.combinat
+                        sage: [W.fuss_catalan_number(i) for i in [1,2,3]]               # needs sage.combinat
                         [42, 273, 969]
 
-                        sage: W = ColoredPermutations(2,2)                              # optional - sage.combinat sage.groups
-                        sage: [W.fuss_catalan_number(i) for i in [1,2,3]]               # optional - sage.combinat sage.groups
+                        sage: W = ColoredPermutations(2,2)                              # needs sage.combinat
+                        sage: [W.fuss_catalan_number(i) for i in [1,2,3]]               # needs sage.combinat
                         [6, 15, 28]
 
-                        sage: W = ColoredPermutations(2,3)                              # optional - sage.combinat sage.groups
-                        sage: [W.fuss_catalan_number(i) for i in [1,2,3]]               # optional - sage.combinat sage.groups
+                        sage: W = ColoredPermutations(2,3)                              # needs sage.combinat
+                        sage: [W.fuss_catalan_number(i) for i in [1,2,3]]               # needs sage.combinat
                         [20, 84, 220]
 
-                        sage: W = ColoredPermutations(2,4)                              # optional - sage.combinat sage.groups
-                        sage: [W.fuss_catalan_number(i) for i in [1,2,3]]               # optional - sage.combinat sage.groups
+                        sage: W = ColoredPermutations(2,4)                              # needs sage.combinat
+                        sage: [W.fuss_catalan_number(i) for i in [1,2,3]]               # needs sage.combinat
                         [70, 495, 1820]
 
                     TESTS::
 
-                        sage: W = ColoredPermutations(2,4)                              # optional - sage.combinat sage.groups
-                        sage: W.fuss_catalan_number(2, positive=True)                   # optional - sage.combinat sage.groups
+                        sage: # needs sage.combinat sage.groups
+                        sage: W = ColoredPermutations(2,4)
+                        sage: W.fuss_catalan_number(2, positive=True)
                         330
-                        sage: W = ColoredPermutations(2,2)                              # optional - sage.combinat sage.groups
-                        sage: W.fuss_catalan_number(2, polynomial=True)                 # optional - sage.combinat sage.groups
+                        sage: W = ColoredPermutations(2,2)
+                        sage: W.fuss_catalan_number(2, polynomial=True)
                         q^16 + q^14 + 2*q^12 + 2*q^10 + 3*q^8 + 2*q^6 +
                         2*q^4 + q^2 + 1
                     """
@@ -1317,11 +1322,11 @@ class FiniteComplexReflectionGroups(CategoryWithAxiom):
 
                     EXAMPLES::
 
-                        sage: [ColoredPermutations(1,n).catalan_number()                # optional - sage.combinat sage.groups
+                        sage: [ColoredPermutations(1,n).catalan_number()                # needs sage.combinat
                         ....:  for n in [3,4,5]]
                         [5, 14, 42]
 
-                        sage: [ColoredPermutations(2,n).catalan_number()                # optional - sage.combinat sage.groups
+                        sage: [ColoredPermutations(2,n).catalan_number()                # needs sage.combinat
                         ....:  for n in [3,4,5]]
                         [20, 70, 252]
 
@@ -1331,11 +1336,12 @@ class FiniteComplexReflectionGroups(CategoryWithAxiom):
 
                     TESTS::
 
-                        sage: W = ColoredPermutations(3,6)                              # optional - sage.combinat sage.groups
-                        sage: W.catalan_number(positive=True)                           # optional - sage.combinat sage.groups
+                        sage: # needs sage.combinat sage.groups
+                        sage: W = ColoredPermutations(3,6)
+                        sage: W.catalan_number(positive=True)
                         462
-                        sage: W = ColoredPermutations(2,2)                              # optional - sage.combinat sage.groups
-                        sage: W.catalan_number(polynomial=True)                         # optional - sage.combinat sage.groups
+                        sage: W = ColoredPermutations(2,2)
+                        sage: W.catalan_number(polynomial=True)
                         q^8 + q^6 + 2*q^4 + q^2 + 1
                     """
                     return self.fuss_catalan_number(1, positive=positive,

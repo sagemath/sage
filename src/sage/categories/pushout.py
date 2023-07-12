@@ -1031,7 +1031,7 @@ class MultiPolynomialFunctor(ConstructionFunctor):
             MPoly[x,y]
             sage: F(ZZ)
             Multivariate Polynomial Ring in x, y over Integer Ring
-            sage: F(CC)                                                                 # optional - sage.rings.real_mpfr
+            sage: F(CC)                                                                 # needs sage.rings.real_mpfr
             Multivariate Polynomial Ring in x, y over Complex Field with 53 bits of precision
         """
         Functor.__init__(self, Rings(), Rings())
@@ -1574,17 +1574,18 @@ class MatrixFunctor(ConstructionFunctor):
 
     EXAMPLES::
 
-        sage: MS = MatrixSpace(ZZ, 2, 3)                                                # optional - sage.modules
-        sage: F = MS.construction()[0]; F                                               # optional - sage.modules
+        sage: # needs sage.modules
+        sage: MS = MatrixSpace(ZZ, 2, 3)
+        sage: F = MS.construction()[0]; F
         MatrixFunctor
-        sage: MS = MatrixSpace(ZZ, 2)                                                   # optional - sage.modules
-        sage: F = MS.construction()[0]; F                                               # optional - sage.modules
+        sage: MS = MatrixSpace(ZZ, 2)
+        sage: F = MS.construction()[0]; F
         MatrixFunctor
-        sage: P.<x,y> = QQ[]                                                            # optional - sage.modules
-        sage: R = F(P); R                                                               # optional - sage.modules
+        sage: P.<x,y> = QQ[]
+        sage: R = F(P); R
         Full MatrixSpace of 2 by 2 dense matrices
          over Multivariate Polynomial Ring in x, y over Rational Field
-        sage: f = P.hom([x+y, x-y], P); F(f)                                            # optional - sage.modules
+        sage: f = P.hom([x+y, x-y], P); F(f)
         Ring endomorphism
          of Full MatrixSpace of 2 by 2 dense matrices
           over Multivariate Polynomial Ring in x, y over Rational Field
@@ -1593,8 +1594,8 @@ class MatrixFunctor(ConstructionFunctor):
                  of Multivariate Polynomial Ring in x, y over Rational Field
                   Defn: x |--> x + y
                         y |--> x - y
-        sage: M = R([x, y, x*y, x + y])                                                 # optional - sage.modules
-        sage: F(f)(M)                                                                   # optional - sage.modules
+        sage: M = R([x, y, x*y, x + y])
+        sage: F(f)(M)
         [    x + y     x - y]
         [x^2 - y^2       2*x]
 
@@ -1605,22 +1606,23 @@ class MatrixFunctor(ConstructionFunctor):
         """
         TESTS::
 
+            sage: # needs sage.modules
             sage: from sage.categories.pushout import MatrixFunctor
-            sage: F = MatrixFunctor(2, 3)                                               # optional - sage.modules
-            sage: F == MatrixSpace(ZZ, 2, 3).construction()[0]                          # optional - sage.modules
+            sage: F = MatrixFunctor(2, 3)
+            sage: F == MatrixSpace(ZZ, 2, 3).construction()[0]
             True
-            sage: F.codomain()                                                          # optional - sage.modules
+            sage: F.codomain()
             Category of commutative additive groups
-            sage: R = MatrixSpace(ZZ, 2, 2).construction()[0]                           # optional - sage.modules
-            sage: R.codomain()                                                          # optional - sage.modules
+            sage: R = MatrixSpace(ZZ, 2, 2).construction()[0]
+            sage: R.codomain()
             Category of rings
-            sage: F(ZZ)                                                                 # optional - sage.modules
+            sage: F(ZZ)
             Full MatrixSpace of 2 by 3 dense matrices over Integer Ring
-            sage: F(ZZ) in F.codomain()                                                 # optional - sage.modules
+            sage: F(ZZ) in F.codomain()
             True
-            sage: R(GF(2))                                                              # optional - sage.rings.finite_rings sage.modules
+            sage: R(GF(2))                                                              # needs sage.rings.finite_rings
             Full MatrixSpace of 2 by 2 dense matrices over Finite Field of size 2
-            sage: R(GF(2)) in R.codomain()                                              # optional - sage.rings.finite_rings sage.modules
+            sage: R(GF(2)) in R.codomain()                                              # needs sage.rings.finite_rings
             True
         """
         if nrows == ncols:
@@ -1640,10 +1642,10 @@ class MatrixFunctor(ConstructionFunctor):
 
         The following is a test against a bug discussed at :trac:`8800`::
 
-            sage: F = MatrixSpace(ZZ, 2, 3).construction()[0]                           # optional - sage.modules
-            sage: F(RR)         # indirect doctest                                      # optional - sage.modules
+            sage: F = MatrixSpace(ZZ, 2, 3).construction()[0]                           # needs sage.modules
+            sage: F(RR)         # indirect doctest                                      # needs sage.modules
             Full MatrixSpace of 2 by 3 dense matrices over Real Field with 53 bits of precision
-            sage: F(RR) in F.codomain()                                                 # optional - sage.modules
+            sage: F(RR) in F.codomain()                                                 # needs sage.modules
             True
 
         """
@@ -1654,10 +1656,10 @@ class MatrixFunctor(ConstructionFunctor):
         """
         TESTS::
 
-            sage: F = MatrixSpace(ZZ, 2, 3).construction()[0]                           # optional - sage.modules
-            sage: F == loads(dumps(F))                                                  # optional - sage.modules
+            sage: F = MatrixSpace(ZZ, 2, 3).construction()[0]                           # needs sage.modules
+            sage: F == loads(dumps(F))                                                  # needs sage.modules
             True
-            sage: F == MatrixSpace(ZZ, 2, 2).construction()[0]                          # optional - sage.modules
+            sage: F == MatrixSpace(ZZ, 2, 2).construction()[0]                          # needs sage.modules
             False
         """
         if isinstance(other, MatrixFunctor):
@@ -1670,10 +1672,10 @@ class MatrixFunctor(ConstructionFunctor):
 
         EXAMPLES::
 
-            sage: F = MatrixSpace(ZZ, 2, 3).construction()[0]                           # optional - sage.modules
-            sage: F != loads(dumps(F))                                                  # optional - sage.modules
+            sage: F = MatrixSpace(ZZ, 2, 3).construction()[0]                           # needs sage.modules
+            sage: F != loads(dumps(F))                                                  # needs sage.modules
             False
-            sage: F != MatrixSpace(ZZ, 2, 2).construction()[0]                          # optional - sage.modules
+            sage: F != MatrixSpace(ZZ, 2, 2).construction()[0]                          # needs sage.modules
             True
         """
         return not (self == other)
@@ -1688,20 +1690,21 @@ class MatrixFunctor(ConstructionFunctor):
 
         EXAMPLES::
 
-            sage: F1 = MatrixSpace(ZZ, 2, 2).construction()[0]                          # optional - sage.modules
-            sage: F2 = MatrixSpace(ZZ, 2, 3).construction()[0]                          # optional - sage.modules
-            sage: F3 = MatrixSpace(ZZ, 2, 2, sparse=True).construction()[0]             # optional - sage.modules
-            sage: F1.merge(F2)                                                          # optional - sage.modules
-            sage: F1.merge(F3)                                                          # optional - sage.modules
+            sage: # needs sage.modules
+            sage: F1 = MatrixSpace(ZZ, 2, 2).construction()[0]
+            sage: F2 = MatrixSpace(ZZ, 2, 3).construction()[0]
+            sage: F3 = MatrixSpace(ZZ, 2, 2, sparse=True).construction()[0]
+            sage: F1.merge(F2)
+            sage: F1.merge(F3)
             MatrixFunctor
-            sage: F13 = F1.merge(F3)                                                    # optional - sage.modules
-            sage: F13.is_sparse                                                         # optional - sage.modules
+            sage: F13 = F1.merge(F3)
+            sage: F13.is_sparse
             False
-            sage: F1.is_sparse                                                          # optional - sage.modules
+            sage: F1.is_sparse
             False
-            sage: F3.is_sparse                                                          # optional - sage.modules
+            sage: F3.is_sparse
             True
-            sage: F3.merge(F3).is_sparse                                                # optional - sage.modules
+            sage: F3.merge(F3).is_sparse
             True
 
         """
@@ -1760,9 +1763,9 @@ class LaurentPolynomialFunctor(ConstructionFunctor):
             sage: F1(F2(QQ))
             Univariate Laurent Polynomial Ring in t over
              Univariate Laurent Polynomial Ring in s over Rational Field
-            sage: F2(F1(QQ))                                                            # optional - sage.modules
+            sage: F2(F1(QQ))                                                            # needs sage.modules
             Multivariate Laurent Polynomial Ring in t, s over Rational Field
-            sage: F3(QQ)                                                                # optional - sage.modules
+            sage: F3(QQ)                                                                # needs sage.modules
             Multivariate Laurent Polynomial Ring in s, t over Rational Field
 
         """
@@ -1785,9 +1788,9 @@ class LaurentPolynomialFunctor(ConstructionFunctor):
             sage: F1(F2(QQ))          # indirect doctest
             Univariate Laurent Polynomial Ring in t over
              Univariate Laurent Polynomial Ring in s over Rational Field
-            sage: F2(F1(QQ))                                                            # optional - sage.modules
+            sage: F2(F1(QQ))                                                            # needs sage.modules
             Multivariate Laurent Polynomial Ring in t, s over Rational Field
-            sage: F3(QQ)                                                                # optional - sage.modules
+            sage: F3(QQ)                                                                # needs sage.modules
             Multivariate Laurent Polynomial Ring in s, t over Rational Field
 
         """
@@ -1874,11 +1877,11 @@ class VectorFunctor(ConstructionFunctor):
 
     EXAMPLES::
 
-        sage: # optional - sage.modules
-        sage: F = (ZZ^3).construction()[0]                                              # optional - sage.modules
-        sage: F                                                                         # optional - sage.modules
+        sage: # needs sage.modules
+        sage: F = (ZZ^3).construction()[0]
+        sage: F
         VectorFunctor
-        sage: F(GF(2)['t'])                                                             # optional - sage.libs.ntl
+        sage: F(GF(2)['t'])                                                             # needs sage.libs.ntl
         Ambient free module of rank 3
          over the principal ideal domain Univariate Polynomial Ring in t
           over Finite Field of size 2 (using GF2X)
@@ -1901,21 +1904,21 @@ class VectorFunctor(ConstructionFunctor):
         TESTS::
 
             sage: from sage.categories.pushout import VectorFunctor
-            sage: F1 = VectorFunctor(3, inner_product_matrix=Matrix(3, 3, range(9)))    # optional - sage.modules
-            sage: F1.domain()                                                           # optional - sage.modules
+            sage: F1 = VectorFunctor(3, inner_product_matrix=Matrix(3, 3, range(9)))    # needs sage.modules
+            sage: F1.domain()                                                           # needs sage.modules
             Category of commutative rings
-            sage: F1.codomain()                                                         # optional - sage.modules
+            sage: F1.codomain()                                                         # needs sage.modules
             Category of commutative additive groups
-            sage: M1 = F1(ZZ)                                                           # optional - sage.modules
-            sage: M1.is_sparse()                                                        # optional - sage.modules
+            sage: M1 = F1(ZZ)                                                           # needs sage.modules
+            sage: M1.is_sparse()                                                        # needs sage.modules
             False
-            sage: v = M1([3, 2, 1])                                                     # optional - sage.modules
-            sage: v * Matrix(3, 3, range(9)) * v.column()                               # optional - sage.modules
+            sage: v = M1([3, 2, 1])                                                     # needs sage.modules
+            sage: v * Matrix(3, 3, range(9)) * v.column()                               # needs sage.modules
             (96)
-            sage: v.inner_product(v)                                                    # optional - sage.modules
+            sage: v.inner_product(v)                                                    # needs sage.modules
             96
             sage: F2 = VectorFunctor(3, is_sparse=True)
-            sage: M2 = F2(QQ); M2; M2.is_sparse()                                       # optional - sage.modules
+            sage: M2 = F2(QQ); M2; M2.is_sparse()                                       # needs sage.modules
             Sparse vector space of dimension 3 over Rational Field
             True
 
@@ -1942,29 +1945,31 @@ class VectorFunctor(ConstructionFunctor):
 
         TESTS::
 
+            sage: # needs sage.modules
             sage: from sage.categories.pushout import VectorFunctor, pushout
-            sage: F1 = VectorFunctor(3, inner_product_matrix=Matrix(3, 3, range(9)))    # optional - sage.modules
-            sage: M1 = F1(ZZ)   # indirect doctest                                      # optional - sage.modules
-            sage: M1.is_sparse()                                                        # optional - sage.modules
+            sage: F1 = VectorFunctor(3, inner_product_matrix=Matrix(3, 3, range(9)))
+            sage: M1 = F1(ZZ)   # indirect doctest
+            sage: M1.is_sparse()
             False
-            sage: v = M1([3, 2, 1])                                                     # optional - sage.modules
-            sage: v * Matrix(3, 3, range(9)) * v.column()                               # optional - sage.modules
+            sage: v = M1([3, 2, 1])
+            sage: v * Matrix(3, 3, range(9)) * v.column()
             (96)
-            sage: v.inner_product(v)                                                    # optional - sage.modules
+            sage: v.inner_product(v)
             96
-            sage: F2 = VectorFunctor(3, is_sparse=True)                                 # optional - sage.modules
-            sage: M2 = F2(QQ); M2; M2.is_sparse()                                       # optional - sage.modules
+            sage: F2 = VectorFunctor(3, is_sparse=True)
+            sage: M2 = F2(QQ); M2; M2.is_sparse()
             Sparse vector space of dimension 3 over Rational Field
             True
-            sage: v = M2([3, 2, 1])                                                     # optional - sage.modules
-            sage: v.inner_product(v)                                                    # optional - sage.modules
+            sage: v = M2([3, 2, 1])
+            sage: v.inner_product(v)
             14
 
-            sage: M = FreeModule(ZZ, 4, with_basis=None, name='M')                      # optional - sage.modules
-            sage: latex(M)                                                              # optional - sage.modules
+            sage: # needs sage.modules
+            sage: M = FreeModule(ZZ, 4, with_basis=None, name='M')
+            sage: latex(M)
             M
-            sage: M_QQ = pushout(M, QQ)                                                 # optional - sage.modules
-            sage: latex(M_QQ)                                                           # optional - sage.modules
+            sage: M_QQ = pushout(M, QQ)
+            sage: latex(M_QQ)
             M \otimes \Bold{Q}
 
         """
@@ -1992,10 +1997,10 @@ class VectorFunctor(ConstructionFunctor):
 
         TESTS::
 
-            sage: F = (ZZ^3).construction()[0]                                          # optional - sage.modules
+            sage: F = (ZZ^3).construction()[0]                                          # needs sage.modules
             sage: P.<x,y> = ZZ[]
             sage: f = P.hom([x + 2*y, 3*x - y], P)
-            sage: F(f)       # indirect doctest                                         # optional - sage.modules
+            sage: F(f)       # indirect doctest                                         # needs sage.modules
             Traceback (most recent call last):
             ...
             NotImplementedError: Cannot create induced morphisms of free modules yet
@@ -2009,14 +2014,15 @@ class VectorFunctor(ConstructionFunctor):
 
         TESTS::
 
+            sage: # needs sage.modules
             sage: from sage.categories.pushout import VectorFunctor
-            sage: F1 = VectorFunctor(3, inner_product_matrix=Matrix(3, 3, range(9)))    # optional - sage.modules
-            sage: F2 = (ZZ^3).construction()[0]                                         # optional - sage.modules
-            sage: F1 == F2                                                              # optional - sage.modules
+            sage: F1 = VectorFunctor(3, inner_product_matrix=Matrix(3, 3, range(9)))
+            sage: F2 = (ZZ^3).construction()[0]
+            sage: F1 == F2
             False
-            sage: F1(QQ) == F2(QQ)                                                      # optional - sage.modules
+            sage: F1(QQ) == F2(QQ)
             False
-            sage: F1 == loads(dumps(F1))                                                # optional - sage.modules
+            sage: F1 == loads(dumps(F1))
             True
         """
         if isinstance(other, VectorFunctor):
@@ -2034,14 +2040,15 @@ class VectorFunctor(ConstructionFunctor):
 
         EXAMPLES::
 
+            sage: # needs sage.modules
             sage: from sage.categories.pushout import VectorFunctor
-            sage: F1 = VectorFunctor(3, inner_product_matrix=Matrix(3, 3, range(9)))    # optional - sage.modules
-            sage: F2 = (ZZ^3).construction()[0]                                         # optional - sage.modules
-            sage: F1 != F2                                                              # optional - sage.modules
+            sage: F1 = VectorFunctor(3, inner_product_matrix=Matrix(3, 3, range(9)))
+            sage: F2 = (ZZ^3).construction()[0]
+            sage: F1 != F2
             True
-            sage: F1(QQ) != F2(QQ)                                                      # optional - sage.modules
+            sage: F1(QQ) != F2(QQ)
             True
-            sage: F1 != loads(dumps(F1))                                                # optional - sage.modules
+            sage: F1 != loads(dumps(F1))
             False
         """
         return not (self == other)
@@ -2057,19 +2064,19 @@ class VectorFunctor(ConstructionFunctor):
 
         Two modules without explicitly given inner product allow coercion::
 
-            sage: M1 = QQ^3                                                             # optional - sage.modules
+            sage: M1 = QQ^3                                                             # needs sage.modules
             sage: P.<t> = ZZ[]
-            sage: M2 = FreeModule(P, 3)                                                 # optional - sage.modules
-            sage: M1([1,1/2,1/3]) + M2([t,t^2+t,3])     # indirect doctest              # optional - sage.modules
+            sage: M2 = FreeModule(P, 3)                                                 # needs sage.modules
+            sage: M1([1,1/2,1/3]) + M2([t,t^2+t,3])     # indirect doctest              # needs sage.modules
             (t + 1, t^2 + t + 1/2, 10/3)
 
         If only one summand has an explicit inner product, the result will be provided
         with it::
 
-            sage: M3 = FreeModule(P, 3, inner_product_matrix=Matrix(3, 3, range(9)))    # optional - sage.modules
-            sage: M1([1,1/2,1/3]) + M3([t,t^2+t,3])                                     # optional - sage.modules
+            sage: M3 = FreeModule(P, 3, inner_product_matrix=Matrix(3, 3, range(9)))    # needs sage.modules
+            sage: M1([1,1/2,1/3]) + M3([t,t^2+t,3])                                     # needs sage.modules
             (t + 1, t^2 + t + 1/2, 10/3)
-            sage: (M1([1,1/2,1/3]) + M3([t,t^2+t,3])).parent().inner_product_matrix()   # optional - sage.modules
+            sage: (M1([1,1/2,1/3]) + M3([t,t^2+t,3])).parent().inner_product_matrix()   # needs sage.modules
             [0 1 2]
             [3 4 5]
             [6 7 8]
@@ -2080,12 +2087,13 @@ class VectorFunctor(ConstructionFunctor):
         inner product was *explicitly* requested for ``M4``. It is therefore not
         possible to coerce with a different inner product::
 
-            sage: M4 = FreeModule(QQ, 3, inner_product_matrix=Matrix(3, 3, 1))          # optional - sage.modules
-            sage: M4 == M1                                                              # optional - sage.modules
+            sage: # needs sage.modules
+            sage: M4 = FreeModule(QQ, 3, inner_product_matrix=Matrix(3, 3, 1))
+            sage: M4 == M1
             True
-            sage: M4.inner_product_matrix() == M1.inner_product_matrix()                # optional - sage.modules
+            sage: M4.inner_product_matrix() == M1.inner_product_matrix()
             True
-            sage: M4([1,1/2,1/3]) + M3([t,t^2+t,3])      # indirect doctest             # optional - sage.modules
+            sage: M4([1,1/2,1/3]) + M3([t,t^2+t,3])      # indirect doctest
             Traceback (most recent call last):
             ...
             TypeError: unsupported operand parent(s) for +:
@@ -2103,16 +2111,17 @@ class VectorFunctor(ConstructionFunctor):
 
         Names are removed when they conflict::
 
+            sage: # needs sage.modules
             sage: from sage.categories.pushout import VectorFunctor, pushout
-            sage: M_ZZx = FreeModule(ZZ['x'], 4, with_basis=None, name='M_ZZx')         # optional - sage.modules
-            sage: N_ZZx = FreeModule(ZZ['x'], 4, with_basis=None, name='N_ZZx')         # optional - sage.modules
-            sage: pushout(M_ZZx, QQ)                                                    # optional - sage.modules
+            sage: M_ZZx = FreeModule(ZZ['x'], 4, with_basis=None, name='M_ZZx')
+            sage: N_ZZx = FreeModule(ZZ['x'], 4, with_basis=None, name='N_ZZx')
+            sage: pushout(M_ZZx, QQ)
             Rank-4 free module M_ZZx_base_ext
              over the Univariate Polynomial Ring in x over Rational Field
-            sage: pushout(M_ZZx, N_ZZx)                                                 # optional - sage.modules
+            sage: pushout(M_ZZx, N_ZZx)
             Rank-4 free module
              over the Univariate Polynomial Ring in x over Integer Ring
-            sage: pushout(pushout(M_ZZx, N_ZZx), QQ)                                    # optional - sage.modules
+            sage: pushout(pushout(M_ZZx, N_ZZx), QQ)
             Rank-4 free module
              over the Univariate Polynomial Ring in x over Rational Field
         """
@@ -2184,14 +2193,15 @@ class SubspaceFunctor(ConstructionFunctor):
 
     EXAMPLES::
 
-        sage: M = ZZ^3                                                                  # optional - sage.modules
-        sage: S = M.submodule([(1,2,3), (4,5,6)]); S                                    # optional - sage.modules
+        sage: # needs sage.modules
+        sage: M = ZZ^3
+        sage: S = M.submodule([(1,2,3), (4,5,6)]); S
         Free module of degree 3 and rank 2 over Integer Ring
         Echelon basis matrix:
         [1 2 3]
         [0 3 6]
-        sage: F = S.construction()[0]                                                   # optional - sage.modules
-        sage: F(GF(2)^3)                                                                # optional - sage.rings.finite_rings sage.modules
+        sage: F = S.construction()[0]
+        sage: F(GF(2)^3)                                                                # needs sage.rings.finite_rings
         Vector space of degree 3 and dimension 2 over Finite Field of size 2
         User basis matrix:
         [1 0 1]
@@ -2213,9 +2223,9 @@ class SubspaceFunctor(ConstructionFunctor):
         TESTS::
 
             sage: from sage.categories.pushout import SubspaceFunctor
-            sage: M = ZZ^3                                                              # optional - sage.modules
-            sage: F = SubspaceFunctor([M([1,2,3]), M([4,5,6])])                         # optional - sage.modules
-            sage: F(GF(5)^3)                                                            # optional - sage.rings.finite_rings sage.modules
+            sage: M = ZZ^3                                                              # needs sage.modules
+            sage: F = SubspaceFunctor([M([1,2,3]), M([4,5,6])])                         # needs sage.modules
+            sage: F(GF(5)^3)                                                            # needs sage.modules sage.rings.finite_rings
             Vector space of degree 3 and dimension 2 over Finite Field of size 5
             User basis matrix:
             [1 2 3]
@@ -2235,14 +2245,15 @@ class SubspaceFunctor(ConstructionFunctor):
 
         TESTS::
 
-            sage: M = ZZ^3                                                              # optional - sage.modules
-            sage: S = M.submodule([(1,2,3), (4,5,6)]); S                                # optional - sage.modules
+            sage: # needs sage.modules
+            sage: M = ZZ^3
+            sage: S = M.submodule([(1,2,3), (4,5,6)]); S
             Free module of degree 3 and rank 2 over Integer Ring
             Echelon basis matrix:
             [1 2 3]
             [0 3 6]
-            sage: F = S.construction()[0]                                               # optional - sage.modules
-            sage: F(GF(2)^3)    # indirect doctest                                      # optional - sage.rings.finite_rings sage.modules
+            sage: F = S.construction()[0]
+            sage: F(GF(2)^3)    # indirect doctest                                      # needs sage.rings.finite_rings
             Vector space of degree 3 and dimension 2 over Finite Field of size 2
             User basis matrix:
             [1 0 1]
@@ -2256,10 +2267,11 @@ class SubspaceFunctor(ConstructionFunctor):
 
         TESTS::
 
-            sage: F = (ZZ^3).span([(1,2,3), (4,5,6)]).construction()[0]                 # optional - sage.modules
-            sage: P.<x,y> = ZZ[]                                                        # optional - sage.modules
-            sage: f = P.hom([x + 2*y, 3*x - y],P)                                       # optional - sage.modules
-            sage: F(f)      # indirect doctest                                          # optional - sage.modules
+            sage: # needs sage.modules
+            sage: F = (ZZ^3).span([(1,2,3), (4,5,6)]).construction()[0]
+            sage: P.<x,y> = ZZ[]
+            sage: f = P.hom([x + 2*y, 3*x - y],P)
+            sage: F(f)      # indirect doctest
             Traceback (most recent call last):
             ...
             NotImplementedError: Cannot create morphisms of free sub-modules yet
@@ -2270,32 +2282,34 @@ class SubspaceFunctor(ConstructionFunctor):
         """
         TESTS::
 
-            sage: F1 = (GF(5)^3).span([(1,2,3),(4,5,6)]).construction()[0]              # optional - sage.modules
-            sage: F2 = (ZZ^3).span([(1,2,3),(4,5,6)]).construction()[0]                 # optional - sage.modules
-            sage: F3 = (QQ^3).span([(1,2,3),(4,5,6)]).construction()[0]                 # optional - sage.modules
-            sage: F4 = (ZZ^3).span([(1,0,-1),(0,1,2)]).construction()[0]                # optional - sage.modules
-            sage: F1 == loads(dumps(F1))                                                # optional - sage.modules
+            sage: # needs sage.modules
+            sage: F1 = (GF(5)^3).span([(1,2,3),(4,5,6)]).construction()[0]
+            sage: F2 = (ZZ^3).span([(1,2,3),(4,5,6)]).construction()[0]
+            sage: F3 = (QQ^3).span([(1,2,3),(4,5,6)]).construction()[0]
+            sage: F4 = (ZZ^3).span([(1,0,-1),(0,1,2)]).construction()[0]
+            sage: F1 == loads(dumps(F1))
             True
 
         The ``span`` method automatically transforms the given basis into
         echelon form. The bases look like that::
 
-            sage: F1.basis                                                              # optional - sage.modules
+            sage: # needs sage.modules
+            sage: F1.basis
             [
             (1, 0, 4),
             (0, 1, 2)
             ]
-            sage: F2.basis                                                              # optional - sage.modules
+            sage: F2.basis
             [
             (1, 2, 3),
             (0, 3, 6)
             ]
-            sage: F3.basis                                                              # optional - sage.modules
+            sage: F3.basis
             [
             (1, 0, -1),
             (0, 1, 2)
             ]
-            sage: F4.basis                                                              # optional - sage.modules
+            sage: F4.basis
             [
             (1, 0, -1),
             (0, 1, 2)
@@ -2305,18 +2319,18 @@ class SubspaceFunctor(ConstructionFunctor):
         The basis of ``F2`` is modulo 5 different from the other bases.
         So, we have::
 
-            sage: F1 != F2 != F3                                                        # optional - sage.modules sage.rings.finite_rings
+            sage: F1 != F2 != F3                                                        # needs sage.modules sage.rings.finite_rings
             True
 
         The bases of ``F1``, ``F3`` and ``F4`` are the same modulo 5; however,
         there is no coercion from ``QQ^3`` to ``GF(5)^3``. Therefore, we have::
 
-            sage: F1 == F3                                                              # optional - sage.modules sage.rings.finite_rings
+            sage: F1 == F3                                                              # needs sage.modules sage.rings.finite_rings
             False
 
         But there are coercions from ``ZZ^3`` to ``QQ^3`` and ``GF(5)^3``, thus::
 
-            sage: F1 == F4 == F3                                                        # optional - sage.modules sage.rings.finite_rings
+            sage: F1 == F4 == F3                                                        # needs sage.modules sage.rings.finite_rings
             True
 
         """
@@ -2342,8 +2356,8 @@ class SubspaceFunctor(ConstructionFunctor):
 
         EXAMPLES::
 
-            sage: F1 = (GF(5)^3).span([(1,2,3),(4,5,6)]).construction()[0]              # optional - sage.modules
-            sage: F1 != loads(dumps(F1))                                                # optional - sage.modules
+            sage: F1 = (GF(5)^3).span([(1,2,3),(4,5,6)]).construction()[0]              # needs sage.modules
+            sage: F1 != loads(dumps(F1))                                                # needs sage.modules
             False
         """
         return not (self == other)
@@ -2356,16 +2370,17 @@ class SubspaceFunctor(ConstructionFunctor):
 
         EXAMPLES::
 
-            sage: M = GF(5)^3                                                           # optional - sage.modules
-            sage: S1 = M.submodule([(1,2,3),(4,5,6)])                                   # optional - sage.modules
-            sage: S2 = M.submodule([(2,2,3)])                                           # optional - sage.modules
-            sage: F1 = S1.construction()[0]                                             # optional - sage.modules
-            sage: F2 = S2.construction()[0]                                             # optional - sage.modules
-            sage: F1.merge(F2)                                                          # optional - sage.modules
+            sage: # needs sage.modules
+            sage: M = GF(5)^3
+            sage: S1 = M.submodule([(1,2,3),(4,5,6)])
+            sage: S2 = M.submodule([(2,2,3)])
+            sage: F1 = S1.construction()[0]
+            sage: F2 = S2.construction()[0]
+            sage: F1.merge(F2)
             SubspaceFunctor
-            sage: F1.merge(F2)(GF(5)^3) == S1 + S2                                      # optional - sage.modules
+            sage: F1.merge(F2)(GF(5)^3) == S1 + S2
             True
-            sage: F1.merge(F2)(GF(5)['t']^3)                                            # optional - sage.modules
+            sage: F1.merge(F2)(GF(5)['t']^3)
             Free module of degree 3 and rank 3
              over Univariate Polynomial Ring in t over Finite Field of size 5
             User basis matrix:
@@ -2376,11 +2391,11 @@ class SubspaceFunctor(ConstructionFunctor):
         TESTS::
 
             sage: P.<t> = ZZ[]
-            sage: S1 = (ZZ^3).submodule([(1,2,3), (4,5,6)])                             # optional - sage.modules
-            sage: S2 = (Frac(P)^3).submodule([(t,t^2,t^3+1), (4*t,0,1)])                # optional - sage.modules
-            sage: v = S1([0,3,6]) + S2([2,0,1/(2*t)]); v   # indirect doctest           # optional - sage.modules
+            sage: S1 = (ZZ^3).submodule([(1,2,3), (4,5,6)])                             # needs sage.modules
+            sage: S2 = (Frac(P)^3).submodule([(t,t^2,t^3+1), (4*t,0,1)])                # needs sage.modules
+            sage: v = S1([0,3,6]) + S2([2,0,1/(2*t)]); v   # indirect doctest           # needs sage.modules
             (2, 3, (-12*t - 1)/(-2*t))
-            sage: v.parent()                                                            # optional - sage.modules
+            sage: v.parent()                                                            # needs sage.modules
             Vector space of degree 3 and dimension 3
              over Fraction Field of Univariate Polynomial Ring in t over Integer Ring
             User basis matrix:
@@ -2481,15 +2496,15 @@ class CompletionFunctor(ConstructionFunctor):
 
     EXAMPLES::
 
-        sage: R = Zp(5)                                                                 # optional - sage.rings.padics
-        sage: R                                                                         # optional - sage.rings.padics
+        sage: R = Zp(5)                                                                 # needs sage.rings.padics
+        sage: R                                                                         # needs sage.rings.padics
         5-adic Ring with capped relative precision 20
-        sage: F1 = R.construction()[0]                                                  # optional - sage.rings.padics
-        sage: F1                                                                        # optional - sage.rings.padics
+        sage: F1 = R.construction()[0]                                                  # needs sage.rings.padics
+        sage: F1                                                                        # needs sage.rings.padics
         Completion[5, prec=20]
-        sage: F1(ZZ) is R                                                               # optional - sage.rings.padics
+        sage: F1(ZZ) is R                                                               # needs sage.rings.padics
         True
-        sage: F1(QQ)                                                                    # optional - sage.rings.padics
+        sage: F1(QQ)                                                                    # needs sage.rings.padics
         5-adic Field with capped relative precision 20
         sage: F2 = RR.construction()[0]
         sage: F2
@@ -2506,11 +2521,12 @@ class CompletionFunctor(ConstructionFunctor):
 
     TESTS::
 
-        sage: R1.<a> = Zp(5, prec=20)[]                                                 # optional - sage.rings.padics
-        sage: R2 = Qp(5, prec=40)                                                       # optional - sage.rings.padics
-        sage: R2(1) + a                                                                 # optional - sage.rings.padics
+        sage: # needs sage.rings.padics
+        sage: R1.<a> = Zp(5, prec=20)[]
+        sage: R2 = Qp(5, prec=40)
+        sage: R2(1) + a
         (1 + O(5^20))*a + 1 + O(5^40)
-        sage: 1/2 + a                                                                   # optional - sage.rings.padics
+        sage: 1/2 + a
         (1 + O(5^20))*a + 3 + 2*5 + 2*5^2 + 2*5^3 + 2*5^4 + 2*5^5 + 2*5^6 + 2*5^7 + 2*5^8 + 2*5^9 + 2*5^10 + 2*5^11 + 2*5^12 + 2*5^13 + 2*5^14 + 2*5^15 + 2*5^16 + 2*5^17 + 2*5^18 + 2*5^19 + O(5^20)
 
     """
@@ -2541,14 +2557,14 @@ class CompletionFunctor(ConstructionFunctor):
         TESTS::
 
             sage: from sage.categories.pushout import CompletionFunctor
-            sage: F1 = CompletionFunctor(5, 100)                                        # optional - sage.rings.padics
-            sage: F1(QQ)                                                                # optional - sage.rings.padics
+            sage: F1 = CompletionFunctor(5, 100)
+            sage: F1(QQ)                                                                # needs sage.rings.padics
             5-adic Field with capped relative precision 100
-            sage: F1(ZZ)                                                                # optional - sage.rings.padics
+            sage: F1(ZZ)                                                                # needs sage.rings.padics
             5-adic Ring with capped relative precision 100
-            sage: F1.type is None                                                       # optional - sage.rings.padics
+            sage: F1.type is None
             True
-            sage: sorted(F1.extras.items())                                             # optional - sage.rings.padics
+            sage: sorted(F1.extras.items())
             []
             sage: F2 = RR.construction()[0]
             sage: F2
@@ -2580,7 +2596,7 @@ class CompletionFunctor(ConstructionFunctor):
         """
         TESTS::
 
-            sage: Zp(7).construction()         # indirect doctest                       # optional - sage.rings.padics
+            sage: Zp(7).construction()         # indirect doctest                       # needs sage.rings.padics
             (Completion[7, prec=20], Integer Ring)
 
             sage: RR.construction()            # indirect doctest
@@ -2594,11 +2610,12 @@ class CompletionFunctor(ConstructionFunctor):
 
         TESTS::
 
-            sage: R = Zp(5)                                                             # optional - sage.rings.padics
-            sage: F1 = R.construction()[0]                                              # optional - sage.rings.padics
-            sage: F1(ZZ) is R  # indirect doctest                                       # optional - sage.rings.padics
+            sage: # needs sage.rings.padics
+            sage: R = Zp(5)
+            sage: F1 = R.construction()[0]
+            sage: F1(ZZ) is R  # indirect doctest
             True
-            sage: F1(QQ)                                                                # optional - sage.rings.padics
+            sage: F1(QQ)
             5-adic Field with capped relative precision 20
 
         """
@@ -2637,19 +2654,20 @@ class CompletionFunctor(ConstructionFunctor):
 
         TESTS::
 
-            sage: R1 = Zp(5, prec=30)                                                   # optional - sage.rings.padics
-            sage: R2 = Zp(5, prec=40)                                                   # optional - sage.rings.padics
-            sage: F1 = R1.construction()[0]                                             # optional - sage.rings.padics
-            sage: F2 = R2.construction()[0]                                             # optional - sage.rings.padics
-            sage: F1 == loads(dumps(F1))    # indirect doctest                          # optional - sage.rings.padics
+            sage: # needs sage.rings.padics
+            sage: R1 = Zp(5, prec=30)
+            sage: R2 = Zp(5, prec=40)
+            sage: F1 = R1.construction()[0]
+            sage: F2 = R2.construction()[0]
+            sage: F1 == loads(dumps(F1))    # indirect doctest
             True
-            sage: F1 == F2                                                              # optional - sage.rings.padics
+            sage: F1 == F2
             True
-            sage: F1(QQ) == F2(QQ)                                                      # optional - sage.rings.padics
+            sage: F1(QQ) == F2(QQ)
             False
-            sage: R3 = Zp(7)                                                            # optional - sage.rings.padics
-            sage: F3 = R3.construction()[0]                                             # optional - sage.rings.padics
-            sage: F1 == F3                                                              # optional - sage.rings.padics
+            sage: R3 = Zp(7)
+            sage: F3 = R3.construction()[0]
+            sage: F1 == F3
             False
         """
         if isinstance(other, CompletionFunctor):
@@ -2662,19 +2680,20 @@ class CompletionFunctor(ConstructionFunctor):
 
         EXAMPLES::
 
-            sage: R1 = Zp(5, prec=30)                                                   # optional - sage.rings.padics
-            sage: R2 = Zp(5, prec=40)                                                   # optional - sage.rings.padics
-            sage: F1 = R1.construction()[0]                                             # optional - sage.rings.padics
-            sage: F2 = R2.construction()[0]                                             # optional - sage.rings.padics
-            sage: F1 != loads(dumps(F1))    # indirect doctest                          # optional - sage.rings.padics
+            sage: # needs sage.rings.padics
+            sage: R1 = Zp(5, prec=30)
+            sage: R2 = Zp(5, prec=40)
+            sage: F1 = R1.construction()[0]
+            sage: F2 = R2.construction()[0]
+            sage: F1 != loads(dumps(F1))    # indirect doctest
             False
-            sage: F1 != F2                                                              # optional - sage.rings.padics
+            sage: F1 != F2
             False
-            sage: F1(QQ) != F2(QQ)                                                      # optional - sage.rings.padics
+            sage: F1(QQ) != F2(QQ)
             True
-            sage: R3 = Zp(7)                                                            # optional - sage.rings.padics
-            sage: F3 = R3.construction()[0]                                             # optional - sage.rings.padics
-            sage: F1 != F3                                                              # optional - sage.rings.padics
+            sage: R3 = Zp(7)
+            sage: F3 = R3.construction()[0]
+            sage: F1 != F3
             True
         """
         return not (self == other)
@@ -2692,15 +2711,16 @@ class CompletionFunctor(ConstructionFunctor):
 
         EXAMPLES::
 
-            sage: R1.<a> = Zp(5, prec=20)[]                                             # optional - sage.rings.padics
-            sage: R2 = Qp(5, prec=40)                                                   # optional - sage.rings.padics
-            sage: R2(1) + a       # indirect doctest                                    # optional - sage.rings.padics
+            sage: # needs sage.rings.padics
+            sage: R1.<a> = Zp(5, prec=20)[]
+            sage: R2 = Qp(5, prec=40)
+            sage: R2(1) + a       # indirect doctest
             (1 + O(5^20))*a + 1 + O(5^40)
-            sage: R3 = RealField(30)                                                    # optional - sage.rings.padics
-            sage: R4 = RealField(50)                                                    # optional - sage.rings.padics
-            sage: R3(1) + R4(1)   # indirect doctest                                    # optional - sage.rings.padics
+            sage: R3 = RealField(30)
+            sage: R4 = RealField(50)
+            sage: R3(1) + R4(1)   # indirect doctest
             2.0000000
-            sage: (R3(1) + R4(1)).parent()                                              # optional - sage.rings.padics
+            sage: (R3(1) + R4(1)).parent()
             Real Field with 30 bits of precision
 
         TESTS:
@@ -2721,12 +2741,12 @@ class CompletionFunctor(ConstructionFunctor):
             sage: R3 = RealIntervalField(53, sci_not=True)
             sage: R4 = RealIntervalField(90)
             sage: R5 = RealIntervalField(90, sci_not=True)
-            sage: R6 = RealField(30)
-            sage: R7 = RealField(30, sci_not=True)
-            sage: R8 = RealField(53, rnd='RNDD')
-            sage: R9 = RealField(53, sci_not=True, rnd='RNDZ')
-            sage: R10 = RealField(53, sci_not=True)
-            sage: R11 = RealField(90, sci_not=True, rnd='RNDZ')
+            sage: R6 = RealField(30)                                                    # needs sage.rings.real_mpfr
+            sage: R7 = RealField(30, sci_not=True)                                      # needs sage.rings.real_mpfr
+            sage: R8 = RealField(53, rnd='RNDD')                                        # needs sage.rings.real_mpfr
+            sage: R9 = RealField(53, sci_not=True, rnd='RNDZ')                          # needs sage.rings.real_mpfr
+            sage: R10 = RealField(53, sci_not=True)                                     # needs sage.rings.real_mpfr
+            sage: R11 = RealField(90, sci_not=True, rnd='RNDZ')                         # needs sage.rings.real_mpfr
             sage: Rlist = [R0,R1,R2,R3,R4,R5,R6,R7,R8,R9,R10,R11]
             sage: from sage.categories.pushout import pushout
             sage: pushouts = [R0,R0,R0,R1,R0,R1,R0,R1,R0,R1,R1,R1,R1,R1,R1,R1,R1,R1,R1,R1,R1,R1,R1,R1,R0,R1,R2,R2,R2,R3,R0,R1,R2,R3,R3,R3,R1,R1,R3,R3,R3,R3,R1,R1,R3,R3,R3,R3,R0,R1,R2,R3,R4,R4,R0,R1,R2,R3,R3,R5,R1,R1,R3,R3,R5,R5,R1,R1,R3,R3,R3,R5,R0,R1,R0,R1,R0,R1,R6,R6,R6,R7,R7,R7,R1,R1,R1,R1,R1,R1,R7,R7,R7,R7,R7,R7,R0,R1,R2,R3,R2,R3,R6,R7,R8,R9,R10,R9,R1,R1,R3,R3,R3,R3,R7,R7,R9,R9,R10,R9,R1,R1,R3,R3,R3,R3,R7,R7,R10,R10,R10,R10,R1,R1,R3,R3,R5,R5,R7,R7,R9,R9,R10,R11]
@@ -2735,19 +2755,20 @@ class CompletionFunctor(ConstructionFunctor):
 
         ::
 
-            sage: P0 = ZpFM(5, 10)                                                      # optional - sage.rings.padics
-            sage: P1 = ZpFM(5, 20)                                                      # optional - sage.rings.padics
-            sage: P2 = ZpCR(5, 10)                                                      # optional - sage.rings.padics
-            sage: P3 = ZpCR(5, 20)                                                      # optional - sage.rings.padics
-            sage: P4 = ZpCA(5, 10)                                                      # optional - sage.rings.padics
-            sage: P5 = ZpCA(5, 20)                                                      # optional - sage.rings.padics
-            sage: P6 = Qp(5, 10)                                                        # optional - sage.rings.padics
-            sage: P7 = Qp(5, 20)                                                        # optional - sage.rings.padics
-            sage: Plist = [P2,P3,P4,P5,P6,P7]                                           # optional - sage.rings.padics
+            sage: # needs sage.rings.padics
+            sage: P0 = ZpFM(5, 10)
+            sage: P1 = ZpFM(5, 20)
+            sage: P2 = ZpCR(5, 10)
+            sage: P3 = ZpCR(5, 20)
+            sage: P4 = ZpCA(5, 10)
+            sage: P5 = ZpCA(5, 20)
+            sage: P6 = Qp(5, 10)
+            sage: P7 = Qp(5, 20)
+            sage: Plist = [P2,P3,P4,P5,P6,P7]
             sage: from sage.categories.pushout import pushout
-            sage: pushouts = [P2,P3,P4,P5,P6,P7,P3,P3,P5,P5,P7,P7,P4,P5,P4,P5,P6,P7,    # optional - sage.rings.padics
+            sage: pushouts = [P2,P3,P4,P5,P6,P7,P3,P3,P5,P5,P7,P7,P4,P5,P4,P5,P6,P7,
             ....:             P5,P5,P5,P5,P7,P7,P6,P7,P6,P7,P6,P7,P7,P7,P7,P7,P7,P7]
-            sage: all(P is Q                                                            # optional - sage.rings.padics
+            sage: all(P is Q
             ....:     for P, Q in zip(pushouts, [pushout(a, b) for a in Plist for b in Plist]))
             True
         """
@@ -2790,9 +2811,9 @@ class CompletionFunctor(ConstructionFunctor):
 
         EXAMPLES::
 
-            sage: F1 = Zp(5).construction()[0]                                          # optional - sage.rings.padics
+            sage: F1 = Zp(5).construction()[0]                                          # needs sage.rings.padics
             sage: F2 = QQ.construction()[0]
-            sage: F1.commutes(F2)                                                       # optional - sage.rings.padics
+            sage: F1.commutes(F2)                                                       # needs sage.rings.padics
             True
 
         TESTS:
@@ -2819,7 +2840,7 @@ class CompletionFunctor(ConstructionFunctor):
         Ambiguous base extension error raised)::
 
             sage: from sage.categories.pushout import pushout
-            sage: pushout(Qp(7), RLF)                                                   # optional - sage.rings.padics
+            sage: pushout(Qp(7), RLF)                                                   # needs sage.rings.padics
             Traceback (most recent call last):
             ...
             CoercionException: Don't know how to
@@ -2854,7 +2875,7 @@ class QuotientFunctor(ConstructionFunctor):
         ...
         CoercionException: Cannot apply this quotient functor to
          Multivariate Polynomial Ring in x, y, z over Rational Field
-        sage: F(QQ['y','z'])                                                            # optional - sage.rings.finite_rings
+        sage: F(QQ['y','z'])                                                            # needs sage.rings.finite_rings
         Traceback (most recent call last):
         ...
         TypeError: Could not find a mapping of the passed element to this ring.
@@ -2884,17 +2905,17 @@ class QuotientFunctor(ConstructionFunctor):
             sage: from sage.categories.pushout import QuotientFunctor
             sage: P.<t> = ZZ[]
             sage: F = QuotientFunctor([5 + t^2] * P)
-            sage: F(P)                                                                  # optional - sage.rings.finite_rings
+            sage: F(P)                                                                  # needs sage.rings.finite_rings
             Univariate Quotient Polynomial Ring in tbar
              over Integer Ring with modulus t^2 + 5
-            sage: F(QQ['t'])                                                            # optional - sage.rings.finite_rings
+            sage: F(QQ['t'])                                                            # needs sage.rings.finite_rings
             Univariate Quotient Polynomial Ring in tbar
              over Rational Field with modulus t^2 + 5
             sage: F = QuotientFunctor([5 + t^2] * P, names='s')
-            sage: F(P)                                                                  # optional - sage.rings.finite_rings
+            sage: F(P)                                                                  # needs sage.rings.finite_rings
             Univariate Quotient Polynomial Ring in s
              over Integer Ring with modulus t^2 + 5
-            sage: F(QQ['t'])                                                            # optional - sage.rings.finite_rings
+            sage: F(QQ['t'])                                                            # needs sage.rings.finite_rings
             Univariate Quotient Polynomial Ring in s
              over Rational Field with modulus t^2 + 5
             sage: F = QuotientFunctor([5] * ZZ, as_field=True)
@@ -2976,14 +2997,14 @@ class QuotientFunctor(ConstructionFunctor):
         TESTS::
 
             sage: P.<x> = QQ[]
-            sage: F = P.quo([(x^2+1)^2*(x^2-3),(x^2+1)^2*(x^5+3)]).construction()[0]    # optional - sage.rings.finite_rings
-            sage: F == loads(dumps(F))                                                  # optional - sage.rings.finite_rings
+            sage: F = P.quo([(x^2+1)^2*(x^2-3),(x^2+1)^2*(x^5+3)]).construction()[0]    # needs sage.rings.finite_rings
+            sage: F == loads(dumps(F))                                                  # needs sage.rings.finite_rings
             True
             sage: P2.<x,y> = QQ[]
-            sage: F == P2.quo([(x^2+1)^2*(x^2-3),(x^2+1)^2*(x^5+3)]).construction()[0]  # optional - sage.rings.finite_rings
+            sage: F == P2.quo([(x^2+1)^2*(x^2-3),(x^2+1)^2*(x^5+3)]).construction()[0]  # needs sage.rings.finite_rings
             False
             sage: P3.<x> = ZZ[]
-            sage: F == P3.quo([(x^2+1)^2*(x^2-3),(x^2+1)^2*(x^5+3)]).construction()[0]  # optional - sage.rings.finite_rings
+            sage: F == P3.quo([(x^2+1)^2*(x^2-3),(x^2+1)^2*(x^5+3)]).construction()[0]  # needs sage.rings.finite_rings
             True
         """
         if not isinstance(other, QuotientFunctor):
@@ -3001,14 +3022,14 @@ class QuotientFunctor(ConstructionFunctor):
         EXAMPLES::
 
             sage: P.<x> = QQ[]
-            sage: F = P.quo([(x^2+1)^2*(x^2-3),(x^2+1)^2*(x^5+3)]).construction()[0]    # optional - sage.rings.finite_rings
-            sage: F != loads(dumps(F))                                                  # optional - sage.rings.finite_rings
+            sage: F = P.quo([(x^2+1)^2*(x^2-3),(x^2+1)^2*(x^5+3)]).construction()[0]    # needs sage.rings.finite_rings
+            sage: F != loads(dumps(F))                                                  # needs sage.rings.finite_rings
             False
             sage: P2.<x,y> = QQ[]
-            sage: F != P2.quo([(x^2+1)^2*(x^2-3),(x^2+1)^2*(x^5+3)]).construction()[0]  # optional - sage.rings.finite_rings
+            sage: F != P2.quo([(x^2+1)^2*(x^2-3),(x^2+1)^2*(x^5+3)]).construction()[0]  # needs sage.rings.finite_rings
             True
             sage: P3.<x> = ZZ[]
-            sage: F != P3.quo([(x^2+1)^2*(x^2-3),(x^2+1)^2*(x^5+3)]).construction()[0]  # optional - sage.rings.finite_rings
+            sage: F != P3.quo([(x^2+1)^2*(x^2-3),(x^2+1)^2*(x^5+3)]).construction()[0]  # needs sage.rings.finite_rings
             False
         """
         return not (self == other)
@@ -3027,10 +3048,10 @@ class QuotientFunctor(ConstructionFunctor):
         EXAMPLES::
 
             sage: P.<x> = QQ[]
-            sage: Q1 = P.quo([(x^2+1)^2*(x^2-3)])                                       # optional - sage.rings.finite_rings
-            sage: Q2 = P.quo([(x^2+1)^2*(x^5+3)])                                       # optional - sage.rings.finite_rings
+            sage: Q1 = P.quo([(x^2+1)^2*(x^2-3)])                                       # needs sage.rings.finite_rings
+            sage: Q2 = P.quo([(x^2+1)^2*(x^5+3)])                                       # needs sage.rings.finite_rings
             sage: from sage.categories.pushout import pushout
-            sage: pushout(Q1,Q2)    # indirect doctest                                  # optional - sage.rings.finite_rings
+            sage: pushout(Q1,Q2)    # indirect doctest                                  # needs sage.rings.finite_rings
             Univariate Quotient Polynomial Ring in xbar over Rational Field
              with modulus x^4 + 2*x^2 + 1
 
@@ -3096,9 +3117,9 @@ class AlgebraicExtensionFunctor(ConstructionFunctor):
     EXAMPLES::
 
         sage: x = polygen(QQ, 'x')
-        sage: K.<a> = NumberField(x^3 + x^2 + 1)                                        # optional - sage.rings.number_field
-        sage: F = K.construction()[0]                                                   # optional - sage.rings.number_field
-        sage: F(ZZ['t'])                                                                # optional - sage.rings.number_field
+        sage: K.<a> = NumberField(x^3 + x^2 + 1)                                        # needs sage.rings.number_field
+        sage: F = K.construction()[0]                                                   # needs sage.rings.number_field
+        sage: F(ZZ['t'])                                                                # needs sage.rings.number_field
         Univariate Quotient Polynomial Ring in a
          over Univariate Polynomial Ring in t over Integer Ring
          with modulus a^3 + a^2 + 1
@@ -3107,11 +3128,11 @@ class AlgebraicExtensionFunctor(ConstructionFunctor):
     extension will be constructed as the quotient of a univariate
     polynomial ring::
 
-        sage: F(CC)                                                                     # optional - sage.rings.number_field
+        sage: F(CC)                                                                     # needs sage.rings.number_field
         Univariate Quotient Polynomial Ring in a
          over Complex Field with 53 bits of precision
          with modulus a^3 + a^2 + 1.00000000000000
-        sage: F(RR)                                                                     # optional - sage.rings.number_field
+        sage: F(RR)                                                                     # needs sage.rings.number_field
         Univariate Quotient Polynomial Ring in a
          over Real Field with 53 bits of precision
          with modulus a^3 + a^2 + 1.00000000000000
@@ -3120,48 +3141,50 @@ class AlgebraicExtensionFunctor(ConstructionFunctor):
     the integers returns an order (not necessarily maximal) of that
     field, similar to the behaviour of ``ZZ.extension(...)``::
 
-        sage: F(ZZ)                                                                     # optional - sage.rings.number_field
+        sage: F(ZZ)                                                                     # needs sage.rings.number_field
         Order in Number Field in a with defining polynomial x^3 + x^2 + 1
 
     This also holds for non-absolute number fields::
 
         sage: x = polygen(QQ, 'x')
-        sage: K.<a,b> = NumberField([x^3 + x^2 + 1, x^2 + x + 1])                       # optional - sage.rings.number_field
-        sage: F = K.construction()[0]                                                   # optional - sage.rings.number_field
-        sage: O = F(ZZ); O                                                              # optional - sage.rings.number_field
+        sage: K.<a,b> = NumberField([x^3 + x^2 + 1, x^2 + x + 1])                       # needs sage.rings.number_field
+        sage: F = K.construction()[0]                                                   # needs sage.rings.number_field
+        sage: O = F(ZZ); O                                                              # needs sage.rings.number_field
         Relative Order in Number Field in a
          with defining polynomial x^3 + x^2 + 1 over its base field
-        sage: O.ambient() is K                                                          # optional - sage.rings.number_field
+        sage: O.ambient() is K                                                          # needs sage.rings.number_field
         True
 
     Special cases are made for cyclotomic fields and residue fields::
 
-        sage: C = CyclotomicField(8)                                                    # optional - sage.rings.number_field
-        sage: F, R = C.construction()                                                   # optional - sage.rings.number_field
-        sage: F                                                                         # optional - sage.rings.number_field
+        sage: # needs sage.rings.number_field
+        sage: C = CyclotomicField(8)
+        sage: F, R = C.construction()
+        sage: F
         AlgebraicExtensionFunctor
-        sage: R                                                                         # optional - sage.rings.number_field
+        sage: R
         Rational Field
-        sage: F(R)                                                                      # optional - sage.rings.number_field
+        sage: F(R)
         Cyclotomic Field of order 8 and degree 4
-        sage: F(ZZ)                                                                     # optional - sage.rings.number_field
+        sage: F(ZZ)
         Maximal Order in Cyclotomic Field of order 8 and degree 4
 
     ::
 
-        sage: K.<z> = CyclotomicField(7)                                                # optional - sage.rings.number_field
-        sage: P = K.factor(17)[0][0]                                                    # optional - sage.rings.number_field
-        sage: k = K.residue_field(P)                                                    # optional - sage.rings.number_field
-        sage: F, R = k.construction()                                                   # optional - sage.rings.number_field
-        sage: F                                                                         # optional - sage.rings.number_field
+        sage: # needs sage.rings.number_field
+        sage: K.<z> = CyclotomicField(7)
+        sage: P = K.factor(17)[0][0]
+        sage: k = K.residue_field(P)
+        sage: F, R = k.construction()
+        sage: F
         AlgebraicExtensionFunctor
-        sage: R                                                                         # optional - sage.rings.number_field
+        sage: R
         Cyclotomic Field of order 7 and degree 6
-        sage: F(R) is k                                                                 # optional - sage.rings.number_field
+        sage: F(R) is k
         True
-        sage: F(ZZ)                                                                     # optional - sage.rings.number_field
+        sage: F(ZZ)
         Residue field of Integers modulo 17
-        sage: F(CyclotomicField(49))                                                    # optional - sage.rings.number_field
+        sage: F(CyclotomicField(49))
         Residue field in zbar of Fractional ideal (17)
 
     """
@@ -3223,25 +3246,25 @@ class AlgebraicExtensionFunctor(ConstructionFunctor):
 
             sage: from sage.categories.pushout import AlgebraicExtensionFunctor
             sage: P.<x> = ZZ[]
-            sage: F1 = AlgebraicExtensionFunctor([x^3 - x^2 + 1], ['a'], [None])        # optional - sage.rings.number_field
-            sage: F2 = AlgebraicExtensionFunctor([x^3 - x^2 + 1], ['a'], [0])           # optional - sage.rings.number_field
-            sage: F1 == F2                                                              # optional - sage.rings.number_field
+            sage: F1 = AlgebraicExtensionFunctor([x^3 - x^2 + 1], ['a'], [None])
+            sage: F2 = AlgebraicExtensionFunctor([x^3 - x^2 + 1], ['a'], [0])
+            sage: F1 == F2
             False
-            sage: F1(QQ)                                                                # optional - sage.rings.number_field
+            sage: F1(QQ)                                                                # needs sage.rings.number_field
             Number Field in a with defining polynomial x^3 - x^2 + 1
-            sage: F1(QQ).coerce_embedding()                                             # optional - sage.rings.number_field
-            sage: phi = F2(QQ).coerce_embedding().__copy__(); phi                       # optional - sage.rings.number_field
+            sage: F1(QQ).coerce_embedding()                                             # needs sage.rings.number_field
+            sage: phi = F2(QQ).coerce_embedding().__copy__(); phi                       # needs sage.rings.number_field
             Generic morphism:
               From: Number Field in a with defining polynomial x^3 - x^2 + 1
                     with a = -0.7548776662466928?
               To:   Real Lazy Field
               Defn: a -> -0.7548776662466928?
-            sage: F1(QQ) == F2(QQ)                                                      # optional - sage.rings.number_field
+            sage: F1(QQ) == F2(QQ)                                                      # needs sage.rings.number_field
             False
-            sage: F1(GF(5))                                                             # optional - sage.rings.finite_rings sage.rings.number_field
+            sage: F1(GF(5))                                                             # needs sage.rings.finite_rings sage.rings.number_field
             Univariate Quotient Polynomial Ring in a over Finite Field of size 5
              with modulus a^3 + 4*a^2 + 1
-            sage: F2(GF(5))                                                             # optional - sage.rings.finite_rings sage.rings.number_field
+            sage: F2(GF(5))                                                             # needs sage.rings.finite_rings sage.rings.number_field
             Traceback (most recent call last):
             ...
             NotImplementedError: ring extension with prescribed embedding is not implemented
@@ -3250,38 +3273,39 @@ class AlgebraicExtensionFunctor(ConstructionFunctor):
         integers, an order (not necessarily maximal) of that field is
         returned, similar to the behaviour of ``ZZ.extension``::
 
-            sage: F1(ZZ)                                                                # optional - sage.rings.number_field
+            sage: F1(ZZ)                                                                # needs sage.rings.number_field
             Order in Number Field in a with defining polynomial x^3 - x^2 + 1
 
         The cyclotomic fields form a special case of number fields
         with prescribed embeddings::
 
-            sage: C = CyclotomicField(8)                                                # optional - sage.rings.number_field
-            sage: F, R = C.construction()                                               # optional - sage.rings.number_field
-            sage: F                                                                     # optional - sage.rings.number_field
+            sage: # needs sage.rings.number_field
+            sage: C = CyclotomicField(8)
+            sage: F, R = C.construction()
+            sage: F
             AlgebraicExtensionFunctor
-            sage: R                                                                     # optional - sage.rings.number_field
+            sage: R
             Rational Field
-            sage: F(R)                                                                  # optional - sage.rings.number_field
+            sage: F(R)
             Cyclotomic Field of order 8 and degree 4
-            sage: F(ZZ)                                                                 # optional - sage.rings.number_field
+            sage: F(ZZ)
             Maximal Order in Cyclotomic Field of order 8 and degree 4
 
         The data stored in this construction includes structural
         morphisms of number fields (see :trac:`20826`)::
 
             sage: R.<x> = ZZ[]
-            sage: K.<a> = NumberField(x^2 - 3)                                          # optional - sage.rings.number_field
-            sage: L0.<b> = K.change_names()                                             # optional - sage.rings.number_field
-            sage: L0.structure()                                                        # optional - sage.rings.number_field
+            sage: K.<a> = NumberField(x^2 - 3)                                          # needs sage.rings.number_field
+            sage: L0.<b> = K.change_names()                                             # needs sage.rings.number_field
+            sage: L0.structure()                                                        # needs sage.rings.number_field
             (Isomorphism given by variable name change map:
                From: Number Field in b with defining polynomial x^2 - 3
                To:   Number Field in a with defining polynomial x^2 - 3,
              Isomorphism given by variable name change map:
                From: Number Field in a with defining polynomial x^2 - 3
                To:   Number Field in b with defining polynomial x^2 - 3)
-            sage: L1 = (b*x).parent().base_ring()                                       # optional - sage.rings.number_field
-            sage: L1 is L0                                                              # optional - sage.rings.number_field
+            sage: L1 = (b*x).parent().base_ring()                                       # needs sage.rings.number_field
+            sage: L1 is L0                                                              # needs sage.rings.number_field
             True
         """
         Functor.__init__(self, Rings(), Rings())
@@ -3325,24 +3349,25 @@ class AlgebraicExtensionFunctor(ConstructionFunctor):
         TESTS::
 
             sage: x = polygen(QQ, 'x')
-            sage: K.<a> = NumberField(x^3 + x^2 + 1)                                    # optional - sage.rings.number_field
-            sage: F = K.construction()[0]                                               # optional - sage.rings.number_field
-            sage: F(ZZ)       # indirect doctest                                        # optional - sage.rings.number_field
+            sage: K.<a> = NumberField(x^3 + x^2 + 1)                                    # needs sage.rings.number_field
+            sage: F = K.construction()[0]                                               # needs sage.rings.number_field
+            sage: F(ZZ)       # indirect doctest                                        # needs sage.rings.number_field
             Order in Number Field in a with defining polynomial x^3 + x^2 + 1
-            sage: F(ZZ['t'])  # indirect doctest                                        # optional - sage.rings.number_field
+            sage: F(ZZ['t'])  # indirect doctest                                        # needs sage.rings.number_field
             Univariate Quotient Polynomial Ring in a over
              Univariate Polynomial Ring in t over Integer Ring with modulus a^3 + a^2 + 1
-            sage: F(RR)       # indirect doctest                                        # optional - sage.rings.number_field
+            sage: F(RR)       # indirect doctest                                        # needs sage.rings.number_field
             Univariate Quotient Polynomial Ring in a over
              Real Field with 53 bits of precision with modulus a^3 + a^2 + 1.00000000000000
 
         Check that :trac:`13538` is fixed::
 
+            sage: # needs sage.rings.padics
             sage: from sage.categories.pushout import AlgebraicExtensionFunctor
-            sage: K = Qp(3, 3)                                                          # optional - sage.rings.padics
-            sage: R.<a> = K[]                                                           # optional - sage.rings.padics
-            sage: AEF = AlgebraicExtensionFunctor([a^2 - 3], ['a'], [None])             # optional - sage.rings.padics
-            sage: AEF(K)                                                                # optional - sage.rings.padics
+            sage: K = Qp(3, 3)
+            sage: R.<a> = K[]
+            sage: AEF = AlgebraicExtensionFunctor([a^2 - 3], ['a'], [None])
+            sage: AEF(K)
             3-adic Eisenstein Extension Field in a defined by a^2 - 3
 
         """
@@ -3373,19 +3398,19 @@ class AlgebraicExtensionFunctor(ConstructionFunctor):
         TESTS::
 
             sage: x = polygen(QQ, 'x')
-            sage: K.<a> = NumberField(x^3 + x^2 + 1)                                    # optional - sage.rings.number_field
-            sage: F = K.construction()[0]                                               # optional - sage.rings.number_field
-            sage: F == loads(dumps(F))                                                  # optional - sage.rings.number_field
+            sage: K.<a> = NumberField(x^3 + x^2 + 1)                                    # needs sage.rings.number_field
+            sage: F = K.construction()[0]                                               # needs sage.rings.number_field
+            sage: F == loads(dumps(F))                                                  # needs sage.rings.number_field
             True
 
-            sage: K2.<a> = NumberField(x^3 + x^2 + 1, latex_names='a')                  # optional - sage.rings.number_field
-            sage: F2 = K2.construction()[0]                                             # optional - sage.rings.number_field
-            sage: F2 == F                                                               # optional - sage.rings.number_field
+            sage: K2.<a> = NumberField(x^3 + x^2 + 1, latex_names='a')                  # needs sage.rings.number_field
+            sage: F2 = K2.construction()[0]                                             # needs sage.rings.number_field
+            sage: F2 == F                                                               # needs sage.rings.number_field
             True
 
-            sage: K3.<a> = NumberField(x^3 + x^2 + 1, latex_names='alpha')              # optional - sage.rings.number_field
-            sage: F3 = K3.construction()[0]                                             # optional - sage.rings.number_field
-            sage: F3 == F                                                               # optional - sage.rings.number_field
+            sage: K3.<a> = NumberField(x^3 + x^2 + 1, latex_names='alpha')              # needs sage.rings.number_field
+            sage: F3 = K3.construction()[0]                                             # needs sage.rings.number_field
+            sage: F3 == F                                                               # needs sage.rings.number_field
             False
         """
         if not isinstance(other, AlgebraicExtensionFunctor):
@@ -3404,9 +3429,9 @@ class AlgebraicExtensionFunctor(ConstructionFunctor):
         EXAMPLES::
 
             sage: x = polygen(QQ, 'x')
-            sage: K.<a> = NumberField(x^3 + x^2 + 1)                                    # optional - sage.rings.number_field
-            sage: F = K.construction()[0]                                               # optional - sage.rings.number_field
-            sage: F != loads(dumps(F))                                                  # optional - sage.rings.number_field
+            sage: K.<a> = NumberField(x^3 + x^2 + 1)                                    # needs sage.rings.number_field
+            sage: F = K.construction()[0]                                               # needs sage.rings.number_field
+            sage: F != loads(dumps(F))                                                  # needs sage.rings.number_field
             False
         """
         return not (self == other)
@@ -3450,36 +3475,38 @@ class AlgebraicExtensionFunctor(ConstructionFunctor):
         The following demonstrate coercions for finite fields using Conway or
         pseudo-Conway polynomials::
 
-            sage: k = GF(3^2, prefix='z'); a = k.gen()                                  # optional - sage.rings.finite_rings
-            sage: l = GF(3^3, prefix='z'); b = l.gen()                                  # optional - sage.rings.finite_rings
-            sage: a + b # indirect doctest                                              # optional - sage.rings.finite_rings
+            sage: k = GF(3^2, prefix='z'); a = k.gen()                                  # needs sage.rings.finite_rings
+            sage: l = GF(3^3, prefix='z'); b = l.gen()                                  # needs sage.rings.finite_rings
+            sage: a + b # indirect doctest                                              # needs sage.rings.finite_rings
             z6^5 + 2*z6^4 + 2*z6^3 + z6^2 + 2*z6 + 1
 
         Note that embeddings are compatible in lattices of such finite fields::
 
-            sage: m = GF(3^5, prefix='z'); c = m.gen()                                  # optional - sage.rings.finite_rings
-            sage: (a + b) + c == a + (b + c) # indirect doctest                         # optional - sage.rings.finite_rings
+            sage: # needs sage.rings.finite_rings
+            sage: m = GF(3^5, prefix='z'); c = m.gen()
+            sage: (a + b) + c == a + (b + c) # indirect doctest
             True
             sage: from sage.categories.pushout import pushout
-            sage: n = pushout(k, l)                                                     # optional - sage.rings.finite_rings
-            sage: o = pushout(l, m)                                                     # optional - sage.rings.finite_rings
-            sage: q = pushout(n, o)                                                     # optional - sage.rings.finite_rings
-            sage: q(o(b)) == q(n(b)) # indirect doctest                                 # optional - sage.rings.finite_rings
+            sage: n = pushout(k, l)
+            sage: o = pushout(l, m)
+            sage: q = pushout(n, o)
+            sage: q(o(b)) == q(n(b)) # indirect doctest
             True
 
         Coercion is also available for number fields::
 
-            sage: P.<x> = QQ[]                                                          # optional - sage.rings.number_field
-            sage: L.<b> = NumberField(x^8 - x^4 + 1, embedding=CDF.0)                   # optional - sage.rings.number_field
-            sage: M1.<c1> = NumberField(x^2 + x + 1, embedding=b^4 - 1)                 # optional - sage.rings.number_field
-            sage: M2.<c2> = NumberField(x^2 + 1, embedding=-b^6)                        # optional - sage.rings.number_field
-            sage: M1.coerce_map_from(M2)                                                # optional - sage.rings.number_field
-            sage: M2.coerce_map_from(M1)                                                # optional - sage.rings.number_field
-            sage: c1 + c2; parent(c1 + c2)    #indirect doctest                         # optional - sage.rings.number_field
+            sage: # needs sage.rings.number_field
+            sage: P.<x> = QQ[]
+            sage: L.<b> = NumberField(x^8 - x^4 + 1, embedding=CDF.0)
+            sage: M1.<c1> = NumberField(x^2 + x + 1, embedding=b^4 - 1)
+            sage: M2.<c2> = NumberField(x^2 + 1, embedding=-b^6)
+            sage: M1.coerce_map_from(M2)
+            sage: M2.coerce_map_from(M1)
+            sage: c1 + c2; parent(c1 + c2)    #indirect doctest
             -b^6 + b^4 - 1
             Number Field in b with defining polynomial x^8 - x^4 + 1
              with b = -0.2588190451025208? + 0.9659258262890683?*I
-            sage: pushout(M1['x'], M2['x'])                                             # optional - sage.rings.number_field
+            sage: pushout(M1['x'], M2['x'])
             Univariate Polynomial Ring in x
              over Number Field in b with defining polynomial x^8 - x^4 + 1
               with b = -0.2588190451025208? + 0.9659258262890683?*I
@@ -3490,13 +3517,13 @@ class AlgebraicExtensionFunctor(ConstructionFunctor):
         are embedded into a field that is not a numberfield, no merging
         occurs::
 
-            sage: cbrt2 = CDF(2)^(1/3)
-            sage: zeta3 = CDF.zeta(3)
-            sage: K.<a> = NumberField(x^3 - 2, embedding=cbrt2 * zeta3)                 # optional - sage.rings.number_field
-            sage: L.<b> = NumberField(x^6 - 2, embedding=1.1)                           # optional - sage.rings.number_field
-            sage: L.coerce_map_from(K)                                                  # optional - sage.rings.number_field
-            sage: K.coerce_map_from(L)                                                  # optional - sage.rings.number_field
-            sage: pushout(K, L)                                                         # optional - sage.rings.number_field
+            sage: cbrt2 = CDF(2)^(1/3)                                                  # needs sage.rings.complex_double
+            sage: zeta3 = CDF.zeta(3)                                                   # needs sage.rings.complex_double
+            sage: K.<a> = NumberField(x^3 - 2, embedding=cbrt2 * zeta3)                 # needs sage.rings.number_field
+            sage: L.<b> = NumberField(x^6 - 2, embedding=1.1)                           # needs sage.rings.number_field
+            sage: L.coerce_map_from(K)                                                  # needs sage.rings.number_field
+            sage: K.coerce_map_from(L)                                                  # needs sage.rings.number_field
+            sage: pushout(K, L)                                                         # needs sage.rings.number_field
             Traceback (most recent call last):
             ...
             CoercionException: ('Ambiguous Base Extension', Number Field in a with
@@ -3571,10 +3598,10 @@ class AlgebraicExtensionFunctor(ConstructionFunctor):
         TESTS::
 
             sage: P.<x> = QQ[]
-            sage: K.<a> = NumberField(x^3 - 5, embedding=0)                             # optional - sage.rings.number_field
-            sage: L.<b> = K.extension(x^2 + a)                                          # optional - sage.rings.number_field
-            sage: F, R = L.construction()                                               # optional - sage.rings.number_field
-            sage: prod(F.expand())(R) == L  #indirect doctest                           # optional - sage.rings.number_field
+            sage: K.<a> = NumberField(x^3 - 5, embedding=0)                             # needs sage.rings.number_field
+            sage: L.<b> = K.extension(x^2 + a)                                          # needs sage.rings.number_field
+            sage: F, R = L.construction()                                               # needs sage.rings.number_field
+            sage: prod(F.expand())(R) == L  #indirect doctest                           # needs sage.rings.number_field
             True
 
         """
@@ -3603,18 +3630,18 @@ class AlgebraicExtensionFunctor(ConstructionFunctor):
         EXAMPLES::
 
             sage: P.<x> = QQ[]
-            sage: K.<a> = NumberField(x^3 - 5, embedding=0)                             # optional - sage.rings.number_field
-            sage: L.<b> = K.extension(x^2 + a)                                          # optional - sage.rings.number_field
-            sage: F, R = L.construction()                                               # optional - sage.rings.number_field
-            sage: prod(F.expand())(R) == L                                              # optional - sage.rings.number_field
+            sage: K.<a> = NumberField(x^3 - 5, embedding=0)                             # needs sage.rings.number_field
+            sage: L.<b> = K.extension(x^2 + a)                                          # needs sage.rings.number_field
+            sage: F, R = L.construction()                                               # needs sage.rings.number_field
+            sage: prod(F.expand())(R) == L                                              # needs sage.rings.number_field
             True
-            sage: K = NumberField([x^2 - 2, x^2 - 3],'a')                               # optional - sage.rings.number_field
-            sage: F, R = K.construction()                                               # optional - sage.rings.number_field
-            sage: F                                                                     # optional - sage.rings.number_field
+            sage: K = NumberField([x^2 - 2, x^2 - 3],'a')                               # needs sage.rings.number_field
+            sage: F, R = K.construction()                                               # needs sage.rings.number_field
+            sage: F                                                                     # needs sage.rings.number_field
             AlgebraicExtensionFunctor
-            sage: L = F.expand(); L                                                     # optional - sage.rings.number_field
+            sage: L = F.expand(); L                                                     # needs sage.rings.number_field
             [AlgebraicExtensionFunctor, AlgebraicExtensionFunctor]
-            sage: L[-1](QQ)                                                             # optional - sage.rings.number_field
+            sage: L[-1](QQ)                                                             # needs sage.rings.number_field
             Number Field in a1 with defining polynomial x^2 - 3
         """
         n = len(self.polys)
@@ -3633,12 +3660,12 @@ class AlgebraicClosureFunctor(ConstructionFunctor):
 
     EXAMPLES::
 
-        sage: F = CDF.construction()[0]
-        sage: F(QQ)                                                                     # optional - sage.rings.number_field
+        sage: F = CDF.construction()[0]                                                 # needs sage.rings.complex_double
+        sage: F(QQ)                                                                     # needs sage.rings.number_field
         Algebraic Field
-        sage: F(RR)                                                                     # optional - sage.rings.real_mpfr
+        sage: F(RR)                                                                     # needs sage.rings.real_mpfr
         Complex Field with 53 bits of precision
-        sage: F(F(QQ)) is F(QQ)                                                         # optional - sage.rings.number_field
+        sage: F(F(QQ)) is F(QQ)                                                         # needs sage.rings.number_field
         True
 
     """
@@ -3650,9 +3677,9 @@ class AlgebraicClosureFunctor(ConstructionFunctor):
 
             sage: from sage.categories.pushout import AlgebraicClosureFunctor
             sage: F = AlgebraicClosureFunctor()
-            sage: F(QQ)                                                                 # optional - sage.rings.number_field
+            sage: F(QQ)                                                                 # needs sage.rings.number_field
             Algebraic Field
-            sage: F(RR)                                                                 # optional - sage.rings.real_mpfr
+            sage: F(RR)                                                                 # needs sage.rings.real_mpfr
             Complex Field with 53 bits of precision
             sage: F == loads(dumps(F))
             True
@@ -3666,8 +3693,8 @@ class AlgebraicClosureFunctor(ConstructionFunctor):
 
         TESTS::
 
-            sage: F = CDF.construction()[0]
-            sage: F(QQ)       # indirect doctest                                        # optional - sage.rings.number_field
+            sage: F = CDF.construction()[0]                                             # needs sage.rings.complex_double
+            sage: F(QQ)       # indirect doctest                                        # needs sage.rings.number_field
             Algebraic Field
         """
         try:
@@ -3687,10 +3714,10 @@ class AlgebraicClosureFunctor(ConstructionFunctor):
         TESTS::
 
             sage: x = polygen(QQ, 'x')
-            sage: K.<a> = NumberField(x^3 + x^2 + 1)                                    # optional - sage.rings.number_field
-            sage: CDF.construction()[0].merge(K.construction()[0]) is None              # optional - sage.rings.number_field
+            sage: K.<a> = NumberField(x^3 + x^2 + 1)                                    # needs sage.rings.number_field
+            sage: CDF.construction()[0].merge(K.construction()[0]) is None              # needs sage.rings.number_field
             True
-            sage: CDF.construction()[0].merge(CDF.construction()[0])                    # optional - sage.rings.number_field
+            sage: CDF.construction()[0].merge(CDF.construction()[0])                    # needs sage.rings.number_field
             AlgebraicClosureFunctor
 
         """
@@ -3713,7 +3740,7 @@ class PermutationGroupFunctor(ConstructionFunctor):
         EXAMPLES::
 
             sage: from sage.categories.pushout import PermutationGroupFunctor
-            sage: PF = PermutationGroupFunctor([PermutationGroupElement([(1,2)])],      # optional - sage.groups
+            sage: PF = PermutationGroupFunctor([PermutationGroupElement([(1,2)])],      # needs sage.groups
             ....:                              [1,2]); PF
             PermutationGroupFunctor[(1,2)]
         """
@@ -3725,9 +3752,9 @@ class PermutationGroupFunctor(ConstructionFunctor):
         """
         EXAMPLES::
 
-            sage: P1 = PermutationGroup([[(1,2)]])                                      # optional - sage.groups
-            sage: PF, P = P1.construction()                                             # optional - sage.groups
-            sage: PF                                                                    # optional - sage.groups
+            sage: P1 = PermutationGroup([[(1,2)]])                                      # needs sage.groups
+            sage: PF, P = P1.construction()                                             # needs sage.groups
+            sage: PF                                                                    # needs sage.groups
             PermutationGroupFunctor[(1,2)]
         """
         return "PermutationGroupFunctor%s" % list(self.gens())
@@ -3736,9 +3763,9 @@ class PermutationGroupFunctor(ConstructionFunctor):
         """
         EXAMPLES::
 
-            sage: P1 = PermutationGroup([[(1,2)]])                                      # optional - sage.groups
-            sage: PF, P = P1.construction()                                             # optional - sage.groups
-            sage: PF(P)                                                                 # optional - sage.groups
+            sage: P1 = PermutationGroup([[(1,2)]])                                      # needs sage.groups
+            sage: PF, P = P1.construction()                                             # needs sage.groups
+            sage: PF(P)                                                                 # needs sage.groups
             Permutation Group with generators [(1,2)]
         """
         from sage.groups.perm_gps.permgroup import PermutationGroup
@@ -3749,9 +3776,9 @@ class PermutationGroupFunctor(ConstructionFunctor):
         """
         EXAMPLES::
 
-            sage: P1 = PermutationGroup([[(1,2)]])                                      # optional - sage.groups
-            sage: PF, P = P1.construction()                                             # optional - sage.groups
-            sage: PF.gens()                                                             # optional - sage.groups
+            sage: P1 = PermutationGroup([[(1,2)]])                                      # needs sage.groups
+            sage: PF, P = P1.construction()                                             # needs sage.groups
+            sage: PF.gens()                                                             # needs sage.groups
             ((1,2),)
         """
         return self._gens
@@ -3762,11 +3789,12 @@ class PermutationGroupFunctor(ConstructionFunctor):
 
         EXAMPLES::
 
-            sage: P1 = PermutationGroup([[(1,2)]])                                      # optional - sage.groups
-            sage: PF1, P = P1.construction()                                            # optional - sage.groups
-            sage: P2 = PermutationGroup([[(1,3)]])                                      # optional - sage.groups
-            sage: PF2, P = P2.construction()                                            # optional - sage.groups
-            sage: PF1.merge(PF2)                                                        # optional - sage.groups
+            sage: # needs sage.groups
+            sage: P1 = PermutationGroup([[(1,2)]])
+            sage: PF1, P = P1.construction()
+            sage: P2 = PermutationGroup([[(1,3)]])
+            sage: PF2, P = P2.construction()
+            sage: PF1.merge(PF2)
             PermutationGroupFunctor[(1,2), (1,3)]
         """
         if self.__class__ != other.__class__:
@@ -3812,13 +3840,13 @@ class EquivariantSubobjectConstructionFunctor(ConstructionFunctor):
     column (index 1); the order of the extra element 2 in a permutation determines
     whether it is a symmetry or an antisymmetry::
 
-        sage: GSym01 = PermutationGroup([[(0,1),(2,),(3,)]]); GSym01                    # optional - sage.groups
+        sage: GSym01 = PermutationGroup([[(0,1),(2,),(3,)]]); GSym01                    # needs sage.groups
         Permutation Group with generators [(0,1)]
-        sage: GASym01 = PermutationGroup([[(0,1),(2,3)]]); GASym01                      # optional - sage.groups
+        sage: GASym01 = PermutationGroup([[(0,1),(2,3)]]); GASym01                      # needs sage.groups
         Permutation Group with generators [(0,1)(2,3)]
         sage: from sage.categories.action import Action
         sage: from sage.structure.element import Matrix
-        sage: class TensorIndexAction(Action):                                          # optional - sage.modules
+        sage: class TensorIndexAction(Action):
         ....:     def _act_(self, g, x):
         ....:         if isinstance(x, Matrix):
         ....:             if g(0) == 1:
@@ -3829,40 +3857,40 @@ class EquivariantSubobjectConstructionFunctor(ConstructionFunctor):
         ....:             else:
         ....:                 return x
         ....:         raise NotImplementedError
-        sage: M = matrix([[1, 2], [3, 4]]); M                                           # optional - sage.modules
+        sage: M = matrix([[1, 2], [3, 4]]); M                                           # needs sage.modules
         [1 2]
         [3 4]
-        sage: GSym01_action = TensorIndexAction(GSym01, M.parent())                     # optional - sage.groups sage.modules
-        sage: GASym01_action = TensorIndexAction(GASym01, M.parent())                   # optional - sage.groups sage.modules
-        sage: GSym01_action.act(GSym01.0, M)                                            # optional - sage.groups sage.modules
+        sage: GSym01_action = TensorIndexAction(GSym01, M.parent())                     # needs sage.groups sage.modules
+        sage: GASym01_action = TensorIndexAction(GASym01, M.parent())                   # needs sage.groups sage.modules
+        sage: GSym01_action.act(GSym01.0, M)                                            # needs sage.groups sage.modules
         [1 3]
         [2 4]
-        sage: GASym01_action.act(GASym01.0, M)                                          # optional - sage.groups sage.modules
+        sage: GASym01_action.act(GASym01.0, M)                                          # needs sage.groups sage.modules
         [-1 -3]
         [-2 -4]
-        sage: Sym01 = M.parent().invariant_module(GSym01, action=GSym01_action); Sym01  # optional - sage.groups sage.modules
+        sage: Sym01 = M.parent().invariant_module(GSym01, action=GSym01_action); Sym01  # needs sage.groups sage.modules
         (Permutation Group with generators [(0,1)])-invariant submodule
          of Full MatrixSpace of 2 by 2 dense matrices over Integer Ring
-        sage: list(Sym01.basis())                                                       # optional - sage.groups sage.modules
+        sage: list(Sym01.basis())                                                       # needs sage.groups sage.modules
         [B[0], B[1], B[2]]
-        sage: list(Sym01.basis().map(Sym01.lift))                                       # optional - sage.groups sage.modules
+        sage: list(Sym01.basis().map(Sym01.lift))                                       # needs sage.groups sage.modules
         [
         [1 0]  [0 1]  [0 0]
         [0 0], [1 0], [0 1]
         ]
-        sage: ASym01 = M.parent().invariant_module(GASym01, action=GASym01_action)      # optional - sage.groups sage.modules
-        sage: ASym01                                                                    # optional - sage.groups sage.modules
+        sage: ASym01 = M.parent().invariant_module(GASym01, action=GASym01_action)      # needs sage.groups sage.modules
+        sage: ASym01                                                                    # needs sage.groups sage.modules
         (Permutation Group with generators [(0,1)(2,3)])-invariant submodule
          of Full MatrixSpace of 2 by 2 dense matrices over Integer Ring
-        sage: list(ASym01.basis())                                                      # optional - sage.groups sage.modules
+        sage: list(ASym01.basis())                                                      # needs sage.groups sage.modules
         [B[0]]
-        sage: list(ASym01.basis().map(ASym01.lift))                                     # optional - sage.groups sage.modules
+        sage: list(ASym01.basis().map(ASym01.lift))                                     # needs sage.groups sage.modules
         [
         [ 0  1]
         [-1  0]
         ]
         sage: from sage.categories.pushout import pushout
-        sage: pushout(Sym01, QQ)                                                        # optional - sage.groups sage.modules
+        sage: pushout(Sym01, QQ)                                                        # needs sage.groups sage.modules
         (Permutation Group with generators [(0,1)])-invariant submodule
          of Full MatrixSpace of 2 by 2 dense matrices over Rational Field
     """
@@ -3871,12 +3899,13 @@ class EquivariantSubobjectConstructionFunctor(ConstructionFunctor):
         """
         EXAMPLES::
 
-            sage: G = SymmetricGroup(3); G.rename('S3')                                 # optional - sage.groups sage.modules
-            sage: M = FreeModule(ZZ, [1,2,3], prefix='M'); M.rename('M')                # optional - sage.groups sage.modules
-            sage: action = lambda g, x: M.term(g(x))                                    # optional - sage.groups sage.modules
-            sage: I = M.invariant_module(G, action_on_basis=action); I                  # optional - sage.groups sage.modules
+            sage: # needs sage.groups sage.modules
+            sage: G = SymmetricGroup(3); G.rename('S3')
+            sage: M = FreeModule(ZZ, [1,2,3], prefix='M'); M.rename('M')
+            sage: action = lambda g, x: M.term(g(x))
+            sage: I = M.invariant_module(G, action_on_basis=action); I
             (S3)-invariant submodule of M
-            sage: I.construction()                                                      # optional - sage.groups sage.modules
+            sage: I.construction()
             (EquivariantSubobjectConstructionFunctor,
             Representation of S3 indexed by {1, 2, 3} over Integer Ring)
         """
@@ -3895,13 +3924,13 @@ class EquivariantSubobjectConstructionFunctor(ConstructionFunctor):
         TESTS::
 
             sage: from sage.categories.pushout import EquivariantSubobjectConstructionFunctor
-            sage: M2 = MatrixSpace(QQ, 2); M2                                           # optional - sage.groups sage.modules
+            sage: M2 = MatrixSpace(QQ, 2); M2                                           # needs sage.groups sage.modules
             Full MatrixSpace of 2 by 2 dense matrices over Rational Field
-            sage: F = EquivariantSubobjectConstructionFunctor(M2,                       # optional - sage.groups sage.modules
+            sage: F = EquivariantSubobjectConstructionFunctor(M2,                       # needs sage.groups sage.modules
             ....:         operator.mul, 'left',
             ....:         operator.mul, 'right'); F
             EquivariantSubobjectConstructionFunctor
-            sage: F(M2)                                                                 # optional - sage.groups sage.modules
+            sage: F(M2)                                                                 # needs sage.groups sage.modules
             Traceback (most recent call last):
             ...
             NotImplementedError: non-trivial other_action=<built-in function mul> is not implemented
@@ -3920,24 +3949,24 @@ class BlackBoxConstructionFunctor(ConstructionFunctor):
     EXAMPLES::
 
         sage: from sage.categories.pushout import BlackBoxConstructionFunctor
-        sage: FG = BlackBoxConstructionFunctor(gap)                                     # optional - sage.libs.gap
-        sage: FS = BlackBoxConstructionFunctor(singular)                                # optional - sage.libs.singular
-        sage: FG                                                                        # optional - sage.libs.gap
+        sage: FG = BlackBoxConstructionFunctor(gap)
+        sage: FS = BlackBoxConstructionFunctor(singular)
+        sage: FG
         BlackBoxConstructionFunctor
-        sage: FG(ZZ)                                                                    # optional - sage.libs.gap
+        sage: FG(ZZ)                                                                    # needs sage.libs.gap
         Integers
-        sage: FG(ZZ).parent()                                                           # optional - sage.libs.gap
+        sage: FG(ZZ).parent()                                                           # needs sage.libs.gap
         Gap
-        sage: FS(QQ['t'])                                                               # optional - sage.libs.singular
+        sage: FS(QQ['t'])                                                               # needs sage.libs.singular
         polynomial ring, over a field, global ordering
         //   coefficients: QQ
         //   number of vars : 1
         //        block   1 : ordering lp
         //                  : names    t
         //        block   2 : ordering C
-        sage: FG == FS                                                                  # optional - sage.libs.gap sage.libs.singular
+        sage: FG == FS                                                                  # needs sage.libs.gap sage.libs.singular
         False
-        sage: FG == loads(dumps(FG))                                                    # optional - sage.libs.gap
+        sage: FG == loads(dumps(FG))                                                    # needs sage.libs.gap
         True
     """
     rank = 100
@@ -3947,11 +3976,11 @@ class BlackBoxConstructionFunctor(ConstructionFunctor):
         TESTS::
 
             sage: from sage.categories.pushout import BlackBoxConstructionFunctor
-            sage: FG = BlackBoxConstructionFunctor(gap)                                 # optional - sage.libs.gap
-            sage: FM = BlackBoxConstructionFunctor(maxima)                              # optional - sage.symbolic
-            sage: FM == FG                                                              # optional - sage.libs.gap sage.symbolic
+            sage: FG = BlackBoxConstructionFunctor(gap)
+            sage: FM = BlackBoxConstructionFunctor(maxima)                              # needs sage.symbolic
+            sage: FM == FG                                                              # needs sage.libs.gap sage.symbolic
             False
-            sage: FM == loads(dumps(FM))                                                # optional - sage.symbolic
+            sage: FM == loads(dumps(FM))                                                # needs sage.symbolic
             True
         """
         ConstructionFunctor.__init__(self, Objects(), Objects())
@@ -3968,7 +3997,7 @@ class BlackBoxConstructionFunctor(ConstructionFunctor):
             sage: from sage.categories.pushout import BlackBoxConstructionFunctor
             sage: f = lambda x: x^2
             sage: F = BlackBoxConstructionFunctor(f)
-            sage: F(ZZ)           # indirect doctest                                    # optional - sage.modules
+            sage: F(ZZ)           # indirect doctest                                    # needs sage.modules
             Ambient free module of rank 2 over the principal ideal domain Integer Ring
 
         """
@@ -3979,11 +4008,11 @@ class BlackBoxConstructionFunctor(ConstructionFunctor):
         TESTS::
 
             sage: from sage.categories.pushout import BlackBoxConstructionFunctor
-            sage: FG = BlackBoxConstructionFunctor(gap)                                 # optional - sage.libs.gap
-            sage: FM = BlackBoxConstructionFunctor(maxima)                              # optional - sage.symbolic
-            sage: FM == FG       # indirect doctest                                     # optional - sage.libs.gap sage.symbolic
+            sage: FG = BlackBoxConstructionFunctor(gap)
+            sage: FM = BlackBoxConstructionFunctor(maxima)                              # needs sage.symbolic
+            sage: FM == FG       # indirect doctest                                     # needs sage.libs.gap sage.symbolic
             False
-            sage: FM == loads(dumps(FM))                                                # optional - sage.symbolic
+            sage: FM == loads(dumps(FM))                                                # needs sage.symbolic
             True
         """
         if not isinstance(other, BlackBoxConstructionFunctor):
@@ -3998,11 +4027,11 @@ class BlackBoxConstructionFunctor(ConstructionFunctor):
         EXAMPLES::
 
             sage: from sage.categories.pushout import BlackBoxConstructionFunctor
-            sage: FG = BlackBoxConstructionFunctor(gap)                                 # optional - sage.libs.gap
-            sage: FM = BlackBoxConstructionFunctor(maxima)                              # optional - sage.symbolic
-            sage: FM != FG       # indirect doctest                                     # optional - sage.libs.gap sage.symbolic
+            sage: FG = BlackBoxConstructionFunctor(gap)
+            sage: FM = BlackBoxConstructionFunctor(maxima)                              # needs sage.symbolic
+            sage: FM != FG       # indirect doctest                                     # needs sage.libs.gap sage.symbolic
             True
-            sage: FM != loads(dumps(FM))                                                # optional - sage.symbolic
+            sage: FM != loads(dumps(FM))                                                # needs sage.symbolic
             False
         """
         return not (self == other)
@@ -4061,17 +4090,17 @@ def pushout(R, S):
     which give us `Frac(Poly_x(Complete_7(Frac(\ZZ))))`::
 
         sage: from sage.categories.pushout import pushout
-        sage: pushout(Qp(7), Frac(ZZ['x']))                                             # optional - sage.rings.padics
+        sage: pushout(Qp(7), Frac(ZZ['x']))                                             # needs sage.rings.padics
         Fraction Field of Univariate Polynomial Ring in x
          over 7-adic Field with capped relative precision 20
 
     Note we get the same thing with
     ::
 
-        sage: pushout(Zp(7), Frac(QQ['x']))                                             # optional - sage.rings.padics
+        sage: pushout(Zp(7), Frac(QQ['x']))                                             # needs sage.rings.padics
         Fraction Field of Univariate Polynomial Ring in x
          over 7-adic Field with capped relative precision 20
-        sage: pushout(Zp(7)['x'], Frac(QQ['x']))                                        # optional - sage.rings.padics
+        sage: pushout(Zp(7)['x'], Frac(QQ['x']))                                        # needs sage.rings.padics
         Fraction Field of Univariate Polynomial Ring in x
          over 7-adic Field with capped relative precision 20
 
@@ -4089,17 +4118,17 @@ def pushout(R, S):
 
     Some other examples::
 
-        sage: pushout(Zp(7)['y'], Frac(QQ['t'])['x,y,z'])                               # optional - sage.rings.padics
+        sage: pushout(Zp(7)['y'], Frac(QQ['t'])['x,y,z'])                               # needs sage.rings.padics
         Multivariate Polynomial Ring in x, y, z
          over Fraction Field of Univariate Polynomial Ring in t
           over 7-adic Field with capped relative precision 20
         sage: pushout(ZZ['x,y,z'], Frac(ZZ['x'])['y'])
         Multivariate Polynomial Ring in y, z
          over Fraction Field of Univariate Polynomial Ring in x over Integer Ring
-        sage: pushout(MatrixSpace(RDF, 2, 2), Frac(ZZ['x']))                            # optional - sage.modules
+        sage: pushout(MatrixSpace(RDF, 2, 2), Frac(ZZ['x']))                            # needs sage.modules
         Full MatrixSpace of 2 by 2 dense matrices
          over Fraction Field of Univariate Polynomial Ring in x over Real Double Field
-        sage: pushout(ZZ, MatrixSpace(ZZ[['x']], 3, 3))                                 # optional - sage.modules
+        sage: pushout(ZZ, MatrixSpace(ZZ[['x']], 3, 3))                                 # needs sage.modules
         Full MatrixSpace of 3 by 3 dense matrices
          over Power Series Ring in x over Integer Ring
         sage: pushout(QQ['x,y'], ZZ[['x']])
@@ -4112,20 +4141,22 @@ def pushout(R, S):
     the :class:`SubspaceFunctor` construction) is only applied if it
     leads to a valid coercion::
 
-        sage: A = ZZ^2                                                                  # optional - sage.modules
-        sage: V = span([[1, 2]], QQ)                                                    # optional - sage.modules
-        sage: P = sage.categories.pushout.pushout(A, V)                                 # optional - sage.modules
-        sage: P                                                                         # optional - sage.modules
+        sage: # needs sage.modules
+        sage: A = ZZ^2
+        sage: V = span([[1, 2]], QQ)
+        sage: P = sage.categories.pushout.pushout(A, V)
+        sage: P
         Vector space of dimension 2 over Rational Field
-        sage: P.has_coerce_map_from(A)                                                  # optional - sage.modules
+        sage: P.has_coerce_map_from(A)
         True
 
-        sage: V = (QQ^3).span([[1, 2, 3/4]])                                            # optional - sage.modules
-        sage: A = ZZ^3                                                                  # optional - sage.modules
-        sage: pushout(A, V)                                                             # optional - sage.modules
+        sage: # needs sage.modules
+        sage: V = (QQ^3).span([[1, 2, 3/4]])
+        sage: A = ZZ^3
+        sage: pushout(A, V)
         Vector space of dimension 3 over Rational Field
-        sage: B = A.span([[0, 0, 2/3]])                                                 # optional - sage.modules
-        sage: pushout(B, V)                                                             # optional - sage.modules
+        sage: B = A.span([[0, 0, 2/3]])
+        sage: pushout(B, V)
         Vector space of degree 3 and dimension 2 over Rational Field
         User basis matrix:
         [1 2 0]
@@ -4170,11 +4201,11 @@ def pushout(R, S):
         sage: pushout(EvenPolynomialRing(QQ, 'x'), EvenPolynomialRing(RR, 'x'))
         Even Power Univariate Polynomial Ring in x over Real Field with 53 bits of precision
 
-        sage: pushout(EvenPolynomialRing(QQ, 'x')^2, RR^2)                              # optional - sage.modules
+        sage: pushout(EvenPolynomialRing(QQ, 'x')^2, RR^2)                              # needs sage.modules
         Ambient free module of rank 2
          over the principal ideal domain Even Power Univariate Polynomial Ring in x
           over Real Field with 53 bits of precision
-        sage: pushout(EvenPolynomialRing(QQ, 'x')^2, RR['x']^2)                         # optional - sage.modules
+        sage: pushout(EvenPolynomialRing(QQ, 'x')^2, RR['x']^2)                         # needs sage.modules
         Ambient free module of rank 2
          over the principal ideal domain Univariate Polynomial Ring in x
          over Real Field with 53 bits of precision
@@ -4362,7 +4393,7 @@ def pushout(R, S):
          (Univariate Polynomial Ring in x over Integer Ring,
           Univariate Polynomial Ring in y over Integer Ring,
           Univariate Polynomial Ring in z over Integer Ring)
-        sage: pushout(CartesianProductPoly((QQ['a,b']['x'], QQ['y'])),                  # optional - sage.symbolic
+        sage: pushout(CartesianProductPoly((QQ['a,b']['x'], QQ['y'])),                  # needs sage.symbolic
         ....:         CartesianProductPoly((ZZ['b,c']['x'], SR['z'])))
         The Cartesian product of
          (Univariate Polynomial Ring in x over
@@ -4575,14 +4606,14 @@ def pushout_lattice(R, S):
     EXAMPLES::
 
         sage: from sage.categories.pushout import pushout_lattice
-        sage: A, B = pushout_lattice(Qp(7), Frac(ZZ['x']))                              # optional - sage.rings.padics
-        sage: A.codomain()                                                              # optional - sage.rings.padics
+        sage: A, B = pushout_lattice(Qp(7), Frac(ZZ['x']))                              # needs sage.rings.padics
+        sage: A.codomain()                                                              # needs sage.rings.padics
         Fraction Field of Univariate Polynomial Ring in x
          over 7-adic Field with capped relative precision 20
-        sage: A.codomain() is B.codomain()                                              # optional - sage.rings.padics
+        sage: A.codomain() is B.codomain()                                              # needs sage.rings.padics
         True
-        sage: A, B = pushout_lattice(ZZ, MatrixSpace(ZZ[['x']], 3, 3))                  # optional - sage.modules
-        sage: B                                                                         # optional - sage.modules
+        sage: A, B = pushout_lattice(ZZ, MatrixSpace(ZZ[['x']], 3, 3))                  # needs sage.modules
+        sage: B                                                                         # needs sage.modules
         Identity endomorphism of Full MatrixSpace of 3 by 3 dense matrices
          over Power Series Ring in x over Integer Ring
 
@@ -4753,7 +4784,7 @@ def construction_tower(R):
     EXAMPLES::
 
         sage: from sage.categories.pushout import construction_tower
-        sage: construction_tower(MatrixSpace(FractionField(QQ['t']), 2))                # optional - sage.modules
+        sage: construction_tower(MatrixSpace(FractionField(QQ['t']), 2))                # needs sage.modules
         [(None, Full MatrixSpace of 2 by 2 dense matrices over Fraction Field
                  of Univariate Polynomial Ring in t over Rational Field),
          (MatrixFunctor, Fraction Field
@@ -4835,7 +4866,7 @@ def type_to_parent(P):
         Integer Ring
         sage: type_to_parent(float)
         Real Double Field
-        sage: type_to_parent(complex)
+        sage: type_to_parent(complex)                                                   # needs sage.rings.complex_double
         Complex Double Field
         sage: type_to_parent(list)
         Traceback (most recent call last):

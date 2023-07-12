@@ -64,7 +64,7 @@ class HeckeModules(Category_module):
 
             sage: TestSuite(HeckeModules(ZZ)).run()
 
-            sage: HeckeModules(Partitions(3)).run()                                     # optional - sage.combinat
+            sage: HeckeModules(Partitions(3)).run()                                     # needs sage.combinat
             Traceback (most recent call last):
             ...
             TypeError: R (=Partitions of the integer 3) must be a commutative ring
@@ -121,15 +121,16 @@ class HeckeModules(Category_module):
 
             EXAMPLES::
 
-                sage: M = ModularForms(Gamma0(7), 4)                                    # optional - sage.modular
-                sage: H = M._Hom_(M, category=HeckeModules(QQ)); H                      # optional - sage.modular
+                sage: # needs sage.modular
+                sage: M = ModularForms(Gamma0(7), 4)
+                sage: H = M._Hom_(M, category=HeckeModules(QQ)); H
                 Set of Morphisms
                  from Modular Forms space of dimension 3 for Congruence Subgroup Gamma0(7) of weight 4 over Rational Field
                    to Modular Forms space of dimension 3 for Congruence Subgroup Gamma0(7) of weight 4 over Rational Field
                    in Category of Hecke modules over Rational Field
-                sage: H.__class__                                                       # optional - sage.modular
+                sage: H.__class__
                 <class 'sage.modular.hecke.homspace.HeckeModuleHomspace_with_category'>
-                sage: TestSuite(H).run(skip=["_test_elements", "_test_an_element", "_test_elements_eq",     # optional - sage.modular
+                sage: TestSuite(H).run(skip=["_test_elements", "_test_an_element", "_test_elements_eq",
                 ....:                        "_test_elements_eq_reflexive", "_test_elements_eq_transitive",
                 ....:                        "_test_elements_eq_symmetric", "_test_elements_neq", "_test_some_elements",
                 ....:                        "_test_zero", "_test_additive_associativity",
@@ -142,7 +143,7 @@ class HeckeModules(Category_module):
 
             TESTS::
 
-                sage: H = M._Hom_(M, category=HeckeModules(GF(5))); H                   # optional - sage.modular sage.rings.finite_rings
+                sage: H = M._Hom_(M, category=HeckeModules(GF(5))); H                   # needs sage.modular sage.rings.finite_rings
                 Traceback (most recent call last):
                 ...
                 TypeError: Category of Hecke modules over Finite Field of size 5

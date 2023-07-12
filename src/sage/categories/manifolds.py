@@ -222,14 +222,14 @@ class Manifolds(Category_over_base_ring):
             EXAMPLES::
 
                 sage: from sage.categories.manifolds import Manifolds
-                sage: Manifolds(CC).Complex()                                           # optional - sage.rings.real_mpfr
+                sage: Manifolds(CC).Complex()                                           # needs sage.rings.real_mpfr
                 Category of complex manifolds over
                  Complex Field with 53 bits of precision
 
             TESTS::
 
-                sage: TestSuite(Manifolds(CC).Complex()).run()                          # optional - sage.rings.real_mpfr
-                sage: Manifolds(CC).Complex.__module__                                  # optional - sage.rings.real_mpfr
+                sage: TestSuite(Manifolds(CC).Complex()).run()                          # needs sage.rings.real_mpfr
+                sage: Manifolds(CC).Complex.__module__                                  # needs sage.rings.real_mpfr
                 'sage.categories.manifolds'
             """
             return ComplexManifolds(self.base())._with_axioms(self.axioms())
