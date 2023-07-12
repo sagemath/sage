@@ -205,8 +205,9 @@ class FilteredModulesWithBasis(FilteredModulesCategory):
                    to An example of a graded module with basis: the free module
                       on partitions over Integer Ring(i))_{i in Partitions of the integer 4}
 
+                sage: # needs sage.modules
                 sage: cat = GradedModulesWithBasis(ZZ)
-                sage: C = CombinatorialFreeModule(ZZ, ['a', 'b'], category=cat)         # needs sage.modules
+                sage: C = CombinatorialFreeModule(ZZ, ['a', 'b'], category=cat)
                 sage: C.degree_on_basis = lambda x: 1 if x == 'a' else 2
                 sage: C.homogeneous_component_basis(1)
                 Finite family {'a': B['a']}

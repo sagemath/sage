@@ -1,4 +1,4 @@
-# sage.doctest: optional - sage.combinat
+# sage.doctest: needs sage.combinat
 r"""
 Bialgebras
 """
@@ -69,10 +69,11 @@ class Bialgebras(Category_over_base_ring):
 
             EXAMPLES::
 
-                sage: s = SymmetricFunctions(QQ).schur()                                # needs sage.modules
+                sage: # needs sage.modules
+                sage: s = SymmetricFunctions(QQ).schur()
                 sage: s([5]).is_primitive()
                 False
-                sage: p = SymmetricFunctions(QQ).powersum()                             # needs sage.modules
+                sage: p = SymmetricFunctions(QQ).powersum()
                 sage: p([5]).is_primitive()
                 True
             """
@@ -86,9 +87,9 @@ class Bialgebras(Category_over_base_ring):
             EXAMPLES::
 
                 sage: s = SymmetricFunctions(QQ).schur()                                # needs sage.modules
-                sage: s([5]).is_grouplike()
+                sage: s([5]).is_grouplike()                                             # needs sage.modules
                 False
-                sage: s([]).is_grouplike()
+                sage: s([]).is_grouplike()                                              # needs sage.modules
                 True
             """
             return self.coproduct() == self.tensor(self)

@@ -188,20 +188,23 @@ class HomologyFunctor(Functor):
 
     Applying to a chain map::
 
-        sage: S = simplicial_complexes.Sphere(1); S                                     # needs sage.graphs
+        sage: # needs sage.graphs sage.modules
+        sage: S = simplicial_complexes.Sphere(1); S
         Minimal triangulation of the 1-sphere
-        sage: SCC = S.chain_complex()                                                   # needs sage.graphs sage.modules
-        sage: CCC.differential()                                                        # needs sage.graphs sage.modules
-        {0: [], 1: [-1 -1  0]
-         [ 1  0 -1]
-         [ 0  1  1], 2: []}
-        sage: f = {0: zero_matrix(ZZ,3,3), 1: zero_matrix(ZZ,3,3)}                      # needs sage.modules
-        sage: G = Hom(SCC, SCC)                                                         # needs sage.graphs sage.modules
-        sage: x = G(f)                                                                  # needs sage.graphs sage.modules
+        sage: SCC = S.chain_complex()
+        sage: SCC.differential()
+        {0: [],
+         1: [-1 -1  0]
+            [ 1  0 -1]
+            [ 0  1  1],
+         2: []}
+        sage: f = {0: zero_matrix(ZZ,3,3), 1: zero_matrix(ZZ,3,3)}
+        sage: G = Hom(SCC, SCC)
+        sage: x = G(f)
         sage: H = HomologyFunctor(ChainComplexes(ZZ), 1)
-        sage: H(SCC)                                                                    # needs sage.graphs sage.modules
+        sage: H(SCC)
         Z
-        sage: H(x)                                                                      # needs sage.graphs sage.modules
+        sage: H(x)
         Generic morphism:
           From: Z
           To:   Z

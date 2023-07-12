@@ -1,4 +1,4 @@
-# sage.doctest: optional - sage.groups
+# sage.doctest: needs sage.groups
 r"""
 Common category for Generalized Coxeter Groups or Complex Reflection Groups
 """

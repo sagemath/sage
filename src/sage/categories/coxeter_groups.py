@@ -779,7 +779,7 @@ class CoxeterGroups(Category_singleton):
 
                 sage: # optional - coxeter3
                 sage: W = CoxeterGroup('A3', implementation='coxeter3')                 # needs sage.modules
-                sage: KL_cells = W.kazhdan_lusztig_cells()
+                sage: KL_cells = W.kazhdan_lusztig_cells()                              # needs sage.combinat sage.groups
                 sage: set([tuple(sorted(C)) for C in KL_cells])
                 {([],),
                  ([1], [2, 1], [3, 2, 1]),
@@ -795,17 +795,17 @@ class CoxeterGroups(Category_singleton):
                 10
 
                 sage: W = CoxeterGroup('A3', implementation='permutation')      # optional - coxeter3, needs sage.modules
-                sage: len(W.kazhdan_lusztig_cells())                        # optional - coxeter3
+                sage: len(W.kazhdan_lusztig_cells())    # optional - coxeter3           # needs sage.combinat sage.groups
                 10
 
             Computing the two sided cells in `B_3`::
 
                 sage: # optional - coxeter3
                 sage: W = CoxeterGroup('B3', implementation='coxeter3')                 # needs sage.modules
-                sage: b3_cells = W.kazhdan_lusztig_cells('two-sided')
+                sage: b3_cells = W.kazhdan_lusztig_cells('two-sided')                   # needs sage.combinat sage.groups
                 sage: len(b3_cells)
                 6
-                sage: set([tuple(sorted(C))
+                sage: set([tuple(sorted(C))                                             # needs sage.combinat sage.groups
                 ....:     for C in W.kazhdan_lusztig_cells()])
                 {([],),
                  ([1], [1, 2, 3, 2, 1], [2, 1], [2, 3, 2, 1], [3, 2, 1]),
@@ -3053,11 +3053,11 @@ class CoxeterGroups(Category_singleton):
 
                 sage: # optional - coxeter3
                 sage: W = WeylGroup('A3', prefix='s')                                   # needs sage.modules
-                sage: s1,s2,s3 = W.simple_reflections()
+                sage: s1,s2,s3 = W.simple_reflections()                                 # needs sage.combinat sage.groups
                 sage: s1.kazhdan_lusztig_cell()
                 {s3*s2*s1, s2*s1, s1}
                 sage: W = CoxeterGroup('A3', implementation='coxeter3')                 # needs sage.modules
-                sage: s1,s2,s3 = W.simple_reflections()
+                sage: s1,s2,s3 = W.simple_reflections()                                 # needs sage.combinat sage.groups
                 sage: s1.kazhdan_lusztig_cell()
                 {[1], [2, 1], [3, 2, 1]}
 
@@ -3065,7 +3065,7 @@ class CoxeterGroups(Category_singleton):
 
                 sage: # optional - coxeter3
                 sage: W = CoxeterGroup('A3', implementation='coxeter3')                 # needs sage.modules
-                sage: s1,s2,s3 = W.simple_reflections()
+                sage: s1,s2,s3 = W.simple_reflections()                                 # needs sage.combinat sage.groups
                 sage: w = s1 * s3
                 sage: w.kazhdan_lusztig_cell(side='right')
                 {[1, 3], [1, 3, 2]}
@@ -3076,7 +3076,7 @@ class CoxeterGroups(Category_singleton):
 
                 sage: # optional - coxeter3
                 sage: W = CoxeterGroup('B4', implementation='coxeter3')                 # needs sage.modules
-                sage: s1,s2,s3,s4 = W.simple_reflections()
+                sage: s1,s2,s3,s4 = W.simple_reflections()                              # needs sage.combinat sage.groups
                 sage: s1.kazhdan_lusztig_cell(side='right')     # long time (4 seconds)
                 {[1],
                  [1, 2],

@@ -256,7 +256,7 @@ class FiniteDimensionalAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
 
             TESTS::
 
-                sage: TestSuite(radical).run()
+                sage: TestSuite(radical).run()                                          # needs sage.graphs sage.modules
             """
             category = AssociativeAlgebras(self.base_ring()).WithBasis().FiniteDimensional().Subobjects()
             radical = self.submodule(self.radical_basis(),
@@ -311,7 +311,7 @@ class FiniteDimensionalAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
 
             TESTS::
 
-                sage: TestSuite(S).run()
+                sage: TestSuite(S).run()                                                # needs sage.graphs sage.modules
             """
             ring = self.base_ring()
             category = Algebras(ring).WithBasis().FiniteDimensional().Quotients().Semisimple()
@@ -384,7 +384,7 @@ class FiniteDimensionalAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
 
             TESTS::
 
-                sage: TestSuite(center).run()
+                sage: TestSuite(center).run()                                           # needs sage.graphs sage.modules
             """
             category = Algebras(self.base_ring()).FiniteDimensional().Subobjects().Commutative().WithBasis()
             if self in Algebras.Semisimple:
@@ -995,7 +995,7 @@ class FiniteDimensionalAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
 
                For comparison::
 
-                sage: # needs sage.libs.pari
+                sage: # needs sage.libs.pari sage.modules
                 sage: A = PQAlgebra(QQ, x**2 - x); y = A.x()
                 sage: a, b = y, 1-y
                 sage: A.is_identity_decomposition_into_orthogonal_idempotents((a, b))
@@ -1010,8 +1010,9 @@ class FiniteDimensionalAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
 
             2. Some idempotents summing to 1 but not orthogonal::
 
+                sage: # needs sage.libs.pari sage.modules
                 sage: R.<x> = PolynomialRing(GF(2))
-                sage: A = PQAlgebra(GF(2), x)                                           # needs sage.rings.finite_rings
+                sage: A = PQAlgebra(GF(2), x)
                 sage: a = A.one()
                 sage: A.is_identity_decomposition_into_orthogonal_idempotents((a,))
                 True
@@ -1020,6 +1021,7 @@ class FiniteDimensionalAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
 
             3. Some orthogonal idempotents not summing to the identity::
 
+                sage: # needs sage.libs.pari sage.modules
                 sage: A.is_identity_decomposition_into_orthogonal_idempotents((a,a))
                 False
                 sage: A.is_identity_decomposition_into_orthogonal_idempotents(())
