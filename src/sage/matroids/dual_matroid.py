@@ -461,7 +461,7 @@ class DualMatroid(Matroid):
             sage: M4 = CircuitClosuresMatroid(groundset='abcdefg',
             ....:   circuit_closures={3: ['abcdefg'], 2: ['beg', 'cdb', 'cfg',
             ....:   'ace', 'fed', 'gad', 'fab']}).dual()
-            sage: M1.dual() == M2
+            sage: M1.dual() == M2  # indirect doctest
             False
             sage: M2 == M3
             False
@@ -493,7 +493,7 @@ class DualMatroid(Matroid):
             sage: M4 = CircuitClosuresMatroid(groundset='abcdefg',
             ....:   circuit_closures={3: ['abcdefg'], 2: ['beg', 'cdb', 'cfg',
             ....:                'ace', 'fed', 'gad', 'fab']}).dual()
-            sage: M1.dual() != M2
+            sage: M1.dual() != M2  # indirect doctest
             True
             sage: M2 != M3
             True
