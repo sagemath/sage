@@ -123,7 +123,7 @@ class DocTestDefaults(SageObject):
         self.initial = False
         self.exitfirst = False
         self.force_lib = False
-        self.only_lib = False
+        self.if_installed = False
         self.abspath = True         # sage-runtests default is False
         self.verbose = False
         self.debug = False
@@ -225,7 +225,7 @@ def skipdir(dirname):
     return False
 
 def skipfile(filename, tested_optional_tags=False, *,
-             only_lib=False, log=None):
+             if_installed=False, log=None):
     """
     Return ``True`` if and only if the file ``filename`` should not be doctested.
 
@@ -236,7 +236,7 @@ def skipfile(filename, tested_optional_tags=False, *,
     - ``tested_optional_tags`` -- a list or tuple or set of optional tags to test,
       or ``False`` (no optional test) or ``True`` (all optional tests)
 
-    - ``only_lib`` -- (boolean, default ``False``) whether to skip Python/Cython files
+    - ``if_installed`` -- (boolean, default ``False``) whether to skip Python/Cython files
       that are not installed as modules
 
     - ``log`` -- function to call with log messages, or ``None``
@@ -285,7 +285,7 @@ def skipfile(filename, tested_optional_tags=False, *,
         if log:
             log(f"Skipping '{filename}' because it is created by the jupyter-sphinx extension for internal use and should not be tested")
         return True
-    if only_lib and ext in ('.py', '.pyx', '.pxd'):
+    if if_installed and ext in ('.py', '.pyx', '.pxd'):
         module_name = get_basename(filename)
         try:
             if not importlib.util.find_spec(module_name):  # tries to import the containing package
@@ -949,7 +949,7 @@ class DocTestController(SageObject):
                              filename.endswith(".rst"))
                         and not skipfile(opj(SAGE_ROOT, filename),
                                          True if self.options.optional else False,
-                                         only_lib=self.options.only_lib)):
+                                         if_installed=self.options.if_installed)):
                     self.files.append(os.path.relpath(opj(SAGE_ROOT, filename)))
 
     def expand_files_into_sources(self):
@@ -1011,11 +1011,11 @@ class DocTestController(SageObject):
                         for file in files:
                             if not skipfile(os.path.join(root, file),
                                             True if self.options.optional else False,
-                                            only_lib=self.options.only_lib):
+                                            if_installed=self.options.if_installed):
                                 yield os.path.join(root, file)
                 else:
                     if not skipfile(path, True if self.options.optional else False,
-                                    only_lib=self.options.only_lib, log=self.log):  # log when directly specified filenames are skipped
+                                    if_installed=self.options.if_installed, log=self.log):  # log when directly specified filenames are skipped
                         yield path
         self.sources = [FileDocTestSource(path, self.options) for path in expand()]
 

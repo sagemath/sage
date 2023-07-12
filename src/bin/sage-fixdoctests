@@ -320,7 +320,7 @@ if not args.no_test:
     environment_args = f'--environment {args.environment} ' if args.environment != runtest_default_environment else ''
     long_args = f'--long ' if args.long else ''
     probe_args = f'--probe {shlex.quote(args.probe)} ' if args.probe else ''
-    lib_args = f'--only-lib ' if args.venv else ''
+    lib_args = f'--if-installed ' if args.venv else ''
     doc_file = tmp_filename()
     if args.venv or environment_args:
        input = os.path.join(os.path.relpath(SAGE_ROOT), 'src', 'sage', 'version.py')

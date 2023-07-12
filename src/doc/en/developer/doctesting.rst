@@ -1392,17 +1392,17 @@ tree (``src/sage/...``)::
 
 Note that testing all doctests as they appear in the source tree does not make sense
 because many of the source files may not be installed in the virtual environment.
-Use the option ``--only-lib`` to skip the source files of all Python/Cython modules
+Use the option ``--if-installed`` to skip the source files of all Python/Cython modules
 that are not installed in the virtual environment::
 
     [mkoeppe@sage sage]$ pkgs/sagemath-categories/.tox/sagepython-sagewheels-.../sage -t \
-                             -p4 --environment sage.all__sagemath_categories --only-lib  \
+                             -p4 --environment sage.all__sagemath_categories --if-installed  \
                              src/sage/schemes
 
 This option can also be combined with ``--all``::
 
     [mkoeppe@sage sage]$ pkgs/sagemath-categories/.tox/sagepython-sagewheels-.../sage -t \
-                             -p4 --environment sage.all__sagemath_categories --only-lib  \
+                             -p4 --environment sage.all__sagemath_categories --if-installed  \
                              --all
 
 
@@ -1645,7 +1645,7 @@ that uses the more specific options ``--venv`` and ``--environment``::
                                 src/sage/geometry/schemes/generic/*.py
 
 Either way, the options ``--keep-both``, ``--full-tracebacks``, and
-``--only-lib`` are implied.
+``--if-installed`` are implied.
 
 In this mode of operation, when the doctester encounters a global name
 that is unknown in its virtual environment (:class:`NameError`),
