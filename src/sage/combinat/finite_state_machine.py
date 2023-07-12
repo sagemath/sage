@@ -944,7 +944,6 @@ from sage.misc.cachefunc import cached_function
 from sage.misc.latex import latex
 from sage.misc.verbose import verbose
 from sage.misc.sageinspect import sage_getargspec
-from sage.rings.qqbar import QQbar
 from sage.rings.integer_ring import ZZ
 from sage.rings.real_mpfr import RR
 from sage.structure.sage_object import SageObject
@@ -9885,7 +9884,7 @@ class FiniteStateMachine(SageObject):
         from sage.arith.misc import binomial
         from sage.symbolic.ring import SR
         if base_ring is None:
-            base_ring = QQbar
+            from sage.rings.qqbar import QQbar as base_ring
         if variable is None:
             variable = SR.symbol('n')
 

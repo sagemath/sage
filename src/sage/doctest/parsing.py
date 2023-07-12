@@ -118,7 +118,8 @@ def parse_optional_tags(string, *, return_string_sans_tags=False):
     - ``'py2'``
     - ``'arb216'``
     - ``'arb218'``
-    - ``'optional - PKG_NAME...'`` -- the dictionary will just have the key ``'PKG_NAME'``
+    - ``'optional - FEATURE...'`` or ``'needs FEATURE...'`` --
+      the dictionary will just have the key ``'FEATURE'``
 
     The values, if non-``None``, are strings with optional explanations
     for a tag, which may appear in parentheses after the tag in ``string``.
@@ -228,7 +229,7 @@ def parse_optional_tags(string, *, return_string_sans_tags=False):
                          for m in tag_with_explanation_regex.finditer(m.group('tags'))})
 
     if return_string_sans_tags:
-        is_persistent = tags and first_line_sans_comments.strip() == 'sage:' and not rest  # persistent (block-scoped) annotation
+        is_persistent = tags and first_line_sans_comments.strip() == 'sage:' and not rest  # persistent (block-scoped) tag
         return tags, (first_line + '\n' + rest%literals if rest is not None
                       else first_line), is_persistent
     else:
@@ -425,7 +426,7 @@ def update_optional_tags(line, tags=None, *, add_tags=None, remove_tags=None, fo
     When no tags are changed, by default, the unchanged input is returned.
     We can force a rewrite; unconditionally or whenever standard tags are involved.
     But even when forced, if comments are already aligned at one of the standard alignment columns,
-    this alignment is kept even if we would normally realign farther to the left.
+    this alignment is kept even if we would normally realign farther to the left::
 
         sage: print_with_ruler([
         ....:     update_optional_tags('    sage: unforced()       # opt' 'ional - latte_int'),
@@ -441,6 +442,10 @@ def update_optional_tags(line, tags=None, *, add_tags=None, remove_tags=None, fo
         ....:                          force_rewrite=True),
         ....:     update_optional_tags('    sage: also_already_aligned()                                                                                        # ne' 'eds scipy',
         ....:                          force_rewrite='standard'),
+        ....:     update_optional_tags('    sage: two_columns_first_preserved()         # lo' 'ng time                             # ne' 'eds scipy',
+        ....:                          force_rewrite='standard'),
+        ....:     update_optional_tags('    sage: two_columns_first_preserved()                 # lo' 'ng time                                 # ne' 'eds scipy',
+        ....:                          force_rewrite='standard'),
         ....: ])
         |                                                V       V       V       V       V   V   v           v                   v                                       v
         |    sage: unforced()       # optional - latte_int
@@ -450,8 +455,10 @@ def update_optional_tags(line, tags=None, *, add_tags=None, remove_tags=None, fo
         |    sage: aligned_with_below()                                  # optional - 4ti2
         |    sage: aligned_with_above()                                  # optional - 4ti2
         |    sage: also_already_aligned()                                                                                        # needs scipy
+        |    sage: two_columns_first_preserved()         # long time                             # needs scipy
+        |    sage: two_columns_first_preserved()                 # long time                     # needs scipy
 
-    Rewriting a persistent (block-scoped) annotation::
+    Rewriting a persistent (block-scoped) tag::
 
         sage: print_with_ruler([
         ....:     update_optional_tags('    sage:    #opt' 'ional:magma sage.symbolic',
@@ -516,21 +523,21 @@ def update_optional_tags(line, tags=None, *, add_tags=None, remove_tags=None, fo
                     break
             line += '  '
 
-            if (group['optional'] or group['special']) and (group['standard'] or group['sage']):
-                # Try if two-column mode works better
-                first_part = unparse_optional_tags({tag: explanation
-                                                    for tag, explanation in new_tags.items()
-                                                    if (tag in group['optional']
-                                                        or tag in group['special'])})
-                column = standard_tag_columns[0]
-                if len(line + first_part) + 8 <= column:
-                    line += first_part
-                    line += ' ' * (column - len(line))
-                    line += unparse_optional_tags({tag: explanation
-                                                   for tag, explanation in new_tags.items()
-                                                   if not (tag in group['optional']
-                                                           or tag in group['special'])})
-                    return line.rstrip()
+        if (group['optional'] or group['special']) and (group['standard'] or group['sage']):
+            # Try if two-column mode works better
+            first_part = unparse_optional_tags({tag: explanation
+                                                for tag, explanation in new_tags.items()
+                                                if (tag in group['optional']
+                                                    or tag in group['special'])})
+            column = standard_tag_columns[0]
+            if len(line + first_part) + 8 <= column:
+                line += first_part
+                line += ' ' * (column - len(line))
+                line += unparse_optional_tags({tag: explanation
+                                               for tag, explanation in new_tags.items()
+                                               if not (tag in group['optional']
+                                                       or tag in group['special'])})
+                return line.rstrip()
 
     line += unparse_optional_tags(new_tags)
     return line
@@ -1010,7 +1017,6 @@ class SageDocTestParser(doctest.DocTestParser):
             ....:               else (getattr(x, 'warnings', None), x.sage_source, x.source)
             ....:             for x in DTP.parse(test_string)]
 
-            sage: # optional - guava
             sage: parse('sage: 1 # optional guava mango\nsage: 2 # optional guava\nsage: 3 # optional guava\nsage: 4 # optional guava\nsage: 5 # optional guava\n\nsage: 11 # optional guava')
             ['',
              (["Consider using a block-scoped tag by inserting the line 'sage: # optional - guava' just before this line to avoid repeating the tag 5 times"],
@@ -1028,7 +1034,6 @@ class SageDocTestParser(doctest.DocTestParser):
              (None, '11 # optional guava\n', 'Integer(11) # optional guava\n'),
              '']
 
-            sage: # optional - guava
             sage: parse('sage: 1 # optional guava\nsage: 2 # optional guava mango\nsage: 3 # optional guava\nsage: 4 # optional guava\nsage: 5 # optional guava\n')
             ['',
              (["Consider using a block-scoped tag by inserting the line 'sage: # optional - guava' just before this line to avoid repeating the tag 5 times"],

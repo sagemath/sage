@@ -48,14 +48,14 @@ from sage.features.all import all_features, module_feature, name_feature
 from sage.misc.temporary_file import tmp_filename
 
 parser = ArgumentParser(description="Given an input file with doctests, this creates a modified file that passes the doctests (modulo any raised exceptions). By default, the input file is modified. You can also name an output file.")
-parser.add_argument('-l', '--long',
-                    dest='long', action="store_true", default=False)
+parser.add_argument('-l', '--long', dest='long', action="store_true", default=False,
+                    help="include tests tagged '# long time'")
 parser.add_argument("--distribution", type=str, default='',
                     help="distribution package to test, e.g., 'sagemath-graphs', 'sagemath-combinat[modules]'; sets defaults for --venv and --environment")
 parser.add_argument("--venv", type=str, default='',
                     help="directory name of a venv where 'sage -t' is to be run")
 parser.add_argument("--environment", type=str, default='',
-                    help="name of a module that provides the global environment for tests; implies --keep-both and --full-tracebacks")
+                    help="name of a module that provides the global environment for tests, e.g., 'sage.all__sagemath_modules'; implies --keep-both and --full-tracebacks")
 parser.add_argument("--no-test", default=False, action="store_true",
                     help="do not run the doctester, only rewrite '# optional/needs' tags; implies --only-tags")
 parser.add_argument("--full-tracebacks", default=False, action="store_true",
@@ -63,14 +63,14 @@ parser.add_argument("--full-tracebacks", default=False, action="store_true",
 parser.add_argument("--only-tags", default=False, action="store_true",
                     help="only add '# optional/needs' tags where needed, ignore other failures")
 parser.add_argument("--probe", metavar="FEATURES", type=str, default='',
-                    help="check whether '# optional - FEATURES' tags are still needed, remove these")
+                    help="check whether '# optional/needs' tags are still needed, remove these")
 parser.add_argument("--keep-both", default=False, action="store_true",
-                    help="do not replace test results; duplicate the test instead and mark both copies # optional")
+                    help="do not replace test results; duplicate the test instead, showing both results, and mark both copies '# optional'")
 parser.add_argument("--overwrite", default=False, action="store_true",
                     help="never interpret a second filename as OUTPUT; overwrite the source files")
 parser.add_argument("--no-overwrite", default=False, action="store_true",
                     help="never interpret a second filename as OUTPUT; output goes to files named INPUT.fixed")
-parser.add_argument("filename", nargs='*', help="input filenames; or INPUT_FILENAME OUTPUT_FILENAME if exactly two filenames are given and neither --overwrite nor --no-overwrite is present",
+parser.add_argument("filename", nargs='*', help="input filenames; or (deprecated) INPUT_FILENAME OUTPUT_FILENAME if exactly two filenames are given and neither --overwrite nor --no-overwrite is present",
                     type=str)
 
 args = parser.parse_args()
@@ -143,7 +143,7 @@ def process_block(block, src_in_lines, file_optional_tags):
 
     if m := re.search(r"using.*block-scoped tag.*'(sage: .*)'.*to avoid repeating the tag", block):
         indent = (len(src_in_lines[first_line_num - 1]) - len(src_in_lines[first_line_num - 1].lstrip()))
-        src_in_lines[line_num - 1] = ' ' * indent + m.group(1) + '\n' + src_in_lines[line_num - 1]
+        src_in_lines[line_num - 2] += '\n' + ' ' * indent + m.group(1)
 
     if m := re.search(r"updating.*block-scoped tag.*'sage: (.*)'.*to avoid repeating the tag", block):
         src_in_lines[first_line_num - 1] = update_optional_tags(src_in_lines[first_line_num - 1],
@@ -158,7 +158,7 @@ def process_block(block, src_in_lines, file_optional_tags):
         src_in_lines[first_line_num - 1] = update_optional_tags(src_in_lines[first_line_num - 1],
                                                                 add_tags=optional)
 
-    if m := re.search(r"annotation '# (optional|needs)[-: ]([^;']*)' may no longer be needed", block):
+    if m := re.search(r"tag '# (optional|needs)[-: ]([^;']*)' may no longer be needed", block):
         optional = m.group(2).split()
         src_in_lines[first_line_num - 1] = update_optional_tags(src_in_lines[first_line_num - 1],
                                                                 remove_tags=optional)
@@ -307,6 +307,8 @@ def process_block(block, src_in_lines, file_optional_tags):
 # set input and output files
 if len(args.filename) == 2 and not args.overwrite and not args.no_overwrite:
     inputs, outputs = [args.filename[0]], [args.filename[1]]
+    print("sage-fixdoctests: When passing two filenames, the second one is taken as an output filename; "
+          "this is deprecated. To pass two input filenames, use the option --overwrite.")
 elif args.no_overwrite:
     inputs, outputs = args.filename, [input + ".fixed" for input in args.filename]
 else:
@@ -316,12 +318,13 @@ else:
 if not args.no_test:
     executable = f'{os.path.relpath(args.venv)}/bin/sage' if args.venv else 'sage'
     environment_args = f'--environment {args.environment} ' if args.environment != runtest_default_environment else ''
+    long_args = f'--long ' if args.long else ''
     probe_args = f'--probe {shlex.quote(args.probe)} ' if args.probe else ''
-    lib_args = f'--only-lib ' if args.venv else ''
+    lib_args = f'--if-installed ' if args.venv else ''
     doc_file = tmp_filename()
     if args.venv or environment_args:
        input = os.path.join(os.path.relpath(SAGE_ROOT), 'src', 'sage', 'version.py')
-       cmdline = f'{shlex.quote(executable)} -t {environment_args}{probe_args}{lib_args}{shlex.quote(input)}'
+       cmdline = f'{shlex.quote(executable)} -t {environment_args}{long_args}{probe_args}{lib_args}{shlex.quote(input)}'
        print(f'Running "{cmdline}"')
        if status := os.waitstatus_to_exitcode(os.system(f'{cmdline} > {shlex.quote(doc_file)}')):
            print(f'Doctester exited with error status {status}')
@@ -335,7 +338,7 @@ for input, output in zip(inputs, outputs):
         doc_out = ''
     else:
         # Run the doctester, putting the output of the test into sage's temporary directory
-        cmdline = f'{shlex.quote(executable)} -t {environment_args}{probe_args}{lib_args}{shlex.quote(input)}'
+        cmdline = f'{shlex.quote(executable)} -t {environment_args}{long_args}{probe_args}{lib_args}{shlex.quote(input)}'
         print(f'Running "{cmdline}"')
         os.system(f'{cmdline} > {shlex.quote(doc_file)}')
 
@@ -376,7 +379,7 @@ for input, output in zip(inputs, outputs):
                                                 if explanation or tag not in file_optional_tags}
                     line = update_optional_tags(line, tags=persistent_optional_tags, force_rewrite='standard')
                     if not line.rstrip():
-                        # persistent (block-scoped or file-scoped) annotation was removed, so remove the whole line
+                        # persistent (block-scoped or file-scoped) tag was removed, so remove the whole line
                         line = None
                 else:
                     tags = {tag: explanation

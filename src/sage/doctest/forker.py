@@ -740,7 +740,7 @@ class SageDocTestRunner(doctest.DocTestRunner, object):
                 if check(example.want, got, self.optionflags):
                     if probed_tags and probed_tags is not True:
                         example.warnings.append(
-                            f"The annotation '{unparse_optional_tags(probed_tags)}' "
+                            f"The tag '{unparse_optional_tags(probed_tags)}' "
                             f"may no longer be needed; these features are not present, "
                             f"but we ran the doctest anyway as requested by --probe, "
                             f"and it succeeded.")
@@ -781,7 +781,7 @@ class SageDocTestRunner(doctest.DocTestRunner, object):
                 elif check(example.exc_msg, exc_msg, self.optionflags):
                     if probed_tags and probed_tags is not True:
                         example.warnings.append(
-                            f"The annotation '{unparse_optional_tags(example.probed_tags)}' "
+                            f"The tag '{unparse_optional_tags(example.probed_tags)}' "
                             f"may no longer be needed; these features are not present, "
                             f"but we ran the doctest anyway as requested by --probe, "
                             f"and it succeeded (raised the expected exception).")
@@ -795,7 +795,7 @@ class SageDocTestRunner(doctest.DocTestRunner, object):
                                            self.optionflags):
                         if probed_tags and probed_tags is not True:
                             example.warnings.append(
-                                f"The annotation '{unparse_optional_tags(example.probed_tags)}' "
+                                f"The tag '{unparse_optional_tags(example.probed_tags)}' "
                                 f"may no longer be needed; these features are not present, "
                                 f"but we ran the doctest anyway as requested by --probe, "
                                 f"and it succeeded (raised an exception as expected).")

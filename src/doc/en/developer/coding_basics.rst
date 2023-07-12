@@ -1000,9 +1000,6 @@ written.
 
       sage: from sage.rings.polynomial.multi_polynomial_ring import MPolynomialRing_polydict, MPolynomialRing_polydict_domain  # this is fine
 
-  - If there is no whitespace in the doctest output where you could wrap the line,
-    do not add such whitespace. Just don't wrap the line.
-
   - Wrap and indent long output to maximize readability in the source code
     and in the HTML output. But do not wrap strings::
 
@@ -1017,6 +1014,14 @@ written.
           and Y is defined by: x - y
       sage: U._repr_()                                                                                                                                                    # this is fine
       'Quasi-projective subscheme X - Y of Projective Space of dimension 2 over Integer Ring, where X is defined by:\n  (no polynomials)\nand Y is defined by:\n  x - y'
+
+    Also, if there is no whitespace in the doctest output where you could wrap the line,
+    do not add such whitespace. Just don't wrap the line::
+
+      sage: B47 = RibbonGraph(4,7, bipartite=True); B47
+      Ribbon graph of genus 9 and 1 boundary components
+      sage: B47.sigma()                                                                                                                                                           # this is fine
+      (1,2,3,4,5,6,7)(8,9,10,11,12,13,14)(15,16,17,18,19,20,21)(22,23,24,25,26,27,28)(29,30,31,32)(33,34,35,36)(37,38,39,40)(41,42,43,44)(45,46,47,48)(49,50,51,52)(53,54,55,56)
 
   - Doctest tags for modularization purposes such as ``# needs sage.modules``
     (see :ref:`section-further_conventions`) should be aligned at column 88.
@@ -1267,7 +1272,7 @@ framework. Here is a comprehensive list:
         chOMP``.
 
   If ``# optional`` or ``# needs`` is placed right after the ``sage:`` prompt,
-  it is a codeblock-scoped tag, which applies to all doctest lines until
+  it is a block-scoped tag, which applies to all doctest lines until
   a blank line is encountered.
 
   These tags can also be applied to an entire file. If one of the first 10 lines

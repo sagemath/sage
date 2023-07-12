@@ -844,19 +844,20 @@ class PolynomialRing_general(ring.Algebra):
 
         EXAMPLES::
 
+            sage: # optional - magma
             sage: R = QQ['y']
-            sage: R._magma_init_(magma)                     # optional - magma
+            sage: R._magma_init_(magma)
             'SageCreateWithNames(PolynomialRing(_sage_ref...),["y"])'
-            sage: S = magma(R)                              # optional - magma
-            sage: S                                         # optional - magma
+            sage: S = magma(R)
+            sage: S
             Univariate Polynomial Ring in y over Rational Field
-            sage: S.1                                       # optional - magma
+            sage: S.1
             y
-            sage: magma(PolynomialRing(GF(7), 'x'))     # optional - magma              # needs sage.rings.finite_rings
+            sage: magma(PolynomialRing(GF(7), 'x'))                                     # needs sage.rings.finite_rings
             Univariate Polynomial Ring in x over GF(7)
-            sage: magma(PolynomialRing(GF(49,'a'), 'x'))        # optional - magma, needs sage.rings.finite_rings
+            sage: magma(PolynomialRing(GF(49,'a'), 'x'))                                # needs sage.rings.finite_rings
             Univariate Polynomial Ring in x over GF(7^2)
-            sage: magma(PolynomialRing(PolynomialRing(ZZ,'w'), 'x'))  # optional - magma
+            sage: magma(PolynomialRing(PolynomialRing(ZZ,'w'), 'x'))
             Univariate Polynomial Ring in x over Univariate Polynomial Ring in w over Integer Ring
 
         Watch out, Magma has different semantics from Sage, i.e., in Magma
@@ -908,13 +909,14 @@ class PolynomialRing_general(ring.Algebra):
         A univariate polynomial ring over a multivariate polynomial
         ring over a number field::
 
+            sage: # needs sage.rings.number_field
             sage: Q.<t> = QQ[]
-            sage: K.<tau> = NumberField(t^2 + t + 1)                                    # needs sage.rings.number_field
-            sage: P.<x,y> = K[]                                                         # needs sage.rings.number_field
-            sage: S.<z> = P[]                                                           # needs sage.rings.number_field
-            sage: gap(S)                                                                # needs sage.libs.gap sage.rings.number_field
+            sage: K.<tau> = NumberField(t^2 + t + 1)
+            sage: P.<x,y> = K[]
+            sage: S.<z> = P[]
+            sage: gap(S)                                                                # needs sage.libs.gap
             PolynomialRing( PolynomialRing( <algebraic extension over the Rationals of degree 2>, ["x", "y"] ), ["z"] )
-            sage: gap(S) is gap(S)                                                      # needs sage.libs.gap sage.rings.number_field
+            sage: gap(S) is gap(S)                                                      # needs sage.libs.gap
             True
         """
         if gap is not None:
@@ -1178,6 +1180,7 @@ class PolynomialRing_general(ring.Algebra):
             x^4 + 1
             sage: R.cyclotomic_polynomial(12)                                           # needs sage.libs.pari
             x^4 - x^2 + 1
+
             sage: S = PolynomialRing(FiniteField(7), 'x')
             sage: S.cyclotomic_polynomial(12)
             x^4 + 6*x^2 + 1
@@ -1319,7 +1322,9 @@ class PolynomialRing_general(ring.Algebra):
             sage: R.<x> = QQ[]
             sage: R.krull_dimension()
             1
-            sage: R.<z> = GF(9, 'a')[]; R                                               # needs sage.rings.finite_rings
+
+            sage: # needs sage.rings.finite_rings
+            sage: R.<z> = GF(9, 'a')[]; R
             Univariate Polynomial Ring in z over Finite Field in a of size 3^2
             sage: R.krull_dimension()
             1
@@ -1902,20 +1907,20 @@ class PolynomialRing_integral_domain(PolynomialRing_commutative, PolynomialRing_
 
         EXAMPLES::
 
+            sage: # needs sage.libs.flint
             sage: R.<T> = ZZ[]
-            sage: L = R.weil_polynomials(4, 2)                                          # needs sage.libs.flint
-            sage: len(L)                                                                # needs sage.libs.flint
+            sage: L = R.weil_polynomials(4, 2)
+            sage: len(L)
             35
-            sage: L[9]                                                                  # needs sage.libs.flint
+            sage: L[9]
             T^4 + T^3 + 2*T^2 + 2*T + 4
-            sage: all(p.is_weil_polynomial() for p in L)                                # needs sage.libs.flint
+            sage: all(p.is_weil_polynomial() for p in L)
             True
 
         Setting multiple leading coefficients::
 
             sage: R.<T> = QQ[]
-            sage: l = R.weil_polynomials(4, 2, lead=((1,0), (2,4), (1,2)))              # needs sage.libs.flint
-            sage: l                                                                     # needs sage.libs.flint
+            sage: l = R.weil_polynomials(4, 2, lead=((1,0), (2,4), (1,2))); l           # needs sage.libs.flint
             [T^4 + 2*T^3 + 5*T^2 + 4*T + 4,
              T^4 + 2*T^3 + 3*T^2 + 4*T + 4,
              T^4 - 2*T^3 + 5*T^2 - 4*T + 4,
@@ -2265,15 +2270,15 @@ class PolynomialRing_field(PolynomialRing_integral_domain,
             9
 
             sage: # needs sage.rings.finite_rings
-            sage: R = PolynomialRing(GF(2**3, 'a'), 'x')                                # needs sage.rings.finite_rings
-            sage: a = R.base_ring().gen()                                               # needs sage.rings.finite_rings
-            sage: f = R.lagrange_polynomial([(a^2+a, a), (a, 1), (a^2, a^2+a+1)]); f    # needs sage.rings.finite_rings
+            sage: R = PolynomialRing(GF(2**3, 'a'), 'x')
+            sage: a = R.base_ring().gen()
+            sage: f = R.lagrange_polynomial([(a^2+a, a), (a, 1), (a^2, a^2+a+1)]); f
             a^2*x^2 + a^2*x + a^2
-            sage: f(a^2 + a)                                                            # needs sage.rings.finite_rings
+            sage: f(a^2 + a)
             a
-            sage: f(a)                                                                  # needs sage.rings.finite_rings
+            sage: f(a)
             1
-            sage: f(a^2)                                                                # needs sage.rings.finite_rings
+            sage: f(a^2)
             a^2 + a + 1
 
         Now use a memory efficient version of Neville's method::
@@ -2287,9 +2292,9 @@ class PolynomialRing_field(PolynomialRing_integral_domain,
             -23/84*x^3 - 11/84*x^2 + 13/7*x + 1]
 
             sage: # needs sage.rings.finite_rings
-            sage: R = PolynomialRing(GF(2**3, 'a'), 'x')                                # needs sage.rings.finite_rings
-            sage: a = R.base_ring().gen()                                               # needs sage.rings.finite_rings
-            sage: R.lagrange_polynomial([(a^2+a, a), (a, 1), (a^2, a^2+a+1)],           # needs sage.rings.finite_rings
+            sage: R = PolynomialRing(GF(2**3, 'a'), 'x')
+            sage: a = R.base_ring().gen()
+            sage: R.lagrange_polynomial([(a^2+a, a), (a, 1), (a^2, a^2+a+1)],
             ....:                       algorithm="neville")
             [a^2 + a + 1, x + a + 1, a^2*x^2 + a^2*x + a^2]
 
@@ -2303,10 +2308,10 @@ class PolynomialRing_field(PolynomialRing_integral_domain,
             -23/84*x^3 - 11/84*x^2 + 13/7*x + 1
 
             sage: # needs sage.rings.finite_rings
-            sage: R = PolynomialRing(GF(2**3, 'a'), 'x')                                # needs sage.rings.finite_rings
-            sage: a = R.base_ring().gen()                                               # needs sage.rings.finite_rings
-            sage: p = R.lagrange_polynomial([(a^2+a, a), (a, 1)], algorithm="neville")  # needs sage.rings.finite_rings
-            sage: R.lagrange_polynomial([(a^2+a, a), (a, 1), (a^2, a^2+a+1)],           # needs sage.rings.finite_rings
+            sage: R = PolynomialRing(GF(2**3, 'a'), 'x')
+            sage: a = R.base_ring().gen()
+            sage: p = R.lagrange_polynomial([(a^2+a, a), (a, 1)], algorithm="neville")
+            sage: R.lagrange_polynomial([(a^2+a, a), (a, 1), (a^2, a^2+a+1)],
             ....:                       algorithm="neville", previous_row=p)[-1]
             a^2*x^2 + a^2*x + a^2
 
@@ -2496,7 +2501,7 @@ class PolynomialRing_dense_finite_field(PolynomialRing_field):
             <class 'sage.rings.polynomial.polynomial_ring.PolynomialRing_dense_finite_field_with_category.element_class'>
 
             sage: S = PolynomialRing_dense_finite_field(GF(25, 'a'), implementation='NTL')          # needs sage.rings.finite_rings
-            sage: type(S(0))                                                            # needs sage.rings.finite_rings
+            sage: type(S(0))                                                                        # needs sage.rings.finite_rings
             <class 'sage.rings.polynomial.polynomial_zz_pex.Polynomial_ZZ_pEX'>
 
             sage: S = PolynomialRing_dense_finite_field(GF(64), implementation='superfast')         # needs sage.rings.finite_rings
@@ -2922,8 +2927,8 @@ class PolynomialRing_cdvr(PolynomialRing_integral_domain):
             False
 
             sage: # needs sage.rings.padics
-            sage: S.<x> = Zp(5)[]                                                       # needs sage.rings.padics
-            sage: isinstance(S, PolynomialRing_cdvr)                                    # needs sage.rings.padics
+            sage: S.<x> = Zp(5)[]
+            sage: isinstance(S, PolynomialRing_cdvr)
             True
         """
         if element_class is None:
@@ -3309,9 +3314,7 @@ class PolynomialRing_dense_mod_p(PolynomialRing_dense_finite_field,
             sage: type(P.gen())
             <class 'sage.rings.polynomial.polynomial_modn_dense_ntl.Polynomial_dense_mod_p'>
 
-            sage: # needs sage.libs.ntl sage.rings.finite_rings
-            sage: P = PolynomialRing_dense_mod_p(GF(9223372036854775837), 'x')          # needs sage.rings.finite_rings
-            sage: P                                                                     # needs sage.rings.finite_rings
+            sage: P = PolynomialRing_dense_mod_p(GF(9223372036854775837), 'x'); P       # needs sage.rings.finite_rings
             Univariate Polynomial Ring in x over Finite Field of size 9223372036854775837 (using NTL)
             sage: type(P.gen())                                                         # needs sage.rings.finite_rings
             <class 'sage.rings.polynomial.polynomial_modn_dense_ntl.Polynomial_dense_mod_p'>
@@ -3320,11 +3323,11 @@ class PolynomialRing_dense_mod_p(PolynomialRing_dense_finite_field,
 
             sage: # needs sage.rings.finite_rings
             sage: p = 2^64 + 13
-            sage: A = GF(p^2)                                                           # needs sage.rings.finite_rings
-            sage: B = GF(p^3)                                                           # needs sage.rings.finite_rings
-            sage: R = A.modulus().parent()                                              # needs sage.rings.finite_rings
-            sage: S = B.modulus().parent()                                              # needs sage.rings.finite_rings
-            sage: R is S                                                                # needs sage.rings.finite_rings
+            sage: A = GF(p^2)
+            sage: B = GF(p^3)
+            sage: R = A.modulus().parent()
+            sage: S = B.modulus().parent()
+            sage: R is S
             True
         """
         if element_class is None:

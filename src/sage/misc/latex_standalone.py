@@ -174,7 +174,7 @@ Instead, you may save a pdf of the tikzpicture into a file of your choice
 
 Opening the image in a viewer can be turned off::
 
-    sage: _ = t1.pdf(view=False)                # long time (2s), optional - latex, needs sage.geometry.polyhedron sage.plot
+    sage: _ = t1.pdf(view=False)                # long time (2s), optional - latex      # needs sage.geometry.polyhedron sage.plot
 
 The same can be done with png format (translated from pdf with convert
 command which needs the installation of imagemagick)::
@@ -206,18 +206,20 @@ Use ``print(t)`` to see the complete content of the file::
 
 Adding a border in the options avoids cropping the vertices of a graph::
 
-    sage: g = graphs.PetersenGraph()                                                    # needs sage.graphs
-    sage: s2 = latex(g)   # takes 3s but the result is cached           # optional - latex, needs sage.graphs
-    sage: t2 = TikzPicture(s2, standalone_config=["border=4mm"],        # optional - latex, needs sage.graphs
-    ....:                 usepackage=['tkz-graph'])
-    sage: _ = t2.pdf()    # not tested, needs sage.graphs
+    sage: # needs sage.graphs
+    sage: g = graphs.PetersenGraph()
+    sage: s2 = latex(g)   # takes 3s but the result is cached           # optional - latex
+    sage: t2 = TikzPicture(s2, standalone_config=["border=4mm"],        # optional - latex
+    ....:                  usepackage=['tkz-graph'])
+    sage: _ = t2.pdf()                          # not tested
 
 The current latex representation of a transducer is a tikzpicture using
 the tikz library automata. The string can be used as input::
 
-    sage: s3 = latex(transducers.GrayCode())                                            # needs sage.graphs sage.modules
-    sage: t3 = TikzPicture(s3, usetikzlibrary=['automata'])                             # needs sage.graphs sage.modules
-    sage: _ = t3.pdf(view=False)                # long time (2s), optional - latex, needs sage.graphs sage.modules
+    sage: # needs sage.graphs sage.modules
+    sage: s3 = latex(transducers.GrayCode())
+    sage: t3 = TikzPicture(s3, usetikzlibrary=['automata'])
+    sage: _ = t3.pdf(view=False)                # long time (2s)        # optional - latex
 
 AUTHORS:
 
@@ -276,7 +278,8 @@ class Standalone(SageObject):
 
     ::
 
-        sage: t = Standalone(content, standalone_config=["border=4mm"], usepackage=['amsmath'])
+        sage: t = Standalone(content, standalone_config=["border=4mm"],
+        ....:                usepackage=['amsmath'])
         sage: t
         \documentclass{standalone}
         \standaloneconfig{border=4mm}
@@ -647,7 +650,7 @@ class Standalone(SageObject):
 
             sage: from sage.misc.latex_standalone import Standalone
             sage: t = Standalone('Hello World')
-            sage: _ = t.pdf(view=False)                 # long time (1s)   # optional latex
+            sage: _ = t.pdf(view=False)                 # long time (1s)    # optional - latex
 
         Same for instances of :class:`TikzPicture`::
 
@@ -661,14 +664,14 @@ class Standalone(SageObject):
 
             sage: from sage.misc.temporary_file import tmp_filename
             sage: filename = tmp_filename('temp','.pdf')
-            sage: path_to_file = t.pdf(filename)        # long time (1s)   # optional latex
-            sage: path_to_file[-4:]                     # long time (fast) # optional latex
+            sage: path_to_file = t.pdf(filename)        # long time (1s)    # optional - latex
+            sage: path_to_file[-4:]                     # long time (fast)  # optional - latex
             '.pdf'
 
         The filename may contain spaces::
 
             sage: filename = tmp_filename('filename with spaces','.pdf')
-            sage: path_to_file = t.pdf(filename)        # long time (1s)   # optional latex
+            sage: path_to_file = t.pdf(filename)        # long time (1s)    # optional - latex
 
         TESTS:
 
@@ -677,7 +680,7 @@ class Standalone(SageObject):
             sage: s = "\\begin{tikzpicture}\n\\draw (0,0) -- (1,1);\n\\end{tikzpicture}"
             sage: s_missing_last_character = s[:-1]
             sage: t = TikzPicture(s_missing_last_character)
-            sage: _ = t.pdf()                                               # optional latex
+            sage: _ = t.pdf()                                               # optional - latex
             Traceback (most recent call last):
             ...
             CalledProcessError: Command '['...latex', '-interaction=nonstopmode',
@@ -771,7 +774,7 @@ class Standalone(SageObject):
 
             sage: from sage.misc.latex_standalone import Standalone
             sage: t = Standalone('Hello World')
-            sage: _ = t.dvi(view=False)                 # long time (1s)    # optional latex
+            sage: _ = t.dvi(view=False)                 # long time (1s)    # optional - latex
 
         Same for instances of :class:`TikzPicture`::
 
@@ -785,14 +788,14 @@ class Standalone(SageObject):
 
             sage: from sage.misc.temporary_file import tmp_filename
             sage: filename = tmp_filename('temp','.dvi')
-            sage: path_to_file = t.dvi(filename)        # long time (1s)    # optional latex
-            sage: path_to_file[-4:]                     # long time (fast)  # optional latex
+            sage: path_to_file = t.dvi(filename)        # long time (1s)    # optional - latex
+            sage: path_to_file[-4:]                     # long time (fast)  # optional - latex
             '.dvi'
 
         The filename may contain spaces::
 
             sage: filename = tmp_filename('filename with spaces','.dvi')
-            sage: path_to_file = t.dvi(filename)        # long time (1s)    # optional latex
+            sage: path_to_file = t.dvi(filename)        # long time (1s)    # optional - latex
 
         TESTS:
 
@@ -801,7 +804,7 @@ class Standalone(SageObject):
             sage: s = "\\begin{tikzpicture}\n\\draw (0,0) -- (1,1);\n\\end{tikzpicture}"
             sage: s_missing_last_character = s[:-1]
             sage: t = TikzPicture(s_missing_last_character)
-            sage: _ = t.dvi()                                               # optional latex
+            sage: _ = t.dvi()                                               # optional - latex
             Traceback (most recent call last):
             ...
             CalledProcessError: Command '['latex', '-interaction=nonstopmode',
@@ -899,7 +902,7 @@ class Standalone(SageObject):
 
             sage: from sage.misc.latex_standalone import Standalone
             sage: t = Standalone('Hello World')
-            sage: _ = t.png(view=False)             # long time (1s)   # optional latex imagemagick
+            sage: _ = t.png(view=False)             # long time (1s)    # optional - latex imagemagick
 
         Same for instances of :class:`TikzPicture`::
 
@@ -912,8 +915,8 @@ class Standalone(SageObject):
 
             sage: from sage.misc.temporary_file import tmp_filename
             sage: filename = tmp_filename('temp','.png')
-            sage: path_to_file = t.png(filename)    # long time (1s)   # optional latex imagemagick
-            sage: path_to_file[-4:]                 # long time (fast) # optional latex imagemagick
+            sage: path_to_file = t.png(filename)    # long time (1s)    # optional - latex imagemagick
+            sage: path_to_file[-4:]                 # long time (fast)  # optional - latex imagemagick
             '.png'
 
         """
@@ -1001,11 +1004,13 @@ class Standalone(SageObject):
 
             sage: from sage.misc.temporary_file import tmp_filename
             sage: filename = tmp_filename('temp', '.svg')
-            sage: path_to_file = t.svg(filename, program='pdf2svg')   # long time (1s)   # optional latex pdf2svg
-            sage: path_to_file[-4:]                                   # long time (fast) # optional latex pdf2svg
+            sage: path_to_file = t.svg(filename,            # long time (1s)    # optional - latex pdf2svg
+            ....:                      program='pdf2svg')
+            sage: path_to_file[-4:]                         # long time (fast)  # optional - latex pdf2svg
             '.svg'
-            sage: path_to_file = t.svg(filename, program='pdftocairo') # long time (1s)   # optional latex pdftocairo
-            sage: path_to_file[-4:]                                    # long time (fast) # optional latex pdftocairo
+            sage: path_to_file = t.svg(filename,            # long time (1s)    # optional - latex pdftocairo
+            ....:                      program='pdftocairo')
+            sage: path_to_file[-4:]                         # long time (fast)  # optional - latex pdftocairo
             '.svg'
 
         """
@@ -1101,11 +1106,13 @@ class Standalone(SageObject):
 
             sage: from sage.misc.temporary_file import tmp_filename
             sage: filename = tmp_filename('temp', '.eps')
-            sage: path_to_file = t.eps(filename, program='dvips')     # long time (1s)   # optional latex dvips
-            sage: path_to_file[-4:]                                   # long time (fast) # optional latex dvips
+            sage: path_to_file = t.eps(filename,            # long time (1s)    # optional - latex dvips
+            ....:                      program='dvips')
+            sage: path_to_file[-4:]                         # long time (fast)  # optional - latex dvips
             '.eps'
-            sage: path_to_file = t.eps(filename, program='pdftocairo') # long time (1s)   # optional latex pdftocairo
-            sage: path_to_file[-4:]                                    # long time (fast) # optional latex pdftocairo
+            sage: path_to_file = t.eps(filename,            # long time (1s)    # optional - latex pdftocairo
+            ....:                      program='pdftocairo')
+            sage: path_to_file[-4:]                         # long time (fast)  # optional - latex pdftocairo
             '.eps'
 
         TESTS:
@@ -1280,9 +1287,9 @@ class Standalone(SageObject):
             sage: from sage.misc.latex_standalone import Standalone
             sage: t = Standalone('Hello World')
             sage: filename = tmp_filename('temp','.pdf')
-            sage: t.save(filename)                # long time (1s)   # optional latex
+            sage: t.save(filename)                          # long time (1s)    # optional - latex
             sage: filename = tmp_filename('temp','.eps')
-            sage: t.save(filename)                # long time (1s)   # optional latex dvips
+            sage: t.save(filename)                          # long time (1s)    # optional - latex dvips
 
         """
         ext = os.path.splitext(filename)[1].lower()
@@ -1361,7 +1368,7 @@ class TikzPicture(Standalone):
         sage: s = latex(g)                                              # optional - latex
         sage: t = TikzPicture(s, standalone_config=["border=4mm"],      # optional - latex
         ....:                 usepackage=['tkz-graph'])
-        sage: _ = t.pdf(view=False)             # long time (2s), optional - latex latex_package_tkz_graph
+        sage: _ = t.pdf(view=False)                     # long time (2s), optional - latex latex_package_tkz_graph
 
     Here are standalone configurations, packages, tikz libraries and macros
     that can be set::
@@ -1376,7 +1383,7 @@ class TikzPicture(Standalone):
         sage: s = "\\begin{tikzpicture}\n\\draw (0,0) -- (1,1);\n\\end{tikzpicture}"
         sage: t = TikzPicture(s, standalone_config=options, usepackage=usepackage,
         ....:        usetikzlibrary=tikzlib, macros=macros)
-        sage: _ = t.pdf(view=False)   # long time (2s) # optional latex
+        sage: _ = t.pdf(view=False)                     # long time (2s), optional - latex
     """
     def __init__(self, content, standalone_config=None, usepackage=None,
             usetikzlibrary=None, macros=None, use_sage_preamble=False):
@@ -1479,14 +1486,14 @@ class TikzPicture(Standalone):
             sage: G = W.cayley_graph()
             sage: dotdata = G.graphviz_string()
             sage: tikz = TikzPicture.from_dot_string(dotdata)   # long time (3s), optional - dot2tex graphviz
-            sage: _ = tikz.pdf()                # not tested
+            sage: _ = tikz.pdf()      # not tested
 
         ::
 
             sage: # needs sage.combinat sage.graphs sage.groups
             sage: dotdata = G.graphviz_string(labels='latex')
             sage: tikz = TikzPicture.from_dot_string(dotdata)   # long time (3s), optional - dot2tex graphviz
-            sage: _ = tikz.pdf()                # not tested
+            sage: _ = tikz.pdf()      # not tested
 
         """
         from sage.features import PythonModule
@@ -1550,7 +1557,7 @@ class TikzPicture(Standalone):
             sage: # needs sage.graphs
             sage: from sage.misc.latex_standalone import TikzPicture
             sage: g = graphs.PetersenGraph()
-            sage: tikz = TikzPicture.from_graph(g)      # optional - dot2tex graphviz
+            sage: tikz = TikzPicture.from_graph(g)                              # optional - dot2tex graphviz
             doctest:...: FutureWarning: This class/method/function is marked as experimental.
             It, its functionality or its interface might change without a formal deprecation.
             See https://github.com/sagemath/sage/issues/20343 for details.
@@ -1559,7 +1566,7 @@ class TikzPicture(Standalone):
         Using ``prog``::
 
             sage: # needs sage.graphs
-            sage: tikz = TikzPicture.from_graph(g, prog='neato',                       # long time (3s), optional - dot2tex graphviz
+            sage: tikz = TikzPicture.from_graph(g, prog='neato',        # long time (3s), optional - dot2tex graphviz
             ....:                               color_by_label=True)
             sage: _ = tikz.pdf()      # not tested
 
@@ -1570,19 +1577,21 @@ class TikzPicture(Standalone):
 
         Using ``merge_multiedges``::
 
-            sage: # needs sage.modules sage.symbolic
+            sage: # needs sage.graphs sage.modules sage.symbolic
             sage: alpha = var('alpha')
-            sage: m = matrix(2, range(4)); m.set_immutable()                                                            # needs sage.modules
-            sage: G = DiGraph([(0,1,alpha), (0,1,0), (0,2,9), (0,2,m)], multiedges=True)            # needs sage.graphs sage.modules
-            sage: tikz = TikzPicture.from_graph(G, merge_multiedges=True)       # optional - dot2tex graphviz, needs sage.graphs sage.modules
-            sage: _ = tikz.pdf()                # not tested, needs sage.modules
+            sage: m = matrix(2, range(4)); m.set_immutable()
+            sage: G = DiGraph([(0,1,alpha), (0,1,0), (0,2,9), (0,2,m)],
+            ....:             multiedges=True)
+            sage: tikz = TikzPicture.from_graph(G, merge_multiedges=True)       # optional - dot2tex graphviz
+            sage: _ = tikz.pdf()      # not tested
 
         Using ``merge_multiedges`` with ``merge_label_function``::
 
+            sage: # needs sage.graphs
             sage: fn = lambda L: LatexExpr(','.join(map(str, L)))
             sage: edges = [(0,1,'a'), (0,1,'b'), (0,2,'c'), (0,2,'d')]
-            sage: G = DiGraph(edges, multiedges=True)                                   # needs sage.graphs
-            sage: tikz = TikzPicture.from_graph(G,      # optional - dot2tex graphviz, needs sage.graphs
+            sage: G = DiGraph(edges, multiedges=True)
+            sage: tikz = TikzPicture.from_graph(G,                              # optional - dot2tex graphviz
             ....:           merge_multiedges=True, merge_label_function=fn)
             sage: _ = tikz.pdf()      # not tested
 
@@ -1599,8 +1608,8 @@ class TikzPicture(Standalone):
             sage: G = R.to_digraph()                                                    # needs sage.combinat sage.graphs
             sage: G                                                                     # needs sage.combinat sage.graphs
             Looped multi-digraph on 27 vertices
-            sage: C = G.strongly_connected_components()                                 # needs sage.combinat sage.graphs
-            sage: tikz = TikzPicture.from_graph(G,      # optional - dot2tex graphviz, needs sage.combinat sage.graphs
+            sage: C = G.strongly_connected_components()                                 # needs sage.graphs
+            sage: tikz = TikzPicture.from_graph(G,                              # optional - dot2tex graphviz, needs sage.graphs
             ....:              merge_multiedges=False, subgraph_clusters=C)
             sage: _ = tikz.pdf()      # not tested
 
@@ -1682,8 +1691,10 @@ class TikzPicture(Standalone):
         EXAMPLES::
 
             sage: from sage.misc.latex_standalone import TikzPicture
-            sage: g = graphs.PetersenGraph()                                            # needs sage.graphs
-            sage: tikz = TikzPicture.from_graph_with_pos(g)                             # needs sage.graphs
+
+            sage: # needs sage.graphs
+            sage: g = graphs.PetersenGraph()
+            sage: tikz = TikzPicture.from_graph_with_pos(g)
             doctest:...: FutureWarning: This class/method/function is marked as experimental.
             It, its functionality or its interface might change without a formal deprecation.
             See https://github.com/sagemath/sage/issues/20343 for details.
@@ -1693,10 +1704,10 @@ class TikzPicture(Standalone):
             sage: # needs sage.graphs
             sage: edges = [(0,0,'a'),(0,1,'b'),(0,1,'c')]
             sage: kwds = dict(format='list_of_edges', loops=True, multiedges=True)
-            sage: G = DiGraph(edges, **kwds)                                            # needs sage.graphs
-            sage: G.set_pos({0:(0,0), 1:(1,0)})                                         # needs sage.graphs
+            sage: G = DiGraph(edges, **kwds)
+            sage: G.set_pos({0:(0,0), 1:(1,0)})
             sage: f = lambda label:','.join(label)
-            sage: TikzPicture.from_graph_with_pos(G, merge_label_function=f)            # needs sage.graphs
+            sage: TikzPicture.from_graph_with_pos(G, merge_label_function=f)
             \documentclass[tikz]{standalone}
             \standaloneconfig{border=4mm}
             \begin{document}
@@ -1714,10 +1725,11 @@ class TikzPicture(Standalone):
 
         TESTS::
 
+            sage: # needs sage.graphs
             sage: edges = [(0,0,'a'),(0,1,'b'),(0,1,'c')]
             sage: kwds = dict(format='list_of_edges', loops=True, multiedges=True)
-            sage: G = DiGraph(edges, **kwds)                                            # needs sage.graphs
-            sage: TikzPicture.from_graph_with_pos(G)                                    # needs sage.graphs
+            sage: G = DiGraph(edges, **kwds)
+            sage: TikzPicture.from_graph_with_pos(G)
             Traceback (most recent call last):
             ...
             ValueError: vertex positions need to be set first
@@ -1811,22 +1823,25 @@ class TikzPicture(Standalone):
         EXAMPLES::
 
             sage: from sage.misc.latex_standalone import TikzPicture
-            sage: P = posets.PentagonPoset()                                            # needs sage.graphs sage.modules
-            sage: tikz = TikzPicture.from_poset(P)      # optional - dot2tex graphviz, needs sage.combinat sage.graphs sage.modules
+
+            sage: # needs sage.graphs sage.modules
+            sage: P = posets.PentagonPoset()
+            sage: tikz = TikzPicture.from_poset(P)                              # optional - dot2tex graphviz
             doctest:...: FutureWarning: This class/method/function is marked as experimental.
             It, its functionality or its interface might change without a formal deprecation.
             See https://github.com/sagemath/sage/issues/20343 for details.
 
         ::
 
-            sage: tikz = TikzPicture.from_poset(P, prog='neato',        # long time (3s), optional - dot2tex, needs sage.combinat
+            sage: tikz = TikzPicture.from_poset(P, prog='neato',        # long time (3s), optional - dot2tex, needs sage.graphs sage.modules
             ....:                               color_by_label=True)
 
         ::
 
-            sage: P = posets.SymmetricGroupWeakOrderPoset(4)                            # needs sage.combinat sage.graphs
-            sage: tikz = TikzPicture.from_poset(P)      # long time (4s), optional - dot2tex graphviz, needs sage.combinat sage.graphs
-            sage: tikz = TikzPicture.from_poset(P, prog='neato')        # long time (4s), optional - dot2tex graphviz, needs sage.combinat sage.graphs
+            sage: # needs sage.graphs
+            sage: P = posets.SymmetricGroupWeakOrderPoset(4)
+            sage: tikz = TikzPicture.from_poset(P)                      # long time (4s), optional - dot2tex graphviz
+            sage: tikz = TikzPicture.from_poset(P, prog='neato')        # long time (4s), optional - dot2tex graphviz
         """
         graph = poset.hasse_diagram()
         return cls.from_graph(graph, **kwds)
