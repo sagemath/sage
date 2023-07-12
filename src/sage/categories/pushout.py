@@ -2747,9 +2747,9 @@ class CompletionFunctor(ConstructionFunctor):
             sage: R9 = RealField(53, sci_not=True, rnd='RNDZ')                          # needs sage.rings.real_mpfr
             sage: R10 = RealField(53, sci_not=True)                                     # needs sage.rings.real_mpfr
             sage: R11 = RealField(90, sci_not=True, rnd='RNDZ')                         # needs sage.rings.real_mpfr
-            sage: Rlist = [R0,R1,R2,R3,R4,R5,R6,R7,R8,R9,R10,R11]
+            sage: Rlist = [R0,R1,R2,R3,R4,R5,R6,R7,R8,R9,R10,R11]                       # needs sage.rings.real_mpfr
             sage: from sage.categories.pushout import pushout
-            sage: pushouts = [R0,R0,R0,R1,R0,R1,R0,R1,R0,R1,R1,R1,R1,R1,R1,R1,R1,R1,R1,R1,R1,R1,R1,R1,R0,R1,R2,R2,R2,R3,R0,R1,R2,R3,R3,R3,R1,R1,R3,R3,R3,R3,R1,R1,R3,R3,R3,R3,R0,R1,R2,R3,R4,R4,R0,R1,R2,R3,R3,R5,R1,R1,R3,R3,R5,R5,R1,R1,R3,R3,R3,R5,R0,R1,R0,R1,R0,R1,R6,R6,R6,R7,R7,R7,R1,R1,R1,R1,R1,R1,R7,R7,R7,R7,R7,R7,R0,R1,R2,R3,R2,R3,R6,R7,R8,R9,R10,R9,R1,R1,R3,R3,R3,R3,R7,R7,R9,R9,R10,R9,R1,R1,R3,R3,R3,R3,R7,R7,R10,R10,R10,R10,R1,R1,R3,R3,R5,R5,R7,R7,R9,R9,R10,R11]
+            sage: pushouts = [R0,R0,R0,R1,R0,R1,R0,R1,R0,R1,R1,R1,R1,R1,R1,R1,R1,R1,R1,R1,R1,R1,R1,R1,R0,R1,R2,R2,R2,R3,R0,R1,R2,R3,R3,R3,R1,R1,R3,R3,R3,R3,R1,R1,R3,R3,R3,R3,R0,R1,R2,R3,R4,R4,R0,R1,R2,R3,R3,R5,R1,R1,R3,R3,R5,R5,R1,R1,R3,R3,R3,R5,R0,R1,R0,R1,R0,R1,R6,R6,R6,R7,R7,R7,R1,R1,R1,R1,R1,R1,R7,R7,R7,R7,R7,R7,R0,R1,R2,R3,R2,R3,R6,R7,R8,R9,R10,R9,R1,R1,R3,R3,R3,R3,R7,R7,R9,R9,R10,R9,R1,R1,R3,R3,R3,R3,R7,R7,R10,R10,R10,R10,R1,R1,R3,R3,R5,R5,R7,R7,R9,R9,R10,R11]  # needs sage.rings.real_mpfr
             sage: all(R is S for R, S in zip(pushouts, [pushout(a, b) for a in Rlist for b in Rlist]))
             True
 
@@ -3506,7 +3506,7 @@ class AlgebraicExtensionFunctor(ConstructionFunctor):
             -b^6 + b^4 - 1
             Number Field in b with defining polynomial x^8 - x^4 + 1
              with b = -0.2588190451025208? + 0.9659258262890683?*I
-            sage: pushout(M1['x'], M2['x'])
+            sage: pushout(M1['x'], M2['x'])                                             # needs sage.rings.finite_rings
             Univariate Polynomial Ring in x
              over Number Field in b with defining polynomial x^8 - x^4 + 1
               with b = -0.2588190451025208? + 0.9659258262890683?*I
@@ -3519,11 +3519,11 @@ class AlgebraicExtensionFunctor(ConstructionFunctor):
 
             sage: cbrt2 = CDF(2)^(1/3)                                                  # needs sage.rings.complex_double
             sage: zeta3 = CDF.zeta(3)                                                   # needs sage.rings.complex_double
-            sage: K.<a> = NumberField(x^3 - 2, embedding=cbrt2 * zeta3)                 # needs sage.rings.number_field
+            sage: K.<a> = NumberField(x^3 - 2, embedding=cbrt2 * zeta3)                 # needs sage.rings.complex_double sage.rings.number_field
             sage: L.<b> = NumberField(x^6 - 2, embedding=1.1)                           # needs sage.rings.number_field
             sage: L.coerce_map_from(K)                                                  # needs sage.rings.number_field
             sage: K.coerce_map_from(L)                                                  # needs sage.rings.number_field
-            sage: pushout(K, L)                                                         # needs sage.rings.number_field
+            sage: pushout(K, L)                                                         # needs sage.rings.finite_rings sage.rings.number_field
             Traceback (most recent call last):
             ...
             CoercionException: ('Ambiguous Base Extension', Number Field in a with
@@ -3661,11 +3661,11 @@ class AlgebraicClosureFunctor(ConstructionFunctor):
     EXAMPLES::
 
         sage: F = CDF.construction()[0]                                                 # needs sage.rings.complex_double
-        sage: F(QQ)                                                                     # needs sage.rings.number_field
+        sage: F(QQ)                                                                     # needs sage.rings.complex_double sage.rings.number_field
         Algebraic Field
-        sage: F(RR)                                                                     # needs sage.rings.real_mpfr
+        sage: F(RR)                                                                     # needs sage.rings.complex_double sage.rings.real_mpfr
         Complex Field with 53 bits of precision
-        sage: F(F(QQ)) is F(QQ)                                                         # needs sage.rings.number_field
+        sage: F(F(QQ)) is F(QQ)                                                         # needs sage.rings.complex_double sage.rings.number_field
         True
 
     """
@@ -3694,7 +3694,7 @@ class AlgebraicClosureFunctor(ConstructionFunctor):
         TESTS::
 
             sage: F = CDF.construction()[0]                                             # needs sage.rings.complex_double
-            sage: F(QQ)       # indirect doctest                                        # needs sage.rings.number_field
+            sage: F(QQ)       # indirect doctest                                        # needs sage.rings.complex_double sage.rings.number_field
             Algebraic Field
         """
         try:

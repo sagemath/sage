@@ -1,4 +1,4 @@
-# sage.doctest: optional - sage.combinat
+# sage.doctest: needs sage.combinat
 r"""
 Examples of filtered modules with basis
 """

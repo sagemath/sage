@@ -415,17 +415,19 @@ Applying an operation is generally done by *calling a method*::
     sage: p.factor()
     6*(x + 1)^2
 
+    sage: # needs sage.symbolic
     sage: R.<x> = PolynomialRing(QQ, sparse=True)
     sage: pQ = R(p)
     sage: type(pQ)
     <class 'sage.rings.polynomial.polynomial_ring.PolynomialRing_field_with_category.element_class'>
-    sage: pQ.factor()                                                                   # needs sage.symbolic
+    sage: pQ.factor()
     (6) * (x + 1)^2
 
+    sage: # needs sage.symbolic
     sage: pZ = ZZ['x'](p)
-    sage: type(pZ)                                                                      # needs sage.symbolic
+    sage: type(pZ)
     <class 'sage.rings.polynomial.polynomial_integer_dense_flint.Polynomial_integer_dense_flint'>
-    sage: pZ.factor()                                                                   # needs sage.symbolic
+    sage: pZ.factor()
     2 * 3 * (x + 1)^2
 
 Factoring integers, expressions, or polynomials are distinct tasks,
@@ -445,7 +447,7 @@ are implemented::
     sage: i._pow_.__module__  # not tested (Issue #24275)
     'sage.categories.semigroups'
 
-    sage: pQ._mul_.__module__
+    sage: pQ._mul_.__module__                                                           # needs sage.symbolic
     'sage.rings.polynomial.polynomial_element_generic'
     sage: pQ._pow_.__module__                   # not tested (Issue #24275)             # needs sage.symbolic
     'sage.categories.semigroups'
