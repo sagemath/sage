@@ -148,6 +148,8 @@ class sage__combinat(JoinFeature):
         JoinFeature.__init__(self, 'sage.combinat',
                              [PythonModule('sage.combinat'),                        # namespace package
                               PythonModule('sage.combinat.tableau'),                # representative
+                              PythonModule('sage.monoids'),                         # namespace package
+                              PythonModule('sage.monoids.hecke_monoid'),            # representative
                              ],
                              spkg='sagemath_combinat', type="standard")
 
