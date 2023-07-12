@@ -222,16 +222,16 @@ class Factorization(SageObject):
         - ``x`` -- a list of pairs (p, e) with e an integer;
           otherwise a :class:`TypeError` is raised
 
-        - ``unit`` -- (default: 1) the unit part of the factorization.
+        - ``unit`` -- (default: 1); the unit part of the factorization.
 
-        - ``cr`` -- (default: ``False``) if ``True``, print the factorization
+        - ``cr`` -- (default: ``False``); if ``True``, print the factorization
           with carriage returns between factors.
 
-        - ``sort`` - (default: ``True``) if ``True``, sort the factors by
+        - ``sort`` - (default: ``True``); if ``True``, sort the factors by
           calling the sort function ``self.sort()`` after creating
           the factorization
 
-        - ``simplify`` - (default: ``True``) if ``True``, remove duplicate
+        - ``simplify`` -- (default: ``True``); if ``True``, remove duplicate
           factors from the factorization.  See the documentation for
           self.simplify.
 
@@ -572,7 +572,7 @@ class Factorization(SageObject):
 
     def is_commutative(self) -> bool:
         """
-        Return ``True`` if my factors commute.
+        Return whether the factors commute.
 
         EXAMPLES::
 
@@ -651,7 +651,7 @@ class Factorization(SageObject):
 
         INPUT:
 
-        - ``key`` -- (default: ``None``) comparison key
+        - ``key`` -- (default: ``None``); comparison key
 
         OUTPUT:
 
