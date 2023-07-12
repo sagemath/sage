@@ -251,7 +251,7 @@ class IntegerRange(UniqueRepresentation, Parent):
         if middle_point is not None:
             return IntegerRangeFromMiddle(begin, end, step, middle_point)
 
-        if (begin == -Infinity) or (begin == Infinity):
+        if begin == -Infinity or begin == Infinity:
             raise ValueError("Can't iterate over this set: It is impossible to begin an enumeration with plus/minus Infinity")
 
         # Check for empty sets
@@ -261,7 +261,7 @@ class IntegerRange(UniqueRepresentation, Parent):
         if end != Infinity and end != -Infinity:
             # Normalize the input
             sgn = 1 if step > 0 else -1
-            end = begin+((end-begin-sgn)//(step)+1)*step
+            end = begin + ((end - begin - sgn) // (step) + 1) * step
             return IntegerRangeFinite(begin, end, step)
         else:
             return IntegerRangeInfinite(begin, step)
@@ -406,9 +406,9 @@ class IntegerRangeFinite(IntegerRange):
         if self.cardinality() < 6:
             return "{" + ", ".join(str(x) for x in self) + "}"
         if self._step == 1:
-            return "{%s, ..., %s}" % (self._begin, self._end-self._step)
-        return "{%s, %s, ..., %s}" % (self._begin, self._begin+self._step,
-                                      self._end-self._step)
+            return "{%s, ..., %s}" % (self._begin, self._end - self._step)
+        return "{%s, %s, ..., %s}" % (self._begin, self._begin + self._step,
+                                      self._end - self._step)
 
     def rank(self, x):
         r"""
@@ -702,11 +702,13 @@ class IntegerRangeFromMiddle(IntegerRange):
         if middle_point not in self:
             raise ValueError("middle_point is not in the interval")
 
-        if (begin != Infinity and begin != -Infinity) and \
-           (end != Infinity and end != -Infinity):
-            Parent.__init__(self, facade=IntegerRing(), category=FiniteEnumeratedSets())
+        if (begin != Infinity and begin != -Infinity and
+                end != Infinity and end != -Infinity):
+            cat = FiniteEnumeratedSets()
         else:
-            Parent.__init__(self, facade=IntegerRing(), category=InfiniteEnumeratedSets())
+            cat = InfiniteEnumeratedSets()
+
+        Parent.__init__(self, facade=IntegerRing(), category=cat)
 
     def _repr_(self):
         r"""
