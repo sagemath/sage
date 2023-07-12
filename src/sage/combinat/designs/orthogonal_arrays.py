@@ -1181,11 +1181,12 @@ def incomplete_orthogonal_array(k,n,holes,resolvable=False, existence=False):
 
     10 holes of size 9 through the product construction::
 
-        sage: iOA = designs.incomplete_orthogonal_array(10,153,[9]*10)  # long time
-        sage: OA9 = designs.orthogonal_arrays.build(10,9)               # long time
-        sage: for i in range(10):                                       # long time
+        sage: # long time
+        sage: iOA = designs.incomplete_orthogonal_array(10,153,[9]*10)
+        sage: OA9 = designs.orthogonal_arrays.build(10,9)
+        sage: for i in range(10):
         ....:     iOA.extend([[153-9*(i+1)+x for x in B] for B in OA9])
-        sage: is_orthogonal_array(iOA,10,153)                           # long time
+        sage: is_orthogonal_array(iOA,10,153)
         True
 
     An `OA(9,82)-OA(9,9)-OA(9,1)`::

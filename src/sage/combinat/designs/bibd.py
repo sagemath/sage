@@ -4,7 +4,7 @@ Balanced Incomplete Block Designs (BIBD)
 This module gathers everything related to Balanced Incomplete Block Designs. One can build a
 BIBD (or check that it can be built) with :func:`balanced_incomplete_block_design`::
 
-    sage: BIBD = designs.balanced_incomplete_block_design(7,3,1)                        # optional - sage.schemes
+    sage: BIBD = designs.balanced_incomplete_block_design(7,3,1)                        # needs sage.schemes
 
 In particular, Sage can build a `(v,k,1)`-BIBD when one exists for all `k\leq
 5`. The following functions are available:
@@ -88,21 +88,21 @@ def biplane(n, existence=False):
 
     EXAMPLES::
 
-        sage: designs.biplane(4)                                                        # optional - sage.rings.finite_rings
+        sage: designs.biplane(4)                                                        # needs sage.rings.finite_rings
         (16,6,2)-Balanced Incomplete Block Design
-        sage: designs.biplane(7, existence=True)                                        # optional - sage.schemes
+        sage: designs.biplane(7, existence=True)                                        # needs sage.schemes
         True
-        sage: designs.biplane(11)                                                       # optional - sage.schemes
+        sage: designs.biplane(11)                                                       # needs sage.schemes
         (79,13,2)-Balanced Incomplete Block Design
 
     TESTS::
 
-        sage: designs.biplane(9)                                                        # optional - sage.libs.gap
+        sage: designs.biplane(9)                                                        # needs sage.libs.gap
         (56,11,2)-Balanced Incomplete Block Design
 
     Check all known biplanes::
 
-        sage: [n for n in [0,1,2,3,4,7,9,11]                                            # optional - sage.schemes
+        sage: [n for n in [0,1,2,3,4,7,9,11]                                            # needs sage.schemes
         ....:  if designs.biplane(n, existence=True) is True]
         [0, 1, 2, 3, 4, 7, 9, 11]
     """
@@ -154,7 +154,7 @@ def balanced_incomplete_block_design(v, k, lambd=1, existence=False, use_LJCR=Fa
 
     EXAMPLES::
 
-        sage: designs.balanced_incomplete_block_design(7, 3, 1).blocks()                # optional - sage.schemes
+        sage: designs.balanced_incomplete_block_design(7, 3, 1).blocks()                # needs sage.schemes
         [[0, 1, 3], [0, 2, 4], [0, 5, 6], [1, 2, 6], [1, 4, 5], [2, 3, 5], [3, 4, 6]]
         sage: B = designs.balanced_incomplete_block_design(66, 6, 1,         # optional - internet
         ....:                                              use_LJCR=True)
@@ -162,7 +162,7 @@ def balanced_incomplete_block_design(v, k, lambd=1, existence=False, use_LJCR=Fa
         (66,6,1)-Balanced Incomplete Block Design
         sage: B.blocks()                                                     # optional - internet
         [[0, 1, 2, 3, 4, 65], [0, 5, 22, 32, 38, 58], [0, 6, 21, 30, 43, 48], ...
-        sage: designs.balanced_incomplete_block_design(216, 6, 1)                       # optional - sage.libs.pari
+        sage: designs.balanced_incomplete_block_design(216, 6, 1)
         Traceback (most recent call last):
         ...
         NotImplementedError: I don't know how to build a (216,6,1)-BIBD!
@@ -171,11 +171,11 @@ def balanced_incomplete_block_design(v, k, lambd=1, existence=False, use_LJCR=Fa
 
         sage: designs.balanced_incomplete_block_design(85,5,existence=True)
         True
-        sage: _ = designs.balanced_incomplete_block_design(85,5)                        # optional - sage.libs.pari
+        sage: _ = designs.balanced_incomplete_block_design(85,5)                        # needs sage.libs.pari
 
     A BIBD from a Finite Projective Plane::
 
-        sage: _ = designs.balanced_incomplete_block_design(21,5)                        # optional - sage.schemes
+        sage: _ = designs.balanced_incomplete_block_design(21,5)                        # needs sage.schemes
 
     Some trivial BIBD::
 
@@ -186,29 +186,30 @@ def balanced_incomplete_block_design(v, k, lambd=1, existence=False, use_LJCR=Fa
 
     Existence of BIBD with `k=3,4,5`::
 
-        sage: [v for v in range(50) if designs.balanced_incomplete_block_design(v,3,existence=True)]                    # optional - sage.schemes
+        sage: [v for v in range(50) if designs.balanced_incomplete_block_design(v,3,existence=True)]                    # needs sage.schemes
         [1, 3, 7, 9, 13, 15, 19, 21, 25, 27, 31, 33, 37, 39, 43, 45, 49]
-        sage: [v for v in range(100) if designs.balanced_incomplete_block_design(v,4,existence=True)]                   # optional - sage.schemes
+        sage: [v for v in range(100) if designs.balanced_incomplete_block_design(v,4,existence=True)]                   # needs sage.schemes
         [1, 4, 13, 16, 25, 28, 37, 40, 49, 52, 61, 64, 73, 76, 85, 88, 97]
-        sage: [v for v in range(150) if designs.balanced_incomplete_block_design(v,5,existence=True)]                   # optional - sage.schemes
+        sage: [v for v in range(150) if designs.balanced_incomplete_block_design(v,5,existence=True)]                   # needs sage.schemes
         [1, 5, 21, 25, 41, 45, 61, 65, 81, 85, 101, 105, 121, 125, 141, 145]
 
     For `k > 5` there are currently very few constructions::
 
-        sage: [v for v in range(300) if designs.balanced_incomplete_block_design(v,6,existence=True) is True]           # optional - sage.schemes
+        sage: [v for v in range(300) if designs.balanced_incomplete_block_design(v,6,existence=True) is True]           # needs sage.schemes
         [1, 6, 31, 66, 76, 91, 96, 106, 111, 121, 126, 136, 141, 151, 156, 171, 181, 186, 196, 201, 211, 241, 271]
-        sage: [v for v in range(300) if designs.balanced_incomplete_block_design(v,6,existence=True) is Unknown]        # optional - sage.schemes
+        sage: [v for v in range(300) if designs.balanced_incomplete_block_design(v,6,existence=True) is Unknown]        # needs sage.schemes
         [51, 61, 81, 166, 216, 226, 231, 246, 256, 261, 276, 286, 291]
 
     Here are some constructions with `k \geq 7` and `v` a prime power::
 
-        sage: designs.balanced_incomplete_block_design(169,7)                           # optional - sage.libs.pari
+        sage: # needs sage.libs.pari
+        sage: designs.balanced_incomplete_block_design(169,7)
         (169,7,1)-Balanced Incomplete Block Design
-        sage: designs.balanced_incomplete_block_design(617,8)                           # optional - sage.libs.pari
+        sage: designs.balanced_incomplete_block_design(617,8)
         (617,8,1)-Balanced Incomplete Block Design
-        sage: designs.balanced_incomplete_block_design(433,9)                           # optional - sage.libs.pari
+        sage: designs.balanced_incomplete_block_design(433,9)
         (433,9,1)-Balanced Incomplete Block Design
-        sage: designs.balanced_incomplete_block_design(1171,10)                         # optional - sage.libs.pari
+        sage: designs.balanced_incomplete_block_design(1171,10)
         (1171,10,1)-Balanced Incomplete Block Design
 
     And we know some nonexistence results::
@@ -220,22 +221,22 @@ def balanced_incomplete_block_design(v, k, lambd=1, existence=False, use_LJCR=Fa
 
         sage: designs.balanced_incomplete_block_design(176, 50, 14, existence=True)
         True
-        sage: designs.balanced_incomplete_block_design(64,28,12)                        # optional - sage.libs.pari
+        sage: designs.balanced_incomplete_block_design(64,28,12)                        # needs sage.libs.pari
         (64,28,12)-Balanced Incomplete Block Design
-        sage: designs.balanced_incomplete_block_design(37,9,8)                          # optional - sage.libs.pari
+        sage: designs.balanced_incomplete_block_design(37,9,8)                          # needs sage.libs.pari
         (37,9,8)-Balanced Incomplete Block Design
-        sage: designs.balanced_incomplete_block_design(15,7,3)                          # optional - sage.schemes
+        sage: designs.balanced_incomplete_block_design(15,7,3)                          # needs sage.schemes
         (15,7,3)-Balanced Incomplete Block Design
 
     Some BIBDs from the recursive construction ::
 
-        sage: designs.balanced_incomplete_block_design(76,16,4)                         # optional - sage.libs.pari
+        sage: designs.balanced_incomplete_block_design(76,16,4)                         # needs sage.libs.pari
         (76,16,4)-Balanced Incomplete Block Design
-        sage: designs.balanced_incomplete_block_design(10,4,2)                          # optional - sage.libs.pari
+        sage: designs.balanced_incomplete_block_design(10,4,2)                          # needs sage.libs.pari
         (10,4,2)-Balanced Incomplete Block Design
-        sage: designs.balanced_incomplete_block_design(50,25,24)                        # optional - sage.schemes
+        sage: designs.balanced_incomplete_block_design(50,25,24)                        # needs sage.schemes
         (50,25,24)-Balanced Incomplete Block Design
-        sage: designs.balanced_incomplete_block_design(29,15,15)                        # optional - sage.libs.pari
+        sage: designs.balanced_incomplete_block_design(29,15,15)                        # needs sage.libs.pari
         (29,15,15)-Balanced Incomplete Block Design
     """
     # Trivial BIBD
@@ -389,17 +390,17 @@ def BruckRyserChowla_check(v, k, lambd):
     Nonexistence of projective planes of order 6 and 14
 
         sage: from sage.combinat.designs.bibd import BruckRyserChowla_check
-        sage: BruckRyserChowla_check(43,7,1)                                            # optional - sage.schemes
+        sage: BruckRyserChowla_check(43,7,1)                                            # needs sage.schemes
         False
-        sage: BruckRyserChowla_check(211,15,1)                                          # optional - sage.schemes
+        sage: BruckRyserChowla_check(211,15,1)                                          # needs sage.schemes
         False
 
     Existence of symmetric BIBDs with parameters `(79,13,2)` and `(56,11,2)`
 
         sage: from sage.combinat.designs.bibd import BruckRyserChowla_check
-        sage: BruckRyserChowla_check(79,13,2)                                           # optional - sage.schemes
+        sage: BruckRyserChowla_check(79,13,2)                                           # needs sage.schemes
         True
-        sage: BruckRyserChowla_check(56,11,2)                                           # optional - sage.schemes
+        sage: BruckRyserChowla_check(56,11,2)
         True
 
     TESTS:
@@ -407,15 +408,15 @@ def BruckRyserChowla_check(v, k, lambd):
     Test some non-symmetric parameters::
 
         sage: from sage.combinat.designs.bibd import BruckRyserChowla_check
-        sage: BruckRyserChowla_check(89,11,3)                                           # optional - sage.schemes
+        sage: BruckRyserChowla_check(89,11,3)
         Unknown
-        sage: BruckRyserChowla_check(25,23,2)                                           # optional - sage.schemes
+        sage: BruckRyserChowla_check(25,23,2)
         Unknown
 
     Clearly wrong parameters satisfying the theorem::
 
         sage: from sage.combinat.designs.bibd import BruckRyserChowla_check
-        sage: BruckRyserChowla_check(13,25,50)                                          # optional - sage.schemes
+        sage: BruckRyserChowla_check(13,25,50)                                          # needs sage.schemes
         True
 
     """
@@ -571,23 +572,23 @@ def BIBD_from_TD(v,k,existence=False):
     First construction::
 
         sage: from sage.combinat.designs.bibd import BIBD_from_TD
-        sage: BIBD_from_TD(25,5,existence=True)                                         # optional - sage.schemes
+        sage: BIBD_from_TD(25,5,existence=True)                                         # needs sage.schemes
         True
-        sage: _ = BlockDesign(25,BIBD_from_TD(25,5))                                    # optional - sage.schemes
+        sage: _ = BlockDesign(25,BIBD_from_TD(25,5))                                    # needs sage.schemes
 
     Second construction::
 
         sage: from sage.combinat.designs.bibd import BIBD_from_TD
-        sage: BIBD_from_TD(21,5,existence=True)                                         # optional - sage.schemes
+        sage: BIBD_from_TD(21,5,existence=True)                                         # needs sage.schemes
         True
-        sage: _ = BlockDesign(21,BIBD_from_TD(21,5))                                    # optional - sage.schemes
+        sage: _ = BlockDesign(21,BIBD_from_TD(21,5))                                    # needs sage.schemes
 
     Third construction::
 
         sage: from sage.combinat.designs.bibd import BIBD_from_TD
-        sage: BIBD_from_TD(85,5,existence=True)                                         # optional - sage.schemes
+        sage: BIBD_from_TD(85,5,existence=True)                                         # needs sage.schemes
         True
-        sage: _ = BlockDesign(85,BIBD_from_TD(85,5))                                    # optional - sage.schemes
+        sage: _ = BlockDesign(85,BIBD_from_TD(85,5))                                    # needs sage.schemes
 
     No idea::
 
@@ -868,8 +869,8 @@ def BIBD_from_PBD(PBD, v, k, check=True, base_cases=None):
         sage: from sage.combinat.designs.bibd import PBD_4_5_8_9_12
         sage: from sage.combinat.designs.bibd import BIBD_from_PBD
         sage: from sage.combinat.designs.bibd import is_pairwise_balanced_design
-        sage: PBD = PBD_4_5_8_9_12(17)                                                  # optional - sage.schemes
-        sage: bibd = is_pairwise_balanced_design(BIBD_from_PBD(PBD,52,4),52,[4])        # optional - sage.schemes
+        sage: PBD = PBD_4_5_8_9_12(17)                                                  # needs sage.schemes
+        sage: bibd = is_pairwise_balanced_design(BIBD_from_PBD(PBD,52,4),52,[4])        # needs sage.schemes
     """
     if base_cases is None:
         base_cases = {}
@@ -910,7 +911,7 @@ def _relabel_bibd(B,n,p=None):
 
     EXAMPLES::
 
-        sage: designs.balanced_incomplete_block_design(40,4).blocks()  # indirect doctest, optional - sage.schemes
+        sage: designs.balanced_incomplete_block_design(40,4).blocks()  # indirect doctest           # needs sage.schemes
         [[0, 1, 2, 12], [0, 3, 6, 9], [0, 4, 8, 10],
          [0, 5, 7, 11], [0, 13, 26, 39], [0, 14, 25, 28],
          [0, 15, 27, 38], [0, 16, 22, 32], [0, 17, 23, 34],
@@ -952,7 +953,7 @@ def PBD_4_5_8_9_12(v, check=True):
 
     EXAMPLES::
 
-        sage: designs.balanced_incomplete_block_design(40,4).blocks()  # indirect doctest, optional - sage.schemes
+        sage: designs.balanced_incomplete_block_design(40,4).blocks()  # indirect doctest           # needs sage.schemes
         [[0, 1, 2, 12], [0, 3, 6, 9], [0, 4, 8, 10],
          [0, 5, 7, 11], [0, 13, 26, 39], [0, 14, 25, 28],
          [0, 15, 27, 38], [0, 16, 22, 32], [0, 17, 23, 34],
@@ -961,7 +962,7 @@ def PBD_4_5_8_9_12(v, check=True):
     Check that :trac:`16476` is fixed::
 
         sage: from sage.combinat.designs.bibd import PBD_4_5_8_9_12
-        sage: for v in (0,1,4,5,8,9,12,13,16,17,20,21,24,25):                           # optional - sage.schemes
+        sage: for v in (0,1,4,5,8,9,12,13,16,17,20,21,24,25):                           # needs sage.schemes
         ....:     _ = PBD_4_5_8_9_12(v)
     """
     if v % 4 not in [0, 1]:
@@ -1031,7 +1032,7 @@ def _PBD_4_5_8_9_12_closure(B):
 
     EXAMPLES::
 
-        sage: designs.balanced_incomplete_block_design(40,4).blocks()  # indirect doctest, optional - sage.schemes
+        sage: designs.balanced_incomplete_block_design(40,4).blocks()  # indirect doctest           # needs sage.schemes
         [[0, 1, 2, 12], [0, 3, 6, 9], [0, 4, 8, 10],
          [0, 5, 7, 11], [0, 13, 26, 39], [0, 14, 25, 28],
          [0, 15, 27, 38], [0, 16, 22, 32], [0, 17, 23, 34],
@@ -1123,7 +1124,7 @@ def v_5_1_BIBD(v, check=True):
 
         sage: from sage.combinat.designs.bibd import v_5_1_BIBD
         sage: i = 0
-        sage: while i<200:                                                              # optional - sage.libs.pari
+        sage: while i<200:                                                              # needs sage.libs.pari
         ....:    i += 20
         ....:    _ = v_5_1_BIBD(i+1)
         ....:    _ = v_5_1_BIBD(i+5)
@@ -1132,7 +1133,7 @@ def v_5_1_BIBD(v, check=True):
 
     Check that the needed difference families are there::
 
-        sage: for v in [21,41,61,81,141,161,281]:                                       # optional - sage.libs.pari
+        sage: for v in [21,41,61,81,141,161,281]:                                       # needs sage.libs.pari
         ....:     assert designs.difference_family(v,5,existence=True)
         ....:     _ = designs.difference_family(v,5)
     """
@@ -1318,19 +1319,19 @@ def BIBD_from_arc_in_desarguesian_projective_plane(n,k,existence=False):
 
         sage: from sage.combinat.designs.bibd import BIBD_from_arc_in_desarguesian_projective_plane
         sage: from sage.combinat.designs.bibd import BalancedIncompleteBlockDesign
-        sage: D = BIBD_from_arc_in_desarguesian_projective_plane(232,8)                 # optional - sage.libs.gap sage.modules sage.rings.finite_rings
-        sage: BalancedIncompleteBlockDesign(232,D)                                      # optional - sage.libs.gap sage.modules sage.rings.finite_rings
+        sage: D = BIBD_from_arc_in_desarguesian_projective_plane(232,8)                 # needs sage.libs.gap sage.modules sage.rings.finite_rings
+        sage: BalancedIncompleteBlockDesign(232,D)                                      # needs sage.libs.gap sage.modules sage.rings.finite_rings
         (232,8,1)-Balanced Incomplete Block Design
 
     A `(120,8,1)`-BIBD::
 
-        sage: D = BIBD_from_arc_in_desarguesian_projective_plane(120,8)                 # optional - sage.libs.gap sage.modules sage.rings.finite_rings
-        sage: BalancedIncompleteBlockDesign(120,D)                                      # optional - sage.libs.gap sage.modules sage.rings.finite_rings
+        sage: D = BIBD_from_arc_in_desarguesian_projective_plane(120,8)                 # needs sage.libs.gap sage.modules sage.rings.finite_rings
+        sage: BalancedIncompleteBlockDesign(120,D)                                      # needs sage.libs.gap sage.modules sage.rings.finite_rings
         (120,8,1)-Balanced Incomplete Block Design
 
     Other parameters::
 
-        sage: all(BIBD_from_arc_in_desarguesian_projective_plane(n,k,existence=True)    # optional - sage.libs.pari
+        sage: all(BIBD_from_arc_in_desarguesian_projective_plane(n,k,existence=True)
         ....:     for n,k in
         ....:       [(120, 8), (232, 8), (456, 8), (904, 8), (496, 16),
         ....:        (976, 16), (1936, 16), (2016, 32), (4000, 32), (8128, 64)])
@@ -1571,14 +1572,15 @@ class BalancedIncompleteBlockDesign(PairwiseBalancedDesign):
 
         EXAMPLES::
 
-            sage: B = designs.balanced_incomplete_block_design(21, 5)                   # optional - sage.schemes
-            sage: a2 = B.arc(); a2  # random                                            # optional - sage.schemes
+            sage: # needs sage.schemes
+            sage: B = designs.balanced_incomplete_block_design(21, 5)
+            sage: a2 = B.arc(); a2  # random
             [5, 9, 10, 12, 15, 20]
-            sage: len(a2)                                                               # optional - sage.schemes
+            sage: len(a2)
             6
-            sage: a4 = B.arc(4); a4  # random                                           # optional - sage.schemes
+            sage: a4 = B.arc(4); a4  # random
             [0, 1, 2, 5, 6, 8, 9, 10, 11, 12, 13, 14, 15, 16, 18, 20]
-            sage: len(a4)                                                               # optional - sage.schemes
+            sage: len(a4)
             16
 
         The `2`-arc and `4`-arc above are maximal. One can check that they
@@ -1591,40 +1593,41 @@ class BalancedIncompleteBlockDesign(PairwiseBalancedDesign):
             sage: 1 + r*3
             16
 
-            sage: B.trace(a2).is_t_design(2, return_parameters=True)                    # optional - sage.schemes
+            sage: B.trace(a2).is_t_design(2, return_parameters=True)                    # needs sage.schemes
             (True, (2, 6, 2, 1))
-            sage: B.trace(a4).is_t_design(2, return_parameters=True)                    # optional - sage.schemes
+            sage: B.trace(a4).is_t_design(2, return_parameters=True)                    # needs sage.schemes
             (True, (2, 16, 4, 1))
 
         Some other examples which are not maximal::
 
             sage: B = designs.balanced_incomplete_block_design(25, 4)
-            sage: a2 = B.arc(2)                                                         # optional - sage.numerical.mip
+            sage: a2 = B.arc(2)                                                         # needs sage.numerical.mip
             sage: r = (25-1)//(4-1)
-            sage: len(a2), 1 + r                                                        # optional - sage.numerical.mip
+            sage: len(a2), 1 + r                                                        # needs sage.numerical.mip
             (8, 9)
-            sage: sa2 = set(a2)                                                         # optional - sage.numerical.mip
-            sage: set(len(sa2.intersection(b)) for b in B.blocks())                     # optional - sage.numerical.mip
+            sage: sa2 = set(a2)                                                         # needs sage.numerical.mip
+            sage: set(len(sa2.intersection(b)) for b in B.blocks())                     # needs sage.numerical.mip
             {0, 1, 2}
-            sage: B.trace(a2).is_t_design(2)                                            # optional - sage.numerical.mip
+            sage: B.trace(a2).is_t_design(2)                                            # needs sage.numerical.mip
             False
 
-            sage: a3 = B.arc(3)                                                         # optional - sage.numerical.mip
-            sage: len(a3), 1 + 2*r                                                      # optional - sage.numerical.mip
+            sage: # needs sage.numerical.mip
+            sage: a3 = B.arc(3)
+            sage: len(a3), 1 + 2*r
             (15, 17)
-            sage: sa3 = set(a3)                                                         # optional - sage.numerical.mip
-            sage: set(len(sa3.intersection(b)) for b in B.blocks()) == set([0,3])       # optional - sage.numerical.mip
+            sage: sa3 = set(a3)
+            sage: set(len(sa3.intersection(b)) for b in B.blocks()) == set([0,3])
             False
-            sage: B.trace(a3).is_t_design(3)                                            # optional - sage.numerical.mip
+            sage: B.trace(a3).is_t_design(3)
             False
 
         TESTS:
 
         Test consistency with relabeling::
 
-            sage: b = designs.balanced_incomplete_block_design(7,3)                     # optional - sage.schemes
-            sage: b.relabel(list("abcdefg"))                                            # optional - sage.schemes
-            sage: set(b.arc()).issubset(b.ground_set())                                 # optional - sage.schemes
+            sage: b = designs.balanced_incomplete_block_design(7,3)                     # needs sage.schemes
+            sage: b.relabel(list("abcdefg"))                                            # needs sage.schemes
+            sage: set(b.arc()).issubset(b.ground_set())                                 # needs sage.schemes
             True
         """
         s = int(s)
