@@ -362,7 +362,7 @@ class ModularForm_abstract(ModuleElement):
             self.__coefficients
         except AttributeError:
             self.__coefficients = {}
-        if isinstance(X, Integer):
+        if isinstance(X, (int, Integer)):
             X = list(range(1, X + 1))
         Y = [n for n in X if n not in self.__coefficients]
         v = self._compute(Y)
@@ -2783,7 +2783,7 @@ class ModularFormElement_elliptic_curve(Newform):
         """
         M = self.parent()
         S = M.cuspidal_subspace()
-#        return S.find_in_space( self.__E.q_expansion( S.q_expansion_basis()[0].prec() ) ) + [0] * ( M.dimension() - S.dimension() )
+        # return S.find_in_space( self.__E.q_expansion( S.q_expansion_basis()[0].prec() ) ) + [0] * ( M.dimension() - S.dimension() )
         return vector(S.find_in_space(self.__E.q_expansion(S.sturm_bound())) + [0] * (M.dimension() - S.dimension()))
 
     def _compute_q_expansion(self, prec):
@@ -3392,6 +3392,30 @@ class GradedModularFormElement(ModuleElement):
 
     qexp = q_expansion  # alias
 
+    def coefficients(self, X):
+        r"""
+        The coefficients a_n of self, for integers n>=0 in the list of X. If
+        X is an Integer, return coefficients for indices from 1 to X.
+
+        TESTS::
+
+            sage: M = ModularFormsRing(1)
+            sage: E4 = M.0; E6 = M.1
+            sage: F = E4 + E6
+            sage: F.coefficients([0,1,3,6])
+            [2, -264, -116256, -3997728]
+            sage: F.coefficients(10)
+            [-264, -14472, -116256, -515208, -1545264, -3997728, -8388672, -16907400, -29701992, -51719472]
+            sage: M = ModularFormsRing(13)
+            sage: (M.0^3).coefficients(range(10, 20))
+            [22812, 36552, 57680, 85686, 126744, 177408, 249246, 332172, 448926, 575736]
+        """
+        if isinstance(X, (int, Integer)):
+            return list(self.q_expansion(X + 1))[1:X + 1]
+        prec = max(X)
+        v = self.q_expansion(prec + 1)
+        return [v[x] for x in X]
+
     def _repr_(self):
         r"""
         The string representation of self.
@@ -3734,7 +3758,7 @@ class GradedModularFormElement(ModuleElement):
             return poly_parent(self[k])
 
         # create the set of "weighted exponents" and compute sturm bound
-        weights_of_generators = [gens[i].weight() for i in range(0, len(gens))]
+        weights_of_generators = [gen.weight() for gen in gens]
         W = WeightedIntegerVectors(k, weights_of_generators).list()
         sturm_bound = self.group().sturm_bound(k)
 
@@ -3742,18 +3766,9 @@ class GradedModularFormElement(ModuleElement):
         matrix_datum = []
 
         # form the matrix of coefficients and list the monomials of weight k
-        list_of_monomials = []
-        for exponents in W:
-            monomial_form = M.one()
-            monomial_poly = poly_parent.one()
-            iter = 0
-            for e, g in zip(exponents, gens):
-                monomial_form *= M(g) ** e
-                monomial_poly *= poly_parent.gen(iter) ** e
-                iter += 1
-            matrix_datum.append(monomial_form[k].coefficients(range(0, sturm_bound + 1)))
-            list_of_monomials.append(monomial_poly)
-
+        monomial_forms = [prod(M(gen) ** exp for exp, gen in zip(exps, gens)) for exps in W]
+        monomial_polys = [prod(poly_gen ** exp for exp, poly_gen in zip(exps, poly_parent.gens())) for exps in W]
+        matrix_datum = M._to_matrix(monomial_forms, prec=sturm_bound)
         mat = Matrix(matrix_datum).transpose()
 
         # initialize the column vector of the coefficients of self
@@ -3764,8 +3779,8 @@ class GradedModularFormElement(ModuleElement):
 
         # initialize the polynomial associated to self
         poly = poly_parent.zero()
-        for iter, p in enumerate(list_of_monomials):
-            poly += soln[iter, 0] * p
+        for i, p in enumerate(monomial_polys):
+            poly += soln[i, 0] * p
         return poly
 
     def to_polynomial(self, names='x', gens=None):
@@ -3778,7 +3793,7 @@ class GradedModularFormElement(ModuleElement):
         - ``names`` -- a list or tuple of names (strings), or a comma separated string. Correspond
           to the names of the variables;
         - ``gens`` -- (default: None) a list of generator of the parent of ``self``. If set to ``None``,
-          the list returned by :meth:`~sage.modular.modform.find_generator.ModularFormsRing.gen_forms`
+          the list returned by :meth:`~sage.modular.modform.ring.ModularFormsRing.gen_forms`
           is used instead
 
         OUTPUT: A polynomial in the variables ``names``
@@ -3791,7 +3806,7 @@ class GradedModularFormElement(ModuleElement):
             sage: (M.0^10 + M.0 * M.1).to_polynomial()
             x0^10 + x0*x1
 
-        This method is not necessarily the inverse of :meth:`~sage.modular.modform.find_generator.ModularFormsRing.from_polynomial`
+        This method is not necessarily the inverse of :meth:`~sage.modular.modform.ring.ModularFormsRing.from_polynomial`
         since there may be some relations between the generators of the modular forms ring::
 
             sage: M = ModularFormsRing(Gamma0(6))

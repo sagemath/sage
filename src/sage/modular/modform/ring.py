@@ -23,6 +23,7 @@ AUTHORS:
 from random import shuffle
 
 from sage.categories.graded_algebras import GradedAlgebras
+from sage.matrix.constructor import Matrix
 from sage.misc.cachefunc import cached_method
 from sage.misc.misc_c import prod
 from sage.misc.superseded import deprecated_function_alias
@@ -1184,6 +1185,44 @@ class ModularFormsRing(Parent):
 
         R = G[0][1].parent()
         return [R(list(x), prec=prec) for x in W.gens()]
+
+    def _to_matrix(self, gens=None, prec=None):
+        r"""
+        Returns a matrix corresponding to the q-expansion of the generators to precision.
+
+        INPUT:
+
+        - ``gens`` -- (default: None) a list of generators. If set to ``None``,
+          the list returned by :meth:`~sage.modular.modform.ring.ModularFormsRing.gen_forms`
+          is used instead
+        - ``prec`` -- (default: None) precision to compute up to, or the Sturm
+          bound if ``prec`` is None.
+
+        OUTPUT: A matrix.
+
+        TESTS::
+
+            sage: M = ModularFormsRing(1)
+            sage: E4 = M.0; E6 = M.1
+            sage: gens = [E4^3, E6^2]
+        """
+
+        if gens is None:
+            gens = self.gen_forms()
+
+        if prec is None:
+            # we don't default to prec=6 because this is an internal function
+            # and is usually used to write other forms as a linear combination
+            # of generators, in which case using the Sturm bound is more reasonable
+            prec = 0
+            for gen in gens:
+                prec = max(prec, gen.group().sturm_bound(gen.weight()))
+
+        matrix_datum = []
+        for gen in gens:
+            matrix_datum.append(gen.coefficients(range(0, prec + 1)))
+
+        return Matrix(matrix_datum)
 
 
 # Deprecated functions
