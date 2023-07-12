@@ -79,7 +79,7 @@ def is_orthogonal_array(OA, int k, int n, int t=2, verbose=False, terminology="O
 
         sage: from itertools import product
         sage: n = 0
-        sage: for a in product(product((0,1), repeat=3), repeat=4):
+        sage: for a in product(product((0,1), repeat=3), repeat=4):                     # needs sage.schemes
         ....:     if is_orthogonal_array(a,3,2):
         ....:          n += 1
         sage: n

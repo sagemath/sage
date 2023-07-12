@@ -1137,8 +1137,8 @@ def OA_16_208():
 
         sage: from sage.combinat.designs.designs_pyx import is_orthogonal_array
         sage: from sage.combinat.designs.database import OA_16_208
-        sage: OA = OA_16_208()                  # not tested                            # needs sage.rings.finite_rings
-        sage: is_orthogonal_array(OA,16,208,2)  # not tested                            # needs sage.rings.finite_rings
+        sage: OA = OA_16_208()                  # not tested (too long)                 # needs sage.rings.finite_rings
+        sage: is_orthogonal_array(OA,16,208,2)  # not tested (too long)                 # needs sage.rings.finite_rings
         True
 
     The design is available from the general constructor::
@@ -1196,8 +1196,8 @@ def OA_15_224():
 
         sage: from sage.combinat.designs.designs_pyx import is_orthogonal_array
         sage: from sage.combinat.designs.database import OA_15_224
-        sage: OA = OA_15_224()                  # not tested                            # needs sage.rings.finite_rings
-        sage: is_orthogonal_array(OA,15,224,2)  # not tested                            # needs sage.rings.finite_rings
+        sage: OA = OA_15_224()                  # not tested (too long)                 # needs sage.rings.finite_rings
+        sage: is_orthogonal_array(OA,15,224,2)  # not tested (too long)                 # needs sage.rings.finite_rings
         True
 
     The design is available from the general constructor::
@@ -1856,8 +1856,8 @@ def OA_15_896():
 
         sage: from sage.combinat.designs.designs_pyx import is_orthogonal_array
         sage: from sage.combinat.designs.database import OA_15_896
-        sage: OA = OA_15_896()                  # not tested                            # needs sage.rings.finite_rings
-        sage: is_orthogonal_array(OA,15,896,2)  # not tested                            # needs sage.rings.finite_rings
+        sage: OA = OA_15_896()                  # not tested (too long, ~2min)          # needs sage.rings.finite_rings
+        sage: is_orthogonal_array(OA,15,896,2)  # not tested (too long)                 # needs sage.rings.finite_rings
         True
 
     The design is available from the general constructor::
