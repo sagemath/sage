@@ -40,7 +40,7 @@ import sys
 from argparse import ArgumentParser, FileType
 from pathlib import Path
 
-from sage.doctest.control import skipfile
+from sage.doctest.control import DocTestDefaults, DocTestController
 from sage.doctest.parsing import parse_file_optional_tags, parse_optional_tags, unparse_optional_tags, update_optional_tags
 from sage.env import SAGE_ROOT
 from sage.features import PythonModule
@@ -307,17 +307,21 @@ def process_block(block, src_in_lines, file_optional_tags):
 
 
 # set input and output files
-if len(args.filename) == 2 and not args.overwrite and not args.no_overwrite:
-    inputs, outputs = [args.filename[0]], [args.filename[1]]
-    print("sage-fixdoctests: When passing two filenames, the second one is taken as an output filename; "
-          "this is deprecated. To pass two input filenames, use the option --overwrite.")
-elif args.no_overwrite:
-    inputs, outputs = args.filename, [input + ".fixed" for input in args.filename]
-else:
-    inputs = outputs = args.filename
+def output_filename(filename):
+    if len(args.filename) == 2 and not args.overwrite and not args.no_overwrite:
+        if args.filename[0] == filename:
+            print("sage-fixdoctests: When passing two filenames, the second one is taken as an output filename; "
+                  "this is deprecated. To pass two input filenames, use the option --overwrite.")
+            return args.filename[1]
+        return filename + ".fixed"
+    if args.no_overwrite:
+        return filename + ".fixed"
+    return filename
 
 # Test the doctester, putting the output of the test into sage's temporary directory
-if not args.no_test:
+if args.no_test:
+    doc_out = ''
+else:
     executable = f'{os.path.relpath(args.venv)}/bin/sage' if args.venv else 'sage'
     environment_args = f'--environment {args.environment} ' if args.environment != runtest_default_environment else ''
     long_args = f'--long ' if args.long else ''
@@ -331,38 +335,54 @@ if not args.no_test:
        if status := os.waitstatus_to_exitcode(os.system(f'{cmdline} > {shlex.quote(doc_file)}')):
            print(f'Doctester exited with error status {status}')
            sys.exit(status)
+    # Run the doctester, putting the output of the test into sage's temporary directory
+    input_args = " ".join(shlex.quote(f) for f in args.filename)
+    cmdline = f'{shlex.quote(executable)} -t -p {environment_args}{long_args}{probe_args}{lib_args}{input_args}'
+    print(f'Running "{cmdline}"')
+    os.system(f'{cmdline} > {shlex.quote(doc_file)}')
 
-for input, output in zip(inputs, outputs):
-    if (skipfile_result := skipfile(input, True, log=print)) is True:
-        continue
-
-    if args.no_test:
-        doc_out = ''
-    else:
-        # Run the doctester, putting the output of the test into sage's temporary directory
-        cmdline = f'{shlex.quote(executable)} -t {environment_args}{long_args}{probe_args}{lib_args}{shlex.quote(input)}'
-        print(f'Running "{cmdline}"')
-        os.system(f'{cmdline} > {shlex.quote(doc_file)}')
-
-        with open(doc_file, 'r') as doc:
-            doc_out = doc.read()
+    with open(doc_file, 'r') as doc:
+        doc_out = doc.read()
 
     # echo control messages
     for m in re.finditer('^Skipping .*', doc_out, re.MULTILINE):
         print('sage-runtests: ' + m.group(0))
-        break
-    else:
-        sep = "**********************************************************************\n"
-        doctests = doc_out.split(sep)
+
+sep = "**********************************************************************\n"
+doctests = doc_out.split(sep)
+
+seen = set()
+
+def block_filename(block):
+    if not (m := re.match('File "([^"]*)", line ([0-9]+), in ', block)):
+        return None
+    return m.group(1)
+
+def expanded_filename_args():
+    DD = DocTestDefaults(optional='all')
+    DC = DocTestController(DD, args.filename)
+    DC.add_files()
+    DC.expand_files_into_sources()
+    for source in DC.sources:
+        yield source.path
+
+def process_grouped_blocks(grouped_iterator):
+
+    for input, blocks in grouped_iterator:
+
+        if not input:  # Blocks of noise
+            continue
+        if input in seen:
+            continue
+        seen.add(input)
 
         with open(input, 'r') as test_file:
             src_in = test_file.read()
         src_in_lines = src_in.splitlines()
         shallow_copy_of_src_in_lines = list(src_in_lines)
-
         file_optional_tags = set(parse_file_optional_tags(enumerate(src_in_lines)))
 
-        for block in doctests:
+        for block in blocks:
             process_block(block, src_in_lines, file_optional_tags)
 
         # Now source line numbers do not matter any more, and lines can be real lines again
@@ -394,6 +414,7 @@ for input, output in zip(inputs, outputs):
                 persistent_optional_tags = {}
 
         if src_in_lines != shallow_copy_of_src_in_lines:
+            output = output_filename(input)
             with open(output, 'w') as test_output:
                 for line in src_in_lines:
                     if line is None:
@@ -411,3 +432,7 @@ for input, output in zip(inputs, outputs):
                     subprocess.call(['git', '--no-pager', 'diff', relative], cwd=SAGE_ROOT)
         else:
             print(f"No fixes made in '{input}'")
+
+process_grouped_blocks(
+    itertools.chain(itertools.groupby(doctests, block_filename),
+                    ((filename, []) for filename in expanded_filename_args())))
