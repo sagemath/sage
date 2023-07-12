@@ -224,6 +224,8 @@ def process_block(block, src_in_lines, file_optional_tags):
                 # NameError from top level, so keep it brief
                 if m := re.match("NameError: name '(.*)'", got[index_NameError:]):
                     name = m.group(1)
+                    if name == 'x':  # Don't mark it '# needs sage.symbolic'; that's almost always wrong
+                        return
                     if feature := name_feature(name):
                         add_tags = [feature.name]
                     else:
