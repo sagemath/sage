@@ -156,7 +156,7 @@ def are_mutually_orthogonal_latin_squares(l, verbose=False):
         False
 
         sage: m = designs.mutually_orthogonal_latin_squares(7,8)                        # needs sage.schemes
-        sage: are_mutually_orthogonal_latin_squares(m)
+        sage: are_mutually_orthogonal_latin_squares(m)                                  # needs sage.schemes
         True
 
     TESTS:
@@ -432,7 +432,7 @@ def latin_square_product(M, N, *others):
 
         sage: from sage.combinat.designs.latin_squares import latin_square_product
         sage: m=designs.mutually_orthogonal_latin_squares(3,4)[0]                       # needs sage.schemes
-        sage: latin_square_product(m,m,m)
+        sage: latin_square_product(m,m,m)                                               # needs sage.schemes
         64 x 64 sparse matrix over Integer Ring (use the '.str()' method to see the entries)
     """
     from sage.matrix.constructor import Matrix
@@ -476,8 +476,9 @@ def MOLS_table(start,stop=None,compare=False,width=None):
 
     EXAMPLES::
 
+        sage: # needs sage.schemes
         sage: from sage.combinat.designs.latin_squares import MOLS_table
-        sage: MOLS_table(100)                                                           # needs sage.schemes
+        sage: MOLS_table(100)
                0   1   2   3   4   5   6   7   8   9  10  11  12  13  14  15  16  17  18  19
             ________________________________________________________________________________
           0| +oo +oo   1   2   3   4   1   6   7   8   2  10   5  12   4   4  15  16   5  18
@@ -485,7 +486,7 @@ def MOLS_table(start,stop=None,compare=False,width=None):
          40|   7  40   5  42   5   6   4  46   8  48   6   5   5  52   5   6   7   7   5  58
          60|   5  60   5   6  63   7   5  66   5   6   6  70   7  72   5   7   6   6   6  78
          80|   9  80   8  82   6   6   6   6   7  88   6   7   6   6   6   6   7  96   6   8
-        sage: MOLS_table(100, width=4)                                                  # needs sage.schemes
+        sage: MOLS_table(100, width=4)
                  0    1    2    3    4    5    6    7    8    9   10   11   12   13   14   15   16   17   18   19
              ____________________________________________________________________________________________________
            0|  +oo  +oo    1    2    3    4    1    6    7    8    2   10    5   12    4    4   15   16    5   18
@@ -493,7 +494,7 @@ def MOLS_table(start,stop=None,compare=False,width=None):
           40|    7   40    5   42    5    6    4   46    8   48    6    5    5   52    5    6    7    7    5   58
           60|    5   60    5    6   63    7    5   66    5    6    6   70    7   72    5    7    6    6    6   78
           80|    9   80    8   82    6    6    6    6    7   88    6    7    6    6    6    6    7   96    6    8
-        sage: MOLS_table(100, compare=True)                                             # needs sage.schemes
+        sage: MOLS_table(100, compare=True)
                0   1   2   3   4   5   6   7   8   9  10  11  12  13  14  15  16  17  18  19
             ________________________________________________________________________________
           0|                                                           +               +
@@ -501,7 +502,7 @@ def MOLS_table(start,stop=None,compare=False,width=None):
          40|
          60|   +
          80|
-        sage: MOLS_table(50, 100, compare=True)                                         # needs sage.schemes
+        sage: MOLS_table(50, 100, compare=True)
                0   1   2   3   4   5   6   7   8   9  10  11  12  13  14  15  16  17  18  19
             ________________________________________________________________________________
          40|

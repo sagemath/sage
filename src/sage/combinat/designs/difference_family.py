@@ -1933,23 +1933,23 @@ def get_fixed_relative_difference_set(G, rel_diff_set, as_elements=False):
 
         sage: from sage.combinat.designs.difference_family import relative_difference_set_from_m_sequence, get_fixed_relative_difference_set
         sage: G, s1 = relative_difference_set_from_m_sequence(5, 2, return_group=True)  # needs sage.libs.pari sage.modules
-        sage: get_fixed_relative_difference_set(G, s1)  # random                        # needs sage.modules
+        sage: get_fixed_relative_difference_set(G, s1)  # random                        # needs sage.libs.pari sage.modules
         [2, 10, 19, 23, 0]
 
     If ``as_elements=True``, the result will contain elements of the group::
 
-        sage: get_fixed_relative_difference_set(G, s1, as_elements=True)  # random      # needs sage.modules
+        sage: get_fixed_relative_difference_set(G, s1, as_elements=True)  # random      # needs sage.libs.pari sage.modules
         [(2), (10), (19), (23), (0)]
 
     TESTS::
 
-        sage: # needs sage.modules
+        sage: # needs sage.libs.pari sage.modules
         sage: from sage.combinat.designs.difference_family import is_fixed_relative_difference_set
-        sage: G, s1 = relative_difference_set_from_m_sequence(5, 2, return_group=True)  # needs sage.libs.pari
+        sage: G, s1 = relative_difference_set_from_m_sequence(5, 2, return_group=True)
         sage: s2 = get_fixed_relative_difference_set(G, s1, as_elements=True)
         sage: is_fixed_relative_difference_set(s2, len(s2))
         True
-        sage: G, s1 = relative_difference_set_from_m_sequence(9, 2, return_group=True)  # needs sage.libs.pari
+        sage: G, s1 = relative_difference_set_from_m_sequence(9, 2, return_group=True)
         sage: s2 = get_fixed_relative_difference_set(G, s1, as_elements=True)
         sage: is_fixed_relative_difference_set(s2, len(s2))
         True
@@ -1999,8 +1999,8 @@ def is_fixed_relative_difference_set(R, q):
         sage: # needs sage.modules
         sage: from sage.combinat.designs.difference_family import relative_difference_set_from_m_sequence, get_fixed_relative_difference_set, is_fixed_relative_difference_set
         sage: G, s1 = relative_difference_set_from_m_sequence(7, 2, return_group=True)  # needs sage.libs.pari
-        sage: s2 = get_fixed_relative_difference_set(G, s1, as_elements=True)
-        sage: is_fixed_relative_difference_set(s2, len(s2))
+        sage: s2 = get_fixed_relative_difference_set(G, s1, as_elements=True)           # needs sage.libs.pari
+        sage: is_fixed_relative_difference_set(s2, len(s2))                             # needs sage.libs.pari
         True
         sage: G = AdditiveAbelianGroup([15])
         sage: s3 = [G[1], G[2], G[3], G[4]]
@@ -2010,8 +2010,8 @@ def is_fixed_relative_difference_set(R, q):
     If the relative difference set does not contain elements of the group, the method returns false::
 
         sage: G, s1 = relative_difference_set_from_m_sequence(7, 2, return_group=True)  # needs sage.libs.pari sage.modules
-        sage: s2 = get_fixed_relative_difference_set(G, s1, as_elements=False)          # needs sage.modules
-        sage: is_fixed_relative_difference_set(s2, len(s2))                             # needs sage.modules
+        sage: s2 = get_fixed_relative_difference_set(G, s1, as_elements=False)          # needs sage.libs.pari sage.modules
+        sage: is_fixed_relative_difference_set(s2, len(s2))                             # needs sage.libs.pari sage.modules
         False
     """
     for el in R:
