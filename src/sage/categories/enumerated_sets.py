@@ -278,33 +278,34 @@ class EnumeratedSets(CategoryWithAxiom):
 
             EXAMPLES::
 
-                sage: P = Partitions()                                                  # needs sage.combinat
-                sage: list(P.iterator_range(stop=5))                                    # needs sage.combinat
+                sage: # needs sage.combinat
+                sage: P = Partitions()
+                sage: list(P.iterator_range(stop=5))
                 [[], [1], [2], [1, 1], [3]]
-                sage: list(P.iterator_range(0, 5))                                      # needs sage.combinat
+                sage: list(P.iterator_range(0, 5))
                 [[], [1], [2], [1, 1], [3]]
-                sage: list(P.iterator_range(3, 5))                                      # needs sage.combinat
+                sage: list(P.iterator_range(3, 5))
                 [[1, 1], [3]]
-                sage: list(P.iterator_range(3, 10))                                     # needs sage.combinat
+                sage: list(P.iterator_range(3, 10))
                 [[1, 1], [3], [2, 1], [1, 1, 1], [4], [3, 1], [2, 2]]
-                sage: list(P.iterator_range(3, 10, 2))                                  # needs sage.combinat
+                sage: list(P.iterator_range(3, 10, 2))
                 [[1, 1], [2, 1], [4], [2, 2]]
-                sage: it = P.iterator_range(3)                                          # needs sage.combinat
-                sage: [next(it) for x in range(10)]                                     # needs sage.combinat
+                sage: it = P.iterator_range(3)
+                sage: [next(it) for x in range(10)]
                 [[1, 1],
                  [3], [2, 1], [1, 1, 1],
                  [4], [3, 1], [2, 2], [2, 1, 1], [1, 1, 1, 1],
                  [5]]
-                sage: it = P.iterator_range(3, step=2)                                  # needs sage.combinat
-                sage: [next(it) for x in range(5)]                                      # needs sage.combinat
+                sage: it = P.iterator_range(3, step=2)
+                sage: [next(it) for x in range(5)]
                 [[1, 1],
                  [2, 1],
                  [4], [2, 2], [1, 1, 1, 1]]
-                sage: next(P.iterator_range(stop=-3))                                   # needs sage.combinat
+                sage: next(P.iterator_range(stop=-3))
                 Traceback (most recent call last):
                 ...
                 NotImplementedError: cannot list an infinite set
-                sage: next(P.iterator_range(start=-3))                                  # needs sage.combinat
+                sage: next(P.iterator_range(start=-3))
                 Traceback (most recent call last):
                 ...
                 NotImplementedError: cannot list an infinite set
@@ -357,26 +358,27 @@ class EnumeratedSets(CategoryWithAxiom):
 
             EXAMPLES::
 
-                sage: P = Partitions()                                                  # needs sage.combinat
-                sage: P.unrank_range(stop=5)                                            # needs sage.combinat
+                sage: # needs sage.combinat
+                sage: P = Partitions()
+                sage: P.unrank_range(stop=5)
                 [[], [1], [2], [1, 1], [3]]
-                sage: P.unrank_range(0, 5)                                              # needs sage.combinat
+                sage: P.unrank_range(0, 5)
                 [[], [1], [2], [1, 1], [3]]
-                sage: P.unrank_range(3, 5)                                              # needs sage.combinat
+                sage: P.unrank_range(3, 5)
                 [[1, 1], [3]]
-                sage: P.unrank_range(3, 10)                                             # needs sage.combinat
+                sage: P.unrank_range(3, 10)
                 [[1, 1], [3], [2, 1], [1, 1, 1], [4], [3, 1], [2, 2]]
-                sage: P.unrank_range(3, 10, 2)                                          # needs sage.combinat
+                sage: P.unrank_range(3, 10, 2)
                 [[1, 1], [2, 1], [4], [2, 2]]
-                sage: P.unrank_range(3)                                                 # needs sage.combinat
+                sage: P.unrank_range(3)
                 Traceback (most recent call last):
                 ...
                 NotImplementedError: cannot list an infinite set
-                sage: P.unrank_range(stop=-3)                                           # needs sage.combinat
+                sage: P.unrank_range(stop=-3)
                 Traceback (most recent call last):
                 ...
                 NotImplementedError: cannot list an infinite set
-                sage: P.unrank_range(start=-3)                                          # needs sage.combinat
+                sage: P.unrank_range(start=-3)
                 Traceback (most recent call last):
                 ...
                 NotImplementedError: cannot list an infinite set
@@ -410,24 +412,25 @@ class EnumeratedSets(CategoryWithAxiom):
 
             EXAMPLES::
 
-                sage: P = Partitions()                                                  # needs sage.combinat
-                sage: P[:5]                                                             # needs sage.combinat
+                sage: # needs sage.combinat
+                sage: P = Partitions()
+                sage: P[:5]
                 [[], [1], [2], [1, 1], [3]]
-                sage: P[0:5]                                                            # needs sage.combinat
+                sage: P[0:5]
                 [[], [1], [2], [1, 1], [3]]
-                sage: P[3:5]                                                            # needs sage.combinat
+                sage: P[3:5]
                 [[1, 1], [3]]
-                sage: P[3:10]                                                           # needs sage.combinat
+                sage: P[3:10]
                 [[1, 1], [3], [2, 1], [1, 1, 1], [4], [3, 1], [2, 2]]
-                sage: P[3:10:2]                                                         # needs sage.combinat
+                sage: P[3:10:2]
                 [[1, 1], [2, 1], [4], [2, 2]]
-                sage: P[3:]                                                             # needs sage.combinat
+                sage: P[3:]
                 Traceback (most recent call last):
                 ...
                 NotImplementedError: cannot list an infinite set
-                sage: P[3]                                                              # needs sage.combinat
+                sage: P[3]
                 [1, 1]
-                sage: P[-1]                                                             # needs sage.combinat
+                sage: P[-1]
                 Traceback (most recent call last):
                 ...
                 NotImplementedError: cannot list an infinite set
@@ -495,7 +498,7 @@ class EnumeratedSets(CategoryWithAxiom):
 
             EXAMPLES::
 
-                sage: (GF(3)^2).tuple()
+                sage: (GF(3)^2).tuple()                                                 # needs sage.modules
                 ((0, 0), (1, 0), (2, 0), (0, 1), (1, 1), (2, 1), (0, 2), (1, 2), (2, 2))
                 sage: R = Integers(11)
                 sage: l = R.tuple(); l
@@ -576,7 +579,7 @@ class EnumeratedSets(CategoryWithAxiom):
 
             EXAMPLES::
 
-                sage: (GF(3)^2).list()
+                sage: (GF(3)^2).list()                                                  # needs sage.modules
                 [(0, 0), (1, 0), (2, 0), (0, 1), (1, 1), (2, 1), (0, 2), (1, 2), (2, 2)]
                 sage: R = Integers(11)
                 sage: R.list()

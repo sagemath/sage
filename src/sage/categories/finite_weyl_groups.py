@@ -27,7 +27,7 @@ class FiniteWeylGroups(CategoryWithAxiom):
     TESTS::
 
         sage: W = FiniteWeylGroups().example()
-        sage: TestSuite(W).run()                                                        # optional - sage.combinat sage.modules
+        sage: TestSuite(W).run()
     """
 
     class ParentMethods:

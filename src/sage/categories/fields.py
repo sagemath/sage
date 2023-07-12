@@ -41,7 +41,7 @@ class Fields(CategoryWithAxiom):
         sage: K(PolynomialRing(GF(3), 'x'))
         Fraction Field of Univariate Polynomial Ring in x over
         Finite Field of size 3
-        sage: K(RealField())                                                            # optional - sage.rings.real_mpfr
+        sage: K(RealField())                                                            # needs sage.rings.real_mpfr
         Real Field with 53 bits of precision
 
     TESTS::
@@ -64,7 +64,7 @@ class Fields(CategoryWithAxiom):
         """
         EXAMPLES::
 
-            sage: GF(4, "a") in Fields()                                                # optional - sage.rings.finite_rings
+            sage: GF(4, "a") in Fields()                                                # needs sage.rings.finite_rings
             True
             sage: QQ in Fields()
             True
@@ -81,15 +81,15 @@ class Fields(CategoryWithAxiom):
 
         Caveat: this should eventually be fixed::
 
-            sage: gap.Rationals in Fields()                                             # optional - sage.libs.gap
+            sage: gap.Rationals in Fields()                                             # needs sage.libs.gap
             False
 
         typically by implementing the method :meth:`category`
         appropriately for Gap objects::
 
-            sage: GR = gap.Rationals                                                    # optional - sage.libs.gap
-            sage: GR.category = lambda: Fields()                                        # optional - sage.libs.gap
-            sage: GR in Fields()                                                        # optional - sage.libs.gap
+            sage: GR = gap.Rationals                                                    # needs sage.libs.gap
+            sage: GR.category = lambda: Fields()                                        # needs sage.libs.gap
+            sage: GR in Fields()                                                        # needs sage.libs.gap
             True
 
         The following tests against a memory leak fixed in :trac:`13370`. In order
@@ -101,7 +101,7 @@ class Fields(CategoryWithAxiom):
             sage: _ = gc.collect()
             sage: permstore = [X for X in gc.get_objects() if isinstance(X, sage.rings.finite_rings.integer_mod_ring.IntegerModRing_generic)]
             sage: n = len(permstore)
-            sage: for i in prime_range(100):                                            # optional - sage.libs.pari
+            sage: for i in prime_range(100):                                            # needs sage.libs.pari
             ....:     R = ZZ.quotient(i)
             ....:     t = R in Fields()
 
@@ -140,16 +140,16 @@ class Fields(CategoryWithAxiom):
         TESTS::
 
             sage: P.<x> = QQ[]
-            sage: Q = P.quotient(x^2 + 2)                                               # optional - sage.libs.pari
-            sage: Q.category()                                                          # optional - sage.libs.pari
+            sage: Q = P.quotient(x^2 + 2)                                               # needs sage.libs.pari
+            sage: Q.category()                                                          # needs sage.libs.pari
             Category of commutative no zero divisors quotients of algebras
              over (number fields and quotient fields and metric spaces)
             sage: F = Fields()
-            sage: F._contains_helper(Q)                                                 # optional - sage.libs.pari
+            sage: F._contains_helper(Q)                                                 # needs sage.libs.pari
             False
-            sage: Q in F  # This changes the category!                                  # optional - sage.libs.pari
+            sage: Q in F  # This changes the category!                                  # needs sage.libs.pari
             True
-            sage: F._contains_helper(Q)                                                 # optional - sage.libs.pari
+            sage: F._contains_helper(Q)                                                 # needs sage.libs.pari
             True
 
         """
@@ -172,7 +172,7 @@ class Fields(CategoryWithAxiom):
             sage: K(PolynomialRing(GF(3), 'x')) # indirect doctest
             Fraction Field of Univariate Polynomial Ring in x over
             Finite Field of size 3
-            sage: K(RealField())                                                        # optional - sage.rings.real_mpfr
+            sage: K(RealField())                                                        # needs sage.rings.real_mpfr
             Real Field with 53 bits of precision
         """
         try:
@@ -207,7 +207,7 @@ class Fields(CategoryWithAxiom):
 
                 sage: QQ.is_integrally_closed()
                 True
-                sage: QQbar.is_integrally_closed()                                      # optional - sage.rings.number_field
+                sage: QQbar.is_integrally_closed()                                      # needs sage.rings.number_field
                 True
                 sage: Z5 = GF(5); Z5
                 Finite Field of size 5
@@ -231,15 +231,15 @@ class Fields(CategoryWithAxiom):
 
             EXAMPLES::
 
-                sage: R.<x> = QQbar[]                                                   # optional - sage.rings.number_field
-                sage: QQbar._gcd_univariate_polynomial(2*x, 2*x^2)                      # optional - sage.rings.number_field
+                sage: R.<x> = QQbar[]                                                   # needs sage.rings.number_field
+                sage: QQbar._gcd_univariate_polynomial(2*x, 2*x^2)                      # needs sage.rings.number_field
                 x
 
             TESTS::
 
                 sage: fields = []
-                sage: fields += [RR, CC]                                                # optional - sage.rings.real_mpfr
-                sage: fields.append(QQbar)                                              # optional - sage.rings.number_field
+                sage: fields += [RR, CC]                                                # needs sage.rings.real_mpfr
+                sage: fields.append(QQbar)                                              # needs sage.rings.number_field
                 sage: for A in fields:
                 ....:     g = A._gcd_univariate_polynomial
                 ....:     R.<x> = A[]
@@ -249,34 +249,35 @@ class Fields(CategoryWithAxiom):
                 ....:            g(2*x, z) == x and
                 ....:            g(z, z) == z)
 
-                sage: R.<x> = RR[]                                                      # optional - sage.rings.real_mpfr
-                sage: (x^3).gcd(x^5 + 1)                                                # optional - sage.rings.real_mpfr
+                sage: # needs sage.rings.real_mpfr
+                sage: R.<x> = RR[]
+                sage: (x^3).gcd(x^5 + 1)
                 1.00000000000000
-                sage: (x^3).gcd(x^5 + x^2)                                              # optional - sage.rings.real_mpfr
+                sage: (x^3).gcd(x^5 + x^2)
                 x^2
-                sage: f = (x+3)^2 * (x-1)                                               # optional - sage.rings.real_mpfr
-                sage: g = (x+3)^5                                                       # optional - sage.rings.real_mpfr
-                sage: f.gcd(g)                                                          # optional - sage.rings.real_mpfr
+                sage: f = (x+3)^2 * (x-1)
+                sage: g = (x+3)^5
+                sage: f.gcd(g)
                 x^2 + 6.00000000000000*x + 9.00000000000000
 
             The following example illustrates the fact that for inexact
             base rings, the returned gcd is often 1 due to rounding::
 
-                sage: f = (x+RR.pi())^2 * (x-1)                                         # optional - sage.rings.real_mpfr
-                sage: g = (x+RR.pi())^5                                                 # optional - sage.rings.real_mpfr
-                sage: f.gcd(g)                                                          # optional - sage.rings.real_mpfr
+                sage: f = (x+RR.pi())^2 * (x-1)
+                sage: g = (x+RR.pi())^5
+                sage: f.gcd(g)                                                          # needs sage.rings.real_mpfr
                 1.00000000000000
 
             Check :trac:`23012`::
 
                 sage: R.<x> = QQ[]
-                sage: Q = R.quotient(x^2 - 1)   # Not a field                           # optional - sage.libs.pari
-                sage: P.<x> = Q[]                                                       # optional - sage.libs.pari
+                sage: Q = R.quotient(x^2 - 1)   # Not a field                           # needs sage.libs.pari
+                sage: P.<x> = Q[]                                                       # needs sage.libs.pari
                 sage: def always_True(*args, **kwds): return True
-                sage: Q.is_field = always_True                                          # optional - sage.libs.pari
-                sage: Q in Fields()                                                     # optional - sage.libs.pari
+                sage: Q.is_field = always_True                                          # needs sage.libs.pari
+                sage: Q in Fields()                                                     # needs sage.libs.pari
                 True
-                sage: Q._gcd_univariate_polynomial(x, x)                                # optional - sage.libs.pari
+                sage: Q._gcd_univariate_polynomial(x, x)                                # needs sage.libs.pari
                 x
             """
             while b:
@@ -334,8 +335,8 @@ class Fields(CategoryWithAxiom):
             TESTS::
 
                 sage: fields = []
-                sage: fields += [RR, CC]                                                # optional - sage.rings.real_mpfr
-                sage: fields.append(QQbar)                                              # optional - sage.rings.number_field
+                sage: fields += [RR, CC]                                                # needs sage.rings.real_mpfr
+                sage: fields.append(QQbar)                                              # needs sage.rings.number_field
                 sage: for A in fields:
                 ....:     g = A._xgcd_univariate_polynomial
                 ....:     R.<x> = A[]
@@ -356,13 +357,14 @@ class Fields(CategoryWithAxiom):
             We check that the behavior of xgcd with zero elements is
             compatible with gcd (:trac:`17671`)::
 
-                sage: R.<x> = QQbar[]                                                   # optional - sage.rings.number_field
-                sage: zero = R.zero()                                                   # optional - sage.rings.number_field
-                sage: zero.xgcd(2*x)                                                    # optional - sage.rings.number_field
+                sage: # needs sage.rings.number_field
+                sage: R.<x> = QQbar[]
+                sage: zero = R.zero()
+                sage: zero.xgcd(2*x)
                 (x, 0, 1/2)
-                sage: (2*x).xgcd(zero)                                                  # optional - sage.rings.number_field
+                sage: (2*x).xgcd(zero)
                 (x, 1/2, 0)
-                sage: zero.xgcd(zero)                                                   # optional - sage.rings.number_field
+                sage: zero.xgcd(zero)
                 (0, 0, 0)
             """
             R = a.parent()
@@ -473,8 +475,8 @@ class Fields(CategoryWithAxiom):
                 sage: x = polygen(GF(3))
                 sage: x.squarefree_decomposition()
                 x
-                sage: f = QQbar['x'](1)                                                 # optional - sage.rings.number_field
-                sage: f.squarefree_decomposition()                                      # optional - sage.rings.number_field
+                sage: f = QQbar['x'](1)                                                 # needs sage.rings.number_field
+                sage: f.squarefree_decomposition()                                      # needs sage.rings.number_field
                 1
             """
             from sage.structure.factorization import Factorization
@@ -531,10 +533,11 @@ class Fields(CategoryWithAxiom):
 
             EXAMPLES::
 
-                sage: K.<a> = Qq(125)                                                   # optional - sage.rings.padics
-                sage: V, fr, to = K.vector_space()                                      # optional - sage.rings.padics
-                sage: v = V([1, 2, 3])                                                  # optional - sage.rings.padics
-                sage: fr(v, 7)                                                          # optional - sage.rings.padics
+                sage: # needs sage.rings.padics
+                sage: K.<a> = Qq(125)
+                sage: V, fr, to = K.vector_space()
+                sage: v = V([1, 2, 3])
+                sage: fr(v, 7)
                 (3*a^2 + 2*a + 1) + O(5^7)
             """
             return self.free_module(*args, **kwds)
@@ -799,7 +802,7 @@ class Fields(CategoryWithAxiom):
             EXAMPLES::
 
                 sage: x = polygen(ZZ, 'x')
-                sage: NumberField(x^7+2, 'a')(2).inverse_of_unit()                      # optional - sage.rings.number_field
+                sage: NumberField(x^7+2, 'a')(2).inverse_of_unit()                      # needs sage.rings.number_field
                 1/2
 
             Trying to invert the zero element typically raises a

@@ -88,14 +88,15 @@ class FilteredHopfAlgebrasWithBasis(FilteredModulesCategory):
 
                 TESTS::
 
-                    sage: H = GradedHopfAlgebrasWithBasis(QQ).Connected().example()     # needs sage.modules
-                    sage: H.monomial(0).antipode()  # indirect doctest                  # needs sage.modules
+                    sage: # needs sage.modules
+                    sage: H = GradedHopfAlgebrasWithBasis(QQ).Connected().example()
+                    sage: H.monomial(0).antipode()  # indirect doctest
                     P0
-                    sage: H.monomial(1).antipode()  # indirect doctest                  # needs sage.modules
+                    sage: H.monomial(1).antipode()  # indirect doctest
                     -P1
-                    sage: H.monomial(2).antipode()  # indirect doctest                  # needs sage.modules
+                    sage: H.monomial(2).antipode()  # indirect doctest
                     P2
-                    sage: H.monomial(3).antipode()  # indirect doctest                  # needs sage.modules
+                    sage: H.monomial(3).antipode()  # indirect doctest
                     -P3
                 """
                 if self.monomial(index) == self.one():

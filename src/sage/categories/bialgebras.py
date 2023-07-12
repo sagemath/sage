@@ -69,10 +69,10 @@ class Bialgebras(Category_over_base_ring):
 
             EXAMPLES::
 
-                sage: s = SymmetricFunctions(QQ).schur()
+                sage: s = SymmetricFunctions(QQ).schur()                                # needs sage.modules
                 sage: s([5]).is_primitive()
                 False
-                sage: p = SymmetricFunctions(QQ).powersum()
+                sage: p = SymmetricFunctions(QQ).powersum()                             # needs sage.modules
                 sage: p([5]).is_primitive()
                 True
             """
@@ -85,7 +85,7 @@ class Bialgebras(Category_over_base_ring):
 
             EXAMPLES::
 
-                sage: s = SymmetricFunctions(QQ).schur()
+                sage: s = SymmetricFunctions(QQ).schur()                                # needs sage.modules
                 sage: s([5]).is_grouplike()
                 False
                 sage: s([]).is_grouplike()

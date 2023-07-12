@@ -70,9 +70,9 @@ class LeftRegularBand(UniqueRepresentation, Parent):
     Now, let us look at the structure of the semigroup::
 
         sage: S = FiniteSemigroups().example(alphabet = ('a','b','c'))
-        sage: S.cayley_graph(side="left", simple=True).plot()                           # optional - sage.graphs sage.plot
+        sage: S.cayley_graph(side="left", simple=True).plot()                           # needs sage.graphs sage.plot
         Graphics object consisting of 60 graphics primitives
-        sage: S.j_transversal_of_idempotents()  # random (arbitrary choice)             # optional - sage.graphs
+        sage: S.j_transversal_of_idempotents()  # random (arbitrary choice)             # needs sage.graphs
         ['acb', 'ac', 'ab', 'bc', 'a', 'c', 'b']
 
     We conclude by running systematic tests on this semigroup::

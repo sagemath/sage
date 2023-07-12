@@ -401,7 +401,7 @@ class Posets(Category):
 
                 sage: P = Poset({1: [2,3], 2: [4], 3: []})
                 sage: I = Set({1, 2})
-                sage: I in P.order_ideals_lattice()
+                sage: I in P.order_ideals_lattice()                                     # needs sage.modules
                 True
                 sage: P.order_ideal_toggle(I, 1)
                 {1, 2}
@@ -412,7 +412,7 @@ class Posets(Category):
                 sage: P.order_ideal_toggle(I, 4)
                 {1, 2, 4}
                 sage: P4 = Posets(4)
-                sage: all(all(all(P.order_ideal_toggle(P.order_ideal_toggle(I, i), i) == I
+                sage: all(all(all(P.order_ideal_toggle(P.order_ideal_toggle(I, i), i) == I          # needs sage.modules
                 ....:               for i in range(4))
                 ....:          for I in P.order_ideals_lattice(facade=True))
                 ....:     for P in P4)

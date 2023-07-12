@@ -53,7 +53,7 @@ class CommutativeAlgebras(CategoryWithAxiom_over_base_ring):
             True
             sage: QQ['a,b'] in CommutativeAlgebras(QQ)
             True
-            sage: FreeAlgebra(QQ, 2, 'a,b') in CommutativeAlgebras(QQ)                  # optional - sage.combinat sage.modules
+            sage: FreeAlgebra(QQ, 2, 'a,b') in CommutativeAlgebras(QQ)                  # needs sage.combinat sage.modules
             False
 
         TODO: get rid of this method once all commutative algebras in
@@ -80,12 +80,13 @@ class CommutativeAlgebras(CategoryWithAxiom_over_base_ring):
 
             TESTS::
 
-                sage: X = algebras.Shuffle(QQ, 'ab')                                    # optional - sage.combinat sage.modules
-                sage: Y = algebras.Shuffle(QQ, 'bc')                                    # optional - sage.combinat sage.modules
-                sage: X in Algebras(QQ).Commutative()                                   # optional - sage.combinat sage.modules
+                sage: # needs sage.combinat sage.modules
+                sage: X = algebras.Shuffle(QQ, 'ab')
+                sage: Y = algebras.Shuffle(QQ, 'bc')
+                sage: X in Algebras(QQ).Commutative()
                 True
-                sage: T = tensor([X, Y])                                                # optional - sage.combinat sage.modules
-                sage: T in CommutativeRings()                                           # optional - sage.combinat sage.modules
+                sage: T = tensor([X, Y])
+                sage: T in CommutativeRings()
                 True
             """
             return [CommutativeRings()]

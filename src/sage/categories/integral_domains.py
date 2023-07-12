@@ -45,7 +45,7 @@ class IntegralDomains(CategoryWithAxiom):
         """
         EXAMPLES::
 
-            sage: GF(4, "a") in IntegralDomains()                                       # optional - sage.rings.finite_rings
+            sage: GF(4, "a") in IntegralDomains()                                       # needs sage.rings.finite_rings
             True
             sage: QQ in IntegralDomains()
             True
@@ -108,10 +108,10 @@ class IntegralDomains(CategoryWithAxiom):
                 sage: Parent(QQ, category=IntegralDomains()).is_integral_domain()
                 True
 
-                sage: L.<z> = LazyLaurentSeriesRing(QQ)                                 # optional - sage.combinat
-                sage: L.is_integral_domain()                                            # optional - sage.combinat
+                sage: L.<z> = LazyLaurentSeriesRing(QQ)                                 # needs sage.combinat
+                sage: L.is_integral_domain()                                            # needs sage.combinat
                 True
-                sage: L.is_integral_domain(proof=True)                                  # optional - sage.combinat
+                sage: L.is_integral_domain(proof=True)                                  # needs sage.combinat
                 True
             """
             return True

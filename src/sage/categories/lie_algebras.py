@@ -70,8 +70,8 @@ class LieAlgebras(Category_over_base_ring):
 
     TESTS::
 
-        sage: C = LieAlgebras(QQ)                                                       # needs sage.combinat sage.modules
-        sage: TestSuite(C).run()                                                        # needs sage.combinat sage.modules
+        sage: C = LieAlgebras(QQ)
+        sage: TestSuite(C).run()
         sage: TestSuite(C.example()).run()                                              # needs sage.combinat sage.modules
 
     .. TODO::
@@ -209,8 +209,8 @@ class LieAlgebras(Category_over_base_ring):
 
         TESTS::
 
-            sage: C = LieAlgebras(QQ).Nilpotent()                                       # needs sage.combinat sage.modules
-            sage: TestSuite(C).run()                                                    # needs sage.combinat sage.modules
+            sage: C = LieAlgebras(QQ).Nilpotent()
+            sage: TestSuite(C).run()
         """
         class ParentMethods:
             @abstract_method

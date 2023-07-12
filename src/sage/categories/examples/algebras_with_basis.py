@@ -26,7 +26,7 @@ class FreeAlgebra(CombinatorialFreeModule):
         """
         EXAMPLES::
 
-            sage: A = AlgebrasWithBasis(QQ).example(); A
+            sage: A = AlgebrasWithBasis(QQ).example(); A                                # needs sage.modules
             An example of an algebra with basis: the free algebra on the generators ('a', 'b', 'c') over Rational Field
             sage: TestSuite(A).run()
 
@@ -40,7 +40,7 @@ class FreeAlgebra(CombinatorialFreeModule):
         """
         EXAMPLES::
 
-            sage: AlgebrasWithBasis(QQ).example() # indirect doctest
+            sage: AlgebrasWithBasis(QQ).example() # indirect doctest                    # needs sage.modules
             An example of an algebra with basis: the free algebra on the generators ('a', 'b', 'c') over Rational Field
         """
         return "An example of an algebra with basis: the free algebra on the generators %s over %s"%(self._alphabet, self.base_ring())
@@ -53,7 +53,7 @@ class FreeAlgebra(CombinatorialFreeModule):
 
         EXAMPLES::r
 
-            sage: A = AlgebrasWithBasis(QQ).example()
+            sage: A = AlgebrasWithBasis(QQ).example()                                   # needs sage.modules
             sage: A.one_basis()
             word:
             sage: A.one()
@@ -68,7 +68,7 @@ class FreeAlgebra(CombinatorialFreeModule):
 
         EXAMPLES::
 
-            sage: A = AlgebrasWithBasis(QQ).example()
+            sage: A = AlgebrasWithBasis(QQ).example()                                   # needs sage.modules
             sage: Words = A.basis().keys()
             sage: A.product_on_basis(Words("acb"), Words("cba"))
             B[word: acbcba]
@@ -85,7 +85,7 @@ class FreeAlgebra(CombinatorialFreeModule):
 
         EXAMPLES::
 
-            sage: A = AlgebrasWithBasis(QQ).example(); A
+            sage: A = AlgebrasWithBasis(QQ).example(); A                                # needs sage.modules
             An example of an algebra with basis: the free algebra on the generators ('a', 'b', 'c') over Rational Field
             sage: A.algebra_generators()
             Family (B[word: a], B[word: b], B[word: c])

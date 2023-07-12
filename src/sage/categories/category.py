@@ -45,8 +45,8 @@ Let's request the category of some objects::
      Category of finite weyl groups and
      Category of well generated finite irreducible complex reflection groups
 
-    sage: P = PerfectMatchings(3)                                                       # needs sage.combinat sage.graphs
-    sage: P.category()                                                                  # needs sage.combinat sage.graphs
+    sage: P = PerfectMatchings(3)                                                       # needs sage.combinat
+    sage: P.category()                                                                  # needs sage.combinat
     Category of finite enumerated sets
 
 Let's check some memberships::
@@ -57,7 +57,7 @@ Let's check some memberships::
     False
     sage: G in Monoids()                                                                # needs sage.groups
     True
-    sage: P in Rings()                                                                  # needs sage.combinat sage.graphs
+    sage: P in Rings()                                                                  # needs sage.combinat
     False
 
 For parametrized categories one can use the following shorthand::
@@ -1792,7 +1792,7 @@ class Category(UniqueRepresentation, SageObject):
 
         ::
 
-            sage: M3 = VectorSpaces(FiniteField(3))                                     # needs sage.modules
+            sage: M3 = VectorSpaces(FiniteField(3))
             sage: M9 = VectorSpaces(FiniteField(9, 'a'))                                # needs sage.modules sage.rings.finite_rings
             sage: M3.is_subcategory(M9)                                                 # needs sage.modules sage.rings.finite_rings
             False
@@ -2786,10 +2786,10 @@ class CategoryWithParameters(Category):
             Join of Category of number fields
              and Category of quotient fields
              and Category of metric spaces
-            sage: RR.category()                                                         # needs sage.rings.real_mpfr
+            sage: RR.category()
             Join of Category of fields and Category of infinite sets
                 and Category of complete metric spaces
-            sage: Modules(QQ).parent_class is Modules(RR).parent_class                  # needs sage.rings.real_mpfr
+            sage: Modules(QQ).parent_class is Modules(RR).parent_class
             False
 
         Some other cases where one could potentially share those classes::
@@ -2928,12 +2928,13 @@ class JoinCategory(CategoryWithParameters):
     the underlying implementation is the same for all finite fields,
     we have::
 
-        sage: G = SymmetricGroup(10)                                                    # needs sage.groups sage.rings.finite_rings
-        sage: A3 = G.algebra(GF(3))                                                     # needs sage.groups sage.rings.finite_rings
-        sage: A5 = G.algebra(GF(5))                                                     # needs sage.groups sage.rings.finite_rings
-        sage: type(A3.category())                                                       # needs sage.groups sage.rings.finite_rings
+        sage: # needs sage.groups sage.rings.finite_rings
+        sage: G = SymmetricGroup(10)
+        sage: A3 = G.algebra(GF(3))
+        sage: A5 = G.algebra(GF(5))
+        sage: type(A3.category())
         <class 'sage.categories.category.JoinCategory_with_category'>
-        sage: type(A3) is type(A5)                                                      # needs sage.groups sage.rings.finite_rings
+        sage: type(A3) is type(A5)
         True
 
     .. automethod:: Category._repr_object_names

@@ -321,7 +321,7 @@ class FilteredAlgebrasWithBasis(FilteredModulesCategory):
             `f` will lead into a graded algebra already, namely into
             the algebra of symmetric functions::
 
-                sage: h = SymmetricFunctions(QQ).h()
+                sage: h = SymmetricFunctions(QQ).h()                                    # needs sage.modules
                 sage: def map_on_basis(m):  # redefining map_on_basis
                 ....:     d = m.dict()
                 ....:     i = d.get('x', 0); j = d.get('y', 0); k = d.get('z', 0)
@@ -459,13 +459,13 @@ class FilteredAlgebrasWithBasis(FilteredModulesCategory):
             For another example, let us compute `\operatorname{gr} f` for a
             map `f` between two Clifford algebras::
 
-                sage: Q = QuadraticForm(ZZ, 2, [1,2,3])
+                sage: Q = QuadraticForm(ZZ, 2, [1,2,3])                                 # needs sage.modules
                 sage: B = CliffordAlgebra(Q, names=['u','v']); B
                 The Clifford algebra of the Quadratic form in 2
                  variables over Integer Ring with coefficients:
                 [ 1 2 ]
                 [ * 3 ]
-                sage: m = Matrix(ZZ, [[1, 2], [1, -1]])
+                sage: m = Matrix(ZZ, [[1, 2], [1, -1]])                                 # needs sage.modules
                 sage: f = B.lift_module_morphism(m, names=['x','y'])
                 sage: A = f.domain(); A
                 The Clifford algebra of the Quadratic form in 2

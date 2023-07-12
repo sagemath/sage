@@ -33,37 +33,37 @@ class AlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
     We construct a typical parent in this category, and do some
     computations with it::
 
-        sage: A = C.example(); A                                                        # optional - sage.combinat sage.modules
+        sage: A = C.example(); A                                                        # needs sage.combinat sage.modules
         An example of an algebra with basis:
          the free algebra on the generators ('a', 'b', 'c') over Rational Field
 
-        sage: A.category()                                                              # optional - sage.combinat sage.modules
+        sage: A.category()                                                              # needs sage.combinat sage.modules
         Category of algebras with basis over Rational Field
 
-        sage: A.one_basis()                                                             # optional - sage.combinat sage.modules
+        sage: A.one_basis()                                                             # needs sage.combinat sage.modules
         word:
-        sage: A.one()                                                                   # optional - sage.combinat sage.modules
+        sage: A.one()                                                                   # needs sage.combinat sage.modules
         B[word: ]
 
-        sage: A.base_ring()                                                             # optional - sage.combinat sage.modules
+        sage: A.base_ring()                                                             # needs sage.combinat sage.modules
         Rational Field
-        sage: A.basis().keys()                                                          # optional - sage.combinat sage.modules
+        sage: A.basis().keys()                                                          # needs sage.combinat sage.modules
         Finite words over {'a', 'b', 'c'}
 
-        sage: (a,b,c) = A.algebra_generators()                                          # optional - sage.combinat sage.modules
-        sage: a^3, b^2                                                                  # optional - sage.combinat sage.modules
+        sage: (a,b,c) = A.algebra_generators()                                          # needs sage.combinat sage.modules
+        sage: a^3, b^2                                                                  # needs sage.combinat sage.modules
         (B[word: aaa], B[word: bb])
-        sage: a * c * b                                                                 # optional - sage.combinat sage.modules
+        sage: a * c * b                                                                 # needs sage.combinat sage.modules
         B[word: acb]
 
-        sage: A.product                                                                 # optional - sage.combinat sage.modules
+        sage: A.product                                                                 # needs sage.combinat sage.modules
         <bound method MagmaticAlgebras.WithBasis.ParentMethods._product_from_product_on_basis_multiply of
          An example of an algebra with basis:
           the free algebra on the generators ('a', 'b', 'c') over Rational Field>
-        sage: A.product(a * b, b)                                                       # optional - sage.combinat sage.modules
+        sage: A.product(a * b, b)                                                       # needs sage.combinat sage.modules
         B[word: abb]
 
-        sage: TestSuite(A).run(verbose=True)                                            # optional - sage.combinat sage.modules
+        sage: TestSuite(A).run(verbose=True)                                            # needs sage.combinat sage.modules
         running ._test_additive_associativity() . . . pass
         running ._test_an_element() . . . pass
         running ._test_associativity() . . . pass
@@ -93,9 +93,9 @@ class AlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
         running ._test_prod() . . . pass
         running ._test_some_elements() . . . pass
         running ._test_zero() . . . pass
-        sage: A.__class__                                                               # optional - sage.combinat sage.modules
+        sage: A.__class__                                                               # needs sage.combinat sage.modules
         <class 'sage.categories.examples.algebras_with_basis.FreeAlgebra_with_category'>
-        sage: A.element_class                                                           # optional - sage.combinat sage.modules
+        sage: A.element_class                                                           # needs sage.combinat sage.modules
         <class 'sage.categories.examples.algebras_with_basis.FreeAlgebra_with_category.element_class'>
 
     Please see the source code of `A` (with ``A??``) for how to
@@ -112,13 +112,13 @@ class AlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
 
         EXAMPLES::
 
-            sage: AlgebrasWithBasis(QQ).example()                                       # optional - sage.combinat sage.modules
+            sage: AlgebrasWithBasis(QQ).example()                                       # needs sage.combinat sage.modules
             An example of an algebra with basis:
              the free algebra on the generators ('a', 'b', 'c') over Rational Field
 
         An other set of generators can be specified as optional argument::
 
-            sage: AlgebrasWithBasis(QQ).example((1,2,3))                                # optional - sage.combinat sage.modules
+            sage: AlgebrasWithBasis(QQ).example((1,2,3))                                # needs sage.combinat sage.modules
             An example of an algebra with basis:
              the free algebra on the generators (1, 2, 3) over Rational Field
         """
@@ -147,12 +147,12 @@ class AlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
             EXAMPLES::
 
                 sage: R.<x> = QQ[]
-                sage: A = algebras.DifferentialWeyl(R)                                  # optional - sage.combinat sage.modules
-                sage: H = A.hochschild_complex(A)                                       # optional - sage.combinat sage.modules
+                sage: A = algebras.DifferentialWeyl(R)                                  # needs sage.combinat sage.modules
+                sage: H = A.hochschild_complex(A)                                       # needs sage.combinat sage.modules
 
-                sage: SGA = SymmetricGroupAlgebra(QQ, 3)                                # optional - sage.combinat sage.modules
-                sage: T = SGA.trivial_representation()                                  # optional - sage.combinat sage.modules
-                sage: H = SGA.hochschild_complex(T)                                     # optional - sage.combinat sage.modules
+                sage: SGA = SymmetricGroupAlgebra(QQ, 3)                                # needs sage.combinat sage.modules
+                sage: T = SGA.trivial_representation()                                  # needs sage.combinat sage.modules
+                sage: H = SGA.hochschild_complex(T)                                     # needs sage.combinat sage.modules
             """
             from sage.homology.hochschild_complex import HochschildComplex
             return HochschildComplex(self, M)
@@ -180,14 +180,15 @@ class AlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
 
             EXAMPLES::
 
-                sage: C = AlgebrasWithBasis(QQ).example()                               # optional - sage.combinat sage.modules
-                sage: x = C(2); x                                                       # optional - sage.combinat sage.modules
+                sage: # needs sage.combinat sage.modules
+                sage: C = AlgebrasWithBasis(QQ).example()
+                sage: x = C(2); x
                 2*B[word: ]
-                sage: ~x                                                                # optional - sage.combinat sage.modules
+                sage: ~x
                 1/2*B[word: ]
-                sage: a = C.algebra_generators().first(); a                             # optional - sage.combinat sage.modules
+                sage: a = C.algebra_generators().first(); a
                 B[word: a]
-                sage: ~a                                                                # optional - sage.combinat sage.modules
+                sage: ~a
                 Traceback (most recent call last):
                 ...
                 ValueError: cannot invert self (= B[word: a])
@@ -241,19 +242,19 @@ class AlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
 
                 EXAMPLES::
 
-                    sage: A = AlgebrasWithBasis(QQ).example(); A                        # optional - sage.combinat sage.modules
+                    sage: A = AlgebrasWithBasis(QQ).example(); A                        # needs sage.combinat sage.modules
                     An example of an algebra with basis: the free algebra
                      on the generators ('a', 'b', 'c') over Rational Field
-                    sage: A.one_basis()                                                 # optional - sage.combinat sage.modules
+                    sage: A.one_basis()                                                 # needs sage.combinat sage.modules
                     word:
 
-                    sage: B = cartesian_product((A, A, A))                              # optional - sage.combinat sage.modules
-                    sage: B.one_from_cartesian_product_of_one_basis()                   # optional - sage.combinat sage.modules
+                    sage: B = cartesian_product((A, A, A))                              # needs sage.combinat sage.modules
+                    sage: B.one_from_cartesian_product_of_one_basis()                   # needs sage.combinat sage.modules
                     B[(0, word: )] + B[(1, word: )] + B[(2, word: )]
-                    sage: B.one()                                                       # optional - sage.combinat sage.modules
+                    sage: B.one()                                                       # needs sage.combinat sage.modules
                     B[(0, word: )] + B[(1, word: )] + B[(2, word: )]
 
-                    sage: cartesian_product([SymmetricGroupAlgebra(QQ, 3),              # optional - sage.combinat sage.modules
+                    sage: cartesian_product([SymmetricGroupAlgebra(QQ, 3),              # needs sage.combinat sage.modules
                     ....:                    SymmetricGroupAlgebra(QQ, 4)]).one()
                     B[(0, [1, 2, 3])] + B[(1, [1, 2, 3, 4])]
                 """
@@ -264,11 +265,11 @@ class AlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
                 """
                 TESTS::
 
-                    sage: A = AlgebrasWithBasis(QQ).example(); A                        # optional - sage.combinat sage.modules
+                    sage: A = AlgebrasWithBasis(QQ).example(); A                        # needs sage.combinat sage.modules
                     An example of an algebra with basis: the free algebra
                      on the generators ('a', 'b', 'c') over Rational Field
-                    sage: B = cartesian_product((A, A, A))                              # optional - sage.combinat sage.modules
-                    sage: B.one()                                                       # optional - sage.combinat sage.modules
+                    sage: B = cartesian_product((A, A, A))                              # needs sage.combinat sage.modules
+                    sage: B.one()                                                       # needs sage.combinat sage.modules
                     B[(0, word: )] + B[(1, word: )] + B[(2, word: )]
                 """
                 if all(hasattr(module, "one_basis") for module in self._sets):
@@ -317,15 +318,16 @@ class AlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
 
                 EXAMPLES::
 
-                    sage: A = AlgebrasWithBasis(QQ).example(); A                        # optional - sage.combinat sage.modules
+                    sage: # needs sage.combinat sage.modules
+                    sage: A = AlgebrasWithBasis(QQ).example(); A
                     An example of an algebra with basis: the free algebra
                      on the generators ('a', 'b', 'c') over Rational Field
-                    sage: A.one_basis()                                                 # optional - sage.combinat sage.modules
+                    sage: A.one_basis()
                     word:
-                    sage: B = tensor((A, A, A))                                         # optional - sage.combinat sage.modules
-                    sage: B.one_basis()                                                 # optional - sage.combinat sage.modules
+                    sage: B = tensor((A, A, A))
+                    sage: B.one_basis()
                     (word: , word: , word: )
-                    sage: B.one()                                                       # optional - sage.combinat sage.modules
+                    sage: B.one()
                     B[word: ] # B[word: ] # B[word: ]
                 """
                 # FIXME: this method should be conditionally defined,
@@ -343,23 +345,23 @@ class AlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
 
                 EXAMPLES::
 
-                    sage: A = AlgebrasWithBasis(QQ).example(); A                        # optional - sage.combinat sage.modules
+                    sage: A = AlgebrasWithBasis(QQ).example(); A                        # needs sage.combinat sage.modules
                     An example of an algebra with basis: the free algebra
                      on the generators ('a', 'b', 'c') over Rational Field
-                    sage: (a,b,c) = A.algebra_generators()                              # optional - sage.combinat sage.modules
+                    sage: (a,b,c) = A.algebra_generators()                              # needs sage.combinat sage.modules
 
-                    sage: x = tensor((a, b, c)); x                                      # optional - sage.combinat sage.modules
+                    sage: x = tensor((a, b, c)); x                                      # needs sage.combinat sage.modules
                     B[word: a] # B[word: b] # B[word: c]
-                    sage: y = tensor((c, b, a)); y                                      # optional - sage.combinat sage.modules
+                    sage: y = tensor((c, b, a)); y                                      # needs sage.combinat sage.modules
                     B[word: c] # B[word: b] # B[word: a]
-                    sage: x * y                                                         # optional - sage.combinat sage.modules
+                    sage: x * y                                                         # needs sage.combinat sage.modules
                     B[word: ac] # B[word: bb] # B[word: ca]
 
-                    sage: x = tensor(((a + 2*b), c)); x                                 # optional - sage.combinat sage.modules
+                    sage: x = tensor(((a + 2*b), c)); x                                 # needs sage.combinat sage.modules
                     B[word: a] # B[word: c] + 2*B[word: b] # B[word: c]
-                    sage: y = tensor((c, a)) + 1; y                                     # optional - sage.combinat sage.modules
+                    sage: y = tensor((c, a)) + 1; y                                     # needs sage.combinat sage.modules
                     B[word: ] # B[word: ] + B[word: c] # B[word: a]
-                    sage: x * y                                                         # optional - sage.combinat sage.modules
+                    sage: x * y                                                         # needs sage.combinat sage.modules
                     B[word: a] # B[word: c] + B[word: ac] # B[word: ca]
                      + 2*B[word: b] # B[word: c] + 2*B[word: bc] # B[word: ca]
 

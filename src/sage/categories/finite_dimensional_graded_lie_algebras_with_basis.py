@@ -53,14 +53,15 @@ class FiniteDimensionalGradedLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ri
 
             EXAMPLES::
 
+                sage: # needs sage.combinat sage.modules
                 sage: C = LieAlgebras(QQ).WithBasis().Graded()
                 sage: C = C.FiniteDimensional().Stratified().Nilpotent()
-                sage: L = LieAlgebra(QQ, {('x','y'): {'z': 1}},                         # optional - sage.combinat sage.modules
+                sage: L = LieAlgebra(QQ, {('x','y'): {'z': 1}},
                 ....:                nilpotent=True, category=C)
-                sage: L._test_grading()                                                 # optional - sage.combinat sage.modules
-                sage: L = LieAlgebra(QQ, {('x','y'): {'x': 1}},                         # optional - sage.combinat sage.modules
+                sage: L._test_grading()
+                sage: L = LieAlgebra(QQ, {('x','y'): {'x': 1}},
                 ....:                nilpotent=True, category=C)
-                sage: L._test_grading()                                                 # optional - sage.combinat sage.modules
+                sage: L._test_grading()
                 Traceback (most recent call last):
                 ...
                 AssertionError: Lie bracket [x, y] has degree 1, not degree 2
@@ -96,9 +97,9 @@ class FiniteDimensionalGradedLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ri
 
                 sage: C = LieAlgebras(QQ).WithBasis().Graded()
                 sage: C = C.FiniteDimensional().Stratified().Nilpotent()
-                sage: L = LieAlgebra(QQ, {('x','y'): {'z': 1}},                         # optional - sage.combinat sage.modules
+                sage: L = LieAlgebra(QQ, {('x','y'): {'z': 1}},                         # needs sage.combinat sage.modules
                 ....:                     nilpotent=True, category=C)
-                sage: L.homogeneous_component_as_submodule(2)                           # optional - sage.combinat sage.modules
+                sage: L.homogeneous_component_as_submodule(2)                           # needs sage.combinat sage.modules
                 Sparse vector space of degree 3 and dimension 1 over Rational Field
                 Basis matrix:
                 [0 0 1]
@@ -147,12 +148,12 @@ class FiniteDimensionalGradedLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ri
                     sage: C = LieAlgebras(QQ).WithBasis().Graded()
                     sage: C = C.FiniteDimensional().Stratified().Nilpotent()
                     sage: sc = {('x','y'): {'z': 1}}
-                    sage: L.<x,y,z> = LieAlgebra(QQ, sc, nilpotent=True, category=C)                # optional - sage.combinat sage.modules
-                    sage: L._test_generated_by_degree_one()                                         # optional - sage.combinat sage.modules
+                    sage: L.<x,y,z> = LieAlgebra(QQ, sc, nilpotent=True, category=C)                # needs sage.combinat sage.modules
+                    sage: L._test_generated_by_degree_one()                                         # needs sage.combinat sage.modules
 
                     sage: sc = {('x','y'): {'z': 1}, ('a','b'): {'c':1}, ('z','c'): {'m':1}}
-                    sage: L.<a,b,c,m,x,y,z> = LieAlgebra(QQ, sc, nilpotent=True, category=C)        # optional - sage.combinat sage.modules
-                    sage: L._test_generated_by_degree_one()                                         # optional - sage.combinat sage.modules
+                    sage: L.<a,b,c,m,x,y,z> = LieAlgebra(QQ, sc, nilpotent=True, category=C)        # needs sage.combinat sage.modules
+                    sage: L._test_generated_by_degree_one()                                         # needs sage.combinat sage.modules
                     Traceback (most recent call last):
                     ...
                     AssertionError: [a, b, x, y] does not generate Nilpotent Lie algebra
@@ -196,19 +197,20 @@ class FiniteDimensionalGradedLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ri
 
                 EXAMPLES::
 
+                    sage: # needs sage.combinat sage.modules
                     sage: C = LieAlgebras(QQ).WithBasis().Graded()
                     sage: C = C.FiniteDimensional().Stratified().Nilpotent()
                     sage: sc = {('X','Y'): {'Z': 1}}
-                    sage: L.<X,Y,Z> = LieAlgebra(QQ, sc, nilpotent=True, category=C)    # optional - sage.combinat sage.modules
-                    sage: L.degree_on_basis(X.leading_support())                        # optional - sage.combinat sage.modules
+                    sage: L.<X,Y,Z> = LieAlgebra(QQ, sc, nilpotent=True, category=C)
+                    sage: L.degree_on_basis(X.leading_support())
                     1
-                    sage: X.degree()                                                    # optional - sage.combinat sage.modules
+                    sage: X.degree()
                     1
-                    sage: Y.degree()                                                    # optional - sage.combinat sage.modules
+                    sage: Y.degree()
                     1
-                    sage: L[X, Y]                                                       # optional - sage.combinat sage.modules
+                    sage: L[X, Y]
                     Z
-                    sage: Z.degree()                                                    # optional - sage.combinat sage.modules
+                    sage: Z.degree()
                     2
                 """
                 if not hasattr(self, '_basis_degrees'):

@@ -68,9 +68,9 @@ class Algebras(CategoryWithAxiom_over_base_ring):
             sage: QQ['x'] in Algebras(QQ)
             True
 
-            sage: QQ^3 in Algebras(QQ)                                                  # optional - sage.modules
+            sage: QQ^3 in Algebras(QQ)                                                  # needs sage.modules
             False
-            sage: QQ['x'] in Algebras(CDF)                                              # optional - sage.rings.complex_double
+            sage: QQ['x'] in Algebras(CDF)                                              # needs sage.rings.complex_double
             False
         """
         if super().__contains__(x):
@@ -154,15 +154,15 @@ class Algebras(CategoryWithAxiom_over_base_ring):
 
             EXAMPLES::
 
-                sage: C = AlgebrasWithBasis(QQ).example()                               # optional - sage.combinat sage.modules
-                sage: x = C(2); x                                                       # optional - sage.combinat sage.modules
+                sage: C = AlgebrasWithBasis(QQ).example()                               # needs sage.combinat sage.modules
+                sage: x = C(2); x                                                       # needs sage.combinat sage.modules
                 2*B[word: ]
-                sage: y = C.algebra_generators().first(); y                             # optional - sage.combinat sage.modules
+                sage: y = C.algebra_generators().first(); y                             # needs sage.combinat sage.modules
                 B[word: a]
 
-                sage: y._div_(x)                                                        # optional - sage.combinat sage.modules
+                sage: y._div_(x)                                                        # needs sage.combinat sage.modules
                 1/2*B[word: a]
-                sage: x._div_(y)                                                        # optional - sage.combinat sage.modules
+                sage: x._div_(y)                                                        # needs sage.combinat sage.modules
                 Traceback (most recent call last):
                 ...
                 ValueError: cannot invert self (= B[word: a])

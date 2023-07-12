@@ -252,12 +252,12 @@ cdef class Functor(SageObject):
 
             sage: from sage.categories.functor import Functor
             sage: F = Functor(Rings(), Fields())
-            sage: k.<a> = GF(25)                                                        # optional - sage.rings.finite_rings
-            sage: f = k.hom([-a - 4])                                                   # optional - sage.rings.finite_rings
-            sage: R.<t> = k[]                                                           # optional - sage.rings.finite_rings
-            sage: fR = R.hom(f, R)                                                      # optional - sage.rings.finite_rings
-            sage: fF = F(fR)         # indirect doctest                                 # optional - sage.rings.finite_rings
-            sage: fF                                                                    # optional - sage.rings.finite_rings
+            sage: k.<a> = GF(25)                                                        # needs sage.rings.finite_rings
+            sage: f = k.hom([-a - 4])                                                   # needs sage.rings.finite_rings
+            sage: R.<t> = k[]                                                           # needs sage.rings.finite_rings
+            sage: fR = R.hom(f, R)                                                      # needs sage.rings.finite_rings
+            sage: fF = F(fR)         # indirect doctest                                 # needs sage.rings.finite_rings
+            sage: fF                                                                    # needs sage.rings.finite_rings
             Ring endomorphism of Fraction Field of
              Univariate Polynomial Ring in t over Finite Field in a of size 5^2
               Defn: Induced from base ring by
@@ -266,7 +266,7 @@ cdef class Functor(SageObject):
                       Defn: Induced from base ring by
                             Ring endomorphism of Finite Field in a of size 5^2
                               Defn: a |--> 4*a + 1
-            sage: fF((a^2+a)*t^2/(a*t - a^2))                                           # optional - sage.rings.finite_rings
+            sage: fF((a^2+a)*t^2/(a*t - a^2))                                           # needs sage.rings.finite_rings
             ((4*a + 2)*t^2)/(t + a + 4)
         """
         try:
@@ -372,10 +372,10 @@ cdef class Functor(SageObject):
             ....:   def _apply_functor(self, R):
             ....:       return MatrixSpace(R, self._m, self._n)
             sage: F = IllFunctor(2, 2)
-            sage: F(QQ)                                                                 # optional - sage.modules
+            sage: F(QQ)                                                                 # needs sage.modules
             Full MatrixSpace of 2 by 2 dense matrices over Rational Field
             sage: F = IllFunctor(2, 3)
-            sage: F(QQ)                                                                 # optional - sage.modules
+            sage: F(QQ)                                                                 # needs sage.modules
             Traceback (most recent call last):
             ...
             TypeError: Functor from Category of rings to Category of rings

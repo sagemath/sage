@@ -183,11 +183,11 @@ class SuperModules(SuperModulesCategory):
             EXAMPLES::
 
                 sage: cat = Algebras(QQ).WithBasis().Super()
-                sage: C = CombinatorialFreeModule(QQ, Partitions(), category=cat)       # optional - sage.combinat sage.modules
-                sage: C.degree_on_basis = sum                                           # optional - sage.combinat sage.modules
-                sage: C.basis()[2,2,1].is_even_odd()                                    # optional - sage.combinat sage.modules
+                sage: C = CombinatorialFreeModule(QQ, Partitions(), category=cat)       # needs sage.combinat sage.modules
+                sage: C.degree_on_basis = sum                                           # needs sage.combinat sage.modules
+                sage: C.basis()[2,2,1].is_even_odd()                                    # needs sage.combinat sage.modules
                 1
-                sage: C.basis()[2,2].is_even_odd()                                      # optional - sage.combinat sage.modules
+                sage: C.basis()[2,2].is_even_odd()                                      # needs sage.combinat sage.modules
                 0
             """
             return self.degree() % 2
@@ -199,11 +199,11 @@ class SuperModules(SuperModulesCategory):
             EXAMPLES::
 
                 sage: cat = Algebras(QQ).WithBasis().Super()
-                sage: C = CombinatorialFreeModule(QQ, Partitions(), category=cat)       # optional - sage.combinat sage.modules
-                sage: C.degree_on_basis = sum                                           # optional - sage.combinat sage.modules
-                sage: C.basis()[2,2,1].is_even()                                        # optional - sage.combinat sage.modules
+                sage: C = CombinatorialFreeModule(QQ, Partitions(), category=cat)       # needs sage.combinat sage.modules
+                sage: C.degree_on_basis = sum                                           # needs sage.combinat sage.modules
+                sage: C.basis()[2,2,1].is_even()                                        # needs sage.combinat sage.modules
                 False
-                sage: C.basis()[2,2].is_even()                                          # optional - sage.combinat sage.modules
+                sage: C.basis()[2,2].is_even()                                          # needs sage.combinat sage.modules
                 True
             """
             return self.is_even_odd() == 0
@@ -215,11 +215,11 @@ class SuperModules(SuperModulesCategory):
             EXAMPLES::
 
                 sage: cat = Algebras(QQ).WithBasis().Super()
-                sage: C = CombinatorialFreeModule(QQ, Partitions(), category=cat)       # optional - sage.combinat sage.modules
-                sage: C.degree_on_basis = sum                                           # optional - sage.combinat sage.modules
-                sage: C.basis()[2,2,1].is_odd()                                         # optional - sage.combinat sage.modules
+                sage: C = CombinatorialFreeModule(QQ, Partitions(), category=cat)       # needs sage.combinat sage.modules
+                sage: C.degree_on_basis = sum                                           # needs sage.combinat sage.modules
+                sage: C.basis()[2,2,1].is_odd()                                         # needs sage.combinat sage.modules
                 True
-                sage: C.basis()[2,2].is_odd()                                           # optional - sage.combinat sage.modules
+                sage: C.basis()[2,2].is_odd()                                           # needs sage.combinat sage.modules
                 False
             """
             return self.is_even_odd() == 1
