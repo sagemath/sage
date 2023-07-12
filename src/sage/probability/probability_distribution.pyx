@@ -958,7 +958,7 @@ cdef class RealDistribution(ProbabilityDistribution):
         elif self.distribution_type == beta:
             return sage.rings.real_double.RDF(gsl_cdf_beta_P(x, self.parameters[0], self.parameters[1]))
         elif self.distribution_type == exponential:
-            return sage.rings.real_double.RDF(gsl_cdf_exponential_P(x, self.parameters[0]]))
+            return sage.rings.real_double.RDF(gsl_cdf_exponential_P(x, self.parameters[0]))
         elif self.distribution_type == gamma:
             return sage.rings.real_double.RDF(gsl_cdf_gamma_P(x, self.parameters[0], self.parameters[1]))
         else:
