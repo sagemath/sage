@@ -110,9 +110,13 @@ SAGE_SPKG_FINALIZE([$pkgname], [$pkgtype], [$SPKG_SOURCE], [$SPKG_TREE_VAR])"
         echo 'changequote(>>>`<<<, >>>'"'"'<<<)dnl' >> $a
     done
 
-    for pkgname in $(sage-package list --has-file bootstrap); do
-        (cd build/pkgs/$pkgname && ./bootstrap) || exit 1
+    for pkgname in $(sage-package list --has-file bootstrap "$@"); do
+        (cd build/pkgs/$pkgname && if [ -x bootstrap ]; then ./bootstrap; else echo >&2 "bootstrap:$LINENO: Nothing to do for $pkgname"; fi) || exit 1
     done
+
+    if [ $# != 0 ]; then
+        return
+    fi
 
     # Default to no filter if "-q" was not passed.
     QUIET_SED_FILTER=""
@@ -126,7 +130,6 @@ SAGE_SPKG_FINALIZE([$pkgname], [$pkgtype], [$SPKG_SOURCE], [$SPKG_TREE_VAR])"
     # stdout alone. Basically we swap the two descriptors using a
     # third, filter, and then swap them back.
     ./bootstrap-conda && \
-    src/doc/bootstrap && \
     aclocal -I m4 && \
     automake --add-missing --copy build/make/Makefile-auto 3>&1 1>&2 2>&3 \
         | sed "${QUIET_SED_FILTER}" 3>&1 1>&2 2>&3 && \
@@ -236,7 +239,7 @@ save () {
 
 
 usage () {
-    echo >&2 "Usage: $0 [-d|-D|-s] [-u <URL>] [-h] [-q]"
+    echo >&2 "Usage: $0 [-d|-D|-s] [-u <URL>] [-h] [-q] [SPKG...]"
     echo >&2 ""
     echo >&2 "Options:"
     echo >&2 "  -d         fall back to downloading (released versions only)"
@@ -269,6 +272,7 @@ do
          ?) usage; exit 2;;
      esac
 done
+shift $(($OPTIND - 1))
 export BOOTSTRAP_QUIET
 CONFBALL="upstream/configure-$CONFVERSION.tar.gz"
 
@@ -278,14 +282,16 @@ if [ $DOWNLOAD$SAVE = yesyes ]; then
     exit 2
 fi
 
-# Start cleanly (it's not a problem if this fails)
+# Start cleanly when a full bootstrap is happening (it's not a problem if this fails)
 # POSIX supports two separate incompatible formats for the MAKEFLAGS
 # variable, so instead of guessing, we simply define our own variable
 # to optionally pass an "-s" (silent) flag to Make.
-MAKE_SILENT=""
-[ "${BOOTSTRAP_QUIET}" = "yes" ] && MAKE_SILENT="-s"
-$MAKE ${MAKE_SILENT} bootstrap-clean 2>/dev/null
-mkdir config 2>/dev/null
+if [ $# = 0 ]; then
+    MAKE_SILENT=""
+    [ "${BOOTSTRAP_QUIET}" = "yes" ] && MAKE_SILENT="-s"
+    $MAKE ${MAKE_SILENT} bootstrap-clean 2>/dev/null
+fi
+mkdir -p config 2>/dev/null
 
 if [ $ALWAYSDOWNLOAD = yes ]; then
     if [ -n "$CONFTARBALL_URL" ]; then
@@ -302,7 +308,7 @@ if [ $ALWAYSDOWNLOAD = yes ]; then
         bootstrap_download || exit $?
     fi
 else
-    bootstrap
+    bootstrap "$@"
 fi
 
 if [ $SAVE = yes ]; then
