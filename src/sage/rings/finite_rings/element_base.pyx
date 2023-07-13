@@ -1,3 +1,4 @@
+# sage.doctest: optional - sage.rings.finite_rings
 """
 Base class for finite field elements
 
@@ -25,7 +26,7 @@ from sage.misc.superseded import deprecated_function_alias
 
 def is_FiniteFieldElement(x):
     """
-    Return True if ``x`` is a finite field element.
+    Return ``True`` if ``x`` is a finite field element.
 
     This function is deprecated.
 
@@ -80,7 +81,6 @@ cdef class FiniteRingElement(CommutativeRingElement):
             sage: r = a._nth_root_common(29*283*3539*12345, False, "Johnston", False)
             sage: r**(29*283*3539*12345) == a
             True
-
         """
         K = self.parent()
         q = K.order()
@@ -95,7 +95,7 @@ cdef class FiniteRingElement(CommutativeRingElement):
         if gcd == q-1:
             if all: return []
             else: raise ValueError("no nth root")
-        gcd, alpha, beta = n.xgcd(q-1) # gcd = alpha*n + beta*(q-1), so 1/n = alpha/gcd (mod q-1)
+        gcd, alpha, _ = n.xgcd(q-1)  # gcd = alpha*n + beta*(q-1), so 1/n = alpha/gcd (mod q-1)
         if gcd == 1:
             return [self**alpha] if all else self**alpha
 
@@ -405,12 +405,11 @@ cdef class FinitePolyExtElement(FiniteRingElement):
             sage: e._vector_(reverse=True)
             (0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 1)
         """
-        #vector(foo) might pass in ZZ
+        # vector(foo) might pass in ZZ
         if isinstance(reverse, Parent):
             raise TypeError("Base field is fixed to prime subfield.")
 
         k = self.parent()
-        p = self.polynomial()
         ret = self.polynomial().padded_list(k.degree())
 
         if reverse:
@@ -421,7 +420,9 @@ cdef class FinitePolyExtElement(FiniteRingElement):
         r"""
         Return the matrix of left multiplication by the element on
         the power basis `1, x, x^2, \ldots, x^{d-1}` for the field
-        extension.  Thus the \emph{columns} of this matrix give the images
+        extension.
+
+        Thus the \emph{columns} of this matrix give the images
         of each of the `x^i`.
 
         INPUT:
@@ -444,7 +445,7 @@ cdef class FinitePolyExtElement(FiniteRingElement):
 
         columns = []
 
-        for i in xrange(d):
+        for i in range(d):
             columns.append( (self * x)._vector_(reverse=reverse) )
             x *= a
 
@@ -504,7 +505,6 @@ cdef class FinitePolyExtElement(FiniteRingElement):
         """
         if var is None:
             var = self.parent().variable_name()
-        from sage.libs.pari.all import pari
         ffgen = self._parent.modulus()._pari_with_name(var).ffgen()
         polypari = self.polynomial()._pari_with_name()
         # Add ffgen - ffgen to ensure that we really get an FFELT
@@ -1006,7 +1006,7 @@ cdef class FinitePolyExtElement(FiniteRingElement):
             sage: G32(m1) == g1
             True
         """
-        [(p, k2)] = list(self.parent().cardinality().factor())
+        k2 = self.parent().degree()
         if k2 % 2:
             raise TypeError("cardinality of the field must be a square number")
         k = k2 / 2

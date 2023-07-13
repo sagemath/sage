@@ -464,7 +464,7 @@ class Sudoku(SageObject):
         nsquare = n*n
         array = []
         array.append('\\begin{array}{|*{%s}{*{%s}{r}|}}\\hline\n' % (n, n))
-        gen = (x for x in self.puzzle)
+        gen = iter(self.puzzle)
         for row in range(nsquare):
             for col in range(nsquare):
                 entry = next(gen)
@@ -719,8 +719,7 @@ class Sudoku(SageObject):
         """
         from .sudoku_backtrack import backtrack_all
         solutions = backtrack_all(self.n, self.puzzle)
-        for soln in solutions:
-            yield soln
+        yield from solutions
 
     def dlx(self, count_only=False):
         r"""

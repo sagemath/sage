@@ -151,7 +151,7 @@ import math
 # sage includes
 from sage.ext.stdsage cimport PY_NEW
 
-from sage.libs.gmp.mpz cimport mpz_t, mpz_init_set
+from sage.libs.gmp.mpz cimport mpz_set
 
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ

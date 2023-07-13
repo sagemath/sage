@@ -627,7 +627,7 @@ class ComplexIntervalField_class(sage.rings.abc.ComplexIntervalField):
         im = rand(*args, **kwds)
         return self.element_class(self, re, im)
 
-    def is_field(self, proof = True):
+    def is_field(self, proof=True):
         """
         Return ``True``, since the complex numbers are a field.
 

@@ -24,14 +24,16 @@ class CommutativeAlgebraIdeals(Category_ideal):
 
         sage: C = CommutativeAlgebraIdeals(QQ['x'])
         sage: C
-        Category of commutative algebra ideals in Univariate Polynomial Ring in x over Rational Field
+        Category of commutative algebra ideals in
+         Univariate Polynomial Ring in x over Rational Field
     """
     def __init__(self, A):
         """
         EXAMPLES::
 
             sage: CommutativeAlgebraIdeals(ZZ['x'])
-            Category of commutative algebra ideals in Univariate Polynomial Ring in x over Integer Ring
+            Category of commutative algebra ideals in
+             Univariate Polynomial Ring in x over Integer Ring
 
             sage: CommutativeAlgebraIdeals(ZZ)
             Traceback (most recent call last):
@@ -43,7 +45,7 @@ class CommutativeAlgebraIdeals(Category_ideal):
             ...
             TypeError: A (=Ring of integers modulo 4) must be a commutative algebra
 
-            sage: CommutativeAlgebraIdeals(Partitions(4))
+            sage: CommutativeAlgebraIdeals(Partitions(4))                               # optional - sage.combinat sage.modules
             Traceback (most recent call last):
             ...
             TypeError: A (=Partitions of the integer 4) must be a commutative algebra

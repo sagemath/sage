@@ -1,4 +1,4 @@
-# Triggers after the documentation build has finished, 
+# Triggers after the documentation build has finished,
 # taking the artifact and uploading it to netlify
 name: Publish documentation
 
@@ -47,7 +47,7 @@ jobs:
             });
             var fs = require('fs');
             fs.writeFileSync('${{github.workspace}}/docs.zip', Buffer.from(download.data));
-      
+
       - name: Extract docs
         run: unzip docs.zip -d docs && unzip docs/docs.zip -d docs/docs
 
@@ -72,11 +72,10 @@ jobs:
           header: preview-comment
           recreate: true
           message: |
-            [Documentation preview for this PR](${{ steps.deploy-netlify.outputs.NETLIFY_URL }}) is ready! :tada:
-            Built with commit: ${{ steps.source-run-info.outputs.sourceHeadSha }}
-      
+            [Documentation preview for this PR](${{ steps.deploy-netlify.outputs.NETLIFY_URL }}) (built with commit ${{ steps.source-run-info.outputs.sourceHeadSha }}; [changes](${{ steps.deploy-netlify.outputs.NETLIFY_URL }}/CHANGES.html)) is ready! :tada:
+
       - name: Update deployment status PR check
-        uses: myrotvorets/set-commit-status-action@1.1.6
+        uses: myrotvorets/set-commit-status-action@v1.1.7
         if: ${{ always() }}
         env:
           DEPLOY_SUCCESS: Successfully deployed preview.

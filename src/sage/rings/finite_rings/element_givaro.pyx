@@ -56,22 +56,15 @@ from cysignals.signals cimport sig_on, sig_off
 
 from cypari2.paridecl cimport *
 
-from sage.misc.randstate cimport randstate, current_randstate
-from sage.rings.finite_rings.finite_field_base cimport FiniteField
-from sage.rings.ring cimport Ring
+from sage.misc.randstate cimport current_randstate
 from .element_pari_ffelt cimport FiniteFieldElement_pari_ffelt
 from sage.structure.richcmp cimport richcmp
-from sage.structure.element cimport Element, ModuleElement, RingElement
-import operator
 import sage.arith.all
-import sage.rings.finite_rings.finite_field_constructor as finite_field
 
-from sage.libs.pari.all import pari
 from cypari2.gen cimport Gen
 from cypari2.stack cimport clear_stack
 
 from sage.structure.parent cimport Parent
-
 
 from sage.interfaces.abc import GapElement
 
@@ -1579,7 +1572,6 @@ cdef class FiniteField_givaroElement(FinitePolyExtElement):
         """
         # TODO -- I'm sure this can be made vastly faster
         # using how elements are represented as a power of the generator ??
-        import sage.arith.all
 
         if self._multiplicative_order is not None:
             return self._multiplicative_order

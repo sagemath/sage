@@ -2193,9 +2193,7 @@ def test_bitset(py_a, py_b, long n):
 
     print("a.hamming_weight() ", bitset_hamming_weight(a))
 
-    morphism = {}
-    for i in xrange(a.size):
-        morphism[i] = a.size - i - 1
+    morphism = {i: a.size - i - 1 for i in range(a.size)}
     bitset_map(r, a, morphism)
     print("a.map(m) ", bitset_string(r))
 

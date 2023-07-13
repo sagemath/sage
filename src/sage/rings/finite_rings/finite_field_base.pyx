@@ -1,3 +1,4 @@
+# sage.doctest: optional - sage.rings.finite_rings
 """
 Base class for finite fields
 
@@ -27,7 +28,7 @@ AUTHORS:
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 #*****************************************************************************
 
 cimport cython
@@ -35,7 +36,6 @@ from cysignals.signals cimport sig_check
 from cpython.array cimport array
 
 from sage.categories.finite_fields import FiniteFields
-from sage.structure.parent cimport Parent
 from sage.misc.persist import register_unpickle_override
 from sage.misc.cachefunc import cached_method
 from sage.misc.prandom import randrange
@@ -1283,13 +1283,12 @@ cdef class FiniteField(Field):
         else:
             raise ValueError("{} is not a subfield".format(base))
 
-        if map is False: # shortcut
+        if map is False:  # shortcut
             return V
 
         if inclusion_map is None:
             inclusion_map = self.coerce_map_from(base)
 
-        from sage.modules.free_module_element import vector
         from sage.matrix.constructor import matrix
         from .maps_finite_field import (
             MorphismVectorSpaceToFiniteField, MorphismFiniteFieldToVectorSpace)

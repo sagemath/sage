@@ -13,6 +13,7 @@ AUTHORS:
 
 This example follows one in the Magma reference manual::
 
+    sage: x = polygen(ZZ, 'x')
     sage: K.<y> = NumberField(x^4 - 420*x^2 + 40000)
     sage: z = y^5/11; z
     420/11*y^3 - 40000/11*y
@@ -116,6 +117,7 @@ def is_RelativeNumberField(x):
     EXAMPLES::
 
         sage: from sage.rings.number_field.number_field_rel import is_RelativeNumberField
+        sage: x = polygen(ZZ, 'x')
         sage: is_RelativeNumberField(NumberField(x^2+1,'a'))
         False
         sage: k.<a> = NumberField(x^3 - 2)
@@ -155,14 +157,15 @@ class NumberField_relative(NumberField_generic):
 
     EXAMPLES::
 
+        sage: x = polygen(ZZ, 'x')
         sage: K.<a> = NumberField(x^3 - 2)
         sage: t = polygen(K)
-        sage: L.<b> = K.extension(t^2+t+a); L
+        sage: L.<b> = K.extension(t^2 + t + a); L
         Number Field in b with defining polynomial x^2 + x + a over its base field
 
     TESTS::
 
-        sage: Z = var('Z')
+        sage: Z = polygen(ZZ, 'Z')
         sage: K.<w> = NumberField(Z^3 + Z + 1)
         sage: L.<z> = K.extension(Z^3 + 2)
         sage: K = loads(dumps(L))
@@ -320,25 +323,26 @@ class NumberField_relative(NumberField_generic):
                                      embedding=embedding, structure=structure)
 
         self._zero_element = self(0)
-        self._one_element =  self(1)
+        self._one_element = self(1)
 
     def change_names(self, names):
         r"""
-        Return relative number field isomorphic to self but with the
+        Return relative number field isomorphic to ``self`` but with the
         given generator names.
 
         INPUT:
 
         - ``names`` -- number of names should be at most the number of
-          generators of self, i.e., the number of steps in the tower
+          generators of ``self``, i.e., the number of steps in the tower
           of relative fields.
 
         Also, ``K.structure()`` returns ``from_K`` and ``to_K``, where
-        from_K is an isomorphism from `K` to self and ``to_K`` is an
+        ``from_K`` is an isomorphism from `K` to ``self`` and ``to_K`` is an
         isomorphism from self to `K`.
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<a,b> = NumberField([x^4 + 3, x^2 + 2]); K
             Number Field in a with defining polynomial x^4 + 3 over its base field
             sage: L.<c,d> = K.change_names()
@@ -366,14 +370,19 @@ class NumberField_relative(NumberField_generic):
             sage: PF.<Y> = F[]
             sage: K.<c> = F.extension(Y^2 - (1 + a)*(a + b)*a*b)
             sage: L.<m, n, r> = K.change_names(); L
-            Number Field in m with defining polynomial x^2 + (-2*r - 3)*n - 2*r - 6 over its base field
+            Number Field in m with defining polynomial
+             x^2 + (-2*r - 3)*n - 2*r - 6 over its base field
             sage: L.structure()
             (Isomorphism given by variable name change map:
-              From: Number Field in m with defining polynomial x^2 + (-2*r - 3)*n - 2*r - 6 over its base field
-              To:   Number Field in c with defining polynomial Y^2 + (-2*b - 3)*a - 2*b - 6 over its base field,
+              From: Number Field in m with defining polynomial
+                    x^2 + (-2*r - 3)*n - 2*r - 6 over its base field
+              To:   Number Field in c with defining polynomial
+                    Y^2 + (-2*b - 3)*a - 2*b - 6 over its base field,
              Isomorphism given by variable name change map:
-              From: Number Field in c with defining polynomial Y^2 + (-2*b - 3)*a - 2*b - 6 over its base field
-              To:   Number Field in m with defining polynomial x^2 + (-2*r - 3)*n - 2*r - 6 over its base field)
+              From: Number Field in c with defining polynomial
+                    Y^2 + (-2*b - 3)*a - 2*b - 6 over its base field
+              To:   Number Field in m with defining polynomial
+                    x^2 + (-2*r - 3)*n - 2*r - 6 over its base field)
         """
         if len(names) == 0:
             names = self.variable_names()
@@ -387,9 +396,9 @@ class NumberField_relative(NumberField_generic):
 
     def subfields(self, degree=0, name=None):
         """
-        Return all subfields of this relative number field self of the given degree,
+        Return all subfields of this relative number field ``self`` of the given degree,
         or of all possible degrees if degree is 0.  The subfields are returned as
-        absolute fields together with an embedding into self.  For the case of the
+        absolute fields together with an embedding into ``self``.  For the case of the
         field itself, the reverse isomorphism is also provided.
 
         EXAMPLES::
@@ -400,27 +409,42 @@ class NumberField_relative(NumberField_generic):
             sage: K.<c> = F.extension(Y^2 - (1 + a)*(a + b)*a*b)
             sage: K.subfields(2)
             [
-            (Number Field in c0 with defining polynomial x^2 - 24*x + 96, Ring morphism:
-              From: Number Field in c0 with defining polynomial x^2 - 24*x + 96
-              To:   Number Field in c with defining polynomial Y^2 + (-2*b - 3)*a - 2*b - 6 over its base field
-              Defn: c0 |--> -4*b + 12, None),
-            (Number Field in c1 with defining polynomial x^2 - 24*x + 120, Ring morphism:
-              From: Number Field in c1 with defining polynomial x^2 - 24*x + 120
-              To:   Number Field in c with defining polynomial Y^2 + (-2*b - 3)*a - 2*b - 6 over its base field
-              Defn: c1 |--> 2*b*a + 12, None),
-            (Number Field in c2 with defining polynomial x^2 - 24*x + 72, Ring morphism:
-              From: Number Field in c2 with defining polynomial x^2 - 24*x + 72
-              To:   Number Field in c with defining polynomial Y^2 + (-2*b - 3)*a - 2*b - 6 over its base field
-              Defn: c2 |--> -6*a + 12, None)
+            (Number Field in c0 with defining polynomial x^2 - 24*x + 96,
+             Ring morphism:
+               From: Number Field in c0 with defining polynomial x^2 - 24*x + 96
+               To:   Number Field in c with defining polynomial
+                     Y^2 + (-2*b - 3)*a - 2*b - 6 over its base field
+               Defn: c0 |--> -4*b + 12,
+             None),
+            (Number Field in c1 with defining polynomial x^2 - 24*x + 120,
+             Ring morphism:
+               From: Number Field in c1 with defining polynomial x^2 - 24*x + 120
+               To:   Number Field in c with defining polynomial
+                     Y^2 + (-2*b - 3)*a - 2*b - 6 over its base field
+               Defn: c1 |--> 2*b*a + 12,
+             None),
+            (Number Field in c2 with defining polynomial x^2 - 24*x + 72,
+             Ring morphism:
+               From: Number Field in c2 with defining polynomial x^2 - 24*x + 72
+               To:   Number Field in c with defining polynomial
+                     Y^2 + (-2*b - 3)*a - 2*b - 6 over its base field
+               Defn: c2 |--> -6*a + 12,
+             None)
             ]
             sage: K.subfields(8, 'w')
             [
-            (Number Field in w0 with defining polynomial x^8 - 12*x^6 + 36*x^4 - 36*x^2 + 9, Ring morphism:
-              From: Number Field in w0 with defining polynomial x^8 - 12*x^6 + 36*x^4 - 36*x^2 + 9
-              To:   Number Field in c with defining polynomial Y^2 + (-2*b - 3)*a - 2*b - 6 over its base field
-              Defn: w0 |--> (-1/2*b*a + 1/2*b + 1/2)*c, Relative number field morphism:
-              From: Number Field in c with defining polynomial Y^2 + (-2*b - 3)*a - 2*b - 6 over its base field
-              To:   Number Field in w0 with defining polynomial x^8 - 12*x^6 + 36*x^4 - 36*x^2 + 9
+            (Number Field in w0 with defining polynomial x^8 - 12*x^6 + 36*x^4 - 36*x^2 + 9,
+             Ring morphism:
+               From: Number Field in w0 with defining polynomial
+                     x^8 - 12*x^6 + 36*x^4 - 36*x^2 + 9
+               To:   Number Field in c with defining polynomial
+                     Y^2 + (-2*b - 3)*a - 2*b - 6 over its base field
+               Defn: w0 |--> (-1/2*b*a + 1/2*b + 1/2)*c,
+             Relative number field morphism:
+              From: Number Field in c with defining polynomial
+                    Y^2 + (-2*b - 3)*a - 2*b - 6 over its base field
+              To:   Number Field in w0 with defining polynomial
+                    x^8 - 12*x^6 + 36*x^4 - 36*x^2 + 9
               Defn: c |--> -1/3*w0^7 + 4*w0^5 - 12*w0^3 + 11*w0
                     a |--> 1/3*w0^6 - 10/3*w0^4 + 5*w0^2
                     b |--> -2/3*w0^6 + 7*w0^4 - 14*w0^2 + 6)
@@ -444,10 +468,11 @@ class NumberField_relative(NumberField_generic):
 
     def is_absolute(self):
         r"""
-        Returns False, since this is not an absolute field.
+        Return ``False``, since this is not an absolute field.
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<a,b> = NumberField([x^4 + 3, x^2 + 2]); K
             Number Field in a with defining polynomial x^4 + 3 over its base field
             sage: K.is_absolute()
@@ -463,6 +488,7 @@ class NumberField_relative(NumberField_generic):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<a,b> = NumberField([x^4 + 3, x^2 + 2]); K
             Number Field in a with defining polynomial x^4 + 3 over its base field
             sage: K.gens()
@@ -490,6 +516,7 @@ class NumberField_relative(NumberField_generic):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<a,b> = NumberField([x^4 + 3, x^2 + 2]); K
             Number Field in a with defining polynomial x^4 + 3 over its base field
             sage: K._first_ngens(0)
@@ -514,6 +541,7 @@ class NumberField_relative(NumberField_generic):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<a,b> = NumberField([x^4 + 3, x^2 + 2]); K
             Number Field in a with defining polynomial x^4 + 3 over its base field
             sage: K.gens()
@@ -529,6 +557,7 @@ class NumberField_relative(NumberField_generic):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<a,b> = NumberField([x^4 + 3, x^2 + 2]); K
             Number Field in a with defining polynomial x^4 + 3 over its base field
             sage: K.gens()
@@ -547,60 +576,67 @@ class NumberField_relative(NumberField_generic):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<a,b> = NumberField([x^4 + 3, x^2 + 2]); K
             Number Field in a with defining polynomial x^4 + 3 over its base field
             sage: K.galois_closure('c')
-            Number Field in c with defining polynomial x^16 + 16*x^14 + 28*x^12 + 784*x^10 + 19846*x^8 - 595280*x^6 + 2744476*x^4 + 3212848*x^2 + 29953729
+            Number Field in c with defining polynomial x^16 + 16*x^14 + 28*x^12
+             + 784*x^10 + 19846*x^8 - 595280*x^6 + 2744476*x^4 + 3212848*x^2 + 29953729
         """
         return self.absolute_field('a').galois_closure(names=names)
 
     def composite_fields(self, other, names=None, both_maps=False, preserve_embedding=True):
         """
-        List of all possible composite number fields formed from self and
-        other, together with (optionally) embeddings into the compositum;
-        see the documentation for both_maps below.
+        List of all possible composite number fields formed from ``self`` and
+        ``other``, together with (optionally) embeddings into the compositum;
+        see the documentation for ``both_maps`` below.
 
         Since relative fields do not have ambient embeddings,
-        preserve_embedding has no effect.  In every case all possible
+        ``preserve_embedding`` has no effect.  In every case all possible
         composite number fields are returned.
 
         INPUT:
 
-        - ``other`` - a number field
+        - ``other`` -- a number field
 
-        - ``names`` - generator name for composite fields
+        - ``names`` -- generator name for composite fields
 
-        - ``both_maps`` - (default: False)  if True, return quadruples
-          (F, self_into_F, other_into_F, k) such that self_into_F maps self into
-          F, other_into_F maps other into F.  For relative number fields k is
-          always None.
-        - ``preserve_embedding`` - (default: True) has no effect, but is kept
-          for compatibility with the absolute version of this function.  In every
+        - ``both_maps`` -- (default: ``False``)  if ``True``, return quadruples
+          (`F`, ``self_into_F, ``other_into_F``, `k`) such that ``self_into_F`` maps ``self`` into
+          `F`, ``other_into_F`` maps ``other`` into `F`.  For relative number fields, `k` is
+          always ``None``.
+
+        - ``preserve_embedding`` -- (default: ``True``) has no effect, but is kept
+          for compatibility with the absolute version of this method.  In every
           case the list of all possible compositums is returned.
 
         OUTPUT:
 
-        -  ``list`` - list of the composite fields, possibly with maps.
-
+        list of the composite fields, possibly with maps.
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<a, b> = NumberField([x^2 + 5, x^2 - 2])
             sage: L.<c, d> = NumberField([x^2 + 5, x^2 - 3])
             sage: K.composite_fields(L, 'e')
-            [Number Field in e with defining polynomial x^8 - 24*x^6 + 464*x^4 + 3840*x^2 + 25600]
+            [Number Field in e with defining polynomial
+              x^8 - 24*x^6 + 464*x^4 + 3840*x^2 + 25600]
             sage: K.composite_fields(L, 'e', both_maps=True)
-            [[Number Field in e with defining polynomial x^8 - 24*x^6 + 464*x^4 + 3840*x^2 + 25600,
+            [[Number Field in e with defining polynomial
+               x^8 - 24*x^6 + 464*x^4 + 3840*x^2 + 25600,
               Relative number field morphism:
-              From: Number Field in a with defining polynomial x^2 + 5 over its base field
-             To:   Number Field in e with defining polynomial x^8 - 24*x^6 + 464*x^4 + 3840*x^2 + 25600
-              Defn: a |--> -9/66560*e^7 + 11/4160*e^5 - 241/4160*e^3 - 101/104*e
-                    b |--> -21/166400*e^7 + 73/20800*e^5 - 779/10400*e^3 + 7/260*e,
+                From: Number Field in a with defining polynomial x^2 + 5 over its base field
+                To:   Number Field in e with defining polynomial
+                      x^8 - 24*x^6 + 464*x^4 + 3840*x^2 + 25600
+                Defn: a |--> -9/66560*e^7 + 11/4160*e^5 - 241/4160*e^3 - 101/104*e
+                      b |--> -21/166400*e^7 + 73/20800*e^5 - 779/10400*e^3 + 7/260*e,
               Relative number field morphism:
-              From: Number Field in c with defining polynomial x^2 + 5 over its base field
-              To:   Number Field in e with defining polynomial x^8 - 24*x^6 + 464*x^4 + 3840*x^2 + 25600
-              Defn: c |--> -9/66560*e^7 + 11/4160*e^5 - 241/4160*e^3 - 101/104*e
-                    d |--> -3/25600*e^7 + 7/1600*e^5 - 147/1600*e^3 + 1/40*e,
+                From: Number Field in c with defining polynomial x^2 + 5 over its base field
+                To:   Number Field in e with defining polynomial
+                      x^8 - 24*x^6 + 464*x^4 + 3840*x^2 + 25600
+                Defn: c |--> -9/66560*e^7 + 11/4160*e^5 - 241/4160*e^3 - 101/104*e
+                      d |--> -3/25600*e^7 + 7/1600*e^5 - 147/1600*e^3 + 1/40*e,
               None]]
         """
         if not isinstance(other, NumberField_generic):
@@ -644,6 +680,7 @@ class NumberField_relative(NumberField_generic):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<a> = NumberFieldTower([x^2 - 17, x^3 - 2])
             sage: K.absolute_degree()
             6
@@ -656,6 +693,7 @@ class NumberField_relative(NumberField_generic):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<a> = NumberFieldTower([x^2 - 17, x^3 - 2])
             sage: K.relative_degree()
             2
@@ -670,11 +708,13 @@ class NumberField_relative(NumberField_generic):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<a> = NumberFieldTower([x^2 - 17, x^3 - 2])
             sage: K.degree()
             Traceback (most recent call last):
             ...
-            NotImplementedError: For a relative number field you must use relative_degree or absolute_degree as appropriate
+            NotImplementedError: For a relative number field
+            you must use relative_degree or absolute_degree as appropriate
         """
         raise NotImplementedError("For a relative number field you must use relative_degree or absolute_degree as appropriate")
 
@@ -686,6 +726,7 @@ class NumberField_relative(NumberField_generic):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<a> = NumberFieldTower([x^2 - 17, x^3 - 2])
             sage: K.maximal_order() is K.maximal_order()  # indirect doctest
             True
@@ -704,6 +745,7 @@ class NumberField_relative(NumberField_generic):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: k.<a, b> = NumberField([x^5 + 2, x^7 + 3])
             sage: repr(k) # indirect doctest
             'Number Field in a with defining polynomial x^5 + 2 over its base field'
@@ -723,6 +765,7 @@ class NumberField_relative(NumberField_generic):
         This function is implicitly called by the ``Hom`` method or
         function::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<a,b> = NumberField([x^3 - 2, x^2+1])
             sage: K.Hom(K) # indirect doctest
             Automorphism group of Number Field in a with defining polynomial x^3 - 2 over its base field
@@ -748,6 +791,7 @@ class NumberField_relative(NumberField_generic):
         EXAMPLES::
 
             sage: x = polygen(QQ)
+            sage: x = polygen(ZZ, 'x')
             sage: K.<a> = NumberField(x^3 - 2)
             sage: t = polygen(K)
             sage: K.extension(t^2+t+a, 'b')._latex_()
@@ -770,6 +814,7 @@ class NumberField_relative(NumberField_generic):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<a> = NumberField(x^3 + 2)
             sage: L.<b> = NumberField(x^2 + 1)
             sage: K._coerce_from_other_number_field(L(2/3))
@@ -951,6 +996,7 @@ class NumberField_relative(NumberField_generic):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: k.<a> = NumberField([x^5 + 2, x^7 + 3])
             sage: b = k(k.base_field().gen())
             sage: b = k.coerce(k.base_field().gen()) # indirect doctest
@@ -1032,6 +1078,7 @@ class NumberField_relative(NumberField_generic):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: k.<a> = NumberField([x^2 + 3, x^2 + 1])
             sage: m = k.base_field(); m
             Number Field in a1 with defining polynomial x^2 + 1
@@ -1079,6 +1126,7 @@ class NumberField_relative(NumberField_generic):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: k.<a> = NumberField([x^5 + 2, x^7 + 3])
             sage: k._fractional_ideal_class_ ()
             <class 'sage.rings.number_field.number_field_ideal_rel.NumberFieldFractionalIdeal_rel'>
@@ -1100,6 +1148,7 @@ class NumberField_relative(NumberField_generic):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: k.<a> = NumberField([x^3 + 2, x^2 + 2])
             sage: k._pari_base_bnf()
             [[;], matrix(0,3), [;], ...]
@@ -1127,27 +1176,31 @@ class NumberField_relative(NumberField_generic):
 
     def is_galois(self):
         r"""
-        For a relative number field, ``is_galois()`` is deliberately not
+        For a relative number field, :meth:`is_galois` is deliberately not
         implemented, since it is not clear whether this would mean "Galois over
-        `\QQ`" or "Galois over the given base field". Use either ``is_galois_absolute()`` or ``is_galois_relative()`` respectively.
+        `\QQ`" or "Galois over the given base field".
+        Use either :meth:`is_galois_absolute` or :meth:`is_galois_relative`, respectively.
 
         EXAMPLES::
 
-            sage: k.<a> =NumberField([x^3 - 2, x^2 + x + 1])
+            sage: x = polygen(ZZ, 'x')
+            sage: k.<a> = NumberField([x^3 - 2, x^2 + x + 1])
             sage: k.is_galois()
             Traceback (most recent call last):
             ...
-            NotImplementedError: For a relative number field L you must use either L.is_galois_relative() or L.is_galois_absolute() as appropriate
+            NotImplementedError: For a relative number field L you must use
+            either L.is_galois_relative() or L.is_galois_absolute() as appropriate
         """
         raise NotImplementedError("For a relative number field L you must use either L.is_galois_relative() or L.is_galois_absolute() as appropriate")
 
     def is_galois_relative(self):
         r"""
-        Return True if for this relative extension `L/K`, `L` is a
+        Return ``True`` if for this relative extension `L/K`, `L` is a
         Galois extension of `K`.
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<a> = NumberField(x^3 - 2)
             sage: y = polygen(K)
             sage: L.<b> = K.extension(y^2 - a)
@@ -1172,10 +1225,11 @@ class NumberField_relative(NumberField_generic):
 
     def is_galois_absolute(self):
         r"""
-        Return True if for this relative extension `L/K`, `L` is a Galois extension of `\QQ`.
+        Return ``True`` if for this relative extension `L/K`, `L` is a Galois extension of `\QQ`.
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<a> = NumberField(x^3 - 2)
             sage: y = polygen(K); L.<b> = K.extension(y^2 - a)
             sage: L.is_galois_absolute()
@@ -1187,13 +1241,14 @@ class NumberField_relative(NumberField_generic):
 
     def is_isomorphic_relative(self, other, base_isom=None):
         r"""
-        For this relative extension `L/K` and another relative extension `M/K`, return True
+        For this relative extension `L/K` and another relative extension `M/K`, return ``True``
         if there is a `K`-linear isomorphism from `L` to `M`. More generally, ``other`` can be a
         relative extension `M/K^\prime` with ``base_isom`` an isomorphism from `K` to
         `K^\prime`.
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<z9> = NumberField(x^6 + x^3 + 1)
             sage: R.<z> = PolynomialRing(K)
             sage: m1 = 3*z9^4 - 4*z9^3 - 4*z9^2 + 3*z9 - 8
@@ -1210,7 +1265,7 @@ class NumberField_relative(NumberField_generic):
             False
 
         If we have two extensions over different, but isomorphic, bases, we can compare them by
-        letting ``base_isom`` be an isomorphism from self's base field to other's base field::
+        letting ``base_isom`` be an isomorphism from ``self``'s base field to ``other``'s base field::
 
             sage: Kcyc.<zeta9> = CyclotomicField(9)
             sage: Rcyc.<zcyc> = PolynomialRing(Kcyc)
@@ -1227,12 +1282,14 @@ class NumberField_relative(NumberField_generic):
             sage: L2.is_isomorphic_relative(L1cyc, base_isom=phi2)
             True
 
-        Omitting ``base_isom`` raises a ValueError when the base fields are not identical::
+        Omitting ``base_isom`` raises a :class:`ValueError` when the base fields are not identical::
 
             sage: L1.is_isomorphic_relative(L1cyc)
             Traceback (most recent call last):
             ...
-            ValueError: other does not have the same base field as self, so an isomorphism from self's base_field to other's base_field must be provided using the base_isom parameter.
+            ValueError: other does not have the same base field as self,
+            so an isomorphism from self's base_field to other's base_field
+            must be provided using the base_isom parameter.
 
         The parameter ``base_isom`` can also be used to check if the relative extensions are
         Galois conjugate::
@@ -1265,11 +1322,12 @@ class NumberField_relative(NumberField_generic):
 
     def is_CM_extension(self):
         """
-        Return True is this is a CM extension, i.e. a totally imaginary
+        Return ``True`` is this is a CM extension, i.e. a totally imaginary
         quadratic extension of a totally real field.
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: F.<a> = NumberField(x^2 - 5)
             sage: K.<z> = F.extension(x^2 + 7)
             sage: K.is_CM_extension()
@@ -1283,7 +1341,7 @@ class NumberField_relative(NumberField_generic):
             sage: K.is_CM_extension()
             False
 
-        A CM field K such that K/F is not a CM extension
+        A CM field `K` such that `K/F` is not a CM extension
 
         ::
 
@@ -1327,6 +1385,7 @@ class NumberField_relative(NumberField_generic):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<a,b,c> = NumberField([x^2 + 2, x^3 + 2, x^3 + 3]); K
             Number Field in a with defining polynomial x^2 + 2 over its base field
             sage: V, from_V, to_V = K.free_module()
@@ -1362,11 +1421,12 @@ class NumberField_relative(NumberField_generic):
 
     def relative_vector_space(self, base=None, *args, **kwds):
         """
-        Return vector space over the base field of self and isomorphisms
-        from the vector space to self and in the other direction.
+        Return vector space over the base field of ``self`` and isomorphisms
+        from the vector space to ``self`` and in the other direction.
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<a,b,c> = NumberField([x^2 + 2, x^3 + 2, x^3 + 3]); K
             Number Field in a with defining polynomial x^2 + 2 over its base field
             sage: V, from_V, to_V = K.relative_vector_space()
@@ -1398,6 +1458,7 @@ class NumberField_relative(NumberField_generic):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<a,b> = NumberField([x^3 + 3, x^3 + 2]); K
             Number Field in a with defining polynomial x^3 + 3 over its base field
             sage: V,from_V,to_V = K.absolute_vector_space(); V
@@ -1425,17 +1486,19 @@ class NumberField_relative(NumberField_generic):
 
     def vector_space(self, *args, **kwds):
         r"""
-        For a relative number field, ``vector_space()`` is
+        For a relative number field, :meth:`vector_space` is
         deliberately not implemented, so that a user cannot confuse
         :meth:`~relative_vector_space` with :meth:`~absolute_vector_space`.
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<a> = NumberFieldTower([x^2 - 17, x^3 - 2])
             sage: K.vector_space()
             Traceback (most recent call last):
             ...
-            NotImplementedError: For a relative number field L you must use either L.relative_vector_space() or L.absolute_vector_space() as appropriate
+            NotImplementedError: For a relative number field L you must use either
+            L.relative_vector_space() or L.absolute_vector_space() as appropriate
 
         """
         raise NotImplementedError("For a relative number field L you must use either L.relative_vector_space() or L.absolute_vector_space() as appropriate")
@@ -1447,6 +1510,7 @@ class NumberField_relative(NumberField_generic):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<a,b,c> = NumberField([x^2 + 2, x^3 + 3, x^3 + 2])
             sage: K
             Number Field in a with defining polynomial x^2 + 2 over its base field
@@ -1473,6 +1537,7 @@ class NumberField_relative(NumberField_generic):
 
         TESTS::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<a> = NumberField(x^2 + 2)
             sage: x = polygen(K)
             sage: L.<b> = K.extension(x^5 + 2*a)
@@ -1484,6 +1549,7 @@ class NumberField_relative(NumberField_generic):
 
         Initialization is lazy enough to allow arithmetic in massive fields::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<a> = NumberField(x^10 + 2000*x + 100001)
             sage: x = polygen(K)
             sage: L.<b> = K.extension(x^10 + 2*a)
@@ -1508,6 +1574,7 @@ class NumberField_relative(NumberField_generic):
 
         TESTS::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<a> = NumberField(x^2 - 2)
             sage: L.<b> = K.extension(x^2 - 3)
             sage: L._pari_nfzk()
@@ -1601,7 +1668,8 @@ class NumberField_relative(NumberField_generic):
 
         EXAMPLES::
 
-            sage: k.<a> = NumberField(x^2+1); k
+            sage: x = polygen(ZZ, 'x')
+            sage: k.<a> = NumberField(x^2 + 1); k
             Number Field in a with defining polynomial x^2 + 1
             sage: y = polygen(k)
             sage: m.<b> = k.extension(y^2+3); m
@@ -1630,6 +1698,7 @@ class NumberField_relative(NumberField_generic):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: k.<a> = NumberField([x^4 + 3, x^2 + 2])
             sage: k.pari_rnf()
             [x^4 + 3, [364, -10*x^7 - 87*x^5 - 370*x^3 - 41*x], [108, 3], ...]
@@ -1643,6 +1712,7 @@ class NumberField_relative(NumberField_generic):
         EXAMPLES::
 
             sage: x = polygen(ZZ)
+            sage: x = polygen(ZZ, 'x')
             sage: K.<a, b> = NumberField([x^2 + 2, x^2 + 3]); K
             Number Field in a with defining polynomial x^2 + 2 over its base field
             sage: K.pari_absolute_base_polynomial()
@@ -1669,13 +1739,14 @@ class NumberField_relative(NumberField_generic):
         Return the PARI relative polynomial associated to this number
         field.
 
-        This is always a polynomial in x and y, suitable for PARI's
-        rnfinit function.  Notice that if this is a relative extension
+        This is always a polynomial in `x` and `y`, suitable for PARI's
+        :pari:`rnfinit` function.  Notice that if this is a relative extension
         of a relative extension, the base field is the absolute base
         field.
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: k.<i> = NumberField(x^2 + 1)
             sage: m.<z> = k.extension(k['w']([i,0,1]))
             sage: m
@@ -1690,24 +1761,26 @@ class NumberField_relative(NumberField_generic):
         return self._pari_relative_structure()[0]
 
     def number_of_roots_of_unity(self):
-        """
-        Return number of roots of unity in this relative field.
+        r"""
+        Return the number of roots of unity in this relative field.
 
         EXAMPLES::
 
-            sage: K.<a, b> = NumberField( [x^2 + x + 1, x^4 + 1] )
+            sage: x = polygen(ZZ, 'x')
+            sage: K.<a, b> = NumberField([x^2 + x + 1, x^4 + 1])
             sage: K.number_of_roots_of_unity()
             24
         """
         return self.absolute_field('a').number_of_roots_of_unity()
 
     def roots_of_unity(self):
-        """
+        r"""
         Return all the roots of unity in this relative field, primitive or not.
 
         EXAMPLES::
 
-            sage: K.<a, b> = NumberField( [x^2 + x + 1, x^4 + 1] )
+            sage: x = polygen(ZZ, 'x')
+            sage: K.<a, b> = NumberField([x^2 + x + 1, x^4 + 1])
             sage: rts = K.roots_of_unity()
             sage: len(rts)
             24
@@ -1757,6 +1830,7 @@ class NumberField_relative(NumberField_generic):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<a,b> = NumberField([x^4 + 3, x^2 + 2]); K
             Number Field in a with defining polynomial x^4 + 3 over its base field
             sage: L.<xyz> = K.absolute_field(); L
@@ -1767,14 +1841,16 @@ class NumberField_relative(NumberField_generic):
             sage: from_L, to_L = L.structure()
             sage: from_L
             Isomorphism map:
-              From: Number Field in c with defining polynomial x^8 + 8*x^6 + 30*x^4 - 40*x^2 + 49
+              From: Number Field in c with defining polynomial
+                    x^8 + 8*x^6 + 30*x^4 - 40*x^2 + 49
               To:   Number Field in a with defining polynomial x^4 + 3 over its base field
             sage: from_L(c)
             a - b
             sage: to_L
             Isomorphism map:
               From: Number Field in a with defining polynomial x^4 + 3 over its base field
-              To:   Number Field in c with defining polynomial x^8 + 8*x^6 + 30*x^4 - 40*x^2 + 49
+              To:   Number Field in c with defining polynomial
+                    x^8 + 8*x^6 + 30*x^4 - 40*x^2 + 49
             sage: to_L(a)
             -5/182*c^7 - 87/364*c^5 - 185/182*c^3 + 323/364*c
             sage: to_L(b)
@@ -1795,6 +1871,7 @@ class NumberField_relative(NumberField_generic):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: NumberField(x^2 + (2/3)*x - 9/17,'a').absolute_polynomial_ntl()
             ([-27 34 51], 51)
         """
@@ -1826,6 +1903,7 @@ class NumberField_relative(NumberField_generic):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: k.<a, b> = NumberField([x^2 + 1, x^3 + x + 1]); k
             Number Field in a with defining polynomial x^2 + 1 over its base field
             sage: k.absolute_polynomial()
@@ -1834,6 +1912,7 @@ class NumberField_relative(NumberField_generic):
         An example comparing the various defining polynomials to their
         PARI counterparts::
 
+            sage: x = polygen(ZZ, 'x')
             sage: k.<a, c> = NumberField([x^2 + 1/3, x^2 + 1/4])
             sage: k.absolute_polynomial()
             x^4 - x^2 + 1
@@ -1856,11 +1935,12 @@ class NumberField_relative(NumberField_generic):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<a> = NumberFieldTower([x^2 + x + 1, x^3 + x + 1])
             sage: K.relative_polynomial()
             x^2 + x + 1
 
-        Use absolute polynomial for a polynomial that defines the absolute
+        Use :meth:`absolute_polynomial` for a polynomial that defines the absolute
         extension.::
 
             sage: K.absolute_polynomial()
@@ -1872,7 +1952,7 @@ class NumberField_relative(NumberField_generic):
         """
         Return the defining polynomial of this relative number field.
 
-        This is exactly the same as ``relative_polynomial()``.
+        This is exactly the same as :meth:`relative_polynomial`.
 
         EXAMPLES::
 
@@ -1887,17 +1967,19 @@ class NumberField_relative(NumberField_generic):
 
     def polynomial(self):
         """
-        For a relative number field, ``polynomial()`` is deliberately
+        For a relative number field, :meth:`polynomial` is deliberately
         not implemented.  Either :meth:`~relative_polynomial` or
         :meth:`~absolute_polynomial` must be used.
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<a> = NumberFieldTower([x^2 + x + 1, x^3 + x + 1])
             sage: K.polynomial()
             Traceback (most recent call last):
             ...
-            NotImplementedError: For a relative number field L you must use either L.relative_polynomial() or L.absolute_polynomial() as appropriate
+            NotImplementedError: For a relative number field L you must use either
+            L.relative_polynomial() or L.absolute_polynomial() as appropriate
         """
         raise NotImplementedError("For a relative number field L you must use either L.relative_polynomial() or L.absolute_polynomial() as appropriate")
 
@@ -1907,6 +1989,7 @@ class NumberField_relative(NumberField_generic):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: k.<a> = NumberField([x^3 + x + 1])
             sage: R.<z> = k[]
             sage: L.<b> = NumberField(z^3 + a)
@@ -1929,6 +2012,7 @@ class NumberField_relative(NumberField_generic):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: k.<a> = NumberField([x^2 + 1, x^3 + x + 1])
             sage: k.base_ring()
             Number Field in a1 with defining polynomial x^3 + x + 1
@@ -1953,7 +2037,8 @@ class NumberField_relative(NumberField_generic):
 
         EXAMPLES::
 
-            sage: K.<a,b> = NumberField([x^3 - 2, x^2+1])
+            sage: x = polygen(ZZ, 'x')
+            sage: K.<a,b> = NumberField([x^3 - 2, x^2 + 1])
             sage: f = K.embeddings(ComplexField(58)); f
             [
             Relative number field morphism:
@@ -1995,20 +2080,23 @@ class NumberField_relative(NumberField_generic):
 
     def automorphisms(self):
         r"""
-        Compute all Galois automorphisms of self over the base field.  This is
-        different than computing the embeddings of self into self; there,
+        Compute all Galois automorphisms of ``self`` over the base field.  This is
+        different from computing the embeddings of ``self`` into ``self``; there,
         automorphisms that do not fix the base field are considered.
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<a, b> = NumberField([x^2 + 10000, x^2 + x + 50]); K
             Number Field in a with defining polynomial x^2 + 10000 over its base field
             sage: K.automorphisms()
             [
-            Relative number field endomorphism of Number Field in a with defining polynomial x^2 + 10000 over its base field
+            Relative number field endomorphism of Number Field in a
+             with defining polynomial x^2 + 10000 over its base field
               Defn: a |--> a
                     b |--> b,
-            Relative number field endomorphism of Number Field in a with defining polynomial x^2 + 10000 over its base field
+            Relative number field endomorphism of Number Field in a
+             with defining polynomial x^2 + 10000 over its base field
               Defn: a |--> -a
                     b |--> b
             ]
@@ -2022,10 +2110,12 @@ class NumberField_relative(NumberField_generic):
             Number Field in b with defining polynomial x^2 + x + 50 over its base field
             sage: L.automorphisms()
             [
-            Relative number field endomorphism of Number Field in b with defining polynomial x^2 + x + 50 over its base field
+            Relative number field endomorphism of Number Field in b
+             with defining polynomial x^2 + x + 50 over its base field
               Defn: b |--> b
                     a |--> a,
-            Relative number field endomorphism of Number Field in b with defining polynomial x^2 + x + 50 over its base field
+            Relative number field endomorphism of Number Field in b
+             with defining polynomial x^2 + x + 50 over its base field
               Defn: b |--> -b - 1
                     a |--> a
             ]
@@ -2041,11 +2131,13 @@ class NumberField_relative(NumberField_generic):
             sage: K.<c> = F.extension(Y^2 - (1 + a)*(a + b)*a*b)
             sage: K.automorphisms()
             [
-            Relative number field endomorphism of Number Field in c with defining polynomial Y^2 + (-2*b - 3)*a - 2*b - 6 over its base field
+            Relative number field endomorphism of Number Field in c
+             with defining polynomial Y^2 + (-2*b - 3)*a - 2*b - 6 over its base field
               Defn: c |--> c
                     a |--> a
                     b |--> b,
-            Relative number field endomorphism of Number Field in c with defining polynomial Y^2 + (-2*b - 3)*a - 2*b - 6 over its base field
+            Relative number field endomorphism of Number Field in c
+             with defining polynomial Y^2 + (-2*b - 3)*a - 2*b - 6 over its base field
               Defn: c |--> -c
                     a |--> a
                     b |--> b
@@ -2064,7 +2156,7 @@ class NumberField_relative(NumberField_generic):
         abs_base_gens = [self_into_L(_) for _ in self.base_field().gens()]
         v = sorted([ self.hom([ L_into_self(aa(a)) ]) for aa in aas if all(aa(g) == g for g in abs_base_gens) ])
         put_natural_embedding_first(v)
-        self.__automorphisms = Sequence(v, cr = (v != []), immutable=True,
+        self.__automorphisms = Sequence(v, cr=(v != []), immutable=True,
                                         check=False, universe=self.Hom(self))
         return self.__automorphisms
 
@@ -2083,7 +2175,7 @@ class NumberField_relative(NumberField_generic):
 
         OUTPUT:
 
-        - the morphism of ``self`` under the logarithmic embedding in the category Set.
+        the morphism of ``self`` under the logarithmic embedding in the category Set.
 
         EXAMPLES::
 
@@ -2139,44 +2231,45 @@ class NumberField_relative(NumberField_generic):
 
     def places(self, all_complex=False, prec=None):
         """
-        Return the collection of all infinite places of self.
+        Return the collection of all infinite places of ``self``.
 
         By default, this returns the set of real places as
-        homomorphisms into RIF first, followed by a choice of one of
-        each pair of complex conjugate homomorphisms into CIF.
+        homomorphisms into ``RIF`` first, followed by a choice of one of
+        each pair of complex conjugate homomorphisms into ``CIF``.
 
-        On the other hand, if prec is not None, we simply return places
-        into RealField(prec) and ComplexField(prec) (or RDF, CDF if
-        prec=53).
+        On the other hand, if ``prec`` is not ``None``, we simply return places
+        into ``RealField(prec)`` and ``ComplexField(prec)`` (or ``RDF``, ``CDF`` if
+        ``prec=53``).
 
-        There is an optional flag all_complex, which defaults to False. If
-        all_complex is True, then the real embeddings are returned as
-        embeddings into CIF instead of RIF.
+        There is an optional flag ``all_complex``, which defaults to ``False``. If
+        ``all_complex`` is ``True``, then the real embeddings are returned as
+        embeddings into ``CIF`` instead of ``RIF``.
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: L.<b, c> = NumberFieldTower([x^2 - 5, x^3 + x + 3])
             sage: L.places()
             [Relative number field morphism:
-            From: Number Field in b with defining polynomial x^2 - 5 over its base field
-            To:   Real Field with 106 bits of precision
-            Defn: b |--> -2.236067977499789696409173668937
-            c |--> -1.213411662762229634132131377426,
-            Relative number field morphism:
-            From: Number Field in b with defining polynomial x^2 - 5 over its base field
-            To:   Real Field with 106 bits of precision
-            Defn: b |--> 2.236067977499789696411548005367
-            c |--> -1.213411662762229634130492421800,
-            Relative number field morphism:
-            From: Number Field in b with defining polynomial x^2 - 5 over its base field
-            To:   Complex Field with 53 bits of precision
-            Defn: b |--> -2.23606797749979 ...e-1...*I
-            c |--> 0.606705831381... - 1.45061224918844*I,
-            Relative number field morphism:
-            From: Number Field in b with defining polynomial x^2 - 5 over its base field
-            To:   Complex Field with 53 bits of precision
-            Defn: b |--> 2.23606797749979 - 4.44089209850063e-16*I
-            c |--> 0.606705831381115 - 1.45061224918844*I]
+               From: Number Field in b with defining polynomial x^2 - 5 over its base field
+               To:   Real Field with 106 bits of precision
+               Defn: b |--> -2.236067977499789696409173668937
+                     c |--> -1.213411662762229634132131377426,
+             Relative number field morphism:
+               From: Number Field in b with defining polynomial x^2 - 5 over its base field
+               To:   Real Field with 106 bits of precision
+               Defn: b |--> 2.236067977499789696411548005367
+                     c |--> -1.213411662762229634130492421800,
+             Relative number field morphism:
+               From: Number Field in b with defining polynomial x^2 - 5 over its base field
+               To:   Complex Field with 53 bits of precision
+               Defn: b |--> -2.23606797749979 ...e-1...*I
+                     c |--> 0.606705831381... - 1.45061224918844*I,
+             Relative number field morphism:
+               From: Number Field in b with defining polynomial x^2 - 5 over its base field
+               To:   Complex Field with 53 bits of precision
+               Defn: b |--> 2.23606797749979 - 4.44089209850063e-16*I
+                     c |--> 0.606705831381115 - 1.45061224918844*I]
         """
         L = self.absolute_field('a')
         pl = L.places(all_complex, prec)
@@ -2186,10 +2279,11 @@ class NumberField_relative(NumberField_generic):
         r"""
         Return the absolute different of this relative number field `L`, as an
         ideal of `L`. To get the relative different of `L/K`, use
-        ``L.relative_different()``.
+        :meth:`relative_different`.
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<i> = NumberField(x^2 + 1)
             sage: t = K['t'].gen()
             sage: L.<b> = K.extension(t^4 - i)
@@ -2204,10 +2298,11 @@ class NumberField_relative(NumberField_generic):
         r"""
         Return the relative different of this extension `L/K` as
         an ideal of `L`.  If you want the absolute different of
-        `L/\QQ`, use ``L.absolute_different()``.
+        `L/\QQ`, use :meth:`absolute_different`.
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<i> = NumberField(x^2 + 1)
             sage: PK.<t> = K[]
             sage: L.<a> = K.extension(t^4  - i)
@@ -2226,11 +2321,13 @@ class NumberField_relative(NumberField_generic):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<a> = NumberFieldTower([x^2 + x + 1, x^3 + x + 1])
             sage: K.different()
             Traceback (most recent call last):
             ...
-            NotImplementedError: For a relative number field you must use relative_different or absolute_different as appropriate
+            NotImplementedError: For a relative number field you must use
+            relative_different or absolute_different as appropriate
         """
         raise NotImplementedError("For a relative number field you must use relative_different or absolute_different as appropriate")
 
@@ -2248,6 +2345,7 @@ class NumberField_relative(NumberField_generic):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<i> = NumberField(x^2 + 1)
             sage: t = K['t'].gen()
             sage: L.<b> = K.extension(t^4 - i)
@@ -2270,6 +2368,7 @@ class NumberField_relative(NumberField_generic):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<i> = NumberField(x^2 + 1)
             sage: t = K['t'].gen()
             sage: L.<b> = K.extension(t^4 - i)
@@ -2305,11 +2404,13 @@ class NumberField_relative(NumberField_generic):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<a> = NumberFieldTower([x^2 + x + 1, x^3 + x + 1])
             sage: K.discriminant()
             Traceback (most recent call last):
             ...
-            NotImplementedError: For a relative number field you must use relative_discriminant or absolute_discriminant as appropriate
+            NotImplementedError: For a relative number field you must use
+            relative_discriminant or absolute_discriminant as appropriate
         """
         raise NotImplementedError("For a relative number field you must use relative_discriminant or absolute_discriminant as appropriate")
 
@@ -2321,11 +2422,13 @@ class NumberField_relative(NumberField_generic):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<a> = NumberFieldTower([x^2 + x + 1, x^3 + x + 1])
             sage: K.disc()
             Traceback (most recent call last):
             ...
-            NotImplementedError: For a relative number field you must use relative_discriminant or absolute_discriminant as appropriate
+            NotImplementedError: For a relative number field you must use
+            relative_discriminant or absolute_discriminant as appropriate
         """
         raise NotImplementedError("For a relative number field you must use relative_discriminant or absolute_discriminant as appropriate")
 
@@ -2336,25 +2439,26 @@ class NumberField_relative(NumberField_generic):
 
         INPUT:
 
-        - ``gens`` -- list of elements of self; if no generators are given, just
-          returns the cardinality of this number field (oo) for consistency.
-        - ``check_is_integral`` -- bool (default: True), whether to check that each
+        - ``gens`` -- list of elements of ``self``; if no generators are given, just
+          returns the cardinality of this number field (`\infty`) for consistency.
+        - ``check_is_integral`` -- bool (default: ``True``), whether to check that each
           generator is integral.
-        - ``check_rank`` -- bool (default: True), whether to check that the ring
-          generated by gens is of full rank.
-        - ``allow_subfield`` -- bool (default: False), if True and the generators
+        - ``check_rank`` -- bool (default: ``True``), whether to check that the ring
+          generated by ``gens`` is of full rank.
+        - ``allow_subfield`` -- bool (default: ``False``), if ``True`` and the generators
           do not generate an order, i.e., they generate a subring of smaller
           rank, instead of raising an error, return an order in a smaller
           number field.
 
-        The check_is_integral and check_rank inputs must be given as
+        The ``check_is_integral`` and ``check_rank`` inputs must be given as
         explicit keyword arguments.
 
         EXAMPLES::
 
             sage: P.<a,b,c> = QQ[2^(1/2), 2^(1/3), 3^(1/2)]
             sage: R = P.order([a,b,c]); R
-            Relative Order in Number Field in sqrt2 with defining polynomial x^2 - 2 over its base field
+            Relative Order in Number Field in sqrt2
+             with defining polynomial x^2 - 2 over its base field
 
         The base ring of an order in a relative extension is still `\ZZ`.::
 
@@ -2364,7 +2468,7 @@ class NumberField_relative(NumberField_generic):
         One must give enough generators to generate a ring of finite index
         in the maximal order::
 
-            sage: P.order([a,b])
+            sage: P.order([a, b])
             Traceback (most recent call last):
             ...
             ValueError: the rank of the span of gens is wrong
@@ -2389,7 +2493,7 @@ class NumberField_relative(NumberField_generic):
         EXAMPLES::
 
             sage: x = polygen(QQ)
-            sage: K.<a> = NumberField(x^2+6)
+            sage: K.<a> = NumberField(x^2 + 6)
             sage: x = polygen(K)
             sage: L.<b> = K.extension(x^2 + 3)    # extend by x^2+3
             sage: L.is_free()
@@ -2407,8 +2511,9 @@ class NumberField_relative(NumberField_generic):
 
         EXAMPLES::
 
-            sage: K.<i> = NumberField(x**2+1)
-            sage: L.<sqrt2> = K.extension(x*x-2)
+            sage: x = polygen(ZZ, 'x')
+            sage: K.<i> = NumberField(x**2 + 1)
+            sage: L.<sqrt2> = K.extension(x*x - 2)
             sage: x = polygen(L,'x')
             sage: factor(x**2+8)  # indirect doctest
             (x + 2*i*sqrt2) * (x - 2*i*sqrt2)
@@ -2424,7 +2529,7 @@ class NumberField_relative(NumberField_generic):
     def lift_to_base(self, element):
         """
         Lift an element of this extension into the base field if possible,
-        or raise a ValueError if it is not possible.
+        or raise a :class:`ValueError` if it is not possible.
 
         EXAMPLES::
 
@@ -2474,24 +2579,25 @@ class NumberField_relative(NumberField_generic):
 
     def relativize(self, alpha, names):
         r"""
-        Given an element in self or an embedding of a subfield into self,
-        return a relative number field `K` isomorphic to self that is relative
+        Given an element in ``self`` or an embedding of a subfield into ``self``,
+        return a relative number field `K` isomorphic to ``self`` that is relative
         over the absolute field `\QQ(\alpha)` or the domain of `\alpha`, along
-        with isomorphisms from `K` to self and from self to `K`.
+        with isomorphisms from `K` to ``self`` and from ``self`` to `K`.
 
         INPUT:
 
-        - ``alpha`` -- an element of self, or an embedding of a subfield into self
+        - ``alpha`` -- an element of ``self``, or an embedding of a subfield into ``self``
         - ``names`` -- name of generator for output field `K`.
 
         OUTPUT: `K` -- a relative number field
 
         Also, ``K.structure()`` returns ``from_K`` and ``to_K``, where
-        ``from_K`` is an isomorphism from `K` to self and ``to_K`` is
-        an isomorphism from self to `K`.
+        ``from_K`` is an isomorphism from `K` to ``self`` and ``to_K`` is
+        an isomorphism from ``self`` to `K`.
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<a,b> = NumberField([x^4 + 3, x^2 + 2]); K
             Number Field in a with defining polynomial x^4 + 3 over its base field
             sage: L.<z,w> = K.relativize(a^2)
@@ -2500,7 +2606,8 @@ class NumberField_relative(NumberField_generic):
             sage: w^2
             -3
             sage: L
-            Number Field in z with defining polynomial x^4 + (-2*w + 4)*x^2 + 4*w + 1 over its base field
+            Number Field in z with defining polynomial
+             x^4 + (-2*w + 4)*x^2 + 4*w + 1 over its base field
             sage: L.base_field()
             Number Field in w with defining polynomial x^2 + 3
 
@@ -2517,7 +2624,8 @@ class NumberField_relative(NumberField_generic):
             sage: L_over_K = L.relativize(K_into_L, 'c'); L_over_K
             Number Field in c with defining polynomial x^2 + a0_0 over its base field
             sage: L_over_K_to_L, L_to_L_over_K = L_over_K.structure()
-            sage: M_over_L_over_K = M.relativize(L_into_M * L_over_K_to_L, 'd'); M_over_L_over_K
+            sage: M_over_L_over_K = M.relativize(L_into_M * L_over_K_to_L, 'd')
+            sage: M_over_L_over_K
             Number Field in d with defining polynomial x^2 + c over its base field
             sage: M_over_L_over_K.base_field() is L_over_K
             True
@@ -2565,30 +2673,30 @@ class NumberField_relative(NumberField_generic):
         L = K.relativize(beta, names)
         return K.relativize(beta, names, structure=structure.RelativeFromRelative(L))
 
-    def uniformizer(self, P, others = "positive"):
+    def uniformizer(self, P, others="positive"):
         """
-        Returns an element of self with valuation 1 at the prime ideal P.
+        Returns an element of ``self`` with valuation 1 at the prime ideal `P`.
 
         INPUT:
 
+        -  ``self`` -- a number field
 
-        -  ``self`` - a number field
+        -  ``P`` -- a prime ideal of ``self``
 
-        -  ``P`` - a prime ideal of self
-
-        -  ``others`` - either "positive" (default), in which
+        -  ``others`` -- either ``"positive"`` (default), in which
            case the element will have non-negative valuation at all other
-           primes of self, or "negative", in which case the element will have
-           non-positive valuation at all other primes of self.
+           primes of ``self``, or ``"negative"``, in which case the element will have
+           non-positive valuation at all other primes of ``self``.
 
 
         .. note::
 
-           When P is principal (e.g. always when self has class number
-           one) the result may or may not be a generator of P!
+           When `P` is principal (e.g., always when ``self`` has class number
+           one), the result may or may not be a generator of `P`!
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<a, b> = NumberField([x^2 + 23, x^2 - 3])
             sage: P = K.prime_factors(5)[0]; P
             Fractional ideal (5, 1/2*a + b - 5/2)

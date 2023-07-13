@@ -520,7 +520,7 @@ def T_sequences_smallcases(t, existence=False, check=True):
     if t in db:
         if existence:
             return True
-        sequences =  list(map(Sequence, db[t]))
+        sequences = list(map(Sequence, db[t]))
         if check:
             assert is_T_sequences_set(sequences)
         return sequences

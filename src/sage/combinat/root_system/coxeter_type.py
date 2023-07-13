@@ -17,16 +17,19 @@ Coxeter Types
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
+import sage.rings.abc
+
+from sage.combinat.root_system.cartan_type import CartanType
 from sage.misc.abstract_method import abstract_method
 from sage.misc.cachefunc import cached_method
 from sage.misc.classcall_metaclass import ClasscallMetaclass
-from sage.combinat.root_system.cartan_type import CartanType
-import sage.rings.abc
 from sage.matrix.args import SparseEntry
 from sage.matrix.constructor import Matrix
-from sage.symbolic.ring import SR
+from sage.misc.lazy_import import lazy_import
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.structure.sage_object import SageObject
+
+lazy_import('sage.rings.universal_cyclotomic_field', 'UniversalCyclotomicField')
 
 
 class CoxeterType(SageObject, metaclass=ClasscallMetaclass):
@@ -372,19 +375,12 @@ class CoxeterType(SageObject, metaclass=ClasscallMetaclass):
         n = self.rank()
         mat = self.coxeter_matrix()._matrix
 
-        from sage.rings.universal_cyclotomic_field import UniversalCyclotomicField
-        UCF = UniversalCyclotomicField()
-
         if R is None:
-            R = UCF
-        # if UCF.has_coerce_map_from(base_ring):
-        #     R = UCF
-        # else:
-        #     R = base_ring
+            R = UniversalCyclotomicField()
 
         # Compute the matrix with entries `- \cos( \pi / m_{ij} )`.
-        E = UCF.gen
-        if R is UCF:
+        if isinstance(R, sage.rings.abc.UniversalCyclotomicField):
+            E = R.gen
 
             def val(x):
                 if x > -1:
@@ -392,6 +388,7 @@ class CoxeterType(SageObject, metaclass=ClasscallMetaclass):
                 else:
                     return R(x)
         elif isinstance(R, sage.rings.abc.NumberField_quadratic):
+            E = UniversalCyclotomicField().gen
 
             def val(x):
                 if x > -1:
@@ -401,6 +398,7 @@ class CoxeterType(SageObject, metaclass=ClasscallMetaclass):
         else:
             from sage.functions.trig import cos
             from sage.symbolic.constants import pi
+            from sage.symbolic.ring import SR
 
             def val(x):
                 if x > -1:

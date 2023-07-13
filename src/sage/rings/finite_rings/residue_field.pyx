@@ -7,6 +7,7 @@ polynomials over `GF(p)`.
 
 EXAMPLES::
 
+    sage: x = polygen(ZZ, 'x')
     sage: K.<a> = NumberField(x^3 - 7)                                                  # optional - sage.rings.number_field
     sage: P = K.ideal(29).factor()[0][0]                                                # optional - sage.rings.number_field
     sage: k = K.residue_field(P)                                                        # optional - sage.rings.number_field
@@ -160,7 +161,7 @@ And now over a large prime field::
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 # *****************************************************************************
 
 
@@ -168,9 +169,7 @@ from sage.rings.ring cimport Field
 from sage.rings.integer cimport Integer
 from sage.rings.rational cimport Rational
 from sage.categories.homset import Hom
-from sage.categories.basic import Fields, Rings
 from sage.categories.pushout import AlgebraicExtensionFunctor
-from sage.rings.finite_rings.integer_mod_ring import Integers
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
 from sage.rings.finite_rings.finite_field_constructor import zech_log_bound, FiniteField as GF
@@ -215,6 +214,7 @@ class ResidueFieldFactory(UniqueFactory):
 
     EXAMPLES::
 
+        sage: x = polygen(ZZ, 'x')
         sage: K.<a> = NumberField(x^3 - 7)                                              # optional - sage.rings.number_field
         sage: P = K.ideal(29).factor()[0][0]                                            # optional - sage.rings.number_field
         sage: ResidueField(P)                                                           # optional - sage.rings.number_field
@@ -307,6 +307,7 @@ class ResidueFieldFactory(UniqueFactory):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<a> = NumberField(x^3 - 7)                                          # optional - sage.rings.number_field
             sage: ResidueField(K.ideal(29).factor()[0][0])  # indirect doctest          # optional - sage.rings.number_field
             Residue field in abar of Fractional ideal (2*a^2 + 3*a - 10)
@@ -354,6 +355,7 @@ class ResidueFieldFactory(UniqueFactory):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<a> = NumberField(x^3 - 7)                                          # optional - sage.rings.number_field
             sage: P = K.ideal(29).factor()[0][0]                                        # optional - sage.rings.number_field
             sage: ResidueField(P) is ResidueField(P)  # indirect doctest                # optional - sage.rings.number_field
@@ -485,6 +487,7 @@ class ResidueField_generic(Field):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<a> = NumberField(x^3 - 17)                                         # optional - sage.rings.number_field
             sage: P = K.ideal(29).factor()[0][0]                                        # optional - sage.rings.number_field
             sage: k = K.residue_field(P)    # indirect doctest                          # optional - sage.rings.number_field
@@ -550,6 +553,7 @@ class ResidueField_generic(Field):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<a> = NumberField(x^3 + x + 1)                                      # optional - sage.rings.number_field
             sage: P = K.ideal(29).factor()[0][0]                                        # optional - sage.rings.number_field
             sage: k = K.residue_field(P) # indirect doctest                             # optional - sage.rings.number_field
@@ -588,6 +592,7 @@ class ResidueField_generic(Field):
         EXAMPLES::
 
             sage: from sage.rings.finite_rings.residue_field import ResidueField_generic
+            sage: x = polygen(ZZ, 'x')
             sage: K.<i> = NumberField(x^2 + 1)                                          # optional - sage.rings.number_field
             sage: P = K.ideal(-3*i - 2)                                                 # optional - sage.rings.number_field
             sage: OK = K.maximal_order()                                                # optional - sage.rings.number_field
@@ -633,6 +638,7 @@ class ResidueField_generic(Field):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<i> = NumberField(x^2 + 1)                                          # optional - sage.rings.number_field
             sage: P = K.ideal(-3*i - 2)                                                 # optional - sage.rings.number_field
             sage: OK = K.maximal_order()                                                # optional - sage.rings.number_field
@@ -663,6 +669,7 @@ class ResidueField_generic(Field):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<a> = NumberField(x^3 - 7)                                          # optional - sage.rings.number_field
             sage: P = K.ideal(29).factor()[0][0]                                        # optional - sage.rings.number_field
             sage: k = K.residue_field(P); k                                             # optional - sage.rings.number_field
@@ -687,6 +694,7 @@ class ResidueField_generic(Field):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<a> = NumberField(x^3 - 7)                                          # optional - sage.rings.number_field
             sage: P = K.ideal(29).factor()[0][0]                                        # optional - sage.rings.number_field
             sage: k = K.residue_field(P)                                                # optional - sage.rings.number_field
@@ -732,6 +740,7 @@ class ResidueField_generic(Field):
             sage: pi.codomain()                                                         # optional - sage.rings.number_field sage.symbolic
             Residue field of Fractional ideal (a)
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<a> = NumberField(x^3 + x^2 - 2*x + 32)                             # optional - sage.rings.number_field
             sage: F = K.factor(2)[0][0].residue_field()                                 # optional - sage.rings.number_field
             sage: F.reduction_map().domain()                                            # optional - sage.rings.number_field
@@ -800,6 +809,7 @@ class ResidueField_generic(Field):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<a> = NumberField(x^3 - 11)                                                                 # optional - sage.rings.number_field
             sage: F = K.ideal(37).factor(); F                                                                   # optional - sage.rings.number_field
             (Fractional ideal (37, a + 9)) * (Fractional ideal (37, a + 12)) * (Fractional ideal (-2*a + 5))
@@ -832,6 +842,7 @@ class ResidueField_generic(Field):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<a> = NumberField(x^3 + x + 1)                                      # optional - sage.rings.number_field
             sage: hash(K.residue_field(K.prime_above(17)))    # random                  # optional - sage.rings.number_field
             -6463132282686559142
@@ -878,6 +889,7 @@ cdef class ReductionMap(Map):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<a> = NumberField(x^3 + x^2 - 2*x + 8)                              # optional - sage.rings.number_field
             sage: F = K.factor(2)[0][0].residue_field()                                 # optional - sage.rings.number_field
             sage: F.reduction_map()                                                     # optional - sage.rings.number_field
@@ -919,6 +931,7 @@ cdef class ReductionMap(Map):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<a> = NumberField(x^2 + 1)                                          # optional - sage.rings.number_field
             sage: F = K.factor(2)[0][0].residue_field()                                 # optional - sage.rings.number_field
             sage: r = F.reduction_map()                                                 # optional - sage.rings.number_field
@@ -948,6 +961,7 @@ cdef class ReductionMap(Map):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<a> = NumberField(x^2 + 1)                                          # optional - sage.rings.number_field
             sage: F = K.factor(2)[0][0].residue_field()                                 # optional - sage.rings.number_field
             sage: r = F.reduction_map()                                                 # optional - sage.rings.number_field
@@ -980,6 +994,7 @@ cdef class ReductionMap(Map):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<a> = NumberField(x^2 + 1)                                          # optional - sage.rings.number_field
             sage: F = K.factor(2)[0][0].residue_field()                                 # optional - sage.rings.number_field
             sage: r = F.reduction_map(); r                                              # optional - sage.rings.number_field
@@ -1091,6 +1106,7 @@ cdef class ReductionMap(Map):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<a> = NumberField(x^5 - 5*x + 2)                                    # optional - sage.rings.number_field
             sage: P = K.ideal(47).factor()[0][0]                                        # optional - sage.rings.number_field
             sage: k = K.residue_field(P)                                                # optional - sage.rings.number_field
@@ -1136,6 +1152,7 @@ cdef class ResidueFieldHomomorphism_global(RingHomomorphism):
 
     EXAMPLES::
 
+        sage: x = polygen(ZZ, 'x')
         sage: K.<a> = NumberField(x^3 - 7)                                              # optional - sage.rings.number_field
         sage: P  = K.ideal(29).factor()[0][0]                                           # optional - sage.rings.number_field
         sage: k  = K.residue_field(P)                                                   # optional - sage.rings.number_field
@@ -1211,6 +1228,7 @@ cdef class ResidueFieldHomomorphism_global(RingHomomorphism):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<a> = NumberField(x^3 - x + 8)                                      # optional - sage.rings.number_field
             sage: P = K.ideal(29).factor()[0][0]                                        # optional - sage.rings.number_field
             sage: k = K.residue_field(P)                                                # optional - sage.rings.number_field
@@ -1241,6 +1259,7 @@ cdef class ResidueFieldHomomorphism_global(RingHomomorphism):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<a> = NumberField(x^3 - x + 8)                                      # optional - sage.rings.number_field
             sage: P = K.ideal(29).factor()[0][0]                                        # optional - sage.rings.number_field
             sage: k = K.residue_field(P)                                                # optional - sage.rings.number_field
@@ -1270,6 +1289,7 @@ cdef class ResidueFieldHomomorphism_global(RingHomomorphism):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<a> = NumberField(x^3 - x + 8)                                      # optional - sage.rings.number_field
             sage: P = K.ideal(29).factor()[0][0]                                        # optional - sage.rings.number_field
             sage: k = K.residue_field(P)                                                # optional - sage.rings.number_field
@@ -1309,6 +1329,7 @@ cdef class ResidueFieldHomomorphism_global(RingHomomorphism):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<a> = NumberField(x^5 - 5*x + 2)                                    # optional - sage.rings.number_field
             sage: P = K.ideal(47).factor()[0][0]                                        # optional - sage.rings.number_field
             sage: k = K.residue_field(P)                                                # optional - sage.rings.number_field
@@ -1353,6 +1374,7 @@ cdef class ResidueFieldHomomorphism_global(RingHomomorphism):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<a> = NumberField(x^3 - 7)                                          # optional - sage.rings.number_field
             sage: P = K.ideal(29).factor()[0][0]                                        # optional - sage.rings.number_field
             sage: k = K.residue_field(P)                                                # optional - sage.rings.number_field
@@ -1383,6 +1405,7 @@ cdef class LiftingMap(Section):
 
     EXAMPLES::
 
+        sage: x = polygen(ZZ, 'x')
         sage: K.<a> = NumberField(x^3 + 2)                                              # optional - sage.rings.number_field
         sage: F = K.factor(5)[0][0].residue_field()                                     # optional - sage.rings.number_field
         sage: F.degree()                                                                # optional - sage.rings.number_field
@@ -1420,6 +1443,7 @@ cdef class LiftingMap(Section):
               From: Residue field in theta_5bar of Fractional ideal (7)
               To:   Maximal Order in Cyclotomic Field of order 5 and degree 4
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<a> = NumberField(x^5 + 2)                                          # optional - sage.rings.number_field
             sage: F = K.factor(7)[0][0].residue_field()                                 # optional - sage.rings.number_field
             sage: L = F.lift_map(); L                                                   # optional - sage.rings.number_field

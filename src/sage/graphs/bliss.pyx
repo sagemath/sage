@@ -1,4 +1,5 @@
 # distutils: language = c++
+# distutils: extra_compile_args = -std=c++11
 # distutils: libraries = bliss
 # sage_setup: distribution = sagemath-bliss
 
@@ -47,22 +48,22 @@ cdef extern from "bliss/graph.hh" namespace "bliss":
     cdef cppclass Graph(AbstractGraph):
         Graph(const unsigned int)
         void add_edge(const unsigned int, const unsigned int)
-        void find_automorphisms(Stats&, void (*)(void*, unsigned int,
-                                                 const unsigned int*), void*)
         void change_color(const unsigned int, const unsigned int)
-        const unsigned int* canonical_form(Stats&, void (*)(void*, unsigned int,
-                                                            const unsigned int*), void*)
+        const unsigned int* canonical_form(Stats&)
+
+cdef extern from "bliss/digraph.hh" namespace "bliss":
 
     cdef cppclass Digraph(AbstractGraph):
         Digraph(const unsigned int)
         void add_edge(const unsigned int, const unsigned int)
-        void find_automorphisms(Stats&, void (*)(void*, unsigned int,
-                                                 const unsigned int*), void*)
         void change_color(const unsigned int, const unsigned int)
-        const unsigned int* canonical_form(Stats&, void (*)(void*, unsigned int,
-                                                            const unsigned int*), void*)
+        const unsigned int* canonical_form(Stats&)
         unsigned int get_hash()
 
+cdef extern from "bliss_cpp/bliss_find_automorphisms.h":
+
+    void bliss_find_automorphisms(Graph*, void (*)(void*, unsigned int, const unsigned int*), void*, Stats&)
+    void bliss_find_automorphisms(Digraph*, void (*)(void*, unsigned int, const unsigned int*), void*, Stats&)
 
 cdef int encoding_numbits(int n):
     r"""
@@ -123,10 +124,6 @@ cdef void add_gen(void *user_param, unsigned int n, const unsigned int *aut):
     gens.append(perm)
 
     sig_free(done)
-
-
-cdef void empty_hook(void *user_param, unsigned int n, const unsigned int *aut):
-    return
 
 #####################################################
 # constructing bliss graphs from edge lists
@@ -346,10 +343,10 @@ cdef canonical_form_from_edge_list(int Vnr, list Vout, list Vin, int Lnr=1, list
 
     if directed:
         d = bliss_digraph_from_labelled_edges(Vnr, Lnr, Vout, Vin, labels, partition)
-        aut = d.canonical_form(s, empty_hook, NULL)
+        aut = d.canonical_form(s)
     else:
         g = bliss_graph_from_labelled_edges(Vnr, Lnr, Vout, Vin, labels, partition)
-        aut = g.canonical_form(s, empty_hook, NULL)
+        aut = g.canonical_form(s)
 
     for i in range(len(Vout)):
         x = Vout[i]
@@ -479,11 +476,11 @@ cpdef canonical_form(G, partition=None, return_graph=False, use_edge_labels=True
     Check that it works with non hashable non sortable edge labels (relying
     on string representations of the labels)::
 
-        sage: g1 = Graph([(0, 1, matrix(ZZ, 2)), (0, 2, RDF.pi()), (1, 2, 'a')])
-        sage: g2 = Graph([(1, 2, matrix(ZZ, 2)), (2, 0, RDF.pi()), (0, 1, 'a')])
-        sage: g1can = canonical_form(g1, use_edge_labels=True)               # optional - bliss
-        sage: g2can = canonical_form(g2, use_edge_labels=True)               # optional - bliss
-        sage: g1can == g2can                                                 # optional - bliss
+        sage: g1 = Graph([(0, 1, matrix(ZZ, 2)), (0, 2, RDF.pi()), (1, 2, 'a')])        # optional - sage.modules
+        sage: g2 = Graph([(1, 2, matrix(ZZ, 2)), (2, 0, RDF.pi()), (0, 1, 'a')])        # optional - sage.modules
+        sage: g1can = canonical_form(g1, use_edge_labels=True)                    # optional - bliss sage.modules
+        sage: g2can = canonical_form(g2, use_edge_labels=True)                    # optional - bliss sage.modules
+        sage: g1can == g2can                                                      # optional - bliss sage.modules
         True
 
     Check that :trac:`32395` is fixed::
@@ -643,11 +640,11 @@ cdef automorphism_group_gens_from_edge_list(int Vnr, Vout, Vin, int Lnr=1, label
 
     if directed:
         d = bliss_digraph_from_labelled_edges(Vnr, Lnr, Vout, Vin, labels, partition)
-        d.find_automorphisms(s, add_gen, <void*>data)
+        bliss_find_automorphisms(d, add_gen, <void*>data, s)
         del d
     else:
         g = bliss_graph_from_labelled_edges(Vnr, Lnr, Vout, Vin, labels, partition)
-        g.find_automorphisms(s, add_gen, <void*>data)
+        bliss_find_automorphisms(g, add_gen, <void*>data, s)
         del g
 
     return [[cyc for cyc in gen if cyc[0] is not None] for gen in gens]

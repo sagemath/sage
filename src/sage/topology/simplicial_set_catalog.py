@@ -34,14 +34,14 @@ example. Type ``simplicial_sets.[TAB]`` for a complete list.
 
 EXAMPLES::
 
-    sage: RP10 = simplicial_sets.RealProjectiveSpace(8)
-    sage: RP10.homology()
+    sage: RP10 = simplicial_sets.RealProjectiveSpace(8)                                 # optional - sage.groups
+    sage: RP10.homology()                                                               # optional - sage.groups sage.modules
     {0: 0, 1: C2, 2: 0, 3: C2, 4: 0, 5: C2, 6: 0, 7: C2, 8: 0}
 
     sage: eta = simplicial_sets.HopfMap()
     sage: S3 = eta.domain()
     sage: S2 = eta.codomain()
-    sage: S3.wedge(S2).homology()
+    sage: S3.wedge(S2).homology()                                                       # optional - sage.graphs sage.modules
     {0: 0, 1: 0, 2: Z, 3: Z}
 """
 

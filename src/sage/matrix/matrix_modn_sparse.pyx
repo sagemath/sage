@@ -83,7 +83,7 @@ TESTS::
 from libc.stdint cimport uint64_t
 from libc.limits cimport UINT_MAX
 
-from cysignals.memory cimport check_calloc, sig_malloc, sig_free
+from cysignals.memory cimport check_calloc, sig_free
 from cysignals.signals cimport sig_on, sig_off
 
 from sage.ext.stdsage cimport PY_NEW
@@ -91,7 +91,6 @@ from sage.ext.stdsage cimport PY_NEW
 from sage.libs.flint.fmpz cimport fmpz_get_mpz, fmpz_set_mpz
 from sage.libs.flint.fmpz_mat cimport fmpz_mat_entry
 
-from sage.structure.element import is_Vector
 from sage.modules.vector_modn_sparse cimport *
 
 cimport sage.libs.linbox.givaro as givaro
@@ -100,7 +99,6 @@ cimport sage.libs.linbox.linbox as linbox
 from sage.libs.linbox.conversion cimport *
 
 from .matrix2 cimport Matrix
-from sage.libs.gmp.mpz cimport mpz_init_set_si
 cimport sage.matrix.matrix as matrix
 cimport sage.matrix.matrix_sparse as matrix_sparse
 cimport sage.matrix.matrix_dense as matrix_dense
@@ -115,18 +113,13 @@ from sage.matrix.matrix2 import Matrix as Matrix2
 from .args cimport SparseEntry, MatrixArgs_init
 from sage.arith.misc import is_prime
 
-from sage.structure.element import is_Vector
-
 cimport sage.structure.element
 
 from sage.data_structures.binary_search cimport *
 from sage.modules.vector_integer_sparse cimport *
 
-from .matrix_integer_sparse cimport Matrix_integer_sparse
 from .matrix_integer_dense cimport Matrix_integer_dense
 from sage.modules.vector_integer_dense cimport Vector_integer_dense
-
-from sage.misc.decorators import rename_keyword
 
 ################
 # TODO: change this to use extern cdef's methods.

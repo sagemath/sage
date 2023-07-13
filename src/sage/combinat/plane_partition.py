@@ -38,8 +38,7 @@ from sage.structure.list_clone import ClonableArray
 from sage.structure.parent import Parent
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.rings.integer_ring import ZZ
-from sage.arith.misc import Sigma
-from sage.functions.other import floor, ceil, binomial, factorial
+from sage.arith.misc import Sigma, integer_floor as floor, integer_ceil as ceil, binomial, factorial
 from sage.sets.disjoint_union_enumerated_sets import DisjointUnionEnumeratedSets
 from sage.sets.family import Family
 from sage.sets.non_negative_integers import NonNegativeIntegers
@@ -213,7 +212,7 @@ class PlanePartition(ClonableArray,
             ValueError: entries not all integers
 
         """
-        if not all(all(a in ZZ for a in b) for b in self):
+        if not all(a in ZZ for b in self for a in b):
             raise ValueError("entries not all integers")
         for row in self:
             if not all(c >= 0 for c in row):
@@ -340,7 +339,7 @@ class PlanePartition(ClonableArray,
             sage: PP.number_of_boxes()
             6
         """
-        return sum(sum(k for k in row) for row in self)
+        return sum(sum(row) for row in self)
 
     def _repr_diagram(self, show_box=False, use_unicode=False) -> str:
         r"""
@@ -451,8 +450,8 @@ class PlanePartition(ClonableArray,
             return u"∅" if use_unicode else ""
 
         if use_unicode:
-            return u'\n'.join(u"".join(s for s in row) for row in drawing)
-        return '\n'.join("".join(s for s in row) for row in drawing)
+            return u'\n'.join(u"".join(row) for row in drawing)
+        return '\n'.join("".join(row) for row in drawing)
 
     def _ascii_art_(self):
         r"""
@@ -668,7 +667,7 @@ class PlanePartition(ClonableArray,
         EXAMPLES::
 
             sage: PP = PlanePartition([[4,3,3,1],[2,1,1],[1,1]])
-            sage: PP.plot()
+            sage: PP.plot()                                                             # optional - sage.plot
             Graphics object consisting of 27 graphics primitives
         """
         from sage.functions.trig import cos, sin
@@ -765,7 +764,7 @@ class PlanePartition(ClonableArray,
         EXAMPLES::
 
             sage: PP = PlanePartition([[4,3,3,1],[2,1,1],[1,1]])
-            sage: PP.plot3d()
+            sage: PP.plot3d()                                                           # optional - sage.plot
             Graphics3d Object
         """
         if colors is None:
@@ -1374,7 +1373,7 @@ class PlanePartitions(UniqueRepresentation, Parent):
         if isinstance(pp, (list, tuple)):
             if not pp:
                 return True
-            if not all(all(a in ZZ for a in b) for b in pp):
+            if not all(a in ZZ for b in pp for a in b):
                 return False
             for row in pp:
                 if not all(c >= 0 for c in row):
@@ -1852,7 +1851,8 @@ class PlanePartitions_SPP(PlanePartitions):
         def comp(x, y):
             return all(a <= b for a, b in zip(x, y))
 
-        pl = [(x, y, z) for x in range(a) for y in range(x+1) for z in range(c)]
+        pl = [(x, y, z) for x in range(a) for y in range(x + 1)
+              for z in range(c)]
         from sage.combinat.posets.posets import Poset
         return Poset((pl, comp))
 
@@ -2048,7 +2048,7 @@ class PlanePartitions_CSPP(PlanePartitions):
             return comp(x, y) or comp(x, (y[2], y[0], y[1])) or comp(x, (y[1], y[2], y[0]))
 
         pl = [(x, y, z) for x in range(a) for y in range(b) for z in range(x, c)
-              if y <= z  and (x != z or y == x)]
+              if y <= z and (x != z or y == x)]
         from sage.combinat.posets.posets import Poset
         return Poset((pl, comp2))
 
