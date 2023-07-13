@@ -180,9 +180,10 @@ The :meth:`call` method takes a sage/Python function and zero or more
 expression trees, and returns an expression tree representing
 the function call. ::
 
-    sage: v3 = etb.call(sin, v1+v2)                                                     # needs sage.symbolic
+    sage: v3 = etb.call(sin, v1+v2)
     sage: v3                                                                            # needs sage.symbolic
-    sin(add(add(mul(add(v_0, v_1), add(v_1, v_1)), floordiv(v_1, v_1)), add(mul(3.14159000000000, v_0), mul(1729, v_1))))
+    sin(add(add(mul(add(v_0, v_1), add(v_1, v_1)), floordiv(v_1, v_1)),
+            add(mul(3.14159000000000, v_0), mul(1729, v_1))))
 
 Many sage/Python built-in functions are specially handled; for instance,
 when evaluating an expression involving :func:`sin` over ``RDF``,
@@ -225,10 +226,12 @@ Here we take sin of the first argument and add it to f::
     sage: from sage.ext.fast_callable import ExpressionTreeBuilder
     sage: etb = ExpressionTreeBuilder('x')
     sage: x = etb.var('x')
-    sage: f = etb.call(sqrt, x^7 + 1)                                                   # needs sage.symbolic
-    sage: g = etb.call(sin, x)                                                          # needs sage.symbolic
-    sage: fast_callable(f+g).op_list()                                                  # needs sage.symbolic
-    [('load_arg', 0), ('ipow', 7), ('load_const', 1), 'add', ('py_call', <function sqrt at ...>, 1), ('load_arg', 0), ('py_call', sin, 1), 'add', 'return']
+    sage: f = etb.call(sqrt, x^7 + 1)
+    sage: g = etb.call(sin, x)
+    sage: fast_callable(f+g).op_list()
+    [('load_arg', 0), ('ipow', 7), ('load_const', 1), 'add',
+     ('py_call', <function sqrt at ...>, 1), ('load_arg', 0), ('py_call', sin, 1),
+     'add', 'return']
 
 
 AUTHOR:
@@ -354,32 +357,44 @@ def fast_callable(x, domain=None, vars=None,
     the RDF interpreter; elements of RDF just don't display all
     their digits. We have special fast interpreter for domain=CDF::
 
-        sage: f_float = fast_callable(expr, vars=[x], domain=float)                     # needs sage.symbolic
-        sage: f_float(2)                                                                # needs sage.symbolic
+        sage: # needs sage.symbolic
+        sage: f_float = fast_callable(expr, vars=[x], domain=float)
+        sage: f_float(2)
         12.909297426825681
-        sage: f_rdf = fast_callable(expr, vars=[x], domain=RDF)                         # needs sage.symbolic
-        sage: f_rdf(2)                                                                  # needs sage.symbolic
+        sage: f_rdf = fast_callable(expr, vars=[x], domain=RDF)
+        sage: f_rdf(2)
         12.909297426825681
-        sage: f_cdf = fast_callable(expr, vars=[x], domain=CDF)                         # needs sage.symbolic
-        sage: f_cdf(2)                                                                  # needs sage.symbolic
+        sage: f_cdf = fast_callable(expr, vars=[x], domain=CDF)
+        sage: f_cdf(2)
         12.909297426825681
-        sage: f_cdf(2+I)                                                                # needs sage.symbolic
+        sage: f_cdf(2+I)
         10.40311925062204 + 11.510943740958707*I
-        sage: f = fast_callable(expr, vars=('z','x','y'))                               # needs sage.symbolic
-        sage: f(1, 2, 3)                                                                # needs sage.symbolic
+        sage: f = fast_callable(expr, vars=('z','x','y'))
+        sage: f(1, 2, 3)
         sin(2) + 12
+
         sage: K.<x> = QQ[]
         sage: p = -1/4*x^6 + 1/2*x^5 - x^4 - 12*x^3 + 1/2*x^2 - 1/95*x - 1/2
         sage: fp = fast_callable(p, domain=RDF)
         sage: fp.op_list()
-        [('load_arg', 0), ('load_const', -0.25), 'mul', ('load_const', 0.5), 'add', ('load_arg', 0), 'mul', ('load_const', -1.0), 'add', ('load_arg', 0), 'mul', ('load_const', -12.0), 'add', ('load_arg', 0), 'mul', ('load_const', 0.5), 'add', ('load_arg', 0), 'mul', ('load_const', -0.010526315789473684), 'add', ('load_arg', 0), 'mul', ('load_const', -0.5), 'add', 'return']
+        [('load_arg', 0), ('load_const', -0.25), 'mul', ('load_const', 0.5), 'add',
+         ('load_arg', 0), 'mul', ('load_const', -1.0), 'add', ('load_arg', 0), 'mul',
+         ('load_const', -12.0), 'add', ('load_arg', 0), 'mul', ('load_const', 0.5),
+         'add', ('load_arg', 0), 'mul', ('load_const', -0.010526315789473684),
+         'add', ('load_arg', 0), 'mul', ('load_const', -0.5), 'add', 'return']
         sage: fp(3.14159)
         -552.4182988917153
+
         sage: K.<x,y,z> = QQ[]
         sage: p = x*y^2 + 1/3*y^2 - x*z - y*z
         sage: fp = fast_callable(p, domain=RDF)
         sage: fp.op_list()
-        [('load_const', 0.0), ('load_const', 1.0), ('load_arg', 0), ('ipow', 1), ('load_arg', 1), ('ipow', 2), 'mul', 'mul', 'add', ('load_const', 0.3333333333333333), ('load_arg', 1), ('ipow', 2), 'mul', 'add', ('load_const', -1.0), ('load_arg', 0), ('ipow', 1), ('load_arg', 2), ('ipow', 1), 'mul', 'mul', 'add', ('load_const', -1.0), ('load_arg', 1), ('ipow', 1), ('load_arg', 2), ('ipow', 1), 'mul', 'mul', 'add', 'return']
+        [('load_const', 0.0), ('load_const', 1.0), ('load_arg', 0), ('ipow', 1),
+         ('load_arg', 1), ('ipow', 2), 'mul', 'mul', 'add',
+         ('load_const', 0.3333333333333333), ('load_arg', 1), ('ipow', 2), 'mul', 'add',
+         ('load_const', -1.0), ('load_arg', 0), ('ipow', 1), ('load_arg', 2),
+         ('ipow', 1), 'mul', 'mul', 'add', ('load_const', -1.0), ('load_arg', 1),
+         ('ipow', 1), ('load_arg', 2), ('ipow', 1), 'mul', 'mul', 'add', 'return']
         sage: fp(e, pi, sqrt(2))   # abs tol 3e-14                                      # needs sage.symbolic
         21.831120464939584
         sage: symbolic_result = p(e, pi, sqrt(2)); symbolic_result                      # needs sage.symbolic
@@ -393,10 +408,10 @@ def fast_callable(x, domain=None, vars=None,
         sage: etb = ExpressionTreeBuilder(vars=('x','y'), domain=float)
         sage: x = etb.var('x')
         sage: y = etb.var('y')
-        sage: expr = etb.call(sin, x^2 + y); expr                                       # needs sage.symbolic
+        sage: expr = etb.call(sin, x^2 + y); expr
         sin(add(ipow(v_0, 2), v_1))
-        sage: fc = fast_callable(expr, domain=float)                                    # needs sage.symbolic
-        sage: fc(5, 7)                                                                  # needs sage.symbolic
+        sage: fc = fast_callable(expr, domain=float)
+        sage: fc(5, 7)
         0.5514266812416906
 
     Check that fast_callable also works for symbolic functions with evaluation
@@ -511,7 +526,7 @@ def _builder_and_stream(vars, domain):
     interpreter::
 
         sage: domain = RDF
-        sage: from sage.structure.element import Element as domain                      # needs sage.modules
+        sage: from sage.structure.element import Element as domain
         sage: _builder_and_stream(["x", "y"], domain)
         (<class 'sage.ext.interpreters.wrapper_el.Wrapper_el'>,
          <sage.ext.fast_callable.InstructionStream object at 0x...>)
@@ -725,18 +740,19 @@ cdef class ExpressionTreeBuilder:
 
         EXAMPLES::
 
+            sage: # needs sage.symbolic
             sage: from sage.ext.fast_callable import ExpressionTreeBuilder
-            sage: var('a,b,some_really_long_name')                                      # needs sage.symbolic
+            sage: var('a,b,some_really_long_name')
             (a, b, some_really_long_name)
             sage: x = polygen(QQ)
-            sage: etb = ExpressionTreeBuilder(vars=('a','b',some_really_long_name, x))  # needs sage.symbolic
-            sage: etb.var(some_really_long_name)                                        # needs sage.symbolic
+            sage: etb = ExpressionTreeBuilder(vars=('a','b',some_really_long_name, x))
+            sage: etb.var(some_really_long_name)
             v_2
-            sage: etb.var('some_really_long_name')                                      # needs sage.symbolic
+            sage: etb.var('some_really_long_name')
             v_2
-            sage: etb.var(x)                                                            # needs sage.symbolic
+            sage: etb.var(x)
             v_3
-            sage: etb.var('y')                                                          # needs sage.symbolic
+            sage: etb.var('y')
             Traceback (most recent call last):
             ...
             ValueError: Variable 'y' not found...
@@ -1717,7 +1733,7 @@ cpdef dict get_builtin_functions():
          'mul', 'neg', 'pow', 'sec', 'sin', 'sinh', 'sqrt', 'sub', 'tan', 'tanh']
         sage: builtins[sin]                                                             # needs sage.symbolic
         'sin'
-        sage: builtins[ln]                                                              # needs sage.symbolic
+        sage: builtins[ln]
         'log'
     """
     # We delay building builtin_functions to break a circular import
@@ -1768,17 +1784,19 @@ cpdef generate_code(Expression expr, InstructionStream stream):
     EXAMPLES::
 
         sage: from sage.ext.fast_callable import ExpressionTreeBuilder, generate_code, InstructionStream
+
+        sage: # needs sage.symbolic
         sage: etb = ExpressionTreeBuilder('x')
         sage: x = etb.var('x')
-        sage: expr = (x+pi) * (x+1)                                                     # needs sage.symbolic
+        sage: expr = (x+pi) * (x+1)
         sage: from sage.ext.interpreters.wrapper_py import metadata, Wrapper_py
         sage: instr_stream = InstructionStream(metadata, 1)
-        sage: generate_code(expr, instr_stream)                                         # needs sage.symbolic
+        sage: generate_code(expr, instr_stream)
         sage: instr_stream.instr('return')
         sage: v = Wrapper_py(instr_stream.get_current())
         sage: type(v)
         <class 'sage.ext.interpreters.wrapper_py.Wrapper_py'>
-        sage: v(7)                                                                      # needs sage.symbolic
+        sage: v(7)
         8*pi + 56
 
     TESTS::
@@ -1788,36 +1806,42 @@ cpdef generate_code(Expression expr, InstructionStream stream):
         sage: def my_sqrt(x):
         ....:     if x < 0: raise ValueError("sqrt of negative number")
         ....:     return sqrt(x, extend=False)
-        sage: fc = fast_callable(expr, domain=RealField(130))                           # needs sage.symbolic
-        sage: fc(0)                                                                     # needs sage.symbolic
+
+        sage: # needs sage.symbolic
+        sage: fc = fast_callable(expr, domain=RealField(130))
+        sage: fc(0)
         3.1415926535897932384626433832795028842
-        sage: fc(1)                                                                     # needs sage.symbolic
+        sage: fc(1)
         8.2831853071795864769252867665590057684
-        sage: fc = fast_callable(expr, domain=RDF)                                      # needs sage.symbolic
-        sage: fc(0)                                                                     # needs sage.symbolic
+        sage: fc = fast_callable(expr, domain=RDF)
+        sage: fc(0)
         3.141592653589793
-        sage: fc(1)                                                                     # needs sage.symbolic
+        sage: fc(1)
         8.283185307179586
-        sage: fc.op_list()                                                              # needs sage.symbolic
+        sage: fc.op_list()
         [('load_arg', 0), ('load_const', pi), 'add', ('load_arg', 0), ('load_const', 1), 'add', 'mul', 'return']
-        sage: fc = fast_callable(etb.call(sin, x) + etb.call(sqrt, x), domain=RDF)      # needs sage.symbolic
-        sage: fc(1)                                                                     # needs sage.symbolic
+        sage: fc = fast_callable(etb.call(sin, x) + etb.call(sqrt, x), domain=RDF)
+        sage: fc(1)
         1.8414709848078965
-        sage: fc.op_list()                                                              # needs sage.symbolic
+        sage: fc.op_list()
         [('load_arg', 0), 'sin', ('load_arg', 0), 'sqrt', 'add', 'return']
-        sage: fc = fast_callable(etb.call(sin, x) + etb.call(sqrt, x))                  # needs sage.symbolic
-        sage: fc(1)                                                                     # needs sage.symbolic
+        sage: fc = fast_callable(etb.call(sin, x) + etb.call(sqrt, x))
+        sage: fc(1)
         sin(1) + 1
-        sage: fc.op_list()                                                              # needs sage.symbolic
+        sage: fc.op_list()
         [('load_arg', 0), ('py_call', sin, 1), ('load_arg', 0), ('py_call', <function sqrt at ...>, 1), 'add', 'return']
         sage: fc = fast_callable(etb.call(my_sin, x), domain=RDF)
-        sage: fc(3)                                                                     # needs sage.symbolic
+        sage: fc(3)
         0.1411200080598672
-        sage: fc = fast_callable(etb.call(my_sin, x), domain=RealField(100))            # needs sage.rings.real_mpfr
-        sage: fc(3)                                                                     # needs sage.rings.real_mpfr sage.symbolic
+
+        sage: # needs sage.rings.real_mpfr sage.symbolic
+        sage: fc = fast_callable(etb.call(my_sin, x), domain=RealField(100))
+        sage: fc(3)
         0.14112000805986722210074480281
-        sage: fc.op_list()                                                              # needs sage.rings.real_mpfr
+        sage: fc.op_list()
         [('load_arg', 0), ('py_call', <function my_sin at 0x...>, 1), 'return']
+
+        sage: # needs sage.symbolic
         sage: fc = fast_callable(etb.call(my_sqrt, x), domain=RDF)
         sage: fc(3)
         1.7320508075688772
@@ -1834,6 +1858,7 @@ cpdef generate_code(Expression expr, InstructionStream stream):
         Traceback (most recent call last):
         ...
         ValueError: sqrt of negative number
+
         sage: etb2 = ExpressionTreeBuilder(('y','z'))
         sage: y = etb2.var('y')
         sage: z = etb2.var('z')
@@ -1852,31 +1877,34 @@ cpdef generate_code(Expression expr, InstructionStream stream):
         25
         sage: fc.op_list()
         [('load_arg', 0), ('load_arg', 1), ('py_call', <function my_norm at 0x...>, 2), 'return']
-        sage: fc = fast_callable(expr)                                                  # needs sage.symbolic
-        sage: fc(3.0r)                                                                  # needs sage.symbolic
+
+        sage: # needs sage.symbolic
+        sage: fc = fast_callable(expr)
+        sage: fc(3.0r)
         4.0*pi + 12.0
-        sage: fc = fast_callable(x+3, domain=ZZ)                                        # needs sage.symbolic
-        sage: fc(4)                                                                     # needs sage.symbolic
+        sage: fc = fast_callable(x+3, domain=ZZ)
+        sage: fc(4)
         7
-        sage: fc = fast_callable(x/3, domain=ZZ)                                        # needs sage.symbolic
-        sage: fc(4)                                                                     # needs sage.symbolic
+        sage: fc = fast_callable(x/3, domain=ZZ)
+        sage: fc(4)
         Traceback (most recent call last):
         ...
         TypeError: no conversion of this rational to integer
-        sage: fc(6)                                                                     # needs sage.symbolic
+        sage: fc(6)
         2
-        sage: fc = fast_callable(etb.call(sin, x), domain=ZZ)                           # needs sage.symbolic
-        sage: fc(0)                                                                     # needs sage.symbolic
+        sage: fc = fast_callable(etb.call(sin, x), domain=ZZ)
+        sage: fc(0)
         0
-        sage: fc(3)                                                                     # needs sage.symbolic
+        sage: fc(3)
         Traceback (most recent call last):
         ...
         TypeError: unable to convert sin(3) to an integer
 
     ::
 
+        sage: # needs sage.symbolic
         sage: fc = fast_callable(etb(x)^100)
-        sage: fc(pi)                                                                    # needs sage.symbolic
+        sage: fc(pi)
         pi^100
         sage: fc = fast_callable(etb(x)^100, domain=ZZ)
         sage: fc(2)
@@ -2152,7 +2180,7 @@ cdef class InstructionStream:
             sage: instr_stream.instr('load_arg', 0)
             sage: instr_stream.instr('sin')                                             # needs sage.symbolic
             sage: instr_stream.instr('py_call', math.sin, 1)
-            sage: instr_stream.instr('abs')                                             # needs sage.symbolic
+            sage: instr_stream.instr('abs')
             sage: instr_stream.instr('factorial')
             Traceback (most recent call last):
             ...
