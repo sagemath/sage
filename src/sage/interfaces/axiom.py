@@ -796,12 +796,12 @@ class PanAxiomElement(ExpectElement, sage.interfaces.abc.AxiomElement):
             2.12340000000000
             sage: _.parent()             #optional - axiom
             Real Field with 53 bits of precision
-            sage: a = RealField(100)(pi)                                                # optional - sage.symbolic
-            sage: axiom(a)._sage_()      #optional - axiom                              # optional - sage.symbolic
+            sage: a = RealField(100)(pi)                                                # needs sage.symbolic
+            sage: axiom(a)._sage_()             # optional - axiom                      # needs sage.symbolic
             3.1415926535897932384626433833
-            sage: _.parent()             #optional - axiom                              # optional - sage.symbolic
+            sage: _.parent()                    # optional - axiom                      # needs sage.symbolic
             Real Field with 100 bits of precision
-            sage: axiom(a)._sage_() == a #optional - axiom                              # optional - sage.symbolic
+            sage: axiom(a)._sage_() == a        # optional - axiom                      # needs sage.symbolic
             True
             sage: axiom(2.0)._sage_() #optional - axiom
             2.00000000000000
@@ -810,16 +810,16 @@ class PanAxiomElement(ExpectElement, sage.interfaces.abc.AxiomElement):
 
 
         We can also convert Axiom's polynomials to Sage polynomials.
-            sage: a = axiom(x^2 + 1)   #optional - axiom                                # optional - sage.symbolic
-            sage: a.type()             #optional - axiom                                # optional - sage.symbolic
+            sage: a = axiom(x^2 + 1)            # optional - axiom                      # needs sage.symbolic
+            sage: a.type()                      # optional - axiom                      # needs sage.symbolic
             Polynomial Integer
-            sage: a.sage()             #optional - axiom                                # optional - sage.symbolic
+            sage: a.sage()                      # optional - axiom                      # needs sage.symbolic
             x^2 + 1
-            sage: _.parent()           #optional - axiom                                # optional - sage.symbolic
+            sage: _.parent()                    # optional - axiom                      # needs sage.symbolic
             Univariate Polynomial Ring in x over Integer Ring
-            sage: axiom('x^2 + y^2 + 1/2').sage()    #optional - axiom                  # optional - sage.symbolic
+            sage: axiom('x^2 + y^2 + 1/2').sage()       # optional - axiom              # needs sage.symbolic
             y^2 + x^2 + 1/2
-            sage: _.parent()                         #optional - axiom                  # optional - sage.symbolic
+            sage: _.parent()                    # optional - axiom                      # needs sage.symbolic
             Multivariate Polynomial Ring in y, x over Rational Field
 
 

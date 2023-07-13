@@ -63,14 +63,14 @@ def expect_quitall(verbose=False):
     EXAMPLES::
 
         sage: sage.interfaces.quit.expect_quitall()
-        sage: gp.eval('a=10')                                                           # optional - sage.libs.pari
+        sage: gp.eval('a=10')                                                           # needs sage.libs.pari
         '10'
-        sage: gp('a')                                                                   # optional - sage.libs.pari
+        sage: gp('a')                                                                   # needs sage.libs.pari
         10
         sage: sage.interfaces.quit.expect_quitall()
-        sage: gp('a')                                                                   # optional - sage.libs.pari
+        sage: gp('a')                                                                   # needs sage.libs.pari
         a
-        sage: sage.interfaces.quit.expect_quitall(verbose=True)                         # optional - sage.libs.pari
+        sage: sage.interfaces.quit.expect_quitall(verbose=True)                         # needs sage.libs.pari
         Exiting PARI/GP interpreter with PID ... running .../gp --fast --emacs --quiet --stacksize 10000000
     """
     for P in expect_objects:
@@ -92,13 +92,13 @@ def kill_spawned_jobs(verbose=False):
 
     EXAMPLES::
 
-        sage: gp.eval('a=10')                                                           # optional - sage.libs.pari
+        sage: gp.eval('a=10')                                                           # needs sage.libs.pari
         '10'
         sage: sage.interfaces.quit.kill_spawned_jobs(verbose=False)
         sage: sage.interfaces.quit.expect_quitall()
-        sage: gp.eval('a=10')                                                           # optional - sage.libs.pari
+        sage: gp.eval('a=10')                                                           # needs sage.libs.pari
         '10'
-        sage: sage.interfaces.quit.kill_spawned_jobs(verbose=True)                      # optional - sage.libs.pari
+        sage: sage.interfaces.quit.kill_spawned_jobs(verbose=True)                      # needs sage.libs.pari
         Killing spawned job ...
 
     After doing the above, we do the following to avoid confusion in other doctests::
@@ -140,19 +140,19 @@ def invalidate_all():
 
     EXAMPLES::
 
-        sage: a = maxima(2); b = gp(3)                                                  # optional - sage.libs.pari sage.symbolic
-        sage: a, b                                                                      # optional - sage.libs.pari sage.symbolic
+        sage: a = maxima(2); b = gp(3)                                                  # needs sage.libs.pari sage.symbolic
+        sage: a, b                                                                      # needs sage.libs.pari sage.symbolic
         (2, 3)
-        sage: sage.interfaces.quit.invalidate_all()                                     # optional - sage.libs.pari sage.symbolic
-        sage: a                                                                         # optional - sage.libs.pari sage.symbolic
+        sage: sage.interfaces.quit.invalidate_all()                                     # needs sage.libs.pari sage.symbolic
+        sage: a                                                                         # needs sage.libs.pari sage.symbolic
         (invalid Maxima object -- The maxima session in which this object was defined is no longer running.)
-        sage: b                                                                         # optional - sage.libs.pari sage.symbolic
+        sage: b                                                                         # needs sage.libs.pari sage.symbolic
         (invalid PARI/GP interpreter object -- The pari session in which this object was defined is no longer running.)
 
     However the maxima and gp sessions should still work out, though with their state reset::
 
-        sage: a = maxima(2); b = gp(3)                                                  # optional - sage.libs.pari sage.symbolic
-        sage: a, b                                                                      # optional - sage.libs.pari sage.symbolic
+        sage: a = maxima(2); b = gp(3)                                                  # needs sage.libs.pari sage.symbolic
+        sage: a, b                                                                      # needs sage.libs.pari sage.symbolic
         (2, 3)
     """
     for I in expect_objects:

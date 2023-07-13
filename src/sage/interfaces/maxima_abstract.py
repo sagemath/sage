@@ -1020,13 +1020,13 @@ class MaximaAbstract(ExtraTabCompletion, Interface):
 
         EXAMPLES::
 
-            sage: zeta_ptsx = [(pari(1/2 + i*I/10).zeta().real()).precision(1)          # optional - sage.libs.pari
+            sage: zeta_ptsx = [(pari(1/2 + i*I/10).zeta().real()).precision(1)          # needs sage.libs.pari
             ....:              for i in range(70,150)]
-            sage: zeta_ptsy = [(pari(1/2 + i*I/10).zeta().imag()).precision(1)          # optional - sage.libs.pari
+            sage: zeta_ptsy = [(pari(1/2 + i*I/10).zeta().imag()).precision(1)          # needs sage.libs.pari
             ....:              for i in range(70,150)]
-            sage: maxima.plot_list(zeta_ptsx, zeta_ptsy)            # not tested        # optional - sage.libs.pari
+            sage: maxima.plot_list(zeta_ptsx, zeta_ptsy)        # not tested            # needs sage.libs.pari
             sage: opts='[gnuplot_preamble, "set nokey"], [gnuplot_term, ps], [gnuplot_out_file, "zeta.eps"]'
-            sage: maxima.plot_list(zeta_ptsx, zeta_ptsy, opts)      # not tested        # optional - sage.libs.pari
+            sage: maxima.plot_list(zeta_ptsx, zeta_ptsy, opts)  # not tested            # needs sage.libs.pari
         """
         cmd = 'plot2d([discrete,%s, %s]'%(ptsx, ptsy)
         if options is None:
@@ -1062,14 +1062,14 @@ class MaximaAbstract(ExtraTabCompletion, Interface):
             sage: yy = [i/10.0 for i in range(-10,10)]
             sage: x0 = [0 for i in range(-10,10)]
             sage: y0 = [0 for i in range(-10,10)]
-            sage: zeta_ptsx1 = [(pari(1/2+i*I/10).zeta().real()).precision(1)           # optional - sage.libs.pari
+            sage: zeta_ptsx1 = [(pari(1/2+i*I/10).zeta().real()).precision(1)           # needs sage.libs.pari
             ....:               for i in range(10)]
-            sage: zeta_ptsy1 = [(pari(1/2+i*I/10).zeta().imag()).precision(1)           # optional - sage.libs.pari
+            sage: zeta_ptsy1 = [(pari(1/2+i*I/10).zeta().imag()).precision(1)           # needs sage.libs.pari
             ....:               for i in range(10)]
             sage: maxima.plot_multilist([[zeta_ptsx1,zeta_ptsy1], [xx,y0], [x0,yy]])    # not tested
-            sage: zeta_ptsx1 = [(pari(1/2+i*I/10).zeta().real()).precision(1)           # optional - sage.libs.pari
+            sage: zeta_ptsx1 = [(pari(1/2+i*I/10).zeta().real()).precision(1)           # needs sage.libs.pari
             ....:               for i in range(10,150)]
-            sage: zeta_ptsy1 = [(pari(1/2+i*I/10).zeta().imag()).precision(1)           # optional - sage.libs.pari
+            sage: zeta_ptsy1 = [(pari(1/2+i*I/10).zeta().imag()).precision(1)           # needs sage.libs.pari
             ....:               for i in range(10,150)]
             sage: maxima.plot_multilist([[zeta_ptsx1,zeta_ptsy1], [xx,y0], [x0,yy]])    # not tested
             sage: opts='[gnuplot_preamble, "set nokey"]'
