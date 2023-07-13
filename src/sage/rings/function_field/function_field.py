@@ -9,122 +9,126 @@ EXAMPLES:
 
 We create a rational function field::
 
-    sage: K.<x> = FunctionField(GF(5^2,'a')); K                                         # optional - sage.rings.finite_rings
+    sage: # needs sage.rings.finite_rings
+    sage: K.<x> = FunctionField(GF(5^2,'a')); K
     Rational function field in x over Finite Field in a of size 5^2
-    sage: K.genus()                                                                     # optional - sage.rings.finite_rings
+    sage: K.genus()
     0
-    sage: f = (x^2 + x + 1) / (x^3 + 1)                                                 # optional - sage.rings.finite_rings
-    sage: f                                                                             # optional - sage.rings.finite_rings
+    sage: f = (x^2 + x + 1) / (x^3 + 1)
+    sage: f
     (x^2 + x + 1)/(x^3 + 1)
-    sage: f^3                                                                           # optional - sage.rings.finite_rings
+    sage: f^3
     (x^6 + 3*x^5 + x^4 + 2*x^3 + x^2 + 3*x + 1)/(x^9 + 3*x^6 + 3*x^3 + 1)
 
 Then we create an extension of the rational function field, and do some
 simple arithmetic in it::
 
-    sage: R.<y> = K[]                                                                   # optional - sage.rings.finite_rings
-    sage: L.<y> = K.extension(y^3 - (x^3 + 2*x*y + 1/x)); L                             # optional - sage.rings.finite_rings sage.rings.function_field
+    sage: # needs sage.rings.finite_rings
+    sage: R.<y> = K[]
+    sage: L.<y> = K.extension(y^3 - (x^3 + 2*x*y + 1/x)); L                             # needs sage.rings.function_field
     Function field in y defined by y^3 + 3*x*y + (4*x^4 + 4)/x
-    sage: y^2                                                                           # optional - sage.rings.finite_rings sage.rings.function_field
+    sage: y^2                                                                           # needs sage.rings.function_field
     y^2
-    sage: y^3                                                                           # optional - sage.rings.finite_rings sage.rings.function_field
+    sage: y^3                                                                           # needs sage.rings.function_field
     2*x*y + (x^4 + 1)/x
-    sage: a = 1/y; a                                                                    # optional - sage.rings.finite_rings sage.rings.function_field
+    sage: a = 1/y; a                                                                    # needs sage.rings.function_field
     (x/(x^4 + 1))*y^2 + 3*x^2/(x^4 + 1)
-    sage: a * y                                                                         # optional - sage.rings.finite_rings sage.rings.function_field
+    sage: a * y                                                                         # needs sage.rings.function_field
     1
 
 We next make an extension of the above function field, illustrating
 that arithmetic with a tower of three fields is fully supported::
 
-    sage: S.<t> = L[]                                                                   # optional - sage.rings.finite_rings sage.rings.function_field
-    sage: M.<t> = L.extension(t^2 - x*y)                                                # optional - sage.rings.finite_rings sage.rings.function_field
-    sage: M                                                                             # optional - sage.rings.finite_rings sage.rings.function_field
+    sage: # needs sage.rings.finite_rings sage.rings.function_field
+    sage: S.<t> = L[]
+    sage: M.<t> = L.extension(t^2 - x*y)
+    sage: M
     Function field in t defined by t^2 + 4*x*y
-    sage: t^2                                                                           # optional - sage.rings.finite_rings sage.rings.function_field
+    sage: t^2
     x*y
-    sage: 1/t                                                                           # optional - sage.rings.finite_rings sage.rings.function_field
+    sage: 1/t
     ((1/(x^4 + 1))*y^2 + 3*x/(x^4 + 1))*t
-    sage: M.base_field()                                                                # optional - sage.rings.finite_rings sage.rings.function_field
+    sage: M.base_field()
     Function field in y defined by y^3 + 3*x*y + (4*x^4 + 4)/x
-    sage: M.base_field().base_field()                                                   # optional - sage.rings.finite_rings sage.rings.function_field
+    sage: M.base_field().base_field()
     Rational function field in x over Finite Field in a of size 5^2
 
 It is also possible to construct function fields over an imperfect base field::
 
-    sage: N.<u> = FunctionField(K)                                                      # optional - sage.rings.finite_rings
+    sage: N.<u> = FunctionField(K)                                                      # needs sage.rings.finite_rings
 
 and inseparable extension function fields::
 
-    sage: J.<x> = FunctionField(GF(5)); J                                               # optional - sage.rings.finite_rings
+    sage: J.<x> = FunctionField(GF(5)); J
     Rational function field in x over Finite Field of size 5
-    sage: T.<v> = J[]                                                                   # optional - sage.rings.finite_rings
-    sage: O.<v> = J.extension(v^5 - x); O                                               # optional - sage.rings.finite_rings sage.rings.function_field
+    sage: T.<v> = J[]
+    sage: O.<v> = J.extension(v^5 - x); O                                               # needs sage.rings.finite_rings sage.rings.function_field
     Function field in v defined by v^5 + 4*x
 
 Function fields over the rational field are supported::
 
     sage: F.<x> = FunctionField(QQ)
     sage: R.<Y> = F[]
-    sage: L.<y> = F.extension(Y^2 - x^8 - 1)                                            # optional - sage.rings.function_field
-    sage: O = L.maximal_order()                                                         # optional - sage.rings.function_field
-    sage: I = O.ideal(x, y - 1)                                                         # optional - sage.rings.function_field
-    sage: P = I.place()                                                                 # optional - sage.rings.function_field
-    sage: D = P.divisor()                                                               # optional - sage.rings.function_field
-    sage: D.basis_function_space()                                                      # optional - sage.rings.function_field
+    sage: L.<y> = F.extension(Y^2 - x^8 - 1)                                            # needs sage.rings.function_field
+    sage: O = L.maximal_order()                                                         # needs sage.rings.function_field
+    sage: I = O.ideal(x, y - 1)                                                         # needs sage.rings.function_field
+    sage: P = I.place()                                                                 # needs sage.rings.function_field
+    sage: D = P.divisor()                                                               # needs sage.rings.function_field
+    sage: D.basis_function_space()                                                      # needs sage.rings.function_field
     [1]
-    sage: (2*D).basis_function_space()                                                  # optional - sage.rings.function_field
+    sage: (2*D).basis_function_space()                                                  # needs sage.rings.function_field
     [1]
-    sage: (3*D).basis_function_space()                                                  # optional - sage.rings.function_field
+    sage: (3*D).basis_function_space()                                                  # needs sage.rings.function_field
     [1]
-    sage: (4*D).basis_function_space()                                                  # optional - sage.rings.function_field
+    sage: (4*D).basis_function_space()                                                  # needs sage.rings.function_field
     [1, 1/x^4*y + 1/x^4]
 
     sage: K.<x> = FunctionField(QQ); _.<Y> = K[]
-    sage: F.<y> = K.extension(Y^3 - x^2*(x^2 + x + 1)^2)                                # optional - sage.rings.function_field
-    sage: O = F.maximal_order()                                                         # optional - sage.rings.function_field
-    sage: I = O.ideal(y)                                                                # optional - sage.rings.function_field
-    sage: I.divisor()                                                                   # optional - sage.rings.function_field
+    sage: F.<y> = K.extension(Y^3 - x^2*(x^2 + x + 1)^2)                                # needs sage.rings.function_field
+    sage: O = F.maximal_order()
+    sage: I = O.ideal(y)                                                                # needs sage.rings.function_field
+    sage: I.divisor()                                                                   # needs sage.rings.function_field
     2*Place (x, y, (1/(x^3 + x^2 + x))*y^2)
      + 2*Place (x^2 + x + 1, y, (1/(x^3 + x^2 + x))*y^2)
 
     sage: K.<x> = FunctionField(QQ); _.<Y> = K[]
-    sage: L.<y> = K.extension(Y^2 + Y + x + 1/x)                                        # optional - sage.rings.function_field
-    sage: O = L.maximal_order()                                                         # optional - sage.rings.function_field
-    sage: I = O.ideal(y)                                                                # optional - sage.rings.function_field
-    sage: I.divisor()                                                                   # optional - sage.rings.function_field
+    sage: L.<y> = K.extension(Y^2 + Y + x + 1/x)                                        # needs sage.rings.function_field
+    sage: O = L.maximal_order()                                                         # needs sage.rings.function_field
+    sage: I = O.ideal(y)                                                                # needs sage.rings.function_field
+    sage: I.divisor()                                                                   # needs sage.rings.function_field
     - Place (x, x*y)
      + Place (x^2 + 1, x*y)
 
 Function fields over the algebraic field are supported::
 
-    sage: K.<x> = FunctionField(QQbar); _.<Y> = K[]                                     # optional - sage.rings.number_field
-    sage: L.<y> = K.extension(Y^2 + Y + x + 1/x)                                        # optional - sage.rings.function_field sage.rings.number_field
-    sage: O = L.maximal_order()                                                         # optional - sage.rings.function_field sage.rings.number_field
-    sage: I = O.ideal(y)                                                                # optional - sage.rings.function_field sage.rings.number_field
-    sage: I.divisor()                                                                   # optional - sage.rings.function_field sage.rings.number_field
+    sage: # needs sage.rings.number_field
+    sage: K.<x> = FunctionField(QQbar); _.<Y> = K[]
+    sage: L.<y> = K.extension(Y^2 + Y + x + 1/x)                                        # needs sage.rings.function_field
+    sage: O = L.maximal_order()                                                         # needs sage.rings.function_field
+    sage: I = O.ideal(y)                                                                # needs sage.rings.function_field
+    sage: I.divisor()                                                                   # needs sage.rings.function_field
     Place (x - I, x*y)
      - Place (x, x*y)
      + Place (x + I, x*y)
-    sage: pl = I.divisor().support()[0]                                                 # optional - sage.rings.function_field sage.rings.number_field
-    sage: m = L.completion(pl, prec=5)                                                  # optional - sage.rings.function_field sage.rings.number_field
-    sage: m(x)                                                                          # optional - sage.rings.function_field sage.rings.number_field
+    sage: pl = I.divisor().support()[0]                                                 # needs sage.rings.function_field
+    sage: m = L.completion(pl, prec=5)                                                  # needs sage.rings.function_field
+    sage: m(x)                                                                          # needs sage.rings.function_field
     I + s + O(s^5)
-    sage: m(y)                             # long time (4s)                             # optional - sage.rings.function_field sage.rings.number_field
+    sage: m(y)                                  # long time (4s)                        # needs sage.rings.function_field
     -2*s + (-4 - I)*s^2 + (-15 - 4*I)*s^3 + (-75 - 23*I)*s^4 + (-413 - 154*I)*s^5 + O(s^6)
-    sage: m(y)^2 + m(y) + m(x) + 1/m(x)    # long time (8s)                             # optional - sage.rings.function_field sage.rings.number_field
+    sage: m(y)^2 + m(y) + m(x) + 1/m(x)         # long time (8s)                        # needs sage.rings.function_field
     O(s^5)
 
 TESTS::
 
-    sage: TestSuite(J).run()                                                            # optional - sage.rings.finite_rings
-    sage: TestSuite(K).run(max_runs=256)   # long time (10s)                            # optional - sage.rings.number_field
-    sage: TestSuite(L).run(max_runs=8)     # long time (25s)                            # optional - sage.rings.function_field sage.rings.number_field
-    sage: TestSuite(M).run(max_runs=8)     # long time (35s)                            # optional - sage.rings.finite_rings sage.rings.function_field
-    sage: TestSuite(N).run(max_runs=8, skip='_test_derivation')      # long time (15s)  # optional - sage.rings.finite_rings
-    sage: TestSuite(O).run()                                                            # optional - sage.rings.function_field sage.rings.number_field
+    sage: TestSuite(J).run()                                                            # needs sage.rings.finite_rings
+    sage: TestSuite(K).run(max_runs=256)        # long time (10s)                       # needs sage.rings.number_field
+    sage: TestSuite(L).run(max_runs=8)          # long time (25s)                       # needs sage.rings.function_field sage.rings.number_field
+    sage: TestSuite(M).run(max_runs=8)          # long time (35s)                       # needs sage.rings.finite_rings sage.rings.function_field
+    sage: TestSuite(N).run(max_runs=8, skip='_test_derivation')         # long time (15s), needs sage.rings.finite_rings
+    sage: TestSuite(O).run()                                                            # needs sage.rings.function_field sage.rings.number_field
     sage: TestSuite(R).run()
-    sage: TestSuite(S).run()               # long time (4s)                             # optional - sage.rings.finite_rings sage.rings.function_field
+    sage: TestSuite(S).run()                    # long time (4s)                        # needs sage.rings.finite_rings sage.rings.function_field
 
 Global function fields
 ----------------------
@@ -139,31 +143,33 @@ A fundamental computation for a global or any function field is to get a basis
 of its maximal order and maximal infinite order, and then do arithmetic with
 ideals of those maximal orders::
 
-    sage: K.<x> = FunctionField(GF(3)); _.<t> = K[]                                     # optional - sage.rings.finite_rings
-    sage: L.<y> = K.extension(t^4 + t - x^5)                                            # optional - sage.rings.finite_rings sage.rings.function_field
-    sage: O = L.maximal_order()                                                         # optional - sage.rings.finite_rings sage.rings.function_field
-    sage: O.basis()                                                                     # optional - sage.rings.finite_rings sage.rings.function_field
+    sage: # needs sage.rings.finite_rings
+    sage: K.<x> = FunctionField(GF(3)); _.<t> = K[]
+    sage: L.<y> = K.extension(t^4 + t - x^5)                                            # needs sage.rings.function_field
+    sage: O = L.maximal_order()                                                         # needs sage.rings.function_field
+    sage: O.basis()                                                                     # needs sage.rings.function_field
     (1, y, 1/x*y^2 + 1/x*y, 1/x^3*y^3 + 2/x^3*y^2 + 1/x^3*y)
-    sage: I = O.ideal(x,y); I                                                           # optional - sage.rings.finite_rings sage.rings.function_field
+    sage: I = O.ideal(x,y); I                                                           # needs sage.rings.function_field
     Ideal (x, y) of Maximal order of Function field in y defined by y^4 + y + 2*x^5
-    sage: J = I^-1                                                                      # optional - sage.rings.finite_rings sage.rings.function_field
-    sage: J.basis_matrix()                                                              # optional - sage.rings.finite_rings sage.rings.function_field
+    sage: J = I^-1                                                                      # needs sage.rings.function_field
+    sage: J.basis_matrix()                                                              # needs sage.rings.function_field
     [  1   0   0   0]
     [1/x 1/x   0   0]
     [  0   0   1   0]
     [  0   0   0   1]
-    sage: L.maximal_order_infinite().basis()                                            # optional - sage.rings.finite_rings sage.rings.function_field
+    sage: L.maximal_order_infinite().basis()                                            # needs sage.rings.function_field
     (1, 1/x^2*y, 1/x^3*y^2, 1/x^4*y^3)
 
 As an example of the most sophisticated computations that Sage can do with a
 global function field, we compute all the Weierstrass places of the Klein
 quartic over `\GF{2}` and gap numbers for ordinary places::
 
-    sage: K.<x> = FunctionField(GF(2)); _.<Y> = K[]                                     # optional - sage.rings.finite_rings
-    sage: L.<y> = K.extension(Y^3 + x^3*Y + x)                                          # optional - sage.rings.finite_rings sage.rings.function_field
-    sage: L.genus()                                                                     # optional - sage.rings.finite_rings sage.rings.function_field
+    sage: # needs sage.rings.finite_rings
+    sage: K.<x> = FunctionField(GF(2)); _.<Y> = K[]
+    sage: L.<y> = K.extension(Y^3 + x^3*Y + x)                                          # needs sage.rings.function_field
+    sage: L.genus()                                                                     # needs sage.rings.function_field
     3
-    sage: L.weierstrass_places()                                                        # optional - sage.rings.finite_rings sage.modules sage.rings.function_field
+    sage: L.weierstrass_places()                                                        # needs sage.modules sage.rings.function_field
     [Place (1/x, 1/x^3*y^2 + 1/x),
      Place (1/x, 1/x^3*y^2 + 1/x^2*y + 1),
      Place (x, y),
@@ -174,17 +180,18 @@ quartic over `\GF{2}` and gap numbers for ordinary places::
      Place (x^3 + x^2 + 1, y + x),
      Place (x^3 + x^2 + 1, y + x^2 + 1),
      Place (x^3 + x^2 + 1, y + x^2 + x + 1)]
-    sage: L.gaps()                                                                      # optional - sage.rings.finite_rings sage.modules sage.rings.function_field
+    sage: L.gaps()                                                                      # needs sage.modules sage.rings.function_field
     [1, 2, 3]
 
 The gap numbers for Weierstrass places are of course not ordinary::
 
-    sage: p1,p2,p3 = L.weierstrass_places()[:3]                                         # optional - sage.rings.finite_rings sage.modules sage.rings.function_field
-    sage: p1.gaps()                                                                     # optional - sage.rings.finite_rings sage.modules sage.rings.function_field
+    sage: # needs sage.modules sage.rings.finite_rings sage.rings.function_field
+    sage: p1,p2,p3 = L.weierstrass_places()[:3]
+    sage: p1.gaps()
     [1, 2, 4]
-    sage: p2.gaps()                                                                     # optional - sage.rings.finite_rings sage.modules sage.rings.function_field
+    sage: p2.gaps()
     [1, 2, 4]
-    sage: p3.gaps()                                                                     # optional - sage.rings.finite_rings sage.modules sage.rings.function_field
+    sage: p3.gaps()
     [1, 2, 4]
 
 AUTHORS:
@@ -303,7 +310,7 @@ class FunctionField(Field):
 
             sage: FunctionField(QQ, 'x').is_perfect()
             True
-            sage: FunctionField(GF(2), 'x').is_perfect()                                # optional - sage.rings.finite_rings
+            sage: FunctionField(GF(2), 'x').is_perfect()
             False
         """
         return self.characteristic() == 0
@@ -331,8 +338,8 @@ class FunctionField(Field):
         ::
 
            sage: R.<y> = K[]
-           sage: L.<y> = K.extension(y^2 - x)                                           # optional - sage.rings.function_field
-           sage: L.some_elements()                                                      # optional - sage.rings.function_field
+           sage: L.<y> = K.extension(y^2 - x)                                           # needs sage.rings.function_field
+           sage: L.some_elements()                                                      # needs sage.rings.function_field
            [1,
             y,
             1/x*y,
@@ -366,15 +373,15 @@ class FunctionField(Field):
             sage: K.<x> = FunctionField(QQ)
             sage: K.characteristic()
             0
-            sage: K.<x> = FunctionField(QQbar)                                          # optional - sage.rings.number_field
-            sage: K.characteristic()                                                    # optional - sage.rings.number_field
+            sage: K.<x> = FunctionField(QQbar)                                          # needs sage.rings.number_field
+            sage: K.characteristic()
             0
-            sage: K.<x> = FunctionField(GF(7))                                          # optional - sage.rings.finite_rings
-            sage: K.characteristic()                                                    # optional - sage.rings.finite_rings
+            sage: K.<x> = FunctionField(GF(7))
+            sage: K.characteristic()
             7
-            sage: R.<y> = K[]                                                           # optional - sage.rings.finite_rings
-            sage: L.<y> = K.extension(y^2 - x)                                          # optional - sage.rings.finite_rings sage.rings.function_field
-            sage: L.characteristic()                                                    # optional - sage.rings.finite_rings sage.rings.function_field
+            sage: R.<y> = K[]
+            sage: L.<y> = K.extension(y^2 - x)                                          # needs sage.rings.finite_rings sage.rings.function_field
+            sage: L.characteristic()                                                    # needs sage.rings.finite_rings sage.rings.function_field
             7
         """
         return self.constant_base_field().characteristic()
@@ -388,8 +395,8 @@ class FunctionField(Field):
             sage: R.<t> = FunctionField(QQ)
             sage: R.is_finite()
             False
-            sage: R.<t> = FunctionField(GF(7))                                          # optional - sage.rings.finite_rings
-            sage: R.is_finite()                                                         # optional - sage.rings.finite_rings
+            sage: R.<t> = FunctionField(GF(7))
+            sage: R.is_finite()
             False
         """
         return False
@@ -404,11 +411,11 @@ class FunctionField(Field):
             sage: R.<t> = FunctionField(QQ)
             sage: R.is_global()
             False
-            sage: R.<t> = FunctionField(QQbar)                                          # optional - sage.rings.number_field
-            sage: R.is_global()                                                         # optional - sage.rings.number_field
+            sage: R.<t> = FunctionField(QQbar)                                          # needs sage.rings.number_field
+            sage: R.is_global()
             False
-            sage: R.<t> = FunctionField(GF(7))                                          # optional - sage.rings.finite_rings
-            sage: R.is_global()                                                         # optional - sage.rings.finite_rings
+            sage: R.<t> = FunctionField(GF(7))
+            sage: R.is_global()
             True
         """
         return self.constant_base_field().is_finite()
@@ -431,18 +438,18 @@ class FunctionField(Field):
         EXAMPLES::
 
             sage: K.<x> = FunctionField(QQ); R.<y> = K[]
-            sage: K.extension(y^5 - x^3 - 3*x + x*y)                                    # optional - sage.rings.function_field
+            sage: K.extension(y^5 - x^3 - 3*x + x*y)                                    # needs sage.rings.function_field
             Function field in y defined by y^5 + x*y - x^3 - 3*x
 
         A nonintegral defining polynomial::
 
             sage: K.<t> = FunctionField(QQ); R.<y> = K[]
-            sage: K.extension(y^3 + (1/t)*y + t^3/(t+1), 'z')                           # optional - sage.rings.function_field
+            sage: K.extension(y^3 + (1/t)*y + t^3/(t+1), 'z')                           # needs sage.rings.function_field
             Function field in z defined by z^3 + 1/t*z + t^3/(t + 1)
 
         The defining polynomial need not be monic or integral::
 
-            sage: K.extension(t*y^3 + (1/t)*y + t^3/(t+1))                              # optional - sage.rings.function_field
+            sage: K.extension(t*y^3 + (1/t)*y + t^3/(t+1))                              # needs sage.rings.function_field
             Function field in y defined by t*y^3 + 1/t*y + t^3/(t + 1)
         """
         from . import constructor
@@ -468,29 +475,29 @@ class FunctionField(Field):
         EXAMPLES::
 
             sage: K.<x> = FunctionField(QQ); R.<y> = K[]
-            sage: L.<y> = K.extension(y^3 + x^3 + 4*x + 1)                              # optional - sage.rings.function_field
-            sage: O = L.order_with_basis([1, y, y^2]); O                                # optional - sage.rings.function_field
+            sage: L.<y> = K.extension(y^3 + x^3 + 4*x + 1)                              # needs sage.rings.function_field
+            sage: O = L.order_with_basis([1, y, y^2]); O                                # needs sage.rings.function_field
             Order in Function field in y defined by y^3 + x^3 + 4*x + 1
-            sage: O.basis()                                                             # optional - sage.rings.function_field
+            sage: O.basis()                                                             # needs sage.rings.function_field
             (1, y, y^2)
 
         Note that 1 does not need to be an element of the basis, as long it is in the module spanned by it::
 
-            sage: O = L.order_with_basis([1+y, y, y^2]); O                              # optional - sage.rings.function_field
+            sage: O = L.order_with_basis([1+y, y, y^2]); O                              # needs sage.rings.function_field
             Order in Function field in y defined by y^3 + x^3 + 4*x + 1
-            sage: O.basis()                                                             # optional - sage.rings.function_field
+            sage: O.basis()                                                             # needs sage.rings.function_field
             (y + 1, y, y^2)
 
         The following error is raised when the module spanned by the basis is not closed under multiplication::
 
-            sage: O = L.order_with_basis([1, x^2 + x*y, (2/3)*y^2]); O                  # optional - sage.rings.function_field
+            sage: O = L.order_with_basis([1, x^2 + x*y, (2/3)*y^2]); O                  # needs sage.rings.function_field
             Traceback (most recent call last):
             ...
             ValueError: the module generated by basis (1, x*y + x^2, 2/3*y^2) must be closed under multiplication
 
         and this happens when the identity is not in the module spanned by the basis::
 
-            sage: O = L.order_with_basis([x, x^2 + x*y, (2/3)*y^2])                     # optional - sage.rings.function_field
+            sage: O = L.order_with_basis([x, x^2 + x*y, (2/3)*y^2])                     # needs sage.rings.function_field
             Traceback (most recent call last):
             ...
             ValueError: the identity element must be in the module spanned by basis (x, x*y + x^2, 2/3*y^2)
@@ -511,20 +518,20 @@ class FunctionField(Field):
         EXAMPLES::
 
             sage: K.<x> = FunctionField(QQ); R.<y> = K[]
-            sage: L.<y> = K.extension(y^3 + x^3 + 4*x + 1)                              # optional - sage.rings.function_field
-            sage: O = L.order(y); O                                                     # optional - sage.modules sage.rings.function_field
+            sage: L.<y> = K.extension(y^3 + x^3 + 4*x + 1)                              # needs sage.rings.function_field
+            sage: O = L.order(y); O                                                     # needs sage.modules sage.rings.function_field
             Order in Function field in y defined by y^3 + x^3 + 4*x + 1
-            sage: O.basis()                                                             # optional - sage.modules sage.rings.function_field
+            sage: O.basis()                                                             # needs sage.modules sage.rings.function_field
             (1, y, y^2)
 
-            sage: Z = K.order(x); Z                                                     # optional - sage.modules
+            sage: Z = K.order(x); Z                                                     # needs sage.modules
             Order in Rational function field in x over Rational Field
-            sage: Z.basis()                                                             # optional - sage.modules
+            sage: Z.basis()                                                             # needs sage.modules
             (1,)
 
         Orders with multiple generators are not yet supported::
 
-            sage: Z = K.order([x, x^2]); Z                                              # optional - sage.modules
+            sage: Z = K.order([x, x^2]); Z
             Traceback (most recent call last):
             ...
             NotImplementedError
@@ -556,24 +563,24 @@ class FunctionField(Field):
         EXAMPLES::
 
             sage: K.<x> = FunctionField(QQ); R.<y> = K[]
-            sage: L.<y> = K.extension(y^3 + x^3 + 4*x + 1)                              # optional - sage.rings.function_field
-            sage: O = L.order_infinite_with_basis([1, 1/x*y, 1/x^2*y^2]); O             # optional - sage.rings.function_field
+            sage: L.<y> = K.extension(y^3 + x^3 + 4*x + 1)                              # needs sage.rings.function_field
+            sage: O = L.order_infinite_with_basis([1, 1/x*y, 1/x^2*y^2]); O             # needs sage.rings.function_field
             Infinite order in Function field in y defined by y^3 + x^3 + 4*x + 1
-            sage: O.basis()                                                             # optional - sage.rings.function_field
+            sage: O.basis()                                                             # needs sage.rings.function_field
             (1, 1/x*y, 1/x^2*y^2)
 
         Note that 1 does not need to be an element of the basis, as long it is
         in the module spanned by it::
 
-            sage: O = L.order_infinite_with_basis([1+1/x*y,1/x*y, 1/x^2*y^2]); O        # optional - sage.rings.function_field
+            sage: O = L.order_infinite_with_basis([1+1/x*y,1/x*y, 1/x^2*y^2]); O        # needs sage.rings.function_field
             Infinite order in Function field in y defined by y^3 + x^3 + 4*x + 1
-            sage: O.basis()                                                             # optional - sage.rings.function_field
+            sage: O.basis()                                                             # needs sage.rings.function_field
             (1/x*y + 1, 1/x*y, 1/x^2*y^2)
 
         The following error is raised when the module spanned by the basis is
         not closed under multiplication::
 
-            sage: O = L.order_infinite_with_basis([1,y, 1/x^2*y^2]); O                  # optional - sage.rings.function_field
+            sage: O = L.order_infinite_with_basis([1,y, 1/x^2*y^2]); O                  # needs sage.rings.function_field
             Traceback (most recent call last):
             ...
             ValueError: the module generated by basis (1, y, 1/x^2*y^2) must be closed under multiplication
@@ -581,7 +588,7 @@ class FunctionField(Field):
         and this happens when the identity is not in the module spanned by the
         basis::
 
-            sage: O = L.order_infinite_with_basis([1/x,1/x*y, 1/x^2*y^2])               # optional - sage.rings.function_field
+            sage: O = L.order_infinite_with_basis([1/x,1/x*y, 1/x^2*y^2])               # needs sage.rings.function_field
             Traceback (most recent call last):
             ...
             ValueError: the identity element must be in the module spanned by basis (1/x, 1/x*y, 1/x^2*y^2)
@@ -602,17 +609,17 @@ class FunctionField(Field):
         EXAMPLES::
 
             sage: K.<x> = FunctionField(QQ); R.<y> = K[]
-            sage: L.<y> = K.extension(y^3 + x^3 + 4*x + 1)                              # optional - sage.rings.function_field
-            sage: L.order_infinite(y)  # todo: not implemented                          # optional - sage.modules sage.rings.function_field
+            sage: L.<y> = K.extension(y^3 + x^3 + 4*x + 1)                              # needs sage.rings.function_field
+            sage: L.order_infinite(y)           # not implemented                       # needs sage.modules sage.rings.function_field
 
-            sage: Z = K.order(x); Z                                                     # optional - sage.modules
+            sage: Z = K.order(x); Z                                                     # needs sage.modules
             Order in Rational function field in x over Rational Field
-            sage: Z.basis()                                                             # optional - sage.modules
+            sage: Z.basis()                                                             # needs sage.modules
             (1,)
 
         Orders with multiple generators, not yet supported::
 
-            sage: Z = K.order_infinite([x, x^2]); Z                                     # optional - sage.modules
+            sage: Z = K.order_infinite([x, x^2]); Z
             Traceback (most recent call last):
             ...
             NotImplementedError
@@ -639,34 +646,34 @@ class FunctionField(Field):
         EXAMPLES::
 
             sage: K.<x> = FunctionField(QQ); R.<y> = K[]
-            sage: L.<y> = K.extension(y^3 + x^3 + 4*x + 1)                              # optional - sage.rings.function_field
-            sage: L.equation_order()                                                    # optional - sage.rings.function_field
+            sage: L.<y> = K.extension(y^3 + x^3 + 4*x + 1)                              # needs sage.rings.function_field
+            sage: L.equation_order()                                                    # needs sage.rings.function_field
             Order in Function field in y defined by y^3 + x^3 + 4*x + 1
-            sage: L._coerce_map_from_(L.equation_order())                               # optional - sage.rings.function_field
+            sage: L._coerce_map_from_(L.equation_order())                               # needs sage.rings.function_field
             Conversion map:
               From: Order in Function field in y defined by y^3 + x^3 + 4*x + 1
               To:   Function field in y defined by y^3 + x^3 + 4*x + 1
-            sage: L._coerce_map_from_(GF(7))                                            # optional - sage.rings.finite_rings sage.rings.function_field
+            sage: L._coerce_map_from_(GF(7))                                            # needs sage.rings.finite_rings sage.rings.function_field
 
             sage: K.<x> = FunctionField(QQ)
-            sage: L.<x> = FunctionField(GaussianIntegers().fraction_field())            # optional - sage.rings.number_field
-            sage: L.has_coerce_map_from(K)                                              # optional - sage.rings.number_field
+            sage: L.<x> = FunctionField(GaussianIntegers().fraction_field())            # needs sage.rings.number_field
+            sage: L.has_coerce_map_from(K)                                              # needs sage.rings.number_field
             True
 
             sage: K.<x> = FunctionField(QQ)
             sage: R.<y> = K[]
-            sage: L.<y> = K.extension(y^3 + 1)                                          # optional - sage.rings.finite_rings sage.rings.function_field
-            sage: K.<x> = FunctionField(GaussianIntegers().fraction_field())            # optional - sage.rings.number_field
-            sage: R.<y> = K[]                                                           # optional - sage.rings.number_field
-            sage: M.<y> = K.extension(y^3 + 1)                                          # optional - sage.rings.function_field
-            sage: M.has_coerce_map_from(L) # not tested (the constant field including into a function field is not yet known to be injective)   # optional - sage.rings.function_field
+            sage: L.<y> = K.extension(y^3 + 1)                                          # needs sage.rings.finite_rings sage.rings.function_field
+            sage: K.<x> = FunctionField(GaussianIntegers().fraction_field())            # needs sage.rings.number_field
+            sage: R.<y> = K[]
+            sage: M.<y> = K.extension(y^3 + 1)                                          # needs sage.rings.function_field
+            sage: M.has_coerce_map_from(L)      # not tested (the constant field including into a function field is not yet known to be injective), needs sage.rings.function_field
             True
 
             sage: K.<x> = FunctionField(QQ)
             sage: R.<I> = K[]
-            sage: L.<I> = K.extension(I^2 + 1)                                          # optional - sage.rings.finite_rings sage.rings.function_field
-            sage: M.<x> = FunctionField(GaussianIntegers().fraction_field())            # optional - sage.rings.number_field
-            sage: M.has_coerce_map_from(L)                                              # optional - sage.rings.finite_rings sage.rings.function_field sage.rings.number_field
+            sage: L.<I> = K.extension(I^2 + 1)                                          # needs sage.rings.finite_rings sage.rings.function_field
+            sage: M.<x> = FunctionField(GaussianIntegers().fraction_field())            # needs sage.rings.number_field
+            sage: M.has_coerce_map_from(L)                                              # needs sage.rings.finite_rings sage.rings.function_field sage.rings.number_field
             True
 
         Check that :trac:`31072` is fixed::
@@ -764,8 +771,8 @@ class FunctionField(Field):
 
             sage: K.<x> = FunctionField(QQ)
             sage: R.<y> = K[]
-            sage: L.<y> = K.extension(y^3 + x^3 + 4*x + 1)                              # optional - sage.rings.function_field
-            sage: K(L(x)) # indirect doctest                                            # optional - sage.rings.function_field
+            sage: L.<y> = K.extension(y^3 + x^3 + 4*x + 1)                              # needs sage.rings.function_field
+            sage: K(L(x)) # indirect doctest                                            # needs sage.rings.function_field
             x
         """
         try:
@@ -799,28 +806,29 @@ class FunctionField(Field):
             [Rational function field in x over Rational Field]
 
             sage: R.<y> = K[]
-            sage: L.<y> = K.extension(y^2 - x)                                          # optional - sage.rings.function_field
-            sage: L._intermediate_fields(K)                                             # optional - sage.rings.function_field
+            sage: L.<y> = K.extension(y^2 - x)                                          # needs sage.rings.function_field
+            sage: L._intermediate_fields(K)                                             # needs sage.rings.function_field
             [Function field in y defined by y^2 - x,
              Rational function field in x over Rational Field]
 
-            sage: R.<z> = L[]                                                           # optional - sage.rings.function_field
-            sage: M.<z> = L.extension(z^2 - y)                                          # optional - sage.rings.function_field
-            sage: M._intermediate_fields(L)                                             # optional - sage.rings.function_field
+            sage: # needs sage.rings.function_field
+            sage: R.<z> = L[]
+            sage: M.<z> = L.extension(z^2 - y)
+            sage: M._intermediate_fields(L)
             [Function field in z defined by z^2 - y,
              Function field in y defined by y^2 - x]
-            sage: M._intermediate_fields(K)                                             # optional - sage.rings.function_field
+            sage: M._intermediate_fields(K)
             [Function field in z defined by z^2 - y,
              Function field in y defined by y^2 - x,
             Rational function field in x over Rational Field]
 
         TESTS::
 
-            sage: K._intermediate_fields(M)                                             # optional - sage.rings.function_field
+            sage: K._intermediate_fields(M)                                             # needs sage.rings.function_field
             Traceback (most recent call last):
             ...
             ValueError: field has not been constructed as a finite extension of base
-            sage: K._intermediate_fields(QQ)                                            # optional - sage.rings.function_field
+            sage: K._intermediate_fields(QQ)
             Traceback (most recent call last):
             ...
             TypeError: base must be a function field
@@ -847,13 +855,13 @@ class FunctionField(Field):
             Rational function field in x over Rational Field
 
             sage: R.<y> = K[]
-            sage: L.<y> = K.extension(y^2 - x)                                          # optional - sage.rings.function_field
-            sage: L.rational_function_field()                                           # optional - sage.rings.function_field
+            sage: L.<y> = K.extension(y^2 - x)                                          # needs sage.rings.function_field
+            sage: L.rational_function_field()                                           # needs sage.rings.function_field
             Rational function field in x over Rational Field
 
-            sage: R.<z> = L[]                                                           # optional - sage.rings.function_field
-            sage: M.<z> = L.extension(z^2 - y)                                          # optional - sage.rings.function_field
-            sage: M.rational_function_field()                                           # optional - sage.rings.function_field
+            sage: R.<z> = L[]                                                           # needs sage.rings.function_field
+            sage: M.<z> = L.extension(z^2 - y)                                          # needs sage.rings.function_field
+            sage: M.rational_function_field()                                           # needs sage.rings.function_field
             Rational function field in x over Rational Field
         """
         from .function_field_rational import RationalFunctionField
@@ -877,49 +885,50 @@ class FunctionField(Field):
         function field::
 
             sage: K.<x> = FunctionField(QQ)
-            sage: v = K.valuation(1); v                                                 # optional - sage.rings.function_field
+            sage: v = K.valuation(1); v                                                 # needs sage.rings.function_field
             (x - 1)-adic valuation
-            sage: v(x)                                                                  # optional - sage.rings.function_field
+            sage: v(x)                                                                  # needs sage.rings.function_field
             0
-            sage: v(x - 1)                                                              # optional - sage.rings.function_field
+            sage: v(x - 1)                                                              # needs sage.rings.function_field
             1
 
         A place can also be specified with an irreducible polynomial::
 
-            sage: v = K.valuation(x - 1); v                                             # optional - sage.rings.function_field
+            sage: v = K.valuation(x - 1); v                                             # needs sage.rings.function_field
             (x - 1)-adic valuation
 
         Similarly, for a finite non-rational place::
 
-            sage: v = K.valuation(x^2 + 1); v                                           # optional - sage.rings.function_field
+            sage: v = K.valuation(x^2 + 1); v                                           # needs sage.rings.function_field
             (x^2 + 1)-adic valuation
-            sage: v(x^2 + 1)                                                            # optional - sage.rings.function_field
+            sage: v(x^2 + 1)                                                            # needs sage.rings.function_field
             1
-            sage: v(x)                                                                  # optional - sage.rings.function_field
+            sage: v(x)                                                                  # needs sage.rings.function_field
             0
 
         Or for the infinite place::
 
-            sage: v = K.valuation(1/x); v                                               # optional - sage.rings.function_field
+            sage: v = K.valuation(1/x); v                                               # needs sage.rings.function_field
             Valuation at the infinite place
-            sage: v(x)                                                                  # optional - sage.rings.function_field
+            sage: v(x)                                                                  # needs sage.rings.function_field
             -1
 
         Instead of specifying a generator of a place, we can define a valuation on a
         rational function field by giving a discrete valuation on the underlying
         polynomial ring::
 
-            sage: R.<x> = QQ[]                                                          # optional - sage.rings.function_field
-            sage: u = valuations.GaussValuation(R, valuations.TrivialValuation(QQ))     # optional - sage.rings.function_field
-            sage: w = u.augmentation(x - 1, 1)                                          # optional - sage.rings.function_field
-            sage: v = K.valuation(w); v                                                 # optional - sage.rings.function_field
+            sage: # needs sage.rings.function_field
+            sage: R.<x> = QQ[]
+            sage: u = valuations.GaussValuation(R, valuations.TrivialValuation(QQ))
+            sage: w = u.augmentation(x - 1, 1)
+            sage: v = K.valuation(w); v
             (x - 1)-adic valuation
 
         Note that this allows us to specify valuations which do not correspond to a
         place of the function field::
 
-            sage: w = valuations.GaussValuation(R, QQ.valuation(2))                     # optional - sage.rings.function_field
-            sage: v = K.valuation(w); v                                                 # optional - sage.rings.function_field
+            sage: w = valuations.GaussValuation(R, QQ.valuation(2))                     # needs sage.rings.function_field
+            sage: v = K.valuation(w); v                                                 # needs sage.rings.function_field
             2-adic valuation
 
         The same is possible for valuations with `v(1/x) > 0` by passing in an
@@ -929,9 +938,9 @@ class FunctionField(Field):
         applying the substitution `x \mapsto 1/x` (here, the inverse map is also `x
         \mapsto 1/x`)::
 
-            sage: w = valuations.GaussValuation(R, QQ.valuation(2)).augmentation(x, 1)  # optional - sage.rings.function_field
-            sage: w = K.valuation(w)                                                    # optional - sage.rings.function_field
-            sage: v = K.valuation((w, K.hom([~K.gen()]), K.hom([~K.gen()]))); v         # optional - sage.rings.function_field
+            sage: w = valuations.GaussValuation(R, QQ.valuation(2)).augmentation(x, 1)  # needs sage.rings.function_field
+            sage: w = K.valuation(w)                                                    # needs sage.rings.function_field
+            sage: v = K.valuation((w, K.hom([~K.gen()]), K.hom([~K.gen()]))); v         # needs sage.rings.function_field
             Valuation on rational function field
             induced by [ Gauss valuation induced by 2-adic valuation, v(x) = 1 ]
             (in Rational function field in x over Rational Field after x |--> 1/x)
@@ -939,10 +948,11 @@ class FunctionField(Field):
         Note that classical valuations at finite places or the infinite place are
         always normalized such that the uniformizing element has valuation 1::
 
-            sage: K.<t> = FunctionField(GF(3))                                          # optional - sage.rings.finite_rings sage.rings.function_field
-            sage: M.<x> = FunctionField(K)                                              # optional - sage.rings.finite_rings sage.rings.function_field
-            sage: v = M.valuation(x^3 - t)                                              # optional - sage.rings.finite_rings sage.rings.function_field
-            sage: v(x^3 - t)                                                            # optional - sage.rings.finite_rings sage.rings.function_field
+            sage: # needs sage.rings.finite_rings sage.rings.function_field
+            sage: K.<t> = FunctionField(GF(3))
+            sage: M.<x> = FunctionField(K)
+            sage: v = M.valuation(x^3 - t)
+            sage: v(x^3 - t)
             1
 
         However, if such a valuation comes out of a base change of the ground
@@ -950,16 +960,17 @@ class FunctionField(Field):
         extension of ``v`` to ``L`` still has valuation 1 on `x^3 - t` but it has
         valuation ``1/3`` on its uniformizing element  `x - w`::
 
-            sage: R.<w> = K[]                                                           # optional - sage.rings.finite_rings
-            sage: L.<w> = K.extension(w^3 - t)                                          # optional - sage.rings.finite_rings sage.rings.function_field
-            sage: N.<x> = FunctionField(L)                                              # optional - sage.rings.finite_rings sage.rings.function_field
-            sage: w = v.extension(N)  # missing factorization, :trac:`16572`            # optional - sage.rings.finite_rings sage.rings.function_field
+            sage: # needs sage.rings.finite_rings
+            sage: R.<w> = K[]
+            sage: L.<w> = K.extension(w^3 - t)                                          # needs sage.rings.function_field
+            sage: N.<x> = FunctionField(L)                                              # needs sage.rings.function_field
+            sage: w = v.extension(N)  # missing factorization, :trac:`16572`            # needs sage.rings.function_field
             Traceback (most recent call last):
             ...
             NotImplementedError
-            sage: w(x^3 - t) # not tested                                               # optional - sage.rings.finite_rings sage.rings.function_field
+            sage: w(x^3 - t)                    # not tested                            # needs sage.rings.function_field
             1
-            sage: w(x - w) # not tested                                                 # optional - sage.rings.finite_rings sage.rings.function_field
+            sage: w(x - w)                      # not tested                            # needs sage.rings.function_field
             1/3
 
         There are several ways to create valuations on extensions of rational
@@ -967,12 +978,12 @@ class FunctionField(Field):
 
             sage: K.<x> = FunctionField(QQ)
             sage: R.<y> = K[]
-            sage: L.<y> = K.extension(y^2 - x); L                                       # optional - sage.rings.function_field
+            sage: L.<y> = K.extension(y^2 - x); L                                       # needs sage.rings.function_field
             Function field in y defined by y^2 - x
 
         A place that has a unique extension can just be defined downstairs::
 
-            sage: v = L.valuation(x); v                                                 # optional - sage.rings.function_field
+            sage: v = L.valuation(x); v                                                 # needs sage.rings.function_field
             (x)-adic valuation
 
         """
@@ -986,12 +997,12 @@ class FunctionField(Field):
         EXAMPLES::
 
             sage: K.<t> = FunctionField(QQ)
-            sage: K.space_of_differentials()                                            # optional - sage.modules
+            sage: K.space_of_differentials()                                            # needs sage.modules
             Space of differentials of Rational function field in t over Rational Field
 
-            sage: K.<x> = FunctionField(GF(5)); _.<Y> = K[]                             # optional - sage.rings.finite_rings
-            sage: L.<y> = K.extension(Y^3 - (x^3 - 1)/(x^3 - 2))                        # optional - sage.rings.finite_rings sage.rings.function_field
-            sage: L.space_of_differentials()                                            # optional - sage.rings.finite_rings sage.modules sage.rings.function_field
+            sage: K.<x> = FunctionField(GF(5)); _.<Y> = K[]
+            sage: L.<y> = K.extension(Y^3 - (x^3 - 1)/(x^3 - 2))                        # needs sage.rings.finite_rings sage.rings.function_field
+            sage: L.space_of_differentials()                                            # needs sage.modules sage.rings.finite_rings sage.rings.function_field
             Space of differentials of Function field in y
              defined by y^3 + (4*x^3 + 1)/(x^3 + 3)
         """
@@ -1004,7 +1015,7 @@ class FunctionField(Field):
         EXAMPLES::
 
             sage: K.<t> = FunctionField(QQ)
-            sage: K.space_of_holomorphic_differentials()                                # optional - sage.libs.pari sage.modules
+            sage: K.space_of_holomorphic_differentials()                                # needs sage.libs.pari sage.modules
             (Vector space of dimension 0 over Rational Field,
              Linear map:
                From: Vector space of dimension 0 over Rational Field
@@ -1013,9 +1024,9 @@ class FunctionField(Field):
                From: Space of differentials of Rational function field in t over Rational Field
                To:   Vector space of dimension 0 over Rational Field)
 
-            sage: K.<x> = FunctionField(GF(5)); _.<Y> = K[]                             # optional - sage.rings.finite_rings
-            sage: L.<y> = K.extension(Y^3 - (x^3 - 1)/(x^3 - 2))                        # optional - sage.rings.finite_rings sage.rings.function_field
-            sage: L.space_of_holomorphic_differentials()                                # optional - sage.rings.finite_rings sage.modules sage.rings.function_field
+            sage: K.<x> = FunctionField(GF(5)); _.<Y> = K[]
+            sage: L.<y> = K.extension(Y^3 - (x^3 - 1)/(x^3 - 2))                        # needs sage.rings.finite_rings sage.rings.function_field
+            sage: L.space_of_holomorphic_differentials()                                # needs sage.modules sage.rings.finite_rings sage.rings.function_field
             (Vector space of dimension 4 over Finite Field of size 5,
              Linear map:
                From: Vector space of dimension 4 over Finite Field of size 5
@@ -1037,12 +1048,12 @@ class FunctionField(Field):
         EXAMPLES::
 
             sage: K.<t> = FunctionField(QQ)
-            sage: K.basis_of_holomorphic_differentials()                                # optional - sage.libs.pari sage.modules
+            sage: K.basis_of_holomorphic_differentials()                                # needs sage.libs.pari sage.modules
             []
 
-            sage: K.<x> = FunctionField(GF(5)); _.<Y> = K[]                             # optional - sage.rings.finite_rings
-            sage: L.<y> = K.extension(Y^3 - (x^3 - 1)/(x^3 - 2))                        # optional - sage.rings.finite_rings sage.rings.function_field
-            sage: L.basis_of_holomorphic_differentials()                                # optional - sage.rings.finite_rings sage.modules sage.rings.function_field
+            sage: K.<x> = FunctionField(GF(5)); _.<Y> = K[]
+            sage: L.<y> = K.extension(Y^3 - (x^3 - 1)/(x^3 - 2))                        # needs sage.rings.finite_rings sage.rings.function_field
+            sage: L.basis_of_holomorphic_differentials()                                # needs sage.modules sage.rings.finite_rings sage.rings.function_field
             [((x/(x^3 + 4))*y) d(x),
              ((1/(x^3 + 4))*y) d(x),
              ((x/(x^3 + 4))*y^2) d(x),
@@ -1059,17 +1070,17 @@ class FunctionField(Field):
         EXAMPLES::
 
             sage: K.<t> = FunctionField(QQ)
-            sage: K.divisor_group()                                                     # optional - sage.modules
+            sage: K.divisor_group()                                                     # needs sage.modules
             Divisor group of Rational function field in t over Rational Field
 
             sage: _.<Y> = K[]
-            sage: L.<y> = K.extension(Y^3 - (t^3 - 1)/(t^3 - 2))                        # optional - sage.rings.function_field
-            sage: L.divisor_group()                                                     # optional - sage.modules sage.rings.function_field
+            sage: L.<y> = K.extension(Y^3 - (t^3 - 1)/(t^3 - 2))                        # needs sage.rings.function_field
+            sage: L.divisor_group()                                                     # needs sage.modules sage.rings.function_field
             Divisor group of Function field in y defined by y^3 + (-t^3 + 1)/(t^3 - 2)
 
-            sage: K.<x> = FunctionField(GF(5)); _.<Y> = K[]                             # optional - sage.rings.finite_rings
-            sage: L.<y> = K.extension(Y^3 - (x^3 - 1)/(x^3 - 2))                        # optional - sage.rings.finite_rings sage.rings.function_field
-            sage: L.divisor_group()                                                     # optional - sage.rings.finite_rings sage.modules sage.rings.function_field
+            sage: K.<x> = FunctionField(GF(5)); _.<Y> = K[]
+            sage: L.<y> = K.extension(Y^3 - (x^3 - 1)/(x^3 - 2))                        # needs sage.rings.finite_rings sage.rings.function_field
+            sage: L.divisor_group()                                                     # needs sage.modules sage.rings.finite_rings sage.rings.function_field
             Divisor group of Function field in y defined by y^3 + (4*x^3 + 1)/(x^3 + 3)
         """
         from .divisor import DivisorGroup
@@ -1081,17 +1092,17 @@ class FunctionField(Field):
 
         EXAMPLES::
 
-            sage: K.<t> = FunctionField(GF(7))                                          # optional - sage.rings.finite_rings
-            sage: K.place_set()                                                         # optional - sage.rings.finite_rings
+            sage: K.<t> = FunctionField(GF(7))
+            sage: K.place_set()
             Set of places of Rational function field in t over Finite Field of size 7
 
             sage: K.<t> = FunctionField(QQ)
             sage: K.place_set()
             Set of places of Rational function field in t over Rational Field
 
-            sage: K.<x> = FunctionField(GF(2)); _.<Y> = K[]                             # optional - sage.rings.finite_rings
-            sage: L.<y> = K.extension(Y^2 + Y + x + 1/x)                                # optional - sage.rings.finite_rings sage.rings.function_field
-            sage: L.place_set()                                                         # optional - sage.rings.finite_rings sage.rings.function_field
+            sage: K.<x> = FunctionField(GF(2)); _.<Y> = K[]
+            sage: L.<y> = K.extension(Y^2 + Y + x + 1/x)                                # needs sage.rings.finite_rings sage.rings.function_field
+            sage: L.place_set()                                                         # needs sage.rings.finite_rings sage.rings.function_field
             Set of places of Function field in y defined by y^2 + y + (x^2 + 1)/x
         """
         from .place import PlaceSet
@@ -1115,83 +1126,87 @@ class FunctionField(Field):
 
         EXAMPLES::
 
-            sage: K.<x> = FunctionField(GF(2)); _.<Y> = K[]                             # optional - sage.rings.finite_rings
-            sage: L.<y> = K.extension(Y^2 + Y + x + 1/x)                                # optional - sage.rings.finite_rings sage.rings.function_field
-            sage: p = L.places_finite()[0]                                              # optional - sage.rings.finite_rings sage.rings.function_field
-            sage: m = L.completion(p); m                                                # optional - sage.rings.finite_rings sage.rings.function_field
+            sage: # needs sage.rings.finite_rings
+            sage: K.<x> = FunctionField(GF(2)); _.<Y> = K[]
+            sage: L.<y> = K.extension(Y^2 + Y + x + 1/x)                                # needs sage.rings.function_field
+            sage: p = L.places_finite()[0]                                              # needs sage.rings.function_field
+            sage: m = L.completion(p); m                                                # needs sage.rings.function_field
             Completion map:
               From: Function field in y defined by y^2 + y + (x^2 + 1)/x
               To:   Laurent Series Ring in s over Finite Field of size 2
-            sage: m(x, 10)                                                              # optional - sage.rings.finite_rings sage.rings.function_field
+            sage: m(x, 10)                                                              # needs sage.rings.function_field
             s^2 + s^3 + s^4 + s^5 + s^7 + s^8 + s^9 + s^10 + O(s^12)
-            sage: m(y, 10)                                                              # optional - sage.rings.finite_rings sage.rings.function_field
+            sage: m(y, 10)                                                              # needs sage.rings.function_field
             s^-1 + 1 + s^3 + s^5 + s^7 + O(s^9)
 
-            sage: K.<x> = FunctionField(GF(2)); _.<Y> = K[]                             # optional - sage.rings.finite_rings
-            sage: L.<y> = K.extension(Y^2 + Y + x + 1/x)                                # optional - sage.rings.finite_rings sage.rings.function_field
-            sage: p = L.places_finite()[0]                                              # optional - sage.rings.finite_rings sage.rings.function_field
-            sage: m = L.completion(p); m                                                # optional - sage.rings.finite_rings sage.rings.function_field
+            sage: # needs sage.rings.finite_rings
+            sage: K.<x> = FunctionField(GF(2)); _.<Y> = K[]
+            sage: L.<y> = K.extension(Y^2 + Y + x + 1/x)                                # needs sage.rings.function_field
+            sage: p = L.places_finite()[0]                                              # needs sage.rings.function_field
+            sage: m = L.completion(p); m                                                # needs sage.rings.function_field
             Completion map:
               From: Function field in y defined by y^2 + y + (x^2 + 1)/x
               To:   Laurent Series Ring in s over Finite Field of size 2
-            sage: m(x, 10)                                                              # optional - sage.rings.finite_rings sage.rings.function_field
+            sage: m(x, 10)                                                              # needs sage.rings.function_field
             s^2 + s^3 + s^4 + s^5 + s^7 + s^8 + s^9 + s^10 + O(s^12)
-            sage: m(y, 10)                                                              # optional - sage.rings.finite_rings sage.rings.function_field
+            sage: m(y, 10)                                                              # needs sage.rings.function_field
             s^-1 + 1 + s^3 + s^5 + s^7 + O(s^9)
 
-            sage: K.<x> = FunctionField(GF(2))                                          # optional - sage.rings.finite_rings
-            sage: p = K.places_finite()[0]; p                                           # optional - sage.rings.finite_rings
+            sage: # needs sage.rings.finite_rings
+            sage: K.<x> = FunctionField(GF(2))
+            sage: p = K.places_finite()[0]; p
             Place (x)
-            sage: m = K.completion(p); m                                                # optional - sage.rings.finite_rings
+            sage: m = K.completion(p); m
             Completion map:
               From: Rational function field in x over Finite Field of size 2
               To:   Laurent Series Ring in s over Finite Field of size 2
-            sage: m(1/(x+1))                                                            # optional - sage.rings.finite_rings
+            sage: m(1/(x+1))
             1 + s + s^2 + s^3 + s^4 + s^5 + s^6 + s^7 + s^8 + s^9 + s^10 + s^11 + s^12
             + s^13 + s^14 + s^15 + s^16 + s^17 + s^18 + s^19 + O(s^20)
 
-            sage: p = K.place_infinite(); p                                             # optional - sage.rings.finite_rings
+            sage: p = K.place_infinite(); p                                             # needs sage.rings.finite_rings
             Place (1/x)
-            sage: m = K.completion(p); m                                                # optional - sage.rings.finite_rings
+            sage: m = K.completion(p); m                                                # needs sage.rings.finite_rings
             Completion map:
               From: Rational function field in x over Finite Field of size 2
               To:   Laurent Series Ring in s over Finite Field of size 2
-            sage: m(x)                                                                  # optional - sage.rings.finite_rings
+            sage: m(x)                                                                  # needs sage.rings.finite_rings
             s^-1 + O(s^19)
 
-            sage: m = K.completion(p, prec=infinity); m                                 # optional - sage.rings.finite_rings
+            sage: m = K.completion(p, prec=infinity); m                                 # needs sage.rings.finite_rings
             Completion map:
               From: Rational function field in x over Finite Field of size 2
               To:   Lazy Laurent Series Ring in s over Finite Field of size 2
-            sage: f = m(x); f                                                           # optional - sage.rings.finite_rings
+            sage: f = m(x); f                                                           # needs sage.rings.finite_rings
             s^-1 + ...
-            sage: f.coefficient(100)                                                    # optional - sage.rings.finite_rings
+            sage: f.coefficient(100)                                                    # needs sage.rings.finite_rings
             0
 
             sage: K.<x> = FunctionField(QQ); _.<Y> = K[]
-            sage: L.<y> = K.extension(Y^2 - x)                                          # optional - sage.rings.function_field sage.rings.function_field
-            sage: O = L.maximal_order()                                                 # optional - sage.rings.function_field sage.rings.function_field
-            sage: decomp = O.decomposition(K.maximal_order().ideal(x - 1))              # optional - sage.rings.function_field sage.rings.function_field
-            sage: pls = (decomp[0][0].place(), decomp[1][0].place())                    # optional - sage.rings.function_field sage.rings.function_field
-            sage: m = L.completion(pls[0]); m                                           # optional - sage.rings.function_field sage.rings.function_field
+            sage: L.<y> = K.extension(Y^2 - x)                                          # needs sage.rings.function_field
+            sage: O = L.maximal_order()                                                 # needs sage.rings.function_field
+            sage: decomp = O.decomposition(K.maximal_order().ideal(x - 1))              # needs sage.rings.function_field
+            sage: pls = (decomp[0][0].place(), decomp[1][0].place())                    # needs sage.rings.function_field
+            sage: m = L.completion(pls[0]); m                                           # needs sage.rings.function_field
             Completion map:
               From: Function field in y defined by y^2 - x
               To:   Laurent Series Ring in s over Rational Field
-            sage: xe = m(x)                                                             # optional - sage.rings.function_field sage.rings.function_field
-            sage: ye = m(y)                                                             # optional - sage.rings.function_field sage.rings.function_field
-            sage: ye^2 - xe == 0                                                        # optional - sage.rings.function_field sage.rings.function_field
+            sage: xe = m(x)                                                             # needs sage.rings.function_field
+            sage: ye = m(y)                                                             # needs sage.rings.function_field
+            sage: ye^2 - xe == 0                                                        # needs sage.rings.function_field
             True
 
-            sage: decomp2 = O.decomposition(K.maximal_order().ideal(x^2 + 1))           # optional - sage.rings.function_field sage.rings.function_field
-            sage: pls2 = decomp2[0][0].place()                                          # optional - sage.rings.function_field sage.rings.function_field
-            sage: m = L.completion(pls2); m                                             # optional - sage.rings.function_field sage.rings.function_field
+            sage: # needs sage.rings.function_field
+            sage: decomp2 = O.decomposition(K.maximal_order().ideal(x^2 + 1))
+            sage: pls2 = decomp2[0][0].place()
+            sage: m = L.completion(pls2); m
             Completion map:
               From: Function field in y defined by y^2 - x
               To:   Laurent Series Ring in s over
                      Number Field in a with defining polynomial x^4 + 2*x^2 + 4*x + 2
-            sage: xe = m(x)                                                             # optional - sage.rings.function_field sage.rings.function_field
-            sage: ye = m(y)                                                             # optional - sage.rings.function_field sage.rings.function_field
-            sage: ye^2 - xe == 0                                                        # optional - sage.rings.function_field sage.rings.function_field
+            sage: xe = m(x)
+            sage: ye = m(y)
+            sage: ye^2 - xe == 0
             True
         """
         from .maps import FunctionFieldCompletion
@@ -1207,12 +1222,13 @@ class FunctionField(Field):
 
         EXAMPLES::
 
-            sage: K.<x> = FunctionField(GF(2)); _.<Y> = K[]                             # optional - sage.rings.finite_rings
-            sage: F.<y> = K.extension(Y^2 + Y + x + 1/x)                                # optional - sage.rings.finite_rings sage.rings.function_field
-            sage: E = F.extension_constant_field(GF(2^4))                               # optional - sage.rings.finite_rings sage.rings.function_field
-            sage: E                                                                     # optional - sage.rings.finite_rings sage.rings.function_field
+            sage: # needs sage.rings.finite_rings
+            sage: K.<x> = FunctionField(GF(2)); _.<Y> = K[]
+            sage: F.<y> = K.extension(Y^2 + Y + x + 1/x)                                # needs sage.rings.function_field
+            sage: E = F.extension_constant_field(GF(2^4))                               # needs sage.rings.function_field
+            sage: E                                                                     # needs sage.rings.function_field
             Function field in y defined by y^2 + y + (x^2 + 1)/x over its base
-            sage: E.constant_base_field()                                               # optional - sage.rings.finite_rings sage.rings.function_field
+            sage: E.constant_base_field()                                               # needs sage.rings.function_field
             Finite Field in z4 of size 2^4
         """
         from .extensions import ConstantFieldExtension
