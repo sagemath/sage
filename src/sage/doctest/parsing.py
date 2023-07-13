@@ -1172,7 +1172,7 @@ class SageDocTestParser(doctest.DocTestParser):
                 if not first_example_in_block:
                     first_example_in_block = item
                     first_example_in_block_index = len(filtered)
-                if not re.match(r'\s*sage:\s*(#|from |import |class |def |\w+\s*=\s*(polygen |lambda ))', item.source):
+                if not re.match(r'\s*sage:\s*(#|from |import |class |def |\w+\s*=\s*(polygen|lambda ))', item.source):
                     update_tag_counts(optional_tags)
                 optional_tags.update(persistent_optional_tags)
                 item.optional_tags = frozenset(optional_tags)
