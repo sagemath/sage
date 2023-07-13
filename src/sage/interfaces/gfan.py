@@ -63,7 +63,7 @@ class Gfan():
 
         EXAMPLES::
 
-            sage: print(gfan('Q[x,y]{x^2-y-1,y^2-xy-2/3}', cmd='bases')) # optional - gfan
+            sage: print(gfan('Q[x,y]{x^2-y-1,y^2-xy-2/3}', cmd='bases'))                # needs gfan
             Q[x,y]
             {{
             y^4+4/9-7/3*y^2-y^3,
@@ -85,7 +85,7 @@ class Gfan():
 
         TESTS::
 
-            sage: _ = gfan(I='Q[x,y]{x^2-y-1,y^2-xy-2/3}', cmd='bases') # optional - gfan
+            sage: _ = gfan(I='Q[x,y]{x^2-y-1,y^2-xy-2/3}', cmd='bases')                 # needs gfan
             doctest:...:
             DeprecationWarning: use the option 'input' instead of 'I'
             See https://github.com/sagemath/sage/issues/33468 for details.
