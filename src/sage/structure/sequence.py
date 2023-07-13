@@ -45,8 +45,8 @@ is ``Objects()``, the elements are not guaranteed to have any
 special parent.  This is what should happen, e.g., with finite field
 elements of different characteristics::
 
-    sage: v = Sequence([GF(3)(1), GF(7)(1)])                                            # optional - sage.rings.finite_rings
-    sage: v.universe()                                                                  # optional - sage.rings.finite_rings
+    sage: v = Sequence([GF(3)(1), GF(7)(1)])                                            # needs sage.rings.finite_rings
+    sage: v.universe()                                                                  # needs sage.rings.finite_rings
     Category of objects
 
 You can make a list immutable with ``v.freeze()``.  Assignment is
@@ -674,11 +674,11 @@ class Sequence_generic(sage.structure.sage_object.SageObject, list):
         r"""
         TESTS::
 
-            sage: t= Sequence([sqrt(x), exp(x), x^(x-1)], universe=SR); t               # optional - sage.symbolic
+            sage: t= Sequence([sqrt(x), exp(x), x^(x-1)], universe=SR); t               # needs sage.symbolic
             [sqrt(x), e^x, x^(x - 1)]
-            sage: t._latex_()                                                           # optional - sage.symbolic
+            sage: t._latex_()                                                           # needs sage.symbolic
             '\\left[\\sqrt{x}, e^{x}, x^{x - 1}\\right]'
-            sage: latex(t)                                                              # optional - sage.symbolic
+            sage: latex(t)                                                              # needs sage.symbolic
             \left[\sqrt{x}, e^{x}, x^{x - 1}\right]
         """
         from sage.misc.latex import list_function as list_latex_function

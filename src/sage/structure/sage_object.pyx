@@ -212,9 +212,9 @@ cdef class SageObject:
         You can use the :func:`~sage.typeset.ascii_art.ascii_art` function
         to get the ASCII art representation of any object in Sage::
 
-            sage: result = ascii_art(integral(exp(x+x^2)/(x+1), x))
+            sage: result = ascii_art(integral(exp(x+x^2)/(x+1), x))                     # needs sage.symbolic
             ...
-            sage: result
+            sage: result                                                                # needs sage.symbolic
               /
              |
              |   2
@@ -230,21 +230,21 @@ cdef class SageObject:
 
             sage: from sage.repl.interpreter import get_test_shell
             sage: shell = get_test_shell()
-            sage: shell.run_cell('tab = StandardTableaux(3)[2]; tab')
+            sage: shell.run_cell('tab = StandardTableaux(3)[2]; tab')                               # needs sage.combinat
             [[1, 2], [3]]
             sage: shell.run_cell('%display ascii_art')
-            sage: shell.run_cell('tab')
+            sage: shell.run_cell('tab')                                                             # needs sage.combinat
             1  2
             3
-            sage: shell.run_cell('Tableaux.options(ascii_art="table", convention="French")')
-            sage: shell.run_cell('tab')
+            sage: shell.run_cell('Tableaux.options(ascii_art="table", convention="French")')        # needs sage.combinat
+            sage: shell.run_cell('tab')                                                             # needs sage.combinat
             +---+
             | 3 |
             +---+---+
             | 1 | 2 |
             +---+---+
             sage: shell.run_cell('%display plain')
-            sage: shell.run_cell('Tableaux.options._reset()')
+            sage: shell.run_cell('Tableaux.options._reset()')                                       # needs sage.combinat
             sage: shell.quit()
 
         TESTS::
@@ -277,7 +277,7 @@ cdef class SageObject:
         You can use the :func:`~sage.typeset.unicode_art.unicode_art` function
         to get the ASCII art representation of any object in Sage::
 
-            sage: unicode_art(integral(exp(x+x^2)/(x+1), x))
+            sage: unicode_art(integral(exp(x+x^2)/(x+1), x))                            # needs sage.symbolic
             ⌠
             ⎮   2
             ⎮  x  + x
@@ -292,21 +292,21 @@ cdef class SageObject:
 
             sage: from sage.repl.interpreter import get_test_shell
             sage: shell = get_test_shell()
-            sage: shell.run_cell('tab = StandardTableaux(3)[2]; tab')
+            sage: shell.run_cell('tab = StandardTableaux(3)[2]; tab')                               # needs sage.combinat
             [[1, 2], [3]]
             sage: shell.run_cell('%display ascii_art')
-            sage: shell.run_cell('tab')
+            sage: shell.run_cell('tab')                                                             # needs sage.combinat
             1  2
             3
-            sage: shell.run_cell('Tableaux.options(ascii_art="table", convention="French")')
-            sage: shell.run_cell('tab')
+            sage: shell.run_cell('Tableaux.options(ascii_art="table", convention="French")')        # needs sage.combinat
+            sage: shell.run_cell('tab')                                                             # needs sage.combinat
             +---+
             | 3 |
             +---+---+
             | 1 | 2 |
             +---+---+
             sage: shell.run_cell('%display plain')
-            sage: shell.run_cell('Tableaux.options._reset()')
+            sage: shell.run_cell('Tableaux.options._reset()')                                       # needs sage.combinat
             sage: shell.quit()
 
         TESTS::
@@ -318,6 +318,7 @@ cdef class SageObject:
 
         Check that breakpoints and baseline are preserved (:trac:`29202`)::
 
+            sage: # needs sage.groups
             sage: F = FreeAbelianMonoid(index_set=ZZ)
             sage: f = prod(F.gen(i) for i in range(5))
             sage: s, t = ascii_art(f), unicode_art(f)
@@ -355,18 +356,19 @@ cdef class SageObject:
         modified to return ``True`` for objects which might behave differently
         in some computations::
 
-            sage: K.<a> = Qq(9)                                                         # optional - sage.rings.padics
-            sage: b = a + O(3)                                                          # optional - sage.rings.padics
-            sage: c = a + 3                                                             # optional - sage.rings.padics
-            sage: b                                                                     # optional - sage.rings.padics
+            sage: # needs sage.rings.padics
+            sage: K.<a> = Qq(9)
+            sage: b = a + O(3)
+            sage: c = a + 3
+            sage: b
             a + O(3)
-            sage: c                                                                     # optional - sage.rings.padics
+            sage: c
             a + 3 + O(3^20)
-            sage: b == c                                                                # optional - sage.rings.padics
+            sage: b == c
             True
-            sage: b == a                                                                # optional - sage.rings.padics
+            sage: b == a
             True
-            sage: c == a                                                                # optional - sage.rings.padics
+            sage: c == a
             False
 
         If such objects defined a non-trivial hash function, this would break
@@ -374,20 +376,20 @@ cdef class SageObject:
         caches. This can be achieved by defining an appropriate
         ``_cache_key``::
 
-            sage: hash(b)                                                               # optional - sage.rings.padics
+            sage: hash(b)                                                               # needs sage.rings.padics
             Traceback (most recent call last):
             ...
             TypeError: unhashable type: 'sage.rings.padics.qadic_flint_CR.qAdicCappedRelativeElement'
             sage: @cached_method
             ....: def f(x): return x==a
-            sage: f(b)                                                                  # optional - sage.rings.padics
+            sage: f(b)                                                                  # needs sage.rings.padics
             True
-            sage: f(c)  # if b and c were hashable, this would return True              # optional - sage.rings.padics
+            sage: f(c)  # if b and c were hashable, this would return True              # needs sage.rings.padics
             False
 
-            sage: b._cache_key()                                                        # optional - sage.rings.padics
+            sage: b._cache_key()                                                        # needs sage.rings.padics
             (..., ((0, 1),), 0, 1)
-            sage: c._cache_key()                                                        # optional - sage.rings.padics
+            sage: c._cache_key()                                                        # needs sage.rings.padics
             (..., ((0, 1), (1,)), 0, 20)
 
         An implementation must make sure that for elements ``a`` and ``b``,
@@ -395,9 +397,9 @@ cdef class SageObject:
         In practice this means that the ``_cache_key`` should always include
         the parent as its first argument::
 
-            sage: S.<a> = Qq(4)                                                         # optional - sage.rings.padics
-            sage: d = a + O(2)                                                          # optional - sage.rings.padics
-            sage: b._cache_key() == d._cache_key() # this would be True if the parents were not included    # optional - sage.rings.padics
+            sage: S.<a> = Qq(4)                                                         # needs sage.rings.padics
+            sage: d = a + O(2)                                                          # needs sage.rings.padics
+            sage: b._cache_key() == d._cache_key() # this would be True if the parents were not included                # needs sage.rings.padics
             False
 
         """
@@ -418,10 +420,10 @@ cdef class SageObject:
 
         EXAMPLES::
 
-            sage: x = SR.var("x")                  # optional - sage.symbolic
-            sage: f = x^3 + 5                      # optional - sage.symbolic
-            sage: from tempfile import NamedTemporaryFile  # optional - sage.symbolic
-            sage: with NamedTemporaryFile(suffix=".sobj") as t:  # optional - sage.symbolic
+            sage: x = SR.var("x")                                                       # needs sage.symbolic
+            sage: f = x^3 + 5                                                           # needs sage.symbolic
+            sage: from tempfile import NamedTemporaryFile                               # needs sage.symbolic
+            sage: with NamedTemporaryFile(suffix=".sobj") as t:                         # needs sage.symbolic
             ....:     f.save(t.name)
             ....:     load(t.name)
             x^3 + 5
@@ -520,10 +522,10 @@ cdef class SageObject:
 
         EXAMPLES::
 
-            sage: t = log(sqrt(2) - 1) + log(sqrt(2) + 1); t                            # optional - sage.symbolic
+            sage: t = log(sqrt(2) - 1) + log(sqrt(2) + 1); t                            # needs sage.symbolic
             log(sqrt(2) + 1) + log(sqrt(2) - 1)
-            sage: u = t.maxima_methods()                                                # optional - sage.symbolic
-            sage: u.parent()                                                            # optional - sage.symbolic
+            sage: u = t.maxima_methods()                                                # needs sage.symbolic
+            sage: u.parent()                                                            # needs sage.symbolic
             <class 'sage.symbolic.maxima_wrapper.MaximaWrapper'>
         """
         return type(self)
@@ -827,7 +829,7 @@ cdef class SageObject:
         ::
 
             sage: n = -3/7
-            sage: m2 = Magma()
+            sage: m2 = Magma()                                                          # needs sage.symbolic
             sage: magma(n)                        # optional - magma
             -3/7
             sage: magma(n).parent()               # optional - magma
@@ -841,10 +843,10 @@ cdef class SageObject:
         since K is a Python object::
 
             sage: x = polygen(ZZ, 'x')
-            sage: K.<a> = NumberField(x^3 + 2)
+            sage: K.<a> = NumberField(x^3 + 2)                                          # needs sage.rings.number_field
             sage: magma(K) is magma(K)            # optional - magma
             True
-            sage: magma2 = Magma()
+            sage: magma2 = Magma()                                                      # needs sage.symbolic
             sage: magma(K) is magma2(K)           # optional - magma
             False
         """
