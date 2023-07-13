@@ -1256,12 +1256,13 @@ class Permutation(CombinatorialElement):
         """
         TESTS::
 
-            sage: SGA = SymmetricGroupAlgebra(QQ, 3)                                    # needs sage.combinat sage.modules
-            sage: SM = SGA.specht_module([2,1])                                         # needs sage.combinat sage.modules
-            sage: p213 = Permutations(3)([2,1,3])                                       # needs sage.modules
-            sage: p213 * SGA.an_element()                                               # needs sage.combinat sage.modules
+            sage: # needs sage.modules
+            sage: SGA = SymmetricGroupAlgebra(QQ, 3)                                    # needs sage.combinat
+            sage: SM = SGA.specht_module([2,1])                                         # needs sage.combinat
+            sage: p213 = Permutations(3)([2,1,3])
+            sage: p213 * SGA.an_element()                                               # needs sage.combinat
             3*[1, 2, 3] + [1, 3, 2] + [2, 1, 3] + 2*[3, 1, 2]
-            sage: p213 * SM.an_element()                                                # needs sage.combinat sage.modules
+            sage: p213 * SM.an_element()                                                # needs sage.combinat
             2*B[0] - 4*B[1]
         """
         if not isinstance(rp, Permutation) and isinstance(rp, Element):
@@ -1863,7 +1864,7 @@ class Permutation(CombinatorialElement):
         The number of `2`-noninversions of a permutation `p \in S_n`
         is `\binom{n}{2}` minus its number of inversions::
 
-            sage: b = binomial(5, 2)
+            sage: b = binomial(5, 2)                                                    # needs sage.symbolic
             sage: all( x.number_of_noninversions(2) == b - x.number_of_inversions()
             ....:      for x in Permutations(5) )
             True
@@ -4264,21 +4265,22 @@ class Permutation(CombinatorialElement):
 
         TESTS::
 
-            sage: Permutation([]).right_permutohedron_interval(Permutation([]))         # needs sage.graphs sage.modules
+            sage: # needs sage.modules
+            sage: Permutation([]).right_permutohedron_interval(Permutation([]))         # needs sage.graphs
             [[]]
-            sage: Permutation([3, 1, 2]).right_permutohedron_interval(Permutation([3, 1, 2]))       # needs sage.graphs sage.modules
+            sage: Permutation([3, 1, 2]).right_permutohedron_interval(Permutation([3, 1, 2]))       # needs sage.graphs
             [[3, 1, 2]]
-            sage: Permutation([1, 3, 2, 4]).right_permutohedron_interval(Permutation([3, 4, 2, 1]))                     # needs sage.graphs sage.modules
+            sage: Permutation([1, 3, 2, 4]).right_permutohedron_interval(Permutation([3, 4, 2, 1]))                     # needs sage.graphs
             [[3, 1, 4, 2], [3, 4, 1, 2], [3, 4, 2, 1], [1, 3, 4, 2],
              [1, 3, 2, 4], [3, 2, 4, 1], [3, 2, 1, 4], [3, 1, 2, 4]]
-            sage: Permutation([2, 1, 4, 5, 3]).right_permutohedron_interval(Permutation([2, 5, 4, 1, 3]))               # needs sage.graphs sage.modules
+            sage: Permutation([2, 1, 4, 5, 3]).right_permutohedron_interval(Permutation([2, 5, 4, 1, 3]))               # needs sage.graphs
             [[2, 4, 5, 1, 3], [2, 4, 1, 5, 3], [2, 1, 4, 5, 3],
              [2, 1, 5, 4, 3], [2, 5, 1, 4, 3], [2, 5, 4, 1, 3]]
-            sage: Permutation([2, 5, 4, 1, 3]).right_permutohedron_interval(Permutation([2, 1, 4, 5, 3]))               # needs sage.modules
+            sage: Permutation([2, 5, 4, 1, 3]).right_permutohedron_interval(Permutation([2, 1, 4, 5, 3]))
             Traceback (most recent call last):
             ...
             ValueError: [2, 5, 4, 1, 3] must be lower or equal than [2, 1, 4, 5, 3] for the right permutohedron order
-            sage: Permutation([2, 4, 1, 3]).right_permutohedron_interval(Permutation([2, 1, 4, 5, 3]))                  # needs sage.modules
+            sage: Permutation([2, 4, 1, 3]).right_permutohedron_interval(Permutation([2, 1, 4, 5, 3]))
             Traceback (most recent call last):
             ...
             ValueError: len([2, 4, 1, 3]) and len([2, 1, 4, 5, 3]) must be equal
@@ -6829,12 +6831,13 @@ class StandardPermutations_n_abstract(Permutations):
             sage: G(P(x))                                                               # needs sage.groups
             (1,4,2,3)
 
-            sage: P = PermutationGroup([[(1,3,5),(2,4)],[(1,3)]])                       # needs sage.groups
-            sage: x = P([(3,5),(2,4)]); x                                               # needs sage.groups
+            sage: # needs sage.groups
+            sage: P = PermutationGroup([[(1,3,5),(2,4)],[(1,3)]])
+            sage: x = P([(3,5),(2,4)]); x
             (2,4)(3,5)
-            sage: Permutations(6)(SymmetricGroup(6)(x))                                 # needs sage.groups
+            sage: Permutations(6)(SymmetricGroup(6)(x))
             [1, 4, 5, 2, 3, 6]
-            sage: Permutations(6)(x)            # known bug, needs sage.groups
+            sage: Permutations(6)(x)            # known bug
             [1, 4, 5, 2, 3, 6]
         """
         if len(x) < self.n:
@@ -8720,16 +8723,17 @@ def to_standard(p, key=None):
 
     EXAMPLES::
 
+        sage: # needs sage.combinat
         sage: import sage.combinat.permutation as permutation
-        sage: permutation.to_standard([4,2,7])                                          # needs sage.combinat
+        sage: permutation.to_standard([4,2,7])
         [2, 1, 3]
-        sage: permutation.to_standard([1,2,3])                                          # needs sage.combinat
+        sage: permutation.to_standard([1,2,3])
         [1, 2, 3]
-        sage: permutation.to_standard([])                                               # needs sage.combinat
+        sage: permutation.to_standard([])
         []
-        sage: permutation.to_standard([1,2,3], key=lambda x: -x)                        # needs sage.combinat
+        sage: permutation.to_standard([1,2,3], key=lambda x: -x)
         [3, 2, 1]
-        sage: permutation.to_standard([5,8,2,5], key=lambda x: -x)                      # needs sage.combinat
+        sage: permutation.to_standard([5,8,2,5], key=lambda x: -x)
         [2, 1, 4, 3]
 
     TESTS:

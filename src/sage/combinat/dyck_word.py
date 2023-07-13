@@ -960,7 +960,7 @@ class DyckWord(CombinatorialElement):
         EXAMPLES::
 
             sage: w = DyckWords(100).random_element()
-            sage: w.plot()                                                              # optional - sage.plot
+            sage: w.plot()                                                              # needs sage.plot
             Graphics object consisting of 1 graphics primitive
         """
         from sage.plot.plot import list_plot
@@ -1698,24 +1698,24 @@ class DyckWord(CombinatorialElement):
         EXAMPLES::
 
             sage: dw = DyckWord([1,0])
-            sage: dw.to_binary_tree()                                                   # optional - sage.graphs
+            sage: dw.to_binary_tree()                                                   # needs sage.graphs
             [., .]
             sage: dw = DyckWord([])
-            sage: dw.to_binary_tree()                                                   # optional - sage.graphs
+            sage: dw.to_binary_tree()                                                   # needs sage.graphs
             .
             sage: dw = DyckWord([1,0,1,1,0,0])
-            sage: dw.to_binary_tree()                                                   # optional - sage.graphs
+            sage: dw.to_binary_tree()                                                   # needs sage.graphs
             [., [[., .], .]]
-            sage: dw.to_binary_tree("L1R0")                                             # optional - sage.graphs
+            sage: dw.to_binary_tree("L1R0")                                             # needs sage.graphs
             [[., .], [., .]]
             sage: dw = DyckWord([1,0,1,1,0,0,1,1,1,0,1,0,0,0])
-            sage: dw.to_binary_tree() == dw.to_binary_tree("1R0L").left_right_symmetry()            # optional - sage.graphs
+            sage: dw.to_binary_tree() == dw.to_binary_tree("1R0L").left_right_symmetry()            # needs sage.graphs
             True
-            sage: dw.to_binary_tree() == dw.to_binary_tree("L1R0").left_border_symmetry()           # optional - sage.graphs
+            sage: dw.to_binary_tree() == dw.to_binary_tree("L1R0").left_border_symmetry()           # needs sage.graphs
             False
-            sage: dw.to_binary_tree("1R0L") == dw.to_binary_tree("L1R0").left_border_symmetry()     # optional - sage.graphs
+            sage: dw.to_binary_tree("1R0L") == dw.to_binary_tree("L1R0").left_border_symmetry()     # needs sage.graphs
             True
-            sage: dw.to_binary_tree("R1L0") == dw.to_binary_tree("L1R0").left_right_symmetry()      # optional - sage.graphs
+            sage: dw.to_binary_tree("R1L0") == dw.to_binary_tree("L1R0").left_right_symmetry()      # needs sage.graphs
             True
             sage: dw.to_binary_tree("R10L")
             Traceback (most recent call last):
@@ -1757,11 +1757,11 @@ class DyckWord(CombinatorialElement):
 
         EXAMPLES::
 
-            sage: DyckWord([1,0]).to_binary_tree_tamari()                               # optional - sage.graphs
+            sage: DyckWord([1,0]).to_binary_tree_tamari()                               # needs sage.graphs
             [., .]
-            sage: DyckWord([1,0,1,1,0,0]).to_binary_tree_tamari()                       # optional - sage.graphs
+            sage: DyckWord([1,0,1,1,0,0]).to_binary_tree_tamari()                       # needs sage.graphs
             [[., .], [., .]]
-            sage: DyckWord([1,0,1,0,1,0]).to_binary_tree_tamari()                       # optional - sage.graphs
+            sage: DyckWord([1,0,1,0,1,0]).to_binary_tree_tamari()                       # needs sage.graphs
             [[[., .], .], .]
         """
         # return self.to_binary_tree("L1R0")  # slower and recursive
@@ -1791,22 +1791,22 @@ class DyckWord(CombinatorialElement):
         EXAMPLES::
 
             sage: dw = DyckWord([1, 1, 0, 1, 0, 0, 1, 0])
-            sage: ip = dw.tamari_interval(DyckWord([1, 1, 1, 0, 0, 1, 0, 0])); ip       # optional - sage.graphs
+            sage: ip = dw.tamari_interval(DyckWord([1, 1, 1, 0, 0, 1, 0, 0])); ip       # needs sage.graphs
             The Tamari interval of size 4 induced by relations [(2, 4), (3, 4), (3, 1), (2, 1)]
-            sage: ip.lower_dyck_word()                                                  # optional - sage.graphs
+            sage: ip.lower_dyck_word()                                                  # needs sage.graphs
             [1, 1, 0, 1, 0, 0, 1, 0]
-            sage: ip.upper_dyck_word()                                                  # optional - sage.graphs
+            sage: ip.upper_dyck_word()                                                  # needs sage.graphs
             [1, 1, 1, 0, 0, 1, 0, 0]
-            sage: ip.interval_cardinality()                                             # optional - sage.graphs
+            sage: ip.interval_cardinality()                                             # needs sage.graphs
             4
-            sage: ip.number_of_tamari_inversions()                                      # optional - sage.graphs
+            sage: ip.number_of_tamari_inversions()                                      # needs sage.graphs
             2
-            sage: list(ip.dyck_words())                                                 # optional - sage.graphs
+            sage: list(ip.dyck_words())                                                 # needs sage.graphs
             [[1, 1, 1, 0, 0, 1, 0, 0],
              [1, 1, 1, 0, 0, 0, 1, 0],
              [1, 1, 0, 1, 0, 1, 0, 0],
              [1, 1, 0, 1, 0, 0, 1, 0]]
-            sage: dw.tamari_interval(DyckWord([1,1,0,0,1,1,0,0]))                       # optional - sage.graphs
+            sage: dw.tamari_interval(DyckWord([1,1,0,0,1,1,0,0]))                       # needs sage.graphs
             Traceback (most recent call last):
             ...
             ValueError: the two Dyck words are not comparable on the Tamari lattice
@@ -2061,10 +2061,10 @@ class DyckWord_complete(DyckWord):
 
             sage: R = QQ['q','t'].fraction_field()
             sage: (q,t) = R.gens()
-            sage: f = sum(t**D.area() * D.characteristic_symmetric_function()           # optional - sage.modules
+            sage: f = sum(t**D.area() * D.characteristic_symmetric_function()           # needs sage.modules
             ....:         for D in DyckWords(3)); f
             (q^3+q^2*t+q*t^2+t^3+q*t)*s[1, 1, 1] + (q^2+q*t+t^2+q+t)*s[2, 1] + s[3]
-            sage: f.nabla(power=-1)                                                     # optional - sage.modules
+            sage: f.nabla(power=-1)                                                     # needs sage.modules
             s[1, 1, 1]
         """
         from sage.combinat.ncsf_qsym.qsym import QuasiSymmetricFunctions
@@ -2480,22 +2480,22 @@ class DyckWord_complete(DyckWord):
         EXAMPLES::
 
             sage: D = DyckWord([1,1,0,0])
-            sage: D.to_ordered_tree()                                                   # optional - sage.graphs
+            sage: D.to_ordered_tree()                                                   # needs sage.graphs
             [[[]]]
             sage: D = DyckWord([1,0,1,0])
-            sage: D.to_ordered_tree()                                                   # optional - sage.graphs
+            sage: D.to_ordered_tree()                                                   # needs sage.graphs
             [[], []]
             sage: D = DyckWord([1, 0, 1, 1, 0, 0])
-            sage: D.to_ordered_tree()                                                   # optional - sage.graphs
+            sage: D.to_ordered_tree()                                                   # needs sage.graphs
             [[], [[]]]
             sage: D = DyckWord([1, 0, 1, 1, 0, 1, 0, 0, 1, 1, 0, 1, 1, 0, 0, 0])
-            sage: D.to_ordered_tree()                                                   # optional - sage.graphs
+            sage: D.to_ordered_tree()                                                   # needs sage.graphs
             [[], [[], []], [[], [[]]]]
 
         TESTS::
 
             sage: D = DyckWord([1, 0, 1, 1, 0, 1, 0, 0, 1, 1, 0, 1, 1, 0, 0, 0])
-            sage: D == D.to_ordered_tree().to_dyck_word()                               # optional - sage.graphs
+            sage: D == D.to_ordered_tree().to_dyck_word()                               # needs sage.graphs
             True
         """
         from sage.combinat.ordered_tree import OrderedTree
@@ -2584,11 +2584,11 @@ class DyckWord_complete(DyckWord):
 
         EXAMPLES::
 
-            sage: g = DyckWord([1, 1, 0, 0, 1, 0]).to_triangulation_as_graph(); g       # optional - sage.graphs
+            sage: g = DyckWord([1, 1, 0, 0, 1, 0]).to_triangulation_as_graph(); g       # needs sage.graphs
             Graph on 5 vertices
-            sage: g.edges(sort=True, labels=False)                                      # optional - sage.graphs
+            sage: g.edges(sort=True, labels=False)                                      # needs sage.graphs
             [(0, 1), (0, 4), (1, 2), (1, 3), (1, 4), (2, 3), (3, 4)]
-            sage: g.show()        # not tested                                          # optional - sage.graphs
+            sage: g.show()                      # not tested                            # needs sage.graphs
         """
         n = self.number_of_open_symbols()
         edges = self.to_triangulation()
@@ -3173,12 +3173,12 @@ class DyckWord_complete(DyckWord):
 
         EXAMPLES::
 
-            sage: DyckWord([1,1,1,0,1,0,0,0]).to_alternating_sign_matrix()              # optional - sage.modules
+            sage: DyckWord([1,1,1,0,1,0,0,0]).to_alternating_sign_matrix()              # needs sage.modules
             [ 0  0  1  0]
             [ 1  0 -1  1]
             [ 0  1  0  0]
             [ 0  0  1  0]
-            sage: DyckWord([1,0,1,0,1,1,0,0]).to_alternating_sign_matrix()              # optional - sage.modules
+            sage: DyckWord([1,0,1,0,1,1,0,0]).to_alternating_sign_matrix()              # needs sage.modules
             [1 0 0 0]
             [0 1 0 0]
             [0 0 0 1]

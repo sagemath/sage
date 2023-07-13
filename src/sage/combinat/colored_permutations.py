@@ -260,14 +260,14 @@ class ColoredPermutation(MultiplicativeGroupElement):
             sage: s1,s2,t = C.gens()
             sage: x = s1*s2*t*s2; x.one_line_form()
             [(1, 2), (0, 1), (0, 3)]
-            sage: M = x.to_matrix(); M                                                  # optional - sage.rings.number_field
+            sage: M = x.to_matrix(); M                                                  # needs sage.rings.number_field
             [    0     1     0]
             [zeta4     0     0]
             [    0     0     1]
 
         The matrix multiplication is in the *opposite* order::
 
-            sage: M == s2.to_matrix()*t.to_matrix()*s2.to_matrix()*s1.to_matrix()       # optional - sage.rings.number_field
+            sage: M == s2.to_matrix()*t.to_matrix()*s2.to_matrix()*s1.to_matrix()       # needs sage.rings.number_field
             True
         """
         Cp = CyclotomicField(self.parent()._m)
@@ -542,14 +542,14 @@ class ColoredPermutations(Parent, UniqueRepresentation):
         EXAMPLES::
 
             sage: C = ColoredPermutations(3, 4)
-            sage: C.coxeter_matrix()                                                    # optional - sage.modules
+            sage: C.coxeter_matrix()                                                    # needs sage.modules
             [1 3 2 2]
             [3 1 3 2]
             [2 3 1 4]
             [2 2 4 1]
 
             sage: C = ColoredPermutations(1, 4)
-            sage: C.coxeter_matrix()                                                    # optional - sage.modules
+            sage: C.coxeter_matrix()                                                    # needs sage.modules
             [1 3 2]
             [3 1 3]
             [2 3 1]
@@ -557,7 +557,7 @@ class ColoredPermutations(Parent, UniqueRepresentation):
         TESTS::
 
             sage: S = SignedPermutations(4)
-            sage: S.coxeter_matrix()                                                    # optional - sage.modules
+            sage: S.coxeter_matrix()                                                    # needs sage.modules
             [1 3 2 2]
             [3 1 3 2]
             [2 3 1 4]
@@ -660,7 +660,7 @@ class ColoredPermutations(Parent, UniqueRepresentation):
         EXAMPLES::
 
             sage: C = ColoredPermutations(4, 3)
-            sage: C.matrix_group()                                                      # optional - sage.modules
+            sage: C.matrix_group()                                                      # needs sage.modules
             Matrix group over Cyclotomic Field of order 4 and degree 2 with 3 generators (
             [0 1 0]  [1 0 0]  [    1     0     0]
             [1 0 0]  [0 0 1]  [    0     1     0]
@@ -677,7 +677,7 @@ class ColoredPermutations(Parent, UniqueRepresentation):
         EXAMPLES::
 
             sage: C = ColoredPermutations(4, 3)
-            sage: C.as_permutation_group()                                              # optional - sage.groups
+            sage: C.as_permutation_group()                                              # needs sage.groups
             Complex reflection group G(4, 1, 3) as a permutation group
         """
         from sage.groups.perm_gps.permgroup_named import ComplexReflectionGroup
@@ -880,8 +880,8 @@ class ColoredPermutations(Parent, UniqueRepresentation):
             sage: C = ColoredPermutations(3, 2)
             sage: f = prod(q - ds - 1 for ds in C.codegrees())
             sage: d = lambda x: sum(1 for e in x.to_matrix().eigenvalues() if e == 1)
-            sage: g = sum(det(x.to_matrix()) * q**d(x) for x in C)                      # optional - sage.modules sage.rings.number_field
-            sage: f == g                                                                # optional - sage.modules sage.rings.number_field
+            sage: g = sum(det(x.to_matrix()) * q**d(x) for x in C)                      # needs sage.modules sage.rings.number_field
+            sage: f == g                                                                # needs sage.modules sage.rings.number_field
             True
         """
         # Special case for the usual symmetric group
@@ -1139,7 +1139,7 @@ class SignedPermutation(ColoredPermutation,
             sage: S = SignedPermutations(4)
             sage: s1,s2,s3,s4 = S.gens()
             sage: x = s4*s1*s2*s3*s4
-            sage: M = x.to_matrix(); M                                                  # optional - sage.modules
+            sage: M = x.to_matrix(); M                                                  # needs sage.modules
             [ 0  1  0  0]
             [ 0  0  1  0]
             [ 0  0  0 -1]
@@ -1147,8 +1147,8 @@ class SignedPermutation(ColoredPermutation,
 
         The matrix multiplication is in the *opposite* order::
 
-            sage: m1,m2,m3,m4 = [g.to_matrix() for g in S.gens()]                       # optional - sage.modules
-            sage: M == m4 * m3 * m2 * m1 * m4                                           # optional - sage.modules
+            sage: m1,m2,m3,m4 = [g.to_matrix() for g in S.gens()]                       # needs sage.modules
+            sage: M == m4 * m3 * m2 * m1 * m4                                           # needs sage.modules
             True
         """
         return self._perm.to_matrix() * diagonal_matrix(self._colors)
@@ -1265,7 +1265,7 @@ class SignedPermutations(ColoredPermutations):
 
     This is a finite Coxeter group of type `B_n`::
 
-        sage: S.canonical_representation()                                              # optional - sage.modules
+        sage: S.canonical_representation()                                              # needs sage.modules
         Finite Coxeter group over Number Field in a with defining polynomial x^2 - 2
          with a = 1.414213562373095? with Coxeter matrix:
         [1 3 2 2]

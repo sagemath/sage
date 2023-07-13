@@ -46,19 +46,19 @@ def CoxeterGroup(data, implementation="reflection", base_ring=None, index_set=No
     ``implementation`` is not specified, the reflection representation
     is returned::
 
-        sage: W = CoxeterGroup(["A",2]); W                                              # optional - sage.libs.gap
+        sage: W = CoxeterGroup(["A",2]); W                                              # needs sage.libs.gap
         Finite Coxeter group over Integer Ring with Coxeter matrix:
         [1 3]
         [3 1]
 
-        sage: W = CoxeterGroup(["A",3,1]); W                                            # optional - sage.libs.gap
+        sage: W = CoxeterGroup(["A",3,1]); W                                            # needs sage.libs.gap
         Coxeter group over Integer Ring with Coxeter matrix:
         [1 3 2 3]
         [3 1 3 2]
         [2 3 1 3]
         [3 2 3 1]
 
-        sage: W = CoxeterGroup(['H',3]); W                                              # optional - sage.libs.gap
+        sage: W = CoxeterGroup(['H',3]); W                                              # needs sage.libs.gap
         Finite Coxeter group over Number Field in a with defining polynomial x^2 - 5
          with a = 2.236067977499790? with Coxeter matrix:
         [1 3 2]
@@ -74,24 +74,24 @@ def CoxeterGroup(data, implementation="reflection", base_ring=None, index_set=No
             and Category of finite weyl groups
             and Category of well generated finite irreducible complex reflection groups
 
-        sage: W = CoxeterGroup(["A",2], implementation="matrix"); W                     # optional - sage.libs.gap
+        sage: W = CoxeterGroup(["A",2], implementation="matrix"); W                     # needs sage.libs.gap
         Weyl Group of type ['A', 2] (as a matrix group acting on the ambient space)
 
-        sage: W = CoxeterGroup(["H",3], implementation="matrix"); W                     # optional - sage.libs.gap sage.rings.number_field
+        sage: W = CoxeterGroup(["H",3], implementation="matrix"); W                     # needs sage.libs.gap sage.rings.number_field
         Finite Coxeter group over Number Field in a with defining polynomial x^2 - 5
          with a = 2.236067977499790? with Coxeter matrix:
         [1 3 2]
         [3 1 5]
         [2 5 1]
 
-        sage: W = CoxeterGroup(["H",3], implementation="reflection"); W                 # optional - sage.rings.number_field
+        sage: W = CoxeterGroup(["H",3], implementation="reflection"); W                 # needs sage.rings.number_field
         Finite Coxeter group over Number Field in a with defining polynomial x^2 - 5
          with a = 2.236067977499790? with Coxeter matrix:
         [1 3 2]
         [3 1 5]
         [2 5 1]
 
-        sage: W = CoxeterGroup(["A",4,1], implementation="permutation")                 # optional - sage.libs.gap
+        sage: W = CoxeterGroup(["A",4,1], implementation="permutation")                 # needs sage.libs.gap
         Traceback (most recent call last):
         ...
         ValueError: the type must be finite
@@ -101,12 +101,12 @@ def CoxeterGroup(data, implementation="reflection", base_ring=None, index_set=No
 
     We use the different options for the "reflection" implementation::
 
-        sage: W = CoxeterGroup(["H",3], implementation="reflection", base_ring=RR); W   # optional - sage.libs.gap
+        sage: W = CoxeterGroup(["H",3], implementation="reflection", base_ring=RR); W   # needs sage.libs.gap
         Finite Coxeter group over Real Field with 53 bits of precision with Coxeter matrix:
         [1 3 2]
         [3 1 5]
         [2 5 1]
-        sage: W = CoxeterGroup([[1,10],[10,1]], implementation="reflection",            # optional - sage.symbolics
+        sage: W = CoxeterGroup([[1,10],[10,1]], implementation="reflection",            # needs sage.symbolics
         ....:                  index_set=['a','b'], base_ring=SR); W
         Finite Coxeter group over Symbolic Ring with Coxeter matrix:
         [ 1 10]

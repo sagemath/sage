@@ -36,13 +36,13 @@ def q_bernoulli(m, p=None):
         -1/(q + 1)
         sage: q_bernoulli(2)
         q/(q^3 + 2*q^2 + 2*q + 1)
-        sage: all(q_bernoulli(i)(q=1) == bernoulli(i) for i in range(12))               # optional - sage.libs.flint
+        sage: all(q_bernoulli(i)(q=1) == bernoulli(i) for i in range(12))               # needs sage.libs.flint
         True
 
     One can evaluate the rational function by giving a second argument::
 
-        sage: x = PolynomialRing(GF(2),'x').gen()                                       # optional - sage.rings.finite_rings
-        sage: q_bernoulli(5, x)                                                         # optional - sage.rings.finite_rings
+        sage: x = PolynomialRing(GF(2),'x').gen()                                       # needs sage.rings.finite_rings
+        sage: q_bernoulli(5, x)                                                         # needs sage.rings.finite_rings
         x/(x^6 + x^5 + x + 1)
 
     The function does not accept negative arguments::
@@ -101,7 +101,7 @@ def q_bernoulli_polynomial(m):
         sage: q_bernoulli_polynomial(1)
         (2/(q + 1))*x - 1/(q + 1)
         sage: x = q_bernoulli_polynomial(1).parent().gen()
-        sage: all(q_bernoulli_polynomial(i)(q=1) == bernoulli_polynomial(x,i)           # optional - sage.libs.flint
+        sage: all(q_bernoulli_polynomial(i)(q=1) == bernoulli_polynomial(x,i)           # needs sage.libs.flint
         ....:     for i in range(12))
         True
         sage: all(q_bernoulli_polynomial(i)(x=0) == q_bernoulli(i)

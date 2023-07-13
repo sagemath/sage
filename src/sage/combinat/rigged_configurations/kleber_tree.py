@@ -1046,7 +1046,7 @@ class KleberTree(UniqueRepresentation, Parent):
 
             sage: from sage.combinat.rigged_configurations.kleber_tree import KleberTree
             sage: KT = KleberTree(['D', 4, 1], [[2, 2]])
-            sage: print(KT.plot())                                                      # optional - sage.plot
+            sage: print(KT.plot())                                                      # needs sage.plot
             Graphics object consisting of 8 graphics primitives
         """
         return self.digraph().plot(edge_labels=True, vertex_size=0, **options)

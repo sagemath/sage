@@ -105,7 +105,7 @@ enumerated sets::
     ([1], [1], [1], [1], [1])
     sage: PartitionTuples(4,5).an_element()
     ([1], [], [], [4])
-    sage: PartitionTuples(3,2)[:]                                                       # optional - sage.libs.flint
+    sage: PartitionTuples(3,2)[:]                                                       # needs sage.libs.flint
     [([2], [], []),
      ([1, 1], [], []),
      ([1], [1], []),
@@ -115,7 +115,7 @@ enumerated sets::
      ([], [1], [1]),
      ([], [], [2]),
      ([], [], [1, 1])]
-    sage: PartitionTuples(2,3).list()                                                   # optional - sage.libs.flint
+    sage: PartitionTuples(2,3).list()                                                   # needs sage.libs.flint
     [([3], []),
      ([2, 1], []),
      ([1, 1, 1], []),
@@ -239,10 +239,10 @@ Every partition tuple behaves every much like a tuple of partitions::
 Attached to a partition tuple is the corresponding Young, or parabolic,
 subgroup::
 
-    sage: mu.young_subgroup()                                                           # optional - sage.groups
+    sage: mu.young_subgroup()                                                           # needs sage.groups
     Permutation Group with generators
      [(), (12,13), (11,12), (8,9), (6,7), (3,4), (2,3), (1,2)]
-    sage: mu.young_subgroup_generators()                                                # optional - sage.groups
+    sage: mu.young_subgroup_generators()                                                # needs sage.groups
     [1, 2, 3, 6, 8, 11, 12]
 
 """
@@ -1479,7 +1479,7 @@ class PartitionTuple(CombinatorialElement):
 
         TESTS::
 
-            sage: all(mu==PartitionTuple(mu.to_list()) for mu in PartitionTuples(4,4))  # optional - sage.libs.flint
+            sage: all(mu==PartitionTuple(mu.to_list()) for mu in PartitionTuples(4,4))  # needs sage.libs.flint
             True
         """
         return [mu.to_list() for mu in self]
@@ -1491,7 +1491,7 @@ class PartitionTuple(CombinatorialElement):
 
         EXAMPLES::
 
-            sage: PartitionTuple([[2,1],[4,2],[1]]).young_subgroup()                    # optional - sage.groups
+            sage: PartitionTuple([[2,1],[4,2],[1]]).young_subgroup()                    # needs sage.groups
             Permutation Group with generators [(), (8,9), (6,7), (5,6), (4,5), (1,2)]
         """
         gens = []
@@ -1960,7 +1960,7 @@ class PartitionTuples(UniqueRepresentation, Parent):
             True
             sage: PartitionTuple([[2,1],[],[1,1],[],[3]]) in PartitionTuples()
             True
-            sage: all(mu in PartitionTuples() for mu in PartitionTuples(3,8))           # optional - sage.libs.flint
+            sage: all(mu in PartitionTuples() for mu in PartitionTuples(3,8))           # needs sage.libs.flint
             True
             sage: [5,1,1] in PartitionTuples()
             True
@@ -1995,7 +1995,7 @@ class PartitionTuples(UniqueRepresentation, Parent):
 
         EXAMPLES::
 
-            sage: PartitionTuples()[10:20]                                              # optional - sage.libs.flint
+            sage: PartitionTuples()[10:20]                                              # needs sage.libs.flint
             [([1, 1, 1]),
              ([2], []),
              ([1, 1], []),
@@ -2079,7 +2079,7 @@ class PartitionTuples_all(PartitionTuples):
 
         EXAMPLES::
 
-            sage: TestSuite( PartitionTuples() ).run()                                  # optional - sage.libs.flint
+            sage: TestSuite( PartitionTuples() ).run()                                  # needs sage.libs.flint
         """
         super().__init__(category=InfiniteEnumeratedSets())
 
@@ -2101,7 +2101,7 @@ class PartitionTuples_all(PartitionTuples):
 
         EXAMPLES::
 
-            sage: PartitionTuples()[:20]                                                # optional - sage.libs.flint
+            sage: PartitionTuples()[:20]                                                # needs sage.libs.flint
             [([]),
              ([1]),
              ([], []),
@@ -2156,7 +2156,7 @@ class PartitionTuples_level(PartitionTuples):
             Partition tuples of level 4
             sage: PartitionTuples(level=6)
             Partition tuples of level 6
-            sage: TestSuite( PartitionTuples(level=4) ).run()                           # optional - sage.libs.flint
+            sage: TestSuite( PartitionTuples(level=4) ).run()                           # needs sage.libs.flint
         """
         if level not in NN:
             raise ValueError('level must be a non-negative integer')
@@ -2190,7 +2190,7 @@ class PartitionTuples_level(PartitionTuples):
             True
             sage: PartitionTuple([[2,2,1],[],[2]]) in PartitionTuples(level=2)
             False
-            sage: all(mu in PartitionTuples(3) for mu in PartitionTuples(3,8))          # optional - sage.libs.flint
+            sage: all(mu in PartitionTuples(3) for mu in PartitionTuples(3,8))          # needs sage.libs.flint
             True
 
         Check that :trac:`14145` is fixed::
@@ -2208,7 +2208,7 @@ class PartitionTuples_level(PartitionTuples):
         EXAMPLES::
 
             sage: parts = PartitionTuples(3)
-            sage: [parts[k] for k in range(20)]                                         # optional - sage.libs.flint
+            sage: [parts[k] for k in range(20)]                                         # needs sage.libs.flint
             [([], [], []),
              ([1], [], []),
              ([], [1], []),
@@ -2262,7 +2262,7 @@ class PartitionTuples_size(PartitionTuples):
             sage: PartitionTuples(size=6)
             Partition tuples of size 6
 
-            sage: TestSuite( PartitionTuples(size=6) ).run()                            # optional - sage.libs.flint
+            sage: TestSuite( PartitionTuples(size=6) ).run()                            # needs sage.libs.flint
         """
         if size not in NN:
             raise ValueError('size must be a non-negative integer')
@@ -2294,7 +2294,7 @@ class PartitionTuples_size(PartitionTuples):
             True
             sage: PartitionTuple([[2,1],[],[1,1],[],[3]]) in PartitionTuples(size=7)
             False
-            sage: all(mu in PartitionTuples(size=8) for mu in PartitionTuples(3,8))     # optional - sage.libs.flint
+            sage: all(mu in PartitionTuples(size=8) for mu in PartitionTuples(3,8))     # needs sage.libs.flint
             True
             sage: [3, 2, 1] in PartitionTuples(size=7)
             False
@@ -2314,7 +2314,7 @@ class PartitionTuples_size(PartitionTuples):
 
         EXAMPLES::
 
-            sage: PartitionTuples(size=3)[:20]                                          # optional - sage.libs.flint
+            sage: PartitionTuples(size=3)[:20]                                          # needs sage.libs.flint
             [([3]),
              ([2, 1]),
              ([1, 1, 1]),
@@ -2363,8 +2363,8 @@ class PartitionTuples_level_size(PartitionTuples):
 
         EXAMPLES::
 
-            sage: TestSuite( PartitionTuples(4,2) ).run()                               # optional - sage.libs.flint sage.libs.pari
-            sage: TestSuite( PartitionTuples(level=4, size=5) ).run()                   # optional - sage.libs.flint sage.libs.pari
+            sage: TestSuite( PartitionTuples(4,2) ).run()                               # needs sage.libs.flint sage.libs.pari
+            sage: TestSuite( PartitionTuples(level=4, size=5) ).run()                   # needs sage.libs.flint sage.libs.pari
         """
         if not (level in NN and size in NN):
             raise ValueError('n and level must be non-negative integers')
@@ -2399,7 +2399,7 @@ class PartitionTuples_level_size(PartitionTuples):
             True
             sage: PartitionTuple([[2,1],[],[1,1],[],[3]]) in PartitionTuples(2,8)
             False
-            sage: all(mu in PartitionTuples(3,8) for mu in PartitionTuples(3,8))        # optional - sage.libs.flint
+            sage: all(mu in PartitionTuples(3,8) for mu in PartitionTuples(3,8))        # needs sage.libs.flint
             True
 
         Check that :trac:`14145` is fixed::
@@ -2420,13 +2420,13 @@ class PartitionTuples_level_size(PartitionTuples):
 
         EXAMPLES::
 
-            sage: PartitionTuples(2,0).list() #indirect doctest                         # optional - sage.libs.flint
+            sage: PartitionTuples(2,0).list() #indirect doctest                         # needs sage.libs.flint
             [([], [])]
-            sage: PartitionTuples(2,1).list() #indirect doctest                         # optional - sage.libs.flint
+            sage: PartitionTuples(2,1).list() #indirect doctest                         # needs sage.libs.flint
             [([1], []), ([], [1])]
-            sage: PartitionTuples(2,2).list() #indirect doctest                         # optional - sage.libs.flint
+            sage: PartitionTuples(2,2).list() #indirect doctest                         # needs sage.libs.flint
             [([2], []), ([1, 1], []), ([1], [1]), ([], [2]), ([], [1, 1])]
-            sage: PartitionTuples(3,2).list() #indirect doctest                         # optional - sage.libs.flint
+            sage: PartitionTuples(3,2).list() #indirect doctest                         # needs sage.libs.flint
             [([2], [], []),
              ([1, 1], [], []),
              ([1], [1], []),
@@ -2468,22 +2468,22 @@ class PartitionTuples_level_size(PartitionTuples):
 
         EXAMPLES::
 
-            sage: PartitionTuples(2,3).cardinality()                                    # optional - sage.libs.pari
+            sage: PartitionTuples(2,3).cardinality()                                    # needs sage.libs.pari
             10
-            sage: PartitionTuples(2,8).cardinality()                                    # optional - sage.libs.pari
+            sage: PartitionTuples(2,8).cardinality()                                    # needs sage.libs.pari
             185
 
         TESTS:
 
         The following calls used to fail (:trac:`11476`)::
 
-            sage: PartitionTuples(17,2).cardinality()                                   # optional - sage.libs.pari
+            sage: PartitionTuples(17,2).cardinality()                                   # needs sage.libs.pari
             170
-            sage: PartitionTuples(2,17).cardinality()                                   # optional - sage.libs.pari
+            sage: PartitionTuples(2,17).cardinality()                                   # needs sage.libs.pari
             8470
-            sage: PartitionTuples(100,13).cardinality()                                 # optional - sage.libs.pari
+            sage: PartitionTuples(100,13).cardinality()                                 # needs sage.libs.pari
             110320020147886800
-            sage: PartitionTuples(13,90).cardinality()                                  # optional - sage.libs.pari
+            sage: PartitionTuples(13,90).cardinality()                                  # needs sage.libs.pari
             91506473741200186152352843611
 
         These answers were checked against Gap4 (the last of which takes an
@@ -2528,7 +2528,7 @@ class RegularPartitionTuples(PartitionTuples):
         TESTS::
 
             sage: RPT = PartitionTuples(regular=3)
-            sage: TestSuite(RPT).run()                                                  # optional - sage.libs.flint
+            sage: TestSuite(RPT).run()                                                  # needs sage.libs.flint
         """
         if regular not in ZZ or regular < 1:
             raise ValueError("regular must be an integer greater than 1")
@@ -2604,7 +2604,7 @@ class RegularPartitionTuples_all(RegularPartitionTuples):
         EXAMPLES::
 
             sage: RPT = PartitionTuples(regular=3)
-            sage: TestSuite(RPT).run()                                                  # optional - sage.libs.flint
+            sage: TestSuite(RPT).run()                                                  # needs sage.libs.flint
         """
         RegularPartitionTuples.__init__(self, regular, category=InfiniteEnumeratedSets())
 
@@ -2625,7 +2625,7 @@ class RegularPartitionTuples_all(RegularPartitionTuples):
 
         EXAMPLES::
 
-            sage: PartitionTuples(regular=2)[:20]                                       # optional - sage.libs.flint
+            sage: PartitionTuples(regular=2)[:20]                                       # needs sage.libs.flint
             [([]),
              ([], []),
              ([1]),
@@ -2673,7 +2673,7 @@ class RegularPartitionTuples_level(PartitionTuples_level):
     EXAMPLES::
 
         sage: RPT = PartitionTuples(level=4, regular=(2,3,0,2))
-        sage: RPT[:24]                                                                  # optional - sage.libs.flint
+        sage: RPT[:24]                                                                  # needs sage.libs.flint
         [([], [], [], []),
          ([1], [], [], []),
          ([], [1], [], []),
@@ -2716,7 +2716,7 @@ class RegularPartitionTuples_level(PartitionTuples_level):
             sage: RPT.category()
             Category of infinite enumerated sets
             sage: RPT = PartitionTuples(level=4, regular=3)
-            sage: TestSuite(RPT).run()                                                  # optional - sage.libs.flint
+            sage: TestSuite(RPT).run()                                                  # needs sage.libs.flint
         """
         if level not in NN:
             raise ValueError('level must be a non-negative integer')
@@ -2819,7 +2819,7 @@ class RegularPartitionTuples_level(PartitionTuples_level):
 
         EXAMPLES::
 
-            sage: PartitionTuples(level=3, regular=(2,1,4))[:24]                        # optional - sage.libs.flint
+            sage: PartitionTuples(level=3, regular=(2,1,4))[:24]                        # needs sage.libs.flint
             [([], [], []),
              ([1], [], []),
              ([], [], [1]),
@@ -2844,7 +2844,7 @@ class RegularPartitionTuples_level(PartitionTuples_level):
              ([1], [], [3]),
              ([1], [], [2, 1]),
              ([1], [], [1, 1, 1])]
-            sage: PartitionTuples(level=4, regular=2)[:20]                              # optional - sage.libs.flint
+            sage: PartitionTuples(level=4, regular=2)[:20]                              # needs sage.libs.flint
             [([], [], [], []),
              ([1], [], [], []),
              ([], [1], [], []),
@@ -2883,7 +2883,7 @@ class RegularPartitionTuples_size(RegularPartitionTuples):
         EXAMPLES::
 
             sage: RPT = PartitionTuples(size=4, regular=3)
-            sage: TestSuite(RPT).run()                                                  # optional - sage.libs.flint
+            sage: TestSuite(RPT).run()                                                  # needs sage.libs.flint
         """
         if size not in NN:
             raise ValueError('size must be a non-negative integer')
@@ -2941,7 +2941,7 @@ class RegularPartitionTuples_size(RegularPartitionTuples):
 
         EXAMPLES::
 
-            sage: PartitionTuples(size=4, regular=2)[:10]                               # optional - sage.libs.flint
+            sage: PartitionTuples(size=4, regular=2)[:10]                               # needs sage.libs.flint
             [([4]),
              ([3, 1]),
              ([4], []),
@@ -2979,7 +2979,7 @@ class RegularPartitionTuples_level_size(PartitionTuples_level_size):
 
     EXAMPLES::
 
-        sage: PartitionTuples(level=3, size=7, regular=(2,1,3))[0:24]                   # optional - sage.libs.flint
+        sage: PartitionTuples(level=3, size=7, regular=(2,1,3))[0:24]                   # needs sage.libs.flint
         [([7], [], []),
          ([6, 1], [], []),
          ([5, 2], [], []),
@@ -3013,7 +3013,7 @@ class RegularPartitionTuples_level_size(PartitionTuples_level_size):
         TESTS::
 
             sage: RPT = PartitionTuples(4,2,3)
-            sage: TestSuite(RPT).run()                                                  # optional - sage.libs.flint sage.libs.pari
+            sage: TestSuite(RPT).run()                                                  # needs sage.libs.flint sage.libs.pari
         """
         if size not in NN:
             raise ValueError('size must be a non-negative integer')
@@ -3087,7 +3087,7 @@ class RegularPartitionTuples_level_size(PartitionTuples_level_size):
 
         EXAMPLES::
 
-            sage: list(PartitionTuples(3,3,2))                                          # optional - sage.libs.pari
+            sage: list(PartitionTuples(3,3,2))                                          # needs sage.libs.pari
             [([3], [], []),
              ([2, 1], [], []),
              ([2], [1], []),

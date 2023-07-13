@@ -370,7 +370,7 @@ class SymmetricFunctionAlgebra_monomial(classical.SymmetricFunctionAlgebra_class
                 q^7 + q^6 + q^5 + q^3 + q^2 + q
 
                 sage: x = 5*m[2] + 3*m[1] + 1
-                sage: x.principal_specialization(3, q=var("q"))                         # optional - sage.symbolic
+                sage: x.principal_specialization(3, q=var("q"))                         # needs sage.symbolic
                 -10*(q^3 - 1)*q/(q - 1) + 5*(q^3 - 1)^2/(q - 1)^2 + 3*(q^3 - 1)/(q - 1) + 1
 
             TESTS::
@@ -456,7 +456,7 @@ class SymmetricFunctionAlgebra_monomial(classical.SymmetricFunctionAlgebra_class
 
             We also support the `q`-exponential_specialization::
 
-                sage: factor(m[3].exponential_specialization(q=var("q"), t=var("t")))   # optional - sage.symbolic
+                sage: factor(m[3].exponential_specialization(q=var("q"), t=var("t")))   # needs sage.symbolic
                 (q - 1)^2*t^3/(q^2 + q + 1)
 
             TESTS::

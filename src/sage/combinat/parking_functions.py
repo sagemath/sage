@@ -1018,23 +1018,23 @@ class ParkingFunction(ClonableArray, metaclass=InheritComparisonClasscallMetacla
 
             sage: R = QQ['q','t'].fraction_field()
             sage: (q,t) = R.gens()
-            sage: cqf = sum(t**PF.area() * PF.characteristic_quasisymmetric_function()  # optional - sage.modules
+            sage: cqf = sum(t**PF.area() * PF.characteristic_quasisymmetric_function()  # needs sage.modules
             ....:           for PF in ParkingFunctions(3)); cqf
             (q^3+q^2*t+q*t^2+t^3+q*t)*F[1, 1, 1] + (q^2+q*t+t^2+q+t)*F[1, 2]
              + (q^2+q*t+t^2+q+t)*F[2, 1] + F[3]
-            sage: s = SymmetricFunctions(R).s()                                         # optional - sage.modules
-            sage: s(cqf.to_symmetric_function())                                        # optional - sage.modules
+            sage: s = SymmetricFunctions(R).s()                                         # needs sage.modules
+            sage: s(cqf.to_symmetric_function())                                        # needs sage.modules
             (q^3+q^2*t+q*t^2+t^3+q*t)*s[1, 1, 1] + (q^2+q*t+t^2+q+t)*s[2, 1] + s[3]
-            sage: s(cqf.to_symmetric_function()).nabla(power=-1)                        # optional - sage.modules
+            sage: s(cqf.to_symmetric_function()).nabla(power=-1)                        # needs sage.modules
             s[1, 1, 1]
 
         ::
 
             sage: p = ParkingFunction([3, 1, 2])
-            sage: p.characteristic_quasisymmetric_function()                            # optional - sage.modules
+            sage: p.characteristic_quasisymmetric_function()                            # needs sage.modules
             q*F[2, 1]
             sage: pf = ParkingFunction([1,2,7,2,1,2,3,2,1])
-            sage: pf.characteristic_quasisymmetric_function()                           # optional - sage.modules
+            sage: pf.characteristic_quasisymmetric_function()                           # needs sage.modules
             q^2*F[1, 1, 1, 2, 1, 3]
         """
         from sage.combinat.ncsf_qsym.qsym import QuasiSymmetricFunctions

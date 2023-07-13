@@ -248,18 +248,18 @@ def q_binomial(n, k, q=None, algorithm='auto'):
 
     This also works for variables in the symbolic ring::
 
-        sage: z = var('z')                                                              # optional - sage.symbolic
-        sage: factor(q_binomial(4, 2, z))                                               # optional - sage.symbolic
+        sage: z = var('z')                                                              # needs sage.symbolic
+        sage: factor(q_binomial(4, 2, z))                                               # needs sage.symbolic
         (z^2 + z + 1)*(z^2 + 1)
 
     This also works for complex roots of unity::
 
-        sage: q_binomial(10, 4, QQbar(I))                                               # optional - sage.rings.number_field
+        sage: q_binomial(10, 4, QQbar(I))                                               # needs sage.rings.number_field
         2
 
     Note that the symbolic computation works (see :trac:`14982`)::
 
-        sage: q_binomial(10, 4, I)                                                      # optional - sage.rings.number_field
+        sage: q_binomial(10, 4, I)                                                      # needs sage.rings.number_field
         2
 
     Check that the algorithm does not matter::
@@ -578,7 +578,7 @@ def q_pochhammer(n, a, q=None):
         1
         sage: q_pochhammer(0, 1)
         1
-        sage: q_pochhammer(0, var('a'))                                                 # optional - sage.symbolic
+        sage: q_pochhammer(0, var('a'))                                                 # needs sage.symbolic
         1
 
     We check that :trac:`25715` is fixed::
@@ -637,7 +637,7 @@ def q_jordan(t, q=None):
         [615195, 40635, 5643, 2331, 1491, 515, 147, 87, 47, 11, 1]
         sage: q_jordan([3,2,1])
         16*q^4 + 24*q^3 + 14*q^2 + 5*q + 1
-        sage: q_jordan([2,1], x)                                                        # optional - sage.symbolic
+        sage: q_jordan([2,1], x)                                                        # needs sage.symbolic
         2*x + 1
 
     If the partition is trivial (i.e. has only one part), we get
@@ -865,13 +865,13 @@ def q_stirling_number1(n, k, q=None):
         sage: q_stirling_number1(4,2)
         q^3 + 3*q^2 + 4*q + 3
 
-        sage: all(stirling_number1(6,k) == q_stirling_number1(6,k)(1)                   # optional - sage.libs.gap
+        sage: all(stirling_number1(6,k) == q_stirling_number1(6,k)(1)                   # needs sage.libs.gap
         ....:     for k in range(1,7))
         True
 
         sage: x = polygen(QQ['q'],'x')
         sage: S = sum(q_stirling_number1(5,k)*x**k for k in range(1, 6))
-        sage: factor(S)                                                                 # optional - sage.libs.singular
+        sage: factor(S)                                                                 # needs sage.libs.singular
         x * (x + 1) * (x + q + 1) * (x + q^2 + q + 1) * (x + q^3 + q^2 + q + 1)
 
     TESTS::

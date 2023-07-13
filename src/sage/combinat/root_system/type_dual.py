@@ -338,7 +338,7 @@ class CartanType(cartan_type.CartanType_decorator, cartan_type.CartanType_crysta
         EXAMPLES::
 
             sage: ct = CartanType(['F', 4, 1]).dual()
-            sage: ct.dynkin_diagram()                                                   # optional - sage.graphs
+            sage: ct.dynkin_diagram()                                                   # needs sage.graphs
             O---O---O=<=O---O
             0   1   2   3   4
             F4~*
@@ -379,7 +379,7 @@ class AmbientSpace(ambient_space.AmbientSpace):
         sage: ct = sage.combinat.root_system.type_dual.CartanType(CartanType(['F',4]))
         sage: L = ct.root_system().ambient_space(); L
         Ambient space of the Root system of type ['F', 4]^*
-        sage: TestSuite(L).run(skip=["_test_elements","_test_pickling"])                # optional - sage.graphs
+        sage: TestSuite(L).run(skip=["_test_elements","_test_pickling"])                # needs sage.graphs
     """
 
     @lazy_attribute
@@ -472,7 +472,7 @@ class AmbientSpace(ambient_space.AmbientSpace):
 
             sage: ct = sage.combinat.root_system.type_dual.CartanType(CartanType(['F',4]))
             sage: L = ct.root_system().ambient_space()
-            sage: L.fundamental_weights()                                               # optional - sage.graphs
+            sage: L.fundamental_weights()                                               # needs sage.graphs
             Finite family {1: (1, 1, 0, 0), 2: (2, 1, 1, 0), 3: (3, 1, 1, 1), 4: (2, 0, 0, 0)}
 
         Note that this ambient space is isomorphic, but not equal, to

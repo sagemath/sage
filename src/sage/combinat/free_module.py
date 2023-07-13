@@ -151,7 +151,7 @@ class CombinatorialFreeModule(UniqueRepresentation, Module, IndexedGenerators):
     The constructed module is in the category of modules with basis
     over the base ring::
 
-        sage: CombinatorialFreeModule(QQ, Partitions()).category()                      # optional - sage.combinat
+        sage: CombinatorialFreeModule(QQ, Partitions()).category()                      # needs sage.combinat
         Category of vector spaces with basis over Rational Field
 
     If furthermore the index set is finite (i.e. in the category
@@ -160,7 +160,7 @@ class CombinatorialFreeModule(UniqueRepresentation, Module, IndexedGenerators):
 
         sage: CombinatorialFreeModule(QQ, [1,2,3,4]).category()
         Category of finite dimensional vector spaces with basis over Rational Field
-        sage: CombinatorialFreeModule(QQ, Partitions(3),                                # optional - sage.combinat
+        sage: CombinatorialFreeModule(QQ, Partitions(3),                                # needs sage.combinat
         ....:                         category=Algebras(QQ).WithBasis()).category()
         Category of finite dimensional algebras with basis over Rational Field
 
@@ -252,11 +252,11 @@ class CombinatorialFreeModule(UniqueRepresentation, Module, IndexedGenerators):
 
     TESTS::
 
-        sage: XQ = SchubertPolynomialRing(QQ)                                           # optional - sage.combinat
-        sage: XZ = SchubertPolynomialRing(ZZ)                                           # optional - sage.combinat
-        sage: XQ == XZ                                                                  # optional - sage.combinat
+        sage: XQ = SchubertPolynomialRing(QQ)                                           # needs sage.combinat
+        sage: XZ = SchubertPolynomialRing(ZZ)                                           # needs sage.combinat
+        sage: XQ == XZ                                                                  # needs sage.combinat
         False
-        sage: XQ == XQ                                                                  # optional - sage.combinat
+        sage: XQ == XQ                                                                  # needs sage.combinat
         True
 
     We check that issue :trac:`28681` is fixed::
@@ -347,21 +347,21 @@ class CombinatorialFreeModule(UniqueRepresentation, Module, IndexedGenerators):
 
         EXAMPLES::
 
-            sage: A = Algebras(QQ).WithBasis().example(); A                             # optional - sage.combinat
+            sage: A = Algebras(QQ).WithBasis().example(); A                             # needs sage.combinat
             An example of an algebra with basis:
             the free algebra on the generators ('a', 'b', 'c') over Rational Field
 
-            sage: A.element_class.mro()                                                 # optional - sage.combinat
+            sage: A.element_class.mro()                                                 # needs sage.combinat
             [<class 'sage.categories.examples.algebras_with_basis.FreeAlgebra_with_category.element_class'>,
              <class 'sage.modules.with_basis.indexed_element.IndexedFreeModuleElement'>,
              ...]
-            sage: a,b,c = A.algebra_generators()                                        # optional - sage.combinat
-            sage: a * b                                                                 # optional - sage.combinat
+            sage: a,b,c = A.algebra_generators()                                        # needs sage.combinat
+            sage: a * b                                                                 # needs sage.combinat
             B[word: ab]
 
         TESTS::
 
-            sage: A.__class__.element_class.__module__                                  # optional - sage.combinat
+            sage: A.__class__.element_class.__module__                                  # needs sage.combinat
             'sage.combinat.free_module'
         """
         return self.__make_element_class__(self.Element,
@@ -385,9 +385,9 @@ class CombinatorialFreeModule(UniqueRepresentation, Module, IndexedGenerators):
             sage: F.category()
             Category of finite dimensional algebras with basis over Rational Field
 
-            sage: F = CombinatorialFreeModule(GF(3), ['a','b','c'],                     # optional - sage.rings.finite_rings
+            sage: F = CombinatorialFreeModule(GF(3), ['a','b','c'],                     # needs sage.rings.finite_rings
             ....:         category=(Modules(GF(3)).WithBasis(), Semigroups()))
-            sage: F.category()                                                          # optional - sage.rings.finite_rings
+            sage: F.category()                                                          # needs sage.rings.finite_rings
             Join of Category of finite semigroups
                 and Category of finite dimensional vector spaces with basis over Finite Field of size 3
 
@@ -519,8 +519,8 @@ class CombinatorialFreeModule(UniqueRepresentation, Module, IndexedGenerators):
 
         TESTS::
 
-            sage: R = NonCommutativeSymmetricFunctions(QQ).R()                          # optional - sage.combinat
-            sage: ascii_art(R.one())  # indirect doctest                                # optional - sage.combinat
+            sage: R = NonCommutativeSymmetricFunctions(QQ).R()                          # needs sage.combinat
+            sage: ascii_art(R.one())  # indirect doctest                                # needs sage.combinat
             1
         """
         try:
@@ -536,8 +536,8 @@ class CombinatorialFreeModule(UniqueRepresentation, Module, IndexedGenerators):
 
         TESTS::
 
-            sage: R = NonCommutativeSymmetricFunctions(QQ).R()                          # optional - sage.combinat
-            sage: unicode_art(R.one())  # indirect doctest                              # optional - sage.combinat
+            sage: R = NonCommutativeSymmetricFunctions(QQ).R()                          # needs sage.combinat
+            sage: unicode_art(R.one())  # indirect doctest                              # needs sage.combinat
             1
         """
         try:
@@ -627,20 +627,20 @@ class CombinatorialFreeModule(UniqueRepresentation, Module, IndexedGenerators):
 
         Do not rely on the following feature which may be removed in the future::
 
-            sage: QS3 = SymmetricGroupAlgebra(QQ,3)                                     # optional - sage.combinat
-            sage: QS3([2,3,1])     # indirect doctest                                   # optional - sage.combinat
+            sage: QS3 = SymmetricGroupAlgebra(QQ,3)                                     # needs sage.combinat
+            sage: QS3([2,3,1])     # indirect doctest                                   # needs sage.combinat
             [2, 3, 1]
 
         instead, use::
 
-            sage: P = QS3.basis().keys()                                                # optional - sage.combinat
-            sage: QS3.monomial(P([2,3,1]))   # indirect doctest                         # optional - sage.combinat
+            sage: P = QS3.basis().keys()                                                # needs sage.combinat
+            sage: QS3.monomial(P([2,3,1]))   # indirect doctest                         # needs sage.combinat
             [2, 3, 1]
 
         or::
 
-            sage: B = QS3.basis()                                                       # optional - sage.combinat
-            sage: B[P([2,3,1])]                                                         # optional - sage.combinat
+            sage: B = QS3.basis()                                                       # needs sage.combinat
+            sage: B[P([2,3,1])]                                                         # needs sage.combinat
             [2, 3, 1]
 
         TODO: The symmetric group algebra (and in general,
@@ -692,17 +692,17 @@ class CombinatorialFreeModule(UniqueRepresentation, Module, IndexedGenerators):
         Here is a real life example illustrating that this yielded
         mathematically wrong results::
 
-            sage: S = SymmetricFunctions(QQ)                                            # optional - sage.combinat
-            sage: s = S.s(); p = S.p()                                                  # optional - sage.combinat
-            sage: ss = tensor([s,s]); pp = tensor([p,p])                                # optional - sage.combinat
-            sage: a = tensor((s[2],s[2]))                                               # optional - sage.combinat
+            sage: S = SymmetricFunctions(QQ)                                            # needs sage.combinat
+            sage: s = S.s(); p = S.p()                                                  # needs sage.combinat
+            sage: ss = tensor([s,s]); pp = tensor([p,p])                                # needs sage.combinat
+            sage: a = tensor((s[2],s[2]))                                               # needs sage.combinat
 
         The following originally used to yield ``p[[2]] # p[[2]]``, and if
         there was no natural coercion between ``s`` and ``p``, this would
         raise a ``NotImplementedError``. Since :trac:`15305`, this takes the
         coercion between ``s`` and ``p`` and lifts it to the tensor product. ::
 
-            sage: pp(a)                                                                 # optional - sage.combinat
+            sage: pp(a)                                                                 # needs sage.combinat
             1/4*p[1, 1] # p[1, 1] + 1/4*p[1, 1] # p[2] + 1/4*p[2] # p[1, 1] + 1/4*p[2] # p[2]
 
         General extensions of the ground ring should probably be reintroduced
@@ -716,8 +716,8 @@ class CombinatorialFreeModule(UniqueRepresentation, Module, IndexedGenerators):
 
         Conversion from the ground ring is implemented for algebras::
 
-            sage: QS3 = SymmetricGroupAlgebra(QQ,3)                                     # optional - sage.combinat
-            sage: QS3(2)                                                                # optional - sage.combinat
+            sage: QS3 = SymmetricGroupAlgebra(QQ,3)                                     # needs sage.combinat
+            sage: QS3(2)                                                                # needs sage.combinat
             2*[1, 2, 3]
         """
         R = self.base_ring()
@@ -798,8 +798,8 @@ class CombinatorialFreeModule(UniqueRepresentation, Module, IndexedGenerators):
             sage: C._first_ngens(3)
             (B[0], B[1], B[-1])
 
-            sage: R.<x,y> = FreeAlgebra(QQ, 2)                                          # optional - sage.combinat
-            sage: x,y                                                                   # optional - sage.combinat
+            sage: R.<x,y> = FreeAlgebra(QQ, 2)                                          # needs sage.combinat
+            sage: x,y                                                                   # needs sage.combinat
             (x, y)
         """
         try:
@@ -835,13 +835,13 @@ class CombinatorialFreeModule(UniqueRepresentation, Module, IndexedGenerators):
             sage: C.has_coerce_map_from(CQ)
             False
 
-            sage: CF2 = CombinatorialFreeModule(GF(2), Set([1,2]))                      # optional - sage.rings.finite_rings
-            sage: CF2.has_coerce_map_from(C)                                            # optional - sage.rings.finite_rings
+            sage: CF2 = CombinatorialFreeModule(GF(2), Set([1,2]))                      # needs sage.rings.finite_rings
+            sage: CF2.has_coerce_map_from(C)                                            # needs sage.rings.finite_rings
             True
-            sage: c = C.monomial(1)                                                     # optional - sage.rings.finite_rings
-            sage: CF2(2*c)                                                              # optional - sage.rings.finite_rings
+            sage: c = C.monomial(1)                                                     # needs sage.rings.finite_rings
+            sage: CF2(2*c)                                                              # needs sage.rings.finite_rings
             0
-            sage: CF2(3*c)                                                              # optional - sage.rings.finite_rings
+            sage: CF2(3*c)                                                              # needs sage.rings.finite_rings
             B[1]
         """
         if isinstance(R, CombinatorialFreeModule):
@@ -877,8 +877,8 @@ class CombinatorialFreeModule(UniqueRepresentation, Module, IndexedGenerators):
 
         ::
 
-            sage: s = SymmetricFunctions(QQ).schur()                                    # optional - sage.combinat
-            sage: s.dimension()                                                         # optional - sage.combinat
+            sage: s = SymmetricFunctions(QQ).schur()                                    # needs sage.combinat
+            sage: s.dimension()                                                         # needs sage.combinat
             +Infinity
         """
         return self._indices.cardinality()
@@ -893,11 +893,11 @@ class CombinatorialFreeModule(UniqueRepresentation, Module, IndexedGenerators):
 
         EXAMPLES::
 
-            sage: GroupAlgebra(GL(3, GF(7))).is_exact()                                 # optional - sage.groups sage.rings.finite_rings
+            sage: GroupAlgebra(GL(3, GF(7))).is_exact()                                 # needs sage.groups sage.rings.finite_rings
             True
-            sage: GroupAlgebra(GL(3, GF(7)), RR).is_exact()                             # optional - sage.groups sage.rings.finite_rings
+            sage: GroupAlgebra(GL(3, GF(7)), RR).is_exact()                             # needs sage.groups sage.rings.finite_rings
             False
-            sage: GroupAlgebra(GL(3, pAdicRing(7))).is_exact()  # not implemented correctly (not my fault)!             # optional - sage.groups sage.rings.padics
+            sage: GroupAlgebra(GL(3, pAdicRing(7))).is_exact()  # not implemented, needs sage.groups sage.rings.padics
             False
         """
         # The index set may not have a check for exactness
@@ -927,11 +927,11 @@ class CombinatorialFreeModule(UniqueRepresentation, Module, IndexedGenerators):
 
         EXAMPLES::
 
-            sage: QS2 = SymmetricGroupAlgebra(QQ,2)                                     # optional - sage.combinat
-            sage: b = list(QS2.basis().keys())                                          # optional - sage.combinat
-            sage: b.reverse()                                                           # optional - sage.combinat
-            sage: QS2.set_order(b)                                                      # optional - sage.combinat
-            sage: QS2.get_order()                                                       # optional - sage.combinat
+            sage: QS2 = SymmetricGroupAlgebra(QQ,2)                                     # needs sage.combinat
+            sage: b = list(QS2.basis().keys())                                          # needs sage.combinat
+            sage: b.reverse()                                                           # needs sage.combinat
+            sage: QS2.set_order(b)                                                      # needs sage.combinat
+            sage: QS2.get_order()                                                       # needs sage.combinat
             [[2, 1], [1, 2]]
         """
         self._order = order
@@ -945,8 +945,8 @@ class CombinatorialFreeModule(UniqueRepresentation, Module, IndexedGenerators):
 
         EXAMPLES::
 
-            sage: QS2 = SymmetricGroupAlgebra(QQ,2)                                     # optional - sage.combinat
-            sage: QS2.get_order() # note: order changed on 2009-03-13                   # optional - sage.combinat
+            sage: QS2 = SymmetricGroupAlgebra(QQ,2)                                     # needs sage.combinat
+            sage: QS2.get_order() # note: order changed on 2009-03-13                   # needs sage.combinat
             [[2, 1], [1, 2]]
         """
         if self._order is None:
@@ -1002,11 +1002,11 @@ class CombinatorialFreeModule(UniqueRepresentation, Module, IndexedGenerators):
 
         EXAMPLES::
 
-            sage: QS3 = SymmetricGroupAlgebra(QQ, 3)                                    # optional - sage.combinat
-            sage: b = QS3.from_vector(vector((2, 0, 0, 0, 0, 4))); b                    # optional - sage.combinat
+            sage: QS3 = SymmetricGroupAlgebra(QQ, 3)                                    # needs sage.combinat
+            sage: b = QS3.from_vector(vector((2, 0, 0, 0, 0, 4))); b                    # needs sage.combinat
             2*[1, 2, 3] + 4*[3, 2, 1]
-            sage: a = 2*QS3([1,2,3]) + 4*QS3([3,2,1])                                   # optional - sage.combinat
-            sage: a == b                                                                # optional - sage.combinat
+            sage: a = 2*QS3([1,2,3]) + 4*QS3([3,2,1])                                   # needs sage.combinat
+            sage: a == b                                                                # needs sage.combinat
             True
         """
         if order is None:
@@ -1133,8 +1133,8 @@ class CombinatorialFreeModule(UniqueRepresentation, Module, IndexedGenerators):
             sage: F = CombinatorialFreeModule(QQ, ['a', 'b', 'c'])
             sage: F._sum_of_monomials(['a', 'b', 'b'])
             B['a'] + 2*B['b']
-            sage: F = CombinatorialFreeModule(GF(3), ['a', 'b', 'c'])                   # optional - sage.rings.finite_rings
-            sage: F._sum_of_monomials(['a', 'b', 'b', 'b'])                             # optional - sage.rings.finite_rings
+            sage: F = CombinatorialFreeModule(GF(3), ['a', 'b', 'c'])                   # needs sage.rings.finite_rings
+            sage: F._sum_of_monomials(['a', 'b', 'b', 'b'])                             # needs sage.rings.finite_rings
             B['a']
         """
         R = self.base_ring()
@@ -1209,26 +1209,26 @@ class CombinatorialFreeModule(UniqueRepresentation, Module, IndexedGenerators):
 
         EXAMPLES::
 
-            sage: e = SymmetricFunctions(QQ).elementary()                               # optional - sage.combinat
-            sage: s = SymmetricFunctions(QQ).schur()                                    # optional - sage.combinat
-            sage: a = e([2,1]) + e([1,1,1]); a                                          # optional - sage.combinat
+            sage: e = SymmetricFunctions(QQ).elementary()                               # needs sage.combinat
+            sage: s = SymmetricFunctions(QQ).schur()                                    # needs sage.combinat
+            sage: a = e([2,1]) + e([1,1,1]); a                                          # needs sage.combinat
             e[1, 1, 1] + e[2, 1]
-            sage: s._from_dict(a.monomial_coefficients())                               # optional - sage.combinat
+            sage: s._from_dict(a.monomial_coefficients())                               # needs sage.combinat
             s[1, 1, 1] + s[2, 1]
 
         If the optional argument ``coerce`` is ``True``, then the
         coefficients are coerced into the base ring of ``self``::
 
-            sage: part = Partition([2,1])                                               # optional - sage.combinat
-            sage: d = {part: 1}                                                         # optional - sage.combinat
-            sage: a = s._from_dict(d, coerce=True); a                                   # optional - sage.combinat
+            sage: part = Partition([2,1])                                               # needs sage.combinat
+            sage: d = {part: 1}                                                         # needs sage.combinat
+            sage: a = s._from_dict(d, coerce=True); a                                   # needs sage.combinat
             s[2, 1]
-            sage: a.coefficient(part).parent()                                          # optional - sage.combinat
+            sage: a.coefficient(part).parent()                                          # needs sage.combinat
             Rational Field
 
         With ``remove_zeros=True``, zero coefficients are removed::
 
-            sage: s._from_dict({part: 0})                                               # optional - sage.combinat
+            sage: s._from_dict({part: 0})                                               # needs sage.combinat
             0
 
         .. WARNING::
@@ -1237,7 +1237,7 @@ class CombinatorialFreeModule(UniqueRepresentation, Module, IndexedGenerators):
             coefficient of the dictionary is zero. Otherwise, this may
             lead to illegal results::
 
-                sage: list(s._from_dict({part: 0}, remove_zeros=False))                 # optional - sage.combinat
+                sage: list(s._from_dict({part: 0}, remove_zeros=False))                 # needs sage.combinat
                 [([2, 1], 0)]
         """
         assert isinstance(d, dict)
@@ -1427,9 +1427,9 @@ class CombinatorialFreeModule_Tensor(CombinatorialFreeModule):
             """
             TESTS::
 
-                sage: R = NonCommutativeSymmetricFunctions(QQ).R()                      # optional - sage.combinat
-                sage: Partitions.options(diagram_str="#", convention="french")          # optional - sage.combinat
-                sage: s = ascii_art(tensor((R[1,2], R[3,1,2]))); s                      # optional - sage.combinat
+                sage: R = NonCommutativeSymmetricFunctions(QQ).R()                      # needs sage.combinat
+                sage: Partitions.options(diagram_str="#", convention="french")          # needs sage.combinat
+                sage: s = ascii_art(tensor((R[1,2], R[3,1,2]))); s                      # needs sage.combinat
                 R   # R
                  #     ###
                  ##      #
@@ -1437,7 +1437,7 @@ class CombinatorialFreeModule_Tensor(CombinatorialFreeModule):
 
             Check that the breakpoints are correct (:trac:`29202`)::
 
-                sage: s._breakpoints                                                    # optional - sage.combinat
+                sage: s._breakpoints                                                    # needs sage.combinat
                 [6]
             """
             if hasattr(self, "_print_options"):
@@ -1456,9 +1456,9 @@ class CombinatorialFreeModule_Tensor(CombinatorialFreeModule):
             """
             TESTS::
 
-                sage: R = NonCommutativeSymmetricFunctions(QQ).R()                      # optional - sage.combinat
-                sage: Partitions.options(diagram_str="#", convention="french")          # optional - sage.combinat
-                sage: s = unicode_art(tensor((R[1,2], R[3,1,2]))); s                    # optional - sage.combinat
+                sage: R = NonCommutativeSymmetricFunctions(QQ).R()                      # needs sage.combinat
+                sage: Partitions.options(diagram_str="#", convention="french")          # needs sage.combinat
+                sage: s = unicode_art(tensor((R[1,2], R[3,1,2]))); s                    # needs sage.combinat
                 R    ⊗ R
                  ┌┐     ┌┬┬┐
                  ├┼┐    └┴┼┤
@@ -1467,7 +1467,7 @@ class CombinatorialFreeModule_Tensor(CombinatorialFreeModule):
 
             Check that the breakpoints are correct (:trac:`29202`)::
 
-                sage: s._breakpoints                                                    # optional - sage.combinat
+                sage: s._breakpoints                                                    # needs sage.combinat
                 [7]
             """
             if hasattr(self, "_print_options"):

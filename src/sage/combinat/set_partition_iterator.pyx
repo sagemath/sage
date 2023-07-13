@@ -30,7 +30,7 @@ def set_partition_iterator(base_set):
     EXAMPLES::
 
         sage: from sage.combinat.set_partition_iterator import set_partition_iterator
-        sage: list(set_partition_iterator([1,-1,x]))                                    # optional - sage.symbolic
+        sage: list(set_partition_iterator([1,-1,x]))                                    # needs sage.symbolic
         [[[1, -1, x]],
          [[1, -1], [x]],
          [[1, x], [-1]],
@@ -119,7 +119,7 @@ def set_partition_iterator_blocks(base_set, Py_ssize_t k):
     EXAMPLES::
 
         sage: from sage.combinat.set_partition_iterator import set_partition_iterator_blocks
-        sage: list(set_partition_iterator_blocks([1,-1,x], 2))                          # optional - sage.symbolic
+        sage: list(set_partition_iterator_blocks([1,-1,x], 2))                          # needs sage.symbolic
         [[[1, x], [-1]], [[1], [-1, x]], [[1, -1], [x]]]
     """
     cdef list base = list(base_set)

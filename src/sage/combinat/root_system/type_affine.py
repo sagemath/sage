@@ -37,7 +37,7 @@ class AmbientSpace(CombinatorialFreeModule):
         In type `BC`, the null root is in fact::
 
             sage: R = RootSystem(["BC",3,2]).ambient_space()
-            sage: R.null_root()                                                         # optional - sage.graphs
+            sage: R.null_root()                                                         # needs sage.graphs
             2*e['delta']
 
     .. WARNING::
@@ -54,16 +54,16 @@ class AmbientSpace(CombinatorialFreeModule):
         are identified::
 
             sage: L = RootSystem(["A",3,1]).ambient_space()
-            sage: Lambda = L.fundamental_weights()                                      # optional - sage.graphs
-            sage: Lambda[0]                                                             # optional - sage.graphs
+            sage: Lambda = L.fundamental_weights()                                      # needs sage.graphs
+            sage: Lambda[0]                                                             # needs sage.graphs
             e['deltacheck']
-            sage: L.null_coroot()                                                       # optional - sage.graphs
+            sage: L.null_coroot()                                                       # needs sage.graphs
             e['deltacheck']
 
         Therefore the scalar product of the null coroot with itself
         differs from the larger ambient space::
 
-            sage: L.null_coroot().scalar(L.null_coroot())                               # optional - sage.graphs
+            sage: L.null_coroot().scalar(L.null_coroot())                               # needs sage.graphs
             1
 
         In general, scalar products between two elements that do not
@@ -108,7 +108,7 @@ class AmbientSpace(CombinatorialFreeModule):
 
     TESTS::
 
-        sage: Lambda[1]                                                                 # optional - sage.graphs
+        sage: Lambda[1]                                                                 # needs sage.graphs
         e[0] + e['deltacheck']
     """
     @classmethod
@@ -247,9 +247,9 @@ class AmbientSpace(CombinatorialFreeModule):
 
         EXAMPLES::
 
-            sage: RootSystem(['A',3,1]).ambient_space().fundamental_weight(2)           # optional - sage.graphs
+            sage: RootSystem(['A',3,1]).ambient_space().fundamental_weight(2)           # needs sage.graphs
             e[0] + e[1] + e['deltacheck']
-            sage: RootSystem(['A',3,1]).ambient_space().fundamental_weights()           # optional - sage.graphs
+            sage: RootSystem(['A',3,1]).ambient_space().fundamental_weights()           # needs sage.graphs
             Finite family {0: e['deltacheck'],
                            1: e[0] + e['deltacheck'],
                            2: e[0] + e[1] + e['deltacheck'],
@@ -257,10 +257,10 @@ class AmbientSpace(CombinatorialFreeModule):
             sage: RootSystem(['A',3]).ambient_space().fundamental_weights()
             Finite family {1: (1, 0, 0, 0), 2: (1, 1, 0, 0), 3: (1, 1, 1, 0)}
             sage: A31wl = RootSystem(['A',3,1]).weight_lattice()
-            sage: A31wl.fundamental_weights().map(attrcall("level"))                    # optional - sage.graphs
+            sage: A31wl.fundamental_weights().map(attrcall("level"))                    # needs sage.graphs
             Finite family {0: 1, 1: 1, 2: 1, 3: 1}
 
-            sage: RootSystem(['B',3,1]).ambient_space().fundamental_weights()           # optional - sage.graphs
+            sage: RootSystem(['B',3,1]).ambient_space().fundamental_weights()           # needs sage.graphs
             Finite family {0: e['deltacheck'],
                            1: e[0] + e['deltacheck'],
                            2: e[0] + e[1] + 2*e['deltacheck'],
@@ -268,7 +268,7 @@ class AmbientSpace(CombinatorialFreeModule):
             sage: RootSystem(['B',3]).ambient_space().fundamental_weights()
             Finite family {1: (1, 0, 0), 2: (1, 1, 0), 3: (1/2, 1/2, 1/2)}
             sage: B31wl = RootSystem(['B',3,1]).weight_lattice()
-            sage: B31wl.fundamental_weights().map(attrcall("level"))                    # optional - sage.graphs
+            sage: B31wl.fundamental_weights().map(attrcall("level"))                    # needs sage.graphs
             Finite family {0: 1, 1: 1, 2: 2, 3: 1}
 
        In type `BC` dual, the coefficient of '\delta^\vee' is the level
@@ -276,14 +276,14 @@ class AmbientSpace(CombinatorialFreeModule):
        `2\delta^\vee`::
 
             sage: R = CartanType(['BC',3,2]).dual().root_system()
-            sage: R.ambient_space().fundamental_weights()                               # optional - sage.graphs
+            sage: R.ambient_space().fundamental_weights()                               # needs sage.graphs
             Finite family {0: e['deltacheck'],
                            1: e[0] + e['deltacheck'],
                            2: e[0] + e[1] + e['deltacheck'],
                            3: 1/2*e[0] + 1/2*e[1] + 1/2*e[2] + 1/2*e['deltacheck']}
-            sage: R.weight_lattice().fundamental_weights().map(attrcall("level"))       # optional - sage.graphs
+            sage: R.weight_lattice().fundamental_weights().map(attrcall("level"))       # needs sage.graphs
             Finite family {0: 2, 1: 2, 2: 2, 3: 1}
-            sage: R.ambient_space().null_coroot()                                       # optional - sage.graphs
+            sage: R.ambient_space().null_coroot()                                       # needs sage.graphs
             2*e['deltacheck']
 
         By a slight naming abuse this function also accepts "delta" as
@@ -321,14 +321,14 @@ class AmbientSpace(CombinatorialFreeModule):
 
             sage: RootSystem(["A",3]).ambient_space().simple_roots()
             Finite family {1: (1, -1, 0, 0), 2: (0, 1, -1, 0), 3: (0, 0, 1, -1)}
-            sage: RootSystem(["A",3,1]).ambient_space().simple_roots()                  # optional - sage.graphs
+            sage: RootSystem(["A",3,1]).ambient_space().simple_roots()                  # needs sage.graphs
             Finite family {0: -e[0] + e[3] + e['delta'], 1: e[0] - e[1],
                            2: e[1] - e[2], 3: e[2] - e[3]}
 
         Here is a twisted affine example::
 
             sage: B31ᵛ = RootSystem(CartanType(["B",3,1]).dual())
-            sage: B31ᵛ.ambient_space().simple_roots()                                   # optional - sage.graphs
+            sage: B31ᵛ.ambient_space().simple_roots()                                   # needs sage.graphs
             Finite family {0: -e[0] - e[1] + e['delta'], 1: e[0] - e[1],
                            2: e[1] - e[2], 3: 2*e[2]}
 
@@ -337,10 +337,10 @@ class AmbientSpace(CombinatorialFreeModule):
         but this only makes a difference in type `BC`::
 
             sage: L = RootSystem(CartanType(["BC",3,2])).ambient_space()
-            sage: L.simple_roots()                                                      # optional - sage.graphs
+            sage: L.simple_roots()                                                      # needs sage.graphs
             Finite family {0: -e[0] + e['delta'], 1: e[0] - e[1],
                            2: e[1] - e[2], 3: 2*e[2]}
-            sage: L.null_root()                                                         # optional - sage.graphs
+            sage: L.null_root()                                                         # needs sage.graphs
             2*e['delta']
 
         .. NOTE::
@@ -378,10 +378,10 @@ class AmbientSpace(CombinatorialFreeModule):
         It is built as the coroot associated to the simple root
         `\alpha_i`::
 
-            sage: RootSystem(["B",3,1]).ambient_space().simple_roots()                  # optional - sage.graphs
+            sage: RootSystem(["B",3,1]).ambient_space().simple_roots()                  # needs sage.graphs
             Finite family {0: -e[0] - e[1] + e['delta'], 1: e[0] - e[1],
                            2: e[1] - e[2], 3: e[2]}
-            sage: RootSystem(["B",3,1]).ambient_space().simple_coroots()                # optional - sage.graphs
+            sage: RootSystem(["B",3,1]).ambient_space().simple_coroots()                # needs sage.graphs
             Finite family {0: -e[0] - e[1] + e['deltacheck'], 1: e[0] - e[1],
                            2: e[1] - e[2], 3: 2*e[2]}
 
@@ -418,24 +418,24 @@ class AmbientSpace(CombinatorialFreeModule):
 
             sage: L = RootSystem(["B",2,1]).ambient_space()
             sage: e = L.basis()
-            sage: L._plot_projection(e[0])                                              # optional - sage.symbolic
+            sage: L._plot_projection(e[0])                                              # needs sage.symbolic
             (1, 0, 0)
-            sage: L._plot_projection(e[1])                                              # optional - sage.symbolic
+            sage: L._plot_projection(e[1])                                              # needs sage.symbolic
             (0, 1, 0)
-            sage: L._plot_projection(e["delta"])                                        # optional - sage.symbolic
+            sage: L._plot_projection(e["delta"])                                        # needs sage.symbolic
             (0, 0, 0)
-            sage: L._plot_projection(e["deltacheck"])                                   # optional - sage.symbolic
+            sage: L._plot_projection(e["deltacheck"])                                   # needs sage.symbolic
             (0, 0, 1)
 
             sage: L = RootSystem(["A",2,1]).ambient_space()
             sage: e = L.basis()
-            sage: L._plot_projection(e[0])                                              # optional - sage.symbolic
+            sage: L._plot_projection(e[0])                                              # needs sage.symbolic
             (1/2, 989/1142, 0)
-            sage: L._plot_projection(e[1])                                              # optional - sage.symbolic
+            sage: L._plot_projection(e[1])                                              # needs sage.symbolic
             (-1, 0, 0)
-            sage: L._plot_projection(e["delta"])                                        # optional - sage.symbolic
+            sage: L._plot_projection(e["delta"])                                        # needs sage.symbolic
             (0, 0, 0)
-            sage: L._plot_projection(e["deltacheck"])                                   # optional - sage.symbolic
+            sage: L._plot_projection(e["deltacheck"])                                   # needs sage.symbolic
             (0, 0, 1)
         """
         from sage.modules.free_module_element import vector
@@ -488,14 +488,14 @@ class AmbientSpace(CombinatorialFreeModule):
 
             EXAMPLES::
 
-                sage: alpha = RootSystem(['C',2,1]).ambient_space().simple_roots()      # optional - sage.graphs
-                sage: alpha                                                             # optional - sage.graphs
+                sage: alpha = RootSystem(['C',2,1]).ambient_space().simple_roots()      # needs sage.graphs
+                sage: alpha                                                             # needs sage.graphs
                 Finite family {0: -2*e[0] + e['delta'], 1: e[0] - e[1], 2: 2*e[1]}
-                sage: alpha[0].associated_coroot()                                      # optional - sage.graphs
+                sage: alpha[0].associated_coroot()                                      # needs sage.graphs
                 -e[0] + e['deltacheck']
-                sage: alpha[1].associated_coroot()                                      # optional - sage.graphs
+                sage: alpha[1].associated_coroot()                                      # needs sage.graphs
                 e[0] - e[1]
-                sage: alpha[2].associated_coroot()                                      # optional - sage.graphs
+                sage: alpha[2].associated_coroot()                                      # needs sage.graphs
                 e[1]
             """
             # CHECKME: does it make any sense to not rescale the delta term?

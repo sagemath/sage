@@ -40,8 +40,8 @@ With the object ``DegreeSequences(n)``, one can:
     For instance::
 
         sage: ds = [3, 3, 2, 2, 2, 2, 2, 1, 1, 0]
-        sage: g = graphs.DegreeSequence(ds)                                             # optional - networkx sage.graphs
-        sage: g.degree_sequence()                                                       # optional - networkx sage.graphs
+        sage: g = graphs.DegreeSequence(ds)                                             # needs networkx sage.graphs
+        sage: g.degree_sequence()                                                       # needs networkx sage.graphs
         [3, 3, 2, 2, 2, 2, 2, 1, 1, 0]
 
 Definitions
@@ -236,16 +236,16 @@ The sequences produced by random graphs *are* degree sequences::
 
     sage: n = 30
     sage: DS = DegreeSequences(30)
-    sage: for i in range(10):                                                           # optional - networkx sage.graphs
+    sage: for i in range(10):                                                           # needs networkx sage.graphs
     ....:     g = graphs.RandomGNP(n,.2)
     ....:     if not g.degree_sequence() in DS:
     ....:         print("Something is very wrong !")
 
 Checking that we indeed enumerate *all* the degree sequences for `n=5`::
 
-    sage: ds1 = Set([tuple(g.degree_sequence()) for g in graphs(5)])                    # optional - sage.graphs
+    sage: ds1 = Set([tuple(g.degree_sequence()) for g in graphs(5)])                    # needs sage.graphs
     sage: ds2 = Set(map(tuple,list(DegreeSequences(5))))
-    sage: ds1 == ds2                                                                    # optional - sage.graphs
+    sage: ds1 == ds2                                                                    # needs sage.graphs
     True
 
 Checking the consistency of enumeration and test::

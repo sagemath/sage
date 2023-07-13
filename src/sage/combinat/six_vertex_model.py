@@ -111,7 +111,7 @@ class SixVertexConfiguration(ClonableArray):
         EXAMPLES::
 
             sage: M = SixVertexModel(3, boundary_conditions='ice')
-            sage: [x.to_signed_matrix() for x in M]                                     # optional - sage.modules
+            sage: [x.to_signed_matrix() for x in M]                                     # needs sage.modules
             [
             [1 0 0]  [1 0 0]  [ 0  1  0]  [0 1 0]  [0 1 0]  [0 0 1]  [0 0 1]
             [0 1 0]  [0 0 1]  [ 1 -1  1]  [1 0 0]  [0 0 1]  [1 0 0]  [0 1 0]
@@ -149,7 +149,7 @@ class SixVertexConfiguration(ClonableArray):
         EXAMPLES::
 
             sage: M = SixVertexModel(2, boundary_conditions='ice')
-            sage: print(M[0].plot().description())                                      # optional - sage.plot
+            sage: print(M[0].plot().description())                                      # needs sage.plot
             Arrow from (-1.0,0.0) to (0.0,0.0)
             Arrow from (-1.0,1.0) to (0.0,1.0)
             Arrow from (0.0,0.0) to (0.0,-1.0)
@@ -392,7 +392,7 @@ class SixVertexModel(UniqueRepresentation, Parent):
         sage: M = SixVertexModel(4, boundary_conditions='ice')
         sage: len(M)
         42
-        sage: all(len(SixVertexModel(n, boundary_conditions='ice'))                     # optional - sage.modules
+        sage: all(len(SixVertexModel(n, boundary_conditions='ice'))                     # needs sage.modules
         ....:     == AlternatingSignMatrices(n).cardinality() for n in range(1, 7))
         True
 
@@ -650,7 +650,7 @@ class SixVertexModel(UniqueRepresentation, Parent):
         EXAMPLES::
 
             sage: M = SixVertexModel(3, boundary_conditions='ice')
-            sage: M.partition_function(2, [1,2,1,2,1,2])                                # optional - sage.symbolic
+            sage: M.partition_function(2, [1,2,1,2,1,2])                                # needs sage.symbolic
             e^(-24) + 2*e^(-28) + e^(-30) + 2*e^(-32) + e^(-36)
 
         REFERENCES:
@@ -693,8 +693,8 @@ class SquareIceModel(SixVertexModel):
         EXAMPLES::
 
             sage: M = SixVertexModel(3, boundary_conditions='ice')
-            sage: asm = AlternatingSignMatrix([[0,1,0],[1,-1,1],[0,1,0]])               # optional - sage.modules
-            sage: M.from_alternating_sign_matrix(asm)                                   # optional - sage.modules
+            sage: asm = AlternatingSignMatrix([[0,1,0],[1,-1,1],[0,1,0]])               # needs sage.modules
+            sage: M.from_alternating_sign_matrix(asm)                                   # needs sage.modules
                 ^    ^    ^
                 |    |    |
             --> # -> # <- # <--
@@ -710,11 +710,11 @@ class SquareIceModel(SixVertexModel):
         TESTS::
 
             sage: M = SixVertexModel(5, boundary_conditions='ice')
-            sage: ASM = AlternatingSignMatrices(5)                                          # optional - sage.modules
-            sage: all(M.from_alternating_sign_matrix(x.to_alternating_sign_matrix()) == x   # optional - sage.modules
+            sage: ASM = AlternatingSignMatrices(5)                                      # needs sage.modules
+            sage: all(M.from_alternating_sign_matrix(x.to_alternating_sign_matrix()) == x           # needs sage.modules
             ....:     for x in M)
             True
-            sage: all(M.from_alternating_sign_matrix(x).to_alternating_sign_matrix() == x   # optional - sage.modules
+            sage: all(M.from_alternating_sign_matrix(x).to_alternating_sign_matrix() == x           # needs sage.modules
             ....:     for x in ASM)
             True
         """
@@ -766,12 +766,12 @@ class SquareIceModel(SixVertexModel):
             EXAMPLES::
 
                 sage: M = SixVertexModel(4, boundary_conditions='ice')
-                sage: M[6].to_alternating_sign_matrix()                                 # optional - sage.modules
+                sage: M[6].to_alternating_sign_matrix()                                 # needs sage.modules
                 [1 0 0 0]
                 [0 0 0 1]
                 [0 0 1 0]
                 [0 1 0 0]
-                sage: M[7].to_alternating_sign_matrix()                                 # optional - sage.modules
+                sage: M[7].to_alternating_sign_matrix()                                 # needs sage.modules
                 [ 0  1  0  0]
                 [ 1 -1  1  0]
                 [ 0  1 -1  1]

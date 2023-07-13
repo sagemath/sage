@@ -560,7 +560,7 @@ class IntegerListsLex(IntegerLists, metaclass=ClasscallMetaclass):
 
     ::
 
-        sage: Partitions(2, max_slope=-1, length=2).list()                              # optional - sage.combinat
+        sage: Partitions(2, max_slope=-1, length=2).list()                              # needs sage.combinat
         []
         sage: list(IntegerListsLex(0, floor=ConstantFunction(1), min_slope=0))
         [[]]

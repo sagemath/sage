@@ -3,7 +3,7 @@ Catalog of posets and lattices
 
 Some common posets can be accessed through the ``posets.<tab>`` object::
 
-    sage: posets.PentagonPoset()                                                        # optional - sage.modules
+    sage: posets.PentagonPoset()                                                        # needs sage.modules
     Finite lattice containing 5 elements
 
 Moreover, the set of all posets of order `n` is represented by ``Posets(n)``::
@@ -238,9 +238,9 @@ class Posets(metaclass=ClasscallMetaclass):
 
         Check the corner cases::
 
-            sage: list(posets.BooleanLattice(0, use_subsets=True))                      # optional - sage.modules
+            sage: list(posets.BooleanLattice(0, use_subsets=True))                      # needs sage.modules
             [{}]
-            sage: list(posets.BooleanLattice(1, use_subsets=True))                      # optional - sage.modules
+            sage: list(posets.BooleanLattice(1, use_subsets=True))                      # needs sage.modules
             [{}, {1}]
         """
         n = check_int(n)
@@ -382,22 +382,22 @@ class Posets(metaclass=ClasscallMetaclass):
 
         EXAMPLES::
 
-            sage: P = posets.PentagonPoset(); P                                         # optional - sage.modules
+            sage: P = posets.PentagonPoset(); P                                         # needs sage.modules
             Finite lattice containing 5 elements
-            sage: P.cover_relations()                                                   # optional - sage.modules
+            sage: P.cover_relations()                                                   # needs sage.modules
             [[0, 1], [0, 2], [1, 4], [2, 3], [3, 4]]
 
         TESTS:
 
         This is smallest lattice that is not modular::
 
-            sage: P.is_modular()                                                        # optional - sage.modules
+            sage: P.is_modular()                                                        # needs sage.modules
             False
 
         This poset and the :meth:`DiamondPoset` are the two smallest
         lattices which are not distributive::
 
-            sage: P.is_distributive()                                                   # optional - sage.modules
+            sage: P.is_distributive()                                                   # needs sage.modules
             False
             sage: posets.DiamondPoset(5).is_distributive()
             False
@@ -535,9 +535,9 @@ class Posets(metaclass=ClasscallMetaclass):
 
         EXAMPLES::
 
-            sage: P = posets.IntegerPartitions(7); P                                    # optional - sage.combinat
+            sage: P = posets.IntegerPartitions(7); P                                    # needs sage.combinat
             Finite poset containing 15 elements
-            sage: len(P.cover_relations())                                              # optional - sage.combinat
+            sage: len(P.cover_relations())                                              # needs sage.combinat
             28
         """
         def lower_covers(partition):
@@ -573,9 +573,9 @@ class Posets(metaclass=ClasscallMetaclass):
 
         EXAMPLES::
 
-            sage: P = posets.RestrictedIntegerPartitions(7); P                          # optional - sage.combinat
+            sage: P = posets.RestrictedIntegerPartitions(7); P                          # needs sage.combinat
             Finite poset containing 15 elements
-            sage: len(P.cover_relations())                                              # optional - sage.combinat
+            sage: len(P.cover_relations())                                              # needs sage.combinat
             17
 
         """
@@ -617,9 +617,9 @@ class Posets(metaclass=ClasscallMetaclass):
 
         EXAMPLES::
 
-            sage: P = posets.IntegerPartitionsDominanceOrder(6); P                      # optional - sage.combinat sage.modules
+            sage: P = posets.IntegerPartitionsDominanceOrder(6); P                      # needs sage.combinat sage.modules
             Finite lattice containing 11 elements
-            sage: P.cover_relations()                                                   # optional - sage.combinat sage.modules
+            sage: P.cover_relations()                                                   # needs sage.combinat sage.modules
             [[[1, 1, 1, 1, 1, 1], [2, 1, 1, 1, 1]],
              [[2, 1, 1, 1, 1], [2, 2, 1, 1]],
              [[2, 2, 1, 1], [2, 2, 2]],
@@ -652,22 +652,22 @@ class Posets(metaclass=ClasscallMetaclass):
 
         EXAMPLES::
 
-            sage: P3 = posets.PowerPoset(3); P3                                         # optional - sage.modules
+            sage: P3 = posets.PowerPoset(3); P3                                         # needs sage.modules
             Finite meet-semilattice containing 19 elements
-            sage: all(P.is_chain() for P in P3.maximal_elements())                      # optional - sage.modules
+            sage: all(P.is_chain() for P in P3.maximal_elements())                      # needs sage.modules
             True
 
         TESTS::
 
-            sage: P0 = posets.PowerPoset(0); P0                                         # optional - sage.modules
+            sage: P0 = posets.PowerPoset(0); P0                                         # needs sage.modules
             Finite meet-semilattice containing 1 elements
-            sage: P0[0]                                                                 # optional - sage.modules
+            sage: P0[0]                                                                 # needs sage.modules
             Finite poset containing 0 elements
-            sage: P1 = posets.PowerPoset(1); P1                                         # optional - sage.modules
+            sage: P1 = posets.PowerPoset(1); P1                                         # needs sage.modules
             Finite meet-semilattice containing 1 elements
-            sage: P1[0]                                                                 # optional - sage.modules
+            sage: P1[0]                                                                 # needs sage.modules
             Finite poset containing 1 elements
-            sage: P1[0][0]                                                              # optional - sage.modules
+            sage: P1[0][0]                                                              # needs sage.modules
             0
         """
         # Todo: Make this faster.
@@ -697,22 +697,22 @@ class Posets(metaclass=ClasscallMetaclass):
 
         EXAMPLES::
 
-            sage: P = posets.ProductOfChains([2, 2]); P                                 # optional - sage.modules
+            sage: P = posets.ProductOfChains([2, 2]); P                                 # needs sage.modules
             Finite lattice containing 4 elements
-            sage: P.linear_extension()                                                  # optional - sage.modules
+            sage: P.linear_extension()                                                  # needs sage.modules
             [(0, 0), (0, 1), (1, 0), (1, 1)]
-            sage: P.upper_covers((0,0))                                                 # optional - sage.modules
+            sage: P.upper_covers((0,0))                                                 # needs sage.modules
             [(0, 1), (1, 0)]
-            sage: P.lower_covers((1,1))                                                 # optional - sage.modules
+            sage: P.lower_covers((1,1))                                                 # needs sage.modules
             [(0, 1), (1, 0)]
 
         TESTS::
 
-            sage: P = posets.ProductOfChains([]); P                                     # optional - sage.modules
+            sage: P = posets.ProductOfChains([]); P                                     # needs sage.modules
             Finite lattice containing 0 elements
-            sage: P = posets.ProductOfChains([3, 0, 1]); P                              # optional - sage.modules
+            sage: P = posets.ProductOfChains([3, 0, 1]); P                              # needs sage.modules
             Finite lattice containing 0 elements
-            sage: P = posets.ProductOfChains([1,1,1,1]); P                              # optional - sage.modules
+            sage: P = posets.ProductOfChains([1,1,1,1]); P                              # needs sage.modules
             Finite lattice containing 1 elements
         """
         try:
@@ -831,12 +831,12 @@ class Posets(metaclass=ClasscallMetaclass):
         EXAMPLES::
 
             sage: set_random_seed(0)  # Results are reproducible
-            sage: L = posets.RandomLattice(8, 0.995); L                                 # optional - sage.modules
+            sage: L = posets.RandomLattice(8, 0.995); L                                 # needs sage.modules
             Finite lattice containing 8 elements
-            sage: L.cover_relations()                                                   # optional - sage.modules
+            sage: L.cover_relations()                                                   # needs sage.modules
             [[7, 6], [7, 3], [7, 1], ..., [5, 4], [2, 4], [1, 4], [0, 4]]
-            sage: L = posets.RandomLattice(10, 0, properties=['dismantlable'])          # optional - sage.modules
-            sage: L.is_dismantlable()                                                   # optional - sage.modules
+            sage: L = posets.RandomLattice(10, 0, properties=['dismantlable'])          # needs sage.modules
+            sage: L.is_dismantlable()                                                   # needs sage.modules
             True
 
         .. SEEALSO:: :meth:`RandomPoset`
@@ -858,7 +858,7 @@ class Posets(metaclass=ClasscallMetaclass):
             ...
             ValueError: unknown value junk for 'properties'
 
-            sage: posets.RandomLattice(0, 0.5)                                          # optional - sage.modules
+            sage: posets.RandomLattice(0, 0.5)                                          # needs sage.modules
             Finite lattice containing 0 elements
         """
         from copy import copy
@@ -941,7 +941,7 @@ class Posets(metaclass=ClasscallMetaclass):
 
         EXAMPLES::
 
-            sage: posets.SetPartitions(4)                                               # optional - sage.combinat sage.modules
+            sage: posets.SetPartitions(4)                                               # needs sage.combinat sage.modules
             Finite lattice containing 15 elements
         """
         from sage.combinat.set_partition import SetPartitions
@@ -981,19 +981,19 @@ class Posets(metaclass=ClasscallMetaclass):
 
         EXAMPLES::
 
-            sage: posets.SSTPoset([2,1])                                                # optional - sage.combinat sage.modules
+            sage: posets.SSTPoset([2,1])                                                # needs sage.combinat sage.modules
             Finite lattice containing 8 elements
 
-            sage: posets.SSTPoset([2,1],4)                                              # optional - sage.combinat sage.modules
+            sage: posets.SSTPoset([2,1],4)                                              # needs sage.combinat sage.modules
             Finite lattice containing 20 elements
 
-            sage: posets.SSTPoset([2,1],2).cover_relations()                            # optional - sage.combinat sage.modules
+            sage: posets.SSTPoset([2,1],2).cover_relations()                            # needs sage.combinat sage.modules
             [[[[1, 1], [2]], [[1, 2], [2]]]]
 
-            sage: posets.SSTPoset([3,2]).bottom()  # long time (6s on sage.math, 2012)  # optional - sage.combinat sage.modules
+            sage: posets.SSTPoset([3,2]).bottom()       # long time (6s on sage.math, 2012), needs sage.combinat sage.modules
             [[1, 1, 1], [2, 2]]
 
-            sage: posets.SSTPoset([3,2],4).maximal_elements()                           # optional - sage.combinat sage.modules
+            sage: posets.SSTPoset([3,2],4).maximal_elements()                           # needs sage.combinat sage.modules
             [[[3, 3, 4], [4, 4]]]
         """
         from sage.combinat.tableau import SemistandardTableaux
@@ -1033,7 +1033,7 @@ class Posets(metaclass=ClasscallMetaclass):
 
             sage: A = posets.StandardExample(3); A
             Finite poset containing 6 elements
-            sage: A.dimension()                                                         # optional - networkx
+            sage: A.dimension()                                                         # needs networkx
             3
 
         REFERENCES:
@@ -1203,11 +1203,11 @@ class Posets(metaclass=ClasscallMetaclass):
             ....:                         labels='integers')
             Finite poset containing 10 elements
 
-            sage: A = AlternatingSignMatrices(3)                                        # optional - sage.combinat sage.modules
-            sage: p = A.lattice()                                                       # optional - sage.combinat sage.modules
-            sage: ji = p.join_irreducibles_poset()                                      # optional - sage.combinat sage.modules
-            sage: tet = posets.TetrahedralPoset(3, 'green','yellow','blue','orange')    # optional - sage.combinat sage.modules
-            sage: ji.is_isomorphic(tet)                                                 # optional - sage.combinat sage.modules
+            sage: A = AlternatingSignMatrices(3)                                        # needs sage.combinat sage.modules
+            sage: p = A.lattice()                                                       # needs sage.combinat sage.modules
+            sage: ji = p.join_irreducibles_poset()                                      # needs sage.combinat sage.modules
+            sage: tet = posets.TetrahedralPoset(3, 'green','yellow','blue','orange')    # needs sage.combinat sage.modules
+            sage: ji.is_isomorphic(tet)                                                 # needs sage.combinat sage.modules
             True
 
         TESTS::
@@ -1277,12 +1277,12 @@ class Posets(metaclass=ClasscallMetaclass):
 
         EXAMPLES::
 
-            sage: W = CoxeterGroup(['B', 3])                                            # optional - sage.combinat sage.groups
-            sage: posets.CoxeterGroupAbsoluteOrderPoset(W)                              # optional - sage.combinat sage.groups
+            sage: W = CoxeterGroup(['B', 3])                                            # needs sage.combinat sage.groups
+            sage: posets.CoxeterGroupAbsoluteOrderPoset(W)                              # needs sage.combinat sage.groups
             Finite poset containing 48 elements
 
-            sage: W = WeylGroup(['B', 2], prefix='s')                                   # optional - sage.combinat sage.groups
-            sage: posets.CoxeterGroupAbsoluteOrderPoset(W, False)                       # optional - sage.combinat sage.groups
+            sage: W = WeylGroup(['B', 2], prefix='s')                                   # needs sage.combinat sage.groups
+            sage: posets.CoxeterGroupAbsoluteOrderPoset(W, False)                       # needs sage.combinat sage.groups
             Finite poset containing 8 elements
         """
         if use_reduced_words:
@@ -1301,12 +1301,12 @@ class Posets(metaclass=ClasscallMetaclass):
 
         EXAMPLES::
 
-            sage: W = CoxeterGroup(['A', 3])                                            # optional - sage.combinat sage.groups
-            sage: posets.NoncrossingPartitions(W)                                       # optional - sage.combinat sage.groups
+            sage: W = CoxeterGroup(['A', 3])                                            # needs sage.combinat sage.groups
+            sage: posets.NoncrossingPartitions(W)                                       # needs sage.combinat sage.groups
             Finite lattice containing 14 elements
 
-            sage: W = WeylGroup(['B', 2], prefix='s')                                   # optional - sage.combinat sage.groups
-            sage: posets.NoncrossingPartitions(W)                                       # optional - sage.combinat sage.groups
+            sage: W = WeylGroup(['B', 2], prefix='s')                                   # needs sage.combinat sage.groups
+            sage: posets.NoncrossingPartitions(W)                                       # needs sage.combinat sage.groups
             Finite lattice containing 6 elements
         """
         return W.noncrossing_partition_lattice()
@@ -1332,11 +1332,11 @@ class Posets(metaclass=ClasscallMetaclass):
 
         EXAMPLES::
 
-            sage: posets.SymmetricGroupAbsoluteOrderPoset(4)                            # optional - sage.groups
+            sage: posets.SymmetricGroupAbsoluteOrderPoset(4)                            # needs sage.groups
             Finite poset containing 24 elements
-            sage: posets.SymmetricGroupAbsoluteOrderPoset(3, labels="cycles")           # optional - sage.groups
+            sage: posets.SymmetricGroupAbsoluteOrderPoset(3, labels="cycles")           # needs sage.groups
             Finite poset containing 6 elements
-            sage: posets.SymmetricGroupAbsoluteOrderPoset(3, labels="reduced_words")    # optional - sage.groups
+            sage: posets.SymmetricGroupAbsoluteOrderPoset(3, labels="reduced_words")    # needs sage.groups
             Finite poset containing 6 elements
         """
         from sage.groups.perm_gps.permgroup_named import SymmetricGroup
@@ -1381,7 +1381,7 @@ class Posets(metaclass=ClasscallMetaclass):
 
         Fibonacci numbers as the number of antichains of a poset::
 
-            sage: [len(posets.UpDownPoset(n).antichains().list()) for n in range(6)]    # optional - sage.combinat
+            sage: [len(posets.UpDownPoset(n).antichains().list()) for n in range(6)]    # needs sage.combinat
             [1, 2, 3, 5, 8, 13]
 
         TESTS::
@@ -1415,13 +1415,13 @@ class Posets(metaclass=ClasscallMetaclass):
 
         EXAMPLES::
 
-            sage: P = posets.YoungDiagramPoset(Partition([2, 2])); P                    # optional - sage.combinat sage.modules
+            sage: P = posets.YoungDiagramPoset(Partition([2, 2])); P                    # needs sage.combinat sage.modules
             Finite meet-semilattice containing 4 elements
 
-            sage: sorted(P.cover_relations())                                           # optional - sage.combinat sage.modules
+            sage: sorted(P.cover_relations())                                           # needs sage.combinat sage.modules
             [[(0, 0), (0, 1)], [(0, 0), (1, 0)], [(0, 1), (1, 1)], [(1, 0), (1, 1)]]
 
-            sage: posets.YoungDiagramPoset([3, 2], dual=True)                           # optional - sage.combinat sage.modules
+            sage: posets.YoungDiagramPoset([3, 2], dual=True)                           # needs sage.combinat sage.modules
             Finite join-semilattice containing 5 elements
         """
         from sage.combinat.partition import Partition
@@ -1461,9 +1461,9 @@ class Posets(metaclass=ClasscallMetaclass):
 
         EXAMPLES::
 
-            sage: P = posets.YoungsLattice(3); P                                        # optional - sage.combinat sage.modules
+            sage: P = posets.YoungsLattice(3); P                                        # needs sage.combinat sage.modules
             Finite meet-semilattice containing 7 elements
-            sage: P.cover_relations()                                                   # optional - sage.combinat sage.modules
+            sage: P.cover_relations()                                                   # needs sage.combinat sage.modules
             [[[], [1]],
              [[1], [1, 1]],
              [[1], [2]],
@@ -1489,9 +1489,9 @@ class Posets(metaclass=ClasscallMetaclass):
 
         EXAMPLES::
 
-            sage: P = posets.YoungsLatticePrincipalOrderIdeal(Partition([2,2])); P      # optional - sage.combinat sage.modules
+            sage: P = posets.YoungsLatticePrincipalOrderIdeal(Partition([2,2])); P      # needs sage.combinat sage.modules
             Finite lattice containing 6 elements
-            sage: P.cover_relations()                                                   # optional - sage.combinat sage.modules
+            sage: P.cover_relations()                                                   # needs sage.combinat sage.modules
             [[[], [1]],
              [[1], [1, 1]],
              [[1], [2]],
@@ -1527,16 +1527,16 @@ class Posets(metaclass=ClasscallMetaclass):
 
         EXAMPLES::
 
-            sage: Y5 = posets.YoungFibonacci(5); Y5                                     # optional - sage.combinat sage.modules
+            sage: Y5 = posets.YoungFibonacci(5); Y5                                     # needs sage.combinat sage.modules
             Finite meet-semilattice containing 20 elements
-            sage: sorted(Y5.upper_covers(Word('211')))                                  # optional - sage.combinat sage.modules
+            sage: sorted(Y5.upper_covers(Word('211')))                                  # needs sage.combinat sage.modules
             [word: 1211, word: 2111, word: 221]
 
         TESTS::
 
-            sage: posets.YoungFibonacci(0)                                              # optional - sage.combinat sage.modules
+            sage: posets.YoungFibonacci(0)                                              # needs sage.combinat sage.modules
             Finite meet-semilattice containing 1 elements
-            sage: posets.YoungFibonacci(1)                                              # optional - sage.combinat sage.modules
+            sage: posets.YoungFibonacci(1)                                              # needs sage.combinat sage.modules
             Finite meet-semilattice containing 2 elements
         """
         from sage.combinat.posets.lattices import FiniteMeetSemilattice
@@ -1616,9 +1616,9 @@ class Posets(metaclass=ClasscallMetaclass):
 
         EXAMPLES::
 
-            sage: P4 = posets.PermutationPattern(4); P4                                 # optional - sage.combinat
+            sage: P4 = posets.PermutationPattern(4); P4                                 # needs sage.combinat
             Finite poset containing 33 elements
-            sage: sorted(P4.lower_covers(Permutation([2,4,1,3])))                       # optional - sage.combinat
+            sage: sorted(P4.lower_covers(Permutation([2,4,1,3])))                       # needs sage.combinat
             [[1, 3, 2], [2, 1, 3], [2, 3, 1], [3, 1, 2]]
 
         .. SEEALSO::
@@ -1627,9 +1627,9 @@ class Posets(metaclass=ClasscallMetaclass):
 
         TESTS::
 
-            sage: posets.PermutationPattern(1)                                          # optional - sage.combinat
+            sage: posets.PermutationPattern(1)                                          # needs sage.combinat
             Finite poset containing 1 elements
-            sage: posets.PermutationPattern(2)                                          # optional - sage.combinat
+            sage: posets.PermutationPattern(2)                                          # needs sage.combinat
             Finite poset containing 3 elements
         """
         n = check_int(n, 1)
@@ -1660,9 +1660,9 @@ class Posets(metaclass=ClasscallMetaclass):
 
             sage: t = Permutation([2,3,1])
             sage: b = Permutation([4,6,2,3,5,1])
-            sage: R = posets.PermutationPatternInterval(t, b); R                        # optional - sage.combinat
+            sage: R = posets.PermutationPatternInterval(t, b); R                        # needs sage.combinat
             Finite poset containing 14 elements
-            sage: R.moebius_function(R.bottom(),R.top())                                # optional - sage.combinat
+            sage: R.moebius_function(R.bottom(),R.top())                                # needs sage.combinat
             -4
 
         .. SEEALSO::
@@ -1673,7 +1673,7 @@ class Posets(metaclass=ClasscallMetaclass):
         TESTS::
 
             sage: p = Permutation([1])
-            sage: posets.PermutationPatternInterval(p, p)                               # optional - sage.combinat
+            sage: posets.PermutationPatternInterval(p, p)                               # needs sage.combinat
             Finite poset containing 1 elements
         """
         P = Permutations()
@@ -1732,7 +1732,7 @@ class Posets(metaclass=ClasscallMetaclass):
 
             sage: t = Permutation([3,2,1])
             sage: b = Permutation([6,3,4,5,2,1])
-            sage: A = posets.PermutationPatternOccurrenceInterval(t, b, (0,2,4)); A     # optional - sage.combinat
+            sage: A = posets.PermutationPatternOccurrenceInterval(t, b, (0,2,4)); A     # needs sage.combinat
             Finite poset containing 8 elements
 
         .. SEEALSO::
@@ -1818,11 +1818,11 @@ class Posets(metaclass=ClasscallMetaclass):
             sage: len(M.cover_relations())
             7
 
-            sage: P = posets.MobilePoset(posets.RibbonPoset(7, [1,3]),                  # optional - sage.combinat sage.modules
+            sage: P = posets.MobilePoset(posets.RibbonPoset(7, [1,3]),                  # needs sage.combinat sage.modules
             ....:         {1: [posets.YoungDiagramPoset([3, 2], dual=True)],
             ....:          3: [posets.DoubleTailedDiamond(6)]},
             ....:         anchor=(4, 2, posets.ChainPoset(6)))
-            sage: len(P.cover_relations())                                              # optional - sage.combinat sage.modules
+            sage: len(P.cover_relations())                                              # needs sage.combinat sage.modules
             33
         """
         elements = []
@@ -2039,8 +2039,8 @@ def _random_distributive_lattice(n):
 
     EXAMPLES::
 
-        sage: g = sage.combinat.posets.poset_examples._random_distributive_lattice(10)  # optional - sage.modules
-        sage: Poset(g).order_ideals_lattice(as_ideals=False).cardinality()              # optional - sage.modules
+        sage: g = sage.combinat.posets.poset_examples._random_distributive_lattice(10)  # needs sage.modules
+        sage: Poset(g).order_ideals_lattice(as_ideals=False).cardinality()              # needs sage.modules
         10
 
     ALGORITHM:
@@ -2095,8 +2095,8 @@ def _random_stone_lattice(n):
 
     EXAMPLES::
 
-        sage: g = sage.combinat.posets.poset_examples._random_stone_lattice(10)         # optional - sage.combinat sage.libs.flint
-        sage: LatticePoset(g).is_stone()                                                # optional - sage.combinat sage.libs.flint
+        sage: g = sage.combinat.posets.poset_examples._random_stone_lattice(10)         # needs sage.combinat sage.libs.flint
+        sage: LatticePoset(g).is_stone()                                                # needs sage.combinat sage.libs.flint
         True
 
     ALGORITHM:

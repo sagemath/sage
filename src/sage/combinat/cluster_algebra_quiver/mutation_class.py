@@ -42,11 +42,11 @@ def _principal_part(mat):
     EXAMPLES::
 
         sage: from sage.combinat.cluster_algebra_quiver.mutation_class import _principal_part
-        sage: M = Matrix([[1,2],[3,4],[5,6]]); M                                        # optional - sage.modules
+        sage: M = Matrix([[1,2],[3,4],[5,6]]); M                                        # needs sage.modules
         [1 2]
         [3 4]
         [5 6]
-        sage: _principal_part(M)                                                        # optional - sage.modules
+        sage: _principal_part(M)                                                        # needs sage.modules
         [1 2]
         [3 4]
     """
@@ -160,7 +160,7 @@ def _matrix_to_digraph( M ):
     EXAMPLES::
 
         sage: from sage.combinat.cluster_algebra_quiver.mutation_class import _matrix_to_digraph
-        sage: _matrix_to_digraph(matrix(3,[0,1,0,-1,0,-1,0,1,0]))                       # optional - sage.modules
+        sage: _matrix_to_digraph(matrix(3,[0,1,0,-1,0,-1,0,1,0]))                       # needs sage.modules
         Digraph on 3 vertices
     """
     n = M.ncols()
@@ -453,7 +453,7 @@ def _dig6_to_matrix( dig6 ):
         sage: from sage.combinat.cluster_algebra_quiver.quiver import ClusterQuiver
         sage: dg = ClusterQuiver(['A',4]).digraph()
         sage: data = _digraph_to_dig6(dg)
-        sage: _dig6_to_matrix(data)                                                     # optional - sage.modules
+        sage: _dig6_to_matrix(data)                                                     # needs sage.modules
         [ 0  1  0  0]
         [-1  0 -1  0]
         [ 0  1  0  1]

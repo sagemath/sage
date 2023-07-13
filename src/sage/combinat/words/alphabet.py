@@ -193,15 +193,15 @@ def build_alphabet(data=None, names=None, name=None):
         Traceback (most recent call last):
         ...
         ValueError: invalid value for names
-        sage: Alphabet(8, x)                                                            # optional - sage.symbolic
+        sage: Alphabet(8, x)                                                            # needs sage.symbolic
         Traceback (most recent call last):
         ...
         ValueError: invalid value for names
-        sage: Alphabet(name=x, names="punctuation")                                     # optional - sage.symbolic
+        sage: Alphabet(name=x, names="punctuation")                                     # needs sage.symbolic
         Traceback (most recent call last):
         ...
         ValueError: name cannot be specified with any other argument
-        sage: Alphabet(x)                                                               # optional - sage.symbolic
+        sage: Alphabet(x)                                                               # needs sage.symbolic
         Traceback (most recent call last):
         ...
         ValueError: unable to construct an alphabet from the given parameters

@@ -271,7 +271,7 @@ def linear_extension_iterator(D):
         48
 
         sage: D = posets.AntichainPoset(9)._hasse_diagram
-        sage: len(list(linear_extension_iterator(D))) == factorial(9)  # long time      # optional - sage.rings.finite_rings
+        sage: len(list(linear_extension_iterator(D))) == factorial(9)   # long time, needs sage.rings.finite_rings
         True
     """
     _le, _a, _b = _linear_extension_prepare(D)

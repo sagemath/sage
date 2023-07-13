@@ -30,7 +30,7 @@ class CartanType(cartan_type.CartanType_decorator):
     We take the Cartan type `B_4`::
 
         sage: T = CartanType(['B',4])
-        sage: T.dynkin_diagram()                                                        # optional - sage.graphs
+        sage: T.dynkin_diagram()                                                        # needs sage.graphs
         O---O---O=>=O
         1   2   3   4
         B4
@@ -38,14 +38,14 @@ class CartanType(cartan_type.CartanType_decorator):
     And mark some of its nodes::
 
         sage: T = T.marked_nodes([2,3])
-        sage: T.dynkin_diagram()                                                        # optional - sage.graphs
+        sage: T.dynkin_diagram()                                                        # needs sage.graphs
         O---X---X=>=O
         1   2   3   4
         B4 with nodes (2, 3) marked
 
     Markings are not additive::
 
-        sage: T.marked_nodes([1,4]).dynkin_diagram()                                    # optional - sage.graphs
+        sage: T.marked_nodes([1,4]).dynkin_diagram()                                    # needs sage.graphs
         X---O---O=>=X
         1   2   3   4
         B4 with nodes (1, 4) marked
@@ -53,7 +53,7 @@ class CartanType(cartan_type.CartanType_decorator):
     And trivial relabelling are honoured nicely::
 
         sage: T = T.marked_nodes([])
-        sage: T.dynkin_diagram()                                                        # optional - sage.graphs
+        sage: T.dynkin_diagram()                                                        # needs sage.graphs
         O---O---O=>=O
         1   2   3   4
         B4
@@ -160,14 +160,14 @@ class CartanType(cartan_type.CartanType_decorator):
            sage: CartanType(['F', 4, 1]).marked_nodes([0, 2])._repr_(compact = True)
            'F4~ with nodes (0, 2) marked'
 
-            sage: D = DynkinDiagram("A2")                                               # optional - sage.graphs
-            sage: D.marked_nodes([1])                                                   # optional - sage.graphs
+            sage: D = DynkinDiagram("A2")                                               # needs sage.graphs
+            sage: D.marked_nodes([1])                                                   # needs sage.graphs
             O---O
             1   2
             A2 with node 1 marked
 
-            sage: CM = CartanMatrix([[2,-4],[-5,2]])                                    # optional - sage.graphs
-            sage: CM.marked_nodes([1])                                                  # optional - sage.graphs
+            sage: CM = CartanMatrix([[2,-4],[-5,2]])                                    # needs sage.graphs
+            sage: CM.marked_nodes([1])                                                  # needs sage.graphs
             [ 2 -4]
             [-5  2] with node 1 marked
         """
@@ -330,7 +330,7 @@ class CartanType(cartan_type.CartanType_decorator):
 
         EXAMPLES::
 
-            sage: CartanType(["G", 2]).marked_nodes([2]).dynkin_diagram()               # optional - sage.graphs
+            sage: CartanType(["G", 2]).marked_nodes([2]).dynkin_diagram()               # needs sage.graphs
               3
             O=<=X
             1   2
@@ -340,11 +340,11 @@ class CartanType(cartan_type.CartanType_decorator):
 
         To be compared with the examples in :meth:`ascii_art`::
 
-            sage: CartanType(["G", 2]).relabel({1:2,2:1}).dynkin_diagram().edges(sort=True)             # optional - sage.graphs
+            sage: CartanType(["G", 2]).relabel({1:2,2:1}).dynkin_diagram().edges(sort=True)         # needs sage.graphs
             [(1, 2, 3), (2, 1, 1)]
-            sage: CartanType(["B", 3, 1]).relabel([1,3,2,0]).dynkin_diagram().edges(sort=True)          # optional - sage.graphs
+            sage: CartanType(["B", 3, 1]).relabel([1,3,2,0]).dynkin_diagram().edges(sort=True)      # needs sage.graphs
             [(0, 2, 1), (1, 2, 1), (2, 0, 2), (2, 1, 1), (2, 3, 1), (3, 2, 1)]
-            sage: CartanType(["F", 4, 1]).relabel(lambda n: 4-n).dynkin_diagram().edges(sort=True)      # optional - sage.graphs
+            sage: CartanType(["F", 4, 1]).relabel(lambda n: 4-n).dynkin_diagram().edges(sort=True)  # needs sage.graphs
             [(0, 1, 1), (1, 0, 1), (1, 2, 1), (2, 1, 2), (2, 3, 1), (3, 2, 1), (3, 4, 1), (4, 3, 1)]
         """
         result = self._type.dynkin_diagram().copy()
@@ -360,11 +360,11 @@ class CartanType(cartan_type.CartanType_decorator):
         EXAMPLES::
 
             sage: T = CartanType(["BC",3, 2])
-            sage: T.marked_nodes([1,3]).dual().dynkin_diagram()                                         # optional - sage.graphs
+            sage: T.marked_nodes([1,3]).dual().dynkin_diagram()                         # needs sage.graphs
             O=>=X---O=>=X
             0   1   2   3
             BC3~* with nodes (1, 3) marked
-            sage: T.dual().marked_nodes([1,3]).dynkin_diagram()                                         # optional - sage.graphs
+            sage: T.dual().marked_nodes([1,3]).dynkin_diagram()                         # needs sage.graphs
             O=>=X---O=>=X
             0   1   2   3
             BC3~* with nodes (1, 3) marked
@@ -378,11 +378,11 @@ class CartanType(cartan_type.CartanType_decorator):
         EXAMPLES::
 
             sage: T = CartanType(["BC",3, 2])
-            sage: T.marked_nodes([1,3]).relabel(lambda x: x+2).dynkin_diagram()                         # optional - sage.graphs
+            sage: T.marked_nodes([1,3]).relabel(lambda x: x+2).dynkin_diagram()         # needs sage.graphs
             O=<=X---O=<=X
             2   3   4   5
             BC3~ relabelled by {0: 2, 1: 3, 2: 4, 3: 5} with nodes (3, 5) marked
-            sage: T.relabel(lambda x: x+2).marked_nodes([3,5]).dynkin_diagram()                         # optional - sage.graphs
+            sage: T.relabel(lambda x: x+2).marked_nodes([3,5]).dynkin_diagram()         # needs sage.graphs
             O=<=X---O=<=X
             2   3   4   5
             BC3~ relabelled by {0: 2, 1: 3, 2: 4, 3: 5} with nodes (3, 5) marked
@@ -425,7 +425,7 @@ class CartanType(cartan_type.CartanType_decorator):
             Finite family {0: (0,), 1: (2,), 2: (1, 3, 4)}
             sage: CartanType(['G',2,1]).dual()._default_folded_cartan_type().folding_orbit()
             Finite family {0: (0,), 1: (1, 3, 4), 2: (2,)}
-            sage: CartanType(['C',3,1]).relabel({0:1, 1:0, 2:3, 3:2}).as_folding().scaling_factors()                    # optional - sage.graphs
+            sage: CartanType(['C',3,1]).relabel({0:1, 1:0, 2:3, 3:2}).as_folding().scaling_factors()                    # needs sage.graphs
             Finite family {0: 1, 1: 2, 2: 2, 3: 1}
         """
         from sage.combinat.root_system.type_folded import CartanTypeFolded
@@ -461,7 +461,7 @@ class AmbientSpace(ambient_space.AmbientSpace):
 
         sage: L = CartanType(["F",4]).marked_nodes([1,3]).root_system().ambient_space(); L
         Ambient space of the Root system of type ['F', 4] with nodes (1, 3) marked
-        sage: TestSuite(L).run()                                                        # optional - sage.graphs
+        sage: TestSuite(L).run()                                                        # needs sage.graphs
     """
     @lazy_attribute
     def _space(self):
@@ -567,11 +567,11 @@ class CartanType_finite(CartanType, cartan_type.CartanType_finite):
         EXAMPLES::
 
             sage: B4 = CartanType(['B',4]).marked_nodes([1,3])
-            sage: B4.dynkin_diagram()                                                   # optional - sage.graphs
+            sage: B4.dynkin_diagram()                                                   # needs sage.graphs
             X---O---X=>=O
             1   2   3   4
             B4 with nodes (1, 3) marked
-            sage: B4.affine().dynkin_diagram()                                          # optional - sage.graphs
+            sage: B4.affine().dynkin_diagram()                                          # needs sage.graphs
                 O 0
                 |
                 |
@@ -670,7 +670,7 @@ class CartanType_affine(CartanType, cartan_type.CartanType_affine):
         EXAMPLES::
 
             sage: T = CartanType(['A',4,1]).marked_nodes([0,2,4])
-            sage: T.dynkin_diagram()                                                    # optional - sage.graphs
+            sage: T.dynkin_diagram()                                                    # needs sage.graphs
             0
             X-----------+
             |           |
@@ -681,7 +681,7 @@ class CartanType_affine(CartanType, cartan_type.CartanType_affine):
 
             sage: T0 = T.classical(); T0
             ['A', 4] with nodes (2, 4) marked
-            sage: T0.dynkin_diagram()                                                   # optional - sage.graphs
+            sage: T0.dynkin_diagram()                                                   # needs sage.graphs
             O---X---O---X
             1   2   3   4
             A4 with nodes (2, 4) marked

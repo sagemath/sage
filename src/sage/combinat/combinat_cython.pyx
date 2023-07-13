@@ -303,7 +303,7 @@ def set_partition_composition(tuple sp1, tuple sp2):
         sage: sp1 = ((1,-2),(2,-1))
         sage: sp2 = ((1,-2),(2,-1))
         sage: p, c = set_partition_composition(sp1, sp2)
-        sage: (SetPartition(p), c) == (SetPartition([[1,-1],[2,-2]]), 0)                # optional - sage.combinat
+        sage: (SetPartition(p), c) == (SetPartition([[1,-1],[2,-2]]), 0)                # needs sage.combinat
         True
     """
     cdef int num_loops = 0  # The number of loops removed

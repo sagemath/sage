@@ -89,38 +89,38 @@ class CartanMatrix(Base, CartanType_abstract,
 
     EXAMPLES::
 
-        sage: CartanMatrix(['A', 4])                                                    # optional - sage.graphs
+        sage: CartanMatrix(['A', 4])                                                    # needs sage.graphs
         [ 2 -1  0  0]
         [-1  2 -1  0]
         [ 0 -1  2 -1]
         [ 0  0 -1  2]
-        sage: CartanMatrix(['B', 6])                                                    # optional - sage.graphs
+        sage: CartanMatrix(['B', 6])                                                    # needs sage.graphs
         [ 2 -1  0  0  0  0]
         [-1  2 -1  0  0  0]
         [ 0 -1  2 -1  0  0]
         [ 0  0 -1  2 -1  0]
         [ 0  0  0 -1  2 -1]
         [ 0  0  0  0 -2  2]
-        sage: CartanMatrix(['C', 4])                                                    # optional - sage.graphs
+        sage: CartanMatrix(['C', 4])                                                    # needs sage.graphs
         [ 2 -1  0  0]
         [-1  2 -1  0]
         [ 0 -1  2 -2]
         [ 0  0 -1  2]
-        sage: CartanMatrix(['D', 6])                                                    # optional - sage.graphs
+        sage: CartanMatrix(['D', 6])                                                    # needs sage.graphs
         [ 2 -1  0  0  0  0]
         [-1  2 -1  0  0  0]
         [ 0 -1  2 -1  0  0]
         [ 0  0 -1  2 -1 -1]
         [ 0  0  0 -1  2  0]
         [ 0  0  0 -1  0  2]
-        sage: CartanMatrix(['E',6])                                                     # optional - sage.graphs
+        sage: CartanMatrix(['E',6])                                                     # needs sage.graphs
         [ 2  0 -1  0  0  0]
         [ 0  2  0 -1  0  0]
         [-1  0  2 -1  0  0]
         [ 0 -1 -1  2 -1  0]
         [ 0  0  0 -1  2 -1]
         [ 0  0  0  0 -1  2]
-        sage: CartanMatrix(['E',7])                                                     # optional - sage.graphs
+        sage: CartanMatrix(['E',7])                                                     # needs sage.graphs
         [ 2  0 -1  0  0  0  0]
         [ 0  2  0 -1  0  0  0]
         [-1  0  2 -1  0  0  0]
@@ -128,7 +128,7 @@ class CartanMatrix(Base, CartanType_abstract,
         [ 0  0  0 -1  2 -1  0]
         [ 0  0  0  0 -1  2 -1]
         [ 0  0  0  0  0 -1  2]
-        sage: CartanMatrix(['E', 8])                                                    # optional - sage.graphs
+        sage: CartanMatrix(['E', 8])                                                    # needs sage.graphs
         [ 2  0 -1  0  0  0  0  0]
         [ 0  2  0 -1  0  0  0  0]
         [-1  0  2 -1  0  0  0  0]
@@ -137,7 +137,7 @@ class CartanMatrix(Base, CartanType_abstract,
         [ 0  0  0  0 -1  2 -1  0]
         [ 0  0  0  0  0 -1  2 -1]
         [ 0  0  0  0  0  0 -1  2]
-        sage: CartanMatrix(['F', 4])                                                    # optional - sage.graphs
+        sage: CartanMatrix(['F', 4])                                                    # needs sage.graphs
         [ 2 -1  0  0]
         [-1  2 -1  0]
         [ 0 -2  2 -1]
@@ -148,34 +148,34 @@ class CartanMatrix(Base, CartanType_abstract,
 
     ::
 
-        sage: CartanMatrix(['G', 2])                                                    # optional - sage.graphs
+        sage: CartanMatrix(['G', 2])                                                    # needs sage.graphs
         [ 2 -3]
         [-1  2]
-        sage: CartanMatrix(['A',1,1])                                                   # optional - sage.graphs
+        sage: CartanMatrix(['A',1,1])                                                   # needs sage.graphs
         [ 2 -2]
         [-2  2]
-        sage: CartanMatrix(['A', 3, 1])                                                 # optional - sage.graphs
+        sage: CartanMatrix(['A', 3, 1])                                                 # needs sage.graphs
         [ 2 -1  0 -1]
         [-1  2 -1  0]
         [ 0 -1  2 -1]
         [-1  0 -1  2]
-        sage: CartanMatrix(['B', 3, 1])                                                 # optional - sage.graphs
+        sage: CartanMatrix(['B', 3, 1])                                                 # needs sage.graphs
         [ 2  0 -1  0]
         [ 0  2 -1  0]
         [-1 -1  2 -1]
         [ 0  0 -2  2]
-        sage: CartanMatrix(['C', 3, 1])                                                 # optional - sage.graphs
+        sage: CartanMatrix(['C', 3, 1])                                                 # needs sage.graphs
         [ 2 -1  0  0]
         [-2  2 -1  0]
         [ 0 -1  2 -2]
         [ 0  0 -1  2]
-        sage: CartanMatrix(['D', 4, 1])                                                 # optional - sage.graphs
+        sage: CartanMatrix(['D', 4, 1])                                                 # needs sage.graphs
         [ 2  0 -1  0  0]
         [ 0  2 -1  0  0]
         [-1 -1  2 -1 -1]
         [ 0  0 -1  2  0]
         [ 0  0 -1  0  2]
-        sage: CartanMatrix(['E', 6, 1])                                                 # optional - sage.graphs
+        sage: CartanMatrix(['E', 6, 1])                                                 # needs sage.graphs
         [ 2  0 -1  0  0  0  0]
         [ 0  2  0 -1  0  0  0]
         [-1  0  2  0 -1  0  0]
@@ -183,7 +183,7 @@ class CartanMatrix(Base, CartanType_abstract,
         [ 0  0 -1 -1  2 -1  0]
         [ 0  0  0  0 -1  2 -1]
         [ 0  0  0  0  0 -1  2]
-        sage: CartanMatrix(['E', 7, 1])                                                 # optional - sage.graphs
+        sage: CartanMatrix(['E', 7, 1])                                                 # needs sage.graphs
         [ 2 -1  0  0  0  0  0  0]
         [-1  2  0 -1  0  0  0  0]
         [ 0  0  2  0 -1  0  0  0]
@@ -192,7 +192,7 @@ class CartanMatrix(Base, CartanType_abstract,
         [ 0  0  0  0 -1  2 -1  0]
         [ 0  0  0  0  0 -1  2 -1]
         [ 0  0  0  0  0  0 -1  2]
-        sage: CartanMatrix(['E', 8, 1])                                                 # optional - sage.graphs
+        sage: CartanMatrix(['E', 8, 1])                                                 # needs sage.graphs
         [ 2  0  0  0  0  0  0  0 -1]
         [ 0  2  0 -1  0  0  0  0  0]
         [ 0  0  2  0 -1  0  0  0  0]
@@ -202,23 +202,23 @@ class CartanMatrix(Base, CartanType_abstract,
         [ 0  0  0  0  0 -1  2 -1  0]
         [ 0  0  0  0  0  0 -1  2 -1]
         [-1  0  0  0  0  0  0 -1  2]
-        sage: CartanMatrix(['F', 4, 1])                                                 # optional - sage.graphs
+        sage: CartanMatrix(['F', 4, 1])                                                 # needs sage.graphs
         [ 2 -1  0  0  0]
         [-1  2 -1  0  0]
         [ 0 -1  2 -1  0]
         [ 0  0 -2  2 -1]
         [ 0  0  0 -1  2]
-        sage: CartanMatrix(['G', 2, 1])                                                 # optional - sage.graphs
+        sage: CartanMatrix(['G', 2, 1])                                                 # needs sage.graphs
         [ 2  0 -1]
         [ 0  2 -3]
         [-1 -1  2]
 
     Examples of Borcherds-Cartan matrices::
 
-        sage: CartanMatrix([[2,-1],[-1,-2]], borcherds=True)                            # optional - sage.graphs
+        sage: CartanMatrix([[2,-1],[-1,-2]], borcherds=True)                            # needs sage.graphs
         [ 2 -1]
         [-1 -2]
-        sage: CartanMatrix('B3', borcherds=[-4,-6,2])                                   # optional - sage.graphs
+        sage: CartanMatrix('B3', borcherds=[-4,-6,2])                                   # needs sage.graphs
         [-4 -1  0]
         [-1 -6 -1]
         [ 0 -2  2]
@@ -245,22 +245,22 @@ class CartanMatrix(Base, CartanType_abstract,
 
         EXAMPLES::
 
-            sage: C = CartanMatrix(['A',1,1])                                           # optional - sage.graphs
-            sage: C2 = CartanMatrix([[2, -2], [-2, 2]])                                 # optional - sage.graphs
-            sage: C3 = CartanMatrix(matrix([[2, -2], [-2, 2]]), [0, 1])                 # optional - sage.graphs
-            sage: C == C2 and C == C3                                                   # optional - sage.graphs
+            sage: C = CartanMatrix(['A',1,1])                                           # needs sage.graphs
+            sage: C2 = CartanMatrix([[2, -2], [-2, 2]])                                 # needs sage.graphs
+            sage: C3 = CartanMatrix(matrix([[2, -2], [-2, 2]]), [0, 1])                 # needs sage.graphs
+            sage: C == C2 and C == C3                                                   # needs sage.graphs
             True
 
         TESTS:
 
         Check that :trac:`15740` is fixed::
 
-            sage: d = DynkinDiagram()                                                   # optional - sage.graphs
-            sage: d.add_edge('a', 'b', 2)                                               # optional - sage.graphs
-            sage: d.index_set()                                                         # optional - sage.graphs
+            sage: d = DynkinDiagram()                                                   # needs sage.graphs
+            sage: d.add_edge('a', 'b', 2)                                               # needs sage.graphs
+            sage: d.index_set()                                                         # needs sage.graphs
             ('a', 'b')
-            sage: cm = CartanMatrix(d)                                                  # optional - sage.graphs
-            sage: cm.index_set()                                                        # optional - sage.graphs
+            sage: cm = CartanMatrix(d)                                                  # needs sage.graphs
+            sage: cm.index_set()                                                        # needs sage.graphs
             ('a', 'b')
         """
         # Special case with 0 args and kwds has Cartan type
@@ -353,12 +353,12 @@ class CartanMatrix(Base, CartanType_abstract,
 
         EXAMPLES::
 
-            sage: cm = CartanMatrix(['A', 3])                                           # optional - sage.graphs
-            sage: cm.matrix_space()                                                     # optional - sage.graphs
+            sage: cm = CartanMatrix(['A', 3])                                           # needs sage.graphs
+            sage: cm.matrix_space()                                                     # needs sage.graphs
             Full MatrixSpace of 3 by 3 sparse matrices over Integer Ring
-            sage: cm.matrix_space(2, 2)                                                 # optional - sage.graphs
+            sage: cm.matrix_space(2, 2)                                                 # needs sage.graphs
             Full MatrixSpace of 2 by 2 sparse matrices over Integer Ring
-            sage: cm[:2,1:]                                                             # optional - sage.graphs
+            sage: cm[:2,1:]                                                             # needs sage.graphs
             [-1  0]
             [ 2 -1]
         """
@@ -381,8 +381,8 @@ class CartanMatrix(Base, CartanType_abstract,
 
         TESTS::
 
-            sage: C = CartanMatrix(['A',1,1])                                           # optional - sage.graphs
-            sage: TestSuite(C).run(skip=["_test_category", "_test_change_ring"])        # optional - sage.graphs
+            sage: C = CartanMatrix(['A',1,1])                                           # needs sage.graphs
+            sage: TestSuite(C).run(skip=["_test_category", "_test_change_ring"])        # needs sage.graphs
         """
         self._index_set = index_set
         self.set_immutable()
@@ -405,9 +405,9 @@ class CartanMatrix(Base, CartanType_abstract,
 
         TESTS::
 
-            sage: CM = CartanMatrix(['A',4])                                            # optional - sage.graphs
-            sage: x = loads(dumps(CM))                                                  # optional - sage.graphs
-            sage: x._index_set                                                          # optional - sage.graphs
+            sage: CM = CartanMatrix(['A',4])                                            # needs sage.graphs
+            sage: x = loads(dumps(CM))                                                  # needs sage.graphs
+            sage: x._index_set                                                          # needs sage.graphs
             (1, 2, 3, 4)
         """
         if self._cartan_type:
@@ -420,8 +420,8 @@ class CartanMatrix(Base, CartanType_abstract,
 
         EXAMPLES::
 
-            sage: C = CartanMatrix(['A',3])                                             # optional - sage.graphs
-            sage: C.root_system()                                                       # optional - sage.graphs
+            sage: C = CartanMatrix(['A',3])                                             # needs sage.graphs
+            sage: C.root_system()                                                       # needs sage.graphs
             Root system of type ['A', 3]
         """
         if self._cartan_type is not None:
@@ -434,8 +434,8 @@ class CartanMatrix(Base, CartanType_abstract,
 
         EXAMPLES::
 
-            sage: C = CartanMatrix(['A',3])                                             # optional - sage.graphs
-            sage: C.root_space()                                                        # optional - sage.graphs
+            sage: C = CartanMatrix(['A',3])                                             # needs sage.graphs
+            sage: C.root_space()                                                        # needs sage.graphs
             Root space over the Rational Field of the Root system of type ['A', 3]
         """
         return self.root_system().root_space()
@@ -446,8 +446,8 @@ class CartanMatrix(Base, CartanType_abstract,
 
         EXAMPLES::
 
-            sage: C = CartanMatrix(['A',3])                                             # optional - sage.graphs
-            sage: C.reflection_group()                                                  # optional - sage.graphs
+            sage: C = CartanMatrix(['A',3])                                             # needs sage.graphs
+            sage: C.reflection_group()                                                  # needs sage.graphs
             Weyl Group of type ['A', 3] (as a matrix group acting on the root space)
         """
         RS = self.root_space()
@@ -475,8 +475,8 @@ class CartanMatrix(Base, CartanType_abstract,
 
         EXAMPLES::
 
-            sage: cm = CartanMatrix([[2,-5],[-2,2]])                                    # optional - sage.graphs
-            sage: cm.symmetrizer()                                                      # optional - sage.graphs
+            sage: cm = CartanMatrix([[2,-5],[-2,2]])                                    # needs sage.graphs
+            sage: cm.symmetrizer()                                                      # needs sage.graphs
             Finite family {0: 2, 1: 5}
 
         TESTS:
@@ -485,9 +485,9 @@ class CartanMatrix(Base, CartanType_abstract,
         with the values given by the Cartan type::
 
             sage: ct = CartanType(['B',4,1])
-            sage: ct.symmetrizer()                                                      # optional - sage.graphs
+            sage: ct.symmetrizer()                                                      # needs sage.graphs
             Finite family {0: 2, 1: 2, 2: 2, 3: 2, 4: 1}
-            sage: ct.cartan_matrix().symmetrizer()                                      # optional - sage.graphs
+            sage: ct.cartan_matrix().symmetrizer()                                      # needs sage.graphs
             Finite family {0: 2, 1: 2, 2: 2, 3: 2, 4: 1}
         """
         sym = self.is_symmetrizable(True)
@@ -508,8 +508,8 @@ class CartanMatrix(Base, CartanType_abstract,
 
         EXAMPLES::
 
-            sage: cm = CartanMatrix(['B',4,1])                                          # optional - sage.graphs
-            sage: cm.symmetrized_matrix()                                               # optional - sage.graphs
+            sage: cm = CartanMatrix(['B',4,1])                                          # needs sage.graphs
+            sage: cm.symmetrized_matrix()                                               # needs sage.graphs
             [ 4  0 -2  0  0]
             [ 0  4 -2  0  0]
             [-2 -2  4 -2  0]
@@ -529,11 +529,11 @@ class CartanMatrix(Base, CartanType_abstract,
 
         EXAMPLES::
 
-            sage: C = CartanMatrix(['A',1,1])                                           # optional - sage.graphs
-            sage: C.index_set()                                                         # optional - sage.graphs
+            sage: C = CartanMatrix(['A',1,1])                                           # needs sage.graphs
+            sage: C.index_set()                                                         # needs sage.graphs
             (0, 1)
-            sage: C = CartanMatrix(['E',6])                                             # optional - sage.graphs
-            sage: C.index_set()                                                         # optional - sage.graphs
+            sage: C = CartanMatrix(['E',6])                                             # needs sage.graphs
+            sage: C.index_set()                                                         # needs sage.graphs
             (1, 2, 3, 4, 5, 6)
         """
         return self._index_set
@@ -544,14 +544,14 @@ class CartanMatrix(Base, CartanType_abstract,
 
         EXAMPLES::
 
-            sage: C = CartanMatrix(['A',4,1])                                           # optional - sage.graphs
-            sage: C.cartan_type()                                                       # optional - sage.graphs
+            sage: C = CartanMatrix(['A',4,1])                                           # needs sage.graphs
+            sage: C.cartan_type()                                                       # needs sage.graphs
             ['A', 4, 1]
 
         If the Cartan type is unknown::
 
-            sage: C = CartanMatrix([[2,-1,-2], [-1,2,-1], [-2,-1,2]])                   # optional - sage.graphs
-            sage: C.cartan_type()                                                       # optional - sage.graphs
+            sage: C = CartanMatrix([[2,-1,-2], [-1,2,-1], [-2,-1,2]])                   # needs sage.graphs
+            sage: C.cartan_type()                                                       # needs sage.graphs
             [ 2 -1 -2]
             [-1  2 -1]
             [-2 -1  2]
@@ -571,13 +571,13 @@ class CartanMatrix(Base, CartanType_abstract,
 
         EXAMPLES::
 
-            sage: C = CartanMatrix(['F',4])                                             # optional - sage.graphs
-            sage: S = C.subtype([1,2,3])                                                # optional - sage.graphs
-            sage: S                                                                     # optional - sage.graphs
+            sage: C = CartanMatrix(['F',4])                                             # needs sage.graphs
+            sage: S = C.subtype([1,2,3])                                                # needs sage.graphs
+            sage: S                                                                     # needs sage.graphs
             [ 2 -1  0]
             [-1  2 -1]
             [ 0 -2  2]
-            sage: S.index_set()                                                         # optional - sage.graphs
+            sage: S.index_set()                                                         # needs sage.graphs
             (1, 2, 3)
         """
         ind = self.index_set()
@@ -590,9 +590,9 @@ class CartanMatrix(Base, CartanType_abstract,
 
         EXAMPLES::
 
-            sage: CartanMatrix(['C',3]).rank()                                          # optional - sage.graphs
+            sage: CartanMatrix(['C',3]).rank()                                          # needs sage.graphs
             3
-            sage: CartanMatrix(["A2","B2","F4"]).rank()                                 # optional - sage.graphs
+            sage: CartanMatrix(["A2","B2","F4"]).rank()                                 # needs sage.graphs
             8
         """
         return self.ncols()
@@ -603,14 +603,14 @@ class CartanMatrix(Base, CartanType_abstract,
 
         EXAMPLES::
 
-            sage: CM = CartanMatrix(['C',3])                                            # optional - sage.graphs
-            sage: R = CM.relabel({1:0, 2:4, 3:1}); R                                    # optional - sage.graphs
+            sage: CM = CartanMatrix(['C',3])                                            # needs sage.graphs
+            sage: R = CM.relabel({1:0, 2:4, 3:1}); R                                    # needs sage.graphs
             [ 2  0 -1]
             [ 0  2 -1]
             [-1 -2  2]
-            sage: R.index_set()                                                         # optional - sage.graphs
+            sage: R.index_set()                                                         # needs sage.graphs
             (0, 1, 4)
-            sage: CM                                                                    # optional - sage.graphs
+            sage: CM                                                                    # needs sage.graphs
             [ 2 -1  0]
             [-1  2 -2]
             [ 0 -1  2]
@@ -624,18 +624,18 @@ class CartanMatrix(Base, CartanType_abstract,
 
         EXAMPLES::
 
-            sage: C = CartanMatrix(['A',2])                                             # optional - sage.graphs
-            sage: C.dynkin_diagram()                                                    # optional - sage.graphs
+            sage: C = CartanMatrix(['A',2])                                             # needs sage.graphs
+            sage: C.dynkin_diagram()                                                    # needs sage.graphs
             O---O
             1   2
             A2
-            sage: C = CartanMatrix(['F',4,1])                                           # optional - sage.graphs
-            sage: C.dynkin_diagram()                                                    # optional - sage.graphs
+            sage: C = CartanMatrix(['F',4,1])                                           # needs sage.graphs
+            sage: C.dynkin_diagram()                                                    # needs sage.graphs
             O---O---O=>=O---O
             0   1   2   3   4
             F4~
-            sage: C = CartanMatrix([[2,-4],[-4,2]])                                     # optional - sage.graphs
-            sage: C.dynkin_diagram()                                                    # optional - sage.graphs
+            sage: C = CartanMatrix([[2,-4],[-4,2]])                                     # needs sage.graphs
+            sage: C.dynkin_diagram()                                                    # needs sage.graphs
             Dynkin diagram of rank 2
         """
         from sage.combinat.root_system.dynkin_diagram import DynkinDiagram
@@ -649,7 +649,7 @@ class CartanMatrix(Base, CartanType_abstract,
 
         EXAMPLES::
 
-            sage: CartanMatrix(['C',3]).cartan_matrix()                                 # optional - sage.graphs
+            sage: CartanMatrix(['C',3]).cartan_matrix()                                 # needs sage.graphs
             [ 2 -1  0]
             [-1  2 -2]
             [ 0 -1  2]
@@ -664,30 +664,30 @@ class CartanMatrix(Base, CartanType_abstract,
         EXAMPLES::
 
             sage: ct = CartanType(['C',3])
-            sage: M = CartanMatrix(ct); M                                               # optional - sage.graphs
+            sage: M = CartanMatrix(ct); M                                               # needs sage.graphs
             [ 2 -1  0]
             [-1  2 -2]
             [ 0 -1  2]
-            sage: M.dual()                                                              # optional - sage.graphs
+            sage: M.dual()                                                              # needs sage.graphs
             [ 2 -1  0]
             [-1  2 -1]
             [ 0 -2  2]
-            sage: M.dual() == CartanMatrix(ct.dual())                                   # optional - sage.graphs
+            sage: M.dual() == CartanMatrix(ct.dual())                                   # needs sage.graphs
             True
-            sage: M.dual().cartan_type() == ct.dual()                                   # optional - sage.graphs
+            sage: M.dual().cartan_type() == ct.dual()                                   # needs sage.graphs
             True
 
         An example with arbitrary Cartan matrices::
 
-            sage: cm = CartanMatrix([[2,-5], [-2, 2]]); cm                              # optional - sage.graphs
+            sage: cm = CartanMatrix([[2,-5], [-2, 2]]); cm                              # needs sage.graphs
             [ 2 -5]
             [-2  2]
-            sage: cm.dual()                                                             # optional - sage.graphs
+            sage: cm.dual()                                                             # needs sage.graphs
             [ 2 -2]
             [-5  2]
-            sage: cm.dual() == CartanMatrix(cm.transpose())                             # optional - sage.graphs
+            sage: cm.dual() == CartanMatrix(cm.transpose())                             # needs sage.graphs
             True
-            sage: cm.dual().dual() == cm                                                # optional - sage.graphs
+            sage: cm.dual().dual() == cm                                                # needs sage.graphs
             True
         """
         if self._cartan_type is not None:
@@ -703,9 +703,9 @@ class CartanMatrix(Base, CartanType_abstract,
 
         EXAMPLES::
 
-            sage: cm = CartanMatrix([[2, -1, -1, -1], [-1, 2, -1, -1],                  # optional - sage.graphs
+            sage: cm = CartanMatrix([[2, -1, -1, -1], [-1, 2, -1, -1],                  # needs sage.graphs
             ....:                    [-1, -1, 2, -1], [-1, -1, -1, 2]])
-            sage: cm.is_simply_laced()                                                  # optional - sage.graphs
+            sage: cm.is_simply_laced()                                                  # needs sage.graphs
             True
         """
         for i in range(self.nrows()):
@@ -722,7 +722,7 @@ class CartanMatrix(Base, CartanType_abstract,
 
         EXAMPLES::
 
-            sage: CartanMatrix(['F',4]).is_crystallographic()                           # optional - sage.graphs
+            sage: CartanMatrix(['F',4]).is_crystallographic()                           # needs sage.graphs
             True
         """
         return self.is_symmetrizable()
@@ -734,8 +734,8 @@ class CartanMatrix(Base, CartanType_abstract,
 
         EXAMPLES::
 
-            sage: M = CartanMatrix(['B',4])                                             # optional - sage.graphs
-            sage: [ (i,a) for (i,a) in M.column_with_indices(3) ]                       # optional - sage.graphs
+            sage: M = CartanMatrix(['B',4])                                             # needs sage.graphs
+            sage: [ (i,a) for (i,a) in M.column_with_indices(3) ]                       # needs sage.graphs
             [(3, 2), (2, -1), (4, -2)]
         """
         return self.dynkin_diagram().column(j)
@@ -747,8 +747,8 @@ class CartanMatrix(Base, CartanType_abstract,
 
         EXAMPLES::
 
-            sage: M = CartanMatrix(['C',4])                                             # optional - sage.graphs
-            sage: [ (i,a) for (i,a) in M.row_with_indices(3) ]                          # optional - sage.graphs
+            sage: M = CartanMatrix(['C',4])                                             # needs sage.graphs
+            sage: [ (i,a) for (i,a) in M.row_with_indices(3) ]                          # needs sage.graphs
             [(3, 2), (2, -1), (4, -2)]
         """
         return self.dynkin_diagram().row(i)
@@ -766,14 +766,14 @@ class CartanMatrix(Base, CartanType_abstract,
 
         EXAMPLES::
 
-            sage: M = CartanMatrix(['C',4])                                             # optional - sage.graphs
-            sage: M.is_finite()                                                         # optional - sage.graphs
+            sage: M = CartanMatrix(['C',4])                                             # needs sage.graphs
+            sage: M.is_finite()                                                         # needs sage.graphs
             True
-            sage: M = CartanMatrix(['D',4,1])                                           # optional - sage.graphs
-            sage: M.is_finite()                                                         # optional - sage.graphs
+            sage: M = CartanMatrix(['D',4,1])                                           # needs sage.graphs
+            sage: M.is_finite()                                                         # needs sage.graphs
             False
-            sage: M = CartanMatrix([[2, -4], [-3, 2]])                                  # optional - sage.graphs
-            sage: M.is_finite()                                                         # optional - sage.graphs
+            sage: M = CartanMatrix([[2, -4], [-3, 2]])                                  # needs sage.graphs
+            sage: M.is_finite()                                                         # needs sage.graphs
             False
         """
         if self._cartan_type is None:
@@ -793,14 +793,14 @@ class CartanMatrix(Base, CartanType_abstract,
 
         EXAMPLES::
 
-            sage: M = CartanMatrix(['C',4])                                             # optional - sage.graphs
-            sage: M.is_affine()                                                         # optional - sage.graphs
+            sage: M = CartanMatrix(['C',4])                                             # needs sage.graphs
+            sage: M.is_affine()                                                         # needs sage.graphs
             False
-            sage: M = CartanMatrix(['D',4,1])                                           # optional - sage.graphs
-            sage: M.is_affine()                                                         # optional - sage.graphs
+            sage: M = CartanMatrix(['D',4,1])                                           # needs sage.graphs
+            sage: M.is_affine()                                                         # needs sage.graphs
             True
-            sage: M = CartanMatrix([[2, -4], [-3, 2]])                                  # optional - sage.graphs
-            sage: M.is_affine()                                                         # optional - sage.graphs
+            sage: M = CartanMatrix([[2, -4], [-3, 2]])                                  # needs sage.graphs
+            sage: M.is_affine()                                                         # needs sage.graphs
             False
         """
         if self._cartan_type is None:
@@ -830,16 +830,16 @@ class CartanMatrix(Base, CartanType_abstract,
 
         EXAMPLES::
 
-            sage: M = CartanMatrix([[2,-2,0],[-2,2,-1],[0,-1,2]])                       # optional - sage.graphs
-            sage: M.is_hyperbolic()                                                     # optional - sage.graphs
+            sage: M = CartanMatrix([[2,-2,0],[-2,2,-1],[0,-1,2]])                       # needs sage.graphs
+            sage: M.is_hyperbolic()                                                     # needs sage.graphs
             True
-            sage: M.is_hyperbolic(compact=True)                                         # optional - sage.graphs
+            sage: M.is_hyperbolic(compact=True)                                         # needs sage.graphs
             False
-            sage: M = CartanMatrix([[2,-3],[-3,2]])                                     # optional - sage.graphs
-            sage: M.is_hyperbolic()                                                     # optional - sage.graphs
+            sage: M = CartanMatrix([[2,-3],[-3,2]])                                     # needs sage.graphs
+            sage: M.is_hyperbolic()                                                     # needs sage.graphs
             True
-            sage: M = CartanMatrix(['C',4])                                             # optional - sage.graphs
-            sage: M.is_hyperbolic()                                                     # optional - sage.graphs
+            sage: M = CartanMatrix(['C',4])                                             # needs sage.graphs
+            sage: M.is_hyperbolic()                                                     # needs sage.graphs
             False
         """
         if not self.is_indefinite() or not self.is_indecomposable():
@@ -866,11 +866,11 @@ class CartanMatrix(Base, CartanType_abstract,
 
         EXAMPLES::
 
-            sage: M = CartanMatrix([[2,-3],[-3,2]])                                     # optional - sage.graphs
-            sage: M.is_lorentzian()                                                     # optional - sage.graphs
+            sage: M = CartanMatrix([[2,-3],[-3,2]])                                     # needs sage.graphs
+            sage: M.is_lorentzian()                                                     # needs sage.graphs
             True
-            sage: M = CartanMatrix([[2,-1],[-1,2]])                                     # optional - sage.graphs
-            sage: M.is_lorentzian()                                                     # optional - sage.graphs
+            sage: M = CartanMatrix([[2,-1],[-1,2]])                                     # needs sage.graphs
+            sage: M.is_lorentzian()                                                     # needs sage.graphs
             False
         """
         if self.det() >= 0:
@@ -884,11 +884,11 @@ class CartanMatrix(Base, CartanType_abstract,
 
         EXAMPLES::
 
-           sage: M = CartanMatrix([[2,-3],[-3,2]])                                      # optional - sage.graphs
-           sage: M.is_indefinite()                                                      # optional - sage.graphs
+           sage: M = CartanMatrix([[2,-3],[-3,2]])                                      # needs sage.graphs
+           sage: M.is_indefinite()                                                      # needs sage.graphs
            True
-           sage: M = CartanMatrix("A2")                                                 # optional - sage.graphs
-           sage: M.is_indefinite()                                                      # optional - sage.graphs
+           sage: M = CartanMatrix("A2")                                                 # needs sage.graphs
+           sage: M.is_indefinite()                                                      # needs sage.graphs
            False
         """
         return not self.is_finite() and not self.is_affine()
@@ -900,11 +900,11 @@ class CartanMatrix(Base, CartanType_abstract,
 
         EXAMPLES::
 
-            sage: M = CartanMatrix(['A',5])                                             # optional - sage.graphs
-            sage: M.is_indecomposable()                                                 # optional - sage.graphs
+            sage: M = CartanMatrix(['A',5])                                             # needs sage.graphs
+            sage: M.is_indecomposable()                                                 # needs sage.graphs
             True
-            sage: M = CartanMatrix([[2,-1,0],[-1,2,0],[0,0,2]])                         # optional - sage.graphs
-            sage: M.is_indecomposable()                                                 # optional - sage.graphs
+            sage: M = CartanMatrix([[2,-1,0],[-1,2,0],[0,0,2]])                         # needs sage.graphs
+            sage: M.is_indecomposable()                                                 # needs sage.graphs
             False
         """
         comp_num = self.dynkin_diagram().connected_components_number()
@@ -920,19 +920,19 @@ class CartanMatrix(Base, CartanType_abstract,
 
         EXAMPLES::
 
-            sage: cm = CartanMatrix([[2,-5,0],[-2,2,-1],[0,-1,2]])                      # optional - sage.graphs
-            sage: cm.coxeter_matrix()                                                   # optional - sage.graphs
+            sage: cm = CartanMatrix([[2,-5,0],[-2,2,-1],[0,-1,2]])                      # needs sage.graphs
+            sage: cm.coxeter_matrix()                                                   # needs sage.graphs
             [ 1 -1  2]
             [-1  1  3]
             [ 2  3  1]
             sage: ct = CartanType([['A',2,2], ['B',3]])
-            sage: ct.coxeter_matrix()                                                   # optional - sage.graphs
+            sage: ct.coxeter_matrix()                                                   # needs sage.graphs
             [ 1 -1  2  2  2]
             [-1  1  2  2  2]
             [ 2  2  1  3  2]
             [ 2  2  3  1  4]
             [ 2  2  2  4  1]
-            sage: ct.cartan_matrix().coxeter_matrix() == ct.coxeter_matrix()            # optional - sage.graphs
+            sage: ct.cartan_matrix().coxeter_matrix() == ct.coxeter_matrix()            # needs sage.graphs
             True
         """
         scalarproducts_to_order = {0: 2,  1: 3,  2: 4,  3: 6}
@@ -957,15 +957,15 @@ class CartanMatrix(Base, CartanType_abstract,
 
         EXAMPLES::
 
-            sage: cm = CartanMatrix([[2,-5,0],[-2,2,-1],[0,-1,2]])                      # optional - sage.graphs
-            sage: G = cm.coxeter_diagram(); G                                           # optional - sage.graphs
+            sage: cm = CartanMatrix([[2,-5,0],[-2,2,-1],[0,-1,2]])                      # needs sage.graphs
+            sage: G = cm.coxeter_diagram(); G                                           # needs sage.graphs
             Graph on 3 vertices
-            sage: G.edges(sort=True)                                                    # optional - sage.graphs
+            sage: G.edges(sort=True)                                                    # needs sage.graphs
             [(0, 1, +Infinity), (1, 2, 3)]
             sage: ct = CartanType([['A',2,2], ['B',3]])
-            sage: ct.coxeter_diagram()                                                  # optional - sage.graphs
+            sage: ct.coxeter_diagram()                                                  # needs sage.graphs
             Graph on 5 vertices
-            sage: ct.cartan_matrix().coxeter_diagram() == ct.coxeter_diagram()          # optional - sage.graphs
+            sage: ct.cartan_matrix().coxeter_diagram() == ct.coxeter_diagram()          # needs sage.graphs
             True
         """
         return self.coxeter_matrix().coxeter_graph()
@@ -980,13 +980,13 @@ class CartanMatrix(Base, CartanType_abstract,
 
         EXAMPLES::
 
-            sage: M = CartanMatrix(['A',2])                                             # optional - sage.graphs
-            sage: M.principal_submatrices()                                             # optional - sage.graphs
+            sage: M = CartanMatrix(['A',2])                                             # needs sage.graphs
+            sage: M.principal_submatrices()                                             # needs sage.graphs
             [
                           [ 2 -1]
             [], [2], [2], [-1  2]
             ]
-            sage: M.principal_submatrices(proper=True)                                  # optional - sage.graphs
+            sage: M.principal_submatrices(proper=True)                                  # needs sage.graphs
             [[], [2], [2]]
 
         """
@@ -1004,14 +1004,14 @@ class CartanMatrix(Base, CartanType_abstract,
 
         EXAMPLES::
 
-            sage: M = CartanMatrix(['A',2])                                             # optional - sage.graphs
-            sage: M.indecomposable_blocks()                                             # optional - sage.graphs
+            sage: M = CartanMatrix(['A',2])                                             # needs sage.graphs
+            sage: M.indecomposable_blocks()                                             # needs sage.graphs
             (
             [ 2 -1]
             [-1  2]
             )
-            sage: M = CartanMatrix([['A',2,1],['A',3,1]])                               # optional - sage.graphs
-            sage: M.indecomposable_blocks()                                             # optional - sage.graphs
+            sage: M = CartanMatrix([['A',2,1],['A',3,1]])                               # needs sage.graphs
+            sage: M.indecomposable_blocks()                                             # needs sage.graphs
             (
             [ 2 -1  0 -1]
             [-1  2 -1  0]  [ 2 -1 -1]
@@ -1106,14 +1106,14 @@ def find_cartan_type_from_matrix(CM):
     EXAMPLES::
 
         sage: from sage.combinat.root_system.cartan_matrix import find_cartan_type_from_matrix
-        sage: CM = CartanMatrix([[2,-1,-1], [-1,2,-1], [-1,-1,2]])                      # optional - sage.graphs
-        sage: find_cartan_type_from_matrix(CM)                                          # optional - sage.graphs
+        sage: CM = CartanMatrix([[2,-1,-1], [-1,2,-1], [-1,-1,2]])                      # needs sage.graphs
+        sage: find_cartan_type_from_matrix(CM)                                          # needs sage.graphs
         ['A', 2, 1]
-        sage: CM = CartanMatrix([[2,-1,0], [-1,2,-2], [0,-1,2]])                        # optional - sage.graphs
-        sage: find_cartan_type_from_matrix(CM)                                          # optional - sage.graphs
+        sage: CM = CartanMatrix([[2,-1,0], [-1,2,-2], [0,-1,2]])                        # needs sage.graphs
+        sage: find_cartan_type_from_matrix(CM)                                          # needs sage.graphs
         ['C', 3] relabelled by {1: 0, 2: 1, 3: 2}
-        sage: CM = CartanMatrix([[2,-1,-2], [-1,2,-1], [-2,-1,2]])                      # optional - sage.graphs
-        sage: find_cartan_type_from_matrix(CM)                                          # optional - sage.graphs
+        sage: CM = CartanMatrix([[2,-1,-2], [-1,2,-1], [-2,-1,2]])                      # needs sage.graphs
+        sage: find_cartan_type_from_matrix(CM)                                          # needs sage.graphs
     """
     types = []
     for S in CM.dynkin_diagram().connected_components_subgraphs():

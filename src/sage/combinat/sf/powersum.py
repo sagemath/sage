@@ -761,11 +761,11 @@ class SymmetricFunctionAlgebra_power(multiplicative.SymmetricFunctionAlgebra_mul
 
                 sage: p = SymmetricFunctions(QQ).p()
                 sage: x = p[8,7,3,1]
-                sage: x.principal_specialization(3, q=var("q"))                         # optional - sage.symbolic
+                sage: x.principal_specialization(3, q=var("q"))                         # needs sage.symbolic
                 (q^24 - 1)*(q^21 - 1)*(q^9 - 1)/((q^8 - 1)*(q^7 - 1)*(q - 1))
 
                 sage: x = 5*p[1,1,1] + 3*p[2,1] + 1
-                sage: x.principal_specialization(3, q=var("q"))                         # optional - sage.symbolic
+                sage: x.principal_specialization(3, q=var("q"))                         # needs sage.symbolic
                 5*(q^3 - 1)^3/(q - 1)^3 + 3*(q^6 - 1)*(q^3 - 1)/((q^2 - 1)*(q - 1)) + 1
 
             By default, we return a rational function in `q`::
@@ -775,7 +775,7 @@ class SymmetricFunctionAlgebra_power(multiplicative.SymmetricFunctionAlgebra_mul
 
             If ``n`` is not given we return the stable principal specialization::
 
-                sage: x.principal_specialization(q=var("q"))                            # optional - sage.symbolic
+                sage: x.principal_specialization(q=var("q"))                            # needs sage.symbolic
                 3/((q^2 - 1)*(q - 1)) - 5/(q - 1)^3 + 1
 
             TESTS::
@@ -882,12 +882,12 @@ class SymmetricFunctionAlgebra_power(multiplicative.SymmetricFunctionAlgebra_mul
                 sage: x.exponential_specialization()
                 0
                 sage: x = p[3] + 5*p[1,1] + 2*p[1] + 1
-                sage: x.exponential_specialization(t=var("t"))                          # optional - sage.symbolic
+                sage: x.exponential_specialization(t=var("t"))                          # needs sage.symbolic
                 5*t^2 + 2*t + 1
 
             We also support the `q`-exponential_specialization::
 
-                sage: factor(p[3].exponential_specialization(q=var("q"), t=var("t")))   # optional - sage.symbolic
+                sage: factor(p[3].exponential_specialization(q=var("q"), t=var("t")))   # needs sage.symbolic
                 (q - 1)^2*t^3/(q^2 + q + 1)
 
             TESTS::

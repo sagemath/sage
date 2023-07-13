@@ -88,8 +88,8 @@ class RootSystem(UniqueRepresentation, SageObject):
 
     ::
 
-        sage: alpha = space.simple_roots()                                              # optional - sage.graphs
-        sage: alpha[1] + alpha[2]                                                       # optional - sage.graphs
+        sage: alpha = space.simple_roots()                                              # needs sage.graphs
+        sage: alpha[1] + alpha[2]                                                       # needs sage.graphs
         Lambda[1] + Lambda[2] - 2*Lambda[3]
 
     The fundamental weights are the dual basis of the coroots::
@@ -100,8 +100,8 @@ class RootSystem(UniqueRepresentation, SageObject):
 
     ::
 
-        sage: alphacheck = space.simple_coroots()                                       # optional - sage.graphs
-        sage: list(alphacheck)                                                          # optional - sage.graphs
+        sage: alphacheck = space.simple_coroots()                                       # needs sage.graphs
+        sage: list(alphacheck)                                                          # needs sage.graphs
         [alphacheck[1], alphacheck[2], alphacheck[3]]
 
     ::
@@ -119,24 +119,24 @@ class RootSystem(UniqueRepresentation, SageObject):
     `\alpha_i`, where `c` is the coefficient of
     `i` in `x`::
 
-        sage: Lambda[1].simple_reflection(1)                                            # optional - sage.graphs
+        sage: Lambda[1].simple_reflection(1)                                            # needs sage.graphs
         -Lambda[1] + Lambda[2]
-        sage: Lambda[2].simple_reflection(1)                                            # optional - sage.graphs
+        sage: Lambda[2].simple_reflection(1)                                            # needs sage.graphs
         Lambda[2]
-        sage: Lambda[3].simple_reflection(1)                                            # optional - sage.graphs
+        sage: Lambda[3].simple_reflection(1)                                            # needs sage.graphs
         Lambda[3]
-        sage: (-2*Lambda[1] + Lambda[2] + Lambda[3]).simple_reflection(1)               # optional - sage.graphs
+        sage: (-2*Lambda[1] + Lambda[2] + Lambda[3]).simple_reflection(1)               # needs sage.graphs
         2*Lambda[1] - Lambda[2] + Lambda[3]
 
     It can be convenient to manipulate the simple reflections
     themselves::
 
-        sage: s = space.simple_reflections()                                            # optional - sage.graphs
-        sage: s[1](Lambda[1])                                                           # optional - sage.graphs
+        sage: s = space.simple_reflections()                                            # needs sage.graphs
+        sage: s[1](Lambda[1])                                                           # needs sage.graphs
         -Lambda[1] + Lambda[2]
-        sage: s[1](Lambda[2])                                                           # optional - sage.graphs
+        sage: s[1](Lambda[2])                                                           # needs sage.graphs
         Lambda[2]
-        sage: s[1](Lambda[3])                                                           # optional - sage.graphs
+        sage: s[1](Lambda[3])                                                           # needs sage.graphs
         Lambda[3]
 
     .. RUBRIC:: Ambient spaces
@@ -156,7 +156,7 @@ class RootSystem(UniqueRepresentation, SageObject):
     In finite type `A`, we recover the natural representation of the
     symmetric group as group of permutation matrices::
 
-        sage: RootSystem(["A",2]).ambient_space().weyl_group().simple_reflections()     # optional - sage.libs.pari
+        sage: RootSystem(["A",2]).ambient_space().weyl_group().simple_reflections()     # needs sage.libs.pari
         Finite family {1: [0 1 0]
                           [1 0 0]
                           [0 0 1],
@@ -167,7 +167,7 @@ class RootSystem(UniqueRepresentation, SageObject):
     In type `B`, `C`, and `D`, we recover the natural representation
     of the Weyl group as groups of signed permutation matrices::
 
-        sage: RootSystem(["B",3]).ambient_space().weyl_group().simple_reflections()     # optional - sage.libs.pari
+        sage: RootSystem(["B",3]).ambient_space().weyl_group().simple_reflections()     # needs sage.libs.pari
         Finite family {1: [0 1 0]
                           [1 0 0]
                           [0 0 1],
@@ -187,35 +187,35 @@ class RootSystem(UniqueRepresentation, SageObject):
 
     Define the "identity" by an appropriate vector at level `-3`::
 
-        sage: e = L.basis(); Lambda = L.fundamental_weights()                           # optional - sage.graphs
-        sage: id = e[0] + 2*e[1] + 3*e[2]  - 3*Lambda[0]                                # optional - sage.graphs
+        sage: e = L.basis(); Lambda = L.fundamental_weights()                           # needs sage.graphs
+        sage: id = e[0] + 2*e[1] + 3*e[2]  - 3*Lambda[0]                                # needs sage.graphs
 
     The corresponding permutation is obtained by projecting it onto
     the classical ambient space::
 
         sage: L.classical()
         Ambient space of the Root system of type ['A', 2]
-        sage: L.classical()(id)                                                         # optional - sage.graphs
+        sage: L.classical()(id)                                                         # needs sage.graphs
         (1, 2, 3)
 
     Here is the orbit of the identity under the action of the finite
     group::
 
-        sage: W = L.weyl_group()                                                        # optional - sage.libs.pari
-        sage: S3 = [ w.action(id) for w in W.classical() ]                              # optional - sage.libs.pari
-        sage: [L.classical()(x) for x in S3]                                            # optional - sage.libs.pari
+        sage: W = L.weyl_group()                                                        # needs sage.libs.pari
+        sage: S3 = [ w.action(id) for w in W.classical() ]                              # needs sage.libs.pari
+        sage: [L.classical()(x) for x in S3]                                            # needs sage.libs.pari
         [(1, 2, 3), (3, 1, 2), (2, 3, 1), (2, 1, 3), (1, 3, 2), (3, 2, 1)]
 
     And the action of `s_0` on these yields::
 
-        sage: s = W.simple_reflections()                                                # optional - sage.libs.pari
-        sage: [L.classical()(s[0].action(x)) for x in S3]                               # optional - sage.libs.pari
+        sage: s = W.simple_reflections()                                                # needs sage.libs.pari
+        sage: [L.classical()(s[0].action(x)) for x in S3]                               # needs sage.libs.pari
         [(0, 2, 4), (-1, 1, 6), (-2, 3, 5), (0, 1, 5), (-1, 3, 4), (-2, 2, 6)]
 
     We can also plot various components of the ambient spaces::
 
         sage: L = RootSystem(['A',2]).ambient_space()
-        sage: L.plot()                                                                  # optional - sage.plot sage.symbolic
+        sage: L.plot()                                                                  # needs sage.plot sage.symbolic
         Graphics object consisting of 13 graphics primitives
 
     For more on plotting, see :ref:`sage.combinat.root_system.plot`.
@@ -263,11 +263,11 @@ class RootSystem(UniqueRepresentation, SageObject):
     TESTS::
 
         sage: R = RootSystem(['C',3])
-        sage: TestSuite(R).run()                                                        # optional - sage.graphs
+        sage: TestSuite(R).run()                                                        # needs sage.graphs
         sage: L = R.ambient_space()
         sage: s = L.simple_reflections() # this used to break the testsuite below due to caching an unpicklable method
         sage: s = L.simple_projections() # todo: not implemented
-        sage: TestSuite(L).run()                                                        # optional - sage.graphs
+        sage: TestSuite(L).run()                                                        # needs sage.graphs
         sage: L = R.root_space()
         sage: s = L.simple_reflections()
         sage: TestSuite(L).run()
@@ -342,7 +342,7 @@ class RootSystem(UniqueRepresentation, SageObject):
 
         EXAMPLES::
 
-            sage: RootSystem(["A",3])._test_root_lattice_realizations()                 # optional - sage.graphs
+            sage: RootSystem(["A",3])._test_root_lattice_realizations()                 # needs sage.graphs
 
         .. SEEALSO:: :class:`TestSuite`.
         """
@@ -394,7 +394,7 @@ class RootSystem(UniqueRepresentation, SageObject):
         EXAMPLES::
 
             sage: R = RootSystem(['A',3])
-            sage: R.dynkin_diagram()                                                    # optional - sage.graphs
+            sage: R.dynkin_diagram()                                                    # needs sage.graphs
             O---O---O
             1   2   3
             A3
@@ -406,7 +406,7 @@ class RootSystem(UniqueRepresentation, SageObject):
         """
         EXAMPLES::
 
-            sage: RootSystem(['A',3]).cartan_matrix()                                   # optional - sage.graphs
+            sage: RootSystem(['A',3]).cartan_matrix()                                   # needs sage.graphs
             [ 2 -1  0]
             [-1  2 -1]
             [ 0 -1  2]
@@ -488,20 +488,20 @@ class RootSystem(UniqueRepresentation, SageObject):
 
         EXAMPLES::
 
-            sage: Phi = RootSystem(['A',2]).root_poset(); Phi                           # optional - sage.graphs
+            sage: Phi = RootSystem(['A',2]).root_poset(); Phi                           # needs sage.graphs
             Finite poset containing 3 elements
-            sage: sorted(Phi.cover_relations(), key=str)                                # optional - sage.graphs
+            sage: sorted(Phi.cover_relations(), key=str)                                # needs sage.graphs
             [[alpha[1], alpha[1] + alpha[2]], [alpha[2], alpha[1] + alpha[2]]]
 
-            sage: Phi = RootSystem(['A',3]).root_poset(restricted=True); Phi            # optional - sage.graphs
+            sage: Phi = RootSystem(['A',3]).root_poset(restricted=True); Phi            # needs sage.graphs
             Finite poset containing 3 elements
-            sage: sorted(Phi.cover_relations(), key=str)                                # optional - sage.graphs
+            sage: sorted(Phi.cover_relations(), key=str)                                # needs sage.graphs
             [[alpha[1] + alpha[2], alpha[1] + alpha[2] + alpha[3]],
              [alpha[2] + alpha[3], alpha[1] + alpha[2] + alpha[3]]]
 
-            sage: Phi = RootSystem(['B',2]).root_poset(); Phi                           # optional - sage.graphs
+            sage: Phi = RootSystem(['B',2]).root_poset(); Phi                           # needs sage.graphs
             Finite poset containing 4 elements
-            sage: Phi.cover_relations()                                                 # optional - sage.graphs
+            sage: Phi.cover_relations()                                                 # needs sage.graphs
             [[alpha[2], alpha[1] + alpha[2]], [alpha[1], alpha[1] + alpha[2]],
              [alpha[1] + alpha[2], alpha[1] + 2*alpha[2]]]
         """
@@ -722,7 +722,7 @@ class RootSystem(UniqueRepresentation, SageObject):
         An alternative base ring can be provided as an option::
 
             sage: e = RootSystem(['B',3]).ambient_space(RR)
-            sage: TestSuite(e).run()                                                    # optional - sage.graphs
+            sage: TestSuite(e).run()                                                    # needs sage.graphs
 
         It should contain the smallest ring over which the ambient
         space can be defined (`\ZZ` in type `A` or `\QQ` otherwise).
@@ -735,7 +735,7 @@ class RootSystem(UniqueRepresentation, SageObject):
         you are welcome to experiment::
 
             sage: e = RootSystem(['G',2]).ambient_space(RR)
-            sage: TestSuite(e).run()                                                    # optional - sage.graphs
+            sage: TestSuite(e).run()                                                    # needs sage.graphs
             Failure in _test_root_lattice_realization:
             Traceback (most recent call last):
             ...

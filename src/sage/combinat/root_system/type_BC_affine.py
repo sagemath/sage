@@ -24,7 +24,7 @@ class CartanType(CartanType_standard_affine):
             ['BC', 4, 2]
             sage: ct._repr_(compact=True)
             'BC4~'
-            sage: ct.dynkin_diagram()                                                   # optional - sage.graphs
+            sage: ct.dynkin_diagram()                                                   # needs sage.graphs
             O=<=O---O---O=<=O
             0   1   2   3   4
             BC4~
@@ -43,19 +43,19 @@ class CartanType(CartanType_standard_affine):
             ['C', 4]
 
             sage: dual = ct.dual()
-            sage: dual.dynkin_diagram()                                                 # optional - sage.graphs
+            sage: dual.dynkin_diagram()                                                 # needs sage.graphs
             O=>=O---O---O=>=O
             0   1   2   3   4
             BC4~*
 
             sage: dual.special_node()
             0
-            sage: dual.classical().dynkin_diagram()                                     # optional - sage.graphs
+            sage: dual.classical().dynkin_diagram()                                     # needs sage.graphs
             O---O---O=>=O
             1   2   3   4
             B4
 
-            sage: CartanType(['BC',1,2]).dynkin_diagram()                               # optional - sage.graphs
+            sage: CartanType(['BC',1,2]).dynkin_diagram()                               # needs sage.graphs
               4
             O=<=O
             0   1
@@ -74,34 +74,34 @@ class CartanType(CartanType_standard_affine):
 
         EXAMPLES::
 
-            sage: c = CartanType(['BC',3,2]).dynkin_diagram(); c                        # optional - sage.graphs
+            sage: c = CartanType(['BC',3,2]).dynkin_diagram(); c                        # needs sage.graphs
             O=<=O---O=<=O
             0   1   2   3
             BC3~
-            sage: c.edges(sort=True)                                                    # optional - sage.graphs
+            sage: c.edges(sort=True)                                                    # needs sage.graphs
             [(0, 1, 1), (1, 0, 2), (1, 2, 1), (2, 1, 1), (2, 3, 1), (3, 2, 2)]
 
-            sage: c = CartanType(["A", 6, 2]).dynkin_diagram() # should be the same as above; did fail at some point!   # optional - sage.graphs
-            sage: c                                                                     # optional - sage.graphs
+            sage: c = CartanType(["A", 6, 2]).dynkin_diagram() # should be the same as above; did fail at some point!   # needs sage.graphs
+            sage: c                                                                     # needs sage.graphs
             O=<=O---O=<=O
             0   1   2   3
             BC3~
-            sage: c.edges(sort=True)                                                    # optional - sage.graphs
+            sage: c.edges(sort=True)                                                    # needs sage.graphs
             [(0, 1, 1), (1, 0, 2), (1, 2, 1), (2, 1, 1), (2, 3, 1), (3, 2, 2)]
 
-            sage: c = CartanType(['BC',2,2]).dynkin_diagram(); c                        # optional - sage.graphs
+            sage: c = CartanType(['BC',2,2]).dynkin_diagram(); c                        # needs sage.graphs
             O=<=O=<=O
             0   1   2
             BC2~
-            sage: c.edges(sort=True)                                                    # optional - sage.graphs
+            sage: c.edges(sort=True)                                                    # needs sage.graphs
             [(0, 1, 1), (1, 0, 2), (1, 2, 1), (2, 1, 2)]
 
-            sage: c = CartanType(['BC',1,2]).dynkin_diagram(); c                        # optional - sage.graphs
+            sage: c = CartanType(['BC',1,2]).dynkin_diagram(); c                        # needs sage.graphs
               4
             O=<=O
             0   1
             BC1~
-            sage: c.edges(sort=True)                                                    # optional - sage.graphs
+            sage: c.edges(sort=True)                                                    # needs sage.graphs
             [(0, 1, 1), (1, 0, 4)]
 
         """

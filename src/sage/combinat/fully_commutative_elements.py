@@ -272,7 +272,7 @@ class FullyCommutativeElement(NormalizedClonableList):
         EXAMPLES::
 
             sage: FC = CoxeterGroup(['B', 5]).fully_commutative_elements()
-            sage: FC([3,2,4,3,1]).plot_heap()                                           # optional - sage.plot
+            sage: FC([3,2,4,3,1]).plot_heap()                                           # needs sage.plot
             Graphics object consisting of 15 graphics primitives
 
         .. PLOT::

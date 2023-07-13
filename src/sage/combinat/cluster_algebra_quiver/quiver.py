@@ -551,11 +551,11 @@ class ClusterQuiver(SageObject):
         EXAMPLES::
 
             sage: Q = ClusterQuiver(['A',5])
-            sage: Q.plot()                                                              # optional - sage.plot sage.symbolic
+            sage: Q.plot()                                                              # needs sage.plot sage.symbolic
             Graphics object consisting of 15 graphics primitives
-            sage: Q.plot(circular=True)                                                 # optional - sage.plot sage.symbolic
+            sage: Q.plot(circular=True)                                                 # needs sage.plot sage.symbolic
             Graphics object consisting of 15 graphics primitives
-            sage: Q.plot(circular=True, mark=1)                                         # optional - sage.plot sage.symbolic
+            sage: Q.plot(circular=True, mark=1)                                         # needs sage.plot sage.symbolic
             Graphics object consisting of 15 graphics primitives
         """
         from sage.plot.colors import rainbow
@@ -702,7 +702,7 @@ class ClusterQuiver(SageObject):
         TESTS::
 
             sage: S = ClusterQuiver(['A',4])
-            sage: S.interact()                                                          # optional - sage.plot sage.symbolic
+            sage: S.interact()                                                          # needs sage.plot sage.symbolic
             ...VBox(children=...
         """
         return cluster_interact(self, fig_size, circular, kind="quiver")
@@ -720,7 +720,7 @@ class ClusterQuiver(SageObject):
 
             sage: Q = ClusterQuiver(['F',4,[1,2]])
             sage: import tempfile
-            sage: with tempfile.NamedTemporaryFile(suffix=".png") as f:                 # optional - sage.plot sage.symbolic
+            sage: with tempfile.NamedTemporaryFile(suffix=".png") as f:                 # needs sage.plot sage.symbolic
             ....:     Q.save_image(f.name)
         """
         graph_plot = self.plot(circular=circular)
@@ -745,7 +745,7 @@ class ClusterQuiver(SageObject):
 
             sage: Q = ClusterQuiver(['F',4,[1,2]])
             sage: import tempfile
-            sage: with tempfile.NamedTemporaryFile(suffix=".qmu") as f:                 # optional - sage.plot sage.symbolic
+            sage: with tempfile.NamedTemporaryFile(suffix=".qmu") as f:                 # needs sage.plot sage.symbolic
             ....:     Q.qmu_save(f.name)
 
         Make sure we can save quivers with `m != n` frozen variables, see :trac:`14851`::
@@ -754,7 +754,7 @@ class ClusterQuiver(SageObject):
             sage: T1 = S.principal_extension()
             sage: Q = T1.quiver()
             sage: import tempfile
-            sage: with tempfile.NamedTemporaryFile(suffix=".qmu") as f:                 # optional - sage.plot sage.symbolic
+            sage: with tempfile.NamedTemporaryFile(suffix=".qmu") as f:                 # needs sage.plot sage.symbolic
             ....:     Q.qmu_save(f.name)
         """
         M = self.b_matrix()

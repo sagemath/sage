@@ -3704,14 +3704,14 @@ class ParallelogramPolyomino(ClonableList,
             sage: pp = ParallelogramPolyomino(
             ....:     [[0, 1, 1, 1, 1], [1, 1, 1, 1, 0]]
             ....: )
-            sage: pp._plot_diagram()                                                    # optional - sage.plot
+            sage: pp._plot_diagram()                                                    # needs sage.plot
             Graphics object consisting of 7 graphics primitives
 
             sage: pp = ParallelogramPolyomino([
             ....:     [0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1],
             ....:     [1, 1, 1, 0, 1, 0, 0, 1, 0, 0, 0]
             ....: ])
-            sage: pp._plot_diagram()                                                    # optional - sage.plot
+            sage: pp._plot_diagram()                                                    # needs sage.plot
             Graphics object consisting of 25 graphics primitives
         """
         G = Graphics()
@@ -3756,14 +3756,14 @@ class ParallelogramPolyomino(ClonableList,
             sage: pp = ParallelogramPolyomino(
             ....:     [[0, 1, 1, 1, 1], [1, 1, 1, 1, 0]]
             ....: )
-            sage: pp._plot_bounce(directions=[1])                                       # optional - sage.plot
+            sage: pp._plot_bounce(directions=[1])                                       # needs sage.plot
             Graphics object consisting of 1 graphics primitive
 
             sage: pp = ParallelogramPolyomino([
             ....:     [0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1],
             ....:     [1, 1, 1, 0, 1, 0, 0, 1, 0, 0, 0]
             ....: ])
-            sage: pp._plot_bounce(directions=[0,1])                                     # optional - sage.plot
+            sage: pp._plot_bounce(directions=[0,1])                                     # needs sage.plot
             Graphics object consisting of 9 graphics primitives
 
         """
@@ -3799,14 +3799,14 @@ class ParallelogramPolyomino(ClonableList,
             sage: pp = ParallelogramPolyomino(
             ....:     [[0, 1, 1, 1, 1], [1, 1, 1, 1, 0]]
             ....: )
-            sage: pp._plot_bounce_values()                                              # optional - sage.plot
+            sage: pp._plot_bounce_values()                                              # needs sage.plot
             Graphics object consisting of 4 graphics primitives
 
             sage: pp = ParallelogramPolyomino([
             ....:     [0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1],
             ....:     [1, 1, 1, 0, 1, 0, 0, 1, 0, 0, 0]
             ....: ])
-            sage: pp._plot_bounce_values(bounce=1)                                      # optional - sage.plot
+            sage: pp._plot_bounce_values(bounce=1)                                      # needs sage.plot
             Graphics object consisting of 10 graphics primitives
         """
         G = Graphics()
@@ -3848,14 +3848,14 @@ class ParallelogramPolyomino(ClonableList,
             sage: pp = ParallelogramPolyomino(
             ....:     [[0, 1, 1, 1, 1], [1, 1, 1, 1, 0]]
             ....: )
-            sage: pp._plot_tree()                                                       # optional - sage.plot
+            sage: pp._plot_tree()                                                       # needs sage.plot
             Graphics object consisting of 2 graphics primitives
 
             sage: pp = ParallelogramPolyomino([
             ....:     [0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1],
             ....:     [1, 1, 1, 0, 1, 0, 0, 1, 0, 0, 0]
             ....: ])
-            sage: pp._plot_tree()                                                       # optional - sage.plot
+            sage: pp._plot_tree()                                                       # needs sage.plot
             Graphics object consisting of 2 graphics primitives
         """
         G = Graphics()
@@ -3870,7 +3870,7 @@ class ParallelogramPolyomino(ClonableList,
         EXAMPLES::
 
             sage: pp = ParallelogramPolyomino([[0,1],[1,0]])
-            sage: pp.plot()                                                             # optional - sage.plot
+            sage: pp.plot()                                                             # needs sage.plot
             Graphics object consisting of 4 graphics primitives
             sage: pp.set_options(
             ....:     drawing_components=dict(
@@ -3880,7 +3880,7 @@ class ParallelogramPolyomino(ClonableList,
             ....:         bounce_values=0,
             ....:     )
             ....: )
-            sage: pp.plot()                                                             # optional - sage.plot
+            sage: pp.plot()                                                             # needs sage.plot
             Graphics object consisting of 7 graphics primitives
         """
         G = Graphics()

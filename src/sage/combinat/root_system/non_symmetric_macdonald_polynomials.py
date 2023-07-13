@@ -95,8 +95,8 @@ class NonSymmetricMacdonaldPolynomials(CherednikOperatorsEigenvectors):
         sage: E[L0([2,0,1])].expand(vars)
         (t - 1)/(q*t - 1)*x0^2*x1 + x0^2*x2 + (q*t - q)/(q*t - 1)*x0*x1*x2
 
-        sage: from sage.combinat.sf.ns_macdonald import E                               # optional - sage.combinat
-        sage: E([2,0,1])                                                                # optional - sage.combinat sage.groups
+        sage: from sage.combinat.sf.ns_macdonald import E                               # needs sage.combinat
+        sage: E([2,0,1])                                                                # needs sage.combinat sage.groups
         (t - 1)/(q*t - 1)*x0^2*x1 + x0^2*x2 + (q*t - q)/(q*t - 1)*x0*x1*x2
 
     Here is a type `G_2^{(1)}` nonsymmetric Macdonald polynomial::
@@ -402,22 +402,22 @@ class NonSymmetricMacdonaldPolynomials(CherednikOperatorsEigenvectors):
         sage: E = NonSymmetricMacdonaldPolynomials(KL,q, q1, q2)
         sage: omega = E.keys().fundamental_weights()
         sage: w = omega[1]
-        sage: import sage.combinat.sf.ns_macdonald as NS                                # optional - sage.combinat
-        sage: p = NS.E([1,0,0]); p                                                      # optional - sage.combinat sage.groups
+        sage: import sage.combinat.sf.ns_macdonald as NS                                # needs sage.combinat
+        sage: p = NS.E([1,0,0]); p                                                      # needs sage.combinat sage.groups
         x0
-        sage: pp = KL0.from_polynomial(p)                                               # optional - sage.combinat sage.groups
-        sage: E.eigenvalues(KL0.from_polynomial(p))                                     # optional - sage.combinat sage.groups
+        sage: pp = KL0.from_polynomial(p)                                               # needs sage.combinat sage.groups
+        sage: E.eigenvalues(KL0.from_polynomial(p))                                     # needs sage.combinat sage.groups
         [t, (-1)/(-q*t^2), t]
 
         sage: def eig(l): return E.eigenvalues(KL0.from_polynomial(NS.E(l)))
 
-        sage: eig([1,0,0])                                                              # optional - sage.combinat sage.groups
+        sage: eig([1,0,0])                                                              # needs sage.combinat sage.groups
         [t, (-1)/(-q*t^2), t]
-        sage: eig([2,0,0])                                                              # optional - sage.combinat sage.groups
+        sage: eig([2,0,0])                                                              # needs sage.combinat sage.groups
         [q*t, (-1)/(-q^2*t^2), t]
-        sage: eig([3,0,0])                                                              # optional - sage.combinat sage.groups
+        sage: eig([3,0,0])                                                              # needs sage.combinat sage.groups
         [q^2*t, (-1)/(-q^3*t^2), t]
-        sage: eig([2,0,4])                                                              # optional - sage.combinat sage.groups
+        sage: eig([2,0,4])                                                              # needs sage.combinat sage.groups
         [(-1)/(-q^3*t), 1/(q^2*t), q^4*t^2]
 
     Next we check explicitly that they agree with the current implementation::
@@ -430,37 +430,37 @@ class NonSymmetricMacdonaldPolynomials(CherednikOperatorsEigenvectors):
         sage: KL0 = KL.classical()
         sage: P = K['x0,x1']
         sage: def EE(weight): return E[L0(weight)].expand(P.gens())
-        sage: import sage.combinat.sf.ns_macdonald as NS                                # optional - sage.combinat
-        sage: EE([0,0])                                                                 # optional - sage.combinat
+        sage: import sage.combinat.sf.ns_macdonald as NS                                # needs sage.combinat
+        sage: EE([0,0])                                                                 # needs sage.combinat
         1
-        sage: NS.E([0,0])                                                               # optional - sage.combinat sage.groups
+        sage: NS.E([0,0])                                                               # needs sage.combinat sage.groups
         1
-        sage: EE([1,0])                                                                 # optional - sage.combinat
+        sage: EE([1,0])                                                                 # needs sage.combinat
         x0
-        sage: NS.E([1,0])                                                               # optional - sage.combinat sage.groups
+        sage: NS.E([1,0])                                                               # needs sage.combinat sage.groups
         x0
-        sage: EE([0,1])                                                                 # optional - sage.combinat
+        sage: EE([0,1])                                                                 # needs sage.combinat
         (t - 1)/(q*t - 1)*x0 + x1
-        sage: NS.E([0,1])                                                               # optional - sage.combinat sage.groups
+        sage: NS.E([0,1])                                                               # needs sage.combinat sage.groups
         (t - 1)/(q*t - 1)*x0 + x1
 
-        sage: NS.E([2,0])                                                               # optional - sage.combinat sage.groups
+        sage: NS.E([2,0])                                                               # needs sage.combinat sage.groups
         x0^2 + (q*t - q)/(q*t - 1)*x0*x1
-        sage: EE([2,0])                                                                 # optional - sage.combinat
+        sage: EE([2,0])                                                                 # needs sage.combinat
         x0^2 + (q*t - q)/(q*t - 1)*x0*x1
 
     The same, directly in the ambient lattice with several shifts::
 
-        sage: E[L0([2,0])]                                                              # optional - sage.combinat
+        sage: E[L0([2,0])]                                                              # needs sage.combinat
         ((-q*t+q)/(-q*t+1))*B[(1, 1)] + B[(2, 0)]
-        sage: E[L0([1,-1])]                                                             # optional - sage.combinat
+        sage: E[L0([1,-1])]                                                             # needs sage.combinat
         ((-q*t+q)/(-q*t+1))*B[(0, 0)] + B[(1, -1)]
-        sage: E[L0([0,-2])]                                                             # optional - sage.combinat
+        sage: E[L0([0,-2])]                                                             # needs sage.combinat
         ((-q*t+q)/(-q*t+1))*B[(-1, -1)] + B[(0, -2)]
 
     Systematic checks with Sage's implementation of [HHL06]_::
 
-        sage: assert all(EE([x,y]) == NS.E([x,y])                                       # optional - sage.combinat
+        sage: assert all(EE([x,y]) == NS.E([x,y])                                       # needs sage.combinat
         ....:            for d in range(5) for x,y in IntegerVectors(d,2))
 
     With the current implementation, we can compute nonsymmetric
@@ -677,13 +677,13 @@ class NonSymmetricMacdonaldPolynomials(CherednikOperatorsEigenvectors):
         sage: E = NonSymmetricMacdonaldPolynomials(KL, q, t, -1)
         sage: omega = E.keys().fundamental_weights()
         sage: La = R.weight_space().basis()
-        sage: LS = crystals.ProjectedLevelZeroLSPaths(2*La[1])                          # optional - sage.combinat
-        sage: (E[-2*omega[1]].map_coefficients(lambda x: x.subs(t=0))   # long time, optional - sage.combinat
+        sage: LS = crystals.ProjectedLevelZeroLSPaths(2*La[1])                          # needs sage.combinat
+        sage: (E[-2*omega[1]].map_coefficients(lambda x: x.subs(t=0))   # long time, needs sage.combinat
         ....:   == LS.one_dimensional_configuration_sum(q))
         True
-        sage: B = crystals.KirillovReshetikhin(['B',3,1],1,1)                           # optional - sage.combinat
-        sage: T = crystals.TensorProduct(B,B)                                           # optional - sage.combinat
-        sage: (T.one_dimensional_configuration_sum(q)                        # long time, optional - sage.combinat
+        sage: B = crystals.KirillovReshetikhin(['B',3,1],1,1)                           # needs sage.combinat
+        sage: T = crystals.TensorProduct(B,B)                                           # needs sage.combinat
+        sage: (T.one_dimensional_configuration_sum(q)   # long time                     # needs sage.combinat
         ....:   == LS.one_dimensional_configuration_sum(q))
         True
 
@@ -694,8 +694,8 @@ class NonSymmetricMacdonaldPolynomials(CherednikOperatorsEigenvectors):
         sage: E = NonSymmetricMacdonaldPolynomials(KL, q, t, -1)
         sage: omega = E.keys().fundamental_weights()
         sage: La = R.weight_space().basis()
-        sage: LS = crystals.ProjectedLevelZeroLSPaths(2*La[1])                          # optional - sage.combinat
-        sage: (E[-2*omega[1]].map_coefficients(lambda x: x.subs(t=0))        # long time, optional - sage.combinat
+        sage: LS = crystals.ProjectedLevelZeroLSPaths(2*La[1])                          # needs sage.combinat
+        sage: (E[-2*omega[1]].map_coefficients(lambda x: x.subs(t=0))   # long time, needs sage.combinat
         ....:   == LS.one_dimensional_configuration_sum(q))
         True
 
@@ -706,12 +706,12 @@ class NonSymmetricMacdonaldPolynomials(CherednikOperatorsEigenvectors):
         sage: E = NonSymmetricMacdonaldPolynomials(KL, q, t, -1)
         sage: omega = E.keys().fundamental_weights()
         sage: La = R.weight_space().basis()
-        sage: LS = crystals.ProjectedLevelZeroLSPaths(2*La[1])                          # optional - sage.combinat
+        sage: LS = crystals.ProjectedLevelZeroLSPaths(2*La[1])                          # needs sage.combinat
         sage: g = E[-2*omega[1]].map_coefficients(lambda x: x.subs(t=0))        # long time
-        sage: f = LS.one_dimensional_configuration_sum(q)                    # long time, optional - sage.combinat
-        sage: P = g.support()[0].parent()                                    # long time, optional - sage.combinat
-        sage: B = P.algebra(q.parent())                                      # long time, optional - sage.combinat
-        sage: sum(p[1]*B(P(p[0])) for p in f) == g                           # long time, optional - sage.combinat
+        sage: f = LS.one_dimensional_configuration_sum(q)       # long time             # needs sage.combinat
+        sage: P = g.support()[0].parent()       # long time                             # needs sage.combinat
+        sage: B = P.algebra(q.parent())         # long time                             # needs sage.combinat
+        sage: sum(p[1]*B(P(p[0])) for p in f) == g      # long time                     # needs sage.combinat
         True
 
     ::
@@ -724,11 +724,11 @@ class NonSymmetricMacdonaldPolynomials(CherednikOperatorsEigenvectors):
         sage: E = NonSymmetricMacdonaldPolynomials(KL, q, t, -1)
         sage: omega = E.keys().fundamental_weights()
         sage: La = R.weight_space().basis()
-        sage: LS = crystals.ProjectedLevelZeroLSPaths(2*La[1])                          # optional - sage.combinat
-        sage: (E[-2*omega[1]].map_coefficients(lambda x: x.subs(t=0))           # not tested, long time (20s), optional - sage.combinat
+        sage: LS = crystals.ProjectedLevelZeroLSPaths(2*La[1])                          # needs sage.combinat
+        sage: (E[-2*omega[1]].map_coefficients(lambda x: x.subs(t=0))           # long time (20s), not tested, needs sage.combinat
         ....:   == LS.one_dimensional_configuration_sum(q)
         True
-        sage: LS = crystals.ProjectedLevelZeroLSPaths(La[1] + La[2])                    # optional - sage.combinat
+        sage: LS = crystals.ProjectedLevelZeroLSPaths(La[1] + La[2])                    # needs sage.combinat
         sage: (E[-omega[1]-omega[2]].map_coefficients(lambda x: x.subs(t=0))    # not tested, long time (23s)
         ....:   == LS.one_dimensional_configuration_sum(q))
         True
@@ -736,8 +736,8 @@ class NonSymmetricMacdonaldPolynomials(CherednikOperatorsEigenvectors):
     The next test breaks if the energy is not scaled by the
     translation factor for dual type `G_2^{(1)}`::
 
-        sage: LS = crystals.ProjectedLevelZeroLSPaths(2*La[1]+La[2])                    # optional - sage.combinat
-        sage: (E[-2*omega[1]-omega[2]].map_coefficients(lambda x: x.subs(t=0))  # not tested, very long time (100s), optional - sage.combinat
+        sage: LS = crystals.ProjectedLevelZeroLSPaths(2*La[1]+La[2])                    # needs sage.combinat
+        sage: (E[-2*omega[1]-omega[2]].map_coefficients(lambda x: x.subs(t=0))  # long time (100s), not tested, needs sage.combinat
         ....:   == LS.one_dimensional_configuration_sum(q)
         True
 
@@ -1031,8 +1031,8 @@ class NonSymmetricMacdonaldPolynomials(CherednikOperatorsEigenvectors):
 
     Systematic checks with Sage's implementation of [HHL06]_::
 
-        sage: import sage.combinat.sf.ns_macdonald as NS                                # optional - sage.combinat
-        sage: assert all(EE([x,y,z]) == NS.E([x,y,z]) for d in range(5)      # long time, optional - sage.combinat
+        sage: import sage.combinat.sf.ns_macdonald as NS                                # needs sage.combinat
+        sage: assert all(EE([x,y,z]) == NS.E([x,y,z]) for d in range(5)         # long time, needs sage.combinat
         ....:            for x,y,z in IntegerVectors(d,3))
 
     We check that we get eigenvectors for generic `q_1`, `q_2`::
@@ -1152,29 +1152,29 @@ class NonSymmetricMacdonaldPolynomials(CherednikOperatorsEigenvectors):
         sage: K = QQ['q','t'].fraction_field()
         sage: q,t = K.gens()
         sage: def to_SR(x): return x.expand([SR.var('x%s'%i) for i in range(1,x.parent().basis().keys().dimension()+1)]).subs(q=SR.var('q'), t=SR.var('t'))
-        sage: var('x1,x2,x3')                                                           # optional - sage.symbolic
+        sage: var('x1,x2,x3')                                                           # needs sage.symbolic
         (x1, x2, x3)
 
         sage: E = NonSymmetricMacdonaldPolynomials(["BC",2,2], q=q, q1=t^2,q2=-1)
         sage: omega = E.keys().fundamental_weights()
-        sage: expected = (t-1)*(t+1)*(2+q^4+2*q^2-2*t^2-2*q^2*t^2-t^4*q^2-q^4*t^4+t^4-3*q^6*t^6-2*q^4*t^6+2*q^6*t^8+2*q^4*t^8+t^10*q^8)*q^4/((q^2*t^3-1)*(q^2*t^3+1)*(t*q-1)*(t*q+1)*(t^2*q^3+1)*(t^2*q^3-1))+(t-1)^2*(t+1)^2*(2*q^2+q^4+2+q^4*t^2)*q^3*x1/((t^2*q^3+1)*(t^2*q^3-1)*(t*q-1)*(t*q+1))+(t-1)^2*(t+1)^2*(q^2+1)*q^5/((t^2*q^3+1)*(t^2*q^3-1)*(t*q-1)*(t*q+1)*x1)+(t-1)^2*(t+1)^2*(q^2+1)*q^4*x2/((t^2*q^3+1)*(t^2*q^3-1)*(t*q-1)*(t*q+1)*x1)+(t-1)^2*(t+1)^2*(2*q^2+q^4+2+q^4*t^2)*q^3*x2/((t^2*q^3+1)*(t^2*q^3-1)*(t*q-1)*(t*q+1))+(t-1)^2*(t+1)^2*(q^2+1)*q^5/((t^2*q^3+1)*(t^2*q^3-1)*(t*q-1)*(t*q+1)*x2)+x1^2*x2^2+(t-1)*(t+1)*(-2*q^2-q^4-2+2*q^2*t^2+t^2+q^6*t^4+q^4*t^4)*q^2*x2*x1/((t^2*q^3+1)*(t^2*q^3-1)*(t*q-1)*(t*q+1))+(t-1)*(t+1)*(q^2+1+q^4*t^2)*q*x2^2*x1/((t^2*q^3-1)*(t^2*q^3+1))+(t-1)*(t+1)*q^3*x1^2/((t^2*q^3-1)*(t^2*q^3+1)*x2)+(t-1)*(t+1)*(q^2+1+q^4*t^2)*q*x2*x1^2/((t^2*q^3-1)*(t^2*q^3+1))+(t-1)*(t+1)*q^6/((t^2*q^3+1)*(t^2*q^3-1)*x1*x2)+(t-1)*(t+1)*(q^2+1+q^4*t^2)*q^2*x1^2/((t^2*q^3-1)*(t^2*q^3+1))+(t-1)*(t+1)*(q^2+1+q^4*t^2)*q^2*x2^2/((t^2*q^3-1)*(t^2*q^3+1))+(t-1)*(t+1)*q^3*x2^2/((t^2*q^3-1)*(t^2*q^3+1)*x1)+(t-1)^2*(t+1)^2*(q^2+1)*q^4*x1/((t^2*q^3+1)*(t^2*q^3-1)*(t*q-1)*(t*q+1)*x2)  # optional - sage.symbolic
-        sage: to_SR(E[2*omega[2]]) - expected   # long time, optional - sage.symbolic
+        sage: expected = (t-1)*(t+1)*(2+q^4+2*q^2-2*t^2-2*q^2*t^2-t^4*q^2-q^4*t^4+t^4-3*q^6*t^6-2*q^4*t^6+2*q^6*t^8+2*q^4*t^8+t^10*q^8)*q^4/((q^2*t^3-1)*(q^2*t^3+1)*(t*q-1)*(t*q+1)*(t^2*q^3+1)*(t^2*q^3-1))+(t-1)^2*(t+1)^2*(2*q^2+q^4+2+q^4*t^2)*q^3*x1/((t^2*q^3+1)*(t^2*q^3-1)*(t*q-1)*(t*q+1))+(t-1)^2*(t+1)^2*(q^2+1)*q^5/((t^2*q^3+1)*(t^2*q^3-1)*(t*q-1)*(t*q+1)*x1)+(t-1)^2*(t+1)^2*(q^2+1)*q^4*x2/((t^2*q^3+1)*(t^2*q^3-1)*(t*q-1)*(t*q+1)*x1)+(t-1)^2*(t+1)^2*(2*q^2+q^4+2+q^4*t^2)*q^3*x2/((t^2*q^3+1)*(t^2*q^3-1)*(t*q-1)*(t*q+1))+(t-1)^2*(t+1)^2*(q^2+1)*q^5/((t^2*q^3+1)*(t^2*q^3-1)*(t*q-1)*(t*q+1)*x2)+x1^2*x2^2+(t-1)*(t+1)*(-2*q^2-q^4-2+2*q^2*t^2+t^2+q^6*t^4+q^4*t^4)*q^2*x2*x1/((t^2*q^3+1)*(t^2*q^3-1)*(t*q-1)*(t*q+1))+(t-1)*(t+1)*(q^2+1+q^4*t^2)*q*x2^2*x1/((t^2*q^3-1)*(t^2*q^3+1))+(t-1)*(t+1)*q^3*x1^2/((t^2*q^3-1)*(t^2*q^3+1)*x2)+(t-1)*(t+1)*(q^2+1+q^4*t^2)*q*x2*x1^2/((t^2*q^3-1)*(t^2*q^3+1))+(t-1)*(t+1)*q^6/((t^2*q^3+1)*(t^2*q^3-1)*x1*x2)+(t-1)*(t+1)*(q^2+1+q^4*t^2)*q^2*x1^2/((t^2*q^3-1)*(t^2*q^3+1))+(t-1)*(t+1)*(q^2+1+q^4*t^2)*q^2*x2^2/((t^2*q^3-1)*(t^2*q^3+1))+(t-1)*(t+1)*q^3*x2^2/((t^2*q^3-1)*(t^2*q^3+1)*x1)+(t-1)^2*(t+1)^2*(q^2+1)*q^4*x1/((t^2*q^3+1)*(t^2*q^3-1)*(t*q-1)*(t*q+1)*x2)  # needs sage.symbolic
+        sage: to_SR(E[2*omega[2]]) - expected   # long time                             # needs sage.symbolic
         0
 
         sage: E = NonSymmetricMacdonaldPolynomials(["BC",3,2], q=q, q1=t^2, q2=-1)
         sage: omega=E.keys().fundamental_weights()
         sage: mu = -3*omega[1] + 3*omega[2] - omega[3]; mu
         (-1, 2, -1)
-        sage: expected = (t-1)^2*(t+1)^2*(3*q^2+q^4+1+t^2*q^4+q^2*t^2-3*t^4*q^2-5*t^6*q^4+2*t^8*q^4-4*t^8*q^6-q^8*t^10+2*t^10*q^6-2*q^8*t^12+t^14*q^8-t^14*q^10+q^10*t^16+q^8*t^16+q^10*t^18+t^18*q^12)*x2*x1/((q^3*t^5+1)*(q^3*t^5-1)*(t*q-1)*(t*q+1)*(t^3*q^2+1)*(t^3*q^2-1)*(t^2*q-1)*(t^2*q+1))+(t-1)^2*(t+1)^2*(q^2*t^6+2*t^6*q^4-q^4*t^4+t^4*q^2-q^2*t^2+t^2-2-q^2)*q^2*x1/((t^3*q^2-1)*(t^3*q^2+1)*(t*q+1)*(t*q-1)*(q^3*t^5-1)*(q^3*t^5+1)*x2)+(t-1)^2*(t+1)^2*(-q^2-1+t^4*q^2-q^4*t^4+2*t^6*q^4)*x1^2/((t^3*q^2-1)*(t^3*q^2+1)*(t*q+1)*(t*q-1)*(q^3*t^5-1)*(q^3*t^5+1))+(t+1)*(t-1)*x2^2*x3/((t*q-1)*(t*q+1)*x1)+(t-1)^2*(t+1)^2*(3*q^2+q^4+2+t^2*q^4+2*q^2*t^2-4*t^4*q^2+q^4*t^4-6*t^6*q^4+t^8*q^4-4*t^8*q^6-q^8*t^10+t^10*q^6-3*q^8*t^12-2*t^14*q^10+2*t^14*q^8+2*q^10*t^16+q^8*t^16+t^18*q^12+2*q^10*t^18)*q*x2/((q^3*t^5+1)*(q^3*t^5-1)*(t*q-1)*(t*q+1)*(t^3*q^2+1)*(t^3*q^2-1)*(t^2*q-1)*(t^2*q+1))+(t-1)^2*(t+1)^2*(1+q^4+2*q^2+t^2*q^4-3*t^4*q^2+q^2*t^6-5*t^6*q^4+3*t^8*q^4-4*t^8*q^6+2*t^10*q^6-q^8*t^12-t^14*q^10+t^14*q^8+q^10*t^16+t^18*q^12)*x3*x1/((q^3*t^5+1)*(q^3*t^5-1)*(t*q-1)*(t*q+1)*(t^3*q^2+1)*(t^3*q^2-1)*(t^2*q-1)*(t^2*q+1))+(t-1)^2*(t+1)^2*(2*q^2+1+q^4+t^2*q^4-t^2+q^2*t^2-4*t^4*q^2+q^4*t^4+q^2*t^6-5*t^6*q^4+3*t^8*q^4-4*t^8*q^6+2*t^10*q^6+q^6*t^12-2*q^8*t^12-2*t^14*q^10+2*t^14*q^8+q^10*t^16+t^18*q^12)*q*x3/((q^3*t^5+1)*(q^3*t^5-1)*(t*q-1)*(t*q+1)*(t^3*q^2+1)*(t^3*q^2-1)*(t^2*q-1)*(t^2*q+1))+(t-1)^2*(t+1)^2*(1+t^2+t^4*q^2)*q*x3*x2^2/((t*q-1)*(t*q+1)*(t^3*q^2+1)*(t^3*q^2-1))+(t-1)^2*(t+1)^2*(-q^2-2-q^2*t^2+t^4-q^4*t^4-t^4*q^2+3*q^2*t^6-t^6*q^4-t^8*q^6+t^8*q^4+t^10*q^4+2*q^6*t^12-q^8*t^12+t^14*q^8)*q*x3*x2*x1/((t^3*q^2-1)*(t^3*q^2+1)*(t*q+1)*(t*q-1)*(q^3*t^5-1)*(q^3*t^5+1))+(t-1)*(t+1)*x1^2/((q^3*t^5-1)*(q^3*t^5+1)*x3*x2)+(t-1)*(t+1)*(-q^2-1+t^4*q^2-q^4*t^4+2*t^6*q^4)*x2^2/((t*q-1)*(t*q+1)*(t^3*q^2+1)*(t^3*q^2-1))+(t-1)*(t+1)*(t^3*q-1)*(t^3*q+1)*x3*x2^2*x1/((t*q-1)*(t*q+1)*(t^3*q^2+1)*(t^3*q^2-1))+(t-1)^2*(t+1)^2*(q^2+1)*q*x1/((t*q+1)*(t*q-1)*(q^3*t^5+1)*(q^3*t^5-1)*x3*x2)+(t-1)^2*(t+1)^2*(t^3*q-1)*(t^3*q+1)*x3*x2*x1^2/((t^3*q^2-1)*(t^3*q^2+1)*(t*q+1)*(t*q-1)*(q^3*t^5-1)*(q^3*t^5+1))+(t-1)^2*(t+1)^2*q^3*x3/((t*q+1)*(t*q-1)*(q^3*t^5-1)*(q^3*t^5+1)*x1*x2)+(t-1)*(t+1)*(-1-q^2+q^2*t^2+t^10*q^6)*q*x2/((t*q+1)*(t*q-1)*(q^3*t^5+1)*(q^3*t^5-1)*x3*x1)+x2^2/(x1*x3)+(t-1)*(t+1)*q*x2^2/((t*q-1)*(t*q+1)*x3)+(t-1)^3*(t+1)^3*(1+t^2+t^4*q^2)*q*x2*x1^2/((t^3*q^2-1)*(t^3*q^2+1)*(t*q+1)*(t*q-1)*(q^3*t^5-1)*(q^3*t^5+1))+(t-1)^2*(t+1)^2*q*x1^2/((t*q+1)*(t*q-1)*(q^3*t^5-1)*(q^3*t^5+1)*x3)+(t-1)^2*(t+1)^2*(q^2*t^6+2*t^6*q^4-q^4*t^4+t^4*q^2-q^2*t^2+t^2-2-q^2)*q^3/((t^3*q^2-1)*(t^3*q^2+1)*(t*q+1)*(t*q-1)*(q^3*t^5-1)*(q^3*t^5+1)*x2)+(t-1)*(t+1)*(q^2+2-t^2+q^4*t^4-t^4*q^2-3*t^6*q^4+t^8*q^4-2*t^10*q^6-q^8*t^12+q^6*t^12+q^8*t^16+q^10*t^16)*q^2*x2/((t^3*q^2-1)*(t^3*q^2+1)*(t*q+1)*(t*q-1)*(q^3*t^5-1)*(q^3*t^5+1)*x1)+(t-1)^2*(t+1)^2*(q^2+1)*q^2/((t*q+1)*(t*q-1)*(q^3*t^5-1)*(q^3*t^5+1)*x3*x2)+(t-1)*(t+1)*(1+q^4+2*q^2-2*q^2*t^2+t^4*q^6-q^4*t^4-3*q^6*t^6-t^6*q^4+2*t^8*q^6-t^10*q^6-q^8*t^10-t^14*q^10+t^14*q^8+2*q^10*t^16)*x2/((t^3*q^2-1)*(t^3*q^2+1)*(t*q+1)*(t*q-1)*(q^3*t^5-1)*(q^3*t^5+1)*x3)+(t-1)^2*(t+1)^2*(-q^2-2-q^2*t^2-q^4*t^4+2*t^6*q^4+t^10*q^6+q^8*t^12+t^14*q^8)*q^3/((t^3*q^2-1)*(t^3*q^2+1)*(t*q+1)*(t*q-1)*(q^3*t^5-1)*(q^3*t^5+1)*x1)+(t-1)^2*(t+1)^2*(-1-q^2-q^2*t^2+t^2+t^4*q^2-q^4*t^4+2*t^6*q^4)*q^2*x3/((t^3*q^2-1)*(t^3*q^2+1)*(t*q+1)*(t*q-1)*(q^3*t^5-1)*(q^3*t^5+1)*x2)+(t-1)*(t+1)*q*x2^2/((t*q-1)*(t*q+1)*x1)+(t-1)^2*(t+1)^2*(1+t^2+t^4*q^2)*q*x2^2*x1/((t*q-1)*(t*q+1)*(t^3*q^2+1)*(t^3*q^2-1))+(t-1)^2*(t+1)^2*q*x1^2/((t*q+1)*(t*q-1)*(q^3*t^5-1)*(q^3*t^5+1)*x2)+(t-1)^2*(t+1)^2*(-1-q^4-2*q^2-t^2*q^4-q^2*t^2+t^4*q^2-t^4*q^6-2*q^4*t^4+3*t^6*q^4-q^6*t^6-t^8*q^8+t^8*q^6+2*t^10*q^6-q^10*t^12+3*q^8*t^12+2*t^14*q^10)*x3*x2/((t^3*q^2-1)*(t^3*q^2+1)*(t*q+1)*(t*q-1)*(q^3*t^5-1)*(q^3*t^5+1))+(t-1)*(t+1)*(q^2+1-t^2+q^4*t^4-t^4*q^2+q^2*t^6-3*t^6*q^4+t^8*q^4-t^10*q^6+q^6*t^12-q^8*t^12+q^10*t^16)*q^2*x3/((t^3*q^2-1)*(t^3*q^2+1)*(t*q+1)*(t*q-1)*(q^3*t^5-1)*(q^3*t^5+1)*x1)+(t-1)*(t+1)*(-1-q^2+q^2*t^2+t^10*q^6)*q^2/((t*q-1)*(t*q+1)*(q^3*t^5+1)*(q^3*t^5-1)*x1*x3)+(t-1)*(t+1)*(1+q^4+2*q^2-3*q^2*t^2+t^4*q^6-q^4*t^4-3*q^6*t^6-t^6*q^4+t^8*q^4+2*t^8*q^6-t^10*q^6+t^14*q^8-t^14*q^10+q^10*t^16)*x1/((t^3*q^2-1)*(t^3*q^2+1)*(t*q+1)*(t*q-1)*(q^3*t^5-1)*(q^3*t^5+1)*x3)+(t-1)^2*(t+1)^2*(3*q^2+q^4+2+q^2*t^2-t^2+t^2*q^4-6*t^4*q^2+q^4*t^4-7*t^6*q^4+q^2*t^6+3*t^8*q^4-4*t^8*q^6+t^10*q^4+3*t^10*q^6-q^8*t^12-t^14*q^10+t^14*q^8+q^8*t^16+q^10*t^18)*q*x1/((q^3*t^5+1)*(q^3*t^5-1)*(t*q-1)*(t*q+1)*(t^3*q^2+1)*(t^3*q^2-1)*(t^2*q-1)*(t^2*q+1))+(t-1)^2*(t+1)^2*(-q^2-2-q^2*t^2-q^4*t^4+2*t^6*q^4+t^10*q^6+q^6*t^12+t^14*q^8)*q*x2*x1/((t^3*q^2-1)*(t^3*q^2+1)*(t*q+1)*(t*q-1)*(q^3*t^5-1)*(q^3*t^5+1)*x3)+(t+1)*(t-1)*x2^2*x1/((t*q-1)*(t*q+1)*x3)+(t-1)^3*(t+1)^3*(1+t^2+t^4*q^2)*q*x3*x1^2/((t^3*q^2-1)*(t^3*q^2+1)*(t*q+1)*(t*q-1)*(q^3*t^5-1)*(q^3*t^5+1))+(t-1)*(t+1)*q^3/((q^3*t^5+1)*(q^3*t^5-1)*x1*x2*x3)+(t-1)^2*(t+1)^2*(3+3*q^2+q^4+2*q^2*t^2-t^2+t^2*q^4-6*t^4*q^2+q^4*t^4-8*t^6*q^4+q^2*t^6+2*t^8*q^4-4*t^8*q^6+t^10*q^4+2*t^10*q^6-2*q^8*t^12-t^14*q^10+t^14*q^8+q^8*t^16+q^10*t^16+2*q^10*t^18)*q^2/((q^3*t^5+1)*(q^3*t^5-1)*(t*q-1)*(t*q+1)*(t^3*q^2+1)*(t^3*q^2-1)*(t^2*q-1)*(t^2*q+1))+(t-1)^2*(t+1)^2*(-q^4-2*q^2-1-t^2*q^4-t^4*q^6+2*q^6*t^6+t^6*q^4+t^10*q^6+q^8*t^12+t^14*q^10)*q/((t^3*q^2-1)*(t^3*q^2+1)*(t*q+1)*(t*q-1)*(q^3*t^5-1)*(q^3*t^5+1)*x3)+(t-1)^2*(t+1)^2*(-1-q^2-q^2*t^2+t^2+t^4*q^2-q^4*t^4+2*t^6*q^4)*q*x3*x1/((t^3*q^2-1)*(t^3*q^2+1)*(t*q+1)*(t*q-1)*(q^3*t^5-1)*(q^3*t^5+1)*x2)+(t-1)^2*(t+1)^2*x2*x1^2/((t*q+1)*(t*q-1)*(q^3*t^5-1)*(q^3*t^5+1)*x3)+(t-1)^2*(t+1)^2*x3*x1^2/((t*q+1)*(t*q-1)*(q^3*t^5-1)*(q^3*t^5+1)*x2)+(t-1)^2*(t+1)^2*q^4/((t*q+1)*(t*q-1)*(q^3*t^5+1)*(q^3*t^5-1)*x1*x2)+(t-1)^2*(t+1)^2*(-q^2-1-q^2*t^2-q^4*t^4+t^6*q^4+t^10*q^6+q^8*t^12+t^14*q^10)*q*x3*x2/((t^3*q^2-1)*(t^3*q^2+1)*(t*q+1)*(t*q-1)*(q^3*t^5-1)*(q^3*t^5+1)*x1)     # optional - sage.symbolic
-        sage: to_SR(E[mu]) - expected           # long time, optional - sage.symbolic
+        sage: expected = (t-1)^2*(t+1)^2*(3*q^2+q^4+1+t^2*q^4+q^2*t^2-3*t^4*q^2-5*t^6*q^4+2*t^8*q^4-4*t^8*q^6-q^8*t^10+2*t^10*q^6-2*q^8*t^12+t^14*q^8-t^14*q^10+q^10*t^16+q^8*t^16+q^10*t^18+t^18*q^12)*x2*x1/((q^3*t^5+1)*(q^3*t^5-1)*(t*q-1)*(t*q+1)*(t^3*q^2+1)*(t^3*q^2-1)*(t^2*q-1)*(t^2*q+1))+(t-1)^2*(t+1)^2*(q^2*t^6+2*t^6*q^4-q^4*t^4+t^4*q^2-q^2*t^2+t^2-2-q^2)*q^2*x1/((t^3*q^2-1)*(t^3*q^2+1)*(t*q+1)*(t*q-1)*(q^3*t^5-1)*(q^3*t^5+1)*x2)+(t-1)^2*(t+1)^2*(-q^2-1+t^4*q^2-q^4*t^4+2*t^6*q^4)*x1^2/((t^3*q^2-1)*(t^3*q^2+1)*(t*q+1)*(t*q-1)*(q^3*t^5-1)*(q^3*t^5+1))+(t+1)*(t-1)*x2^2*x3/((t*q-1)*(t*q+1)*x1)+(t-1)^2*(t+1)^2*(3*q^2+q^4+2+t^2*q^4+2*q^2*t^2-4*t^4*q^2+q^4*t^4-6*t^6*q^4+t^8*q^4-4*t^8*q^6-q^8*t^10+t^10*q^6-3*q^8*t^12-2*t^14*q^10+2*t^14*q^8+2*q^10*t^16+q^8*t^16+t^18*q^12+2*q^10*t^18)*q*x2/((q^3*t^5+1)*(q^3*t^5-1)*(t*q-1)*(t*q+1)*(t^3*q^2+1)*(t^3*q^2-1)*(t^2*q-1)*(t^2*q+1))+(t-1)^2*(t+1)^2*(1+q^4+2*q^2+t^2*q^4-3*t^4*q^2+q^2*t^6-5*t^6*q^4+3*t^8*q^4-4*t^8*q^6+2*t^10*q^6-q^8*t^12-t^14*q^10+t^14*q^8+q^10*t^16+t^18*q^12)*x3*x1/((q^3*t^5+1)*(q^3*t^5-1)*(t*q-1)*(t*q+1)*(t^3*q^2+1)*(t^3*q^2-1)*(t^2*q-1)*(t^2*q+1))+(t-1)^2*(t+1)^2*(2*q^2+1+q^4+t^2*q^4-t^2+q^2*t^2-4*t^4*q^2+q^4*t^4+q^2*t^6-5*t^6*q^4+3*t^8*q^4-4*t^8*q^6+2*t^10*q^6+q^6*t^12-2*q^8*t^12-2*t^14*q^10+2*t^14*q^8+q^10*t^16+t^18*q^12)*q*x3/((q^3*t^5+1)*(q^3*t^5-1)*(t*q-1)*(t*q+1)*(t^3*q^2+1)*(t^3*q^2-1)*(t^2*q-1)*(t^2*q+1))+(t-1)^2*(t+1)^2*(1+t^2+t^4*q^2)*q*x3*x2^2/((t*q-1)*(t*q+1)*(t^3*q^2+1)*(t^3*q^2-1))+(t-1)^2*(t+1)^2*(-q^2-2-q^2*t^2+t^4-q^4*t^4-t^4*q^2+3*q^2*t^6-t^6*q^4-t^8*q^6+t^8*q^4+t^10*q^4+2*q^6*t^12-q^8*t^12+t^14*q^8)*q*x3*x2*x1/((t^3*q^2-1)*(t^3*q^2+1)*(t*q+1)*(t*q-1)*(q^3*t^5-1)*(q^3*t^5+1))+(t-1)*(t+1)*x1^2/((q^3*t^5-1)*(q^3*t^5+1)*x3*x2)+(t-1)*(t+1)*(-q^2-1+t^4*q^2-q^4*t^4+2*t^6*q^4)*x2^2/((t*q-1)*(t*q+1)*(t^3*q^2+1)*(t^3*q^2-1))+(t-1)*(t+1)*(t^3*q-1)*(t^3*q+1)*x3*x2^2*x1/((t*q-1)*(t*q+1)*(t^3*q^2+1)*(t^3*q^2-1))+(t-1)^2*(t+1)^2*(q^2+1)*q*x1/((t*q+1)*(t*q-1)*(q^3*t^5+1)*(q^3*t^5-1)*x3*x2)+(t-1)^2*(t+1)^2*(t^3*q-1)*(t^3*q+1)*x3*x2*x1^2/((t^3*q^2-1)*(t^3*q^2+1)*(t*q+1)*(t*q-1)*(q^3*t^5-1)*(q^3*t^5+1))+(t-1)^2*(t+1)^2*q^3*x3/((t*q+1)*(t*q-1)*(q^3*t^5-1)*(q^3*t^5+1)*x1*x2)+(t-1)*(t+1)*(-1-q^2+q^2*t^2+t^10*q^6)*q*x2/((t*q+1)*(t*q-1)*(q^3*t^5+1)*(q^3*t^5-1)*x3*x1)+x2^2/(x1*x3)+(t-1)*(t+1)*q*x2^2/((t*q-1)*(t*q+1)*x3)+(t-1)^3*(t+1)^3*(1+t^2+t^4*q^2)*q*x2*x1^2/((t^3*q^2-1)*(t^3*q^2+1)*(t*q+1)*(t*q-1)*(q^3*t^5-1)*(q^3*t^5+1))+(t-1)^2*(t+1)^2*q*x1^2/((t*q+1)*(t*q-1)*(q^3*t^5-1)*(q^3*t^5+1)*x3)+(t-1)^2*(t+1)^2*(q^2*t^6+2*t^6*q^4-q^4*t^4+t^4*q^2-q^2*t^2+t^2-2-q^2)*q^3/((t^3*q^2-1)*(t^3*q^2+1)*(t*q+1)*(t*q-1)*(q^3*t^5-1)*(q^3*t^5+1)*x2)+(t-1)*(t+1)*(q^2+2-t^2+q^4*t^4-t^4*q^2-3*t^6*q^4+t^8*q^4-2*t^10*q^6-q^8*t^12+q^6*t^12+q^8*t^16+q^10*t^16)*q^2*x2/((t^3*q^2-1)*(t^3*q^2+1)*(t*q+1)*(t*q-1)*(q^3*t^5-1)*(q^3*t^5+1)*x1)+(t-1)^2*(t+1)^2*(q^2+1)*q^2/((t*q+1)*(t*q-1)*(q^3*t^5-1)*(q^3*t^5+1)*x3*x2)+(t-1)*(t+1)*(1+q^4+2*q^2-2*q^2*t^2+t^4*q^6-q^4*t^4-3*q^6*t^6-t^6*q^4+2*t^8*q^6-t^10*q^6-q^8*t^10-t^14*q^10+t^14*q^8+2*q^10*t^16)*x2/((t^3*q^2-1)*(t^3*q^2+1)*(t*q+1)*(t*q-1)*(q^3*t^5-1)*(q^3*t^5+1)*x3)+(t-1)^2*(t+1)^2*(-q^2-2-q^2*t^2-q^4*t^4+2*t^6*q^4+t^10*q^6+q^8*t^12+t^14*q^8)*q^3/((t^3*q^2-1)*(t^3*q^2+1)*(t*q+1)*(t*q-1)*(q^3*t^5-1)*(q^3*t^5+1)*x1)+(t-1)^2*(t+1)^2*(-1-q^2-q^2*t^2+t^2+t^4*q^2-q^4*t^4+2*t^6*q^4)*q^2*x3/((t^3*q^2-1)*(t^3*q^2+1)*(t*q+1)*(t*q-1)*(q^3*t^5-1)*(q^3*t^5+1)*x2)+(t-1)*(t+1)*q*x2^2/((t*q-1)*(t*q+1)*x1)+(t-1)^2*(t+1)^2*(1+t^2+t^4*q^2)*q*x2^2*x1/((t*q-1)*(t*q+1)*(t^3*q^2+1)*(t^3*q^2-1))+(t-1)^2*(t+1)^2*q*x1^2/((t*q+1)*(t*q-1)*(q^3*t^5-1)*(q^3*t^5+1)*x2)+(t-1)^2*(t+1)^2*(-1-q^4-2*q^2-t^2*q^4-q^2*t^2+t^4*q^2-t^4*q^6-2*q^4*t^4+3*t^6*q^4-q^6*t^6-t^8*q^8+t^8*q^6+2*t^10*q^6-q^10*t^12+3*q^8*t^12+2*t^14*q^10)*x3*x2/((t^3*q^2-1)*(t^3*q^2+1)*(t*q+1)*(t*q-1)*(q^3*t^5-1)*(q^3*t^5+1))+(t-1)*(t+1)*(q^2+1-t^2+q^4*t^4-t^4*q^2+q^2*t^6-3*t^6*q^4+t^8*q^4-t^10*q^6+q^6*t^12-q^8*t^12+q^10*t^16)*q^2*x3/((t^3*q^2-1)*(t^3*q^2+1)*(t*q+1)*(t*q-1)*(q^3*t^5-1)*(q^3*t^5+1)*x1)+(t-1)*(t+1)*(-1-q^2+q^2*t^2+t^10*q^6)*q^2/((t*q-1)*(t*q+1)*(q^3*t^5+1)*(q^3*t^5-1)*x1*x3)+(t-1)*(t+1)*(1+q^4+2*q^2-3*q^2*t^2+t^4*q^6-q^4*t^4-3*q^6*t^6-t^6*q^4+t^8*q^4+2*t^8*q^6-t^10*q^6+t^14*q^8-t^14*q^10+q^10*t^16)*x1/((t^3*q^2-1)*(t^3*q^2+1)*(t*q+1)*(t*q-1)*(q^3*t^5-1)*(q^3*t^5+1)*x3)+(t-1)^2*(t+1)^2*(3*q^2+q^4+2+q^2*t^2-t^2+t^2*q^4-6*t^4*q^2+q^4*t^4-7*t^6*q^4+q^2*t^6+3*t^8*q^4-4*t^8*q^6+t^10*q^4+3*t^10*q^6-q^8*t^12-t^14*q^10+t^14*q^8+q^8*t^16+q^10*t^18)*q*x1/((q^3*t^5+1)*(q^3*t^5-1)*(t*q-1)*(t*q+1)*(t^3*q^2+1)*(t^3*q^2-1)*(t^2*q-1)*(t^2*q+1))+(t-1)^2*(t+1)^2*(-q^2-2-q^2*t^2-q^4*t^4+2*t^6*q^4+t^10*q^6+q^6*t^12+t^14*q^8)*q*x2*x1/((t^3*q^2-1)*(t^3*q^2+1)*(t*q+1)*(t*q-1)*(q^3*t^5-1)*(q^3*t^5+1)*x3)+(t+1)*(t-1)*x2^2*x1/((t*q-1)*(t*q+1)*x3)+(t-1)^3*(t+1)^3*(1+t^2+t^4*q^2)*q*x3*x1^2/((t^3*q^2-1)*(t^3*q^2+1)*(t*q+1)*(t*q-1)*(q^3*t^5-1)*(q^3*t^5+1))+(t-1)*(t+1)*q^3/((q^3*t^5+1)*(q^3*t^5-1)*x1*x2*x3)+(t-1)^2*(t+1)^2*(3+3*q^2+q^4+2*q^2*t^2-t^2+t^2*q^4-6*t^4*q^2+q^4*t^4-8*t^6*q^4+q^2*t^6+2*t^8*q^4-4*t^8*q^6+t^10*q^4+2*t^10*q^6-2*q^8*t^12-t^14*q^10+t^14*q^8+q^8*t^16+q^10*t^16+2*q^10*t^18)*q^2/((q^3*t^5+1)*(q^3*t^5-1)*(t*q-1)*(t*q+1)*(t^3*q^2+1)*(t^3*q^2-1)*(t^2*q-1)*(t^2*q+1))+(t-1)^2*(t+1)^2*(-q^4-2*q^2-1-t^2*q^4-t^4*q^6+2*q^6*t^6+t^6*q^4+t^10*q^6+q^8*t^12+t^14*q^10)*q/((t^3*q^2-1)*(t^3*q^2+1)*(t*q+1)*(t*q-1)*(q^3*t^5-1)*(q^3*t^5+1)*x3)+(t-1)^2*(t+1)^2*(-1-q^2-q^2*t^2+t^2+t^4*q^2-q^4*t^4+2*t^6*q^4)*q*x3*x1/((t^3*q^2-1)*(t^3*q^2+1)*(t*q+1)*(t*q-1)*(q^3*t^5-1)*(q^3*t^5+1)*x2)+(t-1)^2*(t+1)^2*x2*x1^2/((t*q+1)*(t*q-1)*(q^3*t^5-1)*(q^3*t^5+1)*x3)+(t-1)^2*(t+1)^2*x3*x1^2/((t*q+1)*(t*q-1)*(q^3*t^5-1)*(q^3*t^5+1)*x2)+(t-1)^2*(t+1)^2*q^4/((t*q+1)*(t*q-1)*(q^3*t^5+1)*(q^3*t^5-1)*x1*x2)+(t-1)^2*(t+1)^2*(-q^2-1-q^2*t^2-q^4*t^4+t^6*q^4+t^10*q^6+q^8*t^12+t^14*q^10)*q*x3*x2/((t^3*q^2-1)*(t^3*q^2+1)*(t*q+1)*(t*q-1)*(q^3*t^5-1)*(q^3*t^5+1)*x1)  # needs sage.symbolic
+        sage: to_SR(E[mu]) - expected           # long time                             # needs sage.symbolic
         0
 
         sage: E = NonSymmetricMacdonaldPolynomials(["BC",1,2], q=q, q1=t^2,q2=-1)
         sage: omega = E.keys().fundamental_weights()
         sage: mu = -4*omega[1]; mu
         (-4)
-        sage: expected = (t-1)*(t+1)*(-1+q^2*t^2-q^2-3*q^10-7*q^26*t^8+5*t^2*q^6-q^16-3*q^4+4*t^10*q^30-4*t^6*q^22-10*q^20*t^6+2*q^32*t^10-3*q^6-4*q^8+q^34*t^10-4*t^8*q^24-2*q^12-q^14+2*q^22*t^10+4*q^26*t^10+4*q^28*t^10+t^6*q^30-2*q^32*t^8-2*t^8*q^22+2*q^24*t^10-q^20*t^2-2*t^6*q^12+t^8*q^14+2*t^4*q^24-4*t^8*q^30+2*t^8*q^20-9*t^6*q^16+3*q^26*t^6+q^28*t^6+3*t^2*q^4+2*q^18*t^8-6*t^6*q^14+4*t^4*q^22-2*q^24*t^6+3*t^2*q^12+7*t^4*q^20-t^2*q^16+11*q^18*t^4-2*t^2*q^18+9*q^16*t^4-t^4*q^6+6*q^8*t^2+5*q^10*t^2-6*q^28*t^8+q^12*t^4+8*t^4*q^14-10*t^6*q^18-q^4*t^4+q^16*t^8-2*t^4*q^8)/((t*q^4-1)*(t*q^4+1)*(q^7*t^2-1)*(q^7*t^2+1)*(t*q^3-1)*(t*q^3+1)*(q^5*t^2+1)*(q^5*t^2-1))+(q^2+1)*(q^4+1)*(t-1)*(t+1)*(-1+q^2*t^2-q^2+t^2*q^6-q^4+t^6*q^22+3*q^10*t^4+t^2-q^8-2*t^8*q^24+q^22*t^10+q^26*t^10-2*t^8*q^22+q^24*t^10-4*t^6*q^12-2*t^8*q^20-3*t^6*q^16+2*t^2*q^4-t^6*q^10-2*t^6*q^14+t^8*q^12-t^2*q^12+2*q^16*t^4+q^8*t^2-q^10*t^2+3*q^12*t^4+2*t^4*q^14+t^6*q^18-2*q^4*t^4+q^16*t^8+q^20*t^10)*q*x1/((t*q^4-1)*(t*q^4+1)*(q^7*t^2-1)*(q^7*t^2+1)*(t*q^3-1)*(t*q^3+1)*(q^5*t^2+1)*(q^5*t^2-1))+(q^2+1)*(q^4+1)*(t-1)*(t+1)*(1+q^8+q^4+q^2-q^8*t^2-2*t^2*q^4-t^2*q^6+t^2*q^12-t^2+t^4*q^6-2*q^16*t^4-t^4*q^14-2*q^12*t^4+t^6*q^12+t^6*q^16+t^6*q^18+t^6*q^14)*q/((t*q^4-1)*(t*q^4+1)*(q^7*t^2-1)*(q^7*t^2+1)*(t*q^3-1)*(t*q^3+1)*x1)+(t-1)*(t+1)*(-1-q^2-q^6-q^4-q^8+t^2*q^4-t^2*q^14+t^2*q^6-q^10*t^2+q^8*t^2-t^2*q^12+q^12*t^4+q^10*t^4+q^16*t^4+2*t^4*q^14)*(q^4+1)/((q^7*t^2+1)*(q^7*t^2-1)*(t*q^4-1)*(t*q^4+1)*x1^2)+(t-1)*(t+1)*(q^4+1)*(q^2+1)*q/((t*q^4-1)*(t*q^4+1)*x1^3)+(q^4+1)*(t-1)*(t+1)*(1+q^6+q^8+q^2+q^4-q^2*t^2-3*t^2*q^4+q^10*t^2+t^2*q^12-2*t^2*q^6-q^8*t^2-2*q^16*t^4+q^4*t^4+t^4*q^6-q^10*t^4-2*q^12*t^4-2*t^4*q^14+t^6*q^12+t^6*q^18+2*t^6*q^16+t^6*q^14)*x1^2/((t*q^4-1)*(t*q^4+1)*(q^7*t^2-1)*(q^7*t^2+1)*(t*q^3-1)*(t*q^3+1))+(t-1)*(t+1)*(-1-t^2*q^6+t^2+t^4*q^8)*(q^4+1)*(q^2+1)*q*x1^3/((q^7*t^2+1)*(q^7*t^2-1)*(t*q^4-1)*(t*q^4+1))+1/x1^4+(t-1)*(t+1)*x1^4/((t*q^4-1)*(t*q^4+1))   # optional - sage.symbolic
-        sage: to_SR(E[mu]) - expected                                                   # optional - sage.symbolic
+        sage: expected = (t-1)*(t+1)*(-1+q^2*t^2-q^2-3*q^10-7*q^26*t^8+5*t^2*q^6-q^16-3*q^4+4*t^10*q^30-4*t^6*q^22-10*q^20*t^6+2*q^32*t^10-3*q^6-4*q^8+q^34*t^10-4*t^8*q^24-2*q^12-q^14+2*q^22*t^10+4*q^26*t^10+4*q^28*t^10+t^6*q^30-2*q^32*t^8-2*t^8*q^22+2*q^24*t^10-q^20*t^2-2*t^6*q^12+t^8*q^14+2*t^4*q^24-4*t^8*q^30+2*t^8*q^20-9*t^6*q^16+3*q^26*t^6+q^28*t^6+3*t^2*q^4+2*q^18*t^8-6*t^6*q^14+4*t^4*q^22-2*q^24*t^6+3*t^2*q^12+7*t^4*q^20-t^2*q^16+11*q^18*t^4-2*t^2*q^18+9*q^16*t^4-t^4*q^6+6*q^8*t^2+5*q^10*t^2-6*q^28*t^8+q^12*t^4+8*t^4*q^14-10*t^6*q^18-q^4*t^4+q^16*t^8-2*t^4*q^8)/((t*q^4-1)*(t*q^4+1)*(q^7*t^2-1)*(q^7*t^2+1)*(t*q^3-1)*(t*q^3+1)*(q^5*t^2+1)*(q^5*t^2-1))+(q^2+1)*(q^4+1)*(t-1)*(t+1)*(-1+q^2*t^2-q^2+t^2*q^6-q^4+t^6*q^22+3*q^10*t^4+t^2-q^8-2*t^8*q^24+q^22*t^10+q^26*t^10-2*t^8*q^22+q^24*t^10-4*t^6*q^12-2*t^8*q^20-3*t^6*q^16+2*t^2*q^4-t^6*q^10-2*t^6*q^14+t^8*q^12-t^2*q^12+2*q^16*t^4+q^8*t^2-q^10*t^2+3*q^12*t^4+2*t^4*q^14+t^6*q^18-2*q^4*t^4+q^16*t^8+q^20*t^10)*q*x1/((t*q^4-1)*(t*q^4+1)*(q^7*t^2-1)*(q^7*t^2+1)*(t*q^3-1)*(t*q^3+1)*(q^5*t^2+1)*(q^5*t^2-1))+(q^2+1)*(q^4+1)*(t-1)*(t+1)*(1+q^8+q^4+q^2-q^8*t^2-2*t^2*q^4-t^2*q^6+t^2*q^12-t^2+t^4*q^6-2*q^16*t^4-t^4*q^14-2*q^12*t^4+t^6*q^12+t^6*q^16+t^6*q^18+t^6*q^14)*q/((t*q^4-1)*(t*q^4+1)*(q^7*t^2-1)*(q^7*t^2+1)*(t*q^3-1)*(t*q^3+1)*x1)+(t-1)*(t+1)*(-1-q^2-q^6-q^4-q^8+t^2*q^4-t^2*q^14+t^2*q^6-q^10*t^2+q^8*t^2-t^2*q^12+q^12*t^4+q^10*t^4+q^16*t^4+2*t^4*q^14)*(q^4+1)/((q^7*t^2+1)*(q^7*t^2-1)*(t*q^4-1)*(t*q^4+1)*x1^2)+(t-1)*(t+1)*(q^4+1)*(q^2+1)*q/((t*q^4-1)*(t*q^4+1)*x1^3)+(q^4+1)*(t-1)*(t+1)*(1+q^6+q^8+q^2+q^4-q^2*t^2-3*t^2*q^4+q^10*t^2+t^2*q^12-2*t^2*q^6-q^8*t^2-2*q^16*t^4+q^4*t^4+t^4*q^6-q^10*t^4-2*q^12*t^4-2*t^4*q^14+t^6*q^12+t^6*q^18+2*t^6*q^16+t^6*q^14)*x1^2/((t*q^4-1)*(t*q^4+1)*(q^7*t^2-1)*(q^7*t^2+1)*(t*q^3-1)*(t*q^3+1))+(t-1)*(t+1)*(-1-t^2*q^6+t^2+t^4*q^8)*(q^4+1)*(q^2+1)*q*x1^3/((q^7*t^2+1)*(q^7*t^2-1)*(t*q^4-1)*(t*q^4+1))+1/x1^4+(t-1)*(t+1)*x1^4/((t*q^4-1)*(t*q^4+1))  # needs sage.symbolic
+        sage: to_SR(E[mu]) - expected                                                   # needs sage.symbolic
         0
 
     Type `BC` dual, comparison with hand calculations by Bogdan Ion::
@@ -1584,17 +1584,17 @@ class NonSymmetricMacdonaldPolynomials(CherednikOperatorsEigenvectors):
 
         EXAMPLES::
 
-            sage: W = WeylGroup(["B",3])                                                # optional - sage.libs.gap
-            sage: W.element_class._repr_ = lambda x: "".join(str(i)                     # optional - sage.libs.gap
+            sage: W = WeylGroup(["B",3])                                                # needs sage.libs.gap
+            sage: W.element_class._repr_ = lambda x: "".join(str(i)                     # needs sage.libs.gap
             ....:                                            for i in x.reduced_word())
             sage: K = QQ['q1,q2']
             sage: q1, q2 = K.gens()
-            sage: KW = W.algebra(K)                                                     # optional - sage.libs.gap
-            sage: T = KW.demazure_lusztig_operators(q1, q2, affine=True)                # optional - sage.libs.gap
-            sage: E = T.Y_eigenvectors()                                                # optional - sage.libs.gap
-            sage: w = W.an_element(); w                                                 # optional - sage.libs.gap
+            sage: KW = W.algebra(K)                                                     # needs sage.libs.gap
+            sage: T = KW.demazure_lusztig_operators(q1, q2, affine=True)                # needs sage.libs.gap
+            sage: E = T.Y_eigenvectors()                                                # needs sage.libs.gap
+            sage: w = W.an_element(); w                                                 # needs sage.libs.gap
             123
-            sage: E.twist(w,1)                                                          # optional - sage.libs.gap
+            sage: E.twist(w,1)                                                          # needs sage.libs.gap
             1231
         """
         return mu.simple_reflection(i)
@@ -1863,16 +1863,16 @@ class NonSymmetricMacdonaldPolynomials(CherednikOperatorsEigenvectors):
         We compare with the type `A` Macdonald polynomials
         coming from symmetric functions::
 
-            sage: P = SymmetricFunctions(K).macdonald().P()                             # optional - sage.combinat
-            sage: g = P[2,1].expand(3); g                                               # optional - sage.combinat
+            sage: P = SymmetricFunctions(K).macdonald().P()                             # needs sage.combinat
+            sage: g = P[2,1].expand(3); g                                               # needs sage.combinat
             x0^2*x1 + x0*x1^2 + x0^2*x2
             + (2*q*t^2 - q*t - q  + t^2 + t - 2)/(q*t^2 - 1)*x0*x1*x2
             + x1^2*x2 + x0*x2^2 + x1*x2^2
-            sage: fe = f.expand(g.parent().gens()); fe                                  # optional - sage.combinat
+            sage: fe = f.expand(g.parent().gens()); fe                                  # needs sage.combinat
             x0^2*x1 + x0*x1^2 + x0^2*x2
             + (2*q*v^4 - q*v^2 - q + v^4 + v^2 - 2)/(q*v^4 - 1)*x0*x1*x2
             + x1^2*x2 + x0*x2^2 + x1*x2^2
-            sage: g.map_coefficients(lambda x: x.subs(t=v*v)) == fe                     # optional - sage.combinat
+            sage: g.map_coefficients(lambda x: x.subs(t=v*v)) == fe                     # needs sage.combinat
             True
 
             sage: E = NonSymmetricMacdonaldPolynomials(['C',3,1], q, v, -1/v)
