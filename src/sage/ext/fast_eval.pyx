@@ -51,19 +51,20 @@ def fast_float(f, *vars, old=None, expect_one_var=False):
     EXAMPLES::
 
         sage: from sage.ext.fast_eval import fast_float
-        sage: x,y = var('x,y')                                                          # optional - sage.symbolic
-        sage: f = fast_float(sqrt(x^2+y^2), 'x', 'y')                                   # optional - sage.symbolic
-        sage: f(3,4)                                                                    # optional - sage.symbolic
+        sage: x,y = var('x,y')                                                          # needs sage.symbolic
+        sage: f = fast_float(sqrt(x^2+y^2), 'x', 'y')                                   # needs sage.symbolic
+        sage: f(3,4)                                                                    # needs sage.symbolic
         5.0
 
     Specifying the argument names is essential, as fast_float objects
     only distinguish between arguments by order. ::
 
-        sage: f = fast_float(x-y, 'x','y')                                              # optional - sage.symbolic
-        sage: f(1,2)                                                                    # optional - sage.symbolic
+        sage: # needs sage.symbolic
+        sage: f = fast_float(x-y, 'x','y')
+        sage: f(1,2)
         -1.0
-        sage: f = fast_float(x-y, 'y','x')                                              # optional - sage.symbolic
-        sage: f(1,2)                                                                    # optional - sage.symbolic
+        sage: f = fast_float(x-y, 'y','x')
+        sage: f(1,2)
         1.0
     """
     if old:

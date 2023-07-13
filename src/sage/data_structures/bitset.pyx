@@ -204,38 +204,39 @@ cdef class FrozenBitset:
     the number of elements currently in the bitset, while the capacity
     is the number of elements that the bitset can hold. ::
 
-        sage: p = primes_first_n(10); p                                                 # optional - sage.libs.pari
+        sage: p = primes_first_n(10); p                                                 # needs sage.libs.pari
         [2, 3, 5, 7, 11, 13, 17, 19, 23, 29]
-        sage: tuple(p)                                                                  # optional - sage.libs.pari
+        sage: tuple(p)                                                                  # needs sage.libs.pari
         (2, 3, 5, 7, 11, 13, 17, 19, 23, 29)
-        sage: F = FrozenBitset(p); F; FrozenBitset(tuple(p))                            # optional - sage.libs.pari
+        sage: F = FrozenBitset(p); F; FrozenBitset(tuple(p))                            # needs sage.libs.pari
         001101010001010001010001000001
         001101010001010001010001000001
 
     Recover the primes from the bitset::
 
-        sage: for b in F:                                                               # optional - sage.libs.pari
+        sage: for b in F:                                                               # needs sage.libs.pari
         ....:     print(b)
         2
         3
         ...
         29
-        sage: list(F)                                                                   # optional - sage.libs.pari
+        sage: list(F)                                                                   # needs sage.libs.pari
         [2, 3, 5, 7, 11, 13, 17, 19, 23, 29]
 
     Query the bitset::
 
-        sage: len(F)                                                                    # optional - sage.libs.pari
+        sage: # needs sage.libs.pari
+        sage: len(F)
         10
-        sage: len(list(F))                                                              # optional - sage.libs.pari
+        sage: len(list(F))
         10
-        sage: F.capacity()                                                              # optional - sage.libs.pari
+        sage: F.capacity()
         30
-        sage: s = str(F); len(s)                                                        # optional - sage.libs.pari
+        sage: s = str(F); len(s)
         30
-        sage: 2 in F                                                                    # optional - sage.libs.pari
+        sage: 2 in F
         True
-        sage: 1 in F                                                                    # optional - sage.libs.pari
+        sage: 1 in F
         False
 
     A random iterable, with all duplicate elements removed::
@@ -2067,7 +2068,7 @@ def test_bitset(py_a, py_b, long n):
 
     Large enough to span multiple limbs.  We don't explicitly check the number of limbs below because it will be different in the 32 bit versus 64 bit cases::
 
-        sage: test_bitset('111001'*25, RealField(151)(pi).str(2)[2:], 69)               # optional - sage.symbolic
+        sage: test_bitset('111001'*25, RealField(151)(pi).str(2)[2:], 69)               # needs sage.symbolic
         a 111001111001111001111001111001111001111001111001111001111001111001111001111001111001111001111001111001111001111001111001111001111001111001111001111001
         list a [0, 1, 2, 5, 6, 7, 8, 11, 12, 13, 14, 17, 18, 19, 20, 23, 24, 25, 26, 29, 30, 31, 32, 35, 36, 37, 38, 41, 42, 43, 44, 47, 48, 49, 50, 53, 54, 55, 56, 59, 60, 61, 62, 65, 66, 67, 68, 71, 72, 73, 74, 77, 78, 79, 80, 83, 84, 85, 86, 89, 90, 91, 92, 95, 96, 97, 98, 101, 102, 103, 104, 107, 108, 109, 110, 113, 114, 115, 116, 119, 120, 121, 122, 125, 126, 127, 128, 131, 132, 133, 134, 137, 138, 139, 140, 143, 144, 145, 146, 149]
         a.size 150

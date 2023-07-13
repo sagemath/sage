@@ -1865,7 +1865,7 @@ class Permutation(CombinatorialElement):
         is `\binom{n}{2}` minus its number of inversions::
 
             sage: b = binomial(5, 2)                                                    # needs sage.symbolic
-            sage: all( x.number_of_noninversions(2) == b - x.number_of_inversions()
+            sage: all( x.number_of_noninversions(2) == b - x.number_of_inversions()     # needs sage.symbolic
             ....:      for x in Permutations(5) )
             True
 
