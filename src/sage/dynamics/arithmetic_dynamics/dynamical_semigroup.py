@@ -480,6 +480,28 @@ class DynamicalSemigroup(Parent):
         """
         return tuple(self._dynamical_systems)
 
+    def multiply(self, other_dynamical_semigroup):
+        if not isinstance(other_dynamical_semigroup, DynamicalSemigroup):
+            raise TypeError(str(other_dynamical_semigroup) + " is not a `DynamicalSemigroup` object")
+        composite_systems = []
+        my_polys = self.defining_polynomials()
+        other_polys = other_dynamical_semigroup.defining_polynomials()
+        for my_poly in my_polys:
+            composite_poly = []
+            for coordinate_poly in my_poly:
+                for other_poly in other_polys:
+                    composite_poly.append(coordinate_poly(other_poly))
+            composite_system = DynamicalSystem(composite_poly)
+            composite_systems.append(composite_system)
+        for other_poly in other_polys:
+            composite_poly = []
+            for coordinate_poly in other_poly:
+                for self_poly in my_polys:
+                    composite_poly.append(coordinate_poly(self_poly))
+            composite_system = DynamicalSystem(composite_poly)
+            composite_systems.append(composite_system)
+        return DynamicalSemigroup(composite_systems)
+
     def _repr_(self):
         r"""
         Returns the :class:`String` representation of this dynamical semigroup.
@@ -561,7 +583,14 @@ class DynamicalSemigroup_projective(DynamicalSemigroup):
           Defn: Defined on coordinates by sending (x : y) to
                 (x^2 : y^2)
     """
-    pass
+    def dehomogenize(self, n):
+        new_systems = []
+        for ds in self._dynamical_systems:
+            new_system = ds.dehomogenize(n)
+            if not isinstance(new_system, DynamicalSystem):
+                raise ValueError(str(ds) + " dehomogenized at " + str(n) + " is not a `DynamicalSystem` object")
+            new_systems.append(new_system)
+        return DynamicalSemigroup(new_systems)
 
 class DynamicalSemigroup_affine(DynamicalSemigroup):
     r"""
@@ -611,3 +640,12 @@ class DynamicalSemigroup_affine(DynamicalSemigroup):
         for i in range(len(self._dynamical_systems)):
             if isinstance(self._dynamical_systems[i], DynamicalSystem_projective):
                 self._dynamical_systems[i] = self._dynamical_systems[i].dehomogenize(self._dimension)
+
+    def homogenize(self, n):
+        new_systems = []
+        for ds in self._dynamical_systems:
+            new_system = ds.homogenize(n)
+            if not isinstance(new_system, DynamicalSystem):
+                raise ValueError(str(ds) + " homogenized at " + str(n) + " is not a `DynamicalSystem` object")
+            new_systems.append(new_system)
+        return DynamicalSemigroup(new_systems)
