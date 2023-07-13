@@ -6,21 +6,22 @@ EXAMPLES:
 We build a set from the iterator :obj:`graphs` that returns a canonical
 representative for each isomorphism class of graphs::
 
+    sage: # needs sage.graphs
     sage: from sage.sets.set_from_iterator import EnumeratedSetFromIterator
-    sage: E = EnumeratedSetFromIterator(                                                # optional - sage.graphs
+    sage: E = EnumeratedSetFromIterator(
     ....:   graphs,
     ....:   name="Graphs",
     ....:   category=InfiniteEnumeratedSets(),
     ....:   cache=True)
-    sage: E                                                                             # optional - sage.graphs
+    sage: E
     Graphs
-    sage: E.unrank(0)                                                                   # optional - sage.graphs
+    sage: E.unrank(0)
     Graph on 0 vertices
-    sage: E.unrank(4)                                                                   # optional - sage.graphs
+    sage: E.unrank(4)
     Graph on 3 vertices
-    sage: E.cardinality()                                                               # optional - sage.graphs
+    sage: E.cardinality()
     +Infinity
-    sage: E.category()                                                                  # optional - sage.graphs
+    sage: E.category()
     Category of facade infinite enumerated sets
 
 The module also provides decorator for functions and methods::
@@ -97,21 +98,21 @@ class EnumeratedSetFromIterator(Parent):
     EXAMPLES::
 
         sage: from sage.sets.set_from_iterator import EnumeratedSetFromIterator
-        sage: E = EnumeratedSetFromIterator(graphs, args=(7,)); E                       # optional - sage.graphs
+        sage: E = EnumeratedSetFromIterator(graphs, args=(7,)); E                       # needs sage.graphs
         {Graph on 7 vertices, Graph on 7 vertices, Graph on 7 vertices,
          Graph on 7 vertices, Graph on 7 vertices, ...}
-        sage: E.category()                                                              # optional - sage.graphs
+        sage: E.category()                                                              # needs sage.graphs
         Category of facade enumerated sets
 
     The same example with a cache and a custom name::
 
-        sage: E = EnumeratedSetFromIterator(graphs, args=(8,), cache=True,              # optional - sage.graphs
+        sage: E = EnumeratedSetFromIterator(graphs, args=(8,), cache=True,              # needs sage.graphs
         ....:                               name="Graphs with 8 vertices",
         ....:                               category=FiniteEnumeratedSets()); E
         Graphs with 8 vertices
-        sage: E.unrank(3)                                                               # optional - sage.graphs
+        sage: E.unrank(3)                                                               # needs sage.graphs
         Graph on 8 vertices
-        sage: E.category()                                                              # optional - sage.graphs
+        sage: E.category()                                                              # needs sage.graphs
         Category of facade finite enumerated sets
 
     TESTS:
@@ -196,17 +197,18 @@ class EnumeratedSetFromIterator(Parent):
 
         TESTS::
 
+            sage: # needs sage.graphs
             sage: from sage.sets.set_from_iterator import EnumeratedSetFromIterator
-            sage: from sage.graphs.graph_generators import graphs                       # optional - sage.graphs
-            sage: E = EnumeratedSetFromIterator(graphs,                                 # optional - sage.graphs
+            sage: from sage.graphs.graph_generators import graphs
+            sage: E = EnumeratedSetFromIterator(graphs,
             ....:    args=(3,),
             ....:    category=FiniteEnumeratedSets(),
             ....:    name="Graphs on 3 vertices")
-            sage: E                                                                     # optional - sage.graphs
+            sage: E
             Graphs on 3 vertices
-            sage: F = loads(dumps(E)); F                                                # optional - sage.graphs
+            sage: F = loads(dumps(E)); F
             Graphs on 3 vertices
-            sage: E == F                                                                # optional - sage.graphs
+            sage: E == F
             True
         """
         return (EnumeratedSetFromIterator,
@@ -224,16 +226,17 @@ class EnumeratedSetFromIterator(Parent):
 
         TESTS::
 
+            sage: # needs sage.combinat
             sage: from sage.sets.set_from_iterator import EnumeratedSetFromIterator
-            sage: E = EnumeratedSetFromIterator(Partitions(7, min_part=2).__iter__)     # optional - sage.combinat
-            sage: repr(E)    # indirect doctest                                         # optional - sage.combinat
+            sage: E = EnumeratedSetFromIterator(Partitions(7, min_part=2).__iter__)
+            sage: repr(E)    # indirect doctest
             '{[7], [5, 2], [4, 3], [3, 2, 2]}'
-            sage: E = EnumeratedSetFromIterator(Partitions(9, min_part=2).__iter__)     # optional - sage.combinat
-            sage: repr(E)    # indirect doctest                                         # optional - sage.combinat
+            sage: E = EnumeratedSetFromIterator(Partitions(9, min_part=2).__iter__)
+            sage: repr(E)    # indirect doctest
             '{[9], [7, 2], [6, 3], [5, 4], [5, 2, 2], ...}'
-            sage: E = EnumeratedSetFromIterator(Partitions(9, min_part=2).__iter__,     # optional - sage.combinat
+            sage: E = EnumeratedSetFromIterator(Partitions(9, min_part=2).__iter__,
             ....:                               name="Some partitions")
-            sage: repr(E)    # indirect doctest                                         # optional - sage.combinat
+            sage: repr(E)    # indirect doctest
             'Some partitions'
         """
         l = []
@@ -257,10 +260,10 @@ class EnumeratedSetFromIterator(Parent):
 
         EXAMPLES::
 
-            sage: from sage.sets.set_from_iterator import EnumeratedSetFromIterator     # optional - sage.combinat
-            sage: P = Partitions(12, min_part=2, max_part=5)                            # optional - sage.combinat
-            sage: E = EnumeratedSetFromIterator(P.__iter__)                             # optional - sage.combinat
-            sage: P([5,5,2]) in E                                                       # optional - sage.combinat
+            sage: from sage.sets.set_from_iterator import EnumeratedSetFromIterator
+            sage: P = Partitions(12, min_part=2, max_part=5)                            # needs sage.combinat
+            sage: E = EnumeratedSetFromIterator(P.__iter__)                             # needs sage.combinat
+            sage: P([5,5,2]) in E                                                       # needs sage.combinat
             True
         """
         return any(x == y for y in self)
@@ -277,22 +280,23 @@ class EnumeratedSetFromIterator(Parent):
 
         TESTS::
 
+            sage: # needs sage.graphs
             sage: from sage.sets.set_from_iterator import EnumeratedSetFromIterator
-            sage: E4 = EnumeratedSetFromIterator(graphs, args=(4,),                     # optional - sage.graphs
+            sage: E4 = EnumeratedSetFromIterator(graphs, args=(4,),
             ....:                                category=FiniteEnumeratedSets())
-            sage: F4 = EnumeratedSetFromIterator(graphs, args=(4,),                     # optional - sage.graphs
+            sage: F4 = EnumeratedSetFromIterator(graphs, args=(4,),
             ....:                                category=FiniteEnumeratedSets())
-            sage: E5 = EnumeratedSetFromIterator(graphs, args=(5,),                     # optional - sage.graphs
+            sage: E5 = EnumeratedSetFromIterator(graphs, args=(5,),
             ....:                                category=FiniteEnumeratedSets())
-            sage: E4 == E4                                                              # optional - sage.graphs
+            sage: E4 == E4
             True
-            sage: E4 == F4                                                              # optional - sage.graphs
+            sage: E4 == F4
             True
-            sage: E4 == E5                                                              # optional - sage.graphs
+            sage: E4 == E5
             False
-            sage: E5 == E4                                                              # optional - sage.graphs
+            sage: E5 == E4
             False
-            sage: E5 == E5                                                              # optional - sage.graphs
+            sage: E5 == E5
             True
         """
         if isinstance(other, EnumeratedSetFromIterator):
@@ -335,22 +339,23 @@ class EnumeratedSetFromIterator(Parent):
 
         TESTS::
 
+            sage: # needs sage.graphs
             sage: from sage.sets.set_from_iterator import EnumeratedSetFromIterator
-            sage: E4 = EnumeratedSetFromIterator(graphs, args=(4,),                     # optional - sage.graphs
+            sage: E4 = EnumeratedSetFromIterator(graphs, args=(4,),
             ....:                                category=FiniteEnumeratedSets())
-            sage: F4 = EnumeratedSetFromIterator(graphs, args=(4,),                     # optional - sage.graphs
+            sage: F4 = EnumeratedSetFromIterator(graphs, args=(4,),
             ....:                                category=FiniteEnumeratedSets())
-            sage: E5 = EnumeratedSetFromIterator(graphs, args=(5,),                     # optional - sage.graphs
+            sage: E5 = EnumeratedSetFromIterator(graphs, args=(5,),
             ....:                                category=FiniteEnumeratedSets())
-            sage: E4 != E4                                                              # optional - sage.graphs
+            sage: E4 != E4
             False
-            sage: E4 != F4                                                              # optional - sage.graphs
+            sage: E4 != F4
             False
-            sage: E4 != E5                                                              # optional - sage.graphs
+            sage: E4 != E5
             True
-            sage: E5 != E4                                                              # optional - sage.graphs
+            sage: E5 != E4
             True
-            sage: E5 != E5                                                              # optional - sage.graphs
+            sage: E5 != E5
             False
         """
         return not self == other
@@ -361,14 +366,15 @@ class EnumeratedSetFromIterator(Parent):
 
         EXAMPLES::
 
+            sage: # needs sage.graphs
             sage: from sage.sets.set_from_iterator import EnumeratedSetFromIterator
-            sage: E = EnumeratedSetFromIterator(graphs, args=(8,))                      # optional - sage.graphs
-            sage: g1 = next(iter(E)); g1                                                # optional - sage.graphs
+            sage: E = EnumeratedSetFromIterator(graphs, args=(8,))
+            sage: g1 = next(iter(E)); g1
             Graph on 8 vertices
-            sage: E = EnumeratedSetFromIterator(graphs, args=(8,), cache=True)          # optional - sage.graphs
-            sage: g2 = next(iter(E)); g2                                                # optional - sage.graphs
+            sage: E = EnumeratedSetFromIterator(graphs, args=(8,), cache=True)
+            sage: g2 = next(iter(E)); g2
             Graph on 8 vertices
-            sage: g1 == g2                                                              # optional - sage.graphs
+            sage: g1 == g2
             True
         """
         if hasattr(self, '_cache'):
@@ -381,12 +387,13 @@ class EnumeratedSetFromIterator(Parent):
 
         EXAMPLES::
 
+            sage: # needs sage.graphs
             sage: from sage.sets.set_from_iterator import EnumeratedSetFromIterator
-            sage: E = EnumeratedSetFromIterator(graphs, args=(8,), cache=True)          # optional - sage.graphs
-            sage: F = EnumeratedSetFromIterator(graphs, args=(8,), cache=False)         # optional - sage.graphs
-            sage: E.unrank(2)                                                           # optional - sage.graphs
+            sage: E = EnumeratedSetFromIterator(graphs, args=(8,), cache=True)
+            sage: F = EnumeratedSetFromIterator(graphs, args=(8,), cache=False)
+            sage: E.unrank(2)
             Graph on 8 vertices
-            sage: E.unrank(2) == F.unrank(2)                                            # optional - sage.graphs
+            sage: E.unrank(2) == F.unrank(2)
             True
         """
         if hasattr(self, '_cache'):
@@ -507,11 +514,11 @@ class Decorator():
             sage: from sage.misc.sageinspect import sage_getsourcelines
             sage: from sage.sets.set_from_iterator import Decorator
             sage: d = Decorator()
-            sage: d.f = MathieuGroup.order                                              # optional - sage.groups
-            sage: S = sage_getsourcelines(d)   # indirect doctest                       # optional - sage.groups
-            sage: S[0][2]                                                               # optional - sage.groups
+            sage: d.f = MathieuGroup.order                                              # needs sage.groups
+            sage: S = sage_getsourcelines(d)   # indirect doctest                       # needs sage.groups
+            sage: S[0][2]                                                               # needs sage.groups
             '        Return the number of elements of this group.\n'
-            sage: S[0][25]                                                              # optional - sage.groups
+            sage: S[0][25]                                                              # needs sage.groups
             '            return Integer(1)\n'
         """
         from sage.misc.sageinspect import sage_getsourcelines
@@ -526,8 +533,8 @@ class Decorator():
             sage: from sage.misc.sageinspect import sage_getargspec
             sage: from sage.sets.set_from_iterator import Decorator
             sage: d = Decorator()
-            sage: d.f = find_local_minimum                                              # optional - scipy
-            sage: sage_getargspec(d)  # indirect doctest                                # optional - scipy
+            sage: d.f = find_local_minimum                                              # needs scipy
+            sage: sage_getargspec(d)  # indirect doctest                                # needs scipy
             FullArgSpec(args=['f', 'a', 'b', 'tol', 'maxfun'],
                         varargs=None, varkw=None, defaults=(1.48e-08, 500),
                         kwonlyargs=[], kwonlydefaults=None, annotations={})
@@ -615,11 +622,11 @@ class EnumeratedSetFromIterator_function_decorator(Decorator):
         ....: @set_from_function(name="Graphs on %(n)d vertices",
         ....:                    category=FiniteEnumeratedSets(), cache=True)
         ....: def Graphs(n): return graphs(n)
-        sage: Graphs(10)                                                                # optional - sage.graphs
+        sage: Graphs(10)                                                                # needs sage.graphs
         Graphs on 10 vertices
-        sage: Graphs(10).unrank(0)                                                      # optional - sage.graphs
+        sage: Graphs(10).unrank(0)                                                      # needs sage.graphs
         Graph on 10 vertices
-        sage: Graphs(10) is Graphs(10)                                                  # optional - sage.graphs
+        sage: Graphs(10) is Graphs(10)                                                  # needs sage.graphs
         True
 
     The ``@cached_function`` must go first::
@@ -628,11 +635,11 @@ class EnumeratedSetFromIterator_function_decorator(Decorator):
         ....:                    category=FiniteEnumeratedSets(), cache=True)
         ....: @cached_function
         ....: def Graphs(n): return graphs(n)
-        sage: Graphs(10)                                                                # optional - sage.graphs
+        sage: Graphs(10)                                                                # needs sage.graphs
         Graphs on 10 vertices
-        sage: Graphs(10).unrank(0)                                                      # optional - sage.graphs
+        sage: Graphs(10).unrank(0)                                                      # needs sage.graphs
         Graph on 10 vertices
-        sage: Graphs(10) is Graphs(10)                                                  # optional - sage.graphs
+        sage: Graphs(10) is Graphs(10)                                                  # needs sage.graphs
         False
     """
     def __init__(self, f=None, name=None, **options):
@@ -866,7 +873,7 @@ class EnumeratedSetFromIterator_method_decorator():
         sage: b = B()
         sage: G3 = b.graphs(3); G3
         Graphs(3)
-        sage: G3.cardinality()                                                          # optional - sage.graphs
+        sage: G3.cardinality()                                                          # needs sage.graphs
         4
         sage: G3.category()
         Category of facade finite enumerated sets
@@ -907,11 +914,11 @@ class EnumeratedSetFromIterator_method_decorator():
         :mod:`sage.combinat.permutation`) because its method ``bruhat_succ``
         and ``bruhat_pred`` are decorated with ``set_from_method``::
 
-            sage: from sage.combinat.permutation import Permutation                     # optional - sage.combinat
-            sage: loads(dumps(Permutation))                                             # optional - sage.combinat
+            sage: from sage.combinat.permutation import Permutation
+            sage: loads(dumps(Permutation))
             <class 'sage.combinat.permutation.Permutation'>
-            sage: p = Permutation([3,2,1])                                              # optional - sage.combinat
-            sage: loads(dumps(p)) == p                                                  # optional - sage.combinat
+            sage: p = Permutation([3,2,1])
+            sage: loads(dumps(p)) == p
             True
         """
         if f is not None:

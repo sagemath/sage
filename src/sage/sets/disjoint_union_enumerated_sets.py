@@ -89,32 +89,34 @@ class DisjointUnionEnumeratedSets(UniqueRepresentation, Parent):
 
     In general the input can be any family::
 
-        sage: U3 = DisjointUnionEnumeratedSets(                                         # optional - sage.combinat
+        sage: # needs sage.combinat
+        sage: U3 = DisjointUnionEnumeratedSets(
         ....:     Family([2,3,4], Permutations, lazy=True))
-        sage: U3                                                                        # optional - sage.combinat
+        sage: U3
         Disjoint union of Lazy family
          (<class 'sage.combinat.permutation.Permutations'>(i))_{i in [2, 3, 4]}
-        sage: U3.cardinality()                                                          # optional - sage.combinat
+        sage: U3.cardinality()
         32
-        sage: it = iter(U3)                                                             # optional - sage.combinat
-        sage: [next(it), next(it), next(it), next(it), next(it), next(it)]              # optional - sage.combinat
+        sage: it = iter(U3)
+        sage: [next(it), next(it), next(it), next(it), next(it), next(it)]
         [[1, 2], [2, 1], [1, 2, 3], [1, 3, 2], [2, 1, 3], [2, 3, 1]]
-        sage: U3.unrank(18)                                                             # optional - sage.combinat
+        sage: U3.unrank(18)
         [2, 4, 1, 3]
 
     This allows for infinite unions::
 
-        sage: U4 = DisjointUnionEnumeratedSets(                                         # optional - sage.combinat
+        sage: # needs sage.combinat
+        sage: U4 = DisjointUnionEnumeratedSets(
         ....:     Family(NonNegativeIntegers(), Permutations))
-        sage: U4                                                                        # optional - sage.combinat
+        sage: U4
         Disjoint union of Lazy family
          (<class 'sage.combinat.permutation.Permutations'>(i))_{i in Non negative integers}
-        sage: U4.cardinality()                                                          # optional - sage.combinat
+        sage: U4.cardinality()
         +Infinity
-        sage: it = iter(U4)                                                             # optional - sage.combinat
-        sage: [next(it), next(it), next(it), next(it), next(it), next(it)]              # optional - sage.combinat
+        sage: it = iter(U4)
+        sage: [next(it), next(it), next(it), next(it), next(it), next(it)]
         [[], [1], [1, 2], [2, 1], [1, 2, 3], [1, 3, 2]]
-        sage: U4.unrank(18)                                                             # optional - sage.combinat
+        sage: U4.unrank(18)
         [2, 3, 1, 4]
 
     .. WARNING::
@@ -127,41 +129,43 @@ class DisjointUnionEnumeratedSets(UniqueRepresentation, Parent):
 
     We demonstrate the ``keepkey`` option::
 
-        sage: Ukeep = DisjointUnionEnumeratedSets(                                      # optional - sage.combinat
+        sage: # needs sage.combinat
+        sage: Ukeep = DisjointUnionEnumeratedSets(
         ....:            Family(list(range(4)), Permutations), keepkey=True)
-        sage: it = iter(Ukeep)                                                          # optional - sage.combinat
-        sage: [next(it) for i in range(6)]                                              # optional - sage.combinat
+        sage: it = iter(Ukeep)
+        sage: [next(it) for i in range(6)]
         [(0, []), (1, [1]), (2, [1, 2]), (2, [2, 1]), (3, [1, 2, 3]), (3, [1, 3, 2])]
-        sage: type(next(it)[1])                                                         # optional - sage.combinat
+        sage: type(next(it)[1])
         <class 'sage.combinat.permutation.StandardPermutations_n_with_category.element_class'>
 
     We now demonstrate the ``facade`` option::
 
-        sage: UNoFacade = DisjointUnionEnumeratedSets(                                  # optional - sage.combinat
+        sage: # needs sage.combinat
+        sage: UNoFacade = DisjointUnionEnumeratedSets(
         ....:                Family(list(range(4)), Permutations), facade=False)
-        sage: it = iter(UNoFacade)                                                      # optional - sage.combinat
-        sage: [next(it) for i in range(6)]                                              # optional - sage.combinat
+        sage: it = iter(UNoFacade)
+        sage: [next(it) for i in range(6)]
         [[], [1], [1, 2], [2, 1], [1, 2, 3], [1, 3, 2]]
-        sage: el = next(it); el                                                         # optional - sage.combinat
+        sage: el = next(it); el
         [2, 1, 3]
-        sage: type(el)                                                                  # optional - sage.combinat
+        sage: type(el)
         <... 'sage.structure.element_wrapper.ElementWrapper'>
-        sage: el.parent() == UNoFacade                                                  # optional - sage.combinat
+        sage: el.parent() == UNoFacade
         True
-        sage: elv = el.value; elv                                                       # optional - sage.combinat
+        sage: elv = el.value; elv
         [2, 1, 3]
-        sage: type(elv)                                                                 # optional - sage.combinat
+        sage: type(elv)
         <class 'sage.combinat.permutation.StandardPermutations_n_with_category.element_class'>
 
     The elements ``el`` of the disjoint union are simple wrapped elements.
     So to access the methods, you need to do ``el.value``::
 
-        sage: el[0]                                                                     # optional - sage.combinat
+        sage: el[0]                                                                     # needs sage.combinat
         Traceback (most recent call last):
         ...
         TypeError: 'sage.structure.element_wrapper.ElementWrapper' object is not subscriptable
 
-        sage: el.value[0]                                                               # optional - sage.combinat
+        sage: el.value[0]                                                               # needs sage.combinat
         2
 
     Possible extensions: the current enumeration order is not suitable
@@ -183,12 +187,12 @@ class DisjointUnionEnumeratedSets(UniqueRepresentation, Parent):
       :class:`DisjointUnionEnumeratedSets`. Then, one simply
       writes the ``__init__`` method as usual::
 
-          sage: class MyUnion(DisjointUnionEnumeratedSets):                             # optional - sage.combinat
+          sage: class MyUnion(DisjointUnionEnumeratedSets):
           ....:   def __init__(self):
           ....:       DisjointUnionEnumeratedSets.__init__(self,
           ....:            Family([1,2], Permutations))
-          sage: pp = MyUnion()                                                          # optional - sage.combinat
-          sage: pp.list()                                                               # optional - sage.combinat
+          sage: pp = MyUnion()
+          sage: pp.list()
           [[1], [1, 2], [2, 1]]
 
       In case the :meth:`__init__` method takes optional arguments,
@@ -203,37 +207,37 @@ class DisjointUnionEnumeratedSets(UniqueRepresentation, Parent):
 
           sage: class UnionOfSpecialSets(DisjointUnionEnumeratedSets):
           ....:     __classcall_private__ = staticmethod(DisjointUnionEnumeratedSets.__classcall_private__)
-          sage: psp = UnionOfSpecialSets(Family([1,2], Permutations))                   # optional - sage.combinat
-          sage: psp.list()                                                              # optional - sage.combinat
+          sage: psp = UnionOfSpecialSets(Family([1,2], Permutations))
+          sage: psp.list()
           [[1], [1, 2], [2, 1]]
 
     TESTS::
 
         sage: TestSuite(U1).run()
         sage: TestSuite(U2).run()
-        sage: TestSuite(U3).run()                                                       # optional - sage.combinat
-        sage: TestSuite(U4).run()                                                       # optional - sage.combinat
+        sage: TestSuite(U3).run()                                                       # needs sage.combinat
+        sage: TestSuite(U4).run()                                                       # needs sage.combinat
         doctest:...: UserWarning: Disjoint union of Lazy family
         (<class 'sage.combinat.permutation.Permutations'>(i))_{i in Non negative integers}
         is an infinite union
         The default implementation of __contains__ can loop forever. Please overload it.
-        sage: TestSuite(UNoFacade).run()                                                # optional - sage.combinat
+        sage: TestSuite(UNoFacade).run()                                                # needs sage.combinat
 
     We skip ``_test_an_element`` because the coercion framework does not
     currently allow a tuple to be returned for facade parents::
 
-        sage: TestSuite(Ukeep).run(skip="_test_an_element")                             # optional - sage.combinat
+        sage: TestSuite(Ukeep).run(skip="_test_an_element")                             # needs sage.combinat
 
     The following three lines are required for the pickling tests,
     because the classes ``MyUnion`` and ``UnionOfSpecialSets`` have
     been defined interactively::
 
         sage: import __main__
-        sage: __main__.MyUnion = MyUnion                                                # optional - sage.combinat
+        sage: __main__.MyUnion = MyUnion
         sage: __main__.UnionOfSpecialSets = UnionOfSpecialSets
 
-        sage: TestSuite(pp).run()                                                       # optional - sage.combinat
-        sage: TestSuite(psp).run()                                                      # optional - sage.combinat
+        sage: TestSuite(pp).run()
+        sage: TestSuite(psp).run()
 
     """
 
@@ -276,8 +280,8 @@ class DisjointUnionEnumeratedSets(UniqueRepresentation, Parent):
             ....:                                  2: FiniteEnumeratedSet([4,5,6])})
             sage: TestSuite(U).run()
 
-            sage: X = DisjointUnionEnumeratedSets({i: Partitions(i) for i in range(5)})     # optional - sage.combinat sage.libs.flint
-            sage: TestSuite(X).run()                                                        # optional - sage.combinat sage.libs.flint
+            sage: X = DisjointUnionEnumeratedSets({i: Partitions(i) for i in range(5)})             # needs sage.combinat sage.libs.flint
+            sage: TestSuite(X).run()                                                    # needs sage.combinat sage.libs.flint
         """
         self._family = family
         self._facade = facade
@@ -326,9 +330,9 @@ class DisjointUnionEnumeratedSets(UniqueRepresentation, Parent):
 
         EXAMPLES::
 
-            sage: U4 = DisjointUnionEnumeratedSets(                                     # optional - sage.combinat
+            sage: U4 = DisjointUnionEnumeratedSets(
             ....:          Family(NonNegativeIntegers(), Compositions))
-            sage: U4._is_a(Composition([3,2,1,1]))                                      # optional - sage.combinat
+            sage: U4._is_a(Composition([3,2,1,1]))
             doctest:...: UserWarning: Disjoint union of Lazy family
             (<class 'sage.combinat.composition.Compositions'>(i))_{i in Non negative integers}
             is an infinite union
@@ -357,9 +361,9 @@ class DisjointUnionEnumeratedSets(UniqueRepresentation, Parent):
 
         EXAMPLES::
 
-            sage: U4 = DisjointUnionEnumeratedSets(                                     # optional - sage.combinat
+            sage: U4 = DisjointUnionEnumeratedSets(                                     # needs sage.combinat
             ....:          Family(NonNegativeIntegers(), Partitions))
-            sage: Partition([]) in U4                                                   # optional - sage.combinat
+            sage: Partition([]) in U4                                                   # needs sage.combinat
             doctest:...: UserWarning: Disjoint union of Lazy family
             (<class 'sage.combinat.partition.Partitions'>(i))_{i in Non negative integers}
             is an infinite union
@@ -369,7 +373,7 @@ class DisjointUnionEnumeratedSets(UniqueRepresentation, Parent):
         Note: one has to use a different family from the previous one in this
         file otherwise the warning is not re-issued::
 
-            sage: Partition([3,2,1,1]) in U4                                            # optional - sage.combinat
+            sage: Partition([3,2,1,1]) in U4                                            # needs sage.combinat
             True
 
         The following call will loop forever::
@@ -388,21 +392,22 @@ class DisjointUnionEnumeratedSets(UniqueRepresentation, Parent):
         """
         TESTS::
 
-            sage: U4 = DisjointUnionEnumeratedSets(                                     # optional - sage.combinat
+            sage: U4 = DisjointUnionEnumeratedSets(
             ....:          Family(NonNegativeIntegers(), Permutations))
-            sage: it = iter(U4)                                                         # optional - sage.combinat
-            sage: [next(it), next(it), next(it), next(it), next(it), next(it)]          # optional - sage.combinat
+            sage: it = iter(U4)
+            sage: [next(it), next(it), next(it), next(it), next(it), next(it)]
             [[], [1], [1, 2], [2, 1], [1, 2, 3], [1, 3, 2]]
 
-            sage: U4 = DisjointUnionEnumeratedSets(                                     # optional - sage.combinat
+            sage: # needs sage.combinat
+            sage: U4 = DisjointUnionEnumeratedSets(
             ....:          Family(NonNegativeIntegers(), Permutations),
             ....:          keepkey=True, facade=False)
-            sage: it = iter(U4)                                                         # optional - sage.combinat
-            sage: [next(it), next(it), next(it), next(it), next(it), next(it)]          # optional - sage.combinat
+            sage: it = iter(U4)
+            sage: [next(it), next(it), next(it), next(it), next(it), next(it)]
             [(0, []), (1, [1]), (2, [1, 2]), (2, [2, 1]), (3, [1, 2, 3]), (3, [1, 3, 2])]
-            sage: el = next(it); el.parent() == U4                                      # optional - sage.combinat
+            sage: el = next(it); el.parent() == U4
             True
-            sage: el.value == (3, Permutation([2,1,3]))                                 # optional - sage.combinat
+            sage: el.value == (3, Permutation([2,1,3]))
             True
         """
         for k in self._family.keys():
@@ -421,9 +426,9 @@ class DisjointUnionEnumeratedSets(UniqueRepresentation, Parent):
 
         EXAMPLES::
 
-            sage: U4 = DisjointUnionEnumeratedSets(                                     # optional - sage.combinat
+            sage: U4 = DisjointUnionEnumeratedSets(
             ....:          Family([3, 5, 7], Permutations))
-            sage: U4.an_element()                                                       # optional - sage.combinat
+            sage: U4.an_element()
             [1, 2, 3]
         """
         return self._an_element_from_iterator()
@@ -438,16 +443,16 @@ class DisjointUnionEnumeratedSets(UniqueRepresentation, Parent):
         For finite disjoint unions, the cardinality is computed by
         summing the cardinalities of the enumerated sets::
 
-            sage: U = DisjointUnionEnumeratedSets(Family([0,1,2,3], Permutations))      # optional - sage.combinat
-            sage: U.cardinality()                                                       # optional - sage.combinat
+            sage: U = DisjointUnionEnumeratedSets(Family([0,1,2,3], Permutations))
+            sage: U.cardinality()
             10
 
         For infinite disjoint unions, this makes the assumption that
         the result is infinite::
 
-            sage: U = DisjointUnionEnumeratedSets(                                      # optional - sage.combinat
+            sage: U = DisjointUnionEnumeratedSets(
             ....:         Family(NonNegativeIntegers(), Permutations))
-            sage: U.cardinality()                                                       # optional - sage.combinat
+            sage: U.cardinality()
             +Infinity
 
         .. WARNING::
@@ -470,14 +475,15 @@ class DisjointUnionEnumeratedSets(UniqueRepresentation, Parent):
         """
         TESTS::
 
-            sage: U = DisjointUnionEnumeratedSets(                                      # optional - sage.combinat sage.libs.flint
+            sage: # needs sage.combinat sage.libs.flint
+            sage: U = DisjointUnionEnumeratedSets(
             ....:          Family([1,2,3], Partitions), facade=False)
-            sage: U._element_constructor_                                               # optional - sage.combinat sage.libs.flint
+            sage: U._element_constructor_
             <bound method DisjointUnionEnumeratedSets._element_constructor_default
              of Disjoint union of Finite family {...}>
-            sage: U = DisjointUnionEnumeratedSets(                                      # optional - sage.combinat sage.libs.flint
+            sage: U = DisjointUnionEnumeratedSets(
             ....:          Family([1,2,3], Partitions), facade=True)
-            sage: U._element_constructor_                                               # optional - sage.combinat sage.libs.flint
+            sage: U._element_constructor_
             <bound method DisjointUnionEnumeratedSets._element_constructor_facade
              of Disjoint union of Finite family {...}>
         """
@@ -490,13 +496,14 @@ class DisjointUnionEnumeratedSets(UniqueRepresentation, Parent):
         r"""
         TESTS::
 
-            sage: U = DisjointUnionEnumeratedSets(                                      # optional - sage.combinat sage.libs.flint
+            sage: # needs sage.combinat sage.libs.flint
+            sage: U = DisjointUnionEnumeratedSets(
             ....:         Family([1,2,3], Partitions), facade=False)
-            sage: U([1])       # indirect doctest                                       # optional - sage.combinat sage.libs.flint
+            sage: U([1])       # indirect doctest
             [1]
-            sage: U([2,1])     # indirect doctest                                       # optional - sage.combinat sage.libs.flint
+            sage: U([2,1])     # indirect doctest
             [2, 1]
-            sage: U([1,3,2])   # indirect doctest                                       # optional - sage.combinat sage.libs.flint
+            sage: U([1,3,2])   # indirect doctest
             Traceback (most recent call last):
             ...
             ValueError: value [1, 3, 2] does not belong to Disjoint union of
@@ -504,13 +511,14 @@ class DisjointUnionEnumeratedSets(UniqueRepresentation, Parent):
                  2: Partitions of the integer 2,
                  3: Partitions of the integer 3}
 
-            sage: U = DisjointUnionEnumeratedSets(                                      # optional - sage.combinat sage.libs.flint
+            sage: # needs sage.combinat sage.libs.flint
+            sage: U = DisjointUnionEnumeratedSets(
             ....:          Family([1,2,3], Partitions), keepkey=True, facade=False)
-            sage: U((1, [1]))    # indirect doctest                                     # optional - sage.combinat sage.libs.flint
+            sage: U((1, [1]))    # indirect doctest
             (1, [1])
-            sage: U((3,[2,1]))   # indirect doctest                                     # optional - sage.combinat sage.libs.flint
+            sage: U((3,[2,1]))   # indirect doctest
             (3, [2, 1])
-            sage: U((4,[2,1]))   # indirect doctest                                     # optional - sage.combinat sage.libs.flint
+            sage: U((4,[2,1]))   # indirect doctest
             Traceback (most recent call last):
             ...
             ValueError: value (4, [2, 1]) does not belong to Disjoint union of
@@ -529,13 +537,14 @@ class DisjointUnionEnumeratedSets(UniqueRepresentation, Parent):
         """
         TESTS::
 
-            sage: X = DisjointUnionEnumeratedSets({i: Partitions(i)                     # optional - sage.combinat sage.libs.flint
+            sage: # needs sage.combinat sage.libs.flint
+            sage: X = DisjointUnionEnumeratedSets({i: Partitions(i)
             ....:                                  for i in range(5)})
-            sage: X([1]).parent()                                                       # optional - sage.combinat sage.libs.flint
+            sage: X([1]).parent()
             Partitions of the integer 1
-            sage: X([2,1,1]).parent()  # indirect doctest                               # optional - sage.combinat sage.libs.flint
+            sage: X([2,1,1]).parent()  # indirect doctest
             Partitions of the integer 4
-            sage: X([6])                                                                # optional - sage.combinat sage.libs.flint
+            sage: X([6])
             Traceback (most recent call last):
             ...
             ValueError: cannot coerce `[6]` in any parent in `Finite family {...}`
@@ -544,24 +553,25 @@ class DisjointUnionEnumeratedSets(UniqueRepresentation, Parent):
         because this returns a `tuple`, where the coercion framework requires
         an :class:`Element` be returned.
 
-            sage: X = DisjointUnionEnumeratedSets({i: Partitions(i)                     # optional - sage.combinat sage.libs.flint
+            sage: X = DisjointUnionEnumeratedSets({i: Partitions(i)                     # needs sage.combinat sage.libs.flint
             ....:                                  for i in range(5)},
             ....:                                 keepkey=True)
-            sage: p = X._element_constructor_((0, []))  # indirect doctest              # optional - sage.combinat sage.libs.flint
-            sage: p[1].parent()                                                         # optional - sage.combinat sage.libs.flint
+            sage: p = X._element_constructor_((0, []))  # indirect doctest              # needs sage.combinat sage.libs.flint
+            sage: p[1].parent()                                                         # needs sage.combinat sage.libs.flint
             Partitions of the integer 0
 
         Test that facade parents can create and properly access elements
         that are tuples (fixed by :trac:`22382`)::
 
-            sage: f = lambda mu: cartesian_product([mu.standard_tableaux(),             # optional - sage.combinat sage.libs.flint
+            sage: # needs sage.combinat sage.libs.flint
+            sage: f = lambda mu: cartesian_product([mu.standard_tableaux(),
             ....:                                   mu.standard_tableaux()])
-            sage: tabs = DisjointUnionEnumeratedSets(Family(Partitions(4), f))          # optional - sage.combinat sage.libs.flint
-            sage: s = StandardTableau([[1,3],[2,4]])                                    # optional - sage.combinat sage.libs.flint
-            sage: (s,s) in tabs                                                         # optional - sage.combinat sage.libs.flint
+            sage: tabs = DisjointUnionEnumeratedSets(Family(Partitions(4), f))
+            sage: s = StandardTableau([[1,3],[2,4]])
+            sage: (s,s) in tabs
             True
-            sage: ss = tabs( (s,s) )                                                    # optional - sage.combinat sage.libs.flint
-            sage: ss[0]                                                                 # optional - sage.combinat sage.libs.flint
+            sage: ss = tabs( (s,s) )
+            sage: ss[0]
             [[1, 3], [2, 4]]
 
         We do not coerce when one of the elements is already in the set::
@@ -597,13 +607,14 @@ class DisjointUnionEnumeratedSets(UniqueRepresentation, Parent):
         """
         TESTS::
 
-            sage: U = DisjointUnionEnumeratedSets(                                      # optional - sage.combinat sage.libs.flint
+            sage: # needs sage.combinat sage.libs.flint
+            sage: U = DisjointUnionEnumeratedSets(
             ....:          Family([1,2,3], Partitions), facade=False)
-            sage: U.Element                                                             # optional - sage.combinat sage.libs.flint
+            sage: U.Element
             <... 'sage.structure.element_wrapper.ElementWrapper'>
-            sage: U = DisjointUnionEnumeratedSets(                                      # optional - sage.combinat sage.libs.flint
+            sage: U = DisjointUnionEnumeratedSets(
             ....:          Family([1,2,3], Partitions), facade=True)
-            sage: U.Element                                                             # optional - sage.combinat sage.libs.flint
+            sage: U.Element
             Traceback (most recent call last):
             ...
             AttributeError: 'DisjointUnionEnumeratedSets_with_category' object

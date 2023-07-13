@@ -122,7 +122,7 @@ def DisjointSet(arg):
 
     or an iterable::
 
-        sage: DisjointSet(4.3)                                                          # optional - sage.rings.real_mpfr
+        sage: DisjointSet(4.3)                                                          # needs sage.rings.real_mpfr
         Traceback (most recent call last):
         ...
         TypeError: 'sage.rings.real_mpfr.RealLiteral' object is not iterable
@@ -560,7 +560,7 @@ cdef class DisjointSet_of_integers(DisjointSet_class):
             sage: d.union(4,1)
             sage: e = d.element_to_root_dict(); e
             {0: 0, 1: 4, 2: 2, 3: 2, 4: 4}
-            sage: WordMorphism(e)                                                       # optional - sage.combinat
+            sage: WordMorphism(e)                                                       # needs sage.combinat
             WordMorphism: 0->0, 1->4, 2->2, 3->2, 4->4
         """
         d = {}
@@ -582,9 +582,9 @@ cdef class DisjointSet_of_integers(DisjointSet_class):
             sage: d.union(3,4)
             sage: d
             {{0}, {1, 2, 3, 4}}
-            sage: g = d.to_digraph(); g                                                 # optional - sage.graphs
+            sage: g = d.to_digraph(); g                                                 # needs sage.graphs
             Looped digraph on 5 vertices
-            sage: g.edges(sort=True)                                                    # optional - sage.graphs
+            sage: g.edges(sort=True)                                                    # needs sage.graphs
             [(0, 0, None), (1, 2, None), (2, 2, None), (3, 2, None), (4, 2, None)]
 
         The result depends on the ordering of the union::
@@ -595,7 +595,7 @@ cdef class DisjointSet_of_integers(DisjointSet_class):
             sage: d.union(1,4)
             sage: d
             {{0}, {1, 2, 3, 4}}
-            sage: d.to_digraph().edges(sort=True)                                       # optional - sage.graphs
+            sage: d.to_digraph().edges(sort=True)                                       # needs sage.graphs
             [(0, 0, None), (1, 1, None), (2, 1, None), (3, 1, None), (4, 1, None)]
 
         """
@@ -851,7 +851,7 @@ cdef class DisjointSet_of_hashables(DisjointSet_class):
             sage: e = d.element_to_root_dict()
             sage: sorted(e.items())
             [(0, 0), (1, 4), (2, 2), (3, 2), (4, 4)]
-            sage: WordMorphism(e)                                                       # optional - sage.combinat
+            sage: WordMorphism(e)                                                       # needs sage.combinat
             WordMorphism: 0->0, 1->4, 2->2, 3->2, 4->4
         """
         d = {}
@@ -872,9 +872,9 @@ cdef class DisjointSet_of_hashables(DisjointSet_class):
             sage: d.union(3,4)
             sage: d
             {{0}, {1, 2, 3, 4}}
-            sage: g = d.to_digraph(); g                                                 # optional - sage.graphs
+            sage: g = d.to_digraph(); g                                                 # needs sage.graphs
             Looped digraph on 5 vertices
-            sage: g.edges(sort=True)                                                    # optional - sage.graphs
+            sage: g.edges(sort=True)                                                    # needs sage.graphs
             [(0, 0, None), (1, 2, None), (2, 2, None), (3, 2, None), (4, 2, None)]
 
         The result depends on the ordering of the union::
@@ -885,7 +885,7 @@ cdef class DisjointSet_of_hashables(DisjointSet_class):
             sage: d.union(1,4)
             sage: d
             {{0}, {1, 2, 3, 4}}
-            sage: d.to_digraph().edges(sort=True)                                       # optional - sage.graphs
+            sage: d.to_digraph().edges(sort=True)                                       # needs sage.graphs
             [(0, 0, None), (1, 1, None), (2, 1, None), (3, 1, None), (4, 1, None)]
         """
         d = {}

@@ -96,15 +96,15 @@ Identity permutation as seed and ``permutohedron_succ`` as successor
 function::
 
     sage: succ = attrcall("permutohedron_succ")
-    sage: seed = [Permutation([1..5])]                                                  # optional - sage.combinat
-    sage: R = RecursivelyEnumeratedSet(seed, succ, structure='graded')                  # optional - sage.combinat
-    sage: R                                                                             # optional - sage.combinat
+    sage: seed = [Permutation([1..5])]
+    sage: R = RecursivelyEnumeratedSet(seed, succ, structure='graded')
+    sage: R
     A recursively enumerated set with a graded structure (breadth first search)
 
 Depth first search iterator::
 
-    sage: it_depth = R.depth_first_search_iterator()                                    # optional - sage.combinat
-    sage: [next(it_depth) for _ in range(5)]                                            # optional - sage.combinat
+    sage: it_depth = R.depth_first_search_iterator()
+    sage: [next(it_depth) for _ in range(5)]
     [[1, 2, 3, 4, 5],
      [1, 2, 3, 5, 4],
      [1, 2, 5, 3, 4],
@@ -113,8 +113,8 @@ Depth first search iterator::
 
 Breadth first search iterator::
 
-    sage: it_breadth = R.breadth_first_search_iterator()                                # optional - sage.combinat
-    sage: [next(it_breadth) for _ in range(5)]                                          # optional - sage.combinat
+    sage: it_breadth = R.breadth_first_search_iterator()
+    sage: [next(it_breadth) for _ in range(5)]
     [[1, 2, 3, 4, 5],
      [2, 1, 3, 4, 5],
      [1, 3, 2, 4, 5],
@@ -123,20 +123,21 @@ Breadth first search iterator::
 
 Elements of given depth iterator::
 
-    sage: sorted(R.elements_of_depth_iterator(9))                                       # optional - sage.combinat
+    sage: sorted(R.elements_of_depth_iterator(9))
     [[4, 5, 3, 2, 1], [5, 3, 4, 2, 1], [5, 4, 2, 3, 1], [5, 4, 3, 1, 2]]
-    sage: list(R.elements_of_depth_iterator(10))                                        # optional - sage.combinat
+    sage: list(R.elements_of_depth_iterator(10))
     [[5, 4, 3, 2, 1]]
 
 Graded components (set of elements of the same depth)::
 
-    sage: sorted(R.graded_component(0))                                                 # optional - sage.combinat
+    sage: # needs sage.combinat
+    sage: sorted(R.graded_component(0))
     [[1, 2, 3, 4, 5]]
-    sage: sorted(R.graded_component(1))                                                 # optional - sage.combinat
+    sage: sorted(R.graded_component(1))
     [[1, 2, 3, 5, 4], [1, 2, 4, 3, 5], [1, 3, 2, 4, 5], [2, 1, 3, 4, 5]]
-    sage: sorted(R.graded_component(9))                                                 # optional - sage.combinat
+    sage: sorted(R.graded_component(9))
     [[4, 5, 3, 2, 1], [5, 3, 4, 2, 1], [5, 4, 2, 3, 1], [5, 4, 3, 1, 2]]
-    sage: sorted(R.graded_component(10))                                                # optional - sage.combinat
+    sage: sorted(R.graded_component(10))
     [[5, 4, 3, 2, 1]]
 
 Forest structure
@@ -397,7 +398,7 @@ def RecursivelyEnumeratedSet(seeds, successors, structure=None,
 
     A recursive set given by a graded relation::
 
-        sage: # optional - sage.symbolic
+        sage: # needs sage.symbolic
         sage: def f(a):
         ....:     return [a + 1, a + I]
         sage: C = RecursivelyEnumeratedSet([0], f, structure='graded'); C
@@ -896,10 +897,11 @@ cdef class RecursivelyEnumeratedSet_generic(Parent):
 
         We compute all the permutations of 3::
 
-            sage: seeds = [Permutation([1,2,3])]                                        # optional - sage.combinat
-            sage: succ = attrcall("permutohedron_succ")                                 # optional - sage.combinat
-            sage: R = RecursivelyEnumeratedSet(seeds, succ)                             # optional - sage.combinat
-            sage: sorted(R.naive_search_iterator())                                     # optional - sage.combinat
+            sage: # needs sage.combinat
+            sage: seeds = [Permutation([1,2,3])]
+            sage: succ = attrcall("permutohedron_succ")
+            sage: R = RecursivelyEnumeratedSet(seeds, succ)
+            sage: sorted(R.naive_search_iterator())
             [[1, 2, 3], [1, 3, 2], [2, 1, 3], [2, 3, 1], [3, 1, 2], [3, 2, 1]]
         """
         cdef set known, todo
@@ -972,7 +974,7 @@ cdef class RecursivelyEnumeratedSet_generic(Parent):
             sage: def child(i):
             ....:     return [(i+3) % 10, (i+8) % 10]
             sage: R = RecursivelyEnumeratedSet([0], child)
-            sage: R.to_digraph()                                                        # optional - sage.graphs
+            sage: R.to_digraph()                                                        # needs sage.graphs
             Looped multi-digraph on 10 vertices
 
         Digraph of an recursively enumerated set with a symmetric structure of
@@ -983,14 +985,14 @@ cdef class RecursivelyEnumeratedSet_generic(Parent):
             ....:             (a[0] + 1, a[1]), (a[0], a[1] + 1)]
             sage: seeds = [(0, 0)]
             sage: C = RecursivelyEnumeratedSet(seeds, succ, structure='symmetric')
-            sage: C.to_digraph(max_depth=3)                                             # optional - sage.graphs
+            sage: C.to_digraph(max_depth=3)                                             # needs sage.graphs
             Looped multi-digraph on 41 vertices
 
         The ``max_depth`` argument can be given at the creation of the set::
 
             sage: C = RecursivelyEnumeratedSet(seeds, succ, structure='symmetric',
             ....:                              max_depth=2)
-            sage: C.to_digraph()                                                        # optional - sage.graphs
+            sage: C.to_digraph()                                                        # needs sage.graphs
             Looped multi-digraph on 25 vertices
 
         Digraph of an recursively enumerated set with a graded structure::
@@ -998,7 +1000,7 @@ cdef class RecursivelyEnumeratedSet_generic(Parent):
             sage: def f(a):
             ....:     return [a + 1, a + I]
             sage: C = RecursivelyEnumeratedSet([0], f, structure='graded')
-            sage: C.to_digraph(max_depth=4)                                             # optional - sage.graphs
+            sage: C.to_digraph(max_depth=4)                                             # needs sage.graphs
             Looped multi-digraph on 21 vertices
         """
         successors = self.successors
@@ -1153,7 +1155,7 @@ cdef class RecursivelyEnumeratedSet_symmetric(RecursivelyEnumeratedSet_generic):
 
         Gaussian integers::
 
-            sage: # optional - sage.symbolic
+            sage: # needs sage.symbolic
             sage: def f(a):
             ....:     return [a + 1, a + I]
             sage: S = RecursivelyEnumeratedSet([0], f, structure='symmetric')
@@ -1172,7 +1174,7 @@ cdef class RecursivelyEnumeratedSet_symmetric(RecursivelyEnumeratedSet_generic):
         Note that interrupting the computation (``KeyboardInterrupt`` for
         instance) breaks the iterator::
 
-            sage: # optional - sage.symbolic
+            sage: # needs sage.symbolic
             sage: def f(a):
             ....:     sleep(0.05r)
             ....:     return [a - 1, a + 1]
@@ -1447,7 +1449,7 @@ cdef class RecursivelyEnumeratedSet_graded(RecursivelyEnumeratedSet_generic):
 
         EXAMPLES::
 
-            sage: # optional - sage.symbolic
+            sage: # needs sage.symbolic
             sage: def f(a):
             ....:     return [a + 1, a + I]
             sage: C = RecursivelyEnumeratedSet([0], f, structure='graded')
@@ -1462,7 +1464,7 @@ cdef class RecursivelyEnumeratedSet_graded(RecursivelyEnumeratedSet_generic):
 
         We make sure that :trac:`21312` is fixed::
 
-            sage: # optional - sage.symbolic
+            sage: # needs sage.symbolic
             sage: def f(a):
             ....:    sleep(0.1r)
             ....:    return [a + 1, a + I]
@@ -2167,13 +2169,13 @@ class RecursivelyEnumeratedSet_forest(Parent):
             sage: F = RecursivelyEnumeratedSet(seeds, succ,
             ....:         structure='forest', enumeration='depth')
 
-            sage: y = var('y')                                                          # optional - sage.symbolic
+            sage: y = var('y')                                                          # needs sage.symbolic
             sage: def map_function(t):
             ....:     li, sum, _ = t
             ....:     return y ^ sum
             sage: def reduce_function(x, y):
             ....:     return x + y
-            sage: F.map_reduce(map_function, reduce_function, 0)                        # optional - sage.symbolic
+            sage: F.map_reduce(map_function, reduce_function, 0)                        # needs sage.symbolic
             y^45 + y^44 + y^43 + 2*y^42 + 2*y^41 + 3*y^40 + 4*y^39 + 5*y^38 + 6*y^37
             + 8*y^36 + 9*y^35 + 10*y^34 + 12*y^33 + 13*y^32 + 15*y^31 + 17*y^30
             + 18*y^29 + 19*y^28 + 21*y^27 + 21*y^26 + 22*y^25 + 23*y^24 + 23*y^23

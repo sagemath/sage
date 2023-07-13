@@ -71,7 +71,7 @@ def has_finite_length(obj):
         True
         sage: has_finite_length(iter(range(10)))
         False
-        sage: has_finite_length(GF(17^127))                                             # optional - sage.rings.finite_rings
+        sage: has_finite_length(GF(17^127))                                             # needs sage.rings.finite_rings
         True
         sage: has_finite_length(ZZ)
         False
@@ -100,17 +100,18 @@ def Set(X=None, category=None):
 
     EXAMPLES::
 
-        sage: X = Set(GF(9, 'a'))                                                       # optional - sage.rings.finite_rings
-        sage: X                                                                         # optional - sage.rings.finite_rings
+        sage: # needs sage.rings.finite_rings
+        sage: X = Set(GF(9, 'a'))
+        sage: X
         {0, 1, 2, a, a + 1, a + 2, 2*a, 2*a + 1, 2*a + 2}
-        sage: type(X)                                                                   # optional - sage.rings.finite_rings
+        sage: type(X)
         <class 'sage.sets.set.Set_object_enumerated_with_category'>
-        sage: Y = X.union(Set(QQ))                                                      # optional - sage.rings.finite_rings
-        sage: Y                                                                         # optional - sage.rings.finite_rings
+        sage: Y = X.union(Set(QQ))
+        sage: Y
         Set-theoretic union of
          {0, 1, 2, a, a + 1, a + 2, 2*a, 2*a + 1, 2*a + 2} and
          Set of elements of Rational Field
-        sage: type(Y)                                                                   # optional - sage.rings.finite_rings
+        sage: type(Y)
         <class 'sage.sets.set.Set_object_union_with_category'>
 
     Usually sets can be used as dictionary keys.
@@ -152,7 +153,7 @@ def Set(X=None, category=None):
 
     We can also create sets from different types::
 
-        sage: sorted(Set([Sequence([3,1], immutable=True), 5, QQ, Partition([3,1,1])]), key=str)
+        sage: sorted(Set([Sequence([3,1], immutable=True), 5, QQ, Partition([3,1,1])]), key=str)    # needs sage.combinat
         [5, Rational Field, [3, 1, 1], [3, 1]]
 
     Sets with unhashable objects work, but with less functionality::
@@ -236,9 +237,9 @@ class Set_base():
             True
             sage: GF(3)(2) in X
             True
-            sage: GF(5)(2) in X                                                         # optional - sage.rings.finite_rings
+            sage: GF(5)(2) in X                                                         # needs sage.rings.finite_rings
             False
-            sage: sorted(Set(GF(7)) + Set(GF(3)), key=int)                              # optional - sage.rings.finite_rings
+            sage: sorted(Set(GF(7)) + Set(GF(3)), key=int)                              # needs sage.rings.finite_rings
             [0, 0, 1, 1, 2, 2, 3, 4, 5, 6]
         """
         if isinstance(X, (Set_generic, Set_base)):
@@ -262,10 +263,10 @@ class Set_base():
             sage: 2/1 in X
             True
 
-            sage: X = Set(GF(9,'b')).intersection(Set(GF(27,'c'))); X                   # optional - sage.rings.finite_rings
+            sage: X = Set(GF(9,'b')).intersection(Set(GF(27,'c'))); X                   # needs sage.rings.finite_rings
             {}
 
-            sage: X = Set(GF(9,'b')).intersection(Set(GF(27,'b'))); X                   # optional - sage.rings.finite_rings
+            sage: X = Set(GF(9,'b')).intersection(Set(GF(27,'b'))); X                   # needs sage.rings.finite_rings
             {}
         """
         if isinstance(X, (Set_generic, Set_base)):
@@ -289,10 +290,10 @@ class Set_base():
             sage: 4/1 in X
             True
 
-            sage: X = Set(GF(9,'b')).difference(Set(GF(27,'c'))); X                     # optional - sage.rings.finite_rings
+            sage: X = Set(GF(9,'b')).difference(Set(GF(27,'c'))); X                     # needs sage.rings.finite_rings
             {0, 1, 2, b, b + 1, b + 2, 2*b, 2*b + 1, 2*b + 2}
 
-            sage: X = Set(GF(9,'b')).difference(Set(GF(27,'b'))); X                     # optional - sage.rings.finite_rings
+            sage: X = Set(GF(9,'b')).difference(Set(GF(27,'b'))); X                     # needs sage.rings.finite_rings
             {0, 1, 2, b, b + 1, b + 2, 2*b, 2*b + 1, 2*b + 2}
         """
         if isinstance(X, (Set_generic, Set_base)):
@@ -330,7 +331,7 @@ class Set_base():
 
         Instances of other subclasses of :class:`Set_base` run this method::
 
-            sage: Polyhedron()._test_as_set_object(verbose=True)                        # optional - sage.geometry.polyhedron
+            sage: Polyhedron()._test_as_set_object(verbose=True)                        # needs sage.geometry.polyhedron
             Running the test suite of Set(self)
             running ._test_an_element() . . . pass
             ...
@@ -412,15 +413,15 @@ class Set_add_sub_operators:
 
         EXAMPLES::
 
-            sage: Set(RealField()) + Set(QQ^5)                                          # optional - sage.modules
+            sage: Set(RealField()) + Set(QQ^5)                                          # needs sage.modules
              Set-theoretic union of
               Set of elements of Real Field with 53 bits of precision and
               Set of elements of Vector space of dimension 5 over Rational Field
-            sage: Set(GF(3)) + Set(GF(2))                                               # optional - sage.rings.finite_rings
+            sage: Set(GF(3)) + Set(GF(2))                                               # needs sage.rings.finite_rings
             {0, 1, 2, 0, 1}
-            sage: Set(GF(2)) + Set(GF(4,'a'))                                           # optional - sage.rings.finite_rings
+            sage: Set(GF(2)) + Set(GF(4,'a'))                                           # needs sage.rings.finite_rings
             {0, 1, a, a + 1}
-            sage: sorted(Set(GF(8,'b')) + Set(GF(4,'a')), key=str)                      # optional - sage.rings.finite_rings
+            sage: sorted(Set(GF(8,'b')) + Set(GF(4,'a')), key=str)                      # needs sage.rings.finite_rings
             [0, 0, 1, 1, a, a + 1, b, b + 1, b^2, b^2 + 1, b^2 + b, b^2 + b + 1]
         """
         return self.union(X)
@@ -587,8 +588,8 @@ class Set_object(Set_generic, Set_base, Set_boolean_operators, Set_add_sub_opera
 
         EXAMPLES::
 
-            sage: R = Set(RR)                                                           # optional - sage.rings.real_mpfr
-            sage: R.an_element()  # indirect doctest                                    # optional - sage.rings.real_mpfr
+            sage: R = Set(RR)
+            sage: R.an_element()  # indirect doctest                                    # needs sage.rings.real_mpfr
             1.00000000000000
 
             sage: F = Set([1, 2, 3])
@@ -630,9 +631,9 @@ class Set_object(Set_generic, Set_base, Set_boolean_operators, Set_add_sub_opera
             False
             sage: 5/3 in GF(7)
             False
-            sage: sorted(Set(GF(7)).union(Set(GF(5))), key=int)                         # optional - sage.rings.finite_rings
+            sage: sorted(Set(GF(7)).union(Set(GF(5))), key=int)                         # needs sage.rings.finite_rings
             [0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 6]
-            sage: Set(GF(7)).intersection(Set(GF(5)))                                   # optional - sage.rings.finite_rings
+            sage: Set(GF(7)).intersection(Set(GF(5)))                                   # needs sage.rings.finite_rings
             {}
         """
         return x in self.__object
@@ -678,7 +679,7 @@ class Set_object(Set_generic, Set_base, Set_boolean_operators, Set_add_sub_opera
             +Infinity
             sage: Set(GF(5)).cardinality()
             5
-            sage: Set(GF(5^2,'a')).cardinality()                                        # optional - sage.rings.finite_rings
+            sage: Set(GF(5^2,'a')).cardinality()                                        # needs sage.rings.finite_rings
             25
         """
         if self in Sets().Infinite():
@@ -716,7 +717,7 @@ class Set_object(Set_generic, Set_base, Set_boolean_operators, Set_add_sub_opera
             False
             sage: Set([1..100]).is_empty()
             False
-            sage: Set(SymmetricGroup(2).list()).is_empty()                              # optional - sage.groups
+            sage: Set(SymmetricGroup(2).list()).is_empty()                              # needs sage.groups
             False
             sage: Set(ZZ).is_empty()
             False
@@ -729,7 +730,7 @@ class Set_object(Set_generic, Set_base, Set_boolean_operators, Set_add_sub_opera
             False
             sage: Set([1..100]).is_empty()
             False
-            sage: Set(DihedralGroup(4).list()).is_empty()                               # optional - sage.groups
+            sage: Set(DihedralGroup(4).list()).is_empty()                               # needs sage.groups
             False
             sage: Set(QQ).is_empty()
             False
@@ -744,7 +745,7 @@ class Set_object(Set_generic, Set_base, Set_boolean_operators, Set_add_sub_opera
 
             sage: Set(QQ).is_finite()
             False
-            sage: Set(GF(250037)).is_finite()                                           # optional - sage.rings.finite_rings
+            sage: Set(GF(250037)).is_finite()                                           # needs sage.rings.finite_rings
             True
             sage: Set(Integers(2^1000000)).is_finite()
             True
@@ -801,10 +802,10 @@ class Set_object(Set_generic, Set_base, Set_boolean_operators, Set_add_sub_opera
         EXAMPLES::
 
             sage: X = Set([1,2,3])
-            sage: X.subsets_lattice()                                                   # optional - sage.combinat sage.graphs sage.modules
+            sage: X.subsets_lattice()                                                   # needs sage.combinat sage.graphs sage.modules
             Finite lattice containing 8 elements
             sage: Y = Set()
-            sage: Y.subsets_lattice()                                                   # optional - sage.combinat sage.graphs sage.modules
+            sage: Y.subsets_lattice()                                                   # needs sage.combinat sage.graphs sage.modules
             Finite lattice containing 1 elements
 
         """
@@ -840,7 +841,7 @@ class Set_object(Set_generic, Set_base, Set_boolean_operators, Set_add_sub_opera
 
             sage: X = Set(ZZ); X
             Set of elements of Integer Ring
-            sage: X._sympy_()                                                           # optional - sympy
+            sage: X._sympy_()                                                           # needs sympy
             Integers
         """
         from sage.interfaces.sympy import sympy_init
@@ -972,12 +973,13 @@ class Set_object_enumerated(Set_object):
 
         EXAMPLES::
 
-            sage: X = Set(GF(8,'c'))                                                    # optional - sage.rings.finite_rings
-            sage: X                                                                     # optional - sage.rings.finite_rings
+            sage: # needs sage.rings.finite_rings
+            sage: X = Set(GF(8,'c'))
+            sage: X
             {0, 1, c, c + 1, c^2, c^2 + 1, c^2 + c, c^2 + c + 1}
-            sage: X.list()                                                              # optional - sage.rings.finite_rings
+            sage: X.list()
             [0, 1, c, c + 1, c^2, c^2 + 1, c^2 + c, c^2 + c + 1]
-            sage: type(X.list())                                                        # optional - sage.rings.finite_rings
+            sage: type(X.list())
             <... 'list'>
 
         .. TODO::
@@ -1000,14 +1002,15 @@ class Set_object_enumerated(Set_object):
 
         EXAMPLES::
 
-            sage: X = Set(GF(8,'c'))                                                    # optional - sage.rings.finite_rings
-            sage: X                                                                     # optional - sage.rings.finite_rings
+            sage: # needs sage.rings.finite_rings
+            sage: X = Set(GF(8,'c'))
+            sage: X
             {0, 1, c, c + 1, c^2, c^2 + 1, c^2 + c, c^2 + c + 1}
-            sage: X.set()                                                               # optional - sage.rings.finite_rings
+            sage: X.set()
             {0, 1, c, c + 1, c^2, c^2 + 1, c^2 + c, c^2 + c + 1}
-            sage: type(X.set())                                                         # optional - sage.rings.finite_rings
+            sage: type(X.set())
             <... 'set'>
-            sage: type(X)                                                               # optional - sage.rings.finite_rings
+            sage: type(X)
             <class 'sage.sets.set.Set_object_enumerated_with_category'>
         """
         return set(self.object())
@@ -1019,22 +1022,23 @@ class Set_object_enumerated(Set_object):
 
         EXAMPLES::
 
-            sage: X = Set(GF(8,'c'))                                                    # optional - sage.rings.finite_rings
-            sage: X                                                                     # optional - sage.rings.finite_rings
+            sage: # needs sage.rings.finite_rings
+            sage: X = Set(GF(8,'c'))
+            sage: X
             {0, 1, c, c + 1, c^2, c^2 + 1, c^2 + c, c^2 + c + 1}
-            sage: s = X.set(); s                                                        # optional - sage.rings.finite_rings
+            sage: s = X.set(); s
             {0, 1, c, c + 1, c^2, c^2 + 1, c^2 + c, c^2 + c + 1}
-            sage: hash(s)                                                               # optional - sage.rings.finite_rings
+            sage: hash(s)
             Traceback (most recent call last):
             ...
             TypeError: unhashable type: 'set'
-            sage: s = X.frozenset(); s                                                  # optional - sage.rings.finite_rings
+            sage: s = X.frozenset(); s
             frozenset({0, 1, c, c + 1, c^2, c^2 + 1, c^2 + c, c^2 + c + 1})
 
-            sage: hash(s) != hash(tuple(X.set()))                                       # optional - sage.rings.finite_rings
+            sage: hash(s) != hash(tuple(X.set()))                                       # needs sage.rings.finite_rings
             True
 
-            sage: type(s)                                                               # optional - sage.rings.finite_rings
+            sage: type(s)                                                               # needs sage.rings.finite_rings
             <... 'frozenset'>
         """
         return frozenset(self.object())
@@ -1045,8 +1049,8 @@ class Set_object_enumerated(Set_object):
 
         EXAMPLES::
 
-            sage: s = Set(GF(8,'c'))                                                    # optional - sage.rings.finite_rings
-            sage: hash(s) == hash(s)                                                    # optional - sage.rings.finite_rings
+            sage: s = Set(GF(8,'c'))                                                    # needs sage.rings.finite_rings
+            sage: hash(s) == hash(s)                                                    # needs sage.rings.finite_rings
             True
         """
         return hash(self.frozenset())
@@ -1057,10 +1061,10 @@ class Set_object_enumerated(Set_object):
 
         EXAMPLES::
 
-            sage: X = Set(GF(8,'c'))                                                    # optional - sage.rings.finite_rings
-            sage: X == Set(GF(8,'c'))                                                   # optional - sage.rings.finite_rings
+            sage: X = Set(GF(8,'c'))                                                    # needs sage.rings.finite_rings
+            sage: X == Set(GF(8,'c'))                                                   # needs sage.rings.finite_rings
             True
-            sage: X == Set(GF(4,'a'))                                                   # optional - sage.rings.finite_rings
+            sage: X == Set(GF(4,'a'))                                                   # needs sage.rings.finite_rings
             False
             sage: Set(QQ) == Set(ZZ)
             False
@@ -1147,13 +1151,14 @@ class Set_object_enumerated(Set_object):
 
         EXAMPLES::
 
-            sage: X = Set(GF(8,'c'))                                                    # optional - sage.rings.finite_rings
-            sage: Y = Set([GF(8,'c').0, 1, 2, 3])                                       # optional - sage.rings.finite_rings
-            sage: X                                                                     # optional - sage.rings.finite_rings
+            sage: # needs sage.rings.finite_rings
+            sage: X = Set(GF(8,'c'))
+            sage: Y = Set([GF(8,'c').0, 1, 2, 3])
+            sage: X
             {0, 1, c, c + 1, c^2, c^2 + 1, c^2 + c, c^2 + c + 1}
-            sage: sorted(Y)                                                             # optional - sage.rings.finite_rings
+            sage: sorted(Y)
             [1, 2, 3, c]
-            sage: sorted(X.union(Y), key=str)                                           # optional - sage.rings.finite_rings
+            sage: sorted(X.union(Y), key=str)
             [0, 1, 2, 3, c, c + 1, c^2, c^2 + 1, c^2 + c, c^2 + c + 1]
         """
         if not isinstance(other, Set_object_enumerated):
@@ -1166,9 +1171,9 @@ class Set_object_enumerated(Set_object):
 
         EXAMPLES::
 
-            sage: X = Set(GF(8,'c'))                                                    # optional - sage.rings.finite_rings
-            sage: Y = Set([GF(8,'c').0, 1, 2, 3])                                       # optional - sage.rings.finite_rings
-            sage: X.intersection(Y)                                                     # optional - sage.rings.finite_rings
+            sage: X = Set(GF(8,'c'))                                                    # needs sage.rings.finite_rings
+            sage: Y = Set([GF(8,'c').0, 1, 2, 3])                                       # needs sage.rings.finite_rings
+            sage: X.intersection(Y)                                                     # needs sage.rings.finite_rings
             {1, c}
         """
         if not isinstance(other, Set_object_enumerated):
@@ -1186,8 +1191,8 @@ class Set_object_enumerated(Set_object):
             sage: X.difference(Y)
             {3, 4}
             sage: Z = Set(ZZ)
-            sage: W = Set([2.5, 4, 5, 6])                                               # optional - sage.rings.real_mpfr
-            sage: W.difference(Z)                                                       # optional - sage.rings.real_mpfr
+            sage: W = Set([2.5, 4, 5, 6])
+            sage: W.difference(Z)                                                       # needs sage.rings.real_mpfr
             {2.50000000000000}
         """
         if not isinstance(other, Set_object_enumerated):
@@ -1232,16 +1237,16 @@ class Set_object_enumerated(Set_object):
 
             sage: X = Set({1, 2, 3}); X
             {1, 2, 3}
-            sage: sX = X._sympy_(); sX                                                  # optional - sympy
+            sage: sX = X._sympy_(); sX                                                  # needs sympy
             Set(1, 2, 3)
-            sage: sX.is_empty is None                                                   # optional - sympy
+            sage: sX.is_empty is None                                                   # needs sympy
             True
 
             sage: Empty = Set([]); Empty
             {}
-            sage: sEmpty = Empty._sympy_(); sEmpty                                      # optional - sympy
+            sage: sEmpty = Empty._sympy_(); sEmpty                                      # needs sympy
             EmptySet
-            sage: sEmpty.is_empty                                                       # optional - sympy
+            sage: sEmpty.is_empty                                                       # needs sympy
             True
         """
         from sympy import Set, EmptySet
@@ -1269,10 +1274,10 @@ class Set_object_binary(Set_object, metaclass=ClasscallMetaclass):
 
     EXAMPLES::
 
-        sage: X = Set(QQ^2)                                                             # optional - sage.modules
+        sage: X = Set(QQ^2)                                                             # needs sage.modules
         sage: Y = Set(ZZ)
         sage: from sage.sets.set import Set_object_binary
-        sage: S = Set_object_binary(X, Y, "union", "\\cup"); S                          # optional - sage.modules
+        sage: S = Set_object_binary(X, Y, "union", "\\cup"); S                          # needs sage.modules
         Set-theoretic union of
          Set of elements of Vector space of dimension 2 over Rational Field and
          Set of elements of Integer Ring
@@ -1286,9 +1291,9 @@ class Set_object_binary(Set_object, metaclass=ClasscallMetaclass):
         TESTS::
 
             sage: from sage.sets.set import Set_object_binary
-            sage: X = QQ^2                                                              # optional - sage.modules
+            sage: X = QQ^2                                                              # needs sage.modules
             sage: Y = ZZ
-            sage: Set_object_binary(X, Y, "union", "\\cup")                             # optional - sage.modules
+            sage: Set_object_binary(X, Y, "union", "\\cup")                             # needs sage.modules
             Set-theoretic union of
              Set of elements of Vector space of dimension 2 over Rational Field and
              Set of elements of Integer Ring
@@ -1306,10 +1311,10 @@ class Set_object_binary(Set_object, metaclass=ClasscallMetaclass):
         TESTS::
 
             sage: from sage.sets.set import Set_object_binary
-            sage: X = Set(QQ^2)                                                         # optional - sage.modules
+            sage: X = Set(QQ^2)                                                         # needs sage.modules
             sage: Y = Set(ZZ)
-            sage: S = Set_object_binary(X, Y, "union", "\\cup")                         # optional - sage.modules
-            sage: type(S)                                                               # optional - sage.modules
+            sage: S = Set_object_binary(X, Y, "union", "\\cup")                         # needs sage.modules
+            sage: type(S)                                                               # needs sage.modules
             <class 'sage.sets.set.Set_object_binary_with_category'>
         """
         self._X = X
@@ -1376,19 +1381,19 @@ class Set_object_union(Set_object_binary):
 
         EXAMPLES::
 
-            sage: S = Set(QQ^2)                                                         # optional - sage.modules
+            sage: S = Set(QQ^2)                                                         # needs sage.modules
             sage: T = Set(ZZ)
-            sage: X = S.union(T); X                                                     # optional - sage.modules
+            sage: X = S.union(T); X                                                     # needs sage.modules
             Set-theoretic union of
              Set of elements of Vector space of dimension 2 over Rational Field and
              Set of elements of Integer Ring
-            sage: X.category()                                                          # optional - sage.modules
+            sage: X.category()                                                          # needs sage.modules
             Category of infinite sets
 
-            sage: latex(X)                                                              # optional - sage.modules
+            sage: latex(X)                                                              # needs sage.modules
             \Bold{Q}^{2} \cup \Bold{Z}
 
-            sage: TestSuite(X).run()                                                    # optional - sage.modules
+            sage: TestSuite(X).run()                                                    # needs sage.modules
         """
         if category is None:
             category = Sets()
@@ -1429,11 +1434,12 @@ class Set_object_union(Set_object_binary):
 
         EXAMPLES::
 
-            sage: Y = Set(ZZ^2).union(Set(ZZ^3))                                        # optional - sage.modules
-            sage: X = Set(ZZ^3).union(Set(ZZ^2))                                        # optional - sage.modules
-            sage: X == Y                                                                # optional - sage.modules
+            sage: # needs sage.modules
+            sage: Y = Set(ZZ^2).union(Set(ZZ^3))
+            sage: X = Set(ZZ^3).union(Set(ZZ^2))
+            sage: X == Y
             True
-            sage: Y == X                                                                # optional - sage.modules
+            sage: Y == X
             True
 
         This illustrates that equality testing for formal unions
@@ -1459,7 +1465,7 @@ class Set_object_union(Set_object_binary):
 
         EXAMPLES::
 
-            sage: [x for x in Set(GF(3)).union(Set(GF(2)))]                             # optional - sage.rings.finite_rings
+            sage: [x for x in Set(GF(3)).union(Set(GF(2)))]                             # needs sage.rings.finite_rings
             [0, 1, 2, 0, 1]
         """
         for x in self._X:
@@ -1473,14 +1479,15 @@ class Set_object_union(Set_object_binary):
 
         EXAMPLES::
 
-            sage: X = Set(GF(3)).union(Set(GF(2)))                                      # optional - sage.rings.finite_rings
-            sage: GF(5)(1) in X                                                         # optional - sage.rings.finite_rings
+            sage: # needs sage.rings.finite_rings
+            sage: X = Set(GF(3)).union(Set(GF(2)))
+            sage: GF(5)(1) in X
             False
-            sage: GF(3)(2) in X                                                         # optional - sage.rings.finite_rings
+            sage: GF(3)(2) in X
             True
-            sage: GF(2)(0) in X                                                         # optional - sage.rings.finite_rings
+            sage: GF(2)(0) in X
             True
-            sage: GF(5)(0) in X                                                         # optional - sage.rings.finite_rings
+            sage: GF(5)(0) in X
             False
         """
         return x in self._X or x in self._Y
@@ -1491,10 +1498,10 @@ class Set_object_union(Set_object_binary):
 
         EXAMPLES::
 
-            sage: X = Set(GF(3)).union(Set(GF(2)))                                      # optional - sage.rings.finite_rings
-            sage: X                                                                     # optional - sage.rings.finite_rings
+            sage: X = Set(GF(3)).union(Set(GF(2)))                                      # needs sage.rings.finite_rings
+            sage: X                                                                     # needs sage.rings.finite_rings
             {0, 1, 2, 0, 1}
-            sage: X.cardinality()                                                       # optional - sage.rings.finite_rings
+            sage: X.cardinality()                                                       # needs sage.rings.finite_rings
             5
 
             sage: X = Set(GF(3)).union(Set(ZZ))
@@ -1512,7 +1519,7 @@ class Set_object_union(Set_object_binary):
 
             sage: X = Set(ZZ).union(Set([1/2])); X
             Set-theoretic union of Set of elements of Integer Ring and {1/2}
-            sage: X._sympy_()                                                           # optional - sympy
+            sage: X._sympy_()                                                           # needs sympy
             Union(Integers, Set(1/2))
         """
         from sympy import Union
@@ -1531,15 +1538,15 @@ class Set_object_intersection(Set_object_binary):
 
         EXAMPLES::
 
-            sage: S = Set(QQ^2)                                                         # optional - sage.modules
+            sage: S = Set(QQ^2)                                                         # needs sage.modules
             sage: T = Set(ZZ)
-            sage: X = S.intersection(T); X                                              # optional - sage.modules
+            sage: X = S.intersection(T); X                                              # needs sage.modules
             Set-theoretic intersection of
              Set of elements of Vector space of dimension 2 over Rational Field and
              Set of elements of Integer Ring
-            sage: X.category()                                                          # optional - sage.modules
+            sage: X.category()                                                          # needs sage.modules
             Category of enumerated sets
-            sage: latex(X)                                                              # optional - sage.modules
+            sage: latex(X)                                                              # needs sage.modules
             \Bold{Q}^{2} \cap \Bold{Z}
 
             sage: X = Set(IntegerRange(100)).intersection(Primes())
@@ -1666,18 +1673,18 @@ class Set_object_intersection(Set_object_binary):
             sage: X = Set(QQ).intersection(Set(RR))
             sage: 5 in X
             True
-            sage: ComplexField().0 in X                                                 # optional - sage.rings.real_mpfr
+            sage: ComplexField().0 in X                                                 # needs sage.rings.real_mpfr
             False
 
         Any specific floating-point number in Sage is to finite precision,
         hence it is rational::
 
-            sage: RR(sqrt(2)) in X                                                      # optional - sage.rings.real_mpfr sage.symbolic
+            sage: RR(sqrt(2)) in X                                                      # needs sage.rings.real_mpfr sage.symbolic
             True
 
         Real constants are not rational::
 
-            sage: pi in X                                                               # optional - sage.symbolic
+            sage: pi in X                                                               # needs sage.symbolic
             False
         """
         return x in self._X and x in self._Y
@@ -1693,7 +1700,7 @@ class Set_object_intersection(Set_object_binary):
             Set-theoretic intersection of
              Set of elements of Integer Ring and
              Set of elements of [3/2, 11/2]
-            sage: X._sympy_()                                                           # optional - sympy
+            sage: X._sympy_()                                                           # needs sympy
             Range(2, 6, 1)
         """
         from sympy import Intersection
@@ -1840,11 +1847,11 @@ class Set_object_difference(Set_object_binary):
             sage: X = Set(QQ).difference(Set(ZZ))
             sage: 5 in X
             False
-            sage: ComplexField().0 in X                                                 # optional - sage.rings.real_mpfr
+            sage: ComplexField().0 in X                                                 # needs sage.rings.real_mpfr
             False
-            sage: sqrt(2) in X     # since sqrt(2) is not a numerical approx            # optional - sage.symbolic
+            sage: sqrt(2) in X     # since sqrt(2) is not a numerical approx            # needs sage.symbolic
             False
-            sage: sqrt(RR(2)) in X # since sqrt(RR(2)) is a numerical approx            # optional - sage.rings.real_mpfr sage.symbolic
+            sage: sqrt(RR(2)) in X # since sqrt(RR(2)) is a numerical approx
             True
             sage: 5/2 in X
             True
@@ -1864,7 +1871,7 @@ class Set_object_difference(Set_object_binary):
              Set of elements of Integer Ring
             sage: X.category()
             Category of sets
-            sage: X._sympy_()                                                           # optional - sympy
+            sage: X._sympy_()                                                           # needs sympy
             Complement(Rationals, Integers)
 
             sage: X = Set(ZZ).difference(Set(QQ)); X
@@ -1873,7 +1880,7 @@ class Set_object_difference(Set_object_binary):
              Set of elements of Rational Field
             sage: X.category()
             Category of enumerated sets
-            sage: X._sympy_()                                                           # optional - sympy
+            sage: X._sympy_()                                                           # needs sympy
             EmptySet
         """
         from sympy import Complement
@@ -2013,13 +2020,13 @@ class Set_object_symmetric_difference(Set_object_binary):
             sage: X = Set(QQ).symmetric_difference(Primes())
             sage: 4 in X
             True
-            sage: ComplexField().0 in X                                                 # optional - sage.rings.real_mpfr
+            sage: ComplexField().0 in X                                                 # needs sage.rings.real_mpfr
             False
-            sage: sqrt(2) in X      # since sqrt(2) is currently symbolic               # optional - sage.symbolic
+            sage: sqrt(2) in X      # since sqrt(2) is currently symbolic               # needs sage.symbolic
             False
-            sage: sqrt(RR(2)) in X # since sqrt(RR(2)) is currently approximated        # optional - sage.rings.real_mpfr
+            sage: sqrt(RR(2)) in X # since sqrt(RR(2)) is currently approximated
             True
-            sage: pi in X                                                               # optional - sage.symbolic
+            sage: pi in X                                                               # needs sage.symbolic
             False
             sage: 5/2 in X
             True
@@ -2040,7 +2047,7 @@ class Set_object_symmetric_difference(Set_object_binary):
             Set-theoretic symmetric difference of
              Set of elements of Integer Ring and
              {0, 1, 2, 1/3, 2/3, 4/3, 5/3, 7/3, 8/3}
-            sage: X._sympy_()                                                           # optional - sympy
+            sage: X._sympy_()                                                           # needs sympy
             Union(Complement(Integers, Set(0, 1, 2, 1/3, 2/3, 4/3, 5/3, 7/3, 8/3)),
                   Complement(Set(0, 1, 2, 1/3, 2/3, 4/3, 5/3, 7/3, 8/3), Integers))
         """
