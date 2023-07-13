@@ -455,13 +455,13 @@ cdef class interval_bernstein_polynomial_integer(interval_bernstein_polynomial):
         <IBP: (1, 2, 3) + [0 .. 5)>
         sage: bp.variations()
         (0, 0)
-        sage: bp = mk_ibpi([-3, -1, 1, -1, -3, -1], lower=1, upper=5/4, usign=1,        # optional - sage.symbolic
+        sage: bp = mk_ibpi([-3, -1, 1, -1, -3, -1], lower=1, upper=5/4, usign=1,        # needs sage.symbolic
         ....:              error=2, scale_log2=-3, level=2, slope_err=RIF(pi)); print(bp)
         degree 5 IBP with 2-bit coefficients
-        sage: bp                                                                        # optional - sage.symbolic
+        sage: bp                                                                        # needs sage.symbolic
         <IBP: ((-3, -1, 1, -1, -3, -1) + [0 .. 2)) * 2^-3 over [1 .. 5/4]; usign 1;
               level 2; slope_err 3.141592653589794?>
-        sage: bp.variations()                                                           # optional - sage.symbolic
+        sage: bp.variations()                                                           # needs sage.symbolic
         (3, 3)
     """
 
@@ -1355,14 +1355,14 @@ cdef class interval_bernstein_polynomial_float(interval_bernstein_polynomial):
         <IBP: (0.1, 0.2, 0.3) + [0.0 .. 0.5]>
         sage: bp.variations()
         (0, 0)
-        sage: bp = mk_ibpf([-0.3, -0.1, 0.1, -0.1, -0.3, -0.1],                         # optional - sage.symbolic
+        sage: bp = mk_ibpf([-0.3, -0.1, 0.1, -0.1, -0.3, -0.1],                         # needs sage.symbolic
         ....:              lower=1, upper=5/4, usign=1, pos_err=0.2,
         ....:              scale_log2=-3, level=2, slope_err=RIF(pi)); print(bp)
         degree 5 IBP with floating-point coefficients
-        sage: bp                                                                        # optional - sage.symbolic
+        sage: bp                                                                        # needs sage.symbolic
         <IBP: ((-0.3, -0.1, 0.1, -0.1, -0.3, -0.1) + [0.0 .. 0.2]) * 2^-3
               over [1 .. 5/4]; usign 1; level 2; slope_err 3.141592653589794?>
-        sage: bp.variations()                                                           # optional - sage.symbolic
+        sage: bp.variations()                                                           # needs sage.symbolic
         (3, 3)
     """
 

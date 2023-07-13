@@ -74,9 +74,9 @@ def cyclotomic_coeffs(nn, sparse=None):
 
     Check that it has the right degree::
 
-        sage: euler_phi(30)                                                             # optional - sage.libs.pari
+        sage: euler_phi(30)                                                             # needs sage.libs.pari
         8
-        sage: R(cyclotomic_coeffs(14)).factor()                                         # optional - sage.libs.pari
+        sage: R(cyclotomic_coeffs(14)).factor()                                         # needs sage.libs.pari
         x^6 - x^5 + x^4 - x^3 + x^2 - x + 1
 
     The coefficients are not always +/-1::
@@ -253,9 +253,9 @@ def cyclotomic_value(n, x):
 
         sage: elements = [-1, 0, 1, 2, 1/2, Mod(3, 8), Mod(3,11)]
         sage: R.<x> = QQ[]; elements += [x^2 + 2]
-        sage: K.<i> = NumberField(x^2 + 1); elements += [i]                             # optional - sage.rings.number_fields
-        sage: elements += [GF(9,'a').gen()]                                             # optional - sage.rings.finite_rings
-        sage: elements += [Zp(3)(54)]                                                   # optional - sage.rings.padics
+        sage: K.<i> = NumberField(x^2 + 1); elements += [i]                             # needs sage.rings.number_fields
+        sage: elements += [GF(9,'a').gen()]                                             # needs sage.rings.finite_rings
+        sage: elements += [Zp(3)(54)]                                                   # needs sage.rings.padics
         sage: for y in elements:
         ....:     for n in [1..60]:
         ....:         val1 = cyclotomic_value(n, y)
@@ -265,7 +265,7 @@ def cyclotomic_value(n, x):
         ....:         if val1.parent() is not val2.parent():
         ....:             print("Wrong parent for cyclotomic_value(%s, %s) in %s"%(n,y,parent(y)))
 
-        sage: cyclotomic_value(20, I)                                                   # optional - sage.symbolic
+        sage: cyclotomic_value(20, I)                                                   # needs sage.symbolic
         5
         sage: a = cyclotomic_value(10, mod(3, 11)); a
         6
@@ -273,21 +273,21 @@ def cyclotomic_value(n, x):
         Ring of integers modulo 11
         sage: cyclotomic_value(30, -1.0)
         1.00000000000000
-        sage: S.<t> = R.quotient(R.cyclotomic_polynomial(15))                           # optional - sage.libs.pari
-        sage: cyclotomic_value(15, t)                                                   # optional - sage.libs.pari
+        sage: S.<t> = R.quotient(R.cyclotomic_polynomial(15))                           # needs sage.libs.pari
+        sage: cyclotomic_value(15, t)                                                   # needs sage.libs.pari
         0
-        sage: cyclotomic_value(30, t)                                                   # optional - sage.libs.pari
+        sage: cyclotomic_value(30, t)                                                   # needs sage.libs.pari
         2*t^7 - 2*t^5 - 2*t^3 + 2*t
-        sage: S.<t> = R.quotient(x^10)                                                  # optional - sage.libs.pari
-        sage: cyclotomic_value(2^128 - 1, t)                                            # optional - sage.libs.pari
+        sage: S.<t> = R.quotient(x^10)                                                  # needs sage.libs.pari
+        sage: cyclotomic_value(2^128 - 1, t)                                            # needs sage.libs.pari
         -t^7 - t^6 - t^5 + t^2 + t + 1
         sage: cyclotomic_value(10, mod(3,4))
         1
 
     Check that the issue with symbolic element in :trac:`14982` is fixed::
 
-        sage: a = cyclotomic_value(3, I)                                                # optional - sage.rings.number_fields
-        sage: parent(a)                                                                 # optional - sage.rings.number_fields
+        sage: a = cyclotomic_value(3, I)                                                # needs sage.rings.number_fields
+        sage: parent(a)                                                                 # needs sage.rings.number_fields
         Number Field in I with defining polynomial x^2 + 1 with I = 1*I
     """
     n = ZZ(n)
@@ -394,7 +394,7 @@ def bateman_bound(nn):
     EXAMPLES::
 
         sage: from sage.rings.polynomial.cyclotomic import bateman_bound
-        sage: bateman_bound(2**8 * 1234567893377)                                       # optional - sage.libs.pari
+        sage: bateman_bound(2**8 * 1234567893377)                                       # needs sage.libs.pari
         66944986927
     """
     _, n = nn.val_unit(2)

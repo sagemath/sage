@@ -46,7 +46,7 @@ class Ideal_1poly_field(Ideal_pid):
         EXAMPLES::
 
             sage: R.<t> = GF(17)[]; P = R.ideal(t^3 + 2*t + 9)
-            sage: k.<a> = P.residue_field(); k                                          # optional - sage.rings.finite_rings
+            sage: k.<a> = P.residue_field(); k                                          # needs sage.rings.finite_rings
             Residue field in a of Principal ideal (t^3 + 2*t + 9) of
              Univariate Polynomial Ring in t over Finite Field of size 17
         """
@@ -75,11 +75,11 @@ class Ideal_1poly_field(Ideal_pid):
 
             sage: R.<x> = QQ[]
             sage: I = R.ideal([x^2 - 1, x^3 - 1])
-            sage: G = I.groebner_basis(); G                                             # optional - sage.libs.singular
+            sage: G = I.groebner_basis(); G                                             # needs sage.libs.singular
             [x - 1]
-            sage: type(G)                                                               # optional - sage.libs.singular
+            sage: type(G)                                                               # needs sage.libs.singular
             <class 'sage.rings.polynomial.multi_polynomial_sequence.PolynomialSequence_generic'>
-            sage: list(G)                                                               # optional - sage.libs.singular
+            sage: list(G)                                                               # needs sage.libs.singular
             [x - 1]
         """
         gb = self.gens_reduced()

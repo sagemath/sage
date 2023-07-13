@@ -1274,13 +1274,13 @@ class GroebnerFan(SageObject):
 
             sage: R.<x,y,z> = PolynomialRing(QQ,3)
             sage: G = R.ideal([y^3 - x^2, y^2 - 13*x,z]).groebner_fan()
-            sage: test_render = G.render()                                              # optional - sage.plot
+            sage: test_render = G.render()                                              # needs sage.plot
 
         ::
 
             sage: R.<x,y,z> = PolynomialRing(QQ,3)
             sage: G = R.ideal([x^2*y - z, y^2*z - x, z^2*x - y]).groebner_fan()
-            sage: test_render = G.render(larger=True)                                   # optional - sage.plot
+            sage: test_render = G.render(larger=True)                                   # needs sage.plot
 
         TESTS:
 
@@ -1290,7 +1290,7 @@ class GroebnerFan(SageObject):
         ::
 
             sage: R.<x,y> = PolynomialRing(QQ, 2)
-            sage: R.ideal([y^3 - x^2, y^2 - 13*x]).groebner_fan().render()              # optional - sage.plot
+            sage: R.ideal([y^3 - x^2, y^2 - 13*x]).groebner_fan().render()              # needs sage.plot
             Traceback (most recent call last):
             ...
             NotImplementedError
@@ -1460,7 +1460,7 @@ class GroebnerFan(SageObject):
 
             sage: R4.<w,x,y,z> = PolynomialRing(QQ,4)
             sage: gf = R4.ideal([w^2-x,x^2-y,y^2-z,z^2-x]).groebner_fan()
-            sage: three_d = gf.render3d()                                               # optional - sage.plot
+            sage: three_d = gf.render3d()                                               # needs sage.plot
 
         TESTS:
 
@@ -1470,7 +1470,7 @@ class GroebnerFan(SageObject):
         ::
 
             sage: P.<a,b,c> = PolynomialRing(QQ, 3, order="lex")
-            sage: sage.rings.ideal.Katsura(P, 3).groebner_fan().render3d()              # optional - sage.plot
+            sage: sage.rings.ideal.Katsura(P, 3).groebner_fan().render3d()              # needs sage.plot
             Traceback (most recent call last):
             ...
             NotImplementedError
