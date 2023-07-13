@@ -54,7 +54,7 @@ import gc
 import IPython.lib.pretty
 
 import sage.misc.randstate as randstate
-from sage.misc.misc import walltime
+from sage.misc.timing import walltime
 from .util import Timer, RecordingDict, count_noun
 from .sources import DictAsObject
 from .parsing import OriginalSource, reduce_hex, unparse_optional_tags
@@ -1275,7 +1275,7 @@ class SageDocTestRunner(doctest.DocTestRunner, object):
             sage: from sage.doctest.forker import SageDocTestRunner
             sage: from sage.doctest.sources import FileDocTestSource
             sage: from sage.doctest.control import DocTestDefaults; DD = DocTestDefaults()
-            sage: from sage.misc.misc import walltime
+            sage: from sage.misc.timing import walltime
             sage: from sage.env import SAGE_SRC
             sage: import doctest, sys, os
             sage: DTR = SageDocTestRunner(SageOutputChecker(), verbose=True, sage_options=DD, optionflags=doctest.NORMALIZE_WHITESPACE|doctest.ELLIPSIS)
@@ -1449,7 +1449,7 @@ class SageDocTestRunner(doctest.DocTestRunner, object):
             sage: from sage.doctest.forker import SageDocTestRunner
             sage: from sage.doctest.sources import FileDocTestSource
             sage: from sage.doctest.control import DocTestDefaults; DD = DocTestDefaults()
-            sage: from sage.misc.misc import walltime
+            sage: from sage.misc.timing import walltime
             sage: from sage.env import SAGE_SRC
             sage: import doctest, sys, os
             sage: DTR = SageDocTestRunner(SageOutputChecker(), verbose=True, sage_options=DD, optionflags=doctest.NORMALIZE_WHITESPACE|doctest.ELLIPSIS)

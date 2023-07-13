@@ -117,7 +117,8 @@ def mma_free_integrator(expression, v, a=None, b=None):
         input = "Integrate[{},{}]".format(math_expr, variable)
     elif a is not None and b is not None:
         input = "Integrate[{},{{{},{},{}}}]".format(math_expr, variable,
-                    a._mathematica_init_(), b._mathematica_init_())
+                                                    a._mathematica_init_(),
+                                                    b._mathematica_init_())
     else:
         raise ValueError('a(={}) and b(={}) should be both None'
                          ' or both defined'.format(a, b))
@@ -252,8 +253,8 @@ def giac_integrator(expression, v, a=None, b=None):
         result = ex.integrate(v._giac_(), a._giac_(), b._giac_())
     if 'integrate' in format(result) or 'integration' in format(result):
         return expression.integrate(v, a, b, hold=True)
-    else:
-        return result._sage_()
+    return result._sage_()
+
 
 def libgiac_integrator(expression, v, a=None, b=None):
     r"""

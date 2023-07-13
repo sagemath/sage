@@ -103,7 +103,7 @@ documentations)::
 
 One can get (currently) crude plotting via::
 
-    sage: Tab.plot()
+    sage: Tab.plot()                                                                    # optional - sage.plot
     Graphics object consisting of 52 graphics primitives
 
 If dot2tex is installed, one can obtain nice latex pictures via::

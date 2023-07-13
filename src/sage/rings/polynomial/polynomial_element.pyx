@@ -150,7 +150,7 @@ cpdef is_Polynomial(f):
         sage: R.<x> = ZZ[]
         sage: is_Polynomial(x^3 + x + 1)
         doctest:...: DeprecationWarning: the function is_Polynomial is deprecated;
-        use isinstance(x, sage.structure.element.Polynomial) instead
+        use isinstance(x, sage.rings.polynomial.polynomial_element.Polynomial) instead
         See https://github.com/sagemath/sage/issues/32709 for details.
         True
         sage: S.<y> = R[]
@@ -176,7 +176,7 @@ cpdef is_Polynomial(f):
         False
     """
     from sage.misc.superseded import deprecation
-    deprecation(32709, "the function is_Polynomial is deprecated; use isinstance(x, sage.structure.element.Polynomial) instead")
+    deprecation(32709, "the function is_Polynomial is deprecated; use isinstance(x, sage.rings.polynomial.polynomial_element.Polynomial) instead")
 
     return isinstance(f, Polynomial)
 
@@ -900,7 +900,7 @@ cdef class Polynomial(CommutativePolynomial):
         if pol._compiled is None:
             if d < 4 or d > 50000:
                 result = pol.get_unsafe(d)
-                for i in xrange(d - 1, -1, -1):
+                for i in range(d - 1, -1, -1):
                     result = result * a + pol.get_unsafe(i)
                 return result
             pol._compiled = CompiledPolynomialFunction(pol.list())
@@ -1988,6 +1988,12 @@ cdef class Polynomial(CommutativePolynomial):
             False
             sage: R(0).is_square()
             True
+
+        Make sure :trac:`35860` is fixed::
+
+            sage: S.<x> = PolynomialRing(ZZ)
+            sage: is_square(S(1), True)[1].parent()
+            Univariate Polynomial Ring in x over Integer Ring
         """
         if self.is_zero():
             return (True, self) if root else True
@@ -2000,7 +2006,7 @@ cdef class Polynomial(CommutativePolynomial):
         u = self._parent.base_ring()(f.unit())
 
         if all(a[1] % 2 == 0 for a in f) and u.is_square():
-            g = u.sqrt()
+            g = self._parent(u.sqrt())
             for a in f:
                 g *= a[0] ** (a[1] // 2)
             return (True, g) if root else True
@@ -4035,7 +4041,7 @@ cdef class Polynomial(CommutativePolynomial):
         cdef dict X = {}
         cdef list Y = self.list(copy=False)
         cdef Py_ssize_t i
-        for i in xrange(len(Y)):
+        for i in range(len(Y)):
             c = Y[i]
             if c:
                 X[i] = c
@@ -11549,7 +11555,7 @@ cdef class Polynomial_generic_dense(Polynomial):
             raise IndexError("polynomial coefficient index must be nonnegative")
         elif value != 0:
             zero = self.base_ring().zero()
-            for _ in xrange(len(self.__coeffs), n):
+            for _ in range(len(self.__coeffs), n):
                 self.__coeffs.append(zero)
             self.__coeffs.append(value)
 

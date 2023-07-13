@@ -6,14 +6,14 @@ These utility functions are used in the implementations of ``_repr_``
 methods elsewhere.
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2014 Volker Braun <vbraun.name@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 
 class TallListFormatter():
@@ -39,7 +39,7 @@ class TallListFormatter():
             sage: format_list._tall_list_row(['a   b', 'b  c', 'c'])
             ['a           b', 'b        c', 'c,', '']
         """
-        s=[]
+        s = []
         for i, line in enumerate(running_lines):
             if i + 1 != len(running_lines):
                 sep, tail = '  ', ''
