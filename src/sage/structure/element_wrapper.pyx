@@ -209,8 +209,8 @@ cdef class ElementWrapper(Element):
             sage: from sage.structure.element_wrapper import DummyParent
             sage: ElementWrapper(DummyParent("A parent"), 1)._ascii_art_()
             1
-            sage: x = var('x')                                                          # optional - sage.symbolic
-            sage: ElementWrapper(DummyParent("A parent"), x^2 + x)._ascii_art_()        # optional - sage.symbolic
+            sage: x = var('x')                                                          # needs sage.symbolic
+            sage: ElementWrapper(DummyParent("A parent"), x^2 + x)._ascii_art_()        # needs sage.symbolic
              2
             x  + x
         """
@@ -226,8 +226,8 @@ cdef class ElementWrapper(Element):
             sage: from sage.structure.element_wrapper import DummyParent
             sage: ElementWrapper(DummyParent("A parent"), 1)._ascii_art_()
             1
-            sage: x = var('x')                                                          # optional - sage.symbolic
-            sage: ElementWrapper(DummyParent("A parent"), x^2 + x)._unicode_art_()      # optional - sage.symbolic
+            sage: x = var('x')                                                          # needs sage.symbolic
+            sage: ElementWrapper(DummyParent("A parent"), x^2 + x)._unicode_art_()      # needs sage.symbolic
              2
             x  + x
         """
