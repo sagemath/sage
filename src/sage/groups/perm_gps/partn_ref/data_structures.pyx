@@ -1231,48 +1231,48 @@ def SC_test_list_perms(list L, int n, int limit, bint gap, bint limit_complain, 
         ....:     perm1 = [1,0] + list(range(2, m))
         ....:     perm2 = [(i+1)%n for i in range( n )] + list(range(n,m))
         ....:     SC_test_list_perms([perm1, perm2], m, limit, gap, 0, contains)
-        sage: for i in range(2,9):                                                      # optional - sage.groups
+        sage: for i in range(2,9):                                                      # needs sage.groups
         ....:     test_Sn_on_m_points(i,i,1,0)
-        sage: for i in range(2,9):                                                      # optional - sage.groups
+        sage: for i in range(2,9):                                                      # needs sage.groups
         ....:     test_Sn_on_m_points(i,i,0,1)
-        sage: for i in range(2,9):           # long time                                # optional - sage.groups
+        sage: for i in range(2,9):              # long time                             # needs sage.groups
         ....:     test_Sn_on_m_points(i,i,1,1)
-        sage: test_Sn_on_m_points(8,8,1,1)                                              # optional - sage.groups
+        sage: test_Sn_on_m_points(8,8,1,1)                                              # needs sage.groups
         sage: def test_stab_chain_fns_1(n, gap, contains):
         ....:     perm1 = sum([[2*i+1,2*i] for i in range(n)], [])
         ....:     perm2 = [(i+1)%(2*n) for i in range( 2*n)]
         ....:     SC_test_list_perms([perm1, perm2], 2*n, limit, gap, 0, contains)
-        sage: for n in range(1,11):                                                     # optional - sage.groups
+        sage: for n in range(1,11):                                                     # needs sage.groups
         ....:     test_stab_chain_fns_1(n, 1, 0)
-        sage: for n in range(1,11):                                                     # optional - sage.groups
+        sage: for n in range(1,11):                                                     # needs sage.groups
         ....:     test_stab_chain_fns_1(n, 0, 1)
-        sage: for n in range(1,9):              # long time                             # optional - sage.groups
+        sage: for n in range(1,9):              # long time                             # needs sage.groups
         ....:     test_stab_chain_fns_1(n, 1, 1)
-        sage: test_stab_chain_fns_1(11, 1, 1)                                           # optional - sage.groups
+        sage: test_stab_chain_fns_1(11, 1, 1)                                           # needs sage.groups
         sage: def test_stab_chain_fns_2(n, gap, contains):
         ....:     perms = []
         ....:     for p,e in factor(n):
         ....:         perm1 = [(p*(i//p)) + ((i+1)%p) for i in range(n)]
         ....:         perms.append(perm1)
         ....:     SC_test_list_perms(perms, n, limit, gap, 0, contains)
-        sage: for n in range(2,11):                                                     # optional - sage.groups
+        sage: for n in range(2,11):                                                     # needs sage.groups
         ....:     test_stab_chain_fns_2(n, 1, 0)
-        sage: for n in range(2,11):                                                     # optional - sage.groups
+        sage: for n in range(2,11):                                                     # needs sage.groups
         ....:     test_stab_chain_fns_2(n, 0, 1)
-        sage: for n in range(2,11):            # long time                              # optional - sage.groups
+        sage: for n in range(2,11):             # long time                             # needs sage.groups
         ....:     test_stab_chain_fns_2(n, 1, 1)
-        sage: test_stab_chain_fns_2(11, 1, 1)                                           # optional - sage.groups
+        sage: test_stab_chain_fns_2(11, 1, 1)                                           # needs sage.groups
         sage: def test_stab_chain_fns_3(n, gap, contains):
         ....:     perm1 = [(-i)%n for i in range( n )]
         ....:     perm2 = [(i+1)%n for i in range( n )]
         ....:     SC_test_list_perms([perm1, perm2], n, limit, gap, 0, contains)
-        sage: for n in range(2,20):                                                     # optional - sage.groups
+        sage: for n in range(2,20):                                                     # needs sage.groups
         ....:     test_stab_chain_fns_3(n, 1, 0)
-        sage: for n in range(2,20):                                                     # optional - sage.groups
+        sage: for n in range(2,20):                                                     # needs sage.groups
         ....:     test_stab_chain_fns_3(n, 0, 1)
-        sage: for n in range(2,14):            # long time                              # optional - sage.groups
+        sage: for n in range(2,14):             # long time                             # needs sage.groups
         ....:     test_stab_chain_fns_3(n, 1, 1)
-        sage: test_stab_chain_fns_3(20, 1, 1)                                           # optional - sage.groups
+        sage: test_stab_chain_fns_3(20, 1, 1)                                           # needs sage.groups
         sage: def test_stab_chain_fns_4(n, g, gap, contains):
         ....:     perms = []
         ....:     for _ in range(g):
@@ -1280,24 +1280,24 @@ def SC_test_list_perms(list L, int n, int limit, bint gap, bint limit_complain, 
         ....:         shuffle(perm)
         ....:         perms.append(perm)
         ....:     SC_test_list_perms(perms, n, limit, gap, 0, contains)
-        sage: for n in range(4,9):                # long time                           # optional - sage.groups
+        sage: for n in range(4,9):              # long time                             # needs sage.groups
         ....:     test_stab_chain_fns_4(n, 1, 1, 0)
         ....:     test_stab_chain_fns_4(n, 2, 1, 0)
         ....:     test_stab_chain_fns_4(n, 2, 1, 0)
         ....:     test_stab_chain_fns_4(n, 2, 1, 0)
         ....:     test_stab_chain_fns_4(n, 2, 1, 0)
         ....:     test_stab_chain_fns_4(n, 3, 1, 0)
-        sage: for n in range(4,9):  # not tested, known bug (see :trac:`32187`)         # optional - sage.groups
+        sage: for n in range(4,9):              # known bug, not tested                 # needs sage.groups
         ....:     test_stab_chain_fns_4(n, 1, 0, 1)
         ....:     for j in range(6):
         ....:         test_stab_chain_fns_4(n, 2, 0, 1)
         ....:     test_stab_chain_fns_4(n, 3, 0, 1)
-        sage: for n in range(4,8):                # long time                           # optional - sage.groups
+        sage: for n in range(4,8):              # long time                             # needs sage.groups
         ....:     test_stab_chain_fns_4(n, 1, 1, 1)
         ....:     test_stab_chain_fns_4(n, 2, 1, 1)
         ....:     test_stab_chain_fns_4(n, 2, 1, 1)
         ....:     test_stab_chain_fns_4(n, 3, 1, 1)
-        sage: test_stab_chain_fns_4(8, 2, 1, 1)                                         # optional - sage.groups
+        sage: test_stab_chain_fns_4(8, 2, 1, 1)                                         # needs sage.groups
         sage: def test_stab_chain_fns_5(n, gap, contains):
         ....:     perms = []
         ....:     m = n//3
@@ -1308,12 +1308,12 @@ def SC_test_list_perms(list L, int n, int limit, bint gap, bint limit_complain, 
         ....:     shuffle(perm2)
         ....:     perm2 = list(range(m)) + perm2
         ....:     SC_test_list_perms([perm1, perm2], n, limit, gap, 0, contains)
-        sage: for n in [4..9]:                     # long time                          # optional - sage.groups
+        sage: for n in [4..9]:                  # long time                             # needs sage.groups
         ....:     for _ in range(2):
         ....:         test_stab_chain_fns_5(n, 1, 0)
-        sage: for n in [4..8]:                     # long time                          # optional - sage.groups
+        sage: for n in [4..8]:                  # long time                             # needs sage.groups
         ....:     test_stab_chain_fns_5(n, 0, 1)
-        sage: for n in [4..9]:                     # long time                          # optional - sage.groups
+        sage: for n in [4..9]:                  # long time                             # needs sage.groups
         ....:     test_stab_chain_fns_5(n, 1, 1)
         sage: def random_perm(x):
         ....:     shuffle(x)
@@ -1324,19 +1324,19 @@ def SC_test_list_perms(list L, int n, int limit, bint gap, bint limit_complain, 
         ....:         perm = sum([random_perm(list(range(i*(n//m),min(n,(i+1)*(n//m))))) for i in range(m)], [])
         ....:         perms.append(perm)
         ....:     SC_test_list_perms(perms, m*(n//m), limit, gap, 0, contains)
-        sage: for m in range(2,9):                         # long time                  # optional - sage.groups
+        sage: for m in range(2,9):              # long time                             # needs sage.groups
         ....:     for n in range(m,3*m):
         ....:         for k in range(1,3):
         ....:             test_stab_chain_fns_6(m,n,k, 1, 0)
-        sage: for m in range(2,10):                                                     # optional - sage.groups
+        sage: for m in range(2,10):                                                     # needs sage.groups
         ....:     for n in range(m,4*m):
         ....:         for k in range(1,3):
         ....:             test_stab_chain_fns_6(m,n,k, 0, 1)
-        sage: test_stab_chain_fns_6(10,20,2, 1, 1)                                      # optional - sage.groups
-        sage: test_stab_chain_fns_6(8,16,2, 1, 1)                                       # optional - sage.groups
-        sage: test_stab_chain_fns_6(6,36,2, 1, 1)                                       # optional - sage.groups
-        sage: test_stab_chain_fns_6(4,40,3, 1, 1)                                       # optional - sage.groups
-        sage: test_stab_chain_fns_6(4,40,2, 1, 1)                                       # optional - sage.groups
+        sage: test_stab_chain_fns_6(10,20,2, 1, 1)                                      # needs sage.groups
+        sage: test_stab_chain_fns_6(8,16,2, 1, 1)                                       # needs sage.groups
+        sage: test_stab_chain_fns_6(6,36,2, 1, 1)                                       # needs sage.groups
+        sage: test_stab_chain_fns_6(4,40,3, 1, 1)                                       # needs sage.groups
+        sage: test_stab_chain_fns_6(4,40,2, 1, 1)                                       # needs sage.groups
         sage: def test_stab_chain_fns_7(n, cop, gap, contains):
         ....:     perms = []
         ....:     for i in range(0,n//2,2):
@@ -1348,17 +1348,17 @@ def SC_test_list_perms(list L, int n, int limit, bint gap, bint limit_complain, 
         ....:     else:
         ....:         perms.append(p)
         ....:     SC_test_list_perms(perms, n, limit, gap, 0, contains)
-        sage: for n in [6..14]:                                                         # optional - sage.groups
+        sage: for n in [6..14]:                                                         # needs sage.groups
         ....:     test_stab_chain_fns_7(n, 1, 1, 0)
         ....:     test_stab_chain_fns_7(n, 0, 1, 0)
-        sage: for n in [6..30]:                                                         # optional - sage.groups
+        sage: for n in [6..30]:                                                         # needs sage.groups
         ....:     test_stab_chain_fns_7(n, 1, 0, 1)
         ....:     test_stab_chain_fns_7(n, 0, 0, 1)
-        sage: for n in [6..14]:                   # long time                           # optional - sage.groups
+        sage: for n in [6..14]:                 # long time                             # needs sage.groups
         ....:     test_stab_chain_fns_7(n, 1, 1, 1)
         ....:     test_stab_chain_fns_7(n, 0, 1, 1)
-        sage: test_stab_chain_fns_7(20, 1, 1, 1)                                        # optional - sage.groups
-        sage: test_stab_chain_fns_7(20, 0, 1, 1)                                        # optional - sage.groups
+        sage: test_stab_chain_fns_7(20, 1, 1, 1)                                        # needs sage.groups
+        sage: test_stab_chain_fns_7(20, 0, 1, 1)                                        # needs sage.groups
 
     """
     if gap:

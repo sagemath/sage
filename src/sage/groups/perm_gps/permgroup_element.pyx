@@ -1048,7 +1048,7 @@ cdef class PermutationGroupElement(MultiplicativeGroupElement):
 
         ::
 
-            sage: g(x)                                                                  # optional - sage.symbolic
+            sage: g(x)                                                                  # needs sage.symbolic
             Traceback (most recent call last):
             ...
             ValueError: must be in the domain or a list, tuple or string

@@ -212,9 +212,9 @@ class GroupMorphism_libgap(Morphism):
         sage: phi(G.one()).parent()
         General Linear Group of degree 3 over Finite Field of size 3
 
-        sage: MS = MatrixSpace(SR, 2, 2)                                                # optional - sage.symbolic
-        sage: G = MatrixGroup([MS(1), MS([1,2,3,4])])                                   # optional - sage.symbolic
-        sage: G.Hom(G)                                                                  # optional - sage.symbolic
+        sage: MS = MatrixSpace(SR, 2, 2)                                                # needs sage.symbolic
+        sage: G = MatrixGroup([MS(1), MS([1,2,3,4])])                                   # needs sage.symbolic
+        sage: G.Hom(G)                                                                  # needs sage.symbolic
         Set of Morphisms from Matrix group over Symbolic Ring with 2 generators (
         [1 0]  [1 2]
         [0 1], [3 4]

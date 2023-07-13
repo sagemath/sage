@@ -210,11 +210,12 @@ class AbelianGroupElement_polycyclic(AbelianGroupElement_gap):
 
         EXAMPLES::
 
+            sage: # optional - gap_packages
             sage: from sage.groups.abelian_gps.abelian_group_gap import AbelianGroupGap
-            sage: G = AbelianGroupGap([4,7,0])          # optional - gap_packages
-            sage: gens = G.gens()                       # optional - gap_packages
-            sage: g = gens[0]^2 * gens[1]^4 * gens[2]^8 # optional - gap_packages
-            sage: g.exponents()                         # optional - gap_packages
+            sage: G = AbelianGroupGap([4,7,0])
+            sage: gens = G.gens()
+            sage: g = gens[0]^2 * gens[1]^4 * gens[2]^8
+            sage: g.exponents()
             (2, 4, 8)
 
         Efficiently handles very large groups::
@@ -777,13 +778,14 @@ class AbelianGroupSubgroup_gap(AbelianGroup_gap):
 
         Check that we are in the correct category::
 
-            sage: G = AbelianGroupGap([2,3,0])      # optional - gap_packages
-            sage: g = G.gens()                      # optional - gap_packages
-            sage: H1 = G.subgroup([g[0],g[1]])      # optional - gap_packages
-            sage: H1 in Groups().Finite()           # optional - gap_packages
+            sage: # optional - gap_packages
+            sage: G = AbelianGroupGap([2,3,0])
+            sage: g = G.gens()
+            sage: H1 = G.subgroup([g[0],g[1]])
+            sage: H1 in Groups().Finite()
             True
-            sage: H2 = G.subgroup([g[0],g[2]])      # optional - gap_packages
-            sage: H2 in Groups().Infinite()         # optional - gap_packages
+            sage: H2 = G.subgroup([g[0],g[2]])
+            sage: H2 in Groups().Infinite()
             True
         """
         gens_gap = tuple([g.gap() for g in gens])

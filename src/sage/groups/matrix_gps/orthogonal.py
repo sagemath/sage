@@ -460,10 +460,11 @@ class OrthogonalMatrixGroup_generic(NamedMatrixGroup_generic):
         sage: latex(G)
         \text{SO}_{3}(\Bold{F}_{5})
 
-        sage: CF3 = CyclotomicField(3); e3 = CF3.gen()                                  # needs sage.rings.number_field
-        sage: m = matrix(CF3, 3,3, [[1,e3,0],[e3,2,0],[0,0,1]])                         # needs sage.rings.number_field
-        sage: G = SO(3, CF3, invariant_form=m)                                          # needs sage.rings.number_field
-        sage: latex(G)                                                                  # needs sage.rings.number_field
+        sage: # needs sage.rings.number_field
+        sage: CF3 = CyclotomicField(3); e3 = CF3.gen()
+        sage: m = matrix(CF3, 3,3, [[1,e3,0],[e3,2,0],[0,0,1]])
+        sage: G = SO(3, CF3, invariant_form=m)
+        sage: latex(G)
         \text{SO}_{3}(\Bold{Q}(\zeta_{3}))\text{ with respect to non positive definite symmetric form }\left(\begin{array}{rrr}
         1 & \zeta_{3} & 0 \\
         \zeta_{3} & 2 & 0 \\

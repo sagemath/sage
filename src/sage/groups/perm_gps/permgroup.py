@@ -286,12 +286,13 @@ def PermutationGroup(gens=None, *args, **kwds):
 
     We can also make permutation groups from PARI groups::
 
-        sage: H = pari('x^4 - 2*x^3 - 2*x + 1').polgalois()                             # optional - sage.libs.pari
-        sage: G = PariGroup(H, 4); G                                                    # optional - sage.libs.pari
+        sage: # needs sage.libs.pari
+        sage: H = pari('x^4 - 2*x^3 - 2*x + 1').polgalois()
+        sage: G = PariGroup(H, 4); G
         PARI group [8, -1, 3, "D(4)"] of degree 4
-        sage: H = PermutationGroup(G); H                                                # optional - sage.libs.pari
+        sage: H = PermutationGroup(G); H
         Transitive group number 3 of degree 4
-        sage: H.gens()                                                                  # optional - sage.libs.pari
+        sage: H.gens()
         ((1,2,3,4), (1,3))
 
     We can also create permutation groups whose generators are GAP
