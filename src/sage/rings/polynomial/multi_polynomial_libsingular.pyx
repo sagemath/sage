@@ -232,7 +232,6 @@ from sage.rings.number_field.number_field_base cimport NumberField
 from sage.rings.number_field.order import is_NumberFieldOrder
 from sage.categories.number_fields import NumberFields
 
-
 from sage.structure.element import coerce_binop
 
 from sage.structure.parent cimport Parent
