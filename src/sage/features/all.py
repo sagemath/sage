@@ -60,13 +60,13 @@ def module_feature(module_name):
     EXAMPLES::
 
         sage: from sage.features.all import module_feature
-        sage: module_feature('sage.combinat.tableau')                                   # needs sage.combinat
+        sage: module_feature('sage.combinat.tableau')
         Feature('sage.combinat')
-        sage: module_feature('sage.combinat.posets.poset')                              # needs sage.graphs
+        sage: module_feature('sage.combinat.posets.poset')
         Feature('sage.graphs')
-        sage: module_feature('sage.schemes.toric.variety')                              # needs sage.geometry.polyhedron
+        sage: module_feature('sage.schemes.toric.variety')
         Feature('sage.geometry.polyhedron')
-        sage: module_feature('scipy')                                                   # needs scipy
+        sage: module_feature('scipy')
         Feature('scipy')
         sage: print(module_feature('sage.structure.element'))
         None
