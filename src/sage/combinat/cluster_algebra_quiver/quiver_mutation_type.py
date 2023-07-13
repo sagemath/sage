@@ -689,8 +689,8 @@ class QuiverMutationType_abstract(UniqueRepresentation, SageObject):
         EXAMPLES::
 
             sage: QMT = QuiverMutationType(['A',5])
-            sage: pl = QMT.plot()                                                       # optional - sage.plot sage.symbolic
-            sage: pl = QMT.plot(circular=True)                                          # optional - sage.plot sage.symbolic
+            sage: pl = QMT.plot()                                                       # needs sage.plot sage.symbolic
+            sage: pl = QMT.plot(circular=True)                                          # needs sage.plot sage.symbolic
         """
         return self.standard_quiver().plot(circular=circular, directed=directed)
 
@@ -709,7 +709,7 @@ class QuiverMutationType_abstract(UniqueRepresentation, SageObject):
         TESTS::
 
             sage: QMT = QuiverMutationType(['A',5])
-            sage: QMT.show()  # long time                                               # optional - sage.plot sage.symbolic
+            sage: QMT.show()                    # long time                             # needs sage.plot sage.symbolic
         """
         self.plot(circular=circular, directed=directed).show()
 
@@ -788,7 +788,7 @@ class QuiverMutationType_abstract(UniqueRepresentation, SageObject):
 
             sage: mut_type = QuiverMutationType(['A',5]); mut_type
             ['A', 5]
-            sage: mut_type.b_matrix()                                                   # optional - sage.modules
+            sage: mut_type.b_matrix()                                                   # needs sage.modules
             [ 0  1  0  0  0]
             [-1  0 -1  0  0]
             [ 0  1  0  1  0]
@@ -797,7 +797,7 @@ class QuiverMutationType_abstract(UniqueRepresentation, SageObject):
 
             sage: mut_type = QuiverMutationType(['A',3],['B',3]); mut_type
             [ ['A', 3], ['B', 3] ]
-            sage: mut_type.b_matrix()                                                   # optional - sage.modules
+            sage: mut_type.b_matrix()                                                   # needs sage.modules
             [ 0  1  0  0  0  0]
             [-1  0 -1  0  0  0]
             [ 0  1  0  0  0  0]
@@ -854,7 +854,7 @@ class QuiverMutationType_abstract(UniqueRepresentation, SageObject):
 
             sage: mut_type = QuiverMutationType(['A',5]); mut_type
             ['A', 5]
-            sage: mut_type.cartan_matrix()                                              # optional - sage.modules
+            sage: mut_type.cartan_matrix()                                              # needs sage.modules
             [ 2 -1  0  0  0]
             [-1  2 -1  0  0]
             [ 0 -1  2 -1  0]
@@ -863,7 +863,7 @@ class QuiverMutationType_abstract(UniqueRepresentation, SageObject):
 
             sage: mut_type = QuiverMutationType(['A',3],['B',3]); mut_type
             [ ['A', 3], ['B', 3] ]
-            sage: mut_type.cartan_matrix()                                              # optional - sage.modules
+            sage: mut_type.cartan_matrix()                                              # needs sage.modules
             [ 2 -1  0  0  0  0]
             [-1  2 -1  0  0  0]
             [ 0 -1  2  0  0  0]
@@ -2438,17 +2438,17 @@ def _edge_list_to_matrix(edges, nlist, mlist) -> matrix:
 
         sage: from sage.combinat.cluster_algebra_quiver.quiver_mutation_type import _edge_list_to_matrix
         sage: G = QuiverMutationType(['A', 2])._digraph
-        sage: _edge_list_to_matrix(G.edges(sort=True), [0, 1], [])                      # optional - sage.modules
+        sage: _edge_list_to_matrix(G.edges(sort=True), [0, 1], [])                      # needs sage.modules
         [ 0  1]
         [-1  0]
 
         sage: G2 = DiGraph([('a', 'b', 1)])
-        sage: _edge_list_to_matrix(G2.edges(sort=True), ['a', 'b'], [])                 # optional - sage.modules
+        sage: _edge_list_to_matrix(G2.edges(sort=True), ['a', 'b'], [])                 # needs sage.modules
         [ 0  1]
         [-1  0]
 
         sage: G3 = DiGraph([('a', 'b', 1), ('b', 'c', 1)])
-        sage: _edge_list_to_matrix(G3.edges(sort=True), ['a', 'b'], ['c'])              # optional - sage.modules
+        sage: _edge_list_to_matrix(G3.edges(sort=True), ['a', 'b'], ['c'])              # needs sage.modules
         [ 0  1]
         [-1  0]
         [ 0 -1]

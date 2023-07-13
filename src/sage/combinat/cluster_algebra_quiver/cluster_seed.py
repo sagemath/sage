@@ -1042,11 +1042,11 @@ class ClusterSeed(SageObject):
         EXAMPLES::
 
             sage: S = ClusterSeed(['A',5])
-            sage: S.plot()                                                              # optional - sage.plot sage.symbolic
+            sage: S.plot()                                                              # needs sage.plot sage.symbolic
             Graphics object consisting of 15 graphics primitives
-            sage: S.plot(circular=True)                                                 # optional - sage.plot sage.symbolic
+            sage: S.plot(circular=True)                                                 # needs sage.plot sage.symbolic
             Graphics object consisting of 15 graphics primitives
-            sage: S.plot(circular=True, mark=1)                                         # optional - sage.plot sage.symbolic
+            sage: S.plot(circular=True, mark=1)                                         # needs sage.plot sage.symbolic
             Graphics object consisting of 15 graphics primitives
         """
         greens = []
@@ -1088,7 +1088,7 @@ class ClusterSeed(SageObject):
         TESTS::
 
             sage: S = ClusterSeed(['A',5])
-            sage: S.show()  # long time                                                 # optional - sage.plot sage.symbolic
+            sage: S.show()                      # long time                             # needs sage.plot sage.symbolic
         """
         greens = []
         if with_greens:
@@ -1122,7 +1122,7 @@ class ClusterSeed(SageObject):
         TESTS::
 
             sage: S = ClusterSeed(['A',4])
-            sage: S.interact()                                                          # optional - sage.plot sage.symbolic
+            sage: S.interact()                                                          # needs sage.plot sage.symbolic
             ...VBox(children=...
         """
         return cluster_interact(self, fig_size, circular, kind='seed')
@@ -1144,7 +1144,7 @@ class ClusterSeed(SageObject):
 
             sage: S = ClusterSeed(['F',4,[1,2]])
             sage: import tempfile
-            sage: with tempfile.NamedTemporaryFile(suffix=".png") as f:                 # optional - sage.plot sage.symbolic
+            sage: with tempfile.NamedTemporaryFile(suffix=".png") as f:                 # needs sage.plot sage.symbolic
             ....:     S.save_image(f.name)
         """
         graph_plot = self.plot(circular=circular, mark=mark, save_pos=save_pos)
