@@ -83,19 +83,19 @@ cdef class RingExtensionHomomorphism(RingMap):
 
     TESTS::
 
-        sage: K.<a> = GF(5^2).over()                                                    # optional - sage.rings.finite_rings
-        sage: L.<b> = GF(5^4).over(K)                                                   # optional - sage.rings.finite_rings
-        sage: phi = L.hom([b^5, a^5]); phi                                              # optional - sage.rings.finite_rings
+        sage: K.<a> = GF(5^2).over()                                                    # needs sage.rings.finite_rings
+        sage: L.<b> = GF(5^4).over(K)                                                   # needs sage.rings.finite_rings
+        sage: phi = L.hom([b^5, a^5]); phi                                              # needs sage.rings.finite_rings
         Ring endomorphism of Field in b
          with defining polynomial x^2 + (3 - a)*x + a over its base
           Defn: b |--> (2 + a) + 2*b
                 with map on base ring:
                 a |--> 1 - a
 
-        sage: type(phi)                                                                 # optional - sage.rings.finite_rings
+        sage: type(phi)                                                                 # needs sage.rings.finite_rings
         <class 'sage.rings.ring_extension_morphism.RingExtensionHomomorphism'>
 
-        sage: TestSuite(phi).run()                                                      # optional - sage.rings.finite_rings
+        sage: TestSuite(phi).run()                                                      # needs sage.rings.finite_rings
 
     """
     def __init__(self, parent, defn, base_map=None, check=True):
@@ -219,12 +219,12 @@ cdef class RingExtensionHomomorphism(RingMap):
 
         EXAMPLES::
 
-            sage: K.<a> = GF(5^2).over()  # over GF(5)                                  # optional - sage.rings.finite_rings
-            sage: f = K.hom([a^5]); f                                                   # optional - sage.rings.finite_rings
+            sage: K.<a> = GF(5^2).over()  # over GF(5)                                  # needs sage.rings.finite_rings
+            sage: f = K.hom([a^5]); f                                                   # needs sage.rings.finite_rings
             Ring endomorphism of Field in a with defining polynomial x^2 + 4*x + 2 over its base
               Defn: a |--> 1 - a
 
-            sage: f._repr_type()                                                        # optional - sage.rings.finite_rings
+            sage: f._repr_type()                                                        # needs sage.rings.finite_rings
             'Ring'
         """
         return "Ring"
@@ -240,19 +240,19 @@ cdef class RingExtensionHomomorphism(RingMap):
         EXAMPLES::
 
             sage: x = polygen(QQ, 'x')
-            sage: A.<sqrt2> = QQ.extension(x^2 - 2)                                     # optional - sage.rings.number_field
-            sage: K.<sqrt2> = A.over()                                                  # optional - sage.rings.number_field
-            sage: f = K.hom([-sqrt2]); f                                                # optional - sage.rings.number_field
+            sage: A.<sqrt2> = QQ.extension(x^2 - 2)                                     # needs sage.rings.number_field
+            sage: K.<sqrt2> = A.over()                                                  # needs sage.rings.number_field
+            sage: f = K.hom([-sqrt2]); f                                                # needs sage.rings.number_field
             Ring endomorphism of Field in sqrt2 with defining polynomial x^2 - 2 over its base
               Defn: sqrt2 |--> -sqrt2
-            sage: f(sqrt2)                                                              # optional - sage.rings.number_field
+            sage: f(sqrt2)                                                              # needs sage.rings.number_field
             -sqrt2
 
         TESTS::
 
             sage: a = QQ.random_element()
             sage: b = QQ.random_element()
-            sage: f(a + b*sqrt2) == a - b*sqrt2                                         # optional - sage.rings.number_field
+            sage: f(a + b*sqrt2) == a - b*sqrt2                                         # needs sage.rings.number_field
             True
         """
         y = self._backend(backend_element(x))
@@ -268,19 +268,19 @@ cdef class RingExtensionHomomorphism(RingMap):
 
         EXAMPLES::
 
-            sage: F = GF(5)                                                             # optional - sage.rings.finite_rings
-            sage: K.<a> = GF(5^2).over(F)                                               # optional - sage.rings.finite_rings
-            sage: L.<b> = GF(5^6).over(K)                                               # optional - sage.rings.finite_rings
+            sage: F = GF(5)                                                             # needs sage.rings.finite_rings
+            sage: K.<a> = GF(5^2).over(F)                                               # needs sage.rings.finite_rings
+            sage: L.<b> = GF(5^6).over(K)                                               # needs sage.rings.finite_rings
 
         We define the absolute Frobenius of L::
 
-            sage: FrobL = L.hom([b^5, a^5]); FrobL                                      # optional - sage.rings.finite_rings
+            sage: FrobL = L.hom([b^5, a^5]); FrobL                                      # needs sage.rings.finite_rings
             Ring endomorphism of
              Field in b with defining polynomial x^3 + (2 + 2*a)*x - a over its base
               Defn: b |--> (-1 + a) + (1 + 2*a)*b + a*b^2
                     with map on base ring:
                     a |--> 1 - a
-            sage: FrobL.base_map()                                                      # optional - sage.rings.finite_rings
+            sage: FrobL.base_map()                                                      # needs sage.rings.finite_rings
             Ring morphism:
               From: Field in a with defining polynomial x^2 + 4*x + 2 over its base
               To:   Field in b with defining polynomial x^3 + (2 + 2*a)*x - a over its base
@@ -289,11 +289,11 @@ cdef class RingExtensionHomomorphism(RingMap):
         The square of ``FrobL`` acts trivially on K; in other words, it has
         a trivial base map::
 
-            sage: phi = FrobL^2; phi                                                    # optional - sage.rings.finite_rings
+            sage: phi = FrobL^2; phi                                                    # needs sage.rings.finite_rings
             Ring endomorphism of
              Field in b with defining polynomial x^3 + (2 + 2*a)*x - a over its base
               Defn: b |--> 2 + 2*a*b + (2 - a)*b^2
-            sage: phi.base_map()                                                        # optional - sage.rings.finite_rings
+            sage: phi.base_map()                                                        # needs sage.rings.finite_rings
 
         """
         domain = self.domain()
@@ -332,15 +332,15 @@ cdef class RingExtensionHomomorphism(RingMap):
 
         TESTS::
 
-            sage: K.<a> = GF(5^2).over()   # over GF(5)                                 # optional - sage.rings.finite_rings
-            sage: L.<b> = GF(5^6).over(K)                                               # optional - sage.rings.finite_rings
+            sage: K.<a> = GF(5^2).over()   # over GF(5)                                 # needs sage.rings.finite_rings
+            sage: L.<b> = GF(5^6).over(K)                                               # needs sage.rings.finite_rings
 
-            sage: FrobK = K.hom([a^5])                                                  # optional - sage.rings.finite_rings
-            sage: FrobL = L.hom([b^5], base_map=FrobK)                                  # optional - sage.rings.finite_rings
+            sage: FrobK = K.hom([a^5])                                                  # needs sage.rings.finite_rings
+            sage: FrobL = L.hom([b^5], base_map=FrobK)                                  # needs sage.rings.finite_rings
 
-            sage: FrobK^2 == End(K).identity()                                          # optional - sage.rings.finite_rings
+            sage: FrobK^2 == End(K).identity()                                          # needs sage.rings.finite_rings
             True
-            sage: FrobL^6 == End(L).identity()                                          # optional - sage.rings.finite_rings
+            sage: FrobL^6 == End(L).identity()                                          # needs sage.rings.finite_rings
             True
         """
         eq = are_equal_morphisms(self._backend, backend_morphism(other))
@@ -356,22 +356,23 @@ cdef class RingExtensionHomomorphism(RingMap):
 
         EXAMPLES::
 
-            sage: K.<a> = GF(5^2).over()   # over GF(5)                                 # optional - sage.rings.finite_rings
-            sage: FrobK = K.hom([a^5])                                                  # optional - sage.rings.finite_rings
-            sage: FrobK.is_identity()                                                   # optional - sage.rings.finite_rings
+            sage: # needs sage.rings.finite_rings
+            sage: K.<a> = GF(5^2).over()   # over GF(5)
+            sage: FrobK = K.hom([a^5])
+            sage: FrobK.is_identity()
             False
-            sage: (FrobK^2).is_identity()                                               # optional - sage.rings.finite_rings
+            sage: (FrobK^2).is_identity()
             True
 
         Coercion maps are not considered as identity morphisms::
 
-            sage: L.<b> = GF(5^6).over(K)                                               # optional - sage.rings.finite_rings
-            sage: iota = L.defining_morphism(); iota                                    # optional - sage.rings.finite_rings
+            sage: L.<b> = GF(5^6).over(K)                                               # needs sage.rings.finite_rings
+            sage: iota = L.defining_morphism(); iota                                    # needs sage.rings.finite_rings
             Ring morphism:
               From: Field in a with defining polynomial x^2 + 4*x + 2 over its base
               To:   Field in b with defining polynomial x^3 + (2 + 2*a)*x - a over its base
               Defn: a |--> a
-            sage: iota.is_identity()                                                    # optional - sage.rings.finite_rings
+            sage: iota.is_identity()                                                    # needs sage.rings.finite_rings
             False
         """
         if self.domain() is not self.codomain():
@@ -384,23 +385,23 @@ cdef class RingExtensionHomomorphism(RingMap):
 
         EXAMPLES::
 
-            sage: K = GF(5^10).over(GF(5^5))                                            # optional - sage.rings.finite_rings
-            sage: iota = K.defining_morphism(); iota                                    # optional - sage.rings.finite_rings
+            sage: K = GF(5^10).over(GF(5^5))                                            # needs sage.rings.finite_rings
+            sage: iota = K.defining_morphism(); iota                                    # needs sage.rings.finite_rings
             Ring morphism:
               From: Finite Field in z5 of size 5^5
               To:   Field in z10 with defining polynomial
                     x^2 + (2*z5^3 + 2*z5^2 + 4*z5 + 4)*x + z5 over its base
               Defn: z5 |--> z5
-            sage: iota.is_injective()                                                   # optional - sage.rings.finite_rings
+            sage: iota.is_injective()                                                   # needs sage.rings.finite_rings
             True
 
-            sage: K = GF(7).over(ZZ)                                                    # optional - sage.rings.finite_rings
-            sage: iota = K.defining_morphism(); iota                                    # optional - sage.rings.finite_rings
+            sage: K = GF(7).over(ZZ)                                                    # needs sage.rings.finite_rings
+            sage: iota = K.defining_morphism(); iota                                    # needs sage.rings.finite_rings
             Ring morphism:
               From: Integer Ring
               To:   Finite Field of size 7 over its base
               Defn: 1 |--> 1
-            sage: iota.is_injective()                                                   # optional - sage.rings.finite_rings
+            sage: iota.is_injective()                                                   # needs sage.rings.finite_rings
             False
         """
         return self._backend.is_injective()
@@ -411,23 +412,23 @@ cdef class RingExtensionHomomorphism(RingMap):
 
         EXAMPLES::
 
-            sage: K = GF(5^10).over(GF(5^5))                                            # optional - sage.rings.finite_rings
-            sage: iota = K.defining_morphism(); iota                                    # optional - sage.rings.finite_rings
+            sage: K = GF(5^10).over(GF(5^5))                                            # needs sage.rings.finite_rings
+            sage: iota = K.defining_morphism(); iota                                    # needs sage.rings.finite_rings
             Ring morphism:
               From: Finite Field in z5 of size 5^5
               To:   Field in z10 with defining polynomial
                     x^2 + (2*z5^3 + 2*z5^2 + 4*z5 + 4)*x + z5 over its base
               Defn: z5 |--> z5
-            sage: iota.is_surjective()                                                  # optional - sage.rings.finite_rings
+            sage: iota.is_surjective()                                                  # needs sage.rings.finite_rings
             False
 
-            sage: K = GF(7).over(ZZ)                                                    # optional - sage.rings.finite_rings
-            sage: iota = K.defining_morphism(); iota                                    # optional - sage.rings.finite_rings
+            sage: K = GF(7).over(ZZ)                                                    # needs sage.rings.finite_rings
+            sage: iota = K.defining_morphism(); iota                                    # needs sage.rings.finite_rings
             Ring morphism:
               From: Integer Ring
               To:   Finite Field of size 7 over its base
               Defn: 1 |--> 1
-            sage: iota.is_surjective()                                                  # optional - sage.rings.finite_rings
+            sage: iota.is_surjective()                                                  # needs sage.rings.finite_rings
             True
         """
         return self._backend.is_surjective()
@@ -441,11 +442,11 @@ cdef class RingExtensionHomomorphism(RingMap):
 
         EXAMPLES::
 
-            sage: K.<a> = GF(5^2).over()   # over GF(5)                                 # optional - sage.rings.finite_rings
-            sage: L.<b> = GF(5^6).over(K)                                               # optional - sage.rings.finite_rings
-            sage: FrobL = L.hom([b^5, a^5])  # absolute Frobenius                       # optional - sage.rings.finite_rings
+            sage: K.<a> = GF(5^2).over()   # over GF(5)                                 # needs sage.rings.finite_rings
+            sage: L.<b> = GF(5^6).over(K)                                               # needs sage.rings.finite_rings
+            sage: FrobL = L.hom([b^5, a^5])  # absolute Frobenius                       # needs sage.rings.finite_rings
 
-            sage: print(FrobL._repr_defn())                                             # optional - sage.rings.finite_rings
+            sage: print(FrobL._repr_defn())                                             # needs sage.rings.finite_rings
             b |--> (-1 + a) + (1 + 2*a)*b + a*b^2
             with map on base ring:
             a |--> 1 - a
@@ -473,13 +474,13 @@ cdef class RingExtensionHomomorphism(RingMap):
         TESTS::
 
             sage: x = polygen(ZZ, 'x')
-            sage: A.<sqrt5> = QQ.extension(x^2 - 5)                                     # optional - sage.rings.number_field
-            sage: K.<sqrt5> = A.over()                                                  # optional - sage.rings.number_field
-            sage: f = K.hom([-sqrt5]); f                                                # optional - sage.rings.number_field
+            sage: A.<sqrt5> = QQ.extension(x^2 - 5)                                     # needs sage.rings.number_field
+            sage: K.<sqrt5> = A.over()                                                  # needs sage.rings.number_field
+            sage: f = K.hom([-sqrt5]); f                                                # needs sage.rings.number_field
             Ring endomorphism of Field in sqrt5 with defining polynomial x^2 - 5 over its base
               Defn: sqrt5 |--> -sqrt5
 
-            sage: f^2  # indirect doctest                                               # optional - sage.rings.number_field
+            sage: f^2  # indirect doctest                                               # needs sage.rings.number_field
             Ring endomorphism of Field in sqrt5 with defining polynomial x^2 - 5 over its base
               Defn: sqrt5 |--> sqrt5
         """
@@ -498,13 +499,13 @@ cdef class RingExtensionHomomorphism(RingMap):
 
         TESTS::
 
-            sage: K.<a> = GF(5^2).over()   # over GF(5)                                 # optional - sage.rings.finite_rings
-            sage: f = K.hom([a^5])                                                      # optional - sage.rings.finite_rings
+            sage: K.<a> = GF(5^2).over()   # over GF(5)                                 # needs sage.rings.finite_rings
+            sage: f = K.hom([a^5])                                                      # needs sage.rings.finite_rings
 
-            sage: g = copy(f)    # indirect doctest                                     # optional - sage.rings.finite_rings
-            sage: f == g                                                                # optional - sage.rings.finite_rings
+            sage: g = copy(f)    # indirect doctest                                     # needs sage.rings.finite_rings
+            sage: f == g                                                                # needs sage.rings.finite_rings
             True
-            sage: f is g                                                                # optional - sage.rings.finite_rings
+            sage: f is g                                                                # needs sage.rings.finite_rings
             False
         """
         self._backend = _slots['_backend']
@@ -516,9 +517,9 @@ cdef class RingExtensionHomomorphism(RingMap):
 
         TESTS::
 
-            sage: K.<a> = GF(5^2).over()   # over GF(5)                                 # optional - sage.rings.finite_rings
-            sage: f = K.hom([a^5])                                                      # optional - sage.rings.finite_rings
-            sage: loads(dumps(f)) == f                                                  # optional - sage.rings.finite_rings
+            sage: K.<a> = GF(5^2).over()   # over GF(5)                                 # needs sage.rings.finite_rings
+            sage: f = K.hom([a^5])                                                      # needs sage.rings.finite_rings
+            sage: loads(dumps(f)) == f                                                  # needs sage.rings.finite_rings
             True
         """
         slots = RingMap._extra_slots(self)
@@ -533,17 +534,17 @@ cdef class RingExtensionBackendIsomorphism(RingExtensionHomomorphism):
 
     TESTS::
 
-        sage: K = GF(11^9).over(GF(11^3))                                               # optional - sage.rings.finite_rings
-        sage: f = K.coerce_map_from(GF(11^9)); f                                        # optional - sage.rings.finite_rings
+        sage: K = GF(11^9).over(GF(11^3))                                               # needs sage.rings.finite_rings
+        sage: f = K.coerce_map_from(GF(11^9)); f                                        # needs sage.rings.finite_rings
         Coercion morphism:
           From: Finite Field in z9 of size 11^9
           To:   Field in z9 with defining polynomial
                 x^3 + (9*z3^2 + 5*z3 + 1)*x^2 + (4*z3 + 3)*x + 10*z3 over its base
 
-        sage: type(f)                                                                   # optional - sage.rings.finite_rings
+        sage: type(f)                                                                   # needs sage.rings.finite_rings
         <class 'sage.rings.ring_extension_morphism.RingExtensionBackendIsomorphism'>
 
-        sage: TestSuite(f).run()                                                        # optional - sage.rings.finite_rings
+        sage: TestSuite(f).run()                                                        # needs sage.rings.finite_rings
     """
     def __init__(self, parent):
         r"""
@@ -552,9 +553,9 @@ cdef class RingExtensionBackendIsomorphism(RingExtensionHomomorphism):
         TESTS::
 
             sage: x = polygen(ZZ, 'x')
-            sage: A.<a> = QQ.extension(x^2 - 5)                                         # optional - sage.rings.number_field
-            sage: K = A.over()                                                          # optional - sage.rings.number_field
-            sage: K.coerce_map_from(A)                                                  # optional - sage.rings.number_field
+            sage: A.<a> = QQ.extension(x^2 - 5)                                         # needs sage.rings.number_field
+            sage: K = A.over()                                                          # needs sage.rings.number_field
+            sage: K.coerce_map_from(A)                                                  # needs sage.rings.number_field
             Coercion morphism:
               From: Number Field in a with defining polynomial x^2 - 5
               To:   Field in a with defining polynomial x^2 - 5 over its base
@@ -569,13 +570,13 @@ cdef class RingExtensionBackendIsomorphism(RingExtensionHomomorphism):
 
         EXAMPLES::
 
-            sage: K.<a> = GF(5^2).over()  # over GF(5)                                  # optional - sage.rings.finite_rings
-            sage: f = K.coerce_map_from(GF(5^2)); f                                     # optional - sage.rings.finite_rings
+            sage: K.<a> = GF(5^2).over()  # over GF(5)                                  # needs sage.rings.finite_rings
+            sage: f = K.coerce_map_from(GF(5^2)); f                                     # needs sage.rings.finite_rings
             Coercion morphism:
               From: Finite Field in z2 of size 5^2
               To:   Field in a with defining polynomial x^2 + 4*x + 2 over its base
 
-            sage: f._repr_type()                                                        # optional - sage.rings.finite_rings
+            sage: f._repr_type()                                                        # needs sage.rings.finite_rings
             'Coercion'
         """
         return "Coercion"
@@ -586,13 +587,13 @@ cdef class RingExtensionBackendIsomorphism(RingExtensionHomomorphism):
 
         EXAMPLES::
 
-            sage: K.<a> = GF(5^2).over()  # over GF(5)                                  # optional - sage.rings.finite_rings
-            sage: f = K.coerce_map_from(GF(5^2)); f                                     # optional - sage.rings.finite_rings
+            sage: K.<a> = GF(5^2).over()  # over GF(5)                                  # needs sage.rings.finite_rings
+            sage: f = K.coerce_map_from(GF(5^2)); f                                     # needs sage.rings.finite_rings
             Coercion morphism:
               From: Finite Field in z2 of size 5^2
               To:   Field in a with defining polynomial x^2 + 4*x + 2 over its base
 
-            sage: f._repr_defn()                                                        # optional - sage.rings.finite_rings
+            sage: f._repr_defn()                                                        # needs sage.rings.finite_rings
             ''
         """
         return ""
@@ -607,9 +608,9 @@ cdef class RingExtensionBackendIsomorphism(RingExtensionHomomorphism):
 
         EXAMPLES::
 
-            sage: K.<a> = GF(5^2).over()  # over GF(5)                                  # optional - sage.rings.finite_rings
-            sage: f = K.coerce_map_from(GF(5^2))                                        # optional - sage.rings.finite_rings
-            sage: f(GF(5^2).gen())                                                      # optional - sage.rings.finite_rings
+            sage: K.<a> = GF(5^2).over()  # over GF(5)                                  # needs sage.rings.finite_rings
+            sage: f = K.coerce_map_from(GF(5^2))                                        # needs sage.rings.finite_rings
+            sage: f(GF(5^2).gen())                                                      # needs sage.rings.finite_rings
             a
         """
         codomain = self.codomain()
@@ -623,17 +624,17 @@ cdef class RingExtensionBackendReverseIsomorphism(RingExtensionHomomorphism):
 
     TESTS::
 
-        sage: K = GF(11^9).over(GF(11^3))                                               # optional - sage.rings.finite_rings
-        sage: f = GF(11^9).convert_map_from(K); f                                       # optional - sage.rings.finite_rings
+        sage: K = GF(11^9).over(GF(11^3))                                               # needs sage.rings.finite_rings
+        sage: f = GF(11^9).convert_map_from(K); f                                       # needs sage.rings.finite_rings
         Canonical morphism:
           From: Field in z9 with defining polynomial
                 x^3 + (9*z3^2 + 5*z3 + 1)*x^2 + (4*z3 + 3)*x + 10*z3 over its base
           To:   Finite Field in z9 of size 11^9
 
-        sage: type(f)                                                                   # optional - sage.rings.finite_rings
+        sage: type(f)                                                                   # needs sage.rings.finite_rings
         <class 'sage.rings.ring_extension_morphism.RingExtensionBackendReverseIsomorphism'>
 
-        sage: TestSuite(f).run()                                                        # optional - sage.rings.finite_rings
+        sage: TestSuite(f).run()                                                        # needs sage.rings.finite_rings
 
     """
     def __init__(self, parent):
@@ -643,9 +644,9 @@ cdef class RingExtensionBackendReverseIsomorphism(RingExtensionHomomorphism):
         TESTS::
 
             sage: x = polygen(ZZ, 'x')
-            sage: A.<a> = QQ.extension(x^2 - 5)                                         # optional - sage.rings.number_field
-            sage: K = A.over()                                                          # optional - sage.rings.number_field
-            sage: A.convert_map_from(K)                                                 # optional - sage.rings.number_field
+            sage: A.<a> = QQ.extension(x^2 - 5)                                         # needs sage.rings.number_field
+            sage: K = A.over()                                                          # needs sage.rings.number_field
+            sage: A.convert_map_from(K)                                                 # needs sage.rings.number_field
             Canonical morphism:
               From: Field in a with defining polynomial x^2 - 5 over its base
               To:   Number Field in a with defining polynomial x^2 - 5
@@ -660,13 +661,13 @@ cdef class RingExtensionBackendReverseIsomorphism(RingExtensionHomomorphism):
 
         EXAMPLES::
 
-            sage: K.<a> = GF(5^2).over()  # over GF(5)                                  # optional - sage.rings.finite_rings
-            sage: f = GF(5^2).convert_map_from(K); f                                    # optional - sage.rings.finite_rings
+            sage: K.<a> = GF(5^2).over()  # over GF(5)                                  # needs sage.rings.finite_rings
+            sage: f = GF(5^2).convert_map_from(K); f                                    # needs sage.rings.finite_rings
             Canonical morphism:
               From: Field in a with defining polynomial x^2 + 4*x + 2 over its base
               To:   Finite Field in z2 of size 5^2
 
-            sage: f._repr_type()                                                        # optional - sage.rings.finite_rings
+            sage: f._repr_type()                                                        # needs sage.rings.finite_rings
             'Canonical'
         """
         return "Canonical"
@@ -677,13 +678,13 @@ cdef class RingExtensionBackendReverseIsomorphism(RingExtensionHomomorphism):
 
         EXAMPLES::
 
-            sage: K.<a> = GF(5^2).over()  # over GF(5)                                  # optional - sage.rings.finite_rings
-            sage: f = GF(5^2).convert_map_from(K); f                                    # optional - sage.rings.finite_rings
+            sage: K.<a> = GF(5^2).over()  # over GF(5)                                  # needs sage.rings.finite_rings
+            sage: f = GF(5^2).convert_map_from(K); f                                    # needs sage.rings.finite_rings
             Canonical morphism:
               From: Field in a with defining polynomial x^2 + 4*x + 2 over its base
               To:   Finite Field in z2 of size 5^2
 
-            sage: f._repr_defn()                                                        # optional - sage.rings.finite_rings
+            sage: f._repr_defn()                                                        # needs sage.rings.finite_rings
             ''
         """
         return ""
@@ -698,9 +699,9 @@ cdef class RingExtensionBackendReverseIsomorphism(RingExtensionHomomorphism):
 
         EXAMPLES::
 
-            sage: K.<a> = GF(5^2).over()  # over GF(5)                                  # optional - sage.rings.finite_rings
-            sage: f = GF(5^2).convert_map_from(K)                                       # optional - sage.rings.finite_rings
-            sage: f(a)                                                                  # optional - sage.rings.finite_rings
+            sage: K.<a> = GF(5^2).over()  # over GF(5)                                  # needs sage.rings.finite_rings
+            sage: f = GF(5^2).convert_map_from(K)                                       # needs sage.rings.finite_rings
+            sage: f(a)                                                                  # needs sage.rings.finite_rings
             z2
         """
         return (<RingExtensionElement>x)._backend
@@ -713,9 +714,9 @@ cdef class MapFreeModuleToRelativeRing(Map):
 
     TESTS::
 
-        sage: K = GF(5^2).over()                                                        # optional - sage.rings.finite_rings
-        sage: V, i, j = K.free_module()                                                 # optional - sage.rings.finite_rings
-        sage: type(i)                                                                   # optional - sage.rings.finite_rings
+        sage: K = GF(5^2).over()                                                        # needs sage.rings.finite_rings
+        sage: V, i, j = K.free_module()                                                 # needs sage.rings.finite_rings
+        sage: type(i)                                                                   # needs sage.rings.finite_rings
         <class 'sage.rings.ring_extension_morphism.MapFreeModuleToRelativeRing'>
 
     """
@@ -731,9 +732,9 @@ cdef class MapFreeModuleToRelativeRing(Map):
 
         TESTS::
 
-            sage: K = GF(11^6).over(GF(11^3))                                           # optional - sage.rings.finite_rings
-            sage: V, i, j = K.free_module()                                             # optional - sage.rings.finite_rings
-            sage: i                                                                     # optional - sage.rings.finite_rings
+            sage: K = GF(11^6).over(GF(11^3))                                           # needs sage.rings.finite_rings
+            sage: V, i, j = K.free_module()                                             # needs sage.rings.finite_rings
+            sage: i                                                                     # needs sage.rings.finite_rings
             Generic map:
               From: Vector space of dimension 2 over Finite Field in z3 of size 11^3
               To:   Field in z6 with defining polynomial x^2 + (10*z3^2 + z3 + 6)*x + z3 over its base
@@ -751,9 +752,9 @@ cdef class MapFreeModuleToRelativeRing(Map):
 
         EXAMPLES::
 
-            sage: K = GF(11^6).over(GF(11^3))                                           # optional - sage.rings.finite_rings
-            sage: V, i, j = K.free_module()                                             # optional - sage.rings.finite_rings
-            sage: i.is_injective()                                                      # optional - sage.rings.finite_rings
+            sage: K = GF(11^6).over(GF(11^3))                                           # needs sage.rings.finite_rings
+            sage: V, i, j = K.free_module()                                             # needs sage.rings.finite_rings
+            sage: i.is_injective()                                                      # needs sage.rings.finite_rings
             True
         """
         return True
@@ -764,9 +765,9 @@ cdef class MapFreeModuleToRelativeRing(Map):
 
         EXAMPLES::
 
-            sage: K = GF(11^6).over(GF(11^3))                                           # optional - sage.rings.finite_rings
-            sage: V, i, j = K.free_module()                                             # optional - sage.rings.finite_rings
-            sage: i.is_surjective()                                                     # optional - sage.rings.finite_rings
+            sage: K = GF(11^6).over(GF(11^3))                                           # needs sage.rings.finite_rings
+            sage: V, i, j = K.free_module()                                             # needs sage.rings.finite_rings
+            sage: i.is_surjective()                                                     # needs sage.rings.finite_rings
             True
         """
         return True
@@ -781,9 +782,9 @@ cdef class MapFreeModuleToRelativeRing(Map):
 
         EXAMPLES::
 
-            sage: K.<a> = GF(11^6).over(GF(11^3))                                       # optional - sage.rings.finite_rings
-            sage: V, i, j = K.free_module()                                             # optional - sage.rings.finite_rings
-            sage: i((0,1))                                                              # optional - sage.rings.finite_rings
+            sage: K.<a> = GF(11^6).over(GF(11^3))                                       # needs sage.rings.finite_rings
+            sage: V, i, j = K.free_module()                                             # needs sage.rings.finite_rings
+            sage: i((0,1))                                                              # needs sage.rings.finite_rings
             a
         """
         cdef Element elt
@@ -800,9 +801,9 @@ cdef class MapRelativeRingToFreeModule(Map):
 
     TESTS::
 
-        sage: K = GF(5^2).over()                                                        # optional - sage.rings.finite_rings
-        sage: V, i, j = K.free_module()                                                 # optional - sage.rings.finite_rings
-        sage: type(j)                                                                   # optional - sage.rings.finite_rings
+        sage: K = GF(5^2).over()                                                        # needs sage.rings.finite_rings
+        sage: V, i, j = K.free_module()                                                 # needs sage.rings.finite_rings
+        sage: type(j)                                                                   # needs sage.rings.finite_rings
         <class 'sage.rings.ring_extension_morphism.MapRelativeRingToFreeModule'>
 
     """
@@ -818,9 +819,9 @@ cdef class MapRelativeRingToFreeModule(Map):
 
         TESTS::
 
-            sage: K = GF(11^6).over(GF(11^3))                                           # optional - sage.rings.finite_rings
-            sage: V, i, j = K.free_module()                                             # optional - sage.rings.finite_rings
-            sage: j                                                                     # optional - sage.rings.finite_rings
+            sage: K = GF(11^6).over(GF(11^3))                                           # needs sage.rings.finite_rings
+            sage: V, i, j = K.free_module()                                             # needs sage.rings.finite_rings
+            sage: j                                                                     # needs sage.rings.finite_rings
             Generic map:
               From: Field in z6 with defining polynomial x^2 + (10*z3^2 + z3 + 6)*x + z3 over its base
               To:   Vector space of dimension 2 over Finite Field in z3 of size 11^3
@@ -860,9 +861,9 @@ cdef class MapRelativeRingToFreeModule(Map):
 
         EXAMPLES::
 
-            sage: K = GF(11^6).over(GF(11^3))                                           # optional - sage.rings.finite_rings
-            sage: V, i, j = K.free_module()                                             # optional - sage.rings.finite_rings
-            sage: j.is_injective()                                                      # optional - sage.rings.finite_rings
+            sage: K = GF(11^6).over(GF(11^3))                                           # needs sage.rings.finite_rings
+            sage: V, i, j = K.free_module()                                             # needs sage.rings.finite_rings
+            sage: j.is_injective()                                                      # needs sage.rings.finite_rings
             True
         """
         return True
@@ -873,9 +874,9 @@ cdef class MapRelativeRingToFreeModule(Map):
 
         EXAMPLES::
 
-            sage: K = GF(11^6).over(GF(11^3))                                           # optional - sage.rings.finite_rings
-            sage: V, i, j = K.free_module()                                             # optional - sage.rings.finite_rings
-            sage: j.is_surjective()                                                     # optional - sage.rings.finite_rings
+            sage: K = GF(11^6).over(GF(11^3))                                           # needs sage.rings.finite_rings
+            sage: V, i, j = K.free_module()                                             # needs sage.rings.finite_rings
+            sage: j.is_surjective()                                                     # needs sage.rings.finite_rings
             True
         """
         return True
@@ -890,9 +891,9 @@ cdef class MapRelativeRingToFreeModule(Map):
 
         EXAMPLES::
 
-            sage: K.<a> = GF(11^6).over(GF(11^3))                                       # optional - sage.rings.finite_rings
-            sage: V, i, j = K.free_module()                                             # optional - sage.rings.finite_rings
-            sage: j(a)                                                                  # optional - sage.rings.finite_rings
+            sage: K.<a> = GF(11^6).over(GF(11^3))                                       # needs sage.rings.finite_rings
+            sage: V, i, j = K.free_module()                                             # needs sage.rings.finite_rings
+            sage: j(a)                                                                  # needs sage.rings.finite_rings
             (0, 1)
         """
         coeffs = self.backend_coefficients(x)
@@ -909,9 +910,9 @@ cdef class MapRelativeRingToFreeModule(Map):
 
         TESTS::
 
-            sage: K.<a> = GF(11^9).over(GF(11^3))                                       # optional - sage.rings.finite_rings
-            sage: V, i, j = K.free_module()                                             # optional - sage.rings.finite_rings
-            sage: j(a + 2*a^2)   # indirect doctest                                     # optional - sage.rings.finite_rings
+            sage: K.<a> = GF(11^9).over(GF(11^3))                                       # needs sage.rings.finite_rings
+            sage: V, i, j = K.free_module()                                             # needs sage.rings.finite_rings
+            sage: j(a + 2*a^2)   # indirect doctest                                     # needs sage.rings.finite_rings
             (0, 1, 2)
         """
         cdef list coeffs = [ ]
