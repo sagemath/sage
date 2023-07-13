@@ -1,4 +1,4 @@
-# sage.doctest: optional - sage.graphs
+# sage.doctest: needs sage.graphs
 r"""
 Helper functions for mutation types of quivers
 
