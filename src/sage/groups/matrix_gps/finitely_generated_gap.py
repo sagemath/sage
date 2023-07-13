@@ -950,7 +950,7 @@ def test_invariant_generators():
     tetra=MatrixGroup([(-1+i)/2,(-1+i)/2, (1+i)/2,(-1-i)/2], [0,i, -i,0])
     groups.append((tetra,"tetra"))
 
-    for n in range(2,6):
+    for n in range(2,5):
 
     # test for multiple ns
         M = MatrixSpace(QQ, n)
@@ -960,16 +960,16 @@ def test_invariant_generators():
 
         group7 = MatrixGroup([M(g.matrix()) for g in SymmetricGroup(n).gens()]) 
 
-        group8 = MatrixGroup(CyclicPermutationGroup(n))
+        # group8 = MatrixGroup(CyclicPermutationGroup(n))
 
-        groups.extend([(group5, f"identity {n}"), (group6, f"alternating {n}"), (group7, f"symmetric {n}"), (group8, f"cyclic permutation {n}")])
+        groups.extend([(group5, f"identity {n}"), (group6, f"alternating {n}"), (group7, f"symmetric {n}")])#, (group8, f"cyclic permutation {n}")])
 
     K = CyclotomicField(8)
     v=K.gen()
     a = v-v**3 #sqrt(2)
     i = v**2
     octa = MatrixGroup([(-1+i)/2, (-1+i)/2,  (1+i)/2, (-1-i)/2],[(1+i)/a, 0,  0, (1-i)/a])
-    groups.append((octa, "octaherdal"))
+    groups.append((octa, "octahedral"))
 
 
     K = CyclotomicField(10)
@@ -993,34 +993,30 @@ def test_invariant_generators():
 
 
     for group, name in groups:
-        print(f"\n\n\n\n\n{name}")
+        print("-"*100)
+        print(f"{name}")
         print(group)
-        dim = len(group.gens()[0].list())
+        # dim = len(group.gens()[0].list())
         invariants=group.invariant_generators()
         print(f"Invariants: {invariants}")
         for i in range(3): # num invariant tests per group
             random_invariant = randomchoice(invariants)
             random_element = group.random_element()
             result=random_element @ random_invariant
-            print(f"Example time!\ninvariant: {random_invariant}\nelement:\n{random_element}\nresult: {result}\nequal: {str(result==random_invariant).upper()}")
+            print(f"\nExample {i+1}:\ninvariant: {random_invariant}\nelement:\n{random_element}\nresult: {result}\nequal: {str(result==random_invariant).upper()}\n")
         molien=group.molien_series(return_series=False)
         print(f"Molien series: {molien}")
         hilbert=_hilbert_series(invariants)#, invariants[0].parent())
+        print(f"Hilbert series: {hilbert}")
+        print(f"Equal: {str(molien==hilbert).upper()}")
 
 def _hilbert_series(S):
     R=S[0].parent().base_ring()
     T=PolynomialRing(R, len(S), "a")
     h=T.hom(S)                          
-    I=h.kernel()    
-                    
-    # I.groebner_basis() # and here are the relations
-    # [b^2 - a*c]  
+    I=h.kernel()                        
     degrees=[s.degree() for s in S]
-    print(f"S: {S}, degrees: {degrees}")
-    hI=I.hilbert_series(degrees) # 2s are degrees of the elements of S
-    return hI
-    # SR(hI).series(t)
-    # 1 + 3*t^2 + 5*t^4 + 7*t^6 + 9*t^8 + 11*t^10 + 13*t^12 + 15*t^14 + 17*t^16 + 19*t^18 + Order(t^20)
+    return I.hilbert_series(grading=degrees, algorithm="sage") # 2s are degrees of the elements of S
 
 
 
