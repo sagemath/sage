@@ -383,7 +383,6 @@ class FinitelyGeneratedMatrixGroup_gap(MatrixGroup_gap):
             singular.eval('matrix %s,%s=invariant_ring(%s)' % (PName, SName, Lgens))
             OUT = [singular.eval(PName+'[1,%d]' % (j))
                    for j in range(1,1+singular('ncols('+PName+')'))]
-            print(f"There are {len(OUT)} (primary) invariants from PName")
             OUT += [singular.eval(SName+'[1,%d]' % (j))
                     for j in range(2,1+singular('ncols('+SName+')'))]
             return [PR(gen) for gen in OUT]

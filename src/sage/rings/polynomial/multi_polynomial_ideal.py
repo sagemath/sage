@@ -3025,7 +3025,7 @@ class MPolynomialIdeal_singular_repr(
             sage: I.hilbert_series()                                                                                    # optional - sage.rings.number_field
             (t^4 + t^3 + t^2 + t + 1)/(t^2 - 2*t + 1)
         """
-        
+
         if algorithm == 'sage':
             from sage.rings.polynomial.hilbert import hilbert_poincare_series
 
