@@ -120,19 +120,20 @@ class MinMax_base(BuiltinFunction):
 
         Check if a single argument which is not iterable works::
 
-            sage: max_symbolic(None)                                                    # needs sage.symbolic
+            sage: # needs sage.symbolic
+            sage: max_symbolic(None)
             Traceback (most recent call last):
             ...
             TypeError: 'NoneType' object is not iterable
-            sage: max_symbolic(5)                                                       # needs sage.symbolic
+            sage: max_symbolic(5)
             Traceback (most recent call last):
             ...
             TypeError: 'sage.rings.integer.Integer' object is not iterable
-            sage: max_symbolic(x)                                                       # needs sage.symbolic
+            sage: max_symbolic(x)
             Traceback (most recent call last):
             ...
             TypeError: 'sage.symbolic.expression.Expression' object is not iterable
-            sage: min_symbolic(5)                                                       # needs sage.symbolic
+            sage: min_symbolic(5)
             Traceback (most recent call last):
             ...
             TypeError: 'sage.rings.integer.Integer' object is not iterable

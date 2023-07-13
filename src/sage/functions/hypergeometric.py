@@ -955,7 +955,7 @@ class Hypergeometric_M(BuiltinFunction):
 
         sage: hypergeometric_M(1, 1, 1)                                                 # needs sage.symbolic
         hypergeometric_M(1, 1, 1)
-        sage: hypergeometric_M(1, 1, 1.)
+        sage: hypergeometric_M(1, 1, 1.)                                                # needs mpmath
         2.71828182845905
         sage: hypergeometric_M(1, 1, 1).n(70)                                           # needs sage.symbolic
         2.7182818284590452354
@@ -1065,7 +1065,7 @@ class Hypergeometric_U(BuiltinFunction):
 
         sage: hypergeometric_U(1, 1, 1)                                                 # needs sage.symbolic
         hypergeometric_U(1, 1, 1)
-        sage: hypergeometric_U(1, 1, 1.)
+        sage: hypergeometric_U(1, 1, 1.)                                                # needs mpmath
         0.596347362323194
         sage: hypergeometric_U(1, 1, 1).n(70)                                           # needs sage.symbolic
         0.59634736232319407434

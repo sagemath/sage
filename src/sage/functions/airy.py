@@ -122,7 +122,7 @@ class FunctionAiryAiGeneral(BuiltinFunction):
 
             sage: from sage.functions.airy import airy_ai_general
             sage: x, n = var('x n')                                                     # needs sage.symbolic
-            sage: airy_ai_general(-2, 1.0)
+            sage: airy_ai_general(-2, 1.0)                                              # needs mpmath
             0.136645379421096
             sage: airy_ai_general(n, 1.0)                                               # needs sage.symbolic
             airy_ai(n, 1.00000000000000)
@@ -145,7 +145,7 @@ class FunctionAiryAiGeneral(BuiltinFunction):
         EXAMPLES::
 
             sage: from sage.functions.airy import airy_ai_general
-            sage: airy_ai_general(-2, 1.0)
+            sage: airy_ai_general(-2, 1.0)                                              # needs mpmath
             0.136645379421096
         """
         return _mpmath_call(_mpmath_airyai, x, derivative=alpha,
@@ -190,7 +190,7 @@ class FunctionAiryAiSimple(BuiltinFunction):
             sage: from sage.functions.airy import airy_ai_simple
             sage: airy_ai_simple(0)                                                     # needs sage.symbolic
             1/3*3^(1/3)/gamma(2/3)
-            sage: airy_ai_simple(0.0)
+            sage: airy_ai_simple(0.0)                                                   # needs mpmath
             0.355028053887817
             sage: airy_ai_simple(I)                                                     # needs sage.symbolic
             airy_ai(I)
@@ -207,7 +207,7 @@ class FunctionAiryAiSimple(BuiltinFunction):
         EXAMPLES::
 
             sage: from sage.functions.airy import airy_ai_simple
-            sage: airy_ai_simple(0.0)
+            sage: airy_ai_simple(0.0)                                                   # needs mpmath
             0.355028053887817
             sage: airy_ai_simple(1.0 * I)                                               # needs sage.symbolic
             0.331493305432141 - 0.317449858968444*I
@@ -296,7 +296,7 @@ class FunctionAiryAiPrime(BuiltinFunction):
 
             sage: airy_ai_prime(0)                                                      # needs sage.symbolic
             -1/3*3^(2/3)/gamma(1/3)
-            sage: airy_ai_prime(0.0)
+            sage: airy_ai_prime(0.0)                                                    # needs mpmath
             -0.258819403792807
         """
         from .gamma import gamma
@@ -308,7 +308,7 @@ class FunctionAiryAiPrime(BuiltinFunction):
         """
         EXAMPLES::
 
-            sage: airy_ai_prime(0.0)
+            sage: airy_ai_prime(0.0)                                                    # needs mpmath
             -0.258819403792807
 
         We can use several methods for numerical evaluation::
@@ -432,7 +432,7 @@ def airy_ai(alpha, x=None, hold_derivative=True, **kwds):
 
         sage: airy_ai(0)                                                                # needs sage.symbolic
         1/3*3^(1/3)/gamma(2/3)
-        sage: airy_ai(0.0)
+        sage: airy_ai(0.0)                                                              # needs mpmath
         0.355028053887817
         sage: airy_ai(I)                                                                # needs sage.symbolic
         airy_ai(I)
@@ -453,7 +453,7 @@ def airy_ai(alpha, x=None, hold_derivative=True, **kwds):
 
         sage: airy_ai(1, 0)                                                             # needs sage.symbolic
         -1/3*3^(2/3)/gamma(1/3)
-        sage: airy_ai(1, 0.0)
+        sage: airy_ai(1, 0.0)                                                           # needs mpmath
         -0.258819403792807
 
     Plots::
@@ -627,7 +627,7 @@ class FunctionAiryBiSimple(BuiltinFunction):
             sage: from sage.functions.airy import airy_bi_simple
             sage: airy_bi_simple(0)                                                     # needs sage.symbolic
             1/3*3^(5/6)/gamma(2/3)
-            sage: airy_bi_simple(0.0)
+            sage: airy_bi_simple(0.0)                                                   # needs mpmath
             0.614926627446001
             sage: airy_bi_simple(0).n() == airy_bi(0.0)                                 # needs sage.symbolic
             True
@@ -646,7 +646,7 @@ class FunctionAiryBiSimple(BuiltinFunction):
         EXAMPLES::
 
             sage: from sage.functions.airy import airy_bi_simple
-            sage: airy_bi_simple(0.0)
+            sage: airy_bi_simple(0.0)                                                   # needs mpmath
             0.614926627446001
             sage: airy_bi_simple(1.0 * I)                                               # needs sage.symbolic
             0.648858208330395 + 0.344958634768048*I
@@ -736,7 +736,7 @@ class FunctionAiryBiPrime(BuiltinFunction):
 
             sage: airy_bi_prime(0)                                                      # needs sage.symbolic
             3^(1/6)/gamma(1/3)
-            sage: airy_bi_prime(0.0)
+            sage: airy_bi_prime(0.0)                                                    # needs mpmath
             0.448288357353826
         """
         from .gamma import gamma
@@ -748,7 +748,7 @@ class FunctionAiryBiPrime(BuiltinFunction):
         """
         EXAMPLES::
 
-            sage: airy_bi_prime(0.0)
+            sage: airy_bi_prime(0.0)                                                    # needs mpmath
             0.448288357353826
 
         We can use several methods for numerical evaluation::
@@ -873,7 +873,7 @@ def airy_bi(alpha, x=None, hold_derivative=True, **kwds):
 
         sage: airy_bi(0)                                                                # needs sage.symbolic
         1/3*3^(5/6)/gamma(2/3)
-        sage: airy_bi(0.0)
+        sage: airy_bi(0.0)                                                              # needs mpmath
         0.614926627446001
         sage: airy_bi(I)                                                                # needs sage.symbolic
         airy_bi(I)
@@ -894,7 +894,7 @@ def airy_bi(alpha, x=None, hold_derivative=True, **kwds):
 
         sage: airy_bi(1, 0)                                                             # needs sage.symbolic
         3^(1/6)/gamma(1/3)
-        sage: airy_bi(1, 0.0)
+        sage: airy_bi(1, 0.0)                                                           # needs mpmath
         0.448288357353826
 
     Plots::

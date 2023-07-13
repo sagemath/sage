@@ -241,7 +241,7 @@ class Function_HurwitzZeta(BuiltinFunction):
             1/90*pi^4 - 17/16
             sage: hurwitz_zeta(-4, x)                                                   # needs sage.symbolic
             -1/5*x^5 + 1/2*x^4 - 1/3*x^3 + 1/30*x
-            sage: hurwitz_zeta(3, 0.5)
+            sage: hurwitz_zeta(3, 0.5)                                                  # needs mpmath
             8.41439832211716
             sage: hurwitz_zeta(0, x)                                                    # needs sage.symbolic
             -x + 1/2
@@ -326,7 +326,7 @@ def hurwitz_zeta(s, x, **kwargs):
         12.1038134956837
         sage: hurwitz_zeta(3, x).series(x, 60).subs(x=0.5).n()                          # needs sage.symbolic
         8.41439832211716
-        sage: hurwitz_zeta(3, 0.5)
+        sage: hurwitz_zeta(3, 0.5)                                                      # needs mpmath
         8.41439832211716
 
     REFERENCES:
@@ -424,19 +424,20 @@ def zeta_symmetric(s):
 
     EXAMPLES::
 
-        sage: zeta_symmetric(0.7)                                                       # needs sage.rings.real_mpfr
+        sage: # needs sage.rings.real_mpfr
+        sage: zeta_symmetric(0.7)
         0.497580414651127
-        sage: zeta_symmetric(1 - 0.7)                                                   # needs sage.rings.real_mpfr
+        sage: zeta_symmetric(1 - 0.7)
         0.497580414651127
-        sage: RR = RealField(200)                                                       # needs sage.rings.real_mpfr
-        sage: zeta_symmetric(RR(0.7))                                                   # needs sage.rings.real_mpfr
+        sage: RR = RealField(200)
+        sage: zeta_symmetric(RR(0.7))
         0.49758041465112690357779107525638385212657443284080589766062
-        sage: C.<i> = ComplexField()                                                    # needs sage.rings.real_mpfr
-        sage: zeta_symmetric(0.5 + i*14.0)                                              # needs sage.libs.pari sage.rings.real_mpfr
+        sage: C.<i> = ComplexField()
+        sage: zeta_symmetric(0.5 + i*14.0)                                              # needs sage.libs.pari
         0.000201294444235258 + 1.49077798716757e-19*I
-        sage: zeta_symmetric(0.5 + i*14.1)                                              # needs sage.libs.pari sage.rings.real_mpfr
+        sage: zeta_symmetric(0.5 + i*14.1)                                              # needs sage.libs.pari
         0.0000489893483255687 + 4.40457132572236e-20*I
-        sage: zeta_symmetric(0.5 + i*14.2)                                              # needs sage.libs.pari sage.rings.real_mpfr
+        sage: zeta_symmetric(0.5 + i*14.2)                                              # needs sage.libs.pari
         -0.0000868931282620101 + 7.11507675693612e-20*I
 
     REFERENCE:

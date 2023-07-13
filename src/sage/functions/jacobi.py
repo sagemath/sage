@@ -362,7 +362,7 @@ class Jacobi(BuiltinFunction):
         r"""
         TESTS::
 
-            sage: jacobi_sn(3, 4).n(100)
+            sage: jacobi_sn(3, 4).n(100)                                                # needs mpmath
             -0.33260000892770027112809652714 + 1.7077912301715219199143891076e-33*I
             sage: jacobi_dn(I, I).n()
             0.874189950651018 + 0.667346865048825*I
@@ -718,9 +718,9 @@ class InverseJacobi(BuiltinFunction):
         r"""
         TESTS::
 
-            sage: inverse_jacobi_cn(2, 3).n()
+            sage: inverse_jacobi_cn(2, 3).n()                                           # needs mpmath
             0.859663746362987*I
-            sage: inverse_jacobi_cd(3, 4).n(100)
+            sage: inverse_jacobi_cd(3, 4).n(100)                                        # needs mpmath
             -0.67214752201235862490069823239 + 2.1565156474996432354386749988*I
         """
         return _mpmath_call(inverse_jacobi_f, self.kind, x, m, parent=parent)
@@ -939,13 +939,13 @@ def jacobi(kind, z, m, **kwargs):
 
     EXAMPLES::
 
-        sage: jacobi('sn', 1, 1)
+        sage: jacobi('sn', 1, 1)                                                        # needs mpmath
         tanh(1)
-        sage: jacobi('cd', 1, 1/2)
+        sage: jacobi('cd', 1, 1/2)                                                      # needs mpmath
         jacobi_cd(1, 1/2)
-        sage: RDF(jacobi('cd', 1, 1/2))
+        sage: RDF(jacobi('cd', 1, 1/2))                                                 # needs mpmath
         0.7240097216593705
-        sage: (RDF(jacobi('cn', 1, 1/2)), RDF(jacobi('dn', 1, 1/2)),
+        sage: (RDF(jacobi('cn', 1, 1/2)), RDF(jacobi('dn', 1, 1/2)),                    # needs mpmath
         ....:  RDF(jacobi('cn', 1, 1/2) / jacobi('dn', 1, 1/2)))
         (0.5959765676721407, 0.8231610016315962, 0.7240097216593705)
         sage: jsn = jacobi('sn', x, 1)
@@ -1000,13 +1000,13 @@ def inverse_jacobi(kind, x, m, **kwargs):
 
     EXAMPLES::
 
-        sage: jacobi('dn', inverse_jacobi('dn', 3, 0.4), 0.4)
+        sage: jacobi('dn', inverse_jacobi('dn', 3, 0.4), 0.4)                           # needs mpmath
         3.00000000000000
-        sage: inverse_jacobi('dn', 10, 1/10).n(digits=50)
+        sage: inverse_jacobi('dn', 10, 1/10).n(digits=50)                               # needs mpmath
         2.4777736267904273296523691232988240759001423661683*I
         sage: inverse_jacobi_dn(x, 1)
         arcsech(x)
-        sage: inverse_jacobi_dn(1, 3)
+        sage: inverse_jacobi_dn(1, 3)                                                   # needs mpmath
         0
         sage: m = var('m')                                                              # needs sage.symbolic
         sage: z = inverse_jacobi_dn(x, m).series(x, 4).subs(x=0.1, m=0.7)               # needs sage.symbolic
@@ -1014,17 +1014,17 @@ def inverse_jacobi(kind, x, m, **kwargs):
         0.0999892750039819...
         sage: inverse_jacobi_nd(x, 1)
         arccosh(x)
-        sage: inverse_jacobi_nd(1, 2)
+        sage: inverse_jacobi_nd(1, 2)                                                   # needs mpmath
         0
-        sage: inverse_jacobi_ns(10^-5, 3).n()
+        sage: inverse_jacobi_ns(10^-5, 3).n()                                           # needs mpmath
         5.77350269202456e-6 + 1.17142008414677*I
-        sage: jacobi('sn', 1/2, 1/2)
+        sage: jacobi('sn', 1/2, 1/2)                                                    # needs mpmath
         jacobi_sn(1/2, 1/2)
-        sage: jacobi('sn', 1/2, 1/2).n()
+        sage: jacobi('sn', 1/2, 1/2).n()                                                # needs mpmath
         0.470750473655657
-        sage: inverse_jacobi('sn', 0.47, 1/2)
+        sage: inverse_jacobi('sn', 0.47, 1/2)                                           # needs mpmath
         0.499098231322220
-        sage: inverse_jacobi('sn', 0.4707504, 0.5)
+        sage: inverse_jacobi('sn', 0.4707504, 0.5)                                      # needs mpmath
         0.499999911466555
         sage: P = plot(inverse_jacobi('sn', x, 0.5), 0, 1)                              # needs sage.plot
     """
@@ -1083,7 +1083,7 @@ class JacobiAmplitude(BuiltinFunction):
             x
             sage: jacobi_am(0, x)                                                       # needs sage.symbolic
             0
-            sage: jacobi_am(3, 4.)
+            sage: jacobi_am(3, 4.)                                                      # needs mpmath
             -0.339059208303591
         """
         if m == 0:
@@ -1096,7 +1096,7 @@ class JacobiAmplitude(BuiltinFunction):
         r"""
         TESTS::
 
-            sage: jacobi_am(1, 2).n(100)
+            sage: jacobi_am(1, 2).n(100)                                                # needs mpmath
             0.73704379494724574105101929735
         """
         return _mpmath_call(jacobi_am_f, x, m, parent=parent)
