@@ -388,33 +388,33 @@ class Semigroups(CategoryWithAxiom):
             EXAMPLES::
 
                 sage: R = IntegerModRing(15)
-                sage: M = R.subsemigroup([R(3), R(5)]); M
+                sage: M = R.subsemigroup([R(3), R(5)]); M                               # needs sage.combinat
                 A subsemigroup of (Ring of integers modulo 15) with 2 generators
-                sage: M.list()
+                sage: M.list()                                                          # needs sage.combinat
                 [3, 5, 9, 0, 10, 12, 6]
 
             By default, `M` is just in the category of subsemigroups::
 
-                sage: M in Semigroups().Subobjects()
+                sage: M in Semigroups().Subobjects()                                    # needs sage.combinat
                 True
 
             In the following example, we specify that `M` is a
             submonoid of the finite monoid `R` (it shares the same
             unit), and a group by itself::
 
-                sage: M = R.subsemigroup([R(-1)],
+                sage: M = R.subsemigroup([R(-1)],                                       # needs sage.combinat
                 ....:     category=Monoids().Finite().Subobjects() & Groups()); M
                 A submonoid of (Ring of integers modulo 15) with 1 generators
-                sage: M.list()
+                sage: M.list()                                                          # needs sage.combinat
                 [1, 14]
-                sage: M.one()
+                sage: M.one()                                                           # needs sage.combinat
                 1
 
             In the following example, `M` is a group; however, its unit
             does not coincide with that of `R`, so `M` is only a
             subsemigroup, and we need to specify its unit explicitly::
 
-                sage: M = R.subsemigroup([R(5)],
+                sage: M = R.subsemigroup([R(5)],                                        # needs sage.combinat
                 ....:     category=Semigroups().Finite().Subobjects() & Groups()); M
                 Traceback (most recent call last):
                 ...
@@ -434,7 +434,7 @@ class Semigroups(CategoryWithAxiom):
 
             TESTS::
 
-                sage: TestSuite(M).run()
+                sage: TestSuite(M).run()                                                # needs sage.combinat
                 Failure in _test_inverse:
                 Traceback (most recent call last):
                 ...

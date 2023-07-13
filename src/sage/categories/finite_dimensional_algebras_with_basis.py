@@ -489,11 +489,12 @@ class FiniteDimensionalAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
 
             ::
 
+                sage: # needs sage.modules sage.rings.number_field
                 sage: Z12 = Monoids().Finite().example(); Z12
                 An example of a finite multiplicative monoid: the integers modulo 12
                 sage: A = Z12.algebra(QQ)
-                sage: idempotents = A.orthogonal_idempotents_central_mod_radical()      # needs sage.rings.number_field
-                sage: sorted(idempotents, key=str)                                      # needs sage.rings.number_field
+                sage: idempotents = A.orthogonal_idempotents_central_mod_radical()
+                sage: sorted(idempotents, key=str)
                 [-B[0] + 1/2*B[4] + 1/2*B[8],
                  1/2*B[4] - 1/2*B[8],
                  1/2*B[9] + 1/2*B[3] - B[0],
@@ -503,11 +504,11 @@ class FiniteDimensionalAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
                  1/4*B[1] - 1/2*B[9] - 1/2*B[3] + 1/4*B[11] + 1/4*B[5] + 1/4*B[7] + B[0] - 1/2*B[4] - 1/2*B[8],
                  1/4*B[1] - 1/4*B[5] + 1/4*B[7] - 1/4*B[11] - 1/2*B[4] + 1/2*B[8],
                  B[0]]
-                sage: sum(idempotents) == 1                                             # needs sage.rings.number_field
+                sage: sum(idempotents) == 1
                 True
-                sage: all(e*e == e for e in idempotents)                                # needs sage.rings.number_field
+                sage: all(e*e == e for e in idempotents)
                 True
-                sage: all(e*f == 0 and f*e == 0                                         # needs sage.rings.number_field
+                sage: all(e*f == 0 and f*e == 0
                 ....:     for e in idempotents for f in idempotents if e != f)
                 True
 
@@ -519,7 +520,7 @@ class FiniteDimensionalAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
             We construct orthogonal idempotents for the algebra of the
             `0`-Hecke monoid::
 
-                sage: from sage.monoids.hecke_monoid import HeckeMonoid
+                sage: from sage.monoids.hecke_monoid import HeckeMonoid                 # needs sage.combinat
                 sage: A = HeckeMonoid(SymmetricGroup(4)).algebra(QQ)                    # needs sage.groups
                 sage: idempotents = A.orthogonal_idempotents_central_mod_radical()      # needs sage.groups
                 sage: A.is_identity_decomposition_into_orthogonal_idempotents(idempotents)          # needs sage.groups
@@ -690,9 +691,10 @@ class FiniteDimensionalAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
 
             With the algebra of the `0`-Hecke monoid::
 
+                sage: # needs sage.combinat sage.groups sage.modules
                 sage: from sage.monoids.hecke_monoid import HeckeMonoid
-                sage: A = HeckeMonoid(SymmetricGroup(4)).algebra(QQ)                    # needs sage.groups sage.modules
-                sage: A.cartan_invariants_matrix()                                      # needs sage.groups sage.modules sage.rings.number_field
+                sage: A = HeckeMonoid(SymmetricGroup(4)).algebra(QQ)
+                sage: A.cartan_invariants_matrix()                                      # needs sage.rings.number_field
                 [1 0 0 0 0 0 0 0]
                 [0 2 1 0 1 1 0 0]
                 [0 1 1 0 1 0 0 0]
@@ -959,10 +961,11 @@ class FiniteDimensionalAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
 
             With the algebra of the `0`-Hecke monoid::
 
+                sage: # needs sage.combinat sage.groups sage.modules
                 sage: from sage.monoids.hecke_monoid import HeckeMonoid
-                sage: A = HeckeMonoid(SymmetricGroup(4)).algebra(QQ)                    # needs sage.groups sage.modules
-                sage: idempotents = A.orthogonal_idempotents_central_mod_radical()      # needs sage.groups sage.modules sage.rings.number_field
-                sage: A.is_identity_decomposition_into_orthogonal_idempotents(idempotents)          # needs sage.groups sage.modules sage.rings.number_field
+                sage: A = HeckeMonoid(SymmetricGroup(4)).algebra(QQ)
+                sage: idempotents = A.orthogonal_idempotents_central_mod_radical()      # needs sage.rings.number_field
+                sage: A.is_identity_decomposition_into_orthogonal_idempotents(idempotents)          # needs sage.rings.number_field
                 True
 
             Here are some more counterexamples:
