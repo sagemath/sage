@@ -1922,7 +1922,7 @@ class Function_limit(BuiltinFunction):
         EXAMPLES::
 
             sage: from sage.functions.other import symbolic_limit as slimit
-            sage: latex(slimit)                                                         # needs sage.symbolic
+            sage: latex(slimit)
             \lim
         """
         return r'\lim'
