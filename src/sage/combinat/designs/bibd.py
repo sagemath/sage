@@ -1600,15 +1600,16 @@ class BalancedIncompleteBlockDesign(PairwiseBalancedDesign):
 
         Some other examples which are not maximal::
 
+            sage: # needs sage.numerical.mip
             sage: B = designs.balanced_incomplete_block_design(25, 4)
-            sage: a2 = B.arc(2)                                                         # needs sage.numerical.mip
+            sage: a2 = B.arc(2)
             sage: r = (25-1)//(4-1)
-            sage: len(a2), 1 + r                                                        # needs sage.numerical.mip
+            sage: len(a2), 1 + r
             (8, 9)
-            sage: sa2 = set(a2)                                                         # needs sage.numerical.mip
-            sage: set(len(sa2.intersection(b)) for b in B.blocks())                     # needs sage.numerical.mip
+            sage: sa2 = set(a2)
+            sage: set(len(sa2.intersection(b)) for b in B.blocks())
             {0, 1, 2}
-            sage: B.trace(a2).is_t_design(2)                                            # needs sage.numerical.mip
+            sage: B.trace(a2).is_t_design(2)
             False
 
             sage: # needs sage.numerical.mip
