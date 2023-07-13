@@ -263,13 +263,15 @@ class Fields(CategoryWithAxiom):
             The following example illustrates the fact that for inexact
             base rings, the returned gcd is often 1 due to rounding::
 
+                sage: # needs sage.rings.real_mpfr
                 sage: f = (x+RR.pi())^2 * (x-1)
                 sage: g = (x+RR.pi())^5
-                sage: f.gcd(g)                                                          # needs sage.rings.real_mpfr
+                sage: f.gcd(g)
                 1.00000000000000
 
             Check :trac:`23012`::
 
+                sage: # needs sage.libs.pari
                 sage: R.<x> = QQ[]
                 sage: Q = R.quotient(x^2 - 1)   # Not a field                           # needs sage.libs.pari
                 sage: P.<x> = Q[]                                                       # needs sage.libs.pari
