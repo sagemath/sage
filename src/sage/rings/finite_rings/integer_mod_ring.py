@@ -643,13 +643,14 @@ class IntegerModRing_generic(quotient_ring.QuotientRing_generic, sage.rings.abc.
 
         EXAMPLES::
 
-            sage: Integers(5).multiplicative_subgroups()                                # needs sage.groups
+            sage: # needs sage.groups
+            sage: Integers(5).multiplicative_subgroups()
             ((2,), (4,), ())
-            sage: Integers(15).multiplicative_subgroups()                               # needs sage.groups
+            sage: Integers(15).multiplicative_subgroups()
             ((11, 7), (11, 4), (2,), (11,), (14,), (7,), (4,), ())
-            sage: Integers(2).multiplicative_subgroups()                                # needs sage.groups
+            sage: Integers(2).multiplicative_subgroups()
             ((),)
-            sage: len(Integers(341).multiplicative_subgroups())                         # needs sage.groups
+            sage: len(Integers(341).multiplicative_subgroups())
             80
 
         TESTS::
@@ -964,13 +965,14 @@ In the latter case, please inform the developers.""".format(self.order()))
 
         ::
 
-            sage: v = Integers(9*5).square_roots_of_one(); v                            # needs sage.libs.pari
+            sage: # needs sage.libs.pari
+            sage: v = Integers(9*5).square_roots_of_one(); v
             (1, 19, 26, 44)
-            sage: [x^2 for x in v]                                                      # needs sage.libs.pari
+            sage: [x^2 for x in v]
             [1, 1, 1, 1]
-            sage: v = Integers(9*5*8).square_roots_of_one(); v                          # needs sage.libs.pari
+            sage: v = Integers(9*5*8).square_roots_of_one(); v
             (1, 19, 71, 89, 91, 109, 161, 179, 181, 199, 251, 269, 271, 289, 341, 359)
-            sage: [x^2 for x in v]                                                      # needs sage.libs.pari
+            sage: [x^2 for x in v]
             [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
         """
         try:

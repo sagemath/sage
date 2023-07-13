@@ -664,13 +664,14 @@ cdef class IntegerMod_abstract(FiniteRingElement):
 
         A bigger example::
 
-            sage: FF = FiniteField(2^32 + 61)                                           # needs sage.rings.finite_rings
-            sage: c = FF(4294967356)                                                    # needs sage.rings.finite_rings
-            sage: x = FF(2)                                                             # needs sage.rings.finite_rings
-            sage: a = c.log(x)                                                          # needs sage.rings.finite_rings
-            sage: a                                                                     # needs sage.rings.finite_rings
+            sage: # needs sage.rings.finite_rings
+            sage: FF = FiniteField(2^32 + 61)
+            sage: c = FF(4294967356)
+            sage: x = FF(2)
+            sage: a = c.log(x)
+            sage: a
             2147483678
-            sage: x^a                                                                   # needs sage.rings.finite_rings
+            sage: x^a
             4294967356
 
         An example with a highly composite modulus::
@@ -1185,11 +1186,12 @@ cdef class IntegerMod_abstract(FiniteRingElement):
 
         ::
 
-            sage: t = FiniteField(next_prime(2^100))(4)                                 # needs sage.rings.finite_rings
-            sage: t.sqrt(extend=False, all=True)                                        # needs sage.rings.finite_rings
+            sage: # needs sage.rings.finite_rings
+            sage: t = FiniteField(next_prime(2^100))(4)
+            sage: t.sqrt(extend=False, all=True)
             [2, 1267650600228229401496703205651]
-            sage: t = FiniteField(next_prime(2^100))(2)                                 # needs sage.rings.finite_rings
-            sage: t.sqrt(extend=False, all=True)                                        # needs sage.rings.finite_rings
+            sage: t = FiniteField(next_prime(2^100))(2)
+            sage: t.sqrt(extend=False, all=True)
             []
 
         Modulo a power of 2::
@@ -1937,8 +1939,8 @@ cdef class IntegerMod_abstract(FiniteRingElement):
         EXAMPLES::
 
             sage: F.<a> = GF(13)
-            sage: V = F.vector_space(map=False)
-            sage: V(a)
+            sage: V = F.vector_space(map=False)                                         # needs sage.modules
+            sage: V(a)                                                                  # needs sage.modules
             (1)
         """
         return self.parent().vector_space(map=False)([self])
