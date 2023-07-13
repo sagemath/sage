@@ -177,7 +177,7 @@ class PseudoConwayLattice(WithEqualityById, SageObject):
         else:
             self.nodes = {}
 
-    def polynomial(self, n):
+    def polynomial(self, n, minimal=False):
         r"""
         Return the pseudo-Conway polynomial of degree `n` in this
         lattice.
@@ -207,6 +207,12 @@ class PseudoConwayLattice(WithEqualityById, SageObject):
             x^4 + x^3 + 1
             sage: PCL.polynomial(60)
             x^60 + x^59 + x^58 + x^55 + x^54 + x^53 + x^52 + x^51 + x^48 + x^46 + x^45 + x^42 + x^41 + x^39 + x^38 + x^37 + x^35 + x^32 + x^31 + x^30 + x^28 + x^24 + x^22 + x^21 + x^18 + x^17 + x^16 + x^15 + x^14 + x^10 + x^8 + x^7 + x^5 + x^3 + x^2 + x + 1
+
+        Check that :issue:`35357` is fixed::
+
+            sage: PCL = PseudoConwayLattice(65537, use_database=True)
+            sage: PCL.polynomial(12)
+            x^12 + 6282*x^11 + 11122*x^10 + 35286*x^9 + 38302*x^8 + 62766*x^7 + 4264*x^6 + 4288*x^5 + 32878*x^4 + 39221*x^3 + 27451*x^2 + 17153*x + 3
         """
         if n in self.nodes:
             return self.nodes[n]
@@ -219,13 +225,23 @@ class PseudoConwayLattice(WithEqualityById, SageObject):
             self.nodes[1] = f
             return f
 
+        if minimal:
+            from sage.interfaces.gap import gap
+            if gap.IsCheapConwayPolynomial(p, n):
+                from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+                cpoly = gap.ConwayPolynomial(p, n)
+                ccoef = list(cpoly.CoefficientsOfUnivariatePolynomial())
+                return PolynomialRing(FiniteField(p), 'x')(ccoef)
+
+        # TODO: Implement special case when n is prime (enumerate until solution is found)
+
         # Work in an arbitrary field K of order p**n.
         K = FiniteField(p**n, names='a')
 
         # TODO: something like the following
         # gcds = [n.gcd(d) for d in self.nodes.keys()]
         # xi = { m: (...) for m in gcds }
-        xi = {q: self.polynomial(n//q).any_root(K, -n//q, assume_squarefree=True)
+        xi = {q: self.polynomial(n//q, minimal=True).any_root(K, -n//q, assume_squarefree=True)
               for q in n.prime_divisors()}
 
         # The following is needed to ensure that in the concrete instantiation
