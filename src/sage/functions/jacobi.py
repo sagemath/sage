@@ -364,7 +364,7 @@ class Jacobi(BuiltinFunction):
 
             sage: jacobi_sn(3, 4).n(100)                                                # needs mpmath
             -0.33260000892770027112809652714 + 1.7077912301715219199143891076e-33*I
-            sage: jacobi_dn(I, I).n()
+            sage: jacobi_dn(I, I).n()                                                   # needs mpmath sage.symbolic
             0.874189950651018 + 0.667346865048825*I
         """
         return _mpmath_utils_call(_mpmath_ellipfun, self.kind, x, m, parent=parent)
@@ -376,16 +376,17 @@ class Jacobi(BuiltinFunction):
         sn, cn, and dn are analytic for all real ``x``, so we can check
         that the derivatives are correct by computing the series::
 
-            sage: from sage.libs.mpmath.all import almosteq                             # needs mpmath
+            sage: # needs mpmath
+            sage: from sage.libs.mpmath.all import almosteq
             sage: a = 0.9327542442482303
             sage: b = 0.7402326293643771
-            sage: almosteq(jacobi_sn(x, b).series(x, 10).subs(x=a),                     # needs mpmath sage.symbolic
+            sage: almosteq(jacobi_sn(x, b).series(x, 10).subs(x=a),                     # needs sage.symbolic
             ....:          jacobi_sn(a, b), abs_eps=0.01)
             True
-            sage: almosteq(jacobi_cn(x, b).series(x, 10).subs(x=a),                     # needs mpmath sage.symbolic
+            sage: almosteq(jacobi_cn(x, b).series(x, 10).subs(x=a),                     # needs sage.symbolic
             ....:          jacobi_cn(a, b), abs_eps=0.01)
             True
-            sage: almosteq(jacobi_dn(x, b).series(x, 10).subs(x=a),                     # needs mpmath sage.symbolic
+            sage: almosteq(jacobi_dn(x, b).series(x, 10).subs(x=a),                     # needs sage.symbolic
             ....:          jacobi_dn(a, b), abs_eps=0.01)
             True
         """
@@ -948,7 +949,7 @@ def jacobi(kind, z, m, **kwargs):
         sage: (RDF(jacobi('cn', 1, 1/2)), RDF(jacobi('dn', 1, 1/2)),                    # needs mpmath
         ....:  RDF(jacobi('cn', 1, 1/2) / jacobi('dn', 1, 1/2)))
         (0.5959765676721407, 0.8231610016315962, 0.7240097216593705)
-        sage: jsn = jacobi('sn', x, 1)
+        sage: jsn = jacobi('sn', x, 1)                                                  # needs sage.symbolic
         sage: P = plot(jsn, 0, 1)                                                       # needs sage.plot
     """
     if kind == 'nd':
@@ -1004,27 +1005,31 @@ def inverse_jacobi(kind, x, m, **kwargs):
         3.00000000000000
         sage: inverse_jacobi('dn', 10, 1/10).n(digits=50)                               # needs mpmath
         2.4777736267904273296523691232988240759001423661683*I
-        sage: inverse_jacobi_dn(x, 1)
+        sage: inverse_jacobi_dn(x, 1)                                                   # needs sage.symbolic
         arcsech(x)
         sage: inverse_jacobi_dn(1, 3)                                                   # needs mpmath
         0
-        sage: m = var('m')                                                              # needs sage.symbolic
-        sage: z = inverse_jacobi_dn(x, m).series(x, 4).subs(x=0.1, m=0.7)               # needs sage.symbolic
+
+        sage: # needs sage.symbolic
+        sage: m = var('m')
+        sage: z = inverse_jacobi_dn(x, m).series(x, 4).subs(x=0.1, m=0.7)
         sage: jacobi_dn(z, 0.7)
         0.0999892750039819...
         sage: inverse_jacobi_nd(x, 1)
         arccosh(x)
-        sage: inverse_jacobi_nd(1, 2)                                                   # needs mpmath
+
+        sage: # needs mpmath
+        sage: inverse_jacobi_nd(1, 2)
         0
-        sage: inverse_jacobi_ns(10^-5, 3).n()                                           # needs mpmath
+        sage: inverse_jacobi_ns(10^-5, 3).n()
         5.77350269202456e-6 + 1.17142008414677*I
-        sage: jacobi('sn', 1/2, 1/2)                                                    # needs mpmath
+        sage: jacobi('sn', 1/2, 1/2)
         jacobi_sn(1/2, 1/2)
-        sage: jacobi('sn', 1/2, 1/2).n()                                                # needs mpmath
+        sage: jacobi('sn', 1/2, 1/2).n()
         0.470750473655657
-        sage: inverse_jacobi('sn', 0.47, 1/2)                                           # needs mpmath
+        sage: inverse_jacobi('sn', 0.47, 1/2)
         0.499098231322220
-        sage: inverse_jacobi('sn', 0.4707504, 0.5)                                      # needs mpmath
+        sage: inverse_jacobi('sn', 0.4707504, 0.5)
         0.499999911466555
         sage: P = plot(inverse_jacobi('sn', x, 0.5), 0, 1)                              # needs sage.plot
     """

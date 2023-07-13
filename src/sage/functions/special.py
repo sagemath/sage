@@ -146,6 +146,7 @@ from sage.misc.functional import sqrt
 from sage.misc.lazy_import import lazy_import
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
+from sage.structure.element import parent as s_parent
 from sage.symbolic.function import BuiltinFunction
 
 lazy_import('sage.functions.jacobi', 'jacobi_am_f')
@@ -516,9 +517,9 @@ class EllipticE(BuiltinFunction):
 
         Numerically::
 
-            sage: f = lambda x, y: elliptic_e(arcsin(x), y).subs(x=x, y=y)      # optional - fricas
-            sage: g = lambda x, y: fricas.ellipticE(x, y).sage()                # optional - fricas
-            sage: d = lambda x, y: f(x, y) - g(x, y)                            # optional - fricas
+            sage: f = lambda x, y: elliptic_e(arcsin(x), y).subs(x=x, y=y)
+            sage: g = lambda x, y: fricas.ellipticE(x, y).sage()
+            sage: d = lambda x, y: f(x, y) - g(x, y)
             sage: [d(N(-pi/2 + x), y)                           # tol 1e-8      # optional - fricas, needs sage.symbolic
             ....:  for x in range(1, 3) for y in range(-2, 2)]
             [0.000000000000000,
@@ -584,8 +585,8 @@ class EllipticE(BuiltinFunction):
             sage: elliptic_e(2.5, 2.5)
             0.535647771608740 + 1.63996015168665*I
         """
-        R = parent or parent(z)
-        return _mpmath_utils_call(_mpmath_ellipe, z, m, parent=R)
+        R = parent or s_parent(z)
+        return _mpmath_call(_mpmath_ellipe, z, m, parent=R)
 
     def _derivative_(self, z, m, diff_param):
         """
@@ -689,8 +690,8 @@ class EllipticEC(BuiltinFunction):
             sage: elliptic_ec(I).n()                                                    # needs sage.symbolic
             1.63241178144043 - 0.369219492375499*I
         """
-        R = parent or parent(x)
-        return _mpmath_utils_call(_mpmath_ellipe, x, parent=R)
+        R = parent or s_parent(x)
+        return _mpmath_call(_mpmath_ellipe, x, parent=R)
 
     def _derivative_(self, x, diff_param):
         """
@@ -760,8 +761,8 @@ class EllipticEU(BuiltinFunction):
             sage: elliptic_eu(1, 1).n(200)                                              # needs sage.symbolic
             0.7615941559557648881194582...
         """
-        R = parent or parent(u)
-        return _mpmath_utils_call(elliptic_eu_f, u, m, parent=R)
+        R = parent or s_parent(u)
+        return _mpmath_call(elliptic_eu_f, u, m, parent=R)
 
     def _derivative_(self, u, m, diff_param):
         """
@@ -878,9 +879,9 @@ class EllipticF(BuiltinFunction):
 
         Numerically::
 
-            sage: f = lambda x, y: elliptic_f(arcsin(x), y).subs(x=x, y=y)      # optional - fricas
-            sage: g = lambda x, y: fricas.ellipticF(x, y).sage()                # optional - fricas
-            sage: d = lambda x, y: f(x, y) - g(x, y)                            # optional - fricas
+            sage: f = lambda x, y: elliptic_f(arcsin(x), y).subs(x=x, y=y)
+            sage: g = lambda x, y: fricas.ellipticF(x, y).sage()
+            sage: d = lambda x, y: f(x, y) - g(x, y)
             sage: [d(N(-pi/2 + x), y)                          # tol 1e-8       # optional - fricas, needs sage.symbolic
             ....:  for x in range(1, 3) for y in range(-2,2)]
             [0.000000000000000,
@@ -931,8 +932,8 @@ class EllipticF(BuiltinFunction):
             sage: elliptic_f(I, I).n()                                                  # needs sage.symbolic
             0.149965060031782 + 0.925097284105771*I
         """
-        R = parent or parent(z)
-        return _mpmath_utils_call(_mpmath_ellipf, z, m, parent=R)
+        R = parent or s_parent(z)
+        return _mpmath_call(_mpmath_ellipf, z, m, parent=R)
 
     def _derivative_(self, z, m, diff_param):
         """
@@ -1032,7 +1033,7 @@ class EllipticKC(BuiltinFunction):
         Check if complex numbers in the arguments are converted to maxima
         correctly (see :trac:`7557`)::
 
-            sage: t = jacobi_sn(1.2 + 2*I*elliptic_kc(1 - .5), .5)
+            sage: t = jacobi_sn(1.2 + 2*I*elliptic_kc(1 - .5), .5)                      # needs sage.symbolic
             sage: maxima(t)  # abs tol 1e-13                                            # needs sage.symbolic
             0.88771548861928029 - 1.7301614091485560e-15*%i
             sage: t.n()  # abs tol 1e-13                                                # needs sage.symbolic
@@ -1054,8 +1055,8 @@ class EllipticKC(BuiltinFunction):
             sage: elliptic_kc(I).n()                                                    # needs sage.symbolic
             1.42127228104504 + 0.295380284214777*I
         """
-        R = parent or parent(z)
-        return _mpmath_utils_call(_mpmath_ellipk, z, parent=R)
+        R = parent or s_parent(z)
+        return _mpmath_call(_mpmath_ellipk, z, parent=R)
 
     def _derivative_(self, z, diff_param):
         """
@@ -1146,8 +1147,8 @@ class EllipticPi(BuiltinFunction):
             sage: elliptic_pi(pi, I, I).n()
             0.0542471560940594 + 0.552096453413081*I
         """
-        R = parent or parent(z)
-        return _mpmath_utils_call(_mpmath_ellippi, n, z, m, parent=R)
+        R = parent or s_parent(z)
+        return _mpmath_call(_mpmath_ellippi, n, z, m, parent=R)
 
     def _derivative_(self, n, z, m, diff_param):
         """

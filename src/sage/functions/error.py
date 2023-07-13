@@ -130,7 +130,7 @@ class Function_erf(BuiltinFunction):
         0.999977909503001
         sage: 1 - pari(3).erfc()                                                        # needs sage.libs.pari sage.symbolic
         0.999977909503001
-        sage: RR(3).erf()
+        sage: RR(3).erf()                                                               # needs sage.rings.real_mpfr
         0.999977909503001
         sage: (integrate(exp(-x**2), (x,0,3))*2/sqrt(pi)).n()                           # needs sage.symbolic
         0.999977909503001

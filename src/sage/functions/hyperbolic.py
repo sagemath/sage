@@ -453,7 +453,7 @@ class Function_arccosh(GinacFunction):
             arccosh(1/2)
             sage: acosh(1/2).n()                                                        # needs sage.symbolic
             NaN
-            sage: acosh(CC(0.5))
+            sage: acosh(CC(0.5))                                                        # needs sage.rings.real_mpfr
             1.04719755119660*I
             sage: acosh(0)                                                              # needs sage.symbolic
             1/2*I*pi

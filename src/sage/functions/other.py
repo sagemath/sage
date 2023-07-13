@@ -861,7 +861,7 @@ class Function_real_nth_root(BuiltinFunction):
 
             sage: real_nth_root(RDF(-2), 3)
             -1.25992104989487...
-            sage: real_nth_root(Reals(100)(2), 2)
+            sage: real_nth_root(Reals(100)(2), 2)                                       # needs sage.rings.real_mpfr
             1.4142135623730950488016887242
         """
         if hasattr(exp, 'real_part'):

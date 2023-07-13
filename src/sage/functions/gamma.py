@@ -136,7 +136,7 @@ class Function_gamma(GinacFunction):
 
             sage: (-1).gamma()
             Infinity
-            sage: (-1.).gamma()
+            sage: (-1.).gamma()                                                         # needs sage.rings.real_mpfr
             NaN
             sage: CC(-1).gamma()                                                        # needs sage.libs.pari
             Infinity
@@ -233,7 +233,7 @@ class Function_log_gamma(GinacFunction):
 
             sage: log_gamma(-2.1)                                                       # needs sage.symbolic
             1.53171380819509 - 9.42477796076938*I
-            sage: log_gamma(CC(-2.1))
+            sage: log_gamma(CC(-2.1))                                                   # needs sage.rings.real
             1.53171380819509 - 9.42477796076938*I
             sage: log_gamma(-21/10).n()                                                 # needs sage.symbolic
             1.53171380819509 - 9.42477796076938*I
@@ -258,9 +258,9 @@ class Function_log_gamma(GinacFunction):
             4.78749174278205
             sage: log_gamma(x)._sympy_()                                                # needs sympy sage.symbolic
             loggamma(x)
-            sage: log_gamma(CC(6))
+            sage: log_gamma(CC(6))                                                      # needs sage.rings.real_mpfr
             4.78749174278205
-            sage: log_gamma(CC(-2.5))
+            sage: log_gamma(CC(-2.5))                                                   # needs sage.rings.real_mpfr
             -0.0562437164976741 - 9.42477796076938*I
             sage: log_gamma(RDF(-2.5))                                                  # needs sage.symbolic
             -0.056243716497674054 - 9.42477796076938*I
@@ -1028,7 +1028,7 @@ class Function_beta(GinacFunction):
             sage: beta(2., I)
             -0.500000000000000 - 0.500000000000000*I
 
-            sage: beta(x, x)._sympy_()
+            sage: beta(x, x)._sympy_()                                                  # needs sympy sage.symbolic
             beta(x, x)
 
         Test pickling::
