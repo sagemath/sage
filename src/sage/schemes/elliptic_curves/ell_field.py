@@ -1588,6 +1588,62 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
         from .isogeny_small_degree import isogenies_prime_degree
         return sum([isogenies_prime_degree(self, d) for d in L], [])
 
+    def isogenies_degree(self, n):
+        """
+        Return a list of all separable isogenies of given degree with domain
+        equal to ``self``, which are defined over the base field of ``self``.
+
+        INPUT:
+
+        - ``n`` -- an integer.
+
+        TESTS::
+            sage: E = EllipticCurve(GF(11), [1, 1])
+            sage: E.isogenies_degree(23 * 19)
+            [Composite morphism of degree 437 = 1*19*23:
+               From: Elliptic Curve defined by y^2 = x^3 + x + 1 over Finite Field of size 11
+               To:   Elliptic Curve defined by y^2 = x^3 + 8*x + 7 over Finite Field of size 11,
+             Composite morphism of degree 437 = 1*19*23:
+               From: Elliptic Curve defined by y^2 = x^3 + x + 1 over Finite Field of size 11
+               To:   Elliptic Curve defined by y^2 = x^3 + 2*x + 6 over Finite Field of size 11,
+             Composite morphism of degree 437 = 1*19*23:
+               From: Elliptic Curve defined by y^2 = x^3 + x + 1 over Finite Field of size 11
+               To:   Elliptic Curve defined by y^2 = x^3 + 6*x + 2 over Finite Field of size 11,
+             Composite morphism of degree 437 = 1*19*23:
+               From: Elliptic Curve defined by y^2 = x^3 + x + 1 over Finite Field of size 11
+               To:   Elliptic Curve defined by y^2 = x^3 + 7*x + 8 over Finite Field of size 11]
+
+            sage: pol = PolynomialRing(QQ, 'x')([1, -3, 5, -5, 5, -3, 1])
+            sage: L.<a> = NumberField(pol)
+            sage: js = hilbert_class_polynomial(-23).roots(L, multiplicities=False)
+            sage: len(js)
+            3
+            sage: E = EllipticCurve(j=js[0])
+            sage: len(E.isogenies_degree(2**2))
+            7
+            sage: len(E.isogenies_degree(2**5)) # long time (15s)
+            99
+        """
+        n = rings.Integer(n)
+        if n.is_prime():
+            return self.isogenies_prime_degree(n)
+
+        prime_divisors = sum([[p] * e for p, e in n.factor()], [])
+        isos = [self.isogeny(self(0))]
+
+        for p in prime_divisors:
+            if len(isos) == 0:
+                break
+
+            new_isos = []
+            for iso in isos:
+                Eiso = iso.codomain()
+                for next_iso in Eiso.isogenies_prime_degree(p):
+                    new_isos.append(next_iso * iso)
+            isos = new_isos
+
+        return isos
+
     def is_isogenous(self, other, field=None):
         """
         Return whether or not self is isogenous to other.
