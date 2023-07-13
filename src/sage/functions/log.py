@@ -533,7 +533,7 @@ class Function_dilog(GinacFunction):
             Real Field with 13 bits of precision
             sage: dilog(RealField(13)(1.1))                                             # needs sage.rings.real_mpfr
             1.96 - 0.300*I
-            sage: parent(_)
+            sage: parent(_)                                                             # needs sage.rings.real_mpfr
             Complex Field with 13 bits of precision
         """
         GinacFunction.__init__(self, 'dilog',
@@ -595,7 +595,7 @@ class Function_lambert_w(BuiltinFunction):
         0.567143290409784
         sage: lambert_w(-1).n()                                                         # needs mpmath
         -0.318131505204764 + 1.33723570143069*I
-        sage: lambert_w(-1.5 + 5*I)
+        sage: lambert_w(-1.5 + 5*I)                                                     # needs mpmath sage.su
         1.17418016254171 + 1.10651494102011*I
 
     Evaluation of other branches::
@@ -973,7 +973,7 @@ class Function_exp_polar(BuiltinFunction):
         If the imaginary part of `z` obeys `-\pi < z \leq \pi`, then
         `\operatorname{exp\_polar}(z)` is evaluated as `\exp(z)`::
 
-            sage: exp_polar(1.0 + 2.0*I)
+            sage: exp_polar(1.0 + 2.0*I)                                                # needs sage.symbolic
             -1.13120438375681 + 2.47172667200482*I
 
         If the imaginary part of `z` is outside of that interval the
@@ -1060,17 +1060,19 @@ class Function_harmonic_number_generalized(BuiltinFunction):
 
         sage: harmonic_number(5)                                                        # needs mpmath
         137/60
-        sage: harmonic_number(3, 3)                                                     # needs sage.symbolic
+
+        sage: # needs sage.symbolic
+        sage: harmonic_number(3, 3)
         251/216
-        sage: harmonic_number(5/2)                                                      # needs sage.symbolic
+        sage: harmonic_number(5/2)
         -2*log(2) + 46/15
-        sage: harmonic_number(3., 3)                                                    # needs sage.symbolic
+        sage: harmonic_number(3., 3)
         zeta(3) - 0.0400198661225573
-        sage: harmonic_number(3., 3.)                                                   # needs sage.symbolic
+        sage: harmonic_number(3., 3.)
         1.16203703703704
-        sage: harmonic_number(3, 3).n(200)                                              # needs sage.symbolic
+        sage: harmonic_number(3, 3).n(200)
         1.16203703703703703703703...
-        sage: harmonic_number(1 + I, 5)                                                 # needs sage.symbolic
+        sage: harmonic_number(1 + I, 5)
         harmonic_number(I + 1, 5)
         sage: harmonic_number(5, 1. + I)
         1.57436810798989 - 1.06194728851357*I
@@ -1167,11 +1169,12 @@ class Function_harmonic_number_generalized(BuiltinFunction):
         """
         EXAMPLES::
 
-            sage: harmonic_number(3., 3)                                                # needs sage.symbolic
+            sage: # needs sage.symbolic
+            sage: harmonic_number(3., 3)
             zeta(3) - 0.0400198661225573
-            sage: harmonic_number(3., 3.)                                               # needs sage.symbolic
+            sage: harmonic_number(3., 3.)
             1.16203703703704
-            sage: harmonic_number(3, 3).n(200)                                          # needs sage.symbolic
+            sage: harmonic_number(3, 3).n(200)
             1.16203703703703703703703...
             sage: harmonic_number(5, I).n()
             2.36889632899995 - 3.51181956521611*I
