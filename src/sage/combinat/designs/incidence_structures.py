@@ -1583,12 +1583,15 @@ class IncidenceStructure():
             [(8, 4, 7)]
             sage: [(v,k,l) for v in R for k in R for l in R if S4_8.is_t_design(0,v,k,l)]
             [(8, 4, 14)]
-            sage: A = designs.AffineGeometryDesign(3, 1, GF(2))                         # needs sage.rings.finite_rings
-            sage: A.is_t_design(return_parameters=True)                                 # needs sage.rings.finite_rings
+
+            sage: # needs sage.rings.finite_rings
+            sage: A = designs.AffineGeometryDesign(3, 1, GF(2))
+            sage: A.is_t_design(return_parameters=True)
             (True, (2, 8, 2, 1))
-            sage: A = designs.AffineGeometryDesign(4, 2, GF(2))                         # needs sage.rings.finite_rings
-            sage: A.is_t_design(return_parameters=True)                                 # needs sage.rings.finite_rings
+            sage: A = designs.AffineGeometryDesign(4, 2, GF(2))
+            sage: A.is_t_design(return_parameters=True)
             (True, (3, 16, 4, 1))
+
             sage: I = IncidenceStructure(2, [])
             sage: I.is_t_design(return_parameters=True)
             (True, (0, 2, 0, 0))
@@ -1829,15 +1832,15 @@ class IncidenceStructure():
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
+            sage: # needs sage.groups sage.rings.finite_rings
             sage: P = designs.DesarguesianProjectivePlaneDesign(2); P
             (7,3,1)-Balanced Incomplete Block Design
-            sage: G = P.automorphism_group()                                            # needs sage.groups
-            sage: G.is_isomorphic(PGL(3,2))                                             # needs sage.groups
+            sage: G = P.automorphism_group()
+            sage: G.is_isomorphic(PGL(3,2))
             True
-            sage: G                                                                     # needs sage.groups
+            sage: G
             Permutation Group with generators [...]
-            sage: G.cardinality()                                                       # needs sage.groups
+            sage: G.cardinality()
             168
 
         A non self-dual example::
@@ -2165,10 +2168,11 @@ class IncidenceStructure():
 
         EXAMPLES::
 
+            sage: # needs sage.plot
             sage: H = Hypergraph([{1,2,3},{2,3,4},{3,4,5},{4,5,6}]); H
             Incidence structure with 6 points and 4 blocks
-            sage: L = H._spring_layout()                                                # needs sage.plot
-            sage: L  # random                                                           # needs sage.plot
+            sage: L = H._spring_layout()
+            sage: L  # random
             {1: (0.238, -0.926),
              2: (0.672, -0.518),
              3: (0.449, -0.225),
@@ -2179,9 +2183,9 @@ class IncidenceStructure():
              {2, 3, 4}: (0.727, -0.173),
              {4, 5, 6}: (0.838, 0.617),
              {1, 2, 3}: (0.393, -0.617)}
-            sage: all(v in L for v in H.ground_set())                                   # needs sage.plot
+            sage: all(v in L for v in H.ground_set())
             True
-            sage: all(v in L for v in map(Set, H.blocks()))                             # needs sage.plot
+            sage: all(v in L for v in map(Set, H.blocks()))
             True
         """
         from sage.graphs.graph import Graph
