@@ -282,6 +282,12 @@ if [ $DOWNLOAD$SAVE = yesyes ]; then
     exit 2
 fi
 
+if [ $# != 0 -a $DOWNLOAD$ALWAYSDOWNLOAD$SAVE != nonono ]; then
+    echo >&2 "$0: Cannot combine -d, -D, -s, -u with SPKG arguments"
+    usage
+    exit 2
+fi
+
 # Start cleanly when a full bootstrap is happening (it's not a problem if this fails)
 # POSIX supports two separate incompatible formats for the MAKEFLAGS
 # variable, so instead of guessing, we simply define our own variable
