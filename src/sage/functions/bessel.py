@@ -260,7 +260,7 @@ class Function_Bessel_J(BuiltinFunction):
 
     EXAMPLES::
 
-        sage: bessel_J(1.0, 1.0)
+        sage: bessel_J(1.0, 1.0)                                                        # needs mpmath
         0.440050585744933
         sage: bessel_J(2, I).n(digits=30)                                               # needs sage.symbolic
         -0.135747669767038281182852569995
@@ -310,7 +310,7 @@ class Function_Bessel_J(BuiltinFunction):
 
     Check whether the return value is real whenever the argument is real (:trac:`10251`)::
 
-        sage: bessel_J(5, 1.5) in RR
+        sage: bessel_J(5, 1.5) in RR                                                    # needs mpmath
         True
 
     REFERENCES:
@@ -378,19 +378,20 @@ class Function_Bessel_J(BuiltinFunction):
         """
         EXAMPLES::
 
-            sage: bessel_J(0.0, 1.0)
+            sage: bessel_J(0.0, 1.0)                                                    # needs mpmath
             0.765197686557967
             sage: bessel_J(0, 1).n(digits=20)                                           # needs sage.symbolic
             0.76519768655796655145
-            sage: bessel_J(0.5, 1.5)
+            sage: bessel_J(0.5, 1.5)                                                    # needs mpmath
             0.649838074753747
 
         Check for correct rounding (:trac:`17122`)::
 
-            sage: R = RealField(113)                                                    # needs sage.rings.real_mpfr
-            sage: a = R("8.935761195587725798762818805462843676e-01")                   # needs sage.rings.real_mpfr
-            sage: aa = RealField(200)(a)                                                # needs sage.rings.real_mpfr
-            sage: for n in [-10..10]:                                                   # needs sage.rings.real_mpfr
+            sage: # needs sage.rings.real_mpfr
+            sage: R = RealField(113)
+            sage: a = R("8.935761195587725798762818805462843676e-01")
+            sage: aa = RealField(200)(a)
+            sage: for n in [-10..10]:
             ....:     b = bessel_J(R(n), a)
             ....:     bb = R(bessel_J(n, aa))
             ....:     if b != bb:
@@ -472,7 +473,7 @@ class Function_Bessel_Y(BuiltinFunction):
 
         sage: bessel_Y(1, x)                                                            # needs sage.symbolic
         bessel_Y(1, x)
-        sage: bessel_Y(1.0, 1.0)
+        sage: bessel_Y(1.0, 1.0)                                                        # needs mpmath
         -0.781212821300289
         sage: n = var('n')                                                              # needs sage.symbolic
         sage: bessel_Y(n, x)                                                            # needs sage.symbolic
@@ -521,18 +522,19 @@ class Function_Bessel_Y(BuiltinFunction):
 
     Check whether the return value is real whenever the argument is real (:trac:`10251`)::
 
-        sage: bessel_Y(5, 1.5) in RR
+        sage: bessel_Y(5, 1.5) in RR                                                    # needs mpmath
         True
 
     Coercion works correctly (see :trac:`17130`)::
 
-        sage: r = bessel_Y(RealField(200)(1), 1.0); r                                   # needs sage.rings.real_mpfr
+        sage: # needs sage.rings.real_mpfr
+        sage: r = bessel_Y(RealField(200)(1), 1.0); r
         -0.781212821300289
-        sage: parent(r)                                                                 # needs sage.rings.real_mpfr
+        sage: parent(r)
         Real Field with 53 bits of precision
-        sage: r = bessel_Y(RealField(200)(1), 1); r                                     # needs sage.rings.real_mpfr
+        sage: r = bessel_Y(RealField(200)(1), 1); r
         -0.78121282130028871654715000004796482054990639071644460784383
-        sage: parent(r)                                                                 # needs sage.rings.real_mpfr
+        sage: parent(r)
         Real Field with 200 bits of precision
 
     REFERENCES:
@@ -596,7 +598,7 @@ class Function_Bessel_Y(BuiltinFunction):
         """
         EXAMPLES::
 
-            sage: bessel_Y(0.5, 1.5)
+            sage: bessel_Y(0.5, 1.5)                                                    # needs mpmath
             -0.0460831658930974
             sage: bessel_Y(1.0+2*I, 3.0+4*I)                                            # needs sage.symbolic
             0.699410324467538 + 0.228917940896421*I
@@ -605,10 +607,11 @@ class Function_Bessel_Y(BuiltinFunction):
 
         Check for correct rounding (:trac:`17122`)::
 
-            sage: R = RealField(113)                                                    # needs sage.rings.real_mpfr
-            sage: a = R("8.935761195587725798762818805462843676e-01")                   # needs sage.rings.real_mpfr
-            sage: aa = RealField(200)(a)                                                # needs sage.rings.real_mpfr
-            sage: for n in [-10..10]:                                                   # needs sage.rings.real_mpfr
+            sage: # needs sage.rings.real_mpfr
+            sage: R = RealField(113)
+            sage: a = R("8.935761195587725798762818805462843676e-01")
+            sage: aa = RealField(200)(a)
+            sage: for n in [-10..10]:
             ....:     b = bessel_Y(R(n), a)
             ....:     bb = R(bessel_Y(n, aa))
             ....:     if b != bb:
@@ -676,7 +679,7 @@ class Function_Bessel_I(BuiltinFunction):
 
         sage: bessel_I(1, x)                                                            # needs sage.symbolic
         bessel_I(1, x)
-        sage: bessel_I(1.0, 1.0)
+        sage: bessel_I(1.0, 1.0)                                                        # needs mpmath
         0.565159103992485
         sage: n = var('n')                                                              # needs sage.symbolic
         sage: bessel_I(n, x)                                                            # needs sage.symbolic
@@ -744,7 +747,7 @@ class Function_Bessel_I(BuiltinFunction):
 
     Check whether the return value is real whenever the argument is real (:trac:`10251`)::
 
-        sage: bessel_I(5, 1.5) in RR
+        sage: bessel_I(5, 1.5) in RR                                                    # needs mpmath
         True
 
     REFERENCES:
@@ -811,7 +814,7 @@ class Function_Bessel_I(BuiltinFunction):
         """
         EXAMPLES::
 
-            sage: bessel_I(0.0, 1.0)
+            sage: bessel_I(0.0, 1.0)                                                    # needs mpmath
             1.26606587775201
             sage: bessel_I(1,3).n(digits=20)                                            # needs sage.symbolic
             3.9533702174026093965
@@ -870,7 +873,7 @@ class Function_Bessel_K(BuiltinFunction):
 
         sage: bessel_K(1, x)                                                            # needs sage.symbolic
         bessel_K(1, x)
-        sage: bessel_K(1.0, 1.0)
+        sage: bessel_K(1.0, 1.0)                                                        # needs mpmath
         0.601907230197235
         sage: n = var('n')                                                              # needs sage.symbolic
         sage: bessel_K(n, x)                                                            # needs sage.symbolic
@@ -898,7 +901,7 @@ class Function_Bessel_K(BuiltinFunction):
 
     Examples of asymptotic behavior::
 
-        sage: bessel_K(0, 0.0)
+        sage: bessel_K(0, 0.0)                                                          # needs mpmath
         +infinity
         sage: limit(bessel_K(0, x), x=0)                                                # needs sage.symbolic
         +Infinity
@@ -948,7 +951,7 @@ class Function_Bessel_K(BuiltinFunction):
 
     Check whether the return value is real whenever the argument is real (:trac:`10251`)::
 
-        sage: bessel_K(5, 1.5) in RR
+        sage: bessel_K(5, 1.5) in RR                                                    # needs mpmath
         True
 
     REFERENCES:
@@ -1008,7 +1011,7 @@ class Function_Bessel_K(BuiltinFunction):
         """
         EXAMPLES::
 
-            sage: bessel_K(0.0, 1.0)
+            sage: bessel_K(0.0, 1.0)                                                    # needs mpmath
             0.421024438240708
             sage: bessel_K(-1, 1).n(128)                                                # needs sage.symbolic
             0.60190723019723457473754000153561733926
@@ -1095,7 +1098,7 @@ def Bessel(*args, **kwds):
     Evaluation::
 
         sage: f = Bessel(1)
-        sage: f(3.0)
+        sage: f(3.0)                                                                    # needs mpmath
         0.339058958525936
         sage: f(3)                                                                      # needs sage.symbolic
         bessel_J(1, 3)
@@ -1480,13 +1483,13 @@ class Function_Hankel1(BuiltinFunction):
 
         sage: hankel1(3, x)                                                             # needs sage.symbolic
         hankel1(3, x)
-        sage: hankel1(3, 4.)
+        sage: hankel1(3, 4.)                                                            # needs mpmath
         0.430171473875622 - 0.182022115953485*I
         sage: latex(hankel1(3, x))                                                      # needs sage.symbolic
         H_{3}^{(1)}\left(x\right)
         sage: hankel1(3., x).series(x == 2, 10).subs(x=3).n()  # abs tol 1e-12          # needs sage.symbolic
         0.309062682819597 - 0.512591541605233*I
-        sage: hankel1(3, 3.)
+        sage: hankel1(3, 3.)                                                            # needs mpmath
         0.309062722255252 - 0.538541616105032*I
 
     REFERENCES:
@@ -1568,13 +1571,13 @@ class Function_Hankel2(BuiltinFunction):
 
         sage: hankel2(3, x)                                                             # needs sage.symbolic
         hankel2(3, x)
-        sage: hankel2(3, 4.)
+        sage: hankel2(3, 4.)                                                            # needs mpmath
         0.430171473875622 + 0.182022115953485*I
         sage: latex(hankel2(3, x))                                                      # needs sage.symbolic
         H_{3}^{(2)}\left(x\right)
         sage: hankel2(3., x).series(x == 2, 10).subs(x=3).n()  # abs tol 1e-12          # needs sage.symbolic
         0.309062682819597 + 0.512591541605234*I
-        sage: hankel2(3, 3.)
+        sage: hankel2(3, 3.)                                                            # needs mpmath
         0.309062722255252 + 0.538541616105032*I
 
     REFERENCES:
@@ -1660,9 +1663,9 @@ class SphericalBesselJ(BuiltinFunction):
         0.150770999183897 - 0.0260662466510632*I
         sage: spherical_bessel_J(3, x).series(x == 2, 10).subs(x=3).n()                 # needs sage.symbolic
         0.152051648665037
-        sage: spherical_bessel_J(3, 3.)
+        sage: spherical_bessel_J(3, 3.)                                                 # needs mpmath
         0.152051662030533
-        sage: spherical_bessel_J(2.,3.)      # rel tol 1e-10
+        sage: spherical_bessel_J(2.,3.)      # rel tol 1e-10                            # needs mpmath
         0.2986374970757335
         sage: spherical_bessel_J(4, x).simplify()                                       # needs sage.symbolic
         -((45/x^2 - 105/x^4 - 1)*sin(x) + 5*(21/x^2 - 2)*cos(x)/x)/x
@@ -2061,9 +2064,9 @@ def spherical_bessel_f(F, n, z):
     EXAMPLES::
 
         sage: from sage.functions.bessel import spherical_bessel_f
-        sage: spherical_bessel_f('besselj', 3, 4)
+        sage: spherical_bessel_f('besselj', 3, 4)                                       # needs mpmath
         mpf('0.22924385795503024')
-        sage: spherical_bessel_f('hankel1', 3, 4)
+        sage: spherical_bessel_f('hankel1', 3, 4)                                       # needs mpmath
         mpc(real='0.22924385795503024', imag='-0.21864196590306359')
 
     TESTS:
@@ -2071,9 +2074,9 @@ def spherical_bessel_f(F, n, z):
     Check that :trac:`28474` is fixed::
 
         sage: from sage.functions.bessel import spherical_bessel_f
-        sage: spherical_bessel_f('besselj', 3, -4)
+        sage: spherical_bessel_f('besselj', 3, -4)                                      # needs mpmath
         mpc(real='-0.22924385795503024', imag='0.0')
-        sage: spherical_bessel_f('bessely', 3, -4)
+        sage: spherical_bessel_f('bessely', 3, -4)                                      # needs mpmath
         mpc(real='-0.21864196590306359', imag='0.0')
     """
     from mpmath import mp

@@ -593,7 +593,7 @@ class Function_lambert_w(BuiltinFunction):
 
         sage: lambert_w(1.0)                                                            # needs scipy
         0.567143290409784
-        sage: lambert_w(-1).n()
+        sage: lambert_w(-1).n()                                                         # needs mpmath
         -0.318131505204764 + 1.33723570143069*I
         sage: lambert_w(-1.5 + 5*I)
         1.17418016254171 + 1.10651494102011*I
@@ -613,13 +613,13 @@ class Function_lambert_w(BuiltinFunction):
 
     Check the defining equation numerically at `z=5`::
 
-        sage: N(lambert_w(5)*exp(lambert_w(5)) - 5)
+        sage: N(lambert_w(5)*exp(lambert_w(5)) - 5)                                     # needs mpmath
         0.000000000000000
 
     There are several special values of the principal branch which
     are automatically simplified::
 
-        sage: lambert_w(0)
+        sage: lambert_w(0)                                                              # needs mpmath
         0
         sage: lambert_w(e)                                                              # needs sage.symbolic
         1
@@ -732,7 +732,7 @@ class Function_lambert_w(BuiltinFunction):
 
         There are three special values which are automatically simplified::
 
-            sage: lambert_w(0)
+            sage: lambert_w(0)                                                          # needs mpmath
             0
             sage: lambert_w(e)                                                          # needs sage.symbolic
             1
@@ -754,9 +754,9 @@ class Function_lambert_w(BuiltinFunction):
         value should be either the same as the parent of the input, or
         a Sage type::
 
-            sage: parent(lambert_w(int(0)))
+            sage: parent(lambert_w(int(0)))                                             # needs mpmath
             <... 'int'>
-            sage: parent(lambert_w(Integer(0)))
+            sage: parent(lambert_w(Integer(0)))                                         # needs mpmath
             Integer Ring
             sage: parent(lambert_w(e))                                                  # needs sage.symbolic
             Symbolic Ring
@@ -1058,7 +1058,7 @@ class Function_harmonic_number_generalized(BuiltinFunction):
 
     Evaluation of integer, rational, or complex argument::
 
-        sage: harmonic_number(5)
+        sage: harmonic_number(5)                                                        # needs mpmath
         137/60
         sage: harmonic_number(3, 3)                                                     # needs sage.symbolic
         251/216
@@ -1089,9 +1089,9 @@ class Function_harmonic_number_generalized(BuiltinFunction):
 
     There are several special values which are automatically simplified::
 
-        sage: harmonic_number(0)
+        sage: harmonic_number(0)                                                        # needs mpmath
         0
-        sage: harmonic_number(1)
+        sage: harmonic_number(1)                                                        # needs mpmath
         1
         sage: harmonic_number(x, 1)                                                     # needs sage.symbolic
         harmonic_number(x)
@@ -1133,7 +1133,7 @@ class Function_harmonic_number_generalized(BuiltinFunction):
             x
             sage: harmonic_number(x, 1)                                                 # needs sage.symbolic
             harmonic_number(x)
-            sage: harmonic_number(5)
+            sage: harmonic_number(5)                                                    # needs mpmath
             137/60
             sage: harmonic_number(3, 3)                                                 # needs sage.symbolic
             251/216
@@ -1333,11 +1333,11 @@ class Function_harmonic_number(BuiltinFunction):
         """
         EXAMPLES::
 
-            sage: harmonic_number(0)
+            sage: harmonic_number(0)                                                    # needs mpmath
             0
-            sage: harmonic_number(1)
+            sage: harmonic_number(1)                                                    # needs mpmath
             1
-            sage: harmonic_number(20)
+            sage: harmonic_number(20)                                                   # needs mpmath
             55835135/15519504
             sage: harmonic_number(5/2)                                                  # needs sage.symbolic
             -2*log(2) + 46/15
@@ -1358,9 +1358,9 @@ class Function_harmonic_number(BuiltinFunction):
         """
         EXAMPLES::
 
-            sage: harmonic_number(20).n()  # this goes from rational to float
+            sage: harmonic_number(20).n()  # this goes from rational to float           # needs mpmath
             3.59773965714368
-            sage: harmonic_number(20).n(200)
+            sage: harmonic_number(20).n(200)                                            # needs mpmath
             3.59773965714368191148376906...
             sage: harmonic_number(20.)  # this computes the integral with mpmath        # needs mpmath
             3.59773965714368

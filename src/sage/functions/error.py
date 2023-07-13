@@ -167,7 +167,7 @@ class Function_erf(BuiltinFunction):
 
     Special-case 0 for immediate evaluation::
 
-        sage: erf(0)
+        sage: erf(0)                                                                    # needs mpmath
         0
         sage: solve(erf(x)==0, x)                                                       # needs sage.symbolic
         [x == 0]
@@ -222,7 +222,7 @@ class Function_erf(BuiltinFunction):
 
         Input is not an expression and is not exact::
 
-            sage: erf(0.0)
+            sage: erf(0.0)                                                              # needs mpmath
             0.000000000000000
 
         Input is an expression but not a trivial zero::
@@ -365,7 +365,7 @@ class Function_erfi(BuiltinFunction):
         """
         EXAMPLES::
 
-            sage: erfi(2.)
+            sage: erfi(2.)                                                              # needs mpmath
             18.5648024145756
             sage: erfi(2).n(100)                                                        # needs sage.symbolic
             18.564802414575552598704291913
@@ -410,9 +410,9 @@ class Function_erfc(BuiltinFunction):
         sage: erfc(RealField(100)(1/2))                                                 # needs sage.rings.real_mpfr
         0.47950012218695346231725334611
 
-        sage: 1 - erfc(0.5)
+        sage: 1 - erfc(0.5)                                                             # needs mpmath
         0.520499877813047
-        sage: erf(0.5)
+        sage: erf(0.5)                                                                  # needs mpmath
         0.520499877813047
 
     TESTS:
@@ -559,7 +559,7 @@ class Function_erfinv(BuiltinFunction):
         """
         EXAMPLES::
 
-            sage: erfinv(0.2)
+            sage: erfinv(0.2)                                                           # needs mpmath
             0.179143454621292
             sage: erfinv(1/5).n(100)                                                    # needs sage.symbolic
             0.17914345462129167649274901663
@@ -633,9 +633,9 @@ class Function_Fresnel_sin(BuiltinFunction):
 
             sage: fresnel_sin(pi)                                                       # needs sage.symbolic
             fresnel_sin(pi)
-            sage: fresnel_sin(oo)
+            sage: fresnel_sin(oo)                                                       # needs mpmath
             1/2
-            sage: fresnel_sin(-oo)
+            sage: fresnel_sin(-oo)                                                      # needs mpmath
             -1/2
             sage: fresnel_sin(I*oo)                                                     # needs sage.symbolic
             -1/2*I
@@ -729,9 +729,9 @@ class Function_Fresnel_cos(BuiltinFunction):
 
             sage: fresnel_cos(pi)                                                       # needs sage.symbolic
             fresnel_cos(pi)
-            sage: fresnel_cos(oo)
+            sage: fresnel_cos(oo)                                                       # needs mpmath
             1/2
-            sage: fresnel_cos(-oo)
+            sage: fresnel_cos(-oo)                                                      # needs mpmath
             -1/2
             sage: fresnel_cos(I*oo)                                                     # needs sage.symbolic
             1/2*I

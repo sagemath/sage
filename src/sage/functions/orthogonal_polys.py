@@ -610,7 +610,7 @@ class ChebyshevFunction(OrthogonalFunction):
             2 + 3^2 + 3^3 + 3^4 + 3^5 + O(3^20)
             sage: chebyshev_T(100001/2, 2)                                              # needs sage.symbolic
             ...chebyshev_T(100001/2, 2)
-            sage: chebyshev_U._eval_(1.5, Mod(8,9)) is None
+            sage: chebyshev_U._eval_(1.5, Mod(8,9)) is None                             # needs mpmath
             True
         """
         # n is an integer => evaluate algebraically (as polynomial)
@@ -1433,7 +1433,7 @@ class Func_legendre_Q(BuiltinFunction):
 
         EXAMPLES::
 
-            sage: legendre_Q(4, 2.)
+            sage: legendre_Q(4, 2.)                                                     # needs mpmath
             0.00116107583162041 - 86.9828465962674*I
             sage: legendre_Q(1/2, I+1.)
             -0.511424110789061 + 1.34356195297194*I
@@ -1496,7 +1496,7 @@ class Func_legendre_Q(BuiltinFunction):
             -29113619535/131072*log(x + 1) + 29113619535/131072*log(-x + 1)
             sage: legendre_Q(0, 2)                                                      # needs sage.symbolic
             -1/2*I*pi + 1/2*log(3)
-            sage: legendre_Q(0, 2.)
+            sage: legendre_Q(0, 2.)                                                     # needs mpmath
             0.549306144334055 - 1.57079632679490*I
         """
         from sage.functions.log import ln
@@ -1659,13 +1659,13 @@ class Func_assoc_legendre_P(BuiltinFunction):
         -sqrt(-x^2 + 1)
         sage: gen_legendre_P.eval_gen_poly(1, 1, x)                                     # needs sage.symbolic
         -sqrt(-x^2 + 1)
-        sage: gen_legendre_P(1, 1, 0.5) # abs tol 1e-14
+        sage: gen_legendre_P(1, 1, 0.5)  # abs tol 1e-14                                # needs mpmath
         -0.866025403784439
         sage: gen_legendre_P.eval_gen_poly(1, 1, 0.5) # abs tol 1e-14
         -0.866025403784439
-        sage: gen_legendre_P._evalf_(1, 1, 0.5) # abs tol 1e-14
+        sage: gen_legendre_P._evalf_(1, 1, 0.5)  # abs tol 1e-14                        # needs mpmath
         -0.866025403784439
-        sage: gen_legendre_P(2/3,1,0.) # abs tol 1e-14
+        sage: gen_legendre_P(2/3, 1, 0.)  # abs tol 1e-14                               # needs mpmath
         -0.773063511309286
         sage: gen_legendre_P._eval_special_values_(2/3, 1, 0.).n()  # abs tol 1e-14     # needs sage.symbolic
         -0.773063511309286
@@ -1730,7 +1730,7 @@ class Func_assoc_legendre_P(BuiltinFunction):
 
         Case `|m| > |n|` for integers::
 
-            sage: gen_legendre_P(2,3,4)
+            sage: gen_legendre_P(2, 3, 4)                                               # needs mpmath
             0
 
         Case `x = 0`::
@@ -1820,7 +1820,7 @@ class Func_assoc_legendre_P(BuiltinFunction):
             14.3165258449040 - 12.7850496155152*I
             sage: gen_legendre_P(5/2, 2, ComplexField(70)(1+I))                         # needs sage.rings.real_mpfr
             14.316525844904028532 - 12.785049615515157033*I
-            sage: gen_legendre_P(2/3,1,0.)
+            sage: gen_legendre_P(2/3, 1, 0.)                                            # needs mpmath
             -0.773063511309286
 
         """
@@ -1954,7 +1954,7 @@ class Func_assoc_legendre_Q(BuiltinFunction):
 
         EXAMPLES::
 
-            sage: gen_legendre_Q(2,1,3.)
+            sage: gen_legendre_Q(2, 1, 3.)                                              # needs mpmath
             -39.9859464434253 + 0.0165114736149193*I
             sage: gen_legendre_Q(2, 1, ComplexField(70)(3))                             # needs sage.rings.real_mpfr
             -39.985946443425296223 + 0.016511473614919329585*I
@@ -2404,11 +2404,11 @@ class Func_laguerre(OrthogonalFunction):
         EXAMPLES::
 
             sage: x = PolynomialRing(QQ, 'x').gen()
-            sage: laguerre(2,x)
+            sage: laguerre(2, x)                                                        # needs mpmath
             1/2*x^2 - 2*x + 1
-            sage: laguerre(3,x)
+            sage: laguerre(3, x)                                                        # needs mpmath
             -1/6*x^3 + 3/2*x^2 - 3*x + 1
-            sage: laguerre(2,2)
+            sage: laguerre(2, 2)                                                        # needs mpmath
             -1
             sage: laguerre(-1, x)                                                       # needs sage.symbolic
             e^x
@@ -2434,7 +2434,7 @@ class Func_laguerre(OrthogonalFunction):
 
         EXAMPLES::
 
-            sage: laguerre(0, 0)
+            sage: laguerre(0, 0)                                                        # needs mpmath
             1
             sage: laguerre(1, x)                                                        # needs sage.symbolic
             -x + 1
@@ -2453,9 +2453,9 @@ class Func_laguerre(OrthogonalFunction):
             sage: laguerre(3, sin(x))                                                   # needs sage.symbolic
             -1/6*sin(x)^3 + 3/2*sin(x)^2 - 3*sin(x) + 1
             sage: R.<x> = PolynomialRing(QQ, 'x')
-            sage: laguerre(4,x)
+            sage: laguerre(4, x)                                                        # needs mpmath
             1/24*x^4 - 2/3*x^3 + 3*x^2 - 4*x + 1
-            sage: laguerre(4,x+1)
+            sage: laguerre(4, x + 1)                                                    # needs mpmath
             1/24*(x + 1)^4 - 2/3*(x + 1)^3 + 3*(x + 1)^2 - 4*x - 3
             sage: laguerre(10,1+I)
             142511/113400*I + 95867/22680
@@ -2580,7 +2580,7 @@ class Func_gen_laguerre(OrthogonalFunction):
             1
             sage: gen_laguerre(1, 2, x)                                                 # needs sage.symbolic
             -x + 3
-            sage: gen_laguerre(3, 4, 0)
+            sage: gen_laguerre(3, 4, 0)                                                 # needs mpmath
             35
         """
         if n == 0:
@@ -2600,9 +2600,9 @@ class Func_gen_laguerre(OrthogonalFunction):
             sage: gen_laguerre(3, 1/2, sin(x))                                          # needs sage.symbolic
             -1/6*sin(x)^3 + 7/4*sin(x)^2 - 35/8*sin(x) + 35/16
             sage: R.<x> = PolynomialRing(QQ, 'x')
-            sage: gen_laguerre(4, -1/2, x)
+            sage: gen_laguerre(4, -1/2, x)                                              # needs mpmath
             1/24*x^4 - 7/12*x^3 + 35/16*x^2 - 35/16*x + 35/128
-            sage: gen_laguerre(4, -1/2, x+1)
+            sage: gen_laguerre(4, -1/2, x + 1)                                          # needs mpmath
             1/24*(x + 1)^4 - 7/12*(x + 1)^3 + 35/16*(x + 1)^2 - 35/16*x - 245/128
             sage: gen_laguerre(10, 1, 1+I)
             25189/2100*I + 11792/2835
