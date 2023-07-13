@@ -1358,13 +1358,14 @@ class Function_harmonic_number(BuiltinFunction):
         """
         EXAMPLES::
 
-            sage: harmonic_number(20).n()  # this goes from rational to float           # needs mpmath
+            sage: # needs mpmath
+            sage: harmonic_number(20).n()  # this goes from rational to float
             3.59773965714368
-            sage: harmonic_number(20).n(200)                                            # needs mpmath
+            sage: harmonic_number(20).n(200)
             3.59773965714368191148376906...
-            sage: harmonic_number(20.)  # this computes the integral with mpmath        # needs mpmath
+            sage: harmonic_number(20.)  # this computes the integral with mpmath
             3.59773965714368
-            sage: harmonic_number(1.0*I)                                                # needs mpmath
+            sage: harmonic_number(1.0*I)
             0.671865985524010 + 1.07667404746858*I
         """
         return _mpmath_call(_mpmath_harmonic, z, parent=parent)

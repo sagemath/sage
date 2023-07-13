@@ -640,7 +640,7 @@ class Function_log_integral_offset(BuiltinFunction):
 
         Verify that the problem described in :trac:`28917` no longer appears here::
 
-            sage: latex(log_integral_offset)                                            # needs sage.symbolic
+            sage: latex(log_integral_offset)
             \operatorname{log\_integral\_offset}
 
         """

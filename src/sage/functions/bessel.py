@@ -974,7 +974,7 @@ class Function_Bessel_K(BuiltinFunction):
 
         EXAMPLES::
 
-            sage: sage.functions.bessel.Function_Bessel_K()                             # needs sage.symbolic
+            sage: sage.functions.bessel.Function_Bessel_K()
             bessel_K
             sage: bessel_K(x, x)._sympy_()                                              # needs sympy sage.symbolic
             besselk(x, x)
@@ -1521,7 +1521,7 @@ class Function_Hankel1(BuiltinFunction):
         r"""
         TESTS::
 
-            sage: latex(hankel1)                                                        # needs sage.symbolic
+            sage: latex(hankel1)
             H_{\nu}^{(1)}
         """
         return r'H_{\nu}^{(1)}'
@@ -1608,7 +1608,7 @@ class Function_Hankel2(BuiltinFunction):
         r"""
         TESTS::
 
-            sage: latex(hankel2)                                                        # needs sage.symbolic
+            sage: latex(hankel2)
             H_{\nu}^{(2)}
         """
         return r'H_{\nu}^{(2)}'

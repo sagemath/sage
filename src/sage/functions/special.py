@@ -319,7 +319,7 @@ class SphericalHarmonic(BuiltinFunction):
 
         Consistency with ``_eval_``::
 
-            sage: d = lambda a, b: abs(spherical_harmonic(a, b, 1., 2.)                 # needs sage.symbolic
+            sage: d = lambda a, b: abs(spherical_harmonic(a, b, 1., 2.)
             ....:                      - spherical_harmonic(a, b, 1, 2).n())
             sage: ab = [(0, 0), (1, -1), (1, 0), (1, 1), (3, 2), (3, 3)]
             sage: all(d(a, b) < 1e-14 for a, b in ab)                                   # needs sage.symbolic
@@ -370,7 +370,7 @@ class SphericalHarmonic(BuiltinFunction):
         r"""
         TESTS::
 
-            sage: latex(spherical_harmonic)                                             # needs sage.symbolic
+            sage: latex(spherical_harmonic)
             Y_n^m
         """
         return r"Y_n^m"
@@ -516,9 +516,9 @@ class EllipticE(BuiltinFunction):
 
         Numerically::
 
-            sage: f = lambda x, y: elliptic_e(arcsin(x), y).subs(x=x, y=y)      # optional - fricas, needs sage.symbolic
-            sage: g = lambda x, y: fricas.ellipticE(x, y).sage()                # optional - fricas, needs sage.symbolic
-            sage: d = lambda x, y: f(x, y) - g(x, y)                            # optional - fricas, needs sage.symbolic
+            sage: f = lambda x, y: elliptic_e(arcsin(x), y).subs(x=x, y=y)      # optional - fricas
+            sage: g = lambda x, y: fricas.ellipticE(x, y).sage()                # optional - fricas
+            sage: d = lambda x, y: f(x, y) - g(x, y)                            # optional - fricas
             sage: [d(N(-pi/2 + x), y)                           # tol 1e-8      # optional - fricas, needs sage.symbolic
             ....:  for x in range(1, 3) for y in range(-2, 2)]
             [0.000000000000000,
@@ -880,9 +880,9 @@ class EllipticF(BuiltinFunction):
 
         Numerically::
 
-            sage: f = lambda x, y: elliptic_f(arcsin(x), y).subs(x=x, y=y)      # optional - fricas, needs sage.symbolic
-            sage: g = lambda x, y: fricas.ellipticF(x, y).sage()                # optional - fricas, needs sage.symbolic
-            sage: d = lambda x, y: f(x, y) - g(x, y)                            # optional - fricas, needs sage.symbolic
+            sage: f = lambda x, y: elliptic_f(arcsin(x), y).subs(x=x, y=y)      # optional - fricas
+            sage: g = lambda x, y: fricas.ellipticF(x, y).sage()                # optional - fricas
+            sage: d = lambda x, y: f(x, y) - g(x, y)                            # optional - fricas
             sage: [d(N(-pi/2 + x), y)                          # tol 1e-8       # optional - fricas, needs sage.symbolic
             ....:  for x in range(1, 3) for y in range(-2,2)]
             [0.000000000000000,
