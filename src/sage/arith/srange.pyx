@@ -244,8 +244,8 @@ def srange(*args, **kwds):
         [1.00000000000000]
         sage: srange(1.0, 1.0)
         []
-        sage: V = VectorSpace(QQ, 2)
-        sage: srange(V([0,0]), V([5,5]), step=V([2,2]))
+        sage: V = VectorSpace(QQ, 2)                                                    # needs sage.modules
+        sage: srange(V([0,0]), V([5,5]), step=V([2,2]))                                 # needs sage.modules
         [(0, 0), (2, 2), (4, 4)]
 
     Including the endpoint::
