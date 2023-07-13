@@ -148,7 +148,7 @@ class AmbientSpace(Scheme):
 
             sage: from sage.schemes.generic.ambient_space import AmbientSpace
             sage: A = AmbientSpace(3, ZZ)
-            sage: A._validate((x + 1, 1))                                               # optional - sage.symbolic
+            sage: A._validate((x + 1, 1))                                               # needs sage.symbolic
             Traceback (most recent call last):
             ...
             NotImplementedError: ambient spaces must override "_validate" method!

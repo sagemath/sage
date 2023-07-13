@@ -276,13 +276,14 @@ class EllipticCurveFactory(UniqueFactory):
         sage: type(E)
         <class 'sage.schemes.elliptic_curves.ell_field.EllipticCurve_field_with_category'>
 
-        sage: E = EllipticCurve([SR(i),i]); E                                           # needs sage.symbolic
+        sage: # needs sage.symbolic
+        sage: E = EllipticCurve([SR(i),i]); E
         Elliptic Curve defined by y^2 = x^3 + I*x + I over Symbolic Ring
-        sage: type(E)                                                                   # needs sage.symbolic
+        sage: type(E)
         <class 'sage.schemes.elliptic_curves.ell_field.EllipticCurve_field_with_category'>
-        sage: E.category()                                                              # needs sage.symbolic
+        sage: E.category()
         Category of schemes over Symbolic Ring
-        sage: SR in Fields()                                                            # needs sage.symbolic
+        sage: SR in Fields()
         True
 
         sage: F = FractionField(PolynomialRing(QQ,'t'))
@@ -1019,10 +1020,11 @@ def EllipticCurve_from_cubic(F, P=None, morphism=True):
 
     An example over a finite field, using a flex::
 
-        sage: K = GF(17)                                                                # needs sage.rings.finite_rings
-        sage: R.<x,y,z> = K[]                                                           # needs sage.rings.finite_rings
-        sage: cubic = 2*x^3 + 3*y^3 + 4*z^3                                             # needs sage.rings.finite_rings
-        sage: EllipticCurve_from_cubic(cubic, [0,3,1])                                  # needs sage.rings.finite_rings
+        sage: # needs sage.rings.finite_rings
+        sage: K = GF(17)
+        sage: R.<x,y,z> = K[]
+        sage: cubic = 2*x^3 + 3*y^3 + 4*z^3
+        sage: EllipticCurve_from_cubic(cubic, [0,3,1])
         Scheme morphism:
           From: Projective Plane Curve over Finite Field of size 17
                 defined by 2*x^3 + 3*y^3 + 4*z^3
@@ -1032,10 +1034,11 @@ def EllipticCurve_from_cubic(F, P=None, morphism=True):
 
     An example in characteristic 3::
 
-        sage: K = GF(3)                                                                 # needs sage.rings.finite_rings
-        sage: R.<x,y,z> = K[]                                                           # needs sage.rings.finite_rings
-        sage: cubic = x^3 + y^3 + z^3 + x*y*z                                           # needs sage.rings.finite_rings
-        sage: EllipticCurve_from_cubic(cubic, [0,1,-1])                                 # needs sage.rings.finite_rings
+        sage: # needs sage.rings.finite_rings
+        sage: K = GF(3)
+        sage: R.<x,y,z> = K[]
+        sage: cubic = x^3 + y^3 + z^3 + x*y*z
+        sage: EllipticCurve_from_cubic(cubic, [0,1,-1])
         Scheme morphism:
           From: Projective Plane Curve over Finite Field of size 3
                 defined by x^3 + y^3 + x*y*z + z^3
@@ -1045,10 +1048,11 @@ def EllipticCurve_from_cubic(F, P=None, morphism=True):
 
     An example over a number field, using a non-flex and where there are no rational flexes::
 
-        sage: K.<a> = QuadraticField(-3)                                                # needs sage.rings.number_field
-        sage: R.<x,y,z> = K[]                                                           # needs sage.rings.number_field
-        sage: cubic = 2*x^3 + 3*y^3 + 5*z^3                                             # needs sage.rings.number_field
-        sage: EllipticCurve_from_cubic(cubic, [1,1,-1])                                 # needs sage.rings.number_field
+        sage: # needs sage.rings.number_field
+        sage: K.<a> = QuadraticField(-3)
+        sage: R.<x,y,z> = K[]
+        sage: cubic = 2*x^3 + 3*y^3 + 5*z^3
+        sage: EllipticCurve_from_cubic(cubic, [1,1,-1])
         Scheme morphism:
           From: Projective Plane Curve over Number Field in a
                 with defining polynomial x^2 + 3 with a = 1.732050807568878?*I
@@ -1461,13 +1465,14 @@ def EllipticCurves_with_good_reduction_outside_S(S=[], proof=None, verbose=False
         sage: ', '.join(e.label() for e in elist)                                       # long time
         '11a1, 11a2, 11a3, 121a1, 121a2, 121b1, 121b2, 121c1, 121c2, 121d1, 121d2, 121d3'
 
+        sage: # long time
         sage: elist = EllipticCurves_with_good_reduction_outside_S([2,3])               # long time (26s on sage.math, 2011)
-        sage: len(elist)                                                                # long time
+        sage: len(elist)
         752
-        sage: conds = sorted(set([e.conductor() for e in elist]))                       # long time
-        sage: max(conds)                                                                # long time
+        sage: conds = sorted(set([e.conductor() for e in elist]))
+        sage: max(conds)
         62208
-        sage: [N.factor() for N in conds]                                               # long time
+        sage: [N.factor() for N in conds]
         [2^3 * 3,
          3^3,
          2^5,

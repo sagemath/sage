@@ -218,7 +218,7 @@ class ToricIdeal(MPolynomialIdeal):
             sage: ToricIdeal(A)
             Ideal (-z1^2 + z0*z2) of Multivariate Polynomial Ring
             in z0, z1, z2 over Rational Field
-            sage: ToricIdeal(A, names='x', base_ring=GF(101))                           # optional - sage.rings.finite_rings
+            sage: ToricIdeal(A, names='x', base_ring=GF(101))                           # needs sage.rings.finite_rings
             Ideal (-x1^2 + x0*x2) of Multivariate Polynomial Ring
             in x0, x1, x2 over Finite Field of size 101
             sage: ToricIdeal(A, names='x', base_ring=FractionField(QQ['t']))

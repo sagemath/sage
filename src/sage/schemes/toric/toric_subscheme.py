@@ -646,9 +646,9 @@ class AlgebraicScheme_subscheme_toric(AlgebraicScheme_subscheme):
 
             sage: P2.<x,y,z> = toric_varieties.P2()
             sage: f = x^5 + 2*x*y^4 + y^5 - 2*y^3*z^2 + x*z^4 - 2*z^5
-            sage: P2.change_ring(GF(5)).subscheme([f]).is_nondegenerate()               # optional - sage.rings.finite_rings
+            sage: P2.change_ring(GF(5)).subscheme([f]).is_nondegenerate()               # needs sage.rings.finite_rings
             True
-            sage: P2.change_ring(GF(7)).subscheme([f]).is_nondegenerate()               # optional - sage.rings.finite_rings
+            sage: P2.change_ring(GF(7)).subscheme([f]).is_nondegenerate()               # needs sage.rings.finite_rings
             False
 
         TESTS:

@@ -263,17 +263,18 @@ def WeierstrassMap_P3(quadratic1, quadratic2, variables=None):
 
     TESTS::
 
-        sage: R.<w,x,y,z,a0,a1,a2,a3> = GF(101)[]                                       # optional - sage.rings.finite_rings
-        sage: p1 = w^2 + x^2 + y^2 + z^2                                                # optional - sage.rings.finite_rings
-        sage: p2 = a0*w^2 + a1*x^2 + a2*y^2 + a3*z^2                                    # optional - sage.rings.finite_rings
-        sage: X, Y, Z = WeierstrassMap_P3(p1, p2, [w,x,y,z])                            # optional - sage.rings.finite_rings
-        sage: X.total_degree(), len(X.coefficients())                                   # optional - sage.rings.finite_rings
+        sage: # needs sage.rings.finite_rings
+        sage: R.<w,x,y,z,a0,a1,a2,a3> = GF(101)[]
+        sage: p1 = w^2 + x^2 + y^2 + z^2
+        sage: p2 = a0*w^2 + a1*x^2 + a2*y^2 + a3*z^2
+        sage: X, Y, Z = WeierstrassMap_P3(p1, p2, [w,x,y,z])
+        sage: X.total_degree(), len(X.coefficients())
         (22, 4164)
-        sage: Y.total_degree(), len(Y.coefficients())                                   # optional - sage.rings.finite_rings
+        sage: Y.total_degree(), len(Y.coefficients())
         (33, 26912)
-        sage: Z.total_degree(), len(Z.coefficients())                                   # optional - sage.rings.finite_rings
+        sage: Z.total_degree(), len(Z.coefficients())
         (10, 24)
-        sage: Z                                                                         # optional - sage.rings.finite_rings
+        sage: Z
         w*x*y*z*a0^3*a1^2*a2 - w*x*y*z*a0^2*a1^3*a2 - w*x*y*z*a0^3*a1*a2^2
         + w*x*y*z*a0*a1^3*a2^2 + w*x*y*z*a0^2*a1*a2^3 - w*x*y*z*a0*a1^2*a2^3
         - w*x*y*z*a0^3*a1^2*a3 + w*x*y*z*a0^2*a1^3*a3 + w*x*y*z*a0^3*a2^2*a3

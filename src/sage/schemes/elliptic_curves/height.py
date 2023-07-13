@@ -885,12 +885,13 @@ class EllipticCurveCanonicalHeight:
 
         Over a number field other than `\QQ`::
 
-            sage: K.<i> = QuadraticField(-1)                                            # needs sage.rings.number_field
-            sage: E = EllipticCurve(K, [0,0,0,1,-27])                                   # needs sage.rings.number_field
-            sage: H = E.height_function()                                               # needs sage.rings.number_field
-            sage: H.base_field()                                                        # needs sage.rings.number_field
+            sage: # needs sage.rings.number_field
+            sage: K.<i> = QuadraticField(-1)
+            sage: E = EllipticCurve(K, [0,0,0,1,-27])
+            sage: H = E.height_function()
+            sage: H.base_field()
             Number Field in i with defining polynomial x^2 + 1 with i = 1*I
-            sage: H((1, 5*i))                                                           # needs sage.rings.number_field
+            sage: H((1, 5*i))
             1.22257115164148
         """
         return self.E(P).height()
@@ -914,11 +915,12 @@ class EllipticCurveCanonicalHeight:
 
         Example 1 from [CPS2006]_::
 
-            sage: K.<i> = QuadraticField(-1)                                            # needs sage.rings.number_field
-            sage: E = EllipticCurve([0, 0, 0, 1 + 5*i, 3 + i])                          # needs sage.rings.number_field
-            sage: H = E.height_function()                                               # needs sage.rings.number_field
-            sage: alpha = H.alpha(K.places()[0])                                        # needs sage.rings.number_field
-            sage: alpha                                                                 # needs sage.rings.number_field
+            sage: # needs sage.rings.number_field
+            sage: K.<i> = QuadraticField(-1)
+            sage: E = EllipticCurve([0, 0, 0, 1 + 5*i, 3 + i])
+            sage: H = E.height_function()
+            sage: alpha = H.alpha(K.places()[0])
+            sage: alpha
             1.12272013439355
 
         Compare with `\log(\epsilon_v)=0.344562...` in [CPS2006]_::
@@ -985,29 +987,30 @@ class EllipticCurveCanonicalHeight:
 
         EXAMPLES::
 
-            sage: K.<i> = QuadraticField(-1)                                            # needs sage.rings.number_field
-            sage: E = EllipticCurve([0, 0, 0, 1 + 5*i, 3 + i])                          # needs sage.rings.number_field
-            sage: H = E.height_function()                                               # needs sage.rings.number_field
-            sage: H.e_p(K.prime_above(2))                                               # needs sage.rings.number_field
+            sage: # needs sage.rings.number_field
+            sage: K.<i> = QuadraticField(-1)
+            sage: E = EllipticCurve([0, 0, 0, 1 + 5*i, 3 + i])
+            sage: H = E.height_function()
+            sage: H.e_p(K.prime_above(2))
             2
-            sage: H.e_p(K.prime_above(3))                                               # needs sage.rings.number_field
+            sage: H.e_p(K.prime_above(3))
             10
-            sage: H.e_p(K.prime_above(5))                                               # needs sage.rings.number_field
+            sage: H.e_p(K.prime_above(5))
             9
-            sage: E.conductor().norm().factor()                                         # needs sage.rings.number_field
+            sage: E.conductor().norm().factor()
             2^10 * 20921
-            sage: p1, p2 = K.primes_above(20921)                                        # needs sage.rings.number_field
-            sage: E.local_data(p1)                                                      # needs sage.rings.number_field
+            sage: p1, p2 = K.primes_above(20921)
+            sage: E.local_data(p1)
             Local data at Fractional ideal (-40*i + 139):
             Reduction type: bad split multiplicative
             ...
-            sage: H.e_p(p1)                                                             # needs sage.rings.number_field
+            sage: H.e_p(p1)
             20920
-            sage: E.local_data(p2)                                                      # needs sage.rings.number_field
+            sage: E.local_data(p2)
             Local data at Fractional ideal (40*i + 139):
             Reduction type: good
             ...
-            sage: H.e_p(p2)                                                             # needs sage.rings.number_field
+            sage: H.e_p(p2)
             20815
         """
         kp = self.K.residue_field(p)
@@ -1037,10 +1040,11 @@ class EllipticCurveCanonicalHeight:
 
         EXAMPLES::
 
-            sage: K.<i> = QuadraticField(-1)                                            # needs sage.rings.number_field
-            sage: E = EllipticCurve([0, 0, 0, 1+5*i, 3+i])                              # needs sage.rings.number_field
-            sage: H = E.height_function()                                               # needs sage.rings.number_field
-            sage: [H.DE(n) for n in srange(1,6)]                                        # needs sage.rings.number_field
+            sage: # needs sage.rings.number_field
+            sage: K.<i> = QuadraticField(-1)
+            sage: E = EllipticCurve([0, 0, 0, 1+5*i, 3+i])
+            sage: H = E.height_function()
+            sage: [H.DE(n) for n in srange(1,6)]
             [0, 2*log(5) + 2*log(2), 0, 2*log(13) + 2*log(5) + 4*log(2), 0]
         """
         s = 0
@@ -1397,10 +1401,11 @@ class EllipticCurveCanonicalHeight:
             sage: H.wp_c(QQ.places()[0])
             2.68744508779950
 
-            sage: K.<i> = QuadraticField(-1)                                            # needs sage.rings.number_field
-            sage: E = EllipticCurve([0, 0, 0, 1 + 5*i, 3 + i])                          # needs sage.rings.number_field
-            sage: H = E.height_function()                                               # needs sage.rings.number_field
-            sage: H.wp_c(K.places()[0])                                                 # needs sage.rings.number_field
+            sage: # needs sage.rings.number_field
+            sage: K.<i> = QuadraticField(-1)
+            sage: E = EllipticCurve([0, 0, 0, 1 + 5*i, 3 + i])
+            sage: H = E.height_function()
+            sage: H.wp_c(K.places()[0])
             2.66213425640096
         """
         # Note that we normalise w1, w2 differently from [Tho2010]_!
@@ -1904,18 +1909,20 @@ class EllipticCurveCanonicalHeight:
         Example 10.1 from [Tho2010]_ (where a lower bound of 0.18 was
         given)::
 
-            sage: K.<i> = QuadraticField(-1)                                            # needs sage.rings.number_field
-            sage: E = EllipticCurve([0, 0, 0, 91 - 26*i, -144 - 323*i])                 # needs sage.rings.number_field
-            sage: H = E.height_function()                                               # needs sage.rings.number_field
-            sage: H.min_gr(0.1, 4)              # long time                             # needs sage.rings.number_field
+            sage: # needs sage.rings.number_field
+            sage: K.<i> = QuadraticField(-1)
+            sage: E = EllipticCurve([0, 0, 0, 91 - 26*i, -144 - 323*i])
+            sage: H = E.height_function()
+            sage: H.min_gr(0.1, 4)              # long time
             0.1621049443313762
 
         Example 10.2 from [Tho2010]_::
 
-            sage: K.<i> = QuadraticField(-1)                                            # needs sage.rings.number_field
-            sage: E = EllipticCurve([0, 1 - i, i, -i, 0])                               # needs sage.rings.number_field
-            sage: H = E.height_function()                                               # needs sage.rings.number_field
-            sage: H.min_gr(0.01, 5)             # long time                             # needs sage.rings.number_field
+            sage: # needs sage.rings.number_field
+            sage: K.<i> = QuadraticField(-1)
+            sage: E = EllipticCurve([0, 1 - i, i, -i, 0])
+            sage: H = E.height_function()
+            sage: H.min_gr(0.01, 5)             # long time
             0.020153685521979152
 
         In this example the point `P=(0,0)` has height 0.023 so our
@@ -1930,20 +1937,22 @@ class EllipticCurveCanonicalHeight:
         Example 10.3 from [Tho2010]_ (where the same bound of 0.25 is
         given)::
 
-            sage: K.<a> = NumberField(x^3 - 2)                                          # needs sage.rings.number_field
-            sage: E = EllipticCurve([0, 0, 0, -3*a - a^2, a^2])                         # needs sage.rings.number_field
-            sage: H = E.height_function()                                               # needs sage.rings.number_field
-            sage: H.min_gr(0.1, 5)              # long time                             # needs sage.rings.number_field
+            sage: # needs sage.rings.number_field
+            sage: K.<a> = NumberField(x^3 - 2)
+            sage: E = EllipticCurve([0, 0, 0, -3*a - a^2, a^2])
+            sage: H = E.height_function()
+            sage: H.min_gr(0.1, 5)              # long time
             0.25
 
         TESTS:
 
         This example from the LMFDB gave problems before the fix in :trac:`8829`::
 
-            sage: K.<phi> = NumberField(x^2 - x - 1)                                    # needs sage.rings.number_field
-            sage: E = EllipticCurve([phi + 1, -phi + 1, 1, 20*phi - 39, 196*phi + 237])             # needs sage.rings.number_field
-            sage: H = E.height_function()                                               # needs sage.rings.number_field
-            sage: H.min_gr(.1, 5, verbose=True)         # long time                     # needs sage.rings.number_field
+            sage: # needs sage.rings.number_field
+            sage: K.<phi> = NumberField(x^2 - x - 1)
+            sage: E = EllipticCurve([phi + 1, -phi + 1, 1, 20*phi - 39, 196*phi + 237])
+            sage: H = E.height_function()
+            sage: H.min_gr(.1, 5, verbose=True)         # long time
             B_1(1) = 1540.199246369678
             ...
             halving mu to 0.25 and increasing n_max to 6
@@ -2025,18 +2034,20 @@ class EllipticCurveCanonicalHeight:
         Example 10.1 from [Tho2010]_ (where a lower bound of 0.18 was
         given)::
 
-            sage: K.<i> = QuadraticField(-1)                                            # needs sage.rings.number_field
-            sage: E = EllipticCurve([0, 0, 0, 91 - 26*i, -144 - 323*i])                 # needs sage.rings.number_field
-            sage: H = E.height_function()                                               # needs sage.rings.number_field
-            sage: H.min(0.1, 4)                 # long time                             # needs sage.rings.number_field
+            sage: # needs sage.rings.number_field
+            sage: K.<i> = QuadraticField(-1)
+            sage: E = EllipticCurve([0, 0, 0, 91 - 26*i, -144 - 323*i])
+            sage: H = E.height_function()
+            sage: H.min(0.1, 4)                 # long time
             0.1621049443313762
 
         Example 10.2 from [Tho2010]_::
 
-            sage: K.<i> = QuadraticField(-1)                                            # needs sage.rings.number_field
-            sage: E = EllipticCurve([0, 1 - i, i, -i, 0])                               # needs sage.rings.number_field
-            sage: H = E.height_function()                                               # needs sage.rings.number_field
-            sage: H.min(0.01, 5)                # long time                             # needs sage.rings.number_field
+            sage: # needs sage.rings.number_field
+            sage: K.<i> = QuadraticField(-1)
+            sage: E = EllipticCurve([0, 1 - i, i, -i, 0])
+            sage: H = E.height_function()
+            sage: H.min(0.01, 5)                # long time
             0.020153685521979152
 
         In this example the point `P=(0,0)` has height 0.023 so our
@@ -2049,10 +2060,11 @@ class EllipticCurveCanonicalHeight:
         Example 10.3 from [Tho2010]_ (where the same bound of 0.0625 is
         given)::
 
-            sage: K.<a> = NumberField(x^3 - 2)                                          # needs sage.rings.number_field
-            sage: E = EllipticCurve([0, 0, 0, -3*a - a^2, a^2])                         # needs sage.rings.number_field
-            sage: H = E.height_function()                                               # needs sage.rings.number_field
-            sage: H.min(0.1, 5)                 # long time                             # needs sage.rings.number_field
+            sage: # needs sage.rings.number_field
+            sage: K.<a> = NumberField(x^3 - 2)
+            sage: E = EllipticCurve([0, 0, 0, -3*a - a^2, a^2])
+            sage: H = E.height_function()
+            sage: H.min(0.1, 5)                 # long time
             0.0625
 
         More examples over `\QQ`::

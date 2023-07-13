@@ -17,8 +17,8 @@ Affine, over `\QQ`::
 
     sage: from sage.schemes.affine.affine_rational_point import enum_affine_rational_field
     sage: A.<x,y,z> = AffineSpace(3, QQ)
-    sage: S = A.subscheme([2*x - 3*y])                                                  # optional - sage.libs.singular
-    sage: enum_affine_rational_field(S, 2)                                              # optional - sage.libs.singular
+    sage: S = A.subscheme([2*x - 3*y])
+    sage: enum_affine_rational_field(S, 2)
     [(0, 0, -2), (0, 0, -1), (0, 0, -1/2), (0, 0, 0),
      (0, 0, 1/2), (0, 0, 1), (0, 0, 2)]
 
@@ -85,17 +85,17 @@ def enum_affine_rational_field(X, B):
     ::
 
         sage: A.<w,x,y,z> = AffineSpace(4, QQ)
-        sage: S = A.subscheme([x^2 - y*z + 1, w^3 + z + y^2])                           # optional - sage.libs.singular
-        sage: enum_affine_rational_field(S(QQ), 1)                                      # optional - sage.libs.singular
+        sage: S = A.subscheme([x^2 - y*z + 1, w^3 + z + y^2])
+        sage: enum_affine_rational_field(S(QQ), 1)
         [(0, 0, -1, -1)]
-        sage: enum_affine_rational_field(S(QQ), 2)                                      # optional - sage.libs.singular
+        sage: enum_affine_rational_field(S(QQ), 2)
         [(0, 0, -1, -1), (1, -1, -1, -2), (1, 1, -1, -2)]
 
     ::
 
         sage: A.<x,y> = AffineSpace(2, QQ)
-        sage: C = Curve(x^2 + y - x)                                                    # optional - sage.libs.singular
-        sage: enum_affine_rational_field(C, 10) # long time (3 s)                       # optional - sage.libs.singular
+        sage: C = Curve(x^2 + y - x)                                                    # needs sage.libs.singular
+        sage: enum_affine_rational_field(C, 10)         # long time (3 s)               # needs sage.libs.singular
         [(-2, -6), (-1, -2), (-2/3, -10/9), (-1/2, -3/4), (-1/3, -4/9),
          (0, 0), (1/3, 2/9), (1/2, 1/4), (2/3, 2/9), (1, 0),
          (4/3, -4/9), (3/2, -3/4), (5/3, -10/9), (2, -2), (3, -6)]
@@ -190,10 +190,10 @@ def enum_affine_number_field(X, **kwds):
 
         sage: from sage.schemes.affine.affine_rational_point import enum_affine_number_field
         sage: u = QQ['u'].0
-        sage: K = NumberField(u^2 + 2, 'v')                                             # optional - sage.rings.number_field
-        sage: A.<x,y,z> = AffineSpace(K, 3)                                             # optional - sage.rings.number_field
-        sage: X = A.subscheme([y^2 - x])                                                # optional - sage.rings.number_field
-        sage: enum_affine_number_field(X(K), bound=2**0.5)                              # optional - sage.rings.number_field
+        sage: K = NumberField(u^2 + 2, 'v')                                             # needs sage.rings.number_field
+        sage: A.<x,y,z> = AffineSpace(K, 3)                                             # needs sage.rings.number_field
+        sage: X = A.subscheme([y^2 - x])                                                # needs sage.rings.number_field
+        sage: enum_affine_number_field(X(K), bound=2**0.5)                              # needs sage.rings.number_field
         [(0, 0, -1), (0, 0, -v), (0, 0, -1/2*v), (0, 0, 0), (0, 0, 1/2*v),
          (0, 0, v), (0, 0, 1), (1, -1, -1), (1, -1, -v), (1, -1, -1/2*v),
          (1, -1, 0), (1, -1, 1/2*v), (1, -1, v), (1, -1, 1), (1, 1, -1),
@@ -203,10 +203,10 @@ def enum_affine_number_field(X, **kwds):
 
         sage: from sage.schemes.affine.affine_rational_point import enum_affine_number_field
         sage: u = QQ['u'].0
-        sage: K = NumberField(u^2 + 3, 'v')                                             # optional - sage.rings.number_field
-        sage: A.<x,y> = AffineSpace(K, 2)                                               # optional - sage.rings.number_field
-        sage: X = A.subscheme(x - y)                                                    # optional - sage.rings.number_field
-        sage: enum_affine_number_field(X, bound=3**0.25)                                # optional - sage.rings.number_field
+        sage: K = NumberField(u^2 + 3, 'v')                                             # needs sage.rings.number_field
+        sage: A.<x,y> = AffineSpace(K, 2)                                               # needs sage.rings.number_field
+        sage: X = A.subscheme(x - y)                                                    # needs sage.rings.number_field
+        sage: enum_affine_number_field(X, bound=3**0.25)                                # needs sage.rings.number_field
         [(-1, -1), (-1/2*v - 1/2, -1/2*v - 1/2), (1/2*v - 1/2, 1/2*v - 1/2),
          (0, 0), (-1/2*v + 1/2, -1/2*v + 1/2), (1/2*v + 1/2, 1/2*v + 1/2), (1, 1)]
     """

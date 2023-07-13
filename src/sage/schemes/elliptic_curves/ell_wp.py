@@ -91,34 +91,35 @@ def weierstrass_p(E, prec=20, algorithm=None):
         sage: E.weierstrass_p(prec=8, algorithm='quadratic')
         z^-2 + 31/15*z^2 + 2501/756*z^4 + 961/675*z^6 + O(z^8)
 
-        sage: k = GF(11)                                                                # needs sage.rings.finite_rings
-        sage: E = EllipticCurve(k, [1,1])                                               # needs sage.rings.finite_rings
-        sage: E.weierstrass_p(prec=6, algorithm='fast')                                 # needs sage.rings.finite_rings
+        sage: # needs sage.rings.finite_rings
+        sage: k = GF(11)
+        sage: E = EllipticCurve(k, [1,1])
+        sage: E.weierstrass_p(prec=6, algorithm='fast')
         z^-2 + 2*z^2 + 3*z^4 + O(z^6)
-        sage: E.weierstrass_p(prec=7, algorithm='fast')                                 # needs sage.rings.finite_rings
+        sage: E.weierstrass_p(prec=7, algorithm='fast')
         Traceback (most recent call last):
         ...
         ValueError: for computing the Weierstrass p-function via the fast algorithm,
         the characteristic (11) of the underlying field must be greater than prec + 4 = 11
-        sage: E.weierstrass_p(prec=8)                                                   # needs sage.rings.finite_rings
+        sage: E.weierstrass_p(prec=8)
         z^-2 + 2*z^2 + 3*z^4 + 5*z^6 + O(z^8)
-        sage: E.weierstrass_p(prec=8, algorithm='quadratic')                            # needs sage.rings.finite_rings
+        sage: E.weierstrass_p(prec=8, algorithm='quadratic')
         z^-2 + 2*z^2 + 3*z^4 + 5*z^6 + O(z^8)
-        sage: E.weierstrass_p(prec=8, algorithm='pari')                                 # needs sage.rings.finite_rings
+        sage: E.weierstrass_p(prec=8, algorithm='pari')
         z^-2 + 2*z^2 + 3*z^4 + 5*z^6 + O(z^8)
-        sage: E.weierstrass_p(prec=9)                                                   # needs sage.rings.finite_rings
+        sage: E.weierstrass_p(prec=9)
         Traceback (most recent call last):
         ...
         NotImplementedError: currently no algorithms for computing the Weierstrass
         p-function for that characteristic / precision pair is implemented.
         Lower the precision below char(k) - 2
-        sage: E.weierstrass_p(prec=9, algorithm="quadratic")                            # needs sage.rings.finite_rings
+        sage: E.weierstrass_p(prec=9, algorithm="quadratic")
         Traceback (most recent call last):
         ...
         ValueError: for computing the Weierstrass p-function via the quadratic
         algorithm, the characteristic (11) of the underlying field must be greater
         than prec + 2 = 11
-        sage: E.weierstrass_p(prec=9, algorithm='pari')                                 # needs sage.rings.finite_rings
+        sage: E.weierstrass_p(prec=9, algorithm='pari')
         Traceback (most recent call last):
         ...
         ValueError: for computing the Weierstrass p-function via pari, the
@@ -329,16 +330,17 @@ def solve_linear_differential_system(a, b, c, alpha):
 
     EXAMPLES::
 
+        sage: # needs sage.rings.finite_rings
         sage: from sage.schemes.elliptic_curves.ell_wp import solve_linear_differential_system
-        sage: k = GF(17)                                                                # needs sage.rings.finite_rings
-        sage: R.<x> = PowerSeriesRing(k)                                                # needs sage.rings.finite_rings
-        sage: a = 1 + x + O(x^7); b = x + O(x^7); c = 1 + x^3 + O(x^7); alpha = k(3)    # needs sage.rings.finite_rings
-        sage: f = solve_linear_differential_system(a, b, c, alpha)                      # needs sage.rings.finite_rings
-        sage: f                                                                         # needs sage.rings.finite_rings
+        sage: k = GF(17)
+        sage: R.<x> = PowerSeriesRing(k)
+        sage: a = 1 + x + O(x^7); b = x + O(x^7); c = 1 + x^3 + O(x^7); alpha = k(3)
+        sage: f = solve_linear_differential_system(a, b, c, alpha)
+        sage: f
         3 + x + 15*x^2 + x^3 + 10*x^5 + 3*x^6 + 13*x^7 + O(x^8)
-        sage: a*f.derivative() + b*f - c                                                # needs sage.rings.finite_rings
+        sage: a*f.derivative() + b*f - c
         O(x^7)
-        sage: f(0) == alpha                                                             # needs sage.rings.finite_rings
+        sage: f(0) == alpha
         True
     """
     a_recip = 1 / a

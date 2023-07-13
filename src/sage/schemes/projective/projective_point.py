@@ -146,8 +146,8 @@ class SchemeMorphism_point_projective_ring(SchemeMorphism_point):
         ::
 
             sage: R.<t> = PolynomialRing(ZZ)
-            sage: P = ProjectiveSpace(1, R.quo(t^2 + 1))                                # optional - sage.libs.pari
-            sage: P([2*t, 1])                                                           # optional - sage.libs.pari
+            sage: P = ProjectiveSpace(1, R.quo(t^2 + 1))                                # needs sage.libs.pari
+            sage: P([2*t, 1])                                                           # needs sage.libs.pari
             (2*tbar : 1)
 
         ::
@@ -241,9 +241,9 @@ class SchemeMorphism_point_projective_ring(SchemeMorphism_point):
 
         ::
 
-            sage: PS = ProjectiveSpace(Zp(5), 1, 'x')                                   # optional - sage.rings.padics
-            sage: P = PS([0, 1])                                                        # optional - sage.rings.padics
-            sage: P == PS(0)                                                            # optional - sage.rings.padics
+            sage: PS = ProjectiveSpace(Zp(5), 1, 'x')                                   # needs sage.rings.padics
+            sage: P = PS([0, 1])
+            sage: P == PS(0)
             True
 
         ::
@@ -266,9 +266,9 @@ class SchemeMorphism_point_projective_ring(SchemeMorphism_point):
 
             sage: PS = ProjectiveSpace(ZZ, 1, 'x')
             sage: P = PS([2, 1])
-            sage: PS2 = ProjectiveSpace(Zp(7), 1, 'x')                                  # optional - sage.rings.padics
-            sage: Q = PS2([2, 1])                                                       # optional - sage.rings.padics
-            sage: P == Q                                                                # optional - sage.rings.padics
+            sage: PS2 = ProjectiveSpace(Zp(7), 1, 'x')                                  # needs sage.rings.padics
+            sage: Q = PS2([2, 1])                                                       # needs sage.rings.padics
+            sage: P == Q                                                                # needs sage.rings.padics
             True
 
         ::
@@ -290,13 +290,13 @@ class SchemeMorphism_point_projective_ring(SchemeMorphism_point):
         ::
 
             sage: R.<z> = PolynomialRing(QQ)
-            sage: K.<t> = NumberField(z^2 + 5)                                          # optional - sage.rings.number_field
-            sage: OK = K.ring_of_integers()                                             # optional - sage.rings.number_field
-            sage: t = OK.gen(1)                                                         # optional - sage.rings.number_field
-            sage: PS.<x,y> = ProjectiveSpace(OK, 1)                                     # optional - sage.rings.number_field
-            sage: P = PS(2, 1 + t)                                                      # optional - sage.rings.number_field
-            sage: Q = PS(1 - t, 3)                                                      # optional - sage.rings.number_field
-            sage: P == Q                                                                # optional - sage.rings.number_field
+            sage: K.<t> = NumberField(z^2 + 5)                                          # needs sage.rings.number_field
+            sage: OK = K.ring_of_integers()                                             # needs sage.rings.number_field
+            sage: t = OK.gen(1)                                                         # needs sage.rings.number_field
+            sage: PS.<x,y> = ProjectiveSpace(OK, 1)                                     # needs sage.rings.number_field
+            sage: P = PS(2, 1 + t)                                                      # needs sage.rings.number_field
+            sage: Q = PS(1 - t, 3)                                                      # needs sage.rings.number_field
+            sage: P == Q                                                                # needs sage.rings.number_field
             True
 
         Check that :trac:`17429` is fixed::
@@ -329,9 +329,9 @@ class SchemeMorphism_point_projective_ring(SchemeMorphism_point):
 
         ::
 
-            sage: PS = ProjectiveSpace(Zp(5), 1, 'x')                                   # optional - sage.rings.padics
-            sage: P = PS([0, 1])                                                        # optional - sage.rings.padics
-            sage: P != PS(0)                                                            # optional - sage.rings.padics
+            sage: PS = ProjectiveSpace(Zp(5), 1, 'x')                                   # needs sage.rings.padics
+            sage: P = PS([0, 1])
+            sage: P != PS(0)
             False
 
         ::
@@ -354,9 +354,9 @@ class SchemeMorphism_point_projective_ring(SchemeMorphism_point):
 
             sage: PS = ProjectiveSpace(ZZ, 1, 'x')
             sage: P = PS([2, 1])
-            sage: PS2 = ProjectiveSpace(Zp(7), 1, 'x')                                  # optional - sage.rings.padics
-            sage: Q = PS2([2, 1])                                                       # optional - sage.rings.padics
-            sage: P != Q                                                                # optional - sage.rings.padics
+            sage: PS2 = ProjectiveSpace(Zp(7), 1, 'x')                                  # needs sage.rings.padics
+            sage: Q = PS2([2, 1])                                                       # needs sage.rings.padics
+            sage: P != Q                                                                # needs sage.rings.padics
             False
 
         ::
@@ -402,10 +402,10 @@ class SchemeMorphism_point_projective_ring(SchemeMorphism_point):
         ::
 
             sage: R.<x> = PolynomialRing(QQ)
-            sage: K.<w> = NumberField(x^2 + 3)                                          # optional - sage.rings.number_field
-            sage: O = K.maximal_order()                                                 # optional - sage.rings.number_field
-            sage: P.<x,y> = ProjectiveSpace(O, 1)                                       # optional - sage.rings.number_field
-            sage: hash(P([1 + w, 2])) == hash(P([2, 1 - w]))                            # optional - sage.rings.number_field
+            sage: K.<w> = NumberField(x^2 + 3)                                          # needs sage.rings.number_field
+            sage: O = K.maximal_order()                                                 # needs sage.rings.number_field
+            sage: P.<x,y> = ProjectiveSpace(O, 1)                                       # needs sage.rings.number_field
+            sage: hash(P([1 + w, 2])) == hash(P([2, 1 - w]))                            # needs sage.rings.number_field
             True
 
         TESTS::
@@ -446,8 +446,8 @@ class SchemeMorphism_point_projective_ring(SchemeMorphism_point):
 
             sage: P = ProjectiveSpace(QQ, 1)
             sage: Q = P(1,1)
-            sage: m = matrix(QQ, 2, 2, [1,1, 0,1])                                      # optional - sage.modules
-            sage: m*Q                                                                   # optional - sage.modules
+            sage: m = matrix(QQ, 2, 2, [1,1, 0,1])                                      # needs sage.modules
+            sage: m*Q                                                                   # needs sage.modules
             (2 : 1)
 
         ::
@@ -455,25 +455,26 @@ class SchemeMorphism_point_projective_ring(SchemeMorphism_point):
             sage: P.<x,y,z> = ProjectiveSpace(QQ, 2)
             sage: X = P.subscheme(x - y)
             sage: Q = X(1,1)
-            sage: m = matrix(CC, 3, 3, [1,CC.0,0, CC.0,1,0, 1,1,1])                     # optional - sage.modules
-            sage: m*Q                                                                   # optional - sage.modules
+            sage: m = matrix(CC, 3, 3, [1,CC.0,0, CC.0,1,0, 1,1,1])                     # needs sage.modules
+            sage: m*Q                                                                   # needs sage.modules
             (0.333333333333333 + 0.333333333333333*I : 0.333333333333333
             + 0.333333333333333*I : 1.00000000000000)
 
         ::
 
-            sage: P = ProjectiveSpace(QQbar, 1)                                         # optional - sage.rings.number_field
-            sage: Q = P(QQbar(sqrt(2)),1)                                               # optional - sage.rings.number_field sage.symbolic
-            sage: m = matrix(ZZ, 2, 2, [1,-1, 0,1])                                     # optional - sage.modules sage.rings.number_field sage.symbolic
-            sage: m*Q                                                                   # optional - sage.modules sage.rings.number_field sage.symbolic
+            sage: # needs sage.rings.number_field
+            sage: P = ProjectiveSpace(QQbar, 1)
+            sage: Q = P(QQbar(sqrt(2)),1)                                               # needs sage.symbolic
+            sage: m = matrix(ZZ, 2, 2, [1,-1, 0,1])                                     # needs sage.modules sage.symbolic
+            sage: m*Q                                                                   # needs sage.modules sage.symbolic
             (0.4142135623730951? : 1)
 
         ::
 
             sage: P = ProjectiveSpace(QQ, 1)
             sage: Q = P(1,1)
-            sage: m = matrix(QQ, 3, 2, [1,1, 0,1, 1,1])                                 # optional - sage.modules
-            sage: m*Q                                                                   # optional - sage.modules
+            sage: m = matrix(QQ, 3, 2, [1,1, 0,1, 1,1])                                 # needs sage.modules
+            sage: m*Q                                                                   # needs sage.modules
             Traceback (most recent call last):
             ...
             ValueError: matrix must be square
@@ -510,10 +511,10 @@ class SchemeMorphism_point_projective_ring(SchemeMorphism_point):
         ::
 
             sage: R.<t> = PolynomialRing(QQ)
-            sage: S = R.quo(R.ideal(t^3))                                               # optional - sage.libs.pari
-            sage: P.<x,y,z> = ProjectiveSpace(S, 2)                                     # optional - sage.libs.pari
-            sage: Q = P(t, 1, 1)                                                        # optional - sage.libs.pari
-            sage: Q.scale_by(t);Q                                                       # optional - sage.libs.pari
+            sage: S = R.quo(R.ideal(t^3))                                               # needs sage.libs.pari
+            sage: P.<x,y,z> = ProjectiveSpace(S, 2)                                     # needs sage.libs.pari
+            sage: Q = P(t, 1, 1)
+            sage: Q.scale_by(t);Q                                                       # needs sage.libs.pari
             (tbar^2 : tbar : tbar)
 
         ::
@@ -551,9 +552,9 @@ class SchemeMorphism_point_projective_ring(SchemeMorphism_point):
 
         ::
 
-            sage: P = ProjectiveSpace(Zp(7), 2, 'x')                                    # optional - sage.rings.padics
-            sage: p = P([-5, -15, -2])                                                  # optional - sage.rings.padics
-            sage: p.normalize_coordinates(); p                                          # optional - sage.rings.padics
+            sage: P = ProjectiveSpace(Zp(7), 2, 'x')                                    # needs sage.rings.padics
+            sage: p = P([-5, -15, -2])
+            sage: p.normalize_coordinates(); p                                          # needs sage.rings.padics
             (5 + O(7^20) : 1 + 2*7 + O(7^20) : 2 + O(7^20))
 
         ::
@@ -593,10 +594,10 @@ class SchemeMorphism_point_projective_ring(SchemeMorphism_point):
 
             sage: R.<t> = PolynomialRing(QQ, 1)
             sage: S = R.quotient_ring(R.ideal(t^3))
-            sage: P.<x,y> = ProjectiveSpace(S, 1)                                       # optional - sage.libs.singular
-            sage: Q = P(t + 1, t^2 + t)                                                 # optional - sage.libs.singular
-            sage: Q.normalize_coordinates()                                             # optional - sage.libs.singular
-            sage: Q                                                                     # optional - sage.libs.singular
+            sage: P.<x,y> = ProjectiveSpace(S, 1)                                       # needs sage.libs.singular
+            sage: Q = P(t + 1, t^2 + t)                                                 # needs sage.libs.singular
+            sage: Q.normalize_coordinates()
+            sage: Q                                                                     # needs sage.libs.singular
             (1 : tbar)
         """
         R = self.codomain().base_ring()
@@ -646,30 +647,30 @@ class SchemeMorphism_point_projective_ring(SchemeMorphism_point):
             sage: P.<x,y,z> = ProjectiveSpace(QQ, 2)
             sage: X = P.subscheme(x^2 - y^2)
             sage: Q = X(23, 23, 46)
-            sage: Q.dehomogenize(2)                                                     # optional - sage.libs.singular
+            sage: Q.dehomogenize(2)                                                     # needs sage.libs.singular
             (1/2, 1/2)
 
         ::
 
             sage: R.<t> = PolynomialRing(QQ)
-            sage: S = R.quo(R.ideal(t^3))                                               # optional - sage.libs.pari
-            sage: P.<x,y,z> = ProjectiveSpace(S, 2)                                     # optional - sage.libs.pari
-            sage: Q = P(t, 1, 1)                                                        # optional - sage.libs.pari
-            sage: Q.dehomogenize(1)                                                     # optional - sage.libs.pari sage.libs.singular
+            sage: S = R.quo(R.ideal(t^3))                                               # needs sage.libs.pari
+            sage: P.<x,y,z> = ProjectiveSpace(S, 2)                                     # needs sage.libs.pari
+            sage: Q = P(t, 1, 1)                                                        # needs sage.libs.pari
+            sage: Q.dehomogenize(1)                                                     # needs sage.libs.pari sage.libs.singular
             (tbar, 1)
 
         ::
 
             sage: P.<x,y,z> = ProjectiveSpace(GF(5), 2)
             sage: Q = P(1, 3, 1)
-            sage: Q.dehomogenize(0)                                                     # optional - sage.libs.singular
+            sage: Q.dehomogenize(0)
             (3, 1)
 
         ::
 
             sage: P.<x,y,z> = ProjectiveSpace(GF(5), 2)
             sage: Q = P(1, 3, 0)
-            sage: Q.dehomogenize(2)                                                     # optional - sage.libs.singular
+            sage: Q.dehomogenize(2)
             Traceback (most recent call last):
             ...
             ValueError: can...t dehomogenize at 0 coordinate
@@ -701,49 +702,50 @@ class SchemeMorphism_point_projective_ring(SchemeMorphism_point):
 
             sage: P.<x,y,z> = ProjectiveSpace(QQ, 2)
             sage: Q = P.point([4, 4, 1/30])
-            sage: Q.global_height()                                                     # optional - sage.symbolic
+            sage: Q.global_height()                                                     # needs sage.symbolic
             4.78749174278205
 
         ::
 
             sage: P.<x,y,z> = ProjectiveSpace(ZZ, 2)
             sage: Q = P([4, 1, 30])
-            sage: Q.global_height()                                                     # optional - sage.symbolic
+            sage: Q.global_height()                                                     # needs sage.symbolic
             3.40119738166216
 
         ::
 
             sage: R.<x> = PolynomialRing(QQ)
-            sage: k.<w> = NumberField(x^2 + 5)                                          # optional - sage.rings.number_field
-            sage: A = ProjectiveSpace(k, 2, 'z')                                        # optional - sage.rings.number_field
-            sage: A([3, 5*w + 1, 1]).global_height(prec=100)                            # optional - sage.rings.number_field
+            sage: k.<w> = NumberField(x^2 + 5)                                          # needs sage.rings.number_field
+            sage: A = ProjectiveSpace(k, 2, 'z')                                        # needs sage.rings.number_field
+            sage: A([3, 5*w + 1, 1]).global_height(prec=100)                            # needs sage.rings.number_field
             2.4181409534757389986565376694
 
         ::
 
-            sage: P.<x,y,z> = ProjectiveSpace(QQbar, 2)                                 # optional - sage.rings.number_field
-            sage: Q = P([QQbar(sqrt(3)), QQbar(sqrt(-2)), 1])                           # optional - sage.rings.number_field
-            sage: Q.global_height()                                                     # optional - sage.rings.number_field
+            sage: P.<x,y,z> = ProjectiveSpace(QQbar, 2)                                 # needs sage.rings.number_field
+            sage: Q = P([QQbar(sqrt(3)), QQbar(sqrt(-2)), 1])                           # needs sage.rings.number_field
+            sage: Q.global_height()                                                     # needs sage.rings.number_field
             0.549306144334055
 
         ::
 
-            sage: K = UniversalCyclotomicField()                                        # optional - sage.rings.number_field
-            sage: P.<x,y,z> = ProjectiveSpace(K, 2)                                     # optional - sage.rings.number_field
-            sage: Q = P.point([K(4/3), K.gen(7), K.gen(5)])                             # optional - sage.rings.number_field
-            sage: Q.global_height()                                                     # optional - sage.rings.number_field
+            sage: # needs sage.rings.number_field
+            sage: K = UniversalCyclotomicField()
+            sage: P.<x,y,z> = ProjectiveSpace(K, 2)
+            sage: Q = P.point([K(4/3), K.gen(7), K.gen(5)])
+            sage: Q.global_height()
             1.38629436111989
 
         TESTS::
 
             sage: P = ProjectiveSpace(QQ, 2)
-            sage: P(1/1, 2/3, 5/8).global_height()                                      # optional - sage.symbolic
+            sage: P(1/1, 2/3, 5/8).global_height()                                      # needs sage.symbolic
             3.17805383034795
 
             sage: x = polygen(QQ, 'x')
-            sage: F.<u> = NumberField(x^3 - 5)                                          # optional - sage.rings.number_field
-            sage: P = ProjectiveSpace(F, 2)                                             # optional - sage.rings.number_field
-            sage: P(u, u^2/5, 1).global_height()                                        # optional - sage.rings.number_field
+            sage: F.<u> = NumberField(x^3 - 5)                                          # needs sage.rings.number_field
+            sage: P = ProjectiveSpace(F, 2)                                             # needs sage.rings.number_field
+            sage: P(u, u^2/5, 1).global_height()                                        # needs sage.rings.number_field
             1.07295860828940
         """
         if prec is None:
@@ -793,14 +795,14 @@ class SchemeMorphism_point_projective_ring(SchemeMorphism_point):
 
             sage: P.<x,y,z> = ProjectiveSpace(QQ, 2)
             sage: Q = P.point([4, 4, 1/150], False)
-            sage: Q.local_height(5)
+            sage: Q.local_height(5)                                                     # needs sage.rings.real_mpfr
             3.21887582486820
 
         ::
 
             sage: P.<x,y,z> = ProjectiveSpace(QQ, 2)
             sage: Q = P([4, 1, 30])
-            sage: Q.local_height(2)
+            sage: Q.local_height(2)                                                     # needs sage.rings.real_mpfr
             0.693147180559945
         """
         K = FractionField(self.domain().base_ring())
@@ -827,14 +829,14 @@ class SchemeMorphism_point_projective_ring(SchemeMorphism_point):
 
             sage: P.<x,y,z> = ProjectiveSpace(QQ, 2)
             sage: Q = P.point([4, 4, 1/150], False)
-            sage: Q.local_height_arch(0)
+            sage: Q.local_height_arch(0)                                                # needs sage.rings.real_mpfr
             1.38629436111989
 
         ::
 
-            sage: P.<x,y,z> = ProjectiveSpace(QuadraticField(5, 'w'), 2)                # optional - sage.rings.number_field
-            sage: Q = P.point([4, 1, 30], False)                                        # optional - sage.rings.number_field
-            sage: Q.local_height_arch(1)                                                # optional - sage.rings.number_field
+            sage: P.<x,y,z> = ProjectiveSpace(QuadraticField(5, 'w'), 2)                # needs sage.rings.number_field
+            sage: Q = P.point([4, 1, 30], False)
+            sage: Q.local_height_arch(1)                                                # needs sage.rings.number_field
             3.401197381662155375413236691607
         """
         K = FractionField(self.domain().base_ring())
@@ -867,9 +869,9 @@ class SchemeMorphism_point_projective_ring(SchemeMorphism_point):
         EXAMPLES::
 
             sage: P.<x,y,z,w> = ProjectiveSpace(QQ, 3)
-            sage: f = DynamicalSystem_projective([x^2, y^2, 4*w^2, 4*z^2], domain=P)    # optional - sage.schemes
+            sage: f = DynamicalSystem_projective([x^2, y^2, 4*w^2, 4*z^2], domain=P)    # needs sage.schemes
             sage: Q = P.point([4, 4, 1, 1], False)
-            sage: Q.multiplier(f, 1)                                                    # optional - sage.schemes
+            sage: Q.multiplier(f, 1)                                                    # needs sage.schemes
             [ 2  0 -8]
             [ 0  2 -8]
             [ 0  0 -2]
@@ -924,103 +926,103 @@ class SchemeMorphism_point_projective_ring(SchemeMorphism_point):
         EXAMPLES::
 
             sage: P.<x,y> = ProjectiveSpace(QQ, 1)
-            sage: f = DynamicalSystem_projective([x^3 - 3*x*y^2, y^3], domain=P)        # optional - sage.schemes
+            sage: f = DynamicalSystem_projective([x^3 - 3*x*y^2, y^3], domain=P)        # needs sage.schemes
             sage: Q = P(-1, 1)
-            sage: Q.is_preperiodic(f)                                                   # optional - sage.schemes
+            sage: Q.is_preperiodic(f)                                                   # needs sage.schemes
             True
 
         ::
 
             sage: P.<x,y,z> = ProjectiveSpace(QQ, 2)
             sage: X = P.subscheme(z)
-            sage: f = DynamicalSystem([x^2 - y^2, y^2, z^2], domain=X)                  # optional - sage.schemes
+            sage: f = DynamicalSystem([x^2 - y^2, y^2, z^2], domain=X)                  # needs sage.schemes
             sage: p = X((-1, 1, 0))
-            sage: p.is_preperiodic(f, return_period=True)                               # optional - sage.schemes
+            sage: p.is_preperiodic(f, return_period=True)                               # needs sage.schemes
             (0, 2)
 
         ::
 
             sage: P.<x,y> = ProjectiveSpace(QQ,1)
-            sage: f = DynamicalSystem_projective([x^2 - 29/16*y^2, y^2], domain=P)      # optional - sage.schemes
+            sage: f = DynamicalSystem_projective([x^2 - 29/16*y^2, y^2], domain=P)      # needs sage.schemes
             sage: Q = P(1, 4)
-            sage: Q.is_preperiodic(f, return_period=True)                               # optional - sage.schemes
+            sage: Q.is_preperiodic(f, return_period=True)                               # needs sage.schemes
             (1, 3)
             sage: Q = P(1, 1)
-            sage: Q.is_preperiodic(f, return_period=True)                               # optional - sage.schemes
+            sage: Q.is_preperiodic(f, return_period=True)                               # needs sage.schemes
             (0, 0)
 
         ::
 
             sage: R.<x> = PolynomialRing(QQ)
-            sage: K.<a> = NumberField(x^2 + 1)                                          # optional - sage.rings.number_field
-            sage: P.<x,y> = ProjectiveSpace(K, 1)                                       # optional - sage.rings.number_field
-            sage: f = DynamicalSystem_projective([x^5 + 5/4*x*y^4, y^5], domain=P)      # optional - sage.rings.number_field sage.schemes
-            sage: Q = P([-1/2*a + 1/2, 1])                                              # optional - sage.rings.number_field
-            sage: Q.is_preperiodic(f)                                                   # optional - sage.rings.number_field sage.schemes
+            sage: K.<a> = NumberField(x^2 + 1)                                          # needs sage.rings.number_field
+            sage: P.<x,y> = ProjectiveSpace(K, 1)                                       # needs sage.rings.number_field
+            sage: f = DynamicalSystem_projective([x^5 + 5/4*x*y^4, y^5], domain=P)      # needs sage.rings.number_field sage.schemes
+            sage: Q = P([-1/2*a + 1/2, 1])                                              # needs sage.rings.number_field
+            sage: Q.is_preperiodic(f)                                                   # needs sage.rings.number_field sage.schemes
             True
-            sage: Q = P([a, 1])                                                         # optional - sage.rings.number_field
-            sage: Q.is_preperiodic(f)                                                   # optional - sage.rings.number_field sage.schemes
+            sage: Q = P([a, 1])                                                         # needs sage.rings.number_field
+            sage: Q.is_preperiodic(f)                                                   # needs sage.rings.number_field sage.schemes
             False
 
         ::
 
             sage: P.<x,y,z> = ProjectiveSpace(QQ, 2)
-            sage: f = DynamicalSystem_projective([                                      # optional - sage.schemes
+            sage: f = DynamicalSystem_projective([                                      # needs sage.schemes
             ....:         -38/45*x^2 + (2*y - 7/45*z)*x + (-1/2*y^2 - 1/2*y*z + z^2),
             ....:         -67/90*x^2 + (2*y + z*157/90)*x - y*z,
             ....:         z^2
             ....:     ], domain=P)
             sage: Q = P([1, 3, 1])
-            sage: Q.is_preperiodic(f, return_period=True)                               # optional - sage.schemes
+            sage: Q.is_preperiodic(f, return_period=True)                               # needs sage.schemes
             (0, 9)
 
         ::
 
             sage: P.<x,y,z,w> = ProjectiveSpace(QQ, 3)
-            sage: f = DynamicalSystem_projective([                                      # optional - sage.schemes
+            sage: f = DynamicalSystem_projective([                                      # needs sage.schemes
             ....:         (-y - w)*x + (-13/30*y^2 + 13/30*w*y + w^2),
             ....:         -1/2*x^2 + (-y + 3/2*w)*x + (-1/3*y^2 + 4/3*w*y),
             ....:         -3/2*z^2 + 5/2*z*w + w^2,
             ....:         w^2
             ....:     ], domain=P)
             sage: Q = P([3,0,4/3,1])
-            sage: Q.is_preperiodic(f, return_period=True)                               # optional - sage.schemes
+            sage: Q.is_preperiodic(f, return_period=True)                               # needs sage.schemes
             (2, 24)
 
         ::
 
             sage: from sage.misc.verbose import set_verbose
             sage: set_verbose(-1)
-            sage: P.<x,y,z> = ProjectiveSpace(QQbar, 2)                                 # optional - sage.rings.number_field
-            sage: f = DynamicalSystem_projective([x^2, QQbar(sqrt(-1))*y^2, z^2],       # optional - sage.rings.number_field sage.schemes sage.symbolic
+            sage: P.<x,y,z> = ProjectiveSpace(QQbar, 2)                                 # needs sage.rings.number_field
+            sage: f = DynamicalSystem_projective([x^2, QQbar(sqrt(-1))*y^2, z^2],       # needs sage.rings.number_field sage.schemes sage.symbolic
             ....:                                domain=P)
-            sage: Q = P([1, 1, 1])                                                      # optional - sage.rings.number_field sage.symbolic
-            sage: Q.is_preperiodic(f)                                                   # optional - sage.rings.number_field sage.schemes sage.symbolic
+            sage: Q = P([1, 1, 1])
+            sage: Q.is_preperiodic(f)                                                   # needs sage.rings.number_field sage.schemes sage.symbolic
             True
 
         ::
 
             sage: set_verbose(-1)
-            sage: P.<x,y,z> = ProjectiveSpace(QQbar, 2)                                 # optional - sage.rings.number_field
-            sage: f = DynamicalSystem_projective([x^2, y^2, z^2], domain=P)             # optional - sage.rings.number_field sage.schemes
-            sage: Q = P([QQbar(sqrt(-1)), 1, 1])                                        # optional - sage.rings.number_field sage.symbolic
-            sage: Q.is_preperiodic(f)                                                   # optional - sage.rings.number_field sage.schemes sage.symbolic
+            sage: P.<x,y,z> = ProjectiveSpace(QQbar, 2)                                 # needs sage.rings.number_field
+            sage: f = DynamicalSystem_projective([x^2, y^2, z^2], domain=P)             # needs sage.rings.number_field sage.schemes
+            sage: Q = P([QQbar(sqrt(-1)), 1, 1])                                        # needs sage.rings.number_field sage.symbolic
+            sage: Q.is_preperiodic(f)                                                   # needs sage.rings.number_field sage.schemes sage.symbolic
             True
 
         ::
 
             sage: P.<x,y> = ProjectiveSpace(QQ, 1)
-            sage: f = DynamicalSystem_projective([16*x^2 - 29*y^2, 16*y^2], domain=P)   # optional - sage.schemes
+            sage: f = DynamicalSystem_projective([16*x^2 - 29*y^2, 16*y^2], domain=P)   # needs sage.schemes
             sage: Q = P(-1,4)
-            sage: Q.is_preperiodic(f)                                                   # optional - sage.schemes
+            sage: Q.is_preperiodic(f)                                                   # needs sage.schemes
             True
 
         ::
 
             sage: P.<x,y,z> = ProjectiveSpace(GF(3), 2)
-            sage: F = DynamicalSystem([x^2 - 2*y^2, y^2, z^2])                          # optional - sage.rings.finite_rings sage.schemes
+            sage: F = DynamicalSystem([x^2 - 2*y^2, y^2, z^2])                          # needs sage.rings.finite_rings sage.schemes
             sage: Q = P(1, 1, 1)
-            sage: Q.is_preperiodic(F, return_period=True)                               # optional - sage.rings.finite_rings sage.schemes
+            sage: Q.is_preperiodic(F, return_period=True)                               # needs sage.rings.finite_rings sage.schemes
             (1, 1)
 
         TESTS::
@@ -1037,9 +1039,9 @@ class SchemeMorphism_point_projective_ring(SchemeMorphism_point):
         ::
 
             sage: P.<x,y> = ProjectiveSpace(QQ, 1)
-            sage: f = DynamicalSystem_projective([16*x^2 - 29*y^2, 16*y^2])             # optional - sage.schemes
+            sage: f = DynamicalSystem_projective([16*x^2 - 29*y^2, 16*y^2])             # needs sage.schemes
             sage: Q = P(11,4)
-            sage: Q.is_preperiodic(f, err=2)                                            # optional - sage.schemes
+            sage: Q.is_preperiodic(f, err=2)                                            # needs sage.schemes
             False
         """
         try:
@@ -1227,26 +1229,26 @@ class SchemeMorphism_point_projective_field(SchemeMorphism_point_projective_ring
         EXAMPLES::
 
             sage: R.<x> = PolynomialRing(QQ)
-            sage: P.<x,y> = ProjectiveSpace(QQbar, 1)                                               # optional - sage.rings.number_field
-            sage: Q = P([-1/2*QQbar(sqrt(2)) + QQbar(I), 1])                                        # optional - sage.rings.number_field sage.symbolic
-            sage: S = Q._number_field_from_algebraics(); S                                          # optional - sage.rings.number_field sage.symbolic
+            sage: P.<x,y> = ProjectiveSpace(QQbar, 1)                                               # needs sage.rings.number_field
+            sage: Q = P([-1/2*QQbar(sqrt(2)) + QQbar(I), 1])                                        # needs sage.rings.number_field sage.symbolic
+            sage: S = Q._number_field_from_algebraics(); S                                          # needs sage.rings.number_field sage.symbolic
             (1/2*a^3 + a^2 - 1/2*a : 1)
-            sage: S.codomain()                                                                      # optional - sage.rings.number_field sage.symbolic
+            sage: S.codomain()                                                                      # needs sage.rings.number_field sage.symbolic
             Projective Space of dimension 1 over Number Field in a with defining
              polynomial y^4 + 1 with a = 0.7071067811865475? + 0.7071067811865475?*I
 
         The following was fixed in :trac:`23808`::
 
             sage: R.<x> = PolynomialRing(QQ)
-            sage: P.<x,y> = ProjectiveSpace(QQbar, 1)                                               # optional - sage.rings.number_field
-            sage: Q = P([-1/2*QQbar(sqrt(2)) + QQbar(I), 1]);Q                                      # optional - sage.rings.number_field sage.symbolic
+            sage: P.<x,y> = ProjectiveSpace(QQbar, 1)                                               # needs sage.rings.number_field
+            sage: Q = P([-1/2*QQbar(sqrt(2)) + QQbar(I), 1]);Q                                      # needs sage.rings.number_field sage.symbolic
             (-0.7071067811865475? + 1*I : 1)
-            sage: S = Q._number_field_from_algebraics(); S                                          # optional - sage.rings.number_field sage.symbolic
+            sage: S = Q._number_field_from_algebraics(); S                                          # needs sage.rings.number_field sage.symbolic
             (1/2*a^3 + a^2 - 1/2*a : 1)
-            sage: T = S.change_ring(QQbar)  # Used to fail                                          # optional - sage.rings.number_field sage.symbolic
-            sage: T                                                                                 # optional - sage.rings.number_field sage.symbolic
+            sage: T = S.change_ring(QQbar)  # Used to fail                                          # needs sage.rings.number_field sage.symbolic
+            sage: T                                                                                 # needs sage.rings.number_field sage.symbolic
             (-0.7071067811865475? + 1.000000000000000?*I : 1)
-            sage: Q[0] == T[0]                                                                      # optional - sage.rings.number_field sage.symbolic
+            sage: Q[0] == T[0]                                                                      # needs sage.rings.number_field sage.symbolic
             True
         """
         from sage.schemes.projective.projective_space import is_ProjectiveSpace
@@ -1285,10 +1287,10 @@ class SchemeMorphism_point_projective_field(SchemeMorphism_point_projective_ring
         ::
 
             sage: R.<x> = PolynomialRing(QQ)
-            sage: K.<w> = NumberField(x^2 - 3)                                          # optional - sage.rings.number_field
-            sage: P.<x,y,z> = ProjectiveSpace(K, 2)                                     # optional - sage.rings.number_field
-            sage: Q = P([1/w, 3, 0])                                                    # optional - sage.rings.number_field
-            sage: Q.clear_denominators(); Q                                             # optional - sage.rings.number_field
+            sage: K.<w> = NumberField(x^2 - 3)                                          # needs sage.rings.number_field
+            sage: P.<x,y,z> = ProjectiveSpace(K, 2)                                     # needs sage.rings.number_field
+            sage: Q = P([1/w, 3, 0])                                                    # needs sage.rings.number_field
+            sage: Q.clear_denominators(); Q                                             # needs sage.rings.number_field
             (w : 9 : 0)
 
         ::
@@ -1328,13 +1330,13 @@ class SchemeMorphism_point_projective_field(SchemeMorphism_point_projective_ring
             sage: X = P.subscheme([x*z - y^2])
             sage: Y = P.subscheme([x^3 - y*w^2 + z*w^2, x*y - z*w])
             sage: Q1 = X([1/2, 1/4, 1/8, 1])
-            sage: Q1.intersection_multiplicity(Y)                                       # optional - sage.libs.singular
+            sage: Q1.intersection_multiplicity(Y)                                       # needs sage.libs.singular
             1
             sage: Q2 = X([0,0,0,1])
-            sage: Q2.intersection_multiplicity(Y)                                       # optional - sage.libs.singular
+            sage: Q2.intersection_multiplicity(Y)                                       # needs sage.libs.singular
             5
             sage: Q3 = X([0,0,1,0])
-            sage: Q3.intersection_multiplicity(Y)                                       # optional - sage.libs.singular
+            sage: Q3.intersection_multiplicity(Y)                                       # needs sage.libs.singular
             6
 
         ::
@@ -1366,10 +1368,10 @@ class SchemeMorphism_point_projective_field(SchemeMorphism_point_projective_ring
             sage: P.<x,y,z,w,t> = ProjectiveSpace(QQ, 4)
             sage: X = P.subscheme([y^6 - x^3*w^2*t + t^5*w, x^2 - t^2])
             sage: Q1 = X([1,0,2,1,1])
-            sage: Q1.multiplicity()                                                     # optional - sage.libs.singular
+            sage: Q1.multiplicity()                                                     # needs sage.libs.singular
             1
             sage: Q2 = X([0,0,-2,1,0])
-            sage: Q2.multiplicity()                                                     # optional - sage.libs.singular
+            sage: Q2.multiplicity()                                                     # needs sage.libs.singular
             8
         """
         from sage.schemes.projective.projective_space import is_ProjectiveSpace
@@ -1406,8 +1408,8 @@ class SchemeMorphism_point_projective_finite_field(SchemeMorphism_point_projecti
 
         ::
 
-            sage: P.<x,y> = ProjectiveSpace(GF(13^3,'t'), 1)                                        # optional - sage.rings.finite_rings
-            sage: hash(P(3, 4))                                                                     # optional - sage.rings.finite_rings
+            sage: P.<x,y> = ProjectiveSpace(GF(13^3,'t'), 1)                                        # needs sage.rings.finite_rings
+            sage: hash(P(3, 4))                                                                     # needs sage.rings.finite_rings
             2201
         """
         p = self.codomain().base_ring().order()
@@ -1423,11 +1425,12 @@ class SchemeMorphism_point_abelian_variety_field(AdditiveGroupElement, SchemeMor
 
     EXAMPLES::
 
-        sage: E = EllipticCurve([0,0,1,-1,0])                                                       # optional - sage.schemes
-        sage: origin = E(0)                                                                         # optional - sage.schemes
-        sage: origin.domain()                                                                       # optional - sage.schemes
+        sage: # needs sage.schemes
+        sage: E = EllipticCurve([0,0,1,-1,0])
+        sage: origin = E(0)
+        sage: origin.domain()
         Spectrum of Rational Field
-        sage: origin.codomain()                                                                     # optional - sage.schemes
+        sage: origin.codomain()
         Elliptic Curve defined by y^2 + y = x^3 - x over Rational Field
     """
     pass

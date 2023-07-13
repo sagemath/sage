@@ -7140,14 +7140,15 @@ def heegner_sha_an(self, D, prec=53):
     2.3 in [GZ1986]_ page 311, then that conjecture is
     false, as the following example shows::
 
-        sage: E = EllipticCurve('65a')                              # long time
-        sage: E.heegner_sha_an(-56)                                 # long time
+        sage: # long time
+        sage: E = EllipticCurve('65a')
+        sage: E.heegner_sha_an(-56)
         1.00000000000000
-        sage: E.torsion_order()                                     # long time
+        sage: E.torsion_order()
         2
-        sage: E.tamagawa_product()                                  # long time
+        sage: E.tamagawa_product()
         1
-        sage: E.quadratic_twist(-56).rank()                         # long time
+        sage: E.quadratic_twist(-56).rank()
         2
     """
     # check conditions, then return from cache if possible.

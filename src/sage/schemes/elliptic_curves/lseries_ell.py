@@ -669,12 +669,13 @@ class Lseries_ell(SageObject):
 
         With less numerical precision, the error is bounded by numerical accuracy::
 
-            sage: L, err = E.lseries().deriv_at1(100, prec=64)                          # needs sage.symbolic
-            sage: L, err                                                                # needs sage.symbolic
+            sage: # needs sage.symbolic
+            sage: L, err = E.lseries().deriv_at1(100, prec=64)
+            sage: L, err
             (0.305999773834052302, 5.55318e-18)
-            sage: parent(L)                                                             # needs sage.symbolic
+            sage: parent(L)
             Real Field with 64 bits of precision
-            sage: parent(err)                                                           # needs sage.symbolic
+            sage: parent(err)
             Real Field with 24 bits of precision and rounding RNDU
 
         Rank 2 and rank 3 elliptic curves::

@@ -1221,11 +1221,11 @@ class ToricVariety_field(AmbientSpace):
 
         EXAMPLES::
 
-            sage: toric_varieties.P4_11169().dimension_singularities()                  # optional - sage.graphs
+            sage: toric_varieties.P4_11169().dimension_singularities()
             1
-            sage: toric_varieties.Conifold().dimension_singularities()                  # optional - sage.graphs
+            sage: toric_varieties.Conifold().dimension_singularities()
             0
-            sage: toric_varieties.P2().dimension_singularities()                        # optional - sage.graphs
+            sage: toric_varieties.P2().dimension_singularities()
             -1
         """
         for codim in range(self.dimension()+1):
@@ -1538,7 +1538,7 @@ class ToricVariety_field(AmbientSpace):
         EXAMPLES::
 
             sage: X = toric_varieties.Cube_deformation(4)
-            sage: X.plot()                                                              # optional - sage.plot
+            sage: X.plot()                                                              # needs sage.plot
             Graphics3d Object
         """
         if "ray_label" not in options:
@@ -1851,8 +1851,8 @@ class ToricVariety_field(AmbientSpace):
 
             sage: fan = Fan([[0,1,3], [3,4], [2,0], [1,2,4]],
             ....:           [(-3, -2, 1), (0, 0, 1), (3, -2, 1), (-1, -1, 1), (1, -1, 1)])
-            sage: X = ToricVariety(fan, coordinate_names='A B C D E', base_field=GF(5))             # optional - sage.rings.finite_rings
-            sage: SR = X.Stanley_Reisner_ideal(); SR                                                # optional - sage.rings.finite_rings
+            sage: X = ToricVariety(fan, coordinate_names='A B C D E', base_field=GF(5))             # needs sage.rings.finite_rings
+            sage: SR = X.Stanley_Reisner_ideal(); SR                                                # needs sage.rings.finite_rings
             Ideal (A*E, C*D, A*B*C, B*D*E) of
              Multivariate Polynomial Ring in A, B, C, D, E over Rational Field
         """
@@ -1875,8 +1875,8 @@ class ToricVariety_field(AmbientSpace):
 
             sage: fan = Fan([[0,1,3], [3,4], [2,0], [1,2,4]],
             ....:           [(-3, -2, 1), (0, 0, 1), (3, -2, 1), (-1, -1, 1), (1, -1, 1)])
-            sage: X = ToricVariety(fan, coordinate_names='A B C D E', base_field=GF(5))             # optional - sage.rings.finite_rings
-            sage: lin = X.linear_equivalence_ideal(); lin                                           # optional - sage.rings.finite_rings
+            sage: X = ToricVariety(fan, coordinate_names='A B C D E', base_field=GF(5))             # needs sage.rings.finite_rings
+            sage: lin = X.linear_equivalence_ideal(); lin                                           # needs sage.rings.finite_rings
             Ideal (-3*A + 3*C - D + E, -2*A - 2*C - D - E, A + B + C + D + E) of
              Multivariate Polynomial Ring in A, B, C, D, E over Rational Field
         """
@@ -2413,7 +2413,7 @@ class ToricVariety_field(AmbientSpace):
             sage: dP6 = toric_varieties.dP6()
             sage: Div = dP6.divisor_group(); Div
             Group of ZZ-Divisors on 2-d CPR-Fano toric variety covered by 6 affine patches
-            sage: Div(x)                                                                # optional - sage.symbolic
+            sage: Div(x)                                                                # needs sage.symbolic
             V(x)
         """
         from sage.schemes.generic.divisor_group import DivisorGroup
@@ -2489,7 +2489,7 @@ class ToricVariety_field(AmbientSpace):
              (Multivariate Polynomial Ring in z0, z1 over Rational Field,
               Ideal (0) of Multivariate Polynomial Ring in z0, z1 over Rational Field,
               2-d cone in 2-d lattice M)
-             sage: P2.change_ring(GF(101))._semigroup_ring(cone)                                    # optional - sage.rings.finite_rings
+             sage: P2.change_ring(GF(101))._semigroup_ring(cone)                                    # needs sage.rings.finite_rings
              (Multivariate Polynomial Ring in z0, z1 over Finite Field of size 101,
               Ideal (0) of Multivariate Polynomial Ring in z0, z1 over Finite Field of size 101,
               2-d cone in 2-d lattice M)
@@ -2741,10 +2741,10 @@ class ToricVariety_field(AmbientSpace):
 
             sage: o = lattice_polytope.cross_polytope(3)
             sage: V = ToricVariety(FaceFan(o))
-            sage: V2 = V.change_ring(GF(2))                                             # optional - sage.rings.finite_rings
-            sage: V2.point_set().cardinality()                                          # optional - sage.rings.finite_rings
+            sage: V2 = V.change_ring(GF(2))                                             # needs sage.rings.finite_rings
+            sage: V2.point_set().cardinality()                                          # needs sage.rings.finite_rings
             27
-            sage: V2.count_points()                                                     # optional - sage.rings.finite_rings
+            sage: V2.count_points()                                                     # needs sage.rings.finite_rings
             27
         """
         return self.point_set().cardinality()

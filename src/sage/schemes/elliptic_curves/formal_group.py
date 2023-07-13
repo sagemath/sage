@@ -488,21 +488,23 @@ class EllipticCurveFormalGroup(SageObject):
             sage: ehat.group_law(5)
             t1 + t2 - t1*t2 - 2*t1^3*t2 - 3*t1^2*t2^2 - 2*t1*t2^3 + O(t1, t2)^5
 
-            sage: e = EllipticCurve(GF(7), [3, 4])                                      # needs sage.rings.finite_rings
-            sage: ehat = e.formal()                                                     # needs sage.rings.finite_rings
-            sage: ehat.group_law(3)                                                     # needs sage.rings.finite_rings
+            sage: # needs sage.rings.finite_rings
+            sage: e = EllipticCurve(GF(7), [3, 4])
+            sage: ehat = e.formal()
+            sage: ehat.group_law(3)
             t1 + t2 + O(t1, t2)^3
-            sage: F = ehat.group_law(7); F                                              # needs sage.rings.finite_rings
+            sage: F = ehat.group_law(7); F
             t1 + t2 + t1^4*t2 + 2*t1^3*t2^2 + 2*t1^2*t2^3 + t1*t2^4 + O(t1, t2)^7
 
         TESTS::
 
-            sage: R.<x,y,z> = GF(7)[[]]                                                 # needs sage.rings.finite_rings
-            sage: F(x, ehat.inverse()(x))                                               # needs sage.rings.finite_rings
+            sage: # needs sage.rings.finite_rings
+            sage: R.<x,y,z> = GF(7)[[]]
+            sage: F(x, ehat.inverse()(x))
             0 + O(x, y, z)^7
-            sage: F(x, y) == F(y, x)                                                    # needs sage.rings.finite_rings
+            sage: F(x, y) == F(y, x)
             True
-            sage: F(x, F(y, z)) == F(F(x, y), z)                                        # needs sage.rings.finite_rings
+            sage: F(x, F(y, z)) == F(F(x, y), z)
             True
 
         Let's ensure caching with changed precision is working::

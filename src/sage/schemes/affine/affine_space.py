@@ -46,7 +46,7 @@ def is_AffineSpace(x):
         sage: from sage.schemes.affine.affine_space import is_AffineSpace
         sage: is_AffineSpace(AffineSpace(5, names='x'))
         True
-        sage: is_AffineSpace(AffineSpace(5, GF(9, 'alpha'), names='x'))                 # optional - sage.rings.finite_rings
+        sage: is_AffineSpace(AffineSpace(5, GF(9, 'alpha'), names='x'))                 # needs sage.rings.finite_rings
         True
         sage: is_AffineSpace(Spec(ZZ))
         False
@@ -168,10 +168,10 @@ class AffineSpace_generic(AmbientSpace, AffineScheme):
         sage: AffineSpace(5, PolynomialRing(QQ, 'z'), 'Z')
         Affine Space of dimension 5 over Univariate Polynomial Ring in z over Rational Field
 
-        sage: AffineSpace(RealField(), 3, 'Z')                                          # optional - sage.rings.real_mpfr
+        sage: AffineSpace(RealField(), 3, 'Z')                                          # needs sage.rings.real_mpfr
         Affine Space of dimension 3 over Real Field with 53 bits of precision
 
-        sage: AffineSpace(Qp(7), 2, 'x')                                                # optional - sage.rings.padics
+        sage: AffineSpace(Qp(7), 2, 'x')                                                # needs sage.rings.padics
         Affine Space of dimension 2 over 7-adic Field with capped relative precision 20
 
     Even 0-dimensional affine spaces are supported::
@@ -183,7 +183,7 @@ class AffineSpace_generic(AmbientSpace, AffineScheme):
         """
         EXAMPLES::
 
-            sage: AffineSpace(3, Zp(5), 'y')                                            # optional - sage.rings.padics
+            sage: AffineSpace(3, Zp(5), 'y')                                            # needs sage.rings.padics
             Affine Space of dimension 3 over 5-adic Ring with capped relative precision 20
         """
         AmbientSpace.__init__(self, n, R)
@@ -250,7 +250,7 @@ class AffineSpace_generic(AmbientSpace, AffineScheme):
             sage: A = AffineSpace(1, GF(3))
             sage: A.rational_points()
             [(0), (1), (2)]
-            sage: A.rational_points(GF(3^2, 'b'))                                       # optional - sage.rings.finite_rings
+            sage: A.rational_points(GF(3^2, 'b'))                                       # needs sage.rings.finite_rings
             [(0), (b), (b + 1), (2*b + 1), (2), (2*b), (2*b + 2), (b + 2), (1)]
 
             sage: AffineSpace(2, ZZ).rational_points(GF(2))
@@ -331,7 +331,7 @@ class AffineSpace_generic(AmbientSpace, AffineScheme):
 
         TESTS::
 
-            sage: AffineSpace(3, Zp(5), 'y')._latex_()                                  # optional - sage.rings.padics
+            sage: AffineSpace(3, Zp(5), 'y')._latex_()                                  # needs sage.rings.padics
             '\\mathbf{A}_{\\Bold{Z}_{5}}^3'
         """
         return "\\mathbf{A}_{%s}^%s"%(latex(self.base_ring()), self.dimension_relative())
@@ -432,7 +432,7 @@ class AffineSpace_generic(AmbientSpace, AffineScheme):
 
         TESTS::
 
-            sage: AffineSpace(3, Zp(5), 'y')._repr_()                                   # optional - sage.rings.padics
+            sage: AffineSpace(3, Zp(5), 'y')._repr_()                                   # needs sage.rings.padics
             'Affine Space of dimension 3 over 5-adic Ring with capped relative precision 20'
         """
         return "Affine Space of dimension %s over %s"%(self.dimension_relative(), self.base_ring())
@@ -573,8 +573,8 @@ class AffineSpace_generic(AmbientSpace, AffineScheme):
             sage: A3 = AffineSpace(ZZ, 3, 'x')
             sage: A3.inject_variables()
             Defining x0, x1, x2
-            sage: X = A3.subscheme([x0*x2 - x1])                                        # optional - sage.libs.singular
-            sage: A2*X                                                                  # optional - sage.libs.singular
+            sage: X = A3.subscheme([x0*x2 - x1])
+            sage: A2*X
             Closed subscheme of Affine Space of dimension 5 over Integer Ring defined by:
               x0*x2 - x1
 
@@ -635,9 +635,9 @@ class AffineSpace_generic(AmbientSpace, AffineScheme):
 
         ::
 
-            sage: K.<w> = QuadraticField(5)                                             # optional - sage.rings.number_field
-            sage: A = AffineSpace(K, 2, 't')                                            # optional - sage.rings.number_field
-            sage: A.change_ring(K.embeddings(CC)[1])                                    # optional - sage.rings.number_field
+            sage: K.<w> = QuadraticField(5)                                             # needs sage.rings.number_field
+            sage: A = AffineSpace(K, 2, 't')                                            # needs sage.rings.number_field
+            sage: A.change_ring(K.embeddings(CC)[1])                                    # needs sage.rings.number_field
             Affine Space of dimension 2 over Complex Field with 53 bits of precision
         """
         if isinstance(R, Map):
@@ -651,9 +651,9 @@ class AffineSpace_generic(AmbientSpace, AffineScheme):
 
         EXAMPLES::
 
-            sage: R = AffineSpace(2, GF(9,'alpha'), 'z').coordinate_ring(); R           # optional - sage.rings.finite_rings
+            sage: R = AffineSpace(2, GF(9,'alpha'), 'z').coordinate_ring(); R           # needs sage.rings.finite_rings
             Multivariate Polynomial Ring in z0, z1 over Finite Field in alpha of size 3^2
-            sage: AffineSpace(3, R, 'x').coordinate_ring()                              # optional - sage.rings.finite_rings
+            sage: AffineSpace(3, R, 'x').coordinate_ring()                              # needs sage.rings.finite_rings
             Multivariate Polynomial Ring in x0, x1, x2 over Multivariate Polynomial Ring
             in z0, z1 over Finite Field in alpha of size 3^2
         """
@@ -797,7 +797,7 @@ class AffineSpace_generic(AmbientSpace, AffineScheme):
         EXAMPLES::
 
             sage: A.<x,y> = AffineSpace(QQ, 2)
-            sage: X = A.subscheme([x, y^2, x*y^2]); X                                   # optional - sage.libs.singular
+            sage: X = A.subscheme([x, y^2, x*y^2]); X
             Closed subscheme of Affine Space of dimension 2 over Rational Field defined by:
               x,
               y^2,
@@ -805,25 +805,26 @@ class AffineSpace_generic(AmbientSpace, AffineScheme):
 
         ::
 
-            sage: X.defining_polynomials ()                                             # optional - sage.libs.singular
+            sage: # needs sage.libs.singular
+            sage: X.defining_polynomials ()
             (x, y^2, x*y^2)
-            sage: I = X.defining_ideal(); I                                             # optional - sage.libs.singular
+            sage: I = X.defining_ideal(); I
             Ideal (x, y^2, x*y^2) of Multivariate Polynomial Ring in x, y over Rational Field
-            sage: I.groebner_basis()                                                    # optional - sage.libs.singular
+            sage: I.groebner_basis()
             [y^2, x]
-            sage: X.dimension()                                                         # optional - sage.libs.singular
+            sage: X.dimension()
             0
-            sage: X.base_ring()                                                         # optional - sage.libs.singular
+            sage: X.base_ring()
             Rational Field
-            sage: X.base_scheme()                                                       # optional - sage.libs.singular
+            sage: X.base_scheme()
             Spectrum of Rational Field
-            sage: X.structure_morphism()                                                # optional - sage.libs.singular
+            sage: X.structure_morphism()
             Scheme morphism:
               From: Closed subscheme of Affine Space of dimension 2 over Rational Field
                     defined by: x, y^2, x*y^2
               To:   Spectrum of Rational Field
               Defn: Structure map
-            sage: X.dimension()                                                         # optional - sage.libs.singular
+            sage: X.dimension()
             0
         """
         from sage.schemes.affine.affine_subscheme import (AlgebraicScheme_subscheme_affine,
@@ -846,7 +847,7 @@ class AffineSpace_generic(AmbientSpace, AffineScheme):
             sage: AffineSpace(ZZ, 2, 'x').an_element()
             (5, 4)
 
-            sage: AffineSpace(Qp(5), 2, 'x').an_element()                               # optional - sage.rings.padics
+            sage: AffineSpace(Qp(5), 2, 'x').an_element()                               # needs sage.rings.padics
             (5^2 + O(5^22), 4*5 + O(5^21))
         """
         n = self.dimension_relative()
@@ -878,21 +879,21 @@ class AffineSpace_generic(AmbientSpace, AffineScheme):
         EXAMPLES::
 
             sage: A.<x> = AffineSpace(QQ, 1)
-            sage: A.chebyshev_polynomial(5, 'first')                                    # optional - sage.schemes
+            sage: A.chebyshev_polynomial(5, 'first')                                    # needs sage.schemes
             Dynamical System of Affine Space of dimension 1 over Rational Field
               Defn: Defined on coordinates by sending (x) to (16*x^5 - 20*x^3 + 5*x)
 
         ::
 
             sage: A.<x> = AffineSpace(QQ, 1)
-            sage: A.chebyshev_polynomial(3, 'second')                                   # optional - sage.schemes
+            sage: A.chebyshev_polynomial(3, 'second')                                   # needs sage.schemes
             Dynamical System of Affine Space of dimension 1 over Rational Field
               Defn: Defined on coordinates by sending (x) to (8*x^3 - 4*x)
 
         ::
 
             sage: A.<x> = AffineSpace(QQ, 1)
-            sage: A.chebyshev_polynomial(3, 2)                                          # optional - sage.schemes
+            sage: A.chebyshev_polynomial(3, 2)                                          # needs sage.schemes
             Traceback (most recent call last):
             ...
             ValueError: keyword 'kind' must have a value of either 'first' or 'second'
@@ -900,7 +901,7 @@ class AffineSpace_generic(AmbientSpace, AffineScheme):
         ::
 
             sage: A.<x> = AffineSpace(QQ, 1)
-            sage: A.chebyshev_polynomial(-4, 'second')                                  # optional - sage.schemes
+            sage: A.chebyshev_polynomial(-4, 'second')
             Traceback (most recent call last):
             ...
             ValueError: first parameter 'n' must be a non-negative integer
@@ -908,7 +909,7 @@ class AffineSpace_generic(AmbientSpace, AffineScheme):
         ::
 
             sage: A = AffineSpace(QQ, 2, 'x')
-            sage: A.chebyshev_polynomial(2)                                             # optional - sage.schemes
+            sage: A.chebyshev_polynomial(2)
             Traceback (most recent call last):
             ...
             TypeError: affine space must be of dimension 1
@@ -916,7 +917,7 @@ class AffineSpace_generic(AmbientSpace, AffineScheme):
         ::
 
             sage: A.<x> = AffineSpace(QQ, 1)
-            sage: A.chebyshev_polynomial(7, monic=True)                                 # optional - sage.schemes
+            sage: A.chebyshev_polynomial(7, monic=True)                                 # needs sage.schemes
             Dynamical System of Affine Space of dimension 1 over Rational Field
               Defn: Defined on coordinates by sending (x) to (x^7 - 7*x^5 + 14*x^3 - 7*x)
 
@@ -924,7 +925,7 @@ class AffineSpace_generic(AmbientSpace, AffineScheme):
 
             sage: F.<t> = FunctionField(QQ)
             sage: A.<x> = AffineSpace(F, 1)
-            sage: A.chebyshev_polynomial(4, monic=True)                                 # optional - sage.schemes
+            sage: A.chebyshev_polynomial(4, monic=True)                                 # needs sage.schemes
             Dynamical System of Affine Space of dimension 1
             over Rational function field in t over Rational Field
               Defn: Defined on coordinates by sending (x) to (x^4 + (-4)*x^2 + 2)
@@ -1051,8 +1052,8 @@ class AffineSpace_field(AffineSpace_generic):
         ::
 
             sage: u = QQ['u'].0
-            sage: A.<x,y> = AffineSpace(NumberField(u^2 - 2, 'v'), 2)                   # optional - sage.rings.number_field
-            sage: len(list(A.points_of_bounded_height(bound=2, tolerance=0.1)))         # optional - sage.rings.number_field
+            sage: A.<x,y> = AffineSpace(NumberField(u^2 - 2, 'v'), 2)                   # needs sage.rings.number_field
+            sage: len(list(A.points_of_bounded_height(bound=2, tolerance=0.1)))         # needs sage.rings.number_field
             529
         """
         if (is_RationalField(self.base_ring())):
@@ -1106,14 +1107,14 @@ class AffineSpace_field(AffineSpace_generic):
         EXAMPLES::
 
             sage: R.<x> = QQ[]
-            sage: K.<w> = NumberField(x^5 - 2)                                          # optional - sage.rings.number_field
-            sage: AK.<x,y> = AffineSpace(K, 2)                                          # optional - sage.rings.number_field
-            sage: AK.weil_restriction()                                                 # optional - sage.rings.number_field
+            sage: K.<w> = NumberField(x^5 - 2)                                          # needs sage.rings.number_field
+            sage: AK.<x,y> = AffineSpace(K, 2)                                          # needs sage.rings.number_field
+            sage: AK.weil_restriction()                                                 # needs sage.rings.number_field
             Affine Space of dimension 10 over Rational Field
-            sage: R.<x> = K[]                                                           # optional - sage.rings.number_field
-            sage: L.<v> = K.extension(x^2 + 1)                                          # optional - sage.rings.number_field
-            sage: AL.<x,y> = AffineSpace(L, 2)                                          # optional - sage.rings.number_field
-            sage: AL.weil_restriction()                                                 # optional - sage.rings.number_field
+            sage: R.<x> = K[]                                                           # needs sage.rings.number_field
+            sage: L.<v> = K.extension(x^2 + 1)                                          # needs sage.rings.number_field
+            sage: AL.<x,y> = AffineSpace(L, 2)                                          # needs sage.rings.number_field
+            sage: AL.weil_restriction()                                                 # needs sage.rings.number_field
             Affine Space of dimension 4 over Number Field in w
              with defining polynomial x^5 - 2
         """
@@ -1147,7 +1148,7 @@ class AffineSpace_field(AffineSpace_generic):
         EXAMPLES::
 
             sage: A.<x,y,z> = AffineSpace(QQ, 3)
-            sage: A.curve([y - x^4, z - y^5])                                           # optional - sage.libs.pari
+            sage: A.curve([y - x^4, z - y^5])                                           # needs sage.libs.pari
             Affine Curve over Rational Field defined by -x^4 + y, -y^5 + z
         """
         from sage.schemes.curves.constructor import Curve
@@ -1166,14 +1167,14 @@ class AffineSpace_field(AffineSpace_generic):
             sage: A3.<x,y,z> = AffineSpace(3, QQ)
             sage: p1 = A3(1, 2, 3)
             sage: p2 = A3(4, 5, 6)
-            sage: L = A3.line_through(p1, p2); L                                        # optional - sage.schemes
+            sage: L = A3.line_through(p1, p2); L                                        # needs sage.schemes
             Affine Curve over Rational Field defined by -1/6*x + 1/6*y - 1/6,
               -1/6*x + 1/6*z - 1/3, -1/6*y + 1/6*z - 1/6, -1/6*x + 1/3*y - 1/6*z
-            sage: L(p1)                                                                 # optional - sage.schemes
+            sage: L(p1)                                                                 # needs sage.schemes
             (1, 2, 3)
-            sage: L(p2)                                                                 # optional - sage.schemes
+            sage: L(p2)                                                                 # needs sage.schemes
             (4, 5, 6)
-            sage: A3.line_through(p1, p1)                                               # optional - sage.schemes
+            sage: A3.line_through(p1, p1)
             Traceback (most recent call last):
             ...
             ValueError: not distinct points

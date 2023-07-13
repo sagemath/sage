@@ -130,16 +130,16 @@ class ProjectiveConic_rational_function_field(ProjectiveConic_field):
             sage: C = Conic(K, [t^2 - 2, 2*t^3, -2*t^3 - 13*t^2 - 2*t + 18])
             sage: C.has_rational_point(point=True)
             (True, (-3 : (t + 1)/t : 1))
-            sage: R.<t> = FiniteField(23)[]                                             # optional - sage.rings.finite_rings
-            sage: C = Conic([2, t^2 + 1, t^2 + 5])                                      # optional - sage.rings.finite_rings
-            sage: C.has_rational_point()                                                # optional - sage.rings.finite_rings
+            sage: R.<t> = FiniteField(23)[]                                             # needs sage.rings.finite_rings
+            sage: C = Conic([2, t^2 + 1, t^2 + 5])                                      # needs sage.rings.finite_rings
+            sage: C.has_rational_point()                                                # needs sage.rings.finite_rings
             True
-            sage: C.has_rational_point(point=True)                                      # optional - sage.rings.finite_rings
+            sage: C.has_rational_point(point=True)                                      # needs sage.rings.finite_rings
             (True, (5*t : 8 : 1))
-            sage: F.<i> = QuadraticField(-1)                                            # optional - sage.rings.number_field
-            sage: R.<t> = F[]                                                           # optional - sage.rings.number_field
-            sage: C = Conic([1, i*t, -t^2 + 4])                                         # optional - sage.rings.number_field
-            sage: C.has_rational_point(point=True)                                      # optional - sage.rings.number_field
+            sage: F.<i> = QuadraticField(-1)                                            # needs sage.rings.number_field
+            sage: R.<t> = F[]                                                           # needs sage.rings.number_field
+            sage: C = Conic([1, i*t, -t^2 + 4])                                         # needs sage.rings.number_field
+            sage: C.has_rational_point(point=True)                                      # needs sage.rings.number_field
             (True, (-t - 2*i : -2*i : 1))
 
         It works on non-diagonal conics as well::
@@ -183,11 +183,11 @@ class ProjectiveConic_rational_function_field(ProjectiveConic_field):
             sage: P.<u> = QQ[]
             sage: E = P.fraction_field()
             sage: Q.<Y> = E[]
-            sage: F.<v> = E.extension(Y^2 - u^3 - 1)                                    # optional - sage.rings.function_field
-            sage: R.<t> = F[]                                                           # optional - sage.rings.function_field
-            sage: K = R.fraction_field()                                                # optional - sage.rings.function_field
-            sage: C = Conic(K, [u, v, 1])                                               # optional - sage.rings.function_field
-            sage: C.has_rational_point()                                                # optional - sage.rings.function_field
+            sage: F.<v> = E.extension(Y^2 - u^3 - 1)                                    # needs sage.rings.function_field
+            sage: R.<t> = F[]                                                           # needs sage.rings.function_field
+            sage: K = R.fraction_field()                                                # needs sage.rings.function_field
+            sage: C = Conic(K, [u, v, 1])                                               # needs sage.rings.function_field
+            sage: C.has_rational_point()                                                # needs sage.rings.function_field
             Traceback (most recent call last):
             ...
             NotImplementedError: has_rational_point not implemented for conics
@@ -198,10 +198,10 @@ class ProjectiveConic_rational_function_field(ProjectiveConic_field):
         ``has_rational_point`` fails for some conics over function fields
         over finite fields, due to :trac:`20003`::
 
-            sage: K.<t> = PolynomialRing(GF(7))                                         # optional - sage.rings.finite_rings
-            sage: C = Conic([5*t^2 + 4, t^2 + 3*t + 3, 6*t^2 + 3*t + 2,                 # optional - sage.rings.finite_rings
+            sage: K.<t> = PolynomialRing(GF(7))                                         # needs sage.rings.finite_rings
+            sage: C = Conic([5*t^2 + 4, t^2 + 3*t + 3, 6*t^2 + 3*t + 2,                 # needs sage.rings.finite_rings
             ....:            5*t^2 + 5, 4*t + 3, 4*t^2 + t + 5])
-            sage: C.has_rational_point()                                                # optional - sage.rings.finite_rings
+            sage: C.has_rational_point()                                                # needs sage.rings.finite_rings
             Traceback (most recent call last):
             ...
             TypeError: self (=Scheme morphism:

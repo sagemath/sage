@@ -2441,7 +2441,7 @@ class RiemannSurface():
             sage: from sage.schemes.riemann_surfaces.riemann_surface import RiemannSurface
             sage: R.<x,y> = QQ[]
             sage: S = RiemannSurface(y^2 - x^3 - x)
-            sage: S.plot_paths()                                                        # optional - sage.plot
+            sage: S.plot_paths()                                                        # needs sage.plot
             Graphics object consisting of 2 graphics primitives
         """
         from sage.plot.point import point2d
@@ -2478,7 +2478,7 @@ class RiemannSurface():
             sage: from sage.schemes.riemann_surfaces.riemann_surface import RiemannSurface
             sage: R.<x,y> = QQ[]
             sage: S = RiemannSurface(y^2 - x^3 - x)
-            sage: S.plot_paths3d()                                                      # optional - sage.plot
+            sage: S.plot_paths3d()                                                      # needs sage.plot
             Graphics3d Object
         """
         from sage.plot.graphics import Graphics
@@ -2958,7 +2958,7 @@ class RiemannSurface():
             sage: s = sign(w_start)
             sage: u_edge = ((z_start, w_start), z_end)
             sage: J, _ = S._integrate_differentials_iteratively(u_edge)
-            sage: bool(J[0] + s*S._RR(sqrt(pi)*gamma(5/4)/gamma(3/4)/2) < 1e-10)        # optional - sage.symbolic
+            sage: bool(J[0] + s*S._RR(sqrt(pi)*gamma(5/4)/gamma(3/4)/2) < 1e-10)        # needs sage.symbolic
             True
 
         .. NOTE::

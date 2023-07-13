@@ -170,14 +170,15 @@ def is_Q_curve(E, maxp=100, certificate=False, verbose=False):
     in fact there is an isogenous curve with rational `j`, so we have
     a so-called rational `\QQ`-curve::
 
-        sage: K.<a> = NumberField(R([1, 0, -4, 0, 1]))                                  # needs sage.rings.number_field
-        sage: E = EllipticCurve([K([-2,-4,1,1]), K([0,1,0,0]), K([0,1,0,0]),            # needs sage.rings.number_field
+        sage: # needs sage.rings.number_field
+        sage: K.<a> = NumberField(R([1, 0, -4, 0, 1]))
+        sage: E = EllipticCurve([K([-2,-4,1,1]), K([0,1,0,0]), K([0,1,0,0]),
         ....:                    K([-4780,9170,1265,-2463]),
         ....:                    K([163923,-316598,-43876,84852])])
-        sage: flag, cert = is_Q_curve(E, certificate=True)                              # needs sage.rings.number_field
-        sage: flag                                                                      # needs sage.rings.number_field
+        sage: flag, cert = is_Q_curve(E, certificate=True)
+        sage: flag
         True
-        sage: cert                                                                      # needs sage.rings.number_field
+        sage: cert
         {'CM': 0, 'N': 1, 'core_degs': [1], 'core_poly': x - 85184/3, 'r': 0, 'rho': 0}
 
     Over the same field, a so-called strict `\QQ`-curve which is not
@@ -187,12 +188,13 @@ def is_Q_curve(E, maxp=100, certificate=False, verbose=False):
     quadratic conjugate `j`-invariants in `\QQ(\sqrt{3})` (but which
     are not base-changes from the quadratic subfield)::
 
-        sage: E = EllipticCurve([K([0,-3,0,1]), K([1,4,0,-1]), K([0,0,0,0]),            # needs sage.rings.number_field
+        sage: # needs sage.rings.number_field
+        sage: E = EllipticCurve([K([0,-3,0,1]), K([1,4,0,-1]), K([0,0,0,0]),
         ....:                    K([-2,-16,0,4]), K([-19,-32,4,8])])
-        sage: flag, cert = is_Q_curve(E, certificate=True)                              # needs sage.rings.number_field
-        sage: flag                                                                      # needs sage.rings.number_field
+        sage: flag, cert = is_Q_curve(E, certificate=True)
+        sage: flag
         True
-        sage: cert                                                                      # needs sage.rings.number_field
+        sage: cert
         {'CM': 0,
          'N': 2,
          'core_degs': [1, 2],

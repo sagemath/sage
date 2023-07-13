@@ -123,31 +123,32 @@ class SchemeHomset_points_projective_field(SchemeHomset_points):
         ::
 
             sage: u = QQ['u'].0
-            sage: K.<v> = NumberField(u^2 + 3)                                          # optional - sage.rings.number_field
-            sage: P.<x,y,z> = ProjectiveSpace(K, 2)                                     # optional - sage.rings.number_field
-            sage: len(P(K).points(bound=1.8))                                           # optional - sage.rings.number_field
+            sage: K.<v> = NumberField(u^2 + 3)                                          # needs sage.rings.number_field
+            sage: P.<x,y,z> = ProjectiveSpace(K, 2)                                     # needs sage.rings.number_field
+            sage: len(P(K).points(bound=1.8))                                           # needs sage.rings.number_field
             309
 
         ::
 
             sage: P1 = ProjectiveSpace(GF(2), 1)
-            sage: F.<a> = GF(4, 'a')                                                    # optional - sage.rings.finite_rings
-            sage: P1(F).points()                                                        # optional - sage.libs.singular sage.rings.finite_rings
+            sage: F.<a> = GF(4, 'a')                                                    # needs sage.rings.finite_rings
+            sage: P1(F).points()                                                        # needs sage.libs.singular sage.rings.finite_rings
             [(0 : 1), (1 : 0), (1 : 1), (a : 1), (a + 1 : 1)]
 
         ::
 
             sage: P.<x,y,z> = ProjectiveSpace(QQ, 2)
             sage: E = P.subscheme([(y^3-y*z^2) - (x^3-x*z^2), (y^3-y*z^2) + (x^3-x*z^2)])
-            sage: E(P.base_ring()).points()                                             # optional - sage.libs.singular
+            sage: E(P.base_ring()).points()                                             # needs sage.libs.singular
             [(-1 : -1 : 1), (-1 : 0 : 1), (-1 : 1 : 1), (0 : -1 : 1), (0 : 0 : 1),
              (0 : 1 : 1), (1 : -1 : 1), (1 : 0 : 1), (1 : 1 : 1)]
 
         ::
 
-            sage: P.<x,y,z> = ProjectiveSpace(CC, 2)                                    # optional - sage.rings.real_mpfr
-            sage: E = P.subscheme([y^3 - x^3 - x*z^2, x*y*z])                           # optional - sage.rings.real_mpfr
-            sage: L = E(P.base_ring()).points(); sorted(L, key=str)                     # optional - sage.libs.singular sage.rings.real_mpfr
+            sage: # needs sage.rings.real_mpfr
+            sage: P.<x,y,z> = ProjectiveSpace(CC, 2)
+            sage: E = P.subscheme([y^3 - x^3 - x*z^2, x*y*z])
+            sage: L = E(P.base_ring()).points(); sorted(L, key=str)                     # needs sage.libs.singular
             verbose 0 (...: projective_homset.py, points) Warning: computations in
             the numerical fields are inexact;points may be computed partially or incorrectly.
             [(-0.500000000000000 + 0.866025403784439*I : 1.00000000000000 : 0.000000000000000),
@@ -156,7 +157,7 @@ class SchemeHomset_points_projective_field(SchemeHomset_points):
              (0.000000000000000 : 0.000000000000000 : 1.00000000000000),
              (1.00000000000000 : 1.00000000000000 : 0.000000000000000),
              (1.00000000000000*I : 0.000000000000000 : 1.00000000000000)]
-            sage: L[0].codomain()                                                       # optional - sage.libs.singular sage.rings.real_mpfr
+            sage: L[0].codomain()                                                       # needs sage.libs.singular
             Projective Space of dimension 2 over Complex Field with 53 bits of precision
 
         ::
@@ -164,7 +165,7 @@ class SchemeHomset_points_projective_field(SchemeHomset_points):
             sage: # needs sage.rings.complex_double
             sage: P.<x,y,z> = ProjectiveSpace(CDF, 2)
             sage: E = P.subscheme([y^2 + x^2 + z^2, x*y*z])
-            sage: len(E(P.base_ring()).points())                                        # optional - sage.libs.singular
+            sage: len(E(P.base_ring()).points())                                        # needs sage.libs.singular
             verbose 0 (...: projective_homset.py, points) Warning: computations in
             the numerical fields are inexact;points may be computed partially or incorrectly.
             6
@@ -328,33 +329,33 @@ class SchemeHomset_points_projective_field(SchemeHomset_points):
 
             sage: P.<x,y,z> = ProjectiveSpace(QQ, 2)
             sage: E = P.subscheme([y^3 - x^3 - x*z^2, x*y*z])
-            sage: L = E(QQ).numerical_points(F=RR); L                                   # optional - sage.libs.singular
+            sage: L = E(QQ).numerical_points(F=RR); L                                   # needs sage.libs.singular
             [(0.000000000000000 : 0.000000000000000 : 1.00000000000000),
              (1.00000000000000 : 1.00000000000000 : 0.000000000000000)]
-            sage: L[0].codomain()                                                       # optional - sage.libs.singular
+            sage: L[0].codomain()                                                       # needs sage.libs.singular
             Projective Space of dimension 2 over Real Field with 53 bits of precision
 
         ::
 
             sage: S.<a> = QQ[]
-            sage: K.<v> = NumberField(a^5 - 7, embedding=CC(7)**(1/5))                  # optional - sage.rings.number_field
-            sage: P.<x,y,z> = ProjectiveSpace(K, 2)                                     # optional - sage.rings.number_field
-            sage: X = P.subscheme([x^2 - v^2*z^2, y - v*z])                             # optional - sage.rings.number_field
-            sage: len(X(K).numerical_points(F=CDF))                                     # optional - sage.libs.singular sage.rings.number_field
+            sage: K.<v> = NumberField(a^5 - 7, embedding=CC(7)**(1/5))                  # needs sage.rings.number_field
+            sage: P.<x,y,z> = ProjectiveSpace(K, 2)                                     # needs sage.rings.number_field
+            sage: X = P.subscheme([x^2 - v^2*z^2, y - v*z])                             # needs sage.rings.number_field
+            sage: len(X(K).numerical_points(F=CDF))                                     # needs sage.libs.singular sage.rings.number_field
             2
 
         ::
 
             sage: P.<x1, x2, x3> = ProjectiveSpace(QQ, 2)
             sage: E = P.subscheme([3000*x1^50 + 9875643*x2^2*x3^48 + 12334545*x2^50, x1 + x2])
-            sage: len(E(P.base_ring()).numerical_points(F=CDF, zero_tolerance=1e-6))    # optional - sage.libs.singular
+            sage: len(E(P.base_ring()).numerical_points(F=CDF, zero_tolerance=1e-6))    # needs sage.libs.singular
             49
 
         TESTS::
 
             sage: P.<x,y,z> = ProjectiveSpace(QQ, 2)
             sage: E = P.subscheme([y^3 - x^3 - x*z^2, x*y*z])
-            sage: E(QQ).numerical_points(F=CDF, point_tolerance=-1)                     # optional - sage.libs.singular
+            sage: E(QQ).numerical_points(F=CDF, point_tolerance=-1)                     # needs sage.libs.singular
             Traceback (most recent call last):
             ...
             ValueError: tolerance must be positive
@@ -363,7 +364,7 @@ class SchemeHomset_points_projective_field(SchemeHomset_points):
 
             sage: P.<x,y,z> = ProjectiveSpace(QQ, 2)
             sage: E = P.subscheme([y^3 - x^3 - x*z^2, x*y*z])
-            sage: E(QQ).numerical_points(F=CC, zero_tolerance=-1)                       # optional - sage.libs.singular
+            sage: E(QQ).numerical_points(F=CC, zero_tolerance=-1)                       # needs sage.libs.singular
             Traceback (most recent call last):
             ...
             ValueError: tolerance must be positive
@@ -372,7 +373,7 @@ class SchemeHomset_points_projective_field(SchemeHomset_points):
 
             sage: P.<x,y,z> = ProjectiveSpace(QQ, 2)
             sage: E = P.subscheme([y^3 - x^3 - x*z^2, x*y*z])
-            sage: E(QQ).numerical_points(F=QQbar)                                       # optional - sage.rings.number_field
+            sage: E(QQ).numerical_points(F=QQbar)                                       # needs sage.rings.number_field
             Traceback (most recent call last):
             ...
             TypeError: F must be a numerical field
@@ -582,33 +583,33 @@ class SchemeHomset_points_abelian_variety_field(SchemeHomset_points_projective_f
     The bug reported at :trac:`1785` is fixed::
 
         sage: x = polygen(ZZ, 'x')
-        sage: K.<a> = NumberField(x^2 + x - (3^3-3))                                    # optional - sage.rings.number_field
-        sage: E = EllipticCurve('37a')                                                  # optional - sage.rings.number_field
-        sage: X = E(K)                                                                  # optional - sage.rings.number_field
-        sage: X                                                                         # optional - sage.rings.number_field
+        sage: K.<a> = NumberField(x^2 + x - (3^3-3))                                    # needs sage.rings.number_field
+        sage: E = EllipticCurve('37a')                                                  # needs sage.rings.number_field
+        sage: X = E(K)                                                                  # needs sage.rings.number_field
+        sage: X                                                                         # needs sage.rings.number_field
         Abelian group of points on
          Elliptic Curve defined by y^2 + y = x^3 + (-1)*x
           over Number Field in a with defining polynomial x^2 + x - 24
-        sage: P = X([3,a])                                                              # optional - sage.rings.number_field
-        sage: P                                                                         # optional - sage.rings.number_field
+        sage: P = X([3,a])                                                              # needs sage.rings.number_field
+        sage: P                                                                         # needs sage.rings.number_field
         (3 : a : 1)
-        sage: P in E                                                                    # optional - sage.rings.number_field
+        sage: P in E                                                                    # needs sage.rings.number_field
         False
-        sage: P in E.base_extend(K)                                                     # optional - sage.rings.number_field
+        sage: P in E.base_extend(K)                                                     # needs sage.rings.number_field
         True
-        sage: P in X.codomain()                                                         # optional - sage.rings.number_field
+        sage: P in X.codomain()                                                         # needs sage.rings.number_field
         False
-        sage: P in X.extended_codomain()                                                # optional - sage.rings.number_field
+        sage: P in X.extended_codomain()                                                # needs sage.rings.number_field
         True
 
     Check for :trac:`11982`::
 
         sage: P2.<x,y,z> = ProjectiveSpace(QQ,2)
         sage: d = 7
-        sage: C = Curve(x^3 + y^3 - d*z^3)                                              # optional - sage.schemes
-        sage: E = EllipticCurve([0,-432*d^2])                                           # optional - sage.schemes
+        sage: C = Curve(x^3 + y^3 - d*z^3)                                              # needs sage.schemes
+        sage: E = EllipticCurve([0,-432*d^2])                                           # needs sage.schemes
         sage: transformation = [(36*d*z-y)/(72*d), (36*d*z+y)/(72*d), x/(12*d)]
-        sage: phi = E.hom(transformation, C); phi                                       # optional - sage.schemes
+        sage: phi = E.hom(transformation, C); phi                                       # needs sage.schemes
         Scheme morphism:
           From: Elliptic Curve defined by y^2 = x^3 - 21168 over Rational Field
           To:   Projective Plane Curve over Rational Field defined by x^3 + y^3 - 7*z^3
@@ -631,16 +632,17 @@ class SchemeHomset_points_abelian_variety_field(SchemeHomset_points_projective_f
 
         EXAMPLES::
 
-            sage: E = EllipticCurve('37a')                                              # optional - sage.schemes
-            sage: X = E(QQ)                                                             # optional - sage.schemes
-            sage: P = X([0,1,0]);  P                                                    # optional - sage.schemes
+            sage: # needs sage.schemes
+            sage: E = EllipticCurve('37a')
+            sage: X = E(QQ)
+            sage: P = X([0,1,0]);  P
             (0 : 1 : 0)
-            sage: type(P)                                                               # optional - sage.schemes
+            sage: type(P)
             <class 'sage.schemes.elliptic_curves.ell_point.EllipticCurvePoint_number_field'>
 
         TESTS::
 
-            sage: X._element_constructor_([0,1,0])                                      # optional - sage.schemes
+            sage: X._element_constructor_([0,1,0])                                      # needs sage.schemes
             (0 : 1 : 0)
         """
         if len(v) == 1:
@@ -657,9 +659,9 @@ class SchemeHomset_points_abelian_variety_field(SchemeHomset_points_projective_f
 
         EXAMPLES::
 
-            sage: E = EllipticCurve('37a')                                              # optional - sage.schemes
-            sage: X = E(QQ)                                                             # optional - sage.schemes
-            sage: X._repr_()                                                            # optional - sage.schemes
+            sage: E = EllipticCurve('37a')                                              # needs sage.schemes
+            sage: X = E(QQ)                                                             # needs sage.schemes
+            sage: X._repr_()                                                            # needs sage.schemes
             'Abelian group of points on Elliptic Curve defined by y^2 + y = x^3 - x over Rational Field'
         """
         s = 'Abelian group of points on ' + str(self.extended_codomain())
@@ -678,13 +680,14 @@ class SchemeHomset_points_abelian_variety_field(SchemeHomset_points_projective_f
 
         EXAMPLES::
 
-            sage: E = EllipticCurve('37a')                                              # optional - sage.schemes
-            sage: Hom = E.point_homset();  Hom                                          # optional - sage.schemes
+            sage: # needs sage.schemes
+            sage: E = EllipticCurve('37a')
+            sage: Hom = E.point_homset();  Hom
             Abelian group of points on Elliptic Curve defined
              by y^2 + y = x^3 - x over Rational Field
-            sage: Hom.base_ring()                                                       # optional - sage.schemes
+            sage: Hom.base_ring()
             Rational Field
-            sage: Hom.base_extend(QQ)                                                   # optional - sage.schemes
+            sage: Hom.base_extend(QQ)
             Traceback (most recent call last):
             ...
             NotImplementedError: Abelian variety point sets are not

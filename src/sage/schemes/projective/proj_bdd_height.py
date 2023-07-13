@@ -102,12 +102,13 @@ def IQ_points_of_bounded_height(PN, K, dim, bound):
 
     EXAMPLES:
 
+        sage: # needs sage.rings.number_field
         sage: from sage.schemes.projective.proj_bdd_height import IQ_points_of_bounded_height
-        sage: CF.<a> = CyclotomicField(3)                                                           # optional - sage.rings.number_field
-        sage: P.<x,y,z> = ProjectiveSpace(CF, 2)                                                    # optional - sage.rings.number_field
-        sage: len(list(IQ_points_of_bounded_height(P, CF, 2, -1)))                                  # optional - sage.rings.number_field
+        sage: CF.<a> = CyclotomicField(3)
+        sage: P.<x,y,z> = ProjectiveSpace(CF, 2)
+        sage: len(list(IQ_points_of_bounded_height(P, CF, 2, -1)))
         0
-        sage: len(list(IQ_points_of_bounded_height(P, CF, 2, 1)))                                   # optional - sage.rings.number_field
+        sage: len(list(IQ_points_of_bounded_height(P, CF, 2, 1)))
         57
     """
     if bound < 1:
@@ -184,9 +185,9 @@ def points_of_bounded_height(PN, K, dim, bound, prec=53):
 
         sage: from sage.schemes.projective.proj_bdd_height import points_of_bounded_height
         sage: x = polygen(ZZ, 'x')
-        sage: K.<a> = NumberField(x^3 - 7)                                                          # optional - sage.rings.number_field
-        sage: P.<x,y,z> = ProjectiveSpace(K, 2)                                                     # optional - sage.rings.number_field
-        sage: len(list(points_of_bounded_height(P, K, 2, 1)))                                       # optional - sage.geometry.polyhedron sage.libs.pari sage.rings.number_field
+        sage: K.<a> = NumberField(x^3 - 7)                                                          # needs sage.rings.number_field
+        sage: P.<x,y,z> = ProjectiveSpace(K, 2)                                                     # needs sage.rings.number_field
+        sage: len(list(points_of_bounded_height(P, K, 2, 1)))                                       # needs sage.geometry.polyhedron sage.libs.pari sage.rings.number_field
         13
     """
     if bound < 1:

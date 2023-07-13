@@ -42,10 +42,10 @@ def Spec(R, S=None):
         Spectrum of Univariate Polynomial Ring in x over Rational Field
         sage: Spec(PolynomialRing(QQ, 'x', 3))
         Spectrum of Multivariate Polynomial Ring in x0, x1, x2 over Rational Field
-        sage: X = Spec(PolynomialRing(GF(49,'a'), 3, 'x')); X                           # optional - sage.rings.finite_rings
+        sage: X = Spec(PolynomialRing(GF(49,'a'), 3, 'x')); X                           # needs sage.rings.finite_rings
         Spectrum of Multivariate Polynomial Ring in x0, x1, x2
          over Finite Field in a of size 7^2
-        sage: TestSuite(X).run()                                                        # optional - sage.rings.finite_rings
+        sage: TestSuite(X).run()                                                        # needs sage.rings.finite_rings
 
     Applying ``Spec`` twice to the same ring gives identical output
     (see :trac:`17008`)::
@@ -60,7 +60,7 @@ def Spec(R, S=None):
         Traceback (most recent call last):
         ...
         TypeError: x (=5) is not in Category of commutative rings
-        sage: Spec(FreeAlgebra(QQ, 2, 'x'))                                             # optional - sage.combinat sage.modules
+        sage: Spec(FreeAlgebra(QQ, 2, 'x'))                                             # needs sage.combinat sage.modules
         Traceback (most recent call last):
         ...
         TypeError: x (=Free Algebra on 2 generators (x0, x1) over Rational Field)
@@ -152,7 +152,7 @@ class SpecFunctor(Functor, UniqueRepresentation):
 
             sage: from sage.schemes.generic.spec import SpecFunctor
             sage: F = SpecFunctor()
-            sage: F(RR)  # indirect doctest                                             # optional - sage.rings.real_mpfr
+            sage: F(RR)  # indirect doctest                                             # needs sage.rings.real_mpfr
             Spectrum of Real Field with 53 bits of precision
         """
         # The second argument of AffineScheme defaults to None.

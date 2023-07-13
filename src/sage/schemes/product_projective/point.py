@@ -341,10 +341,11 @@ class ProductProjectiveSpaces_point_ring(SchemeMorphism_point):
 
         ::
 
-            sage: PP.<a,b,x,y,z> = ProductProjectiveSpaces([1, 2], CC)                  # optional - sage.rings.real_mpfr
-            sage: X = PP.subscheme([a^2 + b^2])                                         # optional - sage.rings.real_mpfr
-            sage: P = X([2, 2*i, -3, 6*i, 3 - 6*i])                                     # optional - sage.rings.real_mpfr
-            sage: P.dehomogenize([1,0])                                                 # optional - sage.rings.real_mpfr
+            sage: # needs sage.rings.real_mpfr
+            sage: PP.<a,b,x,y,z> = ProductProjectiveSpaces([1, 2], CC)
+            sage: X = PP.subscheme([a^2 + b^2])
+            sage: P = X([2, 2*i, -3, 6*i, 3 - 6*i])
+            sage: P.dehomogenize([1,0])
             (-1.00000000000000*I, -2.00000000000000*I, -1.00000000000000 + 2.00000000000000*I)
 
         ::
@@ -439,30 +440,30 @@ class ProductProjectiveSpaces_point_ring(SchemeMorphism_point):
 
             sage: PP = ProductProjectiveSpaces(QQ, [2, 2], 'x')
             sage: Q = PP([1, 7, 5, 18, 2, 3])
-            sage: Q.global_height()                                                     # optional - sage.symbolic
+            sage: Q.global_height()                                                     # needs sage.symbolic
             2.89037175789616
 
         ::
 
             sage: PP = ProductProjectiveSpaces(ZZ, [1, 1], 'x')
             sage: A = PP([-30, 2, 1, 6])
-            sage: A.global_height()                                                     # optional - sage.symbolic
+            sage: A.global_height()                                                     # needs sage.symbolic
             2.70805020110221
 
         ::
 
             sage: R.<x> = PolynomialRing(QQ)
-            sage: k.<w> = NumberField(x^2 + 5)                                          # optional - sage.rings.number_field
-            sage: PP = ProductProjectiveSpaces(k, [1, 2], 'y')                          # optional - sage.rings.number_field
-            sage: Q = PP([3, 5*w + 1, 1, 7*w, 10])                                      # optional - sage.rings.number_field
-            sage: Q.global_height()                                                     # optional - sage.rings.number_field
+            sage: k.<w> = NumberField(x^2 + 5)                                          # needs sage.rings.number_field
+            sage: PP = ProductProjectiveSpaces(k, [1, 2], 'y')                          # needs sage.rings.number_field
+            sage: Q = PP([3, 5*w + 1, 1, 7*w, 10])                                      # needs sage.rings.number_field
+            sage: Q.global_height()                                                     # needs sage.rings.number_field
             2.75062910527236
 
         ::
 
-            sage: PP = ProductProjectiveSpaces(QQbar, [1, 1], 'x')                      # optional - sage.rings.number_field
-            sage: Q = PP([1, QQbar(sqrt(2)), QQbar(5^(1/3)), QQbar(3^(1/3))])           # optional - sage.rings.number_field sage.symbolic
-            sage: Q.global_height()                                                     # optional - sage.rings.number_field sage.symbolic
+            sage: PP = ProductProjectiveSpaces(QQbar, [1, 1], 'x')                      # needs sage.rings.number_field
+            sage: Q = PP([1, QQbar(sqrt(2)), QQbar(5^(1/3)), QQbar(3^(1/3))])           # needs sage.rings.number_field sage.symbolic
+            sage: Q.global_height()                                                     # needs sage.rings.number_field sage.symbolic
             0.536479304144700
         """
         K = self.codomain().base_ring()
@@ -493,14 +494,14 @@ class ProductProjectiveSpaces_point_ring(SchemeMorphism_point):
 
             sage: PP = ProductProjectiveSpaces(QQ, [1, 1], 'x')
             sage: A = PP([11, 5, 10, 2])
-            sage: A.local_height(5)                                                     # optional - sage.rings.real_mpfr
+            sage: A.local_height(5)                                                     # needs sage.rings.real_mpfr
             1.60943791243410
 
         ::
 
             sage: P = ProductProjectiveSpaces(QQ, [1, 2], 'x')
             sage: Q = P([1, 4, 1/2, 2, 32])
-            sage: Q.local_height(2)                                                     # optional - sage.rings.real_mpfr
+            sage: Q.local_height(2)                                                     # needs sage.rings.real_mpfr
             4.15888308335967
         """
         K = FractionField(self.domain().base_ring())
@@ -532,7 +533,7 @@ class ProductProjectiveSpaces_point_field(ProductProjectiveSpaces_point_ring):
             sage: X = PP.subscheme([y^2*z^3*u - x^5*v])
             sage: Y = PP.subscheme([u^3 - v^3, x - y])
             sage: Q = X([0,0,1,1,1])
-            sage: Q.intersection_multiplicity(Y)                                        # optional - sage.libs.singular
+            sage: Q.intersection_multiplicity(Y)                                        # needs sage.libs.singular
             2
         """
         from sage.schemes.product_projective.space import is_ProductProjectiveSpaces
@@ -554,13 +555,13 @@ class ProductProjectiveSpaces_point_field(ProductProjectiveSpaces_point_ring):
             sage: PP.<x,y,z,w,u,v,t> = ProductProjectiveSpaces(QQ, [3, 2])
             sage: X = PP.subscheme([x^8*t - y^8*t + z^5*w^3*v])
             sage: Q1 = X([1,1,0,0,-1,-1,1])
-            sage: Q1.multiplicity()                                                     # optional - sage.libs.singular
+            sage: Q1.multiplicity()                                                     # needs sage.libs.singular
             1
             sage: Q2 = X([0,0,0,1,0,1,1])
-            sage: Q2.multiplicity()                                                     # optional - sage.libs.singular
+            sage: Q2.multiplicity()                                                     # needs sage.libs.singular
             5
             sage: Q3 = X([0,0,0,1,1,0,0])
-            sage: Q3.multiplicity()                                                     # optional - sage.libs.singular
+            sage: Q3.multiplicity()                                                     # needs sage.libs.singular
             6
         """
         from sage.schemes.product_projective.space import is_ProductProjectiveSpaces

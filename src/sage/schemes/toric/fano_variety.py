@@ -1307,9 +1307,9 @@ class AnticanonicalHypersurface(AlgebraicScheme_subscheme_toric):
 
         Check that finite fields are handled correctly :trac:`14899`::
 
-            sage: F = GF(5^2, "a")                                                      # optional - sage.rings.finite_rings
-            sage: X = P1xP1.change_ring(F)                                              # optional - sage.rings.finite_rings
-            sage: X.anticanonical_hypersurface(monomial_points="all",                   # optional - sage.rings.finite_rings
+            sage: F = GF(5^2, "a")                                                      # needs sage.rings.finite_rings
+            sage: X = P1xP1.change_ring(F)                                              # needs sage.rings.finite_rings
+            sage: X.anticanonical_hypersurface(monomial_points="all",                   # needs sage.rings.finite_rings
             ....:                   coefficients=[1]*X.Delta().npoints())
             Closed subscheme of 2-d CPR-Fano toric variety
              covered by 4 affine patches defined by:

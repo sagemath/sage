@@ -13,8 +13,8 @@ EXAMPLES::
 
 ::
 
-    sage: P.<x,y,z> = ProjectiveSpace(GF(5), 2)                                         # optional - sage.rings.finite_rings
-    sage: Curve(y^2*z^7 - x^9 - x*z^8)                                                  # optional - sage.rings.finite_rings
+    sage: P.<x,y,z> = ProjectiveSpace(GF(5), 2)                                         # needs sage.rings.finite_rings
+    sage: Curve(y^2*z^7 - x^9 - x*z^8)                                                  # needs sage.rings.finite_rings
     Projective Plane Curve over Finite Field of size 5
      defined by -x^9 + y^2*z^7 - x*z^8
 
@@ -125,10 +125,10 @@ def Curve(F, A=None):
 
     Affine plane curves.  ::
 
-        sage: x,y = GF(7)['x,y'].gens()                                                 # optional - sage.rings.finite_rings
-        sage: C = Curve(y^2 + x^3 + x^10); C                                            # optional - sage.rings.finite_rings
+        sage: x,y = GF(7)['x,y'].gens()                                                 # needs sage.rings.finite_rings
+        sage: C = Curve(y^2 + x^3 + x^10); C                                            # needs sage.rings.finite_rings
         Affine Plane Curve over Finite Field of size 7 defined by x^10 + x^3 + y^2
-        sage: C.genus()                                                                 # optional - sage.rings.finite_rings
+        sage: C.genus()                                                                 # needs sage.rings.finite_rings
         0
         sage: x, y = QQ['x,y'].gens()
         sage: Curve(x^3 + y^3 + 1)
@@ -206,11 +206,12 @@ def Curve(F, A=None):
     The defining polynomial must be nonzero unless the ambient space itself is
     of dimension 1. ::
 
-        sage: P1.<x,y> = ProjectiveSpace(1, GF(5))                                      # optional - sage.rings.finite_rings
-        sage: S = P1.coordinate_ring()                                                  # optional - sage.rings.finite_rings
-        sage: Curve(S(0), P1)                                                           # optional - sage.rings.finite_rings
+        sage: # needs sage.rings.finite_rings
+        sage: P1.<x,y> = ProjectiveSpace(1, GF(5))
+        sage: S = P1.coordinate_ring()
+        sage: Curve(S(0), P1)
         Projective Line over Finite Field of size 5
-        sage: Curve(P1)                                                                 # optional - sage.rings.finite_rings
+        sage: Curve(P1)
         Projective Line over Finite Field of size 5
 
     ::

@@ -210,12 +210,12 @@ def enum_product_projective_number_field(X, **kwds):
     EXAMPLES::
 
         sage: u = QQ['u'].0
-        sage: K = NumberField(u^2 + 2, 'v')                                             # optional - sage.rings.number_field
-        sage: PP.<x,y,z,w> = ProductProjectiveSpaces([1, 1], K)                         # optional - sage.rings.number_field
-        sage: X = PP.subscheme([x^2 + 2*y^2])                                           # optional - sage.rings.number_field
+        sage: K = NumberField(u^2 + 2, 'v')                                             # needs sage.rings.number_field
+        sage: PP.<x,y,z,w> = ProductProjectiveSpaces([1, 1], K)                         # needs sage.rings.number_field
+        sage: X = PP.subscheme([x^2 + 2*y^2])                                           # needs sage.rings.number_field
         sage: from sage.schemes.product_projective.rational_point import \
                 enum_product_projective_number_field
-        sage: enum_product_projective_number_field(X, bound=1.5)                        # optional - sage.rings.number_field
+        sage: enum_product_projective_number_field(X, bound=1.5)                        # needs sage.rings.number_field
         [(-v : 1 , -1 : 1), (-v : 1 , -v : 1), (-v : 1 , -1/2*v : 1),
          (-v : 1 , 0 : 1), (-v : 1 , 1/2*v : 1), (-v : 1 , v : 1),
          (-v : 1 , 1 : 0), (-v : 1 , 1 : 1), (v : 1 , -1 : 1),
@@ -338,7 +338,7 @@ def sieve(X, bound):
         sage: from sage.schemes.product_projective.rational_point import sieve
         sage: PP.<x,y,z,u,v> = ProductProjectiveSpaces([2, 1], QQ)
         sage: X = PP.subscheme([x^2 + y^2 - x*z, u*u - v*u])
-        sage: sieve(X, 2)                                                               # optional - sage.libs.singular
+        sage: sieve(X, 2)                                                               # needs sage.libs.singular
         [(0 : 0 : 1 , 0 : 1), (0 : 0 : 1 , 1 : 1), (1/2 : -1/2 : 1 , 0 : 1),
          (1/2 : -1/2 : 1 , 1 : 1), (1/2 : 1/2 : 1 , 0 : 1), (1/2 : 1/2 : 1 , 1 : 1),
          (1 : 0 : 1 , 0 : 1), (1 : 0 : 1 , 1 : 1)]

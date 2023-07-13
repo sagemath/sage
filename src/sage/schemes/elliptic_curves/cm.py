@@ -204,10 +204,10 @@ def is_HCP(f, check_monic_irreducible=True):
 
         sage: from sage.schemes.elliptic_curves.cm import is_HCP
         sage: D = -1856563
-        sage: D.class_number()                                                          # optional - sage.libs.pari
+        sage: D.class_number()                                                          # needs sage.libs.pari
         100
 
-        sage: # optional - sage.libs.flint
+        sage: # needs sage.libs.flint
         sage: H = hilbert_class_polynomial(D)
         sage: H.degree()
         100
@@ -218,13 +218,13 @@ def is_HCP(f, check_monic_irreducible=True):
 
     Testing polynomials which are not HCPs is faster::
 
-        sage: is_HCP(H+1)                                                               # optional - sage.libs.flint
+        sage: is_HCP(H+1)                                                               # needs sage.libs.flint
         0
 
 
     TESTS::
 
-        sage: # optional - sage.libs.flint
+        sage: # needs sage.libs.flint
         sage: from sage.schemes.elliptic_curves.cm import is_HCP
         sage: all(is_HCP(hilbert_class_polynomial(D)) == D
         ....:     for D in srange(-4,-100,-1) if D.is_discriminant())
