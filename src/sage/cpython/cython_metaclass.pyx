@@ -61,7 +61,7 @@ In Python, this would be ``meta.__init__(cls, name, bases, dict)``.
 
 EXAMPLES::
 
-    sage: cython(                                                               # optional - sage.misc.cython
+    sage: cython(                                                                       # needs sage.misc.cython
     ....: '''
     ....: cimport sage.cpython.cython_metaclass
     ....: cdef class MyCustomType():
@@ -76,9 +76,9 @@ EXAMPLES::
     ....: ''')
     Calling MyMetaclass.__init__(<class '...MyCustomType'>, None, None, None)
     Calling MyMetaclass.__init__(<class '...MyDerivedType'>, None, None, None)
-    sage: MyCustomType.__class__                                                # optional - sage.misc.cython
+    sage: MyCustomType.__class__                                                        # needs sage.misc.cython
     <class '...MyMetaclass'>
-    sage: class MyPythonType(MyDerivedType):                                    # optional - sage.misc.cython
+    sage: class MyPythonType(MyDerivedType):                                            # needs sage.misc.cython
     ....:     pass
     Calling MyMetaclass.__init__(<class '...MyPythonType'>, 'MyPythonType', (<class '...MyDerivedType'>,), {...})
 
@@ -99,7 +99,7 @@ TESTS:
 Check that a proper exception is raised if ``__getmetaclass__``
 returns a non-type::
 
-    sage: cython(                                                               # optional - sage.misc.cython
+    sage: cython(                                                                       # needs sage.misc.cython
     ....: '''
     ....: cimport sage.cpython.cython_metaclass
     ....: cdef class MyCustomType():
