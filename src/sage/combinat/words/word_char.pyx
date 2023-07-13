@@ -716,9 +716,9 @@ cdef class WordDatatype_char(WordDatatype):
             sage: W = Words([0,1])
             sage: w = words.FibonacciWord()
             sage: w = W(list(w[:5000]))
-            sage: L = [[len(w[n:].longest_common_prefix(w[n+fibonacci(i):]))            # optional - sage.libs.pari
+            sage: L = [[len(w[n:].longest_common_prefix(w[n+fibonacci(i):]))            # needs sage.libs.pari
             ....:      for i in range(5,15)] for n in range(1,1000)]
-            sage: for n,l in enumerate(L):                                              # optional - sage.libs.pari
+            sage: for n,l in enumerate(L):                                              # needs sage.libs.pari
             ....:     if l.count(0) > 4:
             ....:         print("{} {}".format(n+1,l))
             375 [0, 13, 0, 34, 0, 89, 0, 233, 0, 233]

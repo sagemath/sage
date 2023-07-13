@@ -265,7 +265,7 @@ class FiniteWord_char(WordDatatype_char, FiniteWord_class):
 
         sage: len(w.factor_set())
         127
-        sage: w.rauzy_graph(5)                                                          # optional - sage.graphs
+        sage: w.rauzy_graph(5)                                                          # needs sage.graphs
         Looped digraph on 9 vertices
 
         sage: u = W([1,2,3])
