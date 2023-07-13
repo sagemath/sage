@@ -56,8 +56,8 @@ cdef class GenericAction(Action):
         random errors (see :trac:`18157`). ::
 
             sage: from sage.structure.coerce_actions import ActedUponAction, GenericAction
-            sage: M = MatrixSpace(ZZ, 2)                                                # optional - sage.modules
-            sage: ActedUponAction(M, Cusps, True)                                       # optional - sage.modular sage.modules
+            sage: M = MatrixSpace(ZZ, 2)                                                # needs sage.modules
+            sage: ActedUponAction(M, Cusps, True)                                       # needs sage.modular sage.modules
             Left action
              by Full MatrixSpace of 2 by 2 dense matrices over Integer Ring
              on Set P^1(QQ) of all cusps
@@ -95,15 +95,16 @@ cdef class GenericAction(Action):
         errors (see :trac:`18157`). ::
 
 
-            sage: M = MatrixSpace(ZZ, 2)                                                # optional - sage.modules
-            sage: A = sage.structure.coerce_actions.ActedUponAction(M, Cusps, True)     # optional - sage.modular sage.modules
-            sage: A.codomain()                                                          # optional - sage.modular sage.modules
+            sage: M = MatrixSpace(ZZ, 2)                                                # needs sage.modules
+            sage: A = sage.structure.coerce_actions.ActedUponAction(M, Cusps, True)     # needs sage.modular sage.modules
+            sage: A.codomain()                                                          # needs sage.modular sage.modules
             Set P^1(QQ) of all cusps
 
-            sage: S3 = SymmetricGroup(3)                                                # optional - sage.groups
-            sage: QQxyz = QQ['x,y,z']                                                   # optional - sage.groups
-            sage: A = sage.structure.coerce_actions.ActOnAction(S3, QQxyz, False)       # optional - sage.groups
-            sage: A.codomain()                                                          # optional - sage.groups
+            sage: # needs sage.groups
+            sage: S3 = SymmetricGroup(3)
+            sage: QQxyz = QQ['x,y,z']
+            sage: A = sage.structure.coerce_actions.ActOnAction(S3, QQxyz, False)
+            sage: A.codomain()
             Multivariate Polynomial Ring in x, y, z over Rational Field
 
         """
@@ -121,15 +122,16 @@ cdef class ActOnAction(GenericAction):
         """
         TESTS::
 
-            sage: G = SymmetricGroup(3)                                                 # optional - sage.groups
-            sage: R.<x,y,z> = QQ[]                                                      # optional - sage.groups
-            sage: A = sage.structure.coerce_actions.ActOnAction(G, R, False)            # optional - sage.groups
-            sage: A(x^2 + y - z, G((1,2)))                                              # optional - sage.groups
+            sage: # needs sage.groups
+            sage: G = SymmetricGroup(3)
+            sage: R.<x,y,z> = QQ[]
+            sage: A = sage.structure.coerce_actions.ActOnAction(G, R, False)
+            sage: A(x^2 + y - z, G((1,2)))
             y^2 + x - z
-            sage: A(x + 2*y + 3*z, G((1,3,2)))                                          # optional - sage.groups
+            sage: A(x + 2*y + 3*z, G((1,3,2)))
             2*x + 3*y + z
 
-            sage: type(A)                                                               # optional - sage.groups
+            sage: type(A)                                                               # needs sage.groups
             <... 'sage.structure.coerce_actions.ActOnAction'>
         """
         return (<Element>g)._act_on_(x, self._is_left)
@@ -143,14 +145,15 @@ cdef class ActedUponAction(GenericAction):
         """
         TESTS::
 
-            sage: M = MatrixSpace(ZZ, 2)                                                # optional - sage.modules
-            sage: A = sage.structure.coerce_actions.ActedUponAction(M, Cusps, True)     # optional - sage.modular sage.modules
-            sage: A.act(matrix(ZZ, 2, [1,0,2,-1]), Cusp(1,2))                           # optional - sage.modular sage.modules
+            sage: # needs sage.modules
+            sage: M = MatrixSpace(ZZ, 2)
+            sage: A = sage.structure.coerce_actions.ActedUponAction(M, Cusps, True)     # needs sage.modular
+            sage: A.act(matrix(ZZ, 2, [1,0,2,-1]), Cusp(1,2))                           # needs sage.modular
             Infinity
-            sage: A(matrix(ZZ, 2, [1,0,2,-1]), Cusp(1,2))                               # optional - sage.modular sage.modules
+            sage: A(matrix(ZZ, 2, [1,0,2,-1]), Cusp(1,2))                               # needs sage.modular
             Infinity
 
-            sage: type(A)                                                               # optional - sage.modular sage.modules
+            sage: type(A)                                                               # needs sage.modular sage.modules
             <... 'sage.structure.coerce_actions.ActedUponAction'>
         """
         return (<Element>x)._acted_upon_(g, not self._is_left)
@@ -169,17 +172,17 @@ def detect_element_action(Parent X, Y, bint X_on_left, X_el=None, Y_el=None):
 
         sage: from sage.structure.coerce_actions import detect_element_action
         sage: ZZx = ZZ['x']
-        sage: M = MatrixSpace(ZZ, 2)                                                    # optional - sage.modules
+        sage: M = MatrixSpace(ZZ, 2)                                                    # needs sage.modules
         sage: detect_element_action(ZZx, ZZ, False)
         Left scalar multiplication by Integer Ring
          on Univariate Polynomial Ring in x over Integer Ring
         sage: detect_element_action(ZZx, QQ, True)
         Right scalar multiplication by Rational Field
          on Univariate Polynomial Ring in x over Integer Ring
-        sage: detect_element_action(Cusps, M, False)                                    # optional - sage.modular sage.modules
+        sage: detect_element_action(Cusps, M, False)                                    # needs sage.modular sage.modules
         Left action by Full MatrixSpace of 2 by 2 dense matrices over Integer Ring
          on Set P^1(QQ) of all cusps
-        sage: detect_element_action(Cusps, M, True),                                    # optional - sage.modular sage.modules
+        sage: detect_element_action(Cusps, M, True),                                    # needs sage.modular sage.modules
         (None,)
         sage: detect_element_action(ZZ, QQ, True),
         (None,)
@@ -527,12 +530,13 @@ cdef class ModuleAction(Action):
 
         See :trac:`19521`::
 
-            sage: Q.<y> = SR.subring(no_variables=True)[[]]                             # optional - sage.symbolic
-            sage: (y / 1).parent()                                                      # optional - sage.symbolic
+            sage: # needs sage.symbolic
+            sage: Q.<y> = SR.subring(no_variables=True)[[]]
+            sage: (y / 1).parent()
             Power Series Ring in y over Symbolic Constants Subring
-            sage: R.<x> = SR.subring(no_variables=True)[]                               # optional - sage.symbolic
-            sage: cm = sage.structure.element.get_coercion_model()                      # optional - sage.symbolic
-            sage: cm.explain(x, 1, operator.truediv)                                    # optional - sage.symbolic
+            sage: R.<x> = SR.subring(no_variables=True)[]
+            sage: cm = sage.structure.element.get_coercion_model()
+            sage: cm.explain(x, 1, operator.truediv)
             Action discovered.
                 Right inverse action by Symbolic Constants Subring
                  on Univariate Polynomial Ring in x over Symbolic Constants Subring
@@ -690,8 +694,8 @@ cdef class IntegerAction(Action):
         Check that this action can be pickled (:trac:`29031`)::
 
             sage: from sage.structure.coerce_actions import IntegerMulAction
-            sage: act = IntegerMulAction(ZZ, CDF)                                       # optional - sage.rings.complex_double
-            sage: loads(dumps(act)) is not None                                         # optional - sage.rings.complex_double
+            sage: act = IntegerMulAction(ZZ, CDF)                                       # needs sage.rings.complex_double
+            sage: loads(dumps(act)) is not None                                         # needs sage.rings.complex_double
             True
         """
         # All base classes must take the signature
@@ -703,8 +707,8 @@ cdef class IntegerAction(Action):
         EXAMPLES::
 
             sage: from sage.structure.coerce_actions import IntegerMulAction
-            sage: act = IntegerMulAction(ZZ, CDF)                                       # optional - sage.rings.complex_double
-            sage: ~act                                                                  # optional - sage.rings.complex_double
+            sage: act = IntegerMulAction(ZZ, CDF)                                       # needs sage.rings.complex_double
+            sage: ~act                                                                  # needs sage.rings.complex_double
             Traceback (most recent call last):
             ...
             TypeError: actions by ZZ cannot be inverted
@@ -775,14 +779,14 @@ cdef class IntegerMulAction(IntegerAction):
 
         This used to hang before :trac:`17844`::
 
-            sage: E = EllipticCurve(GF(5), [4,0])                                       # optional - sage.rings.finite_rings
-            sage: P = E.random_element()                                                # optional - sage.rings.finite_rings
-            sage: (-2^63)*P                                                             # optional - sage.rings.finite_rings
+            sage: E = EllipticCurve(GF(5), [4,0])                                       # needs sage.rings.finite_rings
+            sage: P = E.random_element()                                                # needs sage.rings.finite_rings
+            sage: (-2^63)*P                                                             # needs sage.rings.finite_rings
             (0 : 1 : 0)
 
         Check that large multiplications can be interrupted::
 
-            sage: alarm(0.001); 2^(10^7) * P                                            # optional - sage.rings.finite_rings
+            sage: alarm(0.001); 2^(10^7) * P                                            # needs sage.rings.finite_rings
             Traceback (most recent call last):
             ...
             AlarmInterrupt
@@ -790,8 +794,8 @@ cdef class IntegerMulAction(IntegerAction):
         Verify that cysignals correctly detects that the above
         exception has been handled::
 
-            sage: from cysignals.tests import print_sig_occurred                        # optional - sage.rings.finite_rings
-            sage: print_sig_occurred()                                                  # optional - sage.rings.finite_rings
+            sage: from cysignals.tests import print_sig_occurred                        # needs sage.rings.finite_rings
+            sage: print_sig_occurred()                                                  # needs sage.rings.finite_rings
             No current exception
         """
         cdef int err = 0
@@ -853,18 +857,18 @@ cdef class IntegerPowAction(IntegerAction):
         Traceback (most recent call last):
         ...
         ValueError: powering must be a right action
-        sage: IntegerPowAction(ZZ, QQ^3)                                                # optional - sage.modules
+        sage: IntegerPowAction(ZZ, QQ^3)                                                # needs sage.modules
         Traceback (most recent call last):
         ...
         TypeError: no integer powering action defined on Vector space of dimension 3 over Rational Field
 
     ::
 
-        sage: var('x,y')                                                                # optional - sage.symbolic
+        sage: var('x,y')                                                                # needs sage.symbolic
         (x, y)
-        sage: RDF('-2.3')^(x+y^3+sin(x))                                                # optional - sage.symbolic
+        sage: RDF('-2.3')^(x+y^3+sin(x))                                                # needs sage.symbolic
         (-2.3)^(y^3 + x + sin(x))
-        sage: RDF('-2.3')^x                                                             # optional - sage.symbolic
+        sage: RDF('-2.3')^x                                                             # needs sage.symbolic
         (-2.3)^x
     """
     def __init__(self, Z, M, is_left=False, m=None):

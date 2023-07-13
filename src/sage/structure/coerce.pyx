@@ -35,9 +35,9 @@ On failure, a TypeError is always raised.
 Some arithmetic operations (such as multiplication) can indicate an action
 rather than arithmetic in a common parent. For example::
 
-    sage: E = EllipticCurve('37a')                                                      # optional - sage.schemes
-    sage: P = E(0,0)                                                                    # optional - sage.schemes
-    sage: 5*P                                                                           # optional - sage.schemes
+    sage: E = EllipticCurve('37a')                                                      # needs sage.schemes
+    sage: P = E(0,0)                                                                    # needs sage.schemes
+    sage: 5*P                                                                           # needs sage.schemes
     (1/4 : -5/8 : 1)
 
 where there is action of `\ZZ` on the points of `E` given by the additive
@@ -112,7 +112,7 @@ cpdef py_scalar_parent(py_type):
         Integer Ring
         sage: py_scalar_parent(float)
         Real Double Field
-        sage: py_scalar_parent(complex)                                                 # optional - sage.rings.complex_double
+        sage: py_scalar_parent(complex)                                                 # needs sage.rings.complex_double
         Complex Double Field
         sage: py_scalar_parent(bool)
         Integer Ring
@@ -123,14 +123,15 @@ cpdef py_scalar_parent(py_type):
         sage: py_scalar_parent(fractions.Fraction)
         Rational Field
 
-        sage: import numpy                                                              # optional - numpy
-        sage: py_scalar_parent(numpy.int16)                                             # optional - numpy
+        sage: # needs numpy
+        sage: import numpy
+        sage: py_scalar_parent(numpy.int16)
         Integer Ring
-        sage: py_scalar_parent(numpy.int32)                                             # optional - numpy
+        sage: py_scalar_parent(numpy.int32)
         Integer Ring
-        sage: py_scalar_parent(numpy.uint64)                                            # optional - numpy
+        sage: py_scalar_parent(numpy.uint64)
         Integer Ring
-        sage: py_scalar_parent(numpy.double)                                            # optional - numpy
+        sage: py_scalar_parent(numpy.double)
         Real Double Field
 
         sage: import gmpy2
@@ -140,7 +141,7 @@ cpdef py_scalar_parent(py_type):
         Rational Field
         sage: py_scalar_parent(gmpy2.mpfr)
         Real Double Field
-        sage: py_scalar_parent(gmpy2.mpc)                                               # optional - sage.rings.complex_double
+        sage: py_scalar_parent(gmpy2.mpc)                                               # needs sage.rings.complex_double
         Complex Double Field
     """
     if issubclass(py_type, int):
@@ -202,8 +203,8 @@ cpdef py_scalar_to_element(x):
         sage: x = py_scalar_to_element(float(42))
         sage: x, parent(x)
         (42.0, Real Double Field)
-        sage: x = py_scalar_to_element(complex(42))                                     # optional - sage.rings.complex_double
-        sage: x, parent(x)                                                              # optional - sage.rings.complex_double
+        sage: x = py_scalar_to_element(complex(42))                                     # needs sage.rings.complex_double
+        sage: x, parent(x)                                                              # needs sage.rings.complex_double
         (42.0, Complex Double Field)
         sage: py_scalar_to_element('hello')
         'hello'
@@ -230,31 +231,31 @@ cpdef py_scalar_to_element(x):
         sage: x = py_scalar_to_element(gmpy2.mpfr(42.57))
         sage: x, parent(x)
         (42.57, Real Double Field)
-        sage: x = py_scalar_to_element(gmpy2.mpc(int(42), int(42)))                     # optional - sage.rings.complex_double
-        sage: x, parent(x)                                                              # optional - sage.rings.complex_double
+        sage: x = py_scalar_to_element(gmpy2.mpc(int(42), int(42)))                     # needs sage.rings.complex_double
+        sage: x, parent(x)                                                              # needs sage.rings.complex_double
         (42.0 + 42.0*I, Complex Double Field)
 
     Test compatibility with :func:`py_scalar_parent`::
 
         sage: from sage.structure.coerce import py_scalar_parent
         sage: elt = [True, int(42), float(42), complex(42)]
-        sage: for x in elt:                                                             # optional - sage.rings.complex_double
+        sage: for x in elt:                                                             # needs sage.rings.complex_double
         ....:     assert py_scalar_parent(type(x)) == py_scalar_to_element(x).parent()
 
-        sage: import numpy                                                              # optional - numpy
-        sage: elt = [numpy.int8('-12'),  numpy.uint8('143'),                            # optional - numpy
+        sage: import numpy                                                              # needs numpy
+        sage: elt = [numpy.int8('-12'),  numpy.uint8('143'),                            # needs numpy
         ....:        numpy.int16('-33'), numpy.uint16('122'),
         ....:        numpy.int32('-19'), numpy.uint32('44'),
         ....:        numpy.int64('-3'),  numpy.uint64('552'),
         ....:        numpy.float16('-1.23'), numpy.float32('-2.22'),
         ....:        numpy.float64('-3.412'), numpy.complex64(1.2+I),
         ....:        numpy.complex128(-2+I)]
-        sage: for x in elt:                                                             # optional - numpy
+        sage: for x in elt:                                                             # needs numpy
         ....:     assert py_scalar_parent(type(x)) == py_scalar_to_element(x).parent()
 
         sage: elt = [gmpy2.mpz(42), gmpy2.mpq('3/4'),
         ....:        gmpy2.mpfr(42.57), gmpy2.mpc(int(42), int(42))]
-        sage: for x in elt:                                                             # optional - sage.rings.complex_double
+        sage: for x in elt:                                                             # needs sage.rings.complex_double
         ....:     assert py_scalar_parent(type(x)) == py_scalar_to_element(x).parent()
     """
     if isinstance(x, Element):
@@ -316,10 +317,10 @@ cpdef bint parent_is_integers(P) except -1:
         sage: parent_is_integers(dict)
         False
 
-        sage: import numpy                                                              # optional - numpy
-        sage: parent_is_integers(numpy.int16)                                           # optional - numpy
+        sage: import numpy                                                              # needs numpy
+        sage: parent_is_integers(numpy.int16)                                           # needs numpy
         True
-        sage: parent_is_integers(numpy.uint64)                                          # optional - numpy
+        sage: parent_is_integers(numpy.uint64)                                          # needs numpy
         True
         sage: parent_is_integers(float)
         False
@@ -359,15 +360,15 @@ def parent_is_numerical(P):
 
         sage: from sage.structure.coerce import parent_is_numerical
         sage: import gmpy2
-        sage: [parent_is_numerical(R) for R in [QQ, int, complex, gmpy2.mpc]]           # optional - sage.rings.complex_double
+        sage: [parent_is_numerical(R) for R in [QQ, int, complex, gmpy2.mpc]]           # needs sage.rings.complex_double
         [True, True, True, True]
-        sage: [parent_is_numerical(R) for R in [RR, CC]]                                # optional - sage.rings.real_mpfr
+        sage: [parent_is_numerical(R) for R in [RR, CC]]                                # needs sage.rings.real_mpfr
         [True, True]
-        sage: parent_is_numerical(QuadraticField(-1))                                   # optional - sage.rings.number_field
+        sage: parent_is_numerical(QuadraticField(-1))                                   # needs sage.rings.number_field
         True
-        sage: import numpy; parent_is_numerical(numpy.complexfloating)                  # optional - numpy
+        sage: import numpy; parent_is_numerical(numpy.complexfloating)                  # needs numpy
         True
-        sage: parent_is_numerical(SR)                                                   # optional - sage.symbolic
+        sage: parent_is_numerical(SR)                                                   # needs sage.symbolic
         False
         sage: [parent_is_numerical(R) for R in [QQ['x'], QQ[['x']], str]]
         [False, False, False]
@@ -391,18 +392,18 @@ def parent_is_real_numerical(P):
         sage: import gmpy2
         sage: [parent_is_real_numerical(R) for R in [RR, QQ, ZZ, RLF, int, float, gmpy2.mpq]]
         [True, True, True, True, True, True, True]
-        sage: parent_is_real_numerical(QuadraticField(2))                               # optional - sage.rings.number_field
+        sage: parent_is_real_numerical(QuadraticField(2))                               # needs sage.rings.number_field
         True
-        sage: import numpy; parent_is_real_numerical(numpy.integer)                     # optional - numpy
+        sage: import numpy; parent_is_real_numerical(numpy.integer)                     # needs numpy
         True
-        sage: parent_is_real_numerical(QuadraticField(-1))                              # optional - sage.rings.number_field
+        sage: parent_is_real_numerical(QuadraticField(-1))                              # needs sage.rings.number_field
         False
-        sage: [parent_is_real_numerical(R)                                              # optional - numpy
+        sage: [parent_is_real_numerical(R)                                              # needs numpy
         ....:  for R in [CC, complex, gmpy2.mpc, numpy.complexfloating]]
         [False, False, False, False]
         sage: [parent_is_real_numerical(R) for R in [QQ['x'], QQ[['x']], str]]
         [False, False, False]
-        sage: parent_is_real_numerical(SR)                                              # optional - sage.symbolic
+        sage: parent_is_real_numerical(SR)                                              # needs sage.symbolic
         False
         sage: [parent_is_real_numerical(R) for R in [RIF, RBF, CIF, CBF]]
         [False, False, False, False]
@@ -422,20 +423,20 @@ cpdef bint is_numpy_type(t):
     EXAMPLES::
 
         sage: from sage.structure.coerce import is_numpy_type
-        sage: import numpy                                                              # optional - numpy
-        sage: is_numpy_type(numpy.int16)                                                # optional - numpy
+        sage: import numpy                                                              # needs numpy
+        sage: is_numpy_type(numpy.int16)                                                # needs numpy
         True
-        sage: is_numpy_type(numpy.floating)                                             # optional - numpy
+        sage: is_numpy_type(numpy.floating)                                             # needs numpy
         True
-        sage: is_numpy_type(numpy.ndarray)                                              # optional - numpy
+        sage: is_numpy_type(numpy.ndarray)                                              # needs numpy
         True
-        sage: is_numpy_type(numpy.matrix)                                               # optional - numpy
+        sage: is_numpy_type(numpy.matrix)                                               # needs numpy
         True
         sage: is_numpy_type(int)
         False
         sage: is_numpy_type(Integer)
         False
-        sage: is_numpy_type(Sudoku)                                                     # optional - sage.combinat
+        sage: is_numpy_type(Sudoku)                                                     # needs sage.combinat
         False
         sage: is_numpy_type(None)
         False
@@ -469,7 +470,7 @@ cpdef bint is_mpmath_type(t):
 
     EXAMPLES::
 
-        sage: # optional - mpmath
+        sage: # needs mpmath
         sage: from sage.structure.coerce import is_mpmath_type
         sage: is_mpmath_type(int)
         False
@@ -491,14 +492,14 @@ cdef class CoercionModel:
 
     EXAMPLES::
 
-        sage: f = ZZ['t', 'x'].0 + QQ['x'].0 + CyclotomicField(13).gen(); f             # optional - sage.rings.number_field
+        sage: f = ZZ['t', 'x'].0 + QQ['x'].0 + CyclotomicField(13).gen(); f             # needs sage.rings.number_field
         t + x + zeta13
-        sage: f.parent()                                                                # optional - sage.rings.number_field
+        sage: f.parent()                                                                # needs sage.rings.number_field
         Multivariate Polynomial Ring in t, x
          over Cyclotomic Field of order 13 and degree 12
         sage: ZZ['x','y'].0 + ~Frac(QQ['y']).0
         (x*y + 1)/y
-        sage: MatrixSpace(ZZ['x'], 2, 2)(2) + ~Frac(QQ['x']).0                          # optional - sage.modules
+        sage: MatrixSpace(ZZ['x'], 2, 2)(2) + ~Frac(QQ['x']).0                          # needs sage.modules
         [(2*x + 1)/x           0]
         [          0 (2*x + 1)/x]
         sage: f = ZZ['x,y,z'].0 + QQ['w,x,z,a'].0; f
@@ -512,11 +513,11 @@ cdef class CoercionModel:
 
     Check that :trac:`8426` is fixed (see also :trac:`18076`)::
 
-        sage: import numpy                                                              # optional - numpy
+        sage: import numpy                                                              # needs numpy
         sage: x = polygen(RR)
-        sage: numpy.float32('1.5') * x                                                  # optional - numpy
+        sage: numpy.float32('1.5') * x                                                  # needs numpy
         1.50000000000000*x
-        sage: x * numpy.float32('1.5')                                                  # optional - numpy
+        sage: x * numpy.float32('1.5')                                                  # needs numpy
         1.50000000000000*x
         sage: p = x**3 + 2*x - 1
         sage: p(float('1.2'))
@@ -526,26 +527,26 @@ cdef class CoercionModel:
 
     This used to fail (see :trac:`18076`)::
 
-        sage: 1/3 + numpy.int8('12')                                                    # optional - numpy
+        sage: 1/3 + numpy.int8('12')                                                    # needs numpy
         37/3
-        sage: -2/3 + numpy.int16('-2')                                                  # optional - numpy
+        sage: -2/3 + numpy.int16('-2')                                                  # needs numpy
         -8/3
-        sage: 2/5 + numpy.uint8('2')                                                    # optional - numpy
+        sage: 2/5 + numpy.uint8('2')                                                    # needs numpy
         12/5
 
     The numpy types do not interact well with the Sage coercion framework. More
     precisely, if a numpy type is the first operand in a binary operation then
     this operation is done in numpy. The result is hence a numpy type::
 
-        sage: numpy.uint8('2') + 3                                                      # optional - numpy
+        sage: numpy.uint8('2') + 3                                                      # needs numpy
         5
-        sage: type(_)                                                                   # optional - numpy
+        sage: type(_)                                                                   # needs numpy
         <class 'numpy.int32'>  # 32-bit
         <class 'numpy.int64'>  # 64-bit
 
-        sage: numpy.int8('12') + 1/3                                                    # optional - numpy
+        sage: numpy.int8('12') + 1/3                                                    # needs numpy
         12.333333333333334
-        sage: type(_)                                                                   # optional - numpy
+        sage: type(_)                                                                   # needs numpy
         <class 'numpy.float64'>
 
     AUTHOR:
@@ -559,8 +560,8 @@ cdef class CoercionModel:
             sage: from sage.structure.coerce import CoercionModel
             sage: cm = CoercionModel()
             sage: x = polygen(ZZ, 'x')
-            sage: K = NumberField(x^2 - 2, 'a')                                         # optional - sage.rings.number_field
-            sage: A = cm.get_action(ZZ, K, operator.mul)                                # optional - sage.rings.number_field
+            sage: K = NumberField(x^2 - 2, 'a')                                         # needs sage.rings.number_field
+            sage: A = cm.get_action(ZZ, K, operator.mul)                                # needs sage.rings.number_field
             sage: f, g = cm.coercion_maps(QQ, int)
             sage: f, g = cm.coercion_maps(ZZ, int)
         """
@@ -844,11 +845,11 @@ cdef class CoercionModel:
         Sometimes with non-sage types there is not enough information to deduce
         what will actually happen::
 
-            sage: R100 = RealField(100)                                                 # optional - sage.rings.real_mpfr
-            sage: cm.explain(R100, float, operator.add)                                 # optional - sage.rings.real_mpfr
+            sage: R100 = RealField(100)                                                 # needs sage.rings.real_mpfr
+            sage: cm.explain(R100, float, operator.add)                                 # needs sage.rings.real_mpfr
             Right operand is numeric, will attempt coercion in both directions.
             Unknown result parent.
-            sage: parent(R100(1) + float(1))                                            # optional - sage.rings.real_mpfr
+            sage: parent(R100(1) + float(1))                                            # needs sage.rings.real_mpfr
             <class 'float'>
             sage: cm.explain(QQ, float, operator.add)
             Right operand is numeric, will attempt coercion in both directions.
@@ -1033,7 +1034,7 @@ cdef class CoercionModel:
             sage: cm = sage.structure.element.get_coercion_model()
             sage: cm.common_parent(ZZ, QQ)
             Rational Field
-            sage: cm.common_parent(ZZ, QQ, RR)                                          # optional - sage.rings.real_mpfr
+            sage: cm.common_parent(ZZ, QQ, RR)                                          # needs sage.rings.real_mpfr
             Real Field with 53 bits of precision
             sage: ZZT = ZZ[['T']]
             sage: QQT = QQ['T']
@@ -1043,8 +1044,8 @@ cdef class CoercionModel:
             <class 'int'>
             sage: cm.common_parent(int, float, ZZ)
             <class 'float'>
-            sage: real_fields = [RealField(prec) for prec in [10,20..100]]              # optional - sage.rings.real_mpfr
-            sage: cm.common_parent(*real_fields)                                        # optional - sage.rings.real_mpfr
+            sage: real_fields = [RealField(prec) for prec in [10,20..100]]              # needs sage.rings.real_mpfr
+            sage: cm.common_parent(*real_fields)                                        # needs sage.rings.real_mpfr
             Real Field with 10 bits of precision
 
         There are some cases where the ordering does matter, but if a parent
@@ -1103,8 +1104,8 @@ cdef class CoercionModel:
             sage: Zmod100 = Integers(100)
             sage: cm.division_parent(Zmod100)
             Ring of integers modulo 100
-            sage: S5 = SymmetricGroup(5)                                                # optional - sage.groups
-            sage: cm.division_parent(S5)                                                # optional - sage.groups
+            sage: S5 = SymmetricGroup(5)                                                # needs sage.groups
+            sage: cm.division_parent(S5)                                                # needs sage.groups
             Symmetric group of order 5! as a permutation group
         """
         try:
@@ -1153,9 +1154,9 @@ cdef class CoercionModel:
 
         Actions are detected and performed::
 
-            sage: M = matrix(ZZ, 2, 2, range(4))                                        # optional - sage.modules
-            sage: V = vector(ZZ, [5,7])                                                 # optional - sage.modules
-            sage: cm.bin_op(M, V, operator.mul)                                         # optional - sage.modules
+            sage: M = matrix(ZZ, 2, 2, range(4))                                        # needs sage.modules
+            sage: V = vector(ZZ, [5,7])                                                 # needs sage.modules
+            sage: cm.bin_op(M, V, operator.mul)                                         # needs sage.modules
             (7, 31)
 
         TESTS::
@@ -1279,14 +1280,14 @@ cdef class CoercionModel:
             sage: cm = sage.structure.element.get_coercion_model()
             sage: cm.canonical_coercion(mod(2, 10), 17)
             (2, 7)
-            sage: x, y = cm.canonical_coercion(1/2, matrix(ZZ, 2, 2, range(4)))         # optional - sage.modules
-            sage: x                                                                     # optional - sage.modules
+            sage: x, y = cm.canonical_coercion(1/2, matrix(ZZ, 2, 2, range(4)))         # needs sage.modules
+            sage: x                                                                     # needs sage.modules
             [1/2   0]
             [  0 1/2]
-            sage: y                                                                     # optional - sage.modules
+            sage: y                                                                     # needs sage.modules
             [0 1]
             [2 3]
-            sage: parent(x) is parent(y)                                                # optional - sage.modules
+            sage: parent(x) is parent(y)                                                # needs sage.modules
             True
 
         There is some support for non-Sage datatypes as well::
@@ -1311,7 +1312,7 @@ cdef class CoercionModel:
 
         We also make an exception for 0, even if `\ZZ` does not map in::
 
-            sage: canonical_coercion(vector([1, 2, 3]), 0)                              # optional - sage.modules
+            sage: canonical_coercion(vector([1, 2, 3]), 0)                              # needs sage.modules
             ((1, 2, 3), (0, 0, 0))
             sage: canonical_coercion(GF(5)(0), float(0))
             (0, 0)
@@ -1461,28 +1462,29 @@ cdef class CoercionModel:
         Note that to break symmetry, if there is a coercion map in both
         directions, the parent on the left is used::
 
-            sage: V = QQ^3                                                              # optional - sage.modules
-            sage: W = V.__class__(QQ, 3)                                                # optional - sage.modules
-            sage: V == W                                                                # optional - sage.modules
+            sage: # needs sage.modules
+            sage: V = QQ^3
+            sage: W = V.__class__(QQ, 3)
+            sage: V == W
             True
-            sage: V is W                                                                # optional - sage.modules
+            sage: V is W
             False
-            sage: cm = sage.structure.element.get_coercion_model()                      # optional - sage.modules
-            sage: cm.coercion_maps(V, W)                                                # optional - sage.modules
+            sage: cm = sage.structure.element.get_coercion_model()
+            sage: cm.coercion_maps(V, W)
             (None, (map internal to coercion system -- copy before use)
              Coercion map:
                From: Vector space of dimension 3 over Rational Field
                To:   Vector space of dimension 3 over Rational Field)
-            sage: cm.coercion_maps(W, V)                                                # optional - sage.modules
+            sage: cm.coercion_maps(W, V)
             (None, (map internal to coercion system -- copy before use)
              Coercion map:
                From: Vector space of dimension 3 over Rational Field
                To:   Vector space of dimension 3 over Rational Field)
-            sage: v = V([1,2,3])                                                        # optional - sage.modules
-            sage: w = W([1,2,3])                                                        # optional - sage.modules
-            sage: parent(v + w) is V                                                    # optional - sage.modules
+            sage: v = V([1,2,3])
+            sage: w = W([1,2,3])
+            sage: parent(v + w) is V
             True
-            sage: parent(w + v) is W                                                    # optional - sage.modules
+            sage: parent(w + v) is W
             True
 
         TESTS:
@@ -1495,11 +1497,11 @@ cdef class CoercionModel:
             sage: gc.collect() #random
             852
             sage: N0 = len(list(o for o in gc.get_objects() if type(o) is T))
-            sage: L = [ZZ(1) + GF(p)(1) for p in prime_range(2, 50)]                    # optional - sage.rings.finite_rings
+            sage: L = [ZZ(1) + GF(p)(1) for p in prime_range(2, 50)]                    # needs sage.rings.finite_rings
             sage: N1 = len(list(o for o in gc.get_objects() if type(o) is T))
-            sage: N1 > N0                                                               # optional - sage.rings.finite_rings
+            sage: N1 > N0                                                               # needs sage.rings.finite_rings
             True
-            sage: del L                                                                 # optional - sage.rings.finite_rings
+            sage: del L                                                                 # needs sage.rings.finite_rings
             sage: gc.collect() #random
             3939
             sage: N2 = len(list(o for o in gc.get_objects() if type(o) is T))
@@ -1636,7 +1638,7 @@ cdef class CoercionModel:
 
         If R is S, then two identity morphisms suffice::
 
-            sage: cm.discover_coercion(SR, SR)                                          # optional - sage.symbolic
+            sage: cm.discover_coercion(SR, SR)                                          # needs sage.symbolic
             (None, None)
 
         If there is a coercion map either direction, use that::
@@ -1646,7 +1648,7 @@ cdef class CoercionModel:
             Natural morphism:
               From: Integer Ring
               To:   Rational Field, None)
-            sage: cm.discover_coercion(RR, QQ)                                          # optional - sage.rings.real_mpfr
+            sage: cm.discover_coercion(RR, QQ)                                          # needs sage.rings.real_mpfr
             (None, (map internal to coercion system -- copy before use)
              Generic map:
               From: Rational Field
@@ -1667,9 +1669,9 @@ cdef class CoercionModel:
 
         Sometimes there is a reasonable "cover," but no canonical coercion::
 
-            sage: sage.categories.pushout.pushout(QQ, QQ^3)                             # optional - sage.modules
+            sage: sage.categories.pushout.pushout(QQ, QQ^3)                             # needs sage.modules
             Vector space of dimension 3 over Rational Field
-            sage: print(cm.discover_coercion(QQ, QQ^3))                                 # optional - sage.modules
+            sage: print(cm.discover_coercion(QQ, QQ^3))                                 # needs sage.modules
             None
         """
         if R is S:
@@ -1868,10 +1870,10 @@ cdef class CoercionModel:
 
         Check that :trac:`18221` is fixed::
 
-            sage: F.<x> = FreeAlgebra(QQ)                                               # optional - sage.combinat sage.modules
-            sage: x / 2                                                                 # optional - sage.combinat sage.modules
+            sage: F.<x> = FreeAlgebra(QQ)                                               # needs sage.combinat sage.modules
+            sage: x / 2                                                                 # needs sage.combinat sage.modules
             1/2*x
-            sage: cm.discover_action(F, ZZ, operator.truediv)                           # optional - sage.combinat sage.modules
+            sage: cm.discover_action(F, ZZ, operator.truediv)                           # needs sage.combinat sage.modules
             Right inverse action by Rational Field on
              Free Algebra on 1 generators (x,) over Rational Field
              with precomposition on right by Natural morphism:

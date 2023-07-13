@@ -36,14 +36,15 @@ This example illustrates generators for a free module over `\ZZ`.
 
 ::
 
-    sage: M = FreeModule(ZZ, 4)                                                         # optional - sage.modules
-    sage: M                                                                             # optional - sage.modules
+    sage: # needs sage.modules
+    sage: M = FreeModule(ZZ, 4)
+    sage: M
     Ambient free module of rank 4 over the principal ideal domain Integer Ring
-    sage: M.ngens()                                                                     # optional - sage.modules
+    sage: M.ngens()
     4
-    sage: M.gen(0)                                                                      # optional - sage.modules
+    sage: M.gen(0)
     (1, 0, 0, 0)
-    sage: M.gens()                                                                      # optional - sage.modules
+    sage: M.gens()
     ((1, 0, 0, 0), (0, 1, 0, 0), (0, 0, 1, 0), (0, 0, 0, 1))
 """
 
@@ -270,8 +271,8 @@ cdef class CategoryObject(SageObject):
 
         EXAMPLES::
 
-            sage: B.<a,b,c,d> = BooleanPolynomialRing()                                 # optional - sage.rings.polynomial.pbori
-            sage: B.gens_dict()                                                         # optional - sage.rings.polynomial.pbori
+            sage: B.<a,b,c,d> = BooleanPolynomialRing()                                 # needs sage.rings.polynomial.pbori
+            sage: B.gens_dict()                                                         # needs sage.rings.polynomial.pbori
             {'a': a, 'b': b, 'c': c, 'd': d}
 
         TESTS::
@@ -351,16 +352,16 @@ cdef class CategoryObject(SageObject):
         For orders, we correctly use the ring generator, see
         :trac:`15348`::
 
-            sage: A.<i> = ZZ.extension(x^2 + 1)                                         # optional - sage.rings.number_field
-            sage: i                                                                     # optional - sage.rings.number_field
+            sage: A.<i> = ZZ.extension(x^2 + 1)                                         # needs sage.rings.number_field
+            sage: i                                                                     # needs sage.rings.number_field
             i
-            sage: parent(i)                                                             # optional - sage.rings.number_field
+            sage: parent(i)                                                             # needs sage.rings.number_field
             Order in Number Field in i with defining polynomial x^2 + 1
 
         ::
 
-            sage: B.<z> = EquationOrder(x^2 + 3)                                        # optional - sage.rings.number_field
-            sage: z.minpoly()                                                           # optional - sage.rings.number_field
+            sage: B.<z> = EquationOrder(x^2 + 3)                                        # needs sage.rings.number_field
+            sage: z.minpoly()                                                           # needs sage.rings.number_field
             x^2 + 3
         """
         return self._defining_names()[:n]
@@ -388,18 +389,19 @@ cdef class CategoryObject(SageObject):
         For orders, we correctly use the ring generator, see
         :trac:`15348`::
 
-            sage: B.<z> = EquationOrder(x^2 + 3)                                        # optional - sage.rings.number_field
-            sage: B._defining_names()                                                   # optional - sage.rings.number_field
+            sage: B.<z> = EquationOrder(x^2 + 3)                                        # needs sage.rings.number_field
+            sage: B._defining_names()                                                   # needs sage.rings.number_field
             (z,)
 
         For vector spaces and free modules, we get a basis (which can
         be different from the given generators)::
 
-            sage: V = ZZ^3                                                              # optional - sage.modules
-            sage: V._defining_names()                                                   # optional - sage.modules
+            sage: # needs sage.modules
+            sage: V = ZZ^3
+            sage: V._defining_names()
             ((1, 0, 0), (0, 1, 0), (0, 0, 1))
-            sage: W = V.span([(0, 1, 0), (1/2, 1, 0)])                                  # optional - sage.modules
-            sage: W._defining_names()                                                   # optional - sage.modules
+            sage: W = V.span([(0, 1, 0), (1/2, 1, 0)])
+            sage: W._defining_names()
             ((1/2, 0, 0), (0, 1, 0))
         """
         return self.gens()
@@ -500,10 +502,11 @@ cdef class CategoryObject(SageObject):
         wants to print elements of the quotient of such an "unnamed"
         ring, an error resulted. That was fixed in :trac:`11068`::
 
-            sage: MS = MatrixSpace(GF(5), 2, 2)                                         # optional - sage.modules
-            sage: I = MS * [MS.0*MS.1, MS.2 + MS.3] * MS                                # optional - sage.modules
-            sage: Q.<a,b,c,d> = MS.quo(I)                                               # optional - sage.modules
-            sage: a     #indirect doctest                                               # optional - sage.modules
+            sage: # needs sage.modules
+            sage: MS = MatrixSpace(GF(5), 2, 2)
+            sage: I = MS * [MS.0*MS.1, MS.2 + MS.3] * MS
+            sage: Q.<a,b,c,d> = MS.quo(I)
+            sage: a     #indirect doctest
             [1 0]
             [0 0]
 
@@ -562,42 +565,44 @@ cdef class CategoryObject(SageObject):
 
         EXAMPLES::
 
-            sage: from sage.modules.module import Module                                # optional - sage.modules
-            sage: Module(ZZ).base_ring()                                                # optional - sage.modules
+            sage: from sage.modules.module import Module                                # needs sage.modules
+            sage: Module(ZZ).base_ring()                                                # needs sage.modules
             Integer Ring
 
-            sage: F = FreeModule(ZZ, 3)                                                 # optional - sage.modules
-            sage: F.base_ring()                                                         # optional - sage.modules
+            sage: F = FreeModule(ZZ, 3)                                                 # needs sage.modules
+            sage: F.base_ring()                                                         # needs sage.modules
             Integer Ring
-            sage: F.__class__.base_ring                                                 # optional - sage.modules
+            sage: F.__class__.base_ring                                                 # needs sage.modules
             <method 'base_ring' of 'sage.structure.category_object.CategoryObject' objects>
 
         Note that the coordinates of the elements of a module can lie
         in a bigger ring, the ``coordinate_ring``::
 
-            sage: M = (ZZ^2) * (1/2)                                                    # optional - sage.modules
-            sage: v = M([1/2, 0])                                                       # optional - sage.modules
-            sage: v.base_ring()                                                         # optional - sage.modules
+            sage: # needs sage.modules
+            sage: M = (ZZ^2) * (1/2)
+            sage: v = M([1/2, 0])
+            sage: v.base_ring()
             Integer Ring
-            sage: parent(v[0])                                                          # optional - sage.modules
+            sage: parent(v[0])
             Rational Field
-            sage: v.coordinate_ring()                                                   # optional - sage.modules
+            sage: v.coordinate_ring()
             Rational Field
 
         More examples::
 
-            sage: F = FreeAlgebra(QQ, 'x')                                              # optional - sage.combinat sage.modules
-            sage: F.base_ring()                                                         # optional - sage.combinat sage.modules
+            sage: F = FreeAlgebra(QQ, 'x')                                              # needs sage.combinat sage.modules
+            sage: F.base_ring()                                                         # needs sage.combinat sage.modules
             Rational Field
-            sage: F.__class__.base_ring                                                 # optional - sage.combinat sage.modules
+            sage: F.__class__.base_ring                                                 # needs sage.combinat sage.modules
             <method 'base_ring' of 'sage.structure.category_object.CategoryObject' objects>
 
-            sage: E = CombinatorialFreeModule(ZZ, [1,2,3])                              # optional - sage.modules
-            sage: F = CombinatorialFreeModule(ZZ, [2,3,4])                              # optional - sage.modules
-            sage: H = Hom(E, F)                                                         # optional - sage.modules
-            sage: H.base_ring()                                                         # optional - sage.modules
+            sage: # needs sage.modules
+            sage: E = CombinatorialFreeModule(ZZ, [1,2,3])
+            sage: F = CombinatorialFreeModule(ZZ, [2,3,4])
+            sage: H = Hom(E, F)
+            sage: H.base_ring()
             Integer Ring
-            sage: H.__class__.base_ring                                                 # optional - sage.modules
+            sage: H.__class__.base_ring
             <method 'base_ring' of 'sage.structure.category_object.CategoryObject' objects>
 
         .. TODO::
@@ -893,8 +898,8 @@ cdef class CategoryObject(SageObject):
             _test_some_elements
             _test_zero
             _test_zero_divisors
-            sage: F = GF(9,'a')                                                         # optional - sage.rings.finite_rings
-            sage: dir(F)                                                                # optional - sage.rings.finite_rings
+            sage: F = GF(9,'a')                                                         # needs sage.rings.finite_rings
+            sage: dir(F)                                                                # needs sage.rings.finite_rings
             [..., '__class__', ..., '_test_pickling', ..., 'extension', ...]
 
         """
@@ -950,11 +955,11 @@ cpdef normalize_names(Py_ssize_t ngens, names):
 
         sage: nn(1, u'a')
         ('a',)
-        sage: var('alpha')                                                              # optional - sage.symbolic
+        sage: var('alpha')                                                              # needs sage.symbolic
         alpha
-        sage: nn(2, alpha)                                                              # optional - sage.symbolic
+        sage: nn(2, alpha)                                                              # needs sage.symbolic
         ('alpha0', 'alpha1')
-        sage: nn(1, [alpha])                                                            # optional - sage.symbolic
+        sage: nn(1, [alpha])                                                            # needs sage.symbolic
         ('alpha',)
 
     With an unknown number of generators::
