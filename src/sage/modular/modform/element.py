@@ -3544,18 +3544,30 @@ class GradedModularFormElement(ModuleElement):
         TESTS::
 
             sage: M = ModularFormsRing(1)
-            sage: f4 = ModularForms(1, 4).0; f6 = ModularForms(1, 6).0;
-            sage: F4 = M(f4); F6 = M(f6);
+            sage: F4 = M.0; F6 = M.1;
             sage: F4*F6 # indirect doctest
             1 - 264*q - 135432*q^2 - 5196576*q^3 - 69341448*q^4 - 515625264*q^5 + O(q^6)
+
+        This shows that the issue at :trac:`35932` is fixed::
+
+            sage: (F4 + M(1))^2
+            4 + 960*q + 66240*q^2 + 1063680*q^3 + 7961280*q^4 + 37560960*q^5 + O(q^6)
         """
         GM = self.__class__
+        parent = self.parent()
         f_self = self._forms_dictionary
         f_other = other._forms_dictionary
         f_mul = {}
         for k_self in f_self.keys():
             for k_other in f_other.keys():
-                f_mul[k_self + k_other] = f_self[k_self]*f_other[k_other]
+                if k_self + k_other not in f_mul:
+                    k_weight = k_self + k_other
+                    if k_weight == 0:
+                        M = parent.base_ring()
+                    else:
+                        M = parent.modular_forms_of_weight(k_weight).change_ring(parent.base_ring())
+                    f_mul[k_self + k_other] = M(0)
+                f_mul[k_self + k_other] += f_self[k_self]*f_other[k_other]
         return GM(self.parent(), f_mul)
 
     def _lmul_(self, c):
