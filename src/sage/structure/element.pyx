@@ -850,15 +850,9 @@ cdef class Element(SageObject):
 
             sage: (2/3).numerical_approx()                                              # needs sage.rings.real_mpfr
             0.666666666666667
-<<<<<<< HEAD
-            sage: pi.n(digits=10)
-            3.141592654
-            sage: pi.n(prec=20)
-=======
             sage: pi.n(digits=10)                                                       # needs sage.symbolic
             3.141592654
             sage: pi.n(prec=20)                                                         # needs sage.symbolic
->>>>>>> e30481f627 (./sage -fixdoctests --distribution sagemath-categories --only-tags --overwrite src/sage/structure)
             3.1416
 
         TESTS:
@@ -895,29 +889,18 @@ cdef class Element(SageObject):
 
         EXAMPLES::
 
-<<<<<<< HEAD
-=======
             sage: # needs mpmath
->>>>>>> e30481f627 (./sage -fixdoctests --distribution sagemath-categories --only-tags --overwrite src/sage/structure)
             sage: from sage.libs.mpmath.all import mp, mpmathify
             sage: mp.dps = 30
             sage: 25._mpmath_(53)
             mpf('25.0')
             sage: mpmathify(3 + 4*I)
             mpc(real='3.0', imag='4.0')
-<<<<<<< HEAD
-            sage: mpmathify(1 + pi)                                                     # optional - mpmath
-            mpf('4.14159265358979323846264338327933')
-            sage: (1 + pi)._mpmath_(10)                                                 # optional - mpmath
-            mpf('4.140625')
-            sage: (1 + pi)._mpmath_(mp.prec)                                            # optional - mpmath
-=======
             sage: mpmathify(1 + pi)                                                     # needs sage.symbolic
             mpf('4.14159265358979323846264338327933')
             sage: (1 + pi)._mpmath_(10)                                                 # needs sage.symbolic
             mpf('4.140625')
             sage: (1 + pi)._mpmath_(mp.prec)                                            # needs sage.symbolic
->>>>>>> e30481f627 (./sage -fixdoctests --distribution sagemath-categories --only-tags --overwrite src/sage/structure)
             mpf('4.14159265358979323846264338327933')
         """
         return self.n(prec)._mpmath_(prec=prec)
@@ -1006,11 +989,7 @@ cdef class Element(SageObject):
 
             sage: n = 5; n._is_atomic()
             True
-<<<<<<< HEAD
-            sage: n = x+1; n._is_atomic()
-=======
             sage: n = x + 1; n._is_atomic()                                             # needs sage.symbolic
->>>>>>> e30481f627 (./sage -fixdoctests --distribution sagemath-categories --only-tags --overwrite src/sage/structure)
             False
         """
         if self._parent._repr_option('element_is_atomic'):
@@ -2829,11 +2808,7 @@ cdef class RingElement(ModuleElement):
 
         ::
 
-<<<<<<< HEAD
-            sage: divmod(22./7, RR(pi))
-=======
             sage: divmod(22./7, RR(pi))                                                 # needs sage.symbolic
->>>>>>> e30481f627 (./sage -fixdoctests --distribution sagemath-categories --only-tags --overwrite src/sage/structure)
             (1.00040249943477, 0.000000000000000)
         """
         try:
@@ -3287,25 +3262,6 @@ cdef class CommutativeRingElement(RingElement):
         EXAMPLES::
 
             sage: R.<x> = ZZ[]
-<<<<<<< HEAD
-            sage: (x^2).sqrt()
-            x
-            sage: f=x^2-4*x+4; f.sqrt(all=True)
-            [x - 2, -x + 2]
-            sage: sqrtx=x.sqrt(name="y"); sqrtx
-            y
-            sage: sqrtx^2
-            x
-            sage: x.sqrt(all=true,name="y")
-            [y, -y]
-            sage: x.sqrt(extend=False,all=True)
-            []
-            sage: x.sqrt()
-            Traceback (most recent call last):
-            ...
-            TypeError: Polynomial is not a square. You must specify the name of the square root when using the default extend = True
-            sage: x.sqrt(extend=False)
-=======
             sage: (x^2).sqrt()                                                          # needs sage.libs.pari
             x
             sage: f = x^2 - 4*x + 4; f.sqrt(all=True)                                   # needs sage.libs.pari
@@ -3323,27 +3279,12 @@ cdef class CommutativeRingElement(RingElement):
             ...
             TypeError: Polynomial is not a square. You must specify the name of the square root when using the default extend = True
             sage: x.sqrt(extend=False)                                                  # needs sage.libs.pari
->>>>>>> e30481f627 (./sage -fixdoctests --distribution sagemath-categories --only-tags --overwrite src/sage/structure)
             Traceback (most recent call last):
             ...
             ValueError: trying to take square root of non-square x with extend = False
 
         TESTS::
 
-<<<<<<< HEAD
-            sage: f = (x+3)^2; f.sqrt()
-            x + 3
-            sage: f = (x+3)^2; f.sqrt(all=True)
-            [x + 3, -x - 3]
-            sage: f = (x^2 - x + 3)^2; f.sqrt()
-            x^2 - x + 3
-            sage: f = (x^2 - x + 3)^6; f.sqrt()
-            x^6 - 3*x^5 + 12*x^4 - 19*x^3 + 36*x^2 - 27*x + 27
-            sage: g = (R.random_element(15))^2
-            sage: g.sqrt()^2 == g
-            True
-
-=======
             sage: f = (x + 3)^2; f.sqrt()                                               # needs sage.libs.pari
             x + 3
             sage: f = (x + 3)^2; f.sqrt(all=True)                                       # needs sage.libs.pari
@@ -3357,7 +3298,6 @@ cdef class CommutativeRingElement(RingElement):
             True
 
             sage: # needs sage.libs.pari
->>>>>>> e30481f627 (./sage -fixdoctests --distribution sagemath-categories --only-tags --overwrite src/sage/structure)
             sage: R.<x> = GF(250037)[]
             sage: f = x^2/(x+1)^2; f.sqrt()
             x/(x + 1)
