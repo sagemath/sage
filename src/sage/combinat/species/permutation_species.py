@@ -225,8 +225,8 @@ class PermutationSpecies(GenericCombinatorialSpecies, UniqueRepresentation):
         EXAMPLES::
 
             sage: P = species.PermutationSpecies()
-            sage: g = P.cycle_index_series()                                            # optional - sage.modules
-            sage: g[0:5]                                                                # optional - sage.modules
+            sage: g = P.cycle_index_series()                                            # needs sage.modules
+            sage: g[0:5]                                                                # needs sage.modules
             [p[],
              p[1],
              p[1, 1] + p[2],
@@ -244,7 +244,7 @@ class PermutationSpecies(GenericCombinatorialSpecies, UniqueRepresentation):
         EXAMPLES::
 
             sage: P = species.PermutationSpecies()
-            sage: [P._cis_gen(QQ, 2, i) for i in range(10)]                             # optional - sage.modules
+            sage: [P._cis_gen(QQ, 2, i) for i in range(10)]                             # needs sage.modules
             [p[], 0, p[2], 0, p[2, 2], 0, p[2, 2, 2], 0, p[2, 2, 2, 2], 0]
         """
         from sage.combinat.sf.sf import SymmetricFunctions

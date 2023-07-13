@@ -67,8 +67,8 @@ class CharacteristicSpeciesStructure(GenericSpeciesStructure):
             sage: F = species.CharacteristicSpecies(3)
             sage: a = F.structures(["a", "b", "c"]).random_element(); a
             {'a', 'b', 'c'}
-            sage: p = PermutationGroupElement((1,2))                                    # optional - sage.groups
-            sage: a.transport(p)                                                        # optional - sage.groups
+            sage: p = PermutationGroupElement((1,2))                                    # needs sage.groups
+            sage: a.transport(p)                                                        # needs sage.groups
             {'a', 'b', 'c'}
         """
         return self
@@ -84,7 +84,7 @@ class CharacteristicSpeciesStructure(GenericSpeciesStructure):
             sage: F = species.CharacteristicSpecies(3)
             sage: a = F.structures(["a", "b", "c"]).random_element(); a
             {'a', 'b', 'c'}
-            sage: a.automorphism_group()                                                # optional - sage.groups
+            sage: a.automorphism_group()                                                # needs sage.groups
             Symmetric group of order 3! as a permutation group
         """
         from sage.groups.perm_gps.permgroup_named import SymmetricGroup
@@ -110,7 +110,7 @@ class CharacteristicSpecies(GenericCombinatorialSpecies, UniqueRepresentation):
             [0, 1, 0, 0]
             sage: X.isotype_generating_series()[0:4]
             [0, 1, 0, 0]
-            sage: X.cycle_index_series()[0:4]                                           # optional - sage.modules
+            sage: X.cycle_index_series()[0:4]                                           # needs sage.modules
             [0, p[1], 0, 0]
 
             sage: F = species.CharacteristicSpecies(3)
@@ -203,8 +203,8 @@ class CharacteristicSpecies(GenericCombinatorialSpecies, UniqueRepresentation):
         EXAMPLES::
 
             sage: F = species.CharacteristicSpecies(2)
-            sage: g = F.cycle_index_series()                                            # optional - sage.modules
-            sage: g[0:5]                                                                # optional - sage.modules
+            sage: g = F.cycle_index_series()                                            # needs sage.modules
+            sage: g[0:5]                                                                # needs sage.modules
             [0, 0, 1/2*p[1, 1] + 1/2*p[2], 0, 0]
         """
         cis = SetSpecies(weight=self._weight).cycle_index_series(base_ring)
@@ -251,7 +251,7 @@ class EmptySetSpecies(CharacteristicSpecies):
             [1, 0, 0, 0]
             sage: X.isotype_generating_series()[0:4]
             [1, 0, 0, 0]
-            sage: X.cycle_index_series()[0:4]                                           # optional - sage.modules
+            sage: X.cycle_index_series()[0:4]                                           # needs sage.modules
             [p[], 0, 0, 0]
 
         TESTS::
@@ -295,7 +295,7 @@ class SingletonSpecies(CharacteristicSpecies):
             [0, 1, 0, 0]
             sage: X.isotype_generating_series()[0:4]
             [0, 1, 0, 0]
-            sage: X.cycle_index_series()[0:4]                                           # optional - sage.modules
+            sage: X.cycle_index_series()[0:4]                                           # needs sage.modules
             [0, p[1], 0, 0]
 
         TESTS::

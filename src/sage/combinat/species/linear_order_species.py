@@ -43,8 +43,8 @@ class LinearOrderSpeciesStructure(GenericSpeciesStructure):
             sage: F = species.LinearOrderSpecies()
             sage: a = F.structures(["a", "b", "c"])[0]; a
             ['a', 'b', 'c']
-            sage: p = PermutationGroupElement((1,2))                                    # optional - sage.groups
-            sage: a.transport(p)                                                        # optional - sage.groups
+            sage: p = PermutationGroupElement((1,2))                                    # needs sage.groups
+            sage: a.transport(p)                                                        # needs sage.groups
             ['b', 'a', 'c']
         """
         return LinearOrderSpeciesStructure(self.parent(), self._labels, [perm(i) for i in self._list])
@@ -60,7 +60,7 @@ class LinearOrderSpeciesStructure(GenericSpeciesStructure):
             sage: F = species.LinearOrderSpecies()
             sage: a = F.structures(["a", "b", "c"])[0]; a
             ['a', 'b', 'c']
-            sage: a.automorphism_group()                                                # optional - sage.groups
+            sage: a.automorphism_group()                                                # needs sage.groups
             Symmetric group of order 1! as a permutation group
         """
         from sage.groups.perm_gps.permgroup_named import SymmetricGroup
@@ -155,8 +155,8 @@ class LinearOrderSpecies(GenericCombinatorialSpecies, UniqueRepresentation):
         EXAMPLES::
 
             sage: L = species.LinearOrderSpecies()
-            sage: g = L.cycle_index_series()                                            # optional - sage.modules
-            sage: g[0:5]                                                                # optional - sage.modules
+            sage: g = L.cycle_index_series()                                            # needs sage.modules
+            sage: g[0:5]                                                                # needs sage.modules
             [p[], p[1], p[1, 1], p[1, 1, 1], p[1, 1, 1, 1]]
         """
         from sage.combinat.sf.sf import SymmetricFunctions

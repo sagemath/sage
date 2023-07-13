@@ -51,7 +51,7 @@ class CycleSpeciesStructure(GenericSpeciesStructure):
             sage: F = species.CycleSpecies()
             sage: a = F.structures(["a", "b", "c"])[0]; a
             ('a', 'b', 'c')
-            sage: a.permutation_group_element()                                         # optional - sage.groups
+            sage: a.permutation_group_element()                                         # needs sage.groups
             (1,2,3)
         """
         from sage.groups.perm_gps.constructor import PermutationGroupElement
@@ -67,8 +67,8 @@ class CycleSpeciesStructure(GenericSpeciesStructure):
             sage: F = species.CycleSpecies()
             sage: a = F.structures(["a", "b", "c"])[0]; a
             ('a', 'b', 'c')
-            sage: p = PermutationGroupElement((1,2))                                    # optional - sage.groups
-            sage: a.transport(p)                                                        # optional - sage.groups
+            sage: p = PermutationGroupElement((1,2))                                    # needs sage.groups
+            sage: a.transport(p)                                                        # needs sage.groups
             ('a', 'c', 'b')
         """
         p = self.permutation_group_element()
@@ -88,12 +88,12 @@ class CycleSpeciesStructure(GenericSpeciesStructure):
             sage: P = species.CycleSpecies()
             sage: a = P.structures([1, 2, 3, 4])[0]; a
             (1, 2, 3, 4)
-            sage: a.automorphism_group()                                                # optional - sage.groups
+            sage: a.automorphism_group()                                                # needs sage.groups
             Permutation Group with generators [(1,2,3,4)]
 
         ::
 
-            sage: [a.transport(perm) for perm in a.automorphism_group()]                # optional - sage.groups
+            sage: [a.transport(perm) for perm in a.automorphism_group()]                # needs sage.groups
             [(1, 2, 3, 4), (1, 2, 3, 4), (1, 2, 3, 4), (1, 2, 3, 4)]
         """
         from sage.groups.perm_gps.permgroup_named import SymmetricGroup
@@ -255,8 +255,8 @@ class CycleSpecies(GenericCombinatorialSpecies, UniqueRepresentation):
         EXAMPLES::
 
             sage: P = species.CycleSpecies()
-            sage: cis = P.cycle_index_series()                                          # optional - sage.modules
-            sage: cis[0:7]                                                              # optional - sage.modules
+            sage: cis = P.cycle_index_series()                                          # needs sage.modules
+            sage: cis[0:7]                                                              # needs sage.modules
             [0,
              p[1],
              1/2*p[1, 1] + 1/2*p[2],
