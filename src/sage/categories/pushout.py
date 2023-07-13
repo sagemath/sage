@@ -3251,7 +3251,8 @@ class AlgebraicExtensionFunctor(ConstructionFunctor):
         self.latex_names = latex_names
         kwds_self = dict(kwds.items())
         if 'implementation' in kwds_self:
-            self.implementations[0] = kwds_self['implementation']
+            assert len(self.polys) == 1
+            self.implementations = [kwds_self['implementation']]
             del kwds_self['implementation']
         self.kwds = kwds_self
 
@@ -3479,8 +3480,6 @@ class AlgebraicExtensionFunctor(ConstructionFunctor):
         if 'implementation' in kwds_self:
             del kwds_self['implementation']
         kwds_other = dict(other.kwds.items())
-        if 'implementation' in kwds_other:
-            del kwds_other['implementation']
         if (isinstance(self.polys[0], Integer)
                 and isinstance(other.polys[0], Integer)
                 and self.embeddings == other.embeddings == [None]
