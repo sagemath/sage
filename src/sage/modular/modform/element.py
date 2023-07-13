@@ -2568,6 +2568,45 @@ class ModularFormElement(ModularForm_abstract, element.HeckeModuleElement):
 
         return newparent.base_extend(newqexp.base_ring())(newqexp)
 
+    def _pow_int(self, n):
+        """
+        Raises ``self`` to integer powers.
+
+        TESTS::
+
+            sage: F = ModularForms(1, 12).0
+            sage: (F**5).qexp(20)
+            q^5 - 120*q^6 + 7020*q^7 + O(q^8)
+
+            Exponentiation is a lot faster than chain multiplication:
+
+            sage: F = ModularForms(DirichletGroup(6).0, 3).0
+            sage: G = F**8 # long time -- around 3 seconds
+        """
+        # shamelessly copied from above
+        try:
+            eps = self.character()
+            verbose(f"character of self is {eps}")
+            newchar = eps ** n
+            verbose(f"character of product is {newchar}")
+        except (NotImplementedError, ValueError):
+            newchar = None
+            verbose("character of product not determined")
+
+        from .constructor import ModularForms
+        if newchar is not None:
+            verbose("creating a parent with char")
+            newparent = ModularForms(newchar, self.weight() * n,
+                                     base_ring=newchar.base_ring())
+            verbose("parent is %s" % newparent)
+        else:
+            newparent = ModularForms(self.group(), self.weight() * n,
+                                     base_ring=ZZ)
+        m = newparent.sturm_bound()
+        newqexp = self.qexp(m) ** n
+
+        return newparent.base_extend(newqexp.base_ring())(newqexp)
+
     def atkin_lehner_eigenvalue(self, d=None, embedding=None):
         """
         Return the result of the Atkin-Lehner operator `W_d` on
@@ -3572,6 +3611,9 @@ class GradedModularFormElement(ModuleElement):
             sage: F4 = M(f4); F6 = M(f6);
             sage: F4*F6 # indirect doctest
             1 - 264*q - 135432*q^2 - 5196576*q^3 - 69341448*q^4 - 515625264*q^5 + O(q^6)
+            sage: E4 = EisensteinForms(1, 4).0
+            sage: E4^2
+            1 + 480*q + 61920*q^2 + 1050240*q^3 + 7926240*q^4 + 37500480*q^5 + O(q^6)
         """
         GM = self.__class__
         f_self = self._forms_dictionary
