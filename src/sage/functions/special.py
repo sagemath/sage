@@ -172,54 +172,56 @@ class SphericalHarmonic(BuiltinFunction):
 
     EXAMPLES::
 
-        sage: x, y = var('x, y')                                                        # optional - sage.symbolic
-        sage: spherical_harmonic(3, 2, x, y)                                            # optional - sage.symbolic
+        sage: # needs sage.symbolic
+        sage: x, y = var('x, y')
+        sage: spherical_harmonic(3, 2, x, y)
         1/8*sqrt(30)*sqrt(7)*cos(x)*e^(2*I*y)*sin(x)^2/sqrt(pi)
-        sage: spherical_harmonic(3, 2, 1, 2)                                            # optional - sage.symbolic
+        sage: spherical_harmonic(3, 2, 1, 2)
         1/8*sqrt(30)*sqrt(7)*cos(1)*e^(4*I)*sin(1)^2/sqrt(pi)
-        sage: spherical_harmonic(3 + I, 2., 1, 2)                                       # optional - sage.symbolic
+        sage: spherical_harmonic(3 + I, 2., 1, 2)
         -0.351154337307488 - 0.415562233975369*I
-        sage: latex(spherical_harmonic(3, 2, x, y, hold=True))                          # optional - sage.symbolic
+        sage: latex(spherical_harmonic(3, 2, x, y, hold=True))
         Y_{3}^{2}\left(x, y\right)
-        sage: spherical_harmonic(1, 2, x, y)                                            # optional - sage.symbolic
+        sage: spherical_harmonic(1, 2, x, y)
         0
 
     The degree `n` and the order `m` can be symbolic::
 
-        sage: n, m = var('n m')                                                         # optional - sage.symbolic
-        sage: spherical_harmonic(n, m, x, y)                                            # optional - sage.symbolic
+        sage: # needs sage.symbolic
+        sage: n, m = var('n m')
+        sage: spherical_harmonic(n, m, x, y)
         spherical_harmonic(n, m, x, y)
-        sage: latex(spherical_harmonic(n, m, x, y))                                     # optional - sage.symbolic
+        sage: latex(spherical_harmonic(n, m, x, y))
         Y_{n}^{m}\left(x, y\right)
-        sage: diff(spherical_harmonic(n, m, x, y), x)                                   # optional - sage.symbolic
+        sage: diff(spherical_harmonic(n, m, x, y), x)
         m*cot(x)*spherical_harmonic(n, m, x, y)
          + sqrt(-(m + n + 1)*(m - n))*e^(-I*y)*spherical_harmonic(n, m + 1, x, y)
-        sage: diff(spherical_harmonic(n, m, x, y), y)                                   # optional - sage.symbolic
+        sage: diff(spherical_harmonic(n, m, x, y), y)
         I*m*spherical_harmonic(n, m, x, y)
 
     The convention regarding the Condon-Shortley phase `(-1)^m` is the same
     as for SymPy's spherical harmonics and :wikipedia:`Spherical_harmonics`::
 
-        sage: spherical_harmonic(1, 1, x, y)                                            # optional - sage.symbolic
+        sage: spherical_harmonic(1, 1, x, y)                                            # needs sage.symbolic
         -1/4*sqrt(3)*sqrt(2)*e^(I*y)*sin(x)/sqrt(pi)
-        sage: from sympy import Ynm                                                     # optional - sympy sage.symbolic
-        sage: Ynm(1, 1, x, y).expand(func=True)                                         # optional - sympy sage.symbolic
+        sage: from sympy import Ynm                                                     # needs sympy sage.symbolic
+        sage: Ynm(1, 1, x, y).expand(func=True)                                         # needs sympy sage.symbolic
         -sqrt(6)*exp(I*y)*sin(x)/(4*sqrt(pi))
-        sage: spherical_harmonic(1, 1, x, y) - Ynm(1, 1, x, y)                          # optional - sympy sage.symbolic
+        sage: spherical_harmonic(1, 1, x, y) - Ynm(1, 1, x, y)                          # needs sympy sage.symbolic
         0
 
     It also agrees with SciPy's spherical harmonics::
 
-        sage: spherical_harmonic(1, 1, pi/2, pi).n()  # abs tol 1e-14                   # optional - sage.symbolic
+        sage: spherical_harmonic(1, 1, pi/2, pi).n()  # abs tol 1e-14                   # needs sage.symbolic
         0.345494149471335
-        sage: from scipy.special import sph_harm  # NB: arguments x and y are swapped   # optional - scipy
-        sage: sph_harm(1, 1, pi.n(), (pi/2).n())  # abs tol 1e-14                       # optional - scipy sage.symbolic
+        sage: from scipy.special import sph_harm  # NB: arguments x and y are swapped   # needs scipy
+        sage: sph_harm(1, 1, pi.n(), (pi/2).n())  # abs tol 1e-14                       # needs scipy sage.symbolic
         (0.3454941494713355-4.231083042742082e-17j)
 
     Note that this convention differs from the one in Maxima, as revealed by
     the sign difference for odd values of `m`::
 
-        sage: maxima.spherical_harmonic(1, 1, x, y).sage()                              # optional - sage.symbolic
+        sage: maxima.spherical_harmonic(1, 1, x, y).sage()                              # needs sage.symbolic
         1/2*sqrt(3/2)*e^(I*y)*sin(x)/sqrt(pi)
 
     It follows that, contrary to Maxima, SageMath uses the same sign convention
@@ -235,8 +237,8 @@ class SphericalHarmonic(BuiltinFunction):
         r"""
         TESTS::
 
-            sage: n, m, theta, phi = var('n m theta phi')                               # optional - sage.symbolic
-            sage: spherical_harmonic(n, m, theta, phi)._sympy_()                        # optional - sympy sage.symbolic
+            sage: n, m, theta, phi = var('n m theta phi')                               # needs sage.symbolic
+            sage: spherical_harmonic(n, m, theta, phi)._sympy_()                        # needs sympy sage.symbolic
             Ynm(n, m, theta, phi)
         """
         BuiltinFunction.__init__(self, 'spherical_harmonic', nargs=4,
@@ -250,44 +252,45 @@ class SphericalHarmonic(BuiltinFunction):
         r"""
         TESTS::
 
-            sage: x, y = var('x y')                                                     # optional - sage.symbolic
-            sage: spherical_harmonic(1, 2, x, y)                                        # optional - sage.symbolic
+            sage: x, y = var('x y')                                                     # needs sage.symbolic
+            sage: spherical_harmonic(1, 2, x, y)                                        # needs sage.symbolic
             0
-            sage: spherical_harmonic(1, -2, x, y)                                       # optional - sage.symbolic
+            sage: spherical_harmonic(1, -2, x, y)                                       # needs sage.symbolic
             0
-            sage: spherical_harmonic(1/2, 2, x, y)                                      # optional - sage.symbolic
+            sage: spherical_harmonic(1/2, 2, x, y)                                      # needs sage.symbolic
             spherical_harmonic(1/2, 2, x, y)
-            sage: spherical_harmonic(3, 2, x, y)                                        # optional - sage.symbolic
+            sage: spherical_harmonic(3, 2, x, y)                                        # needs sage.symbolic
             1/8*sqrt(30)*sqrt(7)*cos(x)*e^(2*I*y)*sin(x)^2/sqrt(pi)
-            sage: spherical_harmonic(3, 2, 1, 2)                                        # optional - sage.symbolic
+            sage: spherical_harmonic(3, 2, 1, 2)                                        # needs sage.symbolic
             1/8*sqrt(30)*sqrt(7)*cos(1)*e^(4*I)*sin(1)^2/sqrt(pi)
             sage: spherical_harmonic(3 + I, 2., 1, 2)
             -0.351154337307488 - 0.415562233975369*I
 
         Check that :trac:`20939` is fixed::
 
-            sage: ex = spherical_harmonic(3, 2, 1, 2*pi/3)                              # optional - sage.symbolic
-            sage: QQbar(ex * sqrt(pi)/cos(1)/sin(1)^2).minpoly()                        # optional - sage.rings.number_field sage.symbolic
+            sage: ex = spherical_harmonic(3, 2, 1, 2*pi/3)                              # needs sage.symbolic
+            sage: QQbar(ex * sqrt(pi)/cos(1)/sin(1)^2).minpoly()                        # needs sage.rings.number_field sage.symbolic
             x^4 + 105/32*x^2 + 11025/1024
 
         Check whether Sage yields correct results compared to Maxima,
         up to the Condon-Shortley phase factor `(-1)^m`
         (see :trac:`25034` and :trac:`33117`)::
 
-            sage: spherical_harmonic(1, 1, pi/3, pi/6).n()  # abs tol 1e-14             # optional - sage.symbolic
+            sage: # needs sage.symbolic
+            sage: spherical_harmonic(1, 1, pi/3, pi/6).n()  # abs tol 1e-14
             -0.259120612103502 - 0.149603355150537*I
-            sage: maxima.spherical_harmonic(1, 1, pi/3, pi/6).n()  # abs tol 1e-14      # optional - sage.symbolic
+            sage: maxima.spherical_harmonic(1, 1, pi/3, pi/6).n()  # abs tol 1e-14
             0.259120612103502 + 0.149603355150537*I
-            sage: spherical_harmonic(1, -1, pi/3, pi/6).n()  # abs tol 1e-14            # optional - sage.symbolic
+            sage: spherical_harmonic(1, -1, pi/3, pi/6).n()  # abs tol 1e-14
             0.259120612103502 - 0.149603355150537*I
-            sage: maxima.spherical_harmonic(1, -1, pi/3, pi/6).n()  # abs tol 1e-14     # optional - sage.symbolic
+            sage: maxima.spherical_harmonic(1, -1, pi/3, pi/6).n()  # abs tol 1e-14
             -0.259120612103502 + 0.149603355150537*I
 
         Check that :trac:`33501` is fixed::
 
-            sage: spherical_harmonic(2, 1, x, y)                                        # optional - sage.symbolic
+            sage: spherical_harmonic(2, 1, x, y)                                        # needs sage.symbolic
             -1/4*sqrt(6)*sqrt(5)*cos(x)*e^(I*y)*sin(x)/sqrt(pi)
-            sage: spherical_harmonic(5, -3, x, y)                                       # optional - sage.symbolic
+            sage: spherical_harmonic(5, -3, x, y)                                       # needs sage.symbolic
             -1/32*(9*sqrt(385)*sin(x)^4 - 8*sqrt(385)*sin(x)^2)*e^(-3*I*y)*sin(x)/sqrt(pi)
 
         """
@@ -309,17 +312,17 @@ class SphericalHarmonic(BuiltinFunction):
         r"""
         TESTS::
 
-            sage: spherical_harmonic(3 + I, 2, 1, 2).n(100)                             # optional - sage.symbolic
+            sage: spherical_harmonic(3 + I, 2, 1, 2).n(100)                             # needs sage.symbolic
             -0.35115433730748836508201061672 - 0.41556223397536866209990358597*I
-            sage: spherical_harmonic(I, I, I, I).n()                                    # optional - sage.symbolic
+            sage: spherical_harmonic(I, I, I, I).n()                                    # needs sage.symbolic
             7.66678546069894 - 0.265754432549751*I
 
         Consistency with ``_eval_``::
 
-            sage: d = lambda a, b: abs(spherical_harmonic(a, b, 1., 2.)                 # optional - sage.symbolic
+            sage: d = lambda a, b: abs(spherical_harmonic(a, b, 1., 2.)                 # needs sage.symbolic
             ....:                      - spherical_harmonic(a, b, 1, 2).n())
             sage: ab = [(0, 0), (1, -1), (1, 0), (1, 1), (3, 2), (3, 3)]
-            sage: all(d(a, b) < 1e-14 for a, b in ab)                                   # optional - sage.symbolic
+            sage: all(d(a, b) < 1e-14 for a, b in ab)                                   # needs sage.symbolic
             True
 
         """
@@ -329,25 +332,27 @@ class SphericalHarmonic(BuiltinFunction):
         r"""
         TESTS::
 
-            sage: n, m, theta, phi = var('n m theta phi')                               # optional - sage.symbolic
-            sage: Ynm = spherical_harmonic(n, m, theta, phi)                            # optional - sage.symbolic
-            sage: DY_theta = Ynm.diff(theta); DY_theta                                  # optional - sage.symbolic
+            sage: # needs sage.symbolic
+            sage: n, m, theta, phi = var('n m theta phi')
+            sage: Ynm = spherical_harmonic(n, m, theta, phi)
+            sage: DY_theta = Ynm.diff(theta); DY_theta
             m*cot(theta)*spherical_harmonic(n, m, theta, phi)
              + sqrt(-(m + n + 1)*(m - n))*e^(-I*phi)*spherical_harmonic(n, m + 1, theta, phi)
-            sage: Ynm.diff(phi)                                                         # optional - sage.symbolic
+            sage: Ynm.diff(phi)
             I*m*spherical_harmonic(n, m, theta, phi)
 
         Check that :trac:`33117` is fixed::
 
-            sage: DY_theta.subs({n: 1, m: 0})                                                       # optional - sage.symbolic
+            sage: # needs sage.symbolic
+            sage: DY_theta.subs({n: 1, m: 0})
             -1/2*sqrt(3)*sin(theta)/sqrt(pi)
-            sage: Ynm.subs({n: 1, m: 0}).diff(theta)                                                # optional - sage.symbolic
+            sage: Ynm.subs({n: 1, m: 0}).diff(theta)
             -1/2*sqrt(3)*sin(theta)/sqrt(pi)
-            sage: bool(DY_theta.subs({n: 1, m: 0}) == Ynm.subs({n: 1, m: 0}).diff(theta))           # optional - sage.symbolic
+            sage: bool(DY_theta.subs({n: 1, m: 0}) == Ynm.subs({n: 1, m: 0}).diff(theta))
             True
-            sage: bool(DY_theta.subs({n: 1, m: 1}) == Ynm.subs({n: 1, m: 1}).diff(theta))           # optional - sage.symbolic
+            sage: bool(DY_theta.subs({n: 1, m: 1}) == Ynm.subs({n: 1, m: 1}).diff(theta))
             True
-            sage: bool(DY_theta.subs({n: 1, m: -1}) == Ynm.subs({n: 1, m: -1}).diff(theta))         # optional - sage.symbolic
+            sage: bool(DY_theta.subs({n: 1, m: -1}) == Ynm.subs({n: 1, m: -1}).diff(theta))
             True
 
         """
@@ -365,7 +370,7 @@ class SphericalHarmonic(BuiltinFunction):
         r"""
         TESTS::
 
-            sage: latex(spherical_harmonic)                                             # optional - sage.symbolic
+            sage: latex(spherical_harmonic)                                             # needs sage.symbolic
             Y_n^m
         """
         return r"Y_n^m"
@@ -374,8 +379,8 @@ class SphericalHarmonic(BuiltinFunction):
         r"""
         TESTS::
 
-            sage: y = var('y')                                                          # optional - sage.symbolic
-            sage: latex(spherical_harmonic(3, 2, x, y, hold=True))                      # optional - sage.symbolic
+            sage: y = var('y')                                                          # needs sage.symbolic
+            sage: latex(spherical_harmonic(3, 2, x, y, hold=True))                      # needs sage.symbolic
             Y_{3}^{2}\left(x, y\right)
         """
         return r"Y_{{{}}}^{{{}}}\left({}, {}\right)".format(
@@ -409,32 +414,33 @@ def elliptic_j(z, prec=53):
 
     EXAMPLES::
 
-        sage: elliptic_j(CC(i))                                                         # optional - sage.rings.real_mpfr
+        sage: elliptic_j(CC(i))                                                         # needs sage.rings.real_mpfr
         1728.00000000000
-        sage: elliptic_j(sqrt(-2.0))
+        sage: elliptic_j(sqrt(-2.0))                                                    # needs sage.rings.complex_double
         8000.00000000000
-        sage: z = ComplexField(100)(1, sqrt(11))/2                                      # optional - sage.rings.real_mpfr sage.symbolic
-        sage: elliptic_j(z)                                                             # optional - sage.rings.real_mpfr sage.symbolic
+        sage: z = ComplexField(100)(1, sqrt(11))/2                                      # needs sage.rings.real_mpfr sage.symbolic
+        sage: elliptic_j(z)                                                             # needs sage.rings.real_mpfr sage.symbolic
         -32768.000...
-        sage: elliptic_j(z).real().round()                                              # optional - sage.rings.real_mpfr sage.symbolic
+        sage: elliptic_j(z).real().round()                                              # needs sage.rings.real_mpfr sage.symbolic
         -32768
 
     ::
 
-        sage: tau = (1 + sqrt(-163))/2                                                  # optional - sage.symbolic
-        sage: (-elliptic_j(tau.n(100)).real().round())^(1/3)                            # optional - sage.symbolic
+        sage: tau = (1 + sqrt(-163))/2                                                  # needs sage.symbolic
+        sage: (-elliptic_j(tau.n(100)).real().round())^(1/3)                            # needs sage.symbolic
         640320
 
     This example shows the need for higher precision than the default one of
     the `ComplexField`, see :trac:`28355`::
 
-        sage: -elliptic_j(tau)  # rel tol 1e-2                                          # optional - sage.symbolic
+        sage: # needs sage.symbolic
+        sage: -elliptic_j(tau)  # rel tol 1e-2
         2.62537412640767e17 - 732.558854258998*I
-        sage: -elliptic_j(tau, 75)  # rel tol 1e-2                                      # optional - sage.symbolic
+        sage: -elliptic_j(tau, 75)  # rel tol 1e-2
         2.625374126407680000000e17 - 0.0001309913593909879441262*I
-        sage: -elliptic_j(tau, 100)  # rel tol 1e-2                                     # optional - sage.symbolic
+        sage: -elliptic_j(tau, 100)  # rel tol 1e-2
         2.6253741264076799999999999999e17 - 1.3012822400356887122945119790e-12*I
-        sage: (-elliptic_j(tau, 100).real().round())^(1/3)                              # optional - sage.symbolic
+        sage: (-elliptic_j(tau, 100).real().round())^(1/3)
         640320
     """
     CC = z.parent()
@@ -461,16 +467,16 @@ class EllipticE(BuiltinFunction):
 
     EXAMPLES::
 
-        sage: z = var("z")                                                              # optional - sage.symbolic
-        sage: elliptic_e(z, 1)                                                          # optional - sage.symbolic
+        sage: z = var("z")                                                              # needs sage.symbolic
+        sage: elliptic_e(z, 1)                                                          # needs sage.symbolic
         elliptic_e(z, 1)
-        sage: elliptic_e(z, 1).simplify() # not tested - gives wrong answer with maxima < 5.47  # optional - sage.symbolic
+        sage: elliptic_e(z, 1).simplify()       # not tested                            # needs sage.symbolic
         2*round(z/pi) - sin(pi*round(z/pi) - z)
-        sage: elliptic_e(z, 0)                                                                  # optional - sage.symbolic
+        sage: elliptic_e(z, 0)                                                          # needs sage.symbolic
         z
         sage: elliptic_e(0.5, 0.1)  # abs tol 2e-15
         0.498011394498832
-        sage: elliptic_e(1/2, 1/10).n(200)                                              # optional - sage.symbolic
+        sage: elliptic_e(1/2, 1/10).n(200)                                              # needs sage.symbolic
         0.4980113944988315331154610406...
 
     .. SEEALSO::
@@ -493,27 +499,27 @@ class EllipticE(BuiltinFunction):
 
             sage: loads(dumps(elliptic_e))
             elliptic_e
-            sage: elliptic_e(x, x)._sympy_()                                            # optional - sympy sage.symbolic
+            sage: elliptic_e(x, x)._sympy_()                                            # needs sympy sage.symbolic
             elliptic_e(x, x)
 
         Check that :trac:`34085` is fixed::
 
-            sage: _ = var("x y")                                                        # optional - sage.symbolic
-            sage: fricas(elliptic_e(x, y))                                      # optional - fricas  sage.symbolic
+            sage: _ = var("x y")                                                        # needs sage.symbolic
+            sage: fricas(elliptic_e(x, y))                                      # optional - fricas, needs sage.symbolic
             ellipticE(sin(x),y)
 
         However, the conversion is only correct in the interval
         `[-\pi/2, \pi/2]`::
 
-            sage: fricas(elliptic_e(x, y)).D(x).sage()/elliptic_e(x, y).diff(x) # optional - fricas  sage.symbolic
+            sage: fricas(elliptic_e(x, y)).D(x).sage()/elliptic_e(x, y).diff(x)     # optional - fricas, needs sage.symbolic
             cos(x)/sqrt(-sin(x)^2 + 1)
 
         Numerically::
 
-            sage: f = lambda x, y: elliptic_e(arcsin(x), y).subs(x=x, y=y)      # optional - fricas  sage.symbolic
-            sage: g = lambda x, y: fricas.ellipticE(x, y).sage()                # optional - fricas  sage.symbolic
-            sage: d = lambda x, y: f(x, y) - g(x, y)                            # optional - fricas  sage.symbolic
-            sage: [d(N(-pi/2 + x), y)                           # tol 1e-8      # optional - fricas  sage.symbolic
+            sage: f = lambda x, y: elliptic_e(arcsin(x), y).subs(x=x, y=y)      # optional - fricas, needs sage.symbolic
+            sage: g = lambda x, y: fricas.ellipticE(x, y).sage()                # optional - fricas, needs sage.symbolic
+            sage: d = lambda x, y: f(x, y) - g(x, y)                            # optional - fricas, needs sage.symbolic
+            sage: [d(N(-pi/2 + x), y)                           # tol 1e-8      # optional - fricas, needs sage.symbolic
             ....:  for x in range(1, 3) for y in range(-2, 2)]
             [0.000000000000000,
              0.000000000000000,
@@ -537,19 +543,20 @@ class EllipticE(BuiltinFunction):
         """
         EXAMPLES::
 
-            sage: z = var("z")                                                          # optional - sage.symbolic
-            sage: elliptic_e(0, x)                                                      # optional - sage.symbolic
+            sage: # needs sage.symbolic
+            sage: z = var("z")
+            sage: elliptic_e(0, x)
             0
-            sage: elliptic_e(pi/2, x)                                                   # optional - sage.symbolic
+            sage: elliptic_e(pi/2, x)
             elliptic_ec(x)
-            sage: elliptic_e(z, 0)                                                      # optional - sage.symbolic
+            sage: elliptic_e(z, 0)
             z
-            sage: elliptic_e(z, 1)                                                      # optional - sage.symbolic
+            sage: elliptic_e(z, 1)
             elliptic_e(z, 1)
 
         Here arccoth doesn't have 1 in its domain, so we just hold the expression::
 
-            sage: elliptic_e(arccoth(1), x^2*e)                                         # optional - sage.symbolic
+            sage: elliptic_e(arccoth(1), x^2*e)                                         # needs sage.symbolic
             elliptic_e(+Infinity, x^2*e)
         """
         if z == 0:
@@ -565,9 +572,9 @@ class EllipticE(BuiltinFunction):
 
             sage: elliptic_e(0.5, 0.1)
             0.498011394498832
-            sage: elliptic_e(1/2, 1/10).n(200)                                          # optional - sage.symbolic
+            sage: elliptic_e(1/2, 1/10).n(200)                                          # needs sage.symbolic
             0.4980113944988315331154610406...
-            sage: elliptic_e(I, I).n()                                                  # optional - sage.symbolic
+            sage: elliptic_e(I, I).n()                                                  # needs sage.symbolic
             -0.189847437084712 + 1.03209769372160*I
 
         TESTS:
@@ -584,10 +591,10 @@ class EllipticE(BuiltinFunction):
         """
         EXAMPLES::
 
-            sage: x, z = var('x,z')                                                     # optional - sage.symbolic
-            sage: elliptic_e(z, x).diff(z, 1)                                           # optional - sage.symbolic
+            sage: x, z = var('x,z')                                                     # needs sage.symbolic
+            sage: elliptic_e(z, x).diff(z, 1)                                           # needs sage.symbolic
             sqrt(-x*sin(z)^2 + 1)
-            sage: elliptic_e(z, x).diff(x, 1)                                           # optional - sage.symbolic
+            sage: elliptic_e(z, x).diff(x, 1)                                           # needs sage.symbolic
             1/2*(elliptic_e(z, x) - elliptic_f(z, x))/x
         """
         if diff_param == 0:
@@ -599,7 +606,7 @@ class EllipticE(BuiltinFunction):
         r"""
         EXAMPLES::
 
-            sage: latex(elliptic_e(pi, x))                                              # optional - sage.symbolic
+            sage: latex(elliptic_e(pi, x))                                              # needs sage.symbolic
             E(\pi\,|\,x)
         """
         return r"E(%s\,|\,%s)" % (latex(z), latex(m))
@@ -619,7 +626,7 @@ class EllipticEC(BuiltinFunction):
 
         sage: elliptic_ec(0.1)
         1.53075763689776
-        sage: elliptic_ec(x).diff()                                                     # optional - sage.symbolic
+        sage: elliptic_ec(x).diff()                                                     # needs sage.symbolic
         1/2*(elliptic_ec(x) - elliptic_kc(x))/x
 
     .. SEEALSO::
@@ -636,17 +643,17 @@ class EllipticEC(BuiltinFunction):
 
             sage: loads(dumps(elliptic_ec))
             elliptic_ec
-            sage: elliptic_ec(x)._sympy_()                                              # optional - sage.symbolic
+            sage: elliptic_ec(x)._sympy_()                                              # needs sage.symbolic
             elliptic_e(x)
 
         TESTS::
 
-            sage: fricas(elliptic_ec(x))                                        # optional - fricas  sage.symbolic
+            sage: fricas(elliptic_ec(x))                                        # optional - fricas, needs sage.symbolic
             ellipticE(x)
 
-            sage: elliptic_ec(0.5)  # abs tol 1e-8                                      # optional - sage.symbolic
+            sage: elliptic_ec(0.5)  # abs tol 1e-8                                      # needs sage.symbolic
             1.35064388104768
-            sage: fricas.ellipticE(0.5).sage()  # abs tol 1e-8                  # optional - fricas  sage.symbolic
+            sage: fricas.ellipticE(0.5).sage()  # abs tol 1e-8                  # optional - fricas, needs sage.symbolic
             1.3506438810476755025201749
         """
         BuiltinFunction.__init__(self, 'elliptic_ec', nargs=1, latex_name='E',
@@ -659,11 +666,11 @@ class EllipticEC(BuiltinFunction):
         """
         EXAMPLES::
 
-            sage: elliptic_ec(0)                                                        # optional - sage.symbolic
+            sage: elliptic_ec(0)                                                        # needs sage.symbolic
             1/2*pi
-            sage: elliptic_ec(1)                                                        # optional - sage.symbolic
+            sage: elliptic_ec(1)                                                        # needs sage.symbolic
             1
-            sage: elliptic_ec(x)                                                        # optional - sage.symbolic
+            sage: elliptic_ec(x)                                                        # needs sage.symbolic
             elliptic_ec(x)
         """
         if x == 0:
@@ -675,11 +682,11 @@ class EllipticEC(BuiltinFunction):
         """
         EXAMPLES::
 
-            sage: elliptic_ec(sqrt(2)/2).n()                                            # optional - sage.symbolic
+            sage: elliptic_ec(sqrt(2)/2).n()                                            # needs sage.symbolic
             1.23742252487318
-            sage: elliptic_ec(sqrt(2)/2).n(200)                                         # optional - sage.symbolic
+            sage: elliptic_ec(sqrt(2)/2).n(200)                                         # needs sage.symbolic
             1.237422524873181672854746084083...
-            sage: elliptic_ec(I).n()                                                    # optional - sage.symbolic
+            sage: elliptic_ec(I).n()                                                    # needs sage.symbolic
             1.63241178144043 - 0.369219492375499*I
         """
         R = parent or parent(x)
@@ -689,7 +696,7 @@ class EllipticEC(BuiltinFunction):
         """
         EXAMPLES::
 
-            sage: elliptic_ec(x).diff()                                                 # optional - sage.symbolic
+            sage: elliptic_ec(x).diff()                                                 # needs sage.symbolic
             1/2*(elliptic_ec(x) - elliptic_kc(x))/x
         """
         return (elliptic_ec(x) - elliptic_kc(x)) / (Integer(2) * x)
@@ -741,7 +748,7 @@ class EllipticEU(BuiltinFunction):
         """
         EXAMPLES::
 
-            sage: elliptic_eu(1, 1)                                                     # optional - sage.symbolic
+            sage: elliptic_eu(1, 1)                                                     # needs sage.symbolic
             elliptic_eu(1, 1)
         """
         pass
@@ -750,9 +757,9 @@ class EllipticEU(BuiltinFunction):
         """
         EXAMPLES::
 
-            sage: elliptic_eu(1, 1).n()                                                 # optional - sage.symbolic
+            sage: elliptic_eu(1, 1).n()                                                 # needs sage.symbolic
             0.761594155955765
-            sage: elliptic_eu(1, 1).n(200)                                              # optional - sage.symbolic
+            sage: elliptic_eu(1, 1).n(200)                                              # needs sage.symbolic
             0.7615941559557648881194582...
         """
         R = parent or parent(u)
@@ -762,10 +769,10 @@ class EllipticEU(BuiltinFunction):
         """
         EXAMPLES::
 
-            sage: x, m = var('x,m')                                                     # optional - sage.symbolic
-            sage: elliptic_eu(x, m).diff(x)                                             # optional - sage.symbolic
+            sage: x, m = var('x,m')                                                     # needs sage.symbolic
+            sage: elliptic_eu(x, m).diff(x)                                             # needs sage.symbolic
             sqrt(-m*jacobi_sn(x, m)^2 + 1)*jacobi_dn(x, m)
-            sage: elliptic_eu(x, m).diff(m)                                             # optional - sage.symbolic
+            sage: elliptic_eu(x, m).diff(m)                                             # needs sage.symbolic
             1/2*(elliptic_eu(x, m)
              - elliptic_f(jacobi_am(x, m), m))/m
              - 1/2*(m*jacobi_cn(x, m)*jacobi_sn(x, m)
@@ -789,7 +796,7 @@ class EllipticEU(BuiltinFunction):
         """
         EXAMPLES::
 
-            sage: latex(elliptic_eu(1, x))                                              # optional - sage.symbolic
+            sage: latex(elliptic_eu(1, x))                                              # needs sage.symbolic
             E(1;x)
         """
         return r"E(%s;%s)" % (latex(u), latex(m))
@@ -804,7 +811,7 @@ def elliptic_eu_f(u, m):
     EXAMPLES::
 
         sage: from sage.functions.special import elliptic_eu_f
-        sage: elliptic_eu_f(0.5, 0.1)                                                   # optional - mpmath
+        sage: elliptic_eu_f(0.5, 0.1)                                                   # needs mpmath
         mpf('0.49605455128659691')
     """
     from sage.libs.mpmath.all import mp as ctx
@@ -834,10 +841,10 @@ class EllipticF(BuiltinFunction):
 
     EXAMPLES::
 
-        sage: z = var("z")                                                              # optional - sage.symbolic
-        sage: elliptic_f(z, 0)                                                          # optional - sage.symbolic
+        sage: z = var("z")                                                              # needs sage.symbolic
+        sage: elliptic_f(z, 0)                                                          # needs sage.symbolic
         z
-        sage: elliptic_f(z, 1).simplify()                                               # optional - sage.symbolic
+        sage: elliptic_f(z, 1).simplify()                                               # needs sage.symbolic
         log(tan(1/4*pi + 1/2*z))
         sage: elliptic_f(0.2, 0.1)
         0.200132506747543
@@ -856,27 +863,27 @@ class EllipticF(BuiltinFunction):
 
             sage: loads(dumps(elliptic_f))
             elliptic_f
-            sage: elliptic_f(x, 2)._sympy_()                                            # optional - sympy sage.symbolic
+            sage: elliptic_f(x, 2)._sympy_()                                            # needs sympy sage.symbolic
             elliptic_f(x, 2)
 
         Check that :trac:`34186` is fixed::
 
-            sage: _ = var("x y")                                                        # optional - sage.symbolic
-            sage: fricas(elliptic_f(x, y))                                      # optional - fricas  sage.symbolic
+            sage: _ = var("x y")                                                        # needs sage.symbolic
+            sage: fricas(elliptic_f(x, y))                                      # optional - fricas, needs sage.symbolic
             ellipticF(sin(x),y)
 
         However, the conversion is only correct in the interval
         `[-\pi/2, \pi/2]`::
 
-            sage: fricas(elliptic_f(x, y)).D(x).sage()/elliptic_f(x, y).diff(x) # optional - fricas  sage.symbolic
+            sage: fricas(elliptic_f(x, y)).D(x).sage()/elliptic_f(x, y).diff(x)     # optional - fricas, needs sage.symbolic
             cos(x)/sqrt(-sin(x)^2 + 1)
 
         Numerically::
 
-            sage: f = lambda x, y: elliptic_f(arcsin(x), y).subs(x=x, y=y)      # optional - fricas  sage.symbolic
-            sage: g = lambda x, y: fricas.ellipticF(x, y).sage()                # optional - fricas  sage.symbolic
-            sage: d = lambda x, y: f(x, y) - g(x, y)                            # optional - fricas  sage.symbolic
-            sage: [d(N(-pi/2 + x), y)                          # tol 1e-8       # optional - fricas  sage.symbolic
+            sage: f = lambda x, y: elliptic_f(arcsin(x), y).subs(x=x, y=y)      # optional - fricas, needs sage.symbolic
+            sage: g = lambda x, y: fricas.ellipticF(x, y).sage()                # optional - fricas, needs sage.symbolic
+            sage: d = lambda x, y: f(x, y) - g(x, y)                            # optional - fricas, needs sage.symbolic
+            sage: [d(N(-pi/2 + x), y)                          # tol 1e-8       # optional - fricas, needs sage.symbolic
             ....:  for x in range(1, 3) for y in range(-2,2)]
             [0.000000000000000,
              0.000000000000000,
@@ -898,13 +905,14 @@ class EllipticF(BuiltinFunction):
         """
         EXAMPLES::
 
-            sage: elliptic_f(x, 1)                                                      # optional - sage.symbolic
+            sage: # needs sage.symbolic
+            sage: elliptic_f(x, 1)
             elliptic_f(x, 1)
-            sage: elliptic_f(x, 0)                                                      # optional - sage.symbolic
+            sage: elliptic_f(x, 0)
             x
-            sage: elliptic_f(0, 1)                                                      # optional - sage.symbolic
+            sage: elliptic_f(0, 1)
             0
-            sage: elliptic_f(pi/2, x)                                                   # optional - sage.symbolic
+            sage: elliptic_f(pi/2, x)
             elliptic_kc(x)
         """
         if m == 0:
@@ -918,11 +926,11 @@ class EllipticF(BuiltinFunction):
         """
         EXAMPLES::
 
-            sage: elliptic_f(1, 1).n()                                                  # optional - sage.symbolic
+            sage: elliptic_f(1, 1).n()                                                  # needs sage.symbolic
             1.22619117088352
-            sage: elliptic_f(1, 1).n(200)                                               # optional - sage.symbolic
+            sage: elliptic_f(1, 1).n(200)                                               # needs sage.symbolic
             1.22619117088351707081306096...
-            sage: elliptic_f(I, I).n()                                                  # optional - sage.symbolic
+            sage: elliptic_f(I, I).n()                                                  # needs sage.symbolic
             0.149965060031782 + 0.925097284105771*I
         """
         R = parent or parent(z)
@@ -932,10 +940,10 @@ class EllipticF(BuiltinFunction):
         """
         EXAMPLES::
 
-            sage: x, m = var('x,m')                                                     # optional - sage.symbolic
-            sage: elliptic_f(x, m).diff(x)                                              # optional - sage.symbolic
+            sage: x, m = var('x,m')                                                     # needs sage.symbolic
+            sage: elliptic_f(x, m).diff(x)                                              # needs sage.symbolic
             1/sqrt(-m*sin(x)^2 + 1)
-            sage: elliptic_f(x, m).diff(m)                                              # optional - sage.symbolic
+            sage: elliptic_f(x, m).diff(m)                                              # needs sage.symbolic
             -1/2*elliptic_f(x, m)/m
             + 1/4*sin(2*x)/(sqrt(-m*sin(x)^2 + 1)*(m - 1))
             - 1/2*elliptic_e(x, m)/((m - 1)*m)
@@ -953,7 +961,7 @@ class EllipticF(BuiltinFunction):
         r"""
         EXAMPLES::
 
-            sage: latex(elliptic_f(x, pi))                                              # optional - sage.symbolic
+            sage: latex(elliptic_f(x, pi))                                              # needs sage.symbolic
             F(x\,|\,\pi)
         """
         return r"F(%s\,|\,%s)" % (latex(z), latex(m))
@@ -993,17 +1001,17 @@ class EllipticKC(BuiltinFunction):
 
             sage: loads(dumps(elliptic_kc))
             elliptic_kc
-            sage: elliptic_kc(x)._sympy_()                                              # optional - sage.symbolic
+            sage: elliptic_kc(x)._sympy_()                                              # needs sage.symbolic
             elliptic_k(x)
 
         TESTS::
 
-            sage: fricas(elliptic_kc(x))                                        # optional - fricas  sage.symbolic
+            sage: fricas(elliptic_kc(x))                                        # optional - fricas, needs sage.symbolic
             ellipticK(x)
 
             sage: elliptic_kc(0.3)  # abs tol 1e-8
             1.71388944817879
-            sage: fricas.ellipticK(0.3).sage()  # abs tol 1e-3                  # optional - fricas  sage.symbolic
+            sage: fricas.ellipticK(0.3).sage()  # abs tol 1e-3                  # optional - fricas, needs sage.symbolic
             1.7138894481787910555457043
         """
         BuiltinFunction.__init__(self, 'elliptic_kc', nargs=1, latex_name='K',
@@ -1016,9 +1024,9 @@ class EllipticKC(BuiltinFunction):
         """
         EXAMPLES::
 
-            sage: elliptic_kc(0)                                                        # optional - sage.symbolic
+            sage: elliptic_kc(0)                                                        # needs sage.symbolic
             1/2*pi
-            sage: elliptic_kc(1/2)                                                      # optional - sage.symbolic
+            sage: elliptic_kc(1/2)                                                      # needs sage.symbolic
             elliptic_kc(1/2)
 
         TESTS:
@@ -1027,9 +1035,9 @@ class EllipticKC(BuiltinFunction):
         correctly (see :trac:`7557`)::
 
             sage: t = jacobi_sn(1.2 + 2*I*elliptic_kc(1 - .5), .5)
-            sage: maxima(t)  # abs tol 1e-13                                            # optional - sage.symbolic
+            sage: maxima(t)  # abs tol 1e-13                                            # needs sage.symbolic
             0.88771548861928029 - 1.7301614091485560e-15*%i
-            sage: t.n()  # abs tol 1e-13                                                # optional - sage.symbolic
+            sage: t.n()  # abs tol 1e-13                                                # needs sage.symbolic
             0.887715488619280 - 1.73016140914856e-15*I
         """
         if z == 0:
@@ -1041,11 +1049,11 @@ class EllipticKC(BuiltinFunction):
         """
         EXAMPLES::
 
-            sage: elliptic_kc(1/2).n()                                                  # optional - sage.symbolic
+            sage: elliptic_kc(1/2).n()                                                  # needs sage.symbolic
             1.85407467730137
-            sage: elliptic_kc(1/2).n(200)                                               # optional - sage.symbolic
+            sage: elliptic_kc(1/2).n(200)                                               # needs sage.symbolic
             1.85407467730137191843385034...
-            sage: elliptic_kc(I).n()                                                    # optional - sage.symbolic
+            sage: elliptic_kc(I).n()                                                    # needs sage.symbolic
             1.42127228104504 + 0.295380284214777*I
         """
         R = parent or parent(z)
@@ -1055,7 +1063,7 @@ class EllipticKC(BuiltinFunction):
         """
         EXAMPLES::
 
-            sage: elliptic_kc(x).diff(x)                                                # optional - sage.symbolic
+            sage: elliptic_kc(x).diff(x)                                                # needs sage.symbolic
             -1/2*((x - 1)*elliptic_kc(x)
             + elliptic_ec(x))/((x - 1)*x)
         """
@@ -1084,7 +1092,7 @@ class EllipticPi(BuiltinFunction):
 
     EXAMPLES::
 
-        sage: N(elliptic_pi(1, pi/4, 1))                                                # optional - sage.symbolic
+        sage: N(elliptic_pi(1, pi/4, 1))                                                # needs sage.symbolic
         1.14779357469632
 
     Compare the value computed by Maxima to the definition as a definite integral
@@ -1092,7 +1100,7 @@ class EllipticPi(BuiltinFunction):
 
         sage: elliptic_pi(0.1, 0.2, 0.3)
         0.200665068220979
-        sage: numerical_integral(1/(1-0.1*sin(x)^2)/sqrt(1-0.3*sin(x)^2), 0.0, 0.2)     # optional - sage.symbolic
+        sage: numerical_integral(1/(1-0.1*sin(x)^2)/sqrt(1-0.3*sin(x)^2), 0.0, 0.2)     # needs sage.symbolic
         (0.2006650682209791, 2.227829789769088e-15)
 
     REFERENCES:
@@ -1105,7 +1113,7 @@ class EllipticPi(BuiltinFunction):
 
             sage: loads(dumps(elliptic_pi))
             elliptic_pi
-            sage: elliptic_pi(x, pi/4, 1)._sympy_()                                     # optional - sympy sage.symbolic
+            sage: elliptic_pi(x, pi/4, 1)._sympy_()                                     # needs sympy sage.symbolic
             elliptic_pi(x, pi/4, 1)
         """
         BuiltinFunction.__init__(self, 'elliptic_pi', nargs=3,
@@ -1118,9 +1126,9 @@ class EllipticPi(BuiltinFunction):
         """
         EXAMPLES::
 
-            sage: elliptic_pi(x, x, pi)                                                 # optional - sympy sage.symbolic
+            sage: elliptic_pi(x, x, pi)                                                 # needs sympy sage.symbolic
             elliptic_pi(x, x, pi)
-            sage: elliptic_pi(0, x, pi)                                                 # optional - sympy sage.symbolic
+            sage: elliptic_pi(0, x, pi)                                                 # needs sympy sage.symbolic
             elliptic_f(x, pi)
         """
         if n == 0:
@@ -1130,13 +1138,14 @@ class EllipticPi(BuiltinFunction):
         """
         EXAMPLES::
 
-            sage: elliptic_pi(pi, 1/2, 1).n()                                           # optional - sage.symbolic
+            sage: # needs sage.symbolic
+            sage: elliptic_pi(pi, 1/2, 1).n()
             0.795062820631931
-            sage: elliptic_pi(pi, 1/2, 1).n(200)                                        # optional - sage.symbolic
+            sage: elliptic_pi(pi, 1/2, 1).n(200)
             0.79506282063193125292514098445...
-            sage: elliptic_pi(pi, 1, 1).n()                                             # optional - sage.symbolic
+            sage: elliptic_pi(pi, 1, 1).n()
             0.0991592574231369 - 1.30004368185937*I
-            sage: elliptic_pi(pi, I, I).n()                                             # optional - sage.symbolic
+            sage: elliptic_pi(pi, I, I).n()
             0.0542471560940594 + 0.552096453413081*I
         """
         R = parent or parent(z)
@@ -1146,15 +1155,16 @@ class EllipticPi(BuiltinFunction):
         """
         EXAMPLES::
 
-            sage: n, z, m = var('n,z,m')                                                # optional - sage.symbolic
-            sage: elliptic_pi(n, z, m).diff(n)                                          # optional - sage.symbolic
+            sage: # needs sage.symbolic
+            sage: n, z, m = var('n,z,m')
+            sage: elliptic_pi(n, z, m).diff(n)
             1/4*(sqrt(-m*sin(z)^2 + 1)*n*sin(2*z)/(n*sin(z)^2 - 1)
             + 2*(m - n)*elliptic_f(z, m)/n
             + 2*(n^2 - m)*elliptic_pi(n, z, m)/n
             + 2*elliptic_e(z, m))/((m - n)*(n - 1))
-            sage: elliptic_pi(n, z, m).diff(z)                                          # optional - sage.symbolic
+            sage: elliptic_pi(n, z, m).diff(z)
             -1/(sqrt(-m*sin(z)^2 + 1)*(n*sin(z)^2 - 1))
-            sage: elliptic_pi(n, z, m).diff(m)                                          # optional - sage.symbolic
+            sage: elliptic_pi(n, z, m).diff(m)
             1/4*(m*sin(2*z)/(sqrt(-m*sin(z)^2 + 1)*(m - 1))
             - 2*elliptic_e(z, m)/(m - 1)
             - 2*elliptic_pi(n, z, m))/(m - n)
@@ -1181,7 +1191,7 @@ class EllipticPi(BuiltinFunction):
         r"""
         EXAMPLES::
 
-            sage: latex(elliptic_pi(x, pi, 0))                                          # optional - sage.symbolic
+            sage: latex(elliptic_pi(x, pi, 0))                                          # needs sage.symbolic
             \Pi(x,\pi,0)
         """
         return r"\Pi(%s,%s,%s)" % (latex(n), latex(z), latex(m))

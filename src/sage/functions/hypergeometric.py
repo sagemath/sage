@@ -319,7 +319,7 @@ class Hypergeometric(BuiltinFunction):
         """
         EXAMPLES::
 
-            sage: hypergeometric([], [], 0)
+            sage: hypergeometric([], [], 0)                                             # needs sage.symbolic
             1
         """
         if not isinstance(a, tuple) or not isinstance(b, tuple):

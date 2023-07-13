@@ -1426,15 +1426,15 @@ class PiecewiseFunction(BuiltinFunction):
             EXAMPLES::
 
                 sage: ex = piecewise([((0, 1), pi), ([1, 2], x)])
-                sage: f = ex._sympy_(); f                                               # optional - sympy
+                sage: f = ex._sympy_(); f                                               # needs sympy
                 Piecewise((pi, (x > 0) & (x < 1)), (x, (x >= 1) & (x <= 2)))
-                sage: f.diff()                                                          # optional - sympy
+                sage: f.diff()                                                          # needs sympy
                 Piecewise((0, (x > 0) & (x < 1)), (1, (x >= 1) & (x <= 2)))
 
                 sage: ex = piecewise([((-100, -2), 1/x), ((1, +oo), cos(x))])
-                sage: g = ex._sympy_(); g                                               # optional - sympy
+                sage: g = ex._sympy_(); g                                               # needs sympy
                 Piecewise((1/x, (x > -100) & (x < -2)), (cos(x), x > 1))
-                sage: g.diff()                                                          # optional - sympy
+                sage: g.diff()                                                          # needs sympy
                 Piecewise((-1/x**2, (x > -100) & (x < -2)), (-sin(x), x > 1))
             """
             from sympy import Piecewise as pw
@@ -1452,22 +1452,22 @@ class PiecewiseFunction(BuiltinFunction):
             EXAMPLES::
 
                 sage: ex = piecewise([((0, 1), pi), ([1, 2], x)])
-                sage: f = ex._giac_(); f                                                # optional - sage.libs.giac
+                sage: f = ex._giac_(); f                                                # needs sage.libs.giac
                 piecewise(((sageVARx>0) and (1>sageVARx)),pi,((sageVARx>=1) and (2>=sageVARx)),sageVARx)
-                sage: f.diff(x)                                                         # optional - sage.libs.giac
+                sage: f.diff(x)                                                         # needs sage.libs.giac
                 piecewise(((sageVARx>0) and (1>sageVARx)),0,((sageVARx>=1) and (2>=sageVARx)),1)
 
-                sage: ex = piecewise([((-100, -2), 1/x), ((1, +oo), cos(x))])           # optional - sage.libs.giac
-                sage: g = ex._giac_(); g                                                # optional - sage.libs.giac
+                sage: ex = piecewise([((-100, -2), 1/x), ((1, +oo), cos(x))])           # needs sage.libs.giac
+                sage: g = ex._giac_(); g                                                # needs sage.libs.giac
                 piecewise(((sageVARx>-100) and ((-2)>sageVARx)),1/sageVARx,sageVARx>1,cos(sageVARx))
-                sage: g.diff(x)                                                         # optional - sage.libs.giac
+                sage: g.diff(x)                                                         # needs sage.libs.giac
                 piecewise(((sageVARx>-100) and ((-2)>sageVARx)),-1/sageVARx^2,sageVARx>1,-sin(sageVARx))
 
             TESTS::
 
                 sage: f = piecewise([([0,1], x), ((1,2), 3*x)])
-                sage: a = libgiac(f)  # random because verbose                          # optional - sage.libs.giac
-                sage: a                                                                 # optional - sage.libs.giac
+                sage: a = libgiac(f)  # random because verbose                          # needs sage.libs.giac
+                sage: a                                                                 # needs sage.libs.giac
                 piecewise(((sageVARx>=0) and (1>=sageVARx)),sageVARx,((sageVARx>1) and (2>sageVARx)),sageVARx*3)
             """
             from sage.misc.flatten import flatten

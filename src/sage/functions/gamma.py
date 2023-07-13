@@ -40,9 +40,9 @@ class Function_gamma(GinacFunction):
         EXAMPLES::
 
             sage: from sage.functions.gamma import gamma1
-            sage: gamma1(CDF(0.5, 14))                                                  # optional - sage.libs.pari
+            sage: gamma1(CDF(0.5, 14))                                                  # needs sage.libs.pari
             -4.0537030780372815e-10 - 5.773299834553605e-10*I
-            sage: gamma1(CDF(I))                                                        # optional - sage.libs.pari
+            sage: gamma1(CDF(I))                                                        # needs sage.libs.pari
             -0.15494982830181067 - 0.49801566811835607*I
 
         Recall that `\Gamma(n)` is `n-1` factorial::
@@ -51,85 +51,85 @@ class Function_gamma(GinacFunction):
             True
             sage: gamma1(6)
             120
-            sage: gamma1(1/2)                                                           # optional - sage.symbolic
+            sage: gamma1(1/2)                                                           # needs sage.symbolic
             sqrt(pi)
             sage: gamma1(-1)
             Infinity
-            sage: gamma1(I)                                                             # optional - sage.symbolic
+            sage: gamma1(I)                                                             # needs sage.symbolic
             gamma(I)
-            sage: gamma1(x/2)(x=5)                                                      # optional - sage.symbolic
+            sage: gamma1(x/2)(x=5)                                                      # needs sage.symbolic
             3/4*sqrt(pi)
 
             sage: gamma1(float(6))  # For ARM: rel tol 3e-16
             120.0
-            sage: gamma(6.)
+            sage: gamma(6.)                                                             # needs sage.symbolic
             120.000000000000
-            sage: gamma1(x)                                                             # optional - sage.symbolic
+            sage: gamma1(x)                                                             # needs sage.symbolic
             gamma(x)
 
         ::
 
-            sage: gamma1(pi)                                                            # optional - sage.symbolic
+            sage: gamma1(pi)                                                            # needs sage.symbolic
             gamma(pi)
-            sage: gamma1(i)                                                             # optional - sage.symbolic
+            sage: gamma1(i)                                                             # needs sage.symbolic
             gamma(I)
-            sage: gamma1(i).n()                                                         # optional - sage.symbolic
+            sage: gamma1(i).n()                                                         # needs sage.symbolic
             -0.154949828301811 - 0.498015668118356*I
-            sage: gamma1(int(5))
+            sage: gamma1(int(5))                                                        # needs sage.rings.complex_double
             24
 
         ::
 
-            sage: conjugate(gamma(x))                                                   # optional - sage.symbolic
+            sage: conjugate(gamma(x))                                                   # needs sage.symbolic
             gamma(conjugate(x))
 
         ::
 
-            sage: plot(gamma1(x), (x,1,5))                                              # optional - sage.plot sage.symbolic
+            sage: plot(gamma1(x), (x,1,5))                                              # needs sage.plot sage.symbolic
             Graphics object consisting of 1 graphics primitive
 
         We are also able to compute the Laurent expansion of the
         Gamma function (as well as of functions containing
         the Gamma function)::
 
-            sage: gamma(x).series(x==0, 2)                                              # optional - sage.symbolic
+            sage: gamma(x).series(x==0, 2)                                              # needs sage.symbolic
             1*x^(-1) + (-euler_gamma)
             + (1/2*euler_gamma^2 + 1/12*pi^2)*x + Order(x^2)
-            sage: (gamma(x)^2).series(x==0, 1)                                          # optional - sage.symbolic
+            sage: (gamma(x)^2).series(x==0, 1)                                          # needs sage.symbolic
             1*x^(-2) + (-2*euler_gamma)*x^(-1)
             + (2*euler_gamma^2 + 1/6*pi^2) + Order(x)
 
         To prevent automatic evaluation, use the ``hold`` argument::
 
-            sage: gamma1(1/2, hold=True)                                                # optional - sage.symbolic
+            sage: gamma1(1/2, hold=True)                                                # needs sage.symbolic
             gamma(1/2)
 
         To then evaluate again, we currently must use Maxima via
         :meth:`sage.symbolic.expression.Expression.simplify`::
 
-            sage: gamma1(1/2, hold=True).simplify()                                     # optional - sage.symbolic
+            sage: gamma1(1/2, hold=True).simplify()                                     # needs sage.symbolic
             sqrt(pi)
 
         TESTS:
 
-            sage: gamma(x)._sympy_()                                                    # optional - sympy sage.symbolic
+            sage: gamma(x)._sympy_()                                                    # needs sympy sage.symbolic
             gamma(x)
 
         We verify that we can convert this function to Maxima and
         convert back to Sage::
 
-            sage: z = var('z')                                                          # optional - sage.symbolic
-            sage: maxima(gamma1(z)).sage()                                              # optional - sage.symbolic
+            sage: z = var('z')                                                          # needs sage.symbolic
+            sage: maxima(gamma1(z)).sage()                                              # needs sage.symbolic
             gamma(z)
-            sage: latex(gamma1(z))                                                      # optional - sage.symbolic
+            sage: latex(gamma1(z))                                                      # needs sage.symbolic
             \Gamma\left(z\right)
 
         Test that :trac:`5556` is fixed::
 
-            sage: gamma1(3/4)                                                           # optional - sage.symbolic
+            sage: gamma1(3/4)                                                           # needs sage.symbolic
             gamma(3/4)
 
-            sage: gamma1(3/4).n(100)                                                    # optional - sage.symbolic
+            sage: gamma1(3/4).n(100)                                                    # needs sage.symbolic
             1.2254167024651776451290983034
 
         Check that negative integer input works::
@@ -138,37 +138,37 @@ class Function_gamma(GinacFunction):
             Infinity
             sage: (-1.).gamma()
             NaN
-            sage: CC(-1).gamma()                                                        # optional - sage.libs.pari
+            sage: CC(-1).gamma()                                                        # needs sage.libs.pari
             Infinity
             sage: RDF(-1).gamma()
             NaN
-            sage: CDF(-1).gamma()
+            sage: CDF(-1).gamma()                                                       # needs sage.rings.complex_double
             Infinity
 
         Check if :trac:`8297` is fixed::
 
-            sage: latex(gamma(1/4))                                                     # optional - sage.symbolic
+            sage: latex(gamma(1/4))                                                     # needs sage.symbolic
             \Gamma\left(\frac{1}{4}\right)
 
         Test pickling::
 
-            sage: loads(dumps(gamma(x)))                                                # optional - sage.symbolic
+            sage: loads(dumps(gamma(x)))                                                # needs sage.symbolic
             gamma(x)
 
         Check that the implementations roughly agrees (note there might be
         difference of several ulp on more complicated entries)::
 
-            sage: import sage.libs.mpmath                                                         # optional - mpmath
-            sage: float(gamma(10.)) == gamma(10.r) == float(gamma(sage.libs.mpmath.all.mpf(10)))      # optional - mpmath
+            sage: import sage.libs.mpmath                                               # needs mpmath
+            sage: float(gamma(10.)) == gamma(10.r) == float(gamma(sage.libs.mpmath.all.mpf(10)))    # needs mpmath
             True
-            sage: float(gamma(8.5)) == gamma(8.5r) == float(gamma(sage.libs.mpmath.all.mpf(8.5)))     # optional - mpmath
+            sage: float(gamma(8.5)) == gamma(8.5r) == float(gamma(sage.libs.mpmath.all.mpf(8.5)))   # needs mpmath
             True
 
         Check that ``QQbar`` half integers work with the ``pi`` formula::
 
-            sage: gamma(QQbar(1/2))                                                     # optional - sage.rings.number_field sage.symbolic
+            sage: gamma(QQbar(1/2))                                                     # needs sage.rings.number_field sage.symbolic
             sqrt(pi)
-            sage: gamma(QQbar(-9/2))                                                    # optional - sage.rings.number_field sage.symbolic
+            sage: gamma(QQbar(-9/2))                                                    # needs sage.rings.number_field sage.symbolic
             -32/945*sqrt(pi)
 
         .. SEEALSO::
@@ -205,39 +205,39 @@ class Function_log_gamma(GinacFunction):
         Numerical evaluation happens when appropriate, to the
         appropriate accuracy (see :trac:`10072`)::
 
-            sage: log_gamma(6)                                                          # optional - sage.symbolic
+            sage: log_gamma(6)                                                          # needs sage.symbolic
             log(120)
-            sage: log_gamma(6.)
+            sage: log_gamma(6.)                                                         # needs sage.symbolic
             4.78749174278205
-            sage: log_gamma(6).n()
+            sage: log_gamma(6).n()                                                      # needs sage.symbolic
             4.78749174278205
-            sage: log_gamma(RealField(100)(6))
+            sage: log_gamma(RealField(100)(6))                                          # needs sage.rings.real_mpfr
             4.7874917427820459942477009345
-            sage: log_gamma(2.4 + I)                                                    # optional - sage.symbolic
+            sage: log_gamma(2.4 + I)                                                    # needs sage.symbolic
             -0.0308566579348816 + 0.693427705955790*I
-            sage: log_gamma(-3.1)
+            sage: log_gamma(-3.1)                                                       # needs sage.symbolic
             0.400311696703985 - 12.5663706143592*I
-            sage: log_gamma(-1.1) == log(gamma(-1.1))
+            sage: log_gamma(-1.1) == log(gamma(-1.1))                                   # needs sage.symbolic
             False
 
         Symbolic input works (see :trac:`10075`)::
 
-            sage: log_gamma(3*x)                                                        # optional - sage.symbolic
+            sage: log_gamma(3*x)                                                        # needs sage.symbolic
             log_gamma(3*x)
-            sage: log_gamma(3 + I)                                                      # optional - sage.symbolic
+            sage: log_gamma(3 + I)                                                      # needs sage.symbolic
             log_gamma(I + 3)
-            sage: log_gamma(3 + I + x)                                                  # optional - sage.symbolic
+            sage: log_gamma(3 + I + x)                                                  # needs sage.symbolic
             log_gamma(x + I + 3)
 
         Check that :trac:`12521` is fixed::
 
-            sage: log_gamma(-2.1)
+            sage: log_gamma(-2.1)                                                       # needs sage.symbolic
             1.53171380819509 - 9.42477796076938*I
             sage: log_gamma(CC(-2.1))
             1.53171380819509 - 9.42477796076938*I
-            sage: log_gamma(-21/10).n()
+            sage: log_gamma(-21/10).n()                                                 # needs sage.symbolic
             1.53171380819509 - 9.42477796076938*I
-            sage: exp(log_gamma(-1.3) + log_gamma(-0.4) -
+            sage: exp(log_gamma(-1.3) + log_gamma(-0.4) -                               # needs sage.symbolic
             ....:     log_gamma(-1.3 - 0.4)).real_part()  # beta(-1.3, -0.4)
             -4.92909641669610
 
@@ -245,42 +245,43 @@ class Function_log_gamma(GinacFunction):
         to evaluate a held expression, use the ``n()`` numerical
         evaluation method::
 
-            sage: log_gamma(SR(5), hold=True)                                           # optional - sage.symbolic
+            sage: log_gamma(SR(5), hold=True)                                           # needs sage.symbolic
             log_gamma(5)
-            sage: log_gamma(SR(5), hold=True).n()                                       # optional - sage.symbolic
+            sage: log_gamma(SR(5), hold=True).n()                                       # needs sage.symbolic
             3.17805383034795
 
         TESTS::
 
-            sage: log_gamma(-2.1 + I)                                                   # optional - sage.symbolic
+            sage: log_gamma(-2.1 + I)                                                   # needs sage.symbolic
             -1.90373724496982 - 7.18482377077183*I
-            sage: log_gamma(pari(6))                                                    # optional - sage.libs.pari
+            sage: log_gamma(pari(6))                                                    # needs sage.libs.pari
             4.78749174278205
-            sage: log_gamma(x)._sympy_()                                                # optional - sympy sage.symbolic
+            sage: log_gamma(x)._sympy_()                                                # needs sympy sage.symbolic
             loggamma(x)
             sage: log_gamma(CC(6))
             4.78749174278205
             sage: log_gamma(CC(-2.5))
             -0.0562437164976741 - 9.42477796076938*I
-            sage: log_gamma(RDF(-2.5))
+            sage: log_gamma(RDF(-2.5))                                                  # needs sage.symbolic
             -0.056243716497674054 - 9.42477796076938*I
-            sage: log_gamma(CDF(-2.5))
+            sage: log_gamma(CDF(-2.5))                                                  # needs sage.rings.complex_double
             -0.056243716497674054 - 9.42477796076938*I
-            sage: log_gamma(float(-2.5))
+            sage: log_gamma(float(-2.5))                                                # needs sage.symbolic
             (-0.056243716497674054-9.42477796076938j)
-            sage: log_gamma(complex(-2.5))
+            sage: log_gamma(complex(-2.5))                                              # needs sage.rings.complex_double
             (-0.056243716497674054-9.42477796076938j)
 
         ``conjugate(log_gamma(x)) == log_gamma(conjugate(x))`` unless on the
         branch cut, which runs along the negative real axis.::
 
-            sage: conjugate(log_gamma(x))                                               # optional - sage.symbolic
+            sage: # needs sage.symbolic
+            sage: conjugate(log_gamma(x))
             conjugate(log_gamma(x))
-            sage: var('y', domain='positive')                                           # optional - sage.symbolic
+            sage: var('y', domain='positive')
             y
-            sage: conjugate(log_gamma(y))                                               # optional - sage.symbolic
+            sage: conjugate(log_gamma(y))
             log_gamma(y)
-            sage: conjugate(log_gamma(y + I))                                           # optional - sage.symbolic
+            sage: conjugate(log_gamma(y + I))
             conjugate(log_gamma(y + I))
             sage: log_gamma(-2)
             +Infinity
@@ -310,45 +311,45 @@ class Function_gamma_inc(BuiltinFunction):
 
         EXAMPLES::
 
-            sage: gamma_inc(CDF(0,1), 3)
+            sage: gamma_inc(CDF(0,1), 3)                                                # needs sage.rings.complex_double
             0.0032085749933691158 + 0.012406185811871568*I
-            sage: gamma_inc(RDF(1), 3)
+            sage: gamma_inc(RDF(1), 3)                                                  # needs sage.rings.complex_double
             0.049787068367863944
-            sage: gamma_inc(3, 2)                                                       # optional - sage.symbolic
+            sage: gamma_inc(3, 2)                                                       # needs sage.symbolic
             gamma(3, 2)
-            sage: gamma_inc(x, 0)                                                       # optional - sage.symbolic
+            sage: gamma_inc(x, 0)                                                       # needs sage.symbolic
             gamma(x)
-            sage: latex(gamma_inc(3, 2))                                                # optional - sage.symbolic
+            sage: latex(gamma_inc(3, 2))                                                # needs sage.symbolic
             \Gamma\left(3, 2\right)
-            sage: loads(dumps((gamma_inc(3, 2))))                                       # optional - sage.symbolic
+            sage: loads(dumps((gamma_inc(3, 2))))                                       # needs sage.symbolic
             gamma(3, 2)
-            sage: i = ComplexField(30).0; gamma_inc(2, 1 + i)
+            sage: i = ComplexField(30).0; gamma_inc(2, 1 + i)                           # needs sage.rings.real_mpfr
             0.70709210 - 0.42035364*I
-            sage: gamma_inc(2., 5)
+            sage: gamma_inc(2., 5)                                                      # needs sage.rings.complex_double
             0.0404276819945128
-            sage: x, y = var('x,y')                                                     # optional - sage.symbolic
-            sage: gamma_inc(x,y).diff(x)                                                # optional - sage.symbolic
+            sage: x, y = var('x,y')                                                     # needs sage.symbolic
+            sage: gamma_inc(x,y).diff(x)                                                # needs sage.symbolic
             diff(gamma(x, y), x)
-            sage: (gamma_inc(x, x + 1).diff(x)).simplify()                              # optional - sage.symbolic
+            sage: (gamma_inc(x, x + 1).diff(x)).simplify()                              # needs sage.symbolic
             -(x + 1)^(x - 1)*e^(-x - 1) + D[0](gamma)(x, x + 1)
 
         TESTS:
 
         Check that :trac:`21407` is fixed::
 
-            sage: gamma(-1, 5)._sympy_()                                                # optional - sympy sage.symbolic
+            sage: gamma(-1, 5)._sympy_()                                                # needs sympy sage.symbolic
             expint(2, 5)/5
-            sage: gamma(-3/2, 5)._sympy_()                                              # optional - sympy sage.symbolic
+            sage: gamma(-3/2, 5)._sympy_()                                              # needs sympy sage.symbolic
             -6*sqrt(5)*exp(-5)/25 + 4*sqrt(pi)*erfc(sqrt(5))/3
 
         Check that :trac:`25597` is fixed::
 
-            sage: gamma(-1, 5)._fricas_()                                       # optional - fricas sage.symbolic
+            sage: gamma(-1, 5)._fricas_()                                       # optional - fricas, needs sage.symbolic
             Gamma(- 1,5)
 
-            sage: var('t')                                                      # optional - fricas sage.symbolic
+            sage: var('t')                                                      # optional - fricas, needs sage.symbolic
             t
-            sage: integrate(-exp(-x)*x^(t-1), x, algorithm="fricas")            # optional - fricas sage.symbolic
+            sage: integrate(-exp(-x)*x^(t-1), x, algorithm="fricas")            # optional - fricas, needs sage.symbolic
             gamma(t, x)
 
         .. SEEALSO::
@@ -364,14 +365,15 @@ class Function_gamma_inc(BuiltinFunction):
         r"""
         TESTS::
 
-            sage: b = RBF(1, 1e-10)                                                     # optional - sage.libs.flint
-            sage: gamma(b) # abs tol 1e-9                                               # optional - sage.libs.flint
+            sage: # needs sage.libs.flint
+            sage: b = RBF(1, 1e-10)
+            sage: gamma(b) # abs tol 1e-9
             [1.0000000000 +/- 5.78e-11]
-            sage: gamma(CBF(b)) # abs tol 1e-9                                          # optional - sage.libs.flint
+            sage: gamma(CBF(b)) # abs tol 1e-9
             [1.0000000000 +/- 5.78e-11]
-            sage: gamma(CBF(b), 4) # abs tol 2e-9                                       # optional - sage.libs.flint
+            sage: gamma(CBF(b), 4) # abs tol 2e-9
             [0.018315639 +/- 9.00e-10]
-            sage: gamma(CBF(1), b)                                                      # optional - sage.libs.flint
+            sage: gamma(CBF(1), b)
             [0.3678794412 +/- 6.54e-11]
         """
         return [x, y]
@@ -380,21 +382,21 @@ class Function_gamma_inc(BuiltinFunction):
         """
         EXAMPLES::
 
-            sage: gamma_inc(2., 0)
+            sage: gamma_inc(2., 0)                                                      # needs sage.rings.complex_double
             1.00000000000000
-            sage: gamma_inc(2, 0)
+            sage: gamma_inc(2, 0)                                                       # needs sage.rings.real_mpfr
             1
-            sage: gamma_inc(1/2, 2)                                                     # optional - sage.symbolic
+            sage: gamma_inc(1/2, 2)                                                     # needs sage.symbolic
             -sqrt(pi)*(erf(sqrt(2)) - 1)
-            sage: gamma_inc(1/2, 1)                                                     # optional - sage.symbolic
+            sage: gamma_inc(1/2, 1)                                                     # needs sage.symbolic
             -sqrt(pi)*(erf(1) - 1)
-            sage: gamma_inc(1/2, 0)                                                     # optional - sage.symbolic
+            sage: gamma_inc(1/2, 0)                                                     # needs sage.symbolic
             sqrt(pi)
-            sage: gamma_inc(x, 0)                                                       # optional - sage.symbolic
+            sage: gamma_inc(x, 0)                                                       # needs sage.symbolic
             gamma(x)
-            sage: gamma_inc(1, 2)                                                       # optional - sage.symbolic
+            sage: gamma_inc(1, 2)                                                       # needs sage.symbolic
             e^(-2)
-            sage: gamma_inc(0, 2)                                                       # optional - sage.symbolic
+            sage: gamma_inc(0, 2)                                                       # needs sage.symbolic
             -Ei(-2)
         """
         if y == 0:
@@ -411,41 +413,41 @@ class Function_gamma_inc(BuiltinFunction):
         """
         EXAMPLES::
 
-            sage: gamma_inc(0, 2)                                                       # optional - sage.symbolic
+            sage: gamma_inc(0, 2)                                                       # needs sage.symbolic
             -Ei(-2)
-            sage: gamma_inc(0, 2.)
+            sage: gamma_inc(0, 2.)                                                      # needs sage.rings.real_mpfr
             0.0489005107080611
-            sage: gamma_inc(0, 2).n(algorithm='pari')                                   # optional - sage.libs.pari sage.symbolic
+            sage: gamma_inc(0, 2).n(algorithm='pari')                                   # needs sage.libs.pari sage.symbolic
             0.0489005107080611
-            sage: gamma_inc(0, 2).n(200)                                                # optional - sage.symbolic
+            sage: gamma_inc(0, 2).n(200)                                                # needs sage.symbolic
             0.048900510708061119567239835228...
-            sage: gamma_inc(3, 2).n()                                                   # optional - sage.symbolic
+            sage: gamma_inc(3, 2).n()                                                   # needs sage.symbolic
             1.35335283236613
 
         TESTS:
 
         Check that :trac:`7099` is fixed::
 
-            sage: R = RealField(1024)
-            sage: gamma(R(9), R(10^-3))  # rel tol 1e-308
+            sage: R = RealField(1024)                                                   # needs sage.rings.real_mpfr
+            sage: gamma(R(9), R(10^-3))  # rel tol 1e-308                               # needs sage.rings.real_mpfr
             40319.99999999999999999999999999988898884344822911869926361916294165058203634104838326009191542490601781777105678829520585311300510347676330951251563007679436243294653538925717144381702105700908686088851362675381239820118402497959018315224423868693918493033078310647199219674433536605771315869983788442389633
-            sage: numerical_approx(gamma(9, 10^(-3)) - gamma(9), digits=40)  # abs tol 1e-36    # optional - sage.symbolic
+            sage: numerical_approx(gamma(9, 10^(-3)) - gamma(9), digits=40)  # abs tol 1e-36        # needs sage.symbolic
             -1.110111598370794007949063502542063148294e-28
 
         Check that :trac:`17328` is fixed::
 
-            sage: gamma_inc(float(-1), float(-1))
+            sage: gamma_inc(float(-1), float(-1))                                       # needs sage.rings.real_mpfr
             (-0.8231640121031085+3.141592653589793j)
-            sage: gamma_inc(RR(-1), RR(-1))
+            sage: gamma_inc(RR(-1), RR(-1))                                             # needs sage.rings.complex_double
             -0.823164012103109 + 3.14159265358979*I
-            sage: gamma_inc(-1, float(-log(3))) - gamma_inc(-1, float(-log(2)))  # abs tol 1e-15    # optional - sage.symbolic
+            sage: gamma_inc(-1, float(-log(3))) - gamma_inc(-1, float(-log(2)))  # abs tol 1e-15    # needs sage.symbolic
             (1.2730972164471142+0j)
 
         Check that :trac:`17130` is fixed::
 
-            sage: r = gamma_inc(float(0), float(1)); r
+            sage: r = gamma_inc(float(0), float(1)); r                                  # needs sage.rings.real_mpfr
             0.21938393439552029
-            sage: type(r)
+            sage: type(r)                                                               # needs sage.rings.real_mpfr
             <... 'float'>
         """
         R = parent or s_parent(x)
@@ -490,30 +492,30 @@ class Function_gamma_inc_lower(BuiltinFunction):
 
         EXAMPLES::
 
-            sage: gamma_inc_lower(CDF(0,1), 3)
+            sage: gamma_inc_lower(CDF(0,1), 3)                                          # needs sage.rings.complex_double
             -0.1581584032951798 - 0.5104218539302277*I
-            sage: gamma_inc_lower(RDF(1), 3)
+            sage: gamma_inc_lower(RDF(1), 3)                                            # needs sage.rings.complex_double
             0.950212931632136
-            sage: gamma_inc_lower(3, 2, hold=True)                                      # optional - sage.symbolic
+            sage: gamma_inc_lower(3, 2, hold=True)                                      # needs sage.symbolic
             gamma_inc_lower(3, 2)
-            sage: gamma_inc_lower(3, 2)                                                 # optional - sage.symbolic
+            sage: gamma_inc_lower(3, 2)                                                 # needs sage.symbolic
             -10*e^(-2) + 2
-            sage: gamma_inc_lower(x, 0)                                                 # optional - sage.symbolic
+            sage: gamma_inc_lower(x, 0)                                                 # needs sage.symbolic
             0
-            sage: latex(gamma_inc_lower(x, x))                                          # optional - sage.symbolic
+            sage: latex(gamma_inc_lower(x, x))                                          # needs sage.symbolic
             \gamma\left(x, x\right)
-            sage: loads(dumps((gamma_inc_lower(x, x))))                                 # optional - sage.symbolic
+            sage: loads(dumps((gamma_inc_lower(x, x))))                                 # needs sage.symbolic
             gamma_inc_lower(x, x)
-            sage: i = ComplexField(30).0; gamma_inc_lower(2, 1 + i)                     # optional - sage.symbolic
+            sage: i = ComplexField(30).0; gamma_inc_lower(2, 1 + i)                     # needs sage.symbolic
             0.29290790 + 0.42035364*I
-            sage: gamma_inc_lower(2., 5)
+            sage: gamma_inc_lower(2., 5)                                                # needs sage.rings.complex_double
             0.959572318005487
 
         Interfaces to other software::
 
-            sage: gamma_inc_lower(x, x)._sympy_()                                       # optional - sympy sage.symbolic
+            sage: gamma_inc_lower(x, x)._sympy_()                                       # needs sympy sage.symbolic
             lowergamma(x, x)
-            sage: maxima(gamma_inc_lower(x, x))                                         # optional - sage.symbolic
+            sage: maxima(gamma_inc_lower(x, x))                                         # needs sage.symbolic
             gamma_incomplete_lower(_SAGE_VAR_x,_SAGE_VAR_x)
 
     .. SEEALSO::
@@ -528,27 +530,27 @@ class Function_gamma_inc_lower(BuiltinFunction):
         """
         EXAMPLES::
 
-            sage: gamma_inc_lower(2., 0)
+            sage: gamma_inc_lower(2., 0)                                                # needs sage.rings.complex_double
             0.000000000000000
-            sage: gamma_inc_lower(2, 0)                                                 # optional - sage.symbolic
+            sage: gamma_inc_lower(2, 0)                                                 # needs sage.symbolic
             0
-            sage: gamma_inc_lower(1/2, 2)                                               # optional - sage.symbolic
+            sage: gamma_inc_lower(1/2, 2)                                               # needs sage.symbolic
             sqrt(pi)*erf(sqrt(2))
-            sage: gamma_inc_lower(1/2, 1)                                               # optional - sage.symbolic
+            sage: gamma_inc_lower(1/2, 1)                                               # needs sage.symbolic
             sqrt(pi)*erf(1)
-            sage: gamma_inc_lower(1/2, 0)                                               # optional - sage.symbolic
+            sage: gamma_inc_lower(1/2, 0)                                               # needs sage.symbolic
             0
-            sage: gamma_inc_lower(x, 0)                                                 # optional - sage.symbolic
+            sage: gamma_inc_lower(x, 0)                                                 # needs sage.symbolic
             0
-            sage: gamma_inc_lower(1, 2)                                                 # optional - sage.symbolic
+            sage: gamma_inc_lower(1, 2)                                                 # needs sage.symbolic
             -e^(-2) + 1
-            sage: gamma_inc_lower(0, 2)                                                 # optional - sage.symbolic
+            sage: gamma_inc_lower(0, 2)                                                 # needs sage.symbolic
             +Infinity
-            sage: gamma_inc_lower(2, 377/79)                                            # optional - sage.symbolic
+            sage: gamma_inc_lower(2, 377/79)                                            # needs sage.symbolic
             -456/79*e^(-377/79) + 1
-            sage: gamma_inc_lower(3, x)                                                 # optional - sage.symbolic
+            sage: gamma_inc_lower(3, x)                                                 # needs sage.symbolic
             -(x^2 + 2*x + 2)*e^(-x) + 2
-            sage: gamma_inc_lower(9/2, 37/7)                                            # optional - sage.symbolic
+            sage: gamma_inc_lower(9/2, 37/7)                                            # needs sage.symbolic
             -1/38416*sqrt(pi)*(1672946*sqrt(259)*e^(-37/7)/sqrt(pi) - 252105*erf(1/7*sqrt(259)))
         """
         if y == 0:
@@ -566,11 +568,11 @@ class Function_gamma_inc_lower(BuiltinFunction):
         """
         EXAMPLES::
 
-            sage: gamma_inc_lower(3, 2.)
+            sage: gamma_inc_lower(3, 2.)                                                # needs sage.rings.real_mpfr
             0.646647167633873
-            sage: gamma_inc_lower(3, 2).n(200)                                          # optional - sage.symbolic
+            sage: gamma_inc_lower(3, 2).n(200)                                          # needs sage.symbolic
             0.646647167633873081060005050275155...
-            sage: gamma_inc_lower(0, 2.)                                                # optional - sage.symbolic
+            sage: gamma_inc_lower(0, 2.)                                                # needs sage.symbolic
             +infinity
         """
         R = parent or s_parent(x)
@@ -599,10 +601,10 @@ class Function_gamma_inc_lower(BuiltinFunction):
         """
         EXAMPLES::
 
-            sage: x, y = var('x,y')                                                     # optional - sage.symbolic
-            sage: gamma_inc_lower(x, y).diff(y)                                         # optional - sage.symbolic
+            sage: x, y = var('x,y')                                                     # needs sage.symbolic
+            sage: gamma_inc_lower(x, y).diff(y)                                         # needs sage.symbolic
             y^(x - 1)*e^(-y)
-            sage: gamma_inc_lower(x, y).diff(x)                                         # optional - sage.symbolic
+            sage: gamma_inc_lower(x, y).diff(x)                                         # needs sage.symbolic
             Traceback (most recent call last):
             ...
             NotImplementedError: cannot differentiate gamma_inc_lower in the first parameter
@@ -617,7 +619,7 @@ class Function_gamma_inc_lower(BuiltinFunction):
         r"""
         EXAMPLES::
 
-            sage: gamma_inc_lower(4/3, 1)._mathematica_()  # indirect doctest, optional - mathematica sage.symbolic
+            sage: gamma_inc_lower(4/3, 1)._mathematica_()       # optional - mathematica, needs sage.symbolic
             Gamma[4/3, 0, 1]
         """
         args_mathematica = []
@@ -645,9 +647,9 @@ def gamma(a, *args, **kwds):
         True
         sage: gamma(6)
         120
-        sage: gamma(1/2)                                                                # optional - sage.symbolic
+        sage: gamma(1/2)                                                                # needs sage.symbolic
         sqrt(pi)
-        sage: gamma(-4/3)                                                               # optional - sage.symbolic
+        sage: gamma(-4/3)                                                               # needs sage.symbolic
         gamma(-4/3)
         sage: gamma(-1)
         Infinity
@@ -656,48 +658,48 @@ def gamma(a, *args, **kwds):
 
     ::
 
-        sage: gamma_inc(3, 2)                                                           # optional - sage.symbolic
+        sage: gamma_inc(3, 2)                                                           # needs sage.symbolic
         gamma(3, 2)
-        sage: gamma_inc(x,0)                                                            # optional - sage.symbolic
+        sage: gamma_inc(x,0)                                                            # needs sage.symbolic
         gamma(x)
 
     ::
 
-        sage: gamma(5, hold=True)                                                       # optional - sage.symbolic
+        sage: gamma(5, hold=True)                                                       # needs sage.symbolic
         gamma(5)
-        sage: gamma(x, 0, hold=True)                                                    # optional - sage.symbolic
+        sage: gamma(x, 0, hold=True)                                                    # needs sage.symbolic
         gamma(x, 0)
 
     ::
 
-        sage: gamma(CDF(I))                                                             # optional - sage.libs.pari sage.symbolic
+        sage: gamma(CDF(I))                                                             # needs sage.libs.pari sage.symbolic
         -0.15494982830181067 - 0.49801566811835607*I
-        sage: gamma(CDF(0.5, 14))                                                       # optional - sage.libs.pari
+        sage: gamma(CDF(0.5, 14))                                                       # needs sage.libs.pari
         -4.0537030780372815e-10 - 5.773299834553605e-10*I
 
     Use ``numerical_approx`` to get higher precision from
     symbolic expressions::
 
-        sage: gamma(pi).n(100)                                                          # optional - sage.symbolic
+        sage: gamma(pi).n(100)                                                          # needs sage.symbolic
         2.2880377953400324179595889091
-        sage: gamma(3/4).n(100)                                                         # optional - sage.symbolic
+        sage: gamma(3/4).n(100)                                                         # needs sage.symbolic
         1.2254167024651776451290983034
 
     The precision for the result is also deduced from the precision of the
     input. Convert the input to a higher precision explicitly if a result
     with higher precision is desired.::
 
-        sage: t = gamma(RealField(100)(2.5)); t                                         # optional - sage.rings.real_mpfr
+        sage: t = gamma(RealField(100)(2.5)); t                                         # needs sage.rings.real_mpfr
         1.3293403881791370204736256125
-        sage: t.prec()                                                                  # optional - sage.rings.real_mpfr
+        sage: t.prec()                                                                  # needs sage.rings.real_mpfr
         100
 
     The gamma function only works with input that can be coerced to the
     Symbolic Ring::
 
         sage: x = polygen(ZZ, 'x')
-        sage: Q.<i> = NumberField(x^2 + 1)                                              # optional - sage.rings.number_field
-        sage: gamma(i)                                                                  # optional - sage.rings.number_field sage.symbolic
+        sage: Q.<i> = NumberField(x^2 + 1)                                              # needs sage.rings.number_field
+        sage: gamma(i)                                                                  # needs sage.rings.number_field sage.symbolic
         Traceback (most recent call last):
         ...
         TypeError: cannot coerce arguments: no canonical coercion
@@ -749,37 +751,38 @@ class Function_psi1(GinacFunction):
         EXAMPLES::
 
             sage: from sage.functions.gamma import psi1
-            sage: psi1(x)                                                               # optional - sage.symbolic
+            sage: psi1(x)                                                               # needs sage.symbolic
             psi(x)
-            sage: psi1(x).derivative(x)                                                 # optional - sage.symbolic
+            sage: psi1(x).derivative(x)                                                 # needs sage.symbolic
             psi(1, x)
 
         ::
 
-            sage: psi1(3)                                                               # optional - sage.symbolic
+            sage: psi1(3)                                                               # needs sage.symbolic
             -euler_gamma + 3/2
 
         ::
 
-            sage: psi(.5)
+            sage: psi(.5)                                                               # needs sage.symbolic
             -1.96351002602142
-            sage: psi(RealField(100)(.5))
+            sage: psi(RealField(100)(.5))                                               # needs sage.rings.real_mpfr
             -1.9635100260214234794409763330
 
         TESTS::
 
-            sage: latex(psi1(x))                                                        # optional - sage.symbolic
+            sage: latex(psi1(x))                                                        # needs sage.symbolic
             \psi\left(x\right)
-            sage: loads(dumps(psi1(x) + 1))                                             # optional - sage.symbolic
+            sage: loads(dumps(psi1(x) + 1))                                             # needs sage.symbolic
             psi(x) + 1
 
-            sage: t = psi1(x); t                                                        # optional - sage.symbolic
+            sage: # needs sage.symbolic
+            sage: t = psi1(x); t
             psi(x)
-            sage: t.subs(x=.2)                                                          # optional - sage.symbolic
+            sage: t.subs(x=.2)
             -5.28903989659219
-            sage: psi(x)._sympy_()                                                      # optional - sympy sage.symbolic
+            sage: psi(x)._sympy_()                                                      # needs sympy
             polygamma(0, x)
-            sage: psi(x)._fricas_()    # optional - fricas                              # optional - sage.symbolic
+            sage: psi(x)._fricas_()             # optional - fricas
             digamma(x)
         """
         GinacFunction.__init__(self, "psi", nargs=1, latex_name=r'\psi',
@@ -797,50 +800,52 @@ class Function_psi2(GinacFunction):
 
         EXAMPLES::
 
+            sage: # needs sage.symbolic
             sage: from sage.functions.gamma import psi2
-            sage: psi2(2, x)                                                            # optional - sage.symbolic
+            sage: psi2(2, x)
             psi(2, x)
-            sage: psi2(2, x).derivative(x)                                              # optional - sage.symbolic
+            sage: psi2(2, x).derivative(x)
             psi(3, x)
-            sage: n = var('n')                                                          # optional - sage.symbolic
-            sage: psi2(n, x).derivative(x)                                              # optional - sage.symbolic
+            sage: n = var('n')
+            sage: psi2(n, x).derivative(x)
             psi(n + 1, x)
 
         ::
 
-            sage: psi2(0, x)                                                            # optional - sage.symbolic
+            sage: psi2(0, x)                                                            # needs sage.symbolic
             psi(x)
-            sage: psi2(-1, x)                                                           # optional - sage.symbolic
+            sage: psi2(-1, x)                                                           # needs sage.symbolic
             log(gamma(x))
-            sage: psi2(3, 1)                                                            # optional - sage.symbolic
+            sage: psi2(3, 1)                                                            # needs sage.symbolic
             1/15*pi^4
 
         ::
 
-            sage: psi2(2, .5).n()                                                       # optional - sage.symbolic
+            sage: psi2(2, .5).n()                                                       # needs sage.symbolic
             -16.8287966442343
-            sage: psi2(2, .5).n(100)                                                    # optional - sage.symbolic
+            sage: psi2(2, .5).n(100)                                                    # needs sage.symbolic
             -16.828796644234319995596334261
 
         TESTS::
 
-            sage: psi2(n, x).derivative(n)                                              # optional - sage.symbolic
+            sage: psi2(n, x).derivative(n)                                              # needs sage.symbolic
             Traceback (most recent call last):
             ...
             RuntimeError: cannot diff psi(n,x) with respect to n
 
-            sage: latex(psi2(2,x))                                                      # optional - sage.symbolic
+            sage: # needs sage.symbolic
+            sage: latex(psi2(2,x))
             \psi\left(2, x\right)
-            sage: loads(dumps(psi2(2,x) + 1))                                           # optional - sage.symbolic
+            sage: loads(dumps(psi2(2,x) + 1))
             psi(2, x) + 1
-            sage: psi(2, x)._sympy_()                                                   # optional - sympy sage.symbolic
+            sage: psi(2, x)._sympy_()                                                   # needs sympy
             polygamma(2, x)
-            sage: psi(2, x)._fricas_()  # optional - fricas                             # optional - sage.symbolic
+            sage: psi(2, x)._fricas_()          # optional - fricas
             polygamma(2,x)
 
         Fixed conversion::
 
-            sage: psi(2, x)._maple_init_()                                              # optional - sage.symbolic
+            sage: psi(2, x)._maple_init_()                                              # needs sage.symbolic
             'Psi(2,x)'
         """
         GinacFunction.__init__(self, "psi", nargs=2, latex_name=r'\psi',
@@ -857,9 +862,9 @@ class Function_psi2(GinacFunction):
         These are indirect doctests for this function.::
 
             sage: from sage.functions.gamma import psi2
-            sage: psi2(2, x)._maxima_()                                                 # optional - sage.symbolic
+            sage: psi2(2, x)._maxima_()                                                 # needs sage.symbolic
             psi[2](_SAGE_VAR_x)
-            sage: psi2(4, x)._maxima_()                                                 # optional - sage.symbolic
+            sage: psi2(4, x)._maxima_()                                                 # needs sage.symbolic
             psi[4](_SAGE_VAR_x)
         """
         args_maxima = []
@@ -891,29 +896,30 @@ def psi(x, *args, **kwds):
 
     EXAMPLES::
 
-        sage: psi(x)                                                                    # optional - sage.symbolic
+        sage: # needs sage.symbolic
+        sage: psi(x)
         psi(x)
         sage: psi(.5)
         -1.96351002602142
-        sage: psi(3)                                                                    # optional - sage.symbolic
+        sage: psi(3)
         -euler_gamma + 3/2
-        sage: psi(1, 5)                                                                 # optional - sage.symbolic
+        sage: psi(1, 5)
         1/6*pi^2 - 205/144
-        sage: psi(1, x)                                                                 # optional - sage.symbolic
+        sage: psi(1, x)
         psi(1, x)
-        sage: psi(1, x).derivative(x)                                                   # optional - sage.symbolic
+        sage: psi(1, x).derivative(x)
         psi(2, x)
 
     ::
 
-        sage: psi(3, hold=True)                                                         # optional - sage.symbolic
+        sage: psi(3, hold=True)                                                         # needs sage.symbolic
         psi(3)
-        sage: psi(1, 5, hold=True)                                                      # optional - sage.symbolic
+        sage: psi(1, 5, hold=True)                                                      # needs sage.symbolic
         psi(1, 5)
 
     TESTS::
 
-        sage: psi(2, x, 3)                                                              # optional - sage.symbolic
+        sage: psi(2, x, 3)                                                              # needs sage.symbolic
         Traceback (most recent call last):
         ...
         TypeError: Symbolic function psi takes at most 2 arguments (3 given)
@@ -985,40 +991,42 @@ class Function_beta(GinacFunction):
 
         EXAMPLES::
 
+            sage: # needs sage.symbolic
             sage: beta(3, 2)
             1/12
             sage: beta(3, 1)
             1/3
-            sage: beta(1/2, 1/2)                                                        # optional - sage.symbolic
+            sage: beta(1/2, 1/2)
             beta(1/2, 1/2)
             sage: beta(-1, 1)
             -1
             sage: beta(-1/2, -1/2)
             0
-            sage: ex = beta(x/2, 3)                                                     # optional - sage.symbolic
-            sage: set(ex.operands()) == set([1/2*x, 3])                                 # optional - sage.symbolic
+            sage: ex = beta(x/2, 3)
+            sage: set(ex.operands()) == set([1/2*x, 3])
             True
             sage: beta(.5, .5)
             3.14159265358979
-            sage: beta(1, 2.0+I)                                                        # optional - sage.symbolic
+            sage: beta(1, 2.0+I)
             0.400000000000000 - 0.200000000000000*I
-            sage: ex = beta(3, x+I)                                                     # optional - sage.symbolic
-            sage: set(ex.operands()) == set([x+I, 3])                                   # optional - sage.symbolic
+            sage: ex = beta(3, x+I)
+            sage: set(ex.operands()) == set([x+I, 3])
             True
 
         The result is symbolic if exact input is given::
 
-            sage: ex = beta(2, 1+5*I); ex                                               # optional - sage.symbolic
+            sage: # needs sage.symbolic
+            sage: ex = beta(2, 1+5*I); ex
             beta(...
-            sage: set(ex.operands()) == set([1+5*I, 2])                                 # optional - sage.symbolic
+            sage: set(ex.operands()) == set([1+5*I, 2])
             True
             sage: beta(2, 2.)
             0.166666666666667
-            sage: beta(I, 2.)                                                           # optional - sage.symbolic
+            sage: beta(I, 2.)
             -0.500000000000000 - 0.500000000000000*I
             sage: beta(2., 2)
             0.166666666666667
-            sage: beta(2., I)                                                           # optional - sage.symbolic
+            sage: beta(2., I)
             -0.500000000000000 - 0.500000000000000*I
 
             sage: beta(x, x)._sympy_()
@@ -1031,7 +1039,7 @@ class Function_beta(GinacFunction):
 
         Check that :trac:`15196` is fixed::
 
-            sage: beta(-1.3, -0.4)
+            sage: beta(-1.3, -0.4)                                                      # needs sage.symbolic
             -4.92909641669610
         """
         GinacFunction.__init__(self, 'beta', nargs=2,
@@ -1047,7 +1055,7 @@ class Function_beta(GinacFunction):
         r"""
         TESTS::
 
-            sage: RBF(beta(sin(3), sqrt(RBF(2).add_error(1e-8)/3)))  # abs tol 6e-7     # optional - sage.libs.flint
+            sage: RBF(beta(sin(3), sqrt(RBF(2).add_error(1e-8)/3)))  # abs tol 6e-7     # needs sage.libs.flint
             [7.407662 +/- 6.17e-7]
         """
         return [x, y]
