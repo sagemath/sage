@@ -55,10 +55,9 @@ class SpikeFunction:
     ``spike_function``, but one can use it directly::
 
         sage: from sage.functions.spike_function import SpikeFunction
-        sage: S = SpikeFunction([(0,1),(1,2),(pi,-5)])
-        sage: S
+        sage: S = SpikeFunction([(0,1), (1,2), (pi,-5)]); S                             # needs sage.symbolic
         A spike function with spikes at [0.0, 1.0, 3.141592653589793]
-        sage: S.support
+        sage: S.support                                                                 # needs sage.symbolic
         [0.0, 1.0, 3.141592653589793]
     """
     def __init__(self, v, eps=0.0000001):
@@ -158,8 +157,8 @@ class SpikeFunction:
 
             sage: S = spike_function([(-3,4),(-1,1),(2,3)]); S
             A spike function with spikes at [-3.0, -1.0, 2.0]
-            sage: P = S.plot_fft_abs(8)
-            sage: p = P[0]; p.ydata  # abs tol 1e-8
+            sage: P = S.plot_fft_abs(8)                                                 # needs sage.plot
+            sage: p = P[0]; p.ydata  # abs tol 1e-8                                     # needs sage.plot
             [5.0, 5.0, 3.367958691924177, 3.367958691924177, 4.123105625617661,
              4.123105625617661, 4.759921664218055, 4.759921664218055]
         """
@@ -177,8 +176,8 @@ class SpikeFunction:
 
             sage: S = spike_function([(-3,4),(-1,1),(2,3)]); S
             A spike function with spikes at [-3.0, -1.0, 2.0]
-            sage: P = S.plot_fft_arg(8)
-            sage: p = P[0]; p.ydata  # abs tol 1e-8
+            sage: P = S.plot_fft_arg(8)                                                 # needs sage.plot
+            sage: p = P[0]; p.ydata  # abs tol 1e-8                                     # needs sage.plot
             [0.0, 0.0, -0.211524990023434, -0.211524990023434,
              0.244978663126864, 0.244978663126864, -0.149106180027477,
              -0.149106180027477]
@@ -196,7 +195,7 @@ class SpikeFunction:
 
             sage: S = spike_function([(-3,4),(-1,1),(2,3)],0.001); S
             A spike function with spikes at [-3.0, -1.0, 2.0]
-            sage: S.vector(16)
+            sage: S.vector(16)                                                          # needs sage.modules
             (4.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
              0.0, 0.0, 0.0)
         """
@@ -239,9 +238,9 @@ class SpikeFunction:
 
         EXAMPLES::
 
-            sage: S = spike_function([(-1,1),(1,40)])
-            sage: P = plot(S)
-            sage: P[0]
+            sage: S = spike_function([(-1,1), (1,40)])
+            sage: P = plot(S)                                                           # needs sage.plot
+            sage: P[0]                                                                  # needs sage.plot
             Line defined by 8 points
         """
         v = []

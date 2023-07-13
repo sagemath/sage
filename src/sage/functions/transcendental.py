@@ -51,101 +51,102 @@ class Function_zeta(GinacFunction):
 
         EXAMPLES::
 
-            sage: zeta(x)
+            sage: zeta(x)                                                               # needs sage.symbolic
             zeta(x)
-            sage: zeta(2)
+            sage: zeta(2)                                                               # needs sage.symbolic
             1/6*pi^2
-            sage: zeta(2.)
+            sage: zeta(2.)                                                              # needs sage.symbolic
             1.64493406684823
-            sage: RR = RealField(200)
-            sage: zeta(RR(2))
+            sage: RR = RealField(200)                                                   # needs sage.rings.real_mpfr
+            sage: zeta(RR(2))                                                           # needs sage.rings.real_mpfr
             1.6449340668482264364724151666460251892189499012067984377356
-            sage: zeta(I)
+            sage: zeta(I)                                                               # needs sage.symbolic
             zeta(I)
-            sage: zeta(I).n()
+            sage: zeta(I).n()                                                           # needs sage.symbolic
             0.00330022368532410 - 0.418155449141322*I
-            sage: zeta(sqrt(2))
+            sage: zeta(sqrt(2))                                                         # needs sage.symbolic
             zeta(sqrt(2))
-            sage: zeta(sqrt(2)).n()  # rel tol 1e-10
+            sage: zeta(sqrt(2)).n()  # rel tol 1e-10                                    # needs sage.symbolic
             3.02073767948603
 
         It is possible to use the ``hold`` argument to prevent
         automatic evaluation::
 
-            sage: zeta(2,hold=True)
+            sage: zeta(2, hold=True)                                                    # needs sage.symbolic
             zeta(2)
 
         To then evaluate again, we currently must use Maxima via
         :meth:`sage.symbolic.expression.Expression.simplify`::
 
-            sage: a = zeta(2,hold=True); a.simplify()
+            sage: a = zeta(2, hold=True); a.simplify()                                  # needs sage.symbolic
             1/6*pi^2
 
         The Laurent expansion of `\zeta(s)` at `s=1` is
         implemented by means of the
         :wikipedia:`Stieltjes constants <Stieltjes_constants>`::
 
-            sage: s = SR('s')
-            sage: zeta(s).series(s==1, 2)
+            sage: s = SR('s')                                                           # needs sage.symbolic
+            sage: zeta(s).series(s==1, 2)                                               # needs sage.symbolic
             1*(s - 1)^(-1) + euler_gamma + (-stieltjes(1))*(s - 1) + Order((s - 1)^2)
 
         Generally, the Stieltjes constants occur in the Laurent
         expansion of `\zeta`-type singularities::
 
-            sage: zeta(2*s/(s+1)).series(s==1, 2)
+            sage: zeta(2*s/(s+1)).series(s==1, 2)                                       # needs sage.symbolic
             2*(s - 1)^(-1) + (euler_gamma + 1) + (-1/2*stieltjes(1))*(s - 1) + Order((s - 1)^2)
 
 
         TESTS::
 
+            sage: # needs sage.symbolic
             sage: latex(zeta(x))
             \zeta(x)
             sage: a = loads(dumps(zeta(x)))
             sage: a.operator() == zeta
             True
-            sage: zeta(x)._sympy_()
+            sage: zeta(x)._sympy_()                                                     # needs sympy
             zeta(x)
 
-            sage: zeta(1)
+            sage: zeta(1)                                                               # needs sage.symbolic
             Infinity
-            sage: zeta(x).subs(x=1)
+            sage: zeta(x).subs(x=1)                                                     # needs sage.symbolic
             Infinity
 
         Check that :trac:`19799` is resolved::
 
-            sage: zeta(pi)
+            sage: zeta(pi)                                                              # needs sage.symbolic
             zeta(pi)
-            sage: zeta(pi).n()  # rel tol 1e-10
+            sage: zeta(pi).n()  # rel tol 1e-10                                         # needs sage.symbolic
             1.17624173838258
 
         Check that :trac:`20082` is fixed::
 
-            sage: zeta(x).series(x==pi, 2)
+            sage: zeta(x).series(x==pi, 2)                                              # needs sage.symbolic
             (zeta(pi)) + (zetaderiv(1, pi))*(-pi + x) + Order((pi - x)^2)
-            sage: (zeta(x) * 1/(1 - exp(-x))).residue(x==2*pi*I)
+            sage: (zeta(x) * 1/(1 - exp(-x))).residue(x==2*pi*I)                        # needs sage.symbolic
             zeta(2*I*pi)
 
         Check that :trac:`20102` is fixed::
 
-            sage: (zeta(x)^2).series(x==1, 1)
+            sage: (zeta(x)^2).series(x==1, 1)                                           # needs sage.symbolic
             1*(x - 1)^(-2) + (2*euler_gamma)*(x - 1)^(-1)
             + (euler_gamma^2 - 2*stieltjes(1)) + Order(x - 1)
-            sage: (zeta(x)^4).residue(x==1)
+            sage: (zeta(x)^4).residue(x==1)                                             # needs sage.symbolic
             4/3*euler_gamma*(3*euler_gamma^2 - 2*stieltjes(1))
             - 28/3*euler_gamma*stieltjes(1) + 2*stieltjes(2)
 
         Check that the right infinities are returned (:trac:`19439`)::
 
-            sage: zeta(1.0)
+            sage: zeta(1.0)                                                             # needs sage.symbolic
             +infinity
-            sage: zeta(SR(1.0))
+            sage: zeta(SR(1.0))                                                         # needs sage.symbolic
             Infinity
 
         Fixed conversion::
 
-            sage: zeta(3)._maple_init_()
+            sage: zeta(3)._maple_init_()                                                # needs sage.symbolic
             'Zeta(3)'
-            sage: zeta(3)._maple_().sage()  # optional - maple
+            sage: zeta(3)._maple_().sage()      # optional - maple                      # needs sage.symbolic
             zeta(3)
         """
         GinacFunction.__init__(self, 'zeta',
@@ -173,36 +174,37 @@ class Function_stieltjes(GinacFunction):
 
         EXAMPLES::
 
-            sage: _ = var('n')
-            sage: stieltjes(n)
+            sage: _ = var('n')                                                          # needs sage.symbolic
+            sage: stieltjes(n)                                                          # needs sage.symbolic
             stieltjes(n)
-            sage: stieltjes(0)
+            sage: stieltjes(0)                                                          # needs sage.symbolic
             euler_gamma
-            sage: stieltjes(2)
+            sage: stieltjes(2)                                                          # needs sage.symbolic
             stieltjes(2)
-            sage: stieltjes(int(2))
+            sage: stieltjes(int(2))                                                     # needs sage.symbolic
             stieltjes(2)
-            sage: stieltjes(2).n(100)
+            sage: stieltjes(2).n(100)                                                   # needs sage.symbolic
             -0.0096903631928723184845303860352
-            sage: RR = RealField(200)
-            sage: stieltjes(RR(2))
+            sage: RR = RealField(200)                                                   # needs sage.rings.real_mpfr
+            sage: stieltjes(RR(2))                                                      # needs sage.rings.real_mpfr
             -0.0096903631928723184845303860352125293590658061013407498807014
 
         It is possible to use the ``hold`` argument to prevent
         automatic evaluation::
 
-            sage: stieltjes(0,hold=True)
+            sage: stieltjes(0, hold=True)                                               # needs sage.symbolic
             stieltjes(0)
 
+            sage: # needs sage.symbolic
             sage: latex(stieltjes(n))
             \gamma_{n}
             sage: a = loads(dumps(stieltjes(n)))
             sage: a.operator() == stieltjes
             True
-            sage: stieltjes(x)._sympy_()
+            sage: stieltjes(x)._sympy_()                                                # needs sympy
             stieltjes(x)
 
-            sage: stieltjes(x).subs(x==0)
+            sage: stieltjes(x).subs(x==0)                                               # needs sage.symbolic
             euler_gamma
         """
         GinacFunction.__init__(self, "stieltjes", nargs=1,
@@ -219,9 +221,9 @@ class Function_HurwitzZeta(BuiltinFunction):
         r"""
         TESTS::
 
-            sage: latex(hurwitz_zeta(x, 2))
+            sage: latex(hurwitz_zeta(x, 2))                                             # needs sage.symbolic
             \zeta\left(x, 2\right)
-            sage: hurwitz_zeta(x, 2)._sympy_()
+            sage: hurwitz_zeta(x, 2)._sympy_()                                          # needs sympy sage.symbolic
             zeta(x, 2)
         """
         BuiltinFunction.__init__(self, 'hurwitz_zeta', nargs=2,
@@ -233,15 +235,15 @@ class Function_HurwitzZeta(BuiltinFunction):
         r"""
         TESTS::
 
-            sage: hurwitz_zeta(x, 1)
+            sage: hurwitz_zeta(x, 1)                                                    # needs sage.symbolic
             zeta(x)
-            sage: hurwitz_zeta(4, 3)
+            sage: hurwitz_zeta(4, 3)                                                    # needs sage.symbolic
             1/90*pi^4 - 17/16
-            sage: hurwitz_zeta(-4, x)
+            sage: hurwitz_zeta(-4, x)                                                   # needs sage.symbolic
             -1/5*x^5 + 1/2*x^4 - 1/3*x^3 + 1/30*x
             sage: hurwitz_zeta(3, 0.5)
             8.41439832211716
-            sage: hurwitz_zeta(0, x)
+            sage: hurwitz_zeta(0, x)                                                    # needs sage.symbolic
             -x + 1/2
         """
         if x == 1:
@@ -257,9 +259,9 @@ class Function_HurwitzZeta(BuiltinFunction):
         r"""
         TESTS::
 
-            sage: hurwitz_zeta(11/10, 1/2).n()
+            sage: hurwitz_zeta(11/10, 1/2).n()                                          # needs sage.symbolic
             12.1038134956837
-            sage: hurwitz_zeta(11/10, 1/2).n(100)
+            sage: hurwitz_zeta(11/10, 1/2).n(100)                                       # needs sage.symbolic
             12.103813495683755105709077413
             sage: hurwitz_zeta(11/10, 1 + 1j).n()
             9.85014164287853 - 1.06139499403981*I
@@ -270,8 +272,8 @@ class Function_HurwitzZeta(BuiltinFunction):
         r"""
         TESTS::
 
-            sage: y = var('y')
-            sage: diff(hurwitz_zeta(x, y), y)
+            sage: y = var('y')                                                          # needs sage.symbolic
+            sage: diff(hurwitz_zeta(x, y), y)                                           # needs sage.symbolic
             -x*hurwitz_zeta(x + 1, y)
         """
         if diff_param == 1:
@@ -304,6 +306,7 @@ def hurwitz_zeta(s, x, **kwargs):
 
     Symbolic evaluations::
 
+        sage: # needs sage.symbolic
         sage: hurwitz_zeta(x, 1)
         zeta(x)
         sage: hurwitz_zeta(4, 3)
@@ -317,11 +320,11 @@ def hurwitz_zeta(s, x, **kwargs):
 
     Numerical evaluations::
 
-        sage: hurwitz_zeta(3, 1/2).n()
+        sage: hurwitz_zeta(3, 1/2).n()                                                  # needs sage.symbolic
         8.41439832211716
-        sage: hurwitz_zeta(11/10, 1/2).n()
+        sage: hurwitz_zeta(11/10, 1/2).n()                                              # needs sage.symbolic
         12.1038134956837
-        sage: hurwitz_zeta(3, x).series(x, 60).subs(x=0.5).n()
+        sage: hurwitz_zeta(3, x).series(x, 60).subs(x=0.5).n()                          # needs sage.symbolic
         8.41439832211716
         sage: hurwitz_zeta(3, 0.5)
         8.41439832211716
@@ -340,31 +343,32 @@ class Function_zetaderiv(GinacFunction):
 
         EXAMPLES::
 
+            sage: # needs sage.symbolic
             sage: zetaderiv(1, x)
             zetaderiv(1, x)
             sage: zetaderiv(1, x).diff(x)
             zetaderiv(2, x)
             sage: var('n')
             n
-            sage: zetaderiv(n,x)
+            sage: zetaderiv(n, x)
             zetaderiv(n, x)
             sage: zetaderiv(1, 4).n()
             -0.0689112658961254
-            sage: import mpmath; mpmath.diff(lambda x: mpmath.zeta(x), 4)
+            sage: import sage.libs.mpmath; sage.libs.mpmath.all.diff(lambda x: sage.libs.mpmath.all.zeta(x), 4)         # needs mpmath
             mpf('-0.068911265896125382')
 
         TESTS::
 
-            sage: latex(zetaderiv(2,x))
+            sage: latex(zetaderiv(2, x))                                                # needs sage.symbolic
             \zeta^\prime\left(2, x\right)
-            sage: a = loads(dumps(zetaderiv(2,x)))
-            sage: a.operator() == zetaderiv
+            sage: a = loads(dumps(zetaderiv(2, x)))                                     # needs sage.symbolic
+            sage: a.operator() == zetaderiv                                             # needs sage.symbolic
             True
 
-            sage: b = RBF(3/2, 1e-10)
-            sage: zetaderiv(1, b, hold=True)
+            sage: b = RBF(3/2, 1e-10)                                                   # needs sage.libs.flint
+            sage: zetaderiv(1, b, hold=True)                                            # needs sage.libs.flint sage.symbolic
             zetaderiv(1, [1.500000000 +/- 1.01e-10])
-            sage: zetaderiv(b, 1)
+            sage: zetaderiv(b, 1)                                                       # needs sage.libs.flint sage.symbolic
             zetaderiv([1.500000000 +/- 1.01e-10], 1)
         """
         GinacFunction.__init__(self, "zetaderiv", nargs=2,
@@ -374,9 +378,9 @@ class Function_zetaderiv(GinacFunction):
         r"""
         TESTS::
 
-            sage: zetaderiv(0, 3, hold=True).n() == zeta(3).n()
+            sage: zetaderiv(0, 3, hold=True).n() == zeta(3).n()                         # needs sage.symbolic
             True
-            sage: zetaderiv(2, 3 + I).n()
+            sage: zetaderiv(2, 3 + I).n()                                               # needs sage.symbolic
             0.0213814086193841 - 0.174938812330834*I
         """
         return _mpmath_utils_call(_mpmath_zeta, x, 1, n, parent=parent)
@@ -385,7 +389,7 @@ class Function_zetaderiv(GinacFunction):
         r"""
         TESTS::
 
-            sage: zetaderiv(1, RBF(3/2, 0.0001))
+            sage: zetaderiv(1, RBF(3/2, 0.0001))                                        # needs sage.libs.flint
             [-3.93 +/- ...e-3]
         """
         return [x, k]
@@ -420,19 +424,19 @@ def zeta_symmetric(s):
 
     EXAMPLES::
 
-        sage: zeta_symmetric(0.7)
+        sage: zeta_symmetric(0.7)                                                       # needs sage.rings.real_mpfr
         0.497580414651127
-        sage: zeta_symmetric(1-0.7)
+        sage: zeta_symmetric(1 - 0.7)                                                   # needs sage.rings.real_mpfr
         0.497580414651127
-        sage: RR = RealField(200)
-        sage: zeta_symmetric(RR(0.7))
+        sage: RR = RealField(200)                                                       # needs sage.rings.real_mpfr
+        sage: zeta_symmetric(RR(0.7))                                                   # needs sage.rings.real_mpfr
         0.49758041465112690357779107525638385212657443284080589766062
-        sage: C.<i> = ComplexField()
-        sage: zeta_symmetric(0.5 + i*14.0)
+        sage: C.<i> = ComplexField()                                                    # needs sage.rings.real_mpfr
+        sage: zeta_symmetric(0.5 + i*14.0)                                              # needs sage.libs.pari sage.rings.real_mpfr
         0.000201294444235258 + 1.49077798716757e-19*I
-        sage: zeta_symmetric(0.5 + i*14.1)
+        sage: zeta_symmetric(0.5 + i*14.1)                                              # needs sage.libs.pari sage.rings.real_mpfr
         0.0000489893483255687 + 4.40457132572236e-20*I
-        sage: zeta_symmetric(0.5 + i*14.2)
+        sage: zeta_symmetric(0.5 + i*14.2)                                              # needs sage.libs.pari sage.rings.real_mpfr
         -0.0000868931282620101 + 7.11507675693612e-20*I
 
     REFERENCE:
@@ -484,13 +488,14 @@ class DickmanRho(BuiltinFunction):
 
     EXAMPLES::
 
+        sage: # needs sage.symbolic
         sage: dickman_rho(2)
         0.306852819440055
         sage: dickman_rho(10)
         2.77017183772596e-11
         sage: dickman_rho(10.00000000000000000000000000000000000000)
         2.77017183772595898875812120063434232634e-11
-        sage: plot(log(dickman_rho(x)), (x, 0, 15))
+        sage: plot(log(dickman_rho(x)), (x, 0, 15))                                     # needs sage.plot
         Graphics object consisting of 1 graphics primitive
 
     AUTHORS:
@@ -509,11 +514,11 @@ class DickmanRho(BuiltinFunction):
 
         TESTS::
 
-            sage: dickman_rho(x)
+            sage: dickman_rho(x)                                                        # needs sage.symbolic
             dickman_rho(x)
-            sage: dickman_rho(3)
+            sage: dickman_rho(3)                                                        # needs sage.symbolic
             0.0486083882911316
-            sage: dickman_rho(pi)
+            sage: dickman_rho(pi)                                                       # needs sage.symbolic
             0.0359690758968463
         """
         self._cur_prec = 0
@@ -523,9 +528,12 @@ class DickmanRho(BuiltinFunction):
         """
         EXAMPLES::
 
-            sage: [dickman_rho(n) for n in [1..10]]
-            [1.00000000000000, 0.306852819440055, 0.0486083882911316, 0.00491092564776083, 0.000354724700456040, 0.0000196496963539553, 8.74566995329392e-7, 3.23206930422610e-8, 1.01624828273784e-9, 2.77017183772596e-11]
-            sage: dickman_rho(0)
+            sage: [dickman_rho(n) for n in [1..10]]                                     # needs sage.symbolic
+            [1.00000000000000, 0.306852819440055, 0.0486083882911316,
+             0.00491092564776083, 0.000354724700456040, 0.0000196496963539553,
+             8.74566995329392e-7, 3.23206930422610e-8, 1.01624828273784e-9,
+             2.77017183772596e-11]
+            sage: dickman_rho(0)                                                        # needs sage.symbolic
             1.00000000000000
         """
         if not is_RealNumber(x):
@@ -571,7 +579,7 @@ class DickmanRho(BuiltinFunction):
             -9.9376e-8*x^11 + 3.7722e-7*x^10 - 1.4684e-6*x^9 + 5.8783e-6*x^8 - 0.000024259*x^7 + 0.00010341*x^6 - 0.00045583*x^5 + 0.0020773*x^4 - 0.0097336*x^3 + 0.045224*x^2 - 0.11891*x + 0.13032
             sage: f(-1), f(0), f(1)
             (0.30685, 0.13032, 0.048608)
-            sage: dickman_rho(2), dickman_rho(2.5), dickman_rho(3)
+            sage: dickman_rho(2), dickman_rho(2.5), dickman_rho(3)                      # needs sage.symbolic
             (0.306852819440055, 0.130319561832251, 0.0486083882911316)
         """
         return self._compute_power_series(n, abs_prec, cache_ring=None)
@@ -649,11 +657,11 @@ class DickmanRho(BuiltinFunction):
 
         EXAMPLES::
 
-            sage: dickman_rho.approximate(10)
+            sage: dickman_rho.approximate(10)                                           # needs sage.rings.real_mpfr
             2.41739196365564e-11
-            sage: dickman_rho(10)
+            sage: dickman_rho(10)                                                       # needs sage.symbolic
             2.77017183772596e-11
-            sage: dickman_rho.approximate(1000)
+            sage: dickman_rho.approximate(1000)                                         # needs sage.rings.real_mpfr
             4.32938809066403e-3464
         """
         log, exp, sqrt, pi = math.log, math.exp, math.sqrt, math.pi

@@ -7,15 +7,16 @@ as users might expect. These functions wait to evaluate if there are variables.
 
 Here you can see some differences::
 
-   sage: max(x, x^2)
+   sage: max(x, x^2)                                                                    # needs sage.symbolic
    x
-   sage: max_symbolic(x, x^2)
+   sage: max_symbolic(x, x^2)                                                           # needs sage.symbolic
    max(x, x^2)
-   sage: f(x) = max_symbolic(x, x^2); f(1/2)
+   sage: f(x) = max_symbolic(x, x^2); f(1/2)                                            # needs sage.symbolic
    1/2
 
 This works as expected for more than two entries::
 
+   sage: # needs sage.symbolic
    sage: max(3, 5, x)
    5
    sage: min(3, 5, x)
@@ -45,6 +46,7 @@ class MinMax_base(BuiltinFunction):
         """
         EXAMPLES::
 
+            sage: # needs sage.symbolic
             sage: max_symbolic(3, 5, x)  # indirect doctest
             max(x, 5)
             sage: max_symbolic([5.0r])   # indirect doctest
@@ -89,20 +91,20 @@ class MinMax_base(BuiltinFunction):
         """
         EXAMPLES::
 
-            sage: max_symbolic(3, 5, x)
+            sage: max_symbolic(3, 5, x)                                                 # needs sage.symbolic
             max(x, 5)
-            sage: max_symbolic(3, 5, x, hold=True)
+            sage: max_symbolic(3, 5, x, hold=True)                                      # needs sage.symbolic
             max(3, 5, x)
-            sage: max_symbolic([3, 5, x])
+            sage: max_symbolic([3, 5, x])                                               # needs sage.symbolic
             max(x, 5)
 
         ::
 
-            sage: min_symbolic(3, 5, x)
+            sage: min_symbolic(3, 5, x)                                                 # needs sage.symbolic
             min(x, 3)
-            sage: min_symbolic(3, 5, x, hold=True)
+            sage: min_symbolic(3, 5, x, hold=True)                                      # needs sage.symbolic
             min(3, 5, x)
-            sage: min_symbolic([3, 5, x])
+            sage: min_symbolic([3, 5, x])                                               # needs sage.symbolic
             min(x, 3)
 
         TESTS:
@@ -116,19 +118,19 @@ class MinMax_base(BuiltinFunction):
 
         Check if a single argument which is not iterable works::
 
-            sage: max_symbolic(None)
+            sage: max_symbolic(None)                                                    # needs sage.symbolic
             Traceback (most recent call last):
             ...
             TypeError: 'NoneType' object is not iterable
-            sage: max_symbolic(5)
+            sage: max_symbolic(5)                                                       # needs sage.symbolic
             Traceback (most recent call last):
             ...
             TypeError: 'sage.rings.integer.Integer' object is not iterable
-            sage: max_symbolic(x)
+            sage: max_symbolic(x)                                                       # needs sage.symbolic
             Traceback (most recent call last):
             ...
             TypeError: 'sage.symbolic.expression.Expression' object is not iterable
-            sage: min_symbolic(5)
+            sage: min_symbolic(5)                                                       # needs sage.symbolic
             Traceback (most recent call last):
             ...
             TypeError: 'sage.rings.integer.Integer' object is not iterable
@@ -162,6 +164,7 @@ class MaxSymbolic(MinMax_base):
 
         EXAMPLES::
 
+            sage: # needs sage.symbolic
             sage: max_symbolic(3, x)
             max(3, x)
             sage: max_symbolic(3, x).subs(x=5)
@@ -173,11 +176,11 @@ class MaxSymbolic(MinMax_base):
 
         TESTS::
 
-            sage: loads(dumps(max_symbolic(x, 5)))
+            sage: loads(dumps(max_symbolic(x, 5)))                                      # needs sage.symbolic
             max(x, 5)
-            sage: latex(max_symbolic(x, 5))
+            sage: latex(max_symbolic(x, 5))                                             # needs sage.symbolic
             \max\left(x, 5\right)
-            sage: max_symbolic(x, 5)._sympy_()
+            sage: max_symbolic(x, 5)._sympy_()                                          # needs sympy sage.symbolic
             Max(5, x)
         """
         BuiltinFunction.__init__(self, 'max', nargs=0, latex_name=r"\max",
@@ -187,6 +190,7 @@ class MaxSymbolic(MinMax_base):
         """
         EXAMPLES::
 
+            sage: # needs sage.symbolic
             sage: t = max_symbolic(x, 5); t
             max(x, 5)
             sage: t.subs(x=3)  # indirect doctest
@@ -215,6 +219,7 @@ class MaxSymbolic(MinMax_base):
         """
         EXAMPLES::
 
+            sage: # needs sage.symbolic
             sage: t = max_symbolic(sin(x), cos(x))
             sage: t.subs(x=1).n(200)
             0.84147098480789650665250232163029899962256306079837106567275
@@ -231,10 +236,10 @@ class MaxSymbolic(MinMax_base):
         We can usually integrate these expressions, but can't
         guarantee a symbolic answer in closed form::
 
-            sage: f = max_symbolic(sin(x), cos(x))
-            sage: r = integral(f, x, 0, 1)
+            sage: f = max_symbolic(sin(x), cos(x))                                      # needs sage.symbolic
+            sage: r = integral(f, x, 0, 1)                                              # needs sage.symbolic
             ...
-            sage: r.n()  # abs tol 1e-8
+            sage: r.n()  # abs tol 1e-8                                                 # needs sage.symbolic
             0.873911256504955
         """
         return max_symbolic(args)
@@ -254,6 +259,7 @@ class MinSymbolic(MinMax_base):
 
         EXAMPLES::
 
+            sage: # needs sage.symbolic
             sage: min_symbolic(3, x)
             min(3, x)
             sage: min_symbolic(3, x).subs(x=5)
@@ -265,11 +271,11 @@ class MinSymbolic(MinMax_base):
 
         TESTS::
 
-            sage: loads(dumps(min_symbolic(x, 5)))
+            sage: loads(dumps(min_symbolic(x, 5)))                                      # needs sage.symbolic
             min(x, 5)
-            sage: latex(min_symbolic(x, 5))
+            sage: latex(min_symbolic(x, 5))                                             # needs sage.symbolic
             \min\left(x, 5\right)
-            sage: min_symbolic(x, 5)._sympy_()
+            sage: min_symbolic(x, 5)._sympy_()                                          # needs sympy sage.symbolic
             Min(5, x)
         """
         BuiltinFunction.__init__(self, 'min', nargs=0, latex_name=r"\min",
@@ -279,6 +285,7 @@ class MinSymbolic(MinMax_base):
         """
         EXAMPLES::
 
+            sage: # needs sage.symbolic
             sage: t = min_symbolic(x, 5); t
             min(x, 5)
             sage: t.subs(x=3)  # indirect doctest
@@ -307,6 +314,7 @@ class MinSymbolic(MinMax_base):
         """
         EXAMPLES::
 
+            sage: # needs sage.symbolic
             sage: t = min_symbolic(sin(x), cos(x))
             sage: t.subs(x=1).n(200)
             0.54030230586813971740093660744297660373231042061792222767010

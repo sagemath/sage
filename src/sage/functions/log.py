@@ -45,119 +45,123 @@ class Function_exp(GinacFunction):
 
     EXAMPLES::
 
-        sage: exp(-1)                                                                   # optional - sage.symbolic
+        sage: exp(-1)                                                                   # needs sage.symbolic
         e^(-1)
-        sage: exp(2)                                                                    # optional - sage.symbolic
+        sage: exp(2)                                                                    # needs sage.symbolic
         e^2
-        sage: exp(2).n(100)                                                             # optional - sage.symbolic
+        sage: exp(2).n(100)                                                             # needs sage.symbolic
         7.3890560989306502272304274606
-        sage: exp(x^2 + log(x))                                                         # optional - sage.symbolic
+        sage: exp(x^2 + log(x))                                                         # needs sage.symbolic
         e^(x^2 + log(x))
-        sage: exp(x^2 + log(x)).simplify()                                              # optional - sage.symbolic
+        sage: exp(x^2 + log(x)).simplify()                                              # needs sage.symbolic
         x*e^(x^2)
-        sage: exp(2.5)
+        sage: exp(2.5)                                                                  # needs sage.symbolic
         12.1824939607035
         sage: exp(float(2.5))
         12.182493960703473
-        sage: exp(RDF('2.5'))
+        sage: exp(RDF('2.5'))                                                           # needs sage.symbolic
         12.182493960703473
-        sage: exp(I*pi/12)                                                              # optional - sage.symbolic
+        sage: exp(I*pi/12)                                                              # needs sage.symbolic
         (1/4*I + 1/4)*sqrt(6) - (1/4*I - 1/4)*sqrt(2)
 
     To prevent automatic evaluation, use the ``hold`` parameter::
 
-        sage: exp(I*pi, hold=True)                                                      # optional - sage.symbolic
+        sage: exp(I*pi, hold=True)                                                      # needs sage.symbolic
         e^(I*pi)
-        sage: exp(0, hold=True)                                                         # optional - sage.symbolic
+        sage: exp(0, hold=True)                                                         # needs sage.symbolic
         e^0
 
     To then evaluate again, we currently must use Maxima via
     :meth:`sage.symbolic.expression.Expression.simplify`::
 
-        sage: exp(0, hold=True).simplify()                                              # optional - sage.symbolic
+        sage: exp(0, hold=True).simplify()                                              # needs sage.symbolic
         1
 
     ::
 
-        sage: exp(pi*I/2)                                                               # optional - sage.symbolic
+        sage: # needs sage.symbolic
+        sage: exp(pi*I/2)
         I
-        sage: exp(pi*I)                                                                 # optional - sage.symbolic
+        sage: exp(pi*I)
         -1
-        sage: exp(8*pi*I)                                                               # optional - sage.symbolic
+        sage: exp(8*pi*I)
         1
-        sage: exp(7*pi*I/2)                                                             # optional - sage.symbolic
+        sage: exp(7*pi*I/2)
         -I
 
     For the sake of simplification, the argument is reduced modulo the
     period of the complex exponential function, `2\pi i`::
 
-        sage: k = var('k', domain='integer')                                            # optional - sage.symbolic
-        sage: exp(2*k*pi*I)                                                             # optional - sage.symbolic
+        sage: k = var('k', domain='integer')                                            # needs sage.symbolic
+        sage: exp(2*k*pi*I)                                                             # needs sage.symbolic
         1
-        sage: exp(log(2) + 2*k*pi*I)                                                    # optional - sage.symbolic
+        sage: exp(log(2) + 2*k*pi*I)                                                    # needs sage.symbolic
         2
 
     The precision for the result is deduced from the precision of
     the input. Convert the input to a higher precision explicitly
     if a result with higher precision is desired::
 
-        sage: t = exp(RealField(100)(2)); t
+        sage: t = exp(RealField(100)(2)); t                                             # needs sage.rings.real_mpfr
         7.3890560989306502272304274606
-        sage: t.prec()
+        sage: t.prec()                                                                  # needs sage.rings.real_mpfr
         100
-        sage: exp(2).n(100)
+        sage: exp(2).n(100)                                                             # needs sage.symbolic
         7.3890560989306502272304274606
 
     TESTS::
 
-        sage: latex(exp(x))                                                             # optional - sage.symbolic
+        sage: # needs sage.symbolic
+        sage: latex(exp(x))
         e^{x}
-        sage: latex(exp(sqrt(x)))                                                       # optional - sage.symbolic
+        sage: latex(exp(sqrt(x)))
         e^{\sqrt{x}}
-        sage: latex(exp)                                                                # optional - sage.symbolic
+        sage: latex(exp)
         \exp
-        sage: latex(exp(sqrt(x))^x)                                                     # optional - sage.symbolic
+        sage: latex(exp(sqrt(x))^x)
         \left(e^{\sqrt{x}}\right)^{x}
-        sage: latex(exp(sqrt(x)^x))                                                     # optional - sage.symbolic
+        sage: latex(exp(sqrt(x)^x))
         e^{\left(\sqrt{x}^{x}\right)}
-        sage: exp(x)._sympy_()                                                          # optional - sympy sage.symbolic
+        sage: exp(x)._sympy_()                                                          # needs sympy
         exp(x)
 
     Test conjugates::
 
-        sage: conjugate(exp(x))                                                         # optional - sage.symbolic
+        sage: conjugate(exp(x))                                                         # needs sage.symbolic
         e^conjugate(x)
 
     Test simplifications when taking powers of exp (:trac:`7264`)::
 
-        sage: var('a,b,c,II')                                                           # optional - sage.symbolic
+        sage: # needs sage.symbolic
+        sage: var('a,b,c,II')
         (a, b, c, II)
-        sage: model_exp = exp(II)**a*(b)                                                # optional - sage.symbolic
-        sage: sol1_l = {b: 5.0, a: 1.1}                                                 # optional - sage.symbolic
-        sage: model_exp.subs(sol1_l)                                                    # optional - sage.symbolic
+        sage: model_exp = exp(II)**a*(b)
+        sage: sol1_l = {b: 5.0, a: 1.1}
+        sage: model_exp.subs(sol1_l)
         5.00000000000000*e^(1.10000000000000*II)
 
     ::
 
-        sage: exp(3)^II*exp(x)                                                          # optional - sage.symbolic
+        sage: # needs sage.symbolic
+        sage: exp(3)^II*exp(x)
         e^(3*II + x)
-        sage: exp(x)*exp(x)                                                             # optional - sage.symbolic
+        sage: exp(x)*exp(x)
         e^(2*x)
-        sage: exp(x)*exp(a)                                                             # optional - sage.symbolic
+        sage: exp(x)*exp(a)
         e^(a + x)
-        sage: exp(x)*exp(a)^2                                                           # optional - sage.symbolic
+        sage: exp(x)*exp(a)^2
         e^(2*a + x)
 
     Another instance of the same problem (:trac:`7394`)::
 
-        sage: 2*sqrt(e)                                                                 # optional - sage.symbolic
+        sage: 2*sqrt(e)                                                                 # needs sage.symbolic
         2*e^(1/2)
 
     Check that :trac:`19918` is fixed::
 
-        sage: exp(-x^2).subs(x=oo)                                                      # optional - sage.symbolic
+        sage: exp(-x^2).subs(x=oo)                                                      # needs sage.symbolic
         0
-        sage: exp(-x).subs(x=-oo)                                                       # optional - sage.symbolic
+        sage: exp(-x).subs(x=-oo)                                                       # needs sage.symbolic
         +Infinity
     """
     def __init__(self):
@@ -166,7 +170,7 @@ class Function_exp(GinacFunction):
 
             sage: loads(dumps(exp))
             exp
-            sage: maxima(exp(x))._sage_()                                               # optional - sage.symbolic
+            sage: maxima(exp(x))._sage_()                                               # needs sage.symbolic
             e^x
         """
         GinacFunction.__init__(self, "exp", latex_name=r"\exp",
@@ -184,38 +188,40 @@ class Function_log1(GinacFunction):
 
     EXAMPLES::
 
-        sage: ln(e^2)                                                                   # optional - sage.symbolic
+        sage: ln(e^2)                                                                   # needs sage.symbolic
         2
-        sage: ln(2)                                                                     # optional - sage.symbolic
+        sage: ln(2)                                                                     # needs sage.symbolic
         log(2)
-        sage: ln(10)                                                                    # optional - sage.symbolic
+        sage: ln(10)                                                                    # needs sage.symbolic
         log(10)
 
     TESTS::
 
-        sage: latex(x.log())                                                            # optional - sage.symbolic
+        sage: # needs sage.symbolic
+        sage: latex(x.log())
         \log\left(x\right)
-        sage: latex(log(1/4))                                                           # optional - sage.symbolic
+        sage: latex(log(1/4))
         \log\left(\frac{1}{4}\right)
-        sage: log(x)._sympy_()                                                          # optional - sympy sage.symbolic
+        sage: log(x)._sympy_()                                                          # needs sympy
         log(x)
-        sage: loads(dumps(ln(x)+1))                                                     # optional - sage.symbolic
+        sage: loads(dumps(ln(x)+1))
         log(x) + 1
 
     ``conjugate(log(x))==log(conjugate(x))`` unless on the branch cut which
     runs along the negative real axis.::
 
-        sage: conjugate(log(x))                                                         # optional - sage.symbolic
+        sage: # needs sage.symbolic
+        sage: conjugate(log(x))
         conjugate(log(x))
-        sage: var('y', domain='positive')                                               # optional - sage.symbolic
+        sage: var('y', domain='positive')
         y
-        sage: conjugate(log(y))                                                         # optional - sage.symbolic
+        sage: conjugate(log(y))
         log(y)
-        sage: conjugate(log(y + I))                                                     # optional - sage.symbolic
+        sage: conjugate(log(y + I))
         conjugate(log(y + I))
-        sage: conjugate(log(-1))                                                        # optional - sage.symbolic
+        sage: conjugate(log(-1))
         -I*pi
-        sage: log(conjugate(-1))                                                        # optional - sage.symbolic
+        sage: log(conjugate(-1))
         I*pi
 
     Check if float arguments are handled properly.::
@@ -223,20 +229,20 @@ class Function_log1(GinacFunction):
         sage: from sage.functions.log import function_log as log
         sage: log(float(5))
         1.6094379124341003
-        sage: log(float(0))
+        sage: log(float(0))                                                             # needs sage.symbolic
         -inf
-        sage: log(float(-1))
+        sage: log(float(-1))                                                            # needs sage.symbolic
         3.141592653589793j
-        sage: log(x).subs(x=float(-1))                                                  # optional - sage.symbolic
+        sage: log(x).subs(x=float(-1))                                                  # needs sage.symbolic
         3.141592653589793j
 
     :trac:`22142`::
 
-        sage: log(QQbar(sqrt(2)))                                                       # optional - sage.rings.number_field sage.symbolic
+        sage: log(QQbar(sqrt(2)))                                                       # needs sage.rings.number_field sage.symbolic
         log(1.414213562373095?)
-        sage: log(QQbar(sqrt(2))*1.)                                                    # optional - sage.rings.number_field sage.symbolic
+        sage: log(QQbar(sqrt(2))*1.)                                                    # needs sage.rings.number_field sage.symbolic
         0.346573590279973
-        sage: polylog(QQbar(sqrt(2)),3)                                                 # optional - sage.rings.number_field sage.symbolic
+        sage: polylog(QQbar(sqrt(2)),3)                                                 # needs sage.rings.number_field sage.symbolic
         polylog(1.414213562373095?, 3)
     """
     def __init__(self):
@@ -245,7 +251,7 @@ class Function_log1(GinacFunction):
 
             sage: loads(dumps(ln))
             log
-            sage: maxima(ln(x))._sage_()                                                # optional - sage.symbolic
+            sage: maxima(ln(x))._sage_()                                                # needs sage.symbolic
             log(x)
         """
         GinacFunction.__init__(self, 'log', latex_name=r'\log',
@@ -265,14 +271,14 @@ class Function_log2(GinacFunction):
     EXAMPLES::
 
         sage: from sage.functions.log import logb
-        sage: logb(1000, 10)
+        sage: logb(1000, 10)                                                            # needs sage.symbolic
         3
 
     TESTS::
 
-        sage: logb(7, 2)                                                                # optional - sage.symbolic
+        sage: logb(7, 2)                                                                # needs sage.symbolic
         log(7)/log(2)
-        sage: logb(int(7), 2)                                                           # optional - sage.symbolic
+        sage: logb(int(7), 2)                                                           # needs sage.symbolic
         log(7)/log(2)
     """
     def __init__(self):
@@ -308,89 +314,91 @@ class Function_polylog(GinacFunction):
 
         EXAMPLES::
 
+            sage: # needs sage.symbolic
             sage: polylog(2.7, 0)
             0.000000000000000
-            sage: polylog(2, 1)                                                         # optional - sage.symbolic
+            sage: polylog(2, 1)
             1/6*pi^2
-            sage: polylog(2, -1)                                                        # optional - sage.symbolic
+            sage: polylog(2, -1)
             -1/12*pi^2
-            sage: polylog(3, -1)                                                        # optional - sage.symbolic
+            sage: polylog(3, -1)
             -3/4*zeta(3)
-            sage: polylog(2, I)                                                         # optional - sage.symbolic
+            sage: polylog(2, I)
             I*catalan - 1/48*pi^2
-            sage: polylog(4, 1/2)                                                       # optional - sage.symbolic
+            sage: polylog(4, 1/2)
             polylog(4, 1/2)
             sage: polylog(4, 0.5)
             0.517479061673899
 
-            sage: polylog(1, x)                                                         # optional - sage.symbolic
+            sage: polylog(1, x)                                                         # needs sage.symbolic
             -log(-x + 1)
-            sage: polylog(2, x^2 + 1)                                                   # optional - sage.symbolic
+            sage: polylog(2, x^2 + 1)                                                   # needs sage.symbolic
             dilog(x^2 + 1)
 
-            sage: f = polylog(4, 1); f                                                  # optional - sage.symbolic
+            sage: f = polylog(4, 1); f                                                  # needs sage.symbolic
             1/90*pi^4
-            sage: f.n()                                                                 # optional - sage.symbolic
+            sage: f.n()                                                                 # needs sage.symbolic
             1.08232323371114
 
-            sage: polylog(4, 2).n()                                                     # optional - sage.symbolic
+            sage: polylog(4, 2).n()                                                     # needs sage.symbolic
             2.42786280675470 - 0.174371300025453*I
-            sage: complex(polylog(4, 2))                                                # optional - sage.symbolic
+            sage: complex(polylog(4, 2))                                                # needs sage.symbolic
             (2.4278628067547032-0.17437130002545306j)
-            sage: float(polylog(4, 0.5))
+            sage: float(polylog(4, 0.5))                                                # needs sage.symbolic
             0.5174790616738993
 
-            sage: z = var('z')                                                          # optional - sage.symbolic
-            sage: polylog(2, z).series(z==0, 5)                                         # optional - sage.symbolic
+            sage: z = var('z')                                                          # needs sage.symbolic
+            sage: polylog(2, z).series(z==0, 5)                                         # needs sage.symbolic
             1*z + 1/4*z^2 + 1/9*z^3 + 1/16*z^4 + Order(z^5)
 
             sage: loads(dumps(polylog))
             polylog
 
-            sage: latex(polylog(5, x))                                                  # optional - sage.symbolic
+            sage: latex(polylog(5, x))                                                  # needs sage.symbolic
             {\rm Li}_{5}(x)
-            sage: polylog(x, x)._sympy_()                                               # optional - sympy sage.symbolic
+            sage: polylog(x, x)._sympy_()                                               # needs sympy sage.symbolic
             polylog(x, x)
 
         TESTS:
 
         Check if :trac:`8459` is fixed::
 
-            sage: t = maxima(polylog(5,x)).sage(); t                                    # optional - sage.symbolic
+            sage: t = maxima(polylog(5,x)).sage(); t                                    # needs sage.symbolic
             polylog(5, x)
-            sage: t.operator() == polylog                                               # optional - sage.symbolic
+            sage: t.operator() == polylog                                               # needs sage.symbolic
             True
-            sage: t.subs(x=.5).n()                                                      # optional - sage.symbolic
+            sage: t.subs(x=.5).n()                                                      # needs sage.symbolic
             0.50840057924226...
 
         Check if :trac:`18386` is fixed::
 
-            sage: polylog(2.0, 1)
+            sage: polylog(2.0, 1)                                                       # needs sage.symbolic
             1.64493406684823
-            sage: polylog(2, 1.0)
+            sage: polylog(2, 1.0)                                                       # needs sage.symbolic
             1.64493406684823
-            sage: polylog(2.0, 1.0)
+            sage: polylog(2.0, 1.0)                                                     # needs sage.symbolic
             1.64493406684823
 
-            sage: polylog(2, RealBallField(100)(1/3))                                   # optional - sage.libs.flint
+            sage: # needs sage.libs.flint
+            sage: polylog(2, RealBallField(100)(1/3))
             [0.36621322997706348761674629766... +/- ...]
-            sage: polylog(2, ComplexBallField(100)(4/3))                                # optional - sage.libs.flint
+            sage: polylog(2, ComplexBallField(100)(4/3))
             [2.27001825336107090380391448586 +/- ...] + [-0.90377988538400159956755721265 +/- ...]*I
-            sage: polylog(2, CBF(1/3))                                                  # optional - sage.libs.flint
+            sage: polylog(2, CBF(1/3))
             [0.366213229977063 +/- ...]
-            sage: parent(_)                                                             # optional - sage.libs.flint
+            sage: parent(_)
             Complex ball field with 53 bits of precision
-            sage: polylog(2, CBF(1))                                                    # optional - sage.libs.flint
+            sage: polylog(2, CBF(1))
             [1.644934066848226 +/- ...]
-            sage: parent(_)                                                             # optional - sage.libs.flint
+            sage: parent(_)
             Complex ball field with 53 bits of precision
 
-            sage: polylog(1, -1)   # known bug                                          # optional - sage.symbolic
+            sage: polylog(1, -1)                # known bug                             # needs sage.symbolic
             -log(2)
 
         Check for :trac:`21907`::
 
-            sage: bool(x*polylog(x,x)==0)                                               # optional - sage.symbolic
+            sage: bool(x*polylog(x,x)==0)                                               # needs sage.symbolic
             False
         """
         GinacFunction.__init__(self, "polylog", nargs=2,
@@ -405,9 +413,9 @@ class Function_polylog(GinacFunction):
 
         These are indirect doctests for this function::
 
-            sage: polylog(2, x)._maxima_()                                              # optional - sage.symbolic
+            sage: polylog(2, x)._maxima_()                                              # needs sage.symbolic
             li[2](_SAGE_VAR_x)
-            sage: polylog(4, x)._maxima_()                                              # optional - sage.symbolic
+            sage: polylog(4, x)._maxima_()                                              # needs sage.symbolic
             polylog(4,_SAGE_VAR_x)
         """
         args_maxima = []
@@ -429,8 +437,8 @@ class Function_polylog(GinacFunction):
         r"""
         TESTS::
 
-            sage: b = RBF(1/2, .0001)                                                   # optional - sage.libs.flint
-            sage: polylog(2, b)                                                         # optional - sage.libs.flint
+            sage: b = RBF(1/2, .0001)                                                   # needs sage.libs.flint
+            sage: polylog(2, b)                                                         # needs sage.libs.flint
             [0.582 +/- ...]
         """
         return [z, k]
@@ -449,45 +457,47 @@ class Function_dilog(GinacFunction):
 
         EXAMPLES::
 
-            sage: dilog(1)                                                              # optional - sage.symbolic
+            sage: # needs sage.symbolic
+            sage: dilog(1)
             1/6*pi^2
-            sage: dilog(1/2)                                                            # optional - sage.symbolic
+            sage: dilog(1/2)
             1/12*pi^2 - 1/2*log(2)^2
-            sage: dilog(x^2+1)                                                          # optional - sage.symbolic
+            sage: dilog(x^2+1)
             dilog(x^2 + 1)
-            sage: dilog(-1)                                                             # optional - sage.symbolic
+            sage: dilog(-1)
             -1/12*pi^2
             sage: dilog(-1.0)
             -0.822467033424113
             sage: dilog(-1.1)
             -0.890838090262283
-            sage: dilog(1/2)                                                            # optional - sage.symbolic
+            sage: dilog(1/2)
             1/12*pi^2 - 1/2*log(2)^2
             sage: dilog(.5)
             0.582240526465012
             sage: dilog(1/2).n()
             0.582240526465012
-            sage: var('z')                                                              # optional - sage.symbolic
+            sage: var('z')
             z
-            sage: dilog(z).diff(z, 2)                                                   # optional - sage.symbolic
+            sage: dilog(z).diff(z, 2)
             log(-z + 1)/z^2 - 1/((z - 1)*z)
-            sage: dilog(z).series(z==1/2, 3)                                            # optional - sage.symbolic
+            sage: dilog(z).series(z==1/2, 3)
             (1/12*pi^2 - 1/2*log(2)^2) + (-2*log(1/2))*(z - 1/2)
              + (2*log(1/2) + 2)*(z - 1/2)^2 + Order(1/8*(2*z - 1)^3)
 
-            sage: latex(dilog(z))                                                       # optional - sage.symbolic
+            sage: latex(dilog(z))                                                       # needs sage.symbolic
             {\rm Li}_2\left(z\right)
 
         Dilog has a branch point at `1`. Sage's floating point libraries
         may handle this differently from the symbolic package::
 
-            sage: dilog(1)                                                              # optional - sage.symbolic
+            sage: # needs sage.symbolic
+            sage: dilog(1)
             1/6*pi^2
             sage: dilog(1.)
             1.64493406684823
-            sage: dilog(1).n()                                                          # optional - sage.symbolic
+            sage: dilog(1).n()
             1.64493406684823
-            sage: float(dilog(1))                                                       # optional - sage.symbolic
+            sage: float(dilog(1))
             1.6449340668482262
 
     TESTS:
@@ -495,32 +505,33 @@ class Function_dilog(GinacFunction):
         ``conjugate(dilog(x))==dilog(conjugate(x))`` unless on the branch cuts
         which run along the positive real axis beginning at 1.::
 
-            sage: conjugate(dilog(x))                                                   # optional - sage.symbolic
+            sage: # needs sage.symbolic
+            sage: conjugate(dilog(x))
             conjugate(dilog(x))
-            sage: var('y', domain='positive')                                           # optional - sage.symbolic
+            sage: var('y', domain='positive')
             y
-            sage: conjugate(dilog(y))                                                   # optional - sage.symbolic
+            sage: conjugate(dilog(y))
             conjugate(dilog(y))
-            sage: conjugate(dilog(1/19))                                                # optional - sage.symbolic
+            sage: conjugate(dilog(1/19))
             dilog(1/19)
-            sage: conjugate(dilog(1/2*I))                                               # optional - sage.symbolic
+            sage: conjugate(dilog(1/2*I))
             dilog(-1/2*I)
-            sage: dilog(conjugate(1/2*I))                                               # optional - sage.symbolic
+            sage: dilog(conjugate(1/2*I))
             dilog(-1/2*I)
-            sage: conjugate(dilog(2))                                                   # optional - sage.symbolic
+            sage: conjugate(dilog(2))
             conjugate(dilog(2))
 
         Check that return type matches argument type where possible
         (:trac:`18386`)::
 
-            sage: dilog(0.5)
+            sage: dilog(0.5)                                                            # needs sage.symbolic
             0.582240526465012
-            sage: dilog(-1.0)
+            sage: dilog(-1.0)                                                           # needs sage.symbolic
             -0.822467033424113
-            sage: y = dilog(RealField(13)(0.5))
-            sage: parent(y)
+            sage: y = dilog(RealField(13)(0.5))                                         # needs sage.rings.real_mpfr
+            sage: parent(y)                                                             # needs sage.symbolic
             Real Field with 13 bits of precision
-            sage: dilog(RealField(13)(1.1))
+            sage: dilog(RealField(13)(1.1))                                             # needs sage.rings.real_mpfr
             1.96 - 0.300*I
             sage: parent(_)
             Complex Field with 13 bits of precision
@@ -536,11 +547,11 @@ class Function_dilog(GinacFunction):
 
         EXAMPLES::
 
-            sage: w = dilog(x)._sympy_(); w                                             # optional - sympy sage.symbolic
+            sage: w = dilog(x)._sympy_(); w                                             # needs sympy sage.symbolic
             polylog(2, x)
-            sage: w.diff()                                                              # optional - sympy sage.symbolic
+            sage: w.diff()                                                              # needs sympy sage.symbolic
             polylog(1, x)/x
-            sage: w._sage_()                                                            # optional - sympy sage.symbolic
+            sage: w._sage_()                                                            # needs sympy sage.symbolic
             dilog(x)
         """
         return _sympy_polylog(2, _sympify(z, evaluate=False))
@@ -580,7 +591,7 @@ class Function_lambert_w(BuiltinFunction):
 
     Evaluation of the principal branch::
 
-        sage: lambert_w(1.0)
+        sage: lambert_w(1.0)                                                            # needs scipy
         0.567143290409784
         sage: lambert_w(-1).n()
         -0.318131505204764 + 1.33723570143069*I
@@ -589,13 +600,13 @@ class Function_lambert_w(BuiltinFunction):
 
     Evaluation of other branches::
 
-        sage: lambert_w(2, 1.0)
+        sage: lambert_w(2, 1.0)                                                         # needs scipy
         -2.40158510486800 + 10.7762995161151*I
 
     Solutions to certain exponential equations are returned in terms of lambert_w::
 
-        sage: S = solve(e^(5*x)+x==0, x, to_poly_solve=True)
-        sage: z = S[0].rhs(); z
+        sage: S = solve(e^(5*x)+x==0, x, to_poly_solve=True)                            # needs sage.symbolic
+        sage: z = S[0].rhs(); z                                                         # needs sage.symbolic
         -1/5*lambert_w(5)
         sage: N(z)
         -0.265344933048440
@@ -610,18 +621,18 @@ class Function_lambert_w(BuiltinFunction):
 
         sage: lambert_w(0)
         0
-        sage: lambert_w(e)
+        sage: lambert_w(e)                                                              # needs sage.symbolic
         1
-        sage: lambert_w(-1/e)
+        sage: lambert_w(-1/e)                                                           # needs sage.symbolic
         -1
 
     Integration (of the principal branch) is evaluated using Maxima::
 
-        sage: integrate(lambert_w(x), x)                                                # optional - sage.symbolic
+        sage: integrate(lambert_w(x), x)                                                # needs sage.symbolic
         (lambert_w(x)^2 - lambert_w(x) + 1)*x/lambert_w(x)
-        sage: integrate(lambert_w(x), x, 0, 1)                                          # optional - sage.symbolic
+        sage: integrate(lambert_w(x), x, 0, 1)                                          # needs sage.symbolic
         (lambert_w(1)^2 - lambert_w(1) + 1)/lambert_w(1) - 1
-        sage: integrate(lambert_w(x), x, 0, 1.0)                                        # optional - sage.symbolic
+        sage: integrate(lambert_w(x), x, 0, 1.0)                                        # needs sage.symbolic
         0.3303661247616807
 
     Warning: The integral of a non-principal branch is not implemented,
@@ -638,27 +649,27 @@ class Function_lambert_w(BuiltinFunction):
 
         EXAMPLES::
 
-            sage: lambert_w(0, 1.0)
+            sage: lambert_w(0, 1.0)                                                     # needs scipy
             0.567143290409784
-            sage: lambert_w(x, x)._sympy_()                                             # optional - sympy sage.symbolic
+            sage: lambert_w(x, x)._sympy_()                                             # needs sympy sage.symbolic
             LambertW(x, x)
 
         TESTS:
 
         Check that :trac:`25987` is fixed::
 
-            sage: lambert_w(x)._fricas_()                                       # optional - fricas sage.symbolic
+            sage: lambert_w(x)._fricas_()                                       # optional - fricas, needs sage.symbolic
             lambertW(x)
 
-            sage: fricas(lambert_w(x)).eval(x=-1/e)                             # optional - fricas sage.symbolic
+            sage: fricas(lambert_w(x)).eval(x=-1/e)                             # optional - fricas, needs sage.symbolic
             - 1
 
         The two-argument form of Lambert's function is not supported
         by FriCAS, so we return a generic operator::
 
-            sage: var("n")                                                      # optional - sage.symbolic
+            sage: var("n")                                                              # needs sage.symbolic
             n
-            sage: lambert_w(n, x)._fricas_()                                    # optional - fricas sage.symbolic
+            sage: lambert_w(n, x)._fricas_()                                    # optional - fricas, needs sage.symbolic
             generalizedLambertW(n,x)
         """
         BuiltinFunction.__init__(self, "lambert_w", nargs=2,
@@ -676,9 +687,9 @@ class Function_lambert_w(BuiltinFunction):
 
         EXAMPLES::
 
-            sage: lambert_w(1)                                                          # optional - sage.symbolic
+            sage: lambert_w(1)                                                          # needs sage.symbolic
             lambert_w(1)
-            sage: lambert_w(1, 2)                                                       # optional - sage.symbolic
+            sage: lambert_w(1, 2)                                                       # needs sage.symbolic
             lambert_w(1, 2)
         """
         if len(args) == 2:
@@ -692,14 +703,15 @@ class Function_lambert_w(BuiltinFunction):
         r"""
         TESTS::
 
-            sage: b = RBF(1, 0.001)                                                     # optional - sage.libs.flint
-            sage: lambert_w(b)                                                          # optional - sage.libs.flint
+            sage: # needs sage.libs.flint
+            sage: b = RBF(1, 0.001)
+            sage: lambert_w(b)
             [0.567 +/- 6.44e-4]
-            sage: lambert_w(CBF(b))                                                     # optional - sage.libs.flint
+            sage: lambert_w(CBF(b))
             [0.567 +/- 6.44e-4]
-            sage: lambert_w(2r, CBF(b))                                                 # optional - sage.libs.flint
+            sage: lambert_w(2r, CBF(b))
             [-2.40 +/- 2.79e-3] + [10.78 +/- 4.91e-3]*I
-            sage: lambert_w(2, CBF(b))                                                  # optional - sage.libs.flint
+            sage: lambert_w(2, CBF(b))
             [-2.40 +/- 2.79e-3] + [10.78 +/- 4.91e-3]*I
         """
         if n == 0:
@@ -711,29 +723,29 @@ class Function_lambert_w(BuiltinFunction):
         """
         EXAMPLES::
 
-            sage: lambert_w(6.0)
+            sage: lambert_w(6.0)                                                        # needs scipy
             1.43240477589830
-            sage: lambert_w(1)                                                          # optional - sage.symbolic
+            sage: lambert_w(1)                                                          # needs sage.symbolic
             lambert_w(1)
-            sage: lambert_w(x + 1)                                                      # optional - sage.symbolic
+            sage: lambert_w(x + 1)                                                      # needs sage.symbolic
             lambert_w(x + 1)
 
         There are three special values which are automatically simplified::
 
             sage: lambert_w(0)
             0
-            sage: lambert_w(e)                                                          # optional - sage.symbolic
+            sage: lambert_w(e)                                                          # needs sage.symbolic
             1
-            sage: lambert_w(-1/e)                                                       # optional - sage.symbolic
+            sage: lambert_w(-1/e)                                                       # needs sage.symbolic
             -1
-            sage: lambert_w(SR(0))                                                      # optional - sage.symbolic
+            sage: lambert_w(SR(0))                                                      # needs sage.symbolic
             0
 
         The special values only hold on the principal branch::
 
-            sage: lambert_w(1, e)                                                       # optional - sage.symbolic
+            sage: lambert_w(1, e)                                                       # needs sage.symbolic
             lambert_w(1, e)
-            sage: lambert_w(1, e.n())                                                   # optional - sage.symbolic
+            sage: lambert_w(1, e.n())                                                   # needs sage.symbolic
             -0.532092121986380 + 4.59715801330257*I
 
         TESTS:
@@ -746,7 +758,7 @@ class Function_lambert_w(BuiltinFunction):
             <... 'int'>
             sage: parent(lambert_w(Integer(0)))
             Integer Ring
-            sage: parent(lambert_w(e))                                                  # optional - sage.symbolic
+            sage: parent(lambert_w(e))                                                  # needs sage.symbolic
             Symbolic Ring
         """
         if not isinstance(z, Expression):
@@ -764,24 +776,25 @@ class Function_lambert_w(BuiltinFunction):
         """
         EXAMPLES::
 
-            sage: N(lambert_w(1))                                                       # optional - sage.symbolic
+            sage: N(lambert_w(1))                                                       # needs sage.symbolic
             0.567143290409784
-            sage: lambert_w(RealField(100)(1))
+            sage: lambert_w(RealField(100)(1))                                          # needs sage.rings.real_mpfr
             0.56714329040978387299996866221
 
         SciPy is used to evaluate for float, RDF, and CDF inputs::
 
-            sage: lambert_w(RDF(1))                                                     # optional - scipy
+            sage: # needs scipy
+            sage: lambert_w(RDF(1))
             0.5671432904097838
-            sage: lambert_w(float(1))                                                   # optional - scipy
+            sage: lambert_w(float(1))
             0.5671432904097838
-            sage: lambert_w(CDF(1))                                                     # optional - scipy
+            sage: lambert_w(CDF(1))
             0.5671432904097838
-            sage: lambert_w(complex(1))                                                 # optional - scipy
+            sage: lambert_w(complex(1))
             (0.5671432904097838+0j)
-            sage: lambert_w(RDF(-1))  # abs tol 2e-16                                   # optional - scipy
+            sage: lambert_w(RDF(-1))  # abs tol 2e-16
             -0.31813150520476413 + 1.3372357014306895*I
-            sage: lambert_w(float(-1))  # abs tol 2e-16                                 # optional - scipy
+            sage: lambert_w(float(-1))  # abs tol 2e-16
             (-0.31813150520476413+1.3372357014306895j)
         """
         R = parent or s_parent(z)
@@ -805,19 +818,19 @@ class Function_lambert_w(BuiltinFunction):
 
         EXAMPLES::
 
-            sage: x = var('x')                                                          # optional - sage.symbolic
-            sage: derivative(lambert_w(x), x)                                           # optional - sage.symbolic
+            sage: x = var('x')                                                          # needs sage.symbolic
+            sage: derivative(lambert_w(x), x)                                           # needs sage.symbolic
             lambert_w(x)/(x*lambert_w(x) + x)
 
-            sage: derivative(lambert_w(2, exp(x)), x)                                   # optional - sage.symbolic
+            sage: derivative(lambert_w(2, exp(x)), x)                                   # needs sage.symbolic
             e^x*lambert_w(2, e^x)/(e^x*lambert_w(2, e^x) + e^x)
 
         TESTS:
 
         Differentiation in the first parameter raises an error :trac:`14788`::
 
-            sage: n = var('n')                                                          # optional - sage.symbolic
-            sage: lambert_w(n, x).diff(n)                                               # optional - sage.symbolic
+            sage: n = var('n')                                                          # needs sage.symbolic
+            sage: lambert_w(n, x).diff(n)                                               # needs sage.symbolic
             Traceback (most recent call last):
             ...
             ValueError: cannot differentiate lambert_w in the first parameter
@@ -833,16 +846,16 @@ class Function_lambert_w(BuiltinFunction):
 
         These are indirect doctests for this function.::
 
-            sage: lambert_w(0, x)._maxima_()                                            # optional - sage.symbolic
+            sage: lambert_w(0, x)._maxima_()                                            # needs sage.symbolic
             lambert_w(_SAGE_VAR_x)
-            sage: lambert_w(1, x)._maxima_()                                            # optional - sage.symbolic
+            sage: lambert_w(1, x)._maxima_()                                            # needs sage.symbolic
             generalized_lambert_w(1,_SAGE_VAR_x)
 
         TESTS::
 
-            sage: lambert_w(x)._maxima_()._sage_()                                      # optional - sage.symbolic
+            sage: lambert_w(x)._maxima_()._sage_()                                      # needs sage.symbolic
             lambert_w(x)
-            sage: lambert_w(2, x)._maxima_()._sage_()                                   # optional - sage.symbolic
+            sage: lambert_w(2, x)._maxima_()._sage_()                                   # needs sage.symbolic
             lambert_w(2, x)
         """
         if isinstance(z, str):
@@ -863,9 +876,9 @@ class Function_lambert_w(BuiltinFunction):
 
         EXAMPLES::
 
-            sage: lambert_w(1)                                                          # optional - sage.symbolic
+            sage: lambert_w(1)                                                          # needs sage.symbolic
             lambert_w(1)
-            sage: lambert_w(0, x)                                                       # optional - sage.symbolic
+            sage: lambert_w(0, x)                                                       # needs sage.symbolic
             lambert_w(x)
         """
         if n == 0:
@@ -880,13 +893,14 @@ class Function_lambert_w(BuiltinFunction):
 
         EXAMPLES::
 
-            sage: latex(lambert_w(1))                                                   # optional - sage.symbolic
+            sage: # needs sage.symbolic
+            sage: latex(lambert_w(1))
             \operatorname{W}({1})
-            sage: latex(lambert_w(0, x))                                                # optional - sage.symbolic
+            sage: latex(lambert_w(0, x))
             \operatorname{W}({x})
-            sage: latex(lambert_w(1, x))                                                # optional - sage.symbolic
+            sage: latex(lambert_w(1, x))
             \operatorname{W_{1}}({x})
-            sage: latex(lambert_w(1, x + exp(x)))                                       # optional - sage.symbolic
+            sage: latex(lambert_w(1, x + exp(x)))
             \operatorname{W_{1}}({x + e^{x}})
         """
         if n == 0:
@@ -919,23 +933,23 @@ class Function_exp_polar(BuiltinFunction):
         The following expressions are evaluated using the exponential
         function::
 
-            sage: exp_polar(pi*I/2)                                                     # optional - sage.symbolic
+            sage: exp_polar(pi*I/2)                                                     # needs sage.symbolic
             I
-            sage: x = var('x', domain='real')                                           # optional - sage.symbolic
-            sage: exp_polar(-1/2*I*pi + x)                                              # optional - sage.symbolic
+            sage: x = var('x', domain='real')                                           # needs sage.symbolic
+            sage: exp_polar(-1/2*I*pi + x)                                              # needs sage.symbolic
             e^(-1/2*I*pi + x)
 
         The function is left unevaluated when the imaginary part of the
         input `z` does not satisfy `-\pi < \Im(z) \leq \pi`::
 
-            sage: exp_polar(2*pi*I)                                                     # optional - sage.symbolic
+            sage: exp_polar(2*pi*I)                                                     # needs sage.symbolic
             exp_polar(2*I*pi)
-            sage: exp_polar(-4*pi*I)                                                    # optional - sage.symbolic
+            sage: exp_polar(-4*pi*I)                                                    # needs sage.symbolic
             exp_polar(-4*I*pi)
 
         This fixes :trac:`18085`::
 
-            sage: integrate(1/sqrt(1+x^3), x, algorithm='sympy')                        # optional - sage.symbolic
+            sage: integrate(1/sqrt(1+x^3), x, algorithm='sympy')                        # needs sage.symbolic
             1/3*x*gamma(1/3)*hypergeometric((1/3, 1/2), (4/3,), -x^3)/gamma(4/3)
 
 
@@ -965,12 +979,12 @@ class Function_exp_polar(BuiltinFunction):
         If the imaginary part of `z` is outside of that interval the
         expression is left unevaluated::
 
-            sage: exp_polar(-5.0 + 8.0*I)                                               # optional - sage.symbolic
+            sage: exp_polar(-5.0 + 8.0*I)                                               # needs sage.symbolic
             exp_polar(-5.00000000000000 + 8.00000000000000*I)
 
         An attempt to numerically evaluate such an expression raises an error::
 
-            sage: exp_polar(-5.0 + 8.0*I).n()                                           # optional - sage.symbolic
+            sage: exp_polar(-5.0 + 8.0*I).n()                                           # needs sage.symbolic
             Traceback (most recent call last):
             ...
             ValueError: invalid attempt to numerically evaluate exp_polar()
@@ -986,17 +1000,17 @@ class Function_exp_polar(BuiltinFunction):
         """
         EXAMPLES::
 
-            sage: exp_polar(3*I*pi)                                                     # optional - sage.symbolic
+            sage: exp_polar(3*I*pi)                                                     # needs sage.symbolic
             exp_polar(3*I*pi)
-            sage: x = var('x', domain='real')                                           # optional - sage.symbolic
-            sage: exp_polar(4*I*pi + x)                                                 # optional - sage.symbolic
+            sage: x = var('x', domain='real')                                           # needs sage.symbolic
+            sage: exp_polar(4*I*pi + x)                                                 # needs sage.symbolic
             exp_polar(4*I*pi + x)
 
         TESTS:
 
         Check that :trac:`24441` is fixed::
 
-            sage: exp_polar(arcsec(jacobi_sn(1.1*I*x, x)))  # should be fast            # optional - sage.symbolic
+            sage: exp_polar(arcsec(jacobi_sn(1.1*I*x, x)))  # should be fast            # needs sage.symbolic
             exp_polar(arcsec(jacobi_sn(1.10000000000000*I*x, x)))
         """
         try:
@@ -1046,31 +1060,31 @@ class Function_harmonic_number_generalized(BuiltinFunction):
 
         sage: harmonic_number(5)
         137/60
-        sage: harmonic_number(3, 3)
+        sage: harmonic_number(3, 3)                                                     # needs sage.symbolic
         251/216
-        sage: harmonic_number(5/2)                                                      # optional - sage.symbolic
+        sage: harmonic_number(5/2)                                                      # needs sage.symbolic
         -2*log(2) + 46/15
-        sage: harmonic_number(3., 3)                                                    # optional - sage.symbolic
+        sage: harmonic_number(3., 3)                                                    # needs sage.symbolic
         zeta(3) - 0.0400198661225573
-        sage: harmonic_number(3., 3.)
+        sage: harmonic_number(3., 3.)                                                   # needs sage.symbolic
         1.16203703703704
-        sage: harmonic_number(3, 3).n(200)
+        sage: harmonic_number(3, 3).n(200)                                              # needs sage.symbolic
         1.16203703703703703703703...
-        sage: harmonic_number(1 + I, 5)                                                 # optional - sage.symbolic
+        sage: harmonic_number(1 + I, 5)                                                 # needs sage.symbolic
         harmonic_number(I + 1, 5)
         sage: harmonic_number(5, 1. + I)
         1.57436810798989 - 1.06194728851357*I
 
     Solutions to certain sums are returned in terms of harmonic numbers::
 
-        sage: k = var('k')                                                              # optional - sage.symbolic
-        sage: sum(1/k^7,k,1,x)                                                          # optional - sage.symbolic
+        sage: k = var('k')                                                              # needs sage.symbolic
+        sage: sum(1/k^7,k,1,x)                                                          # needs sage.symbolic
         harmonic_number(x, 7)
 
     Check the defining integral at a random integer::
 
         sage: n = randint(10,100)
-        sage: bool(SR(integrate((1-x^n)/(1-x),x,0,1)) == harmonic_number(n))            # optional - sage.symbolic
+        sage: bool(SR(integrate((1-x^n)/(1-x),x,0,1)) == harmonic_number(n))            # needs sage.symbolic
         True
 
     There are several special values which are automatically simplified::
@@ -1079,7 +1093,7 @@ class Function_harmonic_number_generalized(BuiltinFunction):
         0
         sage: harmonic_number(1)
         1
-        sage: harmonic_number(x, 1)                                                     # optional - sage.symbolic
+        sage: harmonic_number(x, 1)                                                     # needs sage.symbolic
         harmonic_number(x)
     """
 
@@ -1087,9 +1101,9 @@ class Function_harmonic_number_generalized(BuiltinFunction):
         r"""
         EXAMPLES::
 
-            sage: loads(dumps(harmonic_number(x, 5)))                                   # optional - sage.symbolic
+            sage: loads(dumps(harmonic_number(x, 5)))                                   # needs sage.symbolic
             harmonic_number(x, 5)
-            sage: harmonic_number(x, x)._sympy_()                                       # optional - sympy sage.symbolic
+            sage: harmonic_number(x, x)._sympy_()                                       # needs sympy sage.symbolic
             harmonic(x, x)
         """
         BuiltinFunction.__init__(self, "harmonic_number", nargs=2,
@@ -1102,11 +1116,11 @@ class Function_harmonic_number_generalized(BuiltinFunction):
 
         EXAMPLES::
 
-            sage: harmonic_number(x)                                                    # optional - sage.symbolic
+            sage: harmonic_number(x)                                                    # needs sage.symbolic
             harmonic_number(x)
-            sage: harmonic_number(x, 1)                                                 # optional - sage.symbolic
+            sage: harmonic_number(x, 1)                                                 # needs sage.symbolic
             harmonic_number(x)
-            sage: harmonic_number(x, 2)                                                 # optional - sage.symbolic
+            sage: harmonic_number(x, 2)                                                 # needs sage.symbolic
             harmonic_number(x, 2)
         """
         return BuiltinFunction.__call__(self, z, m, **kwds)
@@ -1115,30 +1129,30 @@ class Function_harmonic_number_generalized(BuiltinFunction):
         """
         EXAMPLES::
 
-            sage: harmonic_number(x, 0)                                                 # optional - sage.symbolic
+            sage: harmonic_number(x, 0)                                                 # needs sage.symbolic
             x
-            sage: harmonic_number(x, 1)                                                 # optional - sage.symbolic
+            sage: harmonic_number(x, 1)                                                 # needs sage.symbolic
             harmonic_number(x)
             sage: harmonic_number(5)
             137/60
-            sage: harmonic_number(3, 3)
+            sage: harmonic_number(3, 3)                                                 # needs sage.symbolic
             251/216
-            sage: harmonic_number(3, 3).n()  # this goes from rational to float
+            sage: harmonic_number(3, 3).n()  # this goes from rational to float         # needs sage.symbolic
             1.16203703703704
-            sage: harmonic_number(3, 3.)  # the following uses zeta functions
+            sage: harmonic_number(3, 3.)  # the following uses zeta functions           # needs sage.symbolic
             1.16203703703704
-            sage: harmonic_number(3., 3)                                                # optional - sage.symbolic
+            sage: harmonic_number(3., 3)                                                # needs sage.symbolic
             zeta(3) - 0.0400198661225573
-            sage: harmonic_number(0.1, 5)                                               # optional - sage.symbolic
+            sage: harmonic_number(0.1, 5)                                               # needs sage.symbolic
             zeta(5) - 0.650300133161038
-            sage: harmonic_number(0.1, 5).n()
+            sage: harmonic_number(0.1, 5).n()                                           # needs sage.symbolic
             0.386627621982332
-            sage: harmonic_number(3, 5/2)                                               # optional - sage.symbolic
+            sage: harmonic_number(3, 5/2)                                               # needs sage.symbolic
             1/27*sqrt(3) + 1/8*sqrt(2) + 1
 
         TESTS::
 
-            sage: harmonic_number(int(3), int(3))
+            sage: harmonic_number(int(3), int(3))                                       # needs sage.symbolic
             1.162037037037037
         """
         if m == 0:
@@ -1153,11 +1167,11 @@ class Function_harmonic_number_generalized(BuiltinFunction):
         """
         EXAMPLES::
 
-            sage: harmonic_number(3., 3)                                                # optional - sage.symbolic
+            sage: harmonic_number(3., 3)                                                # needs sage.symbolic
             zeta(3) - 0.0400198661225573
-            sage: harmonic_number(3., 3.)
+            sage: harmonic_number(3., 3.)                                               # needs sage.symbolic
             1.16203703703704
-            sage: harmonic_number(3, 3).n(200)
+            sage: harmonic_number(3, 3).n(200)                                          # needs sage.symbolic
             1.16203703703703703703703...
             sage: harmonic_number(5, I).n()
             2.36889632899995 - 3.51181956521611*I
@@ -1175,9 +1189,9 @@ class Function_harmonic_number_generalized(BuiltinFunction):
         """
         EXAMPLES::
 
-            sage: maxima_calculus(harmonic_number(x, 2))                                # optional - sage.symbolic
+            sage: maxima_calculus(harmonic_number(x, 2))                                # needs sage.symbolic
             gen_harmonic_number(2,_SAGE_VAR_x)
-            sage: maxima_calculus(harmonic_number(3, harmonic_number(x,3), hold=True))  # optional - sage.symbolic
+            sage: maxima_calculus(harmonic_number(3, harmonic_number(x,3), hold=True))  # needs sage.symbolic
             1/3^gen_harmonic_number(3,_SAGE_VAR_x)+1/2^gen_harmonic_number(3,_SAGE_VAR_x)+1
         """
         if isinstance(n, str):
@@ -1200,14 +1214,15 @@ class Function_harmonic_number_generalized(BuiltinFunction):
 
         EXAMPLES::
 
-            sage: k,m,n = var('k,m,n')                                                  # optional - sage.symbolic
-            sage: sum(1/k, k, 1, x).diff(x)                                             # optional - sage.symbolic
+            sage: # needs sage.symbolic
+            sage: k,m,n = var('k,m,n')
+            sage: sum(1/k, k, 1, x).diff(x)
             1/6*pi^2 - harmonic_number(x, 2)
-            sage: harmonic_number(x, 1).diff(x)                                         # optional - sage.symbolic
+            sage: harmonic_number(x, 1).diff(x)
             1/6*pi^2 - harmonic_number(x, 2)
-            sage: harmonic_number(n, m).diff(n)                                         # optional - sage.symbolic
+            sage: harmonic_number(n, m).diff(n)
             -m*(harmonic_number(n, m + 1) - zeta(m + 1))
-            sage: harmonic_number(n, m).diff(m)                                         # optional - sage.symbolic
+            sage: harmonic_number(n, m).diff(m)
             Traceback (most recent call last):
             ...
             ValueError: cannot differentiate harmonic_number in the second parameter
@@ -1223,9 +1238,9 @@ class Function_harmonic_number_generalized(BuiltinFunction):
         """
         EXAMPLES::
 
-            sage: harmonic_number(x)                                                    # optional - sage.symbolic
+            sage: harmonic_number(x)                                                    # needs sage.symbolic
             harmonic_number(x)
-            sage: harmonic_number(x, 2)                                                 # optional - sage.symbolic
+            sage: harmonic_number(x, 2)                                                 # needs sage.symbolic
             harmonic_number(x, 2)
         """
         if m == 1:
@@ -1237,9 +1252,9 @@ class Function_harmonic_number_generalized(BuiltinFunction):
         """
         EXAMPLES::
 
-            sage: latex(harmonic_number(x))                                             # optional - sage.symbolic
+            sage: latex(harmonic_number(x))                                             # needs sage.symbolic
             H_{x}
-            sage: latex(harmonic_number(x, 2))                                          # optional - sage.symbolic
+            sage: latex(harmonic_number(x, 2))                                          # needs sage.symbolic
             H_{{x},{2}}
         """
         if m == 1:
@@ -1257,15 +1272,16 @@ class _Function_swap_harmonic(BuiltinFunction):
 
     EXAMPLES::
 
-        sage: maxima(harmonic_number(x, 2))  # maxima expect interface                              # optional - sage.symbolic
+        sage: # needs sage.symbolic
+        sage: maxima(harmonic_number(x, 2))  # maxima expect interface
         gen_harmonic_number(2,_SAGE_VAR_x)
-        sage: from sage.calculus.calculus import symbolic_expression_from_maxima_string as sefms    # optional - sage.symbolic
-        sage: sefms('gen_harmonic_number(3,x)')                                                     # optional - sage.symbolic
+        sage: from sage.calculus.calculus import symbolic_expression_from_maxima_string as sefms
+        sage: sefms('gen_harmonic_number(3,x)')
         harmonic_number(x, 3)
-        sage: from sage.interfaces.maxima_lib import maxima_lib, max_to_sr                          # optional - sage.symbolic
-        sage: c = maxima_lib(harmonic_number(x,2)); c                                               # optional - sage.symbolic
+        sage: from sage.interfaces.maxima_lib import maxima_lib, max_to_sr
+        sage: c = maxima_lib(harmonic_number(x,2)); c
         gen_harmonic_number(2,_SAGE_VAR_x)
-        sage: max_to_sr(c.ecl())                                                                    # optional - sage.symbolic
+        sage: max_to_sr(c.ecl())
         harmonic_number(x, 2)
     """
     def __init__(self):
@@ -1301,10 +1317,10 @@ class Function_harmonic_number(BuiltinFunction):
         r"""
         EXAMPLES::
 
-            sage: k = var('k')                                                          # optional - sage.symbolic
-            sage: loads(dumps(sum(1/k, k, 1, x)))                                       # optional - sage.symbolic
+            sage: k = var('k')                                                          # needs sage.symbolic
+            sage: loads(dumps(sum(1/k, k, 1, x)))                                       # needs sage.symbolic
             harmonic_number(x)
-            sage: harmonic_number(x)._sympy_()                                          # optional - sympy sage.symbolic
+            sage: harmonic_number(x)._sympy_()                                          # needs sympy sage.symbolic
             harmonic(x)
         """
         BuiltinFunction.__init__(self, "harmonic_number", nargs=1,
@@ -1323,9 +1339,9 @@ class Function_harmonic_number(BuiltinFunction):
             1
             sage: harmonic_number(20)
             55835135/15519504
-            sage: harmonic_number(5/2)                                                  # optional - sage.symbolic
+            sage: harmonic_number(5/2)                                                  # needs sage.symbolic
             -2*log(2) + 46/15
-            sage: harmonic_number(2*x)                                                  # optional - sage.symbolic
+            sage: harmonic_number(2*x)                                                  # needs sage.symbolic
             harmonic_number(2*x)
         """
         if z in ZZ:
@@ -1346,9 +1362,9 @@ class Function_harmonic_number(BuiltinFunction):
             3.59773965714368
             sage: harmonic_number(20).n(200)
             3.59773965714368191148376906...
-            sage: harmonic_number(20.)  # this computes the integral with mpmath        # optional - mpmath
+            sage: harmonic_number(20.)  # this computes the integral with mpmath        # needs mpmath
             3.59773965714368
-            sage: harmonic_number(1.0*I)                                                # optional - mpmath
+            sage: harmonic_number(1.0*I)                                                # needs mpmath
             0.671865985524010 + 1.07667404746858*I
         """
         return _mpmath_utils_call(_mpmath_harmonic, z, parent=parent)
@@ -1359,8 +1375,8 @@ class Function_harmonic_number(BuiltinFunction):
 
         EXAMPLES::
 
-            sage: k = var('k')                                                          # optional - sage.symbolic
-            sage: sum(1/k, k, 1, x).diff(x)                                             # optional - sage.symbolic
+            sage: k = var('k')                                                          # needs sage.symbolic
+            sage: sum(1/k, k, 1, x).diff(x)                                             # needs sage.symbolic
             1/6*pi^2 - harmonic_number(x, 2)
         """
         return zeta(2) - harmonic_number(z, 2)
@@ -1369,8 +1385,8 @@ class Function_harmonic_number(BuiltinFunction):
         """
         EXAMPLES::
 
-            sage: k = var('k')                                                          # optional - sage.symbolic
-            sage: latex(sum(1/k, k, 1, x))                                              # optional - sage.symbolic
+            sage: k = var('k')                                                          # needs sage.symbolic
+            sage: latex(sum(1/k, k, 1, x))                                              # needs sage.symbolic
             H_{x}
         """
         return r"H_{%s}" % z
