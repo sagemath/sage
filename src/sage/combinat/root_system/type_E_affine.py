@@ -66,7 +66,7 @@ class CartanType(CartanType_standard_untwisted_affine, CartanType_simply_laced):
 
         EXAMPLES::
 
-            sage: e = CartanType(['E', 6, 1]).dynkin_diagram(); e                       # optional - sage.graphs
+            sage: e = CartanType(['E', 6, 1]).dynkin_diagram(); e                       # needs sage.graphs
                     O 0
                     |
                     |
@@ -76,7 +76,7 @@ class CartanType(CartanType_standard_untwisted_affine, CartanType_simply_laced):
             O---O---O---O---O
             1   3   4   5   6
             E6~
-            sage: e.edges(sort=True)                                                    # optional - sage.graphs
+            sage: e.edges(sort=True)                                                    # needs sage.graphs
             [(0, 2, 1),
              (1, 3, 1),
              (2, 0, 1),
@@ -90,25 +90,25 @@ class CartanType(CartanType_standard_untwisted_affine, CartanType_simply_laced):
              (5, 6, 1),
              (6, 5, 1)]
 
-            sage: e = CartanType(['E', 7, 1]).dynkin_diagram(); e                       # optional - sage.graphs
+            sage: e = CartanType(['E', 7, 1]).dynkin_diagram(); e                       # needs sage.graphs
                         O 2
                         |
                         |
             O---O---O---O---O---O---O
             0   1   3   4   5   6   7
             E7~
-            sage: e.edges(sort=True)                                                    # optional - sage.graphs
+            sage: e.edges(sort=True)                                                    # needs sage.graphs
             [(0, 1, 1), (1, 0, 1), (1, 3, 1), (2, 4, 1), (3, 1, 1), (3, 4, 1),
              (4, 2, 1), (4, 3, 1), (4, 5, 1), (5, 4, 1), (5, 6, 1),
              (6, 5, 1), (6, 7, 1), (7, 6, 1)]
-            sage: e = CartanType(['E', 8, 1]).dynkin_diagram(); e                       # optional - sage.graphs
+            sage: e = CartanType(['E', 8, 1]).dynkin_diagram(); e                       # needs sage.graphs
                     O 2
                     |
                     |
             O---O---O---O---O---O---O---O
             1   3   4   5   6   7   8   0
             E8~
-            sage: e.edges(sort=True)                                                    # optional - sage.graphs
+            sage: e.edges(sort=True)                                                    # needs sage.graphs
             [(0, 8, 1), (1, 3, 1), (2, 4, 1), (3, 1, 1), (3, 4, 1),
              (4, 2, 1), (4, 3, 1), (4, 5, 1), (5, 4, 1), (5, 6, 1),
              (6, 5, 1), (6, 7, 1), (7, 6, 1), (7, 8, 1), (8, 0, 1), (8, 7, 1)]

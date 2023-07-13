@@ -216,7 +216,7 @@ Alcove pictures for affine types
 We now draw the usual alcove picture for affine type `A_2^{(1)}`::
 
     sage: L = RootSystem(["A",2,1]).ambient_space()
-    sage: L.plot()                                     # long time
+    sage: L.plot()                              # long time
     Graphics object consisting of 160 graphics primitives
 
 .. PLOT::
@@ -453,7 +453,7 @@ reflections, on top of the weight lattice in affine type `A_{2,1}`::
 
     sage: L = RootSystem(["A",2,1]).ambient_space()
     sage: w1 = [0,2,1,2,0,2,1,0,2,1,2,1,2,0,2,0,1,2,0]
-    sage: L.plot(alcove_walk=w1, bounding_box=6)       # long time
+    sage: L.plot(alcove_walk=w1, bounding_box=6)        # long time
     Graphics object consisting of 535 graphics primitives
 
 .. PLOT::
@@ -646,9 +646,9 @@ the right place. Behold! Coxeter graph paper!".
 Now you can create your own customized color Coxeter graph paper::
 
     sage: L = RootSystem(["C",2,1]).ambient_space()
-    sage: p = L.plot(bounding_box=[[-8,9],[-5,7]],                  # long time (10 s)
+    sage: p = L.plot(bounding_box=[[-8,9],[-5,7]],      # long time (10 s)
     ....:            coroots="simple")
-    sage: p                                                         # long time
+    sage: p                                             # long time
     Graphics object consisting of ... graphics primitives
 
 .. PLOT::
@@ -661,7 +661,7 @@ By default Sage's plot are bitmap pictures which would come out ugly
 if printed on paper. Instead, we recommend saving the picture in
 postscript or svg before printing it::
 
-    sage: p.save("C21paper.eps")        # not tested
+    sage: p.save("C21paper.eps")                # not tested
 
 .. NOTE::
 

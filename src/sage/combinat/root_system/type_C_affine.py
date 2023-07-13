@@ -54,11 +54,11 @@ class CartanType(CartanType_standard_untwisted_affine):
 
         EXAMPLES::
 
-            sage: c = CartanType(['C',3,1]).dynkin_diagram(); c                         # optional - sage.graphs
+            sage: c = CartanType(['C',3,1]).dynkin_diagram(); c                         # needs sage.graphs
              O=>=O---O=<=O
              0   1   2   3
              C3~
-            sage: c.edges(sort=True)                                                    # optional - sage.graphs
+            sage: c.edges(sort=True)                                                    # needs sage.graphs
             [(0, 1, 2), (1, 0, 1), (1, 2, 1), (2, 1, 1), (2, 3, 1), (3, 2, 2)]
 
         """

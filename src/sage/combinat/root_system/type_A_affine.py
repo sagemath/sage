@@ -72,7 +72,7 @@ class CartanType(CartanType_standard_untwisted_affine):
 
         EXAMPLES::
 
-            sage: a = CartanType(['A',3,1]).dynkin_diagram(); a                         # optional - sage.graphs
+            sage: a = CartanType(['A',3,1]).dynkin_diagram(); a                         # needs sage.graphs
              0
              O-------+
              |       |
@@ -80,7 +80,7 @@ class CartanType(CartanType_standard_untwisted_affine):
              O---O---O
              1   2   3
              A3~
-            sage: a.edges(sort=True)                                                    # optional - sage.graphs
+            sage: a.edges(sort=True)                                                    # needs sage.graphs
             [(0, 1, 1),
              (0, 3, 1),
              (1, 0, 1),
@@ -90,11 +90,11 @@ class CartanType(CartanType_standard_untwisted_affine):
              (3, 0, 1),
              (3, 2, 1)]
 
-            sage: a = DynkinDiagram(['A',1,1]); a                                       # optional - sage.graphs
+            sage: a = DynkinDiagram(['A',1,1]); a                                       # needs sage.graphs
             O<=>O
             0   1
             A1~
-            sage: a.edges(sort=True)                                                    # optional - sage.graphs
+            sage: a.edges(sort=True)                                                    # needs sage.graphs
             [(0, 1, 2), (1, 0, 2)]
         """
         from .dynkin_diagram import DynkinDiagram_class

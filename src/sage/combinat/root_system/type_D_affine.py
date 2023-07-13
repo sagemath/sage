@@ -54,18 +54,18 @@ class CartanType(CartanType_standard_untwisted_affine, CartanType_simply_laced):
 
         EXAMPLES::
 
-           sage: d = CartanType(['D', 6, 1]).dynkin_diagram(); d                        # optional - sage.graphs
+           sage: d = CartanType(['D', 6, 1]).dynkin_diagram(); d                        # needs sage.graphs
               0 O       O 6
                 |       |
                 |       |
             O---O---O---O---O
             1   2   3   4   5
             D6~
-           sage: d.edges(sort=True)                                                     # optional - sage.graphs
+           sage: d.edges(sort=True)                                                     # needs sage.graphs
            [(0, 2, 1), (1, 2, 1), (2, 0, 1), (2, 1, 1), (2, 3, 1),
             (3, 2, 1), (3, 4, 1), (4, 3, 1), (4, 5, 1), (4, 6, 1), (5, 4, 1), (6, 4, 1)]
 
-           sage: d = CartanType(['D', 4, 1]).dynkin_diagram(); d                        # optional - sage.graphs
+           sage: d = CartanType(['D', 4, 1]).dynkin_diagram(); d                        # needs sage.graphs
                O 4
                |
                |
@@ -74,7 +74,7 @@ class CartanType(CartanType_standard_untwisted_affine, CartanType_simply_laced):
                |
                O 0
            D4~
-           sage: d.edges(sort=True)                                                     # optional - sage.graphs
+           sage: d.edges(sort=True)                                                     # needs sage.graphs
            [(0, 2, 1),
             (1, 2, 1),
             (2, 0, 1),
@@ -84,7 +84,7 @@ class CartanType(CartanType_standard_untwisted_affine, CartanType_simply_laced):
             (3, 2, 1),
             (4, 2, 1)]
 
-           sage: d = CartanType(['D', 3, 1]).dynkin_diagram(); d                        # optional - sage.graphs
+           sage: d = CartanType(['D', 3, 1]).dynkin_diagram(); d                        # needs sage.graphs
            0
            O-------+
            |       |
@@ -92,7 +92,7 @@ class CartanType(CartanType_standard_untwisted_affine, CartanType_simply_laced):
            O---O---O
            3   1   2
            D3~
-           sage: d.edges(sort=True)                                                     # optional - sage.graphs
+           sage: d.edges(sort=True)                                                     # needs sage.graphs
            [(0, 2, 1), (0, 3, 1), (1, 2, 1), (1, 3, 1),
             (2, 0, 1), (2, 1, 1), (3, 0, 1), (3, 1, 1)]
 

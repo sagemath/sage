@@ -31,7 +31,7 @@ class AmbientSpace(ambient_space.AmbientSpace):
 
     TESTS::
 
-        sage: TestSuite(e).run()                                                        # optional - sage.graphs
+        sage: TestSuite(e).run()                                                        # needs sage.graphs
     """
 
     def dimension(self):
@@ -216,18 +216,18 @@ class CartanType(CartanType_standard_finite, CartanType_simple, CartanType_cryst
 
         EXAMPLES::
 
-            sage: c = CartanType(['C',3]).dynkin_diagram(); c                           # optional - sage.graphs
+            sage: c = CartanType(['C',3]).dynkin_diagram(); c                           # needs sage.graphs
             O---O=<=O
             1   2   3
             C3
-            sage: c.edges(sort=True)                                                    # optional - sage.graphs
+            sage: c.edges(sort=True)                                                    # needs sage.graphs
             [(1, 2, 1), (2, 1, 1), (2, 3, 1), (3, 2, 2)]
 
-             sage: b = CartanType(['C',1]).dynkin_diagram(); b                          # optional - sage.graphs
+             sage: b = CartanType(['C',1]).dynkin_diagram(); b                          # needs sage.graphs
              O
              1
              C1
-             sage: b.edges(sort=True)                                                   # optional - sage.graphs
+             sage: b.edges(sort=True)                                                   # needs sage.graphs
              []
         """
         return self.dual().dynkin_diagram().dual()
