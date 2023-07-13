@@ -440,13 +440,14 @@ class InfinitePolynomial(CommutativePolynomial, metaclass=InheritComparisonClass
 
         The substitution can also handle matrices::
 
-            sage: M = matrix([[1,0], [0,2]])                                            # needs sage.modules
-            sage: N = matrix([[0,3], [4,0]])                                            # needs sage.modules
-            sage: g = x[0]^2 + 3*x[1]                                                   # needs sage.modules
-            sage: g.subs({'x_0': M})                                                    # needs sage.modules
+            sage: # needs sage.modules
+            sage: M = matrix([[1,0], [0,2]])
+            sage: N = matrix([[0,3], [4,0]])
+            sage: g = x[0]^2 + 3*x[1]
+            sage: g.subs({'x_0': M})
             [3*x_1 + 1         0]
             [        0 3*x_1 + 4]
-            sage: g.subs({x[0]: M, x[1]: N})                                            # needs sage.modules
+            sage: g.subs({x[0]: M, x[1]: N})
             [ 1  9]
             [12  4]
 

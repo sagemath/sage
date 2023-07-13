@@ -168,11 +168,11 @@ cpdef is_Polynomial(f):
         y^3 + x*y - 3*x
         sage: is_Polynomial(f)
         False
-        sage: var('x,y')                                                                # optional - sage.symbolic
+        sage: var('x,y')                                                                # needs sage.symbolic
         (x, y)
-        sage: f = y^3 + x*y - 3*x; f                                                    # optional - sage.symbolic
+        sage: f = y^3 + x*y - 3*x; f                                                    # needs sage.symbolic
         y^3 + x*y - 3*x
-        sage: is_Polynomial(f)                                                          # optional - sage.symbolic
+        sage: is_Polynomial(f)                                                          # needs sage.symbolic
         False
     """
     from sage.misc.superseded import deprecation
@@ -345,10 +345,10 @@ cdef class Polynomial(CommutativePolynomial):
         EXAMPLES::
 
             sage: x = polygen(GF(389))
-            sage: plot(x^2 + 1, rgbcolor=(0,0,1))                                       # optional - sage.rings.finite_rings sage.plot
+            sage: plot(x^2 + 1, rgbcolor=(0,0,1))                                       # needs sage.plot sage.rings.finite_rings
             Graphics object consisting of 1 graphics primitive
             sage: x = polygen(QQ)
-            sage: plot(x^2 + 1, rgbcolor=(1,0,0))                                       # optional - sage.plot
+            sage: plot(x^2 + 1, rgbcolor=(1,0,0))                                       # needs sage.plot
             Graphics object consisting of 1 graphics primitive
         """
         R = self.base_ring()
@@ -484,12 +484,13 @@ cdef class Polynomial(CommutativePolynomial):
 
         We evaluate a polynomial over a quaternion algebra::
 
-            sage: A.<i,j,k> = QuaternionAlgebra(QQ, -1, -1)                             # optional - sage.combinat sage.modules
-            sage: R.<w> = PolynomialRing(A, sparse=True)                                # optional - sage.combinat sage.modules
-            sage: f = i*j*w^5 - 13*i*w^2 + (i+j)*w + i                                  # optional - sage.combinat sage.modules
-            sage: f(i+j+1)                                                              # optional - sage.combinat sage.modules
+            sage: # needs sage.combinat sage.modules
+            sage: A.<i,j,k> = QuaternionAlgebra(QQ, -1, -1)
+            sage: R.<w> = PolynomialRing(A, sparse=True)
+            sage: f = i*j*w^5 - 13*i*w^2 + (i+j)*w + i
+            sage: f(i+j+1)
             24 + 26*i - 10*j - 25*k
-            sage: w = i+j+1; i*j*w^5 - 13*i*w^2 + (i+j)*w + i                           # optional - sage.combinat sage.modules
+            sage: w = i+j+1; i*j*w^5 - 13*i*w^2 + (i+j)*w + i
             24 + 26*i - 10*j - 25*k
 
         The parent ring of the answer always "starts" with the parent of
@@ -500,17 +501,17 @@ cdef class Polynomial(CommutativePolynomial):
 
             sage: R.<x> = QQ[]
             sage: f = R(2/3)
-            sage: a = matrix(ZZ, 2)                                                     # optional - sage.combinat sage.modules
-            sage: b = f(a); b                                                           # optional - sage.combinat sage.modules
+            sage: a = matrix(ZZ, 2)                                                     # needs sage.combinat sage.modules
+            sage: b = f(a); b                                                           # needs sage.combinat sage.modules
             [2/3   0]
             [  0 2/3]
-            sage: b.parent()                                                            # optional - sage.combinat sage.modules
+            sage: b.parent()                                                            # needs sage.combinat sage.modules
             Full MatrixSpace of 2 by 2 dense matrices over Rational Field
             sage: f = R(1)
-            sage: b = f(a); b                                                           # optional - sage.combinat sage.modules
+            sage: b = f(a); b                                                           # needs sage.combinat sage.modules
             [1 0]
             [0 1]
-            sage: b.parent()                                                            # optional - sage.combinat sage.modules
+            sage: b.parent()                                                            # needs sage.combinat sage.modules
             Full MatrixSpace of 2 by 2 dense matrices over Rational Field
 
         ::
@@ -570,7 +571,7 @@ cdef class Polynomial(CommutativePolynomial):
 
         The following results in an element of the symbolic ring. ::
 
-            sage: f(x=sqrt(2))                                                          # optional - sage.symbolic
+            sage: f(x=sqrt(2))                                                          # needs sage.symbolic
             y^2 + sqrt(2)*y + sqrt(2)
 
         ::
@@ -596,7 +597,7 @@ cdef class Polynomial(CommutativePolynomial):
             3
             sage: parent(f(0))
             Rational Field
-            sage: parent(f(Qp(5)(0)))                                                   # optional - sage.rings.padics
+            sage: parent(f(Qp(5)(0)))                                                   # needs sage.rings.padics
             5-adic Field with capped relative precision 20
 
         TESTS:
@@ -705,37 +706,39 @@ cdef class Polynomial(CommutativePolynomial):
 
         These were drastically slower prior to :trac:`33165`::
 
-            sage: R.<x> = GF(31337)[]                                                   # optional - sage.rings.finite_rings
+            sage: R.<x> = GF(31337)[]                                                   # needs sage.rings.finite_rings
             sage: f = R(list(range(100, 201)))
             sage: g = R(list(range(1, 1001)))
-            sage: S.<y> = R.quotient(f)                                                 # optional - sage.rings.finite_rings
-            sage: g(y)                                                                  # optional - sage.rings.finite_rings
+            sage: S.<y> = R.quotient(f)                                                 # needs sage.rings.finite_rings
+            sage: g(y)                                                                  # needs sage.rings.finite_rings
             22537*y^99 + 4686*y^98 + 13285*y^97 + 4216*y^96 + ... + 6389*y^3 + 30062*y^2 + 13755*y + 11875
 
         ::
 
-            sage: T.<z> = GF(31337)[]                                                   # optional - sage.rings.finite_rings
-            sage: g(z)                                                                  # optional - sage.rings.finite_rings
+            sage: # needs sage.rings.finite_rings
+            sage: T.<z> = GF(31337)[]
+            sage: g(z)
             1000*z^999 + 999*z^998 + 998*z^997 + 997*z^996 + ... + 5*z^4 + 4*z^3 + 3*z^2 + 2*z + 1
-            sage: g(z^2)                                                                # optional - sage.rings.finite_rings
+            sage: g(z^2)
             1000*z^1998 + 999*z^1996 + 998*z^1994 + 997*z^1992 + ... + 5*z^8 + 4*z^6 + 3*z^4 + 2*z^2 + 1
-            sage: g(T([0, 1]))                                                          # optional - sage.rings.finite_rings
+            sage: g(T([0, 1]))
             1000*z^999 + 999*z^998 + 998*z^997 + 997*z^996 + ... + 5*z^4 + 4*z^3 + 3*z^2 + 2*z + 1
-            sage: g(T.zero())                                                           # optional - sage.rings.finite_rings
+            sage: g(T.zero())
             1
-            sage: g(T(2))                                                               # optional - sage.rings.finite_rings
+            sage: g(T(2))
             23069
 
         ::
 
-            sage: U.<u,v> = GF(31337)[]                                                 # optional - sage.rings.finite_rings
-            sage: g(u)                                                                  # optional - sage.rings.finite_rings
+            sage: # needs sage.rings.finite_rings
+            sage: U.<u,v> = GF(31337)[]
+            sage: g(u)
             1000*u^999 + 999*u^998 + 998*u^997 + 997*u^996 + ... + 5*u^4 + 4*u^3 + 3*u^2 + 2*u + 1
-            sage: g(u*v^2)                                                              # optional - sage.rings.finite_rings
+            sage: g(u*v^2)
             1000*u^999*v^1998 + 999*u^998*v^1996 + 998*u^997*v^1994 + ... + 4*u^3*v^6 + 3*u^2*v^4 + 2*u*v^2 + 1
-            sage: g(U.zero())                                                           # optional - sage.rings.finite_rings
+            sage: g(U.zero())
             1
-            sage: g(U(2))                                                               # optional - sage.rings.finite_rings
+            sage: g(U(2))
             -8268
 
         Sparse tests for :trac:`33165`::
@@ -914,8 +917,8 @@ cdef class Polynomial(CommutativePolynomial):
 
         EXAMPLES::
 
-            sage: Pol.<x> = CBF[]                                                       # optional - sage.libs.flint
-            sage: (1 + x + x^2/2 + x^3/6 + x^4/24 + x^5/120).compose_trunc(1 + x, 2)    # optional - sage.libs.flint
+            sage: Pol.<x> = CBF[]                                                       # needs sage.libs.flint
+            sage: (1 + x + x^2/2 + x^3/6 + x^4/24 + x^5/120).compose_trunc(1 + x, 2)    # needs sage.libs.flint
             ([2.708333333333333 +/- ...e-16])*x + [2.71666666666667 +/- ...e-15]
 
             sage: Pol.<x> = QQ['y'][]
@@ -1042,9 +1045,9 @@ cdef class Polynomial(CommutativePolynomial):
             sage: a != b
             False
 
-            sage: R.<x> = RBF[]                                                         # optional - sage.libs.flint
-            sage: pol = RBF(1.0, 0.1)                                                   # optional - sage.libs.flint
-            sage: pol == pol                                                            # optional - sage.libs.flint
+            sage: R.<x> = RBF[]                                                         # needs sage.libs.flint
+            sage: pol = RBF(1.0, 0.1)                                                   # needs sage.libs.flint
+            sage: pol == pol                                                            # needs sage.libs.flint
             False
         """
         cdef Polynomial pol = <Polynomial?>other
@@ -1187,21 +1190,21 @@ cdef class Polynomial(CommutativePolynomial):
 
         EXAMPLES::
 
-            sage: K.<u> = Qq(4)                                                         # optional - sage.rings.padics
-            sage: R.<x> = K[]                                                           # optional - sage.rings.padics
-            sage: f = x                                                                 # optional - sage.rings.padics
-            sage: hash(f)                                                               # optional - sage.rings.padics
+            sage: K.<u> = Qq(4)                                                         # needs sage.rings.padics
+            sage: R.<x> = K[]                                                           # needs sage.rings.padics
+            sage: f = x                                                                 # needs sage.rings.padics
+            sage: hash(f)                                                               # needs sage.rings.padics
             Traceback (most recent call last):
             ...
             TypeError: unhashable type: 'sage.rings.padics.qadic_flint_CR.qAdicCappedRelativeElement'
-            sage: f._cache_key()                                                        # optional - sage.rings.padics
+            sage: f._cache_key()                                                        # needs sage.rings.padics
             (Univariate Polynomial Ring in x over 2-adic Unramified Extension Field in u defined by x^2 + x + 1,
              0,
              1 + O(2^20))
             sage: @cached_function
             ....: def foo(t): return t
             ....:
-            sage: foo(x)                                                                # optional - sage.rings.padics
+            sage: foo(x)                                                                # needs sage.rings.padics
             (1 + O(2^20))*x
         """
         return (self._parent,) + tuple(self)
@@ -1238,9 +1241,9 @@ cdef class Polynomial(CommutativePolynomial):
         Verify that :trac:`16251` has been resolved, i.e., polynomials with
         unhashable coefficients are unhashable::
 
-            sage: K.<a> = Qq(9)                                                         # optional - sage.rings.padics
-            sage: R.<t> = K[]                                                           # optional - sage.rings.padics
-            sage: hash(t)                                                               # optional - sage.rings.padics
+            sage: K.<a> = Qq(9)                                                         # needs sage.rings.padics
+            sage: R.<t> = K[]                                                           # needs sage.rings.padics
+            sage: hash(t)                                                               # needs sage.rings.padics
             Traceback (most recent call last):
             ...
             TypeError: unhashable type: 'sage.rings.padics.qadic_flint_CR.qAdicCappedRelativeElement'
@@ -1294,11 +1297,12 @@ cdef class Polynomial(CommutativePolynomial):
             sage: f(x^2 + 3) # indirect doctest
             28
 
-            sage: K.<i> = NumberField(x^2 + 1)                                          # optional - sage.rings.number_field
-            sage: cc = K.hom([-i])                                                      # optional - sage.rings.number_field
-            sage: S.<y> = K[]                                                           # optional - sage.rings.number_field
-            sage: phi = S.hom([y^2], base_map=cc)                                       # optional - sage.rings.number_field
-            sage: phi(i*y)                                                              # optional - sage.rings.number_field
+            sage: # needs sage.rings.number_field
+            sage: K.<i> = NumberField(x^2 + 1)
+            sage: cc = K.hom([-i])
+            sage: S.<y> = K[]
+            sage: phi = S.hom([y^2], base_map=cc)
+            sage: phi(i*y)
             -i*y^2
         """
         a = im_gens[0]
@@ -1327,21 +1331,21 @@ cdef class Polynomial(CommutativePolynomial):
             sage: a = QQ['x'](1/5)
             sage: QQ(a)
             1/5
-            sage: AA(a)                                                                 # optional - sage.rings.number_field
+            sage: AA(a)                                                                 # needs sage.rings.number_field
             1/5
-            sage: QQbar(a)                                                              # optional - sage.rings.number_field
+            sage: QQbar(a)                                                              # needs sage.rings.number_field
             1/5
             sage: RDF(a)
             0.2
-            sage: CDF(a)
+            sage: CDF(a)                                                                # needs sage.rings.complex_double
             0.2
             sage: RR(a)
             0.200000000000000
             sage: CC(a)
             0.200000000000000
-            sage: RBF(a)                                                                # optional - sage.libs.flint
+            sage: RBF(a)                                                                # needs sage.libs.flint
             [0.2000000000000000 +/- 4.45e-17]
-            sage: CBF(a)                                                                # optional - sage.libs.flint
+            sage: CBF(a)                                                                # needs sage.libs.flint
             [0.2000000000000000 +/- 4.45e-17]
             sage: RIF(a)
             0.2000000000000000?
@@ -1352,30 +1356,32 @@ cdef class Polynomial(CommutativePolynomial):
             sage: complex(a)
             (0.2+0j)
 
-            sage: b = AA['x'](AA(2/3).sqrt())                                           # optional - sage.rings.number_field
-            sage: AA(b)                                                                 # optional - sage.rings.number_field
+            sage: # needs sage.rings.number_field
+            sage: b = AA['x'](AA(2/3).sqrt())
+            sage: AA(b)
             0.8164965809277260?
-            sage: RR(b)                                                                 # optional - sage.rings.number_field
+            sage: RR(b)
             0.816496580927726
-            sage: RBF(b)                                                                # optional - sage.libs.flint sage.rings.number_field
+            sage: RBF(b)                                                                # needs sage.libs.flint
             [0.816496580927726 +/- 2.44e-16]
-            sage: RIF(b)                                                                # optional - sage.rings.number_field
+            sage: RIF(b)
             0.8164965809277260?
-            sage: float(b)                                                              # optional - sage.rings.number_field
+            sage: float(b)
             0.816496580927726
 
-            sage: c = QQbar['x'](QQbar(-2/5).sqrt())                                    # optional - sage.rings.number_field
-            sage: QQbar(c)                                                              # optional - sage.rings.number_field
+            sage: # needs sage.rings.number_field
+            sage: c = QQbar['x'](QQbar(-2/5).sqrt())
+            sage: QQbar(c)
             0.6324555320336758?*I
-            sage: CDF(c)                                                                # optional - sage.rings.number_field
+            sage: CDF(c)
             0.6324555320336758*I
-            sage: CC(c)                                                                 # optional - sage.rings.number_field
+            sage: CC(c)
             0.632455532033676*I
-            sage: CBF(c) # abs tol 1e-16                                                # optional - sage.libs.flint sage.rings.number_field
+            sage: CBF(c) # abs tol 1e-16                                                # needs sage.libs.flint
             [0.6324555320336759 +/- 3.38e-17]*I
-            sage: CIF(c)                                                                # optional - sage.rings.number_field
+            sage: CIF(c)
             0.6324555320336758?*I
-            sage: complex(c)                                                            # optional - sage.rings.number_field
+            sage: complex(c)
             0.6324555320336758j
 
             sage: K.<x> = Frac(RR['x'])
@@ -1387,8 +1393,8 @@ cdef class Polynomial(CommutativePolynomial):
             TypeError: cannot convert nonconstant polynomial
 
             sage: x = polygen(QQ)
-            sage: A.<u> = NumberField(x^3 - 2)                                          # optional - sage.rings.number_field
-            sage: A(A['x'](u))                                                          # optional - sage.rings.number_field
+            sage: A.<u> = NumberField(x^3 - 2)                                          # needs sage.rings.number_field
+            sage: A(A['x'](u))                                                          # needs sage.rings.number_field
             u
         """
         if self.degree() > 0:
@@ -1430,8 +1436,8 @@ cdef class Polynomial(CommutativePolynomial):
         r"""
         EXAMPLES::
 
-            sage: p = PolynomialRing(QQbar, 'x')(1+I)                                   # optional - sage.rings.number_field
-            sage: complex(p)                                                            # optional - sage.rings.number_field
+            sage: p = PolynomialRing(QQbar, 'x')(1+I)                                   # needs sage.rings.number_field
+            sage: complex(p)                                                            # needs sage.rings.number_field
             (1+1j)
         """
         return self._scalar_conversion(complex)
@@ -1456,20 +1462,20 @@ cdef class Polynomial(CommutativePolynomial):
 
             sage: R.<x> = QQ[]
             sage: f = x^3 + x
-            sage: g = f._symbolic_(SR); g                                               # optional - sage.symbolic
+            sage: g = f._symbolic_(SR); g                                               # needs sage.symbolic
             x^3 + x
-            sage: g(x=2)                                                                # optional - sage.symbolic
+            sage: g(x=2)                                                                # needs sage.symbolic
             10
 
-            sage: g = SR(f)                                                             # optional - sage.symbolic
-            sage: g(x=2)                                                                # optional - sage.symbolic
+            sage: g = SR(f)                                                             # needs sage.symbolic
+            sage: g(x=2)                                                                # needs sage.symbolic
             10
 
         The polynomial has to be over a field of characteristic 0 (see
         :trac:`24072`)::
 
             sage: R.<w> = GF(7)[]
-            sage: f = SR(2*w^3 + 1); f                                                  # optional - sage.rings.finite_rings sage.symbolic
+            sage: f = SR(2*w^3 + 1); f                                                  # needs sage.rings.finite_rings sage.symbolic
             Traceback (most recent call last):
             ...
             TypeError: positive characteristic not allowed in symbolic computations
@@ -1558,22 +1564,22 @@ cdef class Polynomial(CommutativePolynomial):
 
             sage: R.<x> = RDF[]
             sage: epsilon = RDF(1).ulp()*50   # Allow an error of up to 50 ulp
-            sage: f = inverse_mod(x^2 + 1, x^5 + x + 1); f  # abs tol 1e-14             # optional - sage.modules
+            sage: f = inverse_mod(x^2 + 1, x^5 + x + 1); f  # abs tol 1e-14             # needs sage.modules
             0.4*x^4 - 0.2*x^3 - 0.4*x^2 + 0.2*x + 0.8
-            sage: poly = f * (x^2 + 1) % (x^5 + x + 1)                                  # optional - sage.modules
+            sage: poly = f * (x^2 + 1) % (x^5 + x + 1)                                  # needs sage.modules
             sage: # Remove noisy zero terms:
-            sage: parent(poly)([0.0 if abs(c) <= epsilon else c                         # optional - sage.modules
+            sage: parent(poly)([0.0 if abs(c) <= epsilon else c                         # needs sage.modules
             ....:               for c in poly.coefficients(sparse=False)])
             1.0
-            sage: f = inverse_mod(x^3 - x + 1, x - 2); f                                # optional - sage.modules
+            sage: f = inverse_mod(x^3 - x + 1, x - 2); f                                # needs sage.modules
             0.14285714285714285
-            sage: f * (x^3 - x + 1) % (x - 2)                                           # optional - sage.modules
+            sage: f * (x^3 - x + 1) % (x - 2)                                           # needs sage.modules
             1.0
-            sage: g = 5*x^3 + x - 7; m = x^4 - 12*x + 13; f = inverse_mod(g, m); f      # optional - sage.modules
+            sage: g = 5*x^3 + x - 7; m = x^4 - 12*x + 13; f = inverse_mod(g, m); f      # needs sage.modules
             -0.0319636125...*x^3 - 0.0383269759...*x^2 - 0.0463050900...*x + 0.346479687...
-            sage: poly = f*g % m                                                        # optional - sage.modules
+            sage: poly = f*g % m                                                        # needs sage.modules
             sage: # Remove noisy zero terms:
-            sage: parent(poly)([0.0 if abs(c) <= epsilon else c  # abs tol 1e-14        # optional - sage.modules
+            sage: parent(poly)([0.0 if abs(c) <= epsilon else c  # abs tol 1e-14        # needs sage.modules
             ....:               for c in poly.coefficients(sparse=False)])
             1.0000000000000004
 
@@ -1681,14 +1687,15 @@ cdef class Polynomial(CommutativePolynomial):
 
         Even noncommutative ones::
 
-            sage: M = MatrixSpace(ZZ, 2)                                                # optional - sage.modules
-            sage: x = polygen(M)                                                        # optional - sage.modules
-            sage: p = M([1,2,3,4])*x^3 + M([-1,0,0,1])*x^2 + M([1,3,-1,0])*x + M.one()  # optional - sage.modules
-            sage: q = p.inverse_series_trunc(5)                                         # optional - sage.modules
-            sage: (p*q).truncate(5) == M.one()                                          # optional - sage.modules
+            sage: # needs sage.modules
+            sage: M = MatrixSpace(ZZ, 2)
+            sage: x = polygen(M)
+            sage: p = M([1,2,3,4])*x^3 + M([-1,0,0,1])*x^2 + M([1,3,-1,0])*x + M.one()
+            sage: q = p.inverse_series_trunc(5)
+            sage: (p*q).truncate(5) == M.one()
             True
-            sage: q = p.inverse_series_trunc(13)                                        # optional - sage.modules
-            sage: (p*q).truncate(13) == M.one()                                         # optional - sage.modules
+            sage: q = p.inverse_series_trunc(13)
+            sage: (p*q).truncate(13) == M.one()
             True
 
         TESTS::
@@ -1739,11 +1746,11 @@ cdef class Polynomial(CommutativePolynomial):
             sage: Pol.<x> = QQ[]
             sage: (x + x^3/6 + x^5/120).revert_series(6)
             3/40*x^5 - 1/6*x^3 + x
-            sage: Pol.<x> = CBF[]                                                       # optional - sage.libs.flint
-            sage: (x + x^3/6 + x^5/120).revert_series(6)                                # optional - sage.libs.flint
+            sage: Pol.<x> = CBF[]                                                       # needs sage.libs.flint
+            sage: (x + x^3/6 + x^5/120).revert_series(6)                                # needs sage.libs.flint
             ([0.075000000000000 +/- ...e-17])*x^5 + ([-0.166666666666667 +/- ...e-16])*x^3 + x
-            sage: Pol.<x> = SR[]                                                        # optional - sage.symbolic
-            sage: x.revert_series(6)                                                    # optional - sage.symbolic
+            sage: Pol.<x> = SR[]                                                        # needs sage.symbolic
+            sage: x.revert_series(6)                                                    # needs sage.symbolic
             Traceback (most recent call last):
             ...
             NotImplementedError: only implemented for certain base rings
@@ -1772,20 +1779,21 @@ cdef class Polynomial(CommutativePolynomial):
 
         TESTS::
 
-            sage: Pol.<x> = MatrixSpace(ZZ, 2)[]                                        # optional - sage.modules
-            sage: a = matrix([[1,0], [0,0]])                                            # optional - sage.modules
-            sage: b = matrix([[1,2], [3,4]])                                            # optional - sage.modules
-            sage: list((a*x)*(b*x + 1))                                                 # optional - sage.modules
+            sage: # needs sage.modules
+            sage: Pol.<x> = MatrixSpace(ZZ, 2)[]
+            sage: a = matrix([[1,0], [0,0]])
+            sage: b = matrix([[1,2], [3,4]])
+            sage: list((a*x)*(b*x + 1))
             [
             [0 0]  [1 0]  [1 2]
             [0 0], [0 0], [0 0]
             ]
-            sage: list((b*x + 1)*(a*x))                                                 # optional - sage.modules
+            sage: list((b*x + 1)*(a*x))
             [
             [0 0]  [1 0]  [1 0]
             [0 0], [0 0], [3 0]
             ]
-            sage: list((a*x + 1)*(b*x))                                                 # optional - sage.modules
+            sage: list((a*x + 1)*(b*x))
             [
             [0 0]  [1 2]  [1 2]
             [0 0], [3 4], [0 0]
@@ -1920,8 +1928,8 @@ cdef class Polynomial(CommutativePolynomial):
             sage: x = polygen(GF(3))
             sage: x.squarefree_decomposition()
             x
-            sage: f = QQbar['x'](1)                                                     # optional - sage.rings.number_field
-            sage: f.squarefree_decomposition()                                          # optional - sage.rings.number_field
+            sage: f = QQbar['x'](1)                                                     # needs sage.rings.number_field
+            sage: f.squarefree_decomposition()                                          # needs sage.rings.number_field
             1
 
         """
@@ -2037,71 +2045,74 @@ cdef class Polynomial(CommutativePolynomial):
 
             sage: R.<x> = GF(11)[]
             sage: f = 7*x^7 + 8*x^6 + 4*x^5 + x^4 + 6*x^3 + 10*x^2 + 8*x + 5
-            sage: f.any_root()                                                          # optional - sage.rings.finite_rings
+            sage: f.any_root()                                                          # needs sage.rings.finite_rings
             2
-            sage: f.factor()                                                            # optional - sage.rings.finite_rings
+            sage: f.factor()                                                            # needs sage.rings.finite_rings
             (7) * (x + 9) * (x^6 + 10*x^4 + 6*x^3 + 5*x^2 + 2*x + 2)
             sage: f = x^6 + 10*x^4 + 6*x^3 + 5*x^2 + 2*x + 2
-            sage: f.any_root(GF(11^6, 'a'))                                             # optional - sage.rings.finite_rings
+            sage: f.any_root(GF(11^6, 'a'))                                             # needs sage.rings.finite_rings
             a^5 + a^4 + 7*a^3 + 2*a^2 + 10*a
-            sage: sorted(f.roots(GF(11^6, 'a')))                                        # optional - sage.rings.finite_rings
+            sage: sorted(f.roots(GF(11^6, 'a')))                                        # needs sage.rings.finite_rings
             [(10*a^5 + 2*a^4 + 8*a^3 + 9*a^2 + a, 1),
              (a^5 + a^4 + 7*a^3 + 2*a^2 + 10*a, 1),
              (9*a^5 + 5*a^4 + 10*a^3 + 8*a^2 + 3*a + 1, 1),
              (2*a^5 + 8*a^4 + 3*a^3 + 6*a + 2, 1),
              (a^5 + 3*a^4 + 8*a^3 + 2*a^2 + 3*a + 4, 1),
              (10*a^5 + 3*a^4 + 8*a^3 + a^2 + 10*a + 4, 1)]
-            sage: f.any_root(GF(11^6, 'a'))                                             # optional - sage.rings.finite_rings
+            sage: f.any_root(GF(11^6, 'a'))                                             # needs sage.rings.finite_rings
             a^5 + a^4 + 7*a^3 + 2*a^2 + 10*a
 
             sage: g = (x-1)*(x^2 + 3*x + 9) * (x^5 + 5*x^4 + 8*x^3 + 5*x^2 + 3*x + 5)
-            sage: g.any_root(ring=GF(11^10, 'b'), degree=1)                             # optional - sage.rings.finite_rings
+            sage: g.any_root(ring=GF(11^10, 'b'), degree=1)                             # needs sage.rings.finite_rings
             1
-            sage: g.any_root(ring=GF(11^10, 'b'), degree=2)                             # optional - sage.rings.finite_rings
+            sage: g.any_root(ring=GF(11^10, 'b'), degree=2)                             # needs sage.rings.finite_rings
             5*b^9 + 4*b^7 + 4*b^6 + 8*b^5 + 10*b^2 + 10*b + 5
-            sage: g.any_root(ring=GF(11^10, 'b'), degree=5)                             # optional - sage.rings.finite_rings
+            sage: g.any_root(ring=GF(11^10, 'b'), degree=5)                             # needs sage.rings.finite_rings
             5*b^9 + b^8 + 3*b^7 + 2*b^6 + b^5 + 4*b^4 + 3*b^3 + 7*b^2 + 10*b
 
         TESTS::
 
             sage: R.<x> = GF(5)[]
-            sage: K.<a> = GF(5^12)                                                      # optional - sage.rings.finite_rings
-            sage: for _ in range(40):                                                   # optional - sage.rings.finite_rings
+            sage: K.<a> = GF(5^12)                                                      # needs sage.rings.finite_rings
+            sage: for _ in range(40):                                                   # needs sage.rings.finite_rings
             ....:     f = R.random_element(degree=4)
             ....:     assert f(f.any_root(K)) == 0
 
         Check that our Cantor-Zassenhaus implementation does not loop
         over finite fields of even characteristic (see :trac:`16162`)::
 
-            sage: K.<a> = GF(2**8)                                                      # optional - sage.rings.finite_rings
-            sage: x = polygen(K)                                                        # optional - sage.rings.finite_rings
-            sage: r = (x**2+x+1).any_root()  # used to loop                             # optional - sage.rings.finite_rings
-            sage: r**2 + r                                                              # optional - sage.rings.finite_rings
+            sage: # needs sage.rings.finite_rings
+            sage: K.<a> = GF(2**8)
+            sage: x = polygen(K)
+            sage: r = (x**2+x+1).any_root()  # used to loop
+            sage: r**2 + r
             1
-            sage: (x**2+a+1).any_root()                                                 # optional - sage.rings.finite_rings
+            sage: (x**2+a+1).any_root()
             a^7 + a^2
 
         Also check that such computations can be interrupted::
 
-            sage: K.<a> = GF(2^8)                                                       # optional - sage.rings.finite_rings
-            sage: x = polygen(K)                                                        # optional - sage.rings.finite_rings
-            sage: pol = x^1000000 + x + a                                               # optional - sage.rings.finite_rings
-            sage: alarm(0.5); pol.any_root()                                            # optional - sage.rings.finite_rings
+            sage: # needs sage.rings.finite_rings
+            sage: K.<a> = GF(2^8)
+            sage: x = polygen(K)
+            sage: pol = x^1000000 + x + a
+            sage: alarm(0.5); pol.any_root()
             Traceback (most recent call last):
             ...
             AlarmInterrupt
 
         Check root computation over large finite fields::
 
-            sage: K.<a> = GF(2**50)                                                     # optional - sage.rings.finite_rings
-            sage: x = polygen(K)                                                        # optional - sage.rings.finite_rings
-            sage: (x**10+x+a).any_root()                                                # optional - sage.rings.finite_rings
+            sage: # needs sage.rings.finite_rings
+            sage: K.<a> = GF(2**50)
+            sage: x = polygen(K)
+            sage: (x**10+x+a).any_root()
             a^49 + a^47 + a^44 + a^42 + a^41 + a^39 + a^38 + a^37 + a^36
             + a^34 + a^33 + a^29 + a^27 + a^26 + a^25 + a^23 + a^18
             + a^13 + a^7 + a^5 + a^4 + a^3 + a^2 + a
-            sage: K.<a> = GF(2**150)                                                    # optional - sage.rings.finite_rings
-            sage: x = polygen(K)                                                        # optional - sage.rings.finite_rings
-            sage: (x**10+x+a).any_root()                                                # optional - sage.rings.finite_rings
+            sage: K.<a> = GF(2**150)
+            sage: x = polygen(K)
+            sage: (x**10+x+a).any_root()
             a^149 + a^148 + a^146 + a^144 + a^143 + a^140 + a^138 + a^136 + a^134
             + a^132 + a^131 + a^130 + a^129 + a^127 + a^123 + a^120 + a^118 + a^114
             + a^113 + a^112 + a^111 + a^108 + a^104 + a^103 + a^102 + a^99 + a^98
@@ -2113,11 +2124,12 @@ cdef class Polynomial(CommutativePolynomial):
 
         Check that :trac:`21998` has been resolved::
 
-            sage: K.<a> = GF(2^4)                                                       # optional - sage.rings.finite_rings
-            sage: R.<x> = K[]                                                           # optional - sage.rings.finite_rings
-            sage: f = x^2 + x + a^2 + a                                                 # optional - sage.rings.finite_rings
-            sage: r = f.any_root()                                                      # optional - sage.rings.finite_rings
-            sage: r^2 + r                                                               # optional - sage.rings.finite_rings
+            sage: # needs sage.rings.finite_rings
+            sage: K.<a> = GF(2^4)
+            sage: R.<x> = K[]
+            sage: f = x^2 + x + a^2 + a
+            sage: r = f.any_root()
+            sage: r^2 + r
             a^2 + a
         """
         if self.base_ring().is_finite() and self.base_ring().is_field():
@@ -2311,9 +2323,9 @@ cdef class Polynomial(CommutativePolynomial):
 
         ::
 
-            sage: R.<x> = PolynomialRing(GF(5^2, 'a'), 'x')                             # optional - sage.rings.finite_rings
+            sage: R.<x> = PolynomialRing(GF(5^2, 'a'), 'x')                             # needs sage.rings.finite_rings
             sage: f = x^3 + 4*x
-            sage: f / (x - 1)                                                           # optional - sage.rings.finite_rings
+            sage: f / (x - 1)                                                           # needs sage.rings.finite_rings
             x^2 + x
 
         Be careful about coercions (this used to be broken)::
@@ -2334,8 +2346,8 @@ cdef class Polynomial(CommutativePolynomial):
             ...
             ZeroDivisionError: inverse of Mod(0, 5) does not exist
 
-            sage: P.<x> = GF(25, 'a')[]                                                 # optional - sage.rings.finite_rings
-            sage: x/5                                                                   # optional - sage.rings.finite_rings
+            sage: P.<x> = GF(25, 'a')[]                                                 # needs sage.rings.finite_rings
+            sage: x/5                                                                   # needs sage.rings.finite_rings
             Traceback (most recent call last):
             ...
             ZeroDivisionError: division by zero in finite field
@@ -2407,13 +2419,13 @@ cdef class Polynomial(CommutativePolynomial):
 
             sage: k = GF(5)
             sage: D.<x> = k[]
-            sage: l.<x> = k.extension(x^2 + 2)                                          # optional - sage.rings.finite_rings
-            sage: R.<t> = l[]                                                           # optional - sage.rings.finite_rings
-            sage: f = t^4 + (2*x - 1)*t^3 + (2*x + 1)*t^2 + 3                           # optional - sage.rings.finite_rings
-            sage: h = t^4 - x*t^3 + (3*x + 1)*t^2 + 2*t + 2*x - 1                       # optional - sage.rings.finite_rings
-            sage: pow(f, 2, h)                                                          # optional - sage.rings.finite_rings
+            sage: l.<x> = k.extension(x^2 + 2)                                          # needs sage.rings.finite_rings
+            sage: R.<t> = l[]                                                           # needs sage.rings.finite_rings
+            sage: f = t^4 + (2*x - 1)*t^3 + (2*x + 1)*t^2 + 3                           # needs sage.rings.finite_rings
+            sage: h = t^4 - x*t^3 + (3*x + 1)*t^2 + 2*t + 2*x - 1                       # needs sage.rings.finite_rings
+            sage: pow(f, 2, h)                                                          # needs sage.rings.finite_rings
             3*t^3 + (2*x + 3)*t^2 + (2*x + 2)*t + 2*x + 2
-            sage: pow(f, 10**7, h)                                                      # optional - sage.rings.finite_rings
+            sage: pow(f, 10**7, h)                                                      # needs sage.rings.finite_rings
             4*x*t^3 + 2*x*t^2 + 4*x*t + 4
 
         Check that :trac:`18457` is fixed::
@@ -2432,11 +2444,11 @@ cdef class Polynomial(CommutativePolynomial):
         Check that the algorithm used is indeed correct::
 
             sage: from sage.arith.power import generic_power
-            sage: R1 = PolynomialRing(GF(8,'a'), 'x')                                   # optional - sage.rings.finite_rings
-            sage: R2 = PolynomialRing(GF(9,'b'), 'x', sparse=True)                      # optional - sage.rings.finite_rings
+            sage: R1 = PolynomialRing(GF(8,'a'), 'x')                                   # needs sage.rings.finite_rings
+            sage: R2 = PolynomialRing(GF(9,'b'), 'x', sparse=True)                      # needs sage.rings.finite_rings
             sage: R3 = PolynomialRing(R2, 'y')
             sage: R4 = PolynomialRing(R1, 'y', sparse=True)
-            sage: for d in range(20,40): # long time                                    # optional - sage.rings.finite_rings
+            sage: for d in range(20,40):        # long time                             # needs sage.rings.finite_rings
             ....:     for R in [R1, R2, R3, R3]:
             ....:         a = R.random_element()
             ....:         assert a^d == generic_power(a, d)
@@ -2456,9 +2468,9 @@ cdef class Polynomial(CommutativePolynomial):
         the characteristic of the base ring (:trac:`24308`)::
 
             sage: kk.<a,b> = GF(2)[]
-            sage: k.<y,w> = kk.quo(a^2+a+1)                                             # optional - sage.rings.finite_rings
-            sage: K.<T> = k[]                                                           # optional - sage.rings.finite_rings
-            sage: (T*y)^21                                                              # optional - sage.rings.finite_rings
+            sage: k.<y,w> = kk.quo(a^2+a+1)                                             # needs sage.rings.finite_rings
+            sage: K.<T> = k[]                                                           # needs sage.rings.finite_rings
+            sage: (T*y)^21                                                              # needs sage.rings.finite_rings
             T^21
         """
         if not isinstance(left, Polynomial):
@@ -2561,7 +2573,7 @@ cdef class Polynomial(CommutativePolynomial):
             sage: p = (x^2 + x + 1).power_trunc(2^100, 100); p
             2*x^99 + x^98 + x^95 + 2*x^94 + ... + 3*x^2 + 2*x + 1
 
-            sage: for i in range(100):                                                  # optional - sage.rings.finite_rings
+            sage: for i in range(100):
             ....:    q1 = (x^2 + x + 1).power_trunc(2^100 + i, 100)
             ....:    q2 = p * (x^2 + x + 1).power_trunc(i, 100)
             ....:    q2 = q2.truncate(100)
@@ -2651,10 +2663,10 @@ cdef class Polynomial(CommutativePolynomial):
         elements in the Sage library yet that do not implement
         ``__bool__``, so we have to create one artificially.)::
 
-            sage: class PatchedAlgebraicNumber(sage.rings.qqbar.AlgebraicNumber):       # optional - sage.rings.number_field
+            sage: class PatchedAlgebraicNumber(sage.rings.qqbar.AlgebraicNumber):       # needs sage.rings.number_field
             ....:     def __bool__(self): raise NotImplementedError()
-            sage: R.<x> = QQbar[]                                                       # optional - sage.rings.number_field
-            sage: R([PatchedAlgebraicNumber(0), 1])                                     # optional - sage.rings.number_field
+            sage: R.<x> = QQbar[]                                                       # needs sage.rings.number_field
+            sage: R([PatchedAlgebraicNumber(0), 1])                                     # needs sage.rings.number_field
             x + 0
         """
         if name is None:
@@ -2729,10 +2741,10 @@ cdef class Polynomial(CommutativePolynomial):
 
         ::
 
-            sage: C3.<omega> = CyclotomicField(3)                                       # optional - sage.rings.number_field
-            sage: R.<X> = C3[]                                                          # optional - sage.rings.number_field
-            sage: f = X^3 - omega*X                                                     # optional - sage.rings.number_field
-            sage: latex(f)                                                              # optional - sage.rings.number_field
+            sage: C3.<omega> = CyclotomicField(3)                                       # needs sage.rings.number_field
+            sage: R.<X> = C3[]                                                          # needs sage.rings.number_field
+            sage: f = X^3 - omega*X                                                     # needs sage.rings.number_field
+            sage: latex(f)                                                              # needs sage.rings.number_field
             X^{3} - \omega X
             sage: R.<x> = RDF[]
             sage: latex(x+2)
@@ -2745,9 +2757,9 @@ cdef class Polynomial(CommutativePolynomial):
 
         The following illustrates a (non-intentional) superfluity of parentheses
 
-            sage: K.<I> = QuadraticField(-1)                                            # optional - sage.rings.number_field
-            sage: R.<x> = K[]                                                           # optional - sage.rings.number_field
-            sage: latex(I*x^2 - I*x)                                                    # optional - sage.rings.number_field
+            sage: K.<I> = QuadraticField(-1)                                            # needs sage.rings.number_field
+            sage: R.<x> = K[]                                                           # needs sage.rings.number_field
+            sage: latex(I*x^2 - I*x)                                                    # needs sage.rings.number_field
             \left(\sqrt{-1}\right) x^{2} + \left(-\sqrt{-1}\right) x
         """
         s = " "
@@ -2816,7 +2828,7 @@ cdef class Polynomial(CommutativePolynomial):
             R1.<x> = ZZ[]
             R2.<y> = R1[]
             y^2 + (2*x + 2)*y + (x^2 + 2*x + 1)
-            sage: sage_input(RR(pi) * polygen(RR), verify=True)                         # optional - sage.symbolic
+            sage: sage_input(RR(pi) * polygen(RR), verify=True)                         # needs sage.symbolic
             # Verified
             R.<x> = RR[]
             3.1415926535897931*x
@@ -2929,14 +2941,14 @@ cdef class Polynomial(CommutativePolynomial):
         Check the problem reported at :trac:`12529` is fixed::
 
             sage: gens = 'y a0 a1 a2 b0 b1 b2 c1 c2 d0 d1 d2 d3 d4 d5 d6 d7'.split()
-            sage: R = PolynomialRing(GF(8), 17, gens)                                   # optional - sage.rings.finite_rings
+            sage: R = PolynomialRing(GF(8), 17, gens)                                   # needs sage.rings.finite_rings
             sage: R.inject_variables(verbose=False)
-            sage: A, B, C = a0 + a1*y + a2*y^2, b0 + b1*y + b2*y^2, c1*y + c2*y^2       # optional - sage.rings.finite_rings
-            sage: D = d0 + d1*y + d2*y^2 + d3*y^3 + d4*y^4 + d5*y^5 + d6*y^6 + d7*y^7   # optional - sage.rings.finite_rings
-            sage: F = D.subs({y: B})                                                    # optional - sage.rings.finite_rings
-            sage: G = A.subs({y: F}) + C                                                # optional - sage.rings.finite_rings
-            sage: g = G.mod(y^8 + y)                                                    # optional - sage.rings.finite_rings
-            sage: g.degree(y)                                                           # optional - sage.rings.finite_rings
+            sage: A, B, C = a0 + a1*y + a2*y^2, b0 + b1*y + b2*y^2, c1*y + c2*y^2       # needs sage.rings.finite_rings
+            sage: D = d0 + d1*y + d2*y^2 + d3*y^3 + d4*y^4 + d5*y^5 + d6*y^6 + d7*y^7   # needs sage.rings.finite_rings
+            sage: F = D.subs({y: B})                                                    # needs sage.rings.finite_rings
+            sage: G = A.subs({y: F}) + C                                                # needs sage.rings.finite_rings
+            sage: g = G.mod(y^8 + y)                                                    # needs sage.rings.finite_rings
+            sage: g.degree(y)                                                           # needs sage.rings.finite_rings
             7
         """
         return self % other
@@ -2975,21 +2987,22 @@ cdef class Polynomial(CommutativePolynomial):
 
         Show the product in the symbolic ring::
 
-            sage: L = SR['x']                                                           # optional - sage.symbolic
-            sage: var('a0,a1,b0,b1')                                                    # optional - sage.symbolic
+            sage: L = SR['x']                                                           # needs sage.symbolic
+            sage: var('a0,a1,b0,b1')                                                    # needs sage.symbolic
             (a0, a1, b0, b1)
-            sage: L([a0, a1])._mul_generic(L([b0, b1]))                                 # optional - sage.symbolic
+            sage: L([a0, a1])._mul_generic(L([b0, b1]))                                 # needs sage.symbolic
             a1*b1*x^2 + (a1*b0 + a0*b1)*x + a0*b0
 
         A non-commutative example::
 
-            sage: A.<i,j,k> = QuaternionAlgebra(QQ, -1,-1)                              # optional - sage.combinat sage.modules
-            sage: R.<w> = PolynomialRing(A)                                             # optional - sage.combinat sage.modules
-            sage: f = i*w + j                                                           # optional - sage.combinat sage.modules
-            sage: g = k*w + 1                                                           # optional - sage.combinat sage.modules
-            sage: f._mul_generic(g)                                                     # optional - sage.combinat sage.modules
+            sage: # needs sage.combinat sage.modules
+            sage: A.<i,j,k> = QuaternionAlgebra(QQ, -1,-1)
+            sage: R.<w> = PolynomialRing(A)
+            sage: f = i*w + j
+            sage: g = k*w + 1
+            sage: f._mul_generic(g)
             -j*w^2 + 2*i*w + j
-            sage: g._mul_generic(f)                                                     # optional - sage.combinat sage.modules
+            sage: g._mul_generic(f)
             j*w^2 + j
 
 
@@ -3193,23 +3206,25 @@ cdef class Polynomial(CommutativePolynomial):
 
         Show the product in the symbolic ring::
 
-            sage: L = SR['x']                                                           # optional - sage.symbolic
-            sage: var('a0,a1,b0,b1')                                                    # optional - sage.symbolic
+            sage: # needs sage.symbolic
+            sage: L = SR['x']
+            sage: var('a0,a1,b0,b1')
             (a0, a1, b0, b1)
-            sage: L([a0, a1])._mul_karatsuba(L([b0, b1]), 0)                            # optional - sage.symbolic
+            sage: L([a0, a1])._mul_karatsuba(L([b0, b1]), 0)
             a1*b1*x^2 + ((a0 + a1)*(b0 + b1) - a0*b0 - a1*b1)*x + a0*b0
-            sage: L([a0, a1])._mul_karatsuba(L([b0, b1]), 2)                            # optional - sage.symbolic
+            sage: L([a0, a1])._mul_karatsuba(L([b0, b1]), 2)
             a1*b1*x^2 + (a1*b0 + a0*b1)*x + a0*b0
 
         A noncommutative example::
 
-            sage: A.<i,j,k> = QuaternionAlgebra(QQ, -1,-1)                              # optional - sage.combinat sage.modules
-            sage: R.<w> = PolynomialRing(A)                                             # optional - sage.combinat sage.modules
-            sage: f = i*w + j                                                           # optional - sage.combinat sage.modules
-            sage: g = k*w + 1                                                           # optional - sage.combinat sage.modules
-            sage: f._mul_karatsuba(g,0)                                                 # optional - sage.combinat sage.modules
+            sage: # needs sage.combinat sage.modules
+            sage: A.<i,j,k> = QuaternionAlgebra(QQ, -1,-1)
+            sage: R.<w> = PolynomialRing(A)
+            sage: f = i*w + j
+            sage: g = k*w + 1
+            sage: f._mul_karatsuba(g,0)
             -j*w^2 + 2*i*w + j
-            sage: g._mul_karatsuba(f,0)                                                 # optional - sage.combinat sage.modules
+            sage: g._mul_karatsuba(f,0)
             j*w^2 + j
 
         TESTS::
@@ -3235,28 +3250,30 @@ cdef class Polynomial(CommutativePolynomial):
 
         Random tests for noncommutative rings::
 
-            sage: A.<i,j,k> = QuaternionAlgebra(QQ, -1,-1)                              # optional - sage.combinat sage.modules
-            sage: R.<w> = PolynomialRing(A)                                             # optional - sage.combinat sage.modules
-            sage: f = R.random_element(randint(10,100))                                 # optional - sage.combinat sage.modules
-            sage: g = R.random_element(randint(10,100))                                 # optional - sage.combinat sage.modules
-            sage: f._mul_generic(g) == f._mul_karatsuba(g,0)                            # optional - sage.combinat sage.modules
+            sage: # needs sage.combinat sage.modules
+            sage: A.<i,j,k> = QuaternionAlgebra(QQ, -1,-1)
+            sage: R.<w> = PolynomialRing(A)
+            sage: f = R.random_element(randint(10,100))
+            sage: g = R.random_element(randint(10,100))
+            sage: f._mul_generic(g) == f._mul_karatsuba(g,0)
             True
-            sage: f._mul_generic(g) == f._mul_karatsuba(g,16)                           # optional - sage.combinat sage.modules
+            sage: f._mul_generic(g) == f._mul_karatsuba(g,16)
             True
-            sage: g = R.random_element(0)                                               # optional - sage.combinat sage.modules
-            sage: f._mul_karatsuba(g,0) == f._mul_generic(g)                            # optional - sage.combinat sage.modules
+            sage: g = R.random_element(0)
+            sage: f._mul_karatsuba(g,0) == f._mul_generic(g)
             True
-            sage: g._mul_karatsuba(f,0) == g._mul_generic(f)                            # optional - sage.combinat sage.modules
+            sage: g._mul_karatsuba(f,0) == g._mul_generic(f)
             True
 
         Polynomials over matrices::
 
-            sage: K = PolynomialRing(MatrixSpace(QQ, 2), 'x')                           # optional - sage.modules
-            sage: f = K.random_element(randint(5, 10))                                  # optional - sage.modules
-            sage: g = K.random_element(randint(5, 10))                                  # optional - sage.modules
-            sage: h1 = f._mul_generic(g)                                                # optional - sage.modules
-            sage: h2 = f._mul_karatsuba(g,randint(0, 10))                               # optional - sage.modules
-            sage: h1 == h2                                                              # optional - sage.modules
+            sage: # needs sage.modules
+            sage: K = PolynomialRing(MatrixSpace(QQ, 2), 'x')
+            sage: f = K.random_element(randint(5, 10))
+            sage: g = K.random_element(randint(5, 10))
+            sage: h1 = f._mul_generic(g)
+            sage: h2 = f._mul_karatsuba(g,randint(0, 10))
+            sage: h1 == h2
             True
         """
         if self.is_zero():
@@ -3365,24 +3382,25 @@ cdef class Polynomial(CommutativePolynomial):
 
         EXAMPLES::
 
-            sage: K.<z> = CyclotomicField(3)                                            # optional - sage.rings.number_field
-            sage: f = K.defining_polynomial()                                           # optional - sage.rings.number_field
-            sage: f.change_ring(GF(7))                                                  # optional - sage.rings.finite_rings sage.rings.number_field
+            sage: K.<z> = CyclotomicField(3)                                            # needs sage.rings.number_field
+            sage: f = K.defining_polynomial()                                           # needs sage.rings.number_field
+            sage: f.change_ring(GF(7))                                                  # needs sage.rings.finite_rings sage.rings.number_field
             x^2 + x + 1
 
         ::
 
-            sage: K.<z> = CyclotomicField(3)                                            # optional - sage.rings.number_field
-            sage: R.<x> = K[]                                                           # optional - sage.rings.number_field
-            sage: f = x^2 + z                                                           # optional - sage.rings.number_field
-            sage: f.change_ring(K.embeddings(CC)[1])                                    # optional - sage.rings.number_field sage.rings.real_mpfr
+            sage: # needs sage.rings.number_field
+            sage: K.<z> = CyclotomicField(3)
+            sage: R.<x> = K[]
+            sage: f = x^2 + z
+            sage: f.change_ring(K.embeddings(CC)[1])                                    # needs sage.rings.real_mpfr
             x^2 - 0.500000000000000 - 0.866025403784438*I
 
         ::
 
             sage: R.<x> = QQ[]
             sage: f = x^2 + 1
-            sage: f.change_ring(QQ.embeddings(CC)[0])                                   # optional - sage.rings.real_mpfr
+            sage: f.change_ring(QQ.embeddings(CC)[0])                                   # needs sage.rings.real_mpfr
             x^2 + 1.00000000000000
 
         TESTS:
@@ -3390,17 +3408,18 @@ cdef class Polynomial(CommutativePolynomial):
         Check that :trac:`25022` is fixed::
 
             sage: K.<x> = ZZ[]
-            sage: x.change_ring(SR) == SR['x'].gen()                                    # optional - sage.symbolic
+            sage: x.change_ring(SR) == SR['x'].gen()                                    # needs sage.symbolic
             True
             sage: x.change_ring(ZZ['x']) == ZZ['x']['x'].gen()
             True
 
         Check that :trac:`28541` is fixed::
 
-            sage: F.<a> = GF(7^2)                                                       # optional - sage.rings.finite_rings
-            sage: S.<x> = F[]                                                           # optional - sage.rings.finite_rings
-            sage: P = x^2 + a*x + a^2                                                   # optional - sage.rings.finite_rings
-            sage: P.change_ring(F.frobenius_endomorphism())                             # optional - sage.rings.finite_rings
+            sage: # needs sage.rings.finite_rings
+            sage: F.<a> = GF(7^2)
+            sage: S.<x> = F[]
+            sage: P = x^2 + a*x + a^2
+            sage: P.change_ring(F.frobenius_endomorphism())
             x^2 + (6*a + 1)*x + 6*a + 5
         """
         if isinstance(R, Map):
@@ -3689,9 +3708,9 @@ cdef class Polynomial(CommutativePolynomial):
 
         ::
 
-            sage: K = NumberField(symbolic_expression('x^3+2'), 'a')['s,t']['x']        # optional - sage.rings.number_field sage.symbolic
-            sage: f = K.random_element()                                                # optional - sage.rings.number_field sage.symbolic
-            sage: f.numerator() / f.denominator() == f                                  # optional - sage.rings.number_field sage.symbolic
+            sage: K = NumberField(symbolic_expression('x^3+2'), 'a')['s,t']['x']        # needs sage.rings.number_field sage.symbolic
+            sage: f = K.random_element()                                                # needs sage.rings.number_field sage.symbolic
+            sage: f.numerator() / f.denominator() == f                                  # needs sage.rings.number_field sage.symbolic
             True
             sage: R = RR['x']
             sage: f = R.random_element()
@@ -3804,13 +3823,13 @@ cdef class Polynomial(CommutativePolynomial):
 
         Check that :trac:`28147` is fixed::
 
-            sage: R.<x> = GF(65537)[]                                                   # optional - sage.rings.finite_rings
+            sage: R.<x> = GF(65537)[]                                                   # needs sage.rings.finite_rings
             sage: p = x^4 - 17*x^3 + 2*x^2 - x + 7
-            sage: p.derivative()                                                        # optional - sage.rings.finite_rings
+            sage: p.derivative()                                                        # needs sage.rings.finite_rings
             4*x^3 + 65486*x^2 + 4*x + 65536
-            sage: R.<x> = GF(19^2)[]                                                    # optional - sage.rings.finite_rings
+            sage: R.<x> = GF(19^2)[]                                                    # needs sage.rings.finite_rings
             sage: p = x^4 - 17*x^3 + 2*x^2 - x + 7
-            sage: p.derivative()                                                        # optional - sage.rings.finite_rings
+            sage: p.derivative()                                                        # needs sage.rings.finite_rings
             4*x^3 + 6*x^2 + 4*x + 18
             sage: R.<x> = GF(2)[]
             sage: p = x^4 + x^2 + x
@@ -3829,8 +3848,8 @@ cdef class Polynomial(CommutativePolynomial):
             ...
             ValueError: cannot differentiate with respect to 2*x
 
-            sage: y = var("y")                                                          # optional - sage.symbolic
-            sage: f._derivative(y)                                                      # optional - sage.symbolic
+            sage: y = var("y")                                                          # needs sage.symbolic
+            sage: f._derivative(y)                                                      # needs sage.symbolic
             Traceback (most recent call last):
             ...
             ValueError: cannot differentiate with respect to y
@@ -3846,13 +3865,13 @@ cdef class Polynomial(CommutativePolynomial):
 
         Check that :trac:`28187` is fixed::
 
-            sage: R.<x> = GF(65537)[]                                                   # optional - sage.rings.finite_rings
+            sage: R.<x> = GF(65537)[]                                                   # needs sage.rings.finite_rings
             sage: x._derivative(2*x)
             Traceback (most recent call last):
             ...
             ValueError: cannot differentiate with respect to 2*x
-            sage: y = var('y')                                                          # optional - sage.symbolic
-            sage: R.gen()._derivative(y)                                                # optional - sage.symbolic
+            sage: y = var('y')                                                          # needs sage.symbolic
+            sage: R.gen()._derivative(y)                                                # needs sage.symbolic
             Traceback (most recent call last):
             ...
             ValueError: cannot differentiate with respect to y
@@ -3929,16 +3948,18 @@ cdef class Polynomial(CommutativePolynomial):
 
         This shows that the issue at :trac:`7711` is resolved::
 
-            sage: P.<x,z> = PolynomialRing(GF(2147483647))                              # optional - sage.rings.finite_rings
-            sage: Q.<y> = PolynomialRing(P)                                             # optional - sage.rings.finite_rings
-            sage: p = x + y + z                                                         # optional - sage.rings.finite_rings
-            sage: p.integral()                                                          # optional - sage.rings.finite_rings
+            sage: # needs sage.rings.finite_rings
+            sage: P.<x,z> = PolynomialRing(GF(2147483647))
+            sage: Q.<y> = PolynomialRing(P)
+            sage: p = x + y + z
+            sage: p.integral()
             -1073741823*y^2 + (x + z)*y
 
-            sage: P.<x,z> = PolynomialRing(GF(next_prime(2147483647)))                  # optional - sage.rings.finite_rings
-            sage: Q.<y> = PolynomialRing(P)                                             # optional - sage.rings.finite_rings
-            sage: p = x + y + z                                                         # optional - sage.rings.finite_rings
-            sage: p.integral()                                                          # optional - sage.rings.finite_rings
+            sage: # needs sage.rings.finite_rings
+            sage: P.<x,z> = PolynomialRing(GF(next_prime(2147483647)))
+            sage: Q.<y> = PolynomialRing(P)
+            sage: p = x + y + z
+            sage: p.integral()
             1073741830*y^2 + (x + z)*y
 
         A truly convoluted example::
@@ -4071,39 +4092,40 @@ cdef class Polynomial(CommutativePolynomial):
 
             sage: x = QQ['x'].0
             sage: f = (x^3 - 1)^2
-            sage: f.factor()                                                            # optional - sage.libs.pari
+            sage: f.factor()                                                            # needs sage.libs.pari
             (x - 1)^2 * (x^2 + x + 1)^2
 
         Since `\QQ` is a field, the irreducible factors are monic::
 
             sage: f = 10*x^5 - 1
-            sage: f.factor()                                                            # optional - sage.libs.pari
+            sage: f.factor()                                                            # needs sage.libs.pari
             (10) * (x^5 - 1/10)
             sage: f = 10*x^5 - 10
-            sage: f.factor()                                                            # optional - sage.libs.pari
+            sage: f.factor()                                                            # needs sage.libs.pari
             (10) * (x - 1) * (x^4 + x^3 + x^2 + x + 1)
 
         Over `\ZZ` the irreducible factors need not be monic::
 
             sage: x = ZZ['x'].0
             sage: f = 10*x^5 - 1
-            sage: f.factor()                                                            # optional - sage.libs.pari
+            sage: f.factor()                                                            # needs sage.libs.pari
             10*x^5 - 1
 
         We factor a non-monic polynomial over a finite field of 25
         elements::
 
-            sage: k.<a> = GF(25)                                                        # optional - sage.rings.finite_rings
-            sage: R.<x> = k[]                                                           # optional - sage.rings.finite_rings
-            sage: f = 2*x^10 + 2*x + 2*a                                                # optional - sage.rings.finite_rings
-            sage: F = f.factor(); F                                                     # optional - sage.rings.finite_rings
+            sage: # needs sage.rings.finite_rings
+            sage: k.<a> = GF(25)
+            sage: R.<x> = k[]
+            sage: f = 2*x^10 + 2*x + 2*a
+            sage: F = f.factor(); F
             (2) * (x + a + 2) * (x^2 + 3*x + 4*a + 4) * (x^2 + (a + 1)*x + a + 2)
             * (x^5 + (3*a + 4)*x^4 + (3*a + 3)*x^3 + 2*a*x^2 + (3*a + 1)*x + 3*a + 1)
 
         Notice that the unit factor is included when we multiply `F`
         back out::
 
-            sage: expand(F)                                                             # optional - sage.rings.finite_rings sage.symbolic
+            sage: expand(F)                                                             # needs sage.rings.finite_rings sage.symbolic
             2*x^10 + 2*x + 2*a
 
         A new ring.  In the example below, we set the special method
@@ -4112,54 +4134,56 @@ cdef class Polynomial(CommutativePolynomial):
         used to easily extend polynomial factorization to work over
         new rings you introduce::
 
-             sage: R.<x> = PolynomialRing(IntegerModRing(4), implementation="NTL")      # optional - sage.libs.ntl
-             sage: (x^2).factor()                                                       # optional - sage.libs.ntl
+             sage: # needs sage.libs.ntl
+             sage: R.<x> = PolynomialRing(IntegerModRing(4), implementation="NTL")
+             sage: (x^2).factor()
              Traceback (most recent call last):
              ...
              NotImplementedError: factorization of polynomials over rings with
              composite characteristic is not implemented
              sage: def my_factor(f):
              ....:     return f.change_ring(ZZ).factor()
-             sage: R.base_ring()._factor_univariate_polynomial = my_factor              # optional - sage.libs.ntl
-             sage: (x^2).factor()                                                       # optional - sage.libs.ntl sage.libs.pari
+             sage: R.base_ring()._factor_univariate_polynomial = my_factor
+             sage: (x^2).factor()                                                       # needs sage.libs.pari
              x^2
-             sage: del R.base_ring()._factor_univariate_polynomial  # clean up          # optional - sage.libs.ntl
+             sage: del R.base_ring()._factor_univariate_polynomial  # clean up
 
         Arbitrary precision real and complex factorization::
 
             sage: # needs sage.libs.pari sage.rings.real_mpfr
-            sage: R.<x> = RealField(100)[]                                              # optional - sage.rings.real_mpfr
+            sage: R.<x> = RealField(100)[]
             sage: F = factor(x^2 - 3); F
             (x - 1.7320508075688772935274463415) * (x + 1.7320508075688772935274463415)
-            sage: expand(F)                                                             # optional - sage.rings.real_mpfr
+            sage: expand(F)
             x^2 - 3.0000000000000000000000000000
-            sage: factor(x^2 + 1)                                                       # optional - sage.rings.real_mpfr
+            sage: factor(x^2 + 1)
             x^2 + 1.0000000000000000000000000000
 
             sage: # needs sage.libs.pari sage.rings.real_mpfr
-            sage: R.<x> = ComplexField(100)[]                                           # optional - sage.rings.real_mpfr
-            sage: F = factor(x^2 + 3); F                                                # optional - sage.rings.real_mpfr
+            sage: R.<x> = ComplexField(100)[]
+            sage: F = factor(x^2 + 3); F
             (x - 1.7320508075688772935274463415*I) * (x + 1.7320508075688772935274463415*I)
-            sage: expand(F)                                                             # optional - sage.rings.real_mpfr
+            sage: expand(F)
             x^2 + 3.0000000000000000000000000000
-            sage: factor(x^2 + 1)                                                       # optional - sage.rings.real_mpfr
+            sage: factor(x^2 + 1)
             (x - I) * (x + I)
-            sage: f = R(I) * (x^2 + 1) ; f                                              # optional - sage.rings.real_mpfr
+            sage: f = R(I) * (x^2 + 1) ; f
             I*x^2 + I
-            sage: F = factor(f); F                                                      # optional - sage.rings.real_mpfr
+            sage: F = factor(f); F
             (1.0000000000000000000000000000*I) * (x - I) * (x + I)
-            sage: expand(F)                                                             # optional - sage.rings.real_mpfr
+            sage: expand(F)
             I*x^2 + I
 
         Over a number field::
 
-            sage: K.<z> = CyclotomicField(15)                                           # optional - sage.rings.number_field
-            sage: x = polygen(K)                                                        # optional - sage.rings.number_field
-            sage: ((x^3 + z*x + 1)^3 * (x - z)).factor()                                # optional - sage.rings.number_field
+            sage: # needs sage.rings.number_field
+            sage: K.<z> = CyclotomicField(15)
+            sage: x = polygen(K)
+            sage: ((x^3 + z*x + 1)^3 * (x - z)).factor()
             (x - z) * (x^3 + z*x + 1)^3
-            sage: cyclotomic_polynomial(12).change_ring(K).factor()                     # optional - sage.rings.number_field
+            sage: cyclotomic_polynomial(12).change_ring(K).factor()
             (x^2 - z^5 - 1) * (x^2 + z^5)
-            sage: ((x^3 + z*x + 1)^3 * (x/(z+2) - 1/3)).factor()                        # optional - sage.rings.number_field
+            sage: ((x^3 + z*x + 1)^3 * (x/(z+2) - 1/3)).factor()
             (-1/331*z^7 + 3/331*z^6 - 6/331*z^5 + 11/331*z^4
                 - 21/331*z^3 + 41/331*z^2 - 82/331*z + 165/331)
             * (x - 1/3*z - 2/3) * (x^3 + z*x + 1)^3
@@ -4167,42 +4191,42 @@ cdef class Polynomial(CommutativePolynomial):
         Over a relative number field::
 
             sage: x = polygen(QQ)
-            sage: K.<z> = CyclotomicField(3)                                            # optional - sage.rings.number_field
-            sage: L.<a> = K.extension(x^3 - 2)                                          # optional - sage.rings.number_field
-            sage: t = polygen(L, 't')                                                   # optional - sage.rings.number_field
-            sage: f = (t^3 + t + a) * (t^5 + t + z); f                                  # optional - sage.rings.number_field
+            sage: K.<z> = CyclotomicField(3)                                            # needs sage.rings.number_field
+            sage: L.<a> = K.extension(x^3 - 2)                                          # needs sage.rings.number_field
+            sage: t = polygen(L, 't')                                                   # needs sage.rings.number_field
+            sage: f = (t^3 + t + a) * (t^5 + t + z); f                                  # needs sage.rings.number_field
             t^8 + t^6 + a*t^5 + t^4 + z*t^3 + t^2 + (a + z)*t + z*a
-            sage: f.factor()                                                            # optional - sage.rings.number_field
+            sage: f.factor()                                                            # needs sage.rings.number_field
             (t^3 + t + a) * (t^5 + t + z)
 
         Over the real double field::
 
             sage: R.<x> = RDF[]
-            sage: (-2*x^2 - 1).factor()                                                 # optional - numpy
+            sage: (-2*x^2 - 1).factor()                                                 # needs numpy
             (-2.0) * (x^2 + 0.5000000000000001)
-            sage: (-2*x^2 - 1).factor().expand()                                        # optional - numpy
+            sage: (-2*x^2 - 1).factor().expand()                                        # needs numpy
             -2.0*x^2 - 1.0000000000000002
             sage: f = (x - 1)^3
-            sage: f.factor()  # abs tol 2e-5                                            # optional - numpy
+            sage: f.factor()  # abs tol 2e-5                                            # needs numpy
             (x - 1.0000065719436413) * (x^2 - 1.9999934280563585*x + 0.9999934280995487)
 
         The above output is incorrect because it relies on the
         :meth:`.roots` method, which does not detect that all the roots
         are real::
 
-            sage: f.roots()  # abs tol 2e-5                                             # optional - numpy
+            sage: f.roots()  # abs tol 2e-5                                             # needs numpy
             [(1.0000065719436413, 1)]
 
         Over the complex double field the factors are approximate and
         therefore occur with multiplicity 1::
 
-            sage: R.<x> = CDF[]
+            sage: R.<x> = CDF[]                                                         # needs sage.rings.complex_double
             sage: f = (x^2 + 2*R(I))^3
-            sage: F = f.factor()                                                        # optional - numpy
-            sage: F  # abs tol 3e-5                                                     # optional - numpy
+            sage: F = f.factor()                                                        # needs numpy
+            sage: F  # abs tol 3e-5                                                     # needs numpy
             (x - 1.0000138879287663 + 1.0000013435286879*I) * (x - 0.9999942196864997 + 0.9999873009803959*I) * (x - 0.9999918923847313 + 1.0000113554909125*I)
             * (x + 0.9999908759550227 - 1.0000069659624138*I) * (x + 0.9999985293216753 - 0.9999886153831807*I) * (x + 1.0000105947233 - 1.0000044186544053*I)
-            sage: [f(t[0][0]).abs() for t in F] # abs tol 1e-13                         # optional - numpy
+            sage: [f(t[0][0]).abs() for t in F] # abs tol 1e-13                         # needs numpy
             [1.979365054e-14, 1.97936298566e-14, 1.97936990747e-14,
              3.6812407475e-14, 3.65211563729e-14, 3.65220890052e-14]
 
@@ -4220,8 +4244,8 @@ cdef class Polynomial(CommutativePolynomial):
         Factoring polynomials over the algebraic numbers (see
         :trac:`8544`)::
 
-            sage: R.<x> = QQbar[]                                                       # optional - sage.rings.number_field
-            sage: (x^8 - 1).factor()                                                    # optional - sage.rings.number_field
+            sage: R.<x> = QQbar[]                                                       # needs sage.rings.number_field
+            sage: (x^8 - 1).factor()                                                    # needs sage.rings.number_field
             (x - 1) * (x - 0.7071067811865475? - 0.7071067811865475?*I)
             * (x - 0.7071067811865475? + 0.7071067811865475?*I) * (x - I) * (x + I)
             * (x + 0.7071067811865475? - 0.7071067811865475?*I)
@@ -4230,8 +4254,8 @@ cdef class Polynomial(CommutativePolynomial):
         Factoring polynomials over the algebraic reals (see
         :trac:`8544`)::
 
-            sage: R.<x> = AA[]                                                          # optional - sage.rings.number_field
-            sage: (x^8 + 1).factor()                                                    # optional - sage.rings.number_field
+            sage: R.<x> = AA[]                                                          # needs sage.rings.number_field
+            sage: (x^8 + 1).factor()                                                    # needs sage.rings.number_field
             (x^2 - 1.847759065022574?*x + 1.000000000000000?)
             * (x^2 - 0.7653668647301795?*x + 1.000000000000000?)
             * (x^2 + 0.7653668647301795?*x + 1.000000000000000?)
@@ -4245,9 +4269,9 @@ cdef class Polynomial(CommutativePolynomial):
             sage: f = 12*x^10 + x^9 + 432*x^3 + 9011
             sage: g = 13*x^11 + 89*x^3 + 1
             sage: F = f^2 * g^3
-            sage: F = f^2 * g^3; F.factor()                                             # optional - sage.libs.pari
+            sage: F = f^2 * g^3; F.factor()                                             # needs sage.libs.pari
             (12*x^10 + x^9 + 432*x^3 + 9011)^2 * (13*x^11 + 89*x^3 + 1)^3
-            sage: F = f^2 * g^3 * 7; F.factor()                                         # optional - sage.libs.pari
+            sage: F = f^2 * g^3 * 7; F.factor()                                         # needs sage.libs.pari
             7 * (12*x^10 + x^9 + 432*x^3 + 9011)^2 * (13*x^11 + 89*x^3 + 1)^3
 
         This example came up in :trac:`7097`::
@@ -4255,152 +4279,154 @@ cdef class Polynomial(CommutativePolynomial):
             sage: x = polygen(QQ)
             sage: f = 8*x^9 + 42*x^6 + 6*x^3 - 1
             sage: g = x^24 - 12*x^23 + 72*x^22 - 286*x^21 + 849*x^20 - 2022*x^19 + 4034*x^18 - 6894*x^17 + 10182*x^16 - 13048*x^15 + 14532*x^14 - 13974*x^13 + 11365*x^12 - 7578*x^11 + 4038*x^10 - 1766*x^9 + 762*x^8 - 408*x^7 + 236*x^6 - 126*x^5 + 69*x^4 - 38*x^3 + 18*x^2 - 6*x + 1
-            sage: assert g.is_irreducible()                                             # optional - sage.libs.pari
-            sage: K.<a> = NumberField(g)                                                # optional - sage.rings.number_field
-            sage: len(f.roots(K))                                                       # optional - sage.rings.number_field
+            sage: assert g.is_irreducible()                                             # needs sage.libs.pari
+            sage: K.<a> = NumberField(g)                                                # needs sage.rings.number_field
+            sage: len(f.roots(K))                                                       # needs sage.rings.number_field
             9
-            sage: f.factor()                                                            # optional - sage.libs.pari
+            sage: f.factor()                                                            # needs sage.libs.pari
             (8) * (x^3 + 1/4) * (x^6 + 5*x^3 - 1/2)
-            sage: f.change_ring(K).factor()                                             # optional - sage.rings.number_field
+            sage: f.change_ring(K).factor()                                             # needs sage.rings.number_field
             (8) * (x - 3260097/3158212*a^22 + 35861067/3158212*a^21 - 197810817/3158212*a^20 + 722970825/3158212*a^19 - 1980508347/3158212*a^18 + 4374189477/3158212*a^17 - 4059860553/1579106*a^16 + 6442403031/1579106*a^15 - 17542341771/3158212*a^14 + 20537782665/3158212*a^13 - 20658463789/3158212*a^12 + 17502836649/3158212*a^11 - 11908953451/3158212*a^10 + 6086953981/3158212*a^9 - 559822335/789553*a^8 + 194545353/789553*a^7 - 505969453/3158212*a^6 + 338959407/3158212*a^5 - 155204647/3158212*a^4 + 79628015/3158212*a^3 - 57339525/3158212*a^2 + 26692783/3158212*a - 1636338/789553) * ...
-            sage: f = QQbar['x'](1)                                                     # optional - sage.rings.number_field
-            sage: f.factor()                                                            # optional - sage.rings.number_field
+            sage: f = QQbar['x'](1)                                                     # needs sage.rings.number_field
+            sage: f.factor()                                                            # needs sage.rings.number_field
             1
 
         Factorization also works even if the variable of the finite
         field is nefariously labeled `x`::
 
-            sage: R.<x> = GF(3^2, 'x')[]                                                # optional - sage.rings.finite_rings
+            sage: R.<x> = GF(3^2, 'x')[]                                                # needs sage.rings.finite_rings
             sage: f = x^10 +7*x -13
-            sage: G = f.factor(); G                                                     # optional - sage.rings.finite_rings
+            sage: G = f.factor(); G                                                     # needs sage.rings.finite_rings
             (x + x) * (x + 2*x + 1) * (x^4 + (x + 2)*x^3 + (2*x + 2)*x + 2)
             * (x^4 + 2*x*x^3 + (x + 1)*x + 2)
-            sage: prod(G) == f
+            sage: prod(G) == f                                                          # needs sage.rings.finite_rings
             True
 
         ::
 
-            sage: R.<x0> = GF(9,'x')[]  # purposely calling it x to test robustness     # optional - sage.rings.finite_rings
-            sage: f = x0^3 + x0 + 1                                                     # optional - sage.rings.finite_rings
-            sage: f.factor()                                                            # optional - sage.rings.finite_rings
+            sage: # needs sage.rings.finite_rings
+            sage: R.<x0> = GF(9,'x')[]  # purposely calling it x to test robustness
+            sage: f = x0^3 + x0 + 1
+            sage: f.factor()
             (x0 + 2) * (x0 + x) * (x0 + 2*x + 1)
-            sage: f = 0*x0                                                              # optional - sage.rings.finite_rings
-            sage: f.factor()                                                            # optional - sage.rings.finite_rings
+            sage: f = 0*x0
+            sage: f.factor()
             Traceback (most recent call last):
             ...
             ArithmeticError: factorization of 0 is not defined
 
         ::
 
-            sage: f = x0^0                                                              # optional - sage.rings.finite_rings
-            sage: f.factor()                                                            # optional - sage.rings.finite_rings
+            sage: f = x0^0                                                              # needs sage.rings.finite_rings
+            sage: f.factor()                                                            # needs sage.rings.finite_rings
             1
 
         Over a complicated number field::
 
             sage: x = polygen(QQ, 'x')
             sage: f = x^6 + 10/7*x^5 - 867/49*x^4 - 76/245*x^3 + 3148/35*x^2 - 25944/245*x + 48771/1225
-            sage: K.<a> = NumberField(f)                                                # optional - sage.rings.number_field
-            sage: S.<T> = K[]                                                           # optional - sage.rings.number_field
-            sage: ff = S(f); ff                                                         # optional - sage.rings.number_field
+            sage: K.<a> = NumberField(f)                                                # needs sage.rings.number_field
+            sage: S.<T> = K[]                                                           # needs sage.rings.number_field
+            sage: ff = S(f); ff                                                         # needs sage.rings.number_field
             T^6 + 10/7*T^5 - 867/49*T^4 - 76/245*T^3 + 3148/35*T^2 - 25944/245*T + 48771/1225
-            sage: F = ff.factor()                                                       # optional - sage.rings.number_field
-            sage: len(F)                                                                # optional - sage.rings.number_field
+            sage: F = ff.factor()                                                       # needs sage.rings.number_field
+            sage: len(F)                                                                # needs sage.rings.number_field
             4
-            sage: F[:2]                                                                 # optional - sage.rings.number_field
+            sage: F[:2]                                                                 # needs sage.rings.number_field
             [(T - a, 1),
-             (T - 40085763200/924556084127*a^5 - 145475769880/924556084127*a^4 + 527617096480/924556084127*a^3
-               + 1289745809920/924556084127*a^2 - 3227142391585/924556084127*a - 401502691578/924556084127, 1)]
-            sage: expand(F)                                                             # optional - sage.rings.number_field
+             (T - 40085763200/924556084127*a^5 - 145475769880/924556084127*a^4
+               + 527617096480/924556084127*a^3 + 1289745809920/924556084127*a^2
+               - 3227142391585/924556084127*a - 401502691578/924556084127, 1)]
+            sage: expand(F)                                                             # needs sage.rings.number_field
             T^6 + 10/7*T^5 - 867/49*T^4 - 76/245*T^3 + 3148/35*T^2 - 25944/245*T + 48771/1225
 
         ::
 
             sage: f = x^2 - 1/3
-            sage: K.<a> = NumberField(f)                                                # optional - sage.rings.number_field
-            sage: A.<T> = K[]                                                           # optional - sage.rings.number_field
-            sage: A(x^2 - 1).factor()                                                   # optional - sage.rings.number_field
+            sage: K.<a> = NumberField(f)                                                # needs sage.rings.number_field
+            sage: A.<T> = K[]                                                           # needs sage.rings.number_field
+            sage: A(x^2 - 1).factor()                                                   # needs sage.rings.number_field
             (T - 1) * (T + 1)
 
         ::
 
-            sage: A(3*x^2 - 1).factor()                                                 # optional - sage.rings.number_field
+            sage: A(3*x^2 - 1).factor()                                                 # needs sage.rings.number_field
             (3) * (T - a) * (T + a)
 
         ::
 
-            sage: A(x^2 - 1/3).factor()                                                 # optional - sage.rings.number_field
+            sage: A(x^2 - 1/3).factor()                                                 # needs sage.rings.number_field
             (T - a) * (T + a)
 
         Test that :trac:`10279` is fixed::
 
             sage: R.<t> = PolynomialRing(QQ)
-            sage: K.<a> = NumberField(t^4 - t^2 + 1)                                    # optional - sage.rings.number_field
-            sage: pol = t^3 + (-4*a^3 + 2*a)*t^2 - 11/3*a^2*t + 2/3*a^3 - 4/3*a         # optional - sage.rings.number_field
-            sage: pol.factor()                                                          # optional - sage.rings.number_field
+            sage: K.<a> = NumberField(t^4 - t^2 + 1)                                    # needs sage.rings.number_field
+            sage: pol = t^3 + (-4*a^3 + 2*a)*t^2 - 11/3*a^2*t + 2/3*a^3 - 4/3*a         # needs sage.rings.number_field
+            sage: pol.factor()                                                          # needs sage.rings.number_field
             (t - 2*a^3 + a) * (t - 4/3*a^3 + 2/3*a) * (t - 2/3*a^3 + 1/3*a)
 
         Test that this factorization really uses ``nffactor()`` internally::
 
-            sage: pari.default("debug", 3)
-            sage: F = pol.factor()                                                      # optional - sage.rings.number_field
+            sage: pari.default("debug", 3)                                              # needs sage.libs.pari
+            sage: F = pol.factor()                                                      # needs sage.rings.number_field
             <BLANKLINE>
             Entering nffactor:
             ...
-            sage: pari.default("debug", 0)
+            sage: pari.default("debug", 0)                                              # needs sage.libs.pari
 
         Test that :trac:`10369` is fixed::
 
             sage: x = polygen(QQ)
-            sage: K.<a> = NumberField(x^6 + x^5 + x^4 + x^3 + x^2 + x + 1)              # optional - sage.rings.number_field
-            sage: R.<t> = PolynomialRing(K)                                             # optional - sage.rings.number_field
+            sage: K.<a> = NumberField(x^6 + x^5 + x^4 + x^3 + x^2 + x + 1)              # needs sage.rings.number_field
+            sage: R.<t> = PolynomialRing(K)                                             # needs sage.rings.number_field
 
-            sage: pol = (-1/7*a^5 - 1/7*a^4 - 1/7*a^3 - 1/7*a^2 - 2/7*a - 1/7)*t^10 + (4/7*a^5 - 2/7*a^4 - 2/7*a^3 - 2/7*a^2 - 2/7*a - 6/7)*t^9 + (90/49*a^5 + 152/49*a^4 + 18/49*a^3 + 24/49*a^2 + 30/49*a + 36/49)*t^8 + (-10/49*a^5 + 10/7*a^4 + 198/49*a^3 - 102/49*a^2 - 60/49*a - 26/49)*t^7 + (40/49*a^5 + 45/49*a^4 + 60/49*a^3 + 277/49*a^2 - 204/49*a - 78/49)*t^6 + (90/49*a^5 + 110/49*a^4 + 2*a^3 + 80/49*a^2 + 46/7*a - 30/7)*t^5 + (30/7*a^5 + 260/49*a^4 + 250/49*a^3 + 232/49*a^2 + 32/7*a + 8)*t^4 + (-184/49*a^5 - 58/49*a^4 - 52/49*a^3 - 66/49*a^2 - 72/49*a - 72/49)*t^3 + (18/49*a^5 - 32/49*a^4 + 10/49*a^3 + 4/49*a^2)*t^2 + (2/49*a^4 - 4/49*a^3 + 2/49*a^2)*t                # optional - sage.rings.number_field
-            sage: pol.factor()                                                          # optional - sage.rings.number_field
+            sage: pol = (-1/7*a^5 - 1/7*a^4 - 1/7*a^3 - 1/7*a^2 - 2/7*a - 1/7)*t^10 + (4/7*a^5 - 2/7*a^4 - 2/7*a^3 - 2/7*a^2 - 2/7*a - 6/7)*t^9 + (90/49*a^5 + 152/49*a^4 + 18/49*a^3 + 24/49*a^2 + 30/49*a + 36/49)*t^8 + (-10/49*a^5 + 10/7*a^4 + 198/49*a^3 - 102/49*a^2 - 60/49*a - 26/49)*t^7 + (40/49*a^5 + 45/49*a^4 + 60/49*a^3 + 277/49*a^2 - 204/49*a - 78/49)*t^6 + (90/49*a^5 + 110/49*a^4 + 2*a^3 + 80/49*a^2 + 46/7*a - 30/7)*t^5 + (30/7*a^5 + 260/49*a^4 + 250/49*a^3 + 232/49*a^2 + 32/7*a + 8)*t^4 + (-184/49*a^5 - 58/49*a^4 - 52/49*a^3 - 66/49*a^2 - 72/49*a - 72/49)*t^3 + (18/49*a^5 - 32/49*a^4 + 10/49*a^3 + 4/49*a^2)*t^2 + (2/49*a^4 - 4/49*a^3 + 2/49*a^2)*t  # needs sage.rings.number_field
+            sage: pol.factor()                                                          # needs sage.rings.number_field
             (-1/7*a^5 - 1/7*a^4 - 1/7*a^3 - 1/7*a^2 - 2/7*a - 1/7) * t * (t - a^5 - a^4 - a^3 - a^2 - a - 1)^4 * (t^5 + (-12/7*a^5 - 10/7*a^4 - 8/7*a^3 - 6/7*a^2 - 4/7*a - 2/7)*t^4 + (12/7*a^5 - 8/7*a^3 + 16/7*a^2 + 2/7*a + 20/7)*t^3 + (-20/7*a^5 - 20/7*a^3 - 20/7*a^2 + 4/7*a - 2)*t^2 + (12/7*a^5 + 12/7*a^3 + 2/7*a + 16/7)*t - 4/7*a^5 - 4/7*a^3 - 4/7*a - 2/7)
 
-            sage: pol = (1/7*a^2 - 1/7*a)*t^10 + (4/7*a - 6/7)*t^9 + (102/49*a^5 + 99/49*a^4 + 96/49*a^3 + 93/49*a^2 + 90/49*a + 150/49)*t^8 + (-160/49*a^5 - 36/49*a^4 - 48/49*a^3 - 8/7*a^2 - 60/49*a - 60/49)*t^7 + (30/49*a^5 - 55/49*a^4 + 20/49*a^3 + 5/49*a^2)*t^6 + (6/49*a^4 - 12/49*a^3 + 6/49*a^2)*t^5               # optional - sage.rings.number_field
-            sage: pol.factor()                                                          # optional - sage.rings.number_field
+            sage: pol = (1/7*a^2 - 1/7*a)*t^10 + (4/7*a - 6/7)*t^9 + (102/49*a^5 + 99/49*a^4 + 96/49*a^3 + 93/49*a^2 + 90/49*a + 150/49)*t^8 + (-160/49*a^5 - 36/49*a^4 - 48/49*a^3 - 8/7*a^2 - 60/49*a - 60/49)*t^7 + (30/49*a^5 - 55/49*a^4 + 20/49*a^3 + 5/49*a^2)*t^6 + (6/49*a^4 - 12/49*a^3 + 6/49*a^2)*t^5  # needs sage.rings.number_field
+            sage: pol.factor()                                                          # needs sage.rings.number_field
             (1/7*a^2 - 1/7*a) * t^5 * (t^5 + (-40/7*a^5 - 38/7*a^4 - 36/7*a^3 - 34/7*a^2 - 32/7*a - 30/7)*t^4 + (60/7*a^5 - 30/7*a^4 - 18/7*a^3 - 9/7*a^2 - 3/7*a)*t^3 + (60/7*a^4 - 40/7*a^3 - 16/7*a^2 - 4/7*a)*t^2 + (30/7*a^3 - 25/7*a^2 - 5/7*a)*t + 6/7*a^2 - 6/7*a)
 
-            sage: pol = x^10 + (4/7*a - 6/7)*x^9 + (9/49*a^2 - 3/7*a + 15/49)*x^8 + (8/343*a^3 - 32/343*a^2 + 40/343*a - 20/343)*x^7 + (5/2401*a^4 - 20/2401*a^3 + 40/2401*a^2 - 5/343*a + 15/2401)*x^6 + (-6/16807*a^4 + 12/16807*a^3 - 18/16807*a^2 + 12/16807*a - 6/16807)*x^5       # optional - sage.rings.number_field
-            sage: pol.factor()                                                          # optional - sage.rings.number_field
+            sage: pol = x^10 + (4/7*a - 6/7)*x^9 + (9/49*a^2 - 3/7*a + 15/49)*x^8 + (8/343*a^3 - 32/343*a^2 + 40/343*a - 20/343)*x^7 + (5/2401*a^4 - 20/2401*a^3 + 40/2401*a^2 - 5/343*a + 15/2401)*x^6 + (-6/16807*a^4 + 12/16807*a^3 - 18/16807*a^2 + 12/16807*a - 6/16807)*x^5  # needs sage.rings.number_field
+            sage: pol.factor()                                                          # needs sage.rings.number_field
             x^5 * (x^5 + (4/7*a - 6/7)*x^4 + (9/49*a^2 - 3/7*a + 15/49)*x^3 + (8/343*a^3 - 32/343*a^2 + 40/343*a - 20/343)*x^2 + (5/2401*a^4 - 20/2401*a^3 + 40/2401*a^2 - 5/343*a + 15/2401)*x - 6/16807*a^4 + 12/16807*a^3 - 18/16807*a^2 + 12/16807*a - 6/16807)
 
         Factoring over a number field over which we cannot factor the
         discriminant by trial division::
 
             sage: x = polygen(QQ)
-            sage: K.<a> = NumberField(x^16 - x - 6)                                     # optional - sage.rings.number_field
-            sage: R.<x> = PolynomialRing(K)                                             # optional - sage.rings.number_field
-            sage: f = (x+a)^50 - (a-1)^50                                               # optional - sage.rings.number_field
-            sage: len(factor(f))                                                        # optional - sage.rings.number_field
+            sage: K.<a> = NumberField(x^16 - x - 6)                                     # needs sage.rings.number_field
+            sage: R.<x> = PolynomialRing(K)                                             # needs sage.rings.number_field
+            sage: f = (x+a)^50 - (a-1)^50                                               # needs sage.rings.number_field
+            sage: len(factor(f))                                                        # needs sage.rings.number_field
             6
-            sage: pari(K.discriminant()).factor(limit=10^6)                             # optional - sage.rings.number_field
+            sage: pari(K.discriminant()).factor(limit=10^6)                             # needs sage.rings.number_field
             [-1, 1; 3, 15; 23, 1; 887, 1; 12583, 1; 2354691439917211, 1]
-            sage: factor(K.discriminant())                                              # optional - sage.rings.number_field
+            sage: factor(K.discriminant())                                              # needs sage.rings.number_field
             -1 * 3^15 * 23 * 887 * 12583 * 6335047 * 371692813
 
         Factoring over a number field over which we cannot factor the
         discriminant and over which `nffactor()` fails::
 
-            sage: p = next_prime(10^50); q = next_prime(10^51); n = p*q                 # optional - sage.libs.pari
-            sage: K.<a> = QuadraticField(p*q)                                           # optional - sage.rings.number_field
-            sage: R.<x> = PolynomialRing(K)                                             # optional - sage.rings.number_field
-            sage: K.pari_polynomial('a').nffactor("x^2+1")                              # optional - sage.rings.number_field
+            sage: p = next_prime(10^50); q = next_prime(10^51); n = p*q                 # needs sage.libs.pari
+            sage: K.<a> = QuadraticField(p*q)                                           # needs sage.rings.number_field
+            sage: R.<x> = PolynomialRing(K)                                             # needs sage.rings.number_field
+            sage: K.pari_polynomial('a').nffactor("x^2+1")                              # needs sage.rings.number_field
             Mat([x^2 + 1, 1])
-            sage: factor(x^2 + 1)                                                       # optional - sage.rings.number_field
+            sage: factor(x^2 + 1)                                                       # needs sage.rings.number_field
             x^2 + 1
-            sage: factor((x - a) * (x + 2*a))                                           # optional - sage.rings.number_field
+            sage: factor((x - a) * (x + 2*a))                                           # needs sage.rings.number_field
             (x - a) * (x + 2*a)
 
         A test where nffactor used to fail without a nf structure::
 
             sage: x = polygen(QQ)
-            sage: K = NumberField([x^2 - 1099511627777, x^3 - 3], 'a')                  # optional - sage.rings.number_field
-            sage: x = polygen(K)                                                        # optional - sage.rings.number_field
-            sage: f = x^3 - 3                                                           # optional - sage.rings.number_field
-            sage: factor(f)                                                             # optional - sage.rings.number_field
+            sage: K = NumberField([x^2 - 1099511627777, x^3 - 3], 'a')                  # needs sage.rings.number_field
+            sage: x = polygen(K)                                                        # needs sage.rings.number_field
+            sage: f = x^3 - 3                                                           # needs sage.rings.number_field
+            sage: factor(f)                                                             # needs sage.rings.number_field
             (x - a1) * (x^2 + a1*x + a1^2)
 
         We check that :trac:`7554` is fixed::
@@ -4408,7 +4434,7 @@ cdef class Polynomial(CommutativePolynomial):
             sage: L.<q> = LaurentPolynomialRing(QQ)
             sage: F = L.fraction_field()
             sage: R.<x> = PolynomialRing(F)
-            sage: factor(x)                                                             # optional - sage.libs.pari
+            sage: factor(x)                                                             # needs sage.libs.pari
             x
             sage: factor(x^2 - q^2)
             (x - q) * (x + q)
@@ -4582,33 +4608,34 @@ cdef class Polynomial(CommutativePolynomial):
 
             sage: R.<x>=PolynomialRing(ZZ)
             sage: f = (2*x + 1) * (3*x^2 - 5)^2
-            sage: f._factor_pari_helper(pari(f).factor())                               # optional - sage.libs.pari
+            sage: f._factor_pari_helper(pari(f).factor())                               # needs sage.libs.pari
             (2*x + 1) * (3*x^2 - 5)^2
-            sage: f._factor_pari_helper(pari(f).factor(), unit=11)                      # optional - sage.libs.pari
+            sage: f._factor_pari_helper(pari(f).factor(), unit=11)                      # needs sage.libs.pari
             11 * (2*x + 1) * (3*x^2 - 5)^2
-            sage: (8*f)._factor_pari_helper(pari(f).factor())                           # optional - sage.libs.pari
+            sage: (8*f)._factor_pari_helper(pari(f).factor())                           # needs sage.libs.pari
             8 * (2*x + 1) * (3*x^2 - 5)^2
-            sage: (8*f)._factor_pari_helper(pari(f).factor(), unit=11)                  # optional - sage.libs.pari
+            sage: (8*f)._factor_pari_helper(pari(f).factor(), unit=11)                  # needs sage.libs.pari
             88 * (2*x + 1) * (3*x^2 - 5)^2
-            sage: QQ['x'](f)._factor_pari_helper(pari(f).factor())                      # optional - sage.libs.pari
+            sage: QQ['x'](f)._factor_pari_helper(pari(f).factor())                      # needs sage.libs.pari
             (18) * (x + 1/2) * (x^2 - 5/3)^2
-            sage: QQ['x'](f)._factor_pari_helper(pari(f).factor(), unit=11)             # optional - sage.libs.pari
+            sage: QQ['x'](f)._factor_pari_helper(pari(f).factor(), unit=11)             # needs sage.libs.pari
             (198) * (x + 1/2) * (x^2 - 5/3)^2
 
-            sage: f = prod((k^2*x^k + k)^(k-1) for k in primes(10))                     # optional - sage.libs.pari
-            sage: F = f._factor_pari_helper(pari(f).factor()); F                        # optional - sage.libs.pari
+            sage: # needs sage.libs.pari
+            sage: f = prod((k^2*x^k + k)^(k-1) for k in primes(10))
+            sage: F = f._factor_pari_helper(pari(f).factor()); F
             1323551250 * (2*x^2 + 1) * (3*x^3 + 1)^2 * (5*x^5 + 1)^4 * (7*x^7 + 1)^6
-            sage: F.prod() == f                                                         # optional - sage.libs.pari
+            sage: F.prod() == f
             True
-            sage: QQ['x'](f)._factor_pari_helper(pari(f).factor())                      # optional - sage.libs.pari
+            sage: QQ['x'](f)._factor_pari_helper(pari(f).factor())
             (1751787911376562500) * (x^2 + 1/2) * (x^3 + 1/3)^2 * (x^5 + 1/5)^4 * (x^7 + 1/7)^6
 
-            sage: g = GF(19)['x'](f)                                                    # optional - sage.libs.pari
-            sage: G = g._factor_pari_helper(pari(g).factor()); G                        # optional - sage.libs.pari
+            sage: g = GF(19)['x'](f)                                                    # needs sage.libs.pari
+            sage: G = g._factor_pari_helper(pari(g).factor()); G                        # needs sage.libs.pari
             (4) * (x + 3) * (x + 16)^5 * (x + 11)^6 * (x^2 + 7*x + 9)^4
             * (x^2 + 15*x + 9)^4 * (x^3 + 13)^2
             * (x^6 + 8*x^5 + 7*x^4 + 18*x^3 + 11*x^2 + 12*x + 1)^6
-            sage: G.prod() == g                                                         # optional - sage.libs.pari
+            sage: G.prod() == g                                                         # needs sage.libs.pari
             True
         """
         pols, exps = G
@@ -4669,26 +4696,26 @@ cdef class Polynomial(CommutativePolynomial):
         EXAMPLES::
 
             sage: R.<x> = PolynomialRing(ZZ)
-            sage: K.<a> = (x^3 + 2).splitting_field(); K                                # optional - sage.rings.number_field
+            sage: K.<a> = (x^3 + 2).splitting_field(); K                                # needs sage.rings.number_field
             Number Field in a with defining polynomial
              x^6 + 3*x^5 + 6*x^4 + 11*x^3 + 12*x^2 - 3*x + 1
-            sage: K.<a> = (x^3 - 3*x + 1).splitting_field(); K                          # optional - sage.rings.number_field
+            sage: K.<a> = (x^3 - 3*x + 1).splitting_field(); K                          # needs sage.rings.number_field
             Number Field in a with defining polynomial x^3 - 3*x + 1
 
         Relative situation::
 
             sage: R.<x> = PolynomialRing(QQ)
-            sage: K.<a> = NumberField(x^3 + 2)                                          # optional - sage.rings.number_field
-            sage: S.<t> = PolynomialRing(K)                                             # optional - sage.rings.number_field
-            sage: L.<b> = (t^2 - a).splitting_field()                                   # optional - sage.rings.number_field
-            sage: L                                                                     # optional - sage.rings.number_field
+            sage: K.<a> = NumberField(x^3 + 2)                                          # needs sage.rings.number_field
+            sage: S.<t> = PolynomialRing(K)                                             # needs sage.rings.number_field
+            sage: L.<b> = (t^2 - a).splitting_field()                                   # needs sage.rings.number_field
+            sage: L                                                                     # needs sage.rings.number_field
             Number Field in b with defining polynomial t^6 + 2
 
         With ``map=True``, we also get the embedding of the base field
         into the splitting field::
 
-            sage: L.<b>, phi = (t^2 - a).splitting_field(map=True)                      # optional - sage.rings.number_field
-            sage: phi                                                                   # optional - sage.rings.number_field
+            sage: L.<b>, phi = (t^2 - a).splitting_field(map=True)                      # needs sage.rings.number_field
+            sage: phi                                                                   # needs sage.rings.number_field
             Ring morphism:
               From: Number Field in a with defining polynomial x^3 + 2
               To:   Number Field in b with defining polynomial t^6 + 2
@@ -4698,12 +4725,12 @@ cdef class Polynomial(CommutativePolynomial):
 
             sage: P.<x> = PolynomialRing(GF(7))
             sage: t = x^2 + 1
-            sage: t.splitting_field('b')                                                # optional - sage.rings.finite_rings
+            sage: t.splitting_field('b')                                                # needs sage.rings.finite_rings
             Finite Field in b of size 7^2
 
-            sage: P.<x> = PolynomialRing(GF(7^3, 'a'))                                  # optional - sage.rings.finite_rings
+            sage: P.<x> = PolynomialRing(GF(7^3, 'a'))                                  # needs sage.rings.finite_rings
             sage: t = x^2 + 1
-            sage: t.splitting_field('b', map=True)                                      # optional - sage.rings.finite_rings
+            sage: t.splitting_field('b', map=True)                                      # needs sage.rings.finite_rings
             (Finite Field in b of size 7^6,
              Ring morphism:
                From: Finite Field in a of size 7^3
@@ -4714,12 +4741,12 @@ cdef class Polynomial(CommutativePolynomial):
         name, the map will be the identity::
 
             sage: t = 24*x^13 + 2*x^12 + 14
-            sage: t.splitting_field('a', map=True)                                      # optional - sage.rings.finite_rings
+            sage: t.splitting_field('a', map=True)                                      # needs sage.rings.finite_rings
             (Finite Field in a of size 7^3,
              Identity endomorphism of Finite Field in a of size 7^3)
 
             sage: t = x^56 - 14*x^3
-            sage: t.splitting_field('b', map=True)                                      # optional - sage.rings.finite_rings
+            sage: t.splitting_field('b', map=True)                                      # needs sage.rings.finite_rings
             (Finite Field in b of size 7^3,
              Ring morphism:
              From: Finite Field in a of size 7^3
@@ -4741,48 +4768,48 @@ cdef class Polynomial(CommutativePolynomial):
             ...
             NotImplementedError: splitting_field() is only implemented over number fields and finite fields
 
-            sage: P.<x> = PolynomialRing(GF(11^5, 'a'))                                 # optional - sage.rings.finite_rings
+            sage: P.<x> = PolynomialRing(GF(11^5, 'a'))                                 # needs sage.rings.finite_rings
             sage: t = x^2 + 1
-            sage: t.splitting_field('b')                                                # optional - sage.rings.finite_rings
+            sage: t.splitting_field('b')                                                # needs sage.rings.finite_rings
             Finite Field in b of size 11^10
             sage: t = 24*x^13 + 2*x^12 + 14
-            sage: t.splitting_field('b')                                                # optional - sage.rings.finite_rings
+            sage: t.splitting_field('b')                                                # needs sage.rings.finite_rings
             Finite Field in b of size 11^30
             sage: t = x^56 - 14*x^3
-            sage: t.splitting_field('b')                                                # optional - sage.rings.finite_rings
+            sage: t.splitting_field('b')                                                # needs sage.rings.finite_rings
             Finite Field in b of size 11^130
 
-            sage: P.<x> = PolynomialRing(GF(19^6, 'a'))                                 # optional - sage.rings.finite_rings
+            sage: P.<x> = PolynomialRing(GF(19^6, 'a'))                                 # needs sage.rings.finite_rings
             sage: t = -x^6 + x^2 + 1
-            sage: t.splitting_field('b')                                                # optional - sage.rings.finite_rings
+            sage: t.splitting_field('b')                                                # needs sage.rings.finite_rings
             Finite Field in b of size 19^6
             sage: t = 24*x^13 + 2*x^12 + 14
-            sage: t.splitting_field('b')                                                # optional - sage.rings.finite_rings
+            sage: t.splitting_field('b')                                                # needs sage.rings.finite_rings
             Finite Field in b of size 19^18
             sage: t = x^56 - 14*x^3
-            sage: t.splitting_field('b')                                                # optional - sage.rings.finite_rings
+            sage: t.splitting_field('b')                                                # needs sage.rings.finite_rings
             Finite Field in b of size 19^156
 
-            sage: P.<x> = PolynomialRing(GF(83^6, 'a'))                                 # optional - sage.rings.finite_rings
+            sage: P.<x> = PolynomialRing(GF(83^6, 'a'))                                 # needs sage.rings.finite_rings
             sage: t = 2*x^14 - 5 + 6*x
-            sage: t.splitting_field('b')                                                # optional - sage.rings.finite_rings
+            sage: t.splitting_field('b')                                                # needs sage.rings.finite_rings
             Finite Field in b of size 83^84
             sage: t = 24*x^13 + 2*x^12 + 14
-            sage: t.splitting_field('b')                                                # optional - sage.rings.finite_rings
+            sage: t.splitting_field('b')                                                # needs sage.rings.finite_rings
             Finite Field in b of size 83^78
             sage: t = x^56 - 14*x^3
-            sage: t.splitting_field('b')                                                # optional - sage.rings.finite_rings
+            sage: t.splitting_field('b')                                                # needs sage.rings.finite_rings
             Finite Field in b of size 83^12
 
-            sage: P.<x> = PolynomialRing(GF(401^13, 'a'))                               # optional - sage.rings.finite_rings
+            sage: P.<x> = PolynomialRing(GF(401^13, 'a'))                               # needs sage.rings.finite_rings
             sage: t = 2*x^14 - 5 + 6*x
-            sage: t.splitting_field('b')                                                # optional - sage.rings.finite_rings
+            sage: t.splitting_field('b')                                                # needs sage.rings.finite_rings
             Finite Field in b of size 401^104
             sage: t = 24*x^13 + 2*x^12 + 14
-            sage: t.splitting_field('b')                                                # optional - sage.rings.finite_rings
+            sage: t.splitting_field('b')                                                # needs sage.rings.finite_rings
             Finite Field in b of size 401^156
             sage: t = x^56 - 14*x^3
-            sage: t.splitting_field('b')                                                # optional - sage.rings.finite_rings
+            sage: t.splitting_field('b')                                                # needs sage.rings.finite_rings
             Finite Field in b of size 401^52
 
             sage: R.<x> = QQ[]
@@ -4912,22 +4939,23 @@ cdef class Polynomial(CommutativePolynomial):
         One can easily add gcd functionality to new rings by providing a method
         ``_gcd_univariate_polynomial``::
 
-            sage: O = ZZ[-sqrt(5)]                                                      # optional - sage.rings.number_field sage.symbolic
-            sage: R.<x> = O[]                                                           # optional - sage.rings.number_field sage.symbolic
-            sage: a = O.1                                                               # optional - sage.rings.number_field sage.symbolic
-            sage: p = x + a                                                             # optional - sage.rings.number_field sage.symbolic
-            sage: q = x^2 - 5                                                           # optional - sage.rings.number_field sage.symbolic
-            sage: p.gcd(q)                                                              # optional - sage.rings.number_field sage.symbolic
+            sage: # needs sage.rings.number_field sage.symbolic
+            sage: O = ZZ[-sqrt(5)]
+            sage: R.<x> = O[]
+            sage: a = O.1
+            sage: p = x + a
+            sage: q = x^2 - 5
+            sage: p.gcd(q)
             Traceback (most recent call last):
             ...
             NotImplementedError: Order in Number Field in a
             with defining polynomial x^2 - 5 with a = -2.236067977499790?
             does not provide a gcd implementation for univariate polynomials
-            sage: S.<x> = O.number_field()[]                                            # optional - sage.rings.number_field sage.symbolic
-            sage: O._gcd_univariate_polynomial = lambda f, g: R(S(f).gcd(S(g)))         # optional - sage.rings.number_field sage.symbolic
-            sage: p.gcd(q)                                                              # optional - sage.rings.number_field sage.symbolic
+            sage: S.<x> = O.number_field()[]
+            sage: O._gcd_univariate_polynomial = lambda f, g: R(S(f).gcd(S(g)))
+            sage: p.gcd(q)
             x + a
-            sage: del O._gcd_univariate_polynomial                                      # optional - sage.rings.number_field sage.symbolic
+            sage: del O._gcd_univariate_polynomial
 
         Use multivariate implementation for polynomials over polynomials rings::
 
@@ -4937,7 +4965,7 @@ cdef class Polynomial(CommutativePolynomial):
             sage: r = 2*x*y + z
             sage: p = r * (3*x*y*z - 1)
             sage: q = r * (x + y + z - 2)
-            sage: p.gcd(q)                                                              # optional - sage.libs.singular
+            sage: p.gcd(q)                                                              # needs sage.libs.singular
             z + 2*x*y
 
             sage: R.<x> = QQ[]
@@ -4945,13 +4973,13 @@ cdef class Polynomial(CommutativePolynomial):
             sage: r = 2*x*y + 1
             sage: p = r * (x - 1/2 * y)
             sage: q = r * (x*y^2 - x + 1/3)
-            sage: p.gcd(q)                                                              # optional - sage.libs.singular
+            sage: p.gcd(q)                                                              # needs sage.libs.singular
             2*x*y + 1
 
         TESTS::
 
             sage: Pol = QQ['x','y']['x']
-            sage: Pol.one().gcd(1)                                                      # optional - sage.libs.singular
+            sage: Pol.one().gcd(1)                                                      # needs sage.libs.singular
             1
         """
         cdef Polynomial _other = <Polynomial> other
@@ -5059,24 +5087,24 @@ cdef class Polynomial(CommutativePolynomial):
 
             sage: R.<x> = GF(2)['x']
             sage: f = x^4 + x^3 + x^2 + x + 1
-            sage: f.is_irreducible(), f.is_primitive()                                  # optional - sage.rings.finite_rings
+            sage: f.is_irreducible(), f.is_primitive()                                  # needs sage.rings.finite_rings
             (True, False)
             sage: f = x^3 + x + 1
-            sage: f.is_irreducible(), f.is_primitive()                                  # optional - sage.rings.finite_rings
+            sage: f.is_irreducible(), f.is_primitive()                                  # needs sage.rings.finite_rings
             (True, True)
             sage: R.<x> = GF(3)[]
             sage: f = x^3 - x + 1
-            sage: f.is_irreducible(), f.is_primitive()                                  # optional - sage.rings.finite_rings
+            sage: f.is_irreducible(), f.is_primitive()                                  # needs sage.rings.finite_rings
             (True, True)
             sage: f = x^2 + 1
-            sage: f.is_irreducible(), f.is_primitive()                                  # optional - sage.rings.finite_rings
+            sage: f.is_irreducible(), f.is_primitive()                                  # needs sage.rings.finite_rings
             (True, False)
             sage: R.<x> = GF(5)[]
             sage: f = x^2 + x + 1
-            sage: f.is_primitive()                                                      # optional - sage.rings.finite_rings
+            sage: f.is_primitive()                                                      # needs sage.rings.finite_rings
             False
             sage: f = x^2 - x + 2
-            sage: f.is_primitive()                                                      # optional - sage.rings.finite_rings
+            sage: f.is_primitive()                                                      # needs sage.rings.finite_rings
             True
             sage: x = polygen(QQ); f = x^2 + 1
             sage: f.is_primitive()
@@ -5096,16 +5124,17 @@ cdef class Polynomial(CommutativePolynomial):
             sage: f.is_primitive()
             False
 
-            sage: K = NumberField(x^2 + 5, 'a')                                         # optional - sage.rings.number_field
-            sage: R = K.ring_of_integers()                                              # optional - sage.rings.number_field
-            sage: a = R.gen(1)                                                          # optional - sage.rings.number_field
-            sage: a^2                                                                   # optional - sage.rings.number_field
+            sage: # needs sage.rings.number_field
+            sage: K = NumberField(x^2 + 5, 'a')
+            sage: R = K.ring_of_integers()
+            sage: a = R.gen(1)
+            sage: a^2
             -5
-            sage: f = a*x + 2                                                           # optional - sage.rings.number_field
-            sage: f.is_primitive()                                                      # optional - sage.rings.number_field
+            sage: f = a*x + 2
+            sage: f.is_primitive()
             True
-            sage: f = (1+a)*x + 2                                                       # optional - sage.rings.number_field
-            sage: f.is_primitive()                                                      # optional - sage.rings.number_field
+            sage: f = (1+a)*x + 2
+            sage: f.is_primitive()
             False
 
             sage: x = polygen(Integers(10))
@@ -5118,31 +5147,31 @@ cdef class Polynomial(CommutativePolynomial):
 
             sage: R.<x> = GF(2)['x']
             sage: f = x^4 + x^3 + x^2 + x + 1
-            sage: f.is_primitive(15)                                                    # optional - sage.rings.finite_rings
+            sage: f.is_primitive(15)                                                    # needs sage.rings.finite_rings
             False
-            sage: f.is_primitive(15, [3,5])                                             # optional - sage.rings.finite_rings
+            sage: f.is_primitive(15, [3,5])                                             # needs sage.rings.finite_rings
             False
-            sage: f.is_primitive(n_prime_divs=[3,5])                                    # optional - sage.rings.finite_rings
+            sage: f.is_primitive(n_prime_divs=[3,5])                                    # needs sage.rings.finite_rings
             False
             sage: f = x^3 + x + 1
-            sage: f.is_primitive(7, [7])                                                # optional - sage.rings.finite_rings
+            sage: f.is_primitive(7, [7])                                                # needs sage.rings.finite_rings
             True
             sage: R.<x> = GF(3)[]
             sage: f = x^3 - x + 1
-            sage: f.is_primitive(26, [2,13])                                            # optional - sage.rings.finite_rings
+            sage: f.is_primitive(26, [2,13])                                            # needs sage.rings.finite_rings
             True
             sage: f = x^2 + 1
-            sage: f.is_primitive(8, [2])                                                # optional - sage.rings.finite_rings
+            sage: f.is_primitive(8, [2])                                                # needs sage.rings.finite_rings
             False
             sage: R.<x> = GF(5)[]
             sage: f = x^2 + x + 1
-            sage: f.is_primitive(24, [2,3])                                             # optional - sage.rings.finite_rings
+            sage: f.is_primitive(24, [2,3])                                             # needs sage.rings.finite_rings
             False
             sage: f = x^2 - x + 2
-            sage: f.is_primitive(24, [2,3])                                             # optional - sage.rings.finite_rings
+            sage: f.is_primitive(24, [2,3])                                             # needs sage.rings.finite_rings
             True
             sage: x = polygen(Integers(103)); f = x^2 + 1
-            sage: f.is_primitive()                                                      # optional - sage.rings.finite_rings
+            sage: f.is_primitive()                                                      # needs sage.rings.finite_rings
             False
         """
         R = self.base_ring()
@@ -5259,56 +5288,56 @@ cdef class Polynomial(CommutativePolynomial):
 
             sage: R.<x> = QQ['x']
             sage: f = x^3 + x + 17
-            sage: f.root_field('a')                                                     # optional - sage.rings.number_field
+            sage: f.root_field('a')                                                     # needs sage.rings.number_field
             Number Field in a with defining polynomial x^3 + x + 17
 
         ::
 
             sage: R.<x> = QQ['x']
             sage: f = x - 3
-            sage: f.root_field('b')                                                     # optional - sage.rings.number_field
+            sage: f.root_field('b')                                                     # needs sage.rings.number_field
             Rational Field
 
         ::
 
             sage: R.<x> = ZZ['x']
             sage: f = x^3 + x + 17
-            sage: f.root_field('b')                                                     # optional - sage.rings.number_field
+            sage: f.root_field('b')                                                     # needs sage.rings.number_field
             Number Field in b with defining polynomial x^3 + x + 17
 
         ::
 
             sage: y = QQ['x'].0
-            sage: L.<a> = NumberField(y^3 - 2)                                          # optional - sage.rings.number_field
-            sage: R.<x> = L['x']                                                        # optional - sage.rings.number_field
-            sage: f = x^3 + x + 17                                                      # optional - sage.rings.number_field
-            sage: f.root_field('c')                                                     # optional - sage.rings.number_field
+            sage: L.<a> = NumberField(y^3 - 2)                                          # needs sage.rings.number_field
+            sage: R.<x> = L['x']                                                        # needs sage.rings.number_field
+            sage: f = x^3 + x + 17                                                      # needs sage.rings.number_field
+            sage: f.root_field('c')                                                     # needs sage.rings.number_field
             Number Field in c with defining polynomial x^3 + x + 17 over its base field
 
         ::
 
-            sage: R.<x> = PolynomialRing(GF(9, 'a'))                                    # optional - sage.rings.finite_rings
+            sage: R.<x> = PolynomialRing(GF(9, 'a'))                                    # needs sage.rings.finite_rings
             sage: f = x^3 + x^2 + 8
-            sage: K.<alpha> = f.root_field(); K                                         # optional - sage.rings.finite_rings
+            sage: K.<alpha> = f.root_field(); K                                         # needs sage.rings.finite_rings
             Univariate Quotient Polynomial Ring in alpha
              over Finite Field in a of size 3^2 with modulus x^3 + x^2 + 2
-            sage: alpha^2 + 1                                                           # optional - sage.rings.finite_rings
+            sage: alpha^2 + 1                                                           # needs sage.rings.finite_rings
             alpha^2 + 1
-            sage: alpha^3 + alpha^2                                                     # optional - sage.rings.finite_rings
+            sage: alpha^3 + alpha^2                                                     # needs sage.rings.finite_rings
             1
 
         ::
 
             sage: R.<x> = QQ[]
             sage: f = x^2
-            sage: K.<alpha> = f.root_field()                                            # optional - sage.libs.pari
+            sage: K.<alpha> = f.root_field()                                            # needs sage.libs.pari
             Traceback (most recent call last):
             ...
             ValueError: polynomial must be irreducible
 
         TESTS::
 
-            sage: (PolynomialRing(Integers(31), name='x').0 + 5).root_field('a')        # optional - sage.rings.finite_rings
+            sage: (PolynomialRing(Integers(31), name='x').0 + 5).root_field('a')        # needs sage.rings.finite_rings
             Ring of integers modulo 31
         """
         R = self.base_ring()
@@ -5353,7 +5382,7 @@ cdef class Polynomial(CommutativePolynomial):
             sage: R.<x> = PolynomialRing(ZZ)
             sage: f = (6*x + 47) * (7*x^2 - 2*x + 38)
             sage: g = (6*x + 47) * (3*x^3 + 2*x + 1)
-            sage: M = f.sylvester_matrix(g); M                                          # optional - sage.modules
+            sage: M = f.sylvester_matrix(g); M                                          # needs sage.modules
             [  42  317  134 1786    0    0    0]
             [   0   42  317  134 1786    0    0]
             [   0    0   42  317  134 1786    0]
@@ -5365,7 +5394,7 @@ cdef class Polynomial(CommutativePolynomial):
         If the polynomials share a non-constant common factor then the
         determinant of the Sylvester matrix will be zero::
 
-            sage: M.determinant()                                                       # optional - sage.modules
+            sage: M.determinant()                                                       # needs sage.modules
             0
 
         If ``self`` and ``right`` are polynomials of positive degree, the determinant
@@ -5373,16 +5402,16 @@ cdef class Polynomial(CommutativePolynomial):
 
             sage: h1 = R._random_nonzero_element()
             sage: h2 = R._random_nonzero_element()
-            sage: M1 = h1.sylvester_matrix(h2)                                          # optional - sage.modules
-            sage: M1.determinant() == h1.resultant(h2)                                  # optional - sage.libs.pari sage.modules
+            sage: M1 = h1.sylvester_matrix(h2)                                          # needs sage.modules
+            sage: M1.determinant() == h1.resultant(h2)                                  # needs sage.libs.pari sage.modules
             True
 
         The rank of the Sylvester matrix is related to the degree of the
         gcd of ``self`` and ``right``::
 
-            sage: f.gcd(g).degree() == f.degree() + g.degree() - M.rank()               # optional - sage.modules
+            sage: f.gcd(g).degree() == f.degree() + g.degree() - M.rank()               # needs sage.modules
             True
-            sage: h1.gcd(h2).degree() == h1.degree() + h2.degree() - M1.rank()          # optional - sage.modules
+            sage: h1.gcd(h2).degree() == h1.degree() + h2.degree() - M1.rank()          # needs sage.modules
             True
 
         TESTS:
@@ -5392,10 +5421,10 @@ cdef class Polynomial(CommutativePolynomial):
             sage: K.<x> = QQ['x']
             sage: f = x + 1
             sage: g = QQ['y']([1, 0, 1])
-            sage: f.sylvester_matrix(f, x)                                              # optional - sage.modules
+            sage: f.sylvester_matrix(f, x)                                              # needs sage.modules
             [1 1]
             [1 1]
-            sage: f.sylvester_matrix(g, x)                                              # optional - sage.modules
+            sage: f.sylvester_matrix(g, x)                                              # needs sage.modules
             Traceback (most recent call last):
             ...
             TypeError: no common canonical parent for objects with parents:
@@ -5406,18 +5435,18 @@ cdef class Polynomial(CommutativePolynomial):
 
             sage: f = QQ['x']([1, 0, 1])
             sage: g = ZZ['x']([1, 0, 1])
-            sage: h = GF(25, 'a')['x']([1, 0, 1])                                       # optional - sage.rings.finite_rings
-            sage: f.sylvester_matrix(g)                                                 # optional - sage.modules
+            sage: h = GF(25, 'a')['x']([1, 0, 1])                                       # needs sage.rings.finite_rings
+            sage: f.sylvester_matrix(g)                                                 # needs sage.modules
             [1 0 1 0]
             [0 1 0 1]
             [1 0 1 0]
             [0 1 0 1]
-            sage: g.sylvester_matrix(h)                                                 # optional - sage.rings.finite_rings sage.modules
+            sage: g.sylvester_matrix(h)                                                 # needs sage.modules sage.rings.finite_rings
             [1 0 1 0]
             [0 1 0 1]
             [1 0 1 0]
             [0 1 0 1]
-            sage: f.sylvester_matrix(h)                                                 # optional - sage.rings.finite_rings sage.modules
+            sage: f.sylvester_matrix(h)                                                 # needs sage.modules sage.rings.finite_rings
             Traceback (most recent call last):
             ...
             TypeError: no common canonical parent for objects with parents:
@@ -5429,7 +5458,7 @@ cdef class Polynomial(CommutativePolynomial):
 
             sage: K.<x,y> = QQ['x,y']
             sage: g = K.random_element()
-            sage: f.sylvester_matrix(g) == K(f).sylvester_matrix(g, x)                  # optional - sage.modules
+            sage: f.sylvester_matrix(g) == K(f).sylvester_matrix(g, x)                  # needs sage.modules
             True
 
         Corner cases::
@@ -5437,22 +5466,22 @@ cdef class Polynomial(CommutativePolynomial):
             sage: K.<x> = QQ[]
             sage: f = x^2 + 1
             sage: g = K(0)
-            sage: f.sylvester_matrix(g)                                                 # optional - sage.modules
+            sage: f.sylvester_matrix(g)                                                 # needs sage.modules
             Traceback (most recent call last):
             ...
             ValueError: The Sylvester matrix is not defined for zero polynomials
-            sage: g.sylvester_matrix(f)                                                 # optional - sage.modules
+            sage: g.sylvester_matrix(f)                                                 # needs sage.modules
             Traceback (most recent call last):
             ...
             ValueError: The Sylvester matrix is not defined for zero polynomials
-            sage: g.sylvester_matrix(g)                                                 # optional - sage.modules
+            sage: g.sylvester_matrix(g)                                                 # needs sage.modules
             Traceback (most recent call last):
             ...
             ValueError: The Sylvester matrix is not defined for zero polynomials
-            sage: K(3).sylvester_matrix(x^2)                                            # optional - sage.modules
+            sage: K(3).sylvester_matrix(x^2)                                            # needs sage.modules
             [3 0]
             [0 3]
-            sage: K(3).sylvester_matrix(K(4))                                           # optional - sage.modules
+            sage: K(3).sylvester_matrix(K(4))                                           # needs sage.modules
             []
         """
 
@@ -5524,10 +5553,10 @@ cdef class Polynomial(CommutativePolynomial):
 
         EXAMPLES::
 
-            sage: R.<w> = PolynomialRing(GF(9, 'a'), sparse=True)                       # optional - sage.rings.finite_rings
-            sage: a = w._new_constant_poly(0, R); a                                     # optional - sage.rings.finite_rings
+            sage: R.<w> = PolynomialRing(GF(9, 'a'), sparse=True)                       # needs sage.rings.finite_rings
+            sage: a = w._new_constant_poly(0, R); a                                     # needs sage.rings.finite_rings
             0
-            sage: a.coefficients()                                                      # optional - sage.rings.finite_rings
+            sage: a.coefficients()                                                      # needs sage.rings.finite_rings
             []
         """
         t = type(self)
@@ -5570,12 +5599,12 @@ cdef class Polynomial(CommutativePolynomial):
             sage: b = a(2*191*236607587)
             sage: b.is_nilpotent()
             True
-            sage: R.<x> = a[]                                                           # optional - sage.libs.pari
-            sage: f = 3 + b*x + b^2*x^2                                                 # optional - sage.libs.pari
-            sage: f.is_unit()                                                           # optional - sage.libs.pari
+            sage: R.<x> = a[]                                                           # needs sage.libs.pari
+            sage: f = 3 + b*x + b^2*x^2                                                 # needs sage.libs.pari
+            sage: f.is_unit()                                                           # needs sage.libs.pari
             True
-            sage: f = 3 + b*x + b^2*x^2 + 17*x^3                                        # optional - sage.libs.pari
-            sage: f.is_unit()                                                           # optional - sage.libs.pari
+            sage: f = 3 + b*x + b^2*x^2 + 17*x^3                                        # needs sage.libs.pari
+            sage: f.is_unit()                                                           # needs sage.libs.pari
             False
 
         EXERCISE (Atiyah-McDonald, Ch 1): Let `A[x]` be a
@@ -5836,47 +5865,47 @@ cdef class Polynomial(CommutativePolynomial):
 
             sage: R.<x> = PolynomialRing(QQ)
             sage: f = 3*x^3 + 2*x^2 + x
-            sage: exp(f.global_height())
+            sage: exp(f.global_height())                                                # needs sage.symbolic
             3.00000000000000
 
         Scaling should not change the result::
 
             sage: R.<x> = PolynomialRing(QQ)
             sage: f = 1/25*x^2 + 25/3*x + 1
-            sage: f.global_height()                                                     # optional - sage.symbolic
+            sage: f.global_height()                                                     # needs sage.symbolic
             6.43775164973640
             sage: g = 100 * f
-            sage: g.global_height()                                                     # optional - sage.symbolic
+            sage: g.global_height()                                                     # needs sage.symbolic
             6.43775164973640
 
         ::
 
-            sage: R.<x> = PolynomialRing(QQbar)                                         # optional - sage.rings.number_field
-            sage: f = QQbar(i)*x^2 + 3*x                                                # optional - sage.rings.number_field
-            sage: f.global_height()                                                     # optional - sage.rings.number_field
+            sage: R.<x> = PolynomialRing(QQbar)                                         # needs sage.rings.number_field
+            sage: f = QQbar(i)*x^2 + 3*x                                                # needs sage.rings.number_field
+            sage: f.global_height()                                                     # needs sage.rings.number_field
             1.09861228866811
 
         ::
 
             sage: R.<x> = PolynomialRing(QQ)
-            sage: K.<k> = NumberField(x^2 + 5)                                          # optional - sage.rings.number_field
-            sage: T.<t> = PolynomialRing(K)                                             # optional - sage.rings.number_field
-            sage: f = 1/1331 * t^2 + 5 * t + 7                                          # optional - sage.rings.number_field
-            sage: f.global_height()                                                     # optional - sage.rings.number_field
+            sage: K.<k> = NumberField(x^2 + 5)                                          # needs sage.rings.number_field
+            sage: T.<t> = PolynomialRing(K)                                             # needs sage.rings.number_field
+            sage: f = 1/1331 * t^2 + 5 * t + 7                                          # needs sage.rings.number_field
+            sage: f.global_height()                                                     # needs sage.rings.number_field
             9.13959596745043
 
         ::
 
             sage: R.<x> = QQ[]
             sage: f = 1/123*x^2 + 12
-            sage: f.global_height(prec=2)                                               # optional - sage.symbolic
+            sage: f.global_height(prec=2)                                               # needs sage.symbolic
             8.0
 
         ::
 
             sage: R.<x> = QQ[]
             sage: f = 0*x
-            sage: f.global_height()
+            sage: f.global_height()                                                     # needs sage.rings.real_mpfr
             0.000000000000000
         """
         if prec is None:
@@ -5920,24 +5949,24 @@ cdef class Polynomial(CommutativePolynomial):
 
             sage: R.<x> = PolynomialRing(QQ)
             sage: f = 1/1331*x^2 + 1/4000*x
-            sage: f.local_height(1331)
+            sage: f.local_height(1331)                                                  # needs sage.rings.real_mpfr
             7.19368581839511
 
         ::
 
             sage: R.<x> = QQ[]
-            sage: K.<k> = NumberField(x^2 - 5)                                          # optional - sage.rings.number_field
-            sage: T.<t> = K[]                                                           # optional - sage.rings.number_field
-            sage: I = K.ideal(3)                                                        # optional - sage.rings.number_field
-            sage: f = 1/3*t^2 + 3                                                       # optional - sage.rings.number_field
-            sage: f.local_height(I)                                                     # optional - sage.rings.number_field
+            sage: K.<k> = NumberField(x^2 - 5)                                          # needs sage.rings.number_field
+            sage: T.<t> = K[]                                                           # needs sage.rings.number_field
+            sage: I = K.ideal(3)                                                        # needs sage.rings.number_field
+            sage: f = 1/3*t^2 + 3                                                       # needs sage.rings.number_field
+            sage: f.local_height(I)                                                     # needs sage.rings.number_field
             1.09861228866811
 
         ::
 
             sage: R.<x> = QQ[]
             sage: f = 1/2*x^2 + 2
-            sage: f.local_height(2, prec=2)
+            sage: f.local_height(2, prec=2)                                             # needs sage.rings.real_mpfr
             0.75
         """
         from sage.categories.number_fields import NumberFields
@@ -5969,23 +5998,23 @@ cdef class Polynomial(CommutativePolynomial):
 
             sage: R.<x> = PolynomialRing(QQ)
             sage: f = 210*x^2
-            sage: f.local_height_arch(0)
+            sage: f.local_height_arch(0)                                                # needs sage.rings.real_mpfr
             5.34710753071747
 
         ::
 
             sage: R.<x> = QQ[]
-            sage: K.<k> = NumberField(x^2 - 5)                                          # optional - sage.rings.number_field
-            sage: T.<t> = K[]                                                           # optional - sage.rings.number_field
-            sage: f = 1/2*t^2 + 3                                                       # optional - sage.rings.number_field
-            sage: f.local_height_arch(1, prec=52)                                       # optional - sage.rings.number_field
+            sage: K.<k> = NumberField(x^2 - 5)                                          # needs sage.rings.number_field
+            sage: T.<t> = K[]                                                           # needs sage.rings.number_field
+            sage: f = 1/2*t^2 + 3                                                       # needs sage.rings.number_field
+            sage: f.local_height_arch(1, prec=52)                                       # needs sage.rings.number_field
             1.09861228866811
 
         ::
 
             sage: R.<x> = QQ[]
             sage: f = 1/2*x^2 + 3
-            sage: f.local_height_arch(0, prec=2)
+            sage: f.local_height_arch(0, prec=2)                                        # needs sage.rings.real_mpfr
             1.0
         """
         from sage.categories.number_fields import NumberFields
@@ -6191,10 +6220,10 @@ cdef class Polynomial(CommutativePolynomial):
             sage: f.monomials()
             [x^9, x^2, x, 1]
             sage: x = polygen(ZZ, 'x')
-            sage: K.<rho> = NumberField(x**2 + 1)                                       # optional - sage.rings.number_field
-            sage: R.<y> = QQ[]                                                          # optional - sage.rings.number_field
-            sage: p = rho * y                                                           # optional - sage.rings.number_field
-            sage: p.monomials()                                                         # optional - sage.rings.number_field
+            sage: K.<rho> = NumberField(x**2 + 1)                                       # needs sage.rings.number_field
+            sage: R.<y> = QQ[]                                                          # needs sage.rings.number_field
+            sage: p = rho * y                                                           # needs sage.rings.number_field
+            sage: p.monomials()                                                         # needs sage.rings.number_field
             [y]
         """
         if self.is_zero():
@@ -6229,9 +6258,9 @@ cdef class Polynomial(CommutativePolynomial):
 
         EXAMPLES::
 
-            sage: x = PolynomialRing(RealField(), 'x').gen()                            # optional - sage.rings.real_mpfr
-            sage: f = x^2 - 2                                                           # optional - sage.rings.real_mpfr
-            sage: f.newton_raphson(4, 1)                                                # optional - sage.rings.real_mpfr
+            sage: x = PolynomialRing(RealField(), 'x').gen()                            # needs sage.rings.real_mpfr
+            sage: f = x^2 - 2                                                           # needs sage.rings.real_mpfr
+            sage: f.newton_raphson(4, 1)                                                # needs sage.rings.real_mpfr
             [1.50000000000000, 1.41666666666667, 1.41421568627451, 1.41421356237469]
 
         AUTHORS:
@@ -6291,11 +6320,11 @@ cdef class Polynomial(CommutativePolynomial):
 
             sage: x = QQ['x'].0
             sage: f = x^3 + 2
-            sage: f.newton_slopes(2)                                                    # optional - sage.libs.pari
+            sage: f.newton_slopes(2)                                                    # needs sage.libs.pari
             [1/3, 1/3, 1/3]
             sage: R.<x> = PolynomialRing(ZZ, sparse=True)
             sage: p = x^5 + 6*x^2 + 4
-            sage: p.newton_slopes(2)                                                    # optional - sage.libs.pari
+            sage: p.newton_slopes(2)                                                    # needs sage.libs.pari
             [1/2, 1/2, 1/3, 1/3, 1/3]
             sage: p.newton_slopes(2, lengths=True)
             [(1/2, 2), (1/3, 3)]
@@ -6352,13 +6381,13 @@ cdef class Polynomial(CommutativePolynomial):
         EXAMPLES::
 
             sage: Pol.<x> = QQ[]
-            sage: x.dispersion_set(x + 1)                                               # optional - sage.libs.pari
+            sage: x.dispersion_set(x + 1)                                               # needs sage.libs.pari
             [1]
-            sage: (x + 1).dispersion_set(x)                                             # optional - sage.libs.pari
+            sage: (x + 1).dispersion_set(x)                                             # needs sage.libs.pari
             []
 
             sage: pol = x^3 + x - 7
-            sage: (pol*pol(x+3)^2).dispersion_set()                                     # optional - sage.libs.pari
+            sage: (pol*pol(x+3)^2).dispersion_set()                                     # needs sage.libs.pari
             [0, 3]
         """
         other = self if other is None else self._parent.coerce(other)
@@ -6399,16 +6428,17 @@ cdef class Polynomial(CommutativePolynomial):
         EXAMPLES::
 
             sage: Pol.<x> = QQ[]
-            sage: x.dispersion(x + 1)                                                   # optional - sage.libs.pari
+            sage: x.dispersion(x + 1)                                                   # needs sage.libs.pari
             1
-            sage: (x + 1).dispersion(x)                                                 # optional - sage.libs.pari
+            sage: (x + 1).dispersion(x)                                                 # needs sage.libs.pari
             -Infinity
 
-            sage: Pol.<x> = QQbar[]                                                     # optional - sage.libs.pari sage.rings.number_field
-            sage: pol = Pol([sqrt(5), 1, 3/2])                                          # optional - sage.libs.pari sage.rings.number_field sage.symbolic
-            sage: pol.dispersion()                                                      # optional - sage.libs.pari sage.rings.number_field sage.symbolic
+            sage: # needs sage.libs.pari sage.rings.number_field
+            sage: Pol.<x> = QQbar[]
+            sage: pol = Pol([sqrt(5), 1, 3/2])                                          # needs sage.symbolic
+            sage: pol.dispersion()                                                      # needs sage.symbolic
             0
-            sage: (pol*pol(x+3)).dispersion()                                           # optional - sage.libs.pari sage.rings.number_field sage.symbolic
+            sage: (pol*pol(x+3)).dispersion()                                           # needs sage.symbolic
             3
         """
         dispersions = self.dispersion_set(other)
@@ -6429,7 +6459,7 @@ cdef class Polynomial(CommutativePolynomial):
         EXAMPLES::
 
             sage: f = QQ['x']([0,1,2/3,3])
-            sage: pari(f)                                                               # optional - sage.libs.pari
+            sage: pari(f)                                                               # needs sage.libs.pari
             3*x^3 + 2/3*x^2 + x
 
         ::
@@ -6437,18 +6467,18 @@ cdef class Polynomial(CommutativePolynomial):
             sage: S.<a> = QQ['a']
             sage: R.<x> = S['x']
             sage: f = R([0, a]) + R([0, 0, 2/3])
-            sage: pari(f)                                                               # optional - sage.libs.pari
+            sage: pari(f)                                                               # needs sage.libs.pari
             2/3*x^2 + a*x
 
         Polynomials over a number field work, provided that the variable is
         called 'x'::
 
             sage: x = polygen(QQ)
-            sage: K.<b> = NumberField(x^2 + x + 1)                                      # optional - sage.rings.number_field
-            sage: R.<x> = PolynomialRing(K)                                             # optional - sage.rings.number_field
-            sage: pol = (b + x)^3; pol                                                  # optional - sage.rings.number_field
+            sage: K.<b> = NumberField(x^2 + x + 1)                                      # needs sage.rings.number_field
+            sage: R.<x> = PolynomialRing(K)                                             # needs sage.rings.number_field
+            sage: pol = (b + x)^3; pol                                                  # needs sage.rings.number_field
             x^3 + 3*b*x^2 + (-3*b - 3)*x + 1
-            sage: pari(pol)                                                             # optional - sage.libs.pari sage.rings.number_field
+            sage: pari(pol)                                                             # needs sage.libs.pari sage.rings.number_field
             Mod(1, y^2 + y + 1)*x^3 + Mod(3*y, y^2 + y + 1)*x^2
              + Mod(-3*y - 3, y^2 + y + 1)*x + Mod(1, y^2 + y + 1)
 
@@ -6459,7 +6489,7 @@ cdef class Polynomial(CommutativePolynomial):
             sage: R.<x, y> = QQ[]
             sage: S.<a> = R[]
             sage: f = x^2 + a; g = y^3 + a
-            sage: pari(f)                                                               # optional - sage.libs.pari
+            sage: pari(f)                                                               # needs sage.libs.pari
             Traceback (most recent call last):
             ...
             PariError: incorrect priority in gtopoly: variable x <= a
@@ -6469,9 +6499,9 @@ cdef class Polynomial(CommutativePolynomial):
 
             sage: S.<a> = QQ['a']
             sage: R.<x> = S['x']
-            sage: pari(x^2 + 2*x)                                                       # optional - sage.libs.pari
+            sage: pari(x^2 + 2*x)                                                       # needs sage.libs.pari
             x^2 + 2*x
-            sage: pari(a*x + 2*x^3)                                                     # optional - sage.libs.pari
+            sage: pari(a*x + 2*x^3)                                                     # needs sage.libs.pari
             2*x^3 + a*x
 
         Stacked polynomial rings, second with a multivariate ring on the
@@ -6479,27 +6509,27 @@ cdef class Polynomial(CommutativePolynomial):
 
             sage: S.<a, b> = ZZ['a', 'b']
             sage: R.<x> = S['x']
-            sage: pari(x^2 + 2*x)                                                       # optional - sage.libs.pari
+            sage: pari(x^2 + 2*x)                                                       # needs sage.libs.pari
             x^2 + 2*x
-            sage: pari(a*x + 2*b*x^3)                                                   # optional - sage.libs.pari
+            sage: pari(a*x + 2*b*x^3)                                                   # needs sage.libs.pari
             2*b*x^3 + a*x
 
         Stacked polynomial rings with exotic base rings::
 
             sage: S.<a, b> = GF(7)['a', 'b']
             sage: R.<x> = S['x']
-            sage: pari(x^2 + 9*x)                                                       # optional - sage.rings.finite_rings
+            sage: pari(x^2 + 9*x)                                                       # needs sage.rings.finite_rings
             x^2 + 2*x
-            sage: pari(a*x + 9*b*x^3)                                                   # optional - sage.rings.finite_rings
+            sage: pari(a*x + 9*b*x^3)                                                   # needs sage.rings.finite_rings
             2*b*x^3 + a*x
 
         ::
 
             sage: S.<a> = Integers(8)['a']
             sage: R.<x> = S['x']
-            sage: pari(x^2 + 2*x)                                                       # optional - sage.libs.pari
+            sage: pari(x^2 + 2*x)                                                       # needs sage.libs.pari
             Mod(1, 8)*x^2 + Mod(2, 8)*x
-            sage: pari(a*x + 10*x^3)                                                    # optional - sage.libs.pari
+            sage: pari(a*x + 10*x^3)                                                    # needs sage.libs.pari
             Mod(2, 8)*x^3 + Mod(1, 8)*a*x
         """
         return self._pari_with_name(self._parent.variable_name())
@@ -6520,18 +6550,18 @@ cdef class Polynomial(CommutativePolynomial):
 
             sage: R.<x> = PolynomialRing(ZZ)
             sage: pol = 2*x^2 + 7*x - 5
-            sage: pol._pari_or_constant()                                               # optional - sage.libs.pari
+            sage: pol._pari_or_constant()                                               # needs sage.libs.pari
             2*x^2 + 7*x - 5
-            sage: pol._pari_or_constant('a')                                            # optional - sage.libs.pari
+            sage: pol._pari_or_constant('a')                                            # needs sage.libs.pari
             2*a^2 + 7*a - 5
             sage: pol = R(7)
-            sage: pol._pari_or_constant()                                               # optional - sage.libs.pari
+            sage: pol._pari_or_constant()                                               # needs sage.libs.pari
             7
-            sage: pol._pari_or_constant().type()                                        # optional - sage.libs.pari
+            sage: pol._pari_or_constant().type()                                        # needs sage.libs.pari
             't_INT'
-            sage: pol.__pari__().type()                                                 # optional - sage.libs.pari
+            sage: pol.__pari__().type()                                                 # needs sage.libs.pari
             't_POL'
-            sage: PolynomialRing(IntegerModRing(101), 't')()._pari_or_constant()        # optional - sage.libs.pari
+            sage: PolynomialRing(IntegerModRing(101), 't')()._pari_or_constant()        # needs sage.libs.pari
             Mod(0, 101)
         """
         if self.is_constant():
@@ -6550,9 +6580,9 @@ cdef class Polynomial(CommutativePolynomial):
         EXAMPLES::
 
             sage: R.<a> = PolynomialRing(ZZ)
-            sage: (2*a^2 + a)._pari_with_name()                                         # optional - sage.libs.pari
+            sage: (2*a^2 + a)._pari_with_name()                                         # needs sage.libs.pari
             2*x^2 + x
-            sage: (2*a^2 + a)._pari_with_name('y')                                      # optional - sage.libs.pari
+            sage: (2*a^2 + a)._pari_with_name('y')                                      # needs sage.libs.pari
             2*y^2 + y
         """
         vals = [x.__pari__() for x in self.list()]
@@ -6593,8 +6623,8 @@ cdef class Polynomial(CommutativePolynomial):
 
         A more complicated nested example::
 
-            sage: k.<a> = GF(9); R.<s,t> = k[]; S.<W> = R[]                             # optional - sage.rings.finite_rings
-            sage: magma(a*W^20 + s*t/a)        # optional - magma                       # optional - sage.rings.finite_rings
+            sage: k.<a> = GF(9); R.<s,t> = k[]; S.<W> = R[]                             # needs sage.rings.finite_rings
+            sage: magma(a*W^20 + s*t/a)         # optional - magma                      # needs sage.rings.finite_rings
             a*W^20 + a^7*s*t
         """
         # Get a reference to Magma version of parent.
@@ -6615,33 +6645,33 @@ cdef class Polynomial(CommutativePolynomial):
 
             sage: R.<y> = ZZ[]
             sage: f = y^3 - 17*y + 5
-            sage: g = gap(f); g   # indirect doctest                                    # optional - sage.libs.gap
+            sage: g = gap(f); g   # indirect doctest                                    # needs sage.libs.gap
             y^3-17*y+5
-            sage: f._gap_init_()                                                        # optional - sage.libs.gap
+            sage: f._gap_init_()                                                        # needs sage.libs.gap
             'y^3 - 17*y + 5'
             sage: R.<z> = ZZ[]
-            sage: gap(R)                                                                # optional - sage.libs.gap
+            sage: gap(R)                                                                # needs sage.libs.gap
             PolynomialRing( Integers, ["z"] )
-            sage: g                                                                     # optional - sage.libs.gap
+            sage: g                                                                     # needs sage.libs.gap
             y^3-17*y+5
-            sage: gap(z^2 + z)                                                          # optional - sage.libs.gap
+            sage: gap(z^2 + z)                                                          # needs sage.libs.gap
             z^2+z
-            sage: libgap(z^2 + z)                                                       # optional - sage.libs.gap
+            sage: libgap(z^2 + z)                                                       # needs sage.libs.gap
             z^2+z
 
         Coefficients in a finite field::
 
             sage: R.<y> = GF(7)[]
             sage: f = y^3 - 17*y + 5
-            sage: g = gap(f); g                                                         # optional - sage.libs.gap sage.rings.finite_rings
+            sage: g = gap(f); g                                                         # needs sage.libs.gap sage.rings.finite_rings
             y^3+Z(7)^4*y+Z(7)^5
-            sage: h = libgap(f); h                                                      # optional - sage.libs.gap sage.rings.finite_rings
+            sage: h = libgap(f); h                                                      # needs sage.libs.gap sage.rings.finite_rings
             y^3+Z(7)^4*y+Z(7)^5
-            sage: g.Factors()                                                           # optional - sage.libs.gap sage.rings.finite_rings
+            sage: g.Factors()                                                           # needs sage.libs.gap sage.rings.finite_rings
             [ y+Z(7)^0, y+Z(7)^0, y+Z(7)^5 ]
-            sage: h.Factors()                                                           # optional - sage.libs.gap sage.rings.finite_rings
+            sage: h.Factors()                                                           # needs sage.libs.gap sage.rings.finite_rings
             [ y+Z(7)^0, y+Z(7)^0, y+Z(7)^5 ]
-            sage: f.factor()                                                            # optional - sage.libs.gap sage.rings.finite_rings
+            sage: f.factor()                                                            # needs sage.libs.gap sage.rings.finite_rings
             (y + 5) * (y + 1)^2
         """
         R = gap(self._parent)
@@ -6653,9 +6683,9 @@ cdef class Polynomial(CommutativePolynomial):
         TESTS::
 
             sage: R.<x> = ZZ[]
-            sage: libgap(-x^3 + 3*x)   # indirect doctest                               # optional - sage.libs.gap
+            sage: libgap(-x^3 + 3*x)   # indirect doctest                               # needs sage.libs.gap
             -x^3+3*x
-            sage: libgap(R.zero())     # indirect doctest                               # optional - sage.libs.gap
+            sage: libgap(R.zero())     # indirect doctest                               # needs sage.libs.gap
             0
         """
         from sage.libs.gap.libgap import libgap
@@ -6669,11 +6699,11 @@ cdef class Polynomial(CommutativePolynomial):
 
             sage: R.<x> = GF(101)['e,i'][]
             sage: f = R('e*i') * x + x^2
-            sage: f._giac_init_()                                                       # optional - sage.rings.finite_rings
+            sage: f._giac_init_()                                                       # needs sage.rings.finite_rings
             '((1)*1)*sageVARx^2+((1)*sageVARe*sageVARi)*sageVARx'
-            sage: giac(f)                                                               # optional - sage.rings.finite_rings
+            sage: giac(f)                                                               # needs sage.rings.finite_rings
             sageVARx^2+sageVARe*sageVARi*sageVARx
-            sage: giac(R.zero())                                                        # optional - sage.rings.finite_rings
+            sage: giac(R.zero())                                                        # needs sage.rings.finite_rings
             0
         """
         g = 'sageVAR' + self.variable_name()
@@ -6704,9 +6734,9 @@ cdef class Polynomial(CommutativePolynomial):
 
             sage: R.<x> = QQ[]
             sage: f = x^3 + x + 1;  g = x^3 - x - 1
-            sage: r = f.resultant(g); r                                                 # optional - sage.libs.pari
+            sage: r = f.resultant(g); r                                                 # needs sage.libs.pari
             -8
-            sage: r.parent() is QQ                                                      # optional - sage.libs.pari
+            sage: r.parent() is QQ                                                      # needs sage.libs.pari
             True
 
         We can compute resultants over univariate and multivariate
@@ -6715,9 +6745,9 @@ cdef class Polynomial(CommutativePolynomial):
             sage: R.<a> = QQ[]
             sage: S.<x> = R[]
             sage: f = x^2 + a; g = x^3 + a
-            sage: r = f.resultant(g); r                                                 # optional - sage.libs.pari
+            sage: r = f.resultant(g); r                                                 # needs sage.libs.pari
             a^3 + a^2
-            sage: r.parent() is R                                                       # optional - sage.libs.pari
+            sage: r.parent() is R                                                       # needs sage.libs.pari
             True
 
         ::
@@ -6725,9 +6755,9 @@ cdef class Polynomial(CommutativePolynomial):
             sage: R.<a, b> = QQ[]
             sage: S.<x> = R[]
             sage: f = x^2 + a; g = x^3 + b
-            sage: r = f.resultant(g); r                                                 # optional - sage.libs.pari
+            sage: r = f.resultant(g); r                                                 # needs sage.libs.pari
             a^3 + b^2
-            sage: r.parent() is R                                                       # optional - sage.libs.pari
+            sage: r.parent() is R                                                       # needs sage.libs.pari
             True
 
         TESTS::
@@ -6735,9 +6765,9 @@ cdef class Polynomial(CommutativePolynomial):
             sage: R.<x, y> = QQ[]
             sage: S.<a> = R[]
             sage: f = x^2 + a; g = y^3 + a
-            sage: h = f.resultant(g); h                                                 # optional - sage.libs.pari
+            sage: h = f.resultant(g); h                                                 # needs sage.libs.pari
             y^3 - x^2
-            sage: h.parent() is R                                                       # optional - sage.libs.pari
+            sage: h.parent() is R                                                       # needs sage.libs.pari
             True
 
         Check that :trac:`13672` is fixed::
@@ -6746,7 +6776,7 @@ cdef class Polynomial(CommutativePolynomial):
             sage: S.<x> = R[]
             sage: f = (t^2 + t)*x + t^2 + t
             sage: g = (t + 1)*x + t^2
-            sage: f.resultant(g)                                                        # optional - sage.rings.finite_rings
+            sage: f.resultant(g)                                                        # needs sage.rings.finite_rings
             t^4 + t
 
         Check that :trac:`15061` is fixed::
@@ -6755,23 +6785,23 @@ cdef class Polynomial(CommutativePolynomial):
             sage: F = R([1,1],2)
             sage: RP.<x> = PolynomialRing(R)
             sage: P = x^2 - F
-            sage: P.resultant(P.derivative())                                           # optional - sage.libs.pari
+            sage: P.resultant(P.derivative())                                           # needs sage.libs.pari
             -4 - 4*T + O(T^2)
 
         Check that :trac:`16360` is fixed::
 
             sage: K.<x> = FunctionField(QQ)
             sage: R.<y> = K[]
-            sage: y.resultant(y + x)                                                    # optional - sage.libs.pari
+            sage: y.resultant(y + x)                                                    # needs sage.libs.pari
             x
 
             sage: K.<a> = FunctionField(QQ)
             sage: R.<b> = K[]
-            sage: L.<b> = K.extension(b^2 - a)                                          # optional - sage.libs.singular
-            sage: R.<x> = L[]                                                           # optional - sage.libs.singular
-            sage: f = x^2 - a                                                           # optional - sage.libs.singular
-            sage: g = x - b                                                             # optional - sage.libs.singular
-            sage: f.resultant(g)                                                        # optional - sage.libs.pari sage.libs.singular
+            sage: L.<b> = K.extension(b^2 - a)                                          # needs sage.libs.singular
+            sage: R.<x> = L[]                                                           # needs sage.libs.singular
+            sage: f = x^2 - a                                                           # needs sage.libs.singular
+            sage: g = x - b                                                             # needs sage.libs.singular
+            sage: f.resultant(g)                                                        # needs sage.libs.pari sage.libs.singular
             0
 
         Check that :trac:`17817` is fixed::
@@ -6782,16 +6812,16 @@ cdef class Polynomial(CommutativePolynomial):
             sage: S.<y> = PolynomialRing(R,'y')
             sage: p = ((1/b^2*d^2+1/a)*x*y^2+a*b/c*y+e+x^2)
             sage: q = -4*c^2*y^3+1
-            sage: p.resultant(q)                                                        # optional - sage.libs.pari
+            sage: p.resultant(q)                                                        # needs sage.libs.pari
             (16*c^4)*x^6 + (48*c^4)*e*x^4 + (1/(b^6)*d^6 + 3/(a*b^4)*d^4 + (-12*a^3*b*c + 3)/(a^2*b^2)*d^2 + (-12*a^3*b*c + 1)/(a^3))*x^3 + (48*c^4)*e^2*x^2 + ((-12*a*c)/b*d^2*e + (-12*b*c)*e)*x + (16*c^4)*e^3 + (4*a^3*b^3)/c
 
 
         Test for :trac:`10978`::
 
-            sage: R.<x> = PolynomialRing(CDF)
+            sage: R.<x> = PolynomialRing(CDF)                                           # needs sage.rings.complex_double
             sage: f = R(1 - I*x + (0.5)*x^2 + (1.7)*x^3)
             sage: g = f.derivative()
-            sage: f.resultant(g)                                                        # optional - sage.libs.pari
+            sage: f.resultant(g)                                                        # needs sage.libs.pari
             133.92599999999996 + 37.56999999999999*I
         """
         variable = self.variable_name()
@@ -6941,45 +6971,47 @@ cdef class Polynomial(CommutativePolynomial):
             sage: x = polygen(ZZ)
             sage: p1 = x^2 - 1
             sage: p2 = x^4 - 1
-            sage: p1.composed_op(p2, operator.add)                                      # optional - sage.libs.singular
+            sage: p1.composed_op(p2, operator.add)                                      # needs sage.libs.singular
             x^8 - 4*x^6 + 4*x^4 - 16*x^2
-            sage: p1.composed_op(p2, operator.mul)                                      # optional - sage.libs.singular
+            sage: p1.composed_op(p2, operator.mul)                                      # needs sage.libs.singular
             x^8 - 2*x^4 + 1
-            sage: p1.composed_op(p2, operator.truediv)                                  # optional - sage.libs.singular
+            sage: p1.composed_op(p2, operator.truediv)                                  # needs sage.libs.singular
             x^8 - 2*x^4 + 1
 
         This function works over any field. However for base rings other than
         `\ZZ` and `\QQ` only the resultant algorithm is available::
 
-            sage: x = polygen(QQbar)                                                    # optional - sage.rings.number_field
-            sage: p1 = x**2 - AA(2).sqrt()                                              # optional - sage.rings.number_field
-            sage: p2 = x**3 - AA(3).sqrt()                                              # optional - sage.rings.number_field
-            sage: r1 = p1.roots(multiplicities=False)                                   # optional - sage.rings.number_field
-            sage: r2 = p2.roots(multiplicities=False)                                   # optional - sage.rings.number_field
-            sage: p = p1.composed_op(p2, operator.add); p                               # optional - sage.rings.number_field
+            sage: # needs sage.rings.number_field
+            sage: x = polygen(QQbar)
+            sage: p1 = x**2 - AA(2).sqrt()
+            sage: p2 = x**3 - AA(3).sqrt()
+            sage: r1 = p1.roots(multiplicities=False)
+            sage: r2 = p2.roots(multiplicities=False)
+            sage: p = p1.composed_op(p2, operator.add); p
             x^6 - 4.242640687119285?*x^4 - 3.464101615137755?*x^3 + 6*x^2
              - 14.69693845669907?*x + 0.1715728752538099?
-            sage: all(p(x+y).is_zero() for x in r1 for y in r2)                         # optional - sage.rings.number_field
+            sage: all(p(x+y).is_zero() for x in r1 for y in r2)
             True
 
             sage: x = polygen(GF(2))
             sage: p1 = x**2 + x - 1
             sage: p2 = x**3 + x - 1
-            sage: p_add = p1.composed_op(p2, operator.add); p_add                       # optional - sage.rings.finite_rings
+            sage: p_add = p1.composed_op(p2, operator.add); p_add                       # needs sage.rings.finite_rings
             x^6 + x^5 + x^3 + x^2 + 1
-            sage: p_mul = p1.composed_op(p2, operator.mul); p_mul                       # optional - sage.rings.finite_rings
+            sage: p_mul = p1.composed_op(p2, operator.mul); p_mul                       # needs sage.rings.finite_rings
             x^6 + x^4 + x^2 + x + 1
-            sage: p_div = p1.composed_op(p2, operator.truediv); p_div                   # optional - sage.rings.finite_rings
+            sage: p_div = p1.composed_op(p2, operator.truediv); p_div                   # needs sage.rings.finite_rings
             x^6 + x^5 + x^4 + x^2 + 1
 
-            sage: K = GF(2**6, 'a')                                                     # optional - sage.rings.finite_rings
-            sage: r1 = p1.roots(K, multiplicities=False)                                # optional - sage.rings.finite_rings
-            sage: r2 = p2.roots(K, multiplicities=False)                                # optional - sage.rings.finite_rings
-            sage: all(p_add(x1+x2).is_zero() for x1 in r1 for x2 in r2)                 # optional - sage.rings.finite_rings
+            sage: # needs sage.rings.finite_rings
+            sage: K = GF(2**6, 'a')
+            sage: r1 = p1.roots(K, multiplicities=False)
+            sage: r2 = p2.roots(K, multiplicities=False)
+            sage: all(p_add(x1+x2).is_zero() for x1 in r1 for x2 in r2)
             True
-            sage: all(p_mul(x1*x2).is_zero() for x1 in r1 for x2 in r2)                 # optional - sage.rings.finite_rings
+            sage: all(p_mul(x1*x2).is_zero() for x1 in r1 for x2 in r2)
             True
-            sage: all(p_div(x1/x2).is_zero() for x1 in r1 for x2 in r2)                 # optional - sage.rings.finite_rings
+            sage: all(p_div(x1/x2).is_zero() for x1 in r1 for x2 in r2)
             True
 
         TESTS:
@@ -6987,7 +7019,7 @@ cdef class Polynomial(CommutativePolynomial):
         ::
 
             sage: y = polygen(ZZ)
-            sage: for p1 in [2*y^3 - y + 3, -y^5 - 2, 4*y - 3]:                         # optional - sage.libs.singular
+            sage: for p1 in [2*y^3 - y + 3, -y^5 - 2, 4*y - 3]:                         # needs sage.libs.singular
             ....:   for p2 in [5*y^2 - 7, -3*y - 1]:
             ....:     for monic in [True,False]:
             ....:       for op in [operator.add, operator.sub, operator.mul, operator.truediv]:
@@ -7135,21 +7167,21 @@ cdef class Polynomial(CommutativePolynomial):
             sage: R.<a,b,c> = ZZ[]
             sage: x = polygen(R)
             sage: f = (x - a) * (x - b) * (x - c)
-            sage: f.compose_power(2).factor()                                           # optional - sage.libs.singular sage.modules
+            sage: f.compose_power(2).factor()                                           # needs sage.libs.singular sage.modules
             (x - c^2) * (x - b^2) * (x - a^2) * (x - b*c)^2 * (x - a*c)^2 * (x - a*b)^2
 
             sage: x = polygen(QQ)
             sage: f = x^2 - 2*x + 2
-            sage: f2 = f.compose_power(2); f2                                           # optional - sage.libs.singular sage.modules
+            sage: f2 = f.compose_power(2); f2                                           # needs sage.libs.singular sage.modules
             x^4 - 4*x^3 + 8*x^2 - 16*x + 16
-            sage: f2 == f.composed_op(f, operator.mul)                                  # optional - sage.libs.singular sage.modules
+            sage: f2 == f.composed_op(f, operator.mul)                                  # needs sage.libs.singular sage.modules
             True
-            sage: f3 = f.compose_power(3); f3                                           # optional - sage.libs.singular sage.modules
+            sage: f3 = f.compose_power(3); f3                                           # needs sage.libs.singular sage.modules
             x^8 - 8*x^7 + 32*x^6 - 64*x^5 + 128*x^4 - 512*x^3 + 2048*x^2 - 4096*x + 4096
-            sage: f3 == f2.composed_op(f, operator.mul)                                 # optional - sage.libs.singular sage.modules
+            sage: f3 == f2.composed_op(f, operator.mul)                                 # needs sage.libs.singular sage.modules
             True
-            sage: f4 = f.compose_power(4)                                               # optional - sage.libs.singular sage.modules
-            sage: f4 == f3.composed_op(f, operator.mul)                                 # optional - sage.libs.singular sage.modules
+            sage: f4 = f.compose_power(4)                                               # needs sage.libs.singular sage.modules
+            sage: f4 == f3.composed_op(f, operator.mul)                                 # needs sage.libs.singular sage.modules
             True
         """
         try:
@@ -7189,21 +7221,22 @@ cdef class Polynomial(CommutativePolynomial):
 
         EXAMPLES::
 
-            sage: f = cyclotomic_polynomial(30)                                         # optional - sage.libs.pari
-            sage: f.adams_operator(7)==f                                                # optional - sage.libs.pari
+            sage: # needs sage.libs.pari
+            sage: f = cyclotomic_polynomial(30)
+            sage: f.adams_operator(7)==f
             True
-            sage: f.adams_operator(6) == cyclotomic_polynomial(5)**2                    # optional - sage.libs.pari
+            sage: f.adams_operator(6) == cyclotomic_polynomial(5)**2
             True
-            sage: f.adams_operator(10) == cyclotomic_polynomial(3)**4                   # optional - sage.libs.pari
+            sage: f.adams_operator(10) == cyclotomic_polynomial(3)**4
             True
-            sage: f.adams_operator(15) == cyclotomic_polynomial(2)**8                   # optional - sage.libs.pari
+            sage: f.adams_operator(15) == cyclotomic_polynomial(2)**8
             True
-            sage: f.adams_operator(30) == cyclotomic_polynomial(1)**8                   # optional - sage.libs.pari
+            sage: f.adams_operator(30) == cyclotomic_polynomial(1)**8
             True
 
             sage: x = polygen(QQ)
             sage: f = x^2 - 2*x + 2
-            sage: f.adams_operator(10)                                                  # optional - sage.libs.singular
+            sage: f.adams_operator(10)                                                  # needs sage.libs.singular
             x^2 + 1024
 
         When ``self`` is monic, the output will have leading coefficient
@@ -7213,9 +7246,9 @@ cdef class Polynomial(CommutativePolynomial):
             sage: R.<a,b,c> = ZZ[]
             sage: x = polygen(R)
             sage: f = (x - a) * (x - b) * (x - c)
-            sage: f.adams_operator(3).factor()                                          # optional - sage.libs.singular
+            sage: f.adams_operator(3).factor()                                          # needs sage.libs.singular
             (-1) * (x - c^3) * (x - b^3) * (x - a^3)
-            sage: f.adams_operator(3, monic=True).factor()                              # optional - sage.libs.singular
+            sage: f.adams_operator(3, monic=True).factor()                              # needs sage.libs.singular
             (x - c^3) * (x - b^3) * (x - a^3)
 
         """
@@ -7237,11 +7270,11 @@ cdef class Polynomial(CommutativePolynomial):
 
             sage: x = polygen(QQ)
             sage: f = x^4 - x + 2
-            sage: [f.symmetric_power(k) for k in range(5)]                              # optional - sage.libs.singular
+            sage: [f.symmetric_power(k) for k in range(5)]                              # needs sage.libs.singular
             [x - 1, x^4 - x + 2, x^6 - 2*x^4 - x^3 - 4*x^2 + 8, x^4 - x^3 + 8, x - 2]
 
             sage: f = x^5 - 2*x + 2
-            sage: [f.symmetric_power(k) for k in range(6)]                              # optional - sage.libs.singular
+            sage: [f.symmetric_power(k) for k in range(6)]                              # needs sage.libs.singular
             [x - 1,
              x^5 - 2*x + 2,
              x^10 + 2*x^8 - 4*x^6 - 8*x^5 - 8*x^4 - 8*x^3 + 16,
@@ -7252,7 +7285,7 @@ cdef class Polynomial(CommutativePolynomial):
             sage: R.<a,b,c,d> = ZZ[]
             sage: x = polygen(R)
             sage: f = (x - a) * (x - b) * (x - c) * (x - d)
-            sage: [f.symmetric_power(k).factor() for k in range(5)]                     # optional - sage.libs.singular
+            sage: [f.symmetric_power(k).factor() for k in range(5)]                     # needs sage.libs.singular
             [x - 1,
              (-x + d) * (-x + c) * (-x + b) * (-x + a),
              (x - c*d) * (x - b*d) * (x - a*d) * (x - b*c) * (x - a*c) * (x - a*b),
@@ -7347,18 +7380,18 @@ cdef class Polynomial(CommutativePolynomial):
 
             sage: R.<x> = QQ[]
             sage: f = x^3 + x + 1
-            sage: d = f.discriminant(); d                                               # optional - sage.libs.pari
+            sage: d = f.discriminant(); d                                               # needs sage.libs.pari
             -31
-            sage: d.parent() is QQ                                                      # optional - sage.libs.pari
+            sage: d.parent() is QQ                                                      # needs sage.libs.pari
             True
-            sage: EllipticCurve([1, 1]).discriminant()/16                               # optional - sage.libs.pari
+            sage: EllipticCurve([1, 1]).discriminant()/16                               # needs sage.libs.pari
             -31
 
         ::
 
             sage: R.<x> = QQ[]
             sage: f = 2*x^3 + x + 1
-            sage: d = f.discriminant(); d                                               # optional - sage.libs.pari
+            sage: d = f.discriminant(); d                                               # needs sage.libs.pari
             -116
 
         We can compute discriminants over univariate and multivariate
@@ -7367,9 +7400,9 @@ cdef class Polynomial(CommutativePolynomial):
             sage: R.<a> = QQ[]
             sage: S.<x> = R[]
             sage: f = a*x + x + a + 1
-            sage: d = f.discriminant(); d                                               # optional - sage.libs.pari
+            sage: d = f.discriminant(); d                                               # needs sage.libs.pari
             1
-            sage: d.parent() is R                                                       # optional - sage.libs.pari
+            sage: d.parent() is R                                                       # needs sage.libs.pari
             True
 
         ::
@@ -7377,9 +7410,9 @@ cdef class Polynomial(CommutativePolynomial):
             sage: R.<a, b> = QQ[]
             sage: S.<x> = R[]
             sage: f = x^2 + a + b
-            sage: d = f.discriminant(); d                                               # optional - sage.libs.pari
+            sage: d = f.discriminant(); d                                               # needs sage.libs.pari
             -4*a - 4*b
-            sage: d.parent() is R                                                       # optional - sage.libs.pari
+            sage: d.parent() is R                                                       # needs sage.libs.pari
             True
 
         TESTS::
@@ -7387,7 +7420,7 @@ cdef class Polynomial(CommutativePolynomial):
             sage: R.<x, y> = QQ[]
             sage: S.<a> = R[]
             sage: f = x^2 + a
-            sage: f.discriminant()                                                      # optional - sage.libs.pari
+            sage: f.discriminant()                                                      # needs sage.libs.pari
             1
 
         Check that :trac:`13672` is fixed::
@@ -7395,33 +7428,33 @@ cdef class Polynomial(CommutativePolynomial):
             sage: R.<t> = GF(5)[]
             sage: S.<x> = R[]
             sage: f = x^10 + 2*x^6 + 2*x^5 + x + 2
-            sage: (f - t).discriminant()                                                # optional - sage.rings.finite_rings
+            sage: (f - t).discriminant()                                                # needs sage.rings.finite_rings
             4*t^5
 
         The following examples show that :trac:`11782` has been fixed::
 
-            sage: var('x')                                                              # optional - sage.symbolic
+            sage: var('x')                                                              # needs sage.symbolic
             x
-            sage: ZZ.quo(81)['x'](3*x^2 + 3*x + 3).discriminant()                       # optional - sage.libs.pari sage.symbolic
+            sage: ZZ.quo(81)['x'](3*x^2 + 3*x + 3).discriminant()                       # needs sage.libs.pari sage.symbolic
             54
-            sage: ZZ.quo(9)['x'](2*x^3 + x^2 + x).discriminant()                        # optional - sage.libs.pari sage.symbolic
+            sage: ZZ.quo(9)['x'](2*x^3 + x^2 + x).discriminant()                        # needs sage.libs.pari sage.symbolic
             2
 
         This was fixed by :trac:`15422`::
 
-            sage: R.<s> = PolynomialRing(Qp(2))                                         # optional - sage.rings.padics
-            sage: (s^2).discriminant()                                                  # optional - sage.rings.padics
+            sage: R.<s> = PolynomialRing(Qp(2))                                         # needs sage.rings.padics
+            sage: (s^2).discriminant()                                                  # needs sage.rings.padics
             0
 
         This was fixed by :trac:`16014`::
 
             sage: PR.<b,t1,t2,x1,y1,x2,y2> = QQ[]
             sage: PRmu.<mu> = PR[]
-            sage: E1 = diagonal_matrix(PR, [1, b^2, -b^2])                              # optional - sage.modules
-            sage: M = matrix(PR, [[1,-t1,x1-t1*y1], [t1,1,y1+t1*x1], [0,0,1]])          # optional - sage.modules
-            sage: E1 = M.transpose()*E1*M                                               # optional - sage.modules
-            sage: E2 = E1.subs(t1=t2, x1=x2, y1=y2)                                     # optional - sage.modules
-            sage: det(mu*E1 + E2).discriminant().degrees()                              # optional - sage.modules sage.libs.pari
+            sage: E1 = diagonal_matrix(PR, [1, b^2, -b^2])                              # needs sage.modules
+            sage: M = matrix(PR, [[1,-t1,x1-t1*y1], [t1,1,y1+t1*x1], [0,0,1]])          # needs sage.modules
+            sage: E1 = M.transpose()*E1*M                                               # needs sage.modules
+            sage: E2 = E1.subs(t1=t2, x1=x2, y1=y2)                                     # needs sage.modules
+            sage: det(mu*E1 + E2).discriminant().degrees()                              # needs sage.libs.pari sage.modules
             (24, 12, 12, 8, 8, 8, 8)
 
         This addresses an issue raised by :trac:`15061`::
@@ -7430,7 +7463,7 @@ cdef class Polynomial(CommutativePolynomial):
             sage: F = R([1,1],2)
             sage: RP.<x> = PolynomialRing(R)
             sage: P = x^2 - F
-            sage: P.discriminant()                                                      # optional - sage.libs.pari
+            sage: P.discriminant()                                                      # needs sage.libs.pari
             4 + 4*T + O(T^2)
         """
         # Late import to avoid cyclic dependencies:
@@ -7575,34 +7608,35 @@ cdef class Polynomial(CommutativePolynomial):
 
             sage: x = QQ['x'].0
             sage: f = x^3 - 1
-            sage: f.roots()                                                             # optional - sage.libs.pari
+            sage: f.roots()                                                             # needs sage.libs.pari
             [(1, 1)]
-            sage: f.roots(ring=CC)   # ... - low order bits slightly different on ppc   # optional - sage.libs.pari
+            sage: f.roots(ring=CC)   # ... - low order bits slightly different on ppc   # needs sage.libs.pari
             [(1.00000000000000, 1),
              (-0.500000000000000 - 0.86602540378443...*I, 1),
              (-0.500000000000000 + 0.86602540378443...*I, 1)]
             sage: f = (x^3 - 1)^2
-            sage: f.roots()                                                             # optional - sage.libs.pari
+            sage: f.roots()                                                             # needs sage.libs.pari
             [(1, 2)]
 
         ::
 
             sage: f = -19*x + 884736
-            sage: f.roots()                                                             # optional - sage.libs.pari
+            sage: f.roots()                                                             # needs sage.libs.pari
             [(884736/19, 1)]
-            sage: (f^20).roots()                                                        # optional - sage.libs.pari
+            sage: (f^20).roots()                                                        # needs sage.libs.pari
             [(884736/19, 20)]
 
         ::
 
-            sage: K.<z> = CyclotomicField(3)                                            # optional - sage.rings.number_field
-            sage: f = K.defining_polynomial()                                           # optional - sage.rings.number_field
-            sage: f.roots(ring=GF(7))                                                   # optional - sage.rings.finite_rings sage.rings.number_field
+            sage: # needs sage.rings.number_field
+            sage: K.<z> = CyclotomicField(3)
+            sage: f = K.defining_polynomial()
+            sage: f.roots(ring=GF(7))                                                   # needs sage.rings.finite_rings
             [(4, 1), (2, 1)]
-            sage: g = f.change_ring(GF(7))                                              # optional - sage.rings.finite_rings sage.rings.number_field
-            sage: g.roots()                                                             # optional - sage.rings.finite_rings sage.rings.number_field
+            sage: g = f.change_ring(GF(7))                                              # needs sage.rings.finite_rings
+            sage: g.roots()                                                             # needs sage.rings.finite_rings
             [(4, 1), (2, 1)]
-            sage: g.roots(multiplicities=False)                                         # optional - sage.rings.finite_rings sage.rings.number_field
+            sage: g.roots(multiplicities=False)                                         # needs sage.rings.finite_rings
             [4, 2]
 
         A new ring.  In the example below, we add the special method
@@ -7613,12 +7647,12 @@ cdef class Polynomial(CommutativePolynomial):
         introduce::
 
              sage: R.<x> = QQ[]
-             sage: (x^2 + 1).roots()                                                    # optional - sage.libs.pari
+             sage: (x^2 + 1).roots()                                                    # needs sage.libs.pari
              []
              sage: def my_roots(f, *args, **kwds):
              ....:     return f.change_ring(CDF).roots()
              sage: QQ._roots_univariate_polynomial = my_roots
-             sage: (x^2 + 1).roots()  # abs tol 1e-14                                   # optional - numpy
+             sage: (x^2 + 1).roots()  # abs tol 1e-14                                   # needs numpy
              [(2.7755575615628914e-17 - 1.0*I, 1), (0.9999999999999997*I, 1)]
              sage: del QQ._roots_univariate_polynomial
 
@@ -7627,24 +7661,24 @@ cdef class Polynomial(CommutativePolynomial):
 
             sage: x = RR['x'].0
             sage: f = x^3 - 2
-            sage: f.roots()
+            sage: f.roots()                                                             # needs numpy
             [(1.25992104989487, 1)]
             sage: f.factor()
             (x - 1.25992104989487) * (x^2 + 1.25992104989487*x + 1.58740105196820)
-            sage: x = RealField(100)['x'].0
+            sage: x = RealField(100)['x'].0                                             # needs sage.rings.real_mpfr
             sage: f = x^3 - 2
-            sage: f.roots()
+            sage: f.roots()                                                             # needs numpy
             [(1.2599210498948731647672106073, 1)]
 
         ::
 
             sage: x = CC['x'].0
             sage: f = x^3 - 2
-            sage: f.roots()
+            sage: f.roots()                                                             # needs numpy
             [(1.25992104989487, 1),
              (-0.62996052494743... - 1.09112363597172*I, 1),
              (-0.62996052494743... + 1.09112363597172*I, 1)]
-            sage: f.roots(algorithm='pari')                                             # optional - sage.libs.pari
+            sage: f.roots(algorithm='pari')                                             # needs sage.libs.pari
             [(1.25992104989487, 1),
              (-0.629960524947437 - 1.09112363597172*I, 1),
              (-0.629960524947437 + 1.09112363597172*I, 1)]
@@ -7654,9 +7688,9 @@ cdef class Polynomial(CommutativePolynomial):
 
             sage: x = polygen(ZZ)
             sage: f = (2*x - 3) * (x - 1) * (x + 1)
-            sage: f.roots()                                                             # optional - sage.libs.pari
+            sage: f.roots()                                                             # needs sage.libs.pari
             [(1, 1), (-1, 1)]
-            sage: f.roots(ring=QQ)                                                      # optional - sage.libs.pari
+            sage: f.roots(ring=QQ)                                                      # needs sage.libs.pari
             [(3/2, 1), (1, 1), (-1, 1)]
 
         An example where we compute the roots lying in a subring of the
@@ -7664,17 +7698,17 @@ cdef class Polynomial(CommutativePolynomial):
 
             sage: Pols.<n> = QQ[]
             sage: pol = (n - 1/2)^2 * (n - 1)^2 * (n - 2)
-            sage: pol.roots(ZZ)                                                         # optional - sage.libs.pari
+            sage: pol.roots(ZZ)                                                         # needs sage.libs.pari
             [(2, 1), (1, 2)]
 
         An example involving large numbers::
 
             sage: x = RR['x'].0
             sage: f = x^2 - 1e100
-            sage: f.roots()
+            sage: f.roots()                                                             # needs numpy
             [(-1.00000000000000e50, 1), (1.00000000000000e50, 1)]
             sage: f = x^10 - 2 * (5*x - 1)^2
-            sage: f.roots(multiplicities=False)
+            sage: f.roots(multiplicities=False)                                         # needs numpy
             [-1.6772670339941..., 0.19995479628..., 0.20004530611..., 1.5763035161844...]
 
         ::
@@ -7682,7 +7716,7 @@ cdef class Polynomial(CommutativePolynomial):
             sage: x = CC['x'].0
             sage: i = CC.0
             sage: f = (x - 1) * (x - i)
-            sage: f.roots(multiplicities=False)
+            sage: f.roots(multiplicities=False)                                         # needs numpy
             [1.00000000000000, 1.00000000000000*I]
             sage: g = (x - 1.33 + 1.33*i) * (x - 2.66 - 2.66*i)
             sage: g.roots(multiplicities=False)
@@ -7692,15 +7726,15 @@ cdef class Polynomial(CommutativePolynomial):
 
             sage: x = QQ['x'].0
             sage: f = x^2 + 2
-            sage: f.roots(SR)                                                           # optional - sage.symbolic
+            sage: f.roots(SR)                                                           # needs sage.symbolic
             [(-I*sqrt(2), 1), (I*sqrt(2), 1)]
-            sage: f.roots(SR, multiplicities=False)                                     # optional - sage.symbolic
+            sage: f.roots(SR, multiplicities=False)                                     # needs sage.symbolic
             [-I*sqrt(2), I*sqrt(2)]
 
         The roots of some polynomials cannot be described using radical
         expressions::
 
-            sage: (x^5 - x + 1).roots(SR)                                               # optional - sage.symbolic
+            sage: (x^5 - x + 1).roots(SR)                                               # needs sage.symbolic
             []
 
         For some other polynomials, no roots can be found at the moment
@@ -7709,28 +7743,29 @@ cdef class Polynomial(CommutativePolynomial):
         is the following::
 
             sage: f = x^6 - 300*x^5 + 30361*x^4 - 1061610*x^3 + 1141893*x^2 - 915320*x + 101724
-            sage: f.roots()                                                             # optional - sage.libs.pari
+            sage: f.roots()                                                             # needs sage.libs.pari
             []
 
         A purely symbolic roots example::
 
-            sage: X = var('X')                                                          # optional - sage.symbolic
-            sage: f = expand((X - 1) * (X - I)^3 * (X^2 - sqrt(2))); f                  # optional - sage.symbolic
+            sage: X = var('X')                                                          # needs sage.symbolic
+            sage: f = expand((X - 1) * (X - I)^3 * (X^2 - sqrt(2))); f                  # needs sage.symbolic
             X^6 - (3*I + 1)*X^5 - sqrt(2)*X^4 + (3*I - 3)*X^4 + (3*I + 1)*sqrt(2)*X^3
             + (I + 3)*X^3 - (3*I - 3)*sqrt(2)*X^2 - I*X^2 - (I + 3)*sqrt(2)*X + I*sqrt(2)
-            sage: f.roots()                                                             # optional - sage.symbolic
+            sage: f.roots()                                                             # needs sage.symbolic
             [(I, 3), (-2^(1/4), 1), (2^(1/4), 1), (1, 1)]
 
         The same operation, performed over a polynomial ring
         with symbolic coefficients::
 
-            sage: X = SR['X'].0                                                         # optional - sage.symbolic
-            sage: f = (X - 1) * (X - I)^3 * (X^2 - sqrt(2)); f                          # optional - sage.symbolic
+            sage: # needs sage.symbolic
+            sage: X = SR['X'].0
+            sage: f = (X - 1) * (X - I)^3 * (X^2 - sqrt(2)); f
             X^6 + (-3*I - 1)*X^5 + (-sqrt(2) + 3*I - 3)*X^4 + ((3*I + 1)*sqrt(2) + I + 3)*X^3
             + (-(3*I - 3)*sqrt(2) - I)*X^2 + (-(I + 3)*sqrt(2))*X + I*sqrt(2)
-            sage: f.roots()                                                             # optional - sage.symbolic
+            sage: f.roots()
             [(I, 3), (-2^(1/4), 1), (2^(1/4), 1), (1, 1)]
-            sage: f.roots(multiplicities=False)                                         # optional - sage.symbolic
+            sage: f.roots(multiplicities=False)
             [I, -2^(1/4), 2^(1/4), 1]
 
         A couple of examples where the base ring does not have a
@@ -7745,70 +7780,70 @@ cdef class Polynomial(CommutativePolynomial):
             ...
             NotImplementedError: root finding with multiplicities for this polynomial
             not implemented (try the multiplicities=False option)
-            sage: p.roots(multiplicities=False)                                         # optional - sage.rings.finite_rings
+            sage: p.roots(multiplicities=False)                                         # needs sage.rings.finite_rings
             [5, 1]
             sage: R = Integers(9)
             sage: A = PolynomialRing(R, 'y')
             sage: y = A.gen()
             sage: f = 10*y^2 - y^3 - 9
-            sage: f.roots(multiplicities=False)                                         # optional - sage.rings.finite_rings
+            sage: f.roots(multiplicities=False)                                         # needs sage.rings.finite_rings
             [1, 0, 3, 6]
 
         An example over the complex double field (where root finding is
         fast, thanks to NumPy)::
 
-            sage: R.<x> = CDF[]
+            sage: R.<x> = CDF[]                                                         # needs sage.rings.complex_double
             sage: f = R.cyclotomic_polynomial(5); f
             x^4 + x^3 + x^2 + x + 1.0
-            sage: f.roots(multiplicities=False)  # abs tol 1e-9                         # optional - numpy
+            sage: f.roots(multiplicities=False)  # abs tol 1e-9                         # needs numpy
             [-0.8090169943749469 - 0.5877852522924724*I, -0.8090169943749473 + 0.5877852522924724*I,
              0.30901699437494773 - 0.951056516295154*I, 0.30901699437494756 + 0.9510565162951525*I]
-            sage: [z^5 for z in f.roots(multiplicities=False)]  # abs tol 2e-14         # optional - numpy
+            sage: [z^5 for z in f.roots(multiplicities=False)]  # abs tol 2e-14         # needs numpy
             [0.9999999999999957 - 1.2864981197413038e-15*I, 0.9999999999999976 + 3.062854959141552e-15*I,
              1.0000000000000024 + 1.1331077795295987e-15*I, 0.9999999999999953 - 2.0212861992297117e-15*I]
-            sage: f = CDF['x']([1,2,3,4]); f
+            sage: f = CDF['x']([1,2,3,4]); f                                            # needs sage.rings.complex_double
             4.0*x^3 + 3.0*x^2 + 2.0*x + 1.0
-            sage: r = f.roots(multiplicities=False)                                     # optional - numpy
+            sage: r = f.roots(multiplicities=False)                                     # needs numpy
             sage: [f(a).abs() for a in r]  # abs tol 1e-14
             [2.574630599127759e-15, 1.457101633618084e-15, 1.1443916996305594e-15]
 
         Another example over RDF::
 
             sage: x = RDF['x'].0
-            sage: ((x^3 - 1)).roots()  # abs tol 4e-16                                  # optional - numpy
+            sage: ((x^3 - 1)).roots()  # abs tol 4e-16                                  # needs numpy
             [(1.0000000000000002, 1)]
-            sage: ((x^3 - 1)).roots(multiplicities=False)  # abs tol 4e-16              # optional - numpy
+            sage: ((x^3 - 1)).roots(multiplicities=False)  # abs tol 4e-16              # needs numpy
             [1.0000000000000002]
 
         More examples involving the complex double field::
 
-            sage: x = CDF['x'].0
-            sage: i = CDF.0
+            sage: x = CDF['x'].0                                                        # needs sage.rings.complex_double
+            sage: i = CDF.0                                                             # needs sage.rings.complex_double
             sage: f = x^3 + 2*i; f
             x^3 + 2.0*I
-            sage: f.roots()                                                             # optional - numpy
+            sage: f.roots()                                                             # needs numpy
             [(-1.09112363597172... - 0.62996052494743...*I, 1),
              (...1.25992104989487...*I, 1),
              (1.09112363597172... - 0.62996052494743...*I, 1)]
-            sage: f.roots(multiplicities=False)                                         # optional - numpy
+            sage: f.roots(multiplicities=False)                                         # needs numpy
             [-1.09112363597172... - 0.62996052494743...*I, ...1.25992104989487...*I,
               1.09112363597172... - 0.62996052494743...*I]
-            sage: [abs(f(z)) for z in f.roots(multiplicities=False)]  # abs tol 1e-14   # optional - numpy
+            sage: [abs(f(z)) for z in f.roots(multiplicities=False)]  # abs tol 1e-14   # needs numpy
             [8.95090418262362e-16, 8.728374398092689e-16, 1.0235750533041806e-15]
             sage: f = i*x^3 + 2; f
             I*x^3 + 2.0
-            sage: f.roots()                                                             # optional - numpy
+            sage: f.roots()                                                             # needs numpy
             [(-1.09112363597172... + 0.62996052494743...*I, 1),
              (...1.25992104989487...*I, 1),
              (1.09112363597172... + 0.62996052494743...*I, 1)]
-            sage: abs(f(f.roots()[0][0]))  # abs tol 1e-13                              # optional - numpy
+            sage: abs(f(f.roots()[0][0]))  # abs tol 1e-13                              # needs numpy
             1.1102230246251565e-16
 
         Examples using real root isolation::
 
             sage: x = polygen(ZZ)
             sage: f = x^2 - x - 1
-            sage: f.roots()                                                             # optional - sage.libs.pari
+            sage: f.roots()                                                             # needs sage.libs.pari
             []
             sage: f.roots(ring=RIF)
             [(-0.6180339887498948482045868343657?, 1), (1.6180339887498948482045868343657?, 1)]
@@ -7817,7 +7852,7 @@ cdef class Polynomial(CommutativePolynomial):
             sage: f.roots(ring=RealIntervalField(150))
             [(-0.6180339887498948482045868343656381177203091798057628621354486227?, 1),
              (1.618033988749894848204586834365638117720309179805762862135448623?, 1)]
-            sage: f.roots(ring=AA)                                                      # optional - sage.rings.number_field
+            sage: f.roots(ring=AA)                                                      # needs sage.rings.number_field
             [(-0.618033988749895?, 1), (1.618033988749895?, 1)]
             sage: f = f^2 * (x - 1)
             sage: f.roots(ring=RIF)
@@ -7833,7 +7868,7 @@ cdef class Polynomial(CommutativePolynomial):
 
             sage: x = polygen(ZZ)
             sage: p = x^5 - x - 1
-            sage: p.roots()                                                             # optional - sage.libs.pari
+            sage: p.roots()                                                             # needs sage.libs.pari
             []
             sage: p.roots(ring=CIF)
             [(1.167303978261419?, 1),
@@ -7842,27 +7877,38 @@ cdef class Polynomial(CommutativePolynomial):
              (0.181232444469876? - 1.083954101317711?*I, 1),
              (0.181232444469876? + 1.083954101317711?*I, 1)]
             sage: p.roots(ring=ComplexIntervalField(200))
-            [(1.167303978261418684256045899854842180720560371525489039140082?, 1), (-0.76488443360058472602982318770854173032899665194736756700778? - 0.35247154603172624931794709140258105439420648082424733283770?*I, 1), (-0.76488443360058472602982318770854173032899665194736756700778? + 0.35247154603172624931794709140258105439420648082424733283770?*I, 1), (0.18123244446987538390180023778112063996871646618462304743774? - 1.08395410131771066843034449298076657427364024315511565430114?*I, 1), (0.18123244446987538390180023778112063996871646618462304743774? + 1.08395410131771066843034449298076657427364024315511565430114?*I, 1)]
-            sage: rts = p.roots(ring=QQbar); rts                                        # optional - sage.rings.number_field
-            [(1.167303978261419?, 1), (-0.7648844336005847? - 0.3524715460317263?*I, 1), (-0.7648844336005847? + 0.3524715460317263?*I, 1), (0.1812324444698754? - 1.083954101317711?*I, 1), (0.1812324444698754? + 1.083954101317711?*I, 1)]
-            sage: p.roots(ring=AA)                                                      # optional - sage.rings.number_field
+            [(1.167303978261418684256045899854842180720560371525489039140082?, 1),
+             (-0.76488443360058472602982318770854173032899665194736756700778? - 0.35247154603172624931794709140258105439420648082424733283770?*I, 1),
+             (-0.76488443360058472602982318770854173032899665194736756700778? + 0.35247154603172624931794709140258105439420648082424733283770?*I, 1),
+             (0.18123244446987538390180023778112063996871646618462304743774? - 1.08395410131771066843034449298076657427364024315511565430114?*I, 1),
+             (0.18123244446987538390180023778112063996871646618462304743774? + 1.08395410131771066843034449298076657427364024315511565430114?*I, 1)]
+            sage: rts = p.roots(ring=QQbar); rts                                        # needs sage.rings.number_field
+            [(1.167303978261419?, 1),
+             (-0.7648844336005847? - 0.3524715460317263?*I, 1),
+             (-0.7648844336005847? + 0.3524715460317263?*I, 1),
+             (0.1812324444698754? - 1.083954101317711?*I, 1),
+             (0.1812324444698754? + 1.083954101317711?*I, 1)]
+            sage: p.roots(ring=AA)                                                      # needs sage.rings.number_field
             [(1.167303978261419?, 1)]
-            sage: p = (x - rts[4][0])^2 * (3*x^2 + x + 1)
-            sage: p.roots(ring=QQbar)                                                   # optional - sage.rings.number_field
-            [(-0.1666666666666667? - 0.552770798392567?*I, 1), (-0.1666666666666667? + 0.552770798392567?*I, 1), (0.1812324444698754? + 1.083954101317711?*I, 2)]
+            sage: p = (x - rts[4][0])^2 * (3*x^2 + x + 1)                               # needs sage.rings.number_field
+            sage: p.roots(ring=QQbar)                                                   # needs sage.rings.number_field
+            [(-0.1666666666666667? - 0.552770798392567?*I, 1),
+             (-0.1666666666666667? + 0.552770798392567?*I, 1),
+             (0.1812324444698754? + 1.083954101317711?*I, 2)]
             sage: p.roots(ring=CIF)
             [(-0.1666666666666667? - 0.552770798392567?*I, 1), (-0.1666666666666667? + 0.552770798392567?*I, 1), (0.1812324444698754? + 1.083954101317711?*I, 2)]
 
         In some cases, it is possible to isolate the roots of polynomials over
         complex ball fields::
 
-            sage: Pol.<x> = CBF[]                                                       # optional - sage.libs.flint
-            sage: (x^2 + 2).roots(multiplicities=False)                                 # optional - sage.libs.flint
+            sage: # needs sage.libs.flint
+            sage: Pol.<x> = CBF[]
+            sage: (x^2 + 2).roots(multiplicities=False)
             [[+/- ...e-19] + [-1.414213562373095 +/- ...e-17]*I,
             [+/- ...e-19] + [1.414213562373095 +/- ...e-17]*I]
-            sage: (x^3 - 1/2).roots(RBF, multiplicities=False)                          # optional - sage.libs.flint
+            sage: (x^3 - 1/2).roots(RBF, multiplicities=False)
             [[0.7937005259840997 +/- ...e-17]]
-            sage: ((x - 1)^2).roots(multiplicities=False, proof=False)                  # optional - sage.libs.flint
+            sage: ((x - 1)^2).roots(multiplicities=False, proof=False)
             doctest:...
             UserWarning: roots may have been lost...
             [[1.00000000000 +/- ...e-12] + [+/- ...e-11]*I,
@@ -7874,16 +7920,17 @@ cdef class Polynomial(CommutativePolynomial):
 
         ::
 
-            sage: K.<im> = QuadraticField(-1)                                           # optional - sage.rings.number_field
-            sage: y = polygen(K)                                                        # optional - sage.rings.number_field
-            sage: p = y^4 - 2 - im                                                      # optional - sage.rings.number_field
-            sage: p.roots(ring=CC)                                                      # optional - sage.rings.number_field
+            sage: # needs sage.rings.number_field
+            sage: K.<im> = QuadraticField(-1)
+            sage: y = polygen(K)
+            sage: p = y^4 - 2 - im
+            sage: p.roots(ring=CC)
             [(-1.2146389322441... - 0.14142505258239...*I, 1),
              (-0.14142505258239... + 1.2146389322441...*I, 1),
              (0.14142505258239... - 1.2146389322441...*I, 1),
              (1.2146389322441... + 0.14142505258239...*I, 1)]
-            sage: p = p^2 * (y^2 - 2)                                                   # optional - sage.rings.number_field
-            sage: p.roots(ring=CIF)                                                     # optional - sage.rings.number_field
+            sage: p = p^2 * (y^2 - 2)
+            sage: p.roots(ring=CIF)
             [(-1.414213562373095?, 1), (1.414213562373095?, 1),
              (-1.214638932244183? - 0.141425052582394?*I, 2),
              (-0.141425052582394? + 1.214638932244183?*I, 2),
@@ -7893,21 +7940,21 @@ cdef class Polynomial(CommutativePolynomial):
         Note that one should not use NumPy when wanting high precision
         output as it does not support any of the high precision types::
 
-            sage: R.<x> = RealField(200)[]
-            sage: f = x^2 - R(pi)                                                       # optional - sage.symbolic
-            sage: f.roots()                                                             # optional - sage.symbolic
+            sage: R.<x> = RealField(200)[]                                              # needs sage.rings.real_mpfr
+            sage: f = x^2 - R(pi)                                                       # needs sage.symbolic
+            sage: f.roots()                                                             # needs sage.symbolic
             [(-1.7724538509055160272981674833411451827975494561223871282138, 1),
              (1.7724538509055160272981674833411451827975494561223871282138, 1)]
-            sage: f.roots(algorithm='numpy')                                            # optional - numpy sage.symbolic
+            sage: f.roots(algorithm='numpy')                                            # needs numpy sage.symbolic
             doctest... UserWarning: NumPy does not support arbitrary precision arithmetic.
             The roots found will likely have less precision than you expect.
             [(-1.77245385090551..., 1), (1.77245385090551..., 1)]
 
         We can also find roots over number fields::
 
-            sage: K.<z> = CyclotomicField(15)                                           # optional - sage.rings.number_field
-            sage: R.<x> = PolynomialRing(K)                                             # optional - sage.rings.number_field
-            sage: (x^2 + x + 1).roots()                                                 # optional - sage.rings.number_field
+            sage: K.<z> = CyclotomicField(15)                                           # needs sage.rings.number_field
+            sage: R.<x> = PolynomialRing(K)                                             # needs sage.rings.number_field
+            sage: (x^2 + x + 1).roots()                                                 # needs sage.rings.number_field
             [(z^5, 1), (-z^5 - 1, 1)]
 
         There are many combinations of floating-point input and output
@@ -7916,7 +7963,7 @@ cdef class Polynomial(CommutativePolynomial):
 
         ::
 
-            sage: rflds = (RR, RDF, RealField(100))
+            sage: rflds = (RR, RDF, RealField(100))                                     # needs sage.rings.real_mpfr
             sage: cflds = (CC, CDF, ComplexField(100))
             sage: def cross(a, b):
             ....:     return list(cartesian_product_iterator([a, b]))
@@ -7943,16 +7990,17 @@ cdef class Polynomial(CommutativePolynomial):
         Note that we can find the roots of a polynomial with algebraic
         coefficients::
 
-            sage: rt2 = sqrt(AA(2))                                                     # optional - sage.rings.number_field
-            sage: rt3 = sqrt(AA(3))                                                     # optional - sage.rings.number_field
-            sage: x = polygen(AA)                                                       # optional - sage.rings.number_field
-            sage: f = (x - rt2) * (x - rt3); f                                          # optional - sage.rings.number_field
+            sage: # needs sage.rings.number_field
+            sage: rt2 = sqrt(AA(2))
+            sage: rt3 = sqrt(AA(3))
+            sage: x = polygen(AA)
+            sage: f = (x - rt2) * (x - rt3); f
             x^2 - 3.146264369941973?*x + 2.449489742783178?
-            sage: rts = f.roots(); rts                                                  # optional - sage.rings.number_field
+            sage: rts = f.roots(); rts
             [(1.414213562373095?, 1), (1.732050807568878?, 1)]
-            sage: rts[0][0] == rt2                                                      # optional - sage.rings.number_field
+            sage: rts[0][0] == rt2
             True
-            sage: f.roots(ring=RealIntervalField(150))                                  # optional - sage.rings.number_field
+            sage: f.roots(ring=RealIntervalField(150))
             [(1.414213562373095048801688724209698078569671875376948073176679738?, 1),
              (1.732050807568877293527446341505872366942805253810380628055806980?, 1)]
 
@@ -7962,7 +8010,7 @@ cdef class Polynomial(CommutativePolynomial):
         ``RR`` and ``CC`` allow a much larger range of floating-point numbers::
 
             sage: bigc = 2^1500
-            sage: CDF(bigc)
+            sage: CDF(bigc)                                                             # needs sage.rings.complex_double
             +infinity
             sage: CC(bigc)
             3.50746621104340e451
@@ -7972,37 +8020,37 @@ cdef class Polynomial(CommutativePolynomial):
 
             sage: x = polygen(QQ)
             sage: p = x + bigc
-            sage: p.roots(ring=RR, algorithm='numpy')                                   # optional - numpy
+            sage: p.roots(ring=RR, algorithm='numpy')                                   # needs numpy
             Traceback (most recent call last):
             ...
             LinAlgError: Array must not contain infs or NaNs
-            sage: p.roots(ring=RR, algorithm='pari')                                    # optional - sage.libs.pari
+            sage: p.roots(ring=RR, algorithm='pari')                                    # needs sage.libs.pari
             [(-3.50746621104340e451, 1)]
-            sage: p.roots(ring=AA)                                                      # optional - sage.rings.number_field
+            sage: p.roots(ring=AA)                                                      # needs sage.rings.number_field
             [(-3.5074662110434039?e451, 1)]
-            sage: p.roots(ring=QQbar)                                                   # optional - sage.rings.number_field
+            sage: p.roots(ring=QQbar)                                                   # needs sage.rings.number_field
             [(-3.5074662110434039?e451, 1)]
             sage: p = bigc*x + 1
-            sage: p.roots(ring=RR)
+            sage: p.roots(ring=RR)                                                      # needs numpy
             [(-2.85106096489671e-452, 1)]
-            sage: p.roots(ring=AA)                                                      # optional - sage.rings.number_field
+            sage: p.roots(ring=AA)                                                      # needs sage.rings.number_field
             [(-2.8510609648967059?e-452, 1)]
-            sage: p.roots(ring=QQbar)                                                   # optional - sage.rings.number_field
+            sage: p.roots(ring=QQbar)                                                   # needs sage.rings.number_field
             [(-2.8510609648967059?e-452, 1)]
             sage: p = x^2 - bigc
-            sage: p.roots(ring=RR)
+            sage: p.roots(ring=RR)                                                      # needs numpy
             [(-5.92238652153286e225, 1), (5.92238652153286e225, 1)]
-            sage: p.roots(ring=QQbar)                                                   # optional - sage.rings.number_field
+            sage: p.roots(ring=QQbar)                                                   # needs sage.rings.number_field
             [(-5.9223865215328558?e225, 1), (5.9223865215328558?e225, 1)]
 
         Check that :trac:`30522` is fixed::
 
-            sage: PolynomialRing(SR, names="x")("x^2").roots()                          # optional - sage.symbolic
+            sage: PolynomialRing(SR, names="x")("x^2").roots()                          # needs sage.symbolic
             [(0, 2)]
 
         Check that :trac:`30523` is fixed::
 
-            sage: PolynomialRing(SR, names="x")("x^2 + q").roots()                      # optional - sage.symbolic
+            sage: PolynomialRing(SR, names="x")("x^2 + q").roots()                      # needs sage.symbolic
             [(-sqrt(-q), 1), (sqrt(-q), 1)]
 
         ALGORITHM:
@@ -8094,40 +8142,41 @@ cdef class Polynomial(CommutativePolynomial):
 
         TESTS::
 
-            sage: K.<zeta> = CyclotomicField(2)                                         # optional - sage.rings.number_field
-            sage: R.<x> = K[]                                                           # optional - sage.rings.number_field
-            sage: factor(x^3 - 1)                                                       # optional - sage.rings.number_field
+            sage: K.<zeta> = CyclotomicField(2)                                         # needs sage.rings.number_field
+            sage: R.<x> = K[]                                                           # needs sage.rings.number_field
+            sage: factor(x^3 - 1)                                                       # needs sage.rings.number_field
             (x - 1) * (x^2 + x + 1)
 
         This shows that the issue from :trac:`6237` is fixed::
 
             sage: R.<u> = QQ[]
             sage: g = -27*u^14 - 32*u^9
-            sage: g.roots(CDF, multiplicities=False)  # abs tol 2e-15                   # optional - numpy
+            sage: g.roots(CDF, multiplicities=False)  # abs tol 2e-15                   # needs numpy
             [-1.0345637159435719, 0.0, -0.3196977699902601 - 0.9839285635706636*I, -0.3196977699902601 + 0.9839285635706636*I,
              0.8369796279620465 - 0.6081012947885318*I, 0.8369796279620465 + 0.6081012947885318*I]
-            sage: g.roots(CDF)  # abs tol 2e-15                                         # optional - numpy
+            sage: g.roots(CDF)  # abs tol 2e-15                                         # needs numpy
             [(-1.0345637159435719, 1), (0.0, 9), (-0.3196977699902601 - 0.9839285635706636*I, 1), (-0.3196977699902601 + 0.9839285635706636*I, 1),
              (0.8369796279620465 - 0.6081012947885318*I, 1), (0.8369796279620465 + 0.6081012947885318*I, 1)]
 
         This shows that the issue at :trac:`2418` is fixed::
 
             sage: x = polygen(QQ)
-            sage: p = (x^50/2^100 + x^10 + x + 1).change_ring(ComplexField(106))
-            sage: rts = (p/2^100).roots(multiplicities=False)
+            sage: p = (x^50/2^100 + x^10 + x + 1).change_ring(ComplexField(106))        # needs sage.rings.real_mpfr
+            sage: rts = (p/2^100).roots(multiplicities=False)                           # needs sage.libs.pari
             sage: eps = 2^(-50)   # we test the roots numerically
             sage: [abs(p(rt)) < eps for rt in rts] == [True]*50
             True
 
         This shows that the issue at :trac:`10901` is fixed::
 
-            sage: a = var('a'); R.<x> = SR[]                                            # optional - sage.symbolic
-            sage: f = x - a                                                             # optional - sage.symbolic
-            sage: f.roots(RR)                                                           # optional - sage.symbolic
+            sage: # needs sage.symbolic
+            sage: a = var('a'); R.<x> = SR[]
+            sage: f = x - a
+            sage: f.roots(RR)
             Traceback (most recent call last):
             ...
             TypeError: cannot evaluate symbolic expression to a numeric value
-            sage: f.roots(CC)                                                           # optional - sage.symbolic
+            sage: f.roots(CC)
             Traceback (most recent call last):
             ...
             TypeError: cannot evaluate symbolic expression to a numeric value
@@ -8137,19 +8186,19 @@ cdef class Polynomial(CommutativePolynomial):
 
             sage: R.<x> = ZZ[]
             sage: pol = (x - 1)^2
-            sage: pol.roots(Qp(3, 5))                                                   # optional - sage.rings.padics
+            sage: pol.roots(Qp(3, 5))                                                   # needs sage.rings.padics
             [(1 + O(3^5), 2)]
 
         We lose precision if we first change coefficients to `\QQ_p`::
 
-            sage: pol.change_ring(Qp(3, 5)).roots()                                     # optional - sage.rings.padics
+            sage: pol.change_ring(Qp(3, 5)).roots()                                     # needs sage.rings.padics
             [(1 + O(3^3), 2)]
 
-            sage: (pol - 3^6).roots(Qp(3, 5))                                           # optional - sage.rings.padics
+            sage: (pol - 3^6).roots(Qp(3, 5))                                           # needs sage.rings.padics
             [(1 + 2*3^3 + 2*3^4 + O(3^5), 1), (1 + 3^3 + O(3^5), 1)]
-            sage: r = pol.roots(Zp(3, 5), multiplicities=False); r                      # optional - sage.rings.padics
+            sage: r = pol.roots(Zp(3, 5), multiplicities=False); r                      # needs sage.rings.padics
             [1 + O(3^5)]
-            sage: parent(r[0])                                                          # optional - sage.rings.padics
+            sage: parent(r[0])                                                          # needs sage.rings.padics
             3-adic Ring with capped relative precision 5
 
         Spurious crash with pari-2.5.5, see :trac:`16165`::
@@ -8171,14 +8220,14 @@ cdef class Polynomial(CommutativePolynomial):
 
         Test that some large finite rings can be handled (:trac:`13825`)::
 
-            sage: R.<x> = IntegerModRing(20000009)[]                                    # optional - sage.libs.pari
+            sage: R.<x> = IntegerModRing(20000009)[]                                    # needs sage.libs.pari
             sage: eq = x^6+x-17
-            sage: eq.roots(multiplicities=False)                                        # optional - sage.libs.pari
+            sage: eq.roots(multiplicities=False)                                        # needs sage.libs.pari
             [3109038, 17207405]
 
         Test that roots in fixed modulus p-adic fields work (:trac:`17598`)::
 
-            sage: len(cyclotomic_polynomial(3).roots(ZpFM(739, 566)))                   # optional - sage.rings.padics
+            sage: len(cyclotomic_polynomial(3).roots(ZpFM(739, 566)))                   # needs sage.rings.padics
             2
 
         Check that :trac:`26421` is fixed::
@@ -8192,15 +8241,15 @@ cdef class Polynomial(CommutativePolynomial):
         Check that :trac:`31040` is fixed::
 
             sage: R.<x> = QQ[]
-            sage: K.<a> = Qq(3).extension(x^2 + 1)                                      # optional - sage.rings.padics
-            sage: (x^2 + 1).roots(K)                                                    # optional - sage.rings.padics
+            sage: K.<a> = Qq(3).extension(x^2 + 1)                                      # needs sage.rings.padics
+            sage: (x^2 + 1).roots(K)                                                    # needs sage.rings.padics
             [(a + O(3^20), 1),
              (2*a + 2*a*3 + 2*a*3^2 + 2*a*3^3 + 2*a*3^4 + 2*a*3^5 + 2*a*3^6 + 2*a*3^7 + 2*a*3^8 + 2*a*3^9 + 2*a*3^10 + 2*a*3^11 + 2*a*3^12 + 2*a*3^13 + 2*a*3^14 + 2*a*3^15 + 2*a*3^16 + 2*a*3^17 + 2*a*3^18 + 2*a*3^19 + O(3^20),
               1)]
 
         Check that :trac:`31710` is fixed::
 
-            sage: CBF['x'].zero().roots(multiplicities=False)                           # optional - sage.libs.flint
+            sage: CBF['x'].zero().roots(multiplicities=False)                           # needs sage.libs.flint
             Traceback (most recent call last):
             ...
             ArithmeticError: taking the roots of the zero polynomial
@@ -8209,11 +8258,11 @@ cdef class Polynomial(CommutativePolynomial):
 
             sage: n = randint(2, 10^6)
             sage: K = Integers(n)
-            sage: R.<x> = PolynomialRing(K)
+            sage: R.<x> = PolynomialRing(K)                                             # needs sage.libs.pari
             sage: a = randint(0, n - 1)
             sage: b = randint(0, n - 1)
             sage: f = (x - a) * (x - b)
-            sage: all(r.parent() is K for r in f.roots(multiplicities=False))           # optional - sage.rings.finite_rings
+            sage: all(r.parent() is K for r in f.roots(multiplicities=False))           # needs sage.rings.finite_rings
             True
         """
         from sage.rings.finite_rings.finite_field_constructor import GF
@@ -8483,11 +8532,11 @@ cdef class Polynomial(CommutativePolynomial):
 
             sage: R.<x> = ZZ[]
             sage: pol = 20*x^3 - 50*x^2 + 20*x
-            sage: F = pol.factor(); F                                                   # optional - sage.libs.pari
+            sage: F = pol.factor(); F                                                   # needs sage.libs.pari
             2 * 5 * (x - 2) * x * (2*x - 1)
-            sage: pol._roots_from_factorization(F, multiplicities=True)                 # optional - sage.libs.pari
+            sage: pol._roots_from_factorization(F, multiplicities=True)                 # needs sage.libs.pari
             [(2, 1), (0, 1)]
-            sage: pol.change_ring(QQ)._roots_from_factorization(F, multiplicities=False)            # optional - sage.libs.pari
+            sage: pol.change_ring(QQ)._roots_from_factorization(F, multiplicities=False)            # needs sage.libs.pari
             [2, 0, 1/2]
         """
         seq = []
@@ -8517,14 +8566,14 @@ cdef class Polynomial(CommutativePolynomial):
 
             sage: Pols.<n> = QQ[]
             sage: pol = (n - 1/2)^2 * (n - 1)^2 * (n - 2)
-            sage: rts = pol.roots(ZZ, multiplicities=False); rts                        # optional - sage.libs.pari
+            sage: rts = pol.roots(ZZ, multiplicities=False); rts                        # needs sage.libs.pari
             [2, 1]
-            sage: rts[0].parent()                                                       # optional - sage.libs.pari
+            sage: rts[0].parent()                                                       # needs sage.libs.pari
             Integer Ring
 
             sage: Pols_x.<x> = QQ[]
             sage: Pols_xy.<y> = Pols_x[]
-            sage: ((y - 1)*(y - x))._roots_in_subring(QQ, True, None)                   # optional - sage.libs.singular
+            sage: ((y - 1)*(y - x))._roots_in_subring(QQ, True, None)                   # needs sage.libs.singular
             [(1, 1)]
         """
         K = self._parent.base_ring()
@@ -8557,20 +8606,20 @@ cdef class Polynomial(CommutativePolynomial):
         EXAMPLES::
 
             sage: x = polygen(ZZ)
-            sage: (x^2 - x - 1).real_roots()                                            # optional - sage.rings.real_mpfr
+            sage: (x^2 - x - 1).real_roots()                                            # needs sage.rings.real_mpfr
             [-0.618033988749895, 1.61803398874989]
 
         TESTS::
 
-            sage: x = polygen(RealField(100))                                           # optional - sage.rings.real_mpfr
-            sage: (x^2 - x - 1).real_roots()[0].parent()                                # optional - sage.rings.real_mpfr
+            sage: x = polygen(RealField(100))                                           # needs sage.rings.real_mpfr
+            sage: (x^2 - x - 1).real_roots()[0].parent()                                # needs sage.rings.real_mpfr
                 Real Field with 100 bits of precision
             sage: x = polygen(RDF)
-            sage: (x^2 - x - 1).real_roots()[0].parent()                                # optional - numpy
+            sage: (x^2 - x - 1).real_roots()[0].parent()                                # needs numpy
             Real Double Field
 
-            sage: x = polygen(ZZ,'x'); v = (x^2 - x - 1).real_roots()                   # optional - sage.rings.real_mpfr
-            sage: v[0].parent() is RR                                                   # optional - sage.rings.real_mpfr
+            sage: x = polygen(ZZ,'x'); v = (x^2 - x - 1).real_roots()                   # needs sage.rings.real_mpfr
+            sage: v[0].parent() is RR                                                   # needs sage.rings.real_mpfr
             True
         """
         K = self.base_ring()
@@ -8599,19 +8648,19 @@ cdef class Polynomial(CommutativePolynomial):
         TESTS::
 
             sage: x = polygen(RR)
-            sage: (x^3 - 1).complex_roots()[0].parent()
+            sage: (x^3 - 1).complex_roots()[0].parent()                                 # needs sage.rings.complex_double
             Complex Field with 53 bits of precision
             sage: x = polygen(RDF)
-            sage: (x^3 - 1).complex_roots()[0].parent()                                 # optional - numpy
+            sage: (x^3 - 1).complex_roots()[0].parent()                                 # needs numpy
             Complex Double Field
-            sage: x = polygen(RealField(200))
-            sage: (x^3 - 1).complex_roots()[0].parent()
+            sage: x = polygen(RealField(200))                                           # needs sage.rings.real_mpfr
+            sage: (x^3 - 1).complex_roots()[0].parent()                                 # needs sage.rings.complex_double
             Complex Field with 200 bits of precision
-            sage: x = polygen(CDF)
-            sage: (x^3 - 1).complex_roots()[0].parent()                                 # optional - numpy
+            sage: x = polygen(CDF)                                                      # needs sage.rings.complex_double
+            sage: (x^3 - 1).complex_roots()[0].parent()                                 # needs numpy
             Complex Double Field
-            sage: x = polygen(ComplexField(200))
-            sage: (x^3 - 1).complex_roots()[0].parent()
+            sage: x = polygen(ComplexField(200))                                        # needs sage.rings.real_mpfr
+            sage: (x^3 - 1).complex_roots()[0].parent()                                 # needs sage.rings.complex_double
             Complex Field with 200 bits of precision
             sage: x=polygen(ZZ,'x'); v=(x^2-x-1).complex_roots()
             sage: v[0].parent() is CC
@@ -8647,35 +8696,35 @@ cdef class Polynomial(CommutativePolynomial):
 
             sage: R.<x> = PolynomialRing(ZZ)
             sage: pol = (x - 1)^2 * (x - 2)^2 * (x - 3)
-            sage: pol.number_of_roots_in_interval(1, 2)                                 # optional - sage.libs.pari
+            sage: pol.number_of_roots_in_interval(1, 2)                                 # needs sage.libs.pari
             2
-            sage: pol.number_of_roots_in_interval(1.01, 2)                              # optional - sage.libs.pari
+            sage: pol.number_of_roots_in_interval(1.01, 2)                              # needs sage.libs.pari
             1
-            sage: pol.number_of_roots_in_interval(None, 2)                              # optional - sage.libs.pari
+            sage: pol.number_of_roots_in_interval(None, 2)                              # needs sage.libs.pari
             2
-            sage: pol.number_of_roots_in_interval(1, Infinity)                          # optional - sage.libs.pari
+            sage: pol.number_of_roots_in_interval(1, Infinity)                          # needs sage.libs.pari
             3
-            sage: pol.number_of_roots_in_interval()                                     # optional - sage.libs.pari
+            sage: pol.number_of_roots_in_interval()                                     # needs sage.libs.pari
             3
             sage: pol = (x - 1) * (x - 2) * (x - 3)
-            sage: pol2 = pol.change_ring(CC)                                            # optional - sage.rings.real_mpfr
-            sage: pol2.number_of_roots_in_interval()                                    # optional - sage.libs.pari sage.rings.real_mpfr
+            sage: pol2 = pol.change_ring(CC)                                            # needs sage.rings.real_mpfr
+            sage: pol2.number_of_roots_in_interval()                                    # needs sage.libs.pari sage.rings.real_mpfr
             3
-            sage: R.<x> = PolynomialRing(CC)                                            # optional - sage.rings.real_mpfr
-            sage: pol = (x - 1) * (x - CC(I))                                           # optional - sage.rings.real_mpfr
-            sage: pol.number_of_roots_in_interval(0, 2)                                 # optional - sage.libs.pari sage.rings.real_mpfr
+            sage: R.<x> = PolynomialRing(CC)                                            # needs sage.rings.real_mpfr
+            sage: pol = (x - 1) * (x - CC(I))                                           # needs sage.rings.real_mpfr
+            sage: pol.number_of_roots_in_interval(0, 2)                                 # needs sage.libs.pari sage.rings.real_mpfr
             1
 
         TESTS::
 
             sage: R.<x> = PolynomialRing(ZZ)
             sage: pol = (x - 1)^2 * (x - 2)^2 * (x - 3)
-            sage: pol.number_of_roots_in_interval(1, 2)                                 # optional - sage.libs.pari
+            sage: pol.number_of_roots_in_interval(1, 2)                                 # needs sage.libs.pari
             2
             sage: pol = chebyshev_T(5,x)
-            sage: pol.number_of_roots_in_interval(-1, 2)                                # optional - sage.libs.pari
+            sage: pol.number_of_roots_in_interval(-1, 2)                                # needs sage.libs.pari
             5
-            sage: pol.number_of_roots_in_interval(0, 2)                                 # optional - sage.libs.pari
+            sage: pol.number_of_roots_in_interval(0, 2)                                 # needs sage.libs.pari
             3
 
         """
@@ -8705,15 +8754,15 @@ cdef class Polynomial(CommutativePolynomial):
 
             sage: R.<x> = PolynomialRing(ZZ)
             sage: pol = (x - 1)^2 * (x - 2)^2 * (x - 3)
-            sage: pol.number_of_real_roots()                                            # optional - sage.libs.pari
+            sage: pol.number_of_real_roots()                                            # needs sage.libs.pari
             3
             sage: pol = (x - 1) * (x - 2) * (x - 3)
-            sage: pol2 = pol.change_ring(CC)                                            # optional - sage.rings.real_mpfr
-            sage: pol2.number_of_real_roots()                                           # optional - sage.libs.pari sage.rings.real_mpfr
+            sage: pol2 = pol.change_ring(CC)                                            # needs sage.rings.real_mpfr
+            sage: pol2.number_of_real_roots()                                           # needs sage.libs.pari sage.rings.real_mpfr
             3
-            sage: R.<x> = PolynomialRing(CC)                                            # optional - sage.rings.real_mpfr
-            sage: pol = (x - 1) * (x - CC(I))                                           # optional - sage.rings.real_mpfr
-            sage: pol.number_of_real_roots()                                            # optional - sage.libs.pari sage.rings.real_mpfr
+            sage: R.<x> = PolynomialRing(CC)                                            # needs sage.rings.real_mpfr
+            sage: pol = (x - 1) * (x - CC(I))                                           # needs sage.rings.real_mpfr
+            sage: pol.number_of_real_roots()                                            # needs sage.libs.pari sage.rings.real_mpfr
             1
         """
         return self.number_of_roots_in_interval()
@@ -8727,17 +8776,17 @@ cdef class Polynomial(CommutativePolynomial):
 
             sage: R.<x> = PolynomialRing(ZZ)
             sage: pol = (x - 1)^2 * (x - 2)^2 * (x - 3)
-            sage: pol.all_roots_in_interval(1, 3)                                       # optional - sage.libs.pari
+            sage: pol.all_roots_in_interval(1, 3)                                       # needs sage.libs.pari
             True
-            sage: pol.all_roots_in_interval(1.01, 3)                                    # optional - sage.libs.pari
+            sage: pol.all_roots_in_interval(1.01, 3)                                    # needs sage.libs.pari
             False
             sage: pol = chebyshev_T(5, x)
-            sage: pol.all_roots_in_interval(-1, 1)                                      # optional - sage.libs.pari
+            sage: pol.all_roots_in_interval(-1, 1)                                      # needs sage.libs.pari
             True
             sage: pol = chebyshev_T(5, x/2)
-            sage: pol.all_roots_in_interval(-1, 1)                                      # optional - sage.libs.pari
+            sage: pol.all_roots_in_interval(-1, 1)                                      # needs sage.libs.pari
             False
-            sage: pol.all_roots_in_interval()                                           # optional - sage.libs.pari
+            sage: pol.all_roots_in_interval()                                           # needs sage.libs.pari
             True
         """
         pol = self // self.gcd(self.derivative())
@@ -8751,10 +8800,10 @@ cdef class Polynomial(CommutativePolynomial):
 
             sage: R.<x> = PolynomialRing(ZZ)
             sage: pol = chebyshev_T(5, x)
-            sage: pol.is_real_rooted()                                                  # optional - sage.libs.pari
+            sage: pol.is_real_rooted()                                                  # needs sage.libs.pari
             True
             sage: pol = x^2 + 1
-            sage: pol.is_real_rooted()                                                  # optional - sage.libs.pari
+            sage: pol.is_real_rooted()                                                  # needs sage.libs.pari
             False
         """
         return self.all_roots_in_interval()
@@ -8835,22 +8884,23 @@ cdef class Polynomial(CommutativePolynomial):
         We check that this function works for rings
         that have a coercion to the reals::
 
-            sage: K.<a> = NumberField(x^2 - 2, embedding=1.4)                           # optional - sage.rings.number_field
-            sage: u = x^4 + a*x^3 + 3*x^2 + 2*a*x + 4                                   # optional - sage.rings.number_field
-            sage: u.trace_polynomial()                                                  # optional - sage.rings.number_field
+            sage: # needs sage.rings.number_field
+            sage: K.<a> = NumberField(x^2 - 2, embedding=1.4)
+            sage: u = x^4 + a*x^3 + 3*x^2 + 2*a*x + 4
+            sage: u.trace_polynomial()
             (x^2 + a*x - 1, 1, 2)
-            sage: (u*(x^2-2)).trace_polynomial()                                        # optional - sage.rings.number_field
+            sage: (u*(x^2-2)).trace_polynomial()
             (x^2 + a*x - 1, x^2 - 2, 2)
-            sage: (u*(x^2-2)^2).trace_polynomial()                                      # optional - sage.rings.number_field
+            sage: (u*(x^2-2)^2).trace_polynomial()
             (x^4 + a*x^3 - 9*x^2 - 8*a*x + 8, 1, 2)
-            sage: (u*(x^2-2)^3).trace_polynomial()                                      # optional - sage.rings.number_field
+            sage: (u*(x^2-2)^3).trace_polynomial()
             (x^4 + a*x^3 - 9*x^2 - 8*a*x + 8, x^2 - 2, 2)
-            sage: u = x^4 + a*x^3 + 3*x^2 + 4*a*x + 16                                  # optional - sage.rings.number_field
-            sage: u.trace_polynomial()                                                  # optional - sage.rings.number_field
+            sage: u = x^4 + a*x^3 + 3*x^2 + 4*a*x + 16
+            sage: u.trace_polynomial()
             (x^2 + a*x - 5, 1, 4)
-            sage: (u*(x-2)).trace_polynomial()                                          # optional - sage.rings.number_field
+            sage: (u*(x-2)).trace_polynomial()
             (x^2 + a*x - 5, x - 2, 4)
-            sage: (u*(x+2)).trace_polynomial()                                          # optional - sage.rings.number_field
+            sage: (u*(x+2)).trace_polynomial()
             (x^2 + a*x - 5, x + 2, 4)
 
         TESTS:
@@ -8915,15 +8965,15 @@ cdef class Polynomial(CommutativePolynomial):
             sage: P0 = x^4 + 5*x^3 + 15*x^2 + 25*x + 25
             sage: P1 = x^4 + 25*x^3 + 15*x^2 + 5*x + 25
             sage: P2 = x^4 + 5*x^3 + 25*x^2 + 25*x + 25
-            sage: P0.is_weil_polynomial(return_q=True)                                  # optional - sage.libs.pari
+            sage: P0.is_weil_polynomial(return_q=True)                                  # needs sage.libs.pari
             (True, 5)
-            sage: P0.is_weil_polynomial(return_q=False)                                 # optional - sage.libs.pari
+            sage: P0.is_weil_polynomial(return_q=False)                                 # needs sage.libs.pari
             True
-            sage: P1.is_weil_polynomial(return_q=True)                                  # optional - sage.libs.pari
+            sage: P1.is_weil_polynomial(return_q=True)                                  # needs sage.libs.pari
             (False, 0)
-            sage: P1.is_weil_polynomial(return_q=False)                                 # optional - sage.libs.pari
+            sage: P1.is_weil_polynomial(return_q=False)                                 # needs sage.libs.pari
             False
-            sage: P2.is_weil_polynomial()                                               # optional - sage.libs.pari
+            sage: P2.is_weil_polynomial()                                               # needs sage.libs.pari
             False
 
         .. SEEALSO::
@@ -8938,7 +8988,7 @@ cdef class Polynomial(CommutativePolynomial):
 
             sage: P.<t> = QQ[]
             sage: u = t^10 + 4*t^9 + 8*t^8 + 18*t^7 + 81*t^6 + 272*t^5 + 567*t^4 + 882*t^3 + 2744*t^2 + 9604*t + 16807
-            sage: u.is_weil_polynomial()                                                # optional - sage.libs.pari
+            sage: u.is_weil_polynomial()                                                # needs sage.libs.pari
             True
 
         AUTHORS:
@@ -9061,12 +9111,13 @@ cdef class Polynomial(CommutativePolynomial):
 
         EXAMPLES::
 
-            sage: R.<x> = QQbar[]                                                       # optional - sage.rings.number_field
-            sage: (2*x^2).gcd(2*x)                                                      # optional - sage.rings.number_field
+            sage: # needs sage.rings.number_field
+            sage: R.<x> = QQbar[]
+            sage: (2*x^2).gcd(2*x)
             x
-            sage: R.zero().gcd(0)                                                       # optional - sage.rings.number_field
+            sage: R.zero().gcd(0)
             0
-            sage: (2*x).gcd(0)                                                          # optional - sage.rings.number_field
+            sage: (2*x).gcd(0)
             x
 
         One can easily add xgcd functionality to new rings by providing a
@@ -9173,8 +9224,8 @@ cdef class Polynomial(CommutativePolynomial):
             sage: d = z^4 + (2*t + 4)*z^3 + (-t + 5)*z^2 + (t^2 + 2)*z + t^2 + 2*t + 1
             sage: prec = 9
             sage: x = n.subs(z=w)/d.subs(z=w) + O(w^prec)
-            sage: nc, dc = Pz(x.list()).rational_reconstruction(z^prec)                 # optional - sage.libs.flint
-            sage: (nc, dc) == (n, d)                                                    # optional - sage.libs.flint
+            sage: nc, dc = Pz(x.list()).rational_reconstruction(z^prec)                 # needs sage.libs.flint
+            sage: (nc, dc) == (n, d)                                                    # needs sage.libs.flint
             True
 
         Over `\QQ[t][z]`::
@@ -9192,11 +9243,12 @@ cdef class Polynomial(CommutativePolynomial):
 
         Over `\QQ_5`::
 
-            sage: x = PolynomialRing(Qp(5), 'x').gen()                                  # optional - sage.rings.padics
-            sage: p = 4*x^5 + 3*x^4 + 2*x^3 + 2*x^2 + 4*x + 2                           # optional - sage.rings.padics
-            sage: m = x^6                                                               # optional - sage.rings.padics
-            sage: n, d = p.rational_reconstruction(m, 3, 2)                             # optional - sage.rings.padics
-            sage: ((p*d - n) % m).is_zero()                                             # optional - sage.rings.padics
+            sage: # needs sage.rings.padics
+            sage: x = PolynomialRing(Qp(5), 'x').gen()
+            sage: p = 4*x^5 + 3*x^4 + 2*x^3 + 2*x^2 + 4*x + 2
+            sage: m = x^6
+            sage: n, d = p.rational_reconstruction(m, 3, 2)
+            sage: ((p*d - n) % m).is_zero()
             True
 
         Can also be used to obtain known Padé approximations::
@@ -9444,11 +9496,11 @@ cdef class Polynomial(CommutativePolynomial):
         EXAMPLES::
 
             sage: R.<x> = ZZ[]
-            sage: (x^3 + 1).is_irreducible()                                            # optional - sage.libs.pari
+            sage: (x^3 + 1).is_irreducible()                                            # needs sage.libs.pari
             False
-            sage: (x^2 - 1).is_irreducible()                                            # optional - sage.libs.pari
+            sage: (x^2 - 1).is_irreducible()                                            # needs sage.libs.pari
             False
-            sage: (x^3 + 2).is_irreducible()                                            # optional - sage.libs.pari
+            sage: (x^3 + 2).is_irreducible()                                            # needs sage.libs.pari
             True
             sage: R(0).is_irreducible()
             False
@@ -9457,31 +9509,32 @@ cdef class Polynomial(CommutativePolynomial):
         polynomial in `\QQ[x]`, but not in `\ZZ[x]`::
 
             sage: R.<x> = ZZ[]
-            sage: R(2*x).is_irreducible()                                               # optional - sage.libs.pari
+            sage: R(2*x).is_irreducible()                                               # needs sage.libs.pari
             False
             sage: R.<x> = QQ[]
-            sage: R(2*x).is_irreducible()                                               # optional - sage.libs.pari
+            sage: R(2*x).is_irreducible()                                               # needs sage.libs.pari
             True
 
         TESTS::
 
-            sage: F.<t> = NumberField(x^2 - 5)                                          # optional - sage.rings.number_field
-            sage: Fx.<xF> = PolynomialRing(F)                                           # optional - sage.rings.number_field
-            sage: f = Fx([2*t - 5, 5*t - 10, 3*t - 6, -t, -t + 2, 1])                   # optional - sage.rings.number_field
-            sage: f.is_irreducible()                                                    # optional - sage.rings.number_field
+            sage: # needs sage.rings.number_field
+            sage: F.<t> = NumberField(x^2 - 5)
+            sage: Fx.<xF> = PolynomialRing(F)
+            sage: f = Fx([2*t - 5, 5*t - 10, 3*t - 6, -t, -t + 2, 1])
+            sage: f.is_irreducible()
             False
-            sage: f = Fx([2*t - 3, 5*t - 10, 3*t - 6, -t, -t + 2, 1])                   # optional - sage.rings.number_field
-            sage: f.is_irreducible()                                                    # optional - sage.rings.number_field
+            sage: f = Fx([2*t - 3, 5*t - 10, 3*t - 6, -t, -t + 2, 1])
+            sage: f.is_irreducible()
             True
 
         If the base ring implements `_is_irreducible_univariate_polynomial`,
         then this method gets used instead of the generic algorithm which just
         factors the input::
 
-            sage: R.<x> = QQbar[]                                                       # optional - sage.rings.number_field
-            sage: hasattr(QQbar, "_is_irreducible_univariate_polynomial")               # optional - sage.rings.number_field
+            sage: R.<x> = QQbar[]                                                       # needs sage.rings.number_field
+            sage: hasattr(QQbar, "_is_irreducible_univariate_polynomial")               # needs sage.rings.number_field
             True
-            sage: (x^2 + 1).is_irreducible()                                            # optional - sage.rings.number_field
+            sage: (x^2 + 1).is_irreducible()                                            # needs sage.rings.number_field
             False
 
         Constants can be irreducible if they are not units::
@@ -9489,17 +9542,17 @@ cdef class Polynomial(CommutativePolynomial):
             sage: R.<x> = ZZ[]
             sage: R(1).is_irreducible()
             False
-            sage: R(4).is_irreducible()                                                 # optional - sage.libs.pari
+            sage: R(4).is_irreducible()                                                 # needs sage.libs.pari
             False
-            sage: R(5).is_irreducible()                                                 # optional - sage.libs.pari
+            sage: R(5).is_irreducible()                                                 # needs sage.libs.pari
             True
 
         Check that caching works::
 
             sage: R.<x> = ZZ[]
-            sage: x.is_irreducible()                                                    # optional - sage.libs.pari
+            sage: x.is_irreducible()                                                    # needs sage.libs.pari
             True
-            sage: x.is_irreducible.cache                                                # optional - sage.libs.pari
+            sage: x.is_irreducible.cache                                                # needs sage.libs.pari
             True
 
 
@@ -9647,19 +9700,19 @@ cdef class Polynomial(CommutativePolynomial):
         computations::
 
             sage: R.<x> = ZZ[]
-            sage: (2*x).is_squarefree()                                                 # optional - sage.libs.pari
+            sage: (2*x).is_squarefree()                                                 # needs sage.libs.pari
             True
-            sage: (4*x).is_squarefree()                                                 # optional - sage.libs.pari
+            sage: (4*x).is_squarefree()                                                 # needs sage.libs.pari
             False
-            sage: (2*x^2).is_squarefree()                                               # optional - sage.libs.pari
+            sage: (2*x^2).is_squarefree()                                               # needs sage.libs.pari
             False
-            sage: R(0).is_squarefree()                                                  # optional - sage.libs.pari
+            sage: R(0).is_squarefree()                                                  # needs sage.libs.pari
             False
-            sage: S.<y> = QQ[]                                                          # optional - sage.libs.pari
-            sage: R.<x> = S[]                                                           # optional - sage.libs.pari
-            sage: (2*x*y).is_squarefree()                                               # optional - sage.libs.pari
+            sage: S.<y> = QQ[]                                                          # needs sage.libs.pari
+            sage: R.<x> = S[]                                                           # needs sage.libs.pari
+            sage: (2*x*y).is_squarefree()                                               # needs sage.libs.pari
             True
-            sage: (2*x*y^2).is_squarefree()                                             # optional - sage.libs.pari
+            sage: (2*x*y^2).is_squarefree()                                             # needs sage.libs.pari
             False
 
         In positive characteristic, we compute the square-free
@@ -9670,11 +9723,11 @@ cdef class Polynomial(CommutativePolynomial):
             sage: R.<x> = K[]
             sage: (x^3 - x).is_squarefree()
             True
-            sage: (x^3 - 1).is_squarefree()                                             # optional - sage.rings.finite_rings
+            sage: (x^3 - 1).is_squarefree()                                             # needs sage.rings.finite_rings
             False
-            sage: (x^3 + t).is_squarefree()                                             # optional - sage.rings.finite_rings
+            sage: (x^3 + t).is_squarefree()                                             # needs sage.rings.finite_rings
             True
-            sage: (x^3 + t^3).is_squarefree()                                           # optional - sage.rings.finite_rings
+            sage: (x^3 + t^3).is_squarefree()                                           # needs sage.rings.finite_rings
             False
 
         In the following example, `t^2` is a unit in the base field::
@@ -9686,16 +9739,16 @@ cdef class Polynomial(CommutativePolynomial):
 
             sage: R.<x> = ZZ[]
             sage: f = 4 * x
-            sage: f.is_squarefree()                                                     # optional - sage.rings.finite_rings
+            sage: f.is_squarefree()                                                     # needs sage.rings.finite_rings
             False
-            sage: f.squarefree_decomposition()                                          # optional - sage.rings.finite_rings
+            sage: f.squarefree_decomposition()                                          # needs sage.rings.finite_rings
             (4) * x
 
         If you want this method equally not to consider the content, you can
         remove it as in the following example::
 
             sage: c = f.content()
-            sage: (f/c).is_squarefree()                                                 # optional - sage.rings.finite_rings
+            sage: (f/c).is_squarefree()                                                 # needs sage.rings.finite_rings
             True
 
         If the base ring is not an integral domain, the question is not
@@ -9716,7 +9769,7 @@ cdef class Polynomial(CommutativePolynomial):
 
             sage: R.<x> = ZZ[]
             sage: f = x^2
-            sage: f.is_squarefree()                                                     # optional - sage.libs.pari
+            sage: f.is_squarefree()                                                     # needs sage.libs.pari
             False
             sage: f.is_squarefree.cache
             False
@@ -9725,15 +9778,16 @@ cdef class Polynomial(CommutativePolynomial):
         then this method gets used instead of the generic algorithm in
         :meth:`_is_squarefree_generic`::
 
-            sage: R.<x> = QQbar[]                                                       # optional - sage.rings.number_field
-            sage: (x^2).is_squarefree()                                                 # optional - sage.rings.number_field
+            sage: # needs sage.rings.number_field
+            sage: R.<x> = QQbar[]
+            sage: (x^2).is_squarefree()
             False
-            sage: hasattr(QQbar, '_is_squarefree_univariate_polynomial')                # optional - sage.rings.number_field
+            sage: hasattr(QQbar, '_is_squarefree_univariate_polynomial')
             False
-            sage: QQbar._is_squarefree_univariate_polynomial = lambda self: True        # optional - sage.rings.number_field
-            sage: (x^2).is_squarefree()                                                 # optional - sage.rings.number_field
+            sage: QQbar._is_squarefree_univariate_polynomial = lambda self: True
+            sage: (x^2).is_squarefree()
             True
-            sage: del(QQbar._is_squarefree_univariate_polynomial)                       # optional - sage.rings.number_field
+            sage: del(QQbar._is_squarefree_univariate_polynomial)
 
         """
         B = self._parent.base_ring()
@@ -9753,10 +9807,10 @@ cdef class Polynomial(CommutativePolynomial):
 
         EXAMPLES::
 
-            sage: R.<x> = QQbar[]                                                       # optional - sage.rings.number_field
-            sage: (x^2*(x + 1)).is_squarefree() # indirect doctest                      # optional - sage.rings.number_field
+            sage: R.<x> = QQbar[]                                                       # needs sage.rings.number_field
+            sage: (x^2*(x + 1)).is_squarefree() # indirect doctest                      # needs sage.rings.number_field
             False
-            sage: (x*(x+1)).is_squarefree() # indirect doctest                          # optional - sage.rings.number_field
+            sage: (x*(x+1)).is_squarefree() # indirect doctest                          # needs sage.rings.number_field
             True
 
         """
@@ -9808,7 +9862,7 @@ cdef class Polynomial(CommutativePolynomial):
         If self has a factor of multiplicity divisible by the characteristic (see :trac:`8736`)::
 
             sage: P.<x> = GF(2)[]
-            sage: (x^3 + x^2).radical()                                                 # optional - sage.rings.finite_rings
+            sage: (x^3 + x^2).radical()                                                 # needs sage.rings.finite_rings
             x^2 + x
         """
         P = self._parent
@@ -9867,38 +9921,38 @@ cdef class Polynomial(CommutativePolynomial):
 
         EXAMPLES::
 
-            sage: R.<x> = RR[]                                                          # optional - sage.rings.real_mpfr
-            sage: f = x^6 + x^2 + -x^4 - 2*x^3                                          # optional - sage.rings.real_mpfr
-            sage: f.norm(2)                                                             # optional - sage.rings.real_mpfr
+            sage: R.<x> = RR[]                                                          # needs sage.rings.real_mpfr
+            sage: f = x^6 + x^2 + -x^4 - 2*x^3                                          # needs sage.rings.real_mpfr
+            sage: f.norm(2)                                                             # needs sage.rings.real_mpfr
             2.64575131106459
-            sage: (sqrt(1^2 + 1^2 + (-1)^2 + (-2)^2)).n()                               # optional - sage.symbolic
+            sage: (sqrt(1^2 + 1^2 + (-1)^2 + (-2)^2)).n()                               # needs sage.symbolic
             2.64575131106459
 
         ::
 
-            sage: f.norm(1)                                                             # optional - sage.rings.real_mpfr
+            sage: f.norm(1)                                                             # needs sage.rings.real_mpfr
             5.00000000000000
-            sage: f.norm(infinity)                                                      # optional - sage.rings.real_mpfr
+            sage: f.norm(infinity)                                                      # needs sage.rings.real_mpfr
             2.00000000000000
 
         ::
 
-            sage: f.norm(-1)                                                            # optional - sage.rings.real_mpfr
+            sage: f.norm(-1)                                                            # needs sage.rings.real_mpfr
             Traceback (most recent call last):
             ...
             ValueError: The degree of the norm must be positive
 
         TESTS::
 
-            sage: R.<x> = RR[]                                                          # optional - sage.rings.real_mpfr
-            sage: f = x^6 + x^2 + -x^4 -x^3                                             # optional - sage.rings.real_mpfr
-            sage: f.norm(int(2))                                                        # optional - sage.rings.real_mpfr
+            sage: R.<x> = RR[]                                                          # needs sage.rings.real_mpfr
+            sage: f = x^6 + x^2 + -x^4 -x^3                                             # needs sage.rings.real_mpfr
+            sage: f.norm(int(2))                                                        # needs sage.rings.real_mpfr
             2.00000000000000
 
         Check that :trac:`18600` is fixed::
 
             sage: R.<x> = PolynomialRing(ZZ, sparse=True)
-            sage: (x^2^100 + 1).norm(1)                                                 # optional - sage.rings.real_mpfr
+            sage: (x^2^100 + 1).norm(1)                                                 # needs sage.rings.real_mpfr
             2.00000000000000
 
         AUTHORS:
@@ -9978,17 +10032,17 @@ cdef class Polynomial(CommutativePolynomial):
 
         EXAMPLES::
 
-            sage: R.<x> = SR[]                                                          # optional - sage.symbolic
-            sage: f = (1+I)*x^2 + 3*x - I                                               # optional - sage.symbolic
-            sage: f.map_coefficients(lambda z: z.conjugate())                           # optional - sage.symbolic
+            sage: R.<x> = SR[]                                                          # needs sage.symbolic
+            sage: f = (1+I)*x^2 + 3*x - I                                               # needs sage.symbolic
+            sage: f.map_coefficients(lambda z: z.conjugate())                           # needs sage.symbolic
             (-I + 1)*x^2 + 3*x + I
             sage: R.<x> = ZZ[]
             sage: f = x^2 + 2
             sage: f.map_coefficients(lambda a: a + 42)
             43*x^2 + 44
-            sage: R.<x> = PolynomialRing(SR, sparse=True)                               # optional - sage.symbolic
-            sage: f = (1+I)*x^(2^32) - I                                                # optional - sage.symbolic
-            sage: f.map_coefficients(lambda z: z.conjugate())                           # optional - sage.symbolic
+            sage: R.<x> = PolynomialRing(SR, sparse=True)                               # needs sage.symbolic
+            sage: f = (1+I)*x^(2^32) - I                                                # needs sage.symbolic
+            sage: f.map_coefficients(lambda z: z.conjugate())                           # needs sage.symbolic
             (-I + 1)*x^4294967296 + I
             sage: R.<x> = PolynomialRing(ZZ, sparse=True)
             sage: f = x^(2^32) + 2
@@ -10060,40 +10114,40 @@ cdef class Polynomial(CommutativePolynomial):
         Quick tests::
 
             sage: P.<x> = ZZ['x']
-            sage: (x - 1).is_cyclotomic()                                               # optional - sage.libs.pari
+            sage: (x - 1).is_cyclotomic()                                               # needs sage.libs.pari
             True
-            sage: (x + 1).is_cyclotomic()                                               # optional - sage.libs.pari
+            sage: (x + 1).is_cyclotomic()                                               # needs sage.libs.pari
             True
-            sage: (x^2 - 1).is_cyclotomic()                                             # optional - sage.libs.pari
+            sage: (x^2 - 1).is_cyclotomic()                                             # needs sage.libs.pari
             False
-            sage: (x^2 + x + 1).is_cyclotomic(certificate=True)                         # optional - sage.libs.pari
+            sage: (x^2 + x + 1).is_cyclotomic(certificate=True)                         # needs sage.libs.pari
             3
-            sage: (x^2 + 2*x + 1).is_cyclotomic(certificate=True)                       # optional - sage.libs.pari
+            sage: (x^2 + 2*x + 1).is_cyclotomic(certificate=True)                       # needs sage.libs.pari
             0
 
         Test first 100 cyclotomic polynomials::
 
-            sage: all(cyclotomic_polynomial(i).is_cyclotomic() for i in range(1, 101))  # optional - sage.libs.pari
+            sage: all(cyclotomic_polynomial(i).is_cyclotomic() for i in range(1, 101))  # needs sage.libs.pari
             True
 
         Some more tests::
 
             sage: f = x^16 + x^14 - x^10 + x^8 - x^6 + x^2 + 1
-            sage: f.is_cyclotomic(algorithm="pari")                                     # optional - sage.libs.pari
+            sage: f.is_cyclotomic(algorithm="pari")                                     # needs sage.libs.pari
             False
-            sage: f.is_cyclotomic(algorithm="sage")                                     # optional - sage.libs.pari
+            sage: f.is_cyclotomic(algorithm="sage")                                     # needs sage.libs.pari
             False
 
             sage: g = x^16 + x^14 - x^10 - x^8 - x^6 + x^2 + 1
-            sage: g.is_cyclotomic(algorithm="pari")                                     # optional - sage.libs.pari
+            sage: g.is_cyclotomic(algorithm="pari")                                     # needs sage.libs.pari
             True
-            sage: g.is_cyclotomic(algorithm="sage")                                     # optional - sage.libs.pari
+            sage: g.is_cyclotomic(algorithm="sage")                                     # needs sage.libs.pari
             True
 
             sage: y = polygen(QQ)
-            sage: (y/2 - 1/2).is_cyclotomic()                                           # optional - sage.libs.pari
+            sage: (y/2 - 1/2).is_cyclotomic()                                           # needs sage.libs.pari
             False
-            sage: (2*(y/2 - 1/2)).is_cyclotomic()                                       # optional - sage.libs.pari
+            sage: (2*(y/2 - 1/2)).is_cyclotomic()                                       # needs sage.libs.pari
             True
 
         Invalid arguments::
@@ -10114,28 +10168,28 @@ cdef class Polynomial(CommutativePolynomial):
         TESTS::
 
             sage: R = ZZ['x']
-            sage: for _ in range(20):                                                   # optional - sage.libs.pari
+            sage: for _ in range(20):                                                   # needs sage.libs.pari
             ....:     p = R.random_element(degree=randint(10,20))
             ....:     ans_pari = p.is_cyclotomic(algorithm="pari")
             ....:     ans_sage = p.is_cyclotomic(algorithm="sage")
             ....:     assert ans_pari == ans_sage, "problem with p={}".format(p)
-            sage: for d in range(2, 20):                                                # optional - sage.libs.pari
+            sage: for d in range(2, 20):                                                # needs sage.libs.pari
             ....:     p = cyclotomic_polynomial(d)
             ....:     assert p.is_cyclotomic(algorithm="pari"), "pari problem with p={}".format(p)
             ....:     assert p.is_cyclotomic(algorithm="sage"), "sage problem with p={}".format(p)
 
         Test the output type when ``certificate=True``::
 
-            sage: type((x^2 - 2).is_cyclotomic(certificate=True))                       # optional - sage.libs.pari
+            sage: type((x^2 - 2).is_cyclotomic(certificate=True))                       # needs sage.libs.pari
             <class 'sage.rings.integer.Integer'>
-            sage: type((x - 1).is_cyclotomic(certificate=True))                         # optional - sage.libs.pari
+            sage: type((x - 1).is_cyclotomic(certificate=True))                         # needs sage.libs.pari
             <class 'sage.rings.integer.Integer'>
 
         Check that the arguments are forwarded when the input is not a
         polynomial with coefficients in `\ZZ`::
 
             sage: x = polygen(QQ)
-            sage: (x - 1).is_cyclotomic(certificate=True)                               # optional - sage.libs.pari
+            sage: (x - 1).is_cyclotomic(certificate=True)                               # needs sage.libs.pari
             1
         """
         S = self.base_ring()
@@ -10212,20 +10266,20 @@ cdef class Polynomial(CommutativePolynomial):
         EXAMPLES::
 
             sage: x = polygen(ZZ)
-            sage: (x^5 - 1).is_cyclotomic_product()                                     # optional - sage.libs.pari
+            sage: (x^5 - 1).is_cyclotomic_product()                                     # needs sage.libs.pari
             True
-            sage: (x^5 + x^4 - x^2 + 1).is_cyclotomic_product()                         # optional - sage.libs.pari
+            sage: (x^5 + x^4 - x^2 + 1).is_cyclotomic_product()                         # needs sage.libs.pari
             False
 
-            sage: p = prod(cyclotomic_polynomial(i) for i in [2, 5, 7, 12])             # optional - sage.libs.pari
-            sage: p.is_cyclotomic_product()                                             # optional - sage.libs.pari
+            sage: p = prod(cyclotomic_polynomial(i) for i in [2, 5, 7, 12])             # needs sage.libs.pari
+            sage: p.is_cyclotomic_product()                                             # needs sage.libs.pari
             True
 
-            sage: (x^5 - 1/3).is_cyclotomic_product()                                   # optional - sage.libs.pari
+            sage: (x^5 - 1/3).is_cyclotomic_product()                                   # needs sage.libs.pari
             False
 
             sage: x = polygen(Zmod(5))
-            sage: (x - 1).is_cyclotomic_product()                                       # optional - sage.libs.pari
+            sage: (x - 1).is_cyclotomic_product()                                       # needs sage.libs.pari
             Traceback (most recent call last):
             ...
             NotImplementedError: not implemented in non-zero characteristic
@@ -10346,8 +10400,8 @@ cdef class Polynomial(CommutativePolynomial):
             True
             sage: u = x^5 - 2; u.has_cyclotomic_factor()
             False
-            sage: u = pol(cyclotomic_polynomial(7)) * pol.random_element()  # random    # optional - sage.libs.pari
-            sage: u.has_cyclotomic_factor()                                 # random    # optional - sage.libs.pari
+            sage: u = pol(cyclotomic_polynomial(7)) * pol.random_element()  # random    # needs sage.libs.pari
+            sage: u.has_cyclotomic_factor()                                 # random    # needs sage.libs.pari
             True
         """
         if not QQ.has_coerce_map_from(self.base_ring()):
@@ -10519,30 +10573,32 @@ cdef class Polynomial(CommutativePolynomial):
             sage: a.nth_root(2)
             1/56*x^3 + 103/336*x^2 + 365/252*x + 25/12
 
-            sage: K.<sqrt2> = QuadraticField(2)                                         # optional - sage.rings.number_field
-            sage: R.<x> = K[]                                                           # optional - sage.rings.number_field
-            sage: a = (x + sqrt2)^3 * ((1+sqrt2)*x - 1/sqrt2)^6                         # optional - sage.rings.number_field
-            sage: b = a.nth_root(3); b                                                  # optional - sage.rings.number_field
+            sage: # needs sage.rings.number_field
+            sage: K.<sqrt2> = QuadraticField(2)
+            sage: R.<x> = K[]
+            sage: a = (x + sqrt2)^3 * ((1+sqrt2)*x - 1/sqrt2)^6
+            sage: b = a.nth_root(3); b
             (2*sqrt2 + 3)*x^3 + (2*sqrt2 + 2)*x^2 + (-2*sqrt2 - 3/2)*x + 1/2*sqrt2
-            sage: b^3 == a                                                              # optional - sage.rings.number_field
+            sage: b^3 == a
             True
 
-            sage: R.<x> = QQbar[]                                                       # optional - sage.rings.number_field
-            sage: p = x**3 + QQbar(2).sqrt() * x - QQbar(3).sqrt()                      # optional - sage.rings.number_field
-            sage: r = (p**5).nth_root(5)                                                # optional - sage.rings.number_field
-            sage: r * p[0] == p * r[0]                                                  # optional - sage.rings.number_field
+            sage: # needs sage.rings.number_field
+            sage: R.<x> = QQbar[]
+            sage: p = x**3 + QQbar(2).sqrt() * x - QQbar(3).sqrt()
+            sage: r = (p**5).nth_root(5)
+            sage: r * p[0] == p * r[0]
             True
-            sage: p = (x+1)^20 + x^20                                                   # optional - sage.rings.number_field
-            sage: p.nth_root(20)                                                        # optional - sage.rings.number_field
+            sage: p = (x+1)^20 + x^20
+            sage: p.nth_root(20)
             Traceback (most recent call last):
             ...
             ValueError: not a 20th power
 
-            sage: z = GF(4).gen()                                                       # optional - sage.rings.finite_rings
-            sage: R.<x> = GF(4)[]                                                       # optional - sage.rings.finite_rings
-            sage: p = z*x**4 + 2*x - 1                                                  # optional - sage.rings.finite_rings
-            sage: r = (p**15).nth_root(15)                                              # optional - sage.rings.finite_rings
-            sage: r * p[0] == p * r[0]                                                  # optional - sage.rings.finite_rings
+            sage: z = GF(4).gen()                                                       # needs sage.rings.finite_rings
+            sage: R.<x> = GF(4)[]                                                       # needs sage.rings.finite_rings
+            sage: p = z*x**4 + 2*x - 1                                                  # needs sage.rings.finite_rings
+            sage: r = (p**15).nth_root(15)                                              # needs sage.rings.finite_rings
+            sage: r * p[0] == p * r[0]                                                  # needs sage.rings.finite_rings
             True
             sage: ((x+1)**2).nth_root(2)
             x + 1
@@ -10572,14 +10628,14 @@ cdef class Polynomial(CommutativePolynomial):
         example with a non-trivial coefficient of lowest degree raises an error::
 
             sage: R.<x> = QQ[]
-            sage: R2 = R.quotient(x**2 + 1)                                             # optional - sage.libs.pari
-            sage: x = R2.gen()                                                          # optional - sage.libs.pari
-            sage: R3.<y> = R2[]                                                         # optional - sage.libs.pari
-            sage: (y**2 - 2*y + 1).nth_root(2)                                          # optional - sage.libs.pari
+            sage: R2 = R.quotient(x**2 + 1)                                             # needs sage.libs.pari
+            sage: x = R2.gen()                                                          # needs sage.libs.pari
+            sage: R3.<y> = R2[]                                                         # needs sage.libs.pari
+            sage: (y**2 - 2*y + 1).nth_root(2)                                          # needs sage.libs.pari
             -y + 1
-            sage: (y**3).nth_root(3)                                                    # optional - sage.libs.pari
+            sage: (y**3).nth_root(3)                                                    # needs sage.libs.pari
             y
-            sage: (y**2 + x).nth_root(2)                                                # optional - sage.libs.pari
+            sage: (y**2 + x).nth_root(2)                                                # needs sage.libs.pari
             Traceback (most recent call last):
             ...
             AttributeError: ... has no attribute 'nth_root'
@@ -10615,7 +10671,7 @@ cdef class Polynomial(CommutativePolynomial):
 
         Some random tests::
 
-            sage: for R in [QQ['x'], GF(4)['x']]:                                       # optional - sage.rings.finite_rings
+            sage: for R in [QQ['x'], GF(4)['x']]:                                       # needs sage.rings.finite_rings
             ....:     for _ in range(30):
             ....:         p = R.random_element(degree=randint(10,20))
             ....:         n = ZZ.random_element(2,20)
@@ -10699,10 +10755,11 @@ cdef class Polynomial(CommutativePolynomial):
             sage: R.one()._nth_root_series(3, 5)
             1
 
-            sage: R.<x> = QQbar[]                                                       # optional - sage.rings.number_field
-            sage: p = 2 + 3*x^2                                                         # optional - sage.rings.number_field
-            sage: q = p._nth_root_series(3, 20)                                         # optional - sage.rings.number_field
-            sage: (q**3).truncate(20)                                                   # optional - sage.rings.number_field
+            sage: # needs sage.rings.number_field
+            sage: R.<x> = QQbar[]
+            sage: p = 2 + 3*x^2
+            sage: q = p._nth_root_series(3, 20)
+            sage: (q**3).truncate(20)
             3*x^2 + 2
 
         The exponent must be invertible in the base ring::
@@ -10842,21 +10899,21 @@ cdef class Polynomial(CommutativePolynomial):
 
         TESTS::
 
-            sage: R.<x> = PolynomialRing(ZZ, implementation="NTL")                      # optional - sage.libs.ntl
-            sage: (2*x + 1).divides(4*x**2 + 1)                                         # optional - sage.libs.ntl
+            sage: R.<x> = PolynomialRing(ZZ, implementation="NTL")                      # needs sage.libs.ntl
+            sage: (2*x + 1).divides(4*x**2 + 1)                                         # needs sage.libs.ntl
             False
-            sage: K.<z> = GF(4)                                                         # optional - sage.rings.finite_rings
-            sage: R.<x> = K[]                                                           # optional - sage.rings.finite_rings
+            sage: K.<z> = GF(4)                                                         # needs sage.rings.finite_rings
+            sage: R.<x> = K[]                                                           # needs sage.rings.finite_rings
             sage: S.<y> = R[]
-            sage: p = ((3*z + 2)*x + 2*z - 1) * y + 2*x + z                             # optional - sage.rings.finite_rings
-            sage: q = y^2 + z*y*x + 2*y + z                                             # optional - sage.rings.finite_rings
-            sage: p.divides(q), p.divides(p*q)                                          # optional - sage.rings.finite_rings
+            sage: p = ((3*z + 2)*x + 2*z - 1) * y + 2*x + z                             # needs sage.rings.finite_rings
+            sage: q = y^2 + z*y*x + 2*y + z                                             # needs sage.rings.finite_rings
+            sage: p.divides(q), p.divides(p*q)                                          # needs sage.rings.finite_rings
             (False, True)
             sage: R.<x,y> = GF(2)[]
             sage: S.<z> = R[]
             sage: p = (x+y+1) * z + x*y
             sage: q = (y^2-x^2) * z^2 + z + x-y
-            sage: p.divides(q), p.divides(p*q)                                          # optional - sage.rings.finite_rings
+            sage: p.divides(q), p.divides(p*q)                                          # needs sage.rings.finite_rings
             (False, True)
         """
         if not self.base_ring().is_integral_domain():
@@ -10930,8 +10987,8 @@ cdef class Polynomial(CommutativePolynomial):
 
         EXAMPLES::
 
-            sage: Pol.<x> = CBF[]                                                       # optional - sage.libs.flint
-            sage: (1 + x)._log_series(3)                                                # optional - sage.libs.flint
+            sage: Pol.<x> = CBF[]                                                       # needs sage.libs.flint
+            sage: (1 + x)._log_series(3)                                                # needs sage.libs.flint
             -0.5000000000000000*x^2 + x
         """
         raise NotImplementedError
@@ -10943,8 +11000,8 @@ cdef class Polynomial(CommutativePolynomial):
 
         EXAMPLES::
 
-            sage: Pol.<x> = CBF[]                                                       # optional - sage.libs.flint
-            sage: x._exp_series(3)                                                      # optional - sage.libs.flint
+            sage: Pol.<x> = CBF[]                                                       # needs sage.libs.flint
+            sage: x._exp_series(3)                                                      # needs sage.libs.flint
             0.5000000000000000*x^2 + x + 1.000000000000000
         """
         raise NotImplementedError
@@ -11328,8 +11385,8 @@ cdef class Polynomial_generic_dense(Polynomial):
         sage: from sage.rings.polynomial.polynomial_element_generic import Polynomial_generic_dense
         sage: isinstance(f, Polynomial_generic_dense)
         True
-        sage: f = CC['x'].random_element()                                              # optional - sage.rings.real_mpfr
-        sage: isinstance(f, Polynomial_generic_dense)                                   # optional - sage.rings.real_mpfr
+        sage: f = CC['x'].random_element()                                              # needs sage.rings.real_mpfr
+        sage: isinstance(f, Polynomial_generic_dense)                                   # needs sage.rings.real_mpfr
         True
 
         sage: R.<x> = QQ[]
@@ -11455,14 +11512,15 @@ cdef class Polynomial_generic_dense(Polynomial):
 
         EXAMPLES::
 
-            sage: R.<x> = SR[]                                                          # optional - sage.symbolic
-            sage: R(0).is_term()                                                        # optional - sage.symbolic
+            sage: # needs sage.symbolic
+            sage: R.<x> = SR[]
+            sage: R(0).is_term()
             False
-            sage: R(1).is_term()                                                        # optional - sage.symbolic
+            sage: R(1).is_term()
             True
-            sage: (3*x^5).is_term()                                                     # optional - sage.symbolic
+            sage: (3*x^5).is_term()
             True
-            sage: (1 + 3*x^5).is_term()                                                 # optional - sage.symbolic
+            sage: (1 + 3*x^5).is_term()
             False
         """
         if not self.__coeffs:
@@ -11586,30 +11644,32 @@ cdef class Polynomial_generic_dense(Polynomial):
 
         EXAMPLES::
 
-            sage: R.<x> = QQbar[]                                                       # optional - sage.rings.number_field
-            sage: f = (1+2*x)^3 + 3*x; f                                                # optional - sage.rings.number_field
+            sage: # needs sage.rings.number_field
+            sage: R.<x> = QQbar[]
+            sage: f = (1+2*x)^3 + 3*x; f
             8*x^3 + 12*x^2 + 9*x + 1
-            sage: g = f // (1+2*x); g                                                   # optional - sage.rings.number_field
+            sage: g = f // (1+2*x); g
             4*x^2 + 4*x + 5/2
-            sage: f - g * (1+2*x)                                                       # optional - sage.rings.number_field
+            sage: f - g * (1+2*x)
             -3/2
-            sage: f.quo_rem(1+2*x)                                                      # optional - sage.rings.number_field
+            sage: f.quo_rem(1+2*x)
             (4*x^2 + 4*x + 5/2, -3/2)
 
         TESTS:
 
         Check that :trac:`13048` and :trac:`2034` are fixed::
 
-            sage: R.<x> = QQbar[]                                                       # optional - sage.rings.number_field
-            sage: x // x                                                                # optional - sage.rings.number_field
+            sage: # needs sage.rings.number_field
+            sage: R.<x> = QQbar[]
+            sage: x // x
             1
-            sage: x // 1                                                                # optional - sage.rings.number_field
+            sage: x // 1
             x
-            sage: x // int(1)                                                           # optional - sage.rings.number_field
+            sage: x // int(1)
             x
-            sage: x //= int(1); x                                                       # optional - sage.rings.number_field
+            sage: x //= int(1); x
             x
-            sage: int(1) // x  # check that this doesn't segfault                       # optional - sage.rings.number_field
+            sage: int(1) // x  # check that this doesn't segfault
             Traceback (most recent call last):
             ...
             AttributeError: type object 'int' has no attribute 'base_ring'
@@ -11830,12 +11890,13 @@ cdef class Polynomial_generic_dense(Polynomial):
         Polynomials over noncommutative rings are also allowed
         (after :trac:`34733`)::
 
-            sage: HH = QuaternionAlgebra(QQ, -1, -1)                                    # optional - sage.combinat sage.modules
-            sage: P.<x> = HH[]                                                          # optional - sage.combinat sage.modules
-            sage: f = P.random_element(5)                                               # optional - sage.combinat sage.modules
-            sage: g = P.random_element((0, 5))                                          # optional - sage.combinat sage.modules
-            sage: q, r = f.quo_rem(g)                                                   # optional - sage.combinat sage.modules
-            sage: f == q*g + r                                                          # optional - sage.combinat sage.modules
+            sage: # needs sage.combinat sage.modules
+            sage: HH = QuaternionAlgebra(QQ, -1, -1)
+            sage: P.<x> = HH[]
+            sage: f = P.random_element(5)
+            sage: g = P.random_element((0, 5))
+            sage: q, r = f.quo_rem(g)
+            sage: f == q*g + r
             True
 
         TESTS:
@@ -11966,14 +12027,15 @@ def universal_discriminant(n):
 
     EXAMPLES::
 
+        sage: # needs sage.libs.pari
         sage: from sage.rings.polynomial.polynomial_element import universal_discriminant
-        sage: universal_discriminant(1)                                                 # optional - sage.libs.pari
+        sage: universal_discriminant(1)
         1
-        sage: universal_discriminant(2)                                                 # optional - sage.libs.pari
+        sage: universal_discriminant(2)
         a1^2 - 4*a0*a2
-        sage: universal_discriminant(3)                                                 # optional - sage.libs.pari
+        sage: universal_discriminant(3)
         a1^2*a2^2 - 4*a0*a2^3 - 4*a1^3*a3 + 18*a0*a1*a2*a3 - 27*a0^2*a3^2
-        sage: universal_discriminant(4).degrees()                                       # optional - sage.libs.pari
+        sage: universal_discriminant(4).degrees()
         (3, 4, 4, 4, 3)
 
     .. SEEALSO::
@@ -12005,7 +12067,7 @@ cpdef Polynomial generic_power_trunc(Polynomial p, Integer n, long prec):
 
         sage: from sage.rings.polynomial.polynomial_element import generic_power_trunc
 
-        sage: for S in [ZZ, GF(3)]:  # known bug  # not tested (see :trac:`32075`)      # optional - sage.rings.finite_rings
+        sage: for S in [ZZ, GF(3)]:             # known bug, not tested (see :trac:`32075`), needs sage.rings.finite_rings
         ....:     R = PolynomialRing(S, 'x')
         ....:     for _ in range(100):
         ....:         p = R.random_element()
@@ -12105,9 +12167,9 @@ cdef class Polynomial_generic_dense_inexact(Polynomial_generic_dense):
 
         Coefficients indistinguishable from 0 are not removed.
 
-            sage: R = Zp(5)                                                             # optional - sage.rings.padics
-            sage: S.<x> = R[]                                                           # optional - sage.rings.padics
-            sage: S([1, R(0, 20)])                                                      # optional - sage.rings.padics
+            sage: R = Zp(5)                                                             # needs sage.rings.padics
+            sage: S.<x> = R[]                                                           # needs sage.rings.padics
+            sage: S([1, R(0, 20)])                                                      # needs sage.rings.padics
             O(5^20)*x + 1 + O(5^20)
         """
         cdef list x = self.__coeffs
@@ -12139,27 +12201,29 @@ cdef class Polynomial_generic_dense_inexact(Polynomial_generic_dense):
 
         EXAMPLES::
 
-            sage: K = Qp(3, 10)                                                         # optional - sage.rings.padics
-            sage: R.<T> = K[]                                                           # optional - sage.rings.padics
-            sage: f = T + 2; f                                                          # optional - sage.rings.padics
+            sage: # needs sage.rings.padics
+            sage: K = Qp(3, 10)
+            sage: R.<T> = K[]
+            sage: f = T + 2; f
             (1 + O(3^10))*T + 2 + O(3^10)
-            sage: f.degree()                                                            # optional - sage.rings.padics
+            sage: f.degree()
             1
-            sage: (f - T).degree()                                                      # optional - sage.rings.padics
+            sage: (f - T).degree()
             0
-            sage: (f - T).degree(secure=True)                                           # optional - sage.rings.padics
+            sage: (f - T).degree(secure=True)
             Traceback (most recent call last):
             ...
             PrecisionError: the leading coefficient is indistinguishable from 0
 
-            sage: x = O(3^5)                                                            # optional - sage.rings.padics
-            sage: li = [3^i * x for i in range(0,5)]; li                                # optional - sage.rings.padics
+            sage: # needs sage.rings.padics
+            sage: x = O(3^5)
+            sage: li = [3^i * x for i in range(0,5)]; li
             [O(3^5), O(3^6), O(3^7), O(3^8), O(3^9)]
-            sage: f = R(li); f                                                          # optional - sage.rings.padics
+            sage: f = R(li); f
             O(3^9)*T^4 + O(3^8)*T^3 + O(3^7)*T^2 + O(3^6)*T + O(3^5)
-            sage: f.degree()                                                            # optional - sage.rings.padics
+            sage: f.degree()
             -1
-            sage: f.degree(secure=True)                                                 # optional - sage.rings.padics
+            sage: f.degree(secure=True)
             Traceback (most recent call last):
             ...
             PrecisionError: the leading coefficient is indistinguishable from 0
@@ -12191,20 +12255,21 @@ cdef class Polynomial_generic_dense_inexact(Polynomial_generic_dense):
 
         EXAMPLES::
 
-            sage: K = Qp(3, 10)                                                         # optional - sage.rings.padics
-            sage: R.<T> = K[]                                                           # optional - sage.rings.padics
-            sage: f = T + 2; f                                                          # optional - sage.rings.padics
+            sage: # needs sage.rings.padics
+            sage: K = Qp(3, 10)
+            sage: R.<T> = K[]
+            sage: f = T + 2; f
             (1 + O(3^10))*T + 2 + O(3^10)
-            sage: f.degree()                                                            # optional - sage.rings.padics
+            sage: f.degree()
             1
-            sage: f.prec_degree()                                                       # optional - sage.rings.padics
+            sage: f.prec_degree()
             1
 
-            sage: g = f - T; g                                                          # optional - sage.rings.padics
+            sage: g = f - T; g                                                          # needs sage.rings.padics
             O(3^10)*T + 2 + O(3^10)
-            sage: g.degree()                                                            # optional - sage.rings.padics
+            sage: g.degree()                                                            # needs sage.rings.padics
             0
-            sage: g.prec_degree()                                                       # optional - sage.rings.padics
+            sage: g.prec_degree()                                                       # needs sage.rings.padics
             1
 
         AUTHOR:
@@ -12287,14 +12352,14 @@ cdef class PolynomialBaseringInjection(Morphism):
     supposed to be the fastest maps for that purpose. See
     :trac:`9944`. ::
 
-        sage: R.<x> = Qp(3)[]                                                           # optional - sage.rings.padics
-        sage: R.coerce_map_from(R.base_ring())                                          # optional - sage.rings.padics
+        sage: R.<x> = Qp(3)[]                                                           # needs sage.rings.padics
+        sage: R.coerce_map_from(R.base_ring())                                          # needs sage.rings.padics
         Polynomial base injection morphism:
           From: 3-adic Field with capped relative precision 20
           To:   Univariate Polynomial Ring in x over
                 3-adic Field with capped relative precision 20
-        sage: R.<x,y> = Qp(3)[]                                                         # optional - sage.rings.padics
-        sage: R.coerce_map_from(R.base_ring())                                          # optional - sage.rings.padics
+        sage: R.<x,y> = Qp(3)[]                                                         # needs sage.rings.padics
+        sage: R.coerce_map_from(R.base_ring())                                          # needs sage.rings.padics
         Polynomial base injection morphism:
           From: 3-adic Field with capped relative precision 20
           To:   Multivariate Polynomial Ring in x, y over
@@ -12337,11 +12402,12 @@ cdef class PolynomialBaseringInjection(Morphism):
 
         ::
 
-            sage: R.<t> = Qp(2)[]                                                       # optional - sage.rings.padics
-            sage: f = R.convert_map_from(R.base_ring())    # indirect doctest           # optional - sage.rings.padics
-            sage: f(Qp(2).one()*3)                                                      # optional - sage.rings.padics
+            sage: # needs sage.rings.padics
+            sage: R.<t> = Qp(2)[]
+            sage: f = R.convert_map_from(R.base_ring())    # indirect doctest
+            sage: f(Qp(2).one()*3)
             1 + 2 + O(2^20)
-            sage: (Qp(2).one()*3)*t                                                     # optional - sage.rings.padics
+            sage: (Qp(2).one()*3)*t
             (1 + 2 + O(2^20))*t
         """
         assert codomain.base_ring() is domain, "domain must be basering"
@@ -12405,8 +12471,8 @@ cdef class PolynomialBaseringInjection(Morphism):
         TESTS::
 
             sage: from sage.rings.polynomial.polynomial_element import PolynomialBaseringInjection
-            sage: m = PolynomialBaseringInjection(Qp(5), Qp(5)['x'])                    # optional - sage.rings.padics
-            sage: m(1 + O(5^11), absprec=5)   # indirect doctest                        # optional - sage.rings.padics
+            sage: m = PolynomialBaseringInjection(Qp(5), Qp(5)['x'])                    # needs sage.rings.padics
+            sage: m(1 + O(5^11), absprec=5)   # indirect doctest                        # needs sage.rings.padics
             1 + O(5^11)
         """
         try:

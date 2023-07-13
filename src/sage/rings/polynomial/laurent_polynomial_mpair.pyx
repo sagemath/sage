@@ -234,12 +234,12 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
 
         check compatibility with  :trac:`26105`::
 
-            sage: F.<t> = GF(4)                                                         # optional - sage.rings.finite_rings
-            sage: LF.<a,b> = LaurentPolynomialRing(F)                                   # optional - sage.rings.finite_rings
-            sage: rho = LF.hom([b,a], base_map=F.frobenius_endomorphism())              # optional - sage.rings.finite_rings
-            sage: s = t*~a + b +~t*(b**-3)*a**2; rs = rho(s); rs                        # optional - sage.rings.finite_rings
+            sage: F.<t> = GF(4)                                                         # needs sage.rings.finite_rings
+            sage: LF.<a,b> = LaurentPolynomialRing(F)                                   # needs sage.rings.finite_rings
+            sage: rho = LF.hom([b,a], base_map=F.frobenius_endomorphism())              # needs sage.rings.finite_rings
+            sage: s = t*~a + b +~t*(b**-3)*a**2; rs = rho(s); rs                        # needs sage.rings.finite_rings
             a + (t + 1)*b^-1 + t*a^-3*b^2
-            sage: s == rho(rs)                                                          # optional - sage.rings.finite_rings
+            sage: s == rho(rs)                                                          # needs sage.rings.finite_rings
             True
         """
         p = self._poly
@@ -984,30 +984,30 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
             sage: L.<x,y> = LaurentPolynomialRing(QQ)
             sage: f = x^3 + y^-3
             sage: g = y + x
-            sage: f // g
+            sage: f // g                                                                # needs sage.libs.singular
             x^5*y^-3 - x^4*y^-2 + x^3*y^-1
 
             sage: h = x + y^(-1)
-            sage: f // h
+            sage: f // h                                                                # needs sage.libs.singular
             x^2 - x*y^-1 + y^-2
-            sage: h * (f // h) == f
+            sage: h * (f // h) == f                                                     # needs sage.libs.singular
             True
-            sage: f // 1
+            sage: f // 1                                                                # needs sage.libs.singular
             x^3 + y^-3
-            sage: 1 // f
+            sage: 1 // f                                                                # needs sage.libs.singular
             0
 
         TESTS:
 
         Check that :trac:`19357` is fixed::
 
-            sage: x // y
+            sage: x // y                                                                # needs sage.libs.singular
             x*y^-1
 
         Check that :trac:`21999` is fixed::
 
-            sage: L.<a,b> = LaurentPolynomialRing(QQbar)
-            sage: (a+a*b) // a
+            sage: L.<a,b> = LaurentPolynomialRing(QQbar)                                # needs sage.rings.number_field
+            sage: (a+a*b) // a                                                          # needs sage.libs.singular sage.rings.number_field
             b + 1
         """
         cdef LaurentPolynomial_mpair ans = self._new_c()
@@ -1035,11 +1035,11 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
         EXAMPLES::
 
             sage: R.<s, t> = LaurentPolynomialRing(QQ)
-            sage: (s^2 - t^2).quo_rem(s - t)
+            sage: (s^2 - t^2).quo_rem(s - t)                                            # needs sage.libs.singular
             (s + t, 0)
-            sage: (s^-2 - t^2).quo_rem(s - t)
+            sage: (s^-2 - t^2).quo_rem(s - t)                                           # needs sage.libs.singular
             (s + t, -s^2 + s^-2)
-            sage: (s^-2 - t^2).quo_rem(s^-1 - t)
+            sage: (s^-2 - t^2).quo_rem(s^-1 - t)                                        # needs sage.libs.singular
             (t + s^-1, 0)
 
         TESTS:
@@ -1047,13 +1047,13 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
         Verify that :trac:`31257` is fixed::
 
             sage: R.<x,y> = LaurentPolynomialRing(QQ)
-            sage: q, r = (1/x).quo_rem(y)
-            sage: q, r
+            sage: q, r = (1/x).quo_rem(y)                                               # needs sage.libs.singular
+            sage: q, r                                                                  # needs sage.libs.singular
             (x^-1*y^-1, 0)
-            sage: q*y + r == 1/x
+            sage: q*y + r == 1/x                                                        # needs sage.libs.singular
             True
-            sage: q,r = (x^-2 - y^2).quo_rem(x - y)
-            sage: q*(x - y) + r == x^-2 - y^2
+            sage: q, r = (x^-2 - y^2).quo_rem(x - y)                                    # needs sage.libs.singular
+            sage: q*(x - y) + r == x^-2 - y^2                                           # needs sage.libs.singular
             True
         """
         # make copies of self and right so that the input can be normalized
@@ -1349,13 +1349,13 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
 
             sage: R.<x,y> = LaurentPolynomialRing(QQ)
             sage: f = x^3 + y/x
-            sage: g = f._symbolic_(SR); g                                               # optional - sage.symbolic
+            sage: g = f._symbolic_(SR); g                                               # needs sage.symbolic
             (x^4 + y)/x
-            sage: g(x=2, y=2)                                                           # optional - sage.symbolic
+            sage: g(x=2, y=2)                                                           # needs sage.symbolic
             9
 
-            sage: g = SR(f)                                                             # optional - sage.symbolic
-            sage: g(x=2, y=2)                                                           # optional - sage.symbolic
+            sage: g = SR(f)                                                             # needs sage.symbolic
+            sage: g(x=2, y=2)                                                           # needs sage.symbolic
             9
         """
         d = {repr(g): R.var(g) for g in self._parent.gens()}
@@ -1639,8 +1639,8 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
 
         Test for :trac:`30331`::
 
-            sage: F.<z> = CyclotomicField(3)                                            # optional - sage.rings.number_field
-            sage: p.rescale_vars({0: 2, 1: z}, new_ring=L.change_ring(F))               # optional - sage.rings.number_field
+            sage: F.<z> = CyclotomicField(3)                                            # needs sage.rings.number_field
+            sage: p.rescale_vars({0: 2, 1: z}, new_ring=L.change_ring(F))               # needs sage.rings.number_field
             2*z*x*y^-2 + 1/4*z*x^-2*y
         """
         cdef int i
@@ -1772,8 +1772,8 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
 
             sage: L.<x,y> = LaurentPolynomialRing(QQ, 2)
             sage: p = x + y
-            sage: F.<z> = CyclotomicField(3)
-            sage: p.toric_substitute((2,3), (-1,1), z, new_ring=L.change_ring(F))
+            sage: F.<z> = CyclotomicField(3)                                            # needs sage.rings.number_field
+            sage: p.toric_substitute((2,3), (-1,1), z, new_ring=L.change_ring(F))       # needs sage.rings.number_field
             (-z - 1)*x^3*y^3 + z*x^-2*y^-2
 
             sage: P.<x> = LaurentPolynomialRing(QQ, 1)

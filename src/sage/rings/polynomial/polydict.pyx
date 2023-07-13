@@ -877,7 +877,7 @@ cdef class PolyDict:
 
         Check that :trac:`29604` is fixed::
 
-            sage: PolyDict({(1, 0): GF(4)(1)}).poly_repr(['x', 'y'])
+            sage: PolyDict({(1, 0): GF(4)(1)}).poly_repr(['x', 'y'])                    # needs sage.rings.finite_rings
             'x'
             sage: P.<x,y> = LaurentPolynomialRing(GF(2), 2)
             sage: P.gens()
@@ -1071,9 +1071,9 @@ cdef class PolyDict:
         EXAMPLES::
 
             sage: from sage.rings.polynomial.polydict import PolyDict
-            sage: x, y = FreeMonoid(2, 'x, y').gens()  # a strange object to live in a polydict, but non-commutative!   # optional - sage.groups
-            sage: f = PolyDict({(2, 3): x})                                             # optional - sage.groups
-            sage: f.scalar_rmult(y)                                                     # optional - sage.groups
+            sage: x, y = FreeMonoid(2, 'x, y').gens()  # a strange object to live in a polydict, but non-commutative!   # needs sage.groups
+            sage: f = PolyDict({(2, 3): x})                                             # needs sage.groups
+            sage: f.scalar_rmult(y)                                                     # needs sage.groups
             PolyDict with representation {(2, 3): x*y}
             sage: f = PolyDict({(2,3):2, (1, 2): 3, (2, 1): 4})
             sage: f.scalar_rmult(-2)
@@ -1093,9 +1093,9 @@ cdef class PolyDict:
         EXAMPLES::
 
             sage: from sage.rings.polynomial.polydict import PolyDict
-            sage: x, y = FreeMonoid(2, 'x, y').gens()  # a strange object to live in a polydict, but non-commutative!   # optional - sage.groups
-            sage: f = PolyDict({(2,3):x})                                               # optional - sage.groups
-            sage: f.scalar_lmult(y)                                                     # optional - sage.groups
+            sage: x, y = FreeMonoid(2, 'x, y').gens()  # a strange object to live in a polydict, but non-commutative!   # needs sage.groups
+            sage: f = PolyDict({(2,3):x})                                               # needs sage.groups
+            sage: f.scalar_lmult(y)                                                     # needs sage.groups
             PolyDict with representation {(2, 3): y*x}
             sage: f = PolyDict({(2,3):2, (1,2):3, (2,1):4})
             sage: f.scalar_lmult(-2)
@@ -1122,9 +1122,9 @@ cdef class PolyDict:
         EXAMPLES::
 
             sage: from sage.rings.polynomial.polydict import ETuple, PolyDict
-            sage: x, y = FreeMonoid(2, 'x, y').gens()  # a strange object to live in a polydict, but non-commutative!   # optional - sage.groups
-            sage: f = PolyDict({(2, 3): x})                                             # optional - sage.groups
-            sage: f.term_lmult(ETuple((1, 2)), y)                                       # optional - sage.groups
+            sage: x, y = FreeMonoid(2, 'x, y').gens()  # a strange object to live in a polydict, but non-commutative!   # needs sage.groups
+            sage: f = PolyDict({(2, 3): x})                                             # needs sage.groups
+            sage: f.term_lmult(ETuple((1, 2)), y)                                       # needs sage.groups
             PolyDict with representation {(3, 5): y*x}
 
             sage: f = PolyDict({(2,3): 2, (1,2): 3, (2,1): 4})
@@ -1151,9 +1151,9 @@ cdef class PolyDict:
         EXAMPLES::
 
             sage: from sage.rings.polynomial.polydict import ETuple, PolyDict
-            sage: x, y = FreeMonoid(2, 'x, y').gens()  # a strange object to live in a polydict, but non-commutative!   # optional - sage.groups
-            sage: f = PolyDict({(2, 3): x})                                             # optional - sage.groups
-            sage: f.term_rmult(ETuple((1, 2)), y)                                       # optional - sage.groups
+            sage: x, y = FreeMonoid(2, 'x, y').gens()  # a strange object to live in a polydict, but non-commutative!   # needs sage.groups
+            sage: f = PolyDict({(2, 3): x})                                             # needs sage.groups
+            sage: f.term_rmult(ETuple((1, 2)), y)                                       # needs sage.groups
             PolyDict with representation {(3, 5): x*y}
 
             sage: f = PolyDict({(2, 3): 2, (1, 2): 3, (2, 1): 4})
@@ -1982,9 +1982,9 @@ cdef class ETuple:
         Verify that :trac:`6428` has been addressed::
 
             sage: R.<y, z> = Frac(QQ['x'])[]
-            sage: type(y)                                                               # optional - sage.libs.singular
+            sage: type(y)                                                               # needs sage.libs.singular
             <class 'sage.rings.polynomial.multi_polynomial_libsingular.MPolynomial_libsingular'>
-            sage: y^(2^32)                                                              # optional - sage.libs.singular
+            sage: y^(2^32)                                                              # needs sage.libs.singular
             Traceback (most recent call last):
             ...
             OverflowError: exponent overflow (...)   # 64-bit

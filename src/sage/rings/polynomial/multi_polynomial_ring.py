@@ -31,9 +31,9 @@ We construct the Frobenius morphism on `\GF{5}[x,y,z]` over
     sage: frob = R.hom([x^5, y^5, z^5])
     sage: frob(x^2 + 2*y - z^4)
     -z^20 + x^10 + 2*y^5
-    sage: frob((x + 2*y)^3)                                                             # optional - sage.rings.finite_rings
+    sage: frob((x + 2*y)^3)                                                             # needs sage.rings.finite_rings
     x^15 + x^10*y^5 + 2*x^5*y^10 - 2*y^15
-    sage: (x^5 + 2*y^5)^3                                                               # optional - sage.rings.finite_rings
+    sage: (x^5 + 2*y^5)^3                                                               # needs sage.rings.finite_rings
     x^15 + x^10*y^5 + 2*x^5*y^10 - 2*y^15
 
 We make a polynomial ring in one variable over a polynomial ring in
@@ -249,17 +249,18 @@ class MPolynomialRing_polydict(MPolynomialRing_macaulay2_repr, PolynomialRing_si
 
         Conversion from symbolic variables::
 
-            sage: x,y,z = var('x,y,z')                                                  # optional - sage.symbolic
-            sage: R = QQ['x,y,z']                                                       # optional - sage.symbolic
-            sage: type(x)                                                               # optional - sage.symbolic
+            sage: # needs sage.symbolic
+            sage: x,y,z = var('x,y,z')
+            sage: R = QQ['x,y,z']
+            sage: type(x)
             <class 'sage.symbolic.expression.Expression'>
-            sage: type(R(x))                                                            # optional - sage.symbolic
+            sage: type(R(x))
             <class 'sage.rings.polynomial.multi_polynomial_libsingular.MPolynomial_libsingular'>
-            sage: f = R(x^3 + y^3 - z^3); f                                             # optional - sage.symbolic
+            sage: f = R(x^3 + y^3 - z^3); f
             x^3 + y^3 - z^3
-            sage: type(f)                                                               # optional - sage.symbolic
+            sage: type(f)
             <class 'sage.rings.polynomial.multi_polynomial_libsingular.MPolynomial_libsingular'>
-            sage: parent(f)                                                             # optional - sage.symbolic
+            sage: parent(f)
             Multivariate Polynomial Ring in x, y, z over Rational Field
 
         A more complicated symbolic and computational mix. Behind the
@@ -268,11 +269,11 @@ class MPolynomialRing_polydict(MPolynomialRing_macaulay2_repr, PolynomialRing_si
         ::
 
             sage: R = QQ['x,y,z']
-            sage: f = (x^3 + y^3 - z^3)^10; f                                           # optional - sage.symbolic
+            sage: f = (x^3 + y^3 - z^3)^10; f                                           # needs sage.symbolic
             (x^3 + y^3 - z^3)^10
-            sage: g = R(f); parent(g)                                                   # optional - sage.symbolic
+            sage: g = R(f); parent(g)                                                   # needs sage.symbolic
             Multivariate Polynomial Ring in x, y, z over Rational Field
-            sage: (f - g).expand()                                                      # optional - sage.symbolic
+            sage: (f - g).expand()                                                      # needs sage.symbolic
             0
 
         It intelligently handles conversions from polynomial rings in a subset
@@ -376,16 +377,16 @@ class MPolynomialRing_polydict(MPolynomialRing_macaulay2_repr, PolynomialRing_si
 
             sage: A.<a> = PolynomialRing(QQ)
             sage: B.<d,e> = PolynomialRing(A)
-            sage: f = pari(a*d)
+            sage: f = pari(a*d)                                                         # needs sage.libs.pari
             sage: B(f)
             a*d
-            sage: f = pari(a*d - (a+1)*d*e^3 + a*d^2)
+            sage: f = pari(a*d - (a+1)*d*e^3 + a*d^2)                                   # needs sage.libs.pari
             sage: B(f)
             (-a - 1)*d*e^3 + a*d^2 + a*d
 
             sage: A.<a,b> = PolynomialRing(QQ)
             sage: B.<d,e> = PolynomialRing(A)
-            sage: f = pari(a*d)
+            sage: f = pari(a*d)                                                         # needs sage.libs.pari
             sage: B(f)
             a*d
 
@@ -403,7 +404,7 @@ class MPolynomialRing_polydict(MPolynomialRing_macaulay2_repr, PolynomialRing_si
 
         Check that :trac:`21999` is fixed::
 
-            sage: R = QQbar['s,t']
+            sage: R = QQbar['s,t']                                                      # needs sage.rings.number_field
             sage: type(R({(1,2): 3}).coefficients()[0])
             <class 'sage.rings.qqbar.AlgebraicNumber'>
         """
