@@ -228,23 +228,23 @@ class SchemeHomset_points_affine(SchemeHomset_points):
         ::
 
             sage: u = QQ['u'].0
-            sage: K.<v> = NumberField(u^2 + 3)                                          # optional - sage.rings.number_field
-            sage: A.<x,y> = AffineSpace(K, 2)                                           # optional - sage.rings.number_field
-            sage: len(A(K).points(bound=2))                                             # optional - sage.rings.number_field
+            sage: K.<v> = NumberField(u^2 + 3)                                          # needs sage.rings.number_field
+            sage: A.<x,y> = AffineSpace(K, 2)                                           # needs sage.rings.number_field
+            sage: len(A(K).points(bound=2))                                             # needs sage.rings.number_field
             1849
 
         ::
 
             sage: A.<x,y> = AffineSpace(QQ, 2)
             sage: E = A.subscheme([x^2 + y^2 - 1, y^2 - x^3 + x^2 + x - 1])
-            sage: E(A.base_ring()).points()
+            sage: E(A.base_ring()).points()                                             # needs sage.libs.singular
             [(-1, 0), (0, -1), (0, 1), (1, 0)]
 
         ::
 
-            sage: A.<x,y> = AffineSpace(CC, 2)
+            sage: A.<x,y> = AffineSpace(CC, 2)                                          # needs sage.rings.real_mpfr
             sage: E = A.subscheme([y^3 - x^3 - x^2, x*y])
-            sage: E(A.base_ring()).points()
+            sage: E(A.base_ring()).points()                                             # needs sage.libs.singular sage.rings.real_mpfr
             verbose 0 (...: affine_homset.py, points)
             Warning: computations in the numerical fields are inexact;points
             may be computed partially or incorrectly.
@@ -253,9 +253,9 @@ class SchemeHomset_points_affine(SchemeHomset_points):
 
         ::
 
-            sage: A.<x1,x2> = AffineSpace(CDF, 2)                                       # optional - sage.rings.complex_double
-            sage: E = A.subscheme([x1^2 + x2^2 + x1*x2, x1 + x2])                       # optional - sage.libs.singular sage.rings.complex_double
-            sage: E(A.base_ring()).points()                                             # optional - sage.libs.singular sage.rings.complex_double
+            sage: A.<x1,x2> = AffineSpace(CDF, 2)                                       # needs sage.rings.complex_double
+            sage: E = A.subscheme([x1^2 + x2^2 + x1*x2, x1 + x2])                       # needs sage.libs.singular sage.rings.complex_double
+            sage: E(A.base_ring()).points()                                             # needs sage.libs.singular sage.rings.complex_double
             verbose 0 (...: affine_homset.py, points)
             Warning: computations in the numerical fields are inexact;points
             may be computed partially or incorrectly.
@@ -393,28 +393,29 @@ class SchemeHomset_points_affine(SchemeHomset_points):
 
         EXAMPLES::
 
-            sage: K.<v> = QuadraticField(3)                                             # optional - sage.rings.number_field
-            sage: A.<x,y> = AffineSpace(K, 2)                                           # optional - sage.rings.number_field
-            sage: X = A.subscheme([x^3 - v^2*y, y - v*x^2 + 3])                         # optional - sage.rings.number_field
-            sage: L = X(K).numerical_points(F=RR); L  # abs tol 1e-14                   # optional - sage.rings.number_field
+            sage: # needs sage.rings.number_field
+            sage: K.<v> = QuadraticField(3)
+            sage: A.<x,y> = AffineSpace(K, 2)
+            sage: X = A.subscheme([x^3 - v^2*y, y - v*x^2 + 3])
+            sage: L = X(K).numerical_points(F=RR); L  # abs tol 1e-14
             [(-1.18738247880014, -0.558021142104134),
              (1.57693558184861, 1.30713548084184),
              (4.80659931965815, 37.0162574656220)]
-            sage: L[0].codomain()                                                       # optional - sage.rings.number_field
+            sage: L[0].codomain()
             Affine Space of dimension 2 over Real Field with 53 bits of precision
 
         ::
 
             sage: A.<x,y> = AffineSpace(QQ, 2)
             sage: X = A.subscheme([y^2 - x^2 - 3*x, x^2 - 10*y])
-            sage: len(X(QQ).numerical_points(F=ComplexField(100)))
+            sage: len(X(QQ).numerical_points(F=ComplexField(100)))                      # needs sage.libs.singular
             4
 
         ::
 
             sage: A.<x1, x2> = AffineSpace(QQ, 2)
             sage: E = A.subscheme([30*x1^100 + 1000*x2^2 + 2000*x1*x2 + 1, x1 + x2])
-            sage: len(E(A.base_ring()).numerical_points(F=CDF, zero_tolerance=1e-9))
+            sage: len(E(A.base_ring()).numerical_points(F=CDF, zero_tolerance=1e-9))    # needs sage.libs.singular
             100
 
         TESTS::
@@ -430,7 +431,7 @@ class SchemeHomset_points_affine(SchemeHomset_points):
 
             sage: A.<x,y> = AffineSpace(QQ, 2)
             sage: X = A.subscheme([y^2 - x^2 - 3*x, x^2 - 10*y])
-            sage: X(QQ).numerical_points(F=CC, zero_tolerance=-1)
+            sage: X(QQ).numerical_points(F=CC, zero_tolerance=-1)                       # needs sage.libs.singular
             Traceback (most recent call last):
             ...
             ValueError: tolerance must be positive
