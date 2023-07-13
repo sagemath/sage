@@ -226,13 +226,14 @@ cdef class FiniteField(Field):
 
         EXAMPLES::
 
-            sage: GF(97,'a')._magma_init_(magma)            # optional - magma
+            sage: # optional - magma
+            sage: GF(97,'a')._magma_init_(magma)
             'GF(97)'
-            sage: GF(9,'a')._magma_init_(magma)             # optional - magma
+            sage: GF(9,'a')._magma_init_(magma)
             'SageCreateWithNames(ext<GF(3)|_sage_[...]![GF(3)!2,GF(3)!2,GF(3)!1]>,["a"])'
-            sage: magma(GF(9,'a'))                          # optional - magma
+            sage: magma(GF(9,'a'))
             Finite field of size 3^2
-            sage: magma(GF(9,'a')).1                        # optional - magma
+            sage: magma(GF(9,'a')).1
             a
         """
         if self.degree() == 1:

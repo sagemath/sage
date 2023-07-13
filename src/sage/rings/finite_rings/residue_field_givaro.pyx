@@ -34,17 +34,17 @@ class ResidueFiniteField_givaro(ResidueField_generic, FiniteField_givaro):
     EXAMPLES::
 
         sage: R.<x> = QQ[]
-        sage: K.<a> = NumberField(x^3 - 7)                                              # optional - sage.rings.number_field
-        sage: P = K.ideal(29).factor()[0][0]                                            # optional - sage.rings.number_field
-        sage: k = K.residue_field(P)                                                    # optional - sage.rings.number_field
-        sage: k.degree()                                                                # optional - sage.rings.number_field
+        sage: K.<a> = NumberField(x^3 - 7)                                              # needs sage.rings.number_field
+        sage: P = K.ideal(29).factor()[0][0]                                            # needs sage.rings.number_field
+        sage: k = K.residue_field(P)                                                    # needs sage.rings.number_field
+        sage: k.degree()                                                                # needs sage.rings.number_field
         2
-        sage: OK = K.maximal_order()                                                    # optional - sage.rings.number_field
-        sage: c = OK(a)                                                                 # optional - sage.rings.number_field
-        sage: b = k(c)                                                                  # optional - sage.rings.number_field
-        sage: b*c^2                                                                     # optional - sage.rings.number_field
+        sage: OK = K.maximal_order()                                                    # needs sage.rings.number_field
+        sage: c = OK(a)                                                                 # needs sage.rings.number_field
+        sage: b = k(c)                                                                  # needs sage.rings.number_field
+        sage: b*c^2                                                                     # needs sage.rings.number_field
         7
-        sage: b*c                                                                       # optional - sage.rings.number_field
+        sage: b*c                                                                       # needs sage.rings.number_field
         13*abar + 5
 
         sage: R.<t> = GF(7)[]; P = R.ideal(t^2 + 4)
@@ -75,9 +75,9 @@ class ResidueFiniteField_givaro(ResidueField_generic, FiniteField_givaro):
         EXAMPLES::
 
             sage: R.<x> = QQ[]
-            sage: K.<a> = NumberField(x^4 + 3*x^2 - 17)                                 # optional - sage.rings.number_field
-            sage: P = K.ideal(61).factor()[0][0]                                        # optional - sage.rings.number_field
-            sage: k = K.residue_field(P)                                                # optional - sage.rings.number_field
+            sage: K.<a> = NumberField(x^4 + 3*x^2 - 17)                                 # needs sage.rings.number_field
+            sage: P = K.ideal(61).factor()[0][0]                                        # needs sage.rings.number_field
+            sage: k = K.residue_field(P)                                                # needs sage.rings.number_field
 
             sage: R.<t> = GF(3)[]; P = R.ideal(t^4 - t^3 + t + 1); k.<a> = P.residue_field(); type(k)
             <class 'sage.rings.finite_rings.residue_field_givaro.ResidueFiniteField_givaro_with_category'>
@@ -108,15 +108,15 @@ class ResidueFiniteField_givaro(ResidueField_generic, FiniteField_givaro):
         EXAMPLES::
 
             sage: R.<x> = QQ[]
-            sage: K.<a> = NumberField(x^4 + 3*x^2 - 17)                                 # optional - sage.rings.number_field
-            sage: P = K.ideal(61).factor()[0][0]                                        # optional - sage.rings.number_field
-            sage: k = K.residue_field(P)                                                # optional - sage.rings.number_field
-            sage: k(77*a^7 + 4)                                                         # optional - sage.rings.number_field
+            sage: K.<a> = NumberField(x^4 + 3*x^2 - 17)                                 # needs sage.rings.number_field
+            sage: P = K.ideal(61).factor()[0][0]                                        # needs sage.rings.number_field
+            sage: k = K.residue_field(P)                                                # needs sage.rings.number_field
+            sage: k(77*a^7 + 4)                                                         # needs sage.rings.number_field
             2*abar + 4
-            sage: V = k.vector_space(map=False); v = V([3,-2])                          # optional - sage.rings.number_field
-            sage: type(k.convert_map_from(V))
+            sage: V = k.vector_space(map=False); v = V([3,-2])                          # needs sage.rings.number_field
+            sage: type(k.convert_map_from(V))                                           # needs sage.rings.number_field
             <class 'sage.structure.coerce_maps.DefaultConvertMap_unique'>
-            sage: k(v) # indirect doctest
+            sage: k(v)  # indirect doctest                                              # needs sage.rings.number_field
             59*abar + 3
 
             sage: R.<t> = GF(3)[]; P = R.ideal(t^4 - t^3 + t + 1); k.<a> = P.residue_field()
