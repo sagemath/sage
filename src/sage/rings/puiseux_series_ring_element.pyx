@@ -46,7 +46,7 @@ Other arithmetic can be performed with Puiseux Series::
 
 Mind the base ring. However, the base ring can be changed::
 
-    sage: I*q                                                                           # optional - sage.rings.number_field
+    sage: I*q                                                                           # needs sage.rings.number_field
     Traceback (most recent call last):
     ...
     TypeError: unsupported operand parent(s) for *:
@@ -221,11 +221,11 @@ cdef class PuiseuxSeries(AlgebraElement):
 
             sage: R.<x> = PuiseuxSeriesRing(ZZ)
             sage: p = x^(1/3) + x**3
-            sage: t = p._im_gens_(QQbar, [2])                                           # optional - sage.rings.number_field
-            sage: t in QQbar                                                            # optional - sage.rings.number_field
+            sage: t = p._im_gens_(QQbar, [2])                                           # needs sage.rings.number_field
+            sage: t in QQbar                                                            # needs sage.rings.number_field
             True
-            sage: f = R.hom([QQbar(2)], check=False)                                    # optional - sage.rings.number_field
-            sage: t == f(p)                                                             # optional - sage.rings.number_field
+            sage: f = R.hom([QQbar(2)], check=False)                                    # needs sage.rings.number_field
+            sage: t == f(p)                                                             # needs sage.rings.number_field
             True
         """
         return self(codomain(im_gens[0]))
@@ -242,8 +242,8 @@ cdef class PuiseuxSeries(AlgebraElement):
             sage: R.zero()
             0
 
-            sage: S.<t> = PuiseuxSeriesRing(Zp(5))                                      # optional - sage.rings.padics
-            sage: t**(1/2) + 5 * t^(1/3)                                                # optional - sage.rings.padics
+            sage: S.<t> = PuiseuxSeriesRing(Zp(5))                                      # needs sage.rings.padics
+            sage: t**(1/2) + 5 * t^(1/3)                                                # needs sage.rings.padics
             (5 + O(5^21))*t^(1/3) + (1 + O(5^20))*t^(1/2)
         """
         laurent = self.laurent_part()
@@ -301,7 +301,7 @@ cdef class PuiseuxSeries(AlgebraElement):
             sage: p = x^(1/2) + x**3-x**(-1/4)
             sage: p(16)
             8199/2
-            sage: p(pi.n())                                                             # optional - sage.symbolic
+            sage: p(pi.n())                                                             # needs sage.symbolic
             32.0276049867404
         """
         # use x.nth_root since x**(1/self._e) returns oo when x = 0
@@ -440,9 +440,9 @@ cdef class PuiseuxSeries(AlgebraElement):
 
         EXAMPLES::
 
-            sage: P.<y> = PuiseuxSeriesRing(Zp(3))                                      # optional - sage.rings.padics
-            sage: t = y^(2/5) + O(y)                                                    # optional - sage.rings.padics
-            sage: 5*t                                          # indirect doctest       # optional - sage.rings.padics
+            sage: P.<y> = PuiseuxSeriesRing(Zp(3))                                      # needs sage.rings.padics
+            sage: t = y^(2/5) + O(y)                                                    # needs sage.rings.padics
+            sage: 5*t                                          # indirect doctest       # needs sage.rings.padics
             (2 + 3 + O(3^20))*y^(2/5) + O(y)
         """
         return type(self)(self._parent, self._l._lmul_(c), self._e)
@@ -873,11 +873,12 @@ cdef class PuiseuxSeries(AlgebraElement):
 
         EXAMPLES::
 
-            sage: P.<y> = PolynomialRing(GF(5))                                         # optional - sage.rings.finite_rings
-            sage: R.<x> = PuiseuxSeriesRing(P)                                          # optional - sage.rings.finite_rings
-            sage: p = 3*y*x**(-2/3) + 2*y**2*x**(1/5); p                                # optional - sage.rings.finite_rings
+            sage: # needs sage.rings.finite_rings
+            sage: P.<y> = PolynomialRing(GF(5))
+            sage: R.<x> = PuiseuxSeriesRing(P)
+            sage: p = 3*y*x**(-2/3) + 2*y**2*x**(1/5); p
             3*y*x^(-2/3) + 2*y^2*x^(1/5)
-            sage: p.degree()                                                            # optional - sage.rings.finite_rings
+            sage: p.degree()
             1/5
         """
         return self._l.degree() / self._e
@@ -946,12 +947,13 @@ cdef class PuiseuxSeries(AlgebraElement):
 
         EXAMPLES::
 
-            sage: R.<x> = PuiseuxSeriesRing(GF(3))                                      # optional - sage.rings.finite_rings
-            sage: p = (x**(-1/3) + 2*x**3)**2; p                                        # optional - sage.rings.finite_rings
+            sage: # needs sage.rings.finite_rings
+            sage: R.<x> = PuiseuxSeriesRing(GF(3))
+            sage: p = (x**(-1/3) + 2*x**3)**2; p
             x^(-2/3) + x^(8/3) + x^6
-            sage: q = p.add_bigoh(7); q                                                 # optional - sage.rings.finite_rings
+            sage: q = p.add_bigoh(7); q
             x^(-2/3) + x^(8/3) + x^6 + O(x^7)
-            sage: q.precision_relative()                                                # optional - sage.rings.finite_rings
+            sage: q.precision_relative()
             23/3
         """
         if self.is_zero():
@@ -1020,14 +1022,15 @@ cdef class PuiseuxSeries(AlgebraElement):
 
         EXAMPLES::
 
-            sage: R.<x> = PuiseuxSeriesRing(QQbar)                                      # optional - sage.rings.number_field
-            sage: p = x**(3/2) - QQbar(I)*x**(1/2)                                      # optional - sage.rings.number_field
-            sage: p.power_series()                                                      # optional - sage.rings.number_field
+            sage: # needs sage.rings.number_field
+            sage: R.<x> = PuiseuxSeriesRing(QQbar)
+            sage: p = x**(3/2) - QQbar(I)*x**(1/2)
+            sage: p.power_series()
             Traceback (most recent call last):
             ...
             ArithmeticError: self is not a power series
-            sage: q = p**2                                                              # optional - sage.rings.number_field
-            sage: q.power_series()                                                      # optional - sage.rings.number_field
+            sage: q = p**2
+            sage: q.power_series()
             -x - 2*I*x^2 + x^3
         """
         try:

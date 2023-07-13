@@ -119,7 +119,7 @@ def O(*x, **kwds):
         Traceback (most recent call last):
         ...
         ArithmeticError: O(y) not defined
-        sage: O(x, y)                                                                   # needs sage.symbolic
+        sage: O(x, y)
         Traceback (most recent call last):
         ...
         ArithmeticError: O(x, y) not defined

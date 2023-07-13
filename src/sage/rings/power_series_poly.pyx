@@ -21,9 +21,9 @@ cdef class PowerSeries_poly(PowerSeries):
         """
         EXAMPLES::
 
-            sage: R.<q> = PowerSeriesRing(CC); R                                        # optional - sage.rings.real_mpfr
+            sage: R.<q> = PowerSeriesRing(CC); R                                        # needs sage.rings.real_mpfr
             Power Series Ring in q over Complex Field with 53 bits of precision
-            sage: loads(q.dumps()) == q                                                 # optional - sage.rings.real_mpfr
+            sage: loads(q.dumps()) == q                                                 # needs sage.rings.real_mpfr
             True
 
             sage: R.<t> = QQ[[]]
@@ -38,9 +38,9 @@ cdef class PowerSeries_poly(PowerSeries):
         Check that :trac:`22216` is fixed::
 
             sage: R.<T> = PowerSeriesRing(QQ)
-            sage: R(pari('1 + O(T)'))                                                   # optional - sage.libs.pari
+            sage: R(pari('1 + O(T)'))                                                   # needs sage.libs.pari
             1 + O(T)
-            sage: R(pari('1/T + O(T)'))                                                 # optional - sage.libs.pari
+            sage: R(pari('1/T + O(T)'))                                                 # needs sage.libs.pari
             Traceback (most recent call last):
             ...
             ValueError: series has negative valuation
@@ -109,9 +109,9 @@ cdef class PowerSeries_poly(PowerSeries):
 
         EXAMPLES::
 
-            sage: R.<t> = GF(7)[[]]                                                     # optional - sage.rings.finite_rings
-            sage: f = 3 - t^3 + O(t^5)                                                  # optional - sage.rings.finite_rings
-            sage: f.polynomial()                                                        # optional - sage.rings.finite_rings
+            sage: R.<t> = GF(7)[[]]
+            sage: f = 3 - t^3 + O(t^5)
+            sage: f.polynomial()
             6*t^3 + 3
         """
         return self.__f
@@ -163,12 +163,13 @@ cdef class PowerSeries_poly(PowerSeries):
 
         EXAMPLES::
 
-            sage: R.<t> = GF(11)[[]]                                                    # optional - sage.rings.finite_rings
-            sage: bool(1 + t + O(t^18))                                                 # optional - sage.rings.finite_rings
+            sage: # needs sage.rings.finite_rings
+            sage: R.<t> = GF(11)[[]]
+            sage: bool(1 + t + O(t^18))
             True
-            sage: bool(R(0))                                                            # optional - sage.rings.finite_rings
+            sage: bool(R(0))
             False
-            sage: bool(O(t^18))                                                         # optional - sage.rings.finite_rings
+            sage: bool(O(t^18))
             False
         """
         return not not self.__f
@@ -229,17 +230,17 @@ cdef class PowerSeries_poly(PowerSeries):
 
         A series defined over another ring can be substituted::
 
-            sage: S.<u> = GF(7)[[]]                                                     # optional - sage.rings.finite_rings
-            sage: f(2*u + u^3 + O(u^5))                                                 # optional - sage.rings.finite_rings
+            sage: S.<u> = GF(7)[[]]
+            sage: f(2*u + u^3 + O(u^5))
             4*u^2 + u^3 + 4*u^4 + 5*u^5 + O(u^6)
 
         As can a p-adic integer as long as the coefficient ring is compatible::
 
-            sage: f(100 + O(5^7))                                                       # optional - sage.rings.padics
+            sage: f(100 + O(5^7))                                                       # needs sage.rings.padics
             5^4 + 3*5^5 + 4*5^6 + 2*5^7 + 2*5^8 + O(5^9)
-            sage: f.change_ring(Zp(5))(100 + O(5^7))                                    # optional - sage.rings.padics
+            sage: f.change_ring(Zp(5))(100 + O(5^7))                                    # needs sage.rings.padics
             5^4 + 3*5^5 + 4*5^6 + 2*5^7 + 2*5^8 + O(5^9)
-            sage: f.change_ring(Zp(5))(100 + O(2^7))                                    # optional - sage.rings.padics
+            sage: f.change_ring(Zp(5))(100 + O(2^7))                                    # needs sage.rings.padics
             Traceback (most recent call last):
             ...
             ValueError: Cannot substitute this value
@@ -252,7 +253,7 @@ cdef class PowerSeries_poly(PowerSeries):
             Traceback (most recent call last):
             ...
             ValueError: Can only substitute elements of positive valuation
-            sage: f(2 + O(5^3))                                                         # optional - sage.rings.padics
+            sage: f(2 + O(5^3))                                                         # needs sage.rings.padics
             Traceback (most recent call last):
             ...
             ValueError: Can only substitute elements of positive valuation
@@ -272,18 +273,19 @@ cdef class PowerSeries_poly(PowerSeries):
 
         Arguments beyond the first can refer to the base ring::
 
-            sage: P.<x> = GF(5)[]                                                       # optional - sage.rings.finite_rings
-            sage: Q.<y> = P[[]]                                                         # optional - sage.rings.finite_rings
-            sage: h = (1 - x*y)^-1 + O(y^7); h                                          # optional - sage.rings.finite_rings
+            sage: # needs sage.rings.finite_rings
+            sage: P.<x> = GF(5)[]
+            sage: Q.<y> = P[[]]
+            sage: h = (1 - x*y)^-1 + O(y^7); h
             1 + x*y + x^2*y^2 + x^3*y^3 + x^4*y^4 + x^5*y^5 + x^6*y^6 + O(y^7)
-            sage: h(y^2, 3)                                                             # optional - sage.rings.finite_rings
+            sage: h(y^2, 3)
             1 + 3*y^2 + 4*y^4 + 2*y^6 + y^8 + 3*y^10 + 4*y^12 + O(y^14)
 
         These secondary values can also be specified using keywords::
 
-            sage: h(y=y^2, x=3)                                                         # optional - sage.rings.finite_rings
+            sage: h(y=y^2, x=3)                                                         # needs sage.rings.finite_rings
             1 + 3*y^2 + 4*y^4 + 2*y^6 + y^8 + 3*y^10 + 4*y^12 + O(y^14)
-            sage: h(y^2, x=3)                                                           # optional - sage.rings.finite_rings
+            sage: h(y^2, x=3)                                                           # needs sage.rings.finite_rings
             1 + 3*y^2 + 4*y^4 + 2*y^6 + y^8 + 3*y^10 + 4*y^12 + O(y^14)
         """
         P = self.parent()
@@ -379,27 +381,29 @@ cdef class PowerSeries_poly(PowerSeries):
 
         EXAMPLES::
 
-            sage: R.<t> = GF(7)[[]]                                                     # optional - sage.rings.finite_rings
-            sage: f = 3 + 6*t^3 + O(t^5)                                                # optional - sage.rings.finite_rings
-            sage: f._unsafe_mutate(0, 5)                                                # optional - sage.rings.finite_rings
-            sage: f                                                                     # optional - sage.rings.finite_rings
+            sage: # needs sage.rings.finite_rings
+            sage: R.<t> = GF(7)[[]]
+            sage: f = 3 + 6*t^3 + O(t^5)
+            sage: f._unsafe_mutate(0, 5)
+            sage: f
             5 + 6*t^3 + O(t^5)
-            sage: f._unsafe_mutate(2, 1) ; f                                            # optional - sage.rings.finite_rings
+            sage: f._unsafe_mutate(2, 1) ; f
             5 + t^2 + 6*t^3 + O(t^5)
 
         - Mutating can even bump up the precision::
 
-            sage: f._unsafe_mutate(6, 1) ; f                                            # optional - sage.rings.finite_rings
+            sage: # needs sage.rings.finite_rings
+            sage: f._unsafe_mutate(6, 1) ; f
             5 + t^2 + 6*t^3 + t^6 + O(t^7)
-            sage: f._unsafe_mutate(0, 0) ; f                                            # optional - sage.rings.finite_rings
+            sage: f._unsafe_mutate(0, 0) ; f
             t^2 + 6*t^3 + t^6 + O(t^7)
-            sage: f._unsafe_mutate(1, 0) ; f                                            # optional - sage.rings.finite_rings
+            sage: f._unsafe_mutate(1, 0) ; f
             t^2 + 6*t^3 + t^6 + O(t^7)
-            sage: f._unsafe_mutate(11,0) ; f                                            # optional - sage.rings.finite_rings
+            sage: f._unsafe_mutate(11,0) ; f
             t^2 + 6*t^3 + t^6 + O(t^12)
 
-            sage: g = t + O(t^7)                                                        # optional - sage.rings.finite_rings
-            sage: g._unsafe_mutate(1,0) ; g                                             # optional - sage.rings.finite_rings
+            sage: g = t + O(t^7)                                                        # needs sage.rings.finite_rings
+            sage: g._unsafe_mutate(1,0) ; g                                             # needs sage.rings.finite_rings
             O(t^7)
         """
         self.__f._unsafe_mutate(i, value)
@@ -558,9 +562,9 @@ cdef class PowerSeries_poly(PowerSeries):
 
         EXAMPLES::
 
-            sage: R.<t> = GF(7)[[]]                                                     # optional - sage.rings.finite_rings
-            sage: f = t + 3*t^4 + O(t^11)                                               # optional - sage.rings.finite_rings
-            sage: f * GF(7)(3)                                                          # optional - sage.rings.finite_rings
+            sage: R.<t> = GF(7)[[]]
+            sage: f = t + 3*t^4 + O(t^11)
+            sage: f * GF(7)(3)
             3*t + 2*t^4 + O(t^11)
         """
         return PowerSeries_poly(self._parent, self.__f * c, self._prec, check=False)
@@ -571,9 +575,9 @@ cdef class PowerSeries_poly(PowerSeries):
 
         EXAMPLES::
 
-            sage: R.<t> = GF(11)[[]]                                                    # optional - sage.rings.finite_rings
-            sage: f = 1 + 3*t^4 + O(t^120)                                              # optional - sage.rings.finite_rings
-            sage: 2 * f                                                                 # optional - sage.rings.finite_rings
+            sage: R.<t> = GF(11)[[]]
+            sage: f = 1 + 3*t^4 + O(t^120)
+            sage: 2 * f
             2 + 6*t^4 + O(t^120)
         """
         return PowerSeries_poly(self._parent, c * self.__f, self._prec, check=False)
@@ -601,11 +605,12 @@ cdef class PowerSeries_poly(PowerSeries):
 
         EXAMPLES::
 
-            sage: R.<t> = GF(2)[[]]                                                     # optional - sage.rings.finite_rings
-            sage: f = t + t^4 + O(t^7)                                                  # optional - sage.rings.finite_rings
-            sage: f >> 1                                                                # optional - sage.rings.finite_rings
+            sage: # needs sage.rings.finite_rings
+            sage: R.<t> = GF(2)[[]]
+            sage: f = t + t^4 + O(t^7)
+            sage: f >> 1
             1 + t^3 + O(t^6)
-            sage: f >> 10                                                               # optional - sage.rings.finite_rings
+            sage: f >> 10
             O(t^0)
         """
         if n:
@@ -737,10 +742,10 @@ cdef class PowerSeries_poly(PowerSeries):
 
         EXAMPLES::
 
-            sage: R.<I> = GF(2)[[]]                                                     # optional - sage.rings.finite_rings
-            sage: f = 1/(1+I+O(I^8)); f                                                 # optional - sage.rings.finite_rings
+            sage: R.<I> = GF(2)[[]]
+            sage: f = 1/(1+I+O(I^8)); f
             1 + I + I^2 + I^3 + I^4 + I^5 + I^6 + I^7 + O(I^8)
-            sage: f.truncate(5)                                                         # optional - sage.rings.finite_rings
+            sage: f.truncate(5)
             I^4 + I^3 + I^2 + I + 1
         """
         if prec is infinity:
@@ -768,10 +773,10 @@ cdef class PowerSeries_poly(PowerSeries):
 
         EXAMPLES::
 
-            sage: R.<I> = GF(2)[[]]                                                     # optional - sage.rings.finite_rings
-            sage: f = 1/(1+I+O(I^8)); f                                                 # optional - sage.rings.finite_rings
+            sage: R.<I> = GF(2)[[]]
+            sage: f = 1/(1+I+O(I^8)); f
             1 + I + I^2 + I^3 + I^4 + I^5 + I^6 + I^7 + O(I^8)
-            sage: f.truncate_powerseries(5)                                             # optional - sage.rings.finite_rings
+            sage: f.truncate_powerseries(5)
             1 + I + I^2 + I^3 + I^4 + O(I^5)
         """
         return PowerSeries_poly(self._parent, self.__f.truncate(prec),
@@ -849,8 +854,8 @@ cdef class PowerSeries_poly(PowerSeries):
         TESTS::
 
             sage: R.<t> = PowerSeriesRing(QQ, sparse=True)
-            sage: x = var('x')                                                          # optional - sage.symbolic
-            sage: t.derivative(x)                                                       # optional - sage.symbolic
+            sage: x = var('x')                                                          # needs sage.symbolic
+            sage: t.derivative(x)
             Traceback (most recent call last):
             ...
             ValueError: cannot differentiate with respect to x
@@ -1039,10 +1044,10 @@ cdef class PowerSeries_poly(PowerSeries):
             ...
             ValueError: Series must have valuation one for reversion.
 
-            sage: Series = PowerSeriesRing(SR, 'x')                                     # optional - sage.symbolic
-            sage: ser = Series([0, pi]); ser                                            # optional - sage.symbolic
+            sage: Series = PowerSeriesRing(SR, 'x')                                     # needs sage.symbolic
+            sage: ser = Series([0, pi]); ser                                            # needs sage.symbolic
             pi*x
-            sage: ser.reverse()                                                         # optional - sage.symbolic
+            sage: ser.reverse()                                                         # needs sage.symbolic
             1/pi*x + O(x^20)
         """
         if self.valuation() != 1:
@@ -1198,17 +1203,17 @@ cdef class PowerSeries_poly(PowerSeries):
             sage: R.<x> = PowerSeriesRing(QQ)
             sage: s = R([1,2,3,4,5], prec=10); s
             1 + 2*x + 3*x^2 + 4*x^3 + 5*x^4 + O(x^10)
-            sage: SR(s)                                                                 # optional - sage.symbolic
+            sage: SR(s)                                                                 # needs sage.symbolic
             1 + 2*x + 3*x^2 + 4*x^3 + 5*x^4 + Order(x^10)
-            sage: SR(s).is_terminating_series()                                         # optional - sage.symbolic
+            sage: SR(s).is_terminating_series()                                         # needs sage.symbolic
             False
-            sage: SR(s).variables()                                                     # optional - sage.symbolic
+            sage: SR(s).variables()                                                     # needs sage.symbolic
             (x,)
             sage: s = R([1,2,3,4,5]); s
             1 + 2*x + 3*x^2 + 4*x^3 + 5*x^4
-            sage: SR(s)                                                                 # optional - sage.symbolic
+            sage: SR(s)                                                                 # needs sage.symbolic
             1 + 2*x + 3*x^2 + 4*x^3 + 5*x^4
-            sage: _.is_terminating_series()                                             # optional - sage.symbolic
+            sage: _.is_terminating_series()                                             # needs sage.symbolic
             True
 
         TESTS:
@@ -1216,7 +1221,7 @@ cdef class PowerSeries_poly(PowerSeries):
         Check that :trac:`18094` is fixed::
 
             sage: R.<x> = PolynomialRing(ZZ)
-            sage: SR(R(0).add_bigoh(20))                                                # optional - sage.symbolic
+            sage: SR(R(0).add_bigoh(20))                                                # needs sage.symbolic
             Order(x^20)
         """
         from sage.symbolic.ring import SR

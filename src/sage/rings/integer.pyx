@@ -24,7 +24,7 @@ Add an integer and a rational number::
 
 Add an integer and a complex number::
 
-    sage: b = ComplexField().0 + 1.5
+    sage: b = ComplexField().0 + 1.5                                                    # needs sage.rings.real_mpfr
     sage: loads((a + b).dumps()) == a + b
     True
 
@@ -64,8 +64,8 @@ Return version of this integer in the multi-precision floating
 real field `\RR`::
 
     sage: n = 9390823
-    sage: RR = RealField(200)
-    sage: RR(n)
+    sage: RR = RealField(200)                                                           # needs sage.rings.real_mpfr
+    sage: RR(n)                                                                         # needs sage.rings.real_mpfr
     9.3908230000000000000000000000000000000000000000000000000000e6
 
 AUTHORS:
@@ -421,9 +421,9 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
 
     Conversion from PARI::
 
-        sage: Integer(pari('-10380104371593008048799446356441519384'))                  # optional - sage.libs.pari
+        sage: Integer(pari('-10380104371593008048799446356441519384'))                  # needs sage.libs.pari
         -10380104371593008048799446356441519384
-        sage: Integer(pari('Pol([-3])'))                                                # optional - sage.libs.pari
+        sage: Integer(pari('Pol([-3])'))                                                # needs sage.libs.pari
         -3
 
     Conversion from gmpy2::
@@ -459,11 +459,11 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
             -901824309821093821093812093810928309183091832091
             sage: ZZ(RR(2.0)^80)
             1208925819614629174706176
-            sage: ZZ(QQbar(sqrt(28-10*sqrt(3)) + sqrt(3)))                              # optional - sage.rings.number_field sage.symbolic
+            sage: ZZ(QQbar(sqrt(28-10*sqrt(3)) + sqrt(3)))                              # needs sage.rings.number_field sage.symbolic
             5
-            sage: ZZ(AA(32).nth_root(5))                                                # optional - sage.rings.number_field
+            sage: ZZ(AA(32).nth_root(5))                                                # needs sage.rings.number_field
             2
-            sage: ZZ(pari('Mod(-3,7)'))                                                 # optional - sage.libs.pari
+            sage: ZZ(pari('Mod(-3,7)'))                                                 # needs sage.libs.pari
             4
             sage: ZZ('sage')
             Traceback (most recent call last):
@@ -475,10 +475,10 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
             '3b'
             sage: ZZ( ZZ(5).digits(3) , 3)
             5
-            sage: import numpy                                                          # optional - numpy
-            sage: ZZ(numpy.int64(7^7))                                                  # optional - numpy
+            sage: import numpy                                                          # needs numpy
+            sage: ZZ(numpy.int64(7^7))                                                  # needs numpy
             823543
-            sage: ZZ(numpy.ubyte(-7))                                                   # optional - numpy
+            sage: ZZ(numpy.ubyte(-7))                                                   # needs numpy
             249
             sage: ZZ(True)
             1
@@ -494,8 +494,8 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
 
         ::
 
-            sage: k = GF(2)                                                             # optional - sage.rings.finite_rings
-            sage: ZZ((k(0),k(1)), 2)                                                    # optional - sage.rings.finite_rings
+            sage: k = GF(2)
+            sage: ZZ((k(0),k(1)), 2)
             2
 
         ::
@@ -531,40 +531,40 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
 
         Test conversion from PARI (:trac:`11685`)::
 
-            sage: ZZ(pari(-3))                                                          # optional - sage.libs.pari
+            sage: ZZ(pari(-3))                                                          # needs sage.libs.pari
             -3
-            sage: ZZ(pari("-3.0"))                                                      # optional - sage.libs.pari
+            sage: ZZ(pari("-3.0"))                                                      # needs sage.libs.pari
             -3
-            sage: ZZ(pari("-3.5"))                                                      # optional - sage.libs.pari
+            sage: ZZ(pari("-3.5"))                                                      # needs sage.libs.pari
             Traceback (most recent call last):
             ...
             TypeError: Attempt to coerce non-integral real number to an Integer
-            sage: ZZ(pari("1e100"))                                                     # optional - sage.libs.pari
+            sage: ZZ(pari("1e100"))                                                     # needs sage.libs.pari
             Traceback (most recent call last):
             ...
             PariError: precision too low in truncr (precision loss in truncation)
-            sage: ZZ(pari("10^50"))                                                     # optional - sage.libs.pari
+            sage: ZZ(pari("10^50"))                                                     # needs sage.libs.pari
             100000000000000000000000000000000000000000000000000
-            sage: ZZ(pari("Pol(3)"))                                                    # optional - sage.libs.pari
+            sage: ZZ(pari("Pol(3)"))                                                    # needs sage.libs.pari
             3
-            sage: ZZ(GF(3^20,'t')(1))                                                   # optional - sage.rings.finite_rings
+            sage: ZZ(GF(3^20,'t')(1))                                                   # needs sage.rings.finite_rings
             1
-            sage: ZZ(pari(GF(3^20,'t')(1)))                                             # optional - sage.libs.pari sage.rings.finite_rings
+            sage: ZZ(pari(GF(3^20,'t')(1)))                                             # needs sage.libs.pari sage.rings.finite_rings
             1
             sage: x = polygen(QQ)
-            sage: K.<a> = NumberField(x^2 + 3)                                          # optional - sage.rings.number_field
-            sage: ZZ(a^2)                                                               # optional - sage.rings.number_field
+            sage: K.<a> = NumberField(x^2 + 3)                                          # needs sage.rings.number_field
+            sage: ZZ(a^2)                                                               # needs sage.rings.number_field
             -3
-            sage: ZZ(pari(a)^2)                                                         # optional - sage.libs.pari sage.rings.number_field
+            sage: ZZ(pari(a)^2)                                                         # needs sage.libs.pari sage.rings.number_field
             -3
-            sage: ZZ(pari("Mod(x, x^3+x+1)"))   # Note error message refers to lifted element       # optional - sage.libs.pari
+            sage: ZZ(pari("Mod(x, x^3+x+1)"))   # Note error message refers to lifted element       # needs sage.libs.pari
             Traceback (most recent call last):
             ...
             TypeError: Unable to coerce PARI x to an Integer
 
         Test coercion of p-adic with negative valuation::
 
-            sage: ZZ(pari(Qp(11)(11^-7)))                                               # optional - sage.libs.pari sage.rings.padics
+            sage: ZZ(pari(Qp(11)(11^-7)))                                               # needs sage.libs.pari sage.rings.padics
             Traceback (most recent call last):
             ...
             TypeError: cannot convert p-adic with negative valuation to an integer
@@ -580,23 +580,23 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
 
         Test comparisons with numpy types (see :trac:`13386` and :trac:`18076`)::
 
-            sage: import numpy                                                          # optional - numpy
-            sage: numpy.int8('12') == 12                                                # optional - numpy
+            sage: import numpy                                                          # needs numpy
+            sage: numpy.int8('12') == 12                                                # needs numpy
             True
-            sage: 12 == numpy.int8('12')                                                # optional - numpy
+            sage: 12 == numpy.int8('12')                                                # needs numpy
             True
 
-            sage: float('15') == 15                                                     # optional - numpy
+            sage: float('15') == 15
             True
-            sage: 15 == float('15')                                                     # optional - numpy
+            sage: 15 == float('15')
             True
 
         Test underscores as digit separators (PEP 515,
         https://www.python.org/dev/peps/pep-0515/)::
 
-            sage: Integer('1_3')                                                        # optional - numpy
+            sage: Integer('1_3')
             13
-            sage: Integer(b'1_3')                                                       # optional - numpy
+            sage: Integer(b'1_3')
             13
         """
         # TODO: All the code below should somehow be in an external
@@ -765,8 +765,8 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
         EXAMPLES::
 
             sage: n = -10
-            sage: R = GF(17)                                                            # optional - sage.rings.finite_rings
-            sage: n._im_gens_(R, [R(1)])                                                # optional - sage.rings.finite_rings
+            sage: R = GF(17)
+            sage: n._im_gens_(R, [R(1)])
             7
         """
         return codomain.coerce(self)
@@ -1003,9 +1003,9 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
 
         EXAMPLES::
 
-            sage: ex = SR(ZZ(7)); ex                                                    # optional - sage.symbolic
+            sage: ex = SR(ZZ(7)); ex                                                    # needs sage.symbolic
             7
-            sage: parent(ex)                                                            # optional - sage.symbolic
+            sage: parent(ex)                                                            # needs sage.symbolic
             Symbolic Ring
         """
         return sring._force_pyobject(self, force=True)
@@ -1016,9 +1016,9 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
 
         EXAMPLES::
 
-            sage: n = 5; n._sympy_()                                                    # optional - sympy
+            sage: n = 5; n._sympy_()                                                    # needs sympy
             5
-            sage: n = -5; n._sympy_()                                                   # optional - sympy
+            sage: n = -5; n._sympy_()                                                   # needs sympy
             -5
         """
         import sympy
@@ -2004,7 +2004,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
             Traceback (most recent call last):
             ...
             ZeroDivisionError: rational division by zero
-            sage: 3 / QQbar.zero()                                                      # optional - sage.rings.number_field
+            sage: 3 / QQbar.zero()                                                      # needs sage.rings.number_field
             Traceback (most recent call last):
             ...
             ZeroDivisionError: division by zero in algebraic field
@@ -2109,7 +2109,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
             1
             sage: 2^-0
             1
-            sage: (-1)^(1/3)                                                            # optional - sage.symbolic
+            sage: (-1)^(1/3)                                                            # needs sage.symbolic
             (-1)^(1/3)
 
         For consistency with Python and MPFR, 0^0 is defined to be 1 in
@@ -2136,30 +2136,31 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
 
         We raise 2 to various interesting exponents::
 
-            sage: 2^x                # symbolic x                                       # optional - sage.symbolic
+            sage: 2^x                # symbolic x                                       # needs sage.symbolic
             2^x
             sage: 2^1.5              # real number
             2.82842712474619
             sage: 2^float(1.5)       # python float  abs tol 3e-16
             2.8284271247461903
-            sage: 2^I                # complex number                                   # optional - sage.symbolic
+            sage: 2^I                # complex number                                   # needs sage.symbolic
             2^I
             sage: r = 2 ^ int(-3); r; type(r)
             1/8
             <class 'sage.rings.rational.Rational'>
-            sage: f = 2^(sin(x)-cos(x)); f                                              # optional - sage.symbolic
+            sage: f = 2^(sin(x)-cos(x)); f                                              # needs sage.symbolic
             2^(-cos(x) + sin(x))
-            sage: f(x=3)                                                                # optional - sage.symbolic
+            sage: f(x=3)                                                                # needs sage.symbolic
             2^(-cos(3) + sin(3))
 
         A symbolic sum::
 
-            sage: x, y, z = var('x,y,z')                                                # optional - sage.symbolic
-            sage: 2^(x + y + z)                                                         # optional - sage.symbolic
+            sage: # needs sage.symbolic
+            sage: x, y, z = var('x,y,z')
+            sage: 2^(x + y + z)
             2^(x + y + z)
-            sage: 2^(1/2)                                                               # optional - sage.symbolic
+            sage: 2^(1/2)
             sqrt(2)
-            sage: 2^(-1/2)                                                              # optional - sage.symbolic
+            sage: 2^(-1/2)
             1/2*sqrt(2)
 
         TESTS::
@@ -2651,9 +2652,9 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
         ::
 
             sage: x = 3^100000
-            sage: RR(log(RR(x), 3))
+            sage: RR(log(RR(x), 3))                                                     # needs sage.symbolic
             100000.000000000
-            sage: RR(log(RR(x + 100000), 3))
+            sage: RR(log(RR(x + 100000), 3))                                            # needs sage.symbolic
             100000.000000000
 
         ::
@@ -2764,15 +2765,15 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
 
         EXAMPLES::
 
-            sage: Integer(124).log(5)                                                   # optional - sage.symbolic
+            sage: Integer(124).log(5)                                                   # needs sage.symbolic
             log(124)/log(5)
-            sage: Integer(124).log(5, 100)                                              # optional - sage.rings.real_mpfr
+            sage: Integer(124).log(5, 100)                                              # needs sage.rings.real_mpfr
             2.9950093311241087454822446806
             sage: Integer(125).log(5)
             3
-            sage: Integer(125).log(5, prec=53)                                          # optional - sage.rings.real_mpfr
+            sage: Integer(125).log(5, prec=53)                                          # needs sage.rings.real_mpfr
             3.00000000000000
-            sage: log(Integer(125))                                                     # optional - sage.symbolic
+            sage: log(Integer(125))                                                     # needs sage.symbolic
             3*log(5)
 
         For extremely large numbers, this works::
@@ -2785,28 +2786,28 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
         works in a reasonable amount of time for this ``x``::
 
             sage: x = 3^100000
-            sage: log(x)                                                                # optional - sage.symbolic
+            sage: log(x)                                                                # needs sage.symbolic
             log(1334971414230...5522000001)
 
         But approximations are probably more useful in this
         case, and work to as high a precision as we desire::
 
-            sage: x.log(3, 53)  # default precision for RealField                       # optional - sage.rings.real_mpfr
+            sage: x.log(3, 53)  # default precision for RealField                       # needs sage.rings.real_mpfr
             100000.000000000
-            sage: (x + 1).log(3, 53)                                                    # optional - sage.rings.real_mpfr
+            sage: (x + 1).log(3, 53)                                                    # needs sage.rings.real_mpfr
             100000.000000000
-            sage: (x + 1).log(3, 1000)                                                  # optional - sage.rings.real_mpfr
+            sage: (x + 1).log(3, 1000)                                                  # needs sage.rings.real_mpfr
             100000.000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 
         We can use non-integer bases, with default e::
 
-            sage: x.log(2.5, prec=53)                                                   # optional - sage.rings.real_mpfr
+            sage: x.log(2.5, prec=53)                                                   # needs sage.rings.real_mpfr
             119897.784671579
 
         We also get logarithms of negative integers, via the
         symbolic ring, using the branch from `-\pi` to `\pi`::
 
-            sage: log(-1)                                                               # optional - sage.symbolic
+            sage: log(-1)                                                               # needs sage.symbolic
             I*pi
 
         The logarithm of zero is done likewise::
@@ -2826,7 +2827,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
 
         TESTS::
 
-            sage: (-2).log(3)                                                           # optional - sage.symbolic
+            sage: (-2).log(3)                                                           # needs sage.symbolic
             (I*pi + log(2))/log(3)
         """
         cdef int self_sgn
@@ -2883,11 +2884,11 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
 
         EXAMPLES::
 
-            sage: Integer(8).exp()                                                      # optional - sage.symbolic
+            sage: Integer(8).exp()                                                      # needs sage.symbolic
             e^8
-            sage: Integer(8).exp(prec=100)                                              # optional - sage.symbolic
+            sage: Integer(8).exp(prec=100)                                              # needs sage.symbolic
             2980.9579870417282747435920995
-            sage: exp(Integer(8))                                                       # optional - sage.symbolic
+            sage: exp(Integer(8))                                                       # needs sage.symbolic
             e^8
 
         For even fairly large numbers, this may not be useful.
@@ -2895,9 +2896,9 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
         ::
 
             sage: y = Integer(145^145)
-            sage: y.exp()                                                               # optional - sage.symbolic
+            sage: y.exp()                                                               # needs sage.symbolic
             e^25024207011349079210459585279553675697932183658421565260323592409432707306554163224876110094014450895759296242775250476115682350821522931225499163750010280453185147546962559031653355159703678703793369785727108337766011928747055351280379806937944746847277089168867282654496776717056860661614337004721164703369140625
-            sage: y.exp(prec=53) # default RealField precision                          # optional - sage.symbolic
+            sage: y.exp(prec=53) # default RealField precision                          # needs sage.symbolic
             +infinity
         """
         from sage.functions.all import exp
@@ -2977,12 +2978,12 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
         Setting the optional ``limit`` argument works as expected::
 
             sage: a = 10^100 + 1
-            sage: a.prime_divisors()                                                    # optional - sage.libs.pari
+            sage: a.prime_divisors()                                                    # needs sage.libs.pari
             [73, 137, 401, 1201, 1601, 1676321, 5964848081,
              129694419029057750551385771184564274499075700947656757821537291527196801]
-            sage: a.prime_divisors(limit=10^3)                                          # optional - sage.libs.pari
+            sage: a.prime_divisors(limit=10^3)
             [73, 137, 401]
-            sage: a.prime_divisors(limit=10^7)                                          # optional - sage.libs.pari
+            sage: a.prime_divisors(limit=10^7)
             [73, 137, 401, 1201, 1601, 1676321]
         """
         res = [r[0] for r in self.factor(*args, **kwds)]
@@ -3024,32 +3025,32 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
             [1, 2, 3, 4, 6, 8, 9, 12, 17, 18, 24, 34, 36, 51, 68, 72,
             102, 136, 153, 204, 306, 408, 612, 1224]
             sage: a = odd_part(factorial(31))
-            sage: v = a.divisors()                                                      # optional - sage.libs.pari
-            sage: len(v)                                                                # optional - sage.libs.pari
+            sage: v = a.divisors()                                                      # needs sage.libs.pari
+            sage: len(v)                                                                # needs sage.libs.pari
             172800
-            sage: prod(e + 1 for p, e in factor(a))                                     # optional - sage.libs.pari
+            sage: prod(e + 1 for p, e in factor(a))                                     # needs sage.libs.pari
             172800
-            sage: all(t.divides(a) for t in v)                                          # optional - sage.libs.pari
+            sage: all(t.divides(a) for t in v)                                          # needs sage.libs.pari
             True
 
         ::
 
             sage: n = 2^551 - 1
-            sage: L = n.divisors()                                                      # optional - sage.libs.pari
-            sage: len(L)                                                                # optional - sage.libs.pari
+            sage: L = n.divisors()                                                      # needs sage.libs.pari
+            sage: len(L)                                                                # needs sage.libs.pari
             256
-            sage: L[-1] == n                                                            # optional - sage.libs.pari
+            sage: L[-1] == n                                                            # needs sage.libs.pari
             True
 
         TESTS:
 
         Overflow::
 
-            sage: prod(primes_first_n(64)).divisors()                                   # optional - sage.libs.pari
+            sage: prod(primes_first_n(64)).divisors()                                   # needs sage.libs.pari
             Traceback (most recent call last):
             ...
             OverflowError: value too large
-            sage: prod(primes_first_n(58)).divisors()                                   # optional - sage.libs.pari
+            sage: prod(primes_first_n(58)).divisors()                                   # needs sage.libs.pari
             Traceback (most recent call last):
             ...
             OverflowError: value too large                                 # 32-bit
@@ -3059,8 +3060,8 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
         (the ``divisors`` call below allocates about 800 MB every time,
         so a memory leak will not go unnoticed)::
 
-            sage: n = prod(primes_first_n(25))                                          # optional - sage.libs.pari
-            sage: for i in range(20):  # long time                                      # optional - sage.libs.pari
+            sage: n = prod(primes_first_n(25))                                          # needs sage.libs.pari
+            sage: for i in range(20):           # long time                             # needs sage.libs.pari
             ....:     try:
             ....:         alarm(RDF.random_element(1e-3, 0.5))
             ....:         _ = n.divisors()
@@ -3342,9 +3343,9 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
 
         This example caused trouble in :trac:`6083`::
 
-            sage: a = next_prime(2**31)                                                 # optional - sage.libs.pari
-            sage: b = Integers(a)(100)                                                  # optional - sage.libs.pari
-            sage: a % b                                                                 # optional - sage.libs.pari
+            sage: a = next_prime(2**31)                                                 # needs sage.libs.pari
+            sage: b = Integers(a)(100)                                                  # needs sage.libs.pari
+            sage: a % b                                                                 # needs sage.libs.pari
             Traceback (most recent call last):
             ...
             ArithmeticError: reduction modulo 100 not defined
@@ -3440,10 +3441,10 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
 
             sage: divmod(1, sys.maxsize+1r)  # should not raise OverflowError: Python int too large to convert to C long
             (0, 1)
-            sage: import sage.libs.mpmath                                                         # optional - mpmath
-            sage: sage.libs.mpmath.all.mp.prec = 1000                                                 # optional - mpmath
-            sage: root = sage.libs.mpmath.all.findroot(lambda x: x^2 - 3, 2)                          # optional - mpmath
-            sage: len(str(root))                                                        # optional - mpmath
+            sage: import sage.libs.mpmath                                               # needs mpmath
+            sage: sage.libs.mpmath.all.mp.prec = 1000                                   # needs mpmath
+            sage: root = sage.libs.mpmath.all.findroot(lambda x: x^2 - 3, 2)            # needs mpmath
+            sage: len(str(root))                                                        # needs mpmath
             301
         """
         cdef Integer q = PY_NEW(Integer)
@@ -3696,44 +3697,46 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
 
         EXAMPLES::
 
-            sage: n = next_prime(10^6)*next_prime(10^7); n.trial_division()             # optional - sage.libs.pari
+            sage: # needs sage.libs.pari
+            sage: n = next_prime(10^6)*next_prime(10^7); n.trial_division()
             1000003
-            sage: (-n).trial_division()                                                 # optional - sage.libs.pari
+            sage: (-n).trial_division()
             1000003
-            sage: n.trial_division(bound=100)                                           # optional - sage.libs.pari
+            sage: n.trial_division(bound=100)
             10000049000057
-            sage: n.trial_division(bound=-10)                                           # optional - sage.libs.pari
+            sage: n.trial_division(bound=-10)
             Traceback (most recent call last):
             ...
             ValueError: bound must be positive
-            sage: n.trial_division(bound=0)                                             # optional - sage.libs.pari
+            sage: n.trial_division(bound=0)
             Traceback (most recent call last):
             ...
             ValueError: bound must be positive
-            sage: ZZ(0).trial_division()                                                # optional - sage.libs.pari
+            sage: ZZ(0).trial_division()
             Traceback (most recent call last):
             ...
             ValueError: self must be nonzero
 
-            sage: n = next_prime(10^5) * next_prime(10^40); n.trial_division()          # optional - sage.libs.pari
+            sage: # needs sage.libs.pari
+            sage: n = next_prime(10^5) * next_prime(10^40); n.trial_division()
             100003
-            sage: n.trial_division(bound=10^4)                                          # optional - sage.libs.pari
+            sage: n.trial_division(bound=10^4)
             1000030000000000000000000000000000000012100363
-            sage: (-n).trial_division(bound=10^4)                                       # optional - sage.libs.pari
+            sage: (-n).trial_division(bound=10^4)
             1000030000000000000000000000000000000012100363
-            sage: (-n).trial_division()                                                 # optional - sage.libs.pari
+            sage: (-n).trial_division()
             100003
-            sage: n = 2 * next_prime(10^40); n.trial_division()                         # optional - sage.libs.pari
+            sage: n = 2 * next_prime(10^40); n.trial_division()
             2
-            sage: n = 3 * next_prime(10^40); n.trial_division()                         # optional - sage.libs.pari
+            sage: n = 3 * next_prime(10^40); n.trial_division()
             3
-            sage: n = 5 * next_prime(10^40); n.trial_division()                         # optional - sage.libs.pari
+            sage: n = 5 * next_prime(10^40); n.trial_division()
             5
-            sage: n = 2 * next_prime(10^4); n.trial_division()                          # optional - sage.libs.pari
+            sage: n = 2 * next_prime(10^4); n.trial_division()
             2
-            sage: n = 3 * next_prime(10^4); n.trial_division()                          # optional - sage.libs.pari
+            sage: n = 3 * next_prime(10^4); n.trial_division()
             3
-            sage: n = 5 * next_prime(10^4); n.trial_division()                          # optional - sage.libs.pari
+            sage: n = 5 * next_prime(10^4); n.trial_division()
             5
 
         You can specify a starting point::
@@ -3859,7 +3862,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
 
         EXAMPLES::
 
-            sage: n = 2^100 - 1; n.factor()                                             # optional - sage.libs.pari
+            sage: n = 2^100 - 1; n.factor()                                             # needs sage.libs.pari
             3 * 5^3 * 11 * 31 * 41 * 101 * 251 * 601 * 1801 * 4051 * 8101 * 268501
 
         This factorization can be converted into a list of pairs `(p,
@@ -3886,9 +3889,9 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
         that appear in the factorization::
 
             sage: n = 920384092842390423848290348203948092384082349082
-            sage: n.factor(proof=False)                                                 # optional - sage.libs.pari
+            sage: n.factor(proof=False)                                                 # needs sage.libs.pari
             2 * 11 * 1531 * 4402903 * 10023679 * 619162955472170540533894518173
-            sage: n.factor(proof=True)                                                  # optional - sage.libs.pari
+            sage: n.factor(proof=True)                                                  # needs sage.libs.pari
             2 * 11 * 1531 * 4402903 * 10023679 * 619162955472170540533894518173
 
         We factor using trial division only::
@@ -3899,15 +3902,16 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
         An example where FLINT is used::
 
             sage: n = 82862385732327628428164127822
-            sage: n.factor(algorithm='flint')                                           # optional - sage.libs.flint
+            sage: n.factor(algorithm='flint')                                           # needs sage.libs.flint
             2 * 3 * 11 * 13 * 41 * 73 * 22650083 * 1424602265462161
 
         We factor using a quadratic sieve algorithm::
 
-            sage: p = next_prime(10^20)                                                 # optional - sage.libs.pari
-            sage: q = next_prime(10^21)                                                 # optional - sage.libs.pari
-            sage: n = p * q                                                             # optional - sage.libs.pari
-            sage: n.factor(algorithm='qsieve')                                          # optional - sage.libs.pari
+            sage: # needs sage.libs.pari
+            sage: p = next_prime(10^20)
+            sage: q = next_prime(10^21)
+            sage: n = p * q
+            sage: n.factor(algorithm='qsieve')
             doctest:... RuntimeWarning: the factorization returned
             by qsieve may be incomplete (the factors may not be prime)
             or even wrong; see qsieve? for details
@@ -3915,10 +3919,11 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
 
         We factor using the elliptic curve method::
 
-            sage: p = next_prime(10^15)                                                 # optional - sage.libs.pari
-            sage: q = next_prime(10^21)                                                 # optional - sage.libs.pari
-            sage: n = p * q                                                             # optional - sage.libs.pari
-            sage: n.factor(algorithm='ecm')                                             # optional - sage.libs.pari
+            sage: # needs sage.libs.pari
+            sage: p = next_prime(10^15)
+            sage: q = next_prime(10^21)
+            sage: n = p * q
+            sage: n.factor(algorithm='ecm')
             1000000000000037 * 1000000000000000000117
 
         TESTS::
@@ -4614,13 +4619,14 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
 
         EXAMPLES::
 
-            sage: gamma(5)                                                              # optional - sage.symbolic
+            sage: # needs sage.symbolic
+            sage: gamma(5)
             24
-            sage: gamma(0)                                                              # optional - sage.symbolic
+            sage: gamma(0)
             Infinity
-            sage: gamma(-1)                                                             # optional - sage.symbolic
+            sage: gamma(-1)
             Infinity
-            sage: gamma(-2^150)                                                         # optional - sage.symbolic
+            sage: gamma(-2^150)
             Infinity
         """
         if mpz_sgn(self.value) > 0:
@@ -4810,7 +4816,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
 
         EXAMPLES::
 
-            sage: 144.perfect_power()                                                   # optional - sage.libs.pari
+            sage: 144.perfect_power()                                                   # needs sage.libs.pari
             (12, 2)
             sage: 1.perfect_power()
             (1, 1)
@@ -4818,15 +4824,15 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
             (0, 1)
             sage: (-1).perfect_power()
             (-1, 1)
-            sage: (-8).perfect_power()                                                  # optional - sage.libs.pari
+            sage: (-8).perfect_power()                                                  # needs sage.libs.pari
             (-2, 3)
             sage: (-4).perfect_power()
             (-4, 1)
-            sage: (101^29).perfect_power()                                              # optional - sage.libs.pari
+            sage: (101^29).perfect_power()                                              # needs sage.libs.pari
             (101, 29)
-            sage: (-243).perfect_power()                                                # optional - sage.libs.pari
+            sage: (-243).perfect_power()                                                # needs sage.libs.pari
             (-3, 5)
-            sage: (-64).perfect_power()                                                 # optional - sage.libs.pari
+            sage: (-64).perfect_power()                                                 # needs sage.libs.pari
             (-4, 3)
 
         TESTS::
@@ -4872,9 +4878,9 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
 
         EXAMPLES::
 
-            sage: ZZ(5).global_height()
+            sage: ZZ(5).global_height()                                                 # needs sage.rings.real_mpfr
             1.60943791243410
-            sage: ZZ(-2).global_height(prec=100)
+            sage: ZZ(-2).global_height(prec=100)                                        # needs sage.rings.real_mpfr
             0.69314718055994530941723212146
             sage: exp(_)
             2.0000000000000000000000000000
@@ -5135,55 +5141,57 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
 
         EXAMPLES::
 
-            sage: 17.is_prime_power()                                                   # optional - sage.libs.pari
+            sage: # needs sage.libs.pari
+            sage: 17.is_prime_power()
             True
-            sage: 10.is_prime_power()                                                   # optional - sage.libs.pari
+            sage: 10.is_prime_power()
             False
-            sage: 64.is_prime_power()                                                   # optional - sage.libs.pari
+            sage: 64.is_prime_power()
             True
-            sage: (3^10000).is_prime_power()                                            # optional - sage.libs.pari
+            sage: (3^10000).is_prime_power()
             True
-            sage: (10000).is_prime_power()                                              # optional - sage.libs.pari
+            sage: (10000).is_prime_power()
             False
-            sage: (-3).is_prime_power()                                                 # optional - sage.libs.pari
+            sage: (-3).is_prime_power()
             False
-            sage: 0.is_prime_power()                                                    # optional - sage.libs.pari
+            sage: 0.is_prime_power()
             False
-            sage: 1.is_prime_power()                                                    # optional - sage.libs.pari
+            sage: 1.is_prime_power()
             False
-            sage: p = next_prime(10^20); p                                              # optional - sage.libs.pari
+            sage: p = next_prime(10^20); p
             100000000000000000039
-            sage: p.is_prime_power()                                                    # optional - sage.libs.pari
+            sage: p.is_prime_power()
             True
-            sage: (p^97).is_prime_power()                                               # optional - sage.libs.pari
+            sage: (p^97).is_prime_power()
             True
-            sage: (p + 1).is_prime_power()                                              # optional - sage.libs.pari
+            sage: (p + 1).is_prime_power()
             False
 
         With the ``get_data`` keyword set to ``True``::
 
-            sage: (3^100).is_prime_power(get_data=True)                                 # optional - sage.libs.pari
+            sage: # needs sage.libs.pari
+            sage: (3^100).is_prime_power(get_data=True)
             (3, 100)
-            sage: 12.is_prime_power(get_data=True)                                      # optional - sage.libs.pari
+            sage: 12.is_prime_power(get_data=True)
             (12, 0)
-            sage: (p^97).is_prime_power(get_data=True)                                  # optional - sage.libs.pari
+            sage: (p^97).is_prime_power(get_data=True)
             (100000000000000000039, 97)
-            sage: q = p.next_prime(); q                                                 # optional - sage.libs.pari
+            sage: q = p.next_prime(); q
             100000000000000000129
-            sage: (p*q).is_prime_power(get_data=True)                                   # optional - sage.libs.pari
+            sage: (p*q).is_prime_power(get_data=True)
             (10000000000000000016800000000000000005031, 0)
 
         The method works for large entries when ``proof=False``::
 
             sage: proof.arithmetic(False)
-            sage: ((10^500 + 961)^4).is_prime_power()                                   # optional - sage.libs.pari
+            sage: ((10^500 + 961)^4).is_prime_power()                                   # needs sage.libs.pari
             True
             sage: proof.arithmetic(True)
 
         We check that :trac:`4777` is fixed::
 
             sage: n = 150607571^14
-            sage: n.is_prime_power()                                                    # optional - sage.libs.pari
+            sage: n.is_prime_power()                                                    # needs sage.libs.pari
             True
 
         TESTS::
@@ -5277,26 +5285,26 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
         EXAMPLES::
 
             sage: z = 2^31 - 1
-            sage: z.is_prime()                                                          # optional - sage.libs.pari
+            sage: z.is_prime()                                                          # needs sage.libs.pari
             True
             sage: z = 2^31
-            sage: z.is_prime()                                                          # optional - sage.libs.pari
+            sage: z.is_prime()
             False
             sage: z = 7
-            sage: z.is_prime()                                                          # optional - sage.libs.pari
+            sage: z.is_prime()
             True
             sage: z = -7
-            sage: z.is_prime()                                                          # optional - sage.libs.pari
+            sage: z.is_prime()
             False
-            sage: z.is_irreducible()                                                    # optional - sage.libs.pari
+            sage: z.is_irreducible()
             True
 
         ::
 
             sage: z = 10^80 + 129
-            sage: z.is_prime(proof=False)                                               # optional - sage.libs.pari
+            sage: z.is_prime(proof=False)                                               # needs sage.libs.pari
             True
-            sage: z.is_prime(proof=True)                                                # optional - sage.libs.pari
+            sage: z.is_prime(proof=True)                                                # needs sage.libs.pari
             True
 
         When starting Sage the arithmetic proof flag is True. We can change
@@ -5305,12 +5313,12 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
             sage: proof.arithmetic()
             True
             sage: n = 10^100 + 267
-            sage: timeit("n.is_prime()")  # not tested                                  # optional - sage.libs.pari
+            sage: timeit("n.is_prime()")        # not tested                            # needs sage.libs.pari
             5 loops, best of 3: 163 ms per loop
             sage: proof.arithmetic(False)
             sage: proof.arithmetic()
             False
-            sage: timeit("n.is_prime()")  # not tested                                  # optional - sage.libs.pari
+            sage: timeit("n.is_prime()")        # not tested                            # needs sage.libs.pari
             1000 loops, best of 3: 573 us per loop
 
         ALGORITHM:
@@ -5327,7 +5335,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
             ....:     if tab[i]:
             ....:         for j in range(2*i, size, i):
             ....:             tab[j] = 0
-            sage: all(ZZ(i).is_prime() == b for i,b in enumerate(tab))                  # optional - sage.libs.pari
+            sage: all(ZZ(i).is_prime() == b for i,b in enumerate(tab))                  # needs sage.libs.pari
             True
         """
         if mpz_sgn(self.value) <= 0:
@@ -5390,16 +5398,16 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
         EXAMPLES::
 
             sage: z = 2^31 - 1
-            sage: z.is_irreducible()                                                    # optional - sage.libs.pari
+            sage: z.is_irreducible()                                                    # needs sage.libs.pari
             True
             sage: z = 2^31
-            sage: z.is_irreducible()                                                    # optional - sage.libs.pari
+            sage: z.is_irreducible()
             False
             sage: z = 7
-            sage: z.is_irreducible()                                                    # optional - sage.libs.pari
+            sage: z.is_irreducible()
             True
             sage: z = -7
-            sage: z.is_irreducible()                                                    # optional - sage.libs.pari
+            sage: z.is_irreducible()
             True
         """
         cdef Integer n = self if self >= 0 else -self
@@ -5419,10 +5427,10 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
         EXAMPLES::
 
             sage: z = 2^31 - 1
-            sage: z.is_pseudoprime()                                                    # optional - sage.libs.pari
+            sage: z.is_pseudoprime()                                                    # needs sage.libs.pari
             True
             sage: z = 2^31
-            sage: z.is_pseudoprime()                                                    # optional - sage.libs.pari
+            sage: z.is_pseudoprime()                                                    # needs sage.libs.pari
             False
         """
         return self.__pari__().ispseudoprime()
@@ -5443,17 +5451,17 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
         EXAMPLES::
 
             sage: x = 10^200 + 357
-            sage: x.is_pseudoprime()                                                    # optional - sage.libs.pari
+            sage: x.is_pseudoprime()                                                    # needs sage.libs.pari
             True
-            sage: (x^12).is_pseudoprime_power()                                         # optional - sage.libs.pari
+            sage: (x^12).is_pseudoprime_power()                                         # needs sage.libs.pari
             True
-            sage: (x^12).is_pseudoprime_power(get_data=True)                            # optional - sage.libs.pari
+            sage: (x^12).is_pseudoprime_power(get_data=True)                            # needs sage.libs.pari
             (1000...000357, 12)
-            sage: (997^100).is_pseudoprime_power()                                      # optional - sage.libs.pari
+            sage: (997^100).is_pseudoprime_power()                                      # needs sage.libs.pari
             True
-            sage: (998^100).is_pseudoprime_power()                                      # optional - sage.libs.pari
+            sage: (998^100).is_pseudoprime_power()                                      # needs sage.libs.pari
             False
-            sage: ((10^1000 + 453)^2).is_pseudoprime_power()                            # optional - sage.libs.pari
+            sage: ((10^1000 + 453)^2).is_pseudoprime_power()                            # needs sage.libs.pari
             True
 
         TESTS::
@@ -5462,7 +5470,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
             False
             sage: (-1).is_pseudoprime_power()
             False
-            sage: 1.is_pseudoprime_power()                                              # optional - sage.libs.pari
+            sage: 1.is_pseudoprime_power()                                              # needs sage.libs.pari
             False
         """
         return self.is_prime_power(proof=False, get_data=get_data)
@@ -5530,20 +5538,20 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
         EXAMPLES::
 
             sage: x = polygen(ZZ, 'x')
-            sage: K = NumberField(x^2 - 2, 'beta')                                      # optional - sage.rings.number_field
+            sage: K = NumberField(x^2 - 2, 'beta')                                      # needs sage.rings.number_field
             sage: n = 4
-            sage: n.is_norm(K)                                                          # optional - sage.rings.number_field
+            sage: n.is_norm(K)                                                          # needs sage.rings.number_field
             True
-            sage: 5.is_norm(K)                                                          # optional - sage.rings.number_field
+            sage: 5.is_norm(K)                                                          # needs sage.rings.number_field
             False
             sage: 7.is_norm(QQ)
             True
-            sage: n.is_norm(K, element=True)                                            # optional - sage.rings.number_field
+            sage: n.is_norm(K, element=True)                                            # needs sage.rings.number_field
             (True, -4*beta + 6)
-            sage: n.is_norm(K, element=True)[1].norm()                                  # optional - sage.rings.number_field
+            sage: n.is_norm(K, element=True)[1].norm()                                  # needs sage.rings.number_field
             4
             sage: n = 5
-            sage: n.is_norm(K, element=True)                                            # optional - sage.rings.number_field
+            sage: n.is_norm(K, element=True)                                            # needs sage.rings.number_field
             (False, None)
             sage: n = 7
             sage: n.is_norm(QQ, element=True)
@@ -5559,9 +5567,9 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
 
         EXAMPLES::
 
-            sage: 3._bnfisnorm(QuadraticField(-1, 'i'))                                 # optional - sage.rings.number_field
+            sage: 3._bnfisnorm(QuadraticField(-1, 'i'))                                 # needs sage.rings.number_field
             (1, 3)
-            sage: 7._bnfisnorm(CyclotomicField(7))                                      # optional - sage.rings.number_field
+            sage: 7._bnfisnorm(CyclotomicField(7))                                      # needs sage.rings.number_field
             (zeta7^5 - zeta7^2, 1)
         """
         from sage.rings.rational_field import QQ
@@ -5662,11 +5670,11 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
 
         EXAMPLES::
 
-            sage: (-163).class_number()                                                 # optional - sage.libs.pari
+            sage: (-163).class_number()                                                 # needs sage.libs.pari
             1
-            sage: (-104).class_number()                                                 # optional - sage.libs.pari
+            sage: (-104).class_number()                                                 # needs sage.libs.pari
             6
-            sage: [((4*n + 1), (4*n + 1).class_number()) for n in [21..29]]             # optional - sage.libs.pari
+            sage: [((4*n + 1), (4*n + 1).class_number()) for n in [21..29]]             # needs sage.libs.pari
             [(85, 2),
             (89, 1),
             (93, 1),
@@ -5748,8 +5756,8 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
             2
             sage: a.squarefree_part(bound=2**14)
             2
-            sage: a = 7^3 * next_prime(2^100)^2 * next_prime(2^200)                     # optional - sage.libs.pari
-            sage: a / a.squarefree_part(bound=1000)                                     # optional - sage.libs.pari
+            sage: a = 7^3 * next_prime(2^100)^2 * next_prime(2^200)                     # needs sage.libs.pari
+            sage: a / a.squarefree_part(bound=1000)                                     # needs sage.libs.pari
             49
         """
         cdef Integer z
@@ -5796,17 +5804,18 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
 
         EXAMPLES::
 
-            sage: (-37).next_probable_prime()                                           # optional - sage.libs.pari
+            sage: # needs sage.libs.pari
+            sage: (-37).next_probable_prime()
             2
-            sage: (100).next_probable_prime()                                           # optional - sage.libs.pari
+            sage: (100).next_probable_prime()
             101
-            sage: (2^512).next_probable_prime()                                         # optional - sage.libs.pari
+            sage: (2^512).next_probable_prime()
             13407807929942597099574024998205846127479365820592393377723561443721764030073546976801874298166903427690031858186486050853753882811946569946433649006084171
-            sage: 0.next_probable_prime()                                               # optional - sage.libs.pari
+            sage: 0.next_probable_prime()
             2
-            sage: 126.next_probable_prime()                                             # optional - sage.libs.pari
+            sage: 126.next_probable_prime()
             127
-            sage: 144168.next_probable_prime()                                          # optional - sage.libs.pari
+            sage: 144168.next_probable_prime()
             144169
         """
         return Integer( self.__pari__().nextprime(True) )
@@ -5825,23 +5834,23 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
 
         EXAMPLES::
 
-            sage: 100.next_prime()                                                      # optional - sage.libs.pari
+            sage: 100.next_prime()                                                      # needs sage.libs.pari
             101
-            sage: (10^50).next_prime()                                                  # optional - sage.libs.pari
+            sage: (10^50).next_prime()                                                  # needs sage.libs.pari
             100000000000000000000000000000000000000000000000151
 
         Use ``proof=False``, which is way faster since it does not need
         a primality proof::
 
-            sage: b = (2^1024).next_prime(proof=False)                                  # optional - sage.libs.pari
-            sage: b - 2^1024                                                            # optional - sage.libs.pari
+            sage: b = (2^1024).next_prime(proof=False)                                  # needs sage.libs.pari
+            sage: b - 2^1024                                                            # needs sage.libs.pari
             643
 
         ::
 
-            sage: Integer(0).next_prime()                                               # optional - sage.libs.pari
+            sage: Integer(0).next_prime()                                               # needs sage.libs.pari
             2
-            sage: Integer(1001).next_prime()                                            # optional - sage.libs.pari
+            sage: Integer(1001).next_prime()                                            # needs sage.libs.pari
             1009
         """
         # Use PARI to compute the next *pseudo*-prime
@@ -5870,11 +5879,11 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
 
         EXAMPLES::
 
-            sage: 10.previous_prime()                                                   # optional - sage.libs.pari
+            sage: 10.previous_prime()                                                   # needs sage.libs.pari
             7
-            sage: 7.previous_prime()                                                    # optional - sage.libs.pari
+            sage: 7.previous_prime()                                                    # needs sage.libs.pari
             5
-            sage: 14376485.previous_prime()                                             # optional - sage.libs.pari
+            sage: 14376485.previous_prime()                                             # needs sage.libs.pari
             14376463
 
             sage: 2.previous_prime()
@@ -5885,8 +5894,8 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
         An example using ``proof=False``, which is way faster since it does not
         need a primality proof::
 
-            sage: b = (2^1024).previous_prime(proof=False)                              # optional - sage.libs.pari
-            sage: 2^1024 - b                                                            # optional - sage.libs.pari
+            sage: b = (2^1024).previous_prime(proof=False)                              # needs sage.libs.pari
+            sage: 2^1024 - b                                                            # needs sage.libs.pari
             105
         """
         if mpz_cmp_ui(self.value, 2) <= 0:
@@ -5926,23 +5935,23 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
 
             sage: (-1).next_prime_power()
             2
-            sage: 2.next_prime_power()                                                  # optional - sage.libs.pari
+            sage: 2.next_prime_power()
             3
-            sage: 103.next_prime_power()                                                # optional - sage.libs.pari
+            sage: 103.next_prime_power()                                                # needs sage.libs.pari
             107
-            sage: 107.next_prime_power()                                                # optional - sage.libs.pari
+            sage: 107.next_prime_power()
             109
-            sage: 2044.next_prime_power()                                               # optional - sage.libs.pari
+            sage: 2044.next_prime_power()                                               # needs sage.libs.pari
             2048
 
         TESTS::
 
-            sage: [(2**k - 1).next_prime_power() for k in range(1,10)]                  # optional - sage.libs.pari
+            sage: [(2**k - 1).next_prime_power() for k in range(1,10)]
             [2, 4, 8, 16, 32, 64, 128, 256, 512]
-            sage: [(2**k).next_prime_power() for k in range(10)]                        # optional - sage.libs.pari
+            sage: [(2**k).next_prime_power() for k in range(10)]                        # needs sage.libs.pari
             [2, 3, 5, 9, 17, 37, 67, 131, 257, 521]
 
-            sage: for _ in range(10):                                                   # optional - sage.libs.pari
+            sage: for _ in range(10):                                                   # needs sage.libs.pari
             ....:     n = ZZ.random_element(2**256).next_prime_power()
             ....:     m = n.next_prime_power().previous_prime_power()
             ....:     assert m == n, "problem with n = {}".format(n)
@@ -5990,13 +5999,14 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
 
         EXAMPLES::
 
-            sage: 3.previous_prime_power()                                              # optional - sage.libs.pari
+            sage: # needs sage.libs.pari
+            sage: 3.previous_prime_power()
             2
-            sage: 103.previous_prime_power()                                            # optional - sage.libs.pari
+            sage: 103.previous_prime_power()
             101
-            sage: 107.previous_prime_power()                                            # optional - sage.libs.pari
+            sage: 107.previous_prime_power()
             103
-            sage: 2044.previous_prime_power()                                           # optional - sage.libs.pari
+            sage: 2044.previous_prime_power()
             2039
 
             sage: 2.previous_prime_power()
@@ -6006,12 +6016,12 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
 
         TESTS::
 
-            sage: [(2**k + 1).previous_prime_power() for k in range(1,10)]              # optional - sage.libs.pari
+            sage: [(2**k + 1).previous_prime_power() for k in range(1,10)]
             [2, 4, 8, 16, 32, 64, 128, 256, 512]
-            sage: [(2**k).previous_prime_power() for k in range(2, 10)]                 # optional - sage.libs.pari
+            sage: [(2**k).previous_prime_power() for k in range(2, 10)]                 # needs sage.libs.pari
             [3, 7, 13, 31, 61, 127, 251, 509]
 
-            sage: for _ in range(10):                                                   # optional - sage.libs.pari
+            sage: for _ in range(10):                                                   # needs sage.libs.pari
             ....:     n = ZZ.random_element(3,2**256).previous_prime_power()
             ....:     m = n.previous_prime_power().next_prime_power()
             ....:     assert m == n, "problem with n = {}".format(n)
@@ -6080,11 +6090,11 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
 
         EXAMPLES::
 
-            sage: 100.is_squarefree()                                                   # optional - sage.libs.pari
+            sage: 100.is_squarefree()                                                   # needs sage.libs.pari
             False
-            sage: 102.is_squarefree()                                                   # optional - sage.libs.pari
+            sage: 102.is_squarefree()                                                   # needs sage.libs.pari
             True
-            sage: 0.is_squarefree()                                                     # optional - sage.libs.pari
+            sage: 0.is_squarefree()                                                     # needs sage.libs.pari
             False
         """
         return self.__pari__().issquarefree()
@@ -6129,20 +6139,20 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
 
         EXAMPLES::
 
-            sage: (-4).is_fundamental_discriminant()                                    # optional - sage.libs.pari
+            sage: (-4).is_fundamental_discriminant()                                    # needs sage.libs.pari
             True
-            sage: (-12).is_fundamental_discriminant()                                   # optional - sage.libs.pari
+            sage: (-12).is_fundamental_discriminant()
             False
-            sage: 101.is_fundamental_discriminant()                                     # optional - sage.libs.pari
+            sage: 101.is_fundamental_discriminant()                                     # needs sage.libs.pari
             True
 
         TESTS::
 
-            sage: 0.is_fundamental_discriminant()                                       # optional - sage.libs.pari
+            sage: 0.is_fundamental_discriminant()
             False
-            sage: 1.is_fundamental_discriminant()                                       # optional - sage.libs.pari
+            sage: 1.is_fundamental_discriminant()
             False
-            sage: len([D for D in srange(-100,100)                                      # optional - sage.libs.pari
+            sage: len([D for D in srange(-100,100)                                      # needs sage.libs.pari
             ....:      if D.is_fundamental_discriminant()])
             61
 
@@ -6164,16 +6174,16 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
         EXAMPLES::
 
             sage: n = 9390823
-            sage: m = n.__pari__(); m                                                   # optional - sage.libs.pari
+            sage: m = n.__pari__(); m                                                   # needs sage.libs.pari
             9390823
-            sage: type(m)                                                               # optional - sage.libs.pari
+            sage: type(m)                                                               # needs sage.libs.pari
             <class 'cypari2.gen.Gen'>
 
         TESTS::
 
             sage: n = 10^10000000
-            sage: m = n.__pari__()  # crash from trac 875                               # optional - sage.libs.pari
-            sage: m % 1234567                                                           # optional - sage.libs.pari
+            sage: m = n.__pari__()  # crash from trac 875                               # needs sage.libs.pari
+            sage: m % 1234567                                                           # needs sage.libs.pari
             1041334
 
         """
@@ -6203,19 +6213,19 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
 
         EXAMPLES::
 
-            sage: import numpy                                                          # optional - numpy
-            sage: numpy.array([1, 2, 3])                                                # optional - numpy
+            sage: import numpy                                                          # needs numpy
+            sage: numpy.array([1, 2, 3])                                                # needs numpy
             array([1, 2, 3])
-            sage: numpy.array([1, 2, 3]).dtype                                          # optional - numpy
+            sage: numpy.array([1, 2, 3]).dtype                                          # needs numpy
             dtype('int32')                         # 32-bit
             dtype('int64')                         # 64-bit
 
-            sage: numpy.array(2**40).dtype                                              # optional - numpy
+            sage: numpy.array(2**40).dtype                                              # needs numpy
             dtype('int64')
-            sage: numpy.array(2**400).dtype                                             # optional - numpy
+            sage: numpy.array(2**400).dtype                                             # needs numpy
             dtype('O')
 
-            sage: numpy.array([1,2,3,0.1]).dtype                                        # optional - numpy
+            sage: numpy.array([1,2,3,0.1]).dtype                                        # needs numpy
             dtype('float64')
         """
         if mpz_fits_slong_p(self.value):
@@ -6242,11 +6252,12 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
             '117'
 
         Large integers use hex:
-            sage: m = 3^(2^20)                        # optional - magma
-            sage: s = m._magma_init_(magma)           # optional - magma
-            sage: 'StringToInteger' in s              # optional - magma
+            sage: # optional - magma
+            sage: m = 3^(2^20)
+            sage: s = m._magma_init_(magma)
+            sage: 'StringToInteger' in s
             True
-            sage: magma(m).sage() == m                # optional - magma
+            sage: magma(m).sage() == m
             True
         """
         if self.ndigits(2) > 10000:
@@ -6378,19 +6389,19 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
             12
             sage: sqrt(Integer(144))
             12
-            sage: Integer(102).sqrt()                                                   # optional - sage.symbolic
+            sage: Integer(102).sqrt()                                                   # needs sage.symbolic
             sqrt(102)
 
         ::
 
             sage: n = 2
-            sage: n.sqrt(all=True)                                                      # optional - sage.symbolic
+            sage: n.sqrt(all=True)                                                      # needs sage.symbolic
             [sqrt(2), -sqrt(2)]
-            sage: n.sqrt(prec=10)
+            sage: n.sqrt(prec=10)                                                       # needs sage.rings.real_mpfr
             1.4
-            sage: n.sqrt(prec=100)
+            sage: n.sqrt(prec=100)                                                      # needs sage.rings.real_mpfr
             1.4142135623730950488016887242
-            sage: n.sqrt(prec=100, all=True)
+            sage: n.sqrt(prec=100, all=True)                                            # needs sage.rings.real_mpfr
             [1.4142135623730950488016887242, -1.4142135623730950488016887242]
             sage: n.sqrt(extend=False)
             Traceback (most recent call last):
@@ -6407,13 +6418,13 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
 
         TESTS::
 
-            sage: type(5.sqrt())                                                        # optional - sage.symbolic
+            sage: type(5.sqrt())                                                        # needs sage.symbolic
             <class 'sage.symbolic.expression.Expression'>
-            sage: type(5.sqrt(prec=53))
+            sage: type(5.sqrt(prec=53))                                                 # needs sage.rings.real_mpfr
             <class 'sage.rings.real_mpfr.RealNumber'>
-            sage: type((-5).sqrt(prec=53))
+            sage: type((-5).sqrt(prec=53))                                              # needs sage.rings.real_mpfr
             <class 'sage.rings.complex_mpfr.ComplexNumber'>
-            sage: type(0.sqrt(prec=53))
+            sage: type(0.sqrt(prec=53))                                                 # needs sage.rings.real_mpfr
             <class 'sage.rings.real_mpfr.RealNumber'>
 
         Check that :trac:`9466` and :trac:`26509` are fixed::
@@ -7031,7 +7042,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
 
             sage: 10.binomial(2)
             45
-            sage: 10.binomial(2, algorithm='pari')                                      # optional - sage.libs.pari
+            sage: 10.binomial(2, algorithm='pari')                                      # needs sage.libs.pari
             45
             sage: 10.binomial(-2)
             0
@@ -7073,7 +7084,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
         check for reliable interrupting, see :trac:`18919`::
 
             sage: from cysignals import AlarmInterrupt
-            sage: for i in [1..10]:  # long time (5s)                                   # optional - sage.libs.pari
+            sage: for i in [1..10]:             # long time (5s)                        # needs sage.libs.pari
             ....:     try:
             ....:         alarm(i/11)
             ....:         (2^100).binomial(2^22, algorithm='pari')

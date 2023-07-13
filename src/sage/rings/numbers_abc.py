@@ -41,26 +41,26 @@ def register_sage_classes():
         True
         sage: isinstance(CDF(1.3, 4), numbers.Complex)
         True
-        sage: isinstance(AA(sqrt(2)), numbers.Real)                                     # optional - sage.rings.number_field sage.symbolic
+        sage: isinstance(AA(sqrt(2)), numbers.Real)                                     # needs sage.rings.number_field sage.symbolic
         True
-        sage: isinstance(QQbar(I), numbers.Complex)                                     # optional - sage.rings.number_field
+        sage: isinstance(QQbar(I), numbers.Complex)                                     # needs sage.rings.number_field
         True
 
     This doesn't work with symbolic expressions at all::
 
-        sage: isinstance(pi, numbers.Real)                                              # optional - sage.symbolic
+        sage: isinstance(pi, numbers.Real)                                              # needs sage.symbolic
         False
-        sage: isinstance(I, numbers.Complex)                                            # optional - sage.rings.number_field
+        sage: isinstance(I, numbers.Complex)                                            # needs sage.rings.number_field
         False
-        sage: isinstance(sqrt(2), numbers.Real)                                         # optional - sage.rings.number_field sage.symbolic
+        sage: isinstance(sqrt(2), numbers.Real)                                         # needs sage.rings.number_field sage.symbolic
         False
 
     Because we do this, NumPy's ``isscalar()`` recognizes Sage types::
 
-        sage: from numpy import isscalar                                                # optional - numpy
-        sage: isscalar(3.141)                                                           # optional - numpy
+        sage: from numpy import isscalar                                                # needs numpy
+        sage: isscalar(3.141)                                                           # needs numpy
         True
-        sage: isscalar(4/17)                                                            # optional - numpy
+        sage: isscalar(4/17)                                                            # needs numpy
         True
     """
     from sage.misc.superseded import deprecation

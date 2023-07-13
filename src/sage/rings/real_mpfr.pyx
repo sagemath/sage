@@ -3287,22 +3287,23 @@ cdef class RealNumber(sage.structure.element.RingElement):
         Pari does maintain the same 250-bit number on both 32-bit and
         64-bit platforms::
 
-            sage: RealField(250).pi().__pari__()                                        # needs sage.libs.pari
+            sage: # needs sage.libs.pari
+            sage: RealField(250).pi().__pari__()
             3.14159265358979
-            sage: RR(0.0).__pari__()                                                    # needs sage.libs.pari
+            sage: RR(0.0).__pari__()
             0.E-19
-            sage: RR(-1.234567).__pari__()                                              # needs sage.libs.pari
+            sage: RR(-1.234567).__pari__()
             -1.23456700000000
-            sage: RR(2.0).sqrt().__pari__()                                             # needs sage.libs.pari
+            sage: RR(2.0).sqrt().__pari__()
             1.41421356237310
-            sage: RR(2.0).sqrt().__pari__().sage()                                      # needs sage.libs.pari
+            sage: RR(2.0).sqrt().__pari__().sage()
             1.41421356237309515
-            sage: RR(2.0).sqrt().__pari__().sage().prec()                               # needs sage.libs.pari
+            sage: RR(2.0).sqrt().__pari__().sage().prec()
             64
-            sage: RealField(70)(pi).__pari__().sage().prec()                            # needs sage.libs.pari sage.symbolic
+            sage: RealField(70)(pi).__pari__().sage().prec()                            # needs sage.symbolic
             96                                         # 32-bit
             128                                        # 64-bit
-            sage: for i in range(100, 200):                                             # needs sage.libs.pari
+            sage: for i in range(100, 200):
             ....:     assert(RR(i).sqrt() == RR(i).sqrt().__pari__().sage())
 
         TESTS:
@@ -3317,11 +3318,12 @@ cdef class RealNumber(sage.structure.element.RingElement):
         Check that the largest and smallest exponents representable by
         PARI convert correctly::
 
-            sage: a = pari(0.5) << (sys.maxsize+1)/4                                    # needs sage.libs.pari
-            sage: RR(a) >> (sys.maxsize+1)/4                                            # needs sage.libs.pari
+            sage: # needs sage.libs.pari
+            sage: a = pari(0.5) << (sys.maxsize+1)/4
+            sage: RR(a) >> (sys.maxsize+1)/4
             0.500000000000000
-            sage: a = pari(0.5) >> (sys.maxsize-3)/4                                    # needs sage.libs.pari
-            sage: RR(a) << (sys.maxsize-3)/4                                            # needs sage.libs.pari
+            sage: a = pari(0.5) >> (sys.maxsize-3)/4
+            sage: RR(a) << (sys.maxsize-3)/4
             0.500000000000000
         """
         return new_gen_from_real_mpfr_element(self)

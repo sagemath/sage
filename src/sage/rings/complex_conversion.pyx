@@ -12,7 +12,7 @@ cdef class CCtoCDF(Map):
             sage: f = CCtoCDF(CC, CDF)  # indirect doctest
             sage: f(CC.0)
             1.0*I
-            sage: f(exp(pi*CC.0/4))                                                     # optional - sage.symbolic
+            sage: f(exp(pi*CC.0/4))                                                     # needs sage.symbolic
             0.7071067811865476 + 0.7071067811865475*I
         """
         z = <ComplexDoubleElement>ComplexDoubleElement.__new__(ComplexDoubleElement)

@@ -1200,27 +1200,27 @@ cdef class MPComplexNumber(sage.structure.element.FieldElement):
 
             sage: MPC = MPComplexField()
             sage: a = MPC(2,1)
-            sage: a.__pari__()                                                          # optional - sage.libs.pari
+            sage: a.__pari__()                                                          # needs sage.libs.pari
             2.00000000000000 + 1.00000000000000*I
-            sage: pari(a)                                                               # optional - sage.libs.pari
+            sage: pari(a)                                                               # needs sage.libs.pari
             2.00000000000000 + 1.00000000000000*I
-            sage: pari(a).type()                                                        # optional - sage.libs.pari
+            sage: pari(a).type()                                                        # needs sage.libs.pari
             't_COMPLEX'
-            sage: a = MPC(pi)                                                           # optional - sage.libs.pari sage.symbolic
-            sage: pari(a)                                                               # optional - sage.libs.pari sage.symbolic
+            sage: a = MPC(pi)                                                           # needs sage.libs.pari sage.symbolic
+            sage: pari(a)                                                               # needs sage.libs.pari sage.symbolic
             3.14159265358979
-            sage: pari(a).type()                                                        # optional - sage.libs.pari sage.symbolic
+            sage: pari(a).type()                                                        # needs sage.libs.pari sage.symbolic
             't_REAL'
             sage: a = MPC(-2).sqrt()
-            sage: pari(a)                                                               # optional - sage.libs.pari
+            sage: pari(a)                                                               # needs sage.libs.pari
             1.41421356237310*I
 
         The precision is preserved, rounded up to the wordsize::
 
             sage: MPC = MPComplexField(250)
-            sage: MPC(1,2).__pari__().bitprecision()                                    # optional - sage.libs.pari
+            sage: MPC(1,2).__pari__().bitprecision()                                    # needs sage.libs.pari
             256
-            sage: MPC(pi).__pari__().bitprecision()                                     # optional - sage.libs.pari
+            sage: MPC(pi).__pari__().bitprecision()                                     # needs sage.libs.pari
             256
         """
         if mpfr_zero_p(self.value.re):
@@ -1525,7 +1525,7 @@ cdef class MPComplexNumber(sage.structure.element.FieldElement):
             2.23606797749979
             sage: a.__abs__()
             2.23606797749979
-            sage: float(sqrt(2^2 + 1^1))                                                # optional - sage.symbolic
+            sage: float(sqrt(2^2 + 1^1))                                                # needs sage.symbolic
             2.23606797749979
 
             sage: b = MPC(42,0)
@@ -2217,7 +2217,7 @@ cdef class MPComplexNumber(sage.structure.element.FieldElement):
             sage: a = MPC(1,0)
             sage: a.dilog()
             1.64493406684823
-            sage: float(pi^2/6)                                                         # optional - sage.symbolic
+            sage: float(pi^2/6)                                                         # needs sage.symbolic
             1.6449340668482262
 
         ::

@@ -230,7 +230,7 @@ cdef class ComplexIntervalFieldElement(FieldElement):
             '-2.5000000000000000?*I'
             sage: CIF(1.5).str(base=3)
             '1.1111111111111111111111111111111112?'
-            sage: CIF(1, pi).str(style='brackets')                                      # optional - sage.symbolic
+            sage: CIF(1, pi).str(style='brackets')                                      # needs sage.symbolic
             '[1.0000000000000000 .. 1.0000000000000000] + [3.1415926535897931 .. 3.1415926535897936]*I'
 
         .. SEEALSO::
@@ -285,23 +285,24 @@ cdef class ComplexIntervalFieldElement(FieldElement):
 
         EXAMPLES::
 
-            sage: sum(plot(CIF(RIF(1/k, 1/k), RIF(-k, k))) for k in [1..10])            # optional - sage.plot
+            sage: sum(plot(CIF(RIF(1/k, 1/k), RIF(-k, k))) for k in [1..10])            # needs sage.plot
             Graphics object consisting of 20 graphics primitives
 
         Exact and nearly exact points are still visible::
 
-            sage: plot(CIF(pi, 1), color='red') + plot(CIF(1, e), color='purple') + plot(CIF(-1, -1))   # optional - sage.plot
+            sage: plot(CIF(pi, 1), color='red') + plot(CIF(1, e), color='purple') + plot(CIF(-1, -1))                   # needs sage.plot
             Graphics object consisting of 6 graphics primitives
 
         A demonstration that `z \mapsto z^2` acts chaotically on `|z|=1`::
 
-            sage: z = CIF(0, 2*pi/1000).exp()                                           # optional - sage.symbolic
-            sage: g = Graphics()                                                        # optional - sage.plot sage.symbolic
-            sage: for i in range(40):                                                   # optional - sage.plot sage.symbolic
+            sage: # needs sage.symbolic
+            sage: z = CIF(0, 2*pi/1000).exp()
+            sage: g = Graphics()                                                        # needs sage.plot
+            sage: for i in range(40):                                                   # needs sage.plot
             ....:     z = z^2
             ....:     g += z.plot(color=(1./(40-i), 0, 1))
             ...
-            sage: g                                                                     # optional - sage.plot sage.symbolic
+            sage: g                                                                     # needs sage.plot
             Graphics object consisting of 80 graphics primitives
         """
         from sage.plot.polygon import polygon2d
@@ -351,15 +352,15 @@ cdef class ComplexIntervalFieldElement(FieldElement):
             (2.50000000000000, 3.00000000000000)
             (-4.50000000000000, -4.00000000000000)
 
-            sage: z = CIF(RIF(sqrt(2), sqrt(3)), RIF(e, pi))                            # optional - sage.symbolic
-            sage: a, b, c, d = z.bisection()                                            # optional - sage.symbolic
-            sage: a.intersection(b).intersection(c).intersection(d) == CIF(z.center())  # optional - sage.symbolic
+            sage: z = CIF(RIF(sqrt(2), sqrt(3)), RIF(e, pi))                            # needs sage.symbolic
+            sage: a, b, c, d = z.bisection()                                            # needs sage.symbolic
+            sage: a.intersection(b).intersection(c).intersection(d) == CIF(z.center())  # needs sage.symbolic
             True
 
-            sage: zz = a.union(b).union(c).union(c)                                     # optional - sage.symbolic
-            sage: zz.real().endpoints() == z.real().endpoints()                         # optional - sage.symbolic
+            sage: zz = a.union(b).union(c).union(c)                                     # needs sage.symbolic
+            sage: zz.real().endpoints() == z.real().endpoints()                         # needs sage.symbolic
             True
-            sage: zz.imag().endpoints() == z.imag().endpoints()                         # optional - sage.symbolic
+            sage: zz.imag().endpoints() == z.imag().endpoints()                         # needs sage.symbolic
             True
         """
         a00 = self._new()
@@ -399,9 +400,9 @@ cdef class ComplexIntervalFieldElement(FieldElement):
             True
             sage: CIF(-5, 0).sqrt().is_exact()
             False
-            sage: CIF(0, 2*pi).is_exact()                                               # optional - sage.symbolic
+            sage: CIF(0, 2*pi).is_exact()                                               # needs sage.symbolic
             False
-            sage: CIF(e).is_exact()                                                     # optional - sage.symbolic
+            sage: CIF(e).is_exact()                                                     # needs sage.symbolic
             False
             sage: CIF(1e100).is_exact()
             True
@@ -985,7 +986,7 @@ cdef class ComplexIntervalFieldElement(FieldElement):
         Here a conversion to Maxima happens, which results in a ``TypeError``::
 
             sage: a = CIF(2.3)
-            sage: maxima(a)                                                             # optional - sage.symbolic
+            sage: maxima(a)                                                             # needs sage.symbolic
             Traceback (most recent call last):
             ...
             TypeError
@@ -999,7 +1000,7 @@ cdef class ComplexIntervalFieldElement(FieldElement):
 
         EXAMPLES::
 
-            sage: sage_input(CIF(RIF(e, pi), RIF(sqrt(2), sqrt(3))), verify=True)       # optional - sage.symbolic
+            sage: sage_input(CIF(RIF(e, pi), RIF(sqrt(2), sqrt(3))), verify=True)       # needs sage.symbolic
             # Verified
             CIF(RIF(RR(2.7182818284590451), RR(3.1415926535897936)), RIF(RR(1.4142135623730949), RR(1.7320508075688774)))
             sage: sage_input(ComplexIntervalField(64)(2)^I, preparse=False, verify=True)
@@ -1997,7 +1998,7 @@ cdef class ComplexIntervalFieldElement(FieldElement):
 
             sage: CIF(2, 1).is_NaN()
             False
-            sage: CIF(NaN).is_NaN()                                                     # optional - sage.symbolic
+            sage: CIF(NaN).is_NaN()                                                     # needs sage.symbolic
             True
             sage: (1 / CIF(0, 0)).is_NaN()
             True
@@ -2019,7 +2020,7 @@ cdef class ComplexIntervalFieldElement(FieldElement):
 
         Check that :trac:`17285` is fixed::
 
-            sage: CIF(cos(2/3))                                                         # optional - sage.symbolic
+            sage: CIF(cos(2/3))                                                         # needs sage.symbolic
             0.7858872607769480?
 
         ALGORITHM:
@@ -2061,7 +2062,7 @@ cdef class ComplexIntervalFieldElement(FieldElement):
 
         Check that :trac:`17825` is fixed::
 
-            sage: CIF(sin(2/3))                                                         # optional - sage.symbolic
+            sage: CIF(sin(2/3))                                                         # needs sage.symbolic
             0.618369803069737?
 
         ALGORITHM:
