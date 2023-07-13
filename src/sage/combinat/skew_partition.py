@@ -108,7 +108,7 @@ The :meth:`jacobi_trudi()` method computes the Jacobi-Trudi matrix. See
 
 ::
 
-    sage: SkewPartition([[4,3,1],[2]]).jacobi_trudi()
+    sage: SkewPartition([[4,3,1],[2]]).jacobi_trudi()                                   # needs sage.modules
     [h[2]  h[]    0]
     [h[5] h[3]  h[]]
     [h[6] h[4] h[1]]
@@ -845,41 +845,41 @@ class SkewPartition(CombinatorialElement):
         EXAMPLES::
 
             sage: p = SkewPartition([[3,3,1], [2,1]])
-            sage: Q = p.cell_poset(); Q
+            sage: Q = p.cell_poset(); Q                                                 # needs sage.graphs
             Finite poset containing 4 elements
-            sage: sorted(Q)
+            sage: sorted(Q)                                                             # needs sage.graphs
             [(0, 2), (1, 1), (1, 2), (2, 0)]
-            sage: sorted(Q.maximal_elements())
+            sage: sorted(Q.maximal_elements())                                          # needs sage.graphs
             [(1, 2), (2, 0)]
-            sage: sorted(Q.minimal_elements())
+            sage: sorted(Q.minimal_elements())                                          # needs sage.graphs
             [(0, 2), (1, 1), (2, 0)]
-            sage: sorted(Q.upper_covers((1, 1)))
+            sage: sorted(Q.upper_covers((1, 1)))                                        # needs sage.graphs
             [(1, 2)]
-            sage: sorted(Q.upper_covers((0, 2)))
+            sage: sorted(Q.upper_covers((0, 2)))                                        # needs sage.graphs
             [(1, 2)]
 
-            sage: P = p.cell_poset(orientation="NW"); P
+            sage: P = p.cell_poset(orientation="NW"); P                                 # needs sage.graphs
             Finite poset containing 4 elements
-            sage: sorted(P)
+            sage: sorted(P)                                                             # needs sage.graphs
             [(0, 2), (1, 1), (1, 2), (2, 0)]
-            sage: sorted(P.minimal_elements())
+            sage: sorted(P.minimal_elements())                                          # needs sage.graphs
             [(1, 2), (2, 0)]
-            sage: sorted(P.maximal_elements())
+            sage: sorted(P.maximal_elements())                                          # needs sage.graphs
             [(0, 2), (1, 1), (2, 0)]
-            sage: sorted(P.upper_covers((1, 2)))
+            sage: sorted(P.upper_covers((1, 2)))                                        # needs sage.graphs
             [(0, 2), (1, 1)]
 
-            sage: R = p.cell_poset(orientation="NE"); R
+            sage: R = p.cell_poset(orientation="NE"); R                                 # needs sage.graphs
             Finite poset containing 4 elements
-            sage: sorted(R)
+            sage: sorted(R)                                                             # needs sage.graphs
             [(0, 2), (1, 1), (1, 2), (2, 0)]
-            sage: R.maximal_elements()
+            sage: R.maximal_elements()                                                  # needs sage.graphs
             [(0, 2)]
-            sage: R.minimal_elements()
+            sage: R.minimal_elements()                                                  # needs sage.graphs
             [(2, 0)]
-            sage: R.upper_covers((2, 0))
+            sage: R.upper_covers((2, 0))                                                # needs sage.graphs
             [(1, 1)]
-            sage: sorted([len(R.upper_covers(v)) for v in R])
+            sage: sorted([len(R.upper_covers(v)) for v in R])                           # needs sage.graphs
             [0, 1, 1, 1]
 
         TESTS:
@@ -896,7 +896,7 @@ class SkewPartition(CombinatorialElement):
             ....:                                   and c[1] >= d[1]):
             ....:                     return False
             ....:     return True
-            sage: all( check_NW(n) for n in range(7) )
+            sage: all( check_NW(n) for n in range(7) )                                  # needs sage.graphs
             True
 
             sage: def check_NE(n):
@@ -908,7 +908,7 @@ class SkewPartition(CombinatorialElement):
             ....:                                   and c[1] <= d[1]):
             ....:                     return False
             ....:     return True
-            sage: all( check_NE(n) for n in range(7) )
+            sage: all( check_NE(n) for n in range(7) )                                  # needs sage.graphs
             True
 
             sage: def test_duality(n, ori1, ori2):
@@ -920,11 +920,11 @@ class SkewPartition(CombinatorialElement):
             ....:                 if P.lt(c, d) != Q.lt(d, c):
             ....:                     return False
             ....:     return True
-            sage: all( test_duality(n, "NW", "SE") for n in range(7) )
+            sage: all( test_duality(n, "NW", "SE") for n in range(7) )                  # needs sage.graphs
             True
-            sage: all( test_duality(n, "NE", "SW") for n in range(7) )
+            sage: all( test_duality(n, "NE", "SW") for n in range(7) )                  # needs sage.graphs
             True
-            sage: all( test_duality(n, "NE", "SE") for n in range(4) )
+            sage: all( test_duality(n, "NE", "SE") for n in range(4) )                  # needs sage.graphs
             False
         """
         from sage.combinat.posets.posets import Poset
@@ -1068,18 +1068,18 @@ class SkewPartition(CombinatorialElement):
 
         EXAMPLES::
 
-            sage: dag = SkewPartition([[3, 3, 1], [1, 1]]).to_dag()                     # optional - sage.graphs
-            sage: dag.edges(sort=True)                                                  # optional - sage.graphs
+            sage: dag = SkewPartition([[3, 3, 1], [1, 1]]).to_dag()                     # needs sage.graphs
+            sage: dag.edges(sort=True)                                                  # needs sage.graphs
             [('0,1', '0,2', None),
             ('0,1', '1,1', None),
             ('0,2', '1,2', None),
             ('1,1', '1,2', None)]
-            sage: dag.vertices(sort=True)                                               # optional - sage.graphs
+            sage: dag.vertices(sort=True)                                               # needs sage.graphs
             ['0,1', '0,2', '1,1', '1,2', '2,0']
-            sage: dag = SkewPartition([[3, 2, 1], [1, 1]]).to_dag(format="tuple")       # optional - sage.graphs
-            sage: dag.edges(sort=True)                                                  # optional - sage.graphs
+            sage: dag = SkewPartition([[3, 2, 1], [1, 1]]).to_dag(format="tuple")       # needs sage.graphs
+            sage: dag.edges(sort=True)                                                  # needs sage.graphs
             [((0, 1), (0, 2), None), ((0, 1), (1, 1), None)]
-            sage: dag.vertices(sort=True)                                               # optional - sage.graphs
+            sage: dag.vertices(sort=True)                                               # needs sage.graphs
             [(0, 1), (0, 2), (1, 1), (2, 0)]
         """
         outer = list(self.outer())
@@ -1216,11 +1216,11 @@ class SkewPartition(CombinatorialElement):
 
         EXAMPLES::
 
-            sage: SkewPartition([[3,2,1],[2,1]]).jacobi_trudi()
+            sage: SkewPartition([[3,2,1],[2,1]]).jacobi_trudi()                         # needs sage.modules
             [h[1]    0    0]
             [h[3] h[1]    0]
             [h[5] h[3] h[1]]
-            sage: SkewPartition([[4,3,2],[2,1]]).jacobi_trudi()
+            sage: SkewPartition([[4,3,2],[2,1]]).jacobi_trudi()                         # needs sage.modules
             [h[2]  h[]    0]
             [h[4] h[2]  h[]]
             [h[6] h[4] h[2]]
@@ -1282,24 +1282,24 @@ class SkewPartition(CombinatorialElement):
         EXAMPLES::
 
             sage: mu = SkewPartition([[3,2,1], [2]])
-            sage: SM = mu.specht_module(QQ)
-            sage: s = SymmetricFunctions(QQ).s()
-            sage: s(SM.frobenius_image())
+            sage: SM = mu.specht_module(QQ)                                             # needs sage.modules
+            sage: s = SymmetricFunctions(QQ).s()                                        # needs sage.modules
+            sage: s(SM.frobenius_image())                                               # needs sage.modules
             s[2, 1, 1] + s[2, 2] + s[3, 1]
 
         We verify that the Frobenius image is the corresponding
         skew Schur function::
 
-            sage: s[3,2,1].skew_by(s[2])
+            sage: s[3,2,1].skew_by(s[2])                                                # needs sage.modules
             s[2, 1, 1] + s[2, 2] + s[3, 1]
 
         ::
 
             sage: mu = SkewPartition([[4,2,1], [2,1]])
-            sage: SM = mu.specht_module(QQ)
-            sage: s(SM.frobenius_image())
+            sage: SM = mu.specht_module(QQ)                                             # needs sage.modules
+            sage: s(SM.frobenius_image())                                               # needs sage.modules
             s[2, 1, 1] + s[2, 2] + 2*s[3, 1] + s[4]
-            sage: s(mu)
+            sage: s(mu)                                                                 # needs sage.modules
             s[2, 1, 1] + s[2, 2] + 2*s[3, 1] + s[4]
         """
         from sage.combinat.specht_module import SpechtModule
@@ -1320,9 +1320,9 @@ class SkewPartition(CombinatorialElement):
         EXAMPLES::
 
             sage: mu = SkewPartition([[3,2,1], [2]])
-            sage: mu.specht_module_dimension()
+            sage: mu.specht_module_dimension()                                          # needs sage.modules
             8
-            sage: mu.specht_module_dimension(GF(2))
+            sage: mu.specht_module_dimension(GF(2))                                     # needs sage.modules sage.rings.finite_rings
             8
         """
         from sage.categories.fields import Fields

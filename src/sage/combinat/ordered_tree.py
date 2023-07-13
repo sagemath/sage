@@ -360,20 +360,20 @@ class OrderedTree(AbstractClonableTree, ClonableList,
         EXAMPLES::
 
             sage: T = OrderedTree([[[], [[], [[]]]], [], [[[],[]]], [], []])
-            sage: T.to_parallelogram_polyomino(bijection='Boussicault-Socci')           # optional - sage.combinat
+            sage: T.to_parallelogram_polyomino(bijection='Boussicault-Socci')           # needs sage.combinat sage.modules
             [[0, 0, 0, 1, 1, 0, 1, 1, 1, 1, 0, 1, 1, 1],
              [1, 1, 1, 1, 1, 0, 0, 1, 1, 0, 1, 1, 0, 0]]
             sage: T = OrderedTree( [] )
-            sage: T.to_parallelogram_polyomino()                                        # optional - sage.combinat
+            sage: T.to_parallelogram_polyomino()                                        # needs sage.combinat sage.modules
             [[1], [1]]
             sage: T = OrderedTree( [[]] )
-            sage: T.to_parallelogram_polyomino()                                        # optional - sage.combinat
+            sage: T.to_parallelogram_polyomino()                                        # needs sage.combinat sage.modules
             [[0, 1], [1, 0]]
             sage: T = OrderedTree( [[],[]] )
-            sage: T.to_parallelogram_polyomino()                                        # optional - sage.combinat
+            sage: T.to_parallelogram_polyomino()                                        # needs sage.combinat sage.modules
             [[0, 1, 1], [1, 1, 0]]
             sage: T = OrderedTree( [[[]]] )
-            sage: T.to_parallelogram_polyomino()                                        # optional - sage.combinat
+            sage: T.to_parallelogram_polyomino()                                        # needs sage.combinat sage.modules
             [[0, 0, 1], [1, 0, 0]]
         """
         if (bijection is None) or (bijection == 'Boussicault-Socci'):
@@ -392,19 +392,19 @@ class OrderedTree(AbstractClonableTree, ClonableList,
             sage: T = OrderedTree(
             ....:     [[[], [[], [[]]]], [], [[[],[]]], [], []]
             ....: )
-            sage: T._to_parallelogram_polyomino_Boussicault_Socci()                     # optional - sage.combinat
+            sage: T._to_parallelogram_polyomino_Boussicault_Socci()                     # needs sage.combinat sage.modules
             [[0, 0, 0, 1, 1, 0, 1, 1, 1, 1, 0, 1, 1, 1], [1, 1, 1, 1, 1, 0, 0, 1, 1, 0, 1, 1, 0, 0]]
             sage: T = OrderedTree( [] )
-            sage: T._to_parallelogram_polyomino_Boussicault_Socci()                     # optional - sage.combinat
+            sage: T._to_parallelogram_polyomino_Boussicault_Socci()                     # needs sage.combinat sage.modules
             [[1], [1]]
             sage: T = OrderedTree( [[]] )
-            sage: T._to_parallelogram_polyomino_Boussicault_Socci()                     # optional - sage.combinat
+            sage: T._to_parallelogram_polyomino_Boussicault_Socci()                     # needs sage.combinat sage.modules
             [[0, 1], [1, 0]]
             sage: T = OrderedTree( [[],[]] )
-            sage: T._to_parallelogram_polyomino_Boussicault_Socci()                     # optional - sage.combinat
+            sage: T._to_parallelogram_polyomino_Boussicault_Socci()                     # needs sage.combinat sage.modules
             [[0, 1, 1], [1, 1, 0]]
             sage: T = OrderedTree( [[[]]] )
-            sage: T._to_parallelogram_polyomino_Boussicault_Socci()                     # optional - sage.combinat
+            sage: T._to_parallelogram_polyomino_Boussicault_Socci()                     # needs sage.combinat sage.modules
             [[0, 0, 1], [1, 0, 0]]
         """
         from sage.combinat.parallelogram_polyomino import ParallelogramPolyomino
@@ -501,13 +501,13 @@ class OrderedTree(AbstractClonableTree, ClonableList,
         EXAMPLES::
 
             sage: T = OrderedTree([[],[]])
-            sage: T.to_dyck_word()                                                      # optional - sage.combinat
+            sage: T.to_dyck_word()                                                      # needs sage.combinat
             [1, 0, 1, 0]
             sage: T = OrderedTree([[],[[]]])
-            sage: T.to_dyck_word()                                                      # optional - sage.combinat
+            sage: T.to_dyck_word()                                                      # needs sage.combinat
             [1, 0, 1, 1, 0, 0]
             sage: T = OrderedTree([[], [[], []], [[], [[]]]])
-            sage: T.to_dyck_word()                                                      # optional - sage.combinat
+            sage: T.to_dyck_word()                                                      # needs sage.combinat
             [1, 0, 1, 1, 0, 1, 0, 0, 1, 1, 0, 1, 1, 0, 0, 0]
         """
         word = []
@@ -597,14 +597,14 @@ class OrderedTree(AbstractClonableTree, ClonableList,
             sage: t.to_poset()
             Finite poset containing 1 elements
             sage: p = OrderedTree([[[]],[],[]]).to_poset()
-            sage: p.height(), p.width()
+            sage: p.height(), p.width()                                                 # needs networkx
             (3, 3)
 
         If the tree is labelled, we use its labelling to label the poset.
         Otherwise, we use the poset canonical labelling::
 
             sage: t = OrderedTree([[[]],[],[]]).canonical_labelling().to_poset()
-            sage: t.height(), t.width()
+            sage: t.height(), t.width()                                                 # needs networkx
             (3, 3)
         """
         if self in LabelledOrderedTrees():
@@ -675,7 +675,7 @@ class OrderedTree(AbstractClonableTree, ClonableList,
             o o o
             |
             o
-            sage: p.plot()                                                              # optional - sage.plot
+            sage: p.plot()                                                              # needs sage.plot
             Graphics object consisting of 10 graphics primitives
 
         .. PLOT::
@@ -692,7 +692,7 @@ class OrderedTree(AbstractClonableTree, ClonableList,
             2 3 5
               |
               4
-            sage: g.plot()                                                              # optional - sage.plot
+            sage: g.plot()                                                              # needs sage.plot
             Graphics object consisting of 10 graphics primitives
 
         .. PLOT::
@@ -1088,18 +1088,18 @@ class OrderedTrees_size(OrderedTrees):
 
         EXAMPLES::
 
-            sage: OrderedTrees(5).random_element()  # random                            # optional - sage.combinat
+            sage: OrderedTrees(5).random_element()  # random                            # needs sage.combinat
             [[[], []], []]
-            sage: OrderedTrees(0).random_element()                                      # optional - sage.combinat
+            sage: OrderedTrees(0).random_element()                                      # needs sage.combinat
             Traceback (most recent call last):
             ...
             EmptySetError: there are no ordered trees of size 0
-            sage: OrderedTrees(1).random_element()                                      # optional - sage.combinat
+            sage: OrderedTrees(1).random_element()                                      # needs sage.combinat
             []
 
         TESTS::
 
-            sage: all(OrderedTrees(10).random_element() in OrderedTrees(10)             # optional - sage.combinat
+            sage: all(OrderedTrees(10).random_element() in OrderedTrees(10)             # needs sage.combinat
             ....:     for i in range(20))
             True
         """
