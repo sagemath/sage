@@ -55,7 +55,7 @@ cdef class AttributeErrorMessage:
         ...
         AttributeError: 'sage.rings.integer.Integer' object has no attribute 'bla'
         sage: x = polygen(ZZ, 'x')
-        sage: QQ[x].gen().bla                                                           # optional - sage.libs.flint
+        sage: QQ[x].gen().bla                                                           # needs sage.libs.flint
         Traceback (most recent call last):
         ...
         AttributeError: 'sage.rings.polynomial.polynomial_rational_flint.Polynomial_rational_flint' object has no attribute 'bla'
@@ -407,13 +407,14 @@ def dir_with_other_class(self, *cls):
 
     Check that objects without dicts are well handled::
 
-        sage: cython("cdef class A:\n    cdef public int a")                            # optional - sage.misc.cython
-        sage: cython("cdef class B:\n    cdef public int b")                            # optional - sage.misc.cython
-        sage: x = A()                                                                   # optional - sage.misc.cython
-        sage: x.a = 1                                                                   # optional - sage.misc.cython
-        sage: hasattr(x,'__dict__')                                                     # optional - sage.misc.cython
+        sage: # needs sage.misc.cython
+        sage: cython("cdef class A:\n    cdef public int a")
+        sage: cython("cdef class B:\n    cdef public int b")
+        sage: x = A()
+        sage: x.a = 1
+        sage: hasattr(x,'__dict__')
         False
-        sage: dir_with_other_class(x, B)                                                # optional - sage.misc.cython
+        sage: dir_with_other_class(x, B)
         [..., 'a', 'b']
 
     TESTS:
