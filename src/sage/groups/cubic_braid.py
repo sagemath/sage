@@ -403,11 +403,11 @@ class CubicBraidElement(FinitelyPresentedGroupElement):
             [     1      0      0]
             sage: BuMa.base_ring()
             Number Field in t with defining polynomial t^2 - t + 1
-            sage: BuMa = ele.burau_matrix(domain = QQ[I, sqrt(3)]); BuMa                # optional - sage.rings.number_field sage.symbolic
+            sage: BuMa = ele.burau_matrix(domain = QQ[I, sqrt(3)]); BuMa                # needs sage.rings.number_field sage.symbolic
             [ 1/2*sqrt3*I + 1/2                  1 -1/2*sqrt3*I - 1/2]
             [ 1/2*sqrt3*I + 1/2 -1/2*sqrt3*I + 1/2                  0]
             [                 1                  0                  0]
-            sage: BuMa.base_ring()                                                      # optional - sage.rings.number_field sage.symbolic
+            sage: BuMa.base_ring()                                                      # needs sage.rings.number_field sage.symbolic
             Number Field in I with defining polynomial x^2 + 1 over its base field
             sage: BuMa = ele.burau_matrix(characteristic=7); BuMa
             [3 1 4]
@@ -434,18 +434,18 @@ class CubicBraidElement(FinitelyPresentedGroupElement):
             [      1       0       0]
             sage: BuMa.base_ring()
             Finite Field in t of size 5^2
-            sage: BuMa, BuMaAd, H = ele.burau_matrix(reduced='unitary'); BuMa           # optional - sage.rings.number_field
+            sage: BuMa, BuMaAd, H = ele.burau_matrix(reduced='unitary'); BuMa           # needs sage.rings.number_field
             [       0 zeta12^3]
             [zeta12^3        0]
-            sage: BuMa * H * BuMaAd == H                                                # optional - sage.rings.number_field
+            sage: BuMa * H * BuMaAd == H                                                # needs sage.rings.number_field
             True
-            sage: BuMa.base_ring()                                                      # optional - sage.rings.number_field
+            sage: BuMa.base_ring()                                                      # needs sage.rings.number_field
             Cyclotomic Field of order 12 and degree 4
-            sage: BuMa, BuMaAd, H = ele.burau_matrix(domain=QQ[I, sqrt(3)],             # optional - sage.rings.number_field sage.symbolic
+            sage: BuMa, BuMaAd, H = ele.burau_matrix(domain=QQ[I, sqrt(3)],             # needs sage.rings.number_field sage.symbolic
             ....:                                    reduced='unitary'); BuMa
             [0 I]
             [I 0]
-            sage: BuMa.base_ring()                                                      # optional - sage.rings.number_field sage.symbolic
+            sage: BuMa.base_ring()                                                      # needs sage.rings.number_field sage.symbolic
             Number Field in I with defining polynomial x^2 + 1 over its base field
         """
         braid = self.braid()
@@ -1743,27 +1743,29 @@ class CubicBraidGroup(FinitelyPresentedGroup):
 
         EXAMPLES::
 
-           sage: C3.<c1,c2> = CubicBraidGroup(3)           # optional - gap3
-           sage: R3 = C3.as_reflection_group(); R3         # optional - gap3
+           sage: # optional - gap3
+           sage: C3.<c1,c2> = CubicBraidGroup(3)
+           sage: R3 = C3.as_reflection_group(); R3
            Irreducible complex reflection group of rank 2 and type ST4
-           sage: R3.cartan_matrix()                        # optional - gap3
+           sage: R3.cartan_matrix()
            [-2*E(3) - E(3)^2           E(3)^2]
            [        -E(3)^2 -2*E(3) - E(3)^2]
-           sage: R3.simple_roots()                         # optional - gap3
+           sage: R3.simple_roots()
            Finite family {1: (0, -2*E(3) - E(3)^2), 2: (2*E(3)^2, E(3)^2)}
-           sage: R3.simple_coroots()                       # optional - gap3
+           sage: R3.simple_coroots()
            Finite family {1: (0, 1), 2: (1/3*E(3) - 1/3*E(3)^2, 1/3*E(3) - 1/3*E(3)^2)}
 
        Conversion maps::
 
-           sage: r = R3.an_element()                       # optional - gap3
-           sage: cr = C3(r); cr                            # optional - gap3
+           sage: # optional - gap3
+           sage: r = R3.an_element()
+           sage: cr = C3(r); cr
            c1*c2
-           sage: mr = r.matrix(); mr                       # optional - gap3
+           sage: mr = r.matrix(); mr
            [ 1/3*E(3) - 1/3*E(3)^2  2/3*E(3) + 1/3*E(3)^2]
            [-2/3*E(3) + 2/3*E(3)^2  2/3*E(3) + 1/3*E(3)^2]
-           sage: C3Cl = C3.as_classical_group()            # optional - gap3
-           sage: C3Cl(cr)                                  # optional - gap3
+           sage: C3Cl = C3.as_classical_group()
+           sage: C3Cl(cr)
            [ E(3)^2    -E(4)]
            [-E(12)^7        0]
 
@@ -1773,13 +1775,14 @@ class CubicBraidGroup(FinitelyPresentedGroup):
         the classical group due to different hermitian forms for the unitary
         groups they live in::
 
-           sage: C4 = CubicBraidGroup(4)                   # optional - gap3
-           sage: R4 = C4.as_reflection_group()             # optional - gap3
-           sage: R4.invariant_form()                       # optional - gap3
+           sage: # optional - gap3
+           sage: C4 = CubicBraidGroup(4)
+           sage: R4 = C4.as_reflection_group()
+           sage: R4.invariant_form()
            [1 0 0]
            [0 1 0]
            [0 0 1]
-           sage: _ == C4.classical_invariant_form()        # optional - gap3
+           sage: _ == C4.classical_invariant_form()
            False
         """
         # -------------------------------------------------------------------------------

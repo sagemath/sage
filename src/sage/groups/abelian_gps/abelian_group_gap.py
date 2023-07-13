@@ -781,7 +781,7 @@ class AbelianGroupSubgroup_gap(AbelianGroup_gap):
 
         Check that we are in the correct category::
 
-            sage: # optional - gap_package_polycyclic
+            sage: # optional - gap_packages
             sage: G = AbelianGroupGap([2,3,0])
             sage: g = G.gens()
             sage: H1 = G.subgroup([g[0],g[1]])

@@ -35,11 +35,11 @@ def is_Group(x):
 
     EXAMPLES::
 
-        sage: F.<a,b> = FreeGroup()                                                     # optional - sage.groups
+        sage: F.<a,b> = FreeGroup()                                                     # needs sage.groups
         sage: from sage.groups.group import is_Group
-        sage: is_Group(F)                                                               # optional - sage.groups
+        sage: is_Group(F)                                                               # needs sage.groups
         True
-        sage: is_Group("a string")                                                      # optional - sage.groups
+        sage: is_Group("a string")                                                      # needs sage.groups
         False
     """
     from sage.groups.old import Group as OldGroup
@@ -96,10 +96,11 @@ cdef class Group(Parent):
 
         Check for :trac:`8119`::
 
-            sage: G = SymmetricGroup(2)                                                 # optional - sage.groups
-            sage: h = hash(G)                                                           # optional - sage.groups
-            sage: G.rename('S2')                                                        # optional - sage.groups
-            sage: h == hash(G)                                                          # optional - sage.groups
+            sage: # needs sage.groups
+            sage: G = SymmetricGroup(2)
+            sage: h = hash(G)
+            sage: G.rename('S2')
+            sage: h == hash(G)
             True
         """
         from sage.categories.groups import Groups
@@ -139,7 +140,7 @@ cdef class Group(Parent):
 
         EXAMPLES::
 
-            sage: SL(2, 7).is_commutative()                                             # optional - sage.modules sage.rings.finite_rings
+            sage: SL(2, 7).is_commutative()                                             # needs sage.modules sage.rings.finite_rings
             False
         """
         return self.is_abelian()
@@ -161,8 +162,8 @@ cdef class Group(Parent):
 
         TESTS::
 
-            sage: H = SL(2, QQ)                                                         # optional - sage.modules
-            sage: H.order()                                                             # optional - sage.modules
+            sage: H = SL(2, QQ)                                                         # needs sage.modules
+            sage: H.order()                                                             # needs sage.modules
             +Infinity
         """
         try:
@@ -211,8 +212,8 @@ cdef class Group(Parent):
 
         EXAMPLES::
 
-            sage: G = AbelianGroup([2,3,4,5])                                           # optional - sage.groups
-            sage: G.an_element()                                                        # optional - sage.groups
+            sage: G = AbelianGroup([2,3,4,5])                                           # needs sage.groups
+            sage: G.an_element()                                                        # needs sage.groups
             f0*f1*f2*f3
         """
         return self.prod(self.gens())

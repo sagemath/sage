@@ -319,15 +319,16 @@ class FinitelyGeneratedMatrixGroup_generic(MatrixGroup_generic):
     """
     TESTS::
 
-        sage: m1 = matrix(SR, [[1,2], [3,4]])                                           # needs sage.symbolic
-        sage: m2 = matrix(SR, [[1,3], [-1,0]])                                          # needs sage.symbolic
-        sage: MatrixGroup(m1) == MatrixGroup(m1)                                        # needs sage.symbolic
+        sage: # needs sage.symbolic
+        sage: m1 = matrix(SR, [[1,2], [3,4]])
+        sage: m2 = matrix(SR, [[1,3], [-1,0]])
+        sage: MatrixGroup(m1) == MatrixGroup(m1)
         True
-        sage: MatrixGroup(m1) == MatrixGroup(m1.change_ring(QQ))                        # needs sage.symbolic
+        sage: MatrixGroup(m1) == MatrixGroup(m1.change_ring(QQ))
         False
-        sage: MatrixGroup(m1) == MatrixGroup(m2)                                        # needs sage.symbolic
+        sage: MatrixGroup(m1) == MatrixGroup(m2)
         False
-        sage: MatrixGroup(m1, m2) == MatrixGroup(m2, m1)                                # needs sage.symbolic
+        sage: MatrixGroup(m1, m2) == MatrixGroup(m2, m1)
         False
 
         sage: m1 = matrix(QQ, [[1,2], [3,4]])
@@ -351,11 +352,12 @@ class FinitelyGeneratedMatrixGroup_generic(MatrixGroup_generic):
 
         EXAMPLES::
 
-            sage: m1 = matrix(SR, [[1,2], [3,4]])                                       # needs sage.symbolic
-            sage: m2 = matrix(SR, [[1,3], [-1,0]])                                      # needs sage.symbolic
-            sage: G = MatrixGroup(m1, m2)                                               # needs sage.symbolic
-            sage: TestSuite(G).run()                                                    # needs sage.symbolic
-            sage: type(G)                                                               # needs sage.symbolic
+            sage: # needs sage.symbolic
+            sage: m1 = matrix(SR, [[1,2], [3,4]])
+            sage: m2 = matrix(SR, [[1,3], [-1,0]])
+            sage: G = MatrixGroup(m1, m2)
+            sage: TestSuite(G).run()
+            sage: type(G)
             <class 'sage.groups.matrix_gps.finitely_generated.FinitelyGeneratedMatrixGroup_generic_with_category'>
 
             sage: from sage.groups.matrix_gps.finitely_generated import \
@@ -455,10 +457,11 @@ class FinitelyGeneratedMatrixGroup_generic(MatrixGroup_generic):
 
         Check that :trac:`22128` is fixed::
 
-            sage: R = MatrixSpace(SR, 2)                                                # needs sage.symbolic
-            sage: G = MatrixGroup([R([[1, 1], [0, 1]])])                                # needs sage.symbolic
-            sage: G.register_embedding(R)                                               # needs sage.symbolic
-            sage: loads(dumps(G))                                                       # needs sage.symbolic
+            sage: # needs sage.symbolic
+            sage: R = MatrixSpace(SR, 2)
+            sage: G = MatrixGroup([R([[1, 1], [0, 1]])])
+            sage: G.register_embedding(R)
+            sage: loads(dumps(G))
             Matrix group over Symbolic Ring with 1 generators (
             [1 1]
             [0 1]
@@ -470,10 +473,11 @@ class FinitelyGeneratedMatrixGroup_generic(MatrixGroup_generic):
         """
         EXAMPLES::
 
-            sage: m1 = matrix(SR, [[1,2], [3,4]])                                       # needs sage.symbolic
-            sage: m2 = matrix(SR, [[1,3], [-1,0]])                                      # needs sage.symbolic
-            sage: G = MatrixGroup(m1, m2)                                               # needs sage.symbolic
-            sage: G._test_matrix_generators()                                           # needs sage.symbolic
+            sage: # needs sage.symbolic
+            sage: m1 = matrix(SR, [[1,2], [3,4]])
+            sage: m2 = matrix(SR, [[1,3], [-1,0]])
+            sage: G = MatrixGroup(m1, m2)
+            sage: G._test_matrix_generators()
         """
         tester = self._tester(**options)
         for g,h in zip(self.gens(), MatrixGroup(self.gens()).gens()):

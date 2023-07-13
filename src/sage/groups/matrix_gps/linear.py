@@ -112,10 +112,10 @@ def GL(n, R, var='a'):
         sage: g = GL(2,3)
         sage: d = g.cayley_graph(); d                                                   # needs sage.graphs sage.rings.finite_rings
         Digraph on 48 vertices
-        sage: d.plot(color_by_label=True, vertex_size=0.03,     # long time, needs sage.graphs sage.plot sage.rings.finite_rings
+        sage: d.plot(color_by_label=True, vertex_size=0.03,     # long time             # needs sage.graphs sage.plot sage.rings.finite_rings
         ....:        vertex_labels=False)
         Graphics object consisting of 144 graphics primitives
-        sage: d.plot3d(color_by_label=True)     # long time, needs sage.graphs sage.plot sage.rings.finite_rings
+        sage: d.plot3d(color_by_label=True)     # long time                             # needs sage.graphs sage.plot sage.rings.finite_rings
         Graphics3d Object
 
     ::

@@ -292,11 +292,12 @@ class NamedMatrixGroup_generic(CachedRepresentation, MatrixGroup_generic):
             sage: G == MatrixGroup(G.gens())                                            # needs sage.rings.finite_rings
             True
 
-            sage: G = groups.matrix.GL(4,2)                                             # needs sage.rings.finite_rings
-            sage: H = MatrixGroup(G.gens())                                             # needs sage.rings.finite_rings
-            sage: G == H                                                                # needs sage.rings.finite_rings
+            sage: # needs sage.rings.finite_rings
+            sage: G = groups.matrix.GL(4,2)
+            sage: H = MatrixGroup(G.gens())
+            sage: G == H
             True
-            sage: G != H                                                                # needs sage.rings.finite_rings
+            sage: G != H
             False
         """
         return MatrixGroup_generic.__richcmp__(self, other, op)
