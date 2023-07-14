@@ -314,10 +314,10 @@ cdef class Vector_integer_dense(free_module_element.FreeModuleElement):
 
             sage: A = random_matrix(ZZ,1,3)
             sage: v = A.row(0)
-            sage: vs = singular(v)                                                      # optional - sage.libs.singular
-            sage: vs._repr_() == '{},\n{},\n{}'.format(*v)                              # optional - sage.libs.singular
+            sage: vs = singular(v)                                                      # needs sage.libs.singular
+            sage: vs._repr_() == '{},\n{},\n{}'.format(*v)                              # needs sage.libs.singular
             True
-            sage: vs.type()                                                             # optional - sage.libs.singular
+            sage: vs.type()                                                             # needs sage.libs.singular
             'intvec'
         """
         if singular is None:
