@@ -315,13 +315,13 @@ cdef class ComplexDoubleField_class(sage.rings.abc.ComplexDoubleField):
             2.0 - 3.0*I
             sage: CDF(4.5) # indirect doctest
             4.5
-            sage: CDF(1+I) # indirect doctest
+            sage: CDF(1+I) # indirect doctest                                           # needs sage.symbolic
             1.0 + 1.0*I
-            sage: CDF(pari(1))
+            sage: CDF(pari(1))                                                          # needs sage.libs.pari
             1.0
-            sage: CDF(pari("I"))
+            sage: CDF(pari("I"))                                                        # needs sage.libs.pari
             1.0*I
-            sage: CDF(pari("x^2 + x + 1").polroots()[0])
+            sage: CDF(pari("x^2 + x + 1").polroots()[0])                                # needs sage.libs.pari
             -0.5 - 0.8660254037844386*I
             sage: from gmpy2 import mpc
             sage: CDF(mpc('2.0+1.0j'))
@@ -338,22 +338,22 @@ cdef class ComplexDoubleField_class(sage.rings.abc.ComplexDoubleField):
         numbers and higher-precision ones, though of course there may be
         loss of precision::
 
-            sage: a = ComplexField(200)(-2).sqrt(); a
+            sage: a = ComplexField(200)(-2).sqrt(); a                                   # needs sage.rings.real_mpfr
             1.4142135623730950488016887242096980785696718753769480731767*I
-            sage: b = CDF(a); b
+            sage: b = CDF(a); b                                                         # needs sage.rings.real_mpfr
             1.4142135623730951*I
-            sage: a.parent()(b)
+            sage: a.parent()(b)                                                         # needs sage.rings.real_mpfr
             1.4142135623730951454746218587388284504413604736328125000000*I
-            sage: a.parent()(b) == b
+            sage: a.parent()(b) == b                                                    # needs sage.rings.real_mpfr
             True
-            sage: b == CC(a)
+            sage: b == CC(a)                                                            # needs sage.rings.real_mpfr
             True
 
         TESTS:
 
         Check that :trac:`31836` is fixed::
 
-            sage: a = CDF() ; a
+            sage: a = CDF(); a
             0.0
             sage: a.parent()
             Complex Double Field
@@ -428,7 +428,8 @@ cdef class ComplexDoubleField_class(sage.rings.abc.ComplexDoubleField):
 
         TESTS::
 
-            sage: CDF(1) + RR(1)
+            sage: # needs sage.rings.real_mpfr
+            sage: CDF(1) + RR(1)                                                        # needs sage.rings.real_mpfr
             2.0
             sage: CDF.0 - CC(1) - int(1) - RR(1) - QQbar(1)                             # needs sage.rings.number_field
             -4.0 + 1.0*I
@@ -1014,7 +1015,7 @@ cdef class ComplexDoubleElement(FieldElement):
 
             sage: CDF.0._maxima_init_()
             '1.0000000000000000*%i'
-            sage: CDF(.5 + I)._maxima_init_()
+            sage: CDF(.5 + I)._maxima_init_()                                           # needs sage.symbolic
             '0.50000000000000000 + 1.0000000000000000*%i'
         """
         from .complex_mpfr import ComplexField
@@ -1356,11 +1357,11 @@ cdef class ComplexDoubleElement(FieldElement):
 
             sage: CDF(6).argument()
             0.0
-            sage: CDF(i).argument()
+            sage: CDF(i).argument()                                                     # needs sage.symbolic
             1.5707963267948966
             sage: CDF(-1).argument()
             3.141592653589793
-            sage: CDF(-1 - 0.000001*i).argument()
+            sage: CDF(-1 - 0.000001*i).argument()                                       # needs sage.symbolic
             -3.1415916535897934
         """
         return RealDoubleElement(gsl_complex_arg(self._complex))
@@ -1572,7 +1573,7 @@ cdef class ComplexDoubleElement(FieldElement):
 
             sage: CDF(0.5).is_integer()
             False
-            sage: CDF(I).is_integer()
+            sage: CDF(I).is_integer()                                                   # needs sage.symbolic
             False
             sage: CDF(2).is_integer()
             True
@@ -2298,8 +2299,8 @@ cdef class ComplexDoubleElement(FieldElement):
 
         EXAMPLES::
 
-            sage: i = CDF(I)
-            sage: (1+i).agm(2-i)  # rel tol 1e-15
+            sage: i = CDF(I)                                                            # needs sage.symbolic
+            sage: (1+i).agm(2-i)  # rel tol 1e-15                                       # needs sage.symbolic
             1.6278054848727064 + 0.1368275483973686*I
 
         An example to show that the returned value depends on the algorithm
@@ -2547,7 +2548,7 @@ cdef class FloatToCDF(Morphism):
             1.0 + 2.0*I
             sage: CDF('i') # indirect doctest
             1.0*I
-            sage: CDF(2+i) # indirect doctest
+            sage: CDF(2+i) # indirect doctest                                           # needs sage.symbolic
             2.0 + 1.0*I
         """
         cdef ComplexDoubleElement z = <ComplexDoubleElement>ComplexDoubleElement.__new__(ComplexDoubleElement)
