@@ -294,13 +294,13 @@ def GO(n, R, e=0, var='a', invariant_form=None):
         [0 1 0]
         [1 0 0]
         [0 0 3]
-        sage: pm = Permutation([2,3,1]).to_matrix()                                     # needs sage.combinat
-        sage: g = GO3(pm); g in GO3; g                                                  # needs sage.combinat
+        sage: pm = Permutation([2,3,1]).to_matrix()
+        sage: g = GO3(pm); g in GO3; g
         True
         [0 0 1]
         [1 0 0]
         [0 1 0]
-        sage: GO3m(pm)                                                                  # needs sage.combinat
+        sage: GO3m(pm)
         Traceback (most recent call last):
         ...
         TypeError: matrix must be orthogonal with respect to the symmetric form
@@ -410,7 +410,7 @@ def SO(n, R, e=None, var='a', invariant_form=None):
         [    1 zeta3     0]
         [zeta3     2     0]
         [    0     0     1]
-        sage: pm = Permutation([2,3,1]).to_matrix()                                     # needs sage.combinat
+        sage: pm = Permutation([2,3,1]).to_matrix()
         sage: g = SO3(pm); g in SO3; g                                                  # needs sage.combinat sage.rings.number_field
         True
         [0 0 1]
@@ -424,7 +424,7 @@ def SO(n, R, e=None, var='a', invariant_form=None):
         [zeta3     2     0]
         [    0     0     1]
 
-        sage: SO(3, 5, invariant_form=[[1,0,0], [0,2,0], [0,0,3]])                      # needs sage.combinat sage.rings.number_field
+        sage: SO(3, 5, invariant_form=[[1,0,0], [0,2,0], [0,0,3]])
         Traceback (most recent call last):
         ...
         NotImplementedError: invariant_form for finite groups is fixed by GAP

@@ -110,14 +110,14 @@ def Sp(n, R, var='a', invariant_form=None):
         [ 0  0  0  2]
         [-1  0  0  0]
         [ 0 -2  0  0]
-        sage: pm = Permutation([2,1,4,3]).to_matrix()                                   # needs sage.combinat
-        sage: g = Sp4(pm); g in Sp4; g                                                  # needs sage.combinat
+        sage: pm = Permutation([2,1,4,3]).to_matrix()
+        sage: g = Sp4(pm); g in Sp4; g
         True
         [0 1 0 0]
         [1 0 0 0]
         [0 0 0 1]
         [0 0 1 0]
-        sage: Sp4m(pm)                                                                  # needs sage.combinat
+        sage: Sp4m(pm)
         Traceback (most recent call last):
         ...
         TypeError: matrix must be symplectic with respect to the alternating form
