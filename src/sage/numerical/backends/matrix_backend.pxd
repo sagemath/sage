@@ -9,9 +9,13 @@ cdef class MatrixBackend(GenericBackend):
     cdef bint is_maximize
 
     cdef Matrix row_lower_bound
+    cdef list row_lower_bound_indicator
     cdef Matrix row_upper_bound
+    cdef list row_upper_bound_indicator
     cdef Matrix col_lower_bound
-    cdef object col_upper_bound
+    cdef list col_lower_bound_indicator
+    cdef Matrix col_upper_bound
+    cdef list col_upper_bound_indicator
 
     cdef list row_name_var
     cdef list col_name_var
