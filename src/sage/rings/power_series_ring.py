@@ -98,10 +98,10 @@ We make a sparse Laurent series from a power series generator::
 Choose another implementation of the attached polynomial ring::
 
     sage: R.<t> = PowerSeriesRing(ZZ)
-    sage: type(t.polynomial())
+    sage: type(t.polynomial())                                                          # needs sage.libs.flint
     <... 'sage.rings.polynomial.polynomial_integer_dense_flint.Polynomial_integer_dense_flint'>
-    sage: S.<s> = PowerSeriesRing(ZZ, implementation='NTL')
-    sage: type(s.polynomial())
+    sage: S.<s> = PowerSeriesRing(ZZ, implementation='NTL')                             # needs sage.libs.ntl
+    sage: type(s.polynomial())                                                          # needs sage.libs.ntl
     <... 'sage.rings.polynomial.polynomial_integer_dense_ntl.Polynomial_integer_dense_ntl'>
 
 AUTHORS:

@@ -676,7 +676,8 @@ cdef class RealDoubleField_class(sage.rings.abc.RealDoubleField):
             sage: f.factor()  # abs tol 2e-5                                            # needs numpy
             (x - 1.0000065719436413) * (x^2 - 1.9999934280563585*x + 0.9999934280995487)
         """
-        roots = f.roots(sage.rings.complex_double.CDF)
+        from sage.rings.complex_double import CDF
+        roots = f.roots(CDF)
 
         # collect real roots and conjugate pairs of non-real roots
         real_roots = [(r, e) for r, e in roots if r.imag().is_zero()]

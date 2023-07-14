@@ -4878,9 +4878,10 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
 
         EXAMPLES::
 
-            sage: ZZ(5).global_height()                                                 # needs sage.rings.real_mpfr
+            sage: # needs sage.rings.real_mpfr
+            sage: ZZ(5).global_height()
             1.60943791243410
-            sage: ZZ(-2).global_height(prec=100)                                        # needs sage.rings.real_mpfr
+            sage: ZZ(-2).global_height(prec=100)
             0.69314718055994530941723212146
             sage: exp(_)
             2.0000000000000000000000000000
