@@ -110,8 +110,7 @@ def call_pickled_function(fpargs):
     try:
         import sage.all as toplevel
     except ImportError:
-        import sage.all__sagemath_objects as toplevel
-    from sage.misc.fpickle import unpickle_function  # used below
+        import sage.all__sagemath_categories as toplevel
     (fp, (args, kwds)) = fpargs
     f = eval("unpickle_function(fp)", toplevel.__dict__, {'fp': fp})
     res = eval("f(*args, **kwds)", toplevel.__dict__,
