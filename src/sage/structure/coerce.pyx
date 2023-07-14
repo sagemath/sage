@@ -372,7 +372,7 @@ def parent_is_numerical(P):
         False
         sage: [parent_is_numerical(R) for R in [QQ['x'], QQ[['x']], str]]
         [False, False, False]
-        sage: [parent_is_numerical(R) for R in [RIF, RBF, CIF, CBF]]
+        sage: [parent_is_numerical(R) for R in [RIF, RBF, CIF, CBF]]                    # needs sage.libs.flint
         [False, False, False, False]
     """
     if not isinstance(P, Parent):
@@ -405,7 +405,7 @@ def parent_is_real_numerical(P):
         [False, False, False]
         sage: parent_is_real_numerical(SR)                                              # needs sage.symbolic
         False
-        sage: [parent_is_real_numerical(R) for R in [RIF, RBF, CIF, CBF]]
+        sage: [parent_is_real_numerical(R) for R in [RIF, RBF, CIF, CBF]]               # needs sage.libs.flint
         [False, False, False, False]
     """
     if not isinstance(P, Parent):
@@ -1870,6 +1870,7 @@ cdef class CoercionModel:
 
         Check that :trac:`18221` is fixed::
 
+            sage: # needs sage.combinat sage.modules
             sage: F.<x> = FreeAlgebra(QQ)                                               # needs sage.combinat sage.modules
             sage: x / 2                                                                 # needs sage.combinat sage.modules
             1/2*x

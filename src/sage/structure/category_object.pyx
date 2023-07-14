@@ -565,8 +565,8 @@ cdef class CategoryObject(SageObject):
 
         EXAMPLES::
 
-            sage: from sage.modules.module import Module                                # needs sage.modules
-            sage: Module(ZZ).base_ring()                                                # needs sage.modules
+            sage: from sage.modules.module import Module
+            sage: Module(ZZ).base_ring()
             Integer Ring
 
             sage: F = FreeModule(ZZ, 3)                                                 # needs sage.modules
