@@ -448,8 +448,9 @@ cdef class MPolynomial(CommutativePolynomial):
 
         TESTS::
 
-            sage: R = Qp(7)['x,y,z,t,p']; S = ZZ['x,z,t']['p']                          # needs sage.rings.padics
-            sage: R(S.0)                                                                # needs sage.rings.padics
+            sage: # needs sage.rings.padics
+            sage: R = Qp(7)['x,y,z,t,p']; S = ZZ['x,z,t']['p']
+            sage: R(S.0)
             p
             sage: R = QQ['x,y,z,t,p']; S = ZZ['x']['y,z,t']['p']
             sage: z = S.base_ring().gen(1)
@@ -459,8 +460,8 @@ cdef class MPolynomial(CommutativePolynomial):
             sage: z = S.base_ring().gen(1); p = S.0; x = S.base_ring().base_ring().gen()
             sage: R(z+p)
             z + p
-            sage: R = Qp(7)['x,y,z,p']; S = ZZ['x']['y,z,t']['p'] # shouldn't work, but should throw a better error     # needs sage.rings.padics
-            sage: R(S.0)                                                                # needs sage.rings.padics
+            sage: R = Qp(7)['x,y,z,p']; S = ZZ['x']['y,z,t']['p']  # shouldn't work, but should throw a better error
+            sage: R(S.0)
             p
 
         See :trac:`2601`::
@@ -1554,9 +1555,10 @@ cdef class MPolynomial(CommutativePolynomial):
 
         Test polynomials over QQbar (:trac:`25265`)::
 
-            sage: R.<x,y> = QQbar[]                                                     # needs sage.rings.number_field
-            sage: f = x^5*y + 3*x^2*y^2 - 2*x + y - 1                                   # needs sage.rings.number_field
-            sage: f.discriminant(y)                                                     # needs sage.rings.number_field
+            sage: # needs sage.rings.number_field
+            sage: R.<x,y> = QQbar[]
+            sage: f = x^5*y + 3*x^2*y^2 - 2*x + y - 1
+            sage: f.discriminant(y)
             x^10 + 2*x^5 + 24*x^3 + 12*x^2 + 1
 
         AUTHOR: Miguel Marco
@@ -1772,10 +1774,11 @@ cdef class MPolynomial(CommutativePolynomial):
 
         ::
 
-            sage: R.<x,y> = NumberField(symbolic_expression(x^2+3),'a')['x,y']          # needs sage.rings.number_field sage.symbolic
-            sage: f = (1/17)*x^19 + (1/6)*y - (2/3)*x + 1/3; f                          # needs sage.rings.number_field sage.symbolic
+            sage: # needs sage.rings.number_field sage.symbolic
+            sage: R.<x,y> = NumberField(symbolic_expression(x^2+3),'a')['x,y']
+            sage: f = (1/17)*x^19 + (1/6)*y - (2/3)*x + 1/3; f
             1/17*x^19 - 2/3*x + 1/6*y + 1/3
-            sage: f.denominator()                                                       # needs sage.rings.number_field sage.symbolic
+            sage: f.denominator()
             102
 
         Finally, we try to compute the denominator of a polynomial with
@@ -1874,9 +1877,10 @@ cdef class MPolynomial(CommutativePolynomial):
 
         ::
 
-            sage: K = NumberField(symbolic_expression('x^3+2'), 'a')['x']['s,t']        # needs sage.rings.number_field sage.symbolic
-            sage: f = K.random_element()                                                # needs sage.rings.number_field sage.symbolic
-            sage: f.numerator() / f.denominator() == f                                  # needs sage.rings.number_field sage.symbolic
+            sage: # needs sage.rings.number_field sage.symbolic
+            sage: K = NumberField(symbolic_expression('x^3+2'), 'a')['x']['s,t']
+            sage: f = K.random_element()
+            sage: f.numerator() / f.denominator() == f
             True
             sage: R = RR['x,y,z']
             sage: f = R.random_element()

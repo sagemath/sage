@@ -94,13 +94,14 @@ class MPolynomial_element(MPolynomial):
         """
         EXAMPLES::
 
+            sage: # needs sage.rings.number_field
             sage: x = polygen(ZZ, 'x')
-            sage: K.<cuberoot2> = NumberField(x^3 - 2)                                  # needs sage.rings.number_field
-            sage: L.<cuberoot3> = K.extension(x^3 - 3)                                  # needs sage.rings.number_field
-            sage: S.<sqrt2> = L.extension(x^2 - 2)                                      # needs sage.rings.number_field
-            sage: S                                                                     # needs sage.rings.number_field
+            sage: K.<cuberoot2> = NumberField(x^3 - 2)
+            sage: L.<cuberoot3> = K.extension(x^3 - 3)
+            sage: S.<sqrt2> = L.extension(x^2 - 2)
+            sage: S
             Number Field in sqrt2 with defining polynomial x^2 - 2 over its base field
-            sage: P.<x,y,z> = PolynomialRing(S) # indirect doctest                      # needs sage.rings.number_field
+            sage: P.<x,y,z> = PolynomialRing(S) # indirect doctest
         """
         CommutativeRingElement.__init__(self, parent)
         self.__element = x
@@ -797,12 +798,13 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
 
         ::
 
+            sage: # needs sage.rings.number_field
             sage: a = polygen(ZZ, 'a')
-            sage: K.<a> = NumberField(a^2 + a + 1)                                      # needs sage.rings.number_field
-            sage: P.<x,y> = K[]                                                         # needs sage.rings.number_field
-            sage: f = (a*x - 1) * ((a+1)*y - 1); f                                      # needs sage.rings.number_field
+            sage: K.<a> = NumberField(a^2 + a + 1)
+            sage: P.<x,y> = K[]
+            sage: f = (a*x - 1) * ((a+1)*y - 1); f
             -x*y + (-a)*x + (-a - 1)*y + 1
-            sage: f.monomial_coefficient(x)                                             # needs sage.rings.number_field
+            sage: f.monomial_coefficient(x)
             -a
         """
         if parent(mon) is not self.parent():
@@ -1710,18 +1712,20 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
 
         ::
 
-            sage: R.<x,y,z> = PolynomialRing(CC, 3, order='deglex')                     # needs sage.rings.real_mpfr
-            sage: (x^1*y^2*z^3 + x^3*y^2*z^0).lm()                                      # needs sage.rings.real_mpfr
+            sage: # needs sage.rings.real_mpfr
+            sage: R.<x,y,z> = PolynomialRing(CC, 3, order='deglex')
+            sage: (x^1*y^2*z^3 + x^3*y^2*z^0).lm()
             x*y^2*z^3
-            sage: (x^1*y^2*z^4 + x^1*y^1*z^5).lm()                                      # needs sage.rings.real_mpfr
+            sage: (x^1*y^2*z^4 + x^1*y^1*z^5).lm()
             x*y^2*z^4
 
         ::
 
-            sage: R.<x,y,z> = PolynomialRing(QQbar, 3, order='degrevlex')               # needs sage.rings.number_field
-            sage: (x^1*y^5*z^2 + x^4*y^1*z^3).lm()                                      # needs sage.rings.number_field
+            sage: # needs sage.rings.number_field
+            sage: R.<x,y,z> = PolynomialRing(QQbar, 3, order='degrevlex')
+            sage: (x^1*y^5*z^2 + x^4*y^1*z^3).lm()
             x*y^5*z^2
-            sage: (x^4*y^7*z^1 + x^4*y^2*z^3).lm()                                      # needs sage.rings.number_field
+            sage: (x^4*y^7*z^1 + x^4*y^2*z^3).lm()
             x^4*y^7*z
 
         TESTS::
@@ -2107,7 +2111,7 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
              ...
              NotImplementedError: ...
              sage: R.base_ring()._factor_multivariate_polynomial = lambda f, **kwargs: f.change_ring(QQ).factor()
-             sage: (x*y).factor()
+             sage: (x*y).factor()                                                       # needs sage.libs.pari
              y * x
              sage: del R.base_ring()._factor_multivariate_polynomial # clean up
 

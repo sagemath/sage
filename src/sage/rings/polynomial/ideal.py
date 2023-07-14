@@ -75,11 +75,11 @@ class Ideal_1poly_field(Ideal_pid):
 
             sage: R.<x> = QQ[]
             sage: I = R.ideal([x^2 - 1, x^3 - 1])
-            sage: G = I.groebner_basis(); G                                             # needs sage.libs.singular
+            sage: G = I.groebner_basis(); G
             [x - 1]
-            sage: type(G)                                                               # needs sage.libs.singular
+            sage: type(G)
             <class 'sage.rings.polynomial.multi_polynomial_sequence.PolynomialSequence_generic'>
-            sage: list(G)                                                               # needs sage.libs.singular
+            sage: list(G)
             [x - 1]
         """
         gb = self.gens_reduced()
