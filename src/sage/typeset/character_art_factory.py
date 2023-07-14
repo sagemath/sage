@@ -84,9 +84,9 @@ class CharacterArtFactory(SageObject):
 
         EXAMPLES::
 
-            sage: result = ascii_art(integral(exp(x+x^2)/(x+1), x))                     # optional - sage.symbolic
+            sage: result = ascii_art(integral(exp(x+x^2)/(x+1), x))                     # needs sage.symbolic
             ...
-            sage: result                                                                # optional - sage.symbolic
+            sage: result                                                                # needs sage.symbolic
                 /
                |
                |   2
@@ -99,14 +99,14 @@ class CharacterArtFactory(SageObject):
 
         TESTS::
 
-            sage: n = var('n')                                                          # optional - sage.symbolic
-            sage: ascii_art(sum(binomial(2 * n, n + 1) * x^n, n, 0, oo))                # optional - sage.symbolic
+            sage: n = var('n')                                                          # needs sage.symbolic
+            sage: ascii_art(sum(binomial(2 * n, n + 1) * x^n, n, 0, oo))                # needs sage.symbolic
              /        _________    \
             -\2*x + \/ 1 - 4*x  - 1/
             -------------------------
                        _________
                  2*x*\/ 1 - 4*x
-            sage: ascii_art(list(DyckWords(3)))                                         # optional - sage.combinat
+            sage: ascii_art(list(DyckWords(3)))                                         # needs sage.combinat
             [                                   /\   ]
             [            /\    /\      /\/\    /  \  ]
             [ /\/\/\, /\/  \, /  \/\, /    \, /    \ ]
@@ -161,10 +161,10 @@ class CharacterArtFactory(SageObject):
         EXAMPLES::
 
             sage: from sage.typeset.ascii_art import _ascii_art_factory as factory
-            sage: out = factory.build_from_magic_method(identity_matrix(2));  out       # optional - sage.modules
+            sage: out = factory.build_from_magic_method(identity_matrix(2));  out       # needs sage.modules
             [1 0]
             [0 1]
-            sage: type(out)                                                             # optional - sage.modules
+            sage: type(out)                                                             # needs sage.modules
             <class 'sage.typeset.ascii_art.AsciiArt'>
         """
         magic_method = getattr(obj, self.magic_method_name)
@@ -243,12 +243,12 @@ class CharacterArtFactory(SageObject):
 
         TESTS::
 
-            sage: l = ascii_art(list(DyckWords(3)))  # indirect doctest                 # optional - sage.combinat
-            sage: l                                                                     # optional - sage.combinat
+            sage: l = ascii_art(list(DyckWords(3)))  # indirect doctest                 # needs sage.combinat
+            sage: l                                                                     # needs sage.combinat
             [                                   /\   ]
             [            /\    /\      /\/\    /  \  ]
             [ /\/\/\, /\/  \, /  \/\, /    \, /    \ ]
-            sage: l._breakpoints                                                        # optional - sage.combinat
+            sage: l._breakpoints                                                        # needs sage.combinat
             [9, 17, 25, 33]
 
         Check that zero-height strings are handled (:trac:`28527`)::
@@ -289,7 +289,7 @@ class CharacterArtFactory(SageObject):
         iteration over sets is non-deterministic so too is the results of this
         test::
 
-            sage: ascii_art(set(DyckWords(3)))  # indirect doctest random               # optional - sage.combinat
+            sage: ascii_art(set(DyckWords(3)))  # indirect doctest random               # needs sage.combinat
             {                                   /\   }
             {  /\      /\/\              /\    /  \  }
             { /  \/\, /    \, /\/\/\, /\/  \, /    \ }
@@ -298,7 +298,7 @@ class CharacterArtFactory(SageObject):
         a set, but still obtain the same output formatting::
 
             sage: from sage.typeset.ascii_art import _ascii_art_factory as factory
-            sage: factory.build_set(sorted(set(DyckWords(3))))                          # optional - sage.combinat
+            sage: factory.build_set(sorted(set(DyckWords(3))))                          # needs sage.combinat
             {                                   /\   }
             {            /\    /\      /\/\    /  \  }
             { /\/\/\, /\/  \, /  \/\, /    \, /    \ }
@@ -315,14 +315,15 @@ class CharacterArtFactory(SageObject):
 
         TESTS::
 
+            sage: # needs sage.combinat
             sage: from collections import OrderedDict
-            sage: d = OrderedDict(enumerate(DyckWords(3)))                              # optional - sage.combinat
-            sage: art = ascii_art(d)  # indirect doctest                                # optional - sage.combinat
-            sage: art                                                                   # optional - sage.combinat
+            sage: d = OrderedDict(enumerate(DyckWords(3)))
+            sage: art = ascii_art(d)  # indirect doctest
+            sage: art
             {                                             /\   }
             {                /\      /\        /\/\      /  \  }
             { 0:/\/\/\, 1:/\/  \, 2:/  \/\, 3:/    \, 4:/    \ }
-            sage: art._breakpoints                                                      # optional - sage.combinat
+            sage: art._breakpoints
             [11, 21, 31, 41]
 
         Check that :trac:`29447` is fixed::
@@ -357,18 +358,18 @@ class CharacterArtFactory(SageObject):
 
         TESTS::
 
-            sage: l = ascii_art(list(DyckWords(3)))  # indirect doctest                 # optional - sage.combinat
-            sage: l                                                                     # optional - sage.combinat
+            sage: l = ascii_art(list(DyckWords(3)))  # indirect doctest                 # needs sage.combinat
+            sage: l                                                                     # needs sage.combinat
             [                                   /\   ]
             [            /\    /\      /\/\    /  \  ]
             [ /\/\/\, /\/  \, /  \/\, /    \, /    \ ]
-            sage: l._breakpoints                                                        # optional - sage.combinat
+            sage: l._breakpoints                                                        # needs sage.combinat
             [9, 17, 25, 33]
 
         The breakpoints of the object are used as breakpoints::
 
-            sage: l = ascii_art([DyckWords(2).list(), DyckWords(2).list()])             # optional - sage.combinat
-            sage: l._breakpoints                                                        # optional - sage.combinat
+            sage: l = ascii_art([DyckWords(2).list(), DyckWords(2).list()])             # needs sage.combinat
+            sage: l._breakpoints                                                        # needs sage.combinat
             [(2, [7]), 17, (18, [7])]
 
         The parentheses only stretch as high as the content (:trac:`28527`)::
@@ -399,7 +400,7 @@ class CharacterArtFactory(SageObject):
 
         TESTS::
 
-            sage: ascii_art(tuple(DyckWords(3)))  # indirect doctest                    # optional - sage.combinat
+            sage: ascii_art(tuple(DyckWords(3)))  # indirect doctest                    # needs sage.combinat
             (                                   /\   )
             (            /\    /\      /\/\    /  \  )
             ( /\/\/\, /\/  \, /  \/\, /    \, /    \ )
@@ -440,8 +441,8 @@ class CharacterArtFactory(SageObject):
 
         EXAMPLES::
 
-            sage: i2 = identity_matrix(2)                                               # optional - sage.modules
-            sage: ascii_art(i2, i2, i2, sep=ascii_art(1/x))                             # optional - sage.modules sage.symbolic
+            sage: i2 = identity_matrix(2)                                               # needs sage.modules
+            sage: ascii_art(i2, i2, i2, sep=ascii_art(1/x))                             # needs sage.modules sage.symbolic
                  1     1
             [1 0]-[1 0]-[1 0]
             [0 1]x[0 1]x[0 1]

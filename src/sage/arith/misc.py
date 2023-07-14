@@ -175,7 +175,7 @@ def algdep(z, degree, known_bits=None, use_bits=None, known_digits=None,
     Check that cases where a constant polynomial might look better
     get handled correctly::
 
-        sage: z = CC(-1)**(1/3)
+        sage: z = CC(-1)**(1/3)                                                         # needs sage.rings.real_mpfr
         sage: algdep(z, 1)                                                              # needs sage.libs.pari
         x
 
@@ -5080,9 +5080,9 @@ def falling_factorial(x, a):
         gamma(I + 2)
         sage: CC(a)                                                                     # needs sage.symbolic
         0.652965496420167 + 0.343065839816545*I
-        sage: falling_factorial(1 + I, 4)
+        sage: falling_factorial(1 + I, 4)                                               # needs sage.symbolic
         4*I + 2
-        sage: falling_factorial(I, 4)
+        sage: falling_factorial(I, 4)                                                   # needs sage.symbolic
         -10
 
         sage: M = MatrixSpace(ZZ, 4, 4)                                                 # needs sage.modules
@@ -5182,7 +5182,7 @@ def rising_factorial(x, a):
         sage: CC(a)                                                                     # needs sage.symbolic
         0.266816390637832 + 0.122783354006372*I
 
-        sage: a = rising_factorial(I, 4); a
+        sage: a = rising_factorial(I, 4); a                                             # needs sage.symbolic
         -10
 
         sage: x = polygen(ZZ)
