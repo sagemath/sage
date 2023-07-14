@@ -1160,25 +1160,27 @@ class HasseDiagram(DiGraph):
 
         EXAMPLES::
 
-            sage: P = posets.PentagonPoset()._hasse_diagram                             # needs sage.modules
-            sage: M = P.coxeter_transformation(); M                                     # needs sage.libs.flint sage.modules
+            sage: # needs sage.modules
+            sage: P = posets.PentagonPoset()._hasse_diagram
+            sage: M = P.coxeter_transformation(); M                                     # needs sage.libs.flint
             [ 0  0  0  0 -1]
             [ 0  0  0  1 -1]
             [ 0  1  0  0 -1]
             [-1  1  1  0 -1]
             [-1  1  0  1 -1]
-            sage: P.__dict__['coxeter_transformation'].clear_cache()                    # needs sage.libs.flint sage.modules
-            sage: P.coxeter_transformation(algorithm="matrix") == M                     # needs sage.libs.flint sage.modules
+            sage: P.__dict__['coxeter_transformation'].clear_cache()                    # needs sage.libs.flint
+            sage: P.coxeter_transformation(algorithm="matrix") == M                     # needs sage.libs.flint
             True
 
         TESTS::
 
-            sage: P = posets.PentagonPoset()._hasse_diagram                             # needs sage.modules
-            sage: M = P.coxeter_transformation()                                        # needs sage.libs.flint sage.modules
-            sage: M**8 == 1                                                             # needs sage.libs.flint sage.modules
+            sage: # needs sage.modules
+            sage: P = posets.PentagonPoset()._hasse_diagram
+            sage: M = P.coxeter_transformation()                                        # needs sage.libs.flint
+            sage: M**8 == 1                                                             # needs sage.libs.flint
             True
-            sage: P.__dict__['coxeter_transformation'].clear_cache()                    # needs sage.libs.flint sage.modules
-            sage: P.coxeter_transformation(algorithm="banana")                          # needs sage.libs.flint sage.modules
+            sage: P.__dict__['coxeter_transformation'].clear_cache()                    # needs sage.libs.flint
+            sage: P.coxeter_transformation(algorithm="banana")                          # needs sage.libs.flint
             Traceback (most recent call last):
             ...
             ValueError: unknown algorithm
@@ -2222,11 +2224,12 @@ class HasseDiagram(DiGraph):
 
         EXAMPLES::
 
-            sage: P = posets.PentagonPoset()                                            # needs sage.modules
-            sage: H = P._hasse_diagram                                                  # needs sage.modules
-            sage: H.antichains_iterator()                                               # needs sage.modules
+            sage: # needs sage.modules
+            sage: P = posets.PentagonPoset()
+            sage: H = P._hasse_diagram
+            sage: H.antichains_iterator()
             <generator object ...antichains_iterator at ...>
-            sage: list(H.antichains_iterator())                                         # needs sage.modules
+            sage: list(H.antichains_iterator())
             [[], [4], [3], [2], [1], [1, 3], [1, 2], [0]]
 
             sage: from sage.combinat.posets.hasse_diagram import HasseDiagram
@@ -2279,12 +2282,13 @@ class HasseDiagram(DiGraph):
 
         EXAMPLES::
 
-            sage: P = posets.PentagonPoset()                                            # needs sage.modules
-            sage: H = P._hasse_diagram                                                  # needs sage.modules
-            sage: H.are_incomparable(1,2)                                               # needs sage.modules
+            sage: # needs sage.modules
+            sage: P = posets.PentagonPoset()
+            sage: H = P._hasse_diagram
+            sage: H.are_incomparable(1,2)
             True
-            sage: V = H.vertices(sort=True)                                             # needs sage.modules
-            sage: [ (i,j) for i in V for j in V if H.are_incomparable(i,j)]             # needs sage.modules
+            sage: V = H.vertices(sort=True)
+            sage: [ (i,j) for i in V for j in V if H.are_incomparable(i,j)]
             [(1, 2), (1, 3), (2, 1), (3, 1)]
         """
         if i == j:
@@ -2304,12 +2308,13 @@ class HasseDiagram(DiGraph):
 
         EXAMPLES::
 
-            sage: P = posets.PentagonPoset()                                            # needs sage.modules
-            sage: H = P._hasse_diagram                                                  # needs sage.modules
-            sage: H.are_comparable(1,2)                                                 # needs sage.modules
+            sage: # needs sage.modules
+            sage: P = posets.PentagonPoset()
+            sage: H = P._hasse_diagram
+            sage: H.are_comparable(1,2)
             False
-            sage: V = H.vertices(sort=True)                                             # needs sage.modules
-            sage: [ (i,j) for i in V for j in V if H.are_comparable(i,j)]               # needs sage.modules
+            sage: V = H.vertices(sort=True)
+            sage: [ (i,j) for i in V for j in V if H.are_comparable(i,j)]
             [(0, 0), (0, 1), (0, 2), (0, 3), (0, 4), (1, 0), (1, 1), (1, 4),
              (2, 0), (2, 2), (2, 3), (2, 4), (3, 0), (3, 2), (3, 3), (3, 4),
              (4, 0), (4, 1), (4, 2), (4, 3), (4, 4)]
@@ -2331,16 +2336,17 @@ class HasseDiagram(DiGraph):
 
         EXAMPLES::
 
-            sage: P = posets.PentagonPoset()                                            # needs sage.modules
-            sage: H = P._hasse_diagram                                                  # needs sage.modules
-            sage: A = H.antichains()                                                    # needs sage.modules
-            sage: list(A)                                                               # needs sage.modules
+            sage: # needs sage.modules
+            sage: P = posets.PentagonPoset()
+            sage: H = P._hasse_diagram
+            sage: A = H.antichains()
+            sage: list(A)
             [[], [0], [1], [1, 2], [1, 3], [2], [3], [4]]
-            sage: A.cardinality()                                                       # needs sage.modules
+            sage: A.cardinality()
             8
-            sage: [1,3] in A                                                            # needs sage.modules
+            sage: [1,3] in A
             True
-            sage: [1,4] in A                                                            # needs sage.modules
+            sage: [1,4] in A
             False
 
         TESTS::
@@ -2382,18 +2388,19 @@ class HasseDiagram(DiGraph):
 
         EXAMPLES::
 
-            sage: P = posets.PentagonPoset()                                            # needs sage.modules
-            sage: H = P._hasse_diagram                                                  # needs sage.modules
-            sage: A = H.chains()                                                        # needs sage.modules
-            sage: list(A)                                                               # needs sage.modules
+            sage: # needs sage.modules
+            sage: P = posets.PentagonPoset()
+            sage: H = P._hasse_diagram
+            sage: A = H.chains()
+            sage: list(A)
             [[], [0], [0, 1], [0, 1, 4], [0, 2], [0, 2, 3], [0, 2, 3, 4], [0, 2, 4],
              [0, 3], [0, 3, 4], [0, 4], [1], [1, 4], [2], [2, 3], [2, 3, 4], [2, 4],
              [3], [3, 4], [4]]
-            sage: A.cardinality()                                                       # needs sage.modules
+            sage: A.cardinality()
             20
-            sage: [1,3] in A                                                            # needs sage.modules
+            sage: [1,3] in A
             False
-            sage: [1,4] in A                                                            # needs sage.modules
+            sage: [1,4] in A
             True
 
         One can exclude some vertices::
@@ -2427,15 +2434,16 @@ class HasseDiagram(DiGraph):
 
         EXAMPLES::
 
-            sage: P = posets.PentagonPoset()                                            # needs sage.modules
-            sage: H = P._hasse_diagram                                                  # needs sage.modules
-            sage: H.is_linear_interval(0, 4)                                            # needs sage.modules
+            sage: # needs sage.modules
+            sage: P = posets.PentagonPoset()
+            sage: H = P._hasse_diagram
+            sage: H.is_linear_interval(0, 4)
             False
-            sage: H.is_linear_interval(0, 3)                                            # needs sage.modules
+            sage: H.is_linear_interval(0, 3)
             True
-            sage: H.is_linear_interval(1, 3)                                            # needs sage.modules
+            sage: H.is_linear_interval(1, 3)
             False
-            sage: H.is_linear_interval(1, 1)                                            # needs sage.modules
+            sage: H.is_linear_interval(1, 1)
             True
 
         TESTS::

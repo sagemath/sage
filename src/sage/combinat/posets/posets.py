@@ -1499,14 +1499,15 @@ class FinitePoset(UniqueRepresentation, Parent):
 
         TESTS::
 
-            sage: P = posets.PentagonPoset()                                            # needs sage.modules
-            sage: P.sorted([], allow_incomparable=True, remove_duplicates=True)         # needs sage.modules
+            sage: # needs sage.modules
+            sage: P = posets.PentagonPoset()
+            sage: P.sorted([], allow_incomparable=True, remove_duplicates=True)
             []
-            sage: P.sorted([], allow_incomparable=False, remove_duplicates=True)        # needs sage.modules
+            sage: P.sorted([], allow_incomparable=False, remove_duplicates=True)
             []
-            sage: P.sorted([], allow_incomparable=True, remove_duplicates=False)        # needs sage.modules
+            sage: P.sorted([], allow_incomparable=True, remove_duplicates=False)
             []
-            sage: P.sorted([], allow_incomparable=False, remove_duplicates=False)       # needs sage.modules
+            sage: P.sorted([], allow_incomparable=False, remove_duplicates=False)
             []
         """
         v = [self._element_to_vertex(x) for x in l]
@@ -1956,14 +1957,15 @@ class FinitePoset(UniqueRepresentation, Parent):
 
         To emphasize some elements and show some options::
 
-            sage: L = LatticePoset({0: [1, 2, 3, 4], 1: [12], 2: [6, 7],                # needs sage.modules
+            sage: # needs sage.modules
+            sage: L = LatticePoset({0: [1, 2, 3, 4], 1: [12], 2: [6, 7],
             ....:                   3: [5, 9], 4: [5, 6, 10, 11], 5: [13],
             ....:                   6: [12], 7: [12, 8, 9], 8: [13], 9: [13],
             ....:                   10: [12], 11: [12], 12: [13]})
-            sage: F = L.frattini_sublattice()                                           # needs sage.modules
-            sage: F_internal = [c for c in F.cover_relations()                          # needs sage.modules
+            sage: F = L.frattini_sublattice()
+            sage: F_internal = [c for c in F.cover_relations()
             ....:               if c in L.cover_relations()]
-            sage: L.plot(figsize=12, border=True, element_shape='s',                    # needs sage.modules sage.plot
+            sage: L.plot(figsize=12, border=True, element_shape='s',                    # needs sage.plot
             ....:        element_size=400, element_color='white',
             ....:        element_colors={'blue': F, 'green': L.double_irreducibles()},
             ....:        cover_color='lightgray', cover_colors={'black': F_internal},
@@ -2716,12 +2718,13 @@ class FinitePoset(UniqueRepresentation, Parent):
 
         EXAMPLES::
 
-            sage: P = posets.PentagonPoset()                                            # needs sage.modules
-            sage: P.is_linear_interval(0, 4)                                            # needs sage.modules
+            sage: # needs sage.modules
+            sage: P = posets.PentagonPoset()
+            sage: P.is_linear_interval(0, 4)
             False
-            sage: P.is_linear_interval(0, 3)                                            # needs sage.modules
+            sage: P.is_linear_interval(0, 3)
             True
-            sage: P.is_linear_interval(1, 3)                                            # needs sage.modules
+            sage: P.is_linear_interval(1, 3)
             False
         """
         a = self._element_to_vertex(x)
@@ -2769,10 +2772,11 @@ class FinitePoset(UniqueRepresentation, Parent):
 
         We show how to get an incomparable chain pair::
 
-            sage: P = posets.PentagonPoset()                                            # needs sage.modules
-            sage: chains_1_2 = Poset({0:[], 1:[2]})                                     # needs sage.modules
-            sage: incomps = P.isomorphic_subposets(chains_1_2)[0]                       # needs sage.modules
-            sage: sorted(incomps.list()), incomps.cover_relations()                     # needs sage.modules
+            sage: # needs sage.modules
+            sage: P = posets.PentagonPoset()
+            sage: chains_1_2 = Poset({0:[], 1:[2]})
+            sage: incomps = P.isomorphic_subposets(chains_1_2)[0]
+            sage: sorted(incomps.list()), incomps.cover_relations()
             ([1, 2, 3], [[2, 3]])
 
         TESTS::
@@ -3343,12 +3347,13 @@ class FinitePoset(UniqueRepresentation, Parent):
 
         TESTS::
 
-            sage: P = posets.PentagonPoset()                                            # needs sage.modules
-            sage: P.is_antichain_of_poset([])                                           # needs sage.modules
+            sage: # needs sage.modules
+            sage: P = posets.PentagonPoset()
+            sage: P.is_antichain_of_poset([])
             True
-            sage: P.is_antichain_of_poset([0])                                          # needs sage.modules
+            sage: P.is_antichain_of_poset([0])
             True
-            sage: P.is_antichain_of_poset([1, 2, 1])                                    # needs sage.modules
+            sage: P.is_antichain_of_poset([1, 2, 1])
             True
 
         Check :trac:`19078`::
@@ -3568,9 +3573,9 @@ class FinitePoset(UniqueRepresentation, Parent):
             sage: P.dimension()                                                         # needs networkx
             3
             sage: dim, L = P.dimension(certificate=True)                                # needs sage.numerical.mip
-            sage: L  # random -- architecture-dependent
+            sage: L  # random -- architecture-dependent                                 # needs sage.numerical.mip
             [[0, 2, 4, 5, 1, 3, 6], [2, 5, 0, 1, 3, 4, 6], [0, 1, 2, 3, 5, 6, 4]]
-            sage: Poset( (L[0], lambda x, y: all(l.index(x) < l.index(y) for l in L)) ) == P
+            sage: Poset( (L[0], lambda x, y: all(l.index(x) < l.index(y) for l in L)) ) == P        # needs sage.numerical.mip
             True
 
         According to Schnyder's theorem, the incidence poset (of
@@ -4386,18 +4391,19 @@ class FinitePoset(UniqueRepresentation, Parent):
 
         TESTS::
 
-           sage: P = posets.PentagonPoset()                                             # needs sage.modules
-           sage: P.coxeter_smith_form(algorithm='sage')                                 # needs sage.modules
+           sage: # needs sage.modules
+           sage: P = posets.PentagonPoset()
+           sage: P.coxeter_smith_form(algorithm='sage')
            [1, 1, 1, 1, x^5 + x^4 + x + 1]
-           sage: P.coxeter_smith_form(algorithm='gap')                                  # needs sage.libs.gap sage.modules
+           sage: P.coxeter_smith_form(algorithm='gap')                                  # needs sage.libs.gap
            [1, 1, 1, 1, x^5 + x^4 + x + 1]
-           sage: P.coxeter_smith_form(algorithm='pari')                                 # needs sage.libs.pari sage.modules
+           sage: P.coxeter_smith_form(algorithm='pari')                                 # needs sage.libs.pari
            [1, 1, 1, 1, x^5 + x^4 + x + 1]
-           sage: P.coxeter_smith_form(algorithm='fricas')       # optional - fricas, needs sage.modules
+           sage: P.coxeter_smith_form(algorithm='fricas')       # optional - fricas
            [1, 1, 1, 1, x^5 + x^4 + x + 1]
-           sage: P.coxeter_smith_form(algorithm='maple')        # optional - maple, needs sage.modules
+           sage: P.coxeter_smith_form(algorithm='maple')        # optional - maple
            [1, 1, 1, 1, x^5 + x^4 + x + 1]
-           sage: P.coxeter_smith_form(algorithm='magma')        # optional - magma, needs sage.modules
+           sage: P.coxeter_smith_form(algorithm='magma')        # optional - magma
            [1, 1, 1, 1, x^5 + x^4 + x + 1]
 
         .. SEEALSO::
@@ -4721,13 +4727,14 @@ class FinitePoset(UniqueRepresentation, Parent):
 
         EXAMPLES::
 
-            sage: A = posets.PentagonPoset().antichains(); A                            # needs sage.modules
+            sage: # needs sage.modules
+            sage: A = posets.PentagonPoset().antichains(); A
             Set of antichains of Finite lattice containing 5 elements
-            sage: list(A)                                                               # needs sage.modules
+            sage: list(A)
             [[], [0], [1], [1, 2], [1, 3], [2], [3], [4]]
-            sage: A.cardinality()                                                       # needs sage.modules
+            sage: A.cardinality()
             8
-            sage: A[3]                                                                  # needs sage.modules
+            sage: A[3]
             [1, 2]
 
         To get the antichains as, say, sets, one may use the
@@ -4877,10 +4884,10 @@ class FinitePoset(UniqueRepresentation, Parent):
 
             sage: p = posets.IntegerCompositions(5)
             sage: d = p.dilworth_decomposition()                                        # needs networkx
-            sage: for chain in d:
+            sage: for chain in d:                                                       # needs networkx
             ....:    for i in range(len(chain)-1):
             ....:        assert p.is_greater_than(chain[i],chain[i+1])
-            sage: set(p) == set().union(*d)
+            sage: set(p) == set().union(*d)                                             # needs networkx
             True
         """
         from sage.graphs.graph import Graph
@@ -6094,13 +6101,14 @@ class FinitePoset(UniqueRepresentation, Parent):
 
         Relabeling using a list::
 
-            sage: P = posets.PentagonPoset()                                            # needs sage.modules
-            sage: list(P)                                                               # needs sage.modules
+            sage: # needs sage.modules
+            sage: P = posets.PentagonPoset()
+            sage: list(P)
             [0, 1, 2, 3, 4]
-            sage: P.cover_relations()                                                   # needs sage.modules
+            sage: P.cover_relations()
             [[0, 1], [0, 2], [1, 4], [2, 3], [3, 4]]
-            sage: Q = P.relabel(list('abcde'))                                          # needs sage.modules
-            sage: Q.cover_relations()                                                   # needs sage.modules
+            sage: Q = P.relabel(list('abcde'))
+            sage: Q.cover_relations()
             [['a', 'b'], ['a', 'c'], ['b', 'e'], ['c', 'd'], ['d', 'e']]
 
         Default behaviour is increasing relabeling::
@@ -7979,13 +7987,14 @@ class FinitePoset(UniqueRepresentation, Parent):
             sage: P.is_slender()
             False
 
-            sage: W = WeylGroup(['A', 2])                                               # needs sage.groups
-            sage: G = W.bruhat_poset()                                                  # needs sage.groups
-            sage: G.is_slender()                                                        # needs sage.groups
+            sage: # needs sage.groups
+            sage: W = WeylGroup(['A', 2])
+            sage: G = W.bruhat_poset()
+            sage: G.is_slender()
             True
-            sage: W = WeylGroup(['A', 3])                                               # needs sage.groups
-            sage: G = W.bruhat_poset()                                                  # needs sage.groups
-            sage: G.is_slender()                                                        # needs sage.groups
+            sage: W = WeylGroup(['A', 3])
+            sage: G = W.bruhat_poset()
+            sage: G.is_slender()
             True
 
             sage: P = posets.IntegerPartitions(6)                                       # needs sage.combinat

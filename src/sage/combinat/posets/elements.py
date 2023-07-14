@@ -78,13 +78,14 @@ class PosetElement(Element):
 
         EXAMPLES::
 
-            sage: m = matrix(2, [1,2,3,4])                                              # needs sage.modules
-            sage: m.set_immutable()                                                     # needs sage.modules
-            sage: P = Poset(([m],[]), facade=False)                                     # needs sage.modules
-            sage: [e] = P                                                               # needs sage.modules
-            sage: type(e)                                                               # needs sage.modules
+            sage: # needs sage.modules
+            sage: m = matrix(2, [1,2,3,4])
+            sage: m.set_immutable()
+            sage: P = Poset(([m],[]), facade=False)
+            sage: [e] = P
+            sage: type(e)
             <class 'sage.combinat.posets.posets.FinitePoset_with_category.element_class'>
-            sage: latex(e)                 #indirect doctest                            # needs sage.modules
+            sage: latex(e)                 #indirect doctest
             \left(\begin{array}{rr}
             1 & 2 \\
             3 & 4

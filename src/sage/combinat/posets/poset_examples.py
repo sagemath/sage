@@ -659,15 +659,16 @@ class Posets(metaclass=ClasscallMetaclass):
 
         TESTS::
 
-            sage: P0 = posets.PowerPoset(0); P0                                         # needs sage.modules
+            sage: # needs sage.modules
+            sage: P0 = posets.PowerPoset(0); P0
             Finite meet-semilattice containing 1 elements
-            sage: P0[0]                                                                 # needs sage.modules
+            sage: P0[0]
             Finite poset containing 0 elements
-            sage: P1 = posets.PowerPoset(1); P1                                         # needs sage.modules
+            sage: P1 = posets.PowerPoset(1); P1
             Finite meet-semilattice containing 1 elements
-            sage: P1[0]                                                                 # needs sage.modules
+            sage: P1[0]
             Finite poset containing 1 elements
-            sage: P1[0][0]                                                              # needs sage.modules
+            sage: P1[0][0]
             0
         """
         # Todo: Make this faster.
@@ -697,13 +698,14 @@ class Posets(metaclass=ClasscallMetaclass):
 
         EXAMPLES::
 
-            sage: P = posets.ProductOfChains([2, 2]); P                                 # needs sage.modules
+            sage: # needs sage.modules
+            sage: P = posets.ProductOfChains([2, 2]); P
             Finite lattice containing 4 elements
-            sage: P.linear_extension()                                                  # needs sage.modules
+            sage: P.linear_extension()
             [(0, 0), (0, 1), (1, 0), (1, 1)]
-            sage: P.upper_covers((0,0))                                                 # needs sage.modules
+            sage: P.upper_covers((0,0))
             [(0, 1), (1, 0)]
-            sage: P.lower_covers((1,1))                                                 # needs sage.modules
+            sage: P.lower_covers((1,1))
             [(0, 1), (1, 0)]
 
         TESTS::
@@ -1203,11 +1205,12 @@ class Posets(metaclass=ClasscallMetaclass):
             ....:                         labels='integers')
             Finite poset containing 10 elements
 
-            sage: A = AlternatingSignMatrices(3)                                        # needs sage.combinat sage.modules
-            sage: p = A.lattice()                                                       # needs sage.combinat sage.modules
-            sage: ji = p.join_irreducibles_poset()                                      # needs sage.combinat sage.modules
-            sage: tet = posets.TetrahedralPoset(3, 'green','yellow','blue','orange')    # needs sage.combinat sage.modules
-            sage: ji.is_isomorphic(tet)                                                 # needs sage.combinat sage.modules
+            sage: # needs sage.combinat sage.modules
+            sage: A = AlternatingSignMatrices(3)
+            sage: p = A.lattice()
+            sage: ji = p.join_irreducibles_poset()
+            sage: tet = posets.TetrahedralPoset(3, 'green','yellow','blue','orange')
+            sage: ji.is_isomorphic(tet)
             True
 
         TESTS::
