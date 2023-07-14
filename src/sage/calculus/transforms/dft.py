@@ -240,7 +240,7 @@ class IndexedSequence(SageObject):
             sage: A = [ZZ(i^2)+1 for i in J]
             sage: s = IndexedSequence(A,J)
             sage: P = s.plot_histogram()                                                # needs sage.plot
-            sage: show(P)                       # not tested, needs sage.plot
+            sage: show(P)                       # not tested                            # needs sage.plot
         """
         from sage.rings.real_mpfr import RR
         # elements must be coercible into RR
@@ -269,7 +269,7 @@ class IndexedSequence(SageObject):
             sage: A = [ZZ(i^2)+1 for i in I]
             sage: s = IndexedSequence(A,I)
             sage: P = s.plot()                                                          # needs sage.plot
-            sage: show(P)                       # not tested, needs sage.plot
+            sage: show(P)                       # not tested                            # needs sage.plot
         """
         from sage.rings.real_mpfr import RR
         # elements must be coercible into RR
@@ -436,7 +436,7 @@ class IndexedSequence(SageObject):
             sage: A = [exp(-2*pi*i*I/5) for i in J]
             sage: s = IndexedSequence(A, J)
 
-            sage: s.dst()        # discrete sine                                        # needs sage.symbolic
+            sage: s.dst()        # discrete sine
             Indexed sequence: [0.000000000000000, 1.11022302462516e-16 - 2.50000000000000*I, ...]
             indexed by [0, 1, 2, 3, 4]
         """

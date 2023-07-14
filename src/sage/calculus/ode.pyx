@@ -300,7 +300,7 @@ class ode_solver():
         ....:                error_rel=1e-4, algorithm="rk8pd")
         sage: T.ode_solve(t_span=[0,12], num_points=100)
         sage: f = T.interpolate_solution()
-        sage: f(pi)                                                                     # optional - sage.symbolic
+        sage: f(pi)
         0.5379...
 
     Unfortunately because Python functions are used, this solver

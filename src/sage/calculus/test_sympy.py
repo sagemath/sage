@@ -146,29 +146,29 @@ Mixing SymPy with Sage::
     sage: import sympy
     sage: var("x")._sympy_() + var("y")._sympy_()
     x + y
-    sage: o = var("omega")                                                              # optional - sympy
-    sage: s = sympy.Symbol("x")                                                         # optional - sympy
-    sage: t1 = s + o                                                                    # optional - sympy
-    sage: t2 = o + s                                                                    # optional - sympy
-    sage: type(t1)                                                                      # optional - sympy
+    sage: o = var("omega")
+    sage: s = sympy.Symbol("x")
+    sage: t1 = s + o
+    sage: t2 = o + s
+    sage: type(t1)
     <class 'sympy.core.add.Add'>
-    sage: type(t2)                                                                      # optional - sympy
+    sage: type(t2)
     <class 'sage.symbolic.expression.Expression'>
-    sage: t1, t2                                                                        # optional - sympy
+    sage: t1, t2
     (omega + x, omega + x)
     sage: e = sympy.sin(var("y"))+sage.all.cos(sympy.Symbol("x"))
     sage: type(e)
     <class 'sympy.core.add.Add'>
-    sage: e                                                                             # optional - sympy
+    sage: e
     sin(y) + cos(x)
-    sage: e=e._sage_()                                                                  # optional - sympy
-    sage: type(e)                                                                       # optional - sympy
+    sage: e=e._sage_()
+    sage: type(e)
     <class 'sage.symbolic.expression.Expression'>
-    sage: e                                                                             # optional - sympy
+    sage: e
     cos(x) + sin(y)
-    sage: e = sage.all.cos(var("y")**3)**4+var("x")**2                                  # optional - sympy
-    sage: e = e._sympy_()                                                               # optional - sympy
-    sage: e                                                                             # optional - sympy
+    sage: e = sage.all.cos(var("y")**3)**4+var("x")**2
+    sage: e = e._sympy_()
+    sage: e
     x**2 + cos(y**3)**4
 
 ::

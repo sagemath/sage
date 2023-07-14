@@ -61,17 +61,17 @@ cdef class Spline:
 
     We compute the area underneath the spline::
 
-        sage: s.definite_integral(0, 9)                                                 # optional - sage.symbolic
+        sage: s.definite_integral(0, 9)
         41.196516041067...
 
     The definite integral is additive::
 
-        sage: s.definite_integral(0, 4) + s.definite_integral(4, 9)                     # optional - sage.symbolic
+        sage: s.definite_integral(0, 4) + s.definite_integral(4, 9)
         41.196516041067...
 
     Switching the order of the bounds changes the sign of the integral::
 
-        sage: s.definite_integral(9, 0)                                                 # optional - sage.symbolic
+        sage: s.definite_integral(9, 0)
         -41.196516041067...
 
     We compute the first and second-order derivatives at a few points::
@@ -87,7 +87,7 @@ cdef class Spline:
 
     Only the first two derivatives are supported::
 
-        sage: s.derivative(4, order=3)                                                  # optional - sage.symbolic
+        sage: s.derivative(4, order=3)
         Traceback (most recent call last):
         ...
         ValueError: Order of derivative must be 1 or 2.

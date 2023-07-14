@@ -1576,7 +1576,7 @@ def desolve_odeint(des, ics, times, dvars, ivar=None, compute_jac=False, args=()
         sage: f = [x*(1-y), -y*(1-x)]
         sage: sol = desolve_odeint(f, [0.5,2], srange(0,10,0.1), [x,y])                 # needs scipy
         sage: p = line(zip(sol[:,0],sol[:,1]))                                          # needs scipy sage.plot
-        sage: p.show()                                                                  # needs sage.plot
+        sage: p.show()                                                                  # needs scipy sage.plot
 
     Lorenz Equations::
 
