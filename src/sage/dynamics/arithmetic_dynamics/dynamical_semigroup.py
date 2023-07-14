@@ -1,5 +1,5 @@
 r"""
-Dynamical semigroup
+Dynamical semigroups
 
 A dynamical semigroup is a finitely generated subsemigroup of
 the endomorphism ring of a subscheme of projective or affine space.
@@ -10,6 +10,8 @@ AUTHORS:
 """
 
 #*****************************************************************************
+# Dang Phan <dang8phan@gmail.com>
+#
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
@@ -17,6 +19,7 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
+from collections import Counter
 from collections.abc import Collection
 
 from sage.structure.parent import Parent
@@ -36,7 +39,10 @@ class DynamicalSemigroup(Parent):
 
     - ``ds_data`` -- list or tuple of dynamical systems or objects that define dynamical systems
 
-    OUTPUT: :class:`DynamicalSemigroup_projective` or :class:`DynamicalSemigroup_affine`
+    OUTPUT:
+
+    :class:`DynamicalSemigroup_affine` if ``ds_data`` only contains or defines dynamical systems
+    over affine space; and :class:`DynamicalSemigroup_projective` otherwise.
 
     EXAMPLES::
 
@@ -78,6 +84,24 @@ class DynamicalSemigroup(Parent):
           Defn: Defined on coordinates by sending (x) to
                 (x^2)
 
+    ::
+
+        sage: P.<x,y> = ProjectiveSpace(QQ, 1)
+        sage: X = P.subscheme(x - y)
+        sage: f = DynamicalSystem_projective([x, y], X)
+        sage: g = DynamicalSystem_projective([x^2, y^2], X)
+        sage: DynamicalSemigroup_projective([f, g])
+        Dynamical semigroup over Closed subscheme of Projective Space of dimension 1 over Rational Field defined by:
+          x - y defined by 2 dynamical systems:
+        Dynamical System of Closed subscheme of Projective Space of dimension 1 over Rational Field defined by:
+          x - y
+        Defn: Defined on coordinates by sending (x : y) to
+                (x : y)
+        Dynamical System of Closed subscheme of Projective Space of dimension 1 over Rational Field defined by:
+          x - y
+        Defn: Defined on coordinates by sending (x : y) to
+                (x^2 : y^2)
+
     If a dynamical semigroup is built from dynamical systems with different base rings, all systems will be coerced
     to the largest base ring::
 
@@ -111,6 +135,23 @@ class DynamicalSemigroup(Parent):
 
     If a dynamical semigroup is built from dynamical systems over number fields, a composite number field is created
     and all systems will be coerced to it. This composite number field contains all of the initial number fields::
+
+        sage: R.<r> = QQ[]
+        sage: K.<k> = NumberField(r^2 - 2)
+        sage: P.<x,y> = ProjectiveSpace(QQ, 1)
+        sage: Q.<x,y> = ProjectiveSpace(K, 1)
+        sage: f = DynamicalSystem([x, y], P)
+        sage: g = DynamicalSystem([z^2, w^2], Q)
+        sage: DynamicalSemigroup((f, g))
+        Dynamical semigroup over Projective Space of dimension 1 over Number Field in k with defining polynomial r^2 - 2 defined by 2 dynamical systems:
+        Dynamical System of Projective Space of dimension 1 over Number Field in k with defining polynomial r^2 - 2
+          Defn: Defined on coordinates by sending (x : y) to
+                (x : y)
+        Dynamical System of Projective Space of dimension 1 over Number Field in k with defining polynomial r^2 - 2
+          Defn: Defined on coordinates by sending (x : y) to
+                (x^2 : y^2)
+
+    ::
 
         sage: R.<r> = QQ[]
         sage: K.<k> = NumberField(r^2 - 2)
@@ -207,7 +248,6 @@ class DynamicalSemigroup(Parent):
         """
         systems = []
 
-        # create dynamical systems
         if isinstance(ds_data, Collection):
             for ds_datum in ds_data:
                 if isinstance(ds_datum, DynamicalSystem):
@@ -226,10 +266,8 @@ class DynamicalSemigroup(Parent):
                 except ValueError:
                     raise ValueError(str(ds_data) + " does not define a 'DynamicalSystem' object")
 
-        # check for existence of projective dynamical system
         exists_projective_ds = any(isinstance(element, DynamicalSystem_projective) for element in systems)
 
-        # homogenize or dehomogenize all dynamical systems
         if exists_projective_ds:
             dimension = None
             for ds in systems:
@@ -246,8 +284,6 @@ class DynamicalSemigroup(Parent):
                 identical_domains = False
                 break
 
-        # determine whether all dynamical systems are defined over number fields
-        # and whether all dynamical systems are defined over the rational field
         over_number_fields = True
         all_over_QQ = True
         for ds in systems:
@@ -256,12 +292,9 @@ class DynamicalSemigroup(Parent):
             if ds.base_ring() is not QQ:
                 all_over_QQ = False
 
-        # about to find the biggest ring among the dynamical systems,
-        # and coerce those systems to be defined over said biggest ring
         biggest_ring = None
 
         if over_number_fields and not all_over_QQ:
-            # extracts all involved number fields
             number_fields = []
             for ds in systems:
                 number_fields.append(ds.base_ring())
@@ -276,7 +309,6 @@ class DynamicalSemigroup(Parent):
 
             biggest_ring = minimal_composite_field
         else:
-            # find the maximal coercision ring
             for ds in systems:
                 if biggest_ring is None:
                     biggest_ring = ds.base_ring()
@@ -288,7 +320,6 @@ class DynamicalSemigroup(Parent):
                     raise ValueError("given dynamical systems are not automorphic"
                                     " under global composition")
 
-        # coerce all dynamical systems to the biggest ring
         for i in range(len(systems)):
             if systems[i].base_ring() != biggest_ring:
                     systems[i] = systems[i].change_ring(biggest_ring)
@@ -298,14 +329,12 @@ class DynamicalSemigroup(Parent):
             for ds in systems:
                 if ds.domain().dimension() != systems[0].domain().dimension():
                     raise ValueError("domains of 'DynamicalSystem' objects must be of the same dimension")
-        # systems have domains of the same dimension
 
-        # homogenize generators
-        gens = systems[0].domain().gens()
+        gens = systems[0].domain().ambient_space().gens()
         for i in range(len(systems)):
             if systems[i].domain().coordinate_ring() != systems[0].domain().coordinate_ring():
                 sub_dict = {}
-                old_gens = systems[i].domain().gens()
+                old_gens = systems[i].domain().ambient_space().gens()
                 for j in range(len(old_gens)):
                     sub_dict[old_gens[j]] = gens[j]
                 new_polys = []
@@ -316,7 +345,6 @@ class DynamicalSemigroup(Parent):
                 else:
                     systems[i] = DynamicalSystem_affine(new_polys)
 
-        # store the collection of final dynamical systems
         self._dynamical_systems = systems
         self._domain = systems[0].domain()
         self._codomain = systems[0].codomain()
@@ -331,9 +359,9 @@ class DynamicalSemigroup(Parent):
         INPUT:
 
         - ``input`` -- one element, a list, or a tuple of values that can be evaluated
-          with this dynamical semigroup's defining dynamical systems.
+          with the generators of this dynamical semigroup.
 
-        OUTPUT: A tuple of the resulting values after applying all dynamical systems to ``input``.
+        OUTPUT: A tuple of the resulting values after applying all of this dynamical semigroup's generators to ``input``.
 
         EXAMPLES::
 
@@ -346,16 +374,14 @@ class DynamicalSemigroup(Parent):
 
             sage: P.<x,y> = ProjectiveSpace(QQ, 1)
             sage: f = DynamicalSemigroup(([x, y], [x^2, y^2]))
-            sage: f(f(f(2)))
-            ((2 : 1), (4 : 1), (4 : 1), (16 : 1), (4 : 1), (16 : 1), (16 : 1), (256 : 1))
+            sage: f(f(2))
+            TypeError: ((2 : 1), (4 : 1)) must be a single numerical value
         """
+        if isinstance(input, Collection):
+            raise TypeError(str(input) + " must be a single numerical value")
         result = []
-        if not isinstance(input, Collection):
-            for ds in self._dynamical_systems:
-                result.append(ds(input))
-        else:
-            for value in input:
-                result.extend(self.__call__(value))
+        for ds in self._dynamical_systems:
+            result.append(ds(input))
         return tuple(result)
 
     def base_ring(self):
@@ -363,9 +389,7 @@ class DynamicalSemigroup(Parent):
         The base ring of this dynamical semigroup. This is identical
         to the base ring of all of its defining dynamical system.
 
-        OUTPUT:
-
-        The ring that is the base ring of all defining dynamical systems.
+        OUTPUT: A ring.
 
         EXAMPLES::
 
@@ -378,7 +402,7 @@ class DynamicalSemigroup(Parent):
 
     def change_ring(self, new_ring):
         r"""
-        Returns a new :class:`DynamicalSemigroup` whose defining dynamical systems
+        Return a new :class:`DynamicalSemigroup` whose generators
         are the initial dynamical systems coerced to ``new_ring``.
 
         INPUT:
@@ -387,8 +411,8 @@ class DynamicalSemigroup(Parent):
 
         OUTPUT:
 
-        A new :class:`DynamicalSemigroup_projective` that is defined by this dynamical
-        semigroup's defining dynamical systems, but coerced to ``new_ring``.
+        A :class:`DynamicalSemigroup` defined by this dynamical
+        semigroup's generators, but coerced to ``new_ring``.
 
         EXAMPLES::
 
@@ -410,10 +434,9 @@ class DynamicalSemigroup(Parent):
 
     def domain(self):
         r"""
-        Returns the domain over which every defining dynamical system in this
-        dynamical semigroup is defined; this will be exactly one unique domain.
+        Return the domain of the generators of this dynamical semigroup.
 
-        OUTPUT: A projective space or affine space.
+        OUTPUT: A subscheme of a projective space or affine space.
 
         EXAMPLES::
 
@@ -426,10 +449,9 @@ class DynamicalSemigroup(Parent):
 
     def codomain(self):
         r"""
-        Returns the codomain of every defining dynamical system in this
-        dynamical semigroup; this will be exactly the same as its domain.
+        Return the codomain of the generators of this dynamical semigroup.
 
-        OUTPUT: A projective space or affine space.
+        OUTPUT: A subscheme of a projective space or affine space.
 
         EXAMPLES::
 
@@ -442,7 +464,7 @@ class DynamicalSemigroup(Parent):
 
     def defining_polynomials(self):
         r"""
-        Returns the tuple of polynomials that define each dynamical system that make up this
+        Return the tuple of polynomials that define the generators of this
         dynamical semigroup.
 
         OUTPUT: A tuple of polynomials.
@@ -461,7 +483,7 @@ class DynamicalSemigroup(Parent):
 
     def defining_systems(self):
         r"""
-        Returns the tuple of dynamical systems that define this
+        Return the generators of this
         dynamical semigroup.
 
         OUTPUT: A tuple of dynamical systems.
@@ -504,7 +526,7 @@ class DynamicalSemigroup(Parent):
 
     def _repr_(self):
         r"""
-        Returns the :class:`String` representation of this dynamical semigroup.
+        Return the :class:`String` representation of this dynamical semigroup.
 
         OUTPUT: A :class:`String` displaying information about this dynamical semigroup.
 
@@ -533,7 +555,7 @@ class DynamicalSemigroup(Parent):
 
     def __eq__(self, other):
         r"""
-        Returns whether two dynamical semigroups are equal.
+        Return whether two dynamical semigroups are equal.
 
         OUTPUT:
 
@@ -554,10 +576,19 @@ class DynamicalSemigroup(Parent):
             sage: f = DynamicalSemigroup(([x, y], [x^2, y^2]))
             sage: g = DynamicalSemigroup(([x^2, y^2], [x, y]))
             sage: f == g
+            True
+
+        ::
+
+            sage: P.<x,y> = ProjectiveSpace(QQ, 1)
+            sage: f = DynamicalSemigroup(([x, y], [x^2, y^2]))
+            sage: g = DynamicalSemigroup(([x^2, y^2], [y, x]))
+            sage: f == g
             False
         """
         if isinstance(other, DynamicalSemigroup):
-            return self._dynamical_systems == other._dynamical_systems
+            return len(self._dynamical_systems) == len(other._dynamical_systems) and \
+                all(systems in other._dynamical_systems for systems in self._dynamical_systems)
         return False
 
 class DynamicalSemigroup_projective(DynamicalSemigroup):
