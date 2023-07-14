@@ -480,14 +480,14 @@ class SchemeMorphism_polynomial_projective_space(SchemeMorphism_polynomial):
 
             ::
 
-            sage: # needs sage.rings.real_mpfr
+            sage: # needs sage.libs.pari sage.rings.real_mpfr
             sage: T.<z> = PolynomialRing(CC)
             sage: I = T.ideal(z^3)
-            sage: P.<x,y> = ProjectiveSpace(T.quotient_ring(I), 1)                      # needs sage.libs.pari
+            sage: P.<x,y> = ProjectiveSpace(T.quotient_ring(I), 1)
             sage: H = End(P)
-            sage: f = H([x^2 + x*y, y^2])                                               # needs sage.libs.pari
-            sage: Q = P(z^2, 1)                                                         # needs sage.libs.pari
-            sage: f._fast_eval(list(Q))                                                 # needs sage.libs.pari
+            sage: f = H([x^2 + x*y, y^2])
+            sage: Q = P(z^2, 1)
+            sage: f._fast_eval(list(Q))
             [zbar^2, 1.00000000000000]
 
             ::
@@ -1865,7 +1865,7 @@ class SchemeMorphism_polynomial_projective_space_field(SchemeMorphism_polynomial
             sage: P2.<t,u,v,w> = ProjectiveSpace(RR, 3)
             sage: H = Hom(P1, P2)
             sage: h = H([y^3*z^3, x^3*z^3, y^3*z^3, x^2*y^2*z^2])
-            sage: h.base_indeterminacy_locus()
+            sage: h.base_indeterminacy_locus()                                          # needs sage.rings.real_mpfr
             Closed subscheme of Projective Space of dimension 2 over
              Real Field with 53 bits of precision defined by:
               y^3*z^3,

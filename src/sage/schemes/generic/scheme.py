@@ -219,7 +219,7 @@ class Scheme(Parent):
 
             sage: A(QQ)
             Set of rational points of Affine Space of dimension 2 over Rational Field
-            sage: A(RR)
+            sage: A(RR)                                                                 # needs sage.rings.real_mpfr
             Set of rational points of Affine Space of dimension 2
              over Real Field with 53 bits of precision
 
