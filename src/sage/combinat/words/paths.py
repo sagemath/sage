@@ -1646,13 +1646,14 @@ class FiniteWordPath_2d(FiniteWordPath_all):
 
         The first 4 Fibonacci tiles in an animation::
 
-            sage: a = words.fibonacci_tile(0).animate()                                 # needs sage.plot
-            sage: b = words.fibonacci_tile(1).animate()                                 # needs sage.plot
-            sage: c = words.fibonacci_tile(2).animate()                                 # needs sage.plot
-            sage: d = words.fibonacci_tile(3).animate()                                 # needs sage.plot
-            sage: print(a*b*c*d)                                                        # needs sage.plot
+            sage: # needs sage.plot
+            sage: a = words.fibonacci_tile(0).animate()
+            sage: b = words.fibonacci_tile(1).animate()
+            sage: c = words.fibonacci_tile(2).animate()
+            sage: d = words.fibonacci_tile(3).animate()
+            sage: print(a*b*c*d)
             Animation with 296 frames
-            sage: show(a*b*c*d)                 # long time, optional - imagemagick, needs sage.plot
+            sage: show(a*b*c*d)                 # long time, optional - imagemagick
 
         .. note::
 

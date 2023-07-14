@@ -855,10 +855,11 @@ class WordGenerator():
 
         ::
 
-            sage: a = words.LowerMechanicalWord(1/pi)[1:]                               # needs sage.symbolic
-            sage: b = words.UpperMechanicalWord(1/pi)[1:]                               # needs sage.symbolic
-            sage: c = words.CharacteristicSturmianWord(1/pi)                            # needs sage.symbolic
-            sage: n = 500; a[:n] == b[:n] == c[:n]                                      # needs sage.symbolic
+            sage: # needs sage.symbolic
+            sage: a = words.LowerMechanicalWord(1/pi)[1:]
+            sage: b = words.UpperMechanicalWord(1/pi)[1:]
+            sage: c = words.CharacteristicSturmianWord(1/pi)
+            sage: n = 500; a[:n] == b[:n] == c[:n]
             True
 
         ::
@@ -937,11 +938,12 @@ class WordGenerator():
 
         ::
 
-            sage: alpha = (sqrt(3)-1)/2                                                 # needs sage.symbolic
-            sage: continued_fraction(alpha)[:10]                                        # needs sage.symbolic
+            sage: # needs sage.symbolic
+            sage: alpha = (sqrt(3)-1)/2
+            sage: continued_fraction(alpha)[:10]
             [0; 2, 1, 2, 1, 2, 1, 2, 1, 2]
-            sage: cf = iter(_)                                                          # needs sage.symbolic
-            sage: Word(words._CharacteristicSturmianWord_LetterIterator(cf))            # needs sage.symbolic
+            sage: cf = iter(_)
+            sage: Word(words._CharacteristicSturmianWord_LetterIterator(cf))
             word: 0100100101001001001010010010010100100101...
         """
         try:

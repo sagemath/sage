@@ -3331,24 +3331,25 @@ class WordMorphism(SageObject):
 
         EXAMPLES::
 
-            sage: WordMorphism('0->1,1->0').abelian_rotation_subspace()                 # needs sage.modules
+            sage: # needs sage.modules
+            sage: WordMorphism('0->1,1->0').abelian_rotation_subspace()
             Vector space of degree 2 and dimension 2 over Rational Field
             Basis matrix:
             [1 0]
             [0 1]
-            sage: WordMorphism('0->01,1->10').abelian_rotation_subspace()               # needs sage.modules
+            sage: WordMorphism('0->01,1->10').abelian_rotation_subspace()
             Vector space of degree 2 and dimension 0 over Rational Field
             Basis matrix:
             []
-            sage: WordMorphism('0->01,1->1').abelian_rotation_subspace()                # needs sage.modules
+            sage: WordMorphism('0->01,1->1').abelian_rotation_subspace()
             Vector space of degree 2 and dimension 1 over Rational Field
             Basis matrix:
             [0 1]
-            sage: WordMorphism('1->122,2->211').abelian_rotation_subspace()             # needs sage.modules
+            sage: WordMorphism('1->122,2->211').abelian_rotation_subspace()
             Vector space of degree 2 and dimension 1 over Rational Field
             Basis matrix:
             [ 1 -1]
-            sage: WordMorphism('0->1,1->102,2->3,3->4,4->2').abelian_rotation_subspace()            # needs sage.modules
+            sage: WordMorphism('0->1,1->102,2->3,3->4,4->2').abelian_rotation_subspace()
             Vector space of degree 5 and dimension 3 over Rational Field
             Basis matrix:
             [0 0 1 0 0]
