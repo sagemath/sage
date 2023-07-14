@@ -466,13 +466,14 @@ class AbstractSetPartition(ClonableArray,
 
         EXAMPLES::
 
-            sage: from sage.combinat.diagram_algebras import PartitionDiagram, PartitionDiagrams    # needs sage.modules
-            sage: pd = PartitionDiagram([[1,-3,-5],[2,4],[3,-1,-2],[5],[-4]])           # needs sage.modules
-            sage: pd.max_block_size()                                                   # needs sage.modules
+            sage: # needs sage.modules
+            sage: from sage.combinat.diagram_algebras import PartitionDiagram, PartitionDiagrams
+            sage: pd = PartitionDiagram([[1,-3,-5],[2,4],[3,-1,-2],[5],[-4]])
+            sage: pd.max_block_size()
             3
-            sage: sorted(d.max_block_size() for d in PartitionDiagrams(2))              # needs sage.modules
+            sage: sorted(d.max_block_size() for d in PartitionDiagrams(2))
             [1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 3, 3, 3, 3, 4]
-            sage: sorted(sp.max_block_size() for sp in SetPartitions(3))                # needs sage.modules
+            sage: sorted(sp.max_block_size() for sp in SetPartitions(3))
             [1, 2, 2, 2, 3]
         """
         return max(len(block) for block in self)
@@ -2818,13 +2819,14 @@ class SetPartitions_set(SetPartitions):
 
         EXAMPLES::
 
-            sage: SetPartitions([1,2,3,4]).cardinality()                                # needs sage.libs.flint
+            sage: # needs sage.libs.flint
+            sage: SetPartitions([1,2,3,4]).cardinality()
             15
-            sage: SetPartitions(3).cardinality()                                        # needs sage.libs.flint
+            sage: SetPartitions(3).cardinality()
             5
-            sage: SetPartitions(3,2).cardinality()                                      # needs sage.libs.flint
+            sage: SetPartitions(3,2).cardinality()
             3
-            sage: SetPartitions([]).cardinality()                                       # needs sage.libs.flint
+            sage: SetPartitions([]).cardinality()
             1
         """
         return bell_number(len(self._set))

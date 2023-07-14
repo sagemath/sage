@@ -1528,7 +1528,7 @@ class CombinatorialElement(CombinatorialObject, Element,
 
     Check classcalls::
 
-        sage: class Foo(CombinatorialElement):
+        sage: class Foo(CombinatorialElement):                                          # needs sage.combinat
         ....:     @staticmethod
         ....:     def __classcall__(cls, x):
         ....:         return x
