@@ -739,13 +739,14 @@ class GenericCombinatorialSpecies(SageObject):
 
         EXAMPLES::
 
-            sage: d = DiGraph(multiedges=True)                                          # needs sage.graphs
-            sage: X = species.SingletonSpecies()                                        # needs sage.graphs
-            sage: X._add_to_digraph(d); d                                               # needs sage.graphs
+            sage: # needs sage.graphs
+            sage: d = DiGraph(multiedges=True)
+            sage: X = species.SingletonSpecies()
+            sage: X._add_to_digraph(d); d
             Multi-digraph on 1 vertex
-            sage: (X+X)._add_to_digraph(d); d                                           # needs sage.graphs
+            sage: (X+X)._add_to_digraph(d); d
             Multi-digraph on 2 vertices
-            sage: d.edges(sort=True)                                                    # needs sage.graphs
+            sage: d.edges(sort=True)
             [(Sum of (Singleton species) and (Singleton species), Singleton species, None),
              (Sum of (Singleton species) and (Singleton species), Singleton species, None)]
         """

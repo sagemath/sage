@@ -58,12 +58,13 @@ class ProductSpeciesStructure(GenericSpeciesStructure):
         """
         EXAMPLES::
 
-            sage: p = PermutationGroupElement((2,3))                                    # needs sage.groups
-            sage: S = species.SetSpecies()                                              # needs sage.groups
-            sage: F = S * S                                                             # needs sage.groups
-            sage: a = F.structures(['a','b','c'])[4]; a                                 # needs sage.groups
+            sage: # needs sage.groups
+            sage: p = PermutationGroupElement((2,3))
+            sage: S = species.SetSpecies()
+            sage: F = S * S
+            sage: a = F.structures(['a','b','c'])[4]; a
             {'a', 'b'}*{'c'}
-            sage: a.transport(p)                                                        # needs sage.groups
+            sage: a.transport(p)
             {'a', 'c'}*{'b'}
         """
         left, right = self._list
@@ -151,12 +152,13 @@ class ProductSpeciesStructure(GenericSpeciesStructure):
         """
         EXAMPLES::
 
-            sage: p = PermutationGroupElement((2,3))                                    # needs sage.groups
-            sage: S = species.SetSpecies()                                              # needs sage.groups
-            sage: F = S * S                                                             # needs sage.groups
-            sage: a = F.structures([1,2,3,4])[1]; a                                     # needs sage.groups
+            sage: # needs sage.groups
+            sage: p = PermutationGroupElement((2,3))
+            sage: S = species.SetSpecies()
+            sage: F = S * S
+            sage: a = F.structures([1,2,3,4])[1]; a
             {1}*{2, 3, 4}
-            sage: a.automorphism_group()                                                # needs sage.groups
+            sage: a.automorphism_group()
             Permutation Group with generators [(2,3), (2,3,4)]
 
         ::
