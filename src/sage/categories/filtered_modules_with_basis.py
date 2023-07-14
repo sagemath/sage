@@ -177,7 +177,7 @@ class FilteredModulesWithBasis(FilteredModulesCategory):
             An example with a graded algebra::
 
                 sage: E.<x,y> = ExteriorAlgebra(QQ)
-                sage: E.basis()                                                         # needs sage.rings.number_field
+                sage: E.basis()
                 Lazy family (Term map from Subsets of {0,1} to
                  The exterior algebra of rank 2 over Rational Field(i))_{i in
                  Subsets of {0,1}}

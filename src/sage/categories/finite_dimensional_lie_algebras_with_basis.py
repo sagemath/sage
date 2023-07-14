@@ -70,7 +70,7 @@ class FiniteDimensionalLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
 
             EXAMPLES::
 
-                sage: L = LieAlgebras(QQ).FiniteDimensional().WithBasis().example()     # needs sage.combinat sage.modules
+                sage: L = LieAlgebras(QQ).FiniteDimensional().WithBasis().example()     # needs sage.modules
                 sage: UEA = L._construct_UEA(); UEA                                     # needs sage.combinat sage.modules
                 Noncommutative Multivariate Polynomial Ring in b0, b1, b2
                  over Rational Field, nc-relations: {}
@@ -149,8 +149,8 @@ class FiniteDimensionalLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
 
             EXAMPLES::
 
-                sage: L = LieAlgebras(QQ).FiniteDimensional().WithBasis().example()     # needs sage.combinat sage.modules
-                sage: L._basis_ordering                                                 # needs sage.combinat sage.modules
+                sage: L = LieAlgebras(QQ).FiniteDimensional().WithBasis().example()     # needs sage.modules
+                sage: L._basis_ordering                                                 # needs sage.modules
                 (0, 1, 2)
             """
             return tuple(self.basis().keys())
@@ -296,9 +296,9 @@ class FiniteDimensionalLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
 
             EXAMPLES::
 
-                sage: L = LieAlgebras(QQ).FiniteDimensional().WithBasis().example()     # needs sage.combinat sage.modules
-                sage: a, b, c = L.lie_algebra_generators()                              # needs sage.combinat sage.modules
-                sage: L.killing_form(a, b)                                              # needs sage.combinat sage.modules
+                sage: L = LieAlgebras(QQ).FiniteDimensional().WithBasis().example()     # needs sage.modules
+                sage: a, b, c = L.lie_algebra_generators()                              # needs sage.modules
+                sage: L.killing_form(a, b)                                              # needs sage.modules
                 0
             """
             return self.killing_matrix(x, y).trace()

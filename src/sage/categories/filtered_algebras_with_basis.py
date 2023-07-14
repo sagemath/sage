@@ -322,7 +322,7 @@ class FilteredAlgebrasWithBasis(FilteredModulesCategory):
             the algebra of symmetric functions::
 
                 sage: # needs sage.modules
-                sage: h = SymmetricFunctions(QQ).h()
+                sage: h = SymmetricFunctions(QQ).h()                                    # needs sage.all
                 sage: def map_on_basis(m):  # redefining map_on_basis
                 ....:     d = m.dict()
                 ....:     i = d.get('x', 0); j = d.get('y', 0); k = d.get('z', 0)

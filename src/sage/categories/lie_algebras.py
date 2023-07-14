@@ -301,7 +301,7 @@ class LieAlgebras(Category_over_base_ring):
 
             EXAMPLES::
 
-                sage: L = LieAlgebras(QQ).FiniteDimensional().WithBasis().example()     # needs sage.combinat sage.modules
+                sage: L = LieAlgebras(QQ).FiniteDimensional().WithBasis().example()     # needs sage.modules
                 sage: L.universal_enveloping_algebra()                                  # needs sage.combinat sage.modules
                 Noncommutative Multivariate Polynomial Ring in b0, b1, b2
                  over Rational Field, nc-relations: {}
@@ -334,7 +334,7 @@ class LieAlgebras(Category_over_base_ring):
 
             EXAMPLES::
 
-                sage: L = LieAlgebras(QQ).FiniteDimensional().WithBasis().example()     # needs sage.combinat sage.modules
+                sage: L = LieAlgebras(QQ).FiniteDimensional().WithBasis().example()     # needs sage.modules
                 sage: L._construct_UEA()                                                # needs sage.combinat sage.modules
                 Noncommutative Multivariate Polynomial Ring in b0, b1, b2
                  over Rational Field, nc-relations: {}
@@ -398,8 +398,8 @@ class LieAlgebras(Category_over_base_ring):
 
             EXAMPLES::
 
-                sage: L = LieAlgebras(QQ).FiniteDimensional().WithBasis().example()     # needs sage.combinat sage.modules
-                sage: L.module()                                                        # needs sage.combinat sage.modules
+                sage: L = LieAlgebras(QQ).FiniteDimensional().WithBasis().example()     # needs sage.modules
+                sage: L.module()                                                        # needs sage.modules
                 Vector space of dimension 3 over Rational Field
             """
 
@@ -414,10 +414,10 @@ class LieAlgebras(Category_over_base_ring):
 
             EXAMPLES::
 
-                sage: L = LieAlgebras(QQ).FiniteDimensional().WithBasis().example()     # needs sage.combinat sage.modules
-                sage: u = L.from_vector(vector(QQ, (1, 0, 0))); u                       # needs sage.combinat sage.modules
+                sage: L = LieAlgebras(QQ).FiniteDimensional().WithBasis().example()     # needs sage.modules
+                sage: u = L.from_vector(vector(QQ, (1, 0, 0))); u                       # needs sage.modules
                 (1, 0, 0)
-                sage: parent(u) is L                                                    # needs sage.combinat sage.modules
+                sage: parent(u) is L                                                    # needs sage.modules
                 True
             """
 
@@ -452,9 +452,9 @@ class LieAlgebras(Category_over_base_ring):
 
             EXAMPLES::
 
-                sage: L = LieAlgebras(QQ).FiniteDimensional().WithBasis().example()     # needs sage.combinat sage.modules
-                sage: a, b, c = L.lie_algebra_generators()                              # needs sage.combinat sage.modules
-                sage: L.subalgebra([2*a - c, b + c])                                    # needs sage.combinat sage.modules
+                sage: L = LieAlgebras(QQ).FiniteDimensional().WithBasis().example()     # needs sage.modules
+                sage: a, b, c = L.lie_algebra_generators()                              # needs sage.modules
+                sage: L.subalgebra([2*a - c, b + c])                                    # needs sage.modules
                 An example of a finite dimensional Lie algebra with basis:
                  the 2-dimensional abelian Lie algebra over Rational Field
                  with basis matrix:
@@ -480,9 +480,9 @@ class LieAlgebras(Category_over_base_ring):
 
             EXAMPLES::
 
-                sage: L = LieAlgebras(QQ).FiniteDimensional().WithBasis().example()     # needs sage.combinat sage.modules
-                sage: a, b, c = L.lie_algebra_generators()                              # needs sage.combinat sage.modules
-                sage: L.ideal([2*a - c, b + c])                                         # needs sage.combinat sage.modules
+                sage: L = LieAlgebras(QQ).FiniteDimensional().WithBasis().example()     # needs sage.modules
+                sage: a, b, c = L.lie_algebra_generators()                              # needs sage.modules
+                sage: L.ideal([2*a - c, b + c])                                         # needs sage.modules
                 An example of a finite dimensional Lie algebra with basis:
                  the 2-dimensional abelian Lie algebra over Rational Field
                  with basis matrix:
@@ -530,9 +530,9 @@ class LieAlgebras(Category_over_base_ring):
 
             EXAMPLES::
 
-                sage: L = LieAlgebras(QQ).FiniteDimensional().WithBasis().example()     # needs sage.combinat sage.modules
-                sage: a, b, c = L.lie_algebra_generators()                              # needs sage.combinat sage.modules
-                sage: L.killing_form(a, b + c)                                          # needs sage.combinat sage.modules
+                sage: L = LieAlgebras(QQ).FiniteDimensional().WithBasis().example()     # needs sage.modules
+                sage: a, b, c = L.lie_algebra_generators()                              # needs sage.modules
+                sage: L.killing_form(a, b + c)                                          # needs sage.modules
                 0
             """
 
@@ -596,8 +596,8 @@ class LieAlgebras(Category_over_base_ring):
 
             EXAMPLES::
 
-                sage: L = LieAlgebras(QQ).FiniteDimensional().WithBasis().example()     # needs sage.combinat sage.modules
-                sage: L.is_solvable()                                                   # needs sage.combinat sage.modules
+                sage: L = LieAlgebras(QQ).FiniteDimensional().WithBasis().example()     # needs sage.modules
+                sage: L.is_solvable()                                                   # needs sage.modules
                 True
             """
 
@@ -608,8 +608,8 @@ class LieAlgebras(Category_over_base_ring):
 
             EXAMPLES::
 
-                sage: L = LieAlgebras(QQ).FiniteDimensional().WithBasis().example()     # needs sage.combinat sage.modules
-                sage: L.is_nilpotent()                                                  # needs sage.combinat sage.modules
+                sage: L = LieAlgebras(QQ).FiniteDimensional().WithBasis().example()     # needs sage.modules
+                sage: L.is_nilpotent()                                                  # needs sage.modules
                 True
             """
 
@@ -866,10 +866,10 @@ class LieAlgebras(Category_over_base_ring):
 
             EXAMPLES::
 
-                sage: L = LieAlgebras(QQ).FiniteDimensional().WithBasis().example()     # needs sage.combinat sage.modules
-                sage: u = L((1, 0, 0)).to_vector(); u                                   # needs sage.combinat sage.modules
+                sage: L = LieAlgebras(QQ).FiniteDimensional().WithBasis().example()     # needs sage.modules
+                sage: u = L((1, 0, 0)).to_vector(); u                                   # needs sage.modules
                 (1, 0, 0)
-                sage: parent(u)                                                         # needs sage.combinat sage.modules
+                sage: parent(u)                                                         # needs sage.modules
                 Vector space of dimension 3 over Rational Field
             """
 
@@ -901,9 +901,9 @@ class LieAlgebras(Category_over_base_ring):
 
             EXAMPLES::
 
-                sage: L = LieAlgebras(QQ).FiniteDimensional().WithBasis().example()     # needs sage.combinat sage.modules
-                sage: a, b, c = L.lie_algebra_generators()                              # needs sage.combinat sage.modules
-                sage: a.killing_form(b)                                                 # needs sage.combinat sage.modules
+                sage: L = LieAlgebras(QQ).FiniteDimensional().WithBasis().example()     # needs sage.modules
+                sage: a, b, c = L.lie_algebra_generators()                              # needs sage.modules
+                sage: a.killing_form(b)                                                 # needs sage.modules
                 0
             """
             return self.parent().killing_form(self, x)
@@ -959,7 +959,7 @@ class LiftMorphism(Morphism):
 
         EXAMPLES::
 
-            sage: L = LieAlgebras(QQ).FiniteDimensional().WithBasis().example()         # needs sage.combinat sage.modules
+            sage: L = LieAlgebras(QQ).FiniteDimensional().WithBasis().example()         # needs sage.modules
             sage: f = L.lift                                                            # needs sage.combinat sage.modules
 
         We skip the category test since this is currently not an element of
@@ -975,8 +975,8 @@ class LiftMorphism(Morphism):
 
         EXAMPLES::
 
-            sage: L = LieAlgebras(QQ).FiniteDimensional().WithBasis().example()         # needs sage.combinat sage.modules
-            sage: a, b, c = L.lie_algebra_generators()                                  # needs sage.combinat sage.modules
+            sage: L = LieAlgebras(QQ).FiniteDimensional().WithBasis().example()         # needs sage.modules
+            sage: a, b, c = L.lie_algebra_generators()                                  # needs sage.modules
             sage: L.lift(3*a + b - c)                                                   # needs sage.combinat sage.modules
             3*b0 + b1 - b2
         """

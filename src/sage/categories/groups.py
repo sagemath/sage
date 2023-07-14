@@ -42,7 +42,7 @@ class Groups(CategoryWithAxiom):
         """
         EXAMPLES::
 
-            sage: Groups().example()                                                    # needs sage.groups
+            sage: Groups().example()
             General Linear Group of degree 4 over Rational Field
         """
         from sage.rings.rational_field import QQ
@@ -158,8 +158,8 @@ class Groups(CategoryWithAxiom):
 
             EXAMPLES::
 
-                sage: G = Groups().example()                                            # needs sage.groups
-                sage: G.semidirect_product(G, Morphism(G, G))                           # needs sage.groups
+                sage: G = Groups().example()
+                sage: G.semidirect_product(G, Morphism(G, G))
                 Traceback (most recent call last):
                 ...
                 NotImplementedError: semidirect product of General Linear Group of degree 4
@@ -180,8 +180,8 @@ class Groups(CategoryWithAxiom):
 
             EXAMPLES::
 
-                sage: G = Groups().example()                                            # needs sage.groups
-                sage: G.holomorph()                                                     # needs sage.groups
+                sage: G = Groups().example()
+                sage: G.holomorph()
                 Traceback (most recent call last):
                 ...
                 NotImplementedError: holomorph of General Linear Group of degree 4
@@ -271,7 +271,7 @@ class Groups(CategoryWithAxiom):
 
             ::
 
-                sage: M = SL(2, 2)                                                      # needs sage.groups
+                sage: M = SL(2, 2)
                 sage: M.cayley_table()                                                  # needs sage.groups
                 *  a b c d e f
                  +------------
@@ -389,7 +389,7 @@ class Groups(CategoryWithAxiom):
             confirms that they form a closed subset in the group.
             ::
 
-                sage: from sage.matrix.operation_table import OperationTable            # needs sage.groups
+                sage: from sage.matrix.operation_table import OperationTable
                 sage: G = DiCyclicGroup(3)                                              # needs sage.groups
                 sage: commutator = lambda x, y: x*y*x^-1*y^-1
                 sage: T = OperationTable(G, commutator)                                 # needs sage.groups
@@ -467,9 +467,9 @@ class Groups(CategoryWithAxiom):
                 Conjugacy class of (1,3,5,2,4)
                  in Dihedral group of order 10 as a permutation group
 
-                sage: H = MatrixGroup([matrix(GF(5), 2, [1,2, -1,1]),                   # needs sage.groups sage.modules sage.rings.finite_rings
+                sage: H = MatrixGroup([matrix(GF(5), 2, [1,2, -1,1]),                   # needs sage.modules
                 ....:                  matrix(GF(5), 2, [1,1, 0,1])])
-                sage: h = H(matrix(GF(5), 2, [1,2, -1,1]))                              # needs sage.groups sage.modules sage.rings.finite_rings
+                sage: h = H(matrix(GF(5), 2, [1,2, -1,1]))                              # needs sage.modules
                 sage: h.conjugacy_class()                                               # needs sage.groups sage.modules sage.rings.finite_rings
                 Conjugacy class of [1 2]
                                    [4 1]
@@ -478,14 +478,14 @@ class Groups(CategoryWithAxiom):
                 [4 1], [0 1]
                 )
 
-                sage: G = SL(2, GF(2))                                                  # needs sage.groups sage.modules sage.rings.finite_rings
+                sage: G = SL(2, GF(2))                                                  # needs sage.modules
                 sage: g = G.gens()[0]                                                   # needs sage.groups sage.modules sage.rings.finite_rings
                 sage: g.conjugacy_class()                                               # needs sage.groups sage.modules sage.rings.finite_rings
                 Conjugacy class of [1 1]
                 [0 1] in Special Linear Group of degree 2 over Finite Field of size 2
 
-                sage: G = SL(2, QQ)                                                     # needs sage.groups sage.modules
-                sage: g = G([[1,1], [0,1]])                                             # needs sage.groups sage.modules
+                sage: G = SL(2, QQ)                                                     # needs sage.modules
+                sage: g = G([[1,1], [0,1]])                                             # needs sage.modules
                 sage: g.conjugacy_class()                                               # needs sage.groups sage.modules
                 Conjugacy class of [1 1]
                 [0 1] in Special Linear Group of degree 2 over Rational Field

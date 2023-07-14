@@ -147,8 +147,8 @@ class AlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
             EXAMPLES::
 
                 sage: R.<x> = QQ[]
-                sage: A = algebras.DifferentialWeyl(R)                                  # needs sage.combinat sage.modules
-                sage: H = A.hochschild_complex(A)                                       # needs sage.combinat sage.modules
+                sage: A = algebras.DifferentialWeyl(R)                                  # needs sage.modules
+                sage: H = A.hochschild_complex(A)                                       # needs sage.modules
 
                 sage: SGA = SymmetricGroupAlgebra(QQ, 3)                                # needs sage.combinat sage.modules
                 sage: T = SGA.trivial_representation()                                  # needs sage.combinat sage.modules

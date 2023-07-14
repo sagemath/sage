@@ -943,7 +943,7 @@ class Semigroups(CategoryWithAxiom):
 
                 EXAMPLES::
 
-                    sage: A = GL(3, GF(7)).algebra(ZZ)                                  # needs sage.groups sage.libs.pari sage.modules
+                    sage: A = GL(3, GF(7)).algebra(ZZ)                                  # needs sage.modules
                     sage: A.gen(0)                                                      # needs sage.groups sage.libs.pari sage.modules
                     [3 0 0]
                     [0 1 0]

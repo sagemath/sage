@@ -53,7 +53,7 @@ class CoxeterGroups(Category_singleton):
 
     Here are some further examples::
 
-        sage: FiniteCoxeterGroups().example()                                           # needs sage.combinat sage.groups
+        sage: FiniteCoxeterGroups().example()
         The 5-th dihedral group of order 10
         sage: FiniteWeylGroups().example()
         The symmetric group on {0, ..., 3}

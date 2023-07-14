@@ -1620,9 +1620,9 @@ class MatrixFunctor(ConstructionFunctor):
             Full MatrixSpace of 2 by 3 dense matrices over Integer Ring
             sage: F(ZZ) in F.codomain()
             True
-            sage: R(GF(2))                                                              # needs sage.rings.finite_rings
+            sage: R(GF(2))
             Full MatrixSpace of 2 by 2 dense matrices over Finite Field of size 2
-            sage: R(GF(2)) in R.codomain()                                              # needs sage.rings.finite_rings
+            sage: R(GF(2)) in R.codomain()
             True
         """
         if nrows == ncols:
@@ -2201,7 +2201,7 @@ class SubspaceFunctor(ConstructionFunctor):
         [1 2 3]
         [0 3 6]
         sage: F = S.construction()[0]
-        sage: F(GF(2)^3)                                                                # needs sage.rings.finite_rings
+        sage: F(GF(2)^3)
         Vector space of degree 3 and dimension 2 over Finite Field of size 2
         User basis matrix:
         [1 0 1]
@@ -2225,7 +2225,7 @@ class SubspaceFunctor(ConstructionFunctor):
             sage: from sage.categories.pushout import SubspaceFunctor
             sage: M = ZZ^3                                                              # needs sage.modules
             sage: F = SubspaceFunctor([M([1,2,3]), M([4,5,6])])                         # needs sage.modules
-            sage: F(GF(5)^3)                                                            # needs sage.modules sage.rings.finite_rings
+            sage: F(GF(5)^3)                                                            # needs sage.modules
             Vector space of degree 3 and dimension 2 over Finite Field of size 5
             User basis matrix:
             [1 2 3]
@@ -2253,7 +2253,7 @@ class SubspaceFunctor(ConstructionFunctor):
             [1 2 3]
             [0 3 6]
             sage: F = S.construction()[0]
-            sage: F(GF(2)^3)    # indirect doctest                                      # needs sage.rings.finite_rings
+            sage: F(GF(2)^3)    # indirect doctest
             Vector space of degree 3 and dimension 2 over Finite Field of size 2
             User basis matrix:
             [1 0 1]
@@ -2319,18 +2319,18 @@ class SubspaceFunctor(ConstructionFunctor):
         The basis of ``F2`` is modulo 5 different from the other bases.
         So, we have::
 
-            sage: F1 != F2 != F3                                                        # needs sage.modules sage.rings.finite_rings
+            sage: F1 != F2 != F3                                                        # needs sage.modules
             True
 
         The bases of ``F1``, ``F3`` and ``F4`` are the same modulo 5; however,
         there is no coercion from ``QQ^3`` to ``GF(5)^3``. Therefore, we have::
 
-            sage: F1 == F3                                                              # needs sage.modules sage.rings.finite_rings
+            sage: F1 == F3                                                              # needs sage.modules
             False
 
         But there are coercions from ``ZZ^3`` to ``QQ^3`` and ``GF(5)^3``, thus::
 
-            sage: F1 == F4 == F3                                                        # needs sage.modules sage.rings.finite_rings
+            sage: F1 == F4 == F3                                                        # needs sage.modules
             True
 
         """
@@ -3720,7 +3720,7 @@ class AlgebraicClosureFunctor(ConstructionFunctor):
             sage: K.<a> = NumberField(x^3 + x^2 + 1)                                    # needs sage.rings.number_field
             sage: CDF.construction()[0].merge(K.construction()[0]) is None              # needs sage.rings.number_field
             True
-            sage: CDF.construction()[0].merge(CDF.construction()[0])                    # needs sage.rings.number_field
+            sage: CDF.construction()[0].merge(CDF.construction()[0])
             AlgebraicClosureFunctor
 
         """
@@ -3927,13 +3927,13 @@ class EquivariantSubobjectConstructionFunctor(ConstructionFunctor):
         TESTS::
 
             sage: from sage.categories.pushout import EquivariantSubobjectConstructionFunctor
-            sage: M2 = MatrixSpace(QQ, 2); M2                                           # needs sage.groups sage.modules
+            sage: M2 = MatrixSpace(QQ, 2); M2                                           # needs sage.modules
             Full MatrixSpace of 2 by 2 dense matrices over Rational Field
-            sage: F = EquivariantSubobjectConstructionFunctor(M2,                       # needs sage.groups sage.modules
+            sage: F = EquivariantSubobjectConstructionFunctor(M2,                       # needs sage.modules
             ....:         operator.mul, 'left',
             ....:         operator.mul, 'right'); F
             EquivariantSubobjectConstructionFunctor
-            sage: F(M2)                                                                 # needs sage.groups sage.modules
+            sage: F(M2)                                                                 # needs sage.modules
             Traceback (most recent call last):
             ...
             NotImplementedError: non-trivial other_action=<built-in function mul> is not implemented
