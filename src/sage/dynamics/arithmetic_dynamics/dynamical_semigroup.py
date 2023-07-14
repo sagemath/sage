@@ -246,6 +246,8 @@ class DynamicalSemigroup(Parent):
               Defn: Defined on coordinates by sending (x : y) to
                     (x^2 : y^2)
         """
+        Parent.__init__(self, category=Semigroups().Finite().FinitelyGenerated())
+
         systems = []
 
         if isinstance(ds_data, Collection):
@@ -345,12 +347,11 @@ class DynamicalSemigroup(Parent):
                 else:
                     systems[i] = DynamicalSystem_affine(new_polys)
 
+        self._is_projective = exists_projective_ds
         self._dynamical_systems = systems
         self._domain = systems[0].domain()
         self._codomain = systems[0].codomain()
         self._dimension = self._domain.dimension()
-
-        Parent.__init__(self, category=Semigroups().Finite().FinitelyGenerated())
 
     def __call__(self, input):
         r"""
@@ -502,6 +503,12 @@ class DynamicalSemigroup(Parent):
         """
         return tuple(self._dynamical_systems)
 
+    def homogenize(self, n):
+        raise NotImplementedError("override me")
+
+    def dehomogenize(self, n):
+        raise NotImplementedError("override me")
+
     def multiply(self, other_dynamical_semigroup):
         if not isinstance(other_dynamical_semigroup, DynamicalSemigroup):
             raise TypeError(str(other_dynamical_semigroup) + " is not a `DynamicalSemigroup` object")
@@ -509,19 +516,19 @@ class DynamicalSemigroup(Parent):
         my_polys = self.defining_polynomials()
         other_polys = other_dynamical_semigroup.defining_polynomials()
         for my_poly in my_polys:
-            composite_poly = []
-            for coordinate_poly in my_poly:
-                for other_poly in other_polys:
+            for other_poly in other_polys:
+                composite_poly = []
+                for coordinate_poly in my_poly:
                     composite_poly.append(coordinate_poly(other_poly))
-            composite_system = DynamicalSystem(composite_poly)
-            composite_systems.append(composite_system)
+                composite_system = DynamicalSystem(composite_poly)
+                composite_systems.append(composite_system)
         for other_poly in other_polys:
-            composite_poly = []
-            for coordinate_poly in other_poly:
-                for self_poly in my_polys:
-                    composite_poly.append(coordinate_poly(self_poly))
-            composite_system = DynamicalSystem(composite_poly)
-            composite_systems.append(composite_system)
+            for my_poly in my_polys:
+                composite_poly = []
+                for coordinate_poly in other_poly:
+                    composite_poly.append(coordinate_poly(my_poly))
+                composite_system = DynamicalSystem(composite_poly)
+                composite_systems.append(composite_system)
         return DynamicalSemigroup(composite_systems)
 
     def _repr_(self):
