@@ -606,16 +606,17 @@ class RationalFunctionFieldValuation_base(FunctionFieldValuation_base):
 
         EXAMPLES::
 
+            sage: # needs sage.rings.number_field
             sage: x = polygen(ZZ, 'x')
-            sage: K.<a> = NumberField(x^3 + 6)                                                                          # needs sage.rings.number_field
-            sage: v = K.valuation(2)                                                                                    # needs sage.rings.number_field
-            sage: R.<x> = K[]                                                                                           # needs sage.rings.number_field
-            sage: w = GaussValuation(R, v).augmentation(x, 1/123)                                                       # needs sage.rings.number_field
-            sage: K.<x> = FunctionField(K)                                                                              # needs sage.rings.number_field
-            sage: w = w.extension(K)                                                                                    # needs sage.rings.number_field
-            sage: w.element_with_valuation(122/123)                                                                     # needs sage.rings.number_field
+            sage: K.<a> = NumberField(x^3 + 6)
+            sage: v = K.valuation(2)
+            sage: R.<x> = K[]
+            sage: w = GaussValuation(R, v).augmentation(x, 1/123)
+            sage: K.<x> = FunctionField(K)
+            sage: w = w.extension(K)
+            sage: w.element_with_valuation(122/123)
             2/x
-            sage: w.element_with_valuation(1)                                                                           # needs sage.rings.number_field
+            sage: w.element_with_valuation(1)
             2
 
         """
