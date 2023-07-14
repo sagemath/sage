@@ -240,7 +240,7 @@ class IndexedSequence(SageObject):
             sage: A = [ZZ(i^2)+1 for i in J]
             sage: s = IndexedSequence(A,J)
             sage: P = s.plot_histogram()                                                # needs sage.plot
-            sage: show(P)                       # not tested, needs sage.plot
+            sage: show(P)                       # not tested                            # needs sage.plot
         """
         from sage.rings.real_mpfr import RR
         # elements must be coercible into RR
@@ -269,7 +269,7 @@ class IndexedSequence(SageObject):
             sage: A = [ZZ(i^2)+1 for i in I]
             sage: s = IndexedSequence(A,I)
             sage: P = s.plot()                                                          # needs sage.plot
-            sage: show(P)                       # not tested, needs sage.plot
+            sage: show(P)                       # not tested                            # needs sage.plot
         """
         from sage.rings.real_mpfr import RR
         # elements must be coercible into RR
