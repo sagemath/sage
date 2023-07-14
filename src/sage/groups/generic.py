@@ -143,7 +143,7 @@ def multiple(a, n, operation='*', identity=None, inverse=None, op=None):
 
         sage: multiple(2, 5)
         32
-        sage: multiple(RealField()('2.5'), 4)                                           # needs sage.libs.mpfr
+        sage: multiple(RealField()('2.5'), 4)                                           # needs sage.rings.real_mpfr
         39.0625000000000
         sage: multiple(2, -3)
         1/8
@@ -575,13 +575,14 @@ def discrete_log_rho(a, base, ord=None, operation='*', identity=None, inverse=No
     The main limitation on the hash function is that we don't want to have
     ``hash(x*y) == hash(x) + hash(y)``::
 
-        sage: I = IntegerModRing(next_prime(2^23))                                      # needs sage.libs.pari
+        sage: # needs sage.libs.pari
+        sage: I = IntegerModRing(next_prime(2^23))
         sage: def test():
         ....:     try:
         ....:          discrete_log_rho(I(123456), I(1), operation='+')
         ....:     except Exception:
         ....:          print("FAILURE")
-        sage: test()  # random failure                                                  # needs sage.libs.pari
+        sage: test()  # random failure
         FAILURE
 
     If this happens, we can provide a better hash function::
