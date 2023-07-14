@@ -66,57 +66,61 @@ EXAMPLES:
 This more complicated example involving polynomials also illustrates
 that the unit part is not discarded from factorizations::
 
+    sage: # needs sage.libs.pari
     sage: x = QQ['x'].0
     sage: f = -5*(x-2)*(x-3)
     sage: f
     -5*x^2 + 25*x - 30
-    sage: F = f.factor(); F                                                             # optional - sage.libs.pari
+    sage: F = f.factor(); F
     (-5) * (x - 3) * (x - 2)
-    sage: F.unit()                                                                      # optional - sage.libs.pari
+    sage: F.unit()
     -5
-    sage: F.value()                                                                     # optional - sage.libs.pari
+    sage: F.value()
     -5*x^2 + 25*x - 30
 
 The underlying list is the list of pairs `(p_i, e_i)`, where each
 `p_i` is a 'prime' and each `e_i` is an integer. The unit part
 is discarded by the list::
 
-    sage: list(F)                                                                       # optional - sage.libs.pari
+    sage: # needs sage.libs.pari
+    sage: list(F)
     [(x - 3, 1), (x - 2, 1)]
-    sage: len(F)                                                                        # optional - sage.libs.pari
+    sage: len(F)
     2
-    sage: F[1]                                                                          # optional - sage.libs.pari
+    sage: F[1]
     (x - 2, 1)
 
 In the ring `\ZZ[x]`, the integer `-5` is not a unit, so the
 factorization has three factors::
 
+    sage: # needs sage.libs.pari
     sage: x = ZZ['x'].0
     sage: f = -5*(x-2)*(x-3)
     sage: f
     -5*x^2 + 25*x - 30
-    sage: F = f.factor(); F                                                             # optional - sage.libs.pari
+    sage: F = f.factor(); F
     (-1) * 5 * (x - 3) * (x - 2)
-    sage: F.universe()                                                                  # optional - sage.libs.pari
+    sage: F.universe()
     Univariate Polynomial Ring in x over Integer Ring
-    sage: F.unit()                                                                      # optional - sage.libs.pari
+    sage: F.unit()
     -1
-    sage: list(F)                                                                       # optional - sage.libs.pari
+    sage: list(F)
     [(5, 1), (x - 3, 1), (x - 2, 1)]
-    sage: F.value()                                                                     # optional - sage.libs.pari
+    sage: F.value()
     -5*x^2 + 25*x - 30
-    sage: len(F)                                                                        # optional - sage.libs.pari
+    sage: len(F)
     3
 
 On the other hand, -1 is a unit in `\ZZ`, so it is included in the unit::
 
+    sage: # needs sage.libs.pari
     sage: x = ZZ['x'].0
-    sage: f = -1*(x-2)*(x-3)                                                            # optional - sage.libs.pari
-    sage: F = f.factor(); F                                                             # optional - sage.libs.pari
+    sage: f = -1 * (x-2) * (x-3)
+    sage: F = f.factor(); F
     (-1) * (x - 3) * (x - 2)
-    sage: F.unit()                                                                      # optional - sage.libs.pari
+    sage: F.unit()
     -1
-    sage: list(F)                                                                       # optional - sage.libs.pari
+    sage: list(F)
     [(x - 3, 1), (x - 2, 1)]
 
 Factorizations can involve fairly abstract mathematical objects::
@@ -133,6 +137,7 @@ Factorizations can involve fairly abstract mathematical objects::
 
 
     sage: # needs sage.rings.number_field
+    sage: x = ZZ['x'].0
     sage: K.<a> = NumberField(x^2 + 3); K
     Number Field in a with defining polynomial x^2 + 3
     sage: f = K.factor(15); f
@@ -580,15 +585,19 @@ class Factorization(SageObject):
             sage: F = factor(2006)
             sage: F.is_commutative()
             True
-            sage: K = QuadraticField(23, 'a')                                           # optional - sage.rings.number_field
-            sage: F = K.factor(13)                                                      # optional - sage.rings.number_field
-            sage: F.is_commutative()                                                    # optional - sage.rings.number_field
+
+            sage: # needs sage.rings.number_field
+            sage: K = QuadraticField(23, 'a')
+            sage: F = K.factor(13)
+            sage: F.is_commutative()
             True
-            sage: R.<x,y,z> = FreeAlgebra(QQ, 3)                                        # optional - sage.combinat sage.modules
-            sage: F = Factorization([(z, 2)], 3)                                        # optional - sage.combinat sage.modules
-            sage: F.is_commutative()                                                    # optional - sage.combinat sage.modules
+
+            sage: # needs sage.combinat sage.modules
+            sage: R.<x,y,z> = FreeAlgebra(QQ, 3)
+            sage: F = Factorization([(z, 2)], 3)
+            sage: F.is_commutative()
             False
-            sage: (F*F^-1).is_commutative()                                             # optional - sage.combinat sage.modules
+            sage: (F*F^-1).is_commutative()
             False
         """
         try:

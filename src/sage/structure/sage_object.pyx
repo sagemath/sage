@@ -95,9 +95,9 @@ cdef class SageObject:
         Real numbers are not Python classes, so rename is not supported::
 
             sage: a = 3.14
-            sage: type(a)
+            sage: type(a)                                                               # optional - sage.rings.real_mpfr
             <... 'sage.rings.real_mpfr.RealLiteral'>
-            sage: a.rename('pi')
+            sage: a.rename('pi')                                                        # optional - sage.rings.real_mpfr
             Traceback (most recent call last):
             ...
             NotImplementedError: object does not support renaming: 3.14000000000000
@@ -420,10 +420,11 @@ cdef class SageObject:
 
         EXAMPLES::
 
-            sage: x = SR.var("x")                                                       # needs sage.symbolic
-            sage: f = x^3 + 5                                                           # needs sage.symbolic
-            sage: from tempfile import NamedTemporaryFile                               # needs sage.symbolic
-            sage: with NamedTemporaryFile(suffix=".sobj") as t:                         # needs sage.symbolic
+            sage: # needs sage.symbolic
+            sage: x = SR.var("x")
+            sage: f = x^3 + 5
+            sage: from tempfile import NamedTemporaryFile
+            sage: with NamedTemporaryFile(suffix=".sobj") as t:
             ....:     f.save(t.name)
             ....:     load(t.name)
             x^3 + 5
@@ -927,7 +928,7 @@ cdef class SageObject:
 
         EXAMPLES::
 
-            sage: a = 2/3                                    # optional - rpy2
+            sage: a = 2/3
             sage: a._r_init_()                               # optional - rpy2
             '2/3'
         """

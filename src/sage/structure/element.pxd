@@ -33,7 +33,7 @@ cpdef inline parent(x):
         sage: b = 42/1
         sage: parent(b)
         Rational Field
-        sage: c = 42.0                                                                  # needs sage.rings.real_mpfr
+        sage: c = 42.0
         sage: parent(c)                                                                 # needs sage.rings.real_mpfr
         Real Field with 53 bits of precision
 
@@ -132,12 +132,12 @@ cpdef inline bint have_same_parent(left, right):
     These have different types but the same parent::
 
         sage: a = RLF(2)
-        sage: b = exp(a)                                                                # needs sage.symbolic
-        sage: type(a)                                                                   # needs sage.symbolic
+        sage: b = exp(a)
+        sage: type(a)
         <... 'sage.rings.real_lazy.LazyWrapper'>
-        sage: type(b)                                                                   # needs sage.symbolic
+        sage: type(b)
         <... 'sage.rings.real_lazy.LazyNamedUnop'>
-        sage: have_same_parent(a, b)                                                    # needs sage.symbolic
+        sage: have_same_parent(a, b)
         True
     """
     return HAVE_SAME_PARENT(classify_elements(left, right))

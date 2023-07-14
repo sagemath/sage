@@ -775,14 +775,14 @@ cdef class IntegerMulAction(IntegerAction):
 
         This used to hang before :trac:`17844`::
 
-            sage: E = EllipticCurve(GF(5), [4,0])                                       # needs sage.rings.finite_rings
-            sage: P = E.random_element()                                                # needs sage.rings.finite_rings
-            sage: (-2^63)*P                                                             # needs sage.rings.finite_rings
+            sage: E = EllipticCurve(GF(5), [4,0])                                       # needs sage.schemes
+            sage: P = E.random_element()                                                # needs sage.schemes
+            sage: (-2^63)*P                                                             # needs sage.schemes
             (0 : 1 : 0)
 
         Check that large multiplications can be interrupted::
 
-            sage: alarm(0.001); 2^(10^7) * P                                            # needs sage.rings.finite_rings
+            sage: alarm(0.001); 2^(10^7) * P                                            # needs sage.schemes
             Traceback (most recent call last):
             ...
             AlarmInterrupt
@@ -790,8 +790,8 @@ cdef class IntegerMulAction(IntegerAction):
         Verify that cysignals correctly detects that the above
         exception has been handled::
 
-            sage: from cysignals.tests import print_sig_occurred                        # needs sage.rings.finite_rings
-            sage: print_sig_occurred()                                                  # needs sage.rings.finite_rings
+            sage: from cysignals.tests import print_sig_occurred
+            sage: print_sig_occurred()                                                  # needs sage.schemes
             No current exception
         """
         cdef int err = 0
