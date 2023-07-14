@@ -1306,25 +1306,26 @@ class HillCryptosystem(SymmetricKeyCryptosystem):
 
     EXAMPLES::
 
+        sage: # needs sage.modules
         sage: S = AlphabeticStrings()
-        sage: E = HillCryptosystem(S, 3); E                                             # optional - sage.modules
+        sage: E = HillCryptosystem(S, 3); E
         Hill cryptosystem on Free alphabetic string monoid on A-Z of block length 3
         sage: R = IntegerModRing(26)
-        sage: M = MatrixSpace(R,3,3)                                                    # optional - sage.modules
-        sage: A = M([[1,0,1],[0,1,1],[2,2,3]]); A                                       # optional - sage.modules
+        sage: M = MatrixSpace(R,3,3)
+        sage: A = M([[1,0,1],[0,1,1],[2,2,3]]); A
         [1 0 1]
         [0 1 1]
         [2 2 3]
-        sage: e = E(A); e                                                               # optional - sage.modules
+        sage: e = E(A); e
         Hill cipher on Free alphabetic string monoid on A-Z of block length 3
-        sage: e(S("LAMAISONBLANCHE"))                                                   # optional - sage.modules
+        sage: e(S("LAMAISONBLANCHE"))
         JYVKSKQPELAYKPV
 
     TESTS::
 
         sage: S = AlphabeticStrings()
-        sage: E = HillCryptosystem(S, 3)                                                # optional - sage.modules
-        sage: E == loads(dumps(E))                                                      # optional - sage.modules
+        sage: E = HillCryptosystem(S, 3)                                                # needs sage.modules
+        sage: E == loads(dumps(E))                                                      # needs sage.modules
         True
     """
 
@@ -1350,7 +1351,7 @@ class HillCryptosystem(SymmetricKeyCryptosystem):
         EXAMPLES::
 
             sage: S = AlphabeticStrings()
-            sage: E = HillCryptosystem(S, 3); E                                         # optional - sage.modules
+            sage: E = HillCryptosystem(S, 3); E                                         # needs sage.modules
             Hill cryptosystem on Free alphabetic string monoid on A-Z of block length 3
         """
         if not isinstance(S, StringMonoid_class):
@@ -1369,21 +1370,22 @@ class HillCryptosystem(SymmetricKeyCryptosystem):
 
         EXAMPLES::
 
+            sage: # needs sage.modules
             sage: S = AlphabeticStrings()
-            sage: E = HillCryptosystem(S,3); E                                          # optional - sage.modules
+            sage: E = HillCryptosystem(S,3); E
             Hill cryptosystem on Free alphabetic string monoid on A-Z of block length 3
-            sage: M = E.key_space()                                                     # optional - sage.modules
-            sage: A = M([[1,0,1],[0,1,1],[2,2,3]]); A                                   # optional - sage.modules
+            sage: M = E.key_space()
+            sage: A = M([[1,0,1],[0,1,1],[2,2,3]]); A
             [1 0 1]
             [0 1 1]
             [2 2 3]
-            sage: e = E(A); e                                                           # optional - sage.modules
+            sage: e = E(A); e
             Hill cipher on Free alphabetic string monoid on A-Z of block length 3
-            sage: m = S("LAMAISONBLANCHE")                                              # optional - sage.modules
-            sage: e(m)                                                                  # optional - sage.modules
+            sage: m = S("LAMAISONBLANCHE")
+            sage: e(m)
             JYVKSKQPELAYKPV
-            sage: c = e.inverse()                                                       # optional - sage.modules
-            sage: c(e(m))                                                               # optional - sage.modules
+            sage: c = e.inverse()
+            sage: c(e(m))
             LAMAISONBLANCHE
         """
         M = self.key_space()
@@ -1402,9 +1404,9 @@ class HillCryptosystem(SymmetricKeyCryptosystem):
         EXAMPLES::
 
             sage: A = AlphabeticStrings()
-            sage: H = HillCryptosystem(A, 3); H                                         # optional - sage.modules
+            sage: H = HillCryptosystem(A, 3); H                                         # needs sage.modules
             Hill cryptosystem on Free alphabetic string monoid on A-Z of block length 3
-            sage: H._repr_()                                                            # optional - sage.modules
+            sage: H._repr_()                                                            # needs sage.modules
             'Hill cryptosystem on Free alphabetic string monoid on A-Z of block length 3'
         """
         return "Hill cryptosystem on %s of block length %s" % (
@@ -1426,8 +1428,8 @@ class HillCryptosystem(SymmetricKeyCryptosystem):
 
             sage: A = AlphabeticStrings()
             sage: n = randint(1, A.ngens() - 1)
-            sage: H = HillCryptosystem(A, n)                                            # optional - sage.modules
-            sage: H.block_length() == n                                                 # optional - sage.modules
+            sage: H = HillCryptosystem(A, n)                                            # needs sage.modules
+            sage: H.block_length() == n                                                 # needs sage.modules
             True
         """
         return self.key_space().nrows()
@@ -1448,15 +1450,16 @@ class HillCryptosystem(SymmetricKeyCryptosystem):
 
         EXAMPLES::
 
+            sage: # needs sage.modules
             sage: A = AlphabeticStrings()
             sage: n = 3
-            sage: H = HillCryptosystem(A, n)                                            # optional - sage.modules
-            sage: K = H.random_key()                                                    # optional - sage.modules
-            sage: Ki = H.inverse_key(K)                                                 # optional - sage.modules
-            sage: M = "LAMAISONBLANCHE"                                                 # optional - sage.modules
-            sage: e = H(K)                                                              # optional - sage.modules
-            sage: d = H(Ki)                                                             # optional - sage.modules
-            sage: d(e(A(M))) == A(M)                                                    # optional - sage.modules
+            sage: H = HillCryptosystem(A, n)
+            sage: K = H.random_key()
+            sage: Ki = H.inverse_key(K)
+            sage: M = "LAMAISONBLANCHE"
+            sage: e = H(K)
+            sage: d = H(Ki)
+            sage: d(e(A(M))) == A(M)
             True
         """
         M = self.key_space()
@@ -1482,14 +1485,15 @@ class HillCryptosystem(SymmetricKeyCryptosystem):
 
         EXAMPLES::
 
+            sage: # needs sage.modules
             sage: S = AlphabeticStrings()
-            sage: E = HillCryptosystem(S, 3)                                            # optional - sage.modules
-            sage: A = E.random_key()                                                    # optional - sage.modules
-            sage: B = E.inverse_key(A)                                                  # optional - sage.modules
-            sage: M = S("LAMAISONBLANCHE")                                              # optional - sage.modules
-            sage: e = E(A)                                                              # optional - sage.modules
-            sage: c = E(B)                                                              # optional - sage.modules
-            sage: c(e(M))                                                               # optional - sage.modules
+            sage: E = HillCryptosystem(S, 3)
+            sage: A = E.random_key()
+            sage: B = E.inverse_key(A)
+            sage: M = S("LAMAISONBLANCHE")
+            sage: e = E(A)
+            sage: c = E(B)
+            sage: c(e(M))
             LAMAISONBLANCHE
         """
         S = self.plaintext_space()
@@ -1525,8 +1529,8 @@ class HillCryptosystem(SymmetricKeyCryptosystem):
 
             sage: M = "The matrix cipher by Lester S. Hill."
             sage: A = AlphabeticStrings()
-            sage: H = HillCryptosystem(A, 7)                                            # optional - sage.modules
-            sage: H.encoding(M) == A.encoding(M)                                        # optional - sage.modules
+            sage: H = HillCryptosystem(A, 7)                                            # needs sage.modules
+            sage: H.encoding(M) == A.encoding(M)                                        # needs sage.modules
             True
         """
         S = self.cipher_domain()
@@ -1554,10 +1558,11 @@ class HillCryptosystem(SymmetricKeyCryptosystem):
 
         EXAMPLES::
 
-            sage: H = HillCryptosystem(AlphabeticStrings(), 3)                          # optional - sage.modules
-            sage: K = H.random_key()                                                    # optional - sage.modules
-            sage: M = H.encoding("Good day, mate! How ya going?")                       # optional - sage.modules
-            sage: H.deciphering(K, H.enciphering(K, M)) == M                            # optional - sage.modules
+            sage: # needs sage.modules
+            sage: H = HillCryptosystem(AlphabeticStrings(), 3)
+            sage: K = H.random_key()
+            sage: M = H.encoding("Good day, mate! How ya going?")
+            sage: H.deciphering(K, H.enciphering(K, M)) == M
             True
         """
         # TODO: some type checking that A is invertible hence a valid key
@@ -1581,10 +1586,11 @@ class HillCryptosystem(SymmetricKeyCryptosystem):
 
         EXAMPLES::
 
-            sage: H = HillCryptosystem(AlphabeticStrings(), 3)                          # optional - sage.modules
-            sage: K = H.random_key()                                                    # optional - sage.modules
-            sage: M = H.encoding("Good day, mate! How ya going?")                       # optional - sage.modules
-            sage: H.deciphering(K, H.enciphering(K, M)) == M                            # optional - sage.modules
+            sage: # needs sage.modules
+            sage: H = HillCryptosystem(AlphabeticStrings(), 3)
+            sage: K = H.random_key()
+            sage: M = H.encoding("Good day, mate! How ya going?")
+            sage: H.deciphering(K, H.enciphering(K, M)) == M
             True
         """
         # TODO: some type checking that A is invertible hence a valid key
@@ -3255,20 +3261,20 @@ class TranspositionCryptosystem(SymmetricKeyCryptosystem):
     EXAMPLES::
 
         sage: S = AlphabeticStrings()
-        sage: E = TranspositionCryptosystem(S,14); E                                    # optional - sage.groups
+        sage: E = TranspositionCryptosystem(S,14); E                                    # needs sage.groups
         Transposition cryptosystem on
          Free alphabetic string monoid on A-Z of block length 14
         sage: K = [14 - i for i in range(14)]; K
         [14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1]
-        sage: e = E(K)                                                                  # optional - sage.groups
-        sage: e(S("THECATINTHEHAT"))                                                    # optional - sage.groups
+        sage: e = E(K)                                                                  # needs sage.groups
+        sage: e(S("THECATINTHEHAT"))                                                    # needs sage.groups
         TAHEHTNITACEHT
 
     TESTS::
 
         sage: S = AlphabeticStrings()
-        sage: E = TranspositionCryptosystem(S,14)                                       # optional - sage.groups
-        sage: E == loads(dumps(E))                                                      # optional - sage.groups
+        sage: E = TranspositionCryptosystem(S,14)                                       # needs sage.groups
+        sage: E == loads(dumps(E))                                                      # needs sage.groups
         True
     """
 
@@ -3279,7 +3285,7 @@ class TranspositionCryptosystem(SymmetricKeyCryptosystem):
         EXAMPLES::
 
             sage: S = AlphabeticStrings()
-            sage: E = TranspositionCryptosystem(S,14); E                                # optional - sage.groups
+            sage: E = TranspositionCryptosystem(S,14); E                                # needs sage.groups
             Transposition cryptosystem on Free alphabetic string monoid on A-Z of block length 14
         """
         if not isinstance(S, StringMonoid_class):
@@ -3298,14 +3304,14 @@ class TranspositionCryptosystem(SymmetricKeyCryptosystem):
         EXAMPLES::
 
             sage: M = AlphabeticStrings()
-            sage: E = TranspositionCryptosystem(M,14); E                                # optional - sage.groups
+            sage: E = TranspositionCryptosystem(M,14); E                                # needs sage.groups
             Transposition cryptosystem on Free alphabetic string monoid on A-Z of block length 14
             sage: K = [ 14-i for i in range(14) ]
             sage: K
             [14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1]
-            sage: e = E(K)                                                              # optional - sage.groups
+            sage: e = E(K)                                                              # needs sage.groups
             sage: m = M("THECATINTHEHAT")
-            sage: e(m)                                                                  # optional - sage.groups
+            sage: e(m)                                                                  # needs sage.groups
             TAHEHTNITACEHT
         """
         G = self.key_space()
@@ -3346,15 +3352,16 @@ class TranspositionCryptosystem(SymmetricKeyCryptosystem):
 
         EXAMPLES::
 
+            sage: # needs sage.groups
             sage: S = AlphabeticStrings()
-            sage: E = TranspositionCryptosystem(S, 14)                                  # optional - sage.groups
-            sage: K = E.random_key()                                                    # optional - sage.groups
-            sage: Ki = E.inverse_key(K)                                                 # optional - sage.groups
-            sage: e = E(K)                                                              # optional - sage.groups
-            sage: d = E(Ki)                                                             # optional - sage.groups
+            sage: E = TranspositionCryptosystem(S, 14)
+            sage: K = E.random_key()
+            sage: Ki = E.inverse_key(K)
+            sage: e = E(K)
+            sage: d = E(Ki)
             sage: M = "THECATINTHEHAT"
-            sage: C = e(S(M))                                                           # optional - sage.groups
-            sage: d(S(C)) == S(M)                                                       # optional - sage.groups
+            sage: C = e(S(M))
+            sage: d(S(C)) == S(M)
             True
         """
         n = self.block_length()
@@ -3378,15 +3385,16 @@ class TranspositionCryptosystem(SymmetricKeyCryptosystem):
 
         EXAMPLES::
 
+            sage: # needs sage.groups
             sage: S = AlphabeticStrings()
-            sage: E = TranspositionCryptosystem(S, 14)                                  # optional - sage.groups
-            sage: K = E.random_key()                                                    # optional - sage.groups
-            sage: Ki = E.inverse_key(K)                                                 # optional - sage.groups
-            sage: e = E(K)                                                              # optional - sage.groups
-            sage: d = E(Ki)                                                             # optional - sage.groups
+            sage: E = TranspositionCryptosystem(S, 14)
+            sage: K = E.random_key()
+            sage: Ki = E.inverse_key(K)
+            sage: e = E(K)
+            sage: d = E(Ki)
             sage: M = "THECATINTHEHAT"
-            sage: C = e(S(M))                                                           # optional - sage.groups
-            sage: d(S(C)) == S(M)                                                       # optional - sage.groups
+            sage: C = e(S(M))
+            sage: d(S(C)) == S(M)
             True
         """
         if check:
@@ -3414,8 +3422,8 @@ class TranspositionCryptosystem(SymmetricKeyCryptosystem):
 
             sage: M = "Transposition cipher is not about matrix transpose."
             sage: A = AlphabeticStrings()
-            sage: T = TranspositionCryptosystem(A, 11)                                  # optional - sage.groups
-            sage: T.encoding(M) == A.encoding(M)                                        # optional - sage.groups
+            sage: T = TranspositionCryptosystem(A, 11)                                  # needs sage.groups
+            sage: T.encoding(M) == A.encoding(M)                                        # needs sage.groups
             True
         """
         S = self.cipher_domain()
@@ -3444,10 +3452,11 @@ class TranspositionCryptosystem(SymmetricKeyCryptosystem):
 
         EXAMPLES::
 
-            sage: T = TranspositionCryptosystem(AlphabeticStrings(), 14)                # optional - sage.groups
-            sage: K = T.random_key()                                                    # optional - sage.groups
-            sage: M = T.encoding("The cat in the hat.")                                 # optional - sage.groups
-            sage: T.deciphering(K, T.enciphering(K, M)) == M                            # optional - sage.groups
+            sage: # needs sage.groups
+            sage: T = TranspositionCryptosystem(AlphabeticStrings(), 14)
+            sage: K = T.random_key()
+            sage: M = T.encoding("The cat in the hat.")
+            sage: T.deciphering(K, T.enciphering(K, M)) == M
             True
         """
         i = self(self.inverse_key(K))
@@ -3471,10 +3480,11 @@ class TranspositionCryptosystem(SymmetricKeyCryptosystem):
 
         EXAMPLES::
 
-            sage: T = TranspositionCryptosystem(AlphabeticStrings(), 14)                # optional - sage.groups
-            sage: K = T.random_key()                                                    # optional - sage.groups
-            sage: M = T.encoding("The cat in the hat.")                                 # optional - sage.groups
-            sage: T.deciphering(K, T.enciphering(K, M)) == M                            # optional - sage.groups
+            sage: # needs sage.groups
+            sage: T = TranspositionCryptosystem(AlphabeticStrings(), 14)
+            sage: K = T.random_key()
+            sage: M = T.encoding("The cat in the hat.")
+            sage: T.deciphering(K, T.enciphering(K, M)) == M
             True
         """
         e = self(K)
