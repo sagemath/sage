@@ -79,6 +79,28 @@ class sagemath_doc_html(StaticFile):
                             type='standard')
 
 
+class sage__all(PythonModule):
+    r"""
+    A :class:`~sage.features.Feature` describing the presence of :mod:`sage.all`.
+
+    EXAMPLES::
+
+        sage: from sage.features.sagemath import sage__all
+        sage: sage__all().is_present()                                                  # optional - sage.all
+        FeatureTestResult('sage.all', True)
+    """
+
+    def __init__(self):
+        r"""
+        TESTS::
+
+            sage: from sage.features.sagemath import sage__all
+            sage: isinstance(sage__all(), sage__all)
+            True
+        """
+        PythonModule.__init__(self, 'sage.all')
+
+
 class sage__combinat(JoinFeature):
     r"""
     A :class:`~sage.features.Feature` describing the presence of :mod:`sage.combinat`.
@@ -634,6 +656,28 @@ class sage__rings__complex_double(PythonModule):
                               spkg='sagemath_modules', type='standard')
 
 
+class sage__rings__complex_interval_field(PythonModule):
+    r"""
+    A :class:`~sage.features.Feature` describing the presence of :mod:`sage.rings.complex_interval_field`.
+
+    TESTS::
+
+        sage: from sage.features.sagemath import sage__rings__complex_interval_field
+        sage: sage__rings__complex_interval_field().is_present()                                # needs sage.rings.complex_interval_field
+        FeatureTestResult('sage.rings.complex_interval_field', True)
+    """
+    def __init__(self):
+        r"""
+        TESTS::
+
+            sage: from sage.features.sagemath import sage__rings__complex_interval_field
+            sage: isinstance(sage__rings__complex_interval_field(), sage__rings__complex_interval_field)
+            True
+        """
+        PythonModule.__init__(self, 'sage.rings.complex_interval_field',
+                              spkg='sagemath_modules', type='standard')
+
+
 class sage__rings__finite_rings(JoinFeature):
     r"""
     A :class:`~sage.features.Feature` describing the presence of :mod:`sage.rings.finite_rings`;
@@ -847,6 +891,27 @@ class sage__rings__real_double(PythonModule):
         PythonModule.__init__(self, 'sage.rings.real_double', type='standard')
 
 
+class sage__rings__real_interval_field(PythonModule):
+    r"""
+    A :class:`~sage.features.Feature` describing the presence of :mod:`sage.rings.real_interval_field`.
+
+    TESTS::
+
+        sage: from sage.features.sagemath import sage__rings__real_interval_field
+        sage: sage__rings__real_interval_field().is_present()                                   # needs sage.rings.real_interval_field
+        FeatureTestResult('sage.rings.real_interval_field', True)
+    """
+    def __init__(self):
+        r"""
+        TESTS::
+
+            sage: from sage.features.sagemath import sage__rings__real_interval_field
+            sage: isinstance(sage__rings__real_interval_field(), sage__rings__real_interval_field)
+            True
+        """
+        PythonModule.__init__(self, 'sage.rings.real_interval_field', type='standard')
+
+
 class sage__rings__real_mpfr(JoinFeature):
     r"""
     A :class:`~sage.features.Feature` describing the presence of :mod:`sage.rings.real_mpfr`.
@@ -867,6 +932,7 @@ class sage__rings__real_mpfr(JoinFeature):
         """
         JoinFeature.__init__(self, 'sage.rings.real_mpfr',
                              [PythonModule('sage.rings.real_mpfr'),
+                              PythonModule('sage.rings.cc'),
                               PythonModule('sage.rings.complex_mpfr'),
                              ],
                              spkg='sagemath_modules', type='standard')
@@ -1000,6 +1066,7 @@ def all_features():
         [...Feature('sage.combinat'), ...]
     """
     return [sagemath_doc_html(),
+            sage__all(),
             sage__combinat(),
             sage__geometry__polyhedron(),
             sage__graphs(),
@@ -1015,12 +1082,14 @@ def all_features():
             sage__numerical__mip(),
             sage__plot(),
             sage__rings__complex_double(),
+            sage__rings__complex_interval_field(),
             sage__rings__finite_rings(),
             sage__rings__function_field(),
             sage__rings__number_field(),
             sage__rings__padics(),
             sage__rings__polynomial__pbori(),
             sage__rings__real_double(),
+            sage__rings__real_interval_field(),
             sage__rings__real_mpfr(),
             sage__sat(),
             sage__schemes(),
