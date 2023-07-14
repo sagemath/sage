@@ -631,24 +631,25 @@ class ContinuedFraction_base(SageObject):
             sage: cf.n(digits=8)
             0.63459101
 
+            sage: # needs sage.rings.number_field
             sage: x = polygen(ZZ, 'x')
-            sage: K.<a> = NumberField(x^3 - 2, 'a', embedding=1.25)                     # needs sage.rings.number_field
-            sage: b = 504/253*a^2 + 635/253*a + 661/253                                 # needs sage.rings.number_field
-            sage: cf = continued_fraction(b); cf                                        # needs sage.rings.number_field
+            sage: K.<a> = NumberField(x^3 - 2, 'a', embedding=1.25)
+            sage: b = 504/253*a^2 + 635/253*a + 661/253
+            sage: cf = continued_fraction(b); cf
             [8; 1, 14, 1, 10, 2, 1, 4, 12, 2, 3, 2, 1, 3, 4, 1, 1, 2, 14, 3, ...]
-            sage: cf.n(digits=3)                                                        # needs sage.rings.number_field
+            sage: cf.n(digits=3)
             8.94
-            sage: cf.n(digits=6)                                                        # needs sage.rings.number_field
+            sage: cf.n(digits=6)
             8.93715
-            sage: cf.n(digits=7)                                                        # needs sage.rings.number_field
+            sage: cf.n(digits=7)
             8.937154
-            sage: cf.n(digits=8)                                                        # needs sage.rings.number_field
+            sage: cf.n(digits=8)
             8.9371541
-            sage: cf.n(digits=9)                                                        # needs sage.rings.number_field
+            sage: cf.n(digits=9)
             8.93715414
-            sage: cf.n(digits=10)                                                       # needs sage.rings.number_field
+            sage: cf.n(digits=10)
             8.937154138
-            sage: cf.n(digits=11)                                                       # needs sage.rings.number_field
+            sage: cf.n(digits=11)
             8.9371541378
 
         TESTS:
@@ -1926,19 +1927,20 @@ class ContinuedFraction_real(ContinuedFraction_base):
         The same computation with an element of a number field instead of
         ``pi`` gives a very satisfactory answer::
 
+            sage: # needs sage.rings.number_field
             sage: x = polygen(ZZ, 'x')
-            sage: K.<a2> = NumberField(x^3 - 2, embedding=1.25)                         # needs sage.rings.number_field
-            sage: c2 = continued_fraction(a2)                                           # needs sage.rings.number_field
-            sage: p0 = c2.numerator(111); q0 = c2.denominator(111)                      # needs sage.rings.number_field
-            sage: p1 = c2.numerator(112); q1 = c2.denominator(112)                      # needs sage.rings.number_field
-            sage: num = (q0*a2 - p0); num.n()                                           # needs sage.rings.number_field
+            sage: K.<a2> = NumberField(x^3 - 2, embedding=1.25)
+            sage: c2 = continued_fraction(a2)
+            sage: p0 = c2.numerator(111); q0 = c2.denominator(111)
+            sage: p1 = c2.numerator(112); q1 = c2.denominator(112)
+            sage: num = (q0*a2 - p0); num.n()
             -4.56719261665907e46
-            sage: den = (q1*a2 - p1); den.n()                                           # needs sage.rings.number_field
+            sage: den = (q1*a2 - p1); den.n()
             -3.65375409332726e47
-            sage: a2 = -num/den                                                         # needs sage.rings.number_field
-            sage: b2 = RIF(a2); b2                                                      # needs sage.rings.number_field
+            sage: a2 = -num/den
+            sage: b2 = RIF(a2); b2
             1.002685823312715?
-            sage: b2.absolute_diameter()                                                # needs sage.rings.number_field
+            sage: b2.absolute_diameter()
             8.88178419700125e-16
 
         The consequence is that the precision needed with ``c1`` grows when we
@@ -2448,7 +2450,7 @@ def continued_fraction_list(x, type="std", partial_convergents=False,
     Fixed :trac:`18901`::
 
         sage: a = 1.575709393346379
-        sage: type(a)
+        sage: type(a)                                                                   # needs sage.rings.real_mpfr
         <class 'sage.rings.real_mpfr.RealLiteral'>
         sage: continued_fraction_list(a)
         [1, 1, 1, 2, 1, 4, 18, 1, 5, 2, 25037802, 7, 1, 3, 1, 28, 1, 8, 2]
@@ -2584,20 +2586,21 @@ def continued_fraction(x, value=None):
     ``sqrt(2)`` above), it is much more convenient to use number fields as
     follows since preperiods and periods are computed::
 
+        sage: # needs sage.rings.number_field
         sage: x = polygen(ZZ, 'x')
-        sage: K.<sqrt5> = NumberField(x^2 - 5, embedding=2.23)                          # needs sage.rings.number_field
-        sage: my_golden_ratio = (1 + sqrt5)/2                                           # needs sage.rings.number_field
-        sage: cf = continued_fraction((1+sqrt5)/2); cf                                  # needs sage.rings.number_field
+        sage: K.<sqrt5> = NumberField(x^2 - 5, embedding=2.23)
+        sage: my_golden_ratio = (1 + sqrt5)/2
+        sage: cf = continued_fraction((1+sqrt5)/2); cf
         [(1)*]
-        sage: cf.convergent(12)                                                         # needs sage.rings.number_field
+        sage: cf.convergent(12)
         377/233
-        sage: cf.period()                                                               # needs sage.rings.number_field
+        sage: cf.period()
         (1,)
-        sage: cf = continued_fraction(2/3+sqrt5/5); cf                                  # needs sage.rings.number_field
+        sage: cf = continued_fraction(2/3+sqrt5/5); cf
         [1; 8, (1, 3, 1, 1, 3, 9)*]
-        sage: cf.preperiod()                                                            # needs sage.rings.number_field
+        sage: cf.preperiod()
         (1, 8)
-        sage: cf.period()                                                               # needs sage.rings.number_field
+        sage: cf.period()
         (1, 3, 1, 1, 3, 9)
 
         sage: # needs sage.rings.number_field

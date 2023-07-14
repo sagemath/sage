@@ -71,11 +71,11 @@ class FunctionFieldOrder_basis(FunctionFieldOrder):
 
         TESTS::
 
-            sage: # needs sage.rings.finite_rings
+            sage: # needs sage.rings.finite_rings sage.rings.function_field
             sage: K.<x> = FunctionField(GF(7)); R.<y> = K[]
-            sage: L.<y> = K.extension(y^4 + x*y + 4*x + 1)                                          # needs sage.rings.function_field
-            sage: O = L.equation_order()                                                            # needs sage.rings.function_field
-            sage: TestSuite(O).run()                                                    # needs sage.rings.function_field
+            sage: L.<y> = K.extension(y^4 + x*y + 4*x + 1)
+            sage: O = L.equation_order()
+            sage: TestSuite(O).run()
         """
         if len(basis) == 0:
             raise ValueError("basis must have positive length")
@@ -361,11 +361,11 @@ class FunctionFieldOrderInfinite_basis(FunctionFieldOrderInfinite):
 
         TESTS::
 
-            sage: # needs sage.rings.finite_rings
+            sage: # needs sage.rings.finite_rings sage.rings.function_field
             sage: K.<x> = FunctionField(GF(7)); R.<y> = K[]
-            sage: L.<y> = K.extension(y^4 + x*y + 4*x + 1)                                          # needs sage.rings.function_field
-            sage: O = L.equation_order_infinite()                                                   # needs sage.rings.function_field
-            sage: TestSuite(O).run()                                                    # needs sage.rings.function_field
+            sage: L.<y> = K.extension(y^4 + x*y + 4*x + 1)
+            sage: O = L.equation_order_infinite()
+            sage: TestSuite(O).run()
         """
         if len(basis) == 0:
             raise ValueError("basis must have positive length")

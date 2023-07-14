@@ -145,6 +145,7 @@ cdef class FractionFieldElement(FieldElement):
 
         ::
 
+            sage: # needs sage.rings.number_field
             sage: Zx.<x> = ZZ[]
             sage: K.<i> = NumberField(x^2 + 1)                                          # needs sage.rings.number_field
             sage: cc = K.hom([-i])                                                      # needs sage.rings.number_field
@@ -765,8 +766,8 @@ cdef class FractionFieldElement(FieldElement):
         """
         EXAMPLES::
 
-            sage: K.<x,y> = Frac(I.parent()['x,y'])
-            sage: complex(x/(I*x) + (I*y)/y)
+            sage: K.<x,y> = Frac(I.parent()['x,y'])                                     # needs sage.symbolic
+            sage: complex(x/(I*x) + (I*y)/y)                                            # needs sage.symbolic
             0j
         """
         return complex(self.__numerator) / complex(self.__denominator)
