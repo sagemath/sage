@@ -882,11 +882,12 @@ class InterfaceElement(Element):
         by the doctests because the original identifier was reused. This test makes sure
         that does not happen again::
 
-            sage: a = r("'abc'")                                                  # optional - rpy2
-            sage: b = dumps(a)                                                    # optional - rpy2
-            sage: r.set(a.name(), 0) # make sure that identifier reuse            # optional - rpy2
+            sage: # optional - rpy2
+            sage: a = r("'abc'")
+            sage: b = dumps(a)
+            sage: r.set(a.name(), 0) # make sure that identifier reuse
             ....:                    # does not accidentally lead to success
-            sage: loads(b)                                                        # optional - rpy2
+            sage: loads(b)
             [1] "abc"
 
         """
@@ -1405,13 +1406,14 @@ class InterfaceElement(Element):
 
         EXAMPLES::
 
-            sage: x = r([1,2,3]); x                                               # optional - rpy2
+            sage: # optional - rpy2
+            sage: x = r([1,2,3]); x
             [1] 1 2 3
-            sage: x.name()                                                        # optional - rpy2
+            sage: x.name()
             'sage...'
-            sage: x = r([1,2,3]).name('x'); x                                     # optional - rpy2
+            sage: x = r([1,2,3]).name('x'); x
             [1] 1 2 3
-            sage: x.name()                                                        # optional - rpy2
+            sage: x.name()
             'x'
 
         ::

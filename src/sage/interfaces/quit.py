@@ -140,13 +140,14 @@ def invalidate_all():
 
     EXAMPLES::
 
-        sage: a = maxima(2); b = gp(3)                                                  # needs sage.libs.pari sage.symbolic
-        sage: a, b                                                                      # needs sage.libs.pari sage.symbolic
+        sage: # needs sage.libs.pari sage.symbolic
+        sage: a = maxima(2); b = gp(3)
+        sage: a, b
         (2, 3)
-        sage: sage.interfaces.quit.invalidate_all()                                     # needs sage.libs.pari sage.symbolic
-        sage: a                                                                         # needs sage.libs.pari sage.symbolic
+        sage: sage.interfaces.quit.invalidate_all()
+        sage: a
         (invalid Maxima object -- The maxima session in which this object was defined is no longer running.)
-        sage: b                                                                         # needs sage.libs.pari sage.symbolic
+        sage: b
         (invalid PARI/GP interpreter object -- The pari session in which this object was defined is no longer running.)
 
     However the maxima and gp sessions should still work out, though with their state reset::
