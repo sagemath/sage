@@ -58,20 +58,20 @@ TESTS::
     sage: v = vector(Integers(389), [1,2,3,4,5])
     sage: loads(dumps(v)) == v
     True
-    sage: v = vector(Integers(next_prime(10^20)), [1,2,3,4,5])                          # optional - sage.libs.pari
-    sage: loads(dumps(v)) == v                                                          # optional - sage.libs.pari
+    sage: v = vector(Integers(next_prime(10^20)), [1,2,3,4,5])                          # needs sage.libs.pari
+    sage: loads(dumps(v)) == v
     True
 
-    sage: K = GF(previous_prime(2^31))                                                  # optional - sage.rings.finite_rings
-    sage: v = vector(K, [42]);  type(v[0])                                              # optional - sage.rings.finite_rings
+    sage: K = GF(previous_prime(2^31))                                                  # needs sage.rings.finite_rings
+    sage: v = vector(K, [42]);  type(v[0])                                              # needs sage.rings.finite_rings
     <class 'sage.rings.finite_rings.integer_mod.IntegerMod_int64'>
-    sage: ~v[0]                                                                         # optional - sage.rings.finite_rings
+    sage: ~v[0]                                                                         # needs sage.rings.finite_rings
     2096353084
 
-    sage: K = GF(next_prime(2^31))                                                      # optional - sage.rings.finite_rings
-    sage: v = vector(K, [42]);  type(v[0])                                              # optional - sage.rings.finite_rings
+    sage: K = GF(next_prime(2^31))                                                      # needs sage.rings.finite_rings
+    sage: v = vector(K, [42]);  type(v[0])                                              # needs sage.rings.finite_rings
     <class 'sage.rings.finite_rings.integer_mod.IntegerMod_gmp'>
-    sage: ~v[0]                                                                         # optional - sage.rings.finite_rings
+    sage: ~v[0]                                                                         # needs sage.rings.finite_rings
     1482786336
 
     sage: w = vector(GF(11), [-1,0,0,0])
@@ -82,17 +82,17 @@ TESTS::
 Test that :trac:`28042` is fixed::
 
     sage: p = 193379
-    sage: K = GF(p)                                                                     # optional - sage.rings.finite_rings
-    sage: a = K(1)                                                                      # optional - sage.rings.finite_rings
-    sage: b = K(191495)                                                                 # optional - sage.rings.finite_rings
-    sage: c = K(109320)                                                                 # optional - sage.rings.finite_rings
-    sage: d = K(167667)                                                                 # optional - sage.rings.finite_rings
+    sage: K = GF(p)                                                                     # needs sage.rings.finite_rings
+    sage: a = K(1)                                                                      # needs sage.rings.finite_rings
+    sage: b = K(191495)                                                                 # needs sage.rings.finite_rings
+    sage: c = K(109320)                                                                 # needs sage.rings.finite_rings
+    sage: d = K(167667)                                                                 # needs sage.rings.finite_rings
     sage: e = 103937
-    sage: a*c + b*d - e                                                                 # optional - sage.rings.finite_rings
+    sage: a*c + b*d - e                                                                 # needs sage.rings.finite_rings
     102041
-    sage: vector([a,b]) * vector([c,d]) - e                                             # optional - sage.rings.finite_rings
+    sage: vector([a,b]) * vector([c,d]) - e                                             # needs sage.rings.finite_rings
     102041
-    sage: type(vector([a,b]) * vector([c,d]))                                           # optional - sage.rings.finite_rings
+    sage: type(vector([a,b]) * vector([c,d]))                                           # needs sage.rings.finite_rings
     <class 'sage.rings.finite_rings.integer_mod.IntegerMod_int64'>
 
 AUTHOR:

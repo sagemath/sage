@@ -216,7 +216,7 @@ class FreeModuleMorphism(matrix_morphism.MatrixMorphism):
                       Basis matrix:
                       [1 0]
                       [0 1]
-            sage: f = h.change_ring(GF(7)); f                                                       # optional - sage.libs.pari
+            sage: f = h.change_ring(GF(7)); f
             Vector space morphism represented by the matrix:
             [4 4]
             [4 4]
@@ -418,17 +418,18 @@ class FreeModuleMorphism(matrix_morphism.MatrixMorphism):
 
         This works for vector spaces, too::
 
-            sage: V = VectorSpace(GF(3), 2)                                                         # optional - sage.libs.pari
-            sage: W = VectorSpace(GF(3), 3)                                                         # optional - sage.libs.pari
-            sage: f = V.hom([W.1, W.1 - W.0])                                                       # optional - sage.libs.pari
-            sage: f.lift(W.1)                                                                       # optional - sage.libs.pari
+            sage: # needs sage.libs.pari
+            sage: V = VectorSpace(GF(3), 2)
+            sage: W = VectorSpace(GF(3), 3)
+            sage: f = V.hom([W.1, W.1 - W.0])
+            sage: f.lift(W.1)
             (1, 0)
-            sage: f.lift(W.2)                                                                       # optional - sage.libs.pari
+            sage: f.lift(W.2)
             Traceback (most recent call last):
             ...
             ValueError: element is not in the image
-            sage: w = W((17, -2, 0))                                                                # optional - sage.libs.pari
-            sage: f(f.lift(w)) == w                                                                 # optional - sage.libs.pari
+            sage: w = W((17, -2, 0))
+            sage: f(f.lift(w)) == w
             True
 
         This example illustrates the use of the ``preimage_representative``
@@ -492,16 +493,16 @@ class FreeModuleMorphism(matrix_morphism.MatrixMorphism):
 
             sage: V = QQ^3
             sage: H = V.endomorphism_ring()([[1,-1,0], [-1,1,1], [0,3,1]])
-            sage: H.eigenvalues()                                                                   # optional - sage.rings.number_field
+            sage: H.eigenvalues()                                                                   # needs sage.rings.number_field
             [3, 1, -1]
 
         Note the effect of the ``extend`` option::
 
             sage: V = QQ^2
             sage: H = V.endomorphism_ring()([[0,-1], [1,0]])
-            sage: H.eigenvalues()                                                                   # optional - sage.rings.number_field
+            sage: H.eigenvalues()                                                                   # needs sage.rings.number_field
             [-1*I, 1*I]
-            sage: H.eigenvalues(extend=False)                                                       # optional - sage.libs.pari
+            sage: H.eigenvalues(extend=False)                                                       # needs sage.libs.pari
             []
         """
         if self.base_ring().is_field():
@@ -531,17 +532,17 @@ class FreeModuleMorphism(matrix_morphism.MatrixMorphism):
 
             sage: V = (QQ^4).subspace([[0,2,1,4], [1,2,5,0], [1,1,1,1]])
             sage: H = (V.Hom(V))(matrix(QQ, [[0,1,0], [-1,0,0], [0,0,3]]))
-            sage: H.eigenvectors()                                                      # optional - sage.rings.number_field
+            sage: H.eigenvectors()                                                      # needs sage.rings.number_field
             [(3,    [ (0, 0, 1, -6/7) ], 1),
              (-1*I, [ (1,  1*I, 0, -0.571428571428572? + 2.428571428571429?*I) ], 1),
              (1*I,  [ (1, -1*I, 0, -0.571428571428572? - 2.428571428571429?*I) ], 1)]
-            sage: H.eigenvectors(extend=False)                                          # optional - sage.rings.number_field
+            sage: H.eigenvectors(extend=False)                                          # needs sage.rings.number_field
             [(3, [ (0, 0, 1, -6/7) ], 1)]
             sage: H1 = (V.Hom(V))(matrix(QQ, [[2,1,0],[0,2,0],[0,0,3]]))
-            sage: H1.eigenvectors()                                                     # optional - sage.rings.number_field
+            sage: H1.eigenvectors()                                                     # needs sage.rings.number_field
             [(3, [ (0, 0, 1, -6/7) ], 1),
              (2, [ (0, 1, 0, 17/7) ], 2)]
-            sage: H1.eigenvectors(extend=False)                                         # optional - sage.rings.number_field
+            sage: H1.eigenvectors(extend=False)                                         # needs sage.rings.number_field
             [(3, [ (0, 0, 1, -6/7) ], 1),
              (2, [ (0, 1, 0, 17/7) ], 2)]
 
@@ -549,9 +550,9 @@ class FreeModuleMorphism(matrix_morphism.MatrixMorphism):
 
             sage: V = QQ^2
             sage: m = matrix(2, [1, 1, 0, 1])
-            sage: V.hom(m, side="right").eigenvectors()                                 # optional - sage.rings.number_field
+            sage: V.hom(m, side="right").eigenvectors()                                 # needs sage.rings.number_field
             [(1, [ (1, 0) ], 2)]
-            sage: V.hom(m).eigenvectors()                                               # optional - sage.rings.number_field
+            sage: V.hom(m).eigenvectors()                                               # needs sage.rings.number_field
             [(1, [ (0, 1) ], 2)]
         """
         if self.base_ring().is_field():
@@ -588,7 +589,7 @@ class FreeModuleMorphism(matrix_morphism.MatrixMorphism):
 
             sage: V = QQ^3
             sage: h = V.hom([[1,0,0], [0,0,1], [0,-1,0]], V)
-            sage: h.eigenspaces()                                                       # optional - sage.rings.number_field
+            sage: h.eigenspaces()                                                       # needs sage.rings.number_field
             [(1,    Vector space of degree 3 and dimension 1 over Rational Field
                      Basis matrix:
                      [1 0 0]),
@@ -599,14 +600,14 @@ class FreeModuleMorphism(matrix_morphism.MatrixMorphism):
                      Basis matrix:
                      [   0    1 -1*I])]
 
-            sage: h.eigenspaces(extend=False)                                           # optional - sage.rings.number_field
+            sage: h.eigenspaces(extend=False)                                           # needs sage.rings.number_field
             [(1,
               Vector space of degree 3 and dimension 1 over Rational Field
               Basis matrix:
               [1 0 0])]
 
             sage: h = V.hom([[2,1,0], [0,2,0], [0,0,-1]], V)
-            sage: h.eigenspaces()                                                       # optional - sage.rings.number_field
+            sage: h.eigenspaces()                                                       # needs sage.rings.number_field
             [(-1, Vector space of degree 3 and dimension 1 over Rational Field
                    Basis matrix:
                    [0 0 1]),
@@ -615,7 +616,7 @@ class FreeModuleMorphism(matrix_morphism.MatrixMorphism):
                    [0 1 0])]
 
             sage: h = V.hom([[2,1,0], [0,2,0], [0,0,2]], V)
-            sage: h.eigenspaces()                                                       # optional - sage.rings.number_field
+            sage: h.eigenspaces()                                                       # needs sage.rings.number_field
             [(2, Vector space of degree 3 and dimension 2 over Rational Field
                   Basis matrix:
                   [0 1 0]
@@ -624,11 +625,11 @@ class FreeModuleMorphism(matrix_morphism.MatrixMorphism):
         ::
 
             sage: V = QQ^2; m = matrix(2, [1, 1, 0, 1])
-            sage: V.hom(m, side="right").eigenspaces()                                  # optional - sage.rings.number_field
+            sage: V.hom(m, side="right").eigenspaces()                                  # needs sage.rings.number_field
             [(1, Vector space of degree 2 and dimension 1 over Rational Field
                   Basis matrix:
                   [1 0])]
-            sage: V.hom(m).eigenspaces()                                                # optional - sage.rings.number_field
+            sage: V.hom(m).eigenspaces()                                                # needs sage.rings.number_field
             [(1, Vector space of degree 2 and dimension 1 over Rational Field
                   Basis matrix:
                   [0 1])]
@@ -655,9 +656,9 @@ class FreeModuleMorphism(matrix_morphism.MatrixMorphism):
 
         Compute the minimal polynomial, and check it. ::
 
-            sage: V = GF(7)^3                                                           # optional - sage.libs.pari
-            sage: H = V.Hom(V)([[0,1,2], [-1,0,3], [2,4,1]])                            # optional - sage.libs.pari
-            sage: H                                                                     # optional - sage.libs.pari
+            sage: V = GF(7)^3
+            sage: H = V.Hom(V)([[0,1,2], [-1,0,3], [2,4,1]])
+            sage: H
             Vector space morphism represented by the matrix:
             [0 1 2]
             [6 0 3]
@@ -665,13 +666,13 @@ class FreeModuleMorphism(matrix_morphism.MatrixMorphism):
             Domain: Vector space of dimension 3 over Finite Field of size 7
             Codomain: Vector space of dimension 3 over Finite Field of size 7
 
-            sage: H.minpoly()                                                           # optional - sage.libs.pari
+            sage: H.minpoly()                                                           # needs sage.libs.pari
             x^3 + 6*x^2 + 6*x + 1
 
-            sage: H.minimal_polynomial()                                                # optional - sage.libs.pari
+            sage: H.minimal_polynomial()                                                # needs sage.libs.pari
             x^3 + 6*x^2 + 6*x + 1
 
-            sage: H^3 + (H^2)*6 + H*6 + 1                                               # optional - sage.libs.pari
+            sage: H^3 + (H^2)*6 + H*6 + 1
             Vector space morphism represented by the matrix:
             [0 0 0]
             [0 0 0]

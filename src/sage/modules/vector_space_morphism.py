@@ -41,12 +41,12 @@ domain and codomain.  ::
     sage: F = Integers(13)
     sage: D = F^3
     sage: C = F^2
-    sage: x, y, z = var('x y z')                                                        # optional - sage.symbolic
-    sage: f(x, y, z) = [2*x + 3*y + 5*z, x + z]                                         # optional - sage.symbolic
-    sage: rho = linear_transformation(D, C, f)                                          # optional - sage.symbolic
-    sage: f(1, 2, 3)                                                                    # optional - sage.symbolic
+    sage: x, y, z = var('x y z')                                                        # needs sage.symbolic
+    sage: f(x, y, z) = [2*x + 3*y + 5*z, x + z]                                         # needs sage.symbolic
+    sage: rho = linear_transformation(D, C, f)                                          # needs sage.symbolic
+    sage: f(1, 2, 3)                                                                    # needs sage.symbolic
     (23, 4)
-    sage: rho([1, 2, 3])                                                                # optional - sage.symbolic
+    sage: rho([1, 2, 3])                                                                # needs sage.symbolic
     (10, 4)
 
 A "vector space homspace" is the set of all linear transformations
@@ -70,13 +70,14 @@ homspace to create a linear transformation.  See
 
 A homomorphism may also be created via a method on the domain.  ::
 
-    sage: F = QQ[sqrt(3)]                                                               # optional - sage.rings.number_field sage.symbolic
-    sage: a = F.gen(0)                                                                  # optional - sage.rings.number_field sage.symbolic
-    sage: D = F^2                                                                       # optional - sage.rings.number_field sage.symbolic
-    sage: C = F^2                                                                       # optional - sage.rings.number_field sage.symbolic
-    sage: A = matrix(F, [[a, 1], [2*a, 2]])                                             # optional - sage.rings.number_field sage.symbolic
-    sage: psi = D.hom(A, C)                                                             # optional - sage.rings.number_field sage.symbolic
-    sage: psi                                                                           # optional - sage.rings.number_field sage.symbolic
+    sage: # needs sage.rings.number_field sage.symbolic
+    sage: F = QQ[sqrt(3)]
+    sage: a = F.gen(0)
+    sage: D = F^2
+    sage: C = F^2
+    sage: A = matrix(F, [[a, 1], [2*a, 2]])
+    sage: psi = D.hom(A, C)
+    sage: psi
     Vector space morphism represented by the matrix:
     [  sqrt3       1]
     [2*sqrt3       2]
@@ -84,7 +85,7 @@ A homomorphism may also be created via a method on the domain.  ::
              with defining polynomial x^2 - 3 with sqrt3 = 1.732050807568878?
     Codomain: Vector space of dimension 2 over Number Field in sqrt3
                with defining polynomial x^2 - 3 with sqrt3 = 1.732050807568878?
-    sage: psi([1, 4])                                                                   # optional - sage.rings.number_field sage.symbolic
+    sage: psi([1, 4])
     (9*sqrt3, 9)
 
 Properties
@@ -151,10 +152,10 @@ spaces, but with alternate bases.  The point here is that the
 matrix representation used to represent linear transformations are
 relative to the bases of both the domain and codomain. ::
 
-    sage: A = graphs.PetersenGraph().adjacency_matrix()                                 # optional - sage.graphs
+    sage: A = graphs.PetersenGraph().adjacency_matrix()                                 # needs sage.graphs
     sage: V = QQ^10
-    sage: phi = linear_transformation(V, V, A)                                          # optional - sage.graphs
-    sage: phi                                                                           # optional - sage.graphs
+    sage: phi = linear_transformation(V, V, A)                                          # needs sage.graphs
+    sage: phi                                                                           # needs sage.graphs
     Vector space morphism represented by the matrix:
     [0 1 0 0 1 1 0 0 0 0]
     [1 0 1 0 0 0 1 0 0 0]
@@ -169,13 +170,14 @@ relative to the bases of both the domain and codomain. ::
     Domain: Vector space of dimension 10 over Rational Field
     Codomain: Vector space of dimension 10 over Rational Field
 
-    sage: B1 = [V.gen(i) + V.gen(i+1) for i in range(9)] + [V.gen(9)]                   # optional - sage.graphs
-    sage: B2 = [V.gen(0)] + [-V.gen(i-1) + V.gen(i) for i in range(1,10)]               # optional - sage.graphs
-    sage: D = V.subspace_with_basis(B1)                                                 # optional - sage.graphs
-    sage: C = V.subspace_with_basis(B2)                                                 # optional - sage.graphs
-    sage: rho = phi.restrict_codomain(C)                                                # optional - sage.graphs
-    sage: zeta = rho.restrict_domain(D)                                                 # optional - sage.graphs
-    sage: zeta                                                                          # optional - sage.graphs
+    sage: # needs sage.graphs
+    sage: B1 = [V.gen(i) + V.gen(i+1) for i in range(9)] + [V.gen(9)]
+    sage: B2 = [V.gen(0)] + [-V.gen(i-1) + V.gen(i) for i in range(1,10)]
+    sage: D = V.subspace_with_basis(B1)
+    sage: C = V.subspace_with_basis(B2)
+    sage: rho = phi.restrict_codomain(C)
+    sage: zeta = rho.restrict_domain(D)
+    sage: zeta
     Vector space morphism represented by the matrix:
     [6 5 4 3 3 2 1 0 0 0]
     [6 5 4 3 2 2 2 1 0 0]
@@ -217,16 +219,17 @@ and here each needs to have the same basis.  We are using a
 matrix that has well-behaved eigenvalues, as part of showing that these
 do not change as the representation changes.  ::
 
-    sage: A = graphs.PetersenGraph().adjacency_matrix()                                 # optional - sage.graphs
+    sage: A = graphs.PetersenGraph().adjacency_matrix()                                 # needs sage.graphs
     sage: V = QQ^10
-    sage: phi = linear_transformation(V, V, A)                                          # optional - sage.graphs
-    sage: phi.eigenvalues()                                                             # optional - sage.graphs
+    sage: phi = linear_transformation(V, V, A)                                          # needs sage.graphs
+    sage: phi.eigenvalues()                                                             # needs sage.graphs
     [3, -2, -2, -2, -2, 1, 1, 1, 1, 1]
 
-    sage: B1 = [V.gen(i) + V.gen(i+1) for i in range(9)] + [V.gen(9)]                   # optional - sage.graphs
-    sage: C = V.subspace_with_basis(B1)                                                 # optional - sage.graphs
-    sage: zeta = phi.restrict(C)                                                        # optional - sage.graphs
-    sage: zeta                                                                          # optional - sage.graphs
+    sage: # needs sage.graphs
+    sage: B1 = [V.gen(i) + V.gen(i+1) for i in range(9)] + [V.gen(9)]
+    sage: C = V.subspace_with_basis(B1)
+    sage: zeta = phi.restrict(C)
+    sage: zeta
     Vector space morphism represented by the matrix:
     [ 1  0  1 -1  2 -1  2 -2  2 -2]
     [ 1  0  1  0  0  0  1  0  0  0]
@@ -263,7 +266,7 @@ do not change as the representation changes.  ::
     [0 0 0 0 0 0 0 0 1 1]
     [0 0 0 0 0 0 0 0 0 1]
 
-    sage: zeta.eigenvalues()                                                            # optional - sage.graphs
+    sage: zeta.eigenvalues()                                                            # needs sage.graphs
     [3, -2, -2, -2, -2, 1, 1, 1, 1, 1]
 
 Equality
@@ -497,10 +500,11 @@ def linear_transformation(arg0, arg1=None, arg2=None, side='left'):
         Domain: Vector space of dimension 3 over Rational Field
         Codomain: Vector space of dimension 2 over Rational Field
 
-        sage: x, y, z = var('x y z')                                                    # optional - sage.symbolic
-        sage: h(x, y, z) = [2*x + z, 5*y]                                               # optional - sage.symbolic
-        sage: zeta = linear_transformation(QQ^3, QQ^2, h)                               # optional - sage.symbolic
-        sage: zeta                                                                      # optional - sage.symbolic
+        sage: # needs sage.symbolic
+        sage: x, y, z = var('x y z')
+        sage: h(x, y, z) = [2*x + z, 5*y]
+        sage: zeta = linear_transformation(QQ^3, QQ^2, h)
+        sage: zeta
         Vector space morphism represented by the matrix:
         [2 0]
         [0 5]
@@ -510,7 +514,7 @@ def linear_transformation(arg0, arg1=None, arg2=None, side='left'):
 
         sage: phi == rho
         True
-        sage: rho == zeta                                                               # optional - sage.symbolic
+        sage: rho == zeta                                                               # needs sage.symbolic
         True
 
 
@@ -538,32 +542,34 @@ def linear_transformation(arg0, arg1=None, arg2=None, side='left'):
         [2 5]
         [3 7]
 
-        sage: s, t = var('s t')                                                         # optional - sage.symbolic
-        sage: h(s, t) = [(-4/5)*s + (1/5)*t, (97/5)*s + (-13/5)*t]                      # optional - sage.symbolic
-        sage: zeta = linear_transformation(D, C, h)                                     # optional - sage.symbolic
-        sage: zeta.matrix()                                                             # optional - sage.symbolic
+        sage: # needs sage.symbolic
+        sage: s, t = var('s t')
+        sage: h(s, t) = [(-4/5)*s + (1/5)*t, (97/5)*s + (-13/5)*t]
+        sage: zeta = linear_transformation(D, C, h)
+        sage: zeta.matrix()
         [2 5]
         [3 7]
 
     Finally, we can give an explicit list of images for the basis
     elements of the domain.  ::
 
+        sage: # needs sage.rings.number_field
         sage: x = polygen(QQ)
-        sage: F.<a> = NumberField(x^3 + x + 1)                                          # optional - sage.rings.number_field
-        sage: u = vector(F, [1, a, a^2])                                                # optional - sage.rings.number_field
-        sage: v = vector(F, [a, a^2, 2])                                                # optional - sage.rings.number_field
-        sage: w = u + v                                                                 # optional - sage.rings.number_field
-        sage: D = F^3                                                                   # optional - sage.rings.number_field
-        sage: C = F^3                                                                   # optional - sage.rings.number_field
-        sage: rho = linear_transformation(D, C, [u, v, w])                              # optional - sage.rings.number_field
-        sage: rho.matrix()                                                              # optional - sage.rings.number_field
+        sage: F.<a> = NumberField(x^3 + x + 1)
+        sage: u = vector(F, [1, a, a^2])
+        sage: v = vector(F, [a, a^2, 2])
+        sage: w = u + v
+        sage: D = F^3
+        sage: C = F^3
+        sage: rho = linear_transformation(D, C, [u, v, w])
+        sage: rho.matrix()
         [      1       a     a^2]
         [      a     a^2       2]
         [  a + 1 a^2 + a a^2 + 2]
-        sage: C = (F^3).subspace_with_basis([u, v])                                     # optional - sage.rings.number_field
-        sage: D = (F^3).subspace_with_basis([u, v])                                     # optional - sage.rings.number_field
-        sage: psi = linear_transformation(C, D, [u+v, u-v])                             # optional - sage.rings.number_field
-        sage: psi.matrix()                                                              # optional - sage.rings.number_field
+        sage: C = (F^3).subspace_with_basis([u, v])
+        sage: D = (F^3).subspace_with_basis([u, v])
+        sage: psi = linear_transformation(C, D, [u+v, u-v])
+        sage: psi.matrix()
         [ 1  1]
         [ 1 -1]
 
@@ -657,30 +663,30 @@ def linear_transformation(arg0, arg1=None, arg2=None, side='left'):
     A Sage symbolic function can come in a variety of forms that are
     not representative of a linear transformation. ::
 
-        sage: x, y = var('x, y')                                                        # optional - sage.symbolic
-        sage: f(x, y) = [y, x, y]                                                       # optional - sage.symbolic
-        sage: linear_transformation(QQ^3, QQ^3, f)                                      # optional - sage.symbolic
+        sage: x, y = var('x, y')                                                        # needs sage.symbolic
+        sage: f(x, y) = [y, x, y]                                                       # needs sage.symbolic
+        sage: linear_transformation(QQ^3, QQ^3, f)                                      # needs sage.symbolic
         Traceback (most recent call last):
         ...
         ValueError: symbolic function has the wrong number of inputs for domain
 
-        sage: linear_transformation(QQ^2, QQ^2, f)                                      # optional - sage.symbolic
+        sage: linear_transformation(QQ^2, QQ^2, f)                                      # needs sage.symbolic
         Traceback (most recent call last):
         ...
         ValueError: symbolic function has the wrong number of outputs for codomain
 
-        sage: x, y = var('x y')                                                         # optional - sage.symbolic
-        sage: f(x, y) = [y, x*y]                                                        # optional - sage.symbolic
-        sage: linear_transformation(QQ^2, QQ^2, f)                                      # optional - sage.symbolic
+        sage: x, y = var('x y')                                                         # needs sage.symbolic
+        sage: f(x, y) = [y, x*y]                                                        # needs sage.symbolic
+        sage: linear_transformation(QQ^2, QQ^2, f)                                      # needs sage.symbolic
         Traceback (most recent call last):
         ...
         ValueError: symbolic function must be linear in all the inputs:
         unable to convert y to a rational
 
-        sage: x, y = var('x y')                                                         # optional - sage.symbolic
-        sage: f(x, y) = [x, 2*y]                                                        # optional - sage.symbolic
+        sage: x, y = var('x y')                                                         # needs sage.symbolic
+        sage: f(x, y) = [x, 2*y]                                                        # needs sage.symbolic
         sage: C = (QQ^2).span([vector(QQ, [1, 1])])
-        sage: linear_transformation(QQ^2, C, f)                                         # optional - sage.symbolic
+        sage: linear_transformation(QQ^2, C, f)
         Traceback (most recent call last):
         ...
         ArithmeticError: some image of the function is not in the codomain, because
@@ -904,15 +910,16 @@ class VectorSpaceMorphism(free_module_morphism.FreeModuleMorphism):
         A non-invertible linear transformation, an endomorphism of
         a vector space over a finite field.  ::
 
-            sage: F.<a> = GF(11^2)                                                      # optional - sage.rings.finite_rings
-            sage: A = matrix(F, [[6*a + 3,   8*a +  2, 10*a + 3],                       # optional - sage.rings.finite_rings
+            sage: # needs sage.rings.finite_rings
+            sage: F.<a> = GF(11^2)
+            sage: A = matrix(F, [[6*a + 3,   8*a +  2, 10*a + 3],
             ....:                [2*a + 7,   4*a +  3,  2*a + 3],
             ....:                [9*a + 2,  10*a + 10,  3*a + 3]])
-            sage: A.nullity()                                                           # optional - sage.rings.finite_rings
+            sage: A.nullity()
             1
-            sage: E = End(F^3)                                                          # optional - sage.rings.finite_rings
-            sage: zeta = E(A)                                                           # optional - sage.rings.finite_rings
-            sage: zeta.is_invertible()                                                  # optional - sage.rings.finite_rings
+            sage: E = End(F^3)
+            sage: zeta = E(A)
+            sage: zeta.is_invertible()
             False
         """
         # endomorphism or not, this is equivalent to invertibility of

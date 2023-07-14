@@ -83,17 +83,17 @@ degree::
 Any field can be used as the vector space base. For example a finite
 field::
 
-    sage: F.<a> = GF(5^3)                                                               # optional - sage.rings.finite_rings
-    sage: r1 = (a, 0, F(5));  r1                                                        # optional - sage.rings.finite_rings
+    sage: F.<a> = GF(5^3)                                                               # needs sage.rings.finite_rings
+    sage: r1 = (a, 0, F(5));  r1                                                        # needs sage.rings.finite_rings
     (a, 0, 0)
-    sage: FilteredVectorSpace([r1, r2, r3], {0:[0,1], oo:[1]}, base_ring=F)             # optional - sage.rings.finite_rings
+    sage: FilteredVectorSpace([r1, r2, r3], {0:[0,1], oo:[1]}, base_ring=F)             # needs sage.rings.finite_rings
     GF(125)^2 >= GF(125)^1 in GF(125)^3
 
 Or the algebraic field::
 
-    sage: r1 = (1, 0, 1+QQbar(I));  r1                                                  # optional - sage.rings.number_field
+    sage: r1 = (1, 0, 1+QQbar(I));  r1                                                  # needs sage.rings.number_field
     (1, 0, I + 1)
-    sage: FilteredVectorSpace([r1, r2, r3], {0:[0,1], oo:[1]}, base_ring=QQbar)         # optional - sage.rings.number_field
+    sage: FilteredVectorSpace([r1, r2, r3], {0:[0,1], oo:[1]}, base_ring=QQbar)         # needs sage.rings.number_field
     Vector space of dimension 2 over Algebraic Field
     >= Vector space of dimension 1 over Algebraic Field
     in Vector space of dimension 3 over Algebraic Field
@@ -788,11 +788,11 @@ class FilteredVectorSpace_class(FreeModule_ambient_field):
             sage: FilteredVectorSpace(2, base_ring=QQ)._repr_field_name()
             'QQ'
 
-            sage: F.<a> = GF(9)                                                         # optional - sage.rings.finite_rings
-            sage: FilteredVectorSpace(2, base_ring=F)._repr_field_name()                # optional - sage.rings.finite_rings
+            sage: F.<a> = GF(9)                                                         # needs sage.rings.finite_rings
+            sage: FilteredVectorSpace(2, base_ring=F)._repr_field_name()                # needs sage.rings.finite_rings
             'GF(9)'
 
-            sage: FilteredVectorSpace(2, base_ring=AA)._repr_field_name()               # optional - sage.rings.number_field
+            sage: FilteredVectorSpace(2, base_ring=AA)._repr_field_name()               # needs sage.rings.number_field
             Traceback (most recent call last):
             ...
             NotImplementedError
@@ -829,8 +829,8 @@ class FilteredVectorSpace_class(FreeModule_ambient_field):
             sage: F3 = FilteredVectorSpace(3, base_ring=GF(3))
             sage: F3._repr_vector_space(1234)
             'GF(3)^1234'
-            sage: F3 = FilteredVectorSpace(3, base_ring=AA)                             # optional - sage.rings.number_field
-            sage: F3._repr_vector_space(1234)                                           # optional - sage.rings.number_field
+            sage: F3 = FilteredVectorSpace(3, base_ring=AA)                             # needs sage.rings.number_field
+            sage: F3._repr_vector_space(1234)                                           # needs sage.rings.number_field
             'Vector space of dimension 1234 over Algebraic Real Field'
         """
         if dim == 0:
@@ -886,7 +886,7 @@ class FilteredVectorSpace_class(FreeModule_ambient_field):
             QQ^1 >= 0 in QQ^2
             sage: FilteredVectorSpace({1:[(1,0), (-1,1)], 3:[(1,0)]}, base_ring=GF(3))
             GF(3)^2 >= GF(3)^1 >= GF(3)^1 >= 0
-            sage: FilteredVectorSpace({1:[(1,0), (-1,1)], 3:[(1,0)]}, base_ring=AA)     # optional - sage.rings.number_field
+            sage: FilteredVectorSpace({1:[(1,0), (-1,1)], 3:[(1,0)]}, base_ring=AA)     # needs sage.rings.number_field
             Vector space of dimension 2 over Algebraic Real Field
             >= Vector space of dimension 1 over Algebraic Real Field
             >= Vector space of dimension 1 over Algebraic Real Field >= 0
@@ -922,12 +922,13 @@ class FilteredVectorSpace_class(FreeModule_ambient_field):
 
         TESTS::
 
-            sage: P = toric_varieties.P2()                                              # optional - sage.geometry.polyhedron sage.schemes
-            sage: T_P = P.sheaves.tangent_bundle()                                      # optional - sage.geometry.polyhedron sage.schemes
-            sage: O_P = P.sheaves.trivial_bundle(1)                                     # optional - sage.geometry.polyhedron sage.schemes
-            sage: S1 = T_P + O_P                                                        # optional - sage.geometry.polyhedron sage.schemes
-            sage: S2 = O_P + T_P                                                        # optional - sage.geometry.polyhedron sage.schemes
-            sage: S1._filt[0].is_isomorphic(S2._filt[0])  # known bug                   # optional - sage.geometry.polyhedron sage.schemes
+            sage: # needs sage.geometry.polyhedron sage.schemes
+            sage: P = toric_varieties.P2()
+            sage: T_P = P.sheaves.tangent_bundle()
+            sage: O_P = P.sheaves.trivial_bundle(1)
+            sage: S1 = T_P + O_P
+            sage: S2 = O_P + T_P
+            sage: S1._filt[0].is_isomorphic(S2._filt[0])        # known bug
             True
 
             sage: FilteredVectorSpace(2, base_ring=QQ) == FilteredVectorSpace(2, base_ring=GF(5))
@@ -1111,7 +1112,7 @@ class FilteredVectorSpace_class(FreeModule_ambient_field):
             QQ^2 >= QQ^1 >= 0
             sage: F._power_operation(2, 'symmetric')
             QQ^3 >= QQ^2 >= QQ^1 >= 0
-            sage: F._power_operation(2, 'antisymmetric')                                # optional - sage.groups
+            sage: F._power_operation(2, 'antisymmetric')                                # needs sage.groups
             QQ^1 >= 0
         """
         from sage.modules.tensor_operations import VectorCollection, TensorOperation
@@ -1151,13 +1152,13 @@ class FilteredVectorSpace_class(FreeModule_ambient_field):
 
             sage: F = FilteredVectorSpace(1, 1) + FilteredVectorSpace(1, 2);  F
             QQ^2 >= QQ^1 >= 0
-            sage: F.exterior_power(1)                                                   # optional - sage.groups
+            sage: F.exterior_power(1)                                                   # needs sage.groups
             QQ^2 >= QQ^1 >= 0
-            sage: F.exterior_power(2)                                                   # optional - sage.groups
+            sage: F.exterior_power(2)                                                   # needs sage.groups
             QQ^1 >= 0
-            sage: F.exterior_power(3)                                                   # optional - sage.groups
+            sage: F.exterior_power(3)                                                   # needs sage.groups
             0
-            sage: F.wedge(2)                                                            # optional - sage.groups
+            sage: F.wedge(2)                                                            # needs sage.groups
             QQ^1 >= 0
         """
         return self._power_operation(n, 'antisymmetric')

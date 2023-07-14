@@ -7,9 +7,9 @@ AUTHORS:
 
 TESTS::
 
-    sage: v = vector(CDF,[(1,-1), (2,pi), (3,5)]); v                                    # optional - sage.symbolic
+    sage: v = vector(CDF,[(1,-1), (2,pi), (3,5)]); v                                    # needs sage.symbolic
     (1.0 - 1.0*I, 2.0 + 3.141592653589793*I, 3.0 + 5.0*I)
-    sage: loads(dumps(v)) == v                                                          # optional - sage.symbolic
+    sage: loads(dumps(v)) == v                                                          # needs sage.symbolic
     True
 """
 
