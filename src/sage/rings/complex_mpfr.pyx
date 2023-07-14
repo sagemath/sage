@@ -136,11 +136,11 @@ def is_ComplexNumber(x):
     while elements of the class :class:`ComplexField_class`
     are of type :class:`ComplexNumber`::
 
-        sage: c = 1 + 2*I
-        sage: is_ComplexNumber(c)
+        sage: c = 1 + 2*I                                                               # needs sage.symbolic
+        sage: is_ComplexNumber(c)                                                       # needs sage.symbolic
         False
-        sage: d = CC(1 + 2*I)
-        sage: is_ComplexNumber(d)
+        sage: d = CC(1 + 2*I)                                                           # needs sage.symbolic
+        sage: is_ComplexNumber(d)                                                       # needs sage.symbolic
         True
     """
     return isinstance(x, ComplexNumber)
@@ -448,12 +448,12 @@ class ComplexField_class(sage.rings.abc.ComplexField):
             1.00000000000000 + 1.00000000000000*I
             sage: CC(2,3)
             2.00000000000000 + 3.00000000000000*I
-            sage: CC(QQ[I].gen())
+            sage: CC(QQ[I].gen())                                                       # needs sage.symbolic
             1.00000000000000*I
-            sage: CC.gen() + QQ[I].gen()
+            sage: CC.gen() + QQ[I].gen()                                                # needs sage.symbolic
             2.00000000000000*I
             sage: x = polygen(ZZ, 'x')
-            sage: CC.gen() + QQ.extension(x^2 + 1, 'I', embedding=None).gen()
+            sage: CC.gen() + QQ.extension(x^2 + 1, 'I', embedding=None).gen()           # needs sage.rings.number_field
             Traceback (most recent call last):
             ...
             TypeError: unsupported operand parent(s) for +:
@@ -975,7 +975,7 @@ cdef class ComplexNumber(sage.structure.element.FieldElement):
         Check that :trac:`12038` is resolved::
 
             sage: from sage.rings.complex_mpfr import ComplexNumber as CN
-            sage: coerce(CN, 1+I)
+            sage: coerce(CN, 1+I)                                                       # needs sage.symbolic
             Traceback (most recent call last):
             ...
             TypeError: ...__init__() takes at least 2 positional arguments (1 given)
@@ -992,11 +992,11 @@ cdef class ComplexNumber(sage.structure.element.FieldElement):
 
         EXAMPLES::
 
-            sage: s1 = CC(exp(I)); s1
+            sage: s1 = CC(exp(I)); s1                                                   # needs sage.symbolic
             0.540302305868140 + 0.841470984807897*I
-            sage: s1._interface_init_()
+            sage: s1._interface_init_()                                                 # needs sage.symbolic
             '0.54030230586813977 + 0.84147098480789650*I'
-            sage: s1 == CC(gp(s1))
+            sage: s1 == CC(gp(s1))                                                      # needs sage.libs.pari sage.symbolic
             True
         """
         return self.str()
@@ -1019,7 +1019,7 @@ cdef class ComplexNumber(sage.structure.element.FieldElement):
 
             sage: CC.0._maxima_init_()
             '1.0000000000000000*%i'
-            sage: CC(.5 + I)._maxima_init_()
+            sage: CC(.5 + I)._maxima_init_()                                            # needs sage.symbolic
             '0.50000000000000000 + 1.0000000000000000*%i'
         """
         return self.str(istr='%i')
