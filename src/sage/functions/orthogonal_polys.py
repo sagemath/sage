@@ -749,7 +749,7 @@ class Func_chebyshev_T(ChebyshevFunction):
             2.26195370000000e7
             sage: chebyshev_T._evalf_(10, 3, parent=RealField(75))                      # needs sage.rings.real_mpfr
             2.261953700000000000000e7
-            sage: chebyshev_T._evalf_(10, I)
+            sage: chebyshev_T._evalf_(10, I)                                            # needs sage.symbolic
             -3363.00000000000
             sage: chebyshev_T._evalf_(5, 0.3)                                           # needs sage.rings.real_mpfr
             0.998880000000000
@@ -766,7 +766,7 @@ class Func_chebyshev_T(ChebyshevFunction):
 
             sage: chebyshev_T(1234.5, RDF(2.1))                                         # needs sage.rings.real_mpfr
             5.48174256255782e735
-            sage: chebyshev_T(1234.5, I)
+            sage: chebyshev_T(1234.5, I)                                                # needs sage.symbolic
             -1.21629397684152e472 - 1.21629397684152e472*I
 
         For large values of ``n``, mpmath fails (but the algebraic formula
@@ -871,8 +871,10 @@ class Func_chebyshev_T(ChebyshevFunction):
             sage: n = 97; x = RIF(pi/2/n)                                               # needs sage.symbolic
             sage: chebyshev_T(n, cos(x)).contains_zero()                                # needs sage.symbolic
             True
-            sage: R.<t> = Zp(2, 8, 'capped-abs')[]                                      # needs sage.rings.padics
-            sage: chebyshev_T(10^6 + 1, t)                                              # needs sage.rings.padics
+
+            sage: # needs sage.rings.padics
+            sage: R.<t> = Zp(2, 8, 'capped-abs')[]
+            sage: chebyshev_T(10^6 + 1, t)
             (2^7 + O(2^8))*t^5 + O(2^8)*t^4 + (2^6 + O(2^8))*t^3 + O(2^8)*t^2
              + (1 + 2^6 + O(2^8))*t + O(2^8)
         """

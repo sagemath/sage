@@ -253,16 +253,17 @@ class SphericalHarmonic(BuiltinFunction):
         r"""
         TESTS::
 
-            sage: x, y = var('x y')                                                     # needs sage.symbolic
-            sage: spherical_harmonic(1, 2, x, y)                                        # needs sage.symbolic
+            sage: # needs sage.symbolic
+            sage: x, y = var('x y')
+            sage: spherical_harmonic(1, 2, x, y)
             0
-            sage: spherical_harmonic(1, -2, x, y)                                       # needs sage.symbolic
+            sage: spherical_harmonic(1, -2, x, y)
             0
-            sage: spherical_harmonic(1/2, 2, x, y)                                      # needs sage.symbolic
+            sage: spherical_harmonic(1/2, 2, x, y)
             spherical_harmonic(1/2, 2, x, y)
-            sage: spherical_harmonic(3, 2, x, y)                                        # needs sage.symbolic
+            sage: spherical_harmonic(3, 2, x, y)
             1/8*sqrt(30)*sqrt(7)*cos(x)*e^(2*I*y)*sin(x)^2/sqrt(pi)
-            sage: spherical_harmonic(3, 2, 1, 2)                                        # needs sage.symbolic
+            sage: spherical_harmonic(3, 2, 1, 2)
             1/8*sqrt(30)*sqrt(7)*cos(1)*e^(4*I)*sin(1)^2/sqrt(pi)
             sage: spherical_harmonic(3 + I, 2., 1, 2)
             -0.351154337307488 - 0.415562233975369*I
@@ -475,7 +476,7 @@ class EllipticE(BuiltinFunction):
         2*round(z/pi) - sin(pi*round(z/pi) - z)
         sage: elliptic_e(z, 0)                                                          # needs sage.symbolic
         z
-        sage: elliptic_e(0.5, 0.1)  # abs tol 2e-15
+        sage: elliptic_e(0.5, 0.1)  # abs tol 2e-15                                     # needs mpmath
         0.498011394498832
         sage: elliptic_e(1/2, 1/10).n(200)                                              # needs sage.symbolic
         0.4980113944988315331154610406...
@@ -571,7 +572,7 @@ class EllipticE(BuiltinFunction):
         """
         EXAMPLES::
 
-            sage: elliptic_e(0.5, 0.1)
+            sage: elliptic_e(0.5, 0.1)                                                  # needs mpmath
             0.498011394498832
             sage: elliptic_e(1/2, 1/10).n(200)                                          # needs sage.symbolic
             0.4980113944988315331154610406...
@@ -582,7 +583,7 @@ class EllipticE(BuiltinFunction):
 
         This gave an error in Maxima (:trac:`15046`)::
 
-            sage: elliptic_e(2.5, 2.5)
+            sage: elliptic_e(2.5, 2.5)                                                  # needs mpmath
             0.535647771608740 + 1.63996015168665*I
         """
         R = parent or s_parent(z)
@@ -625,7 +626,7 @@ class EllipticEC(BuiltinFunction):
 
     EXAMPLES::
 
-        sage: elliptic_ec(0.1)
+        sage: elliptic_ec(0.1)                                                          # needs mpmath
         1.53075763689776
         sage: elliptic_ec(x).diff()                                                     # needs sage.symbolic
         1/2*(elliptic_ec(x) - elliptic_kc(x))/x
@@ -722,7 +723,7 @@ class EllipticEU(BuiltinFunction):
 
     EXAMPLES::
 
-        sage: elliptic_eu(0.5, 0.1)
+        sage: elliptic_eu(0.5, 0.1)                                                     # needs mpmath
         0.496054551286597
 
     .. SEEALSO::
@@ -847,7 +848,7 @@ class EllipticF(BuiltinFunction):
         z
         sage: elliptic_f(z, 1).simplify()                                               # needs sage.symbolic
         log(tan(1/4*pi + 1/2*z))
-        sage: elliptic_f(0.2, 0.1)
+        sage: elliptic_f(0.2, 0.1)                                                      # needs mpmath
         0.200132506747543
 
     .. SEEALSO::
@@ -981,7 +982,7 @@ class EllipticKC(BuiltinFunction):
 
     EXAMPLES::
 
-        sage: elliptic_kc(0.5)
+        sage: elliptic_kc(0.5)                                                          # needs mpmath
         1.85407467730137
 
     .. SEEALSO::
@@ -1010,7 +1011,7 @@ class EllipticKC(BuiltinFunction):
             sage: fricas(elliptic_kc(x))                                        # optional - fricas, needs sage.symbolic
             ellipticK(x)
 
-            sage: elliptic_kc(0.3)  # abs tol 1e-8
+            sage: elliptic_kc(0.3)  # abs tol 1e-8                                      # needs mpmath
             1.71388944817879
             sage: fricas.ellipticK(0.3).sage()  # abs tol 1e-3                  # optional - fricas, needs sage.symbolic
             1.7138894481787910555457043
@@ -1099,7 +1100,7 @@ class EllipticPi(BuiltinFunction):
     Compare the value computed by Maxima to the definition as a definite integral
     (using GSL)::
 
-        sage: elliptic_pi(0.1, 0.2, 0.3)
+        sage: elliptic_pi(0.1, 0.2, 0.3)                                                # needs mpmath
         0.200665068220979
         sage: numerical_integral(1/(1-0.1*sin(x)^2)/sqrt(1-0.3*sin(x)^2), 0.0, 0.2)     # needs sage.symbolic
         (0.2006650682209791, 2.227829789769088e-15)

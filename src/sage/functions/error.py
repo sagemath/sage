@@ -181,7 +181,7 @@ class Function_erf(BuiltinFunction):
 
     Check that high-precision ComplexField inputs work::
 
-        sage: CC(erf(ComplexField(1000)(2+3j)))
+        sage: CC(erf(ComplexField(1000)(2+3j)))                                         # needs sage.rings.real_mpfr
         -20.8294614276146 + 8.68731827147016*I
     """
 
