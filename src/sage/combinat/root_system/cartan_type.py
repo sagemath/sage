@@ -1147,15 +1147,16 @@ class CartanType_abstract():
 
         EXAMPLES::
 
-            sage: CartanType(['B',3]).coxeter_diagram()                                 # needs sage.graphs
+            sage: # needs sage.graphs
+            sage: CartanType(['B',3]).coxeter_diagram()
             Graph on 3 vertices
-            sage: CartanType(['A',3]).coxeter_diagram().edges(sort=True)                # needs sage.graphs
+            sage: CartanType(['A',3]).coxeter_diagram().edges(sort=True)
             [(1, 2, 3), (2, 3, 3)]
-            sage: CartanType(['B',3]).coxeter_diagram().edges(sort=True)                # needs sage.graphs
+            sage: CartanType(['B',3]).coxeter_diagram().edges(sort=True)
             [(1, 2, 3), (2, 3, 4)]
-            sage: CartanType(['G',2]).coxeter_diagram().edges(sort=True)                # needs sage.graphs
+            sage: CartanType(['G',2]).coxeter_diagram().edges(sort=True)
             [(1, 2, 6)]
-            sage: CartanType(['F',4]).coxeter_diagram().edges(sort=True)                # needs sage.graphs
+            sage: CartanType(['F',4]).coxeter_diagram().edges(sort=True)
             [(1, 2, 3), (2, 3, 4), (3, 4, 3)]
         """
 
@@ -1641,17 +1642,18 @@ class CartanType_crystallographic(CartanType_abstract):
 
         EXAMPLES::
 
-            sage: CartanType(['A',3]).coxeter_diagram()                                 # needs sage.graphs
+            sage: # needs sage.graphs
+            sage: CartanType(['A',3]).coxeter_diagram()
             Graph on 3 vertices
-            sage: CartanType(['A',3]).coxeter_diagram().edges(sort=True)                # needs sage.graphs
+            sage: CartanType(['A',3]).coxeter_diagram().edges(sort=True)
             [(1, 2, 3), (2, 3, 3)]
-            sage: CartanType(['B',3]).coxeter_diagram().edges(sort=True)                # needs sage.graphs
+            sage: CartanType(['B',3]).coxeter_diagram().edges(sort=True)
             [(1, 2, 3), (2, 3, 4)]
-            sage: CartanType(['G',2]).coxeter_diagram().edges(sort=True)                # needs sage.graphs
+            sage: CartanType(['G',2]).coxeter_diagram().edges(sort=True)
             [(1, 2, 6)]
-            sage: CartanType(['F',4]).coxeter_diagram().edges(sort=True)                # needs sage.graphs
+            sage: CartanType(['F',4]).coxeter_diagram().edges(sort=True)
             [(1, 2, 3), (2, 3, 4), (3, 4, 3)]
-            sage: CartanType(['A',2,2]).coxeter_diagram().edges(sort=True)              # needs sage.graphs
+            sage: CartanType(['A',2,2]).coxeter_diagram().edges(sort=True)
             [(0, 1, +Infinity)]
         """
         return self.dynkin_diagram().coxeter_diagram()
@@ -1977,17 +1979,18 @@ class CartanType_affine(CartanType_simple, CartanType_crystallographic):
 
         EXAMPLES::
 
-            sage: CartanType(['A',3,1]).special_nodes()                                 # needs sage.graphs sage.groups
+            sage: # needs sage.graphs sage.groups
+            sage: CartanType(['A',3,1]).special_nodes()
             (0, 1, 2, 3)
-            sage: CartanType(['C',2,1]).special_nodes()                                 # needs sage.graphs sage.groups
+            sage: CartanType(['C',2,1]).special_nodes()
             (0, 2)
-            sage: CartanType(['D',4,1]).special_nodes()                                 # needs sage.graphs sage.groups
+            sage: CartanType(['D',4,1]).special_nodes()
             (0, 1, 3, 4)
-            sage: CartanType(['E',6,1]).special_nodes()                                 # needs sage.graphs sage.groups
+            sage: CartanType(['E',6,1]).special_nodes()
             (0, 1, 6)
-            sage: CartanType(['D',3,2]).special_nodes()                                 # needs sage.graphs sage.groups
+            sage: CartanType(['D',3,2]).special_nodes()
             (0, 2)
-            sage: CartanType(['A',4,2]).special_nodes()                                 # needs sage.graphs sage.groups
+            sage: CartanType(['A',4,2]).special_nodes()
             (0,)
         """
         return tuple(sorted(self.dynkin_diagram().automorphism_group(edge_labels=True).orbit(self.special_node())))
@@ -2094,13 +2097,14 @@ class CartanType_affine(CartanType_simple, CartanType_crystallographic):
 
         EXAMPLES::
 
-            sage: RootSystem(['C',2,1]).cartan_type().acheck()                          # needs sage.graphs
+            sage: # needs sage.graphs
+            sage: RootSystem(['C',2,1]).cartan_type().acheck()
             Finite family {0: 1, 1: 1, 2: 1}
-            sage: RootSystem(['D',4,1]).cartan_type().acheck()                          # needs sage.graphs
+            sage: RootSystem(['D',4,1]).cartan_type().acheck()
             Finite family {0: 1, 1: 1, 2: 2, 3: 1, 4: 1}
-            sage: RootSystem(['F',4,1]).cartan_type().acheck()                          # needs sage.graphs
+            sage: RootSystem(['F',4,1]).cartan_type().acheck()
             Finite family {0: 1, 1: 2, 2: 3, 3: 2, 4: 1}
-            sage: RootSystem(['BC',4,2]).cartan_type().acheck()                         # needs sage.graphs
+            sage: RootSystem(['BC',4,2]).cartan_type().acheck()
             Finite family {0: 1, 1: 2, 2: 2, 3: 2, 4: 2}
 
         ``acheck`` is a shortcut for row_annihilator::
@@ -2143,13 +2147,14 @@ class CartanType_affine(CartanType_simple, CartanType_crystallographic):
 
         EXAMPLES::
 
-            sage: RootSystem(['C',2,1]).cartan_type().a()                               # needs sage.graphs
+            sage: # needs sage.graphs
+            sage: RootSystem(['C',2,1]).cartan_type().a()
             Finite family {0: 1, 1: 2, 2: 1}
-            sage: RootSystem(['D',4,1]).cartan_type().a()                               # needs sage.graphs
+            sage: RootSystem(['D',4,1]).cartan_type().a()
             Finite family {0: 1, 1: 1, 2: 2, 3: 1, 4: 1}
-            sage: RootSystem(['F',4,1]).cartan_type().a()                               # needs sage.graphs
+            sage: RootSystem(['F',4,1]).cartan_type().a()
             Finite family {0: 1, 1: 2, 2: 3, 3: 4, 4: 2}
-            sage: RootSystem(['BC',4,2]).cartan_type().a()                              # needs sage.graphs
+            sage: RootSystem(['BC',4,2]).cartan_type().a()
             Finite family {0: 2, 1: 2, 2: 2, 3: 2, 4: 1}
 
         ``a`` is a shortcut for col_annihilator::
@@ -2172,13 +2177,14 @@ class CartanType_affine(CartanType_simple, CartanType_crystallographic):
 
         EXAMPLES::
 
-            sage: RootSystem(['C',2,1]).cartan_type().c()                               # needs sage.graphs
+            sage: # needs sage.graphs
+            sage: RootSystem(['C',2,1]).cartan_type().c()
             Finite family {0: 1, 1: 2, 2: 1}
-            sage: RootSystem(['D',4,1]).cartan_type().c()                               # needs sage.graphs
+            sage: RootSystem(['D',4,1]).cartan_type().c()
             Finite family {0: 1, 1: 1, 2: 1, 3: 1, 4: 1}
-            sage: RootSystem(['F',4,1]).cartan_type().c()                               # needs sage.graphs
+            sage: RootSystem(['F',4,1]).cartan_type().c()
             Finite family {0: 1, 1: 1, 2: 1, 3: 2, 4: 2}
-            sage: RootSystem(['BC',4,2]).cartan_type().c()                              # needs sage.graphs
+            sage: RootSystem(['BC',4,2]).cartan_type().c()
             Finite family {0: 2, 1: 1, 2: 1, 3: 1, 4: 1}
 
         TESTS::
@@ -2228,55 +2234,57 @@ class CartanType_affine(CartanType_simple, CartanType_crystallographic):
 
         EXAMPLES::
 
-            sage: CartanType(['C',2,1]).translation_factors()                           # needs sage.graphs
+            sage: # needs sage.graphs
+            sage: CartanType(['C',2,1]).translation_factors()
             Finite family {0: 1, 1: 2, 2: 1}
-            sage: CartanType(['C',2,1]).dual().translation_factors()                    # needs sage.graphs
+            sage: CartanType(['C',2,1]).dual().translation_factors()
             Finite family {0: 1, 1: 1, 2: 1}
-            sage: CartanType(['D',4,1]).translation_factors()                           # needs sage.graphs
+            sage: CartanType(['D',4,1]).translation_factors()
             Finite family {0: 1, 1: 1, 2: 1, 3: 1, 4: 1}
-            sage: CartanType(['F',4,1]).translation_factors()                           # needs sage.graphs
+            sage: CartanType(['F',4,1]).translation_factors()
             Finite family {0: 1, 1: 1, 2: 1, 3: 2, 4: 2}
-            sage: CartanType(['BC',4,2]).translation_factors()                          # needs sage.graphs
+            sage: CartanType(['BC',4,2]).translation_factors()
             Finite family {0: 1, 1: 1, 2: 1, 3: 1, 4: 1/2}
 
         We proceed with systematic tests taken from MuPAD-Combinat's
         testsuite::
 
-            sage: list(CartanType(["A", 1, 1]).translation_factors())                   # needs sage.graphs
+            sage: # needs sage.graphs
+            sage: list(CartanType(["A", 1, 1]).translation_factors())
             [1, 1]
-            sage: list(CartanType(["A", 5, 1]).translation_factors())                   # needs sage.graphs
+            sage: list(CartanType(["A", 5, 1]).translation_factors())
             [1, 1, 1, 1, 1, 1]
-            sage: list(CartanType(["B", 5, 1]).translation_factors())                   # needs sage.graphs
+            sage: list(CartanType(["B", 5, 1]).translation_factors())
             [1, 1, 1, 1, 1, 2]
-            sage: list(CartanType(["C", 5, 1]).translation_factors())                   # needs sage.graphs
+            sage: list(CartanType(["C", 5, 1]).translation_factors())
             [1, 2, 2, 2, 2, 1]
-            sage: list(CartanType(["D", 5, 1]).translation_factors())                   # needs sage.graphs
+            sage: list(CartanType(["D", 5, 1]).translation_factors())
             [1, 1, 1, 1, 1, 1]
-            sage: list(CartanType(["E", 6, 1]).translation_factors())                   # needs sage.graphs
+            sage: list(CartanType(["E", 6, 1]).translation_factors())
             [1, 1, 1, 1, 1, 1, 1]
-            sage: list(CartanType(["E", 7, 1]).translation_factors())                   # needs sage.graphs
+            sage: list(CartanType(["E", 7, 1]).translation_factors())
             [1, 1, 1, 1, 1, 1, 1, 1]
-            sage: list(CartanType(["E", 8, 1]).translation_factors())                   # needs sage.graphs
+            sage: list(CartanType(["E", 8, 1]).translation_factors())
             [1, 1, 1, 1, 1, 1, 1, 1, 1]
-            sage: list(CartanType(["F", 4, 1]).translation_factors())                   # needs sage.graphs
+            sage: list(CartanType(["F", 4, 1]).translation_factors())
             [1, 1, 1, 2, 2]
-            sage: list(CartanType(["G", 2, 1]).translation_factors())                   # needs sage.graphs
+            sage: list(CartanType(["G", 2, 1]).translation_factors())
             [1, 3, 1]
-            sage: list(CartanType(["A", 2, 2]).translation_factors())                   # needs sage.graphs
+            sage: list(CartanType(["A", 2, 2]).translation_factors())
             [1, 1/2]
-            sage: list(CartanType(["A", 2, 2]).dual().translation_factors())            # needs sage.graphs
+            sage: list(CartanType(["A", 2, 2]).dual().translation_factors())
             [1/2, 1]
-            sage: list(CartanType(["A", 10, 2]).translation_factors())                  # needs sage.graphs
+            sage: list(CartanType(["A", 10, 2]).translation_factors())
             [1, 1, 1, 1, 1, 1/2]
-            sage: list(CartanType(["A", 10, 2]).dual().translation_factors())           # needs sage.graphs
+            sage: list(CartanType(["A", 10, 2]).dual().translation_factors())
             [1/2, 1, 1, 1, 1, 1]
-            sage: list(CartanType(["A", 9, 2]).translation_factors())                   # needs sage.graphs
+            sage: list(CartanType(["A", 9, 2]).translation_factors())
             [1, 1, 1, 1, 1, 1]
-            sage: list(CartanType(["D", 5, 2]).translation_factors())                   # needs sage.graphs
+            sage: list(CartanType(["D", 5, 2]).translation_factors())
             [1, 1, 1, 1, 1]
-            sage: list(CartanType(["D", 4, 3]).translation_factors())                   # needs sage.graphs
+            sage: list(CartanType(["D", 4, 3]).translation_factors())
             [1, 1, 1]
-            sage: list(CartanType(["E", 6, 2]).translation_factors())                   # needs sage.graphs
+            sage: list(CartanType(["E", 6, 2]).translation_factors())
             [1, 1, 1, 1, 1]
 
         We conclude with a discussion of the appropriate value for
@@ -2312,11 +2320,11 @@ class CartanType_affine(CartanType_simple, CartanType_crystallographic):
 
         The projections of the simple roots can be read off::
 
-            sage: alpha[0]
+            sage: alpha[0]                                                              # needs sage.graphs
             2*Lambda[0] - Lambda[1]
-            sage: alpha[1]
+            sage: alpha[1]                                                              # needs sage.graphs
             -2*Lambda[0] + 2*Lambda[1] - Lambda[2]
-            sage: alpha[2]
+            sage: alpha[2]                                                              # needs sage.graphs
             -2*Lambda[1] + 2*Lambda[2]
 
         Namely `\alpha_0 = -\omega_1`, `\alpha_1 = 2\omega_1 -

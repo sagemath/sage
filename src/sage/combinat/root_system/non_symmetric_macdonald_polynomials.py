@@ -411,13 +411,14 @@ class NonSymmetricMacdonaldPolynomials(CherednikOperatorsEigenvectors):
 
         sage: def eig(l): return E.eigenvalues(KL0.from_polynomial(NS.E(l)))
 
-        sage: eig([1,0,0])                                                              # needs sage.combinat sage.groups
+        sage: # needs sage.combinat sage.groups
+        sage: eig([1,0,0])
         [t, (-1)/(-q*t^2), t]
-        sage: eig([2,0,0])                                                              # needs sage.combinat sage.groups
+        sage: eig([2,0,0])
         [q*t, (-1)/(-q^2*t^2), t]
-        sage: eig([3,0,0])                                                              # needs sage.combinat sage.groups
+        sage: eig([3,0,0])
         [q^2*t, (-1)/(-q^3*t^2), t]
-        sage: eig([2,0,4])                                                              # needs sage.combinat sage.groups
+        sage: eig([2,0,4])
         [(-1)/(-q^3*t), 1/(q^2*t), q^4*t^2]
 
     Next we check explicitly that they agree with the current implementation::
@@ -1863,16 +1864,17 @@ class NonSymmetricMacdonaldPolynomials(CherednikOperatorsEigenvectors):
         We compare with the type `A` Macdonald polynomials
         coming from symmetric functions::
 
-            sage: P = SymmetricFunctions(K).macdonald().P()                             # needs sage.combinat
-            sage: g = P[2,1].expand(3); g                                               # needs sage.combinat
+            sage: # needs sage.combinat
+            sage: P = SymmetricFunctions(K).macdonald().P()
+            sage: g = P[2,1].expand(3); g
             x0^2*x1 + x0*x1^2 + x0^2*x2
             + (2*q*t^2 - q*t - q  + t^2 + t - 2)/(q*t^2 - 1)*x0*x1*x2
             + x1^2*x2 + x0*x2^2 + x1*x2^2
-            sage: fe = f.expand(g.parent().gens()); fe                                  # needs sage.combinat
+            sage: fe = f.expand(g.parent().gens()); fe
             x0^2*x1 + x0*x1^2 + x0^2*x2
             + (2*q*v^4 - q*v^2 - q + v^4 + v^2 - 2)/(q*v^4 - 1)*x0*x1*x2
             + x1^2*x2 + x0*x2^2 + x1*x2^2
-            sage: g.map_coefficients(lambda x: x.subs(t=v*v)) == fe                     # needs sage.combinat
+            sage: g.map_coefficients(lambda x: x.subs(t=v*v)) == fe
             True
 
             sage: E = NonSymmetricMacdonaldPolynomials(['C',3,1], q, v, -1/v)

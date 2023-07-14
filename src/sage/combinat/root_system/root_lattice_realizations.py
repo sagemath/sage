@@ -1121,11 +1121,12 @@ class RootLatticeRealizations(Category_over_base_ring):
                 sage: P.coxeter_transformation()**10 == 1                               # needs sage.graphs
                 True
 
-                sage: R = RootSystem(['B', 3])                                          # needs sage.graphs
-                sage: RS = R.root_lattice()                                             # needs sage.graphs
-                sage: P = RS.nonnesting_partition_lattice(); P                          # needs sage.graphs
+                sage: # needs sage.graphs
+                sage: R = RootSystem(['B', 3])
+                sage: RS = R.root_lattice()
+                sage: P = RS.nonnesting_partition_lattice(); P
                 Finite lattice containing 20 elements
-                sage: P.coxeter_transformation()**7 == 1                                # needs sage.graphs
+                sage: P.coxeter_transformation()**7 == 1
                 True
 
             REFERENCES:
@@ -2201,22 +2202,23 @@ class RootLatticeRealizations(Category_over_base_ring):
 
             EXAMPLES::
 
-                sage: RootSystem(["A",0]).ambient_space()._plot_projection_barycentric_matrix()     # needs sage.symbolic
+                sage: # needs sage.symbolic
+                sage: RootSystem(["A",0]).ambient_space()._plot_projection_barycentric_matrix()
                 []
-                sage: m = RootSystem(["A",1]).ambient_space()._plot_projection_barycentric_matrix(); m                  # needs sage.symbolic
+                sage: m = RootSystem(["A",1]).ambient_space()._plot_projection_barycentric_matrix(); m
                 [ 1 -1]
-                sage: sum(m.columns())                                                  # needs sage.symbolic
+                sage: sum(m.columns())
                 (0)
-                sage: m = RootSystem(["A",2]).ambient_space()._plot_projection_barycentric_matrix(); m                  # needs sage.symbolic
+                sage: m = RootSystem(["A",2]).ambient_space()._plot_projection_barycentric_matrix(); m
                 [      1/2        -1       1/2]
                 [ 989/1142         0 -989/1142]
-                sage: sum(m.columns())                                                  # needs sage.symbolic
+                sage: sum(m.columns())
                 (0, 0)
-                sage: m = RootSystem(["A",3]).ambient_space()._plot_projection_barycentric_matrix(); m                  # needs sage.symbolic
+                sage: m = RootSystem(["A",3]).ambient_space()._plot_projection_barycentric_matrix(); m
                 [      1277/1564      -1277/1564               0               0]
                 [1009460/2141389        849/1801      -1121/1189               0]
                 [            1/3             1/3             1/3              -1]
-                sage: sum(m.columns())                                                  # needs sage.symbolic
+                sage: sum(m.columns())
                 (0, 0, 0)
 
             """
@@ -2470,21 +2472,22 @@ class RootLatticeRealizations(Category_over_base_ring):
 
             EXAMPLES::
 
-                sage: RootSystem(["A",2,1]).ambient_space().plot_reflection_hyperplanes()           # needs sage.plot sage.symbolic
+                sage: # needs sage.plot sage.symbolic
+                sage: RootSystem(["A",2,1]).ambient_space().plot_reflection_hyperplanes()
                 Graphics object consisting of 6 graphics primitives
-                sage: RootSystem(["G",2,1]).ambient_space().plot_reflection_hyperplanes()           # needs sage.plot sage.symbolic
+                sage: RootSystem(["G",2,1]).ambient_space().plot_reflection_hyperplanes()
                 Graphics object consisting of 6 graphics primitives
-                sage: RootSystem(["A",3]).weight_space().plot_reflection_hyperplanes()              # needs sage.plot sage.symbolic
+                sage: RootSystem(["A",3]).weight_space().plot_reflection_hyperplanes()
                 Graphics3d Object
-                sage: RootSystem(["B",3]).ambient_space().plot_reflection_hyperplanes()             # needs sage.plot sage.symbolic
+                sage: RootSystem(["B",3]).ambient_space().plot_reflection_hyperplanes()
                 Graphics3d Object
-                sage: RootSystem(["A",3,1]).weight_space().plot_reflection_hyperplanes()            # needs sage.plot sage.symbolic
+                sage: RootSystem(["A",3,1]).weight_space().plot_reflection_hyperplanes()
                 Graphics3d Object
-                sage: RootSystem(["B",3,1]).ambient_space().plot_reflection_hyperplanes()           # needs sage.plot sage.symbolic
+                sage: RootSystem(["B",3,1]).ambient_space().plot_reflection_hyperplanes()
                 Graphics3d Object
-                sage: RootSystem(["A",2,1]).weight_space().plot_reflection_hyperplanes(affine=False, level=1)           # needs sage.plot sage.symbolic
+                sage: RootSystem(["A",2,1]).weight_space().plot_reflection_hyperplanes(affine=False, level=1)
                 Graphics3d Object
-                sage: RootSystem(["A",2]).root_lattice().plot_reflection_hyperplanes()              # needs sage.plot sage.symbolic
+                sage: RootSystem(["A",2]).root_lattice().plot_reflection_hyperplanes()
                 Graphics object consisting of 4 graphics primitives
 
             TESTS::
@@ -2554,15 +2557,16 @@ class RootLatticeRealizations(Category_over_base_ring):
 
             EXAMPLES::
 
-                sage: RootSystem(["A",2]).ambient_space().plot_hedron()                 # needs sage.plot sage.symbolic
+                sage: # needs sage.plot sage.symbolic
+                sage: RootSystem(["A",2]).ambient_space().plot_hedron()
                 Graphics object consisting of 8 graphics primitives
-                sage: RootSystem(["A",3]).ambient_space().plot_hedron()                 # needs sage.plot sage.symbolic
+                sage: RootSystem(["A",3]).ambient_space().plot_hedron()
                 Graphics3d Object
-                sage: RootSystem(["B",3]).ambient_space().plot_hedron()                 # needs sage.plot sage.symbolic
+                sage: RootSystem(["B",3]).ambient_space().plot_hedron()
                 Graphics3d Object
-                sage: RootSystem(["C",3]).ambient_space().plot_hedron()                 # needs sage.plot sage.symbolic
+                sage: RootSystem(["C",3]).ambient_space().plot_hedron()
                 Graphics3d Object
-                sage: RootSystem(["D",3]).ambient_space().plot_hedron()                 # needs sage.plot sage.symbolic
+                sage: RootSystem(["D",3]).ambient_space().plot_hedron()
                 Graphics3d Object
 
             Surprise: polyhedra of large dimension know how to
@@ -4252,11 +4256,12 @@ class RootLatticeRealizations(Category_over_base_ring):
             Acting by an element of an isomorphic Coxeter or Weyl group (implemented by the
             action of a corresponding reduced word)::
 
-                sage: W = WeylGroup(['A',3], prefix="s")                                # needs sage.libs.gap
-                sage: w = W.from_reduced_word([1, 2])                                   # needs sage.libs.gap
-                sage: wl.weyl_group() == W                                              # needs sage.libs.gap
+                sage: # needs sage.libs.gap
+                sage: W = WeylGroup(['A',3], prefix="s")
+                sage: w = W.from_reduced_word([1, 2])
+                sage: wl.weyl_group() == W
                 False
-                sage: mudom.weyl_action(w)                                              # needs sage.libs.gap
+                sage: mudom.weyl_action(w)                                              # needs sage.graphs
                 Lambda[1] - 2*Lambda[3]
             """
             # TODO, some day: accept an iterator
