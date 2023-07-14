@@ -305,24 +305,25 @@ def lazy_list_formatter(L, name='lazy list',
 
     ::
 
+        sage: # needs sage.libs.pari
         sage: from sage.misc.lazy_list import lazy_list
-        sage: L = lazy_list(Primes()); L                                                # needs sage.libs.pari
+        sage: L = lazy_list(Primes()); L
         lazy list [2, 3, 5, ...]
         sage: repr(L) == lazy_list_formatter(L)
         True
-        sage: lazy_list_formatter(L, name='primes')                                     # needs sage.libs.pari
+        sage: lazy_list_formatter(L, name='primes')
         'primes [2, 3, 5, ...]'
-        sage: lazy_list_formatter(L, opening_delimiter='(', closing_delimiter=')')      # needs sage.libs.pari
+        sage: lazy_list_formatter(L, opening_delimiter='(', closing_delimiter=')')
         'lazy list (2, 3, 5, ...)'
-        sage: lazy_list_formatter(L, opening_delimiter='', closing_delimiter='')        # needs sage.libs.pari
+        sage: lazy_list_formatter(L, opening_delimiter='', closing_delimiter='')
         'lazy list 2, 3, 5, ...'
-        sage: lazy_list_formatter(L, separator='--')                                    # needs sage.libs.pari
+        sage: lazy_list_formatter(L, separator='--')
         'lazy list [2--3--5--...]'
-        sage: lazy_list_formatter(L, more='and more')                                   # needs sage.libs.pari
+        sage: lazy_list_formatter(L, more='and more')
         'lazy list [2, 3, 5, and more]'
-        sage: lazy_list_formatter(L, preview=10)                                        # needs sage.libs.pari
+        sage: lazy_list_formatter(L, preview=10)
         'lazy list [2, 3, 5, 7, 11, 13, 17, 19, 23, 29, ...]'
-        sage: lazy_list_formatter(L, name='primes',                                     # needs sage.libs.pari
+        sage: lazy_list_formatter(L, name='primes',
         ....:                     opening_delimiter='', closing_delimiter='',
         ....:                     separator=' ', more='->', preview=7)
         'primes 2 3 5 7 11 13 17 ->'

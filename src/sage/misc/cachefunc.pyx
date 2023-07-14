@@ -46,15 +46,16 @@ the name that the wrapped method or function should have,
 since otherwise the name of the original function would
 be used::
 
-    sage: cython('''cpdef test_funct(x): return -x''')                          # optional - sage.misc.cython
-    sage: wrapped_funct = cached_function(test_funct, name='wrapped_funct')     # optional - sage.misc.cython
-    sage: wrapped_funct                                                         # optional - sage.misc.cython
+    sage: # needs sage.misc.cython
+    sage: cython('''cpdef test_funct(x): return -x''')
+    sage: wrapped_funct = cached_function(test_funct, name='wrapped_funct')
+    sage: wrapped_funct
     Cached version of <built-in function test_funct>
-    sage: wrapped_funct.__name__                                                # optional - sage.misc.cython
+    sage: wrapped_funct.__name__
     'wrapped_funct'
-    sage: wrapped_funct(5)                                                      # optional - sage.misc.cython
+    sage: wrapped_funct(5)
     -5
-    sage: wrapped_funct(5) is wrapped_funct(5)                                  # optional - sage.misc.cython
+    sage: wrapped_funct(5) is wrapped_funct(5)
     True
 
 We can proceed similarly for cached methods of Cython classes,
@@ -77,21 +78,21 @@ approach is still needed for cpdef methods::
     ....: '        "Some doc for direct method"',
     ....: '        return 2*x',
     ....: '    wrapped_method = cached_method(test_meth,name="wrapped_method")']
-    sage: cython(os.linesep.join(cython_code))                                  # optional - sage.misc.cython
-    sage: O = MyClass()                                                         # optional - sage.misc.cython
-    sage: O.direct_method                                                       # optional - sage.misc.cython
+    sage: cython(os.linesep.join(cython_code))                                          # needs sage.misc.cython
+    sage: O = MyClass()                                                                 # needs sage.misc.cython
+    sage: O.direct_method                                                               # needs sage.misc.cython
     Cached version of <method 'direct_method' of '...MyClass' objects>
-    sage: O.wrapped_method                                                      # optional - sage.misc.cython
+    sage: O.wrapped_method                                                              # needs sage.misc.cython
     Cached version of <built-in function test_meth>
-    sage: O.wrapped_method.__name__                                             # optional - sage.misc.cython
+    sage: O.wrapped_method.__name__                                                     # needs sage.misc.cython
     'wrapped_method'
-    sage: O.wrapped_method(5)                                                   # optional - sage.misc.cython
+    sage: O.wrapped_method(5)                                                           # needs sage.misc.cython
     -5
-    sage: O.wrapped_method(5) is O.wrapped_method(5)                            # optional - sage.misc.cython
+    sage: O.wrapped_method(5) is O.wrapped_method(5)                                    # needs sage.misc.cython
     True
-    sage: O.direct_method(5)                                                    # optional - sage.misc.cython
+    sage: O.direct_method(5)                                                            # needs sage.misc.cython
     10
-    sage: O.direct_method(5) is O.direct_method(5)                              # optional - sage.misc.cython
+    sage: O.direct_method(5) is O.direct_method(5)                                      # needs sage.misc.cython
     True
 
 In some cases, one would only want to keep the result in cache as long
@@ -129,8 +130,8 @@ category (previously, the cache would have been broken)::
     ....: "        @cached_method",
     ....: "        def invert(self, x):",
     ....: "            return -x"]
-    sage: cython('\n'.join(cython_code))                                        # optional - sage.misc.cython
-    sage: C = MyCategory()                                                      # optional - sage.misc.cython
+    sage: cython('\n'.join(cython_code))                                                # needs sage.misc.cython
+    sage: C = MyCategory()                                                              # needs sage.misc.cython
 
 In order to keep the memory footprint of elements small, it was
 decided to not support the same freedom of using cached methods
@@ -181,88 +182,92 @@ hardly by used.
     ....: "from sage.structure.parent cimport Parent",
     ....: "cdef class MyParent(Parent):",
     ....: "    Element = MyElement"]
-    sage: cython('\n'.join(cython_code))                                        # optional - sage.misc.cython
-    sage: P = MyParent(category=C)                                              # optional - sage.misc.cython
-    sage: ebroken = MyBrokenElement(P, 5)                                       # optional - sage.misc.cython
-    sage: e = MyElement(P, 5)                                                   # optional - sage.misc.cython
+    sage: cython('\n'.join(cython_code))                                                # needs sage.misc.cython
+    sage: P = MyParent(category=C)                                                      # needs sage.misc.cython
+    sage: ebroken = MyBrokenElement(P, 5)                                               # needs sage.misc.cython
+    sage: e = MyElement(P, 5)                                                           # needs sage.misc.cython
 
 The cached methods inherited by the parent works::
 
-    sage: P.one()                                                               # optional - sage.misc.cython
+    sage: # needs sage.misc.cython
+    sage: P.one()
     <1>
-    sage: P.one() is P.one()                                                    # optional - sage.misc.cython
+    sage: P.one() is P.one()
     True
-    sage: P.invert(e)                                                           # optional - sage.misc.cython
+    sage: P.invert(e)
     <-5>
-    sage: P.invert(e) is P.invert(e)                                            # optional - sage.misc.cython
+    sage: P.invert(e) is P.invert(e)
     True
 
 The cached methods inherited by ``MyElement`` works::
 
-    sage: e.element_cache_test()                                                # optional - sage.misc.cython
+    sage: # needs sage.misc.cython
+    sage: e.element_cache_test()
     <-5>
-    sage: e.element_cache_test() is e.element_cache_test()                      # optional - sage.misc.cython
+    sage: e.element_cache_test() is e.element_cache_test()
     True
-    sage: e.element_via_parent_test()                                           # optional - sage.misc.cython
+    sage: e.element_via_parent_test()
     <-5>
-    sage: e.element_via_parent_test() is e.element_via_parent_test()            # optional - sage.misc.cython
+    sage: e.element_via_parent_test() is e.element_via_parent_test()
     True
 
 The other element class can only inherit a ``cached_in_parent_method``, since
 the cache is stored in the parent. In fact, equal elements share the cache,
 even if they are of different types::
 
-    sage: e == ebroken                                                          # optional - sage.misc.cython
+    sage: e == ebroken                                                                  # needs sage.misc.cython
     True
-    sage: type(e) == type(ebroken)                                              # optional - sage.misc.cython
+    sage: type(e) == type(ebroken)                                                      # needs sage.misc.cython
     False
-    sage: ebroken.element_via_parent_test() is e.element_via_parent_test()      # optional - sage.misc.cython
+    sage: ebroken.element_via_parent_test() is e.element_via_parent_test()              # needs sage.misc.cython
     True
 
 However, the cache of the other inherited method breaks, although the method
 as such works::
 
-    sage: ebroken.element_cache_test()                                          # optional - sage.misc.cython
+    sage: ebroken.element_cache_test()                                                  # needs sage.misc.cython
     <-5>
-    sage: ebroken.element_cache_test() is ebroken.element_cache_test()          # optional - sage.misc.cython
+    sage: ebroken.element_cache_test() is ebroken.element_cache_test()                  # needs sage.misc.cython
     False
 
 The cache can be emptied::
 
-    sage: a = test_pfunc(5)                                                     # optional - sage.misc.cython
-    sage: test_pfunc.clear_cache()                                              # optional - sage.misc.cython
-    sage: a is test_pfunc(5)                                                    # optional - sage.misc.cython
+    sage: # needs sage.misc.cython
+    sage: a = test_pfunc(5)
+    sage: test_pfunc.clear_cache()
+    sage: a is test_pfunc(5)
     False
-    sage: a = P.one()                                                           # optional - sage.misc.cython
-    sage: P.one.clear_cache()                                                   # optional - sage.misc.cython
-    sage: a is P.one()                                                          # optional - sage.misc.cython
+    sage: a = P.one()
+    sage: P.one.clear_cache()
+    sage: a is P.one()
     False
 
 Since ``e`` and ``ebroken`` share the cache, when we empty it for one element
 it is empty for the other as well::
 
-    sage: b = ebroken.element_via_parent_test()                                 # optional - sage.misc.cython
-    sage: e.element_via_parent_test.clear_cache()                               # optional - sage.misc.cython
-    sage: b is ebroken.element_via_parent_test()                                # optional - sage.misc.cython
+    sage: b = ebroken.element_via_parent_test()                                         # needs sage.misc.cython
+    sage: e.element_via_parent_test.clear_cache()                                       # needs sage.misc.cython
+    sage: b is ebroken.element_via_parent_test()                                        # needs sage.misc.cython
     False
 
 Introspection works::
 
+    sage: # needs sage.misc.cython
     sage: from sage.misc.edit_module import file_and_line
     sage: from sage.misc.sageinspect import sage_getdoc, sage_getfile, sage_getsource
-    sage: print(sage_getdoc(test_pfunc))                                        # optional - sage.misc.cython
+    sage: print(sage_getdoc(test_pfunc))
        Some documentation
-    sage: print(sage_getdoc(O.wrapped_method))                                  # optional - sage.misc.cython
+    sage: print(sage_getdoc(O.wrapped_method))
     some doc for a wrapped cython method
     <BLANKLINE>
-    sage: print(sage_getdoc(O.direct_method))                                   # optional - sage.misc.cython
+    sage: print(sage_getdoc(O.direct_method))
     Some doc for direct method
     <BLANKLINE>
-    sage: print(sage_getsource(O.wrapped_method))                               # optional - sage.misc.cython
+    sage: print(sage_getsource(O.wrapped_method))
     cpdef test_meth(self,x):
         "some doc for a wrapped cython method"
         return -x
-    sage: print(sage_getsource(O.direct_method))                                # optional - sage.misc.cython
+    sage: print(sage_getsource(O.direct_method))
     def direct_method(self, x):
         "Some doc for direct method"
         return 2*x
@@ -283,13 +288,13 @@ ought to be chosen. A typical example is
     [a, b]
     sage: I.gens() is I.gens()
     True
-    sage: I.groebner_basis()                                                            # optional - sage.libs.singular
+    sage: I.groebner_basis()                                                            # needs sage.libs.singular
     [a, b]
-    sage: I.groebner_basis() is I.groebner_basis()                                      # optional - sage.libs.singular
+    sage: I.groebner_basis() is I.groebner_basis()                                      # needs sage.libs.singular
     True
-    sage: type(I.gens)                                                                  # optional - sage.libs.singular
+    sage: type(I.gens)
     <class 'sage.misc.cachefunc.CachedMethodCallerNoArgs'>
-    sage: type(I.groebner_basis)                                                        # optional - sage.libs.singular
+    sage: type(I.groebner_basis)
     <class 'sage.misc.cachefunc.CachedMethodCaller'>
 
 By :trac:`12951`, the cached_method decorator is also supported on non-c(p)def
@@ -304,11 +309,11 @@ latter is easy::
     ....: "    @cached_method",
     ....: "    def f(self, a,b):",
     ....: "        return a*b"]
-    sage: cython(os.linesep.join(cython_code))                                  # optional - sage.misc.cython
-    sage: P = MyClass()                                                         # optional - sage.misc.cython
-    sage: P.f(2, 3)                                                             # optional - sage.misc.cython
+    sage: cython(os.linesep.join(cython_code))                                          # needs sage.misc.cython
+    sage: P = MyClass()                                                                 # needs sage.misc.cython
+    sage: P.f(2, 3)                                                                     # needs sage.misc.cython
     6
-    sage: P.f(2, 3) is P.f(2, 3)                                                # optional - sage.misc.cython
+    sage: P.f(2, 3) is P.f(2, 3)                                                        # needs sage.misc.cython
     True
 
 Providing attribute access is a bit more tricky, since it is needed that
@@ -333,19 +338,19 @@ enough in the following example::
     ....: "    @cached_method",
     ....: "    def f(self, a,b):",
     ....: "        return a+b"]
-    sage: cython(os.linesep.join(cython_code))                                  # optional - sage.misc.cython
-    sage: Q = MyOtherClass()                                                    # optional - sage.misc.cython
-    sage: Q.f(2, 3)                                                             # optional - sage.misc.cython
+    sage: cython(os.linesep.join(cython_code))                                          # needs sage.misc.cython
+    sage: Q = MyOtherClass()                                                            # needs sage.misc.cython
+    sage: Q.f(2, 3)                                                                     # needs sage.misc.cython
     5
-    sage: Q.f(2, 3) is Q.f(2, 3)                                                # optional - sage.misc.cython
+    sage: Q.f(2, 3) is Q.f(2, 3)                                                        # needs sage.misc.cython
     True
 
 Note that supporting attribute access is somehow faster than the
 easier method::
 
-    sage: timeit("a = P.f(2,3)")   # random                                     # optional - sage.misc.cython
+    sage: timeit("a = P.f(2,3)")   # random                                             # needs sage.misc.cython
     625 loops, best of 3: 1.3 µs per loop
-    sage: timeit("a = Q.f(2,3)")   # random                                     # optional - sage.misc.cython
+    sage: timeit("a = Q.f(2,3)")   # random                                             # needs sage.misc.cython
     625 loops, best of 3: 931 ns per loop
 
 Some immutable objects (such as `p`-adic numbers) cannot implement a
@@ -353,18 +358,19 @@ reasonable hash function because their ``==`` operator has been
 modified to return ``True`` for objects which might behave differently
 in some computations::
 
-    sage: K.<a> = Qq(9)                                                 # optional - sage.rings.padics
-    sage: b = a.add_bigoh(1)                                            # optional - sage.rings.padics
-    sage: c = a + 3                                                     # optional - sage.rings.padics
-    sage: b                                                             # optional - sage.rings.padics
+    sage: # needs sage.rings.padics
+    sage: K.<a> = Qq(9)
+    sage: b = a.add_bigoh(1)
+    sage: c = a + 3
+    sage: b
     a + O(3)
-    sage: c                                                             # optional - sage.rings.padics
+    sage: c
     a + 3 + O(3^20)
-    sage: b == c                                                        # optional - sage.rings.padics
+    sage: b == c
     True
-    sage: b == a                                                        # optional - sage.rings.padics
+    sage: b == a
     True
-    sage: c == a                                                        # optional - sage.rings.padics
+    sage: c == a
     False
 
 If such objects defined a non-trivial hash function, this would break
@@ -372,21 +378,21 @@ caching in many places. However, such objects should still be usable
 in caches. This can be achieved by defining an appropriate method
 ``_cache_key``::
 
-    sage: hash(b)                                                       # optional - sage.rings.padics
+    sage: hash(b)                                                                       # needs sage.rings.padics
     Traceback (most recent call last):
     ...
     TypeError: unhashable type: 'sage.rings.padics.qadic_flint_CR.qAdicCappedRelativeElement'
     sage: from sage.misc.cachefunc import cached_method
     sage: @cached_method
     ....: def f(x): return x == a
-    sage: f(b)                                                          # optional - sage.rings.padics
+    sage: f(b)                                                                          # needs sage.rings.padics
     True
-    sage: f(c)  # if b and c were hashable, this would return True                      # optional - sage.rings.padics
+    sage: f(c)  # if b and c were hashable, this would return True
     False
 
-    sage: b._cache_key()                                                # optional - sage.rings.padics
+    sage: b._cache_key()                                                                # needs sage.rings.padics
     (..., ((0, 1),), 0, 1)
-    sage: c._cache_key()                                                # optional - sage.rings.padics
+    sage: c._cache_key()                                                                # needs sage.rings.padics
     (..., ((0, 1), (1,)), 0, 20)
 
 .. NOTE::
@@ -399,9 +405,9 @@ if ``a != b``, then also ``a._cache_key() != b._cache_key()``.
 In practice this means that the ``_cache_key`` should always include
 the parent as its first argument::
 
-    sage: S.<a> = Qq(4)                                                                 # optional - sage.rings.padics
-    sage: d = a.add_bigoh(1)                                                            # optional - sage.rings.padics
-    sage: b._cache_key() == d._cache_key()  # this would be True if the parents were not included   # optional - sage.rings.padics
+    sage: S.<a> = Qq(4)                                                                 # needs sage.rings.padics
+    sage: d = a.add_bigoh(1)                                                            # needs sage.rings.padics
+    sage: b._cache_key() == d._cache_key()  # this would be True if the parents were not included
     False
 """
 
@@ -461,9 +467,9 @@ def _cached_function_unpickle(module, name, cache=None):
 
     TESTS::
 
-        sage: type(hilbert_class_polynomial)
+        sage: type(hilbert_class_polynomial)                                            # needs sage.schemes
         <class 'sage.misc.cachefunc.CachedFunction'>
-        sage: loads(dumps(hilbert_class_polynomial)) is hilbert_class_polynomial  #indirect doctest
+        sage: loads(dumps(hilbert_class_polynomial)) is hilbert_class_polynomial  #indirect doctest                     # needs sage.schemes
         True
 
     Verify that the ``cache`` parameter works::
@@ -538,8 +544,8 @@ cpdef inline dict_key(o):
         sage: from sage.misc.cachefunc import dict_key
         sage: dict_key(42)
         42
-        sage: K.<u> = Qq(9)                                             # optional - sage.rings.padics
-        sage: dict_key(u)                                               # optional - sage.rings.padics
+        sage: K.<u> = Qq(9)                                                             # needs sage.rings.padics
+        sage: dict_key(u)                                                               # needs sage.rings.padics
         (<object object at ...>, (..., 20))
     """
     try:
@@ -562,24 +568,24 @@ cpdef inline cache_key(o):
     EXAMPLES::
 
         sage: from sage.misc.cachefunc import cache_key
-        sage: K.<u> = Qq(9)                                             # optional - sage.rings.padics
-        sage: a = K(1); a                                               # optional - sage.rings.padics
+        sage: K.<u> = Qq(9)                                                             # needs sage.rings.padics
+        sage: a = K(1); a                                                               # needs sage.rings.padics
         1 + O(3^20)
-        sage: cache_key(a)                                              # optional - sage.rings.padics
+        sage: cache_key(a)                                                              # needs sage.rings.padics
         (..., ((1,),), 0, 20)
 
     This function works if ``o`` is a tuple. In this case it unpacks its
     entries recursively::
 
-        sage: o = (1, 2, (3, a))                                        # optional - sage.rings.padics
-        sage: cache_key(o)                                              # optional - sage.rings.padics
+        sage: o = (1, 2, (3, a))                                                        # needs sage.rings.padics
+        sage: cache_key(o)                                                              # needs sage.rings.padics
         (1, 2, (3, (..., ((1,),), 0, 20)))
 
     Note that tuples are only partially unpacked if some of its entries are
     hashable::
 
-        sage: o = (1/2, a)                                              # optional - sage.rings.padics
-        sage: cache_key(o)                                              # optional - sage.rings.padics
+        sage: o = (1/2, a)                                                              # needs sage.rings.padics
+        sage: cache_key(o)                                                              # needs sage.rings.padics
         (1/2, (..., ((1,),), 0, 20))
     """
     try:
@@ -689,14 +695,15 @@ cdef class CachedFunction():
 
         TESTS::
 
-            sage: g = CachedFunction(number_of_partitions)                              # optional - sage.combinat
-            sage: g.__name__                                                            # optional - sage.combinat
+            sage: # needs sage.combinat
+            sage: g = CachedFunction(number_of_partitions)
+            sage: g.__name__
             'number_of_partitions'
-            sage: 'partitions' in sage.misc.sageinspect.sage_getdoc(g)                  # optional - sage.combinat
+            sage: 'partitions' in sage.misc.sageinspect.sage_getdoc(g)
             True
-            sage: g(5)                                                                  # optional - sage.combinat sage.libs.flint
+            sage: g(5)                                                                  # needs sage.libs.flint
             7
-            sage: g.cache                                                               # optional - sage.combinat sage.libs.flint
+            sage: g.cache                                                               # needs sage.libs.flint
             {((5, 'default'), ()): 7}
 
             sage: def f(t=1): print(t)
@@ -825,9 +832,9 @@ cdef class CachedFunction():
 
         TESTS::
 
-            sage: type(hilbert_class_polynomial)
+            sage: type(hilbert_class_polynomial)                                        # needs sage.schemes
             <class 'sage.misc.cachefunc.CachedFunction'>
-            sage: loads(dumps(hilbert_class_polynomial)) is hilbert_class_polynomial  #indirect doctest
+            sage: loads(dumps(hilbert_class_polynomial)) is hilbert_class_polynomial  #indirect doctest                 # needs sage.schemes
             True
         """
         return _cached_function_unpickle, (self.__module__, self.__name__, self.cache)
@@ -899,8 +906,8 @@ cdef class CachedFunction():
         TESTS::
 
             sage: from sage.misc.sageinspect import sage_getsource
-            sage: g = CachedFunction(number_of_partitions)                              # optional - sage.combinat
-            sage: 'flint' in sage_getsource(g)  # indirect doctest                      # optional - sage.combinat
+            sage: g = CachedFunction(number_of_partitions)                              # needs sage.combinat
+            sage: 'flint' in sage_getsource(g)  # indirect doctest                      # needs sage.combinat
             True
 
         """
@@ -951,16 +958,17 @@ cdef class CachedFunction():
 
         TESTS::
 
-            sage: g = CachedFunction(number_of_partitions)                              # optional - sage.combinat
-            sage: a = g(5)                                                              # optional - sage.combinat sage.libs.flint
-            sage: g.cache                                                               # optional - sage.combinat sage.libs.flint
+            sage: # needs sage.combinat
+            sage: g = CachedFunction(number_of_partitions)
+            sage: a = g(5)                                                              # needs sage.libs.flint
+            sage: g.cache                                                               # needs sage.libs.flint
             {((5, 'default'), ()): 7}
-            sage: a = g(10^5)   # indirect doctest                                      # optional - sage.combinat sage.libs.flint
-            sage: a == number_of_partitions(10^5)                                       # optional - sage.combinat sage.libs.flint
+            sage: a = g(10^5)   # indirect doctest                                      # needs sage.libs.flint
+            sage: a == number_of_partitions(10^5)                                       # needs sage.libs.flint
             True
-            sage: a is g(10^5)                                                          # optional - sage.combinat sage.libs.flint
+            sage: a is g(10^5)                                                          # needs sage.libs.flint
             True
-            sage: a is number_of_partitions(10^5)                                       # optional - sage.combinat sage.libs.flint
+            sage: a is number_of_partitions(10^5)                                       # needs sage.libs.flint
             True
 
         Check that :trac:`16316` has been fixed, i.e., caching works for
@@ -969,16 +977,16 @@ cdef class CachedFunction():
 
             sage: @cached_function
             ....: def f(x): return x+x
-            sage: K.<u> = Qq(4)                                         # optional - sage.rings.padics
-            sage: x = K(1,1); x                                         # optional - sage.rings.padics
+            sage: K.<u> = Qq(4)                                                         # needs sage.rings.padics
+            sage: x = K(1,1); x                                                         # needs sage.rings.padics
             1 + O(2)
-            sage: y = K(1,2); y                                         # optional - sage.rings.padics
+            sage: y = K(1,2); y                                                         # needs sage.rings.padics
             1 + O(2^2)
-            sage: x == y                                                # optional - sage.rings.padics
+            sage: x == y                                                                # needs sage.rings.padics
             True
-            sage: f(x) is f(x)                                          # optional - sage.rings.padics
+            sage: f(x) is f(x)                                                          # needs sage.rings.padics
             True
-            sage: f(y) is not f(x)                                      # optional - sage.rings.padics
+            sage: f(y) is not f(x)                                                      # needs sage.rings.padics
             True
 
         """
@@ -1050,14 +1058,14 @@ cdef class CachedFunction():
 
             sage: @cached_function
             ....: def f(x): return x
-            sage: K.<u> = Qq(4)                                         # optional - sage.rings.padics
-            sage: x = K(1,1); x                                         # optional - sage.rings.padics
+            sage: K.<u> = Qq(4)                                                         # needs sage.rings.padics
+            sage: x = K(1,1); x                                                         # needs sage.rings.padics
             1 + O(2)
-            sage: f.is_in_cache(x)                                      # optional - sage.rings.padics
+            sage: f.is_in_cache(x)                                                      # needs sage.rings.padics
             False
-            sage: f(x)                                                  # optional - sage.rings.padics
+            sage: f(x)                                                                  # needs sage.rings.padics
             1 + O(2)
-            sage: f.is_in_cache(x)                                      # optional - sage.rings.padics
+            sage: f.is_in_cache(x)                                                      # needs sage.rings.padics
             True
 
         """
@@ -1076,14 +1084,15 @@ cdef class CachedFunction():
 
         EXAMPLES::
 
-            sage: g = CachedFunction(number_of_partitions)                              # optional - sage.combinat sage.libs.flint
-            sage: a = g(5)                                                              # optional - sage.combinat sage.libs.flint
-            sage: g.cache                                                               # optional - sage.combinat sage.libs.flint
+            sage: # needs sage.combinat sage.libs.flint
+            sage: g = CachedFunction(number_of_partitions)
+            sage: a = g(5)
+            sage: g.cache
             {((5, 'default'), ()): 7}
-            sage: g.set_cache(17, 5)                                                    # optional - sage.combinat sage.libs.flint
-            sage: g.cache                                                               # optional - sage.combinat sage.libs.flint
+            sage: g.set_cache(17, 5)
+            sage: g.cache
             {((5, 'default'), ()): 17}
-            sage: g(5)                                                                  # optional - sage.combinat sage.libs.flint
+            sage: g(5)
             17
 
         TESTS:
@@ -1094,11 +1103,11 @@ cdef class CachedFunction():
 
             sage: @cached_function
             ....: def f(x): return x
-            sage: K.<u> = Qq(4)                                         # optional - sage.rings.padics
-            sage: x = K(1,1); x                                         # optional - sage.rings.padics
+            sage: K.<u> = Qq(4)                                                         # needs sage.rings.padics
+            sage: x = K(1,1); x                                                         # needs sage.rings.padics
             1 + O(2)
-            sage: f.set_cache(x, x)                                     # optional - sage.rings.padics
-            sage: f.is_in_cache(x)                                      # optional - sage.rings.padics
+            sage: f.set_cache(x, x)                                                     # needs sage.rings.padics
+            sage: f.is_in_cache(x)                                                      # needs sage.rings.padics
             True
 
         DEVELOPER NOTE:
@@ -1177,8 +1186,8 @@ cdef class CachedFunction():
         """
         EXAMPLES::
 
-            sage: g = CachedFunction(number_of_partitions)                      # optional - sage.combinat
-            sage: g     # indirect doctest                                      # optional - sage.combinat
+            sage: g = CachedFunction(number_of_partitions)                              # needs sage.combinat
+            sage: g     # indirect doctest                                              # needs sage.combinat
             Cached version of <function number_of_partitions at 0x...>
         """
         try:
@@ -1192,12 +1201,13 @@ cdef class CachedFunction():
 
         EXAMPLES::
 
-            sage: g = CachedFunction(number_of_partitions)                      # optional - sage.combinat
-            sage: a = g(5)                                                      # optional - sage.combinat
-            sage: g.cache                                                       # optional - sage.combinat
+            sage: # needs sage.combinat
+            sage: g = CachedFunction(number_of_partitions)
+            sage: a = g(5)                                                              # needs sage.libs.flint
+            sage: g.cache                                                               # needs sage.libs.flint
             {((5, 'default'), ()): 7}
-            sage: g.clear_cache()                                               # optional - sage.combinat
-            sage: g.cache                                                       # optional - sage.combinat
+            sage: g.clear_cache()
+            sage: g.cache
             {}
         """
         self.cache.clear()
@@ -1320,17 +1330,17 @@ cdef class WeakCachedFunction(CachedFunction):
         sage: from sage.misc.cachefunc import weak_cached_function
         sage: @weak_cached_function
         ....: def f(x): return x+x
-        sage: K.<u> = Qq(4)                                             # optional - sage.rings.padics
-        sage: R.<t> = K[]                                               # optional - sage.rings.padics
-        sage: x = t + K(1,1); x                                         # optional - sage.rings.padics
+        sage: K.<u> = Qq(4)                                                             # needs sage.rings.padics
+        sage: R.<t> = K[]                                                               # needs sage.rings.padics
+        sage: x = t + K(1,1); x                                                         # needs sage.rings.padics
         (1 + O(2^20))*t + 1 + O(2)
-        sage: y = t + K(1,2); y                                         # optional - sage.rings.padics
+        sage: y = t + K(1,2); y                                                         # needs sage.rings.padics
         (1 + O(2^20))*t + 1 + O(2^2)
-        sage: x == y                                                    # optional - sage.rings.padics
+        sage: x == y                                                                    # needs sage.rings.padics
         True
-        sage: f(x) is f(x)                                              # optional - sage.rings.padics
+        sage: f(x) is f(x)                                                              # needs sage.rings.padics
         True
-        sage: f(y) is not f(x)                                          # optional - sage.rings.padics
+        sage: f(y) is not f(x)                                                          # needs sage.rings.padics
         True
 
     Examples and tests for ``is_in_cache``::
@@ -1364,13 +1374,13 @@ cdef class WeakCachedFunction(CachedFunction):
         sage: from sage.misc.cachefunc import weak_cached_function
         sage: @weak_cached_function
         ....: def f(x): return x
-        sage: K.<u> = Qq(4)                                             # optional - sage.rings.padics
-        sage: R.<t> = K[]                                               # optional - sage.rings.padics
-        sage: f.is_in_cache(t)                                          # optional - sage.rings.padics
+        sage: K.<u> = Qq(4)                                                             # needs sage.rings.padics
+        sage: R.<t> = K[]                                                               # needs sage.rings.padics
+        sage: f.is_in_cache(t)                                                          # needs sage.rings.padics
         False
-        sage: f(t)                                                      # optional - sage.rings.padics
+        sage: f(t)                                                                      # needs sage.rings.padics
         (1 + O(2^20))*t
-        sage: f.is_in_cache(t)                                          # optional - sage.rings.padics
+        sage: f.is_in_cache(t)                                                          # needs sage.rings.padics
         True
 
     Examples and tests for ``set_cache``::
@@ -1390,10 +1400,10 @@ cdef class WeakCachedFunction(CachedFunction):
         sage: from sage.misc.cachefunc import weak_cached_function
         sage: @weak_cached_function
         ....: def f(x): return x
-        sage: K.<u> = Qq(4)                                             # optional - sage.rings.padics
-        sage: R.<t> = K[]                                               # optional - sage.rings.padics
-        sage: f.set_cache(t,t)                                          # optional - sage.rings.padics
-        sage: f.is_in_cache(t)                                          # optional - sage.rings.padics
+        sage: K.<u> = Qq(4)                                                             # needs sage.rings.padics
+        sage: R.<t> = K[]                                                               # needs sage.rings.padics
+        sage: f.set_cache(t,t)                                                          # needs sage.rings.padics
+        sage: f.is_in_cache(t)                                                          # needs sage.rings.padics
         True
     """
     def __init__(self, f, *, classmethod=False, name=None, key=None, **kwds):
@@ -1448,29 +1458,29 @@ class CachedMethodPickle():
 
         sage: R.<x, y, z> = PolynomialRing(QQ, 3)
         sage: I = R * (x^3 + y^3 + z^3, x^4 - y^4)
-        sage: I.groebner_basis()                                                        # optional - sage.libs.singular
+        sage: I.groebner_basis()                                                        # needs sage.libs.singular
         [y^5*z^3 - 1/4*x^2*z^6 + 1/2*x*y*z^6 + 1/4*y^2*z^6,
          x^2*y*z^3 - x*y^2*z^3 + 2*y^3*z^3 + z^6,
          x*y^3 + y^4 + x*z^3, x^3 + y^3 + z^3]
-        sage: I.groebner_basis                                                          # optional - sage.libs.singular
+        sage: I.groebner_basis
         Cached version of <function ...groebner_basis at 0x...>
 
     We now pickle and unpickle the ideal. The cached method
     ``groebner_basis`` is replaced by a placeholder::
 
-        sage: J = loads(dumps(I))                                                       # optional - sage.libs.singular
-        sage: J.groebner_basis                                                          # optional - sage.libs.singular
+        sage: J = loads(dumps(I))
+        sage: J.groebner_basis
         Pickle of the cached method "groebner_basis"
 
     But as soon as any other attribute is requested from the
     placeholder, it replaces itself by the cached method, and
     the entries of the cache are actually preserved::
 
-        sage: J.groebner_basis.is_in_cache()                                            # optional - sage.libs.singular
+        sage: J.groebner_basis.is_in_cache()                                            # needs sage.libs.singular
         True
-        sage: J.groebner_basis                                                          # optional - sage.libs.singular
+        sage: J.groebner_basis
         Cached version of <function ...groebner_basis at 0x...>
-        sage: J.groebner_basis() == I.groebner_basis()                                  # optional - sage.libs.singular
+        sage: J.groebner_basis() == I.groebner_basis()                                  # needs sage.libs.singular
         True
 
     TESTS:
@@ -1550,9 +1560,9 @@ class CachedMethodPickle():
 
             sage: R.<x, y, z> = PolynomialRing(QQ, 3)
             sage: I = R * (x^3 + y^3 + z^3, x^4 - y^4)
-            sage: G = I.groebner_basis()                                                # optional - sage.libs.singular
-            sage: J = loads(dumps(I))                                                   # optional - sage.libs.singular
-            sage: J.groebner_basis  # indirect doctest                                  # optional - sage.libs.singular
+            sage: G = I.groebner_basis()                                                # needs sage.libs.singular
+            sage: J = loads(dumps(I))
+            sage: J.groebner_basis  # indirect doctest
             Pickle of the cached method "groebner_basis"
         """
         return 'Pickle of the cached method "{}"'.format(self._name)
@@ -1566,21 +1576,21 @@ class CachedMethodPickle():
 
             sage: R.<x, y, z> = PolynomialRing(QQ, 3)
             sage: I = R * (x^3 + y^3 + z^3, x^4 - y^4)
-            sage: I.groebner_basis()                                                    # optional - sage.libs.singular
+            sage: I.groebner_basis()                                                    # needs sage.libs.singular
             [y^5*z^3 - 1/4*x^2*z^6 + 1/2*x*y*z^6 + 1/4*y^2*z^6,
              x^2*y*z^3 - x*y^2*z^3 + 2*y^3*z^3 + z^6,
              x*y^3 + y^4 + x*z^3, x^3 + y^3 + z^3]
-            sage: J = loads(dumps(I))                                                   # optional - sage.libs.singular
-            sage: J.groebner_basis                                                      # optional - sage.libs.singular
+            sage: J = loads(dumps(I))
+            sage: J.groebner_basis
             Pickle of the cached method "groebner_basis"
 
         When we now pickle ``J``, the pickle of the cached method
         needs to be taken care of::
 
-            sage: K = loads(dumps(J))  # indirect doctest                               # optional - sage.libs.singular
-            sage: K.groebner_basis                                                      # optional - sage.libs.singular
+            sage: K = loads(dumps(J))  # indirect doctest
+            sage: K.groebner_basis
             Pickle of the cached method "groebner_basis"
-            sage: K.groebner_basis.cache                                                # optional - sage.libs.singular
+            sage: K.groebner_basis.cache                                                # needs sage.libs.singular
             {(('', None, None, False), ()):
             [y^5*z^3 - 1/4*x^2*z^6 + 1/2*x*y*z^6 + 1/4*y^2*z^6,
              x^2*y*z^3 - x*y^2*z^3 + 2*y^3*z^3 + z^6,
@@ -1626,9 +1636,9 @@ class CachedMethodPickle():
 
             sage: R.<x, y, z> = PolynomialRing(QQ, 3)
             sage: I = R * (x^3 + y^3 + z^3, x^4 - y^4)
-            sage: G = I.groebner_basis()                                                # optional - sage.libs.singular
-            sage: J = loads(dumps(I))                                                   # optional - sage.libs.singular
-            sage: J.groebner_basis                                                      # optional - sage.libs.singular
+            sage: G = I.groebner_basis()                                                # needs sage.libs.singular
+            sage: J = loads(dumps(I))
+            sage: J.groebner_basis
             Pickle of the cached method "groebner_basis"
 
         If an attribute of name ``s`` is requested (say,
@@ -1643,9 +1653,9 @@ class CachedMethodPickle():
         In that way, the unpickling of the cached method is
         finally accomplished::
 
-            sage: J.groebner_basis.is_in_cache()  # indirect doctest                    # optional - sage.libs.singular
+            sage: J.groebner_basis.is_in_cache()  # indirect doctest                    # needs sage.libs.singular
             True
-            sage: J.groebner_basis                                                      # optional - sage.libs.singular
+            sage: J.groebner_basis
             Cached version of <function ...groebner_basis at 0x...>
         """
         self._instance.__dict__.__delitem__(self._name)
@@ -1760,13 +1770,13 @@ cdef class CachedMethodCaller(CachedFunction):
 
             sage: R.<x, y, z> = PolynomialRing(QQ, 3)
             sage: I = R * (x^3 + y^3 + z^3, x^4 - y^4)
-            sage: G = I.groebner_basis()                                                # optional - sage.libs.singular
-            sage: J = loads(dumps(I))  # indirect doctest                               # optional - sage.libs.singular
-            sage: J.groebner_basis                                                      # optional - sage.libs.singular
+            sage: G = I.groebner_basis()                                                # needs sage.libs.singular
+            sage: J = loads(dumps(I))  # indirect doctest
+            sage: J.groebner_basis
             Pickle of the cached method "groebner_basis"
-            sage: J.groebner_basis.is_in_cache()                                        # optional - sage.libs.singular
+            sage: J.groebner_basis.is_in_cache()                                        # needs sage.libs.singular
             True
-            sage: J.groebner_basis                                                      # optional - sage.libs.singular
+            sage: J.groebner_basis
             Cached version of <function ...groebner_basis at 0x...>
         """
         if isinstance(self._cachedmethod, CachedInParentMethod) or hasattr(self._instance,self._cachedmethod._cache_name):
@@ -1782,11 +1792,11 @@ cdef class CachedMethodCaller(CachedFunction):
 
             sage: P.<a,b,c,d> = QQ[]
             sage: I = P * [a, b]
-            sage: I.groebner_basis()                                                    # optional - sage.libs.singular
+            sage: I.groebner_basis()                                                    # needs sage.libs.singular
             [a, b]
-            sage: I.groebner_basis._instance_call() is I.groebner_basis()               # optional - sage.libs.singular
+            sage: I.groebner_basis._instance_call() is I.groebner_basis()               # needs sage.libs.singular
             False
-            sage: I.groebner_basis._instance_call() == I.groebner_basis()               # optional - sage.libs.singular
+            sage: I.groebner_basis._instance_call() == I.groebner_basis()               # needs sage.libs.singular
             True
 
         ::
@@ -1905,20 +1915,20 @@ cdef class CachedMethodCaller(CachedFunction):
         immutable unhashable objects which define
         :meth:`sage.structure.sage_object.SageObject._cache_key`::
 
-            sage: K.<u> = Qq(4)                                         # optional - sage.rings.padics
+            sage: K.<u> = Qq(4)                                                         # needs sage.rings.padics
             sage: class A():
             ....:   @cached_method
             ....:   def f(self, x): return x+x
             sage: a = A()
-            sage: x = K(1,1); x                                         # optional - sage.rings.padics
+            sage: x = K(1,1); x                                                         # needs sage.rings.padics
             1 + O(2)
-            sage: y = K(1,2); y                                         # optional - sage.rings.padics
+            sage: y = K(1,2); y                                                         # needs sage.rings.padics
             1 + O(2^2)
-            sage: x == y                                                # optional - sage.rings.padics
+            sage: x == y                                                                # needs sage.rings.padics
             True
-            sage: a.f(x) is a.f(x)                                      # optional - sage.rings.padics
+            sage: a.f(x) is a.f(x)                                                      # needs sage.rings.padics
             True
-            sage: a.f(y) is not a.f(x)                                  # optional - sage.rings.padics
+            sage: a.f(y) is not a.f(x)                                                  # needs sage.rings.padics
             True
 
         """
@@ -3673,11 +3683,11 @@ class disk_cached_function:
         sage: dir = tmp_dir()
         sage: @disk_cached_function(dir)
         ....: def foo(x): return next_prime(2^x)%x
-        sage: x = foo(200); x                                                   # optional - sage.libs.pari
+        sage: x = foo(200); x                                                           # needs sage.libs.pari
         11
         sage: @disk_cached_function(dir)
         ....: def foo(x): return 1/x
-        sage: foo(200)                                                          # optional - sage.libs.pari
+        sage: foo(200)                                                                  # needs sage.libs.pari
         11
         sage: foo.clear_cache()
         sage: foo(200)
@@ -3690,12 +3700,12 @@ class disk_cached_function:
             sage: dir = tmp_dir()
             sage: @disk_cached_function(dir, memory_cache=True)
             ....: def foo(x): return next_prime(2^x)
-            sage: x = foo(200)                                                  # optional - sage.libs.pari
-            sage: x is foo(200)                                                 # optional - sage.libs.pari
+            sage: x = foo(200)                                                          # needs sage.libs.pari
+            sage: x is foo(200)                                                         # needs sage.libs.pari
             True
             sage: @disk_cached_function(dir, memory_cache=False)
             ....: def foo(x): return next_prime(2^x)
-            sage: x is foo(200)                                                 # optional - sage.libs.pari
+            sage: x is foo(200)                                                         # needs sage.libs.pari
             False
         """
         self._dir = dir
@@ -3709,7 +3719,7 @@ class disk_cached_function:
             sage: dir = tmp_dir()
             sage: @disk_cached_function(dir)
             ....: def foo(x): return ModularSymbols(x)
-            sage: foo(389)                                                              # optional - sage.modular
+            sage: foo(389)                                                              # needs sage.modular
             Modular Symbols space of dimension 65 for Gamma_0(389) of weight 2
              with sign 0 over Rational Field
         """
