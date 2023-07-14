@@ -113,7 +113,7 @@ class PolynomialQuotientRingFactory(UniqueFactory):
         sage: # needs sage.rings.finite_rings
         sage: A.<y> = PolynomialRing(GF(2)); A                                          # needs sage.libs.ntl
         Univariate Polynomial Ring in y over Finite Field of size 2 (using GF2X)
-        sage: B = A.quotient(y^2 + y + 1, 'y2'); B
+        sage: B = A.quotient(y^2 + y + 1, 'y2'); B                                      # needs sage.libs.ntl
         Univariate Quotient Polynomial Ring in y2 over Finite Field of size 2
          with modulus y^2 + y + 1
         sage: C = PolynomialRing(B, 'x'); x = C.gen(); C
@@ -1101,10 +1101,10 @@ class PolynomialQuotientRing_generic(QuotientRing_generic):
             sage: U.is_integral_domain()
             False
             sage: R2.<y> = PolynomialRing(R)
-            sage: S2 = R2.quotient(z^2 - y^3)                                           # needs sage.libs.pari
+            sage: S2 = R2.quotient(z^2 - y^3)
             sage: S2.is_integral_domain()                                               # needs sage.libs.pari
             True
-            sage: S3 = R2.quotient(z^2 - 2*y*z + y^2)                                   # needs sage.libs.pari
+            sage: S3 = R2.quotient(z^2 - 2*y*z + y^2)
             sage: S3.is_integral_domain()                                               # needs sage.libs.pari
             False
 
@@ -1119,15 +1119,16 @@ class PolynomialQuotientRing_generic(QuotientRing_generic):
         domain, even though the base ring is integral and the modulus is
         irreducible::
 
+            sage: # needs sage.libs.pari sage.rings.number_field
             sage: x = polygen(ZZ, 'x')
-            sage: B = ZZ.extension(x^2 - 5, 'a')                                        # needs sage.rings.number_field
-            sage: R.<y> = PolynomialRing(B)                                             # needs sage.rings.number_field
-            sage: S = R.quotient(y^2 - y - 1)                                           # needs sage.libs.pari sage.rings.number_field
-            sage: S.is_integral_domain()                                                # needs sage.libs.pari sage.rings.number_field
+            sage: B = ZZ.extension(x^2 - 5, 'a')
+            sage: R.<y> = PolynomialRing(B)
+            sage: S = R.quotient(y^2 - y - 1)
+            sage: S.is_integral_domain()
             Traceback (most recent call last):
             ...
             NotImplementedError
-            sage: S.is_integral_domain(proof=False)                                     # needs sage.libs.pari sage.rings.number_field
+            sage: S.is_integral_domain(proof=False)
             False
 
         The reason that the modulus y^2 - y - 1 is not prime is that it
@@ -1179,8 +1180,8 @@ class PolynomialQuotientRing_generic(QuotientRing_generic):
             sage: R = PolynomialRing(ZZ, 'x').quotient(x**6 - 1)                        # needs sage.libs.pari
             sage: R.krull_dimension()                                                   # needs sage.libs.pari
             1
-            sage: R = PolynomialRing(ZZ, 'x').quotient(1)                               # needs sage.libs.pari
-            sage: R.krull_dimension()                                                   # needs sage.libs.pari
+            sage: R = PolynomialRing(ZZ, 'x').quotient(1)
+            sage: R.krull_dimension()
             -1
         """
         if self.is_zero():
@@ -1566,13 +1567,14 @@ class PolynomialQuotientRing_generic(QuotientRing_generic):
 
         EXAMPLES::
 
-            sage: K.<a> = QuadraticField(-3)                                            # needs sage.rings.number_field
-            sage: K.class_group()                                                       # needs sage.rings.number_field
+            sage: # needs sage.rings.number_field
+            sage: K.<a> = QuadraticField(-3)
+            sage: K.class_group()
             Class group of order 1 of Number Field in a
              with defining polynomial x^2 + 3 with a = 1.732050807568878?*I
             sage: x = polygen(QQ, 'x')
-            sage: K.<a> = QQ['x'].quotient(x^2 + 3)                                     # needs sage.libs.pari sage.rings.number_field
-            sage: K.class_group()                                                       # needs sage.libs.pari sage.rings.number_field
+            sage: K.<a> = QQ['x'].quotient(x^2 + 3)                                     # needs sage.libs.pari
+            sage: K.class_group()                                                       # needs sage.libs.pari
             []
 
         A trivial algebra over `\QQ(\sqrt{-5})` has the same class group as its
@@ -1608,7 +1610,7 @@ class PolynomialQuotientRing_generic(QuotientRing_generic):
         Here is an example of a product of number fields, both of which
         contribute to the class group::
 
-            sage: R.<x> = QQ[]                                                          # needs sage.rings.number_field
+            sage: R.<x> = QQ[]
             sage: S.<xbar> = R.quotient((x^2 + 23) * (x^2 + 47))                        # needs sage.rings.number_field
             sage: S.class_group()                                                       # needs sage.rings.number_field
             [((1/12*xbar^2 + 47/12,

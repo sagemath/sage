@@ -912,8 +912,8 @@ class SymmetricIdeal(Ideal_generic):
 
         In an earlier version, the following examples failed::
 
-            sage: X.<y,z> = InfinitePolynomialRing(GF(5), order='degrevlex')            # needs sage.rings.finite_rings
-            sage: I = ['-2*y_0^2 + 2*z_0^2 + 1',                                        # needs sage.rings.finite_rings
+            sage: X.<y,z> = InfinitePolynomialRing(GF(5), order='degrevlex')
+            sage: I = ['-2*y_0^2 + 2*z_0^2 + 1',
             ....:      '-y_0^2 + 2*y_0*z_0 - 2*z_0^2 - 2*z_0 - 1',
             ....:      'y_0*z_0 + 2*z_0^2 - 2*z_0 - 1',
             ....:      'y_0^2 + 2*y_0*z_0 - 2*z_0^2 + 2*z_0 - 2',
@@ -921,9 +921,9 @@ class SymmetricIdeal(Ideal_generic):
             sage: I.groebner_basis()                                                    # needs sage.combinat sage.rings.finite_rings
             [1]
 
-            sage: Y.<x,y> = InfinitePolynomialRing(GF(3), order='degrevlex',            # needs sage.rings.finite_rings
+            sage: Y.<x,y> = InfinitePolynomialRing(GF(3), order='degrevlex',
             ....:                                  implementation='sparse')
-            sage: I = ['-y_3'] * Y                                                      # needs sage.rings.finite_rings
+            sage: I = ['-y_3'] * Y
             sage: I.groebner_basis()                                                    # needs sage.combinat sage.rings.finite_rings
             [y_1]
 

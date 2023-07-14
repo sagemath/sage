@@ -111,37 +111,41 @@ class FlatteningMorphism(Morphism):
 
         ::
 
+            sage: # needs sage.rings.number_field
             sage: x = polygen(ZZ, 'x')
-            sage: K.<v> = NumberField(x^3 - 2)                                          # needs sage.rings.number_field
-            sage: R = K['x','y']['a','b']                                               # needs sage.rings.number_field
+            sage: K.<v> = NumberField(x^3 - 2)
+            sage: R = K['x','y']['a','b']
             sage: from sage.rings.polynomial.flatten import FlatteningMorphism
-            sage: f = FlatteningMorphism(R)                                             # needs sage.rings.number_field
-            sage: f(R('v*a*x^2 + b^2 + 1/v*y'))                                         # needs sage.rings.number_field
+            sage: f = FlatteningMorphism(R)
+            sage: f(R('v*a*x^2 + b^2 + 1/v*y'))
             v*x^2*a + b^2 + (1/2*v^2)*y
 
         ::
 
-            sage: R = QQbar['x','y']['a','b']                                           # needs sage.rings.number_field
+            sage: # needs sage.rings.number_field
+            sage: R = QQbar['x','y']['a','b']
             sage: from sage.rings.polynomial.flatten import FlatteningMorphism
-            sage: f = FlatteningMorphism(R)                                             # needs sage.rings.number_field
-            sage: f(R('QQbar(sqrt(2))*a*x^2 + b^2 + QQbar(I)*y'))                       # needs sage.rings.number_field sage.symbolic
+            sage: f = FlatteningMorphism(R)
+            sage: f(R('QQbar(sqrt(2))*a*x^2 + b^2 + QQbar(I)*y'))                       # needs sage.symbolic
             1.414213562373095?*x^2*a + b^2 + I*y
 
         ::
 
-            sage: R.<z> = PolynomialRing(QQbar, 1)                                      # needs sage.rings.number_field
+            sage: # needs sage.rings.number_field
+            sage: R.<z> = PolynomialRing(QQbar, 1)
             sage: from sage.rings.polynomial.flatten import FlatteningMorphism
-            sage: f = FlatteningMorphism(R)                                             # needs sage.rings.number_field
-            sage: f.domain(), f.codomain()                                              # needs sage.rings.number_field
+            sage: f = FlatteningMorphism(R)
+            sage: f.domain(), f.codomain()
             (Multivariate Polynomial Ring in z over Algebraic Field,
              Multivariate Polynomial Ring in z over Algebraic Field)
 
         ::
 
-            sage: R.<z> = PolynomialRing(QQbar)                                         # needs sage.rings.number_field
+            sage: # needs sage.rings.number_field
+            sage: R.<z> = PolynomialRing(QQbar)
             sage: from sage.rings.polynomial.flatten import FlatteningMorphism
-            sage: f = FlatteningMorphism(R)                                             # needs sage.rings.number_field
-            sage: f.domain(), f.codomain()                                              # needs sage.rings.number_field
+            sage: f = FlatteningMorphism(R)
+            sage: f.domain(), f.codomain()
             (Univariate Polynomial Ring in z over Algebraic Field,
              Univariate Polynomial Ring in z over Algebraic Field)
 
@@ -487,9 +491,9 @@ class SpecializationMorphism(Morphism):
         The following was fixed in :trac:`23811`::
 
             sage: R.<c> = RR[]
-            sage: P.<z> = AffineSpace(R, 1)                                             # needs sage.modules
-            sage: H = End(P)                                                            # needs sage.modules
-            sage: f = H([z^2 + c])                                                      # needs sage.modules
+            sage: P.<z> = AffineSpace(R, 1)
+            sage: H = End(P)
+            sage: f = H([z^2 + c])
             sage: f.specialization({c:1})                                               # needs sage.modules
             Scheme endomorphism of
              Affine Space of dimension 1 over Real Field with 53 bits of precision

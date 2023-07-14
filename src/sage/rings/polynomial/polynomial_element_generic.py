@@ -16,7 +16,7 @@ We test coercion in a particularly complicated situation::
     sage: WZ.<z> = W['z']
     sage: m = matrix(WZ, 2, 2, [1, z, z, z^2])                                          # needs sage.modules
     sage: a = m.charpoly()                                                              # needs sage.modules
-    sage: R.<x> = WZ[]                                                                  # needs sage.modules
+    sage: R.<x> = WZ[]
     sage: R(a)                                                                          # needs sage.modules
     x^2 + (-z^2 - 1)*x
 """

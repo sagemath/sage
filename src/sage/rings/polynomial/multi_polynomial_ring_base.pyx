@@ -575,14 +575,15 @@ cdef class MPolynomialRing_base(sage.rings.ring.CommutativeRing):
         This fairly complicated code (from Michel Vandenbergh) ends up
         implicitly calling ``_coerce_c_impl``::
 
+            sage: # needs sage.rings.number_field
             sage: z = polygen(QQ, 'z')
-            sage: W.<s> = NumberField(z^2 + 1)                                          # needs sage.rings.number_field
-            sage: Q.<u,v,w> = W[]                                                       # needs sage.rings.number_field
-            sage: W1 = FractionField(Q)                                                 # needs sage.rings.number_field
-            sage: S.<x,y,z> = W1[]                                                      # needs sage.rings.number_field
-            sage: u + x                                                                 # needs sage.rings.number_field
+            sage: W.<s> = NumberField(z^2 + 1)
+            sage: Q.<u,v,w> = W[]
+            sage: W1 = FractionField(Q)
+            sage: S.<x,y,z> = W1[]
+            sage: u + x
             x + u
-            sage: x + 1/u                                                               # needs sage.rings.number_field
+            sage: x + 1/u
             x + 1/u
         """
         try:
@@ -1383,24 +1384,25 @@ cdef class MPolynomialRing_base(sage.rings.ring.CommutativeRing):
 
         EXAMPLES::
 
+            sage: # needs sage.combinat
             sage: R.<x,y,z> = ZZ[]
-            sage: mons = R.monomials_of_degree(2)                                       # needs sage.combinat
-            sage: mons                                                                  # needs sage.combinat
+            sage: mons = R.monomials_of_degree(2)
+            sage: mons
             [z^2, y*z, x*z, y^2, x*y, x^2]
             sage: P = PolynomialRing(QQ, 3, 'x, y, z', order=TermOrder('wdeglex', [1, 2, 1]))
-            sage: P.monomials_of_degree(2)                                              # needs sage.combinat
+            sage: P.monomials_of_degree(2)
             [z^2, y, x*z, x^2]
             sage: P = PolynomialRing(QQ, 3, 'x, y, z', order='lex')
-            sage: P.monomials_of_degree(3)                                              # needs sage.combinat
+            sage: P.monomials_of_degree(3)
             [z^3, y*z^2, y^2*z, y^3, x*z^2, x*y*z, x*y^2, x^2*z, x^2*y, x^3]
             sage: P = PolynomialRing(QQ, 3, 'x, y, z', order='invlex')
-            sage: P.monomials_of_degree(3)                                              # needs sage.combinat
+            sage: P.monomials_of_degree(3)
             [x^3, x^2*y, x*y^2, y^3, x^2*z, x*y*z, y^2*z, x*z^2, y*z^2, z^3]
 
         The number of such monomials equals `\binom{n+k-1}{k}`
         where `n` is the number of variables and `k` the degree::
 
-            sage: len(mons) == binomial(3 + 2 - 1, 2)
+            sage: len(mons) == binomial(3 + 2 - 1, 2)                                   # needs sage.combinat
             True
         """
         deg_of_gens = [x.degree() for x in self.gens()]

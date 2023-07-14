@@ -1034,6 +1034,7 @@ class PolynomialRing_general(ring.Algebra):
 
         EXAMPLES::
 
+            sage: # needs sage.rings.real_mpfr
             sage: R.<x> = RR[]; R
             Univariate Polynomial Ring in x over Real Field with 53 bits of precision
             sage: R.base_extend(CC)
@@ -3275,7 +3276,8 @@ class PolynomialRing_dense_mod_n(PolynomialRing_commutative):
 
         Non-maximal ideals are not accepted::
 
-            sage: R.residue_field(t^2 + 1)                                              # needs sage.rings.finite_rings
+            sage: # needs sage.libs.ntl
+            sage: R.residue_field(t^2 + 1)
             Traceback (most recent call last):
             ...
             ArithmeticError: ideal is not maximal

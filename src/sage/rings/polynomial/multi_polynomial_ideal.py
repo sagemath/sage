@@ -347,7 +347,7 @@ class MPolynomialIdeal_magma_repr:
 
         EXAMPLES::
 
-            sage: R.<a,b,c,d,e,f,g,h,i,j> = PolynomialRing(GF(127),10)                  # needs sage.rings.finite_rings
+            sage: R.<a,b,c,d,e,f,g,h,i,j> = PolynomialRing(GF(127),10)
             sage: I = sage.rings.ideal.Cyclic(R,4) # indirect doctest                   # needs sage.rings.finite_rings
             sage: magma(I)                      # optional - magma                      # needs sage.rings.finite_rings
             Ideal of Polynomial ring of rank 10 over GF(127)
@@ -1359,7 +1359,7 @@ class MPolynomialIdeal_singular_repr(
             sage: I.groebner_basis(algorithm='ginv')            # optional - ginv
             [z^3 - 79/210*z^2 + 1/30*y + 1/70*z, y^2 - 3/5*z^2 - 1/5*y + 1/5*z, y*z + 6/5*z^2 - 1/10*y - 2/5*z, x + 2*y + 2*z - 1]
 
-            sage: P.<x,y,z> = PolynomialRing(GF(127), order='degrevlex')                # needs sage.rings.finite_rings
+            sage: P.<x,y,z> = PolynomialRing(GF(127), order='degrevlex')
             sage: I = sage.rings.ideal.Katsura(P)                                       # needs sage.rings.finite_rings
             sage: I.groebner_basis(algorithm='ginv')    # optional - ginv               # needs sage.rings.finite_rings
             ...
@@ -1978,7 +1978,7 @@ class MPolynomialIdeal_singular_repr(
 
         The interreduced basis of 0 is 0::
 
-            sage: P.<x,y,z> = GF(2)[]                                                   # needs sage.rings.finite_rings
+            sage: P.<x,y,z> = GF(2)[]
             sage: Ideal(P(0)).interreduced_basis()                                      # needs sage.rings.finite_rings
             [0]
 
@@ -2649,8 +2649,8 @@ class MPolynomialIdeal_singular_repr(
         but may fail in small characteristic, especially with ideals of high
         degree with respect to the characteristic::
 
-            sage: R.<x, y> = PolynomialRing(GF(3), 2, order='lex')                      # needs sage.rings.finite_rings
-            sage: I = Ideal([x^2 - 1, y^2 - 1])                                         # needs sage.rings.finite_rings
+            sage: R.<x, y> = PolynomialRing(GF(3), 2, order='lex')
+            sage: I = Ideal([x^2 - 1, y^2 - 1])
             sage: I.variety(algorithm='msolve', proof=False)    # optional - msolve, needs sage.rings.finite_rings
             Traceback (most recent call last):
             ...
@@ -2698,8 +2698,8 @@ class MPolynomialIdeal_singular_repr(
 
         Testing that a bug is indeed fixed ::
 
-            sage: R = PolynomialRing(GF(2), 30, ['x%d'%(i+1) for i in range(30)], order='lex')      # needs sage.rings.finite_rings
-            sage: R.inject_variables()                                                  # needs sage.rings.finite_rings
+            sage: R = PolynomialRing(GF(2), 30, ['x%d'%(i+1) for i in range(30)], order='lex')
+            sage: R.inject_variables()
             Defining...
             sage: I = Ideal([x1 + 1, x2, x3 + 1, x5*x10 + x10 + x18, x5*x11 + x11, \
                              x5*x18, x6, x7 + 1, x9, x10*x11 + x10 + x18, x10*x18 + x18, \
@@ -3864,8 +3864,8 @@ class MPolynomialIdeal(MPolynomialIdeal_singular_repr,
             sage: R.<x,y> = PolynomialRing(IntegerRing(), 2, order='lex')
             sage: R.ideal([x, y])
             Ideal (x, y) of Multivariate Polynomial Ring in x, y over Integer Ring
-            sage: R.<x0,x1> = GF(3)[]                                                   # needs sage.rings.finite_rings
-            sage: R.ideal([x0^2, x1^3])                                                 # needs sage.rings.finite_rings
+            sage: R.<x0,x1> = GF(3)[]
+            sage: R.ideal([x0^2, x1^3])
             Ideal (x0^2, x1^3) of Multivariate Polynomial Ring in x0, x1 over Finite Field of size 3
         """
         Ideal_generic.__init__(self, ring, gens, coerce=coerce)
@@ -4381,7 +4381,7 @@ class MPolynomialIdeal(MPolynomialIdeal_singular_repr,
         Here we use Macaulay2 with three different strategies over a finite
         field. ::
 
-            sage: R.<a,b,c> = PolynomialRing(GF(101), 3)                                # needs sage.rings.finite_rings
+            sage: R.<a,b,c> = PolynomialRing(GF(101), 3)
             sage: I = sage.rings.ideal.Katsura(R,3) # regenerate to prevent caching     # needs sage.rings.finite_rings
             sage: I.groebner_basis('macaulay2:gb')      # optional - macaulay2          # needs sage.rings.finite_rings
             [c^3 + 28*c^2 - 37*b + 13*c, b^2 - 41*c^2 + 20*b - 20*c, b*c - 19*c^2 + 10*b + 40*c, a + 2*b + 2*c - 1]
@@ -4397,7 +4397,7 @@ class MPolynomialIdeal(MPolynomialIdeal_singular_repr,
         Over prime fields of small characteristic, we can also use the
         `optional package msolve <../spkg/msolve.html>`_::
 
-            sage: R.<a,b,c> = PolynomialRing(GF(101), 3)                                # needs sage.rings.finite_rings
+            sage: R.<a,b,c> = PolynomialRing(GF(101), 3)
             sage: I = sage.rings.ideal.Katsura(R,3) # regenerate to prevent caching     # needs sage.rings.finite_rings
             sage: I.groebner_basis('msolve')    # optional - msolve                     # needs sage.rings.finite_rings
             [a + 2*b + 2*c - 1, b*c - 19*c^2 + 10*b + 40*c, b^2 - 41*c^2 + 20*b - 20*c, c^3 + 28*c^2 - 37*b + 13*c]
@@ -4624,7 +4624,7 @@ class MPolynomialIdeal(MPolynomialIdeal_singular_repr,
 
         msolve currently supports the degrevlex order only::
 
-            sage: R.<a,b,c> = PolynomialRing(GF(101), 3, order='lex')                   # needs sage.rings.finite_rings
+            sage: R.<a,b,c> = PolynomialRing(GF(101), 3, order='lex')
             sage: I = sage.rings.ideal.Katsura(R,3)  # regenerate to prevent caching    # needs sage.rings.finite_rings
             sage: I.groebner_basis('msolve')    # optional - msolve                     # needs sage.rings.finite_rings
             Traceback (most recent call last):
@@ -4979,28 +4979,28 @@ class MPolynomialIdeal(MPolynomialIdeal_singular_repr,
 
         EXAMPLES::
 
-            sage: P.<x,y,z> = PolynomialRing(GF(2))                                     # needs sage.rings.finite_rings
-            sage: I = Ideal([x^2*y + z + 1, x + y^2 + 1]); I                            # needs sage.rings.finite_rings
+            sage: P.<x,y,z> = PolynomialRing(GF(2))
+            sage: I = Ideal([x^2*y + z + 1, x + y^2 + 1]); I
             Ideal (x^2*y + z + 1, y^2 + x + 1) of Multivariate
             Polynomial Ring in x, y, z over Finite Field of size 2
 
         ::
 
-            sage: I.homogenize()                                                        # needs sage.rings.finite_rings
+            sage: I.homogenize()
             Ideal (x^2*y + z*h^2 + h^3, y^2 + x*h + h^2) of
             Multivariate Polynomial Ring in x, y, z, h over Finite
             Field of size 2
 
         ::
 
-            sage: I.homogenize(y)                                                       # needs sage.rings.finite_rings
+            sage: I.homogenize(y)
             Ideal (x^2*y + y^3 + y^2*z, x*y) of Multivariate
             Polynomial Ring in x, y, z over Finite Field of size 2
 
         ::
 
-            sage: I = Ideal([x^2*y + z^3 + y^2*x, x + y^2 + 1])                         # needs sage.rings.finite_rings
-            sage: I.homogenize()                                                        # needs sage.rings.finite_rings
+            sage: I = Ideal([x^2*y + z^3 + y^2*x, x + y^2 + 1])
+            sage: I.homogenize()
             Ideal (x^2*y + x*y^2 + z^3, y^2 + x*h + h^2) of
             Multivariate Polynomial Ring in x, y, z, h over Finite
             Field of size 2
@@ -5076,10 +5076,10 @@ class MPolynomialIdeal(MPolynomialIdeal_singular_repr,
         We consider a homogeneous example::
 
             sage: n = 8
-            sage: K = GF(127)                                                           # needs sage.rings.finite_rings
+            sage: K = GF(127)
             sage: P = PolynomialRing(K, n, 'x')                                         # needs sage.rings.finite_rings
             sage: s = [K.random_element() for _ in range(n)]                            # needs sage.rings.finite_rings
-            sage: L = []                                                                # needs sage.rings.finite_rings
+            sage: L = []
             sage: for i in range(2 * n):                                                # needs sage.rings.finite_rings
             ....:     f = P.random_element(degree=2, terms=binomial(n, 2))
             ....:     f -= f(*s)

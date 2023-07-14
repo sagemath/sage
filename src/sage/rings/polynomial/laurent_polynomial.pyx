@@ -515,13 +515,14 @@ cdef class LaurentPolynomial_univariate(LaurentPolynomial):
 
         You can specify a map on the base ring::
 
+            sage: # needs sage.rings.number_field
             sage: Zx.<x> = ZZ[]
-            sage: K.<i> = NumberField(x^2 + 1)                                          # needs sage.rings.number_field
-            sage: cc = K.hom([-i])                                                      # needs sage.rings.number_field
-            sage: R.<t> = LaurentPolynomialRing(K)                                      # needs sage.rings.number_field
-            sage: H = Hom(R, R)                                                         # needs sage.rings.number_field
-            sage: phi = H([t^-2], base_map=cc)                                          # needs sage.rings.number_field
-            sage: phi(i*t)                                                              # needs sage.rings.number_field
+            sage: K.<i> = NumberField(x^2 + 1)
+            sage: cc = K.hom([-i])
+            sage: R.<t> = LaurentPolynomialRing(K)
+            sage: H = Hom(R, R)
+            sage: phi = H([t^-2], base_map=cc)
+            sage: phi(i*t)
             -i*t^-2
         """
         x = im_gens[0]
@@ -1630,10 +1631,11 @@ cdef class LaurentPolynomial_univariate(LaurentPolynomial):
 
         The answer is dependent of the base ring::
 
-            sage: S.<u> = LaurentPolynomialRing(QQbar)                                  # needs sage.rings.number_field
-            sage: (2 + 4*t + 2*t^2).is_square()                                         # needs sage.rings.number_field
+            sage: # needs sage.rings.number_field
+            sage: S.<u> = LaurentPolynomialRing(QQbar)
+            sage: (2 + 4*t + 2*t^2).is_square()
             False
-            sage: (2 + 4*u + 2*u^2).is_square()                                         # needs sage.rings.number_field
+            sage: (2 + 4*u + 2*u^2).is_square()
             True
 
         TESTS::
@@ -1756,12 +1758,13 @@ cdef class LaurentPolynomial_univariate(LaurentPolynomial):
 
         Check that :trac:`28187` is fixed::
 
+            sage: # needs sage.symbolic
             sage: R.<x> = LaurentPolynomialRing(ZZ)
             sage: p = 1/x + 1 + x
-            sage: x,y = var("x, y")                                                     # needs sage.symbolic
-            sage: p._derivative(x)                                                      # needs sage.symbolic
+            sage: x,y = var("x, y")
+            sage: p._derivative(x)
             -x^-2 + 1
-            sage: p._derivative(y)                                                      # needs sage.symbolic
+            sage: p._derivative(y)
             Traceback (most recent call last):
             ...
             ValueError: cannot differentiate with respect to y

@@ -161,7 +161,7 @@ def is_linearly_dependent(polys) -> bool:
         sage: p = 3*B[0] - 2*B[1] + B[2]
         sage: is_linearly_dependent(B + [p])                                            # needs sage.modules
         True
-        sage: p = x*B[0]                                                                # needs sage.modules
+        sage: p = x*B[0]
         sage: is_linearly_dependent(B + [p])                                            # needs sage.modules
         False
         sage: is_linearly_dependent([])                                                 # needs sage.modules

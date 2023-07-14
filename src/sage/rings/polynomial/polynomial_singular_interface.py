@@ -418,8 +418,9 @@ def can_convert_to_singular(R):
         sage: R.<x,y> = GF(10^20 - 11)[]                                                # needs sage.rings.finite_rings
         sage: R._has_singular                                                           # needs sage.rings.finite_rings
         True
-        sage: R.<x,y> = Zmod(10^20 + 1)[]                                               # needs sage.libs.pari
-        sage: R._has_singular                                                           # needs sage.libs.pari
+
+        sage: R.<x,y> = Zmod(10^20 + 1)[]
+        sage: R._has_singular
         True
     """
     if R.ngens() == 0:
