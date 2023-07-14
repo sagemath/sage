@@ -107,8 +107,8 @@ cpdef is_MatrixGroupElement(x):
         sage: is_MatrixGroupElement('helloooo')
         False
 
-        sage: G = GL(2,3)                                                               # needs sage.rings.finite_rings
-        sage: is_MatrixGroupElement(G.an_element())                                     # needs sage.rings.finite_rings
+        sage: G = GL(2,3)
+        sage: is_MatrixGroupElement(G.an_element())
         True
     """
     return isinstance(x, (MatrixGroupElement_generic, MatrixGroupElement_gap))
