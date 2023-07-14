@@ -20,11 +20,11 @@ def coeff_repr(c, is_latex=False):
         sage: from sage.misc.repr import coeff_repr
         sage: coeff_repr(QQ(1/2))
         '1/2'
-        sage: coeff_repr(-x^2)                                                          # optional - sage.symbolic
+        sage: coeff_repr(-x^2)                                                          # needs sage.symbolic
         '(-x^2)'
         sage: coeff_repr(QQ(1/2), is_latex=True)
         '\\frac{1}{2}'
-        sage: coeff_repr(-x^2, is_latex=True)                                           # optional - sage.symbolic
+        sage: coeff_repr(-x^2, is_latex=True)                                           # needs sage.symbolic
         '\\left(-x^{2}\\right)'
     """
     if not is_latex:
@@ -131,12 +131,13 @@ def repr_lincomb(terms, is_latex=False, scalar_mult="*", strip_one=False,
 
     Verify that :trac:`31672` is fixed::
 
-        sage: alpha = var("alpha")                                                      # optional - sage.symbolic
-        sage: repr_lincomb([(x, alpha)], is_latex=True)                                 # optional - sage.symbolic
+        sage: # needs sage.symbolic
+        sage: alpha = var("alpha")
+        sage: repr_lincomb([(x, alpha)], is_latex=True)
         '\\alpha x'
-        sage: A.<psi> = PolynomialRing(QQ)                                              # optional - sage.symbolic
-        sage: B.<t> = FreeAlgebra(A)                                                    # optional - sage.combinat sage.modules sage.symbolic
-        sage: (psi * t)._latex_()                                                       # optional - sage.combinat sage.modules sage.symbolic
+        sage: A.<psi> = PolynomialRing(QQ)
+        sage: B.<t> = FreeAlgebra(A)                                                    # needs sage.combinat sage.modules
+        sage: (psi * t)._latex_()                                                       # needs sage.combinat sage.modules
         '\\psi t'
     """
     # Setting scalar_mult: symbol used for scalar multiplication

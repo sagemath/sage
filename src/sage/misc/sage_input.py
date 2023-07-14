@@ -229,15 +229,16 @@ def sage_input(x, preparse=True, verify=False, allow_locals=False):
     The result of :func:`sage_input` is actually a pair of strings with a
     special ``__repr__`` method to print nicely.::
 
-        sage: r = sage_input(RealField(20)(pi), verify=True)                            # needs sage.symbolic
-        sage: r                                                                         # needs sage.symbolic
+        sage: # needs sage.rings.real_mpfr sage.symbolic
+        sage: r = sage_input(RealField(20)(pi), verify=True)
+        sage: r
         # Verified
         RealField(20)(3.1415939)
-        sage: isinstance(r, tuple)                                                      # needs sage.symbolic
+        sage: isinstance(r, tuple)
         True
-        sage: len(r)                                                                    # needs sage.symbolic
+        sage: len(r)
         2
-        sage: tuple(r)                                                                  # needs sage.symbolic
+        sage: tuple(r)
         ('# Verified\n', 'RealField(20)(3.1415939)')
 
     We cannot find an input form for a function.::
@@ -406,7 +407,7 @@ class SageInputBuilder:
             sage: sage_input(float(-pi), preparse=True, verify=True)                    # needs sage.symbolic
             # Verified
             float(-RR(3.1415926535897931))
-            sage: sage_input(float(42), preparse=True, verify=True)
+            sage: sage_input(float(42), preparse=True, verify=True)                     # needs sage.rings.real_mpfr
             # Verified
             float(42)
             sage: sage_input("Hello, world\n", verify=True)
@@ -427,7 +428,7 @@ class SageInputBuilder:
             sage: sage_input('unicode with spectral: \u1234\U00012345', verify=True)
             # Verified
             'unicode with spectral: \u1234\U00012345'
-            sage: sage_input((2, 3.5, 'Hi'), verify=True)
+            sage: sage_input((2, 3.5, 'Hi'), verify=True)                               # needs sage.rings.real_mpfr
             # Verified
             (2, 3.5, 'Hi')
             sage: sage_input(lambda x: x)

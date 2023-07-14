@@ -66,13 +66,13 @@ def produce_latex_macro(name, *sample_args):
     definition. The following allows the use of "\GF{p^n}", for
     example::
 
-         sage: produce_latex_macro('GF', 37)                                                            # optional - sage.libs.pari
+         sage: produce_latex_macro('GF', 37)
          '\\newcommand{\\GF}[1]{\\Bold{F}_{#1}}'
 
     If the Sage object is not in the global name space, describe it
     like so::
 
-         sage: produce_latex_macro('sage.rings.finite_rings.finite_field_constructor.FiniteField', 3)   # optional - sage.libs.pari
+         sage: produce_latex_macro('sage.rings.finite_rings.finite_field_constructor.FiniteField', 3)
          '\\newcommand{\\FiniteField}[1]{\\Bold{F}_{#1}}'
     """
     from sage.misc.latex import LatexCall  # type: ignore
