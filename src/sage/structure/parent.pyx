@@ -1873,16 +1873,17 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
 
         EXAMPLES::
 
+            sage: # needs sage.rings.number_field
             sage: x = polygen(ZZ, 'x')
-            sage: K.<a> = NumberField(x^3 + x^2 + 1, embedding=1)                       # needs sage.rings.number_field
-            sage: K.coerce_embedding()                                                  # needs sage.rings.number_field
+            sage: K.<a> = NumberField(x^3 + x^2 + 1, embedding=1)
+            sage: K.coerce_embedding()
             Generic morphism:
               From: Number Field in a with defining polynomial x^3 + x^2 + 1
                     with a = -1.465571231876768?
               To:   Real Lazy Field
               Defn: a -> -1.465571231876768?
-            sage: K.<a> = NumberField(x^3 + x^2 + 1, embedding=CC.gen())                # needs sage.rings.number_field
-            sage: K.coerce_embedding()                                                  # needs sage.rings.number_field
+            sage: K.<a> = NumberField(x^3 + x^2 + 1, embedding=CC.gen())
+            sage: K.coerce_embedding()
             Generic morphism:
               From: Number Field in a with defining polynomial x^3 + x^2 + 1
                     with a = 0.2327856159383841? + 0.7925519925154479?*I
@@ -2299,19 +2300,20 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
 
         Another test::
 
+            sage: # needs sage.rings.number_field
             sage: x = polygen(ZZ, 'x')
-            sage: K = NumberField([x^2 - 2, x^2 - 3], 'a,b')                            # needs sage.rings.number_field
-            sage: M = K.absolute_field('c')                                             # needs sage.rings.number_field
-            sage: M_to_K, K_to_M = M.structure()                                        # needs sage.rings.number_field
-            sage: M.register_coercion(K_to_M)                                           # needs sage.rings.number_field
-            sage: K.register_coercion(M_to_K)                                           # needs sage.rings.number_field
-            sage: phi = M.coerce_map_from(QQ)                                           # needs sage.rings.number_field
-            sage: p = QQ.random_element()                                               # needs sage.rings.number_field
-            sage: c = phi(p) - p; c                                                     # needs sage.rings.number_field
+            sage: K = NumberField([x^2 - 2, x^2 - 3], 'a,b')
+            sage: M = K.absolute_field('c')
+            sage: M_to_K, K_to_M = M.structure()
+            sage: M.register_coercion(K_to_M)
+            sage: K.register_coercion(M_to_K)
+            sage: phi = M.coerce_map_from(QQ)
+            sage: p = QQ.random_element()
+            sage: c = phi(p) - p; c
             0
-            sage: c.parent() is M                                                       # needs sage.rings.number_field
+            sage: c.parent() is M
             True
-            sage: K.coerce_map_from(QQ)                                                 # needs sage.rings.number_field
+            sage: K.coerce_map_from(QQ)
             Coercion map:
               From: Rational Field
               To:   Number Field in a with defining polynomial x^2 - 2 over its base field
@@ -2851,7 +2853,7 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
             [False, False]
             sage: [R._is_numerical() for R in [RBF, CBF]]                               # needs sage.libs.flint
             [False, False]
-            sage: [R._is_numerical() for R in [RIF, CIF]]
+            sage: [R._is_numerical() for R in [RIF, CIF]]                               # needs sage.rings.real_interval_field
             [False, False]
         """
         try:
@@ -2862,8 +2864,15 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
         else:
             return ComplexField(mpfr_prec_min()).has_coerce_map_from(self)
 
-        from sage.rings.real_double import CDF
-        return CDF.has_coerce_map_from(self)
+        try:
+            from sage.rings.complex_double import CDF
+        except ImportError:
+            pass
+        else:
+            return CDF.has_coerce_map_from(self)
+
+        from sage.rings.real_double import RDF
+        return RDF.has_coerce_map_from(self)
 
     @cached_method
     def _is_real_numerical(self):
