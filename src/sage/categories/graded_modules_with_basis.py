@@ -46,10 +46,10 @@ class GradedModulesWithBasis(GradedModulesCategory):
 
             EXAMPLES::
 
-                sage: E.<a,b> = ExteriorAlgebra(QQ)                                     # needs sage.combinat sage.modules
-                sage: E.degree_negation((1 + a) * (1 + b))                              # needs sage.combinat sage.modules
+                sage: E.<a,b> = ExteriorAlgebra(QQ)                                     # needs sage.modules
+                sage: E.degree_negation((1 + a) * (1 + b))                              # needs sage.modules
                 a*b - a - b + 1
-                sage: E.degree_negation(E.zero())                                       # needs sage.combinat sage.modules
+                sage: E.degree_negation(E.zero())                                       # needs sage.modules
                 0
 
                 sage: P = GradedModulesWithBasis(ZZ).example(); P                       # needs sage.combinat sage.modules
@@ -270,10 +270,10 @@ class GradedModulesWithBasis(GradedModulesCategory):
 
             EXAMPLES::
 
-                sage: E.<a,b> = ExteriorAlgebra(QQ)                                     # needs sage.combinat sage.modules
-                sage: ((1 + a) * (1 + b)).degree_negation()                             # needs sage.combinat sage.modules
+                sage: E.<a,b> = ExteriorAlgebra(QQ)                                     # needs sage.modules
+                sage: ((1 + a) * (1 + b)).degree_negation()                             # needs sage.modules
                 a*b - a - b + 1
-                sage: E.zero().degree_negation()                                        # needs sage.combinat sage.modules
+                sage: E.zero().degree_negation()                                        # needs sage.modules
                 0
 
                 sage: P = GradedModulesWithBasis(ZZ).example(); P                       # needs sage.combinat sage.modules

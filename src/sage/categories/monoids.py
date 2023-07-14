@@ -448,18 +448,18 @@ class Monoids(CategoryWithAxiom):
 
                 EXAMPLES::
 
-                    sage: A = Sets().WithRealizations().example(); A                    # needs sage.combinat sage.modules
+                    sage: A = Sets().WithRealizations().example(); A                    # needs sage.modules
                     The subset algebra of {1, 2, 3} over Rational Field
-                    sage: A.one.__module__                                              # needs sage.combinat sage.modules
+                    sage: A.one.__module__                                              # needs sage.modules
                     'sage.categories.monoids'
-                    sage: A.one()                                                       # needs sage.combinat sage.modules
+                    sage: A.one()                                                       # needs sage.modules
                     F[{}]
 
                 TESTS::
 
-                    sage: A.one() is A.a_realization().one()                            # needs sage.combinat sage.modules
+                    sage: A.one() is A.a_realization().one()                            # needs sage.modules
                     True
-                    sage: A._test_one()                                                 # needs sage.combinat sage.modules
+                    sage: A._test_one()                                                 # needs sage.modules
                 """
                 return self.a_realization().one()
 

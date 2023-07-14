@@ -71,9 +71,9 @@ def Realizations(self):
 
     The category of realizations of a given algebra::
 
-        sage: A = Sets().WithRealizations().example(); A                                # needs sage.combinat sage.modules
+        sage: A = Sets().WithRealizations().example(); A                                # needs sage.modules
         The subset algebra of {1, 2, 3} over Rational Field
-        sage: A.Realizations()                                                          # needs sage.combinat sage.modules
+        sage: A.Realizations()                                                          # needs sage.modules
         Category of realizations of
          The subset algebra of {1, 2, 3} over Rational Field
 
@@ -116,7 +116,7 @@ class Category_realization_of_parent(Category_over_base, BindableClass):
 
     EXAMPLES::
 
-        sage: A = Sets().WithRealizations().example(); A                                # needs sage.combinat sage.modules
+        sage: A = Sets().WithRealizations().example(); A                                # needs sage.modules
         The subset algebra of {1, 2, 3} over Rational Field
 
     The role of this base class is to implement some technical goodies, like
@@ -124,7 +124,7 @@ class Category_realization_of_parent(Category_over_base, BindableClass):
     implemented as a nested class in ``A``
     (see the :mod:`code of the example <sage.categories.examples.with_realizations.SubsetAlgebra>`)::
 
-        sage: C = A.Realizations(); C                                                   # needs sage.combinat sage.modules
+        sage: C = A.Realizations(); C                                                   # needs sage.modules
         Category of realizations of
          The subset algebra of {1, 2, 3} over Rational Field
 

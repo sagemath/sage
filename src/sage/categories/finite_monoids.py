@@ -181,7 +181,7 @@ class FiniteMonoids(CategoryWithAxiom):
             EXAMPLES::
 
                 sage: M = Monoids().Finite().example()
-                sage: M.rhodes_radical_congruence()                                     # needs sage.groups sage.modules
+                sage: M.rhodes_radical_congruence()                                     # needs sage.modules
                 [(0, 6), (2, 8), (4, 10)]
 
                 sage: # needs sage.combinat sage.groups sage.modules

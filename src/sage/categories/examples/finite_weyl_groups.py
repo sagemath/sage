@@ -135,7 +135,7 @@ class SymmetricGroup(UniqueRepresentation, Parent):
 
         EXAMPLES::
 
-            sage: FiniteWeylGroups().example().cartan_type()                            # needs sage.combinat sage.modules
+            sage: FiniteWeylGroups().example().cartan_type()                            # needs sage.modules
             ['A', 3] relabelled by {1: 0, 2: 1, 3: 2}
         """
         from sage.combinat.root_system.cartan_type import CartanType

@@ -52,7 +52,7 @@ class SuperAlgebrasWithBasis(SuperModulesCategory):
 
             EXAMPLES::
 
-                sage: W.<x,y> = algebras.DifferentialWeyl(QQ)                           # needs sage.combinat sage.modules
+                sage: W.<x,y> = algebras.DifferentialWeyl(QQ)                           # needs sage.modules
                 sage: W.graded_algebra()                                                # needs sage.combinat sage.modules
                 Graded Algebra of Differential Weyl algebra of
                  polynomials in x, y over Rational Field
@@ -78,27 +78,27 @@ class SuperAlgebrasWithBasis(SuperModulesCategory):
 
                 sage: # needs sage.modules
                 sage: Q = QuadraticForm(ZZ, 3, [1,2,3,4,5,6])
-                sage: Cl.<x,y,z> = CliffordAlgebra(Q)                                   # needs sage.combinat
-                sage: a = x*y - z                                                       # needs sage.combinat
-                sage: b = x - y + y*z                                                   # needs sage.combinat
-                sage: a.supercommutator(b)                                              # needs sage.combinat
+                sage: Cl.<x,y,z> = CliffordAlgebra(Q)
+                sage: a = x*y - z
+                sage: b = x - y + y*z
+                sage: a.supercommutator(b)
                 -5*x*y + 8*x*z - 2*y*z - 6*x + 12*y - 5*z
-                sage: a.supercommutator(Cl.one())                                       # needs sage.combinat
+                sage: a.supercommutator(Cl.one())
                 0
-                sage: Cl.one().supercommutator(a)                                       # needs sage.combinat
+                sage: Cl.one().supercommutator(a)
                 0
-                sage: Cl.zero().supercommutator(a)                                      # needs sage.combinat
+                sage: Cl.zero().supercommutator(a)
                 0
-                sage: a.supercommutator(Cl.zero())                                      # needs sage.combinat
+                sage: a.supercommutator(Cl.zero())
                 0
 
                 sage: # needs sage.modules
                 sage: Q = QuadraticForm(ZZ, 2, [-1,1,-3])
-                sage: Cl.<x,y> = CliffordAlgebra(Q)                                     # needs sage.combinat
-                sage: [a.supercommutator(b) for a in Cl.basis() for b in Cl.basis()]    # needs sage.combinat
+                sage: Cl.<x,y> = CliffordAlgebra(Q)
+                sage: [a.supercommutator(b) for a in Cl.basis() for b in Cl.basis()]
                 [0, 0, 0, 0, 0, -2, 1, -x - 2*y, 0, 1,
                  -6, 6*x + y, 0, x + 2*y, -6*x - y, 0]
-                sage: [a*b-b*a for a in Cl.basis() for b in Cl.basis()]                 # needs sage.combinat
+                sage: [a*b-b*a for a in Cl.basis() for b in Cl.basis()]
                 [0, 0, 0, 0, 0, 0, 2*x*y - 1, -x - 2*y, 0,
                  -2*x*y + 1, 0, 6*x + y, 0, x + 2*y, -6*x - y, 0]
 
@@ -106,8 +106,8 @@ class SuperAlgebrasWithBasis(SuperModulesCategory):
             supercommutators work as well. We verify the exterior algebra
             is supercommutative::
 
-                sage: E.<x,y,z,w> = ExteriorAlgebra(QQ)                                 # needs sage.combinat sage.modules
-                sage: all(b1.supercommutator(b2) == 0                                   # needs sage.combinat sage.modules
+                sage: E.<x,y,z,w> = ExteriorAlgebra(QQ)                                 # needs sage.modules
+                sage: all(b1.supercommutator(b2) == 0                                   # needs sage.modules
                 ....:     for b1 in E.basis() for b2 in E.basis())
                 True
             """

@@ -273,13 +273,13 @@ class Fields(CategoryWithAxiom):
 
                 sage: # needs sage.libs.pari
                 sage: R.<x> = QQ[]
-                sage: Q = R.quotient(x^2 - 1)   # Not a field                           # needs sage.libs.pari
-                sage: P.<x> = Q[]                                                       # needs sage.libs.pari
+                sage: Q = R.quotient(x^2 - 1)   # Not a field
+                sage: P.<x> = Q[]
                 sage: def always_True(*args, **kwds): return True
-                sage: Q.is_field = always_True                                          # needs sage.libs.pari
-                sage: Q in Fields()                                                     # needs sage.libs.pari
+                sage: Q.is_field = always_True
+                sage: Q in Fields()
                 True
-                sage: Q._gcd_univariate_polynomial(x, x)                                # needs sage.libs.pari
+                sage: Q._gcd_univariate_polynomial(x, x)
                 x
             """
             while b:
