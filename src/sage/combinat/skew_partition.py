@@ -860,28 +860,30 @@ class SkewPartition(CombinatorialElement):
             sage: sorted(Q.upper_covers((0, 2)))                                        # needs sage.graphs
             [(1, 2)]
 
-            sage: P = p.cell_poset(orientation="NW"); P                                 # needs sage.graphs
+            sage: # needs sage.graphs
+            sage: P = p.cell_poset(orientation="NW"); P
             Finite poset containing 4 elements
-            sage: sorted(P)                                                             # needs sage.graphs
+            sage: sorted(P)
             [(0, 2), (1, 1), (1, 2), (2, 0)]
-            sage: sorted(P.minimal_elements())                                          # needs sage.graphs
+            sage: sorted(P.minimal_elements())
             [(1, 2), (2, 0)]
-            sage: sorted(P.maximal_elements())                                          # needs sage.graphs
+            sage: sorted(P.maximal_elements())
             [(0, 2), (1, 1), (2, 0)]
-            sage: sorted(P.upper_covers((1, 2)))                                        # needs sage.graphs
+            sage: sorted(P.upper_covers((1, 2)))
             [(0, 2), (1, 1)]
 
-            sage: R = p.cell_poset(orientation="NE"); R                                 # needs sage.graphs
+            sage: # needs sage.graphs
+            sage: R = p.cell_poset(orientation="NE"); R
             Finite poset containing 4 elements
-            sage: sorted(R)                                                             # needs sage.graphs
+            sage: sorted(R)
             [(0, 2), (1, 1), (1, 2), (2, 0)]
-            sage: R.maximal_elements()                                                  # needs sage.graphs
+            sage: R.maximal_elements()
             [(0, 2)]
-            sage: R.minimal_elements()                                                  # needs sage.graphs
+            sage: R.minimal_elements()
             [(2, 0)]
-            sage: R.upper_covers((2, 0))                                                # needs sage.graphs
+            sage: R.upper_covers((2, 0))
             [(1, 1)]
-            sage: sorted([len(R.upper_covers(v)) for v in R])                           # needs sage.graphs
+            sage: sorted([len(R.upper_covers(v)) for v in R])
             [0, 1, 1, 1]
 
         TESTS:
@@ -1070,18 +1072,19 @@ class SkewPartition(CombinatorialElement):
 
         EXAMPLES::
 
-            sage: dag = SkewPartition([[3, 3, 1], [1, 1]]).to_dag()                     # needs sage.graphs
-            sage: dag.edges(sort=True)                                                  # needs sage.graphs
+            sage: # needs sage.graphs
+            sage: dag = SkewPartition([[3, 3, 1], [1, 1]]).to_dag()
+            sage: dag.edges(sort=True)
             [('0,1', '0,2', None),
             ('0,1', '1,1', None),
             ('0,2', '1,2', None),
             ('1,1', '1,2', None)]
-            sage: dag.vertices(sort=True)                                               # needs sage.graphs
+            sage: dag.vertices(sort=True)
             ['0,1', '0,2', '1,1', '1,2', '2,0']
-            sage: dag = SkewPartition([[3, 2, 1], [1, 1]]).to_dag(format="tuple")       # needs sage.graphs
-            sage: dag.edges(sort=True)                                                  # needs sage.graphs
+            sage: dag = SkewPartition([[3, 2, 1], [1, 1]]).to_dag(format="tuple")
+            sage: dag.edges(sort=True)
             [((0, 1), (0, 2), None), ((0, 1), (1, 1), None)]
-            sage: dag.vertices(sort=True)                                               # needs sage.graphs
+            sage: dag.vertices(sort=True)
             [(0, 1), (0, 2), (1, 1), (2, 0)]
         """
         outer = list(self.outer())

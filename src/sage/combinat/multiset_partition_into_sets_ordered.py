@@ -3273,14 +3273,15 @@ class MinimajCrystal(UniqueRepresentation, Parent):
 
         EXAMPLES::
 
-            sage: B = crystals.Minimaj(4,5,3)                                           # needs sage.modules
-            sage: B.an_element()                                                        # needs sage.modules
+            sage: # needs sage.modules
+            sage: B = crystals.Minimaj(4,5,3)
+            sage: B.an_element()
             ((2, 3, 1), (1,), (1,))
-            sage: B = crystals.Minimaj(2,2,1)                                           # needs sage.modules
-            sage: B.an_element()                                                        # needs sage.modules
+            sage: B = crystals.Minimaj(2,2,1)
+            sage: B.an_element()
             ((1, 2),)
-            sage: B = crystals.Minimaj(1,2,1)                                           # needs sage.modules
-            sage: B.an_element()                                                        # needs sage.modules
+            sage: B = crystals.Minimaj(1,2,1)
+            sage: B.an_element()
             Traceback (most recent call last):
             ...
             EmptySetError
@@ -3296,14 +3297,15 @@ class MinimajCrystal(UniqueRepresentation, Parent):
 
         EXAMPLES::
 
-            sage: B1 = crystals.Minimaj(4,5,3); b = B1.an_element(); b                  # needs sage.modules
+            sage: # needs sage.modules
+            sage: B1 = crystals.Minimaj(4,5,3); b = B1.an_element(); b
             ((2, 3, 1), (1,), (1,))
-            sage: B1._element_constructor_(list(b))                                     # needs sage.modules
+            sage: B1._element_constructor_(list(b))
             ((2, 3, 1), (1,), (1,))
-            sage: B1._element_constructor_([[1,2,3], [2], [2]])                         # needs sage.modules
+            sage: B1._element_constructor_([[1,2,3], [2], [2]])
             ((3, 1, 2), (2,), (2,))
-            sage: B2 = crystals.Minimaj(5,5,3)                                          # needs sage.modules
-            sage: B2._element_constructor_(b)                                           # needs sage.modules
+            sage: B2 = crystals.Minimaj(5,5,3)
+            sage: B2._element_constructor_(b)
             ((2, 3, 1), (1,), (1,))
         """
         # Allow ``x`` to be either of:
@@ -3327,17 +3329,18 @@ class MinimajCrystal(UniqueRepresentation, Parent):
 
         EXAMPLES::
 
-            sage: B1 = crystals.Minimaj(2,5,3); b1 = B1.an_element(); b1                # needs sage.modules
+            sage: # needs sage.modules
+            sage: B1 = crystals.Minimaj(2,5,3); b1 = B1.an_element(); b1
             ((1, 2), (2, 1), (1,))
-            sage: B2 = crystals.Minimaj(5,5,3); b2 = B2.an_element(); b2                # needs sage.modules
+            sage: B2 = crystals.Minimaj(5,5,3); b2 = B2.an_element(); b2
             ((2, 3, 1), (1,), (1,))
-            sage: b2a = B2(((1,2), (1,), (1,2))); b2a                                   # needs sage.modules
+            sage: b2a = B2(((1,2), (1,), (1,2))); b2a
             ((2, 1), (1,), (1, 2))
-            sage: b1 in B2                                                              # needs sage.modules
+            sage: b1 in B2
             True
-            sage: b2 in B1                                                              # needs sage.modules
+            sage: b2 in B1
             False
-            sage: b2a in B1                                                             # needs sage.modules
+            sage: b2a in B1
             True
         """
         if isinstance(x, MinimajCrystal.Element):
@@ -3358,24 +3361,26 @@ class MinimajCrystal(UniqueRepresentation, Parent):
 
         EXAMPLES::
 
-            sage: B = crystals.Minimaj(3,6,3)                                           # needs sage.modules
-            sage: b = B.an_element(); b                                                 # needs sage.modules
+            sage: # needs sage.modules
+            sage: B = crystals.Minimaj(3,6,3)
+            sage: b = B.an_element(); b
             ((3, 1, 2), (2, 1), (1,))
-            sage: t = b.to_tableaux_words(); t                                          # needs sage.modules
+            sage: t = b.to_tableaux_words(); t
             [[1], [2, 1], [], [3, 2, 1]]
-            sage: B.from_tableau(t)                                                     # needs sage.modules
+            sage: B.from_tableau(t)
             ((3, 1, 2), (2, 1), (1,))
-            sage: B.from_tableau(t) == b                                                # needs sage.modules
+            sage: B.from_tableau(t) == b
             True
 
         TESTS::
 
-            sage: B = crystals.Minimaj(3,6,3)                                           # needs sage.modules
-            sage: all(mu == B.from_tableau(mu.to_tableaux_words()) for mu in B)         # needs sage.modules
+            sage: # needs sage.modules
+            sage: B = crystals.Minimaj(3,6,3)
+            sage: all(mu == B.from_tableau(mu.to_tableaux_words()) for mu in B)
             True
-            sage: t = B.an_element().to_tableaux_words()                                # needs sage.modules
-            sage: B1 = crystals.Minimaj(3,6,2)                                          # needs sage.modules
-            sage: B1.from_tableau(t)                                                    # needs sage.modules
+            sage: t = B.an_element().to_tableaux_words()
+            sage: B1 = crystals.Minimaj(3,6,2)
+            sage: B1.from_tableau(t)
             Traceback (most recent call last):
             ...
             ValueError: ((3, 1, 2), (2, 1), (1,)) is not an element of

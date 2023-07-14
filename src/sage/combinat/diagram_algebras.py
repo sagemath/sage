@@ -2415,24 +2415,26 @@ class PartitionAlgebra(DiagramBasis, UnitDiagramMixin):
 
     ::
 
-        sage: q = var('q')                                                              # needs sage.symbolic
-        sage: PA = PartitionAlgebra(2, q); PA                                           # needs sage.symbolic
+        sage: # needs sage.symbolic
+        sage: q = var('q')
+        sage: PA = PartitionAlgebra(2, q); PA
         Partition Algebra of rank 2 with parameter q over Symbolic Ring
-        sage: PA([[1,2],[-2,-1]])^2 == q*PA([[1,2],[-2,-1]])                            # needs sage.symbolic
+        sage: PA([[1,2],[-2,-1]])^2 == q*PA([[1,2],[-2,-1]])
         True
-        sage: ((PA([[2, -2], [1, -1]]) - 2*PA([[-2, -1], [1, 2]]))^2                    # needs sage.symbolic
+        sage: ((PA([[2, -2], [1, -1]]) - 2*PA([[-2, -1], [1, 2]]))^2
         ....:   == (4*q-4)*PA([[1, 2], [-2, -1]]) + PA([[2, -2], [1, -1]]))
         True
 
     The identity element of the partition algebra is the set
     partition `\{\{1,-1\}, \{2,-2\}, \ldots, \{k,-k\}\}`::
 
-        sage: P = PA.basis().list()                                                     # needs sage.symbolic
-        sage: PA.one()                                                                  # needs sage.symbolic
+        sage: # needs sage.symbolic
+        sage: P = PA.basis().list()
+        sage: PA.one()
         P{{-2, 2}, {-1, 1}}
-        sage: PA.one() * P[7] == P[7]                                                   # needs sage.symbolic
+        sage: PA.one() * P[7] == P[7]
         True
-        sage: P[7] * PA.one() == P[7]                                                   # needs sage.symbolic
+        sage: P[7] * PA.one() == P[7]
         True
 
     We now give some further examples of the use of the other arguments.
@@ -2457,14 +2459,15 @@ class PartitionAlgebra(DiagramBasis, UnitDiagramMixin):
     of the partition algebra (e.g., ``BrauerAlgebra`` and
     ``TemperleyLiebAlgebra``) can also be coerced into the partition algebra::
 
-        sage: S = SymmetricGroupAlgebra(SR, 2)                                          # needs sage.symbolic
-        sage: B = BrauerAlgebra(2, x, SR)                                               # needs sage.symbolic
-        sage: A = PartitionAlgebra(2, x, SR)                                            # needs sage.symbolic
-        sage: S([2,1]) * A([[1,-1],[2,-2]])                                             # needs sage.symbolic
+        sage: # needs sage.symbolic
+        sage: S = SymmetricGroupAlgebra(SR, 2)
+        sage: B = BrauerAlgebra(2, x, SR)
+        sage: A = PartitionAlgebra(2, x, SR)
+        sage: S([2,1]) * A([[1,-1],[2,-2]])
         P{{-2, 1}, {-1, 2}}
-        sage: B([[-1,-2],[2,1]]) * A([[1],[-1],[2,-2]])                                 # needs sage.symbolic
+        sage: B([[-1,-2],[2,1]]) * A([[1],[-1],[2,-2]])
         P{{-2}, {-1}, {1, 2}}
-        sage: A([[1],[-1],[2,-2]]) * B([[-1,-2],[2,1]])                                 # needs sage.symbolic
+        sage: A([[1],[-1],[2,-2]]) * B([[-1,-2],[2,1]])
         P{{-2, -1}, {1}, {2}}
 
     The same is true if the elements come from a subalgebra of a partition
@@ -3838,11 +3841,12 @@ class BrauerAlgebra(SubPartitionAlgebra, UnitDiagramMixin):
 
         EXAMPLES::
 
-            sage: z = var('z')                                                          # needs sage.symbolic
-            sage: B = BrauerAlgebra(3,z)                                                # needs sage.symbolic
-            sage: B.jucys_murphy(1)                                                     # needs sage.symbolic
+            sage: # needs sage.symbolic
+            sage: z = var('z')
+            sage: B = BrauerAlgebra(3,z)
+            sage: B.jucys_murphy(1)
             (1/2*z-1/2)*B{{-3, 3}, {-2, 2}, {-1, 1}}
-            sage: B.jucys_murphy(3)                                                     # needs sage.symbolic
+            sage: B.jucys_murphy(3)
             -B{{-3, -2}, {-1, 1}, {2, 3}} - B{{-3, -1}, {-2, 2}, {1, 3}}
              + B{{-3, 1}, {-2, 2}, {-1, 3}} + B{{-3, 2}, {-2, 3}, {-1, 1}}
              + (1/2*z-1/2)*B{{-3, 3}, {-2, 2}, {-1, 1}}

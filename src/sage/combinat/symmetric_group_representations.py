@@ -86,21 +86,22 @@ def SymmetricGroupRepresentation(partition, implementation="specht",
 
     ::
 
-        sage: orth = SymmetricGroupRepresentation([3,2], "orthogonal"); orth            # needs sage.symbolic
+        sage: # needs sage.symbolic
+        sage: orth = SymmetricGroupRepresentation([3,2], "orthogonal"); orth
         Orthogonal representation of the symmetric group corresponding to [3, 2]
-        sage: orth([2,1,3,4,5])                                                         # needs sage.symbolic
+        sage: orth([2,1,3,4,5])
         [ 1  0  0  0  0]
         [ 0  1  0  0  0]
         [ 0  0 -1  0  0]
         [ 0  0  0  1  0]
         [ 0  0  0  0 -1]
-        sage: orth([1,3,2,4,5])                                                         # needs sage.symbolic
+        sage: orth([1,3,2,4,5])
         [          1           0           0           0           0]
         [          0        -1/2 1/2*sqrt(3)           0           0]
         [          0 1/2*sqrt(3)         1/2           0           0]
         [          0           0           0        -1/2 1/2*sqrt(3)]
         [          0           0           0 1/2*sqrt(3)         1/2]
-        sage: orth([1,2,4,3,5])                                                         # needs sage.symbolic
+        sage: orth([1,2,4,3,5])
         [       -1/3 2/3*sqrt(2)           0           0           0]
         [2/3*sqrt(2)         1/3           0           0           0]
         [          0           0           1           0           0]

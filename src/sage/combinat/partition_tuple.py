@@ -2420,13 +2420,14 @@ class PartitionTuples_level_size(PartitionTuples):
 
         EXAMPLES::
 
-            sage: PartitionTuples(2,0).list() #indirect doctest                         # needs sage.libs.flint
+            sage: # needs sage.libs.flint
+            sage: PartitionTuples(2,0).list() #indirect doctest
             [([], [])]
-            sage: PartitionTuples(2,1).list() #indirect doctest                         # needs sage.libs.flint
+            sage: PartitionTuples(2,1).list() #indirect doctest
             [([1], []), ([], [1])]
-            sage: PartitionTuples(2,2).list() #indirect doctest                         # needs sage.libs.flint
+            sage: PartitionTuples(2,2).list() #indirect doctest
             [([2], []), ([1, 1], []), ([1], [1]), ([], [2]), ([], [1, 1])]
-            sage: PartitionTuples(3,2).list() #indirect doctest                         # needs sage.libs.flint
+            sage: PartitionTuples(3,2).list() #indirect doctest
             [([2], [], []),
              ([1, 1], [], []),
              ([1], [1], []),
@@ -2477,13 +2478,14 @@ class PartitionTuples_level_size(PartitionTuples):
 
         The following calls used to fail (:trac:`11476`)::
 
-            sage: PartitionTuples(17,2).cardinality()                                   # needs sage.libs.pari
+            sage: # needs sage.libs.pari
+            sage: PartitionTuples(17,2).cardinality()
             170
-            sage: PartitionTuples(2,17).cardinality()                                   # needs sage.libs.pari
+            sage: PartitionTuples(2,17).cardinality()
             8470
-            sage: PartitionTuples(100,13).cardinality()                                 # needs sage.libs.pari
+            sage: PartitionTuples(100,13).cardinality()
             110320020147886800
-            sage: PartitionTuples(13,90).cardinality()                                  # needs sage.libs.pari
+            sage: PartitionTuples(13,90).cardinality()
             91506473741200186152352843611
 
         These answers were checked against Gap4 (the last of which takes an

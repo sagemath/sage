@@ -2740,18 +2740,19 @@ class RowStandardTableauTuples(TableauTuples):
 
     TESTS::
 
-        sage: TestSuite( RowStandardTableauTuples() ).run()                             # needs sage.libs.flint
-        sage: TestSuite( RowStandardTableauTuples(level=1) ).run()                      # needs sage.libs.flint
-        sage: TestSuite( RowStandardTableauTuples(level=4) ).run()                      # needs sage.libs.flint
-        sage: TestSuite( RowStandardTableauTuples(size=0) ).run(max_runs=50)  # recursion depth exceeded with default max_runs                                  # needs sage.libs.flint
-        sage: TestSuite( RowStandardTableauTuples(size=6) ).run()                       # needs sage.libs.flint
-        sage: TestSuite( RowStandardTableauTuples(level=1, size=0) ).run()              # needs sage.libs.flint
-        sage: TestSuite( RowStandardTableauTuples(level=1, size=0) ).run()              # needs sage.libs.flint
-        sage: TestSuite( RowStandardTableauTuples(level=1, size=10) ).run()             # needs sage.libs.flint
-        sage: TestSuite( RowStandardTableauTuples(level=4, size=0) ).run()              # needs sage.libs.flint
-        sage: TestSuite( RowStandardTableauTuples(level=4, size=0) ).run()              # needs sage.libs.flint
-        sage: TestSuite( RowStandardTableauTuples(level=4, size=10) ).run()     # long time, needs sage.libs.flint
-        sage: TestSuite( RowStandardTableauTuples(shape=[[1],[3,1],[],[2,1]]) ).run()   # needs sage.libs.flint
+        sage: # needs sage.libs.flint
+        sage: TestSuite( RowStandardTableauTuples() ).run()
+        sage: TestSuite( RowStandardTableauTuples(level=1) ).run()
+        sage: TestSuite( RowStandardTableauTuples(level=4) ).run()
+        sage: TestSuite( RowStandardTableauTuples(size=0) ).run(max_runs=50)  # recursion depth exceeded with default max_runs
+        sage: TestSuite( RowStandardTableauTuples(size=6) ).run()
+        sage: TestSuite( RowStandardTableauTuples(level=1, size=0) ).run()
+        sage: TestSuite( RowStandardTableauTuples(level=1, size=0) ).run()
+        sage: TestSuite( RowStandardTableauTuples(level=1, size=10) ).run()
+        sage: TestSuite( RowStandardTableauTuples(level=4, size=0) ).run()
+        sage: TestSuite( RowStandardTableauTuples(level=4, size=0) ).run()
+        sage: TestSuite( RowStandardTableauTuples(level=4, size=10) ).run()     # long time
+        sage: TestSuite( RowStandardTableauTuples(shape=[[1],[3,1],[],[2,1]]) ).run()
 
     .. SEEALSO::
 
@@ -3246,11 +3247,12 @@ class RowStandardTableauTuples_level_size(RowStandardTableauTuples, DisjointUnio
 
         EXAMPLES::
 
-            sage: RSTT43 = RowStandardTableauTuples(size=4, level=3); RSTT43            # needs sage.libs.flint
+            sage: # needs sage.libs.flint
+            sage: RSTT43 = RowStandardTableauTuples(size=4, level=3); RSTT43
             Row standard tableau tuples of level 3 and size 4
-            sage: RSTT43 is RowStandardTableauTuples(3,4)                               # needs sage.libs.flint
+            sage: RSTT43 is RowStandardTableauTuples(3,4)
             True
-            sage: RowStandardTableauTuples(level=3, size=2)[:]                          # needs sage.libs.flint
+            sage: RowStandardTableauTuples(level=3, size=2)[:]
             [([[1, 2]], [], []),
             ([[2], [1]], [], []),
             ([[1], [2]], [], []),
@@ -3266,7 +3268,7 @@ class RowStandardTableauTuples_level_size(RowStandardTableauTuples, DisjointUnio
             ([], [], [[1, 2]]),
             ([], [], [[2], [1]]),
             ([], [], [[1], [2]])]
-            sage: RowStandardTableauTuples(3,2).cardinality()                           # needs sage.libs.flint
+            sage: RowStandardTableauTuples(3,2).cardinality()
             15
         """
         RowStandardTableauTuples.__init__(self)
@@ -3297,13 +3299,14 @@ class RowStandardTableauTuples_level_size(RowStandardTableauTuples, DisjointUnio
 
         EXAMPLES::
 
-            sage: tabs = RowStandardTableauTuples(level=4, size=4); tabs                # needs sage.libs.flint
+            sage: # needs sage.libs.flint
+            sage: tabs = RowStandardTableauTuples(level=4, size=4); tabs
             Row standard tableau tuples of level 4 and size 4
-            sage: [[[2,4],[1]],[],[[3]],[]] in tabs                                     # needs sage.libs.flint
+            sage: [[[2,4],[1]],[],[[3]],[]] in tabs
             True
-            sage: tabs([[[1,2]],[],[[4],[3]],[]]) == RowStandardTableauTuple([[[1,2]],[],[[4],[3]],[]])                 # needs sage.libs.flint
+            sage: tabs([[[1,2]],[],[[4],[3]],[]]) == RowStandardTableauTuple([[[1,2]],[],[[4],[3]],[]])
             True
-            sage: RowStandardTableauTuple([[[2, 3]], [[1]]]) in tabs                    # needs sage.libs.flint
+            sage: RowStandardTableauTuple([[[2, 3]], [[1]]]) in tabs
             False
 
         Check that :trac:`14145` is fixed::
@@ -4029,16 +4032,17 @@ class StandardTableauTuples(RowStandardTableauTuples):
 
     TESTS::
 
-        sage: TestSuite( StandardTableauTuples() ).run()                                # needs sage.libs.flint
-        sage: TestSuite( StandardTableauTuples(level=1) ).run()                         # needs sage.libs.flint
-        sage: TestSuite( StandardTableauTuples(level=4) ).run()                         # needs sage.libs.flint
-        sage: TestSuite( StandardTableauTuples(size=0) ).run(max_runs=50) # recursion depth exceeded with default max_runs                                      # needs sage.libs.flint
-        sage: TestSuite( StandardTableauTuples(size=6) ).run()                          # needs sage.libs.flint
-        sage: TestSuite( StandardTableauTuples(level=1, size=0) ).run()                 # needs sage.libs.flint
-        sage: TestSuite( StandardTableauTuples(level=1, size=0) ).run()                 # needs sage.libs.flint
-        sage: TestSuite( StandardTableauTuples(level=1, size=10) ).run()                # needs sage.libs.flint
-        sage: TestSuite( StandardTableauTuples(level=4, size=0) ).run()                 # needs sage.libs.flint
-        sage: TestSuite( StandardTableauTuples(level=4, size=0) ).run()                 # needs sage.libs.flint
+        sage: # needs sage.libs.flint
+        sage: TestSuite( StandardTableauTuples() ).run()
+        sage: TestSuite( StandardTableauTuples(level=1) ).run()
+        sage: TestSuite( StandardTableauTuples(level=4) ).run()
+        sage: TestSuite( StandardTableauTuples(size=0) ).run(max_runs=50) # recursion depth exceeded with default max_runs
+        sage: TestSuite( StandardTableauTuples(size=6) ).run()
+        sage: TestSuite( StandardTableauTuples(level=1, size=0) ).run()
+        sage: TestSuite( StandardTableauTuples(level=1, size=0) ).run()
+        sage: TestSuite( StandardTableauTuples(level=1, size=10) ).run()
+        sage: TestSuite( StandardTableauTuples(level=4, size=0) ).run()
+        sage: TestSuite( StandardTableauTuples(level=4, size=0) ).run()
 
     .. SEEALSO::
 
@@ -4633,15 +4637,16 @@ class StandardTableauTuples_level_size(StandardTableauTuples, DisjointUnionEnume
 
         EXAMPLES::
 
-            sage: tabs = StandardTableauTuples(level=4, size=3); tabs                   # needs sage.libs.flint
+            sage: # needs sage.libs.flint
+            sage: tabs = StandardTableauTuples(level=4, size=3); tabs
             Standard tableau tuples of level 4 and size 3
-            sage: [[[1,2]],[],[[3]],[]] in tabs                                         # needs sage.libs.flint
+            sage: [[[1,2]],[],[[3]],[]] in tabs
             True
-            sage: tabs([[[1,2]],[],[[3]],[]]) == StandardTableauTuple([[[1,2]],[],[[3]],[]])        # needs sage.libs.flint
+            sage: tabs([[[1,2]],[],[[3]],[]]) == StandardTableauTuple([[[1,2]],[],[[3]],[]])
             True
-            sage: StandardTableauTuple([[[1, 2]], [[3]]]) in tabs                       # needs sage.libs.flint
+            sage: StandardTableauTuple([[[1, 2]], [[3]]]) in tabs
             False
-            sage: Tableau([[1]]) in tabs                                                # needs sage.libs.flint
+            sage: Tableau([[1]]) in tabs
             False
 
         Check that :trac:`14145` is fixed::
@@ -4684,8 +4689,9 @@ class StandardTableauTuples_level_size(StandardTableauTuples, DisjointUnionEnume
 
         EXAMPLES::
 
-            sage: stt = StandardTableauTuples(3, 3)                                     # needs sage.libs.flint
-            sage: stt[0:8]                                                              # needs sage.libs.flint
+            sage: # needs sage.libs.flint
+            sage: stt = StandardTableauTuples(3, 3)
+            sage: stt[0:8]
             [([[1, 2, 3]], [], []),
               ([[1, 2], [3]], [], []),
               ([[1, 3], [2]], [], []),
@@ -4694,9 +4700,9 @@ class StandardTableauTuples_level_size(StandardTableauTuples, DisjointUnionEnume
               ([[1, 3]], [[2]], []),
               ([[2, 3]], [[1]], []),
               ([[1], [2]], [[3]], [])]
-            sage: stt[40]                                                               # needs sage.libs.flint
+            sage: stt[40]
             ([], [[2, 3]], [[1]])
-            sage: stt[0].parent() is stt                                                # needs sage.libs.flint
+            sage: stt[0].parent() is stt
             True
         """
         # Iterate through the PartitionTuples and then the tableaux

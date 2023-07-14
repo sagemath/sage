@@ -2081,13 +2081,14 @@ class StandardSkewTableaux_size(StandardSkewTableaux):
         """
         EXAMPLES::
 
-            sage: StandardSkewTableaux(1).cardinality()                                 # needs sage.modules
+            sage: # needs sage.modules
+            sage: StandardSkewTableaux(1).cardinality()
             1
-            sage: StandardSkewTableaux(2).cardinality()                                 # needs sage.modules
+            sage: StandardSkewTableaux(2).cardinality()
             4
-            sage: StandardSkewTableaux(3).cardinality()                                 # needs sage.modules
+            sage: StandardSkewTableaux(3).cardinality()
             24
-            sage: StandardSkewTableaux(4).cardinality()                                 # needs sage.modules
+            sage: StandardSkewTableaux(4).cardinality()
             194
         """
         count = 0

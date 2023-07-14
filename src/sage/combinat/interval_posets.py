@@ -613,11 +613,12 @@ class TamariIntervalPoset(Element,
 
         TESTS::
 
-            sage: T = TamariIntervalPosets(20).random_element()                         # needs sage.combinat
-            sage: facs = factor(T)                                                      # needs sage.combinat
-            sage: all(U.is_connected() for U in facs)                                   # needs sage.combinat
+            sage: # needs sage.combinat
+            sage: T = TamariIntervalPosets(20).random_element()
+            sage: facs = factor(T)
+            sage: all(U.is_connected() for U in facs)
             True
-            sage: T == prod(facs)                                                       # needs sage.combinat
+            sage: T == prod(facs)
             True
         """
         hasse = self.poset().hasse_diagram()
@@ -2528,11 +2529,12 @@ class TamariIntervalPoset(Element,
 
         TESTS::
 
-            sage: ex = TamariIntervalPosets(4).random_element()                         # needs sage.combinat
-            sage: dec = ex.new_decomposition()                                          # needs sage.combinat
-            sage: len(dec) == ex.number_of_new_components()                             # needs sage.combinat
+            sage: # needs sage.combinat
+            sage: ex = TamariIntervalPosets(4).random_element()
+            sage: dec = ex.new_decomposition()
+            sage: len(dec) == ex.number_of_new_components()
             True
-            sage: all(u.is_new() for u in dec)                                          # needs sage.combinat
+            sage: all(u.is_new() for u in dec)
             True
         """
         from sage.combinat.binary_tree import BinaryTree
@@ -3056,11 +3058,12 @@ class TamariIntervalPosets(UniqueRepresentation, Parent):
 
         From Dyck words::
 
-            sage: dw = DyckWord([1,0])                                                  # needs sage.combinat
-            sage: TamariIntervalPosets.final_forest(dw)                                 # needs sage.combinat
+            sage: # needs sage.combinat
+            sage: dw = DyckWord([1,0])
+            sage: TamariIntervalPosets.final_forest(dw)
             The Tamari interval of size 1 induced by relations []
-            sage: dw = DyckWord([1,1,0,1,0,0,1,1,0,0])                                  # needs sage.combinat
-            sage: TamariIntervalPosets.final_forest(dw)                                 # needs sage.combinat
+            sage: dw = DyckWord([1,1,0,1,0,0,1,1,0,0])
+            sage: TamariIntervalPosets.final_forest(dw)
             The Tamari interval of size 5 induced by relations [(5, 4), (3, 1), (2, 1)]
 
         TESTS::
@@ -3169,11 +3172,12 @@ class TamariIntervalPosets(UniqueRepresentation, Parent):
 
         from Dyck words::
 
-            sage: dw = DyckWord([1,0])                                                  # needs sage.combinat
-            sage: TamariIntervalPosets.initial_forest(dw)                               # needs sage.combinat
+            sage: # needs sage.combinat
+            sage: dw = DyckWord([1,0])
+            sage: TamariIntervalPosets.initial_forest(dw)
             The Tamari interval of size 1 induced by relations []
-            sage: dw = DyckWord([1,1,0,1,0,0,1,1,0,0])                                  # needs sage.combinat
-            sage: TamariIntervalPosets.initial_forest(dw)                               # needs sage.combinat
+            sage: dw = DyckWord([1,1,0,1,0,0,1,1,0,0])
+            sage: TamariIntervalPosets.initial_forest(dw)
             The Tamari interval of size 5 induced by relations [(1, 4), (2, 3), (3, 4)]
 
         TESTS::
@@ -3295,13 +3299,14 @@ class TamariIntervalPosets(UniqueRepresentation, Parent):
 
         EXAMPLES::
 
-            sage: dw1 = DyckWord([1,0,1,0])                                             # needs sage.combinat
-            sage: dw2 = DyckWord([1,1,0,0])                                             # needs sage.combinat
-            sage: TamariIntervalPosets.from_dyck_words(dw1, dw2)                        # needs sage.combinat
+            sage: # needs sage.combinat
+            sage: dw1 = DyckWord([1,0,1,0])
+            sage: dw2 = DyckWord([1,1,0,0])
+            sage: TamariIntervalPosets.from_dyck_words(dw1, dw2)
             The Tamari interval of size 2 induced by relations []
-            sage: TamariIntervalPosets.from_dyck_words(dw1,dw1)                         # needs sage.combinat
+            sage: TamariIntervalPosets.from_dyck_words(dw1,dw1)
             The Tamari interval of size 2 induced by relations [(1, 2)]
-            sage: TamariIntervalPosets.from_dyck_words(dw2,dw2)                         # needs sage.combinat
+            sage: TamariIntervalPosets.from_dyck_words(dw2,dw2)
             The Tamari interval of size 2 induced by relations [(2, 1)]
 
             sage: dw1 = DyckWord([1,0,1,1,1,0,0,1,1,0,0,0])                             # needs sage.combinat
@@ -3843,14 +3848,15 @@ class TamariIntervalPosets_size(TamariIntervalPosets):
 
         EXAMPLES::
 
-            sage: T = TamariIntervalPosets(4).random_element()                          # needs sage.combinat
-            sage: T.parent()                                                            # needs sage.combinat
+            sage: # needs sage.combinat
+            sage: T = TamariIntervalPosets(4).random_element()
+            sage: T.parent()
             Interval-posets
-            sage: u = T.lower_dyck_word(); u   # random                                 # needs sage.combinat
+            sage: u = T.lower_dyck_word(); u   # random
             [1, 1, 0, 1, 0, 0, 1, 0]
-            sage: v = T.lower_dyck_word(); v   # random                                 # needs sage.combinat
+            sage: v = T.lower_dyck_word(); v   # random
             [1, 1, 0, 1, 0, 0, 1, 0]
-            sage: len(u)                                                                # needs sage.combinat
+            sage: len(u)
             8
         """
         from sage.graphs.schnyder import minimal_schnyder_wood

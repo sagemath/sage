@@ -988,13 +988,14 @@ class BinaryTree(AbstractClonableTree, ClonableArray,
 
         EXAMPLES::
 
-            sage: BinaryTree().to_dyck_word_tamari()                                    # needs sage.combinat
+            sage: # needs sage.combinat
+            sage: BinaryTree().to_dyck_word_tamari()
             []
-            sage: BinaryTree([]).to_dyck_word_tamari()                                  # needs sage.combinat
+            sage: BinaryTree([]).to_dyck_word_tamari()
             [1, 0]
-            sage: BinaryTree([[None,[]],None]).to_dyck_word_tamari()                    # needs sage.combinat
+            sage: BinaryTree([[None,[]],None]).to_dyck_word_tamari()
             [1, 1, 0, 0, 1, 0]
-            sage: BinaryTree([[[], [[], None]], [[], []]]).to_dyck_word_tamari()        # needs sage.combinat
+            sage: BinaryTree([[[], [[], None]], [[], []]]).to_dyck_word_tamari()
             [1, 0, 1, 1, 0, 1, 0, 0, 1, 1, 0, 1, 1, 0, 0, 0]
         """
         return self.to_dyck_word("L1R0")
@@ -1255,21 +1256,22 @@ class BinaryTree(AbstractClonableTree, ClonableArray,
 
         EXAMPLES::
 
-            sage: BinaryTree().to_dyck_word()                                           # needs sage.combinat
+            sage: # needs sage.combinat
+            sage: BinaryTree().to_dyck_word()
             []
-            sage: BinaryTree([]).to_dyck_word()                                         # needs sage.combinat
+            sage: BinaryTree([]).to_dyck_word()
             [1, 0]
-            sage: BinaryTree([[[], [[], None]], [[], []]]).to_dyck_word()               # needs sage.combinat
+            sage: BinaryTree([[[], [[], None]], [[], []]]).to_dyck_word()
             [1, 1, 1, 0, 0, 1, 1, 0, 0, 0, 1, 1, 0, 0, 1, 0]
-            sage: BinaryTree([[None,[]],None]).to_dyck_word()                           # needs sage.combinat
+            sage: BinaryTree([[None,[]],None]).to_dyck_word()
             [1, 1, 0, 1, 0, 0]
-            sage: BinaryTree([[None,[]],None]).to_dyck_word("1R0L")                     # needs sage.combinat
+            sage: BinaryTree([[None,[]],None]).to_dyck_word("1R0L")
             [1, 0, 1, 1, 0, 0]
-            sage: BinaryTree([[None,[]],None]).to_dyck_word("L1R0")                     # needs sage.combinat
+            sage: BinaryTree([[None,[]],None]).to_dyck_word("L1R0")
             [1, 1, 0, 0, 1, 0]
-            sage: BinaryTree([[None,[]],None]).to_dyck_word("R1L0")                     # needs sage.combinat
+            sage: BinaryTree([[None,[]],None]).to_dyck_word("R1L0")
             [1, 1, 0, 1, 0, 0]
-            sage: BinaryTree([[None,[]],None]).to_dyck_word("R10L")                     # needs sage.combinat
+            sage: BinaryTree([[None,[]],None]).to_dyck_word("R10L")
             Traceback (most recent call last):
             ...
             ValueError: R10L is not a correct map
@@ -3411,17 +3413,18 @@ class BinaryTree(AbstractClonableTree, ClonableArray,
 
         TESTS::
 
-            sage: list(u.dendriform_shuffle(u))                                         # needs sage.combinat
+            sage: # needs sage.combinat
+            sage: list(u.dendriform_shuffle(u))
             [.]
-            sage: list(u.dendriform_shuffle(g))                                         # needs sage.combinat
+            sage: list(u.dendriform_shuffle(g))
             [[., .]]
-            sage: list(u.dendriform_shuffle(l))                                         # needs sage.combinat
+            sage: list(u.dendriform_shuffle(l))
             [[[., .], .]]
-            sage: list(u.dendriform_shuffle(r))                                         # needs sage.combinat
+            sage: list(u.dendriform_shuffle(r))
             [[., [., .]]]
-            sage: list(r.dendriform_shuffle(u))                                         # needs sage.combinat
+            sage: list(r.dendriform_shuffle(u))
             [[., [., .]]]
-            sage: list(l.dendriform_shuffle(u))                                         # needs sage.combinat
+            sage: list(l.dendriform_shuffle(u))
             [[[., .], .]]
         """
         from sage.combinat.words.shuffle_product import ShuffleProduct_w1w2

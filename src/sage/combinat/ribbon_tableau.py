@@ -663,20 +663,21 @@ def spin_polynomial(part, weight, length):
 
     EXAMPLES::
 
+        sage: # needs sage.symbolic
         sage: from sage.combinat.ribbon_tableau import spin_polynomial
-        sage: spin_polynomial([6,6,6],[4,2],3)                                          # needs sage.symbolic
+        sage: spin_polynomial([6,6,6],[4,2],3)
         t^6 + t^5 + 2*t^4 + t^3 + t^2
-        sage: spin_polynomial([6,6,6],[4,1,1],3)                                        # needs sage.symbolic
+        sage: spin_polynomial([6,6,6],[4,1,1],3)
         t^6 + 2*t^5 + 3*t^4 + 2*t^3 + t^2
-        sage: spin_polynomial([3,3,3,2,1], [2,2], 3)                                    # needs sage.symbolic
+        sage: spin_polynomial([3,3,3,2,1], [2,2], 3)
         t^(7/2) + t^(5/2)
-        sage: spin_polynomial([3,3,3,2,1], [2,1,1], 3)                                  # needs sage.symbolic
+        sage: spin_polynomial([3,3,3,2,1], [2,1,1], 3)
         2*t^(7/2) + 2*t^(5/2) + t^(3/2)
-        sage: spin_polynomial([3,3,3,2,1], [1,1,1,1], 3)                                # needs sage.symbolic
+        sage: spin_polynomial([3,3,3,2,1], [1,1,1,1], 3)
         3*t^(7/2) + 5*t^(5/2) + 3*t^(3/2) + sqrt(t)
-        sage: spin_polynomial([5,4,3,2,1,1,1], [2,2,1], 3)                              # needs sage.symbolic
+        sage: spin_polynomial([5,4,3,2,1,1,1], [2,2,1], 3)
         2*t^(9/2) + 6*t^(7/2) + 2*t^(5/2)
-        sage: spin_polynomial([[6]*6, [3,3]], [4,4,2], 3)                               # needs sage.symbolic
+        sage: spin_polynomial([[6]*6, [3,3]], [4,4,2], 3)
         3*t^9 + 5*t^8 + 9*t^7 + 6*t^6 + 3*t^5
     """
     from sage.symbolic.ring import SR

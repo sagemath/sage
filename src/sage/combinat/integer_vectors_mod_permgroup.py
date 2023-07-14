@@ -187,11 +187,12 @@ class IntegerVectorsModPermutationGroup(UniqueRepresentation):
     group ``G`` acting on a list of length `n`, all integer vectors of
     length `n` are canonical::
 
-        sage: G = PermutationGroup([[(6,)]]) # long time
-        sage: G.cardinality() # long time
+        sage: # long time
+        sage: G = PermutationGroup([[(6,)]])
+        sage: G.cardinality()
         1
-        sage: I = IntegerVectorsModPermutationGroup(G) # long time
-        sage: for i in range(10): # long time
+        sage: I = IntegerVectorsModPermutationGroup(G)
+        sage: for i in range(10):
         ....:     d1 = I.subset(i).cardinality()
         ....:     d2 = IntegerVectors(i,6).cardinality()
         ....:     print(d1)

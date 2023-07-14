@@ -1085,14 +1085,15 @@ class Partition(CombinatorialElement):
 
         Now let us compare this to the power map on `S_8`::
 
-            sage: G = SymmetricGroup(8)                                                 # needs sage.groups
-            sage: g = G([(1,2,3,4,5),(6,7,8)]); g                                       # needs sage.groups
+            sage: # needs sage.groups
+            sage: G = SymmetricGroup(8)
+            sage: g = G([(1,2,3,4,5),(6,7,8)]); g
             (1,2,3,4,5)(6,7,8)
-            sage: g^2                                                                   # needs sage.groups
+            sage: g^2
             (1,3,5,2,4)(6,8,7)
-            sage: g^3                                                                   # needs sage.groups
+            sage: g^3
             (1,4,2,5,3)
-            sage: g^4                                                                   # needs sage.groups
+            sage: g^4
             (1,5,4,3,2)(6,7,8)
 
         ::
@@ -1894,36 +1895,38 @@ class Partition(CombinatorialElement):
             sage: Q.upper_covers((1, 1))                                                # needs sage.graphs
             [(1, 2)]
 
-            sage: P = p.cell_poset(orientation="NW"); P                                 # needs sage.graphs
+            sage: # needs sage.graphs
+            sage: P = p.cell_poset(orientation="NW"); P
             Finite poset containing 7 elements
-            sage: sorted(P)                                                             # needs sage.graphs
+            sage: sorted(P)
             [(0, 0), (0, 1), (0, 2), (1, 0), (1, 1), (1, 2), (2, 0)]
-            sage: sorted(P.minimal_elements())                                          # needs sage.graphs
+            sage: sorted(P.minimal_elements())
             [(1, 2), (2, 0)]
-            sage: P.maximal_elements()                                                  # needs sage.graphs
+            sage: P.maximal_elements()
             [(0, 0)]
-            sage: P.upper_covers((2, 0))                                                # needs sage.graphs
+            sage: P.upper_covers((2, 0))
             [(1, 0)]
-            sage: sorted(P.upper_covers((1, 2)))                                        # needs sage.graphs
+            sage: sorted(P.upper_covers((1, 2)))
             [(0, 2), (1, 1)]
-            sage: sorted(P.upper_covers((1, 1)))                                        # needs sage.graphs
+            sage: sorted(P.upper_covers((1, 1)))
             [(0, 1), (1, 0)]
-            sage: sorted([len(P.upper_covers(v)) for v in P])                           # needs sage.graphs
+            sage: sorted([len(P.upper_covers(v)) for v in P])
             [0, 1, 1, 1, 1, 2, 2]
 
-            sage: R = p.cell_poset(orientation="NE"); R                                 # needs sage.graphs
+            sage: # needs sage.graphs
+            sage: R = p.cell_poset(orientation="NE"); R
             Finite poset containing 7 elements
-            sage: sorted(R)                                                             # needs sage.graphs
+            sage: sorted(R)
             [(0, 0), (0, 1), (0, 2), (1, 0), (1, 1), (1, 2), (2, 0)]
-            sage: R.maximal_elements()                                                  # needs sage.graphs
+            sage: R.maximal_elements()
             [(0, 2)]
-            sage: R.minimal_elements()                                                  # needs sage.graphs
+            sage: R.minimal_elements()
             [(2, 0)]
-            sage: sorted([len(R.upper_covers(v)) for v in R])                           # needs sage.graphs
+            sage: sorted([len(R.upper_covers(v)) for v in R])
             [0, 1, 1, 1, 1, 2, 2]
-            sage: R.is_isomorphic(P)                                                    # needs sage.graphs
+            sage: R.is_isomorphic(P)
             False
-            sage: R.is_isomorphic(P.dual())                                             # needs sage.graphs
+            sage: R.is_isomorphic(P.dual())
             False
 
         Linear extensions of ``p.cell_poset()`` are in 1-to-1 correspondence
@@ -5406,11 +5409,12 @@ class Partition(CombinatorialElement):
 
         TESTS::
 
-            sage: G = Partition([1]).dual_equivalence_graph()                           # needs sage.graphs
-            sage: G.vertices(sort=False)                                                # needs sage.graphs
+            sage: # needs sage.graphs
+            sage: G = Partition([1]).dual_equivalence_graph()
+            sage: G.vertices(sort=False)
             [[[1]]]
-            sage: G = Partition([]).dual_equivalence_graph()                            # needs sage.graphs
-            sage: G.vertices(sort=False)                                                # needs sage.graphs
+            sage: G = Partition([]).dual_equivalence_graph()
+            sage: G.vertices(sort=False)
             [[]]
 
             sage: P = Partition([3,1,1])
@@ -7064,23 +7068,24 @@ class Partitions_nk(Partitions):
 
         Further examples::
 
-            sage: Partitions(5, length=3).cardinality()                                 # needs sage.libs.flint
+            sage: # needs sage.libs.flint
+            sage: Partitions(5, length=3).cardinality()
             2
-            sage: Partitions(6, length=3).cardinality()                                 # needs sage.libs.flint
+            sage: Partitions(6, length=3).cardinality()
             3
-            sage: Partitions(8, length=4).cardinality()                                 # needs sage.libs.flint
+            sage: Partitions(8, length=4).cardinality()
             5
-            sage: Partitions(8, length=5).cardinality()                                 # needs sage.libs.flint
+            sage: Partitions(8, length=5).cardinality()
             3
-            sage: Partitions(15, length=6).cardinality()                                # needs sage.libs.flint
+            sage: Partitions(15, length=6).cardinality()
             26
-            sage: Partitions(0, length=0).cardinality()                                 # needs sage.libs.flint
+            sage: Partitions(0, length=0).cardinality()
             1
-            sage: Partitions(0, length=1).cardinality()                                 # needs sage.libs.flint
+            sage: Partitions(0, length=1).cardinality()
             0
-            sage: Partitions(1, length=0).cardinality()                                 # needs sage.libs.flint
+            sage: Partitions(1, length=0).cardinality()
             0
-            sage: Partitions(1, length=4).cardinality()                                 # needs sage.libs.flint
+            sage: Partitions(1, length=4).cardinality()
             0
 
         TESTS:
@@ -8479,13 +8484,14 @@ class OrderedPartitions(Partitions):
 
         EXAMPLES::
 
-            sage: OrderedPartitions(3).cardinality()                                    # needs sage.libs.gap
+            sage: # needs sage.libs.gap
+            sage: OrderedPartitions(3).cardinality()
             4
-            sage: OrderedPartitions(3,2).cardinality()                                  # needs sage.libs.gap
+            sage: OrderedPartitions(3,2).cardinality()
             2
-            sage: OrderedPartitions(10,2).cardinality()                                 # needs sage.libs.gap
+            sage: OrderedPartitions(10,2).cardinality()
             9
-            sage: OrderedPartitions(15).cardinality()                                   # needs sage.libs.gap
+            sage: OrderedPartitions(15).cardinality()
             16384
         """
         from sage.libs.gap.libgap import libgap
@@ -8986,17 +8992,18 @@ def number_of_partitions(n, algorithm='default'):
 
     ::
 
-        sage: number_of_partitions(10)                                                  # needs sage.libs.flint
+        sage: # needs sage.libs.flint
+        sage: number_of_partitions(10)
         42
-        sage: number_of_partitions(3)                                                   # needs sage.libs.flint
+        sage: number_of_partitions(3)
         3
-        sage: number_of_partitions(10)                                                  # needs sage.libs.flint
+        sage: number_of_partitions(10)
         42
-        sage: number_of_partitions(40)                                                  # needs sage.libs.flint
+        sage: number_of_partitions(40)
         37338
-        sage: number_of_partitions(100)                                                 # needs sage.libs.flint
+        sage: number_of_partitions(100)
         190569292
-        sage: number_of_partitions(100000)                                              # needs sage.libs.flint
+        sage: number_of_partitions(100000)
         27493510569775696512677516320986352688173429315980054758203125984302147328114964173055050741660736621590157844774296248940493063070200461792764493033510116079342457190155718943509725312466108452006369558934464248716828789832182345009262853831404597021307130674510624419227311238999702284408609370935531629697851569569892196108480158600569421098519
 
     A generating function for the number of partitions `p_n` is given by the
@@ -9074,20 +9081,21 @@ def number_of_partitions_length(n, k, algorithm='hybrid'):
 
     EXAMPLES::
 
+        sage: # needs sage.libs.gap
         sage: from sage.combinat.partition import number_of_partitions_length
-        sage: number_of_partitions_length(5, 2)                                         # needs sage.libs.gap
+        sage: number_of_partitions_length(5, 2)
         2
-        sage: number_of_partitions_length(10, 2)                                        # needs sage.libs.gap
+        sage: number_of_partitions_length(10, 2)
         5
-        sage: number_of_partitions_length(10, 4)                                        # needs sage.libs.gap
+        sage: number_of_partitions_length(10, 4)
         9
-        sage: number_of_partitions_length(10, 0)                                        # needs sage.libs.gap
+        sage: number_of_partitions_length(10, 0)
         0
-        sage: number_of_partitions_length(10, 1)                                        # needs sage.libs.gap
+        sage: number_of_partitions_length(10, 1)
         1
-        sage: number_of_partitions_length(0, 0)                                         # needs sage.libs.gap
+        sage: number_of_partitions_length(0, 0)
         1
-        sage: number_of_partitions_length(0, 1)                                         # needs sage.libs.gap
+        sage: number_of_partitions_length(0, 1)
         0
     """
     if algorithm == 'hybrid':

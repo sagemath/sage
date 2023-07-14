@@ -983,13 +983,14 @@ def full_group_by(l, key=lambda x: x):
 
     EXAMPLES::
 
+        sage: # needs sage.symbolic
         sage: from sage.combinat.finite_state_machine import full_group_by
-        sage: t = [2/x, 1/x, 2/x]                                                       # needs sage.symbolic
-        sage: r = full_group_by([0, 1, 2], key=lambda i: t[i])                          # needs sage.symbolic
-        sage: sorted(r, key=lambda p: p[1])                                             # needs sage.symbolic
+        sage: t = [2/x, 1/x, 2/x]
+        sage: r = full_group_by([0, 1, 2], key=lambda i: t[i])
+        sage: sorted(r, key=lambda p: p[1])
         [(2/x, [0, 2]), (1/x, [1])]
         sage: from itertools import groupby
-        sage: for k, elements in groupby(sorted([0, 1, 2],                              # needs sage.symbolic
+        sage: for k, elements in groupby(sorted([0, 1, 2],
         ....:                            key=lambda i:t[i]),
         ....:                            key=lambda i:t[i]):
         ....:     print("{} {}".format(k, list(elements)))
@@ -4120,17 +4121,18 @@ class FiniteStateMachine(SageObject):
         If the probabilities are variables in the symbolic ring,
         :func:`~sage.symbolic.assumptions.assume` will do the trick::
 
-            sage: var('p q')                                                            # needs sage.symbolic
+            sage: # needs sage.symbolic
+            sage: var('p q')
             (p, q)
-            sage: F = Transducer([(0, 0, p, 1), (0, 0, q, 0)],                          # needs sage.symbolic
+            sage: F = Transducer([(0, 0, p, 1), (0, 0, q, 0)],
             ....:                on_duplicate_transition=duplicate_transition_add_input)
-            sage: assume(p + q == 1)                                                    # needs sage.symbolic
-            sage: (p + q - 1).is_zero()                                                 # needs sage.symbolic
+            sage: assume(p + q == 1)
+            sage: (p + q - 1).is_zero()
             True
-            sage: F.is_Markov_chain()                                                   # needs sage.symbolic
+            sage: F.is_Markov_chain()
             True
-            sage: forget()                                                              # needs sage.symbolic
-            sage: del(p, q)                                                             # needs sage.symbolic
+            sage: forget()
+            sage: del(p, q)
 
         If the probabilities are variables in some polynomial ring,
         the parameter ``is_zero`` can be used::
@@ -10034,12 +10036,13 @@ class FiniteStateMachine(SageObject):
 
             Now, we actually compute the asymptotic moments::
 
-                sage: moments = NAFweight.asymptotic_moments()                          # needs sage.symbolic
-                sage: moments['expectation']                                            # needs sage.symbolic
+                sage: # needs sage.symbolic
+                sage: moments = NAFweight.asymptotic_moments()
+                sage: moments['expectation']
                 1/3*n + Order(1)
-                sage: moments['variance']                                               # needs sage.symbolic
+                sage: moments['variance']
                 2/27*n + Order(1)
-                sage: moments['covariance']                                             # needs sage.symbolic
+                sage: moments['covariance']
                 Order(1)
 
         #.  This is Example 3.16 in [HKW2015]_, where a transducer with
@@ -10050,17 +10053,18 @@ class FiniteStateMachine(SageObject):
 
             ::
 
-                sage: var('a_1, a_2, a_3, a_4')                                         # needs sage.symbolic
+                sage: # needs sage.symbolic
+                sage: var('a_1, a_2, a_3, a_4')
                 (a_1, a_2, a_3, a_4)
-                sage: T = Transducer([[0, 0, 0, a_1], [0, 1, 1, a_3],                   # needs sage.symbolic
+                sage: T = Transducer([[0, 0, 0, a_1], [0, 1, 1, a_3],
                 ....:                 [1, 0, 0, a_4], [1, 1, 1, a_2]],
                 ....:                initial_states=[0], final_states=[0, 1])
-                sage: moments = T.asymptotic_moments()                                  # needs sage.symbolic
+                sage: moments = T.asymptotic_moments()
                 verbose 0 (...) Non-integer output weights lead to
                 significant performance degradation.
-                sage: moments['expectation']                                            # needs sage.symbolic
+                sage: moments['expectation']
                 1/4*(a_1 + a_2 + a_3 + a_4)*n + Order(1)
-                sage: moments['covariance']                                             # needs sage.symbolic
+                sage: moments['covariance']
                 -1/4*(a_1 - a_2)*n + Order(1)
 
             Therefore, the asymptotic covariance vanishes if and only if
@@ -10072,12 +10076,13 @@ class FiniteStateMachine(SageObject):
             :ref:`example on Gray code
             <finite_state_machine_gray_code_example>`)::
 
-                sage: moments = transducers.GrayCode().asymptotic_moments()             # needs sage.symbolic
-                sage: moments['expectation']                                            # needs sage.symbolic
+                sage: # needs sage.symbolic
+                sage: moments = transducers.GrayCode().asymptotic_moments()
+                sage: moments['expectation']
                 1/2*n + Order(1)
-                sage: moments['variance']                                               # needs sage.symbolic
+                sage: moments['variance']
                 1/4*n + Order(1)
-                sage: moments['covariance']                                             # needs sage.symbolic
+                sage: moments['covariance']
                 Order(1)
 
         #.  This is the first part of Example 4.4 in [HKW2015]_,

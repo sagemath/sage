@@ -2950,26 +2950,27 @@ class Tableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass):
 
         EXAMPLES::
 
-            sage: rs = Tableau([[1,2,3],[4,5]]).row_stabilizer()                        # needs sage.groups
-            sage: rs.order() == factorial(3)*factorial(2)                               # needs sage.groups
+            sage: # needs sage.groups
+            sage: rs = Tableau([[1,2,3],[4,5]]).row_stabilizer()
+            sage: rs.order() == factorial(3)*factorial(2)
             True
-            sage: PermutationGroupElement([(1,3,2),(4,5)]) in rs                        # needs sage.groups
+            sage: PermutationGroupElement([(1,3,2),(4,5)]) in rs
             True
-            sage: PermutationGroupElement([(1,4)]) in rs                                # needs sage.groups
+            sage: PermutationGroupElement([(1,4)]) in rs
             False
-            sage: rs = Tableau([[1, 2],[3]]).row_stabilizer()                           # needs sage.groups
-            sage: PermutationGroupElement([(1,2),(3,)]) in rs                           # needs sage.groups
+            sage: rs = Tableau([[1, 2],[3]]).row_stabilizer()
+            sage: PermutationGroupElement([(1,2),(3,)]) in rs
             True
-            sage: rs.one().domain()                                                     # needs sage.groups
+            sage: rs.one().domain()
             [1, 2, 3]
-            sage: rs = Tableau([[1],[2],[3]]).row_stabilizer()                          # needs sage.groups
-            sage: rs.order()                                                            # needs sage.groups
+            sage: rs = Tableau([[1],[2],[3]]).row_stabilizer()
+            sage: rs.order()
             1
-            sage: rs = Tableau([[2,4,5],[1,3]]).row_stabilizer()                        # needs sage.groups
-            sage: rs.order()                                                            # needs sage.groups
+            sage: rs = Tableau([[2,4,5],[1,3]]).row_stabilizer()
+            sage: rs.order()
             12
-            sage: rs = Tableau([]).row_stabilizer()                                     # needs sage.groups
-            sage: rs.order()                                                            # needs sage.groups
+            sage: rs = Tableau([]).row_stabilizer()
+            sage: rs.order()
             1
         """
         # Ensure that the permutations involve all elements of the
@@ -2991,12 +2992,13 @@ class Tableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass):
 
         EXAMPLES::
 
-            sage: cs = Tableau([[1,2,3],[4,5]]).column_stabilizer()                     # needs sage.groups
-            sage: cs.order() == factorial(2)*factorial(2)                               # needs sage.groups
+            sage: # needs sage.groups
+            sage: cs = Tableau([[1,2,3],[4,5]]).column_stabilizer()
+            sage: cs.order() == factorial(2)*factorial(2)
             True
-            sage: PermutationGroupElement([(1,3,2),(4,5)]) in cs                        # needs sage.groups
+            sage: PermutationGroupElement([(1,3,2),(4,5)]) in cs
             False
-            sage: PermutationGroupElement([(1,4)]) in cs                                # needs sage.groups
+            sage: PermutationGroupElement([(1,4)]) in cs
             True
         """
         return self.conjugate().row_stabilizer()
@@ -7016,13 +7018,14 @@ class SemistandardTableaux_shape_weight(SemistandardTableaux_shape):
 
         EXAMPLES::
 
-            sage: SemistandardTableaux([2,2], [2, 1, 1]).cardinality()                  # needs sage.modules
+            sage: # needs sage.modules
+            sage: SemistandardTableaux([2,2], [2, 1, 1]).cardinality()
             1
-            sage: SemistandardTableaux([2,2,2], [2, 2, 1,1]).cardinality()              # needs sage.modules
+            sage: SemistandardTableaux([2,2,2], [2, 2, 1,1]).cardinality()
             1
-            sage: SemistandardTableaux([2,2,2], [2, 2, 2]).cardinality()                # needs sage.modules
+            sage: SemistandardTableaux([2,2,2], [2, 2, 2]).cardinality()
             1
-            sage: SemistandardTableaux([3,2,1], [2, 2, 2]).cardinality()                # needs sage.modules
+            sage: SemistandardTableaux([3,2,1], [2, 2, 2]).cardinality()
             2
         """
         return symmetrica.kostka_number(self.shape, self.weight)
@@ -7047,13 +7050,14 @@ class SemistandardTableaux_shape_weight(SemistandardTableaux_shape):
 
         EXAMPLES::
 
-            sage: SemistandardTableaux([2,2], [2, 1, 1]).list()                         # needs sage.modules
+            sage: # needs sage.modules
+            sage: SemistandardTableaux([2,2], [2, 1, 1]).list()
             [[[1, 1], [2, 3]]]
-            sage: SemistandardTableaux([2,2,2], [2, 2, 1,1]).list()                     # needs sage.modules
+            sage: SemistandardTableaux([2,2,2], [2, 2, 1,1]).list()
             [[[1, 1], [2, 2], [3, 4]]]
-            sage: SemistandardTableaux([2,2,2], [2, 2, 2]).list()                       # needs sage.modules
+            sage: SemistandardTableaux([2,2,2], [2, 2, 2]).list()
             [[[1, 1], [2, 2], [3, 3]]]
-            sage: SemistandardTableaux([3,2,1], [2, 2, 2]).list()                       # needs sage.modules
+            sage: SemistandardTableaux([3,2,1], [2, 2, 2]).list()
             [[[1, 1, 2], [2, 3], [3]], [[1, 1, 3], [2, 2], [3]]]
         """
         return symmetrica.kostka_tab(self.shape, self.weight)
@@ -7097,12 +7101,13 @@ class SemistandardTableaux_size_weight(SemistandardTableaux):
         """
         EXAMPLES::
 
-            sage: [ t for t in SemistandardTableaux(3, [2,1]) ]                         # needs sage.modules
+            sage: # needs sage.modules
+            sage: [ t for t in SemistandardTableaux(3, [2,1]) ]
             [[[1, 1, 2]], [[1, 1], [2]]]
-            sage: [ t for t in SemistandardTableaux(4, [2,2]) ]                         # needs sage.modules
+            sage: [ t for t in SemistandardTableaux(4, [2,2]) ]
             [[[1, 1, 2, 2]], [[1, 1, 2], [2]], [[1, 1], [2, 2]]]
-            sage: sst = SemistandardTableaux(4, [2,2])                                  # needs sage.modules
-            sage: sst[0].parent() is sst                                                # needs sage.modules
+            sage: sst = SemistandardTableaux(4, [2,2])
+            sage: sst[0].parent() is sst
             True
         """
         from sage.combinat.partition import Partitions

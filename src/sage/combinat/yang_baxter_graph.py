@@ -86,20 +86,22 @@ def YangBaxterGraph(partition=None, root=None, operators=None):
 
     The Cayley graph of a finite group can be realized as a Yang-Baxter graph::
 
+        sage: # needs sage.groups
         sage: def left_multiplication_by(g):
         ....:     return lambda h: h*g
-        sage: G = CyclicPermutationGroup(4)                                             # needs sage.groups
-        sage: operators = [ left_multiplication_by(gen) for gen in G.gens() ]           # needs sage.groups
-        sage: Y = YangBaxterGraph(root=G.identity(), operators=operators); Y            # needs sage.groups
+        sage: G = CyclicPermutationGroup(4)
+        sage: operators = [ left_multiplication_by(gen) for gen in G.gens() ]
+        sage: Y = YangBaxterGraph(root=G.identity(), operators=operators); Y
         Yang-Baxter graph with root vertex ()
-        sage: Y.plot(edge_labels=False)                                                 # needs sage.groups sage.plot
+        sage: Y.plot(edge_labels=False)                                                 # needs sage.plot
         Graphics object consisting of 9 graphics primitives
 
-        sage: G = SymmetricGroup(4)                                                     # needs sage.groups
-        sage: operators = [left_multiplication_by(gen) for gen in G.gens()]             # needs sage.groups
-        sage: Y = YangBaxterGraph(root=G.identity(), operators=operators); Y            # needs sage.groups
+        sage: # needs sage.groups
+        sage: G = SymmetricGroup(4)
+        sage: operators = [left_multiplication_by(gen) for gen in G.gens()]
+        sage: Y = YangBaxterGraph(root=G.identity(), operators=operators); Y
         Yang-Baxter graph with root vertex ()
-        sage: Y.plot(edge_labels=False)                                                 # needs sage.groups sage.plot
+        sage: Y.plot(edge_labels=False)                                                 # needs sage.plot
         Graphics object consisting of 96 graphics primitives
 
     AUTHORS:
@@ -606,13 +608,14 @@ class YangBaxterGraph_partition(YangBaxterGraph_generic):
 
         EXAMPLES::
 
-            sage: Y = YangBaxterGraph(partition=[3,2]); Y                               # needs sage.combinat
+            sage: # needs sage.combinat
+            sage: Y = YangBaxterGraph(partition=[3,2]); Y
             Yang-Baxter graph of [3, 2], with top vertex (1, 0, 2, 1, 0)
-            sage: B = copy(Y); B                                                        # needs sage.combinat
+            sage: B = copy(Y); B
             Yang-Baxter graph of [3, 2], with top vertex (1, 0, 2, 1, 0)
-            sage: Y is B                                                                # needs sage.combinat
+            sage: Y is B
             False
-            sage: Y == B                                                                # needs sage.combinat
+            sage: Y == B
             True
         """
         from copy import copy
@@ -681,14 +684,15 @@ class YangBaxterGraph_partition(YangBaxterGraph_generic):
 
         EXAMPLES::
 
-            sage: Y = YangBaxterGraph(partition=[3,1])                                  # needs sage.combinat
-            sage: from sage.combinat.yang_baxter_graph import SwapOperator              # needs sage.combinat
-            sage: ops = [SwapOperator(i) for i in range(3)]                             # needs sage.combinat
-            sage: [Y._swap_operator(op, (1,2,3,4)) for op in ops]                       # needs sage.combinat
+            sage: # needs sage.combinat
+            sage: Y = YangBaxterGraph(partition=[3,1])
+            sage: from sage.combinat.yang_baxter_graph import SwapOperator
+            sage: ops = [SwapOperator(i) for i in range(3)]
+            sage: [Y._swap_operator(op, (1,2,3,4)) for op in ops]
             [(2, 1, 3, 4), (1, 3, 2, 4), (1, 2, 4, 3)]
-            sage: [Y._swap_operator(op, [4,3,2,1]) for op in ops]                       # needs sage.combinat
+            sage: [Y._swap_operator(op, [4,3,2,1]) for op in ops]
             [[3, 4, 2, 1], [4, 2, 3, 1], [4, 3, 1, 2]]
-            sage: [Y._swap_operator(op, Permutation([1,2,3,4])) for op in ops]          # needs sage.combinat
+            sage: [Y._swap_operator(op, Permutation([1,2,3,4])) for op in ops]
             [[2, 1, 3, 4], [1, 3, 2, 4], [1, 2, 4, 3]]
         """
         return operator(u)
@@ -738,14 +742,15 @@ class YangBaxterGraph_partition(YangBaxterGraph_generic):
 
         EXAMPLES::
 
-            sage: Y = YangBaxterGraph(partition=[3,1]); Y                               # needs sage.combinat
+            sage: # needs sage.combinat
+            sage: Y = YangBaxterGraph(partition=[3,1]); Y
             Yang-Baxter graph of [3, 1], with top vertex (0, 2, 1, 0)
-            sage: d = Y.relabel_vertices((1,2,3,4), inplace=False); d                   # needs sage.combinat
+            sage: d = Y.relabel_vertices((1,2,3,4), inplace=False); d
             Digraph on 3 vertices
-            sage: Y.vertices(sort=True)                                                 # needs sage.combinat
+            sage: Y.vertices(sort=True)
             [(0, 2, 1, 0), (2, 0, 1, 0), (2, 1, 0, 0)]
-            sage: e = Y.relabel_vertices((1,2,3,4)); e                                  # needs sage.combinat
-            sage: Y.vertices(sort=True)                                                 # needs sage.combinat
+            sage: e = Y.relabel_vertices((1,2,3,4)); e
+            sage: Y.vertices(sort=True)
             [(1, 2, 3, 4), (2, 1, 3, 4), (2, 3, 1, 4)]
         """
         relabelling = self.vertex_relabelling_dict(v)

@@ -252,11 +252,12 @@ class CombinatorialFreeModule(UniqueRepresentation, Module, IndexedGenerators):
 
     TESTS::
 
-        sage: XQ = SchubertPolynomialRing(QQ)                                           # needs sage.combinat
-        sage: XZ = SchubertPolynomialRing(ZZ)                                           # needs sage.combinat
-        sage: XQ == XZ                                                                  # needs sage.combinat
+        sage: # needs sage.combinat
+        sage: XQ = SchubertPolynomialRing(QQ)
+        sage: XZ = SchubertPolynomialRing(ZZ)
+        sage: XQ == XZ
         False
-        sage: XQ == XQ                                                                  # needs sage.combinat
+        sage: XQ == XQ
         True
 
     We check that issue :trac:`28681` is fixed::
@@ -692,10 +693,11 @@ class CombinatorialFreeModule(UniqueRepresentation, Module, IndexedGenerators):
         Here is a real life example illustrating that this yielded
         mathematically wrong results::
 
-            sage: S = SymmetricFunctions(QQ)                                            # needs sage.combinat
-            sage: s = S.s(); p = S.p()                                                  # needs sage.combinat
-            sage: ss = tensor([s,s]); pp = tensor([p,p])                                # needs sage.combinat
-            sage: a = tensor((s[2],s[2]))                                               # needs sage.combinat
+            sage: # needs sage.combinat
+            sage: S = SymmetricFunctions(QQ)
+            sage: s = S.s(); p = S.p()
+            sage: ss = tensor([s,s]); pp = tensor([p,p])
+            sage: a = tensor((s[2],s[2]))
 
         The following originally used to yield ``p[[2]] # p[[2]]``, and if
         there was no natural coercion between ``s`` and ``p``, this would
@@ -835,13 +837,14 @@ class CombinatorialFreeModule(UniqueRepresentation, Module, IndexedGenerators):
             sage: C.has_coerce_map_from(CQ)
             False
 
-            sage: CF2 = CombinatorialFreeModule(GF(2), Set([1,2]))                      # needs sage.rings.finite_rings
-            sage: CF2.has_coerce_map_from(C)                                            # needs sage.rings.finite_rings
+            sage: # needs sage.rings.finite_rings
+            sage: CF2 = CombinatorialFreeModule(GF(2), Set([1,2]))
+            sage: CF2.has_coerce_map_from(C)
             True
-            sage: c = C.monomial(1)                                                     # needs sage.rings.finite_rings
-            sage: CF2(2*c)                                                              # needs sage.rings.finite_rings
+            sage: c = C.monomial(1)
+            sage: CF2(2*c)
             0
-            sage: CF2(3*c)                                                              # needs sage.rings.finite_rings
+            sage: CF2(3*c)
             B[1]
         """
         if isinstance(R, CombinatorialFreeModule):
@@ -927,11 +930,12 @@ class CombinatorialFreeModule(UniqueRepresentation, Module, IndexedGenerators):
 
         EXAMPLES::
 
-            sage: QS2 = SymmetricGroupAlgebra(QQ,2)                                     # needs sage.combinat
-            sage: b = list(QS2.basis().keys())                                          # needs sage.combinat
-            sage: b.reverse()                                                           # needs sage.combinat
-            sage: QS2.set_order(b)                                                      # needs sage.combinat
-            sage: QS2.get_order()                                                       # needs sage.combinat
+            sage: # needs sage.combinat
+            sage: QS2 = SymmetricGroupAlgebra(QQ,2)
+            sage: b = list(QS2.basis().keys())
+            sage: b.reverse()
+            sage: QS2.set_order(b)
+            sage: QS2.get_order()
             [[2, 1], [1, 2]]
         """
         self._order = order
@@ -1002,11 +1006,12 @@ class CombinatorialFreeModule(UniqueRepresentation, Module, IndexedGenerators):
 
         EXAMPLES::
 
-            sage: QS3 = SymmetricGroupAlgebra(QQ, 3)                                    # needs sage.combinat
-            sage: b = QS3.from_vector(vector((2, 0, 0, 0, 0, 4))); b                    # needs sage.combinat
+            sage: # needs sage.combinat
+            sage: QS3 = SymmetricGroupAlgebra(QQ, 3)
+            sage: b = QS3.from_vector(vector((2, 0, 0, 0, 0, 4))); b
             2*[1, 2, 3] + 4*[3, 2, 1]
-            sage: a = 2*QS3([1,2,3]) + 4*QS3([3,2,1])                                   # needs sage.combinat
-            sage: a == b                                                                # needs sage.combinat
+            sage: a = 2*QS3([1,2,3]) + 4*QS3([3,2,1])
+            sage: a == b
             True
         """
         if order is None:
@@ -1209,21 +1214,23 @@ class CombinatorialFreeModule(UniqueRepresentation, Module, IndexedGenerators):
 
         EXAMPLES::
 
-            sage: e = SymmetricFunctions(QQ).elementary()                               # needs sage.combinat
-            sage: s = SymmetricFunctions(QQ).schur()                                    # needs sage.combinat
-            sage: a = e([2,1]) + e([1,1,1]); a                                          # needs sage.combinat
+            sage: # needs sage.combinat
+            sage: e = SymmetricFunctions(QQ).elementary()
+            sage: s = SymmetricFunctions(QQ).schur()
+            sage: a = e([2,1]) + e([1,1,1]); a
             e[1, 1, 1] + e[2, 1]
-            sage: s._from_dict(a.monomial_coefficients())                               # needs sage.combinat
+            sage: s._from_dict(a.monomial_coefficients())
             s[1, 1, 1] + s[2, 1]
 
         If the optional argument ``coerce`` is ``True``, then the
         coefficients are coerced into the base ring of ``self``::
 
-            sage: part = Partition([2,1])                                               # needs sage.combinat
-            sage: d = {part: 1}                                                         # needs sage.combinat
-            sage: a = s._from_dict(d, coerce=True); a                                   # needs sage.combinat
+            sage: # needs sage.combinat
+            sage: part = Partition([2,1])
+            sage: d = {part: 1}
+            sage: a = s._from_dict(d, coerce=True); a
             s[2, 1]
-            sage: a.coefficient(part).parent()                                          # needs sage.combinat
+            sage: a.coefficient(part).parent()
             Rational Field
 
         With ``remove_zeros=True``, zero coefficients are removed::
