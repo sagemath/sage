@@ -181,19 +181,20 @@ class LargeMatrixHelpRepr(ObjectReprABC):
 
         EXAMPLES::
 
+            sage: # needs sage.modules
             sage: from sage.repl.display.fancy_repr import LargeMatrixHelpRepr
-            sage: M = identity_matrix(40)                                               # optional - sage.modules
-            sage: pp = LargeMatrixHelpRepr()                                            # optional - sage.modules
-            sage: pp.format_string(M)                                                   # optional - sage.modules
+            sage: M = identity_matrix(40)
+            sage: pp = LargeMatrixHelpRepr()
+            sage: pp.format_string(M)
             "40 x 40 dense matrix over Integer Ring (use the '.str()' method...)"
-            sage: pp.format_string([M, M])                                              # optional - sage.modules
+            sage: pp.format_string([M, M])
             '--- object not handled by representer ---'
 
         Leads to::
 
-            sage: M                                                                     # optional - sage.modules
+            sage: M                                                                     # needs sage.modules
             40 x 40 dense matrix over Integer Ring (use the '.str()' method...)
-            sage: [M, M]                                                                # optional - sage.modules
+            sage: [M, M]                                                                # needs sage.modules
             [40 x 40 dense matrix over Integer Ring,
              40 x 40 dense matrix over Integer Ring]
         """
@@ -312,7 +313,7 @@ class TallListRepr(ObjectReprABC):
 
             sage: from sage.repl.display.fancy_repr import TallListRepr
             sage: format_list = TallListRepr().format_string
-            sage: format_list([1, 2, identity_matrix(2)])
+            sage: format_list([1, 2, identity_matrix(2)])                               # needs sage.modules
             '[\n      [1 0]\n1, 2, [0 1]\n]'
 
         Check that :trac:`18743` is fixed::
