@@ -407,7 +407,7 @@ cdef class Function(SageObject):
         except AttributeError:
             return NotImplemented
 
-    def __call__(self, *args, bint coerce=True, bint hold=False):
+    def __call__(self, *args, bint coerce=True, bint hold=False, dont_call_method_on_arg=None):
         """
         Evaluates this function at the given arguments.
 
@@ -532,7 +532,7 @@ cdef class Function(SageObject):
             try:
                 evalf = self._evalf_
             except AttributeError:
-                if len(args) == 1:
+                if len(args) == 1 and not dont_call_method_on_arg:
                     method = getattr(args[0], self._name, None)
                     if callable(method):
                         return method()
@@ -1055,7 +1055,7 @@ cdef class BuiltinFunction(Function):
             res = self._evalf_try_(*args)
             if res is None:
                 res = super().__call__(
-                        *args, coerce=coerce, hold=hold)
+                        *args, coerce=coerce, hold=hold, dont_call_method_on_arg=dont_call_method_on_arg)
 
         # Convert the output back to the corresponding
         # Python type if possible.
