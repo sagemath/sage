@@ -576,7 +576,7 @@ def discrete_log_rho(a, base, ord=None, operation='*', identity=None, inverse=No
     ``hash(x*y) == hash(x) + hash(y)``::
 
         sage: I = IntegerModRing(next_prime(2^23))                                      # needs sage.libs.pari
-        sage: def test():                                                               # needs sage.libs.pari
+        sage: def test():
         ....:     try:
         ....:          discrete_log_rho(I(123456), I(1), operation='+')
         ....:     except Exception:
@@ -1009,7 +1009,7 @@ def discrete_log_lambda(a, base, bounds, operation='*', identity=None, inverse=N
         69327408
 
         sage: K.<a> = GF(89**5)                                                         # needs sage.rings.finite_rings
-        sage: hs = lambda x: hash(x) + 15                                               # needs sage.rings.finite_rings
+        sage: hs = lambda x: hash(x) + 15
         sage: discrete_log_lambda(a**(89**3 - 3),       # long time (10s on sage.math, 2011), needs sage.rings.finite_rings
         ....:                     a, (89**2, 89**4), operation='*', hash_function=hs)
         704966
