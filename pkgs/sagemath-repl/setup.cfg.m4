@@ -37,6 +37,7 @@ packages =
     sage.repl.display
     sage.repl.ipython_kernel
     sage.repl.rich_output
+    sage.tests
 
 scripts =
     # Other scripts that should be in the path also for OS packaging of sage:
