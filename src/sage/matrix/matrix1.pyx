@@ -40,11 +40,11 @@ cdef class Matrix(Matrix0):
             sage: a = matrix(R,2,[x+1,2/3,  x^2/2, 1+x^3]); a
             [  x + 1     2/3]
             [1/2*x^2 x^3 + 1]
-            sage: b = gp(a); b   # indirect doctest                             # optional - sage.libs.pari
+            sage: b = gp(a); b   # indirect doctest                                     # needs sage.libs.pari
             [x + 1, 2/3; 1/2*x^2, x^3 + 1]
             sage: a.determinant()
             x^4 + x^3 - 1/3*x^2 + x + 1
-            sage: b.matdet()                                                    # optional - sage.libs.pari
+            sage: b.matdet()                                                            # needs sage.libs.pari
             x^4 + x^3 - 1/3*x^2 + x + 1
         """
         w = self.list()
@@ -69,11 +69,11 @@ cdef class Matrix(Matrix0):
             sage: a = matrix(R,2,[x+1,2/3,  x^2/2, 1+x^3]); a
             [  x + 1     2/3]
             [1/2*x^2 x^3 + 1]
-            sage: b = pari(a); b  # indirect doctest                            # optional - sage.libs.pari
+            sage: b = pari(a); b  # indirect doctest                                    # needs sage.libs.pari
             [x + 1, 2/3; 1/2*x^2, x^3 + 1]
             sage: a.determinant()
             x^4 + x^3 - 1/3*x^2 + x + 1
-            sage: b.matdet()                                                    # optional - sage.libs.pari
+            sage: b.matdet()                                                            # needs sage.libs.pari
             x^4 + x^3 - 1/3*x^2 + x + 1
 
         This function preserves precision for entries of inexact type (e.g.
@@ -83,7 +83,7 @@ cdef class Matrix(Matrix0):
             sage: a = matrix(R, 2, [1, 2, 3, 1]); a
             [1.0 2.0]
             [3.0 1.0]
-            sage: b = pari(a); b                                                        # optional - sage.libs.pari
+            sage: b = pari(a); b                                                        # needs sage.libs.pari
             [1.000000000, 2.000000000; 3.000000000, 1.000000000] # 32-bit
             [1.00000000000000, 2.00000000000000; 3.00000000000000, 1.00000000000000] # 64-bit
         """
@@ -97,34 +97,36 @@ cdef class Matrix(Matrix0):
         EXAMPLES::
 
             sage: A = MatrixSpace(QQ,3,3)([0,1,2,3,4,5,6,7,8])
-            sage: g = gap(A)  # indirect doctest                                # optional - sage.libs.gap
-            sage: g                                                             # optional - sage.libs.gap
+            sage: g = gap(A)  # indirect doctest                                        # needs sage.libs.gap
+            sage: g                                                                     # needs sage.libs.gap
             [ [ 0, 1, 2 ], [ 3, 4, 5 ], [ 6, 7, 8 ] ]
-            sage: g.CharacteristicPolynomial()                                  # optional - sage.libs.gap
+            sage: g.CharacteristicPolynomial()                                          # needs sage.libs.gap
             x_1^3-12*x_1^2-18*x_1
-            sage: A.characteristic_polynomial()                                 # optional - sage.libs.gap
+            sage: A.characteristic_polynomial()                                         # needs sage.libs.gap
             x^3 - 12*x^2 - 18*x
-            sage: matrix(QQ, g) == A                                            # optional - sage.libs.gap
+            sage: matrix(QQ, g) == A                                                    # needs sage.libs.gap
             True
 
         Particularly difficult is the case of matrices over cyclotomic
         fields and general number fields. See :trac:`5618` and :trac:`8909`::
 
-            sage: K.<zeta> = CyclotomicField(8)                                 # optional - sage.rings.number_field
-            sage: A = MatrixSpace(K, 2, 2)([0, 1+zeta, 2*zeta, 3])              # optional - sage.rings.number_field
-            sage: g = gap(A); g                                                 # optional - sage.rings.number_field
+            sage: # needs sage.rings.number_field
+            sage: K.<zeta> = CyclotomicField(8)
+            sage: A = MatrixSpace(K, 2, 2)([0, 1+zeta, 2*zeta, 3])
+            sage: g = gap(A); g
             [ [ 0, 1+E(8) ], [ 2*E(8), 3 ] ]
-            sage: matrix(K, g) == A                                             # optional - sage.rings.number_field
+            sage: matrix(K, g) == A
             True
-            sage: g.IsMatrix()                                                  # optional - sage.rings.number_field
+            sage: g.IsMatrix()
             true
 
+            sage: # needs sage.rings.number_field
             sage: x = polygen(ZZ, 'x')
-            sage: L.<tau> = NumberField(x^3 - 2)                                        # optional - sage.rings.number_field
-            sage: A = MatrixSpace(L, 2, 2)([0, 1+tau, 2*tau, 3])                        # optional - sage.rings.number_field
-            sage: g = gap(A); g                                                         # optional - sage.rings.number_field
+            sage: L.<tau> = NumberField(x^3 - 2)
+            sage: A = MatrixSpace(L, 2, 2)([0, 1+tau, 2*tau, 3])
+            sage: g = gap(A); g
             [ [ !0, tau+1 ], [ 2*tau, !3 ] ]
-            sage: matrix(L, g) == A                                             # optional - sage.rings.number_field
+            sage: matrix(L, g) == A
             True
         """
         cdef Py_ssize_t i, j
@@ -153,9 +155,9 @@ cdef class Matrix(Matrix0):
 
         EXAMPLES::
 
-            sage: libgap(identity_matrix(ZZ, 2))                                        # optional - sage.libs.gap
+            sage: libgap(identity_matrix(ZZ, 2))                                        # needs sage.libs.gap
             [ [ 1, 0 ], [ 0, 1 ] ]
-            sage: libgap(matrix(GF(3), 2, 2, [4,5,6,7]))                                # optional - sage.libs.gap sage.libs.pari
+            sage: libgap(matrix(GF(3), 2, 2, [4,5,6,7]))                                # needs sage.libs.gap sage.rings.finite_rings
             [ [ Z(3)^0, Z(3) ], [ 0*Z(3), Z(3)^0 ] ]
         """
         from sage.libs.gap.libgap import libgap
@@ -192,9 +194,9 @@ cdef class Matrix(Matrix0):
 
         ::
 
-            sage: y = var('y')                                                          # optional - sage.symbolic
-            sage: M = matrix(SR, 2, [y+sin(y), y - 4, 1/y, dilog(y)])                   # optional - sage.symbolic
-            sage: M == fricas(M).sage()    # optional - fricas                          # optional - sage.symbolic
+            sage: y = var('y')                                                          # needs sage.symbolic
+            sage: M = matrix(SR, 2, [y+sin(y), y - 4, 1/y, dilog(y)])                   # needs sage.symbolic
+            sage: M == fricas(M).sage()         # optional - fricas                     # needs sage.symbolic
             True
         """
         s = ','.join('[' + ','.join(cf._fricas_init_() for cf in row) + ']'
@@ -213,21 +215,21 @@ cdef class Matrix(Matrix0):
         EXAMPLES::
 
             sage: M = matrix(ZZ, 2, range(4))
-            sage: giac(M)                                                               # optional - sage.libs.giac
+            sage: giac(M)                                                               # needs sage.libs.giac
             [[0,1],[2,3]]
 
             sage: M = matrix(QQ, 3, [1,2,3, 4/3,5/3,6/4, 7,8,9])
-            sage: giac(M)                                                               # optional - sage.libs.giac
+            sage: giac(M)                                                               # needs sage.libs.giac
             [[1,2,3],[4/3,5/3,3/2],[7,8,9]]
 
             sage: P.<x> = ZZ[]
             sage: M = matrix(P, 2, [-9*x^2-2*x+2, x-1, x^2+8*x, -3*x^2+5])
-            sage: giac(M)                                                               # optional - sage.libs.giac
+            sage: giac(M)                                                               # needs sage.libs.giac
             [[-9*sageVARx^2-2*sageVARx+2,sageVARx-1],[sageVARx^2+8*sageVARx,-3*sageVARx^2+5]]
 
-            sage: y = var('y')                                                          # optional - sage.symbolic
-            sage: M = matrix(SR, 2, [y+sin(y), y - 4, 1/y, dilog(y)])                   # optional - sage.symbolic
-            sage: giac(M).det().sage()                                                  # optional - sage.libs.giac sage.symbolic
+            sage: y = var('y')                                                          # needs sage.symbolic
+            sage: M = matrix(SR, 2, [y+sin(y), y - 4, 1/y, dilog(y)])                   # needs sage.symbolic
+            sage: giac(M).det().sage()                                                  # needs sage.libs.giac sage.symbolic
             (y^2*dilog(y) + y*dilog(y)*sin(y) - y + 4)/y
         """
         s = ','.join('[' + ','.join(cf._giac_init_() for cf in row) + ']'
@@ -244,11 +246,11 @@ cdef class Matrix(Matrix0):
             [0 1 2]
             [3 4 5]
             [6 7 8]
-            sage: m._maxima_init_()                                                     # optional - sage.symbolic
+            sage: m._maxima_init_()                                                     # needs sage.symbolic
             'matrix([0,1,2],[3,4,5],[6,7,8])'
-            sage: a = maxima(m); a                                                      # optional - sage.symbolic
+            sage: a = maxima(m); a                                                      # needs sage.symbolic
             matrix([0,1,2],[3,4,5],[6,7,8])
-            sage: a.charpoly('x').expand()                                              # optional - sage.symbolic
+            sage: a.charpoly('x').expand()                                              # needs sage.symbolic
             ...-x^3...+12*x^2+18*x
             sage: m.charpoly()
             x^3 - 12*x^2 - 18*x
@@ -271,7 +273,7 @@ cdef class Matrix(Matrix0):
             sage: A = MatrixSpace(QQ,3)([1,2,3,4/3,5/3,6/4,7,8,9])
             sage: g = mathematica(A); g                  # optional - mathematica
             {{1, 2, 3}, {4/3, 5/3, 3/2}, {7, 8, 9}}
-            sage: A._mathematica_init_()                                                # optional - sage.symbolic
+            sage: A._mathematica_init_()                                                # needs sage.symbolic
             '{{1/1, 2/1, 3/1}, {4/3, 5/3, 3/2}, {7/1, 8/1, 9/1}}'
 
         ::
@@ -282,10 +284,10 @@ cdef class Matrix(Matrix0):
 
         ::
 
-            sage: a = matrix([[pi, sin(x)], [cos(x), 1/e]]); a                          # optional - sage.symbolic
+            sage: a = matrix([[pi, sin(x)], [cos(x), 1/e]]); a                          # needs sage.symbolic
             [    pi sin(x)]
             [cos(x) e^(-1)]
-            sage: a._mathematica_init_()                                                # optional - sage.symbolic
+            sage: a._mathematica_init_()                                                # needs sage.symbolic
             '{{Pi, Sin[x]}, {Cos[x], Exp[-1]}}'
         """
         return '{' + ', '.join([v._mathematica_init_() for v in self.rows()]) + '}'
@@ -336,9 +338,9 @@ cdef class Matrix(Matrix0):
         We coerce a matrix over a cyclotomic field, where the generator
         must be named during the coercion. ::
 
-            sage: K = CyclotomicField(9); z = K.0                               # optional - sage.rings.number_field
-            sage: M = matrix(K, 3, 3, [0,1,3,z,z**4,z-1,z**17,1,0])             # optional - sage.rings.number_field
-            sage: M                                                             # optional - sage.rings.number_field
+            sage: K = CyclotomicField(9); z = K.0                                       # needs sage.rings.number_field
+            sage: M = matrix(K, 3, 3, [0,1,3,z,z**4,z-1,z**17,1,0])                     # needs sage.rings.number_field
+            sage: M                                                                     # needs sage.rings.number_field
             [                 0                  1                  3]
             [             zeta9            zeta9^4          zeta9 - 1]
             [-zeta9^5 - zeta9^2                  1                  0]
@@ -389,9 +391,9 @@ cdef class Matrix(Matrix0):
             sage: maple(M)  # optional - maple
             Matrix(2, 2, [[-9*x^2-2*x+2,x-1],[x^2+8*x,-3*x^2+5]])
 
-            sage: y = var('y')                                                          # optional - sage.symbolic
-            sage: M = matrix(SR, 2, [y+sin(y), y - 4, 1/y, dilog(y)])                   # optional - sage.symbolic
-            sage: M == maple(M).sage()    # optional - maple                            # optional - sage.symbolic
+            sage: y = var('y')                                                          # needs sage.symbolic
+            sage: M = matrix(SR, 2, [y+sin(y), y - 4, 1/y, dilog(y)])                   # needs sage.symbolic
+            sage: M == maple(M).sage()          # optional - maple                      # needs sage.symbolic
             True
         """
         s = ','.join('[' + ','.join(cf._maple_init_() for cf in row) + ']'
@@ -408,9 +410,9 @@ cdef class Matrix(Matrix0):
             sage: polymake(M)                           # optional - jupymake
             0 1
             2 3
-            sage: K.<sqrt5> = QuadraticField(5)                                 # optional - sage.rings.number_field
-            sage: M = matrix(K, [[1, 2], [sqrt5, 3]])                           # optional - sage.rings.number_field
-            sage: polymake(M)                           # optional - jupymake   # optional - sage.rings.number_field
+            sage: K.<sqrt5> = QuadraticField(5)                                         # needs sage.rings.number_field
+            sage: M = matrix(K, [[1, 2], [sqrt5, 3]])                                   # needs sage.rings.number_field
+            sage: polymake(M)                           # optional - jupymake           # needs sage.rings.number_field
             1 2
             0+1r5 3
         """
@@ -485,7 +487,7 @@ cdef class Matrix(Matrix0):
             [1 2 3]
             [4 5 6]
             [7 8 9]
-            sage: a._scilab_init_()                                                     # optional - sage.libs.pari
+            sage: a._scilab_init_()                                                     # needs sage.libs.pari
             '[1,2,3;4,5,6;7,8,9]'
 
         AUTHORS:
@@ -540,49 +542,49 @@ cdef class Matrix(Matrix0):
             [1 2 3]
             [4 5 6]
             [7 8 9]
-            sage: sA = A._sympy_(); sA                                                  # optional - sympy
+            sage: sA = A._sympy_(); sA                                                  # needs sympy
             Matrix([
             [1, 2, 3],
             [4, 5, 6],
             [7, 8, 9]])
-            sage: type(sA)                                                              # optional - sympy
+            sage: type(sA)                                                              # needs sympy
             <class 'sympy.matrices.immutable.ImmutableDenseMatrix'>
 
             sage: I = MatrixSpace(QQ, 5, 5, sparse=True).identity_matrix()
-            sage: sI = I._sympy_(); sI                                                  # optional - sympy
+            sage: sI = I._sympy_(); sI                                                  # needs sympy
             Matrix([
             [1, 0, 0, 0, 0],
             [0, 1, 0, 0, 0],
             [0, 0, 1, 0, 0],
             [0, 0, 0, 1, 0],
             [0, 0, 0, 0, 1]])
-            sage: type(sI)                                                              # optional - sympy
+            sage: type(sI)                                                              # needs sympy
             <class 'sympy.matrices.immutable.ImmutableSparseMatrix'>
 
         If ``self`` was immutable, then converting the result to Sage gives
         back ``self``::
 
             sage: immA = matrix([[1, 2, 3], [4, 5, 6], [7, 8, 9]], immutable=True)
-            sage: immA._sympy_()._sage_() is immA                                       # optional - sympy
+            sage: immA._sympy_()._sage_() is immA                                       # needs sympy
             True
 
         If ``self`` was mutable, then converting back to Sage creates a new matrix::
 
-            sage: sA._sage_() is A                                                      # optional - sage.symbolic sympy
+            sage: sA._sage_() is A                                                      # needs sympy sage.symbolic
             False
-            sage: sA._sage_() == A                                                      # optional - sage.symbolic sympy
+            sage: sA._sage_() == A                                                      # needs sympy sage.symbolic
             True
 
         Symbolic matrices are supported::
 
-            sage: M = matrix([[sin(x), cos(x)], [-cos(x), sin(x)]]); M                  # optional - sage.symbolic
+            sage: M = matrix([[sin(x), cos(x)], [-cos(x), sin(x)]]); M                  # needs sage.symbolic
             [ sin(x)  cos(x)]
             [-cos(x)  sin(x)]
-            sage: sM = M._sympy_(); sM                                                  # optional - sage.symbolic sympy
+            sage: sM = M._sympy_(); sM                                                  # needs sympy sage.symbolic
             Matrix([
             [ sin(x), cos(x)],
             [-cos(x), sin(x)]])
-            sage: sM.subs(x, pi/4)                                                      # optional - sage.symbolic sympy
+            sage: sM.subs(x, pi/4)                                                      # needs sympy sage.symbolic
             Matrix([
             [ sqrt(2)/2, sqrt(2)/2],
             [-sqrt(2)/2, sqrt(2)/2]])
@@ -593,12 +595,12 @@ cdef class Matrix(Matrix0):
 
             sage: ZeroCol = matrix(QQ, 3, 0, sparse=False); ZeroCol
             []
-            sage: sZeroCol = ZeroCol._sympy_(); sZeroCol                                # optional - sympy
+            sage: sZeroCol = ZeroCol._sympy_(); sZeroCol                                # needs sympy
             Matrix(3, 0, [])
 
             sage: ZeroRow = matrix(QQ, 0, 2, sparse=False); ZeroRow
             []
-            sage: sZeroRow = ZeroRow._sympy_(); sZeroRow                                # optional - sympy
+            sage: sZeroRow = ZeroRow._sympy_(); sZeroRow                                # needs sympy
             Matrix(0, 2, [])
 
         """
@@ -679,19 +681,19 @@ cdef class Matrix(Matrix0):
         EXAMPLES::
 
             sage: a = matrix(3, range(12))
-            sage: a.numpy()                                                                         # optional - numpy
+            sage: a.numpy()                                                             # needs numpy
             array([[ 0,  1,  2,  3],
                    [ 4,  5,  6,  7],
                    [ 8,  9, 10, 11]])
-            sage: a.numpy('f')                                                                      # optional - numpy
+            sage: a.numpy('f')                                                          # needs numpy
             array([[  0.,   1.,   2.,   3.],
                    [  4.,   5.,   6.,   7.],
                    [  8.,   9.,  10.,  11.]], dtype=float32)
-            sage: a.numpy('d')                                                                      # optional - numpy
+            sage: a.numpy('d')                                                          # needs numpy
             array([[  0.,   1.,   2.,   3.],
                    [  4.,   5.,   6.,   7.],
                    [  8.,   9.,  10.,  11.]])
-            sage: a.numpy('B')                                                                      # optional - numpy
+            sage: a.numpy('B')                                                          # needs numpy
             array([[ 0,  1,  2,  3],
                    [ 4,  5,  6,  7],
                    [ 8,  9, 10, 11]], dtype=uint8)
@@ -699,8 +701,8 @@ cdef class Matrix(Matrix0):
         Type ``numpy.typecodes`` for a list of the possible
         typecodes::
 
-            sage: import numpy                                                                      # optional - numpy
-            sage: sorted(numpy.typecodes.items())                                                   # optional - numpy
+            sage: import numpy                                                          # needs numpy
+            sage: sorted(numpy.typecodes.items())                                       # needs numpy
             [('All', '?bhilqpBHILQPefdgFDGSUVOMm'), ('AllFloat', 'efdgFDG'),
              ('AllInteger', 'bBhHiIlLqQpP'), ('Character', 'c'), ('Complex', 'FDG'),
              ('Datetime', 'Mm'), ('Float', 'efdg'), ('Integer', 'bhilqp'),
@@ -710,15 +712,15 @@ cdef class Matrix(Matrix0):
         the magic :meth:`__array__` method) to convert Sage matrices
         to numpy arrays::
 
-            sage: import numpy                                                                      # optional - numpy
-            sage: b = numpy.array(a); b                                                             # optional - numpy
+            sage: import numpy                                                          # needs numpy
+            sage: b = numpy.array(a); b                                                 # needs numpy
             array([[ 0,  1,  2,  3],
                    [ 4,  5,  6,  7],
                    [ 8,  9, 10, 11]])
-            sage: b.dtype                                                                           # optional - numpy
+            sage: b.dtype                                                               # needs numpy
             dtype('int32')  # 32-bit
             dtype('int64')  # 64-bit
-            sage: b.shape                                                                           # optional - numpy
+            sage: b.shape                                                               # needs numpy
             (3, 4)
         """
         import numpy
@@ -976,14 +978,14 @@ cdef class Matrix(Matrix0):
 
             sage: matrix(3, [1..9]).columns()
             [(1, 4, 7), (2, 5, 8), (3, 6, 9)]
-            sage: matrix(RR, 2, [sqrt(2), pi, exp(1), 0]).columns()                                 # optional - sage.symbolic
+            sage: matrix(RR, 2, [sqrt(2), pi, exp(1), 0]).columns()                     # needs sage.symbolic
             [(1.41421356237310, 2.71828182845905), (3.14159265358979, 0.000000000000000)]
             sage: matrix(RR, 0, 2, []).columns()
             [(), ()]
             sage: matrix(RR, 2, 0, []).columns()
             []
-            sage: m = matrix(RR, 3, 3, {(1,2): pi, (2, 2): -1, (0,1): sqrt(2)})                     # optional - sage.symbolic
-            sage: parent(m.columns()[0])
+            sage: m = matrix(RR, 3, 3, {(1,2): pi, (2, 2): -1, (0,1): sqrt(2)})         # needs sage.symbolic
+            sage: parent(m.columns()[0])                                                # needs sage.symbolic
             Sparse vector space of dimension 3 over Real Field with 53 bits of precision
 
         Sparse matrices produce sparse columns.  ::
@@ -1032,14 +1034,14 @@ cdef class Matrix(Matrix0):
 
             sage: matrix(3, [1..9]).rows()
             [(1, 2, 3), (4, 5, 6), (7, 8, 9)]
-            sage: matrix(RR, 2, [sqrt(2), pi, exp(1), 0]).rows()                        # optional - sage.symbolic
+            sage: matrix(RR, 2, [sqrt(2), pi, exp(1), 0]).rows()                        # needs sage.symbolic
             [(1.41421356237310, 3.14159265358979), (2.71828182845905, 0.000000000000000)]
             sage: matrix(RR, 0, 2, []).rows()
             []
             sage: matrix(RR, 2, 0, []).rows()
             [(), ()]
-            sage: m = matrix(RR, 3, 3, {(1,2): pi, (2, 2): -1, (0,1): sqrt(2)})
-            sage: parent(m.rows()[0])
+            sage: m = matrix(RR, 3, 3, {(1,2): pi, (2, 2): -1, (0,1): sqrt(2)})         # needs sage.symbolic
+            sage: parent(m.rows()[0])                                                   # needs sage.symbolic
             Sparse vector space of dimension 3 over Real Field with 53 bits of precision
 
         Sparse matrices produce sparse rows.  ::
@@ -1613,18 +1615,18 @@ cdef class Matrix(Matrix0):
         ``A.stack(B)`` and ``B.stack(A)`` should be equal::
 
             sage: A = matrix(QQ, 1, 2, [1,2])
-            sage: B = matrix(RR, 1, 2, [sin(1.1), sin(2.2)])                            # optional - sage.symbolic
-            sage: C = A.stack(B); C                                                     # optional - sage.symbolic
+            sage: B = matrix(RR, 1, 2, [sin(1.1), sin(2.2)])
+            sage: C = A.stack(B); C
             [ 1.00000000000000  2.00000000000000]
             [0.891207360061435 0.808496403819590]
-            sage: C.parent()                                                            # optional - sage.symbolic
+            sage: C.parent()
             Full MatrixSpace of 2 by 2 dense matrices
              over Real Field with 53 bits of precision
 
-            sage: D = B.stack(A); D                                                     # optional - sage.symbolic
+            sage: D = B.stack(A); D
             [0.891207360061435 0.808496403819590]
             [ 1.00000000000000  2.00000000000000]
-            sage: D.parent()                                                            # optional - sage.symbolic
+            sage: D.parent()
             Full MatrixSpace of 2 by 2 dense matrices
              over Real Field with 53 bits of precision
 
@@ -1883,17 +1885,17 @@ cdef class Matrix(Matrix0):
         elements of ``right`` into the base ring of ``self``. ::
 
             sage: A = matrix(QQ, 2, [1,2])
-            sage: B = matrix(RR, 2, [sin(1.1), sin(2.2)])                               # optional - sage.symbolic
-            sage: C = A.augment(B); C                                                   # optional - sage.symbolic
+            sage: B = matrix(RR, 2, [sin(1.1), sin(2.2)])
+            sage: C = A.augment(B); C                                                   # needs sage.symbolic
             [                  1 183017397/205358938]
             [                  2 106580492/131825561]
-            sage: C.parent()                                                            # optional - sage.symbolic
+            sage: C.parent()                                                            # needs sage.symbolic
             Full MatrixSpace of 2 by 2 dense matrices over Rational Field
 
-            sage: D = B.augment(A); D                                                   # optional - sage.symbolic
+            sage: D = B.augment(A); D
             [0.89120736006...  1.00000000000000]
             [0.80849640381...  2.00000000000000]
-            sage: D.parent()                                                            # optional - sage.symbolic
+            sage: D.parent()
             Full MatrixSpace of 2 by 2 dense matrices
              over Real Field with 53 bits of precision
 
@@ -2472,36 +2474,38 @@ cdef class Matrix(Matrix0):
 
         ::
 
-            sage: W.<a> = CyclotomicField(100)                                  # optional - sage.rings.number_field
-            sage: M = Matrix(2, 3, [a, a/2, 0, a^2, a^100-1, a^2 - a]); M       # optional - sage.rings.number_field
+            sage: W.<a> = CyclotomicField(100)                                          # needs sage.rings.number_field
+            sage: M = Matrix(2, 3, [a, a/2, 0, a^2, a^100-1, a^2 - a]); M               # needs sage.rings.number_field
             [      a   1/2*a       0]
             [    a^2       0 a^2 - a]
-            sage: M.zero_pattern_matrix()                                       # optional - sage.rings.number_field
+            sage: M.zero_pattern_matrix()                                               # needs sage.rings.number_field
             [0 0 1]
             [0 1 0]
 
         ::
 
-            sage: K.<a> = GF(2^4)                                               # optional - sage.libs.pari
-            sage: l = [a^2 + 1, a^3 + 1, 0, 0, a, a^3 + a + 1, a + 1,           # optional - sage.libs.pari
+            sage: # needs sage.rings.finite_rings
+            sage: K.<a> = GF(2^4)
+            sage: l = [a^2 + 1, a^3 + 1, 0, 0, a, a^3 + a + 1, a + 1,
             ....:      a + 1, a^2, a^3 + a + 1, a^3 + a, a^3 + a]
-            sage: M = Matrix(K, 3, 4, l); M                                     # optional - sage.libs.pari
+            sage: M = Matrix(K, 3, 4, l); M
             [    a^2 + 1     a^3 + 1           0           0]
             [          a a^3 + a + 1       a + 1       a + 1]
             [        a^2 a^3 + a + 1     a^3 + a     a^3 + a]
-            sage: M.zero_pattern_matrix()                                       # optional - sage.libs.pari
+            sage: M.zero_pattern_matrix()
             [0 0 1 1]
             [0 0 0 0]
             [0 0 0 0]
 
         ::
 
-            sage: K.<a> = GF(25)                                                # optional - sage.libs.pari
-            sage: M = Matrix(K, 2, 3, [0, 2, 3, 5, a, a^2])                     # optional - sage.libs.pari
-            sage: M                                                             # optional - sage.libs.pari
+            sage: # needs sage.rings.finite_rings
+            sage: K.<a> = GF(25)
+            sage: M = Matrix(K, 2, 3, [0, 2, 3, 5, a, a^2])
+            sage: M
             [    0     2     3]
             [    0     a a + 3]
-            sage: M.zero_pattern_matrix()                                       # optional - sage.libs.pari
+            sage: M.zero_pattern_matrix()
             [1 0 0]
             [1 0 0]
 
@@ -2588,7 +2592,7 @@ cdef class Matrix(Matrix0):
         dict items are ETuples (see :trac:`17658`)::
 
             sage: from sage.rings.polynomial.polydict import ETuple
-            sage: matrix(GF(5^2, "z"), {ETuple((1, 1)): 2}).dense_matrix()      # optional - sage.libs.pari
+            sage: matrix(GF(5^2, "z"), {ETuple((1, 1)): 2}).dense_matrix()              # needs sage.rings.finite_rings
             [0 0]
             [0 2]
         """

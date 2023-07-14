@@ -70,11 +70,11 @@ cdef class Matrix_generic_dense(matrix_dense.Matrix_dense):
         more::
 
             sage: S.<t> = PolynomialRing(QQ)
-            sage: F.<q> = QQ.extension(t^4 + 1)                                         # optional - sage.rings.number_field
-            sage: R.<x,y> = PolynomialRing(F)                                           # optional - sage.rings.number_field
-            sage: M = MatrixSpace(R, 1, 2)                                              # optional - sage.rings.number_field
+            sage: F.<q> = QQ.extension(t^4 + 1)                                         # needs sage.rings.number_field
+            sage: R.<x,y> = PolynomialRing(F)                                           # needs sage.rings.number_field
+            sage: M = MatrixSpace(R, 1, 2)                                              # needs sage.rings.number_field
             sage: from sage.matrix.matrix_generic_dense import Matrix_generic_dense
-            sage: Matrix_generic_dense(M, (x, y), True, True)                           # optional - sage.rings.number_field
+            sage: Matrix_generic_dense(M, (x, y), True, True)                           # needs sage.rings.number_field
             [x y]
         """
         ma = MatrixArgs_init(parent, entries)
@@ -214,10 +214,11 @@ cdef class Matrix_generic_dense(matrix_dense.Matrix_dense):
 
         EXAMPLES::
 
-            sage: R.<x,y> = FreeAlgebra(QQ, 2)                                          # optional - sage.combinat
-            sage: a = matrix(R, 2, 2, [1,2,x*y,y*x])                                    # optional - sage.combinat
-            sage: b = matrix(R, 2, 2, [1,2,y*x,y*x])                                    # optional - sage.combinat
-            sage: a._add_(b)                                                            # optional - sage.combinat
+            sage: # needs sage.combinat
+            sage: R.<x,y> = FreeAlgebra(QQ, 2)
+            sage: a = matrix(R, 2, 2, [1,2,x*y,y*x])
+            sage: b = matrix(R, 2, 2, [1,2,y*x,y*x])
+            sage: a._add_(b)
             [        2         4]
             [x*y + y*x     2*y*x]
         """
@@ -237,10 +238,11 @@ cdef class Matrix_generic_dense(matrix_dense.Matrix_dense):
 
         EXAMPLES::
 
-            sage: R.<x,y> = FreeAlgebra(QQ, 2)                                          # optional - sage.combinat
-            sage: a = matrix(R, 2, 2, [1,2,x*y,y*x])                                    # optional - sage.combinat
-            sage: b = matrix(R, 2, 2, [1,2,y*x,y*x])                                    # optional - sage.combinat
-            sage: a._sub_(b)                                                            # optional - sage.combinat
+            sage: # needs sage.combinat
+            sage: R.<x,y> = FreeAlgebra(QQ, 2)
+            sage: a = matrix(R, 2, 2, [1,2,x*y,y*x])
+            sage: b = matrix(R, 2, 2, [1,2,y*x,y*x])
+            sage: a._sub_(b)
             [        0         0]
             [x*y - y*x         0]
         """
