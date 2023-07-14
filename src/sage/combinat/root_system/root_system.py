@@ -119,24 +119,26 @@ class RootSystem(UniqueRepresentation, SageObject):
     `\alpha_i`, where `c` is the coefficient of
     `i` in `x`::
 
-        sage: Lambda[1].simple_reflection(1)                                            # needs sage.graphs
+        sage: # needs sage.graphs
+        sage: Lambda[1].simple_reflection(1)
         -Lambda[1] + Lambda[2]
-        sage: Lambda[2].simple_reflection(1)                                            # needs sage.graphs
+        sage: Lambda[2].simple_reflection(1)
         Lambda[2]
-        sage: Lambda[3].simple_reflection(1)                                            # needs sage.graphs
+        sage: Lambda[3].simple_reflection(1)
         Lambda[3]
-        sage: (-2*Lambda[1] + Lambda[2] + Lambda[3]).simple_reflection(1)               # needs sage.graphs
+        sage: (-2*Lambda[1] + Lambda[2] + Lambda[3]).simple_reflection(1)
         2*Lambda[1] - Lambda[2] + Lambda[3]
 
     It can be convenient to manipulate the simple reflections
     themselves::
 
-        sage: s = space.simple_reflections()                                            # needs sage.graphs
-        sage: s[1](Lambda[1])                                                           # needs sage.graphs
+        sage: # needs sage.graphs
+        sage: s = space.simple_reflections()
+        sage: s[1](Lambda[1])
         -Lambda[1] + Lambda[2]
-        sage: s[1](Lambda[2])                                                           # needs sage.graphs
+        sage: s[1](Lambda[2])
         Lambda[2]
-        sage: s[1](Lambda[3])                                                           # needs sage.graphs
+        sage: s[1](Lambda[3])
         Lambda[3]
 
     .. RUBRIC:: Ambient spaces
@@ -202,7 +204,7 @@ class RootSystem(UniqueRepresentation, SageObject):
     group::
 
         sage: W = L.weyl_group()                                                        # needs sage.libs.pari
-        sage: S3 = [ w.action(id) for w in W.classical() ]                              # needs sage.libs.pari
+        sage: S3 = [ w.action(id) for w in W.classical() ]                              # needs sage.graphs sage.libs.pari
         sage: [L.classical()(x) for x in S3]                                            # needs sage.libs.pari
         [(1, 2, 3), (3, 1, 2), (2, 3, 1), (2, 1, 3), (1, 3, 2), (3, 2, 1)]
 

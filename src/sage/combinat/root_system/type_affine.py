@@ -488,14 +488,15 @@ class AmbientSpace(CombinatorialFreeModule):
 
             EXAMPLES::
 
-                sage: alpha = RootSystem(['C',2,1]).ambient_space().simple_roots()      # needs sage.graphs
-                sage: alpha                                                             # needs sage.graphs
+                sage: # needs sage.graphs
+                sage: alpha = RootSystem(['C',2,1]).ambient_space().simple_roots()
+                sage: alpha
                 Finite family {0: -2*e[0] + e['delta'], 1: e[0] - e[1], 2: 2*e[1]}
-                sage: alpha[0].associated_coroot()                                      # needs sage.graphs
+                sage: alpha[0].associated_coroot()
                 -e[0] + e['deltacheck']
-                sage: alpha[1].associated_coroot()                                      # needs sage.graphs
+                sage: alpha[1].associated_coroot()
                 e[0] - e[1]
-                sage: alpha[2].associated_coroot()                                      # needs sage.graphs
+                sage: alpha[2].associated_coroot()
                 e[1]
             """
             # CHECKME: does it make any sense to not rescale the delta term?

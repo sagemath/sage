@@ -151,18 +151,20 @@ cdef class Iterator():
         """
         EXAMPLES::
 
+            sage: # optional - gap3
             sage: from sage.combinat.root_system.reflection_group_c import Iterator
-            sage: W = ReflectionGroup(["B", 4])            # optional - gap3
-            sage: N = W.number_of_reflections()            # optional - gap3
-            sage: I = Iterator(W, N)                       # optional - gap3
-            sage: len(list(I)) == W.cardinality()          # optional - gap3
+            sage: W = ReflectionGroup(["B", 4])
+            sage: N = W.number_of_reflections()
+            sage: I = Iterator(W, N)
+            sage: len(list(I)) == W.cardinality()
             True
 
-            sage: I = Iterator(W, N, "breadth", False)     # optional - gap3
-            sage: len(list(I)) == W.cardinality()          # optional - gap3
+            sage: # optional - gap3
+            sage: I = Iterator(W, N, "breadth", False)
+            sage: len(list(I)) == W.cardinality()
             True
-            sage: I = Iterator(W, N, "parabolic")          # optional - gap3
-            sage: len(list(I)) == W.cardinality()          # optional - gap3
+            sage: I = Iterator(W, N, "parabolic")
+            sage: len(list(I)) == W.cardinality()
             True
         """
         # the breadth search iterator is ~2x slower as it

@@ -71,15 +71,16 @@ cdef class ComplexReflectionGroupElement(PermutationGroupElement):
 
         Check that :trac:`34912` is fixed::
 
-            sage: G4 = ReflectionGroup(4)                           # optional - gap3
-            sage: g0, g1 = G4.gens()                                # optional - gap3
-            sage: elt = g0^2 * g1 * g0^2 * g1                       # optional - gap3
-            sage: elt                                               # optional - gap3
+            sage: # optional - gap3
+            sage: G4 = ReflectionGroup(4)
+            sage: g0, g1 = G4.gens()
+            sage: elt = g0^2 * g1 * g0^2 * g1
+            sage: elt
             (1,12)(2,24)(3,19)(4,22)(5,17)(6,20)(7,23)(8,9)(10,21)(11,13)(14,18)(15,16)
-            sage: y = (elt * G4.gen(1)) * G4.gen(1) * G4.gen(1)     # optional - gap3
-            sage: elt == y                                          # optional - gap3
+            sage: y = (elt * G4.gen(1)) * G4.gen(1) * G4.gen(1)
+            sage: elt == y
             True
-            sage: hash(elt) == hash(y)                              # optional - gap3
+            sage: hash(elt) == hash(y)
             True
         """
         return hash(self._parent) | super().__hash__()
@@ -406,16 +407,18 @@ cdef class ComplexReflectionGroupElement(PermutationGroupElement):
 
         EXAMPLES::
 
-            sage: W = ReflectionGroup(['A',3])           # optional - gap3
-            sage: w = W.w0                               # optional - gap3
-            sage: N = len(W.roots())                     # optional - gap3
-            sage: [w.action_on_root_indices(i) for i in range(N)]    # optional - gap3
+            sage: # optional - gap3
+            sage: W = ReflectionGroup(['A',3])
+            sage: w = W.w0
+            sage: N = len(W.roots())
+            sage: [w.action_on_root_indices(i) for i in range(N)]
             [8, 7, 6, 10, 9, 11, 2, 1, 0, 4, 3, 5]
 
-            sage: W = ReflectionGroup(['A',2], reflection_index_set=['A','B','C'])   # optional - gap3
-            sage: w = W.w0                               # optional - gap3
-            sage: N = len(W.roots())                     # optional - gap3
-            sage: [w.action_on_root_indices(i) for i in range(N)]    # optional - gap3
+            sage: # optional - gap3
+            sage: W = ReflectionGroup(['A',2], reflection_index_set=['A','B','C'])
+            sage: w = W.w0
+            sage: N = len(W.roots())
+            sage: [w.action_on_root_indices(i) for i in range(N)]
             [4, 3, 5, 1, 0, 2]
 
         TESTS::
@@ -770,11 +773,12 @@ cdef class RealReflectionGroupElement(ComplexReflectionGroupElement):
 
         EXAMPLES::
 
-            sage: W = ReflectionGroup(["A",3])                      # optional - gap3
-            sage: s = W.simple_reflections()                        # optional - gap3
-            sage: (s[1]*s[2]).has_left_descent(1)                   # optional - gap3
+            sage: # optional - gap3
+            sage: W = ReflectionGroup(["A",3])
+            sage: s = W.simple_reflections()
+            sage: (s[1]*s[2]).has_left_descent(1)
             True
-            sage: (s[1]*s[2]).has_left_descent(2)                   # optional - gap3
+            sage: (s[1]*s[2]).has_left_descent(2)
             False
         """
         W = self._parent
@@ -796,11 +800,12 @@ cdef class RealReflectionGroupElement(ComplexReflectionGroupElement):
 
         EXAMPLES::
 
-            sage: W = ReflectionGroup(["A",3])                      # optional - gap3
-            sage: s = W.simple_reflections()                        # optional - gap3
-            sage: (s[1]*s[2]).has_descent(1)                        # optional - gap3
+            sage: # optional - gap3
+            sage: W = ReflectionGroup(["A",3])
+            sage: s = W.simple_reflections()
+            sage: (s[1]*s[2]).has_descent(1)
             True
-            sage: (s[1]*s[2]).has_descent(2)                        # optional - gap3
+            sage: (s[1]*s[2]).has_descent(2)
             False
         """
         if not isinstance(positive, bool):
@@ -1062,16 +1067,18 @@ cdef class RealReflectionGroupElement(ComplexReflectionGroupElement):
 
         EXAMPLES::
 
-            sage: W = ReflectionGroup(['A',3])           # optional - gap3
-            sage: w = W.w0                               # optional - gap3
-            sage: N = len(W.roots())                     # optional - gap3
-            sage: [w.action_on_root_indices(i,side="left") for i in range(N)]    # optional - gap3
+            sage: # optional - gap3
+            sage: W = ReflectionGroup(['A',3])
+            sage: w = W.w0
+            sage: N = len(W.roots())
+            sage: [w.action_on_root_indices(i,side="left") for i in range(N)]
             [8, 7, 6, 10, 9, 11, 2, 1, 0, 4, 3, 5]
 
-            sage: W = ReflectionGroup(['A',2], reflection_index_set=['A','B','C'])   # optional - gap3
-            sage: w = W.w0                               # optional - gap3
-            sage: N = len(W.roots())                     # optional - gap3
-            sage: [w.action_on_root_indices(i,side="left") for i in range(N)]    # optional - gap3
+            sage: # optional - gap3
+            sage: W = ReflectionGroup(['A',2], reflection_index_set=['A','B','C'])
+            sage: w = W.w0
+            sage: N = len(W.roots())
+            sage: [w.action_on_root_indices(i,side="left") for i in range(N)]
             [4, 3, 5, 1, 0, 2]
         """
         cdef RealReflectionGroupElement w

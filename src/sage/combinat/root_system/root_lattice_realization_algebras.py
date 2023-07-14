@@ -257,7 +257,7 @@ class Algebras(AlgebrasCategory):
 
             Let us check this systematically on Schur functions of degree 6::
 
-                sage: for p in Partitions(6, max_length=3).list():                      # needs sage.combinat
+                sage: for p in Partitions(6, max_length=3).list():                      # needs sage.combinat sage.libs.gap
                 ....:     assert (s.monomial(p).expand(3, P.variable_names())
                 ....:              == pi0(KL.monomial(L(tuple(p)))).expand(P.gens()))
 
@@ -534,22 +534,24 @@ class Algebras(AlgebrasCategory):
             In fact it is not exactly an eigenvector, but the extra
             '\delta` term is to be interpreted as a `q` parameter::
 
-                sage: Y[alphacheck[0]](KL.one())                                        # needs sage.graphs
+                sage: # needs sage.graphs
+                sage: Y[alphacheck[0]](KL.one())
                 q2^2/q1^2*B[0]
-                sage: Y[alphacheck[1]](x)                                               # needs sage.graphs
+                sage: Y[alphacheck[1]](x)
                 ((-q2^2)/(-q1^2))*B[e[0] - e['delta']]
-                sage: Y[alphacheck[2]](x)                                               # needs sage.graphs
+                sage: Y[alphacheck[2]](x)
                 (q1/(-q2))*B[e[0]]
-                sage: KL.q_project(Y[alphacheck[1]](x),q)                               # needs sage.graphs
+                sage: KL.q_project(Y[alphacheck[1]](x),q)
                 ((-q2^2)/(-q*q1^2))*B[(1, 0, 0)]
 
-                sage: KL.q_project(x, q)                                                # needs sage.graphs
+                sage: # needs sage.graphs
+                sage: KL.q_project(x, q)
                 B[(1, 0, 0)]
-                sage: KL.q_project(Y[alphacheck[0]](x),q)                               # needs sage.graphs
+                sage: KL.q_project(Y[alphacheck[0]](x),q)
                 ((-q*q1)/q2)*B[(1, 0, 0)]
-                sage: KL.q_project(Y[alphacheck[1]](x),q)                               # needs sage.graphs
+                sage: KL.q_project(Y[alphacheck[1]](x),q)
                 ((-q2^2)/(-q*q1^2))*B[(1, 0, 0)]
-                sage: KL.q_project(Y[alphacheck[2]](x),q)                               # needs sage.graphs
+                sage: KL.q_project(Y[alphacheck[2]](x),q)
                 (q1/(-q2))*B[(1, 0, 0)]
 
             We now check systematically that the Demazure-Lusztig
