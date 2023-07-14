@@ -1,3 +1,4 @@
+# sage.doctest: needs numpy
 r"""
 TESTS:
 

@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.libs.pari
 """
 This file contains all the example code from the published book
 'Elementary Number Theory: Primes, Congruences, and Secrets' by
@@ -41,18 +42,21 @@ sage: s[:20]        # the first 20 digits of p (long time)
 '12457502601536945540'
 sage: s[-20:]       # the last 20 digits       (long time)
 '11752880154053967871'
-sage: prime_pi(6)                                                                       # optional - sage.symbolic
+
+sage: # needs sage.symbolic
+sage: prime_pi(6)
 3
-sage: prime_pi(100)                                                                     # optional - sage.symbolic
+sage: prime_pi(100)
 25
-sage: prime_pi(3000000)                                                                 # optional - sage.symbolic
+sage: prime_pi(3000000)
 216816
-sage: plot(prime_pi, 1,1000, rgbcolor=(0,0,1))                                          # optional - sage.plot sage.symbolic
+sage: plot(prime_pi, 1,1000, rgbcolor=(0,0,1))                                          # needs sage.plot
 Graphics object consisting of 1 graphics primitive
-sage: P = plot(Li, 2,10000, rgbcolor='purple')                                          # optional - sage.plot sage.symbolic
-sage: Q = plot(prime_pi, 2,10000, rgbcolor='black')                                     # optional - sage.plot sage.symbolic
-sage: R = plot(sqrt(x)*log(x),2,10000,rgbcolor='red')                                   # optional - sage.plot sage.symbolic
-sage: show(P+Q+R,xmin=0, figsize=[8,3])                                                 # optional - sage.plot sage.symbolic
+sage: P = plot(Li, 2,10000, rgbcolor='purple')                                          # needs sage.plot
+sage: Q = plot(prime_pi, 2,10000, rgbcolor='black')                                     # needs sage.plot
+sage: R = plot(sqrt(x)*log(x),2,10000,rgbcolor='red')                                   # needs sage.plot
+sage: show(P+Q+R,xmin=0, figsize=[8,3])                                                 # needs sage.plot
+
 sage: R = Integers(3)
 sage: list(R)
 [0, 1, 2]
@@ -157,15 +161,15 @@ sage: log(3.0)
 1.09861228866811
 sage: log(19683.0) / log(3.0)
 9.00000000000000
-sage: plot(log, 0.1, 10, rgbcolor=(0,0,1))                                              # optional - sage.plot
+sage: plot(log, 0.1, 10, rgbcolor=(0,0,1))                                              # needs sage.plot
 Graphics object consisting of 1 graphics primitive
 sage: p = 53
 sage: R = Integers(p)
 sage: a = R.multiplicative_generator()
 sage: v = sorted([(a^n, n) for n in range(p-1)])
-sage: G = plot(point(v,pointsize=50,rgbcolor=(0,0,1)))                                  # optional - sage.plot
-sage: H = plot(line(v,rgbcolor=(0.5,0.5,0.5)))                                          # optional - sage.plot
-sage: G + H                                                                             # optional - sage.plot
+sage: G = plot(point(v,pointsize=50,rgbcolor=(0,0,1)))                                  # needs sage.plot
+sage: H = plot(line(v,rgbcolor=(0.5,0.5,0.5)))                                          # needs sage.plot
+sage: G + H                                                                             # needs sage.plot
 Graphics object consisting of 2 graphics primitives
 sage: q = 93450983094850938450983409623
 sage: q.is_prime()
@@ -421,11 +425,14 @@ sage: [c.q(n) for n in range(len(c))]
 [1, 2, 7, 30, 157]
 sage: c = continued_fraction([1,1,1,1,1,1,1,1])
 sage: v = [(i, c.p(i)/c.q(i)) for i in range(len(c))]
-sage: P = point(v, rgbcolor=(0,0,1), pointsize=40)                                      # optional - sage.plot
-sage: L = line(v, rgbcolor=(0.5,0.5,0.5))                                               # optional - sage.plot
-sage: L2 = line([(0,c.value()), (len(c)-1,c.value())],                                  # optional - sage.plot
+
+sage: # needs sage.plot
+sage: P = point(v, rgbcolor=(0,0,1), pointsize=40)
+sage: L = line(v, rgbcolor=(0.5,0.5,0.5))
+sage: L2 = line([(0,c.value()), (len(c)-1,c.value())],
 ....:           thickness=0.5, rgbcolor=(0.7,0,0))
-sage: (L + L2 + P).show(xmin=0, ymin=1)                                                 # optional - sage.plot
+sage: (L + L2 + P).show(xmin=0, ymin=1)
+
 sage: def cf(bits):
 ....:     x = (1 + sqrt(RealField(bits)(5))) / 2
 ....:     return continued_fraction(x)
@@ -497,13 +504,13 @@ sage: E = EllipticCurve([-5, 4])
 sage: E
 Elliptic Curve defined by y^2  = x^3 - 5*x + 4
 over Rational Field
-sage: P = E.plot(thickness=4,rgbcolor=(0.1,0.7,0.1))                                    # optional - sage.plot
-sage: P.show(figsize=[4,6])                                                             # optional - sage.plot
+sage: P = E.plot(thickness=4,rgbcolor=(0.1,0.7,0.1))                                    # needs sage.plot
+sage: P.show(figsize=[4,6])                                                             # needs sage.plot
 sage: E = EllipticCurve(GF(37), [1,0])
 sage: E
 Elliptic Curve defined by y^2  = x^3 + x over
 Finite Field of size 37
-sage: E.plot(pointsize=45)                                                              # optional - sage.plot
+sage: E.plot(pointsize=45)                                                              # needs sage.plot
 Graphics object consisting of 1 graphics primitive
 sage: E = EllipticCurve([-5,4])
 sage: P = E([1,0]); Q = E([0,2])

@@ -110,62 +110,68 @@ def test_executable(args, input="", timeout=100.0, pydebug_ignore_warnings=False
 
     Run Sage itself with various options::
 
-        sage: (out, err, ret) = test_executable([           # long time
+        sage: # long time
+        sage: (out, err, ret) = test_executable([
         ....:     "sage"], pydebug_ignore_warnings=True)
-        sage: out.find(version()) >= 0                      # long time
+        sage: out.find(version()) >= 0
         True
-        sage: err                                           # long time
+        sage: err
         ''
-        sage: ret                                           # long time
+        sage: ret
         0
 
-        sage: (out, err, ret) = test_executable([           # long time
+        sage: # long time
+        sage: (out, err, ret) = test_executable([
         ....:     "sage"], "3^33\n", pydebug_ignore_warnings=True)
-        sage: out.find(version()) >= 0                      # long time
+        sage: out.find(version()) >= 0
         True
-        sage: out.find("5559060566555523") >= 0             # long time
+        sage: out.find("5559060566555523") >= 0
         True
-        sage: err                                           # long time
+        sage: err
         ''
-        sage: ret                                           # long time
+        sage: ret
         0
 
-        sage: (out, err, ret) = test_executable([           # long time
+        sage: # long time
+        sage: (out, err, ret) = test_executable([
         ....:     "sage", "-q"], "3^33\n", pydebug_ignore_warnings=True)
-        sage: out.find(version()) >= 0                      # long time
+        sage: out.find(version()) >= 0
         False
-        sage: out.find("5559060566555523") >= 0             # long time
+        sage: out.find("5559060566555523") >= 0
         True
-        sage: err                                           # long time
+        sage: err
         ''
-        sage: ret                                           # long time
+        sage: ret
         0
 
-        sage: (out, err, ret) = test_executable([           # long time
+        sage: # long time
+        sage: (out, err, ret) = test_executable([
         ....:     "sage", "-c", "print(3^33)"])
-        sage: print(out)                                    # long time
+        sage: print(out)
         5559060566555523
-        sage: err                                           # long time
+        sage: err
         ''
-        sage: ret                                           # long time
+        sage: ret
         0
 
-        sage: (out, err, ret) = test_executable([           # long time
+        sage: # long time
+        sage: (out, err, ret) = test_executable([
         ....:     "sage", "--min", "-c", "print(3^33)"])
-        sage: print(out)                                    # long time
+        sage: print(out)
         5559060566555523
-        sage: err                                           # long time
+        sage: err
         ''
-        sage: ret                                           # long time
+        sage: ret
         0
 
-        sage: (out, err, ret) = test_executable([           # long time
+        sage: # long time
+        sage: (out, err, ret) = test_executable([
         ....:     "sage", "--startuptime"])
-        sage: out.find("Slowest module import") >= 0        # long time
+        sage: out.find("Slowest module import") >= 0
         True
-        sage: err                                           # long time
+        sage: err
         ''
-        sage: ret                                           # long time
+        sage: ret
         0
 
     Test help::
@@ -208,25 +214,27 @@ def test_executable(args, input="", timeout=100.0, pydebug_ignore_warnings=False
         sage: ret
         0
 
-        sage: (out, err, ret) = test_executable(["sage", "--root"])  # optional - sage_spkg
-        sage: len(out) >= 2   # at least one character + newline; optional - sage_spkg
+        sage: # optional - sage_spkg
+        sage: (out, err, ret) = test_executable(["sage", "--root"])
+        sage: len(out) >= 2
         True
-        sage: err  # optional - sage_spkg
+        sage: err
         ''
-        sage: ret  # optional - sage_spkg
+        sage: ret
         0
 
     Test ``sage --info [packages]``::
 
-        sage: out, err, ret = test_executable(["sage", "--info", "sqlite"])  # optional - sage_spkg
-        sage: print(out)  # optional - sage_spkg
+        sage: # optional - sage_spkg
+        sage: out, err, ret = test_executable(["sage", "--info", "sqlite"])
+        sage: print(out)
         sqlite...
         SQLite is a software library that implements a self-contained,
         serverless, zero-configuration, transactional SQL database engine.
         ...
-        sage: err  # optional - sage_spkg
+        sage: err
         ''
-        sage: ret  # optional - sage_spkg
+        sage: ret
         0
 
     Test ``sage-run`` on a Python file, both with an absolute and with a relative path::
@@ -318,17 +326,18 @@ def test_executable(args, input="", timeout=100.0, pydebug_ignore_warnings=False
 
     Now test my_script.sage and the preparsed version my_script.sage.py::
 
-        sage: (out, err, ret) = test_executable([           # long time
+        sage: # long time
+        sage: (out, err, ret) = test_executable([
         ....:     "sage", "-t", "--optional=sage", script])
-        sage: ret                                           # long time
+        sage: ret
         0
-        sage: out.find("All tests passed!") >= 0            # long time
+        sage: out.find("All tests passed!") >= 0
         True
-        sage: (out, err, ret) = test_executable([           # long time
+        sage: (out, err, ret) = test_executable([
         ....:     "sage", "-t", "--optional=sage", script_py])
-        sage: ret                                           # long time
+        sage: ret
         0
-        sage: out.find("All tests passed!") >= 0            # long time
+        sage: out.find("All tests passed!") >= 0
         True
 
     Test that the coding line and doctest are preserved::
@@ -464,13 +473,14 @@ def test_executable(args, input="", timeout=100.0, pydebug_ignore_warnings=False
         sage: ret
         42
 
-        sage: (out, err, ret) = test_executable([   # long time
+        sage: # long time
+        sage: (out, err, ret) = test_executable([
         ....:     "sage", "--ipython"], "\n3**33\n", pydebug_ignore_warnings=True)
-        sage: out.find("5559060566555523") >= 0     # long time
+        sage: out.find("5559060566555523") >= 0
         True
-        sage: err                                   # long time
+        sage: err
         ''
-        sage: ret                                   # long time
+        sage: ret
         0
 
         sage: (out, err, ret) = test_executable(["sage", "--python"], "print(3^33)\n")
@@ -521,13 +531,14 @@ def test_executable(args, input="", timeout=100.0, pydebug_ignore_warnings=False
         sage: ret
         0
 
-        sage: (out, err, ret) = test_executable([                   # long time
+        sage: # long time
+        sage: (out, err, ret) = test_executable([
         ....:     "sage", "--gap", "-q"], "Size(SymmetricGroup(5));\n")
-        sage: out                                                   # long time
+        sage: out
         '120\n'
-        sage: err.replace('gap: halving pool size.', '').strip()    # long time
+        sage: err.replace('gap: halving pool size.', '').strip()
         ''
-        sage: ret                                                   # long time
+        sage: ret
         0
 
         sage: (out, err, ret) = test_executable([                   # long time  # optional - gdb
@@ -578,12 +589,13 @@ def test_executable(args, input="", timeout=100.0, pydebug_ignore_warnings=False
         sage: ret
         0
 
-        sage: (out, err, ret) = test_executable(["sage", "--R", "--version"])  # optional - r
-        sage: out.find("R version ") >= 0                                      # optional - r
+        sage: # optional - r
+        sage: (out, err, ret) = test_executable(["sage", "--R", "--version"])
+        sage: out.find("R version ") >= 0
         True
-        sage: err                                                              # optional - r
+        sage: err
         ''
-        sage: ret                                                              # optional - r
+        sage: ret
         0
 
         sage: (out, err, ret) = test_executable(["sage", "--sqlite3", "--version"])
@@ -596,28 +608,31 @@ def test_executable(args, input="", timeout=100.0, pydebug_ignore_warnings=False
 
     Check some things requiring an internet connection::
 
-        sage: (out, err, ret) = test_executable(["sage", "--standard"])  # optional - internet
-        sage: out.find("cython") >= 0  # optional - internet
+        sage: # optional - internet
+        sage: (out, err, ret) = test_executable(["sage", "--standard"])
+        sage: out.find("cython") >= 0
         True
-        sage: err  # optional - internet
+        sage: err
         ''
-        sage: ret  # optional - internet
+        sage: ret
         0
 
-        sage: (out, err, ret) = test_executable(["sage", "--optional"])  # optional - internet
-        sage: out.find("database_cremona_ellcurve") >= 0  # optional - internet
+        sage: # optional - internet
+        sage: (out, err, ret) = test_executable(["sage", "--optional"])
+        sage: out.find("database_cremona_ellcurve") >= 0
         True
-        sage: err  # optional - internet
+        sage: err
         ''
-        sage: ret  # optional - internet
+        sage: ret
         0
 
-        sage: (out, err, ret) = test_executable(["sage", "--experimental"])  # optional - internet
-        sage: out.find("valgrind") >= 0  # optional - internet
+        sage: # optional - internet
+        sage: (out, err, ret) = test_executable(["sage", "--experimental"])
+        sage: out.find("valgrind") >= 0
         True
-        sage: err  # optional - internet
+        sage: err
         ''
-        sage: ret  # optional - internet
+        sage: ret
         0
 
     Check an illegal command line option.  This outputs an error to stdout,
