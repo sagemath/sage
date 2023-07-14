@@ -335,9 +335,9 @@ class Hypergeometric(BuiltinFunction):
 
         EXAMPLES::
 
-            sage: hypergeometric._evalf_try_((1.0,), (2.0,), 3.0)
+            sage: hypergeometric._evalf_try_((1.0,), (2.0,), 3.0)                       # needs mpmath
             6.36184564106256
-            sage: hypergeometric._evalf_try_((1.0, 1), (), 3.0)
+            sage: hypergeometric._evalf_try_((1.0, 1), (), 3.0)                         # needs mpmath
             -0.0377593153441588 + 0.750349833788561*I
             sage: hypergeometric._evalf_try_((1, 1), (), 3)    # exact input
             sage: hypergeometric._evalf_try_((x,), (), 1.0)    # symbolic

@@ -1711,14 +1711,16 @@ class Function_binomial(GinacFunction):
             10
             sage: type(binomial._eval_(5, 3))
             <class 'sage.rings.integer.Integer'>
-            sage: type(binomial._eval_(5., 3))
+            sage: type(binomial._eval_(5., 3))                                          # needs sage.rings.real_mpfr
             <class 'sage.rings.real_mpfr.RealNumber'>
-            sage: binomial._eval_(x, 3)                                                 # needs sage.symbolic
+
+            sage: # needs sage.symbolic
+            sage: binomial._eval_(x, 3)
             1/6*(x - 1)*(x - 2)*x
-            sage: binomial._eval_(x, x-2)                                               # needs sage.symbolic
+            sage: binomial._eval_(x, x-2)
             1/2*(x - 1)*x
-            sage: n = var('n')                                                          # needs sage.symbolic
-            sage: binomial._eval_(x, n) is None                                         # needs sage.symbolic
+            sage: n = var('n')
+            sage: binomial._eval_(x, n) is None
             True
 
         TESTS::

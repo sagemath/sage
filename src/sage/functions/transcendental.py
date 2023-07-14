@@ -263,7 +263,7 @@ class Function_HurwitzZeta(BuiltinFunction):
             12.1038134956837
             sage: hurwitz_zeta(11/10, 1/2).n(100)                                       # needs sage.symbolic
             12.103813495683755105709077413
-            sage: hurwitz_zeta(11/10, 1 + 1j).n()
+            sage: hurwitz_zeta(11/10, 1 + 1j).n()                                       # needs sage.rings.realpfr
             9.85014164287853 - 1.06139499403981*I
         """
         return _mpmath_utils_call(_mpmath_zeta, s, x, parent=parent)
