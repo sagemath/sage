@@ -95,12 +95,12 @@ def reduced_echelon_matrix_iterator(K, k, n, bint sparse=False, bint copy=True, 
 
     Testing options::
 
-        sage: it = reduced_echelon_matrix_iterator(GF(4, 'z'), 2, 4, copy=False)                    # optional - sage.libs.pari
-        sage: next(it) is next(it)                                                                  # optional - sage.libs.pari
+        sage: it = reduced_echelon_matrix_iterator(GF(4, 'z'), 2, 4, copy=False)                    # needs sage.rings.finite_rings
+        sage: next(it) is next(it)                                                                  # needs sage.rings.finite_rings
         True
         sage: for a in it: pass
 
-        sage: it = reduced_echelon_matrix_iterator(GF(4, 'z'), 2, 4, set_immutable=True)            # optional - sage.rings.finite_rings
+        sage: it = reduced_echelon_matrix_iterator(GF(4, 'z'), 2, 4, set_immutable=True)            # needs sage.rings.finite_rings
         sage: all(a.is_immutable() and a.echelon_form() == a for a in it)
         True
     """

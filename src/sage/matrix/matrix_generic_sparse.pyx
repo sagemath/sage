@@ -16,7 +16,7 @@ EXAMPLES::
     sage: a * b.transpose()
     [            2*x^2 + x           2*x^5 + x^4]
     [      5*x^2 + 4*x + 3 5*x^5 + 4*x^4 + 3*x^3]
-    sage: pari(a)*pari(b.transpose())                                                   # optional - sage.libs.pari
+    sage: pari(a)*pari(b.transpose())                                                   # needs sage.libs.pari
     [2*x^2 + x, 2*x^5 + x^4; 5*x^2 + 4*x + 3, 5*x^5 + 4*x^4 + 3*x^3]
     sage: c = copy(b); c
     [  1   x x^2]
