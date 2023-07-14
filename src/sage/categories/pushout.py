@@ -1051,7 +1051,7 @@ class MultiPolynomialFunctor(ConstructionFunctor):
             <class 'sage.categories.pushout.MultiPolynomialFunctor'>
             sage: F(ZZ)          # indirect doctest
             Multivariate Polynomial Ring in x, y, z over Integer Ring
-            sage: F(RR)          # indirect doctest
+            sage: F(RR)          # indirect doctest                                     # needs sage.rings.real_mpfr
             Multivariate Polynomial Ring in x, y, z over Real Field with 53 bits of precision
         """
         from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
@@ -2569,7 +2569,7 @@ class CompletionFunctor(ConstructionFunctor):
             sage: F2 = RR.construction()[0]
             sage: F2
             Completion[+Infinity, prec=53]
-            sage: F2.type
+            sage: F2.type                                                               # needs sage.rings.real_mpfr
             'MPFR'
             sage: F2.extras
             {'rnd': 0, 'sci_not': False}
@@ -2750,7 +2750,7 @@ class CompletionFunctor(ConstructionFunctor):
             sage: Rlist = [R0,R1,R2,R3,R4,R5,R6,R7,R8,R9,R10,R11]                       # needs sage.rings.real_mpfr
             sage: from sage.categories.pushout import pushout
             sage: pushouts = [R0,R0,R0,R1,R0,R1,R0,R1,R0,R1,R1,R1,R1,R1,R1,R1,R1,R1,R1,R1,R1,R1,R1,R1,R0,R1,R2,R2,R2,R3,R0,R1,R2,R3,R3,R3,R1,R1,R3,R3,R3,R3,R1,R1,R3,R3,R3,R3,R0,R1,R2,R3,R4,R4,R0,R1,R2,R3,R3,R5,R1,R1,R3,R3,R5,R5,R1,R1,R3,R3,R3,R5,R0,R1,R0,R1,R0,R1,R6,R6,R6,R7,R7,R7,R1,R1,R1,R1,R1,R1,R7,R7,R7,R7,R7,R7,R0,R1,R2,R3,R2,R3,R6,R7,R8,R9,R10,R9,R1,R1,R3,R3,R3,R3,R7,R7,R9,R9,R10,R9,R1,R1,R3,R3,R3,R3,R7,R7,R10,R10,R10,R10,R1,R1,R3,R3,R5,R5,R7,R7,R9,R9,R10,R11]  # needs sage.rings.real_mpfr
-            sage: all(R is S for R, S in zip(pushouts, [pushout(a, b) for a in Rlist for b in Rlist]))
+            sage: all(R is S for R, S in zip(pushouts, [pushout(a, b) for a in Rlist for b in Rlist]))                  # needs sage.rings.real_mpfr
             True
 
         ::
@@ -3146,13 +3146,14 @@ class AlgebraicExtensionFunctor(ConstructionFunctor):
 
     This also holds for non-absolute number fields::
 
+        sage: # needs sage.rings.number_field
         sage: x = polygen(QQ, 'x')
-        sage: K.<a,b> = NumberField([x^3 + x^2 + 1, x^2 + x + 1])                       # needs sage.rings.number_field
-        sage: F = K.construction()[0]                                                   # needs sage.rings.number_field
-        sage: O = F(ZZ); O                                                              # needs sage.rings.number_field
+        sage: K.<a,b> = NumberField([x^3 + x^2 + 1, x^2 + x + 1])
+        sage: F = K.construction()[0]
+        sage: O = F(ZZ); O
         Relative Order in Number Field in a
          with defining polynomial x^3 + x^2 + 1 over its base field
-        sage: O.ambient() is K                                                          # needs sage.rings.number_field
+        sage: O.ambient() is K
         True
 
     Special cases are made for cyclotomic fields and residue fields::
@@ -3348,15 +3349,16 @@ class AlgebraicExtensionFunctor(ConstructionFunctor):
 
         TESTS::
 
+            sage: # needs sage.rings.number_field
             sage: x = polygen(QQ, 'x')
-            sage: K.<a> = NumberField(x^3 + x^2 + 1)                                    # needs sage.rings.number_field
-            sage: F = K.construction()[0]                                               # needs sage.rings.number_field
-            sage: F(ZZ)       # indirect doctest                                        # needs sage.rings.number_field
+            sage: K.<a> = NumberField(x^3 + x^2 + 1)
+            sage: F = K.construction()[0]
+            sage: F(ZZ)       # indirect doctest
             Order in Number Field in a with defining polynomial x^3 + x^2 + 1
-            sage: F(ZZ['t'])  # indirect doctest                                        # needs sage.rings.number_field
+            sage: F(ZZ['t'])  # indirect doctest
             Univariate Quotient Polynomial Ring in a over
              Univariate Polynomial Ring in t over Integer Ring with modulus a^3 + a^2 + 1
-            sage: F(RR)       # indirect doctest                                        # needs sage.rings.number_field
+            sage: F(RR)       # indirect doctest
             Univariate Quotient Polynomial Ring in a over
              Real Field with 53 bits of precision with modulus a^3 + a^2 + 1.00000000000000
 
@@ -3521,9 +3523,9 @@ class AlgebraicExtensionFunctor(ConstructionFunctor):
             sage: zeta3 = CDF.zeta(3)                                                   # needs sage.rings.complex_double
             sage: K.<a> = NumberField(x^3 - 2, embedding=cbrt2 * zeta3)                 # needs sage.rings.complex_double sage.rings.number_field
             sage: L.<b> = NumberField(x^6 - 2, embedding=1.1)                           # needs sage.rings.number_field
-            sage: L.coerce_map_from(K)                                                  # needs sage.rings.number_field
-            sage: K.coerce_map_from(L)                                                  # needs sage.rings.number_field
-            sage: pushout(K, L)                                                         # needs sage.rings.finite_rings sage.rings.number_field
+            sage: L.coerce_map_from(K)                                                  # needs sage.rings.complex_double sage.rings.number_field
+            sage: K.coerce_map_from(L)                                                  # needs sage.rings.complex_double sage.rings.number_field
+            sage: pushout(K, L)                                                         # needs sage.rings.complex_double sage.rings.finite_rings sage.rings.number_field
             Traceback (most recent call last):
             ...
             CoercionException: ('Ambiguous Base Extension', Number Field in a with
@@ -3660,12 +3662,13 @@ class AlgebraicClosureFunctor(ConstructionFunctor):
 
     EXAMPLES::
 
-        sage: F = CDF.construction()[0]                                                 # needs sage.rings.complex_double
-        sage: F(QQ)                                                                     # needs sage.rings.complex_double sage.rings.number_field
+        sage: # needs sage.rings.complex_double
+        sage: F = CDF.construction()[0]
+        sage: F(QQ)                                                                     # needs sage.rings.number_field
         Algebraic Field
-        sage: F(RR)                                                                     # needs sage.rings.complex_double sage.rings.real_mpfr
+        sage: F(RR)                                                                     # needs sage.rings.real_mpfr
         Complex Field with 53 bits of precision
-        sage: F(F(QQ)) is F(QQ)                                                         # needs sage.rings.complex_double sage.rings.number_field
+        sage: F(F(QQ)) is F(QQ)                                                         # needs sage.rings.number_field
         True
 
     """
@@ -4186,7 +4189,7 @@ def pushout(R, S):
         Even Power Univariate Polynomial Ring in x over Rational Field
         sage: pushout(EvenPolynomialRing(QQ, 'x'), QQ)
         Even Power Univariate Polynomial Ring in x over Rational Field
-        sage: pushout(EvenPolynomialRing(QQ, 'x'), RR)
+        sage: pushout(EvenPolynomialRing(QQ, 'x'), RR)                                  # needs sage.rings.real_mpfr
         Even Power Univariate Polynomial Ring in x over Real Field with 53 bits of precision
 
         sage: pushout(EvenPolynomialRing(QQ, 'x'), ZZ['x'])
@@ -4198,14 +4201,14 @@ def pushout(R, S):
 
         sage: pushout(EvenPolynomialRing(QQ, 'x'), EvenPolynomialRing(QQ, 'x'))
         Even Power Univariate Polynomial Ring in x over Rational Field
-        sage: pushout(EvenPolynomialRing(QQ, 'x'), EvenPolynomialRing(RR, 'x'))
+        sage: pushout(EvenPolynomialRing(QQ, 'x'), EvenPolynomialRing(RR, 'x'))         # needs sage.rings.real_mpfr
         Even Power Univariate Polynomial Ring in x over Real Field with 53 bits of precision
 
-        sage: pushout(EvenPolynomialRing(QQ, 'x')^2, RR^2)                              # needs sage.modules
+        sage: pushout(EvenPolynomialRing(QQ, 'x')^2, RR^2)                              # needs sage.modules sage.rings.real_mpfr
         Ambient free module of rank 2
          over the principal ideal domain Even Power Univariate Polynomial Ring in x
           over Real Field with 53 bits of precision
-        sage: pushout(EvenPolynomialRing(QQ, 'x')^2, RR['x']^2)                         # needs sage.modules
+        sage: pushout(EvenPolynomialRing(QQ, 'x')^2, RR['x']^2)                         # needs sage.modules sage.rings.real_mpfr
         Ambient free module of rank 2
          over the principal ideal domain Univariate Polynomial Ring in x
          over Real Field with 53 bits of precision
