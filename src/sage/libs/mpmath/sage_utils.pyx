@@ -153,7 +153,7 @@ def sage_to_mpmath(x, prec):
         0.666666666666667
         sage: print(a.sage_to_mpmath(2./3, 53))
         0.666666666666667
-        sage: print(a.sage_to_mpmath(3+4*I, 53))
+        sage: print(a.sage_to_mpmath(3+4*I, 53))                                        # optional - sage.symbolic
         (3.0 + 4.0j)
         sage: print(a.sage_to_mpmath(1+pi, 53))                                         # optional - sage.symbolic
         4.14159265358979
@@ -220,11 +220,11 @@ def call(func, *args, **kwargs):
 
         sage: import sage.libs.mpmath.all as a
         sage: a.mp.prec = 53
-        sage: a.call(a.erf, 3+4*I)
+        sage: a.call(a.erf, 3+4*I)                                                      # optional - sage.symbolic
         -120.186991395079 - 27.7503372936239*I
-        sage: a.call(a.polylog, 2, 1/3+4/5*I)
+        sage: a.call(a.polylog, 2, 1/3+4/5*I)                                           # optional - sage.symbolic
         0.153548951541433 + 0.875114412499637*I
-        sage: a.call(a.barnesg, 3+4*I)
+        sage: a.call(a.barnesg, 3+4*I)                                                  # optional - sage.symbolic
         -0.000676375932234244 - 0.0000442236140124728*I
         sage: a.call(a.barnesg, -4)
         0.000000000000000
@@ -236,8 +236,8 @@ def call(func, *args, **kwargs):
         0.486064958112256
         sage: a.call(a.gammainc, 3+4*I, 2/3, 1-pi*I, prec=100)                          # optional - sage.symbolic
         -274.18871130777160922270612331 + 101.59521032382593402947725236*I
-        sage: x = (3+4*I).n(100)
-        sage: y = (2/3).n(100)
+        sage: x = (3+4*I).n(100)                                                        # optional - sage.symbolic
+        sage: y = (2/3).n(100)                                                          # optional - sage.symbolic
         sage: z = (1-pi*I).n(100)                                                       # optional - sage.symbolic
         sage: a.call(a.gammainc, x, y, z, prec=100)                                     # optional - sage.symbolic
         -274.18871130777160922270612331 + 101.59521032382593402947725236*I
