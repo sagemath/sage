@@ -1239,10 +1239,14 @@ cpdef tuple find_hamiltonian(G, long max_iter=100000, long reset_bound=30000,
     path::
 
         sage: G = graphs.HyperStarGraph(5, 2)
-        sage: fh(G,find_path=False)
-        (False, ['01100', '10100', '00110', '10010', '00011', '10001', '01001', '11000', '01010'])
-        sage: fh(G,find_path=True)
-        (False, ['00110', '10010', '01010', '11000', '01100', '10100', '00101', '10001', '00011'])
+        sage: G.order()
+        10
+        sage: b, P = fh(G,find_path=False)
+        sage: b, len(P)
+        (False, 9)
+        sage: b, P = fh(G,find_path=True)
+        sage: b, len(P)
+        (False, 9)
 
     The method can also be used for directed graphs::
 
@@ -1256,8 +1260,10 @@ cpdef tuple find_hamiltonian(G, long max_iter=100000, long reset_bound=30000,
         (False, ['d', 'c', 'b', 'a'])
         sage: H = DiGraph()
         sage: H.add_cycle('abcdefgh')
-        sage: fh(H)
-        (True, ['b', 'c', 'd', 'e', 'f', 'g', 'h', 'a'])
+        sage: H.add_edge('dg')
+        sage: b, C = fh(H)
+        sage: b, len(C)
+        (True, 8)
         sage: H.delete_edge('ab')
         sage: fh(H, find_path=False)
         (False, ['b', 'c', 'd', 'e', 'f', 'g', 'h', 'a'])
@@ -1312,6 +1318,13 @@ cpdef tuple find_hamiltonian(G, long max_iter=100000, long reset_bound=30000,
         (False, [0, 1, 2, 3])
         sage: fh(G, find_path=True)
         (False, [0, 1, 2, 3])
+
+    Check that the method is robust to incomparble vertices::
+
+        sage: G = Graph([(1, 'a'), ('a', 2), (2, 3), (3, 1)])
+        sage: b, C = fh(G, find_path=False)
+        sage: b, len(C)
+        (True, 4)
     """
     G._scream_if_not_simple()
 
@@ -1471,7 +1484,7 @@ cpdef tuple find_hamiltonian(G, long max_iter=100000, long reset_bound=30000,
             longest = length
             longest_reversed = reverse
 
-        if not directed and not longer:
+        if not directed and not longer and out_degree(sd, path[length - 1]) > 1:
             # We revert a cycle to change the extremity of the path
             degree = out_degree(sd, path[length - 1])
             while True:
