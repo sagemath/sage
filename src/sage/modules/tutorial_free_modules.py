@@ -40,7 +40,7 @@ indexing set for the basis in each example below?
 
     sage: F = CombinatorialFreeModule(ZZ, CC); F.an_element()
     B[1.00000000000000*I]
-    sage: F = CombinatorialFreeModule(ZZ, Partitions(NonNegativeIntegers(),             # optional - sage.combinat
+    sage: F = CombinatorialFreeModule(ZZ, Partitions(NonNegativeIntegers(),             # needs sage.combinat
     ....:                                            max_part=3)); F.an_element()
     2*B[[]] + 2*B[[1]] + 3*B[[2]]
     sage: F = CombinatorialFreeModule(ZZ, ['spam', 'eggs', '42']); F.an_element()

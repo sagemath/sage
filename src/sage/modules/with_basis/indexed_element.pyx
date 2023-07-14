@@ -77,9 +77,9 @@ cdef class IndexedFreeModuleElement(ModuleElement):
             sage: [i for i in sorted(f)]
             [('a', 1), ('c', 3)]
 
-            sage: s = SymmetricFunctions(QQ).schur()                                    # optional - sage.combinat
-            sage: a = s([2,1]) + s([3])                                                 # optional - sage.combinat
-            sage: [i for i in sorted(a)]                                                # optional - sage.combinat
+            sage: s = SymmetricFunctions(QQ).schur()                                    # needs sage.combinat
+            sage: a = s([2,1]) + s([3])                                                 # needs sage.combinat
+            sage: [i for i in sorted(a)]                                                # needs sage.combinat
             [([2, 1], 1), ([3], 1)]
         """
         return iter(self._monomial_coefficients.items())
@@ -102,11 +102,12 @@ cdef class IndexedFreeModuleElement(ModuleElement):
             sage: 'b' in f
             False
 
-            sage: s = SymmetricFunctions(QQ).schur()                                    # optional - sage.combinat
-            sage: a = s([2,1]) + s([3])                                                 # optional - sage.combinat
-            sage: Partition([2,1]) in a                                                 # optional - sage.combinat
+            sage: # needs sage.combinat
+            sage: s = SymmetricFunctions(QQ).schur()
+            sage: a = s([2,1]) + s([3])
+            sage: Partition([2,1]) in a
             True
-            sage: Partition([1,1,1]) in a                                               # optional - sage.combinat
+            sage: Partition([1,1,1]) in a
             False
         """
         deprecation(34509, "using 'index in vector' is deprecated; use 'index in vector.support()' instead")
@@ -128,11 +129,12 @@ cdef class IndexedFreeModuleElement(ModuleElement):
             sage: hash(f) == hash(B['a'] + 4*B['c'])
             False
 
-            sage: F = RootSystem(['A',2]).ambient_space()                               # optional - sage.combinat
-            sage: f = F.simple_root(0)                                                  # optional - sage.combinat
-            sage: hash(f) == hash(F.simple_root(0))                                     # optional - sage.combinat
+            sage: # needs sage.combinat
+            sage: F = RootSystem(['A',2]).ambient_space()
+            sage: f = F.simple_root(0)
+            sage: hash(f) == hash(F.simple_root(0))
             True
-            sage: hash(f) == hash(F.simple_root(1))                                     # optional - sage.combinat
+            sage: hash(f) == hash(F.simple_root(1))
             False
 
         This uses the recipe that was proposed for frozendicts in
@@ -259,14 +261,15 @@ cdef class IndexedFreeModuleElement(ModuleElement):
 
         ::
 
-            sage: s = SymmetricFunctions(QQ).schur()                                    # optional - sage.combinat
-            sage: a = s([2,1])+2*s([3,2])                                               # optional - sage.combinat
-            sage: d = a.monomial_coefficients()                                         # optional - sage.combinat
-            sage: type(d)                                                               # optional - sage.combinat
+            sage: # needs sage.combinat
+            sage: s = SymmetricFunctions(QQ).schur()
+            sage: a = s([2,1])+2*s([3,2])
+            sage: d = a.monomial_coefficients()
+            sage: type(d)
             <... 'dict'>
-            sage: d[ Partition([2,1]) ]                                                 # optional - sage.combinat
+            sage: d[ Partition([2,1]) ]
             1
-            sage: d[ Partition([3,2]) ]                                                 # optional - sage.combinat
+            sage: d[ Partition([3,2]) ]
             2
         """
         if copy:
@@ -342,17 +345,18 @@ cdef class IndexedFreeModuleElement(ModuleElement):
         """
         TESTS::
 
-            sage: M = QuasiSymmetricFunctions(QQ).M()                                   # optional - sage.combinat
-            sage: ascii_art(M[1,3]**2)  # indirect doctest                              # optional - sage.combinat
+            sage: # needs sage.combinat
+            sage: M = QuasiSymmetricFunctions(QQ).M()
+            sage: ascii_art(M[1,3]**2)  # indirect doctest
             4*M      + 2*M       + 2*M      + 2*M       + 2*M       + M
                  ***      ******        ***         ***         ***     ******
                ***        *             *        ****         ***      **
                *          *           ***        *           **
                *                      *
-            sage: ascii_art(M.zero())                                                   # optional - sage.combinat
+            sage: ascii_art(M.zero())
             0
-            sage: DA = DescentAlgebra(QQ, 4)                                            # optional - sage.combinat
-            sage: ascii_art(DA.an_element())                                            # optional - sage.combinat
+            sage: DA = DescentAlgebra(QQ, 4)
+            sage: ascii_art(DA.an_element())
             2*B  + 2*B   + 3*B
                *      **       *
                *      *       **
@@ -419,8 +423,8 @@ cdef class IndexedFreeModuleElement(ModuleElement):
         """
         TESTS::
 
-            sage: M = QuasiSymmetricFunctions(QQ).M()                                   # optional - sage.combinat
-            sage: unicode_art(M[1,1]**2)  # indirect doctest                            # optional - sage.combinat
+            sage: M = QuasiSymmetricFunctions(QQ).M()                                   # needs sage.combinat
+            sage: unicode_art(M[1,1]**2)  # indirect doctest                            # needs sage.combinat
             6*M   + 2*M    + 2*M    + 2*M    + M
                ┌┐      ┌┬┐       ┌┐       ┌┐     ┌┬┐
                ├┤      ├┼┘      ┌┼┤       ├┤    ┌┼┼┘
@@ -430,7 +434,7 @@ cdef class IndexedFreeModuleElement(ModuleElement):
 
         The following test failed before :trac:`26850`::
 
-            sage: unicode_art([M.zero()])  # indirect doctest                           # optional - sage.combinat
+            sage: unicode_art([M.zero()])  # indirect doctest                           # needs sage.combinat
             [ 0 ]
         """
         from sage.misc.repr import coeff_repr
@@ -501,9 +505,9 @@ cdef class IndexedFreeModuleElement(ModuleElement):
 
         ::
 
-            sage: QS3 = SymmetricGroupAlgebra(QQ, 3)                                    # optional - sage.combinat
-            sage: a = 2 + QS3([2,1,3])                                                  # optional - sage.combinat
-            sage: latex(a) #indirect doctest                                            # optional - sage.combinat
+            sage: QS3 = SymmetricGroupAlgebra(QQ, 3)                                    # needs sage.combinat
+            sage: a = 2 + QS3([2,1,3])                                                  # needs sage.combinat
+            sage: latex(a) #indirect doctest                                            # needs sage.combinat
             2 [1, 2, 3] + [2, 1, 3]
 
        ::
@@ -563,10 +567,11 @@ cdef class IndexedFreeModuleElement(ModuleElement):
 
         ::
 
-            sage: s = SymmetricFunctions(QQ).schur()                                    # optional - sage.combinat
-            sage: a = s([2,1])                                                          # optional - sage.combinat
-            sage: b = s([1,1,1])                                                        # optional - sage.combinat
-            sage: a == b                                                                # optional - sage.combinat
+            sage: # needs sage.combinat
+            sage: s = SymmetricFunctions(QQ).schur()
+            sage: a = s([2,1])
+            sage: b = s([1,1,1])
+            sage: a == b
             False
 
         .. TODO::
@@ -590,20 +595,20 @@ cdef class IndexedFreeModuleElement(ModuleElement):
             Traceback (most recent call last):
             ...
             TypeError: do not know how to make x (= 0) an element of self (=Free module generated by {1, 2, 3} over Rational Field)
-            sage: F = AlgebrasWithBasis(QQ).example()                                   # optional - sage.combinat
-            sage: F.one() == 1                                                          # optional - sage.combinat
+            sage: F = AlgebrasWithBasis(QQ).example()                                   # needs sage.combinat
+            sage: F.one() == 1                                                          # needs sage.combinat
             True
-            sage: 1 == F.one()                                                          # optional - sage.combinat
+            sage: 1 == F.one()                                                          # needs sage.combinat
             True
-            sage: 2 * F.one() == int(2)                                                 # optional - sage.combinat
+            sage: 2 * F.one() == int(2)                                                 # needs sage.combinat
             True
-            sage: int(2) == 2 * F.one()                                                 # optional - sage.combinat
+            sage: int(2) == 2 * F.one()                                                 # needs sage.combinat
             True
 
-            sage: S = SymmetricFunctions(QQ); s = S.s(); p = S.p()                      # optional - sage.combinat
-            sage: p[2] == s[2] - s[1, 1]                                                # optional - sage.combinat
+            sage: S = SymmetricFunctions(QQ); s = S.s(); p = S.p()                      # needs sage.combinat
+            sage: p[2] == s[2] - s[1, 1]                                                # needs sage.combinat
             True
-            sage: p[2] == s[2]                                                          # optional - sage.combinat
+            sage: p[2] == s[2]                                                          # needs sage.combinat
             False
 
         This feature is disputable, in particular since it can make
@@ -613,19 +618,20 @@ cdef class IndexedFreeModuleElement(ModuleElement):
         can vary because their indices are incomparable with
         ``cmp``. The following test did fail before :trac:`12489` ::
 
-            sage: F = CombinatorialFreeModule(QQ, Subsets([1,2,3]))                     # optional - sage.combinat
-            sage: x = F.an_element()                                                    # optional - sage.combinat
-            sage: (x+F.zero()).terms()  # random                                        # optional - sage.combinat
+            sage: # needs sage.combinat
+            sage: F = CombinatorialFreeModule(QQ, Subsets([1,2,3]))
+            sage: x = F.an_element()
+            sage: (x+F.zero()).terms()  # random
             [2*B[{1}], 3*B[{2}], B[{}]]
-            sage: x.terms()             # random                                        # optional - sage.combinat
+            sage: x.terms()             # random
             [2*B[{1}], B[{}], 3*B[{2}]]
-            sage: x+F.zero() == x                                                       # optional - sage.combinat
+            sage: x+F.zero() == x
             True
 
         TESTS::
 
             sage: TestSuite(F1).run()
-            sage: TestSuite(F).run()                                                    # optional - sage.combinat
+            sage: TestSuite(F).run()
         """
         cdef IndexedFreeModuleElement elt = <IndexedFreeModuleElement> other
 
@@ -653,11 +659,12 @@ cdef class IndexedFreeModuleElement(ModuleElement):
 
         ::
 
-            sage: s = SymmetricFunctions(QQ).schur()                                    # optional - sage.combinat
-            sage: s([2,1]) + s([5,4]) # indirect doctest                                # optional - sage.combinat
+            sage: # needs sage.combinat
+            sage: s = SymmetricFunctions(QQ).schur()
+            sage: s([2,1]) + s([5,4]) # indirect doctest
             s[2, 1] + s[5, 4]
-            sage: a = s([2,1]) + 0                                                      # optional - sage.combinat
-            sage: len(a.monomial_coefficients())                                        # optional - sage.combinat
+            sage: a = s([2,1]) + 0
+            sage: len(a.monomial_coefficients())
             1
         """
         return type(self)(self._parent,
@@ -676,8 +683,8 @@ cdef class IndexedFreeModuleElement(ModuleElement):
 
         ::
 
-            sage: s = SymmetricFunctions(QQ).schur()                                    # optional - sage.combinat
-            sage: -s([2,1]) # indirect doctest                                          # optional - sage.combinat
+            sage: s = SymmetricFunctions(QQ).schur()                                    # needs sage.combinat
+            sage: -s([2,1]) # indirect doctest                                          # needs sage.combinat
             -s[2, 1]
         """
         return type(self)(self._parent, negate(self._monomial_coefficients))
@@ -693,8 +700,8 @@ cdef class IndexedFreeModuleElement(ModuleElement):
 
         ::
 
-            sage: s = SymmetricFunctions(QQ).schur()                                    # optional - sage.combinat
-            sage: s([2,1]) - s([5,4]) # indirect doctest                                # optional - sage.combinat
+            sage: s = SymmetricFunctions(QQ).schur()                                    # needs sage.combinat
+            sage: s([2,1]) - s([5,4]) # indirect doctest                                # needs sage.combinat
             s[2, 1] - s[5, 4]
         """
         return type(self)(self._parent,
@@ -708,15 +715,16 @@ cdef class IndexedFreeModuleElement(ModuleElement):
 
         EXAMPLES::
 
-            sage: p = Partition([2,1])                                                  # optional - sage.combinat
-            sage: q = Partition([1,1,1])                                                # optional - sage.combinat
-            sage: s = SymmetricFunctions(QQ).schur()                                    # optional - sage.combinat
-            sage: a = s(p)                                                              # optional - sage.combinat
-            sage: a[p]                                                                  # optional - sage.combinat
+            sage: # needs sage.combinat
+            sage: p = Partition([2,1])
+            sage: q = Partition([1,1,1])
+            sage: s = SymmetricFunctions(QQ).schur()
+            sage: a = s(p)
+            sage: a[p]
             1
-            sage: a[q]                                                                  # optional - sage.combinat
+            sage: a[q]
             0
-            sage: a[[2,1]]                                                              # optional - sage.combinat
+            sage: a[[2,1]]
             Traceback (most recent call last):
             ...
             TypeError: unhashable type: 'list'
@@ -765,23 +773,24 @@ cdef class IndexedFreeModuleElement(ModuleElement):
 
         More examples::
 
-            sage: QS3 = SymmetricGroupAlgebra(QQ, 3)                                    # optional - sage.combinat
-            sage: a = 2*QS3([1,2,3]) + 4*QS3([3,2,1])                                   # optional - sage.combinat
-            sage: a._vector_()                                                          # optional - sage.combinat
+            sage: # needs sage.combinat
+            sage: QS3 = SymmetricGroupAlgebra(QQ, 3)
+            sage: a = 2*QS3([1,2,3]) + 4*QS3([3,2,1])
+            sage: a._vector_()
             (2, 0, 0, 0, 0, 4)
-            sage: a.to_vector()                                                         # optional - sage.combinat
+            sage: a.to_vector()
             (2, 0, 0, 0, 0, 4)
-            sage: vector(a)                                                             # optional - sage.combinat
+            sage: vector(a)
             (2, 0, 0, 0, 0, 4)
-            sage: a == QS3.from_vector(a.to_vector())                                   # optional - sage.combinat
+            sage: a == QS3.from_vector(a.to_vector())
             True
-            sage: a.to_vector(sparse=True)                                              # optional - sage.combinat
+            sage: a.to_vector(sparse=True)
             (2, 0, 0, 0, 0, 4)
 
         If ``new_base_ring`` is specified, then a vector over
         ``new_base_ring`` is returned::
 
-            sage: a._vector_(RDF)                                                       # optional - sage.combinat
+            sage: a._vector_(RDF)                                                       # needs sage.combinat
             (2.0, 0.0, 0.0, 0.0, 0.0, 4.0)
 
         .. NOTE::
@@ -859,18 +868,18 @@ cdef class IndexedFreeModuleElement(ModuleElement):
         example with polynomials or fraction fields (:trac:`8832`)::
 
             sage: P.<q> = QQ['q']
-            sage: V = CombinatorialFreeModule(P, Permutations())                        # optional - sage.combinat
-            sage: el = V(Permutation([3,1,2]))                                          # optional - sage.combinat
-            sage: (3/2)*el                                                              # optional - sage.combinat
+            sage: V = CombinatorialFreeModule(P, Permutations())
+            sage: el = V(Permutation([3,1,2]))
+            sage: (3/2)*el
             3/2*B[[3, 1, 2]]
 
             sage: P.<q> = QQ['q']
             sage: F = FractionField(P)
-            sage: V = CombinatorialFreeModule(F, Words())                               # optional - sage.combinat
-            sage: w = Words()('abc')                                                    # optional - sage.combinat
-            sage: (1+q)*V(w)                                                            # optional - sage.combinat
+            sage: V = CombinatorialFreeModule(F, Words())                               # needs sage.combinat
+            sage: w = Words()('abc')                                                    # needs sage.combinat
+            sage: (1+q)*V(w)                                                            # needs sage.combinat
             (q+1)*B[word: abc]
-            sage: ((1+q)/q)*V(w)                                                        # optional - sage.combinat
+            sage: ((1+q)/q)*V(w)                                                        # needs sage.combinat
             ((q+1)/q)*B[word: abc]
 
         .. TODO::

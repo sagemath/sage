@@ -307,10 +307,11 @@ class FreeModule_ambient_field_quotient(FreeModule_ambient_field):
 
     EXAMPLES::
 
-        sage: k.<i> = QuadraticField(-1)                                                # optional - sage.rings.number_field
-        sage: A = k^3; V = A.span([[1,0,i], [2,i,0]])                                   # optional - sage.rings.number_field
-        sage: W = A.span([[3,i,i]])                                                     # optional - sage.rings.number_field
-        sage: U = V/W; U                                                                # optional - sage.rings.number_field
+        sage: # needs sage.rings.number_field
+        sage: k.<i> = QuadraticField(-1)
+        sage: A = k^3; V = A.span([[1,0,i], [2,i,0]])
+        sage: W = A.span([[3,i,i]])
+        sage: U = V/W; U
         Vector space quotient V/W of dimension 1 over Number Field in i
          with defining polynomial x^2 + 1 with i = 1*I where
         V: Vector space of degree 3 and dimension 2 over Number Field in i
@@ -320,20 +321,20 @@ class FreeModule_ambient_field_quotient(FreeModule_ambient_field):
         [ 0  1 -2]
         W: Vector space of degree 3 and dimension 1 over Number Field in i
             with defining polynomial x^2 + 1 with i = 1*I
-        Basis matrix:
-        [    1 1/3*i 1/3*i]
-        sage: U.V()                                                                     # optional - sage.rings.number_field
+            Basis matrix:
+            [    1 1/3*i 1/3*i]
+        sage: U.V()
         Vector space of degree 3 and dimension 2 over Number Field in i
          with defining polynomial x^2 + 1 with i = 1*I
         Basis matrix:
         [ 1  0  i]
         [ 0  1 -2]
-        sage: U.W()                                                                     # optional - sage.rings.number_field
+        sage: U.W()
         Vector space of degree 3 and dimension 1 over Number Field in i
          with defining polynomial x^2 + 1 with i = 1*I
         Basis matrix:
         [    1 1/3*i 1/3*i]
-        sage: U.quotient_map()                                                          # optional - sage.rings.number_field
+        sage: U.quotient_map()
         Vector space morphism represented by the matrix:
         [  1]
         [3*i]
@@ -343,18 +344,18 @@ class FreeModule_ambient_field_quotient(FreeModule_ambient_field):
         [ 1  0  i]
         [ 0  1 -2]
         Codomain: Vector space quotient V/W of dimension 1 over Number Field in i
-                   with defining polynomial x^2 + 1 with i = 1*I where
-        V: Vector space of degree 3 and dimension 2 over Number Field in i
-            with defining polynomial x^2 + 1 with i = 1*I
-        Basis matrix:
-        [ 1  0  i]
-        [ 0  1 -2]
-        W: Vector space of degree 3 and dimension 1 over Number Field in i
-            with defining polynomial x^2 + 1 with i = 1*I
-        Basis matrix:
-        [    1 1/3*i 1/3*i]
-        sage: Z = V.quotient(W)                                                         # optional - sage.rings.number_field
-        sage: Z == U                                                                    # optional - sage.rings.number_field
+                  with defining polynomial x^2 + 1 with i = 1*I where
+                  V: Vector space of degree 3 and dimension 2 over Number Field in i
+                     with defining polynomial x^2 + 1 with i = 1*I
+                     Basis matrix:
+                     [ 1  0  i]
+                     [ 0  1 -2]
+                  W: Vector space of degree 3 and dimension 1 over Number Field in i
+                     with defining polynomial x^2 + 1 with i = 1*I
+                     Basis matrix:
+                     [    1 1/3*i 1/3*i]
+        sage: Z = V.quotient(W)
+        sage: Z == U
         True
 
     We create three quotient spaces and compare them::
@@ -441,19 +442,19 @@ class FreeModule_ambient_field_quotient(FreeModule_ambient_field):
 
         We create a quotient vector space over a finite field::
 
-            sage: k.<a> = GF(9); A = k^3; V = A.span_of_basis([[1,0,a], [a,a,1]]); W = V.span([V.1])    # optional - sage.libs.pari
-            sage: Q = V/W                                                                               # optional - sage.libs.pari
+            sage: k.<a> = GF(9); A = k^3; V = A.span_of_basis([[1,0,a], [a,a,1]]); W = V.span([V.1])                    # needs sage.libs.pari
+            sage: Q = V/W                                                               # needs sage.libs.pari
 
         Note the type::
 
-            sage: type(Q)                                                                               # optional - sage.libs.pari
+            sage: type(Q)                                                               # needs sage.libs.pari
             <class 'sage.modules.quotient_module.FreeModule_ambient_field_quotient_with_category'>
 
         The string representation mentions that this is a quotient
         `V/W`, that the quotient has dimension 1 and is over a finite
         field, and also describes `V` and `W`::
 
-            sage: Q._repr_()                                                                            # optional - sage.libs.pari
+            sage: Q._repr_()                                                            # needs sage.libs.pari
             'Vector space quotient V/W of dimension 1 over Finite Field in a of size 3^2 where\nV: Vector space of degree 3 and dimension 2 over Finite Field in a of size 3^2\nUser basis matrix:\n[1 0 a]\n[a a 1]\nW: Vector space of degree 3 and dimension 1 over Finite Field in a of size 3^2\nBasis matrix:\n[    1     1 a + 2]'
         """
         return "%s space quotient V/W of dimension %s over %s where\nV: %s\nW: %s" % (
