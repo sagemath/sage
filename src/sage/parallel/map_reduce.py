@@ -184,8 +184,8 @@ Second, you need the information necessary to describe a
 
   Compare::
 
-      sage: from sage.combinat.q_analogues import q_factorial                           # optional - sage.combinat
-      sage: q_factorial(5)                                                              # optional - sage.combinat
+      sage: from sage.combinat.q_analogues import q_factorial                           # needs sage.combinat
+      sage: q_factorial(5)                                                              # needs sage.combinat
       q^10 + 4*q^9 + 9*q^8 + 15*q^7 + 20*q^6 + 22*q^5 + 20*q^4 + 15*q^3 + 9*q^2 + 4*q + 1
 
 * **Listing the objects.** One can also compute the list of objects in a
@@ -1653,14 +1653,14 @@ class RESetMapReduceWorker(mp.Process):
             sage: EX = RESetMPExample(maxl=6)
             sage: EX.setup_workers(2)
 
+            sage: # known bug (Issue #27537)
             sage: w0, w1 = EX._workers
             sage: w0._todo.append(42)
             sage: thief0 = Thread(target = w0._thief, name="Thief")
-            sage: thief0.start()  # known bug (Issue #27537)
-
-            sage: w1.steal()  # known bug (Issue #27537)
+            sage: thief0.start()
+            sage: w1.steal()
             42
-            sage: w0._todo  # known bug (Issue #27537)
+            sage: w0._todo
             deque([])
         """
         self._mapred._signal_task_done()
