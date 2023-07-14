@@ -170,23 +170,23 @@ class HillCipher(SymmetricKeyCipher):
         EXAMPLES::
 
             sage: S = AlphabeticStrings()
-            sage: E = HillCryptosystem(S,3); E                                          # optional - sage.modules
+            sage: E = HillCryptosystem(S,3); E                                          # needs sage.modules
             Hill cryptosystem on Free alphabetic string monoid on A-Z of block length 3
-            sage: M = E.key_space()                                                     # optional - sage.modules
-            sage: A = M([[1,0,1],[0,1,1],[2,2,3]]); A                                   # optional - sage.modules
+            sage: M = E.key_space()                                                     # needs sage.modules
+            sage: A = M([[1,0,1],[0,1,1],[2,2,3]]); A                                   # needs sage.modules
             [1 0 1]
             [0 1 1]
             [2 2 3]
-            sage: e = E(A); e                                                           # optional - sage.modules
+            sage: e = E(A); e                                                           # needs sage.modules
             Hill cipher on Free alphabetic string monoid on A-Z of block length 3
-            sage: e(S("LAMAISONBLANCHE"))                                               # optional - sage.modules
+            sage: e(S("LAMAISONBLANCHE"))                                               # needs sage.modules
             JYVKSKQPELAYKPV
 
         TESTS::
 
             sage: S = AlphabeticStrings()
-            sage: E = HillCryptosystem(S,3)                                             # optional - sage.modules
-            sage: E == loads(dumps(E))                                                  # optional - sage.modules
+            sage: E = HillCryptosystem(S,3)                                             # needs sage.modules
+            sage: E == loads(dumps(E))                                                  # needs sage.modules
             True
         """
         # TODO: some type checking that the key is an invertible matrix?
@@ -219,10 +219,11 @@ class HillCipher(SymmetricKeyCipher):
 
         EXAMPLES::
 
-            sage: H = HillCryptosystem(AlphabeticStrings(), 3)                          # optional - sage.modules
-            sage: M = MatrixSpace(IntegerModRing(26), 3, 3)                             # optional - sage.modules
-            sage: A = M([[1,0,1], [0,1,1], [2,2,3]])                                    # optional - sage.modules
-            sage: e = H(A); e                                                           # optional - sage.modules
+            sage: # needs sage.modules
+            sage: H = HillCryptosystem(AlphabeticStrings(), 3)
+            sage: M = MatrixSpace(IntegerModRing(26), 3, 3)
+            sage: A = M([[1,0,1], [0,1,1], [2,2,3]])
+            sage: e = H(A); e
             Hill cipher on Free alphabetic string monoid on A-Z of block length 3
         """
         return "Hill cipher on %s of block length %s" % (
@@ -470,33 +471,33 @@ class TranspositionCipher(SymmetricKeyCipher):
         EXAMPLES::
 
             sage: S = AlphabeticStrings()
-            sage: E = TranspositionCryptosystem(S,14); E                                # optional - sage.groups
+            sage: E = TranspositionCryptosystem(S,14); E                                # needs sage.groups
             Transposition cryptosystem on
              Free alphabetic string monoid on A-Z of block length 14
-            sage: K = [ 14-i for i in range(14) ]; K                                    # optional - sage.groups
+            sage: K = [ 14-i for i in range(14) ]; K
             [14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1]
-            sage: e = E(K)                                                              # optional - sage.groups
-            sage: m = S("THECATINTHEHAT")                                               # optional - sage.groups
-            sage: e(m)                                                                  # optional - sage.groups
+            sage: e = E(K)                                                              # needs sage.groups
+            sage: m = S("THECATINTHEHAT")                                               # needs sage.groups
+            sage: e(m)                                                                  # needs sage.groups
             TAHEHTNITACEHT
 
         EXAMPLES::
 
             sage: S = AlphabeticStrings()
-            sage: E = TranspositionCryptosystem(S,15)                                   # optional - sage.groups
-            sage: m = S("THECATANDTHEHAT")                                              # optional - sage.groups
-            sage: G = E.key_space(); G                                                  # optional - sage.groups
+            sage: E = TranspositionCryptosystem(S,15)                                   # needs sage.groups
+            sage: m = S("THECATANDTHEHAT")                                              # needs sage.groups
+            sage: G = E.key_space(); G                                                  # needs sage.groups
             Symmetric group of order 15! as a permutation group
-            sage: g = G([ 3, 2, 1, 6, 5, 4, 9, 8, 7, 12, 11, 10, 15, 14, 13 ])          # optional - sage.groups
-            sage: e = E(g)                                                              # optional - sage.groups
-            sage: e(m)                                                                  # optional - sage.groups
+            sage: g = G([ 3, 2, 1, 6, 5, 4, 9, 8, 7, 12, 11, 10, 15, 14, 13 ])          # needs sage.groups
+            sage: e = E(g)                                                              # needs sage.groups
+            sage: e(m)                                                                  # needs sage.groups
             EHTTACDNAEHTTAH
 
         TESTS::
 
             sage: S = AlphabeticStrings()
-            sage: E = TranspositionCryptosystem(S,14)                                   # optional - sage.groups
-            sage: E == loads(dumps(E))                                                  # optional - sage.groups
+            sage: E = TranspositionCryptosystem(S,14)                                   # needs sage.groups
+            sage: E == loads(dumps(E))                                                  # needs sage.groups
             True
         """
         n = parent.block_length()
