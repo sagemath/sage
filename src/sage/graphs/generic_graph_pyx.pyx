@@ -35,6 +35,7 @@ from sage.libs.gmp.mpz cimport *
 from sage.misc.prandom import random
 from sage.graphs.base.static_sparse_graph cimport short_digraph
 from sage.graphs.base.static_sparse_graph cimport init_short_digraph
+from sage.graphs.base.static_sparse_graph cimport init_reverse
 from sage.graphs.base.static_sparse_graph cimport free_short_digraph
 from sage.graphs.base.static_sparse_graph cimport out_degree, has_edge
 
@@ -1237,11 +1238,34 @@ cpdef tuple find_hamiltonian(G, long max_iter=100000, long reset_bound=30000,
     Finally, an example on a graph which does not have a Hamiltonian
     path::
 
-        sage: G=graphs.HyperStarGraph(5,2)
+        sage: G = graphs.HyperStarGraph(5, 2)
         sage: fh(G,find_path=False)
-        (False, ['00110', '10100', '01100', '11000', '01010', '10010', '00011', '10001', '00101'])
+        (False, ['01100', '10100', '00110', '10010', '00011', '10001', '01001', '11000', '01010'])
         sage: fh(G,find_path=True)
-        (False, ['01001', '10001', '00101', '10100', '00110', '10010', '01010', '11000', '01100'])
+        (False, ['00110', '10010', '01010', '11000', '01100', '10100', '00101', '10001', '00011'])
+
+    The method can also be used for directed graphs::
+
+        sage: G = DiGraph()
+        sage: G.add_path('abcd')
+        sage: G.add_path('xyd')
+        sage: fh(G)
+        (False, ['a', 'b', 'c', 'd'])
+        sage: G = G.reverse()
+        sage: fh(G)
+        (False, ['d', 'c', 'b', 'a'])
+        sage: H = DiGraph()
+        sage: H.add_cycle('abcdefgh')
+        sage: fh(H)
+        (True, ['b', 'c', 'd', 'e', 'f', 'g', 'h', 'a'])
+        sage: H.delete_edge('ab')
+        sage: fh(H, find_path=False)
+        (False, ['b', 'c', 'd', 'e', 'f', 'g', 'h', 'a'])
+        sage: fh(H, find_path=True)
+        (True, ['b', 'c', 'd', 'e', 'f', 'g', 'h', 'a'])
+        sage: H.delete_edge('gh')
+        sage: fh(H, find_path=True)
+        (False, ['b', 'c', 'd', 'e', 'f', 'g'])
 
     TESTS:
 
@@ -1288,16 +1312,15 @@ cpdef tuple find_hamiltonian(G, long max_iter=100000, long reset_bound=30000,
         (False, [0, 1, 2, 3])
         sage: fh(G, find_path=True)
         (False, [0, 1, 2, 3])
-
     """
+    G._scream_if_not_simple()
+
     from sage.misc.prandom import randint
     cdef int n = G.order()
 
     # Easy cases
-    if not n:
-        return False, []
-    if n == 1:
-        return False, G.vertices(sort=False)
+    if n < 2:
+        return False, list(G)
 
     # To clean the output when find_path is None or a number
     find_path = (find_path > 0)
@@ -1305,7 +1328,7 @@ cpdef tuple find_hamiltonian(G, long max_iter=100000, long reset_bound=30000,
     if G.is_clique(induced=False):
         # We have an hamiltonian path since n >= 2, but we have an hamiltonian
         # cycle only if n >= 3
-        return find_path or n >= 3, G.vertices(sort=True)
+        return find_path or n >= 3, list(G)
 
     cdef list best_path, p
     if not G.is_connected():
@@ -1313,6 +1336,8 @@ cpdef tuple find_hamiltonian(G, long max_iter=100000, long reset_bound=30000,
         # longest path in its connected components.
         best_path = []
         for H in G.connected_components_subgraphs():
+            if H.order() <= len(best_path):
+                continue
             _, p = find_hamiltonian(H, max_iter=max_iter, reset_bound=reset_bound,
                                     backtrack_bound=backtrack_bound, find_path=True)
             if len(p) > len(best_path):
@@ -1321,20 +1346,24 @@ cpdef tuple find_hamiltonian(G, long max_iter=100000, long reset_bound=30000,
 
     # Misc variables used below
     cdef int i, j
-    cdef int n_available
+    cdef bint directed = G.is_directed()
 
     # Initialize the path.
     cdef MemoryAllocator mem = MemoryAllocator()
     cdef int *path = <int *>mem.allocarray(n, sizeof(int))
-    memset(path, -1, n * sizeof(int))
 
     # Initialize the membership array
     cdef bint *member = <bint *>mem.allocarray(n, sizeof(int))
     memset(member, 0, n * sizeof(int))
 
     # static copy of the graph for more efficient operations
+    cdef list int_to_vertex = list(G)
     cdef short_digraph sd
-    init_short_digraph(sd, G)
+    init_short_digraph(sd, G, edge_labelled=False, vertex_list=int_to_vertex)
+    cdef short_digraph rev_sd
+    cdef bint reverse = False
+    if directed:
+        init_reverse(rev_sd, sd)
 
     # A list to store the available vertices at each step
     cdef list available_vertices = []
@@ -1344,7 +1373,7 @@ cpdef tuple find_hamiltonian(G, long max_iter=100000, long reset_bound=30000,
     cdef int u = randint(0, n - 1)
     while not out_degree(sd, u):
         u = randint(0, n - 1)
-    #  Then we pick at random a neighbor of u
+    # Then we pick at random a neighbor of u
     cdef int x = randint(0, out_degree(sd, u) - 1)
     cdef int v = sd.neighbors[u][x]
     # This will be the first edge in the path
@@ -1362,27 +1391,25 @@ cpdef tuple find_hamiltonian(G, long max_iter=100000, long reset_bound=30000,
 
     # Initialize a path to contain the longest path
     cdef int *longest_path = <int *>mem.allocarray(n, sizeof(int))
-    memset(longest_path, -1, n * sizeof(int))
     for i in range(length):
         longest_path[i] = path[i]
 
-    # Initialize a temporary path for flipping
-    cdef int *temp_path = <int *>mem.allocarray(n, sizeof(int))
-    memset(temp_path, -1, n * sizeof(int))
-
     cdef bint longer = False
-    cdef bint good = True
+    cdef bint longest_reversed = False
     cdef bint flag
 
     while not done:
         counter = counter + 1
         if counter % 10 == 0:
             # Reverse the path
-
             for i in range(length//2):
                 t = path[i]
                 path[i] = path[length - i - 1]
                 path[length - i - 1] = t
+
+            if directed:
+                # We now work on the reverse graph
+                reverse = not reverse
 
         if counter > reset_bound:
             bigcount = bigcount + 1
@@ -1390,6 +1417,9 @@ cpdef tuple find_hamiltonian(G, long max_iter=100000, long reset_bound=30000,
 
             # Time to reset the procedure
             memset(member, 0, n * sizeof(int))
+            if directed and reverse:
+                # We restore the original orientation
+                reverse = False
 
             # First we pick a random vertex u of (out-)degree at least one
             u = randint(0, n - 1)
@@ -1405,37 +1435,44 @@ cpdef tuple find_hamiltonian(G, long max_iter=100000, long reset_bound=30000,
             member[u] = True
             member[v] = True
 
-        if counter % backtrack_bound == 0:
+        if length > 5 and counter % backtrack_bound == 0:
             for i in range(5):
                 member[path[length - i - 1]] = False
             length = length - 5
         longer = False
 
+        # We search for a possible extension of the path
         available_vertices = []
         u = path[length - 1]
-        for i in range(out_degree(sd, u)):
-            v = sd.neighbors[u][i]
-            if not member[v]:
-                available_vertices.append(v)
+        if directed and reverse:
+            for i in range(out_degree(rev_sd, u)):
+                v = rev_sd.neighbors[u][i]
+                if not member[v]:
+                    available_vertices.append(v)
+        else:
+            for i in range(out_degree(sd, u)):
+                v = sd.neighbors[u][i]
+                if not member[v]:
+                    available_vertices.append(v)
 
-        n_available = len(available_vertices)
-        if n_available > 0:
+        if available_vertices:
             longer = True
-            x = randint(0, n_available - 1)
-            path[length] = available_vertices[x]
+            x = randint(0, len(available_vertices) - 1)
+            v = available_vertices[x]
+            path[length] = v
             length = length + 1
-            member[available_vertices[x]] = True
+            member[v] = True
 
         if not longer and length > longest:
-
+            # Store the current best solution
             for i in range(length):
                 longest_path[i] = path[i]
 
             longest = length
+            longest_reversed = reverse
 
-        if not longer:
-
-            memset(temp_path, -1, n * sizeof(int))
+        if not directed and not longer:
+            # We revert a cycle to change the extremity of the path
             degree = out_degree(sd, path[length - 1])
             while True:
                 x = randint(0, degree - 1)
@@ -1455,37 +1492,53 @@ cpdef tuple find_hamiltonian(G, long max_iter=100000, long reset_bound=30000,
                     j += 1
                 if path[i] == u:
                     flag = True
+
         if length == n:
             if find_path:
                 done = True
+            elif directed and reverse:
+                done = has_edge(rev_sd, path[0], path[n - 1]) != NULL
             else:
                 done = has_edge(sd, path[n - 1], path[0]) != NULL
 
         if bigcount * reset_bound > max_iter:
-            verts = G.vertices(sort=True)
-            output = [verts[longest_path[i]] for i in range(longest)]
+            output = [int_to_vertex[longest_path[i]] for i in range(longest)]
             free_short_digraph(sd)
+            if directed:
+                free_short_digraph(rev_sd)
+                if longest_reversed:
+                    return (False, output[::-1])
             return (False, output)
     # #
     # # Output test
     # #
 
+    if directed and reverse:
+        # We revert the path to work on sd
+        for i in range(length//2):
+            t = path[i]
+            path[i] = path[length - i - 1]
+            path[length - i - 1] = t
+
     # Test adjacencies
+    cdef bint good = True
     for i in range(n - 1):
         u = path[i]
         v = path[i + 1]
-        # Graph is simple, so both arcs are present
         if has_edge(sd, u, v) == NULL:
             good = False
             break
     if good is False:
-        raise RuntimeError('vertices %d and %d are consecutive in the cycle but are not adjacent' % (u, v))
-    if not find_path and has_edge(sd, path[0], path[n - 1]) == NULL:
-        raise RuntimeError('vertices %d and %d are not adjacent' % (path[0], path[n - 1]))
+        raise RuntimeError(f"vertices {int_to_vertex[u]} and {int_to_vertex[v]}"
+                           " are consecutive in the cycle but are not adjacent")
+    if not find_path and has_edge(sd, path[n - 1], path[0]) == NULL:
+        raise RuntimeError(f"vertices {int_to_vertex[path[n - 1]]} and "
+                           f"{int_to_vertex[path[0]]} are not adjacent")
 
-    verts = G.vertices(sort=True)
-    output = [verts[path[i]] for i in range(length)]
+    output = [int_to_vertex[path[i]] for i in range(length)]
     free_short_digraph(sd)
+    if directed:
+        free_short_digraph(rev_sd)
 
     return (True, output)
 
