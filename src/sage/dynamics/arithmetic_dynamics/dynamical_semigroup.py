@@ -22,6 +22,7 @@ AUTHORS:
 from collections import Counter
 from collections.abc import Collection
 
+from sage.misc.inherit_comparison import InheritComparisonClasscallMetaclass
 from sage.structure.parent import Parent
 
 from sage.dynamics.arithmetic_dynamics.projective_ds import DynamicalSystem_projective
@@ -31,7 +32,7 @@ from sage.categories.number_fields import NumberFields
 from sage.rings.rational_field import QQ
 from sage.categories.semigroups import Semigroups
 
-class DynamicalSemigroup(Parent):
+class DynamicalSemigroup(Parent, metaclass=InheritComparisonClasscallMetaclass):
     r"""
     A dynamical semigroup defined by a multiple dynamical systems on projective or affine space.
 
@@ -229,6 +230,34 @@ class DynamicalSemigroup(Parent):
         sage: DynamicalSemigroup((f, g))
         ValueError: domains of 'DynamicalSystem' objects must be of the same dimension
     """
+
+    @staticmethod
+    def __classcall_private__(cls, ds_data):
+        systems = []
+
+        if isinstance(ds_data, Collection):
+            for ds_datum in ds_data:
+                if isinstance(ds_datum, DynamicalSystem):
+                    systems.append(ds_datum)
+                else:
+                    try:
+                        systems.append(DynamicalSystem(ds_datum))
+                    except ValueError:
+                        raise ValueError(str(ds_datum) + " does not define a 'DynamicalSystem' object")
+        else:
+            if isinstance(ds_data, DynamicalSystem):
+                    systems.append(ds_data)
+            else:
+                try:
+                    systems.append(DynamicalSystem(ds_data))
+                except ValueError:
+                    raise ValueError(str(ds_data) + " does not define a 'DynamicalSystem' object")
+
+        exists_projective_ds = any(isinstance(element, DynamicalSystem_projective) for element in systems)
+
+        if exists_projective_ds:
+            return DynamicalSemigroup_projective(ds_data)
+        return DynamicalSemigroup_affine(ds_data)
 
     def __init__(self, ds_data):
         r"""
@@ -503,29 +532,7 @@ class DynamicalSemigroup(Parent):
         """
         return tuple(self._dynamical_systems)
 
-    def homogenize(self, n):
-        if self._is_projective:
-            raise NotImplementedError("cannot homogenize a dynamical semigroup over projective space")
-        new_systems = []
-        for ds in self._dynamical_systems:
-            new_system = ds.homogenize(n)
-            if not isinstance(new_system, DynamicalSystem):
-                raise ValueError(str(ds) + " homogenized at " + str(n) + " is not a `DynamicalSystem` object")
-            new_systems.append(new_system)
-        return DynamicalSemigroup(new_systems)
-
-    def dehomogenize(self, n):
-        if not self._is_projective:
-            raise NotImplementedError("cannot dehomogenize a dynamical semigroup over affine space")
-        new_systems = []
-        for ds in self._dynamical_systems:
-            new_system = ds.dehomogenize(n)
-            if not isinstance(new_system, DynamicalSystem):
-                raise ValueError(str(ds) + " dehomogenized at " + str(n) + " is not a `DynamicalSystem` object")
-            new_systems.append(new_system)
-        return DynamicalSemigroup(new_systems)
-
-    def multiply(self, other_dynamical_semigroup):
+    def _mul_(self, other_dynamical_semigroup):
         if not isinstance(other_dynamical_semigroup, DynamicalSemigroup):
             raise TypeError(str(other_dynamical_semigroup) + " is not a `DynamicalSemigroup` object")
         composite_systems = []
@@ -638,6 +645,56 @@ class DynamicalSemigroup_projective(DynamicalSemigroup):
                 (x^2 : y^2)
     """
 
+    def dehomogenize(self, n):
+        r"""
+        Return a new :class:`DynamicalSemigroup_projective` with the dehomogenization at ``n`` of
+        the generators of this dynamical semigroup.
+
+        INPUT:
+
+        - ``n`` -- a tuple of nonnegative integers. If ``n`` is an integer,
+          then the two values of the tuple are assumed to be the same
+
+        OUTPUT: :class:`DynamicalSemigroup_affine`
+
+        EXAMPLES::
+
+            sage: P.<x,y> = ProjectiveSpace(QQ, 1)
+            sage: f = DynamicalSystem([x, y], P)
+            sage: g = DynamicalSystem([x^2, y^2], P)
+            sage: d = DynamicalSemigroup((f, g))
+            sage: d.dehomogenize(0)
+            Dynamical semigroup over Affine Space of dimension 1 over Rational Field defined by 2 dynamical systems:
+            Dynamical System of Affine Space of dimension 1 over Rational Field
+              Defn: Defined on coordinates by sending (x) to
+                    (x)
+            Dynamical System of Affine Space of dimension 1 over Rational Field
+              Defn: Defined on coordinates by sending (x) to
+                    (x^2)
+
+        ::
+
+            sage: P.<x,y> = ProjectiveSpace(QQ, 1)
+            sage: f = DynamicalSystem([x, y], P)
+            sage: g = DynamicalSystem([x^2, y^2], P)
+            sage: d = DynamicalSemigroup((f, g))
+            sage: d.dehomogenize((1, 0))
+            Dynamical semigroup over Affine Space of dimension 1 over Rational Field defined by 2 dynamical systems:
+            Dynamical System of Affine Space of dimension 1 over Rational Field
+              Defn: Defined on coordinates by sending (x) to
+                    (1/x)
+            Dynamical System of Affine Space of dimension 1 over Rational Field
+              Defn: Defined on coordinates by sending (x) to
+                    (1/x^2)
+        """
+        new_systems = []
+        for ds in self._dynamical_systems:
+            new_system = ds.dehomogenize(n)
+            if not isinstance(new_system, DynamicalSystem):
+                raise ValueError(str(ds) + " dehomogenized at " + str(n) + " is not a `DynamicalSystem` object")
+            new_systems.append(new_system)
+        return DynamicalSemigroup(new_systems)
+
 class DynamicalSemigroup_affine(DynamicalSemigroup):
     r"""
     A dynamical semigroup defined by a multiple dynamical systems on affine space.
@@ -686,3 +743,46 @@ class DynamicalSemigroup_affine(DynamicalSemigroup):
         for i in range(len(self._dynamical_systems)):
             if isinstance(self._dynamical_systems[i], DynamicalSystem_projective):
                 self._dynamical_systems[i] = self._dynamical_systems[i].dehomogenize(self._dimension)
+
+    def homogenize(self, n):
+        r"""
+        Return a new :class:`DynamicalSemigroup_projective` with the homogenization at ``n`` of
+        the generators of this dynamical semigroup.
+
+        INPUT:
+
+        - ``n`` -- a tuple of nonnegative integers. If ``n`` is an integer,
+          then the two values of the tuple are assumed to be the same
+
+        OUTPUT: :class:`DynamicalSemigroup_projective`
+
+        EXAMPLES::
+
+            sage: A.<x> = AffineSpace(QQ, 1)
+            sage: f = DynamicalSystem(x + 1, A)
+            sage: g = DynamicalSystem(x^2, A)
+            sage: d = DynamicalSemigroup((f, g))
+            sage: d.homogenize(1)
+
+        ::
+
+            sage: A.<x> = AffineSpace(QQ, 1)
+            sage: f = DynamicalSystem(x + 1, A)
+            sage: g = DynamicalSystem(x^2, A)
+            sage: d = DynamicalSemigroup((f, g))
+            sage: d.homogenize((1, 0))
+            Dynamical semigroup over Projective Space of dimension 1 over Rational Field defined by 2 dynamical systems:
+            Dynamical System of Projective Space of dimension 1 over Rational Field
+              Defn: Defined on coordinates by sending (x0 : x1) to
+                    (x1 : x0 + x1)
+            Dynamical System of Projective Space of dimension 1 over Rational Field
+              Defn: Defined on coordinates by sending (x0 : x1) to
+                    (x1^2 : x0^2)
+        """
+        new_systems = []
+        for ds in self._dynamical_systems:
+            new_system = ds.homogenize(n)
+            if not isinstance(new_system, DynamicalSystem):
+                raise ValueError(str(ds) + " homogenized at " + str(n) + " is not a `DynamicalSystem` object")
+            new_systems.append(new_system)
+        return DynamicalSemigroup(new_systems)
