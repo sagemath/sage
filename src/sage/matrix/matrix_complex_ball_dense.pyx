@@ -946,7 +946,7 @@ cdef class Matrix_complex_ball_dense(Matrix_dense):
 
         EXAMPLES::
 
-            sage: matrix(CBF, [[i*pi, 1], [0, i*pi]]).exp()                             # optional - sage.symbolic
+            sage: matrix(CBF, [[i*pi, 1], [0, i*pi]]).exp()                             # needs sage.symbolic
             [[-1.00000000000000 +/- ...e-16] + [+/- ...e-16]*I [-1.00000000000000 +/- ...e-16] + [+/- ...e-16]*I]
             [                                                0 [-1.00000000000000 +/- ...e-16] + [+/- ...e-16]*I]
             sage: matrix(CBF, [[1/2, 1/3]]).exp()

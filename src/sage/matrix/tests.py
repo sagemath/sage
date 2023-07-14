@@ -45,7 +45,7 @@ Division by a scalar::
     sage: matrix(QQ, 2, 2, [1, 1, 1, 1]) / (1/2)
     [2 2]
     [2 2]
-    sage: matrix(QQ['x,y'], 2, 2, [1, 1, 1, 1]) / x                                     # optional - sage.symbolic
+    sage: matrix(QQ['x,y'], 2, 2, [1, 1, 1, 1]) / x                                     # needs sage.symbolic
     [1/x 1/x]
     [1/x 1/x]
     sage: A = matrix(CC, 2, 2, [1, 1, 1, 1]) / I; A

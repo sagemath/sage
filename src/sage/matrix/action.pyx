@@ -222,8 +222,8 @@ cdef class MatrixMatrixAction(MatrixMulAction):
 
         Respects compatible subdivisions::
 
-            sage: M = matrix(5, 5, prime_range(100))                                    # optional - sage.libs.pari
-            sage: M.subdivide(2, 3); M                                                  # optional - sage.libs.pari
+            sage: M = matrix(5, 5, prime_range(100))                                    # needs sage.libs.pari
+            sage: M.subdivide(2, 3); M                                                  # needs sage.libs.pari
             [ 2  3  5| 7 11]
             [13 17 19|23 29]
             [--------+-----]
@@ -238,7 +238,7 @@ cdef class MatrixMatrixAction(MatrixMulAction):
             [--+--]
             [36|49]
             [64|81]
-            sage: M*N                                                                   # optional - sage.libs.pari
+            sage: M*N                                                                   # needs sage.libs.pari
             [ 1048| 1388]
             [ 3056| 4117]
             [-----+-----]
@@ -248,7 +248,7 @@ cdef class MatrixMatrixAction(MatrixMulAction):
 
         Note that this is just like block matrix multiplication::
 
-            sage: M.subdivision(0,0) * N.subdivision(0,0) + M.subdivision(0,1) * N.subdivision(1,0)     # optional - sage.libs.pari
+            sage: M.subdivision(0,0) * N.subdivision(0,0) + M.subdivision(0,1) * N.subdivision(1,0)                     # needs sage.libs.pari
             [1048]
             [3056]
 
@@ -262,7 +262,7 @@ cdef class MatrixMatrixAction(MatrixMulAction):
             [16|25]
             [36|49]
             [64|81]
-            sage: M*N                                                                   # optional - sage.libs.pari
+            sage: M*N                                                                   # needs sage.libs.pari
             [ 1048  1388]
             [ 3056  4117]
             [ 5360  7303]

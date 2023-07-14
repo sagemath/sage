@@ -7,7 +7,7 @@ interesting matrices. These can be reached through ``matrix.<tab>``.
 
 For example, here is a circulant matrix of order five::
 
-    sage: matrix.circulant(SR.var('a b c d e'))                                         # optional - sage.symbolic
+    sage: matrix.circulant(SR.var('a b c d e'))                                         # needs sage.symbolic
     [a b c d e]
     [e a b c d]
     [d e a b c]
@@ -362,22 +362,22 @@ def random_matrix(ring, nrows, ncols=None, algorithm='randomize', implementation
         sage: expected_density = (1 - (4/5)^3)
         sage: float(expected_density)
         0.488
-        sage: while abs(density_sum/total_count - expected_density) > 0.001:            # optional - sage.libs.flint (o/w timeout)
+        sage: while abs(density_sum/total_count - expected_density) > 0.001:
         ....:     add_sample(ZZ, 5, x=-10, y=10, density=0.75)
 
         sage: density_sum = 0.0
         sage: total_count = 0.0
         sage: add_sample(ZZ, 5, x=20, y=30, density=0.75)
-        sage: while abs(density_sum/total_count - expected_density) > 0.001:            # optional - sage.libs.flint
+        sage: while abs(density_sum/total_count - expected_density) > 0.001:            # needs sage.libs.flint
         ....:     add_sample(ZZ, 5, x=20, y=30, density=0.75)
 
         sage: density_sum = 0.0
         sage: total_count = 0.0
-        sage: add_sample(ZZ, 100, x=20, y=30, density=0.75)                             # optional - sage.libs.flint
+        sage: add_sample(ZZ, 100, x=20, y=30, density=0.75)                             # needs sage.libs.flint
         sage: expected_density = (1 - (99/100)^75)
         sage: float(expected_density)
         0.529...
-        sage: while abs(density_sum/total_count - expected_density) > 0.001:            # optional - sage.libs.flint
+        sage: while abs(density_sum/total_count - expected_density) > 0.001:            # needs sage.libs.flint
         ....:     add_sample(ZZ, 100, x=20, y=30, density=0.75)
 
     For a matrix with low density it may be advisable to insist on a sparse
@@ -393,15 +393,15 @@ def random_matrix(ring, nrows, ncols=None, algorithm='randomize', implementation
     For algorithm testing you might want to control the number of bits,
     say 10,000 entries, each limited to 16 bits.  ::
 
-        sage: A = random_matrix(ZZ, 100, 100, x=2^16); A                                # optional - sage.libs.flint
+        sage: A = random_matrix(ZZ, 100, 100, x=2^16); A                                # needs sage.libs.flint
         100 x 100 dense matrix over Integer Ring (use the '.str()' method to see the entries)
 
     One can prescribe a specific matrix implementation::
 
-        sage: K.<a> = FiniteField(2^8)                                                  # optional - sage.rings.finite_rings
-        sage: type(random_matrix(K, 2, 5))                                              # optional - sage.rings.finite_rings
+        sage: K.<a> = FiniteField(2^8)                                                  # needs sage.rings.finite_rings
+        sage: type(random_matrix(K, 2, 5))                                              # needs sage.rings.finite_rings
         <class 'sage.matrix.matrix_gf2e_dense.Matrix_gf2e_dense'>
-        sage: type(random_matrix(K, 2, 5, implementation="generic"))                    # optional - sage.rings.finite_rings
+        sage: type(random_matrix(K, 2, 5, implementation="generic"))                    # needs sage.rings.finite_rings
         <class 'sage.matrix.matrix_generic_dense.Matrix_generic_dense'>
 
     Random rational matrices.  Now ``num_bound`` and ``den_bound`` control the
@@ -460,11 +460,11 @@ def random_matrix(ring, nrows, ncols=None, algorithm='randomize', implementation
     randomisation when using the optional meataxe package, we have to make sure
     that we use the default implementation in this test::
 
-        sage: K.<a> = FiniteField(3^2)                                                  # optional - sage.rings.finite_rings
-        sage: A = random_matrix(K, 2, 5, implementation='generic')                      # optional - sage.rings.finite_rings
+        sage: K.<a> = FiniteField(3^2)                                                  # needs sage.rings.finite_rings
+        sage: A = random_matrix(K, 2, 5, implementation='generic')                      # needs sage.rings.finite_rings
         sage: type(A)
         <class 'sage.matrix.matrix_generic_dense.Matrix_generic_dense'>
-        sage: A.base_ring() is K                                                        # optional - sage.rings.finite_rings
+        sage: A.base_ring() is K                                                        # needs sage.rings.finite_rings
         True
         sage: TestSuite(A).run()
 
@@ -552,7 +552,7 @@ def random_matrix(ring, nrows, ncols=None, algorithm='randomize', implementation
         True
         sage: all(x in ZZ for x in (A - (-1)*identity_matrix(5)).rref().list())
         True
-        sage: A.jordan_form()                                                           # optional - sage.combinat
+        sage: A.jordan_form()                                                           # needs sage.combinat
         [ 2| 0| 0| 0| 0]
         [--+--+--+--+--]
         [ 0| 3| 0| 0| 0]
@@ -749,36 +749,36 @@ def diagonal_matrix(arg0=None, arg1=None, arg2=None, sparse=True):
 
     NumPy arrays may be used as input. ::
 
-        sage: import numpy                                                              # optional - numpy
-        sage: entries = numpy.array([1.2, 5.6]); entries                                # optional - numpy
+        sage: import numpy                                                              # needs numpy
+        sage: entries = numpy.array([1.2, 5.6]); entries                                # needs numpy
         array([1.2, 5.6])
-        sage: A = diagonal_matrix(3, entries); A                                        # optional - numpy
+        sage: A = diagonal_matrix(3, entries); A                                        # needs numpy
         [1.2 0.0 0.0]
         [0.0 5.6 0.0]
         [0.0 0.0 0.0]
-        sage: A.parent()                                                                # optional - numpy
+        sage: A.parent()                                                                # needs numpy
         Full MatrixSpace of 3 by 3 sparse matrices over Real Double Field
 
         sage: j = complex(0,1)
-        sage: entries = numpy.array([2.0+j, 8.1, 3.4+2.6*j]); entries                   # optional - numpy
+        sage: entries = numpy.array([2.0+j, 8.1, 3.4+2.6*j]); entries                   # needs numpy
         array([2. +1.j , 8.1+0.j , 3.4+2.6j])
-        sage: A = diagonal_matrix(entries); A                                           # optional - numpy
+        sage: A = diagonal_matrix(entries); A                                           # needs numpy
         [2.0 + 1.0*I         0.0         0.0]
         [        0.0         8.1         0.0]
         [        0.0         0.0 3.4 + 2.6*I]
-        sage: A.parent()                                                                # optional - numpy
+        sage: A.parent()                                                                # needs numpy
         Full MatrixSpace of 3 by 3 sparse matrices over Complex Double Field
 
-        sage: entries = numpy.array([4, 5, 6])                                          # optional - numpy
-        sage: A = diagonal_matrix(entries); A                                           # optional - numpy
+        sage: entries = numpy.array([4, 5, 6])                                          # needs numpy
+        sage: A = diagonal_matrix(entries); A                                           # needs numpy
         [4 0 0]
         [0 5 0]
         [0 0 6]
-        sage: A.parent()                                                                # optional - numpy
+        sage: A.parent()                                                                # needs numpy
         Full MatrixSpace of 3 by 3 sparse matrices over Integer Ring
 
-        sage: entries = numpy.array([4.1, 5.2, 6.3])                                    # optional - numpy
-        sage: A = diagonal_matrix(ZZ, entries); A                                       # optional - numpy
+        sage: entries = numpy.array([4.1, 5.2, 6.3])                                    # needs numpy
+        sage: A = diagonal_matrix(ZZ, entries); A                                       # needs numpy
         Traceback (most recent call last):
         ...
         TypeError: unable to convert 4.1 to an element of Integer Ring
@@ -820,7 +820,7 @@ def diagonal_matrix(arg0=None, arg1=None, arg2=None, sparse=True):
     Types for the entries need to be iterable (tuple, list, vector, NumPy array,
     etc)::
 
-        sage: diagonal_matrix(x^2)                                                      # optional - sage.symbolic
+        sage: diagonal_matrix(x^2)                                                      # needs sage.symbolic
         Traceback (most recent call last):
         ...
         TypeError: 'sage.symbolic.expression.Expression' object is not iterable
@@ -2274,19 +2274,19 @@ def companion_matrix(poly, format='right'):
         [ 1  0 -8]
         [ 0  1  4]
 
-        sage: y = var('y')                                                              # optional - sage.symbolic
-        sage: q = y^3 - 2*y + 1                                                         # optional - sage.symbolic
-        sage: companion_matrix(q)                                                       # optional - sage.symbolic
+        sage: y = var('y')                                                              # needs sage.symbolic
+        sage: q = y^3 - 2*y + 1                                                         # needs sage.symbolic
+        sage: companion_matrix(q)                                                       # needs sage.symbolic
         Traceback (most recent call last):
         ...
         TypeError: input must be a polynomial (not a symbolic expression, see docstring),
         or other iterable, not y^3 - 2*y + 1
 
-        sage: coeff_list = [q(y=0)] + [q.coefficient(y^k)                               # optional - sage.symbolic
+        sage: coeff_list = [q(y=0)] + [q.coefficient(y^k)                               # needs sage.symbolic
         ....:                          for k in range(1, q.degree(y)+1)]
-        sage: coeff_list                                                                # optional - sage.symbolic
+        sage: coeff_list                                                                # needs sage.symbolic
         [1, -2, 0, 1]
-        sage: companion_matrix(coeff_list)                                              # optional - sage.symbolic
+        sage: companion_matrix(coeff_list)                                              # needs sage.symbolic
         [ 0  0 -1]
         [ 1  0  2]
         [ 0  1  0]
@@ -2299,9 +2299,9 @@ def companion_matrix(poly, format='right'):
         sage: t = polygen(QQ, 't')
         sage: p = t^12 - 7*t^4 + 28*t^2 - 456
         sage: C = companion_matrix(p, format='top')
-        sage: q = C.minpoly(var='t'); q                                                 # optional - sage.libs.pari
+        sage: q = C.minpoly(var='t'); q                                                 # needs sage.libs.pari
         t^12 - 7*t^4 + 28*t^2 - 456
-        sage: p == q                                                                    # optional - sage.libs.pari
+        sage: p == q                                                                    # needs sage.libs.pari
         True
 
         sage: p = t^3 + 3*t - 8
@@ -2310,9 +2310,9 @@ def companion_matrix(poly, format='right'):
         ....:                            companion_matrix(p^2),
         ....:                            companion_matrix(q),
         ....:                            companion_matrix(q) )
-        sage: A.charpoly(var='t').factor()                                              # optional - sage.libs.pari
+        sage: A.charpoly(var='t').factor()                                              # needs sage.libs.pari
         (t^3 + 3*t - 8)^3 * (t^5 + t - 17)^2
-        sage: A.minpoly(var='t').factor()                                               # optional - sage.libs.pari
+        sage: A.minpoly(var='t').factor()                                               # needs sage.libs.pari
         (t^3 + 3*t - 8)^2 * (t^5 + t - 17)
 
     TESTS::
@@ -2322,7 +2322,7 @@ def companion_matrix(poly, format='right'):
         ...
         ValueError: format must be 'right', 'left', 'top' or 'bottom', not junk
 
-        sage: companion_matrix(sin(x))                                                  # optional - sage.symbolic
+        sage: companion_matrix(sin(x))                                                  # needs sage.symbolic
         Traceback (most recent call last):
         ...
         TypeError: input must be a polynomial (not a symbolic expression, see docstring),
@@ -2334,8 +2334,8 @@ def companion_matrix(poly, format='right'):
         ValueError: polynomial (or the polynomial implied by coefficients) must be monic,
         not a leading coefficient of 896
 
-        sage: F.<a> = GF(2^2)                                                           # optional - sage.rings.finite_rings
-        sage: companion_matrix([4/3, a+1, 1])                                           # optional - sage.rings.finite_rings
+        sage: F.<a> = GF(2^2)                                                           # needs sage.rings.finite_rings
+        sage: companion_matrix([4/3, a+1, 1])                                           # needs sage.rings.finite_rings
         Traceback (most recent call last):
         ...
         TypeError: unable to find common ring for coefficients from polynomial
@@ -2640,12 +2640,13 @@ def random_echelonizable_matrix(parent, rank, upper_bound=None, max_tries=100):
 
     Matrices can be generated over any exact ring. ::
 
-        sage: F.<a> = GF(2^3)                                                           # optional - sage.rings.finite_rings
-        sage: B = random_matrix(F, 4, 5, algorithm='echelonizable', rank=4,             # optional - sage.rings.finite_rings
+        sage: # needs sage.rings.finite_rings
+        sage: F.<a> = GF(2^3)
+        sage: B = random_matrix(F, 4, 5, algorithm='echelonizable', rank=4,
         ....:                   upper_bound=None)
-        sage: B.rank()                                                                  # optional - sage.rings.finite_rings
+        sage: B.rank()
         4
-        sage: B.base_ring() is F                                                        # optional - sage.rings.finite_rings
+        sage: B.base_ring() is F
         True
 
     Square matrices over ZZ or QQ with full rank are always unimodular. ::
@@ -2985,12 +2986,13 @@ def random_unimodular_matrix(parent, upper_bound=None, max_tries=100):
 
     A matrix over the number Field in `y` with defining polynomial `y^2-2y-2`. ::
 
+        sage: # needs sage.rings.number_field
         sage: y = polygen(ZZ, 'y')
-        sage: K = NumberField(y^2 - 2*y - 2, 'y')                                       # optional - sage.rings.number_field
-        sage: C = random_matrix(K, 3, algorithm='unimodular')                           # optional - sage.rings.number_field
-        sage: det(C)                                                                    # optional - sage.rings.number_field
+        sage: K = NumberField(y^2 - 2*y - 2, 'y')
+        sage: C = random_matrix(K, 3, algorithm='unimodular')
+        sage: det(C)
         1
-        sage: C.base_ring() is K                                                        # optional - sage.rings.number_field
+        sage: C.base_ring() is K
         True
 
     TESTS:
@@ -3004,8 +3006,8 @@ def random_unimodular_matrix(parent, upper_bound=None, max_tries=100):
 
     Only matrices over ZZ and QQ can have size control. ::
 
-        sage: F.<a> = GF(5^7)                                                           # optional - sage.rings.finite_rings
-        sage: random_matrix(F, 5, algorithm='unimodular', upper_bound=20)               # optional - sage.rings.finite_rings
+        sage: F.<a> = GF(5^7)                                                           # needs sage.rings.finite_rings
+        sage: random_matrix(F, 5, algorithm='unimodular', upper_bound=20)               # needs sage.rings.finite_rings
         Traceback (most recent call last):
         ...
         TypeError: only matrices over ZZ or QQ can have size control.
@@ -3069,10 +3071,10 @@ def random_diagonalizable_matrix(parent,eigenvalues=None,dimensions=None):
         sage: from sage.matrix.constructor import random_diagonalizable_matrix
         sage: matrix_space = sage.matrix.matrix_space.MatrixSpace(QQ, 5)
         sage: A = random_diagonalizable_matrix(matrix_space)
-        sage: eigenvalues = A.eigenvalues()                                             # optional - sage.rings.number_field
-        sage: S = A.right_eigenmatrix()[1]                                              # optional - sage.rings.number_field
-        sage: eigenvalues2 = (S.inverse()*A*S).diagonal()                               # optional - sage.rings.number_field
-        sage: sorted(eigenvalues) == sorted(eigenvalues2)                               # optional - sage.rings.number_field
+        sage: eigenvalues = A.eigenvalues()                                             # needs sage.rings.number_field
+        sage: S = A.right_eigenmatrix()[1]                                              # needs sage.rings.number_field
+        sage: eigenvalues2 = (S.inverse()*A*S).diagonal()                               # needs sage.rings.number_field
+        sage: sorted(eigenvalues) == sorted(eigenvalues2)                               # needs sage.rings.number_field
         True
 
     A diagonalizable matrix with eigenvalues and dimensions designated,
@@ -3088,9 +3090,9 @@ def random_diagonalizable_matrix(parent,eigenvalues=None,dimensions=None):
         True
         sage: all(x in ZZ for x in (B-(6*identity_matrix(6))).rref().list())
         True
-        sage: S = B.right_eigenmatrix()[1]                                              # optional - sage.rings.number_field
-        sage: eigenvalues2 = (S.inverse()*B*S).diagonal()                               # optional - sage.rings.number_field
-        sage: all(e in eigenvalues for e in eigenvalues2)                               # optional - sage.rings.number_field
+        sage: S = B.right_eigenmatrix()[1]                                              # needs sage.rings.number_field
+        sage: eigenvalues2 = (S.inverse()*B*S).diagonal()                               # needs sage.rings.number_field
+        sage: all(e in eigenvalues for e in eigenvalues2)                               # needs sage.rings.number_field
         True
 
     TESTS:
@@ -3273,32 +3275,33 @@ def vector_on_axis_rotation_matrix(v, i, ring=None):
 
         sage: from sage.matrix.constructor import vector_on_axis_rotation_matrix
         sage: v = vector((1,2,3))
-        sage: vector_on_axis_rotation_matrix(v, 2) * v                                  # optional - sage.symbolic
+        sage: vector_on_axis_rotation_matrix(v, 2) * v                                  # needs sage.symbolic
         (0, 0, sqrt(14))
-        sage: vector_on_axis_rotation_matrix(v, 1) * v                                  # optional - sage.symbolic
+        sage: vector_on_axis_rotation_matrix(v, 1) * v                                  # needs sage.symbolic
         (0, sqrt(14), 0)
-        sage: vector_on_axis_rotation_matrix(v, 0) * v                                  # optional - sage.symbolic
+        sage: vector_on_axis_rotation_matrix(v, 0) * v                                  # needs sage.symbolic
         (sqrt(14), 0, 0)
 
     ::
 
-        sage: x,y = var('x,y')                                                          # optional - sage.symbolic
-        sage: v = vector((x,y))                                                         # optional - sage.symbolic
-        sage: vector_on_axis_rotation_matrix(v, 1)                                      # optional - sage.symbolic
+        sage: # needs sage.symbolic
+        sage: x,y = var('x,y')
+        sage: v = vector((x,y))
+        sage: vector_on_axis_rotation_matrix(v, 1)
         [ y/sqrt(x^2 + y^2) -x/sqrt(x^2 + y^2)]
         [ x/sqrt(x^2 + y^2)  y/sqrt(x^2 + y^2)]
-        sage: vector_on_axis_rotation_matrix(v, 0)                                      # optional - sage.symbolic
+        sage: vector_on_axis_rotation_matrix(v, 0)
         [ x/sqrt(x^2 + y^2)  y/sqrt(x^2 + y^2)]
         [-y/sqrt(x^2 + y^2)  x/sqrt(x^2 + y^2)]
-        sage: vector_on_axis_rotation_matrix(v, 0) * v                                  # optional - sage.symbolic
+        sage: vector_on_axis_rotation_matrix(v, 0) * v
         (x^2/sqrt(x^2 + y^2) + y^2/sqrt(x^2 + y^2), 0)
-        sage: vector_on_axis_rotation_matrix(v, 1) * v                                  # optional - sage.symbolic
+        sage: vector_on_axis_rotation_matrix(v, 1) * v
         (0, x^2/sqrt(x^2 + y^2) + y^2/sqrt(x^2 + y^2))
 
     ::
 
         sage: v = vector((1,2,3,4))
-        sage: vector_on_axis_rotation_matrix(v, 0) * v                                  # optional - sage.symbolic
+        sage: vector_on_axis_rotation_matrix(v, 0) * v                                  # needs sage.symbolic
         (sqrt(30), 0, 0, 0)
         sage: vector_on_axis_rotation_matrix(v, 0, ring=RealField(10))
         [ 0.18  0.37  0.55  0.73]
@@ -3343,35 +3346,35 @@ def ith_to_zero_rotation_matrix(v, i, ring=None):
 
         sage: from sage.matrix.constructor import ith_to_zero_rotation_matrix
         sage: v = vector((1,2,3))
-        sage: ith_to_zero_rotation_matrix(v, 2)                                         # optional - sage.symbolic
+        sage: ith_to_zero_rotation_matrix(v, 2)                                         # needs sage.symbolic
         [             1              0              0]
         [             0  2/13*sqrt(13)  3/13*sqrt(13)]
         [             0 -3/13*sqrt(13)  2/13*sqrt(13)]
-        sage: ith_to_zero_rotation_matrix(v, 2) * v                                     # optional - sage.symbolic
+        sage: ith_to_zero_rotation_matrix(v, 2) * v                                     # needs sage.symbolic
         (1, sqrt(13), 0)
 
     ::
 
-        sage: ith_to_zero_rotation_matrix(v, 0)                                         # optional - sage.symbolic
+        sage: ith_to_zero_rotation_matrix(v, 0)                                         # needs sage.symbolic
         [ 3/10*sqrt(10)              0 -1/10*sqrt(10)]
         [             0              1              0]
         [ 1/10*sqrt(10)              0  3/10*sqrt(10)]
-        sage: ith_to_zero_rotation_matrix(v, 1)                                         # optional - sage.symbolic
+        sage: ith_to_zero_rotation_matrix(v, 1)                                         # needs sage.symbolic
         [ 1/5*sqrt(5)  2/5*sqrt(5)            0]
         [-2/5*sqrt(5)  1/5*sqrt(5)            0]
         [           0            0            1]
-        sage: ith_to_zero_rotation_matrix(v, 2)                                         # optional - sage.symbolic
+        sage: ith_to_zero_rotation_matrix(v, 2)                                         # needs sage.symbolic
         [             1              0              0]
         [             0  2/13*sqrt(13)  3/13*sqrt(13)]
         [             0 -3/13*sqrt(13)  2/13*sqrt(13)]
 
     ::
 
-        sage: ith_to_zero_rotation_matrix(v, 0) * v                                     # optional - sage.symbolic
+        sage: ith_to_zero_rotation_matrix(v, 0) * v                                     # needs sage.symbolic
         (0, 2, sqrt(10))
-        sage: ith_to_zero_rotation_matrix(v, 1) * v                                     # optional - sage.symbolic
+        sage: ith_to_zero_rotation_matrix(v, 1) * v                                     # needs sage.symbolic
         (sqrt(5), 0, 3)
-        sage: ith_to_zero_rotation_matrix(v, 2) * v                                     # optional - sage.symbolic
+        sage: ith_to_zero_rotation_matrix(v, 2) * v                                     # needs sage.symbolic
         (1, sqrt(13), 0)
 
     Other ring::
@@ -3387,13 +3390,14 @@ def ith_to_zero_rotation_matrix(v, i, ring=None):
 
     On the symbolic ring::
 
-        sage: x,y,z = var('x,y,z')                                                      # optional - sage.symbolic
-        sage: v = vector((x,y,z))                                                       # optional - sage.symbolic
-        sage: ith_to_zero_rotation_matrix(v, 2)                                         # optional - sage.symbolic
+        sage: # needs sage.symbolic
+        sage: x,y,z = var('x,y,z')
+        sage: v = vector((x,y,z))
+        sage: ith_to_zero_rotation_matrix(v, 2)
         [                 1                  0                  0]
         [                 0  y/sqrt(y^2 + z^2)  z/sqrt(y^2 + z^2)]
         [                 0 -z/sqrt(y^2 + z^2)  y/sqrt(y^2 + z^2)]
-        sage: ith_to_zero_rotation_matrix(v, 2) * v                                     # optional - sage.symbolic
+        sage: ith_to_zero_rotation_matrix(v, 2) * v
         (x, y^2/sqrt(y^2 + z^2) + z^2/sqrt(y^2 + z^2), 0)
 
     TESTS::
@@ -3492,7 +3496,7 @@ def vandermonde(v, ring=None):
 
     A Vandermonde matrix of order three over the symbolic ring::
 
-        sage: matrix.vandermonde(SR.var(['x0', 'x1', 'x2']))                            # optional - sage.symbolic
+        sage: matrix.vandermonde(SR.var(['x0', 'x1', 'x2']))                            # needs sage.symbolic
         [   1   x0 x0^2]
         [   1   x1 x1^2]
         [   1   x2 x2^2]
@@ -3579,7 +3583,7 @@ def hankel(c, r=None, ring=None):
 
     A Hankel matrix with symbolic entries::
 
-        sage: matrix.hankel(SR.var('a, b, c, d, e'))                                    # optional - sage.symbolic
+        sage: matrix.hankel(SR.var('a, b, c, d, e'))                                    # needs sage.symbolic
         [a b c d e]
         [b c d e 0]
         [c d e 0 0]
@@ -3588,7 +3592,7 @@ def hankel(c, r=None, ring=None):
 
     We can also pass the elements of the last row, starting at the second column::
 
-        sage: matrix.hankel(SR.var('a, b, c, d, e'), SR.var('f, g, h, i'))              # optional - sage.symbolic
+        sage: matrix.hankel(SR.var('a, b, c, d, e'), SR.var('f, g, h, i'))              # needs sage.symbolic
         [a b c d e]
         [b c d e f]
         [c d e f g]
