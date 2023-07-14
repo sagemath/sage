@@ -151,6 +151,7 @@ cdef class FastFourierTransform_complex(FastFourierTransform_base):
 
         EXAMPLES::
 
+            sage: # needs sage.rings.mpfr sage.symbolic
             sage: I = CC(I)
             sage: a = FastFourierTransform(4)
             sage: a[0] = 1

@@ -216,9 +216,9 @@ class IndexedSequence(SageObject):
             sage: print(s)
             Indexed sequence: [0, 1, 2]
              indexed by [0, 1, 2]
-            sage: I = GF(3)                                                             # needs sage.rings.finite_rings
-            sage: A = [i^2 for i in I]                                                  # needs sage.rings.finite_rings
-            sage: s = IndexedSequence(A,I); s                                           # needs sage.rings.finite_rings
+            sage: I = GF(3)
+            sage: A = [i^2 for i in I]
+            sage: s = IndexedSequence(A,I); s
             Indexed sequence: [0, 1, 1]
              indexed by Finite Field of size 3
         """

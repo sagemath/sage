@@ -78,13 +78,14 @@ def WaveletTransform(n, wavelet_type, wavelet_k):
 
     This example gives a simple example of wavelet compression::
 
+        sage: # needs sage.symbolic
         sage: a = DWT(2048,'daubechies',6)
-        sage: for i in range(2048): a[i]=float(sin((i*5/2048)**2))                      # needs sage.symbolic
-        sage: a.plot().show()                   # long time (7s on sage.math, 2011), needs sage.plot sage.symbolic
-        sage: a.forward_transform()                                                     # needs sage.symbolic
-        sage: for i in range(1800): a[2048-i-1] = 0                                     # needs sage.symbolic
-        sage: a.backward_transform()                                                    # needs sage.symbolic
-        sage: a.plot().show()                   # long time (7s on sage.math, 2011), needs sage.plot sage.symbolic
+        sage: for i in range(2048): a[i]=float(sin((i*5/2048)**2))
+        sage: a.plot().show()                   # long time (7s on sage.math, 2011), needs sage.plot
+        sage: a.forward_transform()
+        sage: for i in range(1800): a[2048-i-1] = 0
+        sage: a.backward_transform()
+        sage: a.plot().show()                   # long time (7s on sage.math, 2011), needs sage.plot
     """
     cdef size_t _n, _k
     _n = int(n)
