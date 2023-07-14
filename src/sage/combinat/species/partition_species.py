@@ -273,7 +273,7 @@ class PartitionSpecies(GenericCombinatorialSpecies):
 
             sage: P = species.PartitionSpecies()
             sage: g = P.cycle_index_series()                                            # needs sage.modules
-            sage: g[0:5]
+            sage: g[0:5]                                                                # needs sage.modules
             [p[],
              p[1],
              p[1, 1] + p[2],

@@ -145,21 +145,22 @@ class CompositionSpecies(GenericCombinatorialSpecies, UniqueRepresentation):
 
         TESTS::
 
-            sage: a = _[2]                                                              # needs sage.libs.flint
-            sage: f, gs = a._list                                                       # needs sage.libs.flint
-            sage: f                                                                     # needs sage.libs.flint
+            sage: # needs sage.libs.flint
+            sage: a = _[2]
+            sage: f, gs = a._list
+            sage: f
             {{'a', 'c'}, {'b'}}
-            sage: f.parent()                                                            # needs sage.libs.flint
+            sage: f.parent()
             Set species
-            sage: f._list                                                               # needs sage.libs.flint
+            sage: f._list
             [1, 2]
-            sage: f._labels                                                             # needs sage.libs.flint
+            sage: f._labels
             [{'a', 'c'}, {'b'}]
-            sage: [g.parent() for g in gs]                                              # needs sage.libs.flint
+            sage: [g.parent() for g in gs]
             [Cyclic permutation species, Cyclic permutation species]
-            sage: [g._labels for g in gs]                                               # needs sage.libs.flint
+            sage: [g._labels for g in gs]
             [['a', 'c'], ['b']]
-            sage: [g._list for g in gs]                                                 # needs sage.libs.flint
+            sage: [g._list for g in gs]
             [[1, 2], [1]]
         """
         from itertools import product
