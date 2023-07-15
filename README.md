@@ -416,6 +416,18 @@ You need to install `sage_conf`, a wheelhouse of various python packages. You ca
 
 **NOTE:** You can find `sage` and `sagemath` pip packages but with these packages, you will encounter `ModuleNotFoundError`.
 
+Sagemath Docker image
+---------------------
+
+[![Docker Status](http://dockeri.co/image/sagemath/sagemath)](https://hub.docker.com/r/sagemath/sagemath)
+
+Sagemath is available on Docker Hub and can be downloaded by:
+``` bash
+docker pull sagemath/sagemath
+```
+
+Currently, the docker image is not up to date.
+
 Troubleshooting
 ---------------
 
