@@ -207,7 +207,7 @@ class FunctionFieldIdeal_rational(FunctionFieldIdeal):
             sage: K.<x> = FunctionField(QQ)
             sage: O = K.maximal_order()
             sage: I = O.ideal(x^3 + x^2)
-            sage: [f.is_prime() for f,m in I.factor()]                                                                  # needs sage.rings.finite_rings
+            sage: [f.is_prime() for f,m in I.factor()]                                  # needs sage.libs.pari
             [True, True]
         """
         return self._gen.denominator() == 1 and self._gen.numerator().is_prime()
@@ -296,7 +296,7 @@ class FunctionFieldIdeal_rational(FunctionFieldIdeal):
             sage: F.<x> = FunctionField(QQ)
             sage: O = F.maximal_order()
             sage: I = O.ideal(x^2*(x^2+x+1)^3)
-            sage: [f.valuation(I) for f,_ in I.factor()]                                                                # needs sage.rings.finite_rings
+            sage: [f.valuation(I) for f,_ in I.factor()]                                # needs sage.libs.pari
             [2, 3]
         """
         if not self.is_prime():
@@ -319,13 +319,13 @@ class FunctionFieldIdeal_rational(FunctionFieldIdeal):
             sage: F.<x> = FunctionField(QQ)
             sage: O = F.maximal_order()
             sage: p = O.ideal(x)
-            sage: p.valuation(O.ideal(x + 1))  # indirect doctest                                                       # needs sage.rings.finite_rings
+            sage: p.valuation(O.ideal(x + 1))  # indirect doctest                       # needs sage.libs.pari
             0
-            sage: p.valuation(O.ideal(x^2))  # indirect doctest                                                         # needs sage.rings.finite_rings
+            sage: p.valuation(O.ideal(x^2))  # indirect doctest                         # needs sage.libs.pari
             2
-            sage: p.valuation(O.ideal(1/x^3))  # indirect doctest                                                       # needs sage.rings.finite_rings
+            sage: p.valuation(O.ideal(1/x^3))  # indirect doctest                       # needs sage.libs.pari
             -3
-            sage: p.valuation(O.ideal(0))  # indirect doctest                                                           # needs sage.rings.finite_rings
+            sage: p.valuation(O.ideal(0))  # indirect doctest                           # needs sage.libs.pari
             +Infinity
         """
         return ideal.gen().valuation(self.gen())

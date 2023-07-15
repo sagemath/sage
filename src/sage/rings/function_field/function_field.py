@@ -121,7 +121,7 @@ Function fields over the algebraic field are supported::
 
 TESTS::
 
-    sage: TestSuite(J).run()                                                            # needs sage.rings.finite_rings
+    sage: TestSuite(J).run()
     sage: TestSuite(K).run(max_runs=256)        # long time (10s)                       # needs sage.rings.number_field
     sage: TestSuite(L).run(max_runs=8)          # long time (25s)                       # needs sage.rings.function_field sage.rings.number_field
     sage: TestSuite(M).run(max_runs=8)          # long time (35s)                       # needs sage.rings.finite_rings sage.rings.function_field

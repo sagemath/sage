@@ -258,7 +258,7 @@ class FunctionFieldPlace(Element):
 
             sage: k.<a> = GF(2)
             sage: K.<x> = FunctionField(k)
-            sage: sum(K.places_finite())                                                # needs sage.rings.finite_rings
+            sage: sum(K.places_finite())                                                # needs sage.libs.pari
             Place (x) + Place (x + 1)
 
         Note that this does not work, as wanted::
