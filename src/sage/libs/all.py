@@ -1,9 +1,7 @@
 from .all__sagemath_combinat import *
+from .all__sagemath_ntl import *
+from .all__sagemath_pari import *
 from .all__sagemath_symbolics import *
-
-import sage.libs.ntl.all as ntl
-
-from sage.libs.pari.all import pari, pari_gen, PariError
 
 from sage.misc.lazy_import import lazy_import
 lazy_import('sage.libs.gap.libgap', 'libgap')

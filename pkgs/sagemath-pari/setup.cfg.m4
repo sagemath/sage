@@ -18,8 +18,9 @@ install_requires =
 
 packages =
     sage.libs.pari
-    sage.libs.mpfr
 
 [options.package_data]
 sage.libs.pari = *.pxd
-sage.libs.mpfr = *.pxd
+
+[options.extras_require]
+test    = SPKG_INSTALL_REQUIRES_sagemath_repl

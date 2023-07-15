@@ -2,41 +2,19 @@ prune sage
 
 include VERSION.txt
 
-global-include    all__sagemath_pari.py
+include sage/ext/memory.p*                                      # only used by sage.libs.pari
+
+include sage/interfaces/gp.p*
 
 graft sage/libs/pari
 exclude sage/libs/pari/convert_flint.p*
-exclude sage/libs/pari/convert_sage*.p*                         # to be added later; needs sage.rings.{integer,rational,*_double}, sage.libs.gsl.complex
 include sage/rings/finite_rings/element_pari_ffelt.p*   # needs sage.rings.finite_rings.element_base
 include sage/rings/factorint_pari.p*                    # needs sage.rings.integer
 include sage/rings/power_series_pari.p*                 # needs sage.rings.power_series_ring_element, sage.rings.polynomial.polynomial_element
 
-# pxd dependencies
-include sage/misc/binary_tree.pxd                               # FIXME
-include sage/rings/integer.pxd                                  # FIXME
-include sage/rings/finite_rings/element_base.p*                 # FIXME
-include sage/rings/polynomial/*.pxd                             # FIXME
-include sage/rings/power_series_ring_element.pxd                # FIXME
-include sage/rings/rational.pxd                                 # FIXME
-
-
 # We could but don't currently include this
 # -- rather we ship all of sage.rings.number_field in sagemath-ntl (which currently depends on sagemath-pari)
 # include sage/rings/number_field/totallyreal*.p*         # needs sage.rings.{integer,rational}
-
-
-
-#
-# real_mpfr; could hopefully be disentangled from cypari2 later and moved to sagemath-categories.
-#
-include sage/rings/real_mpfr.p*                         # also needs sage.libs.mpmath.utils
-graft sage/libs/mpfr
-
-# real_mpfr dependencies
-include sage/libs/mpmath/utils.pxd                              # FIXME
-include sage/rings/abc.pxd                                      # FIXME
-include sage/rings/real_double.pxd                              # FIXME
-include sage/arith/constants.pxd                                # FIXME
 
 #
 # padics using PARI.
@@ -61,6 +39,9 @@ include sage/rings/morphism.pxd                                 # FIXME
 
 global-exclude *.c
 global-exclude *.cpp
+
+global-exclude all__sagemath*.*
+global-include all__sagemath_pari.py
 
 global-exclude __pycache__
 global-exclude *.py[co]
