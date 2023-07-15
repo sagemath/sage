@@ -905,7 +905,7 @@ class RationalFunctionField_global(RationalFunctionField):
         EXAMPLES::
 
             sage: F.<x> = FunctionField(GF(5))
-            sage: F.places()                                                            # needs sage.rings.finite_rings
+            sage: F.places()                                                            # needs sage.libs.pari
             [Place (1/x),
              Place (x),
              Place (x + 1),
@@ -929,7 +929,7 @@ class RationalFunctionField_global(RationalFunctionField):
         EXAMPLES::
 
             sage: F.<x> = FunctionField(GF(5))
-            sage: F.places_finite()                                                     # needs sage.rings.finite_rings
+            sage: F.places_finite()                                                     # needs sage.libs.pari
             [Place (x), Place (x + 1), Place (x + 2), Place (x + 3), Place (x + 4)]
         """
         return list(self._places_finite(degree))

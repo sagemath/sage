@@ -325,7 +325,7 @@ cdef class FunctionFieldElement(FieldElement):
             sage: K.<x> = FunctionField(QQ); R.<y> = K[]
             sage: L.<y> = K.extension(y^2 - x*y + 4*x^3); R.<z> = L[]                   # needs sage.rings.function_field
             sage: M.<z> = L.extension(z^3 - y^2*z + x)                                  # needs sage.rings.function_field
-            sage: x.characteristic_polynomial('W')                                      # needs sage.modules sage.rings.function_field
+            sage: x.characteristic_polynomial('W')                                      # needs sage.modules
             W - x
             sage: y.characteristic_polynomial('W')                                      # needs sage.modules sage.rings.function_field
             W^2 - x*W + 4*x^3
@@ -346,7 +346,7 @@ cdef class FunctionFieldElement(FieldElement):
             sage: K.<x> = FunctionField(QQ); R.<y> = K[]
             sage: L.<y> = K.extension(y^2 - x*y + 4*x^3); R.<z> = L[]                   # needs sage.rings.function_field
             sage: M.<z> = L.extension(z^3 - y^2*z + x)                                  # needs sage.rings.function_field
-            sage: x.minimal_polynomial('W')                                             # needs sage.modules sage.rings.function_field
+            sage: x.minimal_polynomial('W')                                             # needs sage.modules
             W - x
             sage: y.minimal_polynomial('W')                                             # needs sage.modules sage.rings.function_field
             W^2 - x*W + 4*x^3
@@ -477,7 +477,7 @@ cdef class FunctionFieldElement(FieldElement):
 
             sage: K.<x> = FunctionField(GF(2))
             sage: f = 1/(x^3 + x^2 + x)
-            sage: f.divisor()                                                           # needs sage.modules sage.rings.finite_rings
+            sage: f.divisor()                                                           # needs sage.libs.pari sage.modules
             3*Place (1/x)
              - Place (x)
              - Place (x^2 + x + 1)
@@ -507,7 +507,7 @@ cdef class FunctionFieldElement(FieldElement):
 
             sage: K.<x> = FunctionField(GF(2))
             sage: f = 1/(x^3 + x^2 + x)
-            sage: f.divisor_of_zeros()                                                  # needs sage.modules sage.rings.finite_rings
+            sage: f.divisor_of_zeros()                                                  # needs sage.libs.pari sage.modules
             3*Place (1/x)
 
         ::
@@ -533,7 +533,7 @@ cdef class FunctionFieldElement(FieldElement):
 
             sage: K.<x> = FunctionField(GF(2))
             sage: f = 1/(x^3 + x^2 + x)
-            sage: f.divisor_of_poles()                                                  # needs sage.modules sage.rings.finite_rings
+            sage: f.divisor_of_poles()                                                  # needs sage.libs.pari sage.modules
             Place (x)
              + Place (x^2 + x + 1)
 
@@ -560,7 +560,7 @@ cdef class FunctionFieldElement(FieldElement):
 
             sage: K.<x> = FunctionField(GF(2))
             sage: f = 1/(x^3 + x^2 + x)
-            sage: f.zeros()                                                             # needs sage.modules sage.rings.finite_rings
+            sage: f.zeros()                                                             # needs sage.libs.pari sage.modules
             [Place (1/x)]
 
         ::
@@ -580,7 +580,7 @@ cdef class FunctionFieldElement(FieldElement):
 
             sage: K.<x> = FunctionField(GF(2))
             sage: f = 1/(x^3 + x^2 + x)
-            sage: f.poles()                                                             # needs sage.modules sage.rings.finite_rings
+            sage: f.poles()                                                             # needs sage.libs.pari sage.modules
             [Place (x), Place (x^2 + x + 1)]
 
         ::

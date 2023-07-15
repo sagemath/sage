@@ -16,11 +16,11 @@ Constant field extension of the rational function field over rational numbers::
     sage: L                                                                             # needs sage.rings.number_field
     Rational function field in x over Number Field in a with defining
     polynomial x^2 - 2 with a = 1.4142... over its base
-    sage: d = (x^2 - 2).divisor()                                                       # needs sage.rings.number_field
-    sage: d                                                                             # needs sage.rings.number_field
+    sage: d = (x^2 - 2).divisor()                                                       # needs sage.libs.pari
+    sage: d                                                                             # needs sage.libs.pari
     -2*Place (1/x)
      + Place (x^2 - 2)
-    sage: L.conorm_divisor(d)                                                           # needs sage.rings.number_field
+    sage: L.conorm_divisor(d)                                                           # needs sage.libs.pari sage.rings.number_field
     -2*Place (1/x)
      + Place (x - a)
      + Place (x + a)

@@ -179,7 +179,7 @@ class FunctionFieldOrder_basis(FunctionFieldOrder):
             sage: O = L.equation_order()                                                            # needs sage.rings.function_field
             sage: I = O.ideal_with_gens_over_base([y]); I                                           # needs sage.rings.function_field
             Ideal (y) of Order in Function field in y defined by y^2 + 6*x^3 + 6
-            sage: y in I                                                                            # needs sage.rings.function_field
+            sage: y in I
             True
             sage: y^2 in I                                                                          # needs sage.rings.function_field
             False
@@ -476,7 +476,7 @@ class FunctionFieldOrderInfinite_basis(FunctionFieldOrderInfinite):
             sage: O = L.equation_order()                                                            # needs sage.rings.function_field
             sage: I = O.ideal_with_gens_over_base([y]); I                                           # needs sage.rings.function_field
             Ideal (y) of Order in Function field in y defined by y^2 + 6*x^3 + 6
-            sage: y in I                                                                            # needs sage.rings.function_field
+            sage: y in I
             True
             sage: y^2 in I                                                                          # needs sage.rings.function_field
             False
