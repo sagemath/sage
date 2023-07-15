@@ -44,11 +44,13 @@ jobs:
           # (This keeps mtimes of unchanged files unchanged and mtimes of changed files newer than unchanged files.)
           # Finally we reset the index to "old". (This keeps all mtimes unchanged.)
           # The changed files now show up as uncommitted changes.
+          # The final "git add -N" makes sure that files that were added in "new" do not show
+          # as untracked files, which would be removed by "git clean -fx".
           git worktree add --detach worktree-image
           rm -rf /sage/.git && mv worktree-image/.git /sage/
           rm -rf worktree-image && ln -s /sage worktree-image
           if [ ! -f worktree-image/.gitignore ]; then cp .gitignore worktree-image/; fi
-          (cd worktree-image && git add -A && git commit --allow-empty -m "old" -a && git tag -f old && git reset --hard new && git reset old)
+          (cd worktree-image && git add -A && git commit --quiet --allow-empty -m "old" -a && git tag -f old && git reset --hard new && git reset --quiet old && git add -N . && git status)
           # Keep track of changes to built HTML
           new_version=$(cat src/VERSION.txt); (cd /sage/local/share/doc/sage/html/en && find . -name "*.html" | xargs sed -i '/class="sidebar-brand-text"/s/Sage [0-9a-z.]* /Sage '$new_version' /'; git init && (echo "*.svg binary"; echo "*.pdf binary") >> .gitattributes && (echo ".buildinfo"; echo '*.inv'; echo '.git*'; echo '*.svg'; echo '*.pdf'; echo '*.png'; echo 'searchindex.js') > .gitignore; git add -A && git commit --quiet -m "old")
 
