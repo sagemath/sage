@@ -99,7 +99,7 @@ is attempted, and after that ``sin()`` which succeeds::
     5
     sage: f(0, hold=True)                                                               # needs sage.symbolic
     my_sin(0)
-    sage: f(0, hold=True).n()                                                           # needs sage.symbolic
+    sage: f(0, hold=True).n()
     3.50000000000000
     sage: f(CBF(0))                                                                     # needs sage.libs.flint
     0
@@ -466,7 +466,7 @@ cdef class Function(SageObject):
 
             sage: type(exp(float(0)))
             <... 'float'>
-            sage: exp(RR(0)).parent()                                                   # needs sage.symbolic
+            sage: exp(RR(0)).parent()
             Real Field with 53 bits of precision
 
 
@@ -498,16 +498,17 @@ cdef class Function(SageObject):
 
         Check that :trac:`10133` is fixed::
 
-            sage: out = sin(0)                                                          # needs sage.symbolic
+            sage: # needs sage.symbolic
+            sage: out = sin(0)
             sage: out, parent(out)
             (0, Integer Ring)
-            sage: out = sin(int(0))                                                     # needs sage.symbolic
+            sage: out = sin(int(0))
             sage: (out, parent(out))
             (0, <... 'int'>)
-            sage: out = arctan2(int(0), float(1))                                       # needs sage.symbolic
+            sage: out = arctan2(int(0), float(1))
             sage: (out, parent(out))
             (0, <... 'int'>)
-            sage: out = arctan2(int(0), RR(1))                                          # needs sage.symbolic
+            sage: out = arctan2(int(0), RR(1))
             sage: (out, parent(out))
             (0, Integer Ring)
 
@@ -798,7 +799,7 @@ cdef class Function(SageObject):
             ....:                 assert parent == RealField(prec)
             ....:                 return prec
             sage: noMpmathFn = NoMpmathFn("noMpmathFn")
-            sage: with workprec(64): noMpmathFn(sqrt(mpf('2')))
+            sage: with workprec(64): noMpmathFn(sqrt(mpf('2')))                         # needs sage.symbolic
             64
             sage: sage.libs.mpmath.all.noMpmathFn = lambda x: 123
             sage: with workprec(64): noMpmathFn(sqrt(mpf('2')))
@@ -1192,7 +1193,7 @@ cdef class SymbolicFunction(Function):
             foo
             sage: foo(2, 3)                                                             # needs sage.symbolic
             foo(2, 3)
-            sage: foo(2, 3).n()                                                         # needs sage.symbolic
+            sage: foo(2, 3).n()
             12.0000000000000
             sage: foo(2, 3).conjugate()                                                 # needs sage.symbolic
             2

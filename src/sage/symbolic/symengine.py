@@ -7,10 +7,11 @@ EXAMPLES::
     sage: SR(expr)                                                     # optional - symengine_py
     (golden_ratio*e^y + x)^2
 
-    sage: f = symengine.Lambdify([x, y], expr)                         # optional - symengine_py
-    sage: f(3, 5)                                                      # optional - symengine_py
+    sage: # optional - symengine_py
+    sage: f = symengine.Lambdify([x, y], expr)
+    sage: f(3, 5)
     array(59115.86131768)
-    sage: g = fast_callable(SR(expr), vars=[SR(x),SR(y)], domain=RDF)  # optional - symengine_py
-    sage: g(3, 5)                                                      # optional - symengine_py
+    sage: g = fast_callable(SR(expr), vars=[SR(x),SR(y)], domain=RDF)
+    sage: g(3, 5)
     59115.86131767523
 """
