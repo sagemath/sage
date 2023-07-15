@@ -1,3 +1,4 @@
+# sage.doctest: optional - sage.libs.pari
 r"""
 Interface to the GP calculator of PARI/GP
 
@@ -140,14 +141,18 @@ AUTHORS:
 ##########################################################################
 import os
 
+import sage.interfaces.abc
+
 from sage.env import DOT_SAGE
-from .expect import Expect, ExpectElement, ExpectFunction, FunctionElement
-from sage.misc.verbose import verbose
 from sage.interfaces.tab_completion import ExtraTabCompletion
 from sage.libs.pari.all import pari
-import sage.rings.complex_mpfr
 from sage.misc.instancedoc import instancedoc
-import sage.interfaces.abc
+from sage.misc.lazy_import import lazy_import
+from sage.misc.verbose import verbose
+
+lazy_import('sage.rings.cc', 'CC')
+
+from .expect import Expect, ExpectElement, ExpectFunction, FunctionElement
 
 
 class Gp(ExtraTabCompletion, Expect):
@@ -982,7 +987,7 @@ class GpElement(ExpectElement, sage.interfaces.abc.GpElement):
         """
         # Retrieving values from another computer algebra system is
         # slow anyway, right?
-        cc_val = self._complex_mpfr_field_(sage.rings.complex_mpfr.ComplexField())
+        cc_val = self._complex_mpfr_field_(CC)
         return CDF(cc_val)
 
     def __len__(self):
