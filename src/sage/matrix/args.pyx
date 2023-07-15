@@ -1302,7 +1302,7 @@ cdef class MatrixArgs:
                 return MA_ENTRIES_NDARRAY
             return MA_ENTRIES_SCALAR
         if isinstance(self.entries, Gen):  # PARI object
-            from sage.libs.pari.convert_sage import pari_typ_to_entries_type
+            from sage.libs.pari.convert_sage_matrix import pari_typ_to_entries_type
             return pari_typ_to_entries_type(self)
         if isinstance(self.entries, MatrixArgs):
             # Prevent recursion

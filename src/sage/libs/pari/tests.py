@@ -12,16 +12,16 @@ Sage-specific API checks:
 
 Creating PARI objects::
 
-    sage: pari(Matrix(2,2,range(4)))
+    sage: pari(Matrix(2,2,range(4)))                                                    # needs sage.modules
     [0, 1; 2, 3]
-    sage: pari(x^2-3)                                                                   # optional - sage.symbolic
+    sage: pari(x^2-3)                                                                   # needs sage.symbolic
     x^2 - 3
 
 The following example caused Sage to crash before
 :trac:`20630`::
 
     sage: R.<theta> = QQ[]
-    sage: K.<a> = NumberField(theta^2 + 1)
+    sage: K.<a> = NumberField(theta^2 + 1)                                              # needs sage.rings.number_field
     sage: K.absolute_polynomial().galois_group(pari_group=True)
     PARI group [2, -1, 1, "S2"] of degree 2
 
@@ -30,7 +30,7 @@ Now it takes much less than a second::
 
     sage: pari.allocatemem(200000)
     PARI stack size set to 200000 bytes, maximum size set to ...
-    sage: x = polygen(ZpFM(3,10))
+    sage: x = polygen(ZpFM(3,10))                                                       # needs sage.rings.padics
     sage: pol = ((x-1)^50 + x)
     sage: pari(pol).poldisc()
     2*3 + 3^4 + 2*3^6 + 3^7 + 2*3^8 + 2*3^9 + O(3^10)
@@ -62,7 +62,7 @@ from the lowest degree term.  This includes trailing zeros::
 Number fields::
 
     sage: x = polygen(QQ)
-    sage: K.<a> = NumberField(x^4 - 4*x^2 + 1)
+    sage: K.<a> = NumberField(x^4 - 4*x^2 + 1)                                          # needs sage.rings.number_field
     sage: pari(K).nf_get_pol()
     y^4 - 4*y^2 + 1
     sage: L.<b> = K.extension(x^2 - 5)
@@ -76,7 +76,7 @@ Number fields::
     sage: K.pari_bnf().nf_get_pol()
     y^4 - 4*y^2 + 1
 
-    sage: K.<a> = QuadraticField(-65)
+    sage: K.<a> = QuadraticField(-65)                                                   # needs sage.rings.number_field
     sage: G = K.pari_bnf().bnf_get_gen(); G
     [[3, 2; 0, 1], [2, 1; 0, 1]]
     sage: [K.ideal(J) for J in G]
@@ -84,24 +84,24 @@ Number fields::
 
 Conversions::
 
-    sage: K.<i> = QuadraticField(-1)
+    sage: K.<i> = QuadraticField(-1)                                                    # needs sage.rings.number_field
     sage: F = pari(K).idealfactor(K.ideal(5)); F
     [[5, [-2, 1]~, 1, 1, [2, -1; 1, 2]], 1; [5, [2, 1]~, 1, 1, [-2, -1; 1, -2]], 1]
     sage: F[0,0].pr_get_p()
     5
 
-    sage: K.<i> = QuadraticField(-1)
+    sage: K.<i> = QuadraticField(-1)                                                    # needs sage.rings.number_field
     sage: J = pari(K).idealstar(K.ideal(4*i + 2))
     sage: J.bid_get_cyc()
     [4, 2]
 
-    sage: int(pari(RealField(63)(2^63-1)))
+    sage: int(pari(RealField(63)(2^63-1)))                                              # needs sage.rings.real_mpfr
     9223372036854775807   # 32-bit
     9223372036854775807   # 64-bit
-    sage: int(pari(RealField(63)(2^63+2)))
+    sage: int(pari(RealField(63)(2^63+2)))                                              # needs sage.rings.real_mpfr
     9223372036854775810
 
-    sage: K = Qp(11,5)
+    sage: K = Qp(11,5)                                                                  # needs sage.rings.padics
     sage: x = K(11^-10 + 5*11^-7 + 11^-6)
     sage: y = pari(x)
     sage: y.padicprime()
@@ -127,20 +127,21 @@ Conversions::
 
 Conversion from matrices and vectors is supported::
 
-    sage: a = pari(matrix(2,3,[1,2,3,4,5,6])); a, a.type()
+    sage: a = pari(matrix(2,3,[1,2,3,4,5,6])); a, a.type()                              # needs sage.modules
     ([1, 2, 3; 4, 5, 6], 't_MAT')
-    sage: v = vector([1.2, 3.4, 5.6])
+    sage: v = vector([1.2, 3.4, 5.6])                                                   # needs sage.modules
     sage: pari(v)
     [1.20000000000000, 3.40000000000000, 5.60000000000000]
 
 Some more exotic examples::
 
+    sage: # needs sage.rings.number_field
     sage: K.<a> = NumberField(polygen(QQ)^3 - 2)
     sage: pari(K)
     [y^3 - 2, [1, 1], -108, 1, [[1, 1.25992104989487, 1.58740105196820; 1, -0.629960524947437 + 1.09112363597172*I, -0.793700525984100 - 1.37472963699860*I], [1, 1.25992104989487, 1.58740105196820; 1, 0.461163111024285, -2.16843016298270; 1, -1.72108416091916, 0.581029111014503], [16, 20, 25; 16, 7, -35; 16, -28, 9], [3, 0, 0; 0, 0, 6; 0, 6, 0], [6, 0, 0; 0, 6, 0; 0, 0, 3], [2, 0, 0; 0, 0, 1; 0, 1, 0], [2, [0, 0, 2; 1, 0, 0; 0, 1, 0]], [2, 3]], [1.25992104989487, -0.629960524947437 + 1.09112363597172*I], [1, y, y^2], [1, 0, 0; 0, 1, 0; 0, 0, 1], [1, 0, 0, 0, 0, 2, 0, 2, 0; 0, 1, 0, 1, 0, 0, 0, 0, 2; 0, 0, 1, 0, 1, 0, 1, 0, 0]]
 
-    sage: E = EllipticCurve('37a1')
-    sage: pari(E)
+    sage: E = EllipticCurve('37a1')                                                     # needs sage.schemes
+    sage: pari(E)                                                                       # needs sage.schemes
     [0, 0, 1, -1, 0, 0, -2, 1, -1, 48, -216, 37, 110592/37, Vecsmall([1]), [Vecsmall([64, 1])], [0, 0, 0, 0, 0, 0, 0, 0]]
 
 Deprecation checks::
@@ -407,12 +408,14 @@ Basic functions::
     -1
     sage: pari(3/4).ceil()
     1
-    sage: x = SR.symbol('x')                                                            # optional - sage.symbolic
-    sage: pari(x).ceil()                                                                # optional - sage.symbolic
+
+    sage: # needs sage.symbolic
+    sage: x = SR.symbol('x')
+    sage: pari(x).ceil()
     x
-    sage: pari((x^2+x+1)/x).ceil()                                                      # optional - sage.symbolic
+    sage: pari((x^2+x+1)/x).ceil()
     x + 1
-    sage: pari(x^2+5*x+2.5).ceil()                                                      # optional - sage.symbolic
+    sage: pari(x^2+5*x+2.5).ceil()
     x^2 + 5*x + 2.50000000000000
 
     sage: x = pari(-2).Mod(5)
@@ -495,12 +498,13 @@ Basic functions::
     [1, 2, 4]
     sage: pari([[1.1,2.2],[3.3,4.4]]).floor()
     [[1, 2], [3, 4]]
-    sage: x = SR.symbol('x')                                                            # optional - sage.symbolic
-    sage: pari(x).floor()                                                               # optional - sage.symbolic
+
+    sage: x = SR.symbol('x')                                                            # needs sage.symbolic
+    sage: pari(x).floor()                                                               # needs sage.symbolic
     x
-    sage: pari((x^2+x+1)/x).floor()                                                     # optional - sage.symbolic
+    sage: pari((x^2+x+1)/x).floor()                                                     # needs sage.symbolic
     x + 1
-    sage: pari(x^2+5*x+2.5).floor()                                                     # optional - sage.symbolic
+    sage: pari(x^2+5*x+2.5).floor()                                                     # needs sage.symbolic
     x^2 + 5*x + 2.50000000000000
     sage: pari('"hello world"').floor()
     Traceback (most recent call last):
@@ -509,7 +513,7 @@ Basic functions::
 
     sage: pari(1.75).frac()
     0.750000000000000
-    sage: pari(sqrt(2)).frac()                                                          # optional - sage.symbolic
+    sage: pari(sqrt(2)).frac()                                                          # needs sage.symbolic
     0.414213562373095
     sage: pari('sqrt(-2)').frac()
     Traceback (most recent call last):
@@ -518,7 +522,7 @@ Basic functions::
 
     sage: pari('1+2*I').imag()
     2
-    sage: pari(sqrt(-2)).imag()                                                         # optional - sage.symbolic
+    sage: pari(sqrt(-2)).imag()                                                         # needs sage.symbolic
     1.41421356237310
     sage: pari('x+I').imag()
     1
@@ -538,13 +542,13 @@ Basic functions::
     sage: b.lift()
     -17*x^2 - 3*x
 
-    sage: pari(pi).sign()                                                               # optional - sage.symbolic
+    sage: pari(pi).sign()                                                               # needs sage.symbolic
     1
     sage: pari(0).sign()
     0
     sage: pari(-1/2).sign()
     -1
-    sage: pari(SR(I)).sign()                                                            # optional - sage.symbolic
+    sage: pari(SR(I)).sign()                                                            # needs sage.symbolic
     Traceback (most recent call last):
     ...
     PariError: incorrect type in gsigne (t_COMPLEX)
@@ -707,16 +711,16 @@ Transcendental functions::
     1.04719755119660
     sage: pari(1.1).acos()
     0.443568254385115*I
-    sage: C.<i> = ComplexField()
-    sage: pari(1.1+i).acos()
+    sage: C.<i> = ComplexField()                                                        # needs sage.rings.real_mpfr
+    sage: pari(1.1+i).acos()                                                            # needs sage.rings.real_mpfr
     0.849343054245252 - 1.09770986682533*I
 
     sage: pari(2).acosh()
     1.31695789692482
     sage: pari(0).acosh()
     1.57079632679490*I
-    sage: C.<i> = ComplexField()
-    sage: pari(i).acosh()
+    sage: C.<i> = ComplexField()                                                        # needs sage.rings.real_mpfr
+    sage: pari(i).acosh()                                                               # needs sage.rings.real_mpfr
     0.881373587019543 + 1.57079632679490*I
 
     sage: pari(2).agm(2)
@@ -725,12 +729,12 @@ Transcendental functions::
     0
     sage: pari(1).agm(2)
     1.45679103104691
-    sage: C.<i> = ComplexField()
-    sage: pari(1+i).agm(-3)
+    sage: C.<i> = ComplexField()                                                        # needs sage.rings.real_mpfr
+    sage: pari(1+i).agm(-3)                                                             # needs sage.rings.real_mpfr
     -0.964731722290876 + 1.15700282952632*I
 
-    sage: C.<i> = ComplexField()
-    sage: pari(2+i).arg()
+    sage: C.<i> = ComplexField()                                                        # needs sage.rings.real_mpfr
+    sage: pari(2+i).arg()                                                               # needs sage.rings.real_mpfr
     0.463647609000806
 
     sage: pari(pari(0.5).sin()).asin()
@@ -740,14 +744,14 @@ Transcendental functions::
 
     sage: pari(2).asinh()
     1.44363547517881
-    sage: C.<i> = ComplexField()
-    sage: pari(2+i).asinh()
+    sage: C.<i> = ComplexField()                                                        # needs sage.rings.real_mpfr
+    sage: pari(2+i).asinh()                                                             # needs sage.rings.real_mpfr
     1.52857091948100 + 0.427078586392476*I
 
     sage: pari(1).atan()
     0.785398163397448
-    sage: C.<i> = ComplexField()
-    sage: pari(1.5+i).atan()
+    sage: C.<i> = ComplexField()                                                        # needs sage.rings.real_mpfr
+    sage: pari(1.5+i).atan()                                                            # needs sage.rings.real_mpfr
     1.10714871779409 + 0.255412811882995*I
 
     sage: pari(0).atanh()
@@ -765,46 +769,46 @@ Transcendental functions::
     0.412710032209716
     sage: pari(2).besseli(3)
     2.24521244092995
-    sage: C.<i> = ComplexField()
-    sage: pari(2).besseli(3+i)
+    sage: C.<i> = ComplexField()                                                        # needs sage.rings.real_mpfr
+    sage: pari(2).besseli(3+i)                                                          # needs sage.rings.real_mpfr
     1.12539407613913 + 2.08313822670661*I
-    sage: C.<i> = ComplexField()
-    sage: pari(2+i).bessely(3)
+    sage: C.<i> = ComplexField()                                                        # needs sage.rings.real_mpfr
+    sage: pari(2+i).bessely(3)                                                          # needs sage.rings.real_mpfr
     -0.280775566958244 - 0.486708533223726*I
 
     sage: pari(1.5).cos()
     0.0707372016677029
-    sage: C.<i> = ComplexField()
-    sage: pari(1+i).cos()
+    sage: C.<i> = ComplexField()                                                        # needs sage.rings.real_mpfr
+    sage: pari(1+i).cos()                                                               # needs sage.rings.real_mpfr
     0.833730025131149 - 0.988897705762865*I
     sage: pari('x+O(x^8)').cos()
     1 - 1/2*x^2 + 1/24*x^4 - 1/720*x^6 + 1/40320*x^8 + O(x^9)
 
     sage: pari(1.5).cosh()
     2.35240961524325
-    sage: C.<i> = ComplexField()
-    sage: pari(1+i).cosh()
+    sage: C.<i> = ComplexField()                                                        # needs sage.rings.real_mpfr
+    sage: pari(1+i).cosh()                                                              # needs sage.rings.real_mpfr
     0.833730025131149 + 0.988897705762865*I
     sage: pari('x+O(x^8)').cosh()
     1 + 1/2*x^2 + 1/24*x^4 + 1/720*x^6 + ...O(...)
 
     sage: pari(5).cotan()
     -0.295812915532746
-    sage: x = RR(pi)                                                                    # optional - sage.symbolic
-    sage: pari(x).cotan()  # random                                                     # optional - sage.symbolic
+    sage: x = RR(pi)                                                                    # needs sage.symbolic
+    sage: pari(x).cotan()  # random
     -8.17674825 E15
 
     sage: pari(1).dilog()
     1.64493406684823
-    sage: C.<i> = ComplexField()
-    sage: pari(1+i).dilog()
+    sage: C.<i> = ComplexField()                                                        # needs sage.rings.real_mpfr
+    sage: pari(1+i).dilog()                                                             # needs sage.rings.real_mpfr
     0.616850275068085 + 1.46036211675312*I
 
     sage: pari(1).erfc()
     0.157299207050285
 
-    sage: C.<i> = ComplexField()
-    sage: pari(i).eta()
+    sage: C.<i> = ComplexField()                                                        # needs sage.rings.real_mpfr
+    sage: pari(i).eta()                                                                 # needs sage.rings.real_mpfr
     0.998129069925959
 
     sage: pari(0).exp()
@@ -818,8 +822,8 @@ Transcendental functions::
     1.00000000000000
     sage: pari(5).gamma()
     24.0000000000000
-    sage: C.<i> = ComplexField()
-    sage: pari(1+i).gamma()
+    sage: C.<i> = ComplexField()                                                        # needs sage.rings.real_mpfr
+    sage: pari(1+i).gamma()                                                             # needs sage.rings.real_mpfr
     0.498015668118356 - 0.154949828301811*I
     sage: pari(-1).gamma()
     Traceback (most recent call last):
@@ -830,23 +834,23 @@ Transcendental functions::
     1.32934038817914
     sage: pari(5).gammah()
     52.3427777845535
-    sage: C.<i> = ComplexField()
-    sage: pari(1+i).gammah()
+    sage: C.<i> = ComplexField()                                                        # needs sage.rings.real_mpfr
+    sage: pari(1+i).gammah()                                                            # needs sage.rings.real_mpfr
     0.575315188063452 + 0.0882106775440939*I
 
     sage: pari(1).hyperu(2,3)
     0.333333333333333
 
-    sage: C.<i> = ComplexField()
-    sage: pari(1+i).incgam(3-i)
+    sage: C.<i> = ComplexField()                                                        # needs sage.rings.real_mpfr
+    sage: pari(1+i).incgam(3-i)                                                         # needs sage.rings.real_mpfr
     -0.0458297859919946 + 0.0433696818726677*I
     sage: pari(1).incgamc(2)
     0.864664716763387
 
     sage: pari(5).log()
     1.60943791243410
-    sage: C.<i> = ComplexField()
-    sage: pari(i).log()
+    sage: C.<i> = ComplexField()                                                        # needs sage.rings.real_mpfr
+    sage: pari(i).log()                                                                 # needs sage.rings.real_mpfr
     0.E-19 + 1.57079632679490*I
 
     sage: pari(100).lngamma()
@@ -859,14 +863,14 @@ Transcendental functions::
 
     sage: pari(1).sin()
     0.841470984807897
-    sage: C.<i> = ComplexField()
-    sage: pari(1+i).sin()
+    sage: C.<i> = ComplexField()                                                        # needs sage.rings.real_mpfr
+    sage: pari(1+i).sin()                                                               # needs sage.rings.real_mpfr
     1.29845758141598 + 0.634963914784736*I
 
     sage: pari(0).sinh()
     0.E-19
-    sage: C.<i> = ComplexField()
-    sage: pari(1+i).sinh()
+    sage: C.<i> = ComplexField()                                                        # needs sage.rings.real_mpfr
+    sage: pari(1+i).sinh()                                                              # needs sage.rings.real_mpfr
     0.634963914784736 + 1.29845758141598*I
 
     sage: pari(2).sqrt()
@@ -879,14 +883,14 @@ Transcendental functions::
 
     sage: pari(2).tan()
     -2.18503986326152
-    sage: C.<i> = ComplexField()
-    sage: pari(i).tan()
+    sage: C.<i> = ComplexField()                                                        # needs sage.rings.real_mpfr
+    sage: pari(i).tan()                                                                 # needs sage.rings.real_mpfr
     0.761594155955765*I
 
     sage: pari(1).tanh()
     0.761594155955765
-    sage: C.<i> = ComplexField()
-    sage: z = pari(i); z
+    sage: C.<i> = ComplexField()                                                        # needs sage.rings.real_mpfr
+    sage: z = pari(i); z                                                                # needs sage.rings.real_mpfr
     1.00000000000000*I
     sage: result = z.tanh()
     sage: result.real() <= 1e-18
@@ -903,6 +907,7 @@ Transcendental functions::
     sage: pari(0.5).thetanullk(1)
     0.548978532560341
 
+    sage: # needs sage.rings.real_mpfr
     sage: C.<i> = ComplexField()
     sage: pari(i).weber()
     1.18920711500272
@@ -913,8 +918,8 @@ Transcendental functions::
 
     sage: pari(2).zeta()
     1.64493406684823
-    sage: x = RR(pi)^2/6                                                                # optional - sage.symbolic
-    sage: pari(x)                                                                       # optional - sage.symbolic
+    sage: x = RR(pi)^2/6                                                                # needs sage.symbolic
+    sage: pari(x)                                                                       # needs sage.symbolic
     1.64493406684823
     sage: pari(3).zeta()
     1.20205690315959
@@ -968,6 +973,7 @@ Linear algebra::
     sage: pari('[1,2,3; 4,5,6;  7,8,9]').mathnf()
     [6, 1; 3, 1; 0, 1]
 
+    sage: # needs sage.modules
     sage: M = matrix([[1,2,3],[4,5,6],[7,8,11]])
     sage: d = M.det()
     sage: pari(M).mathnfmod(d)
@@ -978,6 +984,7 @@ Linear algebra::
     sage: pari(M).mathnfmod(12)
     [1, 0, 0; 0, 2, 0; 0, 0, 6]
 
+    sage: # needs sage.modules
     sage: M = matrix([[1,0,0],[0,2,0],[0,0,6]])
     sage: pari(M).mathnfmodid(6)
     [1, 0, 0; 0, 2, 0; 0, 0, 6]
@@ -1009,6 +1016,7 @@ Linear algebra::
 
 Quadratic forms::
 
+    sage: # needs sage.modules
     sage: A = Matrix(3,3,[1,2,3,2,5,5,3,5,11])
     sage: A.is_positive_definite()
     True
@@ -1031,6 +1039,7 @@ Quadratic forms::
     10, 5.00000000000000000, [  1   2   0   1  -1]
     ]
 
+    sage: # needs sage.modules
     sage: M = diagonal_matrix([1,1,-1])
     sage: P = M.__pari__().qfparam([0,1,-1]); P
     [0, -2, 0; 1, 0, -1; -1, 0, -1]
@@ -1044,6 +1053,7 @@ Quadratic forms::
     sage: 48^2 + 55^2 == 73^2
     True
 
+    sage: # needs sage.modules
     sage: M = diagonal_matrix([1,2,3,4,-5])
     sage: M.__pari__().qfsolve()
     [0, 1, -1, 0, -1]~
@@ -1089,18 +1099,19 @@ Number-theoretical functions::
     sage: pari(10).eulerphi()
     4
 
-    sage: x = SR.symbol('x')                                                            # optional - sage.symbolic
+    sage: # needs sage.symbolic
+    sage: x = SR.symbol('x')
     sage: pari(10).gcd(15)
     5
     sage: pari([5, 'y']).gcd()
     1
-    sage: pari([x, x^2]).gcd()                                                          # optional - sage.symbolic
+    sage: pari([x, x^2]).gcd()
     x
     sage: pari(10).lcm(15)
     30
     sage: pari([5, 'y']).lcm()
     5*y
-    sage: pari([10, x, x^2]).lcm()                                                      # optional - sage.symbolic
+    sage: pari([10, x, x^2]).lcm()
     10*x^2
 
     sage: pari(20).numbpart()
@@ -1155,6 +1166,7 @@ Finite fields::
     sage: pari(2003).ffinit(3)
     Mod(1, 2003)*x^3 + Mod(1, 2003)*x^2 + Mod(1993, 2003)*x + Mod(1995, 2003)
 
+    sage: # needs sage.rings.finite_rings
     sage: k.<a> = GF(2^12)
     sage: g = pari(a).ffprimroot()
     sage: (g^1234).fflog(g)
@@ -1169,6 +1181,7 @@ Finite fields::
     sage: (b^555).fflog(b, (ord, ord.factor()) )
     555
 
+    sage: # needs sage.rings.finite_rings
     sage: k.<a> = GF(5^80)
     sage: g = pari(a).ffprimroot()
     sage: g.fforder()
@@ -1180,6 +1193,7 @@ Finite fields::
 
 p-adic functions::
 
+    sage: # needs sage.rings.padics
     sage: K = Qp(11,5)
     sage: x = K(11^-10 + 5*11^-7 + 11^-6)
     sage: y = pari(x)
@@ -1203,10 +1217,10 @@ Elliptic curves::
     [0, 1/2, 0, -3/4, 0, 2, -3/2, 0, -9/16, 40, -116, 117/4, 256000/117, Vecsmall([1]), [Vecsmall([64, 1])], [0, 0, 0, 0, 0, 0, 0, 0]]
     sage: pari([0,0.5,0,-0.75,0]).ellinit()
     [0, 0.500000000000000, 0, -0.750000000000000, 0, 2.00000000000000, -1.50000000000000, 0, -0.562500000000000, 40.0000000000000, -116.000000000000, 29.2500000000000, 2188.03418803419, Vecsmall([0]), [Vecsmall([64, 1])], [0, 0, 0, 0]]
-    sage: pari([0,SR(I),0,1,0]).ellinit()                                               # optional - sage.symbolic
+    sage: pari([0,SR(I),0,1,0]).ellinit()                                               # needs sage.symbolic
     [0, I, 0, 1, 0, 4*I, 2, 0, -1, -64, 352*I, -80, 16384/5, Vecsmall([0]), [Vecsmall([64, 0])], [0, 0, 0, 0]]
-    sage: x = SR.symbol('x')                                                            # optional - sage.symbolic
-    sage: pari([0,x,0,2*x,1]).ellinit()                                                 # optional - sage.symbolic
+    sage: x = SR.symbol('x')                                                            # needs sage.symbolic
+    sage: pari([0,x,0,2*x,1]).ellinit()                                                 # needs sage.symbolic
     [0, x, 0, 2*x, 1, 4*x, 4*x, 4, -4*x^2 + 4*x, 16*x^2 - 96*x, -64*x^3 + 576*x^2 - 864, 64*x^4 - 576*x^3 + 576*x^2 - 432, (256*x^6 - 4608*x^5 + 27648*x^4 - 55296*x^3)/(4*x^4 - 36*x^3 + 36*x^2 - 27), Vecsmall([0]), [Vecsmall([64, 0])], [0, 0, 0, 0]]
 
     sage: e = pari([0,1,1,-2,0]).ellinit()
@@ -1235,6 +1249,8 @@ Elliptic curves::
     sage: e = pari([0, 5, 2, -1, 1]).ellinit()
     sage: e.ellglobalred()
     [20144, [1, -2, 0, -1], 1, [2, 4; 1259, 1], [[4, 2, 0, 1], [1, 5, 0, 1]]]
+
+    sage: # needs sage.schemes
     sage: e = pari(EllipticCurve('17a').a_invariants()).ellinit()
     sage: e.ellglobalred()
     [17, [1, 0, 0, 0], 4, Mat([17, 1]), [[1, 8, 0, 4]]]
@@ -1253,8 +1269,9 @@ Elliptic curves::
     sage: e.ellak(0)
     0
 
+    sage: # needs sage.schemes
     sage: E = EllipticCurve('389a1')
-    sage: pari(E).ellanalyticrank()
+    sage: pari(E).ellanalyticrank()                                                     # needs sage.rings.number_field
     [2, 1.51863300057685]
 
     sage: e = pari([0, -1, 1, -10, -20]).ellinit()
@@ -1293,6 +1310,7 @@ Elliptic curves::
     sage: om.elleisnum(100)
     2.15314248576078 E50
 
+    sage: # needs sage.schemes
     sage: e = pari([0,0,0,0,1]).ellinit()
     sage: e.elllocalred(7)
     [0, 1, [1, 0, 0, 0], 1]
@@ -1333,6 +1351,7 @@ Elliptic curves::
     sage: e.elllocalred(3)
     [2, -10, [1, 0, 0, 0], 4]
 
+    sage: # needs sage.schemes
     sage: e = pari(EllipticCurve('65a1').a_invariants()).ellinit()
     sage: e.ellorder([0,0])
     2
@@ -1342,11 +1361,11 @@ Elliptic curves::
     sage: e = pari([0,1,1,-2,0]).ellinit()
     sage: e.ellordinate(0)
     [0, -1]
-    sage: e.ellordinate(SR(I))                                                          # optional - sage.symbolic
+    sage: e.ellordinate(SR(I))                                                          # needs sage.symbolic
     [0.582203589721741 - 1.38606082464177*I, -1.58220358972174 + 1.38606082464177*I]
-    sage: e.ellordinate(SR(I), precision=128)[0].sage()                                 # optional - sage.symbolic
+    sage: e.ellordinate(SR(I), precision=128)[0].sage()                                 # needs sage.symbolic
     0.58220358972174117723338947874993600727 - 1.3860608246417697185311834209833653345*I
-    sage: e.ellordinate(1+3*5^1+O(5^3))
+    sage: e.ellordinate(1+3*5^1+O(5^3))                                                 # needs sage.rings.padics
     [4*5 + 5^2 + O(5^3), 4 + 3*5^2 + O(5^3)]
     sage: e.ellordinate('z+2*z^2+O(z^4)')
     [-2*z - 7*z^2 - 23*z^3 + O(z^4), -1 + 2*z + 7*z^2 + 23*z^3 + O(z^4)]
@@ -1367,9 +1386,9 @@ Elliptic curves::
     [0]
     sage: e.ellmul(p, 2)
     [1/4, -7/8]
-    sage: q = e.ellmul(p, SR(1+I)); q                                                   # optional - sage.symbolic
+    sage: q = e.ellmul(p, SR(1+I)); q                                                   # needs sage.symbolic
     [-2*I, 1 + I]
-    sage: e.ellmul(q, SR(1-I))                                                          # optional - sage.symbolic
+    sage: e.ellmul(q, SR(1-I))                                                          # needs sage.symbolic
     [1/4, -7/8]
     sage: for D in [-7, -8, -11, -12, -16, -19, -27, -28]:  # long time (1s)
     ....:     hcpol = hilbert_class_polynomial(D)
@@ -1399,6 +1418,7 @@ Elliptic curves::
     sage: e.ellrootno(1009)
     1
 
+    sage: # needs sage.rings.real_mpfr
     sage: e = pari([0,0,0,1,0]).ellinit()
     sage: C.<i> = ComplexField()
     sage: e.ellsigma(2+i)
@@ -1411,26 +1431,26 @@ Elliptic curves::
     sage: e = pari([0,0,0,1,0]).ellinit()
     sage: e.ellzeta(1)
     1.06479841295883
-    sage: C.<i> = ComplexField()
-    sage: e.ellzeta(i-1)
+    sage: C.<i> = ComplexField()                                                        # needs sage.rings.real_mpfr
+    sage: e.ellzeta(i-1)                                                                # needs sage.rings.real_mpfr
     -0.350122658523049 - 0.350122658523049*I
 
     sage: e = pari([0,0,0,1,0]).ellinit()
-    sage: C.<i> = ComplexField()
-    sage: e.ellztopoint(1+i)
+    sage: C.<i> = ComplexField()                                                        # needs sage.rings.real_mpfr
+    sage: e.ellztopoint(1+i)                                                            # needs sage.rings.real_mpfr
     [0.E-... - 1.02152286795670*I, -0.149072813701096 - 0.149072813701096*I]
     sage: e.ellztopoint(0)
     [0]
 
-    sage: pari(SR(I)).ellj()
+    sage: pari(SR(I)).ellj()                                                            # needs sage.symbolic
     1728.00000000000
-    sage: pari(SR(3*I)).ellj()
+    sage: pari(SR(3*I)).ellj()                                                          # needs sage.symbolic
     153553679.396729
     sage: pari('quadgen(-3)').ellj()
     0.E-54
     sage: pari('quadgen(-7)').ellj(precision=256).sage()
     -3375.000000000000000000000000000000000000000000000000000000000000000000000000
-    sage: pari(SR(-I)).ellj()
+    sage: pari(SR(-I)).ellj()                                                           # needs sage.symbolic
     Traceback (most recent call last):
     ...
     PariError: domain error in modular function: Im(argument) <= 0
@@ -1499,93 +1519,102 @@ Quadratic class numbers::
 General number fields::
 
     sage: x = polygen(QQ)
-    sage: K.<a> = NumberField(x^2 - 1/8)
+    sage: K.<a> = NumberField(x^2 - 1/8)                                                # needs sage.rings.number_field
     sage: pari(x^2 - 2).factornf(K.pari_polynomial("a"))
     doctest:...: DeprecationWarning: the PARI/GP function factornf is obsolete (2016-08-08)
     [x + Mod(-a, a^2 - 2), 1; x + Mod(a, a^2 - 2), 1]
 
-    sage: K.<z> = QuadraticField(-23)
+    sage: K.<z> = QuadraticField(-23)                                                   # needs sage.rings.number_field
     sage: p = K.primes_above(3)[0]
     sage: K.pari_bnf().bnrclassno(p._pari_bid_())
     3
 
-    sage: x = SR.symbol('x')                                                            # optional - sage.symbolic
-    sage: P = pari(x^6 + 108)                                                           # optional - sage.symbolic
-    sage: G = P.galoisinit()                                                            # optional - sage.symbolic
-    sage: G[0] == P                                                                     # optional - sage.symbolic
+    sage: # needs sage.symbolic
+    sage: x = SR.symbol('x')
+    sage: P = pari(x^6 + 108)
+    sage: G = P.galoisinit()
+    sage: G[0] == P
     True
-    sage: len(G[5]) == prod(G[7])                                                       # optional - sage.symbolic
+    sage: len(G[5]) == prod(G[7])
     True
 
-    sage: G = pari(x^6 + 108).galoisinit()                                              # optional - sage.symbolic
-    sage: G.galoispermtopol(G[5])                                                       # optional - sage.symbolic
+    sage: # needs sage.symbolic
+    sage: G = pari(x^6 + 108).galoisinit()
+    sage: G.galoispermtopol(G[5])
     [x, 1/12*x^4 - 1/2*x, -1/12*x^4 - 1/2*x, 1/12*x^4 + 1/2*x, -1/12*x^4 + 1/2*x, -x]
-    sage: G.galoispermtopol(G[5][1])                                                    # optional - sage.symbolic
+    sage: G.galoispermtopol(G[5][1])
     1/12*x^4 - 1/2*x
-    sage: G.galoispermtopol(G[5][1:4])                                                  # optional - sage.symbolic
+    sage: G.galoispermtopol(G[5][1:4])
     [1/12*x^4 - 1/2*x, -1/12*x^4 - 1/2*x, 1/12*x^4 + 1/2*x]
 
-    sage: G = pari(x^4 + 1).galoisinit()                                                # optional - sage.symbolic
-    sage: G.galoisfixedfield(G[5][1], flag=2)                                           # optional - sage.symbolic
+    sage: # needs sage.symbolic
+    sage: G = pari(x^4 + 1).galoisinit()
+    sage: G.galoisfixedfield(G[5][1], flag=2)
     [y^2 - 2, Mod(-x^3 + x, x^4 + 1), [x^2 - y*x + 1, x^2 + y*x + 1]]
-    sage: G.galoisfixedfield(G[5][5:7])                                                 # optional - sage.symbolic
+    sage: G.galoisfixedfield(G[5][5:7])
     [x^4 + 1, Mod(x, x^4 + 1)]
-    sage: L = G.galoissubgroups()                                                       # optional - sage.symbolic
-    sage: G.galoisfixedfield(L[3], flag=2, v='z')                                       # optional - sage.symbolic
+    sage: L = G.galoissubgroups()
+    sage: G.galoisfixedfield(L[3], flag=2, v='z')
     [z^2 + 2, Mod(x^3 + x, x^4 + 1), [x^2 - z*x - 1, x^2 + z*x - 1]]
 
-    sage: G = pari(x^6 + 108).galoisinit()                                              # optional - sage.symbolic
-    sage: L = G.galoissubgroups()                                                       # optional - sage.symbolic
-    sage: list(L[0][1])                                                                 # optional - sage.symbolic
+    sage: G = pari(x^6 + 108).galoisinit()
+    sage: L = G.galoissubgroups()
+    sage: list(L[0][1])
     [3, 2]
 
-    sage: G = pari(x^6 + 108).galoisinit()                                              # optional - sage.symbolic
-    sage: G.galoisisabelian()                                                           # optional - sage.symbolic
+    sage: # needs sage.symbolic
+    sage: G = pari(x^6 + 108).galoisinit()
+    sage: G.galoisisabelian()
     0
-    sage: H = G.galoissubgroups()[2]                                                    # optional - sage.symbolic
-    sage: H.galoisisabelian()                                                           # optional - sage.symbolic
+    sage: H = G.galoissubgroups()[2]
+    sage: H.galoisisabelian()
     Mat(2)
-    sage: H.galoisisabelian(flag=1)                                                     # optional - sage.symbolic
+    sage: H.galoisisabelian(flag=1)
     1
 
-    sage: G = pari(x^6 + 108).galoisinit()                                              # optional - sage.symbolic
-    sage: L = G.galoissubgroups()                                                       # optional - sage.symbolic
-    sage: G.galoisisnormal(L[0])                                                        # optional - sage.symbolic
+    sage: # needs sage.symbolic
+    sage: G = pari(x^6 + 108).galoisinit()
+    sage: L = G.galoissubgroups()
+    sage: G.galoisisnormal(L[0])
     1
-    sage: G.galoisisnormal(L[2])                                                        # optional - sage.symbolic
+    sage: G.galoisisnormal(L[2])
     0
 
+    sage: # needs sage.rings.number_field
     sage: F = QuadraticField(5, 'alpha')
     sage: nf = F.__pari__()
     sage: P = F.ideal(F.gen())
     sage: Q = F.ideal(2)
-    sage: moduli = pari.matrix(2,2,[P.pari_prime(),4,Q.pari_prime(),4])
+    sage: moduli = pari.matrix(2,2,[P.pari_prime(),4,Q.pari_prime(),4])                 # needs sage.symbolic
     sage: residues = pari.vector(2,[0,1])
     sage: b = F(nf.idealchinese(moduli,residues))
-    sage: b.valuation(P) >= 4
+    sage: b.valuation(P) >= 4                                                           # needs sage.symbolic
     True
     sage: (b-1).valuation(Q) >= 2
     True
 
-    sage: F = NumberField(x^3-2, 'alpha')                                               # optional - sage.symbolic
-    sage: nf = F.__pari__()                                                             # optional - sage.symbolic
-    sage: x = pari('[1, -1, 2]~')                                                       # optional - sage.symbolic
-    sage: y = pari('[1, -1, 3]~')                                                       # optional - sage.symbolic
-    sage: nf.idealcoprime(x, y)                                                         # optional - sage.symbolic
+    sage: # needs sage.symbolic
+    sage: F = NumberField(x^3-2, 'alpha')
+    sage: nf = F.__pari__()
+    sage: x = pari('[1, -1, 2]~')
+    sage: y = pari('[1, -1, 3]~')
+    sage: nf.idealcoprime(x, y)
     1
 
     sage: y = pari('[2, -2, 4]~')
     sage: nf.idealcoprime(x, y)
     [5/43, 9/43, -1/43]~
 
+    sage: # needs sage.rings.number_field
     sage: R.<x> = PolynomialRing(QQ)
     sage: K.<a> = NumberField(x^2 + 1)
     sage: L = K.pari_nf().ideallist(100)
-    sage: L[0]   # One ideal of norm 1.
+    sage: L[0]   # One ideal of norm 1.                                                 # needs sage.symbolic
     [[1, 0; 0, 1]]
-    sage: L[64]  # 4 ideals of norm 65.
+    sage: L[64]  # 4 ideals of norm 65.                                                 # needs sage.symbolic
     [[65, 8; 0, 1], [65, 47; 0, 1], [65, 18; 0, 1], [65, 57; 0, 1]]
 
+    sage: # needs sage.rings.number_field
     sage: F = NumberField(x^3-2, 'alpha')
     sage: nf = F.__pari__()
     sage: I = pari('[1, -1, 2]~')
@@ -1593,12 +1622,14 @@ General number fields::
     sage: nf.ideallog(5, bid)
     [25]~
 
+    sage: # needs sage.rings.number_field
     sage: K.<i> = QuadraticField(-1)
     sage: F = pari(K).idealprimedec(5); F
     [[5, [-2, 1]~, 1, 1, [2, -1; 1, 2]], [5, [2, 1]~, 1, 1, [-2, -1; 1, -2]]]
     sage: F[0].pr_get_p()
     5
 
+    sage: # needs sage.rings.number_field
     sage: x = polygen(ZZ)
     sage: F = NumberField(x^3 - 2, 'alpha')
     sage: nf = F.__pari__()
@@ -1606,6 +1637,7 @@ General number fields::
     sage: nf.idealstar(I)
     [[[43, 9, 5; 0, 1, 0; 0, 0, 1], [0]], [42, [42]], [Mat([[43, [9, 1, 0]~, 1, 1, [-5, 2, -18; -9, -5, 2; 1, -9, -5]], 1]), Mat([[43, [9, 1, 0]~, 1, 1, [-5, 2, -18; -9, -5, 2; 1, -9, -5]], 1])], [[[[42], [3], [43, 9, 5; 0, 1, 0; 0, 0, 1], [[[-14, -8, 20]~, [1, 34, 38], [43, [9, 1, 0]~, 1, 1, [-5, 2, -18; -9, -5, 2; 1, -9, -5]]]~, 3, [42, [2, 1; 3, 1; 7, 1]]]]], [[], Vecsmall([])]], [Mat(1)]]
 
+    sage: # needs sage.rings.number_field
     sage: x = polygen(QQ)
     sage: K.<a> = NumberField(x^3 - 17)
     sage: Kpari = K.pari_nf()
@@ -1618,12 +1650,14 @@ General number fields::
     sage: Kpari.getattr('zk') * pari("[3/2, -5, 0]~")
     -5/3*y^2 + 5/3*y - 1/6
 
+    sage: # needs sage.rings.number_field
     sage: k.<a> = NumberField(x^2 + 5)
     sage: x = 10
     sage: y = a + 1
     sage: pari(k).nfeltdiveuc(x, y)
     [2, -2]~
 
+    sage: # needs sage.rings.number_field
     sage: x = polygen(ZZ)
     sage: k.<a> = NumberField(x^2 + 5)
     sage: I = k.ideal(a)
@@ -1643,6 +1677,7 @@ General number fields::
     sage: nf.nfgaloisconj()
     [-x, x]~
 
+    sage: # needs sage.rings.number_field
     sage: x = polygen(QQ)
     sage: K.<t> = NumberField(x^3 - x + 1)
     sage: pari(K).nfhilbert(t, t + 2)
@@ -1654,6 +1689,7 @@ General number fields::
     sage: pari(K).nfhilbert(t, t + 2, P.pari_prime())
     1
 
+    sage: # needs sage.rings.number_field
     sage: F.<a> = NumberField(x^2-x-1)
     sage: Fp = pari(F)
     sage: A = matrix(F,[[1,2,a,3],[3,0,a+2,0],[0,0,a,2],[3+a,a,0,1]])
@@ -1686,6 +1722,7 @@ General number fields::
     ...
     PariError: incorrect type in checknf [please apply nfinit()] (t_REAL)
 
+    sage: # needs sage.rings.number_field
     sage: F = NumberField(x^3-2,'alpha')
     sage: G = NumberField(x^3-2,'beta')
     sage: F.__pari__().nfisisom(G.__pari__())
@@ -1745,6 +1782,7 @@ General number fields::
     ...
     PariError: domain error in quadray: isfundamental(D) = 0
 
+    sage: # needs sage.rings.number_field sage.symbolic
     sage: x = SR.symbol('x')
     sage: F = NumberField(x^3-2,'alpha')
     sage: F.__pari__()[0].nfdisc()
@@ -1773,6 +1811,7 @@ library::
     sage: from cypari2 import Pari
     sage: pari = Pari()
 
+    sage: # needs sage.symbolic
     sage: f = pari('(2/3)*x^3 + x - 5/7 + y'); f
     2/3*x^3 + x + (y - 5/7)
     sage: var('x,y')
