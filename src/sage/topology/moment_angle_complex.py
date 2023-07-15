@@ -276,10 +276,8 @@ class MomentAngleComplex(SageObject): # should this inherit SimplicialComplex?
         <Lots and lots of examples>
         """
         from sage.graphs.graph import Graph
-        from sage.graphs.generic_graph import GenericGraph
 
-        one_skeleton = self._simplicial_complex.faces()[1]
-        G = Graph([tuple(f) for f in one_skeleton])
+        one_skeleton = self._simplicial_complex.graph()
 
         obstruction_graphs = [
             Graph([(1, 2), (1, 4), (2, 3), (3, 5), (5, 6), (4, 5), (1, 6)]),
@@ -292,7 +290,7 @@ class MomentAngleComplex(SageObject): # should this inherit SimplicialComplex?
             Graph([(1, 2), (1, 4), (2, 3), (3, 5), (5, 6), (3, 4), (2, 6), (4, 6)]),
         ]
 
-        return not any(G.subgraph_search(g) is not None for g in obstruction_graphs)
+        return not any(one_skeleton.subgraph_search(g) is not None for g in obstruction_graphs)
 
     #needs work
     def golod_decomposition(self):
