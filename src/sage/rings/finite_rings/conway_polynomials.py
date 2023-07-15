@@ -11,10 +11,13 @@ AUTHORS:
 """
 
 from sage.misc.fast_methods import WithEqualityById
+from sage.misc.lazy_import import lazy_import
 from sage.structure.sage_object import SageObject
 from sage.rings.finite_rings.finite_field_constructor import FiniteField
 from sage.rings.integer import Integer
-import sage.databases.conway
+
+lazy_import('sage.databases.conway', 'ConwayPolynomials')
+
 
 def conway_polynomial(p, n):
     """
@@ -57,7 +60,7 @@ def conway_polynomial(p, n):
     (p, n) = (int(p), int(n))
     R = FiniteField(p)['x']
     try:
-        return R(sage.databases.conway.ConwayPolynomials()[p][n])
+        return R(ConwayPolynomials()[p][n])
     except KeyError:
         raise RuntimeError("requested Conway polynomial not in database.")
 
@@ -91,7 +94,7 @@ def exists_conway_polynomial(p, n):
         sage: exists_conway_polynomial(6,6)
         False
     """
-    return sage.databases.conway.ConwayPolynomials().has_polynomial(p,n)
+    return ConwayPolynomials().has_polynomial(p,n)
 
 class PseudoConwayLattice(WithEqualityById, SageObject):
     r"""
@@ -171,7 +174,7 @@ class PseudoConwayLattice(WithEqualityById, SageObject):
         from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
         self.ring = PolynomialRing(FiniteField(p), 'x')
         if use_database:
-            C = sage.databases.conway.ConwayPolynomials()
+            C = ConwayPolynomials()
             self.nodes = {n: self.ring(C.polynomial(p, n))
                           for n in C.degrees(p)}
         else:
