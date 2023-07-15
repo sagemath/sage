@@ -99,7 +99,7 @@ is attempted, and after that ``sin()`` which succeeds::
     5
     sage: f(0, hold=True)                                                               # optional - sage.symbolic
     my_sin(0)
-    sage: f(0, hold=True).n()                                                           # optional - sage.symbolic
+    sage: f(0, hold=True).n()
     3.50000000000000
     sage: f(CBF(0))                                                                     # optional - sage.libs.flint
     0
@@ -495,6 +495,7 @@ cdef class Function(SageObject):
 
         Check that :trac:`10133` is fixed::
 
+            sage: # needs sage.symbolic
             sage: out = sin(0)
             sage: out, parent(out)
             (0, Integer Ring)
@@ -793,7 +794,7 @@ cdef class Function(SageObject):
             ....:                 assert parent == RealField(prec)
             ....:                 return prec
             sage: noMpmathFn = NoMpmathFn("noMpmathFn")
-            sage: with mpmath.workprec(64): noMpmathFn(sqrt(mpmath.mpf('2')))
+            sage: with workprec(64): noMpmathFn(sqrt(mpf('2')))                         # needs sage.symbolic
             64
             sage: mpmath.noMpmathFn = lambda x: 123
             sage: with mpmath.workprec(64): noMpmathFn(sqrt(mpmath.mpf('2')))
@@ -1187,7 +1188,7 @@ cdef class SymbolicFunction(Function):
             foo
             sage: foo(2, 3)                                                             # optional - sage.symbolic
             foo(2, 3)
-            sage: foo(2, 3).n()                                                         # optional - sage.symbolic
+            sage: foo(2, 3).n()
             12.0000000000000
             sage: foo(2, 3).conjugate()                                                 # optional - sage.symbolic
             2
