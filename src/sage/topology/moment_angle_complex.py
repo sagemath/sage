@@ -77,7 +77,7 @@ from itertools import combinations
 # - return for odd dimensional simplicial complexes in golod_decomposition?
 # - explicitly state the vertices?
 # - add product using join of simplicial complexes
-# - a lot of things follow from the homology and cohomology - euler, bigraded betti ...
+# - a lot of things follow from the homology and cohomology - ?
 # - mark copies of code?
 
 def union(c1, c2):
@@ -413,7 +413,7 @@ class MomentAngleComplex(SageObject): # should this inherit SimplicialComplex?
         <Lots and lots of examples>
         """
         dict = {}
-        H = self.homology(base_ring=QQ)
+        H = self.homology(dim=dim, base_ring=QQ)
         try:
             for n in H.keys():
                 dict[n] = H[n].dimension()
@@ -422,3 +422,13 @@ class MomentAngleComplex(SageObject): # should this inherit SimplicialComplex?
             return dict
         except AttributeError:
             return H.dimension()
+
+    def euler_characteristic(self):
+        """
+        Return the Euler characteristic of ``self``.
+
+        EXAMPLES:
+
+        <Lots and lots of examples>
+        """
+        return sum([(-1)**n * self.betti()[n] for n in range(self.dimension() + 1)])
