@@ -31,6 +31,7 @@ mpfr    = # No extra needed
 mpmath  = # No extra needed
 ntl     = # FIXME
 numpy   = SPKG_INSTALL_REQUIRES_numpy
+pari    = SPKG_INSTALL_REQUIRES_sagemath_pari
 
 # extras by rings
 RDF     = sagemath-modules[numpy]
@@ -41,7 +42,7 @@ RIF     =
 CIF     =
 RBF     = sagemath-modules[flint]
 CBF     = sagemath-modules[flint]
-GF      = sagemath-modules[linbox]
+GF      = sagemath-modules[pari]
 GF2     = sagemath-modules[m4ri]
 GF2e    = sagemath-modules[m4rie]
 GF2n    = sagemath-modules[m4rie]
@@ -64,4 +65,4 @@ combinat    = SPKG_INSTALL_REQUIRES_sagemath_combinat
 padics      = sagemath-modules[Zp]
 
 # the whole package
-standard    = sagemath-modules[invariant,combinat,padics,NumberField,FiniteField,m4ri,m4rie,flint,linbox,numpy,mpfi,ntl]
+standard    = sagemath-modules[invariant,combinat,padics,NumberField,FiniteField,m4ri,m4rie,flint,linbox,numpy,mpfi,ntl,pari]
