@@ -21,8 +21,8 @@ def register_symbol(obj, conversions, nargs=None):
     EXAMPLES::
 
         sage: from sage.symbolic.symbols import register_symbol as rs
-        sage: rs(SR(5), {'maxima': 'five'})                                             # optional - sage.symbolic
-        sage: SR(maxima_calculus('five'))                                               # optional - sage.symbolic
+        sage: rs(SR(5), {'maxima': 'five'})                                             # needs sage.symbolic
+        sage: SR(maxima_calculus('five'))                                               # needs sage.symbolic
         5
     """
     conversions = dict(conversions)

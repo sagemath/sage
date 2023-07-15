@@ -603,8 +603,8 @@ class Pi(Constant):
 
         EXAMPLES::
 
-            sage: import sympy                                                          # optional - sympy
-            sage: sympy.pi == pi # indirect doctest                                     # optional - sympy
+            sage: import sympy                                                          # needs sympy
+            sage: sympy.pi == pi # indirect doctest                                     # needs sympy
             True
         """
         import sympy
@@ -744,10 +744,10 @@ class NotANumber(Constant):
 
         EXAMPLES::
 
-            sage: bool(NaN._sympy_()._sage_() == NaN)                                   # optional - sympy
+            sage: bool(NaN._sympy_()._sage_() == NaN)                                   # needs sympy
             True
-            sage: import sympy                                                          # optional - sympy
-            sage: sympy.nan == NaN  # this should be fixed                              # optional - sympy
+            sage: import sympy                                                          # needs sympy
+            sage: sympy.nan == NaN  # this should be fixed                              # needs sympy
             False
         """
         import sympy
@@ -850,8 +850,8 @@ class GoldenRatio(Constant):
 
         EXAMPLES::
 
-            sage: import sympy                                                          # optional - sympy
-            sage: sympy.GoldenRatio == golden_ratio # indirect doctest                  # optional - sympy
+            sage: import sympy                                                          # needs sympy
+            sage: sympy.GoldenRatio == golden_ratio # indirect doctest                  # needs sympy
             True
         """
         import sympy
@@ -1007,8 +1007,8 @@ class EulerGamma(Constant):
 
         EXAMPLES::
 
-            sage: import sympy                                                          # optional - sympy
-            sage: sympy.EulerGamma == euler_gamma # indirect doctest                    # optional - sympy
+            sage: import sympy                                                          # needs sympy
+            sage: sympy.EulerGamma == euler_gamma # indirect doctest                    # needs sympy
             True
         """
         import sympy
@@ -1077,8 +1077,8 @@ class Catalan(Constant):
 
         EXAMPLES::
 
-            sage: import sympy                                                          # optional - sympy
-            sage: sympy.Catalan == catalan # indirect doctest                           # optional - sympy
+            sage: import sympy                                                          # needs sympy
+            sage: sympy.Catalan == catalan # indirect doctest                           # needs sympy
             True
         """
         import sympy
