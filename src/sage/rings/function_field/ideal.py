@@ -166,26 +166,27 @@ class FunctionFieldIdeal(Element):
             sage: I = O.ideal(x, 1/(x+1)); I
             Ideal (1/(x + 1)) of Maximal order of Rational function field in x over Rational Field
 
+            sage: # needs sage.rings.function_field
             sage: K.<x> = FunctionField(QQ); R.<y> = K[]
-            sage: L.<y> = K.extension(y^2 - x^3 - 1)                                                                    # needs sage.rings.finite_rings sage.rings.function_field
-            sage: O = L.equation_order()                                                                                # needs sage.rings.finite_rings sage.rings.function_field
-            sage: O.ideal(x^2 + 1)                                                                                      # needs sage.rings.finite_rings sage.rings.function_field
+            sage: L.<y> = K.extension(y^2 - x^3 - 1)
+            sage: O = L.equation_order()
+            sage: O.ideal(x^2 + 1)
             Ideal (x^2 + 1) of Order in Function field in y defined by y^2 - x^3 - 1
 
-            sage: # needs sage.rings.finite_rings
+            sage: # needs sage.rings.function_field
             sage: K.<x> = FunctionField(GF(2)); _.<Y> = K[]
-            sage: L.<y> = K.extension(Y^2 - x^3*Y - x)                                                                  # needs sage.rings.function_field
-            sage: O = L.maximal_order()                                                                                 # needs sage.rings.function_field
-            sage: I = O.ideal(y); I                                                                                     # needs sage.rings.function_field
+            sage: L.<y> = K.extension(Y^2 - x^3*Y - x)
+            sage: O = L.maximal_order()
+            sage: I = O.ideal(y); I
             Ideal (y) of Maximal order of Function field in y defined by y^2 + x^3*y + x
 
-            sage: L.<y> = K.extension(Y^2 + Y + x + 1/x)                                                                # needs sage.rings.finite_rings sage.rings.function_field
-            sage: O = L.maximal_order()                                                                                 # needs sage.rings.finite_rings sage.rings.function_field
-            sage: I = O.ideal(y); I                                                                                     # needs sage.rings.finite_rings sage.rings.function_field
+            sage: # needs sage.rings.function_field
+            sage: L.<y> = K.extension(Y^2 + Y + x + 1/x)
+            sage: O = L.maximal_order()
+            sage: I = O.ideal(y); I
             Ideal (y) of Maximal order of Function field in y
             defined by y^2 + y + (x^2 + 1)/x
 
-            sage: # needs sage.rings.finite_rings
             sage: K.<x> = FunctionField(GF(2))
             sage: Oinf = K.maximal_order_infinite()
             sage: I = Oinf.ideal(x/(x^2+1))
@@ -193,19 +194,19 @@ class FunctionFieldIdeal(Element):
             Ideal (1/x) of Maximal infinite order of Rational function field
             in x over Finite Field of size 2
 
-            sage: # needs sage.rings.finite_rings
+            sage: # needs sage.rings.finite_rings sage.rings.function_field
             sage: K.<x> = FunctionField(GF(3^2)); _.<t> = PolynomialRing(K)
-            sage: F.<y> = K.extension(t^3 + t^2 - x^4)                                                                  # needs sage.rings.function_field
-            sage: Oinf = F.maximal_order_infinite()                                                                     # needs sage.rings.function_field
-            sage: Oinf.ideal(1/y)                                                                                       # needs sage.rings.function_field
+            sage: F.<y> = K.extension(t^3 + t^2 - x^4)
+            sage: Oinf = F.maximal_order_infinite()
+            sage: Oinf.ideal(1/y)
             Ideal (1/x^4*y^2) of Maximal infinite order of Function field
             in y defined by y^3 + y^2 + 2*x^4
 
-            sage: # needs sage.rings.finite_rings
+            sage: # needs sage.rings.function_field
             sage: K.<x> = FunctionField(GF(2)); _.<Y> = K[]
-            sage: L.<y> = K.extension(Y^2 + Y + x + 1/x)                                                                # needs sage.rings.function_field
-            sage: Oinf = L.maximal_order_infinite()                                                                     # needs sage.rings.function_field
-            sage: Oinf.ideal(1/y)                                                                                       # needs sage.rings.function_field
+            sage: L.<y> = K.extension(Y^2 + Y + x + 1/x)
+            sage: Oinf = L.maximal_order_infinite()
+            sage: Oinf.ideal(1/y)
             Ideal (1/x*y) of Maximal infinite order of Function field in y
             defined by y^2 + y + (x^2 + 1)/x
         """
@@ -220,12 +221,12 @@ class FunctionFieldIdeal(Element):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
+            sage: # needs sage.rings.function_field
             sage: K.<x> = FunctionField(GF(2)); _.<Y> = K[]
-            sage: L.<y> = K.extension(Y^2 - x^3*Y - x)                                                                  # needs sage.rings.function_field
-            sage: O = L.maximal_order()                                                                                 # needs sage.rings.function_field
-            sage: I = O.ideal(y)                                                                                        # needs sage.rings.function_field
-            sage: latex(I)                                                                                              # needs sage.rings.function_field
+            sage: L.<y> = K.extension(Y^2 - x^3*Y - x)
+            sage: O = L.maximal_order()
+            sage: I = O.ideal(y)
+            sage: latex(I)
             \left(y\right)
         """
         return '\\left(' + ', '.join(latex(g) for g in self.gens_reduced()) + '\\right)'
@@ -240,7 +241,6 @@ class FunctionFieldIdeal(Element):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
             sage: K.<x> = FunctionField(GF(7))
             sage: O = K.equation_order()
             sage: I = O.ideal(x^3 + 1)
@@ -265,7 +265,6 @@ class FunctionFieldIdeal(Element):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
             sage: K.<x> = FunctionField(GF(7))
             sage: O = K.equation_order()
             sage: I = O.ideal(x, x^2, x^2 + x)
@@ -288,7 +287,6 @@ class FunctionFieldIdeal(Element):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
             sage: K.<x> = FunctionField(GF(7))
             sage: O = K.equation_order()
             sage: I = O.ideal(x, x^2, x^2 + x)
@@ -303,11 +301,12 @@ class FunctionFieldIdeal(Element):
 
         EXAMPLES::
 
+            sage: # needs sage.rings.function_field
             sage: K.<x> = FunctionField(QQ); R.<y> = K[]
-            sage: L.<y> = K.extension(y^2 - x^3 - 1)                                                                    # needs sage.rings.function_field
-            sage: O = L.equation_order()                                                                                # needs sage.rings.function_field
-            sage: I = O.ideal(x^2 + 1)                                                                                  # needs sage.rings.function_field
-            sage: I.base_ring()                                                                                         # needs sage.rings.function_field
+            sage: L.<y> = K.extension(y^2 - x^3 - 1)
+            sage: O = L.equation_order()
+            sage: I = O.ideal(x^2 + 1)
+            sage: I.base_ring()
             Order in Function field in y defined by y^2 - x^3 - 1
         """
         return self.ring()
@@ -330,7 +329,6 @@ class FunctionFieldIdeal(Element):
             sage: I.place()
             Place (x^3 + x + 1)
 
-            sage: # needs sage.rings.finite_rings
             sage: K.<x> = FunctionField(GF(2))
             sage: Oinf = K.maximal_order_infinite()
             sage: I = Oinf.ideal((x + 1)/(x^3 + 1))
@@ -338,49 +336,49 @@ class FunctionFieldIdeal(Element):
             sage: p.place()
             Place (1/x)
 
-            sage: # needs sage.rings.finite_rings
+            sage: # needs sage.rings.function_field
             sage: K.<x> = FunctionField(GF(2)); _.<t> = PolynomialRing(K)
-            sage: F.<y> = K.extension(t^3 - x^2*(x^2+x+1)^2)                                                            # needs sage.rings.function_field
-            sage: O = F.maximal_order()                                                                                 # needs sage.rings.function_field
-            sage: I = O.ideal(y)                                                                                        # needs sage.rings.function_field
-            sage: [f.place() for f,_ in I.factor()]                                                                     # needs sage.rings.function_field
+            sage: F.<y> = K.extension(t^3 - x^2*(x^2+x+1)^2)
+            sage: O = F.maximal_order()
+            sage: I = O.ideal(y)
+            sage: [f.place() for f,_ in I.factor()]
             [Place (x, (1/(x^3 + x^2 + x))*y^2),
              Place (x^2 + x + 1, (1/(x^3 + x^2 + x))*y^2)]
 
-            sage: # needs sage.rings.finite_rings
+            sage: # needs sage.rings.function_field
             sage: K.<x> = FunctionField(GF(2)); _.<Y> = K[]
-            sage: L.<y> = K.extension(Y^2 + Y + x + 1/x)                                                                # needs sage.rings.function_field
-            sage: O = L.maximal_order()                                                                                 # needs sage.rings.function_field
-            sage: I = O.ideal(y)                                                                                        # needs sage.rings.function_field
-            sage: [f.place() for f,_ in I.factor()]                                                                     # needs sage.rings.function_field
+            sage: L.<y> = K.extension(Y^2 + Y + x + 1/x)
+            sage: O = L.maximal_order()
+            sage: I = O.ideal(y)
+            sage: [f.place() for f,_ in I.factor()]
             [Place (x, x*y), Place (x + 1, x*y)]
 
-            sage: # needs sage.rings.finite_rings
+            sage: # needs sage.rings.finite_rings sage.rings.function_field
             sage: K.<x> = FunctionField(GF(3^2)); R.<t> = PolynomialRing(K)
-            sage: F.<y> = K.extension(t^3 + t^2 - x^4)                                                                  # needs sage.rings.function_field
-            sage: Oinf = F.maximal_order_infinite()                                                                     # needs sage.rings.function_field
-            sage: I = Oinf.ideal(1/x)                                                                                   # needs sage.rings.function_field
-            sage: I.factor()                                                                                            # needs sage.rings.function_field
+            sage: F.<y> = K.extension(t^3 + t^2 - x^4)
+            sage: Oinf = F.maximal_order_infinite()
+            sage: I = Oinf.ideal(1/x)
+            sage: I.factor()
             (Ideal (1/x^3*y^2) of Maximal infinite order of Function field
             in y defined by y^3 + y^2 + 2*x^4)^3
-            sage: J = I.factor()[0][0]                                                                                  # needs sage.rings.function_field
-            sage: J.is_prime()                                                                                          # needs sage.rings.function_field
+            sage: J = I.factor()[0][0]
+            sage: J.is_prime()
             True
-            sage: J.place()                                                                                             # needs sage.rings.function_field
+            sage: J.place()
             Place (1/x, 1/x^3*y^2)
 
-            sage: # needs sage.rings.finite_rings
+            sage: # needs sage.rings.function_field
             sage: K.<x> = FunctionField(GF(2)); _.<Y> = K[]
-            sage: L.<y> = K.extension(Y^2 + Y + x + 1/x)                                                                # needs sage.rings.function_field
-            sage: Oinf = L.maximal_order_infinite()                                                                     # needs sage.rings.function_field
-            sage: I = Oinf.ideal(1/x)                                                                                   # needs sage.rings.function_field
-            sage: I.factor()                                                                                            # needs sage.rings.function_field
+            sage: L.<y> = K.extension(Y^2 + Y + x + 1/x)
+            sage: Oinf = L.maximal_order_infinite()
+            sage: I = Oinf.ideal(1/x)
+            sage: I.factor()
             (Ideal (1/x*y) of Maximal infinite order of Function field in y
             defined by y^2 + y + (x^2 + 1)/x)^2
-            sage: J = I.factor()[0][0]                                                                                  # needs sage.rings.function_field
-            sage: J.is_prime()                                                                                          # needs sage.rings.function_field
+            sage: J = I.factor()[0][0]
+            sage: J.is_prime()
             True
-            sage: J.place()                                                                                             # needs sage.rings.function_field
+            sage: J.place()
             Place (1/x, 1/x*y)
         """
         if not self.is_prime():
@@ -408,21 +406,22 @@ class FunctionFieldIdeal(Element):
             (Ideal (x + 1) of Maximal order of Rational function field in x
             over Finite Field in z2 of size 2^2)^2
 
-            sage: Oinf = K.maximal_order_infinite()                                                                     # needs sage.rings.finite_rings
-            sage: I = Oinf.ideal((x + 1)/(x^3 + 1))                                                                     # needs sage.rings.finite_rings
-            sage: I.factor()                                                                                            # needs sage.rings.finite_rings
+            sage: # needs sage.rings.finite_rings
+            sage: Oinf = K.maximal_order_infinite()
+            sage: I = Oinf.ideal((x + 1)/(x^3 + 1))
+            sage: I.factor()
             (Ideal (1/x) of Maximal infinite order of Rational function field in x
             over Finite Field in z2 of size 2^2)^2
 
-            sage: # needs sage.rings.finite_rings
+            sage: # needs sage.rings.function_field
             sage: K.<x> = FunctionField(GF(2)); _.<T> = PolynomialRing(K)
-            sage: F.<y> = K.extension(T^3 - x^2*(x^2 + x + 1)^2)                                                        # needs sage.rings.function_field
-            sage: O = F.maximal_order()                                                                                 # needs sage.rings.function_field
-            sage: I = O.ideal(y)                                                                                        # needs sage.rings.function_field
-            sage: I == I.factor().prod()                                                                                # needs sage.rings.function_field
+            sage: F.<y> = K.extension(T^3 - x^2*(x^2 + x + 1)^2)
+            sage: O = F.maximal_order()
+            sage: I = O.ideal(y)
+            sage: I == I.factor().prod()
             True
 
-            sage: # needs sage.rings.finite_rings sage.rings.function_field
+            sage: # needs sage.rings.function_field
             sage: Oinf = F.maximal_order_infinite()
             sage: f= 1/x
             sage: I = Oinf.ideal(f)
@@ -432,18 +431,20 @@ class FunctionFieldIdeal(Element):
             (Ideal ((1/(x^4 + x^3 + x^2))*y^2 + 1) of Maximal infinite order
             of Function field in y defined by y^3 + x^6 + x^4 + x^2)
 
+            sage: # needs sage.rings.function_field
             sage: K.<x> = FunctionField(QQ); _.<Y> = K[]
-            sage: F.<y> = K.extension(Y^3 - x^2*(x^2 + x + 1)^2)                                                        # needs sage.rings.function_field
-            sage: O = F.maximal_order()                                                                                 # needs sage.rings.function_field
-            sage: I = O.ideal(y)                                                                                        # needs sage.rings.function_field
-            sage: I == I.factor().prod()                                                                                # needs sage.rings.function_field
+            sage: F.<y> = K.extension(Y^3 - x^2*(x^2 + x + 1)^2)
+            sage: O = F.maximal_order()
+            sage: I = O.ideal(y)
+            sage: I == I.factor().prod()
             True
 
+            sage: # needs sage.rings.function_field
             sage: K.<x> = FunctionField(QQ); _.<Y> = K[]
-            sage: L.<y> = K.extension(Y^2 + Y + x + 1/x)                                                                # needs sage.rings.function_field
-            sage: O = L.maximal_order()                                                                                 # needs sage.rings.function_field
-            sage: I = O.ideal(y)                                                                                        # needs sage.rings.function_field
-            sage: I == I.factor().prod()                                                                                # needs sage.rings.function_field
+            sage: L.<y> = K.extension(Y^2 + Y + x + 1/x)
+            sage: O = L.maximal_order()
+            sage: I = O.ideal(y)
+            sage: I == I.factor().prod()
             True
 
         """
@@ -462,38 +463,41 @@ class FunctionFieldIdeal(Element):
             sage: I.divisor()
             Place (x) + 2*Place (x + 1) - Place (x + z2) - Place (x + z2 + 1)
 
-            sage: Oinf = K.maximal_order_infinite()                                                                     # needs sage.rings.finite_rings
-            sage: I = Oinf.ideal((x + 1)/(x^3 + 1))                                                                     # needs sage.rings.finite_rings
-            sage: I.divisor()                                                                                           # needs sage.rings.finite_rings
+            sage: # needs sage.rings.finite_rings
+            sage: Oinf = K.maximal_order_infinite()
+            sage: I = Oinf.ideal((x + 1)/(x^3 + 1))
+            sage: I.divisor()
             2*Place (1/x)
 
-            sage: # needs sage.rings.finite_rings
+            sage: # needs sage.rings.function_field
             sage: K.<x> = FunctionField(GF(2)); _.<T> = PolynomialRing(K)
-            sage: F.<y> = K.extension(T^3 - x^2*(x^2 + x + 1)^2)                                                        # needs sage.rings.function_field
-            sage: O = F.maximal_order()                                                                                 # needs sage.rings.function_field
-            sage: I = O.ideal(y)                                                                                        # needs sage.rings.function_field
-            sage: I.divisor()                                                                                           # needs sage.rings.function_field
+            sage: F.<y> = K.extension(T^3 - x^2*(x^2 + x + 1)^2)
+            sage: O = F.maximal_order()
+            sage: I = O.ideal(y)
+            sage: I.divisor()
             2*Place (x, (1/(x^3 + x^2 + x))*y^2)
              + 2*Place (x^2 + x + 1, (1/(x^3 + x^2 + x))*y^2)
 
-            sage: Oinf = F.maximal_order_infinite()                                                                     # needs sage.rings.finite_rings sage.rings.function_field
-            sage: I = Oinf.ideal(y)                                                                                     # needs sage.rings.finite_rings sage.rings.function_field
-            sage: I.divisor()                                                                                           # needs sage.rings.finite_rings sage.rings.function_field
+            sage: # needs sage.rings.function_field
+            sage: Oinf = F.maximal_order_infinite()
+            sage: I = Oinf.ideal(y)
+            sage: I.divisor()
             -2*Place (1/x, 1/x^4*y^2 + 1/x^2*y + 1)
              - 2*Place (1/x, 1/x^2*y + 1)
 
-            sage: # needs sage.rings.finite_rings
+            sage: # needs sage.rings.function_field
             sage: K.<x> = FunctionField(GF(2)); _.<Y> = K[]
-            sage: L.<y> = K.extension(Y^2 + Y + x + 1/x)                                                                # needs sage.rings.function_field
-            sage: O = L.maximal_order()                                                                                 # needs sage.rings.function_field
-            sage: I = O.ideal(y)                                                                                        # needs sage.rings.function_field
-            sage: I.divisor()                                                                                           # needs sage.rings.function_field
+            sage: L.<y> = K.extension(Y^2 + Y + x + 1/x)
+            sage: O = L.maximal_order()
+            sage: I = O.ideal(y)
+            sage: I.divisor()
             - Place (x, x*y)
              + 2*Place (x + 1, x*y)
 
-            sage: Oinf = L.maximal_order_infinite()                                                                     # needs sage.rings.finite_rings sage.rings.function_field
-            sage: I = Oinf.ideal(y)                                                                                     # needs sage.rings.finite_rings sage.rings.function_field
-            sage: I.divisor()                                                                                           # needs sage.rings.finite_rings sage.rings.function_field
+            sage: # needs sage.rings.function_field
+            sage: Oinf = L.maximal_order_infinite()
+            sage: I = Oinf.ideal(y)
+            sage: I.divisor()
             - Place (1/x, 1/x*y)
         """
         from .divisor import divisor
@@ -518,19 +522,18 @@ class FunctionFieldIdeal(Element):
             sage: I.divisor_of_zeros()
             Place (x) + 2*Place (x + 1)
 
-            sage: # needs sage.rings.finite_rings
             sage: K.<x> = FunctionField(GF(2))
             sage: Oinf = K.maximal_order_infinite()
             sage: I = Oinf.ideal((x + 1)/(x^3 + 1))
             sage: I.divisor_of_zeros()
             2*Place (1/x)
 
-            sage: # needs sage.rings.finite_rings
+            sage: # needs sage.rings.function_field
             sage: K.<x> = FunctionField(GF(2)); _.<Y> = K[]
-            sage: L.<y> = K.extension(Y^2 + Y + x + 1/x)                                                                # needs sage.rings.function_field
-            sage: O = L.maximal_order()                                                                                 # needs sage.rings.function_field
-            sage: I = O.ideal(y)                                                                                        # needs sage.rings.function_field
-            sage: I.divisor_of_zeros()                                                                                  # needs sage.rings.function_field
+            sage: L.<y> = K.extension(Y^2 + Y + x + 1/x)
+            sage: O = L.maximal_order()
+            sage: I = O.ideal(y)
+            sage: I.divisor_of_zeros()
             2*Place (x + 1, x*y)
         """
         from .divisor import divisor
@@ -555,19 +558,18 @@ class FunctionFieldIdeal(Element):
             sage: I.divisor_of_poles()
             Place (x + z2) + Place (x + z2 + 1)
 
-            sage: # needs sage.rings.finite_rings
             sage: K.<x> = FunctionField(GF(2))
             sage: Oinf = K.maximal_order_infinite()
             sage: I = Oinf.ideal((x + 1)/(x^3 + 1))
             sage: I.divisor_of_poles()
             0
 
-            sage: # needs sage.rings.finite_rings
+            sage: # needs sage.rings.function_field
             sage: K.<x> = FunctionField(GF(2)); _.<Y> = K[]
-            sage: L.<y> = K.extension(Y^2 + Y + x + 1/x)                                                                # needs sage.rings.function_field
-            sage: O = L.maximal_order()                                                                                 # needs sage.rings.function_field
-            sage: I = O.ideal(y)                                                                                        # needs sage.rings.function_field
-            sage: I.divisor_of_poles()                                                                                  # needs sage.rings.function_field
+            sage: L.<y> = K.extension(Y^2 + Y + x + 1/x)
+            sage: O = L.maximal_order()
+            sage: I = O.ideal(y)
+            sage: I.divisor_of_poles()
             Place (x, x*y)
         """
         from .divisor import divisor
@@ -595,13 +597,14 @@ class FunctionFieldIdeal_module(FunctionFieldIdeal, Ideal_generic):
 
     An ideal in an extension of a rational function field::
 
+        sage: # needs sage.rings.function_field
         sage: K.<x> = FunctionField(QQ); R.<y> = K[]
-        sage: L.<y> = K.extension(y^2 - x^3 - 1)                                                                        # needs sage.rings.function_field
-        sage: O = L.equation_order()                                                                                    # needs sage.rings.function_field
-        sage: I = O.ideal(y)                                                                                            # needs sage.rings.function_field
-        sage: I                                                                                                         # needs sage.rings.function_field
+        sage: L.<y> = K.extension(y^2 - x^3 - 1)
+        sage: O = L.equation_order()
+        sage: I = O.ideal(y)
+        sage: I
         Ideal (x^3 + 1, -y) of Order in Function field in y defined by y^2 - x^3 - 1
-        sage: I^2                                                                                                       # needs sage.rings.function_field
+        sage: I^2
         Ideal (x^3 + 1, (-x^3 - 1)*y) of Order in Function field in y defined by y^2 - x^3 - 1
     """
     def __init__(self, ring, module):
@@ -610,11 +613,12 @@ class FunctionFieldIdeal_module(FunctionFieldIdeal, Ideal_generic):
 
         EXAMPLES::
 
+        sage: # needs sage.rings.function_field
             sage: K.<x> = FunctionField(QQ); R.<y> = K[]
-            sage: L.<y> = K.extension(y^2 - x^3 - 1)                                                                    # needs sage.rings.function_field
-            sage: O = L.equation_order()                                                                                # needs sage.rings.function_field
-            sage: I = O.ideal(y)                                                                                        # needs sage.rings.function_field
-            sage: TestSuite(I).run()                                                                                    # needs sage.rings.function_field
+            sage: L.<y> = K.extension(y^2 - x^3 - 1)
+            sage: O = L.equation_order()
+            sage: I = O.ideal(y)
+            sage: TestSuite(I).run()
         """
         FunctionFieldIdeal.__init__(self, ring)
 
@@ -633,16 +637,17 @@ class FunctionFieldIdeal_module(FunctionFieldIdeal, Ideal_generic):
 
         EXAMPLES::
 
+            sage: # needs sage.rings.function_field
             sage: K.<x> = FunctionField(QQ); R.<y> = K[]
-            sage: L.<y> = K.extension(y^2 - x^3 - 1)                                                                    # needs sage.rings.function_field
-            sage: O = L.equation_order()                                                                                # needs sage.rings.function_field
-            sage: I = O.ideal(y); I                                                                                     # needs sage.rings.function_field
+            sage: L.<y> = K.extension(y^2 - x^3 - 1)
+            sage: O = L.equation_order()
+            sage: I = O.ideal(y); I
             Ideal (x^3 + 1, -y) of Order in Function field in y defined by y^2 - x^3 - 1
-            sage: y in I                                                                                                # needs sage.rings.function_field
+            sage: y in I
             True
-            sage: y/x in I                                                                                              # needs sage.rings.function_field
+            sage: y/x in I
             False
-            sage: y^2 - 2 in I                                                                                          # needs sage.rings.function_field
+            sage: y^2 - 2 in I
             False
         """
         return self._structure[2](x) in self._module
@@ -653,11 +658,12 @@ class FunctionFieldIdeal_module(FunctionFieldIdeal, Ideal_generic):
 
         EXAMPLES::
 
+            sage: # needs sage.rings.function_field
             sage: K.<x> = FunctionField(QQ); R.<y> = K[]
-            sage: L.<y> = K.extension(y^2 - x^3 - 1)                                                                    # needs sage.rings.function_field
-            sage: O = L.equation_order()                                                                                # needs sage.rings.function_field
-            sage: I = O.ideal(y)                                                                                        # needs sage.rings.function_field
-            sage: d = {I: 1}  # indirect doctest                                                                        # needs sage.rings.function_field
+            sage: L.<y> = K.extension(y^2 - x^3 - 1)
+            sage: O = L.equation_order()
+            sage: I = O.ideal(y)
+            sage: d = {I: 1}  # indirect doctest
         """
         return hash((self._ring,self._module))
 
@@ -667,19 +673,20 @@ class FunctionFieldIdeal_module(FunctionFieldIdeal, Ideal_generic):
 
         EXAMPLES::
 
+            sage: # needs sage.rings.function_field
             sage: K.<x> = FunctionField(QQ); R.<y> = K[]
-            sage: L.<y> = K.extension(y^2 - x^3 - 1)                                                                    # needs sage.rings.function_field
-            sage: O = L.equation_order()                                                                                # needs sage.rings.function_field
-            sage: I = O.ideal(x, y);  J = O.ideal(y^2 - 2)                                                              # needs sage.rings.function_field
-            sage: I + J == J + I  # indirect test                                                                       # needs sage.rings.function_field
+            sage: L.<y> = K.extension(y^2 - x^3 - 1)
+            sage: O = L.equation_order()
+            sage: I = O.ideal(x, y);  J = O.ideal(y^2 - 2)
+            sage: I + J == J + I  # indirect test
             True
-            sage: I + I == I  # indirect doctest                                                                        # needs sage.rings.function_field
+            sage: I + I == I  # indirect doctest
             True
-            sage: I == J                                                                                                # needs sage.rings.function_field
+            sage: I == J
             False
-            sage: I < J                                                                                                 # needs sage.rings.function_field
+            sage: I < J
             True
-            sage: J < I                                                                                                 # needs sage.rings.function_field
+            sage: J < I
             False
         """
         return richcmp(self.module().basis(), other.module().basis(), op)
@@ -698,21 +705,22 @@ class FunctionFieldIdeal_module(FunctionFieldIdeal, Ideal_generic):
 
         EXAMPLES::
 
+            sage: # needs sage.rings.function_field
             sage: K.<x> = FunctionField(QQ); R.<y> = K[]
-            sage: L.<y> = K.extension(y^2 - x^3 - 1)                                                                    # needs sage.rings.function_field
-            sage: O = L.equation_order();  O                                                                            # needs sage.rings.function_field
+            sage: L.<y> = K.extension(y^2 - x^3 - 1)
+            sage: O = L.equation_order();  O
             Order in Function field in y defined by y^2 - x^3 - 1
-            sage: I = O.ideal(x^2 + 1)                                                                                  # needs sage.rings.function_field
-            sage: I.gens()                                                                                              # needs sage.rings.function_field
+            sage: I = O.ideal(x^2 + 1)
+            sage: I.gens()
             (x^2 + 1, (x^2 + 1)*y)
-            sage: I.module()                                                                                            # needs sage.rings.function_field
+            sage: I.module()
             Free module of degree 2 and rank 2 over Maximal order of Rational function field in x over Rational Field
             Echelon basis matrix:
             [x^2 + 1       0]
             [      0 x^2 + 1]
-            sage: V, from_V, to_V = L.vector_space(); V                                                                 # needs sage.rings.function_field
+            sage: V, from_V, to_V = L.vector_space(); V
             Vector space of dimension 2 over Rational function field in x over Rational Field
-            sage: I.module().is_submodule(V)                                                                            # needs sage.rings.function_field
+            sage: I.module().is_submodule(V)
             True
         """
         return self._module
@@ -723,11 +731,12 @@ class FunctionFieldIdeal_module(FunctionFieldIdeal, Ideal_generic):
 
         EXAMPLES::
 
+            sage: # needs sage.rings.function_field
             sage: K.<x> = FunctionField(QQ); R.<y> = K[]
-            sage: L.<y> = K.extension(y^2 - x^3 - 1)                                                                    # needs sage.rings.function_field
-            sage: O = L.equation_order()                                                                                # needs sage.rings.function_field
-            sage: I = O.ideal(x^2 + 1)                                                                                  # needs sage.rings.function_field
-            sage: I.gens()                                                                                              # needs sage.rings.function_field
+            sage: L.<y> = K.extension(y^2 - x^3 - 1)
+            sage: O = L.equation_order()
+            sage: I = O.ideal(x^2 + 1)
+            sage: I.gens()
             (x^2 + 1, (x^2 + 1)*y)
         """
         return self._gens
@@ -738,11 +747,12 @@ class FunctionFieldIdeal_module(FunctionFieldIdeal, Ideal_generic):
 
         EXAMPLES::
 
+            sage: # needs sage.rings.function_field
             sage: K.<x> = FunctionField(QQ); R.<y> = K[]
-            sage: L.<y> = K.extension(y^2 - x^3 - 1)                                                                    # needs sage.rings.function_field
-            sage: O = L.equation_order()                                                                                # needs sage.rings.function_field
-            sage: I = O.ideal(x^2 + 1)                                                                                  # needs sage.rings.function_field
-            sage: I.gen(1)                                                                                              # needs sage.rings.function_field
+            sage: L.<y> = K.extension(y^2 - x^3 - 1)
+            sage: O = L.equation_order()
+            sage: I = O.ideal(x^2 + 1)
+            sage: I.gen(1)
             (x^2 + 1)*y
         """
         return self._gens[i]
@@ -753,11 +763,12 @@ class FunctionFieldIdeal_module(FunctionFieldIdeal, Ideal_generic):
 
         EXAMPLES::
 
+            sage: # needs sage.rings.function_field
             sage: K.<x> = FunctionField(QQ); R.<y> = K[]
-            sage: L.<y> = K.extension(y^2 - x^3 - 1)                                                                    # needs sage.rings.function_field
-            sage: O = L.equation_order()                                                                                # needs sage.rings.function_field
-            sage: I = O.ideal(x^2 + 1)                                                                                  # needs sage.rings.function_field
-            sage: I.ngens()                                                                                             # needs sage.rings.function_field
+            sage: L.<y> = K.extension(y^2 - x^3 - 1)
+            sage: O = L.equation_order()
+            sage: I = O.ideal(x^2 + 1)
+            sage: I.ngens()
             2
         """
         return len(self._gens)
@@ -768,12 +779,13 @@ class FunctionFieldIdeal_module(FunctionFieldIdeal, Ideal_generic):
 
         EXAMPLES::
 
+            sage: # needs sage.rings.function_field
             sage: K.<x> = FunctionField(QQ); R.<y> = K[]
-            sage: L.<y> = K.extension(y^2 - x^3 - 1)                                                                    # needs sage.rings.function_field
-            sage: O = L.equation_order()                                                                                # needs sage.rings.function_field
-            sage: I = O.ideal(y)                                                                                        # needs sage.rings.function_field
-            sage: J = O.ideal(x+y)                                                                                      # needs sage.rings.function_field
-            sage: I + J                                                                                                 # needs sage.rings.function_field
+            sage: L.<y> = K.extension(y^2 - x^3 - 1)
+            sage: O = L.equation_order()
+            sage: I = O.ideal(y)
+            sage: J = O.ideal(x+y)
+            sage: I + J
             Ideal ((-x^2 + x)*y + 1, -y) of Order in Function field in y defined by y^2 - x^3 - 1
         """
         return self.ring().ideal(self.gens() + other.gens())
@@ -784,12 +796,13 @@ class FunctionFieldIdeal_module(FunctionFieldIdeal, Ideal_generic):
 
         EXAMPLES::
 
+            sage: # needs sage.rings.function_field
             sage: K.<x> = FunctionField(QQ); R.<y> = K[]
-            sage: L.<y> = K.extension(y^2 - x^3 - 1)                                                                    # needs sage.rings.function_field
-            sage: O = L.equation_order()                                                                                # needs sage.rings.function_field
-            sage: I = O.ideal(y)                                                                                        # needs sage.rings.function_field
-            sage: J = O.ideal(x+y)                                                                                      # needs sage.rings.function_field
-            sage: I * J                                                                                                 # needs sage.rings.function_field
+            sage: L.<y> = K.extension(y^2 - x^3 - 1)
+            sage: O = L.equation_order()
+            sage: I = O.ideal(y)
+            sage: J = O.ideal(x+y)
+            sage: I * J
             Ideal ((-x^5 + x^4 - x^2 + x)*y + x^3 + 1, (x^3 - x^2 + 1)*y) of Order in Function field in y defined by y^2 - x^3 - 1
         """
         return self.ring().ideal([x*y for x in self.gens() for y in other.gens()])
@@ -800,11 +813,12 @@ class FunctionFieldIdeal_module(FunctionFieldIdeal, Ideal_generic):
 
         EXAMPLES::
 
+            sage: # needs sage.rings.function_field
             sage: K.<x> = FunctionField(QQ); R.<y> = K[]
-            sage: L.<y> = K.extension(y^2 - x^3 - 1)                                                                    # needs sage.rings.function_field
-            sage: O = L.equation_order()                                                                                # needs sage.rings.function_field
-            sage: I = O.ideal(y)                                                                                        # needs sage.rings.function_field
-            sage: x * I                                                                                                 # needs sage.rings.function_field
+            sage: L.<y> = K.extension(y^2 - x^3 - 1)
+            sage: O = L.equation_order()
+            sage: I = O.ideal(y)
+            sage: x * I
             Ideal (x^4 + x, -x*y) of Order in Function field in y defined by y^2 - x^3 - 1
         """
         return self.ring().ideal([other * x for x in self.gens()])
@@ -815,15 +829,16 @@ class FunctionFieldIdeal_module(FunctionFieldIdeal, Ideal_generic):
 
         EXAMPLES::
 
+            sage: # needs sage.rings.function_field
             sage: K.<x> = FunctionField(QQ); R.<y> = K[]
-            sage: L.<y> = K.extension(y^2 - x^3 - 1)                                                                    # needs sage.rings.function_field
-            sage: O = L.equation_order()                                                                                # needs sage.rings.function_field
-            sage: I = O.ideal(y^3); J = O.ideal(y^2)                                                                    # needs sage.rings.function_field
-            sage: Z = I.intersection(J); Z                                                                              # needs sage.rings.function_field
+            sage: L.<y> = K.extension(y^2 - x^3 - 1)
+            sage: O = L.equation_order()
+            sage: I = O.ideal(y^3); J = O.ideal(y^2)
+            sage: Z = I.intersection(J); Z
             Ideal (x^6 + 2*x^3 + 1, (-x^3 - 1)*y) of Order in Function field in y defined by y^2 - x^3 - 1
-            sage: y^2 in Z                                                                                              # needs sage.rings.function_field
+            sage: y^2 in Z
             False
-            sage: y^3 in Z                                                                                              # needs sage.rings.function_field
+            sage: y^3 in Z
             True
         """
         if not isinstance(other, FunctionFieldIdeal):
@@ -845,15 +860,16 @@ class FunctionFieldIdeal_module(FunctionFieldIdeal, Ideal_generic):
 
         EXAMPLES::
 
+            sage: # needs sage.rings.function_field
             sage: K.<x> = FunctionField(QQ); R.<y> = K[]
-            sage: L.<y> = K.extension(y^2 - x^3 - 1)                                                                    # needs sage.rings.function_field
-            sage: O = L.equation_order()                                                                                # needs sage.rings.function_field
-            sage: I = O.ideal(y)                                                                                        # needs sage.rings.function_field
-            sage: ~I                                                                                                    # needs sage.rings.function_field
+            sage: L.<y> = K.extension(y^2 - x^3 - 1)
+            sage: O = L.equation_order()
+            sage: I = O.ideal(y)
+            sage: ~I
             Ideal (-1, (1/(x^3 + 1))*y) of Order in Function field in y defined by y^2 - x^3 - 1
-            sage: I^-1                                                                                                  # needs sage.rings.function_field
+            sage: I^-1
             Ideal (-1, (1/(x^3 + 1))*y) of Order in Function field in y defined by y^2 - x^3 - 1
-            sage: ~I * I                                                                                                # needs sage.rings.function_field
+            sage: ~I * I
             Ideal (1) of Order in Function field in y defined by y^2 - x^3 - 1
         """
         if len(self.gens()) == 0:
@@ -891,10 +907,11 @@ class FunctionFieldIdealInfinite_module(FunctionFieldIdealInfinite, Ideal_generi
 
     EXAMPLES::
 
+    sage: # needs sage.rings.function_field
         sage: K.<x> = FunctionField(QQ); R.<y> = K[]
-        sage: L.<y> = K.extension(y^2 - x^3 - 1)                                                                        # needs sage.rings.function_field
-        sage: O = L.equation_order()                                                                                    # needs sage.rings.function_field
-        sage: O.ideal(y)                                                                                                # needs sage.rings.function_field
+        sage: L.<y> = K.extension(y^2 - x^3 - 1)
+        sage: O = L.equation_order()
+        sage: O.ideal(y)
         Ideal (x^3 + 1, -y) of Order in Function field in y defined by y^2 - x^3 - 1
     """
     def __init__(self, ring, module):
@@ -903,11 +920,12 @@ class FunctionFieldIdealInfinite_module(FunctionFieldIdealInfinite, Ideal_generi
 
         TESTS::
 
+            sage: # needs sage.rings.function_field
             sage: K.<x> = FunctionField(QQ); R.<y> = K[]
-            sage: L.<y> = K.extension(y^2 - x^3 - 1)                                                                    # needs sage.rings.function_field
-            sage: O = L.equation_order()                                                                                # needs sage.rings.function_field
-            sage: I = O.ideal(y)                                                                                        # needs sage.rings.function_field
-            sage: TestSuite(I).run()                                                                                    # needs sage.rings.function_field
+            sage: L.<y> = K.extension(y^2 - x^3 - 1)
+            sage: O = L.equation_order()
+            sage: I = O.ideal(y)
+            sage: TestSuite(I).run()
         """
         FunctionFieldIdealInfinite.__init__(self, ring)
 
@@ -931,17 +949,17 @@ class FunctionFieldIdealInfinite_module(FunctionFieldIdealInfinite, Ideal_generi
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
+            sage: # needs sage.rings.function_field
             sage: K.<x> = FunctionField(GF(7)); R.<y> = K[]
-            sage: L.<y> = K.extension(y^2 - x^3 - 1)                                                                    # needs sage.rings.function_field
-            sage: O = L.equation_order()                                                                                # needs sage.rings.function_field
-            sage: I = O.ideal_with_gens_over_base([1, y]);  I                                                           # needs sage.rings.function_field
+            sage: L.<y> = K.extension(y^2 - x^3 - 1)
+            sage: O = L.equation_order()
+            sage: I = O.ideal_with_gens_over_base([1, y]);  I
             Ideal (1) of Order in Function field in y defined by y^2 + 6*x^3 + 6
-            sage: y in I                                                                                                # needs sage.rings.function_field
+            sage: y in I
             True
-            sage: y/x in I                                                                                              # needs sage.rings.function_field
+            sage: y/x in I
             False
-            sage: y^2 - 2 in I                                                                                          # needs sage.rings.function_field
+            sage: y^2 - 2 in I
             True
         """
         return self._structure[2](x) in self._module
@@ -952,12 +970,12 @@ class FunctionFieldIdealInfinite_module(FunctionFieldIdealInfinite, Ideal_generi
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
+            sage: # needs sage.rings.function_field
             sage: K.<x> = FunctionField(GF(7)); R.<y> = K[]
-            sage: L.<y> = K.extension(y^2 - x^3 - 1)                                                                    # needs sage.rings.function_field
-            sage: O = L.equation_order()                                                                                # needs sage.rings.function_field
-            sage: I = O.ideal_with_gens_over_base([1, y])                                                               # needs sage.rings.function_field
-            sage: d = {I: 2}  # indirect doctest                                                                        # needs sage.rings.function_field
+            sage: L.<y> = K.extension(y^2 - x^3 - 1)
+            sage: O = L.equation_order()
+            sage: I = O.ideal_with_gens_over_base([1, y])
+            sage: d = {I: 2}  # indirect doctest
         """
         return hash((self._ring,self._module))
 
@@ -971,12 +989,12 @@ class FunctionFieldIdealInfinite_module(FunctionFieldIdealInfinite, Ideal_generi
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
+            sage: # needs sage.rings.function_field
             sage: K.<x> = FunctionField(GF(7)); R.<y> = K[]
-            sage: L.<y> = K.extension(y^2 - x^3 - 1)                                                                    # needs sage.rings.function_field
-            sage: O = L.equation_order()                                                                                # needs sage.rings.function_field
-            sage: I = O.ideal_with_gens_over_base([1, y])                                                               # needs sage.rings.function_field
-            sage: I == I + I  # indirect doctest                                                                        # needs sage.rings.function_field
+            sage: L.<y> = K.extension(y^2 - x^3 - 1)
+            sage: O = L.equation_order()
+            sage: I = O.ideal_with_gens_over_base([1, y])
+            sage: I == I + I  # indirect doctest
             True
         """
         if not isinstance(other, FunctionFieldIdeal_module):
@@ -1000,7 +1018,6 @@ class FunctionFieldIdealInfinite_module(FunctionFieldIdealInfinite, Ideal_generi
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
             sage: K.<x> = FunctionField(GF(7))
             sage: O = K.maximal_order(); O
             Maximal order of Rational function field in x over Finite Field of size 7
@@ -1043,7 +1060,6 @@ class IdealMonoid(UniqueRepresentation, Parent):
 
         TESTS::
 
-            sage: # needs sage.rings.finite_rings
             sage: K.<x> = FunctionField(GF(2))
             sage: O = K.maximal_order()
             sage: M = O.ideal_monoid()
@@ -1087,7 +1103,6 @@ class IdealMonoid(UniqueRepresentation, Parent):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
             sage: K.<x> = FunctionField(GF(2))
             sage: O = K.maximal_order()
             sage: M = O.ideal_monoid()
@@ -1108,7 +1123,6 @@ class IdealMonoid(UniqueRepresentation, Parent):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
             sage: K.<x> = FunctionField(GF(2))
             sage: O = K.maximal_order()
             sage: M = O.ideal_monoid()
@@ -1128,7 +1142,6 @@ class IdealMonoid(UniqueRepresentation, Parent):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
             sage: K.<x> = FunctionField(GF(2))
             sage: O = K.maximal_order()
             sage: M = O.ideal_monoid()
