@@ -3718,10 +3718,12 @@ cdef class Polynomial(CommutativePolynomial):
 
         ::
 
-            sage: K = NumberField(symbolic_expression('x^3+2'), 'a')['s,t']['x']        # needs sage.rings.number_field sage.symbolic
-            sage: f = K.random_element()                                                # needs sage.rings.number_field sage.symbolic
-            sage: f.numerator() / f.denominator() == f                                  # needs sage.rings.number_field sage.symbolic
+            sage: # needs sage.rings.number_field sage.symbolic
+            sage: K = NumberField(symbolic_expression('x^3+2'), 'a')['s,t']['x']
+            sage: f = K.random_element()
+            sage: f.numerator() / f.denominator() == f
             True
+
             sage: R = RR['x']
             sage: f = R.random_element()
             sage: f.numerator() / f.denominator() == f
@@ -3859,8 +3861,9 @@ cdef class Polynomial(CommutativePolynomial):
             ...
             ValueError: cannot differentiate with respect to 2*x
 
-            sage: y = var("y")                                                          # needs sage.symbolic
-            sage: f._derivative(y)                                                      # needs sage.symbolic
+            sage: # needs sage.symbolic
+            sage: y = var("y")
+            sage: f._derivative(y)
             Traceback (most recent call last):
             ...
             ValueError: cannot differentiate with respect to y
@@ -3881,8 +3884,10 @@ cdef class Polynomial(CommutativePolynomial):
             Traceback (most recent call last):
             ...
             ValueError: cannot differentiate with respect to 2*x
-            sage: y = var('y')                                                          # needs sage.symbolic
-            sage: R.gen()._derivative(y)                                                # needs sage.symbolic
+
+            sage: # needs sage.symbolic
+            sage: y = var('y')
+            sage: R.gen()._derivative(y)
             Traceback (most recent call last):
             ...
             ValueError: cannot differentiate with respect to y
@@ -5446,7 +5451,7 @@ cdef class Polynomial(CommutativePolynomial):
             sage: f.sylvester_matrix(f, x)                                              # needs sage.modules
             [1 1]
             [1 1]
-            sage: f.sylvester_matrix(g, x)                                              # needs sage.modules
+            sage: f.sylvester_matrix(g, x)
             Traceback (most recent call last):
             ...
             TypeError: no common canonical parent for objects with parents:

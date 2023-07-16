@@ -234,12 +234,13 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
 
         check compatibility with  :trac:`26105`::
 
-            sage: F.<t> = GF(4)                                                         # needs sage.rings.finite_rings
-            sage: LF.<a,b> = LaurentPolynomialRing(F)                                   # needs sage.rings.finite_rings
-            sage: rho = LF.hom([b,a], base_map=F.frobenius_endomorphism())              # needs sage.rings.finite_rings
-            sage: s = t*~a + b +~t*(b**-3)*a**2; rs = rho(s); rs                        # needs sage.rings.finite_rings
+            sage: # needs sage.rings.finite_rings
+            sage: F.<t> = GF(4)
+            sage: LF.<a,b> = LaurentPolynomialRing(F)
+            sage: rho = LF.hom([b,a], base_map=F.frobenius_endomorphism())
+            sage: s = t*~a + b +~t*(b**-3)*a**2; rs = rho(s); rs
             a + (t + 1)*b^-1 + t*a^-3*b^2
-            sage: s == rho(rs)                                                          # needs sage.rings.finite_rings
+            sage: s == rho(rs)
             True
         """
         p = self._poly

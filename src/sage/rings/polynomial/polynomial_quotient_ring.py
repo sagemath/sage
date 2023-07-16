@@ -116,7 +116,7 @@ class PolynomialQuotientRingFactory(UniqueFactory):
         sage: B = A.quotient(y^2 + y + 1, 'y2'); B                                      # needs sage.libs.ntl
         Univariate Quotient Polynomial Ring in y2 over Finite Field of size 2
          with modulus y^2 + y + 1
-        sage: C = PolynomialRing(B, 'x'); x = C.gen(); C
+        sage: C = PolynomialRing(B, 'x'); x = C.gen(); C                                # needs sage.libs.ntl
         Univariate Polynomial Ring in x
          over Univariate Quotient Polynomial Ring in y2
           over Finite Field of size 2 with modulus y^2 + y + 1
