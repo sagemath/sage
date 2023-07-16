@@ -21,7 +21,7 @@ In the following, the :class:`Hom` object is indeed cached::
 Nonetheless, garbage collection occurs when the original references are
 overwritten::
 
-    sage: for p in prime_range(200):                                                    # needs sage.rings.finite_rings
+    sage: for p in prime_range(200):                                                    # needs sage.libs.pari
     ....:     K = GF(p)
     ....:     H = Hom(ZZ, K)
     sage: import gc
@@ -30,7 +30,7 @@ overwritten::
     sage: L = [x for x in gc.get_objects() if isinstance(x, FF)]
     sage: len(L)
     1
-    sage: L                                                                             # needs sage.rings.finite_rings
+    sage: L
     [Finite Field of size 199]
 
 AUTHORS:
@@ -132,7 +132,7 @@ def Hom(X, Y, category=None, check=True):
     Here, we test against a memory leak that has been fixed at :trac:`11521` by
     using a weak cache::
 
-        sage: for p in prime_range(10^3):                                               # needs sage.rings.finite_rings
+        sage: for p in prime_range(10^3):                                               # needs sage.libs.pari
         ....:  K = GF(p)
         ....:  a = K(0)
         sage: import gc
@@ -140,7 +140,7 @@ def Hom(X, Y, category=None, check=True):
         624
         sage: from sage.rings.finite_rings.finite_field_prime_modn import FiniteField_prime_modn as FF
         sage: L = [x for x in gc.get_objects() if isinstance(x, FF)]
-        sage: len(L), L[0]                                                              # needs sage.rings.finite_rings
+        sage: len(L), L[0]
         (1, Finite Field of size 997)
 
     To illustrate the choice of the category, we consider the

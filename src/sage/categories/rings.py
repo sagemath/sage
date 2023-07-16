@@ -339,7 +339,7 @@ class Rings(CategoryWithAxiom):
                 sage: R.<x> = GF(101)[]
                 sage: R.quo(77).is_zero()
                 True
-                sage: R.quo(x^2 + 1).is_zero()                                          # needs sage.rings.finite_rings
+                sage: R.quo(x^2 + 1).is_zero()                                          # needs sage.libs.pari
                 False
             """
             return self.one() == self.zero()

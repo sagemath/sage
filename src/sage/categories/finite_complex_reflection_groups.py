@@ -388,8 +388,10 @@ class FiniteComplexReflectionGroups(CategoryWithAxiom):
                 sage: W = ColoredPermutations(4,3)
                 sage: W.rank()
                 3
-                sage: W = ReflectionGroup((4,2,3))      # optional - gap3
-                sage: W.rank()                  # optional - gap3
+
+                sage: # optional - gap3, needs sage.combinat sage.groups
+                sage: W = ReflectionGroup((4,2,3))
+                sage: W.rank()
                 3
             """
             return len(self.degrees())
@@ -413,8 +415,10 @@ class FiniteComplexReflectionGroups(CategoryWithAxiom):
                 sage: W = ColoredPermutations(4,3)
                 sage: W.cardinality()
                 384
-                sage: W = ReflectionGroup((4,2,3))      # optional - gap3
-                sage: W.cardinality()           # optional - gap3
+
+                sage: # optional - gap3, needs sage.combinat sage.groups
+                sage: W = ReflectionGroup((4,2,3))
+                sage: W.cardinality()
                 192
             """
             from sage.rings.integer_ring import ZZ
@@ -450,12 +454,12 @@ class FiniteComplexReflectionGroups(CategoryWithAxiom):
                 sage: W.is_well_generated()                                             # needs sage.combinat
                 True
 
-                sage: W = ReflectionGroup((4,2,3))      # optional - gap3               # needs sage.combinat sage.groups
-                sage: W.is_well_generated()     # optional - gap3                       # needs sage.combinat sage.groups
+                sage: # optional - gap3, needs sage.combinat sage.groups
+                sage: W = ReflectionGroup((4,2,3))
+                sage: W.is_well_generated()
                 False
-
-                sage: W = ReflectionGroup((4,4,3))      # optional - gap3               # needs sage.combinat sage.groups
-                sage: W.is_well_generated()     # optional - gap3                       # needs sage.combinat
+                sage: W = ReflectionGroup((4,4,3))
+                sage: W.is_well_generated()
                 True
             """
             return self.number_of_simple_reflections() == self.rank()

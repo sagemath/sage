@@ -256,7 +256,7 @@ class FiniteDimensionalAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
 
             TESTS::
 
-                sage: TestSuite(radical).run()                                          # needs sage.modules
+                sage: TestSuite(radical).run()                                          # needs sage.graphs sage.modules
             """
             category = AssociativeAlgebras(self.base_ring()).WithBasis().FiniteDimensional().Subobjects()
             radical = self.submodule(self.radical_basis(),
@@ -514,16 +514,16 @@ class FiniteDimensionalAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
 
             This is best tested with::
 
-                sage: A.is_identity_decomposition_into_orthogonal_idempotents(idempotents)          # needs sage.rings.number_field
+                sage: A.is_identity_decomposition_into_orthogonal_idempotents(idempotents)          # needs sage.graphs sage.modules sage.rings.number_field
                 True
 
             We construct orthogonal idempotents for the algebra of the
             `0`-Hecke monoid::
 
                 sage: from sage.monoids.hecke_monoid import HeckeMonoid                 # needs sage.combinat
-                sage: A = HeckeMonoid(SymmetricGroup(4)).algebra(QQ)                    # needs sage.groups
-                sage: idempotents = A.orthogonal_idempotents_central_mod_radical()      # needs sage.groups
-                sage: A.is_identity_decomposition_into_orthogonal_idempotents(idempotents)          # needs sage.groups
+                sage: A = HeckeMonoid(SymmetricGroup(4)).algebra(QQ)                    # needs sage.combinat sage.groups
+                sage: idempotents = A.orthogonal_idempotents_central_mod_radical()      # needs sage.graphs sage.groups sage.modules
+                sage: A.is_identity_decomposition_into_orthogonal_idempotents(idempotents)          # needs sage.graphs sage.groups sage.modules
                 True
             """
             one = self.one()
@@ -678,7 +678,7 @@ class FiniteDimensionalAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
                 sage: Z12 = Monoids().Finite().example(); Z12
                 An example of a finite multiplicative monoid: the integers modulo 12
                 sage: A = Z12.algebra(QQ)                                               # needs sage.modules
-                sage: A.cartan_invariants_matrix()                                      # needs sage.modules sage.rings.number_fields
+                sage: A.cartan_invariants_matrix()                                      # needs sage.modules sage.rings.number_field
                 [1 0 0 0 0 0 0 0 0]
                 [0 1 0 0 0 0 0 0 0]
                 [0 0 2 0 0 0 0 0 0]

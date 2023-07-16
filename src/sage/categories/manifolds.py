@@ -25,10 +25,11 @@ class Manifolds(Category_over_base_ring):
 
     EXAMPLES::
 
+        sage: # needs sage.rings.real_mpfr
         sage: from sage.categories.manifolds import Manifolds
-        sage: C = Manifolds(RR); C                                                      # needs sage.rings.real_mpfr
+        sage: C = Manifolds(RR); C
         Category of manifolds over Real Field with 53 bits of precision
-        sage: C.super_categories()                                                      # needs sage.rings.real_mpfr
+        sage: C.super_categories()
         [Category of topological spaces]
 
     TESTS::

@@ -325,14 +325,14 @@ class CommutativeRings(CategoryWithAxiom):
                 illustrated on the following examples::
 
                     sage: K = GF(5)
-                    sage: a = K.multiplicative_generator()                              # needs sage.rings.finite_rings
+                    sage: a = K.multiplicative_generator()                              # needs sage.libs.pari
                     sage: H = K.cyclotomic_cosets(a**2, cosets=[1, 2]); H               # needs sage.rings.finite_rings
                     [[1, 4], [2, 3]]
                     sage: sorted(x - y for D in H for x in D for y in D if x != y)      # needs sage.rings.finite_rings
                     [1, 2, 3, 4]
 
                     sage: K = GF(37)
-                    sage: a = K.multiplicative_generator()                              # needs sage.rings.finite_rings
+                    sage: a = K.multiplicative_generator()                              # needs sage.libs.pari
                     sage: H = K.cyclotomic_cosets(a**4, cosets=[1]); H                  # needs sage.rings.finite_rings
                     [[1, 7, 9, 10, 12, 16, 26, 33, 34]]
                     sage: sorted(x - y for D in H for x in D for y in D if x != y)      # needs sage.rings.finite_rings

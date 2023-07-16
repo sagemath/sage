@@ -42,7 +42,7 @@ class Groups(CategoryWithAxiom):
         """
         EXAMPLES::
 
-            sage: Groups().example()
+            sage: Groups().example()                                                    # needs sage.modules
             General Linear Group of degree 4 over Rational Field
         """
         from sage.rings.rational_field import QQ
@@ -158,8 +158,8 @@ class Groups(CategoryWithAxiom):
 
             EXAMPLES::
 
-                sage: G = Groups().example()
-                sage: G.semidirect_product(G, Morphism(G, G))
+                sage: G = Groups().example()                                            # needs sage.modules
+                sage: G.semidirect_product(G, Morphism(G, G))                           # needs sage.modules
                 Traceback (most recent call last):
                 ...
                 NotImplementedError: semidirect product of General Linear Group of degree 4
@@ -180,8 +180,8 @@ class Groups(CategoryWithAxiom):
 
             EXAMPLES::
 
-                sage: G = Groups().example()
-                sage: G.holomorph()
+                sage: G = Groups().example()                                            # needs sage.modules
+                sage: G.holomorph()                                                     # needs sage.modules
                 Traceback (most recent call last):
                 ...
                 NotImplementedError: holomorph of General Linear Group of degree 4
@@ -271,8 +271,8 @@ class Groups(CategoryWithAxiom):
 
             ::
 
-                sage: M = SL(2, 2)
-                sage: M.cayley_table()                                                  # needs sage.groups
+                sage: M = SL(2, 2)                                                      # needs sage.modules
+                sage: M.cayley_table()                                                  # needs sage.modules
                 *  a b c d e f
                  +------------
                 a| a b c d e f
@@ -389,10 +389,10 @@ class Groups(CategoryWithAxiom):
             confirms that they form a closed subset in the group.
             ::
 
-                sage: from sage.matrix.operation_table import OperationTable
+                sage: from sage.matrix.operation_table import OperationTable            # needs sage.modules
                 sage: G = DiCyclicGroup(3)                                              # needs sage.groups
                 sage: commutator = lambda x, y: x*y*x^-1*y^-1
-                sage: T = OperationTable(G, commutator)                                 # needs sage.groups
+                sage: T = OperationTable(G, commutator)                                 # needs sage.groups sage.modules
                 sage: T                                                                 # needs sage.groups
                 .  a b c d e f g h i j k l
                  +------------------------
