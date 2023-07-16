@@ -855,10 +855,10 @@ class RationalFunctionField(FunctionField):
 
             sage: F.<x> = FunctionField(GF(5))
             sage: p = F.places_finite(2)[0]                                             # needs sage.libs.pari
-            sage: R, fr_R, to_R = F.residue_field(p)                                    # needs sage.rings.function_field
-            sage: R
+            sage: R, fr_R, to_R = F.residue_field(p)                                    # needs sage.libs.pari sage.rings.function_field
+            sage: R                                                                     # needs sage.libs.pari sage.rings.function_field
             Finite Field in z2 of size 5^2
-            sage: to_R(x) in R
+            sage: to_R(x) in R                                                          # needs sage.libs.pari sage.rings.function_field
             True
         """
         return place.residue_field(name=name)
@@ -1009,9 +1009,9 @@ class RationalFunctionField_global(RationalFunctionField):
 
             sage: F.<x> = FunctionField(GF(5))
             sage: d = F.higher_derivation()                                             # needs sage.rings.function_field
-            sage: [d(x^5,i) for i in range(10)]
+            sage: [d(x^5,i) for i in range(10)]                                         # needs sage.rings.function_field
             [x^5, 0, 0, 0, 0, 1, 0, 0, 0, 0]
-            sage: [d(x^7,i) for i in range(10)]
+            sage: [d(x^7,i) for i in range(10)]                                         # needs sage.rings.function_field
             [x^7, 2*x^6, x^5, 0, 0, x^2, 2*x, 1, 0, 0]
         """
         from .derivations_polymod import RationalFunctionFieldHigherDerivation_global

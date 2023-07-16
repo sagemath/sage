@@ -180,55 +180,58 @@ cdef class FunctionFieldElement(FieldElement):
         A rational function field::
 
             sage: K.<t> = FunctionField(QQ)
-            sage: t.matrix()                                                                        # needs sage.modules
+            sage: t.matrix()                                                            # needs sage.modules
             [t]
-            sage: (1/(t+1)).matrix()                                                                # needs sage.modules
+            sage: (1/(t+1)).matrix()                                                    # needs sage.modules
             [1/(t + 1)]
 
         Now an example in a nontrivial extension of a rational function field::
 
+            sage: # needs sage.modules sage.rings.function_field
             sage: K.<x> = FunctionField(QQ); R.<y> = K[]
-            sage: L.<y> = K.extension(y^2 - x*y + 4*x^3)                                            # needs sage.rings.function_field
-            sage: y.matrix()                                                                        # needs sage.modules sage.rings.function_field
+            sage: L.<y> = K.extension(y^2 - x*y + 4*x^3)
+            sage: y.matrix()
             [     0      1]
             [-4*x^3      x]
-            sage: y.matrix().charpoly('Z')                                                          # needs sage.modules sage.rings.function_field
+            sage: y.matrix().charpoly('Z')
             Z^2 - x*Z + 4*x^3
 
         An example in a relative extension, where neither function
         field is rational::
 
+            sage: # needs sage.modules sage.rings.function_field
             sage: K.<x> = FunctionField(QQ)
             sage: R.<y> = K[]
-            sage: L.<y> = K.extension(y^2 - x*y + 4*x^3)                                            # needs sage.rings.function_field
-            sage: M.<T> = L[]                                                                       # needs sage.rings.function_field
-            sage: Z.<alpha> = L.extension(T^3 - y^2*T + x)                                          # needs sage.rings.function_field
-            sage: alpha.matrix()                                                                    # needs sage.modules sage.rings.function_field
+            sage: L.<y> = K.extension(y^2 - x*y + 4*x^3)
+            sage: M.<T> = L[]
+            sage: Z.<alpha> = L.extension(T^3 - y^2*T + x)
+            sage: alpha.matrix()
             [          0           1           0]
             [          0           0           1]
             [         -x x*y - 4*x^3           0]
-            sage: alpha.matrix(K)                                                                   # needs sage.modules sage.rings.function_field
+            sage: alpha.matrix(K)
             [           0            0            1            0            0            0]
             [           0            0            0            1            0            0]
             [           0            0            0            0            1            0]
             [           0            0            0            0            0            1]
             [          -x            0       -4*x^3            x            0            0]
             [           0           -x       -4*x^4 -4*x^3 + x^2            0            0]
-            sage: alpha.matrix(Z)                                                                   # needs sage.modules sage.rings.function_field
+            sage: alpha.matrix(Z)
             [alpha]
 
         We show that this matrix does indeed work as expected when making a
         vector space from a function field::
 
+            sage: # needs sage.modules sage.rings.function_field
             sage: K.<x> = FunctionField(QQ)
             sage: R.<y> = K[]
-            sage: L.<y> = K.extension(y^5 - (x^3 + 2*x*y + 1/x))                                    # needs sage.rings.function_field
-            sage: V, from_V, to_V = L.vector_space()                                                # needs sage.modules sage.rings.function_field
-            sage: y5 = to_V(y^5); y5                                                                # needs sage.modules sage.rings.function_field
+            sage: L.<y> = K.extension(y^5 - (x^3 + 2*x*y + 1/x))
+            sage: V, from_V, to_V = L.vector_space()
+            sage: y5 = to_V(y^5); y5
             ((x^4 + 1)/x, 2*x, 0, 0, 0)
-            sage: y4y = to_V(y^4) * y.matrix(); y4y                                                 # needs sage.modules sage.rings.function_field
+            sage: y4y = to_V(y^4) * y.matrix(); y4y
             ((x^4 + 1)/x, 2*x, 0, 0, 0)
-            sage: y5 == y4y                                                                         # needs sage.modules sage.rings.function_field
+            sage: y5 == y4y
             True
         """
         # multiply each element of the vector space isomorphic to the parent
@@ -363,17 +366,18 @@ cdef class FunctionFieldElement(FieldElement):
 
         EXAMPLES::
 
+            sage: # needs sage.modules sage.rings.function_field
             sage: K.<x> = FunctionField(QQ); R.<y> = K[]
-            sage: L.<y> = K.extension(y^2 - x*y + 4*x^3)                                # needs sage.rings.function_field
-            sage: y.is_integral()                                                       # needs sage.rings.function_field
+            sage: L.<y> = K.extension(y^2 - x*y + 4*x^3)
+            sage: y.is_integral()
             True
-            sage: (y/x).is_integral()                                                   # needs sage.modules sage.rings.function_field
+            sage: (y/x).is_integral()
             True
-            sage: (y/x)^2 - (y/x) + 4*x                                                 # needs sage.modules sage.rings.function_field
+            sage: (y/x)^2 - (y/x) + 4*x
             0
-            sage: (y/x^2).is_integral()                                                 # needs sage.modules sage.rings.function_field
+            sage: (y/x^2).is_integral()
             False
-            sage: (y/x).minimal_polynomial('W')                                         # needs sage.modules sage.rings.function_field
+            sage: (y/x).minimal_polynomial('W')
             W^2 - W + 4*x
         """
         R = self.parent().base_field().maximal_order()
@@ -609,11 +613,12 @@ cdef class FunctionFieldElement(FieldElement):
 
         ::
 
+            sage: # needs sage.rings.function_field
             sage: K.<x> = FunctionField(QQ); _.<Y> = K[]
-            sage: L.<y> = K.extension(Y^2 + Y + x + 1/x)                                # needs sage.rings.function_field
-            sage: O = L.maximal_order()                                                 # needs sage.rings.function_field
-            sage: p = O.ideal(x - 1).place()                                            # needs sage.rings.function_field
-            sage: y.valuation(p)                                                        # needs sage.rings.function_field
+            sage: L.<y> = K.extension(Y^2 + Y + x + 1/x)
+            sage: O = L.maximal_order()
+            sage: p = O.ideal(x - 1).place()
+            sage: y.valuation(p)
             0
         """
         prime = place.prime_ideal()
