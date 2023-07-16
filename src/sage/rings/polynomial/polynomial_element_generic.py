@@ -363,7 +363,7 @@ class Polynomial_generic_sparse(Polynomial):
         EXAMPLES::
 
             sage: R.<w> = PolynomialRing(CDF, sparse=True)                              # needs sage.rings.complex_double
-            sage: f = CDF(1,2) + w^5 - CDF(pi)*w + CDF(e)                               # needs sage.symbolic
+            sage: f = CDF(1,2) + w^5 - CDF(pi)*w + CDF(e)                               # needs sage.rings.complex_double sage.symbolic
             sage: f._repr()   # abs tol 1e-15                                           # needs sage.symbolic
             '1.0*w^5 - 3.141592653589793*w + 3.718281828459045 + 2.0*I'
             sage: f._repr(name='z')   # abs tol 1e-15                                   # needs sage.symbolic

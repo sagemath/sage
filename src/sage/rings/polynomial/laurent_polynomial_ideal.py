@@ -276,16 +276,17 @@ class LaurentPolynomialIdeal( Ideal_generic ):
 
         EXAMPLES::
 
-            sage: K.<z> = CyclotomicField(3)                                            # needs sage.rings.number_field
-            sage: P.<x,y> = LaurentPolynomialRing(K, 2)                                 # needs sage.rings.number_field
-            sage: I = P.ideal([x + z, y - z])                                           # needs sage.rings.number_field
-            sage: h = K.hom([z^2])                                                      # needs sage.rings.number_field
-            sage: I.apply_coeff_map(h)                                                  # needs sage.rings.number_field
+            sage: # needs sage.rings.number_field
+            sage: K.<z> = CyclotomicField(3)
+            sage: P.<x,y> = LaurentPolynomialRing(K, 2)
+            sage: I = P.ideal([x + z, y - z])
+            sage: h = K.hom([z^2])
+            sage: I.apply_coeff_map(h)
             Ideal (x - z - 1, y + z + 1) of Multivariate Laurent Polynomial Ring
              in x, y over Cyclotomic Field of order 3 and degree 2
-            sage: K1.<z1> = CyclotomicField(12)                                         # needs sage.rings.number_field
-            sage: h1 = K.hom([z1^4])                                                    # needs sage.rings.number_field
-            sage: I.apply_coeff_map(h1, new_base_ring=K1)                               # needs sage.rings.number_field
+            sage: K1.<z1> = CyclotomicField(12)
+            sage: h1 = K.hom([z1^4])
+            sage: I.apply_coeff_map(h1, new_base_ring=K1)
             Ideal (x + z1^2 - 1, y - z1^2 + 1) of Multivariate Laurent Polynomial Ring
              in x, y over Cyclotomic Field of order 12 and degree 4
         """
@@ -310,11 +311,12 @@ class LaurentPolynomialIdeal( Ideal_generic ):
 
         EXAMPLES::
 
-            sage: K.<z> = CyclotomicField(3)                                            # needs sage.rings.number_field
-            sage: P.<x,y> = LaurentPolynomialRing(K, 2)                                 # needs sage.rings.number_field
-            sage: I = P.ideal([x + 1, y - 1])                                           # needs sage.rings.number_field
-            sage: M = Matrix([[2,1], [1,-3]])                                           # needs sage.rings.number_field
-            sage: I.toric_coordinate_change(M)                                          # needs sage.rings.number_field
+            sage: # needs sage.rings.number_field
+            sage: K.<z> = CyclotomicField(3)
+            sage: P.<x,y> = LaurentPolynomialRing(K, 2)
+            sage: I = P.ideal([x + 1, y - 1])
+            sage: M = Matrix([[2,1], [1,-3]])
+            sage: I.toric_coordinate_change(M)
             Ideal (x^2*y + 1, -1 + x*y^-3) of Multivariate Laurent Polynomial Ring
              in x, y over Cyclotomic Field of order 3 and degree 2
         """

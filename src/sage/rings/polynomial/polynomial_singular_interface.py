@@ -409,14 +409,15 @@ def can_convert_to_singular(R):
 
     Check for :trac:`33319`::
 
-        sage: R.<x,y> = GF((2^31-1)^3)[]                                                # needs sage.rings.finite_rings
-        sage: R._has_singular                                                           # needs sage.rings.finite_rings
+        sage: # needs sage.rings.finite_rings
+        sage: R.<x,y> = GF((2^31-1)^3)[]
+        sage: R._has_singular
         True
-        sage: R.<x,y> = GF((2^31+11)^2)[]                                               # needs sage.rings.finite_rings
-        sage: R._has_singular                                                           # needs sage.rings.finite_rings
+        sage: R.<x,y> = GF((2^31+11)^2)[]
+        sage: R._has_singular
         False
-        sage: R.<x,y> = GF(10^20 - 11)[]                                                # needs sage.rings.finite_rings
-        sage: R._has_singular                                                           # needs sage.rings.finite_rings
+        sage: R.<x,y> = GF(10^20 - 11)[]
+        sage: R._has_singular
         True
 
         sage: R.<x,y> = Zmod(10^20 + 1)[]

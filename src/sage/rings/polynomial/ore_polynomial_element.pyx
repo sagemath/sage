@@ -161,27 +161,29 @@ cdef class OrePolynomial(AlgebraElement):
 
     Here is another example over a finite field::
 
-        sage: k.<t> = GF(5^3)                                                           # needs sage.rings.finite_rings
-        sage: Frob = k.frobenius_endomorphism()                                         # needs sage.rings.finite_rings
-        sage: S.<x> = k['x',Frob]                                                       # needs sage.rings.finite_rings
-        sage: a = x^4 + (4*t + 1)*x^3 + (t^2 + 3*t + 3)*x^2 + (3*t^2 + 2*t + 2)*x + (3*t^2 + 3*t + 1)                   # needs sage.rings.finite_rings
-        sage: b = (2*t^2 + 3)*x^2 + (3*t^2 + 1)*x + 4*t + 2                             # needs sage.rings.finite_rings
-        sage: q, r = a.left_quo_rem(b)                                                  # needs sage.rings.finite_rings
-        sage: q                                                                         # needs sage.rings.finite_rings
+        sage: # needs sage.rings.finite_rings
+        sage: k.<t> = GF(5^3)
+        sage: Frob = k.frobenius_endomorphism()
+        sage: S.<x> = k['x',Frob]
+        sage: a = x^4 + (4*t + 1)*x^3 + (t^2 + 3*t + 3)*x^2 + (3*t^2 + 2*t + 2)*x + (3*t^2 + 3*t + 1)
+        sage: b = (2*t^2 + 3)*x^2 + (3*t^2 + 1)*x + 4*t + 2
+        sage: q, r = a.left_quo_rem(b)
+        sage: q
         (4*t^2 + t + 1)*x^2 + (2*t^2 + 2*t + 2)*x + 2*t^2 + 4*t + 3
-        sage: r                                                                         # needs sage.rings.finite_rings
+        sage: r
         (t + 2)*x + 3*t^2 + 2*t + 4
-        sage: a == b*q + r                                                              # needs sage.rings.finite_rings
+        sage: a == b*q + r
         True
 
     Once we have Euclidean divisions, we have for free gcd and lcm
     (at least if the base ring is a field)::
 
-        sage: a = (x + t) * (x + t^2)^2                                                 # needs sage.rings.finite_rings
-        sage: b = (x + t) * (t*x + t + 1) * (x + t^2)                                   # needs sage.rings.finite_rings
-        sage: a.right_gcd(b)                                                            # needs sage.rings.finite_rings
+        sage: # needs sage.rings.finite_rings
+        sage: a = (x + t) * (x + t^2)^2
+        sage: b = (x + t) * (t*x + t + 1) * (x + t^2)
+        sage: a.right_gcd(b)
         x + t^2
-        sage: a.left_gcd(b)                                                             # needs sage.rings.finite_rings
+        sage: a.left_gcd(b)
         x + t
 
     The left lcm has the following meaning: given Ore polynomials `a` and `b`,
@@ -287,11 +289,12 @@ cdef class OrePolynomial(AlgebraElement):
 
         EXAMPLES::
 
+            sage: # needs sage.rings.finite_rings
             sage: from sage.rings.polynomial.ore_polynomial_element import OrePolynomialBaseringInjection
-            sage: k.<t> = GF(5^3)                                                       # needs sage.rings.finite_rings
-            sage: Frob = k.frobenius_endomorphism()                                     # needs sage.rings.finite_rings
-            sage: S.<x> = k['x',Frob]                                                   # needs sage.rings.finite_rings
-            sage: OrePolynomialBaseringInjection(k, k['x', Frob]) #indirect doctest     # needs sage.rings.finite_rings
+            sage: k.<t> = GF(5^3)
+            sage: Frob = k.frobenius_endomorphism()
+            sage: S.<x> = k['x',Frob]
+            sage: OrePolynomialBaseringInjection(k, k['x', Frob]) #indirect doctest
             Ore Polynomial base injection morphism:
               From: Finite Field in t of size 5^3
               To:   Ore Polynomial Ring in x over Finite Field in t of size 5^3 twisted by t |--> t^5
@@ -481,21 +484,23 @@ cdef class OrePolynomial(AlgebraElement):
 
         EXAMPLES::
 
-            sage: k.<t> = GF(5^3)                                                       # needs sage.rings.finite_rings
-            sage: Frob = k.frobenius_endomorphism()                                     # needs sage.rings.finite_rings
-            sage: S.<x> = k['x',Frob]                                                   # needs sage.rings.finite_rings
-            sage: a = (3*t^2 + 3*t + 2)*x^3 + (2*t^2 + 3)*x^2 + (4*t^2 + t + 4)*x + 2*t^2 + 2       # needs sage.rings.finite_rings
-            sage: b = a.left_monic(); b                                                 # needs sage.rings.finite_rings
+            sage: # needs sage.rings.finite_rings
+            sage: k.<t> = GF(5^3)
+            sage: Frob = k.frobenius_endomorphism()
+            sage: S.<x> = k['x',Frob]
+            sage: a = (3*t^2 + 3*t + 2)*x^3 + (2*t^2 + 3)*x^2 + (4*t^2 + t + 4)*x + 2*t^2 + 2
+            sage: b = a.left_monic(); b
             x^3 + (4*t^2 + 3*t)*x^2 + (4*t + 2)*x + 2*t^2 + 4*t + 3
 
         Check list::
 
-            sage: b.degree() == a.degree()                                              # needs sage.rings.finite_rings
+            sage: # needs sage.rings.finite_rings
+            sage: b.degree() == a.degree()
             True
-            sage: a.is_left_divisible_by(b)                                             # needs sage.rings.finite_rings
+            sage: a.is_left_divisible_by(b)
             True
-            sage: twist = S.twisting_morphism(-a.degree())                              # needs sage.rings.finite_rings
-            sage: a == b * twist(a.leading_coefficient())                               # needs sage.rings.finite_rings
+            sage: twist = S.twisting_morphism(-a.degree())
+            sage: a == b * twist(a.leading_coefficient())
             True
 
         Note that `b` does not divide `a` on the right::
@@ -534,11 +539,12 @@ cdef class OrePolynomial(AlgebraElement):
 
         EXAMPLES::
 
-            sage: k.<t> = GF(5^3)                                                       # needs sage.rings.finite_rings
-            sage: Frob = k.frobenius_endomorphism()                                     # needs sage.rings.finite_rings
-            sage: S.<x> = k['x',Frob]                                                   # needs sage.rings.finite_rings
-            sage: a = (3*t^2 + 3*t + 2)*x^3 + (2*t^2 + 3)*x^2 + (4*t^2 + t + 4)*x + 2*t^2 + 2       # needs sage.rings.finite_rings
-            sage: b = a.right_monic(); b                                                # needs sage.rings.finite_rings
+            sage: # needs sage.rings.finite_rings
+            sage: k.<t> = GF(5^3)
+            sage: Frob = k.frobenius_endomorphism()
+            sage: S.<x> = k['x',Frob]
+            sage: a = (3*t^2 + 3*t + 2)*x^3 + (2*t^2 + 3)*x^2 + (4*t^2 + t + 4)*x + 2*t^2 + 2
+            sage: b = a.right_monic(); b
             x^3 + (2*t^2 + 3*t + 4)*x^2 + (3*t^2 + 4*t + 1)*x + 2*t^2 + 4*t + 3
 
         Check list::
@@ -632,13 +638,14 @@ cdef class OrePolynomial(AlgebraElement):
 
         EXAMPLES::
 
-            sage: R.<t> = GF(11)[]                                                      # needs sage.rings.finite_rings
-            sage: der = R.derivation()                                                  # needs sage.rings.finite_rings
-            sage: S.<x> = R['x', der]                                                   # needs sage.rings.finite_rings
-            sage: f = t/x                                                               # needs sage.rings.finite_rings
-            sage: f                                                                     # needs sage.rings.finite_rings
+            sage: # needs sage.rings.finite_rings
+            sage: R.<t> = GF(11)[]
+            sage: der = R.derivation()
+            sage: S.<x> = R['x', der]
+            sage: f = t/x
+            sage: f
             (x + 10/t)^(-1) * t
-            sage: f.parent()                                                            # needs sage.rings.finite_rings
+            sage: f.parent()
             Ore Function Field in x over
              Fraction Field of Univariate Polynomial Ring in t over Finite Field of size 11 twisted by d/dt
         """
@@ -694,15 +701,16 @@ cdef class OrePolynomial(AlgebraElement):
 
         EXAMPLES::
 
-            sage: k.<t> = GF(5^3)                                                       # needs sage.rings.finite_rings
-            sage: Frob = k.frobenius_endomorphism()                                     # needs sage.rings.finite_rings
-            sage: S.<x> = k['x',Frob]                                                   # needs sage.rings.finite_rings
-            sage: a = x^2 + t*x + t^2 + 3                                               # needs sage.rings.finite_rings
-            sage: b = x^3 + (t + 1)*x^2 + 1                                             # needs sage.rings.finite_rings
-            sage: c = a*b                                                               # needs sage.rings.finite_rings
-            sage: c.is_right_divisible_by(a)                                            # needs sage.rings.finite_rings
+            sage: # needs sage.rings.finite_rings
+            sage: k.<t> = GF(5^3)
+            sage: Frob = k.frobenius_endomorphism()
+            sage: S.<x> = k['x',Frob]
+            sage: a = x^2 + t*x + t^2 + 3
+            sage: b = x^3 + (t + 1)*x^2 + 1
+            sage: c = a*b
+            sage: c.is_right_divisible_by(a)
             False
-            sage: c.is_right_divisible_by(b)                                            # needs sage.rings.finite_rings
+            sage: c.is_right_divisible_by(b)
             True
 
         Divisibility by `0` does not make sense::
@@ -743,15 +751,16 @@ cdef class OrePolynomial(AlgebraElement):
 
         EXAMPLES::
 
-            sage: k.<t> = GF(5^3)                                                       # needs sage.rings.finite_rings
-            sage: Frob = k.frobenius_endomorphism()                                     # needs sage.rings.finite_rings
-            sage: S.<x> = k['x',Frob]                                                   # needs sage.rings.finite_rings
-            sage: a = x^2 + t*x + t^2 + 3                                               # needs sage.rings.finite_rings
-            sage: b = x^3 + (t + 1)*x^2 + 1                                             # needs sage.rings.finite_rings
-            sage: c = a * b                                                             # needs sage.rings.finite_rings
-            sage: a.left_divides(c)                                                     # needs sage.rings.finite_rings
+            sage: # needs sage.rings.finite_rings
+            sage: k.<t> = GF(5^3)
+            sage: Frob = k.frobenius_endomorphism()
+            sage: S.<x> = k['x',Frob]
+            sage: a = x^2 + t*x + t^2 + 3
+            sage: b = x^3 + (t + 1)*x^2 + 1
+            sage: c = a * b
+            sage: a.left_divides(c)
             True
-            sage: b.left_divides(c)                                                     # needs sage.rings.finite_rings
+            sage: b.left_divides(c)
             False
 
         Divisibility by `0` does not make sense::
@@ -778,15 +787,16 @@ cdef class OrePolynomial(AlgebraElement):
 
         EXAMPLES::
 
-            sage: k.<t> = GF(5^3)                                                       # needs sage.rings.finite_rings
-            sage: Frob = k.frobenius_endomorphism()                                     # needs sage.rings.finite_rings
-            sage: S.<x> = k['x',Frob]                                                   # needs sage.rings.finite_rings
-            sage: a = x^2 + t*x + t^2 + 3                                               # needs sage.rings.finite_rings
-            sage: b = x^3 + (t + 1)*x^2 + 1                                             # needs sage.rings.finite_rings
-            sage: c = a * b                                                             # needs sage.rings.finite_rings
-            sage: a.right_divides(c)                                                    # needs sage.rings.finite_rings
+            sage: # needs sage.rings.finite_rings
+            sage: k.<t> = GF(5^3)
+            sage: Frob = k.frobenius_endomorphism()
+            sage: S.<x> = k['x',Frob]
+            sage: a = x^2 + t*x + t^2 + 3
+            sage: b = x^3 + (t + 1)*x^2 + 1
+            sage: c = a * b
+            sage: a.right_divides(c)
             False
-            sage: b.right_divides(c)                                                    # needs sage.rings.finite_rings
+            sage: b.right_divides(c)
             True
 
         Divisibility by `0` does not make sense::
@@ -856,14 +866,15 @@ cdef class OrePolynomial(AlgebraElement):
 
         EXAMPLES::
 
-            sage: k.<t> = GF(5^3)                                                       # needs sage.rings.finite_rings
-            sage: Frob = k.frobenius_endomorphism()                                     # needs sage.rings.finite_rings
-            sage: S.<x> = k['x',Frob]                                                   # needs sage.rings.finite_rings
-            sage: a = (x + t) * (x^2 + t*x + 1)                                         # needs sage.rings.finite_rings
-            sage: b = 2 * (x + t) * (x^3 + (t+1)*x^2 + t^2)                             # needs sage.rings.finite_rings
-            sage: g,u,v = a.left_xgcd(b); g                                             # needs sage.rings.finite_rings
+            sage: # needs sage.rings.finite_rings
+            sage: k.<t> = GF(5^3)
+            sage: Frob = k.frobenius_endomorphism()
+            sage: S.<x> = k['x',Frob]
+            sage: a = (x + t) * (x^2 + t*x + 1)
+            sage: b = 2 * (x + t) * (x^3 + (t+1)*x^2 + t^2)
+            sage: g,u,v = a.left_xgcd(b); g
             x + t
-            sage: a*u + b*v == g                                                        # needs sage.rings.finite_rings
+            sage: a*u + b*v == g
             True
 
         Specifying ``monic=False``, we *can* get a nonmonic gcd::
@@ -959,13 +970,14 @@ cdef class OrePolynomial(AlgebraElement):
 
         EXAMPLES::
 
-            sage: k.<t> = GF(5^3)                                                       # needs sage.rings.finite_rings
-            sage: Frob = k.frobenius_endomorphism()                                     # needs sage.rings.finite_rings
-            sage: S.<x> = k['x',Frob]                                                   # needs sage.rings.finite_rings
-            sage: a = (3*t^2 + 3*t + 2)*x^3 + (2*t^2 + 3)*x^2 + (4*t^2 + t + 4)*x + 2*t^2 + 2       # needs sage.rings.finite_rings
-            sage: b = (3*t^2 + 4*t + 2)*x^2 + (2*t^2 + 4*t + 3)*x + 2*t^2 + t + 1       # needs sage.rings.finite_rings
-            sage: q,r = a.left_quo_rem(b)                                               # needs sage.rings.finite_rings
-            sage: a == b*q + r                                                          # needs sage.rings.finite_rings
+            sage: # needs sage.rings.finite_rings
+            sage: k.<t> = GF(5^3)
+            sage: Frob = k.frobenius_endomorphism()
+            sage: S.<x> = k['x',Frob]
+            sage: a = (3*t^2 + 3*t + 2)*x^3 + (2*t^2 + 3)*x^2 + (4*t^2 + t + 4)*x + 2*t^2 + 2
+            sage: b = (3*t^2 + 4*t + 2)*x^2 + (2*t^2 + 4*t + 3)*x + 2*t^2 + t + 1
+            sage: q,r = a.left_quo_rem(b)
+            sage: a == b*q + r
             True
 
         In the following example, Sage does not know the inverse
@@ -1088,14 +1100,15 @@ cdef class OrePolynomial(AlgebraElement):
 
         EXAMPLES::
 
-            sage: k.<t> = GF(5^3)                                                       # needs sage.rings.finite_rings
-            sage: Frob = k.frobenius_endomorphism()                                     # needs sage.rings.finite_rings
-            sage: S.<x> = k['x',Frob]                                                   # needs sage.rings.finite_rings
-            sage: a = (x^2 + t*x + 1) * (x + t)                                         # needs sage.rings.finite_rings
-            sage: b = 2 * (x^3 + (t+1)*x^2 + t^2) * (x + t)                             # needs sage.rings.finite_rings
-            sage: g,u,v = a.right_xgcd(b); g                                            # needs sage.rings.finite_rings
+            sage: # needs sage.rings.finite_rings
+            sage: k.<t> = GF(5^3)
+            sage: Frob = k.frobenius_endomorphism()
+            sage: S.<x> = k['x',Frob]
+            sage: a = (x^2 + t*x + 1) * (x + t)
+            sage: b = 2 * (x^3 + (t+1)*x^2 + t^2) * (x + t)
+            sage: g,u,v = a.right_xgcd(b); g
             x + t
-            sage: u*a + v*b == g                                                        # needs sage.rings.finite_rings
+            sage: u*a + v*b == g
             True
 
         Specifying ``monic=False``, we *can* get a nonmonic gcd::
@@ -1171,12 +1184,13 @@ cdef class OrePolynomial(AlgebraElement):
 
         EXAMPLES::
 
-            sage: k.<t> = GF(5^3)                                                       # needs sage.rings.finite_rings
-            sage: Frob = k.frobenius_endomorphism()                                     # needs sage.rings.finite_rings
-            sage: S.<x> = k['x',Frob]                                                   # needs sage.rings.finite_rings
-            sage: a = (x^2 + t*x + 1) * (x + t)                                         # needs sage.rings.finite_rings
-            sage: b = 2 * (x^3 + (t+1)*x^2 + t^2) * (x + t)                             # needs sage.rings.finite_rings
-            sage: a.right_gcd(b)                                                        # needs sage.rings.finite_rings
+            sage: # needs sage.rings.finite_rings
+            sage: k.<t> = GF(5^3)
+            sage: Frob = k.frobenius_endomorphism()
+            sage: S.<x> = k['x',Frob]
+            sage: a = (x^2 + t*x + 1) * (x + t)
+            sage: b = 2 * (x^3 + (t+1)*x^2 + t^2) * (x + t)
+            sage: a.right_gcd(b)
             x + t
 
         Specifying ``monic=False``, we *can* get a nonmonic gcd::
@@ -1238,12 +1252,13 @@ cdef class OrePolynomial(AlgebraElement):
 
         EXAMPLES::
 
-            sage: k.<t> = GF(5^3)                                                       # needs sage.rings.finite_rings
-            sage: Frob = k.frobenius_endomorphism()                                     # needs sage.rings.finite_rings
-            sage: S.<x> = k['x',Frob]                                                   # needs sage.rings.finite_rings
-            sage: a = (x + t) * (x^2 + t*x + 1)                                         # needs sage.rings.finite_rings
-            sage: b = 2 * (x + t) * (x^3 + (t+1)*x^2 + t^2)                             # needs sage.rings.finite_rings
-            sage: a.left_gcd(b)                                                         # needs sage.rings.finite_rings
+            sage: # needs sage.rings.finite_rings
+            sage: k.<t> = GF(5^3)
+            sage: Frob = k.frobenius_endomorphism()
+            sage: S.<x> = k['x',Frob]
+            sage: a = (x + t) * (x^2 + t*x + 1)
+            sage: b = 2 * (x + t) * (x^3 + (t+1)*x^2 + t^2)
+            sage: a.left_gcd(b)
             x + t
 
         Specifying ``monic=False``, we *can* get a nonmonic gcd::
@@ -1253,24 +1268,26 @@ cdef class OrePolynomial(AlgebraElement):
 
         The base ring needs to be a field::
 
-            sage: R.<t> = QQ[]                                                          # needs sage.rings.finite_rings
-            sage: sigma = R.hom([t + 1])                                                # needs sage.rings.finite_rings
-            sage: S.<x> = R['x',sigma]                                                  # needs sage.rings.finite_rings
-            sage: a = (x + t) * (x^2 + t*x + 1)                                         # needs sage.rings.finite_rings
-            sage: b = 2 * (x + t) * (x^3 + (t+1)*x^2 + t^2)                             # needs sage.rings.finite_rings
-            sage: a.left_gcd(b)                                                         # needs sage.rings.finite_rings
+            sage: # needs sage.rings.finite_rings
+            sage: R.<t> = QQ[]
+            sage: sigma = R.hom([t + 1])
+            sage: S.<x> = R['x',sigma]
+            sage: a = (x + t) * (x^2 + t*x + 1)
+            sage: b = 2 * (x + t) * (x^3 + (t+1)*x^2 + t^2)
+            sage: a.left_gcd(b)
             Traceback (most recent call last):
             ...
             TypeError: the base ring must be a field
 
         And the twisting morphism needs to be bijective::
 
-            sage: FR = R.fraction_field()                                               # needs sage.rings.finite_rings
-            sage: f = FR.hom([FR(t)^2])                                                 # needs sage.rings.finite_rings
-            sage: S.<x> = FR['x',f]                                                     # needs sage.rings.finite_rings
-            sage: a = (x + t) * (x^2 + t*x + 1)                                         # needs sage.rings.finite_rings
-            sage: b = 2 * (x + t) * (x^3 + (t+1)*x^2 + t^2)                             # needs sage.rings.finite_rings
-            sage: a.left_gcd(b)                                                         # needs sage.rings.finite_rings
+            sage: # needs sage.rings.finite_rings
+            sage: FR = R.fraction_field()
+            sage: f = FR.hom([FR(t)^2])
+            sage: S.<x> = FR['x',f]
+            sage: a = (x + t) * (x^2 + t*x + 1)
+            sage: b = 2 * (x + t) * (x^3 + (t+1)*x^2 + t^2)
+            sage: a.left_gcd(b)
             Traceback (most recent call last):
             ...
             NotImplementedError: inversion of the twisting morphism Ring endomorphism of Fraction Field of Univariate Polynomial Ring in t over Rational Field
@@ -1310,12 +1327,13 @@ cdef class OrePolynomial(AlgebraElement):
             sage: Frob = k.frobenius_endomorphism(3)                                    # needs sage.rings.finite_rings
             sage: S.<x> = k['x', Frob]                                                  # needs sage.rings.finite_rings
 
-            sage: D = S.random_element(degree=2)                                        # needs sage.rings.finite_rings
-            sage: P = S.random_element(degree=2) * D                                    # needs sage.rings.finite_rings
-            sage: Q = S.random_element(degree=2) * D                                    # needs sage.rings.finite_rings
-            sage: L = P.left_lcm(Q)                                                     # needs sage.rings.finite_rings
-            sage: U = left_lcm_cofactor(P, Q)                                           # needs sage.misc.cython sage.rings.finite_rings
-            sage: (U*P).right_monic() == L                                              # needs sage.misc.cython sage.rings.finite_rings
+            sage: # needs sage.rings.finite_rings
+            sage: D = S.random_element(degree=2)
+            sage: P = S.random_element(degree=2) * D
+            sage: Q = S.random_element(degree=2) * D
+            sage: L = P.left_lcm(Q)
+            sage: U = left_lcm_cofactor(P, Q)                                           # needs sage.misc.cython
+            sage: (U*P).right_monic() == L                                              # needs sage.misc.cython
             True
         """
         cdef OrePolynomial Q, R, T
@@ -1342,13 +1360,14 @@ cdef class OrePolynomial(AlgebraElement):
 
         EXAMPLES::
 
-            sage: k.<t> = GF(5^3)                                                       # needs sage.rings.finite_rings
-            sage: Frob = k.frobenius_endomorphism()                                     # needs sage.rings.finite_rings
-            sage: S.<x> = k['x',Frob]                                                   # needs sage.rings.finite_rings
-            sage: P = (x + t^2) * (x + t)                                               # needs sage.rings.finite_rings
-            sage: Q = 2 * (x^2 + t + 1) * (x * t)                                       # needs sage.rings.finite_rings
-            sage: L, U, V = P.left_xlcm(Q)                                              # needs sage.rings.finite_rings
-            sage: L                                                                     # needs sage.rings.finite_rings
+            sage: # needs sage.rings.finite_rings
+            sage: k.<t> = GF(5^3)
+            sage: Frob = k.frobenius_endomorphism()
+            sage: S.<x> = k['x',Frob]
+            sage: P = (x + t^2) * (x + t)
+            sage: Q = 2 * (x^2 + t + 1) * (x * t)
+            sage: L, U, V = P.left_xlcm(Q)
+            sage: L
             x^5 + (2*t^2 + t + 4)*x^4 + (3*t^2 + 4)*x^3 + (3*t^2 + 3*t + 2)*x^2 + (t^2 + t + 2)*x
 
             sage: U * P == L                                                            # needs sage.rings.finite_rings
@@ -1388,12 +1407,13 @@ cdef class OrePolynomial(AlgebraElement):
             sage: Frob = k.frobenius_endomorphism(3)                                    # needs sage.rings.finite_rings
             sage: S.<x> = k['x', Frob]                                                  # needs sage.rings.finite_rings
 
-            sage: D = S.random_element(degree=2)                                        # needs sage.rings.finite_rings
-            sage: P = D * S.random_element(degree=2)                                    # needs sage.rings.finite_rings
-            sage: Q = D * S.random_element(degree=2)                                    # needs sage.rings.finite_rings
-            sage: L = P.right_lcm(Q)                                                    # needs sage.rings.finite_rings
-            sage: U = right_lcm_cofactor(P, Q)                                          # needs sage.misc.cython sage.rings.finite_rings
-            sage: (P*U).left_monic() == L                                               # needs sage.misc.cython sage.rings.finite_rings
+            sage: # needs sage.rings.finite_rings
+            sage: D = S.random_element(degree=2)
+            sage: P = D * S.random_element(degree=2)
+            sage: Q = D * S.random_element(degree=2)
+            sage: L = P.right_lcm(Q)
+            sage: U = right_lcm_cofactor(P, Q)                                          # needs sage.misc.cython
+            sage: (P*U).left_monic() == L                                               # needs sage.misc.cython
             True
         """
         cdef OrePolynomial Q, R, T
@@ -1427,17 +1447,18 @@ cdef class OrePolynomial(AlgebraElement):
 
         EXAMPLES::
 
-            sage: k.<t> = GF(5^3)                                                       # needs sage.rings.finite_rings
-            sage: Frob = k.frobenius_endomorphism()                                     # needs sage.rings.finite_rings
-            sage: S.<x> = k['x',Frob]                                                   # needs sage.rings.finite_rings
-            sage: P = (x + t) * (x + t^2)                                               # needs sage.rings.finite_rings
-            sage: Q = 2 * (x + t) * (x^2 + t + 1)                                       # needs sage.rings.finite_rings
-            sage: L, U, V = P.right_xlcm(Q)                                             # needs sage.rings.finite_rings
-            sage: L                                                                     # needs sage.rings.finite_rings
+            sage: # needs sage.rings.finite_rings
+            sage: k.<t> = GF(5^3)
+            sage: Frob = k.frobenius_endomorphism()
+            sage: S.<x> = k['x',Frob]
+            sage: P = (x + t) * (x + t^2)
+            sage: Q = 2 * (x + t) * (x^2 + t + 1)
+            sage: L, U, V = P.right_xlcm(Q)
+            sage: L
             x^4 + (2*t^2 + t + 2)*x^3 + (3*t^2 + 4*t + 1)*x^2 + (3*t^2 + 4*t + 1)*x + t^2 + 4
-            sage: P * U == L                                                            # needs sage.rings.finite_rings
+            sage: P * U == L
             True
-            sage: Q * V == L                                                            # needs sage.rings.finite_rings
+            sage: Q * V == L
             True
         """
         if self.base_ring() not in _Fields:
@@ -1481,18 +1502,19 @@ cdef class OrePolynomial(AlgebraElement):
 
         EXAMPLES::
 
-            sage: k.<t> = GF(5^3)                                                       # needs sage.rings.finite_rings
-            sage: Frob = k.frobenius_endomorphism()                                     # needs sage.rings.finite_rings
-            sage: S.<x> = k['x',Frob]                                                   # needs sage.rings.finite_rings
-            sage: a = (x + t^2) * (x + t)                                               # needs sage.rings.finite_rings
-            sage: b = 2 * (x^2 + t + 1) * (x * t)                                       # needs sage.rings.finite_rings
-            sage: c = a.left_lcm(b); c                                                  # needs sage.rings.finite_rings
+            sage: # needs sage.rings.finite_rings
+            sage: k.<t> = GF(5^3)
+            sage: Frob = k.frobenius_endomorphism()
+            sage: S.<x> = k['x',Frob]
+            sage: a = (x + t^2) * (x + t)
+            sage: b = 2 * (x^2 + t + 1) * (x * t)
+            sage: c = a.left_lcm(b); c
             x^5 + (2*t^2 + t + 4)*x^4 + (3*t^2 + 4)*x^3 + (3*t^2 + 3*t + 2)*x^2 + (t^2 + t + 2)*x
-            sage: c.is_right_divisible_by(a)                                            # needs sage.rings.finite_rings
+            sage: c.is_right_divisible_by(a)
             True
-            sage: c.is_right_divisible_by(b)                                            # needs sage.rings.finite_rings
+            sage: c.is_right_divisible_by(b)
             True
-            sage: a.degree() + b.degree() == c.degree() + a.right_gcd(b).degree()       # needs sage.rings.finite_rings
+            sage: a.degree() + b.degree() == c.degree() + a.right_gcd(b).degree()
             True
 
         Specifying ``monic=False``, we *can* get a nonmonic lcm::
@@ -1550,18 +1572,19 @@ cdef class OrePolynomial(AlgebraElement):
 
         EXAMPLES::
 
-            sage: k.<t> = GF(5^3)                                                       # needs sage.rings.finite_rings
-            sage: Frob = k.frobenius_endomorphism()                                     # needs sage.rings.finite_rings
-            sage: S.<x> = k['x',Frob]                                                   # needs sage.rings.finite_rings
-            sage: a = (x + t) * (x + t^2)                                               # needs sage.rings.finite_rings
-            sage: b = 2 * (x + t) * (x^2 + t + 1)                                       # needs sage.rings.finite_rings
-            sage: c = a.right_lcm(b); c                                                 # needs sage.rings.finite_rings
+            sage: # needs sage.rings.finite_rings
+            sage: k.<t> = GF(5^3)
+            sage: Frob = k.frobenius_endomorphism()
+            sage: S.<x> = k['x',Frob]
+            sage: a = (x + t) * (x + t^2)
+            sage: b = 2 * (x + t) * (x^2 + t + 1)
+            sage: c = a.right_lcm(b); c
             x^4 + (2*t^2 + t + 2)*x^3 + (3*t^2 + 4*t + 1)*x^2 + (3*t^2 + 4*t + 1)*x + t^2 + 4
-            sage: c.is_left_divisible_by(a)                                             # needs sage.rings.finite_rings
+            sage: c.is_left_divisible_by(a)
             True
-            sage: c.is_left_divisible_by(b)                                             # needs sage.rings.finite_rings
+            sage: c.is_left_divisible_by(b)
             True
-            sage: a.degree() + b.degree() == c.degree() + a.left_gcd(b).degree()        # needs sage.rings.finite_rings
+            sage: a.degree() + b.degree() == c.degree() + a.left_gcd(b).degree()
             True
 
         Specifying ``monic=False``, we *can* get a nonmonic gcd::
@@ -2048,12 +2071,13 @@ cdef class OrePolynomial(AlgebraElement):
 
         EXAMPLES::
 
-            sage: k.<t> = GF(5^3)                                                       # needs sage.rings.finite_rings
-            sage: Frob = k.frobenius_endomorphism()                                     # needs sage.rings.finite_rings
-            sage: S.<x> = k['x',Frob]                                                   # needs sage.rings.finite_rings
-            sage: a = 1 + t*x^2                                                         # needs sage.rings.finite_rings
-            sage: b = x + 1                                                             # needs sage.rings.finite_rings
-            sage: a.left_mod(b)                                                         # needs sage.rings.finite_rings
+            sage: # needs sage.rings.finite_rings
+            sage: k.<t> = GF(5^3)
+            sage: Frob = k.frobenius_endomorphism()
+            sage: S.<x> = k['x',Frob]
+            sage: a = 1 + t*x^2
+            sage: b = x + 1
+            sage: a.left_mod(b)
             2*t^2 + 4*t
         """
         _, r = self.left_quo_rem(other)
@@ -2901,12 +2925,13 @@ cdef class OrePolynomial_generic_dense(OrePolynomial):
         This behavior ensures that the Hilbert shift by a fixed element
         defines an homomorphism of rings::
 
-            sage: U = S.random_element(degree=5)                                        # needs sage.rings.finite_rings
-            sage: V = S.random_element(degree=5)                                        # needs sage.rings.finite_rings
-            sage: s = k.random_element()                                                # needs sage.rings.finite_rings
-            sage: (U+V).hilbert_shift(s) == U.hilbert_shift(s) + V.hilbert_shift(s)     # needs sage.rings.finite_rings
+            sage: # needs sage.rings.finite_rings
+            sage: U = S.random_element(degree=5)
+            sage: V = S.random_element(degree=5)
+            sage: s = k.random_element()
+            sage: (U+V).hilbert_shift(s) == U.hilbert_shift(s) + V.hilbert_shift(s)
             True
-            sage: (U*V).hilbert_shift(s) == U.hilbert_shift(s) * V.hilbert_shift(s)     # needs sage.rings.finite_rings
+            sage: (U*V).hilbert_shift(s) == U.hilbert_shift(s) * V.hilbert_shift(s)
             True
 
         We check that shifting by an element and then by its opposite
@@ -3059,12 +3084,13 @@ cdef class OrePolynomialBaseringInjection(Morphism):
 
         EXAMPLES::
 
+            sage: # needs sage.rings.finite_rings
             sage: from sage.rings.polynomial.ore_polynomial_element import OrePolynomialBaseringInjection
-            sage: k.<t> = GF(5^3)                                                       # needs sage.rings.finite_rings
-            sage: Frob = k.frobenius_endomorphism()                                     # needs sage.rings.finite_rings
-            sage: S.<x> = k['x',Frob]                                                   # needs sage.rings.finite_rings
-            sage: m = OrePolynomialBaseringInjection(k, k['x', Frob])                   # needs sage.rings.finite_rings
-            sage: m.an_element()                                                        # needs sage.rings.finite_rings
+            sage: k.<t> = GF(5^3)
+            sage: Frob = k.frobenius_endomorphism()
+            sage: S.<x> = k['x',Frob]
+            sage: m = OrePolynomialBaseringInjection(k, k['x', Frob])
+            sage: m.an_element()
             x
         """
         return self._an_element
@@ -3084,14 +3110,15 @@ cdef class OrePolynomialBaseringInjection(Morphism):
 
         TESTS::
 
+            sage: # needs sage.rings.finite_rings
             sage: from sage.rings.polynomial.ore_polynomial_element import OrePolynomialBaseringInjection
-            sage: k.<t> = GF(5^3)                                                       # needs sage.rings.finite_rings
-            sage: Frob = k.frobenius_endomorphism()                                     # needs sage.rings.finite_rings
-            sage: S.<x> = k['x',Frob]                                                   # needs sage.rings.finite_rings
-            sage: m = OrePolynomialBaseringInjection(k, k['x', Frob])                   # needs sage.rings.finite_rings
-            sage: m(4)                                                                  # needs sage.rings.finite_rings
+            sage: k.<t> = GF(5^3)
+            sage: Frob = k.frobenius_endomorphism()
+            sage: S.<x> = k['x',Frob]
+            sage: m = OrePolynomialBaseringInjection(k, k['x', Frob])
+            sage: m(4)
             4
-            sage: parent(m(4))                                                          # needs sage.rings.finite_rings
+            sage: parent(m(4))
             Ore Polynomial Ring in x over Finite Field in t of size 5^3 twisted by t |--> t^5
         """
         try:
@@ -3106,12 +3133,13 @@ cdef class OrePolynomialBaseringInjection(Morphism):
 
         TESTS::
 
+            sage: # needs sage.rings.finite_rings
             sage: from sage.rings.polynomial.ore_polynomial_element import OrePolynomialBaseringInjection
-            sage: k.<t> = GF(5^3)                                                       # needs sage.rings.finite_rings
-            sage: Frob = k.frobenius_endomorphism()                                     # needs sage.rings.finite_rings
-            sage: S.<x> = k['x',Frob]                                                   # needs sage.rings.finite_rings
-            sage: m = OrePolynomialBaseringInjection(k, k['x', Frob])                   # needs sage.rings.finite_rings
-            sage: m.section()                                                           # needs sage.rings.finite_rings
+            sage: k.<t> = GF(5^3)
+            sage: Frob = k.frobenius_endomorphism()
+            sage: S.<x> = k['x',Frob]
+            sage: m = OrePolynomialBaseringInjection(k, k['x', Frob])
+            sage: m.section()
             Generic map:
             From: Ore Polynomial Ring in x over Finite Field in t of size 5^3 twisted by t |--> t^5
             To:   Finite Field in t of size 5^3

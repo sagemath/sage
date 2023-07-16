@@ -214,7 +214,8 @@ cdef class Polynomial_template(Polynomial):
         The following has been a problem in a preliminary version of
         :trac:`12313`::
 
-            sage: K.<z> = GF(4)                                                         # needs sage.libs.pari
+            sage: # needs sage.rings.finite_rings
+            sage: K.<z> = GF(4)
             sage: P.<x> = K[]
             sage: del P
             sage: del x

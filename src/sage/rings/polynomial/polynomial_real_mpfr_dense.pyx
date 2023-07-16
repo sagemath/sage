@@ -6,19 +6,20 @@ TESTS:
 Check that operations with numpy elements work well (see :trac:`18076` and
 :trac:`8426`)::
 
-    sage: import numpy                                                                  # needs numpy
+    sage: # needs numpy
+    sage: import numpy
     sage: x = polygen(RR)
-    sage: x * numpy.int32('1')                                                          # needs numpy
+    sage: x * numpy.int32('1')
     x
-    sage: numpy.int32('1') * x                                                          # needs numpy
+    sage: numpy.int32('1') * x
     x
-    sage: x * numpy.int64('1')                                                          # needs numpy
+    sage: x * numpy.int64('1')
     x
-    sage: numpy.int64('1') * x                                                          # needs numpy
+    sage: numpy.int64('1') * x
     x
-    sage: x * numpy.float32('1.5')                                                      # needs numpy
+    sage: x * numpy.float32('1.5')
     1.50000000000000*x
-    sage: numpy.float32('1.5') * x                                                      # needs numpy
+    sage: numpy.float32('1.5') * x
     1.50000000000000*x
 """
 
@@ -571,12 +572,13 @@ cdef class PolynomialRealDense(Polynomial):
 
         EXAMPLES::
 
-            sage: f = RR['x']([-3, pi, 0, 1])                                           # needs sage.symbolic
-            sage: f.reverse()                                                           # needs sage.symbolic
+            sage: # needs sage.symbolic
+            sage: f = RR['x']([-3, pi, 0, 1])
+            sage: f.reverse()
             -3.00000000000000*x^3 + 3.14159265358979*x^2 + 1.00000000000000
-            sage: f.reverse(2)                                                          # needs sage.symbolic
+            sage: f.reverse(2)
             -3.00000000000000*x^2 + 3.14159265358979*x
-            sage: f.reverse(5)                                                          # needs sage.symbolic
+            sage: f.reverse(5)
             -3.00000000000000*x^5 + 3.14159265358979*x^4 + x^2
 
         TESTS:

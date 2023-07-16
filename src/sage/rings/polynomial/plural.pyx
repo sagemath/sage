@@ -2523,16 +2523,17 @@ cdef class NCPolynomial_plural(RingElement):
 
         Check if :trac:`7152` is fixed::
 
-            sage: x = var('x')                                                          # needs sage.symbolic
-            sage: K.<rho> = NumberField(x**2 + 1)                                       # needs sage.symbolic
-            sage: R.<x,y> = QQ[]                                                        # needs sage.symbolic
-            sage: p = rho*x                                                             # needs sage.symbolic
-            sage: q = x                                                                 # needs sage.symbolic
-            sage: p.monomials()                                                         # needs sage.symbolic
+            sage: # needs sage.symbolic
+            sage: x = var('x')
+            sage: K.<rho> = NumberField(x**2 + 1)
+            sage: R.<x,y> = QQ[]
+            sage: p = rho*x
+            sage: q = x
+            sage: p.monomials()
             [x]
-            sage: q.monomials()                                                         # needs sage.symbolic
+            sage: q.monomials()
             [x]
-            sage: p.monomials()                                                         # needs sage.symbolic
+            sage: p.monomials()
             [x]
         """
         l = list()

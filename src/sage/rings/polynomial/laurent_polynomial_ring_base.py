@@ -396,9 +396,9 @@ class LaurentPolynomialRing_generic(CommutativeRing, Parent):
             sage: L._is_valid_homomorphism_(K, (K(1/2), K(3/2)))                                    # needs sage.rings.number_field
             True
             sage: Q5 = Qp(5); i5 = Q5(-1).sqrt()                                                    # needs sage.rings.padics
-            sage: L._is_valid_homomorphism_(Q5, (Q5(1/2), Q5(3/2))) # no coercion                   # needs sage.rings.padics
+            sage: L._is_valid_homomorphism_(Q5, (Q5(1/2), Q5(3/2))) # no coercion                   # needs sage.rings.number_field sage.rings.padics
             False
-            sage: L._is_valid_homomorphism_(Q5, (Q5(1/2), Q5(3/2)), base_map=K.hom([i5]))           # needs sage.rings.padics
+            sage: L._is_valid_homomorphism_(Q5, (Q5(1/2), Q5(3/2)), base_map=K.hom([i5]))           # needs sage.rings.number_field sage.rings.padics
             True
         """
         if base_map is None and not codomain.has_coerce_map_from(self.base_ring()):

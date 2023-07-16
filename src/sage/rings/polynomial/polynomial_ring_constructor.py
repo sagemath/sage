@@ -419,14 +419,14 @@ def PolynomialRing(base_ring, *args, **kwds):
         True
 
         sage: # needs sage.rings.number_field
-        sage: R = PolynomialRing(QQbar, 'j,k', implementation="generic")                # needs sage.rings.number_field
-        sage: S = PolynomialRing(QQbar, 'j,k', implementation=None)                     # needs sage.rings.number_field
-        sage: R is S                                                                    # needs sage.rings.number_field
+        sage: R = PolynomialRing(QQbar, 'j,k', implementation="generic")
+        sage: S = PolynomialRing(QQbar, 'j,k', implementation=None)
+        sage: R is S
         True
 
         sage: # needs sage.libs.singular
-        sage: R = PolynomialRing(ZZ, 'j,k', implementation="singular")                  # needs sage.libs.singular
-        sage: S = PolynomialRing(ZZ, 'j,k', implementation=None)                        # needs sage.libs.singular
+        sage: R = PolynomialRing(ZZ, 'j,k', implementation="singular")
+        sage: S = PolynomialRing(ZZ, 'j,k', implementation=None)
         sage: R is S
         True
 
