@@ -338,15 +338,16 @@ cdef class ComplexDoubleField_class(sage.rings.abc.ComplexDoubleField):
         numbers and higher-precision ones, though of course there may be
         loss of precision::
 
-            sage: a = ComplexField(200)(-2).sqrt(); a                                   # needs sage.rings.real_mpfr
+            sage: # needs sage.rings.real_mpfr
+            sage: a = ComplexField(200)(-2).sqrt(); a
             1.4142135623730950488016887242096980785696718753769480731767*I
-            sage: b = CDF(a); b                                                         # needs sage.rings.real_mpfr
+            sage: b = CDF(a); b
             1.4142135623730951*I
-            sage: a.parent()(b)                                                         # needs sage.rings.real_mpfr
+            sage: a.parent()(b)
             1.4142135623730951454746218587388284504413604736328125000000*I
-            sage: a.parent()(b) == b                                                    # needs sage.rings.real_mpfr
+            sage: a.parent()(b) == b
             True
-            sage: b == CC(a)                                                            # needs sage.rings.real_mpfr
+            sage: b == CC(a)
             True
 
         TESTS:
@@ -429,7 +430,7 @@ cdef class ComplexDoubleField_class(sage.rings.abc.ComplexDoubleField):
         TESTS::
 
             sage: # needs sage.rings.real_mpfr
-            sage: CDF(1) + RR(1)                                                        # needs sage.rings.real_mpfr
+            sage: CDF(1) + RR(1)
             2.0
             sage: CDF.0 - CC(1) - int(1) - RR(1) - QQbar(1)                             # needs sage.rings.number_field
             -4.0 + 1.0*I

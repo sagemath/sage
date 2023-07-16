@@ -1459,12 +1459,13 @@ cdef class RingExtension_generic(CommutativeAlgebra):
 
         TESTS::
 
+            sage: # needs sage.rings.number_field
             sage: x = polygen(ZZ, 'x')
-            sage: A.<a> = QQ.extension(x^2 - 2)                                         # needs sage.rings.number_field
-            sage: B.<b> = QQ.extension(x^6 - 2)                                         # needs sage.rings.number_field
-            sage: f = A.hom([b^3])                                                      # needs sage.rings.number_field
-            sage: E = B.over(f)                                                         # needs sage.rings.number_field
-            sage: E.degree_over()  # indirect doctest                                   # needs sage.rings.number_field
+            sage: A.<a> = QQ.extension(x^2 - 2)
+            sage: B.<b> = QQ.extension(x^6 - 2)
+            sage: f = A.hom([b^3])
+            sage: E = B.over(f)
+            sage: E.degree_over()  # indirect doctest
             3
         """
         if base is self:
@@ -2207,12 +2208,13 @@ cdef class RingExtensionWithBasis(RingExtension_generic):
 
         TESTS::
 
+            sage: # needs sage.rings.number_field
             sage: x = polygen(ZZ, 'x')
-            sage: A.<a> = QQ.extension(x^2 - 2)                                         # needs sage.rings.number_field
-            sage: B.<b> = QQ.extension(x^6 - 2)                                         # needs sage.rings.number_field
-            sage: f = A.hom([b^3])                                                      # needs sage.rings.number_field
-            sage: E = B.over(f)                                                         # needs sage.rings.number_field
-            sage: E.degree_over()  # indirect doctest                                   # needs sage.rings.number_field
+            sage: A.<a> = QQ.extension(x^2 - 2)
+            sage: B.<b> = QQ.extension(x^6 - 2)
+            sage: f = A.hom([b^3])
+            sage: E = B.over(f)
+            sage: E.degree_over()  # indirect doctest
             3
         """
         if base is self:

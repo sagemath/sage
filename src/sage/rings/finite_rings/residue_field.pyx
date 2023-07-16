@@ -7,12 +7,13 @@ polynomials over `GF(p)`.
 
 EXAMPLES::
 
+    sage: # needs sage.rings.number_field
     sage: x = polygen(ZZ, 'x')
-    sage: K.<a> = NumberField(x^3 - 7)                                                  # needs sage.rings.number_field
-    sage: P = K.ideal(29).factor()[0][0]                                                # needs sage.rings.number_field
-    sage: k = K.residue_field(P); k                                                     # needs sage.rings.number_field
+    sage: K.<a> = NumberField(x^3 - 7)
+    sage: P = K.ideal(29).factor()[0][0]
+    sage: k = K.residue_field(P); k
     Residue field in abar of Fractional ideal (2*a^2 + 3*a - 10)
-    sage: k.order()                                                                     # needs sage.rings.number_field
+    sage: k.order()
     841
 
 We reduce mod a prime for which the ring of integers is not
@@ -559,16 +560,17 @@ class ResidueField_generic(Field):
 
         EXAMPLES::
 
+            sage: # needs sage.rings.number_field
             sage: x = polygen(ZZ, 'x')
-            sage: K.<a> = NumberField(x^3 + x + 1)                                      # needs sage.rings.number_field
-            sage: P = K.ideal(29).factor()[0][0]                                        # needs sage.rings.number_field
-            sage: k = K.residue_field(P) # indirect doctest                             # needs sage.rings.number_field
-            sage: k.ideal() is P                                                        # needs sage.rings.number_field
+            sage: K.<a> = NumberField(x^3 + x + 1)
+            sage: P = K.ideal(29).factor()[0][0]
+            sage: k = K.residue_field(P) # indirect doctest
+            sage: k.ideal() is P
             True
-            sage: p = next_prime(2^40); p                                               # needs sage.rings.number_field
+            sage: p = next_prime(2^40); p
             1099511627791
-            sage: k = K.residue_field(K.prime_above(p))                                 # needs sage.rings.number_field
-            sage: k.ideal().norm() == p                                                 # needs sage.rings.number_field
+            sage: k = K.residue_field(K.prime_above(p))
+            sage: k.ideal().norm() == p
             True
 
             sage: R.<t> = GF(17)[]; P = R.ideal(t^3 + t^2 + 7)
@@ -597,13 +599,14 @@ class ResidueField_generic(Field):
 
         EXAMPLES::
 
+            sage: # needs sage.rings.number_field
             sage: from sage.rings.finite_rings.residue_field import ResidueField_generic
             sage: x = polygen(ZZ, 'x')
-            sage: K.<i> = NumberField(x^2 + 1)                                          # needs sage.rings.number_field
-            sage: P = K.ideal(-3*i - 2)                                                 # needs sage.rings.number_field
-            sage: OK = K.maximal_order()                                                # needs sage.rings.number_field
-            sage: F = OK.residue_field(P)                                               # needs sage.rings.number_field
-            sage: ResidueField_generic._element_constructor_(F, i)                      # needs sage.rings.number_field
+            sage: K.<i> = NumberField(x^2 + 1)
+            sage: P = K.ideal(-3*i - 2)
+            sage: OK = K.maximal_order()
+            sage: F = OK.residue_field(P)
+            sage: ResidueField_generic._element_constructor_(F, i)
             8
 
         With :trac:`8800`, we also have::
@@ -644,12 +647,13 @@ class ResidueField_generic(Field):
 
         EXAMPLES::
 
+            sage: # needs sage.rings.number_field
             sage: x = polygen(ZZ, 'x')
-            sage: K.<i> = NumberField(x^2 + 1)                                          # needs sage.rings.number_field
-            sage: P = K.ideal(-3*i - 2)                                                 # needs sage.rings.number_field
-            sage: OK = K.maximal_order()                                                # needs sage.rings.number_field
-            sage: F = OK.residue_field(P)                                               # needs sage.rings.number_field
-            sage: F.has_coerce_map_from(GF(13)) # indirect doctest                      # needs sage.rings.number_field
+            sage: K.<i> = NumberField(x^2 + 1)
+            sage: P = K.ideal(-3*i - 2)
+            sage: OK = K.maximal_order()
+            sage: F = OK.residue_field(P)
+            sage: F.has_coerce_map_from(GF(13)) # indirect doctest
             True
 
         TESTS:
@@ -700,16 +704,17 @@ class ResidueField_generic(Field):
 
         EXAMPLES::
 
+            sage: # needs sage.rings.number_field
             sage: x = polygen(ZZ, 'x')
-            sage: K.<a> = NumberField(x^3 - 7)                                          # needs sage.rings.number_field
-            sage: P = K.ideal(29).factor()[0][0]                                        # needs sage.rings.number_field
-            sage: k = K.residue_field(P)                                                # needs sage.rings.number_field
-            sage: OK = K.maximal_order()                                                # needs sage.rings.number_field
-            sage: c = OK(a)                                                             # needs sage.rings.number_field
-            sage: b = k(a)                                                              # needs sage.rings.number_field
-            sage: k.lift(13*b + 5)                                                      # needs sage.rings.number_field
+            sage: K.<a> = NumberField(x^3 - 7)
+            sage: P = K.ideal(29).factor()[0][0]
+            sage: k = K.residue_field(P)
+            sage: OK = K.maximal_order()
+            sage: c = OK(a)
+            sage: b = k(a)
+            sage: k.lift(13*b + 5)
             13*a + 5
-            sage: k.lift(12821*b + 918)                                                 # needs sage.rings.number_field
+            sage: k.lift(12821*b + 918)
             3*a + 19
 
             sage: R.<t> = GF(17)[]; P = R.ideal(t^3 + t^2 + 7)
@@ -747,14 +752,15 @@ class ResidueField_generic(Field):
             sage: pi.codomain()
             Residue field of Fractional ideal (a)
 
+            sage: # needs sage.rings.number_field
             sage: x = polygen(ZZ, 'x')
-            sage: K.<a> = NumberField(x^3 + x^2 - 2*x + 32)                             # needs sage.rings.number_field
-            sage: F = K.factor(2)[0][0].residue_field()                                 # needs sage.rings.number_field
-            sage: F.reduction_map().domain()                                            # needs sage.rings.number_field
+            sage: K.<a> = NumberField(x^3 + x^2 - 2*x + 32)
+            sage: F = K.factor(2)[0][0].residue_field()
+            sage: F.reduction_map().domain()
             Number Field in a with defining polynomial x^3 + x^2 - 2*x + 32
-            sage: K.<a> = NumberField(x^3 + 128)                                        # needs sage.rings.number_field
-            sage: F = K.factor(2)[0][0].residue_field()                                 # needs sage.rings.number_field
-            sage: F.reduction_map().codomain()                                          # needs sage.rings.number_field
+            sage: K.<a> = NumberField(x^3 + 128)
+            sage: F = K.factor(2)[0][0].residue_field()
+            sage: F.reduction_map().codomain()
             Residue field of Fractional ideal (1/4*a)
 
             sage: R.<t> = GF(17)[]; P = R.ideal(t^3 + t^2 + 7)
@@ -817,13 +823,14 @@ class ResidueField_generic(Field):
 
         EXAMPLES::
 
+            sage: # needs sage.rings.number_field
             sage: x = polygen(ZZ, 'x')
-            sage: K.<a> = NumberField(x^3 - 11)                                         # needs sage.rings.number_field
-            sage: F = K.ideal(37).factor(); F                                           # needs sage.rings.number_field
+            sage: K.<a> = NumberField(x^3 - 11)
+            sage: F = K.ideal(37).factor(); F
             (Fractional ideal (37, a + 9)) * (Fractional ideal (37, a + 12)) * (Fractional ideal (-2*a + 5))
-            sage: k = K.residue_field(F[0][0])                                          # needs sage.rings.number_field
-            sage: l = K.residue_field(F[1][0])                                          # needs sage.rings.number_field
-            sage: k == l                                                                # needs sage.rings.number_field
+            sage: k = K.residue_field(F[0][0])
+            sage: l = K.residue_field(F[1][0])
+            sage: k == l
             False
 
             sage: R.<t> = GF(17)[]; P = R.ideal(t^3 + t^2 + 7)
@@ -939,18 +946,19 @@ cdef class ReductionMap(Map):
 
         EXAMPLES::
 
+            sage: # needs sage.rings.number_field
             sage: x = polygen(ZZ, 'x')
-            sage: K.<a> = NumberField(x^2 + 1)                                          # needs sage.rings.number_field
-            sage: F = K.factor(2)[0][0].residue_field()                                 # needs sage.rings.number_field
-            sage: r = F.reduction_map()                                                 # needs sage.rings.number_field
-            sage: cr = copy(r) # indirect doctest                                       # needs sage.rings.number_field
-            sage: cr                                                                    # needs sage.rings.number_field
+            sage: K.<a> = NumberField(x^2 + 1)
+            sage: F = K.factor(2)[0][0].residue_field()
+            sage: r = F.reduction_map()
+            sage: cr = copy(r) # indirect doctest
+            sage: cr
             Partially defined reduction map:
               From: Number Field in a with defining polynomial x^2 + 1
               To:   Residue field of Fractional ideal (a + 1)
-            sage: cr == r                       # not implemented                       # needs sage.rings.number_field
+            sage: cr == r                       # not implemented
             True
-            sage: r(2 + a) == cr(2 + a)                                                 # needs sage.rings.number_field
+            sage: r(2 + a) == cr(2 + a)
             True
         """
         slots = Map._extra_slots(self)
@@ -969,18 +977,19 @@ cdef class ReductionMap(Map):
 
         EXAMPLES::
 
+            sage: # needs sage.rings.number_field
             sage: x = polygen(ZZ, 'x')
-            sage: K.<a> = NumberField(x^2 + 1)                                          # needs sage.rings.number_field
-            sage: F = K.factor(2)[0][0].residue_field()                                 # needs sage.rings.number_field
-            sage: r = F.reduction_map()                                                 # needs sage.rings.number_field
-            sage: cr = copy(r) # indirect doctest                                       # needs sage.rings.number_field
-            sage: cr                                                                    # needs sage.rings.number_field
+            sage: K.<a> = NumberField(x^2 + 1)
+            sage: F = K.factor(2)[0][0].residue_field()
+            sage: r = F.reduction_map()
+            sage: cr = copy(r) # indirect doctest
+            sage: cr
             Partially defined reduction map:
               From: Number Field in a with defining polynomial x^2 + 1
               To:   Residue field of Fractional ideal (a + 1)
-            sage: cr == r                       # not implemented                       # needs sage.rings.number_field
+            sage: cr == r                       # not implemented
             True
-            sage: r(2 + a) == cr(2 + a)                                                 # needs sage.rings.number_field
+            sage: r(2 + a) == cr(2 + a)
             True
         """
         Map._update_slots(self, _slots)
@@ -1115,27 +1124,28 @@ cdef class ReductionMap(Map):
 
         EXAMPLES::
 
+            sage: # needs sage.rings.number_field
             sage: x = polygen(ZZ, 'x')
-            sage: K.<a> = NumberField(x^5 - 5*x + 2)                                    # needs sage.rings.number_field
-            sage: P = K.ideal(47).factor()[0][0]                                        # needs sage.rings.number_field
-            sage: k = K.residue_field(P)                                                # needs sage.rings.number_field
-            sage: f = k.convert_map_from(K)                                             # needs sage.rings.number_field
-            sage: s = f.section(); s                                                    # needs sage.rings.number_field
+            sage: K.<a> = NumberField(x^5 - 5*x + 2)
+            sage: P = K.ideal(47).factor()[0][0]
+            sage: k = K.residue_field(P)
+            sage: f = k.convert_map_from(K)
+            sage: s = f.section(); s
             Lifting map:
               From: Residue field in abar of
                     Fractional ideal (-14*a^4 + 24*a^3 + 26*a^2 - 58*a + 15)
               To:   Number Field in a with defining polynomial x^5 - 5*x + 2
-            sage: s(k.gen())                                                            # needs sage.rings.number_field
+            sage: s(k.gen())
             a
-            sage: L.<b> = NumberField(x^5 + 17*x + 1)                                   # needs sage.rings.number_field
-            sage: P = L.factor(53)[0][0]                                                # needs sage.rings.number_field
-            sage: l = L.residue_field(P)                                                # needs sage.rings.number_field
-            sage: g = l.convert_map_from(L)                                             # needs sage.rings.number_field
-            sage: s = g.section(); s                                                    # needs sage.rings.number_field
+            sage: L.<b> = NumberField(x^5 + 17*x + 1)
+            sage: P = L.factor(53)[0][0]
+            sage: l = L.residue_field(P)
+            sage: g = l.convert_map_from(L)
+            sage: s = g.section(); s
             Lifting map:
               From: Residue field in bbar of Fractional ideal (53, b^2 + 23*b + 8)
               To:   Number Field in b with defining polynomial x^5 + 17*x + 1
-            sage: s(l.gen()).parent()                                                   # needs sage.rings.number_field
+            sage: s(l.gen()).parent()
             Number Field in b with defining polynomial x^5 + 17*x + 1
 
             sage: R.<t> = GF(2)[]; h = t^5 + t^2 + 1
@@ -1161,14 +1171,15 @@ cdef class ResidueFieldHomomorphism_global(RingHomomorphism):
 
     EXAMPLES::
 
+        sage: # needs sage.rings.number_field
         sage: x = polygen(ZZ, 'x')
-        sage: K.<a> = NumberField(x^3 - 7)                                              # needs sage.rings.number_field
-        sage: P  = K.ideal(29).factor()[0][0]                                           # needs sage.rings.number_field
-        sage: k  = K.residue_field(P)                                                   # needs sage.rings.number_field
-        sage: OK = K.maximal_order()                                                    # needs sage.rings.number_field
-        sage: abar = k(OK.1); abar                                                      # needs sage.rings.number_field
+        sage: K.<a> = NumberField(x^3 - 7)
+        sage: P  = K.ideal(29).factor()[0][0]
+        sage: k  = K.residue_field(P)
+        sage: OK = K.maximal_order()
+        sage: abar = k(OK.1); abar
         abar
-        sage: (1+abar)^179                                                              # needs sage.rings.number_field
+        sage: (1+abar)^179
         24*abar + 12
 
         sage: phi = k.coerce_map_from(OK); phi                                          # needs sage.rings.number_field
@@ -1238,19 +1249,20 @@ cdef class ResidueFieldHomomorphism_global(RingHomomorphism):
 
         EXAMPLES::
 
+            sage: # needs sage.rings.number_field
             sage: x = polygen(ZZ, 'x')
-            sage: K.<a> = NumberField(x^3 - x + 8)                                      # needs sage.rings.number_field
-            sage: P = K.ideal(29).factor()[0][0]                                        # needs sage.rings.number_field
-            sage: k = K.residue_field(P)                                                # needs sage.rings.number_field
-            sage: OK = K.maximal_order()                                                # needs sage.rings.number_field
-            sage: phi = k.coerce_map_from(OK)                                           # needs sage.rings.number_field
-            sage: psi = copy(phi); psi    # indirect doctest                            # needs sage.rings.number_field
+            sage: K.<a> = NumberField(x^3 - x + 8)
+            sage: P = K.ideal(29).factor()[0][0]
+            sage: k = K.residue_field(P)
+            sage: OK = K.maximal_order()
+            sage: phi = k.coerce_map_from(OK)
+            sage: psi = copy(phi); psi    # indirect doctest
             Ring morphism:
               From: Maximal Order in Number Field in a with defining polynomial x^3 - x + 8
               To:   Residue field in abar of Fractional ideal (29)
-            sage: psi == phi                    # not implemented                       # needs sage.rings.number_field
+            sage: psi == phi                    # not implemented
             True
-            sage: psi(OK.an_element()) == phi(OK.an_element())                          # needs sage.rings.number_field
+            sage: psi(OK.an_element()) == phi(OK.an_element())
             True
         """
         slots = RingHomomorphism._extra_slots(self)
@@ -1269,19 +1281,20 @@ cdef class ResidueFieldHomomorphism_global(RingHomomorphism):
 
         EXAMPLES::
 
+            sage: # needs sage.rings.number_field
             sage: x = polygen(ZZ, 'x')
-            sage: K.<a> = NumberField(x^3 - x + 8)                                      # needs sage.rings.number_field
-            sage: P = K.ideal(29).factor()[0][0]                                        # needs sage.rings.number_field
-            sage: k = K.residue_field(P)                                                # needs sage.rings.number_field
-            sage: OK = K.maximal_order()                                                # needs sage.rings.number_field
-            sage: phi = k.coerce_map_from(OK)                                           # needs sage.rings.number_field
-            sage: psi = copy(phi); psi    # indirect doctest                            # needs sage.rings.number_field
+            sage: K.<a> = NumberField(x^3 - x + 8)
+            sage: P = K.ideal(29).factor()[0][0]
+            sage: k = K.residue_field(P)
+            sage: OK = K.maximal_order()
+            sage: phi = k.coerce_map_from(OK)
+            sage: psi = copy(phi); psi    # indirect doctest
             Ring morphism:
               From: Maximal Order in Number Field in a with defining polynomial x^3 - x + 8
               To:   Residue field in abar of Fractional ideal (29)
-            sage: psi == phi                    # not implemented                       # needs sage.rings.number_field
+            sage: psi == phi                    # not implemented
             True
-            sage: psi(OK.an_element()) == phi(OK.an_element())                          # needs sage.rings.number_field
+            sage: psi(OK.an_element()) == phi(OK.an_element())
             True
         """
         RingHomomorphism._update_slots(self, _slots)
@@ -1299,12 +1312,13 @@ cdef class ResidueFieldHomomorphism_global(RingHomomorphism):
 
         EXAMPLES::
 
+            sage: # needs sage.rings.number_field
             sage: x = polygen(ZZ, 'x')
-            sage: K.<a> = NumberField(x^3 - x + 8)                                      # needs sage.rings.number_field
-            sage: P = K.ideal(29).factor()[0][0]                                        # needs sage.rings.number_field
-            sage: k = K.residue_field(P)                                                # needs sage.rings.number_field
-            sage: OK = K.maximal_order()                                                # needs sage.rings.number_field
-            sage: k.coerce_map_from(OK)(OK(a)^7) # indirect doctest                     # needs sage.rings.number_field
+            sage: K.<a> = NumberField(x^3 - x + 8)
+            sage: P = K.ideal(29).factor()[0][0]
+            sage: k = K.residue_field(P)
+            sage: OK = K.maximal_order()
+            sage: k.coerce_map_from(OK)(OK(a)^7) # indirect doctest
             13*abar^2 + 7*abar + 21
 
             sage: R.<t> = GF(next_prime(2^18))[]; P = R.ideal(t - 71)
@@ -1339,28 +1353,29 @@ cdef class ResidueFieldHomomorphism_global(RingHomomorphism):
 
         EXAMPLES::
 
+            sage: # needs sage.rings.number_field
             sage: x = polygen(ZZ, 'x')
-            sage: K.<a> = NumberField(x^5 - 5*x + 2)                                    # needs sage.rings.number_field
-            sage: P = K.ideal(47).factor()[0][0]                                        # needs sage.rings.number_field
-            sage: k = K.residue_field(P)                                                # needs sage.rings.number_field
-            sage: f = k.coerce_map_from(K.ring_of_integers())                           # needs sage.rings.number_field
-            sage: s = f.section(); s                                                    # needs sage.rings.number_field
+            sage: K.<a> = NumberField(x^5 - 5*x + 2)
+            sage: P = K.ideal(47).factor()[0][0]
+            sage: k = K.residue_field(P)
+            sage: f = k.coerce_map_from(K.ring_of_integers())
+            sage: s = f.section(); s
             Lifting map:
               From: Residue field in abar of
                     Fractional ideal (-14*a^4 + 24*a^3 + 26*a^2 - 58*a + 15)
               To:   Maximal Order in Number Field in a with defining polynomial x^5 - 5*x + 2
-            sage: s(k.gen())                                                            # needs sage.rings.number_field
+            sage: s(k.gen())
             a
-            sage: L.<b> = NumberField(x^5 + 17*x + 1)                                   # needs sage.rings.number_field
-            sage: P = L.factor(53)[0][0]                                                # needs sage.rings.number_field
-            sage: l = L.residue_field(P)                                                # needs sage.rings.number_field
-            sage: g = l.coerce_map_from(L.ring_of_integers())                           # needs sage.rings.number_field
-            sage: s = g.section(); s                                                    # needs sage.rings.number_field
+            sage: L.<b> = NumberField(x^5 + 17*x + 1)
+            sage: P = L.factor(53)[0][0]
+            sage: l = L.residue_field(P)
+            sage: g = l.coerce_map_from(L.ring_of_integers())
+            sage: s = g.section(); s
             Lifting map:
               From: Residue field in bbar of Fractional ideal (53, b^2 + 23*b + 8)
               To:   Maximal Order in Number Field in b
                     with defining polynomial x^5 + 17*x + 1
-            sage: s(l.gen()).parent()                                                   # needs sage.rings.number_field
+            sage: s(l.gen()).parent()
             Maximal Order in Number Field in b with defining polynomial x^5 + 17*x + 1
 
             sage: R.<t> = GF(17)[]; P = R.ideal(t^3 + t^2 + 7)
@@ -1384,17 +1399,18 @@ cdef class ResidueFieldHomomorphism_global(RingHomomorphism):
 
         EXAMPLES::
 
+            sage: # needs sage.rings.number_field
             sage: x = polygen(ZZ, 'x')
-            sage: K.<a> = NumberField(x^3 - 7)                                          # needs sage.rings.number_field
-            sage: P = K.ideal(29).factor()[0][0]                                        # needs sage.rings.number_field
-            sage: k = K.residue_field(P)                                                # needs sage.rings.number_field
-            sage: OK = K.maximal_order()                                                # needs sage.rings.number_field
-            sage: f = k.coerce_map_from(OK)                                             # needs sage.rings.number_field
-            sage: c = OK(a)                                                             # needs sage.rings.number_field
-            sage: b = k(a)                                                              # needs sage.rings.number_field
-            sage: f.lift(13*b + 5)                                                      # needs sage.rings.number_field
+            sage: K.<a> = NumberField(x^3 - 7)
+            sage: P = K.ideal(29).factor()[0][0]
+            sage: k = K.residue_field(P)
+            sage: OK = K.maximal_order()
+            sage: f = k.coerce_map_from(OK)
+            sage: c = OK(a)
+            sage: b = k(a)
+            sage: f.lift(13*b + 5)
             13*a + 5
-            sage: f.lift(12821*b + 918)                                                 # needs sage.rings.number_field
+            sage: f.lift(12821*b + 918)
             3*a + 19
 
             sage: R.<t> = GF(17)[]; P = R.ideal(t^3 + t^2 + 7)
@@ -1415,18 +1431,19 @@ cdef class LiftingMap(Section):
 
     EXAMPLES::
 
+        sage: # needs sage.rings.number_field
         sage: x = polygen(ZZ, 'x')
-        sage: K.<a> = NumberField(x^3 + 2)                                              # needs sage.rings.number_field
-        sage: F = K.factor(5)[0][0].residue_field()                                     # needs sage.rings.number_field
-        sage: F.degree()                                                                # needs sage.rings.number_field
+        sage: K.<a> = NumberField(x^3 + 2)
+        sage: F = K.factor(5)[0][0].residue_field()
+        sage: F.degree()
         2
-        sage: L = F.lift_map(); L                                                       # needs sage.rings.number_field
+        sage: L = F.lift_map(); L
         Lifting map:
           From: Residue field in abar of Fractional ideal (a^2 + 2*a - 1)
           To:   Maximal Order in Number Field in a with defining polynomial x^3 + 2
-        sage: L(F.0^2)                                                                  # needs sage.rings.number_field
+        sage: L(F.0^2)
         3*a + 1
-        sage: L(3*a + 1) == F.0^2                                                       # needs sage.rings.number_field
+        sage: L(3*a + 1) == F.0^2
         True
 
         sage: R.<t> = GF(13)[]
@@ -1453,15 +1470,16 @@ cdef class LiftingMap(Section):
               From: Residue field in theta_5bar of Fractional ideal (7)
               To:   Maximal Order in Cyclotomic Field of order 5 and degree 4
 
+            sage: # needs sage.rings.number_field
             sage: x = polygen(ZZ, 'x')
-            sage: K.<a> = NumberField(x^5 + 2)                                          # needs sage.rings.number_field
-            sage: F = K.factor(7)[0][0].residue_field()                                 # needs sage.rings.number_field
-            sage: L = F.lift_map(); L                                                   # needs sage.rings.number_field
+            sage: K.<a> = NumberField(x^5 + 2)
+            sage: F = K.factor(7)[0][0].residue_field()
+            sage: L = F.lift_map(); L
             Lifting map:
               From: Residue field in abar of Fractional ideal (2*a^4 - a^3 + 4*a^2 - 2*a + 1)
               To:   Maximal Order in Number Field in a
                     with defining polynomial x^5 + 2
-            sage: L.domain()                                                            # needs sage.rings.number_field
+            sage: L.domain()
             Residue field in abar of Fractional ideal (2*a^4 - a^3 + 4*a^2 - 2*a + 1)
 
             sage: # needs sage.rings.number_field

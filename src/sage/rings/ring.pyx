@@ -1882,13 +1882,14 @@ cdef class DedekindDomain(IntegralDomain):
 
         EXAMPLES::
 
+            sage: # needs sage.rings.number_field
             sage: x = polygen(ZZ, 'x')
-            sage: K = NumberField(x^2 + 1, 's')                                         # needs sage.rings.number_field
-            sage: OK = K.ring_of_integers()                                             # needs sage.rings.number_field
-            sage: OK.integral_closure()                                                 # needs sage.rings.number_field
+            sage: K = NumberField(x^2 + 1, 's')
+            sage: OK = K.ring_of_integers()
+            sage: OK.integral_closure()
             Gaussian Integers in Number Field in s
              with defining polynomial x^2 + 1
-            sage: OK.integral_closure() == OK                                           # needs sage.rings.number_field
+            sage: OK.integral_closure() == OK
             True
 
             sage: QQ.integral_closure() == QQ

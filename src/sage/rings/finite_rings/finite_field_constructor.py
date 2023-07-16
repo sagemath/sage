@@ -437,8 +437,8 @@ class FiniteFieldFactory(UniqueFactory):
     Using pseudo-Conway polynomials is slow for highly
     composite extension degrees::
 
-        sage: k = GF(3^120) # long time -- about 3 seconds
-        sage: GF(3^40).gen().minimal_polynomial()(k.gen()^((3^120-1)/(3^40-1))) # long time because of previous line
+        sage: k = GF(3^120)  # long time (about 3 seconds)
+        sage: GF(3^40).gen().minimal_polynomial()(k.gen()^((3^120-1)/(3^40-1)))  # long time (because of previous line)
         0
 
     Before :trac:`17569`, the boolean keyword argument ``conway``

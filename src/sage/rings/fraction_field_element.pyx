@@ -147,12 +147,12 @@ cdef class FractionFieldElement(FieldElement):
 
             sage: # needs sage.rings.number_field
             sage: Zx.<x> = ZZ[]
-            sage: K.<i> = NumberField(x^2 + 1)                                          # needs sage.rings.number_field
-            sage: cc = K.hom([-i])                                                      # needs sage.rings.number_field
-            sage: R.<a,b> = K[]                                                         # needs sage.rings.number_field
-            sage: F = R.fraction_field()                                                # needs sage.rings.number_field
-            sage: phi = F.hom([F(b), F(a)], base_map=cc)                                # needs sage.rings.number_field
-            sage: phi(i/a)                                                              # needs sage.rings.number_field
+            sage: K.<i> = NumberField(x^2 + 1)
+            sage: cc = K.hom([-i])
+            sage: R.<a,b> = K[]
+            sage: F = R.fraction_field()
+            sage: phi = F.hom([F(b), F(a)], base_map=cc)
+            sage: phi(i/a)
             ((-i))/b
         """
         nnum = codomain.coerce(self.__numerator._im_gens_(codomain, im_gens, base_map=base_map))

@@ -136,11 +136,12 @@ def is_ComplexNumber(x):
     while elements of the class :class:`ComplexField_class`
     are of type :class:`ComplexNumber`::
 
-        sage: c = 1 + 2*I                                                               # needs sage.symbolic
-        sage: is_ComplexNumber(c)                                                       # needs sage.symbolic
+        sage: # needs sage.symbolic
+        sage: c = 1 + 2*I
+        sage: is_ComplexNumber(c)
         False
-        sage: d = CC(1 + 2*I)                                                           # needs sage.symbolic
-        sage: is_ComplexNumber(d)                                                       # needs sage.symbolic
+        sage: d = CC(1 + 2*I)
+        sage: is_ComplexNumber(d)
         True
     """
     return isinstance(x, ComplexNumber)
