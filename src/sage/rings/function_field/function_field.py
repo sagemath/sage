@@ -104,7 +104,7 @@ Function fields over the rational field are supported::
 
 Function fields over the algebraic field are supported::
 
-    sage: # optional - rings.number_field, needs sage.rings.function_field
+    sage: # needs sage.rings.function_field sage.rings.number_field
     sage: K.<x> = FunctionField(QQbar); _.<Y> = K[]
     sage: L.<y> = K.extension(Y^2 + Y + x + 1/x)
     sage: O = L.maximal_order()
