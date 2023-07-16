@@ -481,12 +481,12 @@ class QuotientFields(Category_singleton):
 
                 sage: R.<x> = GF(2)[]
                 sage: q = (x+1)/(x^3+x+1)
-                sage: q.partial_fraction_decomposition()                                # needs sage.rings.finite_rings
+                sage: q.partial_fraction_decomposition()                                # needs sage.libs.pari
                 (0, [(x + 1)/(x^3 + x + 1)])
 
                 sage: R.<x> = GF(11)[]
                 sage: q = x + 1 + 1/(x+1) + x^2/(x^3 + 2*x + 9)
-                sage: q.partial_fraction_decomposition()                                # needs sage.rings.finite_rings
+                sage: q.partial_fraction_decomposition()                                # needs sage.libs.pari
                 (x + 1, [1/(x + 1), x^2/(x^3 + 2*x + 9)])
 
             And even the rationals::

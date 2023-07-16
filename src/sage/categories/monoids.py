@@ -645,8 +645,8 @@ class Monoids(CategoryWithAxiom):
                 is needed)::
 
                     sage: N = Monoids.free(ZZ)                                          # needs sage.combinat
-                    sage: C = cartesian_product([M, N])                                 # needs sage.combinat
-                    sage: C.monoid_generators()                                         # needs sage.combinat
+                    sage: C = cartesian_product([M, N])                                 # needs sage.combinat sage.groups
+                    sage: C.monoid_generators()                                         # needs sage.combinat sage.groups
                     Lazy family (gen(i))_{i in The Cartesian product of (...)}
                 """
                 F = self.cartesian_factors()

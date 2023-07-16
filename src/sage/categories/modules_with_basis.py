@@ -216,8 +216,8 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
 
             ::
 
-                sage: QS3 = SymmetricGroupAlgebra(QQ, 3)                                # needs sage.group sage.modules
-                sage: list(QS3.basis())                                                 # needs sage.group sage.modules
+                sage: QS3 = SymmetricGroupAlgebra(QQ, 3)                                # needs sage.all sage.modules
+                sage: list(QS3.basis())                                                 # needs sage.all sage.modules
                 [[1, 2, 3], [1, 3, 2], [2, 1, 3], [2, 3, 1], [3, 1, 2], [3, 2, 1]]
             """
             from sage.sets.family import Family

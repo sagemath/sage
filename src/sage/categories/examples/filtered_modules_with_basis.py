@@ -44,7 +44,7 @@ class FilteredPartitionModule(CombinatorialFreeModule):
 
       ::
 
-          sage: [m for m in A.basis(4)]
+          sage: [m for m in A.basis(4)]                                                 # needs sage.modules
           [P[4], P[3, 1], P[2, 2], P[2, 1, 1], P[1, 1, 1, 1]]
 
     - For dealing with basis elements: :meth:`degree_on_basis`, and
@@ -58,9 +58,9 @@ class FilteredPartitionModule(CombinatorialFreeModule):
 
       ::
 
-          sage: A.degree_on_basis(Partition([4,3]))
+          sage: A.degree_on_basis(Partition([4,3]))                                     # needs sage.modules
           7
-          sage: A._repr_term(Partition([4,3]))
+          sage: A._repr_term(Partition([4,3]))                                          # needs sage.modules
           'P[4, 3]'
 
     - There is a class for elements, which inherits from
@@ -74,11 +74,11 @@ class FilteredPartitionModule(CombinatorialFreeModule):
 
       ::
 
-          sage: p = A.monomial(Partition([3,2,1])); p
+          sage: p = A.monomial(Partition([3,2,1])); p                                   # needs sage.modules
           P[3, 2, 1]
-          sage: p.is_homogeneous()
+          sage: p.is_homogeneous()                                                      # needs sage.modules
           True
-          sage: p.degree()
+          sage: p.degree()                                                              # needs sage.modules
           6
     """
     def __init__(self, base_ring):
@@ -87,7 +87,7 @@ class FilteredPartitionModule(CombinatorialFreeModule):
 
             sage: A = ModulesWithBasis(QQ).Filtered().example(); A                      # needs sage.modules
             An example of a filtered module with basis: the free module on partitions over Rational Field
-            sage: TestSuite(A).run()
+            sage: TestSuite(A).run()                                                    # needs sage.modules
         """
         CombinatorialFreeModule.__init__(self, base_ring, Partitions(),
                                          category=FilteredModulesWithBasis(base_ring))
@@ -111,7 +111,8 @@ class FilteredPartitionModule(CombinatorialFreeModule):
 
         EXAMPLES::
 
-            sage: A = ModulesWithBasis(QQ).Filtered().example()                         # needs sage.modules
+            sage: # needs sage.modules
+            sage: A = ModulesWithBasis(QQ).Filtered().example()
             sage: A.degree_on_basis(Partition((2,1)))
             3
             sage: A.degree_on_basis(Partition((4,2,1,1,1,1)))
@@ -143,7 +144,7 @@ class FilteredPartitionModule(CombinatorialFreeModule):
         EXAMPLES::
 
             sage: A = ModulesWithBasis(QQ).Filtered().example()                         # needs sage.modules
-            sage: A._repr_term(Partition((4,2,1)))
+            sage: A._repr_term(Partition((4,2,1)))                                      # needs sage.modules
             'P[4, 2, 1]'
         """
         return 'P' + t._repr_()

@@ -159,9 +159,9 @@ def WithRealizations(self):
     However we can create a polynomial with mixed coefficients, and
     compute with it::
 
-        sage: p = P([1, In[{1}], Out[{2}] ]); p                                         # needs sage.modules
+        sage: p = P([1, In[{1}], Out[{2}] ]); p                                         # needs sage.combinat sage.modules
         Out[{2}]*x^2 + In[{1}]*x + F[{}]
-        sage: p^2                                                                       # needs sage.modules
+        sage: p^2                                                                       # needs sage.combinat sage.modules
         Out[{2}]*x^4
         + (-8*In[{}] + 4*In[{1}] + 8*In[{2}] + 4*In[{3}]
            - 4*In[{1, 2}] - 2*In[{1, 3}] - 4*In[{2, 3}] + 2*In[{1, 2, 3}])*x^3
@@ -176,7 +176,7 @@ def WithRealizations(self):
 
     One can easily coerce all coefficient to a given basis with::
 
-        sage: p.map_coefficients(In)                                                    # needs sage.modules
+        sage: p.map_coefficients(In)                                                    # needs sage.combinat sage.modules
         (-4*In[{}] + 2*In[{1}] + 4*In[{2}] + 2*In[{3}]
          - 2*In[{1, 2}] - In[{1, 3}] - 2*In[{2, 3}] + In[{1, 2, 3}])*x^2
         + In[{1}]*x + In[{}]
@@ -184,7 +184,7 @@ def WithRealizations(self):
     Alas, the natural notation for constructing such polynomials does
     not yet work::
 
-        sage: In[{1}] * x                                                               # needs sage.modules
+        sage: In[{1}] * x                                                               # needs sage.combinat sage.modules
         Traceback (most recent call last):
         ...
         TypeError: unsupported operand parent(s) for *:

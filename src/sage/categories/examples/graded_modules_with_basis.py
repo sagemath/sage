@@ -45,9 +45,9 @@ class GradedPartitionModule(CombinatorialFreeModule):
 
       ::
 
-          sage: A.basis(2)
+          sage: A.basis(2)                                                              # needs sage.modules
           Lazy family (Term map from Partitions to An example of a graded module with basis: the free module on partitions over Rational Field(i))_{i in Partitions of the integer 2}
-          sage: A.basis(6)[Partition([3,2,1])]
+          sage: A.basis(6)[Partition([3,2,1])]                                          # needs sage.modules
           P[3, 2, 1]
 
     - If the algebra is called ``A``, then its basis function is
@@ -58,7 +58,7 @@ class GradedPartitionModule(CombinatorialFreeModule):
 
       ::
 
-          sage: [m for m in A.basis(4)]
+          sage: [m for m in A.basis(4)]                                                 # needs sage.modules
           [P[4], P[3, 1], P[2, 2], P[2, 1, 1], P[1, 1, 1, 1]]
 
     - For dealing with basis elements: :meth:`degree_on_basis`, and
@@ -72,9 +72,9 @@ class GradedPartitionModule(CombinatorialFreeModule):
 
       ::
 
-          sage: A.degree_on_basis(Partition([4,3]))
+          sage: A.degree_on_basis(Partition([4,3]))                                     # needs sage.modules
           7
-          sage: A._repr_term(Partition([4,3]))
+          sage: A._repr_term(Partition([4,3]))                                          # needs sage.modules
           'P[4, 3]'
 
     - There is a class for elements, which inherits from
@@ -88,11 +88,11 @@ class GradedPartitionModule(CombinatorialFreeModule):
 
       ::
 
-          sage: p = A.monomial(Partition([3,2,1])); p
+          sage: p = A.monomial(Partition([3,2,1])); p                                   # needs sage.modules
           P[3, 2, 1]
-          sage: p.is_homogeneous()
+          sage: p.is_homogeneous()                                                      # needs sage.modules
           True
-          sage: p.degree()
+          sage: p.degree()                                                              # needs sage.modules
           6
     """
     def __init__(self, base_ring):
@@ -101,7 +101,7 @@ class GradedPartitionModule(CombinatorialFreeModule):
 
             sage: A = GradedModulesWithBasis(QQ).example(); A                           # needs sage.modules
             An example of a graded module with basis: the free module on partitions over Rational Field
-            sage: TestSuite(A).run()
+            sage: TestSuite(A).run()                                                    # needs sage.modules
         """
         CombinatorialFreeModule.__init__(self, base_ring, Partitions(),
                                          category=GradedModulesWithBasis(base_ring))
@@ -125,7 +125,8 @@ class GradedPartitionModule(CombinatorialFreeModule):
 
         EXAMPLES::
 
-            sage: A = GradedModulesWithBasis(QQ).example()                              # needs sage.modules
+            sage: # needs sage.modules
+            sage: A = GradedModulesWithBasis(QQ).example()
             sage: A.degree_on_basis(Partition((2,1)))
             3
             sage: A.degree_on_basis(Partition((4,2,1,1,1,1)))
@@ -157,7 +158,7 @@ class GradedPartitionModule(CombinatorialFreeModule):
         EXAMPLES::
 
             sage: A = GradedModulesWithBasis(QQ).example()                              # needs sage.modules
-            sage: A._repr_term(Partition((4,2,1)))
+            sage: A._repr_term(Partition((4,2,1)))                                      # needs sage.modules
             'P[4, 2, 1]'
         """
         return 'P' + t._repr_()

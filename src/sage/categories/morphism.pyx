@@ -366,9 +366,9 @@ cdef class Morphism(Map):
 
         We check that :trac:`28617` is fixed::
 
-            sage: FF = GF(2^20)                                                         # needs sage.libs.combinat
-            sage: f = FF.frobenius_endomorphism()                                       # needs sage.libs.combinat
-            sage: f == FF.frobenius_endomorphism()                                      # needs sage.libs.combinat
+            sage: FF = GF(2^20)                                                         # needs sage.rings.finite_rings
+            sage: f = FF.frobenius_endomorphism()                                       # needs sage.rings.finite_rings
+            sage: f == FF.frobenius_endomorphism()                                      # needs sage.rings.finite_rings
             True
 
         and that :trac:`29632` is fixed::
