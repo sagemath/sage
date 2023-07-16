@@ -476,7 +476,7 @@ class sage__libs__pari(JoinFeature):
             True
         """
         JoinFeature.__init__(self, 'sage.libs.pari',
-                             [PythonModule('sage.libs.pari.convert_sage')],
+                             [PythonModule('sage.libs.pari.convert_gmp')],
                              spkg='sagemath_pari', type='standard')
 
 

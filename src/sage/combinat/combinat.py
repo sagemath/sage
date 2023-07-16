@@ -1532,7 +1532,7 @@ class CombinatorialElement(CombinatorialObject, Element,
         ....:     @staticmethod
         ....:     def __classcall__(cls, x):
         ....:         return x
-        sage: Foo(17)
+        sage: Foo(17)                                                                   # needs sage.combinat
         17
     """
 
@@ -3146,7 +3146,7 @@ def bernoulli_polynomial(x, n: Integer):
     TESTS::
 
         sage: x = polygen(QQ, 'x')
-        sage: bernoulli_polynomial(x, 0).parent()                                       # needs sage.libs.flint
+        sage: bernoulli_polynomial(x, 0).parent()
         Univariate Polynomial Ring in x over Rational Field
 
     REFERENCES:

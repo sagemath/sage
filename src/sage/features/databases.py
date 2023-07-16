@@ -32,7 +32,7 @@ class DatabaseConwayPolynomials(StaticFile):
     EXAMPLES::
 
         sage: from sage.features.databases import DatabaseConwayPolynomials
-        sage: DatabaseConwayPolynomials().is_present()
+        sage: DatabaseConwayPolynomials().is_present()                                  # needs conway_polynomials
         FeatureTestResult('conway_polynomials', True)
     """
 

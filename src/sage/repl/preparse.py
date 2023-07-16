@@ -1920,7 +1920,7 @@ def preparse_file(contents, globals=None, numeric_literals=True):
         ....:     file.write(file_contents)
         137
         sage: load(t)
-        sage: sorted(list(func([11,17])))
+        sage: sorted(list(func([11,17])))                                               # optional - sage.modular
         [(((11,), {}), None), (((17,), {}), None)]
     """
     if not isinstance(contents, str):
