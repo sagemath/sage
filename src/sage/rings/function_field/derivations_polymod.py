@@ -176,7 +176,6 @@ class FunctionFieldDerivation_inseparable(FunctionFieldDerivation):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
             sage: K.<x> = FunctionField(GF(2))
             sage: R.<y> = K[]
             sage: L.<y> = K.extension(y^2 - x)
@@ -184,7 +183,6 @@ class FunctionFieldDerivation_inseparable(FunctionFieldDerivation):
 
         This also works for iterated non-monic extensions::
 
-            sage: # needs sage.rings.finite_rings
             sage: K.<x> = FunctionField(GF(2))
             sage: R.<y> = K[]
             sage: L.<y> = K.extension(y^2 - 1/x)
@@ -195,7 +193,7 @@ class FunctionFieldDerivation_inseparable(FunctionFieldDerivation):
 
         We can also create a multiple of the canonical derivation::
 
-            sage: M.derivation([x])                                                                 # needs sage.rings.finite_rings
+            sage: M.derivation([x])
             x*d/dz
         """
         FunctionFieldDerivation.__init__(self, parent)
@@ -221,7 +219,6 @@ class FunctionFieldDerivation_inseparable(FunctionFieldDerivation):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
             sage: K.<x> = FunctionField(GF(2))
             sage: R.<y> = K[]
             sage: L.<y> = K.extension(y^2 - x)
@@ -245,7 +242,6 @@ class FunctionFieldDerivation_inseparable(FunctionFieldDerivation):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
             sage: K.<x> = FunctionField(GF(3))
             sage: R.<y> = K[]
             sage: L.<y> = K.extension(y^3 - x)
@@ -263,7 +259,6 @@ class FunctionFieldDerivation_inseparable(FunctionFieldDerivation):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
             sage: K.<x> = FunctionField(GF(2))
             sage: R.<y> = K[]
             sage: L.<y> = K.extension(y^2 - x)
@@ -286,8 +281,8 @@ class FunctionFieldHigherDerivation(Map):
 
     EXAMPLES::
 
-        sage: F.<x> = FunctionField(GF(2))                                                          # needs sage.rings.finite_rings
-        sage: F.higher_derivation()                                                                 # needs sage.rings.finite_rings
+        sage: F.<x> = FunctionField(GF(2))
+        sage: F.higher_derivation()
         Higher derivation map:
           From: Rational function field in x over Finite Field of size 2
           To:   Rational function field in x over Finite Field of size 2
@@ -316,9 +311,9 @@ class FunctionFieldHigherDerivation(Map):
 
         EXAMPLES::
 
-            sage: F.<x> = FunctionField(GF(2))                                                      # needs sage.rings.finite_rings
-            sage: h = F.higher_derivation()                                                         # needs sage.rings.finite_rings
-            sage: h  # indirect doctest                                                             # needs sage.rings.finite_rings
+            sage: F.<x> = FunctionField(GF(2))
+            sage: h = F.higher_derivation()
+            sage: h  # indirect doctest
             Higher derivation map:
               From: Rational function field in x over Finite Field of size 2
               To:   Rational function field in x over Finite Field of size 2
@@ -331,9 +326,9 @@ class FunctionFieldHigherDerivation(Map):
 
         TESTS::
 
-            sage: F.<x> = FunctionField(GF(2))                                                      # needs sage.rings.finite_rings
-            sage: h = F.higher_derivation()                                                         # needs sage.rings.finite_rings
-            sage: loads(dumps(h)) == h                                                              # needs sage.rings.finite_rings
+            sage: F.<x> = FunctionField(GF(2))
+            sage: h = F.higher_derivation()
+            sage: loads(dumps(h)) == h
             True
         """
         if isinstance(other, FunctionFieldHigherDerivation):
@@ -349,9 +344,9 @@ def _pth_root_in_prime_field(e):
 
         sage: from sage.rings.function_field.derivations_polymod import _pth_root_in_prime_field
         sage: p = 5
-        sage: F.<a> = GF(p)                                                                         # needs sage.rings.finite_rings
-        sage: e = F.random_element()                                                                # needs sage.rings.finite_rings
-        sage: _pth_root_in_prime_field(e)^p == e                                                    # needs sage.rings.finite_rings
+        sage: F.<a> = GF(p)
+        sage: e = F.random_element()
+        sage: _pth_root_in_prime_field(e)^p == e
         True
     """
     return e
@@ -383,7 +378,6 @@ class RationalFunctionFieldHigherDerivation_global(FunctionFieldHigherDerivation
 
     EXAMPLES::
 
-        sage: # needs sage.rings.finite_rings
         sage: F.<x> = FunctionField(GF(2))
         sage: h = F.higher_derivation()
         sage: h
@@ -399,9 +393,9 @@ class RationalFunctionFieldHigherDerivation_global(FunctionFieldHigherDerivation
 
         TESTS::
 
-            sage: F.<x> = FunctionField(GF(2))                                                      # needs sage.rings.finite_rings
-            sage: h = F.higher_derivation()                                                         # needs sage.rings.finite_rings
-            sage: TestSuite(h).run(skip='_test_category')                                           # needs sage.rings.finite_rings
+            sage: F.<x> = FunctionField(GF(2))
+            sage: h = F.higher_derivation()
+            sage: TestSuite(h).run(skip='_test_category')
         """
         FunctionFieldHigherDerivation.__init__(self, field)
 
@@ -414,9 +408,9 @@ class RationalFunctionFieldHigherDerivation_global(FunctionFieldHigherDerivation
 
         EXAMPLES::
 
-            sage: F.<x> = FunctionField(GF(2))                                                      # needs sage.rings.finite_rings
-            sage: h = F.higher_derivation()                                                         # needs sage.rings.finite_rings
-            sage: h(x^2, 2)  # indirect doctest                                                     # needs sage.rings.finite_rings
+            sage: F.<x> = FunctionField(GF(2))
+            sage: h = F.higher_derivation()
+            sage: h(x^2, 2)  # indirect doctest
             1
         """
         return self._derive(f, *args, **kwds)
@@ -430,7 +424,6 @@ class RationalFunctionFieldHigherDerivation_global(FunctionFieldHigherDerivation
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
             sage: F.<x> = FunctionField(GF(2))
             sage: h = F.higher_derivation()
             sage: h._derive(x^3, 0)
@@ -498,7 +491,6 @@ class RationalFunctionFieldHigherDerivation_global(FunctionFieldHigherDerivation
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
             sage: F.<x> = FunctionField(GF(2))
             sage: h = F.higher_derivation()
             sage: h._prime_power_representation(x^2 + x + 1)
@@ -549,9 +541,9 @@ class RationalFunctionFieldHigherDerivation_global(FunctionFieldHigherDerivation
 
         EXAMPLES::
 
-            sage: F.<x> = FunctionField(GF(2))                                                      # needs sage.rings.finite_rings
-            sage: h = F.higher_derivation()                                                         # needs sage.rings.finite_rings
-            sage: h._pth_root((x^2+1)^2)                                                            # needs sage.rings.finite_rings
+            sage: F.<x> = FunctionField(GF(2))
+            sage: h = F.higher_derivation()
+            sage: h._pth_root((x^2+1)^2)
             x^2 + 1
         """
         K = self._field
@@ -578,7 +570,6 @@ class FunctionFieldHigherDerivation_global(FunctionFieldHigherDerivation):
 
     EXAMPLES::
 
-        sage: # needs sage.rings.finite_rings
         sage: K.<x> = FunctionField(GF(2)); _.<Y> = K[]
         sage: L.<y> = K.extension(Y^3 + x + x^3*Y)
         sage: h = L.higher_derivation()
@@ -596,7 +587,6 @@ class FunctionFieldHigherDerivation_global(FunctionFieldHigherDerivation):
 
         TESTS::
 
-            sage: # needs sage.rings.finite_rings
             sage: K.<x> = FunctionField(GF(2)); _.<Y> = K[]
             sage: L.<y> = K.extension(Y^3 + x + x^3*Y)
             sage: h = L.higher_derivation()
@@ -625,7 +615,6 @@ class FunctionFieldHigherDerivation_global(FunctionFieldHigherDerivation):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
             sage: K.<x> = FunctionField(GF(2)); _.<Y> = K[]
             sage: L.<y> = K.extension(Y^3 + x + x^3*Y)
             sage: h = L.higher_derivation()
@@ -643,7 +632,6 @@ class FunctionFieldHigherDerivation_global(FunctionFieldHigherDerivation):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
             sage: K.<x> = FunctionField(GF(2)); _.<Y> = K[]
             sage: L.<y> = K.extension(Y^3 + x + x^3*Y)
             sage: h = L.higher_derivation()
@@ -743,7 +731,6 @@ class FunctionFieldHigherDerivation_global(FunctionFieldHigherDerivation):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
             sage: K.<x> = FunctionField(GF(2)); _.<Y> = K[]
             sage: L.<y> = K.extension(Y^3 + x + x^3*Y)
             sage: h = L.higher_derivation()
@@ -790,7 +777,6 @@ class FunctionFieldHigherDerivation_global(FunctionFieldHigherDerivation):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
             sage: K.<x> = FunctionField(GF(2)); _.<Y> = K[]
             sage: L.<y> = K.extension(Y^3 + x + x^3*Y)
             sage: h = L.higher_derivation()

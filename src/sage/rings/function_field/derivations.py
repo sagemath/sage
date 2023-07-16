@@ -4,7 +4,6 @@ Derivations of function fields
 For global function fields, which have positive characteristics, the higher
 derivation is available::
 
-    sage: # needs sage.rings.finite_rings
     sage: K.<x> = FunctionField(GF(2)); _.<Y> = K[]
     sage: L.<y> = K.extension(Y^3 + x + x^3*Y)                                                      # needs sage.rings.function_field
     sage: h = L.higher_derivation()                                                                 # needs sage.rings.function_field
