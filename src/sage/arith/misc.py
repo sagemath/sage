@@ -160,23 +160,23 @@ def algdep(z, degree, known_bits=None, use_bits=None, known_digits=None,
 
     TESTS::
 
-        sage: algdep(complex("1+2j"), 4)                                                # needs sage.libs.pari
+        sage: algdep(complex("1+2j"), 4)                                                # needs sage.libs.pari sage.rings.complex_double
         x^2 - 2*x + 5
 
     We get an irreducible polynomial even if PARI returns a reducible
     one::
 
         sage: z = CDF(1, RR(3).sqrt())/2                                                # needs sage.rings.complex_double
-        sage: pari(z).algdep(5)                                                         # needs sage.libs.pari sage.symbolic
+        sage: pari(z).algdep(5)                                                         # needs sage.libs.pari sage.rings.complex_double sage.symbolic
         x^5 + x^2
-        sage: algdep(z, 5)                                                              # needs sage.libs.pari sage.symbolic
+        sage: algdep(z, 5)                                                              # needs sage.libs.pari sage.rings.complex_double sage.symbolic
         x^2 - x + 1
 
     Check that cases where a constant polynomial might look better
     get handled correctly::
 
         sage: z = CC(-1)**(1/3)                                                         # needs sage.rings.real_mpfr
-        sage: algdep(z, 1)                                                              # needs sage.libs.pari
+        sage: algdep(z, 1)                                                              # needs sage.libs.pari sage.symbolic
         x
 
     Tests with numpy and gmpy2 numbers::
@@ -1639,7 +1639,7 @@ class Sigma:
         3672
         sage: sigma(factorial(150), 12).mod(691)                                        # needs sage.libs.pari
         176
-        sage: RR(sigma(factorial(133),20))                                              # needs sage.libs.pari
+        sage: RR(sigma(factorial(133),20))                                              # needs sage.libs.pari sage.rings.real_mpfr
         2.80414775675747e4523
         sage: sigma(factorial(100),0)                                                   # needs sage.libs.pari
         39001250856960000
@@ -6239,7 +6239,7 @@ def gauss_sum(char_value, finite_field):
 
     EXAMPLES::
 
-        sage: # needs sage.libs.pari
+        sage: # needs sage.libs.pari sage.rings.number_field
         sage: from sage.arith.misc import gauss_sum
         sage: F = GF(5); q = 5
         sage: zq = UniversalCyclotomicField().zeta(q - 1)
@@ -6252,7 +6252,7 @@ def gauss_sum(char_value, finite_field):
         sage: [g*g.conjugate() for g in L]
         [1, 5, 5, 5, 1]
 
-        sage: # needs sage.libs.pari
+        sage: # needs sage.libs.pari sage.rings.number_field
         sage: F = GF(11**2); q = 11**2
         sage: zq = UniversalCyclotomicField().zeta(q - 1)
         sage: g = gauss_sum(zq**4, F)
@@ -6261,9 +6261,10 @@ def gauss_sum(char_value, finite_field):
 
     TESTS::
 
+        sage: # needs sage.libs.pari sage.rings.number_field
         sage: F = GF(11); q = 11
-        sage: zq = UniversalCyclotomicField().zeta(q - 1)                               # needs sage.libs.pari sage.rings.number_field
-        sage: gauss_sum(zq**2, F).n(60)                                                 # needs sage.libs.pari sage.rings.number_field
+        sage: zq = UniversalCyclotomicField().zeta(q - 1)
+        sage: gauss_sum(zq**2, F).n(60)
         2.6361055643248352 + 2.0126965627574471*I
 
         sage: zq = QQbar.zeta(q - 1)                                                    # needs sage.libs.pari sage.rings.number_field
@@ -6281,7 +6282,7 @@ def gauss_sum(char_value, finite_field):
         sage: all(D[i].gauss_sum() == gauss_sum(zq**i, F) for i in range(6))
         True
 
-        sage: gauss_sum(1, QQ)                                                          # needs sage.libs.pari
+        sage: gauss_sum(1, QQ)                                                          # needs sage.libs.pari sage.rings.number_field
         Traceback (most recent call last):
         ...
         ValueError: second input must be a finite field
