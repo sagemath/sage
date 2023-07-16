@@ -21,7 +21,8 @@ In the following, the :class:`Hom` object is indeed cached::
 Nonetheless, garbage collection occurs when the original references are
 overwritten::
 
-    sage: for p in prime_range(200):                                                    # needs sage.libs.pari
+    sage: # needs sage.libs.pari
+    sage: for p in prime_range(200):
     ....:     K = GF(p)
     ....:     H = Hom(ZZ, K)
     sage: import gc
@@ -132,7 +133,8 @@ def Hom(X, Y, category=None, check=True):
     Here, we test against a memory leak that has been fixed at :trac:`11521` by
     using a weak cache::
 
-        sage: for p in prime_range(10^3):                                               # needs sage.libs.pari
+        sage: # needs sage.libs.pari
+        sage: for p in prime_range(10^3):
         ....:  K = GF(p)
         ....:  a = K(0)
         sage: import gc
