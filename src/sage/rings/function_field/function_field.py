@@ -745,7 +745,10 @@ class FunctionField(Field):
         tester = self._tester(**options)
         S = tester.some_elements()
         K = self.constant_base_field().some_elements()
-        d = self.derivation()
+        try:
+            d = self.derivation()
+        except ImportError:
+            return
         from itertools import product
         # Non-zero
         tester.assertFalse(d.is_zero())
