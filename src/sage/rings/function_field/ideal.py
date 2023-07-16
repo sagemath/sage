@@ -613,7 +613,7 @@ class FunctionFieldIdeal_module(FunctionFieldIdeal, Ideal_generic):
 
         EXAMPLES::
 
-        sage: # needs sage.rings.function_field
+            sage: # needs sage.rings.function_field
             sage: K.<x> = FunctionField(QQ); R.<y> = K[]
             sage: L.<y> = K.extension(y^2 - x^3 - 1)
             sage: O = L.equation_order()
@@ -907,7 +907,7 @@ class FunctionFieldIdealInfinite_module(FunctionFieldIdealInfinite, Ideal_generi
 
     EXAMPLES::
 
-    sage: # needs sage.rings.function_field
+        sage: # needs sage.rings.function_field
         sage: K.<x> = FunctionField(QQ); R.<y> = K[]
         sage: L.<y> = K.extension(y^2 - x^3 - 1)
         sage: O = L.equation_order()
