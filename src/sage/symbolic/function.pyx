@@ -1085,17 +1085,16 @@ cdef class BuiltinFunction(Function):
             return res
 
         p = res.parent()
-        from sage.rings.complex_double import CDF
         from sage.rings.integer_ring import ZZ
-        from sage.rings.real_double import RDF
         if ZZ.has_coerce_map_from(p):
             return int(res)
-        elif RDF.has_coerce_map_from(p):
+        from sage.rings.real_double import RDF
+        if RDF.has_coerce_map_from(p):
             return float(res)
-        elif CDF.has_coerce_map_from(p):
+        from sage.rings.complex_double import CDF
+        if CDF.has_coerce_map_from(p):
             return complex(res)
-        else:
-            return res
+        return res
 
     cdef _is_registered(self):
         """
