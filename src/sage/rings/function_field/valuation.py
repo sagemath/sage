@@ -307,11 +307,13 @@ class FunctionFieldValuationFactory(UniqueFactory):
 
             sage: K.<x> = FunctionField(QQ)
             sage: R.<y> = K[]
-            sage: L.<y> = K.extension(y^3 + 1/x^3*y + 2/x^4)                                        # needs sage.rings.function_field
-            sage: v = K.valuation(x)                                                                # needs sage.rings.function_field
-            sage: v.extensions(L)                                                                   # needs sage.rings.function_field
-            [[ (x)-adic valuation, v(y) = 1 ]-adic valuation (in Function field in y defined by y^3 + x*y + 2*x^2 after y |--> 1/x^2*y),
-             [ (x)-adic valuation, v(y) = 1/2 ]-adic valuation (in Function field in y defined by y^3 + x*y + 2*x^2 after y |--> 1/x^2*y)]
+            sage: L.<y> = K.extension(y^3 + 1/x^3*y + 2/x^4)                            # needs sage.rings.function_field
+            sage: v = K.valuation(x)                                                    # needs sage.rings.function_field
+            sage: v.extensions(L)                                                       # needs sage.rings.function_field
+            [[ (x)-adic valuation, v(y) = 1 ]-adic valuation
+               (in Function field in y defined by y^3 + x*y + 2*x^2 after y |--> 1/x^2*y),
+             [ (x)-adic valuation, v(y) = 1/2 ]-adic valuation
+               (in Function field in y defined by y^3 + x*y + 2*x^2 after y |--> 1/x^2*y)]
 
         """
         # this should have been handled by create_key already
@@ -510,14 +512,15 @@ class DiscreteFunctionFieldValuation_base(DiscreteValuation):
 
         Iterated extensions over the infinite place::
 
+            sage: # needs sage.rings.function_field
             sage: K.<x> = FunctionField(GF(2))
             sage: R.<y> = K[]
-            sage: L.<y> = K.extension(y^2 + y + x^3)                                    # needs sage.rings.function_field
+            sage: L.<y> = K.extension(y^2 + y + x^3)
             sage: v = K.valuation(1/x)
-            sage: w = v.extension(L)                                                    # needs sage.rings.function_field
-            sage: R.<z> = L[]                                                           # needs sage.rings.function_field
-            sage: M.<z> = L.extension(z^2 - y)                                          # needs sage.rings.function_field
-            sage: w.extension(M)                # not implemented                       # needs sage.rings.function_field
+            sage: w = v.extension(L)
+            sage: R.<z> = L[]
+            sage: M.<z> = L.extension(z^2 - y)
+            sage: w.extension(M)                # not implemented
             Traceback (most recent call last):
             ...
             NotImplementedError
@@ -537,13 +540,14 @@ class DiscreteFunctionFieldValuation_base(DiscreteValuation):
 
         Test that this works in towers::
 
+            sage: # needs sage.rings.function_field
             sage: K.<x> = FunctionField(GF(2))
             sage: R.<y> = K[]
-            sage: L.<y> = K.extension(y - x)                                            # needs sage.rings.function_field
-            sage: R.<z> = L[]                                                           # needs sage.rings.function_field
-            sage: L.<z> = L.extension(z - y)                                            # needs sage.rings.function_field
-            sage: v = K.valuation(x)                                                    # needs sage.rings.function_field
-            sage: v.extensions(L)                                                       # needs sage.rings.function_field
+            sage: L.<y> = K.extension(y - x)
+            sage: R.<z> = L[]
+            sage: L.<z> = L.extension(z - y)
+            sage: v = K.valuation(x)
+            sage: v.extensions(L)
             [(x)-adic valuation]
         """
         K = self.domain()
@@ -1283,12 +1287,13 @@ class FunctionFieldMappedValuation_base(FunctionFieldValuation_base, MappedValua
 
         EXAMPLES::
 
+            sage: # needs sage.rings.function_field
             sage: K.<x> = FunctionField(QQ)
             sage: R.<y> = K[]
-            sage: L.<y> = K.extension(y^2 - x^4 - 1)                                    # needs sage.rings.function_field
-            sage: v = K.valuation(1/x)                                                  # needs sage.rings.function_field
-            sage: w0,w1 = v.extensions(L)                                               # needs sage.rings.function_field
-            sage: w0.is_discrete_valuation()                                            # needs sage.rings.function_field
+            sage: L.<y> = K.extension(y^2 - x^4 - 1)
+            sage: v = K.valuation(1/x)
+            sage: w0,w1 = v.extensions(L)
+            sage: w0.is_discrete_valuation()
             True
 
         """
