@@ -105,7 +105,6 @@ class FunctionFieldDifferential(ModuleElement):
 
         TESTS::
 
-            sage: # needs sage.rings.finite_rings
             sage: F.<x> = FunctionField(GF(7))
             sage: f = x/(x^2 + x + 1)
             sage: w = f.differential()
@@ -173,10 +172,9 @@ class FunctionFieldDifferential(ModuleElement):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
             sage: K.<x> = FunctionField(GF(2)); _.<Y> = K[]
             sage: L.<y> = K.extension(Y^3 + x + x^3*Y)                                  # needs sage.rings.function_field
-            sage: {x.differential(): 1}                                                 # needs sage.rings.function_field
+            sage: {x.differential(): 1}
             {d(x): 1}
             sage: {y.differential(): 1}                                                 # needs sage.rings.function_field
             {(x*y^2 + 1/x*y) d(x): 1}
@@ -411,7 +409,6 @@ class FunctionFieldDifferential(ModuleElement):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
             sage: K.<x> = FunctionField(GF(5)); _.<Y> = K[]
             sage: L.<y> = K.extension(Y^3 + x + x^3*Y)                                  # needs sage.rings.function_field
             sage: w = (1/y) * y.differential()                                          # needs sage.rings.function_field
@@ -502,7 +499,6 @@ class FunctionFieldDifferential(ModuleElement):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
             sage: K.<x> = FunctionField(GF(5)); _.<Y> = K[]
             sage: L.<y> = K.extension(Y^3 + x + x^3*Y)                                  # needs sage.rings.function_field
             sage: d = y.differential()                                                  # needs sage.rings.function_field

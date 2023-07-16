@@ -475,15 +475,16 @@ cdef class FunctionFieldElement_rational(FunctionFieldElement):
 
         EXAMPLES::
 
+            sage: # needs sage.libs.pari
             sage: K.<t> = FunctionField(QQ)
             sage: f = (t+1) / (t^2 - 1/3)
-            sage: f.factor()                                                            # needs sage.libs.pari
+            sage: f.factor()
             (t + 1) * (t^2 - 1/3)^-1
-            sage: (7*f).factor()                                                        # needs sage.libs.pari
+            sage: (7*f).factor()
             (7) * (t + 1) * (t^2 - 1/3)^-1
-            sage: ((7*f).factor()).unit()                                               # needs sage.libs.pari
+            sage: ((7*f).factor()).unit()
             7
-            sage: (f^3).factor()                                                        # needs sage.libs.pari
+            sage: (f^3).factor()
             (t + 1)^3 * (t^2 - 1/3)^-3
         """
         P = self.parent()
