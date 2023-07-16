@@ -86,7 +86,7 @@ TESTS:
 
 This came up in some subtle bug once::
 
-    sage: gp(2) + gap(3)                                                                # needs sage.libs.pari
+    sage: gp(2) + gap(3)                                                                # needs sage.libs.gap sage.libs.pari
     5
 """
 # ****************************************************************************
@@ -1685,16 +1685,18 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
             ....:             D[tuple(nk)] = v
             ....:         return a.parent()(D)
 
+            sage: # needs sage.groups
             sage: R.<x, y, z> = QQ['x, y, z']
-            sage: G = SymmetricGroup(3)                                                 # needs sage.groups
-            sage: act = SymmetricGroupAction(G, R)                                      # needs sage.groups
+            sage: G = SymmetricGroup(3)
+            sage: act = SymmetricGroupAction(G, R)
             sage: t = x + 2*y + 3*z
 
-            sage: act(G((1, 2)), t)                                                     # needs sage.groups
+            sage: # needs sage.groups
+            sage: act(G((1, 2)), t)
             2*x + y + 3*z
-            sage: act(G((2, 3)), t)                                                     # needs sage.groups
+            sage: act(G((2, 3)), t)
             x + 3*y + 2*z
-            sage: act(G((1, 2, 3)), t)                                                  # needs sage.groups
+            sage: act(G((1, 2, 3)), t)
             3*x + y + 2*z
 
         This should fail, since we have not registered the left
@@ -1707,9 +1709,10 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
 
         Now let's make it work::
 
-            sage: R._unset_coercions_used()                                             # needs sage.groups
-            sage: R.register_action(act)                                                # needs sage.groups
-            sage: G((1, 2)) * t                                                         # needs sage.groups
+            sage: # needs sage.groups
+            sage: R._unset_coercions_used()
+            sage: R.register_action(act)
+            sage: G((1, 2)) * t
             2*x + y + 3*z
         """
         if self._coercions_used:
