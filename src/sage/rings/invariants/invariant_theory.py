@@ -214,14 +214,15 @@ def transvectant(f, g, h=1, scale='default'):
     factor will not be invertible in that case. The scale argument ``'none'``
     can be used to compute the transvectant in this case::
 
-        sage: R.<a0,a1,a2,a3,a4,a5,x0,x1> = GF(5)[]                                     # optional - sage.rings.finite_rings
-        sage: f = AlgebraicForm(2, 5, a0*x1^5 + a1*x1^4*x0 + a2*x1^3*x0^2               # optional - sage.rings.finite_rings
+        sage: # needs sage.rings.finite_rings
+        sage: R.<a0,a1,a2,a3,a4,a5,x0,x1> = GF(5)[]
+        sage: f = AlgebraicForm(2, 5, a0*x1^5 + a1*x1^4*x0 + a2*x1^3*x0^2
         ....:                         + a3*x1^2*x0^3 + a4*x1*x0^4 + a5*x0^5, x0, x1)
-        sage: transvectant(f, f, 4)                                                     # optional - sage.rings.finite_rings
+        sage: transvectant(f, f, 4)
         Traceback (most recent call last):
         ...
         ZeroDivisionError
-        sage: transvectant(f, f, 4, scale='none')                                       # optional - sage.rings.finite_rings
+        sage: transvectant(f, f, 4, scale='none')
         Binary quadratic given by -a3^2*x0^2 + a2*a4*x0^2 + a2*a3*x0*x1
         - a1*a4*x0*x1 - a2^2*x1^2 + a1*a3*x1^2
 

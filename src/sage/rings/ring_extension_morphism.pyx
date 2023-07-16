@@ -239,13 +239,14 @@ cdef class RingExtensionHomomorphism(RingMap):
 
         EXAMPLES::
 
+            sage: # needs sage.rings.number_field
             sage: x = polygen(QQ, 'x')
-            sage: A.<sqrt2> = QQ.extension(x^2 - 2)                                     # needs sage.rings.number_field
-            sage: K.<sqrt2> = A.over()                                                  # needs sage.rings.number_field
-            sage: f = K.hom([-sqrt2]); f                                                # needs sage.rings.number_field
+            sage: A.<sqrt2> = QQ.extension(x^2 - 2)
+            sage: K.<sqrt2> = A.over()
+            sage: f = K.hom([-sqrt2]); f
             Ring endomorphism of Field in sqrt2 with defining polynomial x^2 - 2 over its base
               Defn: sqrt2 |--> -sqrt2
-            sage: f(sqrt2)                                                              # needs sage.rings.number_field
+            sage: f(sqrt2)
             -sqrt2
 
         TESTS::

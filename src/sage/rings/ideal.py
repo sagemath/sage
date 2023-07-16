@@ -510,15 +510,16 @@ class Ideal_generic(MonoidElement):
 
         TESTS::
 
+            sage: # needs sage.rings.number_fields
             sage: x = polygen(ZZ)
-            sage: K.<a> = NumberField(x^2 + 1)                                          # needs sage.rings.number_fields
-            sage: A = K.ideal(a)                                                        # needs sage.rings.number_fields
-            sage: taus = K.embeddings(K)                                                # needs sage.rings.number_fields
-            sage: A.apply_morphism(taus[0]) # identity                                  # needs sage.rings.number_fields
+            sage: K.<a> = NumberField(x^2 + 1)
+            sage: A = K.ideal(a)
+            sage: taus = K.embeddings(K)
+            sage: A.apply_morphism(taus[0]) # identity
             Fractional ideal (a)
-            sage: A.apply_morphism(taus[1]) # complex conjugation                       # needs sage.rings.number_fields
+            sage: A.apply_morphism(taus[1]) # complex conjugation
             Fractional ideal (-a)
-            sage: A.apply_morphism(taus[0]) == A.apply_morphism(taus[1])                # needs sage.rings.number_fields
+            sage: A.apply_morphism(taus[0]) == A.apply_morphism(taus[1])
             True
 
         ::
