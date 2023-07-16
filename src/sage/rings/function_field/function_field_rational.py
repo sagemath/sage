@@ -378,9 +378,9 @@ class RationalFunctionField(FunctionField):
             sage: R.<t> = FunctionField(GF(7))
             sage: S.<X> = R[]
             sage: f = (1/t)*(X^4 - 1/t^2)*(X^3 - t^3)
-            sage: f.factor()
+            sage: f.factor()                                                            # needs sage.libs.pari
             (1/t) * (X + 3*t) * (X + 5*t) * (X + 6*t) * (X^2 + 1/t) * (X^2 + 6/t)
-            sage: f.factor().prod() == f
+            sage: f.factor().prod() == f                                                # needs sage.libs.pari
             True
 
         Factoring over a function field over a non-prime finite field::
