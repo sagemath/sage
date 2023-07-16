@@ -78,7 +78,7 @@ Some challenges
       sage: Permutations(5).cardinality()
       120
 
-      sage: GL(2,2).cardinality()                                                       # needs sage.groups
+      sage: GL(2,2).cardinality()                                                       # needs sage.modules
       6
 
       sage: A = random_matrix(ZZ, 6, 3, x=7)                                            # needs sage.modules
@@ -98,7 +98,8 @@ Some challenges
 
   ::
 
-      sage: m = random_matrix(QQ, 4, algorithm='echelonizable',                         # needs sage.modules
+      sage: # needs sage.modules
+      sage: m = random_matrix(QQ, 4, algorithm='echelonizable',
       ....:                   rank=3, upper_bound=60)
       sage: m^8 == m*m*m*m*m*m*m*m == ((m^2)^2)^2
       True
@@ -126,7 +127,7 @@ Sage knows about monoids::
 
 and sure enough, binary powering is defined there::
 
-    sage: m._pow_int.__module__
+    sage: m._pow_int.__module__                                                         # needs sage.modules
     'sage.categories.monoids'
 
 That's our bookshelf! And it's used in many places::

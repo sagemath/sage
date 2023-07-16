@@ -95,12 +95,13 @@ class FiniteDimensionalSemisimpleAlgebrasWithBasis(CategoryWithAxiom_over_base_r
             For the semisimple quotient of a quiver algebra,
             we recover the vertices of the quiver::
 
+                sage: # needs sage.graphs sage.modules
                 sage: A = FiniteDimensionalAlgebrasWithBasis(QQ).example(); A
                 An example of a finite dimensional algebra with basis:
                 the path algebra of the Kronecker quiver (containing
                 the arrows a:x->y and b:x->y) over Rational Field
                 sage: Aquo = A.semisimple_quotient()
-                sage: Aquo.central_orthogonal_idempotents()                             # needs sage.combinat
+                sage: Aquo.central_orthogonal_idempotents()
                 (B['x'], B['y'])
             """
             return tuple([x.lift()
