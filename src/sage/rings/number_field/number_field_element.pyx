@@ -583,19 +583,19 @@ cdef class NumberFieldElement(NumberFieldElement_base):
         EXAMPLES::
 
             sage: F = CyclotomicField(8)
-            sage: F.gen()._libgap_()                                                    # optional - sage.libs.gap
+            sage: F.gen()._libgap_()                                                    # needs sage.libs.gap
             E(8)
-            sage: libgap(F.gen())   # syntactic sugar                                   # optional - sage.libs.gap
+            sage: libgap(F.gen())   # syntactic sugar                                   # needs sage.libs.gap
             E(8)
-            sage: E8 = F.gen()                                                          # optional - sage.libs.gap
-            sage: libgap(E8 + 3/2*E8^2 + 100*E8^7)                                      # optional - sage.libs.gap
+            sage: E8 = F.gen()                                                          # needs sage.libs.gap
+            sage: libgap(E8 + 3/2*E8^2 + 100*E8^7)                                      # needs sage.libs.gap
             E(8)+3/2*E(8)^2-100*E(8)^3
-            sage: type(_)                                                               # optional - sage.libs.gap
+            sage: type(_)                                                               # needs sage.libs.gap
             <class 'sage.libs.gap.element.GapElement_Cyclotomic'>
 
         Check that :trac:`15276` is fixed::
 
-            sage: for n in range(2,20):                                                 # optional - sage.libs.gap
+            sage: for n in range(2,20):                                                 # needs sage.libs.gap
             ....:     K = CyclotomicField(n)
             ....:     assert K(libgap(K.gen())) == K.gen(), "n = {}".format(n)
             ....:     assert K(libgap(K.one())) == K.one(), "n = {}".format(n)
@@ -623,13 +623,13 @@ cdef class NumberFieldElement(NumberFieldElement_base):
 
             sage: x = polygen(ZZ, 'x')
             sage: K.<a> = NumberField(x^3 + 2)
-            sage: K.zero()._pari_polynomial('x')                                        # optional - sage.libs.pari
+            sage: K.zero()._pari_polynomial('x')                                        # needs sage.libs.pari
             0
-            sage: K.one()._pari_polynomial()                                            # optional - sage.libs.pari
+            sage: K.one()._pari_polynomial()                                            # needs sage.libs.pari
             1
-            sage: (a + 1)._pari_polynomial()                                            # optional - sage.libs.pari
+            sage: (a + 1)._pari_polynomial()                                            # needs sage.libs.pari
             y + 1
-            sage: a._pari_polynomial('c')                                               # optional - sage.libs.pari
+            sage: a._pari_polynomial('c')                                               # needs sage.libs.pari
             c
         """
         f = pari(self._coefficients()).Polrev()
@@ -654,20 +654,20 @@ cdef class NumberFieldElement(NumberFieldElement_base):
 
             sage: x = polygen(ZZ, 'x')
             sage: K.<a> = NumberField(x^3 + 2)
-            sage: K(1).__pari__()                                                       # optional - sage.libs.pari
+            sage: K(1).__pari__()                                                       # needs sage.libs.pari
             Mod(1, y^3 + 2)
-            sage: (a + 2).__pari__()                                                    # optional - sage.libs.pari
+            sage: (a + 2).__pari__()                                                    # needs sage.libs.pari
             Mod(y + 2, y^3 + 2)
             sage: L.<b> = K.extension(x^2 + 2)
-            sage: (b + a).__pari__()                                                    # optional - sage.libs.pari
+            sage: (b + a).__pari__()                                                    # needs sage.libs.pari
             Mod(24/101*y^5 - 9/101*y^4 + 160/101*y^3 - 156/101*y^2 + 397/101*y + 364/101, y^6 + 6*y^4 - 4*y^3 + 12*y^2 + 24*y + 12)
 
         ::
 
             sage: k.<j> = QuadraticField(-1)
-            sage: j.__pari__('j')                                                       # optional - sage.libs.pari
+            sage: j.__pari__('j')                                                       # needs sage.libs.pari
             Mod(j, j^2 + 1)
-            sage: pari(j)                                                               # optional - sage.libs.pari
+            sage: pari(j)                                                               # needs sage.libs.pari
             Mod(y, y^2 + 1)
 
         By default the variable name is 'y'. This allows 'x' to be used
@@ -676,7 +676,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
             sage: P.<a> = PolynomialRing(QQ)
             sage: K.<b> = NumberField(a^2 + 1)
             sage: R.<x> = PolynomialRing(K)
-            sage: pari(b*x)                                                             # optional - sage.libs.pari
+            sage: pari(b*x)                                                             # needs sage.libs.pari
             Mod(y, y^2 + 1)*x
 
         In PARI many variable names are reserved, for example ``theta``
@@ -684,25 +684,25 @@ cdef class NumberFieldElement(NumberFieldElement_base):
 
             sage: R.<theta> = PolynomialRing(QQ)
             sage: K.<theta> = NumberField(theta^2 + 1)
-            sage: theta.__pari__('theta')                                               # optional - sage.libs.pari
+            sage: theta.__pari__('theta')                                               # needs sage.libs.pari
             Traceback (most recent call last):
             ...
             PariError: theta already exists with incompatible valence
-            sage: theta.__pari__()                                                      # optional - sage.libs.pari
+            sage: theta.__pari__()                                                      # needs sage.libs.pari
             Mod(y, y^2 + 1)
             sage: k.<I> = QuadraticField(-1)
-            sage: I.__pari__('I')                                                       # optional - sage.libs.pari
+            sage: I.__pari__('I')                                                       # needs sage.libs.pari
             Traceback (most recent call last):
             ...
             PariError: I already exists with incompatible valence
 
         Instead, request the variable be named different for the coercion::
 
-            sage: pari(I)                                                               # optional - sage.libs.pari
+            sage: pari(I)                                                               # needs sage.libs.pari
             Mod(y, y^2 + 1)
-            sage: I.__pari__('i')                                                       # optional - sage.libs.pari
+            sage: I.__pari__('i')                                                       # needs sage.libs.pari
             Mod(i, i^2 + 1)
-            sage: I.__pari__('II')                                                      # optional - sage.libs.pari
+            sage: I.__pari__('II')                                                      # needs sage.libs.pari
             Mod(II, II^2 + 1)
 
         Examples with relative number fields, which always yield an
@@ -710,13 +710,13 @@ cdef class NumberFieldElement(NumberFieldElement_base):
 
             sage: y = QQ['y'].gen()
             sage: k.<j> = NumberField([y^2 - 7, y^3 - 2])
-            sage: pari(j)                                                               # optional - sage.libs.pari
+            sage: pari(j)                                                               # needs sage.libs.pari
             Mod(42/5515*y^5 - 9/11030*y^4 - 196/1103*y^3 + 273/5515*y^2 + 10281/5515*y + 4459/11030, y^6 - 21*y^4 + 4*y^3 + 147*y^2 + 84*y - 339)
             sage: j^2
             7
-            sage: pari(j)^2                                                             # optional - sage.libs.pari
+            sage: pari(j)^2                                                             # needs sage.libs.pari
             Mod(7, y^6 - 21*y^4 + 4*y^3 + 147*y^2 + 84*y - 339)
-            sage: (j^2).__pari__('x')                                                   # optional - sage.libs.pari
+            sage: (j^2).__pari__('x')                                                   # needs sage.libs.pari
             Mod(7, x^6 - 21*x^4 + 4*x^3 + 147*x^2 + 84*x - 339)
 
         A tower of three number fields::
@@ -725,11 +725,11 @@ cdef class NumberFieldElement(NumberFieldElement_base):
             sage: K.<a> = NumberField(x^2 + 2)
             sage: L.<b> = NumberField(polygen(K)^2 + a)
             sage: M.<c> = NumberField(polygen(L)^3 + b)
-            sage: L(b).__pari__()                                                       # optional - sage.libs.pari
+            sage: L(b).__pari__()                                                       # needs sage.libs.pari
             Mod(y, y^4 + 2)
-            sage: M(b).__pari__('c')                                                    # optional - sage.libs.pari
+            sage: M(b).__pari__('c')                                                    # needs sage.libs.pari
             Mod(-c^3, c^12 + 2)
-            sage: c.__pari__('c')                                                       # optional - sage.libs.pari
+            sage: c.__pari__('c')                                                       # needs sage.libs.pari
             Mod(c, c^12 + 2)
         """
         f = self._pari_polynomial(name)
@@ -752,9 +752,9 @@ cdef class NumberFieldElement(NumberFieldElement_base):
 
             sage: x = polygen(ZZ, 'x')
             sage: K.<a> = NumberField(x^5 - x - 1)
-            sage: ((1 + 1/3*a)^4)._pari_init_()                                         # optional - sage.libs.pari
+            sage: ((1 + 1/3*a)^4)._pari_init_()                                         # needs sage.libs.pari
             'Mod(1/81*y^4 + 4/27*y^3 + 2/3*y^2 + 4/3*y + 1, y^5 - y - 1)'
-            sage: ((1 + 1/3*a)^4)._pari_init_('a')                                      # optional - sage.libs.pari
+            sage: ((1 + 1/3*a)^4)._pari_init_('a')                                      # needs sage.libs.pari
             'Mod(1/81*a^4 + 4/27*a^3 + 2/3*a^2 + 4/3*a + 1, a^5 - a - 1)'
 
         Note that _pari_init_ can fail because of reserved words in
@@ -764,7 +764,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
             sage: K.<theta> = NumberField(x^5 - x - 1)
             sage: b = (1/2 - 2/3*theta)^3; b
             -8/27*theta^3 + 2/3*theta^2 - 1/2*theta + 1/8
-            sage: b._pari_init_('theta')                                                # optional - sage.libs.pari
+            sage: b._pari_init_('theta')                                                # needs sage.libs.pari
             Traceback (most recent call last):
             ...
             PariError: theta already exists with incompatible valence
@@ -772,7 +772,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
         Fortunately pari_init returns everything in terms of y by
         default::
 
-            sage: pari(b)                                                               # optional - sage.libs.pari
+            sage: pari(b)                                                               # needs sage.libs.pari
             Mod(-8/27*y^3 + 2/3*y^2 - 1/2*y + 1/8, y^5 - y - 1)
         """
         return repr(self.__pari__(name=name))
@@ -2318,7 +2318,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
         Using the ``extend`` keyword::
 
             sage: K = QuadraticField(-5)
-            sage: z = K(-7).sqrt(extend=True); z                                        # optional - sage.symbolic
+            sage: z = K(-7).sqrt(extend=True); z                                        # needs sage.symbolic
             sqrt(-7)
             sage: CyclotomicField(4)(4).sqrt(extend=False)
             2
@@ -2421,9 +2421,9 @@ cdef class NumberFieldElement(NumberFieldElement_base):
         If the exponent is not integral, perform this operation in
         the symbolic ring::
 
-            sage: sqrt2^(1/5)                                                           # optional - sage.symbolic
+            sage: sqrt2^(1/5)                                                           # needs sage.symbolic
             2^(1/10)
-            sage: sqrt2^sqrt2                                                           # optional - sage.symbolic
+            sage: sqrt2^sqrt2                                                           # needs sage.symbolic
             2^(1/2*sqrt(2))
 
         Sage follows Python's convention `0^0 = 1`::
@@ -2435,17 +2435,17 @@ cdef class NumberFieldElement(NumberFieldElement_base):
 
         TESTS::
 
-            sage: 2^I                                                                   # optional - sage.symbolic
+            sage: 2^I                                                                   # needs sage.symbolic
             2^I
 
         Test :trac:`14895`::
 
             sage: K.<sqrt2> = QuadraticField(2)
-            sage: 2^sqrt2                                                               # optional - sage.symbolic
+            sage: 2^sqrt2                                                               # needs sage.symbolic
             2^sqrt(2)
             sage: x = polygen(ZZ, 'x')
             sage: K.<a> = NumberField(x^2+1)
-            sage: 2^a                                                                   # optional - sage.symbolic
+            sage: 2^a                                                                   # needs sage.symbolic
             Traceback (most recent call last):
             ...
             TypeError: no canonical coercion from Number Field in a with defining polynomial x^2 + 1 to Symbolic Ring
@@ -2943,16 +2943,16 @@ cdef class NumberFieldElement(NumberFieldElement_base):
         EXAMPLES::
 
             sage: K.<a> = QuadraticField(2)
-            sage: SR(a) # indirect doctest                                              # optional - sage.symbolic
+            sage: SR(a) # indirect doctest                                              # needs sage.symbolic
             sqrt(2)
-            sage: SR(3*a-5) # indirect doctest                                          # optional - sage.symbolic
+            sage: SR(3*a-5) # indirect doctest                                          # needs sage.symbolic
             3*sqrt(2) - 5
             sage: K.<a> = QuadraticField(2, embedding=-1.4)
-            sage: SR(a) # indirect doctest                                              # optional - sage.symbolic
+            sage: SR(a) # indirect doctest                                              # needs sage.symbolic
             -sqrt(2)
             sage: x = polygen(ZZ, 'x')
             sage: K.<a> = NumberField(x^2 - 2)
-            sage: SR(a) # indirect doctest                                              # optional - sage.symbolic
+            sage: SR(a) # indirect doctest                                              # needs sage.symbolic
             Traceback (most recent call last):
             ...
             TypeError: an embedding into RR or CC must be specified
@@ -2960,29 +2960,29 @@ cdef class NumberFieldElement(NumberFieldElement_base):
         Now a more complicated example::
 
             sage: K.<a> = NumberField(x^3 + x - 1, embedding=0.68)
-            sage: b = SR(a); b # indirect doctest                                       # optional - sage.symbolic
+            sage: b = SR(a); b # indirect doctest                                       # needs sage.symbolic
             (1/18*sqrt(31)*sqrt(3) + 1/2)^(1/3) - 1/3/(1/18*sqrt(31)*sqrt(3) + 1/2)^(1/3)
-            sage: (b^3 + b - 1).canonicalize_radical()                                  # optional - sage.symbolic
+            sage: (b^3 + b - 1).canonicalize_radical()                                  # needs sage.symbolic
             0
 
         Make sure we got the right one::
 
             sage: CC(a)
             0.682327803828019
-            sage: CC(b)                                                                 # optional - sage.symbolic
+            sage: CC(b)                                                                 # needs sage.symbolic
             0.682327803828019
 
         Special case for cyclotomic fields::
 
             sage: K.<zeta> = CyclotomicField(19)
-            sage: SR(zeta) # indirect doctest                                           # optional - sage.symbolic
+            sage: SR(zeta) # indirect doctest                                           # needs sage.symbolic
             e^(2/19*I*pi)
             sage: CC(zeta)
             0.945817241700635 + 0.324699469204683*I
-            sage: CC(SR(zeta))                                                          # optional - sage.symbolic
+            sage: CC(SR(zeta))                                                          # needs sage.symbolic
             0.945817241700635 + 0.324699469204683*I
 
-            sage: SR(zeta^5 + 2)                                                        # optional - sage.symbolic
+            sage: SR(zeta^5 + 2)                                                        # needs sage.symbolic
             e^(10/19*I*pi) + 2
 
         For degree greater than 5, sometimes Galois theory prevents a
@@ -2991,22 +2991,22 @@ cdef class NumberFieldElement(NumberFieldElement_base):
         printed as a numerical approximation::
 
             sage: K.<a> = NumberField(x^5-x+1, embedding=-1)
-            sage: SR(a)                                                                 # optional - sage.symbolic
+            sage: SR(a)                                                                 # needs sage.symbolic
             -1.167303978261419?
 
         ::
 
             sage: K.<a> = NumberField(x^6-x^3-1, embedding=1)
-            sage: SR(a)                                                                 # optional - sage.symbolic
+            sage: SR(a)                                                                 # needs sage.symbolic
             (1/2*sqrt(5) + 1/2)^(1/3)
 
         In this field, general elements cannot be written in terms of
         radicals, but particular elements might be::
 
             sage: K.<a> = NumberField(x^10 + 6*x^6 + 9*x^2 + 1, embedding=CC(0.332*I))
-            sage: SR(a)                                                                 # optional - sage.symbolic
+            sage: SR(a)                                                                 # needs sage.symbolic
             0.3319890295845093?*I
-            sage: SR(a^5+3*a)                                                           # optional - sage.symbolic
+            sage: SR(a^5+3*a)                                                           # needs sage.symbolic
             I
 
         Conversely, some elements are too complicated to be written in
@@ -3018,9 +3018,9 @@ cdef class NumberFieldElement(NumberFieldElement_base):
 
             sage: K.<a> = NumberField(QQ['x']([6, -65, 163, -185, 81, -15, 1]), embedding=4.9)
             sage: b = a + a^3
-            sage: SR(b.minpoly()).solve(SR('x'), explicit_solutions=True)               # optional - sage.symbolic
+            sage: SR(b.minpoly()).solve(SR('x'), explicit_solutions=True)               # needs sage.symbolic
             []
-            sage: SR(b)                                                                 # optional - sage.symbolic
+            sage: SR(b)                                                                 # needs sage.symbolic
             1/8*(sqrt(4*(1/9*sqrt(109)*sqrt(3) + 2)^(1/3) - 4/3/(1/9*sqrt(109)*sqrt(3) + 2)^(1/3) + 17) + 5)^3
              + 1/2*sqrt(4*(1/9*sqrt(109)*sqrt(3) + 2)^(1/3) - 4/3/(1/9*sqrt(109)*sqrt(3) + 2)^(1/3) + 17) + 5/2
 
@@ -3032,7 +3032,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
             sage: p = x^8 + x^7 - 9*x^6 - 3*x^5 - 6*x^4 + x^3 - 14*x^2 + 2*x + 2
             sage: rt = sorted(p.roots(AA, multiplicities=False))[1]
             sage: K.<a> = NumberField(p, embedding=rt)
-            sage: SR(a)                                                                 # optional - sage.symbolic
+            sage: SR(a)                                                                 # needs sage.symbolic
             -0.3056815681115094?
 
         """
@@ -4718,27 +4718,29 @@ cdef class NumberFieldElement_absolute(NumberFieldElement):
 
         EXAMPLES::
 
+            sage: # optional - magma
             sage: x = polygen(ZZ, 'x')
-            sage: K.<a> = NumberField(x^3 + 2) # optional - magma
-            sage: a._magma_init_(magma)            # optional - magma
+            sage: K.<a> = NumberField(x^3 + 2)
+            sage: a._magma_init_(magma)
             '(_sage_[...]![0, 1, 0])'
-            sage: m = magma((2/3)*a^2 - 17/3); m   # optional - magma
+            sage: m = magma((2/3)*a^2 - 17/3); m
             1/3*(2*a^2 - 17)
-            sage: m.sage()                         # optional - magma
+            sage: m.sage()
             2/3*a^2 - 17/3
 
         An element of a cyclotomic field.
 
         ::
 
-            sage: K = CyclotomicField(9) # optional - magma
-            sage: K.gen() # optional - magma
+            sage: # optional - magma
+            sage: K = CyclotomicField(9)
+            sage: K.gen()
             zeta9
-            sage: K.gen()._magma_init_(magma)     # optional - magma
+            sage: K.gen()._magma_init_(magma)
             '(_sage_[...]![0, 1, 0, 0, 0, 0])'
-            sage: magma(K.gen())                  # optional - magma
+            sage: magma(K.gen())
             zeta9
-            sage: _.sage()                        # optional - magma
+            sage: _.sage()
             zeta9
         """
         K = magma(self.parent())
@@ -4796,7 +4798,7 @@ cdef class NumberFieldElement_absolute(NumberFieldElement):
             sage: b.absolute_minpoly()
             x^5 + 5*x^4 - 40*x^2 - 19*x + 135
 
-            sage: b.absolute_minpoly(algorithm='pari') == b.absolute_minpoly(algorithm='sage')    # optional - sage.libs.pari
+            sage: b.absolute_minpoly(algorithm='pari') == b.absolute_minpoly(algorithm='sage')      # needs sage.libs.pari
             True
         """
         return self.minpoly(var, algorithm)
@@ -4841,7 +4843,7 @@ cdef class NumberFieldElement_absolute(NumberFieldElement):
             sage: R(a).charpoly().parent()
             Univariate Polynomial Ring in x over Integer Ring
 
-            sage: R(a).charpoly(algorithm='pari') == R(a).charpoly(algorithm='sage')              # optional - sage.libs.pari
+            sage: R(a).charpoly(algorithm='pari') == R(a).charpoly(algorithm='sage')    # needs sage.libs.pari
             True
         """
         if algorithm is None:
@@ -5197,7 +5199,7 @@ cdef class NumberFieldElement_relative(NumberFieldElement):
             sage: a.absolute_charpoly('y')
             y^9 + 51*y^6 + 867*y^3 + 4913
 
-            sage: a.absolute_charpoly(algorithm='pari') == a.absolute_charpoly(algorithm='sage')  # optional - sage.libs.pari
+            sage: a.absolute_charpoly(algorithm='pari') == a.absolute_charpoly(algorithm='sage')    # needs sage.libs.pari
             True
         """
         if algorithm is None:

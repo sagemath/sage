@@ -343,10 +343,10 @@ class RelativeNumberFieldHomset(NumberFieldHomset):
         are only approximate::
 
             sage: K.<a> = QuadraticField(-7)
-            sage: f = K.hom([CC(sqrt(-7))], check=False)                                # optional - sage.symbolic
+            sage: f = K.hom([CC(sqrt(-7))], check=False)                                # needs sage.symbolic
             sage: x = polygen(K)
             sage: L.<b> = K.extension(x^2 - a - 5)
-            sage: L.Hom(CC)(f(a + 5).sqrt(), f, check=False)                            # optional - sage.symbolic
+            sage: L.Hom(CC)(f(a + 5).sqrt(), f, check=False)                            # needs sage.symbolic
             Relative number field morphism:
               From: Number Field in b with defining polynomial x^2 - a - 5 over its base field
               To:   Complex Field with 53 bits of precision
