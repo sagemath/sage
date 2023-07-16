@@ -3026,6 +3026,9 @@ class MPolynomialIdeal_singular_repr(
             (t^4 + t^3 + t^2 + t + 1)/(t^2 - 2*t + 1)
         """
 
+        if not self.is_homogeneous(grading=grading):
+                raise TypeError("ideal must be homogeneous")
+
         if algorithm == 'sage':
             from sage.rings.polynomial.hilbert import hilbert_poincare_series
 
@@ -3037,9 +3040,6 @@ class MPolynomialIdeal_singular_repr(
             return hilbert_poincare_series(gb, grading)
         elif algorithm == 'singular':
 
-            if not self.is_homogeneous():
-                raise TypeError("ideal must be homogeneous to use singular implementation")
-            
             t = ZZ['t'].gen()
             n = self.ring().ngens()
 
@@ -4959,7 +4959,7 @@ class MPolynomialIdeal(MPolynomialIdeal_singular_repr,
         P = max(I, key=lambda x: x.parent().ngens()).parent()
         return P.ideal([P(f) for f in I])
 
-    def is_homogeneous(self):
+    def is_homogeneous(self, grading=None):
         r"""
         Return ``True`` if this ideal is spanned by homogeneous
         polynomials, i.e., if it is a homogeneous ideal.
@@ -4991,10 +4991,18 @@ class MPolynomialIdeal(MPolynomialIdeal_singular_repr,
             sage: J.is_homogeneous()
             True
         """
-        for f in self.gens():
-            if not f.is_homogeneous():
-                return False
+        if not grading:
+            for f in self.gens():
+                if not f.is_homogeneous():
+                    return False
+        else:
+            grading_dict={var:grade for var, grade in zip(self.ring().gens(), grading)}
+            for f in self.gens():
+                if not f.is_homogeneous_with_grading(grading_dict):
+                    return False
+                
         return True
+
 
     def degree_of_semi_regularity(self):
         r"""
