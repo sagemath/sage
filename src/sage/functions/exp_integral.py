@@ -1463,20 +1463,20 @@ def exponential_integral_1(x, n=0):
 
     EXAMPLES::
 
-        sage: exponential_integral_1(2)                                                 # needs sage.libs.pari
+        sage: exponential_integral_1(2)                                                 # needs sage.libs.pari sage.rings.real_mpfr
         0.0489005107080611
-        sage: exponential_integral_1(2, 4)  # abs tol 1e-18                             # needs sage.libs.pari
+        sage: exponential_integral_1(2, 4)  # abs tol 1e-18                             # needs sage.libs.pari sage.rings.real_mpfr
         [0.0489005107080611, 0.00377935240984891, 0.000360082452162659, 0.0000376656228439245]
-        sage: exponential_integral_1(40, 5)                                             # needs sage.libs.pari
+        sage: exponential_integral_1(40, 5)                                             # needs sage.libs.pari sage.rings.real_mpfr
         [0.000000000000000, 2.22854325868847e-37, 6.33732515501151e-55,
          2.02336191509997e-72, 6.88522610630764e-90]
         sage: exponential_integral_1(0)
         +Infinity
-        sage: r = exponential_integral_1(RealField(150)(1)); r                          # needs sage.libs.pari
+        sage: r = exponential_integral_1(RealField(150)(1)); r                          # needs sage.libs.pari sage.rings.real_mpfr
         0.21938393439552027367716377546012164903104729
         sage: parent(r)                                                                 # needs sage.libs.pari
         Real Field with 150 bits of precision
-        sage: exponential_integral_1(RealField(150)(100))                               # needs sage.libs.pari
+        sage: exponential_integral_1(RealField(150)(100))                               # needs sage.libs.pari sage.rings.real_mpfr
         3.6835977616820321802351926205081189876552201e-46
 
     TESTS:

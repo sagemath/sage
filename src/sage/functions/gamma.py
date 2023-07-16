@@ -40,9 +40,9 @@ class Function_gamma(GinacFunction):
         EXAMPLES::
 
             sage: from sage.functions.gamma import gamma1
-            sage: gamma1(CDF(0.5, 14))                                                  # needs sage.libs.pari
+            sage: gamma1(CDF(0.5, 14))                                                  # needs sage.libs.pari sage.rings.complex_double
             -4.0537030780372815e-10 - 5.773299834553605e-10*I
-            sage: gamma1(CDF(I))                                                        # needs sage.libs.pari
+            sage: gamma1(CDF(I))                                                        # needs sage.libs.pari sage.rings.complex_double
             -0.15494982830181067 - 0.49801566811835607*I
 
         Recall that `\Gamma(n)` is `n-1` factorial::
@@ -138,7 +138,7 @@ class Function_gamma(GinacFunction):
             Infinity
             sage: (-1.).gamma()                                                         # needs sage.rings.real_mpfr
             NaN
-            sage: CC(-1).gamma()                                                        # needs sage.libs.pari
+            sage: CC(-1).gamma()                                                        # needs sage.libs.pari sage.rings.real_mpfr
             Infinity
             sage: RDF(-1).gamma()
             NaN
@@ -674,7 +674,7 @@ def gamma(a, *args, **kwds):
 
         sage: gamma(CDF(I))                                                             # needs sage.libs.pari sage.symbolic
         -0.15494982830181067 - 0.49801566811835607*I
-        sage: gamma(CDF(0.5, 14))                                                       # needs sage.libs.pari
+        sage: gamma(CDF(0.5, 14))                                                       # needs sage.libs.pari sage.rings.complex_double
         -4.0537030780372815e-10 - 5.773299834553605e-10*I
 
     Use ``numerical_approx`` to get higher precision from
