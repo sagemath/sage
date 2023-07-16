@@ -433,11 +433,11 @@ class pAdicBaseGeneric(pAdicGeneric):
 
         EXAMPLES::
 
-            sage: Zp(3).plot()                                                          # optional - sage.plot
+            sage: Zp(3).plot()                                                          # needs sage.plot
             Graphics object consisting of 1 graphics primitive
-            sage: Zp(5).plot(max_points=625)                                            # optional - sage.plot
+            sage: Zp(5).plot(max_points=625)                                            # needs sage.plot
             Graphics object consisting of 1 graphics primitive
-            sage: Zp(23).plot(rgbcolor=(1,0,0))                                         # optional - sage.plot
+            sage: Zp(23).plot(rgbcolor=(1,0,0))                                         # needs sage.plot
             Graphics object consisting of 1 graphics primitive
         """
         if 'pointsize' not in args:
