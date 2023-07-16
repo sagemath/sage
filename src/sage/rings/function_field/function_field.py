@@ -129,7 +129,7 @@ TESTS::
     sage: TestSuite(L).run(max_runs=8)          # long time (25s)                       # needs sage.rings.function_field sage.rings.number_field
     sage: TestSuite(M).run(max_runs=8)          # long time (35s)                       # needs sage.rings.finite_rings sage.rings.function_field
     sage: TestSuite(N).run(max_runs=8, skip='_test_derivation')         # long time (15s), needs sage.rings.finite_rings
-    sage: TestSuite(O).run()
+    sage: TestSuite(O).run()                                                            # needs sage.rings.function_field
     sage: TestSuite(R).run()                                                            # needs sage.rings.finite_rings sage.rings.function_field
     sage: TestSuite(S).run()                    # long time (4s)                        # needs sage.rings.finite_rings sage.rings.function_field
 
@@ -1166,7 +1166,7 @@ class FunctionField(Field):
             Completion map:
               From: Rational function field in x over Finite Field of size 2
               To:   Laurent Series Ring in s over Finite Field of size 2
-            sage: m(1/(x+1))
+            sage: m(1/(x+1))                                                            # needs sage.rings.function_field
             1 + s + s^2 + s^3 + s^4 + s^5 + s^6 + s^7 + s^8 + s^9 + s^10 + s^11 + s^12
             + s^13 + s^14 + s^15 + s^16 + s^17 + s^18 + s^19 + O(s^20)
 
@@ -1176,16 +1176,16 @@ class FunctionField(Field):
             Completion map:
               From: Rational function field in x over Finite Field of size 2
               To:   Laurent Series Ring in s over Finite Field of size 2
-            sage: m(x)
+            sage: m(x)                                                                  # needs sage.rings.function_field
             s^-1 + O(s^19)
 
             sage: m = K.completion(p, prec=infinity); m                                 # needs sage.rings.function_field
             Completion map:
               From: Rational function field in x over Finite Field of size 2
               To:   Lazy Laurent Series Ring in s over Finite Field of size 2
-            sage: f = m(x); f
+            sage: f = m(x); f                                                           # needs sage.rings.function_field
             s^-1 + ...
-            sage: f.coefficient(100)
+            sage: f.coefficient(100)                                                    # needs sage.rings.function_field
             0
 
             sage: # needs sage.rings.function_field
