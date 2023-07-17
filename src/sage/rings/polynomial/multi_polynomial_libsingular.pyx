@@ -3319,8 +3319,13 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
             False
         """
 
+        if self==0:
+            return True
+
+        variables=self.parent().gens()
+
         # degree of a monomial wrt grading
-        monomial_degree = lambda exps : sum(grading[variable]*exponent for variable, exponent in zip(self.variables(), exps))            
+        monomial_degree = lambda exps : sum(grading[variable]*exponent for variable, exponent in zip(variables, exps))            
 
         # calculate degree of first term
         terms=iter(self.exponents())
