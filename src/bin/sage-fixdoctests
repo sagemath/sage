@@ -189,8 +189,12 @@ def process_block(block, src_in_lines, file_optional_tags):
         return
 
     # Error testing.
-    if m := re.search(r"ModuleNotFoundError: No module named '([^']*)'", block):
-        module = m.group(1)
+    if m := re.search(r"(?:ModuleNotFoundError: No module named|ImportError: cannot import name '([^']*)' from) '([^']*)'", block):
+        if m.group(1):
+            # "ImportError: cannot import name 'function_field_polymod' from 'sage.rings.function_field' (unknown location)"
+            module = m.group(2) + '.' + m.group(1)
+        else:
+            module = m.group(2)
         asked_why = re.search('#.*(why|explain)', src_in_lines[first_line_num - 1])
         optional = module_feature(module)
         if optional and optional.name not in file_optional_tags:
