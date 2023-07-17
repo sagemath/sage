@@ -1793,8 +1793,8 @@ class Category(UniqueRepresentation, SageObject):
         ::
 
             sage: M3 = VectorSpaces(FiniteField(3))
-            sage: M9 = VectorSpaces(FiniteField(9, 'a'))                                # needs sage.modules sage.rings.finite_rings
-            sage: M3.is_subcategory(M9)                                                 # needs sage.modules sage.rings.finite_rings
+            sage: M9 = VectorSpaces(FiniteField(9, 'a'))                                # needs sage.rings.finite_rings
+            sage: M3.is_subcategory(M9)                                                 # needs sage.rings.finite_rings
             False
 
         Join categories are properly handled::
