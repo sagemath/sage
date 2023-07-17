@@ -3275,6 +3275,35 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
         if _ring != currRing:
             rChangeCurrRing(_ring)
         return bool(p_IsHomogeneous(self._poly,_ring))
+    
+    def is_homogeneous_with_grading(self, grading):
+
+        """
+        EXAMPLES ::
+            sage: R.<a,b,c> = QQ[]
+            sage: grading_dict = {a:1, b:2, c:3}
+            sage: p = a**4+b**2
+            sage: p.is_homogeneous_with_grading(grading_dict)
+            True
+            sage: grading_dict = {a:1, b:1, c:3}
+            sage: p.is_homogeneous_with_grading(grading_dict)
+            False
+        """
+
+        # degree of a monomial wrt grading
+        monomial_degree = lambda exponents : sum(grading[variable]*exponent for variable, exponent in zip(self.variables(), exponents))            
+
+        # calculate degree of first term
+        terms=iter(self.exponents())
+        first_term=next(terms)
+        first_term_degree=monomial_degree(first_term)
+
+        # make sure all other degrees are the same
+        for term in terms:
+            if monomial_degree(term)!=first_term_degree:
+                return False
+            
+        return True
 
     def is_homogeneous_with_grading(self, grading):
 
