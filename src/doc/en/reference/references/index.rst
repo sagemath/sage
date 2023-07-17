@@ -576,10 +576,6 @@ REFERENCES:
              Journal of Algorithms, 45:155-166, 2002.
              :doi:`10.1016/S0196-6774(02)00215-8`.
 
-.. [BCH2023] Jose Bastidas, Christophe Hohlweg, and Franco Saliola.
-             *The primitive Eulerian polynomial*.
-             Preprint, (2023) :arXiv:`2306.15556`.
-
 .. [BCHOPSY2017] \G. Benkart, L. Colmenarejo, P. E. Harris, R. Orellana, G. Panova,
                  A. Schilling, M. Yip. *A minimaj-preserving crystal on ordered
                  multiset partitions*.
@@ -810,6 +806,10 @@ REFERENCES:
 .. [BHS2008] Robert Bradshaw, David Harvey and William
              Stein. strassen_window_multiply_c. strassen.pyx, Sage
              3.0, 2008. http://www.sagemath.org
+
+.. [BHS2023] Jose Bastidas, Christophe Hohlweg, and Franco Saliola.
+             *The primitive Eulerian polynomial*.
+             Preprint, (2023) :arxiv:`2306.15556`.
 
 .. [BrHu2019] Petter Brändén, June Huh. *Lorentzian polynomials*.
               Ann. Math. (2) 192, No. 3, 821-891 (2020).
