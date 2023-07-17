@@ -132,15 +132,15 @@ cpdef gen_to_sage(Gen z, locals=None):
         15
         sage: z = pari('1.234'); z
         1.234000000000000000000000000000000000000000000000000000000000000000000
-        sage: a = gen_to_sage(z); a
+        sage: a = gen_to_sage(z); a                                                     # needs sage.rings.real_mpfr
         1.234000000000000000000000000000000000000000000000000000000000000000000000000
-        sage: a.parent()
+        sage: a.parent()                                                                # needs sage.rings.real_mpfr
         Real Field with 256 bits of precision
         sage: pari.set_real_precision(15)
         70
-        sage: a = gen_to_sage(pari('1.234')); a
+        sage: a = gen_to_sage(pari('1.234')); a                                         # needs sage.rings.real_mpfr
         1.23400000000000000
-        sage: a.parent()
+        sage: a.parent()                                                                # needs sage.rings.real_mpfr
         Real Field with 64 bits of precision
 
     For complex numbers, the parent depends on the PARI type::
@@ -149,37 +149,37 @@ cpdef gen_to_sage(Gen z, locals=None):
         3 + I
         sage: z.type()
         't_COMPLEX'
-        sage: a = gen_to_sage(z); a
+        sage: a = gen_to_sage(z); a                                                     # needs sage.rings.number_field
         i + 3
-        sage: a.parent()
+        sage: a.parent()                                                                # needs sage.rings.number_field
         Number Field in i with defining polynomial x^2 + 1 with i = 1*I
 
         sage: z = pari('(3+I)/2'); z
         3/2 + 1/2*I
-        sage: a = gen_to_sage(z); a
+        sage: a = gen_to_sage(z); a                                                     # needs sage.rings.number_field
         1/2*i + 3/2
-        sage: a.parent()
+        sage: a.parent()                                                                # needs sage.rings.number_field
         Number Field in i with defining polynomial x^2 + 1 with i = 1*I
 
         sage: z = pari('1.0 + 2.0*I'); z
         1.00000000000000 + 2.00000000000000*I
-        sage: a = gen_to_sage(z); a
+        sage: a = gen_to_sage(z); a                                                     # needs sage.rings.real_mpfr
         1.00000000000000000 + 2.00000000000000000*I
-        sage: a.parent()
+        sage: a.parent()                                                                # needs sage.rings.real_mpfr
         Complex Field with 64 bits of precision
 
         sage: z = pari('1 + 1.0*I'); z
         1 + 1.00000000000000*I
-        sage: a = gen_to_sage(z); a
+        sage: a = gen_to_sage(z); a                                                     # needs sage.rings.real_mpfr
         1.00000000000000000 + 1.00000000000000000*I
-        sage: a.parent()
+        sage: a.parent()                                                                # needs sage.rings.real_mpfr
         Complex Field with 64 bits of precision
 
         sage: z = pari('1.0 + 1*I'); z
         1.00000000000000 + I
-        sage: a = gen_to_sage(z); a
+        sage: a = gen_to_sage(z); a                                                     # needs sage.rings.real_mpfr
         1.00000000000000000 + 1.00000000000000000*I
-        sage: a.parent()
+        sage: a.parent()                                                                # needs sage.rings.real_mpfr
         Complex Field with 64 bits of precision
 
     Converting polynomials::
@@ -198,7 +198,7 @@ cpdef gen_to_sage(Gen z, locals=None):
         sage: x,y = SR.var('x,y')
         sage: gen_to_sage(f, {'x': x, 'y': y})
         2/3*x^3 + x + y - 5/7
-        sage: parent(gen_to_sage(f, {'x': x, 'y': y}))                                  # needs sage.symbolic
+        sage: parent(gen_to_sage(f, {'x': x, 'y': y}))
         Symbolic Ring
 
         sage: gen_to_sage(f)
@@ -242,7 +242,7 @@ cpdef gen_to_sage(Gen z, locals=None):
         't_MAT'
 
         sage: # needs sage.modules
-        sage: a = gen_to_sage(z); a                                                     # needs sage.modules
+        sage: a = gen_to_sage(z); a
         [1 2]
         [3 4]
         sage: a.parent()
