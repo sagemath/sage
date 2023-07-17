@@ -189,6 +189,12 @@ try:
 except ImportError:
     FiniteField_givaro = None
 
+try:
+    from .finite_field_ntl_gf2e import FiniteField_ntl_gf2e
+except ImportError:
+    FiniteField_ntl_gf2e = None
+
+
 from sage.structure.factory import UniqueFactory
 
 
@@ -619,9 +625,9 @@ class FiniteFieldFactory(UniqueFactory):
                 name = normalize_names(1, name)
 
                 if impl is None:
-                    if order < zech_log_bound:
+                    if order < zech_log_bound and FiniteField_givaro is not None:
                         impl = 'givaro'
-                    elif p == 2:
+                    elif p == 2 and FiniteField_ntl_gf2e is not None:
                         impl = 'ntl'
                     else:
                         impl = 'pari_ffelt'
@@ -772,7 +778,6 @@ class FiniteFieldFactory(UniqueFactory):
                 if impl == 'givaro':
                     K = FiniteField_givaro(order, name, modulus, repr, elem_cache)
                 elif impl == 'ntl':
-                    from .finite_field_ntl_gf2e import FiniteField_ntl_gf2e
                     K = FiniteField_ntl_gf2e(order, name, modulus)
                 elif impl == 'pari_ffelt' or impl == 'pari':
                     from .finite_field_pari_ffelt import FiniteField_pari_ffelt

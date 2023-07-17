@@ -30,13 +30,16 @@ from .element_base cimport FinitePolyExtElement
 from .integer_mod import IntegerMod_abstract
 
 import sage.rings.integer
-from sage.modules.free_module_element import FreeModuleElement
 from sage.rings.integer cimport Integer
 from sage.rings.polynomial.polynomial_element import Polynomial
 from sage.rings.polynomial.multi_polynomial_element import MPolynomial
 from sage.rings.rational import Rational
 from sage.structure.richcmp cimport rich_to_bool
 
+try:
+    from sage.modules.free_module_element import FreeModuleElement
+except ImportError:
+    FreeModuleElement = ()
 
 from sage.interfaces.abc import GapElement
 
