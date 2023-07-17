@@ -8,7 +8,7 @@ include sage/interfaces/gp.p*
 
 graft sage/libs/pari
 exclude sage/libs/pari/convert_flint.p*
-include sage/rings/finite_rings/element_pari_ffelt.p*   # needs sage.rings.finite_rings.element_base
+include sage/rings/finite_rings/*pari*.p*               # needs sage.rings.finite_rings.element_base
 include sage/rings/factorint_pari.p*                    # needs sage.rings.integer
 include sage/rings/power_series_pari.p*                 # needs sage.rings.power_series_ring_element, sage.rings.polynomial.polynomial_element
 
