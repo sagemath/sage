@@ -3497,9 +3497,6 @@ class PolynomialRing_dense_mod_p(PolynomialRing_dense_finite_field,
         from sage.libs.pari.all import pari
         from sage.rings.finite_rings.conway_polynomials import (conway_polynomial,
                                                                 exists_conway_polynomial)
-        from .polynomial_gf2x import (GF2X_BuildIrred_list,
-                                     GF2X_BuildSparseIrred_list,
-                                     GF2X_BuildRandomIrred_list)
 
         p = self.characteristic()
         n = int(n)
@@ -3512,7 +3509,12 @@ class PolynomialRing_dense_mod_p(PolynomialRing_dense_finite_field,
             elif exists_conway_polynomial(p, n):
                 algorithm = "conway"
             elif p == 2:
-                algorithm = "minimal_weight"
+                try:
+                    from .polynomial_gf2x import GF2X_BuildSparseIrred_list
+                except ImportError:
+                    algorithm = "adleman-lenstra"
+                else:
+                    algorithm = "minimal_weight"
             else:
                 algorithm = "adleman-lenstra"
         elif algorithm == "primitive":
@@ -3527,6 +3529,7 @@ class PolynomialRing_dense_mod_p(PolynomialRing_dense_finite_field,
             return self(conway_polynomial(p, n))
         elif algorithm == "first_lexicographic":
             if p == 2:
+                from .polynomial_gf2x import GF2X_BuildIrred_list
                 return self(GF2X_BuildIrred_list(n))
             else:
                 # Fallback to PolynomialRing_dense_finite_field.irreducible_element
@@ -3535,11 +3538,13 @@ class PolynomialRing_dense_mod_p(PolynomialRing_dense_finite_field,
             return self(pari(p).ffinit(n).ffgen().ffprimroot().charpoly())
         elif algorithm == "minimal_weight":
             if p == 2:
+                from .polynomial_gf2x import GF2X_BuildSparseIrred_list
                 return self(GF2X_BuildSparseIrred_list(n))
             else:
                 raise NotImplementedError("'minimal_weight' option only implemented for p = 2")
         elif algorithm == "random":
             if p == 2:
+                from .polynomial_gf2x import GF2X_BuildRandomIrred_list
                 return self(GF2X_BuildRandomIrred_list(n))
             else:
                 pass
