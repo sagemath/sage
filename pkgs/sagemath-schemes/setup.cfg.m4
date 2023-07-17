@@ -28,6 +28,7 @@ meataxe = SPKG_INSTALL_REQUIRES_sagemath_meataxe
 mpfi    = # FIXME
 ntl     = # FIXME
 numpy   = SPKG_INSTALL_REQUIRES_numpy
+pari    = SPKG_INSTALL_REQUIRES_sagemath_pari
 
 # extras by packages (specific to sagemath-schemes)
 
@@ -41,7 +42,7 @@ RIF     =
 CIF     =
 RBF     = sagemath-schemes[flint]
 CBF     = sagemath-schemes[flint]
-GF      = sagemath-schemes[linbox]
+GF      = sagemath-schemes[pari]
 GF2     = sagemath-schemes[m4ri]
 GF2e    = sagemath-schemes[m4rie]
 GF2n    = sagemath-schemes[m4rie]
@@ -64,4 +65,4 @@ toric           = SPKG_INSTALL_REQUIRES_sagemath_polyhedra
 padics          = sagemath-schemes[Zp]
 
 # the whole package
-standard        = sagemath-schemes[toric,padics,NumberField,FiniteField,flint,linbox,mpfi,ntl,numpy]
+standard        = sagemath-schemes[toric,padics,NumberField,FiniteField,flint,linbox,mpfi,ntl,numpy,pari]
