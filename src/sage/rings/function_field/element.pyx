@@ -569,7 +569,7 @@ cdef class FunctionFieldElement(FieldElement):
         ::
 
             sage: K.<x> = FunctionField(GF(4)); _.<Y> = K[]                             # needs sage.rings.finite_rings
-            sage: L.<y> = K.extension(Y^2 + Y + x + 1/x)                                # needs sage.rings.finite_rings
+            sage: L.<y> = K.extension(Y^2 + Y + x + 1/x)                                # needs sage.rings.finite_rings sage.rings.function_field
             sage: (x/y).zeros()                                                         # needs sage.modules sage.rings.finite_rings sage.rings.function_field
             [Place (x, x*y)]
         """
