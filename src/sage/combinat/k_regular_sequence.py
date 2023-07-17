@@ -1016,20 +1016,20 @@ class kRegularSequenceSpace(RecognizableSeriesSpace):
 
         ALGORITHM:
 
-        For the purposes of this description, the left vector valued sequence
-        associated with a regular sequence consists of the left vector
-        multiplied by the corresponding matrix product, but without the right
-        vector of the regular sequence.
+        For the purposes of this description, the right vector valued sequence
+        associated with a regular sequence consists of the
+        corresponding matrix product multiplied by the right vector,
+        but without the right vector of the regular sequence.
 
-        The algorithm maintains a left vector valued sequence consisting
-        of the left vector valued sequence of the argument ``sequence``
+        The algorithm maintains a right vector valued sequence consisting
+        of the right vector valued sequence of the argument ``sequence``
         (replaced by an empty tuple if ``sequence`` is ``None``) plus several
         components of the shape `m \mapsto f(k^t\cdot m +r)` for suitable
         ``t`` and ``r``.
 
         Implicitly, the algorithm also maintains a `d \times n_\mathrm{verify}` matrix ``A``
-        (where ``d`` is the dimension of the left vector valued sequence)
-        whose columns are the current left vector valued sequence evaluated at
+        (where ``d`` is the dimension of the right vector valued sequence)
+        whose columns are the current right vector valued sequence evaluated at
         the non-negative integers less than `n_\mathrm{verify}` and ensures that this
         matrix has full row rank.
 
@@ -1282,12 +1282,12 @@ class kRegularSequenceSpace(RecognizableSeriesSpace):
         # `k**t * m + r`
 
         # The elements of `lines` will correspond to the current components
-        # of the left vector valued sequence described in the algorithm section
+        # of the right vector valued sequence described in the algorithm section
         # of the docstring.
 
         def values(m, lines):
             """
-                Return current (as defined by ``lines``) left vector valued
+                Return current (as defined by ``lines``) right vector valued
                 sequence for argument ``m``.
             """
             return tuple(seq(m)) + tuple(f(k**t_R * m + r_R) for t_R, r_R in lines)
@@ -1302,7 +1302,7 @@ class kRegularSequenceSpace(RecognizableSeriesSpace):
 
                 The output is the inverse of the invertible submatrix and
                 the corresponding list of column indices (i.e., arguments to
-                the current left vector valued sequence).
+                the current right vector valued sequence).
             """
             d = len(seq(0)) + len(lines)
 
