@@ -19,5 +19,3 @@ Finite Fields
 #*****************************************************************************
 
 from .all__sagemath_categories import *
-
-from .conway_polynomials import conway_polynomial, exists_conway_polynomial
