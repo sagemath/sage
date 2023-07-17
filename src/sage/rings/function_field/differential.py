@@ -151,7 +151,7 @@ class FunctionFieldDifferential(ModuleElement):
 
             sage: # needs sage.rings.finite_rings
             sage: K.<x> = FunctionField(GF(4)); _.<Y> = K[]
-            sage: L.<y> = K.extension(Y^3 + x + x^3*Y)
+            sage: L.<y> = K.extension(Y^3 + x + x^3*Y)                                  # needs sage.rings.function_field
             sage: w = y.differential()
             sage: latex(w)
             \left( x y^{2} + \frac{1}{x} y \right)\, dx
@@ -444,7 +444,7 @@ class FunctionFieldDifferential(ModuleElement):
             sage: w = 1/f * f.differential()
             sage: d = f.divisor()
             sage: s = d.support()
-            sage: sum([w.residue(p).trace() for p in s])
+            sage: sum([w.residue(p).trace() for p in s])                                # needs sage.rings.function_field
             0
 
         and in an extension field::
@@ -559,7 +559,7 @@ class FunctionFieldDifferential_global(FunctionFieldDifferential):
             sage: F.<x> = FunctionField(GF(4))
             sage: f = x/(x^2 + x + 1)
             sage: w = 1/f*f.differential()
-            sage: w.cartier() == w
+            sage: w.cartier() == w                                                      # needs sage.rings.function_field
             True
         """
         W = self.parent()
