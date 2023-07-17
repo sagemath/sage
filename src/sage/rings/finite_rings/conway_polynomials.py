@@ -94,7 +94,10 @@ def exists_conway_polynomial(p, n):
         sage: exists_conway_polynomial(6,6)
         False
     """
-    return ConwayPolynomials().has_polynomial(p,n)
+    try:
+        return ConwayPolynomials().has_polynomial(p,n)
+    except ImportError:
+        return False
 
 class PseudoConwayLattice(WithEqualityById, SageObject):
     r"""
@@ -174,9 +177,13 @@ class PseudoConwayLattice(WithEqualityById, SageObject):
         from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
         self.ring = PolynomialRing(FiniteField(p), 'x')
         if use_database:
-            C = ConwayPolynomials()
-            self.nodes = {n: self.ring(C.polynomial(p, n))
-                          for n in C.degrees(p)}
+            try:
+                C = ConwayPolynomials()
+            except ImportError:
+                self.nodes = {}
+            else:
+                self.nodes = {n: self.ring(C.polynomial(p, n))
+                              for n in C.degrees(p)}
         else:
             self.nodes = {}
 
