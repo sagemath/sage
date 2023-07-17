@@ -1335,9 +1335,10 @@ cdef class FiniteFieldElement_pari_ffelt(FinitePolyExtElement):
 
         EXAMPLES::
 
+            sage: # needs sage.libs.gap
             sage: F = FiniteField(2^3, 'aa', impl='pari_ffelt')
             sage: aa = F.multiplicative_generator()
-            sage: gap(aa) # indirect doctest
+            sage: gap(aa)  # indirect doctest
             Z(2^3)
             sage: b = F.multiplicative_generator()
             sage: a = b^3
@@ -1352,6 +1353,7 @@ cdef class FiniteFieldElement_pari_ffelt(FinitePolyExtElement):
 
         You can specify the instance of the Gap interpreter that is used::
 
+            sage: # needs sage.libs.gap
             sage: F = FiniteField(next_prime(200)^2, 'a', impl='pari_ffelt')
             sage: a = F.multiplicative_generator()
             sage: a._gap_ (gap)
@@ -1361,6 +1363,7 @@ cdef class FiniteFieldElement_pari_ffelt(FinitePolyExtElement):
 
         Gap only supports relatively small finite fields::
 
+            sage: # needs sage.libs.gap
             sage: F = FiniteField(next_prime(1000)^2, 'a', impl='pari_ffelt')
             sage: a = F.multiplicative_generator()
             sage: a._gap_init_()

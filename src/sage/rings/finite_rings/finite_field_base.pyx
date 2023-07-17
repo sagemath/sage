@@ -4,9 +4,9 @@ Base class for finite fields
 
 TESTS::
 
-    sage: K.<a> = NumberField(x^2 + 1)
-    sage: F = K.factor(3)[0][0].residue_field()
-    sage: loads(dumps(F)) == F
+    sage: K.<a> = NumberField(x^2 + 1)                                                  # needs sage.rings.number_field
+    sage: F = K.factor(3)[0][0].residue_field()                                         # needs sage.rings.number_field
+    sage: loads(dumps(F)) == F                                                          # needs sage.rings.number_field
     True
 
 AUTHORS:
