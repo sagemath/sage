@@ -7,6 +7,7 @@ cdef class MPolynomialRing_base(sage.rings.ring.CommutativeRing):
     cdef public object _has_singular
     cdef public object _magma_gens
     cdef public dict _magma_cache
+    cpdef _get_action_(self, G, op, bint self_on_left)
 
     cdef _coerce_c_impl(self, x)
 
