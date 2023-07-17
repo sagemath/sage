@@ -238,7 +238,7 @@ class kRegularSequence(RecognizableSeries):
             preview=10)
 
     @cached_method
-    def __getitem__(self, n, **kwds):
+    def coefficient_of_n(self, n, **kwds):
         r"""
         Return the `n`-th entry of this sequence.
 
@@ -254,6 +254,11 @@ class kRegularSequence(RecognizableSeries):
             sage: S = Seq2((Matrix([[1, 0], [0, 1]]), Matrix([[0, -1], [1, 2]])),
             ....:          left=vector([0, 1]), right=vector([1, 0]))
             sage: S[7]
+            3
+
+        This is equivalent to::
+
+            sage: S.coefficient_of_n(7)
             3
 
         TESTS::
@@ -278,6 +283,8 @@ class kRegularSequence(RecognizableSeries):
             True
         """
         return self.coefficient_of_word(self.parent()._n_to_index_(n), **kwds)
+
+    __getitem__ = coefficient_of_n
 
     def __iter__(self):
         r"""
@@ -521,7 +528,7 @@ class kRegularSequence(RecognizableSeries):
 
         zero_M = self.mu[0].parent().zero()
         zero_R = self.right.parent().zero()
-        # Let v(n) = self.__getitem__(n, multiply_left=False)
+        # Let v(n) = self.coefficient_of_n(n, multiply_left=False)
         rule = {}
         # We will construct `kernel` and `rule` in such a way that for all
         # c in `kernel`,
@@ -557,7 +564,7 @@ class kRegularSequence(RecognizableSeries):
                 b.get(c, 0) * self.left
                 for c in kernel)),
             vector(chain.from_iterable(
-                (self.__getitem__(c, multiply_left=False) if c >= 0 else zero_R)
+                (self.coefficient_of_n(c, multiply_left=False) if c >= 0 else zero_R)
                 for c in kernel)))
 
         return result
@@ -1265,8 +1272,7 @@ class kRegularSequenceSpace(RecognizableSeriesSpace):
             seq = lambda m: vector([])
         else:
             mu = [M.rows() for M in sequence.mu]
-            seq = lambda m: (sequence._mu_of_word_(self._n_to_index_(m))
-                             * sequence.right)
+            seq = lambda m: sequence.coefficient_of_n(m, multiply_left=False)
             logger.info('including %s', sequence)
 
         zero = domain(0)
