@@ -416,10 +416,37 @@ class sage__libs__gap(JoinFeature):
                               PythonModule('sage.interfaces.gap')])
 
 
+class sage__libs__linbox(JoinFeature):
+    r"""
+    A :class:`sage.features.Feature` describing the presence of :mod:`sage.libs.linbox`
+    and other modules depending on Givaro, FFLAS-FFPACK, LinBox.
+
+    In addition to the modularization purposes that this tag serves, it also provides attribution
+    to the upstream project.
+
+    TESTS::
+
+        sage: from sage.features.sagemath import sage__libs__linbox
+        sage: sage__libs__linbox().is_present()                                         # needs sage.libs.linbox
+        FeatureTestResult('sage.libs.linbox', True)
+    """
+    def __init__(self):
+        r"""
+        TESTS::
+
+            sage: from sage.features.sagemath import sage__libs__linbox
+            sage: isinstance(sage__libs__linbox(), sage__libs__linbox)
+            True
+        """
+        JoinFeature.__init__(self, 'sage.libs.linbox',
+                             [PythonModule('sage.rings.finite_rings.element_givaro')],
+                             spkg='sagemath_linbox', type='standard')
+
+
 class sage__libs__ntl(JoinFeature):
     r"""
     A :class:`sage.features.Feature` describing the presence of :mod:`sage.libs.ntl`
-    and other modules depending on NTL and arb.
+    and other modules depending on NTL.
 
     In addition to the modularization purposes that this tag serves, it also provides attribution
     to the upstream project.
@@ -1074,6 +1101,7 @@ def all_features():
             sage__libs__ecl(),
             sage__libs__flint(),
             sage__libs__gap(),
+            sage__libs__linbox(),
             sage__libs__ntl(),
             sage__libs__pari(),
             sage__libs__singular(),
