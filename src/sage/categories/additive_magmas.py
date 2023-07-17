@@ -479,7 +479,7 @@ class AdditiveMagmas(Category_singleton):
                     (1, x)
                     sage: e + e
                     (2, 0)
-                    sage: e = groups.misc.AdditiveCyclic(8)
+                    sage: e = groups.misc.AdditiveCyclic(8)                             # needs sage.groups
                     sage: x = e.cartesian_product(e)((e(1), e(2)))
                     sage: x
                     (1, 2)
