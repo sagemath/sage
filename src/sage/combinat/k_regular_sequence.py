@@ -1242,7 +1242,9 @@ class kRegularSequenceSpace(RecognizableSeriesSpace):
 
         ::
 
-            sage: A = Seq2((Matrix([[1, 1], [1, 1]]), Matrix([[1, 1], [1, 1]])), left=(1, 1), right=(1, 1))
+            sage: A = Seq2(
+            ....:     (Matrix([[1, 1], [1, 1]]), Matrix([[1, 1], [1, 1]])),
+            ....:     left=(1, 1), right=(1, 1))
             sage: Seq2.guess(lambda n: n, sequence=A, n_verify=5)
             Traceback (most recent call last):
             ...
