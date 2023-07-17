@@ -1019,7 +1019,7 @@ class kRegularSequenceSpace(RecognizableSeriesSpace):
         For the purposes of this description, the right vector valued sequence
         associated with a regular sequence consists of the
         corresponding matrix product multiplied by the right vector,
-        but without the right vector of the regular sequence.
+        but without the left vector of the regular sequence.
 
         The algorithm maintains a right vector valued sequence consisting
         of the right vector valued sequence of the argument ``sequence``
