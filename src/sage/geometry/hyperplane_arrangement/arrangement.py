@@ -329,7 +329,7 @@ a companion to Richard Stanley's notes [Sta2007]_ on hyperplane
 arrangements.
 """
 
-#*****************************************************************************
+# *****************************************************************************
 #       Copyright (C) 2013 David Perkinson <davidp@reed.edu>
 #                          Volker Braun <vbraun.name@gmail.com>
 #
@@ -338,7 +338,7 @@ arrangements.
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
-#*****************************************************************************
+# *****************************************************************************
 
 # Possible extensions for hyperplane_arrangement.py:
 # - the big face lattice
@@ -3653,7 +3653,7 @@ class HyperplaneArrangementElement(Element):
                                        x0*x1*x3*x0^-1*x3^-1*x1^-1,
                                        x0*x2*x4*x2^-1*x0^-1*x4^-1,
                                        x0*x1^-1*x0^-1*x3^-1*x1*x3,
-                                       x4*x3^-1*x1*x3*x4^-1*x3^-1*x1^-1*x3 >
+                                       x4^-1*x3^-1*x1*x3*x4*x3^-1*x1^-1*x3 >
             sage: dic                                                                   # optional - sirocco
             {1: (5,), 2: (4,), 3: (1,), 4: (3,), 5: (2,), 6: (-5, -4, -3, -2, -1)}
             sage: H=A(x,y,x+y)
@@ -3664,13 +3664,14 @@ class HyperplaneArrangementElement(Element):
             (Finitely presented group < x0, x1 |  >, {1: (1,), 2: (2,), 3: (-2, -1)})
             sage: H = hyperplane_arrangements.braid(4).essentialization()               # optional - sage.graphs
             sage: H._fundamental_group_(proj=True)                                      # optional - sage.graphs, sirocco
-            (Finitely presented group < x0, x1, x2, x3, x4 | x1*x3*x1^-1*x3^-1,
-                                        x0*x2*x0^-1*x2^-1,
-                                        x4^-1*x1^-1*x0^-1*x4*x0*x1,
-                                        x3*x4*x2*x3^-1*x2^-1*x4^-1,
-                                        x3*x4^-1*x3^-1*x2^-1*x4*x2,
-                                        x4*x0*x1^-1*x0^-1*x4^-1*x1 >,
-             {1: (5,), 2: (1,), 3: (2,), 4: (3,), 5: (4,), 6: (-2, -1, -4, -3, -5)})
+            (Finitely presented group < x0, x1, x2, x3, x4 |
+                                                             x0*x2*x0^-1*x2^-1,
+                                                             x1*x3*x1^-1*x3^-1,
+                                                             x1*x4*x1^-1*x0^-1*x4^-1*x0,
+                                                             x4*x2*x3*x2^-1*x4^-1*x3^-1,
+                                                             x4^-1*x1^-1*x0*x1*x4*x0^-1,
+                                                             x3*x4^-1*x3^-1*x2^-1*x4*x2 >,
+             {1: (5,), 2: (1,), 3: (2,), 4: (3,), 5: (4,), 6: (-1, -5, -4, -2, -3)})
 
         .. WARNING::
 
@@ -3752,7 +3753,7 @@ class HyperplaneArrangementElement(Element):
                                                             x0*x1*x3*x0^-1*x3^-1*x1^-1,
                                                             x0*x2*x4*x2^-1*x0^-1*x4^-1,
                                                             x0*x1^-1*x0^-1*x3^-1*x1*x3,
-                                                            x4*x3^-1*x1*x3*x4^-1*x3^-1*x1^-1*x3 >
+                                                            x4^-1*x3^-1*x1*x3*x4*x3^-1*x1^-1*x3 >
             sage: dic                                                                   # optional - sirocco
             {1: (5,), 2: (4,), 3: (1,), 4: (3,), 5: (2,), 6: (-5, -4, -3, -2, -1)}
             sage: H=A(x,y,x+y)
@@ -3763,13 +3764,12 @@ class HyperplaneArrangementElement(Element):
             (Finitely presented group < x0, x1 |  >, {1: (1,), 2: (2,), 3: (-2, -1)})
             sage: H = hyperplane_arrangements.braid(4)                                  # optional - sage.groups
             sage: H.fundamental_group(projective=True)                                  # optional - sirocco, sage.groups
-            (Finitely presented group < x0, x1, x2, x3, x4 | x0*x3*x0^-1*x3^-1,
-                                                             x2*x4^-1*x2^-1*x4,
-                                                             x2*x3*x1*x3^-1*x2^-1*x1^-1,
-                                                             x1*x4*x0*x1^-1*x0^-1*x4^-1,
-                                                             x3^-1*x2^-1*x1^-1*x3*x1*x2,
-                                                             x0^-1*x1*x4*x0*x4^-1*x1^-1 >,
-             {1: (5,), 2: (1,), 3: (2,), 4: (3,), 5: (-4, -5, -3, -2, -1), 6: (4,)})
+            (Finitely presented group < x0, x1, x2, x3, x4 | x0*x2*x0^-1*x2^-1, x1*x3*x1^-1*x3^-1,
+                                                             x1*x4*x1^-1*x0^-1*x4^-1*x0,
+                                                             x4*x2*x3*x2^-1*x4^-1*x3^-1,
+                                                             x4^-1*x1^-1*x0*x1*x4*x0^-1,
+                                                             x3*x4^-1*x3^-1*x2^-1*x4*x2 >,
+             {1: (5,), 2: (1,), 3: (2,), 4: (-1, -5, -4, -2, -3), 5: (4,), 6: (3,)})
             sage: H = hyperplane_arrangements.coordinate(5)
             sage: g = H.fundamental_group(projective=True)[0]                           # optional - sirocco
             sage: g.is_abelian(), g.abelian_invariants()                                # optional - sirocco

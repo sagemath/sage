@@ -26,7 +26,7 @@ EXAMPLES::
     sage: R.<x, y> = QQ[]
     sage: f = y^3 + x^3 - 1
     sage: braid_monodromy(f) # optional - sirocco
-    [s1*s0, s1*s0, s1*s0]
+    ([s1*s0, s1*s0, s1*s0], {1: 1, 2: 1, 3: 1})
     sage: fundamental_group(f) # optional - sirocco
     Finitely presented group < x0 |  >
 """
@@ -1001,7 +1001,7 @@ def geometric_basis(G, E, EC0, p, dual_graph):
         E1.add_edge(cutpath[i], cutpath[i + 1], None)
         E2.add_edge(cutpath[i], cutpath[i + 1], None)
     Gd = copy(dual_graph)
-    to_delete = [e for e in Gd.edges(sort=True) if e[0] in cutpath and e[1] in cutpath]
+    to_delete = [e for e in Gd.edges(sort=True) if e[2][0] in cutpath and e[2][1] in cutpath]
     Gd.delete_edges(to_delete)
     Gd1, Gd2 = Gd.connected_components_subgraphs()
     edges_2 = []
@@ -1056,27 +1056,31 @@ def strand_components(f, flist, p1):
 
     INPUT:
 
-    - ``flist`` -- a  list of polynomial with two variables, over a number field
+    - ``f`` -- a  reduced polynomial with two variables, over a number field
       with an embedding in the complex numbers
+
+    - ``flist`` -- a  list of polynomials with two variables whose product equals ``f``
+    - ``p1`` -- a Gauss rational
 
     OUTPUT:
 
-    - A dictionary attaching a number `i` (strand) to a number `j` (a polynomial in the list).
+    - A list and a dictionary.  The first one is an ordered list of pairs
+      consisting of ``(z,i)`` where ``z`` is a root of ``f(p_1,y)`` and `i` is the position
+      of the polynomial in the list whose root is ``z``. The second one attaches
+      a number `i` (strand) to a number `j` (a polynomial in the list).
 
     EXAMPLES::
 
         sage: from sage.schemes.curves.zariski_vankampen import strand_components # optional - sirocco
         sage: R.<x, y> = QQ[]
         sage: flist = [x^2 - y^3, x + 3 * y - 5]
-        sage: strand_components(flist) # optional - sirocco
-        {1: 1, 2: 2, 3: 1, 4: 1}
+        sage: strand_components(prod(flist), flist, 1) # optional - sirocco
+        ([(-0.500000000000000? - 0.866025403784439?*I, 0),
+          (-0.500000000000000? + 0.866025403784439?*I, 0),
+          (1, 0), (1.333333333333334?, 1)], {1: 1, 2: 1, 3: 1, 4: 2})
     """
     x, y = f.parent().gens()
     F = flist[0].base_ring()
-    if len(flist) == 1:
-        d = f.degree()
-        dic = {j + 1: 1 for j in range(d)}
-        return dic
     strands = {}
     roots_base = []
     for i, h in enumerate(flist):
@@ -1114,16 +1118,21 @@ def braid_monodromy(f, arrangement=()):
         The projection over the `x` axis is used if there are no vertical asymptotes.
         Otherwise, a linear change of variables is done to fall into the previous case.
 
+    .. TODO::
+
+        Create a class ``arrangements_of_curves`` with a ``braid_monodromy`` method
+        it can be also a method for affine line arrangements.
+
     EXAMPLES::
 
         sage: from sage.schemes.curves.zariski_vankampen import braid_monodromy
         sage: R.<x, y> = QQ[]
         sage: f = (x^2 - y^3) * (x + 3 * y - 5)
         sage: bm = braid_monodromy(f); bm  # optional - sirocco
-        [s1*s0*(s1*s2)^2*s0*s2^2*s0^-1*(s2^-1*s1^-1)^2*s0^-1*s1^-1,
-         s1*s0*(s1*s2)^2*(s0*s2^-1*s1*s2*s1*s2^-1)^2*(s2^-1*s1^-1)^2*s0^-1*s1^-1,
-         s1*s0*(s1*s2)^2*s2*s1^-1*s2^-1*s1^-1*s0^-1*s1^-1,
-         s1*s0*s2*s0^-1*s2*s1^-1]
+        ([s1*s0*(s1*s2)^2*s0*s2^2*s0^-1*(s2^-1*s1^-1)^2*s0^-1*s1^-1,
+          s1*s0*(s1*s2)^2*(s0*s2^-1*s1*s2*s1*s2^-1)^2*(s2^-1*s1^-1)^2*s0^-1*s1^-1,
+          s1*s0*(s1*s2)^2*s2*s1^-1*s2^-1*s1^-1*s0^-1*s1^-1,
+          s1*s0*s2*s0^-1*s2*s1^-1], {1: 1, 2: 1, 3: 1, 4: 1})
         sage: flist = (x^2 - y^3, x + 3 * y - 5)
         sage: bm1 = braid_monodromy(f, arrangement=flist) # optional - sirocco
         sage: bm1[0] == bm[0]  # optional - sirocco
@@ -1200,6 +1209,7 @@ def braid_monodromy(f, arrangement=()):
             braidpath = braidpath * segsbraids[(x0, x1)]
         result.append(braidpath)
     return (result, strands)
+
 
 def conjugate_positive_form(braid):
     r"""
@@ -1476,8 +1486,8 @@ def fundamental_group(f, simplified=True, projective=False, puiseux=False, braid
         sage: fundamental_group(f, projective=True) # optional - sirocco
         Finitely presented group < x0 | x0^3 >
         sage: bm = braid_monodromy(f); bm # optional - sirocco
-        [(s1*s0)^2]
-        sage: fundamental_group(f, braid_mon=bm) # optional - sirocco
+        ([(s1*s0)^2], {1: 1, 2: 1, 3: 1})
+        sage: fundamental_group(f, braid_mon=bm[0]) # optional - sirocco
         Finitely presented group < x1, x2 | x1*x2*x1^-1*x2^-1*x1^-1*x2 >
 
     ::
@@ -1521,8 +1531,9 @@ def fundamental_group(f, simplified=True, projective=False, puiseux=False, braid
         sage: R.<x, y> = QQ[]
         sage: f = x^2 * y^2 + x^2 + y^2 - 2 * x * y  * (x + y + 1)
         sage: bm = braid_monodromy(f); print(bm) # optional - sirocco
-        [s1*s2*s0*s1*s0^-1*s1^-1*s0^-1, s0*s1^2*s0*s2*s1*(s0^-1*s1^-1)^2*s0^-1, (s0*s1)^2]
-        sage: g = fundamental_group(f, projective=True, braid_mon=bm); g # optional - sirocco
+        ([s1*s2*s0*s1*s0^-1*s1^-1*s0^-1, s0*s1^2*s0*s2*s1*(s0^-1*s1^-1)^2*s0^-1, (s0*s1)^2],
+         {1: 1, 2: 1, 3: 1, 4: 1})
+        sage: g = fundamental_group(f, projective=True, braid_mon=bm[0]); g # optional - sirocco
         Finitely presented group < x0, x1 | x1*x0^2*x1, x0^-1*x1^-1*x0^-1*x1*x0^-1*x1^-1 >
         sage: print (g.order(), g.abelian_invariants()) # optional - sirocco
         12 (4,)
@@ -1538,7 +1549,7 @@ def fundamental_group(f, simplified=True, projective=False, puiseux=False, braid
         while g.degree(y) < g.degree():
             g = g.subs({x: x + y})
     if braid_mon is None:
-        bm = braid_monodromy(g)
+        bm = braid_monodromy(g)[0]
     else:
         bm = braid_mon
     if bm == []:
@@ -1546,54 +1557,6 @@ def fundamental_group(f, simplified=True, projective=False, puiseux=False, braid
     else:
         d = bm[0].parent().strands()
     return fundamental_group_from_braid_mon(bm, degree=d, simplified=simplified, projective=projective, puiseux=puiseux)
-
-
-def braid_monodromy_arrangement(flist):
-    r"""
-    Compute the braid monodromy of a projection of the curve
-    defined by a list of polynomials with the extra information about the correspondence of strands
-    and elements of the list.
-
-    INPUT:
-
-    - ``flist`` -- a  tuple of polynomial with two variables, over a number field
-      with an embedding in the complex numbers
-
-
-    OUTPUT:
-
-    - A list of braids. The braids correspond to paths based in the same point;
-      each of this paths is the conjugated of a loop around one of the points
-      in the discriminant of the projection of ``f``.
-
-    - A dictionary attaching a number ``i`` (strand) to a number ``j`` (a polynomial in the list).
-
-    .. NOTE::
-
-        The projection over the `x` axis is used if there are no vertical asymptotes.
-        Otherwise, a linear change of variables is done to fall into the previous case.
-
-    EXAMPLES::
-
-        sage: from sage.schemes.curves.zariski_vankampen import braid_monodromy_arrangement # optional - sirocco
-        sage: R.<x, y> = QQ[]
-        sage: flist = [x^2 - y^3, x + 3 * y - 5]
-        sage: braid_monodromy_arrangement(flist)  # optional - sirocco
-        ([s1*s0*(s1*s2)^2*s0*s2^2*s0^-1*(s2^-1*s1^-1)^2*s0^-1*s1^-1,
-         s1*s0*(s1*s2)^2*(s0*s2^-1*s1*s2*s1*s2^-1)^2*(s2^-1*s1^-1)^2*s0^-1*s1^-1,
-         s1*s0*(s1*s2)^2*s2*s1^-1*s2^-1*s1^-1*s0^-1*s1^-1,
-         s1*s0*s2*s0^-1*s2*s1^-1],
-        {1: 1, 2: 2, 3: 1, 4: 1})
-
-    .. TODO::
-
-        Create a class ``arrangements_of_curves`` with a ``braid_monodromy`` method
-        it can be also a method for affine line arrangements.
-    """
-    f = prod(flist)
-    # if len(flist) == 1:
-    #     return (braid_monodromy(f), {})
-    return braid_monodromy(f, arrangement=flist, holdstrand=False)
 
 
 def fundamental_group_arrangement(flist, simplified=True, projective=False, puiseux=False, braid_mon=None):
@@ -1636,7 +1599,8 @@ def fundamental_group_arrangement(flist, simplified=True, projective=False, puis
 
     EXAMPLES::
 
-        sage: from sage.schemes.curves.zariski_vankampen import braid_monodromy_arrangement, fundamental_group_arrangement # optional - sirocco
+        sage: from sage.schemes.curves.zariski_vankampen import braid_monodromy # optional - sirocco
+        sage: from sage.schemes.curves.zariski_vankampen import fundamental_group_arrangement # optional - sirocco
         sage: R.<x, y> = QQ[]
         sage: flist = [x^2 - y^3, x + 3 * y - 5]
         sage: g, dic = fundamental_group_arrangement(flist) # optional - sirocco
@@ -1644,7 +1608,7 @@ def fundamental_group_arrangement(flist, simplified=True, projective=False, puis
         Finitely presented group < x0, x1, x2 | x2*x1*x2^-1*x1^-1, x1*x0*x1^-1*x0^-1, x2*x0*x2*x0^-1*x2^-1*x0^-1 >
         sage: dic # optional - sirocco
         {1: (1,), 2: (2,), 3: (-1, -3, -2, -1)}
-        sage: BM = braid_monodromy_arrangement(flist) # optional - sirocco
+        sage: BM = braid_monodromy(prod(flist), flist) # optional - sirocco
         sage: (g, dic) == fundamental_group_arrangement(flist, braid_mon=BM) # optional - sirocco
         True
         sage: fundamental_group_arrangement(flist, simplified=False, braid_mon=BM) # optional - sirocco
