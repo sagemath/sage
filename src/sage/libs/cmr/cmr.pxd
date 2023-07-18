@@ -1,7 +1,7 @@
 # -*- python -*-
 # distutils: libraries = cmr
 
-# (progn (replace-regexp "/[*]\\(.\\|\n\\)*?[*]/" "") (replace-regexp "[;{}]" "") (replace-regexp "CMR_EXPORT *" "") (replace-regexp "bool" "bint"))
+# (progn (replace-regexp "/[*]\\(.\\|\n\\)*?[*]/" "" nil (point) (point-max)) (replace-regexp "[;{}]" ""  nil (point) (point-max)) (replace-regexp "CMR_EXPORT *" ""  nil (point) (point-max)) (replace-regexp "bool" "bint" nil (point) (point-max)))
 
 cdef extern from "cmr/env.h":
     int CMR_OKAY
@@ -77,3 +77,98 @@ cdef extern from "cmr/matroid.h":
 
     CMR_ERROR CMRminorCreate(CMR* cmr, CMR_MINOR** pminor, size_t numPivots, CMR_SUBMAT* submatrix)
     CMR_ERROR CMRminorFree(CMR* cmr, CMR_MINOR** pminor)
+
+cdef extern from "cmr/element.h":
+
+    ctypedef int CMR_ELEMENT
+
+    const char* CMRelementString(CMR_ELEMENT element, char* buffer)
+    bint CMRelementIsValid(CMR_ELEMENT element)
+    CMR_ELEMENT CMRrowToElement(size_t row)
+    CMR_ELEMENT CMRcolumnToElement(size_t column)
+    bint CMRelementIsRow(CMR_ELEMENT element)
+    size_t CMRelementToRowIndex(CMR_ELEMENT element)
+    bint CMRelementIsColumn(CMR_ELEMENT element)
+    size_t CMRelementToColumnIndex(CMR_ELEMENT element)
+    CMR_ELEMENT CMRelementTranspose(CMR_ELEMENT element)
+
+cdef extern from "cmr/separation.h":
+
+    ctypedef struct CMR_SEPA:
+        unsigned char* rowsToPart
+        unsigned char* columnsToPart
+        size_t numRows[2]
+        size_t numColumns[2]
+        size_t* rows[2]
+        size_t* columns[2]
+        size_t extraRows[2][2]
+        size_t extraColumns[2][2]
+        unsigned char* indicatorMemory
+        size_t* elementMemory
+
+    CMR_ERROR CMRsepaCreate(CMR* cmr, size_t numRows, size_t numColumns, CMR_SEPA** psepa)
+    CMR_ERROR CMRsepaInitialize(CMR* cmr, CMR_SEPA* separation, size_t firstExtraRow0, size_t firstExtraColumn1, size_t firstExtraRow1, size_t firstExtraColumn0, size_t secondExtraRow0, size_t secondExtraColumn1, size_t secondExtraRow1, size_t secondExtraColumn0)
+    CMR_ERROR CMRsepaInitializeMatrix(CMR* cmr, CMR_SEPA* separation, CMR_CHRMAT* matrix, unsigned char totalRank)
+    CMR_ERROR CMRsepaFree(CMR* cmr, CMR_SEPA** psepa)
+    unsigned char CMRsepaRankBottomLeft(CMR_SEPA* sepa)
+    unsigned char CMRsepaRankTopRight(CMR_SEPA* sepa)
+    unsigned char CMRsepaRank(CMR_SEPA* sepa)
+    CMR_ERROR CMRsepaCheckTernary(CMR* cmr, CMR_SEPA* sepa, CMR_CHRMAT* matrix, CMR_SUBMAT* submatrix, bint* pisTernary, CMR_SUBMAT** psubmatrix)
+    CMR_ERROR CMRoneSum(CMR* cmr, CMR_CHRMAT* first, CMR_CHRMAT* second, CMR_CHRMAT** presult)
+    CMR_ERROR CMRtwoSum(CMR* cmr, CMR_CHRMAT* first, CMR_CHRMAT* second, CMR_ELEMENT firstMarker, CMR_ELEMENT secondMarker, CMR_CHRMAT** presult)
+    CMR_ERROR CMRthreeSum(CMR* cmr, CMR_CHRMAT* first, CMR_CHRMAT* second, CMR_ELEMENT firstMarker1, CMR_ELEMENT secondMarker1, CMR_ELEMENT firstMarker2, CMR_ELEMENT secondMarker2, CMR_CHRMAT** presult)
+
+cdef extern from "cmr/graph.h":
+    ctypedef int CMR_GRAPH_NODE
+    ctypedef int CMR_GRAPH_EDGE
+    ctypedef int CMR_GRAPH_ITER
+
+    ctypedef struct CMR_GRAPH_NODE_DATA:
+        int prev
+        int next
+        int firstOut
+
+    ctypedef struct CMR_GRAPH_ARC_DATA:
+        int target
+        int prev
+        int next
+
+    ctypedef struct CMR_GRAPH:
+        size_t numNodes
+        size_t memNodes
+        CMR_GRAPH_NODE_DATA* nodes
+        int firstNode
+        int freeNode
+        size_t numEdges
+        size_t memEdges
+        CMR_GRAPH_ARC_DATA* arcs
+        int freeEdge
+
+    size_t CMRgraphMemNodes(CMR_GRAPH* graph)
+    size_t CMRgraphNumNodes(CMR_GRAPH* graph)
+    size_t CMRgraphMemEdges(CMR_GRAPH* graph)
+    size_t CMRgraphNumEdges(CMR_GRAPH* graph)
+    CMR_GRAPH_NODE CMRgraphEdgeU(CMR_GRAPH* graph, CMR_GRAPH_EDGE e)
+    CMR_GRAPH_NODE CMRgraphEdgeV(CMR_GRAPH* graph, CMR_GRAPH_EDGE e)
+    CMR_ERROR CMRgraphCreateEmpty(CMR* cmr, CMR_GRAPH** pgraph, int memNodes, int memEdges)
+    CMR_ERROR CMRgraphFree(CMR* cmr, CMR_GRAPH** pgraph)
+    CMR_ERROR CMRgraphClear(CMR* cmr, CMR_GRAPH* graph)
+    CMR_ERROR CMRgraphAddNode(CMR* cmr, CMR_GRAPH* graph, CMR_GRAPH_NODE* pnode)
+    CMR_ERROR CMRgraphAddEdge(CMR* cmr, CMR_GRAPH* graph, CMR_GRAPH_NODE u, CMR_GRAPH_NODE v, CMR_GRAPH_EDGE* pedge)
+    CMR_ERROR CMRgraphDeleteNode(CMR* cmr, CMR_GRAPH* graph, CMR_GRAPH_NODE v)
+    CMR_ERROR CMRgraphDeleteEdge(CMR* cmr, CMR_GRAPH* graph, CMR_GRAPH_EDGE e)
+    CMR_GRAPH_NODE CMRgraphNodesFirst(CMR_GRAPH* graph)
+    bint CMRgraphNodesValid(CMR_GRAPH* graph, CMR_GRAPH_NODE v)
+    CMR_GRAPH_NODE CMRgraphNodesNext(CMR_GRAPH* graph, CMR_GRAPH_NODE v)
+    CMR_GRAPH_ITER CMRgraphIncFirst(CMR_GRAPH* graph, CMR_GRAPH_NODE v)
+    bint CMRgraphIncValid(CMR_GRAPH* graph, CMR_GRAPH_ITER i)
+    CMR_GRAPH_ITER CMRgraphIncNext(CMR_GRAPH* graph, CMR_GRAPH_ITER i)
+    CMR_GRAPH_EDGE CMRgraphIncEdge(CMR_GRAPH* graph, CMR_GRAPH_ITER i)
+    CMR_GRAPH_NODE CMRgraphIncSource(CMR_GRAPH* graph, CMR_GRAPH_ITER i)
+    CMR_GRAPH_NODE CMRgraphIncTarget(CMR_GRAPH* graph, CMR_GRAPH_ITER i)
+    CMR_GRAPH_ITER CMRgraphEdgesNext(CMR_GRAPH* graph, CMR_GRAPH_ITER i)
+    bint CMRgraphEdgesValid(CMR_GRAPH* graph, CMR_GRAPH_ITER i)
+    CMR_GRAPH_EDGE CMRgraphEdgesEdge(CMR_GRAPH* graph, CMR_GRAPH_ITER i)
+    # CMR_ERROR CMRgraphPrint(FILE* stream, CMR_GRAPH* graph)
+    CMR_ERROR CMRgraphMergeNodes(CMR* cmr, CMR_GRAPH* graph, CMR_GRAPH_NODE u, CMR_GRAPH_NODE v)
+    # CMR_ERROR CMRgraphCreateFromEdgeList(CMR* cmr, CMR_GRAPH** pgraph, CMR_ELEMENT** pedgeElements, char*** pnodeLabels, FILE* stream)
