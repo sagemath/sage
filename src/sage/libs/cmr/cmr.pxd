@@ -119,6 +119,7 @@ cdef extern from "cmr/separation.h":
     CMR_ERROR CMRthreeSum(CMR* cmr, CMR_CHRMAT* first, CMR_CHRMAT* second, CMR_ELEMENT firstMarker1, CMR_ELEMENT secondMarker1, CMR_ELEMENT firstMarker2, CMR_ELEMENT secondMarker2, CMR_CHRMAT** presult)
 
 cdef extern from "cmr/graph.h":
+
     ctypedef int CMR_GRAPH_NODE
     ctypedef int CMR_GRAPH_EDGE
     ctypedef int CMR_GRAPH_ITER
@@ -172,3 +173,28 @@ cdef extern from "cmr/graph.h":
     # CMR_ERROR CMRgraphPrint(FILE* stream, CMR_GRAPH* graph)
     CMR_ERROR CMRgraphMergeNodes(CMR* cmr, CMR_GRAPH* graph, CMR_GRAPH_NODE u, CMR_GRAPH_NODE v)
     # CMR_ERROR CMRgraphCreateFromEdgeList(CMR* cmr, CMR_GRAPH** pgraph, CMR_ELEMENT** pedgeElements, char*** pnodeLabels, FILE* stream)
+
+cdef extern from "cmr/graphic.h":
+
+    ctypedef struct CMR_GRAPHIC_STATISTICS:
+      size_t totalCount
+      double totalTime
+      size_t checkCount
+      double checkTime
+      size_t applyCount
+      double applyTime
+      size_t transposeCount
+      double transposeTime
+
+    CMR_ERROR CMRstatsGraphicInit(CMR_GRAPHIC_STATISTICS* stats)
+    # CMR_ERROR CMRstatsGraphicPrint(FILE* stream, CMR_GRAPHIC_STATISTICS* stats, const char* prefix)
+    CMR_ERROR CMRcomputeGraphicMatrix(CMR* cmr, CMR_GRAPH* graph, CMR_CHRMAT** pmatrix, CMR_CHRMAT** ptranspose, int numForestEdges, CMR_GRAPH_EDGE* forestEdges, int numCoforestEdges, CMR_GRAPH_EDGE* coforestEdges, bint* pisCorrectForest)
+    CMR_ERROR CMRtestGraphicMatrix(CMR* cmr, CMR_CHRMAT* matrix, bint* pisGraphic, CMR_GRAPH** pgraph, CMR_GRAPH_EDGE** pforestEdges, CMR_GRAPH_EDGE** pcoforestEdges, CMR_SUBMAT** psubmatrix, CMR_GRAPHIC_STATISTICS* stats, double timeLimit)
+    CMR_ERROR CMRtestCographicMatrix(CMR* cmr, CMR_CHRMAT* matrix, bint* pisCographic, CMR_GRAPH** pgraph, CMR_GRAPH_EDGE** pforestEdges, CMR_GRAPH_EDGE** pcoforestEdges, CMR_SUBMAT** psubmatrix, CMR_GRAPHIC_STATISTICS* stats, double timeLimit)
+    CMR_ERROR CMRtestGraphicColumnSubmatrixGreedy(CMR* cmr, CMR_CHRMAT* transpose, size_t* orderedColumns, CMR_SUBMAT** psubmatrix)
+
+
+# Our global CMR environment
+cdef CMR *cmr
+
+cdef CMR_CALL(CMR_ERROR _cmr_error)

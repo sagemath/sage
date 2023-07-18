@@ -4,6 +4,8 @@ Sparse Matrices with CMR
 
 from libc.stdint cimport SIZE_MAX
 
+from cysignals.signals cimport sig_on, sig_off
+
 from sage.rings.integer cimport Integer
 
 from .args cimport MatrixArgs_init
@@ -11,9 +13,6 @@ from .args cimport MatrixArgs_init
 
 cdef class Matrix_cmr_sparse(Matrix_sparse):
     pass
-
-
-cdef CMR *cmr = NULL
 
 
 cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
@@ -76,8 +75,7 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
     cdef _init_from_dict(self, dict d, int nrows, int ncols):
         if cmr == NULL:
             CMRcreateEnvironment(&cmr)
-        if CMRchrmatCreate(cmr, &self._mat, nrows, ncols, len(d)) != CMR_OKAY:
-            raise RuntimeError
+        CMR_CALL(CMRchrmatCreate(cmr, &self._mat, nrows, ncols, len(d)))
         for row in range(nrows):
             self._mat.rowSlice[row] = 0
         for (row, col), coeff in d.items():
@@ -94,14 +92,12 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
         for row in reversed(range(nrows)):
             self._mat.rowSlice[row + 1] = self._mat.rowSlice[row]
         self._mat.rowSlice[0] = 0
-        if CMRchrmatSortNonzeros(cmr, self._mat) != CMR_OKAY:
-            raise RuntimeError
+        CMR_CALL(CMRchrmatSortNonzeros(cmr, self._mat))
         self.set_immutable()
 
     cdef get_unsafe(self, Py_ssize_t i, Py_ssize_t j):
         cdef size_t index
-        if CMRchrmatFindEntry(self._mat, i, j, &index) != CMR_OKAY:
-            raise RuntimeError
+        CMR_CALL(CMRchrmatFindEntry(self._mat, i, j, &index))
         if index == SIZE_MAX:
             return Integer(0)
         return Integer(self._mat.entryValues[index])
@@ -160,21 +156,30 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
             False
         """
         cdef bint result
-        if CMRtestUnimodularity(cmr, self._mat, &result) != CMR_OKAY:
-            raise RuntimeError
+
+        sig_on()
+        CMR_CALL(CMRtestUnimodularity(cmr, self._mat, &result))
+        sig_off()
+
         return result
 
     def is_strongly_unimodular(self):
         cdef bint result
-        if CMRtestStrongUnimodularity(cmr, self._mat, &result) != CMR_OKAY:
-            raise RuntimeError
+
+        sig_on()
+        CMR_CALL(CMRtestStrongUnimodularity(cmr, self._mat, &result))
+        sig_off()
+
         return result
 
     def modulus(self):
         cdef bint result
         cdef size_t k
-        if CMRtestKmodularity(cmr, self._mat, &result, &k) != CMR_OKAY:
-            raise RuntimeError
+
+        sig_on()
+        CMR_CALL(CMRtestKmodularity(cmr, self._mat, &result, &k))
+        sig_off()
+
         if result:
             return Integer(k)
         else:
@@ -183,8 +188,11 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
     def strong_modulus(self):
         cdef bint result
         cdef size_t k
-        if CMRtestStrongKmodularity(cmr, self._mat, &result, &k) != CMR_OKAY:
-            raise RuntimeError
+
+        sig_on()
+        CMR_CALL(CMRtestStrongKmodularity(cmr, self._mat, &result, &k))
+        sig_off()
+
         if result:
             return Integer(k)
         else:
@@ -195,3 +203,49 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
 
     def is_strongly_k_modular(self, k):
         return self.strong_modulus() <= k
+
+    def is_graphic(self, *, time_limit=60.0, certificate=False):
+        r"""
+        EXAMPLES::
+
+            sage: from sage.matrix.matrix_cmr_sparse import Matrix_cmr_chr_sparse
+            sage: M = Matrix_cmr_chr_sparse(MatrixSpace(ZZ, 3, 2, sparse=True),
+            ....:                           [[1, 0], [-1, 1], [0, -1]]); M
+            [ 1  0]
+            [-1  1]
+            [ 0 -1]
+            sage: M.is_graphic()
+            True
+
+        TESTS::
+
+            sage: M.is_graphic(time_limit=0.0)
+            Traceback (most recent call last):
+            ...
+            RuntimeError: Time limit exceeded
+        """
+        cdef bint result
+        cdef CMR_GRAPH *graph
+        cdef CMR_GRAPH_EDGE* forest_edges
+        cdef CMR_GRAPH_EDGE* coforest_edges
+        cdef CMR_SUBMAT* submatrix
+        cdef CMR_GRAPHIC_STATISTICS stats
+
+        if certificate:
+            sig_on()
+            CMR_CALL(CMRtestGraphicMatrix(cmr, self._mat, &result, &graph, &forest_edges,
+                                        &coforest_edges, &submatrix, &stats, time_limit))
+            sig_off()
+            # FIXME: this segfaults despite the sig_on/sig_off
+        else:
+            sig_on()
+            CMR_CALL(CMRtestGraphicMatrix(cmr, self._mat, &result, NULL, NULL,
+                                          NULL, NULL, &stats, time_limit))
+            sig_off()
+
+        if certificate:
+            raise NotImplementedError
+        return result
+
+    def is_cographic(self, certificate=False):
+         raise NotImplementedError
