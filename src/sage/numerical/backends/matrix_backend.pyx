@@ -66,7 +66,7 @@ cdef class MatrixBackend(GenericBackend):
             kwds = {}
 
         self.objective_function = matrix(base_ring, 1, [], **kwds)
-        self.G_matrix = matrix(base_ring, 0, [], **kwds)
+        self.G_matrix = matrix(base_ring, [], **kwds)
         self.row_lower_bound = matrix(base_ring, 1, [], **kwds)
         self.row_lower_bound_indicator = []
         self.row_upper_bound = matrix(base_ring, 1, [], **kwds)
@@ -157,9 +157,9 @@ cdef class MatrixBackend(GenericBackend):
             obj = 0.0
 
         if self.nrows() == 0:
-            self.G_matrix = matrix([0.0])
+            pass
         else:
-            self.G_matrix = self.G_matrix.augment(matrix([0 for i in range(self.nrows())]))
+            self.G_matrix = self.G_matrix.augment(matrix([0.0 for i in range(self.nrows())]))
         
         if lower_bound is None:
             self.col_lower_bound_indicator.append(False)
@@ -180,7 +180,8 @@ cdef class MatrixBackend(GenericBackend):
         self.is_binary.append(binary)
         self.is_continuous.append(continuous)
         self.is_integer.append(integer)
-        return len(self.col_name_var) - 1
+
+        return self.objective_function.dimensions()[1] - 1
 
     cpdef set_variable_type(self, int variable, int vtype):
         """
@@ -344,14 +345,25 @@ cdef class MatrixBackend(GenericBackend):
 
         for idx, ind in enumerate(indices):
             column[ind] = coeffs[idx]
-        
-        self.G_matrix = self.G_matrix.augment(matrix(len(column), column))
+
+        if self.ncols() == 0:
+            self.G_matrix = matrix(len(column), column)
+        else:
+            self.G_matrix = self.G_matrix.augment(matrix(len(column), column))
 
         self.col_lower_bound_indicator.append(None)
-        self.col_lower_bound.augment(matrix([0.0]))
+        if self.col_lower_bound.dimensions()[1] == 0:
+            self.col_lower_bound = matrix(1, [0.0])
+        else:
+            self.col_lower_bound = self.col_lower_bound.augment(matrix([0.0]))
+
         self.col_upper_bound_indicator.append(None)
-        self.col_upper_bound.augment(matrix([0.0]))
-        self.objective_function.augment(matrix([0.0]))
+        if self.col_upper_bound.dimensions()[1] == 0:
+            self.col_upper_bound = matrix(1, [0.0])
+        else:
+            self.col_upper_bound = self.col_upper_bound.augment(matrix([0.0]))
+            
+        self.objective_function = self.objective_function.augment(matrix([0.0]))
         self.col_name_var.append(None)
 
     cpdef add_linear_constraint(self, coefficients, lower_bound, upper_bound, name=None):
@@ -387,12 +399,14 @@ cdef class MatrixBackend(GenericBackend):
         """
         coefficients = list(coefficients)
         for c in coefficients:
-            while c[0] > self.G_matrix.dimensions()[1] - 1:
+            while c[0] > self.ncols() - 1:
                 self.add_variable()
-        if self.ncols() == 0:
-            self.G_matrix = matrix([0.0])
+                     
+        if self.G_matrix.dimensions()[0] == 0:
+            self.G_matrix = matrix(1, [0.0 for i in range(len(coefficients))])
         else:
-            self.G_matrix = self.G_matrix.stack(matrix([0 for i in range(self.ncols())]))
+            self.G_matrix = self.G_matrix.stack(matrix([0.0 for i in range(self.G_matrix.dimensions()[1])]))
+
         for c in coefficients:
             self.G_matrix[-1, c[0]] = c[1]
 
@@ -428,7 +442,7 @@ cdef class MatrixBackend(GenericBackend):
             2
         """
 
-        return self.G_matrix.dimensions()[1]
+        return self.objective_function.dimensions()[1]
 
     cpdef int nrows(self):
         """
@@ -446,7 +460,7 @@ cdef class MatrixBackend(GenericBackend):
             sage: p.nrows()                                         
             2
         """
-        return self.G_matrix.dimensions()[0]
+        return self.row_upper_bound.dimensions()[1]
 
 
     cpdef bint is_maximization(self):
@@ -522,10 +536,11 @@ cdef class MatrixBackend(GenericBackend):
         coeff = []
         idx = []
         index = 0
-        for col in self.G_matrix:
-            if col[i] != 0:
+
+        for i in self.G_matrix[i]:
+            if i != 0:
                 idx.append(index)
-                coeff.append(col[i])
+                coeff.append(i)
             index += 1
         return (idx, coeff)
 
@@ -765,6 +780,7 @@ cdef class MatrixBackend(GenericBackend):
             (0.0, 5)
         """
         if value is not False:
+            self.col_upper_bound_indicator[index] = True
             self.col_upper_bound[0, index] = value
         else:
             return self.col_upper_bound[0, index]
@@ -794,6 +810,7 @@ cdef class MatrixBackend(GenericBackend):
             (5, None)
         """
         if value is not False:
+            self.col_lower_bound_indicator[index] = True
             self.col_lower_bound[0, index] = value
         else:
             return self.col_lower_bound[0, index]
