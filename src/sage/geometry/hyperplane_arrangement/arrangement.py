@@ -988,7 +988,8 @@ class HyperplaneArrangementElement(Element):
             \Psi_A(z) := sum_{X \in L} |\mu(B,X)| z^{\dim X},
 
         where `L` is the intersection poset of `A`, `B` is the minimal
-        element of `L` and `\mu` is the Möbius function of `L`.
+        element of `L` (here, the `0` dimensional subspace), and
+        `\mu` is the Möbius function of `L`.
 
         OUTPUT:
 
@@ -1034,10 +1035,11 @@ class HyperplaneArrangementElement(Element):
 
         .. MATH::
 
-            P_A(z) := sum_{X \in L} |\mu(B,X)| (z - 1)^{\codim X},
+            P_A(z) := sum_{X \in L} |\mu(B,X)| (z - 1)^{\mathrm{codim} X},
 
         where `L` is the intersection poset of `A`, `B` is the minimal
-        element of `L` and `\mu` is the Möbius function of `L`.
+        element of `L` (here, the `0` dimensional subspace), and
+        `\mu` is the Möbius function of `L`.
 
         OUTPUT:
 
