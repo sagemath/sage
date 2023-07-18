@@ -2294,16 +2294,18 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
         # After moving from QQbar to K (like QQ), we need to normalize ``f``
         # to match the normalized resultant.
         f.normalize_coordinates()
+        O = K.maximal_order()
 
-        # If our map and point are defined on P^1(QQ), use Wells' Algorithm.
+        # The original implementation uses Wells' Algorithm if the maps and
+        # points are defined on P^1(QQ). Current implementation extends this
+        # to general number fields.
         # Otherwise, apply the usual algorithm using local Green's functions:
         rel_dim = self.codomain().ambient_space().dimension_relative()
 
-        if (K is QQ) and rel_dim == 1:
+        if rel_dim == 1:
             # Write our point with coordinates whose GCD is 1
             Q.normalize_coordinates()
-            if Q.parent().value_ring() is QQ:
-                Q.clear_denominators()
+            Q.clear_denominators()
 
             # Assure integer coefficients
             coeffs = f[0].coefficients() + f[1].coefficients()
@@ -2312,10 +2314,10 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
                 t = lcm(t, c.denominator())
             A = t * f[0]
             B = t * f[1]
-            Res = f.resultant(normalize=True).abs()
+            Res = O(f.resultant(normalize=True).abs())
             H = 0
-            x_i = Q[0]
-            y_i = Q[1]
+            x_i = O(Q[0])
+            y_i = O(Q[1])
             d = self.degree()
             R = RealField(prec)
             N = kwds.get('N', 10)
@@ -2325,7 +2327,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
             if Res > 1:
                 if err is not None:
                     err /= 2
-                    N = ceil((R(Res).log().log() - R(d-1).log() - R(err).log()) / (R(d).log()))
+                    N = ceil((R(Res).log().log() - R(d-1).log() - R(err).log()) / R(d).log())
                     if N < 1:
                         N = 1
 
@@ -2333,17 +2335,24 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
                     kwds.update({'N': N})
 
                 for n in range(N):
-                    x = A(x_i, y_i) % Res**(N-n)
-                    y = B(x_i, y_i) % Res**(N-n)
+                    order_quotient = O.quotient(O.fraction_ideal(Res**(N - n)))
+                    # x = A(x_i, y_i) % Res**(N-n)
+                    # y = B(x_i, y_i) % Res**(N-n)
+                    x = O(order_quotient(A(x_i, y_i)).lift())
+                    y = O(order_quotient(B(x_i, y_i)).lift())
                     g = gcd([x, y, Res])
-                    H = H + R(g).abs().log() / (d**(n+1))
-                    x_i = x / g
-                    y_i = y / g
+                    # H = H + R(g).abs().log() / (d**(n+1))
+                    H += R(g.norm()).abs().log() / d**(n+1)
+                    x_i = O(x / g)
+                    y_i = O(y / g)
 
             # It looks different than Wells' Algorithm, because of the difference
             # between what Wells' calls H_infty and what Green's function returns
             # for the infinite place.
-            h = f.green_function(Q, 0, **kwds) - H + R(t).log()
+            # h = f.green_function(Q, 0, **kwds) - H + R(t).log()
+            h = Q.global_height() - H
+            for v in K.places():
+                h += f.green_function(Q, v) + R(v(t).abs()).log()
 
             # The value returned by Wells' Algorithm may be negative.
             # As the canonical height is always non-negative, hence return 0 if
