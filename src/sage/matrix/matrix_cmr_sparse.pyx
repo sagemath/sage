@@ -158,8 +158,10 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
         cdef bint result
 
         sig_on()
-        CMR_CALL(CMRtestUnimodularity(cmr, self._mat, &result))
-        sig_off()
+        try:
+            CMR_CALL(CMRtestUnimodularity(cmr, self._mat, &result))
+        finally:
+            sig_off()
 
         return result
 
@@ -167,8 +169,10 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
         cdef bint result
 
         sig_on()
-        CMR_CALL(CMRtestStrongUnimodularity(cmr, self._mat, &result))
-        sig_off()
+        try:
+            CMR_CALL(CMRtestStrongUnimodularity(cmr, self._mat, &result))
+        finally:
+            sig_off()
 
         return result
 
@@ -177,8 +181,10 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
         cdef size_t k
 
         sig_on()
-        CMR_CALL(CMRtestKmodularity(cmr, self._mat, &result, &k))
-        sig_off()
+        try:
+            CMR_CALL(CMRtestKmodularity(cmr, self._mat, &result, &k))
+        finally:
+            sig_off()
 
         if result:
             return Integer(k)
@@ -190,8 +196,10 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
         cdef size_t k
 
         sig_on()
-        CMR_CALL(CMRtestStrongKmodularity(cmr, self._mat, &result, &k))
-        sig_off()
+        try:
+            CMR_CALL(CMRtestStrongKmodularity(cmr, self._mat, &result, &k))
+        finally:
+            sig_off()
 
         if result:
             return Integer(k)
@@ -216,6 +224,10 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
             [ 0 -1]
             sage: M.is_graphic()
             True
+            sage: M.is_graphic(certificate=True)
+            Traceback (most recent call last):
+            ...
+            NotImplementedError
 
         TESTS::
 
@@ -225,23 +237,26 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
             RuntimeError: Time limit exceeded
         """
         cdef bint result
-        cdef CMR_GRAPH *graph
-        cdef CMR_GRAPH_EDGE* forest_edges
-        cdef CMR_GRAPH_EDGE* coforest_edges
-        cdef CMR_SUBMAT* submatrix
+        cdef CMR_GRAPH *graph = NULL
+        cdef CMR_GRAPH_EDGE* forest_edges = NULL
+        cdef CMR_GRAPH_EDGE* coforest_edges = NULL
+        cdef CMR_SUBMAT* submatrix = NULL
         cdef CMR_GRAPHIC_STATISTICS stats
 
         if certificate:
             sig_on()
-            CMR_CALL(CMRtestGraphicMatrix(cmr, self._mat, &result, &graph, &forest_edges,
-                                        &coforest_edges, &submatrix, &stats, time_limit))
-            sig_off()
-            # FIXME: this segfaults despite the sig_on/sig_off
+            try:
+                CMR_CALL(CMRtestGraphicMatrix(cmr, self._mat, &result, &graph, &forest_edges,
+                                              &coforest_edges, &submatrix, &stats, time_limit))
+            finally:
+                sig_off()
         else:
             sig_on()
-            CMR_CALL(CMRtestGraphicMatrix(cmr, self._mat, &result, NULL, NULL,
-                                          NULL, NULL, &stats, time_limit))
-            sig_off()
+            try:
+                CMR_CALL(CMRtestGraphicMatrix(cmr, self._mat, &result, NULL, NULL,
+                                              NULL, NULL, &stats, time_limit))
+            finally:
+                sig_off()
 
         if certificate:
             raise NotImplementedError
