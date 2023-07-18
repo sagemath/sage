@@ -90,4 +90,4 @@ def HyperbolicPlane_quadratic_form(R, r=1):
         raise TypeError("the multiplicity r must be a natural number")
 
     H = QuadraticForm(R, 2, [0, 1, 0])
-    return sum([H  for i in range(r - 1)], H)
+    return sum([H for i in range(r - 1)], H)

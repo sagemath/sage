@@ -23,7 +23,7 @@ REFERENCES:
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 #*****************************************************************************
 
 from libc.math cimport log, ceil
@@ -134,7 +134,8 @@ def OP_represent(int n, merges, perm):
         if not OP_find(OP, i) == i:
             print("Failed at i = %d!" % i)
             good = False
-    if good: print("Each element reports itself as its root.")
+    if good:
+        print("Each element reports itself as its root.")
     print("Merging:")
     for i,j in merges:
         OP_join(OP, i, j)
@@ -296,14 +297,16 @@ cdef int PS_first_smallest(PartitionStack *PS, bitset_t b, int *second_pos=NULL,
                 n = i - j + 1
                 location = j
             j = i + 1
-        if PS.levels[i] == -1: break
+        if PS.levels[i] == -1:
+            break
         i += 1
     # location now points to the beginning of the first, smallest,
     # nontrivial cell
     i = location
     while 1:
         bitset_flip(b, PS.entries[i])
-        if PS.levels[i] <= PS.depth: break
+        if PS.levels[i] <= PS.depth:
+            break
         i += 1
 
     if second_pos != NULL:
@@ -480,7 +483,8 @@ def PS_represent(partition, splits):
     if not PS.degree == n or not PS.depth == 0:
         print("Incorrect degree or depth!")
         good = False
-    if good: print("Everything seems in order, deallocating.")
+    if good:
+        print("Everything seems in order, deallocating.")
     PS_dealloc(PS)
     print("Deallocated.")
     print("Creating PartitionStack from partition %s."%partition)
@@ -633,11 +637,13 @@ cdef inline int SC_realloc_gens(StabilizerChain *SC, int level, int size):
     cdef int n = SC.degree
 
     temp = <int *> sig_realloc( SC.generators[level],   n * size * sizeof(int) )
-    if temp is NULL: return 1
+    if temp is NULL:
+        return 1
     SC.generators[level] = temp
 
     temp = <int *> sig_realloc( SC.gen_inverses[level], n * size * sizeof(int) )
-    if temp is NULL: return 1
+    if temp is NULL:
+        return 1
     SC.gen_inverses[level] = temp
 
     SC.array_size[level] = size
@@ -751,7 +757,8 @@ cdef int SC_realloc_bitsets(StabilizerChain *SC, unsigned long size):
     Returns 1 in case of an allocation failure.
     """
     cdef unsigned long size_old = SC.gen_used.size
-    if size <= size_old: return 0
+    if size <= size_old:
+        return 0
     cdef unsigned long new_size = size_old
     while new_size < size:
         new_size *= 2
@@ -1041,8 +1048,10 @@ cdef int SC_insert_and_sift(StabilizerChain *SC, int level, int *pi, int num_per
                     break
             else:
                 bitset_set(&SC.gen_is_id, perm_gen_index)
-            if b != -1: break
-        if b == -1: return 0
+            if b != -1:
+                break
+        if b == -1:
+            return 0
     if sift and level == SC.base_size:
         SC_add_base_point(SC, b)
     else:
@@ -1064,18 +1073,22 @@ cdef int SC_insert_and_sift(StabilizerChain *SC, int level, int *pi, int num_per
         for i from 0 <= i < SC.orbit_sizes[level]:
             x = SC.base_orbits[level][i]
             for perm_gen_index from 0 <= perm_gen_index < num_perms:
-                if sift and bitset_check(&SC.gen_is_id, perm_gen_index): continue
+                if sift and bitset_check(&SC.gen_is_id, perm_gen_index):
+                    continue
                 perm = pi + n*perm_gen_index
                 if SC.parents[level][perm[x]] == -1:
                     # now we have an x which maps to a new point under perm,
                     re_treed = 1
-                    if sift: bitset_set(&SC.gen_used, perm_gen_index)
+                    if sift:
+                        bitset_set(&SC.gen_used, perm_gen_index)
                     if SC_re_tree(SC, level, perm, x):
                         return 1
                     start_over = 1 # we must look anew
                     break
-            if start_over: break
-            if not re_treed: continue
+            if start_over:
+                break
+            if not re_treed:
+                continue
             for perm_gen_index from 0 <= perm_gen_index < old_num_gens:
                 perm = SC.generators[level] + n*perm_gen_index
                 if SC.parents[level][perm[x]] == -1:
@@ -1084,7 +1097,8 @@ cdef int SC_insert_and_sift(StabilizerChain *SC, int level, int *pi, int num_per
                         return 1
                     start_over = 1 # we must look anew
                     break
-            if start_over: break
+            if start_over:
+                break
             for j from level < j < SC.base_size:
                 for perm_gen_index from 0 <= perm_gen_index < SC.num_gens[j]:
                     perm = SC.generators[j] + n*perm_gen_index
@@ -1361,7 +1375,8 @@ def SC_test_list_perms(list L, int n, int limit, bint gap, bint limit_complain, 
     if gap:
         G = PermutationGroup([[i+1 for i in p] for p in L])
         if G.order() > limit:
-            if limit_complain: print('TOO BIG')
+            if limit_complain:
+                print('TOO BIG')
             return
     SC = SC_new(n)
     cdef int *perm = <int *>sig_malloc(n * (len(L)+3) * sizeof(int))

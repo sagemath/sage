@@ -30,7 +30,7 @@ EXAMPLES::
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
 
@@ -44,6 +44,7 @@ from sage.repl.rich_output.output_browser import (
     OutputHtml,
 )
 from sage.repl.rich_output.preferences import DisplayPreferences
+
 
 def _required_threejs_version():
     """
@@ -59,6 +60,7 @@ def _required_threejs_version():
     import sage.env
     with open(os.path.join(sage.env.SAGE_EXTCODE, 'threejs', 'threejs-version.txt')) as f:
         return f.read().strip()
+
 
 class DisplayException(Exception):
     """
