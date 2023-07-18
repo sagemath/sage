@@ -222,12 +222,18 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
             [ 1  0]
             [-1  1]
             [ 0 -1]
-            sage: M.is_graphic()
+            sage: M.is_graphic()  # ?? should it not check 0/1-ness?
             True
-            sage: M.is_graphic(certificate=True)
-            Traceback (most recent call last):
-            ...
-            NotImplementedError
+            sage: result, certificate = M.is_graphic(certificate=True)
+            sage: graph, forest_edges, coforest_edges = certificate
+            sage: graph.vertices(sort=True)  # what is the meaning of the numbers?
+            [1, 2, 7, 12]
+            sage: graph.edges(sort=True, labels=False)
+            [(1, 2), (1, 7), (1, 12), (2, 7), (7, 12)]
+            sage: forest_edges    # indexed by rows of M
+            ((1, 2), (7, 1), (12, 7))
+            sage: coforest_edges  # indexed by cols of M
+            ((2, 7), (1, 12))
 
         TESTS::
 
@@ -243,24 +249,49 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
         cdef CMR_SUBMAT* submatrix = NULL
         cdef CMR_GRAPHIC_STATISTICS stats
 
-        if certificate:
-            sig_on()
-            try:
+        sig_on()
+        try:
+            if certificate:
                 CMR_CALL(CMRtestGraphicMatrix(cmr, self._mat, &result, &graph, &forest_edges,
                                               &coforest_edges, &submatrix, &stats, time_limit))
-            finally:
-                sig_off()
-        else:
-            sig_on()
-            try:
+            else:
                 CMR_CALL(CMRtestGraphicMatrix(cmr, self._mat, &result, NULL, NULL,
                                               NULL, NULL, &stats, time_limit))
-            finally:
-                sig_off()
+        finally:
+            sig_off()
 
-        if certificate:
-            raise NotImplementedError
-        return result
+        if not certificate:
+            return result
+
+        # Until we have a proper CMR Graph backend, we just create a Sage graph with whatever backend
+        from sage.graphs.graph import Graph
+
+        def vertices():
+            i = CMRgraphNodesFirst(graph)
+            while CMRgraphNodesValid(graph, i):
+                yield i
+                i = CMRgraphNodesNext(graph, i)
+
+        def edge(e):
+            return Integer(CMRgraphEdgeU(graph, e)), Integer(CMRgraphEdgeV(graph, e))
+
+        def edges():
+            i = CMRgraphEdgesFirst(graph)
+            while CMRgraphEdgesValid(graph, i):
+                e = CMRgraphEdgesEdge(graph, i)
+                yield edge(e)
+                i = CMRgraphEdgesNext(graph, i)
+
+        if result:
+            sage_graph = Graph([list(vertices()), list(edges())])
+            sage_forest_edges = tuple(edge(forest_edges[row])
+                                      for row in range(self.nrows()))
+            sage_coforest_edges = tuple(edge(coforest_edges[column])
+                                        for column in range(self.ncols()))
+            return True, (sage_graph, sage_forest_edges, sage_coforest_edges)
+
+        return False, None  # submatrix TBD
+
 
     def is_cographic(self, certificate=False):
          raise NotImplementedError
