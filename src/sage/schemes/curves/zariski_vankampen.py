@@ -877,7 +877,7 @@ def braid_in_segment(glist, x0, x1, precision=dict()):
     return initialbraid * centralbraid * finalbraid
 
 
-def geometric_basis(G, E, EC, p, dual_graph):
+def geometric_basis(G, E, EC0, p, dual_graph):
     r"""
     Return a geometric basis, based on a vertex.
 
@@ -888,7 +888,7 @@ def geometric_basis(G, E, EC, p, dual_graph):
     - ``E`` -- a subgraph of ``G`` which is a cycle; it corresponds to the bounded edges touching
       an unbounded region of a Voronoi Diagram
 
-    - ``EC`` -- A counterclockwise orientation of the vertices of ``E``
+    - ``EC0`` -- A counterclockwise orientation of the vertices of ``E``
 
     - ``p`` -- a vertex of ``E``
 
@@ -946,8 +946,8 @@ def geometric_basis(G, E, EC, p, dual_graph):
           A vertex at (-2, 2),
           A vertex at (-2, -2)]]
     """
-    i = EC.index(p)
-    EC = EC[i:-1] + EC[:i + 1]   # A counterclockwise eulerian circuit on the boundary, starting and ending at p
+    i = EC0.index(p)
+    EC = EC0[i:-1] + EC0[:i + 1]   # A counterclockwise eulerian circuit on the boundary, starting and ending at p
     if G.size() == E.size():
         if E.is_cycle():
             return [EC]
@@ -970,14 +970,11 @@ def geometric_basis(G, E, EC, p, dual_graph):
     distancequotients = [(E.distance(q, v)**2 / Internal.distance(q, v), v) for v in EI]
     r = max(distancequotients)[1]
     cutpath = Internal.shortest_path(q, r)
-    cutpath_in_E = False
-    i = 1
-    while not cutpath_in_E and i < len(cutpath) - 1:
-        cutpath_in_E = cutpath[i] in EC
-        if cutpath_in_E:
-            r = cutpath[i]
+    for i, v in enumerate(cutpath):
+        if i > 0 and v in EC:
+            r = v
             cutpath = cutpath[:i+1]
-        i = i+1
+            break
     qi = EC.index(q)
     ri = EC.index(r)
     Ecut = copy(E)
@@ -993,12 +990,19 @@ def geometric_basis(G, E, EC, p, dual_graph):
         E2.add_edge(q, r, None)
         if r == EC[qi + 1]:
             E1, E2 = E2, E1
+    for v in [q, r]:
+        for n in E.neighbors(v):
+            if n in E1 and n not in (q, r):
+                E1.add_edge(v, n, None)
+            if n in E2 and n not in (q, r):
+                E2.add_edge(v, n, None)
 
+    for i in range(len(cutpath) - 1):
+        E1.add_edge(cutpath[i], cutpath[i + 1], None)
+        E2.add_edge(cutpath[i], cutpath[i + 1], None)
     Gd = copy(dual_graph)
-    cp1 = [(e, cutpath[i + 1], None) for i, e in enumerate(cutpath[: -1])]
-    cp1 += [(cutpath[i + 1], e, None) for i, e in enumerate(cutpath[: -1])]
-    borra = [_ for _ in Gd.edges(sort=True) if _[2] in cp1]
-    Gd.delete_edges(borra)
+    to_delete = [e for e in Gd.edges(sort=True) if e[0] in cutpath and e[1] in cutpath]
+    Gd.delete_edges(to_delete)
     Gd1, Gd2 = Gd.connected_components_subgraphs()
     edges_2 = []
     vertices_2 = []
@@ -1020,22 +1024,11 @@ def geometric_basis(G, E, EC, p, dual_graph):
         G1, G2 = G2, G1
         Gd1, Gd2 = Gd2, Gd1
 
-    for v in [q, r]:
-        for n in E.neighbors(v):
-            if n in E1 and n not in (q, r):
-                E1.add_edge(v, n, None)
-            if n in E2 and n not in (q, r):
-                E2.add_edge(v, n, None)
-
-    for i in range(len(cutpath) - 1):
-        E1.add_edge(cutpath[i], cutpath[i + 1], None)
-        E2.add_edge(cutpath[i], cutpath[i + 1], None)
-
     if qi < ri:
-        EC1 = [EC[j] for j in range(qi, ri)] + [_ for _ in reversed(cutpath)]
+        EC1 = [EC[j] for j in range(qi, ri)] + list(reversed(cutpath))
         EC2 = cutpath + list(EC[ri + 1: -1] + EC[: qi + 1])
     else:
-        EC1 = list(EC[qi:] + EC[1:ri]) + [_ for _ in reversed(cutpath)]
+        EC1 = list(EC[qi:] + EC[1:ri]) + list(reversed(cutpath))
         EC2 = cutpath + list(EC[ri + 1:qi + 1])
 
     gb1 = geometric_basis(G1, E1, EC1, q, Gd1)
@@ -1057,7 +1050,46 @@ def geometric_basis(G, E, EC, p, dual_graph):
     return resul
 
 
-def braid_monodromy(f, arrangement=(), computebm=True, holdstrand=False):
+def strand_components(f, flist, p1):
+    r"""
+    Compute only the assignment from strands to elements of ``flist``.
+
+    INPUT:
+
+    - ``flist`` -- a  list of polynomial with two variables, over a number field
+      with an embedding in the complex numbers
+
+    OUTPUT:
+
+    - A dictionary attaching a number `i` (strand) to a number `j` (a polynomial in the list).
+
+    EXAMPLES::
+
+        sage: from sage.schemes.curves.zariski_vankampen import strand_components # optional - sirocco
+        sage: R.<x, y> = QQ[]
+        sage: flist = [x^2 - y^3, x + 3 * y - 5]
+        sage: strand_components(flist) # optional - sirocco
+        {1: 1, 2: 2, 3: 1, 4: 1}
+    """
+    x, y = f.parent().gens()
+    F = flist[0].base_ring()
+    if len(flist) == 1:
+        d = f.degree()
+        dic = {j + 1: 1 for j in range(d)}
+        return dic
+    strands = {}
+    roots_base = []
+    for i, h in enumerate(flist):
+        h0 = h.subs({x: p1})
+        h1 = F[y](h0)
+        rt = h1.roots(QQbar, multiplicities=False)
+        roots_base += [(_, i) for _ in rt]
+    roots_base.sort()
+    strands = {i + 1: par[1] + 1 for i, par in enumerate(roots_base)}  # quitar +1 despues de revision
+    return (roots_base, strands)
+
+
+def braid_monodromy(f, arrangement=()):
     r"""
     Compute the braid monodromy of a projection of the curve defined by a polynomial.
 
@@ -1066,28 +1098,16 @@ def braid_monodromy(f, arrangement=(), computebm=True, holdstrand=False):
     - ``f`` -- a polynomial with two variables, over a number field
       with an embedding in the complex numbers
 
-    - ``arrangement`` -- an optional tuple of polynomials whose product equals ``f``,
-      in order to provide information for ``braid_monodromy_arrangement``.
+    - ``arrangement`` -- an optional tuple of polynomials whose product equals ``f``.
 
-    - ``computebm`` -- an optional boolean variable (default ``True``) to actually
-      compute the braid monodromy
-
-    -  ``holdstrand`` -- an optional boolean variable (default ``False``) to stop
-       the computation of string assignment.
 
     OUTPUT:
 
-    If ``computebm`` is set to ``True`` and ``arrangement`` contains only one element, a list of braids.
+    A list of braids and a dictionary.
     The braids correspond to paths based in the same point;
-    each of this paths is the conjugated of a loop around one of the points
-    in the discriminant of the projection of ``f``.
-
-    If ``computebm`` is set to ``True`` and ``arrangement`` contains more than one element,
-    either assignment of the roots over the base point to elements of
-    ''arrangement`` (``holdstrand`` set to ``True``) or
-    the assignment of strands to elements of ``arrangement`` (``holdstrand`` set to ``True``).
-
-    If ``computebm`` is set to ``False`` the second part of the above is given (depending on ``holdstrand``).
+    each of these paths is the conjugated of a loop around one of the points
+    in the discriminant of the projection of ``f``. The dictionary assigns each
+    strand to the index of the corresponding factor in ``arrangement``.
 
     .. NOTE::
 
@@ -1106,28 +1126,20 @@ def braid_monodromy(f, arrangement=(), computebm=True, holdstrand=False):
          s1*s0*s2*s0^-1*s2*s1^-1]
         sage: flist = (x^2 - y^3, x + 3 * y - 5)
         sage: bm1 = braid_monodromy(f, arrangement=flist) # optional - sirocco
-        sage: bm1[0] == bm  # optional - sirocco
+        sage: bm1[0] == bm[0]  # optional - sirocco
         True
         sage: bm1[1]  # optional - sirocco
         {1: 1, 2: 2, 3: 1, 4: 1}
-        sage: braid_monodromy(f, arrangement=flist, computebm=False) == bm1[1]  # optional - sirocco
-        True
-        sage: bm2 = braid_monodromy(f, arrangement=flist, holdstrand=True)  # optional - sirocco
-        sage: bm2[0] == bm  # optional - sirocco
-        True
-        sage: bm2[1] == braid_monodromy(f, arrangement=flist, computebm=False, holdstrand=True)  # optional - sirocco
-        True
 
     """
     global roots_interval_cache
-    if arrangement == ():
-        arrangement1 = (f, )
-    else:
-        arrangement1 = arrangement
     F = fieldI(f.base_ring())
     I1 = F(QQbar.gen())
     f = f.change_ring(F)
-    arrangement1 = [_.change_ring(F) for _ in arrangement1]
+    if arrangement == ():
+        arrangement1 = (f,)
+    else:
+        arrangement1 = tuple(_.change_ring(F) for _ in arrangement)
     x, y = f.parent().gens()
     glist = tuple(_[0] for f0 in arrangement1 for _ in f0.factor())
     g = f.parent()(prod(glist))
@@ -1142,74 +1154,52 @@ def braid_monodromy(f, arrangement=(), computebm=True, holdstrand=False):
     else:
         disc = []
     if len(disc) == 0:
-        computebm0 = False
         result = []
-        p0 = (0, 0)
-    else:
-        computebm0 = computebm
-        V = corrected_voronoi_diagram(tuple(disc))
-        G, E, p, EC, DG = voronoi_cells(V)
-        p0 = (p[0], p[1])
-    if computebm0:
-        geombasis = geometric_basis(G, E, EC, p, DG)
-        segs = set()
-        for p in geombasis:
-            for s in zip(p[:-1], p[1:]):
-                if (s[1], s[0]) not in segs:
-                    segs.add((s[0], s[1]))
-        I0 = QQbar.gen()
-        segs = [(a[0] + I0 * a[1], b[0] + I0 * b[1]) for a, b in segs]
-        vertices = list(set(flatten(segs)))
-        tocacheverts = tuple([(g, v) for v in vertices])
-        populate_roots_interval_cache(tocacheverts)
-        end_braid_computation = False
-        while not end_braid_computation:
-            try:
-                braidscomputed = (braid_in_segment([(glist, seg[0], seg[1])
-                                                    for seg in segs]))
-                segsbraids = {}
-                for braidcomputed in braidscomputed:
-                    seg = (braidcomputed[0][0][1], braidcomputed[0][0][2])
-                    beginseg = (QQ(seg[0].real()), QQ(seg[0].imag()))
-                    endseg = (QQ(seg[1].real()), QQ(seg[1].imag()))
-                    b = braidcomputed[1]
-                    segsbraids[(beginseg, endseg)] = b
-                    segsbraids[(endseg, beginseg)] = b.inverse()
-                end_braid_computation = True
-            except ChildProcessError:  # hack to deal with random fails first time
-                pass
-        B = BraidGroup(d)
-        result = []
-        for path in geombasis:
-            braidpath = B.one()
-            for i in range(len(path) - 1):
-                x0 = tuple(path[i].vector())
-                x1 = tuple(path[i + 1].vector())
-                braidpath = braidpath * segsbraids[(x0, x1)]
-            result.append(braidpath)
-    if len(arrangement1) == 1:
-        return result
+        p1 = F(0)
+        roots_base, strands = strand_components(g, arrangement1, p1)
+        return ([], strands)
+    V = corrected_voronoi_diagram(tuple(disc))
+    G, E, p, EC, DG = voronoi_cells(V)
+    p0 = (p[0], p[1])
     p1 = p0[0] + I1 * p0[1]
-    strands = {}
-    roots_base = []
-    for i, h in enumerate(arrangement1):
-        h0 = h.subs({x: p1})
-        h1 = F[y](h0)
-        rt = h1.roots(QQbar, multiplicities=False)
-        roots_base += [(_, i) for _ in rt]
-    if not holdstrand:
-        roots_base.sort()
-        strands = {i + 1: par[1] + 1 for i, par in enumerate(roots_base)}
-    computebm0 = computebm0 or len(disc) == 0
-    if computebm0 and not holdstrand:
-        return (result, strands)
-    if computebm0 and holdstrand:
-        return (result, roots_base)
-    if not computebm0 and not holdstrand:
-        return strands
-    if not computebm0 and holdstrand:
-        return roots_base
-
+    roots_base, strands = strand_components(g, arrangement1, p1)
+    geombasis = geometric_basis(G, E, EC, p, DG)
+    segs = set()
+    for p in geombasis:
+        for s in zip(p[:-1], p[1:]):
+            if (s[1], s[0]) not in segs:
+                segs.add((s[0], s[1]))
+    I0 = QQbar.gen()
+    segs = [(a[0] + I0 * a[1], b[0] + I0 * b[1]) for a, b in segs]
+    vertices = list(set(flatten(segs)))
+    tocacheverts = tuple([(g, v) for v in vertices])
+    populate_roots_interval_cache(tocacheverts)
+    end_braid_computation = False
+    while not end_braid_computation:
+        try:
+            braidscomputed = (braid_in_segment([(glist, seg[0], seg[1])
+                                                for seg in segs]))
+            segsbraids = {}
+            for braidcomputed in braidscomputed:
+                seg = (braidcomputed[0][0][1], braidcomputed[0][0][2])
+                beginseg = (QQ(seg[0].real()), QQ(seg[0].imag()))
+                endseg = (QQ(seg[1].real()), QQ(seg[1].imag()))
+                b = braidcomputed[1]
+                segsbraids[(beginseg, endseg)] = b
+                segsbraids[(endseg, beginseg)] = b.inverse()
+            end_braid_computation = True
+        except ChildProcessError:  # hack to deal with random fails first time
+            pass
+    B = BraidGroup(d)
+    result = []
+    for path in geombasis:
+        braidpath = B.one()
+        for i in range(len(path) - 1):
+            x0 = tuple(path[i].vector())
+            x1 = tuple(path[i + 1].vector())
+            braidpath = braidpath * segsbraids[(x0, x1)]
+        result.append(braidpath)
+    return (result, strands)
 
 def conjugate_positive_form(braid):
     r"""
@@ -1691,14 +1681,11 @@ def fundamental_group_arrangement(flist, simplified=True, projective=False, puis
             flist1 = [g.subs({x: x + y}) for g in flist]
             f = prod(flist1)
     if braid_mon is None:
-        if len(flist1) == 1:
-            bm = braid_monodromy_arrangement(flist1)
-            dic = {j + 1: 1 for j in range(len(flist))}
-        elif len(flist1) == 0:
+        if len(flist1) == 0:
             bm = []
             dic = dict()
         else:
-            bm, dic = braid_monodromy_arrangement(flist1)
+            bm, dic = braid_monodromy(f, flist1)
     else:
         bm, dic = braid_mon
     g = fundamental_group(f, simplified=False, projective=projective, puiseux=puiseux, braid_mon=bm)
@@ -1720,32 +1707,3 @@ def fundamental_group_arrangement(flist, simplified=True, projective=False, puis
     rels = [_.Tietze() for _ in g1.relations()]
     g1 = FreeGroup(n) / rels
     return (g1, dic1)
-
-
-def strand_components(flist):
-    r"""
-    Compute only the assignment from strands to elements of ``flist``.
-
-    INPUT:
-
-    - ``flist`` -- a  list of polynomial with two variables, over a number field
-      with an embedding in the complex numbers
-
-    OUTPUT:
-
-    - A dictionary attaching a number `i` (strand) to a number `j` (a polynomial in the list).
-
-    EXAMPLES::
-
-        sage: from sage.schemes.curves.zariski_vankampen import strand_components # optional - sirocco
-        sage: R.<x, y> = QQ[]
-        sage: flist = [x^2 - y^3, x + 3 * y - 5]
-        sage: strand_components(flist) # optional - sirocco
-        {1: 1, 2: 2, 3: 1, 4: 1}
-    """
-    f = prod(flist)
-    if len(flist) == 1:
-        d = f.degree()
-        dic = {j + 1: 1 for j in range(d)}
-        return dic
-    return braid_monodromy(f, arrangement=flist, computebm=False)
