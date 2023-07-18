@@ -61,8 +61,11 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
         r"""
         TESTS::
 
+            sage: from sage.matrix.matrix_cmr_sparse import Matrix_cmr_chr_sparse
             sage: M = Matrix_cmr_chr_sparse(MatrixSpace(ZZ, 2, 3, sparse=True),
             ....:                           [[1, 2, 3], [4, 0, 6]]); M
+            [1 2 3]
+            [4 0 6]
             sage: TestSuite(M).run()
         """
         cdef dict d
@@ -134,3 +137,61 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
         if version != 0:
             raise RuntimeError("unknown matrix version (=%s)"%version)
         self._init_from_dict(data, self._nrows, self._ncols)
+
+    # CMR-specific methods. Other classes that want to provide these methods should create
+    # a copy of themselves as an instance of this class and delegate to it.
+
+    def is_unimodular(self):
+        r"""
+        EXAMPLES::
+
+            sage: from sage.matrix.matrix_cmr_sparse import Matrix_cmr_chr_sparse
+            sage: M = Matrix_cmr_chr_sparse(MatrixSpace(ZZ, 2, 3, sparse=True),
+            ....:                           [[1, 0, 0], [0, 1, 0]]); M
+            [1 0 0]
+            [0 1 0]
+            sage: M.is_unimodular()
+            True
+            sage: M = Matrix_cmr_chr_sparse(MatrixSpace(ZZ, 2, 3, sparse=True),
+            ....:                           [[1, 1, 0], [-1, 1, 1]]); M
+            [ 1  1  0]
+            [-1  1  1]
+            sage: M.is_unimodular()
+            False
+        """
+        cdef bint result
+        if CMRtestUnimodularity(cmr, self._mat, &result) != CMR_OKAY:
+            raise RuntimeError
+        return result
+
+    def is_strongly_unimodular(self):
+        cdef bint result
+        if CMRtestStrongUnimodularity(cmr, self._mat, &result) != CMR_OKAY:
+            raise RuntimeError
+        return result
+
+    def modulus(self):
+        cdef bint result
+        cdef size_t k
+        if CMRtestKmodularity(cmr, self._mat, &result, &k) != CMR_OKAY:
+            raise RuntimeError
+        if result:
+            return Integer(k)
+        else:
+            return None
+
+    def strong_modulus(self):
+        cdef bint result
+        cdef size_t k
+        if CMRtestStrongKmodularity(cmr, self._mat, &result, &k) != CMR_OKAY:
+            raise RuntimeError
+        if result:
+            return Integer(k)
+        else:
+            return None
+
+    def is_k_modular(self, k):
+        return self.modulus() <= k
+
+    def is_strongly_k_modular(self, k):
+        return self.strong_modulus() <= k
