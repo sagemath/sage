@@ -292,6 +292,87 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
 
         return False, None  # submatrix TBD
 
-
-    def is_cographic(self, certificate=False):
+    def is_cographic(self, *, time_limit=60.0, certificate=False):
          raise NotImplementedError
+
+    def is_network_matrix(self, *, time_limit=60.0, certificate=False):
+        raise NotImplementedError
+
+    def is_dual_network_matrix(self, *, time_limit=60.0, certificate=False):
+        raise NotImplementedError
+
+    def _is_binary_linear_matroid_regular(self, *, time_limit=60.0, certificate=False,
+                                          use_direct_graphicness_test=True,
+                                          series_parallel_ok=True,
+                                          check_graphic_minors_planar=False,
+                                          complete_tree='if_regular',
+                                          construct_matrices=False,
+                                          construct_transposes=False,
+                                          construct_graphs=False):
+        r"""
+        This is an internal method because it should really be exposed
+        as a method of :class:`Matroid`.
+
+        INPUT:
+
+        - ``certificate``: One of ``False``, ``True``, ``'if_regular'``, ``'if_not_regular'``
+
+        EXAMPLES::
+
+            sage: from sage.matrix.matrix_cmr_sparse import Matrix_cmr_chr_sparse
+            sage: M = Matrix_cmr_chr_sparse(MatrixSpace(ZZ, 3, 2, sparse=True),
+            ....:                           [[1, 0], [1, 1], [0, 1]]); M
+            [1 0]
+            [1 1]
+            [0 1]
+            sage: M._is_binary_linear_matroid_regular()
+            True
+        """
+        cdef bint result
+        cdef CMR_REGULAR_PARAMETERS params
+        cdef CMR_REGULAR_STATISTICS stats
+        cdef CMR_DEC *dec = NULL
+        cdef CMR_MINOR *minor = NULL
+
+        cdef CMR_DEC **pdec = &dec
+        cdef CMR_MINOR **pminor = &minor
+
+        cdef dict kwds = dict(use_direct_graphicness_test=use_direct_graphicness_test,
+                              series_parallel_ok=series_parallel_ok,
+                              check_graphic_minors_planar=check_graphic_minors_planar,
+                              complete_tree=complete_tree,
+                              construct_matrices=construct_matrices,
+                              construct_transposes=construct_transposes,
+                              construct_graphs=construct_graphs)
+
+        _set_cmr_regular_parameters(&params, kwds)
+        sig_on()
+        try:
+            CMR_CALL(CMRtestBinaryRegular(cmr, self._mat, &result, pdec, pminor,
+                                          &params, &stats, time_limit))
+        finally:
+            sig_off()
+
+        if not certificate:
+            return result
+
+        raise NotImplementedError
+
+
+cdef _cmr_dec_construct(param):
+    if not param:
+        return CMR_DEC_CONSTRUCT_NONE
+    if param == 'leaves':
+        return CMR_DEC_CONSTRUCT_LEAVES
+    return CMR_DEC_CONSTRUCT_ALL
+
+
+cdef _set_cmr_regular_parameters(CMR_REGULAR_PARAMETERS *params, dict kwds):
+    CMR_CALL(CMRparamsRegularInit(params))
+    params.directGraphicness = kwds['use_direct_graphicness_test']
+    params.seriesParallel = kwds['series_parallel_ok']
+    params.planarityCheck = kwds['check_graphic_minors_planar']
+    params.completeTree = kwds['complete_tree'] is True
+    params.matrices = _cmr_dec_construct(kwds['construct_matrices'])
+    params.transposes = _cmr_dec_construct(kwds['construct_transposes'])
+    params.graphs = _cmr_dec_construct(kwds['construct_graphs'])
