@@ -2255,8 +2255,8 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
         ::
 
             sage: P.<x,y> = ProjectiveSpace(QQ, 1)
-            sage: f = DynamicalSystem([2*( -2*x^3 + 3*(x^2*y)) + 3*y^3,3*y^3])
-            sage: f.canonical_height(P(1,0))
+            sage: f = DynamicalSystem([2*(-2*x^3 + 3*(x^2*y)) + 3*y^3, 3*y^3])
+            sage: f.canonical_height(P(1, 0))
             0.00000000000000000000000000000
         """
         bad_primes = kwds.get("badprimes", None)
