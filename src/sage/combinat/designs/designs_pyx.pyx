@@ -178,13 +178,10 @@ def is_covering_array(array, strength=None, levels=None, verbose=False, paramete
     # does not work. If strength is inputted end after one check
     while finished is False:
         # Iterate over every possible selections of t columns, and
-        # count the t-tuples appearing in each selection
+        # ensure in those columns all unique t-tuples, are present
         for comb in combinations(range(number_columns), wstrength):
-            tuple_dictionary = {item: 0 for item in product(symbol_list, repeat=wstrength)}
-            for row in array:
-                tuple_dictionary[tuple([row[ti] for ti in comb])] += 1
-            # Check if any t-tuple is not covered in current columns
-            if 0 in tuple_dictionary.values():
+            existing_combinations = set(tuple([row[ti] for ti in comb]) for row in array)
+            if len(existing_combinations) != number_columns ** wstrength:
                 if strength is None:
                     wstrength -= 1
                     finished = True
