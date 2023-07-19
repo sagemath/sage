@@ -1231,6 +1231,16 @@ def conjugate_positive_form(braid):
         sage: t = B((1, 3, 2, -3, 1, 1))
         sage: conjugate_positive_form(t)
         [[(s1*s0)^2, [s2]]]
+        sage: B = BraidGroup(5)
+        sage: t = B((1, 2, 3, 4, -1, -2, 3, 3, 2, -4))
+        sage: L = conjugate_positive_form(t); L
+        [[s1^2, [s3*s2]], [s1*s2, [s0]]]
+        sage: s = B.one()
+        sage: for a, l in L:
+        ....:   b = prod(l)
+        ....:   s *= b * a / b
+        sage: s == t
+        True
     """
     B = braid.parent()
     d = B.strands()
@@ -1403,7 +1413,7 @@ def fundamental_group_from_braid_mon(bm, degree=None, simplified=True, projectiv
     if d is None:
         return None
     F = FreeGroup(d)
-    Fv = FreeGroup(d+v)
+    Fv = FreeGroup(d + v)
     bmh = [br for j, br in enumerate(bm) if j + 1 not in vertical0]
 
     @parallel
