@@ -358,6 +358,57 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
 
         raise NotImplementedError
 
+    def is_totally_unimodular(self, *, time_limit=60.0, certificate=False,
+                              use_direct_graphicness_test=True,
+                              series_parallel_ok=True,
+                              check_graphic_minors_planar=False,
+                              complete_tree='if_regular',
+                              construct_matrices=False,
+                              construct_transposes=False,
+                              construct_graphs=False):
+        r"""
+        EXAMPLES::
+
+            sage: from sage.matrix.matrix_cmr_sparse import Matrix_cmr_chr_sparse
+            sage: M = Matrix_cmr_chr_sparse(MatrixSpace(ZZ, 3, 2, sparse=True),
+            ....:                           [[1, 0], [-1, 1], [0, 1]]); M
+            [ 1  0]
+            [-1  1]
+            [ 0  1]
+            sage: M.is_totally_unimodular()
+            True
+
+        """
+        cdef bint result
+        cdef CMR_TU_PARAMETERS params
+        cdef CMR_TU_STATISTICS stats
+        cdef CMR_DEC *dec = NULL
+        cdef CMR_SUBMAT *submat = NULL
+
+        cdef CMR_DEC **pdec = &dec
+        cdef CMR_SUBMAT **psubmat = &submat
+
+        cdef dict kwds = dict(use_direct_graphicness_test=use_direct_graphicness_test,
+                              series_parallel_ok=series_parallel_ok,
+                              check_graphic_minors_planar=check_graphic_minors_planar,
+                              complete_tree=complete_tree,
+                              construct_matrices=construct_matrices,
+                              construct_transposes=construct_transposes,
+                              construct_graphs=construct_graphs)
+
+        _set_cmr_regular_parameters(&params.regular, kwds)
+        sig_on()
+        try:
+            CMR_CALL(CMRtestTotalUnimodularity(cmr, self._mat, &result, pdec, psubmat,
+                                               &params, &stats, time_limit))
+        finally:
+            sig_off()
+
+        if not certificate:
+            return result
+
+        raise NotImplementedError
+
 
 cdef _cmr_dec_construct(param):
     if not param:
