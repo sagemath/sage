@@ -2168,20 +2168,21 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
 
     def canonical_height(self, P, **kwds):
         r"""
-        Evaluate the (absolute) canonical height of ``P`` with respect to
-        this dynamical system.
+        Evaluate the (absolute) canonical height of the projective point ``P``
+        with respect to this dynamical system.
 
         Must be over a number field or an order of a number field. Specify
-        either the number of terms of the series to evaluate, or the required
-        error bound.
+        either the number of terms ``N`` of the series to evaluate, or
+        the required error bound ``error_bound``.
 
         ALGORITHM:
 
         Sum the Green's function at the archimedean places and the places
         of bad reduction.
 
-        If the function is defined over `\QQ`, then use Wells' Algorithm, which
-        allows us to not have to factor the resultant.
+        Original implementation of Wells' algorithm works for functions
+        defined over `\QQ`. Current implementation uses Hutz's version that
+        works for functions defined over any number fields.
 
         INPUT:
 
@@ -2192,7 +2193,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
         - ``badprimes`` -- (optional) a list of primes of bad reduction
 
         - ``N`` -- (default: 10) a positive integer; number of terms of the
-        series to use in the local green functions
+          series to use in the local green functions
 
         - ``prec`` -- (default: 100) a positive integer, float point or
           `p`-adic precision
@@ -2203,20 +2204,20 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
 
         EXAMPLES::
 
-            sage: P.<x,y> = ProjectiveSpace(ZZ,1)
-            sage: f = DynamicalSystem_projective([x^2+y^2, 2*x*y]);
-            sage: f.canonical_height(P.point([5,4]), error_bound=0.001)
+            sage: P.<x,y> = ProjectiveSpace(ZZ, 1)
+            sage: f = DynamicalSystem_projective([x^2 + y^2, 2*x*y]);
+            sage: f.canonical_height(P.point([5, 4]), error_bound=0.001)
             2.1970553519503404898926835324
-            sage: f.canonical_height(P.point([2,1]), error_bound=0.001)
+            sage: f.canonical_height(P.point([2, 1]), error_bound=0.001)
             1.0984430632822307984974382955
 
         Notice that preperiodic points may not return exactly 0::
 
             sage: R.<X> = PolynomialRing(QQ)
             sage: K.<a> = NumberField(X^2 + X - 1)
-            sage: P.<x,y> = ProjectiveSpace(K,1)
-            sage: f = DynamicalSystem_projective([x^2-2*y^2, y^2])
-            sage: Q = P.point([a,1])
+            sage: P.<x,y> = ProjectiveSpace(K, 1)
+            sage: f = DynamicalSystem_projective([x^2 - 2*y^2, y^2])
+            sage: Q = P.point([a, 1])
             sage: f.canonical_height(Q, error_bound=0.000001) # Answer only within error_bound of 0
             5.7364919788790160119266380480e-8
             sage: f.nth_iterate(Q,2) == Q # but it is indeed preperiodic
@@ -2224,26 +2225,26 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
 
         ::
 
-            sage: P.<x,y,z> = ProjectiveSpace(QQ,2)
-            sage: X = P.subscheme(x^2-y^2);
-            sage: f = DynamicalSystem_projective([x^2,y^2, 4*z^2], domain=X);
-            sage: Q = X([4,4,1])
+            sage: P.<x,y,z> = ProjectiveSpace(QQ, 2)
+            sage: X = P.subscheme(x^2 - y^2);
+            sage: f = DynamicalSystem_projective([x^2, y^2, 4*z^2], domain=X);
+            sage: Q = X([4, 4, 1])
             sage: f.canonical_height(Q, badprimes=[2])
             0.0013538030870311431824555314882
 
         ::
 
-            sage: P.<x,y,z> = ProjectiveSpace(QQ,2)
-            sage: X = P.subscheme(x^2-y^2);
-            sage: f = DynamicalSystem_projective([x^2,y^2, 30*z^2], domain=X)
+            sage: P.<x,y,z> = ProjectiveSpace(QQ, 2)
+            sage: X = P.subscheme(x^2 - y^2);
+            sage: f = DynamicalSystem_projective([x^2, y^2, 30*z^2], domain=X)
             sage: Q = X([4, 4, 1])
-            sage: f.canonical_height(Q, badprimes=[2,3,5], prec=200)
+            sage: f.canonical_height(Q, badprimes=[2, 3, 5], prec=200)
             2.7054056208276961889784303469356774912979228770208655455481
 
         ::
 
             sage: P.<x,y> = ProjectiveSpace(QQ, 1)
-            sage: f = DynamicalSystem_projective([1000*x^2-29*y^2, 1000*y^2])
+            sage: f = DynamicalSystem_projective([1000*x^2 - 29*y^2, 1000*y^2])
             sage: Q = P(-1/4, 1)
             sage: f.canonical_height(Q, error_bound=0.01)
             3.7996079979254623065837411853
@@ -2254,9 +2255,9 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
             ....: 1726400507263657518745202199786469389956474942774063845925192557326303453731548\
             ....: 2685079170261221429134616704292143116022212404792747377940806653514195974598569\
             ....: 02143413
-            sage: P.<x,y> = ProjectiveSpace(QQ,1)
+            sage: P.<x,y> = ProjectiveSpace(QQ, 1)
             sage: f = DynamicalSystem_projective([RSA768*x^2 + y^2, x*y])
-            sage: Q = P(RSA768,1)
+            sage: Q = P(RSA768, 1)
             sage: f.canonical_height(Q, error_bound=0.00000000000000001)
             931.18256422718241278672729195
 
@@ -2277,7 +2278,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
                 raise NotImplementedError("Must be over a number field, a number field order, or QQbar")
 
             # Since we want to compute the absolute height, we may compute
-            # the height of a QQbar point by chossing any number field that
+            # the height of a QQbar point by choosing any number field that
             # it is defind over.
             Q = P._number_field_from_algebraics()
             K = Q.codomain().base_ring()
@@ -2344,12 +2345,12 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
 
                 for n in range(N):
                     order_quotient = O.quotient(O.fraction_ideal(Res**(N - n)))
-                    # x = A(x_i, y_i) % Res**(N-n)
-                    # y = B(x_i, y_i) % Res**(N-n)
+                    # x = O(A(x_i, y_i) % Res**(N-n))
+                    # y = O(B(x_i, y_i) % Res**(N-n))
                     x = O(order_quotient(A(x_i, y_i)).lift())
                     y = O(order_quotient(B(x_i, y_i)).lift())
                     g = gcd([x, y, Res])
-                    # H = H + R(g).abs().log() / (d**(n+1))
+                    # H += R(g).abs().log() / (d**(n+1))
                     H += R(g.norm()).abs().log() / d**(n+1)
                     x_i = O(x / g)
                     y_i = O(y / g)
