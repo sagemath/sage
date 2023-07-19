@@ -19,7 +19,6 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from collections import Counter
 from collections.abc import Collection
 
 from sage.structure.parent import Parent
@@ -374,14 +373,18 @@ class DynamicalSemigroup(Parent):
 
             sage: P.<x,y> = ProjectiveSpace(QQ, 1)
             sage: f = DynamicalSemigroup(([x, y], [x^2, y^2]))
+            sage: f([2, 1])
+
+        ::
+
+            sage: P.<x,y> = ProjectiveSpace(QQ, 1)
+            sage: f = DynamicalSemigroup(([x, y], [x^2, y^2]))
             sage: f(f(2))
-            TypeError: ((2 : 1), (4 : 1)) must be a single numerical value
+            TypeError: unable to convert (2 : 1) to an element of Rational Field
         """
-        if isinstance(input, Collection):
-            raise TypeError(str(input) + " must be a single numerical value")
         result = []
         for ds in self._dynamical_systems:
-            result.append(ds(input))
+            result.append(ds(self.domain()(input)))
         return tuple(result)
 
     def base_ring(self):
@@ -464,8 +467,7 @@ class DynamicalSemigroup(Parent):
 
     def defining_polynomials(self):
         r"""
-        Return the tuple of polynomials that define the generators of this
-        dynamical semigroup.
+        Return the tuple of polynomials that define the generators of this dynamical semigroup.
 
         OUTPUT: A tuple of polynomials.
 
@@ -483,8 +485,7 @@ class DynamicalSemigroup(Parent):
 
     def defining_systems(self):
         r"""
-        Return the generators of this
-        dynamical semigroup.
+        Return the generators of this dynamical semigroup.
 
         OUTPUT: A tuple of dynamical systems.
 
