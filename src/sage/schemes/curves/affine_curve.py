@@ -1736,16 +1736,18 @@ class AffinePlaneCurve_field(AffinePlaneCurve, AffineCurve_field):
     """
     _point = AffinePlaneCurvePoint_field
 
-    def fundamental_group(self, puiseux=False, braid_mon=None):
+    def fundamental_group(self, simplified=True, puiseux=False, braid_mon=None):
         r"""
         Return a presentation of the fundamental group of the complement
         of ``self``.
 
         INPUT:
 
+        - ``simplified`` -- (default: ``True``) boolean to simplify the presentation.
+
         - ``puiseux`` -- (default: ``False``) boolean to decide if the
           presentation is constructed in the classical way or using Puiseux
-          shortcut.
+          shortcut. If ``True``, ``simplified`` is set to ``False``.
 
         - ``braid_mon`` -- (default: ``False``) If the value is ``False``
           it apply first the ``braid_monodromy`` method. If it has been already
@@ -1801,14 +1803,16 @@ class AffinePlaneCurve_field(AffinePlaneCurve, AffineCurve_field):
 
             This functionality requires the sirocco package to be installed.
         """
-        from sage.schemes.curves.zariski_vankampen import fundamental_group
+        from sage.schemes.curves.zariski_vankampen import fundamental_group, fundamental_group_from_braid_mon
+        if braid_mon is not None:
+            return fundamental_group_from_braid_mon(braid_mon, simplified=simplified, puiseux=puiseux)
         F = self.base_ring()
         from sage.rings.qqbar import QQbar
         if QQbar.coerce_map_from(F) is None:
             raise NotImplementedError("the base field must have an embedding"
                                       " to the algebraic field")
         f = self.defining_polynomial()
-        return fundamental_group(f, projective=False, puiseux=puiseux, braid_mon=braid_mon)
+        return fundamental_group(f, simplified=simplified, puiseux=puiseux)
 
     def braid_monodromy(self):
         r"""
