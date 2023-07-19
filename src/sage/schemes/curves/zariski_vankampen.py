@@ -64,7 +64,7 @@ from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.qqbar import QQbar
 from sage.rings.rational_field import QQ
 from sage.rings.real_mpfr import RealField
-from sage.sets.set import Set
+# from sage.sets.set import Set
 
 roots_interval_cache = dict()
 
@@ -176,7 +176,7 @@ def discrim(pols):
 
     OUTPUT:
 
-    A tuple with the values of the discriminant in `\QQbar`.
+    A tuple with the roots of the discriminant in `\QQbar`.
 
     EXAMPLES::
 
@@ -591,7 +591,7 @@ def fieldI(F0):
         Number Field in b with defining polynomial x^10 + 5*x^8 + 14*x^6 - 2*x^5 - 10*x^4 + 20*x^3 - 11*x^2 - 14*x + 10
         with b = 0.4863890359345430? + 1.000000000000000?*I
 
-    Another example where ``F`` and ``F0`` coincide.
+    Another example where ``F`` and ``F0`` coincide.::
 
         sage: from sage.schemes.curves.zariski_vankampen import fieldI
         sage: p = QQ[x](x^4 + 1)
@@ -1247,23 +1247,13 @@ def conjugate_positive_form(braid):
     braid1 = braid.super_summit_set()[0]
     L1 = braid1.Tietze()
     sg0 = braid.conjugating_braid(braid1)
-    hilos = list(Set(L1))
-    hilos.sort()
-    bloques = []
-    while len(hilos) > 0:
-        a = [hilos[0]]
-        hilos = hilos[1:]
-        corte = False
-        while len(hilos) > 0 and not corte:
-            b = hilos[0]
-            corte = b - a[-1] > 1
-            if not corte:
-                a.append(b)
-                hilos = hilos[1:]
-        bloques.append(a)
-    trenzabloque = [[a for a in L1 if a in b] for b in bloques]
-    cortas = []
-    for a in trenzabloque:
+    gns = set(L1)
+    cuts = [j for j in range(d + 1) if j not in gns]
+    blocks = []
+    for i in range(len(cuts) - 1):
+        blocks.append([j for j in L1 if j > cuts[i] and j < cuts[i + 1]])
+    shorts = []
+    for a in blocks:
         A = B(a).super_summit_set()
         res = None
         for tau in A:
@@ -1282,8 +1272,8 @@ def conjugate_positive_form(braid):
             r0 = res[0].Tietze()
             res[0] = B([i.sign() * (d - abs(i)) for i in r0])
         res0 = res[:2]
-        cortas.append(res0)
-    return cortas
+        shorts.append(res0)
+    return shorts
 
 
 @parallel
@@ -1319,8 +1309,7 @@ def braid2rels(L):
     d = B.strands()
     F = FreeGroup(d)
     T = br.Tietze()
-    T1 = list(Set(T))
-    T1.sort()
+    T1 = set(T)
     m = len(T1) + 1
     k = min(T1) - 1
     B0 = BraidGroup(m)
@@ -1334,7 +1323,7 @@ def braid2rels(L):
     U = [tuple(sign(k1)*(abs(k1) + k) for k1 in _.Tietze()) for _ in U0]
     pasos = [B.one()] + [_ for _ in reversed(L1)]
     for C in pasos:
-        U = [(F(a) * C ** (-1)).Tietze() for a in U]
+        U = [(F(a) * C.inverse()).Tietze() for a in U]
         ga = F / U
         P = ga.gap().PresentationFpGroup()
         dic = P.TzOptions().sage()
@@ -1403,8 +1392,7 @@ def fundamental_group_from_braid_mon(bm, degree=None, simplified=True, projectiv
         sage: g = fundamental_group_from_braid_mon(bm, vertical=[1]); g
         Finitely presented group < x0, x1, x2 | x2*x0*x1*x2^-1*x1^-1*x0^-1, x2*x0*x1*x0*x1^-1*x0^-1*x2^-1*x1^-1 >
     """
-    vertical0 = [_ for _ in vertical]
-    vertical0.sort()
+    vertical0 = sorted(vertical)
     v = len(vertical0)
     if bm == []:
         d = degree
