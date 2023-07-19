@@ -56,11 +56,10 @@ of Pascals's triangle::
     sage: tuple(u(n) for n in srange(10))
     (0, 1, 3, 5, 9, 11, 15, 19, 27, 29)
 
-There is a `2`-recursive sequence describing the numbers above as well::
+There is a `2`-regular sequence describing the numbers above as well::
 
-    sage: U = Seq2((Matrix([[3, 2], [0, 1]]), Matrix([[2, 0], [1, 3]])),
-    ....:          left=vector([0, 1]), right=vector([1, 0]),
-    ....:          allow_degenerated_sequence=True).transposed()
+    sage: U = Seq2((Matrix([[3, 0], [2, 1]]), Matrix([[2, 1], [0, 3]])),
+    ....:          left=vector([1, 0]), right=vector([0, 1]))
     sage: all(U[n] == u(n) for n in srange(30))
     True
 
