@@ -1217,12 +1217,13 @@ def conjugate_positive_form(braid):
 
     INPUT:
 
-    - ``braid`` -- a braid.
+    - ``braid`` -- a braid ``\sigma``.
 
     OUTPUT:
 
-    A list of lists where each element is a list with two elements, a positive braid `\sigma` and a list of permutation braids
-    `\tau_1,\dots,\tau_n` such that if `\tau=\prod_{j=1}^n \tau_j` then `\tau\sigma\tau^{-1}` is the input ``braid``.
+    A list of `r` lists. Each such list is another list with two elements, a positive braid `\alpha_i` and a list of
+    permutation braids `\gamma_{1}^{i},\dots,\gamma_{r}^{n_r}` such that if `\gamma_i=\prod_{j=1}^{n_i} \tau_j^i` then
+    the braids `\tau_i=\gamma_i\alpha_i\gamma_i^{-1}` commute pairwise and `\alpha=\prod_{i=1}^{r} \tau_i`.
 
     EXAMPLES::
 
@@ -1251,7 +1252,9 @@ def conjugate_positive_form(braid):
     cuts = [j for j in range(d + 1) if j not in gns]
     blocks = []
     for i in range(len(cuts) - 1):
-        blocks.append([j for j in L1 if j > cuts[i] and j < cuts[i + 1]])
+        block = [j for j in L1 if j > cuts[i] and j < cuts[i + 1]]
+        if len(block) > 0:
+            blocks.append(block)
     shorts = []
     for a in blocks:
         A = B(a).super_summit_set()
@@ -1341,6 +1344,10 @@ def braid2rels(L):
 def braid2rels_p(L):
     return braid2rels(L)
 
+@parallel
+def relation(x, b):
+    return x * b / x
+
 
 def fundamental_group_from_braid_mon(bm, degree=None, simplified=True, projective=False, puiseux=False, vertical=[]):
     r"""
@@ -1403,11 +1410,6 @@ def fundamental_group_from_braid_mon(bm, degree=None, simplified=True, projectiv
     F = FreeGroup(d)
     Fv = FreeGroup(d + v)
     bmh = [br for j, br in enumerate(bm) if j + 1 not in vertical0]
-
-    @parallel
-    def relation(x, b):
-        return x * b / x
-
     if not puiseux:
         relations_h = (relation([(x, b) for x in F.gens() for b in bmh]))
         rel_h = [r[1] for r in relations_h]
@@ -1437,7 +1439,7 @@ def fundamental_group_from_braid_mon(bm, degree=None, simplified=True, projectiv
     return G
 
 
-def fundamental_group(f, simplified=True, projective=False, puiseux=False, braid_mon=None):
+def fundamental_group(f, simplified=True, projective=False, puiseux=False):
     r"""
     Return a presentation of the fundamental group of the complement of
     the algebraic set defined by the polynomial ``f``.
@@ -1483,9 +1485,7 @@ def fundamental_group(f, simplified=True, projective=False, puiseux=False, braid
         Finitely presented group < x0, x1, x2 | x0*x1*x2*x1^-1*x0^-2, x0*x1*x0*x1^-1*x0^-1*x1^-1, x0*x1*x0^-1*x2^-1 >
         sage: fundamental_group(f, projective=True) # optional - sirocco
         Finitely presented group < x0 | x0^3 >
-        sage: bm = braid_monodromy(f); bm # optional - sirocco
-        ([(s1*s0)^2], {1: 1, 2: 1, 3: 1})
-        sage: fundamental_group(f, braid_mon=bm[0]) # optional - sirocco
+        sage: fundamental_group(f) # optional - sirocco
         Finitely presented group < x1, x2 | x1*x2*x1^-1*x2^-1*x1^-1*x2 >
 
     ::
@@ -1523,18 +1523,6 @@ def fundamental_group(f, simplified=True, projective=False, puiseux=False, braid
         sage: g = fundamental_group(f, puiseux=True, projective=True); print (g.order(), g.abelian_invariants()) # optional - sirocco
         12 (4,)
 
-    We compute first a braid monodromy and use it for the computation of the fundamental group::
-
-        sage: from sage.schemes.curves.zariski_vankampen import fundamental_group, braid_monodromy # optional - sirocco
-        sage: R.<x, y> = QQ[]
-        sage: f = x^2 * y^2 + x^2 + y^2 - 2 * x * y  * (x + y + 1)
-        sage: bm = braid_monodromy(f); print(bm) # optional - sirocco
-        ([s1*s2*s0*s1*s0^-1*s1^-1*s0^-1, s0*s1^2*s0*s2*s1*(s0^-1*s1^-1)^2*s0^-1, (s0*s1)^2],
-         {1: 1, 2: 1, 3: 1, 4: 1})
-        sage: g = fundamental_group(f, projective=True, braid_mon=bm[0]); g # optional - sirocco
-        Finitely presented group < x0, x1 | x1*x0^2*x1, x0^-1*x1^-1*x0^-1*x1*x0^-1*x1^-1 >
-        sage: print (g.order(), g.abelian_invariants()) # optional - sirocco
-        12 (4,)
     """
     g = f
     x, y = g.parent().gens()
@@ -1546,10 +1534,7 @@ def fundamental_group(f, simplified=True, projective=False, puiseux=False, braid
     if projective:
         while g.degree(y) < g.degree():
             g = g.subs({x: x + y})
-    if braid_mon is None:
-        bm = braid_monodromy(g)[0]
-    else:
-        bm = braid_mon
+    bm = braid_monodromy(g)[0]
     if bm == []:
         d = g.degree(y)
     else:
@@ -1650,7 +1635,7 @@ def fundamental_group_arrangement(flist, simplified=True, projective=False, puis
             bm, dic = braid_monodromy(f, flist1)
     else:
         bm, dic = braid_mon
-    g = fundamental_group(f, simplified=False, projective=projective, puiseux=puiseux, braid_mon=bm)
+    g = fundamental_group_from_braid_mon(bm, degree=d, simplified=False, projective=projective, puiseux=puiseux)
     if simplified:
         hom = g.simplification_isomorphism()
     else:
