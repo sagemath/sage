@@ -150,7 +150,7 @@ cdef class MatrixBackend(GenericBackend):
             sage: p.col_name(4)                                     
             'x'
             sage: p.objective_coefficient(4)                        
-            1.00000000000000
+            1
 
         """
         if obj is None:
@@ -263,10 +263,10 @@ cdef class MatrixBackend(GenericBackend):
             sage: p.add_variable()                                  
             0
             sage: p.objective_coefficient(0)                        
-            0.0
+            0
             sage: p.objective_coefficient(0,2)                      
             sage: p.objective_coefficient(0)                        
-            2.0
+            2
         """
 
         if coeff is not None:
@@ -392,7 +392,7 @@ cdef class MatrixBackend(GenericBackend):
             sage: p.row(0)                                          
             ([1, 2, 3, 4], [1, 2, 3, 4])
             sage: p.row_bounds(0)                                   
-            (2.00000000000000, 2.00000000000000)
+            (2, 2)
             sage: p.add_linear_constraint(zip(range(5), range(5)), 1.0, 1.0, name='foo')    
             sage: p.row_name(-1)                                    
             'foo'
@@ -604,10 +604,10 @@ cdef class MatrixBackend(GenericBackend):
             sage: p.add_variable()                                  
             0
             sage: p.col_bounds(0)                                   
-            (0.0, None)
+            (0, None)
             sage: p.variable_upper_bound(0, 5)                      
             sage: p.col_bounds(0)                                   
-            (0.0, 5)
+            (0, 5)
         """
         if self.col_lower_bound_indicator[index] == True:
             lower = self.col_lower_bound[0, index]
@@ -641,9 +641,9 @@ cdef class MatrixBackend(GenericBackend):
             sage: p.is_variable_binary(0)                           
             True
             sage: p.is_variable_binary(1)    
-            IndexError: ...
+            Traceback (most recent call last):
             ...
-
+            IndexError: ...
         """
         if index >= len(self.is_binary):
             raise IndexError("Variable index out of bounds")
@@ -670,8 +670,9 @@ cdef class MatrixBackend(GenericBackend):
             sage: p.is_variable_integer(0)                          
             True
             sage: p.is_variable_integer(1)        
-            IndexError: ...
+            Traceback (most recent call last):
             ...
+            IndexError: ...
         """
         if index >= len(self.is_integer):
             raise IndexError("Variable index out of bounds")
@@ -703,9 +704,9 @@ cdef class MatrixBackend(GenericBackend):
             sage: p.is_variable_integer(0)                       
             True
             sage: p.is_variable_continuous(1)        
-            IndexError: ...
+            Traceback (most recent call last):
             ...
-
+            IndexError: ...
         """
         if index >= len(self.is_continuous):
             raise IndexError("Variable index out of bounds")
@@ -774,10 +775,10 @@ cdef class MatrixBackend(GenericBackend):
             sage: p.add_variable()                                  
             0
             sage: p.col_bounds(0)                                   
-            (0.0, None)
+            (0, None)
             sage: p.variable_upper_bound(0, 5)                      
             sage: p.col_bounds(0)                                   
-            (0.0, 5)
+            (0, 5)
         """
         if value is not False:
             self.col_upper_bound_indicator[index] = True
@@ -804,7 +805,7 @@ cdef class MatrixBackend(GenericBackend):
             sage: p.add_variable()                                  
             0
             sage: p.col_bounds(0)                                   
-            (0.0, None)
+            (0, None)
             sage: p.variable_lower_bound(0, 5)                      
             sage: p.col_bounds(0)                                   
             (5, None)
