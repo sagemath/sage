@@ -271,7 +271,7 @@ class kRegularSequence(RecognizableSeries):
             preview=10)
 
     @cached_method
-    def __getitem__(self, n, **kwds):
+    def coefficient_of_n(self, n, **kwds):
         r"""
         Return the `n`-th entry of this sequence.
 
@@ -287,6 +287,11 @@ class kRegularSequence(RecognizableSeries):
             sage: S = Seq2((Matrix([[1, 0], [0, 1]]), Matrix([[0, -1], [1, 2]])),
             ....:          left=vector([0, 1]), right=vector([1, 0]))
             sage: S[7]
+            3
+
+        This is equivalent to::
+
+            sage: S.coefficient_of_n(7)
             3
 
         TESTS::
@@ -311,6 +316,8 @@ class kRegularSequence(RecognizableSeries):
             True
         """
         return self.coefficient_of_word(self.parent()._n_to_index_(n), **kwds)
+
+    __getitem__ = coefficient_of_n
 
     def __iter__(self):
         r"""
@@ -796,7 +803,7 @@ class kRegularSequence(RecognizableSeries):
 
         zero_M = self.mu[0].parent().zero()
         zero_R = self.right.parent().zero()
-        # Let v(n) = self.__getitem__(n, multiply_left=False)
+        # Let v(n) = self.coefficient_of_n(n, multiply_left=False)
         rule = {}
         # We will construct `kernel` and `rule` in such a way that for all
         # c in `kernel`,
@@ -832,7 +839,7 @@ class kRegularSequence(RecognizableSeries):
                 b.get(c, 0) * self.left
                 for c in kernel)),
             vector(chain.from_iterable(
-                (self.__getitem__(c, multiply_left=False) if c >= 0 else zero_R)
+                (self.coefficient_of_n(c, multiply_left=False) if c >= 0 else zero_R)
                 for c in kernel)))
 
         return result
@@ -1390,20 +1397,20 @@ class kRegularSequenceSpace(RecognizableSeriesSpace):
 
         ALGORITHM:
 
-        For the purposes of this description, the left vector valued sequence
-        associated with a regular sequence consists of the left vector
-        multiplied by the corresponding matrix product, but without the right
-        vector of the regular sequence.
+        For the purposes of this description, the right vector valued sequence
+        associated with a regular sequence consists of the
+        corresponding matrix product multiplied by the right vector,
+        but without the left vector of the regular sequence.
 
-        The algorithm maintains a left vector valued sequence consisting
-        of the left vector valued sequence of the argument ``sequence``
+        The algorithm maintains a right vector valued sequence consisting
+        of the right vector valued sequence of the argument ``sequence``
         (replaced by an empty tuple if ``sequence`` is ``None``) plus several
         components of the shape `m \mapsto f(k^t\cdot m +r)` for suitable
         ``t`` and ``r``.
 
         Implicitly, the algorithm also maintains a `d \times n_\mathrm{verify}` matrix ``A``
-        (where ``d`` is the dimension of the left vector valued sequence)
-        whose columns are the current left vector valued sequence evaluated at
+        (where ``d`` is the dimension of the right vector valued sequence)
+        whose columns are the current right vector valued sequence evaluated at
         the non-negative integers less than `n_\mathrm{verify}` and ensures that this
         matrix has full row rank.
 
@@ -1651,7 +1658,8 @@ class kRegularSequenceSpace(RecognizableSeriesSpace):
 
         ::
 
-            sage: A = Seq2((Matrix([[1, 1], [1, 1]]), Matrix([[1, 1], [1, 1]])),
+            sage: A = Seq2(
+            ....:     (Matrix([[1, 1], [1, 1]]), Matrix([[1, 1], [1, 1]])),
             ....:     left=(1, 1), right=(1, 1),
             ....:     allow_degenerated_sequence=True)
             sage: Seq2.guess(lambda n: n, sequence=A, n_verify=5)
@@ -1674,8 +1682,7 @@ class kRegularSequenceSpace(RecognizableSeriesSpace):
             seq = lambda m: vector([])
         else:
             mu = [M.rows() for M in sequence.mu]
-            seq = lambda m: (sequence._mu_of_word_(self._n_to_index_(m))
-                             * sequence.right)
+            seq = lambda m: sequence.coefficient_of_n(m, multiply_left=False)
             logger.info('including %s', sequence)
 
         zero = domain(0)
@@ -1685,12 +1692,12 @@ class kRegularSequenceSpace(RecognizableSeriesSpace):
         # `k**t * m + r`
 
         # The elements of `lines` will correspond to the current components
-        # of the left vector valued sequence described in the algorithm section
+        # of the right vector valued sequence described in the algorithm section
         # of the docstring.
 
         def values(m, lines):
             """
-                Return current (as defined by ``lines``) left vector valued
+                Return current (as defined by ``lines``) right vector valued
                 sequence for argument ``m``.
             """
             return tuple(seq(m)) + tuple(f(k**t_R * m + r_R) for t_R, r_R in lines)
@@ -1705,7 +1712,7 @@ class kRegularSequenceSpace(RecognizableSeriesSpace):
 
                 The output is the inverse of the invertible submatrix and
                 the corresponding list of column indices (i.e., arguments to
-                the current left vector valued sequence).
+                the current right vector valued sequence).
             """
             d = len(seq(0)) + len(lines)
 
