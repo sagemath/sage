@@ -922,94 +922,142 @@ def _new_invariant_is_linearly_independent(F, invariants):
 
 ### TODO: test my molien series implementation against theirs
 
-def test_invariant_generators():
-    from sage.groups.matrix_gps.unitary import GU
-    from sage.libs.gap.libgap import libgap
-    from sage.matrix.constructor import matrix
-    from sage.rings.rational_field import QQ
-    from sage.matrix.matrix_space import MatrixSpace
-    from sage.groups.perm_gps.permgroup_named import AlternatingGroup
-    from sage.groups.perm_gps.permgroup_named import SymmetricGroup
-    from sage.groups.perm_gps.permgroup_named import CyclicPermutationGroup
-    from sage.rings.finite_rings.finite_field_constructor import GF
-    from random import choice as randomchoice
+# def test_invariant_generators():
+    
+#     from sage.groups.matrix_gps.unitary import GU
+#     from sage.libs.gap.libgap import libgap
+#     from sage.matrix.constructor import matrix
+#     from sage.rings.rational_field import QQ
+#     from sage.matrix.matrix_space import MatrixSpace
+#     from sage.groups.perm_gps.permgroup_named import AlternatingGroup
+#     from sage.groups.perm_gps.permgroup_named import SymmetricGroup
+#     from sage.groups.perm_gps.permgroup_named import CyclicPermutationGroup
+#     from sage.rings.finite_rings.finite_field_constructor import GF
+#     from random import choice as randomchoice
 
-    groups=[]
+#     groups=[]
 
-    # gens = [matrix(QQ, [[-1,1],[-1,0]]), matrix(QQ, [[0,1],[1,0]])]
-    # group1 = MatrixGroup(gens)
-    # groups.append(group1)
-    # imf = libgap.function_factory('ImfMatrixGroup')
-    # GG = imf( 12, 3 )
-    # group2 = MatrixGroup(GG.GeneratorsOfGroup())
-    # group3 = GU(3,2).as_matrix_group()
+#     # gens = [matrix(QQ, [[-1,1],[-1,0]]), matrix(QQ, [[0,1],[1,0]])]
+#     # group1 = MatrixGroup(gens)
+#     # groups.append(group1)
+#     # imf = libgap.function_factory('ImfMatrixGroup')
+#     # GG = imf( 12, 3 )
+#     # group2 = MatrixGroup(GG.GeneratorsOfGroup())
+#     # group3 = GU(3,2).as_matrix_group()
 
-    K = CyclotomicField(4)
-    i=K.gen()
-    tetra=MatrixGroup([(-1+i)/2,(-1+i)/2, (1+i)/2,(-1-i)/2], [0,i, -i,0])
-    groups.append((tetra,"tetra"))
+#     # K = CyclotomicField(4)
+#     # i=K.gen()
+#     # tetra=MatrixGroup([(-1+i)/2,(-1+i)/2, (1+i)/2,(-1-i)/2], [0,i, -i,0])
+#     # groups.append((tetra,"tetra"))
 
-    for n in range(2,5):
+#     # for n in range(2,5):
 
-    # test for multiple ns
-        M = MatrixSpace(QQ, n)
-        group5=MatrixGroup([M.identity_matrix()])
+#     # # test for multiple ns
+#     #     M = MatrixSpace(QQ, n)
+#     #     group5=MatrixGroup([M.identity_matrix()])
 
-        group6 = MatrixGroup([M(g.matrix()) for g in AlternatingGroup(n).gens()])
+#     #     group6 = MatrixGroup([M(g.matrix()) for g in AlternatingGroup(n).gens()])
 
-        group7 = MatrixGroup([M(g.matrix()) for g in SymmetricGroup(n).gens()]) 
+#     #     group7 = MatrixGroup([M(g.matrix()) for g in SymmetricGroup(n).gens()]) 
 
-        # group8 = MatrixGroup(CyclicPermutationGroup(n))
+#     #     # group8 = MatrixGroup(CyclicPermutationGroup(n))
 
-        groups.extend([(group5, f"identity {n}"), (group6, f"alternating {n}"), (group7, f"symmetric {n}")])#, (group8, f"cyclic permutation {n}")])
+#     #     groups.extend([(group5, f"identity {n}"), (group6, f"alternating {n}"), (group7, f"symmetric {n}")])#, (group8, f"cyclic permutation {n}")])
 
-    K = CyclotomicField(8)
-    v=K.gen()
-    a = v-v**3 #sqrt(2)
-    i = v**2
-    octa = MatrixGroup([(-1+i)/2, (-1+i)/2,  (1+i)/2, (-1-i)/2],[(1+i)/a, 0,  0, (1-i)/a])
-    groups.append((octa, "octahedral"))
-
-
-    K = CyclotomicField(10)
-    v=K.gen()
-    z5 = v**2
-    i = z5**5
-    a = 2*z5**3 + 2*z5**2 + 1 #sqrt(5)
-    Ico = MatrixGroup([[z5**3,0, 0,z5**2],[0,1, -1,0],[(z5**4-z5)/a, (z5**2-z5**3)/a, (z5**2-z5**3)/a, -(z5**4-z5)/a]])
-    groups.append((Ico, "icosahedral"))
+#     # K = CyclotomicField(8)
+#     # v=K.gen()
+#     # a = v-v**3 #sqrt(2)
+#     # i = v**2
+#     # octa = MatrixGroup([(-1+i)/2, (-1+i)/2,  (1+i)/2, (-1-i)/2],[(1+i)/a, 0,  0, (1-i)/a])
+#     # groups.append((octa, "octahedral"))
 
 
-    K = GF(5)
-    S = MatrixGroup(SymmetricGroup(4))
-    G = MatrixGroup([matrix(K, 4, 4, [K(y) for u in m.list() for y in u])for m in S.gens()])
-    groups.append((G, "not sure what to call this one"))
+#     # K = CyclotomicField(10)
+#     # v=K.gen()
+#     # z5 = v**2
+#     # i = z5**5
+#     # a = 2*z5**3 + 2*z5**2 + 1 #sqrt(5)
+#     # Ico = MatrixGroup([[z5**3,0, 0,z5**2],[0,1, -1,0],[(z5**4-z5)/a, (z5**2-z5**3)/a, (z5**2-z5**3)/a, -(z5**4-z5)/a]])
+#     # groups.append((Ico, "icosahedral"))
 
 
-    i = GF(7)(3)
-    G = MatrixGroup([[i**3,0, 0,-i**3], [i**2,0, 0,-i**2]])
-    groups.append((G, "or this one"))
+#     K = GF(5)
+#     S = MatrixGroup(SymmetricGroup(4))
+#     G = MatrixGroup([matrix(K, 4, 4, [K(y) for u in m.list() for y in u])for m in S.gens()])
+#     groups.append((G, "not sure what to call this one"))
 
 
-    for group, name in groups:
-        print("-"*100)
-        print(f"{name}")
-        print(group)
-        # dim = len(group.gens()[0].list())
-        invariants=group.invariant_generators()
-        print(f"Invariants: {invariants}")
-        for i in range(3): # num invariant tests per group
-            random_invariant = randomchoice(invariants)
-            random_element = group.random_element()
-            result=random_element @ random_invariant
-            print(f"\nExample {i+1}:\ninvariant: {random_invariant}\nelement:\n{random_element}\nresult: {result}\nequal: {str(result==random_invariant).upper()}\n")
-        molien=group.molien_series(return_series=False)
-        print(f"Molien series: {molien}")
-        hilbert=_hilbert_series(invariants)#, invariants[0].parent())
-        print(f"Hilbert series: {hilbert}")
-        print(f"Equal: {str(molien==hilbert).upper()}")
+#     i = GF(7)(3)
+#     G = MatrixGroup([[i**3,0, 0,-i**3], [i**2,0, 0,-i**2]])
+#     groups.append((G, "or this one"))
+
+
+#     for group, name in groups:
+#         print("-"*100)
+#         print(f"{name}")
+#         print(group)
+#         # dim = len(group.gens()[0].list())
+#         invariants=group.invariant_generators()
+#         print(f"Invariants: {invariants}")
+#         for i in range(3): # num invariant tests per group
+#             random_invariant = randomchoice(invariants)
+#             random_element = group.random_element()
+#             result=random_element @ random_invariant
+#             print(f"\nExample {i+1}:\ninvariant: {random_invariant}\nelement:\n{random_element}\nresult: {result}\nequal: {str(result==random_invariant).upper()}\n")
+#         molien=group.molien_series(return_series=False)
+#         print(f"Molien series: {molien}")
+#         hilbert=_hilbert_series(invariants)#, invariants[0].parent())
+#         print(f"Hilbert series: {hilbert}")
+#         print(f"Equal: {str(molien==hilbert).upper()}")
 
 def _hilbert_series(S):
+    """
+    EXAMPLES::
+        sage: from sage.groups.matrix_gps.finitely_generated_gap import _hilbert_series
+        sage: def test_invariants(group):
+        ....:     invs=group.invariant_generators()
+        ....:     for inv in invs:
+        ....:         assert group.random_element()@inv==inv
+        sage: def test_hilbert(group):
+        ....:     assert group.molien_series(return_series=False)==_hilbert_series(group.invariant_generators())
+        sage: K = CyclotomicField(4)
+        sage: i=K.gen()
+        sage: tetra=MatrixGroup([(-1+i)/2,(-1+i)/2, (1+i)/2,(-1-i)/2], [0,i, -i,0])
+        sage: test_invariants(tetra)
+        sage: test_hilbert(tetra)
+        sage: for n in range(2,4):
+        ....:     M = MatrixSpace(QQ, n)
+        ....:     identity=MatrixGroup([M.identity_matrix()])
+        ....:     alternating=MatrixGroup([M(g.matrix()) for g in AlternatingGroup(n).gens()])
+        ....:     symmetric=MatrixGroup([M(g.matrix()) for g in SymmetricGroup(n).gens()])
+        ....:     for g in (identity, alternating, symmetric):
+        ....:         test_invariants(g)
+        ....:         test_hilbert(g)
+        sage: K = CyclotomicField(8)
+        sage: v=K.gen()
+        sage: a = v-v**3 #sqrt(2)
+        sage: i = v**2
+        sage: octa = MatrixGroup([(-1+i)/2, (-1+i)/2,  (1+i)/2, (-1-i)/2],[(1+i)/a, 0,  0, (1-i)/a])
+        sage: test_invariants(octa)
+        sage: test_hilbert(octa)
+        sage: K = CyclotomicField(10)
+        sage: v=K.gen()
+        sage: z5 = v**2
+        sage: i = z5**5
+        sage: a = 2*z5**3 + 2*z5**2 + 1 #sqrt(5)
+        sage: Ico = MatrixGroup([[z5**3,0, 0,z5**2],[0,1, -1,0],[(z5**4-z5)/a, (z5**2-z5**3)/a, (z5**2-z5**3)/a, -(z5**4-z5)/a]])
+        sage: test_invariants(Ico)
+        sage: test_hilbert(Ico)
+        sage: K = GF(5)
+        sage: S = MatrixGroup(SymmetricGroup(4))
+        sage: G = MatrixGroup([matrix(K, 4, 4, [K(y) for u in m.list() for y in u])for m in S.gens()])
+        sage: test_invariants(G)
+        sage: test_hilbert(G)
+        sage: i = GF(7)(3)
+        sage: G = MatrixGroup([[i**3,0, 0,-i**3], [i**2,0, 0,-i**2]])
+        sage: test_invariants(G)
+        sage: test_hilbert(G)
+    """
     R=S[0].parent().base_ring()
     T=PolynomialRing(R, len(S), "a")
     h=T.hom(S)                          
