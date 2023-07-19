@@ -374,6 +374,7 @@ class DynamicalSemigroup(Parent):
             sage: P.<x,y> = ProjectiveSpace(QQ, 1)
             sage: f = DynamicalSemigroup(([x, y], [x^2, y^2]))
             sage: f([2, 1])
+            ((2 : 1), (4 : 1))
 
         ::
 
