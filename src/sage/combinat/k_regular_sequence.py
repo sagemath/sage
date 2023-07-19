@@ -407,7 +407,8 @@ class kRegularSequence(RecognizableSeries):
     def regenerated(self):
         r"""
         Return a `k`-regular sequence that satisfies
-        `\mu[0] \mathit{right} = \mathit{right}`.
+        `\mu[0] \mathit{right} = \mathit{right}` with the same values as
+        this sequence.
 
         INPUT:
 
@@ -424,7 +425,7 @@ class kRegularSequence(RecognizableSeries):
 
             sage: Seq2 = kRegularSequenceSpace(2, ZZ)
 
-        The following linear representation of `S` is chosen bad (is
+        The following linear representation of `S` is chosen badly (is
         degenerated, see :meth:`is_degenerated`), as `\mu(0)` applied on
         `\mathit{right}` does not equal `\mathit{right}`::
 
@@ -550,7 +551,7 @@ class kRegularSequence(RecognizableSeries):
 
     def _minimized_right_(self):
         r"""
-        Return a recognizable series equivalent to this series, but
+        Return a regular sequence equivalent to this series, but
         with a right minimized linear representation.
 
         OUTPUT:
@@ -744,7 +745,7 @@ class kRegularSequence(RecognizableSeries):
             ...
             ValueError: a=-1 is not nonnegative.
 
-        The following linear representation of `S` is chosen bad (is
+        The following linear representation of `S` is chosen badly (is
         degenerated, see :meth:`is_degenerated`), as `\mu(0)` applied on
         `\mathit{right}` does not equal `\mathit{right}`::
 
@@ -1070,7 +1071,7 @@ class kRegularSequence(RecognizableSeries):
             sage: C.partial_sums(include_n=True)
             2-regular sequence 0, 1, 3, 6, 10, 15, 21, 28, 36, 45, ...
 
-        The following linear representation of `S` is chosen bad (is
+        The following linear representation of `S` is chosen badly (is
         degenerated, see :meth:`is_degenerated`), as `\mu(0)` applied on
         `\mathit{right}` does not equal `\mathit{right}`::
 
@@ -1515,7 +1516,7 @@ class kRegularSequenceSpace(RecognizableSeriesSpace):
              (0, 1))
             sage: logging.getLogger().setLevel(logging.WARN)
 
-        The following linear representation of `S` is chosen bad (is
+        The following linear representation of `S` is chosen badly (is
         degenerated, see :meth:`is_degenerated`), as `\mu(0)` applied on
         `\mathit{right}` does not equal `\mathit{right}`::
 
