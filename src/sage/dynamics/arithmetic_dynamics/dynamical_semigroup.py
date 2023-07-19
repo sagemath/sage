@@ -596,6 +596,12 @@ class DynamicalSemigroup_projective(DynamicalSemigroup):
     """
     pass
 
+class DynamicalSemigroup_projective_field(DynamicalSemigroup_projective):
+    pass
+
+class DynamicalSemigroup_projective_finite_field(DynamicalSemigroup_projective_field):
+    pass
+
 class DynamicalSemigroup_affine(DynamicalSemigroup):
     r"""
     A dynamical semigroup defined by a multiple dynamical systems on affine space.
@@ -644,3 +650,9 @@ class DynamicalSemigroup_affine(DynamicalSemigroup):
         for i in range(len(self._dynamical_systems)):
             if isinstance(self._dynamical_systems[i], DynamicalSystem_projective):
                 self._dynamical_systems[i] = self._dynamical_systems[i].dehomogenize(self._dimension)
+
+class DynamicalSemigroup_affine_field(DynamicalSemigroup_affine):
+    pass
+
+class DynamicalSemigroup_affine_finite_field(DynamicalSemigroup_affine_field):
+    pass
