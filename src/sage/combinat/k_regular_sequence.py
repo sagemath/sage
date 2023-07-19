@@ -519,6 +519,13 @@ class kRegularSequence(RecognizableSeries):
             sage: U.is_degenerated()
             True
             sage: Ut = U.transposed()
+            sage: Ut.linear_representation()
+            ((1, 0),
+             Finite family {0: [3 0]
+                               [2 1],
+                            1: [2 1]
+                               [0 3]},
+             (0, 1))
             sage: Ut.is_degenerated()
             False
 
