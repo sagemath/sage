@@ -541,7 +541,7 @@ class kRegularSequence(RecognizableSeries):
 
         .. SEEALSO::
 
-            :meth:`RecognizableSeries.tranposed <sage.combinat.recognizable_series.RecognizableSeries.tranposed>`
+            :meth:`RecognizableSeries.transposed <sage.combinat.recognizable_series.RecognizableSeries.transposed>`
         """
         element = super().transposed()
         if not allow_degenerated_sequence:
@@ -559,7 +559,7 @@ class kRegularSequence(RecognizableSeries):
 
         .. SEEALSO::
 
-            :meth:`RecognizableSeries._minimized_right_ <sage.combinat.recognizable_series.RecognizableSeries._minimized_right>`
+            :meth:`RecognizableSeries._minimized_right_ <sage.combinat.recognizable_series.RecognizableSeries._minimized_right_>`
 
         TESTS::
 
