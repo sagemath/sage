@@ -14217,20 +14217,18 @@ class GenericGraph(GenericGraph_pyx):
               a hole.
 
         - ``algorithm`` -- string (default: ``"B"``); the algorithm to choose
-          among ``"A"`` or ``"B"`` (see next section). While they will agree on
-          whether the given graph is chordal, they cannot be expected to return
-          the same certificates.
+          among ``"A"`` or ``"B"``. While they will agree on whether the given
+          graph is chordal, they cannot be expected to return the same
+          certificates.
 
         ALGORITHM:
 
-        This algorithm works through computing a Lex BFS on the graph, then
-        checking whether the order is a Perfect Elimination Order by computing
-        for each vertex `v` the subgraph induces by its non-deleted neighbors,
-        then testing whether this graph is complete.
-
-        This problem can be solved in `O(m)` [RT1975]_ ( where `m` is the number
-        of edges in the graph ) but this implementation is not linear because of
-        the complexity of Lex BFS.
+        This method implements the algorithm proposed in [RT1975]_ for the
+        recognition of chordal graphs with time complexity in `O(m)`. The
+        algorithm works through computing a Lex BFS on the graph, then checking
+        whether the order is a Perfect Elimination Order by computing for each
+        vertex `v` the subgraph induced by its non-deleted neighbors, then
+        testing whether this graph is complete.
 
         EXAMPLES:
 
@@ -14344,7 +14342,7 @@ class GenericGraph(GenericGraph_pyx):
                     continue
 
                 x = next(t_peo.neighbor_out_iterator(v))
-                S = self.neighbors(x) + [x]
+                S = self.neighbors(x, closed=True)
 
                 if not frozenset(g.neighbor_iterator(v)).issubset(S):
 
@@ -14380,7 +14378,7 @@ class GenericGraph(GenericGraph_pyx):
             peo, t_peo = self.lex_BFS(reverse=True, tree=True)
 
             # Remembering the (closed) neighborhoods of each vertex
-            neighbors_subsets = {v: frozenset(self.neighbors(v) + [v]) for v in g}
+            neighbors_subsets = {v: frozenset(self.neighbor_iterator(v, closed=True)) for v in g}
             pos_in_peo = dict(zip(peo, range(self.order())))
 
             # Iteratively removing vertices and checking everything is fine.
