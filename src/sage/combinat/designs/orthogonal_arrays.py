@@ -1521,7 +1521,7 @@ def OA_relabel(OA, k, n, blocks=tuple(), matrix=None, symbol_list=None):
         True
 
         sage: OA = designs.orthogonal_arrays.build(3,2)
-        sage: OA_relabel(OA,3,2,symbol_list=['A','B'])
+        sage: OA_relabel(OA, 3, 2, symbol_list=['A', 'B'])
         [['A', 'A', 'A'], ['A', 'B', 'B'], ['B', 'A', 'B'], ['B', 'B', 'A']]
 
     Making sure that ``[2,2,2,2]`` is a block of `OA(4,3)`. We do this
@@ -1554,8 +1554,8 @@ def OA_relabel(OA, k, n, blocks=tuple(), matrix=None, symbol_list=None):
         OA = [[matrix[i][j] if j is not None else None for i,j in enumerate(R)] for R in OA]
 
     if symbol_list:
-        mapping = {index : symbol for index, symbol in enumerate(symbol_list)}
-        OA = [[mapping.get(element) for element in row] for row in OA]
+        mapping = {index: symbol for index, symbol in enumerate(symbol_list)}
+        OA = [[mapping[element] for element in row] for row in OA]
     return OA
 
 def OA_standard_label(OA):
@@ -1580,8 +1580,8 @@ def OA_standard_label(OA):
 
     """
     symbol_list = sorted({x for l in OA for x in l})
-    mapping = {symbol : index for index, symbol in enumerate(symbol_list)}
-    return [[mapping.get(element) for element in row] for row in OA]
+    mapping = {symbol: index for index, symbol in enumerate(symbol_list)}
+    return [[mapping[element] for element in row] for row in OA]
 
 def OA_n_times_2_pow_c_from_matrix(k,c,G,A,Y,check=True):
     r"""
