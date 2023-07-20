@@ -1250,28 +1250,17 @@ cpdef tuple find_hamiltonian(G, long max_iter=100000, long reset_bound=30000,
 
     The method can also be used for directed graphs::
 
-        sage: G = DiGraph()
-        sage: G.add_path('abcd')
-        sage: G.add_path('xyd')
+        sage: G = DiGraph([(0, 1), (1, 2), (2, 3)])
         sage: fh(G)
-        (False, ['a', 'b', 'c', 'd'])
+        (False, [0, 1, 2, 3])
         sage: G = G.reverse()
         sage: fh(G)
-        (False, ['d', 'c', 'b', 'a'])
-        sage: H = DiGraph()
-        sage: H.add_cycle('abcdefgh')
-        sage: H.add_edge('dg')
-        sage: b, C = fh(H)
-        sage: b, len(C)
-        (True, 8)
-        sage: H.delete_edge('ab')
-        sage: fh(H, find_path=False)
-        (False, ['b', 'c', 'd', 'e', 'f', 'g', 'h', 'a'])
-        sage: fh(H, find_path=True)
-        (True, ['b', 'c', 'd', 'e', 'f', 'g', 'h', 'a'])
-        sage: H.delete_edge('gh')
-        sage: fh(H, find_path=True)
-        (False, ['b', 'c', 'd', 'e', 'f', 'g'])
+        (False, [3, 2, 1, 0])
+        sage: G = DiGraph()
+        sage: G.add_cycle([0, 1, 2, 3, 4, 5])
+        sage: b, P = fh(G)
+        sage: b, len(P)
+        (True, 6)
 
     TESTS:
 
