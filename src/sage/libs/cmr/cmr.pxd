@@ -3,6 +3,10 @@
 
 # (progn (replace-regexp "/[*]\\(.\\|\n\\)*?[*]/" "" nil (point) (point-max)) (replace-regexp "[;{}]" ""  nil (point) (point-max)) (replace-regexp "CMR_EXPORT *" ""  nil (point) (point-max)) (replace-regexp "bool" "bint" nil (point) (point-max)))
 
+cdef extern from "stdbool.h":
+
+    ctypedef int bool
+
 cdef extern from "cmr/env.h":
     int CMR_OKAY
     int CMR_ERROR_INPUT
@@ -51,10 +55,10 @@ cdef extern from "cmr/matrix.h":
 
 cdef extern from "cmr/k_modular.h":
 
-    CMR_ERROR CMRtestUnimodularity(CMR* cmr, CMR_CHRMAT* matrix, bint* pisUnimodular)
-    CMR_ERROR CMRtestStrongUnimodularity(CMR* cmr, CMR_CHRMAT* matrix, bint* pisStronglyUnimodular)
-    CMR_ERROR CMRtestKmodularity(CMR* cmr, CMR_CHRMAT* matrix, bint* pisKmodular, size_t* pk)
-    CMR_ERROR CMRtestStrongKmodularity(CMR* cmr, CMR_CHRMAT* matrix, bint* pisStronglyKmodular, size_t* pk)
+    CMR_ERROR CMRtestUnimodularity(CMR* cmr, CMR_CHRMAT* matrix, int* pisUnimodular)
+    CMR_ERROR CMRtestStrongUnimodularity(CMR* cmr, CMR_CHRMAT* matrix, bool* pisStronglyUnimodular)
+    CMR_ERROR CMRtestKmodularity(CMR* cmr, CMR_CHRMAT* matrix, bool* pisKmodular, size_t* pk)
+    CMR_ERROR CMRtestStrongKmodularity(CMR* cmr, CMR_CHRMAT* matrix, bool* pisStronglyKmodular, size_t* pk)
 
 cdef extern from "cmr/camion.h":
 
@@ -64,8 +68,8 @@ cdef extern from "cmr/camion.h":
 
     CMR_ERROR CMRstatsCamionInit(CMR_CAMION_STATISTICS* stats)
     # CMR_ERROR CMRstatsCamionPrint(FILE* stream, CMR_CAMION_STATISTICS* stats, const char* prefix)
-    CMR_ERROR CMRtestCamionSigned(CMR* cmr, CMR_CHRMAT* matrix, bint* pisCamionSigned, CMR_SUBMAT** psubmatrix, CMR_CAMION_STATISTICS* stats, double timeLimit)
-    CMR_ERROR CMRcomputeCamionSigned(CMR* cmr, CMR_CHRMAT* matrix, bint* pwasCamionSigned, CMR_SUBMAT** psubmatrix, CMR_CAMION_STATISTICS* stats, double timeLimit)
+    CMR_ERROR CMRtestCamionSigned(CMR* cmr, CMR_CHRMAT* matrix, bool* pisCamionSigned, CMR_SUBMAT** psubmatrix, CMR_CAMION_STATISTICS* stats, double timeLimit)
+    CMR_ERROR CMRcomputeCamionSigned(CMR* cmr, CMR_CHRMAT* matrix, bool* pwasCamionSigned, CMR_SUBMAT** psubmatrix, CMR_CAMION_STATISTICS* stats, double timeLimit)
 
 cdef extern from "cmr/matroid.h":
 
@@ -113,7 +117,7 @@ cdef extern from "cmr/separation.h":
     unsigned char CMRsepaRankBottomLeft(CMR_SEPA* sepa)
     unsigned char CMRsepaRankTopRight(CMR_SEPA* sepa)
     unsigned char CMRsepaRank(CMR_SEPA* sepa)
-    CMR_ERROR CMRsepaCheckTernary(CMR* cmr, CMR_SEPA* sepa, CMR_CHRMAT* matrix, CMR_SUBMAT* submatrix, bint* pisTernary, CMR_SUBMAT** psubmatrix)
+    CMR_ERROR CMRsepaCheckTernary(CMR* cmr, CMR_SEPA* sepa, CMR_CHRMAT* matrix, CMR_SUBMAT* submatrix, bool* pisTernary, CMR_SUBMAT** psubmatrix)
     CMR_ERROR CMRoneSum(CMR* cmr, CMR_CHRMAT* first, CMR_CHRMAT* second, CMR_CHRMAT** presult)
     CMR_ERROR CMRtwoSum(CMR* cmr, CMR_CHRMAT* first, CMR_CHRMAT* second, CMR_ELEMENT firstMarker, CMR_ELEMENT secondMarker, CMR_CHRMAT** presult)
     CMR_ERROR CMRthreeSum(CMR* cmr, CMR_CHRMAT* first, CMR_CHRMAT* second, CMR_ELEMENT firstMarker1, CMR_ELEMENT secondMarker1, CMR_ELEMENT firstMarker2, CMR_ELEMENT secondMarker2, CMR_CHRMAT** presult)
@@ -189,9 +193,9 @@ cdef extern from "cmr/graphic.h":
 
     CMR_ERROR CMRstatsGraphicInit(CMR_GRAPHIC_STATISTICS* stats)
     # CMR_ERROR CMRstatsGraphicPrint(FILE* stream, CMR_GRAPHIC_STATISTICS* stats, const char* prefix)
-    CMR_ERROR CMRcomputeGraphicMatrix(CMR* cmr, CMR_GRAPH* graph, CMR_CHRMAT** pmatrix, CMR_CHRMAT** ptranspose, int numForestEdges, CMR_GRAPH_EDGE* forestEdges, int numCoforestEdges, CMR_GRAPH_EDGE* coforestEdges, bint* pisCorrectForest)
-    CMR_ERROR CMRtestGraphicMatrix(CMR* cmr, CMR_CHRMAT* matrix, bint* pisGraphic, CMR_GRAPH** pgraph, CMR_GRAPH_EDGE** pforestEdges, CMR_GRAPH_EDGE** pcoforestEdges, CMR_SUBMAT** psubmatrix, CMR_GRAPHIC_STATISTICS* stats, double timeLimit)
-    CMR_ERROR CMRtestCographicMatrix(CMR* cmr, CMR_CHRMAT* matrix, bint* pisCographic, CMR_GRAPH** pgraph, CMR_GRAPH_EDGE** pforestEdges, CMR_GRAPH_EDGE** pcoforestEdges, CMR_SUBMAT** psubmatrix, CMR_GRAPHIC_STATISTICS* stats, double timeLimit)
+    CMR_ERROR CMRcomputeGraphicMatrix(CMR* cmr, CMR_GRAPH* graph, CMR_CHRMAT** pmatrix, CMR_CHRMAT** ptranspose, int numForestEdges, CMR_GRAPH_EDGE* forestEdges, int numCoforestEdges, CMR_GRAPH_EDGE* coforestEdges, bool* pisCorrectForest)
+    CMR_ERROR CMRtestGraphicMatrix(CMR* cmr, CMR_CHRMAT* matrix, bool* pisGraphic, CMR_GRAPH** pgraph, CMR_GRAPH_EDGE** pforestEdges, CMR_GRAPH_EDGE** pcoforestEdges, CMR_SUBMAT** psubmatrix, CMR_GRAPHIC_STATISTICS* stats, double timeLimit)
+    CMR_ERROR CMRtestCographicMatrix(CMR* cmr, CMR_CHRMAT* matrix, bool* pisCographic, CMR_GRAPH** pgraph, CMR_GRAPH_EDGE** pforestEdges, CMR_GRAPH_EDGE** pcoforestEdges, CMR_SUBMAT** psubmatrix, CMR_GRAPHIC_STATISTICS* stats, double timeLimit)
     CMR_ERROR CMRtestGraphicColumnSubmatrixGreedy(CMR* cmr, CMR_CHRMAT* transpose, size_t* orderedColumns, CMR_SUBMAT** psubmatrix)
 
 cdef extern from "cmr/series_parallel.h":
@@ -223,10 +227,10 @@ cdef extern from "cmr/series_parallel.h":
     bint CMRspIsCopy(CMR_SP_REDUCTION reduction)
     bint CMRspIsValid(CMR_SP_REDUCTION reduction)
 
-    CMR_ERROR CMRtestBinarySeriesParallel(CMR* cmr, CMR_CHRMAT* matrix, bint* pisSeriesParallel, CMR_SP_REDUCTION* reductions, size_t* pnumReductions, CMR_SUBMAT** preducedSubmatrix, CMR_SUBMAT** pviolatorSubmatrix, CMR_SP_STATISTICS* stats, double timeLimit)
-    CMR_ERROR CMRtestTernarySeriesParallel(CMR* cmr, CMR_CHRMAT* matrix, bint* pisSeriesParallel, CMR_SP_REDUCTION* reductions, size_t* pnumReductions, CMR_SUBMAT** preducedSubmatrix, CMR_SUBMAT** pviolatorSubmatrix, CMR_SP_STATISTICS* stats, double timeLimit)
-    CMR_ERROR CMRdecomposeBinarySeriesParallel(CMR* cmr, CMR_CHRMAT* matrix, bint* pisSeriesParallel, CMR_SP_REDUCTION* reductions, size_t maxNumReductions, size_t* pnumReductions, CMR_SUBMAT** preducedSubmatrix, CMR_SUBMAT** pviolatorSubmatrix, CMR_SEPA** pseparation, CMR_SP_STATISTICS* stats, double timeLimit)
-    CMR_ERROR CMRdecomposeTernarySeriesParallel(CMR* cmr, CMR_CHRMAT* matrix, bint* pisSeriesParallel, CMR_SP_REDUCTION* reductions, size_t maxNumReductions, size_t* pnumReductions, CMR_SUBMAT** preducedSubmatrix, CMR_SUBMAT** pviolatorSubmatrix, CMR_SEPA** pseparation, CMR_SP_STATISTICS* stats, double timeLimit)
+    CMR_ERROR CMRtestBinarySeriesParallel(CMR* cmr, CMR_CHRMAT* matrix, bool* pisSeriesParallel, CMR_SP_REDUCTION* reductions, size_t* pnumReductions, CMR_SUBMAT** preducedSubmatrix, CMR_SUBMAT** pviolatorSubmatrix, CMR_SP_STATISTICS* stats, double timeLimit)
+    CMR_ERROR CMRtestTernarySeriesParallel(CMR* cmr, CMR_CHRMAT* matrix, bool* pisSeriesParallel, CMR_SP_REDUCTION* reductions, size_t* pnumReductions, CMR_SUBMAT** preducedSubmatrix, CMR_SUBMAT** pviolatorSubmatrix, CMR_SP_STATISTICS* stats, double timeLimit)
+    CMR_ERROR CMRdecomposeBinarySeriesParallel(CMR* cmr, CMR_CHRMAT* matrix, bool* pisSeriesParallel, CMR_SP_REDUCTION* reductions, size_t maxNumReductions, size_t* pnumReductions, CMR_SUBMAT** preducedSubmatrix, CMR_SUBMAT** pviolatorSubmatrix, CMR_SEPA** pseparation, CMR_SP_STATISTICS* stats, double timeLimit)
+    CMR_ERROR CMRdecomposeTernarySeriesParallel(CMR* cmr, CMR_CHRMAT* matrix, bool* pisSeriesParallel, CMR_SP_REDUCTION* reductions, size_t maxNumReductions, size_t* pnumReductions, CMR_SUBMAT** preducedSubmatrix, CMR_SUBMAT** pviolatorSubmatrix, CMR_SEPA** pseparation, CMR_SP_STATISTICS* stats, double timeLimit)
 
 cdef extern from "cmr/network.h":
 
@@ -238,9 +242,9 @@ cdef extern from "cmr/network.h":
 
     CMR_ERROR CMRstatsNetworkInit(CMR_NETWORK_STATISTICS* stats)
     # CMR_ERROR CMRstatsNetworkPrint(FILE* stream, CMR_NETWORK_STATISTICS* stats, const char* prefix)
-    CMR_ERROR CMRcomputeNetworkMatrix(CMR* cmr, CMR_GRAPH* digraph, CMR_CHRMAT** pmatrix, CMR_CHRMAT** ptranspose, bint* arcsReversed, int numForestArcs, CMR_GRAPH_EDGE* forestArcs, int numCoforestArcs, CMR_GRAPH_EDGE* coforestArcs, bint* pisCorrectForest)
-    CMR_ERROR CMRtestNetworkMatrix(CMR* cmr, CMR_CHRMAT* matrix, bint* pisNetwork, CMR_GRAPH** pdigraph, CMR_GRAPH_EDGE** pforestArcs, CMR_GRAPH_EDGE** pcoforestArcs, bint** parcsReversed, CMR_SUBMAT** psubmatrix, CMR_NETWORK_STATISTICS* stats, double timeLimit)
-    CMR_ERROR CMRtestConetworkMatrix(CMR* cmr, CMR_CHRMAT* matrix, bint* pisConetwork, CMR_GRAPH** pdigraph, CMR_GRAPH_EDGE** pforestArcs, CMR_GRAPH_EDGE** pcoforestArcs, bint** parcsReversed, CMR_SUBMAT** psubmatrix, CMR_NETWORK_STATISTICS* stats, double timeLimit)
+    CMR_ERROR CMRcomputeNetworkMatrix(CMR* cmr, CMR_GRAPH* digraph, CMR_CHRMAT** pmatrix, CMR_CHRMAT** ptranspose, bool* arcsReversed, int numForestArcs, CMR_GRAPH_EDGE* forestArcs, int numCoforestArcs, CMR_GRAPH_EDGE* coforestArcs, bool* pisCorrectForest)
+    CMR_ERROR CMRtestNetworkMatrix(CMR* cmr, CMR_CHRMAT* matrix, bool* pisNetwork, CMR_GRAPH** pdigraph, CMR_GRAPH_EDGE** pforestArcs, CMR_GRAPH_EDGE** pcoforestArcs, bool** parcsReversed, CMR_SUBMAT** psubmatrix, CMR_NETWORK_STATISTICS* stats, double timeLimit)
+    CMR_ERROR CMRtestConetworkMatrix(CMR* cmr, CMR_CHRMAT* matrix, bool* pisConetwork, CMR_GRAPH** pdigraph, CMR_GRAPH_EDGE** pforestArcs, CMR_GRAPH_EDGE** pcoforestArcs, bool** parcsReversed, CMR_SUBMAT** psubmatrix, CMR_NETWORK_STATISTICS* stats, double timeLimit)
 
 cdef extern from "cmr/dec.h":
 
@@ -281,7 +285,7 @@ cdef extern from "cmr/dec.h":
     CMR_CHRMAT* CMRdecGetTranspose(CMR_DEC* dec)
     size_t CMRdecNumChildren(CMR_DEC* dec)
     CMR_DEC* CMRdecChild(CMR_DEC* dec, size_t childIndex)
-    int CMRdecIsSum(CMR_DEC* dec, bint* plowerLeftNonzeros, bint* pupperRightNonzeros)
+    int CMRdecIsSum(CMR_DEC* dec, bool* plowerLeftNonzeros, bool* pupperRightNonzeros)
     CMR_DEC_TYPE CMRdecIsSpecialLeaf(CMR_DEC* dec, int* prepresentationMatrix)
     bint CMRdecIsGraphicLeaf(CMR_DEC* dec)
     bint CMRdecIsCographicLeaf(CMR_DEC* dec)
@@ -301,11 +305,11 @@ cdef extern from "cmr/dec.h":
     size_t CMRdecGraphSizeForest(CMR_DEC* dec)
     CMR_GRAPH_EDGE* CMRdecGraphCoforest(CMR_DEC* dec)
     size_t CMRdecGraphSizeCoforest(CMR_DEC* dec)
-    bint* CMRdecGraphArcsReversed(CMR_DEC* dec)
+    bool* CMRdecGraphArcsReversed(CMR_DEC* dec)
     CMR_GRAPH* CMRdecCograph(CMR_DEC* dec)
     CMR_GRAPH_EDGE* CMRdecCographForest(CMR_DEC* dec)
     CMR_GRAPH_EDGE* CMRdecCographCoforest(CMR_DEC* dec)
-    bint* CMRdecCographArcsReversed(CMR_DEC* dec)
+    bool* CMRdecCographArcsReversed(CMR_DEC* dec)
 
 
 cdef extern from "cmr/regular.h":
@@ -361,7 +365,7 @@ cdef extern from "cmr/tu.h":
 
     CMR_ERROR CMRstatsTotalUnimodularityInit(CMR_TU_STATISTICS* stats)
     # CMR_ERROR CMRstatsTotalUnimodularityPrint(FILE* stream, CMR_TU_STATISTICS* stats, const char* prefix)
-    CMR_ERROR CMRtestTotalUnimodularity(CMR* cmr, CMR_CHRMAT* matrix, bint* pisTotallyUnimodular, CMR_DEC** pdec, CMR_SUBMAT** psubmatrix, CMR_TU_PARAMETERS* params, CMR_TU_STATISTICS* stats, double timeLimit)
+    CMR_ERROR CMRtestTotalUnimodularity(CMR* cmr, CMR_CHRMAT* matrix, bool* pisTotallyUnimodular, CMR_DEC** pdec, CMR_SUBMAT** psubmatrix, CMR_TU_PARAMETERS* params, CMR_TU_STATISTICS* stats, double timeLimit)
 
 
 cdef extern from "cmr/ctu.h":
@@ -374,7 +378,7 @@ cdef extern from "cmr/ctu.h":
     CMR_ERROR CMRstatsComplementTotalUnimodularityInit(CMR_CTU_STATISTICS* stats)
     # CMR_ERROR CMRstatsComplementTotalUnimodularityPrint(FILE* stream, CMR_CTU_STATISTICS* stats, const char* prefix)
     CMR_ERROR CMRcomplementRowColumn(CMR* cmr, CMR_CHRMAT* matrix, size_t complementRow, size_t complementColumn, CMR_CHRMAT** presult)
-    CMR_ERROR CMRtestComplementTotalUnimodularity(CMR* cmr, CMR_CHRMAT* matrix, bint* pisComplementTotallyUnimodular, size_t* pcomplementRow, size_t* pcomplementColumn, CMR_CTU_STATISTICS* stats)
+    CMR_ERROR CMRtestComplementTotalUnimodularity(CMR* cmr, CMR_CHRMAT* matrix, bool* pisComplementTotallyUnimodular, size_t* pcomplementRow, size_t* pcomplementColumn, CMR_CTU_STATISTICS* stats)
 
 
 # Our global CMR environment
