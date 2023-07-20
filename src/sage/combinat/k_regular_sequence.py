@@ -3432,7 +3432,7 @@ class RecurrenceParser():
     def shifted_inhomogeneities(self, recurrence_rules):
         r"""
         Return a dictionary of all needed shifted inhomogeneities as described
-        in the proof of Coroallary D in [HKL2022]_.
+        in the proof of Corollary D in [HKL2022]_.
 
         INPUT:
 
