@@ -4006,7 +4006,7 @@ cdef class BooleanPolynomial(MPolynomial):
         fixed = {}
         if in_dict is not None:
             for var, val in in_dict.items():
-                if isinstance(var, basestring):
+                if isinstance(var, str):
                     var = P(var)
                 elif var.parent() is not P:
                     var = P(var)

@@ -32,6 +32,7 @@ from sage.homology.chain_complex import ChainComplex
 from sage.rings.integer_ring import ZZ
 from sage.topology.simplicial_complex_examples import RandomComplex
 
+
 def random_chain_complex(level=1):
     """
     Return a random chain complex, defined by specifying a single
@@ -54,7 +55,7 @@ def random_chain_complex(level=1):
         sage: C.degree_of_differential() in [-1, 1]
         True
     """
-    bound = 50*level
+    bound = 50 * level
     nrows = randint(0, bound)
     ncols = randint(0, bound)
     sparseness = bool(randint(0, 1))
@@ -100,6 +101,7 @@ def test_random_chain_complex(level=1, trials=1, verbose=False):
                 print("Chain complex: %s" % C.differential())
                 raise ValueError
 
+
 def random_simplicial_complex(level=1, p=0.5):
     """
     Return a random simplicial complex.
@@ -120,9 +122,10 @@ def random_simplicial_complex(level=1, p=0.5):
         sage: X.dimension() < 11
         True
     """
-    n = randint(2, 4*level)
+    n = randint(2, 4 * level)
     dim = randint(1, n)
     return RandomComplex(n, dim, p)
+
 
 @random_testing
 def test_random_simplicial_complex(level=1, trials=1, verbose=False):

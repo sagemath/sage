@@ -41,6 +41,7 @@ from sage.rings.integer_ring import ZZ
 
 from .simplicial_set import SimplicialSet_arbitrary
 
+
 class SimplicialSetHomset(Homset):
     r"""
     A set of morphisms between simplicial sets.
@@ -477,18 +478,18 @@ class SimplicialSetMorphism(Morphism):
             if constant is not None:
                 self._constant = constant
                 check = False
-                data = {sigma: constant.apply_degeneracies(*range(sigma.dimension()-1,-1,-1))
+                data = {sigma: constant.apply_degeneracies(*range(sigma.dimension()-1, -1, -1))
                         for sigma in domain.nondegenerate_simplices()}
 
         if (not isinstance(domain, SimplicialSet_arbitrary)
-            or not isinstance(codomain, SimplicialSet_arbitrary)):
+                or not isinstance(codomain, SimplicialSet_arbitrary)):
             raise TypeError('the domain and codomain must be simplicial sets')
         if any(x.nondegenerate() not in
                domain.nondegenerate_simplices() for x in data.keys()):
             raise ValueError('at least one simplex in the defining '
                              'dictionary is not in the domain')
         # Remove degenerate simplices from the domain specification.
-        d = {sigma:data[sigma] for sigma in data if sigma.is_nondegenerate()}
+        d = {sigma: data[sigma] for sigma in data if sigma.is_nondegenerate()}
         # For each simplex in d.keys(), add its faces, and the faces
         # of its faces, etc., to d.
         for simplex in list(d):
@@ -510,10 +511,10 @@ class SimplicialSetMorphism(Morphism):
                 d[sigma.nondegenerate()] = x
                 faces = domain.faces(sigma.nondegenerate())
                 if faces:
-                    for (i,rho) in enumerate(faces):
+                    for i, rho in enumerate(faces):
                         nondegen = rho.nondegenerate()
                         if nondegen not in d:
-                            add.append((rho,i,sigma))
+                            add.append((rho, i, sigma))
         # Now check that the proposed map commutes with the face
         # maps. (The degeneracy maps should work automatically.)
         if check:
@@ -762,7 +763,7 @@ class SimplicialSetMorphism(Morphism):
         ans = (self._is_identity or
                 (self.domain() == self.codomain()
                  and self.domain().is_finite()
-                 and all(a == b for a,b in self._dictionary.items())))
+                 and all(a == b for a, b in self._dictionary.items())))
         self._is_identity = ans
         return ans
 
@@ -1137,7 +1138,7 @@ class SimplicialSetMorphism(Morphism):
         domain = self.domain().product(*[g.domain() for g in others])
         codomain = self.codomain().product(*[g.codomain() for g in others])
         factors = []
-        for (i,f) in enumerate([self] + list(others)):
+        for i, f in enumerate([self] + list(others)):
             factors.append(f * domain.projection_map(i))
         return codomain.universal_property(*factors)
 
@@ -1320,7 +1321,7 @@ class SimplicialSetMorphism(Morphism):
         min_dim = min(self.domain().dimension(), self.codomain().dimension())
         matrices = {}
         if augmented is True:
-            m = matrix(base_ring,1,1,1)
+            m = matrix(base_ring, 1, 1, 1)
             if not cochain:
                 matrices[-1] = m
             else:
@@ -1331,7 +1332,7 @@ class SimplicialSetMorphism(Morphism):
             num_faces_X = len(X_faces)
             num_faces_Y = len(Y_faces)
             mval = [0 for _ in range(num_faces_X * num_faces_Y)]
-            for idx,x in enumerate(X_faces):
+            for idx, x in enumerate(X_faces):
                 y = self(x)
                 if y.is_nondegenerate():
                     mval[idx + (Y_faces.index(y) * num_faces_X)] = 1
@@ -1340,7 +1341,7 @@ class SimplicialSetMorphism(Morphism):
                 matrices[dim] = m
             else:
                 matrices[dim] = m.transpose()
-        for dim in range(min_dim+1,max_dim+1):
+        for dim in range(min_dim+1, max_dim+1):
             try:
                 l1 = len(self.codomain().n_cells(dim))
             except KeyError:
@@ -1349,7 +1350,7 @@ class SimplicialSetMorphism(Morphism):
                 l2 = len(self.domain().n_cells(dim))
             except KeyError:
                 l2 = 0
-            m = zero_matrix(base_ring,l1,l2,sparse=True)
+            m = zero_matrix(base_ring, l1, l2, sparse=True)
             if not cochain:
                 matrices[dim] = m
             else:
