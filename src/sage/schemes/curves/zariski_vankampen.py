@@ -26,7 +26,7 @@ EXAMPLES::
     sage: R.<x, y> = QQ[]
     sage: f = y^3 + x^3 - 1
     sage: braid_monodromy(f) # optional - sirocco
-    ([s1*s0, s1*s0, s1*s0], {1: 1, 2: 1, 3: 1})
+    ([s1*s0, s1*s0, s1*s0], {0: 0, 1: 0, 2: 0})
     sage: fundamental_group(f) # optional - sirocco
     Finitely presented group < x0 |  >
 """
@@ -218,7 +218,6 @@ def discrim(pols):
 def corrected_voronoi_diagram(points):
     r"""
     Compute a Voronoi diagram of a set of points with rational coordinates.
-
     The given points are granted to lie one in each bounded region.
 
     INPUT:
@@ -227,7 +226,7 @@ def corrected_voronoi_diagram(points):
 
     OUTPUT:
 
-    A VoronoiDiagram constructed from rational approximations of the points,
+    A Voronoi diagram constructed from rational approximations of the points,
     with the guarantee that each bounded region contains exactly one of the
     input points.
 
@@ -1077,7 +1076,7 @@ def strand_components(f, flist, p1):
         sage: strand_components(prod(flist), flist, 1) # optional - sirocco
         ([(-0.500000000000000? - 0.866025403784439?*I, 0),
           (-0.500000000000000? + 0.866025403784439?*I, 0),
-          (1, 0), (1.333333333333334?, 1)], {1: 1, 2: 1, 3: 1, 4: 2})
+          (1, 0), (1.333333333333334?, 1)], {0: 0, 1: 0, 2: 0, 3: 1})
     """
     x, y = f.parent().gens()
     F = flist[0].base_ring()
@@ -1089,7 +1088,7 @@ def strand_components(f, flist, p1):
         rt = h1.roots(QQbar, multiplicities=False)
         roots_base += [(_, i) for _ in rt]
     roots_base.sort()
-    strands = {i + 1: par[1] + 1 for i, par in enumerate(roots_base)}  # quitar +1 despues de revision
+    strands = {i: par[1] for i, par in enumerate(roots_base)}  # quitar +1 despues de revision
     return (roots_base, strands)
 
 
@@ -1132,13 +1131,13 @@ def braid_monodromy(f, arrangement=()):
         ([s1*s0*(s1*s2)^2*s0*s2^2*s0^-1*(s2^-1*s1^-1)^2*s0^-1*s1^-1,
           s1*s0*(s1*s2)^2*(s0*s2^-1*s1*s2*s1*s2^-1)^2*(s2^-1*s1^-1)^2*s0^-1*s1^-1,
           s1*s0*(s1*s2)^2*s2*s1^-1*s2^-1*s1^-1*s0^-1*s1^-1,
-          s1*s0*s2*s0^-1*s2*s1^-1], {1: 1, 2: 1, 3: 1, 4: 1})
+          s1*s0*s2*s0^-1*s2*s1^-1], {0: 0, 1: 0, 2: 0, 3: 0})
         sage: flist = (x^2 - y^3, x + 3 * y - 5)
         sage: bm1 = braid_monodromy(f, arrangement=flist) # optional - sirocco
         sage: bm1[0] == bm[0]  # optional - sirocco
         True
         sage: bm1[1]  # optional - sirocco
-        {1: 1, 2: 2, 3: 1, 4: 1}
+        {0: 0, 1: 1, 2: 0, 3: 0}
 
     """
     global roots_interval_cache
@@ -1286,8 +1285,8 @@ def conjugate_positive_form_p(braid):
 
 def braid2rels(L):
     r"""
-    Return a minimal set of elements of ``F = FreeGroup(d)`` for a braid ``b`` which is the conjugate of
-    a positive braid as relations of the group ``F / [(b * F([j])) / F([j]) for j in (1..d)]``. One starts
+    Return a minimal set of relations of the group ``F / [(b * F([j])) / F([j]) for j in (1..d)]``
+    where ``F = FreeGroup(d)`` and ``b`` is a conjugate of a positive braid . One starts
     from the non-trivial relations determined by the positive braid and transform them in relations determined by ``b``.
 
     INPUT:
@@ -1540,7 +1539,7 @@ def fundamental_group(f, simplified=True, projective=False, puiseux=False):
     return fundamental_group_from_braid_mon(bm, degree=d, simplified=simplified, projective=projective, puiseux=puiseux)
 
 
-def fundamental_group_arrangement(flist, simplified=True, projective=False, puiseux=False, braid_mon=None):
+def fundamental_group_arrangement(flist, simplified=True, projective=False, puiseux=False):
     r"""
     Compute the fundamental group of the complement of a curve
     defined by a list of polynomials with the extra information about the correspondence of the generators
@@ -1565,9 +1564,6 @@ def fundamental_group_arrangement(flist, simplified=True, projective=False, puis
       of the complement of the affine curve will be computed, adding
       one relation if ``projective`` is set to ``True``.
 
-    - ``braid_mon`` -- (default: ``None``); it can be set to the output
-      of ``braid_monodromy_arrangement`` to avoid an extra computation.
-
     OUTPUT:
 
     - A list of braids. The braids correspond to paths based in the same point;
@@ -1588,17 +1584,15 @@ def fundamental_group_arrangement(flist, simplified=True, projective=False, puis
         sage: g # optional - sirocco
         Finitely presented group < x0, x1, x2 | x2*x1*x2^-1*x1^-1, x1*x0*x1^-1*x0^-1, x2*x0*x2*x0^-1*x2^-1*x0^-1 >
         sage: dic # optional - sirocco
-        {1: (1,), 2: (2,), 3: (-1, -3, -2, -1)}
-        sage: BM = braid_monodromy(prod(flist), flist) # optional - sirocco
-        sage: (g, dic) == fundamental_group_arrangement(flist, braid_mon=BM) # optional - sirocco
-        True
-        sage: fundamental_group_arrangement(flist, simplified=False, braid_mon=BM) # optional - sirocco
+        {0: [x0, x2, x0], 1: [x1], 2: [x0^-1*x2^-1*x1^-1*x0^-1]}
+        sage: fundamental_group_arrangement(flist, simplified=False) # optional - sirocco
         (Finitely presented group < x0, x1, x2, x3 | x0*x1*x0*x1^-1*x0^-2,
          x0*x1*x2*x3*x2*x3^-1*x2^-1*x1^-1*x0^-2, x0*x1*x0*x1^-1*x0^-2, 1, x0*x1*x0^-1*x1^-1, 1,
          x0*x1*x0^-1*x1^-1, x1*x2*x3*x2^-1*x1*x2*x3^-1*x2^-1*x1^-2, 1, x1^-1*x0*x1*x2*x3*x2^-1*x1^-1*x0^-1*x1*x2^-1,
-         1, 1, 1, x1^-1*x0*x1*x3^-1, 1, x2^-1*x1*x2*x3*x2^-1*x1^-1*x2*x3^-1 >, {1: (1,), 2: (2,), 3: (-4, -3, -2, -1)})
-        sage: fundamental_group_arrangement(flist, projective=True, braid_mon=BM) # optional - sirocco
-        (Finitely presented group < x |  >, {1: (1,), 2: (-1, -1, -1)})
+         1, 1, 1, x1^-1*x0*x1*x3^-1, 1, x2^-1*x1*x2*x3*x2^-1*x1^-1*x2*x3^-1 >,
+         {0: [x0, x2, x3], 1: [x1], 2: [x3^-1*x2^-1*x1^-1*x0^-1]})
+        sage: fundamental_group_arrangement(flist, projective=True) # optional - sirocco
+        (Finitely presented group < x |  >, {0: [x0, x0, x0], 1: [x0^-3]})
 
     .. TODO::
 
@@ -1625,14 +1619,11 @@ def fundamental_group_arrangement(flist, simplified=True, projective=False, puis
         while f.degree(y) < f.degree():
             flist1 = [g.subs({x: x + y}) for g in flist]
             f = prod(flist1)
-    if braid_mon is None:
-        if len(flist1) == 0:
-            bm = []
-            dic = dict()
-        else:
-            bm, dic = braid_monodromy(f, flist1)
+    if len(flist1) == 0:
+        bm = []
+        dic = dict()
     else:
-        bm, dic = braid_mon
+        bm, dic = braid_monodromy(f, flist1)
     g = fundamental_group_from_braid_mon(bm, degree=d, simplified=False, projective=projective, puiseux=puiseux)
     if simplified:
         hom = g.simplification_isomorphism()
@@ -1643,11 +1634,11 @@ def fundamental_group_arrangement(flist, simplified=True, projective=False, puis
         return (g1, dict())
     dic1 = {}
     for i in range(len(flist1)):
-        j = [j1 for j1 in dic.keys() if dic[j1] == i + 1][0]
-        dic1[i + 1] = hom(g([j])).Tietze()
+        L = [j1 for j1 in dic.keys() if dic[j1] == i]
+        dic1[i] = [hom(g.gen(j)) for j in L]
     if not projective and f.degree(y) == f.degree():
-        t = prod(hom(x) for x in g.gens()).inverse().Tietze()
-        dic1[len(flist1) + 1] = t
+        t = prod(hom(x) for x in g.gens()).inverse()
+        dic1[len(flist1)] = [t]
     n = g1.ngens()
     rels = [_.Tietze() for _ in g1.relations()]
     g1 = FreeGroup(n) / rels
