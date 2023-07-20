@@ -421,6 +421,10 @@ class kRegularSequence(RecognizableSeries):
 
         A :class:`kRegularSequence`
 
+        ALGORITHM:
+
+        Theorem B of [HKL2021]_ with `n_0 = 1`.
+
         EXAMPLES::
 
             sage: Seq2 = kRegularSequenceSpace(2, ZZ)
@@ -457,14 +461,14 @@ class kRegularSequence(RecognizableSeries):
             ....:          allow_degenerated_sequence=True)
             sage: H = S.regenerated(minimize=False)
             sage: H.linear_representation()
-            ((1, 1),
-             Finite family {0: [1|0]
+            ((1, 0),
+             Finite family {0: [ 2|-1]
+                               [--+--]
+                               [ 0| 1],
+                            1: [3|0]
                                [-+-]
-                               [0|2],
-                            1: [0|0]
-                               [-+-]
-                               [3|3]},
-             (1, 0))
+                               [0|0]},
+             (1, 1))
             sage: H.is_degenerated()
             False
         """
@@ -477,19 +481,21 @@ class kRegularSequence(RecognizableSeries):
 
         P = self.parent()
         dim = self.dimension()
-        Z = zero_matrix(dim)
+        Zc = zero_matrix(dim, 1)
+        Zr = zero_matrix(1, dim)
         I = identity_matrix(dim)
 
         itA = iter(P.alphabet())
         z = next(itA)
-        mu = {z: Matrix.block([[I, Z], [Z, self.mu[z]]])}
-        mu.update((r, Matrix.block([[Z, Z], [self.mu[r], self.mu[r]]]))
+        W0 = Matrix(dim, 1, (I - self.mu[z]) * self.right)
+        mu = {z: Matrix.block([[self.mu[z], W0], [Zr, 1]])}
+        mu.update((r, Matrix.block([[self.mu[r], Zc], [Zr, 0]]))
                   for r in itA)
 
         return P.element_class(
             P, mu,
-            vector(2*tuple(self.left)),
-            vector(tuple(self.right) + dim*(0,)))
+            vector(tuple(self.left) + (0,)),
+            vector(tuple(self.right) + (1,)))
 
     def transposed(self, allow_degenerated_sequence=False):
         r"""
