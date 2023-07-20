@@ -1308,7 +1308,7 @@ cpdef tuple find_hamiltonian(G, long max_iter=100000, long reset_bound=30000,
         sage: fh(G, find_path=True)
         (False, [0, 1, 2, 3])
 
-    Check that the method is robust to incomparble vertices::
+    Check that the method is robust to incomparable vertices::
 
         sage: G = Graph([(1, 'a'), ('a', 2), (2, 3), (3, 1)])
         sage: b, C = fh(G, find_path=False)
