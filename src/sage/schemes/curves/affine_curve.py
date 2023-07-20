@@ -1736,7 +1736,8 @@ class AffinePlaneCurve_field(AffinePlaneCurve, AffineCurve_field):
     """
     _point = AffinePlaneCurvePoint_field
 
-    def fundamental_group(self, simplified=True, puiseux=False, braid_mon=None):
+    @cached_method
+    def fundamental_group(self, simplified=True, puiseux=False):
         r"""
         Return a presentation of the fundamental group of the complement
         of ``self``.
@@ -1749,9 +1750,6 @@ class AffinePlaneCurve_field(AffinePlaneCurve, AffineCurve_field):
           presentation is constructed in the classical way or using Puiseux
           shortcut. If ``True``, ``simplified`` is set to ``False``.
 
-        - ``braid_mon`` -- (default: ``False``) If the value is ``False``
-          it apply first the ``braid_monodromy`` method. If it has been already
-          computed it can be passed as a parameter.
 
         OUTPUT:
 
@@ -1777,15 +1775,11 @@ class AffinePlaneCurve_field(AffinePlaneCurve, AffineCurve_field):
             sage: C.fundamental_group()             # optional - sirocco
             Finitely presented group < x0 |  >
             sage: bm = C.braid_monodromy() # optional - sirocco
-            sage: C.fundamental_group(braid_mon=bm) # optional - sirocco
-            Finitely presented group < x0 |  >
             sage: g = C.fundamental_group(puiseux=True) # optional - sirocco
             sage: g # optional - sirocco
             Finitely presented group < x0, x1 | x1*x0^-1, x1*x0*x1^-1*x0^-1 >
             sage: g.simplified() # optional - sirocco
             Finitely presented group < x0 |  >
-            sage: g == C.fundamental_group(puiseux=True, braid_mon=bm) # optional - sirocco
-            True
 
         In the case of number fields, they need to have an embedding
         to the algebraic field::
@@ -1803,17 +1797,10 @@ class AffinePlaneCurve_field(AffinePlaneCurve, AffineCurve_field):
 
             This functionality requires the sirocco package to be installed.
         """
-        from sage.schemes.curves.zariski_vankampen import fundamental_group, fundamental_group_from_braid_mon
-        if braid_mon is not None:
-            return fundamental_group_from_braid_mon(braid_mon, simplified=simplified, puiseux=puiseux)
-        F = self.base_ring()
-        from sage.rings.qqbar import QQbar
-        if QQbar.coerce_map_from(F) is None:
-            raise NotImplementedError("the base field must have an embedding"
-                                      " to the algebraic field")
-        f = self.defining_polynomial()
-        return fundamental_group(f, simplified=simplified, puiseux=puiseux)
+        from sage.schemes.curves.zariski_vankampen import fundamental_group_from_braid_mon
+        return fundamental_group_from_braid_mon(self.braid_monodromy(), simplified=simplified, puiseux=puiseux)
 
+    @cached_method
     def braid_monodromy(self):
         r"""
         Compute the braid monodromy of a projection of the curve.
@@ -1847,7 +1834,8 @@ class AffinePlaneCurve_field(AffinePlaneCurve, AffineCurve_field):
             raise NotImplementedError("the base field must have an embedding"
                                       " to the algebraic field")
         f = self.defining_polynomial()
-        return braid_monodromy(f)[0]
+        bm = braid_monodromy(f)[0]
+        return bm
 
     def riemann_surface(self, **kwargs):
         r"""

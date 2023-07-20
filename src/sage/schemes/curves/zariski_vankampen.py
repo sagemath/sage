@@ -1464,9 +1464,6 @@ def fundamental_group(f, simplified=True, projective=False, puiseux=False):
       of the complement of the affine curve will be computed, adding
       one relation if ``projective`` is set to ``True``.
 
-    - ``braid_mon`` -- (default: ``None``); if it is set to a list of braids
-      braid monodromy is not computed ad this list is used instead.
-
     If ``simplified` and ``projective``` are ``False`` and ``puiseux`` is ``True``, a Zariski-VanKampen presentation
     is returned.
 
