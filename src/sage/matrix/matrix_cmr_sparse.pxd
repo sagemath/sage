@@ -1,4 +1,4 @@
-from sage.libs.cmr.cmr cimport *
+from sage.libs.cmr.cmr cimport CMR_CHRMAT
 
 from .matrix_sparse cimport Matrix_sparse
 
