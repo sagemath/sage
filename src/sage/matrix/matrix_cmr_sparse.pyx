@@ -7,6 +7,7 @@ from libc.stdint cimport SIZE_MAX
 from cysignals.signals cimport sig_on, sig_off
 
 from sage.libs.cmr.cmr cimport *
+from sage.matrix.seymour_decomposition cimport create_DecompositionNode
 from sage.rings.integer cimport Integer
 
 from .args cimport MatrixArgs_init
@@ -378,7 +379,8 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
             [ 0  1]
             sage: M.is_totally_unimodular()
             True
-
+            sage: M.is_totally_unimodular(certificate=True)
+            (True, DecompositionNode with 0 children)
         """
         cdef bool result
         cdef CMR_TU_PARAMETERS params
@@ -408,7 +410,10 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
         if not certificate:
             return <bint> result
 
-        raise NotImplementedError
+        if <bint> result:
+            return True, create_DecompositionNode(dec)
+
+        return False, NotImplemented
 
 
 cdef _cmr_dec_construct(param):

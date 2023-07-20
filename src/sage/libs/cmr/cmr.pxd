@@ -8,13 +8,13 @@ cdef extern from "stdbool.h":
     ctypedef int bool
 
 cdef extern from "cmr/env.h":
-    int CMR_OKAY
-    int CMR_ERROR_INPUT
-    int CMR_ERROR_OUTPUT
-    int CMR_ERROR_MEMORY
-    int CMR_ERROR_INVALID
-    int CMR_ERROR_OVERFLOW
-    int CMR_ERROR_TIMEOUT
+    const int CMR_OKAY
+    const int CMR_ERROR_INPUT
+    const int CMR_ERROR_OUTPUT
+    const int CMR_ERROR_MEMORY
+    const int CMR_ERROR_INVALID
+    const int CMR_ERROR_OVERFLOW
+    const int CMR_ERROR_TIMEOUT
 
     ctypedef int CMR_ERROR
 
@@ -252,31 +252,31 @@ cdef extern from "cmr/dec.h":
 
     ctypedef int CMR_DEC_TYPE
 
-    int CMR_DEC_IRREGULAR
-    int CMR_DEC_UNKNOWN
-    int CMR_DEC_ONE_SUM
-    int CMR_DEC_TWO_SUM
-    int CMR_DEC_THREE_SUM
-    int CMR_DEC_GRAPHIC
-    int CMR_DEC_COGRAPHIC
-    int CMR_DEC_PLANAR
-    int CMR_DEC_SERIES_PARALLEL
-    int CMR_DEC_SPECIAL_R10
-    int CMR_DEC_SPECIAL_FANO
-    int CMR_DEC_SPECIAL_FANO_DUAL
-    int CMR_DEC_SPECIAL_K_5
-    int CMR_DEC_SPECIAL_K_5_DUAL
-    int CMR_DEC_SPECIAL_K_3_3
-    int CMR_DEC_SPECIAL_K_3_3_DUAL
+    const int CMR_DEC_IRREGULAR
+    const int CMR_DEC_UNKNOWN
+    const int CMR_DEC_ONE_SUM
+    const int CMR_DEC_TWO_SUM
+    const int CMR_DEC_THREE_SUM
+    const int CMR_DEC_GRAPHIC
+    const int CMR_DEC_COGRAPHIC
+    const int CMR_DEC_PLANAR
+    const int CMR_DEC_SERIES_PARALLEL
+    const int CMR_DEC_SPECIAL_R10
+    const int CMR_DEC_SPECIAL_FANO
+    const int CMR_DEC_SPECIAL_FANO_DUAL
+    const int CMR_DEC_SPECIAL_K_5
+    const int CMR_DEC_SPECIAL_K_5_DUAL
+    const int CMR_DEC_SPECIAL_K_3_3
+    const int CMR_DEC_SPECIAL_K_3_3_DUAL
 
     ctypedef int CMR_DEC_FLAGS
 
-    int CMR_DEC_MASK_REPRESENTATION
-    int CMR_DEC_IS_GRAPHIC
-    int CMR_DEC_IS_COGRAPHIC
-    int CMR_DEC_IS_REGULAR
-    int CMR_DEC_HAS_LOWER_LEFT_NONZEROS
-    int CMR_DEC_HAS_UPPER_RIGHT_NONZEROS
+    const int CMR_DEC_MASK_REPRESENTATION
+    const int CMR_DEC_IS_GRAPHIC
+    const int CMR_DEC_IS_COGRAPHIC
+    const int CMR_DEC_IS_REGULAR
+    const int CMR_DEC_HAS_LOWER_LEFT_NONZEROS
+    const int CMR_DEC_HAS_UPPER_RIGHT_NONZEROS
 
     CMR_ERROR CMRdecFree(CMR* cmr, CMR_DEC** pdec)
     bint CMRdecHasMatrix(CMR_DEC* dec)
@@ -316,9 +316,9 @@ cdef extern from "cmr/regular.h":
 
     ctypedef int CMR_DEC_CONSTRUCT
 
-    int CMR_DEC_CONSTRUCT_NONE
-    int CMR_DEC_CONSTRUCT_LEAVES
-    int CMR_DEC_CONSTRUCT_ALL
+    const int CMR_DEC_CONSTRUCT_NONE
+    const int CMR_DEC_CONSTRUCT_LEAVES
+    const int CMR_DEC_CONSTRUCT_ALL
 
     ctypedef struct CMR_REGULAR_PARAMETERS:
         bint directGraphicness
