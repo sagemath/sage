@@ -64,6 +64,7 @@ from sage.categories.fields import Fields
 from sage.categories.finite_fields import FiniteFields
 from sage.categories.function_fields import FunctionFields
 from sage.categories.homset import End
+from sage.categories.unique_factorization_domains import UniqueFactorizationDomains
 from sage.categories.number_fields import NumberFields
 from sage.dynamics.arithmetic_dynamics.endPN_automorphism_group import (
     automorphism_group_QQ_CRT,
@@ -2166,9 +2167,9 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
                 Q = F(Q, False)
         return (1 / BR.absolute_degree()) * localht
 
-    def canonical_height(self, P, **kwds):
+    def canonical_height(self, point, **kwds):
         r"""
-        Evaluate the (absolute) canonical height of the projective point ``P``
+        Evaluate the (absolute) canonical height of the projective point ``point``
         with respect to this dynamical system.
 
         Must be over a number field or an order of a number field. Specify
@@ -2186,11 +2187,11 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
 
         INPUT:
 
-        - ``P`` -- a projective point
+        - ``point`` -- a projective point
 
         kwds:
 
-        - ``badprimes`` -- (optional) a list of primes of bad reduction
+        - ``bad_primes`` -- (optional) a list of primes of bad reduction
 
         - ``N`` -- (default: 10) a positive integer; number of terms of the
           series to use in the local green functions
@@ -2205,7 +2206,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
         EXAMPLES::
 
             sage: P.<x,y> = ProjectiveSpace(ZZ, 1)
-            sage: f = DynamicalSystem_projective([x^2 + y^2, 2*x*y]);
+            sage: f = DynamicalSystem_projective([x^2 + y^2, 2*x*y])
             sage: f.canonical_height(P.point([5, 4]), error_bound=0.001)
             2.1970553519503404898926835324
             sage: f.canonical_height(P.point([2, 1]), error_bound=0.001)
@@ -2226,19 +2227,19 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
         ::
 
             sage: P.<x,y,z> = ProjectiveSpace(QQ, 2)
-            sage: X = P.subscheme(x^2 - y^2);
+            sage: X = P.subscheme(x^2 - y^2)
             sage: f = DynamicalSystem_projective([x^2, y^2, 4*z^2], domain=X);
             sage: Q = X([4, 4, 1])
-            sage: f.canonical_height(Q, badprimes=[2])
+            sage: f.canonical_height(Q, bad_primes=[2])
             0.0013538030870311431824555314882
 
         ::
 
             sage: P.<x,y,z> = ProjectiveSpace(QQ, 2)
-            sage: X = P.subscheme(x^2 - y^2);
+            sage: X = P.subscheme(x^2 - y^2)
             sage: f = DynamicalSystem_projective([x^2, y^2, 30*z^2], domain=X)
             sage: Q = X([4, 4, 1])
-            sage: f.canonical_height(Q, badprimes=[2, 3, 5], prec=200)
+            sage: f.canonical_height(Q, bad_primes=[2, 3, 5], prec=200)
             2.7054056208276961889784303469356774912979228770208655455481
 
         ::
@@ -2268,7 +2269,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
             sage: f.canonical_height(P(1, 0))
             0.00000000000000000000000000000
         """
-        bad_primes = kwds.get("badprimes", None)
+        bad_primes = kwds.get("bad_primes", None)
         prec = kwds.get("prec", 100)
         error_bound = kwds.get("error_bound", None)
         K = FractionField(self.codomain().base_ring())
@@ -2279,25 +2280,25 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
 
             # Since we want to compute the absolute height, we may compute
             # the height of a QQbar point by choosing any number field that
-            # it is defind over.
-            Q = P._number_field_from_algebraics()
-            K = Q.codomain().base_ring()
+            # it is defined over.
+            number_field_pt = point._number_field_from_algebraics()
+            K = number_field_pt.codomain().base_ring()
             f = self._number_field_from_algebraics().as_dynamical_system()
 
             if K == QQ:
                 K = f.base_ring()
-                Q = Q.change_ring(K)
+                number_field_pt = number_field_pt.change_ring(K)
             elif f.base_ring() == QQ:
                 f = f.change_ring(K)
             else:
                 K, phi, psi, b = K.composite_fields(f.base_ring(), both_maps=True)[0]
-                Q = Q.change_ring(phi)
+                number_field_pt = number_field_pt.change_ring(phi)
                 f = f.change_ring(psi)
         else:
             if not K.is_absolute():
                 raise TypeError("Must be an absolute field")
 
-            Q = P
+            number_field_pt = point
             f = self
 
         # After moving from QQbar to K (like QQ), we need to normalize ``f``
@@ -2311,10 +2312,11 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
         # Otherwise, apply the usual algorithm using local Green's functions:
         rel_dim = self.codomain().ambient_space().dimension_relative()
 
-        if rel_dim == 1:
+        # Make sure that K is UFD
+        if (O in UniqueFactorizationDomains) and (rel_dim == 1):
             # Write our point with coordinates whose GCD is 1
-            Q.normalize_coordinates()
-            Q.clear_denominators()
+            number_field_pt.normalize_coordinates()
+            number_field_pt.clear_denominators()
 
             # Assure integer coefficients
             coeffs = f[0].coefficients() + f[1].coefficients()
@@ -2325,8 +2327,8 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
             B = t * f[1]
             Res = O(f.resultant(normalize=True).abs())
             H = 0
-            x_i = O(Q[0])
-            y_i = O(Q[1])
+            x_i = O(number_field_pt[0])
+            y_i = O(number_field_pt[1])
             d = self.degree()
             R = RealField(prec)
             N = kwds.get('N', 10)
@@ -2358,10 +2360,10 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
             # It looks different than Wells' Algorithm, because of the difference
             # between what Wells' calls H_infty and what Green's function returns
             # for the infinite place.
-            # h = f.green_function(Q, 0, **kwds) - H + R(t).log()
-            h = Q.global_height() - H
+            # h = f.green_function(number_field_pt, 0, **kwds) - H + R(t).log()
+            h = number_field_pt.global_height() - H
             for v in K.places():
-                h += f.green_function(Q, v) + R(v(t).abs()).log()
+                h += f.green_function(number_field_pt, v) + R(v(t).abs()).log()
 
             # The value returned by Wells' Algorithm may be negative.
             # As the canonical height is always non-negative, hence return 0 if
@@ -2377,7 +2379,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
 
         if bad_primes is None:
             bad_primes = []
-            for b in Q:
+            for b in number_field_pt:
                 if K == QQ:
                     bad_primes += b.denominator().prime_factors()
                 else:
@@ -2394,7 +2396,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
         h = R.zero()
 
         # Update the ``kwds`` dictionary for use in ``green_function``
-        kwds.update({"badprimes": bad_primes})
+        kwds.update({"bad_primes": bad_primes})
         kwds.update({"error_bound": error_bound})
 
         # Archimedean local heights
@@ -2406,7 +2408,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
                 dv = R.one()
             else:
                 dv = R(2)
-            h += dv * f.green_function(Q, v, **kwds) # arch Green function
+            h += dv * f.green_function(number_field_pt, v, **kwds) # arch Green function
 
         # Non-archimedean local heights
         for v in bad_primes:
@@ -2414,7 +2416,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
                 dv = R.one()
             else:
                 dv = R(v.residue_class_degree() * v.absolute_ramification_index())
-            h += dv * f.green_function(Q, v, **kwds) # non-arch Green functions
+            h += dv * f.green_function(number_field_pt, v, **kwds) # non-arch Green functions
         return h
 
     def height_difference_bound(self, prec=None):
