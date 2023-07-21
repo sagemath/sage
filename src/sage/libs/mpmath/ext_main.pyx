@@ -176,7 +176,7 @@ cdef int MPF_set_any(MPF *re, MPF *im, x, MPopts opts, bint str_tuple_ok) except
             elif len(x) == 4:
                 MPF_set_tuple(re, x)
                 return 1
-        if isinstance(x, basestring):
+        if isinstance(x, str):
             try:
                 st = libmp.from_str(x, opts.prec,
                     rndmode_to_python(opts.rounding))
@@ -1007,7 +1007,7 @@ cdef class Context:
             if not p % q:
                 return p // q, 'Z'
             return rationallib.mpq((p,q)), 'Q'
-        if isinstance(x, basestring) and '/' in x:
+        if isinstance(x, str) and '/' in x:
             p, q = x.split('/')
             p = int(p)
             q = int(q)

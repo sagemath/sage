@@ -26,14 +26,14 @@ AUTHORS:
 - Grayson Jorgenson (2016-06)
 
 """
-#*********************************************************************
+# ********************************************************************
 #      Copyright (C) 2005 William Stein <wstein@gmail.com>
 #
 # Distributed under the terms of the GNU General Public License (GPL)
 # as published by the Free Software Foundation; either version 2 of
 # the License, or (at your option) any later version.
-#                 http://www.gnu.org/licenses/
-#*********************************************************************
+#                 https://www.gnu.org/licenses/
+# ********************************************************************
 
 from sage.categories.fields import Fields
 
@@ -78,7 +78,8 @@ from .affine_curve import (AffineCurve,
 
 from sage.schemes.plane_conics.constructor import Conic
 
-def _is_irreducible_and_reduced(F):
+
+def _is_irreducible_and_reduced(F) -> bool:
     """
     Check if the polynomial F is irreducible and reduced.
 
@@ -92,6 +93,7 @@ def _is_irreducible_and_reduced(F):
     """
     factors = F.factor()
     return len(factors) == 1 and factors[0][1] == 1
+
 
 def Curve(F, A=None):
     """
@@ -239,9 +241,9 @@ def Curve(F, A=None):
                     A._coordinate_ring = P
                     break
             else:
-                A = ProjectiveSpace(P.ngens()-1, P.base_ring(), names=P.variable_names())
+                A = ProjectiveSpace(P.ngens() - 1, P.base_ring(), names=P.variable_names())
                 A._coordinate_ring = P
-        elif isinstance(F, MPolynomial): # define a plane curve
+        elif isinstance(F, MPolynomial):  # define a plane curve
             P = F.parent()
             k = F.base_ring()
 

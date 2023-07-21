@@ -114,14 +114,14 @@ AUTHORS:
 - Kwankyu Lee (2019-05): added integral affine curves
 
 """
-# *****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2005 William Stein <wstein@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-# *****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.misc.lazy_attribute import lazy_attribute
 from sage.misc.cachefunc import cached_method
@@ -393,7 +393,7 @@ class AffinePlaneCurve(AffineCurve):
         p = F.characteristic()
         x0 = F(pt[0])
         y0 = F(pt[1])
-        astr = ["a"+str(i) for i in range(1, 2*n)]
+        astr = ["a" + str(i) for i in range(1, 2 * n)]
         x, y = R.gens()
         R0 = PolynomialRing(F, 2 * n + 2, names=[str(x), str(y), "t"] + astr)
         vars0 = R0.gens()
@@ -429,7 +429,7 @@ class AffinePlaneCurve(AffineCurve):
                     else:
                         vals.append([eval(str(y)[1:]), str(y), F(0)])
         vals.sort()
-        return [x0 + t, y0 + add(v[2] * t**(j+1) for j, v in enumerate(vals))]
+        return [x0 + t, y0 + add(v[2] * t**(j + 1) for j, v in enumerate(vals))]
 
     def plot(self, *args, **kwds):
         r"""
@@ -1081,7 +1081,7 @@ class AffineCurve_field(AffineCurve, AlgebraicScheme_subscheme_affine_field):
         # finds a projection that will have a plane curve as its image
         # the following iterates over all pairs (i,j) with j > i to test all
         # possible projections
-        for i in range(0, n - 1):
+        for i in range(n - 1):
             for j in range(i + 1, n):
                 L = self.projection([i, j], AP)
                 if isinstance(L[1], Curve_generic):
@@ -1970,7 +1970,7 @@ class AffinePlaneCurve_finite_field(AffinePlaneCurve_field):
         if algorithm == "enum":
             f = self.defining_polynomial()
             K = f.parent().base_ring()
-            return sorted((self((x, y)) for x in K for y in K if f(x, y) == 0))
+            return sorted(self((x, y)) for x in K for y in K if f(x, y) == 0)
 
         F = self.base_ring()
         if not F.is_prime_field():
@@ -2126,7 +2126,7 @@ class IntegralAffineCurve(AffineCurve_field):
         phi = self._lift_to_function_field
         num = R(f.numerator())
         den = R(f.denominator())
-        return phi(num)/phi(den)
+        return phi(num) / phi(den)
 
     def coordinate_functions(self):
         """
@@ -2421,7 +2421,7 @@ class IntegralAffineCurve(AffineCurve_field):
                 e[-1] = d + 1
             else:
                 e[j] -= 1
-                e[j-1] += 1
+                e[j - 1] += 1
 
             m = R.monomial(*e)
             if any(g.divides(m) for g in gens_lts):
