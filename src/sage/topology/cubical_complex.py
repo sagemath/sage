@@ -226,7 +226,7 @@ class Cube(SageObject):
         """
         t = self.__tuple
         embed = max(len(t), len(vec))
-        t = t + ((0,0),) * (embed-len(t))
+        t = t + ((0, 0),) * (embed-len(t))
         vec = tuple(vec) + (0,) * (embed-len(vec))
         new = []
         for (a, b) in zip(t, vec):
@@ -367,7 +367,7 @@ class Cube(SageObject):
             new = t[idx][1]
         else:
             new = t[idx][0]
-        return Cube(t[0:idx] + ((new,new),) + t[idx+1:])
+        return Cube(t[0:idx] + ((new, new),) + t[idx+1:])
 
     def faces(self):
         """
@@ -380,8 +380,8 @@ class Cube(SageObject):
             sage: C.faces()
             [[2,2] x [3,4], [1,2] x [4,4], [1,1] x [3,4], [1,2] x [3,3]]
         """
-        upper = [self.face(i,True) for i in range(self.dimension())]
-        lower = [self.face(i,False) for i in range(self.dimension())]
+        upper = [self.face(i, True) for i in range(self.dimension())]
+        lower = [self.face(i, False) for i in range(self.dimension())]
         return upper + lower
 
     def faces_as_pairs(self):
@@ -464,7 +464,7 @@ class Cube(SageObject):
         self_tuple = self.tuple()
         other_tuple = other.tuple()
         nondegen = (list(zip(self.nondegenerate_intervals(),
-                        other.nondegenerate_intervals()))
+                             other.nondegenerate_intervals()))
                     + [(len(self_tuple), len(other_tuple))])
         old = (-1, -1)
         self_added = 0
@@ -540,10 +540,10 @@ class Cube(SageObject):
             6
         """
         from .simplicial_complex import Simplex
-        if self.dimension() < 0: # the empty cube
-            return [Simplex(())] # the empty simplex
+        if self.dimension() < 0:  # the empty cube
+            return [Simplex(())]  # the empty simplex
         v = tuple([max(j) for j in self.tuple()])
-        if self.dimension() == 0: # just v
+        if self.dimension() == 0:  # just v
             return [Simplex((v,))]
         simplices = []
         for i in range(self.dimension()):
@@ -594,7 +594,7 @@ class Cube(SageObject):
             nu = 0
             for i in J:
                 for j in Jprime:
-                    if j<i:
+                    if j < i:
                         nu += 1
             t = self.tuple()
             left = []
@@ -717,7 +717,7 @@ class Cube(SageObject):
             sage: C1._repr_()
             '[1,1] x [2,3] x [4,5]'
         """
-        s = ["[%s,%s]"%(str(x), str(y)) for (x,y) in self.__tuple]
+        s = ("[%s,%s]" % (str(x), str(y)) for x, y in self.__tuple)
         return " x ".join(s)
 
     def _latex_(self):
@@ -1074,7 +1074,7 @@ class CubicalComplex(GenericCellComplex):
             sub_facets = {}
             dimension = max([cube.dimension() for cube in self._facets])
             # initialize the lists: add each maximal cube to Cells and sub_facets
-            for i in range(-1,dimension+1):
+            for i in range(-1, dimension+1):
                 Cells[i] = set([])
                 sub_facets[i] = set([])
             for f in self._facets:
@@ -1214,7 +1214,7 @@ class CubicalComplex(GenericCellComplex):
             differentials[0] = mat
         current = vertices
         # now loop from 1 to dimension of the complex
-        for dim in range(1,self.dimension()+1):
+        for dim in range(1, self.dimension()+1):
             if verbose:
                 print("  starting dimension %s" % dim)
             if (dim, subcomplex) in self._complex:
@@ -1488,9 +1488,9 @@ class CubicalComplex(GenericCellComplex):
         zero = [0] * max(embedded_left, embedded_right)
         facets = []
         for f in self.maximal_cells():
-            facets.append(Cube([[0,0]]).product(f._translate(zero)))
+            facets.append(Cube([[0, 0]]).product(f._translate(zero)))
         for f in other.maximal_cells():
-            facets.append(Cube([[1,1]]).product(f._translate(zero)))
+            facets.append(Cube([[1, 1]]).product(f._translate(zero)))
         return CubicalComplex(facets)
 
     def wedge(self, other):
@@ -1522,7 +1522,7 @@ class CubicalComplex(GenericCellComplex):
         embedded_right = len(tuple(other.maximal_cells()[0]))
         translate_left = [-a[0] for a in self.maximal_cells()[0]] + [0] * embedded_right
         translate_right = [-a[0] for a in other.maximal_cells()[0]]
-        point_right = Cube([[0,0]] * embedded_left)
+        point_right = Cube([[0, 0]] * embedded_left)
 
         facets = []
         for f in self.maximal_cells():
@@ -1584,7 +1584,7 @@ class CubicalComplex(GenericCellComplex):
         # start assembling the facets in the connected sum: first, the
         # cylinder on the removed face.
         new_facets = []
-        cylinder = removed.product(Cube([[0,1]]))
+        cylinder = removed.product(Cube([[0, 1]]))
         # don't want to include the ends of the cylinder, so don't
         # include the last pair of faces.  therefore, choose faces up
         # to removed.dimension(), not cylinder.dimension().
@@ -1596,13 +1596,13 @@ class CubicalComplex(GenericCellComplex):
             CL = list(cube.tuple())
             for (idx, L) in insert_self:
                 CL[idx:idx] = L
-            CL.append((0,0))
+            CL.append((0, 0))
             new_facets.append(Cube(CL))
         for cube in other_facets:
             CL = list(cube.tuple())
             for (idx, L) in insert_other:
                 CL[idx:idx] = L
-            CL.append((1,1))
+            CL.append((1, 1))
             new_facets.append(Cube(CL)._translate(translate))
         return CubicalComplex(new_facets)
 
@@ -1813,7 +1813,7 @@ class CubicalComplexExamples():
         Cubical complex with 256 vertices and 6560 cubes
     """
 
-    def Sphere(self,n):
+    def Sphere(self, n):
         r"""
         A cubical complex representation of the `n`-dimensional sphere,
         formed by taking the boundary of an `(n+1)`-dimensional cube.
@@ -1826,7 +1826,7 @@ class CubicalComplexExamples():
             sage: cubical_complexes.Sphere(7)
             Cubical complex with 256 vertices and 6560 cubes
         """
-        return CubicalComplex(Cube([[0,1]]*(n+1)).faces())
+        return CubicalComplex(Cube([[0, 1]]*(n+1)).faces())
 
     def Torus(self):
         r"""

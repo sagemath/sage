@@ -89,12 +89,10 @@ Methods
 # ****************************************************************************
 from .matroid import Matroid
 
-from sage.graphs.graph import Graph
 from copy import copy, deepcopy
 from .utilities import newlabel, split_vertex, sanitize_contractions_deletions
 from itertools import combinations
 from sage.rings.integer import Integer
-from sage.sets.disjoint_set import DisjointSet
 
 
 class GraphicMatroid(Matroid):
@@ -186,6 +184,7 @@ class GraphicMatroid(Matroid):
             running ._test_not_implemented_methods() . . . pass
             running ._test_pickling() . . . pass
         """
+        from sage.graphs.graph import Graph
 
         if groundset is None:
             # Try to construct a ground set based on the edge labels.
@@ -284,6 +283,8 @@ class GraphicMatroid(Matroid):
             1
 
         """
+        from sage.sets.disjoint_set import DisjointSet
+
         edges = self.groundset_to_edges(X)
         vertices = set([u for (u, v, l) in edges]).union(
             [v for (u, v, l) in edges])
@@ -713,6 +714,8 @@ class GraphicMatroid(Matroid):
             sage: M._corank([1,2,3])
             3
         """
+        from sage.sets.disjoint_set import DisjointSet
+
         all_vertices = self._G.vertices(sort=False)
         not_our_edges = self.groundset_to_edges(self._groundset.difference(X))
         DS_vertices = DisjointSet(all_vertices)
@@ -826,6 +829,8 @@ class GraphicMatroid(Matroid):
             sage: sorted(N._max_independent(frozenset(['a'])))
             []
         """
+        from sage.sets.disjoint_set import DisjointSet
+
         edges = self.groundset_to_edges(X)
         vertices = set([u for (u, v, l) in edges])
         vertices.update([v for (u, v, l) in edges])
@@ -861,6 +866,8 @@ class GraphicMatroid(Matroid):
             sage: sorted(N.max_coindependent([0,1,2,5]))
             [1, 2, 5]
         """
+        from sage.sets.disjoint_set import DisjointSet
+
         edges = self.groundset_to_edges(X)
         all_vertices = self._G.vertices(sort=False)
         not_our_edges = self.groundset_to_edges(self._groundset.difference(X))
@@ -924,6 +931,8 @@ class GraphicMatroid(Matroid):
             [4, 5]
 
         """
+        from sage.sets.disjoint_set import DisjointSet
+
         edges = self.groundset_to_edges(X)
         vertices = set([u for (u, v, l) in edges]).union(
             set([v for (u, v, l) in edges]))
