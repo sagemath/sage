@@ -1222,7 +1222,7 @@ def conjugate_positive_form(braid):
 
     A list of `r` lists. Each such list is another list with two elements, a positive braid `\alpha_i` and a list of
     permutation braids `\gamma_{1}^{i},\dots,\gamma_{r}^{n_i}` such that if `\gamma_i=\prod_{j=1}^{n_i} \gamma_j^i` then
-    the braids `\tau_i=\gamma_i\alpha_i\gamma_i^{-1}`pairwise commute and `\alpha=\prod_{i=1}^{r} \tau_i`.
+    the braids `\tau_i=\gamma_i\alpha_i\gamma_i^{-1}` pairwise commute and `\alpha=\prod_{i=1}^{r} \tau_i`.
 
     EXAMPLES::
 
