@@ -350,7 +350,7 @@ cdef class Cone(ParametricSurface):
             urange = [1,0,-1]
         else:
             urange = [1,0]
-        vrange = [2*M_PI*k/t_res for k from 0 <= k < t_res] + [0.0]
+        vrange = [2*M_PI*k/t_res for k in range(t_res)] + [0.0]
         return urange, vrange
 
     cdef int eval_c(self, point_c *res, double u, double v) except -1:
@@ -580,7 +580,7 @@ draw %s width %s {%s %s %s} {%s %s %s}\n%s
             urange = [2,1,-1,-2]
         else:
             urange = [1,-1]
-        vrange = [2*M_PI*k/v_res for k from 0 <= k < v_res] + [0.0]
+        vrange = [2*M_PI*k/v_res for k in range(v_res)] + [0.0]
         return urange, vrange
 
     cdef int eval_c(self, point_c *res, double u, double v) except -1:
