@@ -42,12 +42,12 @@ from libc.stdint cimport uint32_t
 from libcpp.queue cimport priority_queue
 from libcpp.pair cimport pair
 from libcpp.vector cimport vector
-from cysignals.signals cimport sig_on, sig_off, sig_check
+from cysignals.signals cimport sig_on, sig_off
 from memory_allocator cimport MemoryAllocator
 
 from sage.graphs.base.static_sparse_graph cimport init_short_digraph
 from sage.graphs.base.static_sparse_graph cimport free_short_digraph
-from sage.graphs.base.static_sparse_graph cimport out_degree, has_edge
+from sage.graphs.base.static_sparse_graph cimport out_degree
 
 
 def _is_valid_lex_BFS_order(G, L):
@@ -338,16 +338,16 @@ def lex_BFS(G, reverse=False, tree=False, initial_vertex=None, algorithm="fast")
 
     Different orderings for different traversals::
 
-        sage: G = digraphs.DeBruijn(2,3)
-        sage: G.lex_BFS(initial_vertex='000', algorithm="fast")
+        sage: G = digraphs.DeBruijn(2,3)                                                # optional - sage.combinat
+        sage: G.lex_BFS(initial_vertex='000', algorithm="fast")                         # optional - sage.combinat
         ['000', '001', '100', '010', '011', '110', '101', '111']
-        sage: G.lex_BFS(initial_vertex='000', algorithm="slow")
+        sage: G.lex_BFS(initial_vertex='000', algorithm="slow")                         # optional - sage.combinat
         ['000', '001', '100', '010', '011', '110', '101', '111']
-        sage: G.lex_DFS(initial_vertex='000')
+        sage: G.lex_DFS(initial_vertex='000')                                           # optional - sage.combinat
         ['000', '001', '100', '010', '101', '110', '011', '111']
-        sage: G.lex_UP(initial_vertex='000')
+        sage: G.lex_UP(initial_vertex='000')                                            # optional - sage.combinat
         ['000', '001', '010', '101', '110', '111', '011', '100']
-        sage: G.lex_DOWN(initial_vertex='000')
+        sage: G.lex_DOWN(initial_vertex='000')                                          # optional - sage.combinat
         ['000', '001', '100', '011', '010', '110', '111', '101']
 
     TESTS:
@@ -541,14 +541,14 @@ def lex_UP(G, reverse=False, tree=False, initial_vertex=None):
 
     Different orderings for different traversals::
 
-        sage: G = digraphs.DeBruijn(2,3)
-        sage: G.lex_BFS(initial_vertex='000')
+        sage: G = digraphs.DeBruijn(2,3)                                                # optional - sage.combinat
+        sage: G.lex_BFS(initial_vertex='000')                                           # optional - sage.combinat
         ['000', '001', '100', '010', '011', '110', '101', '111']
-        sage: G.lex_DFS(initial_vertex='000')
+        sage: G.lex_DFS(initial_vertex='000')                                           # optional - sage.combinat
         ['000', '001', '100', '010', '101', '110', '011', '111']
-        sage: G.lex_UP(initial_vertex='000')
+        sage: G.lex_UP(initial_vertex='000')                                            # optional - sage.combinat
         ['000', '001', '010', '101', '110', '111', '011', '100']
-        sage: G.lex_DOWN(initial_vertex='000')
+        sage: G.lex_DOWN(initial_vertex='000')                                          # optional - sage.combinat
         ['000', '001', '100', '011', '010', '110', '111', '101']
 
     TESTS:
@@ -714,14 +714,14 @@ def lex_DFS(G, reverse=False, tree=False, initial_vertex=None):
 
     Different orderings for different traversals::
 
-        sage: G = digraphs.DeBruijn(2,3)
-        sage: G.lex_BFS(initial_vertex='000')
+        sage: G = digraphs.DeBruijn(2,3)                                                # optional - sage.combinat
+        sage: G.lex_BFS(initial_vertex='000')                                           # optional - sage.combinat
         ['000', '001', '100', '010', '011', '110', '101', '111']
-        sage: G.lex_DFS(initial_vertex='000')
+        sage: G.lex_DFS(initial_vertex='000')                                           # optional - sage.combinat
         ['000', '001', '100', '010', '101', '110', '011', '111']
-        sage: G.lex_UP(initial_vertex='000')
+        sage: G.lex_UP(initial_vertex='000')                                            # optional - sage.combinat
         ['000', '001', '010', '101', '110', '111', '011', '100']
-        sage: G.lex_DOWN(initial_vertex='000')
+        sage: G.lex_DOWN(initial_vertex='000')                                          # optional - sage.combinat
         ['000', '001', '100', '011', '010', '110', '111', '101']
 
     TESTS:
@@ -889,14 +889,14 @@ def lex_DOWN(G, reverse=False, tree=False, initial_vertex=None):
 
     Different orderings for different traversals::
 
-        sage: G = digraphs.DeBruijn(2,3)
-        sage: G.lex_BFS(initial_vertex='000')
+        sage: G = digraphs.DeBruijn(2,3)                                                # optional - sage.combinat
+        sage: G.lex_BFS(initial_vertex='000')                                           # optional - sage.combinat
         ['000', '001', '100', '010', '011', '110', '101', '111']
-        sage: G.lex_DFS(initial_vertex='000')
+        sage: G.lex_DFS(initial_vertex='000')                                           # optional - sage.combinat
         ['000', '001', '100', '010', '101', '110', '011', '111']
-        sage: G.lex_UP(initial_vertex='000')
+        sage: G.lex_UP(initial_vertex='000')                                            # optional - sage.combinat
         ['000', '001', '010', '101', '110', '111', '011', '100']
-        sage: G.lex_DOWN(initial_vertex='000')
+        sage: G.lex_DOWN(initial_vertex='000')                                          # optional - sage.combinat
         ['000', '001', '100', '011', '010', '110', '111', '101']
 
     TESTS:

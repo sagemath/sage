@@ -23,7 +23,7 @@ from sage.structure.element import Element, get_coercion_model
 from sage.structure.richcmp import richcmp
 #from sage.misc.inherit_comparison import InheritComparisonClasscallMetaclass
 from sage.misc.cachefunc import cached_method
-from sage.misc.misc import powerset
+from sage.combinat.subset import powerset
 from sage.arith.misc import binomial
 from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
 from sage.categories.algebras import Algebras

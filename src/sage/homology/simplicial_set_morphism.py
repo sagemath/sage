@@ -7,6 +7,6 @@ from sage.misc.superseded import deprecated_function_alias
 import sage.topology.simplicial_set_morphism
 
 deprecated_function_alias(31925,
-  sage.topology.simplicial_set_morphism.SimplicialSetHomset)
+                          sage.topology.simplicial_set_morphism.SimplicialSetHomset)
 deprecated_function_alias(31925,
-  sage.topology.simplicial_set_morphism.SimplicialSetMorphism)
+                          sage.topology.simplicial_set_morphism.SimplicialSetMorphism)

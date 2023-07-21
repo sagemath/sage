@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# sage.doctest: optional - sage.rings.padics
 """
 Local Generic Element
 
@@ -23,7 +23,7 @@ AUTHORS:
 # ****************************************************************************
 
 from sage.rings.infinity import infinity
-from sage.structure.element cimport ModuleElement, RingElement, CommutativeRingElement
+from sage.structure.element cimport CommutativeRingElement
 from sage.structure.element import coerce_binop
 from itertools import islice
 

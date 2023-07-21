@@ -93,6 +93,7 @@ from sage.misc.superseded import deprecated_function_alias
 # hard-coded. Thus the following functions are not currently used in
 # the Sage library.
 
+
 def facets_for_RP4():
     """
     Return the list of facets for a minimal triangulation of 4-dimensional
@@ -154,6 +155,7 @@ def facets_for_K3():
                          [(1, 11, 16), (2, 10, 14), (3, 12, 13), (4, 9, 15), (5, 7, 8)]])
     return ([tuple([g(i) for i in (1, 2, 3, 8, 12)]) for g in G] +
             [tuple([g(i) for i in (1, 2, 5, 8, 14)]) for g in G])
+
 
 def matching(A, B):
     r"""
@@ -229,7 +231,7 @@ class UniqueSimplicialComplex(SimplicialComplex, UniqueRepresentation):
 
         Testing ``from_characteristic_function``::
 
-            sage: UniqueSimplicialComplex(from_characteristic_function=(lambda x:sum(x)<=4, range(5)))
+            sage: UniqueSimplicialComplex(from_characteristic_function=(lambda x: sum(x) <= 4, range(5)))
             Simplicial complex with vertex set (0, 1, 2, 3, 4) and facets {(0, 4), (0, 1, 2), (0, 1, 3)}
         """
         char_fcn = kwds.get('from_characteristic_function', None)
@@ -291,6 +293,7 @@ class UniqueSimplicialComplex(SimplicialComplex, UniqueRepresentation):
 
 # Now the functions that produce the actual examples...
 
+
 def Sphere(n):
     """
     A minimal triangulation of the `n`-dimensional sphere.
@@ -320,6 +323,7 @@ def Sphere(n):
     return UniqueSimplicialComplex(facets,
                                    name='Minimal triangulation of the {}-sphere'.format(n))
 
+
 def Simplex(n):
     """
     An `n`-dimensional simplex, as a simplicial complex.
@@ -340,6 +344,7 @@ def Simplex(n):
     """
     return UniqueSimplicialComplex([TrueSimplex(n)],
                                    name='The {}-simplex'.format(n))
+
 
 def Torus():
     r"""
@@ -369,10 +374,11 @@ def Torus():
     - [Lut2002]_
     """
     return UniqueSimplicialComplex([[0, 1, 2], [1, 2, 4], [1, 3, 4], [1, 3, 6],
-                              [0, 1, 5], [1, 5, 6], [2, 3, 5], [2, 4, 5],
-                              [2, 3, 6], [0, 2, 6], [0, 3, 4], [0, 3, 5],
-                              [4, 5, 6], [0, 4, 6]],
+                                    [0, 1, 5], [1, 5, 6], [2, 3, 5], [2, 4, 5],
+                                    [2, 3, 6], [0, 2, 6], [0, 3, 4], [0, 3, 5],
+                                    [4, 5, 6], [0, 4, 6]],
                                    name='Minimal triangulation of the torus')
+
 
 def RealProjectivePlane():
     """
@@ -394,9 +400,9 @@ def RealProjectivePlane():
         Vector space of dimension 1 over Finite Field of size 2
     """
     return UniqueSimplicialComplex([[0, 1, 2], [0, 2, 3], [0, 1, 5], [0, 4, 5],
-                              [0, 3, 4], [1, 2, 4], [1, 3, 4], [1, 3, 5],
-                              [2, 3, 5], [2, 4, 5]],
-                              name='Minimal triangulation of the real projective plane')
+                                    [0, 3, 4], [1, 2, 4], [1, 3, 4], [1, 3, 5],
+                                    [2, 3, 5], [2, 4, 5]],
+                                   name='Minimal triangulation of the real projective plane')
 
 
 ProjectivePlane = RealProjectivePlane
@@ -413,10 +419,11 @@ def KleinBottle():
         Minimal triangulation of the Klein bottle
     """
     return UniqueSimplicialComplex([[2, 3, 7], [1, 2, 3], [1, 3, 5], [1, 5, 7],
-                              [1, 4, 7], [2, 4, 6], [1, 2, 6], [1, 6, 0],
-                              [1, 4, 0], [2, 4, 0], [3, 4, 7], [3, 4, 6],
-                              [3, 5, 6], [5, 6, 0], [2, 5, 0], [2, 5, 7]],
-                            name='Minimal triangulation of the Klein bottle')
+                                    [1, 4, 7], [2, 4, 6], [1, 2, 6], [1, 6, 0],
+                                    [1, 4, 0], [2, 4, 0], [3, 4, 7], [3, 4, 6],
+                                    [3, 5, 6], [5, 6, 0], [2, 5, 0], [2, 5, 7]],
+                                   name='Minimal triangulation of the Klein bottle')
+
 
 def SurfaceOfGenus(g, orientable=True):
     """
@@ -457,11 +464,12 @@ def SurfaceOfGenus(g, orientable=True):
     for i in range(g-1):
         S = S.connected_sum(T)
     if orientable:
-        orient_str = 'n orientable'
+        name_str = 'Triangulation of an orientable surface of genus {}'
     else:
-        orient_str = ' non-orientable'
-    return UniqueSimplicialComplex(S,
-                name='Triangulation of a{} surface of genus {}'.format(orient_str, g))
+        name_str = 'Triangulation of a non-orientable surface of genus {}'
+
+    return UniqueSimplicialComplex(S, name=name_str.format(g))
+
 
 def MooreSpace(q):
     """
@@ -469,7 +477,7 @@ def MooreSpace(q):
 
     INPUT:
 
-    -  ``q`` -0 integer, at least 2
+    -  ``q`` -- integer, at least 2
 
     This is a simplicial complex with simplices of dimension 0, 1,
     and 2, such that its reduced homology is isomorphic to
@@ -520,6 +528,7 @@ def MooreSpace(q):
         facets.append(["A0", Ai, Aiplus])
     return UniqueSimplicialComplex(facets,
                                    name='Triangulation of the mod {} Moore space'.format(q))
+
 
 def ComplexProjectivePlane():
     """
@@ -572,14 +581,14 @@ def QuaternionicProjectivePlane():
 
     EXAMPLES::
 
-        sage: HP2 = simplicial_complexes.QuaternionicProjectivePlane() ; HP2
+        sage: HP2 = simplicial_complexes.QuaternionicProjectivePlane(); HP2             # optional - sage.groups
         Simplicial complex with 15 vertices and 490 facets
-        sage: HP2.f_vector()
+        sage: HP2.f_vector()                                                            # optional - sage.groups
         [1, 15, 105, 455, 1365, 3003, 4515, 4230, 2205, 490]
 
     Checking its automorphism group::
 
-        sage: HP2.automorphism_group().is_isomorphic(AlternatingGroup(5))
+        sage: HP2.automorphism_group().is_isomorphic(AlternatingGroup(5))               # optional - sage.groups
         True
     """
     from sage.groups.perm_gps.permgroup import PermutationGroup
@@ -653,6 +662,7 @@ def PoincareHomologyThreeSphere():
          [9, 14, 15, 16], [10, 11, 13, 16], [10, 13, 15, 16],
          [11, 13, 14, 16], [12, 13, 14, 15], [13, 14, 15, 16]],
         name='Triangulation of the Poincare homology 3-sphere')
+
 
 def RealProjectiveSpace(n):
     r"""
@@ -769,7 +779,7 @@ def RealProjectiveSpace(n):
              [3, 4, 8, 9], [4, 5, 7, 9], [1, 3, 5, 11], [1, 5, 8, 10],
              [2, 5, 7, 8], [3, 5, 9, 10], [4, 6, 7, 10], [1, 3, 7, 10],
              [1, 6, 8, 9], [2, 5, 7, 9], [3, 6, 7, 8], [5, 6, 7, 8]],
-              name='Minimal triangulation of RP^3')
+            name='Minimal triangulation of RP^3')
     if n == 4:
         return UniqueSimplicialComplex(
             [(1, 3, 8, 12, 13), (2, 7, 8, 13, 16), (4, 8, 9, 12, 14),
@@ -852,7 +862,7 @@ def K3Surface():
 
     EXAMPLES::
 
-        sage: K3=simplicial_complexes.K3Surface() ; K3
+        sage: K3 = simplicial_complexes.K3Surface(); K3
         Minimal triangulation of the K3 surface
         sage: K3.f_vector()
         [1, 16, 120, 560, 720, 288]
@@ -975,7 +985,7 @@ def BarnetteSphere():
 
     EXAMPLES::
 
-        sage: BS = simplicial_complexes.BarnetteSphere() ; BS
+        sage: BS = simplicial_complexes.BarnetteSphere(); BS
         Barnette's triangulation of the 3-sphere
         sage: BS.f_vector()
         [1, 8, 27, 38, 19]
@@ -992,15 +1002,17 @@ def BarnetteSphere():
         ....:                          [3, 4, 5, 8], [4, 5, 6, 8], [1, 2, 6, 8],
         ....:                          [1, 5, 6, 8], [1, 3, 5, 8], [2, 4, 6, 8],
         ....:                          [1, 3, 5, 7]])
-        sage: BS.is_isomorphic(BS2)
+        sage: BS.is_isomorphic(BS2)                                                     # optional - sage.graphs
         True
     """
-    return UniqueSimplicialComplex([
-            (1, 2, 4, 5), (2, 3, 5, 6), (1, 3, 4, 6), (1, 2, 3, 7), (4, 5, 6, 7), (1, 2, 4, 7),
-            (2, 4, 5, 7), (2, 3, 5, 7), (3, 5, 6, 7), (3, 1, 6, 7), (1, 6, 4, 7), (1, 2, 3, 8),
-            (4, 5, 6, 8), (1, 2, 5, 8), (1, 4, 5, 8), (2, 3, 6, 8), (2, 5, 6, 8), (3, 1, 4, 8),
-            (3, 6, 4, 8)],
-          name="Barnette's triangulation of the 3-sphere")
+    return UniqueSimplicialComplex([(1, 2, 4, 5), (2, 3, 5, 6), (1, 3, 4, 6),
+                                    (1, 2, 3, 7), (4, 5, 6, 7), (1, 2, 4, 7),
+                                    (2, 4, 5, 7), (2, 3, 5, 7), (3, 5, 6, 7),
+                                    (3, 1, 6, 7), (1, 6, 4, 7), (1, 2, 3, 8),
+                                    (4, 5, 6, 8), (1, 2, 5, 8), (1, 4, 5, 8),
+                                    (2, 3, 6, 8), (2, 5, 6, 8), (3, 1, 4, 8),
+                                    (3, 6, 4, 8)],
+                                   name="Barnette's triangulation of the 3-sphere")
 
 
 def BrucknerGrunbaumSphere():
@@ -1018,7 +1030,7 @@ def BrucknerGrunbaumSphere():
 
     EXAMPLES::
 
-        sage: BGS = simplicial_complexes.BrucknerGrunbaumSphere() ; BGS
+        sage: BGS = simplicial_complexes.BrucknerGrunbaumSphere(); BGS
         Bruckner and Grunbaum's triangulation of the 3-sphere
         sage: BGS.f_vector()
         [1, 8, 28, 40, 20]
@@ -1031,6 +1043,7 @@ def BrucknerGrunbaumSphere():
 
 ###############################################################
 # examples from graph theory:
+
 
 def NotIConnectedGraphs(n, i):
     """
@@ -1089,6 +1102,7 @@ def NotIConnectedGraphs(n, i):
                 facets.append(facet)
     return UniqueSimplicialComplex(facets, name='Simplicial complex of not {}-connected graphs on {} vertices'.format(i, n))
 
+
 def MatchingComplex(n):
     """
     The matching complex of graphs on `n` vertices.
@@ -1116,8 +1130,7 @@ def MatchingComplex(n):
     EXAMPLES::
 
         sage: M = simplicial_complexes.MatchingComplex(7)
-        sage: H = M.homology()
-        sage: H
+        sage: H = M.homology(); H
         {0: 0, 1: C3, 2: Z^20}
         sage: H[2].ngens()
         20
@@ -1160,6 +1173,7 @@ def MatchingComplex(n):
                         facet.append(tuple(sorted(pair)))
                     facets.append(facet)
     return UniqueSimplicialComplex(facets, name='Matching complex on {} vertices'.format(n))
+
 
 def ChessboardComplex(n, i):
     r"""
@@ -1211,6 +1225,7 @@ def ChessboardComplex(n, i):
         facets.append(facet)
     return UniqueSimplicialComplex(facets, name='Chessboard complex for an {}x{} chessboard'.format(n, i))
 
+
 def RandomComplex(n, d, p=0.5):
     """
     A random ``d``-dimensional simplicial complex on ``n`` vertices.
@@ -1253,6 +1268,7 @@ def RandomComplex(n, d, p=0.5):
         facets.extend([f for f in maybe if random.random() <= p])
         return UniqueSimplicialComplex(facets,
                                        name='Random {}-dimensional simplicial complex on {} vertices'.format(d, n))
+
 
 def SumComplex(n, A):
     r"""
@@ -1401,15 +1417,15 @@ def RandomTwoSphere(n):
 
     EXAMPLES::
 
-        sage: G = simplicial_complexes.RandomTwoSphere(6); G
+        sage: G = simplicial_complexes.RandomTwoSphere(6); G                            # optional - sage.graphs
         Simplicial complex with vertex set (0, 1, 2, 3, 4, 5) and 8 facets
-        sage: G.homology()
+        sage: G.homology()                                                              # optional - sage.graphs
         {0: 0, 1: 0, 2: Z}
-        sage: G.is_pure()
+        sage: G.is_pure()                                                               # optional - sage.graphs
         True
-        sage: fg = G.flip_graph(); fg
+        sage: fg = G.flip_graph(); fg                                                   # optional - sage.graphs
         Graph on 8 vertices
-        sage: fg.is_planar() and fg.is_regular(3)
+        sage: fg.is_planar() and fg.is_regular(3)                                       # optional - sage.graphs
         True
     """
     from sage.graphs.generators.random import RandomTriangulation
@@ -1421,6 +1437,7 @@ def RandomTwoSphere(n):
                  for v, w in zip(L, L[1:] + [L[0]]) if u < v and u < w]
 
     return SimplicialComplex(triangles, maximality_check=False)
+
 
 def ShiftedComplex(generators):
     r"""
@@ -1448,14 +1465,14 @@ def ShiftedComplex(generators):
 
     EXAMPLES::
 
-        sage: X = simplicial_complexes.ShiftedComplex([ Simplex([1, 6]), (2, 4), [8] ])
-        sage: sorted(X.facets())
+        sage: X = simplicial_complexes.ShiftedComplex([Simplex([1, 6]), (2, 4), [8]])   # optional - sage.combinat
+        sage: sorted(X.facets())                                                        # optional - sage.combinat
         [(1, 2), (1, 3), (1, 4), (1, 5), (1, 6), (2, 3), (2, 4), (7,), (8,)]
-        sage: X = simplicial_complexes.ShiftedComplex([ [2, 3, 5] ])
-        sage: sorted(X.facets())
+        sage: X = simplicial_complexes.ShiftedComplex([[2, 3, 5]])                      # optional - sage.combinat
+        sage: sorted(X.facets())                                                        # optional - sage.combinat
         [(1, 2, 3), (1, 2, 4), (1, 2, 5), (1, 3, 4), (1, 3, 5), (2, 3, 4), (2, 3, 5)]
-        sage: X = simplicial_complexes.ShiftedComplex([ [1, 3, 5], [2, 6] ])
-        sage: sorted(X.facets())
+        sage: X = simplicial_complexes.ShiftedComplex([[1, 3, 5], [2, 6]])              # optional - sage.combinat
+        sage: sorted(X.facets())                                                        # optional - sage.combinat
         [(1, 2, 3), (1, 2, 4), (1, 2, 5), (1, 3, 4), (1, 3, 5), (1, 6), (2, 6)]
     """
     from sage.combinat.partition import Partitions
@@ -1467,6 +1484,7 @@ def ShiftedComplex(generators):
             for P in Partitions(k, length=L, max_slope=-1, outer=G):
                 Facets.append(list(reversed(P)))
     return SimplicialComplex(Facets)
+
 
 def RudinBall():
     r"""
@@ -1500,6 +1518,7 @@ def RudinBall():
         name="Rudin ball"
     )
 
+
 def ZieglerBall():
     r"""
     Return the non-shellable ball constructed by Ziegler.
@@ -1521,12 +1540,12 @@ def ZieglerBall():
     """
 
     return UniqueSimplicialComplex(
-       [[1, 2, 3, 4], [1, 2, 5, 6], [1, 5, 6, 9], [2, 5, 6, 0], [3, 6, 7, 8], [4, 5, 7, 8],
-        [2, 3, 6, 7], [1, 6, 2, 9], [2, 6, 7, 0], [3, 2, 4, 8], [4, 1, 3, 7], [3, 4, 7, 8],
-        [1, 2, 4, 9], [2, 7, 3, 0], [3, 2, 6, 8], [4, 1, 5, 7], [4, 1, 8, 5], [1, 4, 8, 9],
-        [2, 3, 1, 0], [1, 8, 5, 9], [2, 1, 5, 0]],
-       name="Ziegler ball"
-    )
+        [[1, 2, 3, 4], [1, 2, 5, 6], [1, 5, 6, 9], [2, 5, 6, 0], [3, 6, 7, 8], [4, 5, 7, 8],
+         [2, 3, 6, 7], [1, 6, 2, 9], [2, 6, 7, 0], [3, 2, 4, 8], [4, 1, 3, 7], [3, 4, 7, 8],
+         [1, 2, 4, 9], [2, 7, 3, 0], [3, 2, 6, 8], [4, 1, 5, 7], [4, 1, 8, 5], [1, 4, 8, 9],
+         [2, 3, 1, 0], [1, 8, 5, 9], [2, 1, 5, 0]],
+        name="Ziegler ball")
+
 
 def DunceHat():
     r"""
@@ -1548,11 +1567,10 @@ def DunceHat():
         True
     """
     return UniqueSimplicialComplex(
-       [[1, 3, 5], [2, 3, 5], [2, 4, 5], [1, 2, 4], [1, 3, 4], [3, 4, 8],
-        [1, 2, 8], [1, 7, 8], [1, 2, 7], [2, 3, 7], [3, 6, 7], [1, 3, 6],
-        [1, 5, 6], [4, 5, 6], [4, 6, 8], [6, 7, 8], [2, 3, 8]],
-       name="Minimal triangulation of the dunce hat"
-    )
+        [[1, 3, 5], [2, 3, 5], [2, 4, 5], [1, 2, 4], [1, 3, 4], [3, 4, 8],
+         [1, 2, 8], [1, 7, 8], [1, 2, 7], [2, 3, 7], [3, 6, 7], [1, 3, 6],
+         [1, 5, 6], [4, 5, 6], [4, 6, 8], [6, 7, 8], [2, 3, 8]],
+        name="Minimal triangulation of the dunce hat")
 
 
 def FareyMap(p):
@@ -1577,14 +1595,14 @@ def FareyMap(p):
 
     EXAMPLES::
 
-        sage: S5 = simplicial_complexes.FareyMap(5); S5
+        sage: S5 = simplicial_complexes.FareyMap(5); S5                                 # optional - sage.groups
         Simplicial complex with 12 vertices and 20 facets
-        sage: S5.automorphism_group().cardinality()
+        sage: S5.automorphism_group().cardinality()                                     # optional - sage.groups
         120
 
-        sage: S7 = simplicial_complexes.FareyMap(7); S7
+        sage: S7 = simplicial_complexes.FareyMap(7); S7                                 # optional - sage.groups
         Simplicial complex with 24 vertices and 56 facets
-        sage: S7.f_vector()
+        sage: S7.f_vector()                                                             # optional - sage.groups
         [1, 24, 84, 56]
 
     REFERENCES:
@@ -1642,7 +1660,7 @@ def GenusSix():
     EXAMPLES::
 
         sage: S = simplicial_complexes.GenusSix()
-        sage: S.automorphism_group().cardinality()
+        sage: S.automorphism_group().cardinality()                                      # optional - sage.groups
         12
         sage: S.betti()
         {0: 1, 1: 12, 2: 1}

@@ -6,10 +6,8 @@ from .all__sagemath_environment import *
 from .all__sagemath_repl import *
 
 from .misc import (BackslashOperator,
-                  cputime,
-                  union, uniq, powerset, subsets,
                   exists, forall, is_iterator,
-                  random_sublist, walltime,
+                  random_sublist,
                   pad_zeros,
                   SAGE_DB,
                    newton_method_sizes, compose,
@@ -17,9 +15,9 @@ from .misc import (BackslashOperator,
 lazy_import('sage.misc.misc', 'union',
             deprecation=32096)
 
-from .banner import version, banner
+from .banner import version
 
-from .dev_tools import runsnake, import_statements
+from .dev_tools import import_statements
 
 from .html import html, pretty_print_default
 
@@ -27,7 +25,7 @@ from .table import table
 
 from .sage_timeit_class import timeit
 
-from .edit_module import edit, set_edit_template
+from .edit_module import edit
 
 from .map_threaded import map_threaded
 
@@ -35,17 +33,9 @@ from .session import load_session, save_session, show_identifiers
 
 from .remote_file import get_remote_file
 
-from .profiler import Profiler
-
 from .mrange import xmrange, mrange, xmrange_iter, mrange_iter, cartesian_product_iterator
 
 from .fpickle import pickle_function, unpickle_function
-
-from .dist import install_scripts
-
-lazy_import('sage.misc.package', ('installed_packages', 'is_package_installed',
-                                  'standard_packages', 'optional_packages',
-                                  'experimental_packages', 'package_versions'))
 
 lazy_import('sage.misc.pager', 'pager')
 
@@ -130,46 +120,25 @@ from .functional import (additive_order,
 
 from .latex import LatexExpr, latex, view
 
-from .trace import trace
-
 from .randstate import seed, set_random_seed, initial_seed, current_randstate
 
 from .prandom import *
+
+from .timing import walltime, cputime
 
 from .explain_pickle import explain_pickle, unpickle_newobj, unpickle_global, unpickle_build, unpickle_instantiate, unpickle_persistent, unpickle_extension, unpickle_appends
 
 lazy_import('sage.misc.inline_fortran', 'fortran')
 
-
-##########################################################################
-def benchmark(n=-1):
-    """
-    Run a well-chosen range of Sage commands and record the time it
-    takes for each to run.
-
-    INPUT:
-
-    - ``n`` -- int (default: -1); the benchmark number. The default
-      of -1 runs all the benchmarks.
-
-    OUTPUT:
-
-    - ``list`` -- summary of timings for each benchmark
-    """
-    import sage.misc.benchmark
-    return sage.misc.benchmark.benchmark(n)
-
-
-class logstr(str):
-    def __repr__(self):
-        return self
-
-    def _latex_(self):
-        # return "\\begin{verbatim}%s\\end{verbatim}"%self
-        if '#' not in self:
-            delim = '#'
-        elif '@' not in self:
-            delim = '@'
-        elif '~' not in self:
-            delim = '~'
-        return r"""\verb%s%s%s""" % (delim, self.replace('\n\n', '\n').replace('\n', '; '), delim)
+lazy_import('sage.misc.banner', 'banner', deprecation=34259)
+lazy_import('sage.misc.dev_tools', 'runsnake', deprecation=34259)
+lazy_import('sage.misc.edit_module', 'set_edit_template', deprecation=34259)
+lazy_import('sage.misc.profiler', 'Profiler', deprecation=34259)
+lazy_import('sage.misc.dist', 'install_scripts', deprecation=34259)
+lazy_import('sage.misc.trace', 'trace', deprecation=34259)
+lazy_import('sage.misc.package', ('installed_packages', 'is_package_installed',
+                                  'standard_packages', 'optional_packages',
+                                  'experimental_packages', 'package_versions'),
+            deprecation=34259)
+lazy_import('sage.misc.benchmark', 'benchmark', deprecation=34259)
+lazy_import('sage.repl.interpreter', 'logstr', deprecation=34259)

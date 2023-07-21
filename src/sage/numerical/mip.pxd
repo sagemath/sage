@@ -36,5 +36,3 @@ cdef class MIPVariable(SageObject):
     cdef object _upper_bound
     cdef _matrix_rmul_impl(self, m)
     cdef _matrix_lmul_impl(self, m)
-
-

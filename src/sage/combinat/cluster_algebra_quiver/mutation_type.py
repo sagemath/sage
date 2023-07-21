@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.graphs
 r"""
 Helper functions for mutation types of quivers
 
@@ -55,20 +56,20 @@ def is_mutation_finite(M, nr_of_checks=None):
         sage: from sage.combinat.cluster_algebra_quiver.mutation_type import is_mutation_finite
 
         sage: Q = ClusterQuiver(['A',10])
-        sage: M = Q.b_matrix()
-        sage: is_mutation_finite(M)
+        sage: M = Q.b_matrix()                                                          # needs sage.modules
+        sage: is_mutation_finite(M)                                                     # needs sage.modules
         (True, None)
 
         sage: Q = ClusterQuiver([(0,1),(1,2),(2,3),(3,4),(4,5),(5,6),(6,7),(7,8),(2,9)])
-        sage: M = Q.b_matrix()
-        sage: is_mutation_finite(M) # random
+        sage: M = Q.b_matrix()                                                          # needs sage.modules
+        sage: is_mutation_finite(M)  # random                                           # needs sage.modules
         (False, [9, 6, 9, 8, 9, 4, 0, 4, 5, 2, 1, 0, 1, 0, 7, 1, 9, 2, 5, 7, 8, 6, 3, 0, 2, 5, 4, 2, 6, 9, 2, 7, 3, 5, 3, 7, 9, 5, 9, 0, 2, 7, 9, 2, 4, 2, 1, 6, 9, 4, 3, 5, 0, 8, 2, 9, 5, 3, 7, 0, 1, 8, 3, 7, 2, 7, 3, 4, 8, 0, 4, 9, 5, 2, 8, 4, 8, 1, 7, 8, 9, 1, 5, 0, 8, 7, 4, 8, 9, 8, 0, 7, 4, 7, 1, 2, 8, 6, 1, 3, 9, 3, 9, 1, 3, 2, 4, 9, 5, 1, 2, 9, 4, 8, 5, 3, 4, 6, 8, 9, 2, 5, 9, 4, 6, 2, 1, 4, 9, 6, 0, 9, 8, 0, 4, 7, 9, 2, 1, 6])
 
     Check that :trac:`19495` is fixed::
 
-        sage: dg = DiGraph(); dg.add_vertex(0); S = ClusterSeed(dg); S
+        sage: dg = DiGraph(); dg.add_vertex(0); S = ClusterSeed(dg); S                  # needs sage.modules
         A seed for a cluster algebra of rank 1
-        sage: S.is_mutation_finite()
+        sage: S.is_mutation_finite()                                                    # needs sage.modules
         True
     """
     import random
@@ -284,7 +285,7 @@ def _check_special_BC_cases(dg, n, check_letter_list, check_twist_list,
         return 'unknown'
     # divides into cases depending on whether or not a list 'conn_vert_list' of connecting vertices is given.
     if conn_vert_list:
-        mut_type = _connected_mutation_type_AAtildeD( dg, ret_conn_vert = True )
+        mut_type = _connected_mutation_type_AAtildeD( dg, ret_conn_vert=True )
         # when 'conn_vert_list' is given, the output of _connected_mutation_type_AAtildeD is
         # either 'unknown' or a pair (mut_type, conn_verts).  Then, it is tested if the vertices can be glued together as desired.
         if not mut_type == 'unknown':
@@ -292,7 +293,7 @@ def _check_special_BC_cases(dg, n, check_letter_list, check_twist_list,
     else:
         # when conn_vert_list == False, the output of _connected_mutation_type _AAtildeD is simply 'unknown' or the mutation type.
         # no 'connecting vertices' need to be computed.
-        mut_type = _connected_mutation_type_AAtildeD( dg, ret_conn_vert = False )
+        mut_type = _connected_mutation_type_AAtildeD( dg, ret_conn_vert=False )
         conn_verts = []
     # when the mutation type is recognized, program now tries more specifically to figure out 'letter' and 'twist'
     if not mut_type == 'unknown':
@@ -1428,7 +1429,7 @@ def _random_tests(mt, k, mut_class=None, nr_mut=5):
     TESTS::
 
         sage: from sage.combinat.cluster_algebra_quiver.mutation_type import _random_tests
-        sage: _random_tests( ['A',3], 1)
+        sage: _random_tests( ['A',3], 1)                                                # needs sage.modules
         testing ['A', 3]
     """
     from sage.combinat.cluster_algebra_quiver.quiver import ClusterQuiver

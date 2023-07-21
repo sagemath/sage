@@ -22,7 +22,7 @@ from cysignals.memory cimport sig_malloc, sig_free
 
 from sage.libs.flint.nmod_poly cimport *
 from sage.libs.flint.ulong_extras cimport *
-
+from sage.structure.factorization import Factorization
 
 cdef inline celement *celement_new(unsigned long n):
     cdef celement *g = <celement *>sig_malloc(sizeof(nmod_poly_t))

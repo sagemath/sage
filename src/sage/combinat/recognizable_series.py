@@ -1,3 +1,4 @@
+# sage.doctest: optional - sage.combinat sage.modules
 r"""
 Recognizable Series
 
@@ -65,15 +66,15 @@ ACKNOWLEDGEMENT:
 Classes and Methods
 ===================
 """
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2016 Daniel Krenn <dev@danielkrenn.at>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from functools import wraps
 
@@ -263,7 +264,7 @@ class PrefixClosedSet():
         while n < len(self.elements):
             try:
                 nn = next(it)
-                yield self.elements[n] + nn #next(it)
+                yield self.elements[n] + nn  # next(it)
             except StopIteration:
                 n += 1
                 it = self.words.iterate_by_length(1)
@@ -441,6 +442,7 @@ class RecognizableSeries(ModuleElement):
         super(RecognizableSeries, self).__init__(parent=parent)
 
         from copy import copy
+        from sage.matrix.constructor import Matrix
         from sage.modules.free_module_element import vector
         from sage.sets.family import Family
 
@@ -456,7 +458,7 @@ class RecognizableSeries(ModuleElement):
             return m
 
         if isinstance(mu, dict):
-            mu = dict((a, immutable(M)) for a, M in mu.items())
+            mu = {a: Matrix(M, immutable=True) for a, M in mu.items()}
         mu = Family(mu)
 
         if not mu.is_finite():
@@ -1211,11 +1213,11 @@ class RecognizableSeries(ModuleElement):
         mu_prime = []
         for a in self.parent().alphabet():
             a = self.parent().indices()([a])
-            M = Matrix([alpha(c) if c in C else tuple(ZZ(c==q) for q in P)
+            M = Matrix([alpha(c) if c in C else tuple(ZZ(c == q) for q in P)
                         for c in (p + a for p in P)])
             mu_prime.append(M)
 
-        left_prime = vector([ZZ(1)] + (len(P)-1)*[ZZ(0)])
+        left_prime = vector([ZZ.one()] + (len(P) - 1) * [ZZ.zero()])
         right_prime = vector(self.coefficient_of_word(p) for p in P)
 
         P = self.parent()
@@ -1362,7 +1364,7 @@ class RecognizableSeries(ModuleElement):
         if other.is_one():
             return self
         P = self.parent()
-        return P.element_class(P, self.mu, other*self.left, self.right)
+        return P.element_class(P, self.mu, other * self.left, self.right)
 
     def _lmul_(self, other):
         r"""
@@ -1417,7 +1419,7 @@ class RecognizableSeries(ModuleElement):
         if other.is_one():
             return self
         P = self.parent()
-        return P.element_class(P, self.mu, self.left, self.right*other)
+        return P.element_class(P, self.mu, self.left, self.right * other)
 
     @minimize_result
     def hadamard_product(self, other):
@@ -1865,7 +1867,7 @@ class RecognizableSeriesSpace(UniqueRepresentation, Parent):
         z = self.coefficient_ring().zero()
         o = self.coefficient_ring().one()
         e = self.coefficient_ring().an_element()
-        return self(list(Matrix([[o, z], [i*o, o]])
+        return self(list(Matrix([[o, z], [i * o, o]])
                          for i, _ in enumerate(self.alphabet())),
                     vector([z, e]), right=vector([e, z]))
 

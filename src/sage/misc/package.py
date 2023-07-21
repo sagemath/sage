@@ -125,6 +125,42 @@ def pip_remote_version(pkg, pypi_url=DEFAULT_PYPI, ignore_URLError=False):
     return max(stable_releases)
 
 
+def spkg_type(name):
+    r"""
+    Return the type of the Sage package with the given name.
+
+    INPUT:
+
+    - ``name`` -- string giving the subdirectory name of the package under
+      ``SAGE_PKGS``
+
+    EXAMPLES::
+
+        sage: from sage.misc.package import spkg_type
+        sage: spkg_type('pip')                                  # optional - sage_spkg
+        'standard'
+
+    OUTPUT:
+
+    The type as a string in ``('base', 'standard', 'optional', 'experimental')``.
+    If no ``SPKG`` exists with the given name (or the directory ``SAGE_PKGS`` is
+    not avaialble), ``None`` is returned.
+    """
+    spkg_type = None
+    from sage.env import SAGE_PKGS
+    if not SAGE_PKGS:
+        return None
+    try:
+        f = open(os.path.join(SAGE_PKGS, name, "type"))
+    except IOError:
+        # Probably an empty directory => ignore
+        return None
+
+    with f:
+        spkg_type = f.read().strip()
+    return spkg_type
+
+
 def pip_installed_packages(normalization=None):
     r"""
     Return a dictionary `name->version` of installed pip packages.
@@ -310,14 +346,9 @@ def list_packages(*pkg_types: str, pkg_sources: List[str] = ['normal', 'pip', 's
 
     for p in lp:
 
-        try:
-            f = open(os.path.join(SAGE_PKGS, p, "type"))
-        except IOError:
-            # Probably an empty directory => ignore
+        typ = spkg_type(p)
+        if not typ:
             continue
-
-        with f:
-            typ = f.read().strip()
 
         if os.path.isfile(os.path.join(SAGE_PKGS, p, "requirements.txt")):
             src = 'pip'
@@ -384,12 +415,20 @@ def installed_packages(exclude_pip=True):
     - ``exclude_pip`` -- (optional, default: ``True``) whether "pip" packages
       are excluded from the list
 
-    EXAMPLES::
+    EXAMPLES:
 
-        sage: sorted(installed_packages().keys())  # optional - sage_spkg
-        [...'gmpy2', ...'sage_conf', ...]
-        sage: installed_packages()['gmpy2']  # optional - sage_spkg, random
-        '2.1.0b5'
+    Below we test for a standard package without ``spkg-configure.m4`` script
+    that should be installed in ``SAGE_LOCAL``. When Sage is installed by
+    the Sage distribution (indicated by feature ``sage_spkg``), we should have
+    the installation record for this package. (We do not test for installation
+    records of Python packages. Our ``SAGE_VENV`` is not necessarily the
+    main Sage venv; it could be a user-created venv or a venv created by tox.)::
+
+        sage: from sage.misc.package import installed_packages
+        sage: sorted(installed_packages().keys())         # optional - sage_spkg
+        [...'conway_polynomials', ...]
+        sage: installed_packages()['conway_polynomials']  # optional - sage_spkg, random
+        '0.5'
 
     .. SEEALSO::
 
@@ -424,12 +463,13 @@ def is_package_installed(package, exclude_pip=True):
 
     EXAMPLES::
 
-        sage: is_package_installed('gap')  # optional - sage_spkg
+        sage: from sage.misc.package import is_package_installed
+        sage: is_package_installed('conway_polynomials')  # optional - sage_spkg
         True
 
     Giving just the beginning of the package name is not good enough::
 
-        sage: is_package_installed('matplotli')  # optional - sage_spkg
+        sage: is_package_installed('conway_poly')         # optional - sage_spkg
         False
 
     Otherwise, installing "pillow" would cause this function to think
@@ -494,6 +534,7 @@ def package_versions(package_type, local=False):
 
     EXAMPLES::
 
+        sage: from sage.misc.package import package_versions
         sage: std = package_versions('standard', local=True)  # optional - sage_spkg
         sage: 'gap' in std  # optional - sage_spkg
         True
@@ -621,15 +662,15 @@ def package_manifest(package):
     EXAMPLES::
 
         sage: from sage.misc.package import package_manifest
-        sage: sagetex_manifest = package_manifest('sagetex')  # optional - sage_spkg
-        sage: sagetex_manifest['package_name'] == 'sagetex'  # optional - sage_spkg
+        sage: manifest = package_manifest('conway_polynomials')  # optional - sage_spkg
+        sage: manifest['package_name'] == 'conway_polynomials'   # optional - sage_spkg
         True
-        sage: 'files' in sagetex_manifest  # optional - sage_spkg
+        sage: 'files' in manifest                                # optional - sage_spkg
         True
 
     Test a nonexistent package::
 
-        sage: package_manifest('dummy-package')  # optional - sage_spkg
+        sage: package_manifest('dummy-package')                  # optional - sage_spkg
         Traceback (most recent call last):
         ...
         KeyError: 'dummy-package'

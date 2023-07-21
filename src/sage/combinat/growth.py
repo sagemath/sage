@@ -797,8 +797,8 @@ class GrowthDiagram(SageObject):
         """
         l = self._lambda[0]
         h = len(self._lambda)
-        shape_lambda = [l-p for p in self._mu] + [l]*(h-len(self._mu))
-        shape_mu     = [l-p for p in self._lambda]
+        shape_lambda = [l - p for p in self._mu] + [l] * (h - len(self._mu))
+        shape_mu = [l - p for p in self._lambda]
         shape = SkewPartition([shape_lambda[::-1], shape_mu[::-1]])
         F = {(l-i-1, h-j-1): v for (i,j),v in self._filling.items()}
         return GrowthDiagram(self.rule,
@@ -2608,7 +2608,7 @@ class RuleLLMS(Rule):
                 # the addable cell with largest content at most e
                 cprime = sorted([c for c in y.to_partition().addable_cells()
                                  if c[1]-c[0] <= e],
-                                key = lambda c: -(c[1]-c[0]))[0]
+                                key=lambda c: -(c[1]-c[0]))[0]
                 h = cprime[1] - cprime[0]
                 z = y.affine_symmetric_group_simple_action(h % self.k)
 

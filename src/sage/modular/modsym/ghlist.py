@@ -173,7 +173,8 @@ class _GHlist_old_pickle(GHlist):
         # We don't really want this class, but we want to handle new
         #   pickles without creating a new class
         self.__class__ = GHlist
-        self.__dict__ = state # Default pickling is ``state = self.__dict__``
+        self.__dict__ = state  # Default pickling is ``state = self.__dict__``
+
 
 register_unpickle_override('sage.modular.modsym.ghlist', 'GHlist',
                            _GHlist_old_pickle)

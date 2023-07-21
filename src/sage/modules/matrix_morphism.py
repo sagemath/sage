@@ -523,9 +523,10 @@ class MatrixMorphism_abstract(sage.categories.morphism.Morphism):
 
         Composite maps can be formed with matrix morphisms::
 
-            sage: K.<a> = NumberField(x^2 + 23)
-            sage: V, VtoK, KtoV = K.vector_space()
-            sage: f = V.hom([V.0 - V.1, V.0 + V.1])*KtoV; f
+            sage: x = polygen(ZZ, 'x')
+            sage: K.<a> = NumberField(x^2 + 23)                                         # optional - sage.rings.number_field
+            sage: V, VtoK, KtoV = K.vector_space()                                      # optional - sage.rings.number_field
+            sage: f = V.hom([V.0 - V.1, V.0 + V.1])*KtoV; f                             # optional - sage.rings.number_field
             Composite map:
             From: Number Field in a with defining polynomial x^2 + 23
             To:   Vector space of dimension 2 over Rational Field

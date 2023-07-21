@@ -99,9 +99,9 @@ from sage.libs.gmp.mpz cimport *
 from sage.geometry.toric_plotter import ToricPlotter
 from sage.modules.vector_integer_dense cimport Vector_integer_dense
 from sage.structure.coerce_exceptions import CoercionException
-from sage.structure.element cimport Element, Vector
+from sage.structure.element cimport Vector
 from sage.rings.integer cimport Integer
-from sage.structure.richcmp cimport richcmp_not_equal, richcmp
+from sage.structure.richcmp cimport richcmp_not_equal
 
 
 def is_ToricLatticeElement(x):

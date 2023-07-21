@@ -246,10 +246,10 @@ def pretty_print(*args, **kwds):
         sage: pretty_print(x^2 / (x + 1))                                               # optional - sage.symbolic
         x^2/(x + 1)
 
-        sage: t = BinaryTrees(3).first()                                                # optional - sage.combinat
-        sage: pretty_print(t)                                                           # optional - sage.combinat
+        sage: t = BinaryTrees(3).first()                                                # optional - sage.graphs
+        sage: pretty_print(t)                                                           # optional - sage.graphs
         [., [., [., .]]]
-        sage: print(t)                                                                  # optional - sage.combinat
+        sage: print(t)                                                                  # optional - sage.graphs
         [., [., [., .]]]
 
     TESTS::
@@ -263,7 +263,7 @@ def pretty_print(*args, **kwds):
     The following illustrates a possible use-case::
 
         sage: %display ascii_art  # not tested
-        sage: for t in BinaryTrees(3)[:3]:                                              # optional - sage.combinat
+        sage: for t in BinaryTrees(3)[:3]:                                              # optional - sage.graphs
         ....:     pretty_print(t)
         o
          \

@@ -34,7 +34,6 @@ Functions
 
 from sage.categories.cartesian_product import cartesian_product
 from sage.misc.misc_c import prod
-from libcpp.vector cimport vector
 from libcpp.queue cimport priority_queue
 from libcpp.pair cimport pair
 from sage.rings.integer_ring import ZZ

@@ -18,7 +18,6 @@ overridden by subclasses.
 from operator import eq, ne, gt, lt, ge, le, mul, pow, neg, add, truediv
 from functools import reduce
 
-from sage.rings.rational_field import QQ
 from sage.symbolic.ring import SR
 from sage.structure.element import Expression
 from sage.functions.all import exp
@@ -583,7 +582,7 @@ class InterfaceInit(Converter):
             raise NotImplementedError
         args = ex.operands()
         if (not all(isinstance(v, Expression) and v.is_symbol() for v in args) or
-            len(args) != len(set(args))):
+                len(args) != len(set(args))):
             # An evaluated derivative of the form f'(1) is not a
             # symbolic variable, yet we would like to treat it like
             # one. So, we replace the argument `1` with a temporary
@@ -1107,7 +1106,7 @@ class FriCASConverter(InterfaceInit):
         params_set = set(params)
         mult = ",".join(str(params.count(i)) for i in params_set)
         if (not all(isinstance(v, Expression) and v.is_symbol() for v in args) or
-            len(args) != len(set(args))):
+                len(args) != len(set(args))):
             # An evaluated derivative of the form f'(1) is not a
             # symbolic variable, yet we would like to treat it like
             # one. So, we replace the argument `1` with a temporary
@@ -1224,6 +1223,8 @@ class AlgebraicConverter(Converter):
 
         if operator is pow:
             from sage.symbolic.constants import e, pi, I
+            from sage.rings.rational_field import QQ
+
             base, expt = ex.operands()
             if base == e and expt / (pi * I) in QQ:
                 return exp(expt)._algebraic_(self.field)
@@ -1317,6 +1318,7 @@ class AlgebraicConverter(Converter):
             if not (SR(-1).sqrt() * operand).is_real():
                 raise ValueError("unable to represent as an algebraic number")
             # Coerce (not convert, see #22571) arg to a rational
+            from sage.rings.rational_field import QQ
             arg = operand.imag()/(2*ex.parent().pi())
             try:
                 rat_arg = QQ.coerce(arg.pyobject())
@@ -2226,8 +2228,7 @@ class Exponentialize(ExpressionTreeWalker):
     from sage.functions.hyperbolic import sinh, cosh, sech, csch, tanh, coth
     from sage.functions.log import exp
     from sage.functions.trig import sin, cos, sec, csc, tan, cot
-    from sage.rings.imaginary_unit import I
-    from sage.symbolic.constants import e
+    from sage.symbolic.constants import e, I
     from sage.rings.integer import Integer
     from sage.symbolic.ring import SR
     from sage.calculus.var import function

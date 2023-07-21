@@ -20,7 +20,7 @@ In this chapter, we discuss interfaces between Sage and :ref:`PARI
 
 .. _section-pari-library:
 
-The PARI C Library Interface
+The PARI C library interface
 ============================
 
 Here is a step-by-step guide to adding new PARI functions to Sage. We
@@ -570,7 +570,7 @@ One more example (in addition to the one in the docstring):
     ((0, 1, 0), (1, 0, 0), (0, 0, 1))
 
 
-Singular: Another Approach
+Singular: another approach
 ==========================
 
 There is also a more Python-like interface to Singular. Using this,
@@ -626,7 +626,7 @@ implemented in the Sage/Singular interface, whereas the code in the
 previous section used only the barest minimum of that interface.
 
 
-Creating a New Pseudo-TTY Interface
+Creating a new pseudo-TTY interface
 ===================================
 
 You can create Sage pseudo-tty interfaces that allow Sage to work with
@@ -708,7 +708,7 @@ dumps the user into an Octave interactive shell:
             Use octave to compute a solution x to A*x = b, as a list.
 
             INPUT:
-            
+
             - A -- mxn matrix A with entries in QQ or RR
             - b -- m-vector b entries in QQ or RR (resp)
 

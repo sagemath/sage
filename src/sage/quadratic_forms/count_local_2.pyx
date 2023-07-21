@@ -1,34 +1,30 @@
 r"""
 Optimized counting of congruence solutions
 """
-
 from sage.arith.misc import is_prime, kronecker as kronecker_symbol, valuation
 from sage.rings.finite_rings.integer_mod cimport IntegerMod_gmp
 from sage.rings.finite_rings.integer_mod import Mod
 from sage.rings.finite_rings.integer_mod_ring import IntegerModRing
-from sage.rings.integer_ring import ZZ
-from sage.sets.set import Set
 
 
 def count_modp__by_gauss_sum(n, p, m, Qdet):
-    """
-    Returns the number of solutions of Q(x) = m over the finite field
-    Z/pZ, where p is a prime number > 2 and Q is a non-degenerate
-    quadratic form of dimension n >= 1 and has Gram determinant Qdet.
+    r"""
+    Return the number of solutions of `Q(x) = m` over the finite field
+    `\ZZ/p\ZZ`, where `p` is a prime number > 2 and `Q` is a non-degenerate
+    quadratic form of dimension `n \geq 1` and has Gram determinant ``Qdet``.
 
     REFERENCE:
-        These are defined in Table 1 on p363 of Hanke's "Local
-        Densities..." paper.
+
+    These are defined in Table 1 on p363 of Hanke's "Local Densities..." paper.
 
     INPUT:
 
-    - n -- an integer >= 1
-    - p -- a prime number > 2
-    - m -- an integer
-    - Qdet -- a integer which is non-zero mod p
+    - ``n`` -- an integer `\geq 1`
+    - ``p`` -- a prime number > 2
+    - ``m`` -- an integer
+    - ``Qdet`` -- a integer which is non-zero mod `p`
 
-    OUTPUT:
-        an integer >= 0
+    OUTPUT: an integer `\geq 0`
 
     EXAMPLES::
 
@@ -42,7 +38,9 @@ def count_modp__by_gauss_sum(n, p, m, Qdet):
         12
 
         sage: Q = DiagonalQuadraticForm(ZZ, [1,1,1])
-        sage: [Q.count_congruence_solutions(3, 1, m, None, None) == count_modp__by_gauss_sum(3, 3, m, 1)  for m in range(3)]
+        sage: [Q.count_congruence_solutions(3, 1, m, None, None)
+        ....:    == count_modp__by_gauss_sum(3, 3, m, 1)
+        ....:  for m in range(3)]
         [True, True, True]
 
 
@@ -54,7 +52,9 @@ def count_modp__by_gauss_sum(n, p, m, Qdet):
         6
 
         sage: Q = DiagonalQuadraticForm(ZZ, [1,1,2])
-        sage: [Q.count_congruence_solutions(3, 1, m, None, None) == count_modp__by_gauss_sum(3, 3, m, 2)  for m in range(3)]
+        sage: [Q.count_congruence_solutions(3, 1, m, None, None)
+        ....:    == count_modp__by_gauss_sum(3, 3, m, 2)
+        ....:  for m in range(3)]
         [True, True, True]
 
 
@@ -161,10 +161,10 @@ def CountAllLocalTypesNaive(Q, p, k, m, zvec, nzvec):
 
     INPUT:
 
-    - `Q` -- quadratic form over `\ZZ`
-    - `p` -- prime number > 0
-    - `k` -- an integer > 0
-    - `m` -- an integer (depending only on mod `p^k`)
+    - ``Q`` -- quadratic form over `\ZZ`
+    - ``p`` -- prime number > 0
+    - ``k`` -- an integer > 0
+    - ``m`` -- an integer (depending only on mod `p^k`)
     - ``zvec``, ``nzvec`` -- a list of integers in ``range(Q.dim())``, or ``None``
 
     OUTPUT:
@@ -194,12 +194,12 @@ def CountAllLocalTypesNaive(Q, p, k, m, zvec, nzvec):
 
 cdef local_solution_type_cdef(Q, p, w, zvec, nzvec):
     """
-    Internal routine to check if a given solution vector w (of Q(w) =
-    m mod p^k) is of a certain local type and satisfies certain
-    congruence conditions mod p.
+    Internal routine to check if a given solution vector `w` (of `Q(w) =
+    m` mod `p^k`) is of a certain local type and satisfies certain
+    congruence conditions mod `p`.
 
-    NOTE: No internal checking is done to test if p is a prime >=2, or
-    that Q has the same size as w.
+    NOTE: No internal checking is done to test if `p` is a prime >=2, or
+    that Q has the same size as `w`.
 
     """
     cdef long i
