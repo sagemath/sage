@@ -173,6 +173,7 @@ from .point import (ProjectiveCurvePoint_field,
                     IntegralProjectivePlaneCurvePoint_finite_field)
 
 from .closed_point import IntegralProjectiveCurveClosedPoint
+from sage.misc.persist import register_unpickle_override
 
 
 class ProjectiveCurve(Curve_generic, AlgebraicScheme_subscheme_projective):
@@ -212,7 +213,7 @@ class ProjectiveCurve(Curve_generic, AlgebraicScheme_subscheme_projective):
             True
         """
         if not is_ProjectiveSpace(A):
-            raise TypeError("A (=%s) must be a projective space"%A)
+            raise TypeError("A (=%s) must be a projective space" % A)
 
         Curve_generic.__init__(self, A, X)
 
@@ -665,8 +666,8 @@ class ProjectivePlaneCurve(ProjectiveCurve):
         for P in pnts:
             if P[2] != F(0):
                 # What is the '5' in this line and the 'r()' in the next???
-                lcs = self.local_coordinates(P,5)
-                ldg = degree_lowest_rational_function(r(lcs[0],lcs[1]),z)
+                lcs = self.local_coordinates(P, 5)
+                ldg = degree_lowest_rational_function(r(lcs[0], lcs[1]), z)
                 if ldg != 0:
                     divf.append([ldg, P])
         return divf
@@ -705,14 +706,14 @@ class ProjectivePlaneCurve(ProjectiveCurve):
         p = F.characteristic()
         x0 = F(pt[0])
         y0 = F(pt[1])
-        astr = ["a"+str(i) for i in range(1,2*n)]
-        x,y = R.gens()
+        astr = ["a"+str(i) for i in range(1, 2*n)]
+        x, y = R.gens()
         R0 = PolynomialRing(F, 2 * n + 2, names=[str(x), str(y), "t"] + astr)
         vars0 = R0.gens()
         t = vars0[2]
-        yt = y0*t**0 + add([vars0[i]*t**(i-2) for i in range(3,2*n+2)])
+        yt = y0*t**0 + add([vars0[i]*t**(i-2) for i in range(3, 2*n+2)])
         xt = x0+t
-        ft = f(xt,yt)
+        ft = f(xt, yt)
         S = singular
         S.eval('ring s = '+str(p)+','+str(R0.gens())+',lp;')
         S.eval('poly f = '+str(ft))
@@ -733,15 +734,15 @@ class ProjectivePlaneCurve(ProjectiveCurve):
                 if str(y) in x:
                     if x.replace(str(y), ""):
                         i = x.find("-")
-                        if i>0:
-                            vals.append([eval(x[1:i]),x[:i],F(eval(x[i+1:]))])
+                        if i > 0:
+                            vals.append([eval(x[1:i]), x[:i], F(eval(x[i+1:]))])
                         i = x.find("+")
-                        if i>0:
-                            vals.append([eval(x[1:i]),x[:i],-F(eval(x[i+1:]))])
+                        if i > 0:
+                            vals.append([eval(x[1:i]), x[:i], -F(eval(x[i+1:]))])
                     else:
-                        vals.append([eval(str(y)[1:]),str(y),F(0)])
+                        vals.append([eval(str(y)[1:]), str(y), F(0)])
         vals.sort()
-        return [x0 + t, y0 + add(v[2] * t**(j+1) for j, v in enumerate(vals))]
+        return [x0 + t, y0 + add(v[2] * t**(j + 1) for j, v in enumerate(vals))]
 
     def plot(self, *args, **kwds):
         """
@@ -1032,7 +1033,7 @@ class ProjectivePlaneCurve(ProjectiveCurve):
         """
         r = self.multiplicity(P)
         if r < 2:
-            raise TypeError("(=%s) is not a singular point of (=%s)"%(P,self))
+            raise TypeError("(=%s) is not a singular point of (=%s)" % (P, self))
 
         # Find an affine chart of the ambient space of self that contains P
         i = 0
@@ -1206,13 +1207,13 @@ class ProjectivePlaneCurve(ProjectiveCurve):
             i += 1
         coords = [PP.gens()[j] + Q[j]/Q[i]*PP.gens()[i] for j in range(3)]
         coords[i] = PP.gens()[i]
-        accoords = [PP.gens()[j] - Q[j]/Q[i]*PP.gens()[i] for j in range(3)] # coords used in map construction
+        accoords = [PP.gens()[j] - Q[j]/Q[i]*PP.gens()[i] for j in range(3)]  # coords used in map construction
         accoords[i] = PP.gens()[i]
         baseC = PP.curve(self.defining_polynomial()(coords))
         P = [0]*3
         P[i] = 1
         P = PP(P)
-        l = [0,1,2]
+        l = [0, 1, 2]
         l.pop(i)
         # choose points forming a triangle with one vertex at P to map to the coordinate triangle
         good = False
@@ -1263,13 +1264,13 @@ class ProjectivePlaneCurve(ProjectiveCurve):
                     # since (0 : 0 : 1) has multiplicity r, divide out by the highest
                     # shared power of the corresponding variable before doing the resultant computations
                     if j == 0:
-                        div_pow = min([e[1] for e in npoly.exponents()])
-                        npoly = PP.coordinate_ring()(dict([((v[0],v[1] - div_pow,v[2]),g) for (v,g) in\
-                                                         npoly.dict().items()]))
+                        div_pow = min(e[1] for e in npoly.exponents())
+                        npoly = PP.coordinate_ring()({(v0, v1 - div_pow, v2): g
+                            for (v0, v1, v2), g in npoly.dict().items()})
                     else:
-                        div_pow = min([e[0] for e in npoly.exponents()])
-                        npoly = PP.coordinate_ring()(dict([((v[0] - div_pow,v[1],v[2]),g) for (v,g) in\
-                                                         npoly.dict().items()]))
+                        div_pow = min(e[0] for e in npoly.exponents())
+                        npoly = PP.coordinate_ring()({(v0 - div_pow, v1, v2): g
+                            for (v0, v1, v2), g in npoly.dict().items()})
                     # check the degree again
                     if npoly.degree() != d - r:
                         need_continue = True
@@ -1293,7 +1294,7 @@ class ProjectivePlaneCurve(ProjectiveCurve):
                 # at a simple point P of the curve, the tangent at that point is
                 # given by F_x(P)*x + F_y(P)*y + F_z(P)*z where F is the defining polynomial
                 # of the curve
-                tmp_l = [0,1,2]
+                tmp_l = [0, 1, 2]
                 tmp_l.pop(j)
                 poly1 = npoly.derivative(PP.gens()[tmp_l[0]])
                 poly2 = npoly.derivative(PP.gens()[tmp_l[1]])
@@ -1823,7 +1824,7 @@ class ProjectivePlaneCurve_field(ProjectivePlaneCurve, ProjectiveCurve_field):
         H = Hom(ProjectiveSpace(R.base_ring(), 1, R.gens()), C)
         return H(param)
 
-    def riemann_surface(self,**kwargs):
+    def riemann_surface(self, **kwargs):
         r"""
         Return the complex Riemann surface determined by this curve
 
@@ -1925,7 +1926,7 @@ class ProjectivePlaneCurve_finite_field(ProjectivePlaneCurve_field):
         g = self.defining_polynomial()
         K = g.parent().base_ring()
         from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
-        R = PolynomialRing(K,'X')
+        R = PolynomialRing(K, 'X')
         X = R.gen()
         one = K.one()
         zero = K.zero()
@@ -1938,7 +1939,7 @@ class ProjectivePlaneCurve_finite_field(ProjectivePlaneCurve_field):
             pass
 
         # points with Z = 0, Y = 1
-        g10 = R(g(X,one,zero))
+        g10 = R(g(X, one, zero))
         if g10.is_zero():
             for x in K:
                 yield self.point([x, one, zero])
@@ -1948,7 +1949,7 @@ class ProjectivePlaneCurve_finite_field(ProjectivePlaneCurve_field):
 
         # points with Z = 1
         for y in K:
-            gy1 = R(g(X,y,one))
+            gy1 = R(g(X, y, one))
             if gy1.is_zero():
                 for x in K:
                     yield self.point([x, y, one])
@@ -2018,8 +2019,8 @@ class ProjectivePlaneCurve_finite_field(ProjectivePlaneCurve_field):
         F = self.defining_polynomial()
         z = F.parent().gens()[-1]
         if z.divides(F):
-            pnts += [self(1,a,0) for a in self.base_ring()]
-            pnts += [self(0,1,0)]
+            pnts += [self(1, a, 0) for a in self.base_ring()]
+            pnts += [self(0, 1, 0)]
         # remove multiple points
         pnts = list(set(pnts))
         if sort:
@@ -2075,13 +2076,15 @@ class ProjectivePlaneCurve_finite_field(ProjectivePlaneCurve_field):
             raise RuntimeError(str(s) + "\n\n ** Unable to use the Brill-Noether Singular package to compute all points (see above).")
         X2 = singular.NSplaces(1, X1)
         # retrieve list of all computed closed points (possibly of degree >1)
-        v = X2[3].sage_flattened_str_list()    # We use sage_flattened_str_list since iterating through
-                                               # the entire list through the sage/singular interface directly
-                                               # would involve hundreds of calls to singular, and timing issues with
-                                               # the expect interface could crop up.  Also, this is vastly
-                                               # faster (and more robust).
-        v = [ v[i].partition(',') for i in range(len(v)) ]
-        pnts = [ ( int(v[i][0]), int(v[i][2])-1 ) for i in range(len(v))]
+        v = X2[3].sage_flattened_str_list()
+        # We use sage_flattened_str_list since iterating through
+        # the entire list through the sage/singular interface directly
+        # would involve hundreds of calls to singular, and timing issues with
+        # the expect interface could crop up.  Also, this is vastly
+        # faster (and more robust).
+
+        v = [v[i].partition(',') for i in range(len(v))]
+        pnts = [(int(v[i][0]), int(v[i][2])-1) for i in range(len(v))]
         # retrieve coordinates of rational points
         R = X2[5][1][1]
         singular.set_ring(R)
@@ -2100,8 +2103,8 @@ class ProjectivePlaneCurve_finite_field(ProjectivePlaneCurve_field):
         T.set_ring()
         LG = G.BrillNoether(X2)
         LG = [X.split(',\n') for X in LG.sage_structured_str_list()]
-        x,y,z = self.ambient_space().coordinate_ring().gens()
-        vars = {'x':x, 'y':y, 'z':z}
+        x, y, z = self.ambient_space().coordinate_ring().gens()
+        vars = {'x': x, 'y': y, 'z': z}
         V = [(sage_eval(a, vars)/sage_eval(b, vars)) for a, b in LG]
         return V
 
@@ -2194,16 +2197,17 @@ class ProjectivePlaneCurve_finite_field(ProjectivePlaneCurve_field):
 
         if algorithm == "bn":
             return self._points_via_singular(sort=sort)
-        elif algorithm == "all":
+
+        if algorithm == "all":
             S_enum = self.rational_points(algorithm="enum")
             S_bn = self.rational_points(algorithm="bn")
             if S_enum != S_bn:
                 raise RuntimeError("Bug in rational_points -- different\
                                      algorithms give different answers for\
-                                     curve %s!"%self)
+                                     curve %s!" % self)
             return S_enum
-        else:
-            raise ValueError("No algorithm '{}' known".format(algorithm))
+
+        raise ValueError(f"No algorithm '{algorithm}' known")
 
 
 class IntegralProjectiveCurve(ProjectiveCurve_field):
@@ -2413,7 +2417,7 @@ class IntegralProjectiveCurve(ProjectiveCurve_field):
         """
         S = self.ambient_space().coordinate_ring()
         to_F = self._lift_to_function_field
-        sing = self.singular_subscheme() # singular locus
+        sing = self.singular_subscheme()  # singular locus
 
         # for each affine patch, places on which the dehomogenized polynomials
         # defining the singular locus are collected.
@@ -2444,7 +2448,7 @@ class IntegralProjectiveCurve(ProjectiveCurve_field):
                 if p == q:
                     places.append(place)
                     break
-            else: # new singularity
+            else:  # new singularity
                 points_and_places.append((p, [place]))
 
         return points_and_places
@@ -2492,7 +2496,7 @@ class IntegralProjectiveCurve(ProjectiveCurve_field):
         F = self.function_field()
 
         A = self.ambient_space()
-        S = A.coordinate_ring().change_ring(order='degrevlex') # homogeneous coordinate ring
+        S = A.coordinate_ring().change_ring(order='degrevlex')  # homogeneous coordinate ring
 
         # prepare coordinates for the affine patch containing the place
         vals = [f.valuation(place) for f in self._coordinate_functions]
@@ -2507,18 +2511,18 @@ class IntegralProjectiveCurve(ProjectiveCurve_field):
         # implement an FGLM-like algorithm
         e = [0 for i in range(R.ngens())]
         basis = [R.one()]
-        basis_vecs = [to_V(k.one())] # represent as a vector
+        basis_vecs = [to_V(k.one())]  # represent as a vector
 
         gens = []
         gens_lts = []
         terminate = False
-        while True: # check FGLM termination condition
+        while True:  # check FGLM termination condition
             # compute next exponent in degree reverse lexicographical order
             j = R.ngens() - 1
             while j > 0 and not e[j]:
                 j -= 1
 
-            if not j: # j is zero
+            if not j:  # j is zero
                 if terminate:
                     break
                 terminate = True
@@ -2536,11 +2540,11 @@ class IntegralProjectiveCurve(ProjectiveCurve_field):
             prod = 1
             for i in range(R.ngens()):
                 prod *= coords[i]**e[i]
-            vec = to_V(to_k(prod)) # represent as a vector
+            vec = to_V(to_k(prod))  # represent as a vector
             mat = matrix(basis_vecs)
             try:
                 s = mat.solve_left(vec)
-            except ValueError: # no solution
+            except ValueError:  # no solution
                 basis.append(m)
                 basis_vecs.append(vec)
                 terminate = False
@@ -2775,7 +2779,7 @@ class IntegralProjectiveCurve_finite_field(IntegralProjectiveCurve):
         L = self.L_polynomial()
         Lp = L.derivative()
 
-        R = IntegerRing()[[L.parent().gen()]] # power series ring
+        R = IntegerRing()[[L.parent().gen()]]  # power series ring
         L = R(L)
         Lp = R(Lp)
 
@@ -2812,6 +2816,7 @@ class IntegralProjectivePlaneCurve_finite_field(IntegralProjectiveCurve_finite_f
     """
     _point = IntegralProjectivePlaneCurvePoint_finite_field
 
+
 def Hasse_bounds(q, genus=1):
     r"""
     Return the Hasse-Weil bounds for the cardinality of a nonsingular
@@ -2837,9 +2842,9 @@ def Hasse_bounds(q, genus=1):
         rq = (4*q).isqrt()
     else:
         rq = (4*(genus**2)*q).isqrt()
-    return (q+1-rq,q+1+rq)
+    return (q+1-rq, q+1+rq)
+
 
 # Fix pickles from changing class names and plane_curves folder name
-from sage.misc.persist import register_unpickle_override
 register_unpickle_override('sage.schemes.plane_curves.projective_curve',
                            'ProjectiveCurve_generic', ProjectivePlaneCurve)

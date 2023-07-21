@@ -45,7 +45,7 @@ class IntegralDomains(CategoryWithAxiom):
         """
         EXAMPLES::
 
-            sage: GF(4, "a") in IntegralDomains()
+            sage: GF(4, "a") in IntegralDomains()                                       # optional - sage.rings.finite_rings
             True
             sage: QQ in IntegralDomains()
             True
@@ -108,10 +108,10 @@ class IntegralDomains(CategoryWithAxiom):
                 sage: Parent(QQ, category=IntegralDomains()).is_integral_domain()
                 True
 
-                sage: L.<z> = LazyLaurentSeriesRing(QQ)
-                sage: L.is_integral_domain()
+                sage: L.<z> = LazyLaurentSeriesRing(QQ)                                 # optional - sage.combinat
+                sage: L.is_integral_domain()                                            # optional - sage.combinat
                 True
-                sage: L.is_integral_domain(proof=True)
+                sage: L.is_integral_domain(proof=True)                                  # optional - sage.combinat
                 True
             """
             return True
@@ -129,7 +129,7 @@ class IntegralDomains(CategoryWithAxiom):
             tester = self._tester(**options)
             try:
                 fraction_field = self.fraction_field()
-            except AttributeError:
+            except (AttributeError, ImportError):
                 # some integral domains do not implement fraction_field() yet
                 if self in Fields():
                     raise

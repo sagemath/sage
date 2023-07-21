@@ -1,5 +1,5 @@
 r"""
-Check for Sphinx
+Features for testing the presence of ``sphinx``
 """
 
 # *****************************************************************************
@@ -16,7 +16,7 @@ from . import PythonModule
 
 class Sphinx(PythonModule):
     r"""
-    A :class:`sage.features.Feature` describing the presence of Sphinx.
+    A :class:`sage.features.Feature` describing the presence of :ref:`Sphinx <spkg_sphinx>`.
 
     Sphinx is provided by a standard package in the Sage distribution,
     but it can be disabled by ``configure --disable-doc``.
@@ -35,7 +35,7 @@ class Sphinx(PythonModule):
             sage: isinstance(Sphinx(), Sphinx)
             True
         """
-        PythonModule.__init__(self, 'sphinx', spkg='sphinx')
+        PythonModule.__init__(self, 'sphinx', spkg='sphinx', type='standard')
 
 
 def all_features():

@@ -136,10 +136,11 @@ including exponentiation::
     [          1/2*(e^(2*sqrt(x)) + 1)*e^(x - sqrt(x)) 1/2*(x*e^(2*sqrt(x)) - x)*sqrt(x)*e^(x - sqrt(x))]
     [  1/2*(e^(2*sqrt(x)) - 1)*e^(x - sqrt(x))/x^(3/2)           1/2*(e^(2*sqrt(x)) + 1)*e^(x - sqrt(x))]
 
-And complex exponentiation works now::
+Complex exponentiation works, but may require a patched version of
+maxima (:trac:`32898`) for now::
 
     sage: M = i*matrix([[pi]])
-    sage: e^M
+    sage: e^M  # not tested, requires patched maxima
     [-1]
     sage: M = i*matrix([[pi,0],[0,2*pi]])
     sage: e^M
@@ -424,9 +425,9 @@ from sage.rings.cc import CC
 
 from sage.misc.latex import latex
 from sage.misc.parser import Parser, LookupNameMaker
-
-from sage.symbolic.ring import var, SR, is_SymbolicVariable
-from sage.symbolic.expression import Expression, symbol_table
+from sage.structure.element import Expression
+from sage.symbolic.ring import var, SR
+from sage.symbolic.expression import symbol_table
 from sage.symbolic.function import Function
 from sage.symbolic.function_factory import function_factory
 from sage.symbolic.integration.integral import (indefinite_integral,
@@ -613,7 +614,7 @@ def symbolic_sum(expression, v, a, b, algorithm='maxima', hold=False):
        the summation the result might not be convertible into a Sage
        expression.
     """
-    if not is_SymbolicVariable(v):
+    if not (isinstance(v, Expression) and v.is_symbol()):
         if isinstance(v, str):
             v = var(v)
         else:
@@ -782,7 +783,7 @@ def nintegral(ex, x, a, b,
     Now numerically integrating, we see why the answer is wrong::
 
         sage: f.nintegrate(x,0,1)
-        (-480.0000000000001, 5.32907051820075...e-12, 21, 0)
+        (-480.000000000000..., 5.32907051820075...e-12, 21, 0)
 
     It is just because every floating point evaluation of return -480.0
     in floating point.
@@ -879,7 +880,7 @@ def symbolic_product(expression, v, a, b, algorithm='maxima', hold=False):
         (-1)^n*factorial(n)^2
 
     """
-    if not is_SymbolicVariable(v):
+    if not (isinstance(v, Expression) and v.is_symbol()):
         if isinstance(v, str):
             v = var(v)
         else:
@@ -1186,8 +1187,18 @@ def limit(ex, dir=None, taylor=False, algorithm='maxima', **argv):
         e
         sage: f.limit(x=5)
         7776/3125
-        sage: f.limit(x=1.2)
+
+    Domain to real, a regression in 5.46.0, see https://sf.net/p/maxima/bugs/4138 ::
+
+        sage: maxima_calculus.eval("domain:real")
+        ...
+        sage: f.limit(x=1.2).n()
         2.06961575467...
+        sage: maxima_calculus.eval("domain:complex");
+        ...
+
+    Otherwise, it works ::
+
         sage: f.limit(x=I, taylor=True)
         (-I + 1)^I
         sage: f(x=1.2)
@@ -1215,7 +1226,7 @@ def limit(ex, dir=None, taylor=False, algorithm='maxima', **argv):
     With this example, Maxima is looking for a LOT of information::
 
         sage: assume(a>0)
-        sage: limit(x^a,x=0)
+        sage: limit(x^a,x=0)  # random - maxima 5.46.0 does not need extra assumption
         Traceback (most recent call last):
         ...
         ValueError: Computation failed since Maxima requested additional
@@ -1224,7 +1235,7 @@ def limit(ex, dir=None, taylor=False, algorithm='maxima', **argv):
          more details)
         Is a an integer?
         sage: assume(a,'integer')
-        sage: limit(x^a, x=0)
+        sage: limit(x^a, x=0)  # random - maxima 5.46.0 does not need extra assumption
         Traceback (most recent call last):
         ...
         ValueError: Computation failed since Maxima requested additional
@@ -1325,7 +1336,7 @@ def limit(ex, dir=None, taylor=False, algorithm='maxima', **argv):
         sage: limit(floor(x), x=0, dir='+')
         0
         sage: limit(floor(x), x=0)
-        und
+        ...nd
 
     Maxima gives the right answer here, too, showing
     that :trac:`4142` is fixed::
@@ -1690,8 +1701,11 @@ def laplace(ex, t, s, algorithm='maxima'):
 
     Testing SymPy::
 
-        sage: laplace(t^n, t, s, algorithm='sympy')
-        (gamma(n + 1)/(s*s^n), 0, re(n) > -1)
+        sage: F, a, cond = laplace(t^n, t, s, algorithm='sympy')
+        sage: a, cond
+        (0, re(n) > -1)
+        sage: F.simplify()
+        s^(-n - 1)*gamma(n + 1)
 
     Testing Maxima::
 
@@ -1700,17 +1714,19 @@ def laplace(ex, t, s, algorithm='maxima'):
 
     Check that :trac:`24212` is fixed::
 
-        sage: laplace(cos(t^2), t, s, algorithm='sympy')
-        (-1/2*sqrt(pi)*(sqrt(2)*cos(1/4*s^2)*fresnel_sin(1/2*sqrt(2)*s/sqrt(pi)) -
-        sqrt(2)*fresnel_cos(1/2*sqrt(2)*s/sqrt(pi))*sin(1/4*s^2) - cos(1/4*pi + 1/4*s^2)),
-        0, True)
+        sage: F, a, cond = laplace(cos(t^2), t, s, algorithm='sympy')
+        sage: a, cond
+        (0, True)
+        sage: F._sympy_().simplify()
+        sqrt(pi)*(sqrt(2)*sin(s**2/4)*fresnelc(sqrt(2)*s/(2*sqrt(pi))) -
+        sqrt(2)*cos(s**2/4)*fresnels(sqrt(2)*s/(2*sqrt(pi))) + cos(s**2/4 + pi/4))/2
 
     Testing result from SymPy that Sage doesn't know how to handle::
 
         sage: laplace(cos(-1/t), t, s, algorithm='sympy')
         Traceback (most recent call last):
         ...
-        AttributeError: Unable to convert SymPy result (=meijerg(((), ()), ((-1/2, 0, 1/2), (0,)), s**2/16)/4) into Sage
+        AttributeError: Unable to convert SymPy result (=meijerg(((), ()), ((-1/2, 0, 1/2), (0,)), ...)/4) into Sage
     """
     if not isinstance(ex, (Expression, Function)):
         ex = SR(ex)
@@ -1817,8 +1833,8 @@ def inverse_laplace(ex, s, t, algorithm='maxima'):
 
     Transform an expression involving a time-shift, via SymPy::
 
-        sage: inverse_laplace(1/s^2*exp(-s), s, t, algorithm='sympy')
-        -(log(e^(-t)) + 1)*heaviside(t - 1)
+        sage: inverse_laplace(1/s^2*exp(-s), s, t, algorithm='sympy').simplify()
+        (t - 1)*heaviside(t - 1)
 
     The same instance with Giac::
 
@@ -2099,6 +2115,7 @@ def dummy_pochhammer(*args):
     from sage.functions.gamma import gamma
     return gamma(x + y) / gamma(x)
 
+
 #######################################################
 #
 # Helper functions for printing latex expression
@@ -2251,10 +2268,10 @@ def symbolic_expression_from_maxima_string(x, equals_sub=False, maxima=maxima):
         True
         sage: sefms("x # 3") == SR(x != 3)
         True
-        sage: solve([x != 5], x)
-        [[x - 5 != 0]]
+        sage: solve([x != 5], x) in [[[x - 5 != 0]], [[x < 5], [5 < x]]]
+        True
         sage: solve([2*x==3, x != 5], x)
-        [[x == (3/2), (-7/2) != 0]]
+        [[x == (3/2)...
 
     Make sure that we don't accidentally pick up variables in the maxima namespace (:trac:`8734`)::
 

@@ -31,7 +31,6 @@ Methods
 
 from sage.data_structures.bitset_base cimport *
 from .basis_matroid cimport BasisMatroid
-from sage.arith.misc import binomial
 
 
 cdef class CutNode:
@@ -341,8 +340,8 @@ cdef class LinearSubclasses:
 
         self._planes_on_line = [[] for l in range(self._hyperlines_count)]
         self._lines_on_plane = [[] for l in range(self._hyperplanes_count)]
-        for l in xrange(self._hyperlines_count):
-            for h in xrange(self._hyperplanes_count):
+        for l in range(self._hyperlines_count):
+            for h in range(self._hyperplanes_count):
                 if self._hyperplanes[h] >= self._hyperlines[l]:
                     self._lines_on_plane[h].append(l)
                     self._planes_on_line[l].append(h)
@@ -354,10 +353,10 @@ cdef class LinearSubclasses:
 
         if line_length is not None:
             self._line_length = line_length
-            self._mandatory_lines = [l for l in xrange(self._hyperlines_count) if len(self._planes_on_line[l]) >= line_length]
+            self._mandatory_lines = [l for l in range(self._hyperlines_count) if len(self._planes_on_line[l]) >= line_length]
 
         if subsets is not None:
-            for p in xrange(self._hyperplanes_count):
+            for p in range(self._hyperplanes_count):
                 H = self._hyperplanes[p]
                 for S in subsets:
                     if frozenset(S).issubset(H):
@@ -371,7 +370,7 @@ cdef class LinearSubclasses:
             if len(E) != len(E2) or len(F) != 1:
                 raise ValueError("LinearSubclasses: the ground set of the splice matroid is not of the form E + e-f")
 
-            for p in xrange(self._hyperplanes_count):
+            for p in range(self._hyperplanes_count):
                 X = self._hyperplanes[p] - F
                 if splice._rank(X) == splice.full_rank() - 1:
                     if splice._rank(X | F2) == splice.full_rank() - 1:
@@ -491,7 +490,7 @@ cdef class MatroidExtensions(LinearSubclasses):
             BM = BasisMatroid(M)
         LinearSubclasses.__init__(self, BM, line_length=line_length, subsets=subsets, splice=splice)
         self._BX = BM._extension(e, [])
-        self._BH = [BM._extension(e, [self._hyperplanes[i]]) for i in xrange(len(self._hyperplanes))]
+        self._BH = [BM._extension(e, [self._hyperplanes[i]]) for i in range(len(self._hyperplanes))]
         if orderly:
             self._orderly = True
 

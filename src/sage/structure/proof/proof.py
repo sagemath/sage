@@ -8,7 +8,7 @@ class _ProofPref(SageObject):
     A True flag means that the subsystem (such as linear algebra or number fields) should return results that are true unconditionally: the correctness should not depend on an algorithm with a nonzero probability of returning an incorrect answer or on the truth of any unproven conjectures.
     A False flag means that the subsystem can use faster methods to return answers that have a very small probability of being wrong.
     """
-    def __init__(self, proof = True):
+    def __init__(self, proof=True):
         self._require_proof = {}
         self._require_proof["arithmetic"] = proof
         self._require_proof["elliptic_curve"] = proof
@@ -17,7 +17,7 @@ class _ProofPref(SageObject):
         self._require_proof["polynomial"] = proof
         self._require_proof["other"] = proof
 
-    def arithmetic(self, t = None):
+    def arithmetic(self, t=None):
         """
         Controls the default proof strategy for integer arithmetic algorithms (such as primality testing).
 
@@ -46,7 +46,7 @@ class _ProofPref(SageObject):
             return self._require_proof["arithmetic"]
         self._require_proof["arithmetic"] = bool(t)
 
-    def elliptic_curve(self, t = None):
+    def elliptic_curve(self, t=None):
         """
         Controls the default proof strategy for elliptic curve algorithms.
 
@@ -75,7 +75,7 @@ class _ProofPref(SageObject):
             return self._require_proof["elliptic_curve"]
         self._require_proof["elliptic_curve"] = bool(t)
 
-    def linear_algebra(self, t = None):
+    def linear_algebra(self, t=None):
         """
         Controls the default proof strategy for linear algebra algorithms.
 
@@ -104,7 +104,7 @@ class _ProofPref(SageObject):
             return self._require_proof["linear_algebra"]
         self._require_proof["linear_algebra"] = bool(t)
 
-    def number_field(self, t = None):
+    def number_field(self, t=None):
         """
         Controls the default proof strategy for number field algorithms.
 
@@ -133,7 +133,7 @@ class _ProofPref(SageObject):
             return self._require_proof["number_field"]
         self._require_proof["number_field"] = bool(t)
 
-    def polynomial(self, t = None):
+    def polynomial(self, t=None):
         """
         Controls the default proof strategy for polynomial algorithms.
 
@@ -165,7 +165,7 @@ class _ProofPref(SageObject):
 
 _proof_prefs = _ProofPref(True) #Creates the global object that stores proof preferences.
 
-def get_flag(t = None, subsystem = None):
+def get_flag(t=None, subsystem=None):
     """
     Used for easily determining the correct proof flag to use.
 
@@ -196,10 +196,12 @@ class WithProof():
     systems for a block of code, with a guarantee that it will be set
     back to how it was before after the block is done, even if there is an error.
 
-    EXAMPLES::
+    EXAMPLES:
+
+    This would hang "forever" if attempted with ``proof=True``::
 
         sage: proof.arithmetic(True)
-        sage: with proof.WithProof('arithmetic',False):    # this would hang "forever" if attempted with proof=True
+        sage: with proof.WithProof('arithmetic', False):                                # optional - sage.libs.pari
         ....:      print((10^1000 + 453).is_prime())
         ....:      print(1/0)
         Traceback (most recent call last):

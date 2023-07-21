@@ -20,7 +20,7 @@ TESTS::
     sage: TestSuite(bijection).run()
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2011, 2012 Travis Scrimshaw <tscrim@ucdavis.edu>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
@@ -32,8 +32,8 @@ TESTS::
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.combinat.rigged_configurations.bij_type_A import KRTToRCBijectionTypeA
 from sage.combinat.rigged_configurations.bij_type_A2_even import KRTToRCBijectionTypeA2Even
@@ -84,7 +84,7 @@ class KRTToRCBijectionTypeDTwisted(KRTToRCBijectionTypeD, KRTToRCBijectionTypeA2
             r = cur_crystal.parent().r()
             # Iterate through the columns
             for col_number, cur_column in enumerate(reversed(cur_crystal.to_array(False))):
-                self.cur_path.insert(0, []) # Prepend an empty list
+                self.cur_path.insert(0, [])  # Prepend an empty list
 
                 # Check to see if we are a spinor column
                 if r == self.n:
@@ -101,7 +101,7 @@ class KRTToRCBijectionTypeDTwisted(KRTToRCBijectionTypeD, KRTToRCBijectionTypeA2
 
                 for letter in reversed(cur_column):
                     self.cur_dims[0][0] += 1
-                    val = letter.value # Convert from a CrystalOfLetter to an Integer
+                    val = letter.value  # Convert from a CrystalOfLetter to an Integer
 
                     if verbose:
                         print("====================")
@@ -111,7 +111,7 @@ class KRTToRCBijectionTypeDTwisted(KRTToRCBijectionTypeD, KRTToRCBijectionTypeA2
                         print("--------------------\n")
 
                     # Build the next state
-                    self.cur_path[0].insert(0, [letter]) # Prepend the value
+                    self.cur_path[0].insert(0, [letter])  # Prepend the value
                     self.next_state(val)
 
                 # Check to see if we are a spinor column
@@ -138,7 +138,7 @@ class KRTToRCBijectionTypeDTwisted(KRTToRCBijectionTypeD, KRTToRCBijectionTypeA2
                     for a in range(self.n):
                         self._update_vacancy_nums(a)
 
-        self.ret_rig_con.set_immutable() # Return it to immutable
+        self.ret_rig_con.set_immutable()  # Return it to immutable
         return self.ret_rig_con
 
     def next_state(self, val):
@@ -571,4 +571,4 @@ class RCToKRTBijectionTypeDTwisted(RCToKRTBijectionTypeD, RCToKRTBijectionTypeA2
             else:
                 self.cur_partitions[n-1].rigging[row_num_bar_next] = self.cur_partitions[n-1].vacancy_numbers[row_num_bar_next]
 
-        return(b)
+        return b

@@ -15,7 +15,7 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from sage.misc.misc import cputime
+from sage.misc.timing import cputime
 import inspect
 import sys
 
@@ -28,6 +28,7 @@ class Profiler:
 
     EXAMPLES::
 
+        from sage.misc.profiler import Profiler
         sage: def f():                        # not tested
         ....:     p = Profiler()
 

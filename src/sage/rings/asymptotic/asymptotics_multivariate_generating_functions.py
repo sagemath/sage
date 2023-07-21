@@ -1251,7 +1251,7 @@ class FractionWithFactoredDenominator(RingElement):
             sage: H = R(f.denominator())
             sage: ff = FFPD(G, H.factor())
             sage: decomp = ff.leinartas_decomposition()
-            sage: decomp
+            sage: decomp  # random - non canonical depends on singular version
             (0, []) +
             (-(x*y^2*sin(x) + x^2*y + x*y + y*sin(x) + x)*y, [(y, 1)]) +
             ((x*y^2*sin(x) + x^2*y + x*y + y*sin(x) + x)*x*y, [(x*y + 1, 1)]) +
@@ -1592,7 +1592,7 @@ class FractionWithFactoredDenominator(RingElement):
              432,
              3/5*sqrt(5)*sqrt(3)*sqrt(2)*sqrt(r)/sqrt(pi)
               + 463/6000*sqrt(5)*sqrt(3)*sqrt(2)/(sqrt(pi)*sqrt(r)))
-            sage: F.relative_error(asy[0], alpha, [1, 2, 4, 8, 16], asy[1])  # abs tol 1e-10
+            sage: F.relative_error(asy[0], alpha, [1, 2, 4, 8, 16], asy[1])  # abs tol 1e-10  # long time
             [((4, 3), 2.083333333, [2.092576110], [-0.004436533009]),
              ((8, 6), 2.787374614, [2.790732875], [-0.001204811281]),
              ((16, 12), 3.826259447, [3.827462310], [-0.0003143703383]),
@@ -1611,9 +1611,7 @@ class FractionWithFactoredDenominator(RingElement):
             (-16, [(x + 2*y + z - 4, 1), (2*x + y + z - 4, 2)])
             sage: alpha = [3, 3, 2]
             sage: decomp = F.asymptotic_decomposition(alpha); decomp
-            (0, []) +
-            (16*r*(3/x - 2/z) + 16/x - 16/z,
-             [(x + 2*y + z - 4, 1), (2*x + y + z - 4, 1)])
+            (0, []) + (..., [(x + 2*y + z - 4, 1), (2*x + y + z - 4, 1)])
             sage: F1 = decomp[1]
             sage: p = {x: 1, y: 1, z: 1}
             sage: asy = F1.asymptotics(p, alpha, 2, verbose=True) # long time
@@ -1874,7 +1872,7 @@ class FractionWithFactoredDenominator(RingElement):
             Uderivs = diff_prod(Hderivs, U, Hcheck, X,
                                 range(1, k + 1), end, Uderivs, atP)
             # Check for a nonzero U derivative.
-            if any(u for u in Uderivs.values()):
+            if any(Uderivs.values()):
                 all_zero = False
             if all_zero:
                 # Then, using a proposition at the end of [RW2012], we can
@@ -2265,7 +2263,7 @@ class FractionWithFactoredDenominator(RingElement):
             Uderivs = diff_prod(Hprodderivs, U, Hcheck, X,
                                 range(1, k + 1), end, Uderivs, atP)
             # Check for a nonzero U derivative.
-            if any(u for u in Uderivs.values()):
+            if any(Uderivs.values()):
                 all_zero = False
             if all_zero:
                 # Then all higher derivatives of U are zero.
@@ -2821,7 +2819,7 @@ class FractionWithFactoredDenominator(RingElement):
             sage: alpha = vector([3, 3, 2])
             sage: interval = [1, 2, 4]
             sage: S = [r*alpha for r in interval]
-            sage: F.maclaurin_coefficients(S, numerical=10)
+            sage: F.maclaurin_coefficients(S, numerical=10)  # long time
             {(3, 3, 2): 0.7849731445,
              (6, 6, 4): 0.7005249476,
              (12, 12, 8): 0.5847732654}
@@ -3323,7 +3321,6 @@ class FractionWithFactoredDenominatorRing(UniqueRepresentation, Ring):
         """
         from sage.rings.semirings.non_negative_integer_semiring import NN
         return self(NN.an_element(), [(self.base().an_element(), NN(3))])
-
 
     Element = FractionWithFactoredDenominator
 
@@ -4029,10 +4026,10 @@ def diff_op(A, B, AB_derivs, V, M, r, N):
         sage: B = function('B')(*tuple(T))
         sage: AB_derivs = {}
         sage: M = matrix([[1, 2],[2, 1]])
-        sage: DD = diff_op(A, B, AB_derivs, T, M, 1, 2)
-        sage: sorted(DD)
+        sage: DD = diff_op(A, B, AB_derivs, T, M, 1, 2)  # long time (see :trac:`35207`)
+        sage: sorted(DD)                                 # long time
         [(0, 0, 0), (0, 1, 0), (0, 1, 1), (0, 1, 2)]
-        sage: DD[(0, 1, 2)].number_of_operands()
+        sage: DD[(0, 1, 2)].number_of_operands()         # long time
         246
     """
     from itertools import product

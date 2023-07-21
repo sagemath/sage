@@ -20,14 +20,13 @@ AUTHOR:
 #                  https://www.gnu.org/licenses/
 # ***************************************************************************
 
-from cpython.object cimport Py_LT, Py_LE, Py_EQ, Py_NE, Py_GT, Py_GE
+from cpython.object cimport Py_EQ, Py_NE
 from sage.structure.richcmp cimport rich_to_bool_sgn
 from sage.structure.element import coerce_binop
 
 from sage.structure.element cimport Element
 from sage.structure.element cimport MonoidElement
 from sage.structure.element cimport CommutativeAlgebraElement
-from sage.structure.sequence import Sequence
 
 from sage.rings.infinity import Infinity
 from sage.rings.integer_ring import ZZ
@@ -258,9 +257,7 @@ cdef class TateAlgebraTerm(MonoidElement):
             ...00000000010*x*y
             sage: T(2*x*y)._latex_()
             '...00000000010xy'
-
         """
-        from sage.misc.latex import latex
         parent = self._parent
         s = ""
         if self._coeff._is_atomic() or (-self._coeff)._is_atomic():
@@ -1255,9 +1252,7 @@ cdef class TateAlgebraElement(CommutativeAlgebraElement):
             ...0000000001*x^3 + ...0000000001*x + ...00000000010*x^2
             sage: f._latex_()
             '...0000000001x^{3} + ...0000000001x + ...00000000010x^{2}'
-
         """
-        from sage.misc.latex import latex
         base = self._parent.base_ring()
         nvars = self._parent.ngens()
         vars = self._parent.variable_names()
@@ -1884,6 +1879,7 @@ cdef class TateAlgebraElement(CommutativeAlgebraElement):
             sage: f(a, 2)
             a^2 + 2^2 + O(2^20)
 
+            sage: x = polygen(ZZ, 'x')
             sage: T.<pi> = S.extension(x^2 - 2)
             sage: f(pi, 2)
             pi^2 + pi^4 + O(pi^42)
@@ -2667,7 +2663,7 @@ cdef class TateAlgebraElement(CommutativeAlgebraElement):
             while True:
                 # we compute the sum for the possible values for u using Horner's method
                 inner_sum = R.zero()
-                for u in xrange(upper_u,0,-1):
+                for u in range(upper_u,0,-1):
                     # We want u to be a p-adic unit
                     if u % p==0:
                         new_term = R.zero()
@@ -2750,7 +2746,7 @@ cdef class TateAlgebraElement(CommutativeAlgebraElement):
             sage: f(x0, y0).exp() == expf(x0, y0)
             True
 
-            sage: expf.log() == f
+            sage: expf.log() == f  # long time
             True
 
         """
@@ -3268,6 +3264,7 @@ cdef class TateAlgebraElement(CommutativeAlgebraElement):
             sage: f % [2,u]  # indirect doctest
             O(2^10 * <u, v>)
 
+            sage: x = polygen(ZZ, 'x')
             sage: S.<pi> = R.extension(x^2 - 2)
             sage: f % (pi*u)  # indirect doctest
             (pi^2 + O(pi^20))*v^2 + O(pi^20 * <u, v>)

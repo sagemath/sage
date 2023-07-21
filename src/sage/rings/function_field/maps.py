@@ -34,6 +34,7 @@ AUTHORS:
 - Kwankyu Lee (2017-04-30): added higher derivations and completions
 
 """
+
 # ****************************************************************************
 #       Copyright (C) 2010      William Stein <wstein@gmail.com>
 #                     2011-2017 Julian Rüth <julian.rueth@gmail.com>

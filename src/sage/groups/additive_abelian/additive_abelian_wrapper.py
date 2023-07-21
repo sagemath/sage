@@ -338,9 +338,10 @@ class AdditiveAbelianGroupWrapper(addgp.AdditiveAbelianGroup_fixed_gens):
 
         ::
 
-            sage: F.<t> = GF(1009**2, modulus=x**2+11); E = EllipticCurve(j=F(940))
-            sage: P, Q = E(900*t + 228, 974*t + 185), E(1007*t + 214, 865*t + 802)
-            sage: E.abelian_group().discrete_log(123 * P + 777 * Q, [P, Q])
+            sage: x = polygen(ZZ, 'x')
+            sage: F.<t> = GF(1009**2, modulus=x**2+11); E = EllipticCurve(j=F(940))     # optional - sage.rings.finite_rings
+            sage: P, Q = E(900*t + 228, 974*t + 185), E(1007*t + 214, 865*t + 802)      # optional - sage.rings.finite_rings
+            sage: E.abelian_group().discrete_log(123 * P + 777 * Q, [P, Q])             # optional - sage.rings.finite_rings
             (123, 777)
 
         ::

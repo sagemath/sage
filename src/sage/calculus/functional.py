@@ -25,28 +25,45 @@ EXAMPLES: We illustrate each of the calculus functional functions.
     sage: expand((x - a)^3)
     -a^3 + 3*a^2*x - 3*a*x^2 + x^3
 """
+from sage.structure.element import Expression
 
-from .calculus import SR
-from sage.symbolic.expression import Expression
 
-def simplify(f):
+def simplify(f, algorithm="maxima", **kwds):
     r"""
     Simplify the expression `f`.
 
-    EXAMPLES: We simplify the expression `i + x - x`.
+    See the documentation of the
+    :meth:`~sage.symbolic.expression.Expression.simplify` method of symbolic
+    expressions for details on options.
 
-    ::
+    EXAMPLES:
+
+    We simplify the expression `i + x - x`::
 
         sage: f = I + x - x; simplify(f)
         I
 
     In fact, printing `f` yields the same thing - i.e., the
     simplified form.
+
+    Some simplifications are algorithm-specific::
+
+        sage: x, t = var("x, t")
+        sage: ex = 1/2*I*x + 1/2*I*sqrt(x^2 - 1) + 1/2/(I*x + I*sqrt(x^2 - 1))
+        sage: simplify(ex)
+        1/2*I*x + 1/2*I*sqrt(x^2 - 1) + 1/(2*I*x + 2*I*sqrt(x^2 - 1))
+        sage: simplify(ex, algorithm="giac")
+        I*sqrt(x^2 - 1)
     """
+    try:
+        return f.simplify(algorithm=algorithm, **kwds)
+    except (TypeError, AttributeError):
+        pass
     try:
         return f.simplify()
     except AttributeError:
         return f
+
 
 def derivative(f, *args, **kwds):
     r"""
@@ -147,10 +164,13 @@ def derivative(f, *args, **kwds):
     except AttributeError:
         pass
     if not isinstance(f, Expression):
+        from sage.symbolic.ring import SR
         f = SR(f)
     return f.derivative(*args, **kwds)
 
+
 diff = derivative
+
 
 def integral(f, *args, **kwds):
     r"""
@@ -224,9 +244,7 @@ def integral(f, *args, **kwds):
 
     Sage is now (:trac:`27958`) able to compute the following integral::
 
-        sage: result = integral(exp(-x^2)*log(x), x)
-        ...
-        sage: result
+        sage: integral(exp(-x^2)*log(x), x)  # long time
         1/2*sqrt(pi)*erf(x)*log(x) - x*hypergeometric((1/2, 1/2), (3/2, 3/2), -x^2)
 
     and its value::
@@ -296,10 +314,13 @@ def integral(f, *args, **kwds):
         pass
 
     if not isinstance(f, Expression):
+        from sage.symbolic.ring import SR
         f = SR(f)
     return f.integral(*args, **kwds)
 
+
 integrate = integral
+
 
 def limit(f, dir=None, taylor=False, **argv):
     r"""
@@ -349,10 +370,13 @@ def limit(f, dir=None, taylor=False, **argv):
         -limit((erf(x) - 1)*e^(x^2), x, +Infinity)
     """
     if not isinstance(f, Expression):
+        from sage.symbolic.ring import SR
         f = SR(f)
     return f.limit(dir=dir, taylor=taylor, **argv)
 
+
 lim = limit
+
 
 def taylor(f, *args):
     """
@@ -392,8 +416,10 @@ def taylor(f, *args):
         (x - 1)*(y + 1)^3 - 3*(x - 1)*(y + 1)^2 + (y + 1)^3 + 3*(x - 1)*(y + 1) - 3*(y + 1)^2 - x + 3*y + 3
     """
     if not isinstance(f, Expression):
+        from sage.symbolic.ring import SR
         f = SR(f)
     return f.taylor(*args)
+
 
 def expand(x, *args, **kwds):
     """

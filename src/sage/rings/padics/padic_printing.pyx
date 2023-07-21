@@ -48,16 +48,16 @@ cdef enum print_modes:
 
 def pAdicPrinter(ring, options={}):
     """
-    Creates a pAdicPrinter.
+    Create a :class:`pAdicPrinter`.
 
     INPUT:
 
-        - ring -- a p-adic ring or field.
+    - ring -- a p-adic ring or field.
 
-        - options -- a dictionary, with keys in 'mode', 'pos',
-          'ram_name', 'unram_name', 'var_name', 'max_ram_terms',
-          'max_unram_terms', 'max_terse_terms', 'sep', 'alphabet'; see
-          pAdicPrinter_class for the meanings of these keywords.
+    - options -- a dictionary, with keys in ``'mode'``, ``'pos'``,
+      ``'ram_name'``, ``'unram_name'``, ``'var_name'``, ``'max_ram_terms'``,
+      ``'max_unram_terms'``, ``'max_terse_terms'``, ``'sep'``, ``'alphabet'``; see
+      :class:`pAdicPrinter_class` for the meanings of these keywords.
 
     EXAMPLES::
 
@@ -76,7 +76,7 @@ class pAdicPrinterDefaults(SageObject):
     This class stores global defaults for p-adic printing.
     """
     def __init__(self, mode = 'series', pos = True, max_ram_terms = -1, max_unram_terms = -1, max_terse_terms = -1, sep = "|", alphabet = None):
-        """
+        r"""
         Instances of this class store global defaults used in
         determining printing options during the creation of p-adic
         rings and fields.  One instance stored in padic_printing
@@ -109,13 +109,13 @@ class pAdicPrinterDefaults(SageObject):
             self._alphabet = alphabet
 
     def mode(self, mode=None):
-        """
+        r"""
         Set the default printing mode.
 
-        mode=None returns the current value.
+        ``mode=None`` returns the current value.
 
-        The allowed values for mode are: 'val-unit', 'series',
-        'terse', 'digits' and 'bars'.
+        The allowed values for mode are: ``'val-unit'``, ``'series'``,
+        ``'terse'``, ``'digits'`` and ``'bars'``.
 
         EXAMPLES::
 
@@ -150,10 +150,10 @@ class pAdicPrinterDefaults(SageObject):
                 raise ValueError("invalid printing mode")
 
     def allow_negatives(self, neg = None):
-        """
+        r"""
         Controls whether or not to display a balanced representation.
 
-        neg=None returns the current value.
+        ``neg=None`` returns the current value.
 
         EXAMPLES::
 
@@ -172,13 +172,13 @@ class pAdicPrinterDefaults(SageObject):
             self._pos = not neg
 
     def max_series_terms(self, max = None):
-        """
+        r"""
         Controls the maximum number of terms shown when printing in
-        'series', 'digits' or 'bars' mode.
+        ``'series'``, ``'digits'`` or ``'bars'`` mode.
 
-        max=None returns the current value.
+        ``max=None`` returns the current value.
 
-        max=-1 encodes 'no limit.'
+        ``max=-1`` encodes 'no limit.'
 
         EXAMPLES::
 
@@ -197,14 +197,14 @@ class pAdicPrinterDefaults(SageObject):
             self._max_ram_terms = int(max)
 
     def max_unram_terms(self, max = None):
-        """
+        r"""
         For rings with non-prime residue fields, controls how many
-        terms appear in the coefficient of each pi^n when printing in
-        'series' or 'bar' modes.
+        terms appear in the coefficient of each ``pi^n`` when printing in
+        ``'series'`` or ``'bar'`` modes.
 
-        max=None returns the current value.
+        ``max=None`` returns the current value.
 
-        max=-1 encodes 'no limit.'
+        ``max=-1`` encodes 'no limit.'
 
         EXAMPLES::
 
@@ -222,13 +222,13 @@ class pAdicPrinterDefaults(SageObject):
             self._max_unram_terms = int(max)
 
     def max_poly_terms(self, max = None):
-        """
+        r"""
         Controls the number of terms appearing when printing
-        polynomial representations in 'terse' or 'val-unit' modes.
+        polynomial representations in ``'terse'`` or ``'val-unit'`` modes.
 
-        max=None returns the current value.
+        ``max=None`` returns the current value.
 
-        max=-1 encodes 'no limit.'
+        ``max=-1`` encodes 'no limit.'
 
         EXAMPLES::
 
@@ -248,10 +248,10 @@ class pAdicPrinterDefaults(SageObject):
             self._max_terse_terms = int(max)
 
     def sep(self, sep = None):
-        """
-        Controls the separator used in 'bars' mode.
+        r"""
+        Controls the separator used in ``'bars'`` mode.
 
-        sep=None returns the current value.
+        ``sep=None`` returns the current value.
 
         EXAMPLES::
 
@@ -271,13 +271,13 @@ class pAdicPrinterDefaults(SageObject):
             self._sep = str(sep)
 
     def alphabet(self, alphabet = None):
-        """
+        r"""
         Controls the alphabet used to translate p-adic digits into
-        strings (so that no separator need be used in 'digits' mode).
+        strings (so that no separator need be used in ``'digits'`` mode).
 
-        alphabet should be passed in as a list or tuple.
+        ``alphabet`` should be passed in as a list or tuple.
 
-        alphabet=None returns the current value.
+        ``alphabet=None`` returns the current value.
 
         EXAMPLES::
 
@@ -305,11 +305,11 @@ cdef class pAdicPrinter_class(SageObject):
     """
     def __init__(self, ring, mode, pos, ram_name, unram_name, var_name, max_ram_terms, max_unram_terms, max_terse_terms, sep, alphabet, show_prec):
         """
-        Initializes a pAdicPrinter.
+        Initializes a :class:`pAdicPrinter`.
 
         INPUT:
 
-            - ring -- the ring or field to which this pAdicPrinter is
+            - ring -- the ring or field to which this :class:`pAdicPrinter` is
               attached.
 
             - mode -- The allowed values for mode are: 'val-unit',
@@ -514,14 +514,14 @@ cdef class pAdicPrinter_class(SageObject):
     def richcmp_modes(pAdicPrinter_class self,
                       pAdicPrinter_class other, int op):
         """
-        Return a comparison of the printing modes of self and other.
+        Return a comparison of the printing modes of ``self`` and ``other``.
 
         Return 0 if and only if all relevant modes are equal
-        (max_unram_terms is irrelevant if the ring is totally ramified
-        over the base for example). This does not check if the rings are
+        (``max_unram_terms`` is irrelevant if the ring is totally ramified
+        over the base, for example). This does not check if the rings are
         equal (to prevent infinite recursion in the comparison
         functions of p-adic rings), but it does check if the primes
-        are the same (since the prime affects whether pos is
+        are the same (since the prime affects whether ``pos`` is
         relevant).
 
         EXAMPLES::
@@ -531,7 +531,7 @@ cdef class pAdicPrinter_class(SageObject):
             sage: R._printer == S._printer
             True
             sage: R = Qp(7)
-            sage: S = Qp(7,print_mode='val-unit')
+            sage: S = Qp(7, print_mode='val-unit')
             sage: R == S
             False
             sage: R._printer < S._printer
@@ -636,7 +636,7 @@ cdef class pAdicPrinter_class(SageObject):
 
     def dict(self):
         """
-        Returns a dictionary storing all of self's printing options.
+        Return a dictionary storing all of ``self``'s printing options.
 
         EXAMPLES::
 
@@ -849,10 +849,10 @@ cdef class pAdicPrinter_class(SageObject):
 
         INPUT:
 
-            - elt -- a p-adic element of the appropriate ring to print.
+        - ``elt`` -- a p-adic element of the appropriate ring to print.
 
-            - do_latex -- whether to return a latex representation or
-              a normal one.
+        - ``do_latex`` -- whether to return a latex representation or
+          a normal one.
 
         EXAMPLES::
 
