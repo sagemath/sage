@@ -98,11 +98,18 @@ cdef class MatrixBackend(GenericBackend):
             sage: from sage.numerical.backends.matrix_backend import MatrixBackend
             sage: MatrixBackend(base_ring=QQ).base_ring()
             Rational Field
+            sage: MatrixBackend(base_ring=AA).base_ring()
+            Algebraic Real Field
+            sage: MatrixBackend(base_ring=RDF).base_ring()
+            Real Double Field
+            sage: MatrixBackend(base_ring=RealField(100)).base_ring()
+            Real Field with 100 bits of precision
+
         """
         return self._base_ring
 
 
-    cpdef int add_variable(self, lower_bound=0.0, upper_bound=None, binary=False, continuous=True, integer=False, obj=None, name=None) except -1:
+    cpdef int add_variable(self, lower_bound=0, upper_bound=None, binary=False, continuous=True, integer=False, obj=None, name=None) except -1:
         """
         Add a variable.
 
@@ -151,26 +158,97 @@ cdef class MatrixBackend(GenericBackend):
             'x'
             sage: p.objective_coefficient(4)                        
             1
+            sage: p.objective_coefficient(4).parent()
+            Rational Field
+            sage: p = get_solver(solver = "Matrix", base_ring = AA)                 
+            sage: p.ncols()                                         
+            0
+            sage: p.add_variable()                                  
+            0
+            sage: p.ncols()                                         
+            1
+            sage: p.add_variable()                                  
+            1
+            sage: p.add_variable(lower_bound=-2)                  
+            2
+            sage: p.add_variable(continuous=True)                   
+            3
+            sage: p.add_variable(name='x',obj=1)                  
+            4
+            sage: p.col_name(3)                                     
+            'x_3'
+            sage: p.col_name(4)                                     
+            'x'
+            sage: p.objective_coefficient(4)                        
+            1
+            sage: p.objective_coefficient(4).parent()
+            Algebraic Real Field
+            sage: p = get_solver(solver = "Matrix", base_ring = RDF)                 
+            sage: p.ncols()                                         
+            0
+            sage: p.add_variable()                                  
+            0
+            sage: p.ncols()                                         
+            1
+            sage: p.add_variable()                                  
+            1
+            sage: p.add_variable(lower_bound=-2.0)                  
+            2
+            sage: p.add_variable(continuous=True)                   
+            3
+            sage: p.add_variable(name='x',obj=1.0)                  
+            4
+            sage: p.col_name(3)                                     
+            'x_3'
+            sage: p.col_name(4)                                     
+            'x'
+            sage: p.objective_coefficient(4)                        
+            1.0
+            sage: p.objective_coefficient(4).parent()
+            Real Double Field
+            sage: p = get_solver(solver = "Matrix", base_ring = RealField(100))
+            sage: p.ncols()
+            0
+            sage: p.add_variable()
+            0
+            sage: p.ncols()
+            1
+            sage: p.add_variable()
+            1
+            sage: p.add_variable(lower_bound=-2.0)
+            2
+            sage: p.add_variable(continuous=True)
+            3
+            sage: p.add_variable(name='x',obj=1.0)
+            4
+            sage: p.col_name(3)
+            'x_3'
+            sage: p.col_name(4)
+            'x'
+            sage: p.objective_coefficient(4)
+            1.0000000000000000000000000000
+            sage: p.objective_coefficient(4).parent()
+            Real Field with 100 bits of precision
 
         """
         if obj is None:
-            obj = 0.0
+            obj = self._base_ring.zero()
 
         if self.nrows() == 0:
             pass
         else:
-            self.G_matrix = self.G_matrix.augment(matrix([0.0 for i in range(self.nrows())]))
+            self.G_matrix = self.G_matrix.augment(matrix([self._base_ring.zero() for i in range(self.nrows())]))
         
         if lower_bound is None:
             self.col_lower_bound_indicator.append(False)
-            self.col_lower_bound = self.col_lower_bound.augment(matrix([0.0]))
+            self.col_lower_bound = self.col_lower_bound.augment(matrix([self._base_ring.zero()]))
         else:
             self.col_lower_bound_indicator.append(True)
             self.col_lower_bound = self.col_lower_bound.augment(matrix([lower_bound]))
         
         if upper_bound is None:
             self.col_upper_bound_indicator.append(False)
-            self.col_upper_bound = self.col_upper_bound.augment(matrix([0.0]))
+            self.col_upper_bound = self.col_upper_bound.augment(matrix([self._base_ring.zero()]))
         else:
             self.col_upper_bound_indicator.append(True)
             self.col_upper_bound = self.col_upper_bound.augment(matrix([upper_bound]))
@@ -267,14 +345,45 @@ cdef class MatrixBackend(GenericBackend):
             sage: p.objective_coefficient(0,2)                      
             sage: p.objective_coefficient(0)                        
             2
+            sage: p = get_solver(solver = "Matrix", base_ring=AA)
+            sage: p.add_variable()
+            0
+            sage: p.objective_coefficient(0)
+            0
+            sage: p.objective_coefficient(0,2)
+            sage: p.objective_coefficient(0)
+            2
+            sage: p.objective_coefficient(0).parent()
+            Algebraic Real Field
+            sage: p = get_solver(solver = "Matrix", base_ring=RDF)
+            sage: p.add_variable()
+            0
+            sage: p.objective_coefficient(0)
+            0.0
+            sage: p.objective_coefficient(0,2)
+            sage: p.objective_coefficient(0)
+            2.0
+            sage: p.objective_coefficient(0).parent()
+            Real Double Field
+            sage: p = get_solver(solver = "Matrix", base_ring=RealField(100))
+            sage: p.add_variable()
+            0
+            sage: p.objective_coefficient(0)
+            0.00000000000000000000000000000
+            sage: p.objective_coefficient(0,2)
+            sage: p.objective_coefficient(0)
+            2.0000000000000000000000000000
+            sage: p.objective_coefficient(0).parent()
+            Real Field with 100 bits of precision
+
         """
 
         if coeff is not None:
-            self.objective_function[0, variable] = float(coeff)
+            self.objective_function[0, variable] = coeff
         else:
             return self.objective_function[0, variable]
 
-    cpdef set_objective(self, list coeff, d = 0.0):
+    cpdef set_objective(self, list coeff, d = 0):
         """
         Set the objective function.
 
@@ -294,6 +403,47 @@ cdef class MatrixBackend(GenericBackend):
             sage: p.set_objective([1, 1, 2, 1, 3])                  
             sage: [p.objective_coefficient(x) for x in range(5)]    
             [1, 1, 2, 1, 3]
+            sage: p = get_solver(solver = "Matrix", base_ring = AA)
+            sage: p.add_variables(5)
+            4
+            sage: p.set_objective([1, 1, 2, 1, 3])
+            sage: [p.objective_coefficient(x) for x in range(5)]
+            [1, 1, 2, 1, 3]
+            sage: [p.objective_coefficient(x).parent() for x in range(5)]
+            [Algebraic Real Field,
+            Algebraic Real Field,
+            Algebraic Real Field,
+            Algebraic Real Field,
+            Algebraic Real Field]
+            sage: p = get_solver(solver = "Matrix", base_ring = RDF)
+            sage: p.add_variables(5)
+            4
+            sage: p.set_objective([1, 1, 2, 1, 3])
+            sage: [p.objective_coefficient(x) for x in range(5)]
+            [1.0, 1.0, 2.0, 1.0, 3.0]
+            sage: [p.objective_coefficient(x).parent() for x in range(5)]
+            [Real Double Field,
+            Real Double Field,
+            Real Double Field,
+            Real Double Field,
+            Real Double Field]
+            sage: p = get_solver(solver = "Matrix", base_ring = RealField(100))
+            sage: p.add_variables(5)
+            4
+            sage: p.set_objective([1, 1, 2, 1, 3])
+            sage: [p.objective_coefficient(x) for x in range(5)]
+            [1.0000000000000000000000000000,
+            1.0000000000000000000000000000,
+            2.0000000000000000000000000000,
+            1.0000000000000000000000000000,
+            3.0000000000000000000000000000]
+            sage: [p.objective_coefficient(x).parent() for x in range(5)]
+            [Real Field with 100 bits of precision,
+            Real Field with 100 bits of precision,
+            Real Field with 100 bits of precision,
+            Real Field with 100 bits of precision,
+            Real Field with 100 bits of precision]
+
         """
         for i in range(len(coeff)):
             self.objective_function[0, i] = coeff[i]
@@ -338,10 +488,37 @@ cdef class MatrixBackend(GenericBackend):
             sage: p.add_col(range(5), range(5))                     
             sage: p.nrows()                                         
             5
+            sage: p = get_solver(solver = "Matrix", base_ring=AA)
+            sage: p.ncols()
+            0
+            sage: p.nrows()
+            0
+            sage: p.add_linear_constraints(5, 0, None)
+            sage: p.add_col(range(5), range(5))
+            sage: p.nrows()
+            5
+            sage: p = get_solver(solver = "Matrix", base_ring=RDF)
+            sage: p.ncols()
+            0
+            sage: p.nrows()
+            0
+            sage: p.add_linear_constraints(5, 0, None)
+            sage: p.add_col(range(5), range(5))
+            sage: p.nrows()
+            5
+            sage: p = get_solver(solver = "Matrix", base_ring=RealField(100))
+            sage: p.ncols()
+            0
+            sage: p.nrows()
+            0
+            sage: p.add_linear_constraints(5, 0, None)
+            sage: p.add_col(range(5), range(5))
+            sage: p.nrows()
+            5
         """
         column = []
         for _ in indices:
-            column.append(0.0)
+            column.append(self._base_ring.zero())
 
         for idx, ind in enumerate(indices):
             column[ind] = coeffs[idx]
@@ -353,17 +530,17 @@ cdef class MatrixBackend(GenericBackend):
 
         self.col_lower_bound_indicator.append(None)
         if self.col_lower_bound.dimensions()[1] == 0:
-            self.col_lower_bound = matrix(1, [0.0])
+            self.col_lower_bound = matrix(1, [self._base_ring.zero()])
         else:
-            self.col_lower_bound = self.col_lower_bound.augment(matrix([0.0]))
+            self.col_lower_bound = self.col_lower_bound.augment(matrix([self._base_ring.zero()]))
 
         self.col_upper_bound_indicator.append(None)
         if self.col_upper_bound.dimensions()[1] == 0:
-            self.col_upper_bound = matrix(1, [0.0])
+            self.col_upper_bound = matrix(1, [self._base_ring.zero()])
         else:
-            self.col_upper_bound = self.col_upper_bound.augment(matrix([0.0]))
+            self.col_upper_bound = self.col_upper_bound.augment(matrix([self._base_ring.zero()]))
             
-        self.objective_function = self.objective_function.augment(matrix([0.0]))
+        self.objective_function = self.objective_function.augment(matrix([self._base_ring.zero()]))
         self.col_name_var.append(None)
 
     cpdef add_linear_constraint(self, coefficients, lower_bound, upper_bound, name=None):
@@ -403,23 +580,23 @@ cdef class MatrixBackend(GenericBackend):
                 self.add_variable()
                      
         if self.G_matrix.dimensions()[0] == 0:
-            self.G_matrix = matrix(1, [0.0 for i in range(len(coefficients))])
+            self.G_matrix = matrix(1, [self._base_ring.zero() for i in range(len(coefficients))])
         else:
-            self.G_matrix = self.G_matrix.stack(matrix([0.0 for i in range(self.G_matrix.dimensions()[1])]))
+            self.G_matrix = self.G_matrix.stack(matrix([self._base_ring.zero() for i in range(self.G_matrix.dimensions()[1])]))
 
         for c in coefficients:
             self.G_matrix[-1, c[0]] = c[1]
 
         if lower_bound is None:
             self.row_lower_bound_indicator.append(False)
-            self.row_lower_bound = self.row_lower_bound.augment(matrix([0.0]))
+            self.row_lower_bound = self.row_lower_bound.augment(matrix([self._base_ring.zero()]))
         else:
             self.row_lower_bound_indicator.append(True)
             self.row_lower_bound = self.row_lower_bound.augment(matrix([lower_bound]))
         
         if upper_bound is None:
             self.row_upper_bound_indicator.append(False)
-            self.row_upper_bound = self.row_upper_bound.augment(matrix([0.0]))
+            self.row_upper_bound = self.row_upper_bound.augment(matrix([self._base_ring.zero()]))
         else:
             self.row_upper_bound_indicator.append(True)
             self.row_upper_bound = self.row_upper_bound.augment(matrix([upper_bound]))
@@ -532,15 +709,62 @@ cdef class MatrixBackend(GenericBackend):
             ([1, 2, 3, 4], [1, 2, 3, 4])
             sage: p.row_bounds(0)                                   
             (2, 2)
+            sage: p = get_solver(solver = "Matrix", base_ring = AA)
+            sage: p.add_variables(5)
+            4
+            sage: p.add_linear_constraint(list(zip(range(5), range(5))), 2, 2)
+            sage: p.row(0)
+            ([1, 2, 3, 4], [1, 2, 3, 4])
+            sage: [i.parent() for i in p.row(0)[1]]
+            [Algebraic Real Field,
+            Algebraic Real Field,
+            Algebraic Real Field,
+            Algebraic Real Field]
+            sage: p.row_bounds(0)
+            (2, 2)
+            sage: [i.parent() for i in p.row_bounds(0)]
+            [Algebraic Real Field, Algebraic Real Field]
+            sage: p = get_solver(solver = "Matrix", base_ring = RDF)
+            sage: p.add_variables(5)
+            4
+            sage: p.add_linear_constraint(list(zip(range(5), range(5))), 2, 2)
+            sage: p.row(0)
+            ([1, 2, 3, 4], [1.0, 2.0, 3.0, 4.0])
+            sage: [i.parent() for i in p.row(0)[1]]
+            [Real Double Field, Real Double Field, Real Double Field, Real Double Field]
+            sage:  p.row_bounds(0)
+            (2.0, 2.0)
+            sage: [i.parent() for i in p.row_bounds(0)]
+            [Real Double Field, Real Double Field]
+            sage: p = get_solver(solver = "Matrix", base_ring = RealField(100))
+            sage: p.add_variables(5)
+            4
+            sage: p.add_linear_constraint(list(zip(range(5), range(5))), 2, 2)
+            sage: p.row(0)
+            ([1, 2, 3, 4],
+            [1.0000000000000000000000000000,
+            2.0000000000000000000000000000,
+            3.0000000000000000000000000000,
+            4.0000000000000000000000000000])
+            sage: [i.parent() for i in p.row(0)[1]]
+            [Real Field with 100 bits of precision,
+            Real Field with 100 bits of precision,
+            Real Field with 100 bits of precision,
+            Real Field with 100 bits of precision]
+            sage: p.row_bounds(0)
+            (2.0000000000000000000000000000, 2.0000000000000000000000000000)
+            sage: [i.parent() for i in p.row_bounds(0)]
+            [Real Field with 100 bits of precision, Real Field with 100 bits of precision]
+
         """
         coeff = []
         idx = []
         index = 0
 
-        for i in self.G_matrix[i]:
-            if i != 0:
+        for num in self.G_matrix[i]:
+            if num != 0:
                 idx.append(index)
-                coeff.append(i)
+                coeff.append(num)
             index += 1
         return (idx, coeff)
 
@@ -608,6 +832,43 @@ cdef class MatrixBackend(GenericBackend):
             sage: p.variable_upper_bound(0, 5)                      
             sage: p.col_bounds(0)                                   
             (0, 5)
+            sage: p = get_solver(solver = "Matrix", base_ring = AA)
+            sage: p.add_variable()
+            0
+            sage: p.col_bounds(0)
+            (0, None)
+            sage: p.col_bounds(0)[0].parent()
+            Algebraic Real Field
+            sage: p.variable_upper_bound(0, 5)  
+            sage: p.col_bounds(0)
+            (0, 5)
+            sage: [i.parent() for i in p.col_bounds(0)]
+            [Algebraic Real Field, Algebraic Real Field]
+            sage: p = get_solver(solver = "Matrix", base_ring = RDF)
+            sage: p.add_variable()
+            0
+            sage: p.col_bounds(0)
+            (0.0, None)
+            sage: p.col_bounds(0)[0].parent()
+            Real Double Field
+            sage: p.variable_upper_bound(0, 5)
+            sage: p.col_bounds(0)
+            (0.0, 5.0)
+            sage: [i.parent() for i in p.col_bounds(0)]
+            [Real Double Field, Real Double Field]
+            sage: p = get_solver(solver = "Matrix", base_ring = RealField(100))
+            sage: p.add_variable()
+            0
+            sage: p.col_bounds(0)
+            (0.00000000000000000000000000000, None)
+            sage: p.col_bounds(0)[0].parent()
+            Real Field with 100 bits of precision
+            sage: p.variable_upper_bound(0, 5)
+            sage: p.col_bounds(0)
+            (0.00000000000000000000000000000, 5.0000000000000000000000000000)
+            sage: [i.parent() for i in p.col_bounds(0)]
+            [Real Field with 100 bits of precision, Real Field with 100 bits of precision]
+
         """
         if self.col_lower_bound_indicator[index] == True:
             lower = self.col_lower_bound[0, index]
@@ -809,6 +1070,42 @@ cdef class MatrixBackend(GenericBackend):
             sage: p.variable_lower_bound(0, 5)                      
             sage: p.col_bounds(0)                                   
             (5, None)
+            sage: p = get_solver(solver = "Matrix", base_ring = AA)
+            sage: p.add_variable()
+            0
+            sage: p.col_bounds(0)
+            (0, None)
+            sage: p.col_bounds(0)[0].parent()
+            Algebraic Real Field
+            sage: p.variable_lower_bound(0, 5)
+            sage: p.col_bounds(0)
+            (5, None)
+            sage: p.col_bounds(0)[0].parent()
+            Algebraic Real Field
+            sage: p = get_solver(solver = "Matrix", base_ring = RDF)
+            sage: p.add_variable()
+            0
+            sage: p.col_bounds(0)
+            (0.0, None)
+            sage: p.col_bounds(0)[0].parent()
+            Real Double Field
+            sage: p.variable_lower_bound(0, 5)
+            sage: p.col_bounds(0)
+            (5.0, None)
+            sage: p.col_bounds(0)[0].parent()
+            Real Double Field
+            sage: p = get_solver(solver = "Matrix", base_ring = RealField(100))
+            sage: p.add_variable()
+            0
+            sage: p.col_bounds(0)
+            (0.00000000000000000000000000000, None)
+            sage: p.col_bounds(0)[0].parent()
+            Real Field with 100 bits of precision
+            sage: p.variable_lower_bound(0, 5)
+            sage: p.col_bounds(0)
+            (5.0000000000000000000000000000, None)
+            sage: p.col_bounds(0)[0].parent()
+            Real Field with 100 bits of precision
         """
         if value is not False:
             self.col_lower_bound_indicator[index] = True
