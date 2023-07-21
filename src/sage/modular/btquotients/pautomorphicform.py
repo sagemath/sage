@@ -1913,16 +1913,14 @@ class pAdicAutomorphicFormElement(ModuleElement):
         if method == 'riemann_sum':
             for e in E:
                 ii += 1
-                #print(ii,"/",len(E))
                 exp = ((R1([e[1, 1], e[1, 0]])) ** (self.parent()._U.weight()) * e.determinant() ** (-(self.parent()._U.weight()) / 2)) * f(R1([e[0, 1], e[0, 0]]) / R1([e[1, 1], e[1, 0]]))
-                #exp = R2([tmp[jj] for jj in range(self.parent()._k-1)])
+                # exp = R2([tmp[jj] for jj in range(self.parent()._k-1)])
                 new = eval_dist_at_powseries(self.evaluate(e), exp.truncate(self.parent()._U.weight() + 1))
                 value += new
         elif method == 'moments':
             n = self.parent()._U.weight()
             for e in E:
                 ii += 1
-                #print(ii,"/",len(E))
                 a, b, c, d = e.list()
                 delta = e.determinant()
                 verbose('%s' % (R2([e[0, 1], e[0, 0]])
@@ -2272,7 +2270,7 @@ class pAdicAutomorphicForms(Module, UniqueRepresentation):
                 self._R = Qp(domain._p, prec)
         else:
             self._R = R
-        #U is a CoefficientModuleSpace
+        # U is a CoefficientModuleSpace
         if isinstance(U, Integer):
             if t is None:
                 if overconvergent:
@@ -2281,11 +2279,11 @@ class pAdicAutomorphicForms(Module, UniqueRepresentation):
                     t = 0
             if overconvergent:
                 self._U = OverconvergentDistributions(U - 2, base=self._R,
-                                        prec_cap=U - 1 + t,
-                                        act_on_left=True,
-                                        adjuster=_btquot_adjuster(),
-                                        dettwist=-ZZ((U - 2) // 2),
-                                        act_padic=True)
+                                                      prec_cap=U - 1 + t,
+                                                      act_on_left=True,
+                                                      adjuster=_btquot_adjuster(),
+                                                      dettwist=-ZZ((U - 2) // 2),
+                                                      act_padic=True)
             else:
                 self._U = Symk(U - 2, base=self._R, act_on_left=True,
                                adjuster=_btquot_adjuster(),
@@ -2485,13 +2483,14 @@ class pAdicAutomorphicForms(Module, UniqueRepresentation):
             F = []
             Uold = data.parent()._U
             for ii in range(len(data._F)):
-                newtmp = data.parent()._Sigma0(E[ii].rep.inverse(), check=False) * Uold(data._F[ii],normalize=False)
+                newtmp = data.parent()._Sigma0(E[ii].rep.inverse(), check=False) * Uold(data._F[ii],
+                                                                                        normalize=False)
                 tmp.append(newtmp)
                 F.append(newtmp)
-            A = data.parent()._Sigma0(Matrix(QQ,2,2,[0,1/self.prime(),1,0]),check=False)
+            A = data.parent()._Sigma0(Matrix(QQ, 2, 2, [0, ~self.prime(), 1, 0]), check=False)
             for ii in range(len(data._F)):
                 F.append(-(A * tmp[ii]))
-            vals = self._make_invariant([self._U(o,normalize=False) for o in F])
+            vals = self._make_invariant([self._U(o, normalize=False) for o in F])
             return self.element_class(self, vals)
         if data == 0:
             return self.zero()
@@ -2605,11 +2604,12 @@ class pAdicAutomorphicForms(Module, UniqueRepresentation):
                 m = M[ii]
                 for v in Si:
                     s += 1
-                    g = self._Sigma0(m.adjugate() * self._source.embed_quaternion(v[0], prec=self._prec).adjugate() * m,check=False)
+                    g = self._Sigma0(m.adjugate() * self._source.embed_quaternion(v[0], prec=self._prec).adjugate() * m,
+                                     check=False)
                     newFi += g * x
                 newF.append((QQ(1) / s) * newFi)
             else:
-                newF.append(self._U(x,normalize=False))
+                newF.append(self._U(x, normalize=False))
         return newF
 
     def _apply_Up_operator(self, f, scale=False, original_moments=None):
@@ -2650,7 +2650,8 @@ class pAdicAutomorphicForms(Module, UniqueRepresentation):
             for gg, edge_list in HeckeData:
                 u = edge_list[jj]
                 tprec = 2 * (prec_cap + u.power) + 1
-                r = S0(self._p ** -u.power * (u.t(tprec) * gg).adjugate(),check=False)
+                r = S0(self._p ** -u.power * (u.t(tprec) * gg).adjugate(),
+                       check=False)
                 tmp += r * f._value[u.label]
             tmp *= factor
             for ii in range(self._n + 1):

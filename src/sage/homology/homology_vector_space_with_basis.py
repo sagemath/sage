@@ -409,7 +409,8 @@ class HomologyVectorSpaceWithBasis(CombinatorialFreeModule):
             """
             if not self.is_homogeneous():
                 raise ValueError("only defined for homogeneous elements")
-            return sum(c * self.parent()._to_cycle_on_basis(i) for i,c in self)
+            return sum(c * self.parent()._to_cycle_on_basis(i) for i, c in self)
+
 
 class CohomologyRing(HomologyVectorSpaceWithBasis):
     """
@@ -508,7 +509,7 @@ class CohomologyRing(HomologyVectorSpaceWithBasis):
             True
         """
         one = self.base_ring().one()
-        d = {(0,i): one for i in self._graded_indices[0]}
+        d = {(0, i): one for i in self._graded_indices[0]}
         return self._from_dict(d, remove_zeros=False)
 
     @cached_method
@@ -755,7 +756,7 @@ class CohomologyRing(HomologyVectorSpaceWithBasis):
             ret = P.zero()
             H = scomplex.homology_with_basis(base_ring)
             deg_comp = {}
-            for index,coeff in self:
+            for index, coeff in self:
                 d = deg_comp.get(index[0], {})
                 d[index] = coeff
                 deg_comp[index[0]] = d
@@ -828,7 +829,7 @@ class CohomologyRing(HomologyVectorSpaceWithBasis):
                             if ((hasattr(left, 'is_nondegenerate')
                                  and left.is_nondegenerate()
                                  and right.is_nondegenerate())
-                                or not hasattr(left, 'is_nondegenerate')):
+                                    or not hasattr(left, 'is_nondegenerate')):
                                 left = n_chains(left)
                                 right = n_chains(right)
                                 gamma_coeff += coeff * cycle.eval(left) * cycle.eval(right)
@@ -836,6 +837,7 @@ class CohomologyRing(HomologyVectorSpaceWithBasis):
                         result[(m, gamma_index)] = gamma_coeff
                 ret += P._from_dict(result, remove_zeros=False)
             return ret
+
 
 def sum_indices(k, i_k_plus_one, S_k_plus_one):
     r"""
