@@ -168,6 +168,28 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
         return <bint> result
 
     def is_strongly_unimodular(self):
+        r"""
+        A matrix is strongly unimodular if ``self`` and ``self.transpose()`` are both unimodular.
+
+        EXAMPLES::
+
+            sage: from sage.matrix.matrix_cmr_sparse import Matrix_cmr_chr_sparse
+            sage: M = Matrix_cmr_chr_sparse(MatrixSpace(ZZ, 3, 3, sparse=True),
+            ....:                           [[1, 0, 1], [0, 1, 1], [1, 2, 3]]); M
+            [1 0 1]
+            [0 1 1]
+            [1 2 3]
+            sage: M.is_unimodular()
+            True
+            sage: M.is_strongly_unimodular()
+            False
+            sage: M = Matrix_cmr_chr_sparse(MatrixSpace(ZZ, 2, 3, sparse=True),
+            ....:                           [[1, 0, 0], [0, 1, 0]]); M
+            [1 0 0]
+            [0 1 0]
+            sage: M.is_strongly_unimodular()
+            True
+        """
         cdef bool result
 
         sig_on()
@@ -295,7 +317,7 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
         return False, None  # submatrix TBD
 
     def is_cographic(self, *, time_limit=60.0, certificate=False):
-         raise NotImplementedError
+        raise NotImplementedError
 
     def is_network_matrix(self, *, time_limit=60.0, certificate=False):
         raise NotImplementedError
