@@ -6,7 +6,7 @@ the endomorphism ring of a subscheme of projective or affine space.
 
 AUTHORS:
 
- - Dang Phan (July 12th, 2023): initial implementation
+ - Dang Phan (July 21st, 2023): initial implementation
 """
 
 #*****************************************************************************
@@ -20,16 +20,17 @@ AUTHORS:
 #*****************************************************************************
 
 from collections.abc import Collection
-
-from sage.misc.inherit_comparison import InheritComparisonClasscallMetaclass
-from sage.structure.parent import Parent
-
-from sage.dynamics.arithmetic_dynamics.projective_ds import DynamicalSystem_projective
+from sage.categories.fields import Fields
+from sage.categories.number_fields import NumberFields
+from sage.categories.semigroups import Semigroups
 from sage.dynamics.arithmetic_dynamics.affine_ds import DynamicalSystem_affine
 from sage.dynamics.arithmetic_dynamics.generic_ds import DynamicalSystem
-from sage.categories.number_fields import NumberFields
+from sage.dynamics.arithmetic_dynamics.projective_ds import DynamicalSystem_projective
+from sage.misc.classcall_metaclass import typecall
+from sage.misc.inherit_comparison import InheritComparisonClasscallMetaclass
+from sage.rings.finite_rings.finite_field_base import FiniteField
 from sage.rings.rational_field import QQ
-from sage.categories.semigroups import Semigroups
+from sage.structure.parent import Parent
 
 class DynamicalSemigroup(Parent, metaclass=InheritComparisonClasscallMetaclass):
     r"""
@@ -207,7 +208,9 @@ class DynamicalSemigroup(Parent, metaclass=InheritComparisonClasscallMetaclass):
 
         sage: P.<x,y> = ProjectiveSpace(QQ, 1)
         sage: DynamicalSemigroup(1)
-        ValueError: 1 does not define a 'DynamicalSystem' object
+        Traceback (most recent call last):
+        ...
+        TypeError: 1 does not define a 'DynamicalSemigroup' object
 
     ::
 
@@ -218,6 +221,8 @@ class DynamicalSemigroup(Parent, metaclass=InheritComparisonClasscallMetaclass):
         sage: f = DynamicalSystem([x, y], P)
         sage: g = DynamicalSystem([z^2, w^2], Q)
         sage: DynamicalSemigroup((f, g))
+        Traceback (most recent call last):
+        ...
         ValueError: given dynamical systems are not automorphic under global composition
 
     ::
@@ -227,17 +232,20 @@ class DynamicalSemigroup(Parent, metaclass=InheritComparisonClasscallMetaclass):
         sage: f = DynamicalSystem([x, y])
         sage: g = DynamicalSystem([u^2, v^2, w^2])
         sage: DynamicalSemigroup((f, g))
+        Traceback (most recent call last):
+        ...
         ValueError: domains of 'DynamicalSystem' objects must be of the same dimension
     """
 
     @staticmethod
     def __classcall_private__(cls, ds_data):
-        systems = DynamicalSemigroup._create_dynamical_systems_(ds_data)
-        all_affine_systems = all(isinstance(ds, DynamicalSystem_affine) for ds in systems)
-        if all_affine_systems:
-            return DynamicalSemigroup_affine(systems)
-        else:
-            return DynamicalSemigroup_projective(systems)
+        if isinstance(ds_data, Collection):
+            all_affine_systems = all(isinstance(ds_datum, DynamicalSystem_affine) for ds_datum in ds_data)
+            if all_affine_systems:
+                return DynamicalSemigroup_affine(ds_data)
+        elif not isinstance(ds_data, DynamicalSystem):
+            raise TypeError(str(ds_data) + " does not define a 'DynamicalSemigroup' object")
+        return DynamicalSemigroup_projective(ds_data)
 
     def __init__(self, systems):
         r"""
@@ -256,20 +264,18 @@ class DynamicalSemigroup(Parent, metaclass=InheritComparisonClasscallMetaclass):
                     (x^2 : y^2)
         """
 
-        systems = self._standardize_domains_of_(systems)
         self._domain = systems[0].domain()
         self._codomain = systems[0].codomain()
         self._dynamical_systems = systems
-        self._dimension = self._domain.dimension()
         Parent.__init__(self, category=Semigroups().Finite().FinitelyGenerated())
 
     def __call__(self, input):
         r"""
-        The result after evaluating this dynamical semigroup on a list or tuple of values.
+        The result after evaluating this dynamical semigroup on a value.
 
         INPUT:
 
-        - ``input`` -- one element, a list, or a tuple of values that can be evaluated
+        - ``input`` -- one value that can be evaluated
           with the generators of this dynamical semigroup.
 
         OUTPUT: A tuple of the resulting values after applying all of this dynamical semigroup's generators to ``input``.
@@ -293,6 +299,8 @@ class DynamicalSemigroup(Parent, metaclass=InheritComparisonClasscallMetaclass):
             sage: P.<x,y> = ProjectiveSpace(QQ, 1)
             sage: f = DynamicalSemigroup(([x, y], [x^2, y^2]))
             sage: f(f(2))
+            Traceback (most recent call last):
+            ...
             TypeError: unable to convert (2 : 1) to an element of Rational Field
         """
         result = []
@@ -483,100 +491,6 @@ class DynamicalSemigroup(Parent, metaclass=InheritComparisonClasscallMetaclass):
                 all(systems in other._dynamical_systems for systems in self._dynamical_systems)
         return False
 
-    @staticmethod
-    def _create_dynamical_systems_(ds_data):
-        systems = []
-
-        if isinstance(ds_data, Collection):
-            for ds_datum in ds_data:
-                if isinstance(ds_datum, DynamicalSystem):
-                    systems.append(ds_datum)
-                else:
-                    try:
-                        systems.append(DynamicalSystem(ds_datum))
-                    except ValueError:
-                        raise ValueError(str(ds_datum) + " does not define a 'DynamicalSystem' object")
-        else:
-            if isinstance(ds_data, DynamicalSystem):
-                    systems.append(ds_data)
-            else:
-                try:
-                    systems.append(DynamicalSystem(ds_data))
-                except ValueError:
-                    raise ValueError(str(ds_data) + " does not define a 'DynamicalSystem' object")
-
-        return systems
-
-    def _standardize_domains_of_(self, systems):
-        identical_domains = True
-        for ds in systems:
-            if ds.domain() != systems[0].domain():
-                identical_domains = False
-                break
-
-        over_number_fields = True
-        all_over_QQ = True
-        for ds in systems:
-            if ds.base_ring() not in NumberFields():
-                over_number_fields = False
-            if ds.base_ring() is not QQ:
-                all_over_QQ = False
-
-        biggest_ring = None
-
-        if over_number_fields and not all_over_QQ:
-            number_fields = []
-            for ds in systems:
-                number_fields.append(ds.base_ring())
-
-            minimal_composite_field = None
-            for field in number_fields:
-                if field is not QQ:
-                    if minimal_composite_field is None:
-                        minimal_composite_field = field
-                    else:
-                        minimal_composite_field = minimal_composite_field.composite_fields(field)[0]
-
-            biggest_ring = minimal_composite_field
-        else:
-            for ds in systems:
-                if biggest_ring is None:
-                    biggest_ring = ds.base_ring()
-                elif ds.base_ring().has_coerce_map_from(biggest_ring):
-                    biggest_ring = ds.base_ring()
-                elif biggest_ring.has_coerce_map_from(ds.base_ring()):
-                    pass
-                else:
-                    raise ValueError("given dynamical systems are not automorphic"
-                                    " under global composition")
-
-        for i in range(len(systems)):
-            if systems[i].base_ring() != biggest_ring:
-                    systems[i] = systems[i].change_ring(biggest_ring)
-
-        domain = systems[0].domain()
-
-        identical_domains = all(ds.domain() == systems[0].domain() for ds in systems)
-        if not identical_domains:
-            for ds in systems:
-                if ds.domain().dimension() != systems[0].domain().dimension():
-                    raise ValueError("domains of 'DynamicalSystem' objects must be of the same dimension")
-
-        gens = systems[0].domain().ambient_space().gens()
-        for i in range(len(systems)):
-            if systems[i].domain().coordinate_ring() != systems[0].domain().coordinate_ring():
-                sub_dict = {}
-                old_gens = systems[i].domain().ambient_space().gens()
-                for j in range(len(old_gens)):
-                    sub_dict[old_gens[j]] = gens[j]
-                new_polys = []
-                for poly in systems[i].defining_polynomials():
-                    new_polys.append(poly.subs(sub_dict))
-                systems[i] = DynamicalSystem(new_polys, domain)
-
-        return systems
-
-
 class DynamicalSemigroup_projective(DynamicalSemigroup):
     r"""
     A dynamical semigroup defined by a multiple dynamical systems on projective space.
@@ -602,17 +516,36 @@ class DynamicalSemigroup_projective(DynamicalSemigroup):
     """
 
     @staticmethod
-    def __classcall_private__(cls, systems):
-        if not all(isinstance(system, DynamicalSystem) for system in systems):
-            raise ValueError("must pass in dynamical systems")
-        for i in range(len(systems)):
-            if not isinstance(systems[i], DynamicalSystem_projective):
-                dimension = systems[i].domain().dimension()
-                systems[i] = systems[i].homogenize(dimension)
-        if all(ds.domain() in NumberFields() and ds.domain().is_finite() for ds in systems):
-            return DynamicalSemigroup_projective_finite_field(systems)
+    def __classcall_private__(cls, ds_data):
+        systems = []
+
+        if isinstance(ds_data, Collection):
+            for ds_datum in ds_data:
+                if isinstance(ds_datum, DynamicalSystem_projective):
+                    systems.append(ds_datum)
+                elif isinstance(ds_datum, DynamicalSystem_affine):
+                    dimension = ds_datum.domain().dimension()
+                    systems.append(ds_datum.homogenize(dimension))
+                else:
+                    try:
+                        systems.append(DynamicalSystem_projective(ds_datum))
+                    except ValueError:
+                        raise ValueError(str(ds_datum) + " does not define a 'DynamicalSystem_projective' object")
         else:
-            return DynamicalSemigroup_projective_field(systems)
+            if isinstance(ds_data, DynamicalSystem_projective):
+                    systems.append(ds_data)
+            else:
+                try:
+                    systems.append(DynamicalSystem_projective(ds_data))
+                except ValueError:
+                    raise ValueError(str(ds_data) + " does not define a 'DynamicalSystem_projective' object")
+
+        systems = _standardize_domains_of_(systems)
+        if systems[0].base_ring() not in Fields():
+            return typecall(cls, systems)
+        if isinstance(systems[0].base_ring(), FiniteField):
+            return DynamicalSemigroup_projective_finite_field(systems)
+        return DynamicalSemigroup_projective_field(systems)
 
 class DynamicalSemigroup_projective_field(DynamicalSemigroup_projective):
     pass
@@ -647,34 +580,128 @@ class DynamicalSemigroup_affine(DynamicalSemigroup):
     """
 
     @staticmethod
-    def __classcall_private__(cls, affine_systems):
-        if any(not isinstance(ds, DynamicalSystem_affine) for ds in affine_systems):
-            raise ValueError("must pass in affine dynamical systems")
-        if all(ds.domain() in NumberFields() and ds.domain().is_finite() for ds in affine_systems):
-            return DynamicalSemigroup_affine_finite_field(affine_systems)
+    def __classcall_private__(cls, ds_data):
+        systems = []
+
+        if isinstance(ds_data, Collection):
+            for ds_datum in ds_data:
+                if isinstance(ds_datum, DynamicalSystem_affine):
+                    systems.append(ds_datum)
+                else:
+                    try:
+                        systems.append(DynamicalSystem_affine(ds_datum))
+                    except ValueError:
+                        raise ValueError(str(ds_datum) + " does not define a 'DynamicalSystem_affine' object")
         else:
-            return DynamicalSemigroup_affine_field(affine_systems)
-    # def __init__(self, ds_data):
-    #     r"""
-    #     The Python constructor.
+            if isinstance(ds_data, DynamicalSystem_affine):
+                    systems.append(ds_data)
+            else:
+                try:
+                    systems.append(DynamicalSystem_affine(ds_data))
+                except ValueError:
+                    raise ValueError(str(ds_data) + " does not define a 'DynamicalSystem_affine' object")
 
-    #     EXAMPLES::
-
-    #     sage: A.<x> = AffineSpace(QQ, 1)
-    #     sage: f = DynamicalSystem(x, A)
-    #     sage: g = DynamicalSystem(x^2, A)
-    #     sage: DynamicalSemigroup_affine((f, g))
-    #     Dynamical semigroup over Affine Space of dimension 1 over Rational Field defined by 2 dynamical systems:
-    #     Dynamical System of Affine Space of dimension 1 over Rational Field
-    #       Defn: Defined on coordinates by sending (x) to
-    #             (x)
-    #     Dynamical System of Affine Space of dimension 1 over Rational Field
-    #       Defn: Defined on coordinates by sending (x) to
-    #             (x^2)
-    #     """
+        systems = _standardize_domains_of_(systems)
+        if systems[0].base_ring() not in Fields():
+            return typecall(cls, systems)
+        if isinstance(systems[0].base_ring(), FiniteField):
+            return DynamicalSemigroup_projective_finite_field(systems)
+        return DynamicalSemigroup_projective_field(systems)
 
 class DynamicalSemigroup_affine_field(DynamicalSemigroup_affine):
     pass
 
 class DynamicalSemigroup_affine_finite_field(DynamicalSemigroup_affine_field):
     pass
+
+def _standardize_domains_of_(systems):
+    r"""
+    Coerces dynamical systems to the same domain and have the same generators
+
+    INPUT:
+
+    - ``systems`` -- list of dynamical systems
+
+    OUTPUT: list of dynamical systems from ``systems`` coerced to the same domain with the same generators
+
+    EXAMPLES::
+
+        sage: A.<x> = AffineSpace(QQ, 1)
+        sage: B.<y> = AffineSpace(RR, 1)
+        sage: f = DynamicalSystem(x, A)
+        sage: g = DynamicalSystem(x^2, B)
+        sage: sage.dynamics.arithmetic_dynamics.dynamical_semigroup._standardize_domains_of_([f, g])
+        [Dynamical System of Affine Space of dimension 1 over Real Field with 53 bits of precision
+           Defn: Defined on coordinates by sending (x) to
+             (x),
+         Dynamical System of Affine Space of dimension 1 over Real Field with 53 bits of precision
+           Defn: Defined on coordinates by sending (x) to
+             (x^2)]
+    """
+    identical_domains = True
+    for ds in systems:
+        if ds.domain() != systems[0].domain():
+            identical_domains = False
+            break
+
+    over_number_fields = True
+    all_over_QQ = True
+    for ds in systems:
+        if ds.base_ring() not in NumberFields():
+            over_number_fields = False
+        if ds.base_ring() is not QQ:
+            all_over_QQ = False
+
+    biggest_ring = None
+
+    if over_number_fields and not all_over_QQ:
+        number_fields = []
+        for ds in systems:
+            number_fields.append(ds.base_ring())
+
+        minimal_composite_field = None
+        for field in number_fields:
+            if field is not QQ:
+                if minimal_composite_field is None:
+                    minimal_composite_field = field
+                else:
+                    minimal_composite_field = minimal_composite_field.composite_fields(field)[0]
+
+        biggest_ring = minimal_composite_field
+    else:
+        for ds in systems:
+            if biggest_ring is None:
+                biggest_ring = ds.base_ring()
+            elif ds.base_ring().has_coerce_map_from(biggest_ring):
+                biggest_ring = ds.base_ring()
+            elif biggest_ring.has_coerce_map_from(ds.base_ring()):
+                pass
+            else:
+                raise ValueError("given dynamical systems are not automorphic"
+                                " under global composition")
+
+    for i in range(len(systems)):
+        if systems[i].base_ring() != biggest_ring:
+                systems[i] = systems[i].change_ring(biggest_ring)
+
+    domain = systems[0].domain()
+
+    identical_domains = all(ds.domain() == systems[0].domain() for ds in systems)
+    if not identical_domains:
+        for ds in systems:
+            if ds.domain().dimension() != systems[0].domain().dimension():
+                raise ValueError("domains of 'DynamicalSystem' objects must be of the same dimension")
+
+    gens = systems[0].domain().ambient_space().gens()
+    for i in range(len(systems)):
+        if systems[i].domain().coordinate_ring() != systems[0].domain().coordinate_ring():
+            sub_dict = {}
+            old_gens = systems[i].domain().ambient_space().gens()
+            for j in range(len(old_gens)):
+                sub_dict[old_gens[j]] = gens[j]
+            new_polys = []
+            for poly in systems[i].defining_polynomials():
+                new_polys.append(poly.subs(sub_dict))
+            systems[i] = DynamicalSystem(new_polys, domain)
+
+    return systems
