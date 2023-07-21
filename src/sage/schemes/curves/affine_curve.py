@@ -37,20 +37,20 @@ EXAMPLES::
 
 Closed points of arbitrary degree can be computed::
 
-    sage: C.closed_points()                                                             # optional - sage.rings.finite_rings
+    sage: C.closed_points()                     # long time                             # optional - sage.rings.finite_rings
     [Point (x, y, z), Point (x + 1, y, z)]
-    sage: C.closed_points(2)                                                            # optional - sage.rings.finite_rings
+    sage: C.closed_points(2)                    # long time                             # optional - sage.rings.finite_rings
     [Point (x^2 + x + 1, y + 1, z),
      Point (y^2 + y + 1, x + y, z),
      Point (y^2 + y + 1, x + y + 1, z)]
-    sage: p = _[0]                                                                      # optional - sage.rings.finite_rings
-    sage: p.places()                                                                    # optional - sage.rings.finite_rings
+    sage: p = _[0]                              # long time                             # optional - sage.rings.finite_rings
+    sage: p.places()                            # long time                             # optional - sage.rings.finite_rings
     [Place (x^2 + x + 1, (1/(x^4 + x^2 + 1))*z^7 + (1/(x^4 + x^2 + 1))*z^6 + 1)]
 
 The places at infinity correspond to the extra closed points of the curve's
 projective closure::
 
-    sage: C.places_at_infinity()                                                        # optional - sage.rings.finite_rings
+    sage: C.places_at_infinity()                # long time                             # optional - sage.rings.finite_rings
     [Place (1/x, 1/x*z)]
 
 It is easy to transit to and from the function field of the curve::
@@ -114,14 +114,14 @@ AUTHORS:
 - Kwankyu Lee (2019-05): added integral affine curves
 
 """
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2005 William Stein <wstein@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.misc.lazy_attribute import lazy_attribute
 from sage.misc.cachefunc import cached_method
@@ -391,14 +391,14 @@ class AffinePlaneCurve(AffineCurve):
         p = F.characteristic()
         x0 = F(pt[0])
         y0 = F(pt[1])
-        astr = ["a"+str(i) for i in range(1,2*n)]
-        x,y = R.gens()
+        astr = ["a" + str(i) for i in range(1, 2 * n)]
+        x, y = R.gens()
         R0 = PolynomialRing(F, 2 * n + 2, names=[str(x), str(y), "t"] + astr)
         vars0 = R0.gens()
         t = vars0[2]
-        yt = y0*t**0+add([vars0[i]*t**(i-2) for i in range(3,2*n+2)])
+        yt = y0*t**0+add([vars0[i]*t**(i-2) for i in range(3, 2*n+2)])
         xt = x0+t
-        ft = f(xt,yt)
+        ft = f(xt, yt)
         S = singular
         S.eval('ring s = '+str(p)+','+str(R0.gens())+',lp;')
         S.eval('poly f = '+str(ft) + ';')
@@ -419,15 +419,15 @@ class AffinePlaneCurve(AffineCurve):
                 if str(y) in x:
                     if x.replace(str(y), ""):
                         i = x.find("-")
-                        if i>0:
-                            vals.append([eval(x[1:i]),x[:i],F(eval(x[i+1:]))])
+                        if i > 0:
+                            vals.append([eval(x[1:i]), x[:i], F(eval(x[i+1:]))])
                         i = x.find("+")
-                        if i>0:
-                            vals.append([eval(x[1:i]),x[:i],-F(eval(x[i+1:]))])
+                        if i > 0:
+                            vals.append([eval(x[1:i]), x[:i], -F(eval(x[i+1:]))])
                     else:
-                        vals.append([eval(str(y)[1:]),str(y),F(0)])
+                        vals.append([eval(str(y)[1:]), str(y), F(0)])
         vals.sort()
-        return [x0 + t, y0 + add(v[2] * t**(j+1) for j, v in enumerate(vals))]
+        return [x0 + t, y0 + add(v[2] * t**(j + 1) for j, v in enumerate(vals))]
 
     def plot(self, *args, **kwds):
         r"""
@@ -657,9 +657,9 @@ class AffinePlaneCurve(AffineCurve):
         vars = self.ambient_space().gens()
         coords = [vars[0] + P[0], vars[1] + P[1]]
         f = f(coords)
-        coords = [vars[0] - P[0], vars[1] - P[1]] # coords to change back with
-        deriv = [f.derivative(vars[0],i).derivative(vars[1], r-i)([0,0]) for i in range(r+1)]
-        T = sum([binomial(r,i)*deriv[i]*(vars[0])**i*(vars[1])**(r-i) for i in range(r+1)])
+        coords = [vars[0] - P[0], vars[1] - P[1]]  # coords to change back with
+        deriv = [f.derivative(vars[0], i).derivative(vars[1], r-i)([0, 0]) for i in range(r+1)]
+        T = sum([binomial(r, i)*deriv[i]*(vars[0])**i*(vars[1])**(r-i) for i in range(r+1)])
         if not factor:
             return [T(coords)]
         if self.base_ring() == QQbar:
@@ -670,13 +670,13 @@ class AffinePlaneCurve(AffineCurve):
             if t > 0:
                 fact.append(vars[0])
                 # divide T by that power of vars[0]
-                T = self.ambient_space().coordinate_ring()(dict([((v[0] - t,v[1]), h) for (v,h) in T.dict().items()]))
+                T = self.ambient_space().coordinate_ring()(dict([((v[0] - t, v[1]), h) for (v, h) in T.dict().items()]))
             t = min([e[1] for e in T.exponents()])
             # vars[1] divides T
             if t > 0:
                 fact.append(vars[1])
                 # divide T by that power of vars[1]
-                T = self.ambient_space().coordinate_ring()(dict([((v[0],v[1] - t), h) for (v,h) in T.dict().items()]))
+                T = self.ambient_space().coordinate_ring()(dict([((v[0], v[1] - t), h) for (v, h) in T.dict().items()]))
             # T is homogeneous in var[0], var[1] if nonconstant, so dehomogenize
             if T not in self.base_ring():
                 if T.degree(vars[0]) > 0:
@@ -741,7 +741,7 @@ class AffinePlaneCurve(AffineCurve):
         """
         r = self.multiplicity(P)
         if r < 2:
-            raise TypeError("(=%s) is not a singular point of (=%s)" % (P,self))
+            raise TypeError("(=%s) is not a singular point of (=%s)" % (P, self))
 
         T = self.tangents(P, factor=False)[0]
         vars = self.ambient_space().gens()
@@ -990,7 +990,7 @@ class AffineCurve_field(AffineCurve, AlgebraicScheme_subscheme_affine_field):
             indices = [AA.gens().index(f) for f in indices]
             indices.sort()
         else:
-            indices = [int(i) for i in indices] # type checking
+            indices = [int(i) for i in indices]  # type checking
             indices.sort()
             if indices[0] < 0 or indices[-1] > n - 1:
                 raise ValueError("index values must be between 0 and one "
@@ -1079,9 +1079,9 @@ class AffineCurve_field(AffineCurve, AlgebraicScheme_subscheme_affine_field):
         # finds a projection that will have a plane curve as its image
         # the following iterates over all pairs (i,j) with j > i to test all
         # possible projections
-        for i in range(0, n - 1):
+        for i in range(n - 1):
             for j in range(i + 1, n):
-                L = self.projection([i,j], AP)
+                L = self.projection([i, j], AP)
                 if isinstance(L[1], Curve_generic):
                     return L
 
@@ -1810,7 +1810,6 @@ class AffinePlaneCurve_field(AffinePlaneCurve, AffineCurve_field):
         f = self.defining_polynomial()
         return braid_monodromy(f)
 
-
     def riemann_surface(self, **kwargs):
         r"""
         Return the complex Riemann surface determined by this curve
@@ -1826,7 +1825,7 @@ class AffinePlaneCurve_field(AffinePlaneCurve, AffineCurve_field):
              with 53 bits of precision
         """
         from sage.schemes.riemann_surfaces.riemann_surface import RiemannSurface
-        S = RiemannSurface(self.defining_polynomial(),**kwargs)
+        S = RiemannSurface(self.defining_polynomial(), **kwargs)
         S._curve = self
         return S
 
@@ -1944,7 +1943,7 @@ class AffinePlaneCurve_finite_field(AffinePlaneCurve_field):
         if algorithm == "enum":
             f = self.defining_polynomial()
             K = f.parent().base_ring()
-            return sorted((self((x,y)) for x in K for y in K if f(x,y) == 0))
+            return sorted(self((x, y)) for x in K for y in K if f(x, y) == 0)
 
         F = self.base_ring()
         if not F.is_prime_field():
@@ -2087,7 +2086,7 @@ class IntegralAffineCurve(AffineCurve_field):
             (x/(x^5 + 1))*y^4 + x^2/(x^5 + 1)
             sage: df = f.differential(); df                                             # optional - sage.rings.finite_rings
             ((1/(x^10 + 1))*y^4 + x^6/(x^10 + 1)) d(x)
-            sage: df.divisor()                                                          # optional - sage.rings.finite_rings
+            sage: df.divisor()                  # long time                             # optional - sage.rings.finite_rings
             2*Place (1/x, 1/x^4*y^4 + 1/x^3*y^3 + 1/x^2*y^2 + 1/x*y + 1)
              + 2*Place (1/x, 1/x*y + 1)
              - 2*Place (x + 1, y)
@@ -2100,7 +2099,7 @@ class IntegralAffineCurve(AffineCurve_field):
         phi = self._lift_to_function_field
         num = R(f.numerator())
         den = R(f.denominator())
-        return phi(num)/phi(den)
+        return phi(num) / phi(den)
 
     def coordinate_functions(self):
         """
@@ -2285,7 +2284,7 @@ class IntegralAffineCurve(AffineCurve_field):
 
             sage: A.<x,y> = AffineSpace(GF(7^2), 2)                                     # optional - sage.rings.finite_rings
             sage: C = Curve(x^2 - x^4 - y^4)                                            # optional - sage.rings.finite_rings
-            sage: C._singularities                                                      # optional - sage.rings.finite_rings
+            sage: C._singularities              # long time                             # optional - sage.rings.finite_rings
             [(Point (x, y),
               [Place (x, 1/x*y^3 + 1/x*y^2 + 1), Place (x, 1/x*y^3 + 1/x*y^2 + 6)])]
         """
@@ -2314,7 +2313,7 @@ class IntegralAffineCurve(AffineCurve_field):
                 if p == q:
                     places.append(place)
                     break
-            else: # new singularity
+            else:  # new singularity
                 points.append((p, [place]))
 
         return points
@@ -2375,18 +2374,18 @@ class IntegralAffineCurve(AffineCurve_field):
         # implement an FGLM-like algorithm
         e = [0 for i in range(R.ngens())]
         basis = [R.one()]
-        basis_vecs = [to_V(k.one())] # represent as a vector
+        basis_vecs = [to_V(k.one())]  # represent as a vector
 
         gens = []
         gens_lts = []
         terminate = False
-        while True: # check FGLM termination condition
+        while True:  # check FGLM termination condition
             # compute next exponent in degree reverse lexicographical order
             j = R.ngens() - 1
             while j > 0 and not e[j]:
                 j -= 1
 
-            if not j: # j is zero
+            if not j:  # j is zero
                 if terminate:
                     break
                 terminate = True
@@ -2395,7 +2394,7 @@ class IntegralAffineCurve(AffineCurve_field):
                 e[-1] = d + 1
             else:
                 e[j] -= 1
-                e[j-1] += 1
+                e[j - 1] += 1
 
             m = R.monomial(*e)
             if any(g.divides(m) for g in gens_lts):
@@ -2404,11 +2403,11 @@ class IntegralAffineCurve(AffineCurve_field):
             prod = 1
             for i in range(R.ngens()):
                 prod *= coords[i]**e[i]
-            vec = to_V(to_k(prod)) # represent as a vector
+            vec = to_V(to_k(prod))  # represent as a vector
             mat = matrix(basis_vecs)
             try:
                 s = mat.solve_left(vec)
-            except ValueError: # no solution
+            except ValueError:  # no solution
                 basis.append(m)
                 basis_vecs.append(vec)
                 terminate = False
@@ -2657,9 +2656,9 @@ class IntegralAffineCurve_finite_field(IntegralAffineCurve):
         for place in places_above:
             try:
                 p = self.place_to_closed_point(place)
-            except ValueError: # place is at infinity
+            except ValueError:  # place is at infinity
                 continue
-            assert p.degree() == degree # sanity check
+            assert p.degree() == degree  # sanity check
             points.append(p)
 
         return points

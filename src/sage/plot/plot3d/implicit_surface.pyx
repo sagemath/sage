@@ -81,8 +81,6 @@ cimport numpy as np
 import numpy as np
 
 from sage.plot.plot3d.transform cimport point_c, face_c, color_c, Transformation
-from sage.plot.plot3d.base cimport PrimitiveObject
-from sage.plot.plot3d.base import RenderParams, default_texture
 from sage.plot.plot3d.index_face_set cimport IndexFaceSet
 from sage.rings.real_double import RDF
 from sage.plot.misc import setup_for_eval_on_grid
@@ -495,8 +493,8 @@ cdef class MarchingCubesTriangles(MarchingCubes):
         cdef bint has_nan
         cdef point_c gradients[2]
         cdef int i
-        for y from 0 <= y < ny - 1:
-            for z from 0 <= z < nz:
+        for y in range(ny - 1):
+            for z in range(nz):
                 if marching_has_edge(cur[y,z], cur[y+1,z], self.contour, &frac, &has_nan):
                     v = mk_VertexInfo(x, y+frac, z, &self.eval_min, &self.eval_scale)
                     if self.region is not None:
@@ -509,7 +507,7 @@ cdef class MarchingCubesTriangles(MarchingCubes):
                             self.apply_point_func(&v.gradient, self.gradient, v)
                         else:
                             # Use central differencing.
-                            for i from 0 <= i < 2:
+                            for i in range(2):
                                 self.get_gradient(&gradients[i],
                                                    x, y+i, z,
                                                    cur[y+i,z],
@@ -529,8 +527,8 @@ cdef class MarchingCubesTriangles(MarchingCubes):
 
         # OK, that updated the Y vertices.  Now we do almost exactly
         # the same thing to update Z vertices.
-        for y from 0 <= y < ny:
-            for z from 0 <= z < nz - 1:
+        for y in range(ny):
+            for z in range(nz - 1):
                 if marching_has_edge(cur[y,z], cur[y,z+1], self.contour, &frac, &has_nan):
                     v = mk_VertexInfo(x, y, z+frac, &self.eval_min, &self.eval_scale)
                     if self.region is not None:
@@ -543,7 +541,7 @@ cdef class MarchingCubesTriangles(MarchingCubes):
                             self.apply_point_func(&v.gradient, self.gradient, v)
                         else:
                             # Use central differencing.
-                            for i from 0 <= i < 2:
+                            for i in range(2):
                                 self.get_gradient(&gradients[i],
                                                    x, y, z+i,
                                                    cur[y,z+i],
@@ -596,8 +594,8 @@ cdef class MarchingCubesTriangles(MarchingCubes):
         cdef double frac
         cdef bint has_nan
         cdef point_c gradients[2]
-        for y from 0 <= y < ny:
-            for z from 0 <= z < nz:
+        for y in range(ny):
+            for z in range(nz):
                 if marching_has_edge(left[y,z], right[y,z], self.contour, &frac, &has_nan):
                     v = mk_VertexInfo(x+frac, y, z, &self.eval_min, &self.eval_scale)
                     if self.region is not None:
@@ -746,8 +744,8 @@ cdef class MarchingCubesTriangles(MarchingCubes):
 
         cdef int i
 
-        for y from 0 <= y < ny-1:
-            for z from 0 <= z < nz-1:
+        for y in range(ny - 1):
+            for z in range(nz - 1):
                 # For each vertex (0 to 7), set the corresponding bit
                 # of insideMask iff the vertex is inside the surface.
                 insideMask = 0
@@ -910,13 +908,13 @@ cpdef render_implicit(f, xrange, yrange, zrange, plot_points, cube_marchers):
 
     cdef MarchingCubes marcher
 
-    for n from 0 <= n < nx:
+    for n in range(nx):
         x = nx-1-n
         eval_x = eval_min.x + eval_scale.x * x
         slice = data[n % 4, :, :]
-        for y from 0 <= y < ny:
+        for y in range(ny):
             eval_y = eval_min.y + eval_scale.y * y
-            for z from 0 <= z < nz:
+            for z in range(nz):
                 eval_z = eval_min.z + eval_scale.z * z
                 slice[y, z] = f(eval_x, eval_y, eval_z)
 
@@ -1219,7 +1217,7 @@ cdef class ImplicitSurface(IndexFaceSet):
             int fcount = len(results)
 
         self.realloc(fcount * 3, fcount, fcount * 3)
-        for i from 0 <= i < fcount:
+        for i in range(fcount):
             dest_face = &self._faces[i]
             src_face = results[i]
 
@@ -1235,7 +1233,7 @@ cdef class ImplicitSurface(IndexFaceSet):
                 # ct is the mean of the colors of vertices
                 dest_face.color.r, dest_face.color.g, dest_face.color.b = ct
 
-            for j from 0 <= j < 3:
+            for j in range(3):
                 dest_face.vertices[j] = (3 * i) + j
                 dest_vertex = &self.vs[(3 * i) + j]
                 dest_vertex.x = src_face[j]['x']

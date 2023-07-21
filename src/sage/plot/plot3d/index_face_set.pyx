@@ -32,9 +32,8 @@ AUTHORS:
 # ****************************************************************************
 
 from textwrap import dedent
-from sage.misc.superseded import deprecation_cython as deprecation
 
-from libc.math cimport isfinite, INFINITY
+from libc.math cimport INFINITY
 from libc.string cimport memset, memcpy
 from cysignals.memory cimport check_calloc, check_allocarray, check_reallocarray, sig_free
 from cysignals.signals cimport sig_check, sig_on, sig_off
@@ -53,15 +52,10 @@ from cpython.bytes cimport *
 
 include "point_c.pxi"
 
-
-from math import sin, cos, sqrt
-from random import randint
-
 from sage.cpython.string cimport bytes_to_str
 
 from sage.rings.real_double import RDF
 
-from sage.matrix.constructor import matrix
 from sage.modules.free_module_element import vector
 
 from sage.plot.colors import Color, float_to_integer
@@ -184,7 +178,7 @@ cdef inline format_pmesh_face(face_c face, int has_color):
         # Naive triangulation
         all = []
         if has_color == 1:
-            for i from 1 <= i < face.n - 1:
+            for i in range(1, face.n - 1):
                 r = sprintf_5i(ss, "%d\n%d\n%d\n%d\n%d", has_color * 4,
                                face.vertices[0],
                                face.vertices[i],
@@ -192,7 +186,7 @@ cdef inline format_pmesh_face(face_c face, int has_color):
                                face.vertices[0])
                 PyList_Append(all, PyBytes_FromStringAndSize(ss, r))
         else:
-            for i from 1 <= i < face.n - 1:
+            for i in range(1, face.n - 1):
                 r = sprintf_6i(ss, "%d\n%d\n%d\n%d\n%d\n%d", has_color * 4,
                                face.vertices[0],
                                face.vertices[i],
@@ -375,16 +369,16 @@ cdef class IndexFaceSet(PrimitiveObject):
 
         cdef Py_ssize_t i
         cdef Py_ssize_t index_len = 0
-        for i from 0 <= i < len(faces):
+        for i in range(len(faces)):
             index_len += len(faces[i])
 
         self.realloc(len(point_list), len(faces), index_len)
 
-        for i from 0 <= i < self.vcount:
+        for i in range(self.vcount):
             self.vs[i].x, self.vs[i].y, self.vs[i].z = point_list[i]
 
         cdef int cur_pt = 0
-        for i from 0 <= i < self.fcount:
+        for i in range(self.fcount):
             self._faces[i].n = len(faces[i])
             self._faces[i].vertices = &self.face_indices[cur_pt]
             if self.global_texture:
@@ -523,15 +517,15 @@ cdef class IndexFaceSet(PrimitiveObject):
         cdef int* point_counts = <int *>check_calloc(self.vcount * 2 + 1, sizeof(int))
         # For each vertex, get number of faces
         cdef int* running_point_counts = &point_counts[self.vcount]
-        for i from 0 <= i < self.fcount:
+        for i in range(self.fcount):
             face = &self._faces[i]
             total += face.n
-            for j from 0 <= j < face.n:
+            for j in range(face.n):
                 point_counts[face.vertices[j]] += 1
         # Running used as index into face list
         cdef int running = 0
         cdef int max = 0
-        for i from 0 <= i < self.vcount:
+        for i in range(self.vcount):
             running_point_counts[i] = running
             running += point_counts[i]
             if point_counts[i] > max:
@@ -546,9 +540,9 @@ cdef class IndexFaceSet(PrimitiveObject):
             raise
         sig_on()
         memset(point_counts, 0, sizeof(int) * self.vcount)
-        for i from 0 <= i < self.fcount:
+        for i in range(self.fcount):
             face = &self._faces[i]
-            for j from 0 <= j < face.n:
+            for j in range(face.n):
                 v = face.vertices[j]
                 point_faces[running_point_counts[v]+point_counts[v]] = face
                 point_counts[v] += 1
@@ -563,7 +557,7 @@ cdef class IndexFaceSet(PrimitiveObject):
         while start < self.vcount:
             ix = self.vcount
             # Find creases
-            for i from 0 <= i < self.vcount - start:
+            for i in range(self.vcount - start):
                 faces = &point_faces[running_point_counts[i]]
                 any = 0
                 for j from point_counts[i] > j >= 1:
@@ -588,17 +582,17 @@ cdef class IndexFaceSet(PrimitiveObject):
                     raise
                 ix = self.vcount
                 running = 0
-                for i from 0 <= i < self.vcount - start:
+                for i in range(self.vcount - start):
                     if point_counts[i] != running_point_counts[i+1] - running_point_counts[i]:
                         # We have a new vertex
                         self.vs[ix] = self.vs[i+start]
                         # Update the point_counts and point_faces arrays for the next time around.
                         count = running_point_counts[i+1] - running_point_counts[i] - point_counts[i]
                         faces = &point_faces[running]
-                        for j from 0 <= j < count:
+                        for j in range(count):
                             faces[j] = point_faces[running_point_counts[i] + point_counts[i] + j]
                             face = faces[j]
-                            for k from 0 <= k < face.n:
+                            for k in range(face.n):
                                 if face.vertices[k] == i + start:
                                     face.vertices[k] = ix
                         point_counts[ix-self.vcount] = count
@@ -659,8 +653,8 @@ cdef class IndexFaceSet(PrimitiveObject):
         """
         cdef Py_ssize_t i, j
         return [[self._faces[i].vertices[j]
-                 for j from 0 <= j < self._faces[i].n]
-                for i from 0 <= i < self.fcount]
+                 for j in range(self._faces[i].n)]
+                for i in range(self.fcount)]
 
     def has_local_colors(self):
         """
@@ -725,11 +719,11 @@ cdef class IndexFaceSet(PrimitiveObject):
         if self.global_texture:
             raise ValueError('the texture is global')
         return [([self._faces[i].vertices[j]
-                  for j from 0 <= j < self._faces[i].n],
+                  for j in range(self._faces[i].n)],
                  Color(self._faces[i].color.r,
                        self._faces[i].color.g,
                        self._faces[i].color.b).html_color())
-                for i from 0 <= i < self.fcount]
+                for i in range(self.fcount)]
 
     def faces(self):
         """
@@ -950,10 +944,10 @@ cdef class IndexFaceSet(PrimitiveObject):
         cdef int *partition = <int *>check_allocarray(self.fcount, sizeof(int))
 
         part_counts = {}
-        for i from 0 <= i < self.fcount:
+        for i in range(self.fcount):
             face = &self._faces[i]
             P = self.vs[face.vertices[0]]
-            for j from 1 <= j < face.n:
+            for j in range(1, face.n):
                 point_c_add(&P, P, self.vs[face.vertices[j]])
             point_c_mul(&P, P, 1.0/face.n)
             partition[i] = part = f(P.x, P.y, P.z)
@@ -970,13 +964,13 @@ cdef class IndexFaceSet(PrimitiveObject):
             memcpy(face_set.vs, self.vs, sizeof(point_c) * self.vcount)
             face_ix = 0
             ix = 0
-            for i from 0 <= i < self.fcount:
+            for i in range(self.fcount):
                 if partition[i] == part:
                     face = &self._faces[i]
                     new_face = &face_set._faces[face_ix]
                     new_face.n = face.n
                     new_face.vertices = &face_set.face_indices[ix]
-                    for j from 0 <= j < face.n:
+                    for j in range(face.n):
                         new_face.vertices[j] = face.vertices[j]
                     face_ix += 1
                     ix += face.n
@@ -1232,7 +1226,7 @@ cdef class IndexFaceSet(PrimitiveObject):
         cdef face_c face
         cdef Py_ssize_t i, k
         sig_on()
-        for i from 0 <= i < self.fcount:
+        for i in range(self.fcount):
             face = self._faces[i]
             if transform is not None:
                 transform.transform_point_c(&P, self.vs[face.vertices[0]])
@@ -1248,7 +1242,7 @@ cdef class IndexFaceSet(PrimitiveObject):
             else:
                 PyList_Append(lines, format_tachyon_texture(face.color))
             if face.n > 3:
-                for k from 3 <= k < face.n:
+                for k in range(3, face.n):
                     Q = R
                     if transform is not None:
                         transform.transform_point_c(&R, self.vs[face.vertices[k]])
@@ -1296,7 +1290,7 @@ cdef class IndexFaceSet(PrimitiveObject):
                          for i in range(self.vcount)))
         else:
             vertices_str = "["
-            for i from 0 <= i < self.vcount:
+            for i in range(self.vcount):
                 transform.transform_point_c(&res, self.vs[i])
                 if i > 0:
                     vertices_str += ","
@@ -1414,7 +1408,7 @@ cdef class IndexFaceSet(PrimitiveObject):
         vertices = []
         cdef Transformation transform = render_params.transform
         cdef point_c res
-        for i from 0 <= i < self.vcount:
+        for i in range(self.vcount):
             if transform is None:
                 res = self.vs[i]
             else:
@@ -1424,16 +1418,16 @@ cdef class IndexFaceSet(PrimitiveObject):
 
         faces = []
         cdef face_c face
-        for i from 0 <= i < self.fcount:
+        for i in range(self.fcount):
             face = self._faces[i]
-            faces.append([int(face.vertices[j]) for j from 0 <= j < face.n])
+            faces.append([int(face.vertices[j]) for j in range(face.n)])
         surface['faces'] = faces
 
         if self.global_texture:
             surface['color'] = '#' + str(self.texture.hex_rgb())
         else:
             face_colors = []
-            for i from 0 <= i < self.fcount:
+            for i in range(self.fcount):
                 face = self._faces[i]
                 color = Color(face.color.r, face.color.g, face.color.b)
                 face_colors.append(str(color.html_color()))
@@ -1478,16 +1472,16 @@ cdef class IndexFaceSet(PrimitiveObject):
 
         sig_on()
         if transform is None:
-            points = [format_obj_vertex(self.vs[i]) for i from 0 <= i < self.vcount]
+            points = [format_obj_vertex(self.vs[i]) for i in range(self.vcount)]
         else:
             points = []
-            for i from 0 <= i < self.vcount:
+            for i in range(self.vcount):
                 transform.transform_point_c(&res, self.vs[i])
                 PyList_Append(points, format_obj_vertex(res))
 
-        faces = [format_obj_face(self._faces[i], off) for i from 0 <= i < self.fcount]
+        faces = [format_obj_face(self._faces[i], off) for i in range(self.fcount)]
         if not self.enclosed:
-            back_faces = [format_obj_face_back(self._faces[i], off) for i from 0 <= i < self.fcount]
+            back_faces = [format_obj_face_back(self._faces[i], off) for i in range(self.fcount)]
         else:
             back_faces = []
 
@@ -1519,25 +1513,25 @@ cdef class IndexFaceSet(PrimitiveObject):
         sig_on()
         if transform is None:
             points = [format_pmesh_vertex(self.vs[i])
-                      for i from 0 <= i < self.vcount]
+                      for i in range(self.vcount)]
         else:
             points = []
-            for i from 0 <= i < self.vcount:
+            for i in range(self.vcount):
                 transform.transform_point_c(&res, self.vs[i])
                 PyList_Append(points, format_pmesh_vertex(res))
 
         # activation of coloring in jmol
         if self.global_texture:
             faces = [format_pmesh_face(self._faces[i], 1)
-                     for i from 0 <= i < self.fcount]
+                     for i in range(self.fcount)]
         else:
             faces = [format_pmesh_face(self._faces[i], -1)
-                     for i from 0 <= i < self.fcount]
+                     for i in range(self.fcount)]
 
         # If a face has more than 4 vertices, it gets chopped up in
         # format_pmesh_face
         cdef Py_ssize_t extra_faces = 0
-        for i from 0 <= i < self.fcount:
+        for i in range(self.fcount):
             if self._faces[i].n >= 5:
                 extra_faces += self._faces[i].n-3
 
@@ -1637,9 +1631,7 @@ cdef class IndexFaceSet(PrimitiveObject):
             sage: T = S.dual()
             sage: len(T.vertex_list())
             6
-
         """
-        cdef point_c P
         cdef face_c *face
         cdef Py_ssize_t i, j, ix, ff
         cdef IndexFaceSet dual = IndexFaceSet([], **kwds)
@@ -1649,14 +1641,14 @@ cdef class IndexFaceSet(PrimitiveObject):
         dual.realloc(self.fcount, self.vcount, self.icount)
 
         # is using dicts overly-heavy?
-        dual_faces = [{} for i from 0 <= i < self.vcount]
+        dual_faces = [{} for i in range(self.vcount)]
 
-        for i from 0 <= i < self.fcount:
+        for i in range(self.fcount):
             sig_check()
             # Let the vertex be centered on the face according to a simple average
             face = &self._faces[i]
             dual.vs[i] = self.vs[face.vertices[0]]
-            for j from 1 <= j < face.n:
+            for j in range(1, face.n):
                 point_c_add(&dual.vs[i], dual.vs[i], self.vs[face.vertices[j]])
             point_c_mul(&dual.vs[i], dual.vs[i], 1.0/face.n)
 
@@ -1684,7 +1676,7 @@ cdef class IndexFaceSet(PrimitiveObject):
             face.vertices = &dual.face_indices[ix]
             ff, next_ = next(iter(dd.itervalues()))
             face.vertices[0] = ff
-            for j from 1 <= j < face.n:
+            for j in range(1, face.n):
                 ff, next_ = dd[next_]
                 face.vertices[j] = ff
             i += 1
@@ -1772,7 +1764,7 @@ cdef class FaceIter:
             raise StopIteration
         else:
             face = []
-            for j from 0 <= j < self.set._faces[self.i].n:
+            for j in range(self.set._faces[self.i].n):
                 P = self.set.vs[self.set._faces[self.i].vertices[j]]
                 PyList_Append(face, (P.x, P.y, P.z))
             self.i += 1

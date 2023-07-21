@@ -175,7 +175,7 @@ class PieriFactors(UniqueRepresentation, Parent):
         """
         return iter(self.elements())
 
-    def generating_series(self, weight = None):
+    def generating_series(self, weight=None):
         r"""
         Return a length generating series for the elements of ``self``.
 
@@ -755,7 +755,7 @@ class PieriFactors_type_A_affine(PieriFactors_affine_type):
         if self._min_length == len(self._min_support) and self._max_length == len(self._max_support) -1:
             return Integer(2**(len(self._extra_support)) - 1)
         else:
-            return self.generating_series(weight = ConstantFunction(1))
+            return self.generating_series(weight=ConstantFunction(1))
 
     def generating_series(self, weight=None):
         r"""

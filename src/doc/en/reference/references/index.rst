@@ -43,6 +43,10 @@ REFERENCES:
             University of New South Wales,
             1995
 
+.. [Ab2022] Willie Aboumrad,
+        *Quantum compution with anyons: an F-matrix and braid calculator*
+        (2022). https://arxiv.org/abs/2212.00831
+
 .. [AB2007] \M. Aschenbrenner, C. Hillar,
             *Finite generation of symmetric ideals*.
             Trans. Amer. Math. Soc. 359 (2007), no. 11, 5171--5192.
@@ -1123,6 +1127,10 @@ REFERENCES:
             Achtzelle (Oktatope)", Verhand. Konik. Akad. Wetenschap,
             Erste Sectie, 10 (1910)
 
+.. [BR1998] Georgia Benkart and Tom Roby. *Down-up algebras*.
+            J. Algebra, **209** no. 1 (1999), pp. 305-335.
+            :doi:`10.1006/jabr.1998.7511`.
+
 .. [Br2000] Kenneth S. Brown, *Semigroups, rings, and Markov chains*,
             :arxiv:`math/0006145v1`.
 
@@ -1486,6 +1494,9 @@ REFERENCES:
 .. [Conr] Keith Conrad, "Artin-Hasse-Type Series and Roots of Unity",
           http://www.math.uconn.edu/~kconrad/blurbs/gradnumthy/AHrootofunity.pdf
 
+.. [Coron2023] Basile Coron *Supersolvability of built lattices and Koszulness
+               of generalized Chow rings*. Preprint, :arxiv:`2302.13072` (2023).
+
 .. [CGMRV16] \A. Conte, R. Grossi, A. Marino, R. Rizzi, L. Versari,
              "Directing Road Networks by Listing Strong Orientations.",
              Combinatorial Algorithms, Proceedings of 27th International Workshop,
@@ -1611,6 +1622,10 @@ REFERENCES:
              cluster complexes, and generalized multi-associahedra*,
              \J. Algebr. Comb. **39** (2014) pp. 17-51.
              :doi:`10.1007/s10801-013-0437-x`, :arxiv:`1108.1776`.
+
+.. [CM2000] Paula A.A.B. Carvalho and Ian M. Musson. *Down-up algebras and
+            their representation theory*. J. Algebra. **228** no. 1, (2000),
+            pp. 286-310. :doi:`10.1006/jabr.1999.8263`
 
 .. [CM2012] \M. Cabanes, I. Marin, *On ternary quotients of cubic Hecke
              algebras*, Comm. Math. Phys. (2012), Volume 314, Issue 1,
@@ -1885,7 +1900,11 @@ REFERENCES:
 .. [CW2005] \J. E. Cremona and M. Watkins. Computing isogenies of elliptic
             curves. preprint, 2005.
 
+<<<<<<< HEAD
 .. [CHW2015] Shawn X.; Hong, Seung-Moon; Wang, Zhenghan Universal quantum computation
+=======
+.. [CHW2015] Cui, Shawn X.; Hong, Seung-Moon; Wang, Zhenghan Universal quantum computation
+>>>>>>> develop
              with weakly integral anyons. Quantum Inf. Process. 14 (2015),
              no. 8, 2687-2727.
 
@@ -2005,6 +2024,11 @@ REFERENCES:
 
 .. [DeVi1984] \M.-P. Delest, and G. Viennot, *Algebraic Languages and
               Polyominoes Enumeration.* Theoret. Comput. Sci. 34, 169-206, 1984.
+
+.. [DJP2014] Luca De Feo, David Jao and Jérôme Plût: Towards quantum-resistant
+             cryptosystems from supersingular elliptic curve isogenies. Journal
+             of Mathematical Cryptology, vol. 8, no. 3, 2014, pp. 209-247.
+             https://eprint.iacr.org/2011/506.pdf
 
 .. [DFMS1996] Philipppe Di Francesco, Pierre Mathieu, and David Sénéchal.
               *Conformal Field Theory*. Graduate Texts in Contemporary
@@ -2700,6 +2724,14 @@ REFERENCES:
 .. [GJ2007] \A. Glen, J. Justin, Episturmian words: a survey, Preprint,
             2007, :arxiv:`0801.1655`.
 
+.. [Goff1999] Christopher Goff. *Isomorphic fusion algebras of twisted quantum
+              doubles of finite groups*. PhD Thesis,
+              University of California, Santa Cruz. 1999.
+
+.. [GoMa2010] Christopher Goff and Geoffrey Mason, 
+            *Generalized twisted quantum doubles and the McKay correspondence*,
+            J. Algebra 324 (2010), no. 11, 3007–3016. 
+
 .. [GJ2016] Muddappa Seetharama Gowda and Juyoung Jeong.
             Spectral cones in Euclidean Jordan algebras.
             Linear Algebra and its Applications, 509:286-305, 2016.
@@ -3009,6 +3041,9 @@ REFERENCES:
 .. [Har1977] \R. Hartshorne. Algebraic Geometry. Springer-Verlag, New York, 1977.
 
 .. [Har1994] Frank Harary. *Graph Theory*. Reading, MA: Addison-Wesley, 1994.
+
+.. [Har2009] Harvey, David. *Efficient computation of p-adic heights*.
+             LMS J. Comput. Math. **11** (2008), 40–59.
 
 .. [Harako2020] Shuichi Harako. *The second homology group of the commutative
                 case of Kontsevich's symplectic derivation Lie algebra*.
@@ -3923,7 +3958,7 @@ REFERENCES:
              set as the intersection of super greedy linear extensions. Order 4,
              293-311 (1987).
              :doi:`10.1007/BF00337892`
-             
+
 .. [Kuh1987] \W. Kühnel, "Minimal triangulations of Kummer varieties",
              Abh. Math. Sem. Univ. Hamburg 57 (1987), 7-20.
 
@@ -4187,7 +4222,7 @@ REFERENCES:
              889-929. :doi:`10.1090/mcom/3358`.
 
 .. [Lon2013] \S. London,
-            *Constructing New Turyn Type Sequences, T-Sequences and Hadamard Matrices*. 
+            *Constructing New Turyn Type Sequences, T-Sequences and Hadamard Matrices*.
             PhD Thesis, University of Illinois at Chicago, 2013.
             https://hdl.handle.net/10027/9916
 
@@ -4428,6 +4463,10 @@ REFERENCES:
 
 .. [Mat2002] Jiří Matousek, "Lectures on Discrete Geometry", Springer,
              2002
+
+.. [Mas1995] Mason, Geoffrey. *The quantum double of a finite group and its role
+             in conformal field theory*. Groups '93 Galway/St. Andrews, Vol. 2,
+             405-417, London Math. Soc. Lecture Note Ser., 212, Cambridge, 1995.
 
 .. [Ma2009] Sarah Mason, An Explicit Construction of Type A Demazure
             Atoms, Journal of Algebraic Combinatorics, Vol. 29,
@@ -4705,17 +4744,21 @@ REFERENCES:
               sharpening of the Parikh mapping*. Theoret. Informatics Appl. 35
               (2001) 551-564.
 
+.. [MST2006] Barry Mazur, William Stein, John Tate.
+             *Computation of p-adic heights and log convergence*.
+             Doc. Math. 2006, Extra Vol., 577-614.
+
 .. [MSZ2013] Michael Maschler, Solan Eilon, and Zamir Shmuel. *Game
              Theory*. Cambridge: Cambridge University Press,
              (2013). ISBN 9781107005488.
 
-.. [MT1991] Mazur, B., & Tate, J. (1991). The `p`-adic sigma
-            function. Duke Mathematical Journal, 62(3), 663-688.
+.. [MT1991] Mazur, B., & Tate, J. (1991). *The `p`-adic sigma
+            function*. Duke Mathematical Journal, **62** (3), 663-688.
 
-.. [MTT1986] \B. Mazur, J. Tate, and J. Teitelbaum, On `p`-adic
-             analogues of the conjectures of Birch and
-             Swinnerton-Dyer, Inventiones Mathematicae 84, (1986),
-             1-48.
+.. [MTT1986] \B. Mazur, J. Tate, and J. Teitelbaum,
+             *On `p`-adic analogues of the conjectures of Birch and
+             Swinnerton-Dyer*,
+             Inventiones Mathematicae **84**, (1986), 1-48.
 
 .. [Mu1997] Murty, M. Ram. *Congruences between modular forms*. In "Analytic
             Number Theory" (ed. Y. Motohashi), London Math. Soc. Lecture Notes
@@ -4906,6 +4949,11 @@ REFERENCES:
 .. [Or2018b] \M. Orlitzky. Positive and Z-operators on closed convex cones.
              Electronic Journal of Linear Algebra, 34:444-458, 2018,
              :doi:`10.13001/1081-3810.3782`.
+
+.. [ORS2013] Peter Ozsvath, Jacob Rasmussen, Zoltan Szabo,
+             *Odd Khovanov homology*,
+             Algebraic & Geometric Topology 13 (2013) 1465–1488,
+             :doi:`10.2140/agt.2013.13.1465`.
 
 .. [ORV] Grigori Olshanski, Amitai Regev, Anatoly Vershik,
          *Frobenius-Schur functions*,
@@ -5426,6 +5474,9 @@ REFERENCES:
 .. [Sch1996] \E. Schaefer. A simplified data encryption
              algorithm. Cryptologia, 20(1):77--84, 1996.
 
+.. [Scha1996] Richard D. Schaefer. *An Introduction to Nonassociative Algebras*.
+              Dover, New York, 1996.
+
 .. [Sch1999] Gilles Schaeffer, *Random Sampling of Large Planar Maps and Convex
              Polyhedra*, Annual ACM Symposium on Theory of Computing
              (Atlanta, GA, 1999). :doi:`10.1145/301250.301448`.
@@ -5599,7 +5650,7 @@ REFERENCES:
              Journal of Cryptology. 12. 193-196. 1999.
              :doi:`10.1007/s001459900052`.
 
-.. [Smi2023] \D. Smith, J. S. Myers, C. S. Kaplan and C. Goodman-Strauss, 
+.. [Smi2023] \D. Smith, J. S. Myers, C. S. Kaplan and C. Goodman-Strauss,
              *An aperiodic monotile*,
              :arxiv:`2303.10798`
 
@@ -6082,6 +6133,10 @@ REFERENCES:
 
 .. [TOPCOM] \J. Rambau, TOPCOM
             <http://www.rambau.wm.uni-bayreuth.de/TOPCOM/>.
+
+.. [TT2023] Tan Nhat Tran and Shuhei Tsujie.
+            *A type B analog of Ish arrangement*.
+            Preprint, :arxiv:`2304.12022`. (2023)
 
 .. [TTWL2009] Trebst, Troyer, Wang and Ludwig, A short introduction to
               Fibonacci anyon models, :arxiv:`0902.3275`.

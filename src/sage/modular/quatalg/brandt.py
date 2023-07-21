@@ -399,7 +399,7 @@ def basis_for_left_ideal(R, gens):
         sage: sage.modular.quatalg.brandt.basis_for_left_ideal(B.maximal_order(), [3*(i+j),3*(i-j),6*k,A(3)])
         [3/2 + 1/2*i + k, i + 2*k, 3/2*j + 3/2*k, 3*k]
     """
-    return basis_for_quaternion_lattice([b * g for b in R.basis() for g in gens])
+    return basis_for_quaternion_lattice([b * g for b in R.basis() for g in gens], reverse=False)
 
 
 def right_order(R, basis):
@@ -876,7 +876,7 @@ class BrandtModule_class(AmbientHeckeModule):
         """
         if not Integer(p).is_prime():
             raise ValueError("p must be a prime")
-        if not(self.level() % p):
+        if not self.level() % p:
             raise ValueError("p must be coprime to the level")
 
         R = self.order_of_level_N()
@@ -922,7 +922,7 @@ class BrandtModule_class(AmbientHeckeModule):
                     v = [A(1), alpha, beta, alpha * beta]
                     M = rational_matrix_from_rational_quaternions(v)
                     e = M.determinant()
-                    if e and not((d / e).valuation(p)):
+                    if e and not (d / e).valuation(p):
                         S = A.quaternion_order(v)
                         break
                 if S is not None:
@@ -1177,7 +1177,7 @@ class BrandtModule_class(AmbientHeckeModule):
         for r in range(len(C)):
             percent_done = 100 * r // len(C)
             if percent_done != last_percent:
-                if not(percent_done % 5):
+                if not percent_done % 5:
                     verbose("percent done: %s" % percent_done)
                 last_percent = percent_done
             if use_fast_alg:
@@ -1296,7 +1296,7 @@ class BrandtModule_class(AmbientHeckeModule):
         """
         level = self.level()
         p = ZZ(2)
-        while not(level % p):
+        while not level % p:
             p = next_prime(p)
         return p
 
@@ -1555,7 +1555,7 @@ class BrandtModule_class(AmbientHeckeModule):
         p = Integer(2)
         N = self.level()
         while V.dimension() >= 2:
-            while not(N % p):
+            while not N % p:
                 p = p.next_prime()
             A = V.T(p) - (p + 1)
             V = A.kernel()
@@ -1690,7 +1690,7 @@ def benchmark_sage(levels, silent=False):
         ('sage', 43, 2, ...)
         ('sage', 97, 2, ...)
     """
-    from sage.misc.misc import cputime
+    from sage.misc.timing import cputime
     ans = []
     for p, M in levels:
         t = cputime()

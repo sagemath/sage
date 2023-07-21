@@ -97,6 +97,6 @@ cdef wrapperdescr_fastcall(wrapper_descriptor slotwrapper, self, args, kwds):
 
     if <PyObject*>kwds is not NULL and kwds:
         raise TypeError(f"wrapper {bytes_to_str(slotdef.name)} slotdef "
-                         "doesn't take keyword arguments")
+                        "doesn't take keyword arguments")
 
     return slotdef.wrapper(self, args, slotwrapper.d_wrapped)

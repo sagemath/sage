@@ -82,11 +82,11 @@ class FormsSpace_abstract(FormsRing_abstract):
             sage: MF.is_homogeneous()
             True
         """
-        #from space import canonical_parameters
-        #(group, base_ring, k, ep, n) = canonical_parameters(group, base_ring, k, ep, n)
+        # from space import canonical_parameters
+        # (group, base_ring, k, ep, n) = canonical_parameters(group, base_ring, k, ep, n)
 
         super().__init__(group=group, base_ring=base_ring, red_hom=True, n=n)
-        #self.register_embedding(self.hom(lambda f: f.parent().graded_ring()(f), codomain=self.graded_ring()))
+        # self.register_embedding(self.hom(lambda f: f.parent().graded_ring()(f), codomain=self.graded_ring()))
 
         self._weight = k
         self._ep = ep
@@ -571,14 +571,13 @@ class FormsSpace_abstract(FormsRing_abstract):
             sage: el.parent() == subspace
             True
         """
-
         if not self.module():
-            raise ValueError("No free module defined for {}".format(self))
+            raise ValueError(f"no free module defined for {self}")
         basis = self.gens()
-        assert(len(basis) == len(vec))
+        assert len(basis) == len(vec)
         # vec = self.module()(self.module().linear_combination_of_basis(vec))
         # this also handles the trivial case (dimension 0)
-        return self(sum([vec[k]*basis[k] for k in range(0, len(vec))]))
+        return self(sum([vec[k] * basis[k] for k in range(len(vec))]))
 
     def element_from_ambient_coordinates(self, vec):
         r"""
@@ -835,7 +834,7 @@ class FormsSpace_abstract(FormsRing_abstract):
 
         return new_space(rat)
 
-    def Faber_pol(self, m, order_1=ZZ(0), fix_d = False, d_num_prec = None):
+    def Faber_pol(self, m, order_1=ZZ(0), fix_d=False, d_num_prec=None):
         r"""
         Return the ``m``'th Faber polynomial of ``self``.
 
@@ -967,7 +966,7 @@ class FormsSpace_abstract(FormsRing_abstract):
         J_qexp = self.J_inv().q_expansion(prec=order_inf - m, fix_d=fix_d, d_num_prec=d_num_prec)
 
         # The precision could be infinity, otherwise we could do this:
-        #assert(temp_reminder.prec() == 1)
+        # assert temp_reminder.prec() == 1
         temp_reminder = (1 / simple_qexp / q**(-m)).add_bigoh(1)
 
         fab_pol = q.parent()([])
@@ -985,7 +984,7 @@ class FormsSpace_abstract(FormsRing_abstract):
         return fab_pol.polynomial()
 
     # very similar to Faber_pol: faber_pol(q)=Faber_pol(d*q)
-    def faber_pol(self, m, order_1=ZZ(0), fix_d = False, d_num_prec = None):
+    def faber_pol(self, m, order_1=ZZ(0), fix_d=False, d_num_prec=None):
         r"""
         If ``n=infinity`` a non-trivial order of ``-1`` can be specified through the
         parameter ``order_1`` (default: 0). Otherwise it is ignored.
@@ -1109,7 +1108,7 @@ class FormsSpace_abstract(FormsRing_abstract):
         j_qexp = self.j_inv().q_expansion(prec=order_inf - m, fix_d=fix_d, d_num_prec=d_num_prec)
 
         # The precision could be infinity, otherwise we could do this:
-        #assert(temp_reminder.prec() == 1)
+        # assert temp_reminder.prec() == 1
         temp_reminder = (1 / simple_qexp / q**(-m)).add_bigoh(1)
 
         fab_pol = q.parent()([])
@@ -1121,8 +1120,8 @@ class FormsSpace_abstract(FormsRing_abstract):
             temp_reminder -= temp_coeff*j_qexp**temp_exp
             # The first term is zero only up to numerical errors,
             # so we manually have to remove it
-            if (not d.parent().is_exact()):
-                temp_reminder=temp_reminder.truncate_neg(-temp_exp+1)
+            if not d.parent().is_exact():
+                temp_reminder = temp_reminder.truncate_neg(-temp_exp+1)
 
         return fab_pol.polynomial()
 
@@ -2042,7 +2041,7 @@ class FormsSpace_abstract(FormsRing_abstract):
 
             el = self(sum([b[k]*basis[k] for k in range(0, len(basis))]))
         else:
-            A = self._quasi_form_matrix(min_exp = min_exp, order_1=order_1)
+            A = self._quasi_form_matrix(min_exp=min_exp, order_1=order_1)
             row_size = A.dimensions()[0]
 
             if (prec < min_exp + row_size):
@@ -2164,7 +2163,7 @@ class FormsSpace_abstract(FormsRing_abstract):
                 if (m >= row_len + min_exp):
                     raise ValueError("Index out of range: m={} >= {}=required_precision + min_exp".format(m, row_len + min_exp))
 
-                A = self._quasi_form_matrix(min_exp = min_exp, order_1=order_1)
+                A = self._quasi_form_matrix(min_exp=min_exp, order_1=order_1)
                 b = vector(self.coeff_ring(), row_len)
                 b[m - min_exp] = 1
                 try:
@@ -2180,7 +2179,7 @@ class FormsSpace_abstract(FormsRing_abstract):
 
                 return el
 
-    def rationalize_series(self, laurent_series, coeff_bound = 1e-10, denom_factor = ZZ(1)):
+    def rationalize_series(self, laurent_series, coeff_bound=1e-10, denom_factor=ZZ(1)):
         r"""
         Try to return a Laurent series with coefficients in ``self.coeff_ring()``
         that matches the given Laurent series.

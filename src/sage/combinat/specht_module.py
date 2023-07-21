@@ -24,6 +24,7 @@ from sage.rings.rational_field import QQ
 from sage.modules.with_basis.subquotient import SubmoduleWithBasis
 from sage.categories.modules_with_basis import ModulesWithBasis
 
+
 class SpechtModule(SubmoduleWithBasis):
     r"""
     A Specht module.
@@ -143,7 +144,7 @@ class SpechtModule(SubmoduleWithBasis):
         basis = SGA.echelon_form(span_set, False, order=support_order)
         basis = Family(basis)
         SubmoduleWithBasis.__init__(self, basis, support_order, ambient=SGA,
-                                     unitriangular=False, category=Mod.Subobjects())
+                                    unitriangular=False, category=Mod.Subobjects())
 
     def _repr_(self):
         r"""
@@ -335,6 +336,7 @@ class SpechtModule(SubmoduleWithBasis):
                     return P.retract(P._ambient(x) * self.lift())
             return None
 
+
 def _to_diagram(D):
     r"""
     Convert ``D`` to a list of cells representing a diagram.
@@ -372,6 +374,7 @@ def _to_diagram(D):
         D = [tuple(cell) for cell in D]
     return D
 
+
 def specht_module_spanning_set(D, SGA=None):
     r"""
     Return a spanning set of the Specht module of diagram ``D``.
@@ -394,6 +397,15 @@ def specht_module_spanning_set(D, SGA=None):
         sage: specht_module_spanning_set([(0,0), (1,1), (2,1)], SGA)
         (() - (2,3), -(1,2) + (1,3,2), (1,2,3) - (1,3),
          -() + (2,3), -(1,2,3) + (1,3), (1,2) - (1,3,2))
+
+    TESTS:
+
+    Verify that diagrams bigger than the rank work::
+
+        sage: specht_module_spanning_set([(0,0), (3,5)])
+        ([1, 2], [2, 1])
+        sage: specht_module_spanning_set([(0,0), (5,3)])
+        ([1, 2], [2, 1])
     """
     n = len(D)
     if SGA is None:
@@ -401,10 +413,12 @@ def specht_module_spanning_set(D, SGA=None):
         SGA = SymmetricGroupAlgebra(QQ, n)
     elif SGA.group().rank() != n - 1:
         raise ValueError("the rank does not match the size of the diagram")
-    row_diagram = [set() for _ in range(n)]
-    col_diagram = [set() for _ in range(n)]
-    for i,cell in enumerate(D):
-        x,y = cell
+    nr = max((c[0] for c in D), default=0) + 1
+    nc = max((c[1] for c in D), default=0) + 1
+    row_diagram = [set() for _ in range(nr)]
+    col_diagram = [set() for _ in range(nc)]
+    for i, cell in enumerate(D):
+        x, y = cell
         row_diagram[x].add(i)
         col_diagram[y].add(i)
     # Construct the row and column stabilizer elements
@@ -412,19 +426,20 @@ def specht_module_spanning_set(D, SGA=None):
     col_stab = SGA.zero()
     B = SGA.basis()
     for w in B.keys():
-            # Remember that the permutation w is 1-based
-            row_perm = [set() for _ in range(n)]
-            col_perm = [set() for _ in range(n)]
-            for i,cell in enumerate(D):
-                    x,y = cell
-                    row_perm[x].add(w(i+1)-1)
-                    col_perm[y].add(w(i+1)-1)
-            if row_diagram == row_perm:
-                    row_stab += B[w]
-            if col_diagram == col_perm:
-                    col_stab += w.sign() * B[w]
+        # Remember that the permutation w is 1-based
+        row_perm = [set() for _ in range(nr)]
+        col_perm = [set() for _ in range(nc)]
+        for i, cell in enumerate(D):
+            x, y = cell
+            row_perm[x].add(w(i + 1) - 1)
+            col_perm[y].add(w(i + 1) - 1)
+        if row_diagram == row_perm:
+            row_stab += B[w]
+        if col_diagram == col_perm:
+            col_stab += w.sign() * B[w]
     gen = col_stab * row_stab
     return tuple([b * gen for b in B])
+
 
 def specht_module_rank(D, base_ring=None):
     r"""

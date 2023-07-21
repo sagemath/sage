@@ -2095,7 +2095,7 @@ class FindStatCombinatorialStatistic(SageObject):
         if counter >= 4:
             if verbose:
                 print('Searching the OEIS for "%s"' % OEIS_string)
-            return oeis(str(OEIS_string)) # in python 2.7, oeis does not like unicode
+            return oeis(OEIS_string)
 
         if verbose:
             print("Too little information to search the OEIS for this statistic (only %s values given)." % counter)
@@ -2371,7 +2371,7 @@ class FindStatStatistic(Element,
             sage: s.set_description(u"Möbius")                                  # optional -- internet
             sage: s.submit()                                                    # optional -- webbrowser
         """
-        args = dict()
+        args = {}
         args["OriginalStatistic"] = self.id_str()
         args["Domain"]            = self.domain().id_str()
         args["Values"]            = self.first_terms_str(max_values=max_values)
@@ -4187,7 +4187,7 @@ class FindStatCollection(Element,
         EXAMPLES::
 
             sage: from sage.databases.findstat import FindStatCollections
-            sage: set(c for c in FindStatCollections())                         # optional -- internet
+            sage: set(FindStatCollections())           # optional -- internet
             {Cc0001: Permutations,
              Cc0002: Integer partitions,
              ...
@@ -4738,6 +4738,7 @@ class FindStatCollections(UniqueRepresentation, Parent):
 #                fields = "SageCodeElementToString,SageCodeElementsOnLevel,SageCodeStringToElement"
 #                url = FINDSTAT_API_COLLECTIONS + id + "?fields=" + fields
 #                print(json.load(urlopen(url))["included"]["Collections"][id])
+
         def position(item):
             try:
                 return tuple(_SupportedFindStatCollections).index(item[1]["NameWiki"])

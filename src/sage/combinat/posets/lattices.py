@@ -993,7 +993,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
             (False, 2)
         """
         if ((self.is_ranked() and len(self.meet_irreducibles()) == self.rank()) or
-            self.cardinality() == 0):
+                self.cardinality() == 0):
             return (True, None) if certificate else True
         if not certificate:
             return False
@@ -1081,7 +1081,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
             (False, 6)
         """
         if ((self.is_ranked() and len(self.join_irreducibles()) == self.rank()) or
-            self.cardinality() == 0):
+                self.cardinality() == 0):
             return (True, None) if certificate else True
         if not certificate:
             return False
@@ -1250,8 +1250,8 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
             return ok
 
         if (self.is_graded() and
-         self.rank() == len(self.join_irreducibles()) ==
-         len(self.meet_irreducibles())):
+                self.rank() == len(self.join_irreducibles()) ==
+                len(self.meet_irreducibles())):
             return ok
 
         if not certificate:
@@ -1988,8 +1988,8 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
 
                 # Get elements more than B levels below it.
                 too_close = set(H.breadth_first_search(j,
-                                                      neighbors=H.neighbors_in,
-                                                      distance=B - 2))
+                                                       neighbors=H.neighbors_in,
+                                                       distance=B - 2))
                 elems = [e for e in H.order_ideal([j]) if e not in too_close]
 
                 achains = PairwiseCompatibleSubsets(elems,
@@ -2649,7 +2649,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
             for x in self.principal_lower_set(b):
                 for a in self:
                     if (self.join(x, self.meet(a, b)) !=
-                        self.meet(self.join(x, a), b)):
+                            self.meet(self.join(x, a), b)):
                         if certificate:
                             return (False, (x, a, b))
                         return False
@@ -3259,7 +3259,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
         for i in range(n):
             for j in range(i):
                 if (o_meet(self[i], self[j]) not in self or
-                    o_join(self[i], self[j]) not in self):
+                        o_join(self[i], self[j]) not in self):
                     return False
         return True
 
@@ -4127,7 +4127,10 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
         meetands = []
         for a in H.neighbors_out(e):
             above_a = list(H.depth_first_search(a))
-            go_up = lambda v: [v_ for v_ in H.neighbors_out(v) if v_ not in above_a]
+
+            def go_up(v):
+                return [v_ for v_ in H.neighbors_out(v) if v_ not in above_a]
+
             result = None
             for v in H.depth_first_search(e, neighbors=go_up):
                 if H.out_degree(v) == 1 and next(H.neighbor_out_iterator(v)) in above_a:
@@ -4190,7 +4193,10 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
         joinands = []
         for a in H.neighbors_in(e):
             below_a = list(H.depth_first_search(a, neighbors=H.neighbors_in))
-            go_down = lambda v: [v_ for v_ in H.neighbors_in(v) if v_ not in below_a]
+
+            def go_down(v):
+                return [v_ for v_ in H.neighbors_in(v) if v_ not in below_a]
+
             result = None
             for v in H.depth_first_search(e, neighbors=go_down):
                 if H.in_degree(v) == 1 and next(H.neighbor_in_iterator(v)) in below_a:
@@ -4200,7 +4206,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
             joinands.append(result)
         return [self._vertex_to_element(v) for v in joinands]
 
-    def is_constructible_by_doublings(self, type):
+    def is_constructible_by_doublings(self, type) -> bool:
         r"""
         Return ``True`` if the lattice is constructible by doublings, and
         ``False`` otherwise.
@@ -4944,6 +4950,109 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
 
         return L.relabel(lambda e: SetPartition([[self._vertex_to_element(v)
                                                   for v in p] for p in C[e]]))
+
+    def feichtner_yuzvinsky_ring(self, G, use_defining=False, base_ring=None):
+        r"""
+        Return the Feichtner-Yuzvinsky ring of ``self`` and ``G``.
+
+        Let `R` be a commutative ring, `L` a lattice, and `G \subseteq L`.
+        The *Feichtner-Yuzvinsky ring* is the quotient of the polynomial
+        ring `R[h_g \mid g \in G]` by the ideal generated by
+
+        - `h_a` for every atom `a \in L \cap G` and
+        - for every antichain `A` of the subposet `G` such that
+          `g := \bigvee A \in G` (with the join taken in `L`)
+
+          .. MATH::
+
+              \prod_{a \in A} (h_g - h_a).
+
+        This was originally described for `G` such that `(L, G)` is a built
+        lattice in the sense of [FY2004]_ (which has a geometric motivation),
+        but this has been extended to `G` being an arbitrary subset.
+
+        This is not the original definition, which uses the nested subsets
+        of `G` (see [FY2004]_ for the definition). However, the original
+        construction, which we call the *defining* presentation and use the
+        variables `\{x_g \mid g \in G\}`, can be recovered by setting
+        `h_g = \sum_{g' \geq g} x_{g'}` (where `g' \in G`).
+
+        INPUT:
+
+        - ``G`` -- a subset of elements of ``self``
+        - ``use_defining`` -- (default: ``False``) whether or not to use
+          the defining presentation in `x_g`
+        - ``base_ring`` -- (default: `\QQ`) the base ring
+
+        The order on the variables is equal to the ordering of the
+        elements in ``G``.
+
+        EXAMPLES::
+
+            sage: B2 = posets.BooleanLattice(2)
+            sage: FY = B2.feichtner_yuzvinsky_ring(B2[1:])
+            sage: FY
+            Quotient of Multivariate Polynomial Ring in h0, h1, h2 over Rational Field
+             by the ideal (h0, h1, h0*h1 - h0*h2 - h1*h2 + h2^2)
+
+            sage: FY = B2.feichtner_yuzvinsky_ring(B2[1:], use_defining=True)
+            sage: FY
+            Quotient of Multivariate Polynomial Ring in x0, x1, x2 over Rational Field
+             by the ideal (x0 + x2, x1 + x2, x0*x1)
+
+        We reproduce the example from Section 5 of [Coron2023]_::
+
+            sage: H.<a,b,c,d> = HyperplaneArrangements(QQ)
+            sage: Arr = H(a-b, b-c, c-d, d-a)
+            sage: P = LatticePoset(Arr.intersection_poset())
+            sage: FY = P.feichtner_yuzvinsky_ring([P.top(),5,1,2,3,4])
+            sage: FY.defining_ideal().groebner_basis()
+            [h0^2 - h0*h1, h1^2, h2, h3, h4, h5]
+
+        TESTS::
+
+            sage: B2 = posets.BooleanLattice(2)
+            sage: B2.feichtner_yuzvinsky_ring([1,2,1])
+            Traceback (most recent call last):
+            ...
+            ValueError: the input set G must not contain duplicates
+        """
+        if base_ring is None:
+            from sage.rings.rational_field import QQ
+            base_ring = QQ
+
+        G = tuple(G)
+        Gmap = {g: i for i, g in enumerate(G)}
+        if len(G) != len(Gmap):
+            raise ValueError("the input set G must not contain duplicates")
+        GP = self.subposet(G)
+
+        from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+        if use_defining:
+            R = PolynomialRing(base_ring, 'x', len(G))
+            gens = R.gens()
+            gens = [R.sum(gens[Gmap[gp]] for gp in GP.order_filter([g]))
+                    for g in G]
+        else:
+            R = PolynomialRing(base_ring, 'h', len(G))
+            gens = R.gens()
+        I = []
+        atoms = set(self.atoms())
+        for i, g in enumerate(G):
+            if g in atoms:
+                I.append(gens[i])
+        for A in GP.antichains_iterator():
+            if len(A) <= 1:
+                # skip trivial cases
+                continue
+            gp = A[0]
+            for y in A[1:]:
+                gp = self.join(gp, y)
+            if gp not in Gmap:
+                continue
+            i = Gmap[gp]
+            I.append(R.prod(gens[i] - gens[Gmap[a]] for a in A))
+        return R.quotient(I)
 
 
 def _log_2(n):

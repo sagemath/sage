@@ -1,3 +1,4 @@
+# sage.doctest: optional - sage.combinat
 r"""
 Coalgebras
 """

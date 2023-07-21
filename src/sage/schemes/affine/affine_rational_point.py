@@ -41,15 +41,15 @@ AUTHORS:
 
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2010 William Stein, David Kohel, John Cremona, Charlie Turner
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
@@ -119,10 +119,10 @@ def enum_affine_rational_field(X, B):
     n = X.codomain().ambient_space().ngens()
     VR = X.value_ring()
     if VR is ZZ:
-        R = [ 0 ] + [ s*k for k in range(1, B+1) for s in [1, -1] ]
-        iters = [ iter(R) for _ in range(n) ]
+        R = [0] + [s * k for k in range(1, B + 1) for s in [1, -1]]
+        iters = [iter(R) for _ in range(n)]
     else:  # rational field
-        iters = [ QQ.range_by_height(B + 1) for _ in range(n) ]
+        iters = [QQ.range_by_height(B + 1) for _ in range(n)]
     pts = []
     P = [0] * n
     try:
@@ -141,7 +141,7 @@ def enum_affine_rational_field(X, B):
                 iters[i] = iter(R)
             else:  # rational field
                 iters[i] = QQ.range_by_height(B + 1)
-            P[i] = next(iters[i]) # reset P[i] to 0 and increment
+            P[i] = next(iters[i])  # reset P[i] to 0 and increment
             i += 1
             continue
         P[i] = a
@@ -298,7 +298,7 @@ def enum_affine_finite_field(X):
     n = X.codomain().ambient_space().ngens()
     F = X.value_ring()
     pts = []
-    for c in cartesian_product_iterator([F]*n):
+    for c in cartesian_product_iterator([F] * n):
         try:
             pts.append(X(c))
         except Exception:

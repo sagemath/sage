@@ -472,8 +472,8 @@ class DES(SageObject):
             DES block cipher with 16 rounds and the following key schedule:
             Original DES key schedule with 16 rounds
         """
-        return('DES block cipher with %s rounds and the following key '
-               'schedule:\n%s' % (self._rounds, self.keySchedule.__repr__()))
+        return ('DES block cipher with %s rounds and the following key '
+                'schedule:\n%s' % (self._rounds, self.keySchedule.__repr__()))
 
     def encrypt(self, plaintext, key):
         r"""
