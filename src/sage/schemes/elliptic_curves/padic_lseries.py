@@ -61,7 +61,7 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 ######################################################################
 
-from sage.matrix.constructor import Matrix as matrix
+from sage.matrix.constructor import matrix
 import sage.schemes.hyperelliptic_curves.monsky_washnitzer
 
 from sage.arith.functions import lcm as LCM

@@ -109,7 +109,7 @@ from sage.rings.fast_arith import prime_range
 from sage.arith.functions import lcm
 from sage.arith.misc import (binomial, factorial, prime_divisors,
                              GCD as gcd, XGCD as xgcd)
-from sage.matrix.constructor import Matrix as matrix
+from sage.matrix.constructor import matrix
 from sage.matrix.matrix_space import MatrixSpace
 from sage.misc.cachefunc import cached_method
 from sage.misc.misc_c import prod

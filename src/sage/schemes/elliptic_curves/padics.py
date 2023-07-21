@@ -25,7 +25,7 @@ import math
 
 from sage.arith.functions import lcm as LCM
 from sage.arith.misc import valuation
-from sage.matrix.constructor import Matrix as matrix
+from sage.matrix.constructor import matrix
 from sage.misc.misc import newton_method_sizes
 from sage.rings.finite_rings.finite_field_constructor import FiniteField as GF
 from sage.rings.padics.factory import Qp as pAdicField
