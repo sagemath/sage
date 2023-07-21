@@ -140,8 +140,8 @@ cdef class ProbabilityDistribution:
              2.0]
         """
         import pylab
-        l = [float(self.get_random_element()) for _ in range(num_samples)]
-        S = pylab.hist(l, bins, density=True)
+        ell = [float(self.get_random_element()) for _ in range(num_samples)]
+        S = pylab.hist(ell, bins, density=True)
         return [list(S[0]), list(S[1])]
 
     def generate_histogram_plot(self, name, num_samples = 1000, bins = 50):
@@ -171,8 +171,8 @@ cdef class ProbabilityDistribution:
             ....:     X.generate_histogram_plot(f.name)
         """
         import pylab
-        l = [float(self.get_random_element()) for _ in range(num_samples)]
-        pylab.hist(l, bins, density=True)
+        ell = [float(self.get_random_element()) for _ in range(num_samples)]
+        pylab.hist(ell, bins, density=True)
         pylab.savefig(name)
 
 
@@ -309,7 +309,7 @@ cdef class SphericalDistribution(ProbabilityDistribution):
         gsl_ran_dir_nd(self.r, self.dimension, self.vec)
         for i in range(self.dimension):
             v[i] = self.vec[i]
-        return vector(sage.rings.real_double.RDF, v) #This could be made more efficient by directly constructing the vector, TODO.
+        return vector(sage.rings.real_double.RDF, v)  # This could be made more efficient by directly constructing the vector, TODO.
 
     def reset_distribution(self):
         """
@@ -542,11 +542,12 @@ cdef class RealDistribution(ProbabilityDistribution):
     cdef double* parameters
     cdef long int seed
     cdef object name
-    #cdef double (*generator_1)(gsl_rng*)
-    #cdef double (*generator_2)(gsl_rng*, double)
-    #cdef _get_random_element_c(self)
+    # cdef double (*generator_1)(gsl_rng*)
+    # cdef double (*generator_2)(gsl_rng*, double)
+    # cdef _get_random_element_c(self)
 
-    def __init__(self, type = 'uniform', parameters = [], rng = 'default', seed = None):
+    def __init__(self, type='uniform', parameters=None,
+                 rng='default', seed=None):
         r"""
         EXAMPLES::
 
@@ -571,7 +572,6 @@ cdef class RealDistribution(ProbabilityDistribution):
             sage: one == three
             False
         """
-
         gsl_rng_env_setup()
         self.parameters = NULL
         self.set_random_number_generator(rng)
@@ -681,7 +681,7 @@ cdef class RealDistribution(ProbabilityDistribution):
 
         return sage.rings.real_double.RDF(result)
 
-    def set_distribution(self, name = 'uniform', parameters = []):
+    def set_distribution(self, name='uniform', parameters=None):
         """
         This method can be called to change the current probability distribution.
 
@@ -692,6 +692,9 @@ cdef class RealDistribution(ProbabilityDistribution):
             sage: T.set_distribution('pareto', [0, 1])
         """
         sig_free(self.parameters)
+
+        if parameters is None:
+            parameters = []
 
         if name == 'uniform':
             self.distribution_type = uniform
@@ -809,7 +812,7 @@ cdef class RealDistribution(ProbabilityDistribution):
 
         self.name = name
 
-    #def _get_random_element_c():
+    # def _get_random_element_c():
 
     def reset_distribution(self):
         """
@@ -1028,7 +1031,6 @@ cdef class GeneralDiscreteDistribution(ProbabilityDistribution):
         ...
         ValueError: The distribution probabilities must be non-negative
     """
-
     cdef gsl_rng_type * T
     cdef gsl_rng * r
     cdef gsl_ran_discrete_t *dist
@@ -1070,7 +1072,6 @@ cdef class GeneralDiscreteDistribution(ProbabilityDistribution):
             sage: X = GeneralDiscreteDistribution([1,2,2^1024])
             sage: Counter(X.get_random_element() for _ in range(100))
             Counter({2: 100})
-
         """
         gsl_rng_env_setup()
         self.set_random_number_generator(rng)
@@ -1093,7 +1094,7 @@ cdef class GeneralDiscreteDistribution(ProbabilityDistribution):
         for i in range(n):
             if P[i] < 0:
                 raise ValueError("The distribution probabilities must "
-                    "be non-negative")
+                                 "be non-negative")
             P_vec[i] = P[i]
 
         self.dist = gsl_ran_discrete_preproc(n, P_vec)
@@ -1111,7 +1112,6 @@ cdef class GeneralDiscreteDistribution(ProbabilityDistribution):
             sage: X.get_random_element()
             1
         """
-
         gsl_rng_set(self.r, seed)
         self.seed = seed
 
@@ -1124,7 +1124,6 @@ cdef class GeneralDiscreteDistribution(ProbabilityDistribution):
             sage: X = GeneralDiscreteDistribution([0.3, 0.4, 0.3])
             sage: X.set_random_number_generator('taus')
         """
-
         if rng == 'default':
             self.T = gsl_rng_default
         elif rng == 'luxury':

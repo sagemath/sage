@@ -209,6 +209,7 @@ class Function_stieltjes(GinacFunction):
                                 sympy='stieltjes'),
                             latex_name=r'\gamma')
 
+
 stieltjes = Function_stieltjes()
 
 
@@ -278,6 +279,7 @@ class Function_HurwitzZeta(BuiltinFunction):
         else:
             raise NotImplementedError('derivative with respect to first '
                                       'argument')
+
 
 hurwitz_zeta_func = Function_HurwitzZeta()
 
@@ -389,7 +391,9 @@ class Function_zetaderiv(GinacFunction):
         """
         return [x, k]
 
+
 zetaderiv = Function_zetaderiv()
+
 
 def zeta_symmetric(s):
     r"""
@@ -446,8 +450,10 @@ def zeta_symmetric(s):
 
     return (s/2 + 1).gamma() * (s-1) * (R.pi()**(-s/2)) * s.zeta()
 
+
 import math
 from sage.rings.polynomial.polynomial_real_mpfr_dense import PolynomialRealDense
+
 
 class DickmanRho(BuiltinFunction):
     r"""
@@ -664,5 +670,6 @@ class DickmanRho(BuiltinFunction):
             xi -= y/dydxi
             y = (exp(xi)-1.0)/xi - x
         return (-x*xi + RR(xi).eint()).exp() / (sqrt(2*pi*x)*xi)
+
 
 dickman_rho = DickmanRho()

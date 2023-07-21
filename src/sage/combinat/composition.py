@@ -1436,6 +1436,7 @@ class Composition(CombinatorialElement):
         from sage.combinat.specht_module import specht_module_rank
         return specht_module_rank(self, base_ring)
 
+
 Sequence.register(Composition)
 ##############################################################
 
