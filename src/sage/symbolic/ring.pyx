@@ -865,7 +865,7 @@ cdef class SymbolicRing(sage.rings.abc.SymbolicRing):
         """
         if isinstance(name, Expression):
             return name
-        if not isinstance(name, (basestring, list, tuple)):
+        if not isinstance(name, (str, list, tuple)):
             name = repr(name)
 
         is_multiple = False

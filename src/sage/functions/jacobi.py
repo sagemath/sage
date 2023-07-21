@@ -521,6 +521,7 @@ class Jacobi(BuiltinFunction):
                                                                       latex(x),
                                                                       latex(m))
 
+
 jacobi_nd = Jacobi('nd')
 jacobi_ns = Jacobi('ns')
 jacobi_nc = Jacobi('nc')
@@ -912,6 +913,7 @@ class InverseJacobi(BuiltinFunction):
                                                                          latex(x),
                                                                          latex(m))
 
+
 inverse_jacobi_nd = InverseJacobi('nd')
 inverse_jacobi_ns = InverseJacobi('ns')
 inverse_jacobi_nc = InverseJacobi('nc')
@@ -1060,6 +1062,7 @@ def inverse_jacobi(kind, x, m, **kwargs):
     else:
         raise ValueError("kind must be one of 'nd', 'ns', 'nc', 'dn', "
                          "'ds', 'dc', 'sn', 'sd', 'sc', 'cn', 'cd', 'cs'.")
+
 
 class JacobiAmplitude(BuiltinFunction):
     r"""

@@ -36,15 +36,16 @@ AUTHORS:
 
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2011 Benjamin Jones <benjaminfjones@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
+
 import math
 
 from sage.misc.lazy_import import lazy_import
@@ -189,7 +190,7 @@ class Function_exp_integral_e(BuiltinFunction):
         # special case: z == 0 and n > 1
         if isinstance(z, Expression):
             if z.is_trivial_zero():
-                z_zero = True # for later
+                z_zero = True  # for later
                 if n > 1:
                     return 1/(n-1)
         else:
@@ -212,7 +213,7 @@ class Function_exp_integral_e(BuiltinFunction):
                 else:
                     return exp(-z)/z
 
-        return None # leaves the expression unevaluated
+        return None  # leaves the expression unevaluated
 
     def _evalf_(self, n, z, parent=None, algorithm=None):
         """
@@ -224,7 +225,6 @@ class Function_exp_integral_e(BuiltinFunction):
             0.000281624451981418 - 0.179324535039359*I
             sage: exp_integral_e(1, RealField(100)(1))                                  # needs sage.rings.real_mpfr
             0.21938393439552027367716377546
-
         """
         return _mpmath_utils_call(_mpmath_expint, n, z, parent=parent)
 
@@ -255,12 +255,11 @@ class Function_exp_integral_e(BuiltinFunction):
             sage: f = exp_integral_e(2, sqrt(x))                                        # needs sage.symbolic
             sage: f.diff(x)                                                             # needs sage.symbolic
             -1/2*exp_integral_e(1, sqrt(x))/sqrt(x)
-
         """
         if n in ZZ and n > 0:
-            return -1*exp_integral_e(n-1,z)
-        else:
-            raise NotImplementedError("The derivative of this function is only implemented for n = 1, 2, 3, ...")
+            return -1*exp_integral_e(n-1, z)
+        raise NotImplementedError("The derivative of this function is only implemented for n = 1, 2, 3, ...")
+
 
 exp_integral_e = Function_exp_integral_e()
 
@@ -371,6 +370,7 @@ class Function_exp_integral_e1(BuiltinFunction):
 
         """
         return -exp(-z)/z
+
 
 exp_integral_e1 = Function_exp_integral_e1()
 
@@ -505,7 +505,9 @@ class Function_log_integral(BuiltinFunction):
         """
         return 1/log(z)
 
+
 li = log_integral = Function_log_integral()
+
 
 class Function_log_integral_offset(BuiltinFunction):
     r"""
@@ -648,7 +650,7 @@ class Function_log_integral_offset(BuiltinFunction):
                                  latex_name=r'\operatorname{log\_integral\_offset}',
                                  conversions=dict(sympy='Li'))
 
-    def _eval_(self,z):
+    def _eval_(self, z):
         """
         EXAMPLES::
 
@@ -893,6 +895,7 @@ class Function_sin_integral(BuiltinFunction):
         """
         return sin(z)/z
 
+
 Si = sin_integral = Function_sin_integral()
 
 
@@ -1033,6 +1036,7 @@ class Function_cos_integral(BuiltinFunction):
 
         """
         return cos(z)/z
+
 
 Ci = cos_integral = Function_cos_integral()
 
@@ -1185,6 +1189,7 @@ class Function_sinh_integral(BuiltinFunction):
         """
         return sinh(z)/z
 
+
 Shi = sinh_integral = Function_sinh_integral()
 
 
@@ -1312,6 +1317,7 @@ class Function_cosh_integral(BuiltinFunction):
         """
         return cosh(z)/z
 
+
 Chi = cosh_integral = Function_cosh_integral()
 
 
@@ -1427,6 +1433,7 @@ class Function_exp_integral(BuiltinFunction):
             e^f(x)*diff(f(x), x)/f(x)
         """
         return exp(x)/x
+
 
 Ei = exp_integral_ei = Function_exp_integral()
 

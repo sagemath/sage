@@ -491,6 +491,7 @@ class Function_erfc(BuiltinFunction):
         """
         return -2*exp(-x**2)/sqrt(pi)
 
+
 erfc = Function_erfc()
 
 
@@ -649,11 +650,11 @@ class Function_Fresnel_sin(BuiltinFunction):
                 return x
             if x.is_infinity():
                 if x.is_positive_infinity():
-                    return Rational((1,2))
+                    return Rational((1, 2))
                 elif x.imag_part().is_positive_infinity():
-                    return -I*Rational((1,2))
+                    return -I*Rational((1, 2))
                 elif x.imag_part().is_negative_infinity():
-                    return I*Rational((1,2))
+                    return I*Rational((1, 2))
         elif x < 0:
             return -fresnel_sin(-x)
         elif not x:
@@ -682,7 +683,9 @@ class Function_Fresnel_sin(BuiltinFunction):
         """
         return sin(pi*x**2/2)
 
+
 fresnel_sin = Function_Fresnel_sin()
+
 
 class Function_Fresnel_cos(BuiltinFunction):
     def __init__(self):
@@ -745,11 +748,11 @@ class Function_Fresnel_cos(BuiltinFunction):
                 return x
             if x.is_infinity():
                 if x.is_positive_infinity():
-                    return Rational((1,2))
+                    return Rational((1, 2))
                 elif x.imag_part().is_positive_infinity():
-                    return I*Rational((1,2))
+                    return I*Rational((1, 2))
                 elif x.imag_part().is_negative_infinity():
-                    return -I*Rational((1,2))
+                    return -I*Rational((1, 2))
         elif x < 0:
             return -fresnel_cos(-x)
         elif not x:
@@ -777,5 +780,6 @@ class Function_Fresnel_cos(BuiltinFunction):
             cos(1/2*pi*x^2)
         """
         return cos(pi*x**2/2)
+
 
 fresnel_cos = Function_Fresnel_cos()
