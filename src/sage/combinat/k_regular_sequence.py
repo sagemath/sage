@@ -423,7 +423,7 @@ class kRegularSequence(RecognizableSeries):
 
         ALGORITHM:
 
-        Theorem B of [HKL2021]_ with `n_0 = 1`.
+        Theorem B of [HKL2022]_ with `n_0 = 1`.
 
         EXAMPLES::
 
@@ -1833,7 +1833,7 @@ class kRegularSequenceSpace(RecognizableSeriesSpace):
         r"""
         Construct the unique `k`-regular sequence which fulfills the given
         recurrence relations and initial values. The recurrence relations have to
-        have the specific shape of `k`-recursive sequences as described in [HKL2021]_,
+        have the specific shape of `k`-recursive sequences as described in [HKL2022]_,
         and are either given as symbolic equations, e.g.,
 
         ::
@@ -1882,7 +1882,7 @@ class kRegularSequenceSpace(RecognizableSeriesSpace):
             ``coefficient_ring``.
 
           The recurrence relations above uniquely determine a `k`-regular sequence;
-          see [HKL2021]_ for further information.
+          see [HKL2022]_ for further information.
 
         - ``function`` -- symbolic function ``f`` occurring in the equations
 
@@ -1895,11 +1895,11 @@ class kRegularSequenceSpace(RecognizableSeriesSpace):
         following arguments are required:
 
         - ``M`` -- parameter of the recursive sequences,
-          see [HKL2021]_, Definition 3.1, as well as in the description of
+          see [HKL2022]_, Definition 3.1, as well as in the description of
           ``equations`` above
 
         - ``m`` -- parameter of the recursive sequences,
-          see [HKL2021]_, Definition 3.1, as well as in the description of
+          see [HKL2022]_, Definition 3.1, as well as in the description of
           ``equations`` above
 
         - ``coeffs`` -- a dictionary where ``coeffs[(r, j)]`` is the
@@ -1917,7 +1917,7 @@ class kRegularSequenceSpace(RecognizableSeriesSpace):
 
         - ``inhomogeneities`` -- (default: ``{}``) a dictionary
           mapping integers ``r`` to the inhomogeneity `g_r` as given
-          in [HKL2021]_, Corollary D. All inhomogeneities have to be
+          in [HKL2022]_, Corollary D. All inhomogeneities have to be
           regular sequences from ``self`` or elements of ``coefficient_ring``.
 
         OUTPUT: a :class:`kRegularSequence`
@@ -2985,13 +2985,13 @@ class RecurrenceParser():
         OUTPUT: a namedtuple ``recurrence_rules`` consisting of
 
         - ``M``, ``m``, ``l``, ``u``, ``offset`` -- parameters of the recursive
-          sequences, see [HKL2021]_, Definition 3.1
+          sequences, see [HKL2022]_, Definition 3.1
 
         - ``ll``, ``uu``, ``n1``, ``dim`` -- parameters and dimension of the
-          resulting linear representation, see [HKL2021]_, Theorem A
+          resulting linear representation, see [HKL2022]_, Theorem A
 
         - ``coeffs`` -- a dictionary mapping ``(r, j)`` to the coefficients
-          `c_{r, j}` as given in [HKL2021]_, Equation (3.1).
+          `c_{r, j}` as given in [HKL2022]_, Equation (3.1).
           If ``coeffs[(r, j)]`` is not given for some ``r`` and ``j``,
           then it is assumed to be zero.
 
@@ -2999,7 +2999,7 @@ class RecurrenceParser():
           ``n``-th value of the sequence
 
         - ``inhomogeneities`` -- a dictionary mapping integers ``r``
-          to the inhomogeneity `g_r` as given in [HKL2021]_, Corollary D.
+          to the inhomogeneity `g_r` as given in [HKL2022]_, Corollary D.
 
         EXAMPLES::
 
@@ -3177,10 +3177,10 @@ class RecurrenceParser():
         INPUT:
 
         - ``M``, ``m``, ``l``, ``u``, ``offset`` -- parameters of the
-          recursive sequences, see [HKL2021]_, Definition 3.1
+          recursive sequences, see [HKL2022]_, Definition 3.1
 
         - ``ll`` -- parameter of the resulting linear representation,
-          see [HKL2021]_, Theorem A
+          see [HKL2022]_, Theorem A
 
         - ``coeffs`` -- a dictionary where ``coeffs[(r, j)]`` is the
           coefficient `c_{r,j}` as given in :meth:`kRegularSequenceSpace.from_recurrence`.
@@ -3194,7 +3194,7 @@ class RecurrenceParser():
           determine the linear representation
 
         - ``inhomogeneities`` -- a dictionary mapping integers ``r``
-          to the inhomogeneity `g_r` as given in [HKL2021]_, Corollary D.
+          to the inhomogeneity `g_r` as given in [HKL2022]_, Corollary D.
 
         OUTPUT:
 
@@ -3368,15 +3368,15 @@ class RecurrenceParser():
     def ind(self, M, m, ll, uu):
         r"""
         Determine the index operator corresponding to the recursive
-        sequence as defined in [HKL2021]_.
+        sequence as defined in [HKL2022]_.
 
         INPUT:
 
         - ``M``, ``m`` -- parameters of the recursive sequences,
-          see [HKL2021]_, Definition 3.1
+          see [HKL2022]_, Definition 3.1
 
         - ``ll``, ``uu`` -- parameters of the resulting linear representation,
-          see [HKL2021]_, Theorem A
+          see [HKL2022]_, Theorem A
 
         OUTPUT:
 
@@ -3432,7 +3432,7 @@ class RecurrenceParser():
     def shifted_inhomogeneities(self, recurrence_rules):
         r"""
         Return a dictionary of all needed shifted inhomogeneities as described
-        in the proof of Coroallary D in [HKL2021]_.
+        in the proof of Corollary D in [HKL2022]_.
 
         INPUT:
 
@@ -3442,9 +3442,9 @@ class RecurrenceParser():
         OUTPUT:
 
         A dictionary mapping `r` to the regular sequence
-        `\sum_i g_r(n + i)` for `g_r` as given in [HKL2021]_, Corollary D,
+        `\sum_i g_r(n + i)` for `g_r` as given in [HKL2022]_, Corollary D,
         and `i` between `\lfloor\ell'/k^{M}\rfloor` and
-        `\lfloor (k^{M-1} - k^{m} + u')/k^{M}\rfloor + 1`; see [HKL2021]_,
+        `\lfloor (k^{M-1} - k^{m} + u')/k^{M}\rfloor + 1`; see [HKL2022]_,
         proof of Corollary D. The first blocks of the corresponding
         vector-valued sequence (obtained from its linear
         representation) correspond to the sequences `g_r(n + i)` where
@@ -3543,7 +3543,7 @@ class RecurrenceParser():
 
     def v_eval_n(self, recurrence_rules, n):
         r"""
-        Return the vector `v(n)` as given in [HKL2021]_, Theorem A.
+        Return the vector `v(n)` as given in [HKL2022]_, Theorem A.
 
         INPUT:
 
@@ -3612,7 +3612,7 @@ class RecurrenceParser():
 
         - ``correct_offset`` -- (default: ``True``) a boolean. If
           ``True``, then the resulting linear representation has no
-          offset.  See [HKL2021]_ for more information.
+          offset.  See [HKL2022]_ for more information.
 
         OUTPUT: a matrix
 
