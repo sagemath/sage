@@ -731,6 +731,31 @@ cdef class RingExtension_generic(CommutativeAlgebra):
         # One could define a construction functor K' -> K' otimes_K L, but we leave this to another issue
         pass
 
+    def backend(self, force=False):
+        """
+        Return the backend of this extension.
+
+        INPUT:
+
+        - ``force`` -- a boolean (default: ``False``); if ``False``,
+          raise an error if the backend is not exposed
+
+        EXAMPLES::
+
+             sage: K = GF(5^3)
+             sage: E = K.over()
+             sage: E
+             Field in z3 with defining polynomial x^3 + 3*x + 3 over its base
+             sage: E.backend()
+             Finite Field in z3 of size 5^3
+             sage: E.backend() is K
+             True
+
+        """
+        if force or self._is_backend_exposed:
+            return self._backend
+        raise ValueError("backend is not exposed; try force=True")
+
     def from_base_ring(self, r):
         r"""
         Return the canonical embedding of ``r`` into this extension.

@@ -793,7 +793,7 @@ class Permutation(CombinatorialElement):
 
         #Reverse the list between first and the end
         first_half = p[:first+1]
-        last_half  = p[first+1:]
+        last_half = p[first+1:]
         last_half.reverse()
         p = first_half + last_half
 
@@ -844,17 +844,17 @@ class Permutation(CombinatorialElement):
         if first == -1:
             return False
 
-        #Starting from the end, find the first j such that p[j] < p[first]
+        # Starting from the end, find the first j such that p[j] < p[first]
         j = n - 1
         while p[j] > p[first]:
             j -= 1
 
-        #Swap positions first and j
+        # Swap positions first and j
         (p[j], p[first]) = (p[first], p[j])
 
-        #Reverse the list between first+1 and end
+        # Reverse the list between first+1 and end
         first_half = p[:first+1]
-        last_half  = p[first+1:]
+        last_half = p[first+1:]
         last_half.reverse()
         p = first_half + last_half
 
@@ -981,7 +981,7 @@ class Permutation(CombinatorialElement):
             l[i], next = False, l[i]
             while next != cycleFirst:
                 cycle.append(next)
-                l[next - 1], next  = False, l[next - 1]
+                l[next - 1], next = False, l[next - 1]
             # Add the cycle to the list of cycles
             if singletons or len(cycle) > 1:
                 cycles.append(tuple(cycle))
@@ -1979,9 +1979,9 @@ class Permutation(CombinatorialElement):
         """
         if i not in range(2, len(self)):
             raise ValueError("i (= %s) must be between 2 and n-1" % i)
-        pos_i   = self.index(i)
-        pos_ip1 = self.index(i+1)
-        pos_im1 = self.index(i-1)
+        pos_i = self.index(i)
+        pos_ip1 = self.index(i + 1)
+        pos_im1 = self.index(i - 1)
 
         if pos_i < pos_im1 and pos_im1 < pos_ip1:
             state = '213'
@@ -2033,22 +2033,22 @@ class Permutation(CombinatorialElement):
         state, pos_im1, pos_i, pos_ip1 = state
         l = list(self)
 
-        if state == '213':   #goes to 132
-            l[pos_i]   = i-1
-            l[pos_im1] = i+1
+        if state == '213':   # goes to 132
+            l[pos_i] = i - 1
+            l[pos_im1] = i + 1
             l[pos_ip1] = i
-        elif state == '132': #goes to 213
+        elif state == '132':  # goes to 213
             l[pos_im1] = i
-            l[pos_ip1] = i-1
-            l[pos_i]   = i+1
-        elif state == '231': #goes to 312
-            l[pos_i]   = i+1
-            l[pos_ip1] = i-1
+            l[pos_ip1] = i - 1
+            l[pos_i] = i + 1
+        elif state == '231':  # goes to 312
+            l[pos_i] = i + 1
+            l[pos_ip1] = i - 1
             l[pos_im1] = i
-        elif state == '312': #goes to 231
+        elif state == '312':  # goes to 231
             l[pos_ip1] = i
-            l[pos_im1] = i+1
-            l[pos_i]   = i-1
+            l[pos_im1] = i + 1
+            l[pos_i] = i - 1
         else:
             # This branch should never occur, no matter what the user does.
             raise ValueError("invalid state")
@@ -2096,18 +2096,18 @@ class Permutation(CombinatorialElement):
         state, pos_im1, pos_i, pos_ip1 = state
         l = list(self)
 
-        if state == '213':    #goes to 312
-            l[pos_i]   = i+1
+        if state == '213':    # goes to 312
+            l[pos_i] = i + 1
             l[pos_ip1] = i
-        elif state == '132':  #goes to 231
+        elif state == '132':  # goes to 231
             l[pos_im1] = i
-            l[pos_i]   = i-1
-        elif state == '231':  #goes to 132
-            l[pos_i]   = i-1
+            l[pos_i] = i - 1
+        elif state == '231':  # goes to 132
+            l[pos_i] = i - 1
             l[pos_im1] = i
-        elif state == '312':  #goes to 213
+        elif state == '312':  # goes to 213
             l[pos_ip1] = i
-            l[pos_i]   = i+1
+            l[pos_i] = i + 1
         else:
             # This branch should never occur, no matter what the user does.
             raise ValueError("invalid state")
@@ -3194,9 +3194,9 @@ class Permutation(CombinatorialElement):
             []
         """
         p = self
-        recoils  = []
+        recoils = []
         for i in range(len(p)):
-            if p[i] != len(self) and self.index(p[i]+1) < i:
+            if p[i] != len(self) and self.index(p[i] + 1) < i:
                 recoils.append(i)
 
         return recoils
@@ -8202,9 +8202,9 @@ def descents_composition_first(dc):
     cpl = [x for x in reversed(dc.conjugate())]
     res = []
     s = 0
-    for i in range(len(cpl)):
-        res += [s + cpl[i]-j for j in range(cpl[i])]
-        s   += cpl[i]
+    for cpli in cpl:
+        s += cpli
+        res += [s - j for j in range(cpli)]
 
     return Permutations()(res)
 

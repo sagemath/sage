@@ -428,6 +428,7 @@ def installed_packages(exclude_pip=True):
     main Sage venv; it could be a user-created venv or a venv created by tox.)::
 
         sage: # optional - sage_spkg
+        sage: from sage.misc.package import installed_packages
         sage: sorted(installed_packages().keys())
         [...'conway_polynomials', ...]
         sage: installed_packages()['conway_polynomials']
@@ -466,6 +467,7 @@ def is_package_installed(package, exclude_pip=True):
 
     EXAMPLES::
 
+        sage: from sage.misc.package import is_package_installed
         sage: is_package_installed('conway_polynomials')  # optional - sage_spkg
         True
 
@@ -537,8 +539,9 @@ def package_versions(package_type, local=False):
     EXAMPLES::
 
         sage: # optional - sage_spkg
+        sage: from sage.misc.package import package_versions
         sage: std = package_versions('standard', local=True)
-        sage: 'gap' in std
+        sage: 'gap' in std  # optional - sage_spkg
         True
         sage: std['zlib']
         ('1.2.11.p0', '1.2.11.p0')

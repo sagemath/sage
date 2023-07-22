@@ -244,10 +244,10 @@ class SphericalHarmonic(BuiltinFunction):
         """
         BuiltinFunction.__init__(self, 'spherical_harmonic', nargs=4,
                                  conversions=dict(
-                                    maple='SphericalY',
-                                    mathematica='SphericalHarmonicY',
-                                    maxima='spherical_harmonic',
-                                    sympy='Ynm'))
+                                     maple='SphericalY',
+                                     mathematica='SphericalHarmonicY',
+                                     maxima='spherical_harmonic',
+                                     sympy='Ynm'))
 
     def _eval_(self, n, m, theta, phi, **kwargs):
         r"""
@@ -305,8 +305,8 @@ class SphericalHarmonic(BuiltinFunction):
             from sage.functions.trig import cos
             from sage.functions.orthogonal_polys import gen_legendre_P
             res = (sqrt(factorial(n-m) * (2*n+1) / (4*pi * factorial(n+m)))
-                    * gen_legendre_P(n, m, cos(theta))
-                    * exp(I*m*phi)).simplify_trig()
+                   * gen_legendre_P(n, m, cos(theta))
+                   * exp(I*m*phi)).simplify_trig()
             res = res.substitute({sqrt(sin(theta)**2): sin(theta)})
             return res
 
@@ -386,11 +386,13 @@ class SphericalHarmonic(BuiltinFunction):
             Y_{3}^{2}\left(x, y\right)
         """
         return r"Y_{{{}}}^{{{}}}\left({}, {}\right)".format(
-                 latex(n), latex(m), latex(theta), latex(phi))
+            latex(n), latex(m), latex(theta), latex(phi))
+
 
 spherical_harmonic = SphericalHarmonic()
 
-####### elliptic functions and integrals
+
+# elliptic functions and integrals
 
 def elliptic_j(z, prec=53):
     r"""
@@ -456,7 +458,8 @@ def elliptic_j(z, prec=53):
     from sage.libs.pari.all import pari
     return CC(pari(z).ellj())
 
-#### elliptic integrals
+
+# elliptic integrals
 
 class EllipticE(BuiltinFunction):
     r"""
@@ -612,6 +615,7 @@ class EllipticE(BuiltinFunction):
             E(\pi\,|\,x)
         """
         return r"E(%s\,|\,%s)" % (latex(z), latex(m))
+
 
 elliptic_e = EllipticE()
 
@@ -802,6 +806,7 @@ class EllipticEU(BuiltinFunction):
             E(1;x)
         """
         return r"E(%s;%s)" % (latex(u), latex(m))
+
 
 def elliptic_eu_f(u, m):
     r"""

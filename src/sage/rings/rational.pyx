@@ -110,8 +110,6 @@ except ImportError:
 from libc.stdint cimport uint64_t
 from sage.libs.gmp.binop cimport mpq_add_z, mpq_mul_z, mpq_div_zz
 
-from cpython.int cimport PyInt_AS_LONG
-
 cimport sage.rings.fast_arith
 import sage.rings.fast_arith
 

@@ -714,7 +714,7 @@ cdef class MPolynomial(CommutativePolynomial):
         if self.is_homogeneous():
             return self
 
-        if isinstance(var, basestring):
+        if isinstance(var, str):
             V = list(P.variable_names())
             try:
                 i = V.index(var)

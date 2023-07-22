@@ -62,6 +62,7 @@ from sage.rings.padics.precision_error import PrecisionError
 from sage.rings.rational_field import QQ
 from sage.structure.sage_object import SageObject
 from sage.structure.unique_representation import UniqueRepresentation
+lazy_import("sage.plot.colors", "rainbow")
 
 lazy_import('sage.algebras.quatalg.quaternion_algebra', 'QuaternionAlgebra')
 lazy_import('sage.graphs.graph', 'Graph')
@@ -1435,7 +1436,8 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
             True
         """
         return super().__classcall__(cls, p, Nminus, Nplus,
-               character, use_magma, seed, magma_session)
+                                     character, use_magma,
+                                     seed, magma_session)
 
     def __init__(self, p, Nminus, Nplus=1, character=None,
                  use_magma=False, seed=None, magma_session=None):

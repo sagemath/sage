@@ -91,7 +91,7 @@ def get_systems(cmd):
              "Rebuild Sage with the environment variable 'SAGE_PROFILE=yes' "
              "to enable profiling.")
 
-    if not isinstance(cmd, basestring):
+    if not isinstance(cmd, str):
         raise TypeError("command must be a string")
 
     from sage.repl.preparse import preparse

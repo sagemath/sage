@@ -151,7 +151,7 @@ class IntegralCurveClosedPoint(CurveClosedPoint):
             sage: {p: 1}
             {Point (x, y): 1}
         """
-        return hash((self.parent(),self.prime_ideal()))
+        return hash((self.parent(), self.prime_ideal()))
 
     def _richcmp_(self, other, op):
         """

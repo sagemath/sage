@@ -79,7 +79,7 @@ class GenericCellComplex(SageObject):
         sage: from sage.topology.cell_complex import GenericCellComplex
         sage: A = GenericCellComplex()
     """
-    def __eq__(self,right):
+    def __eq__(self, right):
         """
         Comparisons of cell complexes are not implemented.
 
@@ -94,7 +94,7 @@ class GenericCellComplex(SageObject):
         """
         raise NotImplementedError
 
-    def __ne__(self,right):
+    def __ne__(self, right):
         """
         Comparisons of cell complexes are not implemented.
 
@@ -254,7 +254,7 @@ class GenericCellComplex(SageObject):
             sage: cubical_complexes.KleinBottle().f_vector()
             [1, 42, 84, 42]
         """
-        return [self._f_dict()[n] for n in range(-1, self.dimension()+1)]
+        return [self._f_dict()[n] for n in range(-1, self.dimension() + 1)]
 
     def _f_dict(self):
         """
@@ -290,7 +290,7 @@ class GenericCellComplex(SageObject):
             sage: cubical_complexes.KleinBottle().euler_characteristic()
             0
         """
-        return sum([(-1)**n * self.f_vector()[n+1] for n in range(self.dimension() + 1)])
+        return sum((-1)**n * self.f_vector()[n + 1] for n in range(self.dimension() + 1))
 
     ############################################################
     # end of methods using self.cells()
@@ -543,9 +543,6 @@ class GenericCellComplex(SageObject):
             sage: S.homology(generators=True)                                           # needs sage.modules
             {0: [], 1: 0, 2: [(Z, sigma_2)]}
         """
-        from sage.topology.cubical_complex import CubicalComplex
-        from sage.topology.simplicial_complex import SimplicialComplex
-        from sage.modules.free_module import VectorSpace
         from sage.homology.homology_group import HomologyGroup
 
         if dim is not None:
@@ -599,8 +596,8 @@ class GenericCellComplex(SageObject):
         return answer.get(dim, zero)
 
     def cohomology(self, dim=None, base_ring=ZZ, subcomplex=None,
-                 generators=False, algorithm='pari',
-                 verbose=False, reduced=True):
+                   generators=False, algorithm='pari',
+                   verbose=False, reduced=True):
         r"""
         The reduced cohomology of this cell complex.
 

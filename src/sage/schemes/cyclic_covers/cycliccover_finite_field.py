@@ -91,15 +91,14 @@ def _N0_nodenominators(p, g, n):
     """
     Return the necessary p-adic precision for the Frobenius matrix to deduce
     the characteristic polynomial of Frobenius using the Newton identities,
-    using  :meth:`charpoly_frobenius`, which assumes that the Frobenius matrix
+    using :meth:`charpoly_frobenius`, which assumes that the Frobenius matrix
     is integral, i.e., has no denominators.
-
 
     INPUT:
 
-    - `p` - prime
-    - `g` - genus
-    - `n` - degree of residue field
+    - `p` -- prime
+    - `g` -- genus
+    - `n` -- degree of residue field
 
     TESTS::
 
@@ -595,16 +594,16 @@ class CyclicCover_finite_field(cycliccover_generic.CyclicCover_generic):
             [0 for i in range(d - 2)] + self._flift.list() + [0 for i in range(d - 1)]
         )
         fd_co = (
-            [0 for i in range(d - 1)] + self._dflift.list() + [0 for i in range(d - 0)]
+            [0 for i in range(d - 1)] + self._dflift.list() + [0 for i in range(d)]
         )
 
-        rows = [f_co[d - 2 - i : -i - 1] for i in range(d - 1)]
-        rows += [fd_co[d - 1 - i : -i - 1] for i in range(d)]
+        rows = [f_co[d - 2 - i:-i - 1] for i in range(d - 1)]
+        rows += [fd_co[d - 1 - i:-i - 1] for i in range(d)]
 
         m = matrix(rows).transpose().inverse()
 
         a_foo = m[0:d, 0:d]
-        b_foo = m[d - 1 : 2 * d - 1, 0:d]
+        b_foo = m[d - 1:2 * d - 1, 0:d]
         a_foo = matrix(d, d, lambda i, j: 1 if i == j and i != d - 1 else 0) * a_foo
         foo = matrix(d, d, lambda i, j: j if i == j - 1 else 0)
         bp_foo = foo * b_foo
@@ -1065,10 +1064,9 @@ class CyclicCover_finite_field(cycliccover_generic.CyclicCover_generic):
             for j in range(1, self._r):
                 s0 = (j * self._p) % self._r
                 for i in range(self._d - 1):
-                    m[
-                        (s0 - 1) * (self._d - 1) : s0 * (self._d - 1),
-                        i + (j - 1) * (self._d - 1),
-                    ] = self._frob(i, j + self._epsilon * self._r, N0)
+                    m[(s0 - 1) * (self._d - 1):s0 * (self._d - 1),
+                      i + (j - 1) * (self._d - 1),
+                      ] = self._frob(i, j + self._epsilon * self._r, N0)
             return m
 
         self._init_frob(N)
@@ -1152,7 +1150,6 @@ class CyclicCover_finite_field(cycliccover_generic.CyclicCover_generic):
             sage: CyclicCover(3, h).frobenius_polynomial()  # long time
             x^8 + 532*x^7 - 2877542*x^6 - 242628176*x^5 + 4390163797795*x^4 - 247015136050256*x^3
              - 2982540407204025062*x^2 + 561382189105547134612*x + 1074309286591662654798721
-
 
         A non-monic example checking that :trac:`29015` is fixed::
 

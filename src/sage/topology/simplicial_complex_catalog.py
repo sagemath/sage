@@ -66,11 +66,20 @@ EXAMPLES::
 """
 
 from sage.topology.simplicial_complex_examples import (Sphere, Simplex, Torus,
-        ProjectivePlane,
-        RealProjectivePlane, KleinBottle, FareyMap, GenusSix, SurfaceOfGenus,
-        MooreSpace,
-        ComplexProjectivePlane, QuaternionicProjectivePlane,
-        PoincareHomologyThreeSphere, RealProjectiveSpace, K3Surface,
-        BarnetteSphere, BrucknerGrunbaumSphere, NotIConnectedGraphs,
-        MatchingComplex, ChessboardComplex, RandomComplex, SumComplex,
-        RandomTwoSphere, ShiftedComplex, RudinBall, ZieglerBall, DunceHat)
+                                                       ProjectivePlane,
+                                                       RealProjectivePlane, KleinBottle,
+                                                       FareyMap, GenusSix,
+                                                       SurfaceOfGenus,
+                                                       MooreSpace,
+                                                       ComplexProjectivePlane,
+                                                       QuaternionicProjectivePlane,
+                                                       PoincareHomologyThreeSphere,
+                                                       RealProjectiveSpace, K3Surface,
+                                                       BarnetteSphere,
+                                                       BrucknerGrunbaumSphere,
+                                                       NotIConnectedGraphs,
+                                                       MatchingComplex,
+                                                       ChessboardComplex, RandomComplex,
+                                                       SumComplex,
+                                                       RandomTwoSphere, ShiftedComplex,
+                                                       RudinBall, ZieglerBall, DunceHat)

@@ -23,13 +23,13 @@ AUTHORS:
 
 """
 
-#*****************************************************************************
+# ****************************************************************************
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 import sage.rings.abc
 
@@ -48,9 +48,10 @@ from sage.structure.unique_representation import UniqueRepresentation
 lazy_import('sage.rings.number_field.number_field_ideal', 'NumberFieldFractionalIdeal')
 
 
-def is_Berkovich(space):
+
+def is_Berkovich(space) -> bool:
     """
-    Checks if ``space`` is a Berkovich space.
+    Check if ``space`` is a Berkovich space.
 
     OUTPUT:
 
@@ -66,9 +67,10 @@ def is_Berkovich(space):
     """
     return isinstance(space, Berkovich)
 
-def is_Berkovich_Cp(space):
+
+def is_Berkovich_Cp(space) -> bool:
     """
-    Checks if ``space`` is a Berkovich space over ``Cp``.
+    Check if ``space`` is a Berkovich space over ``Cp``.
 
     OUTPUT:
 
@@ -84,11 +86,13 @@ def is_Berkovich_Cp(space):
     """
     return isinstance(space, Berkovich_Cp)
 
+
 class Berkovich(UniqueRepresentation, Parent):
     """
     The parent class for any Berkovich space
     """
     pass
+
 
 class Berkovich_Cp(Berkovich):
     """
@@ -202,7 +206,7 @@ class Berkovich_Cp(Berkovich):
         """
         return self._ideal
 
-    def __eq__(self,right):
+    def __eq__(self, right):
         """
         Equality operator.
 
@@ -250,7 +254,7 @@ class Berkovich_Cp(Berkovich):
         else:
             return self.base() == right.base() and self.ideal() == right.ideal()
 
-    def __ne__(self,right):
+    def __ne__(self, right):
         """
         Inequality operator.
 
@@ -286,6 +290,7 @@ class Berkovich_Cp(Berkovich):
         if self._base_type == 'padic field':
             return hash(self.prime())
         return hash(self.ideal())
+
 
 class Berkovich_Cp_Affine(Berkovich_Cp):
     r"""
@@ -727,4 +732,4 @@ class Berkovich_Cp_Projective(Berkovich_Cp):
             sage: latex(B)                                                              # needs sage.rings.padics
             \text{Projective Berkovich line over } \Bold{C}_{3}
         """
-        return r"\text{Projective Berkovich line over } \Bold{C}_{%s}" %(self.prime())
+        return r"\text{Projective Berkovich line over } \Bold{C}_{%s}" % (self.prime())

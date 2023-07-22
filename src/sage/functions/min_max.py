@@ -19,11 +19,11 @@ This works as expected for more than two entries::
    sage: # needs sage.symbolic
    sage: max(3, 5, x)
    5
-   sage: min(3, 5, x)
+   sage: min(3, 5, x)                                                                   # optional - sage.symbolic
    3
-   sage: max_symbolic(3, 5, x)
+   sage: max_symbolic(3, 5, x)                                                          # optional - sage.symbolic
    max(x, 5)
-   sage: min_symbolic(3, 5, x)
+   sage: min_symbolic(3, 5, x)                                                          # optional - sage.symbolic
    min(x, 3)
 """
 ###############################################################################
@@ -53,7 +53,7 @@ class MinMax_base(BuiltinFunction):
             max(x, 5)
             sage: max_symbolic([5.0r])   # indirect doctest
             5.0
-            sage: min_symbolic(3, 5, x)
+            sage: min_symbolic(3, 5, x)                                                 # optional - sage.symbolic
             min(x, 3)
             sage: min_symbolic([5.0r])   # indirect doctest
             5.0
@@ -129,7 +129,7 @@ class MinMax_base(BuiltinFunction):
             Traceback (most recent call last):
             ...
             TypeError: 'sage.rings.integer.Integer' object is not iterable
-            sage: max_symbolic(x)
+            sage: max_symbolic(x)                                                       # optional - sage.symbolic
             Traceback (most recent call last):
             ...
             TypeError: 'sage.symbolic.expression.Expression' object is not iterable
@@ -170,11 +170,11 @@ class MaxSymbolic(MinMax_base):
             sage: # needs sage.symbolic
             sage: max_symbolic(3, x)
             max(3, x)
-            sage: max_symbolic(3, x).subs(x=5)
+            sage: max_symbolic(3, x).subs(x=5)                                          # optional - sage.symbolic
             5
-            sage: max_symbolic(3, 5, x)
+            sage: max_symbolic(3, 5, x)                                                 # optional - sage.symbolic
             max(x, 5)
-            sage: max_symbolic([3, 5, x])
+            sage: max_symbolic([3, 5, x])                                               # optional - sage.symbolic
             max(x, 5)
 
         TESTS::
@@ -196,17 +196,17 @@ class MaxSymbolic(MinMax_base):
             sage: # needs sage.symbolic
             sage: t = max_symbolic(x, 5); t
             max(x, 5)
-            sage: t.subs(x=3)  # indirect doctest
+            sage: t.subs(x=3)  # indirect doctest                                       # optional - sage.symbolic
             5
             sage: max_symbolic(5, 3)
             5
-            sage: u = max_symbolic(*(list(range(10)) + [x])); u
+            sage: u = max_symbolic(*(list(range(10)) + [x])); u                         # optional - sage.symbolic
             max(x, 9)
-            sage: u.subs(x=-1)
+            sage: u.subs(x=-1)                                                          # optional - sage.symbolic
             9
-            sage: u.subs(x=10)
+            sage: u.subs(x=10)                                                          # optional - sage.symbolic
             10
-            sage: max_symbolic([0, x])
+            sage: max_symbolic([0, x])                                                  # optional - sage.symbolic
             max(x, 0)
 
         TESTS::
@@ -226,12 +226,12 @@ class MaxSymbolic(MinMax_base):
             sage: t = max_symbolic(sin(x), cos(x))
             sage: t.subs(x=1).n(200)
             0.84147098480789650665250232163029899962256306079837106567275
-            sage: var('y')
+            sage: var('y')                                                              # optional - sage.symbolic
             y
-            sage: t = max_symbolic(sin(x), cos(x), y)
-            sage: u = t.subs(x=1); u
+            sage: t = max_symbolic(sin(x), cos(x), y)                                   # optional - sage.symbolic
+            sage: u = t.subs(x=1); u                                                    # optional - sage.symbolic
             max(sin(1), cos(1), y)
-            sage: u.n()
+            sage: u.n()                                                                 # optional - sage.symbolic
             Traceback (most recent call last):
             ...
             TypeError: cannot evaluate symbolic expression numerically
@@ -265,11 +265,11 @@ class MinSymbolic(MinMax_base):
             sage: # needs sage.symbolic
             sage: min_symbolic(3, x)
             min(3, x)
-            sage: min_symbolic(3, x).subs(x=5)
+            sage: min_symbolic(3, x).subs(x=5)                                          # optional - sage.symbolic
             3
-            sage: min_symbolic(3, 5, x)
+            sage: min_symbolic(3, 5, x)                                                 # optional - sage.symbolic
             min(x, 3)
-            sage: min_symbolic([3, 5, x])
+            sage: min_symbolic([3, 5, x])                                               # optional - sage.symbolic
             min(x, 3)
 
         TESTS::
@@ -291,17 +291,17 @@ class MinSymbolic(MinMax_base):
             sage: # needs sage.symbolic
             sage: t = min_symbolic(x, 5); t
             min(x, 5)
-            sage: t.subs(x=3)  # indirect doctest
+            sage: t.subs(x=3)  # indirect doctest                                       # optional - sage.symbolic
             3
-            sage: min_symbolic(5, 3)
+            sage: min_symbolic(5, 3)                                                    # optional - sage.symbolic
             3
-            sage: u = min_symbolic(*(list(range(10)) + [x])); u
+            sage: u = min_symbolic(*(list(range(10)) + [x])); u                         # optional - sage.symbolic
             min(x, 0)
-            sage: u.subs(x=-1)
+            sage: u.subs(x=-1)                                                          # optional - sage.symbolic
             -1
-            sage: u.subs(x=10)
+            sage: u.subs(x=10)                                                          # optional - sage.symbolic
             0
-            sage: min_symbolic([3, x])
+            sage: min_symbolic([3, x])                                                  # optional - sage.symbolic
             min(x, 3)
 
         TESTS::
@@ -321,12 +321,12 @@ class MinSymbolic(MinMax_base):
             sage: t = min_symbolic(sin(x), cos(x))
             sage: t.subs(x=1).n(200)
             0.54030230586813971740093660744297660373231042061792222767010
-            sage: var('y')
+            sage: var('y')                                                              # optional - sage.symbolic
             y
-            sage: t = min_symbolic(sin(x), cos(x), y)
-            sage: u = t.subs(x=1); u
+            sage: t = min_symbolic(sin(x), cos(x), y)                                   # optional - sage.symbolic
+            sage: u = t.subs(x=1); u                                                    # optional - sage.symbolic
             min(sin(1), cos(1), y)
-            sage: u.n()
+            sage: u.n()                                                                 # optional - sage.symbolic
             Traceback (most recent call last):
             ...
             TypeError: cannot evaluate symbolic expression numerically

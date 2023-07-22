@@ -31,6 +31,7 @@ def runsnake(command):
 
     EXAMPLES::
 
+        sage: from sage.misc.dev_tools import runsnake
         sage: runsnake("list(SymmetricGroup(3))")        # optional - runsnake
 
     ``command`` is first preparsed (see :func:`preparse`)::
@@ -244,6 +245,7 @@ def find_objects_from_name(name, module_name=None):
         It might be a good idea to move this function into
         :mod:`sage.misc.sageinspect`.
     """
+    from sage.misc.lazy_import import LazyImport
 
     obj = []
     for smodule_name, smodule in sys.modules.items():
@@ -253,7 +255,7 @@ def find_objects_from_name(name, module_name=None):
             continue
         if hasattr(smodule, '__dict__') and name in smodule.__dict__:
             u = smodule.__dict__[name]
-            if all(v is not u for v in obj):
+            if not isinstance(u, LazyImport) and all(v is not u for v in obj):
                 obj.append(u)
 
     return obj

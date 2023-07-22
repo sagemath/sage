@@ -120,7 +120,7 @@ class HomologyGroup_class(AdditiveAbelianGroup_fixed_gens):
             g = ["\\ZZ^{{{}}}".format(rank)]
         else:
             g = ["\\ZZ"] * rank
-        if len(torsion) != 0:
+        if torsion:
             printed = []
             for t in torsion:
                 numfac = torsion.count(t)
@@ -133,6 +133,7 @@ class HomologyGroup_class(AdditiveAbelianGroup_fixed_gens):
                     g.append("C_{{{}}}".format(t))
         times = " \\times "
         return times.join(g)
+
 
 def HomologyGroup(n, base_ring, invfac=None):
     """

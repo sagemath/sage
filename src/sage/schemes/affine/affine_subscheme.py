@@ -209,11 +209,11 @@ class AlgebraicScheme_subscheme_affine(AlgebraicScheme_subscheme):
                 i = n
         i = int(i)
         if i < 0 or i > n:
-            raise ValueError("Argument i (=%s) must be between 0 and %s, inclusive"%(i, n))
+            raise ValueError("Argument i (=%s) must be between 0 and %s, inclusive" % (i, n))
         try:
             phi = self.__projective_embedding[i]
-            #assume that if you've passed in a new ambient projective space
-            #you want to override the existing embedding
+            # assume that if you've passed in a new ambient projective space
+            # you want to override the existing embedding
             if PP is None or phi.codomain().ambient_space() == PP:
                 return phi
         except AttributeError:
@@ -223,7 +223,7 @@ class AlgebraicScheme_subscheme_affine(AlgebraicScheme_subscheme):
         if PP is None:
             PP = AA.projective_embedding(i).codomain()
         elif PP.dimension_relative() != n:
-            raise ValueError("Projective Space must be of dimension %s"%(n))
+            raise ValueError("Projective Space must be of dimension %s" % (n))
         PR = PP.coordinate_ring()
         # Groebner basis w.r.t. a graded monomial order computed here to ensure
         # after homogenization, the basis elements will generate the defining
@@ -232,7 +232,7 @@ class AlgebraicScheme_subscheme_affine(AlgebraicScheme_subscheme):
         G = self.defining_ideal().groebner_basis()
         v = list(PP.gens())
         z = v.pop(i)
-        phi = R.hom(v,PR)
+        phi = R.hom(v, PR)
         v.append(z)
         X = PP.subscheme([phi(f).homogenize(i) for f in G])
         v = list(R.gens())
@@ -399,14 +399,14 @@ class AlgebraicScheme_subscheme_affine(AlgebraicScheme_subscheme):
         """
         AA = self.ambient_space()
         if AA != X.ambient_space():
-            raise TypeError("this subscheme and (=%s) must be defined in the same ambient space"%X)
+            raise TypeError("this subscheme and (=%s) must be defined in the same ambient space" % X)
         W = self.intersection(X)
         try:
             W._check_satisfies_equations(P)
         except TypeError:
-            raise TypeError("(=%s) must be a point in the intersection of this subscheme and (=%s)"%(P,X))
+            raise TypeError("(=%s) must be a point in the intersection of this subscheme and (=%s)" % (P, X))
         if AA.dimension() != self.dimension() + X.dimension() or W.dimension() != 0:
-            raise TypeError("the intersection of this subscheme and (=%s) must be proper and finite"%X)
+            raise TypeError("the intersection of this subscheme and (=%s) must be proper and finite" % X)
         I = self.defining_ideal()
         J = X.defining_ideal()
         # move P to the origin and localize
@@ -421,8 +421,8 @@ class AlgebraicScheme_subscheme_affine(AlgebraicScheme_subscheme):
         s = 0
         t = sum(singular.Tor(i, Iloc, Jloc).std().hilb(2).sage())
         while t != 0:
-            s = s + ((-1)**i)*t
-            i = i + 1
+            s += (-1)**i * t
+            i += 1
             t = sum(singular.Tor(i, Iloc, Jloc).std().hilb(2).sage())
         return s
 
@@ -488,7 +488,7 @@ class AlgebraicScheme_subscheme_affine(AlgebraicScheme_subscheme):
         try:
             P = self(P)
         except TypeError:
-            raise TypeError("(=%s) is not a point on (=%s)"%(P,self))
+            raise TypeError("(=%s) is not a point on (=%s)" % (P, self))
 
         from sage.interfaces.singular import singular
 
@@ -577,7 +577,6 @@ class AlgebraicScheme_subscheme_affine_field(AlgebraicScheme_subscheme_affine):
               2*x + 3*z
             sage: _.dimension()
             1
-
         """
         from sage.modules.free_module_element import vector
 
@@ -586,7 +585,7 @@ class AlgebraicScheme_subscheme_affine_field(AlgebraicScheme_subscheme_affine):
         gens = R.gens()
 
         J = self.Jacobian_matrix()
-        Jp = J.apply_map( lambda f: f.subs(dict(zip(gens, p))) )
+        Jp = J.apply_map(lambda f: f.subs(dict(zip(gens, p))))
         I = [f for f in Jp * vector(gens) if f]
 
         return A.subscheme(R.ideal(I))

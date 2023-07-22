@@ -86,6 +86,7 @@ from sage.rings.ideal import Ideal_generic
 from sage.homology.free_resolution import (FiniteFreeResolution,
                                            FiniteFreeResolution_free_module,
                                            FiniteFreeResolution_singular)
+from sage.misc.superseded import deprecated_function_alias
 
 
 class GradedFiniteFreeResolution(FiniteFreeResolution):
@@ -142,7 +143,7 @@ class GradedFiniteFreeResolution(FiniteFreeResolution):
         if degrees[0] in ZZ:
             zero_deg = 0
             multigrade = False
-        else: # degrees are integer vectors
+        else:  # degrees are integer vectors
             degrees = tuple([vector(v) for v in degrees])
             zero_deg = degrees[0].parent().zero()
             multigrade = True
@@ -402,7 +403,7 @@ class GradedFiniteFreeResolution_free_module(GradedFiniteFreeResolution, FiniteF
 
         def find_deg(i):
             for j in range(M.nrows()):
-                ret = M[j,i].degree()
+                ret = M[j, i].degree()
                 if ret != -1:
                     return ret
             raise NotImplementedError("a generator maps to 0")
@@ -518,8 +519,8 @@ class GradedFiniteFreeResolution_singular(GradedFiniteFreeResolution, FiniteFree
         from sage.libs.singular.singular import si2sa_resolution_graded
         from sage.libs.singular.function import singular_function
 
-        #cdef int i, j, k, ncols, nrows
-        #cdef list res_shifts, prev_shifts, new_shifts
+        # cdef int i, j, k, ncols, nrows
+        # cdef list res_shifts, prev_shifts, new_shifts
 
         # This ensures the first component of the Singular resolution to be a
         # module, like the later components. This is important when the
@@ -572,5 +573,4 @@ class GradedFiniteFreeResolution_singular(GradedFiniteFreeResolution, FiniteFree
         return res_mats
 
 
-from sage.misc.superseded import deprecated_function_alias
 GradedFreeResolution = deprecated_function_alias(34873, GradedFiniteFreeResolution_singular)

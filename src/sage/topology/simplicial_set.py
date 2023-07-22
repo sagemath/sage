@@ -273,6 +273,7 @@ from .simplicial_complex import SimplicialComplex
 lazy_import('sage.categories.simplicial_sets', 'SimplicialSets')
 lazy_import('sage.matrix.constructor', 'matrix')
 
+
 ########################################################################
 # The classes for simplices.
 
@@ -572,10 +573,10 @@ class AbstractSimplex_class(SageObject):
             if hasattr(other.nondegenerate(), '__custom_name'):
                 return str(self) < str(other)
             return True
-        else:
-            if (hasattr(other, '__custom_name')
+
+        if (hasattr(other, '__custom_name')
                 or hasattr(other.nondegenerate(), '__custom_name')):
-                return False
+            return False
         return id(self) < id(other)
 
     def __gt__(self, other):
@@ -1696,7 +1697,7 @@ class SimplicialSet_arbitrary(Parent):
 
         G = Graph(loops=True, multiedges=True)
         for e in self.n_cells(1):
-            G.add_edge(self.face(e,0), self.face(e,1), e)
+            G.add_edge(self.face(e, 0), self.face(e, 1), e)
         for v in self.n_cells(0):
             G.add_vertex(v)
         return G
@@ -2021,7 +2022,7 @@ class SimplicialSet_arbitrary(Parent):
                     space = self.n_skeleton(max_dim+1)
                     min_dim = min(dim)
                     H = GenericCellComplex.homology(space, **kwds)
-                    return {n: H[n] for n in H if n<=max_dim and n >= min_dim}
+                    return {n: H[n] for n in H if min_dim <= n <= max_dim}
                 else:
                     max_dim = dim
             space = self.n_skeleton(max_dim+1)
@@ -2287,7 +2288,7 @@ class SimplicialSet_arbitrary(Parent):
             # Test whether subcomplex is actually a subcomplex of
             # self.
             if (not isinstance(subcomplex, SubSimplicialSet)
-                and subcomplex.ambient_space() == self):
+                    and subcomplex.ambient_space() == self):
                 raise ValueError('the "subcomplex" is not actually a subcomplex')
         if self.is_finite():
             return QuotientOfSimplicialSet_finite(subcomplex.inclusion_map(),
@@ -3675,7 +3676,7 @@ class SimplicialSet_finite(SimplicialSet_arbitrary, GenericCellComplex):
         from sage.homology.chain_complex import ChainComplex
 
         if dimensions is None:
-            if not self.cells(): # Empty
+            if not self.cells():  # Empty
                 if cochain:
                     return ChainComplex({-1: matrix(base_ring, 0, 0)},
                                         degree_of_differential=1)
@@ -3722,13 +3723,13 @@ class SimplicialSet_finite(SimplicialSet_arbitrary, GenericCellComplex):
         if augmented and first == 0:
             differentials[first-1] = matrix(base_ring, 0, 1)
             differentials[first] = matrix(base_ring, 1, rank,
-                                      [1] * rank)
+                                          [1] * rank)
         else:
             differentials[first] = matrix(base_ring, 0, rank)
 
         for d in dimensions:
             old_rank = rank
-            faces = {_[1]:_[0] for _ in enumerate(current)}
+            faces = {_[1]: _[0] for _ in enumerate(current)}
             if d in simplices:
                 current = sorted(simplices[d])
                 rank = len(current)
@@ -3901,6 +3902,7 @@ def standardize_degeneracies(*L):
                 J[idx + 1] = tmp
     return tuple(J)
 
+
 def all_degeneracies(n, l=1):
     r"""
     Return list of all composites of degeneracies (written in
@@ -3942,6 +3944,7 @@ def all_degeneracies(n, l=1):
         ans.update(set([tuple(standardize_degeneracies(*([i] + list(_))))
                         for _ in all_degeneracies(n, l-1)]))
     return ans
+
 
 def standardize_face_maps(*L):
     r"""
@@ -3988,6 +3991,7 @@ def standardize_face_maps(*L):
                 J[idx] = J[idx + 1] - 1
                 J[idx + 1] = tmp
     return tuple(J)
+
 
 def face_degeneracies(m, I):
     r"""
@@ -4039,7 +4043,7 @@ def face_degeneracies(m, I):
     for i in I:
         if t is None:
             J.append(i)
-        elif t<i:
+        elif t < i:
             J.append(i-1)
         elif t == i or t == i+1:
             t = None

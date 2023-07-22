@@ -21,14 +21,14 @@ AUTHORS:
 - William Stein (2005)
 
 """
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2005 William Stein <wstein@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.misc.latex import latex
 
@@ -40,6 +40,7 @@ from sage.schemes.generic.divisor_group import DivisorGroup
 from sage.schemes.generic.divisor import Divisor_curve
 
 from sage.rings.integer import Integer
+
 
 class Curve_generic(AlgebraicScheme_subscheme):
     r"""
@@ -70,11 +71,11 @@ class Curve_generic(AlgebraicScheme_subscheme):
         """
         if self.defining_ideal().is_zero() and self.ambient_space().dimension() == 1:
             return "{} Line over {}".format(self._repr_type(), self.base_ring())
+        polys = ', '.join(str(x) for x in self.defining_polynomials())
         return "{} Curve over {} defined by {}".format(self._repr_type(),
-                                                       self.base_ring(),
-            ', '.join(str(x) for x in self.defining_polynomials()))
+                                                       self.base_ring(), polys)
 
-    def _repr_type(self):
+    def _repr_type(self) -> str:
         r"""
         Return a string representation of the type of this curve.
 
@@ -421,13 +422,13 @@ class Curve_generic(AlgebraicScheme_subscheme):
             False
         """
         if C.ambient_space() != self.ambient_space():
-            raise TypeError("(=%s) must be a curve in the same ambient space as (=%s)"%(C,self))
+            raise TypeError("(=%s) must be a curve in the same ambient space as (=%s)" % (C, self))
         if not isinstance(C, Curve_generic):
-            raise TypeError("(=%s) must be a curve"%C)
+            raise TypeError("(=%s) must be a curve" % C)
         try:
             P = self.ambient_space()(P)
         except TypeError:
-            raise TypeError("(=%s) must be a point in the ambient space of this curve"%P)
+            raise TypeError("(=%s) must be a point in the ambient space of this curve" % P)
         try:
             P = self(P)
             P = C(P)
@@ -485,9 +486,9 @@ class Curve_generic(AlgebraicScheme_subscheme):
             (=Rational Field) must be a finite field
         """
         if C.ambient_space() != self.ambient_space():
-            raise TypeError("(=%s) must be a curve in the same ambient space as (=%s)"%(C,self))
+            raise TypeError("(=%s) must be a curve in the same ambient space as (=%s)" % (C, self))
         if not isinstance(C, Curve_generic):
-            raise TypeError("(=%s) must be a curve"%C)
+            raise TypeError("(=%s) must be a curve" % C)
         X = self.intersection(C)
         if F is None:
             F = self.base_ring()

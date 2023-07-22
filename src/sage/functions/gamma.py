@@ -619,7 +619,7 @@ class Function_gamma_inc_lower(BuiltinFunction):
         r"""
         EXAMPLES::
 
-            sage: gamma_inc_lower(4/3, 1)._mathematica_()       # optional - mathematica, needs sage.symbolic
+            sage: gamma_inc_lower(4/3, 1)._mathematica_()  # indirect doctest  # optional - mathematica, needs sage.symbolic
             Gamma[4/3, 0, 1]
         """
         args_mathematica = []
@@ -672,7 +672,7 @@ def gamma(a, *args, **kwds):
 
     ::
 
-        sage: gamma(CDF(I))                                                             # needs sage.libs.pari sage.symbolic
+        sage: gamma(CDF(I))                                                             # needs sage.libs.pari sage.rings.complex_double sage.symbolic
         -0.15494982830181067 - 0.49801566811835607*I
         sage: gamma(CDF(0.5, 14))                                                       # needs sage.libs.pari sage.rings.complex_double
         -4.0537030780372815e-10 - 5.773299834553605e-10*I

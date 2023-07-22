@@ -191,11 +191,11 @@ class SchemeMorphism_polynomial_affine_space(SchemeMorphism_polynomial):
         """
         if check:
             if not isinstance(polys, (list, tuple)):
-                raise TypeError("polys (=%s) must be a list or tuple"%polys)
+                raise TypeError("polys (=%s) must be a list or tuple" % polys)
             source_ring = parent.domain().ambient_space().coordinate_ring()
             target = parent.codomain().ambient_space()
             if len(polys) != target.ngens():
-                raise ValueError("there must be %s polynomials"%target.ngens())
+                raise ValueError("there must be %s polynomials" % target.ngens())
             try:
                 polys = [source_ring(poly) for poly in polys]
             except TypeError:  # maybe given quotient ring elements
@@ -204,14 +204,15 @@ class SchemeMorphism_polynomial_affine_space(SchemeMorphism_polynomial):
                 except (TypeError, AttributeError):
                     # must be a rational function since we cannot have
                     # rational functions for quotient rings
+                    source_field = source_ring.base_ring().fraction_field()
                     try:
-                        if not all(p.base_ring().fraction_field()==source_ring.base_ring().fraction_field() for p in polys):
-                            raise TypeError("polys (=%s) must be rational functions in %s"%(polys, source_ring))
+                        if not all(p.base_ring().fraction_field() == source_field for p in polys):
+                            raise TypeError("polys (=%s) must be rational functions in %s" % (polys, source_ring))
                         K = FractionField(source_ring)
                         polys = [K(p) for p in polys]
                         # polys = [source_ring(poly.numerator())/source_ring(poly.denominator()) for poly in polys]
-                    except TypeError: # can't seem to coerce
-                        raise TypeError("polys (=%s) must be rational functions in %s"%(polys, source_ring))
+                    except TypeError:  # can't seem to coerce
+                        raise TypeError("polys (=%s) must be rational functions in %s" % (polys, source_ring))
             check = False
 
         SchemeMorphism_polynomial.__init__(self, parent, polys, check)
@@ -261,7 +262,7 @@ class SchemeMorphism_polynomial_affine_space(SchemeMorphism_polynomial):
                 try:
                     x = self.domain()(x)
                 except (TypeError, NotImplementedError):
-                    raise TypeError("%s fails to convert into the map's domain %s, but a `pushforward` method is not properly implemented"%(x, self.domain()))
+                    raise TypeError("%s fails to convert into the map's domain %s, but a `pushforward` method is not properly implemented" % (x, self.domain()))
 
         R = x.domain().coordinate_ring()
         if R is self.base_ring():
@@ -306,7 +307,7 @@ class SchemeMorphism_polynomial_affine_space(SchemeMorphism_polynomial):
             return False
         if self.parent() != right.parent():
             return False
-        return all(val == right._polys[i] for i,val in enumerate(self._polys))
+        return all(val == right._polys[i] for i, val in enumerate(self._polys))
 
     def __ne__(self, right):
         """
@@ -336,7 +337,7 @@ class SchemeMorphism_polynomial_affine_space(SchemeMorphism_polynomial):
             return True
         if self.parent() != right.parent():
             return True
-        return any(val != right._polys[i] for i,val in enumerate(self._polys))
+        return any(val != right._polys[i] for i, val in enumerate(self._polys))
 
     @lazy_attribute
     def _fastpolys(self):
@@ -424,11 +425,11 @@ class SchemeMorphism_polynomial_affine_space(SchemeMorphism_polynomial):
         P = []
         for i in range(len(self._fastpolys[0])):
             # Check if denominator is the identity;
-            #if not, then must append the fraction evaluated at the point
+            # if not, then must append the fraction evaluated at the point
             if self._fastpolys[1][i] is R.one():
                 P.append(self._fastpolys[0][i](*x))
             else:
-                P.append(self._fastpolys[0][i](*x)/self._fastpolys[1][i](*x))
+                P.append(self._fastpolys[0][i](*x) / self._fastpolys[1][i](*x))
         return P
 
     def homogenize(self, n):
@@ -603,32 +604,32 @@ class SchemeMorphism_polynomial_affine_space(SchemeMorphism_polynomial):
         # create dictionary for mapping of coordinate rings
         R = self.domain().ambient_space().coordinate_ring()
         S = A.ambient_space().coordinate_ring()
-        D = dict(zip(R.gens(), [S.gen(i) for i in range(N+1) if i != ind[0]]))
+        D = dict(zip(R.gens(), [S.gen(i) for i in range(N + 1) if i != ind[0]]))
 
         if self.codomain().is_projective():
-            L = [self[i].denominator() for i in range(M+1)]
-            l = [prod(L[:j] + L[j+1:M+1]) for j in range(M+1)]
-            F = [S(R(self[i].numerator()*l[i]).subs(D)) for i in range(M+1)]
+            L = [self[i].denominator() for i in range(M + 1)]
+            l = [prod(L[:j] + L[j + 1:M + 1]) for j in range(M + 1)]
+            F = [S(R(self[i].numerator() * l[i]).subs(D)) for i in range(M + 1)]
         else:
             # clear the denominators if a rational function
             L = [self[i].denominator() for i in range(M)]
-            l = [prod(L[:j] + L[j+1:M]) for j in range(M)]
-            F = [S(R(self[i].numerator()*l[i]).subs(D)) for i in range(M)]
+            l = [prod(L[:j] + L[j + 1:M]) for j in range(M)]
+            F = [S(R(self[i].numerator() * l[i]).subs(D)) for i in range(M)]
             F.insert(ind[1], S(R(prod(L)).subs(D)))  # coerce in case l is a constant
 
         try:
             # remove possible gcd of the polynomials
             g = gcd(F)
-            F = [S(f/g) for f in F]
+            F = [S(f / g) for f in F]
             # remove possible gcd of coefficients
             gc = gcd([f.content() for f in F])
-            F = [S(f/gc) for f in F]
-        except (AttributeError, ValueError, NotImplementedError, TypeError, ArithmeticError): # no gcd
+            F = [S(f / gc) for f in F]
+        except (AttributeError, ValueError, NotImplementedError, TypeError, ArithmeticError):  # no gcd
             pass
 
         # homogenize
-        d = max([F[i].degree() for i in range(M+1)])
-        F = [F[i].homogenize(str(newvar))*newvar**(d-F[i].degree()) for i in range(M+1)]
+        d = max([F[i].degree() for i in range(M + 1)])
+        F = [F[i].homogenize(str(newvar)) * newvar**(d - F[i].degree()) for i in range(M + 1)]
 
         return H(F)
 
@@ -684,7 +685,7 @@ class SchemeMorphism_polynomial_affine_space(SchemeMorphism_polynomial):
         if R not in _Fields:
             return DynamicalSystem_affine(list(self), self.domain())
         if isinstance(R, FiniteField):
-                return DynamicalSystem_affine_finite_field(list(self), self.domain())
+            return DynamicalSystem_affine_finite_field(list(self), self.domain())
         return DynamicalSystem_affine_field(list(self), self.domain())
 
     def global_height(self, prec=None):
@@ -894,7 +895,7 @@ class SchemeMorphism_polynomial_affine_space(SchemeMorphism_polynomial):
 
         from sage.calculus.functions import jacobian
 
-        self.__jacobian = jacobian(list(self),self.domain().ambient_space().gens())
+        self.__jacobian = jacobian(list(self), self.domain().ambient_space().gens())
         return self.__jacobian
 
     def _matrix_times_polymap_(self, mat, h):
@@ -1033,6 +1034,7 @@ class SchemeMorphism_polynomial_affine_space(SchemeMorphism_polynomial):
             elif poly.degree() > max_degree:
                 max_degree = poly.degree()
         return max_degree
+
 
 class SchemeMorphism_polynomial_affine_space_field(SchemeMorphism_polynomial_affine_space):
 
@@ -1226,7 +1228,7 @@ class SchemeMorphism_polynomial_affine_space_field(SchemeMorphism_polynomial_aff
         R = new_domain.coordinate_ring()
         H = Hom(new_domain, new_codomain)
         if isinstance(g[0], FractionFieldElement):
-            return H([R(G.numerator())/R(G.denominator()) for G in g])
+            return H([R(G.numerator()) / R(G.denominator()) for G in g])
         return H([R(G) for G in g])
 
     def indeterminacy_locus(self):
@@ -1257,7 +1259,7 @@ class SchemeMorphism_polynomial_affine_space_field(SchemeMorphism_polynomial_aff
         """
         A = self.domain()
         X = A.subscheme(0)  # affine space as a subscheme
-        return (self*X.hom(A.gens(), A)).indeterminacy_locus()
+        return (self * X.hom(A.gens(), A)).indeterminacy_locus()
 
     def indeterminacy_points(self, F=None):
         r"""
@@ -1332,7 +1334,7 @@ class SchemeMorphism_polynomial_affine_space_field(SchemeMorphism_polynomial_aff
         """
         X = self.domain().subscheme(0)
         e = X.embedding_morphism()
-        return (self*e).image()
+        return (self * e).image()
 
 
 class SchemeMorphism_polynomial_affine_space_finite_field(SchemeMorphism_polynomial_affine_space_field):
@@ -1358,7 +1360,7 @@ class SchemeMorphism_polynomial_affine_space_finite_field(SchemeMorphism_polynom
             [1, 1, 2]
         """
         R = self.domain().ambient_space().coordinate_ring()
-        P=[]
+        P = []
         for i in range(len(self._fastpolys[0])):
             r = self._fastpolys[0][i](*x)
             if self._fastpolys[1][i] is R.one():
@@ -1372,7 +1374,7 @@ class SchemeMorphism_polynomial_affine_space_finite_field(SchemeMorphism_polynom
                     p = self.base_ring().characteristic()
                     r = Integer(r) % p
                     s = Integer(s) % p
-                P.append(r/s)
+                P.append(r / s)
         return P
 
 
@@ -1457,7 +1459,7 @@ class SchemeMorphism_polynomial_affine_subscheme_field(SchemeMorphism_polynomial
             reprs = []
             for r in h.representatives():
                 i = X.projective_embedding(0, h.domain().ambient_space())
-                reprs.append(r*i)
+                reprs.append(r * i)
         else:
             reprs = []
             for r in h.representatives():
@@ -1578,5 +1580,5 @@ class SchemeMorphism_polynomial_affine_subscheme_field(SchemeMorphism_polynomial
             return self.homogenize(0).image()
 
         e = Y.projective_embedding(0)
-        h = (e*self).homogenize(0)
+        h = (e * self).homogenize(0)
         return h.image().affine_patch(0, Y.ambient_space())

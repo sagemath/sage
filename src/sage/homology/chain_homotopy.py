@@ -385,6 +385,7 @@ class ChainHomotopy(Morphism):
         s += '\n  and {}'.format('\n  '.join(self._g._repr_().split('\n')))
         return s
 
+
 class ChainContraction(ChainHomotopy):
     r"""
     A chain contraction.

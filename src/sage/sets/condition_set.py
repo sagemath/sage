@@ -207,7 +207,7 @@ class ConditionSet(Set_generic, Set_base, Set_boolean_operators, Set_add_sub_ope
         if isinstance(universe, Parent):
             facade = universe
         super().__init__(facade=facade, category=category,
-                         names=names, normalize=False) # names already normalized by classcall
+                         names=names, normalize=False)  # names already normalized by classcall
 
     def _first_ngens(self, n):
         r"""

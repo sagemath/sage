@@ -26,18 +26,19 @@ AUTHORS:
 - Grayson Jorgenson (2016-6): initial version
 
 """
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2005 William Stein <wstein@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 from sage.schemes.affine.affine_point import (SchemeMorphism_point_affine_field,
                                               SchemeMorphism_point_affine_finite_field)
 from sage.schemes.projective.projective_point import (SchemeMorphism_point_projective_field,
                                                       SchemeMorphism_point_projective_finite_field)
+
 
 class ProjectiveCurvePoint_field(SchemeMorphism_point_projective_field):
     """
@@ -193,7 +194,8 @@ class IntegralProjectiveCurvePoint(ProjectiveCurvePoint_field):
                 break
         ai = hcoords[i]
         xi = S.gen(i)
-        hgens = [ai*S.gen(j) - hcoords[j]*xi for j in range(S.ngens()) if j != i]
+        hgens = [ai * S.gen(j) - hcoords[j] * xi
+                 for j in range(S.ngens()) if j != i]
         return curve._closed_point(curve, S.ideal(hgens), degree=1)
 
     def places(self):
@@ -459,6 +461,7 @@ class IntegralAffinePlaneCurvePoint(IntegralAffineCurvePoint, AffinePlaneCurvePo
     Point of an integral affine plane curve over a finite field.
     """
     pass
+
 
 class IntegralAffinePlaneCurvePoint_finite_field(AffinePlaneCurvePoint_finite_field, IntegralAffineCurvePoint_finite_field):
     """

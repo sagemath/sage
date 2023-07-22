@@ -12589,7 +12589,7 @@ cdef class Matrix(Matrix1):
         R = self.base_ring()
         if not is_Vector(v):
             raise TypeError('first input should be a vector, not {0}'.format(v))
-        if not (var is None  or isinstance(var, basestring)):
+        if not (var is None  or isinstance(var, str)):
             generator = False
             try:
                 generator = var.is_gen()

@@ -799,8 +799,8 @@ class GrowthDiagram(SageObject):
         """
         l = self._lambda[0]
         h = len(self._lambda)
-        shape_lambda = [l-p for p in self._mu] + [l]*(h-len(self._mu))
-        shape_mu     = [l-p for p in self._lambda]
+        shape_lambda = [l - p for p in self._mu] + [l] * (h - len(self._mu))
+        shape_mu = [l - p for p in self._lambda]
         shape = SkewPartition([shape_lambda[::-1], shape_mu[::-1]])
         F = {(l-i-1, h-j-1): v for (i,j),v in self._filling.items()}
         return GrowthDiagram(self.rule,

@@ -219,7 +219,7 @@ class AffinePermutation(ClonableArray):
         """
         return self.value(i)
 
-    def is_i_grassmannian(self, i=0, side="right"):
+    def is_i_grassmannian(self, i=0, side="right") -> bool:
         r"""
         Test whether ``self`` is `i`-grassmannian, i.e., either is the
         identity or has ``i`` as the sole descent.
@@ -279,7 +279,7 @@ class AffinePermutation(ClonableArray):
         S = self.descents(side)
         return [self.apply_simple_reflection(i, side) for i in S]
 
-    def is_one(self):
+    def is_one(self) -> bool:
         r"""
         Tests whether the affine permutation is the identity.
 
@@ -878,18 +878,21 @@ class AffinePermutationTypeA(AffinePermutation):
                         code[i] += (b-i) // (self.k+1) + 1
         return Composition(code)
 
-    def is_fully_commutative(self):
+    def is_fully_commutative(self) -> bool:
         r"""
-        Determine whether ``self`` is fully commutative, i.e., has no
-        reduced words with a braid.
+        Determine whether ``self`` is fully commutative.
+
+        This means that it has no reduced word with a braid.
+
+        This uses a specific algorithm.
 
         EXAMPLES::
 
             sage: A = AffinePermutationGroup(['A',7,1])
-            sage: p=A([3, -1, 0, 6, 5, 4, 10, 9])
+            sage: p = A([3, -1, 0, 6, 5, 4, 10, 9])
             sage: p.is_fully_commutative()
             False
-            sage: q=A([-3, -2, 0, 7, 9, 2, 11, 12])
+            sage: q = A([-3, -2, 0, 7, 9, 2, 11, 12])
             sage: q.is_fully_commutative()
             True
         """
@@ -902,14 +905,12 @@ class AffinePermutationTypeA(AffinePermutation):
             if c[i] > 0:
                 if firstnonzero is None:
                     firstnonzero = i
-                if m != -1 and c[i] - (i-m) >= c[m]:
+                if m != -1 and c[i] - (i - m) >= c[m]:
                     return False
                 m = i
-        #now check m (the last non-zero) against firstnonzero.
-        d = self.n-(m-firstnonzero)
-        if c[firstnonzero]-d >= c[m]:
-            return False
-        return True
+        # now check m (the last non-zero) against first non-zero.
+        d = self.n - (m - firstnonzero)
+        return not c[firstnonzero] - d >= c[m]
 
     def to_bounded_partition(self, typ='decreasing', side='right'):
         r"""
