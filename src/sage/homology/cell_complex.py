@@ -9,4 +9,4 @@ from sage.misc.superseded import deprecated_function_alias
 import sage.topology.cell_complex
 
 GenericCellComplex = deprecated_function_alias(31925,
-                      sage.topology.cell_complex.GenericCellComplex)
+                                               sage.topology.cell_complex.GenericCellComplex)
