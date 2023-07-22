@@ -426,7 +426,7 @@ Sagemath is available on Docker Hub and can be downloaded by:
 docker pull sagemath/sagemath
 ```
 
-Currently, the docker image is not up to date.
+Currently, only stable versions are kept up to date.
 
 Troubleshooting
 ---------------
