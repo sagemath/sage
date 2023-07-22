@@ -155,7 +155,7 @@ class HyperplaneArrangementLibrary():
         for u, v in G.edge_iterator(labels=False, sort_vertices=False):
             i = vertex_to_int[u]
             j = vertex_to_int[v]
-            hyperplanes.append( x[i] - x[j] - A[i][j])
+            hyperplanes.append(x[i] - x[j] - A[i][j])
             hyperplanes.append(-x[i] + x[j] - A[j][i])
         return H(*hyperplanes)
 
@@ -689,7 +689,7 @@ class HyperplaneArrangementLibrary():
             x^3 - 54*x^2 + 972*x - 5832
         """
         if data in NN:
-            cartan_type = CartanType(["A",data-1])
+            cartan_type = CartanType(["A", data - 1])
         else:
             cartan_type = CartanType(data)
         if not cartan_type.is_crystallographic():
@@ -704,12 +704,13 @@ class HyperplaneArrangementLibrary():
         hyperplanes = []
 
         for a in PR:
-            for const in range(-m+1,m+1):
+            for const in range(-m + 1, m + 1):
                 hyperplanes.append(sum(a[j]*x[j] for j in range(d))-const)
         A = H(*hyperplanes)
         x = polygen(QQ, 'x')
         charpoly = x**(d-n) * (x-m*h)**n
         A.characteristic_polynomial.set_cache(charpoly)
         return A
+
 
 hyperplane_arrangements = HyperplaneArrangementLibrary()
