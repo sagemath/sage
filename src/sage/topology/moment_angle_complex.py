@@ -61,6 +61,7 @@ from sage.homology.homology_group import HomologyGroup
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
 from sage.structure.sage_object import SageObject
+from sage.structure.unique_representation import UniqueRepresentation
 from .cubical_complex import CubicalComplex, cubical_complexes
 from .simplicial_complex import SimplicialComplex, copy
 from .simplicial_complex_examples import Sphere, Simplex
@@ -88,7 +89,7 @@ def union(c1, c2):
         facets.append(f)
     return CubicalComplex(facets)
 
-class MomentAngleComplex(SageObject): # should this inherit SimplicialComplex?
+class MomentAngleComplex(SageObject, UniqueRepresentation):
     """
     Define a moment-angle complex.
 
@@ -143,6 +144,14 @@ class MomentAngleComplex(SageObject): # should this inherit SimplicialComplex?
                     Y.append(Sphere(1))
 
             self._components[facet] = Y
+
+    @staticmethod
+    def __classcall_private__(cls, simplicial_complex):
+        if simplicial_complex.is_mutable():
+            immutable_complex = SimplicialComplex(simplicial_complex, is_mutable=False)
+        else:
+            immutable_complex = simplicial_complex
+        return super().__classcall__(cls, immutable_complex)
 
     def __eq__(self, other):
         """
