@@ -1902,7 +1902,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
             sage: b'hi' * 8 == b'hihihihihihihihi'
             True
         """
-        if isinstance(s, (list, tuple, basestring, bytes)):
+        if isinstance(s, (list, tuple, str, bytes)):
             if mpz_fits_slong_p(self.value):
                 return s * mpz_get_si(self.value)
             else:
@@ -4812,15 +4812,15 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
 
             sage: 144.perfect_power()                                                   # optional - sage.libs.pari
             (12, 2)
-            sage: 1.perfect_power()                                                     # optional - sage.libs.pari
+            sage: 1.perfect_power()
             (1, 1)
-            sage: 0.perfect_power()                                                     # optional - sage.libs.pari
+            sage: 0.perfect_power()
             (0, 1)
-            sage: (-1).perfect_power()                                                  # optional - sage.libs.pari
+            sage: (-1).perfect_power()
             (-1, 1)
             sage: (-8).perfect_power()                                                  # optional - sage.libs.pari
             (-2, 3)
-            sage: (-4).perfect_power()                                                  # optional - sage.libs.pari
+            sage: (-4).perfect_power()
             (-4, 1)
             sage: (101^29).perfect_power()                                              # optional - sage.libs.pari
             (101, 29)
@@ -4828,7 +4828,28 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
             (-3, 5)
             sage: (-64).perfect_power()                                                 # optional - sage.libs.pari
             (-4, 3)
+
+        TESTS::
+
+            sage: 4.perfect_power()
+            (2, 2)
+            sage: 256.perfect_power()
+            (2, 8)
         """
+        cdef long n
+        # Fast PARI-free path
+        if mpz_fits_slong_p(self.value):
+            n = mpz_get_si(self.value)
+            if -8 < n < 4:
+                return self, one
+            if n >= 4:
+                if not (n & 1):
+                    if mpz_popcount(self.value) == 1:
+                        return smallInteger(2), smallInteger(mpz_sizeinbase(self.value, 2) - 1)
+                if n < 1000:
+                    if _small_primes_table[n >> 1]:
+                        return self, one
+
         parians = self.__pari__().ispower()
         return Integer(parians[1]), Integer(parians[0])
 
@@ -5164,11 +5185,32 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
             sage: n = 150607571^14
             sage: n.is_prime_power()                                                    # optional - sage.libs.pari
             True
+
+        TESTS::
+
+            sage: 2.is_prime_power(get_data=True)
+            (2, 1)
+            sage: 4.is_prime_power(get_data=True)
+            (2, 2)
+            sage: 512.is_prime_power(get_data=True)
+            (2, 9)
         """
+        cdef long n
+
         if mpz_sgn(self.value) <= 0:
             return (self, zero) if get_data else False
 
         if mpz_fits_slong_p(self.value):
+            # Fast PARI-free path
+            n = mpz_get_si(self.value)
+            if not (n & 1):
+                if mpz_popcount(self.value) != 1:
+                    return (self, zero) if get_data else False
+                return (smallInteger(2), smallInteger(mpz_sizeinbase(self.value, 2) - 1)) if get_data else True
+            if n < 1000:
+                if _small_primes_table[n >> 1]:
+                    return (self, one) if get_data else True
+
             global pari_is_prime_power
             if pari_is_prime_power is None:
                 try:
@@ -5178,7 +5220,6 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
             if pari_is_prime_power is not None:
                 return pari_is_prime_power(self, get_data)
 
-        cdef long n
         if proof is None:
             from sage.structure.proof.proof import get_flag
             proof = get_flag(proof, "arithmetic")
@@ -5362,7 +5403,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
             True
         """
         cdef Integer n = self if self >= 0 else -self
-        return n.__pari__().isprime()
+        return n.is_prime(proof=True)
 
     def is_pseudoprime(self):
         r"""

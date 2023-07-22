@@ -1007,7 +1007,7 @@ cpdef normalize_names(Py_ssize_t ngens, names):
                 names = tuple(names)
             except ValueError:
                 pass
-        if isinstance(names, basestring):
+        if isinstance(names, str):
             if ngens < 0:
                 names = [names]
             else:
