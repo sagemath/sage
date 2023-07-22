@@ -14,5 +14,6 @@ cdef class Matrix_cmr_sparse(Matrix_sparse):
 cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
 
     cdef CMR_CHRMAT *_mat
+    cdef object _root
 
     cdef _init_from_dict(self, dict d, int nrows, int ncols)
