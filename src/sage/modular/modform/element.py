@@ -2783,7 +2783,7 @@ class ModularFormElement_elliptic_curve(Newform):
         """
         M = self.parent()
         S = M.cuspidal_subspace()
-#        return S.find_in_space( self.__E.q_expansion( S.q_expansion_basis()[0].prec() ) ) + [0] * ( M.dimension() - S.dimension() )
+        #        return S.find_in_space( self.__E.q_expansion( S.q_expansion_basis()[0].prec() ) ) + [0] * ( M.dimension() - S.dimension() )
         return vector(S.find_in_space(self.__E.q_expansion(S.sturm_bound())) + [0] * (M.dimension() - S.dimension()))
 
     def _compute_q_expansion(self, prec):
@@ -3553,16 +3553,17 @@ class GradedModularFormElement(ModuleElement):
             sage: (F4 + M(1))^2
             4 + 960*q + 66240*q^2 + 1063680*q^3 + 7961280*q^4 + 37560960*q^5 + O(q^6)
         """
+        from collections import defaultdict
+
         GM = self.__class__
         f_self = self._forms_dictionary
         f_other = other._forms_dictionary
-        f_mul = {}
+        f_mul = defaultdict(int)
+
         for k_self in f_self.keys():
             for k_other in f_other.keys():
-                try:
-                    f_mul[k_self + k_other] += f_self[k_self]*f_other[k_other]
-                except KeyError:
-                    f_mul[k_self + k_other] = f_self[k_self]*f_other[k_other]
+                f_mul[k_self + k_other] += f_self[k_self] * f_other[k_other]
+
         return GM(self.parent(), f_mul)
 
     def _lmul_(self, c):
