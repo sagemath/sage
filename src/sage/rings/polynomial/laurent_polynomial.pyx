@@ -184,7 +184,7 @@ cdef class LaurentPolynomial(CommutativeAlgebraElement):
 
             sage: R.<x, y> = LaurentPolynomialRing(QQ)                                  # needs sage.modules
             sage: a = 2*x^2 + 3*x^3 + 4*x^-1                                            # needs sage.modules
-            sage: a.change_ring(GF(3))                                                  # needs sage.modules sage.rings.finite_rings
+            sage: a.change_ring(GF(3))                                                  # needs sage.modules
             -x^2 + x^-1
         """
         return self._parent.change_ring(R)(self)

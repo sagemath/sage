@@ -742,14 +742,15 @@ cdef class RingExtension_generic(CommutativeAlgebra):
 
         EXAMPLES::
 
-             sage: K = GF(5^3)
-             sage: E = K.over()
-             sage: E
-             Field in z3 with defining polynomial x^3 + 3*x + 3 over its base
-             sage: E.backend()
-             Finite Field in z3 of size 5^3
-             sage: E.backend() is K
-             True
+            sage: # needs sage.rings.finite_rings
+            sage: K = GF(5^3)
+            sage: E = K.over()
+            sage: E
+            Field in z3 with defining polynomial x^3 + 3*x + 3 over its base
+            sage: E.backend()
+            Finite Field in z3 of size 5^3
+            sage: E.backend() is K
+            True
 
         """
         if force or self._is_backend_exposed:
@@ -766,7 +767,7 @@ cdef class RingExtension_generic(CommutativeAlgebra):
 
         EXAMPLES::
 
-            sage: k = GF(5)                                                             # needs sage.rings.finite_rings
+            sage: k = GF(5)
             sage: K.<u> = GF(5^2).over(k)                                               # needs sage.rings.finite_rings
             sage: L.<v> = GF(5^4).over(K)                                               # needs sage.rings.finite_rings
 
@@ -1707,13 +1708,13 @@ cdef class RingExtension_generic(CommutativeAlgebra):
             sage: K.is_field()                                                          # needs sage.rings.finite_rings
             True
 
-            sage: S.<x> = QQ[]                                                          # needs sage.rings.finite_rings
-            sage: A = S.over(QQ)                                                        # needs sage.rings.finite_rings
-            sage: A.is_field()                                                          # needs sage.rings.finite_rings
+            sage: S.<x> = QQ[]
+            sage: A = S.over(QQ)
+            sage: A.is_field()
             False
 
-            sage: B = A.fraction_field()                                                # needs sage.rings.finite_rings
-            sage: B.is_field()                                                          # needs sage.rings.finite_rings
+            sage: B = A.fraction_field()
+            sage: B.is_field()
             True
         """
         return self._backend.is_field(proof=proof)
@@ -1778,8 +1779,8 @@ cdef class RingExtension_generic(CommutativeAlgebra):
 
         TESTS::
 
-            sage: A = GF(5).over(ZZ)                                                    # needs sage.rings.finite_rings
-            sage: A.fraction_field(extend_base=True)                                    # needs sage.rings.finite_rings
+            sage: A = GF(5).over(ZZ)
+            sage: A.fraction_field(extend_base=True)
             Traceback (most recent call last):
             ...
             ValueError: the morphism is not injective
@@ -1971,8 +1972,8 @@ cdef class RingExtension_generic(CommutativeAlgebra):
 
         ::
 
-            sage: E = GF(7).over(ZZ)                                                    # needs sage.rings.finite_rings
-            sage: E.characteristic()                                                    # needs sage.rings.finite_rings
+            sage: E = GF(7).over(ZZ)
+            sage: E.characteristic()
             7
 
         TESTS:
@@ -2184,7 +2185,7 @@ cdef class RingExtensionWithBasis(RingExtension_generic):
 
         TESTS::
 
-            sage: F = GF(5)                                                             # needs sage.rings.finite_rings
+            sage: F = GF(5)
             sage: K = GF(5^2).over(F)                                                   # needs sage.rings.finite_rings
             sage: L = GF(5^4).over(K)                                                   # needs sage.rings.finite_rings
 
@@ -2382,7 +2383,7 @@ cdef class RingExtensionWithBasis(RingExtension_generic):
 
         EXAMPLES::
 
-            sage: F = GF(11)                                                            # needs sage.rings.finite_rings
+            sage: F = GF(11)
             sage: K.<a> = GF(11^2).over()                                               # needs sage.rings.finite_rings
             sage: L.<b> = GF(11^6).over(K)                                              # needs sage.rings.finite_rings
 
@@ -2546,8 +2547,8 @@ cdef class RingExtensionWithBasis(RingExtension_generic):
 
         TESTS::
 
-            sage: A = GF(5).over(ZZ)                                                    # needs sage.rings.finite_rings
-            sage: A.fraction_field(extend_base=True)                                    # needs sage.rings.finite_rings
+            sage: A = GF(5).over(ZZ)
+            sage: A.fraction_field(extend_base=True)
             Traceback (most recent call last):
             ...
             ValueError: the morphism is not injective
@@ -2792,8 +2793,8 @@ cdef class RingExtensionWithGen(RingExtensionWithBasis):
 
         TESTS::
 
-            sage: A = GF(5).over(ZZ)                                                    # needs sage.rings.finite_rings
-            sage: A.fraction_field(extend_base=True)                                    # needs sage.rings.finite_rings
+            sage: A = GF(5).over(ZZ)
+            sage: A.fraction_field(extend_base=True)
             Traceback (most recent call last):
             ...
             ValueError: the morphism is not injective

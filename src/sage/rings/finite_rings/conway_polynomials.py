@@ -48,11 +48,11 @@ def conway_polynomial(p, n):
 
     EXAMPLES::
 
-        sage: conway_polynomial(2,5)                                            # needs conway_polynomials
+        sage: conway_polynomial(2,5)                                                    # needs conway_polynomials
         x^5 + x^2 + 1
-        sage: conway_polynomial(101,5)                                          # needs conway_polynomials
+        sage: conway_polynomial(101,5)                                                  # needs conway_polynomials
         x^5 + 2*x + 99
-        sage: conway_polynomial(97,101)                                         # needs conway_polynomials
+        sage: conway_polynomial(97,101)                                                 # needs conway_polynomials
         Traceback (most recent call last):
         ...
         RuntimeError: requested Conway polynomial not in database.
@@ -85,7 +85,7 @@ def exists_conway_polynomial(p, n):
 
     EXAMPLES::
 
-        sage: exists_conway_polynomial(2,3)                                     # needs conway_polynomials
+        sage: exists_conway_polynomial(2,3)                                             # needs conway_polynomials
         True
         sage: exists_conway_polynomial(2,-1)
         False

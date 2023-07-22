@@ -279,8 +279,8 @@ cdef class RingExtensionElement(CommutativeAlgebraElement):
 
         EXAMPLES::
 
-            sage: F = GF(5^2)
-            sage: K.<z> = GF(5^4).over(F)
+            sage: F = GF(5^2)                                                           # needs sage.rings.finite_rings
+            sage: K.<z> = GF(5^4).over(F)                                               # needs sage.rings.finite_rings
             sage: x = z^10
             sage: x
             (z2 + 2) + (3*z2 + 1)*z
@@ -301,8 +301,8 @@ cdef class RingExtensionElement(CommutativeAlgebraElement):
 
         EXAMPLES::
 
-            sage: F = GF(5^2)
-            sage: K.<z> = GF(5^4).over(F)
+            sage: F = GF(5^2)                                                           # needs sage.rings.finite_rings
+            sage: K.<z> = GF(5^4).over(F)                                               # needs sage.rings.finite_rings
             sage: x = z^3 + z^2 + z + 4
             sage: y = x.in_base()
             sage: y
@@ -321,7 +321,7 @@ cdef class RingExtensionElement(CommutativeAlgebraElement):
 
             sage: S.<X> = F[]
             sage: E = S.over(F)
-            sage: f = E(1)
+            sage: f = E(1)                                                              # needs sage.rings.number_field
             sage: g = f.in_base()
             sage: g
             1
@@ -332,9 +332,9 @@ cdef class RingExtensionElement(CommutativeAlgebraElement):
 
         We check the case of a tower of extensions::
 
-            sage: F = GF(5^2)
-            sage: K.<u> = GF(5^4).over(F)
-            sage: L.<v> = GF(5^8).over(K)
+            sage: F = GF(5^2)                                                           # needs sage.rings.finite_rings
+            sage: K.<u> = GF(5^4).over(F)                                               # needs sage.rings.finite_rings
+            sage: L.<v> = GF(5^8).over(K)                                               # needs sage.rings.finite_rings
             sage: x = 4*v^7 + v^6 + 3*v^4 + v^3 + v^2 + 4
             sage: x.in_base()
             u
@@ -770,8 +770,9 @@ cdef class RingExtensionFractionFieldElement(RingExtensionElement):
 
         TESTS::
 
-            sage: x = K.random_element()                                                # needs sage.rings.number_field
-            sage: x == x.numerator() / x.denominator()                                  # needs sage.rings.number_field
+            sage: # needs sage.rings.number_field
+            sage: x = K.random_element()
+            sage: x == x.numerator() / x.denominator()
             True
         """
         ring = (<RingExtensionFractionField>self._parent)._ring
@@ -806,8 +807,9 @@ cdef class RingExtensionFractionFieldElement(RingExtensionElement):
 
         TESTS::
 
-            sage: x = K.random_element()                                                # needs sage.rings.number_field
-            sage: x == x.numerator() / x.denominator()                                  # needs sage.rings.number_field
+            sage: # needs sage.rings.number_field
+            sage: x = K.random_element()
+            sage: x == x.numerator() / x.denominator()
             True
         """
         ring = (<RingExtensionFractionField>self._parent)._ring

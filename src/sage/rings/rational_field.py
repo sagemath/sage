@@ -451,7 +451,7 @@ class RationalField(Singleton, number_field_base.NumberField):
 
         EXAMPLES::
 
-            sage: QQ / ZZ                                                               # needs sage.groups
+            sage: QQ / ZZ
             Q/Z
         """
         from sage.rings.ideal import Ideal_generic
@@ -787,28 +787,28 @@ class RationalField(Singleton, number_field_base.NumberField):
 
         TESTS::
 
-            sage: QQ.hilbert_symbol_negative_at_S(5/2, -2)                              # needs sage.libs.pari sage.modules
+            sage: QQ.hilbert_symbol_negative_at_S(5/2, -2)                              # needs sage.modules
             Traceback (most recent call last):
             ...
             TypeError: first argument must be a list or integer
 
         ::
 
-            sage: QQ.hilbert_symbol_negative_at_S([1, 3], 0)                            # needs sage.libs.pari sage.modules
+            sage: QQ.hilbert_symbol_negative_at_S([1, 3], 0)                            # needs sage.modules
             Traceback (most recent call last):
             ...
             ValueError: second argument must be nonzero
 
         ::
 
-            sage: QQ.hilbert_symbol_negative_at_S([-1, 3, 5], 2)                        # needs sage.libs.pari sage.modules
+            sage: QQ.hilbert_symbol_negative_at_S([-1, 3, 5], 2)                        # needs sage.modules
             Traceback (most recent call last):
             ...
             ValueError: list should be of even cardinality
 
         ::
 
-            sage: QQ.hilbert_symbol_negative_at_S([1, 3], 2)                            # needs sage.libs.pari sage.modules
+            sage: QQ.hilbert_symbol_negative_at_S([1, 3], 2)                            # needs sage.modules
             Traceback (most recent call last):
             ...
             ValueError: all entries in list must be prime or -1 for
@@ -831,7 +831,7 @@ class RationalField(Singleton, number_field_base.NumberField):
 
         ::
 
-            sage: QQ.hilbert_symbol_negative_at_S([-1, 3], 2)                           # needs sage.libs.pari sage.modules
+            sage: QQ.hilbert_symbol_negative_at_S([-1, 3], 2)                           # needs sage.modules
             Traceback (most recent call last):
             ...
             ValueError: if the infinite place is in the list, the second

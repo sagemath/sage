@@ -2651,10 +2651,11 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
 
         ::
 
+            sage: # needs sage.rings.real_mpfr
             sage: x = 3^100000
-            sage: RR(log(RR(x), 3))                                                     # needs sage.symbolic
+            sage: RR(log(RR(x), 3))
             100000.000000000
-            sage: RR(log(RR(x + 100000), 3))                                            # needs sage.symbolic
+            sage: RR(log(RR(x + 100000), 3))
             100000.000000000
 
         ::
@@ -2812,7 +2813,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
 
         The logarithm of zero is done likewise::
 
-            sage: log(0)
+            sage: log(0)                                                                # needs sage.symbolic
             -Infinity
 
         Some rational bases yield integer logarithms (:trac:`21517`)::

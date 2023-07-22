@@ -107,7 +107,7 @@ implementation for univariate polynomials over the integers
 to the default FLINT implementation, but not vice versa::
 
     sage: R.<x> = PolynomialRing(ZZ, implementation='NTL')                              # needs sage.libs.ntl
-    sage: S.<x> = PolynomialRing(ZZ, implementation='FLINT')                            # needs sage.libs.flint
+    sage: S.<x> = PolynomialRing(ZZ, implementation='FLINT')
     sage: (S.0 + R.0).parent() is S                                                     # needs sage.libs.flint sage.libs.ntl
     True
     sage: (R.0 + S.0).parent() is S                                                     # needs sage.libs.flint sage.libs.ntl
@@ -212,11 +212,12 @@ def is_PolynomialRing(x):
 
     ::
 
-        sage: R.<w> = PolynomialRing(ZZ, implementation="singular"); R                  # needs sage.libs.singular
+        sage: # needs sage.libs.singular
+        sage: R.<w> = PolynomialRing(ZZ, implementation="singular"); R
         Multivariate Polynomial Ring in w over Integer Ring
-        sage: is_PolynomialRing(R)                                                      # needs sage.libs.singular
+        sage: is_PolynomialRing(R)
         False
-        sage: type(R)                                                                   # needs sage.libs.singular
+        sage: type(R)
         <class 'sage.rings.polynomial.multi_polynomial_libsingular.MPolynomialRing_libsingular'>
     """
     return isinstance(x, PolynomialRing_general)
@@ -380,10 +381,11 @@ class PolynomialRing_general(ring.Algebra):
 
         This shows that the issue at :trac:`4106` is fixed::
 
-            sage: x = var('x')                                                          # needs sage.symbolic
+            sage: # needs sage.symbolic
+            sage: x = var('x')
             sage: R = IntegerModRing(4)
-            sage: S = R['x']                                                            # needs sage.symbolic
-            sage: S(x)                                                                  # needs sage.symbolic
+            sage: S = R['x']
+            sage: S(x)
             x
 
         Throw a TypeError if any of the coefficients cannot be coerced
@@ -658,11 +660,12 @@ class PolynomialRing_general(ring.Algebra):
             sage: 1 / g
             1 - x + O(x^20)
 
-            sage: PP = P.completion(x, prec=oo); PP                                     # needs sage.combinat
+            sage: # needs sage.combinat
+            sage: PP = P.completion(x, prec=oo); PP
             Lazy Taylor Series Ring in x over Rational Field
-            sage: g = 1 / PP(f); g                                                      # needs sage.combinat
+            sage: g = 1 / PP(f); g
             1 + x + x^2 + O(x^3)
-            sage: 1 / g == f                                                            # needs sage.combinat
+            sage: 1 / g == f
             True
         """
         if p is None or str(p) == self._names[0]:
@@ -766,6 +769,7 @@ class PolynomialRing_general(ring.Algebra):
         Over the integers, there is a coercion from the NTL and generic
         implementation to the default FLINT implementation::
 
+            sage: R = S = T = None  # clear values from doctests above
             sage: R = PolynomialRing(ZZ, 't', implementation="NTL")                     # needs sage.libs.ntl
             sage: S = PolynomialRing(ZZ, 't', implementation="FLINT")                   # needs sage.libs.flint
             sage: T = PolynomialRing(ZZ, 't', implementation="generic")
@@ -1177,9 +1181,9 @@ class PolynomialRing_general(ring.Algebra):
         EXAMPLES::
 
             sage: R = ZZ['x']
-            sage: R.cyclotomic_polynomial(8)                                            # needs sage.libs.pari
+            sage: R.cyclotomic_polynomial(8)
             x^4 + 1
-            sage: R.cyclotomic_polynomial(12)                                           # needs sage.libs.pari
+            sage: R.cyclotomic_polynomial(12)
             x^4 - x^2 + 1
 
             sage: S = PolynomialRing(FiniteField(7), 'x')
@@ -1192,7 +1196,7 @@ class PolynomialRing_general(ring.Algebra):
 
         Make sure it agrees with other systems for the trivial case::
 
-            sage: ZZ['x'].cyclotomic_polynomial(1)                                      # needs sage.libs.pari
+            sage: ZZ['x'].cyclotomic_polynomial(1)
             x - 1
             sage: gp('polcyclo(1)')                                                     # needs sage.libs.pari
             x - 1
@@ -1266,9 +1270,10 @@ class PolynomialRing_general(ring.Algebra):
 
         EXAMPLES::
 
-            sage: R.<z> = Integers(2)[]; R                                              # needs sage.libs.ntl
+            sage: # needs sage.libs.ntl
+            sage: R.<z> = Integers(2)[]; R
             Univariate Polynomial Ring in z over Ring of integers modulo 2 (using GF2X)
-            sage: R.is_field()                                                          # needs sage.libs.ntl
+            sage: R.is_field()
             False
         """
         return False
@@ -1750,9 +1755,9 @@ class PolynomialRing_commutative(PolynomialRing_general, ring.CommutativeAlgebra
         Quotienting by the zero ideal returns ``self`` (:trac:`5978`)::
 
             sage: R = QQ['x']
-            sage: R.quotient_by_principal_ideal(R.zero_ideal()) is R                    # needs sage.libs.pari
+            sage: R.quotient_by_principal_ideal(R.zero_ideal()) is R
             True
-            sage: R.quotient_by_principal_ideal(0) is R                                 # needs sage.libs.pari
+            sage: R.quotient_by_principal_ideal(0) is R
             True
         """
         from sage.rings.ideal import Ideal
@@ -1770,9 +1775,9 @@ class PolynomialRing_commutative(PolynomialRing_general, ring.CommutativeAlgebra
         EXAMPLES::
 
             sage: R = QQ['x']
-            sage: W = R.weyl_algebra(); W                                               # needs sage.combinat sage.modules
+            sage: W = R.weyl_algebra(); W                                               # needs sage.modules
             Differential Weyl algebra of polynomials in x over Rational Field
-            sage: W.polynomial_ring() == R                                              # needs sage.combinat sage.modules
+            sage: W.polynomial_ring() == R                                              # needs sage.modules
             True
         """
         from sage.algebras.weyl_algebra import DifferentialWeylAlgebra
@@ -2026,11 +2031,12 @@ class PolynomialRing_integral_domain(PolynomialRing_commutative, PolynomialRing_
             sage: functor.implementation is None
             True
 
-            sage: R = PRing(ZZ, 'x', implementation='NTL'); R                           # needs sage.libs.ntl
+            sage: # needs sage.libs.ntl
+            sage: R = PRing(ZZ, 'x', implementation='NTL'); R
             Univariate Polynomial Ring in x over Integer Ring (using NTL)
-            sage: functor, arg = R.construction(); functor, arg                         # needs sage.libs.ntl
+            sage: functor, arg = R.construction(); functor, arg
             (Poly[x], Integer Ring)
-            sage: functor.implementation                                                # needs sage.libs.ntl
+            sage: functor.implementation
             'NTL'
         """
         implementation = None
@@ -3138,7 +3144,7 @@ class PolynomialRing_dense_mod_n(PolynomialRing_commutative):
             sage: type(R.gen())                                                                                         # needs sage.libs.ntl
             <class 'sage.rings.polynomial.polynomial_modn_dense_ntl.Polynomial_dense_modn_ntl_ZZ'>
 
-            sage: R = PRing(Zmod(2**63*3), 'x', implementation='FLINT')                                                 # needs sage.libs.flint
+            sage: R = PRing(Zmod(2**63*3), 'x', implementation='FLINT')
             Traceback (most recent call last):
             ...
             ValueError: FLINT does not support modulus 27670116110564327424

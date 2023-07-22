@@ -158,16 +158,16 @@ cdef class LazyField(Field):
             True
             sage: RLF.has_coerce_map_from(QQ)
             True
-            sage: RLF.has_coerce_map_from(AA)
+            sage: RLF.has_coerce_map_from(AA)                                           # needs sage.rings.number_field
             True
-            sage: CLF.has_coerce_map_from(QQbar)
+            sage: CLF.has_coerce_map_from(QQbar)                                        # needs sage.rings.number_field
             True
             sage: RLF.has_coerce_map_from(RDF)
             False
 
             sage: CLF.has_coerce_map_from(QQ)
             True
-            sage: CLF.has_coerce_map_from(QQbar)
+            sage: CLF.has_coerce_map_from(QQbar)                                        # needs sage.rings.number_field
             True
             sage: CLF.has_coerce_map_from(CC)
             False
@@ -418,7 +418,7 @@ class ComplexLazyField_class(LazyField):
 
             sage: CLF.interval_field()
             Complex Interval Field with 53 bits of precision
-            sage: CLF.interval_field(333)
+            sage: CLF.interval_field(333)                                               # needs sage.rings.complex_interval_field
             Complex Interval Field with 333 bits of precision
             sage: CLF.interval_field() is CIF
             True
@@ -438,7 +438,7 @@ class ComplexLazyField_class(LazyField):
 
             sage: CLF.gen()
             1*I
-            sage: ComplexField(100)(CLF.gen())
+            sage: ComplexField(100)(CLF.gen())                                          # needs sage.rings.number_field
             1.0000000000000000000000000000*I
         """
         if i == 0:
@@ -882,7 +882,7 @@ cdef class LazyFieldElement(FieldElement):
             1.732050807568878?
             sage: sin(a)                                                                # needs sage.symbolic
             0.1411200080598673?
-            sage: RealField(160)(tanh(RLF(3)))                                          # needs sage.symbolic
+            sage: RealField(160)(tanh(RLF(3)))
             0.99505475368673045133188018525548847509781385470
         """
         if name in named_unops:
@@ -1248,8 +1248,8 @@ cdef class LazyUnop(LazyFieldElement):
             sage: a = LazyUnop(RLF, 3, sqrt)
             sage: a.depth()
             1
-            sage: b = LazyUnop(RLF, a, sin)                                             # needs sage.symbolic
-            sage: b.depth()                                                             # needs sage.symbolic
+            sage: b = LazyUnop(RLF, a, sin)
+            sage: b.depth()
             2
         """
         return 1 + self._arg.depth()
@@ -1644,13 +1644,13 @@ cdef class LazyAlgebraic(LazyFieldElement):
             sage: a = LazyAlgebraic(CLF, QQ['x'].cyclotomic_polynomial(7), 0.6+0.8*CC.0)
             sage: a
             0.6234898018587335? + 0.7818314824680299?*I
-            sage: ComplexField(150)(a) # indirect doctest
+            sage: ComplexField(150)(a) # indirect doctest                               # needs sage.rings.number_field
             0.62348980185873353052500488400423981063227473 + 0.78183148246802980870844452667405775023233452*I
 
             sage: a = LazyAlgebraic(CLF, QQ['x'].0^2-7, -2.0)
-            sage: RR(a)
+            sage: RR(a)                                                                 # needs sage.rings.number_field
             -2.64575131106459
-            sage: RR(a)^2
+            sage: RR(a)^2                                                               # needs sage.rings.number_field
             7.00000000000000
         """
         if isinstance(R, type):

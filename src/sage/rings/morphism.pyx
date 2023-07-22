@@ -302,7 +302,7 @@ Embedding a number field into the reals::
 
     sage: R.<x> = PolynomialRing(QQ)
     sage: K.<beta> = NumberField(x^3 - 2)                                               # needs sage.rings.number_field
-    sage: alpha = RR(2)^(1/3); alpha                                                    # needs sage.rings.number_field
+    sage: alpha = RR(2)^(1/3); alpha
     1.25992104989487
     sage: i = K.hom([alpha],check=False); i                                             # needs sage.rings.number_field
     Ring morphism:
@@ -975,7 +975,7 @@ cdef class RingHomomorphism(RingMap):
             sage: # needs sage.libs.singular
             sage: S.<u,v> = QQ['u,v'].quotient('v^2 - 2')
             sage: f = QuadraticField(2).hom([v], S)                                     # needs sage.rings.number_field
-            sage: I = S.ideal(u + v)                                                    # needs sage.rings.number_field
+            sage: I = S.ideal(u + v)
             sage: J = f.inverse_image(I)                                                # needs sage.rings.number_field
             sage: J.is_zero()                                                           # needs sage.rings.number_field
             True
@@ -1586,7 +1586,7 @@ cdef class RingHomomorphism(RingMap):
         ::
 
             sage: R.<x,y> = LaurentPolynomialRing(QQ)
-            sage: R.hom([y, x], R).inverse()                                            # needs sage.libs.singular
+            sage: R.hom([y, x], R).inverse()
             Traceback (most recent call last):
             ...
             NotImplementedError

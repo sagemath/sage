@@ -625,10 +625,11 @@ cdef class PolynomialRealDense(Polynomial):
             sage: fg.quo_rem(g)
             (x^2 - 2.00000000000000, 0)
 
+            sage: # needs sage.symbolic
             sage: f = PolynomialRealDense(RR['x'], range(5))
-            sage: g = PolynomialRealDense(RR['x'], [pi,3000,4])                         # needs sage.symbolic
-            sage: q, r = f.quo_rem(g)                                                   # needs sage.symbolic
-            sage: g*q + r == f                                                          # needs sage.symbolic
+            sage: g = PolynomialRealDense(RR['x'], [pi,3000,4])
+            sage: q, r = f.quo_rem(g)
+            sage: g*q + r == f
             True
 
         TESTS:
