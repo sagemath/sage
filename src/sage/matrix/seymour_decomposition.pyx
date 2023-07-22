@@ -4,7 +4,11 @@ Seymour's decomposition of totally unimodular matrices and regular matroids
 
 from sage.libs.cmr.cmr cimport *
 from sage.misc.cachefunc import cached_method
+from sage.rings.integer_ring import ZZ
 from sage.structure.sage_object cimport SageObject
+
+from .matrix_cmr_sparse cimport Matrix_cmr_chr_sparse
+from .matrix_space import MatrixSpace
 
 
 cdef class DecompositionNode(SageObject):
@@ -18,8 +22,69 @@ cdef class DecompositionNode(SageObject):
     def __dealloc__(self):
         self._set_dec(NULL, None)
 
+    @cached_method
     def matrix(self):
-        raise NotImplementedError
+        r"""
+        EXAMPLES::
+
+            sage: from sage.matrix.matrix_cmr_sparse import Matrix_cmr_chr_sparse
+            sage: M = Matrix_cmr_chr_sparse(MatrixSpace(ZZ, 3, 2, sparse=True),
+            ....:                           [[1, 0], [-1, 1], [0, 1]]); M
+            [ 1  0]
+            [-1  1]
+            [ 0  1]
+            sage: result, certificate = M.is_totally_unimodular(certificate=True)
+            sage: result, certificate
+            (True, DecompositionNode with 0 children)
+            sage: certificate.matrix() is None
+            True
+
+            sage: result, certificate = M.is_totally_unimodular(certificate=True,
+            ....:                                               construct_matrices=True)
+            sage: result, certificate
+            (True, DecompositionNode with 0 children)
+            sage: certificate.matrix()
+            [ 1  0]
+            [-1  1]
+            [ 0  1]
+        """
+        cdef Matrix_cmr_chr_sparse result
+        cdef CMR_CHRMAT *mat = CMRdecGetMatrix(self._dec)
+        if mat == NULL:
+            return None
+        ms = MatrixSpace(ZZ, mat.numRows, mat.numColumns, sparse=True)
+        result = Matrix_cmr_chr_sparse.__new__(Matrix_cmr_chr_sparse, ms)
+        result._mat = mat
+        result._root = self._root
+        return result
+
+    def parent_rows_and_columns(self):
+        r"""
+        EXAMPLES::
+
+            sage: from sage.matrix.matrix_cmr_sparse import Matrix_cmr_chr_sparse
+            sage: M = Matrix_cmr_chr_sparse(MatrixSpace(ZZ, 3, 2, sparse=True),
+            ....:                           [[1, 0], [-1, 1], [0, 1]]); M
+            [ 1  0]
+            [-1  1]
+            [ 0  1]
+            sage: result, certificate = M.is_totally_unimodular(certificate=True)
+            sage: certificate.parent_rows_and_columns()
+            (None, None)
+        """
+
+        cdef size_t *parent_rows = CMRdecRowsParent(self._dec)
+        cdef size_t *parent_columns = CMRdecColumnsParent(self._dec)
+        if parent_rows == NULL:
+            parent_rows_tuple = None
+        else:
+            parent_rows_tuple = tuple(parent_rows[i] for i in range(CMRdecNumRows(self._dec)))
+        if parent_columns == NULL:
+            parent_columns_tuple = None
+        else:
+            parent_columns_tuple = tuple(parent_columns[i] for i in range(CMRdecNumColumns(self._dec)))
+
+        return parent_rows_tuple, parent_columns_tuple
 
     def plot(self):
         raise NotImplementedError
@@ -40,8 +105,7 @@ cdef class SumNode(DecompositionNode):
         r"Return (Prow, BlockMatrix, Pcolumn) so that self.matrix() == Prow * BlockMatrix * Pcolumn ????"
         raise NotImplementedError
 
-    def summands(self):
-        raise NotImplementedError
+    summands = DecompositionNode._children
 
 
 cdef class OneSumNode(SumNode):
@@ -103,6 +167,8 @@ cdef create_DecompositionNode(CMR_DEC *dec, root=None):
       If ``None``, ``dec`` will be owned by the returned instance.
       If non-``None``, ``dec`` is owned by that instance.
     """
+    if dec == NULL:
+        return None
     cdef DecompositionNode result = <DecompositionNode> _class(dec)()
     result._set_dec(dec, root)
     return result
