@@ -628,7 +628,7 @@ cdef class Polynomial(CommutativePolynomial):
 
         The following test came up in :trac:`9051`::
 
-            sage: Cif = ComplexIntervalField(64)
+            sage: Cif = ComplexIntervalField(64)                                        # needs sage.rings.complex_interval_field
             sage: R.<x> = Cif[]
             sage: f = 2*x-1
             sage: jj = Cif(RIF(0,2))
@@ -1753,8 +1753,10 @@ cdef class Polynomial(CommutativePolynomial):
             sage: Pol.<x> = CBF[]                                                       # needs sage.libs.flint
             sage: (x + x^3/6 + x^5/120).revert_series(6)                                # needs sage.libs.flint
             ([0.075000000000000 +/- ...e-17])*x^5 + ([-0.166666666666667 +/- ...e-16])*x^3 + x
-            sage: Pol.<x> = SR[]                                                        # needs sage.symbolic
-            sage: x.revert_series(6)                                                    # needs sage.symbolic
+
+            sage: # needs sage.symbolic
+            sage: Pol.<x> = SR[]
+            sage: x.revert_series(6)
             Traceback (most recent call last):
             ...
             NotImplementedError: only implemented for certain base rings
@@ -5007,7 +5009,7 @@ cdef class Polynomial(CommutativePolynomial):
         TESTS::
 
             sage: Pol = QQ['x','y']['x']
-            sage: Pol.one().gcd(1)                                                      # needs sage.libs.singular
+            sage: Pol.one().gcd(1)
             1
         """
         cdef Polynomial _other = <Polynomial> other
@@ -7922,7 +7924,7 @@ cdef class Polynomial(CommutativePolynomial):
              (-0.764884433600585? + 0.352471546031727?*I, 1),
              (0.181232444469876? - 1.083954101317711?*I, 1),
              (0.181232444469876? + 1.083954101317711?*I, 1)]
-            sage: p.roots(ring=ComplexIntervalField(200))
+            sage: p.roots(ring=ComplexIntervalField(200))                               # needs sage.rings.complex_interval_field
             [(1.167303978261418684256045899854842180720560371525489039140082?, 1),
              (-0.76488443360058472602982318770854173032899665194736756700778? - 0.35247154603172624931794709140258105439420648082424733283770?*I, 1),
              (-0.76488443360058472602982318770854173032899665194736756700778? + 0.35247154603172624931794709140258105439420648082424733283770?*I, 1),
@@ -8304,7 +8306,7 @@ cdef class Polynomial(CommutativePolynomial):
 
             sage: n = randint(2, 10^6)
             sage: K = Integers(n)
-            sage: R.<x> = PolynomialRing(K)                                             # needs sage.libs.pari
+            sage: R.<x> = PolynomialRing(K)
             sage: a = randint(0, n - 1)
             sage: b = randint(0, n - 1)
             sage: f = (x - a) * (x - b)
@@ -9028,9 +9030,9 @@ cdef class Polynomial(CommutativePolynomial):
             (True, 5)
             sage: P0.is_weil_polynomial(return_q=False)                                 # needs sage.libs.pari
             True
-            sage: P1.is_weil_polynomial(return_q=True)                                  # needs sage.libs.pari
+            sage: P1.is_weil_polynomial(return_q=True)
             (False, 0)
-            sage: P1.is_weil_polynomial(return_q=False)                                 # needs sage.libs.pari
+            sage: P1.is_weil_polynomial(return_q=False)
             False
             sage: P2.is_weil_polynomial()                                               # needs sage.libs.pari
             False
@@ -9283,8 +9285,8 @@ cdef class Polynomial(CommutativePolynomial):
             sage: d = z^4 + (2*t + 4)*z^3 + (-t + 5)*z^2 + (t^2 + 2)*z + t^2 + 2*t + 1
             sage: prec = 9
             sage: x = n.subs(z=w)/d.subs(z=w) + O(w^prec)
-            sage: nc, dc = Pz(x.list()).rational_reconstruction(z^prec)                 # needs sage.libs.flint
-            sage: (nc, dc) == (n, d)                                                    # needs sage.libs.flint
+            sage: nc, dc = Pz(x.list()).rational_reconstruction(z^prec)
+            sage: (nc, dc) == (n, d)
             True
 
         Over `\QQ[t][z]`::
@@ -9601,9 +9603,9 @@ cdef class Polynomial(CommutativePolynomial):
             sage: R.<x> = ZZ[]
             sage: R(1).is_irreducible()
             False
-            sage: R(4).is_irreducible()                                                 # needs sage.libs.pari
+            sage: R(4).is_irreducible()
             False
-            sage: R(5).is_irreducible()                                                 # needs sage.libs.pari
+            sage: R(5).is_irreducible()
             True
 
         Check that caching works::
@@ -9767,11 +9769,11 @@ cdef class Polynomial(CommutativePolynomial):
             False
             sage: R(0).is_squarefree()                                                  # needs sage.libs.pari
             False
-            sage: S.<y> = QQ[]                                                          # needs sage.libs.pari
-            sage: R.<x> = S[]                                                           # needs sage.libs.pari
-            sage: (2*x*y).is_squarefree()                                               # needs sage.libs.pari
+            sage: S.<y> = QQ[]
+            sage: R.<x> = S[]
+            sage: (2*x*y).is_squarefree()
             True
-            sage: (2*x*y^2).is_squarefree()                                             # needs sage.libs.pari
+            sage: (2*x*y^2).is_squarefree()
             False
 
         In positive characteristic, we compute the square-free
@@ -10204,7 +10206,7 @@ cdef class Polynomial(CommutativePolynomial):
             True
 
             sage: y = polygen(QQ)
-            sage: (y/2 - 1/2).is_cyclotomic()                                           # needs sage.libs.pari
+            sage: (y/2 - 1/2).is_cyclotomic()
             False
             sage: (2*(y/2 - 1/2)).is_cyclotomic()                                       # needs sage.libs.pari
             True
@@ -10330,15 +10332,15 @@ cdef class Polynomial(CommutativePolynomial):
             sage: (x^5 + x^4 - x^2 + 1).is_cyclotomic_product()                         # needs sage.libs.pari
             False
 
-            sage: p = prod(cyclotomic_polynomial(i) for i in [2, 5, 7, 12])             # needs sage.libs.pari
+            sage: p = prod(cyclotomic_polynomial(i) for i in [2, 5, 7, 12])
             sage: p.is_cyclotomic_product()                                             # needs sage.libs.pari
             True
 
-            sage: (x^5 - 1/3).is_cyclotomic_product()                                   # needs sage.libs.pari
+            sage: (x^5 - 1/3).is_cyclotomic_product()
             False
 
             sage: x = polygen(Zmod(5))
-            sage: (x - 1).is_cyclotomic_product()                                       # needs sage.libs.pari
+            sage: (x - 1).is_cyclotomic_product()
             Traceback (most recent call last):
             ...
             NotImplementedError: not implemented in non-zero characteristic
@@ -10459,8 +10461,8 @@ cdef class Polynomial(CommutativePolynomial):
             True
             sage: u = x^5 - 2; u.has_cyclotomic_factor()
             False
-            sage: u = pol(cyclotomic_polynomial(7)) * pol.random_element()  # random    # needs sage.libs.pari
-            sage: u.has_cyclotomic_factor()                                 # random    # needs sage.libs.pari
+            sage: u = pol(cyclotomic_polynomial(7)) * pol.random_element()  # random
+            sage: u.has_cyclotomic_factor()                                 # random
             True
         """
         if not QQ.has_coerce_map_from(self.base_ring()):
@@ -10687,15 +10689,16 @@ cdef class Polynomial(CommutativePolynomial):
         Here we consider a base ring without ``nth_root`` method. The third
         example with a non-trivial coefficient of lowest degree raises an error::
 
+            sage: # needs sage.libs.pari
             sage: R.<x> = QQ[]
-            sage: R2 = R.quotient(x**2 + 1)                                             # needs sage.libs.pari
-            sage: x = R2.gen()                                                          # needs sage.libs.pari
-            sage: R3.<y> = R2[]                                                         # needs sage.libs.pari
-            sage: (y**2 - 2*y + 1).nth_root(2)                                          # needs sage.libs.pari
+            sage: R2 = R.quotient(x**2 + 1)
+            sage: x = R2.gen()
+            sage: R3.<y> = R2[]
+            sage: (y**2 - 2*y + 1).nth_root(2)
             -y + 1
-            sage: (y**3).nth_root(3)                                                    # needs sage.libs.pari
+            sage: (y**3).nth_root(3)
             y
-            sage: (y**2 + x).nth_root(2)                                                # needs sage.libs.pari
+            sage: (y**2 + x).nth_root(2)
             Traceback (most recent call last):
             ...
             AttributeError: ... has no attribute 'nth_root'

@@ -1702,13 +1702,13 @@ cdef class MPolynomial(CommutativePolynomial):
         an example of bad reduction at a prime ``p = 5``::
 
             sage: R.<x,y,z> = PolynomialRing(QQ, 3)
-            sage: y.macaulay_resultant([x^3 + 25*y^2*x, 5*z])                           # needs sage.modules
+            sage: y.macaulay_resultant([x^3 + 25*y^2*x, 5*z])                           # needs sage.libs.pari sage.modules
             125
 
         The input can given as an unpacked list of polynomials::
 
             sage: R.<x,y,z> = PolynomialRing(QQ, 3)
-            sage: y.macaulay_resultant(x^3 + 25*y^2*x, 5*z)                             # needs sage.modules
+            sage: y.macaulay_resultant(x^3 + 25*y^2*x, 5*z)                             # needs sage.libs.pari sage.modules
             125
 
         an example when the coefficients live in a finite field::
@@ -1723,7 +1723,7 @@ cdef class MPolynomial(CommutativePolynomial):
         char polynomials of numerator/denominator)::
 
             sage: R.<x,y,z> = PolynomialRing(QQ, 3)
-            sage: y.macaulay_resultant([x + z, z^2])                                    # needs sage.modules
+            sage: y.macaulay_resultant([x + z, z^2])                                    # needs sage.libs.pari sage.modules
             -1
 
         When there are only 2 polynomials, the Macaulay resultant degenerates to the traditional resultant::
@@ -2329,7 +2329,7 @@ cdef class MPolynomial(CommutativePolynomial):
             sage: R.<x,h> = PolynomialRing(QQ)
             sage: f = 19*x^8 - 262*x^7*h + 1507*x^6*h^2 - 4784*x^5*h^3 + 9202*x^4*h^4\
              -10962*x^3*h^5 + 7844*x^2*h^6 - 3040*x*h^7 + 475*h^8
-            sage: f.reduced_form(prec=200, smallest_coeffs=False)                       # needs sage.modules
+            sage: f.reduced_form(prec=200, smallest_coeffs=False)                       # needs sage.modules sage.rings.complex_interval_field
             (
             -x^8 - 2*x^7*h + 7*x^6*h^2 + 16*x^5*h^3 + 2*x^4*h^4 - 2*x^3*h^5 + 4*x^2*h^6 - 5*h^8,
             <BLANKLINE>
@@ -2342,7 +2342,7 @@ cdef class MPolynomial(CommutativePolynomial):
             sage: R.<x,y> = PolynomialRing(QQ)
             sage: f = x^3 + 378666*x^2*y - 12444444*x*y^2 + 1234567890*y^3
             sage: j = f * (x-545*y)^9
-            sage: j.reduced_form(prec=200, smallest_coeffs=False)                       # needs sage.modules
+            sage: j.reduced_form(prec=200, smallest_coeffs=False)                       # needs sage.modules sage.rings.complex_interval_field
             Traceback (most recent call last):
             ...
             ValueError: cannot have a root with multiplicity >= 12/2
@@ -2351,7 +2351,7 @@ cdef class MPolynomial(CommutativePolynomial):
 
             sage: R.<x,y> = PolynomialRing(QQ)
             sage: F = x^6 + 3*x^5*y - 8*x^4*y^2 - 2*x^3*y^3 - 44*x^2*y^4 - 8*x*y^5
-            sage: F.reduced_form(smallest_coeffs=False, prec=400)                       # needs sage.modules
+            sage: F.reduced_form(smallest_coeffs=False, prec=400)                       # needs sage.modules sage.rings.complex_interval_field
             Traceback (most recent call last):
             ...
             ArithmeticError: Newton's method converged to z not in the upper half plane
@@ -2360,7 +2360,7 @@ cdef class MPolynomial(CommutativePolynomial):
 
             sage: R.<x,y> = PolynomialRing(QQ)
             sage: F = 5*x^2*y - 5*x*y^2 - 30*y^3
-            sage: F.reduced_form(smallest_coeffs=False)                                 # needs sage.modules
+            sage: F.reduced_form(smallest_coeffs=False)                                 # needs sage.modules sage.rings.complex_interval_field
             (
                                         [1 1]
             5*x^2*y + 5*x*y^2 - 30*y^3, [0 1]
@@ -2371,12 +2371,12 @@ cdef class MPolynomial(CommutativePolynomial):
             sage: R.<x,y> = PolynomialRing(QQ)
             sage: F = (-16*x^7 - 114*x^6*y - 345*x^5*y^2 - 599*x^4*y^3
             ....:      - 666*x^3*y^4 - 481*x^2*y^5 - 207*x*y^6 - 40*y^7)
-            sage: F.reduced_form(prec=50, smallest_coeffs=False)                        # needs sage.modules
+            sage: F.reduced_form(prec=50, smallest_coeffs=False)                        # needs sage.modules sage.rings.complex_interval_field
             Traceback (most recent call last):
             ...
             ValueError: accuracy of Newton's root not within tolerance(0.000012... > 1e-06),
             increase precision
-            sage: F.reduced_form(prec=100, smallest_coeffs=False)                       # needs sage.modules
+            sage: F.reduced_form(prec=100, smallest_coeffs=False)                       # needs sage.modules sage.rings.complex_interval_field
             (
                                                                   [-1 -1]
             -x^5*y^2 - 24*x^3*y^4 - 3*x^2*y^5 - 2*x*y^6 + 16*y^7, [ 1  0]
@@ -2386,14 +2386,14 @@ cdef class MPolynomial(CommutativePolynomial):
 
             sage: R.<x,y> = PolynomialRing(QQ)
             sage: F = - 8*x^4 - 3933*x^3*y - 725085*x^2*y^2 - 59411592*x*y^3 - 1825511633*y^4
-            sage: F.reduced_form(return_conjugation=False)                              # needs sage.modules
+            sage: F.reduced_form(return_conjugation=False)                              # needs sage.modules sage.rings.complex_interval_field
             x^4 + 9*x^3*y - 3*x*y^3 - 8*y^4
 
         ::
 
             sage: R.<x,y> = QQ[]
             sage: F = -2*x^3 + 2*x^2*y + 3*x*y^2 + 127*y^3
-            sage: F.reduced_form()                                                      # needs sage.modules
+            sage: F.reduced_form()                                                      # needs sage.modules sage.rings.complex_interval_field
             (
                                                    [1 4]
             -2*x^3 - 22*x^2*y - 77*x*y^2 + 43*y^3, [0 1]
@@ -2403,7 +2403,7 @@ cdef class MPolynomial(CommutativePolynomial):
 
             sage: R.<x,y> = QQ[]
             sage: F = -2*x^3 + 2*x^2*y + 3*x*y^2 + 127*y^3
-            sage: F.reduced_form(norm_type='height')                                    # needs sage.modules
+            sage: F.reduced_form(norm_type='height')                                    # needs sage.modules sage.rings.complex_interval_field
             (
                                                     [5 4]
             -58*x^3 - 47*x^2*y + 52*x*y^2 + 43*y^3, [1 1]
@@ -2413,7 +2413,7 @@ cdef class MPolynomial(CommutativePolynomial):
 
             sage: R.<x,y,z> = PolynomialRing(QQ)
             sage: F = x^4 + x^3*y*z + y^2*z
-            sage: F.reduced_form()                                                      # needs sage.modules
+            sage: F.reduced_form()                                                      # needs sage.modules sage.rings.complex_interval_field
             Traceback (most recent call last):
             ...
             ValueError: (=x^3*y*z + x^4 + y^2*z) must have two variables
@@ -2422,7 +2422,7 @@ cdef class MPolynomial(CommutativePolynomial):
 
             sage: R.<x,y> = PolynomialRing(ZZ)
             sage: F = - 8*x^6 - 3933*x^3*y - 725085*x^2*y^2 - 59411592*x*y^3 - 99*y^6
-            sage: F.reduced_form(return_conjugation=False)                              # needs sage.modules
+            sage: F.reduced_form(return_conjugation=False)                              # needs sage.modules sage.rings.complex_interval_field
             Traceback (most recent call last):
             ...
             ValueError: (=-8*x^6 - 99*y^6 - 3933*x^3*y - 725085*x^2*y^2 -
@@ -2433,7 +2433,7 @@ cdef class MPolynomial(CommutativePolynomial):
             sage: R.<x,y> = PolynomialRing(RR)
             sage: F = (217.992172373276*x^3 + 96023.1505442490*x^2*y
             ....:      + 1.40987971253579e7*x*y^2 + 6.90016027113216e8*y^3)
-            sage: F.reduced_form(smallest_coeffs=False) # tol 1e-8                      # needs sage.modules
+            sage: F.reduced_form(smallest_coeffs=False) # tol 1e-8                      # needs sage.modules sage.rings.complex_interval_field
             (
             -39.5673942565918*x^3 + 111.874026298523*x^2*y
              + 231.052762985229*x*y^2 - 138.380829811096*y^3,
@@ -2449,7 +2449,7 @@ cdef class MPolynomial(CommutativePolynomial):
             ....:      + (84.8317207268542 + 93.8840848648033*CC.0)*x^2*y
             ....:      + (3159.07040755858 + 3475.33037377779*CC.0)*x*y^2
             ....:      + (39202.5965389079 + 42882.5139724962*CC.0)*y^3)
-            sage: F.reduced_form(smallest_coeffs=False)  # tol 1e-11                    # needs sage.modules sage.rings.real_mpfr
+            sage: F.reduced_form(smallest_coeffs=False)  # tol 1e-11                    # needs sage.modules sage.rings.complex_interval_field sage.rings.real_mpfr
             (
             (-0.759099196558145 - 0.845425869641446*I)*x^3
             + (-0.571709908900118 - 0.0418133346027929*I)*x^2*y

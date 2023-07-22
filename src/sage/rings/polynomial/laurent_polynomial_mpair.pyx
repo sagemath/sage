@@ -993,7 +993,7 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
             x^2 - x*y^-1 + y^-2
             sage: h * (f // h) == f                                                     # needs sage.libs.singular
             True
-            sage: f // 1                                                                # needs sage.libs.singular
+            sage: f // 1
             x^3 + y^-3
             sage: 1 // f                                                                # needs sage.libs.singular
             0
@@ -1002,7 +1002,7 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
 
         Check that :trac:`19357` is fixed::
 
-            sage: x // y                                                                # needs sage.libs.singular
+            sage: x // y
             x*y^-1
 
         Check that :trac:`21999` is fixed::
@@ -1047,14 +1047,15 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
 
         Verify that :trac:`31257` is fixed::
 
+            sage: # needs sage.libs.singular
             sage: R.<x,y> = LaurentPolynomialRing(QQ)
-            sage: q, r = (1/x).quo_rem(y)                                               # needs sage.libs.singular
-            sage: q, r                                                                  # needs sage.libs.singular
+            sage: q, r = (1/x).quo_rem(y)
+            sage: q, r
             (x^-1*y^-1, 0)
-            sage: q*y + r == 1/x                                                        # needs sage.libs.singular
+            sage: q*y + r == 1/x
             True
-            sage: q, r = (x^-2 - y^2).quo_rem(x - y)                                    # needs sage.libs.singular
-            sage: q*(x - y) + r == x^-2 - y^2                                           # needs sage.libs.singular
+            sage: q, r = (x^-2 - y^2).quo_rem(x - y)
+            sage: q*(x - y) + r == x^-2 - y^2
             True
         """
         # make copies of self and right so that the input can be normalized

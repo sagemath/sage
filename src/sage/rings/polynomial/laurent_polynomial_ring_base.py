@@ -463,7 +463,7 @@ class LaurentPolynomialRing_generic(CommutativeRing, Parent):
 
             sage: LaurentPolynomialRing(QQ, 2, 'x').characteristic()
             0
-            sage: LaurentPolynomialRing(GF(3), 2, 'x').characteristic()                 # needs sage.libs.pari
+            sage: LaurentPolynomialRing(GF(3), 2, 'x').characteristic()
             3
 
         """

@@ -2329,7 +2329,7 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
             sage: R.<x,y> = RR[]
             sage: p = x + y
             sage: q = x*y
-            sage: p.resultant(q)                                                        # needs sage.libs.singular
+            sage: p.resultant(q)
             -y^2
 
         Check that this method works over QQbar (:trac:`25351`)::

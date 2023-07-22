@@ -268,12 +268,13 @@ class MPolynomialRing_polydict(MPolynomialRing_macaulay2_repr, PolynomialRing_si
 
         ::
 
+            sage: # needs sage.symbolic
             sage: R = QQ['x,y,z']
-            sage: f = (x^3 + y^3 - z^3)^10; f                                           # needs sage.symbolic
+            sage: f = (x^3 + y^3 - z^3)^10; f
             (x^3 + y^3 - z^3)^10
-            sage: g = R(f); parent(g)                                                   # needs sage.symbolic
+            sage: g = R(f); parent(g)
             Multivariate Polynomial Ring in x, y, z over Rational Field
-            sage: (f - g).expand()                                                      # needs sage.symbolic
+            sage: (f - g).expand()
             0
 
         It intelligently handles conversions from polynomial rings in a subset

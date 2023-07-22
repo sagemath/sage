@@ -1638,13 +1638,13 @@ cdef class MPolynomialRing_base(sage.rings.ring.CommutativeRing):
         An example of bad reduction at a prime `p = 5`::
 
             sage: R.<x,y,z> = PolynomialRing(QQ, 3)
-            sage: R.macaulay_resultant([y, x^3 + 25*y^2*x, 5*z])                        # needs sage.modules
+            sage: R.macaulay_resultant([y, x^3 + 25*y^2*x, 5*z])                        # needs sage.libs.pari sage.modules
             125
 
         The input can given as an unpacked list of polynomials::
 
             sage: R.<x,y,z> = PolynomialRing(QQ, 3)
-            sage: R.macaulay_resultant(y, x^3 + 25*y^2*x, 5*z)                          # needs sage.modules
+            sage: R.macaulay_resultant(y, x^3 + 25*y^2*x, 5*z)                          # needs sage.libs.pari sage.modules
             125
 
         An example when the coefficients live in a finite field::
@@ -1659,7 +1659,7 @@ cdef class MPolynomialRing_base(sage.rings.ring.CommutativeRing):
         char polynomials of numerator/denominator)::
 
             sage: R.<x,y,z> = PolynomialRing(QQ, 3)
-            sage: R.macaulay_resultant([y, x + z, z^2])                                 # needs sage.modules
+            sage: R.macaulay_resultant([y, x + z, z^2])                                 # needs sage.libs.pari sage.modules
             -1
 
         When there are only 2 polynomials, the Macaulay resultant degenerates
@@ -1750,9 +1750,9 @@ cdef class MPolynomialRing_base(sage.rings.ring.CommutativeRing):
         EXAMPLES::
 
             sage: R = QQ['x,y,z']
-            sage: W = R.weyl_algebra(); W                                               # needs sage.combinat sage.modules
+            sage: W = R.weyl_algebra(); W                                               # needs sage.modules
             Differential Weyl algebra of polynomials in x, y, z over Rational Field
-            sage: W.polynomial_ring() == R                                              # needs sage.combinat sage.modules
+            sage: W.polynomial_ring() == R                                              # needs sage.modules
             True
         """
         from sage.algebras.weyl_algebra import DifferentialWeylAlgebra
