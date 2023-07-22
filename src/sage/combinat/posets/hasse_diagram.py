@@ -574,7 +574,7 @@ class HasseDiagram(DiGraph):
             sage: H.is_isomorphic( H.dual() )                                           # optional - sage.combinat
             False
         """
-        H = self.reverse()
+        H = self.reverse(immutable=False)
         H.relabel(perm=list(range(H.num_verts() - 1, -1, -1)), inplace=True)
         return HasseDiagram(H)
 
