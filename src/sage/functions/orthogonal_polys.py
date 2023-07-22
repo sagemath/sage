@@ -1096,8 +1096,10 @@ class Func_chebyshev_U(ChebyshevFunction):
             sage: n = 97; x = RIF(pi/n)                                                 # needs sage.symbolic
             sage: chebyshev_U(n - 1, cos(x)).contains_zero()                            # needs sage.symbolic
             True
-            sage: R.<t> = Zp(2, 6, 'capped-abs')[]                                      # needs sage.rings.padics
-            sage: chebyshev_U(10^6 + 1, t)                                              # needs sage.rings.padics
+
+            sage: # needs sage.rings.padics
+            sage: R.<t> = Zp(2, 6, 'capped-abs')[]
+            sage: chebyshev_U(10^6 + 1, t)
             (2 + O(2^6))*t + O(2^6)
         """
         if n == -1:
