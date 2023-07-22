@@ -11,6 +11,7 @@ from sage.matrix.seymour_decomposition cimport create_DecompositionNode
 from sage.rings.integer cimport Integer
 
 from .args cimport MatrixArgs_init
+from .seymour_decomposition cimport create_DecompositionNode
 
 
 cdef class Matrix_cmr_sparse(Matrix_sparse):
@@ -122,7 +123,9 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
         return self
 
     def __dealloc__(self):
-        CMRchrmatFree(cmr, &self._mat)
+        if self._root is not None:
+            # We own it, so we have to free it.
+            CMRchrmatFree(cmr, &self._mat)
 
     def _test_change_ring(self, **options):
         return
@@ -403,6 +406,38 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
             True
             sage: M.is_totally_unimodular(certificate=True)
             (True, DecompositionNode with 0 children)
+
+            sage: MF = matroids.named_matroids.Fano(); MF
+            Fano: Binary matroid of rank 3 on 7 elements, type (3, 0)
+            sage: MFR = MF.representation().change_ring(ZZ); MFR
+            [1 0 0 0 1 1 1]
+            [0 1 0 1 0 1 1]
+            [0 0 1 1 1 0 1]
+            sage: MFR2 = block_diagonal_matrix(MFR, MFR, sparse=True); MFR2
+            [1 0 0 0 1 1 1|0 0 0 0 0 0 0]
+            [0 1 0 1 0 1 1|0 0 0 0 0 0 0]
+            [0 0 1 1 1 0 1|0 0 0 0 0 0 0]
+            [-------------+-------------]
+            [0 0 0 0 0 0 0|1 0 0 0 1 1 1]
+            [0 0 0 0 0 0 0|0 1 0 1 0 1 1]
+            [0 0 0 0 0 0 0|0 0 1 1 1 0 1]
+            sage: MS2 = MFR2.parent(); MS2
+            Full MatrixSpace of 6 by 14 sparse matrices over Integer Ring
+            sage: from sage.matrix.matrix_cmr_sparse import Matrix_cmr_chr_sparse
+            sage: MFR2cmr = Matrix_cmr_chr_sparse(MS2, MFR2)
+            sage: MFR2cmr.is_totally_unimodular(certificate=True, construct_matrices=True)
+            (False, (None, ((0, 1, 2), (3, 4, 5))))
+            sage: result, certificate = MFR2cmr.is_totally_unimodular(certificate=True,
+            ....:                                                     complete_tree=True,
+            ....:                                                     construct_matrices=True)
+            sage: result, certificate
+            (False, (None, ((0, 1, 2), (3, 4, 5))))
+            sage: submatrix = MFR2.matrix_from_rows_and_columns(*certificate[1]); submatrix
+            [0 1 1]
+            [1 0 1]
+            [1 1 0]
+            sage: submatrix.determinant()
+            2
         """
         cdef bool result
         cdef CMR_TU_PARAMETERS params
@@ -435,7 +470,14 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
         if <bint> result:
             return True, create_DecompositionNode(dec)
 
-        return False, NotImplemented
+        if submat == NULL:
+            submat_tuple = None
+        else:
+            submat_tuple = (tuple(submat.rows[i] for i in range(submat.numRows)),
+                            tuple(submat.columns[i] for i in range(submat.numColumns)))
+
+        return False, (create_DecompositionNode(dec),
+                       submat_tuple)
 
 
 cdef _cmr_dec_construct(param):
