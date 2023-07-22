@@ -79,6 +79,8 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 # ****************************************************************************
 
+import sage.rings.abc
+
 from sage.arith.misc import gcd, binomial
 
 from sage.rings.finite_rings.finite_field_base import FiniteField
@@ -89,7 +91,6 @@ from sage.rings.polynomial.polynomial_ring import is_PolynomialRing
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.rational_field import QQ, is_RationalField
 from sage.rings.fraction_field import FractionField
-from sage.rings.number_field.order import Order
 
 from sage.categories.fields import Fields
 from sage.categories.rings import Rings
@@ -1163,7 +1164,7 @@ class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
         elif R in NumberFields():
             # True for the rational field as well, so check is_RationalField first
             field_type = True
-        elif (R is ZZ) or (isinstance(R, Order) and R.is_integrally_closed()): # Ensure ring of integers / maximal order
+        elif R is ZZ or (isinstance(R, sage.rings.abc.Order) and R.is_integrally_closed()):  # Ensure ring of integers / maximal order
             is_ring_of_ints = True
         else:
             raise NotImplementedError("self must be a projective space over a number field or a ring of integers")
