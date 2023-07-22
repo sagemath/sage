@@ -1777,6 +1777,7 @@ class KnotInfoBase(Enum):
             sage: K8kr == K8ko                                         # optional database_knotinfo
             False
 
+
         Comparision to Sage's results::
 
             sage: Kk == K.link().khovanov_polynomial()
