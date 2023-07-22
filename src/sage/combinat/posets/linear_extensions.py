@@ -40,7 +40,7 @@ from sage.matrix.constructor import matrix
 
 
 class LinearExtensionOfPoset(ClonableArray,
-        metaclass=InheritComparisonClasscallMetaclass):
+                             metaclass=InheritComparisonClasscallMetaclass):
     r"""
     A linear extension of a finite poset `P` of size `n` is a total
     ordering `\pi := \pi_0 \pi_1 \ldots \pi_{n-1}` of its elements

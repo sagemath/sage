@@ -24272,6 +24272,7 @@ class GenericGraph(GenericGraph_pyx):
     from sage.graphs.domination import dominating_set
     from sage.graphs.domination import greedy_dominating_set
     from sage.graphs.base.static_dense_graph import connected_subgraph_iterator
+    rooted_product = LazyImport('sage.graphs.graph_decompositions.graph_products', 'rooted_product')
     from sage.graphs.path_enumeration import shortest_simple_paths
     from sage.graphs.path_enumeration import all_paths
     from sage.graphs.traversals import lex_BFS

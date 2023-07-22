@@ -180,8 +180,7 @@ class FiniteDrinfeldModule(DrinfeldModule):
             True
         """
         t = self.ore_polring().gen()
-        Fq = self._function_ring.base()
-        deg = self._base.over(Fq).degree(Fq)
+        deg = self.base_over_constants_field().degree_over()
         return self._Hom_(self, category=self.category())(t**deg)
 
     def frobenius_charpoly(self, var='X'):
@@ -408,7 +407,9 @@ class FiniteDrinfeldModule(DrinfeldModule):
             ...
             ValueError: input must be in the image of the Drinfeld module
 
-            sage: phi.invert(t^3 + t^2 + 1)
+        ::
+
+            sage: phi.invert(t^4 + t^2 + 1)
             Traceback (most recent call last):
             ...
             ValueError: input must be in the image of the Drinfeld module
@@ -437,87 +438,61 @@ class FiniteDrinfeldModule(DrinfeldModule):
             sage: phi_r5 = cat.random_object(5)
             sage: phi_r5.invert(phi_r5(a)) == a
             True
+
+        ::
+
+            sage: B.<X> = Fq[]
+            sage: phi_r5.invert(X)
+            Traceback (most recent call last):
+            ...
+            TypeError: input must be an Ore polynomial
+
         """
         deg = ore_pol.degree()
         r = self.rank()
-        base_over_Fq = self.base_over_constants_field()
-        if ore_pol not in self._ore_polring:
-            raise TypeError('input must be an Ore polynomial')
-        if ore_pol.degree() == 0:
-            coord = base_over_Fq(self._base(ore_pol)).vector()
-            if coord.nonzero_positions == [0]:
-                return self._Fq(coord[0])
-        if ore_pol == 0:
-            return self._Fq.zero()
-        if deg % r != 0:
-            raise ValueError('input must be in the image of the Drinfeld '
-                             'module')
-
-        k = deg // r
-        T = self._function_ring.gen()
-        mat_lines = [[0 for _ in range(k+1)] for _ in range(k+1)]
-        for i in range(k+1):
-            phi_T_i = self(T**i)
-            for j in range(i+1):
-                mat_lines[j][i] = phi_T_i[r*j]
-        mat = Matrix(mat_lines)
-        vec = vector([list(ore_pol)[r*j] for j in range(k+1)])
-        coeffs_K = list((mat**(-1)) * vec)
-        coeffs_Fq = list(map(lambda x: base_over_Fq(x).vector()[0], coeffs_K))
-        pre_image = self._function_ring(coeffs_Fq)
-
-        if self(pre_image) == ore_pol:
-            return pre_image
+        E = self.base()
+        K = self.base_over_constants_field()
+        if ore_pol in self._ore_polring:
+            ore_pol = self._ore_polring(ore_pol)
         else:
-            raise ValueError('input must be in the image of the Drinfeld '
-                             'module')
+            raise TypeError('input must be an Ore polynomial')
 
-    def is_ordinary(self):
-        r"""
-        Return ``True`` whether the Drinfeld module is ordinary; raise a
-        NotImplementedError if the rank is not two.
-
-        A rank two finite Drinfeld module is *ordinary* if and only if
-        the function ring-characteristic does not divide the Frobenius
-        trace. A *supersingular* rank two finite Drinfeld module is a
-        Drinfeld module that is not ordinary.
-
-        A rank two Drinfeld module is *ordinary* if and only if it is
-        not supersingular; see :meth:`is_supersingular`.
-
-        EXAMPLES::
-
-            sage: Fq = GF(343)
-            sage: A.<T> = Fq[]
-            sage: K.<z6> = Fq.extension(2)
-            sage: phi = DrinfeldModule(A, [1, 0, z6])
-            sage: phi.is_ordinary()
-            False
-            sage: phi_p = phi(phi.characteristic())
-            sage: phi_p  # Purely inseparable
-            z6*t^2
-
-        ALGORITHM:
-
-            Compute the Frobenius trace and test if the
-            `\mathbb{F}_q[T]` characteristic divides it.
-
-            We could also test if the image of the
-            `\mathbb{F}_q[T]`-characteristic under the Drinfeld module
-            is purely inseparable; see [Gek1991]_, Proposition 4.1.
-        """
-        self._check_rank_two()
-        return not self.is_supersingular()
+        # Trivial cases
+        if deg <= 0:
+            return K(ore_pol[0]).in_base()
+        if deg % r != 0:
+            raise ValueError('input must be in the image of the Drinfeld module')
+        # Write the system and solve it
+        k = deg // r
+        A = self._function_ring
+        T = A.gen()
+        mat_rows = [[E.zero() for _ in range(k+1)] for _ in range(k+1)]
+        mat_rows[0][0] = E.one()
+        phiT = self.gen()
+        phiTi = self.ore_polring().one()
+        for i in range(1, k+1):
+            phiTi *= phiT
+            for j in range(i+1):
+                mat_rows[j][i] = phiTi[r*j]
+        mat = Matrix(mat_rows)
+        vec = vector([ore_pol[r*j] for j in range(k+1)])
+        coeffs_K = list(mat.inverse() * vec)
+        # Cast the coefficients to Fq
+        try:
+            coeffs_Fq = [K(c).in_base() for c in coeffs_K]
+            pre_image = A(coeffs_Fq)
+            if self(pre_image) == ore_pol:
+                return pre_image
+        except ValueError:
+            pass
+        raise ValueError('input must be in the image of the Drinfeld module')
 
     def is_supersingular(self):
         r"""
-        Return ``True`` whether the Drinfeld module is supersingular; raise a
-        NotImplementedError if the rank is not two.
+        Return ``True`` if this Drinfeld module is supersingular.
 
-        A rank two finite Drinfeld module is *supersingular* if and only
-        if the function ring-characteristic divides the Frobenius
-        trace. An *ordinary* rank two finite Drinfeld module is a
-        Drinfeld module that is not supersingular.
+        A Drinfeld module is supersingular if and only if its
+        height equals its rank.
 
         EXAMPLES::
 
@@ -527,17 +502,43 @@ class FiniteDrinfeldModule(DrinfeldModule):
             sage: phi = DrinfeldModule(A, [1, 0, z6])
             sage: phi.is_supersingular()
             True
-            sage: phi(phi.characteristic()) # Purely inseparable
+            sage: phi(phi.characteristic())   # Purely inseparable
             z6*t^2
 
-        ALGORITHM:
+        In rank two, a Drinfeld module is either ordinary or
+        supersinguler. In higher ranks, it could be neither of
+        the two::
 
-            Compute the Frobenius trace and test if the function
-            ring-characteristic divides it.
+            sage: psi = DrinfeldModule(A, [1, 0, z6, z6])
+            sage: psi.is_ordinary()
+            False
+            sage: psi.is_supersingular()
+            False
 
-            We could also test if the image of the function
-            ring-characteristic under the Drinfeld module is purely
-            inseparable; see [Gek1991]_, Proposition 4.1.
         """
-        self._check_rank_two()
-        return self.characteristic().divides(self.frobenius_trace())
+        return self.height() == self.rank()
+
+    def is_ordinary(self):
+        r"""
+        Return ``True`` if this Drinfeld module is ordinary.
+
+        A Drinfeld module is ordinary if and only if its
+        height is one.
+
+        EXAMPLES::
+
+            sage: Fq = GF(343)
+            sage: A.<T> = Fq[]
+            sage: K.<z6> = Fq.extension(2)
+            sage: phi = DrinfeldModule(A, [1, 0, z6])
+            sage: phi.is_ordinary()
+            False
+
+        ::
+
+            sage: phi = DrinfeldModule(A, [1, z6, 0, z6])
+            sage: phi.is_ordinary()
+            True
+
+        """
+        return self.height() == 1
