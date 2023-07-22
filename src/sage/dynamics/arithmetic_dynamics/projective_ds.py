@@ -2304,7 +2304,6 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
         # After moving from QQbar to K (like QQ), we need to normalize ``f``
         # to match the normalized resultant.
         f.normalize_coordinates()
-        O = K.maximal_order()
 
         # The original implementation uses Wells' Algorithm if the maps and
         # points are defined on P^1(QQ). Current implementation extends this
@@ -2312,11 +2311,11 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
         # Otherwise, apply the usual algorithm using local Green's functions:
         rel_dim = self.codomain().ambient_space().dimension_relative()
 
-        # Make sure that K is UFD
-        if (O in UniqueFactorizationDomains) and (rel_dim == 1):
+        if rel_dim == 1:
             # Write our point with coordinates whose GCD is 1
             number_field_pt.normalize_coordinates()
-            number_field_pt.clear_denominators()
+            if number_field_pt.parent().value_ring() is QQ:
+                number_field_pt.clear_denominators()
 
             # Assure integer coefficients
             coeffs = f[0].coefficients() + f[1].coefficients()
@@ -2325,57 +2324,102 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
                 t = lcm(t, c.denominator())
             A = t * f[0]
             B = t * f[1]
-            Res = O(f.resultant(normalize=True).abs())
+
             H = 0
-            x_i = O(number_field_pt[0])
-            y_i = O(number_field_pt[1])
+
             d = self.degree()
             R = RealField(prec)
             N = kwds.get('N', 10)
             err = kwds.get('error_bound', None)
 
-            # Compute the error bound as defined in Algorithm 3.1 of [WELLS]
-            if Res > 1:
-                if err is not None:
-                    err /= 2
-                    N = ceil((R(Res).log().log() - R(d-1).log() - R(err).log()) / R(d).log())
-                    if N < 1:
-                        N = 1
+            if K is QQ:
+                Res = f.resultant(normalize=True).abs()
+            
+                x_i = number_field_pt[0]
+                y_i = number_field_pt[1]
 
-                    kwds.update({'error_bound': err})
-                    kwds.update({'N': N})
+                # computes the error bound as defined in Algorithm 3.1 of [WELLS]
+                if Res > 1:
+                    if err is not None:
+                        err = err / 2
+                        N = ceil((R(Res).log().log() - R(d-1).log() - R(err).log())/(R(d).log()))
+                        if N < 1:
+                            N = 1
+                        kwds.update({'error_bound': err})
+                        kwds.update({'N': N})
+                    for n in range(N):
+                        x = A(x_i,y_i) % Res**(N-n)
+                        y = B(x_i,y_i) % Res**(N-n)
+                        g = gcd([x, y, Res])
+                        H = H + R(g).abs().log() / (d**(n+1))
+                        x_i = x / g
+                        y_i = y / g
 
-                for n in range(N):
-                    order_quotient = O.quotient(O.ideal(Res**(N - n)))
-                    # x = O(A(x_i, y_i) % Res**(N-n))
-                    # y = O(B(x_i, y_i) % Res**(N-n))
-                    x = O(order_quotient(A(x_i, y_i)).lift())
-                    y = O(order_quotient(B(x_i, y_i)).lift())
-                    g = gcd([x, y, Res])
-                    H += R(g).abs().log() / (d**(n+1))
-                    # H += R(g.norm()).abs().log() / d**(n+1)
-                    x_i = O(x / g)
-                    y_i = O(y / g)
+                # this looks different than Wells' Algorithm because of the difference
+                # between what Wells' calls H_infty,
+                # and what Green's Function returns for the infinite place
+                h = f.green_function(number_field_pt, 0, **kwds) - H + R(t).log()
 
-            # It looks different than Wells' Algorithm, because of the difference
-            # between what Wells' calls H_infty and what Green's function returns
-            # for the infinite place.
-            # h = f.green_function(number_field_pt, 0, **kwds) - H + R(t).log()
-            h = number_field_pt.global_height() - H
-            for v in K.places():
-                h += f.green_function(number_field_pt, v) + R(v(t).abs()).log()
+                # The value returned by Wells' Algorithm may be negative.
+                # As the canonical height is always non-negative, hence return 0 if
+                # this value is within -err of 0.
+                if h < 0:
+                    # This should be impossible. The error bound for Wells' is rigorous
+                    # and the actual height is always >= 0.
+                    # If we see something less than -err, something has gone wrong.
+                    assert h > -err, "A negative height less than -error_bound was computed. " + \
+                    "This should be impossible, please report bug on https://github.com/sagemath/sage/issues"
+                    h = R(0)
+                return h
 
-            # The value returned by Wells' Algorithm may be negative.
-            # As the canonical height is always non-negative, hence return 0 if
-            # this value is within -err of 0.
-            if h < 0:
-                # This should be impossible. The error bound for Wells' is rigorous
-                # and the actual height is always >= 0.
-                # If we see something less than -err, something has gone wrong.
-                assert h > -err, "A negative height less than -error_bound was computed. " + \
-                 "This should be impossible, please report bug on https://github.com/sagemath/sage/issues"
-                h = R(0)
-            return h
+            elif K.maximal_order() in UniqueFactorizationDomains:
+                Res = O(f.resultant(normalize=True).abs())
+
+                x_i = O(number_field_pt[0])
+                y_i = O(number_field_pt[1])
+
+                # Compute the error bound as defined in Algorithm 3.1 of [WELLS]
+                if Res > 1:
+                    if err is not None:
+                        err /= 2
+                        N = ceil((R(Res).log().log() - R(d-1).log() - R(err).log()) / R(d).log())
+                        if N < 1:
+                            N = 1
+
+                        kwds.update({'error_bound': err})
+                        kwds.update({'N': N})
+
+                    for n in range(N):
+                        order_quotient = O.quotient(O.ideal(Res**(N - n)))
+                        # x = O(A(x_i, y_i) % Res**(N-n))
+                        # y = O(B(x_i, y_i) % Res**(N-n))
+                        x = O(order_quotient(A(x_i, y_i)).lift())
+                        y = O(order_quotient(B(x_i, y_i)).lift())
+                        g = gcd([x, y, Res])
+                        H += R(g).abs().log() / (d**(n+1))
+                        # H += R(g.norm()).abs().log() / d**(n+1)
+                        x_i = O(x / g)
+                        y_i = O(y / g)
+
+                # It looks different than Wells' Algorithm, because of the difference
+                # between what Wells' calls H_infty and what Green's function returns
+                # for the infinite place.
+                # h = f.green_function(number_field_pt, 0, **kwds) - H + R(t).log()
+                h = number_field_pt.global_height() - H
+                for v in K.places():
+                    h += f.green_function(number_field_pt, v) + R(v(t).abs()).log()
+
+                # The value returned by Wells' Algorithm may be negative.
+                # As the canonical height is always non-negative, hence return 0 if
+                # this value is within -err of 0.
+                if h < 0:
+                    # This should be impossible. The error bound for Wells' is rigorous
+                    # and the actual height is always >= 0.
+                    # If we see something less than -err, something has gone wrong.
+                    assert h > -err, "A negative height less than -error_bound was computed. " + \
+                    "This should be impossible, please report bug on https://github.com/sagemath/sage/issues"
+                    h = R(0)
+                return h
 
         if bad_primes is None:
             bad_primes = []
