@@ -1040,6 +1040,7 @@ class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
 
         ::
 
+            sage: # needs sage.rings.number_field
             sage: R.<x> = QQ[]
             sage: F.<a> = NumberField(x^4 - 8*x^2 + 3)                                  # needs sage.rings.number_field
             sage: P.<x,y,z> = ProjectiveSpace(F, 2)                                     # needs sage.rings.number_field
@@ -1072,6 +1073,7 @@ class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
 
         ::
 
+            sage: # needs sage.rings.number_field
             sage: R.<x> = QQ[]
             sage: K.<v> = NumberField(x^5 + x^3 + 1)                                    # needs sage.rings.number_field
             sage: P.<x,y,z> = ProjectiveSpace(K, 2)                                     # needs sage.rings.number_field
@@ -1081,6 +1083,7 @@ class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
 
         ::
 
+            sage: # needs sage.rings.number_field
             sage: K.<v> = QuadraticField(2)
             sage: P.<x,y> = ProjectiveSpace(K, 1)
             sage: sorted(list(P.points_of_bounded_height(bound=2)))
@@ -1091,6 +1094,7 @@ class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
 
         ::
 
+            sage: # needs sage.rings.number_field
             sage: R.<x> = QQ[]
             sage: K.<a> = NumberField(3*x^2 + 1)
             sage: P.<z,w> = ProjectiveSpace(K, 1)
@@ -1100,6 +1104,7 @@ class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
 
         ::
 
+            sage: # needs sage.rings.number_field
             sage: R.<x> = QQ[]
             sage: K.<a> = NumberField(3*x^2 + 1)
             sage: O = K.maximal_order()
@@ -1109,6 +1114,7 @@ class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
 
         ::
 
+            sage: # needs sage.rings.number_field
             sage: R.<x> = QQ[]
             sage: K.<a> = NumberField(x^3 - 7)
             sage: O = K.maximal_order()
@@ -1135,6 +1141,7 @@ class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
 
         ::
 
+            sage: # needs sage.rings.number_field
             sage: K.<i> = NumberField(x^2 + 1)
             sage: PK.<t> = K[]
             sage: L.<a> = K.extension(t^4  - i)
