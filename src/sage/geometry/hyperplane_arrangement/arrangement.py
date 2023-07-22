@@ -3436,12 +3436,12 @@ class HyperplaneArrangementElement(Element):
 
 class OrderedHyperplaneArrangementElement(HyperplaneArrangementElement):
     """
-    A hyperplane arrangement.
+    An ordered hyperplane arrangement.
 
     .. WARNING::
 
         You should never create
-        :class:`HyperplaneArrangementElement` instances directly,
+        :class:`OrderedHyperplaneArrangementElement` instances directly,
         always use the parent.
     """
 
@@ -4068,7 +4068,7 @@ class OrderedHyperplaneArrangements(HyperplaneArrangements):
 
     def _element_constructor_(self, *args, **kwds):
         """
-        Construct an element of ``self``.
+        Repetition of the corresponding function for hyperplane arrangements without reordering.
 
         INPUT:
 
@@ -4079,31 +4079,26 @@ class OrderedHyperplaneArrangements(HyperplaneArrangements):
         - ``signed`` -- boolean (optional, default: ``True``); whether to
           preserve signs of hyperplane equations
 
-        - ``warn_duplicates`` -- boolean (optional, default: ``False``);
-          whether to issue a warning if duplicate hyperplanes were
-          passed -- note that duplicate hyperplanes are always removed,
-          whether or not there is a warning shown
-
         - ``check`` -- boolean (optional, default: ``True``); whether to
           perform argument checking.
 
         EXAMPLES::
 
-            sage: L.<x, y> = HyperplaneArrangements(QQ)
+            sage: L.<x, y> = OrderedHyperplaneArrangements(QQ)
             sage: L._element_constructor_(x, y)
-            Arrangement <y | x>
+            Arrangement <x | y>
             sage: L._element_constructor_([x, y])
-            Arrangement <y | x>
+            Arrangement <x | y>
             sage: L._element_constructor_([0, 1, 0], [0, 0, 1])
-            Arrangement <y | x>
-            sage: L._element_constructor_([[0, 1, 0], [0, 0, 1]])
+            Arrangement <x | y>
+            sage: L._element_constructor_([[0, 0, 1], [0, 1, 0]])
             Arrangement <y | x>
 
             sage: L._element_constructor_(polytopes.hypercube(2))
-            Arrangement <-x + 1 | -y + 1 | y + 1 | x + 1>
+            Arrangement <-x + 1 | -y + 1 | x + 1 | y + 1>
 
             sage: L(-x, x + y - 1, signed=False)
-            Arrangement <-x - y + 1 | x>
+            Arrangement <x | -x - y + 1>
 
         TESTS::
 
