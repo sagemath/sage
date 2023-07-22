@@ -315,14 +315,15 @@ class FractionField_generic(ring.Field):
 
         Coercion from a localization::
 
+            sage: # needs sage.libs.pari
             sage: R.<x> = ZZ[]
-            sage: L = Localization(R, (x**2 + 1,7))                                     # needs sage.libs.pari
+            sage: L = Localization(R, (x**2 + 1,7))
             sage: F = L.fraction_field()
-            sage: f = F.coerce_map_from(L); f                                           # needs sage.libs.pari
+            sage: f = F.coerce_map_from(L); f
             Coercion map:
               From: Univariate Polynomial Ring in x over Integer Ring localized at (7, x^2 + 1)
               To:   Fraction Field of Univariate Polynomial Ring in x over Integer Ring
-            sage: f(L(1/7)) == 1/7                                                      # needs sage.libs.pari
+            sage: f(L(1/7)) == 1/7
             True
         """
         from sage.rings.rational_field import QQ

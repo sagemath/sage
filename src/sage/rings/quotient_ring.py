@@ -838,7 +838,7 @@ class QuotientRing_nc(ring.Ring, sage.structure.parent_gens.ParentWithGens):
             sage: R.<x,y> = PolynomialRing(QQ, 2)
             sage: S.<a,b> = QuotientRing(R, R.ideal(1 + y^2))                           # needs sage.libs.singular
             sage: T.<c,d> = QuotientRing(S, S.ideal(a))                                 # needs sage.libs.singular
-            sage: S.defining_ideal()                                                    # needs sage.libs.singular
+            sage: S.defining_ideal()
             Ideal (y^2 + 1) of Multivariate Polynomial Ring in x, y over Rational Field
             sage: T.defining_ideal()                                                    # needs sage.libs.singular
             Ideal (x, y^2 + 1) of Multivariate Polynomial Ring in x, y over Rational Field

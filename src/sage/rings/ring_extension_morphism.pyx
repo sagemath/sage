@@ -269,7 +269,7 @@ cdef class RingExtensionHomomorphism(RingMap):
 
         EXAMPLES::
 
-            sage: F = GF(5)                                                             # needs sage.rings.finite_rings
+            sage: F = GF(5)
             sage: K.<a> = GF(5^2).over(F)                                               # needs sage.rings.finite_rings
             sage: L.<b> = GF(5^6).over(K)                                               # needs sage.rings.finite_rings
 
@@ -396,13 +396,13 @@ cdef class RingExtensionHomomorphism(RingMap):
             sage: iota.is_injective()                                                   # needs sage.rings.finite_rings
             True
 
-            sage: K = GF(7).over(ZZ)                                                    # needs sage.rings.finite_rings
-            sage: iota = K.defining_morphism(); iota                                    # needs sage.rings.finite_rings
+            sage: K = GF(7).over(ZZ)
+            sage: iota = K.defining_morphism(); iota
             Ring morphism:
               From: Integer Ring
               To:   Finite Field of size 7 over its base
               Defn: 1 |--> 1
-            sage: iota.is_injective()                                                   # needs sage.rings.finite_rings
+            sage: iota.is_injective()
             False
         """
         return self._backend.is_injective()
@@ -423,13 +423,13 @@ cdef class RingExtensionHomomorphism(RingMap):
             sage: iota.is_surjective()                                                  # needs sage.rings.finite_rings
             False
 
-            sage: K = GF(7).over(ZZ)                                                    # needs sage.rings.finite_rings
-            sage: iota = K.defining_morphism(); iota                                    # needs sage.rings.finite_rings
+            sage: K = GF(7).over(ZZ)
+            sage: iota = K.defining_morphism(); iota
             Ring morphism:
               From: Integer Ring
               To:   Finite Field of size 7 over its base
               Defn: 1 |--> 1
-            sage: iota.is_surjective()                                                  # needs sage.rings.finite_rings
+            sage: iota.is_surjective()
             True
         """
         return self._backend.is_surjective()

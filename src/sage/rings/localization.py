@@ -906,17 +906,18 @@ class Localization(IntegralDomain, UniqueRepresentation):
 
         EXAMPLES::
 
+            sage: # needs sage.libs.pari
             sage: P.<x,y,z> = QQ[]
             sage: d = x**2 + y**2 + z**2
-            sage: L = Localization(P, d)                                                # needs sage.libs.pari
-            sage: L._fraction_to_element((x+y+z)/d)                                     # needs sage.libs.pari
+            sage: L = Localization(P, d)
+            sage: L._fraction_to_element((x+y+z)/d)
             (x + y + z)/(x^2 + y^2 + z^2)
-            sage: _ in L                                                                # needs sage.libs.pari
+            sage: _ in L
             True
 
         TESTS::
 
-            sage: TestSuite(L).run()                                                    # needs sage.libs.pari
+            sage: TestSuite(L).run()
         """
         potential_non_unit_denom = self._cut_off_extra_units_from_base_ring_element(x.denominator())
         if potential_non_unit_denom.is_unit():
