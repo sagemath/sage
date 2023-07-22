@@ -231,15 +231,15 @@ class RingDerivationModule(Module, UniqueRepresentation):
             sage: TestSuite(M).run()
 
             sage: from sage.rings.derivation import RingDerivationModule
-            sage: R5.<x> = GF(5)[]                                                      # needs sage.rings.finite_rings
+            sage: R5.<x> = GF(5)[]
             sage: R25.<x> = GF(25)[]                                                    # needs sage.rings.finite_rings
-            sage: R7.<x> = GF(7)[]                                                      # needs sage.rings.finite_rings
+            sage: R7.<x> = GF(7)[]
 
             sage: RingDerivationModule(R5, R25)                                         # needs sage.rings.finite_rings
             Module of derivations
              from Univariate Polynomial Ring in x over Finite Field of size 5
                to Univariate Polynomial Ring in x over Finite Field in z2 of size 5^2
-            sage: RingDerivationModule(R5, R5^2)                                        # needs sage.rings.finite_rings
+            sage: RingDerivationModule(R5, R5^2)
             Traceback (most recent call last):
             ...
             TypeError: the codomain must be an algebra over the domain
@@ -250,7 +250,7 @@ class RingDerivationModule(Module, UniqueRepresentation):
             TypeError: the codomain must be an algebra over the domain
              or a morphism with the correct domain
 
-            sage: theta = R5.hom([R5.gen()^2])                                          # needs sage.rings.finite_rings
+            sage: theta = R5.hom([R5.gen()^2])
             sage: RingDerivationModule(R5, R25, twist=theta)                            # needs sage.rings.finite_rings
             Module of twisted derivations
              from Univariate Polynomial Ring in x over Finite Field of size 5
@@ -1074,10 +1074,10 @@ class RingDerivationWithoutTwist(RingDerivation):
 
         EXAMPLES::
 
-            sage: R.<x,y,z> = GF(5)[]                                                   # needs sage.rings.finite_rings
-            sage: D = sum(v*R.derivation(v) for v in R.gens()); D                       # needs sage.rings.finite_rings
+            sage: R.<x,y,z> = GF(5)[]
+            sage: D = sum(v*R.derivation(v) for v in R.gens()); D
             x*d/dx + y*d/dy + z*d/dz
-            sage: D.pth_power() == D                                                    # needs sage.rings.finite_rings
+            sage: D.pth_power() == D
             True
 
         """
@@ -1915,19 +1915,19 @@ class RingDerivationWithoutTwist_function(RingDerivationWithoutTwist):
 
         EXAMPLES::
 
-            sage: R.<x,y> = GF(5)[[]]                                                   # needs sage.rings.finite_rings
-            sage: M = R.derivation_module()                                             # needs sage.rings.finite_rings
-            sage: M.basis()                                                             # needs sage.rings.finite_rings
+            sage: R.<x,y> = GF(5)[[]]
+            sage: M = R.derivation_module()
+            sage: M.basis()
             Family (d/dx, d/dy)
 
-            sage: R.derivation(x).list()                                                # needs sage.rings.finite_rings
+            sage: R.derivation(x).list()
             [1, 0]
-            sage: R.derivation(y).list()                                                # needs sage.rings.finite_rings
+            sage: R.derivation(y).list()
             [0, 1]
 
-            sage: f = x*R.derivation(x) + y*R.derivation(y); f                          # needs sage.rings.finite_rings
+            sage: f = x*R.derivation(x) + y*R.derivation(y); f
             x*d/dx + y*d/dy
-            sage: f.list()                                                              # needs sage.rings.finite_rings
+            sage: f.list()
             [x, y]
 
         """
