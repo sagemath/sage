@@ -1001,7 +1001,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
             3
         """
         if (maximal_faces is not None and
-            from_characteristic_function is not None):
+                from_characteristic_function is not None):
             raise ValueError("maximal_faces and from_characteristic_function cannot be both defined")
         category = SimplicialComplexes().Finite().or_subcategory(category)
         Parent.__init__(self, category=category)
@@ -1084,7 +1084,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
         for face in maximal_simplices:
             # check whether each given face is actually maximal
             if (maximality_check and
-                any(face.is_face(other) for other in good_faces)):
+                    any(face.is_face(other) for other in good_faces)):
                 continue
             # This sorting is crucial for homology computations:
             face = Simplex(sorted(face.tuple(), key=vertex_to_index.__getitem__))
@@ -1835,7 +1835,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
                     if rename_vertices:
                         d['L' + str(v) + 'R' + str(w)] = V[v] * L + V[w]
                     else:
-                        d[(v,w)] = V[v] * L + V[w]
+                        d[(v, w)] = V[v] * L + V[w]
             return SimplicialComplex(facets, is_mutable=is_mutable, sort_facets=d)
 
     def join(self, right, rename_vertices=True, is_mutable=True):
@@ -3058,9 +3058,9 @@ class SimplicialComplex(Parent, GenericCellComplex):
             from sage.parallel.ncpus import ncpus as get_ncpus
             ncpus = get_ncpus()
 
-        facs = [ x for x in self.face_iterator() ]
+        facs = [x for x in self.face_iterator()]
         n = len(facs)
-        facs_divided = [ [] for i in range(ncpus) ]
+        facs_divided = [[] for i in range(ncpus)]
         for i in range(n):
             facs_divided[i % ncpus].append(facs[i])
 
@@ -3068,15 +3068,15 @@ class SimplicialComplex(Parent, GenericCellComplex):
             S = self.link(F)
             H = S.homology(base_ring=base_ring)
             if base_ring.is_field():
-                return all( H[j].dimension() == 0 for j in range(S.dimension()) )
+                return all(H[j].dimension() == 0 for j in range(S.dimension()))
             else:
-                return not any( H[j].invariants() for j in range(S.dimension()) )
+                return not any(H[j].invariants() for j in range(S.dimension()))
 
         @parallel(ncpus=ncpus)
         def all_homologies_in_list_vanish(Fs):
-            return all( all_homologies_vanish(F) for F in Fs )
+            return all(all_homologies_vanish(F) for F in Fs)
 
-        return all( answer[1] for answer in all_homologies_in_list_vanish(facs_divided) )
+        return all(answer[1] for answer in all_homologies_in_list_vanish(facs_divided))
 
     def generated_subcomplex(self, sub_vertex_set, is_mutable=True):
         """
@@ -3275,7 +3275,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
             cur_complex.add_face(F)
             cur_order.append(F)
             facets.remove(F)
-            it.append(iter(set(facets))) # Iterate over a copy of the current facets
+            it.append(iter(set(facets)))  # Iterate over a copy of the current facets
 
         return tuple(cur_order)
 
@@ -3945,14 +3945,14 @@ class SimplicialComplex(Parent, GenericCellComplex):
             done = True
             remove_these = []
             if verbose:
-                print("  looping through %s facets" % len(faces))
+                print(f"  looping through {len(faces)} facets")
             for f in faces:
                 f_set = f.set()
-                int_facets = set( a.set().intersection(f_set) for a in new_facets )
+                int_facets = set(a.set().intersection(f_set) for a in new_facets)
                 intersection = SimplicialComplex(int_facets)
                 if not intersection._facets[0].is_empty():
                     if (len(intersection._facets) == 1 or
-                        intersection == intersection._contractible_subcomplex()):
+                            intersection == intersection._contractible_subcomplex()):
                         new_facets.append(f)
                         remove_these.append(f)
                         done = False
@@ -4241,7 +4241,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
         # Check easy invariants agree
         if (sorted(x.dimension() for x in self._facets)
             != sorted(x.dimension() for x in other._facets)
-            or len(self.vertices()) != len(other.vertices())):
+                or len(self.vertices()) != len(other.vertices())):
             return False
 
         from sage.graphs.graph import Graph
@@ -4922,7 +4922,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
             return ZZ.one()
         if base_ring in self._bbn:
             if base_ring in self._bbn_all_computed:
-                return self._bbn[base_ring].get((a,b), ZZ.zero())
+                return self._bbn[base_ring].get((a, b), ZZ.zero())
             elif (a, b) in self._bbn[base_ring]:
                 return self._bbn[base_ring][a, b]
 
@@ -4930,7 +4930,6 @@ class SimplicialComplex(Parent, GenericCellComplex):
 
         b //= 2
         L = self.vertices()
-        n = len(L)
         H0 = HomologyGroup(0, base_ring)
 
         B = 0
@@ -4950,7 +4949,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
 
         return B
 
-    def is_golod(self):
+    def is_golod(self) -> bool:
         r"""
         Return whether ``self`` is Golod.
 
@@ -4973,7 +4972,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
 
         return not any(i+j in H for ii, i in enumerate(H) for j in H[ii:])
 
-    def is_minimally_non_golod(self):
+    def is_minimally_non_golod(self) -> bool:
         r"""
         Return whether ``self`` is minimally non-Golod.
 
@@ -5003,7 +5002,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
             X.remove_face([v])
             return X.is_golod()
 
-        return (not self.is_golod()) and all(test(v) for v in self.vertices())
+        return not self.is_golod() and all(test(v) for v in self.vertices())
 
 # Miscellaneous utility functions.
 
@@ -5070,7 +5069,8 @@ def facets_for_K3():
         True
     """
     from sage.groups.perm_gps.permgroup import PermutationGroup
-    G = PermutationGroup([[(1,3,8,4,9,16,15,2,14,12,6,7,13,5,10)],
-                         [(1,11,16),(2,10,14),(3,12,13),(4,9,15),(5,7,8)]])
-    return ([tuple([g(i) for i in (1,2,3,8,12)]) for g in G]
-            + [tuple([g(i) for i in (1,2,5,8,14)]) for g in G])
+    G = PermutationGroup([[(1, 3, 8, 4, 9, 16, 15, 2, 14, 12, 6, 7, 13, 5, 10)],
+                          [(1, 11, 16), (2, 10, 14), (3, 12, 13),
+                           (4, 9, 15), (5, 7, 8)]])
+    return ([tuple([g(i) for i in (1, 2, 3, 8, 12)]) for g in G]
+            + [tuple([g(i) for i in (1, 2, 5, 8, 14)]) for g in G])
