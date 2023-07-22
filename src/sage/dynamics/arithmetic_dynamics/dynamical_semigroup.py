@@ -188,6 +188,19 @@ class DynamicalSemigroup(Parent, metaclass=InheritComparisonClasscallMetaclass):
           Defn: Defined on coordinates by sending (x) to
                 (x^2)
 
+    A dynamical semigroup may contain dynamical systems over finite fields::
+
+        sage: F = FiniteField(5)
+        sage: P.<x,y> = ProjectiveSpace(F, 1)
+        sage: DynamicalSemigroup(([x, y], [x^2, y^2]))
+        Dynamical semigroup over Projective Space of dimension 1 over Finite Field of size 5 defined by 2 dynamical systems:
+        Dynamical System of Projective Space of dimension 1 over Finite Field of size 5
+          Defn: Defined on coordinates by sending (x : y) to
+                (x : y)
+        Dynamical System of Projective Space of dimension 1 over Finite Field of size 5
+          Defn: Defined on coordinates by sending (x : y) to
+                (x^2 : y^2)
+
     If a dynamical semigroup is built from dynamical systems over both projective and affine spaces, all systems
     will be homogenized to dynamical systems over projective space::
 
@@ -218,6 +231,18 @@ class DynamicalSemigroup(Parent, metaclass=InheritComparisonClasscallMetaclass):
         sage: K.<k> = NumberField(r^2 - 2)
         sage: P.<x,y> = ProjectiveSpace(RR, 1)
         sage: Q.<z,w> = ProjectiveSpace(K, 1)
+        sage: f = DynamicalSystem([x, y], P)
+        sage: g = DynamicalSystem([z^2, w^2], Q)
+        sage: DynamicalSemigroup((f, g))
+        Traceback (most recent call last):
+        ...
+        ValueError: given dynamical systems are not automorphic under global composition
+
+    ::
+
+        sage: F = FiniteField(5)
+        sage: P.<x,y> = ProjectiveSpace(F, 1)
+        sage: Q.<z,w> = ProjectiveSpace(QQ, 1)
         sage: f = DynamicalSystem([x, y], P)
         sage: g = DynamicalSystem([z^2, w^2], Q)
         sage: DynamicalSemigroup((f, g))
