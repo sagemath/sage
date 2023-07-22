@@ -1,5 +1,5 @@
 r"""
-Moment angle complexes
+Moment-angle complexes
 
 AUTHORS:
 
@@ -94,8 +94,6 @@ class MomentAngleComplex(SageObject): # should this inherit SimplicialComplex?
 
     :param simplicial_complex: the corresponding simplicial complex
     :type simplicial_complex: a simplicial complex, or a list of facets that defines a simplicial complex
-    :param create_complex: see below
-    :type create_complex: boolean; optional, default ``False``
     :return: the associated moment-angle complex
 
     ``simplicial_complex`` must be an intance of
@@ -103,7 +101,7 @@ class MomentAngleComplex(SageObject): # should this inherit SimplicialComplex?
     list of facets, which represents the simplicial complex whose
     moment-angle complex we wish to create.
 
-    If ``create_complex`` is ``True``, we also explicitly compute the
+    If ``create_complex()`` is called, we also explicitly compute the
     moment-angle complex, with the construction described above.
 
     .. WARNING::
@@ -117,8 +115,7 @@ class MomentAngleComplex(SageObject): # should this inherit SimplicialComplex?
     """
 
     def __init__(self,
-                 simplicial_complex,
-                 create_complex=False):
+                 simplicial_complex):
         """
         Define a moment-angle complex. See :class:`MomentAngleComplex`
         for full documentation.
@@ -146,9 +143,6 @@ class MomentAngleComplex(SageObject): # should this inherit SimplicialComplex?
                     Y.append(Sphere(1))
 
             self._components[facet] = Y
-
-        if create_complex:
-            self.create_complex()
 
     def __eq__(self, other):
         """
@@ -329,8 +323,7 @@ class MomentAngleComplex(SageObject): # should this inherit SimplicialComplex?
         # needs work
         return out
 
-    #expand the docstring here
-    #works only for ZZ
+    # expand the docstring here
     # should direct sum be implemented differently here?
     def homology(self, dim=None, base_ring=ZZ, cohomology=False,
                  algorithm='pari', verbose=False, reduced=True):
