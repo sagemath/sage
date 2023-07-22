@@ -72,10 +72,10 @@ from itertools import combinations
 # - compute up to homotopy?
 # - and a lot more ...
 # - add literature to bibliography?
-# - golod decomposition
 # - polyhedral products and real moment-angle complexes?
+# - golod decomposition
 # - return for odd dimensional simplicial complexes in golod_decomposition?
-# - explicitly state the vertices?
+# - explicitly state the vertices for construction?
 # - add product using join of simplicial complexes
 # - a lot of things follow from the homology and cohomology - ?
 # - mark copies of code?
@@ -425,3 +425,18 @@ class MomentAngleComplex(SageObject): # should this inherit SimplicialComplex?
         <Lots and lots of examples>
         """
         return sum([(-1)**n * self.betti()[n] for n in range(self.dimension() + 1)])
+
+    def product(self, other):
+        """
+        The product of this moment-angle complex with another one.
+
+        It is known that the product of two moment-angle complexes
+        is a moment-angle complex over the join of the two corresponding
+        simplicial complexes.
+
+        EXAMPLES:
+
+        <Lots and lots of examples>
+        """
+        simplicial_complex = self._simplicial_complex.join(other._simplicial_complex, rename_vertices=True)
+        return MomentAngleComplex(simplicial_complex)
