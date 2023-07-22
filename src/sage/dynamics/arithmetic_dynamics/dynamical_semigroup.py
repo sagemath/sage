@@ -676,10 +676,10 @@ class DynamicalSemigroup_projective(DynamicalSemigroup):
         new_systems = []
         for ds in self._dynamical_systems:
             new_system = ds.dehomogenize(n)
-            if not isinstance(new_system, DynamicalSystem):
-                raise ValueError(str(ds) + " dehomogenized at " + str(n) + " is not a `DynamicalSystem` object")
+            if not isinstance(new_system, DynamicalSystem_affine):
+                raise ValueError(str(ds) + " dehomogenized at " + str(n) + " is not a `DynamicalSystem_affine` object")
             new_systems.append(new_system)
-        return DynamicalSemigroup(new_systems)
+        return DynamicalSemigroup_affine(new_systems)
 
     def _mul_(self, other_dynamical_semigroup):
         r"""
@@ -913,10 +913,10 @@ class DynamicalSemigroup_affine(DynamicalSemigroup):
         new_systems = []
         for ds in self._dynamical_systems:
             new_system = ds.homogenize(n)
-            if not isinstance(new_system, DynamicalSystem):
-                raise ValueError(str(ds) + " homogenized at " + str(n) + " is not a `DynamicalSystem` object")
+            if not isinstance(new_system, DynamicalSystem_projective):
+                raise ValueError(str(ds) + " homogenized at " + str(n) + " is not a `DynamicalSystem_projective` object")
             new_systems.append(new_system)
-        return DynamicalSemigroup(new_systems)
+        return DynamicalSemigroup_projective(new_systems)
 
     def _mul_(self, other_dynamical_semigroup):
         r"""
