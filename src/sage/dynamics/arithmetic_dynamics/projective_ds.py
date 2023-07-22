@@ -2286,7 +2286,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
             f = self._number_field_from_algebraics().as_dynamical_system()
 
             if K == QQ:
-                K = f.base_ring()
+                K = f.base_ring() # TODO make it field?
                 number_field_pt = number_field_pt.change_ring(K)
             elif f.base_ring() == QQ:
                 f = f.change_ring(K)
@@ -2346,14 +2346,14 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
                     kwds.update({'N': N})
 
                 for n in range(N):
-                    order_quotient = O.quotient(O.fraction_ideal(Res**(N - n)))
+                    order_quotient = O.quotient(O.ideal(Res**(N - n)))
                     # x = O(A(x_i, y_i) % Res**(N-n))
                     # y = O(B(x_i, y_i) % Res**(N-n))
                     x = O(order_quotient(A(x_i, y_i)).lift())
                     y = O(order_quotient(B(x_i, y_i)).lift())
                     g = gcd([x, y, Res])
-                    # H += R(g).abs().log() / (d**(n+1))
-                    H += R(g.norm()).abs().log() / d**(n+1)
+                    H += R(g).abs().log() / (d**(n+1))
+                    # H += R(g.norm()).abs().log() / d**(n+1)
                     x_i = O(x / g)
                     y_i = O(y / g)
 
