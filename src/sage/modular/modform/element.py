@@ -3560,9 +3560,9 @@ class GradedModularFormElement(ModuleElement):
         for k_self in f_self.keys():
             for k_other in f_other.keys():
                 try:
-                     f_mul[k_self + k_other] += f_self[k_self]*f_other[k_other]
+                    f_mul[k_self + k_other] += f_self[k_self]*f_other[k_other]
                 except KeyError:
-                     f_mul[k_self + k_other] = f_self[k_self]*f_other[k_other]
+                    f_mul[k_self + k_other] = f_self[k_self]*f_other[k_other]
         return GM(self.parent(), f_mul)
 
     def _lmul_(self, c):
