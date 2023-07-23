@@ -2592,7 +2592,7 @@ class FreeModule_generic(Module_free_ambient):
         except AttributeError:
             MAT = sage.matrix.matrix_space.MatrixSpace(self.coordinate_ring(),
                             len(self.basis()), self.degree(),
-                            sparse = self.is_sparse())
+                            sparse=self.is_sparse())
             if self.is_ambient():
                 A = MAT.identity_matrix()
             else:
@@ -5378,7 +5378,7 @@ class FreeModule_ambient(FreeModule_generic):
             sage: M is S._dense_module()
             True
         """
-        return FreeModule(base_ring=self.base_ring(), rank = self.rank(), sparse=False)
+        return FreeModule(base_ring=self.base_ring(), rank=self.rank(), sparse=False)
 
     def _sparse_module(self):
         """
@@ -5394,7 +5394,7 @@ class FreeModule_ambient(FreeModule_generic):
             sage: M._sparse_module() is S
             True
         """
-        return FreeModule(base_ring=self.base_ring(), rank = self.rank(), sparse=True)
+        return FreeModule(base_ring=self.base_ring(), rank=self.rank(), sparse=True)
 
     def echelonized_basis_matrix(self):
         """
@@ -6683,7 +6683,7 @@ class FreeModule_submodule_with_basis_pid(FreeModule_generic_pid):
         # Return the first rank rows (i.e., the nonzero rows).
         d = self._denominator(basis)
         MAT = sage.matrix.matrix_space.MatrixSpace(
-            ambient.base_ring(), len(basis), ambient.degree(), sparse = ambient.is_sparse())
+            ambient.base_ring(), len(basis), ambient.degree(), sparse=ambient.is_sparse())
         if d != 1:
             basis = [x*d for x in basis]
         A = MAT(basis)
@@ -7051,7 +7051,7 @@ class FreeModule_submodule_with_basis_pid(FreeModule_generic_pid):
                 rows = sum([self.echelon_coordinates(b,check=False) for b in self.basis()], [])
                 M = sage.matrix.matrix_space.MatrixSpace(self.base_ring().fraction_field(),
                                              self.dimension(),
-                                             sparse = self.is_sparse())
+                                             sparse=self.is_sparse())
                 self.__user_to_echelon_matrix = M(rows)
         return self.__user_to_echelon_matrix
 
@@ -8184,9 +8184,13 @@ def element_class(R, is_sparse):
     elif isinstance(R, sage.rings.abc.CallableSymbolicExpressionRing) and not is_sparse:
         import sage.modules.vector_callable_symbolic_dense
         return sage.modules.vector_callable_symbolic_dense.Vector_callable_symbolic_dense
-    elif isinstance(R, sage.rings.abc.SymbolicRing) and not is_sparse:
-        import sage.modules.vector_symbolic_dense
-        return sage.modules.vector_symbolic_dense.Vector_symbolic_dense
+    elif isinstance(R, sage.rings.abc.SymbolicRing):
+        if not is_sparse:
+            import sage.modules.vector_symbolic_dense
+            return sage.modules.vector_symbolic_dense.Vector_symbolic_dense
+        else:
+            import sage.modules.vector_symbolic_sparse
+            return sage.modules.vector_symbolic_sparse.Vector_symbolic_sparse
 
     if is_sparse:
         return free_module_element.FreeModuleElement_generic_sparse

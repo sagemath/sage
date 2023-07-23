@@ -152,7 +152,7 @@ class Diagram(ClonableArray, metaclass=InheritComparisonClasscallMetaclass):
             # minimum possible number of rows/cols
             N_rows = max(c[0] for c in self._cells)
             N_cols = max(c[1] for c in self._cells)
-        else: # if there are no cells
+        else:  # if there are no cells
             N_rows = -1
             N_cols = -1
 
@@ -344,18 +344,22 @@ class Diagram(ClonableArray, metaclass=InheritComparisonClasscallMetaclass):
         def end_line(r):
             # give the line ending to row ``r``
             if r == 0:
-                return "".join(r'\cline{%s-%s}'%(i+1, i+1) for i,j in enumerate(array[0]) if j is not None)
+                return "".join(r'\cline{%s-%s}' % (i+1, i+1)
+                               for i, j in enumerate(array[0]) if j is not None)
             elif r == len(array):
-                return r"\\" + "".join(r'\cline{%s-%s}'%(i+1, i+1) for i,j in enumerate(array[r-1]) if j is not None)
+                return r"\\" + "".join(r'\cline{%s-%s}' % (i+1, i+1)
+                                       for i, j in enumerate(array[r-1]) if j is not None)
             else:
-                out = r"\\" + "".join(r'\cline{%s-%s}'%(i+1, i+1) for i,j in enumerate(array[r-1]) if j is not None)
-                out += "".join(r'\cline{%s-%s}'%(i+1, i+1) for i,j in enumerate(array[r]) if j is not None)
+                out = r"\\" + "".join(r'\cline{%s-%s}' % (i+1, i+1)
+                                      for i, j in enumerate(array[r-1]) if j is not None)
+                out += "".join(r'\cline{%s-%s}' % (i+1, i+1)
+                               for i, j in enumerate(array[r]) if j is not None)
                 return out
 
-        tex=r'\raisebox{-.6ex}{$\begin{array}[b]{*{%s}{p{0.6ex}}}'%(max(map(len,array)))
-        tex+=end_line(0)+'\n'
+        tex = r'\raisebox{-.6ex}{$\begin{array}[b]{*{%s}{p{0.6ex}}}' % (max(map(len, array)))
+        tex += end_line(0)+'\n'
         for r in range(len(array)):
-            tex+='&'.join('' if c is None else r'\lr{%s}'%(c,) for c in array[r])
+            tex += '&'.join('' if c is None else r'\lr{%s}' % (c,) for c in array[r])
             tex += end_line(r+1)+'\n'
         return '{%s\n%s\n}' % (lr, tex+r'\end{array}$}')
 
@@ -531,6 +535,7 @@ class Diagram(ClonableArray, metaclass=InheritComparisonClasscallMetaclass):
         from sage.combinat.specht_module import specht_module_rank
         return specht_module_rank(self, base_ring)
 
+
 class Diagrams(UniqueRepresentation, Parent):
     r"""
     The class of combinatorial diagrams.
@@ -615,7 +620,7 @@ class Diagrams(UniqueRepresentation, Parent):
         """
         from sage.sets.non_negative_integers import NonNegativeIntegers
         from sage.categories.cartesian_product import cartesian_product
-        from sage.misc.misc import subsets
+        from sage.combinat.subset import subsets
         # the product of positive integers automatically implements an
         # an enumeration which allows us to get out of the first column
         N = NonNegativeIntegers()
@@ -624,7 +629,7 @@ class Diagrams(UniqueRepresentation, Parent):
         while True:
             cells = next(X)
             try:
-                yield self.element_class(self, tuple((i, j) for i,j in cells))
+                yield self.element_class(self, tuple((i, j) for i, j in cells))
             except ValueError:
                 # if cells causes the .check method of a
                 # subclass to fail, just go to the next one
@@ -777,17 +782,17 @@ class Diagrams(UniqueRepresentation, Parent):
 
         EXAMPLES::
 
-            sage: M = matrix([[1,0,1,1],[0,1,1,0]])
+            sage: M = matrix([[1,0,1,1],[0,1,1,0]])                                     # optional - sage.modules
             sage: from sage.combinat.diagram import Diagrams
-            sage: Diagrams()(M).pp()
+            sage: Diagrams()(M).pp()                                                    # optional - sage.modules
             O . O O
             . O O .
-            sage: Diagrams().from_zero_one_matrix(M).pp()
+            sage: Diagrams().from_zero_one_matrix(M).pp()                               # optional - sage.modules
             O . O O
             . O O .
 
-            sage: M = matrix([[1, 0, 0], [1, 0, 0], [0, 0, 0]])
-            sage: Diagrams()(M).pp()
+            sage: M = matrix([[1, 0, 0], [1, 0, 0], [0, 0, 0]])                         # optional - sage.modules
+            sage: Diagrams()(M).pp()                                                    # optional - sage.modules
             O . .
             O . .
             . . .
@@ -800,9 +805,9 @@ class Diagrams(UniqueRepresentation, Parent):
             one = M.base_ring().one()
             for i in range(n_rows):
                 for j in range(n_cols):
-                    if not (M[i,j] == zero or M[i,j] == one):
-                        raise ValueError("Matrix entries must be 0 or 1")
-        cells = [(i, j) for i in range(n_rows) for j in range(n_cols) if M[i,j]]
+                    if not (M[i, j] == zero or M[i, j] == one):
+                        raise ValueError("matrix entries must be 0 or 1")
+        cells = [(i, j) for i in range(n_rows) for j in range(n_cols) if M[i, j]]
 
         return self.element_class(self, cells, n_rows, n_cols, check=False)
 
@@ -1435,7 +1440,7 @@ class NorthwestDiagrams(Diagrams):
 
         EXAMPLES::
 
-            sage: p = ParallelogramPolyomino([[0, 0, 1, 0, 0, 0, 1, 1],
+            sage: p = ParallelogramPolyomino([[0, 0, 1, 0, 0, 0, 1, 1],                 # optional - sage.modules
             ....:                              [1, 1, 0, 1, 0, 0, 0, 0]])
             sage: from sage.combinat.diagram import NorthwestDiagrams
             sage: NorthwestDiagrams().from_parallelogram_polyomino(p).pp()

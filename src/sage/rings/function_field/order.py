@@ -95,7 +95,7 @@ AUTHORS:
 
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2010      William Stein <wstein@gmail.com>
 #                     2011      Maarten Derickx <m.derickx.student@gmail.com>
 #                     2011      Julian Rueth <julian.rueth@gmail.com>
@@ -106,7 +106,7 @@ AUTHORS:
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
 #                  https://www.gnu.org/licenses/
-#*****************************************************************************
+# ****************************************************************************
 
 from sage.categories.integral_domains import IntegralDomains
 from sage.structure.parent import Parent

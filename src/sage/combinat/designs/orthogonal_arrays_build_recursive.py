@@ -1404,7 +1404,7 @@ def brouwer_separable_design(k,t,q,x,check=False,verbose=False,explain_construct
     assert x>=0
     assert is_prime_power(q)
     N2 = q**4+q**2+1
-    N1 = q**2+  q +1
+    N1 = q**2+ q +1
 
     # A projective plane on (q^2-q+1)*(q^2+q+1)=q^4+q^2+1 points
     B = difference_family(N2,q**2+1,1)[1][0]

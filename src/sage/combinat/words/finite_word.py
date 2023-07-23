@@ -136,7 +136,7 @@ of them::
     sage: st = w.suffix_tree()
     sage: st
     Implicit Suffix Tree of the word: abaabbba
-    sage: st.show(word_labels=True)
+    sage: st.show(word_labels=True)                                                     # optional - sage.plot
 
 ::
 
@@ -190,9 +190,9 @@ The set of factors::
 Rauzy graphs::
 
     sage: f = words.FibonacciWord()[:30]
-    sage: f.rauzy_graph(4)
+    sage: f.rauzy_graph(4)                                                              # optional - sage.graphs
     Looped digraph on 5 vertices
-    sage: f.reduced_rauzy_graph(4)
+    sage: f.reduced_rauzy_graph(4)                                                      # optional - sage.graphs
     Looped multi-digraph on 2 vertices
 
 Left-special and bispecial factors::
@@ -1461,16 +1461,16 @@ class FiniteWord_class(Word_class):
 
             sage: W = Words([0, 1])
             sage: w = W([0, 1, 0, 0, 0, 1, 1, 0, 0, 1, 0, 1])
-            sage: t = w.topological_entropy(3); t
+            sage: t = w.topological_entropy(3); t                                       # optional - sage.symbolic
             1/3*log(7)/log(2)
-            sage: n(t)
+            sage: n(t)                                                                  # optional - sage.symbolic
             0.935784974019201
 
         ::
 
             sage: w = words.ThueMorseWord()[:100]
             sage: topo = w.topological_entropy
-            sage: for i in range(0, 41, 5):
+            sage: for i in range(0, 41, 5):                                             # optional - sage.symbolic
             ....:     print("{} {}".format(i, n(topo(i), digits=5)))
             0 1.0000
             5 0.71699
@@ -1494,7 +1494,7 @@ class FiniteWord_class(Word_class):
 
             sage: W = Words(range(20))
             sage: w = W(range(20))
-            sage: w.topological_entropy(3)
+            sage: w.topological_entropy(3)                                              # optional - sage.symbolic
             1/3*log(18)/log(20)
         """
         d = self.parent().alphabet().cardinality()
@@ -1522,12 +1522,12 @@ class FiniteWord_class(Word_class):
 
             sage: w = Word(range(10)); w
             word: 0123456789
-            sage: g = w.rauzy_graph(3); g
+            sage: g = w.rauzy_graph(3); g                                               # optional - sage.graphs
             Looped digraph on 8 vertices
             sage: WordOptions(identifier='')
-            sage: g.vertices(sort=True)
+            sage: g.vertices(sort=True)                                                 # optional - sage.graphs
             [012, 123, 234, 345, 456, 567, 678, 789]
-            sage: g.edges(sort=True)
+            sage: g.edges(sort=True)                                                    # optional - sage.graphs
             [(012, 123, 3),
              (123, 234, 4),
              (234, 345, 5),
@@ -1540,20 +1540,20 @@ class FiniteWord_class(Word_class):
         ::
 
             sage: f = words.FibonacciWord()[:100]
-            sage: f.rauzy_graph(8)
+            sage: f.rauzy_graph(8)                                                      # optional - sage.graphs
             Looped digraph on 9 vertices
 
         ::
 
             sage: w = Word('1111111')
-            sage: g = w.rauzy_graph(3)
-            sage: g.edges(sort=True)
+            sage: g = w.rauzy_graph(3)                                                  # optional - sage.graphs
+            sage: g.edges(sort=True)                                                    # optional - sage.graphs
             [(word: 111, word: 111, word: 1)]
 
         ::
 
             sage: w = Word('111')
-            sage: for i in range(5) : w.rauzy_graph(i)
+            sage: for i in range(5): w.rauzy_graph(i)                                   # optional - sage.graphs
             Looped multi-digraph on 1 vertex
             Looped digraph on 1 vertex
             Looped digraph on 1 vertex
@@ -1564,9 +1564,9 @@ class FiniteWord_class(Word_class):
 
             sage: W = Words('abcde')
             sage: w = W('abc')
-            sage: w.rauzy_graph(0)
+            sage: w.rauzy_graph(0)                                                      # optional - sage.graphs
             Looped multi-digraph on 1 vertex
-            sage: _.edges(sort=True)
+            sage: _.edges(sort=True)                                                    # optional - sage.graphs
             [(word: , word: , word: a),
              (word: , word: , word: b),
              (word: , word: , word: c)]
@@ -1633,35 +1633,37 @@ class FiniteWord_class(Word_class):
 
             sage: w = Word(range(10)); w
             word: 0123456789
-            sage: g = w.reduced_rauzy_graph(3); g
+            sage: g = w.reduced_rauzy_graph(3); g                                       # optional - sage.graphs
             Looped multi-digraph on 2 vertices
-            sage: g.vertices(sort=True)
+            sage: g.vertices(sort=True)                                                 # optional - sage.graphs
             [word: 012, word: 789]
-            sage: g.edges(sort=True)
+            sage: g.edges(sort=True)                                                    # optional - sage.graphs
             [(word: 012, word: 789, word: 3456789)]
 
         For the Fibonacci word::
 
             sage: f = words.FibonacciWord()[:100]
-            sage: g = f.reduced_rauzy_graph(8);g
+            sage: g = f.reduced_rauzy_graph(8);g                                        # optional - sage.graphs
             Looped multi-digraph on 2 vertices
-            sage: g.vertices(sort=True)
+            sage: g.vertices(sort=True)                                                 # optional - sage.graphs
             [word: 01001010, word: 01010010]
-            sage: g.edges(sort=True)
-            [(word: 01001010, word: 01010010, word: 010), (word: 01010010, word: 01001010, word: 01010), (word: 01010010, word: 01001010, word: 10)]
+            sage: g.edges(sort=True)                                                    # optional - sage.graphs
+            [(word: 01001010, word: 01010010, word: 010),
+             (word: 01010010, word: 01001010, word: 01010),
+             (word: 01010010, word: 01001010, word: 10)]
 
         For periodic words::
 
             sage: from itertools import cycle
             sage: w = Word(cycle('abcd'))[:100]
-            sage: g = w.reduced_rauzy_graph(3)
-            sage: g.edges(sort=True)
+            sage: g = w.reduced_rauzy_graph(3)                                          # optional - sage.graphs
+            sage: g.edges(sort=True)                                                    # optional - sage.graphs
             [(word: abc, word: abc, word: dabc)]
 
         ::
 
             sage: w = Word('111')
-            sage: for i in range(5) : w.reduced_rauzy_graph(i)
+            sage: for i in range(5): w.reduced_rauzy_graph(i)                           # optional - sage.graphs
             Looped digraph on 1 vertex
             Looped digraph on 1 vertex
             Looped digraph on 1 vertex
@@ -1673,10 +1675,10 @@ class FiniteWord_class(Word_class):
             sage: sigma = WordMorphism('a->abcd,b->cd,c->cd,d->cd')
             sage: w = sigma.fixed_point('a')[:100]; w
             word: abcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcd...
-            sage: g = w.reduced_rauzy_graph(5)
-            sage: g.vertices(sort=True)
+            sage: g = w.reduced_rauzy_graph(5)                                          # optional - sage.graphs
+            sage: g.vertices(sort=True)                                                 # optional - sage.graphs
             [word: abcdc, word: cdcdc]
-            sage: g.edges(sort=True)
+            sage: g.edges(sort=True)                                                    # optional - sage.graphs
             [(word: abcdc, word: cdcdc, word: dc), (word: cdcdc, word: cdcdc, word: dc)]
 
         AUTHOR:
@@ -1731,8 +1733,7 @@ class FiniteWord_class(Word_class):
         """
         if n is None:
             for i in range(self.length()):
-                for w in self.left_special_factors_iterator(i):
-                    yield w
+                yield from self.left_special_factors_iterator(i)
         else:
             left_extensions = defaultdict(set)
             for w in self.factor_iterator(n+1):
@@ -1799,8 +1800,7 @@ class FiniteWord_class(Word_class):
         """
         if n is None:
             for i in range(self.length()):
-                for w in self.right_special_factors_iterator(i):
-                    yield w
+                yield from self.right_special_factors_iterator(i)
         else:
             right_extensions = defaultdict(set)
             for w in self.factor_iterator(n+1):
@@ -1890,8 +1890,7 @@ class FiniteWord_class(Word_class):
         """
         if n is None:
             for i in range(self.length()):
-                for w in self.bispecial_factors_iterator(i):
-                    yield w
+                yield from self.bispecial_factors_iterator(i)
         else:
             left_extensions = defaultdict(set)
             right_extensions = defaultdict(set)
@@ -3097,9 +3096,9 @@ class FiniteWord_class(Word_class):
             sage: sa = WordMorphism('a->ab,b->b')
             sage: sb = WordMorphism('a->a,b->ba')
             sage: w = (sa*sb*sb*sa*sa*sa*sb).fixed_point('a')
-            sage: w[:30].defect()
+            sage: w[:30].defect()                                                       # optional - sage.modules
             0
-            sage: w[110:140].defect()
+            sage: w[110:140].defect()                                                   # optional - sage.modules
             0
 
         It is even conjectured that the defect of an aperiodic word which is
@@ -3107,11 +3106,11 @@ class FiniteWord_class(Word_class):
         (see [BBGL2008]_)::
 
             sage: w = words.ThueMorseWord()
-            sage: w[:50].defect()
+            sage: w[:50].defect()                                                       # optional - sage.modules
             12
-            sage: w[:100].defect()
+            sage: w[:100].defect()                                                      # optional - sage.modules
             16
-            sage: w[:300].defect()
+            sage: w[:300].defect()                                                      # optional - sage.modules
             52
 
         For generalized defect with an involution different from the identity,
@@ -6824,18 +6823,18 @@ class FiniteWord_class(Word_class):
 
         EXAMPLES::
 
-            sage: Word(range(20)).colored_vector()
+            sage: Word(range(20)).colored_vector()                                      # optional - sage.plot
             Graphics object consisting of 21 graphics primitives
-            sage: Word(range(100)).colored_vector(0,0,10,1)
+            sage: Word(range(100)).colored_vector(0,0,10,1)                             # optional - sage.plot
             Graphics object consisting of 101 graphics primitives
-            sage: Words(range(100))(range(10)).colored_vector()
+            sage: Words(range(100))(range(10)).colored_vector()                         # optional - sage.plot
             Graphics object consisting of 11 graphics primitives
             sage: w = Word('abbabaab')
-            sage: w.colored_vector()
+            sage: w.colored_vector()                                                    # optional - sage.plot
             Graphics object consisting of 9 graphics primitives
-            sage: w.colored_vector(cmap='autumn')
+            sage: w.colored_vector(cmap='autumn')                                       # optional - sage.plot
             Graphics object consisting of 9 graphics primitives
-            sage: Word(range(20)).colored_vector(label='Rainbow')
+            sage: Word(range(20)).colored_vector(label='Rainbow')                       # optional - sage.plot
             Graphics object consisting of 23 graphics primitives
 
         When two words are defined under the same parent, same letters are
@@ -6844,25 +6843,25 @@ class FiniteWord_class(Word_class):
             sage: W = Words(range(20))
             sage: w = W(range(20))
             sage: y = W(range(10,20))
-            sage: y.colored_vector(y=1, x=10) + w.colored_vector()
+            sage: y.colored_vector(y=1, x=10) + w.colored_vector()                      # optional - sage.plot
             Graphics object consisting of 32 graphics primitives
 
         TESTS:
 
         The empty word::
 
-            sage: Word().colored_vector()
+            sage: Word().colored_vector()                                               # optional - sage.plot
             Graphics object consisting of 1 graphics primitive
-            sage: Word().colored_vector(label='empty')
+            sage: Word().colored_vector(label='empty')                                  # optional - sage.plot
             Graphics object consisting of 3 graphics primitives
 
         Unknown cmap::
 
-            sage: Word(range(100)).colored_vector(cmap='jolies')
+            sage: Word(range(100)).colored_vector(cmap='jolies')                        # optional - sage.plot
             Traceback (most recent call last):
             ...
             RuntimeError: Color map jolies not known
-            sage: Word(range(100)).colored_vector(cmap='__doc__')
+            sage: Word(range(100)).colored_vector(cmap='__doc__')                       # optional - sage.plot
             Traceback (most recent call last):
             ...
             RuntimeError: Color map __doc__ not known

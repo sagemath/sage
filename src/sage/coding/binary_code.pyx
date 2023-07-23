@@ -1,10 +1,11 @@
+# sage.doctest: optional - sage.modules sage.rings.finite_rings
 r"""
 Optimized low-level binary code representation
 
-Some computations with linear binary codes. Fix a basis for `GF(2)^n`.
-A linear binary code is a linear subspace of `GF(2)^n`, together with
+Some computations with linear binary codes. Fix a basis for `\GF{2}^n`.
+A linear binary code is a linear subspace of `\GF{2}^n`, together with
 this choice of basis. A permutation `g \in S_n` of the fixed basis
-gives rise to a permutation of the vectors, or words, in `GF(2)^n`,
+gives rise to a permutation of the vectors, or words, in `\GF{2}^n`,
 sending `(w_i)` to `(w_{g(i)})`. The permutation automorphism group of
 the code `C` is the set of permutations of the basis that bijectively
 map `C` to itself. Note that if `g` is such a permutation, then
@@ -15,7 +16,7 @@ map `C` to itself. Note that if `g` is such a permutation, then
 
 Over other fields, it is also required that the map be linear, which
 as per above boils down to scalar multiplication. However, over
-`GF(2),` the only scalars are 0 and 1, so the linearity condition has
+`\GF{2},` the only scalars are 0 and 1, so the linearity condition has
 trivial effect.
 
 AUTHOR:
@@ -46,7 +47,7 @@ from cpython.object cimport PyObject_RichCompare
 from cysignals.memory cimport sig_malloc, sig_realloc, sig_free
 
 from sage.structure.element import is_Matrix
-from sage.misc.misc import cputime
+from sage.misc.timing import cputime
 from sage.rings.integer cimport Integer
 from copy import copy
 from sage.data_structures.bitset_base cimport *
@@ -87,12 +88,12 @@ cdef int *hamming_weights():
 
 def weight_dist(M):
     """
-    Computes the weight distribution of the row space of M.
+    Computes the weight distribution of the row space of `M`.
 
     EXAMPLES::
 
         sage: from sage.coding.binary_code import weight_dist
-        sage: M = Matrix(GF(2),[
+        sage: M = Matrix(GF(2), [
         ....:  [1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0],
         ....:  [0,0,0,0,1,1,1,1,1,1,1,1,0,0,0,0],
         ....:  [0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1],
@@ -100,14 +101,14 @@ def weight_dist(M):
         ....:  [0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1]])
         sage: weight_dist(M)
         [1, 0, 0, 0, 0, 0, 0, 0, 30, 0, 0, 0, 0, 0, 0, 0, 1]
-        sage: M = Matrix(GF(2),[
+        sage: M = Matrix(GF(2), [
         ....:  [1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0],
         ....:  [0,0,0,0,0,0,1,1,1,1,1,1,1,1,0,0,0],
         ....:  [0,0,0,0,0,1,0,1,0,0,0,1,1,1,1,1,1],
         ....:  [0,0,0,1,1,0,0,0,0,1,1,0,1,1,0,1,1]])
         sage: weight_dist(M)
         [1, 0, 0, 0, 0, 0, 0, 0, 11, 0, 0, 0, 4, 0, 0, 0, 0, 0]
-        sage: M=Matrix(GF(2),[
+        sage: M = Matrix(GF(2), [
         ....:  [1,0,0,1,1,1,1,0,0,1,0,0,0,0,0,0,0],
         ....:  [0,1,0,0,1,1,1,1,0,0,1,0,0,0,0,0,0],
         ....:  [0,0,1,0,0,1,1,1,1,0,0,1,0,0,0,0,0],
@@ -155,35 +156,37 @@ def weight_dist(M):
     return L
 
 def test_word_perms(t_limit=5.0):
-    """
-    Tests the WordPermutation structs for at least t_limit seconds.
+    r"""
+    Test the :class:`WordPermutation` structs for at least ``t_limit`` seconds.
 
     These are structures written in pure C for speed, and are tested from this
     function, which performs the following tests:
 
-    1. Tests create_word_perm, which creates a WordPermutation from a Python
-        list L representing a permutation i --> L[i]. Takes a random word and
-        permutes it by a random list permutation, and tests that the result
-        agrees with doing it the slow way.
+    1.  Tests :func:`create_word_perm`, which creates a :class:`WordPermutation`
+        from a Python list `L` representing a permutation `i \mapsto
+        L[i]`. Takes a random word and permutes it by a random list permutation,
+        and tests that the result agrees with doing it the slow way.
 
-    1b. Tests create_array_word_perm, which creates a WordPermutation from a
-        C array. Does the same as above.
+    1b. Tests :func:`create_array_word_perm`, which creates a
+        :class:`WordPermutation` from a C array. Does the same as above.
 
-    2. Tests create_comp_word_perm, which creates a WordPermutation as a
-        composition of two WordPermutations. Takes a random word and
-        two random permutations, and tests that the result of permuting by the
-        composition is correct.
+    2.  Tests :func:`create_comp_word_perm`, which creates a
+        :class:`WordPermutation` as a composition of two
+        :class:`WordPermutation` objects. Takes a random word and two random
+        permutations, and tests that the result of permuting by the composition
+        is correct.
 
-    3. Tests create_inv_word_perm and create_id_word_perm, which create a
-        WordPermutation as the inverse and identity permutations, resp.
-        Takes a random word and a random permutation, and tests that the result
-        permuting by the permutation and its inverse in either order, and
-        permuting by the identity both return the original word.
+    3.  Tests :func:`create_inv_word_perm` and :func:`create_id_word_perm`,
+        which create a :class:`WordPermutation` as the inverse and identity
+        permutations, resp.  Takes a random word and a random permutation, and
+        tests that the result permuting by the permutation and its inverse in
+        either order, and permuting by the identity both return the original
+        word.
 
     .. NOTE::
 
-        The functions permute_word_by_wp and dealloc_word_perm are implicitly
-        involved in each of the above tests.
+        The functions :func:`permute_word_by_wp` and :func:`dealloc_word_perm`
+        are implicitly involved in each of the above tests.
 
     TESTS::
 
@@ -202,10 +205,10 @@ def test_word_perms(t_limit=5.0):
         raise MemoryError("Error allocating memory.")
     from sage.misc.prandom import randint
     from sage.combinat.permutation import Permutations
-    S = Permutations(list(xrange(n)))
+    S = Permutations(list(range(n)))
     t = cputime()
     while cputime(t) < t_limit:
-        word = [randint(0, 1) for _ in xrange(n)]
+        word = [randint(0, 1) for _ in range(n)]
         cw1 = 0
         for j from 0 <= j < n:
             cw1 += (<codeword>word[j]) << (<codeword>j)
@@ -298,7 +301,7 @@ cdef WordPermutation *create_word_perm(object list_perm):
     word_perm.chunk_num = num_chunks
     words_per_chunk = 1 << chunk_size
     word_perm.gate = ( (<codeword>1) << chunk_size ) - 1
-    list_perm += list(xrange(len(list_perm), chunk_size*num_chunks))
+    list_perm += list(range(len(list_perm), chunk_size*num_chunks))
     word_perm.chunk_words = words_per_chunk
     for i from 0 <= i < num_chunks:
         images_i = <codeword *> sig_malloc(words_per_chunk * sizeof(codeword))
@@ -524,7 +527,7 @@ def test_expand_to_ortho_basis(B=None):
 
     INPUT:
 
-    - B -- a BinaryCode in standard form
+    - ``B`` -- a :class:`BinaryCode` in standard form
 
     OUTPUT:
 
@@ -536,7 +539,7 @@ def test_expand_to_ortho_basis(B=None):
     TESTS::
 
         sage: from sage.coding.binary_code import test_expand_to_ortho_basis, BinaryCode
-        sage: M = Matrix(GF(2), [[1,1,1,1,1,1,0,0,0,0],[0,0,1,1,1,1,1,1,1,1]])
+        sage: M = Matrix(GF(2), [[1,1,1,1,1,1,0,0,0,0], [0,0,1,1,1,1,1,1,1,1]])
         sage: B = BinaryCode(M)
         sage: B.put_in_std_form()
         0
@@ -661,7 +664,7 @@ cdef codeword *expand_to_ortho_basis(BinaryCode B, int n):
     for j from i <= j < n:
         basis[j] = 0
     # now basis is length i
-    perm = list(xrange(B.nrows))
+    perm = list(range(B.nrows))
     perm_c = []
     for j from B.nrows <= j < B.ncols:
         if (<codeword>1 << j) & pivots:
@@ -669,7 +672,7 @@ cdef codeword *expand_to_ortho_basis(BinaryCode B, int n):
         else:
             perm_c.append(j)
     perm.extend(perm_c)
-    perm.extend(list(xrange(B.ncols, n)))
+    perm.extend(list(range(B.ncols, n)))
     perm_c = [0]*n
     for j from 0 <= j < n:
         perm_c[perm[j]] = j
@@ -865,12 +868,12 @@ cdef class BinaryCode:
 
     def matrix(self):
         """
-        Returns the generator matrix of the BinaryCode, i.e. the code is the
-        rowspace of B.matrix().
+        Return the generator matrix of the :class:`BinaryCode`, i.e. the code is
+        the rowspace of ``B.matrix()``.
 
         EXAMPLES::
 
-            sage: M = Matrix(GF(2), [[1,1,1,1,0,0],[0,0,1,1,1,1]])
+            sage: M = Matrix(GF(2), [[1,1,1,1,0,0], [0,0,1,1,1,1]])
             sage: from sage.coding.binary_code import *
             sage: B = BinaryCode(M)
             sage: B.matrix()
@@ -1212,7 +1215,7 @@ cdef class BinaryCode:
         EXAMPLES::
 
             sage: from sage.coding.binary_code import *
-            sage: M = Matrix(GF(2), [[1,1,1,1,0,0],[0,0,1,1,1,1]])
+            sage: M = Matrix(GF(2), [[1,1,1,1,0,0], [0,0,1,1,1,1]])
             sage: B = BinaryCode(M); B
             Binary [6,2] linear code, generator matrix
             [111100]
@@ -2878,7 +2881,8 @@ cdef class PartitionStack:
 
             sage: import sage.coding.binary_code
             sage: from sage.coding.binary_code import *
-            sage: M = Matrix(GF(2), [[1,1,1,1,0,0,0,0],[0,0,1,1,1,1,0,0],[0,0,0,0,1,1,1,1],[1,0,1,0,1,0,1,0]])
+            sage: M = Matrix(GF(2), [[1,1,1,1,0,0,0,0], [0,0,1,1,1,1,0,0],
+            ....:                    [0,0,0,0,1,1,1,1], [1,0,1,0,1,0,1,0]])
             sage: B = BinaryCode(M)
             sage: P = PartitionStack(4, 8)
             sage: P._refine(0, [[0,0],[1,0]], B)
@@ -2930,7 +2934,11 @@ cdef class PartitionStack:
             sage: import sage.coding.binary_code
             sage: from sage.coding.binary_code import *
             sage: P = PartitionStack(4, 8)
-            sage: P._dangerous_dont_use_set_ents_lvls(list(range(8)), list(range(7))+[-1], [4,7,12,11,1,9,3,0,2,5,6,8,10,13,14,15], [0]*16)
+            sage: P._dangerous_dont_use_set_ents_lvls(
+            ....:     list(range(8)),
+            ....:     list(range(7)) + [-1],
+            ....:     [4,7,12,11,1,9,3,0,2,5,6,8,10,13,14,15],
+            ....:     [0]*16)
             sage: P
             ({4},{7},{12},{11},{1},{9},{3},{0},{2},{5},{6},{8},{10},{13},{14},{15})  ({0},{1,2,3,4,5,6,7})
             ({4},{7},{12},{11},{1},{9},{3},{0},{2},{5},{6},{8},{10},{13},{14},{15})  ({0},{1},{2,3,4,5,6,7})
@@ -3164,12 +3172,12 @@ cdef class BinaryCodeClassifier:
 
     def _aut_gp_and_can_label(self, CC, verbosity=0):
         """
-        Compute the automorphism group and canonical label of the code CC.
+        Compute the automorphism group and canonical label of the code ``CC``.
 
         INPUT:
 
-        - CC - a BinaryCode object
-        - verbosity -- a nonnegative integer
+        - ``CC`` -- a BinaryCode object
+        - ``verbosity`` -- a nonnegative integer
 
         OUTPUT:
             a tuple, (gens, labeling, size, base)
@@ -3896,17 +3904,17 @@ cdef class BinaryCodeClassifier:
 
     def generate_children(self, BinaryCode B, int n, int d=2):
         """
-        Use canonical augmentation to generate children of the code B.
+        Use canonical augmentation to generate children of the code `B`.
 
         INPUT:
 
-        - B -- a BinaryCode
+        - ``B`` -- a :class:`BinaryCode`
 
-        - n -- limit on the degree of the code
+        - ``n`` -- limit on the degree of the code
 
-        - d -- test whether new vector has weight divisible by d. If d==4, this
-          ensures that all doubly-even canonically augmented children are
-          generated.
+        - ``d`` -- test whether new vector has weight divisible by `d`. If
+          `d=4`, this ensures that all doubly-even canonically augmented
+          children are generated.
 
         EXAMPLES::
 
@@ -3931,7 +3939,8 @@ cdef class BinaryCodeClassifier:
             sage: for n in range(13):
             ....:   s = 'n=%2d : '%n
             ....:   for k in range(1,7):
-            ....:       s += '%3d '%len([C for C in L if C.length() == n and C.dimension() == k])
+            ....:       s += '%3d '%len([C for C in L
+            ....:                        if C.length() == n and C.dimension() == k])
             ....:   print(s)
             n= 0 :   0   0   0   0   0   0
             n= 1 :   0   0   0   0   0   0
@@ -4017,7 +4026,7 @@ cdef class BinaryCodeClassifier:
 
 
         for i from 0 <= i < len(aut_gp_gens):
-            parent_generators[i] = create_word_perm(aut_gp_gens[i] + list(xrange(B.ncols, n)))
+            parent_generators[i] = create_word_perm(aut_gp_gens[i] + list(range(B.ncols, n)))
 
         word = 0
         while ortho_basis[k] & (((<codeword>1) << B.ncols) - 1):
@@ -4116,7 +4125,7 @@ cdef class BinaryCodeClassifier:
                             aut_B_aug = libgap(PermutationGroup([PermutationGroupElement([a+1 for a in g]) for g in aug_aut_gp_gens]))
                         H = libgap(aut_m).Intersection2(aut_B_aug)
                         rt_transversal = [[int(a) - 1 for a in g.ListPerm(n)] for g in aut_B_aug.RightTransversal(H) if not g.IsOne()]
-                        rt_transversal.append(list(xrange(n)))
+                        rt_transversal.append(list(range(n)))
 
                         bingo2 = 0
                         for coset_rep in rt_transversal:

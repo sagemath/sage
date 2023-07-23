@@ -166,10 +166,12 @@ def get_matrix_class(R, nrows, ncols, sparse, implementation):
         sage: get_matrix_class(Zmod(2**30), 2, 2, False, 'linbox-double')
         Traceback (most recent call last):
         ...
-        ValueError: 'linbox-double' matrices can only deal with order < 8388608
+        ValueError: 'linbox-double' matrices can only deal with order < 94906266
 
         sage: type(matrix(SR, 2, 2, 0))
         <class 'sage.matrix.matrix_symbolic_dense.Matrix_symbolic_dense'>
+        sage: type(matrix(SR, 2, 2, 0, sparse=True))
+        <class 'sage.matrix.matrix_symbolic_sparse.Matrix_symbolic_sparse'>
         sage: type(matrix(GF(7), 2, range(4)))
         <class 'sage.matrix.matrix_modn_dense_float.Matrix_modn_dense_float'>
         sage: type(matrix(GF(16007), 2, range(4)))
@@ -400,6 +402,18 @@ def get_matrix_class(R, nrows, ncols, sparse, implementation):
     if isinstance(R, (sage.rings.abc.RealDoubleField, sage.rings.abc.ComplexDoubleField)):
         from . import matrix_double_sparse
         return matrix_double_sparse.Matrix_double_sparse
+    try:
+        from sage.symbolic.ring import SR
+    except ImportError:
+        pass
+    else:
+        if R is SR:
+            try:
+                from . import matrix_symbolic_sparse
+            except ImportError:
+                pass
+            else:
+                return matrix_symbolic_sparse.Matrix_symbolic_sparse
 
     # the fallback
     from sage.matrix.matrix_generic_sparse import Matrix_generic_sparse
@@ -603,7 +617,8 @@ class MatrixSpace(UniqueRepresentation, Parent):
 
            - ``linbox-float`` - for integer mod rings up to `2^8 = 256`
 
-           - ``linbox-double`` - for integer mod rings up to `2^23 = 8388608`
+           - ``linbox-double`` - for integer mod rings up to
+             `floor(2^26*sqrt(2) + 1/2) = 94906266`
 
            - ``numpy`` - for real and complex floating point numbers
 

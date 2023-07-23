@@ -154,7 +154,7 @@ cimport sage.rings.abc
 cimport sage.rings.rational
 
 from cpython.int cimport PyInt_AS_LONG
-from cpython.object cimport Py_LT, Py_LE, Py_EQ, Py_NE, Py_GT, Py_GE
+from cpython.object cimport Py_EQ, Py_NE
 from cpython.complex cimport PyComplex_FromDoubles
 
 from sage.ext.stdsage cimport PY_NEW
@@ -1402,7 +1402,6 @@ cdef class ComplexBall(RingElement):
         """
         cdef fmpz_t tmpz
         cdef fmpq_t tmpq
-        cdef long myprec
         cdef bint cplx = False
 
         Element.__init__(self, parent)
@@ -2426,17 +2425,15 @@ cdef class ComplexBall(RingElement):
             False
         """
         cdef ComplexBall lt, rt
-        cdef acb_t difference
 
         lt = left
         rt = right
 
         if op == Py_EQ:
             return acb_eq(lt.value, rt.value)
-        elif op == Py_NE:
+        if op == Py_NE:
             return acb_ne(lt.value, rt.value)
-        elif op == Py_GT or op == Py_GE or op == Py_LT or op == Py_LE:
-            raise TypeError("No order is defined for ComplexBalls.")
+        raise TypeError("No order is defined for ComplexBalls.")
 
     def identical(self, ComplexBall other):
         """
@@ -3931,7 +3928,7 @@ cdef class ComplexBall(RingElement):
         cdef acb_ptr vec_a = _acb_vec_init(p - s)
         cdef acb_ptr vec_b = _acb_vec_init(q + 1 - s)
         cdef long j = 0
-        for i in xrange(p):
+        for i in range(p):
             if i != i1:
                 tmp = self._parent.coerce(a[i])
                 acb_set(&(vec_a[j]), tmp.value)

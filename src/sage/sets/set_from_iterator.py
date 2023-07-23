@@ -46,7 +46,7 @@ The module also provides decorator for functions and methods::
     sage: f(100)
     {0, 1, 2, 3, 4, ...}
 """
-#*****************************************************************************
+# ****************************************************************************
 #  Copyright (C) 2012 Vincent Delecroix <vincent.delecroix@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
@@ -58,8 +58,8 @@ The module also provides decorator for functions and methods::
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
-#******************************************************************************
+#                  https://www.gnu.org/licenses/
+# *****************************************************************************
 
 from sage.structure.parent import Parent
 from sage.categories.enumerated_sets import EnumeratedSets
@@ -174,8 +174,8 @@ class EnumeratedSetFromIterator(Parent):
 
         if cache:
             self._cache = lazy_list(iter(self._func(
-                                         *getattr(self, '_args', ()),
-                                        **getattr(self, '_kwds', {}))))
+                *getattr(self, '_args', ()),
+                **getattr(self, '_kwds', {}))))
 
     def __hash__(self):
         r"""
@@ -214,12 +214,12 @@ class EnumeratedSetFromIterator(Parent):
             True
         """
         return (EnumeratedSetFromIterator,
-                (self._func,                           # func
-                 getattr(self, '_args', None),         # args
-                 getattr(self, '_kwds', None),         # kwds
-                 getattr(self, '__custom_name', None), # name
-                 self.category(),                      # category
-                 hasattr(self, '_cache'))              # cache
+                (self._func,                            # func
+                 getattr(self, '_args', None),          # args
+                 getattr(self, '_kwds', None),          # kwds
+                 getattr(self, '__custom_name', None),  # name
+                 self.category(),                       # category
+                 hasattr(self, '_cache'))               # cache
                 )
 
     def _repr_(self):
@@ -270,7 +270,7 @@ class EnumeratedSetFromIterator(Parent):
 
     is_parent_of = __contains__
 
-    #TODO: what should we do for comparisons of infinite sets
+    # TODO: what should we do for comparisons of infinite sets
     def __eq__(self, other):
         r"""
         Equality test.
@@ -299,12 +299,12 @@ class EnumeratedSetFromIterator(Parent):
             # trick to allow equality between infinite sets
             # this assume that the function does not return randomized data!
             if (self._func == other._func and
-                getattr(self, '_args', None) == getattr(other, '_args', None) and
-                getattr(self, '_kwds', None) == getattr(other, '_kwds', None)):
+                    getattr(self, '_args', None) == getattr(other, '_args', None) and
+                    getattr(self, '_kwds', None) == getattr(other, '_kwds', None)):
                 return True
 
         if other in EnumeratedSets():
-            #TODO: think about what should be done at that point
+            # TODO: think about what should be done at that point
             if self not in FiniteEnumeratedSets() and other not in FiniteEnumeratedSets():
                 import warnings
                 warnings.warn("Testing equality of infinite sets which will not end in case of equality")
@@ -327,7 +327,7 @@ class EnumeratedSetFromIterator(Parent):
                 if x != y:
                     return False
 
-    def __ne__(self,other):
+    def __ne__(self, other):
         r"""
         Difference test.
 
@@ -409,8 +409,7 @@ class EnumeratedSetFromIterator(Parent):
         """
         if el in self:
             return el
-        else:
-            raise ValueError("%s not in %s"%(el, self))
+        raise ValueError("%s not in %s" % (el, self))
 
     def clear_cache(self):
         r"""
@@ -432,14 +431,15 @@ class EnumeratedSetFromIterator(Parent):
         """
         if hasattr(self, '_cache'):
             self._cache = lazy_list(iter(self._func(
-                                         *getattr(self, '_args', ()),
-                                        **getattr(self, '_kwds', {}))))
+                *getattr(self, '_args', ()),
+                **getattr(self, '_kwds', {}))))
 
 #
 # Decorators
 #
 
-#TODO: move it in sage.misc ?
+
+# TODO: move it in sage.misc ?
 @instancedoc
 class Decorator():
     r"""
@@ -679,11 +679,11 @@ class EnumeratedSetFromIterator_function_decorator(Decorator):
             sage: F(10).cardinality()
             10
         """
-        if hasattr(self, 'f'): # yet initialized
-            if hasattr(self,'name'):
+        if hasattr(self, 'f'):  # yet initialized
+            if hasattr(self, 'name'):
                 if isinstance(self.name, str):
                     if args or kwds:
-                        _, kk = self.af.fix_to_named(*args,**kwds)
+                        _, kk = self.af.fix_to_named(*args, **kwds)
                         name = self.name % dict(kk)
                     else:
                         name = self.name
@@ -692,7 +692,7 @@ class EnumeratedSetFromIterator_function_decorator(Decorator):
                 return EnumeratedSetFromIterator(self.f, args, kwds, name=name, **self.options)
             return EnumeratedSetFromIterator(self.f, args, kwds, **self.options)
 
-        else: # potential global options
+        else:  # potential global options
             if args == ():
                 f, = kwds.values()
             else:
@@ -700,8 +700,9 @@ class EnumeratedSetFromIterator_function_decorator(Decorator):
                 f = args[0]
             return EnumeratedSetFromIterator_function_decorator(
                 f,
-                name=getattr(self,'name',None),
+                name=getattr(self, 'name', None),
                 **self.options)
+
 
 set_from_function = EnumeratedSetFromIterator_function_decorator
 
@@ -759,9 +760,9 @@ class EnumeratedSetFromIterator_method_caller(Decorator):
         self.name = name
         self.options = options
 
-    def __call__(self,*args,**kwds):
+    def __call__(self, *args, **kwds):
         r"""
-        Returns an instance of :class:`EnumeratedSetFromIterator` with
+        Return an instance of :class:`EnumeratedSetFromIterator` with
         proper argument.
 
         TESTS::
@@ -784,9 +785,9 @@ class EnumeratedSetFromIterator_method_caller(Decorator):
         if self.inst is not None:
             args = (self.inst,) + args
         if self.name:
-            if isinstance(self.name,str):
-                aa,kk = self.af.fix_to_named(*args,**kwds)
-                name = self.name%dict(kk)
+            if isinstance(self.name, str):
+                aa, kk = self.af.fix_to_named(*args, **kwds)
+                name = self.name % dict(kk)
             else:
                 name = self.name(*args, **kwds)
             return EnumeratedSetFromIterator(self.f, args, kwds, name, **self.options)
@@ -826,9 +827,10 @@ class EnumeratedSetFromIterator_method_caller(Decorator):
             {2, 3, 4, 5, 6, ...}
         """
         return EnumeratedSetFromIterator_method_caller(
-                inst, self.f,
-                self.name,
-                **self.options)
+            inst, self.f,
+            self.name,
+            **self.options)
+
 
 class EnumeratedSetFromIterator_method_decorator():
     r"""
@@ -921,7 +923,7 @@ class EnumeratedSetFromIterator_method_decorator():
         """
         if f is not None:
             self.f = f
-            if hasattr(f,"__name__"):
+            if hasattr(f, "__name__"):
                 self.__name__ = f.__name__
                 self.__module__ = f.__module__
             else:
@@ -953,7 +955,7 @@ class EnumeratedSetFromIterator_method_decorator():
             sage: a.f()
             {0, 1, 2}
         """
-        return EnumeratedSetFromIterator_method_decorator(f,**self.options)
+        return EnumeratedSetFromIterator_method_decorator(f, **self.options)
 
     def __get__(self, inst, cls):
         r"""
@@ -973,7 +975,9 @@ class EnumeratedSetFromIterator_method_decorator():
         # You would hardly ever see an instance of this class alive.
         return EnumeratedSetFromIterator_method_caller(inst, self.f, **self.options)
 
+
 set_from_method = EnumeratedSetFromIterator_method_decorator
+
 
 class DummyExampleForPicklingTest:
     r"""
@@ -990,7 +994,8 @@ class DummyExampleForPicklingTest:
         {10, 11, 12, 13, 14, ...}
     """
     start = 10
-    stop  = 100
+    stop = 100
+
     @set_from_method
     def f(self):
         r"""

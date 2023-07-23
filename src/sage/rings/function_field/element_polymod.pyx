@@ -3,14 +3,23 @@ r"""
 Elements of function fields: extension
 """
 
-# ****************************************************************************
-#       Copyright (C) 2023 Kwankyu Lee <ekwankyu@gmail.com>
+# *****************************************************************************
+#       Copyright (C) 2010      William Stein <wstein@gmail.com>
+#                     2010      Robert Bradshaw <robertwb@math.washington.edu>
+#                     2011-2020 Julian Rueth <julian.rueth@gmail.com>
+#                     2011      Maarten Derickx <m.derickx.student@gmail.com>
+#                     2015      Nils Bruin
+#                     2016      Frédéric Chapoton
+#                     2017-2019 Kwankyu Lee
+#                     2018-2020 Travis Scrimshaw
+#                     2019      Brent Baccala
+#                     2021      Saher Amasha
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
 #                  https://www.gnu.org/licenses/
-# ****************************************************************************
+# *****************************************************************************
 
 from sage.structure.richcmp cimport richcmp
 from sage.structure.element cimport FieldElement
@@ -298,7 +307,7 @@ cdef class FunctionFieldElement_polymod(FunctionFieldElement):
         # reduce to the separable case
         poly = self._parent._polynomial
         if not poly.gcd(poly.derivative()).is_one():
-            L, from_L, to_L = self._parent.separable_model(('t', 'w'))
+            _, from_L, to_L = self._parent.separable_model(('t', 'w'))
             return from_L(to_L(self).nth_root(n))
 
         constant_base_field = self._parent.constant_base_field()
@@ -347,7 +356,7 @@ cdef class FunctionFieldElement_polymod(FunctionFieldElement):
         # reduce to the separable case
         poly = self._parent._polynomial
         if not poly.gcd(poly.derivative()).is_one():
-            L, from_L, to_L = self._parent.separable_model(('t', 'w'))
+            _, _, to_L = self._parent.separable_model(('t', 'w'))
             return to_L(self).is_nth_power(n)
 
         constant_base_field = self._parent.constant_base_field()
