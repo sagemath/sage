@@ -480,6 +480,40 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
             SeriesParallelNode SeriesParallelNode
             │                  │
             DecompositionNode  DecompositionNode
+
+        TESTS:
+
+        This is test ``NestedMinorPivotsTwoSeparation`` in CMR's ``test_regular.cpp``::
+
+            sage: M = Matrix_cmr_chr_sparse(MatrixSpace(ZZ, 11, 11, sparse=True),
+            ....:                           [[1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0],
+            ....:                            [1, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0],
+            ....:                            [0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0],
+            ....:                            [0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0],
+            ....:                            [0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 1],
+            ....:                            [0, 1, 1, 1, 0, 0, 0, 0, 0, 1, 0],
+            ....:                            [0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0],
+            ....:                            [0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0],
+            ....:                            [0, 1, 1, 0, 0, 0, 1, 0, 0, 0, 0],
+            ....:                            [0, 1, 1, 0, 0, 0, 0, 0, 1, 0, 0],
+            ....:                            [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1]])
+            sage: result, certificate = M._is_binary_linear_matroid_regular(
+            ....:                           certificate=True, complete_tree=True)
+            sage: result, certificate
+            (True, GraphicNode)
+            sage: unicode_art(certificate)
+            GraphicNode
+            sage: result, certificate = M._is_binary_linear_matroid_regular(
+            ....:                           certificate=True, complete_tree=True,
+            ....:                           use_direct_graphicness_test=False)
+            sage: result, certificate
+            (True, TwoSumNode with 2 children)
+            sage: unicode_art(certificate)
+            ╭─────TwoSumNode with 2 children
+            │           │
+            GraphicNode SeriesParallelNode
+                        │
+                        GraphicNode
         """
         cdef bool result
         cdef CMR_REGULAR_PARAMETERS params
