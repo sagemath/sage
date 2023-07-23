@@ -7,7 +7,7 @@ from sage.misc.cachefunc import cached_method
 from sage.rings.integer_ring import ZZ
 from sage.structure.sage_object cimport SageObject
 
-from .matrix_cmr_sparse cimport Matrix_cmr_chr_sparse
+from .matrix_cmr_sparse cimport Matrix_cmr_chr_sparse, _sage_graph
 from .matrix_space import MatrixSpace
 
 
@@ -35,14 +35,14 @@ cdef class DecompositionNode(SageObject):
             [ 0  1]
             sage: result, certificate = M.is_totally_unimodular(certificate=True)
             sage: result, certificate
-            (True, DecompositionNode with 0 children)
+            (True, GraphicNode with 0 children)
             sage: certificate.matrix() is None
             True
 
             sage: result, certificate = M.is_totally_unimodular(certificate=True,
             ....:                                               construct_matrices=True)
             sage: result, certificate
-            (True, DecompositionNode with 0 children)
+            (True, GraphicNode with 0 children)
             sage: certificate.matrix()
             [ 1  0]
             [-1  1]
@@ -113,15 +113,45 @@ cdef class OneSumNode(SumNode):
     pass
 
 
-cdef class BaseGraphicNode(DecompositionNode):
+cdef class TwoSumNode(SumNode):
 
     pass
 
 
+cdef class ThreeSumNode(SumNode):
+
+    pass
+
+
+cdef class BaseGraphicNode(DecompositionNode):
+
+    @cached_method
+    def graph(self):
+        r"""
+        EXAMPLES::
+
+            sage: from sage.matrix.matrix_cmr_sparse import Matrix_cmr_chr_sparse
+            sage: M = Matrix_cmr_chr_sparse(MatrixSpace(ZZ, 3, 2, sparse=True),
+            ....:                           [[1, 0], [-1, 1], [0, 1]]); M
+            [ 1  0]
+            [-1  1]
+            [ 0  1]
+            sage: result, certificate = M.is_totally_unimodular(certificate=True)
+            sage: result, certificate
+            (True, GraphicNode with 0 children)
+            sage: G = certificate.graph(); G
+            Graph on 4 vertices
+            sage: G.vertices(sort=True)
+            [1, 2, 7, 12]
+            sage: G.edges(sort=True)
+            [(1, 2, None), (1, 7, None), (1, 12, None), (2, 7, None), (7, 12, None)]
+        """
+        return _sage_graph(CMRdecGraph(self._dec))
+
+
 cdef class GraphicNode(BaseGraphicNode):
 
-    def graph(self):
-        raise NotImplementedError
+    pass
 
 
 cdef class CographicNode(BaseGraphicNode):
@@ -134,7 +164,7 @@ cdef class PlanarNode(BaseGraphicNode):
     pass
 
 
-cdef class LeafNode(DecompositionNode):
+cdef class SpecialLeafNode(DecompositionNode):
 
 
     pass
@@ -152,6 +182,16 @@ cdef _class(CMR_DEC *dec):
     k = CMRdecIsSum(dec, NULL, NULL)
     if k == 1:
         return OneSumNode
+    if k == 2:
+        return TwoSumNode
+    if k == 3:
+        return ThreeSumNode
+    if CMRdecIsGraphicLeaf(dec):
+        if CMRdecIsCographicLeaf(dec):
+            return PlanarNode
+        return GraphicNode
+    if CMRdecIsCographicLeaf(dec):
+        return CographicNode
     # More TBD
     return DecompositionNode
 

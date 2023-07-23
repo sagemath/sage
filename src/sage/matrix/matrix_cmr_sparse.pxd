@@ -1,4 +1,4 @@
-from sage.libs.cmr.cmr cimport CMR_CHRMAT
+from sage.libs.cmr.cmr cimport CMR_CHRMAT, CMR_GRAPH
 
 from .matrix_sparse cimport Matrix_sparse
 
@@ -17,3 +17,5 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
     cdef object _root
 
     cdef _init_from_dict(self, dict d, int nrows, int ncols)
+
+cdef _sage_graph(CMR_GRAPH *graph)

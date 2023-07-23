@@ -396,30 +396,11 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
         if not certificate:
             return <bint> result
 
-        # Until we have a proper CMR Graph backend, we just create a Sage graph with whatever backend
-        from sage.graphs.graph import Graph
-
-        def vertices():
-            i = CMRgraphNodesFirst(graph)
-            while CMRgraphNodesValid(graph, i):
-                yield i
-                i = CMRgraphNodesNext(graph, i)
-
-        def edge(e):
-            return Integer(CMRgraphEdgeU(graph, e)), Integer(CMRgraphEdgeV(graph, e))
-
-        def edges():
-            i = CMRgraphEdgesFirst(graph)
-            while CMRgraphEdgesValid(graph, i):
-                e = CMRgraphEdgesEdge(graph, i)
-                yield edge(e)
-                i = CMRgraphEdgesNext(graph, i)
-
         if <bint> result:
-            sage_graph = Graph([list(vertices()), list(edges())])
-            sage_forest_edges = tuple(edge(forest_edges[row])
+            sage_graph = _sage_graph(graph)
+            sage_forest_edges = tuple(edge(graph, forest_edges[row])
                                       for row in range(self.nrows()))
-            sage_coforest_edges = tuple(edge(coforest_edges[column])
+            sage_coforest_edges = tuple(edge(graph, coforest_edges[column])
                                         for column in range(self.ncols()))
             return True, (sage_graph, sage_forest_edges, sage_coforest_edges)
 
@@ -585,6 +566,16 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
         return False, (create_DecompositionNode(dec),
                        submat_tuple)
 
+    def is_complement_totally_unimodular(self, *, time_limit=60.0, certificate=False,
+                                         use_direct_graphicness_test=True,
+                                         series_parallel_ok=True,
+                                         check_graphic_minors_planar=False,
+                                         complete_tree='if_regular',
+                                         construct_matrices=False,
+                                         construct_transposes=False,
+                                         construct_graphs=False):
+        raise NotImplementedError
+
 
 cdef _cmr_dec_construct(param):
     if not param:
@@ -603,3 +594,26 @@ cdef _set_cmr_regular_parameters(CMR_REGULAR_PARAMETERS *params, dict kwds):
     params.matrices = _cmr_dec_construct(kwds['construct_matrices'])
     params.transposes = _cmr_dec_construct(kwds['construct_transposes'])
     params.graphs = _cmr_dec_construct(kwds['construct_graphs'])
+
+
+cdef edge(CMR_GRAPH *graph, e):
+    return Integer(CMRgraphEdgeU(graph, e)), Integer(CMRgraphEdgeV(graph, e))
+
+cdef _sage_graph(CMR_GRAPH *graph):
+    # Until we have a proper CMR Graph backend, we just create a Sage graph with whatever backend
+    from sage.graphs.graph import Graph
+
+    def vertices():
+        i = CMRgraphNodesFirst(graph)
+        while CMRgraphNodesValid(graph, i):
+            yield i
+            i = CMRgraphNodesNext(graph, i)
+
+    def edges():
+        i = CMRgraphEdgesFirst(graph)
+        while CMRgraphEdgesValid(graph, i):
+            e = CMRgraphEdgesEdge(graph, i)
+            yield edge(graph, e)
+            i = CMRgraphEdgesNext(graph, i)
+
+    return Graph([list(vertices()), list(edges())])
