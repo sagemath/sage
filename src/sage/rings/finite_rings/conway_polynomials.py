@@ -231,7 +231,8 @@ class PseudoConwayLattice(WithEqualityById, SageObject):
                 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
                 cpoly = gap.ConwayPolynomial(p, n)
                 ccoef = list(cpoly.CoefficientsOfUnivariatePolynomial())
-                return PolynomialRing(FiniteField(p), 'x')(ccoef)
+                self.nodes[n] = PolynomialRing(FiniteField(p), 'x')(ccoef)
+                return self.nodes[n]
 
         # TODO: Implement special case when n is prime (enumerate until solution is found)
 
