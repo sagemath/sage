@@ -398,9 +398,9 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
 
         if <bint> result:
             sage_graph = _sage_graph(graph)
-            sage_forest_edges = tuple(edge(graph, forest_edges[row])
+            sage_forest_edges = tuple(_sage_edge(graph, forest_edges[row])
                                       for row in range(self.nrows()))
-            sage_coforest_edges = tuple(edge(graph, coforest_edges[column])
+            sage_coforest_edges = tuple(_sage_edge(graph, coforest_edges[column])
                                         for column in range(self.ncols()))
             return True, (sage_graph, sage_forest_edges, sage_coforest_edges)
 
@@ -596,8 +596,9 @@ cdef _set_cmr_regular_parameters(CMR_REGULAR_PARAMETERS *params, dict kwds):
     params.graphs = _cmr_dec_construct(kwds['construct_graphs'])
 
 
-cdef edge(CMR_GRAPH *graph, e):
+cdef _sage_edge(CMR_GRAPH *graph, CMR_GRAPH_EDGE e):
     return Integer(CMRgraphEdgeU(graph, e)), Integer(CMRgraphEdgeV(graph, e))
+
 
 cdef _sage_graph(CMR_GRAPH *graph):
     # Until we have a proper CMR Graph backend, we just create a Sage graph with whatever backend
@@ -613,7 +614,7 @@ cdef _sage_graph(CMR_GRAPH *graph):
         i = CMRgraphEdgesFirst(graph)
         while CMRgraphEdgesValid(graph, i):
             e = CMRgraphEdgesEdge(graph, i)
-            yield edge(graph, e)
+            yield _sage_edge(graph, e)
             i = CMRgraphEdgesNext(graph, i)
 
     return Graph([list(vertices()), list(edges())])

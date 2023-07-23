@@ -7,7 +7,7 @@ from sage.misc.cachefunc import cached_method
 from sage.rings.integer_ring import ZZ
 from sage.structure.sage_object cimport SageObject
 
-from .matrix_cmr_sparse cimport Matrix_cmr_chr_sparse, _sage_graph
+from .matrix_cmr_sparse cimport Matrix_cmr_chr_sparse, _sage_edge, _sage_graph
 from .matrix_space import MatrixSpace
 
 
@@ -148,6 +148,35 @@ cdef class BaseGraphicNode(DecompositionNode):
         """
         return _sage_graph(CMRdecGraph(self._dec))
 
+    @cached_method
+    def forest_edges(self):
+        r"""
+        EXAMPLES::
+
+            sage: from sage.matrix.matrix_cmr_sparse import Matrix_cmr_chr_sparse
+            sage: M = Matrix_cmr_chr_sparse(MatrixSpace(ZZ, 3, 2, sparse=True),
+            ....:                           [[1, 0], [-1, 1], [0, 1]]); M
+            [ 1  0]
+            [-1  1]
+            [ 0  1]
+            sage: result, certificate = M.is_totally_unimodular(certificate=True)
+            sage: result, certificate
+            (True, GraphicNode with 0 children)
+            sage: certificate.forest_edges()
+            ((1, 2), (7, 1))
+        """
+        cdef CMR_GRAPH *graph = CMRdecGraph(self._dec)
+        cdef size_t num_edges = CMRdecGraphSizeForest(self._dec)
+        cdef CMR_GRAPH_EDGE *edges = CMRdecGraphForest(self._dec)
+        return tuple(_sage_edge(graph, edges[i]) for i in range(num_edges))
+
+    @cached_method
+    def coforest_edges(self):
+        cdef CMR_GRAPH *graph = CMRdecGraph(self._dec)
+        cdef size_t num_edges = CMRdecGraphSizeCoforest(self._dec)
+        cdef CMR_GRAPH_EDGE *edges = CMRdecGraphCoforest(self._dec)
+        return tuple(_sage_edge(graph, edges[i]) for i in range(num_edges))
+
 
 cdef class GraphicNode(BaseGraphicNode):
 
@@ -164,7 +193,7 @@ cdef class PlanarNode(BaseGraphicNode):
     pass
 
 
-cdef class SpecialLeafNode(DecompositionNode):
+cdef class LeafNode(DecompositionNode):
 
 
     pass
