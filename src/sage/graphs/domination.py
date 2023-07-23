@@ -137,7 +137,7 @@ def is_redundant(G, dom, focus=None):
         False
     """
     dom = list(dom)
-    focus = list(G) if focus is None else list(focus)
+    focus = G if focus is None else set(focus)
 
     # dominator[v] (for v in focus) will be equal to:
     #  - (0, None) if v has no neighbor in dom
@@ -343,6 +343,13 @@ def dominating_sets(g, k=1, independent=False, total=False,
         Traceback (most recent call last):
         ...
         ValueError: the domination distance must be a non-negative integer
+
+    The method is robust to vertices with incomparable labels::
+
+        sage: G = Graph([(1, 'A'), ('A', 2), (2, 3), (3, 1)])
+        sage: L = list(G.dominating_sets())
+        sage: len(L)
+        6
     """
     g._scream_if_not_simple(allow_multiple_edges=True, allow_loops=not total)
 
@@ -719,8 +726,8 @@ def _cand_ext_enum(G, to_dom, u_next):
 
     # Here we use aux_with_rep twice to enumerate the minimal
     # dominating sets while avoiding repeated outputs
-    for (X, i) in _aux_with_rep(G, to_dom, u_next):
-        for (Y, j) in _aux_with_rep(G, to_dom, u_next):
+    for X, i in _aux_with_rep(G, to_dom, u_next):
+        for Y, j in _aux_with_rep(G, to_dom, u_next):
             if j >= i:
                 # This is the first time we meet X: we output it
                 yield X
@@ -730,7 +737,7 @@ def _cand_ext_enum(G, to_dom, u_next):
                 break
 
 
-def minimal_dominating_sets(G, to_dominate=None, work_on_copy=False, k=1):
+def minimal_dominating_sets(G, to_dominate=None, work_on_copy=True, k=1):
     r"""
     Return an iterator over the minimal dominating sets of a graph.
 
@@ -741,7 +748,7 @@ def minimal_dominating_sets(G, to_dominate=None, work_on_copy=False, k=1):
     - ``to_dominate`` -- vertex iterable or ``None`` (default: ``None``);
       the set of vertices to be dominated.
 
-    - ``work_on_copy`` -- boolean (default: ``False``); whether or not to work on
+    - ``work_on_copy`` -- boolean (default: ``True``); whether or not to work on
       a copy of the input graph; if set to ``False``, the input graph will be
       modified (relabeled).
 
@@ -889,6 +896,15 @@ def minimal_dominating_sets(G, to_dominate=None, work_on_copy=False, k=1):
         Traceback (most recent call last):
         ...
         ValueError: vertex (foo) is not a vertex of the graph
+
+    The method is robust to vertices with incomparable labels::
+
+        sage: G = Graph([(1, 'A'), ('A', 2), (2, 3), (3, 1)])
+        sage: L = list(G.minimal_dominating_sets())
+        sage: len(L)
+        6
+        sage: {3, 'A'} in L
+        True
     """
     def tree_search(H, plng, dom, i):
         r"""
@@ -942,7 +958,8 @@ def minimal_dominating_sets(G, to_dominate=None, work_on_copy=False, k=1):
             # We complete dom with can_ext -> canD
             canD = set().union(can_ext, dom)
 
-            if (not H.is_redundant(canD, V_next)) and set(dom) == set(_parent(H, canD, plng[i][1])):
+            if (not H.is_redundant(canD, V_next)
+                    and set(dom) == set(_parent(H, canD, plng[i][1]))):
                 # By construction, can_ext is a dominating set of
                 # `V_next - N[dom]`, so canD dominates V_next.
                 # If canD is a legitimate child of dom and is not redundant, we
@@ -951,6 +968,12 @@ def minimal_dominating_sets(G, to_dominate=None, work_on_copy=False, k=1):
                     yield Di
     ##
     # end of tree-search routine
+
+    if k < 0:
+        raise ValueError("the domination distance must be a non-negative integer")
+    if not k:
+        yield set(G) if to_dominate is None else set(to_dominate)
+        return
 
     int_to_vertex = list(G)
     vertex_to_int = {u: i for i, u in enumerate(int_to_vertex)}
@@ -963,28 +986,24 @@ def minimal_dominating_sets(G, to_dominate=None, work_on_copy=False, k=1):
                 raise ValueError(f"vertex ({u}) is not a vertex of the graph")
         vertices_to_dominate = {vertex_to_int[u] for u in to_dominate}
 
-    if k < 0:
-        raise ValueError("the domination distance must be a non-negative integer")
-    elif not k:
-        yield set(int_to_vertex) if to_dominate is None else set(to_dominate)
+    if not vertices_to_dominate:
+        # base case: vertices_to_dominate is empty
+        # the empty set/list is the only minimal DS of the empty set
+        yield set()
         return
     elif k > 1:
         # We build a graph H with an edge between u and v if these vertices are
         # at distance at most k in G
         H = G.__class__(G.order())
         for u, ui in vertex_to_int.items():
-            H.add_edges((ui, vertex_to_int[v]) for v in G.breadth_first_search(u, distance=k) if u != v)
+            H.add_edges((ui, vertex_to_int[v])
+                        for v in G.breadth_first_search(u, distance=k) if u != v)
         G = H
     elif work_on_copy:
-        G.relabel(perm=vertex_to_int)
-    else:
         G = G.relabel(perm=vertex_to_int, inplace=False)
-
-    if not vertices_to_dominate:
-        # base case: vertices_to_dominate is empty
-        # the empty set/list is the only minimal DS of the empty set
-        yield set()
-        return
+    else:
+        # The input graph is modified
+        G.relabel(perm=vertex_to_int, inplace=True)
 
     peeling = _peel(G, vertices_to_dominate)
 
@@ -1116,6 +1135,12 @@ def greedy_dominating_set(G, k=1, vertices=None, ordering=None, return_sets=Fals
         [0, 1]
         sage: G = graphs.PathGraph(5)
         sage: dom = greedy_dominating_set(G, vertices=[0, 1, 3, 4])
+
+    The method is robust to vertices with incomparable labels::
+
+        sage: G = Graph([(1, 'A')])
+        sage: len(greedy_dominating_set(G))
+        1
 
     Check parameters::
 
