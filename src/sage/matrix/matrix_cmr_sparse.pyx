@@ -204,6 +204,32 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
         return <bint> result
 
     def modulus(self):
+        r"""
+        A matrix `M` of rank-`r` is `k`-modular if the following two conditions are satisfied:
+        - for some column basis `B` of `M`, the greatest common divisor of the determinants of all `r`-by-`r` submatrices of `B` is `k`;
+        - the matrix `X` such that `M=BX` is totally unimodular.
+
+        OUTPUT:
+
+        - ``k``: ``self`` is  `k`-modular
+        - ``None``: ``self`` is not `k`-modular for any `k`
+
+        EXAMPLES::
+
+            sage: from sage.matrix.matrix_cmr_sparse import Matrix_cmr_chr_sparse
+            sage: M = Matrix_cmr_chr_sparse(MatrixSpace(ZZ, 3, 3, sparse=True),
+            ....:                           [[1, 0, 1], [0, 1, 1], [1, 2, 3]]); M
+            [1 0 1]
+            [0 1 1]
+            [1 2 3]
+            sage: M.modulus()
+            1
+            sage: M = Matrix_cmr_chr_sparse(MatrixSpace(ZZ, 2, 3, sparse=True),
+            ....:                           [[1, 1, 1], [0, 1, 3]]); M
+            [1 1 1]
+            [0 1 3]
+            sage: M.modulus()
+        """
         cdef bool result
         cdef size_t k
 
@@ -219,6 +245,32 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
             return None
 
     def strong_modulus(self):
+        r"""
+        A matrix `M` of rank-`r` is `k`-modular if the following two conditions are satisfied:
+        - for some column basis `B` of `M`, the greatest common divisor of the determinants of all `r`-by-`r` submatrices of `B` is `k`;
+        - the matrix `X` such that `M=BX` is totally unimodular.
+
+        OUTPUT:
+
+        - ``k``: ``self`` is  `k`-modular
+        - ``None``: ``self`` is not `k`-modular for any `k`
+
+        EXAMPLES::
+
+            sage: from sage.matrix.matrix_cmr_sparse import Matrix_cmr_chr_sparse
+            sage: M = Matrix_cmr_chr_sparse(MatrixSpace(ZZ, 3, 3, sparse=True),
+            ....:                           [[1, 0, 1], [0, 1, 1], [1, 2, 3]]); M
+            [1 0 1]
+            [0 1 1]
+            [1 2 3]
+            sage: M.strong_modulus()
+            sage: M = Matrix_cmr_chr_sparse(MatrixSpace(ZZ, 2, 3, sparse=True),
+            ....:                           [[1, 0, 0], [0, 1, 0]]); M
+            [1 0 0]
+            [0 1 0]
+            sage: M.strong_modulus()
+            1
+        """
         cdef bool result
         cdef size_t k
 
@@ -234,10 +286,64 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
             return None
 
     def is_k_modular(self, k):
-        return self.modulus() <= k
+        r"""
+        A matrix `M` of rank-`r` is `k`-modular if the following two conditions are satisfied:
+        - for some column basis `B` of `M`, the greatest common divisor of the determinants of all `r`-by-`r` submatrices of `B` is `k`;
+        - the matrix `X` such that `M=BX` is totally unimodular.
+        If the matrix has full row rank, it is `k`-modular if all the full rank minor of the matrix has determinant `0,\pm k`.
+        The matrix is also called strictly `k`-modular.
+
+        EXAMPLES::
+
+            sage: from sage.matrix.matrix_cmr_sparse import Matrix_cmr_chr_sparse
+            sage: M = Matrix_cmr_chr_sparse(MatrixSpace(ZZ, 3, 3, sparse=True),
+            ....:                           [[1, 0, 1], [0, 1, 1], [1, 2, 3]]); M
+            [1 0 1]
+            [0 1 1]
+            [1 2 3]
+            sage: M.is_k_modular(1)
+            True
+            sage: M.is_k_modular(2)
+            False
+            sage: M = Matrix_cmr_chr_sparse(MatrixSpace(ZZ, 2, 3, sparse=True),
+            ....:                           [[1, 1, 1], [0, 1, 3]]); M
+            [1 1 1]
+            [0 1 3]
+            sage: M.is_k_modular(1)
+            False
+        """
+        result = self.modulus()
+        if not result:
+            return False
+        else:
+            return result == k
 
     def is_strongly_k_modular(self, k):
-        return self.strong_modulus() <= k
+        r"""
+        A matrix is strongly k-modular if ``self`` and ``self.transpose()`` are both k-modular.
+
+        EXAMPLES::
+
+            sage: from sage.matrix.matrix_cmr_sparse import Matrix_cmr_chr_sparse
+            sage: M = Matrix_cmr_chr_sparse(MatrixSpace(ZZ, 3, 3, sparse=True),
+            ....:                           [[1, 0, 1], [0, 1, 1], [1, 2, 3]]); M
+            [1 0 1]
+            [0 1 1]
+            [1 2 3]
+            sage: M.is_strongly_k_modular(1)
+            False
+            sage: M = Matrix_cmr_chr_sparse(MatrixSpace(ZZ, 2, 3, sparse=True),
+            ....:                           [[1, 0, 0], [0, 1, 0]]); M
+            [1 0 0]
+            [0 1 0]
+            sage: M.is_strongly_k_modular(1)
+            True
+        """
+        result = self.strong_modulus()
+        if not result:
+            return False
+        else:
+            return result == k
 
     def is_graphic(self, *, time_limit=60.0, certificate=False):
         r"""
