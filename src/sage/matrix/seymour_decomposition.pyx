@@ -139,11 +139,7 @@ cdef class DecompositionNode(SageObject):
                      for index in range(CMRdecNumChildren(self._dec)))
 
     def _repr_(self):
-        result = f'{self.__class__.__name__}'
-        children = self._children()
-        if children:
-            result += f' with {len(children)} children'
-        return result
+        return f'{self.__class__.__name__}'
 
     def _unicode_art_(self):
         return self.as_ordered_tree()._unicode_art_()
@@ -153,6 +149,12 @@ cdef class DecompositionNode(SageObject):
 
 
 cdef class SumNode(DecompositionNode):
+
+    def _repr_(self):
+        result = super()._repr_()
+        children = self._children()
+        result += f' with {len(children)} children'
+        return result
 
     def permuted_block_matrix(self):
         r"Return (Prow, BlockMatrix, Pcolumn) so that self.matrix() == Prow * BlockMatrix * Pcolumn ????"
@@ -246,18 +248,44 @@ cdef class PlanarNode(BaseGraphicNode):
     pass
 
 
-cdef class LeafNode(DecompositionNode):
-
-
-    pass
-
-
-cdef class K33Node(LeafNode):
-
-    def graph(self):
-        raise NotImplementedError
+cdef class SeriesParallelNode(DecompositionNode):
 
     pass
+
+
+cdef class SpecialLeafNode(DecompositionNode):
+
+    @cached_method
+    def matroid(self):
+        r"""
+
+        """
+        cdef int representation_matrix
+        cdef CMR_DEC_TYPE typ = CMRdecIsSpecialLeaf(self._dec, &representation_matrix)
+        import sage.matroids.matroids_catalog as matroids
+        from sage.graphs.graph_generators import graphs
+        from sage.matroids.matroid import Matroid
+
+        if typ == CMR_DEC_SPECIAL_R10:
+            return matroids.named_matroids.R10()
+        if typ == CMR_DEC_SPECIAL_FANO:
+            return matroids.named_matroids.Fano()
+        if typ == CMR_DEC_SPECIAL_FANO_DUAL:
+            return matroids.named_matroids.Fano().dual()
+        if typ == CMR_DEC_SPECIAL_K_5:
+            return matroids.CompleteGraphic(5)
+        if typ == CMR_DEC_SPECIAL_K_5_DUAL:
+            return matroids.CompleteGraphic(5).dual()
+        if typ == CMR_DEC_SPECIAL_K_3_3:
+            E = 'abcdefghi'
+            G = graphs.CompleteBipartiteGraph(3, 3)
+            return Matroid(groundset=E, graph=G, regular=True)
+        if typ == CMR_DEC_SPECIAL_K_3_3_DUAL:
+            return matroids.named_matroids.K33dual()
+        assert False, 'special leaf node with unknown type'
+
+    def _repr_(self):
+        return f'Minor isomorphic to {self._matroid()}'
 
 
 cdef _class(CMR_DEC *dec):
@@ -274,7 +302,11 @@ cdef _class(CMR_DEC *dec):
         return GraphicNode
     if CMRdecIsCographicLeaf(dec):
         return CographicNode
-    # More TBD
+    if CMRdecIsSpecialLeaf(dec, NULL):
+        return SpecialLeafNode
+    if CMRdecNumChildren(dec) == 1:
+        return SeriesParallelNode
+    assert CMRdecNumChildren(dec) == 0
     return DecompositionNode
 
 
