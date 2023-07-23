@@ -441,6 +441,45 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
             [0 1]
             sage: M._is_binary_linear_matroid_regular()
             True
+
+            sage: MF = matroids.named_matroids.Fano(); MF
+            Fano: Binary matroid of rank 3 on 7 elements, type (3, 0)
+            sage: MFR = MF.representation().change_ring(ZZ); MFR
+            [1 0 0 0 1 1 1]
+            [0 1 0 1 0 1 1]
+            [0 0 1 1 1 0 1]
+            sage: MFR2 = block_diagonal_matrix(MFR, MFR, sparse=True); MFR2
+            [1 0 0 0 1 1 1|0 0 0 0 0 0 0]
+            [0 1 0 1 0 1 1|0 0 0 0 0 0 0]
+            [0 0 1 1 1 0 1|0 0 0 0 0 0 0]
+            [-------------+-------------]
+            [0 0 0 0 0 0 0|1 0 0 0 1 1 1]
+            [0 0 0 0 0 0 0|0 1 0 1 0 1 1]
+            [0 0 0 0 0 0 0|0 0 1 1 1 0 1]
+            sage: MS2 = MFR2.parent(); MS2
+            Full MatrixSpace of 6 by 14 sparse matrices over Integer Ring
+            sage: from sage.matrix.matrix_cmr_sparse import Matrix_cmr_chr_sparse
+            sage: MFR2cmr = Matrix_cmr_chr_sparse(MS2, MFR2)
+            sage: result, certificate = MFR2cmr._is_binary_linear_matroid_regular(
+            ....:                           certificate=True)
+            sage: result, certificate
+            (False, (OneSumNode with 2 children, NotImplemented))
+            sage: unicode_art(certificate[0])
+            ╭────────────────OneSumNode with 2 children
+            │                  │
+            SeriesParallelNode DecompositionNode
+            │
+            DecompositionNode
+            sage: result, certificate = MFR2cmr._is_binary_linear_matroid_regular(
+            ....:                           certificate=True, complete_tree=True)
+            sage: result, certificate
+            (False, (OneSumNode with 2 children, NotImplemented))
+            sage: unicode_art(certificate[0])
+            ╭────────────────OneSumNode with 2 children
+            │                  │
+            SeriesParallelNode SeriesParallelNode
+            │                  │
+            DecompositionNode  DecompositionNode
         """
         cdef bool result
         cdef CMR_REGULAR_PARAMETERS params
@@ -470,7 +509,11 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
         if not certificate:
             return <bint> result
 
-        raise NotImplementedError
+        if <bint> result:
+            return True, create_DecompositionNode(dec)
+
+        return False, (create_DecompositionNode(dec),
+                       NotImplemented)
 
     def is_totally_unimodular(self, *, time_limit=60.0, certificate=False,
                               use_direct_graphicness_test=True,
@@ -492,7 +535,7 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
             sage: M.is_totally_unimodular()
             True
             sage: M.is_totally_unimodular(certificate=True)
-            (True, DecompositionNode with 0 children)
+            (True, GraphicNode)
 
             sage: MF = matroids.named_matroids.Fano(); MF
             Fano: Binary matroid of rank 3 on 7 elements, type (3, 0)
