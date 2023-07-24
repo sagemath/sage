@@ -176,6 +176,19 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
             ⎜─────┼─────⎟
             ⎜ 0  0│ 1  1⎟
             ⎝ 0  0│-1  0⎠
+
+        TESTS::
+
+            sage: M = Matrix_cmr_chr_sparse.one_sum(); M
+            []
+            sage: M.parent()
+            Full MatrixSpace of 0 by 0 sparse matrices over Integer Ring
+
+            sage: M = Matrix_cmr_chr_sparse.one_sum([[1, 0], [-1, 1]]); unicode_art(M)
+            ⎛ 1  0⎞
+            ⎝-1  1⎠
+            sage: M.parent()
+            Full MatrixSpace of 2 by 2 sparse matrices over Integer Ring
         """
         cdef Matrix_cmr_chr_sparse sum, summand
         cdef CMR_CHRMAT *sum_mat
@@ -195,14 +208,15 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
             CMR_CALL(CMRoneSum(cmr, sum_mat, summand._mat, &sum_mat))
         if sum_mat != sum._mat:
             sum = Matrix_cmr_chr_sparse._from_cmr(sum_mat, immutable=False)
-        sum.subdivide(row_subdivision, column_subdivision)
+        if row_subdivision or column_subdivision:
+            sum.subdivide(row_subdivision, column_subdivision)
         sum.set_immutable()
         return sum
 
-    def two_sum(self, other):
+    def two_sum(self, other, *args):
         raise NotImplementedError
 
-    def three_sum(self, other):
+    def three_sum(self, other, *args):
         raise NotImplementedError
 
     def is_unimodular(self):
