@@ -68,18 +68,15 @@ Using conda to provide system packages for the Sage distribution
 If Conda is installed (check by typing ``conda info``), one can install SageMath
 from source as follows:
 
-  - If you are using a git checkout::
-
-      $ ./bootstrap-conda
-
   - Create a new conda environment including all standard packages
     recognized by sage, and activate it::
 
-      $ conda env create --file environment.yml --name sage-build
+      $ conda env create --file environment-3.11-linux.yml --name sage-build
       $ conda activate sage-build
 
-    Alternatively, use ``environment-optional.yml`` in place of
-    ``environment.yml`` to create an environment with all standard and optional
+    If you use a different architecture, replace ``linux`` by ``macos``.
+    Alternatively, use ``environment-optional-3.11-linux.yml`` in place of
+    ``environment-3.11-linux.yml`` to create an environment with all standard and optional
     packages recognized by sage.
 
   - Then the SageMath distribution will be built using the compilers provided by Conda
@@ -118,24 +115,18 @@ Here we assume that you are using a git checkout.
 
       $ conda install mamba
 
-  - Generate the conda environment files ``src/environment*.yml`` used
-    in the next step::
-
-      $ ./bootstrap-conda
-
   - Create and activate a new conda environment with the dependencies of Sage
     and a few additional developer tools::
 
-      $ mamba env create --file src/environment-dev.yml --name sage-dev
+      $ mamba env create --file src/environment-dev-3.11-linux.yml --name sage-dev
       $ conda activate sage-dev
 
-    Alternatively, you can use ``src/environment.yml`` or
-    ``src/environment-optional.yml``, which will only install standard
+    Alternatively, you can use ``src/environment-3.11-linux.yml`` or
+    ``src/environment-optional-3.11-linux.yml``, which will only install standard
     (and optional) packages without any additional developer tools.
 
-    By default, the most recent version of Python supported by Sage is
-    installed. You can use the additional option ``python=3.9`` in the above
-    ``env create`` command to select another Python version (here 3.9). 
+    This will use Python 3.11. You can change the Python version by using one 
+    of the other environment files, e.g. ``src/environment-3.10-linux.yml``.
 
   - Run the ``configure`` script::
 
@@ -177,7 +168,7 @@ After editing any Cython files, rebuild the Sage library using::
 
 In order to update the conda environment later, you can run::
 
-  $ mamba env update --file src/environment-dev.yml --name sage-dev
+  $ mamba env update --file src/environment-dev-3.11-linux.yml --name sage-dev
 
 To build the documentation, use::
 

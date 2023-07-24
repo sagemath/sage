@@ -21,3 +21,8 @@ requires = [
         memory_allocator \
                     ')]
 build-backend = "setuptools.build_meta"
+
+[tool.conda-lock]
+platforms = [
+    'osx-64', 'linux-64'
+]

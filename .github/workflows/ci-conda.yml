@@ -20,7 +20,7 @@ concurrency:
 jobs:
   test:
     name: Conda
-    runs-on: ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}-latest
     
     # Run on push, workflow dispatch and when certain labels are added 
     if: |
@@ -32,7 +32,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, macos-latest]
+        os: [ubuntu, macos]
         python: ['3.9', '3.10', '3.11']
         # Optional environment is disabled for now as its not yet working
         # environment: [environment, environment-optional]
@@ -53,9 +53,6 @@ jobs:
           bash ~/miniconda.sh -b -p $HOME/miniconda
           echo "CONDA=$HOME/miniconda" >> $GITHUB_ENV
 
-      - name: Create conda environment files
-        run: ./bootstrap-conda
-
       - name: Cache conda packages
         uses: actions/cache@v3
         with:
@@ -71,7 +68,7 @@ jobs:
           channels: conda-forge,defaults
           channel-priority: true
           activate-environment: sage-build
-          environment-file: src/${{ matrix.conda-env }}.yml
+          environment-file: src/${{ matrix.conda-env }}-${{ matrix.python }}-${{ matrix.os }}.yml
 
       - name: Print Conda environment
         shell: bash -l {0}
