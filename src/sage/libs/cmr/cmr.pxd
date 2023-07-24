@@ -292,6 +292,8 @@ cdef extern from "cmr/dec.h":
     bint CMRdecIsGraphic(CMR_DEC* dec)
     bint CMRdecIsCographic(CMR_DEC* dec)
     bint CMRdecIsRegular(CMR_DEC* dec)
+    bint CMRdecIsSeriesParallelReduction(CMR_DEC* dec)
+    bint CMRdecIsUnknown(CMR_DEC* dec)
     bint CMRdecNumRows(CMR_DEC* dec)
     CMR_ELEMENT* CMRdecRowElements(CMR_DEC* dec)
     size_t* CMRdecRowsParent(CMR_DEC* dec)
