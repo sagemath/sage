@@ -130,6 +130,17 @@ New arrangements from old::
     sage: b == hyperplane_arrangements.coordinate(3)
     True
 
+In some cases ordered arrangements are useful and the :class:`OrderedHyperplaneArrangements` for which the
+hyperplanes are not sorted::
+
+    sage: H0.<t0, t1, t2> = HyperplaneArrangements(QQ)
+    sage: H0(t0 - t1, t1 - t2, t0 - t2)
+    Arrangement <t1 - t2 | t0 - t1 | t0 - t2>
+    sage: H.<t0, t1, t2> = OrderedHyperplaneArrangements(QQ)
+    sage: H(t0 - t1, t1 - t2, t0 - t2)
+    Arrangement <t0 - t1 | t1 - t2 | t0 - t2>
+
+
 Properties of Arrangements
 --------------------------
 
@@ -237,7 +248,7 @@ arrangement. It is defined as
 
     \chi(x) := \sum_{w\in P} \mu(w) x^{dim(w)}
 
-where the sum is `P` is the
+where `P` is the
 :meth:`~HyperplaneArrangementElement.intersection_poset` of the
 arrangement and `\mu` is the Möbius function of `P`::
 
@@ -291,6 +302,8 @@ Miscellaneous methods (see documentation for an explanation)::
 There are extensive methods for visualizing hyperplane arrangements in
 low dimensions.  See :meth:`~HyperplaneArrangementElement.plot` for
 details.
+
+For ordere hyperplane arrangements hyperplane sections and fundamental group are also defined.
 
 TESTS::
 
