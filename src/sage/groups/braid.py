@@ -93,7 +93,6 @@ from sage.rings.polynomial.laurent_polynomial_ring import LaurentPolynomialRing
 from sage.sets.set import Set
 from sage.structure.richcmp import richcmp, rich_to_bool
 
-
 lazy_import('sage.libs.braiding',
             ['leftnormalform', 'rightnormalform', 'centralizer', 'supersummitset', 'greatestcommondivisor',
              'leastcommonmultiple', 'conjugatingbraid', 'ultrasummitset',
@@ -117,6 +116,7 @@ class Braid(FiniteTypeArtinGroupElement):
         sage: B((1, 2, -3, -2))
         s0*s1*s2^-1*s1^-1
     """
+
     def _richcmp_(self, other, op):
         """
         Compare ``self`` and ``other``
@@ -877,8 +877,8 @@ class Braid(FiniteTypeArtinGroupElement):
         varnames = 't0, t1'
 
         rep = self.parent()._links_gould_representation(symbolics=use_symbolics)
-        l = len(rep)
-        mu = rep[l-1] # quantum trace factor
+        ln = len(rep)
+        mu = rep[ln - 1]  # quantum trace factor
         M = mu * self.links_gould_matrix(symbolics=use_symbolics)
         d1, d2 = M.dimensions()
         e = d1//4
@@ -886,13 +886,13 @@ class Braid(FiniteTypeArtinGroupElement):
         R = LaurentPolynomialRing(ZZ, varnames)
 
         # partial quantum trace according to I. Marin section 2.5
-        part_trace = matrix(B, 4, 4, lambda i, j: sum(M[e*i+ k, e*j+k] for k in range(e)))
-        ptemp = part_trace[0,0] # part_trace == psymb*M.parent().one()
+        part_trace = matrix(B, 4, 4, lambda i, j: sum(M[e * i + k, e * j + k] for k in range(e)))
+        ptemp = part_trace[0, 0]  # part_trace == psymb*M.parent().one()
         if use_symbolics:
             v1, v2 = R.variable_names()
             pstr = str(ptemp._sympy_().simplify())
             pstr = pstr.replace('t0', v1).replace('t1', v2)
-            F = R.fraction_field() # to make coercion work
+            F = R.fraction_field()  # to make coercion work
             return R(F(pstr))
         else:
             ltemp = ptemp.lift().constant_coefficient()
@@ -1522,9 +1522,9 @@ class Braid(FiniteTypeArtinGroupElement):
             (s0*s1*s0,)
         """
         if algorithm == 'libbraiding':
-            l = leftnormalform(self)
+            lnf = leftnormalform(self)
             B = self.parent()
-            return tuple([B.delta()**l[0][0]] + [B(b) for b in l[1:]] )
+            return tuple([B.delta()**lnf[0][0]] + [B(b) for b in lnf[1:]])
         elif algorithm == 'artin':
             return FiniteTypeArtinGroupElement.left_normal_form.f(self)
         raise ValueError("invalid algorithm")
@@ -1565,11 +1565,11 @@ class Braid(FiniteTypeArtinGroupElement):
         delta = 0
         Delta = self.parent()._coxeter_group.long_element()
         sr = self.parent()._coxeter_group.simple_reflections()
-        l = self.Tietze()
-        if not l:
+        tz = self.Tietze()
+        if not tz:
             return (0,)
         form = []
-        for i in l:
+        for i in tz:
             if i > 0:
                 form.append(sr[i])
             else:
@@ -1617,9 +1617,9 @@ class Braid(FiniteTypeArtinGroupElement):
             sage: b.right_normal_form()
             (s1*s0, s0*s2, 1)
         """
-        l = rightnormalform(self)
+        rnf = rightnormalform(self)
         B = self.parent()
-        return tuple([B(b) for b in l[:-1]] + [B.delta()**l[-1][0]])
+        return tuple([B(b) for b in rnf[:-1]] + [B.delta()**rnf[-1][0]])
 
     def centralizer(self):
         """
@@ -1633,9 +1633,9 @@ class Braid(FiniteTypeArtinGroupElement):
             [s1*s0*s2*s1, s0*s2]
 
         """
-        l = centralizer(self)
+        c = centralizer(self)
         B = self.parent()
-        return [B._element_from_libbraiding(b) for b in l]
+        return [B._element_from_libbraiding(b) for b in c]
 
     def super_summit_set(self):
         """
@@ -1652,9 +1652,9 @@ class Braid(FiniteTypeArtinGroupElement):
             s0^-1*s1^-1*s0^-2*s1^-1*s0*s1^3*s0]
 
         """
-        l = supersummitset(self)
+        sss = supersummitset(self)
         B = self.parent()
-        return [B._element_from_libbraiding(b) for b in l]
+        return [B._element_from_libbraiding(b) for b in sss]
 
     def gcd(self, other):
         """
@@ -1755,13 +1755,13 @@ class Braid(FiniteTypeArtinGroupElement):
             sage: c.conjugating_braid(b) is None
             True
         """
-        l = conjugatingbraid(self, other)
-        if not l:
+        cb = conjugatingbraid(self, other)
+        if not cb:
             return None
         else:
             B = self.parent()
-            l[0][0] %= 2
-            return B._element_from_libbraiding(l)
+            cb[0][0] %= 2
+            return B._element_from_libbraiding(cb)
 
     def is_conjugated(self, other):
         """
@@ -1782,8 +1782,8 @@ class Braid(FiniteTypeArtinGroupElement):
             sage: c.is_conjugated(b)
             False
         """
-        l = conjugatingbraid(self, other)
-        return bool(l)
+        cb = conjugatingbraid(self, other)
+        return bool(cb)
 
     def pure_conjugating_braid(self, other):
         r"""
@@ -1870,7 +1870,7 @@ class Braid(FiniteTypeArtinGroupElement):
         if p3 not in S.subgroup(LP):
             return None
         P = p3.word_problem(list(LP), display=False, as_list=True)
-        b1 = prod(LP[S(a)] ** b for a,b in P)
+        b1 = prod(LP[S(a)] ** b for a, b in P)
         b0 = b1 * b0
         n0 = len(b0.Tietze())
         L = leftnormalform(b0)
@@ -2125,12 +2125,11 @@ class Braid(FiniteTypeArtinGroupElement):
         n = self.strands()
         m = len(self.Tietze())
         from sage.algebras.free_algebra import FreeAlgebra
-        alg = FreeAlgebra(R, m*3, [f'{s}p_{i}'
-                                   for i in range(m) if self.Tietze()[i] > 0
-                                   for s in 'bca']
-                                  + [f'{s}m_{i}'
-                                     for i in range(m) if self.Tietze()[i] < 0
-                                     for s in 'bca'])
+        alg = FreeAlgebra(R, m*3,
+                          [f'{s}p_{i}' for i in range(m) if self.Tietze()[i] > 0
+                           for s in 'bca']
+                          + [f'{s}m_{i}' for i in range(m) if self.Tietze()[i] < 0
+                             for s in 'bca'])
         gen_indices = ([i for i in range(m) if self.Tietze()[i] > 0]
                        + [i for i in range(m) if self.Tietze()[i] < 0])
 
@@ -2294,6 +2293,7 @@ class RightQuantumWord:
          q*cp_1*ap_1 + q^2*bp_1*cm_0*am_0*bm_2
          reduced from ap_1*cp_1 + q^3*bm_2*bp_1*am_0*cm_0
     """
+
     def __init__(self, words):
         r"""
         Initialize ``self``.
@@ -2482,8 +2482,8 @@ class RightQuantumWord:
             ret_q *= prod(prod(1 - q**(N - 1 - q_tuple[3*i + 1] - h)
                                for h in range(q_tuple[3*i + 2]))
                           for i in range(self._minus_begin//3))
-            ret_q *= prod(prod(1 - q**(q_tuple[3*j + 1] + l + 1 - N)
-                               for l in range(q_tuple[3*j + 2]))
+            ret_q *= prod(prod(1 - q**(q_tuple[3*j + 1] + k + 1 - N)
+                               for k in range(q_tuple[3*j + 2]))
                           for j in range(self._minus_begin//3,
                                          len(q_tuple)//3))
             return ret_q
@@ -2811,7 +2811,7 @@ class BraidGroup_class(FiniteTypeArtinGroup):
         """
         from sage.matrix.constructor import matrix
         n = self.strands()
-        d = 4 # dimension of the natural module
+        d = 4  # dimension of the natural module
         from sage.matrix.special import diagonal_matrix
         if symbolics:
             from sage.symbolic.ring import SR as BR
@@ -2828,7 +2828,7 @@ class BraidGroup_class(FiniteTypeArtinGroup):
             LR = LaurentPolynomialRing(ZZ, 's0r, s1r')
             PR = PolynomialRing(LR, 'Yr')
             s0r, s1r, Yr = PR.gens_dict_recursive().values()
-            pqr = Yr**2 + (s0r**2-1)*(s1r**2 -1)
+            pqr = Yr**2 + (s0r**2-1)*(s1r**2 - 1)
             BR = PR.quotient_ring(pqr)
             s0 = BR(s0r)
             s1 = BR(s1r)
@@ -2842,12 +2842,12 @@ class BraidGroup_class(FiniteTypeArtinGroup):
         if n == 2:
             # R-Matrix taken from I. Marin
             R = matrix(BR, {(0, 0): t0, (1, 4): s0, (2, 8): s0, (3, 12): 1,
-                (4, 1): s0, (4, 4): t0 - 1, (5, 5): -1, (6, 6): t0*t1 - 1,
-                (6, 9): -s0*s1, (6, 12): -Y*s0*s1, (7, 13): s1, (8, 2): s0,
-                (8, 8): t0 - 1, (9, 6): -s0*s1, (9, 12): Y, (10, 10): -1,
-                (11, 14): s1, (12, 3): 1, (12, 6): -Y*s0*s1, (12, 9): Y,
-                (12, 12): -(t0 - 1)*(t1 - 1), (13, 7): s1, (13, 13): t1 - 1,
-                (14, 11): s1, (14, 14): t1 - 1, (15, 15): t1}, sparse=sparse)
+                            (4, 1): s0, (4, 4): t0 - 1, (5, 5): -1, (6, 6): t0*t1 - 1,
+                            (6, 9): -s0*s1, (6, 12): -Y*s0*s1, (7, 13): s1, (8, 2): s0,
+                            (8, 8): t0 - 1, (9, 6): -s0*s1, (9, 12): Y, (10, 10): -1,
+                            (11, 14): s1, (12, 3): 1, (12, 6): -Y*s0*s1, (12, 9): Y,
+                            (12, 12): -(t0 - 1)*(t1 - 1), (13, 7): s1, (13, 13): t1 - 1,
+                            (14, 11): s1, (14, 14): t1 - 1, (15, 15): t1}, sparse=sparse)
             RI = (~t0 + ~t1)*(1 + R) - ~t0*~t1*(R + R**2) - 1
 
             # quantum trace operator on two fold tensor space
@@ -2924,58 +2924,58 @@ class BraidGroup_class(FiniteTypeArtinGroup):
             for i in braid[1:]:
                 A = A*self._LKB_matrix_((i,), variab)
             return A
-        l = list(Set(range(n)).subsets(2))
+        n2 = list(Set(range(n)).subsets(2))
         R = LaurentPolynomialRing(IntegerRing(), variab)
         q = R.gens()[0]
         t = R.gens()[1]
         if not braid:
-            return identity_matrix(R, len(l), sparse=True)
-        A = matrix(R, len(l), sparse=True)
+            return identity_matrix(R, len(n2), sparse=True)
+        A = matrix(R, len(n2), sparse=True)
         if braid[0] > 0:
             i = braid[0]-1
-            for m in range(len(l)):
-                j = min(l[m])
-                k = max(l[m])
+            for m in range(len(n2)):
+                j = min(n2[m])
+                k = max(n2[m])
                 if i == j-1:
-                    A[l.index(Set([i, k])), m] = q
-                    A[l.index(Set([i, j])), m] = q*q-q
-                    A[l.index(Set([j, k])), m] = 1-q
+                    A[n2.index(Set([i, k])), m] = q
+                    A[n2.index(Set([i, j])), m] = q*q-q
+                    A[n2.index(Set([j, k])), m] = 1-q
                 elif i == j and not j == k-1:
-                    A[l.index(Set([j, k])), m] = 0
-                    A[l.index(Set([j+1, k])), m] = 1
+                    A[n2.index(Set([j, k])), m] = 0
+                    A[n2.index(Set([j+1, k])), m] = 1
                 elif k-1 == i and not k-1 == j:
-                    A[l.index(Set([j, i])), m] = q
-                    A[l.index(Set([j, k])), m] = 1-q
-                    A[l.index(Set([i, k])), m] = (1-q)*q*t
+                    A[n2.index(Set([j, i])), m] = q
+                    A[n2.index(Set([j, k])), m] = 1-q
+                    A[n2.index(Set([i, k])), m] = (1-q)*q*t
                 elif i == k:
-                    A[l.index(Set([j, k])), m] = 0
-                    A[l.index(Set([j, k+1])), m] = 1
+                    A[n2.index(Set([j, k])), m] = 0
+                    A[n2.index(Set([j, k+1])), m] = 1
                 elif i == j and j == k-1:
-                    A[l.index(Set([j, k])), m] = -t*q*q
+                    A[n2.index(Set([j, k])), m] = -t*q*q
                 else:
-                    A[l.index(Set([j, k])), m] = 1
+                    A[n2.index(Set([j, k])), m] = 1
             return A
         else:
             i = -braid[0]-1
-            for m in range(len(l)):
-                j = min(l[m])
-                k = max(l[m])
+            for m in range(len(n2)):
+                j = min(n2[m])
+                k = max(n2[m])
                 if i == j-1:
-                    A[l.index(Set([j-1, k])), m] = 1
+                    A[n2.index(Set([j-1, k])), m] = 1
                 elif i == j and not j == k-1:
-                    A[l.index(Set([j+1, k])), m] = q**(-1)
-                    A[l.index(Set([j, k])), m] = 1-q**(-1)
-                    A[l.index(Set([j, j+1])), m] = t**(-1)*q**(-1)-t**(-1)*q**(-2)
+                    A[n2.index(Set([j+1, k])), m] = q**(-1)
+                    A[n2.index(Set([j, k])), m] = 1-q**(-1)
+                    A[n2.index(Set([j, j+1])), m] = t**(-1)*q**(-1)-t**(-1)*q**(-2)
                 elif k-1 == i and not k-1 == j:
-                    A[l.index(Set([j, k-1])), m] = 1
+                    A[n2.index(Set([j, k-1])), m] = 1
                 elif i == k:
-                    A[l.index(Set([j, k+1])), m] = q**(-1)
-                    A[l.index(Set([j, k])), m] = 1-q**(-1)
-                    A[l.index(Set([k, k+1])), m] = -q**(-1)+q**(-2)
+                    A[n2.index(Set([j, k+1])), m] = q**(-1)
+                    A[n2.index(Set([j, k])), m] = 1-q**(-1)
+                    A[n2.index(Set([k, k+1])), m] = -q**(-1)+q**(-2)
                 elif i == j and j == k-1:
-                    A[l.index(Set([j, k])), m] = -t**(-1)*q**(-2)
+                    A[n2.index(Set([j, k])), m] = -t**(-1)*q**(-2)
                 else:
-                    A[l.index(Set([j, k])), m] = 1
+                    A[n2.index(Set([j, k])), m] = 1
             return A
 
     def dimension_of_TL_space(self, drain_size):
@@ -3422,7 +3422,7 @@ class BraidGroup_class(FiniteTypeArtinGroup):
 
     def presentation2gens(self, isomorphisms=False):
         """
-        Construct an isomorphic group to ``gens`` with only two generators
+        Construct an isomorphic group to ``self``, braid group,  with only two generators
 
         INPUT:
 
@@ -3497,7 +3497,7 @@ class BraidGroup_class(FiniteTypeArtinGroup):
         Gg = libgap(G)
         Hg = libgap(H)
         gquotients = Gg.GQuotients(Hg)
-        hom1g = libgap.GroupHomomorphismByImagesNC(G0g,Gg,[libgap(hom1(u)) for u in self.gens()])
+        hom1g = libgap.GroupHomomorphismByImagesNC(G0g, Gg, [libgap(hom1(u)) for u in self.gens()])
         g0quotients = [hom1g * h for h in gquotients]
         res = []
         # the following closure is needed to attach a specific value of quo to
@@ -3509,6 +3509,7 @@ class BraidGroup_class(FiniteTypeArtinGroup):
             res.append(fhom)
         return res
 
+
 def BraidGroup(n=None, names='s'):
     """
     Construct a Braid Group
@@ -3518,7 +3519,7 @@ def BraidGroup(n=None, names='s'):
     - ``n`` -- integer or ``None`` (default). The number of
       strands. If not specified the ``names`` are counted and the
       group is assumed to have one more strand than generators.
-
++
     - ``names`` -- string or list/tuple/iterable of strings (default:
       ``'x'``). The generator names or name prefix.
 
@@ -3637,6 +3638,7 @@ class MappingClassGroupAction(Action):
         sage: A(x1^-1, s1)
         x1*x2^-1*x1^-1
     """
+
     def __init__(self, G, M):
         """
         TESTS::

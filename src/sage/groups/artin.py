@@ -12,7 +12,7 @@ AUTHORS:
 - Travis Scrimshaw (2018-02-05): Initial version
 """
 
-#****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2018 Travis Scrimshaw <tcscrims at gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
@@ -20,7 +20,7 @@ AUTHORS:
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
-#*****************************************************************************
+# *****************************************************************************
 
 from sage.misc.cachefunc import cached_method
 from sage.groups.free_group import FreeGroup
@@ -47,6 +47,7 @@ class ArtinGroupElement(FinitelyPresentedGroupElement):
         sage: A((1, 2, -3, -2))
         s1*s2*s3^-1*s2^-1
     """
+
     def _latex_(self):
         r"""
         Return a LaTeX representation of ``self``.
@@ -151,13 +152,15 @@ class ArtinGroupElement(FinitelyPresentedGroupElement):
         if W is None:
             W = self.parent().coxeter_group()
         s = W.simple_reflections()
-        I = W.index_set()
-        return W.prod(s[I[abs(i)-1]] for i in self.Tietze())
+        In = W.index_set()
+        return W.prod(s[In[abs(i)-1]] for i in self.Tietze())
+
 
 class FiniteTypeArtinGroupElement(ArtinGroupElement):
     """
     An element of a finite-type Artin group.
     """
+
     def _richcmp_(self, other, op):
         """
         Compare ``self`` and ``other``.
@@ -287,11 +290,11 @@ class FiniteTypeArtinGroupElement(ArtinGroupElement):
         delta = 0
         Delta = self.parent().coxeter_group().long_element()
         sr = self.parent().coxeter_group().simple_reflections()
-        l = self.Tietze()
-        if l == ():
+        tz = self.Tietze()
+        if tz == ():
             return (0,)
         form = []
-        for i in l:
+        for i in tz:
             if i > 0:
                 form.append(sr[i])
             else:
@@ -323,6 +326,7 @@ class FiniteTypeArtinGroupElement(ArtinGroupElement):
             form.pop(0)
             delta -= 1
         return tuple([-delta] + form)
+
 
 class ArtinGroup(FinitelyPresentedGroup):
     r"""
@@ -466,13 +470,13 @@ class ArtinGroup(FinitelyPresentedGroup):
         free_group = FreeGroup(names)
         rels = []
         # Generate the relations based on the Coxeter graph
-        I = coxeter_matrix.index_set()
-        for ii,i in enumerate(I):
-            for j in I[ii+1:]:
-                m = coxeter_matrix[i,j]
+        In = coxeter_matrix.index_set()
+        for ii, i in enumerate(In):
+            for j in In[ii+1:]:
+                m = coxeter_matrix[i, j]
                 if m == Infinity:  # no relation
                     continue
-                elt = [i,j]*m
+                elt = [i, j] * m
                 for ind in range(m, 2*m):
                     elt[ind] = -elt[ind]
                 rels.append(free_group(elt))
@@ -640,7 +644,7 @@ class ArtinGroup(FinitelyPresentedGroup):
         rank = self.coxeter_matrix().rank()
         elements_list = [self.gen(0)]
         elements_list.append(self.prod(self.gens()))
-        elements_list.append(elements_list[-1] ** min(rank,3))
+        elements_list.append(elements_list[-1] ** min(rank, 3))
         return elements_list
 
     def _standard_lift_Tietze(self, w):
@@ -725,6 +729,7 @@ class FiniteTypeArtinGroup(ArtinGroup):
         sage: GF = F.cayley_graph(elements=ball(F, 4), generators=F.gens()); GF
         Digraph on 40 vertices
     """
+
     def delta(self):
         r"""
         Return the `\Delta` element of ``self``.
