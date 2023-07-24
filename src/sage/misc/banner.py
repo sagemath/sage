@@ -100,7 +100,7 @@ def banner():
     EXAMPLES::
 
         sage: import sage.misc.banner; sage.misc.banner.SAGE_BANNER = ''
-        sage: banner()
+        sage: sage.misc.banner.banner()
         ┌────────────────────────────────────────────────────────────────────┐
         │ SageMath version ..., Release Date: ...                            │
         │ Using Python .... Type "help()" for help.                          │
