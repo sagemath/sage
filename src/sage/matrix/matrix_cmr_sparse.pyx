@@ -7,10 +7,13 @@ from libc.stdint cimport SIZE_MAX
 from cysignals.signals cimport sig_on, sig_off
 
 from sage.libs.cmr.cmr cimport *
-from sage.matrix.seymour_decomposition cimport create_DecompositionNode
 from sage.rings.integer cimport Integer
+from sage.rings.integer_ring import ZZ
+from sage.structure.element cimport Matrix
 
 from .args cimport MatrixArgs_init
+from .constructor import matrix
+from .matrix_space import MatrixSpace
 from .seymour_decomposition cimport create_DecompositionNode
 
 
@@ -59,7 +62,7 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
         [100 200 300]
         [400   0 600]
     """
-    def __init__(self, parent, entries=None, copy=None, bint coerce=True):
+    def __init__(self, parent, entries=None, copy=None, bint coerce=True, immutable=True):
         r"""
         TESTS::
 
@@ -73,9 +76,9 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
         cdef dict d
         ma = MatrixArgs_init(parent, entries)
         d = ma.dict(coerce)
-        self._init_from_dict(d, ma.nrows, ma.ncols)
+        self._init_from_dict(d, ma.nrows, ma.ncols, immutable=True)
 
-    cdef _init_from_dict(self, dict d, int nrows, int ncols):
+    cdef _init_from_dict(self, dict d, int nrows, int ncols, bint immutable=True):
         if cmr == NULL:
             CMRcreateEnvironment(&cmr)
         CMR_CALL(CMRchrmatCreate(cmr, &self._mat, nrows, ncols, len(d)))
@@ -96,7 +99,8 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
             self._mat.rowSlice[row + 1] = self._mat.rowSlice[row]
         self._mat.rowSlice[0] = 0
         CMR_CALL(CMRchrmatSortNonzeros(cmr, self._mat))
-        self.set_immutable()
+        if immutable:
+            self.set_immutable()
 
     cdef get_unsafe(self, Py_ssize_t i, Py_ssize_t j):
         cdef size_t index
@@ -141,6 +145,65 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
 
     # CMR-specific methods. Other classes that want to provide these methods should create
     # a copy of themselves as an instance of this class and delegate to it.
+
+    @staticmethod
+    def _from_data(data, immutable=True):
+        if not isinstance(data, Matrix):
+            data = matrix(ZZ, data, sparse=True)
+        if not isinstance(data, Matrix_cmr_chr_sparse):
+            data = Matrix_cmr_chr_sparse(data.parent(), data, immutable=immutable)
+        return data
+
+    @staticmethod
+    cdef _from_cmr(CMR_CHRMAT *mat, bint immutable=False):
+        cdef Matrix_cmr_chr_sparse result
+        ms = MatrixSpace(ZZ, mat.numRows, mat.numColumns, sparse=True)
+        result = Matrix_cmr_chr_sparse.__new__(Matrix_cmr_chr_sparse, ms, immutable=immutable)
+        result._mat = mat
+        result._root = None
+        return result
+
+    @staticmethod
+    def one_sum(*summands):
+        r"""
+        EXAMPLES::
+
+            sage: from sage.matrix.matrix_cmr_sparse import Matrix_cmr_chr_sparse
+            sage: M = Matrix_cmr_chr_sparse.one_sum([[1, 0], [-1, 1]], [[1, 1], [-1, 0]])
+            sage: unicode_art(M)
+            ⎛ 1  0│ 0  0⎞
+            ⎜-1  1│ 0  0⎟
+            ⎜─────┼─────⎟
+            ⎜ 0  0│ 1  1⎟
+            ⎝ 0  0│-1  0⎠
+        """
+        cdef Matrix_cmr_chr_sparse sum, summand
+        cdef CMR_CHRMAT *sum_mat
+        summands = iter(summands)
+        try:
+            first = next(summands)
+        except StopIteration:
+            return Matrix_cmr_chr_sparse._from_data({})
+        sum = Matrix_cmr_chr_sparse._from_data(first, immutable=False)
+        sum_mat = sum._mat
+        row_subdivision = []
+        column_subdivision = []
+        for s in summands:
+            row_subdivision.append(sum_mat.numRows)
+            column_subdivision.append(sum_mat.numColumns)
+            summand = Matrix_cmr_chr_sparse._from_data(s)
+            CMR_CALL(CMRoneSum(cmr, sum_mat, summand._mat, &sum_mat))
+        if sum_mat != sum._mat:
+            sum = Matrix_cmr_chr_sparse._from_cmr(sum_mat, immutable=False)
+        sum.subdivide(row_subdivision, column_subdivision)
+        sum.set_immutable()
+        return sum
+
+    def two_sum(self, other):
+        raise NotImplementedError
+
+    def three_sum(self, other):
+        raise NotImplementedError
 
     def is_unimodular(self):
         r"""
