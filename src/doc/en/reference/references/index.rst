@@ -5829,6 +5829,9 @@ REFERENCES:
              subsequences*, Canadian Journal of Mathematics, Vol 13
              (1961), pp. 179--191.
 
+.. [Sch1986] Alexander Schrijver, *Theory of Linear and Integer Programming*,
+             John Wiley and Sons, 1986.
+
 .. [Sch1990] Schnyder, Walter. *Embedding Planar Graphs on the Grid*.
              Proc. 1st Annual ACM-SIAM Symposium on Discrete Algorithms,
              San Francisco (1994), pp. 138-147.
