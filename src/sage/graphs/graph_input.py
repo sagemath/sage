@@ -185,8 +185,9 @@ def from_seidel_adjacency_matrix(G, M):
 
         sage: from sage.graphs.graph_input import from_seidel_adjacency_matrix
         sage: g = Graph()
-        sage: from_seidel_adjacency_matrix(g, graphs.PetersenGraph().seidel_adjacency_matrix())
-        sage: g.is_isomorphic(graphs.PetersenGraph())
+        sage: sam = graphs.PetersenGraph().seidel_adjacency_matrix()                    # optional - sage.modules
+        sage: from_seidel_adjacency_matrix(g, sam)                                      # optional - sage.modules
+        sage: g.is_isomorphic(graphs.PetersenGraph())                                   # optional - sage.modules
         True
     """
     from sage.structure.element import is_Matrix
@@ -235,8 +236,8 @@ def from_adjacency_matrix(G, M, loops=False, multiedges=False, weighted=False):
 
         sage: from sage.graphs.graph_input import from_adjacency_matrix
         sage: g = Graph()
-        sage: from_adjacency_matrix(g, graphs.PetersenGraph().adjacency_matrix())
-        sage: g.is_isomorphic(graphs.PetersenGraph())
+        sage: from_adjacency_matrix(g, graphs.PetersenGraph().adjacency_matrix())       # optional - sage.modules
+        sage: g.is_isomorphic(graphs.PetersenGraph())                                   # optional - sage.modules
         True
     """
     from sage.structure.element import is_Matrix
@@ -311,8 +312,8 @@ def from_incidence_matrix(G, M, loops=False, multiedges=False, weighted=False):
 
         sage: from sage.graphs.graph_input import from_incidence_matrix
         sage: g = Graph()
-        sage: from_incidence_matrix(g, graphs.PetersenGraph().incidence_matrix())
-        sage: g.is_isomorphic(graphs.PetersenGraph())
+        sage: from_incidence_matrix(g, graphs.PetersenGraph().incidence_matrix())       # optional - sage.modules
+        sage: g.is_isomorphic(graphs.PetersenGraph())                                   # optional - sage.modules
         True
     """
     from sage.structure.element import is_Matrix
@@ -377,38 +378,37 @@ def from_oriented_incidence_matrix(G, M, loops=False, multiedges=False, weighted
 
         sage: from sage.graphs.graph_input import from_oriented_incidence_matrix
         sage: g = DiGraph()
-        sage: from_oriented_incidence_matrix(g, digraphs.Circuit(10).incidence_matrix())
-        sage: g.is_isomorphic(digraphs.Circuit(10))
+        sage: im = digraphs.Circuit(10).incidence_matrix()                              # optional - sage.modules
+        sage: from_oriented_incidence_matrix(g, im)                                     # optional - sage.modules
+        sage: g.is_isomorphic(digraphs.Circuit(10))                                     # optional - sage.modules
         True
 
     TESTS:
 
     Fix bug reported in :trac:`22985`::
 
-        sage: DiGraph(matrix ([[1,0,0,1],[0,0,1,1],[0,0,1,1]]).transpose())
+        sage: DiGraph(matrix ([[1,0,0,1],[0,0,1,1],[0,0,1,1]]).transpose())             # optional - sage.modules
         Traceback (most recent call last):
         ...
         ValueError: each column represents an edge: -1 goes to 1
 
     Handle incidence matrix containing a column with only zeros (:trac:`29275`)::
 
-        sage: m = Matrix([[0,1],[0,-1],[0,0]])
-        sage: m
+        sage: m = Matrix([[0,1],[0,-1],[0,0]]); m                                       # optional - sage.modules
         [ 0  1]
         [ 0 -1]
         [ 0  0]
-        sage: G = DiGraph(m,format='incidence_matrix')
-        sage: list(G.edges(sort=True, labels=False))
+        sage: G = DiGraph(m, format='incidence_matrix')                                 # optional - sage.modules
+        sage: list(G.edges(sort=True, labels=False))                                    # optional - sage.modules
         [(1, 0)]
 
     Handle incidence matrix [[1],[-1]] (:trac:`29275`)::
 
-        sage: m = Matrix([[1],[-1]])
-        sage: m
+        sage: m = Matrix([[1],[-1]]); m                                                 # optional - sage.modules
         [ 1]
         [-1]
-        sage: G = DiGraph(m,format='incidence_matrix')
-        sage: list(G.edges(sort=True, labels=False))
+        sage: G = DiGraph(m, format='incidence_matrix')                                 # optional - sage.modules
+        sage: list(G.edges(sort=True, labels=False))                                    # optional - sage.modules
         [(1, 0)]
     """
     from sage.structure.element import is_Matrix

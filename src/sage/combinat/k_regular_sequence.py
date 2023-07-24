@@ -1,3 +1,4 @@
+# sage.doctest: optional - sage.combinat sage.modules sage.symbolic
 r"""
 `k`-regular Sequences
 
@@ -245,6 +246,11 @@ class kRegularSequence(RecognizableSeries):
 
             :doc:`k-regular sequence <k_regular_sequence>`,
             :class:`kRegularSequenceSpace`.
+
+        TESTS::
+
+            sage: Seq2(([[1, 0], [0, 1]], [[1, 1], [0, 1]]), (1, 0), (0, 1))
+            2-regular sequence 0, 1, 1, 2, 1, 2, 2, 3, 1, 2, ...
         """
         super().__init__(parent=parent, mu=mu, left=left, right=right)
 

@@ -81,8 +81,8 @@ class ModularSymbolsSubspace(sage.modular.modsym.space.ModularSymbolsSpace, heck
             sage: ModularSymbols(24,4).cuspidal_subspace()._repr_()
             'Modular Symbols subspace of dimension 16 of Modular Symbols space of dimension 24 for Gamma_0(24) of weight 4 with sign 0 over Rational Field'
         """
-        return "Modular Symbols subspace of dimension %s of %s"%(
-                    self.rank(), self.ambient_module())
+        return "Modular Symbols subspace of dimension %s of %s" % (
+            self.rank(), self.ambient_module())
 
     ################################
     # Public functions
@@ -279,17 +279,17 @@ class ModularSymbolsSubspace(sage.modular.modsym.space.ModularSymbolsSpace, heck
                     if A.is_cuspidal():
                         V = A.plus_submodule()
                         V._is_simple = True
-                        D.append((V,1))
+                        D.append((V, 1))
                         V = A.minus_submodule()
                         V._is_simple = True
-                        D.append((V,1))
+                        D.append((V, 1))
                     else:
                         A._is_simple = True
                         D.append((A, 1))
             else:
                 for A in N:
                     A._is_simple = True
-                    D.append((A,1))
+                    D.append((A, 1))
         else:
             # Compute factorization of the ambient space, then compute multiplicity
             # of each factor in this space.
@@ -297,19 +297,19 @@ class ModularSymbolsSubspace(sage.modular.modsym.space.ModularSymbolsSpace, heck
             for S in self.ambient_hecke_module().simple_factors():
                 n = self.multiplicity(S, check_simple=False)
                 if n > 0:
-                    D.append((S,n))
+                    D.append((S, n))
         # endif
 
         # check that dimensions add up
         r = self.dimension()
-        s = sum([A.rank()*mult for A, mult in D])
+        s = sum([A.rank() * mult for A, mult in D])
         if r != s:
-            raise NotImplementedError("modular symbols factorization not fully implemented yet --  self has dimension %s, but sum of dimensions of factors is %s"%(
-            r, s))
+            raise NotImplementedError("modular symbols factorization not fully implemented yet "
+                                      "--  self has dimension %s, but sum of dimensions of factors is %s" % (r, s))
         self._factorization = sage.structure.factorization.Factorization(D, cr=True)
         return self._factorization
 
-    def is_cuspidal(self):
+    def is_cuspidal(self) -> bool:
         """
         Return True if self is cuspidal.
 

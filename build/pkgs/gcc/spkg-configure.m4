@@ -232,7 +232,7 @@ SAGE_SPKG_CONFIGURE_BASE([gcc], [
     fi
     AC_SUBST(CFLAGS_MARCH)
 
-    # Determine wether compiler supports OpenMP.
+    # Determine whether compiler supports OpenMP.
     AC_LANG_PUSH([C])
     AX_OPENMP([
         AC_SUBST(OPENMP_CFLAGS)

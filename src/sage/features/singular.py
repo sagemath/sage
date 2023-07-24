@@ -1,5 +1,5 @@
 r"""
-Features for testing the presence of Singular
+Features for testing the presence of ``singular`` and the SageMath interfaces to it
 """
 
 # *****************************************************************************
@@ -18,7 +18,7 @@ from sage.env import SINGULAR_BIN
 
 class Singular(Executable):
     r"""
-    A :class:`~sage.features.Feature` describing the presence of the Singular executable.
+    A :class:`~sage.features.Feature` describing the presence of the :ref:`singular <spkg_singular>` executable.
 
     EXAMPLES::
 
@@ -35,7 +35,7 @@ class Singular(Executable):
             True
         """
         Executable.__init__(self, "singular", SINGULAR_BIN,
-                            spkg='singular')
+                            spkg='singular', type='standard')
 
 
 class sage__libs__singular(JoinFeature):

@@ -231,15 +231,17 @@ def set_intersphinx_mappings(app, config):
     'python': ('https://docs.python.org/',
                 os.path.join(SAGE_DOC_SRC, "common",
                              "python{}.inv".format(python_version))),
-    'pplpy': (PPLPY_DOCS, None)}
+    }
+    if PPLPY_DOCS and os.path.exists(os.path.join(PPLPY_DOCS, 'objects.inv')):
+        app.config.intersphinx_mapping['pplpy'] = (PPLPY_DOCS, None)
+    else:
+        app.config.intersphinx_mapping['pplpy'] = ('https://www.labri.fr/perso/vdelecro/pplpy/latest/', None)
 
     # Add master intersphinx mapping
     dst = os.path.join(invpath, 'objects.inv')
     app.config.intersphinx_mapping['sagemath'] = (refpath, dst)
 
     # Add intersphinx mapping for subdirectories
-    # We intentionally do not name these such that these get higher
-    # priority in case of conflicts
     for directory in os.listdir(os.path.join(invpath)):
         if directory == 'jupyter_execute':
             # This directory is created by jupyter-sphinx extension for
@@ -248,7 +250,7 @@ def set_intersphinx_mappings(app, config):
         if os.path.isdir(os.path.join(invpath, directory)):
             src = os.path.join(refpath, directory)
             dst = os.path.join(invpath, directory, 'objects.inv')
-            app.config.intersphinx_mapping[src] = dst
+            app.config.intersphinx_mapping[directory] = (src, dst)
 
     intersphinx.normalize_intersphinx_mapping(app, config)
 
@@ -619,7 +621,8 @@ latex_elements['preamble'] = r"""
     \DeclareUnicodeCharacter{2534}{+}  % uh
     \DeclareUnicodeCharacter{253C}{+}  % vh
     \DeclareUnicodeCharacter{2571}{/}  % upper right to lower left
-    \DeclareUnicodeCharacter{2571}{\setminus} % upper left to lower right
+    \DeclareUnicodeCharacter{2572}{\ensuremath{\setminus}} % upper left to lower right
+    \DeclareUnicodeCharacter{2573}{X} % diagonal cross
 
     \DeclareUnicodeCharacter{25CF}{\ensuremath{\bullet}}  % medium black circle
     \DeclareUnicodeCharacter{26AC}{\ensuremath{\circ}}  % medium small white circle
@@ -713,7 +716,7 @@ def call_intersphinx(app, env, node, contnode):
     """
     debug_inf(app, "???? Trying intersphinx for %s" % node['reftarget'])
     builder = app.builder
-    res =  intersphinx.missing_reference(
+    res = intersphinx.missing_reference(
         app, env, node, contnode)
     if res:
         # Replace absolute links to $SAGE_DOC by relative links: this
@@ -735,7 +738,7 @@ def find_sage_dangling_links(app, env, node, contnode):
     debug_inf(app, "==================== find_sage_dangling_links ")
 
     reftype = node['reftype']
-    reftarget  = node['reftarget']
+    reftarget = node['reftarget']
     try:
         doc = node['refdoc']
     except KeyError:
@@ -751,17 +754,18 @@ def find_sage_dangling_links(app, env, node, contnode):
 
     res = call_intersphinx(app, env, node, contnode)
     if res:
-        debug_inf(app, "++ DONE %s"%(res['refuri']))
+        debug_inf(app, "++ DONE %s" % (res['refuri']))
         return res
 
-    if node.get('refdomain') != 'py': # not a python file
+    if node.get('refdomain') != 'py':  # not a python file
         return None
 
     try:
         module = node['py:module']
-        cls    = node['py:class']
+        cls = node['py:class']
     except KeyError:
-        debug_inf(app, "-- no module or class for :%s:%s"%(reftype, reftarget))
+        debug_inf(app, "-- no module or class for :%s:%s" % (reftype,
+                                                             reftarget))
         return None
 
     basename = reftarget.split(".")[0]
@@ -787,10 +791,10 @@ def find_sage_dangling_links(app, env, node, contnode):
     # adapted  from sphinx/domains/python.py
     builder = app.builder
     searchmode = node.hasattr('refspecific') and 1 or 0
-    matches =  builder.env.domains['py'].find_obj(
+    matches = builder.env.domains['py'].find_obj(
         builder.env, module, cls, newtarget, reftype, searchmode)
     if not matches:
-        debug_inf(app, "?? no matching doc for %s"%newtarget)
+        debug_inf(app, "?? no matching doc for %s" % newtarget)
         return call_intersphinx(app, env, node, contnode)
     elif len(matches) > 1:
         env.warn(target_module,
@@ -925,6 +929,7 @@ def setup(app):
         app.add_config_value('intersphinx_mapping', {}, False)
         app.add_config_value('intersphinx_cache_limit', 5, False)
         app.add_config_value('intersphinx_disabled_reftypes', [], False)
+        app.add_config_value('intersphinx_timeout', None, False)
         app.connect('config-inited', set_intersphinx_mappings)
         app.connect('builder-inited', intersphinx.load_mappings)
         # We do *not* fully initialize intersphinx since we call it by hand

@@ -41,7 +41,6 @@ export = p1list.export()
 from .apply cimport Apply
 cdef Apply PolyApply= Apply()
 
-from sage.rings.integer cimport Integer
 from sage.matrix.matrix_rational_dense cimport Matrix_rational_dense
 from sage.matrix.matrix_cyclo_dense cimport Matrix_cyclo_dense
 
@@ -49,7 +48,7 @@ ctypedef long long llong
 
 cdef int llong_prod_mod(int a, int b, int N):
     cdef int c
-    c = <int> ( ((<llong> a) * (<llong> b)) % (<llong> N) )
+    c = <int> (((<llong> a) * (<llong> b)) % (<llong> N))
     if c < 0:
         c = c + N
     return c
@@ -198,12 +197,12 @@ cdef class Heilbronn:
                 a[i] = b[i] = 0
         if N < 32768:   # use ints with no reduction modulo N
             for i in range(self.length):
-                a[i] = u*self.list.v[4*i] + v*self.list.v[4*i+2]
-                b[i] = u*self.list.v[4*i+1] + v*self.list.v[4*i+3]
+                a[i] = u * self.list.v[4*i] + v * self.list.v[4*i+2]
+                b[i] = u * self.list.v[4*i+1] + v * self.list.v[4*i+3]
         elif N < 46340:    # use ints but reduce mod N so can add two
             for i in range(self.length):
-                a[i] = (u * self.list.v[4*i])%N + (v * self.list.v[4*i+2])%N
-                b[i] = (u * self.list.v[4*i+1])%N + (v * self.list.v[4*i+3])%N
+                a[i] = (u * self.list.v[4*i]) % N + (v * self.list.v[4*i+2]) % N
+                b[i] = (u * self.list.v[4*i+1]) % N + (v * self.list.v[4*i+3]) % N
         else:
             for i in range(self.length):
                 a[i] = llong_prod_mod(u,self.list.v[4*i],N) + llong_prod_mod(v,self.list.v[4*i+2], N)
@@ -221,11 +220,13 @@ cdef class Heilbronn:
 
         OUTPUT: sets entries of ans
         """
-        cdef int j, m = k-2
+        cdef int j, m = k - 2
         for j in range(self.length):
             PolyApply.apply_to_monomial_flint(ans[j], i, m,
-                   self.list.v[4*j], self.list.v[4*j+1],
-                   self.list.v[4*j+2], self.list.v[4*j+3])
+                                              self.list.v[4 * j],
+                                              self.list.v[4 * j + 1],
+                                              self.list.v[4 * j + 2],
+                                              self.list.v[4 * j + 3])
 
     def apply(self, int u, int v, int N):
         """
@@ -332,7 +333,7 @@ cdef class HeilbronnCremona(Heilbronn):
             sage: HeilbronnCremona(691).__repr__()
             'The Cremona-Heilbronn matrices of determinant 691'
         """
-        return "The Cremona-Heilbronn matrices of determinant %s"%self.p
+        return f"The Cremona-Heilbronn matrices of determinant {self.p}"
 
     def _initialize_list(self):
         """
@@ -363,7 +364,7 @@ cdef class HeilbronnCremona(Heilbronn):
             [-2, 1, 1, -3],
             [1, 0, -3, 5]]
         """
-        cdef int r, x1, x2, y1, y2, a, b, c, x3, y3, q, n, p
+        cdef int r, x1, x2, y1, y2, a, b, c, x3, y3, q, p
         cdef list *L
         list_init(&self.list)
         L = &self.list
@@ -799,8 +800,8 @@ def hecke_images_quad_character_weight2(int u, int v, int N, indices, chi, R):
     cdef int k, scalar
     cdef Heilbronn H
 
-    t = verbose("computing non-reduced images of symbol under Hecke operators",
-                               level=1, caller_name='hecke_images_quad_character_weight2')
+    _ = verbose("computing non-reduced images of symbol under Hecke operators",
+                level=1, caller_name='hecke_images_quad_character_weight2')
 
     # Make a matrix over the rational numbers each of whose columns
     # are the values of the character chi.
@@ -839,13 +840,11 @@ def hecke_images_quad_character_weight2(int u, int v, int N, indices, chi, R):
     return T * R
 
 
-
-
-############################################################################
+# ##########################################################################
 # Fast application of Heilbronn operators to computation of
 # systems of Hecke eigenvalues.
 #   Trivial character and weight > 2.
-############################################################################
+# ##########################################################################
 
 def hecke_images_gamma0_weight_k(int u, int v, int i, int N, int k, indices, R):
     """
@@ -897,7 +896,6 @@ def hecke_images_gamma0_weight_k(int u, int v, int i, int N, int k, indices, R):
 
     cdef Heilbronn H
     cdef fmpz_poly_t* poly
-    cdef Integer coeff = Integer()
 
     for z, m in enumerate(indices):
         H = HeilbronnCremona(m) if is_prime(m) else HeilbronnMerel(m)

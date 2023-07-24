@@ -14,11 +14,11 @@ Matrix group elements implemented in GAP
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 #*****************************************************************************
 
 from sage.groups.matrix_gps.group_element cimport is_MatrixGroupElement
-from sage.libs.gap.element cimport GapElement, GapElement_List
+from sage.libs.gap.element cimport GapElement
 from sage.misc.cachefunc import cached_method
 from sage.structure.element import is_Matrix
 from sage.structure.factorization import Factorization
