@@ -148,6 +148,15 @@ cdef class DecompositionNode(SageObject):
         return self.as_ordered_tree()._ascii_art_()
 
 
+cdef class ThreeConnectedIrregularNode(DecompositionNode):
+
+    pass
+
+cdef class UnknownNode(DecompositionNode):
+
+    pass
+
+
 cdef class SumNode(DecompositionNode):
 
     def _repr_(self):
@@ -248,7 +257,7 @@ cdef class PlanarNode(BaseGraphicNode):
     pass
 
 
-cdef class SeriesParallelNode(DecompositionNode):
+cdef class SeriesParallelReductionNode(DecompositionNode):
 
     pass
 
@@ -304,10 +313,11 @@ cdef _class(CMR_DEC *dec):
         return CographicNode
     if CMRdecIsSpecialLeaf(dec, NULL):
         return SpecialLeafNode
-    if CMRdecNumChildren(dec) == 1:
-        return SeriesParallelNode
-    assert CMRdecNumChildren(dec) == 0
-    return DecompositionNode
+    if CMRdecIsSeriesParallelReduction(dec):
+        return SeriesParallelReductionNode
+    if CMRdecIsUnknown(dec):
+        return UnknownNode
+    return ThreeConnectedIrregularNode
 
 
 cdef create_DecompositionNode(CMR_DEC *dec, root=None):

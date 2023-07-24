@@ -576,21 +576,21 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
             sage: result, certificate
             (False, (OneSumNode with 2 children, NotImplemented))
             sage: unicode_art(certificate[0])
-            ╭────────────────OneSumNode with 2 children
-            │                  │
-            SeriesParallelNode DecompositionNode
-            │
-            DecompositionNode
+            ╭OneSumNode with 2 children─╮
+            │                           │
+            SeriesParallelReductionNode UnknownNode
+            │                          
+            ThreeConnectedIrregularNode
             sage: result, certificate = MFR2cmr._is_binary_linear_matroid_regular(
             ....:                           certificate=True, complete_tree=True)
             sage: result, certificate
             (False, (OneSumNode with 2 children, NotImplemented))
             sage: unicode_art(certificate[0])
-            ╭────────────────OneSumNode with 2 children
-            │                  │
-            SeriesParallelNode SeriesParallelNode
-            │                  │
-            DecompositionNode  DecompositionNode
+            ╭OneSumNode with 2 children─╮
+            │                           │
+            SeriesParallelReductionNode SeriesParallelReductionNode
+            │                           │
+            ThreeConnectedIrregularNode ThreeConnectedIrregularNode
 
         TESTS:
 
@@ -622,7 +622,7 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
             sage: unicode_art(certificate)
             ╭─────TwoSumNode with 2 children
             │           │
-            GraphicNode SeriesParallelNode
+            GraphicNode SeriesParallelReductionNode
                         │
                         GraphicNode
         """
