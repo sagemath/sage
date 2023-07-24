@@ -2268,6 +2268,30 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
             sage: f = DynamicalSystem([2*(-2*x^3 + 3*(x^2*y)) + 3*y^3, 3*y^3])
             sage: f.canonical_height(P(1, 0))
             0.00000000000000000000000000000
+
+        ::
+
+            sage: K.<v> = QuadraticField(5)
+            sage: P.<x,y> = ProjectiveSpace(K, 1)
+            sage: f = DynamicalSystem([x^2, y^2])
+            sage: f.canonical_height(P(2 + v, 1))
+            2.5228572277444373139081754230
+
+        ::
+
+            sage: P.<x,y> = ProjectiveSpace(QQ[sqrt(3)], 1)
+            sage: f = DynamicalSystem_projective([x^2 + y^2, 2*x*y])
+            sage: f.canonical_height(P.point([5, 4]), error_bound=0.001)
+            2.1971399646432799363415870031
+
+        ::
+
+            sage: P.<x,y> = ProjectiveSpace(CC, 1)
+            sage: f = DynamicalSystem([x, y])
+            sage: f.canonical_height(P(1, 0))
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: Must be over a number field, a number field order, or QQbar
         """
         bad_primes = kwds.get("bad_primes", None)
         prec = kwds.get("prec", 100)
@@ -2286,7 +2310,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
             f = self._number_field_from_algebraics().as_dynamical_system()
 
             if K == QQ:
-                K = f.base_ring() # TODO make it field?
+                K = f.base_ring()
                 number_field_pt = number_field_pt.change_ring(K)
             elif f.base_ring() == QQ:
                 f = f.change_ring(K)
@@ -2325,12 +2349,13 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
             A = t * f[0]
             B = t * f[1]
 
-            H = 0
-
             d = self.degree()
             R = RealField(prec)
             N = kwds.get('N', 10)
             err = kwds.get('error_bound', None)
+
+            H = 0
+            h = R.zero()
 
             if K is QQ:
                 Res = f.resultant(normalize=True).abs()
@@ -2338,26 +2363,28 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
                 x_i = number_field_pt[0]
                 y_i = number_field_pt[1]
 
-                # computes the error bound as defined in Algorithm 3.1 of [WELLS]
+                # Compute the error bound as defined in Algorithm 3.1 of [WELLS]
                 if Res > 1:
                     if err is not None:
-                        err = err / 2
+                        err /= 2
                         N = ceil((R(Res).log().log() - R(d-1).log() - R(err).log())/(R(d).log()))
                         if N < 1:
                             N = 1
+
                         kwds.update({'error_bound': err})
                         kwds.update({'N': N})
+
                     for n in range(N):
-                        x = A(x_i,y_i) % Res**(N-n)
-                        y = B(x_i,y_i) % Res**(N-n)
+                        x = A(x_i, y_i) % Res**(N - n)
+                        y = B(x_i, y_i) % Res**(N - n)
                         g = gcd([x, y, Res])
-                        H = H + R(g).abs().log() / (d**(n+1))
+                        H = H + R(g).abs().log() / d**(n+1)
                         x_i = x / g
                         y_i = y / g
 
-                # this looks different than Wells' Algorithm because of the difference
-                # between what Wells' calls H_infty,
-                # and what Green's Function returns for the infinite place
+                # It looks different than Wells' Algorithm, because of the difference
+                # between what Wells' calls H_infty and what Green's function returns
+                # for the infinite place.
                 h = f.green_function(number_field_pt, 0, **kwds) - H + R(t).log()
 
                 # The value returned by Wells' Algorithm may be negative.
@@ -2373,6 +2400,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
                 return h
 
             elif K.maximal_order() in UniqueFactorizationDomains:
+                O = K.maximal_order()
                 Res = O(f.resultant(normalize=True).abs())
 
                 x_i = O(number_field_pt[0])
@@ -2391,20 +2419,16 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
 
                     for n in range(N):
                         order_quotient = O.quotient(O.ideal(Res**(N - n)))
-                        # x = O(A(x_i, y_i) % Res**(N-n))
-                        # y = O(B(x_i, y_i) % Res**(N-n))
                         x = O(order_quotient(A(x_i, y_i)).lift())
                         y = O(order_quotient(B(x_i, y_i)).lift())
                         g = gcd([x, y, Res])
-                        H += R(g).abs().log() / (d**(n+1))
-                        # H += R(g.norm()).abs().log() / d**(n+1)
+                        H += R(g).abs().log() / d**(n+1)
                         x_i = O(x / g)
                         y_i = O(y / g)
 
                 # It looks different than Wells' Algorithm, because of the difference
                 # between what Wells' calls H_infty and what Green's function returns
                 # for the infinite place.
-                # h = f.green_function(number_field_pt, 0, **kwds) - H + R(t).log()
                 h = number_field_pt.global_height() - H
                 for v in K.places():
                     h += f.green_function(number_field_pt, v) + R(v(t).abs()).log()
@@ -2424,7 +2448,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
         if bad_primes is None:
             bad_primes = []
             for b in number_field_pt:
-                if K == QQ:
+                if K is QQ:
                     bad_primes += b.denominator().prime_factors()
                 else:
                     bad_primes += b.denominator_ideal().prime_factors()
@@ -2433,9 +2457,11 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
             bad_primes = list(set(bad_primes))
 
         emb = K.places(prec=prec)
-        num_places = len(emb) + len(bad_primes)
+
         if error_bound is not None:
+            num_places = len(emb) + len(bad_primes)
             error_bound /= num_places
+
         R = RealField(prec)
         h = R.zero()
 
@@ -2456,11 +2482,12 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
 
         # Non-archimedean local heights
         for v in bad_primes:
-            if K == QQ:
+            if K is QQ:
                 dv = R.one()
             else:
                 dv = R(v.residue_class_degree() * v.absolute_ramification_index())
             h += dv * f.green_function(number_field_pt, v, **kwds) # non-arch Green functions
+
         return h
 
     def height_difference_bound(self, prec=None):
