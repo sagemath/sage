@@ -18,11 +18,16 @@ from .seymour_decomposition cimport create_DecompositionNode
 
 
 cdef class Matrix_cmr_sparse(Matrix_sparse):
+    r"""
+    Base class for sparse matrices implemented in CMR
+    """
     pass
 
 
 cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
     r"""
+    Sparse matrices with 8-bit integer entries implemented in CMR
+
     EXAMPLES::
 
         sage: from sage.matrix.matrix_cmr_sparse import Matrix_cmr_chr_sparse
@@ -166,6 +171,13 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
     @staticmethod
     def one_sum(*summands):
         r"""
+        Return a block-diagonal matrix constructed from the given matrices (summands).
+
+        INPUT:
+
+        - ``summands`` -- integer matrices or data from which integer matrices can be
+          constructed
+
         EXAMPLES::
 
             sage: from sage.matrix.matrix_cmr_sparse import Matrix_cmr_chr_sparse
@@ -176,6 +188,14 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
             ⎜─────┼─────⎟
             ⎜ 0  0│ 1  1⎟
             ⎝ 0  0│-1  0⎠
+            sage: M = Matrix_cmr_chr_sparse.one_sum([[1, 0], [-1, 1]], [[1]], [[-1]])
+            sage: unicode_art(M)
+            ⎛ 1  0│ 0│ 0⎞
+            ⎜-1  1│ 0│ 0⎟
+            ⎜─────┼──┼──⎟
+            ⎜ 0  0│ 1│ 0⎟
+            ⎜─────┼──┼──⎟
+            ⎝ 0  0│ 0│-1⎠
 
         TESTS::
 
@@ -221,6 +241,8 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
 
     def is_unimodular(self):
         r"""
+        Return whether ``self`` is a unimodular matrix.
+
         EXAMPLES::
 
             sage: from sage.matrix.matrix_cmr_sparse import Matrix_cmr_chr_sparse
@@ -249,6 +271,8 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
 
     def is_strongly_unimodular(self):
         r"""
+        Return whether ``self`` is a strongly unimodular matrix.
+
         A matrix is strongly unimodular if ``self`` and ``self.transpose()`` are both unimodular.
 
         EXAMPLES::
@@ -282,7 +306,9 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
 
     def modulus(self):
         r"""
-        A matrix `M` of rank-`r` is `k`-modular if the following two conditions are satisfied:
+        Return the integer `k` such that ``self`` is `k`-modular.
+
+        A matrix `M` of rank `r` is `k`-modular if the following two conditions are satisfied:
         - for some column basis `B` of `M`, the greatest common divisor of the determinants of all `r`-by-`r` submatrices of `B` is `k`;
         - the matrix `X` such that `M=BX` is totally unimodular.
 
@@ -323,6 +349,8 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
 
     def strong_modulus(self):
         r"""
+        Return the integer `k` such that ``self`` is strongly `k`-modular.
+
         A matrix `M` of rank-`r` is `k`-modular if the following two conditions are satisfied:
         - for some column basis `B` of `M`, the greatest common divisor of the determinants of all `r`-by-`r` submatrices of `B` is `k`;
         - the matrix `X` such that `M=BX` is totally unimodular.
@@ -364,6 +392,8 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
 
     def is_k_modular(self, k):
         r"""
+        Return whether ``self`` is `k`-modular.
+
         A matrix `M` of rank-`r` is `k`-modular if the following two conditions are satisfied:
         - for some column basis `B` of `M`, the greatest common divisor of the determinants of all `r`-by-`r` submatrices of `B` is `k`;
         - the matrix `X` such that `M=BX` is totally unimodular.
@@ -397,7 +427,9 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
 
     def is_strongly_k_modular(self, k):
         r"""
-        A matrix is strongly k-modular if ``self`` and ``self.transpose()`` are both k-modular.
+        Return whether ``self`` is strongly `k`-modular.
+
+        A matrix is strongly `k`-modular if ``self`` and ``self.transpose()`` are both `k`-modular.
 
         EXAMPLES::
 
@@ -501,6 +533,8 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
                                           construct_transposes=False,
                                           construct_graphs=False):
         r"""
+        Return whether the linear matroid of ``self`` over `\GF{2}` is regular.
+
         This is an internal method because it should really be exposed
         as a method of :class:`Matroid`.
 
@@ -635,6 +669,12 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
                               construct_transposes=False,
                               construct_graphs=False):
         r"""
+        Return whether ``self`` is a totally unimodular matrix.
+
+        REFERENCES:
+
+        - [Sch1986]_
+
         EXAMPLES::
 
             sage: from sage.matrix.matrix_cmr_sparse import Matrix_cmr_chr_sparse
