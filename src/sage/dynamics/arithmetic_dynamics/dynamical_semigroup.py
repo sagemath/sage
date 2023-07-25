@@ -465,6 +465,27 @@ class DynamicalSemigroup(Parent, metaclass=InheritComparisonClasscallMetaclass):
         EXAMPLES::
 
             sage: P.<x,y> = ProjectiveSpace(QQ, 1)
+            sage: f = DynamicalSemigroup(([x^2, y^2],))
+            sage: f.nth_iterate(2, 0)
+            (2 : 1)
+
+        ::
+
+            sage: P.<x,y> = ProjectiveSpace(QQ, 1)
+            sage: f = DynamicalSemigroup(([x^2, y^2],))
+            sage: f.nth_iterate(2, 1)
+            (4 : 1)
+
+        ::
+
+            sage: P.<x,y> = ProjectiveSpace(QQ, 1)
+            sage: f = DynamicalSemigroup(([x^2, y^2],))
+            sage: f.nth_iterate(2, 2)
+            (16 : 1)
+
+        ::
+
+            sage: P.<x,y> = ProjectiveSpace(QQ, 1)
             sage: f = DynamicalSemigroup(([x + y, x - y], [x^2, y^2]))
             sage: f.nth_iterate(2, 0)
             (2 : 1)
@@ -477,7 +498,6 @@ class DynamicalSemigroup(Parent, metaclass=InheritComparisonClasscallMetaclass):
             ((3 : 1), (4 : 1))
 
         ::
-
 
             sage: P.<x,y> = ProjectiveSpace(QQ, 1)
             sage: f = DynamicalSemigroup(([x + y, x - y], [x^2, y^2]))
@@ -515,6 +535,8 @@ class DynamicalSemigroup(Parent, metaclass=InheritComparisonClasscallMetaclass):
             for point in result:
                 next_iteration.extend(self(point))
             result = next_iteration
+        if len(result) == 1:
+            return result[0]
         return tuple(result)
 
     def __pow__(self, n):
