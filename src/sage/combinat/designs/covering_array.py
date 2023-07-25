@@ -8,7 +8,7 @@ least one row.
 
 An Orthogonal Array, denoted OA`(N;t,k,v)` is a covering array with the
 property that every sequence of `t`-elements appears in exactly one row.
-See :mod:`sage.combinat.designs.orthogonal_arrays.`
+(See :mod:`sage.combinat.designs.orthogonal_arrays`).
 
 REFERENCES:
 
