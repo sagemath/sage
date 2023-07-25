@@ -56,11 +56,10 @@ of Pascals's triangle::
     sage: tuple(u(n) for n in srange(10))
     (0, 1, 3, 5, 9, 11, 15, 19, 27, 29)
 
-There is a `2`-recursive sequence describing the numbers above as well::
+There is a `2`-regular sequence describing the numbers above as well::
 
-    sage: U = Seq2((Matrix([[3, 2], [0, 1]]), Matrix([[2, 0], [1, 3]])),
-    ....:          left=vector([0, 1]), right=vector([1, 0]),
-    ....:          allow_degenerated_sequence=True).transposed()
+    sage: U = Seq2((Matrix([[3, 0], [2, 1]]), Matrix([[2, 1], [0, 3]])),
+    ....:          left=vector([1, 0]), right=vector([0, 1]))
     sage: all(U[n] == u(n) for n in srange(30))
     True
 
@@ -271,7 +270,7 @@ class kRegularSequence(RecognizableSeries):
             preview=10)
 
     @cached_method
-    def __getitem__(self, n, **kwds):
+    def coefficient_of_n(self, n, **kwds):
         r"""
         Return the `n`-th entry of this sequence.
 
@@ -287,6 +286,11 @@ class kRegularSequence(RecognizableSeries):
             sage: S = Seq2((Matrix([[1, 0], [0, 1]]), Matrix([[0, -1], [1, 2]])),
             ....:          left=vector([0, 1]), right=vector([1, 0]))
             sage: S[7]
+            3
+
+        This is equivalent to::
+
+            sage: S.coefficient_of_n(7)
             3
 
         TESTS::
@@ -311,6 +315,8 @@ class kRegularSequence(RecognizableSeries):
             True
         """
         return self.coefficient_of_word(self.parent()._n_to_index_(n), **kwds)
+
+    __getitem__ = coefficient_of_n
 
     def __iter__(self):
         r"""
@@ -379,8 +385,8 @@ class kRegularSequence(RecognizableSeries):
         TESTS::
 
             sage: Seq2 = kRegularSequenceSpace(2, ZZ)
-            sage: Seq2((Matrix([[3, 2], [0, 1]]), Matrix([[2, 0], [1, 3]])),
-            ....:      left=vector([0, 1]), right=vector([1, 0]))  # indirect doctest
+            sage: Seq2((Matrix([[3, 2], [0, 1]]), Matrix([[2, 0], [1, 3]])),  # indirect doctest
+            ....:      left=vector([0, 1]), right=vector([1, 0]))
             Traceback (most recent call last):
             ...
             DegeneratedSequenceError: degenerated sequence: mu[0]*right != right.
@@ -397,25 +403,33 @@ class kRegularSequence(RecognizableSeries):
                 "for correcting this.")
 
     @cached_method
-    def regenerated(self, minimize=True):
+    @minimize_result
+    def regenerated(self):
         r"""
         Return a `k`-regular sequence that satisfies
-        `\mu[0] \mathit{right} = \mathit{right}`.
+        `\mu[0] \mathit{right} = \mathit{right}` with the same values as
+        this sequence.
 
         INPUT:
 
-        - ``minimize`` -- (default: ``True``) a boolean. If set, then
-          :meth:`minimized` is called after the operation.
+        - ``minimize`` -- (default: ``None``) a boolean or ``None``.
+          If ``True``, then :meth:`~RecognizableSeries.minimized` is called after the operation,
+          if ``False``, then not. If this argument is ``None``, then
+          the default specified by the parent's ``minimize_results`` is used.
 
         OUTPUT:
 
         A :class:`kRegularSequence`
 
+        ALGORITHM:
+
+        Theorem B of [HKL2022]_ with `n_0 = 1`.
+
         EXAMPLES::
 
             sage: Seq2 = kRegularSequenceSpace(2, ZZ)
 
-        The following linear representation of `S` is chosen bad (is
+        The following linear representation of `S` is chosen badly (is
         degenerated, see :meth:`is_degenerated`), as `\mu(0)` applied on
         `\mathit{right}` does not equal `\mathit{right}`::
 
@@ -431,11 +445,13 @@ class kRegularSequence(RecognizableSeries):
             sage: H = S.regenerated()
             sage: H
             2-regular sequence 1, 3, 6, 9, 12, 18, 18, 27, 24, 36, ...
-            sage: H.mu[0], H.mu[1], H.left, H.right
-            (
-            [ 0  1]  [3 0]
-            [-2  3], [6 0], (1, 0), (1, 1)
-            )
+            sage: H.linear_representation()
+            ((1, 0),
+             Finite family {0: [ 0  1]
+                               [-2  3],
+                            1: [3 0]
+                               [6 0]},
+             (1, 1))
             sage: H.is_degenerated()
             False
 
@@ -444,49 +460,42 @@ class kRegularSequence(RecognizableSeries):
             sage: S = Seq2((Matrix([2]), Matrix([3])), vector([1]), vector([1]),
             ....:          allow_degenerated_sequence=True)
             sage: H = S.regenerated(minimize=False)
-            sage: H.mu[0], H.mu[1], H.left, H.right
-            (
-            [1 0]  [0 0]
-            [0 2], [3 3], (1, 1), (1, 0)
-            )
+            sage: H.linear_representation()
+            ((1, 0),
+             Finite family {0: [ 2|-1]
+                               [--+--]
+                               [ 0| 1],
+                            1: [3|0]
+                               [-+-]
+                               [0|0]},
+             (1, 1))
             sage: H.is_degenerated()
             False
-
-        ::
-
-            sage: C = Seq2((Matrix([[2, 0], [2, 1]]), Matrix([[0, 1], [-2, 3]])),
-            ....:          vector([1, 0]), vector([0, 1]))
-            sage: C.is_degenerated()
-            False
-            sage: C.regenerated() is C
-            True
         """
         if not self.is_degenerated():
             return self
 
+        from sage.matrix.constructor import Matrix
         from sage.matrix.special import zero_matrix, identity_matrix
         from sage.modules.free_module_element import vector
 
         P = self.parent()
         dim = self.dimension()
-        Z = zero_matrix(dim)
+        Zc = zero_matrix(dim, 1)
+        Zr = zero_matrix(1, dim)
         I = identity_matrix(dim)
 
         itA = iter(P.alphabet())
         z = next(itA)
-        mu = {z: I.augment(Z).stack(Z.augment(self.mu[z]))}
-        mu.update((r, Z.augment(Z).stack(self.mu[r].augment(self.mu[r])))
+        W0 = Matrix(dim, 1, (I - self.mu[z]) * self.right)
+        mu = {z: Matrix.block([[self.mu[z], W0], [Zr, 1]])}
+        mu.update((r, Matrix.block([[self.mu[r], Zc], [Zr, 0]]))
                   for r in itA)
 
-        result = P.element_class(
+        return P.element_class(
             P, mu,
-            vector(2*tuple(self.left)),
-            vector(tuple(self.right) + dim*(0,)))
-
-        if minimize:
-            return result.minimized()
-        else:
-            return result
+            vector(tuple(self.left) + (0,)),
+            vector(tuple(self.right) + (1,)))
 
     def transposed(self, allow_degenerated_sequence=False):
         r"""
@@ -516,6 +525,13 @@ class kRegularSequence(RecognizableSeries):
             sage: U.is_degenerated()
             True
             sage: Ut = U.transposed()
+            sage: Ut.linear_representation()
+            ((1, 0),
+             Finite family {0: [3 0]
+                               [2 1],
+                            1: [2 1]
+                               [0 3]},
+             (0, 1))
             sage: Ut.is_degenerated()
             False
 
@@ -532,7 +548,7 @@ class kRegularSequence(RecognizableSeries):
 
         .. SEEALSO::
 
-            :meth:`RecognizableSeries.tranposed <sage.combinat.recognizable_series.RecognizableSeries.tranposed>`
+            :meth:`RecognizableSeries.transposed <sage.combinat.recognizable_series.RecognizableSeries.transposed>`
         """
         element = super().transposed()
         if not allow_degenerated_sequence:
@@ -541,7 +557,7 @@ class kRegularSequence(RecognizableSeries):
 
     def _minimized_right_(self):
         r"""
-        Return a recognizable series equivalent to this series, but
+        Return a regular sequence equivalent to this series, but
         with a right minimized linear representation.
 
         OUTPUT:
@@ -550,13 +566,13 @@ class kRegularSequence(RecognizableSeries):
 
         .. SEEALSO::
 
-            :meth:`RecognizableSeries._minimized_right_ <sage.combinat.recognizable_series.RecognizableSeries._minimized_right>`
+            :meth:`RecognizableSeries._minimized_right_ <sage.combinat.recognizable_series.RecognizableSeries._minimized_right_>`
 
         TESTS::
 
             sage: Seq2 = kRegularSequenceSpace(2, ZZ)
-            sage: Seq2((Matrix([[3, 0], [2, 1]]), Matrix([[2, 1], [0, 3]])),
-            ....:          left=vector([1, 0]), right=vector([0, 1])).minimized()  # indirect doctest
+            sage: Seq2((Matrix([[3, 0], [2, 1]]), Matrix([[2, 1], [0, 3]])),  # indirect doctest
+            ....:          left=vector([1, 0]), right=vector([0, 1])).minimized()
             2-regular sequence 0, 1, 3, 5, 9, 11, 15, 19, 27, 29, ...
         """
         return self.transposed(allow_degenerated_sequence=True)._minimized_left_().transposed(allow_degenerated_sequence=True)
@@ -735,7 +751,7 @@ class kRegularSequence(RecognizableSeries):
             ...
             ValueError: a=-1 is not nonnegative.
 
-        The following linear representation of `S` is chosen bad (is
+        The following linear representation of `S` is chosen badly (is
         degenerated, see :meth:`is_degenerated`), as `\mu(0)` applied on
         `\mathit{right}` does not equal `\mathit{right}`::
 
@@ -800,7 +816,7 @@ class kRegularSequence(RecognizableSeries):
 
         zero_M = self.mu[0].parent().zero()
         zero_R = self.right.parent().zero()
-        # Let v(n) = self.__getitem__(n, multiply_left=False)
+        # Let v(n) = self.coefficient_of_n(n, multiply_left=False)
         rule = {}
         # We will construct `kernel` and `rule` in such a way that for all
         # c in `kernel`,
@@ -836,7 +852,7 @@ class kRegularSequence(RecognizableSeries):
                 b.get(c, 0) * self.left
                 for c in kernel)),
             vector(chain.from_iterable(
-                (self.__getitem__(c, multiply_left=False) if c >= 0 else zero_R)
+                (self.coefficient_of_n(c, multiply_left=False) if c >= 0 else zero_R)
                 for c in kernel)))
 
         return result
@@ -1164,7 +1180,7 @@ class kRegularSequence(RecognizableSeries):
             sage: C.partial_sums(include_n=True)
             2-regular sequence 0, 1, 3, 6, 10, 15, 21, 28, 36, 45, ...
 
-        The following linear representation of `S` is chosen bad (is
+        The following linear representation of `S` is chosen badly (is
         degenerated, see :meth:`is_degenerated`), as `\mu(0)` applied on
         `\mathit{right}` does not equal `\mathit{right}`::
 
@@ -1192,13 +1208,17 @@ class kRegularSequence(RecognizableSeries):
             sage: G = Seq2.guess(lambda n: L[n])
             sage: G
             2-regular sequence 1, 4, 10, 19, 31, 49, 67, 94, 118, 154, ...
-            sage: G.mu[0], G.mu[1], G.left, G.right
-            (
-            [  0   1   0   0]  [  0   0   1   0]
-            [  0   0   0   1]  [ -5   3   3   0]
-            [ -5   5   1   0]  [ -5   0   6   0]
-            [ 10 -17   0   8], [-30  21  10   0], (1, 0, 0, 0), (1, 1, 4, 1)
-            )
+            sage: G.linear_representation()
+            ((1, 0, 0, 0),
+             Finite family {0: [  0   1   0   0]
+                               [  0   0   0   1]
+                               [ -5   5   1   0]
+                               [ 10 -17   0   8],
+                            1: [  0   0   1   0]
+                               [ -5   3   3   0]
+                               [ -5   0   6   0]
+                               [-30  21  10   0]},
+             (1, 1, 4, 1))
             sage: G.minimized().dimension() == G.dimension()
             True
 
@@ -1533,20 +1553,20 @@ class kRegularSequenceSpace(RecognizableSeriesSpace):
 
         ALGORITHM:
 
-        For the purposes of this description, the left vector valued sequence
-        associated with a regular sequence consists of the left vector
-        multiplied by the corresponding matrix product, but without the right
-        vector of the regular sequence.
+        For the purposes of this description, the right vector valued sequence
+        associated with a regular sequence consists of the
+        corresponding matrix product multiplied by the right vector,
+        but without the left vector of the regular sequence.
 
-        The algorithm maintains a left vector valued sequence consisting
-        of the left vector valued sequence of the argument ``sequence``
+        The algorithm maintains a right vector valued sequence consisting
+        of the right vector valued sequence of the argument ``sequence``
         (replaced by an empty tuple if ``sequence`` is ``None``) plus several
         components of the shape `m \mapsto f(k^t\cdot m +r)` for suitable
         ``t`` and ``r``.
 
         Implicitly, the algorithm also maintains a `d \times n_\mathrm{verify}` matrix ``A``
-        (where ``d`` is the dimension of the left vector valued sequence)
-        whose columns are the current left vector valued sequence evaluated at
+        (where ``d`` is the dimension of the right vector valued sequence)
+        whose columns are the current right vector valued sequence evaluated at
         the non-negative integers less than `n_\mathrm{verify}` and ensures that this
         matrix has full row rank.
 
@@ -1645,7 +1665,7 @@ class kRegularSequenceSpace(RecognizableSeriesSpace):
              (0, 1))
             sage: logging.getLogger().setLevel(logging.WARN)
 
-        The following linear representation of `S` is chosen bad (is
+        The following linear representation of `S` is chosen badly (is
         degenerated, see :meth:`is_degenerated`), as `\mu(0)` applied on
         `\mathit{right}` does not equal `\mathit{right}`::
 
@@ -1661,11 +1681,13 @@ class kRegularSequenceSpace(RecognizableSeriesSpace):
             sage: G = Seq2.guess(lambda n: S[n])
             sage: G
             2-regular sequence 1, 3, 6, 9, 12, 18, 18, 27, 24, 36, ...
-            sage: G.mu[0], G.mu[1], G.left, G.right
-            (
-            [ 0  1]  [3 0]
-            [-2  3], [6 0], (1, 0), (1, 1)
-            )
+            sage: G.linear_representation()
+            ((1, 0),
+             Finite family {0: [ 0  1]
+                               [-2  3],
+                            1: [3 0]
+                               [6 0]},
+             (1, 1))
 
             sage: G == S.regenerated()
             True
@@ -1792,7 +1814,8 @@ class kRegularSequenceSpace(RecognizableSeriesSpace):
 
         ::
 
-            sage: A = Seq2((Matrix([[1, 1], [1, 1]]), Matrix([[1, 1], [1, 1]])),
+            sage: A = Seq2(
+            ....:     (Matrix([[1, 1], [1, 1]]), Matrix([[1, 1], [1, 1]])),
             ....:     left=(1, 1), right=(1, 1),
             ....:     allow_degenerated_sequence=True)
             sage: Seq2.guess(lambda n: n, sequence=A, n_verify=5)
@@ -1815,8 +1838,7 @@ class kRegularSequenceSpace(RecognizableSeriesSpace):
             seq = lambda m: vector([])
         else:
             mu = [M.rows() for M in sequence.mu]
-            seq = lambda m: (sequence._mu_of_word_(self._n_to_index_(m))
-                             * sequence.right)
+            seq = lambda m: sequence.coefficient_of_n(m, multiply_left=False)
             logger.info('including %s', sequence)
 
         zero = domain(0)
@@ -1826,12 +1848,12 @@ class kRegularSequenceSpace(RecognizableSeriesSpace):
         # `k**t * m + r`
 
         # The elements of `lines` will correspond to the current components
-        # of the left vector valued sequence described in the algorithm section
+        # of the right vector valued sequence described in the algorithm section
         # of the docstring.
 
         def values(m, lines):
             """
-                Return current (as defined by ``lines``) left vector valued
+                Return current (as defined by ``lines``) right vector valued
                 sequence for argument ``m``.
             """
             return tuple(seq(m)) + tuple(f(k**t_R * m + r_R) for t_R, r_R in lines)
@@ -1846,7 +1868,7 @@ class kRegularSequenceSpace(RecognizableSeriesSpace):
 
                 The output is the inverse of the invertible submatrix and
                 the corresponding list of column indices (i.e., arguments to
-                the current left vector valued sequence).
+                the current right vector valued sequence).
             """
             d = len(seq(0)) + len(lines)
 
@@ -1954,7 +1976,7 @@ class kRegularSequenceSpace(RecognizableSeriesSpace):
         r"""
         Construct the unique `k`-regular sequence which fulfills the given
         recurrence relations and initial values. The recurrence relations have to
-        have the specific shape of `k`-recursive sequences as described in [HKL2021]_,
+        have the specific shape of `k`-recursive sequences as described in [HKL2022]_,
         and are either given as symbolic equations, e.g.,
 
         ::
@@ -2003,7 +2025,7 @@ class kRegularSequenceSpace(RecognizableSeriesSpace):
             ``coefficient_ring``.
 
           The recurrence relations above uniquely determine a `k`-regular sequence;
-          see [HKL2021]_ for further information.
+          see [HKL2022]_ for further information.
 
         - ``function`` -- symbolic function ``f`` occurring in the equations
 
@@ -2016,11 +2038,11 @@ class kRegularSequenceSpace(RecognizableSeriesSpace):
         following arguments are required:
 
         - ``M`` -- parameter of the recursive sequences,
-          see [HKL2021]_, Definition 3.1, as well as in the description of
+          see [HKL2022]_, Definition 3.1, as well as in the description of
           ``equations`` above
 
         - ``m`` -- parameter of the recursive sequences,
-          see [HKL2021]_, Definition 3.1, as well as in the description of
+          see [HKL2022]_, Definition 3.1, as well as in the description of
           ``equations`` above
 
         - ``coeffs`` -- a dictionary where ``coeffs[(r, j)]`` is the
@@ -2038,7 +2060,7 @@ class kRegularSequenceSpace(RecognizableSeriesSpace):
 
         - ``inhomogeneities`` -- (default: ``{}``) a dictionary
           mapping integers ``r`` to the inhomogeneity `g_r` as given
-          in [HKL2021]_, Corollary D. All inhomogeneities have to be
+          in [HKL2022]_, Corollary D. All inhomogeneities have to be
           regular sequences from ``self`` or elements of ``coefficient_ring``.
 
         OUTPUT: a :class:`kRegularSequence`
@@ -3106,13 +3128,13 @@ class RecurrenceParser():
         OUTPUT: a namedtuple ``recurrence_rules`` consisting of
 
         - ``M``, ``m``, ``l``, ``u``, ``offset`` -- parameters of the recursive
-          sequences, see [HKL2021]_, Definition 3.1
+          sequences, see [HKL2022]_, Definition 3.1
 
         - ``ll``, ``uu``, ``n1``, ``dim`` -- parameters and dimension of the
-          resulting linear representation, see [HKL2021]_, Theorem A
+          resulting linear representation, see [HKL2022]_, Theorem A
 
         - ``coeffs`` -- a dictionary mapping ``(r, j)`` to the coefficients
-          `c_{r, j}` as given in [HKL2021]_, Equation (3.1).
+          `c_{r, j}` as given in [HKL2022]_, Equation (3.1).
           If ``coeffs[(r, j)]`` is not given for some ``r`` and ``j``,
           then it is assumed to be zero.
 
@@ -3120,7 +3142,7 @@ class RecurrenceParser():
           ``n``-th value of the sequence
 
         - ``inhomogeneities`` -- a dictionary mapping integers ``r``
-          to the inhomogeneity `g_r` as given in [HKL2021]_, Corollary D.
+          to the inhomogeneity `g_r` as given in [HKL2022]_, Corollary D.
 
         EXAMPLES::
 
@@ -3298,10 +3320,10 @@ class RecurrenceParser():
         INPUT:
 
         - ``M``, ``m``, ``l``, ``u``, ``offset`` -- parameters of the
-          recursive sequences, see [HKL2021]_, Definition 3.1
+          recursive sequences, see [HKL2022]_, Definition 3.1
 
         - ``ll`` -- parameter of the resulting linear representation,
-          see [HKL2021]_, Theorem A
+          see [HKL2022]_, Theorem A
 
         - ``coeffs`` -- a dictionary where ``coeffs[(r, j)]`` is the
           coefficient `c_{r,j}` as given in :meth:`kRegularSequenceSpace.from_recurrence`.
@@ -3315,7 +3337,7 @@ class RecurrenceParser():
           determine the linear representation
 
         - ``inhomogeneities`` -- a dictionary mapping integers ``r``
-          to the inhomogeneity `g_r` as given in [HKL2021]_, Corollary D.
+          to the inhomogeneity `g_r` as given in [HKL2022]_, Corollary D.
 
         OUTPUT:
 
@@ -3489,15 +3511,15 @@ class RecurrenceParser():
     def ind(self, M, m, ll, uu):
         r"""
         Determine the index operator corresponding to the recursive
-        sequence as defined in [HKL2021]_.
+        sequence as defined in [HKL2022]_.
 
         INPUT:
 
         - ``M``, ``m`` -- parameters of the recursive sequences,
-          see [HKL2021]_, Definition 3.1
+          see [HKL2022]_, Definition 3.1
 
         - ``ll``, ``uu`` -- parameters of the resulting linear representation,
-          see [HKL2021]_, Theorem A
+          see [HKL2022]_, Theorem A
 
         OUTPUT:
 
@@ -3553,7 +3575,7 @@ class RecurrenceParser():
     def shifted_inhomogeneities(self, recurrence_rules):
         r"""
         Return a dictionary of all needed shifted inhomogeneities as described
-        in the proof of Coroallary D in [HKL2021]_.
+        in the proof of Corollary D in [HKL2022]_.
 
         INPUT:
 
@@ -3563,9 +3585,9 @@ class RecurrenceParser():
         OUTPUT:
 
         A dictionary mapping `r` to the regular sequence
-        `\sum_i g_r(n + i)` for `g_r` as given in [HKL2021]_, Corollary D,
+        `\sum_i g_r(n + i)` for `g_r` as given in [HKL2022]_, Corollary D,
         and `i` between `\lfloor\ell'/k^{M}\rfloor` and
-        `\lfloor (k^{M-1} - k^{m} + u')/k^{M}\rfloor + 1`; see [HKL2021]_,
+        `\lfloor (k^{M-1} - k^{m} + u')/k^{M}\rfloor + 1`; see [HKL2022]_,
         proof of Corollary D. The first blocks of the corresponding
         vector-valued sequence (obtained from its linear
         representation) correspond to the sequences `g_r(n + i)` where
@@ -3664,7 +3686,7 @@ class RecurrenceParser():
 
     def v_eval_n(self, recurrence_rules, n):
         r"""
-        Return the vector `v(n)` as given in [HKL2021]_, Theorem A.
+        Return the vector `v(n)` as given in [HKL2022]_, Theorem A.
 
         INPUT:
 
@@ -3733,7 +3755,7 @@ class RecurrenceParser():
 
         - ``correct_offset`` -- (default: ``True``) a boolean. If
           ``True``, then the resulting linear representation has no
-          offset.  See [HKL2021]_ for more information.
+          offset.  See [HKL2022]_ for more information.
 
         OUTPUT: a matrix
 
