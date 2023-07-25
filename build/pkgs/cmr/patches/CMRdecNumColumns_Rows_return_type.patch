@@ -1,0 +1,50 @@
+commit 65bee3c428dd7b64ca93b29b008d4c8fa7364691
+Author: Matthias Koeppe <mkoeppe@math.ucdavis.edu>
+Date:   Mon Jul 24 22:24:27 2023 -0700
+
+    dec.{h,c} (CMRdecNum{Columns,Rows}): Fix return type
+
+diff --git a/include/cmr/dec.h b/include/cmr/dec.h
+index ab97d2a..20be1dd 100644
+--- a/include/cmr/dec.h
++++ b/include/cmr/dec.h
+@@ -211,7 +211,7 @@ bool CMRdecIsUnknown(
+  */
+ 
+ CMR_EXPORT
+-bool CMRdecNumRows(
++size_t CMRdecNumRows(
+   CMR_DEC* dec  /**< Decomposition. */
+ );
+ 
+@@ -238,7 +238,7 @@ size_t* CMRdecRowsParent(
+  */
+ 
+ CMR_EXPORT
+-bool CMRdecNumColumns(
++size_t CMRdecNumColumns(
+   CMR_DEC* dec  /**< Decomposition. */
+ );
+ 
+diff --git a/src/cmr/dec.c b/src/cmr/dec.c
+index 35fd196..3582c0f 100644
+--- a/src/cmr/dec.c
++++ b/src/cmr/dec.c
+@@ -182,7 +182,7 @@ bool CMRdecIsUnknown(CMR_DEC* dec)
+   return dec->type == CMR_DEC_UNKNOWN;
+ }
+ 
+-bool CMRdecNumRows(CMR_DEC* dec)
++size_t CMRdecNumRows(CMR_DEC* dec)
+ {
+   assert(dec);
+ 
+@@ -196,7 +196,7 @@ size_t* CMRdecRowsParent(CMR_DEC* dec)
+   return dec->rowsParent;
+ }
+ 
+-bool CMRdecNumColumns(CMR_DEC* dec)
++size_t CMRdecNumColumns(CMR_DEC* dec)
+ {
+   assert(dec);
+ 
