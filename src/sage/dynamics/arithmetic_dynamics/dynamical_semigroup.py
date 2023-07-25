@@ -511,6 +511,9 @@ class DynamicalSemigroup(Parent, metaclass=InheritComparisonClasscallMetaclass):
         return tuple(result)
 
     def orbit(self, p, n):
+        r"""
+        Return a tuple of tuples
+        """
         if isinstance(n, Integer):
             if n < 0:
                 raise ValueError(str(n) + " must be a nonnegative integer")
@@ -523,8 +526,19 @@ class DynamicalSemigroup(Parent, metaclass=InheritComparisonClasscallMetaclass):
             raise ValueError(str(n) + " cannot be in descending order")
 
         result = []
-        current_iterate = self.nth_iterate(p, n[0])
+        current_iterate = None
+        if n[0] == 0:
+            current_iterate = (self.domain()(p),)
+        else:
+            current_iterate = self.nth_iterate(p, n[0])
         result.append(current_iterate)
+        for i in range(n[0] + 1, n[1] + 1):
+            next_iterate = []
+            for value in current_iterate:
+                next_iterate.extend(self(value))
+            result.append(tuple(next_iterate))
+            current_iterate = next_iterate
+        return tuple(result)
 
     def __pow__(self, n):
         r"""
