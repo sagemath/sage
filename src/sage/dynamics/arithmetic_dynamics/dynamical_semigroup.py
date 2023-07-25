@@ -542,6 +542,27 @@ class DynamicalSemigroup(Parent, metaclass=InheritComparisonClasscallMetaclass):
     def orbit(self, p, n):
         r"""
         Return a tuple of tuples
+
+        EXAMPLES::
+
+            sage: P.<x,y> = ProjectiveSpace(QQ, 1)
+            sage: d = DynamicalSemigroup(([x, y], [x^2, y^2]))
+            sage: d.orbit(2, 0)
+            False
+
+        ::
+
+            sage: P.<x,y> = ProjectiveSpace(QQ, 1)
+            sage: d = DynamicalSemigroup(([x, y], [x^2, y^2]))
+            sage: d.orbit(2, 1)
+            False
+
+        ::
+
+            sage: P.<x,y> = ProjectiveSpace(QQ, 1)
+            sage: d = DynamicalSemigroup(([x, y], [x^2, y^2]))
+            sage: d.orbit(2, 2)
+            False
         """
         if isinstance(n, Integer):
             if n < 0:
@@ -555,11 +576,11 @@ class DynamicalSemigroup(Parent, metaclass=InheritComparisonClasscallMetaclass):
             raise ValueError(str(n) + " cannot be in descending order")
 
         result = []
-        current_iterate = None
-        if n[0] == 0:
-            current_iterate = (self.domain()(p),)
-        else:
-            current_iterate = self.nth_iterate(p, n[0])
+        current_iterate = self.nth_iterate(p, n[0])
+        # if n[0] == 0:
+        #     current_iterate = (self.domain()(p),)
+        # else:
+        #     current_iterate = self.nth_iterate(p, n[0])
         result.append(current_iterate)
         for i in range(n[0] + 1, n[1] + 1):
             next_iterate = []
