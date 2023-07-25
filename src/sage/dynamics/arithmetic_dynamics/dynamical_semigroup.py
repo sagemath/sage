@@ -562,6 +562,56 @@ class DynamicalSemigroup(Parent, metaclass=InheritComparisonClasscallMetaclass):
             sage: d = DynamicalSemigroup(([x, y], [x^2, y^2]))
             sage: d.orbit(2, 2)
             False
+
+        ::
+
+            sage: P.<x,y> = ProjectiveSpace(QQ, 1)
+            sage: d = DynamicalSemigroup(([x, y], [x^2, y^2]))
+            sage: d.orbit(2, [1, 2])
+            (((2 : 1), (4 : 1)), ((2 : 1), (4 : 1), (4 : 1), (16 : 1)))
+
+        TESTS::
+
+            sage: P.<x,y> = ProjectiveSpace(QQ, 1)
+            sage: d = DynamicalSemigroup(([x, y], [x^2, y^2]))
+            sage: d.orbit(2, -2)
+            Traceback (most recent call last):
+            ...
+            ValueError: -2 must be a nonnegative integer
+
+        ::
+
+            sage: P.<x,y> = ProjectiveSpace(QQ, 1)
+            sage: d = DynamicalSemigroup(([x, y], [x^2, y^2]))
+            sage: d.orbit(2, x)
+            Traceback (most recent call last):
+            ...
+            TypeError: x must be an integer or list or tuple of two integers
+
+            sage: P.<x,y> = ProjectiveSpace(QQ, 1)
+            sage: d = DynamicalSemigroup(([x, y], [x^2, y^2]))
+            sage: d.orbit(2, [1, 2, 3])
+            Traceback (most recent call last):
+            ...
+            ValueError: [1, 2, 3] must be an integer or list or tuple of two integers
+
+        ::
+
+            sage: P.<x,y> = ProjectiveSpace(QQ, 1)
+            sage: d = DynamicalSemigroup(([x, y], [x^2, y^2]))
+            sage: d.orbit(2, [-2, 1])
+            Traceback (most recent call last):
+            ...
+            ValueError: [-2, 1] must contain exactly two nonnegative integers
+
+        ::
+
+            sage: P.<x,y> = ProjectiveSpace(QQ, 1)
+            sage: d = DynamicalSemigroup(([x, y], [x^2, y^2]))
+            sage: d.orbit(2, [2, 1])
+            Traceback (most recent call last):
+            ...
+            ValueError: [2, 1] cannot be in descending order
         """
         if isinstance(n, Integer):
             if n < 0:
@@ -569,6 +619,8 @@ class DynamicalSemigroup(Parent, metaclass=InheritComparisonClasscallMetaclass):
             return self.orbit(p, [0, n])
         if not isinstance(n, Collection):
             raise TypeError(str(n) + " must be an integer or list or tuple of two integers")
+        if not len(n) == 2:
+            raise ValueError(str(n) + " must be an integer or list or tuple of two integers")
         if n[0] < 0 or n[1] < 0:
             raise ValueError(str(n) + " must contain exactly two nonnegative integers")
         if n[0] > n[1]:
@@ -576,10 +628,6 @@ class DynamicalSemigroup(Parent, metaclass=InheritComparisonClasscallMetaclass):
 
         result = []
         current_iterate = self.nth_iterate(p, n[0])
-        # if n[0] == 0:
-        #     current_iterate = (self.domain()(p),)
-        # else:
-        #     current_iterate = self.nth_iterate(p, n[0])
         result.append(current_iterate)
         for i in range(n[0] + 1, n[1] + 1):
             next_iterate = []
