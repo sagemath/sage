@@ -514,13 +514,69 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
                                         for column in range(self.ncols()))
             return True, (sage_graph, sage_forest_edges, sage_coforest_edges)
 
-        return False, None  # submatrix TBD
+        return False, NotImplemented  # submatrix TBD
 
     def is_cographic(self, *, time_limit=60.0, certificate=False):
         raise NotImplementedError
 
     def is_network_matrix(self, *, time_limit=60.0, certificate=False):
-        raise NotImplementedError
+        r"""
+        EXAMPLES:
+
+        This is test ``Basic`` in CMR's ``test_network.cpp``::
+
+            sage: from sage.matrix.matrix_cmr_sparse import Matrix_cmr_chr_sparse
+            sage: M = Matrix_cmr_chr_sparse(MatrixSpace(ZZ, 6, 7, sparse=True),
+            ....:                           [[-1,  0,  0,  0,  1, -1,  0],
+            ....:                            [ 1,  0,  0,  1, -1,  1,  0],
+            ....:                            [ 0, -1,  0, -1,  1, -1,  0],
+            ....:                            [ 0,  1,  0,  0,  0,  0,  1],
+            ....:                            [ 0,  0,  1, -1,  1,  0,  1],
+            ....:                            [ 0,  0, -1,  1, -1,  0,  0]])
+            sage: M.is_network_matrix()
+            True
+            sage: result, certificate = M.is_network_matrix(certificate=True)
+            sage: result, certificate
+            (True,
+             (Digraph on 7 vertices,
+              ((9, 8), (3, 8), (3, 4), (5, 4), (4, 6), (0, 6)),
+              ((3, 9), (5, 3), (4, 0), (0, 8), (9, 0), (4, 9), (5, 6))))
+            sage: digraph, forest_arcs, coforest_arcs = certificate
+            sage: digraph.plot()  # TODO: How should we visualize the forest & coforest?
+            Graphics object consisting of 21 graphics primitives
+        """
+        cdef bool result
+        cdef CMR_GRAPH *digraph = NULL
+        cdef CMR_GRAPH_EDGE* forest_arcs = NULL
+        cdef CMR_GRAPH_EDGE* coforest_arcs = NULL
+        cdef bool* arcs_reversed = NULL
+        cdef CMR_SUBMAT* submatrix = NULL
+        cdef CMR_NETWORK_STATISTICS stats
+
+        sig_on()
+        try:
+            if certificate:
+                CMR_CALL(CMRtestNetworkMatrix(cmr, self._mat, &result, &digraph, &forest_arcs,
+                                              &coforest_arcs, &arcs_reversed, &submatrix, &stats,
+                                              time_limit))
+            else:
+                CMR_CALL(CMRtestNetworkMatrix(cmr, self._mat, &result, NULL, NULL,
+                                              NULL, NULL, NULL, &stats, time_limit))
+        finally:
+            sig_off()
+
+        if not certificate:
+            return <bint> result
+
+        if <bint> result:
+            sage_digraph = _sage_digraph(digraph, arcs_reversed)
+            sage_forest_arcs = tuple(_sage_arc(digraph, forest_arcs[row], arcs_reversed[forest_arcs[row]])
+                                      for row in range(self.nrows()))
+            sage_coforest_arcs = tuple(_sage_arc(digraph, coforest_arcs[column], arcs_reversed[coforest_arcs[column]])
+                                        for column in range(self.ncols()))
+            return True, (sage_digraph, sage_forest_arcs, sage_coforest_arcs)
+
+        return False, NotImplemented  # submatrix TBD
 
     def is_dual_network_matrix(self, *, time_limit=60.0, certificate=False):
         raise NotImplementedError
@@ -813,3 +869,28 @@ cdef _sage_graph(CMR_GRAPH *graph):
             i = CMRgraphEdgesNext(graph, i)
 
     return Graph([list(vertices()), list(edges())])
+
+
+cdef _sage_arc(CMR_GRAPH *graph, CMR_GRAPH_EDGE e, bint reversed):
+    if reversed:
+        return Integer(CMRgraphEdgeV(graph, e)), Integer(CMRgraphEdgeU(graph, e))
+    return Integer(CMRgraphEdgeU(graph, e)), Integer(CMRgraphEdgeV(graph, e))
+
+
+cdef _sage_digraph(CMR_GRAPH *graph, bool *arcs_reversed):
+    from sage.graphs.digraph import DiGraph
+
+    def vertices():
+        i = CMRgraphNodesFirst(graph)
+        while CMRgraphNodesValid(graph, i):
+            yield i
+            i = CMRgraphNodesNext(graph, i)
+
+    def arcs():
+        i = CMRgraphEdgesFirst(graph)
+        while CMRgraphEdgesValid(graph, i):
+            e = CMRgraphEdgesEdge(graph, i)
+            yield _sage_arc(graph, e, arcs_reversed[e])
+            i = CMRgraphEdgesNext(graph, i)
+
+    return DiGraph([list(vertices()), list(arcs())])
