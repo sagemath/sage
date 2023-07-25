@@ -1,14 +1,14 @@
 r"""
 Covering Arrays (CA)
 
-A Covering Array, denoted CA`(N,k,v,t)`, is an `n` by `k` array with
+A Covering Array, denoted CA`(N;t,k,v)`, is an `N` by `k` array with
 entries from a set of `v` elements with the property that in every
-selection of `t` columns, eachrow contains every sequence of
-`t`-elements at least once.
+selection of `t` columns, every sequence of `t` elements appears in at
+least one row.
 
-An Orthogonal Array, denoted OA`(N,k,v,t)` is a covering array with the
-property that each row contains every sequence of `t`-elements exactly
-once
+An Orthogonal Array, denoted OA`(N;t,k,v)` is a covering array with the
+property that every sequence of `t`-elements appears in exactly one row.
+(See :mod:`sage.combinat.designs.orthogonal_arrays`).
 
 REFERENCES:
 
@@ -21,10 +21,6 @@ REFERENCES:
 AUTHORS:
 
 - Aaron Dwyer and brett stevens (2022): initial version
-
-.. TODO::
-
-    Implement various construction methods for CAs
 
 """
 
