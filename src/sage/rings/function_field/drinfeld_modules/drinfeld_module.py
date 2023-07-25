@@ -938,26 +938,26 @@ class DrinfeldModule(Parent, UniqueRepresentation):
             sage: K.<T> = Frac(A)
             sage: phi = DrinfeldModule(A, [T, 0, T+1, T^2 + 1])
             sage: phi.basic_j_invariant_parameters()
-            [((1, 2), (1, 5, 1)),
+            [((1,), (31, 1)),
+             ((1, 2), (1, 5, 1)),
              ((1, 2), (7, 4, 1)),
-             ((1, 2), (13, 3, 1)),
-             ((1, 2), (19, 2, 1)),
-             ((1, 2), (25, 1, 1)),
-             ((1, 2), (31, 0, 1)),
              ((1, 2), (8, 9, 2)),
-             ((1, 2), (20, 7, 2)),
              ((1, 2), (9, 14, 3)),
-             ((1, 2), (15, 13, 3)),
-             ((1, 2), (27, 11, 3)),
              ((1, 2), (10, 19, 4)),
-             ((1, 2), (22, 17, 4)),
              ((1, 2), (11, 24, 5)),
-             ((1, 2), (17, 23, 5)),
-             ((1, 2), (23, 22, 5)),
-             ((1, 2), (29, 21, 5)),
-             ((1, 2), (0, 31, 6)),
              ((1, 2), (12, 29, 6)),
-             ((1, 2), (31, 31, 7))]
+             ((1, 2), (13, 3, 1)),
+             ((1, 2), (15, 13, 3)),
+             ((1, 2), (17, 23, 5)),
+             ((1, 2), (19, 2, 1)),
+             ((1, 2), (20, 7, 2)),
+             ((1, 2), (22, 17, 4)),
+             ((1, 2), (23, 22, 5)),
+             ((1, 2), (25, 1, 1)),
+             ((1, 2), (27, 11, 3)),
+             ((1, 2), (29, 21, 5)),
+             ((1, 2), (31, 31, 7)),
+             ((2,), (31, 6))]
 
         Use the ``nonzero=True`` flag to display only the parameters
         whose `j`-invariant value is nonzero::
@@ -973,13 +973,13 @@ class DrinfeldModule(Parent, UniqueRepresentation):
             sage: K.<T> = Frac(A)
             sage: phi = DrinfeldModule(A, [T, T, 1, T])
             sage: phi.basic_j_invariant_parameters([1, 2])
-            [((1, 2), (1, 2, 1)),
+            [((1,), (7, 1)),
+             ((1, 2), (1, 2, 1)),
              ((1, 2), (4, 1, 1)),
-             ((1, 2), (7, 0, 1)),
              ((1, 2), (5, 3, 2)),
-             ((1, 2), (0, 7, 3)),
              ((1, 2), (6, 5, 3)),
-             ((1, 2), (7, 7, 4))]
+             ((1, 2), (7, 7, 4)),
+             ((2,), (7, 3))]
 
         TESTS::
 
@@ -1064,8 +1064,23 @@ class DrinfeldModule(Parent, UniqueRepresentation):
         polyhedron = Polyhedron(ieqs=inequalities, eqns=[equation])
         # Compute its integral points
         integral_points = polyhedron.integral_points()
-        return [(tuple(coeff_indices), tuple(p)) for p in integral_points
-                if gcd(p) == 1]
+        # Format the result
+        parameters = []
+        for p in integral_points:
+            if gcd(p) != 1:
+                continue
+            ks = list(coeff_indices)
+            ds = p.list()
+            i = 0
+            while i < len(ks):
+                if ds[i] == 0:
+                    del ds[i]
+                    del ks[i]
+                else:
+                    i += 1
+            parameters.append((tuple(ks), tuple(ds)))
+        parameters.sort()
+        return parameters
 
     def basic_j_invariants(self, nonzero=False):
         r"""
@@ -1110,14 +1125,14 @@ class DrinfeldModule(Parent, UniqueRepresentation):
             sage: K.<T> = Frac(A)
             sage: phi = DrinfeldModule(A, [T, T + 2, T+1, 1])
             sage: J_phi = phi.basic_j_invariants(); J_phi
-            {((1, 2), (0, 31, 6)): T^31 + T^30 + T^26 + T^25 + T^6 + T^5 + T + 1,
+            {((1,), (31, 1)): T^31 + 2*T^30 + 2*T^26 + 4*T^25 + 2*T^6 + 4*T^5 + 4*T + 3,
              ((1, 2), (1, 5, 1)): T^6 + 2*T^5 + T + 2,
              ((1, 2), (7, 4, 1)): T^11 + 3*T^10 + T^9 + 4*T^8 + T^7 + 2*T^6 + 2*T^4 + 3*T^3 + 2*T^2 + 3,
              ((1, 2), (8, 9, 2)): T^17 + 2*T^15 + T^14 + 4*T^13 + 4*T^11 + 4*T^10 + 3*T^9 + 2*T^8 + 3*T^7 + 2*T^6 + 3*T^5 + 2*T^4 + 3*T^3 + 4*T^2 + 3*T + 1,
              ((1, 2), (9, 14, 3)): T^23 + 2*T^22 + 2*T^21 + T^19 + 4*T^18 + T^17 + 4*T^16 + T^15 + 4*T^14 + 2*T^12 + 4*T^11 + 4*T^10 + 2*T^8 + 4*T^7 + 4*T^6 + 2*T^4 + T^2 + 2*T + 2,
              ((1, 2), (10, 19, 4)): T^29 + 4*T^28 + T^27 + 4*T^26 + T^25 + 2*T^24 + 3*T^23 + 2*T^22 + 3*T^21 + 2*T^20 + 4*T^19 + T^18 + 4*T^17 + T^16 + 4*T^15 + T^9 + 4*T^8 + T^7 + 4*T^6 + T^5 + 4*T^4 + T^3 + 4*T^2 + T + 4,
              ...
-             ((1, 2), (31, 31, 7)): T^62 + 3*T^61 + 2*T^60 + 3*T^57 + 4*T^56 + T^55 + 2*T^52 + T^51 + 4*T^50 + 3*T^37 + 4*T^36 + T^35 + 4*T^32 + 2*T^31 + 3*T^30 + T^27 + 3*T^26 + 2*T^25 + 2*T^12 + T^11 + 4*T^10 + T^7 + 3*T^6 + 2*T^5 + 4*T^2 + 2*T + 3}
+             ((2,), (31, 6)): T^31 + T^30 + T^26 + T^25 + T^6 + T^5 + T + 1}
             sage: J_phi[((1, 2), (7, 4, 1))]
             T^11 + 3*T^10 + T^9 + 4*T^8 + T^7 + 2*T^6 + 2*T^4 + 3*T^3 + 2*T^2 + 3
         """
@@ -1703,9 +1718,9 @@ class DrinfeldModule(Parent, UniqueRepresentation):
             sage: K.<T> = Frac(A)
             sage: phi = DrinfeldModule(A, [T, T^2 + T + 1, 0, T^4 + 1, T - 1])
             sage: param = phi.basic_j_invariant_parameters(nonzero=True)
-            sage: phi.j_invariant(param[0])
-            T^13 + 2*T^12 + T + 2
             sage: phi.j_invariant(param[1])
+            T^13 + 2*T^12 + T + 2
+            sage: phi.j_invariant(param[2])
             T^35 + 2*T^31 + T^27 + 2*T^8 + T^4 + 2
 
         TESTS::
