@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-cmr
 from sage.libs.cmr.cmr cimport CMR_DEC
 from sage.structure.sage_object cimport SageObject
 

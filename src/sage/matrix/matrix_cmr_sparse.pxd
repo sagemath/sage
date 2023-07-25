@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-cmr
 from sage.libs.cmr.cmr cimport CMR_CHRMAT, CMR_GRAPH, CMR_GRAPH_EDGE
 
 from .matrix_sparse cimport Matrix_sparse
