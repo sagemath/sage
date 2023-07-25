@@ -458,7 +458,7 @@ class DynamicalSemigroup(Parent, metaclass=InheritComparisonClasscallMetaclass):
         INPUT:
 
         - ``p`` -- a value on which dynamical systems can evaluate
-        - ``n`` -- a positive integer
+        - ``n`` -- a nonnegative integer
 
         OUTPUT: a tuple of values
 
@@ -468,11 +468,38 @@ class DynamicalSemigroup(Parent, metaclass=InheritComparisonClasscallMetaclass):
             sage: f = DynamicalSemigroup(([x + y, x - y], [x^2, y^2]))
             sage: f.nth_iterate(2, 3)
             ((2 : 1), (9 : 1), (5/3 : 1), (16 : 1))
+
+        ::
+
+            sage: P.<x,y> = ProjectiveSpace(QQ, 1)
+            sage: f = DynamicalSemigroup(([x + y, x - y], [x^2, y^2]))
+            sage: f.nth_iterate(2, 0)
+            (2 : 1)
+
+        TESTS::
+
+            sage: P.<x,y> = ProjectiveSpace(QQ, 1)
+            sage: f = DynamicalSemigroup(([x + y, x - y], [x^2, y^2]))
+            sage: f.nth_iterate(2, 3.5)
+            Traceback (most recent call last):
+            ...
+            TypeError: 3.50000000000000 must be an integer
+
+        ::
+
+            sage: P.<x,y> = ProjectiveSpace(QQ, 1)
+            sage: f = DynamicalSemigroup(([x + y, x - y], [x^2, y^2]))
+            sage: f.nth_iterate(2, -3)
+            Traceback (most recent call last):
+            ...
+            ValueError: -3 must be a nonnegative integer
         """
         if not isinstance(n, Integer):
             raise TypeError(str(n) + " must be an integer")
-        if not n > 0:
-            raise ValueError(str(n) + " must be a positive integer")
+        if n < 0:
+            raise ValueError(str(n) + " must be a nonnegative integer")
+        if n == 0:
+            return self.codomain()(p)
         result = self(p)
         if n == 1:
             return result
@@ -523,6 +550,23 @@ class DynamicalSemigroup(Parent, metaclass=InheritComparisonClasscallMetaclass):
             Dynamical System of Projective Space of dimension 1 over Rational Field
               Defn: Defined on coordinates by sending (x : y) to
                     (x^4 : y^4)
+
+        TESTS::
+
+            sage: P.<x,y> = ProjectiveSpace(QQ, 1)
+            sage: f = DynamicalSemigroup(([x, y], [x^2, y^2]))
+            sage: f^2.5
+            Traceback (most recent call last):
+            TypeError: 2.50000000000000 must be an integer
+
+        ::
+
+            sage: P.<x,y> = ProjectiveSpace(QQ, 1)
+            sage: f = DynamicalSemigroup(([x, y], [x^2, y^2]))
+            sage: f^(-2)
+            Traceback (most recent call last):
+            ...
+            ValueError: -2 must be a positive integer
         """
         if not isinstance(n, Integer):
             raise TypeError(str(n) + " must be an integer")
