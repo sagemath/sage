@@ -43,7 +43,7 @@ class DynamicalSemigroup(Parent, metaclass=InheritComparisonClasscallMetaclass):
 
     OUTPUT:
 
-    :class:`DynamicalSemigroup_affine` if ``ds_data`` only contains or defines dynamical systems
+    :class:`DynamicalSemigroup_affine` if ``ds_data`` only contains dynamical systems
     over affine space; and :class:`DynamicalSemigroup_projective` otherwise.
 
     EXAMPLES::
@@ -293,7 +293,7 @@ class DynamicalSemigroup(Parent, metaclass=InheritComparisonClasscallMetaclass):
         self._domain = systems[0].domain()
         self._codomain = systems[0].codomain()
         self._dynamical_systems = systems
-        Parent.__init__(self, category=Semigroups().Finite().FinitelyGenerated())
+        Parent.__init__(self, category=Semigroups().Finite().FinitelyGeneratedAsMagma())
 
     def __call__(self, input):
         r"""
@@ -1075,7 +1075,7 @@ class DynamicalSemigroup_affine_finite_field(DynamicalSemigroup_affine_field):
 
 def _standardize_domains_of_(systems):
     r"""
-    Coerces dynamical systems to the same domain and have the same generators
+    Coerces dynamical systems to the same domain and have the same generators.
 
     INPUT:
 
