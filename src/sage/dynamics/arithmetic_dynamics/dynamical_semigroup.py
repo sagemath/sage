@@ -465,9 +465,23 @@ class DynamicalSemigroup(Parent, metaclass=InheritComparisonClasscallMetaclass):
         EXAMPLES::
 
             sage: P.<x,y> = ProjectiveSpace(QQ, 1)
-            sage: f = DynamicalSemigroup(([x + y, x - y], [x^2, y^2]))
-            sage: f.nth_iterate(2, 3)
-            ((2 : 1), (9 : 1), (5/3 : 1), (16 : 1))
+            sage: f = DynamicalSemigroup(([x^2, y^2],))
+            sage: f.nth_iterate(2, 0)
+            (2 : 1)
+
+        ::
+
+            sage: P.<x,y> = ProjectiveSpace(QQ, 1)
+            sage: f = DynamicalSemigroup(([x^2, y^2],))
+            sage: f.nth_iterate(2, 1)
+            (4 : 1)
+
+        ::
+
+            sage: P.<x,y> = ProjectiveSpace(QQ, 1)
+            sage: f = DynamicalSemigroup(([x^2, y^2],))
+            sage: f.nth_iterate(2, 2)
+            (16 : 1)
 
         ::
 
@@ -475,6 +489,21 @@ class DynamicalSemigroup(Parent, metaclass=InheritComparisonClasscallMetaclass):
             sage: f = DynamicalSemigroup(([x + y, x - y], [x^2, y^2]))
             sage: f.nth_iterate(2, 0)
             (2 : 1)
+
+        ::
+
+            sage: P.<x,y> = ProjectiveSpace(QQ, 1)
+            sage: f = DynamicalSemigroup(([x + y, x - y], [x^2, y^2]))
+            sage: f.nth_iterate(2, 1)
+            ((3 : 1), (4 : 1))
+
+        ::
+
+            sage: P.<x,y> = ProjectiveSpace(QQ, 1)
+            sage: f = DynamicalSemigroup(([x + y, x - y], [x^2, y^2]))
+            sage: f.nth_iterate(2, 2)
+            ((2 : 1), (9 : 1), (5/3 : 1), (16 : 1))
+
 
         TESTS::
 
@@ -499,15 +528,15 @@ class DynamicalSemigroup(Parent, metaclass=InheritComparisonClasscallMetaclass):
         if n < 0:
             raise ValueError(str(n) + " must be a nonnegative integer")
         if n == 0:
-            return self.codomain()(p)
-        result = self(p)
-        if n == 1:
-            return result
-        for i in range(n - 2):
+            return self.domain()(p)
+        result = (p,)
+        for i in range(1, n + 1):
             next_iteration = []
             for point in result:
                 next_iteration.extend(self(point))
             result = next_iteration
+        if len(result) == 1:
+            return result[0]
         return tuple(result)
 
     def orbit(self, p, n):
