@@ -2488,9 +2488,9 @@ cdef class GapElement_Function(GapElement):
         """
         cdef Obj result = NULL
         cdef Obj arg_list
-        cdef int i, n = len(args)
+        cdef int n = len(args)
 
-        if n > 0:
+        if n > 0 and n <= 3:
             libgap = self.parent()
             a = [x if isinstance(x, GapElement) else libgap(x) for x in args]
 
@@ -2498,43 +2498,22 @@ cdef class GapElement_Function(GapElement):
             sig_GAP_Enter()
             sig_on()
             if n == 0:
-                result = CALL_0ARGS(self.value)
+                result = GAP_CallFunc0Args(self.value)
             elif n == 1:
-                result = CALL_1ARGS(self.value,
+                result = GAP_CallFunc1Args(self.value,
                                            (<GapElement>a[0]).value)
             elif n == 2:
-                result = CALL_2ARGS(self.value,
+                result = GAP_CallFunc2Args(self.value,
                                            (<GapElement>a[0]).value,
                                            (<GapElement>a[1]).value)
             elif n == 3:
-                result = CALL_3ARGS(self.value,
+                result = GAP_CallFunc3Args(self.value,
                                            (<GapElement>a[0]).value,
                                            (<GapElement>a[1]).value,
                                            (<GapElement>a[2]).value)
-            elif n == 4:
-                result = CALL_4ARGS(self.value,
-                                           (<GapElement>a[0]).value,
-                                           (<GapElement>a[1]).value,
-                                           (<GapElement>a[2]).value,
-                                           (<GapElement>a[3]).value)
-            elif n == 5:
-                result = CALL_5ARGS(self.value,
-                                           (<GapElement>a[0]).value,
-                                           (<GapElement>a[1]).value,
-                                           (<GapElement>a[2]).value,
-                                           (<GapElement>a[3]).value,
-                                           (<GapElement>a[4]).value)
-            elif n == 6:
-                result = CALL_6ARGS(self.value,
-                                           (<GapElement>a[0]).value,
-                                           (<GapElement>a[1]).value,
-                                           (<GapElement>a[2]).value,
-                                           (<GapElement>a[3]).value,
-                                           (<GapElement>a[4]).value,
-                                           (<GapElement>a[5]).value)
-            elif n >= 7:
+            else:
                 arg_list = make_gap_list(args)
-                result = CALL_XARGS(self.value, arg_list)
+                result = GAP_CallFuncList(self.value, arg_list)
             sig_off()
         finally:
             GAP_Leave()
