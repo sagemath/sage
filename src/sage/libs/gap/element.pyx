@@ -47,11 +47,11 @@ cdef Obj make_gap_list(sage_list) except NULL:
 
     The list of the elements in ``a`` as a Gap ``Obj``.
     """
-    cdef GapElement l
+    cdef Obj l
     cdef GapElement elem
     try:
         GAP_Enter()
-        l = libgap(GAP_NewPlist(0))
+        l = GAP_NewPlist(0)
     finally:
         GAP_Leave()
 
@@ -61,8 +61,8 @@ cdef Obj make_gap_list(sage_list) except NULL:
         else:
             elem = <GapElement>x
 
-        AddList(l.value, elem.value)
-    return l.value
+        AddList(l, elem.value)
+    return l
 
 
 cdef Obj make_gap_matrix(sage_list, gap_ring) except NULL:
@@ -83,12 +83,12 @@ cdef Obj make_gap_matrix(sage_list, gap_ring) except NULL:
 
     The list of the elements in ``sage_list`` as a Gap ``Obj``.
     """
-    cdef GapElement l
+    cdef Obj l
     cdef GapElement elem
     cdef GapElement one
     try:
         GAP_Enter()
-        l = libgap(GAP_NewPlist(0))
+        l = GAP_NewPlist(0)
     finally:
         GAP_Leave()
 
@@ -103,8 +103,8 @@ cdef Obj make_gap_matrix(sage_list, gap_ring) except NULL:
         else:
             elem = <GapElement>x
 
-        AddList(l.value, elem.value)
-    return l.value
+        AddList(l, elem.value)
+    return l
 
 
 cdef char *capture_stdout(Obj func, Obj obj):
