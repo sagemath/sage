@@ -510,6 +510,22 @@ class DynamicalSemigroup(Parent, metaclass=InheritComparisonClasscallMetaclass):
             result = next_iteration
         return tuple(result)
 
+    def orbit(self, p, n):
+        if isinstance(n, Integer):
+            if n < 0:
+                raise ValueError(str(n) + " must be a nonnegative integer")
+            return self.orbit(p, [0, n])
+        if not isinstance(n, Collection):
+            raise TypeError(str(n) + " must be an integer or list or tuple of two integers")
+        if n[0] < 0 or n[1] < 0:
+            raise ValueError(str(n) + " must contain exactly two nonnegative integers")
+        if n[0] > n[1]:
+            raise ValueError(str(n) + " cannot be in descending order")
+
+        result = []
+        current_iterate = self.nth_iterate(p, n[0])
+        result.append(current_iterate)
+
     def __pow__(self, n):
         r"""
         Return a new dynamical semigroup that is the product of this dynamical semigroup and itself ``n`` times.
