@@ -1994,8 +1994,8 @@ class RecognizableSeriesSpace(UniqueRepresentation, Parent):
     def one(self):
         r"""
         Return the one element of this :class:`RecognizableSeriesSpace`,
-        i.e. the embedding of the unique neutral element for `*` in the
-        coefficient ring.
+        i.e. the embedding of the one of the coefficient ring into
+        this :class:`RecognizableSeriesSpace`.
 
         EXAMPLES::
 

@@ -1440,8 +1440,8 @@ class kRegularSequenceSpace(RecognizableSeriesSpace):
         r"""
         Return the one element of this :class:`kRegularSequenceSpace`,
         i.e. the unique neutral element for `*` and also
-        the embedding of the unique neutral element for `*` in the
-        coefficient ring.
+        the embedding of the one of the coefficient ring into
+        this :class:`kRegularSequenceSpace`.
 
         EXAMPLES::
 
