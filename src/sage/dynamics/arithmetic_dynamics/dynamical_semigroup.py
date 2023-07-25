@@ -677,26 +677,24 @@ class DynamicalSemigroup_projective(DynamicalSemigroup):
             sage: d.dehomogenize(0)
             Dynamical semigroup over Affine Space of dimension 1 over Rational Field defined by 2 dynamical systems:
             Dynamical System of Affine Space of dimension 1 over Rational Field
-              Defn: Defined on coordinates by sending (x) to
-                    (x)
+              Defn: Defined on coordinates by sending (y) to
+                    (y)
             Dynamical System of Affine Space of dimension 1 over Rational Field
-              Defn: Defined on coordinates by sending (x) to
-                    (x^2)
+              Defn: Defined on coordinates by sending (y) to
+                    (y^2)
 
-        ::
+        TESTS::
 
             sage: P.<x,y> = ProjectiveSpace(QQ, 1)
             sage: f = DynamicalSystem([x, y], P)
             sage: g = DynamicalSystem([x^2, y^2], P)
             sage: d = DynamicalSemigroup((f, g))
             sage: d.dehomogenize((1, 0))
-            Dynamical semigroup over Affine Space of dimension 1 over Rational Field defined by 2 dynamical systems:
-            Dynamical System of Affine Space of dimension 1 over Rational Field
-              Defn: Defined on coordinates by sending (x) to
-                    (1/x)
-            Dynamical System of Affine Space of dimension 1 over Rational Field
-              Defn: Defined on coordinates by sending (x) to
-                    (1/x^2)
+            Traceback (most recent call last):
+            ...
+            ValueError: Dynamical System of Projective Space of dimension 1 over Rational Field
+              Defn: Defined on coordinates by sending (x : y) to
+                    (x : y) dehomogenized at (1, 0) is not a `DynamicalSystem_affine` object
         """
         new_systems = []
         for ds in self._dynamical_systems:
