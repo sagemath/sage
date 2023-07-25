@@ -504,7 +504,6 @@ class DynamicalSemigroup(Parent, metaclass=InheritComparisonClasscallMetaclass):
             sage: f.nth_iterate(2, 2)
             ((2 : 1), (9 : 1), (5/3 : 1), (16 : 1))
 
-
         TESTS::
 
             sage: P.<x,y> = ProjectiveSpace(QQ, 1)
