@@ -42,14 +42,14 @@ else:
 
     from sage_setup.command.sage_build_cython import sage_build_cython
     from sage_setup.command.sage_build_ext import sage_build_ext
-    sage_build_cython.built_distributions = ['sagemath-bliss']
+    sage_build_cython.built_distributions = ['sagemath-cmr']
 
     cmdclass = dict(build_cython=sage_build_cython,
                     build_ext=sage_build_ext)
 
 from sage_setup.find import find_python_sources
 python_packages, python_modules, cython_modules = find_python_sources(
-    '.', ['sage'], distributions=['sagemath-bliss'])
+    '.', ['sage'], distributions=['sagemath-cmr'])
 
 log.warn('python_packages = {0}'.format(python_packages))
 log.warn('python_modules = {0}'.format(python_modules))

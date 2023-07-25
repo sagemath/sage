@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-cmr
 r"""
 Seymour's decomposition of totally unimodular matrices and regular matroids
 """

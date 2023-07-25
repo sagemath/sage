@@ -1,6 +1,6 @@
 include(`sage_spkg_versions.m4')dnl' -*- conf-unix -*-
 [metadata]
-name = sagemath-bliss
+name = sagemath-cmr
 version = file: VERSION.txt
 description = Sage: Open Source Mathematics Software: Combinatorial matrix recognition
 long_description = file: README.rst
