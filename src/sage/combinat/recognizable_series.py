@@ -1974,7 +1974,7 @@ class RecognizableSeriesSpace(UniqueRepresentation, Parent):
             sage: O.linear_representation()
             ((1), Finite family {0: [0], 1: [0]}, (1))
 
-        TESTS:
+        TESTS::
 
             sage: Rec.one() is Rec.one()
             True
