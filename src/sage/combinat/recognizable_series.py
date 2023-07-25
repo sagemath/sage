@@ -1141,7 +1141,8 @@ class RecognizableSeries(ModuleElement):
 
         TESTS::
 
-            sage: Rec((Matrix([[0]]), Matrix([[0]])), vector([1]), vector([0])).minimized().linear_representation()
+            sage: Rec((Matrix([[0]]), Matrix([[0]])),
+            ....:     vector([1]), vector([0])).minimized().linear_representation()
             ((), Finite family {0: [], 1: []}, ())
         """
         return self._minimized_right_()._minimized_left_()
