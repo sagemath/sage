@@ -1809,6 +1809,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
                                 "if the rank is greater than 2")
             return self._gen[1]**(q+1)/self._gen[2]
         if parameter in ZZ:
+            parameter = ZZ(parameter)
             if parameter <= 0 or parameter >= r:
                 raise ValueError("integer parameter must be >= 1 and < the "
                                  f"rank (={r})")
@@ -1826,17 +1827,19 @@ class DrinfeldModule(Parent, UniqueRepresentation):
                        not len(parameter[1]) == len(parameter[0]) + 1:
                 raise ValueError("components of tuple or list parameter have "
                                  "incorrect length")
-            if not all(p in ZZ for p in parameter[0])\
-                    or not all(p in ZZ for p in parameter[1]):
+            try:  # Check parameter's type
+                parameter_0 = [ZZ(p) for p in parameter[0]]
+                parameter_1 = [ZZ(p) for p in parameter[1]]
+            except TypeError:
                 raise TypeError("components of tuple or list parameter must "
                                 "contain only integers")
             # Check that the weight-0 condition is satisfied:
             #   d_1 (q - 1) + ... + d_{r-1} (q^{r-1} - 1)
             #   = d_r (q^r - 1)
             if check:
-                right = parameter[1][-1]*(q**r - 1)
-                left = sum(parameter[1][i]*(q**(parameter[0][i]) - 1) for i in
-                           range(len(parameter[0])))
+                right = parameter_1[-1]*(q**r - 1)
+                left = sum(parameter_1[i]*(q**(parameter_0[i]) - 1) for i in
+                           range(len(parameter_0)))
                 if left != right:
                     raise ValueError("parameter does not satisfy the "
                                      "weight-0 condition")
@@ -1844,8 +1847,8 @@ class DrinfeldModule(Parent, UniqueRepresentation):
             raise TypeError("parameter must be a tuple or a list of "
                             "length 2 or an integer")
         num = prod(self._gen[k]**d
-                   for k, d in zip(parameter[0], parameter[1][:-1]))
-        return num / (self._gen[-1]**parameter[1][-1])
+                   for k, d in zip(parameter_0, parameter_1[:-1]))
+        return num / (self._gen[-1]**parameter_1[-1])
 
     def jk_invariants(self):
         r"""
