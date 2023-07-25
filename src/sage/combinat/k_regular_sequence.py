@@ -1044,7 +1044,7 @@ class kRegularSequenceSpace(RecognizableSeriesSpace):
             sage: O.linear_representation()
             ((1), Finite family {0: [1], 1: [0]}, (1))
 
-        TESTS:
+        TESTS::
 
             sage: Seq2.one() is Seq2.one()
             True
