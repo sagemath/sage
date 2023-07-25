@@ -580,7 +580,7 @@ class DynamicalSemigroup_projective_finite_field(DynamicalSemigroup_projective_f
 
 class DynamicalSemigroup_affine(DynamicalSemigroup):
     r"""
-    A dynamical semigroup defined by a multiple dynamical systems on affine space.
+    A dynamical semigroup defined by multiple dynamical systems on affine space.
 
     INPUT:
 
@@ -630,8 +630,8 @@ class DynamicalSemigroup_affine(DynamicalSemigroup):
         if systems[0].base_ring() not in Fields():
             return typecall(cls, systems)
         if isinstance(systems[0].base_ring(), FiniteField):
-            return DynamicalSemigroup_projective_finite_field(systems)
-        return DynamicalSemigroup_projective_field(systems)
+            return DynamicalSemigroup_affine_finite_field(systems)
+        return DynamicalSemigroup_affine_field(systems)
 
 class DynamicalSemigroup_affine_field(DynamicalSemigroup_affine):
     pass
