@@ -74,6 +74,27 @@ cdef class DecompositionNode(SageObject):
             sage: result, certificate = M.is_totally_unimodular(certificate=True)
             sage: certificate.parent_rows_and_columns()
             (None, None)
+
+            sage: from sage.matrix.matrix_cmr_sparse import Matrix_cmr_chr_sparse
+            sage: M = matrix([[1, 0], [-1, 1], [0, 1]], sparse=True)
+            sage: M2 = block_diagonal_matrix([M, M], sparse=True)
+            sage: M2cmr = Matrix_cmr_chr_sparse(M2.parent(), M2); M2cmr
+            [ 1  0  0  0]
+            [-1  1  0  0]
+            [ 0  1  0  0]
+            [ 0  0  1  0]
+            [ 0  0 -1  1]
+            [ 0  0  0  1]
+            sage: result, certificate = M2cmr.is_totally_unimodular(certificate=True,
+            ....:                                                   construct_matrices=True)
+            sage: result, certificate
+            (True, OneSumNode with 2 children)
+            sage: C = certificate.summands(); C
+            (GraphicNode, GraphicNode)
+            sage: C[0].parent_rows_and_columns()
+            ((0, 1, 2), (0, 1))
+            sage: C[1].parent_rows_and_columns()
+            ((3, 4, 5), (2, 3))
         """
 
         cdef size_t *parent_rows = CMRdecRowsParent(self._dec)
