@@ -2727,9 +2727,9 @@ REFERENCES:
               doubles of finite groups*. PhD Thesis,
               University of California, Santa Cruz. 1999.
 
-.. [GoMa2010] Christopher Goff and Geoffrey Mason, 
+.. [GoMa2010] Christopher Goff and Geoffrey Mason,
             *Generalized twisted quantum doubles and the McKay correspondence*,
-            J. Algebra 324 (2010), no. 11, 3007–3016. 
+            J. Algebra 324 (2010), no. 11, 3007–3016.
 
 .. [GJ2016] Muddappa Seetharama Gowda and Juyoung Jeong.
             Spectral cones in Euclidean Jordan algebras.
@@ -5558,10 +5558,6 @@ REFERENCES:
              Course material, 1997,
              `<http://www.cs.tau.ac.il/~rshamir/atga/atga.html>`_
 
-.. [Sher2006] G.B. Sherwood, S.S Martirosyan, and C.J. Colbourn, "Covering
-              arrays of higher strength from permutation vectors". J. Combin.
-              Designs, 14 (2006) pp. 202-213.
-
 .. [SHET2018] \O. Seker, P. Heggernes, T. Ekim, and Z. Caner Taskin.
               *Generation of random chordal graphs using subtrees of a tree*,
               :arxiv:`1810.13326v1`.
@@ -5625,6 +5621,10 @@ REFERENCES:
              foundations.* Cambridge University Press, 2008.
 
 .. [SloaHada] \N.J.A. Sloane's Library of Hadamard Matrices, at https://neilsloane.com/hadamard/
+
+.. [SMC2006] \G.B. Sherwood, S.S Martirosyan, and C.J. Colbourn, "Covering
+              arrays of higher strength from permutation vectors". J. Combin.
+              Designs, 14 (2006) pp. 202-213.
 
 .. [SMMK2013] \T. Suzaki, K. Minematsu, S. Morioka, and E. Kobayashi,
               *TWINE: A lightweight block cipher for multiple platforms*; in
@@ -6272,10 +6272,6 @@ REFERENCES:
              Math. Combin. Comput. **36** (2001), 95-118.
              http://www.info2.uqam.ca/~walsh_t/papers/Involutions%20paper.pdf
 
-.. [Wal2007] R.A. Walker II, and C.J. Colbourn, "Perfect Hash Families:
-             Constructions and Existence". J. Math. Crypt. 1 (2007),
-             pp.125-150
-
 .. [Walton1990] Mark A. Walton. *Fusion rules in Wess-Zumino-Witten models*.
                 Nuclear Phys. B **340** (1990).
 
@@ -6308,6 +6304,10 @@ REFERENCES:
 
 .. [Wat2010] Watkins, David S. Fundamentals of Matrix Computations,
              Third Edition.  Wiley, Hoboken, New Jersey, 2010.
+
+.. [WC2007] \R.A. Walker II, and C.J. Colbourn, "Perfect Hash Families:
+             Constructions and Existence". J. Math. Crypt. 1 (2007),
+             pp.125-150
 
 .. [Web2007] James Webb. *Game theory: decisions, interaction and
              Evolution*. Springer Science & Business Media, 2007.

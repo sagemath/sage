@@ -15,12 +15,13 @@ from cysignals.memory cimport sig_malloc, sig_calloc, sig_realloc, sig_free
 
 from sage.misc.unknown import Unknown
 
-#Current Version
-#***********************************************************#
-
 def is_covering_array(array, strength=None, levels=None, verbose=False, parameters=False):
     r"""
     Check if the input is a covering array with given strength.
+
+    See :mod:`sage.combinat.designs.covering_array` for a definition.
+
+    INPUT:
 
     - ``array`` -- the Covering Array to be tested.
 
@@ -151,7 +152,7 @@ def is_covering_array(array, strength=None, levels=None, verbose=False, paramete
         symbol_list = list({x for l in array for x in l})
         levels = len(symbol_list)
     else:
-        symbol_list = [num for num in range(levels)]
+        symbol_list = range(levels)
 
     number_rows = len(array)
     number_columns = len(array[0])
@@ -181,7 +182,7 @@ def is_covering_array(array, strength=None, levels=None, verbose=False, paramete
         # ensure in those columns all unique t-tuples, are present
         for comb in combinations(range(number_columns), wstrength):
             existing_combinations = set(tuple([row[ti] for ti in comb]) for row in array)
-            if len(existing_combinations) != number_columns ** wstrength:
+            if len(existing_combinations) != levels ** wstrength:
                 if strength is None:
                     wstrength -= 1
                     finished = True
@@ -200,7 +201,7 @@ def is_covering_array(array, strength=None, levels=None, verbose=False, paramete
                 break
 
     if verbose:
-            print('A {} by {} Covering Array with strength {} with entries from a symbol set of size {}'.format(number_rows,number_columns,wstrength,levels))
+            print('A {} by {} Covering Array with strength {} with entries from a symbol set of size {}'.format(number_rows, number_columns, wstrength, levels))
 
     if parameters:
         return (result, (number_rows, wstrength, number_columns, levels))
