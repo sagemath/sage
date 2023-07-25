@@ -47,8 +47,14 @@ cdef Obj make_gap_list(sage_list) except NULL:
 
     The list of the elements in ``a`` as a Gap ``Obj``.
     """
-    cdef GapElement l = libgap(GAP_NewPlist(0))
+    cdef GapElement l
     cdef GapElement elem
+    try:
+        GAP_Enter()
+        l = libgap(GAP_NewPlist(0))
+    finally:
+        GAP_Leave()
+
     for x in sage_list:
         if not isinstance(x, GapElement):
             elem = <GapElement>libgap(x)
@@ -77,9 +83,15 @@ cdef Obj make_gap_matrix(sage_list, gap_ring) except NULL:
 
     The list of the elements in ``sage_list`` as a Gap ``Obj``.
     """
-    cdef GapElement l = libgap(GAP_NewPlist(0))
+    cdef GapElement l
     cdef GapElement elem
     cdef GapElement one
+    try:
+        GAP_Enter()
+        l = libgap(GAP_NewPlist(0))
+    finally:
+        GAP_Leave()
+
     if gap_ring is not None:
         one = <GapElement>gap_ring.One()
     else:
