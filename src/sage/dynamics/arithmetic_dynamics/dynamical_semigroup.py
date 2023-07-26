@@ -21,6 +21,7 @@ AUTHORS:
 
 from collections.abc import Collection
 from sage.categories.fields import Fields
+from sage.categories.homset import Hom
 from sage.categories.number_fields import NumberFields
 from sage.categories.semigroups import Semigroups
 from sage.dynamics.arithmetic_dynamics.affine_ds import DynamicalSystem_affine
@@ -467,28 +468,28 @@ class DynamicalSemigroup(Parent, metaclass=InheritComparisonClasscallMetaclass):
             sage: P.<x,y> = ProjectiveSpace(QQ, 1)
             sage: f = DynamicalSemigroup(([x^2, y^2],))
             sage: f.nth_iterate(2, 0)
-            (2 : 1)
+            ((2 : 1),)
 
         ::
 
             sage: P.<x,y> = ProjectiveSpace(QQ, 1)
             sage: f = DynamicalSemigroup(([x^2, y^2],))
             sage: f.nth_iterate(2, 1)
-            (4 : 1)
+            ((4 : 1),)
 
         ::
 
             sage: P.<x,y> = ProjectiveSpace(QQ, 1)
             sage: f = DynamicalSemigroup(([x^2, y^2],))
             sage: f.nth_iterate(2, 2)
-            (16 : 1)
+            ((16 : 1),)
 
         ::
 
             sage: P.<x,y> = ProjectiveSpace(QQ, 1)
             sage: f = DynamicalSemigroup(([x + y, x - y], [x^2, y^2]))
             sage: f.nth_iterate(2, 0)
-            (2 : 1)
+            ((2 : 1),)
 
         ::
 
@@ -522,20 +523,16 @@ class DynamicalSemigroup(Parent, metaclass=InheritComparisonClasscallMetaclass):
             ...
             ValueError: -3 must be a nonnegative integer
         """
-        if not isinstance(n, Integer):
+        if not isinstance(n, Integer) and not isinstance(n, int):
             raise TypeError(str(n) + " must be an integer")
         if n < 0:
             raise ValueError(str(n) + " must be a nonnegative integer")
-        if n == 0:
-            return self.domain()(p)
-        result = (p,)
+        result = (self.domain()(p),)
         for i in range(1, n + 1):
             next_iteration = []
             for point in result:
                 next_iteration.extend(self(point))
             result = next_iteration
-        if len(result) == 1:
-            return result[0]
         return tuple(result)
 
     def orbit(self, p, n):
@@ -639,11 +636,12 @@ class DynamicalSemigroup(Parent, metaclass=InheritComparisonClasscallMetaclass):
 
     def __pow__(self, n):
         r"""
-        Return a new dynamical semigroup that is the product of this dynamical semigroup and itself ``n`` times.
+        Return a new dynamical semigroup that is this dynamical semigroup with itself ``n`` times.
+        If ``n`` is zero, return a dynamical semigroup with the identity map.
 
         INPUT:
 
-        - ``n`` -- a positive integer
+        - ``n`` -- a nonnegative integer
 
         OUTPUT: :class:`DynamicalSemigroup`
 
@@ -678,6 +676,14 @@ class DynamicalSemigroup(Parent, metaclass=InheritComparisonClasscallMetaclass):
               Defn: Defined on coordinates by sending (x : y) to
                     (x^4 : y^4)
 
+        ::
+
+            sage: P.<x,y> = ProjectiveSpace(QQ, 1)
+            sage: f = DynamicalSemigroup(([x, y], [x^2, y^2]))
+            sage: f^0
+            Scheme endomorphism of Projective Space of dimension 1 over Rational Field
+              Defn: Identity map
+
         TESTS::
 
             sage: P.<x,y> = ProjectiveSpace(QQ, 1)
@@ -693,12 +699,14 @@ class DynamicalSemigroup(Parent, metaclass=InheritComparisonClasscallMetaclass):
             sage: f^(-2)
             Traceback (most recent call last):
             ...
-            ValueError: -2 must be a positive integer
+            ValueError: -2 must be a nonnegative integer
         """
-        if not isinstance(n, Integer):
+        if not isinstance(n, Integer) and not isinstance(n, int):
             raise TypeError(str(n) + " must be an integer")
-        if not n > 0:
-            raise ValueError(str(n) + " must be a positive integer")
+        if n < 0:
+            raise ValueError(str(n) + " must be a nonnegative integer")
+        if n == 0:
+            return DynamicalSemigroup(Hom(self.domain(), self.domain()).identity())
         result = self
         for i in range(n - 1):
             result = result * self
@@ -877,7 +885,13 @@ class DynamicalSemigroup_projective(DynamicalSemigroup):
 
     def _mul_(self, other_dynamical_semigroup):
         r"""
-        Return a new :class:`DynamicalSystem_projective` with???
+        Return a new :class:`DynamicalSemigroup_projective` that is the result of multiplying
+        this dynamical semigroup with another dynamical semigroup using the * operator.
+
+        Let `f` be a dynamical semigroup with generators `\{ f_1, f_2, \dots, f_m \}`
+        and `g` be a dynamical semigroup with generators `\{ g_1, g_2, \dots, g_n \}`.
+        The product `f * g` has generators
+        `\{ f_i(g_j) : 1 \leq i \leq m, 1 \leq j \leq n \} \cup \{ g_j(f_i) : 1 \leq i \leq m, 1 \leq j \leq n \}`.
 
         INPUT:
 
@@ -1114,7 +1128,13 @@ class DynamicalSemigroup_affine(DynamicalSemigroup):
 
     def _mul_(self, other_dynamical_semigroup):
         r"""
-        Return a new :class:`DynamicalSystem_affine` with???
+        Return a new :class:`DynamicalSemigroup_affine` that is the result of multiplying
+        this dynamical semigroup with another dynamical semigroup using the * operator.
+
+        Let `f` be a dynamical semigroup with generators `\{ f_1, f_2, \dots, f_m \}`
+        and `g` be a dynamical semigroup with generators `\{ g_1, g_2, \dots, g_n \}`.
+        The product `f * g` has generators
+        `\{ f_i(g_j) : 1 \leq i \leq m, 1 \leq j \leq n \} \cup \{ g_j(f_i) : 1 \leq i \leq m, 1 \leq j \leq n \}`.
 
         INPUT:
 
