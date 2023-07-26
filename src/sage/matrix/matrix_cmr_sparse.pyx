@@ -686,20 +686,12 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
               ((3, 9), (5, 3), (4, 0), (0, 8), (9, 0), (4, 9), (5, 6))))
             sage: digraph, forest_arcs, coforest_arcs = certificate
             sage: list(digraph.edges(sort=True))
-            [(0, 6, None),
-            (0, 8, None),
-            (3, 4, None),
-            (3, 8, None),
-            (3, 9, None),
-            (4, 0, None),
-            (4, 6, None),
-            (4, 9, None),
-            (5, 3, None),
-            (5, 4, None),
-            (5, 6, None),
-            (9, 0, None),
-            (9, 8, None)]
-            sage: digraph.plot(color_by_label=True)  # TODO: How should we visualize the forest & coforest?
+            [(0, 6, None), (0, 8, None),
+             (3, 4, None), (3, 8, None), (3, 9, None),
+             (4, 0, None), (4, 6, None), (4, 9, None),
+             (5, 3, None), (5, 4, None), (5, 6, None),
+             (9, 0, None), (9, 8, None)]
+            sage: digraph.plot(edge_colors={'red': forest_arcs})                        # needs sage.plot
             Graphics object consisting of 21 graphics primitives
         """
         cdef bool result
