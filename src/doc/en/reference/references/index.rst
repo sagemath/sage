@@ -2603,6 +2603,11 @@ REFERENCES:
 .. [FV2002] \I. Fagnot, L. Vuillon, Generalized balances in Sturmian
             words, Discrete Applied Mathematics 121 (2002), 83--101.
 
+.. [FW2012] Fan, Neng and Watson, Jean-Paul. *Solving the Connected Dominating 
+            Set Problem and Power Dominating Set Problem by Integer Programming*.
+            Combinatorial Optimization and Applications (2012): 371-383.
+            :doi:`10.1007/978-3-642-31770-5_33`.
+
 .. [FY2004] Eva Maria Feichtner and Sergey Yuzvinsky. *Chow rings of
             toric varieties defined by atomic lattices*. Inventiones
             Mathematicae. **155** (2004), no. 3, pp. 515-536.
