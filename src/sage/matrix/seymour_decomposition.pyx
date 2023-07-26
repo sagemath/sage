@@ -15,7 +15,8 @@ from .matrix_space import MatrixSpace
 cdef class DecompositionNode(SageObject):
 
     cdef _set_dec(self, CMR_DEC *dec, root):
-        if self._root is None:
+        if self._root is None or self._root is self:
+            # We own it, so we have to free it.
             CMR_CALL(CMRdecFree(cmr, &self._dec))
         self._dec = dec
         self._root = root
