@@ -1121,6 +1121,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
         """
         return self._gen
 
+    @cached_method
     def goss_polynomial(self, n, name='X'):
         r"""
         Return the `n`-th Goss polynomial of the Drinfeld module.
