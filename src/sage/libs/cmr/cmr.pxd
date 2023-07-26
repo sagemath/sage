@@ -27,6 +27,13 @@ cdef extern from "cmr/env.h":
     char* CMRgetErrorMessage(CMR* cmr)
     void CMRclearErrorMessage(CMR* cmr)
 
+    CMR_ERROR _CMRallocBlock(CMR* cmr, void** ptr, size_t size)
+    CMR_ERROR _CMRfreeBlock(CMR* cmr, void** ptr, size_t size)
+    CMR_ERROR _CMRallocBlockArray(CMR* cmr, void** ptr, size_t size, size_t length)
+    CMR_ERROR _CMRreallocBlockArray(CMR* cmr, void** ptr, size_t size, size_t length)
+    CMR_ERROR _CMRduplicateBlockArray(CMR* cmr, void** ptr, size_t size, size_t length, void* source)
+    CMR_ERROR _CMRfreeBlockArray(CMR* cmr, void** ptr)
+
 cdef extern from "cmr/matrix.h":
 
     ctypedef struct CMR_SUBMAT:
