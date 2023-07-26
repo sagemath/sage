@@ -1121,6 +1121,59 @@ class DrinfeldModule(Parent, UniqueRepresentation):
         """
         return self._gen
 
+    def goss_polynomial(self, n, name='X'):
+        r"""
+        Return the `n`-th Goss polynomial of the Drinfeld module.
+
+        Note that Goss polynomials are only defined for Drinfeld modules
+        of characteristic zero.
+
+        INPUT:
+
+        - ``n`` (integer) -- the index of the Goss polynomial.
+        - ``name`` (str, default: ``'X'``) -- the name of polynomial
+        variable.
+
+        OUTPUT:
+
+        - a univariate polynomial in ``name`` over the base `A`-field.
+
+        EXAMPLES::
+
+            sage: from drinfeld_modular_forms import goss_polynomial
+            sage: A = GF(3)['T']
+            sage: K.<T> = Frac(A)
+            sage: phi = DrinfeldModule(A, [T, K.one()])  # Carlitz module
+            sage: phi.goss_polynomial(1)
+            X
+            sage: phi.goss_polynomial(2)
+            X^2
+            sage: phi.goss_polynomial(4)
+            X^4 + (1/(T^3 + 2*T))*X^2
+            sage: phi.goss_polynomial(5)
+            X^5 + (2/(T^3 + 2*T))*X^3
+            sage: phi.goss_polynomial(10)
+            X^10 + (1/(T^3 + 2*T))*X^8 + (1/(T^6 + T^4 + T^2))*X^6 + (1/(T^9 + 2*T^3))*X^4 + (1/(T^18 + 2*T^12 + 2*T^10 + T^4))*X^2
+
+        """
+        if self.category()._characteristic:
+            raise ValueError(f"characteristic must be zero (={self.characteristic()})")
+        n = ZZ(n)
+        K = self.base()
+        R = K[name]
+        X = R.gen()
+        if n.is_zero():
+            return R.zero()
+        q = self._Fq.cardinality()
+        if n <= q - 1:
+            return X**n
+        if n%q == 0:
+            return self.goss_polynomial(ZZ(n/q))**q
+        exp = self.exponential()
+        pol = sum(exp[q**(i+1)]*self.goss_polynomial(n - q**(i+1))
+                for i in range(0, (n.log(q).n()).floor()))
+        return X*(self.goss_polynomial(n - 1) + pol)
+
     def height(self):
         r"""
         Return the height of the Drinfeld module if the function field
