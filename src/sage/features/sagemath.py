@@ -184,7 +184,7 @@ class sage__libs__cmr(JoinFeature):
         """
         JoinFeature.__init__(self, 'sage.libs.cmr',
                              [PythonModule('sage.matrix.matrix_cmr_sparse')],
-                             spkg='sagemath_cmr', type='standard')
+                             spkg='sagemath_cmr')
 
 
 class sage__libs__flint(JoinFeature):
