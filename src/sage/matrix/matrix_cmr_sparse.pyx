@@ -170,6 +170,109 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
         return result
 
     @staticmethod
+    def _network_matrix_from_digraph(digraph, forest_arcs=None, arcs=None, vertices=None):
+        r"""
+        Return the network matrix of ``digraph``, pivoted according to ``forest_arcs``.
+
+        Its rows are indexed parallel to ``forest_arcs``, and
+        its columns are indexed parallel to ``vertices``.
+
+        INPUT:
+
+        - ``digraph`` -- a :class:`DiGraph`
+
+        - ``forest_arcs`` -- a sequence of arcs of the ``digraph`` or ``None`` (the default:
+          use the labels of the ``arcs`` as a boolean value)
+
+        - ``arcs`` -- a sequence of arcs of the digraph or ``None`` (the default:
+          all arcs between the ``vertices`` of the ``digraph``)
+
+        - ``vertices`` -- a sequence of vertices of the digraph or ``None`` (the default:
+          all vertices of the ``digraph``)
+
+        EXAMPLES::
+
+            sage: from sage.matrix.matrix_cmr_sparse import Matrix_cmr_chr_sparse
+
+            sage: D = DiGraph([[0, 1, 2], [(0, 1), (1, 2), (0, 2)]])
+            sage: T = [(0, 1), (0, 2)]
+            sage: M = Matrix_cmr_chr_sparse._network_matrix_from_digraph(D, T); M
+            [-1 -1  0  1]
+            [ 1  1  1  0]
+
+        TESTS::
+
+            sage: D = DiGraph([[0, 1, 2], [(0, 1), (1, 2), (0, 2)]])
+            sage: not_a_forest = [(0, 1), (1, 2), (0, 2)]
+            sage: M = Matrix_cmr_chr_sparse._network_matrix_from_digraph(D, not_a_forest); M
+            Traceback (most recent call last):
+            ...
+            ValueError: not a forest
+        """
+        cdef CMR_GRAPH *cmr_digraph = NULL
+        cdef dict vertex_to_cmr_node = {}
+        cdef dict arc_to_cmr_edge = {}
+        cdef CMR_GRAPH_EDGE cmr_edge
+        cdef CMR_GRAPH_NODE cmr_node
+
+        if cmr == NULL:
+            CMRcreateEnvironment(&cmr)
+
+        CMR_CALL(CMRgraphCreateEmpty(cmr, &cmr_digraph, digraph.num_verts(), digraph.num_edges()))
+
+        if vertices is None:
+            vertices = digraph.vertex_iterator()
+        for u in vertices:
+            CMR_CALL(CMRgraphAddNode(cmr, cmr_digraph, &cmr_node))
+            vertex_to_cmr_node[u] = cmr_node
+
+        vertices = vertex_to_cmr_node.keys()
+        if arcs is None:
+            arcs = digraph.edge_iterator(labels=False, vertices=vertices, ignore_direction=True)
+
+        for a in arcs:
+            u, v = a
+            CMR_CALL(CMRgraphAddEdge(cmr, cmr_digraph, vertex_to_cmr_node[u],
+                                     vertex_to_cmr_node[v], &cmr_edge))
+            arc_to_cmr_edge[a] = cmr_edge
+
+        cdef CMR_GRAPH_EDGE *cmr_forest_arcs = NULL
+        cdef bool *cmr_arcs_reversed = NULL
+        cdef CMR_CHRMAT *cmr_matrix = NULL
+        cdef bool is_correct_forest
+        cdef size_t num_forest_arcs
+
+        CMR_CALL(_CMRallocBlockArray(cmr, <void **> &cmr_forest_arcs, len(forest_arcs), sizeof(CMR_GRAPH_EDGE)))
+        try:
+            if forest_arcs is None:
+                num_forest_arcs = 0
+                for u, v, label in digraph.edge_iterator(labels=True, vertices=vertices,
+                                                         ignore_direction=True):
+                    if label:
+                        cmr_forest_arcs[num_forest_arcs] = arc_to_cmr_edge[(u, v)]
+                        num_forest_arcs += 1
+            else:
+                num_forest_arcs = len(forest_arcs)
+                for i, a in enumerate(forest_arcs):
+                    cmr_forest_arcs[i] = arc_to_cmr_edge[a]
+
+            CMR_CALL(_CMRallocBlockArray(cmr, <void **> &cmr_arcs_reversed, len(arc_to_cmr_edge), sizeof(bool)))
+            try:
+                for j in range(len(arc_to_cmr_edge)):
+                    cmr_arcs_reversed[j] = <bool> False
+                CMR_CALL(CMRcomputeNetworkMatrix(cmr, cmr_digraph, &cmr_matrix, NULL,
+                                                 cmr_arcs_reversed, num_forest_arcs, cmr_forest_arcs,
+                                                 0, NULL, &is_correct_forest))
+                if not is_correct_forest:
+                    raise ValueError('not a forest')
+            finally:
+                CMR_CALL(_CMRfreeBlockArray(cmr, <void **> &cmr_arcs_reversed))
+        finally:
+            CMR_CALL(_CMRfreeBlockArray(cmr, <void **> &cmr_forest_arcs))
+
+        return Matrix_cmr_chr_sparse._from_cmr(cmr_matrix)
+
+    @staticmethod
     def one_sum(*summands):
         r"""
         Return a block-diagonal matrix constructed from the given matrices (summands).
