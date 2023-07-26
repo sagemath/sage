@@ -1073,6 +1073,10 @@ cdef class MPolynomialRing_libsingular(MPolynomialRing_base):
         p_Setm(_p, _ring)
 
         return new_MP(self, _p)
+    
+    def subring_generated_by(self, gens):
+        from .multi_polynomial_subring import MPolynomial_subring
+        return MPolynomial_subring(self, gens)
 
     def ideal(self, *gens, **kwds):
         """
@@ -5380,7 +5384,7 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
             p_Setm(mon, _ring)
             _p = p_Add_q(_p, mon, _ring)
         return new_MP(self._parent, _p)
-
+    
     def resultant(self, MPolynomial_libsingular other, variable=None):
         """
         Compute the resultant of this polynomial and the first
