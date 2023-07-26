@@ -133,7 +133,7 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
         return self
 
     def __dealloc__(self):
-        if self._root is not None:
+        if self._root is None or self._root is self:
             # We own it, so we have to free it.
             CMRchrmatFree(cmr, &self._mat)
 
