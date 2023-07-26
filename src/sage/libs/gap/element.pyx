@@ -51,7 +51,7 @@ cdef Obj make_gap_list(sage_list) except NULL:
     cdef GapElement elem
     try:
         GAP_Enter()
-        l = libgap(GAP_NewPlist(0))
+        l = make_GapElement_List(libgap, GAP_NewPlist(0))
     finally:
         GAP_Leave()
 
@@ -88,7 +88,7 @@ cdef Obj make_gap_matrix(sage_list, gap_ring) except NULL:
     cdef GapElement one
     try:
         GAP_Enter()
-        l = libgap(GAP_NewPlist(0))
+        l = make_GapElement_List(libgap, GAP_NewPlist(0))
     finally:
         GAP_Leave()
 
