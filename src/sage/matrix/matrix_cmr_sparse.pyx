@@ -174,8 +174,14 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
         r"""
         Return the network matrix of ``digraph``, pivoted according to ``forest_arcs``.
 
-        Its rows are indexed parallel to ``forest_arcs``, and
-        its columns are indexed parallel to ``vertices``.
+        Its rows are indexed parallel to ``forest_arcs``.
+        It is in "short tableau" form, i.e., the columns are indexed parallel
+        to the elements of ``arcs`` that are not in ``forest_arcs``.
+
+        .. NOTE::
+
+            In [Sch1986]_, the columns are indexed by all arcs of the digraph,
+            giving a "long tableau" form of the network matrix.
 
         INPUT:
 
@@ -185,7 +191,7 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
           use the labels of the ``arcs`` as a boolean value)
 
         - ``arcs`` -- a sequence of arcs of the digraph or ``None`` (the default:
-          all arcs between the ``vertices`` of the ``digraph``)
+          all arcs going out from the ``vertices``)
 
         - ``vertices`` -- a sequence of vertices of the digraph or ``None`` (the default:
           all vertices of the ``digraph``)
@@ -194,11 +200,35 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
 
             sage: from sage.matrix.matrix_cmr_sparse import Matrix_cmr_chr_sparse
 
-            sage: D = DiGraph([[0, 1, 2], [(0, 1), (1, 2), (0, 2)]])
-            sage: T = [(0, 1), (0, 2)]
+        Defining the forest by arc labels::
+
+            sage: D = DiGraph([[0, 1, 2, 3],
+            ....:              [(0, 1, True), (0, 2, True), (1, 2), (1, 3, True), (2, 3)]])
+            sage: M = Matrix_cmr_chr_sparse._network_matrix_from_digraph(D); M
+            [ 1 -1]
+            [-1  1]
+            [ 1  0]
+
+        Defining the forest by a separate list of forest arcs::
+
+            sage: D = DiGraph([[0, 1, 2, 3],
+            ....:              [(0, 1), (0, 2), (1, 2), (1, 3), (2, 3)]])
+            sage: T = [(0, 1), (0, 2), (1, 3)]
             sage: M = Matrix_cmr_chr_sparse._network_matrix_from_digraph(D, T); M
-            [-1 -1  0  1]
-            [ 1  1  1  0]
+            [ 1 -1]
+            [-1  1]
+            [ 1  0]
+
+        Prescribing an order for the arcs (columns)::
+
+            sage: D = DiGraph([[0, 1, 2, 3],
+            ....:              [(0, 1), (0, 2), (1, 2), (1, 3), (2, 3)]])
+            sage: T = [(0, 1), (0, 2), (1, 3)]
+            sage: A = [(2, 3), (0, 1), (0, 2), (1, 2), (1, 3)]
+            sage: M = Matrix_cmr_chr_sparse._network_matrix_from_digraph(D, T, arcs=A); M
+            [ 1 -1]
+            [-1  1]
+            [ 1  0]
 
         TESTS::
 
@@ -207,7 +237,7 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
             sage: M = Matrix_cmr_chr_sparse._network_matrix_from_digraph(D, not_a_forest); M
             Traceback (most recent call last):
             ...
-            ValueError: not a forest
+            ValueError: not a spanning forest
         """
         cdef CMR_GRAPH *cmr_digraph = NULL
         cdef dict vertex_to_cmr_node = {}
@@ -221,20 +251,22 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
         CMR_CALL(CMRgraphCreateEmpty(cmr, &cmr_digraph, digraph.num_verts(), digraph.num_edges()))
 
         if vertices is None:
-            vertices = digraph.vertex_iterator()
-        for u in vertices:
+            iter_vertices = digraph.vertex_iterator()
+        else:
+            iter_vertices = vertices
+        for u in iter_vertices:
             CMR_CALL(CMRgraphAddNode(cmr, cmr_digraph, &cmr_node))
             vertex_to_cmr_node[u] = cmr_node
 
         vertices = vertex_to_cmr_node.keys()
         if arcs is None:
-            arcs = digraph.edge_iterator(labels=False, vertices=vertices, ignore_direction=True)
+            arcs = digraph.edge_iterator(labels=False, vertices=vertices, ignore_direction=False)
 
         for a in arcs:
             u, v = a
             CMR_CALL(CMRgraphAddEdge(cmr, cmr_digraph, vertex_to_cmr_node[u],
                                      vertex_to_cmr_node[v], &cmr_edge))
-            arc_to_cmr_edge[a] = cmr_edge
+            arc_to_cmr_edge[(u, v)] = cmr_edge
 
         cdef CMR_GRAPH_EDGE *cmr_forest_arcs = NULL
         cdef bool *cmr_arcs_reversed = NULL
@@ -242,19 +274,27 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
         cdef bool is_correct_forest
         cdef size_t num_forest_arcs
 
-        CMR_CALL(_CMRallocBlockArray(cmr, <void **> &cmr_forest_arcs, len(forest_arcs), sizeof(CMR_GRAPH_EDGE)))
+        cdef size_t mem_arcs
+        if forest_arcs is not None:
+            mem_arcs = len(forest_arcs)
+        else:
+            mem_arcs = len(vertices) - 1
+
+        CMR_CALL(_CMRallocBlockArray(cmr, <void **> &cmr_forest_arcs, mem_arcs, sizeof(CMR_GRAPH_EDGE)))
         try:
             if forest_arcs is None:
                 num_forest_arcs = 0
                 for u, v, label in digraph.edge_iterator(labels=True, vertices=vertices,
-                                                         ignore_direction=True):
+                                                         ignore_direction=False):
                     if label:
+                        if num_forest_arcs >= mem_arcs:
+                            raise ValueError('not a spanning forest')
                         cmr_forest_arcs[num_forest_arcs] = arc_to_cmr_edge[(u, v)]
                         num_forest_arcs += 1
             else:
                 num_forest_arcs = len(forest_arcs)
-                for i, a in enumerate(forest_arcs):
-                    cmr_forest_arcs[i] = arc_to_cmr_edge[a]
+                for i, (u, v) in enumerate(forest_arcs):
+                    cmr_forest_arcs[i] = arc_to_cmr_edge[(u, v)]
 
             CMR_CALL(_CMRallocBlockArray(cmr, <void **> &cmr_arcs_reversed, len(arc_to_cmr_edge), sizeof(bool)))
             try:
@@ -264,7 +304,7 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
                                                  cmr_arcs_reversed, num_forest_arcs, cmr_forest_arcs,
                                                  0, NULL, &is_correct_forest))
                 if not is_correct_forest:
-                    raise ValueError('not a forest')
+                    raise ValueError('not a spanning forest')
             finally:
                 CMR_CALL(_CMRfreeBlockArray(cmr, <void **> &cmr_arcs_reversed))
         finally:
@@ -645,7 +685,21 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
               ((9, 8), (3, 8), (3, 4), (5, 4), (4, 6), (0, 6)),
               ((3, 9), (5, 3), (4, 0), (0, 8), (9, 0), (4, 9), (5, 6))))
             sage: digraph, forest_arcs, coforest_arcs = certificate
-            sage: digraph.plot()  # TODO: How should we visualize the forest & coforest?
+            sage: list(digraph.edges(sort=True))
+            [(0, 6, None),
+            (0, 8, None),
+            (3, 4, None),
+            (3, 8, None),
+            (3, 9, None),
+            (4, 0, None),
+            (4, 6, None),
+            (4, 9, None),
+            (5, 3, None),
+            (5, 4, None),
+            (5, 6, None),
+            (9, 0, None),
+            (9, 8, None)]
+            sage: digraph.plot(color_by_label=True)  # TODO: How should we visualize the forest & coforest?
             Graphics object consisting of 21 graphics primitives
         """
         cdef bool result
