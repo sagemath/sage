@@ -1122,7 +1122,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
         return self._gen
 
     @cached_method
-    def goss_polynomial(self, n, name='X'):
+    def goss_polynomial(self, n, var='X'):
         r"""
         Return the `n`-th Goss polynomial of the Drinfeld module.
 
@@ -1165,7 +1165,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
             raise ValueError(f"characteristic must be zero (={self.characteristic()})")
         n = ZZ(n)
         K = self.base()
-        R = K[name]
+        R = K[var]
         X = R.gen()
         if n.is_zero():
             return R.zero()
