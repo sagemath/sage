@@ -537,28 +537,29 @@ class DynamicalSemigroup(Parent, metaclass=InheritComparisonClasscallMetaclass):
 
     def orbit(self, p, n):
         r"""
-        Return a tuple of tuples
+        If ``n`` is an integer, return `(p, f(p), f^2(p), \dots, f^n(p))`. If ``n`` is a list or tuple in interval
+        notation `[a, b]`, return `(f^a(p), \dots, f^b(p))`.
 
         EXAMPLES::
 
             sage: P.<x,y> = ProjectiveSpace(QQ, 1)
             sage: d = DynamicalSemigroup(([x, y], [x^2, y^2]))
             sage: d.orbit(2, 0)
-            False
+            (((2 : 1),),)
 
         ::
 
             sage: P.<x,y> = ProjectiveSpace(QQ, 1)
             sage: d = DynamicalSemigroup(([x, y], [x^2, y^2]))
             sage: d.orbit(2, 1)
-            False
+            (((2 : 1),), ((2 : 1), (4 : 1)))
 
         ::
 
             sage: P.<x,y> = ProjectiveSpace(QQ, 1)
             sage: d = DynamicalSemigroup(([x, y], [x^2, y^2]))
             sage: d.orbit(2, 2)
-            False
+            (((2 : 1),), ((2 : 1), (4 : 1)), ((2 : 1), (4 : 1), (4 : 1), (16 : 1)))
 
         ::
 
@@ -610,7 +611,7 @@ class DynamicalSemigroup(Parent, metaclass=InheritComparisonClasscallMetaclass):
             ...
             ValueError: [2, 1] cannot be in descending order
         """
-        if isinstance(n, Integer):
+        if isinstance(n, Integer) or isinstance(n, int):
             if n < 0:
                 raise ValueError(str(n) + " must be a nonnegative integer")
             return self.orbit(p, [0, n])
