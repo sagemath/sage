@@ -1155,6 +1155,10 @@ class DrinfeldModule(Parent, UniqueRepresentation):
             sage: phi.goss_polynomial(10)
             X^10 + (1/(T^3 + 2*T))*X^8 + (1/(T^6 + T^4 + T^2))*X^6 + (1/(T^9 + 2*T^3))*X^4 + (1/(T^18 + 2*T^12 + 2*T^10 + T^4))*X^2
 
+        REFERENCE:
+
+        Section 3 of [Gek1988]_ provides an exposition of Goss
+        polynomials.
         """
         if self.category()._characteristic:
             raise ValueError(f"characteristic must be zero (={self.characteristic()})")

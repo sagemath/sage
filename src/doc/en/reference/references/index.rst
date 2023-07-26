@@ -2661,6 +2661,9 @@ REFERENCES:
             TR-737-05, (2005).
             ftp://ftp.cs.princeton.edu/reports/2005/737.pdf
 
+.. [Gek1988] \E.-U. Gekeler, On the coefficients of Drinfel'd modular
+             forms. Invent. Math. 93 (1988), no. 3, 667-700
+
 .. [Gek1991] \E.-U. Gekeler. On finite Drinfeld modules. Journal of
              algebra, 1(141):187–203, 1991.
 
@@ -2724,9 +2727,9 @@ REFERENCES:
               doubles of finite groups*. PhD Thesis,
               University of California, Santa Cruz. 1999.
 
-.. [GoMa2010] Christopher Goff and Geoffrey Mason, 
+.. [GoMa2010] Christopher Goff and Geoffrey Mason,
             *Generalized twisted quantum doubles and the McKay correspondence*,
-            J. Algebra 324 (2010), no. 11, 3007–3016. 
+            J. Algebra 324 (2010), no. 11, 3007–3016.
 
 .. [GJ2016] Muddappa Seetharama Gowda and Juyoung Jeong.
             Spectral cones in Euclidean Jordan algebras.
