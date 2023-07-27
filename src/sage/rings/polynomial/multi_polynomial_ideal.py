@@ -4989,15 +4989,18 @@ class MPolynomialIdeal(MPolynomialIdeal_singular_repr,
             sage: J.is_homogeneous()
             True
         """
-        if not grading:
-            for f in self.gens():
-                if not f.is_homogeneous():
-                    return False
-        else:
+        # if not grading:
+        #     for f in self.gens():
+        #         if not f.is_homogeneous():
+        #             return False
+        # else:
+        if grading:
             grading_dict={var:grade for var, grade in zip(self.ring().gens(), grading)}
-            for f in self.gens():
-                if not f.is_homogeneous_with_grading(grading_dict):
-                    return False
+        else:
+            grading_dict={var:1 for var, grade in zip(self.ring().gens(), grading)}
+        for f in self.gens():
+            if not f.is_homogeneous_with_grading(grading_dict):
+                return False
         return True
 
 
