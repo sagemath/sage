@@ -1019,7 +1019,13 @@ def _hilbert_series(S):
         ....:     for inv in invs:
         ....:         assert group.random_element()@inv==inv
         sage: def test_hilbert(group):
-        ....:     assert group.molien_series(return_series=False)==_hilbert_series(group.invariant_generators())
+        ....:     invs=group.invariant_generators()
+        ....:     R=invs[0].parent()
+        ....:     subring=R.subring_generated_by(invs)
+        ....:     h1=subring.hilbert_series(algorithm="sage")
+        ....:     h2=subring.hilbert_series(algorithm="singular")
+        ....:     m=group.molien_series(return_series=False)
+        ....:     assert h1==h2 and h2==m
         sage: K = CyclotomicField(4)
         sage: i=K.gen()
         sage: tetra=MatrixGroup([(-1+i)/2,(-1+i)/2, (1+i)/2,(-1-i)/2], [0,i, -i,0])
