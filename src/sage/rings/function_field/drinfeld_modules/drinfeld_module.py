@@ -1131,9 +1131,10 @@ class DrinfeldModule(Parent, UniqueRepresentation):
 
         INPUT:
 
-        - ``n`` (integer) -- the index of the Goss polynomial.
+        - ``n`` (integer) -- the index of the Goss polynomial
+
         - ``name`` (str, default: ``'X'``) -- the name of polynomial
-        variable.
+          variable.
 
         OUTPUT:
 
