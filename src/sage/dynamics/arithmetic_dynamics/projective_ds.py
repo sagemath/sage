@@ -2372,6 +2372,8 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
             H = 0
             h = R.zero()
 
+            # import pdb; pdb.set_trace()
+
             if K is QQ:
                 Res = f.resultant(normalize=True).abs()
             
@@ -2414,7 +2416,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
                     h = R(0)
                 return h
 
-            elif K.maximal_order() in UniqueFactorizationDomains:
+            elif (K.maximal_order() in UniqueFactorizationDomains) or (K.is_unique_factorization_domain()):
                 O = K.maximal_order()
                 Res = O(f.resultant(normalize=True).abs())
 
@@ -2446,7 +2448,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
                 # for the infinite place.
                 h = number_field_pt.global_height() - H
                 for v in K.places():
-                    h += f.green_function(number_field_pt, v) + R(v(t).abs()).log()
+                    h += f.green_function(number_field_pt, v) + R(v(1).abs()).log()
 
                 # The value returned by Wells' Algorithm may be negative.
                 # As the canonical height is always non-negative, hence return 0 if
