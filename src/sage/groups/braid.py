@@ -459,7 +459,7 @@ class Braid(FiniteTypeArtinGroupElement):
             sage: c1 == b.permutation()
             True
 
-        From a permutation it is also possible to recover the permutation braid.
+        From a permutation it is also possible to recover the permutation braid::
 
             sage: B(c0)
             s0*s1*s2*s1
