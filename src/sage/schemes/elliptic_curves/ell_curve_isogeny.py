@@ -1303,7 +1303,6 @@ class EllipticCurveIsogeny(EllipticCurveHom):
             # lines of order_from_multiple() to determine the new
             # order, but this probably shouldn't happen by default
             # as it'll be detrimental to performance in some cases.
-            Q._order = P._order
         return Q
 
     def __getitem__(self, i):
