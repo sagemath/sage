@@ -294,7 +294,7 @@ class DynamicalSemigroup(Parent, metaclass=InheritComparisonClasscallMetaclass):
         self._domain = systems[0].domain()
         self._codomain = systems[0].codomain()
         self._dynamical_systems = systems
-        Parent.__init__(self, category=Semigroups().Finite().FinitelyGeneratedAsMagma())
+        Parent.__init__(self, category=Semigroups().FinitelyGeneratedAsMagma())
 
     def __call__(self, input):
         r"""
@@ -682,8 +682,20 @@ class DynamicalSemigroup(Parent, metaclass=InheritComparisonClasscallMetaclass):
             sage: P.<x,y> = ProjectiveSpace(QQ, 1)
             sage: f = DynamicalSemigroup(([x, y], [x^2, y^2]))
             sage: f^0
-            Scheme endomorphism of Projective Space of dimension 1 over Rational Field
-              Defn: Identity map
+            Dynamical semigroup over Projective Space of dimension 1 over Rational Field defined by 1 dynamical system:
+            Dynamical System of Projective Space of dimension 1 over Rational Field
+              Defn: Defined on coordinates by sending (x : y) to
+                    (x : y)
+
+        ::
+
+            sage: P.<x,y,z,w,t,u,v> = ProjectiveSpace(QQ, 6)
+            sage: f = DynamicalSemigroup(([x^20, y^20, z^20, w^20, t^20, u^20, v^20], [x^23, y^23, z^23, w^23, t^23, u^23, v^23]))
+            sage: f^0
+            Dynamical semigroup over Projective Space of dimension 6 over Rational Field defined by 1 dynamical system:
+            Dynamical System of Projective Space of dimension 6 over Rational Field
+              Defn: Defined on coordinates by sending (x : y : z : w : t : u : v) to
+                    (x : y : z : w : t : u : v)
 
         TESTS::
 
@@ -707,7 +719,12 @@ class DynamicalSemigroup(Parent, metaclass=InheritComparisonClasscallMetaclass):
         if n < 0:
             raise ValueError(str(n) + " must be a nonnegative integer")
         if n == 0:
-            return DynamicalSemigroup(Hom(self.domain(), self.domain()).identity())
+            if isinstance(self, DynamicalSemigroup_projective):
+                identity = DynamicalSystem_projective(self.domain().gens(), self.domain().ambient_space())
+                return DynamicalSemigroup_projective(identity)
+            if isinstance(self, DynamicalSemigroup_affine):
+                identity = DynamicalSystem_affine(self.domain().gens(), self.domain().ambient_space())
+                return DynamicalSemigroup_affine(identity)
         result = self
         for i in range(n - 1):
             result = result * self
