@@ -110,7 +110,7 @@ class ArtinGroupElement(FinitelyPresentedGroupElement):
 
         OUTPUT:
 
-        An element of the Coxeter group or an element of a symmetric group.
+        An element of the Coxeter group  ``W``.
 
         EXAMPLES::
 
@@ -468,9 +468,9 @@ class ArtinGroup(FinitelyPresentedGroup):
         free_group = FreeGroup(names)
         rels = []
         # Generate the relations based on the Coxeter graph
-        In = coxeter_matrix.index_set()
-        for ii, i in enumerate(In):
-            for j in In[ii+1:]:
+        I = coxeter_matrix.index_set()
+        for ii, i in enumerate(I):
+            for j in I[ii + 1:]:
                 m = coxeter_matrix[i, j]
                 if m == Infinity:  # no relation
                     continue

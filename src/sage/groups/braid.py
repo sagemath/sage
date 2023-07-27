@@ -444,8 +444,7 @@ class Braid(FiniteTypeArtinGroupElement):
 
         OUTPUT:
 
-        The image of ``self`` under the natural projection map to ``W``
-        as either a standard permutation or an element of a symmetric group.
+        The image of ``self`` under the natural projection map to ``W``.
 
         EXAMPLES::
 
@@ -1335,8 +1334,6 @@ class Braid(FiniteTypeArtinGroupElement):
             sage: B = BraidGroup(3)
             sage: B([1,2,1,2])._annular_khovanov_complex_cached((5,-1)).homology()
             {1: Z, 2: Z, 3: 0}
-
-
         """
         from sage.homology.chain_complex import ChainComplex
         if ring is None:
@@ -2123,18 +2120,19 @@ class Braid(FiniteTypeArtinGroupElement):
         """
         R = LaurentPolynomialRing(IntegerRing(), variab)
         n = self.strands()
-        m = len(self.Tietze())
+        tz = self.Tietze()
+        m = len(tz)
         from sage.algebras.free_algebra import FreeAlgebra
         alg = FreeAlgebra(R, m*3,
-                          [f'{s}p_{i}' for i in range(m) if self.Tietze()[i] > 0
+                          [f'{s}p_{i}' for i in range(m) if tz[i] > 0
                            for s in 'bca']
-                          + [f'{s}m_{i}' for i in range(m) if self.Tietze()[i] < 0
+                          + [f'{s}m_{i}' for i in range(m) if tz[i] < 0
                              for s in 'bca'])
-        gen_indices = ([i for i in range(m) if self.Tietze()[i] > 0]
-                       + [i for i in range(m) if self.Tietze()[i] < 0])
+        gen_indices = ([i for i in range(m) if tz[i] > 0]
+                       + [i for i in range(m) if tz[i] < 0])
 
         M = identity_matrix(alg, n)
-        for k, i in enumerate(self.Tietze()):
+        for k, i in enumerate(tz):
             A = identity_matrix(alg, n)
             gen_index = gen_indices.index(k)
             b, c, a = alg.gens()[3*gen_index:3*gen_index+3]
@@ -2293,7 +2291,6 @@ class RightQuantumWord:
          q*cp_1*ap_1 + q^2*bp_1*cm_0*am_0*bm_2
          reduced from ap_1*cp_1 + q^3*bm_2*bp_1*am_0*cm_0
     """
-
     def __init__(self, words):
         r"""
         Initialize ``self``.
@@ -2828,7 +2825,7 @@ class BraidGroup_class(FiniteTypeArtinGroup):
             LR = LaurentPolynomialRing(ZZ, 's0r, s1r')
             PR = PolynomialRing(LR, 'Yr')
             s0r, s1r, Yr = PR.gens_dict_recursive().values()
-            pqr = Yr**2 + (s0r**2-1)*(s1r**2 - 1)
+            pqr = Yr**2 + (s0r**2 - 1) * (s1r**2 - 1)
             BR = PR.quotient_ring(pqr)
             s0 = BR(s0r)
             s1 = BR(s1r)
@@ -2932,7 +2929,7 @@ class BraidGroup_class(FiniteTypeArtinGroup):
             return identity_matrix(R, len(n2), sparse=True)
         A = matrix(R, len(n2), sparse=True)
         if braid[0] > 0:
-            i = braid[0]-1
+            i = braid[0] - 1
             for m in range(len(n2)):
                 j = min(n2[m])
                 k = max(n2[m])
@@ -3426,16 +3423,16 @@ class BraidGroup_class(FiniteTypeArtinGroup):
 
         INPUT:
 
-        - ``isomorphism`` -- boolean (default ``False``). If ``True`` an isomorphism
-          from ``self`` and the isomorphic group and its inverse are provided
+        - ``isomorphism`` -- boolean (default ``False``); if ``True``, then an isomorphism
+          from ``self`` and the isomorphic group and its inverse is also returned
 
         EXAMPLES:
 
             sage: B = BraidGroup(3)
-            sage: B.presentation2gens()
+            sage: B.presentation_two_generators()
             Finitely presented group < x0, x1 | x1^3*x0^-2 >
             sage: B = BraidGroup(4)
-            sage: G, hom1, hom2 = B.presentation2gens(isomorphisms=True)
+            sage: G, hom1, hom2 = B.presentation_two_generators(isomorphisms=True)
             sage: G
             Finitely presented group < x0, x1 | x1^4*x0^-3, x0*x1*x0*x1^-2*x0^-1*x1^3*x0^-1*x1^-2 >
             sage: hom1(B.gen(0))
@@ -3468,11 +3465,12 @@ class BraidGroup_class(FiniteTypeArtinGroup):
     def epimorphisms(self, H):
         r"""
         Return the epimorphisms from ``self`` to ``H``, up to automorphism of `H` passing
-        through the presentation of two gens for ``self``
+        through the :meth:`two generator presentation
+        <presentation_two_generators>` of ``self``.
 
         INPUT:
 
-        - `H` -- Another group
+        - `H` -- another group
 
         EXAMPLES::
 
@@ -3482,15 +3480,15 @@ class BraidGroup_class(FiniteTypeArtinGroup):
             From: Braid group on 5 strands
             To:   Symmetric group of order 5! as a permutation group
             Defn: s0 |--> (1,5)
-                    s1 |--> (4,5)
-                    s2 |--> (3,4)
-                    s3 |--> (2,3)]
+                  s1 |--> (4,5)
+                  s2 |--> (3,4)
+                  s3 |--> (2,3)]
 
         ALGORITHM:
 
         Uses libgap's GQuotients function.
         """
-        G, hom1, hom2 = self.presentation2gens(isomorphisms=True)
+        G, hom1, hom2 = self.presentation_two_generators(isomorphisms=True)
         from sage.misc.misc_c import prod
         HomSpace = self.Hom(H)
         G0g = libgap(self)
@@ -3519,7 +3517,7 @@ def BraidGroup(n=None, names='s'):
     - ``n`` -- integer or ``None`` (default). The number of
       strands. If not specified the ``names`` are counted and the
       group is assumed to have one more strand than generators.
-+
+
     - ``names`` -- string or list/tuple/iterable of strings (default:
       ``'x'``). The generator names or name prefix.
 
@@ -3638,7 +3636,6 @@ class MappingClassGroupAction(Action):
         sage: A(x1^-1, s1)
         x1*x2^-1*x1^-1
     """
-
     def __init__(self, G, M):
         """
         TESTS::
