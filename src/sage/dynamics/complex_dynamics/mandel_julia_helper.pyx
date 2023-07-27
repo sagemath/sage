@@ -774,7 +774,6 @@ cpdef polynomial_mandelbrot(f, parameter=None, double x_center=0,
         constant_c = True
     except (PariError, TypeError):
         constant_c = False
-        critical_pts = []
 
     # If c is in the constant term of the polynomial, then the critical points
     # will be independent of c.
