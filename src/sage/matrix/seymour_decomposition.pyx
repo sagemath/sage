@@ -67,6 +67,7 @@ cdef class DecompositionNode(SageObject):
         result._root = self._root or self
         return result
 
+    @cached_method
     def parent_rows_and_columns(self):
         r"""
         EXAMPLES::
@@ -102,7 +103,6 @@ cdef class DecompositionNode(SageObject):
             sage: C[1].parent_rows_and_columns()
             ((3, 4, 5), (2, 3))
         """
-
         cdef size_t *parent_rows = CMRdecRowsParent(self._dec)
         cdef size_t *parent_columns = CMRdecColumnsParent(self._dec)
         if parent_rows == NULL:
@@ -162,12 +162,20 @@ cdef class DecompositionNode(SageObject):
     @cached_method
     def _children(self):
         r"""
-        Returns tuple of summands, () in the case of graphic or leaf nodes.
+        Return a tuple of the children.
+
+        The children are sorted by their :meth:`parent_rows_and_columns`.
+
+        In the case of :class:`SumNode`, this is the same as :meth:`~SumNode.summands`.
+
+        For graphic or leaf nodes, it returns the empty tuple.
+
         EXAMPLES::
 
             sage: from sage.matrix.matrix_cmr_sparse import Matrix_cmr_chr_sparse
             sage: M = Matrix_cmr_chr_sparse.one_sum([[1, 0], [-1, 1]],
-            ....: [[1, 1], [-1, 0]], [[1, 0], [0,1]]); M
+            ....:                                   [[1, 1], [-1, 0]],
+            ....:                                   [[1, 0], [0,1]]); M
             [ 1  0| 0  0| 0  0]
             [-1  1| 0  0| 0  0]
             [-----+-----+-----]
@@ -176,23 +184,24 @@ cdef class DecompositionNode(SageObject):
             [-----+-----+-----]
             [ 0  0| 0  0| 1  0]
             [ 0  0| 0  0| 0  1]
-            sage: result, certificate = M3.is_totally_unimodular(certificate=True); certificate
+            sage: result, certificate = M.is_totally_unimodular(certificate=True); certificate
             OneSumNode with 4 children
             sage: certificate._children()
             (GraphicNode, GraphicNode, GraphicNode, GraphicNode)
 
             sage: M2 = Matrix_cmr_chr_sparse(MatrixSpace(ZZ, 2, 2, sparse=True),
-            ...:  [[1, 1], [-1, 0]]); M2
+            ....:                            [[1, 1], [-1, 0]]); M2
             [ 1  1]
             [-1  0]
-            sage: result, certificate = M.is_totally_unimodular(certificate=True); certificate
+            sage: result, certificate = M2.is_totally_unimodular(certificate=True); certificate
             GraphicNode
-            certificate._children()
+            sage: certificate._children()
             ()
         """
-        return tuple(create_DecompositionNode(CMRdecChild(self._dec, index),
-                                              self._root or self)
-                     for index in range(CMRdecNumChildren(self._dec)))
+        return tuple(sorted((create_DecompositionNode(CMRdecChild(self._dec, index),
+                                                self._root or self)
+                             for index in range(CMRdecNumChildren(self._dec))),
+                            key=lambda node: node.parent_rows_and_columns()))
 
     def _repr_(self):
         return f'{self.__class__.__name__}'
@@ -228,7 +237,7 @@ cdef class SumNode(DecompositionNode):
     summands = DecompositionNode._children
 
     def summand_matrices(self):
-        return tuple(s.matrix() for s in self._children())
+        return tuple(s.matrix() for s in self.summands())
 
 
 cdef class OneSumNode(SumNode):
@@ -253,8 +262,9 @@ cdef class OneSumNode(SumNode):
             [ 0  0| 1  1]
             [ 0  0|-1  0]
 
-            sage: M3 = Matrix_cmr_chr_sparse.one_sum([[1, 0], [-1, 1]], [[1, 1], [-1, 0]], [[1, 0], [0,1]]
-            ....: [[1, 1], [-1, 0]], [[1, 0], [0,1]]); M3
+            sage: M3 = Matrix_cmr_chr_sparse.one_sum([[1, 0], [-1, 1]],
+            ....:                                    [[1, 1], [-1, 0]],
+            ....:                                    [[1, 0], [0, 1]]); M3
             [ 1  0| 0  0| 0  0]
             [-1  1| 0  0| 0  0]
             [-----+-----+-----]
