@@ -239,7 +239,7 @@ class Nerve(SimplicialSet_arbitrary):
                                 face = e.apply_degeneracies(i)
                             else:
                                 face = (face_dict[chain[:i]
-                                         + chain[i+2:]].apply_degeneracies(i))
+                                                  + chain[i+2:]].apply_degeneracies(i))
                         else:
                             # Non-degenerate.
                             face = (face_dict[chain[:i]
@@ -289,7 +289,7 @@ def Sphere(n):
     if n == 0:
         w_0 = AbstractSimplex(0, name='w_0')
         return SimplicialSet_finite({v_0: None, w_0: None}, base_point=v_0,
-                             name='S^0')
+                                    name='S^0')
     degens = range(n-2, -1, -1)
     degen_v = v_0.apply_degeneracies(*degens)
     sigma = AbstractSimplex(n, name='sigma_{}'.format(n),
@@ -391,7 +391,7 @@ def KleinBottle():
     temp = SimplicialSet_finite(delta_complexes.KleinBottle())
     pt = temp.n_cells(0)[0]
     return SimplicialSet_finite(temp.face_data(), base_point=pt,
-                         name='Klein bottle')
+                                name='Klein bottle')
 
 
 def Torus():
@@ -583,31 +583,31 @@ def ComplexProjectiveSpace(n):
         f4_201110 = AbstractSimplex(4, name='tau_1', latex_name='\\tau_1')
         f4_211010 = AbstractSimplex(4, name='tau_2', latex_name='\\tau_2')
         K = SimplicialSet_finite({f2_1: (v.apply_degeneracies(0),
-                                  v.apply_degeneracies(0),
-                                  v.apply_degeneracies(0)),
-                           f2_2: (v.apply_degeneracies(0),
-                                  v.apply_degeneracies(0),
-                                  v.apply_degeneracies(0)),
-                           f3_110: (f2_1, f2_2, f2_1, v.apply_degeneracies(1, 0)),
-                           f3_011: (f2_1, f2_1, f2_1, f2_1),
-                           f3_111: (v.apply_degeneracies(1, 0), f2_1, f2_2, f2_1),
-                           f4_101101: (f2_1.apply_degeneracies(0),
-                                       f2_1.apply_degeneracies(0),
-                                       f3_011,
-                                       f2_1.apply_degeneracies(2),
-                                       f2_1.apply_degeneracies(2)),
-                           f4_201110: (f2_1.apply_degeneracies(1),
-                                       f3_111,
-                                       f3_011,
-                                       f3_110,
-                                       f2_1.apply_degeneracies(1)),
-                           f4_211010: (f2_1.apply_degeneracies(2),
-                                       f3_111,
-                                       f2_1.apply_degeneracies(1),
-                                       f3_110,
-                                       f2_1.apply_degeneracies(0))},
-                           base_point=v, name='CP^2',
-                           latex_name='CP^{2}')
+                                         v.apply_degeneracies(0),
+                                         v.apply_degeneracies(0)),
+                                  f2_2: (v.apply_degeneracies(0),
+                                         v.apply_degeneracies(0),
+                                         v.apply_degeneracies(0)),
+                                  f3_110: (f2_1, f2_2, f2_1, v.apply_degeneracies(1, 0)),
+                                  f3_011: (f2_1, f2_1, f2_1, f2_1),
+                                  f3_111: (v.apply_degeneracies(1, 0), f2_1, f2_2, f2_1),
+                                  f4_101101: (f2_1.apply_degeneracies(0),
+                                              f2_1.apply_degeneracies(0),
+                                              f3_011,
+                                              f2_1.apply_degeneracies(2),
+                                              f2_1.apply_degeneracies(2)),
+                                  f4_201110: (f2_1.apply_degeneracies(1),
+                                              f3_111,
+                                              f3_011,
+                                              f3_110,
+                                              f2_1.apply_degeneracies(1)),
+                                  f4_211010: (f2_1.apply_degeneracies(2),
+                                              f3_111,
+                                              f2_1.apply_degeneracies(1),
+                                              f3_110,
+                                              f2_1.apply_degeneracies(0))},
+                                 base_point=v, name='CP^2',
+                                 latex_name='CP^{2}')
         return K
     if n == 3:
         file = os.path.join(SAGE_ENV['SAGE_EXTCODE'], 'kenzo', 'CP3.txt')
@@ -772,28 +772,28 @@ def HopfMap():
     alpha_5 = AbstractSimplex(3, name='alpha_5', latex_name='\\alpha_5')
     alpha_6 = AbstractSimplex(3, name='alpha_6', latex_name='\\alpha_6')
     S3 = SimplicialSet_finite({beta_11: (w_0, w_0), beta_22: (w_0, w_0),
-                        beta_23: (w_0, w_0), beta_44: (w_0, w_0),
-                        beta_1: (w_1, beta_11, w_1),
-                        beta_2: (w_1, beta_22, beta_23),
-                        beta_3: (w_1, beta_23, w_1),
-                        beta_4: (w_1, beta_44, w_1),
-                        alpha_12: (beta_11, beta_23, w_1),
-                        alpha_23: (beta_11, beta_22, w_1),
-                        alpha_34: (beta_11, beta_22, beta_44),
-                        alpha_45: (w_1, beta_23, beta_44),
-                        alpha_56: (w_1, beta_23, w_1),
-                        alpha_1: (beta_1, beta_3, alpha_12, w_2),
-                        alpha_2: (beta_11.apply_degeneracies(1), beta_2,
-                                  alpha_23, alpha_12),
-                        alpha_3: (beta_11.apply_degeneracies(0), alpha_34,
-                                  alpha_23, beta_4),
-                        alpha_4: (beta_1, beta_2, alpha_34, alpha_45),
-                        alpha_5: (w_2, alpha_45, alpha_56, beta_4),
-                        alpha_6: (w_2, beta_3, alpha_56, w_2)},
-                       base_point=w_0)
-    return S3.Hom(S2)({alpha_1:s0_sigma, alpha_2:s1_sigma,
-                       alpha_3:s2_sigma, alpha_4:s0_sigma,
-                       alpha_5:s2_sigma, alpha_6:s1_sigma})
+                               beta_23: (w_0, w_0), beta_44: (w_0, w_0),
+                               beta_1: (w_1, beta_11, w_1),
+                               beta_2: (w_1, beta_22, beta_23),
+                               beta_3: (w_1, beta_23, w_1),
+                               beta_4: (w_1, beta_44, w_1),
+                               alpha_12: (beta_11, beta_23, w_1),
+                               alpha_23: (beta_11, beta_22, w_1),
+                               alpha_34: (beta_11, beta_22, beta_44),
+                               alpha_45: (w_1, beta_23, beta_44),
+                               alpha_56: (w_1, beta_23, w_1),
+                               alpha_1: (beta_1, beta_3, alpha_12, w_2),
+                               alpha_2: (beta_11.apply_degeneracies(1), beta_2,
+                                         alpha_23, alpha_12),
+                               alpha_3: (beta_11.apply_degeneracies(0), alpha_34,
+                                         alpha_23, beta_4),
+                               alpha_4: (beta_1, beta_2, alpha_34, alpha_45),
+                               alpha_5: (w_2, alpha_45, alpha_56, beta_4),
+                               alpha_6: (w_2, beta_3, alpha_56, w_2)},
+                              base_point=w_0)
+    return S3.Hom(S2)({alpha_1: s0_sigma, alpha_2: s1_sigma,
+                       alpha_3: s2_sigma, alpha_4: s0_sigma,
+                       alpha_5: s2_sigma, alpha_6: s1_sigma})
 
 
 def PresentationComplex(G):
