@@ -1151,8 +1151,8 @@ class DrinfeldModule(Parent, UniqueRepresentation):
             return poly_ring.zero()
         if n <= q - 1:
             return X**n
-        if n%q == 0:
-            return self.goss_polynomial(ZZ(n/q))**q
+        if n % q == 0:
+            return self.goss_polynomial(n // q)**q
         # General case
         pol = sum(self._compute_coefficient_exp(i+1)
                   *self._compute_goss_polynomial(n - q**(i+1), q, poly_ring, X)
