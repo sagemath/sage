@@ -14,10 +14,14 @@ from .matrix_space import MatrixSpace
 
 cdef class DecompositionNode(SageObject):
 
+    def __cinit__(self):
+        self._dec = NULL
+
     cdef _set_dec(self, CMR_DEC *dec, root):
         if self._root is None or self._root is self:
-            # We own it, so we have to free it.
-            CMR_CALL(CMRdecFree(cmr, &self._dec))
+            if self._dec != NULL:
+                # We own it, so we have to free it.
+                CMR_CALL(CMRdecFree(cmr, &self._dec))
         self._dec = dec
         self._root = root
 
@@ -60,7 +64,7 @@ cdef class DecompositionNode(SageObject):
         ms = MatrixSpace(ZZ, mat.numRows, mat.numColumns, sparse=True)
         result = Matrix_cmr_chr_sparse.__new__(Matrix_cmr_chr_sparse, ms)
         result._mat = mat
-        result._root = self._root
+        result._root = self._root or self
         return result
 
     def parent_rows_and_columns(self):
