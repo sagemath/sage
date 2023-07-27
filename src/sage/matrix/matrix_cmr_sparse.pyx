@@ -162,6 +162,14 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
 
     @staticmethod
     cdef _from_cmr(CMR_CHRMAT *mat, bint immutable=False):
+        r"""
+        INPUT:
+
+        - ``mat`` -- a ``CMR_CHRMAT``; after this call, it is owned by the created Python object
+
+        OUTPUT: A :class:`Matrix_cmr_chr_sparse`
+
+        """
         cdef Matrix_cmr_chr_sparse result
         ms = MatrixSpace(ZZ, mat.numRows, mat.numColumns, sparse=True)
         result = Matrix_cmr_chr_sparse.__new__(Matrix_cmr_chr_sparse, ms, immutable=immutable)
