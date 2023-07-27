@@ -126,7 +126,7 @@ class MomentAngleComplex(SageObject, UniqueRepresentation):
         <Lots and lots of examples>
         """
         if not isinstance(simplicial_complex, SimplicialComplex):
-            simplicial_complex = SimplicialComplex(simplicial_complex, is_mutable=True)
+            simplicial_complex = SimplicialComplex(simplicial_complex)
 
         self._simplicial_complex = copy(simplicial_complex)
         self._moment_angle_complex = None
@@ -147,7 +147,9 @@ class MomentAngleComplex(SageObject, UniqueRepresentation):
 
     @staticmethod
     def __classcall_private__(cls, simplicial_complex):
-        if simplicial_complex.is_mutable():
+        if not isinstance(simplicial_complex, SimplicialComplex):
+            immutable_complex = SimplicialComplex(simplicial_complex, is_mutable=False)
+        elif simplicial_complex.is_mutable():
             immutable_complex = SimplicialComplex(simplicial_complex, is_mutable=False)
         else:
             immutable_complex = simplicial_complex
