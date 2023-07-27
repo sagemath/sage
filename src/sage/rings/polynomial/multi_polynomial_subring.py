@@ -19,9 +19,9 @@ class MPolynomial_subring(MPolynomialRing_libsingular):
     def ngens(self):
         return len(self.generators)
     
-    def hilbert_series(self):
+    def hilbert_series(self, algorithm="sage"):
         grading=[s.degree() for s in self.generators]
-        return self.I.hilbert_series(grading=grading)
+        return self.I.hilbert_series(grading=grading, algorithm=algorithm)
     
     def __contains__(self, other):
         try:
