@@ -42,8 +42,24 @@ but rather work with the corresponding simplicial complex.
 
 EXAMPLES::
 
-<Lots and lots of examples>
+    sage: MomentAngleComplex([[1,2,3], [2,4], [3,4]])
+    Moment angle complex over a simplicial complex with vertex set (1, 2, 3, 4) and facets {(2, 4), (3, 4), (1, 2, 3)}
+    sage: X = SimplicialComplex([[0,1], [1,2], [1,3], [2,3]])
+    sage: Z = MomentAngleComplex(X)
+    sage: Z
+    Moment angle complex over a simplicial complex with vertex set (0, 1, 2, 3) and facets {(0, 1), (1, 2), (1, 3), (2, 3)}
+    sage: M = MomentAngleComplex([[1], [2]])
+    sage: M
+    Moment angle complex over a simplicial complex with vertex set (1, 2) and facets {(1,), (2,)}
 
+We can perform a number of operations, such as find the dimension or compute the homology.
+
+    sage: M.homology()
+    {0: 0, 1: 0, 2: 0, 3: Z}
+    sage: Z.dimension()
+    6
+    sage: Z.homology()
+    {0: 0, 1: 0, 2: 0, 3: Z x Z, 4: Z, 5: Z, 6: Z}
 """
 
 # ****************************************************************************
@@ -82,6 +98,13 @@ from itertools import combinations
 # - mark copies of code?
 
 def union(c1, c2):
+    """
+    Return the union of cubical complexes, as a cubical complex.
+
+    EXAMPLES::
+
+    <Lots and lots of examples>
+    """
     facets = []
     for f in c1.maximal_cells():
         facets.append(f)
@@ -154,6 +177,7 @@ class MomentAngleComplex(SageObject, UniqueRepresentation):
         else:
             immutable_complex = simplicial_complex
         return super().__classcall__(cls, immutable_complex)
+        #behaviour for None?
 
     def __eq__(self, other):
         """
@@ -197,6 +221,8 @@ class MomentAngleComplex(SageObject, UniqueRepresentation):
     def create_complex(self):
         """
         Create the moment-angle complex as a simplicial complex.
+
+        Here we view the moment-angle complex as a cubical complex.
 
         EXAMPLES::
 
