@@ -385,8 +385,58 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
         sum.set_immutable()
         return sum
 
-    def two_sum(self, other, *args):
-        raise NotImplementedError
+    def two_sum(first_mat, second_mat, column, row):
+        r"""
+        Return the 2-sum matrix constructed from the given matrices ``first_mat`` and ``second_mat``, with column index of the first matrix ``column`` and row index of the second matrix ``row``.
+        Suppose that ``column`` indicates the last column and ``row`` indicates the first row, i.e, the first matrix is `M_1=\begin{bmatrix} A & a\end{bmatrix}` and the second matrix is `M_2=\begin{bmatrix} b^T \\ B\end{bmatrix}`. Then the two sum `M_1 \oplus_2 M_2 =\begin{bmatrix}A & ab^T\\ 0 & B\end{bmatrix}`.
+
+        INPUT:
+
+        - ``first_mat`` -- the first integer matrix
+        - ``second_mat`` -- the second integer matrix
+        - ``column`` -- the column index of the first integer matrix
+        - ``row`` -- the row index of the first integer matrix
+
+        EXAMPLES::
+
+            sage: from sage.matrix.matrix_cmr_sparse import Matrix_cmr_chr_sparse
+            sage: M1 = Matrix_cmr_chr_sparse(MatrixSpace(ZZ, 2, 3, sparse=True),
+            ....:                            [[1, 2, 3], [4, 5, 6]]); M1
+            [1 2 3]
+            [4 5 6]
+            sage: M2 = Matrix_cmr_chr_sparse(MatrixSpace(ZZ, 2, 3, sparse=True),
+            ....:                            [[7, 8, 9], [-1, -2, -3]]); M2
+            [ 7  8  9]
+            [-1 -2 -3]
+            sage: Matrix_cmr_chr_sparse.two_sum(M1,M2,2,0)
+            [ 1  2|21 24 27]
+            [ 4  5|42 48 54]
+            [-----+--------]
+            [ 0  0|-1 -2 -3]
+            sage: M1.two_sum(M2,1,1)
+            [  1   3| -2  -4  -6]
+            [  4   6| -5 -10 -15]
+            [-------+-----------]
+            [  0   0|  7   8   9]
+        """
+        cdef Matrix_cmr_chr_sparse sum, first, second
+        cdef CMR_CHRMAT *sum_mat
+        first = Matrix_cmr_chr_sparse._from_data(first_mat, immutable=False)
+        second = Matrix_cmr_chr_sparse._from_data(second_mat, immutable=False)
+        if column < 0 or column >= first._mat.numColumns:
+            raise ValueError("First marker should be a column index of the first matrix")
+        if row < 0 or row >= second._mat.numRows:
+            raise ValueError("Second marker should be a row index of the second matrix")
+        row_subdivision = []
+        column_subdivision = []
+        row_subdivision.append(first._mat.numRows)
+        column_subdivision.append(first._mat.numColumns - 1)
+        CMR_CALL(CMRtwoSum(cmr, first._mat, second._mat, CMRcolumnToElement(column), CMRrowToElement(row), &sum_mat))
+        sum = Matrix_cmr_chr_sparse._from_cmr(sum_mat, immutable=False)
+        if row_subdivision or column_subdivision:
+            sum.subdivide(row_subdivision, column_subdivision)
+        sum.set_immutable()
+        return sum
 
     def three_sum(self, other, *args):
         raise NotImplementedError
@@ -793,7 +843,7 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
             ╭OneSumNode with 2 children─╮
             │                           │
             SeriesParallelReductionNode UnknownNode
-            │                          
+            │
             ThreeConnectedIrregularNode
             sage: result, certificate = MFR2cmr._is_binary_linear_matroid_regular(
             ....:                           certificate=True, complete_tree=True)
