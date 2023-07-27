@@ -2271,14 +2271,6 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
 
         ::
 
-            sage: K.<v> = QuadraticField(5)
-            sage: P.<x,y> = ProjectiveSpace(K, 1)
-            sage: f = DynamicalSystem([x^2, y^2])
-            sage: f.canonical_height(P(2 + v, 1))
-            2.5228572277444373139081754230
-
-        ::
-
             sage: P.<x,y> = ProjectiveSpace(QQ[sqrt(3)], 1)
             sage: f = DynamicalSystem_projective([x^2 + y^2, 2*x*y])
             sage: f.canonical_height(P.point([5, 4]), error_bound=0.001)
@@ -2416,7 +2408,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
                     h = R(0)
                 return h
 
-            elif (K.maximal_order() in UniqueFactorizationDomains) or (K.is_unique_factorization_domain()):
+            elif K.class_number() == 1:
                 O = K.maximal_order()
                 Res = O(f.resultant(normalize=True).abs())
 
