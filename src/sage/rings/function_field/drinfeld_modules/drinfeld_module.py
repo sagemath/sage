@@ -1170,19 +1170,18 @@ class DrinfeldModule(Parent, UniqueRepresentation):
 
         - ``n`` (integer) -- the index of the Goss polynomial
 
-        - ``name`` (str, default: ``'X'``) -- the name of polynomial
+        - ``var`` (str, default: ``'X'``) -- the name of polynomial
           variable.
 
         OUTPUT:
 
-        - a univariate polynomial in ``name`` over the base `A`-field.
+        - a univariate polynomial in ``var`` over the base `A`-field.
 
         EXAMPLES::
 
-            sage: from drinfeld_modular_forms import goss_polynomial
             sage: A = GF(3)['T']
             sage: K.<T> = Frac(A)
-            sage: phi = DrinfeldModule(A, [T, K.one()])  # Carlitz module
+            sage: phi = DrinfeldModule(A, [T, 1])  # Carlitz module
             sage: phi.goss_polynomial(1)
             X
             sage: phi.goss_polynomial(2)
