@@ -1122,6 +1122,43 @@ class DrinfeldModule(Parent, UniqueRepresentation):
         return self._gen
 
     @cached_method
+    def _compute_goss_polynomial(self, n, q, poly_ring, X):
+        r"""
+        Utility function for computing the n-th Goss polynomial.
+
+        The user should not call this method directly, but
+        :meth:`goss_polynomial` instead.
+
+        TESTS::
+
+            sage: A = GF(2^2)['T']
+            sage: K.<T> = Frac(A)
+            sage: phi = DrinfeldModule(A, [T, T+1, T^2, 1])
+            sage: poly_ring = phi.base()['X']
+            sage: X = poly_ring.gen()
+            sage: phi._compute_goss_polynomial(0, 2^2, poly_ring, X)
+            0
+            sage: phi._compute_goss_polynomial(3, 2^2, poly_ring, X)
+            X^3
+            sage: phi._compute_goss_polynomial(4*3, 2^2, poly_ring, X)
+            X^12
+            sage: phi._compute_goss_polynomial(9, 2^2, poly_ring, X)
+            X^9 + (1/(T^3 + T^2 + T))*X^6 + (1/(T^6 + T^4 + T^2))*X^3
+
+        """
+        # Trivial cases
+        if n.is_zero():
+            return poly_ring.zero()
+        if n <= q - 1:
+            return X**n
+        if n%q == 0:
+            return self.goss_polynomial(ZZ(n/q))**q
+        # General case
+        pol = sum(self._compute_coefficient_exp(i+1)
+                  *self._compute_goss_polynomial(n - q**(i+1), q, poly_ring, X)
+                  for i in range(0, (n.log(q).n()).floor()))
+        return X*(self._compute_goss_polynomial(n - 1, q, poly_ring, X) + pol)
+
     def goss_polynomial(self, n, var='X'):
         r"""
         Return the `n`-th Goss polynomial of the Drinfeld module.
@@ -1166,19 +1203,10 @@ class DrinfeldModule(Parent, UniqueRepresentation):
             raise ValueError(f"characteristic must be zero (={self.characteristic()})")
         n = ZZ(n)
         K = self.base()
-        R = K[var]
-        X = R.gen()
-        if n.is_zero():
-            return R.zero()
+        poly_ring = K[var]
+        X = poly_ring.gen()
         q = self._Fq.cardinality()
-        if n <= q - 1:
-            return X**n
-        if n%q == 0:
-            return self.goss_polynomial(ZZ(n/q))**q
-        exp = self.exponential()
-        pol = sum(exp[q**(i+1)]*self.goss_polynomial(n - q**(i+1))
-                for i in range(0, (n.log(q).n()).floor()))
-        return X*(self.goss_polynomial(n - 1) + pol)
+        return self._compute_goss_polynomial(n, q, poly_ring, X)
 
     def height(self):
         r"""
