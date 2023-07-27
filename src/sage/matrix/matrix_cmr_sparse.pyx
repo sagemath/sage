@@ -838,27 +838,27 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
             sage: result, certificate = MFR2cmr._is_binary_linear_matroid_regular(
             ....:                           certificate=True)
             sage: result, certificate
-            (False, (OneSumNode with 2 children, NotImplemented))
+            (False, (OneSumNode (6×14) with 2 children, NotImplemented))
             sage: certificate[0].summands()[0].parent_rows_and_columns()
             ((0, 1, 2), (0, 4, 5, 6, 2, 3, 1))
             sage: certificate[0].summands()[1].parent_rows_and_columns()
             ((3, 4, 5), (7, 11, 12, 13, 9, 10, 8))
             sage: unicode_art(certificate[0])  # random (whether the left or the right branch has been followed)
-            ╭OneSumNode with 2 children─╮
-            │                           │
-            SeriesParallelReductionNode UnknownNode
+            ╭OneSumNode (6×14) with 2 children╮
+            │                                 │
+            SeriesParallelReductionNode (3×7) UnknownNode (3×7)
             │
-            ThreeConnectedIrregularNode
+            ThreeConnectedIrregularNode (3×4)
             sage: result, certificate = MFR2cmr._is_binary_linear_matroid_regular(
             ....:                           certificate=True, complete_tree=True)
             sage: result, certificate
-            (False, (OneSumNode with 2 children, NotImplemented))
+            (False, (OneSumNode (6×14) with 2 children, NotImplemented))
             sage: unicode_art(certificate[0])
-            ╭OneSumNode with 2 children─╮
-            │                           │
-            SeriesParallelReductionNode SeriesParallelReductionNode
-            │                           │
-            ThreeConnectedIrregularNode ThreeConnectedIrregularNode
+            ╭OneSumNode (6×14) with 2 children╮
+            │                                 │
+            SeriesParallelReductionNode (3×7) SeriesParallelReductionNode (3×7)
+            │                                 │
+            ThreeConnectedIrregularNode (3×4) ThreeConnectedIrregularNode (3×4)
 
         TESTS:
 
@@ -879,20 +879,20 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
             sage: result, certificate = M._is_binary_linear_matroid_regular(
             ....:                           certificate=True, complete_tree=True)
             sage: result, certificate
-            (True, GraphicNode)
+            (True, GraphicNode (11×11))
             sage: unicode_art(certificate)
-            GraphicNode
+            GraphicNode (11×11)
             sage: result, certificate = M._is_binary_linear_matroid_regular(
             ....:                           certificate=True, complete_tree=True,
             ....:                           use_direct_graphicness_test=False)
             sage: result, certificate
-            (True, TwoSumNode with 2 children)
+            (True, TwoSumNode (11×11) with 2 children)
             sage: unicode_art(certificate)
-            ╭─────TwoSumNode with 2 children
-            │           │
-            GraphicNode SeriesParallelReductionNode
-                        │
-                        GraphicNode
+            ╭──────────TwoSumNode (11×11) with 2 children
+            │                 │
+            GraphicNode (7×8) SeriesParallelReductionNode (5×4)
+                              │
+                              GraphicNode (4×4)
         """
         cdef bool result
         cdef CMR_REGULAR_PARAMETERS params
@@ -954,7 +954,7 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
             sage: M.is_totally_unimodular()
             True
             sage: M.is_totally_unimodular(certificate=True)
-            (True, GraphicNode)
+            (True, GraphicNode (3×2))
 
             sage: MF = matroids.named_matroids.Fano(); MF
             Fano: Binary matroid of rank 3 on 7 elements, type (3, 0)

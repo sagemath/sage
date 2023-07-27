@@ -31,6 +31,15 @@ cdef class DecompositionNode(SageObject):
     def __hash__(self):
         return <int>self._dec
 
+    def nrows(self):
+        return CMRdecNumRows(self._dec)
+
+    def ncols(self):
+        return CMRdecNumColumns(self._dec)
+
+    def dimensions(self):
+        return self.nrows(), self.ncols()
+
     @cached_method
     def matrix(self):
         r"""
@@ -44,14 +53,14 @@ cdef class DecompositionNode(SageObject):
             [ 0  1]
             sage: result, certificate = M.is_totally_unimodular(certificate=True)
             sage: result, certificate
-            (True, GraphicNode)
+            (True, GraphicNode (3×2))
             sage: certificate.matrix() is None
             True
 
             sage: result, certificate = M.is_totally_unimodular(certificate=True,
             ....:                                               construct_matrices=True)
             sage: result, certificate
-            (True, GraphicNode)
+            (True, GraphicNode (3×2))
             sage: certificate.matrix()
             [ 1  0]
             [-1  1]
@@ -95,9 +104,9 @@ cdef class DecompositionNode(SageObject):
             sage: result, certificate = M2cmr.is_totally_unimodular(certificate=True,
             ....:                                                   construct_matrices=True)
             sage: result, certificate
-            (True, OneSumNode with 2 children)
+            (True, OneSumNode (6×4) with 2 children)
             sage: C = certificate.summands(); C
-            (GraphicNode, GraphicNode)
+            (GraphicNode (3×2), GraphicNode (3×2))
             sage: C[0].parent_rows_and_columns()
             ((0, 1, 2), (0, 1))
             sage: C[1].parent_rows_and_columns()
@@ -133,11 +142,11 @@ cdef class DecompositionNode(SageObject):
             sage: result, certificate = M2cmr.is_totally_unimodular(certificate=True,
             ....:                                                   construct_matrices=True)
             sage: T = certificate.as_ordered_tree(); T
-            OneSumNode with 2 children[GraphicNode[], GraphicNode[]]
+            OneSumNode (6×4) with 2 children[GraphicNode (3×2)[], GraphicNode (3×2)[]]
             sage: unicode_art(T)
-            ╭─────OneSumNode with 2 children
-            │           │
-            GraphicNode GraphicNode
+            ╭───────────OneSumNode (6×4) with 2 children
+            │                 │
+            GraphicNode (3×2) GraphicNode (3×2)
         """
         from sage.combinat.ordered_tree import LabelledOrderedTree
         return LabelledOrderedTree([child.as_ordered_tree() for child in self._children()],
@@ -185,16 +194,16 @@ cdef class DecompositionNode(SageObject):
             [ 0  0| 0  0| 1  0]
             [ 0  0| 0  0| 0  1]
             sage: result, certificate = M.is_totally_unimodular(certificate=True); certificate
-            OneSumNode with 4 children
+            OneSumNode (6×6) with 4 children
             sage: certificate._children()
-            (GraphicNode, GraphicNode, GraphicNode, GraphicNode)
+            (GraphicNode (2×2), GraphicNode (2×2), GraphicNode (1×1), GraphicNode (1×1))
 
             sage: M2 = Matrix_cmr_chr_sparse(MatrixSpace(ZZ, 2, 2, sparse=True),
             ....:                            [[1, 1], [-1, 0]]); M2
             [ 1  1]
             [-1  0]
             sage: result, certificate = M2.is_totally_unimodular(certificate=True); certificate
-            GraphicNode
+            GraphicNode (2×2)
             sage: certificate._children()
             ()
         """
@@ -204,7 +213,8 @@ cdef class DecompositionNode(SageObject):
                             key=lambda node: node.parent_rows_and_columns()))
 
     def _repr_(self):
-        return f'{self.__class__.__name__}'
+        nrows, ncols = self.dimensions()
+        return f'{self.__class__.__name__} ({nrows}×{ncols})'
 
     def _unicode_art_(self):
         return self.as_ordered_tree()._unicode_art_()
@@ -249,7 +259,7 @@ cdef class OneSumNode(SumNode):
             sage: from sage.matrix.matrix_cmr_sparse import Matrix_cmr_chr_sparse
             sage: M = Matrix_cmr_chr_sparse.one_sum([[1, 0], [-1, 1]], [[1, 1], [-1, 0]])
             sage: result, certificate = M.is_totally_unimodular(certificate=True); certificate
-            OneSumNode with 2 children
+            OneSumNode (4×4) with 2 children
             sage: certificate.summand_matrices()
             (
             [ 1  0]  [ 1  1]
@@ -274,7 +284,7 @@ cdef class OneSumNode(SumNode):
             [ 0  0| 0  0| 1  0]
             [ 0  0| 0  0| 0  1]
             sage: result, certificate = M3.is_totally_unimodular(certificate=True); certificate
-            OneSumNode with 4 children
+            OneSumNode (6×6) with 4 children
             sage: certificate.summand_matrices()
             (
             [ 1  0]  [ 1  1]
@@ -319,7 +329,7 @@ cdef class BaseGraphicNode(DecompositionNode):
             [ 0  1]
             sage: result, certificate = M.is_totally_unimodular(certificate=True)
             sage: result, certificate
-            (True, GraphicNode)
+            (True, GraphicNode (3×2))
             sage: G = certificate.graph(); G
             Graph on 4 vertices
             sage: G.vertices(sort=True)
@@ -342,7 +352,7 @@ cdef class BaseGraphicNode(DecompositionNode):
             [ 0  1]
             sage: result, certificate = M.is_totally_unimodular(certificate=True)
             sage: result, certificate
-            (True, GraphicNode)
+            (True, GraphicNode (3×2))
             sage: certificate.forest_edges()
             ((1, 2), (7, 1))
         """
