@@ -294,7 +294,7 @@ class DynamicalSemigroup(Parent, metaclass=InheritComparisonClasscallMetaclass):
         self._domain = systems[0].domain()
         self._codomain = systems[0].codomain()
         self._dynamical_systems = systems
-        Parent.__init__(self, category=Semigroups().Finite().FinitelyGeneratedAsMagma())
+        Parent.__init__(self, category=Semigroups().FinitelyGeneratedAsMagma())
 
     def __call__(self, input):
         r"""
