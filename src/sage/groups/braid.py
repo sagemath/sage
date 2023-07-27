@@ -3420,9 +3420,9 @@ class BraidGroup_class(FiniteTypeArtinGroup):
         gens_mirr = [~g for g in self.gens()]
         return self.hom(gens_mirr, check=False)
 
-    def presentation2gens(self, isomorphisms=False):
-        """
-        Construct an isomorphic group to ``self``, braid group,  with only two generators
+    def presentation_two_generators(self, isomorphisms=False):
+        r"""
+        Construct a finitely presented group isomorphic to ``self`` with only two generators.
 
         INPUT:
 
