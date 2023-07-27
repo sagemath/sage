@@ -106,9 +106,7 @@ class ArtinGroupElement(FinitelyPresentedGroupElement):
 
         INPUT:
 
-        - W -- (default: ``None``) It may be ``G = SymmetricGroup(n)`` if ``self.parent()``
-          is either an Artin group of type ``['A', n-1]`` or ``BraidGroup(n)`` to obtain an
-          element of ``G`` instead a ``Standard Permutation``.
+        - ``W`` -- (default: ``self.parent().coxeter_group()``) the image Coxeter group
 
         OUTPUT:
 
