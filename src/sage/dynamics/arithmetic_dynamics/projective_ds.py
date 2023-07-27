@@ -2286,12 +2286,32 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
 
         ::
 
+            sage: K.<v> = QuadraticField(5)
+            sage: P.<x,y> = ProjectiveSpace(K, 1)
+            sage: f = DynamicalSystem([x^2, y^2])
+            sage: f.canonical_height(P(2 + v, 1))
+            0.721817737589405
+
+        ::
+
             sage: P.<x,y> = ProjectiveSpace(CC, 1)
             sage: f = DynamicalSystem([x, y])
             sage: f.canonical_height(P(1, 0))
             Traceback (most recent call last):
             ...
             NotImplementedError: Must be over a number field, a number field order, or QQbar
+
+        ::
+
+            sage: K.<v> = QuadraticField(5)
+            sage: R.<x> = K[]
+            sage: L.<l> = K.extension(x^3 + 2)
+            sage: P.<x,y> = ProjectiveSpace(L, 1)
+            sage: f = DynamicalSystem([x^2, y^2])
+            sage: print(f.canonical_height(P(2 + l, 1)))
+            Traceback (most recent call last):
+            ...
+            TypeError: Must be an absolute field
         """
         bad_primes = kwds.get("bad_primes", None)
         prec = kwds.get("prec", 100)
@@ -2341,13 +2361,8 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
             if number_field_pt.parent().value_ring() is QQ:
                 number_field_pt.clear_denominators()
 
-            # Assure integer coefficients
-            coeffs = f[0].coefficients() + f[1].coefficients()
-            t = 1
-            for c in coeffs:
-                t = lcm(t, c.denominator())
-            A = t * f[0]
-            B = t * f[1]
+            A = f[0]
+            B = f[1]
 
             d = self.degree()
             R = RealField(prec)
@@ -2385,7 +2400,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
                 # It looks different than Wells' Algorithm, because of the difference
                 # between what Wells' calls H_infty and what Green's function returns
                 # for the infinite place.
-                h = f.green_function(number_field_pt, 0, **kwds) - H + R(t).log()
+                h = f.green_function(number_field_pt, 0, **kwds) - H + R(1).log() / (d - 1)
 
                 # The value returned by Wells' Algorithm may be negative.
                 # As the canonical height is always non-negative, hence return 0 if
