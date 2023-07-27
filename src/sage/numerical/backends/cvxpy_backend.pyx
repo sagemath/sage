@@ -26,8 +26,9 @@ import cvxpy
 from cvxpy.atoms.affine.add_expr import AddExpression
 from cvxpy.expressions.constants import Constant
 from cvxpy.constraints.zero import Equality
+from sage.numerical.backends.matrix_backend cimport MatrixBackend
 
-cdef class CVXPYBackend:
+cdef class CVXPYBackend(MatrixBackend):
     """
     MIP Backend that delegates to CVXPY.
 
@@ -109,10 +110,6 @@ cdef class CVXPYBackend:
             sage: from sage.numerical.backends.generic_backend import get_solver
             sage: p = get_solver(solver="CVXPY")
         """
-        if base_ring is None:
-            base_ring = RDF
-        elif base_ring != RDF:
-            raise ValueError('base_ring must be RDF')
 
         if cvxpy_solver_args is None:
             cvxpy_solver_args = {}
@@ -127,13 +124,14 @@ cdef class CVXPYBackend:
         self._cvxpy_solver_args = cvxpy_solver_args
 
         self.set_verbosity(0)
+
         self.variables = []
         self.constraint_names = []
-        self.Matrix = []
-        self.row_lower_bound = []
-        self.row_upper_bound = []
-        self.col_lower_bound = []
-        self.col_upper_bound = []
+        #self.Matrix = []
+        #self.row_lower_bound = []
+        #self.row_upper_bound = []
+        #self.col_lower_bound = []
+        #self.col_upper_bound = []
         self.objective_coefficients = []
         self.obj_constant_term = 0.0
         if maximization:
@@ -141,6 +139,12 @@ cdef class CVXPYBackend:
         else:
             objective = cvxpy.Minimize(0)
         self.problem = cvxpy.Problem(objective, ())
+    
+    def _init_base_ring(self, base_ring=None):
+        if base_ring != RDF and base_ring is not None:
+            raise ValueError('base_ring must be RDF')
+        
+        self._base_ring = RDF
 
     cpdef __copy__(self):
         """

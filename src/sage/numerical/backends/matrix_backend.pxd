@@ -4,7 +4,7 @@ from sage.matrix.matrix2 cimport Matrix
 cdef class MatrixBackend(GenericBackend):
 
     cdef Matrix objective_function
-    cdef Matrix G_matrix
+    cdef Matrix Matrix
     cdef str prob_name
     cdef bint is_maximize
 

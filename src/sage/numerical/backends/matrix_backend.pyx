@@ -38,8 +38,7 @@ cdef class MatrixBackend(GenericBackend):
         sage: p                                                     
         Mixed Integer Program (no objective, 0 variables, 0 constraints)
     """
-    def __cinit__(self, maximization = True, base_ring=None, numpy_implementation = False):
-    #def __cinit__(self, maximization = True, base_ring=None):
+    def __cinit__(self, maximization = True, base_ring=None, numpy_implementation = False, **kwds):
         """
         Cython constructor
 
@@ -56,24 +55,25 @@ cdef class MatrixBackend(GenericBackend):
         self.obj_constant_term = 0
         self.is_maximize = 1
 
-        if base_ring is None:
-            from sage.rings.rational_field import QQ
-            base_ring = QQ
+        #if base_ring is None:
+        #    from sage.rings.rational_field import QQ
+        #    base_ring = QQ
+        self._init_base_ring(base_ring=base_ring)
 
         if numpy_implementation:
             kwds = dict(implementation = "numpy")
         else:
             kwds = {}
 
-        self.objective_function = matrix(base_ring, 1, [], **kwds)
-        self.G_matrix = matrix(base_ring, [], **kwds)
-        self.row_lower_bound = matrix(base_ring, 1, [], **kwds)
+        self.objective_function = matrix(self._base_ring, 1, [], **kwds)
+        self.Matrix = matrix(self._base_ring, [], **kwds)
+        self.row_lower_bound = matrix(self._base_ring, 1, [], **kwds)
         self.row_lower_bound_indicator = []
-        self.row_upper_bound = matrix(base_ring, 1, [], **kwds)
+        self.row_upper_bound = matrix(self._base_ring, 1, [], **kwds)
         self.row_upper_bound_indicator = []
-        self.col_lower_bound = matrix(base_ring, 1, [], **kwds)
+        self.col_lower_bound = matrix(self._base_ring, 1, [], **kwds)
         self.col_lower_bound_indicator = []
-        self.col_upper_bound = matrix(base_ring, 1, [], **kwds)
+        self.col_upper_bound = matrix(self._base_ring, 1, [], **kwds)
         self.col_upper_bound_indicator = []
 
         self.row_name_var = []
@@ -86,6 +86,13 @@ cdef class MatrixBackend(GenericBackend):
             self.set_sense(+1)
         else:
             self.set_sense(-1)
+
+        #self._base_ring = base_ring
+    
+    def _init_base_ring(self, base_ring=None):
+        if base_ring is None:
+            from sage.rings.rational_field import QQ
+            base_ring = QQ
 
         self._base_ring = base_ring
 
@@ -237,7 +244,7 @@ cdef class MatrixBackend(GenericBackend):
         if self.nrows() == 0:
             pass
         else:
-            self.G_matrix = self.G_matrix.augment(matrix([self._base_ring.zero() for i in range(self.nrows())]))
+            self.Matrix = self.Matrix.augment(matrix([self._base_ring.zero() for i in range(self.nrows())]))
         
         if lower_bound is None:
             self.col_lower_bound_indicator.append(False)
@@ -524,9 +531,9 @@ cdef class MatrixBackend(GenericBackend):
             column[ind] = coeffs[idx]
 
         if self.ncols() == 0:
-            self.G_matrix = matrix(len(column), column)
+            self.Matrix = matrix(len(column), column)
         else:
-            self.G_matrix = self.G_matrix.augment(matrix(len(column), column))
+            self.Matrix = self.Matrix.augment(matrix(len(column), column))
 
         self.col_lower_bound_indicator.append(None)
         if self.col_lower_bound.dimensions()[1] == 0:
@@ -579,13 +586,13 @@ cdef class MatrixBackend(GenericBackend):
             while c[0] > self.ncols() - 1:
                 self.add_variable()
                      
-        if self.G_matrix.dimensions()[0] == 0:
-            self.G_matrix = matrix(1, [self._base_ring.zero() for i in range(len(coefficients))])
+        if self.Matrix.dimensions()[0] == 0:
+            self.Matrix = matrix(1, [self._base_ring.zero() for i in range(len(coefficients))])
         else:
-            self.G_matrix = self.G_matrix.stack(matrix([self._base_ring.zero() for i in range(self.G_matrix.dimensions()[1])]))
+            self.Matrix = self.Matrix.stack(matrix([self._base_ring.zero() for i in range(self.Matrix.dimensions()[1])]))
 
         for c in coefficients:
-            self.G_matrix[-1, c[0]] = c[1]
+            self.Matrix[-1, c[0]] = c[1]
 
         if lower_bound is None:
             self.row_lower_bound_indicator.append(False)
@@ -761,7 +768,7 @@ cdef class MatrixBackend(GenericBackend):
         idx = []
         index = 0
 
-        for num in self.G_matrix[i]:
+        for num in self.Matrix[i]:
             if num != 0:
                 idx.append(index)
                 coeff.append(num)
@@ -902,12 +909,16 @@ cdef class MatrixBackend(GenericBackend):
             sage: p.is_variable_binary(0)                           
             True
             sage: p.is_variable_binary(1)    
-            Traceback (most recent call last):
-            ...
-            IndexError: ...
+            False
         """
-        if index >= len(self.is_binary):
-            raise IndexError("Variable index out of bounds")
+        if index < 0 or index >= len(self.is_binary):
+            # This is how the other backends behave, and this method is
+            # unable to raise a python exception as currently defined.
+            return False
+
+        #if index >= len(self.is_binary):
+        #    raise IndexError("Variable index out of bounds")
+            
         return self.is_binary[index]
 
     cpdef bint is_variable_integer(self, int index):
@@ -931,12 +942,18 @@ cdef class MatrixBackend(GenericBackend):
             sage: p.is_variable_integer(0)                          
             True
             sage: p.is_variable_integer(1)        
-            Traceback (most recent call last):
-            ...
-            IndexError: ...
+            False
         """
-        if index >= len(self.is_integer):
-            raise IndexError("Variable index out of bounds")
+
+        if index < 0 or index >= len(self.is_integer):
+            # This is how the other backends behave, and this method is
+            # unable to raise a python exception as currently defined.
+            return False
+
+        #if index >= len(self.is_integer):
+        #    raise IndexError("Variable index out of bounds")
+        
+        
         return self.is_integer[index]
 
     cpdef bint is_variable_continuous(self, int index):
@@ -965,12 +982,17 @@ cdef class MatrixBackend(GenericBackend):
             sage: p.is_variable_integer(0)                       
             True
             sage: p.is_variable_continuous(1)        
-            Traceback (most recent call last):
-            ...
-            IndexError: ...
+            False
         """
-        if index >= len(self.is_continuous):
-            raise IndexError("Variable index out of bounds")
+
+        if index < 0 or index >= len(self.is_continuous):
+            # This is how the other backends behave, and this method is
+            # unable to raise a python exception as currently defined.
+            return False
+
+        #if index >= len(self.is_continuous):
+        #    raise IndexError("Variable index out of bounds")
+
         return self.is_continuous[index]
 
     cpdef row_name(self, int index):
