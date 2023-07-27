@@ -67,6 +67,7 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 ##############################################################################
 
+from itertools import combinations
 from sage.categories.action import Action
 from sage.categories.groups import Groups
 from sage.combinat.permutation import Permutation
@@ -2921,7 +2922,7 @@ class BraidGroup_class(FiniteTypeArtinGroup):
             for i in braid[1:]:
                 A = A*self._LKB_matrix_((i,), variab)
             return A
-        n2 = list(Set(range(n)).subsets(2))
+        n2 = [set(X) for X in combinations(range(n), 2)]
         R = LaurentPolynomialRing(IntegerRing(), variab)
         q = R.gens()[0]
         t = R.gens()[1]
