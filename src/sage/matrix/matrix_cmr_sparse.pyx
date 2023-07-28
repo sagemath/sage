@@ -477,7 +477,6 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
         second_subcol = first_mat.delete_rows([second_row_index]).columns()[second_col_index1]
         first_submat = first_mat.delete_columns([first_col_index1, first_col_index2])
         second_submat = second_mat.delete_columns([second_col_index1, second_col_index2])
-        return first_submat
         first_row = first_submat.rows()[first_row_index]
         second_row = second_submat.rows()[second_row_index]
         first_submat = first_submat.delete_rows([first_row_index])
@@ -490,24 +489,16 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
         n2 = len(second_submat.rows())
         row_list = []
         for i in range(n1):
-            l1 = []
-            r = first_subrows[i]
-            u = upper_right_rows[i]
-            for k in range(len(r)):
-                l1.append(r[k])
-            for k in range(len(u)):
-                l1.append(u[k])
-            row_list.append(l1)
+            r = list(first_subrows[i])
+            u = list(upper_right_rows[i])
+            r.extend(u)
+            row_list.append(r)
         for i in range(n2):
-            l2 = []
-            r = second_subrows[i]
-            u = lower_left_rows[i]
-            for k in range(len(r)):
-                l2.append(r[k])
-            for k in range(len(u)):
-                l2.append(u[k])
-            row_list.append(l2)
-        return Matrix_cmr_chr_sparse._from_data(upper_rows)     
+            r = list(lower_left_subrows[i])
+            u = list(second_rows[i])
+            r.extend(u)
+            row_list.append(r)
+        return Matrix_cmr_chr_sparse._from_data(row_list, immutable = False)  
 
     def delete_rows(self, indices):
         rows = self.rows()
@@ -522,7 +513,7 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
             for i in range(len(r)):
                 x.append(r[i])
             row_list.append(x)
-        return Matrix_cmr_chr_sparse._from_data(row_list)
+        return Matrix_cmr_chr_sparse._from_data(row_list, immutable = False)
 
     def delete_columns(self, indices):
         rows = self.rows()
@@ -537,7 +528,7 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
                 if not (k in indices):
                     x.append(r[k])
             row_list.append(x)
-        return Matrix_cmr_chr_sparse._from_data(row_list)
+        return Matrix_cmr_chr_sparse._from_data(row_list, immutable = False)
 
     def is_unimodular(self):
         r"""
