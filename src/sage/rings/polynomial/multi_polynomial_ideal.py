@@ -4997,7 +4997,7 @@ class MPolynomialIdeal(MPolynomialIdeal_singular_repr,
         if grading:
             grading_dict={var:grade for var, grade in zip(self.ring().gens(), grading)}
         else:
-            grading_dict={var:1 for var, grade in zip(self.ring().gens(), grading)}
+            grading_dict={var:1 for var in self.ring().gens()}
         for f in self.gens():
             if not f.is_homogeneous_with_grading(grading_dict):
                 return False
