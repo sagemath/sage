@@ -610,6 +610,7 @@ class DynamicalSemigroup(Parent, metaclass=InheritComparisonClasscallMetaclass):
             sage: f = DynamicalSemigroup(([x, y], [x^2, y^2]))
             sage: f^2.5
             Traceback (most recent call last):
+            ...
             TypeError: 2.50000000000000 must be an integer
 
         ::
