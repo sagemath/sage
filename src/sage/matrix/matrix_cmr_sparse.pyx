@@ -494,8 +494,8 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
             r.extend(u)
             row_list.append(r)
         for i in range(n2):
-            r = list(lower_left_subrows[i])
-            u = list(second_rows[i])
+            r = list(lower_left_rows[i])
+            u = list(second_subrows[i])
             r.extend(u)
             row_list.append(r)
         return Matrix_cmr_chr_sparse._from_data(row_list, immutable = False)  
