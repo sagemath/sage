@@ -494,7 +494,7 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
             r = first_subrows[i]
             u = upper_right_rows[i]
             for k in range(len(r)):
-                l.append(r[k])
+                l1.append(r[k])
             for k in range(len(u)):
                 l1.append(u[k])
             row_list.append(l1)
