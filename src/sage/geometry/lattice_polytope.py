@@ -3220,7 +3220,7 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
         for k in range(1, n_f):
             # Error for k == 1 already!
             permutations_inv[n_s] = [S_f.one(), S_v.one()]
-            m = index_of_max(PM[k, tuple(permutations_inv[n_s][1](j+1) - 1 for j in range(n_v))])
+            m = index_of_max(tuple(PM[k, permutations_inv[n_s][1](j+1) - 1] for j in range(n_v)))
             if m > 0:
                 permutations_inv[n_s][1] = permutations_inv[n_s][1] * PGE(S_v, 1, m+1)
             d = (PM[k, permutations_inv[n_s][1](1) - 1]
@@ -3231,7 +3231,7 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
                 continue
             # otherwise:
             for i in range(1, n_v):
-                m = index_of_max(PM[k, tuple(permutations_inv[n_s][1](j+1) - 1 for j in range(i,n_v))])
+                m = index_of_max(tuple(PM[k, permutations_inv[n_s][1](j+1) - 1] for j in range(i,n_v)))
                 if m > 0:
                     permutations_inv[n_s][1] = permutations_inv[n_s][1] \
                                            * PGE(S_v, i + 1, m + i + 1)
