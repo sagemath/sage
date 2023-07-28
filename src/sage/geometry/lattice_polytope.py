@@ -3210,42 +3210,42 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
             return m
 
         n_s = 1
-        permutations = {0 : [S_f.one(), S_v.one()]}
+        permutations_inv = {0 : [S_f.one(), S_v.one()]}
         for j in range(n_v):
             m = index_of_max([PM[0][i] for i in range(j, n_v)])
             if m > 0:
-                permutations[0][1] = PGE(S_v, j + 1, m + j + 1) * permutations[0][1]
+                permutations_inv[0][1] = permutations_inv[0][1] * PGE(S_v, j + 1, m + j + 1)
         first_row = list(PM[0])
 
         # Arrange other rows one by one and compare with first row
         for k in range(1, n_f):
             # Error for k == 1 already!
-            permutations[n_s] = [S_f.one(), S_v.one()]
-            m = index_of_max(PM[k, tuple((permutations[n_s][1].inverse())(j+1)-1 for j in range(n_v))])
+            permutations_inv[n_s] = [S_f.one(), S_v.one()]
+            m = index_of_max(PM[k, tuple((permutations_inv[n_s][1])(j+1)-1 for j in range(n_v))])
             if m > 0:
-                permutations[n_s][1] = PGE(S_v, 1, m+1) * permutations[n_s][1]
-            d = (PM[k, (permutations[n_s][1].inverse())(1)-1]
-                - permutations[0][1](first_row)[0])
+                permutations_inv[n_s][1] = permutations_inv[n_s][1] * PGE(S_v, 1, m+1)
+            d = (PM[k, (permutations_inv[n_s][1])(1)-1]
+                - (permutations_inv[0][1].inverse())(first_row)[0])
             if d < 0:
                 # The largest elt of this row is smaller than largest elt
                 # in 1st row, so nothing to do
                 continue
             # otherwise:
             for i in range(1, n_v):
-                m = index_of_max(PM[k, tuple((permutations[n_s][1].inverse())(j+1)-1 for j in range(i,n_v))])
+                m = index_of_max(PM[k, tuple((permutations_inv[n_s][1])(j+1)-1 for j in range(i,n_v))])
                 if m > 0:
-                    permutations[n_s][1] = PGE(S_v, i + 1, m + i + 1) \
-                                           * permutations[n_s][1]
+                    permutations_inv[n_s][1] = permutations_inv[n_s][1] \
+                                           * PGE(S_v, i + 1, m + i + 1)
                 if d == 0:
-                    d = (PM[k, (permutations[n_s][1].inverse())(i+1)-1]
-                        -permutations[0][1](first_row)[i])
+                    d = (PM[k, (permutations_inv[n_s][1])(i+1)-1]
+                        -(permutations_inv[0][1].inverse())(first_row)[i])
                     if d < 0:
                         break
             if d < 0:
                 # This row is smaller than 1st row, so nothing to do
-                del permutations[n_s]
+                del permutations_inv[n_s]
                 continue
-            permutations[n_s][0] = PGE(S_f, 1, k + 1) * permutations[n_s][0]
+            permutations_inv[n_s][0] = permutations_inv[n_s][0] * PGE(S_f, 1, k + 1)
             if d == 0:
                 # This row is the same, so we have a symmetry!
                 n_s += 1
@@ -3253,11 +3253,11 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
                 # This row is larger, so it becomes the first row and
                 # the symmetries reset.
                 first_row = list(PM[k])
-                permutations = {0: permutations[n_s]}
+                permutations_inv = {0: permutations_inv[n_s]}
                 n_s = 1
-        permutations = {k:permutations[k] for k in permutations if k < n_s}
+        permutations_inv = {k:permutations_inv[k] for k in permutations_inv if k < n_s}
 
-        b = tuple(PM[(permutations[0][0].inverse())(1)-1, (permutations[0][1].inverse())(j+1)-1] for j in range(n_v))
+        b = tuple(PM[(permutations_inv[0][0])(1)-1, (permutations_inv[0][1])(j+1)-1] for j in range(n_v))
         # Work out the restrictions the current permutations
         # place on other permutations as a automorphisms
         # of the first row
@@ -3275,7 +3275,7 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
         # We determine the other rows of PM_max in turn by use of perms and
         # aut on previous rows.
         for l in range(1, n_f - 1):
-            n_s = len(permutations)
+            n_s = len(permutations_inv)
             n_s_bar = n_s
             cf = 0
             l_r = [0]*n_v
@@ -3285,42 +3285,42 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
                 # number of local permutations associated with current global
                 n_p = 0
                 ccf = cf
-                permutations_bar = {0: copy(permutations[k])}
+                permutations_inv_bar = {0: copy(permutations_inv[k])}
                 # We look for the line with the maximal entry in the first
                 # subsymmetry block, i.e. we are allowed to swap elements
                 # between 0 and S(0)
                 for s in range(l, n_f):
                     for j in range(1, S[0]):
-                        v = tuple(PM[(permutations_bar[n_p][0].inverse())(s+1)-1, (permutations_bar[n_p][1].inverse())(j+1)-1] for j in range(n_v))
+                        v = tuple(PM[(permutations_inv_bar[n_p][0])(s+1)-1, (permutations_inv_bar[n_p][1])(j+1)-1] for j in range(n_v))
                         if v[0] < v[j]:
-                            permutations_bar[n_p][1] = PGE(S_v, 1, j + 1) * permutations_bar[n_p][1]
+                            permutations_inv_bar[n_p][1] = permutations_inv_bar[n_p][1] * PGE(S_v, 1, j + 1)
                     if ccf == 0:
-                        l_r[0] = PM[(permutations_bar[n_p][0].inverse())(s+1)-1, (permutations_bar[n_p][1].inverse())(1)-1]
-                        permutations_bar[n_p][0] = PGE(S_f, l + 1, s + 1) * permutations_bar[n_p][0]
+                        l_r[0] = PM[(permutations_inv_bar[n_p][0])(s+1)-1, (permutations_inv_bar[n_p][1])(1)-1]
+                        permutations_inv_bar[n_p][0] = permutations_inv_bar[n_p][0] * PGE(S_f, l + 1, s + 1)
                         n_p += 1
                         ccf = 1
-                        permutations_bar[n_p] = copy(permutations[k])
+                        permutations_inv_bar[n_p] = copy(permutations_inv[k])
                     else:
-                        d1 = PM[(permutations_bar[n_p][0].inverse())(s+1)-1, (permutations_bar[n_p][1].inverse())(1)-1]
+                        d1 = PM[(permutations_inv_bar[n_p][0])(s+1)-1, (permutations_inv_bar[n_p][1])(1)-1]
                         d = d1 - l_r[0]
                         if d < 0:
                             # We move to the next line
                             continue
                         elif d==0:
                             # Maximal values agree, so possible symmetry
-                            permutations_bar[n_p][0] = PGE(S_f, l + 1, s + 1) * permutations_bar[n_p][0]
+                            permutations_inv_bar[n_p][0] = permutations_inv_bar[n_p][0] * PGE(S_f, l + 1, s + 1)
                             n_p += 1
-                            permutations_bar[n_p] = copy(permutations[k])
+                            permutations_inv_bar[n_p] = copy(permutations_inv[k])
                         else:
                             # We found a greater maximal value for first entry.
                             # It becomes our new reference:
                             l_r[0] = d1
-                            permutations_bar[n_p][0] = PGE(S_f, l + 1, s + 1) * permutations_bar[n_p][0]
+                            permutations_inv_bar[n_p][0] = permutations_inv_bar[n_p][0] * PGE(S_f, l + 1, s + 1)
                             # Forget previous work done
                             cf = 0
-                            permutations_bar = {0:copy(permutations_bar[n_p])}
+                            permutations_inv_bar = {0:copy(permutations_inv_bar[n_p])}
                             n_p = 1
-                            permutations_bar[n_p] = copy(permutations[k])
+                            permutations_inv_bar[n_p] = copy(permutations_inv[k])
                             n_s = k + 1
                 # Check if the permutations found just now work
                 # with other elements
@@ -3337,20 +3337,20 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
                         s -= 1
                         # Find the largest value in this symmetry block
                         for j in range(c + 1, h):
-                            v = tuple(PM[(permutations_bar[s][0].inverse())(l+1)-1, (permutations_bar[s][1].inverse())(j+1)-1] for j in range(n_v))
+                            v = tuple(PM[(permutations_inv_bar[s][0])(l+1)-1, (permutations_inv_bar[s][1])(j+1)-1] for j in range(n_v))
                             if (v[c] < v[j]):
-                                permutations_bar[s][1] = PGE(S_v, c + 1, j + 1) * permutations_bar[s][1]
+                                permutations_inv_bar[s][1] = permutations_inv_bar[s][1] * PGE(S_v, c + 1, j + 1)
                         if ccf == 0:
                             # Set reference and carry on to next permutation
-                            l_r[c] = PM[(permutations_bar[s][0].inverse())(l+1)-1, (permutations_bar[s][1].inverse())(c+1)-1]
+                            l_r[c] = PM[(permutations_inv_bar[s][0])(l+1)-1, (permutations_inv_bar[s][1])(c+1)-1]
                             ccf = 1
                         else:
-                            d1 = PM[(permutations_bar[s][0].inverse())(l+1)-1, (permutations_bar[s][1].inverse())(c+1)-1]
+                            d1 = PM[(permutations_inv_bar[s][0])(l+1)-1, (permutations_inv_bar[s][1])(c+1)-1]
                             d = d1 - l_r[c]
                             if d < 0:
                                 n_p -= 1
                                 if s < n_p:
-                                    permutations_bar[s] = copy(permutations_bar[n_p])
+                                    permutations_inv_bar[s] = copy(permutations_inv_bar[n_p])
                             elif d > 0:
                                 # The current case leads to a smaller matrix,
                                 # hence this case becomes our new reference
@@ -3360,13 +3360,13 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
                                 n_s = k + 1
                 # Update permutations
                 if (n_s - 1) > k:
-                    permutations[k] = copy(permutations[n_s - 1])
+                    permutations_inv[k] = copy(permutations_inv[n_s - 1])
                 n_s -= 1
                 for s in range(n_p):
-                    permutations[n_s] = copy(permutations_bar[s])
+                    permutations_inv[n_s] = copy(permutations_inv_bar[s])
                     n_s += 1
                 cf = n_s
-            permutations = {k: permutations[k] for k in permutations if k < n_s}
+            permutations_inv = {k: permutations_inv[k] for k in permutations_inv if k < n_s}
             # If the automorphisms are not already completely restricted,
             # update them
             if S != list(range(1, n_v + 1)):
@@ -3374,7 +3374,7 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
                 # the restrictions the last worked out
                 # row imposes.
                 c = 0
-                M = tuple(PM[(permutations[0][0].inverse())(l+1)-1, (permutations[0][1].inverse())(j+1)-1] for j in range(n_v))
+                M = tuple(PM[(permutations_inv[0][0])(l+1)-1, (permutations_inv[0][1])(j+1)-1] for j in range(n_v))
                 while c < n_v:
                     s = S[c] + 1
                     S[c] = c + 1
@@ -3387,9 +3387,12 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
                             S[c] = c + 1
                         c += 1
         # Now we have the perms, we construct PM_max using one of them
-        PM_max = PM.with_permuted_rows_and_columns(*permutations[0])
+        PM_max = PM.with_permuted_rows_and_columns(permutations_inv[0][0].inverse(),permutations_inv[0][1].inverse())
         if check:
-            return (PM_max, permutations)
+            for p in permutations_inv.keys():
+                permutaiton_inv[p][0] = permutaiton_inv[p][0].inverse()
+                permutaiton_inv[p][1] = permutaiton_inv[p][1].inverse()
+            return (PM_max, permutations_inv)
         else:
             return PM_max
 
