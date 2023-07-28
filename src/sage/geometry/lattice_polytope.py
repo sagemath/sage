@@ -3390,8 +3390,8 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
         PM_max = PM.with_permuted_rows_and_columns(permutations_inv[0][0].inverse(),permutations_inv[0][1].inverse())
         if check:
             for p in permutations_inv.keys():
-                permutaiton_inv[p][0] = permutaiton_inv[p][0].inverse()
-                permutaiton_inv[p][1] = permutaiton_inv[p][1].inverse()
+                permutations_inv[p][0] = permutations_inv[p][0].inverse()
+                permutations_inv[p][1] = permutations_inv[p][1].inverse()
             return (PM_max, permutations_inv)
         else:
             return PM_max
