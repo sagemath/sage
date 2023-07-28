@@ -522,6 +522,13 @@ class DynamicalSemigroup(Parent, metaclass=InheritComparisonClasscallMetaclass):
             Traceback (most recent call last):
             ...
             ValueError: -3 must be a nonnegative integer
+
+        ::
+
+            sage: P.<x,y> = ProjectiveSpace(QQ, 1)
+            sage: f = DynamicalSemigroup(([x + y, x - y], [x^2, y^2]))
+            sage: f.nth_iterate(3, 2) == (f * f)(3)
+            False
         """
         if not isinstance(n, Integer) and not isinstance(n, int):
             raise TypeError(str(n) + " must be an integer")
@@ -613,18 +620,163 @@ class DynamicalSemigroup(Parent, metaclass=InheritComparisonClasscallMetaclass):
             Traceback (most recent call last):
             ...
             ValueError: -2 must be a nonnegative integer
+
+        ::
+
+            sage: P.<x,y> = ProjectiveSpace(QQ, 1)
+            sage: f1 = DynamicalSystem([x, y], P)
+            sage: f2 = DynamicalSystem([x^2, y^2], P)
+            sage: f = DynamicalSemigroup((f1, f2))
+            sage: f * f == f^2
+            True
+
+        ::
+
+            sage: P.<x,y> = ProjectiveSpace(QQ, 1)
+            sage: f1 = DynamicalSystem([x, y], P)
+            sage: f2 = DynamicalSystem([x^2, y^2], P)
+            sage: f = DynamicalSemigroup((f1, f2))
+            sage: f^2 * f^3 == f^(2 + 3)
+            True
+
+        ::
+
+            sage: P.<x,y> = ProjectiveSpace(QQ, 1)
+            sage: f1 = DynamicalSystem([x, y], P)
+            sage: f2 = DynamicalSystem([x^2, y^2], P)
+            sage: g1 = DynamicalSystem([x^3, y^3], P)
+            sage: g2 = DynamicalSystem([x^4, y^4], P)
+            sage: f = DynamicalSemigroup((f1, f2))
+            sage: g = DynamicalSemigroup((g1, g2))
+            sage: (f * g)^2 == f^2 * g^2
+            True
+
+        ::
+
+            sage: P.<x,y> = ProjectiveSpace(QQ, 1)
+            sage: Q.<z,w> = ProjectiveSpace(QQ, 1)
+            sage: f1 = DynamicalSystem([x, y], P)
+            sage: f2 = DynamicalSystem([x^2, y^2], P)
+            sage: g1 = DynamicalSystem([z^3, w^3], Q)
+            sage: g2 = DynamicalSystem([z^4, w^4], Q)
+            sage: f = DynamicalSemigroup((f1, f2))
+            sage: g = DynamicalSemigroup((g1, g2))
+            sage: (f * g)^2 == f^2 * g^2
+            True
+
+        ::
+
+            sage: P.<x,y> = ProjectiveSpace(QQ, 1)
+            sage: f1 = DynamicalSystem([x, y], P)
+            sage: f2 = DynamicalSystem([x^2, y^2], P)
+            sage: g1 = DynamicalSystem([x^3, y^3], P)
+            sage: g2 = DynamicalSystem([x^4, y^4], P)
+            sage: f = DynamicalSemigroup((f1, f2))
+            sage: g = DynamicalSemigroup((g1, g2))
+            sage: f^2 * g^3 == g^3 * f^2
+            True
+
+        ::
+
+            sage: P.<x,y> = ProjectiveSpace(QQ, 1)
+            sage: Q.<z,w> = ProjectiveSpace(QQ, 1)
+            sage: f1 = DynamicalSystem([x, y], P)
+            sage: f2 = DynamicalSystem([x^2, y^2], P)
+            sage: g1 = DynamicalSystem([z^3, w^3], Q)
+            sage: g2 = DynamicalSystem([z^4, w^4], Q)
+            sage: f = DynamicalSemigroup((f1, f2))
+            sage: g = DynamicalSemigroup((g1, g2))
+            sage: f^2 * g^3 == g^3 * f^2
+            True
+
+        ::
+
+            sage: P.<x,y> = ProjectiveSpace(QQ, 1)
+            sage: f1 = DynamicalSystem([x, y], P)
+            sage: f2 = DynamicalSystem([x^2, y^2], P)
+            sage: g1 = DynamicalSystem([x^3, y^3], P)
+            sage: g2 = DynamicalSystem([x^4, y^4], P)
+            sage: h1 = DynamicalSystem([x^5, y^5], P)
+            sage: h2 = DynamicalSystem([x^6, y^6], P)
+            sage: f = DynamicalSemigroup((f1, f2))
+            sage: g = DynamicalSemigroup((g1, g2))
+            sage: h = DynamicalSemigroup((h1, h2))
+            sage: f * g * g * h * f * g == f^2 * g^3 * h^1
+            True
+
+        ::
+
+            sage: P.<x,y> = ProjectiveSpace(QQ, 1)
+            sage: Q.<z,w> = ProjectiveSpace(QQ, 1)
+            sage: R.<u,v> = ProjectiveSpace(QQ, 1)
+            sage: f1 = DynamicalSystem([x, y], P)
+            sage: f2 = DynamicalSystem([x^2, y^2], P)
+            sage: g1 = DynamicalSystem([z^3, w^3], Q)
+            sage: g2 = DynamicalSystem([z^4, w^4], Q)
+            sage: h1 = DynamicalSystem([u^5, v^5], R)
+            sage: h2 = DynamicalSystem([u^6, v^6], R)
+            sage: f = DynamicalSemigroup((f1, f2))
+            sage: g = DynamicalSemigroup((g1, g2))
+            sage: h = DynamicalSemigroup((h1, h2))
+            sage: f * g * g * h * f * g == f^2 * g^3 * h^1
+            True
+
+        ::
+
+            sage: P.<x,y> = ProjectiveSpace(QQ, 1)
+            sage: f1 = DynamicalSystem([x, y], P)
+            sage: f2 = DynamicalSystem([x^2, y^2], P)
+            sage: g1 = DynamicalSystem([x^3, y^3], P)
+            sage: g2 = DynamicalSystem([x^4, y^4], P)
+            sage: f = DynamicalSemigroup((f1, f2))
+            sage: g = DynamicalSemigroup((g1, g2))
+            sage: f * g^0 == f
+            True
+
+        ::
+
+            sage: P.<x,y> = ProjectiveSpace(QQ, 1)
+            sage: Q.<z,w> = ProjectiveSpace(QQ, 1)
+            sage: f1 = DynamicalSystem([x, y], P)
+            sage: f2 = DynamicalSystem([x^2, y^2], P)
+            sage: g1 = DynamicalSystem([z^3, w^3], Q)
+            sage: g2 = DynamicalSystem([z^4, w^4], Q)
+            sage: f = DynamicalSemigroup((f1, f2))
+            sage: g = DynamicalSemigroup((g1, g2))
+            sage: f * g^0 == f
+            True
+
+        ::
+
+            sage: P.<x,y> = ProjectiveSpace(QQ, 1)
+            sage: f1 = DynamicalSystem([x, y], P)
+            sage: f2 = DynamicalSystem([x^2, y^2], P)
+            sage: g1 = DynamicalSystem([x^3, y^3], P)
+            sage: g2 = DynamicalSystem([x^4, y^4], P)
+            sage: f = DynamicalSemigroup((f1, f2))
+            sage: g = DynamicalSemigroup((g1, g2))
+            sage: f^0 == g^0
+            True
+
+        ::
+
+            sage: P.<x,y> = ProjectiveSpace(QQ, 1)
+            sage: Q.<z,w> = ProjectiveSpace(QQ, 1)
+            sage: f1 = DynamicalSystem([x, y], P)
+            sage: f2 = DynamicalSystem([x^2, y^2], P)
+            sage: g1 = DynamicalSystem([z^3, w^3], Q)
+            sage: g2 = DynamicalSystem([z^4, w^4], Q)
+            sage: f = DynamicalSemigroup((f1, f2))
+            sage: g = DynamicalSemigroup((g1, g2))
+            sage: f^0 == g^0
+            True
         """
         if not isinstance(n, Integer) and not isinstance(n, int):
             raise TypeError(str(n) + " must be an integer")
         if n < 0:
             raise ValueError(str(n) + " must be a nonnegative integer")
         if n == 0:
-            if isinstance(self, DynamicalSemigroup_projective):
-                identity = DynamicalSystem_projective(self.domain().gens(), self.domain().ambient_space())
-                return DynamicalSemigroup_projective(identity)
-            if isinstance(self, DynamicalSemigroup_affine):
-                identity = DynamicalSystem_affine(self.domain().gens(), self.domain().ambient_space())
-                return DynamicalSemigroup_affine(identity)
+            return DynamicalSemigroup(DynamicalSystem(Hom(self.domain(), self.domain()).identity()))
         result = self
         for i in range(n - 1):
             result = result * self
@@ -868,12 +1020,42 @@ class DynamicalSemigroup_projective(DynamicalSemigroup):
         ::
 
             sage: P.<x,y> = ProjectiveSpace(QQ, 1)
+            sage: Q.<z,w> = ProjectiveSpace(QQ, 1)
+            sage: f1 = DynamicalSystem([x, y], P)
+            sage: f2 = DynamicalSystem([x^2, y^2], P)
+            sage: g1 = DynamicalSystem([z^3, w^3], Q)
+            sage: g2 = DynamicalSystem([z^4, w^4], Q)
+            sage: f = DynamicalSemigroup((f1, f2))
+            sage: g = DynamicalSemigroup((g1, g2))
+            sage: f*g == g*f
+            True
+
+        ::
+
+            sage: P.<x,y> = ProjectiveSpace(QQ, 1)
             sage: f1 = DynamicalSystem([x, y], P)
             sage: f2 = DynamicalSystem([x^2, y^2], P)
             sage: g1 = DynamicalSystem([x^3, y^3], P)
             sage: g2 = DynamicalSystem([x^4, y^4], P)
             sage: h1 = DynamicalSystem([x^5, y^5], P)
             sage: h2 = DynamicalSystem([x^6, y^6], P)
+            sage: f = DynamicalSemigroup((f1, f2))
+            sage: g = DynamicalSemigroup((g1, g2))
+            sage: h = DynamicalSemigroup((h1, h2))
+            sage: f*(g*h) == (f*g)*h
+            True
+
+        ::
+
+            sage: P.<x,y> = ProjectiveSpace(QQ, 1)
+            sage: Q.<z,w> = ProjectiveSpace(QQ, 1)
+            sage: R.<u,v> = ProjectiveSpace(QQ, 1)
+            sage: f1 = DynamicalSystem([x, y], P)
+            sage: f2 = DynamicalSystem([x^2, y^2], P)
+            sage: g1 = DynamicalSystem([z^3, z^3], Q)
+            sage: g2 = DynamicalSystem([z^4, w^4], Q)
+            sage: h1 = DynamicalSystem([u^5, v^5], R)
+            sage: h2 = DynamicalSystem([u^6, v^6], R)
             sage: f = DynamicalSemigroup((f1, f2))
             sage: g = DynamicalSemigroup((g1, g2))
             sage: h = DynamicalSemigroup((h1, h2))
@@ -1111,12 +1293,42 @@ class DynamicalSemigroup_affine(DynamicalSemigroup):
         ::
 
             sage: A.<x> = AffineSpace(QQ, 1)
+            sage: B.<y> = AffineSpace(QQ, 1)
+            sage: f1 = DynamicalSystem(x, A)
+            sage: f2 = DynamicalSystem(x^2, A)
+            sage: g1 = DynamicalSystem(y^3, B)
+            sage: g2 = DynamicalSystem(y^4, B)
+            sage: f = DynamicalSemigroup((f1, f2))
+            sage: g = DynamicalSemigroup((g1, g2))
+            sage: f*g == g*f
+            True
+
+        ::
+
+            sage: A.<x> = AffineSpace(QQ, 1)
             sage: f1 = DynamicalSystem(x, A)
             sage: f2 = DynamicalSystem(x^2, A)
             sage: g1 = DynamicalSystem(x^3, A)
             sage: g2 = DynamicalSystem(x^4, A)
             sage: h1 = DynamicalSystem(x^5, A)
             sage: h2 = DynamicalSystem(x^6, A)
+            sage: f = DynamicalSemigroup((f1, f2))
+            sage: g = DynamicalSemigroup((g1, g2))
+            sage: h = DynamicalSemigroup((h1, h2))
+            sage: f*(g*h) == (f*g)*h
+            True
+
+        ::
+
+            sage: A.<x> = AffineSpace(QQ, 1)
+            sage: B.<y> = AffineSpace(QQ, 1)
+            sage: C.<z> = AffineSpace(QQ, 1)
+            sage: f1 = DynamicalSystem(x, A)
+            sage: f2 = DynamicalSystem(x^2, A)
+            sage: g1 = DynamicalSystem(y^3, B)
+            sage: g2 = DynamicalSystem(y^4, B)
+            sage: h1 = DynamicalSystem(z^5, C)
+            sage: h2 = DynamicalSystem(z^6, C)
             sage: f = DynamicalSemigroup((f1, f2))
             sage: g = DynamicalSemigroup((g1, g2))
             sage: h = DynamicalSemigroup((h1, h2))
