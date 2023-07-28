@@ -360,6 +360,39 @@ class MomentAngleComplex(SageObject, UniqueRepresentation):
         # needs work
         return out
 
+    @cached_method
+    def _homology_group(self, l, base_ring=ZZ, cohomology=False,
+                     algorithm='pari', verbose=False, reduced=True):
+        """
+        Expand the docstirng.
+
+        EXAMPLES::
+
+        <Lots and lots of examples>
+        """
+        vertices = self._simplicial_complex.vertices()
+        n = len(vertices)
+        invfac = []
+
+        # experimental WARNING, or require it to be field, or believe it is correct
+        for j in range(n+1):
+            for x in combinations(vertices, j):
+                S = self._simplicial_complex.generated_subcomplex(x)
+                if base_ring.is_field():
+                    invfac.append(S.homology(l-j-1, base_ring=base_ring,
+                                             cohomology=cohomology, algorithm=algorithm,
+                                             verbose=verbose, reduced=reduced).dimension())
+                else:
+                    invfac.extend(S.homology(l-j-1, base_ring=base_ring,
+                                             cohomology=cohomology, algorithm=algorithm,
+                                             verbose=verbose, reduced=reduced)._original_invts)
+
+        m = len(invfac)
+        if base_ring.is_field():
+            return HomologyGroup(sum(invfac), base_ring)
+
+        return HomologyGroup(m, base_ring, invfac)
+
     # expand the docstring here
     # should direct sum be implemented differently here?
     def homology(self, dim=None, base_ring=ZZ, cohomology=False,
@@ -372,33 +405,6 @@ class MomentAngleComplex(SageObject, UniqueRepresentation):
 
         <Lots and lots of examples>
         """
-        # pull this out, make it cached_method and ignore the algorithm
-        def homology_group(l):
-            # useless
-            self._simplicial_complex.set_immutable()
-            vertices = self._simplicial_complex.vertices()
-            n = len(vertices)
-            invfac = []
-
-            # experimental WARNING, or require it to be field, or believe it is correct
-            for j in range(n+1):
-                for x in combinations(vertices, j):
-                    S = self._simplicial_complex.generated_subcomplex(x, is_mutable=False)
-                    if base_ring.is_field():
-                        invfac.append(S.homology(l-j-1, base_ring=base_ring,
-                                                 cohomology=cohomology, algorithm=algorithm,
-                                                 verbose=verbose, reduced=reduced).dimension())
-                    else:
-                        invfac.extend(S.homology(l-j-1, base_ring=base_ring,
-                                                 cohomology=cohomology, algorithm=algorithm,
-                                                 verbose=verbose, reduced=reduced)._original_invts)
-
-            m = len(invfac)
-            if base_ring.is_field():
-                return HomologyGroup(sum(invfac), base_ring)
-
-            return HomologyGroup(m, base_ring, invfac)
-
         if dim is not None:
             if isinstance(dim, (list, tuple, range)):
                 low = min(dim)
@@ -410,7 +416,9 @@ class MomentAngleComplex(SageObject, UniqueRepresentation):
         else:
             dims = range(self.dimension()+1)
 
-        answer = {i : homology_group(i) for i in dims}
+        answer = {i : self._homology_group(i, base_ring=base_ring,
+                                             cohomology=cohomology, algorithm=algorithm,
+                                             verbose=verbose, reduced=reduced) for i in dims}
         return answer
 
     def cohomology(self, dim=None, base_ring=ZZ, algorithm='pari',
