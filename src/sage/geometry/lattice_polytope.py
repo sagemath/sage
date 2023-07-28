@@ -142,6 +142,7 @@ from sage.structure.sage_object import SageObject
 from sage.structure.richcmp import richcmp_method, richcmp
 from sage.geometry.convex_set import ConvexSet_compact
 import sage.geometry.abc
+from sage.matrix.permuted_matrix_window import PermutedMatrixWindow
 
 from copy import copy
 from collections.abc import Hashable
@@ -3193,11 +3194,12 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
                 return S.one()
             return S((u, v), check=False)
 
-        PM = self.vertex_facet_pairing_matrix()
-        n_v = PM.ncols()
-        n_f = PM.nrows()
+        PM_old = self.vertex_facet_pairing_matrix()
+        n_v = PM_old.ncols()
+        n_f = PM_old.nrows()
         S_v = SymmetricGroup(n_v)
         S_f = SymmetricGroup(n_f)
+        PM = PermutedMatrixWindow(PM_old, 0, 0, n_f, n_v)
 
         # and find all the ways of making the first row of PM_max
         def index_of_max(iterable):
@@ -3396,7 +3398,7 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
                             S[c] = c + 1
                         c += 1
         # Now we have the perms, we construct PM_max using one of them
-        PM_max = PM.with_permuted_rows_and_columns(*permutations[0])
+        PM_max = PM_old.with_permuted_rows_and_columns(*permutations[0])
         if check:
             return (PM_max, permutations)
         else:
