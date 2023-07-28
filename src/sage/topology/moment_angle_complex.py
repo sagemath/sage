@@ -97,6 +97,8 @@ from itertools import combinations
 # - a lot of things follow from the homology and cohomology - ?
 # - mark copies of code?
 
+# add moment_angle_complex to simplicial_complex
+
 def union(c1, c2):
     """
     Return the union of cubical complexes, as a cubical complex.
@@ -148,9 +150,7 @@ class MomentAngleComplex(SageObject, UniqueRepresentation):
 
         <Lots and lots of examples>
         """
-        if not isinstance(simplicial_complex, SimplicialComplex):
-            simplicial_complex = SimplicialComplex(simplicial_complex)
-
+        # add comments
         self._simplicial_complex = copy(simplicial_complex)
         self._moment_angle_complex = None
 
@@ -372,12 +372,15 @@ class MomentAngleComplex(SageObject, UniqueRepresentation):
 
         <Lots and lots of examples>
         """
+        # pull this out, make it cached_method and ignore the algorithm
         def homology_group(l):
+            # useless
             self._simplicial_complex.set_immutable()
             vertices = self._simplicial_complex.vertices()
             n = len(vertices)
             invfac = []
 
+            # experimental WARNING, or require it to be field, or believe it is correct
             for j in range(n+1):
                 for x in combinations(vertices, j):
                     S = self._simplicial_complex.generated_subcomplex(x, is_mutable=False)
