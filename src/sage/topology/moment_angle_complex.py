@@ -364,7 +364,7 @@ class MomentAngleComplex(SageObject, UniqueRepresentation):
     def _homology_group(self, l, base_ring=ZZ, cohomology=False,
                      algorithm='pari', verbose=False, reduced=True):
         """
-        Expand the docstirng.
+        Expand the docstirng here.
 
         EXAMPLES::
 
@@ -374,7 +374,6 @@ class MomentAngleComplex(SageObject, UniqueRepresentation):
         n = len(vertices)
         invfac = []
 
-        # experimental WARNING, or require it to be field, or believe it is correct
         for j in range(n+1):
             for x in combinations(vertices, j):
                 S = self._simplicial_complex.generated_subcomplex(x)
