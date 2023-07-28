@@ -439,6 +439,41 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
         return sum
 
     def three_sum(first_mat, second_mat, first_col_index1, first_col_index2, second_col_index1, second_col_index2):
+        r"""
+        Return the 3-sum matrix constructed from the given matrices ``first_mat`` and ``second_mat``, with 'first_col_index1'
+        and 'first_col_index2' being the indices of the column vectors of the matrix, which are identical except for one row
+        having a 0 in one column and the other a non-zero entry in that row. The method assumes the nonzero entry is one. The same assumptions
+        are made for 'second_mat' and its input index variables.
+        
+        EXAMPLES::
+
+            sage: from sage.matrix.matrix_cmr_sparse import Matrix_cmr_chr_sparse
+            sage: M1 = Matrix_cmr_chr_sparse(MatrixSpace(ZZ, 5, 5, sparse=True),
+            ....:                          [[1, 0, -1, 0, 1], [1, 1, 0, -1, 1], [0, 0, 1, 1, 1], 
+            ....:                           [1, 1, -1, 0, 0], [-1, -1, 0, 0,1]]); M1
+            [ 1  0 -1  0  1]
+            [ 1  1  0 -1  1]
+            [ 0  0  1  1  1]
+            [ 1  1 -1  0  0]
+            [-1 -1  0  0  1]
+            sage: M2 = Matrix_cmr_chr_sparse(MatrixSpace(ZZ, 5, 5, sparse=True),
+            ....:                      [[1, 1, 1, 1, 1], [1, 1, 1, 0, 0], [1, 0, 1, 1, 0],
+            ....:                       [0, 0, 0, 1, 1], [1, 1, 0, 0, 1]]); M2
+            [1 1 1 1 1]
+            [1 1 1 0 0]
+            [1 0 1 1 0]
+            [0 0 0 1 1]
+            [1 1 0 0 1]
+            sage: M3 = Matrix_cmr_chr_sparse.three_sum(M1, M2, 0, 1, 0, 1); M3
+            [ 0 -1  1  1  1  0]
+            [ 1  1  1  0  0  0]
+            [-1  0  0  1  1  0]
+            [ 0  0  1 -1 -1  0]
+            [-1  0  1  1  1  1]
+            [-1  0  1  1  0  0]
+            [-1  0  1  0  1  1]
+            [ 1  0 -1  0  0  1]
+        """
         fc = len(first_mat.columns())
         sc = len(second_mat.columns())
         fr = len(first_mat.rows())
