@@ -3337,7 +3337,6 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
                         # Find the largest value in this symmetry block
                         for j in range(c + 1, h):
                             v = tuple(PM[(permutations_bar[s][0])(l+1) - 1, (permutations_bar[s][1])(i+1) - 1] for i in range(n_v))
-                            print(v)
                             if (v[c] < v[j]):
                                 permutations_bar[s][1] = PGE(S_v, c + 1, j + 1) * permutations_bar[s][1]
                         if ccf == 0:
