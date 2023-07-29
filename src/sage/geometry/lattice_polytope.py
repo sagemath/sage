@@ -3290,8 +3290,9 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
                 # between 0 and S(0)
                 for s in range(l, n_f):
                     for j in range(1, S[0]):
-                        v = tuple(PM[permutations_bar[n_p][0](s+1) - 1, permutations_bar[n_p][1](i+1) - 1] for i in range(n_v))
-                        if v[0] < v[j]:
+                        v0 = PM[permutations_bar[n_p][0](s+1) - 1, permutations_bar[n_p][1](1) - 1]
+                        vj = PM[permutations_bar[n_p][0](s+1) - 1, permutations_bar[n_p][1](j+1) - 1]
+                        if v0 < vj:
                             permutations_bar[n_p][1] = PGE(S_v, 1, j + 1) * permutations_bar[n_p][1]
                     if ccf == 0:
                         l_r[0] = PM[permutations_bar[n_p][0](s+1) - 1, permutations_bar[n_p][1](1) - 1]
@@ -3336,8 +3337,9 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
                         s -= 1
                         # Find the largest value in this symmetry block
                         for j in range(c + 1, h):
-                            v = tuple(PM[(permutations_bar[s][0])(l+1) - 1, (permutations_bar[s][1])(i+1) - 1] for i in range(n_v))
-                            if (v[c] < v[j]):
+                            vc = PM[(permutations_bar[s][0])(l+1) - 1, (permutations_bar[s][1])(c+1) - 1]
+                            vj = PM[(permutations_bar[s][0])(l+1) - 1, (permutations_bar[s][1])(j+1) - 1]
+                            if (vc < vj):
                                 permutations_bar[s][1] = PGE(S_v, c + 1, j + 1) * permutations_bar[s][1]
                         if ccf == 0:
                             # Set reference and carry on to next permutation
