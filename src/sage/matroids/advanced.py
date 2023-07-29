@@ -59,4 +59,6 @@ from .utilities import setprint, newlabel, get_nonisomorphic_matroids, lift_cros
 from . import lean_matrix
 from .extension import LinearSubclasses, MatroidExtensions
 from .union_matroid import MatroidUnion, MatroidSum, PartitionMatroid
-from .graphic_matroid import GraphicMatroid
+
+from sage.misc.lazy_import import lazy_import
+lazy_import('sage.matroids.graphic_matroid', 'GraphicMatroid')
