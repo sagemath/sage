@@ -5198,13 +5198,15 @@ def _palp_canonical_order(V, PM_max, permutations):
             p_c = S_v((1 + i, 1 + k), check=False) * p_c
     # Create array of possible NFs.
     permutations = [p_c * l[1] for l in permutations.values()]
-    Vs = [(V.column_matrix().with_permuted_columns(sig).hermite_form(), sig)
+    Vmatrix = V.column_matrix()
+    Vs = [(Vmatrix.with_permuted_columns(sig).hermite_form(), sig)
           for sig in permutations]
     Vmin = min(Vs, key=lambda x:x[0])
-    vertices = [V.module()(_) for _ in Vmin[0].columns()]
+    Vmodule = V.module()
+    vertices = [Vmodule(_) for _ in Vmin[0].columns()]
     for v in vertices:
         v.set_immutable()
-    return (PointCollection(vertices, V.module()), Vmin[1])
+    return (PointCollection(vertices, Vmodule), Vmin[1])
 
 
 def _palp_convert_permutation(permutation):
