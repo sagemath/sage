@@ -10,13 +10,7 @@ Given a simplicial complex `K`, with a set of vertices
 `V = \{v_1, v_2, \dotso, v_n\}`, a moment-angle complex over `K` is a
 topological space `Z`, which is a union of `X_{\sigma}`, where
 `\sigma \in K`, and `X_{\sigma} = Y_{v_1} \times Y_{v_2} \times \dotso \times Y_{v_n}`
-and `Y_{v_i}` is a 2-disk (a 2-simplex) if `v_i \in \sigma`, or a 1-sphere otherwise
-
-.. NOTE::
-
-    The mentioned union is not a disjoint union of topological spaces. The unit disks
-    and the unit spheres are considered subsets of `\CC`, so the union is just
-    a normal union of subsets of `\CC^n`.
+and `Y_{v_i}` is a 2-disk (a 2-simplex) if `v_i \in \sigma`, or a 1-sphere otherwise.
 
 .. MATH::
 
@@ -26,16 +20,22 @@ and `Y_{v_i}` is a 2-disk (a 2-simplex) if `v_i \in \sigma`, or a 1-sphere other
         S^1, &v_i \notin \sigma
     \end{cases}
 
+.. NOTE::
+
+    The mentioned union is not a disjoint union of topological spaces. The unit disks
+    and the unit spheres are considered subsets of `\CC`, so the union is just
+    a normal union of subsets of `\CC^n`.
+
 They are one of the main topics of resarch in fields such as algebraic and
 toric topology, as well as combinatorial algebraic geometry.
 
-Here we view them as cubical complexes and try to compute mostly
+Here we moment-angle complexes as cubical complexes and try to compute mostly
 things which would not require computing the moment-angle complex itself,
 but rather work with the corresponding simplicial complex.
 
 .. NOTE::
 
-    One of the most useful properties will be the
+    One of the more useful properties will be the
     :meth:`bigraded Betti numbers<sage.topology.simplicial_complex.bigraded_betti_numbers>`,
     and the underlying theorem which makes this possible is Hochter's formula, which
     can be found on page 104 of :arxiv:`Toric topoloogy<1210.2368>`.
@@ -45,14 +45,12 @@ EXAMPLES::
     sage: MomentAngleComplex([[1,2,3], [2,4], [3,4]])
     Moment angle complex over a simplicial complex with vertex set (1, 2, 3, 4) and facets {(2, 4), (3, 4), (1, 2, 3)}
     sage: X = SimplicialComplex([[0,1], [1,2], [1,3], [2,3]])
-    sage: Z = MomentAngleComplex(X)
-    sage: Z
+    sage: Z = MomentAngleComplex(X); Z
     Moment angle complex over a simplicial complex with vertex set (0, 1, 2, 3) and facets {(0, 1), (1, 2), (1, 3), (2, 3)}
-    sage: M = MomentAngleComplex([[1], [2]])
-    sage: M
+    sage: M = MomentAngleComplex([[1], [2]]); M
     Moment angle complex over a simplicial complex with vertex set (1, 2) and facets {(1,), (2,)}
 
-We can perform a number of operations, such as find the dimension or compute the homology.
+We can perform a number of operations, such as find the dimension or compute the homology::
 
     sage: M.homology()
     {0: 0, 1: 0, 2: 0, 3: Z}
@@ -85,27 +83,46 @@ from itertools import combinations
 
 #TODO's:
 # - Documentation (examples and tests) - wait for a bit more complete implementation
-# - latex?
-# - compute up to homotopy?
-# - and a lot more ...
 # - add literature to bibliography?
 # - polyhedral products and real moment-angle complexes?
 # - golod decomposition
 # - return for odd dimensional simplicial complexes in golod_decomposition?
 # - explicitly state the vertices for construction?
 # - add product using join of simplicial complexes
-# - a lot of things follow from the homology and cohomology - ?
-# - mark copies of code?
 
 # add moment_angle_complex to simplicial_complex
 
 def union(c1, c2):
     """
-    Return the union of cubical complexes, as a cubical complex.
+    Return the union of cubical complexes.
+
+    This method returns a cubical complex whose set of maximal faces
+    is the union of sets of maximal faces of ``c1`` and ``c2``.
+
+    INPUT:
+
+    - ``c1`` -- a cubical complex
+
+    - ``c2`` -- a cubical complex
+
+    OUTPUT: the union of cubical complexes ``c1`` and ``c2``
+
+    .. WARNING::
+
+        This is regular union, not disjoint union. One should be careful
+        with the nomenclature of the vertices.
 
     EXAMPLES::
 
-    <Lots and lots of examples>
+        sage: from sage.topology.moment_angle_complex import union
+        sage: C1 = CubicalComplex([([0,0], [2,3]), ([0,1], [3,3]), ([0,1], [2,2]), ([1,1], [2,3])]); C1
+        Cubical complex with 4 vertices and 8 cubes
+        sage: C2 = CubicalComplex([([0,0], [2,3]), ([0,1], [3,3]), ([0,1], [2,2]), ([2,2], [2,3])]); C2
+        Cubical complex with 6 vertices and 10 cubes
+        sage: union(C1, C2)
+        Cubical complex with 6 vertices and 11 cubes
+        sage: union(C1, C1) == C1
+        True
     """
     facets = []
     for f in c1.maximal_cells():
@@ -467,7 +484,7 @@ class MomentAngleComplex(SageObject, UniqueRepresentation):
         """
         Return the Euler characteristic of ``self``.
 
-        EXAMPLES:
+        EXAMPLES::
 
         <Lots and lots of examples>
         """
