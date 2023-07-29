@@ -177,7 +177,7 @@ if __name__ == "__main__":
         # we do not silently hide typos.
         filenames = [f for f in args.filenames
                      if f.endswith("_test.py") or not os.path.isfile(f)]
-        if filenames or not args.filenames:
+        if filenames:
             print(f"Running pytest on {filenames} with options {pytest_options}")
             exit_code_pytest = pytest.main(filenames + pytest_options)
             if exit_code_pytest == 5:
