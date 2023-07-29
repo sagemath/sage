@@ -1041,7 +1041,7 @@ class kRegularSequence(RecognizableSeries):
     def partial_sums(self, include_n=False):
         r"""
         Return the sequence of partial sums of this
-        `k`-regular sequence. That is, the `n`th entry of the result
+        `k`-regular sequence. That is, the `n`-th entry of the result
         is the sum of the first `n` entries in the original sequence.
 
         INPUT:
