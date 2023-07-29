@@ -423,7 +423,7 @@ def atoms_and_clique_separators(G, tree=False, rooted_tree=False, separators=Fal
     if not G.is_connected():
         from sage.graphs.graph import Graph
 
-        for cc in G.connected_components():
+        for cc in G.connected_components(sort=False):
             g = Graph([cc, G.edge_boundary(cc, cc, False, False)],
                       format='vertices_and_edges',
                       loops=True, multiedges=True)
