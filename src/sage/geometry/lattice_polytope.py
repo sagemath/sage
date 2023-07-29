@@ -3188,11 +3188,6 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
             sage: all(results)  # long time
             True
         """
-        def PGE(S, u, v):
-            if u == v:
-                return S.one()
-            return S((u, v), check=False)
-
         PM = self.vertex_facet_pairing_matrix()
         n_v = PM.ncols()
         n_f = PM.nrows()
@@ -3202,27 +3197,23 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
         # and find all the ways of making the first row of PM_max
         def index_of_max(iterable):
             # returns the index of max of any iterable
-            m, x = 0, iterable[0]
-            for k, l in enumerate(iterable):
-                if l > x:
-                    m, x = k, l
-            return m
+            return max(enumerate(iterable), key=lambda x: x[1])[0]
 
         n_s = 1
         permutations = {0: [S_f.one(), S_v.one()]}
         for j in range(n_v):
-            m = index_of_max([PM[0][i] for i in range(j, n_v)])
+            m = index_of_max(PM[0, i] for i in range(j, n_v))
             if m > 0:
-                permutations[0][1] = PGE(S_v, j + 1, m + j + 1) * permutations[0][1]
+                permutations[0][1] = S_v((j + 1, m + j + 1), check=False) * permutations[0][1]
         first_row = list(PM[0])
 
         # Arrange other rows one by one and compare with first row
         for k in range(1, n_f):
             # Error for k == 1 already!
             permutations[n_s] = [S_f.one(), S_v.one()]
-            m = index_of_max(tuple(PM[k, permutations[n_s][1](j+1) - 1] for j in range(n_v)))
+            m = index_of_max(PM[k, permutations[n_s][1](j+1) - 1] for j in range(n_v))
             if m > 0:
-                permutations[n_s][1] = PGE(S_v, 1, m+1) * permutations[n_s][1]
+                permutations[n_s][1] = S_v((1, m + 1), check=False) * permutations[n_s][1]
             d = (PM[k, permutations[n_s][1](1) - 1]
                 - permutations[0][1](first_row)[0])
             if d < 0:
@@ -3231,9 +3222,9 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
                 continue
             # otherwise:
             for i in range(1, n_v):
-                m = index_of_max(tuple(PM[k, permutations[n_s][1](j+1) - 1] for j in range(i,n_v)))
+                m = index_of_max(PM[k, permutations[n_s][1](j+1) - 1] for j in range(i,n_v))
                 if m > 0:
-                    permutations[n_s][1] = PGE(S_v, i + 1, m + i + 1) \
+                    permutations[n_s][1] = S_v((i + 1, m + i + 1), check=False) \
                                            * permutations[n_s][1]
                 if d == 0:
                     d = (PM[k, permutations[n_s][1](i+1) - 1]
@@ -3244,7 +3235,7 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
                 # This row is smaller than 1st row, so nothing to do
                 del permutations[n_s]
                 continue
-            permutations[n_s][0] = PGE(S_f, 1, k + 1) * permutations[n_s][0]
+            permutations[n_s][0] = S_f((1, k + 1), check=False) * permutations[n_s][0]
             if d == 0:
                 # This row is the same, so we have a symmetry!
                 n_s += 1
@@ -3293,10 +3284,11 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
                         v0 = PM[permutations_bar[n_p][0](s+1) - 1, permutations_bar[n_p][1](1) - 1]
                         vj = PM[permutations_bar[n_p][0](s+1) - 1, permutations_bar[n_p][1](j+1) - 1]
                         if v0 < vj:
-                            permutations_bar[n_p][1] = PGE(S_v, 1, j + 1) * permutations_bar[n_p][1]
+                            permutations_bar[n_p][1] = S_v((1, j + 1), check=False) * permutations_bar[n_p][1]
                     if ccf == 0:
                         l_r[0] = PM[permutations_bar[n_p][0](s+1) - 1, permutations_bar[n_p][1](1) - 1]
-                        permutations_bar[n_p][0] = PGE(S_f, l + 1, s + 1) * permutations_bar[n_p][0]
+                        if s != l:
+                            permutations_bar[n_p][0] = S_f((l + 1, s + 1), check=False) * permutations_bar[n_p][0]
                         n_p += 1
                         ccf = 1
                         permutations_bar[n_p] = copy(permutations[k])
@@ -3308,14 +3300,16 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
                             continue
                         elif d==0:
                             # Maximal values agree, so possible symmetry
-                            permutations_bar[n_p][0] = PGE(S_f, l + 1, s + 1) * permutations_bar[n_p][0]
+                            if s != l:
+                                permutations_bar[n_p][0] = S_f((l + 1, s + 1), check=False) * permutations_bar[n_p][0]
                             n_p += 1
                             permutations_bar[n_p] = copy(permutations[k])
                         else:
                             # We found a greater maximal value for first entry.
                             # It becomes our new reference:
                             l_r[0] = d1
-                            permutations_bar[n_p][0] = PGE(S_f, l + 1, s + 1) * permutations_bar[n_p][0]
+                            if s != l:
+                                permutations_bar[n_p][0] = S_f((l + 1, s + 1), check=False) * permutations_bar[n_p][0]
                             # Forget previous work done
                             cf = 0
                             permutations_bar = {0:copy(permutations_bar[n_p])}
@@ -3340,7 +3334,7 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
                             vc = PM[(permutations_bar[s][0])(l+1) - 1, (permutations_bar[s][1])(c+1) - 1]
                             vj = PM[(permutations_bar[s][0])(l+1) - 1, (permutations_bar[s][1])(j+1) - 1]
                             if (vc < vj):
-                                permutations_bar[s][1] = PGE(S_v, c + 1, j + 1) * permutations_bar[s][1]
+                                permutations_bar[s][1] = S_v((c + 1, j + 1), check=False) * permutations_bar[s][1]
                         if ccf == 0:
                             # Set reference and carry on to next permutation
                             l_r[c] = PM[(permutations_bar[s][0])(l+1) - 1, (permutations_bar[s][1])(c+1) - 1]
@@ -5188,11 +5182,10 @@ def _palp_canonical_order(V, PM_max, permutations):
          in 2-d lattice M, (1,3,2,4))
     """
     n_v = PM_max.ncols()
-    n_f = PM_max.nrows()
     S_v = SymmetricGroup(n_v)
     p_c = S_v.one()
-    M_max = [max([PM_max[i][j] for i in range(n_f)]) for j in range(n_v)]
-    S_max = [sum([PM_max[i][j] for i in range(n_f)]) for j in range(n_v)]
+    M_max = [max(row[j] for row in PM_max.rows()) for j in range(n_v)]
+    S_max = sum(PM_max)
     for i in range(n_v):
         k = i
         for j in range(i + 1, n_v):
