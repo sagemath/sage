@@ -40,12 +40,12 @@ from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
 from sage.rings.polynomial.ore_polynomial_element import OrePolynomial
 from sage.rings.polynomial.polynomial_ring import PolynomialRing_general
-from sage.rings.ring_extension import RingExtension_generic
 from sage.structure.parent import Parent
 from sage.structure.sage_object import SageObject
 from sage.structure.sequence import Sequence
 from sage.structure.unique_representation import UniqueRepresentation
 
+lazy_import('sage.rings.ring_extension', 'RingExtension_generic')
 lazy_import('sage.rings.lazy_series_ring', 'LazyPowerSeriesRing')
 
 
