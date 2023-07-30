@@ -52,7 +52,7 @@ def ZZ_points_of_bounded_height(PS, dim, bound):
 
     - an iterator of points of bounded height
 
-    EXAMPLES:
+    EXAMPLES::
 
         sage: from sage.schemes.projective.proj_bdd_height import ZZ_points_of_bounded_height
         sage: PS = ProjectiveSpace(ZZ, 1)
@@ -110,7 +110,7 @@ def QQ_points_of_bounded_height(PS, dim, bound, normalize=False):
 
     - an iterator of points of bounded height
 
-    EXAMPLES:
+    EXAMPLES::
 
         sage: from sage.schemes.projective.proj_bdd_height import QQ_points_of_bounded_height
         sage: PS = ProjectiveSpace(QQ, 1)
@@ -251,7 +251,7 @@ def points_of_bounded_height(PS, K, dim, bound, prec=53):
 
     - an iterator of points of bounded height
 
-    EXAMPLES:
+    EXAMPLES::
 
         sage: from sage.schemes.projective.proj_bdd_height import points_of_bounded_height
         sage: x = polygen(ZZ, 'x')

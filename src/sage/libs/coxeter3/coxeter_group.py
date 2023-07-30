@@ -1,4 +1,5 @@
-# -*- coding: utf-8 -*-
+# sage_setup: distribution = sagemath-coxeter3
+
 """
 Coxeter Groups implemented with Coxeter3
 """
