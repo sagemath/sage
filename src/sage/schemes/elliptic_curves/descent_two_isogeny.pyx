@@ -170,7 +170,7 @@ cdef int lemma6(mpz_t a, mpz_t b, mpz_t c, mpz_t d, mpz_t e,
     else:
         mu = valuation(g_prime_of_x, p)
         if lambd > 2*mu:
-            result = +1  # soluble
+            result = 1  # soluble
         elif lambd >= 2*nu and mu >= nu:
             result = 0  # undecided
 
@@ -226,14 +226,14 @@ cdef int lemma7(mpz_t a, mpz_t b, mpz_t c, mpz_t d, mpz_t e,
     else:
         mu = valuation(g_prime_of_x, p)
         if lambd > 2*mu:
-            result = +1  # soluble
+            result = 1  # soluble
         elif nu > mu:
             if lambd >= mu+nu:
-                result = +1  # soluble
+                result = 1  # soluble
             elif lambd+1 == mu+nu and (lambd & 1) == 0:
-                result = +1  # soluble
+                result = 1  # soluble
             elif lambd+2 == mu+nu and (lambd & 1) == 0 and g_of_x_odd_part_mod_4 == 1:
-                result = +1 # soluble
+                result = 1 # soluble
         else: # nu <= mu
             if lambd >= 2*nu:
                 result = 0  # undecided
@@ -1001,7 +1001,7 @@ def test_els(a, b, c, d, e):
         ....:         except ValueError:
         ....:             continue
     """
-    cdef Integer A,B,C,D,E
+    cdef Integer A, B, C, D, E
     A = Integer(a)
     B = Integer(b)
     C = Integer(c)
