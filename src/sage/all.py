@@ -194,10 +194,6 @@ from sage.misc.copying import license
 copying = license
 copyright = license
 
-_cpu_time_ = cputime()
-_wall_time_ = walltime()
-
-
 def quit_sage(verbose=True):
     """
     Does nothing. Code that needs cleanup should register its own

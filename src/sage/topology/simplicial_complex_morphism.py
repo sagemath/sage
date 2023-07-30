@@ -133,7 +133,7 @@ class SimplicialComplexMorphism(Morphism):
     """
     An element of this class is a morphism of simplicial complexes.
     """
-    def __init__(self,f,X,Y):
+    def __init__(self, f, X, Y):
         """
         Input is a dictionary ``f``, the domain ``X``, and the codomain ``Y``.
 
@@ -156,7 +156,7 @@ class SimplicialComplexMorphism(Morphism):
             sage: x.image() == y.image()
             False
         """
-        if not isinstance(X,SimplicialComplex) or not isinstance(Y,SimplicialComplex):
+        if not isinstance(X, SimplicialComplex) or not isinstance(Y, SimplicialComplex):
             raise ValueError("X and Y must be SimplicialComplexes")
         if not set(f.keys()) == set(X.vertices()):
             raise ValueError("f must be a dictionary from the vertex set of X to single values in the vertex set of Y")
@@ -172,9 +172,9 @@ class SimplicialComplexMorphism(Morphism):
             if v not in Y_faces[v.dimension()]:
                 raise ValueError("f must be a dictionary from the vertices of X to the vertices of Y")
         self._vertex_dictionary = f
-        Morphism.__init__(self, Hom(X,Y,SimplicialComplexes()))
+        Morphism.__init__(self, Hom(X, Y, SimplicialComplexes()))
 
-    def __eq__(self,x):
+    def __eq__(self, x):
         """
         Return ``True`` if and only if ``self == x``.
 
@@ -204,12 +204,12 @@ class SimplicialComplexMorphism(Morphism):
             sage: k == l
             True
         """
-        if not isinstance(x,SimplicialComplexMorphism) or self.codomain() != x.codomain() or self.domain() != x.domain() or self._vertex_dictionary != x._vertex_dictionary:
+        if not isinstance(x, SimplicialComplexMorphism) or self.codomain() != x.codomain() or self.domain() != x.domain() or self._vertex_dictionary != x._vertex_dictionary:
             return False
         else:
             return True
 
-    def __call__(self,x,orientation=False):
+    def __call__(self, x, orientation=False):
         """
         Input is a simplex of the domain. Output is the image simplex.
 
@@ -304,7 +304,8 @@ class SimplicialComplexMorphism(Morphism):
         codomain = [vd[v] for v in domain]
         return "{} --> {}".format(domain, codomain)
 
-    def associated_chain_complex_morphism(self,base_ring=ZZ,augmented=False,cochain=False):
+    def associated_chain_complex_morphism(self, base_ring=ZZ,
+                                          augmented=False, cochain=False):
         """
         Return the associated chain complex morphism of ``self``.
 
@@ -374,11 +375,11 @@ class SimplicialComplexMorphism(Morphism):
         """
         from sage.homology.chain_complex_morphism import ChainComplexMorphism
 
-        max_dim = max(self.domain().dimension(),self.codomain().dimension())
-        min_dim = min(self.domain().dimension(),self.codomain().dimension())
+        max_dim = max(self.domain().dimension(), self.codomain().dimension())
+        min_dim = min(self.domain().dimension(), self.codomain().dimension())
         matrices = {}
         if augmented is True:
-            m = matrix(base_ring,1,1,1)
+            m = matrix(base_ring, 1, 1, 1)
             if not cochain:
                 matrices[-1] = m
             else:
@@ -395,12 +396,12 @@ class SimplicialComplexMorphism(Morphism):
                     pass
                 else:
                     mval[X_faces.index(i)+(Y_faces.index(y)*num_faces_X)] = oriented
-            m = matrix(base_ring,num_faces_Y,num_faces_X,mval,sparse=True)
+            m = matrix(base_ring, num_faces_Y, num_faces_X, mval, sparse=True)
             if not cochain:
                 matrices[dim] = m
             else:
                 matrices[dim] = m.transpose()
-        for dim in range(min_dim+1,max_dim+1):
+        for dim in range(min_dim+1, max_dim+1):
             try:
                 l1 = len(self.codomain().n_cells(dim))
             except KeyError:
@@ -409,18 +410,18 @@ class SimplicialComplexMorphism(Morphism):
                 l2 = len(self.domain().n_cells(dim))
             except KeyError:
                 l2 = 0
-            m = zero_matrix(base_ring,l1,l2,sparse=True)
+            m = zero_matrix(base_ring, l1, l2, sparse=True)
             if not cochain:
                 matrices[dim] = m
             else:
                 matrices[dim] = m.transpose()
         if not cochain:
             return ChainComplexMorphism(matrices,
-                    self.domain().chain_complex(base_ring=base_ring,augmented=augmented,cochain=cochain),
-                    self.codomain().chain_complex(base_ring=base_ring,augmented=augmented,cochain=cochain))
+                self.domain().chain_complex(base_ring=base_ring, augmented=augmented, cochain=cochain),
+                self.codomain().chain_complex(base_ring=base_ring, augmented=augmented, cochain=cochain))
         return ChainComplexMorphism(matrices,
-                self.codomain().chain_complex(base_ring=base_ring,augmented=augmented,cochain=cochain),
-                self.domain().chain_complex(base_ring=base_ring,augmented=augmented,cochain=cochain))
+            self.codomain().chain_complex(base_ring=base_ring, augmented=augmented, cochain=cochain),
+            self.domain().chain_complex(base_ring=base_ring, augmented=augmented, cochain=cochain))
 
     def image(self):
         """
@@ -593,9 +594,9 @@ class SimplicialComplexMorphism(Morphism):
         """
         if self.codomain() != other.codomain():
             raise ValueError("self and other must have the same codomain")
-        X = self.domain().product(other.domain(),rename_vertices=rename_vertices)
+        X = self.domain().product(other.domain(), rename_vertices=rename_vertices)
         v = []
-        f = dict()
+        f = {}
         eff1 = self.domain().vertices()
         eff2 = other.domain().vertices()
         for i in eff1:
@@ -605,8 +606,8 @@ class SimplicialComplexMorphism(Morphism):
                         v.append("L"+str(i)+"R"+str(j))
                         f["L"+str(i)+"R"+str(j)] = self._vertex_dictionary[i]
                     else:
-                        v.append((i,j))
-                        f[(i,j)] = self._vertex_dictionary[i]
+                        v.append((i, j))
+                        f[(i, j)] = self._vertex_dictionary[i]
         return SimplicialComplexMorphism(f, X.generated_subcomplex(v), self.codomain())
 
     def mapping_torus(self):
@@ -646,12 +647,12 @@ class SimplicialComplexMorphism(Morphism):
         if self.domain() != self.codomain():
             raise ValueError("self must have the same domain and codomain")
         map_dict = self._vertex_dictionary
-        interval = SimplicialComplex([["I0","I1"],["I1","I2"]])
-        product = interval.product(self.domain(),False)
+        interval = SimplicialComplex([["I0", "I1"], ["I1", "I2"]])
+        product = interval.product(self.domain(), False)
         facets = list(product.maximal_faces())
         for facet in self.domain()._facets:
-            left = [ ("I0",v) for v in facet ]
-            right = [ ("I2",map_dict[v]) for v in facet ]
+            left = [("I0", v) for v in facet]
+            right = [("I2", map_dict[v]) for v in facet]
             for i in range(facet.dimension()+1):
                 facets.append(tuple(left[:i+1]+right[i:]))
         return SimplicialComplex(facets)

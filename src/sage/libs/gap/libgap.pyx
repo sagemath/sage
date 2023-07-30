@@ -311,7 +311,7 @@ class Gap(Parent):
             return make_GapElement_Boolean(self, GAP_True if x else GAP_False)
         elif isinstance(x, int):
             return make_GapElement_Integer(self, make_gap_integer(x))
-        elif isinstance(x, basestring):
+        elif isinstance(x, str):
             return make_GapElement_String(self, make_gap_string(x))
         elif isinstance(x, Path):
             return make_GapElement_String(self, make_gap_string(str(x)))
@@ -399,7 +399,7 @@ class Gap(Parent):
         """
         cdef GapElement elem
 
-        if not isinstance(gap_command, basestring):
+        if not isinstance(gap_command, str):
             gap_command = str(gap_command._libgap_init_())
 
         initialize()

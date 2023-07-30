@@ -66,15 +66,15 @@ ACKNOWLEDGEMENT:
 Classes and Methods
 ===================
 """
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2016 Daniel Krenn <dev@danielkrenn.at>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from functools import wraps
 
@@ -264,7 +264,7 @@ class PrefixClosedSet():
         while n < len(self.elements):
             try:
                 nn = next(it)
-                yield self.elements[n] + nn #next(it)
+                yield self.elements[n] + nn  # next(it)
             except StopIteration:
                 n += 1
                 it = self.words.iterate_by_length(1)
@@ -318,6 +318,12 @@ def minimize_result(operation):
       if ``False``, then not. If this argument is ``None``, then
       the default specified by the parent's ``minimize_results`` is used.
 
+    .. NOTE::
+
+        If the result of ``operation`` is ``self``, then minimization is
+        not applied unless ``minimize=True`` is explicitly set,
+        in particular, independent of the parent's ``minimize_results``.
+
     TESTS::
 
         sage: from sage.combinat.recognizable_series import minimize_result
@@ -352,14 +358,39 @@ def minimize_result(operation):
         some result minimized
         sage: S('some').operation(minimize=False)
         some result
+
+    ::
+
+        sage: class T(S):
+        ....:     @minimize_result
+        ....:     def nooperation(self):
+        ....:         return self
+        sage: t = T('some')
+        sage: p.minimize_results = True
+        sage: t.nooperation() is t
+        True
+        sage: t.nooperation(minimize=True) is t
+        False
+        sage: t.nooperation(minimize=False) is t
+        True
+        sage: p.minimize_results = False
+        sage: t.nooperation() is t
+        True
+        sage: t.nooperation(minimize=True) is t
+        False
+        sage: t.nooperation(minimize=False) is t
+        True
     """
     @wraps(operation)
     def minimized(self, *args, **kwds):
         minimize = kwds.pop('minimize', None)
-        if minimize is None:
-            minimize = self.parent().minimize_results
 
         result = operation(self, *args, **kwds)
+        if minimize is not True and result is self:
+            return result
+
+        if minimize is None:
+            minimize = self.parent().minimize_results
 
         if minimize:
             result = result.minimized()
@@ -1045,9 +1076,11 @@ class RecognizableSeries(ModuleElement):
             T = M.transpose()
             T.set_immutable()
             return T
-        return self.parent()(self.mu.map(tr),
-                             left=self.right,
-                             right=self.left)
+
+        P = self.parent()
+        return P.element_class(P, self.mu.map(tr),
+                               left=self.right,
+                               right=self.left)
 
     @cached_method
     def minimized(self):
@@ -1213,11 +1246,11 @@ class RecognizableSeries(ModuleElement):
         mu_prime = []
         for a in self.parent().alphabet():
             a = self.parent().indices()([a])
-            M = Matrix([alpha(c) if c in C else tuple(ZZ(c==q) for q in P)
+            M = Matrix([alpha(c) if c in C else tuple(ZZ(c == q) for q in P)
                         for c in (p + a for p in P)])
             mu_prime.append(M)
 
-        left_prime = vector([ZZ(1)] + (len(P)-1)*[ZZ(0)])
+        left_prime = vector([ZZ.one()] + (len(P) - 1) * [ZZ.zero()])
         right_prime = vector(self.coefficient_of_word(p) for p in P)
 
         P = self.parent()
@@ -1364,7 +1397,7 @@ class RecognizableSeries(ModuleElement):
         if other.is_one():
             return self
         P = self.parent()
-        return P.element_class(P, self.mu, other*self.left, self.right)
+        return P.element_class(P, self.mu, other * self.left, self.right)
 
     def _lmul_(self, other):
         r"""
@@ -1419,7 +1452,7 @@ class RecognizableSeries(ModuleElement):
         if other.is_one():
             return self
         P = self.parent()
-        return P.element_class(P, self.mu, self.left, self.right*other)
+        return P.element_class(P, self.mu, self.left, self.right * other)
 
     @minimize_result
     def hadamard_product(self, other):
@@ -1867,15 +1900,19 @@ class RecognizableSeriesSpace(UniqueRepresentation, Parent):
         z = self.coefficient_ring().zero()
         o = self.coefficient_ring().one()
         e = self.coefficient_ring().an_element()
-        return self(list(Matrix([[o, z], [i*o, o]])
+        return self(list(Matrix([[o, z], [i * o, o]])
                          for i, _ in enumerate(self.alphabet())),
                     vector([z, e]), right=vector([e, z]))
 
-    def some_elements(self):
+    def some_elements(self, **kwds):
         r"""
         Return some elements of this recognizable series space.
 
         See :class:`TestSuite` for a typical use case.
+
+        INPUT:
+
+        - ``kwds`` are passed on to the element constructor
 
         OUTPUT:
 
@@ -1913,7 +1950,7 @@ class RecognizableSeriesSpace(UniqueRepresentation, Parent):
                 LR = list(islice(elements_V, 2))
                 if len(mu) != k or len(LR) != 2:
                     break
-                yield self(mu, *LR)
+                yield self(mu, *LR, **kwds)
 
     @cached_method
     def one_hadamard(self):

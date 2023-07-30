@@ -81,16 +81,16 @@ distributions = ['',
                  'sagemath-gap',
                  'sagemath-giac',
                  'sagemath-homfly',
+                 'sagemath-ntl',
                  'sagemath-pari',
                  ]
 from sage.misc.package import is_package_installed_and_updated
-optional_packages_with_extensions = ['mcqd', 'bliss', 'tdlib',
-                                     'coxeter3', 'sirocco', 'meataxe']
+optional_packages_with_extensions = os.environ.get('SAGE_OPTIONAL_PACKAGES_WITH_EXTENSIONS', '').split(',')
 distributions += ['sagemath-{}'.format(pkg)
                   for pkg in optional_packages_with_extensions
                   if is_package_installed_and_updated(pkg)]
 log.warn('distributions = {0}'.format(distributions))
-from sage_setup.find import find_python_sources, find_extra_files
+from sage_setup.find import find_python_sources
 python_packages, python_modules, cython_modules = find_python_sources(
     SAGE_SRC, ['sage'], distributions=distributions)
 

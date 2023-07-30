@@ -8,6 +8,7 @@
 #                  http://www.gnu.org/licenses/
 #*******************************************************************************
 
+from sage.data_structures.bitset_base cimport *
 from sage.groups.perm_gps.partn_ref.data_structures cimport OrbitPartition, PartitionStack
 from sage.libs.gap.element cimport GapElement, GapElement_Permutation
 from sage.structure.parent cimport Parent
@@ -83,3 +84,7 @@ cdef class PartitionRefinement_generic:
                               bint* inner_group_changed, bint* changed_partition,
                               str refine_name)
     cdef int len(self)
+
+
+cdef int PS_first_smallest_PR(PartitionStack *PS, bitset_t b, int *second_pos=?,
+        PartitionRefinement_generic partn_ref_alg=?)

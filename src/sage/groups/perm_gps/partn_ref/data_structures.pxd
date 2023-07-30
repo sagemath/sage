@@ -14,7 +14,6 @@ from sage.data_structures.bitset_base cimport *
 from libc.string cimport memcpy
 from libc.stdlib cimport rand
 from sage.libs.gmp.mpz cimport *
-from sage.groups.perm_gps.partn_ref2.refinement_generic cimport PartitionRefinement_generic
 
 
 cdef enum:
@@ -261,8 +260,7 @@ cdef PS_print(PartitionStack *PS)
 
 cdef void PS_unit_partition(PartitionStack *PS)
 
-cdef int PS_first_smallest(PartitionStack *PS, bitset_t b, int *second_pos=?,
-        PartitionRefinement_generic partn_ref_alg=?)
+cdef int PS_first_smallest(PartitionStack *PS, bitset_t b, int *second_pos=?)
 
 cdef PartitionStack *PS_from_list(list L)
 

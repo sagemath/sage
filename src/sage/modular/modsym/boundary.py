@@ -237,7 +237,7 @@ class BoundarySpaceElement(hecke.HeckeModuleElement):
         """
         x = {}
         for i, c in self.__x.items():
-            x[i] = c*other
+            x[i] = c * other
         return BoundarySpaceElement(self.parent(), x)
 
     def _lmul_(self, other):
@@ -258,7 +258,7 @@ class BoundarySpaceElement(hecke.HeckeModuleElement):
         """
         x = {}
         for i, c in self.__x.items():
-            x[i] = other*c
+            x[i] = other * c
         return BoundarySpaceElement(self.parent(), x)
 
     def __neg__(self):
@@ -324,8 +324,8 @@ class BoundarySpace(hecke.HeckeModule_generic):
         if character is None and arithgroup.is_Gamma0(group):
             character = dirichlet.TrivialCharacter(group.level(), base_ring)
         (self.__group, self.__weight, self.__character,
-          self.__sign, self.__base_ring) = (group, weight,
-                                             character, sign, base_ring)
+         self.__sign, self.__base_ring) = (group, weight,
+                                           character, sign, base_ring)
         self._known_gens = []
         self._zero_cusps = []
         hecke.HeckeModule_generic.__init__(self, base_ring, group.level())
@@ -443,7 +443,7 @@ class BoundarySpace(hecke.HeckeModule_generic):
         """
         if i >= len(self._known_gens) or i < 0:
             raise ValueError("only %s generators known for %s" % (len(self._known_gens), self))
-        return BoundarySpaceElement(self, {i:1})
+        return BoundarySpaceElement(self, {i: 1})
 
     def free_module(self):
         """
@@ -558,7 +558,7 @@ class BoundarySpace(hecke.HeckeModule_generic):
             if not isinstance(M, ModularSymbolsAmbient):
                 raise TypeError("x (=%s) must be an element of a space of modular symbols of type ModularSymbolsAmbient" % x)
             if M.level() != self.level():
-                raise TypeError("x (=%s) must have level %s but has level %s"%(
+                raise TypeError("x (=%s) must have level %s but has level %s" % (
                     x, self.level(), M.level()))
             S = x.manin_symbol_rep()
             if len(S) == 0:
@@ -697,7 +697,7 @@ class BoundarySpace_wtk_g0(BoundarySpace):
         if i != -1:
             if i == -2:
                 return self(0)
-            return BoundarySpaceElement(self, {i:1})
+            return BoundarySpaceElement(self, {i: 1})
 
         # see if we've already found -c
         sign = self.sign()
@@ -707,7 +707,7 @@ class BoundarySpace_wtk_g0(BoundarySpace):
                 if i2 == -2:
                     return self(0)
                 else:
-                    return BoundarySpaceElement(self, {i2:sign})
+                    return BoundarySpaceElement(self, {i2: sign})
 
         # found a new cusp class
         g = self._known_gens
@@ -743,7 +743,7 @@ class BoundarySpace_wtk_g0(BoundarySpace):
                 del self._known_gens[-1]
                 return self(0)
 
-        return BoundarySpaceElement(self, {(len(g)-1):1})
+        return BoundarySpaceElement(self, {(len(g) - 1): 1})
 
     def _is_equiv(self, c1, c2):
         """
@@ -904,7 +904,7 @@ class BoundarySpace_wtk_g1(BoundarySpace):
             if i == -2:
                 return self(0)
             else:
-                return BoundarySpaceElement(self, {i : eps**k})
+                return BoundarySpaceElement(self, {i: eps**k})
 
         if sign != 0:
             i2, eps = self._cusp_index(-c)
@@ -912,7 +912,7 @@ class BoundarySpace_wtk_g1(BoundarySpace):
                 if i2 == -2:
                     return self(0)
                 else:
-                    return BoundarySpaceElement(self, {i2:sign*(eps**k)})
+                    return BoundarySpaceElement(self, {i2: sign * (eps**k)})
 
         # found a new cusp class
         g = self._known_gens
@@ -922,7 +922,7 @@ class BoundarySpace_wtk_g1(BoundarySpace):
         # this occurs if and only if N = 4 and c is equivalent to 1/2.
 
         if N == 4 and k % 2:
-            if self._is_equiv(c, (1,2))[0]:
+            if self._is_equiv(c, (1, 2))[0]:
                 self._zero_cusps.append(c)
                 del self._known_gens[-1]
                 return self(0)
@@ -946,10 +946,10 @@ class BoundarySpace_wtk_g1(BoundarySpace):
         #
         if sign:
             if (c.is_infinity() and sign != (-1)**self.weight()) or \
-                (c.is_zero() and sign == -1):
-                    self._zero_cusps.append(c)
-                    del self._known_gens[-1]
-                    return self(0)
+               (c.is_zero() and sign == -1):
+                self._zero_cusps.append(c)
+                del self._known_gens[-1]
+                return self(0)
             elif (not c.is_infinity() and not c.is_zero()):
                 t, eps = self._is_equiv(c, -c)
                 if t and ((eps == 1 and sign == -1) or
@@ -958,7 +958,7 @@ class BoundarySpace_wtk_g1(BoundarySpace):
                     del self._known_gens[-1]
                     return self(0)
 
-        return BoundarySpaceElement(self, {(len(g)-1): 1})
+        return BoundarySpaceElement(self, {(len(g) - 1): 1})
 
 
 class BoundarySpace_wtk_gamma_h(BoundarySpace):
@@ -1153,7 +1153,7 @@ class BoundarySpace_wtk_gamma_h(BoundarySpace):
             if i == -2:
                 return self(0)
             else:
-                return BoundarySpaceElement(self, {i : eps**k})
+                return BoundarySpaceElement(self, {i: eps**k})
 
         if sign != 0:
             i2, eps = self._cusp_index(-c)
@@ -1161,7 +1161,7 @@ class BoundarySpace_wtk_gamma_h(BoundarySpace):
                 if i2 == -2:
                     return self(0)
                 else:
-                    return BoundarySpaceElement(self, {i2:sign*(eps**k)})
+                    return BoundarySpaceElement(self, {i2: sign * (eps**k)})
 
         # found a new cusp class
         g = self._known_gens
@@ -1211,7 +1211,7 @@ class BoundarySpace_wtk_gamma_h(BoundarySpace):
                     del self._known_gens[-1]
                     return self(0)
 
-        return BoundarySpaceElement(self, {(len(g)-1): 1})
+        return BoundarySpaceElement(self, {(len(g) - 1): 1})
 
 
 class BoundarySpace_wtk_eps(BoundarySpace):
@@ -1392,7 +1392,7 @@ class BoundarySpace_wtk_eps(BoundarySpace):
 
         # Does cusp vanish because of stabiliser?
         s = arithgroup.Gamma0(self.level()).cusp_data(c)[0]
-        if self.__eps(s[1,1]) != 1:
+        if self.__eps(s[1, 1]) != 1:
             self._zero_cusps.append(c)
             del self._known_gens[-1]
             return self(0)
@@ -1430,4 +1430,4 @@ class BoundarySpace_wtk_eps(BoundarySpace):
                         del self._known_gens[-1]
                         return self(0)
 
-        return BoundarySpaceElement(self, {(len(g)-1):1})
+        return BoundarySpaceElement(self, {(len(g) - 1): 1})
