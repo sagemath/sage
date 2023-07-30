@@ -43,12 +43,12 @@ but rather work with the corresponding simplicial complex.
 EXAMPLES::
 
     sage: MomentAngleComplex([[1,2,3], [2,4], [3,4]])
-    Moment angle complex over a simplicial complex with vertex set (1, 2, 3, 4) and facets {(2, 4), (3, 4), (1, 2, 3)}
+    Moment-angle complex over a simplicial complex with vertex set (1, 2, 3, 4) and facets {(2, 4), (3, 4), (1, 2, 3)}
     sage: X = SimplicialComplex([[0,1], [1,2], [1,3], [2,3]])
     sage: Z = MomentAngleComplex(X); Z
-    Moment angle complex over a simplicial complex with vertex set (0, 1, 2, 3) and facets {(0, 1), (1, 2), (1, 3), (2, 3)}
+    Moment-angle complex over a simplicial complex with vertex set (0, 1, 2, 3) and facets {(0, 1), (1, 2), (1, 3), (2, 3)}
     sage: M = MomentAngleComplex([[1], [2]]); M
-    Moment angle complex over a simplicial complex with vertex set (1, 2) and facets {(1,), (2,)}
+    Moment-angle complex over a simplicial complex with vertex set (1, 2) and facets {(1,), (2,)}
 
 We can perform a number of operations, such as find the dimension or compute the homology::
 
@@ -82,16 +82,21 @@ from .simplicial_complex_examples import Sphere, Simplex
 from itertools import combinations
 
 #TODO's:
-# - Documentation (examples and tests) - wait for a bit more complete implementation
-# - add literature to bibliography?
-# - polyhedral products and real moment-angle complexes?
+# - Documentation (examples and tests)
+# - add literature and references to bibliography!!!
+# - add latex_name parameter?
+# - add moment_angle_complex to simplicial_complex
+# - add a method simplicial_complex()?
+# - use different UniqueRepresentation complexes for components?
+
+
+#Future TODO's:
+# - explicitly state the vertices for construction
+# - polyhedral products and real moment-angle complexes
 # - golod decomposition
 # - return for odd dimensional simplicial complexes in golod_decomposition?
-# - explicitly state the vertices for construction?
-# - add product using join of simplicial complexes
 
-# add moment_angle_complex to simplicial_complex
-
+# maybe make private?
 def union(c1, c2):
     """
     Return the union of cubical complexes.
@@ -132,48 +137,70 @@ def union(c1, c2):
     return CubicalComplex(facets)
 
 class MomentAngleComplex(SageObject, UniqueRepresentation):
-    """
+    r"""
     Define a moment-angle complex.
 
-    :param simplicial_complex: the corresponding simplicial complex
-    :type simplicial_complex: a simplicial complex, or a list of facets that defines a simplicial complex
-    :return: the associated moment-angle complex
+    INPUT:
 
-    ``simplicial_complex`` must be an intance of
-    :class:`~sage.topology.simplicial_complex.SimplicialComplex` or a
-    list of facets, which represents the simplicial complex whose
-    moment-angle complex we wish to create.
-
-    If ``create_complex()`` is called, we also explicitly compute the
-    moment-angle complex, with the construction described above.
-
-    .. WARNING::
-
-        The construction can be very slow, it is not reccomended unless
-        the corresponding simplicial complex has 5 or less vertices.
+    - ''simplicial_complex'' -- an instance of ''SimplicialComplex'',
+      or an object from which an instance of ''SimplicialComplex'' can be
+      created (e.g., list of facets), which represents the associated
+      simplicial complex over which this moment-angle complex is created.
 
     EXAMPLES::
 
-    <Lots and lots of examples>
+    If the associated simplicial_complex is an `n`-simplex, then the
+    corresponding moment-angle complex is a polydisc (a complex ball) of
+    complex dimension `n+1`::
+
+        sage: Z = MomentAngleComplex([[0, 1, 2]]); Z
+        Moment-angle complex over a simplicial complex with vertex set (0, 1, 2) and facets {(0, 1, 2)}
+
+    This can be seen by viewing the components used in the construction
+    of this moment-angle complex by calling ``components()``::
+
+        sage: Z.components()
+        {(0, 1, 2): [The 2-simplex, The 2-simplex, The 2-simplex]}
+
+    If the associated simplicial_complex is a disjoint union of 2 points,
+    then the corresponding moment-angle complex is homeomorphic to a boundary
+    of a 3-sphere::
+
+        sage: Z = MomentAngleComplex([[0], [1]]); Z
+        Moment-angle complex over a simplicial complex with vertex set (0, 1) and facets {(0,), (1,)}
+        sage: dict(sorted(Z.components().items()))
+        {(0,): [The 2-simplex, Minimal triangulation of the 1-sphere],
+         (1,): [Minimal triangulation of the 1-sphere, The 2-simplex]}
+
+    The moment-angle complex passes all the tests of the test suite relative
+    to its category::
+
+        sage: TestSuite(Z).run()
     """
 
-    def __init__(self,
-                 simplicial_complex):
+    def __init__(self, simplicial_complex):
         """
         Define a moment-angle complex. See :class:`MomentAngleComplex`
         for full documentation.
 
-        EXAMPLES::
+        TESTS::
 
-        <Lots and lots of examples>
+            sage: Z = MomentAngleComplex([[0,1,2], [1,2,3], [0, 3]])
+            sage: Z
+            Moment-angle complex over a simplicial complex with vertex set (0, 1, 2, 3) and facets {(0, 3), (0, 1, 2), (1, 2, 3)}
+            sage: dim(Z)
+            7
+            sage: TestSuite(Z).run()
         """
-        # add comments
+        # The underlying simplicial complex
         self._simplicial_complex = copy(simplicial_complex)
+        # The moment-angle complex as a cubical complex
+        # if create_complex() is called, this is computed
         self._moment_angle_complex = None
-
-        vertices = self._simplicial_complex.vertices()
+        # A dictionary of components indexed by facets
         self._components = {}
 
+        vertices = self._simplicial_complex.vertices()
         # it suffices to perform union only over facets
         for facet in self._simplicial_complex.maximal_faces():
             Y = []
@@ -232,14 +259,21 @@ class MomentAngleComplex(SageObject, UniqueRepresentation):
 
         <Lots and lots of examples>
         """
-        return "Moment angle complex over a " + self._simplicial_complex._repr_().lower()
+        return "Moment-angle complex over a " + self._simplicial_complex._repr_().lower()
 
     @cached_method
     def create_complex(self):
         """
         Create the moment-angle complex as a simplicial complex.
 
-        Here we view the moment-angle complex as a cubical complex.
+        If this method is called, we also explicitly compute the
+        moment-angle complex, viewed as a cubical complex, with the construction
+        described above.
+
+        .. WARNING::
+
+            The construction can be very slow, it is not reccomended unless
+            the corresponding simplicial complex has 5 or less vertices.
 
         EXAMPLES::
 
