@@ -1298,6 +1298,16 @@ cdef class PermutationGroupElement(MultiplicativeGroupElement):
 
         return coercion_model.bin_op(left, right, operator.mul)
 
+    def _transpose_left(self, j, k):
+        if j == k:
+            return self
+        cdef PermutationGroupElement prod = self._new_c()
+        cdef int i
+        for i from 0 <= i < self.n:
+            prod.perm[i] = self.perm[i]
+        prod.perm[j - 1], prod.perm[k - 1] = self.perm[k - 1], self.perm[j - 1]
+        return prod
+
     cpdef _mul_(left, _right):
         r"""
         EXAMPLES::
