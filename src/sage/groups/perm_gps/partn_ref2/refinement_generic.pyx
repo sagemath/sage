@@ -684,8 +684,7 @@ cdef class PartitionRefinement_generic:
         bitset_init(b, self._n)
         PS_move_all_mins_to_front(self._part)
         cdef int second_pos
-        cdef int smallest = PS_first_smallest(self._part, b, &second_pos,
-                                              self)
+        cdef int smallest = PS_first_smallest_PR(self._part, b, &second_pos, self)
         if second_pos != -1:
             self._fixed_not_minimized.append(second_pos)
         cdef int pos = smallest
@@ -941,3 +940,42 @@ cdef class PartitionRefinement_generic:
         """
         if BACKTRACK_WITHLATEX_DEBUG:
             self._latex_debug_string += "]\n"
+
+
+cdef int PS_first_smallest_PR(PartitionStack *PS, bitset_t b, int *second_pos=NULL,
+                              PartitionRefinement_generic partn_ref_alg=None):
+    """
+    Find the first occurrence of the smallest cell of size greater than one,
+    which is admissible (checked by the function ``test_allowance``).
+    Its entries are stored to b and its minimum element is returned.
+
+    This generalizes :func:`sage.groups.perm_gps.partn_ref.data_structures.PS_first_smallest`.
+    """
+    cdef int i = 0, j = 0, location = 0, n = PS.degree
+    bitset_zero(b)
+    while True:
+        if PS.levels[i] <= PS.depth:
+            if i != j and n > i - j + 1 and (partn_ref_alg is None or
+                                partn_ref_alg._minimization_allowed_on_col(PS.entries[j])):
+                n = i - j + 1
+                location = j
+            j = i + 1
+        if PS.levels[i] == -1:
+            break
+        i += 1
+    # location now points to the beginning of the first, smallest,
+    # nontrivial cell
+    i = location
+    while True:
+        bitset_flip(b, PS.entries[i])
+        if PS.levels[i] <= PS.depth:
+            break
+        i += 1
+
+    if second_pos != NULL:
+        if n == 2:
+            second_pos[0] = PS.entries[location + 1]
+        else:
+            second_pos[0] = -1
+
+    return PS.entries[location]
