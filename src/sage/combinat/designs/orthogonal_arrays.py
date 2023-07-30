@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.rings.finite_rings
 r"""
 Orthogonal arrays (OA)
 
@@ -1180,11 +1181,12 @@ def incomplete_orthogonal_array(k,n,holes,resolvable=False, existence=False):
 
     10 holes of size 9 through the product construction::
 
-        sage: iOA = designs.incomplete_orthogonal_array(10,153,[9]*10)  # long time
-        sage: OA9 = designs.orthogonal_arrays.build(10,9)               # long time
-        sage: for i in range(10):                                       # long time
+        sage: # long time
+        sage: iOA = designs.incomplete_orthogonal_array(10,153,[9]*10)
+        sage: OA9 = designs.orthogonal_arrays.build(10,9)
+        sage: for i in range(10):
         ....:     iOA.extend([[153-9*(i+1)+x for x in B] for B in OA9])
-        sage: is_orthogonal_array(iOA,10,153)                           # long time
+        sage: is_orthogonal_array(iOA,10,153)
         True
 
     An `OA(9,82)-OA(9,9)-OA(9,1)`::
@@ -1954,7 +1956,8 @@ def OA_from_PBD(k,n,PBD, check=True):
         sage: OA_from_PBD(4,10,pbd)
         Traceback (most recent call last):
         ...
-        EmptySetError: There is no OA(n+1,n) - 3.OA(n+1,1) as all blocks intersect in a projective plane.
+        EmptySetError: There is no OA(n+1,n) - 3.OA(n+1,1)
+        as all blocks intersect in a projective plane.
 
     Or an `OA(3,6)` (as the PBD has 10 points)::
 

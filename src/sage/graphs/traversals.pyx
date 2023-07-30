@@ -2009,7 +2009,7 @@ def maximum_cardinality_search_M(G, initial_vertex=None):
         ....:     if len(X) < k - 1:
         ....:         raise ValueError("something goes wrong")
         sage: G = graphs.RandomGNP(10, .2)
-        sage: cc = G.connected_components()
+        sage: cc = G.connected_components(sort=False)
         sage: _, _, X = G.maximum_cardinality_search_M()
         sage: len(X) >= len(cc) - 1
         True
