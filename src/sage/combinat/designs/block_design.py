@@ -1,4 +1,4 @@
-# sage.doctest: optional - sage.rings.finite_rings
+# sage.doctest: needs sage.rings.finite_rings
 r"""
 Block designs
 
@@ -54,14 +54,17 @@ Functions and methods
 #*****************************************************************************
 from sage.arith.misc import binomial, integer_floor, is_prime_power
 from sage.categories.sets_cat import EmptySetError
-from sage.modules.free_module import VectorSpace
+from sage.misc.lazy_import import lazy_import
+from sage.misc.unknown import Unknown
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
+
 from .incidence_structures import IncidenceStructure
-from sage.rings.finite_rings.finite_field_constructor import FiniteField
-from sage.misc.unknown import Unknown
-from sage.matrix.matrix_space import MatrixSpace
-from sage.libs.gap.libgap import libgap
+
+lazy_import('sage.libs.gap.libgap', 'libgap')
+lazy_import('sage.matrix.matrix_space', 'MatrixSpace')
+lazy_import('sage.modules.free_module', 'VectorSpace')
+lazy_import('sage.rings.finite_rings.finite_field_constructor', 'FiniteField')
 
 
 BlockDesign = IncidenceStructure
@@ -214,8 +217,7 @@ def ProjectiveGeometryDesign(n, d, F, algorithm=None, point_coordinates=True, ch
     The set of `d`-dimensional subspaces in a `n`-dimensional projective space
     forms `2`-designs (or balanced incomplete block designs)::
 
-        sage: PG = designs.ProjectiveGeometryDesign(4, 2, GF(2))
-        sage: PG
+        sage: PG = designs.ProjectiveGeometryDesign(4, 2, GF(2)); PG
         Incidence structure with 31 points and 155 blocks
         sage: PG.is_t_design(return_parameters=True)
         (True, (2, 31, 7, 7))
@@ -226,8 +228,7 @@ def ProjectiveGeometryDesign(n, d, F, algorithm=None, point_coordinates=True, ch
 
     Check with ``F`` being a prime power::
 
-        sage: PG = designs.ProjectiveGeometryDesign(3, 2, 4)
-        sage: PG
+        sage: PG = designs.ProjectiveGeometryDesign(3, 2, 4); PG
         Incidence structure with 85 points and 85 blocks
 
     Use coordinates::
@@ -900,10 +901,10 @@ def CremonaRichmondConfiguration():
 
     EXAMPLES::
 
-        sage: H = designs.CremonaRichmondConfiguration(); H                             # optional - networkx
+        sage: H = designs.CremonaRichmondConfiguration(); H                             # needs networkx
         Incidence structure with 15 points and 15 blocks
-        sage: g = graphs.TutteCoxeterGraph()                                            # optional - networkx
-        sage: H.incidence_graph().is_isomorphic(g)                                      # optional - networkx
+        sage: g = graphs.TutteCoxeterGraph()                                            # needs networkx
+        sage: H.incidence_graph().is_isomorphic(g)                                      # needs networkx
         True
     """
     from sage.graphs.generators.smallgraphs import TutteCoxeterGraph
@@ -956,16 +957,16 @@ def HadamardDesign(n):
 
     EXAMPLES::
 
-        sage: designs.HadamardDesign(7)                                                 # optional - sage.modules
+        sage: designs.HadamardDesign(7)                                                 # needs sage.modules
         Incidence structure with 7 points and 7 blocks
-        sage: print(designs.HadamardDesign(7))                                          # optional - sage.modules
+        sage: print(designs.HadamardDesign(7))                                          # needs sage.modules
         Incidence structure with 7 points and 7 blocks
 
     For example, the Hadamard 2-design with `n = 11` is a design whose parameters are `2-(11, 5, 2)`.
     We verify that `NJ = 5J` for this design. ::
 
-        sage: D = designs.HadamardDesign(11); N = D.incidence_matrix()                  # optional - sage.modules
-        sage: J = matrix(ZZ, 11, 11, [1]*11*11); N*J                                    # optional - sage.modules
+        sage: D = designs.HadamardDesign(11); N = D.incidence_matrix()                  # needs sage.modules
+        sage: J = matrix(ZZ, 11, 11, [1]*11*11); N*J                                    # needs sage.modules
         [5 5 5 5 5 5 5 5 5 5 5]
         [5 5 5 5 5 5 5 5 5 5 5]
         [5 5 5 5 5 5 5 5 5 5 5]
@@ -1009,7 +1010,7 @@ def Hadamard3Design(n):
 
     EXAMPLES::
 
-        sage: designs.Hadamard3Design(12)                                               # optional - sage.modules
+        sage: designs.Hadamard3Design(12)                                               # needs sage.modules
         Incidence structure with 12 points and 22 blocks
 
     We verify that any two blocks of the Hadamard `3`-design `3-(8, 4, 1)`
@@ -1019,9 +1020,9 @@ def Hadamard3Design(n):
 
     ::
 
-        sage: D = designs.Hadamard3Design(8)                                            # optional - sage.modules
-        sage: N = D.incidence_matrix()                                                  # optional - sage.modules
-        sage: N.transpose()*N                                                           # optional - sage.modules
+        sage: D = designs.Hadamard3Design(8)                                            # needs sage.modules
+        sage: N = D.incidence_matrix()                                                  # needs sage.modules
+        sage: N.transpose()*N                                                           # needs sage.modules
         [4 2 2 2 2 2 2 2 2 2 2 2 2 0]
         [2 4 2 2 2 2 2 2 2 2 2 2 0 2]
         [2 2 4 2 2 2 2 2 2 2 2 0 2 2]

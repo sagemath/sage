@@ -71,13 +71,14 @@ class Posets(Category):
     :trac:`10130` will be resolved, this will be automatically
     provided by this category::
 
-        sage: x < y      # todo: not implemented
+        sage: # not implemented
+        sage: x < y
         True
-        sage: x < x      # todo: not implemented
+        sage: x < x
         False
-        sage: x <= x     # todo: not implemented
+        sage: x <= x
         True
-        sage: y >= x     # todo: not implemented
+        sage: y >= x
         True
 
     .. SEEALSO:: :func:`Poset`, :class:`FinitePosets`, :class:`LatticePosets`
