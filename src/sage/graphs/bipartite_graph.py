@@ -1209,7 +1209,7 @@ class BipartiteGraph(Graph):
             vertex_in_left[v] = False
 
         # Map each vertex to the connected component it belongs to
-        vertex_to_component = {v: comp for comp in self.connected_components()
+        vertex_to_component = {v: comp for comp in self.connected_components(sort=False)
                                    for v in comp}
 
         for e in edges:
