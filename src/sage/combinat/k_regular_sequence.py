@@ -728,20 +728,36 @@ class kRegularSequence(RecognizableSeries):
                             1: [0 0]
                                [0 1]},
              (1, 1))
+
             sage: P = E.partial_sums(minimize=False)
             sage: P.linear_representation()
-            ((1, 0, -1, 0),
-             Finite family {0: [ 0  1| 0  0]
-                               [ 0  2| 0 -1]
-                               [-----+-----]
-                               [ 0  0| 0  1]
-                               [ 0  0| 0  1],
-                            1: [0 1|0 0]
+            ((1, 0, 0, 0),
+             Finite family {0: [0 1|0 0]
                                [0 2|0 0]
+                               [---+---]
+                               [0 0|0 1]
+                               [0 0|0 1],
+                            1: [0 1|0 1]
+                               [0 2|0 1]
                                [---+---]
                                [0 0|0 0]
                                [0 0|0 1]},
-             (1, 1, 1, 1))
+             (0, 0, 1, 1))
+
+            sage: P = E.partial_sums(include_n=True, minimize=False)
+            sage: P.linear_representation()
+            ((1, 0, 1, 0),
+             Finite family {0: [0 1|0 0]
+                               [0 2|0 0]
+                               [---+---]
+                               [0 0|0 1]
+                               [0 0|0 1],
+                            1: [0 1|0 1]
+                               [0 2|0 1]
+                               [---+---]
+                               [0 0|0 0]
+                               [0 0|0 1]},
+             (0, 0, 1, 1))
         """
         from itertools import chain
         from sage.matrix.constructor import Matrix
@@ -752,17 +768,21 @@ class kRegularSequence(RecognizableSeries):
         A = P.alphabet()
         k = P.k
         dim = self.dimension()
-
-        B = {r: sum(self.mu[a] for a in A[r:]) for r in A}
         Z = zero_matrix(dim)
-        B[k] = Z
+
+        z = A[0]
+        assert z == 0
+        B = {z: Z}
+        for r in A:
+            B[r+1] = B[r] + self.mu[r]
+        C = B[k]
 
         result = P.element_class(
             P,
-            {r: Matrix.block([[B[0], -B[r + 1]], [Z, self.mu[r]]]) for r in A},
+            {r: Matrix.block([[C, B[r]], [Z, self.mu[r]]]) for r in A},
             vector(chain(self.left,
-                         (dim * (0,) if include_n else -self.left))),
-            vector(chain(self.right, self.right)))
+                         (dim * (0,) if not include_n else self.left))),
+            vector(chain(dim * (0,), self.right)))
 
         return result
 
