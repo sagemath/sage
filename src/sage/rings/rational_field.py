@@ -451,7 +451,7 @@ class RationalField(Singleton, number_field_base.NumberField):
 
         EXAMPLES::
 
-            sage: QQ / ZZ
+            sage: QQ / ZZ                                                               # needs sage.modules
             Q/Z
         """
         from sage.rings.ideal import Ideal_generic
