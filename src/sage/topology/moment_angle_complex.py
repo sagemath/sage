@@ -223,34 +223,6 @@ class MomentAngleComplex(SageObject, UniqueRepresentation):
         return super().__classcall__(cls, immutable_complex)
         #behaviour for None?
 
-    def __eq__(self, other):
-        """
-        Return ``True`` iff ``self`` is the same moment-angle complex
-        as ``other``.
-
-        We consider two moment-angle complexes to be equal if their
-        corresponding simplicial complexes are equal.
-
-        :param other: the other moment-angle complex
-
-        EXAMPLES::
-
-        <Lots and lots of examples>
-        """
-        return isinstance(other, MomentAngleComplex) and self._simplicial_complex.__eq__(other._simplicial_complex)
-
-    def __ne__(self, other):
-        """
-        Return ``True`` iff ``self`` is not equal to ``other``.
-
-        :param other: the other moment-angle complex
-
-        EXAMPLES::
-
-        <Lots and lots of examples>
-        """
-        return not self.__eq__(other)
-
     def _repr_(self):
         """
         Print representation.
