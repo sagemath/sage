@@ -364,6 +364,7 @@ def test_random_elements(level=MAX_LEVEL, trials=1):
         -12
         ----
 
+        sage: # needs sage.libs.pari
         sage: sage.rings.tests.test_random_elements(trials=10)
         survived 0 tests...
         sage: sage.rings.tests.test_random_elements(trials=1000)  # long time (5 seconds)

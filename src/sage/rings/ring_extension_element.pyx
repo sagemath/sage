@@ -279,8 +279,9 @@ cdef class RingExtensionElement(CommutativeAlgebraElement):
 
         EXAMPLES::
 
-            sage: F = GF(5^2)                                                           # needs sage.rings.finite_rings
-            sage: K.<z> = GF(5^4).over(F)                                               # needs sage.rings.finite_rings
+            sage: # needs sage.rings.finite_rings
+            sage: F = GF(5^2)
+            sage: K.<z> = GF(5^4).over(F)
             sage: x = z^10
             sage: x
             (z2 + 2) + (3*z2 + 1)*z
@@ -301,8 +302,9 @@ cdef class RingExtensionElement(CommutativeAlgebraElement):
 
         EXAMPLES::
 
-            sage: F = GF(5^2)                                                           # needs sage.rings.finite_rings
-            sage: K.<z> = GF(5^4).over(F)                                               # needs sage.rings.finite_rings
+            sage: # needs sage.rings.finite_rings
+            sage: F = GF(5^2)
+            sage: K.<z> = GF(5^4).over(F)
             sage: x = z^3 + z^2 + z + 4
             sage: y = x.in_base()
             sage: y
@@ -312,29 +314,30 @@ cdef class RingExtensionElement(CommutativeAlgebraElement):
 
         When the element is not in the base, an error is raised::
 
-            sage: z.in_base()
+            sage: z.in_base()                                                           # needs sage.rings.finite_rings
             Traceback (most recent call last):
             ...
             ValueError: z is not in the base
 
         ::
 
+            sage: # needs sage.rings.finite_rings
             sage: S.<X> = F[]
             sage: E = S.over(F)
             sage: f = E(1)                                                              # needs sage.rings.number_field
-            sage: g = f.in_base()
-            sage: g
+            sage: g = f.in_base(); g                                                    # needs sage.rings.number_field
             1
-            sage: g.parent()
+            sage: g.parent()                                                            # needs sage.rings.number_field
             Finite Field in z2 of size 5^2
 
         TESTS::
 
         We check the case of a tower of extensions::
 
-            sage: F = GF(5^2)                                                           # needs sage.rings.finite_rings
-            sage: K.<u> = GF(5^4).over(F)                                               # needs sage.rings.finite_rings
-            sage: L.<v> = GF(5^8).over(K)                                               # needs sage.rings.finite_rings
+            sage: # needs sage.rings.finite_rings
+            sage: F = GF(5^2)
+            sage: K.<u> = GF(5^4).over(F)
+            sage: L.<v> = GF(5^8).over(K)
             sage: x = 4*v^7 + v^6 + 3*v^4 + v^3 + v^2 + 4
             sage: x.in_base()
             u

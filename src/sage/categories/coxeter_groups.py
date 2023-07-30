@@ -1581,6 +1581,7 @@ class CoxeterGroups(Category_singleton):
 
             EXAMPLES::
 
+                sage: # needs sage.combinat sage.groups
                 sage: W = CoxeterGroup(['A', 3])
                 sage: len([1 for w in W if w.is_fully_commutative()])
                 14
@@ -1590,8 +1591,8 @@ class CoxeterGroups(Category_singleton):
 
             TESTS::
 
-                sage: W = CoxeterGroup(matrix(2,2,[1,7,7,1]),index_set='ab')
-                sage: len([1 for w in W if w.is_fully_commutative()])
+                sage: W = CoxeterGroup(matrix(2,2,[1,7,7,1]), index_set='ab')     # needs sage.combinat sage.groups
+                sage: len([1 for w in W if w.is_fully_commutative()])             # needs sage.combinat sage.groups
                 13
             """
             word = self.reduced_word()
