@@ -491,9 +491,9 @@ class FunctionField_polymod(FunctionField):
 
         EXAMPLES::
 
-            sage: K.<x> = FunctionField(GF(5)); _.<Y> = K[]                             # optional - sage.rings.finite_rings
-            sage: L.<y> = K.extension(Y^5 - x)                                          # optional - sage.rings.finite_rings
-            sage: L.constant_field()                                                    # optional - sage.rings.finite_rings
+            sage: K.<x> = FunctionField(GF(5)); _.<Y> = K[]                             # needs sage.rings.finite_rings
+            sage: L.<y> = K.extension(Y^5 - x)                                          # needs sage.rings.finite_rings
+            sage: L.constant_field()                                                    # needs sage.rings.finite_rings
             Traceback (most recent call last):
             ...
             NotImplementedError
@@ -631,28 +631,31 @@ class FunctionField_polymod(FunctionField):
 
         EXAMPLES::
 
-            sage: K.<x> = FunctionField(GF(2))                                          # optional - sage.rings.finite_rings
-            sage: R.<y> = K[]                                                           # optional - sage.rings.finite_rings
-            sage: L.<y> = K.extension(y^2 - x)                                          # optional - sage.rings.finite_rings
-            sage: L.is_separable()                                                      # optional - sage.rings.finite_rings
+            sage: # needs sage.rings.finite_rings
+            sage: K.<x> = FunctionField(GF(2))
+            sage: R.<y> = K[]
+            sage: L.<y> = K.extension(y^2 - x)
+            sage: L.is_separable()
             False
-            sage: R.<z> = L[]                                                           # optional - sage.rings.finite_rings
-            sage: M.<z> = L.extension(z^3 - y)                                          # optional - sage.rings.finite_rings
-            sage: M.is_separable()                                                      # optional - sage.rings.finite_rings
+            sage: R.<z> = L[]
+            sage: M.<z> = L.extension(z^3 - y)
+            sage: M.is_separable()
             True
-            sage: M.is_separable(K)                                                     # optional - sage.rings.finite_rings
+            sage: M.is_separable(K)
             False
 
-            sage: K.<x> = FunctionField(GF(5))                                          # optional - sage.rings.finite_rings
-            sage: R.<y> = K[]                                                           # optional - sage.rings.finite_rings
-            sage: L.<y> = K.extension(y^5 - (x^3 + 2*x*y + 1/x))                        # optional - sage.rings.finite_rings
-            sage: L.is_separable()                                                      # optional - sage.rings.finite_rings
+            sage: # needs sage.rings.finite_rings
+            sage: K.<x> = FunctionField(GF(5))
+            sage: R.<y> = K[]
+            sage: L.<y> = K.extension(y^5 - (x^3 + 2*x*y + 1/x))
+            sage: L.is_separable()
             True
 
-            sage: K.<x> = FunctionField(GF(5))                                          # optional - sage.rings.finite_rings
-            sage: R.<y> = K[]                                                           # optional - sage.rings.finite_rings
-            sage: L.<y> = K.extension(y^5 - 1)                                          # optional - sage.rings.finite_rings
-            sage: L.is_separable()                                                      # optional - sage.rings.finite_rings
+            sage: # needs sage.rings.finite_rings
+            sage: K.<x> = FunctionField(GF(5))
+            sage: R.<y> = K[]
+            sage: L.<y> = K.extension(y^5 - 1)
+            sage: L.is_separable()
             False
 
         """
@@ -719,48 +722,49 @@ class FunctionField_polymod(FunctionField):
 
         We get the vector spaces, and maps back and forth::
 
-            sage: V, from_V, to_V = L.free_module()                                                 # optional - sage.modules
-            sage: V                                                                                 # optional - sage.modules
+            sage: # needs sage.modules
+            sage: V, from_V, to_V = L.free_module()
+            sage: V
             Vector space of dimension 5 over Rational function field in x over Rational Field
-            sage: from_V                                                                            # optional - sage.modules
+            sage: from_V
             Isomorphism:
               From: Vector space of dimension 5 over Rational function field in x over Rational Field
               To:   Function field in y defined by y^5 - 2*x*y + (-x^4 - 1)/x
-            sage: to_V                                                                              # optional - sage.modules
+            sage: to_V
             Isomorphism:
               From: Function field in y defined by y^5 - 2*x*y + (-x^4 - 1)/x
               To:   Vector space of dimension 5 over Rational function field in x over Rational Field
 
         We convert an element of the vector space back to the function field::
 
-            sage: from_V(V.1)                                                                       # optional - sage.modules
+            sage: from_V(V.1)                                                                       # needs sage.modules
             y
 
         We define an interesting element of the function field::
 
-            sage: a = 1/L.0; a                                                                      # optional - sage.modules
+            sage: a = 1/L.0; a                                                                      # needs sage.modules
             (x/(x^4 + 1))*y^4 - 2*x^2/(x^4 + 1)
 
         We convert it to the vector space, and get a vector over the base field::
 
-            sage: to_V(a)                                                                           # optional - sage.modules
+            sage: to_V(a)                                                                           # needs sage.modules
             (-2*x^2/(x^4 + 1), 0, 0, 0, x/(x^4 + 1))
 
         We convert to and back, and get the same element::
 
-            sage: from_V(to_V(a)) == a                                                              # optional - sage.modules
+            sage: from_V(to_V(a)) == a                                                              # needs sage.modules
             True
 
         In the other direction::
 
-            sage: v = x*V.0 + (1/x)*V.1                                                             # optional - sage.modules
-            sage: to_V(from_V(v)) == v                                                              # optional - sage.modules
+            sage: v = x*V.0 + (1/x)*V.1                                                             # needs sage.modules
+            sage: to_V(from_V(v)) == v                                                              # needs sage.modules
             True
 
         And we show how it works over an extension of an extension field::
 
             sage: R2.<z> = L[]; M.<z> = L.extension(z^2 - y)
-            sage: M.free_module()                                                                   # optional - sage.modules
+            sage: M.free_module()                                                                   # needs sage.modules
             (Vector space of dimension 2 over Function field in y defined by y^5 - 2*x*y + (-x^4 - 1)/x, Isomorphism:
               From: Vector space of dimension 2 over Function field in y defined by y^5 - 2*x*y + (-x^4 - 1)/x
               To:   Function field in z defined by z^2 - y, Isomorphism:
@@ -769,7 +773,7 @@ class FunctionField_polymod(FunctionField):
 
         We can also get the vector space of ``M`` over ``K``::
 
-            sage: M.free_module(K)                                                                  # optional - sage.modules
+            sage: M.free_module(K)                                                                  # needs sage.modules
             (Vector space of dimension 10 over Rational function field in x over Rational Field, Isomorphism:
               From: Vector space of dimension 10 over Rational function field in x over Rational Field
               To:   Function field in z defined by z^2 - y, Isomorphism:
@@ -815,14 +819,14 @@ class FunctionField_polymod(FunctionField):
             sage: L.maximal_order_infinite()
             Maximal infinite order of Function field in y defined by y^5 - 2*x*y + (-x^4 - 1)/x
 
-            sage: K.<x> = FunctionField(GF(2)); _.<t> = K[]                             # optional - sage.rings.finite_rings
-            sage: F.<y> = K.extension(t^3 - x^2*(x^2 + x + 1)^2)                        # optional - sage.rings.finite_rings
-            sage: F.maximal_order_infinite()                                            # optional - sage.rings.finite_rings
+            sage: K.<x> = FunctionField(GF(2)); _.<t> = K[]                             # needs sage.rings.finite_rings
+            sage: F.<y> = K.extension(t^3 - x^2*(x^2 + x + 1)^2)                        # needs sage.rings.finite_rings
+            sage: F.maximal_order_infinite()                                            # needs sage.rings.finite_rings
             Maximal infinite order of Function field in y defined by y^3 + x^6 + x^4 + x^2
 
-            sage: K.<x> = FunctionField(GF(2)); _.<Y> = K[]                             # optional - sage.rings.finite_rings
-            sage: L.<y> = K.extension(Y^2 + Y + x + 1/x)                                # optional - sage.rings.finite_rings
-            sage: L.maximal_order_infinite()                                            # optional - sage.rings.finite_rings
+            sage: K.<x> = FunctionField(GF(2)); _.<Y> = K[]                             # needs sage.rings.finite_rings
+            sage: L.<y> = K.extension(Y^2 + Y + x + 1/x)                                # needs sage.rings.finite_rings
+            sage: L.maximal_order_infinite()                                            # needs sage.rings.finite_rings
             Maximal infinite order of Function field in y defined by y^2 + y + (x^2 + 1)/x
         """
         from .order_polymod import FunctionFieldMaximalOrderInfinite_polymod
@@ -834,9 +838,9 @@ class FunctionField_polymod(FunctionField):
 
         EXAMPLES::
 
-            sage: K.<x> = FunctionField(GF(2)); _.<Y> = K[]                             # optional - sage.rings.finite_rings
-            sage: F.<y> = K.extension(Y^3 - x^2*(x^2 + x + 1)^2)                        # optional - sage.rings.finite_rings
-            sage: F.different()                                                         # optional - sage.rings.finite_rings
+            sage: K.<x> = FunctionField(GF(2)); _.<Y> = K[]                             # needs sage.rings.finite_rings
+            sage: F.<y> = K.extension(Y^3 - x^2*(x^2 + x + 1)^2)                        # needs sage.rings.finite_rings
+            sage: F.different()                                                         # needs sage.rings.finite_rings
             2*Place (x, (1/(x^3 + x^2 + x))*y^2)
              + 2*Place (x^2 + x + 1, (1/(x^3 + x^2 + x))*y^2)
         """
@@ -1079,12 +1083,13 @@ class FunctionField_polymod(FunctionField):
 
         Check that this also works for inseparable extensions::
 
-            sage: K.<x> = FunctionField(GF(2))                                          # optional - sage.rings.finite_rings
-            sage: R.<y> = K[]                                                           # optional - sage.rings.finite_rings
-            sage: L.<y> = K.extension(y^2 - x)                                          # optional - sage.rings.finite_rings
-            sage: R.<z> = L[]                                                           # optional - sage.rings.finite_rings
-            sage: M.<z> = L.extension(z^2 - y)                                          # optional - sage.rings.finite_rings
-            sage: M._simple_model()                                                     # optional - sage.rings.finite_rings
+            sage: # needs sage.rings.finite_rings
+            sage: K.<x> = FunctionField(GF(2))
+            sage: R.<y> = K[]
+            sage: L.<y> = K.extension(y^2 - x)
+            sage: R.<z> = L[]
+            sage: M.<z> = L.extension(z^2 - y)
+            sage: M._simple_model()
             (Function field in v defined by v^4 + x,
              Function Field morphism:
               From: Function field in v defined by v^4 + x
@@ -1099,12 +1104,13 @@ class FunctionField_polymod(FunctionField):
         An example where the generator of the last extension does not generate
         the extension of the rational function field::
 
-            sage: K.<x> = FunctionField(GF(2))                                          # optional - sage.rings.finite_rings
-            sage: R.<y> = K[]                                                           # optional - sage.rings.finite_rings
-            sage: L.<y> = K.extension(y^2 - x)                                          # optional - sage.rings.finite_rings
-            sage: R.<z> = L[]                                                           # optional - sage.rings.finite_rings
-            sage: M.<z> = L.extension(z^3 - 1)                                          # optional - sage.rings.finite_rings
-            sage: M._simple_model()                                                     # optional - sage.rings.finite_rings
+            sage: # needs sage.rings.finite_rings
+            sage: K.<x> = FunctionField(GF(2))
+            sage: R.<y> = K[]
+            sage: L.<y> = K.extension(y^2 - x)
+            sage: R.<z> = L[]
+            sage: M.<z> = L.extension(z^3 - 1)
+            sage: M._simple_model()
             (Function field in v defined by v^6 + x*v^4 + x^2*v^2 + x^3 + 1,
              Function Field morphism:
                From: Function field in v defined by v^6 + x*v^4 + x^2*v^2 + x^3 + 1
@@ -1239,10 +1245,11 @@ class FunctionField_polymod(FunctionField):
 
         An example with higher degrees::
 
-            sage: K.<x> = FunctionField(GF(3)); R.<y> = K[]                                                             # optional - sage.rings.finite_rings
-            sage: L.<y> = K.extension(y^5 - x); R.<z> = L[]                                                             # optional - sage.rings.finite_rings
-            sage: M.<z> = L.extension(z^3 - x)                                                                          # optional - sage.rings.finite_rings
-            sage: M.simple_model()                                                                                      # optional - sage.rings.finite_rings
+            sage: # needs sage.rings.finite_rings
+            sage: K.<x> = FunctionField(GF(3)); R.<y> = K[]
+            sage: L.<y> = K.extension(y^5 - x); R.<z> = L[]
+            sage: M.<z> = L.extension(z^3 - x)
+            sage: M.simple_model()
             (Function field in z defined by z^15 + x*z^12 + x^2*z^9 + 2*x^3*z^6 + 2*x^4*z^3 + 2*x^5 + 2*x^3,
              Function Field morphism:
                From: Function field in z defined by z^15 + x*z^12 + x^2*z^9 + 2*x^3*z^6 + 2*x^4*z^3 + 2*x^5 + 2*x^3
@@ -1257,10 +1264,11 @@ class FunctionField_polymod(FunctionField):
 
         This also works for inseparable extensions::
 
-            sage: K.<x> = FunctionField(GF(2)); R.<y> = K[]                                                             # optional - sage.rings.finite_rings
-            sage: L.<y> = K.extension(y^2 - x); R.<z> = L[]                                                             # optional - sage.rings.finite_rings
-            sage: M.<z> = L.extension(z^2 - y)                                                                          # optional - sage.rings.finite_rings
-            sage: M.simple_model()                                                                                      # optional - sage.rings.finite_rings
+            sage: # needs sage.rings.finite_rings
+            sage: K.<x> = FunctionField(GF(2)); R.<y> = K[]
+            sage: L.<y> = K.extension(y^2 - x); R.<z> = L[]
+            sage: M.<z> = L.extension(z^2 - y)
+            sage: M.simple_model()
             (Function field in z defined by z^4 + x, Function Field morphism:
                From: Function field in z defined by z^4 + x
                To:   Function field in z defined by z^2 + y
@@ -1330,12 +1338,13 @@ class FunctionField_polymod(FunctionField):
 
         This also works for inseparable extensions::
 
-            sage: K.<x> = FunctionField(GF(2))                                          # optional - sage.rings.finite_rings
-            sage: R.<Y> = K[]                                                           # optional - sage.rings.finite_rings
-            sage: L.<y> = K.extension(Y^2 - x)                                          # optional - sage.rings.finite_rings
-            sage: R.<Z> = L[]                                                           # optional - sage.rings.finite_rings
-            sage: M.<z> = L.extension(Z^2 - y)                                          # optional - sage.rings.finite_rings
-            sage: M.primitive_element()                                                 # optional - sage.rings.finite_rings
+            sage: # needs sage.rings.finite_rings
+            sage: K.<x> = FunctionField(GF(2))
+            sage: R.<Y> = K[]
+            sage: L.<y> = K.extension(Y^2 - x)
+            sage: R.<Z> = L[]
+            sage: M.<z> = L.extension(Z^2 - y)
+            sage: M.primitive_element()
             z
         """
         N, f, t = self.simple_model()
@@ -1371,10 +1380,11 @@ class FunctionField_polymod(FunctionField):
 
         EXAMPLES::
 
-            sage: K.<x> = FunctionField(GF(2))                                          # optional - sage.rings.finite_rings
-            sage: R.<y> = K[]                                                           # optional - sage.rings.finite_rings
-            sage: L.<y> = K.extension(y^2 - x^3)                                        # optional - sage.rings.finite_rings
-            sage: L.separable_model(('t','w'))                                          # optional - sage.rings.finite_rings
+            sage: # needs sage.rings.finite_rings
+            sage: K.<x> = FunctionField(GF(2))
+            sage: R.<y> = K[]
+            sage: L.<y> = K.extension(y^2 - x^3)
+            sage: L.separable_model(('t','w'))
             (Function field in t defined by t^3 + w^2,
              Function Field morphism:
                From: Function field in t defined by t^3 + w^2
@@ -1389,10 +1399,11 @@ class FunctionField_polymod(FunctionField):
 
         This also works for non-integral polynomials::
 
-            sage: K.<x> = FunctionField(GF(2))                                          # optional - sage.rings.finite_rings
-            sage: R.<y> = K[]                                                           # optional - sage.rings.finite_rings
-            sage: L.<y> = K.extension(y^2/x - x^2)                                      # optional - sage.rings.finite_rings
-            sage: L.separable_model()                                                   # optional - sage.rings.finite_rings
+            sage: # needs sage.rings.finite_rings
+            sage: K.<x> = FunctionField(GF(2))
+            sage: R.<y> = K[]
+            sage: L.<y> = K.extension(y^2/x - x^2)
+            sage: L.separable_model()
             (Function field in y_ defined by y_^3 + x_^2,
              Function Field morphism:
                From: Function field in y_ defined by y_^3 + x_^2
@@ -1407,13 +1418,14 @@ class FunctionField_polymod(FunctionField):
 
         If the base field is not perfect this is only implemented in trivial cases::
 
-            sage: k.<t> = FunctionField(GF(2))                                          # optional - sage.rings.finite_rings
-            sage: k.is_perfect()                                                        # optional - sage.rings.finite_rings
+            sage: # needs sage.rings.finite_rings
+            sage: k.<t> = FunctionField(GF(2))
+            sage: k.is_perfect()
             False
-            sage: K.<x> = FunctionField(k)                                              # optional - sage.rings.finite_rings
-            sage: R.<y> = K[]                                                           # optional - sage.rings.finite_rings
-            sage: L.<y> = K.extension(y^3 - t)                                          # optional - sage.rings.finite_rings
-            sage: L.separable_model()                                                   # optional - sage.rings.finite_rings
+            sage: K.<x> = FunctionField(k)
+            sage: R.<y> = K[]
+            sage: L.<y> = K.extension(y^3 - t)
+            sage: L.separable_model()
             (Function field in y defined by y^3 + t,
              Function Field endomorphism of Function field in y defined by y^3 + t
                Defn: y |--> y
@@ -1425,9 +1437,9 @@ class FunctionField_polymod(FunctionField):
         Some other cases for which a separable model could be constructed are
         not supported yet::
 
-            sage: R.<y> = K[]                                                           # optional - sage.rings.finite_rings
-            sage: L.<y> = K.extension(y^2 - t)                                          # optional - sage.rings.finite_rings
-            sage: L.separable_model()                                                   # optional - sage.rings.finite_rings
+            sage: R.<y> = K[]                                                           # needs sage.rings.finite_rings
+            sage: L.<y> = K.extension(y^2 - t)                                          # needs sage.rings.finite_rings
+            sage: L.separable_model()                                                   # needs sage.rings.finite_rings
             Traceback (most recent call last):
             ...
             NotImplementedError: constructing a separable model is only implemented for function fields over a perfect constant base field
@@ -1450,12 +1462,13 @@ class FunctionField_polymod(FunctionField):
 
         Check that this works for towers of inseparable extensions::
 
-            sage: K.<x> = FunctionField(GF(2))                                          # optional - sage.rings.finite_rings
-            sage: R.<y> = K[]                                                           # optional - sage.rings.finite_rings
-            sage: L.<y> = K.extension(y^2 - x)                                          # optional - sage.rings.finite_rings
-            sage: R.<z> = L[]                                                           # optional - sage.rings.finite_rings
-            sage: M.<z> = L.extension(z^2 - y)                                          # optional - sage.rings.finite_rings
-            sage: M.separable_model()                                                   # optional - sage.rings.finite_rings
+            sage: # needs sage.rings.finite_rings
+            sage: K.<x> = FunctionField(GF(2))
+            sage: R.<y> = K[]
+            sage: L.<y> = K.extension(y^2 - x)
+            sage: R.<z> = L[]
+            sage: M.<z> = L.extension(z^2 - y)
+            sage: M.separable_model()
             (Function field in z_ defined by z_ + x_^4,
              Function Field morphism:
                From: Function field in z_ defined by z_ + x_^4
@@ -1471,12 +1484,13 @@ class FunctionField_polymod(FunctionField):
 
         Check that this also works if only the first extension is inseparable::
 
-            sage: K.<x> = FunctionField(GF(2))                                          # optional - sage.rings.finite_rings
-            sage: R.<y> = K[]                                                           # optional - sage.rings.finite_rings
-            sage: L.<y> = K.extension(y^2 - x)                                          # optional - sage.rings.finite_rings
-            sage: R.<z> = L[]                                                           # optional - sage.rings.finite_rings
-            sage: M.<z> = L.extension(z^3 - y)                                          # optional - sage.rings.finite_rings
-            sage: M.separable_model()                                                   # optional - sage.rings.finite_rings
+            sage: # needs sage.rings.finite_rings
+            sage: K.<x> = FunctionField(GF(2))
+            sage: R.<y> = K[]
+            sage: L.<y> = K.extension(y^2 - x)
+            sage: R.<z> = L[]
+            sage: M.<z> = L.extension(z^3 - y)
+            sage: M.separable_model()
             (Function field in z_ defined by z_ + x_^6, Function Field morphism:
                From: Function field in z_ defined by z_ + x_^6
                To:   Function field in z defined by z^3 + y
@@ -1655,9 +1669,9 @@ class FunctionField_simple(FunctionField_polymod):
 
         EXAMPLES::
 
-            sage: K.<x> = FunctionField(GF(2)); _.<t> = K[]                             # optional - sage.rings.finite_rings
-            sage: F.<y> = K.extension(t^3 - x^2*(x^2 + x + 1)^2)                        # optional - sage.rings.finite_rings
-            sage: F._inversion_isomorphism()                                            # optional - sage.rings.finite_rings
+            sage: K.<x> = FunctionField(GF(2)); _.<t> = K[]                             # needs sage.rings.finite_rings
+            sage: F.<y> = K.extension(t^3 - x^2*(x^2 + x + 1)^2)                        # needs sage.rings.finite_rings
+            sage: F._inversion_isomorphism()                                            # needs sage.rings.finite_rings
             (Function field in s defined by s^3 + x^16 + x^14 + x^12, Composite map:
                From: Function field in s defined by s^3 + x^16 + x^14 + x^12
                To:   Function field in y defined by y^3 + x^6 + x^4 + x^2
@@ -1712,9 +1726,9 @@ class FunctionField_simple(FunctionField_polymod):
 
         EXAMPLES::
 
-            sage: K.<x> = FunctionField(GF(2)); _.<Y> = K[]                             # optional - sage.rings.finite_rings
-            sage: F.<y> = K.extension(Y^3 - x^2*(x^2 + x + 1)^2)                        # optional - sage.rings.finite_rings
-            sage: all(q.place_below() == p                                              # optional - sage.rings.finite_rings
+            sage: K.<x> = FunctionField(GF(2)); _.<Y> = K[]                             # needs sage.rings.finite_rings
+            sage: F.<y> = K.extension(Y^3 - x^2*(x^2 + x + 1)^2)                        # needs sage.rings.finite_rings
+            sage: all(q.place_below() == p                                              # needs sage.rings.finite_rings
             ....:     for p in K.places() for q in F.places_above(p))
             True
 
@@ -1726,12 +1740,13 @@ class FunctionField_simple(FunctionField_polymod):
             ....:     for p in pls for q in F.places_above(p))
             True
 
-            sage: K.<x> = FunctionField(QQbar); _.<Y> = K[]                             # optional - sage.rings.number_field
-            sage: F.<y> = K.extension(Y^3 - x^2*(x^2 + x + 1)^2)                        # optional - sage.rings.number_field
-            sage: O = K.maximal_order()                                                 # optional - sage.rings.number_field
-            sage: pls = [O.ideal(x - QQbar(sqrt(c))).place()                            # optional - sage.rings.number_field
+            sage: # needs sage.rings.number_field
+            sage: K.<x> = FunctionField(QQbar); _.<Y> = K[]
+            sage: F.<y> = K.extension(Y^3 - x^2*(x^2 + x + 1)^2)
+            sage: O = K.maximal_order()
+            sage: pls = [O.ideal(x - QQbar(sqrt(c))).place()
             ....:        for c in [-2, -1, 0, 1, 2]]
-            sage: all(q.place_below() == p         # long time (4s)                     # optional - sage.rings.number_field
+            sage: all(q.place_below() == p      # long time (4s)
             ....:     for p in pls for q in F.places_above(p))
             True
         """
@@ -1754,9 +1769,9 @@ class FunctionField_simple(FunctionField_polymod):
 
         EXAMPLES::
 
-            sage: K.<x> = FunctionField(GF(3)); _.<y> = K[]                             # optional - sage.rings.finite_rings
-            sage: L.<y> = K.extension(y^5 - (x^3 + 2*x*y + 1/x))                        # optional - sage.rings.finite_rings
-            sage: L.constant_field()                                                    # optional - sage.rings.finite_rings
+            sage: K.<x> = FunctionField(GF(3)); _.<y> = K[]                             # needs sage.rings.finite_rings
+            sage: L.<y> = K.extension(y^5 - (x^3 + 2*x*y + 1/x))                        # needs sage.rings.finite_rings
+            sage: L.constant_field()                                                    # needs sage.rings.finite_rings
             Finite Field of size 3
         """
         return self.exact_constant_field()[0]
@@ -1771,17 +1786,18 @@ class FunctionField_simple(FunctionField_polymod):
 
         EXAMPLES::
 
-            sage: K.<x> = FunctionField(GF(3)); _.<Y> = K[]                             # optional - sage.rings.finite_rings
-            sage: f = Y^2 - x*Y + x^2 + 1 # irreducible but not absolutely irreducible  # optional - sage.rings.finite_rings
-            sage: L.<y> = K.extension(f)                                                # optional - sage.rings.finite_rings
-            sage: L.genus()                                                             # optional - sage.rings.finite_rings
+            sage: # needs sage.rings.finite_rings
+            sage: K.<x> = FunctionField(GF(3)); _.<Y> = K[]
+            sage: f = Y^2 - x*Y + x^2 + 1 # irreducible but not absolutely irreducible
+            sage: L.<y> = K.extension(f)
+            sage: L.genus()
             0
-            sage: L.exact_constant_field()                                              # optional - sage.rings.finite_rings
+            sage: L.exact_constant_field()
             (Finite Field in t of size 3^2, Ring morphism:
                From: Finite Field in t of size 3^2
                To:   Function field in y defined by y^2 + 2*x*y + x^2 + 1
                Defn: t |--> y + x)
-            sage: (y+x).divisor()                                                       # optional - sage.rings.finite_rings
+            sage: (y+x).divisor()
             0
         """
         # A basis of the full constant field is obtained from
@@ -1816,12 +1832,13 @@ class FunctionField_simple(FunctionField_polymod):
 
         EXAMPLES::
 
-            sage: F.<a> = GF(16)                                                        # optional - sage.rings.finite_rings
-            sage: K.<x> = FunctionField(F); K                                           # optional - sage.rings.finite_rings
+            sage: # needs sage.rings.finite_rings
+            sage: F.<a> = GF(16)
+            sage: K.<x> = FunctionField(F); K
             Rational function field in x over Finite Field in a of size 2^4
-            sage: R.<t> = PolynomialRing(K)                                             # optional - sage.rings.finite_rings
-            sage: L.<y> = K.extension(t^4 + t - x^5)                                    # optional - sage.rings.finite_rings
-            sage: L.genus()                                                             # optional - sage.rings.finite_rings
+            sage: R.<t> = PolynomialRing(K)
+            sage: L.<y> = K.extension(t^4 + t - x^5)
+            sage: L.genus()
             6
 
         The genus is computed by the Hurwitz genus formula.
@@ -1855,24 +1872,25 @@ class FunctionField_simple(FunctionField_polymod):
 
         EXAMPLES::
 
-            sage: K.<x> = FunctionField(GF(2)); _.<Y> = K[]                             # optional - sage.rings.finite_rings
-            sage: L.<y> = K.extension(Y^2 + Y + x + 1/x)                                # optional - sage.rings.finite_rings
-            sage: p = L.places_finite()[0]                                              # optional - sage.rings.finite_rings
-            sage: R, fr_R, to_R = L.residue_field(p)                                    # optional - sage.rings.finite_rings
-            sage: R                                                                     # optional - sage.rings.finite_rings
+            sage: # needs sage.rings.finite_rings
+            sage: K.<x> = FunctionField(GF(2)); _.<Y> = K[]
+            sage: L.<y> = K.extension(Y^2 + Y + x + 1/x)
+            sage: p = L.places_finite()[0]
+            sage: R, fr_R, to_R = L.residue_field(p)
+            sage: R
             Finite Field of size 2
-            sage: f = 1 + y                                                             # optional - sage.rings.finite_rings
-            sage: f.valuation(p)                                                        # optional - sage.rings.finite_rings
+            sage: f = 1 + y
+            sage: f.valuation(p)
             -1
-            sage: to_R(f)                                                               # optional - sage.rings.finite_rings
+            sage: to_R(f)
             Traceback (most recent call last):
             ...
             TypeError: ...
-            sage: (1+1/f).valuation(p)                                                  # optional - sage.rings.finite_rings
+            sage: (1+1/f).valuation(p)
             0
-            sage: to_R(1 + 1/f)                                                         # optional - sage.rings.finite_rings
+            sage: to_R(1 + 1/f)
             1
-            sage: [fr_R(e) for e in R]                                                  # optional - sage.rings.finite_rings
+            sage: [fr_R(e) for e in R]
             [0, 1]
         """
         return place.residue_field(name=name)
@@ -1905,7 +1923,7 @@ class FunctionField_char_zero(FunctionField_simple):
 
             sage: K.<x> = FunctionField(QQ); _.<Y> = K[]
             sage: L.<y> = K.extension(Y^3 - (x^3 - 1)/(x^3 - 2))
-            sage: L.higher_derivation()                                                 # optional - sage.modules
+            sage: L.higher_derivation()                                                 # needs sage.modules
             Higher derivation map:
               From: Function field in y defined by y^3 + (-x^3 + 1)/(x^3 - 2)
               To:   Function field in y defined by y^3 + (-x^3 + 1)/(x^3 - 2)
@@ -1926,23 +1944,23 @@ class FunctionField_global(FunctionField_simple):
 
     EXAMPLES::
 
-        sage: K.<x> = FunctionField(GF(5)); _.<Y> = K[]                                 # optional - sage.rings.finite_rings
-        sage: L.<y> = K.extension(Y^3 - (x^3 - 1)/(x^3 - 2))                            # optional - sage.rings.finite_rings
-        sage: L                                                                         # optional - sage.rings.finite_rings
+        sage: K.<x> = FunctionField(GF(5)); _.<Y> = K[]                                 # needs sage.rings.finite_rings
+        sage: L.<y> = K.extension(Y^3 - (x^3 - 1)/(x^3 - 2))                            # needs sage.rings.finite_rings
+        sage: L                                                                         # needs sage.rings.finite_rings
         Function field in y defined by y^3 + (4*x^3 + 1)/(x^3 + 3)
 
     The defining equation needs not be monic::
 
-        sage: K.<x> = FunctionField(GF(4)); _.<Y> = K[]                                 # optional - sage.rings.finite_rings
-        sage: L.<y> = K.extension((1 - x)*Y^7 - x^3)                                    # optional - sage.rings.finite_rings
-        sage: L.gaps()                         # long time (6s)                         # optional - sage.rings.finite_rings
+        sage: K.<x> = FunctionField(GF(4)); _.<Y> = K[]                                 # needs sage.rings.finite_rings
+        sage: L.<y> = K.extension((1 - x)*Y^7 - x^3)                                    # needs sage.rings.finite_rings
+        sage: L.gaps()                          # long time (6s)                        # needs sage.rings.finite_rings
         [1, 2, 3]
 
     or may define a trivial extension::
 
-        sage: K.<x> = FunctionField(GF(5)); _.<Y> = K[]                                 # optional - sage.rings.finite_rings
-        sage: L.<y> = K.extension(Y-1)                                                  # optional - sage.rings.finite_rings
-        sage: L.genus()                                                                 # optional - sage.rings.finite_rings
+        sage: K.<x> = FunctionField(GF(5)); _.<Y> = K[]                                 # needs sage.rings.finite_rings
+        sage: L.<y> = K.extension(Y-1)                                                  # needs sage.rings.finite_rings
+        sage: L.genus()                                                                 # needs sage.rings.finite_rings
         0
     """
     _differentials_space = LazyImport('sage.rings.function_field.differential', 'DifferentialsSpace_global')
@@ -1953,9 +1971,9 @@ class FunctionField_global(FunctionField_simple):
 
         TESTS::
 
-            sage: K.<x> = FunctionField(GF(5)); _.<Y> = K[]                             # optional - sage.rings.finite_rings
-            sage: L.<y> = K.extension(Y^3 - (x^3 - 1)/(x^3 - 2))                        # optional - sage.rings.finite_rings
-            sage: TestSuite(L).run()               # long time (7s)                     # optional - sage.rings.finite_rings
+            sage: K.<x> = FunctionField(GF(5)); _.<Y> = K[]                             # needs sage.rings.finite_rings
+            sage: L.<y> = K.extension(Y^3 - (x^3 - 1)/(x^3 - 2))                        # needs sage.rings.finite_rings
+            sage: TestSuite(L).run()            # long time (7s)                        # needs sage.rings.finite_rings
         """
         FunctionField_polymod.__init__(self, polynomial, names)
 
@@ -1965,11 +1983,12 @@ class FunctionField_global(FunctionField_simple):
 
         EXAMPLES::
 
-            sage: K.<x> = FunctionField(GF(2))                                          # optional - sage.rings.finite_rings
-            sage: R.<t> = PolynomialRing(K)                                             # optional - sage.rings.finite_rings
-            sage: F.<y> = K.extension(t^4 + x^12*t^2 + x^18*t + x^21 + x^18)            # optional - sage.rings.finite_rings
-            sage: O = F.maximal_order()                                                 # optional - sage.rings.finite_rings
-            sage: O.basis()                                                             # optional - sage.rings.finite_rings
+            sage: # needs sage.rings.finite_rings
+            sage: K.<x> = FunctionField(GF(2))
+            sage: R.<t> = PolynomialRing(K)
+            sage: F.<y> = K.extension(t^4 + x^12*t^2 + x^18*t + x^21 + x^18)
+            sage: O = F.maximal_order()
+            sage: O.basis()
             (1, 1/x^4*y, 1/x^11*y^2 + 1/x^2, 1/x^15*y^3 + 1/x^6*y)
         """
         from .order_polymod import FunctionFieldMaximalOrder_global
@@ -1987,9 +2006,9 @@ class FunctionField_global(FunctionField_simple):
 
         EXAMPLES::
 
-            sage: K.<x> = FunctionField(GF(5)); _.<Y> = K[]                             # optional - sage.rings.finite_rings
-            sage: L.<y> = K.extension(Y^3 - (x^3 - 1)/(x^3 - 2))                        # optional - sage.rings.finite_rings
-            sage: L.higher_derivation()                                                 # optional - sage.rings.finite_rings sage.modules
+            sage: K.<x> = FunctionField(GF(5)); _.<Y> = K[]                             # needs sage.rings.finite_rings
+            sage: L.<y> = K.extension(Y^3 - (x^3 - 1)/(x^3 - 2))                        # needs sage.rings.finite_rings
+            sage: L.higher_derivation()                                                 # needs sage.modules sage.rings.finite_rings
             Higher derivation map:
               From: Function field in y defined by y^3 + (4*x^3 + 1)/(x^3 + 3)
               To:   Function field in y defined by y^3 + (4*x^3 + 1)/(x^3 + 3)
@@ -2009,25 +2028,26 @@ class FunctionField_global(FunctionField_simple):
 
         EXAMPLES::
 
-            sage: F.<a> = GF(2)                                                         # optional - sage.rings.finite_rings
-            sage: K.<x> = FunctionField(F)                                              # optional - sage.rings.finite_rings
-            sage: R.<Y> = PolynomialRing(K)                                             # optional - sage.rings.finite_rings
-            sage: L.<y> = K.extension(Y^4 + Y - x^5)                                    # optional - sage.rings.finite_rings
-            sage: L.get_place(1)                                                        # optional - sage.rings.finite_rings
+            sage: # needs sage.rings.finite_rings
+            sage: F.<a> = GF(2)
+            sage: K.<x> = FunctionField(F)
+            sage: R.<Y> = PolynomialRing(K)
+            sage: L.<y> = K.extension(Y^4 + Y - x^5)
+            sage: L.get_place(1)
             Place (x, y)
-            sage: L.get_place(2)                                                        # optional - sage.rings.finite_rings
+            sage: L.get_place(2)
             Place (x, y^2 + y + 1)
-            sage: L.get_place(3)                                                        # optional - sage.rings.finite_rings
+            sage: L.get_place(3)
             Place (x^3 + x^2 + 1, y + x^2 + x)
-            sage: L.get_place(4)                                                        # optional - sage.rings.finite_rings
+            sage: L.get_place(4)
             Place (x + 1, x^5 + 1)
-            sage: L.get_place(5)                                                        # optional - sage.rings.finite_rings
+            sage: L.get_place(5)
             Place (x^5 + x^3 + x^2 + x + 1, y + x^4 + 1)
-            sage: L.get_place(6)                                                        # optional - sage.rings.finite_rings
+            sage: L.get_place(6)
             Place (x^3 + x^2 + 1, y^2 + y + x^2)
-            sage: L.get_place(7)                                                        # optional - sage.rings.finite_rings
+            sage: L.get_place(7)
             Place (x^7 + x + 1, y + x^6 + x^5 + x^4 + x^3 + x)
-            sage: L.get_place(8)                                                        # optional - sage.rings.finite_rings
+            sage: L.get_place(8)
 
         """
         for p in self._places_finite(degree):
@@ -2048,11 +2068,12 @@ class FunctionField_global(FunctionField_simple):
 
         EXAMPLES::
 
-            sage: F.<a> = GF(2)                                                         # optional - sage.rings.finite_rings
-            sage: K.<x> = FunctionField(F)                                              # optional - sage.rings.finite_rings
-            sage: R.<t> = PolynomialRing(K)                                             # optional - sage.rings.finite_rings
-            sage: L.<y> = K.extension(t^4 + t - x^5)                                    # optional - sage.rings.finite_rings
-            sage: L.places(1)                                                           # optional - sage.rings.finite_rings
+            sage: # needs sage.rings.finite_rings
+            sage: F.<a> = GF(2)
+            sage: K.<x> = FunctionField(F)
+            sage: R.<t> = PolynomialRing(K)
+            sage: L.<y> = K.extension(t^4 + t - x^5)
+            sage: L.places(1)
             [Place (1/x, 1/x^4*y^3), Place (x, y), Place (x, y + 1)]
         """
         return self.places_infinite(degree) + self.places_finite(degree)
@@ -2067,11 +2088,12 @@ class FunctionField_global(FunctionField_simple):
 
         EXAMPLES::
 
-            sage: F.<a> = GF(2)                                                         # optional - sage.rings.finite_rings
-            sage: K.<x> = FunctionField(F)                                              # optional - sage.rings.finite_rings
-            sage: R.<t> = PolynomialRing(K)                                             # optional - sage.rings.finite_rings
-            sage: L.<y> = K.extension(t^4 + t - x^5)                                    # optional - sage.rings.finite_rings
-            sage: L.places_finite(1)                                                    # optional - sage.rings.finite_rings
+            sage: # needs sage.rings.finite_rings
+            sage: F.<a> = GF(2)
+            sage: K.<x> = FunctionField(F)
+            sage: R.<t> = PolynomialRing(K)
+            sage: L.<y> = K.extension(t^4 + t - x^5)
+            sage: L.places_finite(1)
             [Place (x, y), Place (x, y + 1)]
         """
         return list(self._places_finite(degree))
@@ -2086,11 +2108,12 @@ class FunctionField_global(FunctionField_simple):
 
         EXAMPLES::
 
-            sage: F.<a> = GF(2)                                                         # optional - sage.rings.finite_rings
-            sage: K.<x> = FunctionField(F)                                              # optional - sage.rings.finite_rings
-            sage: R.<t> = PolynomialRing(K)                                             # optional - sage.rings.finite_rings
-            sage: L.<y> = K.extension(t^4 + t - x^5)                                    # optional - sage.rings.finite_rings
-            sage: L._places_finite(1)                                                   # optional - sage.rings.finite_rings
+            sage: # needs sage.rings.finite_rings
+            sage: F.<a> = GF(2)
+            sage: K.<x> = FunctionField(F)
+            sage: R.<t> = PolynomialRing(K)
+            sage: L.<y> = K.extension(t^4 + t - x^5)
+            sage: L._places_finite(1)
             <generator object ...>
         """
         O = self.maximal_order()
@@ -2115,11 +2138,12 @@ class FunctionField_global(FunctionField_simple):
 
         EXAMPLES::
 
-            sage: F.<a> = GF(2)                                                         # optional - sage.rings.finite_rings
-            sage: K.<x> = FunctionField(F)                                              # optional - sage.rings.finite_rings
-            sage: R.<t> = PolynomialRing(K)                                             # optional - sage.rings.finite_rings
-            sage: L.<y> = K.extension(t^4 + t - x^5)                                    # optional - sage.rings.finite_rings
-            sage: L.places_infinite(1)                                                  # optional - sage.rings.finite_rings
+            sage: # needs sage.rings.finite_rings
+            sage: F.<a> = GF(2)
+            sage: K.<x> = FunctionField(F)
+            sage: R.<t> = PolynomialRing(K)
+            sage: L.<y> = K.extension(t^4 + t - x^5)
+            sage: L.places_infinite(1)
             [Place (1/x, 1/x^4*y^3)]
         """
         return list(self._places_infinite(degree))
@@ -2134,11 +2158,12 @@ class FunctionField_global(FunctionField_simple):
 
         EXAMPLES::
 
-            sage: F.<a> = GF(2)                                                         # optional - sage.rings.finite_rings
-            sage: K.<x> = FunctionField(F)                                              # optional - sage.rings.finite_rings
-            sage: R.<t> = PolynomialRing(K)                                             # optional - sage.rings.finite_rings
-            sage: L.<y> = K.extension(t^4 + t - x^5)                                    # optional - sage.rings.finite_rings
-            sage: L._places_infinite(1)                                                 # optional - sage.rings.finite_rings
+            sage: # needs sage.rings.finite_rings
+            sage: F.<a> = GF(2)
+            sage: K.<x> = FunctionField(F)
+            sage: R.<t> = PolynomialRing(K)
+            sage: L.<y> = K.extension(t^4 + t - x^5)
+            sage: L._places_infinite(1)
             <generator object ...>
         """
         Oinf = self.maximal_order_infinite()
@@ -2156,9 +2181,9 @@ class FunctionField_global(FunctionField_simple):
 
         EXAMPLES::
 
-            sage: K.<x> = FunctionField(GF(2)); _.<Y> = K[]                             # optional - sage.rings.finite_rings
-            sage: L.<y> = K.extension(Y^3 + x^3 * Y + x)                                # optional - sage.rings.finite_rings
-            sage: L.gaps()                                                              # optional - sage.rings.finite_rings sage.modules
+            sage: K.<x> = FunctionField(GF(2)); _.<Y> = K[]                             # needs sage.rings.finite_rings
+            sage: L.<y> = K.extension(Y^3 + x^3 * Y + x)                                # needs sage.rings.finite_rings
+            sage: L.gaps()                                                              # needs sage.modules sage.rings.finite_rings
             [1, 2, 3]
         """
         return self._weierstrass_places()[1]
@@ -2169,9 +2194,9 @@ class FunctionField_global(FunctionField_simple):
 
         EXAMPLES::
 
-            sage: K.<x> = FunctionField(GF(2)); _.<Y> = K[]                             # optional - sage.rings.finite_rings
-            sage: L.<y> = K.extension(Y^3 + x^3 * Y + x)                                # optional - sage.rings.finite_rings
-            sage: L.weierstrass_places()                                                # optional - sage.rings.finite_rings sage.modules
+            sage: K.<x> = FunctionField(GF(2)); _.<Y> = K[]                             # needs sage.rings.finite_rings
+            sage: L.<y> = K.extension(Y^3 + x^3 * Y + x)                                # needs sage.rings.finite_rings
+            sage: L.weierstrass_places()                                                # needs sage.modules sage.rings.finite_rings
             [Place (1/x, 1/x^3*y^2 + 1/x),
              Place (1/x, 1/x^3*y^2 + 1/x^2*y + 1),
              Place (x, y),
@@ -2193,9 +2218,9 @@ class FunctionField_global(FunctionField_simple):
 
         EXAMPLES::
 
-            sage: K.<x> = FunctionField(GF(2)); _.<Y> = K[]                             # optional - sage.rings.finite_rings
-            sage: L.<y> = K.extension(Y^3 + x^3 * Y + x)                                # optional - sage.rings.finite_rings
-            sage: len(L.weierstrass_places())  # indirect doctest                       # optional - sage.rings.finite_rings sage.modules
+            sage: K.<x> = FunctionField(GF(2)); _.<Y> = K[]                             # needs sage.rings.finite_rings
+            sage: L.<y> = K.extension(Y^3 + x^3 * Y + x)                                # needs sage.rings.finite_rings
+            sage: len(L.weierstrass_places())  # indirect doctest                       # needs sage.modules sage.rings.finite_rings
             10
 
         This method implements Algorithm 30 in [Hes2002b]_.
@@ -2241,9 +2266,9 @@ class FunctionField_global(FunctionField_simple):
 
         EXAMPLES::
 
-            sage: K.<x> = FunctionField(GF(2)); _.<Y> = K[]                             # optional - sage.rings.finite_rings
-            sage: F.<y> = K.extension(Y^2 + Y + x + 1/x)                                # optional - sage.rings.finite_rings
-            sage: F.L_polynomial()                                                      # optional - sage.rings.finite_rings
+            sage: K.<x> = FunctionField(GF(2)); _.<Y> = K[]                             # needs sage.rings.finite_rings
+            sage: F.<y> = K.extension(Y^2 + Y + x + 1/x)                                # needs sage.rings.finite_rings
+            sage: F.L_polynomial()                                                      # needs sage.rings.finite_rings
             2*t^2 + t + 1
         """
         from sage.rings.integer_ring import ZZ
@@ -2273,11 +2298,12 @@ class FunctionField_global(FunctionField_simple):
 
         EXAMPLES::
 
-            sage: K.<x> = FunctionField(GF(2)); _.<Y> = K[]                             # optional - sage.rings.finite_rings
-            sage: F.<y> = K.extension(Y^2 + Y + x + 1/x)                                # optional - sage.rings.finite_rings
-            sage: F.number_of_rational_places()                                         # optional - sage.rings.finite_rings
+            sage: # needs sage.rings.finite_rings
+            sage: K.<x> = FunctionField(GF(2)); _.<Y> = K[]
+            sage: F.<y> = K.extension(Y^2 + Y + x + 1/x)
+            sage: F.number_of_rational_places()
             4
-            sage: [F.number_of_rational_places(r) for r in [1..10]]                     # optional - sage.rings.finite_rings
+            sage: [F.number_of_rational_places(r) for r in [1..10]]
             [4, 8, 4, 16, 44, 56, 116, 288, 508, 968]
         """
         from sage.rings.integer_ring import IntegerRing
@@ -2368,10 +2394,11 @@ class FunctionField_integral(FunctionField_simple):
 
         EXAMPLES::
 
-            sage: K.<x> = FunctionField(GF(2))                                          # optional - sage.rings.finite_rings
-            sage: R.<t> = PolynomialRing(K)                                             # optional - sage.rings.finite_rings
-            sage: F.<y> = K.extension(t^4 + x^12*t^2 + x^18*t + x^21 + x^18)            # optional - sage.rings.finite_rings
-            sage: F._maximal_order_basis()                                              # optional - sage.rings.finite_rings
+            sage: # needs sage.rings.finite_rings
+            sage: K.<x> = FunctionField(GF(2))
+            sage: R.<t> = PolynomialRing(K)
+            sage: F.<y> = K.extension(t^4 + x^12*t^2 + x^18*t + x^21 + x^18)
+            sage: F._maximal_order_basis()
             [1, 1/x^4*y, 1/x^11*y^2 + 1/x^2, 1/x^15*y^3 + 1/x^6*y]
 
         The basis of the maximal order *always* starts with 1. This is assumed
@@ -2466,9 +2493,9 @@ class FunctionField_integral(FunctionField_simple):
 
         EXAMPLES::
 
-            sage: K.<x> = FunctionField(GF(2)); R.<t> = PolynomialRing(K)               # optional - sage.rings.finite_rings
-            sage: F.<y> = K.extension(t^3 - x^2*(x^2+x+1)^2)                            # optional - sage.rings.finite_rings
-            sage: F.equation_order()                                                    # optional - sage.rings.finite_rings
+            sage: K.<x> = FunctionField(GF(2)); R.<t> = PolynomialRing(K)               # needs sage.rings.finite_rings
+            sage: F.<y> = K.extension(t^3 - x^2*(x^2+x+1)^2)                            # needs sage.rings.finite_rings
+            sage: F.equation_order()                                                    # needs sage.rings.finite_rings
             Order in Function field in y defined by y^3 + x^6 + x^4 + x^2
 
             sage: K.<x> = FunctionField(QQ); R.<t> = PolynomialRing(K)
@@ -2492,11 +2519,12 @@ class FunctionField_integral(FunctionField_simple):
 
         EXAMPLES::
 
-            sage: K.<x> = FunctionField(GF(2)); R.<t> = PolynomialRing(K)               # optional - sage.rings.finite_rings
-            sage: F.<y> = K.extension(t^3 - x^2*(x^2+x+1)^2)                            # optional - sage.rings.finite_rings
-            sage: b = F.primitive_integal_element_infinite(); b                         # optional - sage.rings.finite_rings
+            sage: # needs sage.rings.finite_rings
+            sage: K.<x> = FunctionField(GF(2)); R.<t> = PolynomialRing(K)
+            sage: F.<y> = K.extension(t^3 - x^2*(x^2+x+1)^2)
+            sage: b = F.primitive_integal_element_infinite(); b
             1/x^2*y
-            sage: b.minimal_polynomial('t')                                             # optional - sage.rings.finite_rings
+            sage: b.minimal_polynomial('t')
             t^3 + (x^4 + x^2 + 1)/x^4
         """
         f = self.polynomial()
@@ -2519,9 +2547,9 @@ class FunctionField_integral(FunctionField_simple):
 
         EXAMPLES::
 
-            sage: K.<x> = FunctionField(GF(2)); R.<t> = PolynomialRing(K)               # optional - sage.rings.finite_rings
-            sage: F.<y> = K.extension(t^3 - x^2*(x^2+x+1)^2)                            # optional - sage.rings.finite_rings
-            sage: F.equation_order_infinite()                                           # optional - sage.rings.finite_rings
+            sage: K.<x> = FunctionField(GF(2)); R.<t> = PolynomialRing(K)               # needs sage.rings.finite_rings
+            sage: F.<y> = K.extension(t^3 - x^2*(x^2+x+1)^2)                            # needs sage.rings.finite_rings
+            sage: F.equation_order_infinite()                                           # needs sage.rings.finite_rings
             Infinite order in Function field in y defined by y^3 + x^6 + x^4 + x^2
 
             sage: K.<x> = FunctionField(QQ); R.<t> = PolynomialRing(K)

@@ -1265,10 +1265,11 @@ class CFiniteSequences_generic(CommutativeRing, UniqueRepresentation):
 r"""
 .. TODO::
 
-    sage: CFiniteSequence(x+x^2+x^3+x^4+x^5+O(x^6)) # not implemented
-    sage: latex(r)        # not implemented
+    sage: # not implemented
+    sage: CFiniteSequence(x+x^2+x^3+x^4+x^5+O(x^6))
+    sage: latex(r)
     \big\{a_{n\ge0}\big|a_{n+2}=\sum_{i=0}^{1}c_ia_{n+i}, c=\{1,1\}, a_{n<2}=\{0,0,0,1\}\big\}
-    sage: r.egf()      # not implemented
+    sage: r.egf()
     exp(2*x)
-    sage: r = CFiniteSequence(1/(1-y-x*y), x) # not implemented
+    sage: r = CFiniteSequence(1/(1-y-x*y), x)
 """
