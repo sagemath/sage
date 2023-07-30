@@ -816,8 +816,9 @@ def geometric_basis(G, E, p):
             q = EC[-i]
             connecting_path = list(reversed(EC[-i:]))
             break
+    I_cc_q = set(I.connected_component_containing_vertex(q, sort=False))
     distancequotients = [(E.distance(q, v)**2 / I.distance(q, v), v) for v in E
-                         if v in I.connected_component_containing_vertex(q) and not v == q]
+                         if v in I_cc_q and not v == q]
     r = max(distancequotients)[1]
     cutpath = I.shortest_path(q, r)
     Gcut = copy(G)

@@ -6540,7 +6540,7 @@ class GenericGraph(GenericGraph_pyx):
             else:
                 if self.is_planar():
                     # We use Euler's formula: V-E+F-C=1
-                    C = len(self.connected_components())
+                    C = self.connected_components_number()
                     return self.size() - self.order() + C + 1
                 else:
                     raise ValueError("no embedding is provided and the graph is not planar")
@@ -6747,7 +6747,7 @@ class GenericGraph(GenericGraph_pyx):
 
         # Can the problem be solved ? Are all the vertices in the same
         # connected component ?
-        cc = g.connected_component_containing_vertex(vertices[0])
+        cc = g.connected_component_containing_vertex(vertices[0], sort=False)
         if any(v not in cc for v in vertices):
             from sage.categories.sets_cat import EmptySetError
             raise EmptySetError("the given vertices do not all belong to the "
@@ -9157,6 +9157,12 @@ class GenericGraph(GenericGraph_pyx):
             Traceback (most recent call last):
             ...
             ValueError: the only implementation available for undirected graphs is with constraint_generation set to True
+
+        :trac:`35889` is fixed::
+
+            sage: G = Graph([('A', 1)])
+            sage: G.feedback_vertex_set()
+            []
         """
         if not constraint_generation and not self.is_directed():
             raise ValueError("the only implementation available for "
@@ -14233,20 +14239,18 @@ class GenericGraph(GenericGraph_pyx):
               a hole.
 
         - ``algorithm`` -- string (default: ``"B"``); the algorithm to choose
-          among ``"A"`` or ``"B"`` (see next section). While they will agree on
-          whether the given graph is chordal, they cannot be expected to return
-          the same certificates.
+          among ``"A"`` or ``"B"``. While they will agree on whether the given
+          graph is chordal, they cannot be expected to return the same
+          certificates.
 
         ALGORITHM:
 
-        This algorithm works through computing a Lex BFS on the graph, then
-        checking whether the order is a Perfect Elimination Order by computing
-        for each vertex `v` the subgraph induces by its non-deleted neighbors,
-        then testing whether this graph is complete.
-
-        This problem can be solved in `O(m)` [RT1975]_ ( where `m` is the number
-        of edges in the graph ) but this implementation is not linear because of
-        the complexity of Lex BFS.
+        This method implements the algorithm proposed in [RT1975]_ for the
+        recognition of chordal graphs with time complexity in `O(m)`. The
+        algorithm works through computing a Lex BFS on the graph, then checking
+        whether the order is a Perfect Elimination Order by computing for each
+        vertex `v` the subgraph induced by its non-deleted neighbors, then
+        testing whether this graph is complete.
 
         EXAMPLES:
 
@@ -14360,7 +14364,7 @@ class GenericGraph(GenericGraph_pyx):
                     continue
 
                 x = next(t_peo.neighbor_out_iterator(v))
-                S = self.neighbors(x) + [x]
+                S = self.neighbors(x, closed=True)
 
                 if not frozenset(g.neighbor_iterator(v)).issubset(S):
 
@@ -14396,7 +14400,7 @@ class GenericGraph(GenericGraph_pyx):
             peo, t_peo = self.lex_BFS(reverse=True, tree=True)
 
             # Remembering the (closed) neighborhoods of each vertex
-            neighbors_subsets = {v: frozenset(self.neighbors(v) + [v]) for v in g}
+            neighbors_subsets = {v: frozenset(self.neighbor_iterator(v, closed=True)) for v in g}
             pos_in_peo = dict(zip(peo, range(self.order())))
 
             # Iteratively removing vertices and checking everything is fine.
@@ -14763,7 +14767,7 @@ class GenericGraph(GenericGraph_pyx):
         a special vertex `-1` is a ''star-shaped'' Gallai tree::
 
             sage: g = 8 * graphs.CompleteGraph(6)
-            sage: g.add_edges([(-1, c[0]) for c in g.connected_components()])
+            sage: g.add_edges([(-1, c[0]) for c in g.connected_components(sort=False)])
             sage: g.is_gallai_tree()
             True
 
@@ -19385,7 +19389,7 @@ class GenericGraph(GenericGraph_pyx):
                 return Graph(self.min_spanning_tree(weight_function=lambda e: 1))
             else:
                 G = Graph(list(self))
-                for cc in self.connected_components():
+                for cc in self.connected_components(sort=False):
                     if len(cc) > 1:
                         edges = self.subgraph(cc).min_spanning_tree(weight_function=lambda e: 1)
                         G.add_edges(edges)

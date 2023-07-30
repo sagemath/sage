@@ -607,7 +607,7 @@ def vertex_coloring(g, k=None, value_only=False, hex_colors=False, solver=None, 
         # by the test of degeneracy (as previously).
         if not g.is_connected():
             if value_only:
-                for component in g.connected_components():
+                for component in g.connected_components(sort=False):
                     tmp = vertex_coloring(g.subgraph(component), k=k,
                                           value_only=value_only,
                                           hex_colors=hex_colors,
@@ -617,7 +617,7 @@ def vertex_coloring(g, k=None, value_only=False, hex_colors=False, solver=None, 
                         return False
                 return True
             colorings = []
-            for component in g.connected_components():
+            for component in g.connected_components(sort=False):
                 tmp = vertex_coloring(g.subgraph(component), k=k,
                                       value_only=value_only,
                                       hex_colors=False,

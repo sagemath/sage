@@ -123,7 +123,7 @@ class AmbientSpace(CombinatorialFreeModule):
             DD = T.dynkin_diagram()
         except ImportError:  # Dynkin diagrams need sage.graphs
             return
-        for C in DD.connected_components():
+        for C in DD.connected_components(sort=False):
             tester.assertEqual(len( set( alpha[i].scalar(alpha[i]) / D[i] for i in C ) ), 1)
 
     # FIXME: attribute or method?

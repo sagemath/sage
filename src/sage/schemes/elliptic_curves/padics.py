@@ -23,9 +23,6 @@ Miscellaneous `p`-adic methods
 
 import math
 
-import sage.schemes.hyperelliptic_curves.hypellfrob
-import sage.schemes.hyperelliptic_curves.monsky_washnitzer
-
 from sage.arith.functions import lcm as LCM
 from sage.arith.misc import valuation
 from sage.matrix.constructor import Matrix as matrix
@@ -40,6 +37,8 @@ from sage.rings.laurent_series_ring import LaurentSeriesRing
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.power_series_ring import PowerSeriesRing
 from sage.rings.rational_field import RationalField
+import sage.schemes.hyperelliptic_curves.hypellfrob
+import sage.schemes.hyperelliptic_curves.monsky_washnitzer
 
 lazy_import('sage.rings.padics.factory', ['Qp', 'Zp'])
 

@@ -58,6 +58,18 @@ Methods
 -------
 """
 
+# ****************************************************************************
+#
+#       Copyright (C) 2023      David Coudert <david.coudert@inria.fr>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 2 of the License, or
+# (at your option) any later version.
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
+
+from sage.misc.superseded import deprecation
 
 def is_connected(G):
     """
@@ -119,7 +131,7 @@ def is_connected(G):
         return len(conn_verts) == G.num_verts()
 
 
-def connected_components(G, sort=True):
+def connected_components(G, sort=None, key=None):
     """
     Return the list of connected components.
 
@@ -130,20 +142,30 @@ def connected_components(G, sort=True):
 
     - ``G`` -- the input graph
 
-    - ``sort`` -- boolean (default ``True``); whether to sort vertices inside
-      each component
+    - ``sort`` -- boolean (default: ``None``); if ``True``, vertices inside each
+      component are sorted according to the default ordering
+
+      As of :trac:`35889`, this argument must be explicitly specified (unless a
+      ``key`` is given); otherwise a warning is printed and ``sort=True`` is
+      used. The default will eventually be changed to ``False``.
+
+    - ``key`` -- a function (default: ``None``); a function that takes a
+      vertex as its one argument and returns a value that can be used for
+      comparisons in the sorting algorithm (we must have ``sort=True``)
 
     EXAMPLES::
 
         sage: from sage.graphs.connectivity import connected_components
         sage: G = Graph({0: [1, 3], 1: [2], 2: [3], 4: [5, 6], 5: [6]})
-        sage: connected_components(G)
+        sage: connected_components(G, sort=True)
         [[0, 1, 2, 3], [4, 5, 6]]
-        sage: G.connected_components()
+        sage: G.connected_components(sort=True)
         [[0, 1, 2, 3], [4, 5, 6]]
         sage: D = DiGraph({0: [1, 3], 1: [2], 2: [3], 4: [5, 6], 5: [6]})
-        sage: connected_components(D)
+        sage: connected_components(D, sort=True)
         [[0, 1, 2, 3], [4, 5, 6]]
+        sage: connected_components(D, sort=True, key=lambda x: -x)
+        [[3, 2, 1, 0], [6, 5, 4]]
 
     TESTS:
 
@@ -154,16 +176,40 @@ def connected_components(G, sort=True):
         Traceback (most recent call last):
         ...
         TypeError: the input must be a Sage graph
+
+    When parameter ``key`` is set, parameter ``sort`` must be ``True``::
+
+        sage: G = Graph(2)
+        sage: G.connected_components(sort=False, key=lambda x: x)
+        Traceback (most recent call last):
+        ...
+        ValueError: sort keyword is False, yet a key function is given
+
+    Deprecation warning for ``sort=None`` (:trac:`35889`)::
+
+        sage: G = graphs.HouseGraph()
+        sage: G.connected_components()
+        doctest:...: DeprecationWarning: parameter 'sort' will be set to False by default in the future
+        See https://github.com/sagemath/sage/issues/35889 for details.
+        [[0, 1, 2, 3, 4]]
     """
     from sage.graphs.generic_graph import GenericGraph
     if not isinstance(G, GenericGraph):
         raise TypeError("the input must be a Sage graph")
 
+    if sort is None:
+        if key is None:
+            deprecation(35889, "parameter 'sort' will be set to False by default in the future")
+        sort = True
+
+    if (not sort) and key:
+        raise ValueError('sort keyword is False, yet a key function is given')
+
     cdef set seen = set()
     cdef list components = []
     for v in G:
         if v not in seen:
-            c = connected_component_containing_vertex(G, v, sort=sort)
+            c = connected_component_containing_vertex(G, v, sort=sort, key=key)
             seen.update(c)
             components.append(c)
     components.sort(key=lambda comp: -len(comp))
@@ -236,7 +282,7 @@ def connected_components_subgraphs(G):
     return [G.subgraph(c, inplace=False) for c in connected_components(G, sort=False)]
 
 
-def connected_component_containing_vertex(G, vertex, sort=True):
+def connected_component_containing_vertex(G, vertex, sort=None, key=None):
     """
     Return a list of the vertices connected to vertex.
 
@@ -246,20 +292,30 @@ def connected_component_containing_vertex(G, vertex, sort=True):
 
     - ``v`` -- the vertex to search for
 
-    - ``sort`` -- boolean (default ``True``); whether to sort vertices inside
-      the component
+    - ``sort`` -- boolean (default: ``None``); if ``True``, vertices inside the
+      component are sorted according to the default ordering
+
+      As of :trac:`35889`, this argument must be explicitly specified (unless a
+      ``key`` is given); otherwise a warning is printed and ``sort=True`` is
+      used. The default will eventually be changed to ``False``.
+
+    - ``key`` -- a function (default: ``None``); a function that takes a
+      vertex as its one argument and returns a value that can be used for
+      comparisons in the sorting algorithm (we must have ``sort=True``)
 
     EXAMPLES::
 
         sage: from sage.graphs.connectivity import connected_component_containing_vertex
         sage: G = Graph({0: [1, 3], 1: [2], 2: [3], 4: [5, 6], 5: [6]})
-        sage: connected_component_containing_vertex(G, 0)
+        sage: connected_component_containing_vertex(G, 0, sort=True)
         [0, 1, 2, 3]
-        sage: G.connected_component_containing_vertex(0)
+        sage: G.connected_component_containing_vertex(0, sort=True)
         [0, 1, 2, 3]
         sage: D = DiGraph({0: [1, 3], 1: [2], 2: [3], 4: [5, 6], 5: [6]})
-        sage: connected_component_containing_vertex(D, 0)
+        sage: connected_component_containing_vertex(D, 0, sort=True)
         [0, 1, 2, 3]
+        sage: connected_component_containing_vertex(D, 0, sort=True, key=lambda x: -x)
+        [3, 2, 1, 0]
 
     TESTS:
 
@@ -270,10 +326,44 @@ def connected_component_containing_vertex(G, vertex, sort=True):
         Traceback (most recent call last):
         ...
         TypeError: the input must be a Sage graph
+
+    :trac:`35889` is fixed::
+
+        sage: G = Graph([('A', 1)])
+        sage: G.connected_component_containing_vertex(1, sort=False)
+        [1, 'A']
+        sage: G.connected_component_containing_vertex(1, sort=True)
+        Traceback (most recent call last):
+        ...
+        TypeError: '<' not supported between instances of 'str' and 'int'
+
+    When parameter ``key`` is set, parameter ``sort`` must be ``True``::
+
+        sage: G = Graph(2)
+        sage: G.connected_component_containing_vertex(1, sort=False, key=lambda x: x)
+        Traceback (most recent call last):
+        ...
+        ValueError: sort keyword is False, yet a key function is given
+
+    Deprecation warning for ``sort=None`` (:trac:`35889`)::
+
+        sage: G = graphs.HouseGraph()
+        sage: G.connected_component_containing_vertex(1)
+        doctest:...: DeprecationWarning: parameter 'sort' will be set to False by default in the future
+        See https://github.com/sagemath/sage/issues/35889 for details.
+        [0, 1, 2, 3, 4]
     """
     from sage.graphs.generic_graph import GenericGraph
     if not isinstance(G, GenericGraph):
         raise TypeError("the input must be a Sage graph")
+
+    if sort is None:
+        if key is None:
+            deprecation(35889, "parameter 'sort' will be set to False by default in the future")
+        sort = True
+
+    if (not sort) and key:
+        raise ValueError('sort keyword is False, yet a key function is given')
 
     try:
         c = list(G._backend.depth_first_search(vertex, ignore_direction=True))
@@ -281,7 +371,7 @@ def connected_component_containing_vertex(G, vertex, sort=True):
         c = list(G.depth_first_search(vertex, ignore_direction=True))
 
     if sort:
-        c.sort()
+        return sorted(c, key=key)
     return c
 
 
@@ -325,7 +415,7 @@ def connected_components_sizes(G):
     return [len(cc) for cc in connected_components(G, sort=False)]
 
 
-def blocks_and_cut_vertices(G, algorithm="Tarjan_Boost", sort=False):
+def blocks_and_cut_vertices(G, algorithm="Tarjan_Boost", sort=False, key=None):
     """
     Return the blocks and cut vertices of the graph.
 
@@ -350,6 +440,10 @@ def blocks_and_cut_vertices(G, algorithm="Tarjan_Boost", sort=False):
     - ``sort`` -- boolean (default: ``False``); whether to sort vertices inside
       the components and the list of cut vertices
       **currently only available for ``"Tarjan_Sage"``**
+
+    - ``key`` -- a function (default: ``None``); a function that takes a
+      vertex as its one argument and returns a value that can be used for
+      comparisons in the sorting algorithm (we must have ``sort=True``)
 
     OUTPUT: ``(B, C)``, where ``B`` is a list of blocks - each is a list of
     vertices and the blocks are the corresponding induced subgraphs - and
@@ -439,6 +533,9 @@ def blocks_and_cut_vertices(G, algorithm="Tarjan_Boost", sort=False):
         raise NotImplementedError("blocks and cut vertices algorithm '%s' is not implemented" % algorithm)
 
     # If algorithm is "Tarjan_Sage"
+    if (not sort) and key:
+        raise ValueError('sort keyword is False, yet a key function is given')
+
     blocks = []
     cut_vertices = set()
 
@@ -531,7 +628,7 @@ def blocks_and_cut_vertices(G, algorithm="Tarjan_Boost", sort=False):
                         u1, u2 = edge_stack.pop()
                     new_block.add(u1)
                     if sort:
-                        this_block = sorted(new_block)
+                        this_block = sorted(new_block, key=key)
                     else:
                         this_block = list(new_block)
                     blocks.append(this_block)
@@ -546,9 +643,8 @@ def blocks_and_cut_vertices(G, algorithm="Tarjan_Boost", sort=False):
                         start_already_seen = True
 
     if sort:
-        return blocks, sorted(cut_vertices)
-    else:
-        return blocks, list(cut_vertices)
+        return blocks, sorted(cut_vertices, key=key)
+    return blocks, list(cut_vertices)
 
 
 def blocks_and_cuts_tree(G):
@@ -1042,7 +1138,9 @@ def edge_connectivity(G,
 
         sage: g = graphs.PetersenGraph()
         sage: edge_connectivity((2 * g), vertices=True)
-        [0, [], [[0, 1, 2, 3, 4, 5, 6, 7, 8, 9], [10, 11, 12, 13, 14, 15, 16, 17, 18, 19]]]
+        [0, [], [{0, 1, 2, 3, 4, 5, 6, 7, 8, 9}, {10, 11, 12, 13, 14, 15, 16, 17, 18, 19}]]
+        sage: edge_connectivity(Graph(), vertices=True)
+        [0, [], [{}, {}]]
 
     If ``G`` is not a Sage graph, an error is raised::
 
@@ -1079,7 +1177,7 @@ def edge_connectivity(G,
         if value_only:
             return 0
         elif vertices:
-            return [0, [], [[], []]]
+            return [0, [], [{}, {}]]
         else:
             return [0, []]
 
@@ -1102,9 +1200,9 @@ def edge_connectivity(G,
                 b = set(H).difference(a)
                 val.append([a, b])
             else:
-                val.append(connected_components(H))
+                val.append([set(c) for c in connected_components(H, sort=False)])
         elif vertices:
-            val.append(connected_components(G))
+            val.append([set(c) for c in connected_components(G, sort=False)])
 
         return val
 
@@ -1187,13 +1285,13 @@ def edge_connectivity(G,
         val.append(edges)
 
         if vertices:
-            a = []
-            b = []
+            a = {}
+            b = {}
             for v in g:
                 if in_set[0, v]:
-                    a.append(v)
+                    a.add(v)
                 else:
-                    b.append(v)
+                    b.add(v)
             val.append([a, b])
 
         return val
@@ -2122,7 +2220,7 @@ def cleave(G, cut_vertices=None, virtual_edges=True, solver=None, verbose=0,
 
     H = G.copy(immutable=False)
     H.delete_vertices(cut_vertices)
-    CC = H.connected_components()
+    CC = H.connected_components(sort=False)
     if len(CC) == 1:
         raise ValueError("the set cut_vertices is not a vertex cut of the graph")
 

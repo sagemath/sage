@@ -954,26 +954,28 @@ cdef int PS_first_smallest_PR(PartitionStack *PS, bitset_t b, int *second_pos=NU
     """
     cdef int i = 0, j = 0, location = 0, n = PS.degree
     bitset_zero(b)
-    while 1:
+    while True:
         if PS.levels[i] <= PS.depth:
             if i != j and n > i - j + 1 and (partn_ref_alg is None or
                                 partn_ref_alg._minimization_allowed_on_col(PS.entries[j])):
                 n = i - j + 1
                 location = j
             j = i + 1
-        if PS.levels[i] == -1: break
+        if PS.levels[i] == -1:
+            break
         i += 1
     # location now points to the beginning of the first, smallest,
     # nontrivial cell
     i = location
-    while 1:
+    while True:
         bitset_flip(b, PS.entries[i])
-        if PS.levels[i] <= PS.depth: break
+        if PS.levels[i] <= PS.depth:
+            break
         i += 1
 
     if second_pos != NULL:
-        if n==2:
-            second_pos[0] = PS.entries[location+1]
+        if n == 2:
+            second_pos[0] = PS.entries[location + 1]
         else:
             second_pos[0] = -1
 

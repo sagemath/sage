@@ -385,9 +385,6 @@ def make_replacements_in_file(location, package_regex=None, verbose=False, outpu
         write_file.write(replaced_content)  # overwriting the old file contents with the new/replaced content
 
 
-excluded_file_regex = 'auto-methods|replace_dot_all'
-
-
 def walkdir_replace_dot_all(dir, file_regex=r'.*[.](py|pyx|pxi)$', package_regex=None, verbose=False, *,
                             excluded_file_regex=r'auto-methods|replace_dot_all'):
     r"""

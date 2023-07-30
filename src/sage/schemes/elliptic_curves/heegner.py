@@ -47,8 +47,8 @@ We find some Mordell-Weil generators in the rank 1 case using Heegner points::
     sage: E = EllipticCurve('43a'); P = E.heegner_point(-7)
     sage: P.x_poly_exact()
     x
-    sage: P.point_exact()
-    (0 : 0 : 1)
+    sage: z = P.point_exact(); z == E(0,0,1) or -z == E(0,0,1)
+    True
 
     sage: E = EllipticCurve('997a')
     sage: E.rank()
@@ -58,16 +58,17 @@ We find some Mordell-Weil generators in the rank 1 case using Heegner points::
     sage: P = E.heegner_point(-19)
     sage: P.x_poly_exact()
     x - 141/49
-    sage: P.point_exact()
-    (141/49 : -162/343 : 1)
+    sage: z = P.point_exact(); z == E(141/49, -162/343, 1)  or -z == E(141/49, -162/343, 1)
+    True
 
 Here we find that the Heegner point generates a subgroup of index 3::
 
     sage: E = EllipticCurve('92b1')
     sage: E.heegner_discriminants_list(1)
     [-7]
-    sage: P = E.heegner_point(-7); z = P.point_exact(); z
-    (0 : 1 : 1)
+    sage: P = E.heegner_point(-7)
+    sage: z = P.point_exact(); z == E(0, 1, 1)  or -z == E(0, 1, 1)
+    True
     sage: E.regulator()
     0.0498083972980648
     sage: z.height()
@@ -100,7 +101,7 @@ import sage.rings.abc
 from sage.arith.functions import lcm
 from sage.arith.misc import (binomial, factorial, prime_divisors,
                              GCD as gcd, XGCD as xgcd)
-from sage.matrix.constructor import Matrix as matrix
+from sage.matrix.constructor import matrix
 from sage.matrix.matrix_space import MatrixSpace
 from sage.misc.cachefunc import cached_method
 from sage.misc.misc_c import prod
@@ -6422,8 +6423,8 @@ def ell_heegner_point(self, D, c=ZZ(1), f=None, check=True):
         [-7, -11, -40, -47, -67, -71, -83, -84, -95, -104]
         sage: P = E.heegner_point(-7); P                          # indirect doctest
         Heegner point of discriminant -7 on elliptic curve of conductor 37
-        sage: P.point_exact()
-        (0 : 0 : 1)
+        sage: z = P.point_exact(); z == E(0, 0, 1)  or -z == E(0, 0, 1)
+        True
         sage: P.curve()
         Elliptic Curve defined by y^2 + y = x^3 - x over Rational Field
         sage: P = E.heegner_point(-40).point_exact(); P

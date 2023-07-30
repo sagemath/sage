@@ -768,7 +768,7 @@ class ComplexReflectionOrGeneralizedCoxeterGroups(Category_singleton):
                         for i,j in itertools.combinations(I,2)
                         if s[i]*s[j] != s[j]*s[i] ]],
                       format="vertices_and_edges")
-            return G.connected_components()
+            return G.connected_components(sort=False)
 
         @abstract_method(optional=True)
         def irreducible_components(self):

@@ -41,7 +41,7 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 ######################################################################
 from sage.arith.functions import lcm as LCM
-from sage.matrix.constructor import Matrix as matrix
+from sage.matrix.constructor import matrix
 from sage.misc.functional import denominator, log
 from sage.misc.lazy_import import lazy_import
 from sage.misc.misc_c import prod
