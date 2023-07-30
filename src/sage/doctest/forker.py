@@ -22,10 +22,22 @@ AUTHORS:
 """
 
 # ****************************************************************************
-#       Copyright (C) 2012 David Roe <roed.math@gmail.com>
-#                          Robert Bradshaw <robertwb@gmail.com>
-#                          William Stein <wstein@gmail.com>
-#       Copyright (C) 2013-2015 Jeroen Demeyer <jdemeyer@cage.ugent.be>
+#       Copyright (C) 2012-2013 David Roe <roed.math@gmail.com>
+#                     2012      Robert Bradshaw <robertwb@gmail.com>
+#                     2012      William Stein <wstein@gmail.com>
+#                     2013      R. Andrew Ohana
+#                     2013-2018 Jeroen Demeyer <jdemeyer@cage.ugent.be>
+#                     2013-2020 John H. Palmieri
+#                     2013-2017 Volker Braun
+#                     2014      André Apitzsch
+#                     2014      Darij Grinberg
+#                     2016-2021 Frédéric Chapoton
+#                     2017-2019 Erik M. Bray
+#                     2018      Julian Rüth
+#                     2020      Jonathan Kliem
+#                     2020-2023 Matthias Koeppe
+#                     2022      Markus Wageringel
+#                     2022      Michael Orlitzky
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
@@ -57,9 +69,9 @@ import sage.misc.randstate as randstate
 from sage.misc.timing import walltime
 from .util import Timer, RecordingDict, count_noun
 from .sources import DictAsObject
-from .parsing import OriginalSource, reduce_hex, unparse_optional_tags
+from .parsing import OriginalSource, reduce_hex
 from sage.structure.sage_object import SageObject
-from .parsing import SageOutputChecker, pre_hash, get_source
+from .parsing import SageOutputChecker, pre_hash, get_source, unparse_optional_tags
 from sage.repl.user_globals import set_globals
 from sage.cpython.atexit import restore_atexit
 from sage.cpython.string import bytes_to_str, str_to_bytes
@@ -132,10 +144,11 @@ def init_sage(controller=None):
     Check that SymPy equation pretty printer is limited in doctest
     mode to default width (80 chars)::
 
-        sage: from sympy import sympify                                                 # optional - sage.symbolic
-        sage: from sympy.printing.pretty.pretty import PrettyPrinter                    # optional - sage.symbolic
-        sage: s = sympify('+x^'.join(str(i) for i in range(30)))                        # optional - sage.symbolic
-        sage: print(PrettyPrinter(settings={'wrap_line': True}).doprint(s))             # optional - sage.symbolic
+        sage: # needs sympy
+        sage: from sympy import sympify
+        sage: from sympy.printing.pretty.pretty import PrettyPrinter
+        sage: s = sympify('+x^'.join(str(i) for i in range(30)))
+        sage: print(PrettyPrinter(settings={'wrap_line': True}).doprint(s))
          29    28    27    26    25    24    23    22    21    20    19    18    17
         x   + x   + x   + x   + x   + x   + x   + x   + x   + x   + x   + x   + x   +
         <BLANKLINE>
@@ -716,10 +729,18 @@ class SageDocTestRunner(doctest.DocTestRunner, object):
 
             outcome = FAILURE   # guilty until proved innocent or insane
 
+            probed_tags = getattr(example, 'probed_tags', False)
+
             # If the example executed without raising any exceptions,
             # verify its output.
             if exception is None:
                 if check(example.want, got, self.optionflags):
+                    if probed_tags and probed_tags is not True:
+                        example.warnings.append(
+                            f"The tag '{unparse_optional_tags(probed_tags)}' "
+                            f"may no longer be needed; these features are not present, "
+                            f"but we ran the doctest anyway as requested by --probe, "
+                            f"and it succeeded.")
                     outcome = SUCCESS
 
             # The example raised an exception: check if it was expected.
@@ -755,6 +776,12 @@ class SageDocTestRunner(doctest.DocTestRunner, object):
 
                 # We expected an exception: see whether it matches.
                 elif check(example.exc_msg, exc_msg, self.optionflags):
+                    if probed_tags and probed_tags is not True:
+                        example.warnings.append(
+                            f"The tag '{unparse_optional_tags(example.probed_tags)}' "
+                            f"may no longer be needed; these features are not present, "
+                            f"but we ran the doctest anyway as requested by --probe, "
+                            f"and it succeeded (raised the expected exception).")
                     outcome = SUCCESS
 
                 # Another chance if they didn't care about the detail.
@@ -763,22 +790,32 @@ class SageDocTestRunner(doctest.DocTestRunner, object):
                     m2 = re.match(r'(?:[^:]*\.)?([^:]*:)', exc_msg)
                     if m1 and m2 and check(m1.group(1), m2.group(1),
                                            self.optionflags):
+                        if probed_tags and probed_tags is not True:
+                            example.warnings.append(
+                                f"The tag '{unparse_optional_tags(example.probed_tags)}' "
+                                f"may no longer be needed; these features are not present, "
+                                f"but we ran the doctest anyway as requested by --probe, "
+                                f"and it succeeded (raised an exception as expected).")
                         outcome = SUCCESS
 
             check_duration = walltime(check_starttime)
             self.total_walltime += example.walltime + check_duration
 
             # Report the outcome.
+            if example.warnings:
+                for warning in example.warnings:
+                    out(self._failure_header(test, example, f'Warning: {warning}'))
             if outcome is SUCCESS:
                 if self.options.warn_long > 0 and example.walltime + check_duration > self.options.warn_long:
                     self.report_overtime(out, test, example, got,
                                          check_duration=check_duration)
                 elif example.warnings:
-                    for warning in example.warnings:
-                        out(self._failure_header(test, example, f'Warning: {warning}'))
+                    pass
                 elif not quiet:
                     self.report_success(out, test, example, got,
                                         check_duration=check_duration)
+            elif probed_tags:
+                pass
             elif outcome is FAILURE:
                 if not quiet:
                     self.report_failure(out, test, example, got, test.globs)
@@ -1097,7 +1134,8 @@ class SageDocTestRunner(doctest.DocTestRunner, object):
         if isinstance(globs, RecordingDict):
             globs.start()
         example.sequence_number = len(self.history)
-        example.warnings = []
+        if not hasattr(example, 'warnings'):
+            example.warnings = []
         self.history.append(example)
         timer = Timer().start()
         try:
@@ -1111,16 +1149,24 @@ class SageDocTestRunner(doctest.DocTestRunner, object):
                 for name in globs.got:
                     setters_dict = self.setters.get(name)  # setter_optional_tags -> setter
                     if setters_dict:
+                        was_set = False
                         for setter_optional_tags, setter in setters_dict.items():
-                            if setter_optional_tags.issubset(example.optional_tags):
+                            if setter_optional_tags.issubset(example.optional_tags):  # was set in a less constrained doctest
+                                was_set = True
                                 example.predecessors.append(setter)
-                        if not example.predecessors:
-                            f_setter_optional_tags = "; ".join("'"
-                                                               + unparse_optional_tags(setter_optional_tags)
-                                                               + "'"
-                                                               for setter_optional_tags in setters_dict)
-                            example.warnings.append(f"Variable '{name}' referenced here "
-                                                    f"was set only in doctest marked {f_setter_optional_tags}")
+                        if not was_set:
+                            if example.probed_tags:
+                                # Probing confusion.
+                                # Do not issue the "was set only in doctest marked" warning;
+                                # and also do not issue the "may no longer be needed" notice
+                                example.probed_tags = True
+                            else:
+                                f_setter_optional_tags = "; ".join("'"
+                                                                   + unparse_optional_tags(setter_optional_tags)
+                                                                   + "'"
+                                                                   for setter_optional_tags in setters_dict)
+                                example.warnings.append(f"Variable '{name}' referenced here "
+                                                        f"was set only in doctest marked {f_setter_optional_tags}")
                 for name in globs.set:
                     self.setters[name][example.optional_tags] = example
             else:
@@ -2134,7 +2180,7 @@ class DocTestWorker(multiprocessing.Process):
 
         TESTS::
 
-            sage: run_doctests(sage.symbolic.units) # indirect doctest  # optional - sage.symbolic
+            sage: run_doctests(sage.symbolic.units)  # indirect doctest                 # needs sage.symbolic
             Running doctests with ID ...
             Doctesting 1 file.
             sage -t .../sage/symbolic/units.py

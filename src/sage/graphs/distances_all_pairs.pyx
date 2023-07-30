@@ -2572,7 +2572,7 @@ def antipodal_graph(G):
 
     if not G.is_connected():
         import itertools
-        CC = G.connected_components()
+        CC = G.connected_components(sort=False)
         for c1, c2 in itertools.combinations(CC, 2):
             A.add_edges(itertools.product(c1, c2))
         return A
