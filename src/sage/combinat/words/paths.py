@@ -18,7 +18,7 @@ AUTHORS:
 
 - Arnaud Bergeron (2008) : Initial version, path on the square grid
 
-- Sebastien Labbe (2009-01-14) : New classes and hierarchy, doc and functions.
+- Sébastien Labbé (2009-01-14) : New classes and hierarchy, doc and functions.
 
 EXAMPLES:
 
@@ -320,10 +320,10 @@ def WordPaths(alphabet, steps=None):
         ...
         TypeError: Unknown type of steps : square_gridd
     """
-    #Construction of the alphabet
+    # Construction of the alphabet
     alphabet = build_alphabet(alphabet)
 
-    #If no steps are given, they are guessed from the alphabet
+    # If no steps are given, they are guessed from the alphabet
     if steps is None:
         if alphabet.cardinality() == 2:
             steps = 'north_east'
@@ -334,7 +334,7 @@ def WordPaths(alphabet, steps=None):
         else:
             raise TypeError("Unable to make a class WordPaths from %s"%alphabet)
 
-    #Returns the class of WordPaths according to the given type of paths
+    # Returns the class of WordPaths according to the given type of paths
     if isinstance(steps, str):
         if steps in ('square_grid', 'square'):
             return WordPaths_square_grid(alphabet=alphabet)
@@ -362,7 +362,7 @@ def WordPaths(alphabet, steps=None):
 
 class WordPaths_all(FiniteWords):
     r"""
-    The combinatorial class of all paths, i.e of all words over
+    The combinatorial class of all paths, i.e. of all words over
     an alphabet where each letter is mapped to a step (a vector).
     """
     def __init__(self, alphabet, steps):
@@ -443,7 +443,7 @@ class WordPaths_all(FiniteWords):
         self._steps = dict(zip(alphabet, vsteps))
         self._vector_space = s.parent()
 
-    def __eq__(self, other):
+    def __eq__(self, other) -> bool:
         r"""
         TESTS::
 
@@ -455,12 +455,12 @@ class WordPaths_all(FiniteWords):
             sage: W1 == W3
             False
         """
-        return self is other or (type(self) == type(other) and
+        return self is other or (isinstance(other, WordPaths_all) and
             self.alphabet() == other.alphabet() and
             self.vector_space() == other.vector_space() and
             self.letters_to_steps() == other.letters_to_steps())
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         r"""
         TESTS::
 
@@ -2605,8 +2605,8 @@ class FiniteWordPath_square_grid_callable(WordDatatype_callable, FiniteWordPath_
 
 ##### Unknown length paths on square grid (experimental) #####
 
-#class WordPath_square_grid_iter_with_caching(WordDatatype_iter_with_caching, FiniteWordPath_square_grid, Word_class):
-#    pass
+# class WordPath_square_grid_iter_with_caching(WordDatatype_iter_with_caching, FiniteWordPath_square_grid, Word_class):
+#     pass
 
 ##### Finite paths on triangle grid #####
 

@@ -1098,7 +1098,7 @@ class GrowthDiagram(SageObject):
                                    for j in range(self._lambda[r]-self._mu[r])]
                                   for r in range(len(self._lambda))][::-1]])._repr_diagram()
 
-    def __eq__(self, other):
+    def __eq__(self, other) -> bool:
         r"""
         Return ``True`` if the growth diagram ``other`` has the same
         shape and the same filling as ``self``.
@@ -1128,13 +1128,13 @@ class GrowthDiagram(SageObject):
             sage: G1 == G2
             False
         """
-        return (type(self) == type(other) and
+        return (isinstance(other, GrowthDiagram) and
                 self.rule == other.rule and
                 self._lambda == other._lambda and
                 self._mu == other._mu and
                 self._filling == other._filling)
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         r"""
         Return ``True`` if the growth diagram ``other`` does not have the
         same shape and the same filling as ``self``.
@@ -1186,7 +1186,7 @@ class GrowthDiagram(SageObject):
         """
         rule = self.rule
         if rule.has_multiple_edges:
-            return [rule.normalize_vertex(val) if i % 2 == 0 else val
+            return [rule.normalize_vertex(val) if not i % 2 else val
                     for i, val in enumerate(labels)]
         else:
             return [rule.normalize_vertex(la) for la in labels]
