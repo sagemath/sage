@@ -6,21 +6,6 @@ An introduction and formal definition of `k`-regular sequences can be
 found, for example, on the :wikipedia:`k-regular_sequence` or in
 [AS2003]_.
 
-
-.. WARNING::
-
-    As this code is experimental, warnings are thrown when a
-    `k`-regular sequence space is created for the first time in a
-    session (see :class:`sage.misc.superseded.experimental`).
-
-    TESTS::
-
-        sage: Seq2 = kRegularSequenceSpace(2, ZZ)
-        doctest:...: FutureWarning: This class/method/function is
-        marked as experimental. It, its functionality or its interface
-        might change without a formal deprecation.
-        See https://github.com/sagemath/sage/issues/21202 for details.
-
 ::
 
     sage: import logging

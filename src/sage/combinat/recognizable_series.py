@@ -27,20 +27,6 @@ such that the coefficient corresponding to a word `w\in A^*` equals
     In particular, minimization is called before checking if a series is
     nonzero.
 
-.. WARNING::
-
-    As this code is experimental, warnings are thrown when a
-    recognizable series space is created for the first time in a
-    session (see :class:`sage.misc.superseded.experimental`).
-
-    TESTS::
-
-        sage: Rec = RecognizableSeriesSpace(ZZ, [0, 1])
-        doctest:...: FutureWarning: This class/method/function is
-        marked as experimental. It, its functionality or its interface
-        might change without a formal deprecation.
-        See https://github.com/sagemath/sage/issues/21202 for details.
-
 
 Various
 =======
@@ -79,7 +65,6 @@ Classes and Methods
 from functools import wraps
 
 from sage.misc.cachefunc import cached_method
-from sage.misc.superseded import experimental
 from sage.structure.element import ModuleElement
 from sage.structure.parent import Parent
 from sage.structure.unique_representation import UniqueRepresentation
@@ -1741,7 +1726,6 @@ class RecognizableSeriesSpace(UniqueRepresentation, Parent):
 
         return (coefficient_ring, indices, category, minimize_results)
 
-    @experimental(issue_number=21202)
     def __init__(self, coefficient_ring, indices, category, minimize_results):
         r"""
         See :class:`RecognizableSeriesSpace` for details.
