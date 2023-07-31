@@ -65,7 +65,7 @@ cdef class MatrixBackend(GenericBackend):
         else:
             kwds = {}
 
-        self.objective_function = matrix(self._base_ring, 1, [], **kwds)
+        self.objective_coefficients = matrix(self._base_ring, 1, [], **kwds)
         self.Matrix = matrix(self._base_ring, [], **kwds)
         self.row_lower_bound = matrix(self._base_ring, 1, [], **kwds)
         self.row_lower_bound_indicator = []
@@ -244,7 +244,7 @@ cdef class MatrixBackend(GenericBackend):
         if self.nrows() == 0:
             pass
         else:
-            self.Matrix = self.Matrix.augment(matrix([self._base_ring.zero() for i in range(self.nrows())]))
+            self.Matrix = self.Matrix.augment(matrix(self._base_ring, self.nrows(), 1))
         
         if lower_bound is None:
             self.col_lower_bound_indicator.append(False)
@@ -260,13 +260,13 @@ cdef class MatrixBackend(GenericBackend):
             self.col_upper_bound_indicator.append(True)
             self.col_upper_bound = self.col_upper_bound.augment(matrix([upper_bound]))
 
-        self.objective_function = self.objective_function.augment(matrix([obj]))
+        self.objective_coefficients = self.objective_coefficients.augment(matrix([obj]))
         self.col_name_var.append(name)
         self.is_binary.append(binary)
         self.is_continuous.append(continuous)
         self.is_integer.append(integer)
 
-        return self.objective_function.dimensions()[1] - 1
+        return self.objective_coefficients.dimensions()[1] - 1
 
     cpdef set_variable_type(self, int variable, int vtype):
         """
@@ -386,9 +386,9 @@ cdef class MatrixBackend(GenericBackend):
         """
 
         if coeff is not None:
-            self.objective_function[0, variable] = coeff
+            self.objective_coefficients[0, variable] = coeff
         else:
-            return self.objective_function[0, variable]
+            return self.objective_coefficients[0, variable]
 
     cpdef set_objective(self, list coeff, d = 0):
         """
@@ -453,7 +453,7 @@ cdef class MatrixBackend(GenericBackend):
 
         """
         for i in range(len(coeff)):
-            self.objective_function[0, i] = coeff[i]
+            self.objective_coefficients[0, i] = coeff[i]
         obj_constant_term = d
 
     cpdef set_verbosity(self, int level):
@@ -547,7 +547,7 @@ cdef class MatrixBackend(GenericBackend):
         else:
             self.col_upper_bound = self.col_upper_bound.augment(matrix([self._base_ring.zero()]))
             
-        self.objective_function = self.objective_function.augment(matrix([self._base_ring.zero()]))
+        self.objective_coefficients = self.objective_coefficients.augment(matrix([self._base_ring.zero()]))
         self.col_name_var.append(None)
 
     cpdef add_linear_constraint(self, coefficients, lower_bound, upper_bound, name=None):
@@ -626,7 +626,7 @@ cdef class MatrixBackend(GenericBackend):
             2
         """
 
-        return self.objective_function.dimensions()[1]
+        return self.objective_coefficients.dimensions()[1]
 
     cpdef int nrows(self):
         """

@@ -110,6 +110,7 @@ cdef class CVXPYBackend(MatrixBackend):
             sage: from sage.numerical.backends.generic_backend import get_solver
             sage: p = get_solver(solver="CVXPY")
         """
+        super().__init__(maximization, base_ring)
 
         if cvxpy_solver_args is None:
             cvxpy_solver_args = {}
@@ -132,8 +133,9 @@ cdef class CVXPYBackend(MatrixBackend):
         #self.row_upper_bound = []
         #self.col_lower_bound = []
         #self.col_upper_bound = []
-        self.objective_coefficients = []
+        #self.objective_coefficients = []
         self.obj_constant_term = 0.0
+
         if maximization:
             objective = cvxpy.Maximize(0)
         else:
@@ -236,25 +238,26 @@ cdef class CVXPYBackend(MatrixBackend):
             sage: p.objective_coefficient(1)
             1.0
         """
+        super(CVXPYBackend, self).add_variable(lower_bound, upper_bound, binary, continuous, integer, obj, name)
         cdef int vtype = int(binary) + int(continuous) + int(integer)
         if vtype == 0:
             continuous = True
         elif vtype != 1:
             raise ValueError("Exactly one parameter of 'binary', 'integer' and 'continuous' must be 'True'.")
 
-        for i in range(len(self.Matrix)):
-            self.Matrix[i].append(0.0)
-        if lower_bound is not None:
-            lower_bound = float(lower_bound)
-        self.col_lower_bound.append(lower_bound)
-        if upper_bound is not None:
-            upper_bound = float(upper_bound)
-        self.col_upper_bound.append(upper_bound)
-        if obj is None:
-            obj = 0.0
-        else:
-            obj = float(obj)
-        self.objective_coefficients.append(obj)
+        #for i in range(len(self.Matrix)):
+        #    self.Matrix[i].append(0.0)
+        #if lower_bound is not None:
+        #    lower_bound = float(lower_bound)
+        #self.col_lower_bound.append(lower_bound)
+        #if upper_bound is not None:
+        #    upper_bound = float(upper_bound)
+        #self.col_upper_bound.append(upper_bound)
+        #if obj is None:
+        #    obj = 0.0
+        #else:
+        #    obj = float(obj)
+        #self.objective_coefficients.append(obj)
 
         if name is None:
             name = f'x_{self.ncols()}'
@@ -340,15 +343,16 @@ cdef class CVXPYBackend(MatrixBackend):
             sage: p.row_name(1)
             'constraint_1'
         """
-        last = len(self.Matrix)
-        self.Matrix.append([])
-        for i in range(len(self.objective_coefficients)):
-            self.Matrix[last].append(0.0)
-        for a in coefficients:
-            self.Matrix[last][a[0]] = a[1]
+        super(CVXPYBackend, self).add_linear_constraint(coefficients, lower_bound, upper_bound, name)
+        #last = len(self.Matrix)
+        #self.Matrix.append([])
+        #for i in range(len(self.objective_coefficients)):
+        #    self.Matrix[last].append(0.0)
+        #for a in coefficients:
+        #    self.Matrix[last][a[0]] = a[1]
 
-        self.row_lower_bound.append(lower_bound)
-        self.row_upper_bound.append(upper_bound)
+        #self.row_lower_bound.append(lower_bound)
+        #self.row_upper_bound.append(upper_bound)
 
         terms = [v * self.variables[i] for i, v in coefficients]
         if terms:
@@ -402,13 +406,14 @@ cdef class CVXPYBackend(MatrixBackend):
             sage: p.nrows()
             5
         """
-        for i in range(len(self.Matrix)):
-            self.Matrix[i].append(0)
-        for i in range(len(indices)):
-            self.Matrix[indices[i]][len(self.Matrix[indices[i]]) - 1] = coeffs[i]
+        super(CVXPYBackend, self).add_col(indices, coeffs)
+        #for i in range(len(self.Matrix)):
+        #    self.Matrix[i].append(0)
+        #for i in range(len(indices)):
+        #    self.Matrix[indices[i]][len(self.Matrix[indices[i]]) - 1] = coeffs[i]
 
-        self.col_lower_bound.append(None)
-        self.col_upper_bound.append(None)
+        #self.col_lower_bound.append(None)
+        #self.col_upper_bound.append(None)
         #self.objective_coefficients.append(0) goes to "self.add_variable"
         self.add_variable(coefficients=zip(indices, coeffs))
 
@@ -435,14 +440,15 @@ cdef class CVXPYBackend(MatrixBackend):
         """
         if self.variables:
             expr = AddExpression([c * x for c, x in zip(coeff, self.variables)])
-            for i in range(len(coeff)):
-                self.objective_coefficients[i] = float(coeff[i])
+            #for i in range(len(coeff)):
+            #    self.objective_coefficients[i] = float(coeff[i])
+            super(CVXPYBackend, self).set_objective(coeff, d)
         else:
             expr = Constant(0)
         objective = type(self.problem.objective)(expr)
         constraints = list(self.problem.constraints)
         self.problem = cvxpy.Problem(objective, constraints)
-        self.obj_constant_term = d
+        #self.obj_constant_term = d
 
     cpdef set_sense(self, int sense):
         """
@@ -468,8 +474,10 @@ cdef class CVXPYBackend(MatrixBackend):
         expr = self.problem.objective.args[0]
         if sense == 1:
             objective = cvxpy.Maximize(expr)
+            self.is_maximize = 1
         else:
             objective = cvxpy.Minimize(expr)
+            self.is_maximize = 0
         self.problem = cvxpy.Problem(objective, self.problem.constraints)
 
     cpdef objective_coefficient(self, int variable, coeff=None):
@@ -495,15 +503,16 @@ cdef class CVXPYBackend(MatrixBackend):
             sage: p.objective_coefficient(0)
             2
         """
+        super(CVXPYBackend, self).objective_coefficient(variable, coeff)
         if coeff is not None:
-            self.objective_coefficients[variable] = coeff
+            #self.objective_coefficients[variable] = coeff
             expr = self.problem.objective.args[0] + coeff * self.variables[variable]
             objective = type(self.problem.objective)(expr)
             constraints = list(self.problem.constraints)
             self.problem = cvxpy.Problem(objective, constraints)
         else:
-            if variable < len(self.objective_coefficients):
-                return self.objective_coefficients[variable]
+            if variable < self.objective_coefficients.dimensions()[1]:
+                return self.objective_coefficients[0, variable]
             else:
                 return 0
 
@@ -703,13 +712,14 @@ cdef class CVXPYBackend(MatrixBackend):
             sage: p.row_bounds(index)
             (2, 2)
         """
-        idx = []
-        coef = []
-        for j in range(len(self.Matrix[i])):
-            if self.Matrix[i][j] != 0:
-                idx.append(j)
-                coef.append(self.Matrix[i][j])
-        return (idx, coef)
+        return super(CVXPYBackend, self).row(i)
+        #idx = []
+        #coef = []
+        #for j in range(len(self.Matrix[i])):
+        #    if self.Matrix[i][j] != 0:
+        #        idx.append(j)
+        #        coef.append(self.Matrix[i][j])
+        #return (idx, coef)
 
     cpdef row_bounds(self, int index):
         """
@@ -738,7 +748,8 @@ cdef class CVXPYBackend(MatrixBackend):
             sage: p.row_bounds(index)
             (2, 2)
         """
-        return (self.row_lower_bound[index], self.row_upper_bound[index])
+        return super(CVXPYBackend, self).row_bounds(index)
+        #return (self.row_lower_bound[index], self.row_upper_bound[index])
 
     cpdef col_bounds(self, int index):
         """
@@ -766,7 +777,8 @@ cdef class CVXPYBackend(MatrixBackend):
             sage: p.col_bounds(0)
             (0.0, 5)
         """
-        return (self.col_lower_bound[index], self.col_upper_bound[index])
+        return super(CVXPYBackend, self).col_bounds(index)
+        #return (self.col_lower_bound[index], self.col_upper_bound[index])
 
     cpdef bint is_variable_binary(self, int index):
         """
@@ -898,10 +910,11 @@ cdef class CVXPYBackend(MatrixBackend):
             sage: p.col_bounds(0)
             (0.0, None)
         """
-        if value is not False:
-            self.col_upper_bound[index] = value
-        else:
-            return self.col_upper_bound[index]
+        return super(CVXPYBackend, self).variable_upper_bound(index, value)
+        #if value is not False:
+        #    self.col_upper_bound[index] = value
+        #else:
+        #    return self.col_upper_bound[index]
 
     cpdef variable_lower_bound(self, int index, value = False):
         """
@@ -930,7 +943,8 @@ cdef class CVXPYBackend(MatrixBackend):
             sage: p.col_bounds(0)
             (None, None)
         """
-        if value is not False:
-            self.col_lower_bound[index] = value
-        else:
-            return self.col_lower_bound[index]
+        return super(CVXPYBackend, self).variable_lower_bound(index, value)
+        #if value is not False:
+        #    self.col_lower_bound[index] = value
+        #else:
+        #    return self.col_lower_bound[index]

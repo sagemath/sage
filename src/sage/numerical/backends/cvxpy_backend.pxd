@@ -19,8 +19,6 @@ cdef class CVXPYBackend(MatrixBackend):
     cdef object _cvxpy_solver
     cdef object _cvxpy_solver_args
 
-    cdef list objective_coefficients
-
     cpdef int add_variable(self,
                            lower_bound=*,
                            upper_bound=*,
