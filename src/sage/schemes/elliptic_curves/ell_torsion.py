@@ -237,7 +237,7 @@ class EllipticCurveTorsionSubgroup(groups.AdditiveAbelianGroupWrapper):
             sage: tor == tor
             True
         """
-        if type(self) != type(other):
+        if not isinstance(other, EllipticCurveTorsionSubgroup):
             return NotImplemented
         return richcmp(self.__E, other.__E, op)
 

@@ -113,7 +113,7 @@ class TateCurve(SageObject):
             sage: eq7 == eq5
             False
         """
-        if type(self) != type(other):
+        if not isinstance(other, TateCurve):
             return NotImplemented
 
         return richcmp((self._E, self._p), (other._E, other._p), op)
@@ -156,7 +156,7 @@ class TateCurve(SageObject):
              over Rational Field
             sage: eq.prime()
             5
-       """
+        """
         return self._p
 
     def parameter(self, prec=20):

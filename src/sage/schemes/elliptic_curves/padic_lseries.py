@@ -224,7 +224,7 @@ class pAdicLseries(SageObject):
             sage: lp1 == lp3
             False
         """
-        if type(self) != type(other):
+        if not isinstance(other, pAdicLseries):
             return NotImplemented
         return richcmp((self._E, self._p), (other._E, other._p), op)
 
@@ -434,17 +434,18 @@ class pAdicLseries(SageObject):
         if quadratic_twist == 1:
             if self._E.conductor() % p == 0:
                 return z * f(a/(p*w))
-            return z * ( f(a/(p*w)) - f(a/w) / alpha)
+            return z * (f(a/(p*w)) - f(a/w) / alpha)
         else:
             D = quadratic_twist
             if self.is_ordinary():
-                chip = kronecker_symbol(D,p)
+                chip = kronecker_symbol(D, p)
             else:
-                chip = 1 # alpha is +- sqrt(-p) anyway
+                chip = 1  # alpha is +- sqrt(-p) anyway
             if self._E.conductor() % p == 0:
-                mu = chip**n * z * sum([kronecker_symbol(D,u) * f(a/(p*w)+ZZ(u)/D) for u in range(1,D.abs())])
+                mu = chip**n * z * sum([kronecker_symbol(D, u) * f(a/(p*w)+ZZ(u)/D)
+                                        for u in range(1, D.abs())])
             else:
-                mu = chip**n * z * sum([kronecker_symbol(D,u) * ( f(a/(p*w)+ZZ(u)/D) - chip / alpha * f(a/w+ZZ(u)/D) ) for u in range(1,D.abs())])
+                mu = chip**n * z * sum([kronecker_symbol(D, u) * (f(a/(p*w)+ZZ(u)/D) - chip / alpha * f(a/w+ZZ(u)/D)) for u in range(1, D.abs())])
             return s*mu
 
     def alpha(self, prec=20):
@@ -510,7 +511,7 @@ class pAdicLseries(SageObject):
                     self._alpha[prec] = K(a)
                     return K(a)
             raise RuntimeError("bug in p-adic L-function alpha")
-        else: # supersingular case
+        else:  # supersingular case
             f = f.change_ring(K)
             A = K.extension(f, names="alpha")
             a = A.gen()
@@ -629,8 +630,8 @@ class pAdicLseries(SageObject):
         pn = self._p**n
         enj = infinity
         res = [enj]
-        for j in range(1,prec):
-            bino = valuation(binomial(pn,j),self._p)
+        for j in range(1, prec):
+            bino = valuation(binomial(pn, j), self._p)
             if bino < enj:
                 enj = bino
             res.append(enj)
@@ -923,17 +924,17 @@ class pAdicLseriesOrdinary(pAdicLseries):
             res_series_prec = min(p**(n-1), prec)
         verbose("using series precision of %s" % res_series_prec)
 
-        ans = self._get_series_from_cache(n, res_series_prec,D,eta)
+        ans = self._get_series_from_cache(n, res_series_prec, D,eta)
         if ans is not None:
             verbose("found series in cache")
             return ans
 
         K = QQ
-        R = PowerSeriesRing(K,'T',res_series_prec)
-        T = R(R.gen(),res_series_prec )
-        L = R(0)
-        one_plus_T_factor = R(1)
-        gamma_power = K(1)
+        R = PowerSeriesRing(K, 'T', res_series_prec)
+        T = R(R.gen(), res_series_prec)
+        L = R.zero()
+        one_plus_T_factor = R.one()
+        gamma_power = K.one()
         teich = self.teichmuller(padic_prec)
         if p == 2:
             teich = [0, 1, -1]
@@ -965,13 +966,13 @@ class pAdicLseriesOrdinary(pAdicLseries):
         # Now create series but with each coefficient truncated
         # so it is proven correct:
         K = Qp(p, padic_prec, print_mode='series')
-        R = PowerSeriesRing(K,'T',res_series_prec)
-        L = R(L,res_series_prec)
+        R = PowerSeriesRing(K, 'T', res_series_prec)
+        L = R(L, res_series_prec)
         aj = L.list()
         if aj:
             aj = [aj[0].add_bigoh(padic_prec-2)] + \
-                 [aj[j].add_bigoh(bounds[j]) for j in range(1,len(aj))]
-        L = R(aj,res_series_prec )
+                 [aj[j].add_bigoh(bounds[j]) for j in range(1, len(aj))]
+        L = R(aj, res_series_prec)
 
         L /= self._quotient_of_periods_to_twist(D)
         if si == +1:
