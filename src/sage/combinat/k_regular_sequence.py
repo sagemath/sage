@@ -157,7 +157,7 @@ def value(D, k):
 class DegeneratedSequenceError(RuntimeError):
     r"""
     Exception raised if a degenerated sequence
-    (see :meth:`~kRegularSequence.is_degenerated`) is detected.
+    (see :meth:`~RegularSequence.is_degenerated`) is detected.
 
     EXAMPLES::
 
@@ -173,7 +173,7 @@ class DegeneratedSequenceError(RuntimeError):
     pass
 
 
-class kRegularSequence(RecognizableSeries):
+class RegularSequence(RecognizableSeries):
     def __init__(self, parent, mu, left=None, right=None):
         r"""
         A `k`-regular sequence.
@@ -410,7 +410,7 @@ class kRegularSequence(RecognizableSeries):
 
         OUTPUT:
 
-        A :class:`kRegularSequence`
+        A :class:`RegularSequence`
 
         ALGORITHM:
 
@@ -502,7 +502,7 @@ class kRegularSequence(RecognizableSeries):
 
         OUTPUT:
 
-        A :class:`kRegularSequence`
+        A :class:`RegularSequence`
 
         Each of the matrices in :meth:`mu <mu>` is transposed. Additionally
         the vectors :meth:`left <left>` and :meth:`right <right>` are switched.
@@ -553,7 +553,7 @@ class kRegularSequence(RecognizableSeries):
 
         OUTPUT:
 
-        A :class:`kRegularSequence`
+        A :class:`RegularSequence`
 
         .. SEEALSO::
 
@@ -591,7 +591,7 @@ class kRegularSequence(RecognizableSeries):
 
         OUTPUT:
 
-        A :class:`kRegularSequence`
+        A :class:`RegularSequence`
 
         .. NOTE::
 
@@ -864,7 +864,7 @@ class kRegularSequence(RecognizableSeries):
 
         OUTPUT:
 
-        A :class:`kRegularSequence`
+        A :class:`RegularSequence`
 
         .. NOTE::
 
@@ -910,7 +910,7 @@ class kRegularSequence(RecognizableSeries):
 
         OUTPUT:
 
-        A :class:`kRegularSequence`
+        A :class:`RegularSequence`
 
         .. NOTE::
 
@@ -958,7 +958,7 @@ class kRegularSequence(RecognizableSeries):
 
         OUTPUT:
 
-        A :class:`kRegularSequence`
+        A :class:`RegularSequence`
 
         .. NOTE::
 
@@ -999,7 +999,7 @@ class kRegularSequence(RecognizableSeries):
 
         OUTPUT:
 
-        A :class:`kRegularSequence`
+        A :class:`RegularSequence`
 
         EXAMPLES::
 
@@ -1032,7 +1032,7 @@ class kRegularSequence(RecognizableSeries):
 
         INPUT:
 
-        - ``other`` -- a :class:`kRegularSequence`
+        - ``other`` -- a :class:`RegularSequence`
 
         - ``minimize`` -- (default: ``None``) a boolean or ``None``.
           If ``True``, then :meth:`~RecognizableSeries.minimized` is called after the operation,
@@ -1041,7 +1041,7 @@ class kRegularSequence(RecognizableSeries):
 
         OUTPUT:
 
-        A :class:`kRegularSequence`
+        A :class:`RegularSequence`
 
         ALGORITHM:
 
@@ -1151,7 +1151,7 @@ class kRegularSequence(RecognizableSeries):
 
         OUTPUT:
 
-        A :class:`kRegularSequence`
+        A :class:`RegularSequence`
 
         EXAMPLES::
 
@@ -1312,9 +1312,9 @@ class RegularSequenceRing(RecognizableSeriesSpace):
     .. SEEALSO::
 
         :doc:`k-regular sequence <k_regular_sequence>`,
-        :class:`kRegularSequence`.
+        :class:`RegularSequence`.
     """
-    Element = kRegularSequence
+    Element = RegularSequence
 
     @classmethod
     def __normalize__(cls, k,
@@ -1372,7 +1372,7 @@ class RegularSequenceRing(RecognizableSeriesSpace):
         .. SEEALSO::
 
             :doc:`k-regular sequence <k_regular_sequence>`,
-            :class:`kRegularSequence`.
+            :class:`RegularSequence`.
         """
         self.k = k
         super().__init__(*args, **kwds)
@@ -1546,7 +1546,7 @@ class RegularSequenceRing(RecognizableSeriesSpace):
 
         OUTPUT:
 
-        A :class:`kRegularSequence`
+        A :class:`RegularSequence`
 
         ALGORITHM:
 
@@ -2060,7 +2060,7 @@ class RegularSequenceRing(RecognizableSeriesSpace):
           in [HKL2022]_, Corollary D. All inhomogeneities have to be
           regular sequences from ``self`` or elements of ``coefficient_ring``.
 
-        OUTPUT: a :class:`kRegularSequence`
+        OUTPUT: a :class:`RegularSequence`
 
         EXAMPLES:
 
@@ -2324,7 +2324,7 @@ class RecurrenceParser():
     for the sequence satisfying these recurrence relations.
 
     This is used by :meth:`RegularSequenceRing.from_recurrence`
-    to construct a :class:`kRegularSequence`.
+    to construct a :class:`RegularSequence`.
     """
 
     def __init__(self, k, coefficient_ring):
@@ -4109,7 +4109,7 @@ class RecurrenceParser():
 
         This is the main method of :class:`RecurrenceParser` and
         is called by :meth:`RegularSequenceRing.from_recurrence`
-        to construct a :class:`kRegularSequence`.
+        to construct a :class:`RegularSequence`.
 
         INPUT:
 
