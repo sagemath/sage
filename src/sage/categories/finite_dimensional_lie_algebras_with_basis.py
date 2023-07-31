@@ -1068,7 +1068,7 @@ class FiniteDimensionalLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
             return not self.killing_form_matrix().is_singular()
 
         @cached_method(key=lambda self,M,d,s,n: (M,d,s))
-        def chevalley_eilenberg_complex(self, M=None, dual=False, sparse=True, ncpus=None):
+        def chevalley_eilenberg_complex(self, M, f, dual=False, sparse=True, ncpus=None):
             r"""
             Return the Chevalley-Eilenberg complex of ``self``.
 
@@ -1099,6 +1099,7 @@ class FiniteDimensionalLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
 
             - ``M`` -- (default: the trivial 1-dimensional module)
               the module `M`
+            - ``f`` -- Lie algebra homomorphism from L to the endomorphism Lie algebra of M
             - ``dual`` -- (default: ``False``) if ``True``, causes
               the dual of the complex to be computed
             - ``sparse`` -- (default: ``True``) whether to use sparse
@@ -1129,43 +1130,50 @@ class FiniteDimensionalLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
                             [0 0]       [2]
                  0 <-- C_0 <------ C_1 <---- C_2 <-- 0
 
+                sage: bracket = {('x','y'): {'y':1}}
+                sage: L.<x,y> = LieAlgebra(QQ, bracket)
+                sage: M = VectorSpace(QQ, 2)
+                sage: f=({x:Matrix([[1,0],[0,0]]), y:Matrix([[0,1],[0,0]])})
+                sage: C=chevalley_eilenberg(L, M, f); C
+                sage: ascii_art(C)
+                Chain complex with at most 3 nonzero terms over Rational Field
+                                        [ 0  0]      
+                                        [ 0  0]      
+                        [1 0 0 0]       [-1  0]      
+                        [0 1 0 0]       [ 0 -1]      
+                0 <-- C_0 <---------- C_1 <-------- C_2 <-- 0 
+
             REFERENCES:
 
             - :wikipedia:`Lie_algebra_cohomology#Chevalley-Eilenberg_complex`
             - [Wei1994]_ Chapter 7
-
-            .. TODO::
-
-                Currently this is only implemented for coefficients
-                given by the trivial module `R`, where `R` is the
-                base ring and `g R = 0` for all `g \in \mathfrak{g}`.
-                Allow generic coefficient modules `M`.
+            
             """
             if dual:
                 return self.chevalley_eilenberg_complex(M, dual=False,
                                                         sparse=sparse,
                                                         ncpus=ncpus).dual()
 
-            if M is not None:
-                raise NotImplementedError("only implemented for the default"
-                                          " (the trivial module)")
 
+            import itertools
             from itertools import combinations
             from sage.arith.misc import binomial
             from sage.matrix.matrix_space import MatrixSpace
             R = self.base_ring()
             zero = R.zero()
             mone = -R.one()
-            if M is not None:
-                raise NotImplementedError("coefficient module M cannot be passed")
+           
 
             # Make sure we specify the ordering of the basis
-            B = self.basis()
+            B = L.basis()
             K = list(B.keys())
             B = [B[k] for k in K]
-            Ind = list(range(len(K)))
-            M = self.module()
-            ambient = M.is_ambient()
+            L_dim = list(range(len(K)))
+        
+            Mb = M.basis()
+            Km = list(range(len(Mb)))
+            Mb = [Mb[k] for k in Km]
+            M_dim = list(range(len(Km)))
 
             def sgn(k, X):
                 """
@@ -1187,74 +1195,184 @@ class FiniteDimensionalLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
                         return zero, None
                     if k > val:
                         Y.insert(i+1, k)
-                        return mone**(i+1), tuple(Y)
+                        return (-1)**(i+1), tuple(Y)
                 Y.insert(0, k)
-                return R.one(), tuple(Y)
+                return 1, tuple(Y)
+
+            def HomAlgebra(Module):
+                """
+                Define the endomorphism Lie algebra of M, with generators {gi}.
+                """
+
+                n = dim(Module)
+                MS=MatrixSpace(R, n)
+                keys=[]
+                values=[]
+                gln=lie_algebras.gl(R, n)
+        
+                family = gln.structure_coefficients()
+        
+                for x in family.keys():
+                    i=gln.basis().keys().index(x[0])
+                    j=gln.basis().keys().index(x[1])
+                    keys.append((f'g{i}', f'g{j}'))
+        
+                for x in family.values():
+                    D = x.monomial_coefficients()
+                    B=list(D.keys())
+                    C=list(D.values())
+                    bracket = {f'g{gln.basis().keys().index(B[i])}': C[i] for i in range(len(D))}
+        
+                    values.append(bracket)
+        
+                d = {keys[i]: values[i] for i in range(len(keys))}
+        
+                str = ','.join(f'g{i}' for i in range(n^2))
+        
+                A=LieAlgebra(R, str, d)
+        
+                return A
+
+            def Lieaction(L, M, h, LieElement, ModuleElement):
+
+                n=dim(M)
+                G=HomAlgebra(M)
+                preimage=list(h.keys())
+        
+                image=list(h.values())
+        
+                gln=lie_algebras.gl(R, n)
+                values=[]
+                for x in image:
+                    D=x.monomial_coefficients()
+                    B=list(D.keys())
+                    C=list(D.values())
+                    output=0
+                    for i in range(len(B)):
+                        l=n*B[i][0]+B[i][1]
+                        output+=G.basis().values()[l]*C[i]
+                    values.append(output)
+        
+        
+                d = {preimage[i]:values[i] for i in range(len(preimage))}
+        
+                g=L.morphism(d)
+        
+                H=zero_matrix(R, n)
+                K=list(itertools.chain(*H))
+        
+                final = g(LieElement).monomial_coefficients()
+                F=list(final.keys())
+                N=list(final.values())
+        
+                for i in range(len(F)):
+                    l=G.basis().keys().index(F[i])
+                    K[l]+=N[i]
+        
+                MS=MatrixSpace(R, n)
+        
+                return (vector(ModuleElement))*MS(K)
 
             from sage.parallel.decorate import parallel
 
             @parallel(ncpus=ncpus)
-            def compute_diff(k):
+            def f1(k):
                 """
-                Build the ``k``-th differential (in parallel).
+                Return the first term of the coboundary map.
                 """
-                indices = {tuple(X): i for i,X in enumerate(combinations(Ind, k-1))}
-                if sparse:
-                    data = {}
-                    row = 0
-                else:
-                    data = []
-                if not sparse:
-                    zero = [zero] * len(indices)
-                for X in combinations(Ind, k):
-                    if not sparse:
-                        ret = list(zero)
+                Lambda_dim = {i:tuple(X) for i,X in enumerate(combinations(L_dim, k-1), start=len(M_dim))}
+                First_space = {X:i for i, X in enumerate(M_dim)}
+                values_cartesian_product = list(itertools.product(First_space.values(), Lambda_dim.values()))
+                Parentspace = {i: value for i, value in enumerate(values_cartesian_product)}
+                V=VectorSpace(R, len(Parentspace))
+        
+                data=[]
+                zero = [0] * len(Parentspace)
+        
+                Big_Lambda_dim = {i:tuple(X) for i,X in enumerate(combinations(L_dim, k), start=len(M_dim))}
+                big_values_cartesian_product = list(itertools.product(First_space.values(), Big_Lambda_dim.values()))
+                BigParentspace = {i: value for i, value in enumerate(big_values_cartesian_product)}
+        
+                for j in BigParentspace.values():
+                    met = list(zero)
+                    total = list(zero)
+                    Y=list(j[1])
+        
+                    if (k==1):
+                        vec = Lieaction(L, M, h, B[Y[0]], Mb[int(j[0])])
+                        for p in range(len(total)):
+                            total[p]+=vec[p]
+        
+                    else:
+                        for i in range(k):
+                            Ynew = Y[:i] + Y[i+1:]
+                            vec = (-1)**(i)*Lieaction(L, M, h, B[i], Mb[int(j[0])])
+                            action=list(vec)
+                            l=len(action)
+        
+                            for d in range(l):
+                                key = [k for k, v in Parentspace.items() if v == (d, tuple(Ynew))][0]
+                                vector=action[d]*V.basis()[key]
+        
+                                for t in range(len(vector)):
+                                    met[t]+=vector[t]
+        
+                        for p in range(len(total)):
+                            total[p]+=met[p]
+        
+                    data.append(total)
+        
+        
+                nrows = len(BigParentspace)
+                ncols = len(Parentspace)
+                MS = MatrixSpace(R, nrows, ncols)
+                final = MS(data).transpose()
+                return final
+            
+            def f2(k):
+                """
+                Return the second term of the coboundary map.
+                """
+                Lambda_dim = {tuple(X): i for i,X in enumerate(combinations(L_dim, k-1))}
+                data=[]
+                zero = [0] * len(Lambda_dim)
+                for X in combinations(L_dim, k):
+                    ret = list(zero)
                     for i in range(k):
                         Y = list(X)
                         Y.pop(i)
-                        # We do mone**i because we are 0-based
-                        # This is where we would do the action on
-                        #   the coefficients module
-                        #ret[indices[tuple(Y)]] += mone**i * zero
                         for j in range(i+1,k):
-                            # We shift j by 1 because we already removed
-                            #   an earlier element from X.
                             Z = tuple(Y[:j-1] + Y[j:])
-                            elt = mone**(i+j) * B[X[i]].bracket(B[X[j]])
-                            if ambient:
-                                vec = elt.to_vector()
-                            else:
-                                vec = M.coordinate_vector(elt.to_vector())
+                            elt = (-1)**(i+j)*B[X[i]].bracket(B[X[j]])
+                            vec = M.coordinate_vector(elt.to_vector())
                             for key, coeff in vec.iteritems():
-                                s, A = sgn(key, Z)
-                                if A is None:
-                                    continue
-                                if sparse:
-                                    coords = (row, indices[A])
-                                    if coords in data:
-                                        data[coords] += s * coeff
-                                    else:
-                                        data[coords] = s * coeff
-                                else:
-                                    ret[indices[A]] += s * coeff
-                    if sparse:
-                        row += 1
-                    else:
-                        data.append(ret)
-                nrows = binomial(len(Ind), k)
-                ncols = binomial(len(Ind), k-1)
-                MS = MatrixSpace(R, nrows, ncols, sparse=sparse)
+                                        s, A = sgn(key, Z)
+                                        if A is None:
+                                            continue
+                                        else:
+                                            ret[Lambda_dim[A]] += s * coeff
+                    data.append(ret)
+                nrows = binomial(len(L_dim), k)
+                ncols = binomial(len(L_dim), k-1)
+                MS = MatrixSpace(R, nrows, ncols)
                 ret = MS(data).transpose()
-                ret.set_immutable()
-                return ret
+                Mdim=M.dimension()
+                A=matrix.identity(Mdim)
+                A1=matrix(A.tensor_product(ret))
+                return A1
 
-            chain_data = {X[0][0]: M for X, M in compute_diff(list( range(1,len(Ind)+1) ))}
-
+            @parallel
+            def compute_diff(k):
+                """
+                Build the k-th differential (in parallel).
+                """
+                return f1(k)+f2(k)
+                
             from sage.homology.chain_complex import ChainComplex
-            try:
-                return ChainComplex(chain_data, degree_of_differential=-1)
-            except TypeError:
-                return chain_data
+            
+            chain_data = {X[0][0]: M for X, M in compute_diff(list(range(1,len(L_dim)+1) ))}
+            C=ChainComplex(chain_data, degree_of_differential=-1)
+            return C
 
         def homology(self, deg=None, M=None, sparse=True, ncpus=None):
             r"""
