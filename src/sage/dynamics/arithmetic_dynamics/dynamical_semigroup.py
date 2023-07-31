@@ -657,17 +657,24 @@ class DynamicalSemigroup(Parent, metaclass=InheritComparisonClasscallMetaclass):
 
             sage: R.<r> = QQ[]
             sage: P.<x,y> = ProjectiveSpace(R, 1)
-            sage: f = DynamicalSystem([t * x, y], P)
-            sage: g = DynamicalSystem([x, t * y], P)
+            sage: f = DynamicalSystem([r * x, y], P)
+            sage: g = DynamicalSystem([x, r * y], P)
             sage: d = DynamicalSemigroup((f, g))
-            sage: d.specialization({t:2})
+            sage: d.specialization({r:2})
+            Dynamical semigroup over Projective Space of dimension 1 over Rational Field defined by 2 dynamical systems:
+            Dynamical System of Projective Space of dimension 1 over Rational Field
+              Defn: Defined on coordinates by sending (x : y) to
+                    (2*x : y)
+            Dynamical System of Projective Space of dimension 1 over Rational Field
+              Defn: Defined on coordinates by sending (x : y) to
+                    (x : 2*y)
         """
         specialized_systems = []
         for ds in self.defining_systems():
             specialized_systems.append(ds.specialization(assignments))
         return DynamicalSemigroup(specialized_systems)
 
-    def __mul__(self, n):
+    def __mul__(self, other_dynamical_semigroup):
         r"""
         Return a new :class:`DynamicalSemigroup` that is the result of multiplying
         this dynamical semigroup with another dynamical semigroup of the same type
