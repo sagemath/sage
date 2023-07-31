@@ -318,6 +318,12 @@ def minimize_result(operation):
       if ``False``, then not. If this argument is ``None``, then
       the default specified by the parent's ``minimize_results`` is used.
 
+    .. NOTE::
+
+        If the result of ``operation`` is ``self``, then minimization is
+        not applied unless ``minimize=True`` is explicitly set,
+        in particular, independent of the parent's ``minimize_results``.
+
     TESTS::
 
         sage: from sage.combinat.recognizable_series import minimize_result
@@ -352,14 +358,39 @@ def minimize_result(operation):
         some result minimized
         sage: S('some').operation(minimize=False)
         some result
+
+    ::
+
+        sage: class T(S):
+        ....:     @minimize_result
+        ....:     def nooperation(self):
+        ....:         return self
+        sage: t = T('some')
+        sage: p.minimize_results = True
+        sage: t.nooperation() is t
+        True
+        sage: t.nooperation(minimize=True) is t
+        False
+        sage: t.nooperation(minimize=False) is t
+        True
+        sage: p.minimize_results = False
+        sage: t.nooperation() is t
+        True
+        sage: t.nooperation(minimize=True) is t
+        False
+        sage: t.nooperation(minimize=False) is t
+        True
     """
     @wraps(operation)
     def minimized(self, *args, **kwds):
         minimize = kwds.pop('minimize', None)
-        if minimize is None:
-            minimize = self.parent().minimize_results
 
         result = operation(self, *args, **kwds)
+        if minimize is not True and result is self:
+            return result
+
+        if minimize is None:
+            minimize = self.parent().minimize_results
 
         if minimize:
             result = result.minimized()
@@ -1045,9 +1076,11 @@ class RecognizableSeries(ModuleElement):
             T = M.transpose()
             T.set_immutable()
             return T
-        return self.parent()(self.mu.map(tr),
-                             left=self.right,
-                             right=self.left)
+
+        P = self.parent()
+        return P.element_class(P, self.mu.map(tr),
+                               left=self.right,
+                               right=self.left)
 
     @cached_method
     def minimized(self):
@@ -1871,11 +1904,15 @@ class RecognizableSeriesSpace(UniqueRepresentation, Parent):
                          for i, _ in enumerate(self.alphabet())),
                     vector([z, e]), right=vector([e, z]))
 
-    def some_elements(self):
+    def some_elements(self, **kwds):
         r"""
         Return some elements of this recognizable series space.
 
         See :class:`TestSuite` for a typical use case.
+
+        INPUT:
+
+        - ``kwds`` are passed on to the element constructor
 
         OUTPUT:
 
@@ -1913,7 +1950,7 @@ class RecognizableSeriesSpace(UniqueRepresentation, Parent):
                 LR = list(islice(elements_V, 2))
                 if len(mu) != k or len(LR) != 2:
                     break
-                yield self(mu, *LR)
+                yield self(mu, *LR, **kwds)
 
     @cached_method
     def one_hadamard(self):
