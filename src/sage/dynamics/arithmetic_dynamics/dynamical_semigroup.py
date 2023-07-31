@@ -74,6 +74,16 @@ class DynamicalSemigroup(Parent, metaclass=InheritComparisonClasscallMetaclass):
     ::
 
         sage: A.<x> = AffineSpace(QQ, 1)
+        sage: f = DynamicalSystem_affine(x, A)
+        sage: DynamicalSemigroup(f)
+        Dynamical semigroup over Affine Space of dimension 1 over Rational Field defined by 1 dynamical system:
+        Dynamical System of Affine Space of dimension 1 over Rational Field
+          Defn: Defined on coordinates by sending (x) to
+                (x)
+
+    ::
+
+        sage: A.<x> = AffineSpace(QQ, 1)
         sage: f = DynamicalSystem(x, A)
         sage: g = DynamicalSystem(x^2, A)
         sage: DynamicalSemigroup((f, g))
@@ -268,6 +278,8 @@ class DynamicalSemigroup(Parent, metaclass=InheritComparisonClasscallMetaclass):
             all_affine_systems = all(isinstance(ds_datum, DynamicalSystem_affine) for ds_datum in ds_data)
             if all_affine_systems:
                 return DynamicalSemigroup_affine(ds_data)
+        elif isinstance(ds_data, DynamicalSystem_affine):
+            return DynamicalSemigroup_affine(ds_data)
         elif not isinstance(ds_data, DynamicalSystem):
             raise TypeError(str(ds_data) + " does not define a 'DynamicalSemigroup' object")
         return DynamicalSemigroup_projective(ds_data)
