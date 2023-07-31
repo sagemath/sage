@@ -651,7 +651,7 @@ class DynamicalSemigroup(Parent, metaclass=InheritComparisonClasscallMetaclass):
             current_iterate = next_iterate
         return tuple(result)
 
-    def __pow__(self, n):
+    def __mul__(self, n):
         r"""
         Return a new :class:`DynamicalSemigroup` that is the result of multiplying
         this dynamical semigroup with another dynamical semigroup of the same type
