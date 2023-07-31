@@ -232,7 +232,7 @@ class Feature(TrivialUniqueRepresentation):
         EXAMPLES::
 
             sage: from sage.features.gap import GapPackage
-            sage: GapPackage("ve1EeThu").require()
+            sage: GapPackage("ve1EeThu").require()                                      # needs sage.libs.gap
             Traceback (most recent call last):
             ...
             FeatureNotPresentError: gap_package_ve1EeThu is not available.
@@ -379,7 +379,7 @@ class Feature(TrivialUniqueRepresentation):
 
             sage: from sage.features.graph_generators import Benzene
             sage: Benzene().hide()
-            sage: len(list(graphs.fusenes(2)))
+            sage: len(list(graphs.fusenes(2)))                                          # needs sage.graphs
             Traceback (most recent call last):
             ...
             FeatureNotPresentError: benzene is not available.
@@ -387,7 +387,7 @@ class Feature(TrivialUniqueRepresentation):
             Use method `unhide` to make it available again.
 
             sage: Benzene().unhide()
-            sage: len(list(graphs.fusenes(2)))  # optional benzene
+            sage: len(list(graphs.fusenes(2)))  # optional - benzene, needs sage.graphs
             1
         """
         self._hidden = True
@@ -405,7 +405,7 @@ class Feature(TrivialUniqueRepresentation):
             sage: from sage.features.gap import GapPackage
             sage: Polycyclic = GapPackage("polycyclic", spkg="gap_packages")
             sage: Polycyclic.hide()
-            sage: libgap(AbelianGroup(3, [0,3,4], names="abc"))
+            sage: libgap(AbelianGroup(3, [0,3,4], names="abc"))                         # needs sage.libs.gap
             Traceback (most recent call last):
             ...
             FeatureNotPresentError: gap_package_polycyclic is not available.
@@ -413,7 +413,7 @@ class Feature(TrivialUniqueRepresentation):
             Use method `unhide` to make it available again.
 
             sage: Polycyclic.unhide()
-            sage: libgap(AbelianGroup(3, [0,3,4], names="abc"))
+            sage: libgap(AbelianGroup(3, [0,3,4], names="abc"))                         # needs sage.libs.gap
             Pcp-group with orders [ 0, 3, 4 ]
         """
         self._hidden = False
@@ -452,7 +452,7 @@ class FeatureNotPresentError(RuntimeError):
         EXAMPLES::
 
             sage: from sage.features.gap import GapPackage
-            sage: GapPackage("gapZuHoh8Uu").require()  # indirect doctest
+            sage: GapPackage("gapZuHoh8Uu").require()  # indirect doctest               # needs sage.libs.gap
             Traceback (most recent call last):
             ...
             FeatureNotPresentError: gap_package_gapZuHoh8Uu is not available.
@@ -485,7 +485,7 @@ class FeatureTestResult():
     Explanatory messages might be available as ``reason`` and
     ``resolution``::
 
-        sage: presence.reason
+        sage: presence.reason                                                           # needs sage.libs.gap
         '`TestPackageAvailability("NOT_A_PACKAGE")` evaluated to `fail` in GAP.'
         sage: bool(presence.resolution)
         False
@@ -870,8 +870,10 @@ class CythonFeature(Feature):
         ....:
         ....: assert fabs(-1) == 1
         ....: '''
-        sage: fabs = CythonFeature("fabs", test_code=fabs_test_code, spkg="gcc", url="https://gnu.org", type="standard")
-        sage: fabs.is_present()
+        sage: fabs = CythonFeature("fabs", test_code=fabs_test_code,                    # needs sage.misc.cython
+        ....:                      spkg="gcc", url="https://gnu.org",
+        ....:                      type="standard")
+        sage: fabs.is_present()                                                         # needs sage.misc.cython
         FeatureTestResult('fabs', True)
 
     Test various failures::
@@ -922,7 +924,7 @@ class CythonFeature(Feature):
 
             sage: from sage.features import CythonFeature
             sage: empty = CythonFeature("empty", test_code="")
-            sage: empty.is_present()
+            sage: empty.is_present()                                                    # needs sage.misc.cython
             FeatureTestResult('empty', True)
         """
         from sage.misc.temporary_file import tmp_filename
@@ -935,6 +937,9 @@ class CythonFeature(Feature):
             pyx.write(self.test_code)
         try:
             from sage.misc.cython import cython_import
+        except ImportError:
+            return FeatureTestResult(self, False, reason="sage.misc.cython is not available")
+        try:
             cython_import(pyx.name, verbose=-1)
         except CCompilerError:
             return FeatureTestResult(self, False, reason="Failed to compile test code.")
