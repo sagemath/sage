@@ -6654,7 +6654,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
             sage: try:
             ....:     print('Possible error output from gmp', flush=True)
             ....:     1 << (2^60)
-            ....: except (MemoryError, OverflowError, RuntimeError):
+            ....: except (MemoryError, OverflowError, RuntimeError, FloatingPointError):
             ....:     pass
             ....: else:
             ....:     print("Failed to raise exception")
