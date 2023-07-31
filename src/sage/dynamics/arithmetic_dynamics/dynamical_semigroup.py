@@ -651,6 +651,22 @@ class DynamicalSemigroup(Parent, metaclass=InheritComparisonClasscallMetaclass):
             current_iterate = next_iterate
         return tuple(result)
 
+    def specialization(self, assignments):
+        r"""
+        EXAMPLES::
+
+            sage: R.<r> = QQ[]
+            sage: P.<x,y> = ProjectiveSpace(R, 1)
+            sage: f = DynamicalSystem([t * x, y], P)
+            sage: g = DynamicalSystem([x, t * y], P)
+            sage: d = DynamicalSemigroup((f, g))
+            sage: d.specialization({t:2})
+        """
+        specialized_systems = []
+        for ds in self.defining_systems():
+            specialized_systems.append(ds.specialization(assignments))
+        return DynamicalSemigroup(specialized_systems)
+
     def __mul__(self, n):
         r"""
         Return a new :class:`DynamicalSemigroup` that is the result of multiplying
