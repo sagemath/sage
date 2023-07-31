@@ -475,7 +475,7 @@ class Constellation_class(Element):
         G.add_vertices(list(range(self.degree())))
         for p in self._g:
             G.add_edges(enumerate(p.domain()), loops=False)
-        m = G.connected_components()
+        m = G.connected_components(sort=False)
         if len(m) == 1:
             return [self]
         for mm in m:
