@@ -1165,7 +1165,7 @@ class FiniteDimensionalLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
            
 
             # Make sure we specify the ordering of the basis
-            B = L.basis()
+            B = L=self.basis()
             K = list(B.keys())
             B = [B[k] for k in K]
             L_dim = list(range(len(K)))
@@ -1233,7 +1233,7 @@ class FiniteDimensionalLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
         
                 return A
 
-            def Lieaction(L, M, h, LieElement, ModuleElement):
+            def Lieaction(self, M, h, LieElement, ModuleElement):
 
                 n=dim(M)
                 G=HomAlgebra(M)
@@ -1256,7 +1256,7 @@ class FiniteDimensionalLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
         
                 d = {preimage[i]:values[i] for i in range(len(preimage))}
         
-                g=L.morphism(d)
+                g=self.morphism(d)
         
                 H=zero_matrix(R, n)
                 K=list(itertools.chain(*H))
