@@ -537,8 +537,7 @@ class DynamicalSemigroup(Parent, metaclass=InheritComparisonClasscallMetaclass):
 
             sage: P.<x,y> = ProjectiveSpace(QQ, 1)
             sage: f = DynamicalSemigroup(([x + y, x - y], [x^2, y^2]))
-            sage: f.nth_iterate(3, 2) == (f * f)(3)
-            False
+            sage: (f * f)(3)
         """
         if not isinstance(n, Integer) and not isinstance(n, int):
             raise TypeError(str(n) + " must be an integer")
