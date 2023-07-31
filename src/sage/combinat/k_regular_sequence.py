@@ -1052,6 +1052,12 @@ class kRegularSequence(RecognizableSeries):
 
         A :class:`kRegularSequence`
 
+        ALGORITHM:
+
+        See pdf attached to
+        `github pull request #35894 <https://github.com/sagemath/sage/pull/35894>`_
+        which contains a draft describing the details of the used algorithm.
+
         EXAMPLES::
 
             sage: Seq2 = kRegularSequenceSpace(2, ZZ)
