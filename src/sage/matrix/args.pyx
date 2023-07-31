@@ -1260,7 +1260,7 @@ cdef class MatrixArgs:
         if isinstance(self.entries, MatrixArgs):
             # Prevent recursion
             return MA_ENTRIES_UNKNOWN
-        if isinstance(self.entries, basestring):
+        if isinstance(self.entries, str):
             # Blacklist strings, we don't want them to be considered a sequence
             return MA_ENTRIES_UNKNOWN
         try:
@@ -1300,7 +1300,7 @@ cdef class MatrixArgs:
             return MA_ENTRIES_SEQ_FLAT
         if isinstance(x, Element) and element_is_scalar(<Element>x):
             return MA_ENTRIES_SEQ_FLAT
-        if isinstance(x, basestring):
+        if isinstance(x, str):
             # Blacklist strings, we don't want them to be considered a sequence
             return MA_ENTRIES_UNKNOWN
         try:

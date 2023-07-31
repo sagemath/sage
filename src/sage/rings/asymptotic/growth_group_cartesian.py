@@ -775,8 +775,7 @@ class GenericProduct(CartesianProductPoset, GenericGrowthGroup):
             def subfactors(F):
                 for f in F:
                     if isinstance(f, GenericProduct):
-                        for g in subfactors(f.cartesian_factors()):
-                            yield g
+                        yield from subfactors(f.cartesian_factors())
                     else:
                         yield f
 

@@ -344,7 +344,7 @@ fan::
     1 connected components over (1, 2), each with 2 irreducible components.
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2011 Volker Braun <vbraun.name@gmail.com>
 #       Copyright (C) 2010 Andrey Novoseltsev <novoselt@gmail.com>
 #       Copyright (C) 2006 William Stein <wstein@gmail.com>
@@ -353,8 +353,8 @@ fan::
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 # For now, the scheme morphism base class cannot derive from Morphism
 # since this would clash with elliptic curves. So we derive only on
@@ -370,7 +370,8 @@ from sage.arith.misc import GCD as gcd
 from sage.misc.cachefunc import cached_method
 from sage.matrix.constructor import matrix, identity_matrix
 from sage.modules.free_module_element import vector
-from sage.geometry.all import Cone, Fan
+from sage.geometry.cone import Cone
+from sage.geometry.fan import Fan
 
 from sage.schemes.generic.scheme import is_Scheme
 from sage.schemes.generic.morphism import (
@@ -639,7 +640,7 @@ class SchemeMorphism_orbit_closure_toric_variety(SchemeMorphism, Morphism):
         """
         orbit = self.parent().domain()
         codomain_fan = self.parent().codomain().fan()
-        reverse_ray_dict = dict()
+        reverse_ray_dict = {}
         for n1, n2 in self._ray_map.items():
             ray_index = codomain_fan.rays().index(n1)
             if n2.is_zero():
@@ -759,7 +760,7 @@ class SchemeMorphism_orbit_closure_toric_variety(SchemeMorphism, Morphism):
         codomain_rays = self.codomain().fan().rays()
         for ray in self.domain().fan().rays():
             ray = codomain_rays[self._reverse_ray_map()[ray]]
-            value = divisor.function_value(ray) - m*ray
+            value = divisor.function_value(ray) - m * ray
             values.append(value)
         return self.domain().divisor(values)
 
@@ -854,9 +855,9 @@ class SchemeMorphism_fan_toric_variety(SchemeMorphism, Morphism):
                     to Rational polyhedral fan in 1-d lattice N.
         """
         SchemeMorphism.__init__(self, parent)
-        if check and self.domain().fan()!=fan_morphism.domain_fan():
+        if check and self.domain().fan() != fan_morphism.domain_fan():
             raise ValueError('the fan morphism domain must be the fan of the domain')
-        if check and self.codomain().fan()!=fan_morphism.codomain_fan():
+        if check and self.codomain().fan() != fan_morphism.codomain_fan():
             raise ValueError('the fan morphism codomain must be the fan of the codomain')
         self._fan_morphism = fan_morphism
 
@@ -1815,7 +1816,7 @@ class SchemeMorphism_fan_fiber_component_toric_variety(SchemeMorphism):
         ker = fm.kernel().basis()
         m = fm.matrix() * base_cone.lattice().basis_matrix()
         base_cone_preimg = [m.solve_left(r) for r in base_cone.rays()]
-        L = fm.domain_fan().lattice().span(ker+base_cone_preimg).saturation()
+        L = fm.domain_fan().lattice().span(ker + base_cone_preimg).saturation()
 
         cone_L = Cone([L.coordinates(r) for r in defining_cone.rays()])
         L_quotient = cone_L.sublattice_quotient()
@@ -1832,7 +1833,7 @@ class SchemeMorphism_fan_fiber_component_toric_variety(SchemeMorphism):
             cones.append(Cone(projected_rays))
         fiber_fan = Fan(cones)
 
-        ray_index_map = dict()
+        ray_index_map = {}
         for ray in star_rays:
             ray_index = fm.domain_fan().rays().index(ray)
             projected_ray = fiber_fan.lattice()(projection(ray))
@@ -1938,7 +1939,7 @@ class SchemeMorphism_fan_fiber_component_toric_variety(SchemeMorphism):
             d = gcd(ray)
             if d * fiber_ray != ray:
                 continue
-            if multiplicity is not None and d>multiplicity:
+            if multiplicity is not None and d > multiplicity:
                 continue
             multiplicity = d
             image_ray_index = index
@@ -1983,7 +1984,7 @@ class SchemeMorphism_fan_fiber_component_toric_variety(SchemeMorphism):
         for ray in self.domain().fan().rays():
             image_ray_index, multiplicity = self._image_ray_multiplicity(ray)
             image_ray = codomain_rays[image_ray_index]
-            value = divisor.function_value(image_ray) - m*image_ray
+            value = divisor.function_value(image_ray) - m * image_ray
             value /= multiplicity
             values.append(value)
         return self.domain().divisor(values)

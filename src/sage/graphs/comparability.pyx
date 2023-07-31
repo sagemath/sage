@@ -257,7 +257,7 @@ def greedy_is_comparability(g, no_certificate=False, equivalence_class=False):
     # Each vertex can partition its neighbors into equivalence classes
     equivalence_classes = {}
     for v in g:
-        equivalence_classes[v] = g.subgraph(vertices=g.neighbors(v)).complement().connected_components()
+        equivalence_classes[v] = g.subgraph(vertices=g.neighbors(v)).complement().connected_components(sort=False)
 
     # We build a graph h with one vertex per (vertex of g + equivalence class)
     from sage.graphs.graph import Graph
@@ -288,7 +288,7 @@ def greedy_is_comparability(g, no_certificate=False, equivalence_class=False):
         if equivalence_class:
 
             # Returning the largest equivalence class
-            cc = sorted(h.connected_components(), key=len)[-1]
+            cc = sorted(h.connected_components(sort=False), key=len)[-1]
 
             edges = []
             for v, sid in cc:
@@ -642,7 +642,7 @@ def is_permutation(g, algorithm="greedy", certificate=False, check=True,
         sage: p1 = Permutation([nn+1 for nn in perm[0]])
         sage: p2 = Permutation([nn+1 for nn in perm[1]])
         sage: p = p2 * p1.inverse()
-        sage: p.show(representation = "braid")
+        sage: p.show(representation="braid")                                            # optional - sage.plot
 
     TESTS:
 
@@ -745,15 +745,15 @@ def is_transitive(g, certificate=False):
         (0, 2)
         sage: digraphs.RandomDirectedGNP(30,.2).is_transitive()
         False
-        sage: D = digraphs.DeBruijn(5, 2)
-        sage: D.is_transitive()
+        sage: D = digraphs.DeBruijn(5, 2)                                               # optional - sage.combinat
+        sage: D.is_transitive()                                                         # optional - sage.combinat
         False
-        sage: cert = D.is_transitive(certificate=True)
-        sage: D.has_edge(*cert)
+        sage: cert = D.is_transitive(certificate=True)                                  # optional - sage.combinat
+        sage: D.has_edge(*cert)                                                         # optional - sage.combinat
         False
-        sage: bool(D.shortest_path(*cert))
+        sage: bool(D.shortest_path(*cert))                                              # optional - sage.combinat
         True
-        sage: digraphs.RandomDirectedGNP(20,.2).transitive_closure().is_transitive()
+        sage: digraphs.RandomDirectedGNP(20,.2).transitive_closure().is_transitive()    # optional - networkx
         True
     """
     cdef int n = g.order()

@@ -1,3 +1,4 @@
+# sage.doctest: optional - sage.libs.pari
 """
 Basic arithmetic with C integers
 """
@@ -58,16 +59,16 @@ cpdef prime_range(start, stop=None, algorithm=None, bint py_ints=False):
 
     - ``algorithm`` -- optional string (default: ``None``), one of:
 
-        - ``None``: Use  algorithm ``"pari_primes"`` if ``stop`` <= 436273009
-          (approximately 4.36E8). Otherwise use algorithm ``"pari_isprime"``.
+      - ``None``: Use  algorithm ``"pari_primes"`` if ``stop`` <= 436273009
+        (approximately 4.36E8). Otherwise use algorithm ``"pari_isprime"``.
 
-        - ``"pari_primes"``: Use PARI's :pari:`primes` function to generate all
-          primes from 2 to stop. This is fast but may crash if there is
-          insufficient memory. Raises an error if ``stop`` > 436273009.
+      - ``"pari_primes"``: Use PARI's :pari:`primes` function to generate all
+        primes from 2 to stop. This is fast but may crash if there is
+        insufficient memory. Raises an error if ``stop`` > 436273009.
 
-        - ``"pari_isprime"``: Wrapper for ``list(primes(start, stop))``. Each (odd)
-          integer in the specified range is tested for primality by applying PARI's
-          :pari:`isprime` function. This is slower but will work for much larger input.
+      - ``"pari_isprime"``: Wrapper for ``list(primes(start, stop))``. Each (odd)
+        integer in the specified range is tested for primality by applying PARI's
+        :pari:`isprime` function. This is slower but will work for much larger input.
 
     - ``py_ints`` -- optional boolean (default ``False``), return Python ints rather
       than Sage Integers (faster). Ignored unless algorithm ``"pari_primes"`` is being
@@ -145,7 +146,6 @@ cpdef prime_range(start, stop=None, algorithm=None, bint py_ints=False):
     - Kevin Stueve (added primes iterator option) 2010-10-16
     - Robert Bradshaw (speedup using Pari prime table, py_ints option)
     """
-    cdef Integer z
     # input to pari.init_primes cannot be greater than 436273290 (hardcoded bound)
     DEF init_primes_max = 436273290
     DEF small_prime_max = 436273009  #  a prime < init_primes_max (preferably the largest)

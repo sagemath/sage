@@ -11,36 +11,37 @@ EXAMPLES:
 Constant field extension of the rational function field over rational numbers::
 
     sage: K.<x> = FunctionField(QQ)
-    sage: N.<a> = QuadraticField(2)                                                     # optional - sage.rings.number_field
-    sage: L = K.extension_constant_field(N)                                             # optional - sage.rings.number_field
-    sage: L                                                                             # optional - sage.rings.number_field
+    sage: N.<a> = QuadraticField(2)                                                     # needs sage.rings.number_field
+    sage: L = K.extension_constant_field(N)                                             # needs sage.rings.number_field
+    sage: L                                                                             # needs sage.rings.number_field
     Rational function field in x over Number Field in a with defining
     polynomial x^2 - 2 with a = 1.4142... over its base
-    sage: d = (x^2 - 2).divisor()                                                       # optional - sage.rings.number_field
-    sage: d                                                                             # optional - sage.rings.number_field
+    sage: d = (x^2 - 2).divisor()                                                       # needs sage.libs.pari sage.modules
+    sage: d                                                                             # needs sage.libs.pari sage.modules
     -2*Place (1/x)
      + Place (x^2 - 2)
-    sage: L.conorm_divisor(d)                                                           # optional - sage.rings.number_field
+    sage: L.conorm_divisor(d)                                                           # needs sage.libs.pari sage.modules sage.rings.number_field
     -2*Place (1/x)
      + Place (x - a)
      + Place (x + a)
 
 Constant field extension of a function field over a finite field::
 
-    sage: K.<x> = FunctionField(GF(2)); R.<Y> = K[]                                     # optional - sage.rings.finite_rings
-    sage: F.<y> = K.extension(Y^3 - x^2*(x^2 + x + 1)^2)                                # optional - sage.rings.finite_rings sage.rings.function_field
-    sage: E = F.extension_constant_field(GF(2^3))                                       # optional - sage.rings.finite_rings sage.rings.function_field
-    sage: E                                                                             # optional - sage.rings.finite_rings sage.rings.function_field
+    sage: # needs sage.rings.finite_rings sage.rings.function_field
+    sage: K.<x> = FunctionField(GF(2)); R.<Y> = K[]
+    sage: F.<y> = K.extension(Y^3 - x^2*(x^2 + x + 1)^2)
+    sage: E = F.extension_constant_field(GF(2^3))
+    sage: E
     Function field in y defined by y^3 + x^6 + x^4 + x^2 over its base
-    sage: p = F.get_place(3)                                                            # optional - sage.rings.finite_rings sage.rings.function_field
-    sage: E.conorm_place(p)  # random                                                   # optional - sage.rings.finite_rings sage.rings.function_field
+    sage: p = F.get_place(3)
+    sage: E.conorm_place(p)  # random
     Place (x + z3, y + z3^2 + z3)
      + Place (x + z3^2, y + z3)
      + Place (x + z3^2 + z3, y + z3^2)
-    sage: q = F.get_place(2)                                                            # optional - sage.rings.finite_rings sage.rings.function_field
-    sage: E.conorm_place(q)  # random                                                   # optional - sage.rings.finite_rings sage.rings.function_field
+    sage: q = F.get_place(2)
+    sage: E.conorm_place(q)  # random
     Place (x + 1, y^2 + y + 1)
-    sage: E.conorm_divisor(p + q)  # random                                             # optional - sage.rings.finite_rings sage.rings.function_field
+    sage: E.conorm_divisor(p + q)  # random
     Place (x + 1, y^2 + y + 1)
      + Place (x + z3, y + z3^2 + z3)
      + Place (x + z3^2, y + z3)
@@ -90,10 +91,11 @@ class ConstantFieldExtension(FunctionFieldExtension):
 
         TESTS::
 
-            sage: K.<x> = FunctionField(GF(2)); R.<Y> = K[]                             # optional - sage.rings.finite_rings
-            sage: F.<y> = K.extension(Y^3 - x^2*(x^2 + x + 1)^2)                        # optional - sage.rings.finite_rings sage.rings.function_field
-            sage: E = F.extension_constant_field(GF(2^3))                               # optional - sage.rings.finite_rings sage.rings.function_field
-            sage: TestSuite(E).run(skip=['_test_elements', '_test_pickling'])           # optional - sage.rings.finite_rings sage.rings.function_field
+            sage: # needs sage.rings.finite_rings sage.rings.function_field
+            sage: K.<x> = FunctionField(GF(2)); R.<Y> = K[]
+            sage: F.<y> = K.extension(Y^3 - x^2*(x^2 + x + 1)^2)
+            sage: E = F.extension_constant_field(GF(2^3))
+            sage: TestSuite(E).run(skip=['_test_elements', '_test_pickling'])
         """
         k = F.constant_base_field()
         F_base = F.base_field()
@@ -129,10 +131,11 @@ class ConstantFieldExtension(FunctionFieldExtension):
 
         EXAMPLES::
 
-            sage: K.<x> = FunctionField(GF(2)); R.<Y> = K[]                             # optional - sage.rings.finite_rings
-            sage: F.<y> = K.extension(Y^3 - x^2*(x^2 + x + 1)^2)                        # optional - sage.rings.finite_rings sage.rings.function_field
-            sage: E = F.extension_constant_field(GF(2^3))                               # optional - sage.rings.finite_rings sage.rings.function_field
-            sage: E.top()                                                               # optional - sage.rings.finite_rings sage.rings.function_field
+            sage: # needs sage.rings.finite_rings sage.rings.function_field
+            sage: K.<x> = FunctionField(GF(2)); R.<Y> = K[]
+            sage: F.<y> = K.extension(Y^3 - x^2*(x^2 + x + 1)^2)
+            sage: E = F.extension_constant_field(GF(2^3))
+            sage: E.top()
             Function field in y defined by y^3 + x^6 + x^4 + x^2
         """
         return self._F_ext
@@ -145,10 +148,11 @@ class ConstantFieldExtension(FunctionFieldExtension):
 
         EXAMPLES::
 
-            sage: K.<x> = FunctionField(GF(2)); R.<Y> = K[]                             # optional - sage.rings.finite_rings
-            sage: F.<y> = K.extension(Y^3 - x^2*(x^2 + x + 1)^2)                        # optional - sage.rings.finite_rings sage.rings.function_field
-            sage: E = F.extension_constant_field(GF(2^3))                               # optional - sage.rings.finite_rings sage.rings.function_field
-            sage: E.defining_morphism()                                                 # optional - sage.rings.finite_rings sage.rings.function_field
+            sage: # needs sage.rings.finite_rings sage.rings.function_field
+            sage: K.<x> = FunctionField(GF(2)); R.<Y> = K[]
+            sage: F.<y> = K.extension(Y^3 - x^2*(x^2 + x + 1)^2)
+            sage: E = F.extension_constant_field(GF(2^3))
+            sage: E.defining_morphism()
             Function Field morphism:
               From: Function field in y defined by y^3 + x^6 + x^4 + x^2
               To:   Function field in y defined by y^3 + x^6 + x^4 + x^2
@@ -170,16 +174,17 @@ class ConstantFieldExtension(FunctionFieldExtension):
 
         EXAMPLES::
 
-            sage: K.<x> = FunctionField(GF(2)); R.<Y> = K[]                             # optional - sage.rings.finite_rings
-            sage: F.<y> = K.extension(Y^3 - x^2*(x^2 + x + 1)^2)                        # optional - sage.rings.finite_rings sage.rings.function_field
-            sage: E = F.extension_constant_field(GF(2^3))                               # optional - sage.rings.finite_rings sage.rings.function_field
-            sage: p = F.get_place(3)                                                    # optional - sage.rings.finite_rings sage.rings.function_field
-            sage: d = E.conorm_place(p)                                                 # optional - sage.rings.finite_rings sage.rings.function_field
-            sage: [pl.degree() for pl in d.support()]                                   # optional - sage.rings.finite_rings sage.rings.function_field
+            sage: # needs sage.rings.finite_rings sage.rings.function_field
+            sage: K.<x> = FunctionField(GF(2)); R.<Y> = K[]
+            sage: F.<y> = K.extension(Y^3 - x^2*(x^2 + x + 1)^2)
+            sage: E = F.extension_constant_field(GF(2^3))
+            sage: p = F.get_place(3)
+            sage: d = E.conorm_place(p)
+            sage: [pl.degree() for pl in d.support()]
             [1, 1, 1]
-            sage: p = F.get_place(2)                                                    # optional - sage.rings.finite_rings sage.rings.function_field
-            sage: d = E.conorm_place(p)                                                 # optional - sage.rings.finite_rings sage.rings.function_field
-            sage: [pl.degree() for pl in d.support()]                                   # optional - sage.rings.finite_rings sage.rings.function_field
+            sage: p = F.get_place(2)
+            sage: d = E.conorm_place(p)
+            sage: [pl.degree() for pl in d.support()]
             [2]
         """
         embedF = self.defining_morphism()
@@ -206,15 +211,16 @@ class ConstantFieldExtension(FunctionFieldExtension):
 
         EXAMPLES::
 
-            sage: K.<x> = FunctionField(GF(2)); R.<Y> = K[]                             # optional - sage.rings.finite_rings
-            sage: F.<y> = K.extension(Y^3 - x^2*(x^2 + x + 1)^2)                        # optional - sage.rings.finite_rings sage.rings.function_field
-            sage: E = F.extension_constant_field(GF(2^3))                               # optional - sage.rings.finite_rings sage.rings.function_field
-            sage: p1 = F.get_place(3)                                                   # optional - sage.rings.finite_rings sage.rings.function_field
-            sage: p2 = F.get_place(2)                                                   # optional - sage.rings.finite_rings sage.rings.function_field
-            sage: c = E.conorm_divisor(2*p1 + 3*p2)                                     # optional - sage.rings.finite_rings sage.rings.function_field
-            sage: c1 = E.conorm_place(p1)                                               # optional - sage.rings.finite_rings sage.rings.function_field
-            sage: c2 = E.conorm_place(p2)                                               # optional - sage.rings.finite_rings sage.rings.function_field
-            sage: c == 2*c1 + 3*c2                                                      # optional - sage.rings.finite_rings sage.rings.function_field
+            sage: # needs sage.rings.finite_rings sage.rings.function_field
+            sage: K.<x> = FunctionField(GF(2)); R.<Y> = K[]
+            sage: F.<y> = K.extension(Y^3 - x^2*(x^2 + x + 1)^2)
+            sage: E = F.extension_constant_field(GF(2^3))
+            sage: p1 = F.get_place(3)
+            sage: p2 = F.get_place(2)
+            sage: c = E.conorm_divisor(2*p1 + 3*p2)
+            sage: c1 = E.conorm_place(p1)
+            sage: c2 = E.conorm_place(p2)
+            sage: c == 2*c1 + 3*c2
             True
         """
         div_top = self.divisor_group()

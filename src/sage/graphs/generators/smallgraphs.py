@@ -139,21 +139,21 @@ def HarriesGraph(embedding=1):
 
     EXAMPLES::
 
-        sage: g = graphs.HarriesGraph()
-        sage: g.order()
+        sage: g = graphs.HarriesGraph()                                                 # optional - networkx
+        sage: g.order()                                                                 # optional - networkx
         70
-        sage: g.size()
+        sage: g.size()                                                                  # optional - networkx
         105
-        sage: g.girth()
+        sage: g.girth()                                                                 # optional - networkx
         10
-        sage: g.diameter()
+        sage: g.diameter()                                                              # optional - networkx
         6
-        sage: g.show(figsize=[10, 10])   # long time
-        sage: graphs.HarriesGraph(embedding=2).show(figsize=[10, 10])   # long time
+        sage: g.show(figsize=[10, 10])   # long time                                    # optional - networkx sage.plot
+        sage: graphs.HarriesGraph(embedding=2).show(figsize=[10, 10])   # long time     # optional - networkx sage.plot
 
     TESTS::
 
-        sage: graphs.HarriesGraph(embedding=3)
+        sage: graphs.HarriesGraph(embedding=3)                                          # optional - networkx
         Traceback (most recent call last):
         ...
         ValueError: the value of embedding must be 1 or 2
@@ -257,25 +257,25 @@ def HarriesWongGraph(embedding=1):
 
     EXAMPLES::
 
-        sage: g = graphs.HarriesWongGraph()
-        sage: g.order()
+        sage: g = graphs.HarriesWongGraph()                                             # optional - networkx
+        sage: g.order()                                                                 # optional - networkx
         70
-        sage: g.size()
+        sage: g.size()                                                                  # optional - networkx
         105
-        sage: g.girth()
+        sage: g.girth()                                                                 # optional - networkx
         10
-        sage: g.diameter()
+        sage: g.diameter()                                                              # optional - networkx
         6
-        sage: orbits = g.automorphism_group(orbits=True)[-1]  # long time
-        sage: g.show(figsize=[15, 15], partition=orbits)  # long time
+        sage: orbits = g.automorphism_group(orbits=True)[-1]  # long time               # optional - networkx sage.groups
+        sage: g.show(figsize=[15, 15], partition=orbits)      # long time               # optional - networkx sage.groups sage.plot
 
     Alternative embedding::
 
-        sage: graphs.HarriesWongGraph(embedding=2).show()  # long time
+        sage: graphs.HarriesWongGraph(embedding=2).show()     # long time               # optional - networkx sage.plot
 
     TESTS::
 
-        sage: graphs.HarriesWongGraph(embedding=3)
+        sage: graphs.HarriesWongGraph(embedding=3)                                      # optional - networkx
         Traceback (most recent call last):
         ...
         ValueError: the value of embedding must be 1 or 2
@@ -679,7 +679,7 @@ def HallJankoGraph(from_string=True):
         sage: g = graphs.HallJankoGraph()
         sage: g.is_regular(36)
         True
-        sage: g.is_vertex_transitive()
+        sage: g.is_vertex_transitive()                                                  # optional - sage.groups
         True
 
     Is it really strongly regular with parameters 14, 12? ::
@@ -804,20 +804,20 @@ def Balaban10Cage(embedding=1):
 
     EXAMPLES::
 
-        sage: g = graphs.Balaban10Cage()
-        sage: g.girth()
+        sage: g = graphs.Balaban10Cage()                                                # optional - networkx
+        sage: g.girth()                                                                 # optional - networkx
         10
-        sage: g.chromatic_number()
+        sage: g.chromatic_number()                                                      # optional - networkx
         2
-        sage: g.diameter()
+        sage: g.diameter()                                                              # optional - networkx
         6
-        sage: g.is_hamiltonian()
+        sage: g.is_hamiltonian()                                                        # optional - networkx
         True
-        sage: g.show(figsize=[10,10])   # long time
+        sage: g.show(figsize=[10,10])   # long time                                     # optional - networkx sage.plot
 
     TESTS::
 
-        sage: graphs.Balaban10Cage(embedding='foo')
+        sage: graphs.Balaban10Cage(embedding='foo')                                     # optional - networkx
         Traceback (most recent call last):
         ...
         ValueError: the value of embedding must be 1 or 2
@@ -897,7 +897,7 @@ def Balaban11Cage(embedding=1):
         11
         sage: g.diameter()
         8
-        sage: g.automorphism_group().cardinality()
+        sage: g.automorphism_group().cardinality()                                      # optional - sage.groups
         64
 
     Our many embeddings::
@@ -905,9 +905,9 @@ def Balaban11Cage(embedding=1):
         sage: g1 = graphs.Balaban11Cage(embedding=1)
         sage: g2 = graphs.Balaban11Cage(embedding=2)
         sage: g3 = graphs.Balaban11Cage(embedding=3)
-        sage: g1.show(figsize=[10,10])   # long time
-        sage: g2.show(figsize=[10,10])   # long time
-        sage: g3.show(figsize=[10,10])   # long time
+        sage: g1.show(figsize=[10,10])   # long time                                    # optional - sage.plot
+        sage: g2.show(figsize=[10,10])   # long time                                    # optional - sage.plot
+        sage: g3.show(figsize=[10,10])   # long time                                    # optional - sage.plot
 
     Proof that the embeddings are the same graph::
 
@@ -1114,26 +1114,26 @@ def BiggsSmithGraph(embedding=1):
 
     Basic properties::
 
-        sage: g = graphs.BiggsSmithGraph()
-        sage: g.order()
+        sage: g = graphs.BiggsSmithGraph()                                              # optional - networkx
+        sage: g.order()                                                                 # optional - networkx
         102
-        sage: g.size()
+        sage: g.size()                                                                  # optional - networkx
         153
-        sage: g.girth()
+        sage: g.girth()                                                                 # optional - networkx
         9
-        sage: g.diameter()
+        sage: g.diameter()                                                              # optional - networkx
         7
-        sage: g.automorphism_group().cardinality() # long time
+        sage: g.automorphism_group().cardinality() # long time                          # optional - networkx
         2448
-        sage: g.show(figsize=[10, 10])   # long time
+        sage: g.show(figsize=[10, 10])   # long time                                    # optional - networkx sage.plot
 
     The other embedding::
 
-        sage: graphs.BiggsSmithGraph(embedding=2).show()  # long time
+        sage: graphs.BiggsSmithGraph(embedding=2).show()  # long time                   # optional - networkx
 
     TESTS::
 
-        sage: graphs.BiggsSmithGraph(embedding='xyzzy')
+        sage: graphs.BiggsSmithGraph(embedding='xyzzy')                                 # optional - networkx
         Traceback (most recent call last):
         ...
         ValueError: the value of embedding must be 1 or 2
@@ -1199,16 +1199,16 @@ def BlanusaFirstSnarkGraph():
 
     EXAMPLES::
 
-        sage: g = graphs.BlanusaFirstSnarkGraph()
-        sage: g.order()
+        sage: g = graphs.BlanusaFirstSnarkGraph()                                       # optional - sage.groups
+        sage: g.order()                                                                 # optional - sage.groups
         18
-        sage: g.size()
+        sage: g.size()                                                                  # optional - sage.groups
         27
-        sage: g.diameter()
+        sage: g.diameter()                                                              # optional - sage.groups
         4
-        sage: g.girth()
+        sage: g.girth()                                                                 # optional - sage.groups
         5
-        sage: g.automorphism_group().cardinality()
+        sage: g.automorphism_group().cardinality()                                      # optional - sage.groups
         8
     """
     g = Graph({17: [4, 7, 1], 0: [5], 3: [8], 13: [9], 12: [16],
@@ -1234,16 +1234,16 @@ def BlanusaSecondSnarkGraph():
 
     EXAMPLES::
 
-        sage: g = graphs.BlanusaSecondSnarkGraph()
-        sage: g.order()
+        sage: g = graphs.BlanusaSecondSnarkGraph()                                      # optional - sage.groups
+        sage: g.order()                                                                 # optional - sage.groups
         18
-        sage: g.size()
+        sage: g.size()                                                                  # optional - sage.groups
         27
-        sage: g.diameter()
+        sage: g.diameter()                                                              # optional - sage.groups
         4
-        sage: g.girth()
+        sage: g.girth()                                                                 # optional - sage.groups
         5
-        sage: g.automorphism_group().cardinality()
+        sage: g.automorphism_group().cardinality()                                      # optional - sage.groups
         4
     """
     c0 = (-1, 0)
@@ -1361,18 +1361,18 @@ def BrouwerHaemersGraph():
 
     EXAMPLES::
 
-        sage: g = graphs.BrouwerHaemersGraph()
-        sage: g
+        sage: g = graphs.BrouwerHaemersGraph()                                          # optional - sage.modules
+        sage: g                                                                         # optional - sage.modules
         Brouwer-Haemers: Graph on 81 vertices
 
     It is indeed strongly regular with parameters `(81,20,1,6)`::
 
-        sage: g.is_strongly_regular(parameters=True)  # long time
+        sage: g.is_strongly_regular(parameters=True)  # long time                       # optional - sage.modules
         (81, 20, 1, 6)
 
     Its has as eigenvalues `20,2` and `-7`::
 
-        sage: set(g.spectrum()) == {20,2,-7}
+        sage: set(g.spectrum()) == {20,2,-7}                                            # optional - sage.modules
         True
     """
     from sage.rings.finite_rings.finite_field_constructor import FiniteField
@@ -1419,16 +1419,16 @@ def BuckyBall():
     The Bucky Ball can also be created by extracting the 1-skeleton of the Bucky
     Ball polyhedron, but this is much slower::
 
-        sage: g = polytopes.buckyball().vertex_graph()
-        sage: g.remove_loops()
+        sage: g = polytopes.buckyball().vertex_graph()                                  # optional - sage.geometry.polyhedron
+        sage: g.remove_loops()                                                          # optional - sage.geometry.polyhedron
         sage: h = graphs.BuckyBall()
-        sage: g.is_isomorphic(h)
+        sage: g.is_isomorphic(h)                                                        # optional - sage.geometry.polyhedron
         True
 
     The graph is returned along with an attractive embedding::
 
         sage: g = graphs.BuckyBall()  # long time
-        sage: g.plot(vertex_labels=False, vertex_size=10).show()  # long time
+        sage: g.plot(vertex_labels=False, vertex_size=10).show()  # long time           # optional - sage.plot
     """
     edges = [(0, 2), (0, 48), (0, 59), (1, 3), (1, 9), (1, 58),
              (2, 3), (2, 36), (3, 17), (4, 6), (4, 8), (4, 12),
@@ -1577,7 +1577,7 @@ def DoubleStarSnark():
         False
         sage: g.automorphism_group().cardinality()
         80
-        sage: g.show()
+        sage: g.show()                                                                  # optional - sage.plot
     """
     d = {0: [1, 14, 15],
          1: [0, 2, 11],
@@ -1735,12 +1735,12 @@ def CameronGraph():
 
     EXAMPLES::
 
-        sage: g = graphs.CameronGraph()
-        sage: g.order()
+        sage: g = graphs.CameronGraph()                                                 # optional - sage.groups
+        sage: g.order()                                                                 # optional - sage.groups
         231
-        sage: g.size()
+        sage: g.size()                                                                  # optional - sage.groups
         3465
-        sage: g.is_strongly_regular(parameters = True) # long time
+        sage: g.is_strongly_regular(parameters=True)  # long time                       # optional - sage.groups
         (231, 30, 9, 3)
     """
     from sage.groups.perm_gps.permgroup_named import MathieuGroup
@@ -1828,7 +1828,7 @@ def ClebschGraph():
     EXAMPLES::
 
         sage: g = graphs.ClebschGraph()
-        sage: g.automorphism_group().cardinality()
+        sage: g.automorphism_group().cardinality()                                      # optional - sage.groups
         1920
         sage: g.girth()
         4
@@ -1836,7 +1836,7 @@ def ClebschGraph():
         4
         sage: g.diameter()
         2
-        sage: g.show(figsize=[10, 10]) # long time
+        sage: g.show(figsize=[10, 10])  # long time                                     # optional - sage.plot
     """
     g = Graph(pos={})
     x = 0
@@ -1865,7 +1865,7 @@ def CoxeterGraph():
     EXAMPLES::
 
         sage: g = graphs.CoxeterGraph()
-        sage: g.automorphism_group().cardinality()
+        sage: g.automorphism_group().cardinality()                                      # optional - sage.groups
         336
         sage: g.girth()
         7
@@ -1873,7 +1873,7 @@ def CoxeterGraph():
         3
         sage: g.diameter()
         4
-        sage: g.show(figsize=[10, 10])  # long time
+        sage: g.show(figsize=[10, 10])  # long time                                     # optional - sage.plot
     """
     g = Graph({
             27: [6, 22, 14],
@@ -1904,11 +1904,11 @@ def DejterGraph():
 
     EXAMPLES::
 
-        sage: g = graphs.DejterGraph(); g
+        sage: g = graphs.DejterGraph(); g                                               # optional - sage.rings.finite_rings
         Dejter Graph: Graph on 112 vertices
-        sage: g.is_regular(k=6)
+        sage: g.is_regular(k=6)                                                         # optional - sage.rings.finite_rings
         True
-        sage: g.girth()
+        sage: g.girth()                                                                 # optional - sage.rings.finite_rings
         4
     """
     from sage.graphs.generators.families import CubeGraph
@@ -1931,10 +1931,10 @@ def DesarguesGraph():
     EXAMPLES::
 
         sage: D = graphs.DesarguesGraph()
-        sage: L = graphs.LCFGraph(20,[5,-5,9,-9],5)
-        sage: D.is_isomorphic(L)
+        sage: L = graphs.LCFGraph(20,[5,-5,9,-9],5)                                     # optional - networkx
+        sage: D.is_isomorphic(L)                                                        # optional - networkx
         True
-        sage: D.show()  # long time
+        sage: D.show()  # long time                                                     # optional - sage.plot
     """
     from sage.graphs.generators.families import GeneralizedPetersenGraph
     G = GeneralizedPetersenGraph(10, 3)
@@ -2085,22 +2085,22 @@ def HortonGraph():
 
     EXAMPLES::
 
-        sage: g = graphs.HortonGraph()
-        sage: g.order()
+        sage: g = graphs.HortonGraph()                                                  # optional - networkx
+        sage: g.order()                                                                 # optional - networkx
         96
-        sage: g.size()
+        sage: g.size()                                                                  # optional - networkx
         144
-        sage: g.radius()
+        sage: g.radius()                                                                # optional - networkx
         10
-        sage: g.diameter()
+        sage: g.diameter()                                                              # optional - networkx
         10
-        sage: g.girth()
+        sage: g.girth()                                                                 # optional - networkx
         6
-        sage: g.automorphism_group().cardinality()
+        sage: g.automorphism_group().cardinality()                                      # optional - networkx
         96
-        sage: g.chromatic_number()
+        sage: g.chromatic_number()                                                      # optional - networkx
         2
-        sage: g.is_hamiltonian()  # not tested -- veeeery long
+        sage: g.is_hamiltonian()  # not tested -- veeeery long                          # optional - networkx
         False
     """
     g = Graph(name="Horton Graph")
@@ -2374,17 +2374,17 @@ def F26AGraph():
 
     EXAMPLES::
 
-        sage: g = graphs.F26AGraph(); g
+        sage: g = graphs.F26AGraph(); g                                                 # optional - networkx
         F26A Graph: Graph on 26 vertices
-        sage: g.order(),g.size()
+        sage: g.order(), g.size()                                                       # optional - networkx
         (26, 39)
-        sage: g.automorphism_group().cardinality()
+        sage: g.automorphism_group().cardinality()                                      # optional - networkx
         78
-        sage: g.girth()
+        sage: g.girth()                                                                 # optional - networkx
         6
-        sage: g.is_bipartite()
+        sage: g.is_bipartite()                                                          # optional - networkx
         True
-        sage: g.characteristic_polynomial().factor()
+        sage: g.characteristic_polynomial().factor()                                    # optional - networkx
         (x - 3) * (x + 3) * (x^4 - 5*x^2 + 3)^6
     """
     from sage.graphs.generators.families import LCFGraph
@@ -2435,26 +2435,26 @@ def FolkmanGraph():
 
     EXAMPLES::
 
-        sage: g = graphs.FolkmanGraph()
-        sage: g.order()
+        sage: g = graphs.FolkmanGraph()                                                 # optional - networkx
+        sage: g.order()                                                                 # optional - networkx
         20
-        sage: g.size()
+        sage: g.size()                                                                  # optional - networkx
         40
-        sage: g.diameter()
+        sage: g.diameter()                                                              # optional - networkx
         4
-        sage: g.girth()
+        sage: g.girth()                                                                 # optional - networkx
         4
-        sage: g.charpoly().factor()
+        sage: g.charpoly().factor()                                                     # optional - networkx
         (x - 4) * (x + 4) * x^10 * (x^2 - 6)^4
-        sage: g.chromatic_number()
+        sage: g.chromatic_number()                                                      # optional - networkx
         2
-        sage: g.is_eulerian()
+        sage: g.is_eulerian()                                                           # optional - networkx
         True
-        sage: g.is_hamiltonian()
+        sage: g.is_hamiltonian()                                                        # optional - networkx
         True
-        sage: g.is_vertex_transitive()
+        sage: g.is_vertex_transitive()                                                  # optional - networkx
         False
-        sage: g.is_bipartite()
+        sage: g.is_bipartite()                                                          # optional - networkx
         True
     """
     from sage.graphs.generators.families import LCFGraph
@@ -2471,18 +2471,18 @@ def FosterGraph():
 
     EXAMPLES::
 
-        sage: g = graphs.FosterGraph()
-        sage: g.order()
+        sage: g = graphs.FosterGraph()                                                  # optional - networkx
+        sage: g.order()                                                                 # optional - networkx
         90
-        sage: g.size()
+        sage: g.size()                                                                  # optional - networkx
         135
-        sage: g.diameter()
+        sage: g.diameter()                                                              # optional - networkx
         8
-        sage: g.girth()
+        sage: g.girth()                                                                 # optional - networkx
         10
-        sage: g.automorphism_group().cardinality()
+        sage: g.automorphism_group().cardinality()                                      # optional - networkx
         4320
-        sage: g.is_hamiltonian()
+        sage: g.is_hamiltonian()                                                        # optional - networkx
         True
     """
     from sage.graphs.generators.families import LCFGraph
@@ -2565,18 +2565,18 @@ def FruchtGraph():
 
     EXAMPLES::
 
-        sage: FRUCHT = graphs.FruchtGraph()
-        sage: FRUCHT
+        sage: FRUCHT = graphs.FruchtGraph()                                             # optional - networkx
+        sage: FRUCHT                                                                    # optional - networkx
         Frucht graph: Graph on 12 vertices
-        sage: FRUCHT.graph6_string()
+        sage: FRUCHT.graph6_string()                                                    # optional - networkx
         'KhCKM?_EGK?L'
-        sage: (graphs.FruchtGraph()).show()  # long time
+        sage: (graphs.FruchtGraph()).show()  # long time                                # optional - networkx
 
     TESTS::
 
-        sage: import networkx
-        sage: G = graphs.FruchtGraph()
-        sage: G.is_isomorphic(Graph(networkx.frucht_graph()))
+        sage: import networkx                                                           # optional - networkx
+        sage: G = graphs.FruchtGraph()                                                  # optional - networkx
+        sage: G.is_isomorphic(Graph(networkx.frucht_graph()))                           # optional - networkx
         True
     """
     edges = {0: [1, 6, 7], 1: [2, 7], 2: [3, 8], 3: [4, 9], 4: [5, 9],
@@ -2668,11 +2668,12 @@ def GolombGraph():
     and 18 edges. It has chromatic number 4, diameter 3, radius 2 and
     girth 3. It can be drawn in the plane as a unit distance graph::
 
-        sage: G = graphs.GolombGraph(); G
+        sage: G = graphs.GolombGraph(); G                                               # optional - sage.symbolic
         Golomb graph: Graph on 10 vertices
-        sage: pos = G.get_pos()
-        sage: dist2 = lambda u,v:(u[0]-v[0])**2 + (u[1]-v[1])**2
-        sage: all(dist2(pos[u], pos[v]) == 1 for u, v in G.edge_iterator(labels=None))
+        sage: pos = G.get_pos()                                                         # optional - sage.symbolic
+        sage: def dist2(u, v):
+        ....:     return (u[0]-v[0])**2 + (u[1]-v[1])**2
+        sage: all(dist2(pos[u], pos[v]) == 1 for u, v in G.edge_iterator(labels=None))  # optional - sage.symbolic
         True
     """
     edge_dict = {
@@ -2887,8 +2888,8 @@ def HerschelGraph():
 
         sage: G.chromatic_number()
         2
-        sage: ag = G.automorphism_group()
-        sage: ag.is_isomorphic(DihedralGroup(6))
+        sage: ag = G.automorphism_group()                                               # optional - sage.groups
+        sage: ag.is_isomorphic(DihedralGroup(6))                                        # optional - sage.groups
         True
     """
     edge_dict = {
@@ -2918,9 +2919,9 @@ def GritsenkoGraph():
 
     EXAMPLES::
 
-        sage: H = graphs.GritsenkoGraph(); H
+        sage: H = graphs.GritsenkoGraph(); H                                            # optional - sage.groups
         Gritsenko strongly regular graph: Graph on 65 vertices
-        sage: H.is_strongly_regular(parameters=True)
+        sage: H.is_strongly_regular(parameters=True)                                    # optional - sage.groups
         (65, 32, 15, 16)
     """
     from sage.groups.perm_gps.permgroup import PermutationGroup
@@ -2999,13 +3000,13 @@ def HigmanSimsGraph(relabel=True):
     which is of index 2 and is simple.  It is known as the Higman-Sims group::
 
         sage: H = graphs.HigmanSimsGraph()
-        sage: G = H.automorphism_group()
-        sage: g=G.order(); g
+        sage: G = H.automorphism_group()                                                # optional - sage.groups
+        sage: g = G.order(); g                                                          # optional - sage.groups
         88704000
-        sage: K = G.normal_subgroups()[1]
-        sage: K.is_simple()
+        sage: K = G.normal_subgroups()[1]                                               # optional - sage.groups
+        sage: K.is_simple()                                                             # optional - sage.groups
         True
-        sage: g//K.order()
+        sage: g//K.order()                                                              # optional - sage.groups
         2
 
     AUTHOR:
@@ -3191,7 +3192,7 @@ def HoffmanGraph():
         3
         sage: g.diameter()
         4
-        sage: g.automorphism_group().cardinality()
+        sage: g.automorphism_group().cardinality()                                      # optional - sage.groups
         48
     """
     g = Graph({
@@ -3230,7 +3231,7 @@ def HoltGraph():
         Holt graph: Graph on 27 vertices
         sage: g.is_regular()
         True
-        sage: g.is_vertex_transitive()
+        sage: g.is_vertex_transitive()                                                  # optional - sage.groups
         True
         sage: g.chromatic_number()
         3
@@ -3242,7 +3243,7 @@ def HoltGraph():
         3
         sage: g.girth()
         5
-        sage: g.automorphism_group().cardinality()
+        sage: g.automorphism_group().cardinality()                                      # optional - sage.groups
         54
     """
     g = Graph(loops=False, name="Holt graph", pos={})
@@ -3323,7 +3324,7 @@ def Klein3RegularGraph():
         (56, 84)
         sage: g.girth()
         7
-        sage: g.automorphism_group().cardinality()
+        sage: g.automorphism_group().cardinality()                                      # optional - sage.groups
         336
         sage: g.chromatic_number()
         3
@@ -3356,7 +3357,7 @@ def Klein7RegularGraph():
         (24, 84)
         sage: g.girth()
         3
-        sage: g.automorphism_group().cardinality()
+        sage: g.automorphism_group().cardinality()                                      # optional - sage.groups
         336
         sage: g.chromatic_number()
         4
@@ -3412,21 +3413,21 @@ def LjubljanaGraph(embedding=1):
 
     EXAMPLES::
 
-        sage: g = graphs.LjubljanaGraph()
-        sage: g.order()
+        sage: g = graphs.LjubljanaGraph()                                               # optional - networkx
+        sage: g.order()                                                                 # optional - networkx
         112
-        sage: g.size()
+        sage: g.size()                                                                  # optional - networkx
         168
-        sage: g.girth()
+        sage: g.girth()                                                                 # optional - networkx
         10
-        sage: g.diameter()
+        sage: g.diameter()                                                              # optional - networkx
         8
-        sage: g.show(figsize=[10, 10])   # long time
-        sage: graphs.LjubljanaGraph(embedding=2).show(figsize=[10, 10])   # long time
+        sage: g.show(figsize=[10, 10])   # long time                                    # optional - networkx sage.plot
+        sage: graphs.LjubljanaGraph(embedding=2).show(figsize=[10, 10])   # long time   # optional - networkx sage.plot
 
     TESTS::
 
-        sage: graphs.LjubljanaGraph(embedding=3)
+        sage: graphs.LjubljanaGraph(embedding=3)                                        # optional - networkx
         Traceback (most recent call last):
         ...
         ValueError: the value of embedding must be 1 or 2
@@ -3517,12 +3518,12 @@ def M22Graph():
 
     EXAMPLES::
 
-        sage: g = graphs.M22Graph()
-        sage: g.order()
+        sage: g = graphs.M22Graph()                                                     # optional - sage.groups
+        sage: g.order()                                                                 # optional - sage.groups
         77
-        sage: g.size()
+        sage: g.size()                                                                  # optional - sage.groups
         616
-        sage: g.is_strongly_regular(parameters = True)
+        sage: g.is_strongly_regular(parameters=True)                                    # optional - sage.groups
         (77, 16, 0, 4)
     """
     from sage.groups.perm_gps.permgroup_named import MathieuGroup
@@ -3560,11 +3561,11 @@ def MarkstroemGraph():
         True
         sage: g.is_regular(3)
         True
-        sage: g.subgraph_search(graphs.CycleGraph(4)) is None
+        sage: g.subgraph_search(graphs.CycleGraph(4)) is None                           # optional - sage.modules
         True
-        sage: g.subgraph_search(graphs.CycleGraph(8)) is None
+        sage: g.subgraph_search(graphs.CycleGraph(8)) is None                           # optional - sage.modules
         True
-        sage: g.subgraph_search(graphs.CycleGraph(16))
+        sage: g.subgraph_search(graphs.CycleGraph(16))                                  # optional - sage.modules
         Subgraph of (Markstroem Graph): Graph on 16 vertices
     """
     g = Graph(name="Markstroem Graph")
@@ -3601,21 +3602,21 @@ def McGeeGraph(embedding=2):
 
     EXAMPLES::
 
-        sage: g = graphs.McGeeGraph()
-        sage: g.order()
+        sage: g = graphs.McGeeGraph()                                                   # optional - networkx
+        sage: g.order()                                                                 # optional - networkx
         24
-        sage: g.size()
+        sage: g.size()                                                                  # optional - networkx
         36
-        sage: g.girth()
+        sage: g.girth()                                                                 # optional - networkx
         7
-        sage: g.diameter()
+        sage: g.diameter()                                                              # optional - networkx
         4
-        sage: g.show()
-        sage: graphs.McGeeGraph(embedding=1).show()  # long time
+        sage: g.show()                                                                  # optional - networkx sage.plot
+        sage: graphs.McGeeGraph(embedding=1).show()  # long time                        # optional - networkx sage.plot
 
     TESTS::
 
-        sage: graphs.McGeeGraph(embedding=3)
+        sage: graphs.McGeeGraph(embedding=3)                                            # optional - networkx
         Traceback (most recent call last):
         ...
         ValueError: the value of embedding must be 1 or 2
@@ -3725,7 +3726,7 @@ def MoebiusKantorGraph():
         Moebius-Kantor Graph: Graph on 16 vertices
         sage: MK.graph6_string()
         'OhCGKE?O@?ACAC@I?Q_AS'
-        sage: (graphs.MoebiusKantorGraph()).show()  # long time
+        sage: (graphs.MoebiusKantorGraph()).show()  # long time                         # optional - sage.plot
     """
     from sage.graphs.generators.families import GeneralizedPetersenGraph
     G = GeneralizedPetersenGraph(8, 3)
@@ -3743,38 +3744,38 @@ def MoserSpindle():
 
     The Moser spindle is a planar graph having 7 vertices and 11 edges::
 
-        sage: G = graphs.MoserSpindle(); G
+        sage: G = graphs.MoserSpindle(); G                                              # optional - sage.symbolic
         Moser spindle: Graph on 7 vertices
-        sage: G.is_planar()
+        sage: G.is_planar()                                                             # optional - sage.symbolic
         True
-        sage: G.order()
+        sage: G.order()                                                                 # optional - sage.symbolic
         7
-        sage: G.size()
+        sage: G.size()                                                                  # optional - sage.symbolic
         11
 
     It is a Hamiltonian graph with radius 2, diameter 2, and girth 3::
 
-        sage: G.is_hamiltonian()
+        sage: G.is_hamiltonian()                                                        # optional - sage.symbolic
         True
-        sage: G.radius()
+        sage: G.radius()                                                                # optional - sage.symbolic
         2
-        sage: G.diameter()
+        sage: G.diameter()                                                              # optional - sage.symbolic
         2
-        sage: G.girth()
+        sage: G.girth()                                                                 # optional - sage.symbolic
         3
 
     The Moser spindle can be drawn in the plane as a unit distance graph,
     has chromatic number 4, and its automorphism group is isomorphic to
     the dihedral group `D_4`::
 
-        sage: pos = G.get_pos()
-        sage: all(sum((ui-vi)**2 for ui, vi in zip(pos[u], pos[v])) == 1
+        sage: pos = G.get_pos()                                                         # optional - sage.symbolic
+        sage: all(sum((ui-vi)**2 for ui, vi in zip(pos[u], pos[v])) == 1                # optional - sage.symbolic
         ....:         for u, v in G.edge_iterator(labels=None))
         True
-        sage: G.chromatic_number()
+        sage: G.chromatic_number()                                                      # optional - sage.symbolic
         4
-        sage: ag = G.automorphism_group()
-        sage: ag.is_isomorphic(DihedralGroup(4))
+        sage: ag = G.automorphism_group()                                               # optional - sage.symbolic
+        sage: ag.is_isomorphic(DihedralGroup(4))                                        # optional - sage.symbolic
         True
     """
     edge_dict = {
@@ -3820,8 +3821,8 @@ def NauruGraph(embedding=2):
         6
         sage: g.diameter()
         4
-        sage: g.show()
-        sage: graphs.NauruGraph(embedding=1).show()  # long time
+        sage: g.show()                                                                  # optional - sage.plot
+        sage: graphs.NauruGraph(embedding=1).show()  # long time                        # optional - sage.plot
 
     TESTS::
 
@@ -3829,7 +3830,7 @@ def NauruGraph(embedding=2):
         Traceback (most recent call last):
         ...
         ValueError: the value of embedding must be 1 or 2
-        sage: graphs.NauruGraph(embedding=1).is_isomorphic(g)
+        sage: graphs.NauruGraph(embedding=1).is_isomorphic(g)                           # optional - networkx
         True
     """
 
@@ -3856,10 +3857,10 @@ def PappusGraph():
     EXAMPLES::
 
         sage: G = graphs.PappusGraph()
-        sage: G.show()  # long time
-        sage: L = graphs.LCFGraph(18, [5,7,-7,7,-7,-5], 3)
-        sage: L.show()  # long time
-        sage: G.is_isomorphic(L)
+        sage: G.show()  # long time                                                     # optional - sage.plot
+        sage: L = graphs.LCFGraph(18, [5,7,-7,7,-7,-5], 3)                              # optional - networkx
+        sage: L.show()  # long time                                                     # optional - networkx sage.plot
+        sage: G.is_isomorphic(L)                                                        # optional - networkx
         True
     """
     edges = {0: [1, 5, 6], 1: [2, 7], 2: [3, 8], 3: [4, 9], 4: [5, 10], 5: [11],
@@ -3922,9 +3923,9 @@ def PetersenGraph():
         ....:                          3:[2,4,8], 4:[0,3,9], 5:[0,7,8],
         ....:                          6:[1,8,9], 7:[2,5,9], 8:[3,5,6],
         ....:                          9:[4,6,7]})
-        sage: petersen_spring.show()  # long time
+        sage: petersen_spring.show()  # long time                                       # optional - sage.plot
         sage: petersen_database = graphs.PetersenGraph()
-        sage: petersen_database.show()  # long time
+        sage: petersen_database.show()  # long time                                     # optional - sage.plot
     """
     from sage.graphs.generators.families import GeneralizedPetersenGraph
     P = GeneralizedPetersenGraph(5, 2)
@@ -3969,22 +3970,23 @@ def RobertsonGraph():
 
     EXAMPLES::
 
-        sage: g = graphs.RobertsonGraph()
-        sage: g.order()
+        sage: g = graphs.RobertsonGraph()                                               # optional - networkx
+        sage: g.order()                                                                 # optional - networkx
         19
-        sage: g.size()
+        sage: g.size()                                                                  # optional - networkx
         38
-        sage: g.diameter()
+        sage: g.diameter()                                                              # optional - networkx
         3
-        sage: g.girth()
+        sage: g.girth()                                                                 # optional - networkx
         5
-        sage: g.charpoly().factor()
-        (x - 4) * (x - 1)^2 * (x^2 + x - 5) * (x^2 + x - 1) * (x^2 - 3)^2 * (x^2 + x - 4)^2 * (x^2 + x - 3)^2
-        sage: g.chromatic_number()
+        sage: g.charpoly().factor()                                                     # optional - networkx
+        (x - 4) * (x - 1)^2 * (x^2 + x - 5) * (x^2 + x - 1)
+         * (x^2 - 3)^2 * (x^2 + x - 4)^2 * (x^2 + x - 3)^2
+        sage: g.chromatic_number()                                                      # optional - networkx
         3
-        sage: g.is_hamiltonian()
+        sage: g.is_hamiltonian()                                                        # optional - networkx
         True
-        sage: g.is_vertex_transitive()
+        sage: g.is_vertex_transitive()                                                  # optional - networkx
         False
     """
     from sage.graphs.generators.families import LCFGraph
@@ -4017,12 +4019,12 @@ def SchlaefliGraph():
     Checking that the method actually returns the Schläfli graph::
 
         sage: S = graphs.SchlaefliGraph()
-        sage: S.is_strongly_regular(parameters = True)
+        sage: S.is_strongly_regular(parameters=True)
         (27, 16, 10, 8)
 
     The graph is vertex-transitive::
 
-        sage: S.is_vertex_transitive()
+        sage: S.is_vertex_transitive()                                                  # optional - sage.groups
         True
 
     The neighborhood of each vertex is isomorphic to the complement of the
@@ -4234,7 +4236,7 @@ def SousselierGraph():
         2
         sage: g.diameter()
         3
-        sage: g.automorphism_group().cardinality()
+        sage: g.automorphism_group().cardinality()                                      # optional - sage.groups
         2
         sage: g.is_hamiltonian()
         False
@@ -4315,7 +4317,7 @@ def ThomsenGraph():
         Thomsen graph: Graph on 6 vertices
         sage: T.graph6_string()
         'EFz_'
-        sage: (graphs.ThomsenGraph()).show() # long time
+        sage: (graphs.ThomsenGraph()).show()  # long time                               # optional - sage.plot
     """
     from sage.graphs.generators.basic import CompleteBipartiteGraph
     G = CompleteBipartiteGraph(3, 3)
@@ -4341,9 +4343,9 @@ def TietzeGraph():
         3
         sage: g.girth()
         3
-        sage: g.automorphism_group().cardinality()
+        sage: g.automorphism_group().cardinality()                                      # optional - sage.groups
         12
-        sage: g.automorphism_group().is_isomorphic(groups.permutation.Dihedral(6))
+        sage: g.automorphism_group().is_isomorphic(groups.permutation.Dihedral(6))      # optional - sage.groups
         True
     """
     g = Graph([(0, 9), (3, 10), (6, 11), (1, 5), (2, 7), (4, 8)],
@@ -4395,7 +4397,7 @@ def TruncatedTetrahedralGraph():
         Truncated Tetrahedron: Graph on 12 vertices
         sage: g.order(), g.size()
         (12, 18)
-        sage: g.is_isomorphic(polytopes.simplex(3).truncation().graph())
+        sage: g.is_isomorphic(polytopes.simplex(3).truncation().graph())                # optional - sage.geometry.polyhedron
         True
     """
     g = Graph(':K`ESwC_EOyDl\\MCi', loops=False, multiedges=False)
@@ -4414,16 +4416,16 @@ def Tutte12Cage():
 
     EXAMPLES::
 
-        sage: g = graphs.Tutte12Cage()
-        sage: g.order()
+        sage: g = graphs.Tutte12Cage()                                                  # optional - networkx
+        sage: g.order()                                                                 # optional - networkx
         126
-        sage: g.size()
+        sage: g.size()                                                                  # optional - networkx
         189
-        sage: g.girth()
+        sage: g.girth()                                                                 # optional - networkx
         12
-        sage: g.diameter()
+        sage: g.diameter()                                                              # optional - networkx
         6
-        sage: g.show()
+        sage: g.show()                                                                  # optional - networkx sage.plot
     """
     L = [17, 27, -13, -59, -35, 35, -11, 13, -53, 53, -27, 21, 57, 11,
          -21, -57, 59, -17]
@@ -4447,21 +4449,21 @@ def TutteCoxeterGraph(embedding=2):
 
     EXAMPLES::
 
-        sage: g = graphs.TutteCoxeterGraph()
-        sage: g.order()
+        sage: g = graphs.TutteCoxeterGraph()                                            # optional - networkx
+        sage: g.order()                                                                 # optional - networkx
         30
-        sage: g.size()
+        sage: g.size()                                                                  # optional - networkx
         45
-        sage: g.girth()
+        sage: g.girth()                                                                 # optional - networkx
         8
-        sage: g.diameter()
+        sage: g.diameter()                                                              # optional - networkx
         4
-        sage: g.show()
-        sage: graphs.TutteCoxeterGraph(embedding=1).show()  # long time
+        sage: g.show()                                                                  # optional - networkx sage.plot
+        sage: graphs.TutteCoxeterGraph(embedding=1).show()  # long time                 # optional - networkx sage.plot
 
     TESTS::
 
-        sage: graphs.TutteCoxeterGraph(embedding=3)
+        sage: graphs.TutteCoxeterGraph(embedding=3)                                     # optional - networkx
         Traceback (most recent call last):
         ...
         ValueError: the value of embedding must be 1 or 2
@@ -4514,7 +4516,7 @@ def TutteGraph():
         3
         sage: g.girth()
         4
-        sage: g.automorphism_group().cardinality()
+        sage: g.automorphism_group().cardinality()                                      # optional - sage.groups
         3
         sage: g.is_hamiltonian()
         False
@@ -4560,16 +4562,16 @@ def WagnerGraph():
 
     EXAMPLES::
 
-        sage: g = graphs.WagnerGraph()
-        sage: g.order()
+        sage: g = graphs.WagnerGraph()                                                  # optional - networkx
+        sage: g.order()                                                                 # optional - networkx
         8
-        sage: g.size()
+        sage: g.size()                                                                  # optional - networkx
         12
-        sage: g.girth()
+        sage: g.girth()                                                                 # optional - networkx
         4
-        sage: g.diameter()
+        sage: g.diameter()                                                              # optional - networkx
         2
-        sage: g.show()
+        sage: g.show()                                                                  # optional - networkx sage.plot
     """
     from sage.graphs.generators.families import LCFGraph
     g = LCFGraph(8, [4], 8)

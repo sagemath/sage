@@ -38,6 +38,7 @@ from sage.rings.number_field.number_field import CyclotomicField
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.power_series_ring import PowerSeriesRing
 from sage.rings.qqbar import QQbar
+from sage.rings.polynomial.multi_polynomial_sequence import PolynomialSequence
 
 
 class FinitelyGeneratedMatrixGroup_gap(MatrixGroup_gap):
@@ -898,9 +899,23 @@ class FinitelyGeneratedMatrixGroup_gap(MatrixGroup_gap):
         inv = set()
         for e in IntegerVectors(deg, D):
             F = self.reynolds_operator(R.monomial(*e), chi=chi)
-            if not F.is_zero():
-                F = F / F.lc()
+            if not F.is_zero() and _new_invariant_is_linearly_independent((F:=F/F.lc()), inv):
                 inv.add(F)
                 if len(inv) == ms[deg]:
                     break
         return list(inv)
+
+def _new_invariant_is_linearly_independent(F, invariants):
+    """
+    EXAMPLES ::
+        sage: gens = [matrix(QQ, [[-1,1],[-1,0]]), matrix(QQ, [[0,1],[1,0]])]
+        sage: G = MatrixGroup(gens)
+        sage: s = Sequence(G.invariants_of_degree(14))
+        sage: s.coefficient_matrix()[0].rank()
+        3
+        sage: len(s)
+        3
+    """
+    if len(invariants)==0:
+        return True
+    return PolynomialSequence(invariants).coefficient_matrix()[0].rank() != PolynomialSequence(list(invariants)+[F]).coefficient_matrix()[0].rank()

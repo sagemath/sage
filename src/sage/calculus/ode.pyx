@@ -324,14 +324,15 @@ class ode_solver():
     following (WARNING: the following is *not* automatically
     doctested)::
 
-        sage: T = ode_solver()                               # not tested
-        sage: T.algorithm = "bsimp"                          # not tested
-        sage: vander = van_der_pol()                         # not tested
-        sage: T.function = vander                            # not tested
-        sage: T.ode_solve(y_0=[1, 0], t_span=[0, 2000],      # not tested
+        sage: # not tested
+        sage: T = ode_solver()
+        sage: T.algorithm = "bsimp"
+        sage: vander = van_der_pol()
+        sage: T.function = vander
+        sage: T.ode_solve(y_0=[1, 0], t_span=[0, 2000],
         ....:             num_points=1000)
-        sage: from tempfile import NamedTemporaryFile        # not tested
-        sage: with NamedTemporaryFile(suffix=".png") as f:   # not tested
+        sage: from tempfile import NamedTemporaryFile
+        sage: with NamedTemporaryFile(suffix=".png") as f:
         ....:     T.plot_solution(i=0, filename=f.name)
 
     """
@@ -401,9 +402,8 @@ class ode_solver():
             G.save(filename=filename)
 
     def ode_solve(self,t_span=False,y_0=False,num_points=False,params=[]):
-        import inspect
         cdef double h # step size
-        h=self.h
+        h = self.h
         cdef int i
         cdef int j
         cdef int type
@@ -435,7 +435,6 @@ class ode_solver():
             elif self.params!=[]:
                 wrapper.the_parameters = self.params
             wrapper.y_n = dim
-
 
         cdef double t
         cdef double t_end
@@ -478,13 +477,11 @@ class ode_solver():
         else:
             raise TypeError("algorithm not valid")
 
-
         cdef gsl_odeiv_step * s
         s  = gsl_odeiv_step_alloc (T, dim)
         if s==NULL:
             sig_free(y)
             raise MemoryError("error setting up solver")
-
 
         cdef gsl_odeiv_control * c
 
@@ -507,7 +504,6 @@ class ode_solver():
             sig_free(scale_abs_array)
             raise MemoryError("error setting up solver")
 
-
         cdef gsl_odeiv_evolve * e
         e  = gsl_odeiv_evolve_alloc(dim)
 
@@ -517,7 +513,6 @@ class ode_solver():
             sig_free(y)
             sig_free(scale_abs_array)
             raise MemoryError("error setting up solver")
-
 
         cdef gsl_odeiv_system sys
         if type:               # The user has passed a class with a compiled function, use that for the system
@@ -530,7 +525,6 @@ class ode_solver():
             sys.jacobian = c_jac
             sys.params = <void *> wrapper
         sys.dimension = dim
-
 
         cdef int status
         import copy
@@ -593,12 +587,11 @@ class ode_solver():
                         sig_free(scale_abs_array)
                         raise ValueError("error solving")
 
-                for j from 0<=j<dim:
-                    v[j]=<double> y[j]
-                result.append( (t,copy.copy(v)) )
+                for j in range(dim):
+                    v[j] = <double> y[j]
+                result.append((t, copy.copy(v)))
 
-                t=self.t_span[i]
-
+                t = self.t_span[i]
 
         gsl_odeiv_evolve_free (e)
         gsl_odeiv_control_free (c)

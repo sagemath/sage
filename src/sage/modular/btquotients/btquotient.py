@@ -57,7 +57,6 @@ from sage.misc.verbose import verbose
 from sage.modular.arithgroup.all import Gamma0
 from sage.modular.arithgroup.congroup_gammaH import GammaH_constructor
 from sage.modular.dirichlet import DirichletGroup
-lazy_import("sage.plot.colors", "rainbow")
 from sage.quadratic_forms.quadratic_form import QuadraticForm
 from sage.rings.finite_rings.finite_field_constructor import GF
 from sage.rings.finite_rings.integer_mod_ring import Zmod
@@ -69,6 +68,7 @@ from sage.rings.padics.precision_error import PrecisionError
 from sage.rings.rational_field import QQ
 from sage.structure.sage_object import SageObject
 from sage.structure.unique_representation import UniqueRepresentation
+lazy_import("sage.plot.colors", "rainbow")
 
 
 class DoubleCosetReduction(SageObject):
@@ -412,7 +412,7 @@ class BruhatTitsTree(SageObject, UniqueRepresentation):
         sage: T = BruhatTitsTree(4)
         Traceback (most recent call last):
         ...
-        ValueError: Input (4) must be prime
+        ValueError: input (4) must be prime
 
     AUTHORS:
 
@@ -428,8 +428,8 @@ class BruhatTitsTree(SageObject, UniqueRepresentation):
             sage: T = BruhatTitsTree(17)
             sage: TestSuite(T).run()
         """
-        if not(ZZ(p).is_prime()):
-            raise ValueError('Input (%s) must be prime' % p)
+        if not ZZ(p).is_prime():
+            raise ValueError(f'input ({p}) must be prime')
         self._p = ZZ(p)
         self._Mat_22 = MatrixSpace(ZZ, 2, 2)
         self._mat_p001 = self._Mat_22([self._p, 0, 0, 1])
@@ -1435,7 +1435,8 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
             True
         """
         return super().__classcall__(cls, p, Nminus, Nplus,
-               character, use_magma, seed, magma_session)
+                                     character, use_magma,
+                                     seed, magma_session)
 
     def __init__(self, p, Nminus, Nplus=1, character=None,
                  use_magma=False, seed=None, magma_session=None):
@@ -2283,7 +2284,7 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
             self._II = M([0, a, 1, 0])
             z = 0
             self._JJ = 0
-            while(self._JJ == 0):
+            while self._JJ == 0:
                 c = a * z * z + b
                 if c.is_square():
                     x = c.sqrt()

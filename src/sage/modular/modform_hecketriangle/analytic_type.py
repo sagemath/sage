@@ -11,14 +11,14 @@ AUTHORS:
 
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2013-2014 Jonas Jermann <jjermann2@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
 #                  https://www.gnu.org/licenses/
-#*****************************************************************************
+# ****************************************************************************
 
 from sage.sets.set import Set
 from sage.combinat.posets.posets import Poset, FinitePoset
@@ -68,7 +68,7 @@ class AnalyticTypeElement(LatticePosetElement):
     """
 
     # We use the same constructor as LatticePosetElement
-    #def __init__(self, poset, element, vertex):
+    # def __init__(self, poset, element, vertex):
     #    super().__init__(poset, element, vertex)
 
     def _repr_(self):
@@ -437,14 +437,14 @@ class AnalyticType(FiniteLatticePoset):
             zero
         """
         # We (arbitrarily) choose to model by inclusion instead of restriction
-        P_elements = [ "cusp", "holo", "weak", "mero", "quasi"]
+        P_elements = ["cusp", "holo", "weak", "mero", "quasi"]
         P_relations = [["cusp", "holo"], ["holo", "weak"], ["weak", "mero"]]
 
         self._base_poset = Poset([P_elements, P_relations], cover_relations=True,
                                  linear_extension=True, facade=False)
 
         L = self._base_poset.order_ideals_lattice()
-        H = L._hasse_diagram.relabel({i:x for i,x in enumerate(L._elements)},
+        H = L._hasse_diagram.relabel({i: x for i, x in enumerate(L._elements)},
                                      inplace=False)
         FiniteLatticePoset.__init__(self, hasse_diagram=H,
                                     elements=L._elements, category=L.category(),
@@ -527,19 +527,20 @@ class AnalyticType(FiniteLatticePoset):
         if isinstance(element, str):
             element = [element]
         if isinstance(element, (list, tuple)):
-            element = Set(self._base_poset.order_ideal([self._base_poset(s) for s in element]))
+            element = Set(self._base_poset.order_ideal([self._base_poset(s)
+                                                        for s in element]))
 
         return super()._element_constructor_(element)
 
-        #res = self.first()
-        #for element in args:
+        # res = self.first()
+        # for element in args:
         #    if type(element)==str:
         #        element=[element]
         #    if isinstance(element,list) or isinstance(element,tuple):
         #        element = Set(self._base_poset.order_ideal([self._base_poset(s) for s in element]))
         #    element = super()._element_constructor_(element)
         #    res += element
-        #return res
+        # return res
 
     def base_poset(self):
         r"""

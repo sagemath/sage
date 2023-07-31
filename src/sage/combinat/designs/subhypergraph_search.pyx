@@ -119,7 +119,7 @@ Methods
 
 from libc.stdlib cimport qsort
 from libc.stdint cimport uint64_t
-from cysignals.memory cimport sig_malloc, sig_calloc, sig_realloc, sig_free
+from cysignals.memory cimport sig_malloc, sig_calloc, sig_free
 
 ctypedef struct hypergraph:
     int n
@@ -444,8 +444,8 @@ cdef class SubHypergraphSearch:
 
         EXAMPLES::
 
-            sage: d = designs.projective_plane(3)
-            sage: d.isomorphic_substructures_iterator(d).relabel_heuristic()
+            sage: d = designs.projective_plane(3)                                       # needs sage.schemes
+            sage: d.isomorphic_substructures_iterator(d).relabel_heuristic()            # needs sage.schemes
         """
         cdef hypergraph h2 = self.h2
         cdef int x,y,i
@@ -490,7 +490,6 @@ cdef class SubHypergraphSearch:
         cdef hypergraph h1 = self.h1
         cdef hypergraph h2 = self.h2
         cdef hypergraph tmp1 = self.tmp1
-        cdef hypergraph tmp2 = self.tmp2
         cdef int * step = self.step
 
         if h1.n<h2.n or h1.m<h2.m:
