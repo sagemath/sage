@@ -319,17 +319,18 @@ lässt. Diese Liste wird verwaltet durch die Befehle
 ``latex.add_to_mathjax_avoid_list`` und
 ``latex.mathjax_avoid_list``. ::
 
-    sage: latex.mathjax_avoid_list([])  # not tested
-    sage: latex.mathjax_avoid_list()    # not tested
+    sage: # not tested
+    sage: latex.mathjax_avoid_list([])
+    sage: latex.mathjax_avoid_list()
     []
-    sage: latex.mathjax_avoid_list(['foo', 'bar'])  # not tested
-    sage: latex.mathjax_avoid_list()                # not tested
+    sage: latex.mathjax_avoid_list(['foo', 'bar'])
+    sage: latex.mathjax_avoid_list()
     ['foo', 'bar']
-    sage: latex.add_to_mathjax_avoid_list('tikzpicture')  # not tested
-    sage: latex.mathjax_avoid_list()                      # not tested
+    sage: latex.add_to_mathjax_avoid_list('tikzpicture')
+    sage: latex.mathjax_avoid_list()
     ['foo', 'bar', 'tikzpicture']
-    sage: latex.mathjax_avoid_list([])  # not tested
-    sage: latex.mathjax_avoid_list()    # not tested
+    sage: latex.mathjax_avoid_list([])
+    sage: latex.mathjax_avoid_list()
     []
 
 Nehmen wir an ein LaTeX-Ausdruck wurde im Notebook durch ``view()``
