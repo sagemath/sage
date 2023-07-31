@@ -289,8 +289,6 @@ class DynamicalSemigroup(Parent, metaclass=InheritComparisonClasscallMetaclass):
                     (x^2 : y^2)
         """
 
-        self._domain = systems[0].domain()
-        self._codomain = systems[0].codomain()
         self._dynamical_systems = systems
         Parent.__init__(self, category=Semigroups().FinitelyGeneratedAsMagma())
 
@@ -329,7 +327,7 @@ class DynamicalSemigroup(Parent, metaclass=InheritComparisonClasscallMetaclass):
             TypeError: unable to convert (2 : 1) to an element of Rational Field
         """
         result = []
-        for ds in self._dynamical_systems:
+        for ds in self.defining_systems():
             result.append(ds(self.domain()(input)))
         return tuple(result)
 
@@ -347,7 +345,7 @@ class DynamicalSemigroup(Parent, metaclass=InheritComparisonClasscallMetaclass):
             sage: f.base_ring()
             Rational Field
         """
-        return self._dynamical_systems[0].base_ring()
+        return self.defining_systems()[0].base_ring()
 
     def change_ring(self, new_ring):
         r"""
@@ -377,7 +375,7 @@ class DynamicalSemigroup(Parent, metaclass=InheritComparisonClasscallMetaclass):
                     (x^2 : y^2)
         """
         new_systems = []
-        for ds in self._dynamical_systems:
+        for ds in self.defining_systems():
             new_systems.append(ds.change_ring(new_ring))
         return DynamicalSemigroup_projective(new_systems)
 
@@ -394,7 +392,7 @@ class DynamicalSemigroup(Parent, metaclass=InheritComparisonClasscallMetaclass):
             sage: f.domain()
             Projective Space of dimension 1 over Rational Field
         """
-        return self._domain
+        return self.defining_systems()[0].domain()
 
     def codomain(self):
         r"""
@@ -409,7 +407,7 @@ class DynamicalSemigroup(Parent, metaclass=InheritComparisonClasscallMetaclass):
             sage: f.codomain()
             Projective Space of dimension 1 over Rational Field
         """
-        return self._codomain
+        return self.defining_systems()[0].codomain()
 
     def defining_polynomials(self):
         r"""
@@ -425,7 +423,7 @@ class DynamicalSemigroup(Parent, metaclass=InheritComparisonClasscallMetaclass):
             ((x, y), (x^2, y^2))
         """
         result = []
-        for ds in self._dynamical_systems:
+        for ds in self.defining_systems():
             result.append(ds.defining_polynomials())
         return tuple(result)
 
@@ -468,12 +466,12 @@ class DynamicalSemigroup(Parent, metaclass=InheritComparisonClasscallMetaclass):
                     (x^2 : y^2)
         """
         header = "Dynamical semigroup over %s defined by %d dynamical system"
-        if (len(self._dynamical_systems) > 1):
+        if (len(self.defining_systems()) > 1):
             header += "s"
         header += ":"
-        header = header % (str(self.domain()), len(self._dynamical_systems))
+        header = header % (str(self.domain()), len(self.defining_systems()))
         systems = []
-        for ds in self._dynamical_systems:
+        for ds in self.defining_systems():
             systems.append(str(ds))
         systems = '\n'.join(systems)
         return header + "\n" + systems
@@ -484,36 +482,64 @@ class DynamicalSemigroup(Parent, metaclass=InheritComparisonClasscallMetaclass):
 
         OUTPUT:
 
-        A boolean that is True if and only if the two dynamical semigroups contain
-        the same dynamical systems in the same order.
+        A boolean that is True if and only if the generators of the two
+        dynamical semigroups are equal as sets and no generator is of degree 1.
 
         EXAMPLES::
 
             sage: P.<x,y> = ProjectiveSpace(QQ, 1)
-            sage: f = DynamicalSemigroup(([x, y], [x^2, y^2]))
-            sage: g = DynamicalSemigroup(([x, y], [x^2, y^2]))
+            sage: f = DynamicalSemigroup(([x^2, y^2], [x^3, y^3]))
+            sage: g = DynamicalSemigroup(([x^2, y^2], [x^3, y^3]))
             sage: f == g
             True
 
         ::
 
             sage: P.<x,y> = ProjectiveSpace(QQ, 1)
-            sage: f = DynamicalSemigroup(([x, y], [x^2, y^2]))
-            sage: g = DynamicalSemigroup(([x^2, y^2], [x, y]))
+            sage: f = DynamicalSemigroup(([x^2, y^2], [x^2, y^2]))
+            sage: g = DynamicalSemigroup(([x^2, y^2], [x^2, y^2], [x^2, y^2]))
             sage: f == g
             True
 
         ::
 
             sage: P.<x,y> = ProjectiveSpace(QQ, 1)
-            sage: f = DynamicalSemigroup(([x, y], [x^2, y^2]))
-            sage: g = DynamicalSemigroup(([x^2, y^2], [y, x]))
+            sage: f = DynamicalSemigroup(([x^3, y^3], [x^2, y^2]))
+            sage: g = DynamicalSemigroup(([x^2, y^2], [x^3, y^3]))
+            sage: f == g
+            True
+
+        ::
+
+            sage: P.<x,y> = ProjectiveSpace(QQ, 1)
+            sage: f = DynamicalSemigroup(([x^3, y^3], [x^2, y^2]))
+            sage: g = DynamicalSemigroup(([x^2, y^2], [y^3, x^3]))
             sage: f == g
             False
+
+        TESTS::
+
+            sage: P.<x,y> = ProjectiveSpace(QQ, 1)
+            sage: f = DynamicalSemigroup(([x, y], [x^2, y^2]))
+            sage: f == 1
+            False
+
+        ::
+
+            sage: P.<x,y> = ProjectiveSpace(QQ, 1)
+            sage: f = DynamicalSemigroup(([x, y], [x^2, y^2]))
+            sage: g = DynamicalSemigroup(([x^2, y^2], [x^3, y^3]))
+            sage: f == g
+            Traceback (most recent call last):
+            ...
+            ValueError: cannot compare dynamical semigroups with at least one generator of degree 1
         """
         if isinstance(other, DynamicalSemigroup):
-            return len(self._dynamical_systems) == len(other._dynamical_systems) and \
-                all(systems in other._dynamical_systems for systems in self._dynamical_systems)
+            if any(ds.degree() == 1 for ds in self.defining_systems()) or \
+                any(ds.degree() == 1 for ds in other.defining_systems()):
+                raise ValueError("cannot compare dynamical semigroups with at least one generator of degree 1")
+            return all(ds in other.defining_systems() for ds in self.defining_systems()) and \
+                all(ds in self.defining_systems() for ds in other.defining_systems())
         return False
 
 class DynamicalSemigroup_projective(DynamicalSemigroup):
@@ -702,8 +728,8 @@ def _standardize_domains_of_(systems):
             elif biggest_ring.has_coerce_map_from(ds.base_ring()):
                 pass
             else:
-                raise ValueError("given dynamical systems are not automorphic"
-                                " under global composition")
+                raise ValueError("given dynamical systems are not automorphic \
+                                under global composition")
 
     for i in range(len(systems)):
         if systems[i].base_ring() != biggest_ring:
