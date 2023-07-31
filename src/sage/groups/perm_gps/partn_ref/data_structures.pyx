@@ -33,7 +33,10 @@ from cysignals.memory cimport sig_malloc, sig_calloc, sig_realloc, sig_free
 
 from sage.data_structures.bitset_base cimport *
 from sage.rings.integer cimport Integer
-from sage.libs.flint.ulong_extras cimport n_is_prime
+# from sage.libs.flint.ulong_extras cimport n_is_prime
+# -- avoid modularization obstruction -- function is only used for a doctest helper
+from sage.arith.misc import is_prime as n_is_prime
+
 
 # OrbitPartition (OP)
 
@@ -281,8 +284,7 @@ cdef PS_print_partition(PartitionStack *PS, int k):
     s = s[:-1] + ')'
     print(s)
 
-cdef int PS_first_smallest(PartitionStack *PS, bitset_t b, int *second_pos=NULL,
-                           PartitionRefinement_generic partn_ref_alg=None):
+cdef int PS_first_smallest(PartitionStack *PS, bitset_t b, int *second_pos=NULL):
     """
     Find the first occurrence of the smallest cell of size greater than one,
     which is admissible (checked by the function ``test_allowance``).
@@ -290,10 +292,9 @@ cdef int PS_first_smallest(PartitionStack *PS, bitset_t b, int *second_pos=NULL,
     """
     cdef int i = 0, j = 0, location = 0, n = PS.degree
     bitset_zero(b)
-    while 1:
+    while True:
         if PS.levels[i] <= PS.depth:
-            if i != j and n > i - j + 1 and (partn_ref_alg is None or
-                                partn_ref_alg._minimization_allowed_on_col(PS.entries[j])):
+            if i != j and n > i - j + 1:
                 n = i - j + 1
                 location = j
             j = i + 1
@@ -303,18 +304,17 @@ cdef int PS_first_smallest(PartitionStack *PS, bitset_t b, int *second_pos=NULL,
     # location now points to the beginning of the first, smallest,
     # nontrivial cell
     i = location
-    while 1:
+    while True:
         bitset_flip(b, PS.entries[i])
         if PS.levels[i] <= PS.depth:
             break
         i += 1
 
     if second_pos != NULL:
-        if n==2:
-            second_pos[0] = PS.entries[location+1]
+        if n == 2:
+            second_pos[0] = PS.entries[location + 1]
         else:
             second_pos[0] = -1
-
 
     return PS.entries[location]
 
