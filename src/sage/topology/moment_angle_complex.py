@@ -214,14 +214,32 @@ class MomentAngleComplex(SageObject, UniqueRepresentation):
 
     @staticmethod
     def __classcall_private__(cls, simplicial_complex):
-        if not isinstance(simplicial_complex, SimplicialComplex):
-            immutable_complex = SimplicialComplex(simplicial_complex, is_mutable=False)
-        elif simplicial_complex.is_mutable():
-            immutable_complex = SimplicialComplex(simplicial_complex, is_mutable=False)
+        """
+        TESTS::
+
+            sage: MomentAngleComplex([[0,2], [1,2,3]]) is MomentAngleComplex([[0,2], [1,2,3]])
+            True
+            sage: Z = MomentAngleComplex([[0,2], [1,2,3]])
+            sage: Z is MomentAngleComplex(Z)
+            True
+        """
+        if simplicial_complex:
+            if isinstance(simplicial_complex, MomentAngleComplex):
+                # Allows for copy constructor
+                immutable_complex = SimplicialComplex(simplicial_complex._simplicial_complex, is_mutable=False)
+            elif not isinstance(simplicial_complex, SimplicialComplex):
+                # Try to create a SimplicialComplex out of simplicial_complex
+                # in case that simplicial_complex is a list of facets, or
+                # something that can generate a SimplicialComplex
+                immutable_complex = SimplicialComplex(simplicial_complex, is_mutable=False)
+            elif simplicial_complex.is_mutable():
+                immutable_complex = SimplicialComplex(simplicial_complex, is_mutable=False)
+            else:
+                immutable_complex = simplicial_complex
         else:
-            immutable_complex = simplicial_complex
+            immutable_complex = SimplicialComplex(is_mutable=False)
         return super().__classcall__(cls, immutable_complex)
-        #behaviour for None?
+        #behaviour for MomentAngleComplex()? maybe allow for simplexes?
 
     def _repr_(self):
         """
