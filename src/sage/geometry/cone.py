@@ -844,7 +844,7 @@ class IntegralRayCollection(SageObject, Hashable, Iterable):
             sage: c2 is c3
             False
         """
-        if type(self) != type(right):
+        if not isinstance(right, IntegralRayCollection):
             return NotImplemented
 
         # We probably do need to have explicit comparison of lattices here

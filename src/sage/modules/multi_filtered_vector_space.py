@@ -490,7 +490,7 @@ class MultiFilteredVectorSpace_class(FreeModule_ambient_field):
             sage: V == MultiFilteredVectorSpace({'a':F1, 'b':F2})
             False
         """
-        if type(self) != type(other):
+        if not isinstance(other, MultiFilteredVectorSpace_class):
             return False
         return self._filt == other._filt
 

@@ -951,7 +951,7 @@ class ToricLattice_ambient(ToricLattice_generic, FreeModule_ambient_pid):
         """
         if self is right:
             return rich_to_bool(op, 0)
-        if type(self) != type(right):
+        if not isinstance(right, ToricLattice_ambient):
             return NotImplemented
 
         lx = self.rank()
