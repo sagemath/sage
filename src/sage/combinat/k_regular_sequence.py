@@ -1038,6 +1038,115 @@ class kRegularSequence(RecognizableSeries):
         return self.subsequence(1, {1: 1, 0: -1}, **kwds)
 
     @minimize_result
+    def _mul_(self, other):
+        r"""
+        Return the product of this `k`-regular sequence with ``other``,
+        where the multiplication is convolution of power series.
+
+        The operator `*` is mapped to :meth:`convolution`.
+
+        INPUT:
+
+        - ``other`` -- a :class:`kRegularSequence`
+
+        - ``minimize`` -- (default: ``None``) a boolean or ``None``.
+          If ``True``, then :meth:`~RecognizableSeries.minimized` is called after the operation,
+          if ``False``, then not. If this argument is ``None``, then
+          the default specified by the parent's ``minimize_results`` is used.
+
+        OUTPUT:
+
+        A :class:`kRegularSequence`
+
+        ALGORITHM:
+
+        See pdf attached to
+        `github pull request #35894 <https://github.com/sagemath/sage/pull/35894>`_
+        which contains a draft describing the details of the used algorithm.
+
+        EXAMPLES::
+
+            sage: Seq2 = kRegularSequenceSpace(2, ZZ)
+            sage: E = Seq2((Matrix([[0, 1], [0, 1]]), Matrix([[0, 0], [0, 1]])),
+            ....:          vector([1, 0]), vector([1, 1]))
+            sage: E
+            2-regular sequence 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, ...
+
+        We can build the convolution (in the sense of power-series) of `E` by
+        itself via::
+
+            sage: E.convolution(E)
+            2-regular sequence 1, 0, 2, 0, 3, 0, 4, 0, 5, 0, ...
+
+        This is the same as using multiplication operator::
+
+            sage: E * E
+            2-regular sequence 1, 0, 2, 0, 3, 0, 4, 0, 5, 0, ...
+
+        Building :meth:`partial_sums` can also be seen as a convolution::
+
+            sage: o = Seq2.one_hadamard()
+            sage: E * o
+            2-regular sequence 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, ...
+            sage: E * o == E.partial_sums(include_n=True)
+            True
+
+        TESTS::
+
+            sage: E * o == o * E
+            True
+        """
+        from sage.arith.srange import srange
+        from sage.matrix.constructor import Matrix
+        from sage.matrix.special import zero_matrix
+        from sage.modules.free_module_element import vector
+
+        P = self.parent()
+        k = P.k
+
+        def tensor_product(left, right):
+            T = left.tensor_product(right)
+            T.subdivide()
+            return T
+
+        matrices_0 = {r: sum(tensor_product(self.mu[s], other.mu[r-s])
+                             for s in srange(0, r+1))
+                      for r in P.alphabet()}
+        matrices_1 = {r: sum(tensor_product(self.mu[s], other.mu[k+r-s])
+                             for s in srange(r+1, k))
+                      for r in P.alphabet()}
+        left = vector(tensor_product(Matrix(self.left), Matrix(other.left)))
+        right = vector(tensor_product(Matrix(self.right), Matrix(other.right)))
+
+        def linear_representation_morphism_recurrence_order_1(C, D):
+            r"""
+                Return the morphism of a linear representation
+                for the sequence `z_n` satisfying
+                `z_{kn+r} = C_r z_n + D_r z_{n-1}`.
+            """
+            Z = zero_matrix(C[0].dimensions()[0])
+
+            def blocks(r):
+                upper = list([C[s], D[s], Z]
+                             for s in reversed(srange(max(0, r-2), r+1)))
+                lower = list([Z, C[s], D[s]]
+                             for s in reversed(srange(k-3+len(upper), k)))
+                return upper + lower
+
+            return {r: Matrix.block(blocks(r)) for r in P.alphabet()}
+
+        result = P.element_class(
+            P,
+            linear_representation_morphism_recurrence_order_1(matrices_0,
+                                                              matrices_1),
+            vector(list(left) + (2*len(list(left)))*[0]),
+            vector(list(right) + (2*len(list(right)))*[0]))
+
+        return result
+
+    convolution = _mul_
+
+    @minimize_result
     def partial_sums(self, include_n=False):
         r"""
         Return the sequence of partial sums of this
@@ -1223,7 +1332,10 @@ class kRegularSequenceSpace(RecognizableSeriesSpace):
     Element = kRegularSequence
 
     @classmethod
-    def __normalize__(cls, k, coefficient_ring, **kwds):
+    def __normalize__(cls, k,
+                      coefficient_ring,
+                      category=None,
+                      **kwds):
         r"""
         Normalizes the input in order to ensure a unique
         representation.
@@ -1234,13 +1346,17 @@ class kRegularSequenceSpace(RecognizableSeriesSpace):
 
             sage: Seq2 = kRegularSequenceSpace(2, ZZ)
             sage: Seq2.category()
-            Category of modules over Integer Ring
+            Category of algebras over Integer Ring
             sage: Seq2.alphabet()
             {0, 1}
         """
         from sage.arith.srange import srange
+        from sage.categories.algebras import Algebras
+        category = category or Algebras(coefficient_ring)
         nargs = super().__normalize__(coefficient_ring,
-                                      alphabet=srange(k), **kwds)
+                                      alphabet=srange(k),
+                                      category=category,
+                                      **kwds)
         return (k,) + nargs
 
     def __init__(self, k, *args, **kwds):
@@ -1330,6 +1446,39 @@ class kRegularSequenceSpace(RecognizableSeriesSpace):
             return W(n.digits(self.k))
         except OverflowError:
             raise ValueError('value {} of index is negative'.format(n)) from None
+
+    @cached_method
+    def one(self):
+        r"""
+        Return the one element of this :class:`kRegularSequenceSpace`,
+        i.e. the unique neutral element for `*` and also
+        the embedding of the one of the coefficient ring into
+        this :class:`kRegularSequenceSpace`.
+
+        EXAMPLES::
+
+            sage: Seq2 = kRegularSequenceSpace(2, ZZ)
+            sage: O = Seq2.one(); O
+            2-regular sequence 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, ...
+            sage: O.linear_representation()
+            ((1), Finite family {0: [1], 1: [0]}, (1))
+
+        TESTS::
+
+            sage: Seq2.one() is Seq2.one()
+            True
+        """
+        from sage.matrix.constructor import Matrix
+        from sage.modules.free_module_element import vector
+
+        R = self.coefficient_ring()
+        one = R.one()
+        zero = R.zero()
+        return self.element_class(self,
+                                  [Matrix([[one]])]
+                                  + (self.k-1)*[Matrix([[zero]])],
+                                  vector([one]),
+                                  vector([one]))
 
     def some_elements(self):
         r"""
