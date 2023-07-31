@@ -573,6 +573,26 @@ class DynamicalSemigroup(Parent, metaclass=InheritComparisonClasscallMetaclass):
         EXAMPLES::
 
             sage: P.<x,y> = ProjectiveSpace(QQ, 1)
+            sage: f1 = DynamicalSystem([x^10, y^10], P)
+            sage: f = DynamicalSemigroup(f1)
+            sage: f*f
+            Dynamical semigroup over Projective Space of dimension 1 over Rational Field defined by 1 dynamical system:
+            Dynamical System of Projective Space of dimension 1 over Rational Field
+              Defn: Defined on coordinates by sending (x : y) to
+                    (x^100 : y^100)
+
+        ::
+
+            sage: A.<x> = AffineSpace(QQ, 1)
+            sage: f1 = DynamicalSystem_affine(x^10, A)
+            sage: f = DynamicalSemigroup(f1)
+            sage: f*f
+            Dynamical semigroup over Affine Space of dimension 1 over Rational Field defined by 1 dynamical system:
+            Dynamical System of Affine Space of dimension 1 over Rational Field
+              Defn: Defined on coordinates by sending (x) to
+                    (x^100)
+
+            sage: P.<x,y> = ProjectiveSpace(QQ, 1)
             sage: f1 = DynamicalSystem([x^2 + x * y, y^2 + x * y], P)
             sage: g1 = DynamicalSystem([x^3 + x^2 * y, y^3 + x * y^2], P)
             sage: f = DynamicalSemigroup(f1)
@@ -690,7 +710,7 @@ class DynamicalSemigroup(Parent, metaclass=InheritComparisonClasscallMetaclass):
         composite_systems = []
         for f in self.defining_systems():
             for g in other_dynamical_semigroup.defining_systems():
-                composite_systems.append(f*g)
+                composite_systems.append(DynamicalSystem(f*g))
         return DynamicalSemigroup(composite_systems)
 
     def __pow__(self, n):
@@ -708,17 +728,115 @@ class DynamicalSemigroup(Parent, metaclass=InheritComparisonClasscallMetaclass):
 
             sage: A.<x> = AffineSpace(QQ, 1)
             sage: f = DynamicalSystem(x^2, A)
-            sage: d = DynamicalSemigroup_affine(f)
+            sage: d = DynamicalSemigroup(f)
             sage: d^2
+            Dynamical semigroup over Affine Space of dimension 1 over Rational Field defined by 1 dynamical system:
+            Dynamical System of Affine Space of dimension 1 over Rational Field
+              Defn: Defined on coordinates by sending (x) to
+                    (x^4)
+
+        ::
+
+            sage: A.<x, y, z, w, t, u ,v> = AffineSpace(QQ, 7)
+            sage: f = DynamicalSystem([t + u, v - w, x + y, z^2, u * t, v^2 - w^2, x * y * z], A)
+            sage: d = DynamicalSemigroup(f)
+            sage: d^0
+            Dynamical semigroup over Affine Space of dimension 7 over Rational Field defined by 1 dynamical system:
+            Dynamical System of Affine Space of dimension 7 over Rational Field
+              Defn: Defined on coordinates by sending (x, y, z, w, t, u, v) to
+                    (x, y, z, w, t, u, v)
+
+        TESTS::
+
+            sage: A.<x> = AffineSpace(QQ, 1)
+            sage: f1 = DynamicalSystem(x^2 + 1, A)
+            sage: f2 = DynamicalSystem(x^3 - 1, A)
+            sage: d = DynamicalSemigroup(f)
+            sage: d*d == d^2
+            True
+
+        ::
+
+            sage: A.<x> = AffineSpace(QQ, 1)
+            sage: f1 = DynamicalSystem(x^2 + 1, A)
+            sage: f2 = DynamicalSystem(x^3 - 1, A)
+            sage: d = DynamicalSemigroup(f)
+            sage: d^3 * d^2 == d^(3 + 2)
+            True
+
+        ::
+
+            sage: A.<x> = AffineSpace(QQ, 1)
+            sage: f1 = DynamicalSystem(x^2 + 1, A)
+            sage: f2 = DynamicalSystem(x^3 - 1, A)
+            sage: d = DynamicalSemigroup(f)
+            sage: (d^3)^2 == d^(3 * 2)
+            True
+
+        ::
+
+            sage: A.<x> = AffineSpace(QQ, 1)
+            sage: f1 = DynamicalSystem(x^2 + 1, A)
+            sage: f2 = DynamicalSystem(x^3 - 1, A)
+            sage: g1 = DynamicalSystem(x^3 + x - 1, A)
+            sage: g2 = DynamicalSystem(x^2 - x + 1, A)
+            sage: f = DynamicalSemigroup((f1, f2))
+            sage: g = DynamicalSemigroup((g1, g2))
+            sage: (f * g) ^ 2 == f^2 * g^2
             False
 
+        ::
+
+            sage: A.<x> = AffineSpace(QQ, 1)
+            sage: f1 = DynamicalSystem(x^2 + 1, A)
+            sage: f2 = DynamicalSystem(x^3 - 1, A)
+            sage: g1 = DynamicalSystem(x^3 + x - 1, A)
+            sage: g2 = DynamicalSystem(x^2 - x + 1, A)
+            sage: f = DynamicalSemigroup((f1, f2))
+            sage: g = DynamicalSemigroup((g1, g2))
+            sage: f * g^0 == f
+            True
+
+        ::
+
+            sage: A.<x> = AffineSpace(QQ, 1)
+            sage: f1 = DynamicalSystem(x^2 + 1, A)
+            sage: f2 = DynamicalSystem(x^3 - 1, A)
+            sage: g1 = DynamicalSystem(x^3 + x - 1, A)
+            sage: g2 = DynamicalSystem(x^2 - x + 1, A)
+            sage: f = DynamicalSemigroup((f1, f2))
+            sage: g = DynamicalSemigroup((g1, g2))
+            sage: g * f^0 == g
+            True
+
+        ::
+
+            sage: A.<x> = AffineSpace(QQ, 1)
+            sage: f1 = DynamicalSystem(x^2 + 1, A)
+            sage: f2 = DynamicalSystem(x^3 - 1, A)
+            sage: d = DynamicalSemigroup((f1, f2))
+            sage: d^1.5
+            Traceback (most recent call last):
+            ...
+            TypeError: 1.50000000000000 must be an integer
+
+        ::
+
+            sage: A.<x> = AffineSpace(QQ, 1)
+            sage: f1 = DynamicalSystem(x^2 + 1, A)
+            sage: f2 = DynamicalSystem(x^3 - 1, A)
+            sage: d = DynamicalSemigroup((f1, f2))
+            sage: d^(-1)
+            Traceback (most recent call last):
+            ...
+            ValueError: -1 must be a nonnegative integer
         """
         if not isinstance(n, Integer) and not isinstance(n, int):
             raise TypeError(str(n) + " must be an integer")
         if n < 0:
             raise ValueError(str(n) + " must be a nonnegative integer")
         if n == 0:
-            return DynamicalSemigroup(self.defining_systems()[0] ** 0)
+            return DynamicalSemigroup(DynamicalSystem(self.defining_systems()[0] ** 0))
         result = self
         for i in range(n - 1):
             result = result * self
