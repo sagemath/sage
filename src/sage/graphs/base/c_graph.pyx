@@ -4819,7 +4819,7 @@ cdef class Search_iterator:
 
         Immutable graphs (see :trac:`16019`)::
 
-            sage: DiGraph([[1,2]], immutable=True).connected_components()
+            sage: DiGraph([(1, 2)], immutable=True).connected_components(sort=True)
             [[1, 2]]
 
         """
