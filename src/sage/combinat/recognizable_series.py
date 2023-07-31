@@ -1282,7 +1282,7 @@ class RecognizableSeries(ModuleElement):
 
         EXAMPLES::
 
-            sage: Seq2 = kRegularSequenceSpace(2, ZZ)
+            sage: Seq2 = RegularSequenceRing(2, ZZ)
             sage: E = Seq2((Matrix([[0, 1], [0, 1]]), Matrix([[0, 0], [0, 1]])),
             ....:          vector([1, 0]), vector([1, 1]))
             sage: E
@@ -1321,7 +1321,7 @@ class RecognizableSeries(ModuleElement):
 
         EXAMPLES::
 
-            sage: Seq2 = kRegularSequenceSpace(2, ZZ)
+            sage: Seq2 = RegularSequenceRing(2, ZZ)
             sage: E = Seq2((Matrix([[0, 1], [0, 1]]), Matrix([[0, 0], [0, 1]])),
             ....:          vector([1, 0]), vector([1, 1]))
             sage: -E
@@ -1348,7 +1348,7 @@ class RecognizableSeries(ModuleElement):
 
         EXAMPLES::
 
-            sage: Seq2 = kRegularSequenceSpace(2, ZZ)
+            sage: Seq2 = RegularSequenceRing(2, ZZ)
             sage: E = Seq2((Matrix([[0, 1], [0, 1]]), Matrix([[0, 0], [0, 1]])),
             ....:          vector([1, 0]), vector([1, 1]))
             sage: M = 2 * E  # indirect doctest
@@ -1412,7 +1412,7 @@ class RecognizableSeries(ModuleElement):
 
         EXAMPLES::
 
-            sage: Seq2 = kRegularSequenceSpace(2, ZZ)
+            sage: Seq2 = RegularSequenceRing(2, ZZ)
             sage: E = Seq2((Matrix([[0, 1], [0, 1]]), Matrix([[0, 0], [0, 1]])),
             ....:          vector([1, 0]), vector([1, 1]))
             sage: M = E * 2 # indirect doctest
@@ -1482,7 +1482,7 @@ class RecognizableSeries(ModuleElement):
 
         EXAMPLES::
 
-            sage: Seq2 = kRegularSequenceSpace(2, ZZ)
+            sage: Seq2 = RegularSequenceRing(2, ZZ)
 
             sage: E = Seq2((Matrix([[0, 1], [0, 1]]), Matrix([[0, 0], [0, 1]])),
             ....:          vector([1, 0]), vector([1, 1]))

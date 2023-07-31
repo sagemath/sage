@@ -20,7 +20,7 @@ Binary sum of digits
 The binary sum of digits `S(n)` of a nonnegative integer `n` satisfies
 `S(2n) = S(n)` and `S(2n+1) = S(n) + 1`. We model this by the following::
 
-    sage: Seq2 = kRegularSequenceSpace(2, ZZ)
+    sage: Seq2 = RegularSequenceRing(2, ZZ)
     sage: S = Seq2((Matrix([[1, 0], [0, 1]]), Matrix([[1, 0], [1, 1]])),
     ....:          left=vector([0, 1]), right=vector([1, 0]))
     sage: S
@@ -161,7 +161,7 @@ class DegeneratedSequenceError(RuntimeError):
 
     EXAMPLES::
 
-        sage: Seq2 = kRegularSequenceSpace(2, ZZ)
+        sage: Seq2 = RegularSequenceRing(2, ZZ)
         sage: Seq2((Matrix([2]), Matrix([3])), vector([1]), vector([1]))
         Traceback (most recent call last):
         ...
@@ -180,7 +180,7 @@ class kRegularSequence(RecognizableSeries):
 
         INPUT:
 
-        - ``parent`` -- an instance of :class:`kRegularSequenceSpace`
+        - ``parent`` -- an instance of :class:`RegularSequenceRing`
 
         - ``mu`` -- a family of square matrices, all of which have the
           same dimension. The indices of this family are `0,...,k-1`.
@@ -198,7 +198,7 @@ class kRegularSequence(RecognizableSeries):
           from the right to the matrix product. If ``None``, then this
           multiplication is skipped.
 
-        When created via the parent :class:`kRegularSequenceSpace`, then
+        When created via the parent :class:`RegularSequenceRing`, then
         the following option is available.
 
         - ``allow_degenerated_sequence`` -- (default: ``False``) a boolean. If set, then
@@ -209,7 +209,7 @@ class kRegularSequence(RecognizableSeries):
 
         EXAMPLES::
 
-            sage: Seq2 = kRegularSequenceSpace(2, ZZ)
+            sage: Seq2 = RegularSequenceRing(2, ZZ)
             sage: S = Seq2((Matrix([[3, 0], [6, 1]]), Matrix([[0, 1], [-6, 5]])),
             ....:          vector([1, 0]), vector([0, 1])); S
             2-regular sequence 0, 1, 3, 5, 9, 11, 15, 19, 27, 29, ...
@@ -230,7 +230,7 @@ class kRegularSequence(RecognizableSeries):
         .. SEEALSO::
 
             :doc:`k-regular sequence <k_regular_sequence>`,
-            :class:`kRegularSequenceSpace`.
+            :class:`RegularSequenceRing`.
 
         TESTS::
 
@@ -247,7 +247,7 @@ class kRegularSequence(RecognizableSeries):
 
         TESTS::
 
-            sage: Seq2 = kRegularSequenceSpace(2, ZZ)
+            sage: Seq2 = RegularSequenceRing(2, ZZ)
             sage: s = Seq2((Matrix([[3, 0], [6, 1]]), Matrix([[0, 1], [-6, 5]])),
             ....:           vector([1, 0]), vector([0, 1]))
             sage: repr(s)  # indirect doctest
@@ -273,7 +273,7 @@ class kRegularSequence(RecognizableSeries):
 
         EXAMPLES::
 
-            sage: Seq2 = kRegularSequenceSpace(2, ZZ)
+            sage: Seq2 = RegularSequenceRing(2, ZZ)
             sage: S = Seq2((Matrix([[1, 0], [0, 1]]), Matrix([[0, -1], [1, 2]])),
             ....:          left=vector([0, 1]), right=vector([1, 0]))
             sage: S[7]
@@ -293,7 +293,7 @@ class kRegularSequence(RecognizableSeries):
 
         ::
 
-            sage: Seq2 = kRegularSequenceSpace(2, ZZ)
+            sage: Seq2 = RegularSequenceRing(2, ZZ)
             sage: W = Seq2.indices()
             sage: M0 = Matrix([[1, 0], [0, 1]])
             sage: M1 = Matrix([[0, -1], [1, 2]])
@@ -315,7 +315,7 @@ class kRegularSequence(RecognizableSeries):
 
         EXAMPLES::
 
-            sage: Seq2 = kRegularSequenceSpace(2, ZZ)
+            sage: Seq2 = RegularSequenceRing(2, ZZ)
             sage: S = Seq2((Matrix([[1, 0], [0, 1]]), Matrix([[0, -1], [1, 2]])),
             ....:          left=vector([0, 1]), right=vector([1, 0]))
             sage: from itertools import islice
@@ -342,7 +342,7 @@ class kRegularSequence(RecognizableSeries):
 
         EXAMPLES::
 
-            sage: Seq2 = kRegularSequenceSpace(2, ZZ)
+            sage: Seq2 = RegularSequenceRing(2, ZZ)
             sage: Seq2((Matrix([2]), Matrix([3])), vector([1]), vector([1]))  # indirect doctest
             Traceback (most recent call last):
             ...
@@ -375,7 +375,7 @@ class kRegularSequence(RecognizableSeries):
 
         TESTS::
 
-            sage: Seq2 = kRegularSequenceSpace(2, ZZ)
+            sage: Seq2 = RegularSequenceRing(2, ZZ)
             sage: Seq2((Matrix([[3, 2], [0, 1]]), Matrix([[2, 0], [1, 3]])),  # indirect doctest
             ....:      left=vector([0, 1]), right=vector([1, 0]))
             Traceback (most recent call last):
@@ -418,7 +418,7 @@ class kRegularSequence(RecognizableSeries):
 
         EXAMPLES::
 
-            sage: Seq2 = kRegularSequenceSpace(2, ZZ)
+            sage: Seq2 = RegularSequenceRing(2, ZZ)
 
         The following linear representation of `S` is chosen badly (is
         degenerated, see :meth:`is_degenerated`), as `\mu(0)` applied on
@@ -509,7 +509,7 @@ class kRegularSequence(RecognizableSeries):
 
         EXAMPLES::
 
-            sage: Seq2 = kRegularSequenceSpace(2, ZZ)
+            sage: Seq2 = RegularSequenceRing(2, ZZ)
             sage: U = Seq2((Matrix([[3, 2], [0, 1]]), Matrix([[2, 0], [1, 3]])),
             ....:          left=vector([0, 1]), right=vector([1, 0]),
             ....:          allow_degenerated_sequence=True)
@@ -561,7 +561,7 @@ class kRegularSequence(RecognizableSeries):
 
         TESTS::
 
-            sage: Seq2 = kRegularSequenceSpace(2, ZZ)
+            sage: Seq2 = RegularSequenceRing(2, ZZ)
             sage: Seq2((Matrix([[3, 0], [2, 1]]), Matrix([[2, 1], [0, 3]])),  # indirect doctest
             ....:          left=vector([1, 0]), right=vector([0, 1])).minimized()
             2-regular sequence 0, 1, 3, 5, 9, 11, 15, 19, 27, 29, ...
@@ -600,7 +600,7 @@ class kRegularSequence(RecognizableSeries):
 
         EXAMPLES::
 
-            sage: Seq2 = kRegularSequenceSpace(2, ZZ)
+            sage: Seq2 = RegularSequenceRing(2, ZZ)
 
         We consider the sequence `C` with `C(n) = n` and
         the following linear representation
@@ -873,7 +873,7 @@ class kRegularSequence(RecognizableSeries):
 
         EXAMPLES::
 
-            sage: Seq2 = kRegularSequenceSpace(2, ZZ)
+            sage: Seq2 = RegularSequenceRing(2, ZZ)
             sage: C = Seq2((Matrix([[2, 0], [0, 1]]), Matrix([[2, 1], [0, 1]])),
             ....:          vector([1, 0]), vector([0, 1])); C
             2-regular sequence 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, ...
@@ -919,7 +919,7 @@ class kRegularSequence(RecognizableSeries):
 
         EXAMPLES::
 
-            sage: Seq2 = kRegularSequenceSpace(2, ZZ)
+            sage: Seq2 = RegularSequenceRing(2, ZZ)
             sage: C = Seq2((Matrix([[2, 0], [0, 1]]), Matrix([[2, 1], [0, 1]])),
             ....:          vector([1, 0]), vector([0, 1])); C
             2-regular sequence 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, ...
@@ -966,7 +966,7 @@ class kRegularSequence(RecognizableSeries):
 
         EXAMPLES::
 
-            sage: Seq2 = kRegularSequenceSpace(2, ZZ)
+            sage: Seq2 = RegularSequenceRing(2, ZZ)
             sage: C = Seq2((Matrix([[2, 0], [2, 1]]), Matrix([[0, 1], [-2, 3]])),
             ....:          vector([1, 0]), vector([0, 1]))
             sage: C
@@ -1003,7 +1003,7 @@ class kRegularSequence(RecognizableSeries):
 
         EXAMPLES::
 
-            sage: Seq2 = kRegularSequenceSpace(2, ZZ)
+            sage: Seq2 = RegularSequenceRing(2, ZZ)
             sage: C = Seq2((Matrix([[2, 0], [2, 1]]), Matrix([[0, 1], [-2, 3]])),
             ....:          vector([1, 0]), vector([0, 1]))
             sage: C
@@ -1051,7 +1051,7 @@ class kRegularSequence(RecognizableSeries):
 
         EXAMPLES::
 
-            sage: Seq2 = kRegularSequenceSpace(2, ZZ)
+            sage: Seq2 = RegularSequenceRing(2, ZZ)
             sage: E = Seq2((Matrix([[0, 1], [0, 1]]), Matrix([[0, 0], [0, 1]])),
             ....:          vector([1, 0]), vector([1, 1]))
             sage: E
@@ -1155,7 +1155,7 @@ class kRegularSequence(RecognizableSeries):
 
         EXAMPLES::
 
-            sage: Seq2 = kRegularSequenceSpace(2, ZZ)
+            sage: Seq2 = RegularSequenceRing(2, ZZ)
 
             sage: E = Seq2((Matrix([[0, 1], [0, 1]]), Matrix([[0, 0], [0, 1]])),
             ....:          vector([1, 0]), vector([1, 1]))
@@ -1195,7 +1195,7 @@ class kRegularSequence(RecognizableSeries):
             sage: H
             2-regular sequence 0, 2, 10, 16, 50, 62, 80, 98, 250, 274, ...
 
-        We can :meth:`~kRegularSequenceSpace.guess` the correct representation::
+        We can :meth:`~RegularSequenceRing.guess` the correct representation::
 
             sage: from itertools import islice
             sage: L = []; ps = 0
@@ -1274,22 +1274,22 @@ class kRegularSequence(RecognizableSeries):
         return result
 
 
-def _pickle_kRegularSequenceSpace(k, coefficients, category):
+def _pickle_RegularSequenceRing(k, coefficients, category):
     r"""
     Pickle helper.
 
     TESTS::
 
-        sage: Seq2 = kRegularSequenceSpace(2, ZZ)
-        sage: from sage.combinat.k_regular_sequence import _pickle_kRegularSequenceSpace
-        sage: _pickle_kRegularSequenceSpace(
+        sage: Seq2 = RegularSequenceRing(2, ZZ)
+        sage: from sage.combinat.k_regular_sequence import _pickle_RegularSequenceRing
+        sage: _pickle_RegularSequenceRing(
         ....:     Seq2.k, Seq2.coefficient_ring(), Seq2.category())
         Space of 2-regular sequences over Integer Ring
     """
-    return kRegularSequenceSpace(k, coefficients, category=category)
+    return RegularSequenceRing(k, coefficients, category=category)
 
 
-class kRegularSequenceSpace(RecognizableSeriesSpace):
+class RegularSequenceRing(RecognizableSeriesSpace):
     r"""
     The space of `k`-regular Sequences over the given ``coefficient_ring``.
 
@@ -1304,9 +1304,9 @@ class kRegularSequenceSpace(RecognizableSeriesSpace):
 
     EXAMPLES::
 
-        sage: kRegularSequenceSpace(2, ZZ)
+        sage: RegularSequenceRing(2, ZZ)
         Space of 2-regular sequences over Integer Ring
-        sage: kRegularSequenceSpace(3, ZZ)
+        sage: RegularSequenceRing(3, ZZ)
         Space of 3-regular sequences over Integer Ring
 
     .. SEEALSO::
@@ -1325,11 +1325,11 @@ class kRegularSequenceSpace(RecognizableSeriesSpace):
         Normalizes the input in order to ensure a unique
         representation.
 
-        For more information see :class:`kRegularSequenceSpace`.
+        For more information see :class:`RegularSequenceRing`.
 
         TESTS::
 
-            sage: Seq2 = kRegularSequenceSpace(2, ZZ)
+            sage: Seq2 = RegularSequenceRing(2, ZZ)
             sage: Seq2.category()
             Category of algebras over Integer Ring
             sage: Seq2.alphabet()
@@ -1346,7 +1346,7 @@ class kRegularSequenceSpace(RecognizableSeriesSpace):
 
     def __init__(self, k, *args, **kwds):
         r"""
-        See :class:`kRegularSequenceSpace` for details.
+        See :class:`RegularSequenceRing` for details.
 
         INPUT:
 
@@ -1357,15 +1357,15 @@ class kRegularSequenceSpace(RecognizableSeriesSpace):
 
         TESTS::
 
-            sage: kRegularSequenceSpace(2, ZZ)
+            sage: RegularSequenceRing(2, ZZ)
             Space of 2-regular sequences over Integer Ring
-            sage: kRegularSequenceSpace(3, ZZ)
+            sage: RegularSequenceRing(3, ZZ)
             Space of 3-regular sequences over Integer Ring
 
         ::
 
             sage: from itertools import islice
-            sage: Seq2 = kRegularSequenceSpace(2, ZZ)
+            sage: Seq2 = RegularSequenceRing(2, ZZ)
             sage: TestSuite(Seq2).run(  # long time
             ....:    elements=tuple(islice(Seq2.some_elements(), 4)))
 
@@ -1383,11 +1383,11 @@ class kRegularSequenceSpace(RecognizableSeriesSpace):
 
         TESTS::
 
-            sage: Seq2 = kRegularSequenceSpace(2, ZZ)
+            sage: Seq2 = RegularSequenceRing(2, ZZ)
             sage: loads(dumps(Seq2))  # indirect doctest
             Space of 2-regular sequences over Integer Ring
         """
-        return _pickle_kRegularSequenceSpace, \
+        return _pickle_RegularSequenceRing, \
             (self.k, self.coefficient_ring(), self.category())
 
     def _repr_(self):
@@ -1398,7 +1398,7 @@ class kRegularSequenceSpace(RecognizableSeriesSpace):
 
         TESTS::
 
-            sage: repr(kRegularSequenceSpace(2, ZZ))  # indirect doctest
+            sage: repr(RegularSequenceRing(2, ZZ))  # indirect doctest
             'Space of 2-regular sequences over Integer Ring'
         """
         return 'Space of {}-regular sequences over {}'.format(self.k, self.base())
@@ -1416,7 +1416,7 @@ class kRegularSequenceSpace(RecognizableSeriesSpace):
 
         TESTS::
 
-            sage: Seq2 = kRegularSequenceSpace(2, ZZ)
+            sage: Seq2 = RegularSequenceRing(2, ZZ)
             sage: Seq2._n_to_index_(6)
             word: 011
             sage: Seq2._n_to_index_(-1)
@@ -1435,14 +1435,14 @@ class kRegularSequenceSpace(RecognizableSeriesSpace):
     @cached_method
     def one(self):
         r"""
-        Return the one element of this :class:`kRegularSequenceSpace`,
+        Return the one element of this :class:`RegularSequenceRing`,
         i.e. the unique neutral element for `*` and also
         the embedding of the one of the coefficient ring into
-        this :class:`kRegularSequenceSpace`.
+        this :class:`RegularSequenceRing`.
 
         EXAMPLES::
 
-            sage: Seq2 = kRegularSequenceSpace(2, ZZ)
+            sage: Seq2 = RegularSequenceRing(2, ZZ)
             sage: O = Seq2.one(); O
             2-regular sequence 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, ...
             sage: O.linear_representation()
@@ -1477,7 +1477,7 @@ class kRegularSequenceSpace(RecognizableSeriesSpace):
 
         EXAMPLES::
 
-            sage: tuple(kRegularSequenceSpace(2, ZZ).some_elements())
+            sage: tuple(RegularSequenceRing(2, ZZ).some_elements())
             (2-regular sequence 0, 1, 1, 2, 1, 2, 2, 3, 1, 2, ...,
              2-regular sequence 1, 1, 0, 1, 0, 0, 0, 1, 0, 0, ...,
              2-regular sequence 1, 1, 0, 1, -1, 0, 0, 1, -2, -1, ...,
@@ -1490,18 +1490,18 @@ class kRegularSequenceSpace(RecognizableSeriesSpace):
         """
         return iter(element.regenerated()
                     for element
-                    in super(kRegularSequenceSpace, self).some_elements(
+                    in super(RegularSequenceRing, self).some_elements(
                         allow_degenerated_sequence=True))
 
     def _element_constructor_(self, *args, **kwds):
         r"""
         Return a `k`-regular sequence.
 
-        See :class:`kRegularSequenceSpace` for details.
+        See :class:`RegularSequenceRing` for details.
 
         TESTS::
 
-            sage: Seq2 = kRegularSequenceSpace(2, ZZ)
+            sage: Seq2 = RegularSequenceRing(2, ZZ)
             sage: Seq2((Matrix([2]), Matrix([3])), vector([1]), vector([1]))
             Traceback (most recent call last):
             ...
@@ -1517,7 +1517,7 @@ class kRegularSequenceSpace(RecognizableSeriesSpace):
             2-regular sequence 1, 3, 6, 9, 12, 18, 18, 27, 24, 36, ...
         """
         allow_degenerated_sequence = kwds.pop('allow_degenerated_sequence', False)
-        element = super(kRegularSequenceSpace, self)._element_constructor_(*args, **kwds)
+        element = super(RegularSequenceRing, self)._element_constructor_(*args, **kwds)
         if not allow_degenerated_sequence:
             element._error_if_degenerated_()
         return element
@@ -1583,7 +1583,7 @@ class kRegularSequenceSpace(RecognizableSeriesSpace):
 
         Let us guess a `2`-linear representation for `s(n)`::
 
-            sage: Seq2 = kRegularSequenceSpace(2, ZZ)
+            sage: Seq2 = RegularSequenceRing(2, ZZ)
             sage: import logging
             sage: logging.getLogger().setLevel(logging.INFO)
             sage: S1 = Seq2.guess(s); S1
@@ -1673,7 +1673,7 @@ class kRegularSequenceSpace(RecognizableSeriesSpace):
             sage: S.is_degenerated()
             True
 
-        However, we can :meth:`~kRegularSequenceSpace.guess` a `2`-regular sequence of dimension `2`::
+        However, we can :meth:`~RegularSequenceRing.guess` a `2`-regular sequence of dimension `2`::
 
             sage: G = Seq2.guess(lambda n: S[n])
             sage: G
@@ -1716,7 +1716,7 @@ class kRegularSequenceSpace(RecognizableSeriesSpace):
                             1: [1]},
              (1))
 
-        We :meth:`~kRegularSequenceSpace.guess` some partial sums sequences::
+        We :meth:`~RegularSequenceRing.guess` some partial sums sequences::
 
             sage: S = Seq2((Matrix([1]), Matrix([2])), vector([1]), vector([1]))
             sage: S
@@ -1741,7 +1741,7 @@ class kRegularSequenceSpace(RecognizableSeriesSpace):
 
         ::
 
-            sage: Seq3 = kRegularSequenceSpace(3, QQ)
+            sage: Seq3 = RegularSequenceRing(3, QQ)
             sage: S = Seq3((Matrix([1]), Matrix([3]), Matrix([2])), vector([1]), vector([1]))
             sage: S
             3-regular sequence 1, 3, 2, 3, 9, 6, 2, 6, 4, 3, ...
@@ -1774,7 +1774,7 @@ class kRegularSequenceSpace(RecognizableSeriesSpace):
 
         ::
 
-            sage: R = kRegularSequenceSpace(2, QQ)
+            sage: R = RegularSequenceRing(2, QQ)
             sage: one = R.one_hadamard()
             sage: S = R.guess(lambda n: sum(n.bits()), sequence=one) + one
             sage: T = R.guess(lambda n: n*n, sequence=S, n_verify=4); T
@@ -1978,7 +1978,7 @@ class kRegularSequenceSpace(RecognizableSeriesSpace):
 
         ::
 
-            sage: Seq2 = kRegularSequenceSpace(2, ZZ)
+            sage: Seq2 = RegularSequenceRing(2, ZZ)
             sage: var('n')
             n
             sage: function('f')
@@ -2010,7 +2010,7 @@ class kRegularSequenceSpace(RecognizableSeriesSpace):
             + l + 1) + ... + c_{r,u} f(k^m n + u)` for some integers
             `0 \leq r < k^M`, `M > m \geq 0` and `l \leq u`, and some
             coefficients `c_{r,j}` from the (semi)ring ``coefficients``
-            of the corresponding :class:`kRegularSequenceSpace`, valid
+            of the corresponding :class:`RegularSequenceRing`, valid
             for all integers `n \geq \text{offset}` for some integer
             `\text{offset} \geq \max(-l/k^m, 0)` (default: ``0``), and
             there is an equation of this form (with the same
@@ -2066,7 +2066,7 @@ class kRegularSequenceSpace(RecognizableSeriesSpace):
 
         Stern--Brocot Sequence::
 
-            sage: Seq2 = kRegularSequenceSpace(2, ZZ)
+            sage: Seq2 = RegularSequenceRing(2, ZZ)
             sage: var('n')
             n
             sage: function('f')
@@ -2140,7 +2140,7 @@ class kRegularSequenceSpace(RecognizableSeriesSpace):
 
         Number of Non-Zero Elements in the Generalized Pascal's Triangle (see [LRS2017]_)::
 
-            sage: Seq2 = kRegularSequenceSpace(2, QQ)
+            sage: Seq2 = RegularSequenceRing(2, QQ)
             sage: P = Seq2.from_recurrence([
             ....:     f(4*n) == 5/3*f(2*n) - 1/3*f(2*n + 1),
             ....:     f(4*n + 1) == 4/3*f(2*n) + 1/3*f(2*n + 1),
@@ -2323,7 +2323,7 @@ class RecurrenceParser():
     the construction of a `k`-linear representation
     for the sequence satisfying these recurrence relations.
 
-    This is used by :meth:`kRegularSequenceSpace.from_recurrence`
+    This is used by :meth:`RegularSequenceRing.from_recurrence`
     to construct a :class:`kRegularSequence`.
     """
 
@@ -2338,7 +2338,7 @@ class RecurrenceParser():
         - ``coefficient_ring`` -- a ring.
 
         These are the same parameters used when creating
-        a :class:`kRegularSequenceSpace`.
+        a :class:`RegularSequenceRing`.
 
         TESTS::
 
@@ -2351,20 +2351,20 @@ class RecurrenceParser():
 
     def parse_recurrence(self, equations, function, var):
         r"""
-        Parse recurrence relations as admissible in :meth:`kRegularSequenceSpace.from_recurrence`.
+        Parse recurrence relations as admissible in :meth:`RegularSequenceRing.from_recurrence`.
 
         INPUT:
 
         All parameters are explained in the high-level method
-        :meth:`kRegularSequenceSpace.from_recurrence`.
+        :meth:`RegularSequenceRing.from_recurrence`.
 
         OUTPUT: a tuple consisting of
 
-        - ``M``, ``m`` -- see :meth:`kRegularSequenceSpace.from_recurrence`
+        - ``M``, ``m`` -- see :meth:`RegularSequenceRing.from_recurrence`
 
-        - ``coeffs`` -- see :meth:`kRegularSequenceSpace.from_recurrence`
+        - ``coeffs`` -- see :meth:`RegularSequenceRing.from_recurrence`
 
-        - ``initial_values`` -- see :meth:`kRegularSequenceSpace.from_recurrence`
+        - ``initial_values`` -- see :meth:`RegularSequenceRing.from_recurrence`
 
         EXAMPLES::
 
@@ -2393,7 +2393,7 @@ class RecurrenceParser():
 
         .. SEEALSO::
 
-            :meth:`kRegularSequenceSpace.from_recurrence`
+            :meth:`RegularSequenceRing.from_recurrence`
 
         TESTS:
 
@@ -2738,7 +2738,7 @@ class RecurrenceParser():
 
         This results in giving the correct (see :trac:`33158`) minimization in::
 
-            sage: Seq2 = kRegularSequenceSpace(2, QQ)
+            sage: Seq2 = RegularSequenceRing(2, QQ)
             sage: P = Seq2.from_recurrence(equations, f, n)
             sage: P
             2-regular sequence 1, 2, 3, 3, 4, 5, 5, 4, 5, 7, ...
@@ -2938,12 +2938,12 @@ class RecurrenceParser():
     def parse_direct_arguments(self, M, m, coeffs, initial_values):
         r"""
         Check whether the direct arguments as admissible in
-        :meth:`kRegularSequenceSpace.from_recurrence` are valid.
+        :meth:`RegularSequenceRing.from_recurrence` are valid.
 
         INPUT:
 
         All parameters are explained in the high-level method
-        :meth:`kRegularSequenceSpace.from_recurrence`.
+        :meth:`RegularSequenceRing.from_recurrence`.
 
         OUTPUT: a tuple consisting of the input parameters
 
@@ -2972,7 +2972,7 @@ class RecurrenceParser():
 
         .. SEEALSO::
 
-            :meth:`kRegularSequenceSpace.from_recurrence`
+            :meth:`RegularSequenceRing.from_recurrence`
 
         TESTS:
 
@@ -3115,12 +3115,12 @@ class RecurrenceParser():
     def parameters(self, M, m, coeffs, initial_values, offset=0, inhomogeneities={}):
         r"""
         Determine parameters from recurrence relations as admissible in
-        :meth:`kRegularSequenceSpace.from_recurrence`.
+        :meth:`RegularSequenceRing.from_recurrence`.
 
         INPUT:
 
         All parameters are explained in the high-level method
-        :meth:`kRegularSequenceSpace.from_recurrence`.
+        :meth:`RegularSequenceRing.from_recurrence`.
 
         OUTPUT: a namedtuple ``recurrence_rules`` consisting of
 
@@ -3160,7 +3160,7 @@ class RecurrenceParser():
 
         .. SEEALSO::
 
-            :meth:`kRegularSequenceSpace.from_recurrence`
+            :meth:`RegularSequenceRing.from_recurrence`
 
         TESTS::
 
@@ -3184,7 +3184,7 @@ class RecurrenceParser():
 
         ::
 
-            sage: Seq3 = kRegularSequenceSpace(3, ZZ)
+            sage: Seq3 = RegularSequenceRing(3, ZZ)
             sage: RP.parameters(1, 0, {(0, 0): 1}, {}, 0,
             ....:     {0: Seq3.zero()})
             Traceback (most recent call last):
@@ -3262,12 +3262,12 @@ class RecurrenceParser():
                 raise ValueError(f"Indices {invalid_indices} for inhomogeneities are no "
                                  f"integers between 0 and {k**M - 1}.")
 
-            Seq = kRegularSequenceSpace(k, coefficient_ring)
+            Seq = RegularSequenceRing(k, coefficient_ring)
             inhomogeneities.update({i: inhomogeneities[i] * Seq.one_hadamard()
                                     for i in inhomogeneities
                                     if inhomogeneities[i] in coefficient_ring})
             invalid = {i: inhomogeneities[i] for i in inhomogeneities
-                       if not (isinstance(inhomogeneities[i].parent(), kRegularSequenceSpace) and
+                       if not (isinstance(inhomogeneities[i].parent(), RegularSequenceRing) and
                                inhomogeneities[i].parent().k == k)}
             if invalid:
                 raise ValueError(f"Inhomogeneities {invalid} are neither {k}-regular "
@@ -3311,7 +3311,7 @@ class RecurrenceParser():
                initial_values, last_value_needed, offset, inhomogeneities):
         r"""
         Determine enough values of the corresponding recursive sequence by
-        applying the recurrence relations given in :meth:`kRegularSequenceSpace.from_recurrence`
+        applying the recurrence relations given in :meth:`RegularSequenceRing.from_recurrence`
         to the values given in ``initial_values``.
 
         INPUT:
@@ -3323,7 +3323,7 @@ class RecurrenceParser():
           see [HKL2022]_, Theorem A
 
         - ``coeffs`` -- a dictionary where ``coeffs[(r, j)]`` is the
-          coefficient `c_{r,j}` as given in :meth:`kRegularSequenceSpace.from_recurrence`.
+          coefficient `c_{r,j}` as given in :meth:`RegularSequenceRing.from_recurrence`.
           If ``coeffs[(r, j)]`` is not given for some ``r`` and ``j``,
           then it is assumed to be zero.
 
@@ -3356,7 +3356,7 @@ class RecurrenceParser():
 
         .. SEEALSO::
 
-            :meth:`kRegularSequenceSpace.from_recurrence`
+            :meth:`RegularSequenceRing.from_recurrence`
 
         TESTS:
 
@@ -3437,7 +3437,7 @@ class RecurrenceParser():
 
         ::
 
-            sage: Seq2 = kRegularSequenceSpace(2, ZZ)
+            sage: Seq2 = RegularSequenceRing(2, ZZ)
             sage: RP.values(M=1, m=0, l=0, u=0, ll=0,
             ....:     coeffs={(0, 0): 0, (1, 1): 0}, initial_values={},
             ....:     last_value_needed=10, offset=0,
@@ -3544,7 +3544,7 @@ class RecurrenceParser():
 
         .. SEEALSO::
 
-            :meth:`kRegularSequenceSpace.from_recurrence`
+            :meth:`RegularSequenceRing.from_recurrence`
         """
         from sage.arith.srange import srange
 
@@ -3596,7 +3596,7 @@ class RecurrenceParser():
             sage: from collections import namedtuple
             sage: from sage.combinat.k_regular_sequence import RecurrenceParser
             sage: RP = RecurrenceParser(2, ZZ)
-            sage: Seq2 = kRegularSequenceSpace(2, ZZ)
+            sage: Seq2 = RegularSequenceRing(2, ZZ)
             sage: S = Seq2((Matrix([[1, 0], [0, 1]]), Matrix([[1, 0], [1, 1]])),
             ....:          left=vector([0, 1]), right=vector([1, 0]))
             sage: S
@@ -3629,7 +3629,7 @@ class RecurrenceParser():
 
         TESTS::
 
-            sage: Seq2 = kRegularSequenceSpace(2, ZZ)
+            sage: Seq2 = RegularSequenceRing(2, ZZ)
             sage: var('n')
             n
             sage: function('f')
@@ -3662,7 +3662,7 @@ class RecurrenceParser():
 
         .. SEEALSO::
 
-            :meth:`kRegularSequenceSpace.from_recurrence`
+            :meth:`RegularSequenceRing.from_recurrence`
         """
         from sage.arith.srange import srange
         from sage.functions.other import floor
@@ -3708,7 +3708,7 @@ class RecurrenceParser():
 
         .. SEEALSO::
 
-            :meth:`kRegularSequenceSpace.from_recurrence`
+            :meth:`RegularSequenceRing.from_recurrence`
         """
         from itertools import chain
 
@@ -3887,7 +3887,7 @@ class RecurrenceParser():
 
         .. SEEALSO::
 
-            :meth:`kRegularSequenceSpace.from_recurrence`
+            :meth:`RegularSequenceRing.from_recurrence`
         """
         from itertools import chain
 
@@ -4015,7 +4015,7 @@ class RecurrenceParser():
 
         ::
 
-            sage: Seq2 = kRegularSequenceSpace(2, ZZ)
+            sage: Seq2 = RegularSequenceRing(2, ZZ)
             sage: RRD = namedtuple('recurrence_rules_dim',
             ....:                  ['M', 'm', 'll', 'uu', 'dim', 'inhomogeneities'])
             sage: recurrence_rules = RRD(M=3, m=2, ll=0, uu=9, dim=5,
@@ -4025,7 +4025,7 @@ class RecurrenceParser():
 
         .. SEEALSO::
 
-            :meth:`kRegularSequenceSpace.from_recurrence`
+            :meth:`RegularSequenceRing.from_recurrence`
         """
         from sage.modules.free_module_element import vector
 
@@ -4053,7 +4053,7 @@ class RecurrenceParser():
 
         .. SEEALSO::
 
-            :meth:`kRegularSequenceSpace.from_recurrence`
+            :meth:`RegularSequenceRing.from_recurrence`
 
         TESTS:
 
@@ -4108,18 +4108,18 @@ class RecurrenceParser():
         given in ``equations``.
 
         This is the main method of :class:`RecurrenceParser` and
-        is called by :meth:`kRegularSequenceSpace.from_recurrence`
+        is called by :meth:`RegularSequenceRing.from_recurrence`
         to construct a :class:`kRegularSequence`.
 
         INPUT:
 
         All parameters are explained in the high-level method
-        :meth:`kRegularSequenceSpace.from_recurrence`.
+        :meth:`RegularSequenceRing.from_recurrence`.
 
         OUTPUT: a linear representation ``(left, mu, right)``
 
         Many examples can be found in
-        :meth:`kRegularSequenceSpace.from_recurrence`.
+        :meth:`RegularSequenceRing.from_recurrence`.
 
         TESTS::
 
