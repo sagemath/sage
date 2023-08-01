@@ -1,6 +1,6 @@
 # sage.doctest: optional - sage.combinat sage.modules sage.symbolic
 r"""
-`k`-regular Sequences
+`k`-regular sequences
 
 An introduction and formal definition of `k`-regular sequences can be
 found, for example, on the :wikipedia:`k-regular_sequence` or in
