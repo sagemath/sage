@@ -71,7 +71,7 @@ AUTHORS:
 #
 #                  https://www.gnu.org/licenses/
 ##########################################################################
-from sage.functions.all import sin, cos
+from sage.functions.trig import sin, cos
 from sage.misc.lazy_import import lazy_import
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
