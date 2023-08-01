@@ -2273,7 +2273,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
 
             sage: P.<x,y> = ProjectiveSpace(QQ[sqrt(3)], 1)
             sage: f = DynamicalSystem_projective([x^2 + y^2, 2*x*y])
-            sage: f.canonical_height(P.point([5, 4]), error_bound=0.001)
+            sage: f.canonical_height(P(5, 4), error_bound=0.001)
             2.1971399646432799363415870031
 
         ::
@@ -2364,8 +2364,6 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
             H = 0
             h = R.zero()
 
-            # import pdb; pdb.set_trace()
-
             if K is QQ:
                 Res = f.resultant(normalize=True).abs()
             
@@ -2410,10 +2408,17 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
 
             elif K.class_number() == 1:
                 O = K.maximal_order()
-                Res = O(f.resultant(normalize=True).abs())
 
-                x_i = O(number_field_pt[0])
-                y_i = O(number_field_pt[1])
+                # Put the coordinates in the maximal order, to facilitate
+                # the following calculations
+                max_order_PS = ProjectiveSpace(O, 1)
+                number_field_pt.clear_denominators()
+                number_field_pt = max_order_PS(number_field_pt)
+
+                x_i = number_field_pt[0]
+                y_i = number_field_pt[1]
+
+                Res = O(f.resultant(normalize=True).abs())
 
                 # Compute the error bound as defined in Algorithm 3.1 of [WELLS]
                 if Res > 1:
@@ -2427,9 +2432,9 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
                         kwds.update({'N': N})
 
                     for n in range(N):
-                        order_quotient = O.quotient(O.ideal(Res**(N - n)))
-                        x = O(order_quotient(A(x_i, y_i)).lift())
-                        y = O(order_quotient(B(x_i, y_i)).lift())
+                        order_quotient = O.quotient(O.fractional_ideal(Res**(N - n)), 't')
+                        x = order_quotient(A(x_i, y_i)).lift()
+                        y = order_quotient(B(x_i, y_i)).lift()
                         g = gcd([x, y, Res])
                         H += R(g).abs().log() / d**(n+1)
                         x_i = O(x / g)
