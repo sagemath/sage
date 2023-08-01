@@ -966,7 +966,7 @@ def minpoly(ex, var='x', algorithm=None, bits=None, degree=None, epsilon=0):
 
     If the minimal polynomial could not be found, two distinct kinds of
     errors are raised. If no reasonable candidate was found with the
-    given ``bit``/``degree`` parameters, a :class:`ValueError` will be
+    given ``bits``/``degree`` parameters, a :class:`ValueError` will be
     raised. If a reasonable candidate was found but (perhaps due to
     limits in the underlying symbolic package) was unable to be proved
     correct, a :class:`NotImplementedError` will be raised.
