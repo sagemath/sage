@@ -110,7 +110,7 @@ def pad_right(T, length, zero=0):
 
     EXAMPLES::
 
-        sage: from sage.combinat.k_regular_sequence import pad_right
+        sage: from sage.combinat.regular_sequence import pad_right
         sage: pad_right((1, 2, 3), 10)
         (1, 2, 3, 0, 0, 0, 0, 0, 0, 0)
         sage: pad_right((1, 2, 3), 2)
@@ -147,7 +147,7 @@ def value(D, k):
 
     EXAMPLES::
 
-        sage: from sage.combinat.k_regular_sequence import value
+        sage: from sage.combinat.regular_sequence import value
         sage: value(42.digits(7), 7)
         42
     """
@@ -229,7 +229,7 @@ class RegularSequence(RecognizableSeries):
 
         .. SEEALSO::
 
-            :doc:`k-regular sequence <k_regular_sequence>`,
+            :doc:`k-regular sequence <regular_sequence>`,
             :class:`RegularSequenceRing`.
 
         TESTS::
@@ -1281,7 +1281,7 @@ def _pickle_RegularSequenceRing(k, coefficients, category):
     TESTS::
 
         sage: Seq2 = RegularSequenceRing(2, ZZ)
-        sage: from sage.combinat.k_regular_sequence import _pickle_RegularSequenceRing
+        sage: from sage.combinat.regular_sequence import _pickle_RegularSequenceRing
         sage: _pickle_RegularSequenceRing(
         ....:     Seq2.k, Seq2.coefficient_ring(), Seq2.category())
         Space of 2-regular sequences over Integer Ring
@@ -1311,7 +1311,7 @@ class RegularSequenceRing(RecognizableSeriesSpace):
 
     .. SEEALSO::
 
-        :doc:`k-regular sequence <k_regular_sequence>`,
+        :doc:`k-regular sequence <regular_sequence>`,
         :class:`RegularSequence`.
     """
     Element = RegularSequence
@@ -1371,7 +1371,7 @@ class RegularSequenceRing(RecognizableSeriesSpace):
 
         .. SEEALSO::
 
-            :doc:`k-regular sequence <k_regular_sequence>`,
+            :doc:`k-regular sequence <regular_sequence>`,
             :class:`RegularSequence`.
         """
         self.k = k
@@ -2342,9 +2342,9 @@ class RecurrenceParser():
 
         TESTS::
 
-            sage: from sage.combinat.k_regular_sequence import RecurrenceParser
+            sage: from sage.combinat.regular_sequence import RecurrenceParser
             sage: RecurrenceParser(2, ZZ)
-            <sage.combinat.k_regular_sequence.RecurrenceParser object at 0x...>
+            <sage.combinat.regular_sequence.RecurrenceParser object at 0x...>
         """
         self.k = k
         self.coefficient_ring = coefficient_ring
@@ -2368,7 +2368,7 @@ class RecurrenceParser():
 
         EXAMPLES::
 
-            sage: from sage.combinat.k_regular_sequence import RecurrenceParser
+            sage: from sage.combinat.regular_sequence import RecurrenceParser
             sage: RP = RecurrenceParser(2, ZZ)
             sage: var('n')
             n
@@ -2949,7 +2949,7 @@ class RecurrenceParser():
 
         EXAMPLES::
 
-            sage: from sage.combinat.k_regular_sequence import RecurrenceParser
+            sage: from sage.combinat.regular_sequence import RecurrenceParser
             sage: RP = RecurrenceParser(2, ZZ)
             sage: RP.parse_direct_arguments(2, 1,
             ....:     {(0, -2): 3, (0, 0): 1, (0, 1): 2,
@@ -3143,7 +3143,7 @@ class RecurrenceParser():
 
         EXAMPLES::
 
-            sage: from sage.combinat.k_regular_sequence import RecurrenceParser
+            sage: from sage.combinat.regular_sequence import RecurrenceParser
             sage: RP = RecurrenceParser(2, ZZ)
             sage: RP.parameters(2, 1,
             ....: {(0, -2): 3, (0, 0): 1, (0, 1): 2, (1, -2): 6, (1, 0): 4,
@@ -3345,7 +3345,7 @@ class RecurrenceParser():
 
         Stern--Brocot Sequence::
 
-            sage: from sage.combinat.k_regular_sequence import RecurrenceParser
+            sage: from sage.combinat.regular_sequence import RecurrenceParser
             sage: RP = RecurrenceParser(2, ZZ)
             sage: RP.values(M=1, m=0, l=0, u=1, ll=0,
             ....:     coeffs={(0, 0): 1, (1, 0): 1, (1, 1): 1},
@@ -3531,7 +3531,7 @@ class RecurrenceParser():
 
         EXAMPLES::
 
-            sage: from sage.combinat.k_regular_sequence import RecurrenceParser
+            sage: from sage.combinat.regular_sequence import RecurrenceParser
             sage: RP = RecurrenceParser(2, ZZ)
             sage: RP.ind(3, 1, -3, 3)
             {(0, 0): 0, (1, -1): 3, (1, -2): 2, (1, -3): 1,
@@ -3594,7 +3594,7 @@ class RecurrenceParser():
         EXAMPLES::
 
             sage: from collections import namedtuple
-            sage: from sage.combinat.k_regular_sequence import RecurrenceParser
+            sage: from sage.combinat.regular_sequence import RecurrenceParser
             sage: RP = RecurrenceParser(2, ZZ)
             sage: Seq2 = RegularSequenceRing(2, ZZ)
             sage: S = Seq2((Matrix([[1, 0], [0, 1]]), Matrix([[1, 0], [1, 1]])),
@@ -3698,7 +3698,7 @@ class RecurrenceParser():
 
         Stern--Brocot Sequence::
 
-            sage: from sage.combinat.k_regular_sequence import RecurrenceParser
+            sage: from sage.combinat.regular_sequence import RecurrenceParser
             sage: RP = RecurrenceParser(2, ZZ)
             sage: SB_rules = RP.parameters(
             ....:     1, 0, {(0, 0): 1, (1, 0): 1, (1, 1): 1},
@@ -3762,7 +3762,7 @@ class RecurrenceParser():
         right-hand sides of the recurrence relations correspond to the entries of
         the matrices. ::
 
-            sage: from sage.combinat.k_regular_sequence import RecurrenceParser
+            sage: from sage.combinat.regular_sequence import RecurrenceParser
             sage: RP = RecurrenceParser(2, ZZ)
             sage: var('n')
             n
@@ -4005,7 +4005,7 @@ class RecurrenceParser():
         EXAMPLES::
 
             sage: from collections import namedtuple
-            sage: from sage.combinat.k_regular_sequence import RecurrenceParser
+            sage: from sage.combinat.regular_sequence import RecurrenceParser
             sage: RP = RecurrenceParser(2, ZZ)
             sage: RRD = namedtuple('recurrence_rules_dim',
             ....:                  ['dim', 'inhomogeneities'])
@@ -4059,7 +4059,7 @@ class RecurrenceParser():
 
         Stern--Brocot Sequence::
 
-            sage: from sage.combinat.k_regular_sequence import RecurrenceParser
+            sage: from sage.combinat.regular_sequence import RecurrenceParser
             sage: RP = RecurrenceParser(2, ZZ)
             sage: var('n')
             n
@@ -4123,7 +4123,7 @@ class RecurrenceParser():
 
         TESTS::
 
-            sage: from sage.combinat.k_regular_sequence import RecurrenceParser
+            sage: from sage.combinat.regular_sequence import RecurrenceParser
             sage: RP = RecurrenceParser(2, ZZ)
             sage: var('n')
             n

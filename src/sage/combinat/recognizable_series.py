@@ -33,7 +33,7 @@ Various
 
 .. SEEALSO::
 
-    :mod:`k-regular sequence <sage.combinat.k_regular_sequence>`,
+    :mod:`k-regular sequence <sage.combinat.regular_sequence>`,
     :mod:`sage.rings.cfinite_sequence`,
     :mod:`sage.combinat.binary_recurrence_sequences`.
 
