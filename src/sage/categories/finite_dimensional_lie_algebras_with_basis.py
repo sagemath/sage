@@ -1068,7 +1068,8 @@ class FiniteDimensionalLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
             return not self.killing_form_matrix().is_singular()
 
         @cached_method(key=lambda self,M,d,s,n: (M,d,s))
-        def chevalley_eilenberg_complex(self, M, h, dual=False, sparse=True, ncpus=None):
+        def chevalley_eilenberg_complex(self, M, image, preimage, dual=False, sparse=True, ncpus=None):
+            h={k: v for k, v in zip(image, preimage)}
             r"""
             Return the Chevalley-Eilenberg complex of ``self``.
 
@@ -1099,7 +1100,7 @@ class FiniteDimensionalLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
 
             - ``M`` -- (default: the trivial 1-dimensional module)
               the module `M`
-            - ``f`` -- Lie algebra homomorphism from L to the endomorphism Lie algebra of M
+            - ``h`` -- Lie algebra homomorphism from L to the endomorphism Lie algebra of M
             - ``dual`` -- (default: ``False``) if ``True``, causes
               the dual of the complex to be computed
             - ``sparse`` -- (default: ``True``) whether to use sparse
