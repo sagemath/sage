@@ -1165,7 +1165,7 @@ class FiniteDimensionalLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
            
 
             # Make sure we specify the ordering of the basis
-            B = L=self.basis()
+            B = self.basis()
             K = list(B.keys())
             B = [B[k] for k in K]
             L_dim = list(range(len(K)))
@@ -1212,12 +1212,12 @@ class FiniteDimensionalLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
         
                 family = gln.structure_coefficients()
         
-                for x in list(family.keys()):
+                for x in family.keys():
                     i=gln.basis().keys().index(x[0])
                     j=gln.basis().keys().index(x[1])
                     keys.append((f'g{i}', f'g{j}'))
         
-                for x in list(family.values()):
+                for x in family.values():
                     D = x.monomial_coefficients()
                     B=list(D.keys())
                     C=list(D.values())
@@ -1299,14 +1299,14 @@ class FiniteDimensionalLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
                     Y=list(j[1])
         
                     if (k==1):
-                        vec = Lieaction(L, M, h, B[Y[0]], Mb[int(j[0])])
+                        vec = Lieaction(self, M, h, B[Y[0]], Mb[int(j[0])])
                         for p in range(len(total)):
                             total[p]+=vec[p]
         
                     else:
                         for i in range(k):
                             Ynew = Y[:i] + Y[i+1:]
-                            vec = (-1)**(i)*Lieaction(L, M, h, B[i], Mb[int(j[0])])
+                            vec = (-1)**(i)*Lieaction(self, M, h, B[i], Mb[int(j[0])])
                             action=list(vec)
                             l=len(action)
         
