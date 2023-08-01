@@ -309,9 +309,9 @@ cdef class TwoSumNode(SumNode):
         EXAMPLES::
 
             sage: from sage.matrix.matrix_cmr_sparse import Matrix_cmr_chr_sparse
-             M = Matrix_cmr_chr_sparse(MatrixSpace(ZZ, 5, 5, sparse=True), 
-            ....:                       [[1, 1, 1, 1, 1], [1, 1, 1, 0, 0], [1, 0, 1, 1, 0]
-            ....:                       ,[1, 0, 0, 1, 1], [1, 1, 0, 0, 1]]); M2
+            sage: M2 = Matrix_cmr_chr_sparse(MatrixSpace(ZZ, 5, 5, sparse=True),
+            ....:                       [[1, 1, 1, 1, 1], [1, 1, 1, 0, 0], [1, 0, 1, 1, 0],
+            ....:                        [1, 0, 0, 1, 1], [1, 1, 0, 0, 1]]); M2
             [1 1 1 1 1]
             [1 1 1 0 0]
             [1 0 1 1 0]
