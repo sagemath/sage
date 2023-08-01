@@ -1,4 +1,4 @@
-# sage.doctest: optional - sage.symbolic
+# sage.doctest: needs sage.symbolic
 r"""
 A Sample Session using SymPy
 
