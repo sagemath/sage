@@ -1212,12 +1212,12 @@ class FiniteDimensionalLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
         
                 family = gln.structure_coefficients()
         
-                for x in family.keys():
+                for x in list(family.keys()):
                     i=gln.basis().keys().index(x[0])
                     j=gln.basis().keys().index(x[1])
                     keys.append((f'g{i}', f'g{j}'))
         
-                for x in family.values():
+                for x in list(family.values()):
                     D = x.monomial_coefficients()
                     B=list(D.keys())
                     C=list(D.values())
