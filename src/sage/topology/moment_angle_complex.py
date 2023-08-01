@@ -147,7 +147,7 @@ class MomentAngleComplex(SageObject, UniqueRepresentation):
       created (e.g., list of facets), which represents the associated
       simplicial complex over which this moment-angle complex is created.
 
-    EXAMPLES::
+    EXAMPLES:
 
     If the associated simplicial_complex is an `n`-simplex, then the
     corresponding moment-angle complex is a polydisc (a complex ball) of
@@ -281,7 +281,7 @@ class MomentAngleComplex(SageObject, UniqueRepresentation):
             sage: Z._moment_angle_complex
             Cubical complex with 64 vertices and 705 cubes
 
-        This method is used in the `cubical_complex()` method::
+        This method is used in the ``cubical_complex()`` method::
 
             sage: Z.cubical_complex()
             Cubical complex with 64 vertices and 705 cubes
@@ -342,38 +342,52 @@ class MomentAngleComplex(SageObject, UniqueRepresentation):
     def components(self):
         """
         Return the dictionary of components of ``self``, indexed by facets
-        of the simplicial complex.
+        of the associated simplicial complex.
 
-        The values are lists, representing spheres and disks described in the
-        construction of the moment-angle complex.
+        OUTPUT:
+
+        - a dictonary, whose values are lists, representing spheres
+          and disks described in the construction of the moment-angle
+          complex. ``The 2-simplex`` represents a disk, and
+          ``Minimal triangulation of the 1-sphere`` represents a `1-sphere`.
 
         EXAMPLES::
 
-        <Lots and lots of examples>
+            sage: M = MomentAngleComplex([[0, 1, 2]]); M
+            Moment-angle complex over a simplicial complex with vertex set (0, 1, 2) and facets {(0, 1, 2)}
+            sage: M.components()
+            {(0, 1, 2): [The 2-simplex, The 2-simplex, The 2-simplex]}
+            sage: Z = MomentAngleComplex([[0,1], [1,2], [2,3], [3,0]])
+            sage: dict(sorted(Z.components().items()))
+            {(0, 1): [The 2-simplex,
+              The 2-simplex,
+              Minimal triangulation of the 1-sphere,
+              Minimal triangulation of the 1-sphere],
+             (0, 3): [The 2-simplex,
+              Minimal triangulation of the 1-sphere,
+              Minimal triangulation of the 1-sphere,
+              The 2-simplex],
+             (1, 2): [Minimal triangulation of the 1-sphere,
+              The 2-simplex,
+              The 2-simplex,
+              Minimal triangulation of the 1-sphere],
+             (2, 3): [Minimal triangulation of the 1-sphere,
+              Minimal triangulation of the 1-sphere,
+              The 2-simplex,
+              The 2-simplex]}
+
+        It is not that difficult to prove that the previous moment-angle complex
+        is homeomorphic to a product of two 3-spheres. We can look at the
+        cohomologies to try and validate whether this makes sense::
+
+            sage: from sage.topology.simplicial_complex_examples import Sphere as S
+            sage: product_of_spheres = S(3).product(S(3))
+            sage: Z.cohomology()
+            {0: 0, 1: 0, 2: 0, 3: Z x Z, 4: 0, 5: 0, 6: Z}
+            sage: Z.cohomology() == product_of_spheres.cohomology()
+            True
         """
-
         return self._components
-
-    #def homology(self, dim=None, base_ring=ZZ, subcomplex=None,
-                 #generators=False, cohomology=False, algorithm='pari',
-                 #verbose=False, reduced=True, **kwds):
-        #"""
-        #The (reduced) homology of this moment-angle complex.
-#
-#
-        #.. SEEALSO::
-            #:meth:`~sage.topology.cell_complex.homology`
-#
-        #EXAMPLES::
-#
-        #<Lots and lots of examples>
-        #"""
-        #if self._moment_angle_complex is None:
-            #raise ValueError("the moment-angle complex is not created")
-#
-        #return self._moment_angle_complex.homology(dim, base_ring, subcomplex,
-                 #generators, cohomology, algorithm,
-                 #verbose, reduced, **kwds)
 
     def dimension(self):
         r"""
@@ -387,7 +401,20 @@ class MomentAngleComplex(SageObject, UniqueRepresentation):
 
         EXAMPLES::
 
-        <Lots and lots of examples>
+            sage: Z = MomentAngleComplex([[0,1], [1,2,3]])
+            sage: Z.dimension()
+            7
+            sage: Z = MomentAngleComplex([[0, 1, 2]])
+            sage: Z.dimension()
+            6
+            sage: dim(Z)  # indirect doctest
+            6
+
+        We can construct the cubical complex and compare whether
+        the dimensions coincide::
+
+            sage: dim(Z) == dim(Z.cubical_complex())
+            True
         """
         number_of_vertices = len(self._simplicial_complex.vertices())
         dim = self._simplicial_complex.dimension()
@@ -545,7 +572,7 @@ class MomentAngleComplex(SageObject, UniqueRepresentation):
         :type dim: integer or list of integers or ``None``; optional,
            default ``None``
 
-        EXAMPLES:
+        EXAMPLES::
 
         <Lots and lots of examples>
         """
@@ -578,7 +605,7 @@ class MomentAngleComplex(SageObject, UniqueRepresentation):
         is a moment-angle complex over the join of the two corresponding
         simplicial complexes.
 
-        EXAMPLES:
+        EXAMPLES::
 
         <Lots and lots of examples>
         """
