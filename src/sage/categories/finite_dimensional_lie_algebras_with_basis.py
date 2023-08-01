@@ -1134,7 +1134,7 @@ class FiniteDimensionalLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
                 sage: L.<x,y> = LieAlgebra(QQ, bracket)
                 sage: M = VectorSpace(QQ, 2)
                 sage: f=({x:Matrix([[1,0],[0,0]]), y:Matrix([[0,1],[0,0]])})
-                sage: C=chevalley_eilenberg(L, M, f); C
+                sage: C=L.chevalley_eilenberg_complex(M, f); C
                 sage: ascii_art(C)
                 Chain complex with at most 3 nonzero terms over Rational Field
                                         [ 0  0]      
