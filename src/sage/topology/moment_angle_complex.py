@@ -243,31 +243,50 @@ class MomentAngleComplex(SageObject, UniqueRepresentation):
 
     def _repr_(self):
         """
-        Print representation.
+        Return a string representation of this moment-angle complex.
 
-        EXAMPLES::
+        TESTS::
 
-        <Lots and lots of examples>
+            sage: Z = MomentAngleComplex([[0,1], [1,2], [2,0]])
+            sage: Z._repr_()
+            'Moment-angle complex over a simplicial complex with vertex set (0, 1, 2) and facets {(0, 1), (0, 2), (1, 2)}'
+            sage: repr(Z)  # indiredt doctest
+            'Moment-angle complex over a simplicial complex with vertex set (0, 1, 2) and facets {(0, 1), (0, 2), (1, 2)}'
+            sage: Z  # indirect doctest
+            Moment-angle complex over a simplicial complex with vertex set (0, 1, 2) and facets {(0, 1), (0, 2), (1, 2)}
+            sage: Z = MomentAngleComplex([[i for i in range(20)]])
+            sage: Z._repr_()
+            'Moment-angle complex over a simplicial complex with 20 vertices and 1 facets'
         """
         return "Moment-angle complex over a " + self._simplicial_complex._repr_().lower()
 
     @cached_method
-    def create_complex(self):
+    def _create_complex(self):
         """
-        Create the moment-angle complex as a simplicial complex.
+        Create the moment-angle complex as a cubical complex.
 
         If this method is called, we also explicitly compute the
-        moment-angle complex, viewed as a cubical complex, with the construction
-        described above.
+        moment-angle complex, viewed as a cubical complex.
 
         .. WARNING::
 
             The construction can be very slow, it is not reccomended unless
             the corresponding simplicial complex has 5 or less vertices.
 
-        EXAMPLES::
+        TESTS::
 
-        <Lots and lots of examples>
+            sage: Z = MomentAngleComplex([[0], [1], [2]]); Z
+            Moment-angle complex over a simplicial complex with vertex set (0, 1, 2) and facets {(0,), (1,), (2,)}
+            sage: Z._create_complex()
+            sage: Z._moment_angle_complex
+            Cubical complex with 64 vertices and 705 cubes
+
+        This method is used in the `cubical_complex()` method::
+
+            sage: Z.cubical_complex()
+            Cubical complex with 64 vertices and 705 cubes
+            sage: Z.cubical_complex() == Z._moment_angle_complex
+            True
         """
         n = len(self._simplicial_complex.vertices())
         D = [cubical_complexes.Cube(2)] * n
@@ -281,6 +300,44 @@ class MomentAngleComplex(SageObject, UniqueRepresentation):
                 x = x.product(y)
 
             self._moment_angle_complex = union(self._moment_angle_complex, x)
+
+    def cubical_complex(self):
+        """
+        Return the cubical complex which represents this moment-angle complex.
+
+        This method returns returns a cubical complex which is
+        derived by explicitly computing products and unions in the
+        definition of a moment-angle complex.
+
+        .. WARNING::
+
+            The construction can be very slow, it is not reccomended unless
+            the corresponding simplicial complex has 5 or less vertices.
+
+        EXAMPLES::
+
+            sage: Z = MomentAngleComplex([[0,1,2], [1,2,3]]); Z
+            Moment-angle complex over a simplicial complex with vertex set (0, 1, 2, 3) and facets {(0, 1, 2), (1, 2, 3)}
+            sage: Z.cubical_complex()
+            Cubical complex with 256 vertices and 6481 cubes
+            sage: dim(Z.cubical_complex()) == dim(Z)
+            True
+
+        We can now work with moment-angle complexes as concrete cubical complexes.
+        Though, it can be very slow, due to the size of the complex. However,
+        for some smaller moment-angle complexes, this may be possible::
+
+            sage: Z = MomentAngleComplex([[0], [1]]); Z
+            Moment-angle complex over a simplicial complex with vertex set (0, 1) and facets {(0,), (1,)}
+            sage: Z.cubical_complex().f_vector()
+            [1, 16, 32, 24, 8]
+        """
+        if self._moment_angle_complex:
+            # We check whether it has aready been created
+            return self._moment_angle_complex
+        else:
+            self._create_complex()
+            return self._moment_angle_complex
 
     def components(self):
         """
@@ -401,7 +458,7 @@ class MomentAngleComplex(SageObject, UniqueRepresentation):
         # needs work
         return out
 
-    @cached_method
+    @cached_method # maybe ignore the algorithm?
     def _homology_group(self, l, base_ring=ZZ, cohomology=False,
                      algorithm='pari', verbose=False, reduced=True):
         """
@@ -434,7 +491,6 @@ class MomentAngleComplex(SageObject, UniqueRepresentation):
         return HomologyGroup(m, base_ring, invfac)
 
     # expand the docstring here
-    # should direct sum be implemented differently here?
     def homology(self, dim=None, base_ring=ZZ, cohomology=False,
                  algorithm='pari', verbose=False, reduced=True):
         """
