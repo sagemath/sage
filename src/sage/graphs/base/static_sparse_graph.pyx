@@ -702,7 +702,7 @@ def tarjan_strongly_connected_components(G):
         sage: tarjan_strongly_connected_components(digraphs.Path(3))
         [[2], [1], [0]]
         sage: D = DiGraph( { 0 : [1, 3], 1 : [2], 2 : [3], 4 : [5, 6], 5 : [6] } )
-        sage: D.connected_components()
+        sage: D.connected_components(sort=True)
         [[0, 1, 2, 3], [4, 5, 6]]
         sage: D = DiGraph( { 0 : [1, 3], 1 : [2], 2 : [3], 4 : [5, 6], 5 : [6] } )
         sage: D.strongly_connected_components()
