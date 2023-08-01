@@ -438,8 +438,132 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
         sum.set_immutable()
         return sum
 
-    def three_sum(self, other, *args):
-        raise NotImplementedError
+    def three_sum(first_mat, second_mat, first_col_index1, first_col_index2, second_col_index1, second_col_index2):
+        r"""
+        Return the 3-sum matrix constructed from the given matrices ``first_mat`` and ``second_mat``, with 'first_col_index1'
+        and 'first_col_index2' being the indices of the column vectors of the matrix, which are identical except for one row
+        having a 0 in one column and the other a non-zero entry in that row. The method assumes the nonzero entry is one. The same assumptions
+        are made for 'second_mat' and its input index variables.
+        
+        EXAMPLES::
+
+            sage: from sage.matrix.matrix_cmr_sparse import Matrix_cmr_chr_sparse
+            sage: M1 = Matrix_cmr_chr_sparse(MatrixSpace(ZZ, 5, 5, sparse=True),
+            ....:                          [[1, 0, -1, 0, 1], [1, 1, 0, -1, 1], [0, 0, 1, 1, 1], 
+            ....:                           [1, 1, -1, 0, 0], [-1, -1, 0, 0,1]]); M1
+            [ 1  0 -1  0  1]
+            [ 1  1  0 -1  1]
+            [ 0  0  1  1  1]
+            [ 1  1 -1  0  0]
+            [-1 -1  0  0  1]
+            sage: M2 = Matrix_cmr_chr_sparse(MatrixSpace(ZZ, 5, 5, sparse=True),
+            ....:                      [[1, 1, 1, 1, 1], [1, 1, 1, 0, 0], [1, 0, 1, 1, 0],
+            ....:                       [0, 0, 0, 1, 1], [1, 1, 0, 0, 1]]); M2
+            [1 1 1 1 1]
+            [1 1 1 0 0]
+            [1 0 1 1 0]
+            [0 0 0 1 1]
+            [1 1 0 0 1]
+            sage: M3 = Matrix_cmr_chr_sparse.three_sum(M1, M2, 0, 1, 0, 1); M3
+            [ 0 -1  1  1  1  0]
+            [ 1  1  1  0  0  0]
+            [-1  0  0  1  1  0]
+            [ 0  0  1 -1 -1  0]
+            [-1  0  1  1  1  1]
+            [-1  0  1  1  0  0]
+            [-1  0  1  0  1  1]
+            [ 1  0 -1  0  0  1]
+        """
+        fc = len(first_mat.columns())
+        sc = len(second_mat.columns())
+        fr = len(first_mat.rows())
+        sr = len(second_mat.rows())
+        if any([fc < 3, sc < 3, fr < 2, sr < 2]):
+            raise ValueError('Some matrix is not large enough to perform a 3-sum')
+        if any([first_col_index1 >= fc, first_col_index2 >= fc, second_col_index1 >= sc, second_col_index2 >= sc]):
+            raise ValueError('Some column indicated exceeds its matrix size')
+        first_col1 = first_mat.columns()[first_col_index1]
+        first_col2 = first_mat.columns()[first_col_index2]
+        second_col1 = second_mat.columns()[second_col_index1]
+        second_col2 = second_mat.columns()[second_col_index2]
+        fir_nrows = range(fr)
+        sec_nrows = range(sr)
+        valid1 = False
+        valid2 = False
+        for i in fir_nrows:
+            if (first_col1[i] == 1 and first_col2[i] == 0) or (first_col1[i] == 0 and first_col2[i] == 1):
+                subcol1 = tuple(first_col1[k] for k in fir_nrows if k != i)
+                subcol2 = tuple(first_col2[k] for k in fir_nrows if k != i)
+                if subcol1 == subcol2:
+                    valid1 = True
+                    first_row_index = i 
+                    break
+        for i in sec_nrows:
+            if (second_col1[i] == 1 and second_col2[i] == 0) or (second_col1[i] == 0 and second_col2[i] == 1):
+                subcol1 = tuple(second_col1[k] for k in sec_nrows if k != i)
+                subcol2 = tuple(second_col2[k] for k in sec_nrows if k != i)
+                if subcol1 == subcol2:
+                    valid2 = True
+                    second_row_index = i 
+                    break
+        if not (valid1 and valid2):
+            raise ValueError('indicated columns of Matrices are not of appropriate form for 3-sum')
+        first_subcol = first_mat.delete_rows([first_row_index]).columns()[first_col_index1]
+        second_subcol = first_mat.delete_rows([second_row_index]).columns()[second_col_index1]
+        first_submat = first_mat.delete_columns([first_col_index1, first_col_index2])
+        second_submat = second_mat.delete_columns([second_col_index1, second_col_index2])
+        first_row = first_submat.rows()[first_row_index]
+        second_row = second_submat.rows()[second_row_index]
+        first_submat = first_submat.delete_rows([first_row_index])
+        second_submat = second_submat.delete_rows([second_row_index])
+        first_subrows = first_submat.rows()
+        second_subrows = second_submat.rows()
+        upper_right_rows = first_subcol.tensor_product(second_row).rows()
+        lower_left_rows = second_subcol.tensor_product(first_row).rows()
+        n1 = len(first_submat.rows())
+        n2 = len(second_submat.rows())
+        row_list = []
+        for i in range(n1):
+            r = list(first_subrows[i])
+            u = list(upper_right_rows[i])
+            r.extend(u)
+            row_list.append(r)
+        for i in range(n2):
+            r = list(lower_left_rows[i])
+            u = list(second_subrows[i])
+            r.extend(u)
+            row_list.append(r)
+        return Matrix_cmr_chr_sparse._from_data(row_list, immutable = False)  
+
+    def delete_rows(self, indices):
+        rows = self.rows()
+        row_list = []
+        n = len(rows)
+        for i in indices:
+            if i >= n:
+                raise ValueError('Found index greater than matrix size')
+            rows.pop(i)
+        for r in rows:
+            x = []
+            for i in range(len(r)):
+                x.append(r[i])
+            row_list.append(x)
+        return Matrix_cmr_chr_sparse._from_data(row_list, immutable = False)
+
+    def delete_columns(self, indices):
+        rows = self.rows()
+        n = len(rows)
+        row_list = []
+        for i in indices:
+            if i >= n:
+                raise ValueError('Found index greater than matrix size')
+        for r in rows:
+            x = []
+            for k in range(len(r)):
+                if not (k in indices):
+                    x.append(r[k])
+            row_list.append(x)
+        return Matrix_cmr_chr_sparse._from_data(row_list, immutable = False)
 
     def is_unimodular(self):
         r"""
@@ -718,7 +842,51 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
         return False, NotImplemented  # submatrix TBD
 
     def is_cographic(self, *, time_limit=60.0, certificate=False):
-        raise NotImplementedError
+        r"""
+        EXAMPLES::
+
+            sage: from sage.matrix.matrix_cmr_sparse import Matrix_cmr_chr_sparse
+            sage: M = Matrix_cmr_chr_sparse(MatrixSpace(ZZ, 4, 9, sparse=True), [[1, 0, 0, 0, 1, -1, 1, 0, 0],
+            ....:                                  [0, 1, 0, 0, 0, 1, -1, 1, 0], [0, 0, 1, 0, 0, 0, 1, -1, 1], 
+            ....:                                  [0, 0, 0, 1, 1, 0, 0, 1, -1]]); M
+            [ 1  0  0  0  1 -1  1  0  0]
+            [ 0  1  0  0  0  1 -1  1  0]
+            [ 0  0  1  0  0  0  1 -1  1]
+            [ 0  0  0  1  1  0  0  1 -1]
+            sage: M.is_cographic()
+            True
+        """
+        cdef bool result
+        cdef CMR_GRAPH *graph = NULL
+        cdef CMR_GRAPH_EDGE* forest_edges = NULL
+        cdef CMR_GRAPH_EDGE* coforest_edges = NULL
+        cdef CMR_SUBMAT* submatrix = NULL
+        cdef CMR_GRAPHIC_STATISTICS stats
+
+        sig_on()
+        try:
+            if certificate:
+                CMR_CALL(CMRtestCographicMatrix(cmr, self._mat, &result, &graph, &forest_edges,
+                                              &coforest_edges, &submatrix, &stats, time_limit))
+            else:
+                CMR_CALL(CMRtestCographicMatrix(cmr, self._mat, &result, NULL, NULL,
+                                              NULL, NULL, &stats, time_limit))
+        finally:
+            sig_off()
+
+        if not certificate:
+            return <bint> result
+
+        if <bint> result:
+            sage_graph = _sage_graph(graph)
+            sage_forest_edges = tuple(_sage_edge(graph, forest_edges[row])
+                                      for row in range(self.nrows()))
+            sage_coforest_edges = tuple(_sage_edge(graph, coforest_edges[column])
+                                        for column in range(self.ncols()))
+            return True, (sage_graph, sage_forest_edges, sage_coforest_edges)
+
+        return False, NotImplemented  # submatrix TBD
+
 
     def is_network_matrix(self, *, time_limit=60.0, certificate=False):
         r"""

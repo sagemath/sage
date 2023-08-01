@@ -305,9 +305,33 @@ cdef class OneSumNode(SumNode):
 
 
 cdef class TwoSumNode(SumNode):
-    
-    pass
+    r"""
+        EXAMPLES::
 
+            sage: from sage.matrix.matrix_cmr_sparse import Matrix_cmr_chr_sparse
+             M = Matrix_cmr_chr_sparse(MatrixSpace(ZZ, 5, 5, sparse=True), 
+            ....:                       [[1, 1, 1, 1, 1], [1, 1, 1, 0, 0], [1, 0, 1, 1, 0]
+            ....:                       ,[1, 0, 0, 1, 1], [1, 1, 0, 0, 1]]); M2
+            [1 1 1 1 1]
+            [1 1 1 0 0]
+            [1 0 1 1 0]
+            [1 0 0 1 1]
+            [1 1 0 0 1]
+            sage: M3 = Matrix_cmr_chr_sparse.two_sum(M2, M2, 0, 1); M3
+            [1 1 1 1|1 1 1 0 0]
+            [1 1 0 0|1 1 1 0 0]
+            [0 1 1 0|1 1 1 0 0]
+            [0 0 1 1|1 1 1 0 0]
+            [1 0 0 1|1 1 1 0 0]
+            [-------+---------]
+            [0 0 0 0|1 1 1 1 1]
+            [0 0 0 0|1 0 1 1 0]
+            [0 0 0 0|1 0 0 1 1]
+            [0 0 0 0|1 1 0 0 1]
+            sage: result, certificate = M3.is_totally_unimodular(certificate=True); certificate
+            TwoSumNode (9×9) with 2 children
+    """
+    pass
 
 cdef class ThreeSumNode(SumNode):
 
@@ -375,13 +399,18 @@ cdef class GraphicNode(BaseGraphicNode):
 
 
 cdef class CographicNode(BaseGraphicNode):
-
-    pass
+    @cached_method
+    def graph(self):
+        r"""
+        Actually the cograph of matrix, in the case where it is not graphic.
+        """
+        return _sage_graph(CMRdecCograph(self._dec))
 
 
 cdef class PlanarNode(BaseGraphicNode):
-
-    pass
+    @cached_method
+    def cograph(self):
+        return _sage_graph(CMRdecCograph(self._dec))
 
 
 cdef class SeriesParallelReductionNode(DecompositionNode):
