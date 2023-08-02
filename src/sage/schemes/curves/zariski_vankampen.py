@@ -600,7 +600,7 @@ def braid_in_segment(g, x0, x1):
         sage: p2 = QQbar(1/2+sqrt(-1/3)/2)
         sage: B = zvk.braid_in_segment(g.factor(),CC(p1),CC(p2)) # optional - sirocco
         sage: B  # optional - sirocco
-        s5*s3^-1
+        s0^-1*s1^-1*s0^-1*s5*s3^-1
     """
     _, y = g.value().parent().gens()
     I = QQbar.gen()
