@@ -2446,7 +2446,7 @@ class MPolynomialIdeal_singular_repr(
             (Ideal (y, x^5) of Multivariate Polynomial Ring in x, y, z over Algebraic Field, 4)
         """
         from sage.libs.singular.function_factory import ff
-        # function renamed in singular > 4.3.2p4, see https://github.com/sagemath/sage/pull/35980
+        # function renamed in singular > 4.3.2p4, see issue #35980
         try:
             sat = ff.elim__lib.sat_with_exp
         except NameError:
