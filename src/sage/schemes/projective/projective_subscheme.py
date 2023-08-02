@@ -1057,18 +1057,20 @@ class AlgebraicScheme_subscheme_projective(AlgebraicScheme_subscheme):
 
         EXAMPLES::
 
+            sage: # needs sage.schemes
             sage: P.<x,y,z> = ProjectiveSpace(GF(5), 2)
-            sage: C = Curve([x^4 - z^2*y^2], P)                                         # needs sage.rings.finite_rings
-            sage: D = Curve([y^4*z - x^5 - x^3*z^2], P)                                 # needs sage.rings.finite_rings
+            sage: C = Curve([x^4 - z^2*y^2], P)
+            sage: D = Curve([y^4*z - x^5 - x^3*z^2], P)
             sage: Q1 = P([0,1,0])
-            sage: C.intersection_multiplicity(D, Q1)                                    # needs sage.libs.singular sage.rings.finite_rings
+            sage: C.intersection_multiplicity(D, Q1)                                    # needs sage.libs.singular
             4
             sage: Q2 = P([0,0,1])
-            sage: C.intersection_multiplicity(D, Q2)                                    # needs sage.libs.singular sage.rings.finite_rings
+            sage: C.intersection_multiplicity(D, Q2)                                    # needs sage.libs.singular
             6
 
         ::
 
+            sage: # needs sage.rings.number_field
             sage: R.<a> = QQ[]
             sage: K.<b> = NumberField(a^4 + 1)                                          # needs sage.rings.number_field
             sage: P.<x,y,z,w> = ProjectiveSpace(K, 3)                                   # needs sage.rings.number_field
@@ -1149,9 +1151,9 @@ class AlgebraicScheme_subscheme_projective(AlgebraicScheme_subscheme):
         ::
 
             sage: P.<x,y,z,w> = ProjectiveSpace(GF(29), 3)
-            sage: C = Curve([y^17 - x^5*w^4*z^8, x*y - z^2], P)                         # needs sage.rings.finite_rings
+            sage: C = Curve([y^17 - x^5*w^4*z^8, x*y - z^2], P)                         # needs sage.schemes
             sage: Q = P([3,0,0,1])
-            sage: C.multiplicity(Q)                                                     # needs sage.libs.singular sage.rings.finite_rings
+            sage: C.multiplicity(Q)                                                     # needs sage.libs.singular sage.schemes
             8
         """
         if self.base_ring() not in Fields():
