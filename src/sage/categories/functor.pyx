@@ -55,7 +55,7 @@ def _Functor_unpickle(Cl, D, domain, codomain):
 
     """
     F = Functor.__new__(Cl)
-    Functor.__init__(F,domain,codomain)
+    Functor.__init__(F, domain, codomain)
     for s, v in D:
         setattr(F, s, v)
     return F
@@ -268,12 +268,11 @@ cdef class Functor(SageObject):
                               Defn: a |--> 4*a + 1
             sage: fF((a^2+a)*t^2/(a*t - a^2))                                           # optional - sage.rings.finite_rings
             ((4*a + 2)*t^2)/(t + a + 4)
-
         """
         try:
             return self(f.domain()).hom(f, self(f.codomain()))
         except Exception:
-            raise TypeError('unable to transform %s into a morphism in %s' % (f,self.codomain()))
+            raise TypeError(f'unable to transform {f} into a morphism in {self.codomain()}')
 
     def _coerce_into_domain(self, x):
         """
@@ -541,7 +540,7 @@ class ForgetfulFunctor_generic(Functor):
             sage: F1 != QQ
             True
         """
-        return not self ==  other
+        return not self == other
 
 
 class IdentityFunctor_generic(ForgetfulFunctor_generic):

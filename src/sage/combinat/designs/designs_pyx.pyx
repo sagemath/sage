@@ -36,6 +36,7 @@ def is_orthogonal_array(OA, int k, int n, int t=2, verbose=False, terminology="O
 
     EXAMPLES::
 
+        sage: # needs sage.schemes
         sage: from sage.combinat.designs.designs_pyx import is_orthogonal_array
         sage: OA = designs.orthogonal_arrays.build(8,9)
         sage: is_orthogonal_array(OA,8,9)
@@ -48,26 +49,27 @@ def is_orthogonal_array(OA, int k, int n, int t=2, verbose=False, terminology="O
         sage: is_orthogonal_array(OA,8,9,verbose=True)
         Columns 0 and 3 are not orthogonal
         False
-        sage: is_orthogonal_array(OA,8,9,verbose=True,terminology="MOLS")
+        sage: is_orthogonal_array(OA,8,9, verbose=True, terminology="MOLS")
         Squares 0 and 3 are not orthogonal
         False
 
     TESTS::
 
-        sage: is_orthogonal_array(OA,8,9,t=3)
+        sage: # needs sage.schemes
+        sage: is_orthogonal_array(OA,8,9, t=3)
         Traceback (most recent call last):
         ...
         NotImplementedError: only implemented for t=2
-        sage: is_orthogonal_array([[3]*8],8,9,verbose=True)
+        sage: is_orthogonal_array([[3]*8],8,9, verbose=True)
         The number of rows is 1 instead of 9^2=81
         False
-        sage: is_orthogonal_array([[3]*8],8,9,verbose=True,terminology="MOLS")
+        sage: is_orthogonal_array([[3]*8],8,9, verbose=True, terminology="MOLS")
         All squares do not have dimension n^2=9^2
         False
-        sage: is_orthogonal_array([[3]*7],8,9,verbose=True)
+        sage: is_orthogonal_array([[3]*7],8,9, verbose=True)
         Some row does not have length 8
         False
-        sage: is_orthogonal_array([[3]*7],8,9,verbose=True,terminology="MOLS")
+        sage: is_orthogonal_array([[3]*7],8,9, verbose=True, terminology="MOLS")
         The number of squares is not 6
         False
 
@@ -77,7 +79,7 @@ def is_orthogonal_array(OA, int k, int n, int t=2, verbose=False, terminology="O
 
         sage: from itertools import product
         sage: n = 0
-        sage: for a in product(product((0,1), repeat=3), repeat=4):
+        sage: for a in product(product((0,1), repeat=3), repeat=4):                     # needs sage.schemes
         ....:     if is_orthogonal_array(a,3,2):
         ....:          n += 1
         sage: n
@@ -183,16 +185,16 @@ def is_group_divisible_design(groups,blocks,v,G=None,K=None,lambd=1,verbose=Fals
     EXAMPLES::
 
         sage: from sage.combinat.designs.designs_pyx import is_group_divisible_design
-        sage: TD = designs.transversal_design(4,10)
+        sage: TD = designs.transversal_design(4,10)                                     # needs sage.modules
         sage: groups = [list(range(i*10,(i+1)*10)) for i in range(4)]
-        sage: is_group_divisible_design(groups,TD,40,lambd=1)
+        sage: is_group_divisible_design(groups,TD,40,lambd=1)                           # needs sage.modules
         True
 
     TESTS::
 
-        sage: TD = designs.transversal_design(4,10)
+        sage: TD = designs.transversal_design(4,10)                                     # needs sage.modules
         sage: groups = [list(range(i*10,(i+1)*10)) for i in range(4)]
-        sage: is_group_divisible_design(groups,TD,40,lambd=2,verbose=True)
+        sage: is_group_divisible_design(groups, TD, 40, lambd=2, verbose=True)          # needs sage.modules
         the pair (0,10) has been seen 1 times but lambda=2
         False
         sage: is_group_divisible_design([[1,2],[3,4]],[[1,2]],40,lambd=1,verbose=True)
@@ -214,6 +216,7 @@ def is_group_divisible_design(groups,blocks,v,G=None,K=None,lambd=1,verbose=Fals
         a block has size 2 while K=[1]
         False
 
+        sage: # needs sage.schemes
         sage: p = designs.projective_plane(3)
         sage: is_group_divisible_design(None, p.blocks(), 13)
         (True, [[0], [1], [2], [3], [4], [5], [6], [7], [8], [9], [10], [11], [12]])
@@ -362,24 +365,24 @@ def is_pairwise_balanced_design(blocks,v,K=None,lambd=1,verbose=False):
         sage: sts = designs.steiner_triple_system(9)
         sage: is_pairwise_balanced_design(sts,9,[3],1)
         True
-        sage: TD = designs.transversal_design(4,10).blocks()
+        sage: TD = designs.transversal_design(4,10).blocks()                            # needs sage.modules
         sage: groups = [list(range(i*10,(i+1)*10)) for i in range(4)]
-        sage: is_pairwise_balanced_design(TD+groups,40,[4,10],1,verbose=True)
+        sage: is_pairwise_balanced_design(TD + groups, 40, [4,10], 1, verbose=True)     # needs sage.modules
         True
 
     TESTS::
 
         sage: from sage.combinat.designs.designs_pyx import is_pairwise_balanced_design
-        sage: is_pairwise_balanced_design(TD+groups,40,[4,10],2,verbose=True)
+        sage: is_pairwise_balanced_design(TD + groups, 40, [4,10], 2, verbose=True)     # needs sage.modules
         the pair (0,1) has been seen 1 times but lambda=2
         False
-        sage: is_pairwise_balanced_design(TD+groups,40,[10],1,verbose=True)
+        sage: is_pairwise_balanced_design(TD + groups, 40, [10], 1, verbose=True)       # needs sage.modules
         a block has size 4 while K=[10]
         False
-        sage: is_pairwise_balanced_design([[2,2]],40,[2],1,verbose=True)
+        sage: is_pairwise_balanced_design([[2,2]], 40, [2], 1, verbose=True)
         The following block has repeated elements: [2, 2]
         False
-        sage: is_pairwise_balanced_design([["e",2]],40,[2],1,verbose=True)
+        sage: is_pairwise_balanced_design([["e",2]], 40, [2], 1, verbose=True)
         e does not belong to [0,...,39]
         False
     """
@@ -415,11 +418,12 @@ def is_projective_plane(blocks, verbose=False):
     EXAMPLES::
 
         sage: from sage.combinat.designs.designs_pyx import is_projective_plane
-        sage: p = designs.projective_plane(4)
-        sage: b = p.blocks()
-        sage: is_projective_plane(b, verbose=True)
+        sage: p = designs.projective_plane(4)                                           # needs sage.schemes
+        sage: b = p.blocks()                                                            # needs sage.schemes
+        sage: is_projective_plane(b, verbose=True)                                      # needs sage.schemes
         True
 
+        sage: # needs sage.schemes
         sage: p = designs.projective_plane(2)
         sage: b = p.blocks()
         sage: is_projective_plane(b)
@@ -437,6 +441,7 @@ def is_projective_plane(blocks, verbose=False):
         First block has less than 3 points.
         False
 
+        sage: # needs sage.schemes
         sage: p = designs.projective_plane(2)
         sage: b = p.blocks()
         sage: b[2].append(4)
@@ -486,9 +491,9 @@ def is_difference_matrix(M,G,k,lmbda=1,verbose=False):
 
         sage: from sage.combinat.designs.designs_pyx import is_difference_matrix
         sage: q = 3**3
-        sage: F = GF(q,'x')
-        sage: M = [[x*y for y in F] for x in F]
-        sage: is_difference_matrix(M,F,q,verbose=1)
+        sage: F = GF(q,'x')                                                             # needs sage.rings.finite_rings
+        sage: M = [[x*y for y in F] for x in F]                                         # needs sage.rings.finite_rings
+        sage: is_difference_matrix(M,F,q,verbose=1)                                     # needs sage.rings.finite_rings
         True
 
         sage: B = [[0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -501,6 +506,7 @@ def is_difference_matrix(M,G,k,lmbda=1,verbose=False):
 
     Bad input::
 
+        sage: # needs sage.rings.finite_rings
         sage: for R in M: R.append(None)
         sage: is_difference_matrix(M,F,q,verbose=1)
         The matrix has 28 columns but k=27
@@ -518,7 +524,8 @@ def is_difference_matrix(M,G,k,lmbda=1,verbose=False):
         sage: for R in M: R[-1] = 1
         sage: M[-1][-1] = 0
         sage: is_difference_matrix(M,F,q,verbose=1)
-        Columns 0 and 26 do not generate all elements of G exactly lambda(=1) times. The element x appeared 0 times as a difference.
+        Columns 0 and 26 do not generate all elements of G exactly lambda(=1) times.
+        The element x appeared 0 times as a difference.
         False
     """
     return is_quasi_difference_matrix(M,G,k,lmbda=lmbda,mu=lmbda,u=0,verbose=verbose)
@@ -559,9 +566,9 @@ def is_quasi_difference_matrix(M,G,int k,int lmbda,int mu,int u,verbose=False):
 
         sage: from sage.combinat.designs.designs_pyx import is_quasi_difference_matrix
         sage: q = 3**3
-        sage: F = GF(q,'x')
-        sage: M = [[x*y for y in F] for x in F]
-        sage: is_quasi_difference_matrix(M,F,q,1,1,0,verbose=1)
+        sage: F = GF(q,'x')                                                             # needs sage.rings.finite_rings
+        sage: M = [[x*y for y in F] for x in F]                                         # needs sage.rings.finite_rings
+        sage: is_quasi_difference_matrix(M,F,q,1,1,0,verbose=1)                         # needs sage.rings.finite_rings
         True
 
         sage: B = [[0, 0, 0, 0, 0, 0, 0, 0, 0, 0],

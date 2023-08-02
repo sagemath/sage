@@ -35,7 +35,7 @@ EXAMPLES::
         [0 0 0]}
 """
 
-#*****************************************************************************
+# ****************************************************************************
 # Copyright (C) 2009 D. Benjamin Antieau <d.ben.antieau@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
@@ -49,7 +49,7 @@ EXAMPLES::
 #
 #                  https://www.gnu.org/licenses/
 #
-#*****************************************************************************
+# ****************************************************************************
 
 from sage.matrix.constructor import block_diagonal_matrix, zero_matrix
 from sage.categories.morphism import Morphism
@@ -165,8 +165,8 @@ class ChainComplexMorphism(Morphism):
             # Check sizes of matrices.
             for i in matrices:
                 if (matrices[i].nrows() != D.free_module_rank(i) or
-                    matrices[i].ncols() != C.free_module_rank(i)):
-                    raise ValueError('matrix in degree {} is not the right size'.format(i))
+                        matrices[i].ncols() != C.free_module_rank(i)):
+                    raise ValueError(f'matrix in degree {i} is not the right size')
             # Check commutativity.
             for i in degrees:
                 if i - d not in degrees:
@@ -187,7 +187,7 @@ class ChainComplexMorphism(Morphism):
             # Use immutable matrices because they're hashable.
             m.set_immutable()
             self._matrix_dictionary[i] = m
-        Morphism.__init__(self, Hom(C,D, ChainComplexes(C.base_ring())))
+        Morphism.__init__(self, Hom(C, D, ChainComplexes(C.base_ring())))
 
     def in_degree(self, n):
         """
@@ -324,7 +324,7 @@ class ChainComplexMorphism(Morphism):
             f[i] = -self._matrix_dictionary[i]
         return ChainComplexMorphism(f, self.domain(), self.codomain())
 
-    def __add__(self,x):
+    def __add__(self, x):
         """
         Return ``self + x``.
 
@@ -431,7 +431,7 @@ class ChainComplexMorphism(Morphism):
             sage: g._matrix_dictionary
             {1: [], 2: []}
         """
-        if not isinstance(x,ChainComplexMorphism) or self.domain() != x.codomain():
+        if not isinstance(x, ChainComplexMorphism) or self.domain() != x.codomain():
             try:
                 y = self.domain().base_ring()(x)
             except TypeError:
@@ -439,13 +439,13 @@ class ChainComplexMorphism(Morphism):
             f = dict()
             for i in self._matrix_dictionary:
                 f[i] = self._matrix_dictionary[i] * y
-            return ChainComplexMorphism(f,self.domain(),self.codomain())
-        f = dict()
+            return ChainComplexMorphism(f, self.domain(), self.codomain())
+        f = {}
         for i in self._matrix_dictionary:
             f[i] = self._matrix_dictionary[i]*x.in_degree(i)
-        return ChainComplexMorphism(f,x.domain(),self.codomain())
+        return ChainComplexMorphism(f, x.domain(), self.codomain())
 
-    def __rmul__(self,x):
+    def __rmul__(self, x):
         """
         Return ``x * self`` if ``x`` is an element of the base ring.
 
@@ -465,11 +465,11 @@ class ChainComplexMorphism(Morphism):
         except TypeError:
             raise TypeError("multiplication is not defined")
         f = dict()
-        for i in self._matrix_dictionary.keys():
+        for i in self._matrix_dictionary:
             f[i] = y * self._matrix_dictionary[i]
-        return ChainComplexMorphism(f,self.domain(),self.codomain())
+        return ChainComplexMorphism(f, self.domain(), self.codomain())
 
-    def __sub__(self,x):
+    def __sub__(self, x):
         """
         Return ``self - x``.
 
@@ -498,7 +498,7 @@ class ChainComplexMorphism(Morphism):
         """
         return self + (-x)
 
-    def __eq__(self,x):
+    def __eq__(self, x):
         """
         Return ``True`` if and only if ``self == x``.
 
@@ -518,12 +518,12 @@ class ChainComplexMorphism(Morphism):
             sage: x == y                                                                # optional - sage.graphs
             True
         """
-        return isinstance(x,ChainComplexMorphism) \
-                and self.codomain() == x.codomain() \
-                and self.domain() == x.domain() \
-                and self._matrix_dictionary == x._matrix_dictionary
+        return isinstance(x, ChainComplexMorphism) \
+            and self.codomain() == x.codomain() \
+            and self.domain() == x.domain() \
+            and self._matrix_dictionary == x._matrix_dictionary
 
-    def is_identity(self):
+    def is_identity(self) -> bool:
         """
         Return ``True`` if this is the identity map.
 
@@ -538,7 +538,7 @@ class ChainComplexMorphism(Morphism):
         """
         return self.to_matrix().is_one()
 
-    def is_surjective(self):
+    def is_surjective(self) -> bool:
         """
         Return ``True`` if this map is surjective.
 

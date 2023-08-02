@@ -2724,9 +2724,9 @@ REFERENCES:
               doubles of finite groups*. PhD Thesis,
               University of California, Santa Cruz. 1999.
 
-.. [GoMa2010] Christopher Goff and Geoffrey Mason, 
+.. [GoMa2010] Christopher Goff and Geoffrey Mason,
             *Generalized twisted quantum doubles and the McKay correspondence*,
-            J. Algebra 324 (2010), no. 11, 3007–3016. 
+            J. Algebra 324 (2010), no. 11, 3007–3016.
 
 .. [GJ2016] Muddappa Seetharama Gowda and Juyoung Jeong.
             Spectral cones in Euclidean Jordan algebras.
@@ -3102,8 +3102,9 @@ REFERENCES:
              with tunable clustering*, Phys. Rev. E (2002). vol 65, no 2, 026107.
              :doi:`10.1103/PhysRevE.65.026107`.
 
-.. [HKL2021] Clemens Heuberger, Daniel Krenn, Gabriel F. Lipnik, "Asymptotic
-             Analysis of `q`-Recursive Sequences", :arxiv:`2105.04334`, 2021.
+.. [HKL2022] Clemens Heuberger, Daniel Krenn, Gabriel F. Lipnik, "Asymptotic
+             Analysis of `q`-Recursive Sequences". Algorithmica **84** (2022),
+             2480–2532. :doi:`10.1007/s00453-022-00950-y`.
 
 .. [HKOTY1999] \G. Hatayama, A. Kuniba, M. Okado, T. Tagaki, and Y. Yamada,
                *Remarks on fermionic formula*. Contemp. Math., **248** (1999).
@@ -4946,6 +4947,11 @@ REFERENCES:
              Electronic Journal of Linear Algebra, 34:444-458, 2018,
              :doi:`10.13001/1081-3810.3782`.
 
+.. [ORS2013] Peter Ozsvath, Jacob Rasmussen, Zoltan Szabo,
+             *Odd Khovanov homology*,
+             Algebraic & Geometric Topology 13 (2013) 1465–1488,
+             :doi:`10.2140/agt.2013.13.1465`.
+
 .. [ORV] Grigori Olshanski, Amitai Regev, Anatoly Vershik,
          *Frobenius-Schur functions*,
          :arxiv:`math/0110077v1`.
@@ -5076,6 +5082,11 @@ REFERENCES:
 
 .. [Pos2005] \A. Postnikov, Affine approach to quantum Schubert
              calculus, Duke Math. J. 128 (2005) 473-509
+
+.. [Pot1998] Potemine, I.Y.,
+             Minimal Terminal Q-Factorial Models of Drinfeld Coarse Moduli Schemes.
+             Mathematical Physics, Analysis and Geometry 1, 171-191 (1998).
+             :doi:`10.1023/A:1009724323513`
 
 .. [PPW2013] \D. Perkinson, J. Perlman, and J. Wilmes.
              *Primer for the algebraic geometry of sandpiles*.
