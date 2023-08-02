@@ -68,4 +68,4 @@ class GapPackage(Feature):
 
 
 def all_features():
-    return []
+    return [GapPackage("grape", spkg="gap_packages")]
