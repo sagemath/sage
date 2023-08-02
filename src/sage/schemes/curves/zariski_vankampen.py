@@ -955,13 +955,13 @@ def geometric_basis(G, E, EC0, p, dual_graph):
     Internal = G.subgraph(vertices=InternalVertices, edges=InternalEdges)
     for i, ECi in enumerate(EC):  # q and r are the points we will cut through
         if ECi in Internal:
-            EI = [v for v in E if v in Internal.connected_component_containing_vertex(ECi) and v != ECi]
+            EI = [v for v in E if v in Internal.connected_component_containing_vertex(ECi, sort=True) and v != ECi]
             if len(EI) > 0:
                 q = ECi
                 connecting_path = list(EC[:i])
                 break
         if EC[-i] in Internal:
-            EI = [v for v in E if v in Internal.connected_component_containing_vertex(EC[-i]) and v != EC[-i]]
+            EI = [v for v in E if v in Internal.connected_component_containing_vertex(EC[-i], sort=True) and v != EC[-i]]
             if len(EI) > 0:
                 q = EC[-i]
                 connecting_path = list(reversed(EC[-i:]))
