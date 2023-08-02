@@ -35,18 +35,19 @@ coerce maps. In previous versions of Sage, the cache was by strong
 references and resulted in a memory leak in the following example.
 However, this leak was fixed by :trac:`715`, using weak references::
 
-    sage: K.<t> = GF(2^55)                                                              # needs sage.rings.finite_rings
-    sage: for i in range(20):                                                           # needs sage.rings.finite_rings
+    sage: # needs sage.combinat sage.modules sage.rings.finite_rings
+    sage: K.<t> = GF(2^55)
+    sage: for i in range(20):
     ....:     a = K.random_element()
     ....:     E = EllipticCurve(j=a)
     ....:     P = E.random_point()
     ....:     Q = 2*P
-    sage: L = [Partitions(n) for n in range(200)]  # purge strong cache in CachedRepresentation     # needs sage.combinat sage.rings.finite_rings
+    sage: L = [Partitions(n) for n in range(200)]  # purge strong cache in CachedRepresentation
     sage: import gc
     sage: n = gc.collect()
-    sage: from sage.schemes.elliptic_curves.ell_finite_field import EllipticCurve_finite_field      # needs sage.combinat sage.rings.finite_rings
-    sage: LE = [x for x in gc.get_objects() if isinstance(x, EllipticCurve_finite_field)]           # needs sage.combinat sage.rings.finite_rings
-    sage: len(LE)                                                                                   # needs sage.combinat sage.rings.finite_rings
+    sage: from sage.schemes.elliptic_curves.ell_finite_field import EllipticCurve_finite_field
+    sage: LE = [x for x in gc.get_objects() if isinstance(x, EllipticCurve_finite_field)]
+    sage: len(LE)
     1
 """
 

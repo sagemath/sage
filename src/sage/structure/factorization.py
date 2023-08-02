@@ -125,14 +125,15 @@ On the other hand, -1 is a unit in `\ZZ`, so it is included in the unit::
 
 Factorizations can involve fairly abstract mathematical objects::
 
-    sage: F = ModularSymbols(11,4).factorization(); F                                   # optional - sage.modular
+    sage: # needs sage.modular
+    sage: F = ModularSymbols(11,4).factorization(); F
     (Modular Symbols subspace of dimension 2 of Modular Symbols space
       of dimension 6 for Gamma_0(11) of weight 4 with sign 0 over Rational Field) *
     (Modular Symbols subspace of dimension 2 of Modular Symbols space
       of dimension 6 for Gamma_0(11) of weight 4 with sign 0 over Rational Field) *
     (Modular Symbols subspace of dimension 2 of Modular Symbols space
       of dimension 6 for Gamma_0(11) of weight 4 with sign 0 over Rational Field)
-    sage: type(F)                                                                       # optional - sage.modular
+    sage: type(F)
     <class 'sage.structure.factorization.Factorization'>
 
 
