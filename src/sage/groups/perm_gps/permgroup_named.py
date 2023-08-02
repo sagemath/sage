@@ -1063,14 +1063,14 @@ class JankoGroup(PermutationGroup_unique):
 
         EXAMPLES::
 
-            sage: G = groups.permutation.Janko(1); G # optional - gap_packages internet
+            sage: G = groups.permutation.Janko(1); G # optional - gap_package_atlasrep internet
             Janko group J1 of order 175560 as a permutation group
 
         TESTS::
 
-            sage: G.category() # optional - gap_packages internet
+            sage: G.category() # optional - gap_package_atlasrep internet
             Category of finite enumerated permutation groups
-            sage: TestSuite(G).run(skip=["_test_enumerated_set_contains", "_test_enumerated_set_iter_list"]) # optional - gap_packages internet
+            sage: TestSuite(G).run(skip=["_test_enumerated_set_contains", "_test_enumerated_set_iter_list"]) # optional - gap_package_atlasrep internet
         """
         if n not in [1, 2, 3]:
             raise ValueError("n must belong to {1,2,3}")
@@ -1083,7 +1083,7 @@ class JankoGroup(PermutationGroup_unique):
         """
         EXAMPLES::
 
-            sage: G = groups.permutation.Janko(1); G # optional - gap_packages internet
+            sage: G = groups.permutation.Janko(1); G # optional - gap_package_atlasrep internet
             Janko group J1 of order 175560 as a permutation group
         """
         return "Janko group J%s of order %s as a permutation group" % (self._n, self.order())
@@ -1096,14 +1096,14 @@ class SuzukiSporadicGroup(PermutationGroup_unique):
 
         EXAMPLES::
 
-            sage: G = groups.permutation.SuzukiSporadic(); G # optional - gap_packages internet
+            sage: G = groups.permutation.SuzukiSporadic(); G # optional - gap_package_atlasrep internet
             Sporadic Suzuki group acting on 1782 points
 
         TESTS::
 
-            sage: G.category() # optional - gap_packages internet
+            sage: G.category() # optional - gap_package_atlasrep internet
             Category of finite enumerated permutation groups
-            sage: TestSuite(G).run(skip=["_test_enumerated_set_contains", "_test_enumerated_set_iter_list"]) # optional - gap_packages internet
+            sage: TestSuite(G).run(skip=["_test_enumerated_set_contains", "_test_enumerated_set_iter_list"]) # optional - gap_package_atlasrep internet
         """
         libgap.load_package("atlasrep")
         PermutationGroup_generic.__init__(self, gap_group='AtlasGroup("Suz")')
@@ -1112,7 +1112,7 @@ class SuzukiSporadicGroup(PermutationGroup_unique):
         """
         EXAMPLES::
 
-            sage: G = groups.permutation.SuzukiSporadic(); G # optional - gap_packages internet
+            sage: G = groups.permutation.SuzukiSporadic(); G # optional - gap_package_atlasrep internet
             Sporadic Suzuki group acting on 1782 points
         """
         return "Sporadic Suzuki group acting on 1782 points"

@@ -910,12 +910,12 @@ class AbstractLinearCode(AbstractLinearCodeNoMetric):
         EXAMPLES::
 
             sage: C = codes.HammingCode(GF(2), 5)
-            sage: C.covering_radius()  # optional - gap_packages (Guava package)
+            sage: C.covering_radius()  # optional - gap_package_guava
             ...
             1
 
             sage: C = codes.random_linear_code(GF(263), 5, 1)
-            sage: C.covering_radius()  # optional - gap_packages (Guava package)
+            sage: C.covering_radius()  # optional - gap_package_guava
             Traceback (most recent call last):
             ...
             NotImplementedError: the GAP algorithm that Sage is using
@@ -1374,7 +1374,7 @@ class AbstractLinearCode(AbstractLinearCodeNoMetric):
             sage: C.minimum_distance(algorithm="gap")                                   # optional - sage.libs.gap
             3
             sage: libgap.SetAllInfoLevels(0)         # to suppress extra info messages  # optional - sage.libs.gap
-            sage: C.minimum_distance(algorithm="guava")  # optional - gap_packages (Guava package)
+            sage: C.minimum_distance(algorithm="guava")  # optional - gap_package_guava
             ...
             3
 
@@ -1615,10 +1615,10 @@ class AbstractLinearCode(AbstractLinearCodeNoMetric):
             sage: GG = C.permutation_automorphism_group(algorithm="codecan") # long time, optional - sage.groups
             sage: GG == G                                                    # long time, optional - sage.groups
             True
-            sage: C.permutation_automorphism_group(algorithm="gap")  # optional - gap_packages (Guava package) sage.groups
+            sage: C.permutation_automorphism_group(algorithm="gap")  # optional - gap_package_guava sage.groups
             Permutation Group with generators [(1,3)(4,5), (1,4)(3,5)]
             sage: C = codes.GolayCode(GF(3), True)
-            sage: C.permutation_automorphism_group(algorithm="gap")  # optional - gap_packages (Guava package) sage.groups
+            sage: C.permutation_automorphism_group(algorithm="gap")  # optional - gap_package_guava sage.groups
             Permutation Group with generators
              [(5,7)(6,11)(8,9)(10,12), (4,6,11)(5,8,12)(7,10,9), (3,4)(6,8)(9,11)(10,12),
               (2,3)(6,11)(8,12)(9,10), (1,2)(5,10)(7,12)(8,9)]
@@ -1839,7 +1839,7 @@ class AbstractLinearCode(AbstractLinearCodeNoMetric):
             [1, 0, 0, 30, 15, 18]
             sage: C = codes.HammingCode(GF(2), 3); C
             [7, 4] Hamming Code over GF(2)
-            sage: C.weight_distribution(algorithm="leon")   # optional - gap_packages (Guava package)
+            sage: C.weight_distribution(algorithm="leon")   # optional - gap_package_guava
             [1, 0, 0, 7, 7, 0, 0, 1]
             sage: C.weight_distribution(algorithm="gap")                                # optional - sage.libs.gap
             [1, 0, 0, 7, 7, 0, 0, 1]
@@ -1847,15 +1847,15 @@ class AbstractLinearCode(AbstractLinearCodeNoMetric):
             [1, 0, 0, 7, 7, 0, 0, 1]
             sage: C = codes.HammingCode(GF(3), 3); C
             [13, 10] Hamming Code over GF(3)
-            sage: C.weight_distribution() == C.weight_distribution(algorithm="leon")  # optional - gap_packages (Guava package)
+            sage: C.weight_distribution() == C.weight_distribution(algorithm="leon")  # optional - gap_package_guava
             True
             sage: C = codes.HammingCode(GF(5), 2); C
             [6, 4] Hamming Code over GF(5)
-            sage: C.weight_distribution() == C.weight_distribution(algorithm="leon")  # optional - gap_packages (Guava package)
+            sage: C.weight_distribution() == C.weight_distribution(algorithm="leon")  # optional - gap_package_guava
             True
             sage: C = codes.HammingCode(GF(7), 2); C
             [8, 6] Hamming Code over GF(7)
-            sage: C.weight_distribution() == C.weight_distribution(algorithm="leon")   # optional - gap_packages (Guava package)
+            sage: C.weight_distribution() == C.weight_distribution(algorithm="leon")   # optional - gap_package_guava
             True
 
         """
@@ -2001,10 +2001,10 @@ class AbstractLinearCode(AbstractLinearCodeNoMetric):
             sage: C = codes.HammingCode(GF(2), 3)
             sage: C.zeta_polynomial()
             2/5*T^2 + 2/5*T + 1/5
-            sage: C = codes.databases.best_linear_code_in_guava(6,3,GF(2))  # optional - gap_packages (Guava package)
-            sage: C.minimum_distance()              # optional - gap_packages (Guava package)
+            sage: C = codes.databases.best_linear_code_in_guava(6,3,GF(2))  # optional - gap_package_guava
+            sage: C.minimum_distance()              # optional - gap_package_guava
             3
-            sage: C.zeta_polynomial()               # optional - gap_packages (Guava package)
+            sage: C.zeta_polynomial()               # optional - gap_package_guava
             2/5*T^2 + 2/5*T + 1/5
             sage: C = codes.HammingCode(GF(2), 4)
             sage: C.zeta_polynomial()

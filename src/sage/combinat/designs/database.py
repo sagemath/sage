@@ -4464,9 +4464,9 @@ def HigmanSimsDesign():
 
     EXAMPLES::
 
-        sage: H = designs.HigmanSimsDesign(); H  # optional - gap_packages
+        sage: H = designs.HigmanSimsDesign(); H                     # optional - gap_package_design
         Incidence structure with 176 points and 176 blocks
-        sage: H.is_t_design(return_parameters=1) # optional - gap_packages
+        sage: H.is_t_design(return_parameters=1)                    # optional - gap_package_design
         (True, (2, 176, 50, 14))
 
     Make sure that the automorphism group of this designs is isomorphic to the
@@ -4475,9 +4475,9 @@ def HigmanSimsDesign():
     first of those permutation groups acts on 176 points, while the second acts
     on 100::
 
-        sage: gH = H.automorphism_group()                        # optional - gap_packages
-        sage: gG = graphs.HigmanSimsGraph().automorphism_group() # optional - gap_packages
-        sage: gG.is_isomorphic(gG)                   # long time # optional - gap_packages
+        sage: gH = H.automorphism_group()                           # optional - gap_package_design
+        sage: gG = graphs.HigmanSimsGraph().automorphism_group()    # optional - gap_package_design
+        sage: gG.is_isomorphic(gG)                       # long time, optional - gap_package_design
         True
 
     REFERENCE:

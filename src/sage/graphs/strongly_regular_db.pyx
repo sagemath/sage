@@ -910,9 +910,9 @@ def is_cossidente_penttila(int v, int k, int l, int mu):
         sage: from sage.graphs.strongly_regular_db import is_cossidente_penttila
         sage: t =  is_cossidente_penttila(378, 52, 1, 8); t
         (<function CossidentePenttilaGraph at ...>, 5)
-        sage: g = t[0](*t[1:]); g                      # optional - gap_packages
+        sage: g = t[0](*t[1:]); g                      # optional - gap_package_design
         CossidentePenttila(5): Graph on 378 vertices
-        sage: g.is_strongly_regular(parameters=True)   # optional - gap_packages
+        sage: g.is_strongly_regular(parameters=True)   # optional - gap_package_design
         (378, 52, 1, 8)
 
     TESTS::
@@ -1496,7 +1496,7 @@ def is_twograph_descendant_of_srg(int v, int k0, int l, int mu):
 
         sage: graphs.strongly_regular_graph(279, 150, 85, 75, existence=True)
         True
-        sage: graphs.strongly_regular_graph(279, 150, 85, 75).is_strongly_regular(parameters=True) # optional - gap_packages internet
+        sage: graphs.strongly_regular_graph(279, 150, 85, 75).is_strongly_regular(parameters=True) # optional - gap_package_design internet
         (279, 150, 85, 75)
     """
     cdef int b, k, s
@@ -1985,8 +1985,8 @@ def SRG_120_77_52_44():
     EXAMPLES::
 
         sage: from sage.graphs.strongly_regular_db import SRG_120_77_52_44
-        sage: G = SRG_120_77_52_44()                 # optional - gap_packages
-        sage: G.is_strongly_regular(parameters=True) # optional - gap_packages
+        sage: G = SRG_120_77_52_44()                 # optional - gap_package_design
+        sage: G.is_strongly_regular(parameters=True) # optional - gap_package_design
         (120, 77, 52, 44)
     """
     from sage.combinat.designs.block_design import WittDesign
@@ -2043,8 +2043,8 @@ def SRG_176_49_12_14():
     EXAMPLES::
 
         sage: from sage.graphs.strongly_regular_db import SRG_176_49_12_14
-        sage: G = SRG_176_49_12_14()                 # optional - gap_packages # long time
-        sage: G.is_strongly_regular(parameters=True) # optional - gap_packages # long time
+        sage: G = SRG_176_49_12_14()                    # long time, optional - gap_package_design
+        sage: G.is_strongly_regular(parameters=True)    # long time, optional - gap_package_design
         (176, 49, 12, 14)
     """
     from sage.combinat.designs.database import HigmanSimsDesign
@@ -2080,8 +2080,8 @@ def SRG_176_105_68_54():
     EXAMPLES::
 
         sage: from sage.graphs.strongly_regular_db import SRG_176_105_68_54
-        sage: G = SRG_176_105_68_54()                # optional - gap_packages
-        sage: G.is_strongly_regular(parameters=True) # optional - gap_packages
+        sage: G = SRG_176_105_68_54()                   # optional - gap_package_design
+        sage: G.is_strongly_regular(parameters=True)    # optional - gap_package_design
         (176, 105, 68, 54)
     """
     from sage.combinat.designs.block_design import WittDesign
@@ -2178,8 +2178,8 @@ def SRG_253_140_87_65():
     EXAMPLES::
 
         sage: from sage.graphs.strongly_regular_db import SRG_253_140_87_65
-        sage: G = SRG_253_140_87_65()                # optional - gap_packages
-        sage: G.is_strongly_regular(parameters=True) # optional - gap_packages
+        sage: G = SRG_253_140_87_65()                   # optional - gap_package_design
+        sage: G.is_strongly_regular(parameters=True)    # optional - gap_package_design
         (253, 140, 87, 65)
     """
     from sage.combinat.designs.block_design import WittDesign
@@ -2261,8 +2261,8 @@ def SRG_276_140_58_84():
     EXAMPLES::
 
         sage: from sage.graphs.strongly_regular_db import SRG_276_140_58_84
-        sage: g=SRG_276_140_58_84()                  # long time # optional - gap_packages
-        sage: g.is_strongly_regular(parameters=True) # long time # optional - gap_packages
+        sage: g = SRG_276_140_58_84()                   # long time, optional - gap_package_design
+        sage: g.is_strongly_regular(parameters=True)    # long time, optional - gap_package_design
         (276, 140, 58, 84)
     """
     from sage.graphs.generators.smallgraphs import McLaughlinGraph
@@ -2871,7 +2871,7 @@ def strongly_regular_graph(int v, int k, int l, int mu=-1, bint existence=False,
     Check that all of our constructions are correct - you will need gap_packages spkg installed::
 
         sage: from sage.graphs.strongly_regular_db import apparently_feasible_parameters
-        sage: for p in sorted(apparently_feasible_parameters(1300)):   # not tested
+        sage: for p in sorted(apparently_feasible_parameters(1300)):   # not tested, optional gap_package_design
         ....:     if graphs.strongly_regular_graph(*p,existence=True) is True:
         ....:         try:
         ....:             _ = graphs.strongly_regular_graph(*p)
