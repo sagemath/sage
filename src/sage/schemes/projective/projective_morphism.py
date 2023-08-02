@@ -112,6 +112,7 @@ class SchemeMorphism_polynomial_projective_space(SchemeMorphism_polynomial):
 
     An example of a morphism between projective plane curves (see :trac:`10297`)::
 
+        sage: # needs sage.schemes
         sage: P2.<x,y,z> = ProjectiveSpace(QQ, 2)
         sage: f = x^3 + y^3 + 60*z^3
         sage: g = y^2*z - (x^3 - 6400*z^3/3)
@@ -529,6 +530,7 @@ class SchemeMorphism_polynomial_projective_space(SchemeMorphism_polynomial):
 
         ::
 
+            sage: # needs sage.rings.real_mpfr
             sage: P.<x,y> = ProjectiveSpace(QQ, 1)
             sage: P2.<u,v> = ProjectiveSpace(CC, 1)                                     # needs sage.rings.real_mpfr
             sage: H = End(P)
@@ -775,7 +777,7 @@ class SchemeMorphism_polynomial_projective_space(SchemeMorphism_polynomial):
             sage: X = P.subscheme(x^2 - y^2)
             sage: H = Hom(X, X)
             sage: f = H([x^2, y^2, z^2])
-            sage: f.scale_by(x - y); f                                                  # needs sage.rings.finite_rings
+            sage: f.scale_by(x - y); f                                                  # needs sage.libs.singular
             Scheme endomorphism of Closed subscheme of Projective Space of dimension 2
              over Finite Field of size 7 defined by: x^2 - y^2
               Defn: Defined on coordinates by sending (x : y : z) to
@@ -839,7 +841,7 @@ class SchemeMorphism_polynomial_projective_space(SchemeMorphism_polynomial):
             sage: X = P.subscheme(x^2 - y^2)
             sage: H = Hom(X, X)
             sage: f = H([x^3 + x*y^2, x*y^2, x*z^2])
-            sage: f.normalize_coordinates(); f                                          # needs sage.rings.finite_rings
+            sage: f.normalize_coordinates(); f                                          # needs sage.libs.singular
             Scheme endomorphism of Closed subscheme of Projective Space of dimension 2
              over Finite Field of size 7 defined by: x^2 - y^2
               Defn: Defined on coordinates by sending (x : y : z) to (2*y^2 : y^2 : z^2)
@@ -868,6 +870,7 @@ class SchemeMorphism_polynomial_projective_space(SchemeMorphism_polynomial):
 
         ::
 
+            sage: # needs sage.rings.number_field
             sage: R.<t> = PolynomialRing(ZZ)
             sage: K.<b> = NumberField(t^3 - 11)                                         # needs sage.rings.number_field
             sage: a = 7/(b - 1)
@@ -890,6 +893,7 @@ class SchemeMorphism_polynomial_projective_space(SchemeMorphism_polynomial):
 
         ::
 
+            sage: # needs sage.rings.number_field
             sage: R.<w> = QQ[]
             sage: A.<a> = NumberField(w^2 + 1)                                          # needs sage.rings.number_field
             sage: P.<x,y,z> = ProjectiveSpace(A, 2)                                     # needs sage.rings.number_field
@@ -1276,7 +1280,7 @@ class SchemeMorphism_polynomial_projective_space(SchemeMorphism_polynomial):
             sage: P.<x,y,z> = ProjectiveSpace(R, 2)
             sage: H = Hom(P, P)
             sage: f = H([x*z - t*y^2, x^2 - y^2, t*z^2])
-            sage: f.is_morphism()                                                       # needs sage.libs.singular sage.rings.finite_rings
+            sage: f.is_morphism()                                                       # needs sage.libs.singular
             True
 
         Map that is not morphism on projective space, but is over a subscheme::
@@ -1343,6 +1347,7 @@ class SchemeMorphism_polynomial_projective_space(SchemeMorphism_polynomial):
 
         ::
 
+            sage: # needs sage.rings.number_field
             sage: R.<z> = PolynomialRing(QQ)
             sage: K.<w> = NumberField(z^2 - 2)                                          # needs sage.rings.number_field
             sage: O = K.maximal_order()                                                 # needs sage.rings.number_field
@@ -1450,6 +1455,7 @@ class SchemeMorphism_polynomial_projective_space(SchemeMorphism_polynomial):
 
         ::
 
+            sage: # needs sage.rings.number_field
             sage: R.<z> = PolynomialRing(QQ)
             sage: K.<w> = NumberField(z^2 - 2)                                          # needs sage.rings.number_field
             sage: P.<x,y> = ProjectiveSpace(K, 1)                                       # needs sage.rings.number_field
@@ -1497,6 +1503,7 @@ class SchemeMorphism_polynomial_projective_space(SchemeMorphism_polynomial):
 
         ::
 
+            sage: # needs sage.rings.number_field
             sage: R.<z> = PolynomialRing(QQ)
             sage: K.<w> = NumberField(z^2 - 2)                                          # needs sage.rings.number_field
             sage: P.<x,y> = ProjectiveSpace(K, 1)                                       # needs sage.rings.number_field
@@ -1524,6 +1531,7 @@ class SchemeMorphism_polynomial_projective_space(SchemeMorphism_polynomial):
 
         EXAMPLES::
 
+            sage: # needs sage.rings.number_field
             sage: R.<x> = PolynomialRing(QQ)
             sage: K.<w> = NumberField(x^2 + 11)                                         # needs sage.rings.number_field
             sage: P.<x,y> = ProjectiveSpace(K, 1)                                       # needs sage.rings.number_field
@@ -1535,6 +1543,7 @@ class SchemeMorphism_polynomial_projective_space(SchemeMorphism_polynomial):
 
         ::
 
+            sage: # needs sage.rings.number_field
             sage: P.<x,y> = ProjectiveSpace(QQ, 1)
             sage: P2.<u,v,t> = ProjectiveSpace(K, 2)                                    # needs sage.rings.number_field
             sage: H = Hom(P, P2)                                                        # needs sage.rings.number_field
@@ -1626,6 +1635,7 @@ class SchemeMorphism_polynomial_projective_space_field(SchemeMorphism_polynomial
 
         A number field example ::
 
+            sage: # needs sage.rings.number_field
             sage: z = QQ['z'].0
             sage: K.<a> = NumberField(z^2 - 2)                                          # needs sage.rings.number_field
             sage: P.<x,y> = ProjectiveSpace(K, 1)                                       # needs sage.rings.number_field
@@ -1636,6 +1646,7 @@ class SchemeMorphism_polynomial_projective_space_field(SchemeMorphism_polynomial
 
         ::
 
+            sage: # needs sage.rings.number_field
             sage: z = QQ['z'].0
             sage: K.<a> = NumberField(z^2 - 2)                                          # needs sage.rings.number_field
             sage: P.<x,y,z> = ProjectiveSpace(K, 2)                                     # needs sage.rings.number_field
@@ -1733,6 +1744,7 @@ class SchemeMorphism_polynomial_projective_space_field(SchemeMorphism_polynomial
 
         EXAMPLES::
 
+            sage: # needs sage.rings.number_field
             sage: R.<x> = PolynomialRing(QQ)
             sage: P.<x,y> = ProjectiveSpace(QQbar, 1)                                   # needs sage.rings.number_field
             sage: H = End(P)                                                            # needs sage.rings.number_field
@@ -1766,6 +1778,7 @@ class SchemeMorphism_polynomial_projective_space_field(SchemeMorphism_polynomial
 
         The following was fixed in :trac:`23808`::
 
+            sage: # needs sage.rings.number_field
             sage: R.<t> = PolynomialRing(QQ)
             sage: s = (t^3 + t + 1).roots(QQbar)[0][0]                                  # needs sage.rings.number_field
             sage: P.<x,y> = ProjectiveSpace(QQbar, 1)                                   # needs sage.rings.number_field
@@ -2007,6 +2020,7 @@ class SchemeMorphism_polynomial_projective_space_field(SchemeMorphism_polynomial
 
         ::
 
+            sage: # needs sage.rings.padics
             sage: set_verbose(None)
             sage: P.<x,y,z> = ProjectiveSpace(Qp(3), 2)                                 # needs sage.rings.padics
             sage: H = End(P)
@@ -2094,6 +2108,7 @@ class SchemeMorphism_polynomial_projective_space_field(SchemeMorphism_polynomial
 
         ::
 
+            sage: # needs sage.rings.finite_rings
             sage: K.<v> = GF(5)
             sage: L = K.algebraic_closure()                                                         # needs sage.rings.finite_rings
             sage: P.<x,y> = ProjectiveSpace(L, 1)                                                   # needs sage.rings.finite_rings
@@ -2293,6 +2308,7 @@ class SchemeMorphism_polynomial_projective_subscheme_field(SchemeMorphism_polyno
 
         TESTS::
 
+            sage: # needs sage.schemes
             sage: R.<x,y,z> = QQ[]
             sage: C = Curve(7*x^2 + 2*y*z + z^2)                                        # needs sage.schemes
             sage: f, g = C.parametrization()                                            # needs sage.schemes
@@ -2735,12 +2751,13 @@ class SchemeMorphism_polynomial_projective_subscheme_field(SchemeMorphism_polyno
 
         EXAMPLES::
 
+            sage: # needs sage.schemes
             sage: k = GF(11)
-            sage: E = EllipticCurve(k, [1,1])                                                       # needs sage.rings.finite_rings
-            sage: Q = E(6, 5)                                                                       # needs sage.rings.finite_rings
-            sage: phi = E.scalar_multiplication(2)                                                  # needs sage.rings.finite_rings
-            sage: mor = phi.as_morphism()                                                           # needs sage.rings.finite_rings
-            sage: mor.projective_degrees()                                                          # needs sage.rings.finite_rings
+            sage: E = EllipticCurve(k, [1,1])
+            sage: Q = E(6, 5)
+            sage: phi = E.scalar_multiplication(2)
+            sage: mor = phi.as_morphism()
+            sage: mor.projective_degrees()
             (12, 3)
         """
         X = self.domain()
@@ -2779,12 +2796,13 @@ class SchemeMorphism_polynomial_projective_subscheme_field(SchemeMorphism_polyno
 
         EXAMPLES::
 
+            sage: # needs sage.schemes
             sage: k = GF(11)
-            sage: E = EllipticCurve(k, [1,1])                                                       # needs sage.rings.finite_rings
-            sage: Q = E(6, 5)                                                                       # needs sage.rings.finite_rings
-            sage: phi = E.scalar_multiplication(2)                                                  # needs sage.rings.finite_rings
-            sage: mor = phi.as_morphism()                                                           # needs sage.rings.finite_rings
-            sage: mor.degree()                                                                      # needs sage.rings.finite_rings
+            sage: E = EllipticCurve(k, [1,1])
+            sage: Q = E(6, 5)
+            sage: phi = E.scalar_multiplication(2)
+            sage: mor = phi.as_morphism()
+            sage: mor.degree()
             4
         """
         return self.projective_degrees()[0] // self.image().degree()
