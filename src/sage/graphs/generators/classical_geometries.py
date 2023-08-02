@@ -1264,19 +1264,19 @@ def CossidentePenttilaGraph(q):
 
     For `q=3` one gets Sims-Gewirtz graph. ::
 
-        sage: g = graphs.CossidentePenttilaGraph(3)     # optional - gap_packages (grape)
+        sage: G = graphs.CossidentePenttilaGraph(3)     # optional - gap_packages (grape)
         sage: G.is_strongly_regular(parameters=True)    # optional - gap_packages (grape)
         (56, 10, 0, 2)
 
     For `q>3` one gets new graphs. ::
 
-        sage: g = graphs.CossidentePenttilaGraph(5)     # optional - gap_packages (grape)
+        sage: G = graphs.CossidentePenttilaGraph(5)     # optional - gap_packages (grape)
         sage: G.is_strongly_regular(parameters=True)    # optional - gap_packages (grape)
         (378, 52, 1, 8)
 
     TESTS::
 
-        sage: g = graphs.CossidentePenttilaGraph(7)     # optional - gap_packages (grape) # long time
+        sage: G = graphs.CossidentePenttilaGraph(7)     # optional - gap_packages (grape) # long time
         sage: G.is_strongly_regular(parameters=True)    # optional - gap_packages (grape) # long time
         (1376, 150, 2, 18)
         sage: graphs.CossidentePenttilaGraph(2)
