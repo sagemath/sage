@@ -432,20 +432,20 @@ def shortest_simple_paths(self, source, target, weight_function=None,
          [1, 2, 3, 4, 5],
          [1, 6, 9, 3, 4, 5],
          [1, 6, 9, 11, 10, 5]]
-        sage: G = digraphs.DeBruijn(2, 3)                                               # optional - sage.combinat
-        sage: for u,v in G.edges(sort=True, labels=False):
+        sage: G = digraphs.DeBruijn(2, 3)                                               # needs sage.combinat
+        sage: for u,v in G.edges(sort=True, labels=False):                              # needs sage.combinat
         ....:     G.set_edge_label(u, v, 1)
-        sage: G.allow_multiple_edges(True)
-        sage: for u,v in G.edges(sort=True, labels=False):
+        sage: G.allow_multiple_edges(True)                                              # needs sage.combinat
+        sage: for u,v in G.edges(sort=True, labels=False):                              # needs sage.combinat
         ....:     G.add_edge(u, v, 2)
-        sage: list(G.shortest_simple_paths('000', '111'))
+        sage: list(G.shortest_simple_paths('000', '111'))                               # needs sage.combinat
         [['000', '001', '011', '111'], ['000', '001', '010', '101', '011', '111']]
-        sage: list(G.shortest_simple_paths('000', '111', by_weight=True))
+        sage: list(G.shortest_simple_paths('000', '111', by_weight=True))               # needs sage.combinat
         [['000', '001', '011', '111'], ['000', '001', '010', '101', '011', '111']]
-        sage: list(G.shortest_simple_paths('000', '111', by_weight=True, report_weight=True))
+        sage: list(G.shortest_simple_paths('000', '111', by_weight=True, report_weight=True))       # needs sage.combinat
         [(3, ['000', '001', '011', '111']),
          (5, ['000', '001', '010', '101', '011', '111'])]
-        sage: list(G.shortest_simple_paths('000', '111', by_weight=True, report_weight=True, report_edges=True, labels=True))
+        sage: list(G.shortest_simple_paths('000', '111', by_weight=True, report_weight=True, report_edges=True, labels=True))                                   # needs sage.combinat
         [(3, [('000', '001', 1), ('001', '011', 1), ('011', '111', 1)]),
          (5,
           [('000', '001', 1),
@@ -470,12 +470,12 @@ def shortest_simple_paths(self, source, target, weight_function=None,
 
     Check for consistency of results of Yen's and Feng's::
 
-        sage: G = digraphs.DeBruijn(2, 4)                                               # optional - sage.combinat
+        sage: G = digraphs.DeBruijn(2, 4)                                               # needs sage.combinat
         sage: s = set()
-        sage: for p in G.shortest_simple_paths('0000', '1111', by_weight=False, algorithm='Yen'):
+        sage: for p in G.shortest_simple_paths('0000', '1111', by_weight=False, algorithm='Yen'):   # needs sage.combinat
         ....:     s.add(tuple(p))
         sage: k = set()
-        sage: for p in G.shortest_simple_paths('0000', '1111', by_weight=False, algorithm='Feng'):
+        sage: for p in G.shortest_simple_paths('0000', '1111', by_weight=False, algorithm='Feng'):  # needs sage.combinat
         ....:     k.add(tuple(p))
         sage: k == s
         True

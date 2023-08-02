@@ -149,7 +149,7 @@ def HarriesGraph(embedding=1):
         10
         sage: g.diameter()
         6
-        sage: g.show(figsize=[10, 10])          # long time, needs sage.plot
+        sage: g.show(figsize=[10, 10])          # long time                             # needs sage.plot
         sage: graphs.HarriesGraph(embedding=2).show(figsize=[10, 10])   # long time, needs sage.plot
 
     TESTS::
@@ -268,12 +268,12 @@ def HarriesWongGraph(embedding=1):
         10
         sage: g.diameter()
         6
-        sage: orbits = g.automorphism_group(orbits=True)[-1]    # long time, needs sage.groups
-        sage: g.show(figsize=[15, 15], partition=orbits)        # long time, needs sage.groups sage.plot
+        sage: orbits = g.automorphism_group(orbits=True)[-1]    # long time             # needs sage.groups
+        sage: g.show(figsize=[15, 15], partition=orbits)        # long time             # needs sage.groups sage.plot
 
     Alternative embedding::
 
-        sage: graphs.HarriesWongGraph(embedding=2).show()       # long time, needs networkx sage.plot
+        sage: graphs.HarriesWongGraph(embedding=2).show()       # long time             # needs networkx sage.plot
 
     TESTS::
 
@@ -818,7 +818,7 @@ def Balaban10Cage(embedding=1):
         6
         sage: g.is_hamiltonian()                                                        # needs sage.numerical.mip
         True
-        sage: g.show(figsize=[10,10])           # long time, needs sage.plot
+        sage: g.show(figsize=[10,10])           # long time                             # needs sage.plot
 
     TESTS::
 
@@ -910,9 +910,9 @@ def Balaban11Cage(embedding=1):
         sage: g1 = graphs.Balaban11Cage(embedding=1)
         sage: g2 = graphs.Balaban11Cage(embedding=2)                                    # needs networkx
         sage: g3 = graphs.Balaban11Cage(embedding=3)                                    # needs networkx
-        sage: g1.show(figsize=[10,10])          # long time, needs sage.plot
-        sage: g2.show(figsize=[10,10])          # long time, needs networkx sage.plot
-        sage: g3.show(figsize=[10,10])          # long time, needs sage.plot
+        sage: g1.show(figsize=[10,10])          # long time                             # needs sage.plot
+        sage: g2.show(figsize=[10,10])          # long time                             # needs networkx sage.plot
+        sage: g3.show(figsize=[10,10])          # long time                             # needs sage.plot
 
     Proof that the embeddings are the same graph::
 
@@ -1131,11 +1131,11 @@ def BiggsSmithGraph(embedding=1):
         7
         sage: g.automorphism_group().cardinality()      # long time
         2448
-        sage: g.show(figsize=[10, 10])          # long time, needs sage.plot
+        sage: g.show(figsize=[10, 10])          # long time                             # needs sage.plot
 
     The other embedding::
 
-        sage: graphs.BiggsSmithGraph(embedding=2).show()        # long time, needs networkx
+        sage: graphs.BiggsSmithGraph(embedding=2).show()        # long time             # needs networkx
 
     TESTS::
 
@@ -1372,7 +1372,7 @@ def BrouwerHaemersGraph():
 
     It is indeed strongly regular with parameters `(81,20,1,6)`::
 
-        sage: g.is_strongly_regular(parameters=True)    # long time, needs sage.modules sage.rings.finite_rings
+        sage: g.is_strongly_regular(parameters=True)    # long time                     # needs sage.modules sage.rings.finite_rings
         (81, 20, 1, 6)
 
     Its has as eigenvalues `20,2` and `-7`::
@@ -1646,7 +1646,7 @@ def MeredithGraph():
         4
         sage: g.chromatic_number()
         3
-        sage: g.is_hamiltonian()                # long time, needs sage.numerical.mip
+        sage: g.is_hamiltonian()                # long time                             # needs sage.numerical.mip
         False
     """
     g = Graph(name="Meredith Graph")
@@ -1842,7 +1842,7 @@ def ClebschGraph():
         4
         sage: g.diameter()
         2
-        sage: g.show(figsize=[10, 10])          # long time, needs sage.plot
+        sage: g.show(figsize=[10, 10])          # long time                             # needs sage.plot
     """
     g = Graph(pos={})
     x = 0
@@ -1879,7 +1879,7 @@ def CoxeterGraph():
         3
         sage: g.diameter()
         4
-        sage: g.show(figsize=[10, 10])          # long time, needs sage.plot
+        sage: g.show(figsize=[10, 10])          # long time                             # needs sage.plot
     """
     g = Graph({
             27: [6, 22, 14],
@@ -1940,7 +1940,7 @@ def DesarguesGraph():
         sage: L = graphs.LCFGraph(20,[5,-5,9,-9],5)                                     # needs networkx
         sage: D.is_isomorphic(L)                                                        # needs networkx
         True
-        sage: D.show()                          # long time, needs sage.plot
+        sage: D.show()                          # long time                             # needs sage.plot
     """
     from sage.graphs.generators.families import GeneralizedPetersenGraph
     G = GeneralizedPetersenGraph(10, 3)
@@ -2107,7 +2107,7 @@ def HortonGraph():
         96
         sage: g.chromatic_number()
         2
-        sage: g.is_hamiltonian()                # not tested, needs sage.numerical.mip
+        sage: g.is_hamiltonian()                # not tested                            # needs sage.numerical.mip
         False
     """
     g = Graph(name="Horton Graph")
@@ -2174,7 +2174,7 @@ def EllinghamHorton54Graph():
 
     It is not Hamiltonian::
 
-        sage: g.is_hamiltonian()                # not tested, needs sage.numerical.mip
+        sage: g.is_hamiltonian()                # not tested                            # needs sage.numerical.mip
         False
 
     ... and it has a nice drawing ::
@@ -2251,7 +2251,7 @@ def EllinghamHorton78Graph():
 
     It is not Hamiltonian::
 
-        sage: g.is_hamiltonian()                # not tested, needs sage.numerical.mip
+        sage: g.is_hamiltonian()                # not tested                            # needs sage.numerical.mip
         False
 
     ... and it has a nice drawing ::
@@ -2580,7 +2580,7 @@ def FruchtGraph():
         Frucht graph: Graph on 12 vertices
         sage: FRUCHT.graph6_string()
         'KhCKM?_EGK?L'
-        sage: (graphs.FruchtGraph()).show()     # long time, needs networkx
+        sage: (graphs.FruchtGraph()).show()     # long time                             # needs networkx
 
     TESTS::
 
@@ -2733,7 +2733,7 @@ def GrayGraph(embedding=1):
         8
         sage: g.diameter()
         6
-        sage: g.show(figsize=[10, 10])          # long time, needs sage.plot
+        sage: g.show(figsize=[10, 10])          # long time                             # needs sage.plot
         sage: graphs.GrayGraph(embedding=2).show(figsize=[10, 10])      # long time, needs sage.plot
 
     TESTS::
@@ -3197,7 +3197,7 @@ def HoffmanGraph():
         sage: g = graphs.HoffmanGraph()
         sage: g.is_bipartite()
         True
-        sage: g.is_hamiltonian()                # long time, needs sage.numerical.mip
+        sage: g.is_hamiltonian()                # long time                             # needs sage.numerical.mip
         True
         sage: g.radius()
         3
@@ -3246,7 +3246,7 @@ def HoltGraph():
         True
         sage: g.chromatic_number()
         3
-        sage: g.is_hamiltonian()                # long time, needs sage.numerical.mip
+        sage: g.is_hamiltonian()                # long time                             # needs sage.numerical.mip
         True
         sage: g.radius()
         3
@@ -3434,7 +3434,7 @@ def LjubljanaGraph(embedding=1):
         10
         sage: g.diameter()
         8
-        sage: g.show(figsize=[10, 10])          # long time, needs sage.plot
+        sage: g.show(figsize=[10, 10])          # long time                             # needs sage.plot
         sage: graphs.LjubljanaGraph(embedding=2).show(figsize=[10, 10])         # long time, needs sage.plot
 
     TESTS::
@@ -3627,7 +3627,7 @@ def McGeeGraph(embedding=2):
         sage: g.diameter()
         4
         sage: g.show()                                                                  # needs sage.plot
-        sage: graphs.McGeeGraph(embedding=1).show()     # long time, needs sage.plot
+        sage: graphs.McGeeGraph(embedding=1).show()     # long time                     # needs sage.plot
 
     TESTS::
 
@@ -3741,7 +3741,7 @@ def MoebiusKantorGraph():
         Moebius-Kantor Graph: Graph on 16 vertices
         sage: MK.graph6_string()
         'OhCGKE?O@?ACAC@I?Q_AS'
-        sage: (graphs.MoebiusKantorGraph()).show()      # long time, needs sage.plot
+        sage: (graphs.MoebiusKantorGraph()).show()      # long time                     # needs sage.plot
     """
     from sage.graphs.generators.families import GeneralizedPetersenGraph
     G = GeneralizedPetersenGraph(8, 3)
@@ -3840,7 +3840,7 @@ def NauruGraph(embedding=2):
         sage: g.diameter()
         4
         sage: g.show()                                                                  # needs sage.plot
-        sage: graphs.NauruGraph(embedding=1).show()     # long time, needs sage.plot
+        sage: graphs.NauruGraph(embedding=1).show()     # long time                     # needs sage.plot
 
     TESTS::
 
@@ -3875,9 +3875,9 @@ def PappusGraph():
     EXAMPLES::
 
         sage: G = graphs.PappusGraph()
-        sage: G.show()                          # long time, needs sage.plot
+        sage: G.show()                          # long time                             # needs sage.plot
         sage: L = graphs.LCFGraph(18, [5,7,-7,7,-7,-5], 3)                              # needs networkx
-        sage: L.show()                          # long time, needs networkx sage.plot
+        sage: L.show()                          # long time                             # needs networkx sage.plot
         sage: G.is_isomorphic(L)                                                        # needs networkx
         True
     """
@@ -3941,9 +3941,9 @@ def PetersenGraph():
         ....:                          3:[2,4,8], 4:[0,3,9], 5:[0,7,8],
         ....:                          6:[1,8,9], 7:[2,5,9], 8:[3,5,6],
         ....:                          9:[4,6,7]})
-        sage: petersen_spring.show()            # long time, needs sage.plot
+        sage: petersen_spring.show()            # long time                             # needs sage.plot
         sage: petersen_database = graphs.PetersenGraph()
-        sage: petersen_database.show()          # long time, needs sage.plot
+        sage: petersen_database.show()          # long time                             # needs sage.plot
     """
     from sage.graphs.generators.families import GeneralizedPetersenGraph
     P = GeneralizedPetersenGraph(5, 2)
@@ -4336,7 +4336,7 @@ def ThomsenGraph():
         Thomsen graph: Graph on 6 vertices
         sage: T.graph6_string()
         'EFz_'
-        sage: (graphs.ThomsenGraph()).show()    # long time, needs sage.plot
+        sage: (graphs.ThomsenGraph()).show()    # long time                             # needs sage.plot
     """
     from sage.graphs.generators.basic import CompleteBipartiteGraph
     G = CompleteBipartiteGraph(3, 3)
@@ -4393,7 +4393,7 @@ def TruncatedIcosidodecahedralGraph():
         Traceback (most recent call last):
         ...
         ValueError: *Error: Numerical inconsistency is found.  Use the GMP exact arithmetic.
-        sage: g.order(), g.size()               # not tested, needs sage.geometry.polyhedron sage.groups sage.rings.number_field
+        sage: g.order(), g.size()               # not tested                            # needs sage.geometry.polyhedron sage.groups sage.rings.number_field
         (120, 180)
     """
     from sage.geometry.polyhedron.library import polytopes
@@ -4480,7 +4480,7 @@ def TutteCoxeterGraph(embedding=2):
         sage: g.diameter()
         4
         sage: g.show()                                                                  # needs sage.plot
-        sage: graphs.TutteCoxeterGraph(embedding=1).show()      # long time, needs sage.plot
+        sage: graphs.TutteCoxeterGraph(embedding=1).show()      # long time             # needs sage.plot
 
     TESTS::
 
@@ -4659,7 +4659,7 @@ def WienerArayaGraph():
         4
         sage: g.is_planar()
         True
-        sage: g.is_hamiltonian()                # not tested (30s), needs sage.numerical.mip
+        sage: g.is_hamiltonian()                # not tested (30s)                      # needs sage.numerical.mip
         False
         sage: g.delete_vertex(g.random_vertex())
         sage: g.is_hamiltonian()                                                        # needs sage.numerical.mip
