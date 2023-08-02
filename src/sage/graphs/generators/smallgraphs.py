@@ -2175,7 +2175,7 @@ def EllinghamHorton54Graph():
 
     It is not Hamiltonian::
 
-        sage: g.is_hamiltonian()                # not tested (too long)                 # needs sage.numerical.mip
+        sage: g.is_hamiltonian()                # not tested                            # needs sage.numerical.mip
         False
 
     ... and it has a nice drawing ::
@@ -2252,7 +2252,7 @@ def EllinghamHorton78Graph():
 
     It is not Hamiltonian::
 
-        sage: g.is_hamiltonian()                # not tested (too long)                 # needs sage.numerical.mip
+        sage: g.is_hamiltonian()                # not tested                            # needs sage.numerical.mip
         False
 
     ... and it has a nice drawing ::
@@ -2734,7 +2734,7 @@ def GrayGraph(embedding=1):
         8
         sage: g.diameter()
         6
-        sage: g.show(figsize=[10, 10])                                  # long time, needs sage.plot
+        sage: g.show(figsize=[10, 10])          # long time                             # needs sage.plot
         sage: graphs.GrayGraph(embedding=2).show(figsize=[10, 10])      # long time, needs sage.plot
 
     TESTS::
@@ -4664,12 +4664,6 @@ def WienerArayaGraph():
         4
         sage: g.is_planar()
         True
-<<<<<<< HEAD
-        sage: g.is_hamiltonian()  # not tested -- around 30s long
-        False
-        sage: g.delete_vertex(g.random_vertex())
-        sage: g.is_hamiltonian()
-=======
         sage: g.is_hamiltonian()                # not tested (30s)                      # needs sage.numerical.mip
         False
         sage: g.delete_vertex(g.random_vertex())

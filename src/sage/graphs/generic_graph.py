@@ -15285,7 +15285,8 @@ class GenericGraph(GenericGraph_pyx):
 
             sage: # needs networkx
             sage: G = graphs.RandomGNM(10,20)
-            sage: impls = ['boost', 'sparse_copy', 'dense_copy', 'networkx']
+            sage: impls = ['boost', 'sparse_copy', 'dense_copy']
+            sage: impls += ['networkx']
             sage: coeffs = [G.clustering_average(implementation=impl)
             ....:           for impl in impls]
             sage: max(coeffs) - min(coeffs)  # tol abs 1e-12
@@ -23150,10 +23151,10 @@ class GenericGraph(GenericGraph_pyx):
             sage: str(a1) == str(a2)                                                    # needs sage.groups
             False
             sage: b1 = G.automorphism_group(algorithm='bliss')  # optional - bliss
-            sage: str(a1) == str(b1)            # optional - bliss, needs sage.groups
+            sage: str(a1) == str(b1)            # optional - bliss                      # needs sage.groups
             True
             sage: b2 = G.automorphism_group(algorithm='bliss', partition=[V])  # optional - bliss
-            sage: str(a2) == str(b2)            # optional - bliss, needs sage.groups
+            sage: str(a2) == str(b2)            # optional - bliss                      # needs sage.groups
             True
         """
         from sage.features.bliss import Bliss

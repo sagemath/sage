@@ -99,11 +99,12 @@ def centrality_betweenness(G, bint exact=False, bint normalize=True):
 
     Compare with NetworkX::
 
-        sage: import networkx                                                           # optional - networkx
-        sage: g = graphs.RandomGNP(100, .2)                                             # optional - networkx
-        sage: nw = networkx.betweenness_centrality(g.networkx_graph())                  # optional - networkx
-        sage: sg = centrality_betweenness(g)                                            # optional - networkx
-        sage: max(abs(nw[x] - sg[x]) for x in g)  # abs tol 1e-10                       # optional - networkx
+        sage: # needs networkx
+        sage: import networkx
+        sage: g = graphs.RandomGNP(100, .2)
+        sage: nw = networkx.betweenness_centrality(g.networkx_graph())
+        sage: sg = centrality_betweenness(g)
+        sage: max(abs(nw[x] - sg[x]) for x in g)  # abs tol 1e-10
         0
 
     Stupid cases::
@@ -642,13 +643,13 @@ def centrality_closeness_top_k(G, int k=1, int verbose=0):
         sage: n = 20
         sage: m = random.randint(1, n * (n - 1) / 2)
         sage: k = random.randint(1, n)
-        sage: g = graphs.RandomGNM(n, m)                                                # optional - networkx
-        sage: topk = centrality_closeness_top_k(g, k)                                   # optional - networkx
-        sage: centr = g.centrality_closeness(algorithm='BFS')                           # optional - networkx
-        sage: sorted_centr = sorted(centr.values(), reverse=True)                       # optional - networkx
-        sage: len(topk) == min(k, len(sorted_centr))                                    # optional - networkx
+        sage: g = graphs.RandomGNM(n, m)                                                # needs networkx
+        sage: topk = centrality_closeness_top_k(g, k)                                   # needs networkx
+        sage: centr = g.centrality_closeness(algorithm='BFS')                           # needs networkx
+        sage: sorted_centr = sorted(centr.values(), reverse=True)                       # needs networkx
+        sage: len(topk) == min(k, len(sorted_centr))                                    # needs networkx
         True
-        sage: all(abs(topk[i][0] - sorted_centr[i]) < 1e-12 for i in range(len(topk)))  # optional - networkx
+        sage: all(abs(topk[i][0] - sorted_centr[i]) < 1e-12 for i in range(len(topk)))  # needs networkx
         True
 
     Directed case::
@@ -658,13 +659,13 @@ def centrality_closeness_top_k(G, int k=1, int verbose=0):
         sage: n = 20
         sage: m = random.randint(1, n * (n - 1))
         sage: k = random.randint(1, n)
-        sage: g = digraphs.RandomDirectedGNM(n, m)                                      # optional - networkx
-        sage: topk = centrality_closeness_top_k(g, k)                                   # optional - networkx
-        sage: centr = g.centrality_closeness(algorithm='BFS')                           # optional - networkx
-        sage: sorted_centr = sorted(centr.values(), reverse=True)                       # optional - networkx
-        sage: len(topk) == min(k, len(sorted_centr))                                    # optional - networkx
+        sage: g = digraphs.RandomDirectedGNM(n, m)                                      # needs networkx
+        sage: topk = centrality_closeness_top_k(g, k)                                   # needs networkx
+        sage: centr = g.centrality_closeness(algorithm='BFS')                           # needs networkx
+        sage: sorted_centr = sorted(centr.values(), reverse=True)                       # needs networkx
+        sage: len(topk) == min(k, len(sorted_centr))                                    # needs networkx
         True
-        sage: all(abs(topk[i][0] - sorted_centr[i]) < 1e-12 for i in range(len(topk)))  # optional - networkx
+        sage: all(abs(topk[i][0] - sorted_centr[i]) < 1e-12 for i in range(len(topk)))  # needs networkx
         True
     """
     cdef list res
