@@ -868,7 +868,7 @@ class KirillovReshetikhinCrystals(Category_singleton):
                 B = P0.algebra(q.parent())
                 if group_components:
                     G = self.digraph(index_set=self.cartan_type().classical().index_set())
-                    C = G.connected_components()
+                    C = G.connected_components(sort=False)
                     return B.sum(q**(c[0].energy_function())*B.sum(B(P0(b.weight())) for b in c)
                                  for c in C)
                 return B.sum(q**(b.energy_function())*B(P0(b.weight())) for b in self)
