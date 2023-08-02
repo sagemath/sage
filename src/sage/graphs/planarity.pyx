@@ -99,6 +99,7 @@ def is_planar(g, kuratowski=False, set_pos=False, set_embedding=False, circular=
             ....:     assert (hasattr(G, '_pos') and G._pos is not None) == set_pos, (set_embedding, set_pos)
 
     """
+    g._scream_if_not_simple()
     if circular is not None:
         from sage.misc.superseded import deprecation
         deprecation(33759, 'the circular argument of is_planar is deprecated and has no effect')
@@ -118,7 +119,7 @@ def is_planar(g, kuratowski=False, set_pos=False, set_embedding=False, circular=
         if set_embedding:
             g._embedding = {u: [v], v: [u]}
         if set_pos:
-            g._pos = {u: (0, 0), v: (0, 1)}
+            g._pos = {u: [0, 0], v: [0, 1]}
         return (True, None) if kuratowski else True
 
     # Create to and from mappings to relabel vertices to the set {1,...,n}

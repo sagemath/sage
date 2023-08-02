@@ -5382,11 +5382,6 @@ class GenericGraph(GenericGraph_pyx):
             ...
             NotImplementedError: cannot compute with embeddings of
             multiple-edged or looped graphs
-            sage: G.is_planar(set_pos=True)
-            Traceback (most recent call last):
-            ...
-            NotImplementedError: cannot compute with embeddings of
-            multiple-edged or looped graphs
             sage: G.is_planar(set_embedding=True)
             Traceback (most recent call last):
             ...
@@ -5394,6 +5389,49 @@ class GenericGraph(GenericGraph_pyx):
             multiple-edged or looped graphs
             sage: G.is_planar(kuratowski=True)
             (True, None)
+            sage: G.is_planar(set_pos=True)
+            sage: sorted(G.get_pos().items())
+            [(0, [0, 0]), (1, [0, 1])]
+
+        Digraphs with multiple edges or loops or pairs of opposite arcs are
+        partially supported (:trac:`35152`)::
+
+            sage: D = digraphs.Complete(3)
+            sage: D.is_planar()
+            True
+            sage: D.is_planar(set_pos=True)
+            sage: sorted(D.get_pos().items())
+            [(0, [0, 1]), (1, [1, 1]), (2, [1, 0])]
+            sage: D.is_planar(on_embedding={})
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: cannot compute with embeddings of
+            digraphs with pairs of opposite arcs
+            sage: D.is_planar(set_embedding=True)
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: cannot compute with embeddings of
+            digraphs with pairs of opposite arcs
+            sage: D.is_planar(kuratowski=True)
+            (True, None)
+            sage: D.allow_multiple_edges(True)
+            sage: D.add_edges(D.edges(sort=False))
+            sage: D.add_edges((u, u) for u in D)
+            sage: D.is_planar()
+            True
+            sage: D.is_planar(kuratowski=True)
+            (True, None)
+            sage: D.is_planar(set_pos=True)
+            sage: D.is_planar(set_embedding=True)
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: cannot compute with embeddings of
+            multiple-edged or looped graphs
+            sage: D.is_planar(on_embedding={})
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: cannot compute with embeddings of
+            multiple-edged or looped graphs
 
         ::
 
@@ -5454,31 +5492,35 @@ class GenericGraph(GenericGraph_pyx):
             if self.order() > 4 and self.size() > 3 * self.order() - 6:
                 return False
 
-        if self.has_multiple_edges() or self.has_loops():
-            if set_embedding or (on_embedding is not None) or set_pos:
+        if set_embedding or (on_embedding is not None):
+            # So far, working with embeddings is not working properly when a
+            # (di)graph has multiple edges or loops, or when a digraph has pairs
+            # of opposite arcs
+            if self.has_multiple_edges() or self.has_loops():
                 raise NotImplementedError("cannot compute with embeddings of multiple-edged or looped graphs")
-            else:
-                return self.to_simple().is_planar(kuratowski=kuratowski)
+            elif (self.is_directed() and
+                      any(self.has_edge(v, u) for u, v in self.edge_iterator(labels=False))):
+                raise NotImplementedError("cannot compute with embeddings of digraphs with pairs of opposite arcs")
 
         if on_embedding is not None:
             self._check_embedding_validity(on_embedding, boolean=False)
             return (0 == self.genus(minimal=False, set_embedding=False, on_embedding=on_embedding))
+
+        # We take the underlying undirected and simple graph
+        G = self.to_simple(to_undirected=True, immutable=False)
+        # And check if it is planar
+        from sage.graphs.planarity import is_planar
+        planar = is_planar(G, kuratowski=kuratowski, set_pos=set_pos, set_embedding=set_embedding)
+        if kuratowski:
+            bool_result = planar[0]
         else:
-            from sage.graphs.planarity import is_planar
-            G = self.to_undirected()
-            if hasattr(G, '_immutable'):
-                G = copy(G)
-            planar = is_planar(G, kuratowski=kuratowski, set_pos=set_pos, set_embedding=set_embedding)
-            if kuratowski:
-                bool_result = planar[0]
-            else:
-                bool_result = planar
-            if bool_result:
-                if set_pos:
-                    self._pos = G._pos
-                if set_embedding:
-                    self._embedding = G._embedding
-            return planar
+            bool_result = planar
+        if bool_result:
+            if set_pos:
+                self._pos = G._pos
+            if set_embedding:
+                self._embedding = G._embedding
+        return planar
 
     def is_circular_planar(self, on_embedding=None, kuratowski=False,
                            set_embedding=True, boundary=None,
