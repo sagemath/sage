@@ -1576,12 +1576,13 @@ cdef class CGraphBackend(GenericGraphBackend):
 
         We check that the bug described in :trac:`8406` is gone::
 
+            sage: # needs sage.rings.finite_rings
             sage: G = Graph()
-            sage: R.<a> = GF(3**3)                                                      # needs sage.rings.finite_rings
-            sage: S.<x> = R[]                                                           # needs sage.rings.finite_rings
-            sage: G.add_vertex(a**2)                                                    # needs sage.rings.finite_rings
-            sage: G.add_vertex(x)                                                       # needs sage.rings.finite_rings
-            sage: G.vertices(sort=True)                                                 # needs sage.rings.finite_rings
+            sage: R.<a> = GF(3**3)
+            sage: S.<x> = R[]
+            sage: G.add_vertex(a**2)
+            sage: G.add_vertex(x)
+            sage: G.vertices(sort=True)
             [a^2, x]
 
         And that the bug described in :trac:`9610` is gone::
