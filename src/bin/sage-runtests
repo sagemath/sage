@@ -172,9 +172,9 @@ if __name__ == "__main__":
         if args.verbose:
             pytest_options.append("-v")
 
-        # #35999: no filenames in arguments is equivalent to "src"
+        # #35999: no filename in arguments defaults to "src"
         if not args.filenames:
-            filenames = [os.environ.get('SAGE_SRC')]
+            filenames = [SAGE_SRC]
         else:
             # #31924: Do not run pytest on individual Python files unless
             # they match the pytest file pattern.  However, pass names
