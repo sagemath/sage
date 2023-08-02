@@ -648,7 +648,7 @@ cdef class SBox(SageObject):
         for i in range(nrows):
             si = self._S_list[i]
             for di in range(nrows):
-                L[di*nrows + si ^ self._S_list[i ^ di]] += 1
+                L[di*ncols + si ^ self._S_list[i ^ di]] += 1
 
         A = matrix(ZZ, nrows, ncols, L)
         A.set_immutable()
