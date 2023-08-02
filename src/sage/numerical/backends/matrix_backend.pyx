@@ -114,6 +114,36 @@ cdef class MatrixBackend(GenericBackend):
 
         """
         return self._base_ring
+    
+    cpdef __copy__(self):
+        """
+        Returns a copy of self.
+
+        EXAMPLES::
+
+            sage: from sage.numerical.backends.generic_backend import get_solver
+            sage: p = MixedIntegerLinearProgram(solver="Matrix")
+            sage: b = p.new_variable()
+            sage: p.add_constraint(b[1] + b[2] <= 6)
+            sage: p.set_objective(b[1] + b[2])
+            sage: cp = copy(p.get_backend())
+            sage: cp.solve()
+            0
+            sage: cp.get_objective_value()  # abs tol 1e-7
+            6.0
+        """
+        cdef MatrixBackend mat = type(self)(base_ring=self.base_ring())
+        #cp.problem = self.problem                   # it's considered immutable; so no need to copy.
+        #cp.variables = copy(self.variables)
+        #cp.constraint_names = copy(self.constraint_names)
+        mat.Matrix = self.Matrix.__copy__()
+        mat.row_lower_bound = self.row_lower_bound.__copy__()
+        mat.row_upper_bound = self.row_upper_bound.__copy__()
+        mat.col_lower_bound = self.col_lower_bound.__copy__()
+        mat.col_upper_bound = self.col_upper_bound.__copy__()
+        mat.objective_coefficients = self.objective_coefficients.__copy__()
+        mat.obj_constant_term = self.obj_constant_term
+        return mat
 
 
     cpdef int add_variable(self, lower_bound=0, upper_bound=None, binary=False, continuous=True, integer=False, obj=None, name=None) except -1:
@@ -1063,7 +1093,9 @@ cdef class MatrixBackend(GenericBackend):
             sage: p.col_bounds(0)                                   
             (0, 5)
         """
-        if value is not False:
+        if value is None:
+            self.col_upper_bound_indicator[index] = False
+        elif value is not False:
             self.col_upper_bound_indicator[index] = True
             self.col_upper_bound[0, index] = value
         else:
@@ -1129,7 +1161,9 @@ cdef class MatrixBackend(GenericBackend):
             sage: p.col_bounds(0)[0].parent()
             Real Field with 100 bits of precision
         """
-        if value is not False:
+        if value is None:
+            self.col_lower_bound_indicator[index] = False
+        elif value is not False:
             self.col_lower_bound_indicator[index] = True
             self.col_lower_bound[0, index] = value
         else:
