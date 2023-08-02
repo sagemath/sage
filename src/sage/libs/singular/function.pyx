@@ -1241,32 +1241,22 @@ cdef class SingularFunction(SageObject):
             sage: I = Ideal([x^3*y^2 + 3*x^2*y^2*z + y^3*z^2 + z^5])
             sage: I = Ideal(I.groebner_basis())
             sage: hilb = sage.libs.singular.function_factory.ff.hilb
-            sage: hilb(I) # Singular will print // ** _ is no standard basis
-            // ** _ is no standard basis
-            //         1 t^0
-            //        -1 t^5
-            <BLANKLINE>
-            //         1 t^0
-            //         1 t^1
-            //         1 t^2
-            //         1 t^3
-            //         1 t^4
-            // dimension (proj.)  = 1
-            // degree (proj.)   = 5
+            sage: from sage.misc.sage_ostools import redirection
+            sage: out = tmp_filename()
+            sage: with redirection(sys.stdout,  open(out, 'w')):
+            ....:     hilb(I) # Singular will print // ** _ is no standard basis
+            sage: with open(out) as f:
+            ....:     'is no standard basis' in f.read()
+            True
 
         So we tell Singular that ``I`` is indeed a Groebner basis::
 
-            sage: hilb(I,attributes={I:{'isSB':1}}) # no complaint from Singular
-            //         1 t^0
-            //        -1 t^5
-            <BLANKLINE>
-            //         1 t^0
-            //         1 t^1
-            //         1 t^2
-            //         1 t^3
-            //         1 t^4
-            // dimension (proj.)  = 1
-            // degree (proj.)   = 5
+            sage: out = tmp_filename()
+            sage: with redirection(sys.stdout,  open(out, 'w')):
+            ....:     hilb(I,attributes={I:{'isSB':1}}) # no complaint from Singular
+            sage: with open(out) as f:
+            ....:     'is no standard basis' in f.read()
+            False
 
 
         TESTS:

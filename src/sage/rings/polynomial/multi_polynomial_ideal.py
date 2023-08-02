@@ -3123,13 +3123,16 @@ class MPolynomialIdeal_singular_repr(
             sage: I.hilbert_numerator()                                                 # needs sage.rings.number_field
             -t^5 + 1
 
-        This example returns a wrong answer due to an integer overflow in Singular::
+        This example returns a wrong answer in singular < 4.3.2p4 due to an integer overflow::
 
             sage: n=4; m=11; P = PolynomialRing(QQ, n*m, "x"); x = P.gens(); M = Matrix(n, x)
             sage: I = P.ideal(M.minors(2))
             sage: J = P * [m.lm() for m in I.groebner_basis()]
-            sage: J.hilbert_numerator(algorithm='singular')
-            ...120*t^33 - 3465*t^32 + 48180*t^31 - ...
+            sage: J.hilbert_numerator(algorithm='singular') # known bug
+            Traceback (most recent call last):
+            ....
+            RuntimeError: error in Singular function call 'hilb':
+            overflow at t^22
 
         Our two algorithms should always agree; not tested until
         :trac:`33178` is fixed::
