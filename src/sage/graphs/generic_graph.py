@@ -16400,8 +16400,8 @@ class GenericGraph(GenericGraph_pyx):
 
         The 2-dimensional DeBruijn graph of 2 symbols has 2 directed `C_3`::
 
-            sage: G = digraphs.DeBruijn(2,2)                                                        # needs sage.combinat
-            sage: G.triangles_count()                                                               # needs sage.combinat
+            sage: G = digraphs.DeBruijn(2,2)                                            # needs sage.combinat
+            sage: G.triangles_count()                                                   # needs sage.combinat
             2
 
         The directed `n`-cycle is trivially triangle free for `n > 3`::
@@ -20779,15 +20779,16 @@ class GenericGraph(GenericGraph_pyx):
 
         ::
 
-            sage: from sage.plot.colors import rainbow                                  # needs sage.plot
+            sage: # needs sage.plot
+            sage: from sage.plot.colors import rainbow
             sage: C = graphs.CubeGraph(5)
-            sage: R = rainbow(5)                                                        # needs sage.plot
-            sage: edge_colors = {R[i]: [] for i in range(5)}                            # needs sage.plot
-            sage: for u, v, l in C.edges(sort=False):                                   # needs sage.plot
+            sage: R = rainbow(5)
+            sage: edge_colors = {R[i]: [] for i in range(5)}
+            sage: for u, v, l in C.edges(sort=False):
             ....:  for i in range(5):
             ....:      if u[i] != v[i]:
             ....:          edge_colors[R[i]].append((u, v, l))
-            sage: C.plot(vertex_labels=False, vertex_size=0,                            # needs sage.plot
+            sage: C.plot(vertex_labels=False, vertex_size=0,
             ....:        edge_colors=edge_colors).show()
 
         ::

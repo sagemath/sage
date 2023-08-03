@@ -67,14 +67,8 @@ def SymplecticPolarGraph(d, q, algorithm=None):
         (40, 12, 2, 4)
         sage: O.is_isomorphic(G)
         False
-        sage: O.is_isomorphic(G)                # optional - GOT (with --distribution 'sagemath-graphs[modules]')
-        Traceback (most recent call last):
-        ...
-        File "<doctest...>", line 1, in <module>
-        O.is_isomorphic(G)
-        AttributeError: 'function' object has no attribute 'is_isomorphic'
-        sage: S = graphs.SymplecticPolarGraph(6,4,algorithm="gap")      # not tested (long time), needs sage.libs.gap
-        sage: S.is_strongly_regular(parameters=True)    # not tested (long time)        # needs sage.libs.gap
+        sage: S = graphs.SymplecticPolarGraph(6, 4, algorithm="gap")    # not tested (long time)
+        sage: S.is_strongly_regular(parameters=True)                    # not tested (long time)
         (1365, 340, 83, 85)
 
     TESTS::
@@ -273,7 +267,7 @@ def _orthogonal_polar_graph(m, q, sign="+", point_type=[0]):
     `NO^{-,\perp}(5,5)`::
 
         sage: g = _orthogonal_polar_graph(5,5,point_type=[2,3])         # long time, needs sage.libs.gap
-        sage: g.is_strongly_regular(parameters=True)    # long time                     # needs sage.libs.gap
+        sage: g.is_strongly_regular(parameters=True)                    # long time, needs sage.libs.gap
         (300, 65, 10, 15)
 
     `NO^{+,\perp}(5,5)`::
@@ -487,19 +481,22 @@ def NonisotropicOrthogonalPolarGraph(m, q, sign="+", perp=None):
         NO^-,perp(3, 5): Graph on 10 vertices
         sage: g.is_strongly_regular(parameters=True)
         (10, 3, 0, 1)
-        sage: g = graphs.NonisotropicOrthogonalPolarGraph(6,3,'+')      # long time, needs sage.libs.gap
-        sage: g.is_strongly_regular(parameters=True)    # long time                     # needs sage.libs.gap
+
+        sage: # long time, needs sage.libs.gap
+        sage: g = graphs.NonisotropicOrthogonalPolarGraph(6,3,'+')
+        sage: g.is_strongly_regular(parameters=True)
         (117, 36, 15, 9)
-        sage: g = graphs.NonisotropicOrthogonalPolarGraph(6,3,'-'); g   # long time
+        sage: g = graphs.NonisotropicOrthogonalPolarGraph(6,3,'-'); g
         NO^-(6, 3): Graph on 126 vertices
-        sage: g.is_strongly_regular(parameters=True)    # long time                     # needs sage.libs.gap
+        sage: g.is_strongly_regular(parameters=True)
         (126, 45, 12, 18)
-        sage: g = graphs.NonisotropicOrthogonalPolarGraph(5,5,'-')      # long time, needs sage.libs.gap
-        sage: g.is_strongly_regular(parameters=True)    # long time                     # needs sage.libs.gap
+        sage: g = graphs.NonisotropicOrthogonalPolarGraph(5,5,'-')
+        sage: g.is_strongly_regular(parameters=True)
         (300, 104, 28, 40)
-        sage: g = graphs.NonisotropicOrthogonalPolarGraph(5,5,'+')      # long time, needs sage.libs.gap
-        sage: g.is_strongly_regular(parameters=True)    # long time                     # needs sage.libs.gap
+        sage: g = graphs.NonisotropicOrthogonalPolarGraph(5,5,'+')
+        sage: g.is_strongly_regular(parameters=True)
         (325, 144, 68, 60)
+
         sage: g = graphs.NonisotropicOrthogonalPolarGraph(6,4,'+')
         Traceback (most recent call last):
         ...
@@ -871,11 +868,11 @@ def TaylorTwographDescendantSRG(q, clique_partition=False):
         sage: g.is_strongly_regular(parameters=True)
         (27, 10, 1, 5)
         sage: from sage.combinat.designs.twographs import taylor_twograph
-        sage: T = taylor_twograph(3)            # long time                             # needs sage.rings.finite_rings
-        sage: g.is_isomorphic(T.descendant(T.ground_set()[1]))  # long time             # needs sage.rings.finite_rings
+        sage: T = taylor_twograph(3)                            # long time
+        sage: g.is_isomorphic(T.descendant(T.ground_set()[1]))  # long time
         True
-        sage: g = graphs.TaylorTwographDescendantSRG(5)          # not tested (long time)
-        sage: g.is_strongly_regular(parameters=True)             # not tested (long time)
+        sage: g = graphs.TaylorTwographDescendantSRG(5)         # not tested (long time)
+        sage: g.is_strongly_regular(parameters=True)            # not tested (long time)
         (125, 52, 15, 26)
 
     TESTS::
@@ -1198,7 +1195,7 @@ def HaemersGraph(q, hyperoval=None, hyperoval_matching=None, field=None, check_h
         ...
         RuntimeError: incorrect hyperoval
 
-        sage: g = graphs.HaemersGraph(8); g     # not tested (long time)                # needs sage.rings.finite_rings
+        sage: g = graphs.HaemersGraph(8); g             # not tested (long time)        # needs sage.rings.finite_rings
         Haemers(8): Graph on 640 vertices
         sage: g.is_strongly_regular(parameters=True)    # not tested (long time)        # needs sage.rings.finite_rings
         (640, 71, 6, 8)
@@ -1498,9 +1495,9 @@ def OrthogonalDualPolarGraph(e, d, q):
         sage: G.is_distance_regular(True)
         ([7, 6, 4, None], [None, 1, 3, 7])
         sage: G = graphs.OrthogonalDualPolarGraph(0,3,3)        # long time
-        sage: G.is_distance_regular(True)       # long time
+        sage: G.is_distance_regular(True)                       # long time
         ([39, 36, 27, None], [None, 1, 4, 13])
-        sage: G.order()                         # long time
+        sage: G.order()                                         # long time
         1120
 
     REFERENCES:
@@ -1514,7 +1511,7 @@ def OrthogonalDualPolarGraph(e, d, q):
         sage: G.is_distance_regular(True)
         ([14, 12, 8, None], [None, 1, 3, 7])
         sage: G = graphs.OrthogonalDualPolarGraph(-1,3,2)       # long time
-        sage: G.is_distance_regular(True)       # long time
+        sage: G.is_distance_regular(True)                       # long time
         ([28, 24, 16, None], [None, 1, 3, 7])
         sage: G = graphs.OrthogonalDualPolarGraph(1,3,4)
         sage: G.is_distance_regular(True)
