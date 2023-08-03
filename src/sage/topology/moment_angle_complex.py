@@ -88,6 +88,7 @@ from itertools import combinations
 # - add moment_angle_complex to simplicial_complex
 # - add a method simplicial_complex()?
 # - use different UniqueRepresentation complexes for components?
+# - different way of computing euler characteristic
 
 
 #Future TODO's:
@@ -142,8 +143,8 @@ class MomentAngleComplex(SageObject, UniqueRepresentation):
 
     INPUT:
 
-    - ''simplicial_complex'' -- an instance of ''SimplicialComplex'',
-      or an object from which an instance of ''SimplicialComplex'' can be
+    - ``simplicial_complex`` -- an instance of ``SimplicialComplex``,
+      or an object from which an instance of ``SimplicialComplex`` can be
       created (e.g., list of facets), which represents the associated
       simplicial complex over which this moment-angle complex is created.
 
@@ -346,10 +347,10 @@ class MomentAngleComplex(SageObject, UniqueRepresentation):
 
         OUTPUT:
 
-        - a dictonary, whose values are lists, representing spheres
-          and disks described in the construction of the moment-angle
-          complex. ``The 2-simplex`` represents a disk, and
-          ``Minimal triangulation of the 1-sphere`` represents a `1-sphere`.
+        a dictonary, whose values are lists, representing spheres
+        and disks described in the construction of the moment-angle
+        complex. ``The 2-simplex`` represents a disk, and
+        ``Minimal triangulation of the 1-sphere`` represents a `1-sphere`.
 
         EXAMPLES::
 
@@ -493,24 +494,24 @@ class MomentAngleComplex(SageObject, UniqueRepresentation):
 
         INPUT:
 
-        - ``l`` -- integer; index of the homology group which
-          we want to compute
+        - ``dim`` -- integer, or a list of integers; represents the
+          homology (or homologies) we want to compute
 
-        - ``base_ring`` -- commutative ring, must be ``ZZ`` or a field.
-          It is optional, the default is ``ZZ``
+        - ``base_ring`` -- commutative ring, must be ``ZZ`` or a field
+          (default: ``ZZ``)
 
-        - ``cohomology`` -- boolean; optional, is ``False`` by default.
-          If ``True``, compute cohomology rather than homology.
+        - ``cohomology`` -- boolean (default: ``False``);
+          if ``True``, compute cohomology rather than homology.
 
         - ``algorithm`` -- a string which represents the method for
-          computing homology. The options are 'auto', 'dhsw', or 'pari'.
-          See below for a description of what they mean.
+          computing homology. The options are 'auto', 'dhsw', or 'pari'
+          (default: `pari`). See below for a description of what they mean.
 
-        - ``verbose`` -- boolean; optional, is ``False`` by default.
-          If ``True``, print some messages as the homology is computed.
+        - ``verbose`` -- boolean (default: ``False``); if ``True``,
+          print some messages as the homology is computed.
 
-        - ``reduced`` -- boolean; optional, is ``True`` by default.
-          If ``True``, return the reduced homology.
+        - ``reduced`` -- boolean (default: ``True``); If ``True``,
+          return the reduced homology.
 
         ALGORITHM:
 
@@ -525,8 +526,8 @@ class MomentAngleComplex(SageObject, UniqueRepresentation):
 
         .. SEEALSO::
 
-            :meth:`sage.topology.moment_angle_complex.homology`,
-            :meth:`sage.topology.cell_complex.homology`.
+            :meth:`homology`,
+            :meth:`.cell_complex.homology`.
 
         TESTS::
 
@@ -577,6 +578,7 @@ class MomentAngleComplex(SageObject, UniqueRepresentation):
         m = len(invfac)
         return HomologyGroup(m, base_ring, invfac)
 
+    # improve the documentation for optional arguments, see the dev guide
     def homology(self, dim=None, base_ring=ZZ, cohomology=False,
                  algorithm='pari', verbose=False, reduced=True):
         """
@@ -584,24 +586,24 @@ class MomentAngleComplex(SageObject, UniqueRepresentation):
 
         INPUT:
 
-        - ``dim`` -- integer, or a list of integers; Represents the
+        - ``dim`` -- integer, or a list of integers; represents the
           homology (or homologies) we want to compute
 
-        - ``base_ring`` -- commutative ring, must be ``ZZ`` or a field.
-          It is optional, the default is ``ZZ``
+        - ``base_ring`` -- commutative ring, must be ``ZZ`` or a field
+          (default: ``ZZ``)
 
-        - ``cohomology`` -- boolean; optional, is ``False`` by default.
-          If ``True``, compute cohomology rather than homology.
+        - ``cohomology`` -- boolean (default: ``False``);
+          if ``True``, compute cohomology rather than homology.
 
         - ``algorithm`` -- a string which represents the method for
-          computing homology. The options are 'auto', 'dhsw', or 'pari'.
-          See below for a description of what they mean.
+          computing homology. The options are 'auto', 'dhsw', or 'pari'
+          (default: `pari`). See below for a description of what they mean.
 
-        - ``verbose`` -- boolean; optional, is ``False`` by default.
-          If ``True``, print some messages as the homology is computed.
+        - ``verbose`` -- boolean (default: ``False``); if ``True``,
+          print some messages as the homology is computed.
 
-        - ``reduced`` -- boolean; optional, is ``True`` by default.
-          If ``True``, return the reduced homology.
+        - ``reduced`` -- boolean (default: ``True``); If ``True``,
+          return the reduced homology.
 
         ALGORITHM:
 
@@ -616,7 +618,7 @@ class MomentAngleComplex(SageObject, UniqueRepresentation):
 
         .. SEEALSO::
 
-            :meth:`sage.topology.cell_complex.homology`.
+            :meth:`.cell_complex.homology`.
 
         EXAMPLES::
 
@@ -702,7 +704,7 @@ class MomentAngleComplex(SageObject, UniqueRepresentation):
 
         .. SEEALSO::
 
-            :meth:`sage.topology.moment_angle_complex.homology`.
+            :meth:`homology`.
 
         EXAMPLES::
 
@@ -725,23 +727,28 @@ class MomentAngleComplex(SageObject, UniqueRepresentation):
 
     def betti(self, dim=None):
         r"""
-        The Betti numbers of this moment-angle complex as a dictionary
-        (or a single Betti number, if only one dimension is given):
-        the ith Betti number is the rank of the ith homology group.
+        Return the Betti number (or numbers) of this moment-angle complex.
 
-        :param dim: If ``None``, then return every Betti number, as
-           a dictionary with keys the non-negative integers.  If
-           ``dim`` is an integer or list, return the Betti number for
-           each given dimension.  (Actually, if ``dim`` is a list,
-           return the Betti numbers, as a dictionary, in the range
-           from ``min(dim)`` to ``max(dim)``.  If ``dim`` is a number,
-           return the Betti number in that dimension.)
-        :type dim: integer or list of integers or ``None``; optional,
-           default ``None``
+        The the `i`-th Betti number is the rank of the `i`-th homology group.
+
+        INPUT:
+
+        - ``dim`` -- an integer or a list of integers (default: ``None``)
+
+        OUTPUT:
+
+        If ``dim`` is an integer or a list of integers, then return
+        a dictionary of Betti numbers for each given dimension, indexed
+        by dimension. Otherwise, return all Betti numbers.
 
         EXAMPLES::
 
-        <Lots and lots of examples>
+            sage: Z = MomentAngleComplex([[0,1], [1,2], [2,0], [1,2,3]])
+            sage: Z.betti()
+            {0: 1, 1: 0, 2: 0, 3: 1, 4: 0, 5: 1, 6: 1, 7: 0}
+            sage: Z = MomentAngleComplex([[0,1], [1,2], [2,0], [1,2,3], [3,0]])
+            sage: Z.betti(dim=6)
+            {6: 2}
         """
         dict = {}
         H = self.homology(dim=dim, base_ring=QQ)
@@ -758,15 +765,24 @@ class MomentAngleComplex(SageObject, UniqueRepresentation):
         """
         Return the Euler characteristic of ``self``.
 
+        The Euler characteristic is defined as the alternating sum
+        of the Betti numbers of this moment-angle complex.
+
         EXAMPLES::
 
-        <Lots and lots of examples>
+            sage: X = SimplicialComplex([[0,1,2,3,4,5], [0,1,2,3,4,6], [0,1,2,3,5,7], [0,1,2,3,6,8,9]])
+            sage: M = MomentAngleComplex(X)
+            sage: M.euler_characteristic()
+            0
+            sage: Z = MomentAngleComplex([[0,1,2,3,4]])
+            sage: Z.euler_characteristic()
+            1
         """
         return sum([(-1)**n * self.betti()[n] for n in range(self.dimension() + 1)])
 
     def product(self, other):
         """
-        The product of this moment-angle complex with another one.
+        Return the product of this moment-angle complex with another one.
 
         It is known that the product of two moment-angle complexes
         is a moment-angle complex over the join of the two corresponding
