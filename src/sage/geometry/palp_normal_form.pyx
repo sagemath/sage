@@ -78,6 +78,7 @@ def _palp_PM_max(self, check=False):
     cdef int n_s = 1
     cdef dict permutations = {0: [S_f.one(), S_v.one()]}
     cdef int j, k, m, d
+    cdef int element, max_element
 
     for j in range(n_v):
         m = index_of_max(PM[0, i] for i in range(j, n_v))
@@ -89,7 +90,7 @@ def _palp_PM_max(self, check=False):
     for k in range(1, n_f):
         # Error for k == 1 already!
         permutations[n_s] = [S_f.one(), S_v.one()]
-        m = index_of_max(PM[k, permutations[n_s][1](j+1) - 1] for j in range(n_v))
+        m = index_of_max(PM[k, (<PermutationGroupElement> permutations[n_s][1])(j+1) - 1] for j in range(n_v))
         if m > 0:
             permutations[n_s][1] = (<PermutationGroupElement> permutations[n_s][1])._transpose_left(1, m + 1)
         d = PM[k, (<PermutationGroupElement> permutations[n_s][1])(1) - 1] - (<PermutationGroupElement> permutations[0][1])(first_row)[0]
@@ -99,9 +100,15 @@ def _palp_PM_max(self, check=False):
             continue
         # otherwise:
         for i in range(1, n_v):
-            m = index_of_max(PM[k, (<PermutationGroupElement> permutations[n_s][1](j+1)) - 1] for j in range(i,n_v))
-            if m > 0:
-                permutations[n_s][1] = (<PermutationGroupElement> permutations[n_s][1])._transpose_left(i + 1, m + i + 1)
+            max_element = PM[k, (<PermutationGroupElement> permutations[n_s][1](i + 1)) - 1]
+            m = i + 1
+            for j in range(i + 1, n_v):
+                element = PM[k, (<PermutationGroupElement> permutations[n_s][1](j+1)) - 1]
+                if element > max_element:
+                    max_element = element
+                    m = j
+            if m > i + 1:
+                permutations[n_s][1] = (<PermutationGroupElement> permutations[n_s][1])._transpose_left(i + 1, m)
             if d == 0:
                 d = (PM[k, (<PermutationGroupElement> permutations[n_s][1])(i+1) - 1]
                      - (<PermutationGroupElement> permutations[0][1])(first_row)[i])
