@@ -90,7 +90,7 @@ We test corner cases for multiplication::
 from libc.stdint cimport uint64_t
 from cpython.bytes cimport *
 
-from cysignals.memory cimport check_malloc, check_allocarray, sig_malloc, sig_free
+from cysignals.memory cimport check_malloc, check_allocarray, check_calloc, sig_malloc, sig_free
 from cysignals.signals cimport sig_check, sig_on, sig_off
 
 from sage.libs.gmp.mpz cimport *
@@ -447,8 +447,8 @@ cdef class Matrix_modn_dense_template(Matrix_dense):
         if p >= MAX_MODULUS:
             raise OverflowError("p (=%s) must be < %s."%(p, MAX_MODULUS))
 
-        self._entries = <celement *>check_allocarray(self._nrows * self._ncols, sizeof(celement))
-        self._matrix = <celement **>check_allocarray(self._nrows, sizeof(celement*))
+        self._entries = <celement *>check_calloc(self._nrows * self._ncols, sizeof(celement))
+        self._matrix = <celement **>check_calloc(self._nrows, sizeof(celement*))
 
         cdef unsigned int k
         cdef Py_ssize_t i
