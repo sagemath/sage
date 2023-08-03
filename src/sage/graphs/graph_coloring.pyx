@@ -1381,48 +1381,49 @@ def edge_coloring(g, value_only=False, vizing=False, hex_colors=False, solver=No
 
     The Petersen graph has chromatic index 4::
 
-       sage: from sage.graphs.graph_coloring import edge_coloring
-       sage: g = graphs.PetersenGraph()
-       sage: edge_coloring(g, value_only=True, solver='GLPK')                           # needs sage.numerical.mip
-       4
-       sage: color_classes = edge_coloring(g, value_only=False, solver='GLPK')          # needs sage.numerical.mip
-       sage: len(color_classes)                                                         # needs sage.numerical.mip
-       4
-       sage: len(set(frozenset(e) for C in color_classes for e in C)) == g.size()       # needs sage.numerical.mip
-       True
-       sage: all(g.has_edge(e) for C in color_classes for e in C)                       # needs sage.numerical.mip
-       True
-       sage: all(len(Graph(C).matching()) == len(C) for C in color_classes)             # needs networkx sage.numerical.mip
-       True
-       sage: color_classes = edge_coloring(g, value_only=False,                         # needs sage.numerical.mip
-       ....:                               hex_colors=True, solver='GLPK')
-       sage: sorted(color_classes.keys())                                               # needs sage.numerical.mip
-       ['#00ffff', '#7f00ff', '#7fff00', '#ff0000']
+        sage: # needs sage.numerical.mip
+        sage: from sage.graphs.graph_coloring import edge_coloring
+        sage: g = graphs.PetersenGraph()
+        sage: edge_coloring(g, value_only=True, solver='GLPK')
+        4
+        sage: color_classes = edge_coloring(g, value_only=False, solver='GLPK')
+        sage: len(color_classes)
+        4
+        sage: len(set(frozenset(e) for C in color_classes for e in C)) == g.size()
+        True
+        sage: all(g.has_edge(e) for C in color_classes for e in C)
+        True
+        sage: all(len(Graph(C).matching()) == len(C) for C in color_classes)            # needs networkx
+        True
+        sage: color_classes = edge_coloring(g, value_only=False,
+        ....:                               hex_colors=True, solver='GLPK')
+        sage: sorted(color_classes.keys())
+        ['#00ffff', '#7f00ff', '#7fff00', '#ff0000']
 
     Complete graphs are colored using the linear-time round-robin coloring::
 
-       sage: from sage.graphs.graph_coloring import edge_coloring
-       sage: len(edge_coloring(graphs.CompleteGraph(20)))                               # needs sage.numerical.mip
-       19
+        sage: from sage.graphs.graph_coloring import edge_coloring
+        sage: len(edge_coloring(graphs.CompleteGraph(20)))                              # needs sage.numerical.mip
+        19
 
     The chromatic index of a non connected graph is the maximum over its
     connected components::
 
-       sage: g = graphs.CompleteGraph(4) + graphs.CompleteGraph(10)
-       sage: edge_coloring(g, value_only=True)                                          # needs sage.numerical.mip
-       9
+        sage: g = graphs.CompleteGraph(4) + graphs.CompleteGraph(10)
+        sage: edge_coloring(g, value_only=True)                                         # needs sage.numerical.mip
+        9
 
     TESTS:
 
     Graph without edge::
 
-       sage: g = Graph(2)
-       sage: edge_coloring(g)                                                           # needs sage.numerical.mip
-       []
-       sage: edge_coloring(g, value_only=True)                                          # needs sage.numerical.mip
-       0
-       sage: edge_coloring(g, hex_colors=True)                                          # needs sage.numerical.mip
-       {}
+        sage: g = Graph(2)
+        sage: edge_coloring(g)                                                          # needs sage.numerical.mip
+        []
+        sage: edge_coloring(g, value_only=True)                                         # needs sage.numerical.mip
+        0
+        sage: edge_coloring(g, hex_colors=True)                                         # needs sage.numerical.mip
+        {}
     """
     g._scream_if_not_simple()
 

@@ -1428,19 +1428,20 @@ def is_GQqmqp(int v, int k, int l, int mu):
 
     TESTS::
 
+        sage: # needs sage.libs.pari
         sage: (S,T) = (127,129)
-        sage: t = is_GQqmqp((S+1)*(S*T+1), S*(T+1), S-1, T+1); t                        # needs sage.libs.pari
+        sage: t = is_GQqmqp((S+1)*(S*T+1), S*(T+1), S-1, T+1); t
         (<function T2starGeneralizedQuadrangleGraph at ...>, 128, False)
         sage: (S,T) = (129,127)
-        sage: t = is_GQqmqp((S+1)*(S*T+1), S*(T+1), S-1, T+1); t                        # needs sage.libs.pari
+        sage: t = is_GQqmqp((S+1)*(S*T+1), S*(T+1), S-1, T+1); t
         (<function T2starGeneralizedQuadrangleGraph at ...>, 128, True)
         sage: (S,T) = (124,126)
-        sage: t = is_GQqmqp((S+1)*(S*T+1), S*(T+1), S-1, T+1); t                        # needs sage.libs.pari
+        sage: t = is_GQqmqp((S+1)*(S*T+1), S*(T+1), S-1, T+1); t
         (<function AhrensSzekeresGeneralizedQuadrangleGraph at ...>, 125, False)
         sage: (S,T) = (126,124)
-        sage: t = is_GQqmqp((S+1)*(S*T+1), S*(T+1), S-1, T+1); t                        # needs sage.libs.pari
+        sage: t = is_GQqmqp((S+1)*(S*T+1), S*(T+1), S-1, T+1); t
         (<function AhrensSzekeresGeneralizedQuadrangleGraph at ...>, 125, True)
-        sage: t = is_GQqmqp(5,5,5,5); t                                                 # needs sage.libs.pari
+        sage: t = is_GQqmqp(5,5,5,5); t
     """
     # do we have GQ(s,t)? we must have mu=t+1, s=l+1,
     # v=(s+1)(st+1), k=s(t+1)

@@ -3869,13 +3869,15 @@ class Graph(GenericGraph):
             True
             sage: are_equal_colorings(P, Q)
             True
-            sage: G.plot(partition=P)                                                   # needs sage.plot
+
+            sage: # needs sage.plot
+            sage: G.plot(partition=P)
             Graphics object consisting of 16 graphics primitives
-            sage: G.coloring(hex_colors=True, algorithm="MILP")                         # needs sage.plot
+            sage: G.coloring(hex_colors=True, algorithm="MILP")
             {'#0000ff': [4], '#00ff00': [0, 6, 5], '#ff0000': [2, 1, 3]}
-            sage: H = G.coloring(hex_colors=True, algorithm="DLX"); H                   # needs sage.plot
+            sage: H = G.coloring(hex_colors=True, algorithm="DLX"); H
             {'#0000ff': [4], '#00ff00': [1, 2, 3], '#ff0000': [0, 5, 6]}
-            sage: G.plot(vertex_colors=H)                                               # needs sage.plot
+            sage: G.plot(vertex_colors=H)
             Graphics object consisting of 16 graphics primitives
 
         .. PLOT::
@@ -7486,20 +7488,22 @@ class Graph(GenericGraph):
         EXAMPLES::
 
             sage: C = Graph('DJ{')
-            sage: C.cliques_vertex_clique_number()                                      # needs sage.plot
+            sage: C.cliques_vertex_clique_number()
             {0: 2, 1: 4, 2: 4, 3: 4, 4: 4}
             sage: E = C.cliques_maximal(); E
             [[0, 4], [1, 2, 3, 4]]
-            sage: C.cliques_vertex_clique_number(cliques=E, algorithm="networkx")       # needs networkx sage.plot
+            sage: C.cliques_vertex_clique_number(cliques=E, algorithm="networkx")       # needs networkx
             {0: 2, 1: 4, 2: 4, 3: 4, 4: 4}
+
             sage: F = graphs.Grid2dGraph(2,3)
-            sage: F.cliques_vertex_clique_number(algorithm="networkx")                  # needs networkx sage.plot
+            sage: F.cliques_vertex_clique_number(algorithm="networkx")                  # needs networkx
             {(0, 0): 2, (0, 1): 2, (0, 2): 2, (1, 0): 2, (1, 1): 2, (1, 2): 2}
-            sage: F.cliques_vertex_clique_number(vertices=[(0, 1), (1, 2)])             # needs sage.plot
+            sage: F.cliques_vertex_clique_number(vertices=[(0, 1), (1, 2)])
             {(0, 1): 2, (1, 2): 2}
+
             sage: G = Graph({0:[1,2,3], 1:[2], 3:[0,1]})
             sage: G.show(figsize=[2,2])                                                 # needs sage.plot
-            sage: G.cliques_vertex_clique_number()                                      # needs sage.plot
+            sage: G.cliques_vertex_clique_number()
             {0: 3, 1: 3, 2: 3, 3: 3}
         """
         if algorithm == "cliquer":

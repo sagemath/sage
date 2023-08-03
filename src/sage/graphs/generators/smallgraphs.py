@@ -2108,7 +2108,7 @@ def HortonGraph():
         96
         sage: g.chromatic_number()
         2
-        sage: g.is_hamiltonian()                # not tested                            # needs sage.numerical.mip
+        sage: g.is_hamiltonian()                # not tested (veeeery long)             # needs sage.numerical.mip
         False
     """
     g = Graph(name="Horton Graph")
@@ -4540,11 +4540,7 @@ def TutteGraph():
         4
         sage: g.automorphism_group().cardinality()                                      # needs sage.groups
         3
-<<<<<<< HEAD
-        sage: g.is_hamiltonian()
-=======
         sage: g.is_hamiltonian()                                                        # needs sage.numerical.mip
->>>>>>> 85d4a8d443 (./sage -fixdoctests --probe all --distribution 'sagemath-graphs[modules]'  src/sage/graphs/generators/smallgraphs.py; ./sage -fixdoctests src/sage/graphs/generators/smallgraphs.py)
         False
     """
     g = Graph(name="Tutte Graph")
@@ -4723,11 +4719,7 @@ def _EllipticLinesProjectivePlaneScheme(k):
     TESTS::
 
         sage: from sage.graphs.generators.smallgraphs import _EllipticLinesProjectivePlaneScheme
-<<<<<<< HEAD
-        sage: _EllipticLinesProjectivePlaneScheme(2)
-=======
         sage: _EllipticLinesProjectivePlaneScheme(2)                                    # needs sage.libs.gap
->>>>>>> 85d4a8d443 (./sage -fixdoctests --probe all --distribution 'sagemath-graphs[modules]'  src/sage/graphs/generators/smallgraphs.py; ./sage -fixdoctests src/sage/graphs/generators/smallgraphs.py)
         [
         [1 0 0 0 0 0]  [0 1 1 1 1 0]  [0 0 0 0 0 1]
         [0 1 0 0 0 0]  [1 0 1 1 0 1]  [0 0 0 0 1 0]
@@ -5042,20 +5034,12 @@ def IoninKharaghani765Graph():
 
     EXAMPLES::
 
-<<<<<<< HEAD
-        sage: g = graphs.IoninKharaghani765Graph(); g
-=======
         sage: g = graphs.IoninKharaghani765Graph(); g                                   # needs sage.modules sage.rings.finite_rings
->>>>>>> 85d4a8d443 (./sage -fixdoctests --probe all --distribution 'sagemath-graphs[modules]'  src/sage/graphs/generators/smallgraphs.py; ./sage -fixdoctests src/sage/graphs/generators/smallgraphs.py)
         Ionin-Kharaghani: Graph on 765 vertices
 
     TESTS::
 
-<<<<<<< HEAD
-        sage: graphs.strongly_regular_graph(765, 192, 48, 48)
-=======
         sage: graphs.strongly_regular_graph(765, 192, 48, 48)                           # needs sage.modules sage.rings.finite_rings
->>>>>>> 85d4a8d443 (./sage -fixdoctests --probe all --distribution 'sagemath-graphs[modules]'  src/sage/graphs/generators/smallgraphs.py; ./sage -fixdoctests src/sage/graphs/generators/smallgraphs.py)
         Ionin-Kharaghani: Graph on 765 vertices
 
     .. TODO::
