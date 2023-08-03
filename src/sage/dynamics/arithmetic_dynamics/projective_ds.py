@@ -2424,21 +2424,25 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
                 if Res > 1:
                     if err_bound is not None:
                         err_bound /= 2
-                        N = ceil((R(Res).log().log() - R(d - 1).log() - R(err_bound).log()) / R(d).log())
+                        N = ceil((R(Res.norm()).log().log() - R(d - 1).log() - R(err_bound).log()) / R(d).log())
                         if N < 1:
                             N = 1
 
                         kwds.update({'error_bound': err_bound})
                         kwds.update({'N': N})
 
+                    # import pdb; pdb.set_trace()
+
                     for n in range(N):
                         order_quotient = O.quotient(O.fractional_ideal(Res**(N - n)), 't')
                         x = order_quotient(A(x_i, y_i)).lift()
                         y = order_quotient(B(x_i, y_i)).lift()
                         g = gcd([x, y, Res])
-                        H += R(g).abs().log() / d**(n + 1)
+                        H += R(g.norm()).abs().log() / d**(n + 1)
                         x_i = O(x / g)
                         y_i = O(y / g)
+
+                # import pdb; pdb.set_trace()
 
                 # It looks different than Wells' Algorithm, because of the difference
                 # between what Wells' calls H_infty and what Green's function returns
@@ -2458,6 +2462,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
                     "This should be impossible, please report bug on https://github.com/sagemath/sage/issues"
                     h = R(0)
                 return h
+                # return R(H) / K.degree()
 
         if bad_primes is None:
             bad_primes = []
