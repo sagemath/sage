@@ -1,10 +1,11 @@
+# sage.doctest: optional - sage.rings.real_double
+
 """
 Base class for polyhedra over ``RDF``
 """
 
-from sage.rings.all import RDF
+from sage.rings.real_double import RDF
 from .base import Polyhedron_base
-
 
 
 class Polyhedron_RDF(Polyhedron_base):
@@ -101,4 +102,3 @@ class Polyhedron_RDF(Polyhedron_base):
         return x>=-1e-6
 
     _base_ring = RDF
-

@@ -74,9 +74,9 @@ There is an important distinction between Parents and types::
     sage: a = GF(5).random_element()
     sage: b = GF(7).random_element()
     sage: type(a)
-    <type 'sage.rings.finite_rings.integer_mod.IntegerMod_int'>
+    <class 'sage.rings.finite_rings.integer_mod.IntegerMod_int'>
     sage: type(b)
-    <type 'sage.rings.finite_rings.integer_mod.IntegerMod_int'>
+    <class 'sage.rings.finite_rings.integer_mod.IntegerMod_int'>
     sage: type(a) == type(b)
     True
     sage: parent(a)
@@ -345,7 +345,7 @@ Methods to implement
     this case ``r * s`` gets handled as ``r._act_on_(s, True)`` or
     ``s._acted_upon_(r, False)`` and ``s * r`` as ``r._act_on_(s, False)`` or
     ``s._acted_upon_(r, True)``. There is no constraint on the type or parents
-    of objects passed to these methods; raise a ``TypeError`` or ``ValueError``
+    of objects passed to these methods; raise a :class:`TypeError` or :class:`ValueError`
     if the wrong kind of object is passed in to indicate the action is not
     appropriate here.
 
@@ -671,7 +671,7 @@ Modules
 -------
 
 .. toctree::
-    :maxdepth: 2
+    :maxdepth: 1
 
     sage/structure/coerce
     sage/structure/coerce_actions

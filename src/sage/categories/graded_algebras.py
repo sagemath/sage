@@ -39,8 +39,8 @@ class GradedAlgebras(GradedModulesCategory):
 
             EXAMPLES::
 
-                sage: m = SymmetricFunctions(QQ).m()
-                sage: m.graded_algebra() is m
+                sage: m = SymmetricFunctions(QQ).m()                                    # optional - sage.combinat
+                sage: m.graded_algebra() is m                                           # optional - sage.combinat
                 True
             """
             return self
@@ -81,4 +81,3 @@ class GradedAlgebras(GradedModulesCategory):
             Meaning: a signed tensor product of algebras is an algebra
             """
             return [self.base_category()]
-

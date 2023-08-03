@@ -122,7 +122,7 @@ class SymbolicData:
             """
             l = []
 
-            if str(node.nodeName) in ['vars','poly']:
+            if str(node.nodeName) in ['vars', 'poly']:
                 l.append(_getTextFromNode(node))
 
             for c in node.childNodes:
@@ -131,7 +131,7 @@ class SymbolicData:
             return l
 
         orig_name = name
-        name = name.replace('__','.')
+        name = name.replace('__', '.')
 
         try:
             name = self.__intpath + name + ".xml"
@@ -141,16 +141,15 @@ class SymbolicData:
                 name = self.__genpath + name + ".xml"
                 open(name)
             except IOError:
-                raise AttributeError("No ideal matching '%s' found in database."%orig_name)
+                raise AttributeError("No ideal matching '%s' found in database." % orig_name)
 
         dom = parse(name)
         res = _dom2ideal(dom)
-        variables, polys = res[0].replace("_",""), [p.replace("_","") for p in res[1:]]
+        variables, polys = res[0].replace("_", ""), [p.replace("_", "") for p in res[1:]]
 
         P = PolynomialRing(base_ring, len(variables.split(",")), variables)
         I = P.ideal([P(f) for f in polys])
         return I
-
 
     def __repr__(self):
         """
@@ -160,10 +159,10 @@ class SymbolicData:
             SymbolicData with 372 ideals
         """
         try:
-            l = len(self.trait_names())
+            l = len(self.__dir__())
         except AttributeError:
             l = 0
-        return "SymbolicData with %d ideals"%l
+        return "SymbolicData with %d ideals" % l
 
     def __getattr__(self, name):
         """
@@ -184,12 +183,12 @@ class SymbolicData:
         """
         return self.get_ideal(name)
 
-    def trait_names(self):
+    def __dir__(self):
         """
         EXAMPLES::
 
             sage: sd = SymbolicData() # optional - database_symbolic_data
-            sage: sorted(sd.trait_names())[:10] # optional - database_symbolic_data
+            sage: sorted(sd.__dir__())[:10] # optional - database_symbolic_data
             ['Bjoerk_8',
              'Bronstein-86',
              'Buchberger-87',
@@ -201,11 +200,11 @@ class SymbolicData:
              'Curves__curve10_20',
              'Curves__curve10_30']
         """
-        if hasattr(self,"__ideals"):
+        if hasattr(self, "__ideals"):
             return self.__ideals
         try:
-            __ideals = [s.replace('.xml','') for s in  os.listdir(self.__intpath)]
-            __ideals += [s.replace('.xml','') for s in  os.listdir(self.__genpath)]
+            __ideals = [s.replace('.xml', '') for s in os.listdir(self.__intpath)]
+            __ideals += [s.replace('.xml', '') for s in os.listdir(self.__genpath)]
             self.__ideals = [s.replace('.', '__') for s in __ideals]
             return self.__ideals
         except OSError:

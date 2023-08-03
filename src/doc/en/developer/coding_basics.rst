@@ -31,7 +31,7 @@ style conventions discussed in this chapter.
 
 .. _section-coding-python:
 
-Python Code Style
+Python code style
 =================
 
 Follow the standard Python formatting rules when writing code for
@@ -44,7 +44,7 @@ In particular,
 
 - Use 4 spaces for indentation levels. Do not use tabs as they can
   result in indentation confusion. Most editors have a feature that
-  will insert 4 spaces when the tab key is hit. Also, many editors
+  will insert 4 spaces when the :kbd:`Tab` key is hit. Also, many editors
   will automatically search/replace leading tabs with 4 spaces.
 
 - Whitespace before and after assignment and binary operator of the
@@ -77,7 +77,7 @@ In particular,
 
 - Use CamelCase for class names::
 
-      class SomeValue(object):
+      class SomeValue():
           def __init__(self, x):
           self._x  = 1
 
@@ -90,7 +90,7 @@ In particular,
 
 .. _chapter-directory-structure:
 
-Files and Directory Structure
+Files and directory structure
 =============================
 
 Roughly, the Sage directory tree is layout like this. Note that we use
@@ -103,13 +103,9 @@ of the directory containing the Sage sources:
         sage          # the Sage launcher
         Makefile      # top level Makefile
         build/        # Sage's build system
-            deps
-            install
-            ...
             pkgs/     # install, patch, and metadata from spkgs
         src/
             setup.py
-            module_list.py
             ...
             sage/            # Sage library
                 ext_data/    # extra Sage resources (formerly src/ext)
@@ -117,7 +113,7 @@ of the directory containing the Sage sources:
         upstream/            # tarballs of upstream sources
         local/               # installed binaries
 
-Python Sage library code goes into ``src/`` and uses the following
+Python Sage library code goes into ``src/sage/`` and uses the following
 conventions. Directory names may be plural (e.g. ``rings``) and file
 names are almost always singular (e.g. ``polynomial_ring.py``). Note
 that the file ``polynomial_ring.py`` might still contain definitions
@@ -129,40 +125,58 @@ of several different types of polynomial rings.
    discussions, etc., in your package.  Make these plain text files
    (with extension ``.txt``) in a subdirectory called ``notes``.
 
-If you want to create a new directory in the Sage library
-``SAGE_ROOT/src/sage`` (say, ``measure_theory``), that directory
-should contain a file ``__init__.py`` that contains the single line
-``import all`` in addition to whatever
-files you want to add (say, ``borel_measure.py`` and
-``banach_tarski.py``), and also a file ``all.py`` listing imports from
-that directory that are important enough to be in the Sage’s global
-namespace at startup.
-The file ``all.py`` might look like this::
+If you want to create a new directory (`package
+<https://docs.python.org/3/tutorial/modules.html#packages>`_) in the
+Sage library ``SAGE_ROOT/src/sage`` (say, ``measure_theory``), that
+directory will usually contain an empty file ``__init__.py``, which
+marks the directory as an ordinary package (see
+:ref:`section_namespace_packages`), and also a file ``all.py``,
+listing imports from this package that are user-facing and important
+enough to be in the global namespace of Sage at startup.  The file
+``all.py`` might look like this::
 
-    from borel_measure import BorelMeasure
-    from banach_tarski import BanachTarskiParadox
+    from .borel_measure import BorelMeasure
+    from .banach_tarski import BanachTarskiParadox
 
-but it is generally better to use the lazy import framework::
+but it is generally better to use the :mod:`~sage.misc.lazy_import`
+framework::
 
     from sage.misc.lazy_import import lazy_import
-    lazy_import('sage.measure_theory.borel_measue', 'BorelMeasure')
+    lazy_import('sage.measure_theory.borel_measure', 'BorelMeasure')
     lazy_import('sage.measure_theory.banach_tarski', 'BanachTarskiParadox')
 
 Then in the file ``SAGE_ROOT/src/sage/all.py``, add a line ::
 
     from sage.measure_theory.all import *
 
-Non-Python Sage source code and supporting files should be placed in
-appropriate subdirectories of ``SAGE_ROOT/src/sage/ext_data/``. They will then be
-automatically copied to the corresponding subdirectories of
-``SAGE_ROOT/local/share/sage/ext/`` during the build process and can be
-accessed at runtime using ``SAGE_EXTCODE``.  For example, if ``file`` is placed
-in ``SAGE_ROOT/src/sage/ext_data/directory/`` it can be accessed with ::
+Adding new top-level packages below :mod:`sage` should be done
+sparingly.  It is often better to create subpackages of existing
+packages.
+
+Non-Python Sage source code and supporting files can be included in one
+of the following places:
+
+- In the directory of the Python code that uses that file.  When the
+  Sage library is installed, the file will be installed in the same
+  location as the Python code. For example,
+  ``SAGE_ROOT/src/sage/interfaces/maxima.py`` needs to use the file
+  ``SAGE_ROOT/src/sage/interfaces/maxima.lisp`` at runtime, so it refers
+  to it as ::
+
+    os.path.join(os.path.dirname(__file__), 'sage-maxima.lisp')
+
+- In an appropriate subdirectory of ``SAGE_ROOT/src/sage/ext_data/``.
+  (At runtime, it is then available in the directory indicated by
+  ``SAGE_EXTCODE``).  For example, if ``file`` is placed in
+  ``SAGE_ROOT/src/sage/ext_data/directory/`` it can be accessed with ::
 
     from sage.env import SAGE_EXTCODE
     file = os.path.join(SAGE_EXTCODE, 'directory', 'file')
 
-``SAGE_EXTCODE`` is used because not all distributions have ``SAGE_ROOT``.
+In both cases, the files must be listed (explicitly or via wildcards) in
+the section ``options.package_data`` of the file
+``SAGE_ROOT/pkgs/sagemath-standard/setup.cfg.m4`` (or the corresponding
+file of another distribution).
 
 
 Learn by copy/paste
@@ -179,7 +193,7 @@ search, but restricted to function definitions, while
 docstrings for more information and more options.
 
 
-Headings of Sage Library Code Files
+Headings of Sage library code files
 ===================================
 
 The top of each Sage code file should follow this format::
@@ -226,7 +240,7 @@ compatible, that is, less restrictive license (e.g. the BSD license).
 
 .. _section-docstrings:
 
-Documentation Strings
+Documentation strings
 =====================
 
 .. _section-docstring-function:
@@ -459,7 +473,7 @@ information. You can use the existing functions of Sage as templates.
   Note the trailing underscores which makes the citations into hyperlinks. See
   below for more about the master bibliography file. For more about citations,
   see the `Sphinx/reST markup for citations
-  <https://www.sphinx-doc.org/rest.html#citations>`_. For links to trac tickets
+  <https://www.sphinx-doc.org/rest.html#citations>`_. For links to GitHub issues and PRs
   or wikipedia, see :ref:`chapter-sage_manuals_links`.
 
 - A **TESTS** block (highly recommended).
@@ -494,6 +508,12 @@ information. You can use the existing functions of Sage as templates.
     headers: ``- = ` : ' " ~ _ ^ * + # < >``.
     However, lines only containing double colons `::` do not
     end "TESTS" blocks.
+
+  Sometimes (but rarely) one has private or protected methods that don't need a
+  proper ``EXAMPLES`` doctest. In these cases, one can either write traditional
+  doctest using the ``TESTS`` block or use pytest to test the method.
+  In the latter case, one has to add ``TESTS: pytest`` to the docstring, so that
+  the method is explicitly marked as tested.
 
 Note about Sphinx directives vs. other blocks
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -664,6 +684,48 @@ You are strongly encouraged to:
   of Sage that break something else might not go seen until much later
   when someone uses the system, which is unacceptable.
 
+Fine points on styles
+---------------------
+
+A Sage developer, in writing code and docstrings, should follow the styles
+suggested in this manual, except special cases with good reasons. However, there
+are some details where we as a community did not reach to an agreement on
+the official style. These are
+
+- one space::
+
+    This is the first sentence. This is the second sentence.
+
+  vs two spaces::
+
+    This is the first sentence.  This is the second sentence.
+
+  between sentences.
+
+- tight list::
+
+    - first item
+    - second item
+    - third item
+
+  vs spaced list::
+
+    - first item
+
+    - second item
+
+    - third item
+
+There are different opinions on each of these, and in reality, we find
+instances in each style in our codebase. Then what should we do? Do we decide
+on one style by voting? There are different opinions even on what to do!
+
+We can at least do this to prevent any dispute about these style conflicts:
+
+- Acknowledge different authors may have different preferences on these.
+
+- Respect the style choice of the author who first wrote the code or the docstrings.
+
 Private functions
 ^^^^^^^^^^^^^^^^^
 
@@ -709,13 +771,12 @@ there is not one already. That is, you can do the following:
 
 .. _section-latex-typeset:
 
-LaTeX Typesetting
+LaTeX typesetting
 -----------------
 
-In Sage's documentation LaTeX code is allowed and is marked with **backticks or
-dollar signs**:
+In Sage's documentation LaTeX code is allowed and is marked with **backticks**:
 
-    ```x^2 + y^2 = 1``` and ``$x^2 + y^2 = 1$`` both yield `x^2 + y^2 = 1`.
+    ```x^2 + y^2 = 1``` yields `x^2 + y^2 = 1`.
 
 **Backslashes:** For LaTeX commands containing backslashes, either use double
 backslashes or begin the docstring with a ``r"""`` instead of ``"""``. Both of
@@ -728,7 +789,7 @@ the following are valid::
 
     def sin(x):
         r"""
-        Return $\sin(x)$.
+        Return `\sin(x)`.
         """
 
 **MATH block:** This is similar to the LaTeX syntax ``\[<math expression>\]``
@@ -814,7 +875,7 @@ for details about how to add more macros.
 
 .. _section-doctest-writing:
 
-Writing Testable Examples
+Writing testable examples
 -------------------------
 
 The examples from Sage's documentation have a double purpose:
@@ -874,6 +935,15 @@ written.
   Sage does not know about the function ``AA()`` by default, so it needs to be
   imported before it is tested. Hence the first line in the example.
 
+  All blocks within the same docstring are linked: Variables set
+  in a doctest keep their values for the remaining doctests within the
+  same docstring. It is good practice to use different variable names for different
+  values, as it makes the data flow in the examples easier to understand
+  for human readers.  (It also makes the data flow analysis in the
+  Sage doctester more precise.)  In particular, when unrelated examples
+  appear in the same docstring, do not use the same variable name
+  for both examples.
+
 - **Preparsing:** As in Sage's console, `4/3` returns `4/3` and not
   `1.3333333333333333` as in Python 3.8. Testing occurs with full Sage
   preparsing of input within the standard Sage shell environment, as
@@ -896,6 +966,78 @@ written.
       3
       5
       7
+
+- **Wrap long doctest lines:** Note that all doctests in EXAMPLES blocks
+  get formatted as part of our HTML and PDF reference manuals. Our HTML manuals
+  are formatted using the responsive design provided by the
+  :ref:`Furo theme <spkg_furo>`. Even when the browser window is expanded to
+  make use of the full width of a wide desktop screen, the style will not
+  allow code boxes to grow arbitrarily wide.
+
+  It is best to wrap long lines when possible so that readers do not have to
+  scroll horizontally (back and forth) to follow an example.
+
+  - Try to wrap long lines somewhere around columns 80 to 88
+    and try to never exceed column 95 in the source file.
+    (Columns numbers are from the left margin in the source file;
+    these rules work no matter how deep the docstring may be nested
+    because also the formatted output will be nested.)
+
+  - If you have to break an expression at a place that is not already
+    nested in parentheses, wrap it in parentheses::
+
+      sage: (len(list(Permutations(['a', 'b', 'c', 'd', 'e', 'f', 'g'])))
+      ....:    == len(list(Permutations(7))))
+      True
+
+  - If the output in your only example is very wide and cannot be reasonably
+    reformatted to fit (for example, large symbolic matrices or numbers with many digits),
+    consider showing a smaller example first.
+
+  - No need to wrap long ``import`` statements. Typically, the ``import`` statements
+    are not the interesting parts of the doctests. Users only need to be able to
+    copy-paste them into a Sage session or source file::
+
+      sage: from sage.rings.polynomial.multi_polynomial_ring import MPolynomialRing_polydict, MPolynomialRing_polydict_domain  # this is fine
+
+  - Wrap and indent long output to maximize readability in the source code
+    and in the HTML output. But do not wrap strings::
+
+      sage: from sage.schemes.generic.algebraic_scheme import AlgebraicScheme_quasi
+      sage: P.<x, y, z> = ProjectiveSpace(2, ZZ)
+      sage: S = P.subscheme([])
+      sage: T = P.subscheme([x - y])
+      sage: U = AlgebraicScheme_quasi(S, T); U
+      Quasi-projective subscheme X - Y of Projective Space of dimension 2
+       over Integer Ring,
+        where X is defined by: (no polynomials)
+          and Y is defined by: x - y
+      sage: U._repr_()                                                                                                                                                    # this is fine
+      'Quasi-projective subscheme X - Y of Projective Space of dimension 2 over Integer Ring, where X is defined by:\n  (no polynomials)\nand Y is defined by:\n  x - y'
+
+    Also, if there is no whitespace in the doctest output where you could wrap the line,
+    do not add such whitespace. Just don't wrap the line::
+
+      sage: B47 = RibbonGraph(4,7, bipartite=True); B47
+      Ribbon graph of genus 9 and 1 boundary components
+      sage: B47.sigma()                                                                                                                                                           # this is fine
+      (1,2,3,4,5,6,7)(8,9,10,11,12,13,14)(15,16,17,18,19,20,21)(22,23,24,25,26,27,28)(29,30,31,32)(33,34,35,36)(37,38,39,40)(41,42,43,44)(45,46,47,48)(49,50,51,52)(53,54,55,56)
+
+  - Doctest tags for modularization purposes such as ``# needs sage.modules``
+    (see :ref:`section-further_conventions`) should be aligned at column 88.
+    Clean lines from consistent alignment help reduce visual clutter.
+    Moreover, at the maximum window width, only the word ``# needs`` will be
+    visible in the HTML output without horizontal scrolling, striking a
+    thoughtfully chosen balance between presenting
+    the information and reducing visual clutter. (How much can be seen may be
+    browser-dependent, of course.) In visually dense doctests, you can try to sculpt out visual space to separate
+    the test commands from the annotation.
+
+  - Doctest tags such as ``# optional - pynormaliz`` that make the doctest
+    conditional on the presence of optional packages, on the other hand,
+    should be aligned so that they are visible without having to scroll horizontally.
+    The :ref:`doctest fixer <section-fixdoctests-optional-needs>` uses
+    tab stops at columns 48, 56, 64, ... for these tags.
 
 - **Python3 print:** Python3 syntax for print must be used in Sage
   code and doctests. If you use an old-style print in doctests, it
@@ -922,7 +1064,7 @@ written.
 
 .. _section-further_conventions:
 
-Special Markup to Influence Doctests
+Special markup to influence doctests
 ------------------------------------
 
 Overly complicated output in the example code can be shortened
@@ -1031,9 +1173,9 @@ framework. Here is a comprehensive list:
 
       sage: print("The sum of 1 and 1 equals 5")  # abs tol 1
       The sum of 2 and 2 equals 4
-      sage: e^(i*pi/4).n() # rel tol 1e-1
+      sage: e^(i*pi/4).n()  # rel tol 1e-1
       0.7 + 0.7*I
-      sage: ((x+1.001)^4).expand() # rel tol 2
+      sage: ((x+1.001)^4).expand()  # rel tol 2
       x^4 + 4*x^3 + 6*x^2 + 4*x + 1
       sage: M = matrix.identity(3) + random_matrix(RR,3,3)/10^3
       sage: M^2 # abs tol 1e-2
@@ -1070,8 +1212,9 @@ framework. Here is a comprehensive list:
      Neither of this applies to files or directories which are explicitly given
      as command line arguments: those are always tested.
 
-- **optional:** A line flagged with ``optional - keyword`` is not tested unless
-  the ``--optional=keyword`` flag is passed to ``sage -t`` (see
+- **optional/needs:** A line tagged with ``optional - FEATURE``
+  or ``needs FEATURE`` is not tested unless the ``--optional=KEYWORD`` flag
+  is passed to ``sage -t`` (see
   :ref:`section-optional-doctest-flag`). The main applications are:
 
   - **optional packages:** When a line requires an optional package to be
@@ -1086,31 +1229,66 @@ framework. Here is a comprehensive list:
        n-state Turing machine can make on an initially blank tape before
        eventually halting.
 
-  - **bug:** For lines that describe bugs. Alternatively, use ``# known bug``
-    instead: it is an alias for ``optional bug``.
+  - **known bugs:** For lines that describe known bugs, you can use ``# optional - bug``,
+    although ``# known bug`` is preferred.
 
     .. CODE-BLOCK:: rest
 
-        The following should yield 4.  See :trac:`2`. ::
+        The following should yield 4.  See :issue:`2`. ::
 
-            sage: 2+2  # optional: bug
+            sage: 2+2  # optional - bug
             5
             sage: 2+2  # known bug
             5
 
+  - **modularization:** To enable
+    :ref:`separate testing of the distribution packages <section-doctesting-venv>`
+    of the modularized Sage library, doctests that depend on features provided
+    by other distribution packages can be tagged ``# needs FEATURE``.
+    For example:
+
+    .. CODE-BLOCK:: rest
+
+        Consider the following calculation::
+
+            sage: a = AA(2).sqrt()  # needs sage.rings.number_field
+            sage: b = sqrt(3)       # needs sage.symbolic
+            sage: a + AA(b)         # needs sage.rings.number_field sage.symbolic
+            3.146264369941973?
+
   .. NOTE::
 
-      - Any words after ``# optional`` are interpreted as a list of
-        package names, separated by spaces.
+      - Any words after ``# optional`` and ``# needs``  are interpreted as a list of
+        package (spkg) names or other feature tags, separated by spaces.
 
-      - Any punctuation (periods, commas, hyphens, semicolons, ...) after the
+      - Any punctuation other than underscores (``_``) and periods (``.``),
+        that is, commas, hyphens, semicolons, ..., after the
         first word ends the list of packages.  Hyphens or colons between the
         word ``optional`` and the first package name are allowed.  Therefore,
-        you should not write ``optional: needs package CHomP`` but simply
-        ``optional: CHomP``.
+        you should not write ``# optional - depends on package CHomP`` but simply
+        ``# optional - CHomP``.
 
-      - Optional tags are case-insensitive, so you could also write ``optional:
+      - Optional tags are case-insensitive, so you could also write ``# optional -
         chOMP``.
+
+  If ``# optional`` or ``# needs`` is placed right after the ``sage:`` prompt,
+  it is a block-scoped tag, which applies to all doctest lines until
+  a blank line is encountered.
+
+  These tags can also be applied to an entire file. If one of the first 10 lines
+  of a file starts with any of ``r""" sage.doctest: optional - FEATURE``,
+  ``# sage.doctest: needs FEATURE``, or ``.. sage.doctest: optional - FEATURE``
+  (in ``.rst`` files), etc., then this applies to all doctests in this file.
+
+  When a file is skipped that was explicitly given as a command line argument,
+  a warning is displayed.
+
+  .. NOTE::
+
+       If you add such a line to a file, you are strongly encouraged
+       to add a note to the module-level documentation, saying that
+       the doctests in this file will be skipped unless the
+       appropriate conditions are met.
 
 - **indirect doctest:** in the docstring of a function ``A(...)``, a line
   calling ``A`` and in which the name ``A`` does not appear should have this
@@ -1137,6 +1315,22 @@ framework. Here is a comprehensive list:
       8193                      # 32-bit
       2147491840                # 64-bit
 
+Per coding style (:ref:`section-coding-python`), the magic comment
+should be separated by at least 2 spaces.
+
+For multiline doctests, the comment should appear on the first
+`physical line <https://docs.python.org/3/reference/lexical_analysis.html#physical-lines>`_
+of the doctest (the line with the prompt ``sage:``), not on the
+continuation lines (the lines with the prompt ``....:``)::
+
+    sage: print(ZZ.random_element())        # random
+    42
+    sage: for _ in range(3):                # random
+    ....:     print(QQ.random_element())
+    1
+    1/77
+    -1/2
+
 Using ``search_src`` from the Sage prompt (or ``grep``), one can
 easily find the aforementioned keywords. In the case of ``todo: not
 implemented``, one can use the results of such a search to direct
@@ -1144,7 +1338,7 @@ further development on Sage.
 
 .. _chapter-testing:
 
-Running Automated Doctests
+Running automated doctests
 ==========================
 
 This section describes Sage's automated testing of test files of the
@@ -1159,7 +1353,7 @@ doctesting modules in the Sage library.
 
 .. _section-testpython:
 
-Testing .py, .pyx and .sage Files
+Testing .py, .pyx and .sage files
 ---------------------------------
 
 Run ``sage -t <filename.py>`` to test all code examples in
@@ -1184,7 +1378,7 @@ write for the documentation and have them work.
 For more information, see :ref:`chapter-doctesting`.
 
 
-Testing reST Documentation
+Testing reST documentation
 --------------------------
 
 Run ``sage -t <filename.rst>`` to test the examples in verbatim
@@ -1227,7 +1421,7 @@ Sage.
 
 .. _section-coding-general-whitespace:
 
-General Coding Style Regarding Whitespace
+General coding style regarding whitespace
 =========================================
 
 Use spaces instead of tabs for indentation. The only exception is for
@@ -1242,10 +1436,10 @@ whitespace, see https://www.emacswiki.org/emacs/DeletingWhitespace
 for various solutions.
 
 If you use another editor, we recommend to configure it so you do not
-add tabs to files.
+add tabs to files. See :ref:`section-ide`.
 
 
-Global Options
+Global options
 ==============
 
 Global options for classes can be defined in Sage using

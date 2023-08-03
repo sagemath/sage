@@ -1,1 +1,2 @@
-sagemath-standard
+# This file is updated on every release by the sage-update-version script
+sagemath-standard ~= 10.1b8

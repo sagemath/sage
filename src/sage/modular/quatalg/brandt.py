@@ -1,5 +1,5 @@
 r"""
-Brandt Modules
+Brandt modules
 
 Introduction
 ------------
@@ -202,21 +202,26 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-# imports
-from sage.misc.all import prod
-from sage.misc.verbose import verbose
-from sage.rings.all import Integer, ZZ, QQ, PolynomialRing, GF, CommutativeRing
-
 from sage.algebras.quatalg.quaternion_algebra import QuaternionAlgebra, basis_for_quaternion_lattice
 from sage.algebras.quatalg.quaternion_algebra_cython import rational_matrix_from_rational_quaternions
-
-from sage.arith.all import gcd, factor, prime_divisors, kronecker, next_prime
-from sage.modular.hecke.all import (AmbientHeckeModule, HeckeSubmodule,
-                                    HeckeModuleElement)
-from sage.modular.dirichlet import TrivialCharacter
-from sage.matrix.all import MatrixSpace, matrix
-from sage.structure.richcmp import richcmp, richcmp_method
+from sage.arith.misc import gcd, factor, prime_divisors, kronecker, next_prime
+from sage.matrix.constructor import matrix
+from sage.matrix.matrix_space import MatrixSpace
 from sage.misc.cachefunc import cached_method
+from sage.misc.misc_c import prod
+from sage.misc.verbose import verbose
+from sage.modular.dirichlet import TrivialCharacter
+from sage.modular.hecke.ambient_module import AmbientHeckeModule
+from sage.modular.hecke.element import HeckeModuleElement
+from sage.modular.hecke.submodule import HeckeSubmodule
+from sage.rings.finite_rings.finite_field_constructor import GF
+from sage.rings.integer import Integer
+from sage.rings.integer_ring import ZZ
+from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+from sage.rings.power_series_ring import PowerSeriesRing
+from sage.rings.rational_field import QQ
+from sage.rings.ring import CommutativeRing
+from sage.structure.richcmp import richcmp, richcmp_method
 
 
 cache = {}
@@ -394,7 +399,7 @@ def basis_for_left_ideal(R, gens):
         sage: sage.modular.quatalg.brandt.basis_for_left_ideal(B.maximal_order(), [3*(i+j),3*(i-j),6*k,A(3)])
         [3/2 + 1/2*i + k, i + 2*k, 3/2*j + 3/2*k, 3*k]
     """
-    return basis_for_quaternion_lattice([b * g for b in R.basis() for g in gens])
+    return basis_for_quaternion_lattice([b * g for b in R.basis() for g in gens], reverse=False)
 
 
 def right_order(R, basis):
@@ -486,7 +491,7 @@ def quaternion_order_with_given_level(A, level):
     level = abs(level)
     N = A.discriminant()
     N1 = gcd(level, N)
-    M1 = level / N1
+    M1 = level // N1
 
     O = maximal_order(A)
     # if N1 != 1:
@@ -871,7 +876,7 @@ class BrandtModule_class(AmbientHeckeModule):
         """
         if not Integer(p).is_prime():
             raise ValueError("p must be a prime")
-        if not(self.level() % p):
+        if not self.level() % p:
             raise ValueError("p must be coprime to the level")
 
         R = self.order_of_level_N()
@@ -917,7 +922,7 @@ class BrandtModule_class(AmbientHeckeModule):
                     v = [A(1), alpha, beta, alpha * beta]
                     M = rational_matrix_from_rational_quaternions(v)
                     e = M.determinant()
-                    if e and not((d / e).valuation(p)):
+                    if e and not (d / e).valuation(p):
                         S = A.quaternion_order(v)
                         break
                 if S is not None:
@@ -1023,14 +1028,14 @@ class BrandtModule_class(AmbientHeckeModule):
             [ 6  6]
             [ 2 10]
             sage: type(t)
-            <type 'sage.matrix.matrix_rational_sparse.Matrix_rational_sparse'>
+            <class 'sage.matrix.matrix_rational_sparse.Matrix_rational_sparse'>
             sage: B.hecke_matrix(19, algorithm='direct', B=2)
             [ 8 12]
             [ 4 16]
         """
         n = ZZ(n)
         if n <= 0:
-            raise IndexError("n must be positive.")
+            raise IndexError("n must be positive")
         if n not in self._hecke_matrices:
             if algorithm == 'default':
                 try:
@@ -1051,7 +1056,7 @@ class BrandtModule_class(AmbientHeckeModule):
             elif algorithm == 'brandt':
                 T = self._compute_hecke_matrix_brandt(n, sparse=sparse)
             else:
-                raise ValueError("unknown algorithm '%s'" % algorithm)
+                raise ValueError(f"unknown algorithm '{algorithm}'")
             T.set_immutable()
             self._hecke_matrices[n] = T
         return self._hecke_matrices[n]
@@ -1079,9 +1084,9 @@ class BrandtModule_class(AmbientHeckeModule):
             [1 0 2]
             [1 2 0]
             sage: type(t)
-            <type 'sage.matrix.matrix_rational_dense.Matrix_rational_dense'>
+            <class 'sage.matrix.matrix_rational_dense.Matrix_rational_dense'>
             sage: type(B._compute_hecke_matrix_prime(2,sparse=True))
-            <type 'sage.matrix.matrix_rational_sparse.Matrix_rational_sparse'>
+            <class 'sage.matrix.matrix_rational_sparse.Matrix_rational_sparse'>
         """
         return self._compute_hecke_matrix_directly(n=p, B=B, sparse=sparse)
 
@@ -1106,9 +1111,9 @@ class BrandtModule_class(AmbientHeckeModule):
             [1 0 2]
             [1 2 0]
             sage: type(t)
-            <type 'sage.matrix.matrix_rational_dense.Matrix_rational_dense'>
+            <class 'sage.matrix.matrix_rational_dense.Matrix_rational_dense'>
             sage: type(B._compute_hecke_matrix_directly(2,sparse=True))
-            <type 'sage.matrix.matrix_rational_sparse.Matrix_rational_sparse'>
+            <class 'sage.matrix.matrix_rational_sparse.Matrix_rational_sparse'>
 
         You can't compute the Hecke operator for n not coprime to the level using this function::
 
@@ -1172,7 +1177,7 @@ class BrandtModule_class(AmbientHeckeModule):
         for r in range(len(C)):
             percent_done = 100 * r // len(C)
             if percent_done != last_percent:
-                if not(percent_done % 5):
+                if not percent_done % 5:
                     verbose("percent done: %s" % percent_done)
                 last_percent = percent_done
             if use_fast_alg:
@@ -1291,7 +1296,7 @@ class BrandtModule_class(AmbientHeckeModule):
         """
         level = self.level()
         p = ZZ(2)
-        while not(level % p):
+        while not level % p:
             p = next_prime(p)
         return p
 
@@ -1513,7 +1518,7 @@ class BrandtModule_class(AmbientHeckeModule):
             [  1/6 + 2*t^2 + O(t^3)       1/6 + t + O(t^3)]
         """
         A = self._brandt_series_vectors(prec)
-        R = QQ[[var]]
+        R = PowerSeriesRing(QQ, var)
         n = len(A[0])
         return matrix(R, n, n,
                       [[R(x.list()[:prec], prec) for x in Y] for Y in A])
@@ -1550,13 +1555,13 @@ class BrandtModule_class(AmbientHeckeModule):
         p = Integer(2)
         N = self.level()
         while V.dimension() >= 2:
-            while not(N % p):
+            while not N % p:
                 p = p.next_prime()
             A = V.T(p) - (p + 1)
             V = A.kernel()
         return V
 
-    def is_cuspidal(self):
+    def is_cuspidal(self) -> bool:
         r"""
         Return whether ``self`` is cuspidal, i.e. has no Eisenstein part.
 
@@ -1580,7 +1585,7 @@ class BrandtModule_class(AmbientHeckeModule):
         fixed choice of basis. The weight of an ideal class `[I]` is
         half the number of units of the right order `I`.
 
-        NOTE: The base ring must be `\QQ` or `\ZZ`.
+        .. NOTE:: The base ring must be `\QQ` or `\ZZ`.
 
         EXAMPLES::
 
@@ -1615,9 +1620,9 @@ class BrandtModule_class(AmbientHeckeModule):
         return tuple(a[1] / a[0] / 2 for a in thetas)
 
 
-#############################################################################
-# Benchmarking
-#############################################################################
+# ====================
+#     Benchmarking
+# ====================
 def benchmark_magma(levels, silent=False):
     """
     INPUT:
@@ -1646,7 +1651,7 @@ def benchmark_magma(levels, silent=False):
         ('magma', 97, 2, ...)
     """
     ans = []
-    from sage.interfaces.all import magma
+    from sage.interfaces.magma import magma
     for p, M in levels:
         t = magma.cputime()
         magma.eval('HeckeOperator(BrandtModule(%s, %s),2)' % (p, M))
@@ -1685,7 +1690,7 @@ def benchmark_sage(levels, silent=False):
         ('sage', 43, 2, ...)
         ('sage', 97, 2, ...)
     """
-    from sage.misc.all import cputime
+    from sage.misc.timing import cputime
     ans = []
     for p, M in levels:
         t = cputime()

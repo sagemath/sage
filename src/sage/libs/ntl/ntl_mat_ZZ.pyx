@@ -67,14 +67,14 @@ cdef inline ntl_mat_ZZ make_mat_ZZ_sig_off(mat_ZZ_c* x):
 #
 ##############################################################################
 
-cdef class ntl_mat_ZZ(object):
+cdef class ntl_mat_ZZ():
     # see ntl_mat_ZZ.pxd for data members
     r"""
-    The \class{mat_ZZ} class implements arithmetic with matrices over $\Z$.
+    The \class{mat_ZZ} class implements arithmetic with matrices over `\Z`.
     """
     def __init__(self, nrows=0,  ncols=0, v=None):
-        """
-        The \class{mat_ZZ} class implements arithmetic with matrices over $\Z$.
+        r"""
+        The \class{mat_ZZ} class implements arithmetic with matrices over `\Z`.
 
         EXAMPLES::
 
@@ -319,6 +319,8 @@ cdef class ntl_mat_ZZ(object):
 
     def __getitem__(self, ij):
         """
+        EXAMPLES::
+
             sage: m = ntl.mat_ZZ(3, 2, range(6))
             sage: m[0,0] ## indirect doctest
             0
@@ -453,7 +455,7 @@ cdef class ntl_mat_ZZ(object):
             sage: M.charpoly()
             [-2 -5 1]
             sage: type(_)
-            <type 'sage.libs.ntl.ntl_ZZX.ntl_ZZX'>
+            <class 'sage.libs.ntl.ntl_ZZX.ntl_ZZX'>
             sage: M.determinant()
             -2
         """
@@ -1167,19 +1169,19 @@ cdef class ntl_mat_ZZ(object):
         r"""
         Performs LLL reduction of self (puts \code{self} in an LLL form).
 
-        \code{self} is an $m x n$ matrix, viewed as $m$ rows of
-        $n$-vectors.  $m$ may be less than, equal to, or greater than $n$,
+        \code{self} is an `m x n` matrix, viewed as `m` rows of
+        `n`-vectors.  `m` may be less than, equal to, or greater than `n`,
         and the rows need not be linearly independent. self is
         transformed into an LLL-reduced basis, and the return value is
-        the rank r of self so as det2 (see below).  The first $m-r$ rows
+        the rank r of self so as det2 (see below).  The first `m-r` rows
         of self are zero.
 
         More specifically, elementary row transformations are
         performed on \code{self} so that the non-zero rows of
         new-\code{self} form an LLL-reduced basis for the lattice
         spanned by the rows of old-\code{self}.  The default reduction
-        parameter is $\delta=3/4$, which means that the squared length
-        of the first non-zero basis vector is no more than $2^{r-1}$
+        parameter is `\delta=3/4`, which means that the squared length
+        of the first non-zero basis vector is no more than `2^{r-1}`
         times that of the shortest vector in the lattice.
 
         det2 is calculated as the \emph{square} of the determinant of
@@ -1193,10 +1195,10 @@ cdef class ntl_mat_ZZ(object):
         of old-B.
 
         The parameters a and b allow an arbitrary reduction parameter
-        $\delta=a/b$, where $1/4 < a/b \leq 1$, where a and b are positive
+        `\delta=a/b`, where `1/4 < a/b \leq 1`, where a and b are positive
         integers.  For a basis reduced with parameter delta, the
         squared length of the first non-zero basis vector is no more
-        than $1/(delta-1/4)^{r-1}$ times that of the shortest vector in
+        than `1/(delta-1/4)^{r-1}` times that of the shortest vector in
         the lattice.
 
         The algorithm employed here is essentially the one in Cohen's
@@ -1280,7 +1282,7 @@ cdef class ntl_mat_ZZ(object):
         different, improving both stability and performance.
 
         If return_U is True, then also U is returned which is
-        the transition matrix: $U * self_{old} = self_{new}$
+        the transition matrix: `U * self_{old} = self_{new}`
 
         The optional argument 'delta' is the reduction parameter, and
         may be set so that 0.50 <= delta < 1.  Setting it close to 1

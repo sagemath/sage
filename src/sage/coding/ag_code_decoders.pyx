@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# sage.doctest: optional - sage.rings.finite_rings sage.schemes
 r"""
 Decoders for AG codes
 
@@ -19,27 +19,27 @@ EXAMPLES::
     sage: pls.remove(O)
     sage: G = -O + 18*Q
     sage: code = codes.EvaluationAGCode(pls, G)  # long time
-    sage: code  # long time
+    sage: code                                   # long time
     [26, 15] evaluation AG code over GF(9)
-    sage: decoder = code.decoder('K')  # long time
-    sage: tau = decoder.decoding_radius()  # long time
-    sage: tau  # long time
+    sage: decoder = code.decoder('K')            # long time
+    sage: tau = decoder.decoding_radius()        # long time
+    sage: tau                                    # long time
     4
 
 The ``decoder`` is now ready for correcting vectors received from a noisy
 channel::
 
     sage: channel = channels.StaticErrorRateChannel(code.ambient_space(), tau)  # long time
-    sage: message_space = decoder.message_space()  # long time
-    sage: message = message_space.random_element()  # long time
-    sage: encoder = decoder.connected_encoder()  # long time
-    sage: sent_codeword = encoder.encode(message)  # long time
-    sage: received_vector = channel(sent_codeword)  # long time
-    sage: (received_vector - sent_codeword).hamming_weight()  # long time
+    sage: message_space = decoder.message_space()                   # long time
+    sage: message = message_space.random_element()                  # long time
+    sage: encoder = decoder.connected_encoder()                     # long time
+    sage: sent_codeword = encoder.encode(message)                   # long time
+    sage: received_vector = channel(sent_codeword)                  # long time
+    sage: (received_vector - sent_codeword).hamming_weight()        # long time
     4
     sage: decoder.decode_to_code(received_vector) == sent_codeword  # long time
     True
-    sage: decoder.decode_to_message(received_vector) == message  # long time
+    sage: decoder.decode_to_message(received_vector) == message     # long time
     True
 
 AUTHORS:
@@ -60,8 +60,8 @@ AUTHORS:
 
 cimport cython
 
-from sage.rings.all import PolynomialRing
-from sage.rings.function_field.all import FunctionField
+from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+from sage.rings.function_field.constructor import FunctionField
 
 from sage.modules.free_module_element import vector
 from sage.matrix.constructor import matrix
@@ -1330,7 +1330,7 @@ cdef inline int pos_mod(int a, int b):
     return m
 
 
-cdef class Decoder_K(object):
+cdef class Decoder_K():
     """
     Common base class for the implementation of decoding algorithm K
     for AG codes.
@@ -1519,6 +1519,7 @@ cdef class Decoder_K(object):
 
         if verbose:
             width = 7 * (K.degree() + 2)
+
             # auxiliary function for verbose printing
             def vprint_g(g, s):
                 if verbose > 1:
@@ -2313,7 +2314,7 @@ cdef class DifferentialAGCodeDecoder_K(Decoder_K):
         self.info = info
 
 
-cdef class Decoder_K_extension(object):
+cdef class Decoder_K_extension():
     """
     Common base class for decoding algorithm K for AG codes via constant field extension.
 
@@ -2635,4 +2636,3 @@ cdef class DifferentialAGCodeDecoder_K_extension(Decoder_K_extension):
             sage: TestSuite(circuit).run(skip='_test_pickling')               # long time
         """
         super().__init__(pls, G, Q, DifferentialAGCodeDecoder_K, verbose=verbose)
-

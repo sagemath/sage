@@ -133,9 +133,8 @@ cdef list quotient_by_var(list L, size_t index):
     cdef list result = L[:len(L)] # creates a copy
     cdef size_t i
     for i in range(len(L)):
-        m_j = (<ETuple>PyList_GET_ITEM(L,i)).divide_by_var(index)
-        if m_j is not None:
-            result.append(m_j)
+        if (<ETuple> PyList_GET_ITEM(L, i)).get_exp(index):
+            result.append((<ETuple> PyList_GET_ITEM(L, i)).divide_by_var(index))
     return interred(result)
 
 cdef ETuple sum_from_list(list L, size_t s, size_t l):
@@ -443,16 +442,16 @@ def first_hilbert_series(I, grading=None, return_grading=False):
         sage: I = singular.ideal(['x^2','y^2','z^2'])
         sage: first_hilbert_series(I)
         -t^6 + 3*t^4 - 3*t^2 + 1
-        sage: first_hilbert_series(I,return_grading=True)
+        sage: first_hilbert_series(I, return_grading=True)
         (-t^6 + 3*t^4 - 3*t^2 + 1, (1, 1, 1))
-        sage: first_hilbert_series(I,grading=(1,2,3))
+        sage: first_hilbert_series(I, grading=(1,2,3))
         -t^12 + t^10 + t^8 - t^4 - t^2 + 1
 
     TESTS:
 
     We test against some corner cases::
 
-        sage: R.<x,y,z>=PolynomialRing(QQ)
+        sage: R.<x,y,z> = PolynomialRing(QQ)
         sage: I = 0*R
         sage: first_hilbert_series(I)
         1
@@ -464,8 +463,9 @@ def first_hilbert_series(I, grading=None, return_grading=False):
         sage: first_hilbert_series(singular(I))
         0
     """
-    from sage.all import ZZ, PolynomialRing
-    PR = PolynomialRing(ZZ,'t')
+    from sage.rings.integer_ring import ZZ
+    from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+    PR = PolynomialRing(ZZ, 't')
     cdef Node AN
     # The "active node". If a recursive computation is needed, it will be equipped
     # with a 'Left' and a 'Right' child node, and some 'Multipliers'. Later, the first Hilbert
@@ -559,31 +559,23 @@ def hilbert_poincare_series(I, grading=None):
 
         sage: from sage.rings.polynomial.hilbert import hilbert_poincare_series
         sage: R = PolynomialRing(QQ,'x',9)
-        sage: I = [m.lm() for m in ((matrix(R,3,R.gens())^2).list()*R).groebner_basis()]*R
+        sage: I = [m.lm()
+        ....:      for m in ((matrix(R, 3, R.gens())^2).list() * R).groebner_basis()] * R
         sage: hilbert_poincare_series(I)
         (t^7 - 3*t^6 + 2*t^5 + 2*t^4 - 2*t^3 + 6*t^2 + 5*t + 1)/(t^4 - 4*t^3 + 6*t^2 - 4*t + 1)
-        sage: hilbert_poincare_series((R*R.gens())^2, grading=range(1,10))
+        sage: hilbert_poincare_series((R * R.gens())^2, grading=range(1,10))
         t^9 + t^8 + t^7 + t^6 + t^5 + t^4 + t^3 + t^2 + t + 1
 
     The following example is taken from :trac:`20145`::
 
-        sage: n=4;m=11;P = PolynomialRing(QQ,n*m,"x"); x = P.gens(); M = Matrix(n,x)
+        sage: n=4; m=11; P = PolynomialRing(QQ, n*m, "x"); x = P.gens(); M = Matrix(n, x)
         sage: from sage.rings.polynomial.hilbert import first_hilbert_series
         sage: I = P.ideal(M.minors(2))
-        sage: J = P*[m.lm() for m in I.groebner_basis()]
+        sage: J = P * [m.lm() for m in I.groebner_basis()]
         sage: hilbert_poincare_series(J).numerator()
         120*t^3 + 135*t^2 + 30*t + 1
         sage: hilbert_poincare_series(J).denominator().factor()
         (t - 1)^14
-
-    This example exceeds the current capabilities of Singular::
-
-        sage: J.hilbert_numerator(algorithm='singular')
-        Traceback (most recent call last):
-        ...
-        RuntimeError: error in Singular function call 'hilb':
-         int overflow in hilb 1
-
     """
     cdef Polynomial_integer_dense_flint HP
     HP, grading = first_hilbert_series(I, grading=grading, return_grading=True)
@@ -601,4 +593,3 @@ def hilbert_poincare_series(I, grading=None):
         if HP.leading_coefficient() >= 0:
             return HP / PR.prod([(1-t**d) for d in grading])
         return (-HP) / (-PR.prod([(1-t**d) for d in grading]))
-

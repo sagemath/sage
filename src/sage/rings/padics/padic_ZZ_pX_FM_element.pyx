@@ -5,7 +5,7 @@
 # distutils: extra_link_args = NTL_LIBEXTRA
 # distutils: language = c++
 r"""
-`p`-Adic ``ZZ_pX`` FM Element
+`p`-adic ``ZZ_pX`` FM Element
 
 This file implements elements of Eisenstein and unramified extensions
 of `\ZZ_p` with fixed modulus precision.
@@ -20,7 +20,7 @@ element contains the following data:
   This ``ZZ_pX`` is created with global ntl modulus determined by the
   parent's precision cap and shared among all elements.
 
-- ``prime_pow`` (some subclass of ``PowComputer_ZZ_pX``) -- a class,
+- ``prime_pow`` (some subclass of :class:`PowComputer_ZZ_pX`) -- a class,
   identical among all elements with the same parent, holding common
   data.
 
@@ -48,7 +48,7 @@ element contains the following data:
     ``prime_pow.get_top_context`` -- obtain an
     ``ntl_ZZ_pContext_class`` corresponding to `p^n`.  The capdiv
     version divides by ``prime_pow.e`` as appropriate.
-    ``top_context`` corresponds to `p^{prec_cap}`.
+    ``top_context`` corresponds to `p^{\texttt{prec\_cap}}`.
 
   * ``prime_pow.restore_context``,
     ``prime_pow.restore_context_capdiv``,
@@ -113,8 +113,7 @@ AUTHORS:
 
 - David Roe  (2008-01-01) initial version
 """
-
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2008 David Roe <roed.math@gmail.com>
 #                          William Stein <wstein@gmail.com>
 #
@@ -122,18 +121,14 @@ AUTHORS:
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from cysignals.signals cimport sig_on, sig_off
 
 include "sage/libs/ntl/decl.pxi"
 
 from sage.structure.richcmp cimport rich_to_bool
-from sage.structure.element cimport Element
-from sage.rings.padics.padic_printing cimport pAdicPrinter_class
-from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
-from sage.rings.integer_ring import ZZ
 from sage.rings.integer cimport Integer
 from sage.rings.padics.padic_generic_element cimport pAdicGenericElement
 from sage.rings.padics.padic_ext_element cimport pAdicExtElement
@@ -144,13 +139,11 @@ from sage.libs.ntl.ntl_ZZX cimport ntl_ZZX
 from sage.libs.ntl.ntl_ZZ cimport ntl_ZZ
 from sage.libs.ntl.ntl_ZZ_p cimport ntl_ZZ_p
 from sage.libs.ntl.ntl_ZZ_pContext cimport ntl_ZZ_pContext_class
-from sage.libs.ntl.ntl_ZZ_pContext import ntl_ZZ_pContext
 from sage.rings.rational cimport Rational
 from sage.libs.pari.all import pari_gen
-from sage.interfaces.gp import GpElement
+from sage.interfaces.abc import GpElement
 from sage.rings.finite_rings.integer_mod import is_IntegerMod
-from sage.rings.all import IntegerModRing
-from sage.rings.padics.pow_computer_ext cimport PowComputer_ZZ_pX_FM_Eis
+from sage.rings.finite_rings.integer_mod_ring import IntegerModRing
 
 
 cdef class pAdicZZpXFMElement(pAdicZZpXElement):
@@ -260,7 +253,7 @@ cdef class pAdicZZpXFMElement(pAdicZZpXElement):
             tmp_Int = Integer.__new__(Integer)
             ZZ_to_mpz(tmp_Int.value, &(<ntl_ZZ>x).x)
             x = tmp_Int
-        elif isinstance(x, (int, long)):
+        elif isinstance(x, int):
             x = Integer(x)
         if isinstance(x, Integer):
             self._set_from_mpz((<Integer>x).value)
@@ -718,7 +711,7 @@ cdef class pAdicZZpXFMElement(pAdicZZpXElement):
             sage: f = x^5 + 75*x^3 - 15*x^2 +125*x - 5
             sage: W.<w> = R.ext(f)
             sage: type(W(0))
-            <type 'sage.rings.padics.padic_ZZ_pX_FM_element.pAdicZZpXFMElement'>
+            <class 'sage.rings.padics.padic_ZZ_pX_FM_element.pAdicZZpXFMElement'>
             sage: W(0)^0
             1
             sage: W(0)^0 == W(1)
@@ -1032,7 +1025,7 @@ cdef class pAdicZZpXFMElement(pAdicZZpXElement):
             [1590 1375 1695 1032 2358]
             [2415  590 2370 2970 1032]
         """
-        from sage.matrix.all import matrix
+        from sage.matrix.constructor import matrix
         R = IntegerModRing(self.prime_pow.pow_Integer(self.prime_pow.prec_cap))
         n = self.prime_pow.deg
         L = []
@@ -1658,7 +1651,7 @@ cdef class pAdicZZpXFMElement(pAdicZZpXElement):
             3 + 2*w^2 + w^4 + w^6 + w^7 + 3*w^8 + 3*w^9 + 2*w^11 + 3*w^12
              + 3*w^13 + w^15 + 4*w^16 + 2*w^17 + w^18 + 3*w^21 + w^22 + 3*w^24
         """
-        cdef long valuation, index
+        cdef long valuation = 0, index = 0
         ZZ_pX_min_val_coeff(valuation, index, self.value, self.prime_pow.pow_ZZ_tmp(1)[0])
         if index == -1: # self == 0
             return self.prime_pow.ram_prec_cap
@@ -1721,6 +1714,7 @@ cdef class pAdicZZpXFMElement(pAdicZZpXElement):
         """
         return self.ext_p_list_precs(pos, self.prime_pow.ram_prec_cap)
 
+
 def make_ZZpXFMElement(parent, f):
     """
     Create a new ``pAdicZZpXFMElement`` out of an ``ntl_ZZ_pX`` ``f``, with
@@ -1737,4 +1731,3 @@ def make_ZZpXFMElement(parent, f):
         True
     """
     return pAdicZZpXFMElement(parent, f)
-

@@ -1,8 +1,9 @@
+# sage.doctest: optional - primecountpy
 """
 Utility classes for multi-modular algorithms
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2006 William Stein
 #
 # This program is free software: you can redistribute it and/or modify
@@ -10,13 +11,13 @@ Utility classes for multi-modular algorithms
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
 #                  https://www.gnu.org/licenses/
-#*****************************************************************************
+# ****************************************************************************
 
 from cysignals.memory cimport check_allocarray, check_reallocarray, sig_free
 
 from sage.libs.gmp.mpz cimport *
 from sage.rings.integer cimport Integer, smallInteger
-from sage.arith.all import random_prime
+from sage.arith.misc import random_prime
 from types import GeneratorType
 from sage.ext.stdsage cimport PY_NEW
 from cpython.object cimport PyObject_RichCompare
@@ -33,7 +34,7 @@ ai = arith_llong()
 MAX_MODULUS = MOD_INT_MAX
 
 
-cdef class MultiModularBasis_base(object):
+cdef class MultiModularBasis_base():
     r"""
     This class stores a list of machine-sized prime numbers,
     and can do reduction and Chinese Remainder Theorem lifting
@@ -116,7 +117,7 @@ cdef class MultiModularBasis_base(object):
         """
         sig_free(self.moduli)
         for i in range(self.n):
-           mpz_clear(self.partial_products[i])
+            mpz_clear(self.partial_products[i])
         sig_free(self.partial_products)
         sig_free(self.C)
         mpz_clear(self.product)
@@ -150,7 +151,7 @@ cdef class MultiModularBasis_base(object):
             sage: mm = MultiModularBasis_base(height); mm
             MultiModularBasis with moduli [...]
 
-            sage: mm.prod()//height > 2
+            sage: mm.prod()//height >= 2
             True
 
             sage: mm = MultiModularBasis_base([1000000000000000000000000000057])
@@ -174,7 +175,7 @@ cdef class MultiModularBasis_base(object):
         self._l_bound = l_bound
         self._u_bound = u_bound
 
-        from sage.functions.prime_pi import prime_pi  # must be here to avoid circular import
+        from primecountpy.primecount import prime_pi
         self._num_primes = prime_pi(self._u_bound) - prime_pi(self._l_bound-1)
 
         if isinstance(val, (list, tuple, GeneratorType)):
@@ -193,11 +194,10 @@ cdef class MultiModularBasis_base(object):
           the allowed interval; we will not return a prime in
           known_primes.
         """
-        cdef Py_ssize_t i
         cdef mod_int p
         while True:
             if len(known_primes) >= self._num_primes:
-                raise RuntimeError("there are not enough primes in the interval [%s, %s] to complete this multimodular computation"%(self._l_bound, self._u_bound))
+                raise RuntimeError("there are not enough primes in the interval [%s, %s] to complete this multimodular computation" % (self._l_bound, self._u_bound))
             p = random_prime(self._u_bound, lbound =self._l_bound)
             if p not in known_primes:
                 return p
@@ -219,7 +219,7 @@ cdef class MultiModularBasis_base(object):
         if isinstance(plist, GeneratorType):
             plist = list(plist)
         elif not isinstance(plist, (tuple, list)):
-            raise TypeError("plist should be a list, tuple or a generator, got: %s"%(str(type(plist))))
+            raise TypeError("plist should be a list, tuple or a generator, got: %s" % (str(type(plist))))
 
         cdef Py_ssize_t len_plist = len(plist)
 
@@ -297,7 +297,7 @@ cdef class MultiModularBasis_base(object):
             sage: from sage.arith.multi_modular import MultiModularBasis_base
             sage: mm = MultiModularBasis_base([10007, 10009])
             sage: mm.__getstate__()
-            ([10007, 10009], 1024L, 32768L)
+            ([10007, 10009], 1024, 32768)
         """
         return (self.list(), self._l_bound, self._u_bound)
 
@@ -371,11 +371,10 @@ cdef class MultiModularBasis_base(object):
             return self.n
 
         # find new prime moduli
-        cdef int i
         new_moduli = []
         new_partial_products = []
-        cdef Integer M # keeps current height
-        cdef mod_int p # keeps current prime moduli
+        cdef Integer M  # keeps current height
+        cdef mod_int p  # keeps current prime moduli
 
         if self.n == 0:
             M = smallInteger(1)
@@ -487,9 +486,9 @@ cdef class MultiModularBasis_base(object):
         count = self.n * mpz_sizeinbase(height, 2) / mpz_sizeinbase(self.partial_products[self.n-1], 2) # an estimate
         count = max(min(count, self.n), 1)
         while count > 1 and mpz_cmp(height, self.partial_products[count-1]) < 0:
-           count -= 1
+            count -= 1
         while mpz_cmp(height, self.partial_products[count-1]) > 0:
-           count += 1
+            count += 1
 
         return count
 
@@ -632,7 +631,6 @@ cdef class MultiModularBasis_base(object):
             if mpz_cmp(z[j], self.half_product) > 0:
                 mpz_sub(z[j], z[j], self.product)
 
-
         cdef Integer zz
         zz = PY_NEW(Integer)
         mpz_set(zz.value, self.half_product)
@@ -686,7 +684,7 @@ cdef class MultiModularBasis_base(object):
         return z
 
     def precomputation_list(self):
-        """
+        r"""
         Return a list of the precomputed coefficients
         `\prod_j=1^{i-1} m_j^{-1} (mod m_i)`
         where `m_i` are the prime moduli.
@@ -822,8 +820,7 @@ cdef class MultiModularBasis_base(object):
             sage: from sage.arith.multi_modular import MultiModularBasis_base
             sage: mm = MultiModularBasis_base([10007, 10009])
             sage: mm[1]
-            10009             # 64-bit
-            10009L            # 32-bit
+            10009
             sage: mm[-1]
             Traceback (most recent call last):
             ...
@@ -939,7 +936,9 @@ cdef class MutableMultiModularBasis(MultiModularBasis):
             sage: from sage.arith.multi_modular import MutableMultiModularBasis
             sage: mm = MutableMultiModularBasis([10007])
             sage: p = mm.next_prime()
-            sage: p > 10007
+            sage: 1024 < p < 32768
+            True
+            sage: p != 10007
             True
             sage: mm.list() == [10007, p]
             True

@@ -1,6 +1,5 @@
 r"""
 Enumerated sets of partitions, tableaux, ...
-============================================
 
 Partitions
 ----------

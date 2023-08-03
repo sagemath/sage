@@ -4,8 +4,9 @@ from cysignals.signals cimport sig_check, sig_on, sig_off
 from sage.rings.fast_arith cimport arith_llong
 cdef arith_llong arith = arith_llong()
 
-from sage.rings.all import ZZ, PowerSeriesRing
-from sage.arith.all import kronecker_symbol
+from sage.arith.misc import kronecker_symbol
+from sage.rings.integer_ring import ZZ
+from sage.rings.power_series_ring import PowerSeriesRing
 
 from libc.math cimport ceil, floor, sqrt
 from libc.string cimport memcpy
@@ -73,7 +74,6 @@ def bqf_theta_series(Q, long bound, var=None):
 
 
 cdef long* bqf_theta_series_c(long* terms, long bound, long a, long b, long c) except NULL:
-    cdef long i
     cdef long x, y, yD
     cdef long xmax, ymin, ymax
     cdef double sqrt_yD

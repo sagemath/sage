@@ -69,9 +69,12 @@ class WQSymBasis_abstract(CombinatorialFreeModule, BindableClass):
             sage: M = algebras.WQSym(QQ).M()
             sage: TestSuite(M).run()  # long time
         """
+        def sorting_key(X):
+            return (sum(map(len, X)), X)
         CombinatorialFreeModule.__init__(self, alg.base_ring(),
                                          OrderedSetPartitions(),
                                          category=WQSymBases(alg, graded),
+                                         sorting_key=sorting_key,
                                          bracket="", prefix=self._prefix)
 
     def _repr_term(self, osp):
@@ -233,7 +236,7 @@ class WQSymBasis_abstract(CombinatorialFreeModule, BindableClass):
             # Otherwise lift that basis up and then coerce over
             target = getattr(self.realization_of(), R._basis_name)()
             return self._coerce_map_via([target], R)
-        return super(WQSymBasis_abstract, self)._coerce_map_from_(R)
+        return super()._coerce_map_from_(R)
 
     @cached_method
     def an_element(self):
@@ -574,7 +577,7 @@ class WordQuasiSymmetricFunctions(UniqueRepresentation, Parent):
             sage: M = WQSym.M(); M
             Word Quasi-symmetric functions over Rational Field in the Monomial basis
             sage: sorted(M.basis(2))
-            [M[{1, 2}], M[{2}, {1}], M[{1}, {2}]]
+            [M[{1}, {2}], M[{2}, {1}], M[{1, 2}]]
         """
         _prefix = "M"
         _basis_name = "Monomial"
@@ -625,6 +628,7 @@ class WordQuasiSymmetricFunctions(UniqueRepresentation, Parent):
 
             def union(X, Y):
                 return X.union(Y)
+
             return self.sum_of_monomials(ShuffleProduct_overlapping(x, yshift,
                                                                     K, union))
 
@@ -646,7 +650,7 @@ class WordQuasiSymmetricFunctions(UniqueRepresentation, Parent):
                 sage: M.coproduct( M([[1], [2]]) )
                 M[] # M[{1}, {2}] + M[{1}] # M[{1}] + M[{1}, {2}] # M[]
             """
-            if not len(x):
+            if not x:
                 return self.one().tensor(self.one())
             K = self.indices()
 
@@ -975,12 +979,15 @@ class WordQuasiSymmetricFunctions(UniqueRepresentation, Parent):
                         temp = temp[:j]
                         break
 
+            def union(X, Y):
+                return X.union(Y)
+
             # Perform the quasi-shuffle product
             cur = {data[0]: 1}
             for B in data[1:]:
                 ret = {}
                 for A in cur:
-                    for C in ShuffleProduct_overlapping(A, B, element_constructor=OSP):
+                    for C in ShuffleProduct_overlapping(A, B, element_constructor=OSP, add=union):
                         if C in ret:
                             ret[C] += cur[A]
                         else:
@@ -1212,7 +1219,7 @@ class WordQuasiSymmetricFunctions(UniqueRepresentation, Parent):
             # The coproduct on the Q basis satisfies the same formula
             # as on the M basis. This is easily derived from the
             # formula on the M basis.
-            if not len(x):
+            if not x:
                 return self.one().tensor(self.one())
             K = self.indices()
 
@@ -1723,7 +1730,7 @@ class WordQuasiSymmetricFunctions(UniqueRepresentation, Parent):
                 sage: AA(M(x).coproduct()) == x.coproduct()
                 True
             """
-            if not len(x):
+            if not x:
                 return self.one().tensor(self.one())
             K = self.indices()
 

@@ -1,3 +1,4 @@
+# sage.doctest: optional - sage.combinat, sage.groups
 r"""
 Coxeter Group Algebras
 """
@@ -181,4 +182,3 @@ class CoxeterGroupAlgebras(AlgebrasCategory):
             result.affine_lift = w0._mul_
             result.affine_retract = w0._mul_
             return result
-

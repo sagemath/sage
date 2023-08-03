@@ -83,7 +83,7 @@ cdef class SetSystem:
         else:
             self._groundset = groundset
         self._idx = {}
-        for i in xrange(len(groundset)):
+        for i in range(len(groundset)):
             self._idx[groundset[i]] = i
 
         self._groundset_size = len(groundset)
@@ -125,7 +125,7 @@ cdef class SetSystem:
 
     def __dealloc__(self):
         cdef long i
-        for i in xrange(self._len):
+        for i in range(self._len):
             bitset_free(self._subsets[i])
         sig_free(self._subsets)
         bitset_free(self._temp)
@@ -205,7 +205,7 @@ cdef class SetSystem:
     cdef copy(self):
         cdef SetSystem S
         S = SetSystem(self._groundset, capacity=len(self))
-        for i in xrange(len(self)):
+        for i in range(len(self)):
             S._append(self._subsets[i])
         return S
 
@@ -232,7 +232,7 @@ cdef class SetSystem:
                 E.append(self._E[i])
         self._groundset = E
         self._idx = {}
-        for i in xrange(self._groundset_size):
+        for i in range(self._groundset_size):
             self._idx[self._groundset[i]] = i
 
     cpdef _complements(self):
@@ -255,7 +255,7 @@ cdef class SetSystem:
         if self._groundset_size == 0:
             return self
         S = SetSystem(self._groundset, capacity=len(self))
-        for i in xrange(len(self)):
+        for i in range(len(self)):
             bitset_complement(self._temp, self._subsets[i])
             S._append(self._temp)
         return S
@@ -266,7 +266,7 @@ cdef class SetSystem:
         """
         if k is None:
             k = self._len
-        for i in xrange(k, self._len):
+        for i in range(k, self._len):
             bitset_free(self._subsets[i])
         self._len = min(self._len, k)
         k2 = max(k, 1)
@@ -357,7 +357,7 @@ cdef class SetSystem:
         bitset_complement(active, active)
 
         # We compute the union of all sets containing 0, and deactivate them.
-        for i in xrange(self._len):
+        for i in range(self._len):
             if bitset_in(self._subsets[i], 0):
                 bitset_union(self._temp, self._subsets[i], self._temp)
                 bitset_discard(active, i)
@@ -388,7 +388,7 @@ cdef class SetSystem:
         """
         cdef long i, e
         cdef list cnt
-        cnt = [0 for v in xrange(self._groundset_size)]
+        cnt = [0 for v in range(self._groundset_size)]
         for e in E:
             i = bitset_first(self._subsets[e])
             while i >= 0:
@@ -401,11 +401,11 @@ cdef class SetSystem:
         Helper method for partition methods below.
         """
         cdef dict C
-        cdef long i, j, v, t0, t
+        cdef long i, v, t0, t
         cdef bint split
 
         C = {}
-        for i in xrange(len(P)):
+        for i in range(len(P)):
             v = bitset_first(P._subsets[i])
             if v < 0:
                 continue
@@ -443,7 +443,7 @@ cdef class SetSystem:
         """
         cdef long c
         c = 0
-        for p in xrange(len(P)):
+        for p in range(len(P)):
             c <<= bitset_len(P._subsets[p])
             bitset_intersection(self._temp, P._subsets[p], self._subsets[e])
             c += bitset_len(self._temp)
@@ -453,11 +453,10 @@ cdef class SetSystem:
         """
         Helper method for partition methods below.
         """
-        S = {}
         if P is None:
             P = self.groundset_partition()
         if E is None:
-            E = xrange(self._len)
+            E = range(self._len)
         if len(E) == 0:
             return [E]
 
@@ -487,7 +486,7 @@ cdef class SetSystem:
         S = SetSystem(self._groundset, capacity=len(self) + 1)
         bitset_clear(self._temp)
         bitset_add(self._temp, v)
-        for i in xrange(len(self)):
+        for i in range(len(self)):
             bitset_difference(S._temp, self._subsets[i], self._temp)
             S._append(S._temp)
         S._append(self._temp)
@@ -499,7 +498,7 @@ cdef class SetSystem:
         Helper method for partition methods below.
         """
         if E is None:
-            E = xrange(self._len)
+            E = range(self._len)
         if P is None:
             if self._groundset:
                 P = SetSystem(self._groundset, [self._groundset], capacity=self._groundset_size)
@@ -510,7 +509,7 @@ cdef class SetSystem:
         return P
 
     cpdef _equitable_partition(self, SetSystem P=None, EP=None):
-        """
+        r"""
         Return an equitable ordered partition of the ground set of the
         hypergraph whose edges are the subsets in this SetSystem.
 
@@ -561,7 +560,7 @@ cdef class SetSystem:
             partition elements is an invariant of the isomorphism class of the
             hypergraph.
         """
-        cdef long h, l
+        cdef long h
         cdef list EP2, H
 
         if P is None:
@@ -633,7 +632,7 @@ cdef class SetSystem:
             [3]
         """
         P, EP, h = self._equitable_partition(P, EP)
-        for i in xrange(len(P)):
+        for i in range(len(P)):
             if bitset_len(P._subsets[i]) > 1:
                 return self._heuristic_partition(P._distinguish(bitset_first(P._subsets[i])), EP)
         return P, EP, h
@@ -676,13 +675,13 @@ cdef class SetSystem:
         if len(SP) != len(OP):
             return None
         p = SP._groundset_size + 1
-        for i in xrange(len(SP)):
+        for i in range(len(SP)):
             l = bitset_len(SP._subsets[i])
             if l != bitset_len(OP._subsets[i]):
                 return None
             if l != 1 and l < p:
                 p = l
-        for i in xrange(len(SP)):
+        for i in range(len(SP)):
             if bitset_len(SP._subsets[i]) == p:
                 SP2, SEP, sh = self._equitable_partition(SP._distinguish(bitset_first(SP._subsets[i])))
                 v = bitset_first(OP._subsets[i])
@@ -694,9 +693,9 @@ cdef class SetSystem:
                             return m
                     v = bitset_next(OP._subsets[i], v + 1)
                 return None
-        if sorted([self.subset_characteristic(SP, i) for i in xrange(len(self))]) != sorted([other.subset_characteristic(OP, i) for i in xrange(len(other))]):
+        if sorted([self.subset_characteristic(SP, i) for i in range(len(self))]) != sorted([other.subset_characteristic(OP, i) for i in range(len(other))]):
             return None
-        return dict([(self._groundset[bitset_first(SP._subsets[i])], other._groundset[bitset_first(OP._subsets[i])]) for i in xrange(len(SP))])
+        return dict([(self._groundset[bitset_first(SP._subsets[i])], other._groundset[bitset_first(OP._subsets[i])]) for i in range(len(SP))])
 
     cpdef _equivalence(self, is_equiv, SetSystem other, SetSystem SP=None, SetSystem OP=None):
         """
@@ -734,7 +733,7 @@ cdef class SetSystem:
             sage: N = Matroid(ring=GF(5), reduced_matrix=[[1,0,1],[0,1,1],[1,1,0]])
             sage: M.is_field_isomorphic(N)
             False
-            sage: any(M.is_field_isomorphism(N, p) for p in Permutations(range(6)))
+            sage: any(M.is_field_isomorphism(N, p) for p in Permutations(range(6)))     # needs sage.combinat
             False
         """
         cdef long v
@@ -745,10 +744,10 @@ cdef class SetSystem:
                 return None
         if len(SP) != len(OP):
             return None
-        for i in xrange(len(SP)):
+        for i in range(len(SP)):
             if bitset_len(SP._subsets[i]) != bitset_len(OP._subsets[i]):
                 return None
-        for i in xrange(len(SP)):
+        for i in range(len(SP)):
             if bitset_len(SP._subsets[i]) > 1:
                 SP2, SEP, sh = self._equitable_partition(SP._distinguish(bitset_first(SP._subsets[i])))
                 v = bitset_first(OP._subsets[i])
@@ -760,7 +759,7 @@ cdef class SetSystem:
                             return m
                     v = bitset_next(OP._subsets[i], v + 1)
                 return None
-        morph = dict([(self._groundset[bitset_first(SP._subsets[i])], other._groundset[bitset_first(OP._subsets[i])]) for i in xrange(len(SP))])
+        morph = dict([(self._groundset[bitset_first(SP._subsets[i])], other._groundset[bitset_first(OP._subsets[i])]) for i in range(len(SP))])
         if is_equiv(self, other, morph):
             return morph
 

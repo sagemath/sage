@@ -12,10 +12,10 @@ An example
 ----------
 
 Here is a very brief example of using SageTeX. The full documentation
-can be found in ``SAGE_ROOT/local/share/doc/sagetex``,
+can be found in ``SAGE_ROOT/venv/share/doc/sagetex``,
 where ``SAGE_ROOT`` is the directory where your Sage installation is
 located. That directory contains the documentation and an example file.
-See ``SAGE_ROOT/local/share/texmf/tex/latex/sagetex`` for
+See ``SAGE_ROOT/venv/share/texmf/tex/latex/sagetex`` for
 some possibly useful Python scripts.
 
 To see how SageTeX works, follow the directions for installing SageTeX (in
@@ -105,7 +105,7 @@ commands in your document.
 There's a lot more to SageTeX, and since both Sage and LaTeX are
 complex, powerful tools, it's a good idea to read the documentation for
 SageTeX, which is in
-``SAGE_ROOT/local/share/doc/sagetex``.
+``SAGE_ROOT/venv/share/doc/sagetex``.
 
 .. _sec-sagetex_install:
 
@@ -122,7 +122,7 @@ installation aware of it before it will work.
 
 The key to this is that TeX needs to be able to find ``sagetex.sty``,
 which can be found in
-``SAGE_ROOT/local/share/texmf/tex/latex/sagetex/``, where
+``SAGE_ROOT/venv/share/texmf/tex/latex/sagetex/``, where
 ``SAGE_ROOT`` is the directory where you built or installed Sage. If
 TeX can find ``sagetex.sty``, then SageTeX will work. There are several
 ways to accomplish this.
@@ -137,25 +137,21 @@ ways to accomplish this.
   that if you upgrade Sage and get a new version of SageTeX, the Python
   code and LaTeX code for SageTeX may no longer match, causing errors.
 
-- The second way is to use the ``TEXINPUTS`` environment variable. If
+- The second way is to use the ``TEXMFLOCAL`` environment variable. If
   you are using the bash shell, you can do
 
   .. CODE-BLOCK:: shell-session
 
-      $ export TEXINPUTS="SAGE_ROOT/local/share/texmf//:"
+      $ export TEXMFLOCAL=SAGE_ROOT/venv/share/texmf
+      $ mktexlsr       # update kpathsea ls-R databases
 
-  where ``SAGE_ROOT`` is the location of your Sage installation. Note
-  that the double slash and colon at the end of that line are important.
-  Thereafter, TeX and friends will find the SageTeX style file. If you
-  want to make this change permanent, you can add the above line to your
-  ``.bashrc`` file. If you are using a different shell, you may have to
+  where ``SAGE_ROOT`` is the location of your Sage installation.
+  Thereafter, TeX and friends will find the SageTeX style file.
+  If you want to make this change persistent, you can add the 1st of the
+  above lines to your ``.bashrc`` file.
+  If you are using a different shell, you may have to
   modify the above command to make the environment variable known; see
   your shell's documentation for how to do that.
-
-  One flaw with this method is that if you use applications like
-  TeXShop, Kile, or Emacs/AucTeX, they will not necessarily pick up the
-  environment variable, since when they run LaTeX, they may do so
-  outside your usual shell environment.
 
   If you ever move your Sage installation, or install a new version into
   a new directory, you'll need to update the above command to reflect
@@ -173,12 +169,12 @@ ways to accomplish this.
 
   which will print out a directory, such as ``/home/drake/texmf`` or
   ``/Users/drake/Library/texmf``. Copy the ``tex/`` directory from
-  ``SAGE_ROOT/local/share/texmf/`` into your home ``texmf`` directory
+  ``SAGE_ROOT/venv/share/texmf/`` into your home ``texmf`` directory
   with a command like
 
   .. CODE-BLOCK:: shell-session
 
-      $ cp -R SAGE_ROOT/local/share/texmf/tex TEXMFHOME
+      $ cp -R SAGE_ROOT/venv/share/texmf/tex TEXMFHOME
 
   where ``SAGE_ROOT`` is, as usual, replaced with the location of your
   Sage installation and ``TEXMFHOME`` is the result of the
@@ -229,7 +225,7 @@ SageTeX documentation
 
 While not strictly part of installation, it bears mentioning here that
 the documentation for SageTeX is maintained in
-``SAGE_ROOT/local/share/doc/sagetex/sagetex.pdf``. There is also an
+``SAGE_ROOT/venv/share/doc/sagetex/sagetex.pdf``. There is also an
 example file in the same directory -- see ``example.tex`` and
 ``example.pdf``, the pre-built result of typesetting that file with
 LaTeX and Sage. You can also get those files from the `SageTeX page <https://github.com/sagemath/sagetex>`_.
@@ -238,16 +234,14 @@ SageTeX and TeXLive
 -------------------
 
 One potentially confusing issue is that the popular TeX distribution
-`TeXLive 2009 <http://www.tug.org/texlive/>`_ includes SageTeX. This may
+`TeXLive <http://www.tug.org/texlive/>`_ includes SageTeX. This may
 seem nice, but with SageTeX, it's important that the Sage bits and LaTeX
-bits be synchronized -- which is a problem in this case, since both Sage
-and SageTeX are updated frequently, and TeXLive is not.
-While at the time of this writing (March 2013), many Linux distributions
-have moved on to more recent releases of TeXLive, the 2009 release
-lingers and is, in fact, the source of most bug reports about SageTeX!
+bits be synchronized -- which is a problem in this case, since
+TeXLive, as shipped by your OS distro, or package manager, might be out of sync with
+TeXLive distribution, and the latter might also be out of sync with
+the current SageTeX.
 
 Because of this, it is *strongly recommended* that you always install
 the LaTeX part of SageTeX from Sage, as described above. The
 instructions above will insure that both halves of SageTeX are
-compatible and will work properly. Using TeXLive to provide the LaTeX
-side of SageTeX is not supported.
+compatible and will work properly.

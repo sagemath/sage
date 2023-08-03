@@ -5,13 +5,15 @@ Integers
 --------
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
    sage/rings/integer_ring
    sage/rings/integer
    sage/rings/bernmm
    sage/rings/bernoulli_mod_p
    sage/rings/factorint
+   sage/rings/factorint_flint
+   sage/rings/factorint_pari
    sage/rings/fast_arith
    sage/rings/sum_of_squares
    sage/arith/functions
@@ -30,7 +32,7 @@ Rationals
 ---------
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
    sage/rings/rational_field
    sage/rings/rational

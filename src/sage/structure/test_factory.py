@@ -20,7 +20,7 @@ Test of the :mod:`~sage.structure.factory` module
 from sage.structure.factory import UniqueFactory
 
 
-class A(object):
+class A():
     # something we can weakref
     pass
 

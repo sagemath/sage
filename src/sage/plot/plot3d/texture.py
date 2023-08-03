@@ -1,5 +1,5 @@
 r"""
-Texture Support
+Texture support
 
 This module provides texture/material support for 3D Graphics
 objects and plotting.  This is a very rough common interface for
@@ -71,7 +71,7 @@ def is_Texture(x):
         sage: t = Texture(0.5)
         sage: is_Texture(t)
         doctest:...: DeprecationWarning: Please use isinstance(x, Texture)
-        See https://trac.sagemath.org/27593 for details.
+        See https://github.com/sagemath/sage/issues/27593 for details.
         True
     """
     from sage.misc.superseded import deprecation

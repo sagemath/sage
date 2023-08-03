@@ -1,5 +1,5 @@
 r"""
-The modular group `{\rm SL}_2(\ZZ)`
+The modular group `\SL_2(\ZZ)`
 
 AUTHORS:
 
@@ -19,16 +19,18 @@ AUTHORS:
 #
 ################################################################################
 
+from sage.arith.misc import gcd
+from sage.modular.cusps import Cusp
+from sage.modular.modsym.p1list import lift_to_sl2z
+from sage.rings.integer_ring import ZZ
+
 from .congroup_gamma0 import Gamma0_class
 from .arithgroup_element import ArithmeticSubgroupElement
-from sage.rings.integer_ring import ZZ
-from sage.modular.cusps import Cusp
-from sage.arith.all import gcd
-from sage.modular.modsym.p1list import lift_to_sl2z
+
 
 def is_SL2Z(x):
     r"""
-    Return True if x is the modular group `{\rm SL}_2(\ZZ)`.
+    Return True if x is the modular group `\SL_2(\ZZ)`.
 
     EXAMPLES::
 
@@ -42,13 +44,13 @@ def is_SL2Z(x):
 
 class SL2Z_class(Gamma0_class):
     r"""
-    The full modular group `{\rm SL}_2(\ZZ)`, regarded as a congruence
+    The full modular group `\SL_2(\ZZ)`, regarded as a congruence
     subgroup of itself.
     """
 
     def __init__(self):
         r"""
-        The modular group ${\rm SL}_2(\Z)$.
+        The modular group `\SL_2(\Z)`.
 
         EXAMPLES::
 
@@ -165,7 +167,7 @@ class SL2Z_class(Gamma0_class):
         r"""
         Return the unique reduced cusp equivalent to c under the
         action of self. Always returns Infinity, since there is only
-        one equivalence class of cusps for $SL_2(Z)$.
+        one equivalence class of cusps for `SL_2(Z)`.
 
         EXAMPLES::
 
@@ -176,14 +178,14 @@ class SL2Z_class(Gamma0_class):
 
     def random_element(self, bound=100, *args, **kwds):
         r"""
-        Return a random element of `{\rm SL}_2(\ZZ)` with entries whose
+        Return a random element of `\SL_2(\ZZ)` with entries whose
         absolute value is strictly less than bound (default 100).
         Additional arguments and keywords are passed to the random_element
         method of ZZ.
 
         (Algorithm: Generate a random pair of integers at most bound. If they
         are not coprime, throw them away and start again. If they are, find an
-        element of `{\rm SL}_2(\ZZ)` whose bottom row is that, and
+        element of `\SL_2(\ZZ)` whose bottom row is that, and
         left-multiply it by `\begin{pmatrix} 1 & w \\ 0 & 1\end{pmatrix}` for
         an integer `w` randomly chosen from a small enough range that the
         answer still has entries at most bound.)
@@ -256,5 +258,3 @@ def _SL2Z_ref():
         True
     """
     return SL2Z
-
-

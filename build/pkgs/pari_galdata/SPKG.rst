@@ -18,7 +18,3 @@ Upstream Contact
 
 http://pari.math.u-bordeaux.fr/
 
-Dependencies
-------------
-
-None (package contains data files only)

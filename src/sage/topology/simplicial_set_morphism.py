@@ -13,11 +13,11 @@ AUTHORS:
 This module implements morphisms and homsets of simplicial sets.
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #  Copyright (C) 2016 John H. Palmieri <palmieri at math.washington.edu>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 #
 #    This code is distributed in the hope that it will be useful,
 #    but WITHOUT ANY WARRANTY; without even the implied warranty
@@ -26,9 +26,9 @@ This module implements morphisms and homsets of simplicial sets.
 #  See the GNU General Public License for more details; the full text
 #  is available at:
 #
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 #
-#*****************************************************************************
+# ****************************************************************************
 
 import itertools
 
@@ -39,9 +39,8 @@ from sage.matrix.constructor import matrix, zero_matrix
 from sage.misc.latex import latex
 from sage.rings.integer_ring import ZZ
 
-from sage.homology.chain_complex_morphism import ChainComplexMorphism
-from sage.homology.homology_morphism import InducedHomologyMorphism
 from .simplicial_set import SimplicialSet_arbitrary
+
 
 class SimplicialSetHomset(Homset):
     r"""
@@ -103,8 +102,8 @@ class SimplicialSetHomset(Homset):
 
         EXAMPLES::
 
-            sage: RP2 = simplicial_sets.RealProjectiveSpace(2)
-            sage: Hom(RP2, RP2.product(RP2)).diagonal_morphism()
+            sage: RP2 = simplicial_sets.RealProjectiveSpace(2)                          # optional - sage.groups
+            sage: Hom(RP2, RP2.product(RP2)).diagonal_morphism()                        # optional - sage.groups
             Simplicial set morphism:
               From: RP^2
               To:   RP^2 x RP^2
@@ -479,18 +478,18 @@ class SimplicialSetMorphism(Morphism):
             if constant is not None:
                 self._constant = constant
                 check = False
-                data = {sigma: constant.apply_degeneracies(*range(sigma.dimension()-1,-1,-1))
+                data = {sigma: constant.apply_degeneracies(*range(sigma.dimension()-1, -1, -1))
                         for sigma in domain.nondegenerate_simplices()}
 
         if (not isinstance(domain, SimplicialSet_arbitrary)
-            or not isinstance(codomain, SimplicialSet_arbitrary)):
+                or not isinstance(codomain, SimplicialSet_arbitrary)):
             raise TypeError('the domain and codomain must be simplicial sets')
         if any(x.nondegenerate() not in
                domain.nondegenerate_simplices() for x in data.keys()):
             raise ValueError('at least one simplex in the defining '
                              'dictionary is not in the domain')
         # Remove degenerate simplices from the domain specification.
-        d = {sigma:data[sigma] for sigma in data if sigma.is_nondegenerate()}
+        d = {sigma: data[sigma] for sigma in data if sigma.is_nondegenerate()}
         # For each simplex in d.keys(), add its faces, and the faces
         # of its faces, etc., to d.
         for simplex in list(d):
@@ -512,10 +511,10 @@ class SimplicialSetMorphism(Morphism):
                 d[sigma.nondegenerate()] = x
                 faces = domain.faces(sigma.nondegenerate())
                 if faces:
-                    for (i,rho) in enumerate(faces):
+                    for i, rho in enumerate(faces):
                         nondegen = rho.nondegenerate()
                         if nondegen not in d:
-                            add.append((rho,i,sigma))
+                            add.append((rho, i, sigma))
         # Now check that the proposed map commutes with the face
         # maps. (The degeneracy maps should work automatically.)
         if check:
@@ -621,9 +620,9 @@ class SimplicialSetMorphism(Morphism):
             sage: one(e) == e
             True
 
-            sage: B = AbelianGroup([2]).nerve()
-            sage: c = B.constant_map()
-            sage: c(B.n_cells(2)[0])
+            sage: B = AbelianGroup([2]).nerve()                                         # optional - sage.groups
+            sage: c = B.constant_map()                                                  # optional - sage.groups
+            sage: c(B.n_cells(2)[0])                                                    # optional - sage.groups
             s_1 s_0 *
         """
         if x not in self.domain():
@@ -668,7 +667,7 @@ class SimplicialSetMorphism(Morphism):
               Defn: [v_0, sigma_1] --> [(v_0, v_0), (sigma_1, s_0 v_0)]
             sage: (g*f).image()
             Simplicial set with 2 non-degenerate simplices
-            sage: f.image().homology()
+            sage: f.image().homology()                                                  # optional - sage.modules
             {0: 0, 1: Z}
         """
         if self.is_identity():
@@ -690,21 +689,22 @@ class SimplicialSetMorphism(Morphism):
             sage: S1 = simplicial_sets.Sphere(1)
             sage: T = S1.product(S1)
             sage: K = T.factor(0, as_subset=True)
-            sage: f = S1.Hom(T)({S1.n_cells(0)[0]:K.n_cells(0)[0], S1.n_cells(1)[0]:K.n_cells(1)[0]})
-            sage: f
+            sage: f = S1.Hom(T)({S1.n_cells(0)[0]: K.n_cells(0)[0],
+            ....:                S1.n_cells(1)[0]: K.n_cells(1)[0]}); f
             Simplicial set morphism:
               From: S^1
               To:   S^1 x S^1
               Defn: [v_0, sigma_1] --> [(v_0, v_0), (sigma_1, s_0 v_0)]
             sage: f.image()
             Simplicial set with 2 non-degenerate simplices
-            sage: f.image().homology()
+            sage: f.image().homology()                                                  # optional - sage.modules
             {0: 0, 1: Z}
 
-            sage: B = simplicial_sets.ClassifyingSpace(groups.misc.MultiplicativeAbelian([2]))
-            sage: B.constant_map().image()
+            sage: G = groups.misc.MultiplicativeAbelian([2])                            # optional - sage.groups
+            sage: B = simplicial_sets.ClassifyingSpace(G)                               # optional - sage.groups
+            sage: B.constant_map().image()                                              # optional - sage.groups
             Point
-            sage: Hom(B,B).identity().image() == B
+            sage: Hom(B,B).identity().image() == B                                      # optional - sage.groups
             True
         """
         if self._is_identity:
@@ -747,22 +747,23 @@ class SimplicialSetMorphism(Morphism):
             sage: (f*g).induced_homology_morphism().to_matrix(1)
             [0]
 
-            sage: RP5 = simplicial_sets.RealProjectiveSpace(5)
-            sage: RP5.n_skeleton(2).inclusion_map().is_identity()
+            sage: RP5 = simplicial_sets.RealProjectiveSpace(5)                          # optional - sage.groups
+            sage: RP5.n_skeleton(2).inclusion_map().is_identity()                       # optional - sage.groups
             False
-            sage: RP5.n_skeleton(5).inclusion_map().is_identity()
+            sage: RP5.n_skeleton(5).inclusion_map().is_identity()                       # optional - sage.groups
             True
 
-            sage: B = simplicial_sets.ClassifyingSpace(groups.misc.MultiplicativeAbelian([2]))
-            sage: Hom(B,B).identity().is_identity()
+            sage: G = groups.misc.MultiplicativeAbelian([2])                            # optional - sage.groups
+            sage: B = simplicial_sets.ClassifyingSpace(G)                               # optional - sage.groups
+            sage: Hom(B,B).identity().is_identity()                                     # optional - sage.groups
             True
-            sage: Hom(B,B).constant_map().is_identity()
+            sage: Hom(B,B).constant_map().is_identity()                                 # optional - sage.groups
             False
         """
         ans = (self._is_identity or
                 (self.domain() == self.codomain()
                  and self.domain().is_finite()
-                 and all(a == b for a,b in self._dictionary.items())))
+                 and all(a == b for a, b in self._dictionary.items())))
         self._is_identity = ans
         return ans
 
@@ -772,18 +773,18 @@ class SimplicialSetMorphism(Morphism):
 
         EXAMPLES::
 
-            sage: RP5 = simplicial_sets.RealProjectiveSpace(5)
-            sage: RP2 = RP5.n_skeleton(2)
-            sage: RP2.inclusion_map().is_surjective()
+            sage: RP5 = simplicial_sets.RealProjectiveSpace(5)                          # optional - sage.groups
+            sage: RP2 = RP5.n_skeleton(2)                                               # optional - sage.groups
+            sage: RP2.inclusion_map().is_surjective()                                   # optional - sage.groups
             False
 
-            sage: RP5_2 = RP5.quotient(RP2)
-            sage: RP5_2.quotient_map().is_surjective()
+            sage: RP5_2 = RP5.quotient(RP2)                                             # optional - sage.groups
+            sage: RP5_2.quotient_map().is_surjective()                                  # optional - sage.groups
             True
 
-            sage: K = RP5_2.pullback(RP5_2.quotient_map(), RP5_2.base_point_map())
-            sage: f = K.universal_property(RP2.inclusion_map(), RP2.constant_map())
-            sage: f.is_surjective()
+            sage: K = RP5_2.pullback(RP5_2.quotient_map(), RP5_2.base_point_map())      # optional - sage.groups
+            sage: f = K.universal_property(RP2.inclusion_map(), RP2.constant_map())     # optional - sage.groups
+            sage: f.is_surjective()                                                     # optional - sage.groups
             True
         """
         return self._is_identity or self.image() == self.codomain()
@@ -794,18 +795,18 @@ class SimplicialSetMorphism(Morphism):
 
         EXAMPLES::
 
-            sage: RP5 = simplicial_sets.RealProjectiveSpace(5)
-            sage: RP2 = RP5.n_skeleton(2)
-            sage: RP2.inclusion_map().is_injective()
+            sage: RP5 = simplicial_sets.RealProjectiveSpace(5)                          # optional - sage.groups
+            sage: RP2 = RP5.n_skeleton(2)                                               # optional - sage.groups
+            sage: RP2.inclusion_map().is_injective()                                    # optional - sage.groups
             True
 
-            sage: RP5_2 = RP5.quotient(RP2)
-            sage: RP5_2.quotient_map().is_injective()
+            sage: RP5_2 = RP5.quotient(RP2)                                             # optional - sage.groups
+            sage: RP5_2.quotient_map().is_injective()                                   # optional - sage.groups
             False
 
-            sage: K = RP5_2.pullback(RP5_2.quotient_map(), RP5_2.base_point_map())
-            sage: f = K.universal_property(RP2.inclusion_map(), RP2.constant_map())
-            sage: f.is_injective()
+            sage: K = RP5_2.pullback(RP5_2.quotient_map(), RP5_2.base_point_map())      # optional - sage.groups
+            sage: f = K.universal_property(RP2.inclusion_map(), RP2.constant_map())     # optional - sage.groups
+            sage: f.is_injective()                                                      # optional - sage.groups
             True
         """
         if self._is_identity:
@@ -824,18 +825,18 @@ class SimplicialSetMorphism(Morphism):
 
         EXAMPLES::
 
-            sage: RP5 = simplicial_sets.RealProjectiveSpace(5)
-            sage: RP2 = RP5.n_skeleton(2)
-            sage: RP2.inclusion_map().is_bijective()
+            sage: RP5 = simplicial_sets.RealProjectiveSpace(5)                          # optional - sage.groups
+            sage: RP2 = RP5.n_skeleton(2)                                               # optional - sage.groups
+            sage: RP2.inclusion_map().is_bijective()                                    # optional - sage.groups
             False
 
-            sage: RP5_2 = RP5.quotient(RP2)
-            sage: RP5_2.quotient_map().is_bijective()
+            sage: RP5_2 = RP5.quotient(RP2)                                             # optional - sage.groups
+            sage: RP5_2.quotient_map().is_bijective()                                   # optional - sage.groups
             False
 
-            sage: K = RP5_2.pullback(RP5_2.quotient_map(), RP5_2.base_point_map())
-            sage: f = K.universal_property(RP2.inclusion_map(), RP2.constant_map())
-            sage: f.is_bijective()
+            sage: K = RP5_2.pullback(RP5_2.quotient_map(), RP5_2.base_point_map())      # optional - sage.groups
+            sage: f = K.universal_property(RP2.inclusion_map(), RP2.constant_map())     # optional - sage.groups
+            sage: f.is_bijective()                                                      # optional - sage.groups
             True
         """
         return self.is_injective() and self.is_surjective()
@@ -917,8 +918,7 @@ class SimplicialSetMorphism(Morphism):
             sage: K = simplicial_sets.KleinBottle()
             sage: init_T = T._map_from_empty_set()
             sage: init_K = K._map_from_empty_set()
-            sage: D = init_T.pushout(init_K) # the disjoint union as a pushout
-            sage: D
+            sage: D = init_T.pushout(init_K); D  # the disjoint union as a pushout      # optional - sage.graphs
             Pushout of maps:
               Simplicial set morphism:
                 From: Empty simplicial set
@@ -953,8 +953,7 @@ class SimplicialSetMorphism(Morphism):
             sage: K = simplicial_sets.KleinBottle()
             sage: term_T = T.constant_map()
             sage: term_K = K.constant_map()
-            sage: P = term_T.pullback(term_K) # the product as a pullback
-            sage: P
+            sage: P = term_T.pullback(term_K); P  # the product as a pullback
             Pullback of maps:
               Simplicial set morphism:
                 From: Torus
@@ -1059,8 +1058,7 @@ class SimplicialSetMorphism(Morphism):
             sage: f = K.inclusion_map()
             sage: v,w = K.n_cells(0)
             sage: g = Hom(K,L)({v:pt, w:pt, e:pt.apply_degeneracies(0)})
-            sage: P = f.coequalizer(g)
-            sage: P
+            sage: P = f.coequalizer(g); P                                               # optional - sage.graphs
             Pushout of maps:
               Simplicial set morphism:
                 From: Disjoint union: (Simplicial set with 3 non-degenerate simplices u 2-simplex)
@@ -1098,7 +1096,8 @@ class SimplicialSetMorphism(Morphism):
             sage: L = K.set_base_point(K.n_cells(0)[0])
             sage: u,v,w = L.n_cells(0)
             sage: e,f,g = L.n_cells(1)
-            sage: h = L.Hom(S1)({u:v_0, v:v_0, w:v_0, e:sigma_1, f:v_0.apply_degeneracies(0), g:sigma_1})
+            sage: h = L.Hom(S1)({u:v_0, v:v_0, w:v_0, e:sigma_1,
+            ....:                f:v_0.apply_degeneracies(0), g:sigma_1})
             sage: h
             Simplicial set morphism:
               From: Simplicial set with 6 non-degenerate simplices
@@ -1108,8 +1107,8 @@ class SimplicialSetMorphism(Morphism):
             [1|0]
             [-+-]
             [0|2]
-            sage: X = h.mapping_cone()
-            sage: X.homology() == simplicial_sets.RealProjectiveSpace(2).homology()
+            sage: X = h.mapping_cone()                                                  # optional - sage.graphs
+            sage: X.homology() == simplicial_sets.RealProjectiveSpace(2).homology()     # optional - sage.graphs sage.modules
             True
         """
         dom = self.domain()
@@ -1139,7 +1138,7 @@ class SimplicialSetMorphism(Morphism):
         domain = self.domain().product(*[g.domain() for g in others])
         codomain = self.codomain().product(*[g.codomain() for g in others])
         factors = []
-        for (i,f) in enumerate([self] + list(others)):
+        for i, f in enumerate([self] + list(others)):
             factors.append(f * domain.projection_map(i))
         return codomain.universal_property(*factors)
 
@@ -1156,10 +1155,10 @@ class SimplicialSetMorphism(Morphism):
 
             sage: S1 = simplicial_sets.Sphere(1)
             sage: f = Hom(S1,S1).identity()
-            sage: f.coproduct(f).is_bijective()
+            sage: f.coproduct(f).is_bijective()                                         # optional - sage.graphs
             True
             sage: g = S1.constant_map(S1)
-            sage: g.coproduct(g).is_bijective()
+            sage: g.coproduct(g).is_bijective()                                         # optional - sage.graphs
             False
         """
         codomain = self.codomain().coproduct(*[g.codomain() for g in others])
@@ -1179,8 +1178,9 @@ class SimplicialSetMorphism(Morphism):
         EXAMPLES::
 
             sage: eta = simplicial_sets.HopfMap()
-            sage: susp_eta = eta.suspension()
-            sage: susp_eta.mapping_cone().homology() == eta.mapping_cone().suspension().homology()
+            sage: mc_susp_eta = eta.suspension().mapping_cone()                         # optional - sage.graphs
+            sage: susp_mc_eta = eta.mapping_cone().suspension()                         # optional - sage.graphs
+            sage: mc_susp_eta.homology() == susp_mc_eta.homology()                      # optional - sage.graphs sage.modules
             True
 
         This uses reduced suspensions if the original morphism is
@@ -1190,19 +1190,19 @@ class SimplicialSetMorphism(Morphism):
             sage: L = simplicial_sets.Simplex(1)
             sage: L.constant_map().is_pointed()
             False
-            sage: f = L.constant_map().suspension()
-            sage: f.is_constant()
+            sage: f = L.constant_map().suspension()                                     # optional - sage.graphs
+            sage: f.is_constant()                                                       # optional - sage.graphs
             False
 
             sage: K = simplicial_sets.Sphere(3)
             sage: K.constant_map().is_pointed()
             True
-            sage: g = K.constant_map().suspension()
-            sage: g.is_constant()
+            sage: g = K.constant_map().suspension()                                     # optional - sage.graphs
+            sage: g.is_constant()                                                       # optional - sage.graphs
             True
 
-            sage: h = K.identity().suspension()
-            sage: h.is_identity()
+            sage: h = K.identity().suspension()                                         # optional - sage.graphs
+            sage: h.is_identity()                                                       # optional - sage.graphs
             True
         """
         domain = self.domain()
@@ -1250,13 +1250,14 @@ class SimplicialSetMorphism(Morphism):
 
         EXAMPLES::
 
-            sage: B = simplicial_sets.ClassifyingSpace(groups.misc.MultiplicativeAbelian([2]))
-            sage: one = Hom(B,B).identity()
-            sage: one.n_skeleton(3)
+            sage: G = groups.misc.MultiplicativeAbelian([2])                            # optional - sage.groups
+            sage: B = simplicial_sets.ClassifyingSpace(G)                               # optional - sage.groups
+            sage: one = Hom(B,B).identity()                                             # optional - sage.groups
+            sage: one.n_skeleton(3)                                                     # optional - sage.groups
             Simplicial set endomorphism of Simplicial set with 4 non-degenerate simplices
               Defn: Identity map
-            sage: c = Hom(B,B).constant_map()
-            sage: c.n_skeleton(3)
+            sage: c = Hom(B,B).constant_map()                                           # optional - sage.groups
+            sage: c.n_skeleton(3)                                                       # optional - sage.groups
             Simplicial set endomorphism of Simplicial set with 4 non-degenerate simplices
               Defn: Constant map at 1
 
@@ -1312,13 +1313,15 @@ class SimplicialSetMorphism(Morphism):
             [-+-]
             [0|0]
         """
+        from sage.homology.chain_complex_morphism import ChainComplexMorphism
+
         # One or the other chain complex is trivial between these
         # dimensions:
         max_dim = max(self.domain().dimension(), self.codomain().dimension())
         min_dim = min(self.domain().dimension(), self.codomain().dimension())
         matrices = {}
         if augmented is True:
-            m = matrix(base_ring,1,1,1)
+            m = matrix(base_ring, 1, 1, 1)
             if not cochain:
                 matrices[-1] = m
             else:
@@ -1329,7 +1332,7 @@ class SimplicialSetMorphism(Morphism):
             num_faces_X = len(X_faces)
             num_faces_Y = len(Y_faces)
             mval = [0 for _ in range(num_faces_X * num_faces_Y)]
-            for idx,x in enumerate(X_faces):
+            for idx, x in enumerate(X_faces):
                 y = self(x)
                 if y.is_nondegenerate():
                     mval[idx + (Y_faces.index(y) * num_faces_X)] = 1
@@ -1338,7 +1341,7 @@ class SimplicialSetMorphism(Morphism):
                 matrices[dim] = m
             else:
                 matrices[dim] = m.transpose()
-        for dim in range(min_dim+1,max_dim+1):
+        for dim in range(min_dim+1, max_dim+1):
             try:
                 l1 = len(self.codomain().n_cells(dim))
             except KeyError:
@@ -1347,7 +1350,7 @@ class SimplicialSetMorphism(Morphism):
                 l2 = len(self.domain().n_cells(dim))
             except KeyError:
                 l2 = 0
-            m = zero_matrix(base_ring,l1,l2,sparse=True)
+            m = zero_matrix(base_ring, l1, l2, sparse=True)
             if not cochain:
                 matrices[dim] = m
             else:
@@ -1383,17 +1386,19 @@ class SimplicialSetMorphism(Morphism):
             sage: Y = SimplicialSet({e: (v, v)})
             sage: H = Hom(X, Y)
             sage: f = H({v: v, w: v, e: e, f: e})
-            sage: g = f.induced_homology_morphism()
-            sage: g.to_matrix()
+            sage: g = f.induced_homology_morphism()                                     # optional - sage.modules
+            sage: g.to_matrix()                                                         # optional - sage.modules
             [1|0]
             [-+-]
             [0|2]
-            sage: g3 = f.induced_homology_morphism(base_ring=GF(3), cohomology=True)
-            sage: g3.to_matrix()
+            sage: g3 = f.induced_homology_morphism(base_ring=GF(3), cohomology=True)    # optional - sage.modules sage.rings.finite_rings
+            sage: g3.to_matrix()                                                        # optional - sage.modules sage.rings.finite_rings
             [1|0]
             [-+-]
             [0|2]
         """
+        from sage.homology.homology_morphism import InducedHomologyMorphism
+
         return InducedHomologyMorphism(self, base_ring, cohomology)
 
     def _repr_type(self):

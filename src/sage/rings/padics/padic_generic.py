@@ -1,5 +1,6 @@
+# sage.doctest: optional - sage.rings.padics
 r"""
-p-Adic Generic
+`p`-adic Generic
 
 A generic superclass for all p-adic parents.
 
@@ -90,7 +91,6 @@ class pAdicGeneric(PrincipalIdealDomain, LocalGeneric):
         return L
 
     def _modified_print_mode(self, print_mode):
-
         r"""
         Return a dictionary of print options, starting with ``self``'s
         print options but modified by the options in the dictionary
@@ -352,7 +352,7 @@ class pAdicGeneric(PrincipalIdealDomain, LocalGeneric):
             doctest:warning
             ...
             DeprecationWarning: Use the change method if you want to change print options in fraction_field()
-            See http://trac.sagemath.org/23227 for details.
+            See https://github.com/sagemath/sage/issues/23227 for details.
             (('pos', False),)
         """
         if print_mode is not None:
@@ -390,7 +390,7 @@ class pAdicGeneric(PrincipalIdealDomain, LocalGeneric):
             doctest:warning
             ...
             DeprecationWarning: Use the change method if you want to change print options in fraction_field()
-            See http://trac.sagemath.org/23227 for details.
+            See https://github.com/sagemath/sage/issues/23227 for details.
             3132
             sage: U.<a> = Zq(17^4, 6, print_mode='val-unit', print_max_terse_terms=3)
             sage: U.fraction_field()
@@ -402,7 +402,7 @@ class pAdicGeneric(PrincipalIdealDomain, LocalGeneric):
 
             sage: R = ZpLC(2); R
             doctest:...: FutureWarning: This class/method/function is marked as experimental. It, its functionality or its interface might change without a formal deprecation.
-            See http://trac.sagemath.org/23505 for details.
+            See https://github.com/sagemath/sage/issues/23505 for details.
             2-adic Ring with lattice-cap precision
             sage: K = R.fraction_field(); K
             2-adic Field with lattice-cap precision
@@ -450,7 +450,7 @@ class pAdicGeneric(PrincipalIdealDomain, LocalGeneric):
             doctest:warning
             ...
             DeprecationWarning: Use the change method if you want to change print options in integer_ring()
-            See http://trac.sagemath.org/23227 for details.
+            See https://github.com/sagemath/sage/issues/23227 for details.
             3132
             sage: U.<a> = Qq(17^4, 6, print_mode='val-unit', print_max_terse_terms=3)
             sage: U.integer_ring()
@@ -459,7 +459,7 @@ class pAdicGeneric(PrincipalIdealDomain, LocalGeneric):
             doctest:warning
             ...
             DeprecationWarning: Use the change method if you want to change print options in fraction_field()
-            See http://trac.sagemath.org/23227 for details.
+            See https://github.com/sagemath/sage/issues/23227 for details.
             False
 
         TESTS::
@@ -478,6 +478,12 @@ class pAdicGeneric(PrincipalIdealDomain, LocalGeneric):
             2-adic Ring with lattice-cap precision (label: test)
             sage: R.integer_ring({'mode':'series'}) is R
             True
+
+        The `secure` attribute for relaxed type is preserved::
+
+            sage: K = QpER(5, secure=True)
+            sage: K.integer_ring().is_secure()
+            True
         """
         # Currently does not support fields with non integral defining
         # polynomials.  This should change when the padic_general_extension
@@ -485,13 +491,13 @@ class pAdicGeneric(PrincipalIdealDomain, LocalGeneric):
         if not self.is_field() and print_mode is None:
             return self
         if print_mode is None:
-            return self.change(field=False)
+            return self.change(field=False, check=False)
         else:
             from sage.misc.superseded import deprecation
             deprecation(23227, "Use the change method if you want to change print options in integer_ring()")
             return self.change(field=False, **print_mode)
 
-    def teichmuller(self, x, prec = None):
+    def teichmuller(self, x, prec=None):
         r"""
         Return the Teichmüller representative of ``x``.
 
@@ -608,7 +614,7 @@ class pAdicGeneric(PrincipalIdealDomain, LocalGeneric):
 #         """
 #         raise NotImplementedError
 
-    def extension(self, modulus, prec = None, names = None, print_mode = None, implementation='FLINT', **kwds):
+    def extension(self, modulus, prec=None, names=None, print_mode=None, implementation='FLINT', **kwds):
         r"""
         Create an extension of this p-adic ring.
 
@@ -659,7 +665,7 @@ class pAdicGeneric(PrincipalIdealDomain, LocalGeneric):
                         print_mode[option] = kwds[option]
                     else:
                         print_mode[option] = self._printer.dict()[option]
-        return ExtensionFactory(base=self, modulus=modulus, prec=prec, names=names, check = True, implementation=implementation, **print_mode)
+        return ExtensionFactory(base=self, modulus=modulus, prec=prec, names=names, check=True, implementation=implementation, **print_mode)
 
     def _is_valid_homomorphism_(self, codomain, im_gens, base_map=None):
         r"""
@@ -962,7 +968,6 @@ class pAdicGeneric(PrincipalIdealDomain, LocalGeneric):
                         tester.assertEqual(y.expansion(i), x.expansion(i))
                     xx = y + (x % b)
                     tester.assertTrue(xx.is_equal_to(x,prec))
-
 
     def _test_log(self, **options):
         r"""
@@ -1441,9 +1446,9 @@ class pAdicGeneric(PrincipalIdealDomain, LocalGeneric):
 
         .. NOTE::
 
-            When ``secure`` is ``True``, this method raises an error when 
-            the precision on the input polynomial is not enough to determine 
-            the number of roots in the ground field. This happens when two 
+            When ``secure`` is ``True``, this method raises an error when
+            the precision on the input polynomial is not enough to determine
+            the number of roots in the ground field. This happens when two
             roots cannot be separated.
             A typical example is the polynomial
 
@@ -1451,14 +1456,14 @@ class pAdicGeneric(PrincipalIdealDomain, LocalGeneric):
 
                  (1 + O(p^10))*X^2 + O(p^10)*X + O(p^10).
 
-            Indeed its discriminant might be any `p`-adic integer divisible 
-            by `p^{10}` (resp. `p^{11}` when `p=2`) and so can be as well 
+            Indeed its discriminant might be any `p`-adic integer divisible
+            by `p^{10}` (resp. `p^{11}` when `p=2`) and so can be as well
             zero, a square and a non-square.
             In the first case, the polynomial has one double root; in the
             second case, it has two roots; in the third case, it has no
             root in `\QQ_p`.
 
-            When ``secure`` is ``False``, this method assumes that two 
+            When ``secure`` is ``False``, this method assumes that two
             inseparable roots actually collapse. In the above example,
             it then answers that the given polynomial has a double root
             `O(p^5)`.
@@ -1574,7 +1579,7 @@ class pAdicGeneric(PrincipalIdealDomain, LocalGeneric):
         if P.is_zero():
             raise ArithmeticError("factorization of 0 is not defined")
         if ring is None:
-             ring = self
+            ring = self
         if algorithm is None:
             try:
                 return self._roots_univariate_polynomial(P, ring, multiplicities, "pari", secure)
@@ -1903,4 +1908,3 @@ def local_print_mode(obj, print_options, pos=None, ram_name=None):
         if option not in print_options:
             print_options[option] = obj._printer.dict()[option]
     return pAdicPrinter(obj, print_options)
-

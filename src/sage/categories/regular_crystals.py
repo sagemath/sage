@@ -1,3 +1,4 @@
+# sage.doctest: optional - sage.combinat sage.graphs
 r"""
 Regular Crystals
 """
@@ -93,7 +94,7 @@ class RegularCrystals(Category_singleton):
         """
         return [Crystals()]
 
-    def example(self, n = 3):
+    def example(self, n=3):
         """
         Returns an example of highest weight crystals, as per
         :meth:`Category.example`.
@@ -133,21 +134,21 @@ class RegularCrystals(Category_singleton):
 
             EXAMPLES::
 
-                sage: La = RootSystem(['A',2,1]).weight_space(extended=True).fundamental_weights()
+                sage: A21 = RootSystem(['A',2,1])
+                sage: La = A21.weight_space(extended=True).fundamental_weights()
                 sage: B = crystals.LSPaths(La[0])
-                sage: La = RootSystem(['A',2,1]).weight_lattice(extended=True).fundamental_weights()
+                sage: La = A21.weight_lattice(extended=True).fundamental_weights()
                 sage: C = crystals.GeneralizedYoungWalls(2, La[0])
                 sage: H = Hom(B, C)
                 sage: from sage.categories.highest_weight_crystals import HighestWeightCrystalMorphism
                 sage: class Psi(HighestWeightCrystalMorphism):
                 ....:     def is_strict(self):
                 ....:         return True
-                sage: psi = Psi(H, C.module_generators)
-                sage: psi
+                sage: psi = Psi(H, C.module_generators); psi
                 ['A', 2, 1] Crystal morphism:
                   From: The crystal of LS paths of type ['A', 2, 1] and weight Lambda[0]
-                  To:   Highest weight crystal of generalized Young walls of Cartan type ['A', 2, 1]
-                         and highest weight Lambda[0]
+                  To:   Highest weight crystal of generalized Young walls
+                        of Cartan type ['A', 2, 1] and highest weight Lambda[0]
                   Defn: (Lambda[0],) |--> []
                 sage: psi.is_isomorphism()
                 True
@@ -184,25 +185,28 @@ class RegularCrystals(Category_singleton):
             EXAMPLES::
 
                 sage: T = crystals.Tableaux(['A',2], shape=[2,1])
-                sage: C = CombinatorialFreeModule(QQ,T)
+                sage: C = CombinatorialFreeModule(QQ, T)
                 sage: t = T.highest_weight_vector()
                 sage: b = 2*C(t)
                 sage: T.demazure_operator(b,[1,2,1])
-                2*B[[[1, 1], [2]]] + 2*B[[[1, 2], [2]]] + 2*B[[[1, 3], [2]]] + 2*B[[[1, 1], [3]]]
-                + 2*B[[[1, 2], [3]]] + 2*B[[[1, 3], [3]]] + 2*B[[[2, 2], [3]]] + 2*B[[[2, 3], [3]]]
+                2*B[[[1, 1], [2]]] + 2*B[[[1, 2], [2]]] + 2*B[[[1, 3], [2]]]
+                + 2*B[[[1, 1], [3]]] + 2*B[[[1, 2], [3]]] + 2*B[[[1, 3], [3]]]
+                + 2*B[[[2, 2], [3]]] + 2*B[[[2, 3], [3]]]
 
             The Demazure operator is idempotent::
 
-                sage: T = crystals.Tableaux("A1",shape=[4])
-                sage: C = CombinatorialFreeModule(QQ,T)
+                sage: T = crystals.Tableaux("A1", shape=[4])
+                sage: C = CombinatorialFreeModule(QQ, T)
                 sage: b = C(T.module_generators[0]); b
                 B[[[1, 1, 1, 1]]]
                 sage: e = T.demazure_operator(b,[1]); e
-                B[[[1, 1, 1, 1]]] + B[[[1, 1, 1, 2]]] + B[[[1, 1, 2, 2]]] + B[[[1, 2, 2, 2]]] + B[[[2, 2, 2, 2]]]
+                B[[[1, 1, 1, 1]]] + B[[[1, 1, 1, 2]]] + B[[[1, 1, 2, 2]]]
+                + B[[[1, 2, 2, 2]]] + B[[[2, 2, 2, 2]]]
                 sage: e == T.demazure_operator(e,[1])
                 True
 
-                sage: all(T.demazure_operator(T.demazure_operator(C(t),[1]),[1]) == T.demazure_operator(C(t),[1]) for t in T)
+                sage: all(T.demazure_operator(T.demazure_operator(C(t),[1]),[1])
+                ....:      == T.demazure_operator(C(t),[1]) for t in T)
                 True
             """
             M = element.parent()
@@ -249,10 +253,10 @@ class RegularCrystals(Category_singleton):
                 sage: K = crystals.KirillovReshetikhin(['A',1,1], 1, 2)
                 sage: mg = K.module_generator()
                 sage: S = K.demazure_subcrystal(mg, [1])
-                sage: S.digraph().edges()
+                sage: S.digraph().edges(sort=True)
                 [([[1, 1]], [[1, 2]], 1), ([[1, 2]], [[2, 2]], 1)]
                 sage: S = K.demazure_subcrystal(mg, [1], only_support=False)
-                sage: S.digraph().edges()
+                sage: S.digraph().edges(sort=True)
                 [([[1, 1]], [[1, 2]], 1),
                  ([[1, 2]], [[1, 1]], 0),
                  ([[1, 2]], [[2, 2]], 1),
@@ -299,7 +303,7 @@ class RegularCrystals(Category_singleton):
                 sage: T._test_stembridge_local_axioms(index_set=[1,3])
                 True
 
-                sage: B=Crystals().example(choice='naive')
+                sage: B = Crystals().example(choice='naive')
                 sage: B._test_stembridge_local_axioms()
                 Traceback (most recent call last):
                 ...
@@ -382,12 +386,12 @@ class RegularCrystals(Category_singleton):
 
                 sage: T = crystals.Tableaux(['A',3], shape=[2,2])
                 sage: G = T.dual_equivalence_graph()
-                sage: sorted(G.edges())
+                sage: G.edges(sort=True)
                 [([[1, 3], [2, 4]], [[1, 2], [3, 4]], 2),
                  ([[1, 2], [3, 4]], [[1, 3], [2, 4]], 3)]
                 sage: T = crystals.Tableaux(['A',4], shape=[3,2])
                 sage: G = T.dual_equivalence_graph()
-                sage: sorted(G.edges())
+                sage: G.edges(sort=True)
                 [([[1, 3, 5], [2, 4]], [[1, 3, 4], [2, 5]], 4),
                  ([[1, 3, 5], [2, 4]], [[1, 2, 5], [3, 4]], 2),
                  ([[1, 3, 4], [2, 5]], [[1, 2, 4], [3, 5]], 2),
@@ -397,9 +401,9 @@ class RegularCrystals(Category_singleton):
 
                 sage: T = crystals.Tableaux(['A',4], shape=[3,1])
                 sage: G = T.dual_equivalence_graph(index_set=[1,2,3])
-                sage: G.vertices()
+                sage: G.vertices(sort=True)
                 [[[1, 3, 4], [2]], [[1, 2, 4], [3]], [[1, 2, 3], [4]]]
-                sage: G.edges()
+                sage: G.edges(sort=True)
                 [([[1, 3, 4], [2]], [[1, 2, 4], [3]], 2),
                  ([[1, 2, 4], [3]], [[1, 2, 3], [4]], 3)]
 
@@ -407,10 +411,10 @@ class RegularCrystals(Category_singleton):
 
                 sage: T = crystals.Tableaux(['A',4], shape=[3,1])
                 sage: G = T.dual_equivalence_graph(index_set=[2,3])
-                sage: sorted(G.edges())
+                sage: G.edges(sort=True)
                 [([[1, 2, 4], [3]], [[1, 2, 3], [4]], 3),
                  ([[2, 4, 5], [3]], [[2, 3, 5], [4]], 3)]
-                sage: sorted(G.vertices())
+                sage: G.vertices(sort=True)
                 [[[1, 3, 4], [2]],
                  [[1, 2, 4], [3]],
                  [[2, 4, 5], [3]],
@@ -446,7 +450,7 @@ class RegularCrystals(Category_singleton):
                         y = x.e(i).e(im).f(i).f(im)
                         if checker(y):
                             edges.append([x, y, i])
-            from sage.graphs.all import DiGraph
+            from sage.graphs.digraph import DiGraph
             G = DiGraph([X, edges], format="vertices_and_edges", immutable=True)
             from sage.graphs.dot2tex_utils import have_dot2tex
             if have_dot2tex():
@@ -493,7 +497,7 @@ class RegularCrystals(Category_singleton):
             phi = 0
             while x is not None:
                 x = x.f(i)
-                phi = phi + 1
+                phi += 1
             return phi
 
         def weight(self):
@@ -508,7 +512,7 @@ class RegularCrystals(Category_singleton):
             """
             return self.Phi() - self.Epsilon()
 
-        def demazure_operator_simple(self, i, ring = None):
+        def demazure_operator_simple(self, i, ring=None):
             r"""
             Return the Demazure operator `D_i` applied to ``self``.
 
@@ -597,10 +601,10 @@ class RegularCrystals(Category_singleton):
             EXAMPLES::
 
                 sage: T = crystals.Tableaux(['A',2], shape=[2,1])
-                sage: t=T(rows=[[1,2],[2]])
+                sage: t = T(rows=[[1,2],[2]])
                 sage: t.stembridgeDelta_depth(1,2)
                 0
-                sage: s=T(rows=[[2,3],[3]])
+                sage: s = T(rows=[[2,3],[3]])
                 sage: s.stembridgeDelta_depth(1,2)
                 -1
             """
@@ -620,10 +624,10 @@ class RegularCrystals(Category_singleton):
             EXAMPLES::
 
                 sage: T = crystals.Tableaux(['A',2], shape=[2,1])
-                sage: t=T(rows=[[1,2],[2]])
+                sage: t = T(rows=[[1,2],[2]])
                 sage: t.stembridgeDelta_rise(1,2)
                 -1
-                sage: s=T(rows=[[2,3],[3]])
+                sage: s = T(rows=[[2,3],[3]])
                 sage: s.stembridgeDelta_rise(1,2)
                 0
             """
@@ -643,10 +647,10 @@ class RegularCrystals(Category_singleton):
             EXAMPLES::
 
                 sage: T = crystals.Tableaux(['A',2], shape=[2,1])
-                sage: t=T(rows=[[1,1],[2]])
+                sage: t = T(rows=[[1,1],[2]])
                 sage: t.stembridgeDel_depth(1,2)
                 0
-                sage: s=T(rows=[[1,3],[3]])
+                sage: s = T(rows=[[1,3],[3]])
                 sage: s.stembridgeDel_depth(1,2)
                 -1
             """
@@ -666,10 +670,10 @@ class RegularCrystals(Category_singleton):
             EXAMPLES::
 
                 sage: T = crystals.Tableaux(['A',2], shape=[2,1])
-                sage: t=T(rows=[[1,1],[2]])
+                sage: t = T(rows=[[1,1],[2]])
                 sage: t.stembridgeDel_rise(1,2)
                 -1
-                sage: s=T(rows=[[1,3],[3]])
+                sage: s = T(rows=[[1,3],[3]])
                 sage: s.stembridgeDel_rise(1,2)
                 0
             """
@@ -692,20 +696,20 @@ class RegularCrystals(Category_singleton):
             EXAMPLES::
 
                 sage: T = crystals.Tableaux(['A',2], shape=[2,1])
-                sage: t=T(rows=[[1,1],[2]])
+                sage: t = T(rows=[[1,1],[2]])
                 sage: t.stembridgeTriple(1,2)
-                sage: s=T(rows=[[1,2],[2]])
+                sage: s = T(rows=[[1,2],[2]])
                 sage: s.stembridgeTriple(1,2)
                 (-1, 0, -1)
 
                 sage: T = crystals.Tableaux(['B',2], shape=[2,1])
-                sage: t=T(rows=[[1,2],[2]])
+                sage: t = T(rows=[[1,2],[2]])
                 sage: t.stembridgeTriple(1,2)
                 (-2, 0, -2)
-                sage: s=T(rows=[[-1,-1],[0]])
+                sage: s = T(rows=[[-1,-1],[0]])
                 sage: s.stembridgeTriple(1,2)
                 (-2, -2, 0)
-                sage: u=T(rows=[[0,2],[1]])
+                sage: u = T(rows=[[0,2],[1]])
                 sage: u.stembridgeTriple(1,2)
                 (-2, -1, -1)
             """
@@ -739,7 +743,7 @@ class RegularCrystals(Category_singleton):
             EXAMPLES::
 
                 sage: T = crystals.Tableaux(['A',2], shape=[2,1])
-                sage: t=T(rows=[[1,1],[2]])
+                sage: t = T(rows=[[1,1],[2]])
                 sage: t._test_stembridge_local_axioms()
                 True
                 sage: t._test_stembridge_local_axioms(index_set=[1,3])
@@ -748,7 +752,7 @@ class RegularCrystals(Category_singleton):
                 True
             """
             tester = self._tester(**options)
-            goodness=True
+            goodness = True
             if index_set is None:
                 index_set=self.index_set()
 
@@ -831,12 +835,12 @@ class RegularCrystals(Category_singleton):
 
                 sage: T = crystals.Tableaux(['A',3], shape=[2,2])
                 sage: G = T(2,1,4,3).dual_equivalence_class()
-                sage: sorted(G.edges())
+                sage: G.edges(sort=True)
                 [([[1, 3], [2, 4]], [[1, 2], [3, 4]], 2),
                  ([[1, 3], [2, 4]], [[1, 2], [3, 4]], 3)]
                 sage: T = crystals.Tableaux(['A',4], shape=[3,2])
                 sage: G = T(2,1,4,3,5).dual_equivalence_class()
-                sage: sorted(G.edges())
+                sage: G.edges(sort=True)
                 [([[1, 3, 5], [2, 4]], [[1, 3, 4], [2, 5]], 4),
                  ([[1, 3, 5], [2, 4]], [[1, 2, 5], [3, 4]], 2),
                  ([[1, 3, 5], [2, 4]], [[1, 2, 5], [3, 4]], 3),
@@ -894,4 +898,3 @@ class RegularCrystals(Category_singleton):
                 [Category of regular crystals]
             """
             return [self.base_category()]
-

@@ -264,22 +264,18 @@ Checking the consistency of enumeration and test::
     than a couple of minutes.
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2011 Nathann Cohen <nathann.cohen@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
-
-from libc.string cimport memset
 from cysignals.memory cimport check_calloc, sig_free
 from cysignals.signals cimport sig_on, sig_off
-
-from sage.rings.integer cimport Integer
 
 
 cdef unsigned char * seq
@@ -441,24 +437,25 @@ cdef init(int n):
     return sequences
 
 cdef inline add_seq():
-     """
-     This function is called whenever a sequence is found.
+    """
+    This function is called whenever a sequence is found.
 
-     Build the degree sequence corresponding to the current state of the
-     algorithm and adds it to the sequences list.
-     """
-     global sequences
-     global N
-     global seq
+    Build the degree sequence corresponding to the current state of the
+    algorithm and adds it to the sequences list.
+    """
+    global sequences
+    global N
+    global seq
 
-     cdef list s = []
-     cdef int i, j
+    cdef list s = []
+    cdef int i, j
 
-     for N > i >= 0:
-         for 0<= j < seq[i]:
-             s.append(i)
+    for N > i >= 0:
+        for 0 <= j < seq[i]:
+            s.append(i)
 
-     sequences.append(s)
+    sequences.append(s)
+
 
 cdef void enum(int k, int M):
     r"""
@@ -586,4 +583,3 @@ cdef void enum(int k, int M):
         seq[i] = seq[i+1]
 
     sig_off()
-

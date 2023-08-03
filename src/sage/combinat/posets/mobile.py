@@ -1,3 +1,6 @@
+"""
+Mobile posets
+"""
 # ****************************************************************************
 #       Copyright (C) 2020 Stefan Grosser <stefan.grosser1@gmail.com>
 #
@@ -25,13 +28,13 @@ class MobilePoset(FinitePoset):
 
     EXAMPLES::
 
-        sage: P = posets.MobilePoset(posets.RibbonPoset(7, [1,3]),
+        sage: P = posets.MobilePoset(posets.RibbonPoset(7, [1,3]),                      # optional - sage.combinat
         ....:                        {1: [posets.YoungDiagramPoset([3, 2], dual=True)],
         ....:                         3: [posets.DoubleTailedDiamond(6)]},
         ....:                        anchor=(4, 2, posets.ChainPoset(6)))
-        sage: len(P._ribbon)
+        sage: len(P._ribbon)                                                            # optional - sage.combinat
         8
-        sage: P._anchor
+        sage: P._anchor                                                                 # optional - sage.combinat
         (4, 5)
 
     This example is Example 5.9 in [GGMM2020]_::
@@ -50,7 +53,7 @@ class MobilePoset(FinitePoset):
         [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]
         sage: P2._anchor
         (8, (8, 0))
-        sage: P2.linear_extensions().cardinality()
+        sage: P2.linear_extensions().cardinality()                                      # optional - sage.modules
         21399440939
 
         sage: EP = posets.MobilePoset(posets.ChainPoset(0), {})
@@ -120,7 +123,7 @@ class MobilePoset(FinitePoset):
                     continue
 
                 G_un.delete_edge(lc, r)
-                P = Poset(G.subgraph(G_un.connected_component_containing_vertex(lc)))
+                P = Poset(G.subgraph(G_un.connected_component_containing_vertex(lc, sort=False)))
                 if P.top() != lc or not P.is_d_complete():
                     return False
                 G_un.add_edge(lc, r)
@@ -140,7 +143,7 @@ class MobilePoset(FinitePoset):
             sage: M._anchor
             (4, 3)
         """
-        ribbon = list(map(lambda x: self._element_to_vertex(x), self._ribbon))
+        ribbon = [self._element_to_vertex(x) for x in self._ribbon]
         H = self._hasse_diagram
         R = H.subgraph(ribbon)
 
@@ -195,7 +198,7 @@ class MobilePoset(FinitePoset):
 
         if G.is_path():
             # Check if there is a anchor by seeing if there is more than one acyclic path to the next max
-            ends = max_elmt_graph.vertices(degree=1)
+            ends = max_elmt_graph.vertices(sort=True, degree=1)
             # Form ribbon
             ribbon = G.shortest_path(ends[0], ends[1])
             for end_count, end in enumerate(ends):
@@ -212,8 +215,8 @@ class MobilePoset(FinitePoset):
         # Then check if the edge going to a max element is down from the degree 3 vertex
         # Arbitrarily choose between ones with just 1
 
-        ends = max_elmt_graph.vertices(degree=1)
-        deg3 = max_elmt_graph.vertices(degree=3)[0]
+        ends = max_elmt_graph.vertices(sort=True, degree=1)
+        deg3 = max_elmt_graph.vertices(sort=True, degree=3)[0]
 
         anchoredEnd = None
         for end in ends:

@@ -20,10 +20,3 @@ cycler is developed on github: https://github.com/matplotlib/cycler
 
 A more informative webpage about cycler, its motivation and usage is at
 http://tacaswell.github.io/cycler/
-
-Dependencies
-------------
-
--  python
--  setuptools
--  six

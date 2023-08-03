@@ -47,30 +47,28 @@ This example illustrates generators for a free module over `\ZZ`.
 
 ::
 
-    sage: M = FreeModule(ZZ, 4)
-    sage: M
+    sage: M = FreeModule(ZZ, 4)                                                         # optional - sage.modules
+    sage: M                                                                             # optional - sage.modules
     Ambient free module of rank 4 over the principal ideal domain Integer Ring
-    sage: M.ngens()
+    sage: M.ngens()                                                                     # optional - sage.modules
     4
-    sage: M.gen(0)
+    sage: M.gen(0)                                                                      # optional - sage.modules
     (1, 0, 0, 0)
-    sage: M.gens()
+    sage: M.gens()                                                                      # optional - sage.modules
     ((1, 0, 0, 0), (0, 1, 0, 0), (0, 0, 1, 0), (0, 0, 0, 1))
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2005, 2006 William Stein <wstein@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
-from . import gens_py
 cimport sage.structure.parent as parent
-from sage.structure.coerce_dict cimport MonoDict
 cimport sage.structure.category_object as category_object
 
 
@@ -81,13 +79,14 @@ cdef inline check_old_coerce(parent.Parent p):
 
 cdef class ParentWithGens(ParentWithBase):
     # Derived class *must* call __init__ and set the base!
-    def __init__(self, base, names=None, normalize=True, category = None):
+    def __init__(self, base, names=None, normalize=True, category=None):
         """
         EXAMPLES::
 
+            sage: from sage.structure.parent_gens import ParentWithGens
             sage: class MyParent(ParentWithGens):
             ....:     def ngens(self): return 3
-            sage: P = MyParent(base = QQ, names = 'a,b,c', normalize = True, category = Groups())
+            sage: P = MyParent(base=QQ, names='a,b,c', normalize=True, category=Groups())
             sage: P.category()
             Category of groups
             sage: P._names
@@ -109,20 +108,15 @@ cdef class ParentWithGens(ParentWithBase):
         raise NotImplementedError("i-th generator not known.")
 
     def gens(self):
-       """
-       Return a tuple whose entries are the generators for this
-       object, in order.
-       """
-       cdef int i, n
-       if self._gens is not None:
-           return self._gens
-       else:
-           v = []
-           n = self.ngens()
-           for i from 0 <= i < n:
-               v.append(self.gen(i))
-           self._gens = tuple(v)
-           return self._gens
+        """
+        Return a tuple whose entries are the generators for this
+        object, in order.
+        """
+        cdef int i
+        if self._gens is not None:
+            return self._gens
+        self._gens = tuple(self.gen(i) for i in range(self.ngens()))
+        return self._gens
 
     def _assign_names(self, names=None, normalize=True):
         """
@@ -198,10 +192,9 @@ cdef class ParentWithGens(ParentWithBase):
         self._names = d['_names']
         self._latex_names = d['_latex_names']
 
-
-    #################################################################################
+    ######################################################################
     # Morphisms of objects with generators
-    #################################################################################
+    ######################################################################
 
     def hom(self, im_gens, codomain=None, base_map=None, category=None, check=True):
         r"""
@@ -247,31 +240,31 @@ cdef class ParentWithGens(ParentWithBase):
             6
 
             sage: R.<x> = PolynomialRing(QQ)
-            sage: f = R.hom([5], GF(7))
+            sage: f = R.hom([5], GF(7))                                                 # optional - sage.rings.finite_rings
             Traceback (most recent call last):
             ...
             ValueError: relations do not all (canonically) map to 0 under map determined by images of generators
 
-            sage: R.<x> = PolynomialRing(GF(7))
-            sage: f = R.hom([3], GF(49,'a'))
-            sage: f
+            sage: R.<x> = PolynomialRing(GF(7))                                         # optional - sage.rings.finite_rings
+            sage: f = R.hom([3], GF(49, 'a'))                                           # optional - sage.rings.finite_rings
+            sage: f                                                                     # optional - sage.rings.finite_rings
             Ring morphism:
               From: Univariate Polynomial Ring in x over Finite Field of size 7
               To:   Finite Field in a of size 7^2
               Defn: x |--> 3
-            sage: f(x+6)
+            sage: f(x + 6)                                                              # optional - sage.rings.finite_rings
             2
-            sage: f(x^2+1)
+            sage: f(x^2 + 1)                                                            # optional - sage.rings.finite_rings
             3
 
         EXAMPLES: Natural morphism
 
         ::
 
-            sage: f = ZZ.hom(GF(5))
-            sage: f(7)
+            sage: f = ZZ.hom(GF(5))                                                     # optional - sage.rings.finite_rings
+            sage: f(7)                                                                  # optional - sage.rings.finite_rings
             2
-            sage: f
+            sage: f                                                                     # optional - sage.rings.finite_rings
             Natural morphism:
               From: Integer Ring
               To:   Finite Field of size 5
@@ -287,13 +280,13 @@ cdef class ParentWithGens(ParentWithBase):
 
         You can specify a map on the base ring::
 
-            sage: k = GF(2)
-            sage: R.<a> = k[]
-            sage: l.<a> = k.extension(a^3 + a^2 + 1)
-            sage: R.<b> = l[]
-            sage: m.<b> = l.extension(b^2 + b + a)
-            sage: n.<z> = GF(2^6)
-            sage: m.hom([z^4 + z^3 + 1], base_map=l.hom([z^5 + z^4 + z^2]))
+            sage: k = GF(2)                                                             # optional - sage.rings.finite_rings
+            sage: R.<a> = k[]                                                           # optional - sage.rings.finite_rings
+            sage: l.<a> = k.extension(a^3 + a^2 + 1)                                    # optional - sage.rings.finite_rings
+            sage: R.<b> = l[]                                                           # optional - sage.rings.finite_rings
+            sage: m.<b> = l.extension(b^2 + b + a)                                      # optional - sage.rings.finite_rings
+            sage: n.<z> = GF(2^6)                                                       # optional - sage.rings.finite_rings
+            sage: m.hom([z^4 + z^3 + 1], base_map=l.hom([z^5 + z^4 + z^2]))             # optional - sage.rings.finite_rings
             Ring morphism:
               From: Univariate Quotient Polynomial Ring in b over Finite Field in a of size 2^3 with modulus b^2 + b + a
               To:   Finite Field in z of size 2^6
@@ -342,7 +335,7 @@ cdef class localvars:
 
     EXAMPLES::
 
-        sage: R.<x,y> = PolynomialRing(QQ,2)
+        sage: R.<x,y> = PolynomialRing(QQ, 2)
         sage: with localvars(R, 'z,w'):
         ....:     print(x^3 + y^3 - x*y)
         z^3 + w^3 - z*w
@@ -377,5 +370,3 @@ cdef class localvars:
 
     def __exit__(self, type, value, traceback):
         self._obj.__temporarily_change_names(self._orig[0], self._orig[1])
-
-

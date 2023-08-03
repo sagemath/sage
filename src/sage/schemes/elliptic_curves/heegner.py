@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# sage.doctest: optional - sage.rings.number_field
 r"""
 Heegner points on elliptic curves over the rational numbers
 
@@ -15,7 +15,8 @@ EXAMPLES::
     sage: z = P.point_exact(201); z
     (-4/3 : 1/9*a : 1)
     sage: parent(z)
-    Abelian group of points on Elliptic Curve defined by y^2 + x*y = x^3 + 1 over Number Field in a with defining polynomial x^2 - 12*x + 111
+    Abelian group of points on Elliptic Curve defined by y^2 + x*y = x^3 + 1
+     over Number Field in a with defining polynomial x^2 - 12*x + 111
     sage: parent(z[0]).discriminant()
     -3
     sage: E.quadratic_twist(-3).rank()
@@ -33,7 +34,9 @@ Next try an inert prime::
     sage: z[0].charpoly().factor()
     (x^6 + x^5 - 1/4*x^4 + 19/10*x^3 + 31/20*x^2 - 7/10*x + 49/100)^2
     sage: z[1].charpoly().factor()
-    x^12 - x^11 + 6/5*x^10 - 33/40*x^9 - 89/320*x^8 + 3287/800*x^7 - 5273/1600*x^6 + 993/4000*x^5 + 823/320*x^4 - 2424/625*x^3 + 12059/12500*x^2 + 3329/25000*x + 123251/250000
+    x^12 - x^11 + 6/5*x^10 - 33/40*x^9 - 89/320*x^8 + 3287/800*x^7
+     - 5273/1600*x^6 + 993/4000*x^5 + 823/320*x^4 - 2424/625*x^3
+     + 12059/12500*x^2 + 3329/25000*x + 123251/250000
     sage: f = P.x_poly_exact(300); f
     x^6 + x^5 - 1/4*x^4 + 19/10*x^3 + 31/20*x^2 - 7/10*x + 49/100
     sage: f.discriminant().factor()
@@ -44,8 +47,8 @@ We find some Mordell-Weil generators in the rank 1 case using Heegner points::
     sage: E = EllipticCurve('43a'); P = E.heegner_point(-7)
     sage: P.x_poly_exact()
     x
-    sage: P.point_exact()
-    (0 : 0 : 1)
+    sage: z = P.point_exact(); z == E(0,0,1) or -z == E(0,0,1)
+    True
 
     sage: E = EllipticCurve('997a')
     sage: E.rank()
@@ -55,16 +58,17 @@ We find some Mordell-Weil generators in the rank 1 case using Heegner points::
     sage: P = E.heegner_point(-19)
     sage: P.x_poly_exact()
     x - 141/49
-    sage: P.point_exact()
-    (141/49 : -162/343 : 1)
+    sage: z = P.point_exact(); z == E(141/49, -162/343, 1)  or -z == E(141/49, -162/343, 1)
+    True
 
 Here we find that the Heegner point generates a subgroup of index 3::
 
     sage: E = EllipticCurve('92b1')
     sage: E.heegner_discriminants_list(1)
     [-7]
-    sage: P = E.heegner_point(-7); z = P.point_exact(); z
-    (0 : 1 : 1)
+    sage: P = E.heegner_point(-7)
+    sage: z = P.point_exact(); z == E(0, 1, 1)  or -z == E(0, 1, 1)
+    True
     sage: E.regulator()
     0.0498083972980648
     sage: z.height()
@@ -92,31 +96,37 @@ The above is consistent with the following analytic computation::
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
+import sage.rings.abc
+import sage.rings.number_field.number_field_element
+import sage.rings.number_field.number_field as number_field
+import sage.rings.all as rings
 
-from sage.misc.all import prod
-from sage.misc.verbose import verbose
+from sage.arith.functions import lcm
+from sage.arith.misc import (binomial, factorial, prime_divisors,
+                             GCD as gcd, XGCD as xgcd)
+from sage.matrix.constructor import Matrix as matrix
+from sage.matrix.matrix_space import MatrixSpace
 from sage.misc.cachefunc import cached_method
-
+from sage.misc.misc_c import prod
+from sage.misc.verbose import verbose
+from sage.modular.modsym.p1list import P1List
+from sage.rings.complex_double import CDF
+from sage.rings.complex_mpfr import ComplexField
+from sage.rings.factorint import factor_trial_division
+from sage.rings.finite_rings.finite_field_constructor import FiniteField as GF
+from sage.rings.finite_rings.integer_mod_ring import IntegerModRing as Integers
+from sage.rings.integer_ring import ZZ
+from sage.rings.number_field.number_field import QuadraticField
+from sage.rings.rational_field import QQ
+from sage.rings.real_mpfr import RealField
+from sage.quadratic_forms.binary_qf import BinaryQF
+from sage.quadratic_forms.binary_qf import BinaryQF_reduced_representatives
+from sage.rings.number_field.number_field_element_base import NumberFieldElement_base
 from sage.structure.sage_object import SageObject
 from sage.structure.richcmp import (richcmp_method, richcmp,
                                     richcmp_not_equal, rich_to_bool)
 
-import sage.rings.number_field.number_field_element
-import sage.rings.number_field.number_field as number_field
-import sage.rings.all as rings
-from sage.rings.all import (ZZ, GF, QQ, CDF,
-                            Integers, RealField, ComplexField, QuadraticField)
-from sage.arith.all import (gcd, xgcd, lcm, prime_divisors, factorial,
-        binomial)
-from sage.rings.factorint import factor_trial_division
-from sage.quadratic_forms.all import (BinaryQF,
-                                      BinaryQF_reduced_representatives)
-from sage.matrix.all import MatrixSpace, matrix
-
-from sage.modular.modsym.p1list import P1List
-
-
-##################################################################################
+###############################################################################
 #
 # The exported functions, which are in most cases enough to get the
 # user going working with Heegner points:
@@ -124,7 +134,7 @@ from sage.modular.modsym.p1list import P1List
 #    heegner_points -- all of them with given level, discriminant, conductor
 #    heegner_point -- a specific one
 #
-##################################################################################
+###############################################################################
 
 def heegner_points(N, D=None, c=None):
     """
@@ -134,19 +144,19 @@ def heegner_points(N, D=None, c=None):
 
     INPUT:
 
-        - `N` -- level (positive integer)
+    - `N` -- level (positive integer)
 
-        - `D` -- discriminant (negative integer)
+    - `D` -- discriminant (negative integer)
 
-        - `c` -- conductor (positive integer)
+    - `c` -- conductor (positive integer)
 
     EXAMPLES::
 
-        sage: heegner_points(389,-7)
+        sage: heegner_points(389, -7)
         Set of all Heegner points on X_0(389) associated to QQ[sqrt(-7)]
-        sage: heegner_points(389,-7,1)
+        sage: heegner_points(389, -7, 1)
         All Heegner points of conductor 1 on X_0(389) associated to QQ[sqrt(-7)]
-        sage: heegner_points(389,-7,5)
+        sage: heegner_points(389, -7, 5)
         All Heegner points of conductor 5 on X_0(389) associated to QQ[sqrt(-7)]
     """
     if D is None and c is None:
@@ -154,8 +164,9 @@ def heegner_points(N, D=None, c=None):
     if D is not None and c is None:
         return HeegnerPoints_level_disc(N, D)
     if D is not None and c is not None:
-        return HeegnerPoints_level_disc_cond(N,D,c)
+        return HeegnerPoints_level_disc_cond(N, D, c)
     raise TypeError
+
 
 def heegner_point(N, D=None, c=1):
     """
@@ -166,11 +177,11 @@ def heegner_point(N, D=None, c=1):
 
     INPUT:
 
-        - `N` -- level (positive integer)
+    - `N` -- level (positive integer)
 
-        - `D` -- discriminant (optional: default first valid `D`)
+    - `D` -- discriminant (optional: default first valid `D`)
 
-        - `c` -- conductor (positive integer, optional, default: 1)
+    - `c` -- conductor (positive integer, optional, default: 1)
 
     EXAMPLES::
 
@@ -184,20 +195,20 @@ def heegner_point(N, D=None, c=1):
         Heegner point 1/778*sqrt(-20) - 165/389 of discriminant -20 on X_0(389)
     """
     if D is not None:
-        return heegner_points(N,D,c)[0]
+        return heegner_points(N, D, c)[0]
     H = heegner_points(N)
     D = H.discriminants(1)[0]
-    return heegner_points(N,D,c)[0]
+    return heegner_points(N, D, c)[0]
 
 
-##################################################################################
+###############################################################################
 #
 # Ring class fields, represented as abstract objects.  These do not
 # derive from number fields, since we do not need to work with their
 # elements, and explicitly representing them as number fields would be
 # far too difficult.
 #
-##################################################################################
+###############################################################################
 
 class RingClassField(SageObject):
     """
@@ -230,18 +241,17 @@ class RingClassField(SageObject):
         """
         INPUT:
 
-            - `D` -- discriminant of quadratic imaginary field
+        - `D` -- discriminant of quadratic imaginary field
 
-            - `c` -- conductor (positive integer coprime to `D`)
+        - `c` -- conductor (positive integer coprime to `D`)
 
-            - ``check`` -- bool (default: ``True``); whether to check
-              validity of input
+        - ``check`` -- bool (default: ``True``); whether to check
+          validity of input
 
         EXAMPLES::
 
-            sage: sage.schemes.elliptic_curves.heegner.RingClassField(-7,5, False)
+            sage: sage.schemes.elliptic_curves.heegner.RingClassField(-7, 5, False)
             Ring class field extension of QQ[sqrt(-7)] of conductor 5
-
         """
         if check:
             D = ZZ(D)
@@ -352,9 +362,8 @@ class RingClassField(SageObject):
         """
         c = self.__c
         if c == 1:
-            return "Hilbert class field of QQ[sqrt(%s)]"%self.__D
-        else:
-            return "Ring class field extension of QQ[sqrt(%s)] of conductor %s"%(self.__D, self.__c)
+            return "Hilbert class field of QQ[sqrt(%s)]" % self.__D
+        return "Ring class field extension of QQ[sqrt(%s)] of conductor %s" % (self.__D, self.__c)
 
     @cached_method
     def degree_over_K(self):
@@ -509,10 +518,11 @@ class RingClassField(SageObject):
 
             sage: E = EllipticCurve('389a'); K = E.heegner_point(-7,5).ring_class_field()
             sage: K.quadratic_field()
-            Number Field in sqrt_minus_7 with defining polynomial x^2 + 7 with sqrt_minus_7 = 2.645751311064591?*I
+            Number Field in sqrt_minus_7 with defining polynomial x^2 + 7
+             with sqrt_minus_7 = 2.645751311064591?*I
         """
-        D   = self.__D
-        var = 'sqrt_minus_%s'%(-D)
+        D = self.__D
+        var = 'sqrt_minus_%s' % (-D)
         return number_field.QuadraticField(D,var)
 
     @cached_method
@@ -522,7 +532,7 @@ class RingClassField(SageObject):
 
         INPUT:
 
-            - ``base`` -- (default: `\QQ`) a subfield of ``self`` or `\QQ`
+        - ``base`` -- (default: `\QQ`) a subfield of ``self`` or `\QQ`
 
         EXAMPLES::
 
@@ -535,13 +545,15 @@ class RingClassField(SageObject):
             sage: A.galois_group()
             Galois group of Ring class field extension of QQ[sqrt(-7)] of conductor 5
             sage: A.galois_group(B)
-            Galois group of Ring class field extension of QQ[sqrt(-7)] of conductor 5 over Hilbert class field of QQ[sqrt(-7)]
+            Galois group of Ring class field extension of QQ[sqrt(-7)] of conductor 5
+             over Hilbert class field of QQ[sqrt(-7)]
             sage: A.galois_group().cardinality()
             12
             sage: A.galois_group(B).cardinality()
             6
             sage: C.galois_group(A)
-            Galois group of Ring class field extension of QQ[sqrt(-7)] of conductor 15 over Ring class field extension of QQ[sqrt(-7)] of conductor 5
+            Galois group of Ring class field extension of QQ[sqrt(-7)] of conductor 15
+             over Ring class field extension of QQ[sqrt(-7)] of conductor 5
             sage: C.galois_group(A).cardinality()
             4
         """
@@ -597,7 +609,8 @@ class GaloisGroup(SageObject):
         sage: G.cardinality()
         12
         sage: G.complex_conjugation()
-        Complex conjugation automorphism of Ring class field extension of QQ[sqrt(-7)] of conductor 5
+        Complex conjugation automorphism of Ring class field extension of QQ[sqrt(-7)]
+         of conductor 5
 
     TESTS::
 
@@ -611,18 +624,20 @@ class GaloisGroup(SageObject):
         r"""
         INPUT:
 
-           - ``field`` -- a ring class field
+        - ``field`` -- a ring class field
 
-           - ``base`` -- subfield of field (default: `\QQ`)
+        - ``base`` -- subfield of field (default: `\QQ`)
 
         EXAMPLES::
 
             sage: K5 = heegner_points(389,-7,5).ring_class_field()
             sage: K1 = heegner_points(389,-7,1).ring_class_field()
             sage: sage.schemes.elliptic_curves.heegner.GaloisGroup(K5,K1)
-            Galois group of Ring class field extension of QQ[sqrt(-7)] of conductor 5 over Hilbert class field of QQ[sqrt(-7)]
+            Galois group of Ring class field extension of QQ[sqrt(-7)] of conductor 5
+             over Hilbert class field of QQ[sqrt(-7)]
             sage: K5.galois_group(K1)
-            Galois group of Ring class field extension of QQ[sqrt(-7)] of conductor 5 over Hilbert class field of QQ[sqrt(-7)]
+            Galois group of Ring class field extension of QQ[sqrt(-7)] of conductor 5
+             over Hilbert class field of QQ[sqrt(-7)]
         """
         if not isinstance(field, RingClassField):
             raise TypeError("field must be of type RingClassField")
@@ -674,7 +689,6 @@ class GaloisGroup(SageObject):
             sage: G = EllipticCurve('389a').heegner_point(-7,5).ring_class_field().galois_group()
             sage: hash(G) == hash((G.field(), G.base_field()))
             True
-
         """
         return hash((self.__field, self.__base))
 
@@ -686,11 +700,9 @@ class GaloisGroup(SageObject):
 
         INPUT:
 
-            - `x` -- automorphism or quadratic field element
+        - `x` -- automorphism or quadratic field element
 
-        OUTPUT:
-
-            - automorphism (or TypeError)
+        OUTPUT: An automorphism (or ``TypeError``)
 
         EXAMPLES::
 
@@ -712,7 +724,6 @@ class GaloisGroup(SageObject):
             Traceback (most recent call last):
             ...
             TypeError: x does not define element of (O_K/c*O_K)^*
-
         """
         if isinstance(x, GaloisAutomorphism) and x.parent() == self:
             return x
@@ -733,10 +744,10 @@ class GaloisGroup(SageObject):
             'Galois group of Ring class field extension of QQ[sqrt(-7)] of conductor 5'
         """
         if self.base_field() != QQ:
-            s = " over %s"%self.base_field()
+            s = " over %s" % self.base_field()
         else:
             s = ''
-        return "Galois group of %s%s"%(self.field(), s)
+        return "Galois group of %s%s" % (self.field(), s)
 
     def field(self):
         """
@@ -770,13 +781,17 @@ class GaloisGroup(SageObject):
             sage: Kc.absolute_degree()
             12
             sage: G = Kc.galois_group(K); G
-            Galois group of Ring class field extension of QQ[sqrt(-7)] of conductor 5 over Number Field in sqrt_minus_7 with defining polynomial x^2 + 7 with sqrt_minus_7 = 2.645751311064591?*I
+            Galois group of Ring class field extension of QQ[sqrt(-7)] of conductor 5
+             over Number Field in sqrt_minus_7 with defining polynomial x^2 + 7
+              with sqrt_minus_7 = 2.645751311064591?*I
             sage: G.cardinality()
             6
             sage: G.base_field()
-            Number Field in sqrt_minus_7 with defining polynomial x^2 + 7 with sqrt_minus_7 = 2.645751311064591?*I
+            Number Field in sqrt_minus_7 with defining polynomial x^2 + 7
+             with sqrt_minus_7 = 2.645751311064591?*I
             sage: G = Kc.galois_group(Kc); G
-            Galois group of Ring class field extension of QQ[sqrt(-7)] of conductor 5 over Ring class field extension of QQ[sqrt(-7)] of conductor 5
+            Galois group of Ring class field extension of QQ[sqrt(-7)] of conductor 5
+             over Ring class field extension of QQ[sqrt(-7)] of conductor 5
             sage: G.cardinality()
             1
             sage: G.base_field()
@@ -798,7 +813,7 @@ class GaloisGroup(SageObject):
 
         OUTPUT:
 
-            - list of elements of ``self``
+        - list of elements of ``self``
 
         EXAMPLES::
 
@@ -838,14 +853,15 @@ class GaloisGroup(SageObject):
 
         OUTPUT:
 
-            - tuple of elements of self
+        - tuple of elements of self
 
         EXAMPLES::
 
             sage: K5 = heegner_points(389,-52,5).ring_class_field()
             sage: G = K5.galois_group(K5.quadratic_field())
             sage: G.lift_of_hilbert_class_field_galois_group()
-            (Class field automorphism defined by x^2 + 325*y^2, Class field automorphism defined by 2*x^2 + 2*x*y + 163*y^2)
+            (Class field automorphism defined by x^2 + 325*y^2,
+             Class field automorphism defined by 2*x^2 + 2*x*y + 163*y^2)
             sage: G.cardinality()
             12
             sage: K5.quadratic_field().class_number()
@@ -874,17 +890,22 @@ class GaloisGroup(SageObject):
 
         Example with order 1 (a special case)::
 
-            sage: E = EllipticCurve('389a'); F= E.heegner_point(-7,1).ring_class_field()
+            sage: E = EllipticCurve('389a'); F = E.heegner_point(-7,1).ring_class_field()
             sage: G = F.galois_group(F.quadratic_field())
             sage: G._list()
             (Class field automorphism defined by x^2 + x*y + 2*y^2,)
 
         Example over quadratic imaginary field::
 
-            sage: E = EllipticCurve('389a'); F= E.heegner_point(-7,5).ring_class_field()
+            sage: E = EllipticCurve('389a'); F = E.heegner_point(-7,5).ring_class_field()
             sage: G = F.galois_group(F.quadratic_field())
             sage: G._list()
-            (Class field automorphism defined by x^2 + x*y + 44*y^2, Class field automorphism defined by 2*x^2 - x*y + 22*y^2, Class field automorphism defined by 2*x^2 + x*y + 22*y^2, Class field automorphism defined by 4*x^2 - x*y + 11*y^2, Class field automorphism defined by 4*x^2 + x*y + 11*y^2, Class field automorphism defined by 7*x^2 + 7*x*y + 8*y^2)
+            (Class field automorphism defined by x^2 + x*y + 44*y^2,
+             Class field automorphism defined by 2*x^2 - x*y + 22*y^2,
+             Class field automorphism defined by 2*x^2 + x*y + 22*y^2,
+             Class field automorphism defined by 4*x^2 - x*y + 11*y^2,
+             Class field automorphism defined by 4*x^2 + x*y + 11*y^2,
+             Class field automorphism defined by 7*x^2 + 7*x*y + 8*y^2)
 
         Example over `\QQ` (it is not implemented yet)::
 
@@ -896,10 +917,12 @@ class GaloisGroup(SageObject):
 
         Example over Hilbert class field::
 
-            sage: K3 = heegner_points(389,-52,3).ring_class_field(); K1 = heegner_points(389,-52,1).ring_class_field()
+            sage: K3 = heegner_points(389,-52,3).ring_class_field()
+            sage: K1 = heegner_points(389,-52,1).ring_class_field()
             sage: G = K3.galois_group(K1)
             sage: G._list()
-            (Class field automorphism defined by x^2 + 117*y^2, Class field automorphism defined by 9*x^2 - 6*x*y + 14*y^2, Class field automorphism defined by 9*x^2 + 13*y^2, Class field automorphism defined by 9*x^2 + 6*x*y + 14*y^2)
+            (Class field automorphism defined by x^2 + 117*y^2, Class field automorphism defined by 9*x^2 - 6*x*y + 14*y^2,
+             Class field automorphism defined by 9*x^2 + 13*y^2, Class field automorphism defined by 9*x^2 + 6*x*y + 14*y^2)
         """
         if self._base_is_QQ():
             raise NotImplementedError("Galois group over QQ not yet implemented")
@@ -938,12 +961,11 @@ class GaloisGroup(SageObject):
         """
         INPUT:
 
-           - `f` -- a binary quadratic form with discriminant `c^2 D`
+        - `f` -- a binary quadratic form with discriminant `c^2 D`
 
         OUTPUT:
 
-           - an element of the ring of integers of the quadratic
-             imaginary field
+        - an element of the ring of integers of the quadratic imaginary field
 
         EXAMPLES::
 
@@ -977,7 +999,7 @@ class GaloisGroup(SageObject):
 
         INPUT:
 
-            - `\alpha` -- element of quadratic imaginary field coprime to conductor
+        - `\alpha` -- element of quadratic imaginary field coprime to conductor
 
         EXAMPLES::
 
@@ -1000,7 +1022,6 @@ class GaloisGroup(SageObject):
             d = self.__p1_to_automorphism
         return d[uv]
 
-
     def _alpha_to_p1_element(self, alpha):
         r"""
         Given an element of the ring of integers that is nonzero
@@ -1009,12 +1030,11 @@ class GaloisGroup(SageObject):
 
         INPUT:
 
-            - `\alpha` -- element of the ring of integers of the
-              quadratic imaginary field
+        - `\alpha` -- element of the ring of integers of the quadratic imaginary field
 
         OUTPUT:
 
-            - 2-tuple of integers
+        - 2-tuple of integers
 
         EXAMPLES::
 
@@ -1041,7 +1061,7 @@ class GaloisGroup(SageObject):
         n = gcd(w)
         w /= n
         c = P1.N()
-        w = P1.normalize(ZZ(w[0])%c, ZZ(w[1])%c)
+        w = P1.normalize(ZZ(w[0]) % c, ZZ(w[1]) % c)
         if w == (0,0):
             w = (1,0)
         return w
@@ -1055,11 +1075,11 @@ class GaloisGroup(SageObject):
 
         INPUT:
 
-            - ``uv`` -- pair of integers
+        - ``uv`` -- pair of integers
 
         OUTPUT:
 
-            - element of maximal order of quadratic field
+        - element of maximal order of quadratic field
 
         EXAMPLES::
 
@@ -1074,7 +1094,6 @@ class GaloisGroup(SageObject):
         """
         B = self.field().quadratic_field().maximal_order().basis()
         return uv[0]*B[0] + uv[1]*B[1]
-
 
     def _base_is_QQ(self):
         r"""
@@ -1107,7 +1126,7 @@ class GaloisGroup(SageObject):
             sage: M.galois_group(heegner_points(389,-20,1).ring_class_field())._base_is_quad_imag_field()
             False
         """
-        return number_field.is_QuadraticField(self.__base)
+        return isinstance(self.__base, sage.rings.abc.NumberField_quadratic)
 
     def is_kolyvagin(self):
         """
@@ -1159,7 +1178,6 @@ class GaloisGroup(SageObject):
         M = self.__base
         return isinstance(M, RingClassField) and M.conductor() == 1
 
-
     def __getitem__(self, i):
         """
         EXAMPLES::
@@ -1170,7 +1188,6 @@ class GaloisGroup(SageObject):
             Class field automorphism defined by x^2 + x*y + 44*y^2
         """
         return self._list()[i]
-
 
     def __len__(self):
         """
@@ -1218,7 +1235,8 @@ class GaloisGroup(SageObject):
             sage: E = EllipticCurve('389a')
             sage: G = E.heegner_point(-7,5).ring_class_field().galois_group()
             sage: G.complex_conjugation()
-            Complex conjugation automorphism of Ring class field extension of QQ[sqrt(-7)] of conductor 5
+            Complex conjugation automorphism of Ring class field extension
+             of QQ[sqrt(-7)] of conductor 5
         """
         if self.base_field() != QQ:
             raise ValueError("the base field must be fixed by complex conjugation")
@@ -1245,7 +1263,7 @@ class GaloisAutomorphism(SageObject):
         """
         INPUT:
 
-            - ``parent`` -- a group of automorphisms of a ring class field
+        - ``parent`` -- a group of automorphisms of a ring class field
 
         EXAMPLES::
 
@@ -1264,7 +1282,8 @@ class GaloisAutomorphism(SageObject):
         EXAMPLES::
 
             sage: E = EllipticCurve('389a')
-            sage: s = E.heegner_point(-7,5).ring_class_field().galois_group().complex_conjugation()
+            sage: G = E.heegner_point(-7,5).ring_class_field().galois_group()
+            sage: s = G.complex_conjugation()
             sage: s.parent()
             Galois group of Ring class field extension of QQ[sqrt(-7)] of conductor 5
         """
@@ -1277,7 +1296,8 @@ class GaloisAutomorphism(SageObject):
         EXAMPLES::
 
             sage: E = EllipticCurve('389a')
-            sage: s = E.heegner_point(-7,5).ring_class_field().galois_group().complex_conjugation()
+            sage: G = E.heegner_point(-7,5).ring_class_field().galois_group()
+            sage: s = G.complex_conjugation()
             sage: s.domain()
             Ring class field extension of QQ[sqrt(-7)] of conductor 5
         """
@@ -1290,9 +1310,11 @@ class GaloisAutomorphismComplexConjugation(GaloisAutomorphism):
 
     EXAMPLES::
 
-        sage: conj = heegner_point(37,-7,5).ring_class_field().galois_group().complex_conjugation()
+        sage: G = heegner_point(37,-7,5).ring_class_field().galois_group()
+        sage: conj = G.complex_conjugation()
         sage: conj
-        Complex conjugation automorphism of Ring class field extension of QQ[sqrt(-7)] of conductor 5
+        Complex conjugation automorphism of Ring class field extension
+         of QQ[sqrt(-7)] of conductor 5
         sage: conj.domain()
         Ring class field extension of QQ[sqrt(-7)] of conductor 5
 
@@ -1313,7 +1335,8 @@ class GaloisAutomorphismComplexConjugation(GaloisAutomorphism):
 
             sage: G = heegner_point(37,-7,5).ring_class_field().galois_group()
             sage: sage.schemes.elliptic_curves.heegner.GaloisAutomorphismComplexConjugation(G)
-            Complex conjugation automorphism of Ring class field extension of QQ[sqrt(-7)] of conductor 5
+            Complex conjugation automorphism of Ring class field extension
+             of QQ[sqrt(-7)] of conductor 5
         """
         GaloisAutomorphism.__init__(self, parent)
 
@@ -1368,7 +1391,7 @@ class GaloisAutomorphismComplexConjugation(GaloisAutomorphism):
             sage: conj._repr_()
             'Complex conjugation automorphism of Ring class field extension of QQ[sqrt(-7)] of conductor 5'
         """
-        return "Complex conjugation automorphism of %s"%self.domain()
+        return "Complex conjugation automorphism of %s" % self.domain()
 
 ##     def __mul__(self, right):
 ##         """
@@ -1398,7 +1421,8 @@ class GaloisAutomorphismComplexConjugation(GaloisAutomorphism):
         """
         EXAMPLES::
 
-            sage: conj = heegner_point(37,-7,5).ring_class_field().galois_group().complex_conjugation()
+            sage: G = heegner_point(37,-7,5).ring_class_field().galois_group()
+            sage: conj = G.complex_conjugation()
             sage: conj.order()
             2
         """
@@ -1424,19 +1448,19 @@ class GaloisAutomorphismQuadraticForm(GaloisAutomorphism):
         r"""
         INPUT:
 
-            - ``parent`` -- a group of automorphisms of a ring class field
+        - ``parent`` -- a group of automorphisms of a ring class field
 
-            - ``quadratic_form`` -- a binary quadratic form that
-              defines an element of the Galois group of `K_c` over `K`.
+        - ``quadratic_form`` -- a binary quadratic form that
+          defines an element of the Galois group of `K_c` over `K`.
 
-            - ``\alpha`` -- (default: ``None``) optional data that specified
-              element corresponding element of `(\mathcal{O}_K /
-              c\mathcal{O}_K)^* / (\ZZ/c\ZZ)^*`, via class field
-              theory.
+        - ``\alpha`` -- (default: ``None``) optional data that specified
+          element corresponding element of `(\mathcal{O}_K /
+          c\mathcal{O}_K)^* / (\ZZ/c\ZZ)^*`, via class field theory.
 
         EXAMPLES::
 
-            sage: H = heegner_points(389,-20,3); G = H.ring_class_field().galois_group(H.quadratic_field())
+            sage: H = heegner_points(389,-20,3)
+            sage: G = H.ring_class_field().galois_group(H.quadratic_field())
             sage: f = BinaryQF_reduced_representatives(-20*9)[0]
             sage: sage.schemes.elliptic_curves.heegner.GaloisAutomorphismQuadraticForm(G, f)
             Class field automorphism defined by x^2 + 45*y^2
@@ -1500,10 +1524,11 @@ class GaloisAutomorphismQuadraticForm(GaloisAutomorphism):
             sage: K1 = heegner_points(389,-52,1).ring_class_field()
             sage: G = K5.galois_group(K1)
             sage: orb = sorted([g.alpha() for g in G]); orb # random (the sign depends on the database being installed or not)
-            [1, -1/2*sqrt_minus_52, 1/2*sqrt_minus_52 + 1, 1/2*sqrt_minus_52 - 1, 1/2*sqrt_minus_52 - 2, -1/2*sqrt_minus_52 - 2]
+            [1, -1/2*sqrt_minus_52, 1/2*sqrt_minus_52 + 1, 1/2*sqrt_minus_52 - 1,
+             1/2*sqrt_minus_52 - 2, -1/2*sqrt_minus_52 - 2]
             sage: sorted([x^2 for x in orb]) # just for testing
-            [-13, -sqrt_minus_52 - 12, sqrt_minus_52 - 12, -2*sqrt_minus_52 - 9, 2*sqrt_minus_52 - 9, 1]
-
+            [-13, -sqrt_minus_52 - 12, sqrt_minus_52 - 12,
+             -2*sqrt_minus_52 - 9, 2*sqrt_minus_52 - 9, 1]
         """
         if self.__alpha is None:
             raise ValueError("alpha data not defined")
@@ -1591,9 +1616,8 @@ class GaloisAutomorphismQuadraticForm(GaloisAutomorphism):
             sage: H = heegner_points(389,-20,3); s = H.ring_class_field().galois_group(H.quadratic_field())[0]
             sage: s._repr_()
             'Class field automorphism defined by x^2 + 45*y^2'
-
         """
-        return "Class field automorphism defined by %s"%self.__quadratic_form
+        return "Class field automorphism defined by %s" % self.__quadratic_form
 
     def __mul__(self, right):
         """
@@ -1605,7 +1629,8 @@ class GaloisAutomorphismQuadraticForm(GaloisAutomorphism):
             sage: s * s
             Class field automorphism defined by x^2 + 45*y^2
             sage: G = s.parent(); list(G)
-            [Class field automorphism defined by x^2 + 45*y^2, Class field automorphism defined by 2*x^2 + 2*x*y + 23*y^2, Class field automorphism defined by 5*x^2 + 9*y^2, Class field automorphism defined by 7*x^2 + 4*x*y + 7*y^2]
+            [Class field automorphism defined by x^2 + 45*y^2, Class field automorphism defined by 2*x^2 + 2*x*y + 23*y^2,
+             Class field automorphism defined by 5*x^2 + 9*y^2, Class field automorphism defined by 7*x^2 + 4*x*y + 7*y^2]
             sage: G[0]*G[0]
             Class field automorphism defined by x^2 + 45*y^2
             sage: G[1]*G[2] == G[3]
@@ -1627,7 +1652,6 @@ class GaloisAutomorphismQuadraticForm(GaloisAutomorphism):
         """
         Return reduced quadratic form corresponding to this Galois
         automorphism.
-
 
         EXAMPLES::
 
@@ -1652,7 +1676,8 @@ class GaloisAutomorphismQuadraticForm(GaloisAutomorphism):
             sage: G[1].ideal()
             Fractional ideal (2, 1/2*sqrt_minus_20 + 1)
             sage: [s.ideal().gens() for s in G]
-            [(1, 3/2*sqrt_minus_20), (2, 3/2*sqrt_minus_20 - 1), (5, 3/2*sqrt_minus_20), (7, 3/2*sqrt_minus_20 - 2)]
+            [(1, 3/2*sqrt_minus_20), (2, 3/2*sqrt_minus_20 - 1),
+             (5, 3/2*sqrt_minus_20), (7, 3/2*sqrt_minus_20 - 2)]
         """
         M = self.parent().field()
         K = M.quadratic_field()
@@ -1660,9 +1685,9 @@ class GaloisAutomorphismQuadraticForm(GaloisAutomorphism):
         c = M.conductor()
         sqrtD = K.gen()
         (A,B,C) = f
-        if A%c == 0:
+        if A % c == 0:
             A, C = C, A
-        return K.maximal_order().ideal([A, (-B+c*sqrtD)/2])
+        return K.fractional_ideal([A, (-B+c*sqrtD)/2])
 
 ##     def __call__(self, z):
 ##         """
@@ -1783,7 +1808,7 @@ class HeegnerPoint(SageObject):
             sage: H._repr_()
             'Heegner point of level 389, discriminant -7, and conductor 5'
         """
-        return "Heegner point of level %s, discriminant %s, and conductor %s"%(
+        return "Heegner point of level %s, discriminant %s, and conductor %s" % (
             self.__N, self.__D, self.__c)
 
     def __hash__(self):
@@ -1820,7 +1845,8 @@ class HeegnerPoint(SageObject):
             sage: heegner_point(389,-7,5).conductor()
             5
             sage: E = EllipticCurve('37a1'); P = E.kolyvagin_point(-67,7); P
-            Kolyvagin point of discriminant -67 and conductor 7 on elliptic curve of conductor 37
+            Kolyvagin point of discriminant -67 and conductor 7
+             on elliptic curve of conductor 37
             sage: P.conductor()
             7
             sage: E = EllipticCurve('389a'); P = E.heegner_point(-7, 5); P.conductor()
@@ -1838,7 +1864,8 @@ class HeegnerPoint(SageObject):
             sage: heegner_point(389,-7,5).discriminant()
             -7
             sage: E = EllipticCurve('37a1'); P = E.kolyvagin_point(-67,7); P
-            Kolyvagin point of discriminant -67 and conductor 7 on elliptic curve of conductor 37
+            Kolyvagin point of discriminant -67 and conductor 7
+             on elliptic curve of conductor 37
             sage: P.discriminant()
             -67
             sage: E = EllipticCurve('389a'); P = E.heegner_point(-7, 5); P.discriminant()
@@ -1855,12 +1882,13 @@ class HeegnerPoint(SageObject):
 
             sage: x = heegner_point(37,-7,5)
             sage: x.quadratic_field()
-            Number Field in sqrt_minus_7 with defining polynomial x^2 + 7 with sqrt_minus_7 = 2.645751311064591?*I
-
+            Number Field in sqrt_minus_7 with defining polynomial x^2 + 7
+             with sqrt_minus_7 = 2.645751311064591?*I
 
             sage: E = EllipticCurve('37a'); P = E.heegner_point(-40)
             sage: P.quadratic_field()
-            Number Field in sqrt_minus_40 with defining polynomial x^2 + 40 with sqrt_minus_40 = 6.324555320336759?*I
+            Number Field in sqrt_minus_40 with defining polynomial x^2 + 40
+             with sqrt_minus_40 = 6.324555320336759?*I
             sage: P.quadratic_field() is P.quadratic_field()
             True
             sage: type(P.quadratic_field())
@@ -1877,16 +1905,17 @@ class HeegnerPoint(SageObject):
         EXAMPLES::
 
             sage: heegner_point(389,-7,5).quadratic_order()
-            Order in Number Field in sqrt_minus_7 with defining polynomial x^2 + 7 with sqrt_minus_7 = 2.645751311064591?*I
+            Order in Number Field in sqrt_minus_7 with defining polynomial x^2 + 7
+             with sqrt_minus_7 = 2.645751311064591?*I
             sage: heegner_point(389,-7,5).quadratic_order().basis()
             [1, 5*sqrt_minus_7]
 
             sage: E = EllipticCurve('37a'); P = E.heegner_point(-40,11)
             sage: P.quadratic_order()
-            Order in Number Field in sqrt_minus_40 with defining polynomial x^2 + 40 with sqrt_minus_40 = 6.324555320336759?*I
+            Order in Number Field in sqrt_minus_40 with defining polynomial x^2 + 40
+             with sqrt_minus_40 = 6.324555320336759?*I
             sage: P.quadratic_order().basis()
             [1, 11*sqrt_minus_40]
-
         """
         K = self.quadratic_field()
         return K.order([1,self.conductor()*K.gen()])
@@ -1945,7 +1974,7 @@ class HeegnerPoints(SageObject):
         """
         INPUT:
 
-            - `N` -- level, a positive integer
+        - `N` -- level, a positive integer
 
         EXAMPLES::
 
@@ -2023,7 +2052,7 @@ class HeegnerPoints_level(HeegnerPoints):
             sage: heegner_points(389)._repr_()
             'Set of all Heegner points on X_0(389)'
         """
-        return "Set of all Heegner points on X_0(%s)"%self.level()
+        return "Set of all Heegner points on X_0(%s)" % self.level()
 
     def reduce_mod(self, ell):
         r"""
@@ -2033,7 +2062,7 @@ class HeegnerPoints_level(HeegnerPoints):
 
         INPUT:
 
-            - `\ell` -- prime
+        - `\ell` -- prime
 
         EXAMPLES::
 
@@ -2049,11 +2078,11 @@ class HeegnerPoints_level(HeegnerPoints):
 
         INPUT:
 
-            - `n` -- nonnegative integer
+        - `n` -- nonnegative integer
 
-            - ``weak`` -- bool (default: ``False``); if ``True`` only require
-              weak Heegner hypothesis, which is the same as usual but
-              without the condition that `\gcd(D,N)=1`.
+        - ``weak`` -- bool (default: ``False``); if ``True`` only require
+          weak Heegner hypothesis, which is the same as usual but
+          without the condition that `\gcd(D,N)=1`.
 
         EXAMPLES::
 
@@ -2071,7 +2100,7 @@ class HeegnerPoints_level(HeegnerPoints):
         The discriminant -111 satisfies only the weak Heegner hypothesis, since it
         is divisible by 37::
 
-            sage: X.discriminants(15,weak=True)
+            sage: X.discriminants(15, weak=True)
             [-7, -11, -40, -47, -67, -71, -83, -84, -95, -104, -107, -111, -115, -120, -123]
         """
         N = self.level()
@@ -2103,7 +2132,8 @@ class HeegnerPoints_level_disc(HeegnerPoints):
         sage: H.discriminant()
         -7
         sage: H.quadratic_field()
-        Number Field in sqrt_minus_7 with defining polynomial x^2 + 7 with sqrt_minus_7 = 2.645751311064591?*I
+        Number Field in sqrt_minus_7 with defining polynomial x^2 + 7
+         with sqrt_minus_7 = 2.645751311064591?*I
         sage: H.kolyvagin_conductors()
         [1, 3, 5, 13, 15, 17, 19, 31, 39, 41]
 
@@ -2114,9 +2144,9 @@ class HeegnerPoints_level_disc(HeegnerPoints):
         """
         INPUT:
 
-           - `N` -- positive integer
+        - `N` -- positive integer
 
-           - `D` -- negative fundamental discriminant
+        - `D` -- negative fundamental discriminant
 
         EXAMPLES::
 
@@ -2126,7 +2156,7 @@ class HeegnerPoints_level_disc(HeegnerPoints):
         HeegnerPoints.__init__(self, N)
         D = ZZ(D)
         if not satisfies_weak_heegner_hypothesis(N,D):
-            raise ValueError("D (=%s) must satisfy the weak Heegner hypothesis for N (=%s)"%(D,N))
+            raise ValueError("D (=%s) must satisfy the weak Heegner hypothesis for N (=%s)" % (D,N))
         self.__D = D
 
     def __eq__(self, other):
@@ -2168,9 +2198,8 @@ class HeegnerPoints_level_disc(HeegnerPoints):
             sage: heegner_points(389,-7)._repr_()
             'Set of all Heegner points on X_0(389) associated to QQ[sqrt(-7)]'
         """
-        return "Set of all Heegner points on X_0(%s) associated to QQ[sqrt(%s)]"%(
+        return "Set of all Heegner points on X_0(%s) associated to QQ[sqrt(%s)]" % (
             self.level(), self.discriminant())
-
 
     def discriminant(self):
         r"""
@@ -2192,10 +2221,11 @@ class HeegnerPoints_level_disc(HeegnerPoints):
 
             sage: E = EllipticCurve('389a'); K = E.heegner_point(-7,5).ring_class_field()
             sage: K.quadratic_field()
-            Number Field in sqrt_minus_7 with defining polynomial x^2 + 7 with sqrt_minus_7 = 2.645751311064591?*I
+            Number Field in sqrt_minus_7 with defining polynomial x^2 + 7
+             with sqrt_minus_7 = 2.645751311064591?*I
         """
-        D   = self.__D
-        var = 'sqrt_minus_%s'%(-D)
+        D = self.__D
+        var = 'sqrt_minus_%s' % (-D)
         return number_field.QuadraticField(D,var)
 
     def kolyvagin_conductors(self, r=None, n=10, E=None, m=None):
@@ -2213,17 +2243,17 @@ class HeegnerPoints_level_disc(HeegnerPoints):
 
         INPUT:
 
-            - `r` -- (default: ``None``) nonnegative integer or ``None``
+        - `r` -- (default: ``None``) nonnegative integer or ``None``
 
-            - `n` -- positive integer
+        - `n` -- positive integer
 
-            - `E` -- an elliptic curve
+        - `E` -- an elliptic curve
 
-            - `m` -- a positive integer
+        - `m` -- a positive integer
 
         EXAMPLES::
 
-            sage: H = heegner_points(389,-7)
+            sage: H = heegner_points(389, -7)
             sage: H.kolyvagin_conductors(0)
             [1]
             sage: H.kolyvagin_conductors(1)
@@ -2232,9 +2262,9 @@ class HeegnerPoints_level_disc(HeegnerPoints):
             [3, 5, 13, 17, 19, 31, 41, 47, 59, 61, 73, 83, 89, 97, 101]
             sage: H.kolyvagin_conductors(1,5)
             [3, 5, 13, 17, 19]
-            sage: H.kolyvagin_conductors(1,5,EllipticCurve('389a'),3)
+            sage: H.kolyvagin_conductors(1, 5, EllipticCurve('389a'), 3)
             [5, 17, 41, 59, 83]
-            sage: H.kolyvagin_conductors(2,5,EllipticCurve('389a'),3)
+            sage: H.kolyvagin_conductors(2, 5, EllipticCurve('389a'), 3)
             [85, 205, 295, 415, 697]
         """
         D = self.__D
@@ -2275,30 +2305,30 @@ def is_kolyvagin_conductor(N, E, D, r, n, c):
 
     INPUT:
 
-        - `N` -- level (positive integer)
+    - `N` -- level (positive integer)
 
-        - `E` -- elliptic curve or ``None``
+    - `E` -- elliptic curve or ``None``
 
-        - `D` -- negative fundamental discriminant
+    - `D` -- negative fundamental discriminant
 
-        - `r` -- number of prime factors (nonnegative integer) or ``None``
+    - `r` -- number of prime factors (nonnegative integer) or ``None``
 
-        - `n` -- torsion order (i.e., do we get class in `(E(K_c)/n E(K_c))^{Gal(K_c/K)}`?)
+    - `n` -- torsion order (i.e., do we get class in `(E(K_c)/n E(K_c))^{Gal(K_c/K)}`?)
 
-        - `c` -- conductor (positive integer)
+    - `c` -- conductor (positive integer)
 
     EXAMPLES::
 
         sage: from sage.schemes.elliptic_curves.heegner import is_kolyvagin_conductor
-        sage: is_kolyvagin_conductor(389,None,-7,1,None,5)
+        sage: is_kolyvagin_conductor(389, None, -7, 1, None, 5)
         True
-        sage: is_kolyvagin_conductor(389,None,-7,1,None,7)
+        sage: is_kolyvagin_conductor(389, None, -7, 1, None, 7)
         False
-        sage: is_kolyvagin_conductor(389,None,-7,1,None,11)
+        sage: is_kolyvagin_conductor(389, None, -7, 1, None, 11)
         False
-        sage: is_kolyvagin_conductor(389,EllipticCurve('389a'),-7,1,3,5)
+        sage: is_kolyvagin_conductor(389, EllipticCurve('389a'), -7, 1, 3, 5)
         True
-        sage: is_kolyvagin_conductor(389,EllipticCurve('389a'),-7,1,11,5)
+        sage: is_kolyvagin_conductor(389, EllipticCurve('389a'), -7, 1, 11, 5)
         False
     """
     ND = N*D
@@ -2343,7 +2373,8 @@ class HeegnerPoints_level_disc_cond(HeegnerPoints_level, HeegnerPoints_level_dis
         (147, 631)
 
         sage: H.quadratic_field()
-        Number Field in sqrt_minus_7 with defining polynomial x^2 + 7 with sqrt_minus_7 = 2.645751311064591?*I
+        Number Field in sqrt_minus_7 with defining polynomial x^2 + 7
+         with sqrt_minus_7 = 2.645751311064591?*I
         sage: H.ring_class_field()
         Ring class field extension of QQ[sqrt(-7)] of conductor 5
 
@@ -2362,11 +2393,11 @@ class HeegnerPoints_level_disc_cond(HeegnerPoints_level, HeegnerPoints_level_dis
 
         INPUT:
 
-            - `N` -- positive integer (the level)
+        - `N` -- positive integer (the level)
 
-            - `D` -- negative fundamental discriminant
+        - `D` -- negative fundamental discriminant
 
-            - `c` -- conductor (default: 1)
+        - `c` -- conductor (default: 1)
 
         EXAMPLES::
 
@@ -2418,7 +2449,7 @@ class HeegnerPoints_level_disc_cond(HeegnerPoints_level, HeegnerPoints_level_dis
             sage: H = heegner_points(37,-7,5); H._repr_()
             'All Heegner points of conductor 5 on X_0(37) associated to QQ[sqrt(-7)]'
         """
-        return "All Heegner points of conductor %s on X_0(%s) associated to QQ[sqrt(%s)]"%(
+        return "All Heegner points of conductor %s on X_0(%s) associated to QQ[sqrt(%s)]" % (
             self.conductor(), self.level(), self.discriminant())
 
     def conductor(self):
@@ -2478,9 +2509,11 @@ class HeegnerPoints_level_disc_cond(HeegnerPoints_level, HeegnerPoints_level_dis
             sage: len(H)
             12
             sage: H[0]
-            Heegner point 5/778*sqrt(-7) - 147/778 of discriminant -7 and conductor 5 on X_0(389)
+            Heegner point 5/778*sqrt(-7) - 147/778 of discriminant -7 and conductor 5
+             on X_0(389)
             sage: H[-1]
-            Heegner point 5/5446*sqrt(-7) - 757/778 of discriminant -7 and conductor 5 on X_0(389)
+            Heegner point 5/5446*sqrt(-7) - 757/778 of discriminant -7 and conductor 5
+             on X_0(389)
         """
         return self.points()[i]
 
@@ -2531,8 +2564,7 @@ class HeegnerPoints_level_disc_cond(HeegnerPoints_level, HeegnerPoints_level_dis
         N = self.level()
         R = Integers(4*N)
         m = 2*N
-        return tuple(sorted( set([a%m for a in R(D).sqrt(all=True)]) ))
-
+        return tuple(sorted( set([a % m for a in R(D).sqrt(all=True)]) ))
 
     @cached_method
     def points(self, beta=None):
@@ -2545,17 +2577,25 @@ class HeegnerPoints_level_disc_cond(HeegnerPoints_level, HeegnerPoints_level_dis
 
         EXAMPLES::
 
-            sage: H = heegner_points(389,-7,5); H
+            sage: H = heegner_points(389, -7, 5); H
             All Heegner points of conductor 5 on X_0(389) associated to QQ[sqrt(-7)]
             sage: H.points()
-            (Heegner point 5/778*sqrt(-7) - 147/778 of discriminant -7 and conductor 5 on X_0(389), ..., Heegner point 5/5446*sqrt(-7) - 757/778 of discriminant -7 and conductor 5 on X_0(389))
+            (Heegner point 5/778*sqrt(-7) - 147/778 of discriminant -7 and conductor 5
+              on X_0(389),
+             ...,
+             Heegner point 5/5446*sqrt(-7) - 757/778 of discriminant -7 and conductor 5
+              on X_0(389))
             sage: H.betas()
             (147, 631)
             sage: [x.tau() for x in H.points(147)]
-            [5/778*sqrt_minus_7 - 147/778, 5/1556*sqrt_minus_7 - 147/1556, 5/1556*sqrt_minus_7 - 925/1556, 5/3112*sqrt_minus_7 - 1703/3112, 5/3112*sqrt_minus_7 - 2481/3112, 5/5446*sqrt_minus_7 - 21/778]
+            [5/778*sqrt_minus_7 - 147/778, 5/1556*sqrt_minus_7 - 147/1556,
+             5/1556*sqrt_minus_7 - 925/1556, 5/3112*sqrt_minus_7 - 1703/3112,
+             5/3112*sqrt_minus_7 - 2481/3112, 5/5446*sqrt_minus_7 - 21/778]
 
             sage: [x.tau() for x in H.points(631)]
-            [5/778*sqrt_minus_7 - 631/778, 5/1556*sqrt_minus_7 - 631/1556, 5/1556*sqrt_minus_7 - 1409/1556, 5/3112*sqrt_minus_7 - 631/3112, 5/3112*sqrt_minus_7 - 1409/3112, 5/5446*sqrt_minus_7 - 757/778]
+            [5/778*sqrt_minus_7 - 631/778, 5/1556*sqrt_minus_7 - 631/1556,
+             5/1556*sqrt_minus_7 - 1409/1556, 5/3112*sqrt_minus_7 - 631/3112,
+             5/3112*sqrt_minus_7 - 1409/3112, 5/5446*sqrt_minus_7 - 757/778]
 
         The result is cached and is a tuple (since it is immutable)::
 
@@ -2608,9 +2648,9 @@ class HeegnerPoints_level_disc_cond(HeegnerPoints_level, HeegnerPoints_level_dis
 
         EXAMPLES::
 
-            sage: heegner_points(389,-7,5).plot(pointsize=50, rgbcolor='red')
+            sage: heegner_points(389,-7,5).plot(pointsize=50, rgbcolor='red')           # optional - sage.plot
             Graphics object consisting of 12 graphics primitives
-            sage: heegner_points(53,-7,15).plot(pointsize=50, rgbcolor='purple')
+            sage: heegner_points(53,-7,15).plot(pointsize=50, rgbcolor='purple')        # optional - sage.plot
             Graphics object consisting of 48 graphics primitives
         """
         return sum(z.plot(*args, **kwds) for z in self)
@@ -2623,7 +2663,7 @@ class HeegnerPointOnX0N(HeegnerPoint):
 
     EXAMPLES::
 
-        sage: x = heegner_point(37,-7,5); x
+        sage: x = heegner_point(37, -7, 5); x
         Heegner point 5/74*sqrt(-7) - 11/74 of discriminant -7 and conductor 5 on X_0(37)
         sage: type(x)
         <class 'sage.schemes.elliptic_curves.heegner.HeegnerPointOnX0N'>
@@ -2634,11 +2674,13 @@ class HeegnerPointOnX0N(HeegnerPoint):
         sage: x.discriminant()
         -7
         sage: x.quadratic_field()
-        Number Field in sqrt_minus_7 with defining polynomial x^2 + 7 with sqrt_minus_7 = 2.645751311064591?*I
+        Number Field in sqrt_minus_7 with defining polynomial x^2 + 7
+         with sqrt_minus_7 = 2.645751311064591?*I
         sage: x.quadratic_form()
         37*x^2 + 11*x*y + 2*y^2
         sage: x.quadratic_order()
-        Order in Number Field in sqrt_minus_7 with defining polynomial x^2 + 7 with sqrt_minus_7 = 2.645751311064591?*I
+        Order in Number Field in sqrt_minus_7 with defining polynomial x^2 + 7
+         with sqrt_minus_7 = 2.645751311064591?*I
         sage: x.tau()
         5/74*sqrt_minus_7 - 11/74
         sage: loads(dumps(x)) == x
@@ -2648,28 +2690,30 @@ class HeegnerPointOnX0N(HeegnerPoint):
         r"""
         INPUT:
 
-           - `N` -- positive integer
+        - `N` -- positive integer
 
-           - `D` -- fundamental discriminant, a negative integer
+        - `D` -- fundamental discriminant, a negative integer
 
-           - `c` -- conductor, a positive integer coprime to `N`
+        - `c` -- conductor, a positive integer coprime to `N`
 
-           - `f` -- binary quadratic form, 3-tuple `(A,B,C)` of coefficients
-                    of `AX^2 + BXY + CY^2`, or element of quadratic imaginary
-                    field `\QQ(\sqrt{D})` in the upper half plan.
+        - `f` -- binary quadratic form, 3-tuple `(A,B,C)` of coefficients
+          of `AX^2 + BXY + CY^2`, or element of quadratic imaginary
+          field `\QQ(\sqrt{D})` in the upper half plan.
 
-           - ``check`` -- bool, default: ``True``.  should not be used
-                    except internally.
-
+        - ``check`` -- bool, default: ``True``.  should not be used
+          except internally.
 
         EXAMPLES::
 
+            sage: from sage.schemes.elliptic_curves.heegner import HeegnerPointOnX0N
             sage: x = heegner_point(389, -7, 5); x
-            Heegner point 5/778*sqrt(-7) - 147/778 of discriminant -7 and conductor 5 on X_0(389)
+            Heegner point 5/778*sqrt(-7) - 147/778 of discriminant -7 and conductor 5
+             on X_0(389)
             sage: type(x)
             <class 'sage.schemes.elliptic_curves.heegner.HeegnerPointOnX0N'>
-            sage: sage.schemes.elliptic_curves.heegner.HeegnerPointOnX0N(389, -7, 5, None, check=False)
-            Heegner point 5/778*sqrt(-7) - 147/778 of discriminant -7 and conductor 5 on X_0(389)
+            sage: HeegnerPointOnX0N(389, -7, 5, None, check=False)
+            Heegner point 5/778*sqrt(-7) - 147/778 of discriminant -7 and conductor 5
+             on X_0(389)
         """
         if check:
             N = ZZ(N)
@@ -2678,7 +2722,7 @@ class HeegnerPointOnX0N(HeegnerPoint):
             if c.gcd(N) != 1:
                 raise ValueError("conductor c (=%s) must be coprime to N (=%s)" % (c, N))
             if not satisfies_weak_heegner_hypothesis(N, D):
-                raise ValueError("N (=%s) and D (=%s) must satisfy the Heegner hypothesis"%(N, D))
+                raise ValueError("N (=%s) and D (=%s) must satisfy the Heegner hypothesis" % (N, D))
             if f is not None:
                 if isinstance(f, tuple):
                     if len(f) != 3:
@@ -2687,7 +2731,7 @@ class HeegnerPointOnX0N(HeegnerPoint):
                 elif isinstance(f, BinaryQF):
                     # convert from BinaryQF
                     f = tuple(f)
-                elif sage.rings.number_field.number_field_element.is_NumberFieldElement(f):
+                elif isinstance(f, NumberFieldElement_base):
                     # tau = number field element
                     g = f.minpoly()
                     if g.degree() != 2:
@@ -2698,7 +2742,7 @@ class HeegnerPointOnX0N(HeegnerPoint):
                     raise TypeError("f must be a 3-tuple, quadratic form, or element of the upper half plane")
                 A, B, C = f
                 if B*B - 4*A*C != D*c*c:
-                    raise ValueError("f (=%s) must have discriminant %s"%(f, D*c*c))
+                    raise ValueError("f (=%s) must have discriminant %s" % (f, D*c*c))
         HeegnerPoint.__init__(self, N, D, c)
         if f is None:
             # We know that N|A, so A = N is optimal.
@@ -2708,7 +2752,6 @@ class HeegnerPointOnX0N(HeegnerPoint):
             f = (A,B,C)
         self.__f = f
 
-
     def __hash__(self):
         """
         The hash is obtained from the hash provided by :class:`HeegnerPoint`,
@@ -2716,7 +2759,7 @@ class HeegnerPointOnX0N(HeegnerPoint):
 
         EXAMPLES::
 
-            sage: x = heegner_point(37,-7,5)
+            sage: x = heegner_point(37, -7, 5)
             sage: from sage.schemes.elliptic_curves.heegner import HeegnerPoint
             sage: hash(x) == hash( (HeegnerPoint.__hash__(x), x.reduced_quadratic_form()) )
             True
@@ -2730,7 +2773,7 @@ class HeegnerPointOnX0N(HeegnerPoint):
         EXAMPLES::
 
             sage: x1 = EllipticCurve('389a').heegner_point(-7).heegner_point_on_X0N()
-            sage: x5 = EllipticCurve('389a').heegner_point(-7,5).heegner_point_on_X0N()
+            sage: x5 = EllipticCurve('389a').heegner_point(-7, 5).heegner_point_on_X0N()
             sage: x1 == x1
             True
             sage: x1 < x5
@@ -2751,32 +2794,33 @@ class HeegnerPointOnX0N(HeegnerPoint):
 
         EXAMPLES::
 
-            sage: x = heegner_point(37,-7,5); x._repr_()
+            sage: x = heegner_point(37, -7, 5); x._repr_()
             'Heegner point 5/74*sqrt(-7) - 11/74 of discriminant -7 and conductor 5 on X_0(37)'
         """
         c = self.conductor()
-        s = " and conductor %s"%c if c != 1 else ""
+        s = " and conductor %s" % c if c != 1 else ""
         N = self.level()
         D = self.discriminant()
-        tau = repr(self.tau()).replace('sqrt_minus_%s'%(-D),'sqrt(%s)'%D)
-        return "Heegner point %s of discriminant %s%s on X_0(%s)"%(tau, D, s, N)
+        tau = repr(self.tau()).replace('sqrt_minus_%s' % (-D),'sqrt(%s)' % D)
+        return "Heegner point %s of discriminant %s%s on X_0(%s)" % (tau, D, s, N)
 
     def atkin_lehner_act(self, Q=None):
         r"""
-        Given an integer Q dividing the level N such that `\gcd(Q, N/Q) = 1`, returns the
+        Given an integer Q dividing the level N such that `\gcd(Q, N/Q) = 1`, return the
         image of this Heegner point under the Atkin-Lehner operator `W_Q`.
 
         INPUT:
 
-            - `Q` -- positive divisor of `N`; if not given, default to `N`
+        - `Q` -- positive divisor of `N`; if not given, default to `N`
 
         EXAMPLES::
 
-            sage: x = heegner_point(389,-7,5)
+            sage: x = heegner_point(389, -7, 5)
             sage: x.atkin_lehner_act()
-            Heegner point 5/199168*sqrt(-7) - 631/199168 of discriminant -7 and conductor 5 on X_0(389)
+            Heegner point 5/199168*sqrt(-7) - 631/199168 of discriminant -7
+             and conductor 5 on X_0(389)
 
-            sage: x = heegner_point(45,D=-11,c=1); x
+            sage: x = heegner_point(45, D=-11, c=1); x
             Heegner point 1/90*sqrt(-11) - 13/90 of discriminant -11 on X_0(45)
             sage: x.atkin_lehner_act(5)
             Heegner point 1/90*sqrt(-11) + 23/90 of discriminant -11 on X_0(45)
@@ -2808,7 +2852,7 @@ class HeegnerPointOnX0N(HeegnerPoint):
 
         EXAMPLES::
 
-            sage: heegner_point(389,-7,5).quadratic_form()
+            sage: heegner_point(389, -7, 5).quadratic_form()
             389*x^2 + 147*x*y + 14*y^2
         """
         # It is good/important that this return a copy, since
@@ -2823,7 +2867,7 @@ class HeegnerPointOnX0N(HeegnerPoint):
 
         EXAMPLES::
 
-            sage: x = heegner_point(389,-7,5)
+            sage: x = heegner_point(389, -7, 5)
             sage: x.quadratic_form()
             389*x^2 + 147*x*y + 14*y^2
             sage: x.reduced_quadratic_form()
@@ -2842,7 +2886,7 @@ class HeegnerPointOnX0N(HeegnerPoint):
 
         EXAMPLES::
 
-            sage: x = heegner_point(37,-7,5); tau = x.tau(); tau
+            sage: x = heegner_point(37, -7, 5); tau = x.tau(); tau
             5/74*sqrt_minus_7 - 11/74
             sage: 37 * tau.minpoly()
             37*x^2 + 11*x + 2
@@ -2862,14 +2906,17 @@ class HeegnerPointOnX0N(HeegnerPoint):
 
         EXAMPLES::
 
-            sage: x = heegner_point(389,-7,5); x
-            Heegner point 5/778*sqrt(-7) - 147/778 of discriminant -7 and conductor 5 on X_0(389)
+            sage: x = heegner_point(389, -7, 5); x
+            Heegner point 5/778*sqrt(-7) - 147/778 of discriminant -7
+             and conductor 5 on X_0(389)
             sage: y = x.map_to_curve(EllipticCurve('389a')); y
-            Heegner point of discriminant -7 and conductor 5 on elliptic curve of conductor 389
+            Heegner point of discriminant -7 and conductor 5
+             on elliptic curve of conductor 389
             sage: y.curve().cremona_label()
             '389a1'
             sage: y.heegner_point_on_X0N()
-            Heegner point 5/778*sqrt(-7) - 147/778 of discriminant -7 and conductor 5 on X_0(389)
+            Heegner point 5/778*sqrt(-7) - 147/778 of discriminant -7
+             and conductor 5 on X_0(389)
 
         You can also directly apply the modular parametrization of the elliptic curve::
 
@@ -2888,10 +2935,14 @@ class HeegnerPointOnX0N(HeegnerPoint):
 
         EXAMPLES::
 
-            sage: x = heegner_point(389,-7,3); x
-            Heegner point 3/778*sqrt(-7) - 223/778 of discriminant -7 and conductor 3 on X_0(389)
+            sage: x = heegner_point(389, -7, 3); x
+            Heegner point 3/778*sqrt(-7) - 223/778 of discriminant -7
+             and conductor 3 on X_0(389)
             sage: x.galois_orbit_over_K()
-            [Heegner point 3/778*sqrt(-7) - 223/778 of discriminant -7 and conductor 3 on X_0(389), Heegner point 3/1556*sqrt(-7) - 223/1556 of discriminant -7 and conductor 3 on X_0(389), Heegner point 3/1556*sqrt(-7) - 1001/1556 of discriminant -7 and conductor 3 on X_0(389), Heegner point 3/3112*sqrt(-7) - 223/3112 of discriminant -7 and conductor 3 on X_0(389)]
+            [Heegner point 3/778*sqrt(-7) - 223/778 of discriminant -7 and conductor 3 on X_0(389),
+             Heegner point 3/1556*sqrt(-7) - 223/1556 of discriminant -7 and conductor 3 on X_0(389),
+             Heegner point 3/1556*sqrt(-7) - 1001/1556 of discriminant -7 and conductor 3 on X_0(389),
+             Heegner point 3/3112*sqrt(-7) - 223/3112 of discriminant -7 and conductor 3 on X_0(389)]
         """
         c = self.conductor()
         N = self.level()
@@ -2960,15 +3011,15 @@ class HeegnerPointOnEllipticCurve(HeegnerPoint):
            - `x` -- Heegner point on `X_0(N)`
 
            - ``check`` -- bool (default: ``True``); if ``True``, ensure that `D`,
-                      `c` are of type Integer and define a Heegner point
-                      on `E`
+             `c` are of type Integer and define a Heegner point on `E`
 
         EXAMPLES::
 
             sage: x = heegner_point(389,-7,5)
             sage: E = EllipticCurve('389a')
             sage: sage.schemes.elliptic_curves.heegner.HeegnerPointOnEllipticCurve(E, x)
-            Heegner point of discriminant -7 and conductor 5 on elliptic curve of conductor 389
+            Heegner point of discriminant -7 and conductor 5 on elliptic curve
+             of conductor 389
         """
         if check:
             if E.conductor() != x.level():
@@ -2988,15 +3039,15 @@ class HeegnerPointOnEllipticCurve(HeegnerPoint):
 
         INPUT:
 
-            `n` -- positive integer
+        - `n` -- positive integer
 
         EXAMPLES::
 
             sage: EllipticCurve('389a').heegner_point(-7).satisfies_kolyvagin_hypothesis()
             True
-            sage: EllipticCurve('389a').heegner_point(-7,5).satisfies_kolyvagin_hypothesis()
+            sage: EllipticCurve('389a').heegner_point(-7, 5).satisfies_kolyvagin_hypothesis()
             True
-            sage: EllipticCurve('389a').heegner_point(-7,11).satisfies_kolyvagin_hypothesis()
+            sage: EllipticCurve('389a').heegner_point(-7, 11).satisfies_kolyvagin_hypothesis()
             False
         """
         if n is not None:
@@ -3013,7 +3064,7 @@ class HeegnerPointOnEllipticCurve(HeegnerPoint):
 
         EXAMPLES::
 
-            sage: x = EllipticCurve('389a').heegner_point(-7,5)
+            sage: x = EllipticCurve('389a').heegner_point(-7, 5)
             sage: hash(x) == hash( (x.curve(), x.heegner_point_on_X0N()) )
             True
         """
@@ -3024,7 +3075,7 @@ class HeegnerPointOnEllipticCurve(HeegnerPoint):
         EXAMPLES::
 
             sage: y1 = EllipticCurve('389a').heegner_point(-7)
-            sage: y5 = EllipticCurve('389a').heegner_point(-7,5)
+            sage: y5 = EllipticCurve('389a').heegner_point(-7, 5)
             sage: y1 == y1
             True
             sage: y5 == y5
@@ -3042,7 +3093,7 @@ class HeegnerPointOnEllipticCurve(HeegnerPoint):
         EXAMPLES::
 
             sage: y1 = EllipticCurve('389a').heegner_point(-7)
-            sage: y5 = EllipticCurve('389a').heegner_point(-7,5)
+            sage: y5 = EllipticCurve('389a').heegner_point(-7, 5)
             sage: y1 != y1
             False
             sage: y5 != y5
@@ -3064,9 +3115,9 @@ class HeegnerPointOnEllipticCurve(HeegnerPoint):
             sage: P._repr_()
             'Heegner point of discriminant -7 and conductor 97 on elliptic curve of conductor 389'
         """
-        s = " and conductor %s"%self.conductor() if self.conductor() != 1 else ""
+        s = " and conductor %s" % self.conductor() if self.conductor() != 1 else ""
         N = self.__E.conductor()
-        return "Heegner point of discriminant %s%s on elliptic curve of conductor %s"%(self.discriminant(), s, N)
+        return "Heegner point of discriminant %s%s on elliptic curve of conductor %s" % (self.discriminant(), s, N)
 
     def heegner_point_on_X0N(self):
         r"""
@@ -3075,9 +3126,11 @@ class HeegnerPointOnEllipticCurve(HeegnerPoint):
         EXAMPLES::
 
             sage: E = EllipticCurve('37a'); P = E.heegner_point(-7,5); P
-            Heegner point of discriminant -7 and conductor 5 on elliptic curve of conductor 37
+            Heegner point of discriminant -7 and conductor 5 on elliptic curve
+             of conductor 37
             sage: P.heegner_point_on_X0N()
-            Heegner point 5/74*sqrt(-7) - 11/74 of discriminant -7 and conductor 5 on X_0(37)
+            Heegner point 5/74*sqrt(-7) - 11/74 of discriminant -7 and conductor 5
+             on X_0(37)
         """
         return self.__x
 
@@ -3159,7 +3212,8 @@ class HeegnerPointOnEllipticCurve(HeegnerPoint):
             sage: P = y.kolyvagin_point(); P
             Kolyvagin point of discriminant -7 on elliptic curve of conductor 37
             sage: P.numerical_approx()  # abs tol 1e-15
-            (-3.36910401903861e-16 - 2.22076195576076e-16*I : 3.33066907387547e-16 + 2.22076195576075e-16*I : 1.00000000000000)
+            (-3.36910401903861e-16 - 2.22076195576076e-16*I
+             : 3.33066907387547e-16 + 2.22076195576075e-16*I : 1.00000000000000)
         """
         return KolyvaginPoint(self)
 
@@ -3175,12 +3229,13 @@ class HeegnerPointOnEllipticCurve(HeegnerPoint):
 
         OUTPUT:
 
-            - ``Integer`` -- returns an integer
+        - ``Integer`` -- returns an integer
 
         EXAMPLES::
 
             sage: E = EllipticCurve('77a1')
-            sage: P = E.heegner_point(-19); y = P._trace_numerical_conductor_1(); [c.real() for c in y]
+            sage: P = E.heegner_point(-19); y = P._trace_numerical_conductor_1()
+            sage: [c.real() for c in y]
             [-1.2...e-16, -1.00000000000000, 1.00000000000000]
             sage: -2*E.gens()[0]
             (0 : -1 : 1)
@@ -3190,7 +3245,8 @@ class HeegnerPointOnEllipticCurve(HeegnerPoint):
             sage: P = E.heegner_point(-68); P
             Heegner point of discriminant -68 on elliptic curve of conductor 77
             sage: N(P)
-            (0.219223593595584 - 1.87443160153148*I : -1.34232921921325 - 1.52356748877889*I : 1.00000000000000)
+            (0.219223593595584 - 1.87443160153148*I
+             : -1.34232921921325 - 1.52356748877889*I : 1.00000000000000)
             sage: P._trace_index()
             0
         """
@@ -3224,14 +3280,14 @@ class HeegnerPointOnEllipticCurve(HeegnerPoint):
         Return the integral primitive positive definite binary
         quadratic form associated to this Heegner point.
 
-
         EXAMPLES::
 
             sage: EllipticCurve('389a').heegner_point(-7, 5).quadratic_form()
             389*x^2 + 147*x*y + 14*y^2
 
             sage: P = EllipticCurve('389a').heegner_point(-7, 5, (778,925,275)); P
-            Heegner point of discriminant -7 and conductor 5 on elliptic curve of conductor 389
+            Heegner point of discriminant -7 and conductor 5 on elliptic curve
+             of conductor 389
             sage: P.quadratic_form()
             778*x^2 + 925*x*y + 275*y^2
         """
@@ -3251,14 +3307,15 @@ class HeegnerPointOnEllipticCurve(HeegnerPoint):
 
         INPUT:
 
-            - prec     -- (default: ``None``) the working precision
+        - prec     -- (default: ``None``) the working precision
 
         EXAMPLES::
 
             sage: E = EllipticCurve('37a'); P = E.heegner_point(-7); P
             Heegner point of discriminant -7 on elliptic curve of conductor 37
             sage: P.numerical_approx()  # abs tol 1e-15
-            (-3.36910401903861e-16 - 2.22076195576076e-16*I : 3.33066907387547e-16 + 2.22076195576075e-16*I : 1.00000000000000)
+            (-3.36910401903861e-16 - 2.22076195576076e-16*I
+             : 3.33066907387547e-16 + 2.22076195576075e-16*I : 1.00000000000000)
             sage: P.numerical_approx(10)  # expect random digits
             (0.0030 - 0.0028*I : -0.0030 + 0.0028*I : 1.0)
             sage: P.numerical_approx(100)[0]  # expect random digits
@@ -3266,7 +3323,8 @@ class HeegnerPointOnEllipticCurve(HeegnerPoint):
             sage: E = EllipticCurve('37a'); P = E.heegner_point(-40); P
             Heegner point of discriminant -40 on elliptic curve of conductor 37
             sage: P.numerical_approx()  # abs tol 1e-14
-            (-3.15940603400359e-16 + 1.41421356237309*I : 1.00000000000000 - 1.41421356237309*I : 1.00000000000000)
+            (-3.15940603400359e-16 + 1.41421356237309*I
+             : 1.00000000000000 - 1.41421356237309*I : 1.00000000000000)
 
         A rank 2 curve, where all Heegner points of conductor 1 are 0::
 
@@ -3280,15 +3338,20 @@ class HeegnerPointOnEllipticCurve(HeegnerPoint):
         However, Heegner points of bigger conductor are often nonzero::
 
             sage: E = EllipticCurve('389a'); P = E.heegner_point(-7, 5); P
-            Heegner point of discriminant -7 and conductor 5 on elliptic curve of conductor 389
+            Heegner point of discriminant -7 and conductor 5 on elliptic curve
+             of conductor 389
             sage: numerical_approx(P)
-            (0.675507556926807 + 0.344749649302635*I : -0.377142931401887 + 0.843366227137146*I : 1.00000000000000)
+            (0.675507556926807 + 0.344749649302635*I
+             : -0.377142931401887 + 0.843366227137146*I : 1.00000000000000)
             sage: P.numerical_approx()
-            (0.6755075569268... + 0.3447496493026...*I : -0.3771429314018... + 0.8433662271371...*I : 1.00000000000000)
+            (0.6755075569268... + 0.3447496493026...*I
+             : -0.3771429314018... + 0.8433662271371...*I : 1.00000000000000)
             sage: E.heegner_point(-7, 11).numerical_approx()
-            (0.1795583794118... + 0.02035501750912...*I : -0.5573941377055... + 0.2738940831635...*I : 1.00000000000000)
+            (0.1795583794118... + 0.02035501750912...*I
+             : -0.5573941377055... + 0.2738940831635...*I : 1.00000000000000)
             sage: E.heegner_point(-7, 13).numerical_approx()
-            (1.034302915374... - 3.302744319777...*I : 1.323937875767... + 6.908264226850...*I : 1.00000000000000)
+            (1.034302915374... - 3.302744319777...*I
+             : 1.323937875767... + 6.908264226850...*I : 1.00000000000000)
 
         We find (probably) the defining polynomial of the
         `x`-coordinate of `P`, which defines a class field.  The shape of
@@ -3333,16 +3396,15 @@ class HeegnerPointOnEllipticCurve(HeegnerPoint):
 
         INPUT:
 
-            - ``prec`` -- integer (default: 53)
+        - ``prec`` -- integer (default: 53)
 
-            - ``algorithm`` -- 'conjugates' or 'lll' (default); if
-                   'conjugates', compute numerically all the
-                   conjugates ``y[i]`` of the Heegner point and construct
-                   the characteristic polynomial as the product
-                   `f(X)=(X-y[i])`.  If 'lll', compute only one of the
-                   conjugates ``y[0]``, then uses the LLL algorithm to
-                   guess `f(X)`.
-
+        - ``algorithm`` -- 'conjugates' or 'lll' (default); if
+          'conjugates', compute numerically all the
+          conjugates ``y[i]`` of the Heegner point and construct
+          the characteristic polynomial as the product
+          `f(X)=(X-y[i])`.  If 'lll', compute only one of the
+          conjugates ``y[0]``, then uses the LLL algorithm to
+          guess `f(X)`.
 
         EXAMPLES:
 
@@ -3352,58 +3414,63 @@ class HeegnerPointOnEllipticCurve(HeegnerPoint):
             sage: E = EllipticCurve('37a')
             sage: v = E.heegner_discriminants_list(10)
             sage: [E.heegner_point(D).x_poly_exact() for D in v]
-            [x, x, x^2 + 2, x^5 - x^4 + x^3 + x^2 - 2*x + 1, x - 6, x^7 - 2*x^6 + 9*x^5 - 10*x^4 - x^3 + 8*x^2 - 5*x + 1, x^3 + 5*x^2 + 10*x + 4, x^4 - 10*x^3 + 10*x^2 + 12*x - 12, x^8 - 5*x^7 + 7*x^6 + 13*x^5 - 10*x^4 - 4*x^3 + x^2 - 5*x + 7, x^6 - 2*x^5 + 11*x^4 - 24*x^3 + 30*x^2 - 16*x + 4]
-
+            [x, x, x^2 + 2, x^5 - x^4 + x^3 + x^2 - 2*x + 1, x - 6,
+             x^7 - 2*x^6 + 9*x^5 - 10*x^4 - x^3 + 8*x^2 - 5*x + 1,
+             x^3 + 5*x^2 + 10*x + 4, x^4 - 10*x^3 + 10*x^2 + 12*x - 12,
+             x^8 - 5*x^7 + 7*x^6 + 13*x^5 - 10*x^4 - 4*x^3 + x^2 - 5*x + 7,
+             x^6 - 2*x^5 + 11*x^4 - 24*x^3 + 30*x^2 - 16*x + 4]
 
         We compute `x`-coordinate polynomials for some Heegner points
         of conductor bigger than 1 on a rank 2 curve::
 
             sage: E = EllipticCurve('389a'); P = E.heegner_point(-7, 5); P
-            Heegner point of discriminant -7 and conductor 5 on elliptic curve of conductor 389
+            Heegner point of discriminant -7 and conductor 5
+             on elliptic curve of conductor 389
             sage: P.x_poly_exact()
             Traceback (most recent call last):
             ...
-            ValueError: insufficient precision to determine Heegner point (fails discriminant test)
-            sage: P.x_poly_exact(75)
+            ValueError: insufficient precision to determine Heegner point
+            (fails discriminant test)
+            sage: P.x_poly_exact(120)
             x^6 + 10/7*x^5 - 867/49*x^4 - 76/245*x^3 + 3148/35*x^2 - 25944/245*x + 48771/1225
-            sage: E.heegner_point(-7,11).x_poly_exact(300)
-            x^10 + 282527/52441*x^9 + 27049007420/2750058481*x^8 - 22058564794/2750058481*x^7 - 140054237301/2750058481*x^6 + 696429998952/30250643291*x^5 + 2791387923058/30250643291*x^4 - 3148473886134/30250643291*x^3 + 1359454055022/30250643291*x^2 - 250620385365/30250643291*x + 181599685425/332757076201
+            sage: E.heegner_point(-7, 11).x_poly_exact(500)
+            x^10 + 282527/52441*x^9 + 27049007420/2750058481*x^8 - 22058564794/2750058481*x^7
+             - 140054237301/2750058481*x^6 + 696429998952/30250643291*x^5
+             + 2791387923058/30250643291*x^4 - 3148473886134/30250643291*x^3
+             + 1359454055022/30250643291*x^2 - 250620385365/30250643291*x
+             + 181599685425/332757076201
 
         Here we compute a Heegner point of conductor 5 on a rank 3 curve::
 
             sage: E = EllipticCurve('5077a'); P = E.heegner_point(-7,5); P
-            Heegner point of discriminant -7 and conductor 5 on elliptic curve of conductor 5077
-            sage: P.x_poly_exact(300)
+            Heegner point of discriminant -7 and conductor 5
+             on elliptic curve of conductor 5077
+            sage: P.x_poly_exact(500)
             x^6 + 1108754853727159228/72351048803252547*x^5 + 88875505551184048168/1953478317687818769*x^4 - 2216200271166098662132/3255797196146364615*x^3 + 14941627504168839449851/9767391588439093845*x^2 - 3456417460183342963918/3255797196146364615*x + 1306572835857500500459/5426328660243941025
+
+        See :trac:`34121`::
+
+            sage: E = EllipticCurve('11a1')
+            sage: P = E.heegner_point(-7)
+            sage: PE = P.point_exact()
+            sage: PE
+            (a : -4*a + 3 : 1)
+            sage: all(c.parent().disc() == -7 for c in PE)
+            True
+
         """
-        n = self.ring_class_field().degree_over_K()
+        L = self.ring_class_field()
+        n = L.absolute_degree()
 
         if algorithm == 'lll':
             P = self.numerical_approx(prec)
-            g = None
-            for e in [1,2]:   # is there a condition under which we should not bother trying e=1?
-                f = P[0].algdep(e*n)
-
-                # If f is correct, then disc(f) = m^2 * (a product of primes dividing D*c).
-                # To check this, we divide out the primes dividing D*c, then
-                # check that the resulting cofactor is a perfect square.
-                F = f.factor()
-                if len(F) == 1:
-                    f = F[0][0]
-                    if self._check_poly_discriminant(f):
-                        g = f
-                        break
-
-            if g is None:
+            f = P[0].algdep(n)
+            if f.is_irreducible() and self._check_poly_discriminant(f):
+                return f.monic()
+            else:
                 raise ValueError("insufficient precision to determine Heegner point (fails discriminant test)")
-            f = g
-            f = f/f.leading_coefficient()
-
-        elif algorithm == 'conjugates':
-
-            raise NotImplementedError
-
-        return f
+        else:
+            raise NotImplementedError("'lll' is the only algorithm implemented for Heegner points")
 
     def _check_poly_discriminant(self, f):
         """
@@ -3414,12 +3481,13 @@ class HeegnerPointOnEllipticCurve(HeegnerPoint):
 
         INPUT:
 
-            - `f` -- a polynomial
+        - `f` -- a polynomial
 
         EXAMPLES::
 
             sage: E = EllipticCurve('389a'); P = E.heegner_point(-7, 5); P
-            Heegner point of discriminant -7 and conductor 5 on elliptic curve of conductor 389
+            Heegner point of discriminant -7 and conductor 5
+             on elliptic curve of conductor 389
             sage: R.<x> = QQ[]
             sage: P._check_poly_discriminant(x^2 - 5)
             True
@@ -3438,7 +3506,6 @@ class HeegnerPointOnEllipticCurve(HeegnerPoint):
             return disc.is_square()
 
         return all(self._check_poly_discriminant(g) for g,_ in f.factor())
-
 
     def point_exact(self, prec=53, algorithm='lll', var='a', optimize=False):
         """
@@ -3461,23 +3528,24 @@ class HeegnerPointOnEllipticCurve(HeegnerPoint):
 
         INPUT:
 
-            - ``prec`` -- integer (default: 53)
+        - ``prec`` -- integer (default: 53)
 
-            - ``algorithm`` -- see the description of the algorithm
-              parameter for the ``x_poly_exact`` method.
+        - ``algorithm`` -- see the description of the algorithm
+          parameter for the ``x_poly_exact`` method.
 
-            - ``var`` -- string (default: 'a')
+        - ``var`` -- string (default: 'a')
 
-            - ``optimize`` -- book (default; False) if ``True``, try to
-              optimize defining polynomial for the number field that
-              the point is defined over.  Off by default, since this
-              can be very expensive.
+        - ``optimize`` -- bool (default; False) if ``True``, try to
+          optimize defining polynomial for the number field that
+          the point is defined over.  Off by default, since this
+          can be very expensive.
 
         EXAMPLES::
 
             sage: E = EllipticCurve('389a'); P = E.heegner_point(-7, 5); P
-            Heegner point of discriminant -7 and conductor 5 on elliptic curve of conductor 389
-            sage: z = P.point_exact(100, optimize=True)
+            Heegner point of discriminant -7 and conductor 5
+             on elliptic curve of conductor 389
+            sage: z = P.point_exact(200, optimize=True)
             sage: z[1].charpoly()
             x^12 + 6*x^11 + 90089/1715*x^10 + 71224/343*x^9 + 52563964/588245*x^8 - 483814934/588245*x^7 - 156744579/16807*x^6 - 2041518032/84035*x^5 + 1259355443184/14706125*x^4 + 3094420220918/14706125*x^3 + 123060442043827/367653125*x^2 + 82963044474852/367653125*x + 211679465261391/1838265625
             sage: f = P.numerical_approx(500)[1].algdep(12); f / f.leading_coefficient()
@@ -3536,13 +3604,13 @@ class HeegnerPointOnEllipticCurve(HeegnerPoint):
             M = K.extension(gg, names='b')
             y = M.gen()/dd
             x = M(x)
-            L = M.absolute_field(names = var)
+            L = M.absolute_field(names=var)
             phi = L.structure()[1]
             x = phi(x)
             y = phi(y)
 
         EL = E.change_ring(L)
-        P = EL.point((x,y,1), check=False)
+        P = EL.point((x,y,L(1)), check=False)
         return P
 
     @cached_method
@@ -3554,9 +3622,14 @@ class HeegnerPointOnEllipticCurve(HeegnerPoint):
 
             sage: E = EllipticCurve('77a')
             sage: y = E.heegner_point(-52,5); y
-            Heegner point of discriminant -52 and conductor 5 on elliptic curve of conductor 77
+            Heegner point of discriminant -52 and conductor 5
+             on elliptic curve of conductor 77
             sage: print([z.quadratic_form() for z in y.conjugates_over_K()])
-            [77*x^2 + 52*x*y + 13*y^2, 154*x^2 + 206*x*y + 71*y^2, 539*x^2 + 822*x*y + 314*y^2, 847*x^2 + 1284*x*y + 487*y^2, 1001*x^2 + 52*x*y + y^2, 1078*x^2 + 822*x*y + 157*y^2, 1309*x^2 + 360*x*y + 25*y^2, 1309*x^2 + 2054*x*y + 806*y^2, 1463*x^2 + 976*x*y + 163*y^2, 2233*x^2 + 2824*x*y + 893*y^2, 2387*x^2 + 2054*x*y + 442*y^2, 3619*x^2 + 3286*x*y + 746*y^2]
+            [77*x^2 + 52*x*y + 13*y^2, 154*x^2 + 206*x*y + 71*y^2, 539*x^2 + 822*x*y + 314*y^2,
+             847*x^2 + 1284*x*y + 487*y^2, 1001*x^2 + 52*x*y + y^2, 1078*x^2 + 822*x*y + 157*y^2,
+             1309*x^2 + 360*x*y + 25*y^2, 1309*x^2 + 2054*x*y + 806*y^2,
+             1463*x^2 + 976*x*y + 163*y^2, 2233*x^2 + 2824*x*y + 893*y^2,
+             2387*x^2 + 2054*x*y + 442*y^2, 3619*x^2 + 3286*x*y + 746*y^2]
             sage: y.quadratic_form()
             77*x^2 + 52*x*y + 13*y^2
         """
@@ -3573,7 +3646,7 @@ class HeegnerPointOnEllipticCurve(HeegnerPoint):
 
         INPUT:
 
-            - ``prec`` -- positive integer (default: 53)
+        - ``prec`` -- positive integer (default: 53)
 
         EXAMPLES::
 
@@ -3604,11 +3677,11 @@ class HeegnerPointOnEllipticCurve(HeegnerPoint):
 
         INPUT:
 
-            - ``prec`` -- positive integer (default: 53)
+        - ``prec`` -- positive integer (default: 53)
 
         OUTPUT:
 
-            - 2-tuple of polynomials with floating point coefficients
+        - 2-tuple of polynomials with floating point coefficients
 
         EXAMPLES::
 
@@ -3616,7 +3689,8 @@ class HeegnerPointOnEllipticCurve(HeegnerPoint):
             sage: y = E.heegner_point(-7,3); y
             Heegner point of discriminant -7 and conductor 3 on elliptic curve of conductor 37
             sage: y._numerical_approx_xy_poly()  # rel tol 1e-14
-            (X^8 + 6.00000000000000*X^7 + 8.99999999999998*X^6 - 12.0000000000000*X^5 - 42.0000000000000*X^4 - 17.9999999999999*X^3 + 36.0000000000001*X^2 + 35.9999999999999*X + 8.99999999999995, X^8 + 12.0000000000000*X^7 + 72.0000000000000*X^6 + 270.000000000000*X^5 + 678.000000000001*X^4 + 1152.00000000000*X^3 + 1269.00000000000*X^2 + 810.000000000002*X + 225.000000000001)
+            (X^8 + 6.00000000000000*X^7 + 8.99999999999998*X^6 - 12.0000000000000*X^5 - 42.0000000000000*X^4 - 17.9999999999999*X^3 + 36.0000000000001*X^2 + 35.9999999999999*X + 8.99999999999995,
+             X^8 + 12.0000000000000*X^7 + 72.0000000000000*X^6 + 270.000000000000*X^5 + 678.000000000001*X^4 + 1152.00000000000*X^3 + 1269.00000000000*X^2 + 810.000000000002*X + 225.000000000001)
         """
         v = self._numerical_approx_conjugates_over_QQ(prec)
         R = ComplexField(prec)['X']
@@ -3636,13 +3710,13 @@ class HeegnerPointOnEllipticCurve(HeegnerPoint):
 
         INPUT:
 
-            - ``prec`` -- positive integer (default: 53)
+        - ``prec`` -- positive integer (default: 53)
 
-            - ``max_error`` -- very small floating point number
+        - ``max_error`` -- very small floating point number
 
         OUTPUT:
 
-            - 2-tuple of polynomials with rational coefficients
+        - 2-tuple of polynomials with rational coefficients
 
         EXAMPLES::
 
@@ -3651,9 +3725,7 @@ class HeegnerPointOnEllipticCurve(HeegnerPoint):
             Heegner point of discriminant -7 and conductor 3 on elliptic curve of conductor 37
             sage: y._xy_poly_nearby()
             [X^8 + 6*X^7 + 9*X^6 - 12*X^5 - 42*X^4 - 18*X^3 + 36*X^2 + 36*X + 9,
-            X^8 + 12*X^7 + 72*X^6 + 270*X^5 + 678*X^4 + 1152*X^3 + 1269*X^2 + 810*X + 225]
-
-
+             X^8 + 12*X^7 + 72*X^6 + 270*X^5 + 678*X^4 + 1152*X^3 + 1269*X^2 + 810*X + 225]
         """
         v = self._numerical_approx_xy_poly(prec)
         return [nearby_rational_poly(g, max_error=max_error) for g in v]
@@ -3666,9 +3738,9 @@ class HeegnerPointOnEllipticCurve(HeegnerPoint):
 
         INPUT:
 
-            - ``prec`` -- positive integer (default: 53)
+        - ``prec`` -- positive integer (default: 53)
 
-            - ``prec2`` -- passed into simplest_rational_poly function
+        - ``prec2`` -- passed into simplest_rational_poly function
 
         EXAMPLES::
 
@@ -3700,7 +3772,7 @@ class HeegnerPointOnEllipticCurve(HeegnerPoint):
         N = self.__E.conductor()
         R = Integers(4*N)
         m = 2*N
-        return sorted( set([a%m for a in R(self.discriminant()).sqrt(all=True)]) )
+        return sorted( set([a % m for a in R(self.discriminant()).sqrt(all=True)]) )
 
     def _trace_numerical_conductor_1(self, prec=53):
         """
@@ -3710,7 +3782,7 @@ class HeegnerPointOnEllipticCurve(HeegnerPoint):
 
         INPUT:
 
-           - `prec` -- bits precision (default: 53)
+        - `prec` -- bits precision (default: 53)
 
         EXAMPLES::
 
@@ -3791,7 +3863,7 @@ class HeegnerPointOnEllipticCurve(HeegnerPoint):
                         s = s.lift()
                         f = (a*N, b+2*N*s, ZZ( ((b + 2*N*s)**2 - D)/(4*a*N)) )
                         for d in divs:
-                            Q = d * prod(p**k for p,k in N.factor() if (b-beta)%(p**k)!=0)
+                            Q = d * prod(p**k for p,k in N.factor() if (b-beta) % (p**k) != 0)
                             g = self._qf_atkin_lehner_act(Q, f)
                             gbar = (ZZ(g[0]/N), -g[1], g[2]*N)
                             g = self._qf_reduce(g)
@@ -3824,7 +3896,7 @@ class HeegnerPointOnEllipticCurve(HeegnerPoint):
 
         INPUT:
 
-            - `f` -- binary quadratic form
+        - `f` -- binary quadratic form
 
         EXAMPLES::
 
@@ -3847,7 +3919,7 @@ class HeegnerPointOnEllipticCurve(HeegnerPoint):
 
         INPUT:
 
-            - `\tau` -- quadratic element of the upper half plane
+        - `\tau` -- quadratic element of the upper half plane
 
         EXAMPLES::
 
@@ -3860,10 +3932,9 @@ class HeegnerPointOnEllipticCurve(HeegnerPoint):
             sage: P._qf_from_tau(tau)
             (57, 26, 3)
         """
-        g  = tau.minpoly()
+        g = tau.minpoly()
         g *= g.denominator()
         return (ZZ(g[2]), ZZ(g[1]), ZZ(g[0]))
-
 
     def _qf_atkin_lehner_act(self, Q, f):
         r"""
@@ -3878,13 +3949,13 @@ class HeegnerPointOnEllipticCurve(HeegnerPoint):
 
         INPUT:
 
-           - `Q` -- integer that divides the level `N`
+        - `Q` -- integer that divides the level `N`
 
-           - `f` -- quadratic form
+        - `f` -- quadratic form
 
         OUTPUT:
 
-           - quadratic form
+        - quadratic form
 
         EXAMPLES::
 
@@ -3907,7 +3978,6 @@ class HeegnerPointOnEllipticCurve(HeegnerPoint):
         tau = self._qf_to_tau(f)
         tau2 = ((u*Q*tau + v) / (N*tau + Q))
         return self._qf_from_tau(tau2)
-
 
     def _qf_reduce(self, f):
         """
@@ -3932,9 +4002,9 @@ class HeegnerPointOnEllipticCurve(HeegnerPoint):
 
         INPUT:
 
-            - `n` -- positive integer that divides the gcd of `a_p`
-              and `p+1` for all `p` dividing the conductor.  If `n` is
-              ``None``, choose the largest valid `n`.
+        - `n` -- positive integer that divides the gcd of `a_p`
+          and `p+1` for all `p` dividing the conductor.  If `n` is
+          ``None``, choose the largest valid `n`.
 
         EXAMPLES::
 
@@ -3962,7 +4032,8 @@ class KolyvaginPoint(HeegnerPoint):
         sage: EllipticCurve('37a1').kolyvagin_point(-67)
         Kolyvagin point of discriminant -67 on elliptic curve of conductor 37
         sage: EllipticCurve('389a1').kolyvagin_point(-7, 5)
-        Kolyvagin point of discriminant -7 and conductor 5 on elliptic curve of conductor 389
+        Kolyvagin point of discriminant -7 and conductor 5
+         on elliptic curve of conductor 389
 
     One can also associated a Kolyvagin point to a Heegner point::
 
@@ -4092,7 +4163,7 @@ class KolyvaginPoint(HeegnerPoint):
 
         INPUT:
 
-            - ``prec`` -- precision in bits (default: 53)
+        - ``prec`` -- precision in bits (default: 53)
 
         EXAMPLES::
 
@@ -4104,7 +4175,8 @@ class KolyvaginPoint(HeegnerPoint):
             True
 
             sage: P = EllipticCurve('389a1').kolyvagin_point(-7, 5); P
-            Kolyvagin point of discriminant -7 and conductor 5 on elliptic curve of conductor 389
+            Kolyvagin point of discriminant -7 and conductor 5
+             on elliptic curve of conductor 389
 
         Numerical approximation is only implemented for points of conductor 1::
 
@@ -4121,7 +4193,7 @@ class KolyvaginPoint(HeegnerPoint):
         """
         INPUT:
 
-            - ``prec`` -- precision in bits (default: 53)
+        - ``prec`` -- precision in bits (default: 53)
 
         EXAMPLES:
 
@@ -4148,7 +4220,6 @@ class KolyvaginPoint(HeegnerPoint):
             sage: E = EllipticCurve('389a1'); P = E.kolyvagin_point(-7)
             sage: P.point_exact()
             (0 : 1 : 0)
-
         """
         if self.conductor() == 1:
             # the result is a point defined over K in the conductor 1 case, which is easier.
@@ -4208,7 +4279,7 @@ class KolyvaginPoint(HeegnerPoint):
         EXAMPLES::
 
             sage: E = EllipticCurve('37a'); P = E.heegner_point(-11).kolyvagin_point()
-            sage: P.plot(prec=30, pointsize=50, rgbcolor='red') + E.plot()
+            sage: P.plot(prec=30, pointsize=50, rgbcolor='red') + E.plot()              # optional - sage.plot
             Graphics object consisting of 3 graphics primitives
         """
         if self.conductor() != 1:
@@ -4224,7 +4295,6 @@ class KolyvaginPoint(HeegnerPoint):
             return point((P[0].real(), P[1].real()),*args, **kwds)
         else:
             raise NotImplementedError
-
 
     @cached_method
     def trace_to_real_numerical(self, prec=53):
@@ -4245,7 +4315,6 @@ class KolyvaginPoint(HeegnerPoint):
             (1.61355529131986 : -2.18446840788880 : 1.00000000000000)
             sage: P.trace_to_real_numerical(prec=80)  # abs tol 1e-21
             (1.6135552913198573127230 : -2.1844684078888023289187 : 1.0000000000000000000000)
-
         """
         # Compute numerical approximation of P in E(K).
         P = self.numerical_approx(prec=prec)
@@ -4293,9 +4362,9 @@ class KolyvaginPoint(HeegnerPoint):
 
         INPUT:
 
-             - `P` -- numerical approximation for a point on `E`
+        - `P` -- numerical approximation for a point on `E`
 
-             - `n` -- upper bound on divisibility index of `P` in group `E(\QQ)`
+        - `n` -- upper bound on divisibility index of `P` in group `E(\QQ)`
 
         EXAMPLES::
 
@@ -4384,13 +4453,9 @@ class KolyvaginPoint(HeegnerPoint):
 
         # do actual calculation
         if self.conductor() == 1:
-
-            P = self._trace_exact_conductor_1(prec = prec)
+            P = self._trace_exact_conductor_1(prec=prec)
             return E.change_ring(GF(p))(P)
-
-        else:
-
-            raise NotImplementedError
+        raise NotImplementedError
 
 ##     def congruent_rational_point(self, n, prec=53):
 ##         r"""
@@ -4411,23 +4476,22 @@ class KolyvaginPoint(HeegnerPoint):
 ##         """
 ##         raise NotImplementedError
 
-
     def kolyvagin_cohomology_class(self, n=None):
         """
         INPUT:
 
-            - `n` -- positive integer that divides the gcd of `a_p`
-              and `p+1` for all `p` dividing the conductor.  If `n` is
-              ``None``, choose the largest valid `n`.
+        - `n` -- positive integer that divides the gcd of `a_p`
+          and `p+1` for all `p` dividing the conductor.  If `n` is
+          ``None``, choose the largest valid `n`.
 
         EXAMPLES::
 
-            sage: y = EllipticCurve('389a').heegner_point(-7,5)
+            sage: y = EllipticCurve('389a').heegner_point(-7, 5)
             sage: P = y.kolyvagin_point()
             sage: P.kolyvagin_cohomology_class(3)
             Kolyvagin cohomology class c(5) in H^1(K,E[3])
 
-            sage: y = EllipticCurve('37a').heegner_point(-7,5).kolyvagin_point()
+            sage: y = EllipticCurve('37a').heegner_point(-7, 5).kolyvagin_point()
             sage: y.kolyvagin_cohomology_class()
             Kolyvagin cohomology class c(5) in H^1(K,E[2])
         """
@@ -4456,7 +4520,7 @@ class KolyvaginCohomologyClass(SageObject):
 
         EXAMPLES::
 
-            sage: y = EllipticCurve('389a').heegner_point(-7,5)
+            sage: y = EllipticCurve('389a').heegner_point(-7, 5)
             sage: y.kolyvagin_cohomology_class(3)
             Kolyvagin cohomology class c(5) in H^1(K,E[3])
         """
@@ -4466,7 +4530,7 @@ class KolyvaginCohomologyClass(SageObject):
             n = gcd([(p+1).gcd(E.ap(p)) for p in c.prime_divisors()])
 
         if not kolyvagin_point.satisfies_kolyvagin_hypothesis(n):
-            raise ValueError("Kolyvagin point does not satisfy Kolyvagin hypothesis for %s"%n)
+            raise ValueError("Kolyvagin point does not satisfy Kolyvagin hypothesis for %s" % n)
         self.__kolyvagin_point = kolyvagin_point
         self.__n = n
 
@@ -4525,7 +4589,7 @@ class KolyvaginCohomologyClass(SageObject):
 
         EXAMPLES::
 
-            sage: y = EllipticCurve('37a').heegner_point(-7,5)
+            sage: y = EllipticCurve('37a').heegner_point(-7, 5)
             sage: t = y.kolyvagin_cohomology_class()
             sage: t.conductor()
             5
@@ -4539,10 +4603,11 @@ class KolyvaginCohomologyClass(SageObject):
 
         EXAMPLES::
 
-            sage: y = EllipticCurve('37a').heegner_point(-7,5)
+            sage: y = EllipticCurve('37a').heegner_point(-7, 5)
             sage: t = y.kolyvagin_cohomology_class()
             sage: t.kolyvagin_point()
-            Kolyvagin point of discriminant -7 and conductor 5 on elliptic curve of conductor 37
+            Kolyvagin point of discriminant -7 and conductor 5
+             on elliptic curve of conductor 37
         """
         return self.__kolyvagin_point
 
@@ -4553,10 +4618,11 @@ class KolyvaginCohomologyClass(SageObject):
 
         EXAMPLES::
 
-            sage: y = EllipticCurve('37a').heegner_point(-7,5)
+            sage: y = EllipticCurve('37a').heegner_point(-7, 5)
             sage: t = y.kolyvagin_cohomology_class()
             sage: t.heegner_point()
-            Heegner point of discriminant -7 and conductor 5 on elliptic curve of conductor 37
+            Heegner point of discriminant -7 and conductor 5
+             on elliptic curve of conductor 37
         """
         return self.__kolyvagin_point.heegner_point()
 
@@ -4571,12 +4637,12 @@ class KolyvaginCohomologyClassEn(KolyvaginCohomologyClass):
 
         EXAMPLES::
 
-            sage: y = EllipticCurve('37a').heegner_point(-7,5)
+            sage: y = EllipticCurve('37a').heegner_point(-7, 5)
             sage: t = y.kolyvagin_cohomology_class()
             sage: t._repr_()
             'Kolyvagin cohomology class c(5) in H^1(K,E[2])'
         """
-        return "Kolyvagin cohomology class c(%s) in H^1(K,E[%s])"%(
+        return "Kolyvagin cohomology class c(%s) in H^1(K,E[%s])" % (
             self.conductor(), self.n())
 
 
@@ -4608,9 +4674,9 @@ class HeegnerQuatAlg(SageObject):
         r"""
         INPUT:
 
-           - ``level`` -- the level (a positive integer)
+        - ``level`` -- the level (a positive integer)
 
-           - `\ell` -- the characteristic, a prime coprime to the level
+        - `\ell` -- the characteristic, a prime coprime to the level
 
         EXAMPLES::
 
@@ -4664,7 +4730,7 @@ class HeegnerQuatAlg(SageObject):
             sage: heegner_points(11).reduce_mod(13)._repr_()
             'Heegner points on X_0(11) over F_13'
         """
-        return "Heegner points on X_0(%s) over F_%s"%(
+        return "Heegner points on X_0(%s) over F_%s" % (
             self.__level, self.__ell)
 
     def level(self):
@@ -4698,13 +4764,11 @@ class HeegnerQuatAlg(SageObject):
 
         INPUT:
 
-            - `D` -- negative integer
+        - `D` -- negative integer
 
-            - `c` -- positive integer (default: 1)
+        - `c` -- positive integer (default: 1)
 
-        OUTPUT:
-
-            - bool
+        OUTPUT: A boolean.
 
         EXAMPLES::
 
@@ -4737,11 +4801,9 @@ class HeegnerQuatAlg(SageObject):
 
         INPUT:
 
-            - `n` -- positive integer (default: 5)
+        - `n` -- positive integer (default: 5)
 
-        OUTPUT:
-
-            - list
+        OUTPUT: A list.
 
         EXAMPLES::
 
@@ -4768,14 +4830,11 @@ class HeegnerQuatAlg(SageObject):
 
         INPUT:
 
-            - `D` -- negative integer; a fundamental Heegner
-              discriminant
+        - `D` -- negative integer; a fundamental Heegner discriminant
 
-            - `n` -- positive integer (default: 5)
+        - `n` -- positive integer (default: 5)
 
-        OUTPUT:
-
-            - list
+        OUTPUT: A list.
 
         EXAMPLES::
 
@@ -4792,7 +4851,6 @@ class HeegnerQuatAlg(SageObject):
                 v.append(c)
             c += 1
         return v
-
 
     def optimal_embeddings(self, D, c, R):
         """
@@ -4818,7 +4876,7 @@ class HeegnerQuatAlg(SageObject):
              Embedding sending 2*sqrt(-7) to -2*i + 2*j + 2*k]
         """
         Q, G = R.ternary_quadratic_form(include_basis=True)
-        n    = -D*c*c
+        n = -D*c*c
         reps = Q.representation_vector_list(n+1)[-1]
 
         # The representatives give elements in terms of the
@@ -4879,8 +4937,10 @@ class HeegnerQuatAlg(SageObject):
         EXAMPLES::
 
             sage: heegner_points(11).reduce_mod(3).left_orders()
-            [Order of Quaternion Algebra (-1, -3) with base ring Rational Field with basis (1/2 + 1/2*j + 7*k, 1/2*i + 13/2*k, j + 3*k, 11*k),
-             Order of Quaternion Algebra (-1, -3) with base ring Rational Field with basis (1/2 + 1/2*j + 7*k, 1/4*i + 1/2*j + 63/4*k, j + 14*k, 22*k)]
+            [Order of Quaternion Algebra (-1, -3) with base ring Rational Field
+              with basis (1/2 + 1/2*j + 7*k, 1/2*i + 13/2*k, j + 3*k, 11*k),
+             Order of Quaternion Algebra (-1, -3) with base ring Rational Field
+              with basis (1/2 + 1/2*j + 7*k, 1/4*i + 1/2*j + 63/4*k, j + 14*k, 22*k)]
         """
         return [I.left_order() for I in self.right_ideals()]
 
@@ -4898,13 +4958,11 @@ class HeegnerQuatAlg(SageObject):
 
         INPUT:
 
-            - `D` -- discriminant (negative integer)
+        - `D` -- discriminant (negative integer)
 
-            - `c` -- conductor (positive integer)
+        - `c` -- conductor (positive integer)
 
-        OUTPUT:
-
-            - Brandt module element
+        OUTPUT: A Brandt module element.
 
         EXAMPLES::
 
@@ -4945,7 +5003,7 @@ class HeegnerQuatAlg(SageObject):
             if a > 0:
                 reps = Q.representation_vector_list(n+1)[-1]
                 k = len([r for r in reps if gcd(r) == 1])
-                assert k%2 == 0
+                assert k % 2 == 0
                 v[i] += k // 2
         return B(v)
 
@@ -4964,11 +5022,9 @@ class HeegnerQuatAlg(SageObject):
 
         INPUT:
 
-            - `p` -- unramified odd prime
+        - `p` -- unramified odd prime
 
-        OUTPUT:
-
-            - 2-tuple of matrices over finite field
+        OUTPUT: A 2-tuple of matrices over finite field.
 
         EXAMPLES::
 
@@ -5017,12 +5073,12 @@ class HeegnerQuatAlg(SageObject):
         """
         p = ZZ(p)
         if not p.is_prime():
-            raise ValueError("p (=%s) must be prime"%p)
+            raise ValueError("p (=%s) must be prime" % p)
         if p == 2:
             raise ValueError("p must be odd")
         Q = self.quaternion_algebra()
         if Q.discriminant() % p == 0:
-            raise ValueError("p (=%s) must be an unramified prime"%p)
+            raise ValueError("p (=%s) must be an unramified prime" % p)
         i, j, k = Q.gens()
         F = GF(p)
         i2 = F(i*i)
@@ -5051,7 +5107,7 @@ class HeegnerQuatAlg(SageObject):
 
         INPUT:
 
-            - `p` -- prime number
+        - `p` -- prime number
 
         EXAMPLES::
 
@@ -5059,8 +5115,8 @@ class HeegnerQuatAlg(SageObject):
             sage: f = H.modp_splitting_map(13)
             sage: B = H.quaternion_algebra(); B
             Quaternion Algebra (-1, -7) with base ring Rational Field
-            sage: i,j,k = H.quaternion_algebra().gens()
-            sage: a = 2+i-j+3*k; b = 7+2*i-4*j+k
+            sage: i, j, k = H.quaternion_algebra().gens()
+            sage: a = 2 + i - j + 3*k; b = 7 + 2*i - 4*j + k
             sage: f(a*b)
             [12  3]
             [10  5]
@@ -5069,11 +5125,12 @@ class HeegnerQuatAlg(SageObject):
             [10  5]
         """
         I, J = self.modp_splitting_data(p)
-        K = I*J
+        K = I * J
         F = I.base_ring()
+
         def phi(q):
             v = [F(a) for a in q.coefficient_tuple()]
-            return v[0] + I*v[1] + J*v[2] + K*v[3]
+            return v[0] + I * v[1] + J * v[2] + K * v[3]
         return phi
 
     def cyclic_subideal_p1(self, I, c):
@@ -5083,11 +5140,10 @@ class HeegnerQuatAlg(SageObject):
 
         INPUT:
 
-            - `I` -- right ideal of Eichler order or in quaternion algebra
+        - `I` -- right ideal of Eichler order or in quaternion algebra
 
-            - `c` -- square free integer (currently must be odd prime
-                     and coprime to level, discriminant, characteristic,
-                     etc.
+        - `c` -- square free integer (currently must be odd prime
+          and coprime to level, discriminant, characteristic, etc.
 
         OUTPUT:
 
@@ -5097,7 +5153,7 @@ class HeegnerQuatAlg(SageObject):
 
             sage: H = heegner_points(11).reduce_mod(7)
             sage: I = H.brandt_module().right_ideals()[0]
-            sage: sorted(H.cyclic_subideal_p1(I,3).items())
+            sage: sorted(H.cyclic_subideal_p1(I, 3).items())
             [((0, 1),
               Fractional ideal (2 + 2*j + 32*k, 2*i + 8*j + 82*k, 12*j + 60*k, 132*k)),
              ((1, 0),
@@ -5106,7 +5162,7 @@ class HeegnerQuatAlg(SageObject):
               Fractional ideal (2 + 2*j + 76*k, 2*i + 4*j + 106*k, 12*j + 60*k, 132*k)),
              ((1, 2),
               Fractional ideal (2 + 10*j + 116*k, 2*i + 8*j + 38*k, 12*j + 60*k, 132*k))]
-            sage: len(H.cyclic_subideal_p1(I,17))
+            sage: len(H.cyclic_subideal_p1(I, 17))
             18
         """
         c = ZZ(c)
@@ -5126,7 +5182,7 @@ class HeegnerQuatAlg(SageObject):
                 V = V.intersection(phi(B[i]).kernel())
             b = V.basis()
             assert len(b) == 1, "common kernel must have dimension 1"
-            uv = P1.normalize(ZZ(b[0][0])%c, ZZ(b[0][1])%c)
+            uv = P1.normalize(ZZ(b[0][0]) % c, ZZ(b[0][1]) % c)
             ans[uv] = J
         assert len(ans) == c+1
         return ans
@@ -5140,16 +5196,17 @@ class HeegnerQuatAlg(SageObject):
 
         INPUT:
 
-            - `D` -- fundamental discriminant
+        - `D` -- fundamental discriminant
 
-            - `c` -- conductor (square-free integer)
+        - `c` -- conductor (square-free integer)
 
         EXAMPLES::
 
             sage: N = 37; D = -7; ell = 17; c = 41; p = 3
             sage: H = heegner_points(N).reduce_mod(ell)
             sage: H.galois_group_over_hilbert_class_field(D, c)
-            Galois group of Ring class field extension of QQ[sqrt(-7)] of conductor 41 over Hilbert class field of QQ[sqrt(-7)]
+            Galois group of Ring class field extension of QQ[sqrt(-7)] of conductor 41
+             over Hilbert class field of QQ[sqrt(-7)]
         """
         Kc = heegner_points(self.level(), D, c).ring_class_field()
         K1 = heegner_points(self.level(), D, 1).ring_class_field()
@@ -5163,17 +5220,18 @@ class HeegnerQuatAlg(SageObject):
 
         INPUT:
 
-            - `D` -- fundamental discriminant
+        - `D` -- fundamental discriminant
 
-            - `c` -- conductor (square-free integer)
+        - `c` -- conductor (square-free integer)
 
         EXAMPLES::
 
             sage: N = 37; D = -7; ell = 17; c = 41; p = 3
             sage: H = heegner_points(N).reduce_mod(ell)
             sage: H.galois_group_over_quadratic_field(D, c)
-            Galois group of Ring class field extension of QQ[sqrt(-7)] of conductor 41 over Number Field in sqrt_minus_7 with defining polynomial x^2 + 7 with sqrt_minus_7 = 2.645751311064591?*I
-
+            Galois group of Ring class field extension of QQ[sqrt(-7)] of conductor 41
+             over Number Field in sqrt_minus_7 with defining polynomial x^2 + 7
+              with sqrt_minus_7 = 2.645751311064591?*I
         """
         Kc = heegner_points(self.level(), D, c).ring_class_field()
         return Kc.galois_group(Kc.quadratic_field())
@@ -5186,17 +5244,16 @@ class HeegnerQuatAlg(SageObject):
 
         INPUT:
 
-            - `D` -- fundamental discriminant
+        - `D` -- fundamental discriminant
 
-        OUTPUT:
-
-            - a quadratic number field
+        OUTPUT: A quadratic number field.
 
         EXAMPLES::
 
             sage: H = heegner_points(389).reduce_mod(5)
             sage: H.quadratic_field(-7)
-            Number Field in sqrt_minus_7 with defining polynomial x^2 + 7 with sqrt_minus_7 = 2.645751311064591?*I
+            Number Field in sqrt_minus_7 with defining polynomial x^2 + 7
+             with sqrt_minus_7 = 2.645751311064591?*I
         """
         Kc = heegner_points(self.level(), D, 1).ring_class_field()
         return Kc.quadratic_field()
@@ -5210,21 +5267,18 @@ class HeegnerQuatAlg(SageObject):
 
         INPUT:
 
-            - `I` -- right ideal of the quaternion algebra
+        - `I` -- right ideal of the quaternion algebra
 
-            - `p` -- prime number
+        - `p` -- prime number
 
-            - ``alpha_quaternion`` -- image in the quaternion algebra
-                of generator `\alpha` for
-                `(\mathcal{O}_K / c\mathcal{O}_K)^* / (\ZZ/c\ZZ)^*`.
+        - ``alpha_quaternion`` -- image in the quaternion algebra
+          of generator `\alpha` for `(\mathcal{O}_K / c\mathcal{O}_K)^* / (\ZZ/c\ZZ)^*`.
 
-        OUTPUT:
-
-            - list of 2-tuples
+        OUTPUT: A list of 2-tuples.
 
         EXAMPLES::
 
-            sage: N = 37; D = -7; ell = 17; c=5
+            sage: N = 37; D = -7; ell = 17; c = 5
             sage: H = heegner_points(N).reduce_mod(ell)
             sage: I = H.brandt_module().right_ideals()[49]
             sage: f = H.optimal_embeddings(D, 1, I.left_order())[1]
@@ -5232,12 +5286,24 @@ class HeegnerQuatAlg(SageObject):
             sage: alpha_quaternion = f(g[0]); alpha_quaternion
             1 - 77/192*i - 5/128*j - 137/384*k
             sage: H.kolyvagin_cyclic_subideals(I, 5, alpha_quaternion)
-            [(Fractional ideal (2 + 2/3*i + 364*j + 231928/3*k, 4/3*i + 946*j + 69338/3*k, 1280*j + 49920*k, 94720*k), 0),
-             (Fractional ideal (2 + 2/3*i + 108*j + 31480/3*k, 4/3*i + 434*j + 123098/3*k, 1280*j + 49920*k, 94720*k), 1),
-             (Fractional ideal (2 + 2/3*i + 876*j + 7672/3*k, 4/3*i + 434*j + 236762/3*k, 1280*j + 49920*k, 94720*k), 2),
-             (Fractional ideal (2 + 2/3*i + 364*j + 61432/3*k, 4/3*i + 178*j + 206810/3*k, 1280*j + 49920*k, 94720*k), 3),
-             (Fractional ideal (2 + 2/3*i + 876*j + 178168/3*k, 4/3*i + 1202*j + 99290/3*k, 1280*j + 49920*k, 94720*k), 4),
-             (Fractional ideal (2 + 2/3*i + 1132*j + 208120/3*k, 4/3*i + 946*j + 183002/3*k, 1280*j + 49920*k, 94720*k), 5)]
+            [(Fractional ideal (2 + 2/3*i + 364*j + 231928/3*k,
+                                4/3*i + 946*j + 69338/3*k,
+                                1280*j + 49920*k, 94720*k), 0),
+             (Fractional ideal (2 + 2/3*i + 108*j + 31480/3*k,
+                                4/3*i + 434*j + 123098/3*k,
+                                1280*j + 49920*k, 94720*k), 1),
+             (Fractional ideal (2 + 2/3*i + 876*j + 7672/3*k,
+                                4/3*i + 434*j + 236762/3*k,
+                                1280*j + 49920*k, 94720*k), 2),
+             (Fractional ideal (2 + 2/3*i + 364*j + 61432/3*k,
+                                4/3*i + 178*j + 206810/3*k,
+                                1280*j + 49920*k, 94720*k), 3),
+             (Fractional ideal (2 + 2/3*i + 876*j + 178168/3*k,
+                                4/3*i + 1202*j + 99290/3*k,
+                                1280*j + 49920*k, 94720*k), 4),
+             (Fractional ideal (2 + 2/3*i + 1132*j + 208120/3*k,
+                                4/3*i + 946*j + 183002/3*k,
+                                1280*j + 49920*k, 94720*k), 5)]
         """
         X = I.cyclic_right_subideals(p, alpha_quaternion)
         return [(J, i) for i, J in enumerate(X)]
@@ -5254,20 +5320,20 @@ class HeegnerQuatAlg(SageObject):
 
         INPUT:
 
-            - `K` -- quadratic imaginary field
+        - `K` -- quadratic imaginary field
 
-            - `p` -- inert prime
+        - `p` -- inert prime
 
         EXAMPLES::
 
-            sage: N = 37; D = -7; ell = 17; p=5
+            sage: N = 37; D = -7; ell = 17; p = 5
             sage: H = heegner_points(N).reduce_mod(ell)
             sage: I = H.brandt_module().right_ideals()[49]
             sage: f = H.optimal_embeddings(D, 1, I.left_order())[0]
             sage: H.kolyvagin_generator(f.domain().number_field(), 5)
             a + 1
 
-        This function requires that p be prime, but kolyvagin_generators works in general::
+        This function requires that `p` be prime, but ``kolyvagin_generators`` works in general::
 
             sage: H.kolyvagin_generator(f.domain().number_field(), 5*17)
             Traceback (most recent call last):
@@ -5305,13 +5371,13 @@ class HeegnerQuatAlg(SageObject):
 
         INPUT:
 
-            - `K` -- quadratic imaginary field
+        - `K` -- quadratic imaginary field
 
-            - `c` -- square free product of inert prime
+        - `c` -- square free product of inert prime
 
         EXAMPLES::
 
-            sage: N = 37; D = -7; ell = 17; p=5
+            sage: N = 37; D = -7; ell = 17; p = 5
             sage: H = heegner_points(N).reduce_mod(ell)
             sage: I = H.brandt_module().right_ideals()[49]
             sage: f = H.optimal_embeddings(D, 1, I.left_order())[0]
@@ -5346,15 +5412,15 @@ class HeegnerQuatAlg(SageObject):
 
         INPUT:
 
-            - `D` -- fundamental discriminant
+        - `D` -- fundamental discriminant
 
-            - `c` -- conductor (square-free integer, need not be prime)
+        - `c` -- conductor (square-free integer, need not be prime)
 
-            - `r` -- nonnegative integer
+        - `r` -- nonnegative integer
 
-            - ``bound`` -- (default: ``None``), if given, controls
-              precision of computation of theta series, which could
-              impact performance, but does not impact correctness
+        - ``bound`` -- (default: ``None``), if given, controls
+          precision of computation of theta series, which could
+          impact performance, but does not impact correctness
 
         EXAMPLES:
 
@@ -5367,9 +5433,11 @@ class HeegnerQuatAlg(SageObject):
             sage: V = H.modp_dual_elliptic_curve_factor(E, q, 5)  # long time (4s on sage.math, 2012)
             sage: k118 = H.kolyvagin_sigma_operator(D, c, 118)
             sage: k104 = H.kolyvagin_sigma_operator(D, c, 104)
-            sage: [b.dot_product(k104.element().change_ring(GF(3))) for b in V.basis()]  # long time
+            sage: [b.dot_product(k104.element().change_ring(GF(3)))  # long time
+            ....:  for b in V.basis()]
             [0, 0]
-            sage: [b.dot_product(k118.element().change_ring(GF(3))) for b in V.basis()]  # long time
+            sage: [b.dot_product(k118.element().change_ring(GF(3)))  # long time
+            ....:  for b in V.basis()]
             [0, 0]
 
         Next we try again with `c=41` and this does work, in that we
@@ -5378,9 +5446,11 @@ class HeegnerQuatAlg(SageObject):
             sage: c = 41
             sage: k118 = H.kolyvagin_sigma_operator(D, c, 118)
             sage: k104 = H.kolyvagin_sigma_operator(D, c, 104)
-            sage: [b.dot_product(k118.element().change_ring(GF(3))) for b in V.basis()]  # long time
+            sage: [b.dot_product(k118.element().change_ring(GF(3)))  # long time
+            ....:  for b in V.basis()]
             [2, 0]
-            sage: [b.dot_product(k104.element().change_ring(GF(3))) for b in V.basis()]  # long time
+            sage: [b.dot_product(k104.element().change_ring(GF(3)))  # long time
+            ....:  for b in V.basis()]
             [1, 0]
 
         By the way, the above is the first ever provable verification
@@ -5468,11 +5538,11 @@ class HeegnerQuatAlg(SageObject):
 
         INPUT:
 
-            - `E` -- elliptic curve of conductor equal to the level of self
+        - `E` -- elliptic curve of conductor equal to the level of ``self``
 
-            - `p` -- prime number
+        - `p` -- prime number
 
-            - `bound` -- positive integer (default: 10)
+        - ``bound`` -- positive integer (default: 10)
 
         EXAMPLES::
 
@@ -5480,14 +5550,13 @@ class HeegnerQuatAlg(SageObject):
             sage: H = heegner_points(N).reduce_mod(ell)
             sage: V = H.modp_dual_elliptic_curve_factor(EllipticCurve('37a'), q, 5); V
             Vector space of degree 52 and dimension 2 over Ring of integers modulo 3
-            Basis matrix:
-            2 x 52 dense matrix over Ring of integers modulo 3
+             Basis matrix: 2 x 52 dense matrix over Ring of integers modulo 3
         """
         if E.conductor() != self.level():
             raise ValueError("conductor of E must equal level of self")
         p = ZZ(p)
         if not p.is_prime():
-            raise ValueError("p (=%s) must be prime"%p)
+            raise ValueError("p (=%s) must be prime" % p)
         bad = self.__level * self.__ell
 
         V = None
@@ -5495,7 +5564,7 @@ class HeegnerQuatAlg(SageObject):
         B = self.brandt_module()
         F = GF(p)
         while q <= bound and (V is None or V.dimension() > 2):
-            verbose("q = %s"%q)
+            verbose("q = %s" % q)
             if bad % q != 0:
                 T = B._compute_hecke_matrix_directly(q).change_ring(F).transpose()
                 if V is None:
@@ -5516,14 +5585,11 @@ class HeegnerQuatAlg(SageObject):
 
         INPUT:
 
-            - `D` -- discriminant (negative integer)
+        - `D` -- discriminant (negative integer)
 
-            - `c` -- conductor (positive integer)
+        - `c` -- conductor (positive integer)
 
-
-        OUTPUT:
-
-            - Brandt module element (or tuple of them)
+        OUTPUT: Brandt module element (or tuple of them).
 
         EXAMPLES::
 
@@ -5562,16 +5628,16 @@ class HeegnerQuatAlg(SageObject):
 
         INPUT:
 
-            - `D` -- fundamental negative discriminant
+        - `D` -- fundamental negative discriminant
 
-            - `c` -- conductor
+        - `c` -- conductor
 
-            - `E` -- elliptic curve of conductor the level of self
+        - `E` -- elliptic curve of conductor the level of self
 
-            - `p` -- odd prime number such that we consider image in
-                     `E(\GF{\ell^2}) / p E(\GF{\ell^2})`
+        - `p` -- odd prime number such that we consider image in
+          `E(\GF{\ell^2}) / p E(\GF{\ell^2})`
 
-            - ``bound`` -- integer (default: 10)
+        - ``bound`` -- integer (default: 10)
 
         EXAMPLES::
 
@@ -5593,52 +5659,51 @@ def kolyvagin_reduction_data(E, q, first_only=True):
 
     INPUT:
 
-        - `E` -- elliptic curve over `\QQ` of rank 1 or 2
+    - `E` -- elliptic curve over `\QQ` of rank 1 or 2
 
-        - `q` -- an odd prime that does not divide the order of the
-           rational torsion subgroup of `E`
+    - `q` -- an odd prime that does not divide the order of the
+       rational torsion subgroup of `E`
 
-        - ``first_only`` -- bool (default: ``True``) whether two only return
-           the first prime that one can work modulo to get data about
-           the Euler system
+    - ``first_only`` -- bool (default: ``True``) whether two only return
+       the first prime that one can work modulo to get data about
+       the Euler system
 
     OUTPUT in the rank 1 case or when the default flag ``first_only=True``:
 
-        - `\ell` -- first good odd prime satisfying the Kolyvagin
-           condition that `q` divides \gcd(a_{\ell},\ell+1)` and the
-           reduction map is surjective to `E(\GF{\ell}) / q
-           E(\GF{\ell})`
+    - `\ell` -- first good odd prime satisfying the Kolyvagin
+       condition that `q` divides \gcd(a_{\ell},\ell+1)` and the
+       reduction map is surjective to `E(\GF{\ell}) / q
+       E(\GF{\ell})`
 
-        - `D` -- discriminant of the first quadratic imaginary field
-           `K` that satisfies the Heegner hypothesis for `E` such that
-           both `\ell` is inert in `K`, and the twist `E^D` has analytic
-           rank `\leq 1`
+    - `D` -- discriminant of the first quadratic imaginary field
+       `K` that satisfies the Heegner hypothesis for `E` such that
+       both `\ell` is inert in `K`, and the twist `E^D` has analytic
+       rank `\leq 1`
 
-        - `h_D` -- the class number of `K`
+    - `h_D` -- the class number of `K`
 
-        -  the dimension of the Brandt module `B(\ell,N)`, where `N` is
-           the conductor of `E`
+    - the dimension of the Brandt module `B(\ell,N)`, where `N` is
+      the conductor of `E`
 
     OUTPUT in the rank 2 case:
 
-        - `\ell_1` -- first prime (as above in the rank 1 case) where
-          reduction map is surjective
+    - `\ell_1` -- first prime (as above in the rank 1 case) where
+      reduction map is surjective
 
-        - `\ell_2` -- second prime (as above) where reduction map is
-          surjective
+    - `\ell_2` -- second prime (as above) where reduction map is
+      surjective
 
-        - `D` -- discriminant of the first quadratic imaginary field
-           `K` that satisfies the Heegner hypothesis for `E` such that
-           both `\ell_1` and `\ell_2` are simultaneously inert in `K`,
-           and the twist `E^D` has analytic rank `\leq 1`
+    - `D` -- discriminant of the first quadratic imaginary field
+       `K` that satisfies the Heegner hypothesis for `E` such that
+       both `\ell_1` and `\ell_2` are simultaneously inert in `K`,
+       and the twist `E^D` has analytic rank `\leq 1`
 
-        - `h_D` -- the class number of `K`
+    - `h_D` -- the class number of `K`
 
-        -  the dimension of the Brandt module `B(\ell_1,N)`, where `N` is
-           the conductor of `E`
+    - the dimension of the Brandt module `B(\ell_1,N)`, where `N` is
+      the conductor of `E`
 
-        -  the dimension of the Brandt module `B(\ell_2,N)`
-
+    - the dimension of the Brandt module `B(\ell_2,N)`
 
     EXAMPLES:
 
@@ -5648,19 +5713,19 @@ def kolyvagin_reduction_data(E, q, first_only=True):
 
     A rank 1 example::
 
-        sage: kolyvagin_reduction_data(EllipticCurve('37a1'),3)
+        sage: kolyvagin_reduction_data(EllipticCurve('37a1'), 3)
         (17, -7, 1, 52)
 
     A rank 3 example::
 
-        sage: kolyvagin_reduction_data(EllipticCurve('5077a1'),3)
+        sage: kolyvagin_reduction_data(EllipticCurve('5077a1'), 3)
         (11, -47, 5, 4234)
         sage: H = heegner_points(5077, -47)
-        sage: [c for c in H.kolyvagin_conductors(2,10,EllipticCurve('5077a1'),3) if c%11]
+        sage: [c for c in H.kolyvagin_conductors(2, 10, EllipticCurve('5077a1'), 3)
+        ....:    if c % 11]
         [667, 943, 1189, 2461]
         sage: factor(667)
         23 * 29
-
 
     A rank 4 example (the first Kolyvagin class that we could try to
     compute would be `P_{23\cdot 29\cdot 41}`, and would require
@@ -5676,19 +5741,19 @@ def kolyvagin_reduction_data(E, q, first_only=True):
 
     The first rank 2 example::
 
-        sage: kolyvagin_reduction_data(EllipticCurve('389a'),3)
+        sage: kolyvagin_reduction_data(EllipticCurve('389a'), 3)
         (5, -7, 1, 130)
-        sage: kolyvagin_reduction_data(EllipticCurve('389a'),3, first_only=False)
+        sage: kolyvagin_reduction_data(EllipticCurve('389a'), 3, first_only=False)
         (5, 17, -7, 1, 130, 520)
 
     A large `q = 7`::
 
-        sage: kolyvagin_reduction_data(EllipticCurve('1143c1'),7, first_only=False)
+        sage: kolyvagin_reduction_data(EllipticCurve('1143c1'), 7, first_only=False)
         (13, 83, -59, 3, 1536, 10496)
 
     Additive reduction::
 
-        sage: kolyvagin_reduction_data(EllipticCurve('2350g1'),5, first_only=False)
+        sage: kolyvagin_reduction_data(EllipticCurve('2350g1'), 5, first_only=False)
         (19, 239, -311, 19, 6480, 85680)
     """
     from .ell_generic import is_EllipticCurve
@@ -5726,9 +5791,9 @@ def kolyvagin_reduction_data(E, q, first_only=True):
     def best_heegner_D(ell_1, ell_2):
         # return the first Heegner D satisfy all hypothesis such that
         # both ell_1 and ell_2 are inert
-        D = -5
+        D = ZZ(-5)
         while True:
-            if number_field.is_fundamental_discriminant(D) and \
+            if D.is_fundamental_discriminant() and \
                D % ell_1 and D % ell_2 and \
                E.satisfies_heegner_hypothesis(D) and \
                is_inert(D, ell_1) and is_inert(D, ell_2) and \
@@ -5758,12 +5823,13 @@ def kolyvagin_reduction_data(E, q, first_only=True):
         raise ValueError("if first_only is not True, then the curve E must have rank 1 or 2")
 
     P, Q = E.gens()
+
     def kernel_of_reduction(ell):
         # return list of reps for the kernel as a subgroup of the map
         # E(Q) / q E(Q)  ---->  E(F_ell) / q E(F_ell)
         m = ZZ(E.Np(ell) / q)
-        A = [a*P + b*Q for a in range(q) for b in range(q)]
-        return [z for z in A if red(z,ell) * m == 0]
+        A = (a * P + b * Q for a in range(q) for b in range(q))
+        return [z for z in A if red(z, ell) * m == 0]
 
     # compute first good odd prime
     ell_1 = ZZ(3)
@@ -5812,14 +5878,14 @@ class HeegnerQuatAlgEmbedding(SageObject):
         r"""
         INPUT:
 
-            - `D` -- negative fundamental discriminant
+        - `D` -- negative fundamental discriminant
 
-            - `c` -- positive integer coprime to `D`
+        - `c` -- positive integer coprime to `D`
 
-            - `R` -- Eichler order in a rational quaternion algebra
+        - `R` -- Eichler order in a rational quaternion algebra
 
-            - `\beta` -- element of `R` such that the homomorphism
-              sends `c\sqrt{D}` to `\beta`
+        - `\beta` -- element of `R` such that the homomorphism
+          sends `c\sqrt{D}` to `\beta`
 
         EXAMPLES::
 
@@ -5929,7 +5995,8 @@ class HeegnerQuatAlgEmbedding(SageObject):
 
             sage: H = heegner_points(11).reduce_mod(3); R = H.left_orders()[0]
             sage: H.optimal_embeddings(-7, 2, R)[0].domain()
-            Order in Number Field in a with defining polynomial x^2 + 7 with a = 2.645751311064591?*I
+            Order in Number Field in a with defining polynomial x^2 + 7
+             with a = 2.645751311064591?*I
         """
         R, a = quadratic_order(self.__D, self.__c)
 
@@ -5993,7 +6060,8 @@ class HeegnerQuatAlgEmbedding(SageObject):
 
             sage: H = heegner_points(11).reduce_mod(3); R = H.left_orders()[0]
             sage: H.optimal_embeddings(-7, 2, R)[0].codomain()
-            Order of Quaternion Algebra (-1, -3) with base ring Rational Field with basis (1/2 + 1/2*j + 7*k, 1/2*i + 13/2*k, j + 3*k, 11*k)
+            Order of Quaternion Algebra (-1, -3) with base ring Rational Field
+             with basis (1/2 + 1/2*j + 7*k, 1/2*i + 13/2*k, j + 3*k, 11*k)
         """
         return self.__R
 
@@ -6008,8 +6076,8 @@ class HeegnerQuatAlgEmbedding(SageObject):
             sage: f = H.optimal_embeddings(-7, 2, R)[1]; f._repr_()
             'Embedding sending 2*sqrt(-7) to -5*i + k'
         """
-        a = '%ssqrt(%s)'%('%s*'%self.__c if self.__c > 1 else '', self.__D)
-        return "Embedding sending %s to %s"%(a, self.__beta)
+        a = '%ssqrt(%s)' % ('%s*' % self.__c if self.__c > 1 else '', self.__D)
+        return "Embedding sending %s to %s" % (a, self.__beta)
 
     def conjugate(self):
         """
@@ -6041,27 +6109,29 @@ def quadratic_order(D, c, names='a'):
 
     INPUT:
 
-        - `D` -- fundamental discriminant
+    - `D` -- fundamental discriminant
 
-        - `c` -- conductor
+    - `c` -- conductor
 
-        - ``names`` -- string (default: 'a')
+    - ``names`` -- string (default: 'a')
 
     OUTPUT:
 
-        - order `R` of conductor `c` in an imaginary quadratic field
+    - order `R` of conductor `c` in an imaginary quadratic field
 
-        - the element `c\sqrt{D}` as an element of `R`
+    - the element `c\sqrt{D}` as an element of `R`
 
     The generator for the field is named 'a' by default.
 
     EXAMPLES::
 
         sage: sage.schemes.elliptic_curves.heegner.quadratic_order(-7,3)
-        (Order in Number Field in a with defining polynomial x^2 + 7 with a = 2.645751311064591?*I,
+        (Order in Number Field in a with defining polynomial x^2 + 7
+          with a = 2.645751311064591?*I,
          3*a)
         sage: sage.schemes.elliptic_curves.heegner.quadratic_order(-7,3,'alpha')
-        (Order in Number Field in alpha with defining polynomial x^2 + 7 with alpha = 2.645751311064591?*I,
+        (Order in Number Field in alpha with defining polynomial x^2 + 7
+          with alpha = 2.645751311064591?*I,
          3*alpha)
     """
     K = QuadraticField(D, names)
@@ -6077,7 +6147,7 @@ def class_number(D):
 
     INPUT:
 
-        - `D` -- integer
+    - `D` -- integer
 
     EXAMPLES::
 
@@ -6088,7 +6158,7 @@ def class_number(D):
         sage: sage.schemes.elliptic_curves.heegner.class_number(-163)
         1
 
-    A ValueError is raised when `D` is not a fundamental
+    A :class:`ValueError` is raised when `D` is not a fundamental
     discriminant::
 
         sage: sage.schemes.elliptic_curves.heegner.class_number(-5)
@@ -6096,10 +6166,9 @@ def class_number(D):
         ...
         ValueError: D (=-5) must be a fundamental discriminant
     """
-    if not number_field.is_fundamental_discriminant(D):
+    if not D.is_fundamental_discriminant():
         raise ValueError("D (=%s) must be a fundamental discriminant" % D)
-    return QuadraticField(D, 'a').class_number()
-
+    return D.class_number()
 
 def is_inert(D, p):
     r"""
@@ -6107,9 +6176,9 @@ def is_inert(D, p):
 
     INPUT:
 
-        - `D` -- fundamental discriminant
+    - `D` -- fundamental discriminant
 
-        - `p` -- prime integer
+    - `p` -- prime integer
 
     EXAMPLES::
 
@@ -6130,9 +6199,9 @@ def is_split(D, p):
 
     INPUT:
 
-        - `D` -- fundamental discriminant
+    - `D` -- fundamental discriminant
 
-        - `p` -- prime integer
+    - `p` -- prime integer
 
     EXAMPLES::
 
@@ -6153,9 +6222,9 @@ def is_ramified(D, p):
 
     INPUT:
 
-        - `D` -- fundamental discriminant
+    - `D` -- fundamental discriminant
 
-        - `p` -- prime integer
+    - `p` -- prime integer
 
     EXAMPLES::
 
@@ -6175,16 +6244,17 @@ def nearby_rational_poly(f, **kwds):
 
     INPUT:
 
-        - `f` -- polynomial with real floating point entries
+    - `f` -- polynomial with real floating point entries
 
-        - ``**kwds`` -- passed on to ``nearby_rational`` method
+    - ``**kwds`` -- passed on to ``nearby_rational`` method
 
     EXAMPLES::
 
+        sage: from sage.schemes.elliptic_curves.heegner import nearby_rational_poly
         sage: R.<x> = RR[]
-        sage: sage.schemes.elliptic_curves.heegner.nearby_rational_poly(2.1*x^2 + 3.5*x - 1.2, max_error=10e-16)
+        sage: nearby_rational_poly(2.1*x^2 + 3.5*x - 1.2, max_error=10e-16)
         21/10*X^2 + 7/2*X - 6/5
-        sage: sage.schemes.elliptic_curves.heegner.nearby_rational_poly(2.1*x^2 + 3.5*x - 1.2, max_error=10e-17)
+        sage: nearby_rational_poly(2.1*x^2 + 3.5*x - 1.2, max_error=10e-17)
         4728779608739021/2251799813685248*X^2 + 7/2*X - 5404319552844595/4503599627370496
         sage: RR(4728779608739021/2251799813685248  - 21/10)
         8.88178419700125e-17
@@ -6199,14 +6269,15 @@ def simplest_rational_poly(f, prec):
 
     INPUT:
 
-        - `f` -- polynomial with real floating point entries
+    - `f` -- polynomial with real floating point entries
 
-        - ``prec`` -- positive integer
+    - ``prec`` -- positive integer
 
     EXAMPLES::
 
+        sage: from sage.schemes.elliptic_curves.heegner import simplest_rational_poly
         sage: R.<x> = RR[]
-        sage: sage.schemes.elliptic_curves.heegner.simplest_rational_poly(2.1*x^2 + 3.5*x - 1.2, 53)
+        sage: simplest_rational_poly(2.1*x^2 + 3.5*x - 1.2, 53)
         21/10*X^2 + 7/2*X - 6/5
     """
     R = QQ['X']
@@ -6225,9 +6296,9 @@ def satisfies_weak_heegner_hypothesis(N, D):
 
     INPUT:
 
-        - `N` -- positive integer
+    - `N` -- positive integer
 
-        - `D` -- negative integer
+    - `D` -- negative integer
 
     EXAMPLES::
 
@@ -6247,7 +6318,7 @@ def satisfies_weak_heegner_hypothesis(N, D):
         sage: EllipticCurve('37a').heegner_discriminants_list(10)
         [-7, -11, -40, -47, -67, -71, -83, -84, -95, -104]
     """
-    if not number_field.is_fundamental_discriminant(D):
+    if not D.is_fundamental_discriminant():
         return False
     if D >= 0:
         return False
@@ -6268,11 +6339,9 @@ def make_monic(f):
 
     INPUT:
 
-    - f -- polynomial over the rational numbers
+    - `f` -- polynomial over the rational numbers
 
-    OUTPUT:
-
-    a monic integral polynomial and an integer
+    OUTPUT: A monic integral polynomial and an integer.
 
     EXAMPLES::
 
@@ -6344,9 +6413,7 @@ def ell_heegner_point(self, D, c=ZZ(1), f=None, check=True):
 
     - ``check``  -- bool (default: ``True``)
 
-    OUTPUT:
-
-    The Heegner point `y_c`.
+    OUTPUT: The Heegner point `y_c`.
 
     EXAMPLES::
 
@@ -6355,8 +6422,8 @@ def ell_heegner_point(self, D, c=ZZ(1), f=None, check=True):
         [-7, -11, -40, -47, -67, -71, -83, -84, -95, -104]
         sage: P = E.heegner_point(-7); P                          # indirect doctest
         Heegner point of discriminant -7 on elliptic curve of conductor 37
-        sage: P.point_exact()
-        (0 : 0 : 1)
+        sage: z = P.point_exact(); z == E(0, 0, 1)  or -z == E(0, 0, 1)
+        True
         sage: P.curve()
         Elliptic Curve defined by y^2 + y = x^3 - x over Rational Field
         sage: P = E.heegner_point(-40).point_exact(); P
@@ -6384,7 +6451,8 @@ def ell_heegner_point(self, D, c=ZZ(1), f=None, check=True):
     We can specify the quadratic form::
 
         sage: P = EllipticCurve('389a').heegner_point(-7, 5, (778,925,275)); P
-        Heegner point of discriminant -7 and conductor 5 on elliptic curve of conductor 389
+        Heegner point of discriminant -7 and conductor 5
+         on elliptic curve of conductor 389
         sage: P.quadratic_form()
         778*x^2 + 925*x*y + 275*y^2
     """
@@ -6398,16 +6466,13 @@ def kolyvagin_point(self, D, c=ZZ(1), check=True):
 
     INPUT:
 
-        - `D`        -- a Heegner discriminant
+    - `D`        -- a Heegner discriminant
 
-        - `c`        -- (default: 1) conductor, must be coprime to `DN`
+    - `c`        -- (default: 1) conductor, must be coprime to `DN`
 
-        - ``check``  -- bool (default: ``True``)
+    - ``check``  -- bool (default: ``True``)
 
-
-    OUTPUT:
-
-        The Kolyvagin point `P` of conductor `c`.
+    OUTPUT: The Kolyvagin point `P` of conductor `c`.
 
     EXAMPLES::
 
@@ -6423,7 +6488,6 @@ def kolyvagin_point(self, D, c=ZZ(1), check=True):
         True
         sage: 6*g
         (6 : -15 : 1)
-
     """
     return self.heegner_point(D,c,check=check).kolyvagin_point()
 
@@ -6434,9 +6498,7 @@ def ell_heegner_discriminants(self, bound):
 
     INPUT:
 
-
-    -  ``bound (int)`` - upper bound for -discriminant
-
+    - ``bound (int)`` -- upper bound for -discriminant
 
     OUTPUT: The list of Heegner discriminants between -1 and -bound for
     the given elliptic curve.
@@ -6447,7 +6509,7 @@ def ell_heegner_discriminants(self, bound):
         sage: E.heegner_discriminants(30)                     # indirect doctest
         [-7, -8, -19, -24]
     """
-    return [-D for D in range(1, bound)
+    return [ZZ(-D) for D in range(1, bound)
             if self.satisfies_heegner_hypothesis(-D)]
 
 
@@ -6458,9 +6520,7 @@ def ell_heegner_discriminants_list(self, n):
 
     INPUT:
 
-    -  ``n (int)`` - the number of discriminants to
-       compute
-
+    - ``n (int)`` -- the number of discriminants to compute
 
     OUTPUT: The list of the first n Heegner discriminants smaller than
     -5 for the given elliptic curve.
@@ -6472,7 +6532,7 @@ def ell_heegner_discriminants_list(self, n):
         [-7, -8, -19, -24]
     """
     v = []
-    D = -5
+    D = ZZ(-5)
     while len(v) < n:
         while not self.satisfies_heegner_hypothesis(D):
             D -= 1
@@ -6491,16 +6551,14 @@ def heegner_point_height(self, D, prec=2, check_rank=True):
 
     INPUT:
 
+    - ``D (int)`` -- fundamental discriminant (=/= -3, -4)
 
-    -  ``D (int)`` - fundamental discriminant (=/= -3, -4)
+    - ``prec (int)`` -- (default: 2), use `prec \cdot \sqrt(N) + 20`
+      terms of `L`-series in computations, where `N` is the
+      conductor.
 
-    - ``prec (int)`` - (default: 2), use `prec \cdot \sqrt(N) + 20`
-       terms of `L`-series in computations, where `N` is the
-       conductor.
-
-    - ``check_rank`` - whether to check if the rank is at least 2 by
+    - ``check_rank`` -- whether to check if the rank is at least 2 by
       computing the Mordell-Weil rank directly.
-
 
     OUTPUT: Interval that contains the height of the Heegner point.
 
@@ -6518,18 +6576,18 @@ def heegner_point_height(self, D, prec=2, check_rank=True):
         sage: E = EllipticCurve('5077a')
         sage: E.heegner_point_height(-7)
         0
-        sage: E.heegner_point_height(-7,check_rank=False)
+        sage: E.heegner_point_height(-7, check_rank=False)
         0.0000?
     """
 
     if not self.satisfies_heegner_hypothesis(D):
-        raise ArithmeticError("Discriminant (=%s) must be a fundamental discriminant that satisfies the Heegner hypothesis."%D)
+        raise ArithmeticError("Discriminant (=%s) must be a fundamental discriminant that satisfies the Heegner hypothesis." % D)
 
     if check_rank and self.rank() >= 2:
         return ZZ(0)
 
     if D == -3 or D == -4:
-        raise ArithmeticError("Discriminant (=%s) must not be -3 or -4."%D)
+        raise ArithmeticError("Discriminant (=%s) must not be -3 or -4." % D)
     eps = self.root_number()
     L1_vanishes = self.lseries().L1_vanishes()
 
@@ -6567,7 +6625,8 @@ def heegner_point_height(self, D, prec=2, check_rank=True):
         return IR(alpha-MIN_ERR,alpha+MIN_ERR) * IR(LE1-err_E,LE1+err_E) * IR(LF1-err_F,LF1+err_F)
 
 
-def heegner_index(self, D,  min_p=2, prec=5, descent_second_limit=12, verbose_mwrank=False, check_rank=True):
+def heegner_index(self, D, min_p=2, prec=5, descent_second_limit=12,
+                  verbose_mwrank=False, check_rank=True):
     r"""
     Return an interval that contains the index of the Heegner
     point `y_K` in the group of `K`-rational points modulo torsion
@@ -6588,23 +6647,22 @@ def heegner_index(self, D,  min_p=2, prec=5, descent_second_limit=12, verbose_mw
 
     INPUT:
 
-    -  ``D (int)`` - Heegner discriminant
+    - ``D (int)`` -- Heegner discriminant
 
-    -  ``min_p (int)`` - (default: 2) only rule out primes
-       = min_p dividing the index.
+    - ``min_p (int)`` -- (default: 2) only rule out primes
+      = min_p dividing the index.
 
-    -  ``verbose_mwrank (bool)`` - (default: ``False``); print lots of
-       mwrank search status information when computing regulator
+    - ``verbose_mwrank (bool)`` -- (default: ``False``); print lots of
+      mwrank search status information when computing regulator
 
-    -  ``prec (int)`` - (default: 5), use prec\*sqrt(N) +
-       20 terms of L-series in computations, where N is the conductor.
+    - ``prec (int)`` -- (default: 5), use prec\*sqrt(N) +
+      20 terms of L-series in computations, where N is the conductor.
 
-    -  ``descent_second_limit`` - (default: 12)- used in 2-descent
-       when computing regulator of the twist
+    - ``descent_second_limit`` -- (default: 12)- used in 2-descent
+      when computing regulator of the twist
 
-    - ``check_rank`` - whether to check if the rank is at least 2 by
+    - ``check_rank`` -- whether to check if the rank is at least 2 by
       computing the Mordell-Weil rank directly.
-
 
     OUTPUT: an interval that contains the index, or half the index
 
@@ -6679,7 +6737,7 @@ def heegner_index(self, D,  min_p=2, prec=5, descent_second_limit=12, verbose_mw
         True
     """
     if not self.satisfies_heegner_hypothesis(D):
-        raise ArithmeticError("Discriminant (=%s) must be a fundamental discriminant that satisfies the Heegner hypothesis."%D)
+        raise ArithmeticError("Discriminant (=%s) must be a fundamental discriminant that satisfies the Heegner hypothesis." % D)
 
     if check_rank and self.rank() >= 2:
         return rings.infinity
@@ -6694,19 +6752,19 @@ def heegner_index(self, D,  min_p=2, prec=5, descent_second_limit=12, verbose_mw
     # Heegner point on the twist.
 
     ht = h0/2
-    verbose('Height of heegner point = %s'%ht, tm)
+    verbose('Height of heegner point = %s' % ht, tm)
 
     if self.root_number() == 1:
         F = self.quadratic_twist(D)
     else:
         F = self
     # Now rank(F) > 0
-    h  = ht.upper()
-    verbose("Heegner height bound = %s"%h)
+    h = ht.upper()
+    verbose("Heegner height bound = %s" % h)
     B = F.CPS_height_bound()
-    verbose("CPS bound = %s"%B)
+    verbose("CPS bound = %s" % B)
     c = h/(min_p**2) + B
-    verbose("Search would have to be up to height = %s"%c)
+    verbose("Search would have to be up to height = %s" % c)
 
     from .ell_rational_field import _MAX_HEIGHT
 
@@ -6723,7 +6781,7 @@ def heegner_index(self, D,  min_p=2, prec=5, descent_second_limit=12, verbose_mw
             if z.is_divisible_by(2):
                 a = 2
             else:
-                FK_even_tor_pts = [T for T in FK.torsion_subgroup().gens() if T.order()%2==0]
+                FK_even_tor_pts = [T for T in FK.torsion_subgroup().gens() if T.order() % 2 == 0]
                 if len(FK_even_tor_pts) == 2:
                     FK_even_tor_pts.append(sum(FK_even_tor_pts))
                 for T in FK_even_tor_pts:
@@ -6748,7 +6806,7 @@ def heegner_index(self, D,  min_p=2, prec=5, descent_second_limit=12, verbose_mw
         if z.is_divisible_by(2):
             a = 2
         else:
-            FK_even_tor_pts = [T for T in FK.torsion_subgroup().gens() if T.order()%2==0]
+            FK_even_tor_pts = [T for T in FK.torsion_subgroup().gens() if T.order() % 2 == 0]
             if len(FK_even_tor_pts) == 2:
                 FK_even_tor_pts.append(sum(FK_even_tor_pts))
             for T in FK_even_tor_pts:
@@ -6770,7 +6828,7 @@ def _adjust_heegner_index(self, a):
     EXAMPLES::
 
         sage: E = EllipticCurve('11a1')
-        sage: a = RIF(sqrt(2))-RIF(1.4142135623730951)
+        sage: a = RIF(sqrt(2)) - RIF(1.4142135623730951)
         sage: E._adjust_heegner_index(a)
         1.?e-8
     """
@@ -6780,7 +6838,7 @@ def _adjust_heegner_index(self, a):
     return a.sqrt()
 
 
-def heegner_index_bound(self, D=0,  prec=5, max_height=None):
+def heegner_index_bound(self, D=0, prec=5, max_height=None):
     r"""
     Assume ``self`` has rank 0.
 
@@ -6799,32 +6857,29 @@ def heegner_index_bound(self, D=0,  prec=5, max_height=None):
 
     INPUT:
 
+    - ``D (int)`` -- (default: 0) Heegner discriminant; if
+      0, use the first discriminant -4 that satisfies the Heegner
+      hypothesis
 
-    -  ``D (int)`` - (default: 0) Heegner discriminant; if
-       0, use the first discriminant -4 that satisfies the Heegner
-       hypothesis
+    - ``verbose (bool)`` -- (default: ``True``)
 
-    -  ``verbose (bool)`` - (default: ``True``)
+    - ``prec (int)`` -- (default: 5), use `prec \cdot \sqrt(N) + 20`
+      terms of `L`-series in computations, where `N` is the conductor.
 
-    -  ``prec (int)`` - (default: 5), use `prec \cdot \sqrt(N) + 20`
-       terms of `L`-series in computations, where `N` is the conductor.
-
-    -  ``max_height (float)`` - should be = 21; bound on
-       logarithmic naive height used in point searches. Make smaller to
-       make this function faster, at the expense of possibly obtaining a
-       worse answer. A good range is between 13 and 21.
-
+    - ``max_height (float)`` -- should be = 21; bound on
+      logarithmic naive height used in point searches. Make smaller to
+      make this function faster, at the expense of possibly obtaining a
+      worse answer. A good range is between 13 and 21.
 
     OUTPUT:
 
+    - ``v`` -- list or int (bad primes or 0 or -1)
 
-    -  ``v`` - list or int (bad primes or 0 or -1)
+    - ``D`` -- the discriminant that was used (this is
+      useful if `D` was automatically selected).
 
-    -  ``D`` - the discriminant that was used (this is
-       useful if `D` was automatically selected).
-
-    -  ``exact`` - either False, or the exact Heegner index
-       (up to factors of 2)
+    - ``exact`` -- either False, or the exact Heegner index
+      (up to factors of 2)
 
     EXAMPLES::
 
@@ -6850,16 +6905,16 @@ def heegner_index_bound(self, D=0,  prec=5, max_height=None):
     if 0 in ht:
         return 0, D, False
     F = self.quadratic_twist(D)
-    h  = ht.upper()
-    verbose("Heegner height bound = %s"%h)
+    h = ht.upper()
+    verbose("Heegner height bound = %s" % h)
     B = F.CPS_height_bound()
-    verbose("CPS bound = %s"%B)
+    verbose("CPS bound = %s" % B)
     if self.two_torsion_rank() == 0:
         H = h
     else:
         H = 4*h
     p = 3
-    from sage.all import next_prime
+    from sage.arith.misc import next_prime
     while True:
         c = H/(2*p**2) + B
         if c < max_height:
@@ -6867,13 +6922,13 @@ def heegner_index_bound(self, D=0,  prec=5, max_height=None):
         if p > 100:
             break
         p = next_prime(p)
-    verbose("Using p = %s"%p)
+    verbose("Using p = %s" % p)
 
     if c > max_height:
-        verbose("No information by searching only up to max_height (=%s)."%c)
+        verbose("No information by searching only up to max_height (=%s)." % c)
         return -1, D, False
 
-    verbose("Searching up to height = %s"%c)
+    verbose("Searching up to height = %s" % c)
     eps = 10e-5
 
     def _bound(P):
@@ -6888,15 +6943,15 @@ def heegner_index_bound(self, D=0,  prec=5, max_height=None):
         IR = rings.RealIntervalField(20)  # todo: 20?
         h = IR(reg-eps,reg+eps)
         ind2 = ht/(h/2)
-        verbose("index squared = %s"%ind2)
+        verbose("index squared = %s" % ind2)
         ind = ind2.sqrt()
-        verbose("index = %s"%ind)
+        verbose("index = %s" % ind)
         # Compute upper bound on square root of index.
         if ind.absolute_diameter() < 1:
             t, i = ind.is_int()
             if t:   # unique integer in interval, so we've found exact index squared.
                 return prime_divisors(i), D, i
-        raise RuntimeError("Unable to compute bound for e=%s, D=%s (try increasing precision)"%(self, D))
+        raise RuntimeError("Unable to compute bound for e=%s, D=%s (try increasing precision)" % (self, D))
 
     # First try a quick search, in case we get lucky and find
     # a generator.
@@ -6925,9 +6980,7 @@ def _heegner_index_in_EK(self, D):
 
     - `D` -- negative integer; the Heegner discriminant
 
-    OUTPUT:
-
-    a power of 2 -- the given index
+    OUTPUT: A power of 2 -- the given index.
 
     EXAMPLES:
 
@@ -6949,11 +7002,10 @@ def _heegner_index_in_EK(self, D):
         (-867/3872*a - 3615/3872 : -18003/170368*a - 374575/170368 : 1)
         sage: P.division_points(2)
         [(1/8*a + 5/8 : -5/16*a - 9/16 : 1)]
-
     """
     # check conditions, then use cache if possible.
     if not self.satisfies_heegner_hypothesis(D):
-        raise ValueError("D (=%s) must satisfy the Heegner hypothesis"%D)
+        raise ValueError("D (=%s) must satisfy the Heegner hypothesis" % D)
     try:
         return self.__heegner_index_in_EK[D]
     except AttributeError:
@@ -6982,25 +7034,25 @@ def _heegner_index_in_EK(self, D):
     # so we may assume t is of 2-power order.
     #####################################################################
 
-    E     = self  # nice shortcut
-    F     = E.quadratic_twist(D).minimal_model()
-    K     = rings.QuadraticField(D, 'a')
+    E = self  # nice shortcut
+    F = E.quadratic_twist(D).minimal_model()
+    K = rings.QuadraticField(D, 'a')
 
     # Define a map phi that we'll use to put the points of E^D(QQ)
     # into E(K):
-    G     = E.change_ring(K)
-    G2    = F.change_ring(K)
-    phi   = G2.isomorphism_to(G)
+    G = E.change_ring(K)
+    G2 = F.change_ring(K)
+    phi = G2.isomorphism_to(G)
 
     # Basis for E(Q)/tor oplus E^D(QQ)/tor in E(K):
     basis = [G(z) for z in E.gens()] + [G(phi(z)) for z in F.gens()]
     # Make a list of the 2-power order torsion points in E(K), including 0.
-    T     = [G(z) for z in G.torsion_subgroup().list() if z.order() == 1 or
+    T = [G(z) for z in G.torsion_subgroup().list() if z.order() == 1 or
             ((z.order() % 2 == 0 and len(z.order().factor()) == 1))]
 
-    r     = len(basis)   # rank
-    V     = rings.QQ**r
-    B     = []
+    r = len(basis)   # rank
+    V = rings.QQ**r
+    B = []
 
     # Iterate through reps for A/(2*A) creating vectors in (1/2)*ZZ^r
     for v in rings.GF(2)**r:
@@ -7013,7 +7065,7 @@ def _heegner_index_in_EK(self, D):
 
     A = rings.ZZ**r
     # Take span of our vectors in (1/2)*ZZ^r, along with ZZ^r.  This is E(K)/tor.
-    W     = V.span(B, rings.ZZ) + A
+    W = V.span(B, rings.ZZ) + A
 
     # Compute the index in E(K)/tor of A = E(Q)/tor + E^D(Q)/tor, cache, and return.
     index = A.index_in(W)
@@ -7042,7 +7094,6 @@ def heegner_sha_an(self, D, prec=53):
         curves that come up have enormous conductor, and Sha is
         nontrivial, which makes provably finding the Mordell-Weil
         group using 2-descent difficult.
-
 
     EXAMPLES:
 
@@ -7089,19 +7140,20 @@ def heegner_sha_an(self, D, prec=53):
     2.3 in [GZ1986]_ page 311, then that conjecture is
     false, as the following example shows::
 
-        sage: E = EllipticCurve('65a')                              # long time
-        sage: E.heegner_sha_an(-56)                                 # long time
+        sage: # long time
+        sage: E = EllipticCurve('65a')
+        sage: E.heegner_sha_an(-56)
         1.00000000000000
-        sage: E.torsion_order()                                     # long time
+        sage: E.torsion_order()
         2
-        sage: E.tamagawa_product()                                  # long time
+        sage: E.tamagawa_product()
         1
-        sage: E.quadratic_twist(-56).rank()                         # long time
+        sage: E.quadratic_twist(-56).rank()
         2
     """
     # check conditions, then return from cache if possible.
     if not self.satisfies_heegner_hypothesis(D):
-        raise ValueError("D (=%s) must satisfy the Heegner hypothesis"%D)
+        raise ValueError("D (=%s) must satisfy the Heegner hypothesis" % D)
     try:
         return self.__heegner_sha_an[(D, prec)]
     except AttributeError:
@@ -7111,13 +7163,13 @@ def heegner_sha_an(self, D, prec=53):
 
     # Use the BSD conjecture over the quadratic imaginary K --
     # see page 311 of [GZ1986]_ for the formula.
-    E   = self  # notational convenience
-    F   = E.quadratic_twist(D).minimal_model()
-    K   = rings.QuadraticField(D, 'a')
+    E = self  # notational convenience
+    F = E.quadratic_twist(D).minimal_model()
+    K = rings.QuadraticField(D, 'a')
 
     # Compute each of the quantities in BSD
     #  - The torsion subgroup over K.
-    T   = E.change_ring(K).torsion_order()
+    T = E.change_ring(K).torsion_order()
 
     #  - The product of the Tamagawa numbers, which because D is
     #    coprime to N is just the square of the product of the
@@ -7127,7 +7179,7 @@ def heegner_sha_an(self, D, prec=53):
 
     #  - The leading term of the L-series, as a product of two
     #  other L-series.
-    rE  = E.rank()
+    rE = E.rank()
     rF = F.rank()
     L_E = E.lseries().dokchitser(prec).derivative(1, rE)
     L_F = F.lseries().dokchitser(prec).derivative(1, rF)
@@ -7208,13 +7260,13 @@ def _heegner_forms_list(self, D, beta=None, expected_count=None):
         [389*x^2 + 313*x*y + 63*y^2, 1167*x^2 + 313*x*y + 21*y^2, 3501*x^2 + 313*x*y + 7*y^2]
     """
     if expected_count is None:
-        expected_count = number_field.QuadraticField(D, 'a').class_number()
+        expected_count = D.class_number()
     N = self.conductor()
     if beta is None:
         beta = Integers(4*N)(D).sqrt(extend=False)
     else:
         assert beta**2 == Integers(4*N)(D)
-    from sage.quadratic_forms.all import BinaryQF
+    from sage.quadratic_forms.binary_qf import BinaryQF
     b = ZZ(beta) % (2*N)
     all = []
     seen = []
@@ -7268,10 +7320,10 @@ def satisfies_heegner_hypothesis(self, D):
         sage: E.satisfies_heegner_hypothesis(-11)
         False
     """
-    if not number_field.is_fundamental_discriminant(D):
-        return False
     D = ZZ(D)
     if D >= 0:
+        return False
+    if not D.is_fundamental_discriminant():
         return False
     if D.gcd(self.conductor()) != 1:
         return False

@@ -1,13 +1,11 @@
 # NOT ready to be used -- possibly should be deleted.
 
 from .power_series_ring_element cimport PowerSeries
-from sage.structure.element cimport Element, ModuleElement, RingElement
-from .infinity import infinity, is_Infinite
-from sage.libs.all import PariError
-from .power_series_ring_element import is_PowerSeries
-from . import rational_field
+from sage.structure.element cimport Element
+from .infinity import infinity
 from .polynomial.multi_polynomial_ring_base import is_MPolynomialRing
 from . import power_series_poly
+
 
 cdef class PowerSeries_mpoly(PowerSeries):
 
@@ -131,8 +129,8 @@ cdef class PowerSeries_mpoly(PowerSeries):
         EXAMPLES:
         """
         cdef PowerSeries_mpoly right = <PowerSeries_mpoly>right_m
-        return PowerSeries_mpoly(self._parent, self.__f + right.__f, \
-                                         self.common_prec_c(right), check=True)
+        return PowerSeries_mpoly(self._parent, self.__f + right.__f,
+                                 self.common_prec_c(right), check=True)
 
     cpdef _sub_(self, right_m):
         """
@@ -141,14 +139,16 @@ cdef class PowerSeries_mpoly(PowerSeries):
         EXAMPLES:
         """
         cdef PowerSeries_mpoly right = <PowerSeries_mpoly>right_m
-        return PowerSeries_mpoly(self._parent, self.__f - right.__f, \
-                                         self.common_prec_c(right), check=True)
+        return PowerSeries_mpoly(self._parent, self.__f - right.__f,
+                                 self.common_prec_c(right), check=True)
 
     cpdef _rmul_(self, Element c):
-        return PowerSeries_mpoly(self._parent, self.__f._rmul_(c), self._prec, check=False)
+        return PowerSeries_mpoly(self._parent, self.__f._rmul_(c),
+                                 self._prec, check=False)
 
     cpdef _lmul_(self, Element c):
-        return PowerSeries_mpoly(self._parent, self.__f._lmul_(c), self._prec, check=False)
+        return PowerSeries_mpoly(self._parent, self.__f._lmul_(c),
+                                 self._prec, check=False)
 
 
 def make_powerseries_mpoly_v0(parent,  f, prec, is_gen):

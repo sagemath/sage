@@ -1,7 +1,7 @@
 SAGE_SPKG_CONFIGURE([ntl], [
     m4_pushdef(SAGE_NTL_VERSION_MAJOR, [10])
     m4_pushdef(SAGE_NTL_VERSION_MINOR, [3])
-    SAGE_SPKG_DEPCHECK([gmp mpir gcc], [
+    SAGE_SPKG_DEPCHECK([gmp gcc], [
         AC_CHECK_HEADER([NTL/ZZ.h], [], [sage_spkg_install_ntl=yes])
         AC_MSG_CHECKING([whether we can link a program using NTL])
         NTL_SAVED_LIBS=$LIBS

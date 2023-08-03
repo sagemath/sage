@@ -134,14 +134,21 @@ from https://wiki.sagemath.org/days4schedule .
 from copy import copy
 import time
 
-from sage.rings.all import ZZ, QQ, RR, AA, RealField, RealIntervalField, RIF, RDF, infinity
-from sage.arith.all import binomial, factorial
+from sage.rings.integer_ring import ZZ
+from sage.rings.rational_field import QQ
+from sage.rings.infinity import infinity
+from sage.rings.qqbar import AA
+from sage.rings.real_double import RDF
+from sage.rings.real_mpfi import RealIntervalField, RIF
+from sage.rings.real_mpfr import RR, RealField
+from sage.arith.misc import binomial, factorial
 from sage.misc.randstate import randstate
-from sage.modules.all import vector, FreeModule
-from sage.matrix.all import MatrixSpace
+from sage.modules.free_module_element import free_module_element as vector
+from sage.modules.free_module import FreeModule
+from sage.matrix.matrix_space import MatrixSpace
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
-from sage.rings.polynomial.polynomial_ring import polygen
-from sage.misc.all import numerator, denominator, prod
+from sage.misc.functional import numerator, denominator
+from sage.misc.misc_c import prod
 
 from sage.matrix.matrix_integer_dense cimport Matrix_integer_dense
 from sage.modules.vector_integer_dense cimport Vector_integer_dense
@@ -325,9 +332,9 @@ cdef class interval_bernstein_polynomial:
         on bp2 (or bp1).
         """
         if self.max_variations - bp1.min_variations < bp2.max_variations:
-           bp2.max_variations = self.max_variations - bp1.min_variations
+            bp2.max_variations = self.max_variations - bp1.min_variations
         if self.max_variations - bp2.min_variations < bp1.max_variations:
-           bp1.max_variations = self.max_variations - bp2.min_variations
+            bp1.max_variations = self.max_variations - bp2.min_variations
 
     def try_split(self, context ctx, logging_note):
         """
@@ -405,9 +412,9 @@ cdef class interval_bernstein_polynomial:
         # A different algorithm here might be more efficient.
 
         div = 1024
-        while self.degree() >= div//4:
+        while self.degree() >= (div // 4):
             div = div * 2
-        qdiv = div/4
+        qdiv = div // 4  # divides evenly since div = 1024*2^k
         rand = Integer(ctx.random.randrange(qdiv, 3*qdiv)) / div
         (p1, p2, ok) = self.de_casteljau(ctx, rand)
         ctx.dc_log_append(("div" + self._type_code(), self.scale_log2, self.bitsize, rand, ok, logging_note))
@@ -867,7 +874,7 @@ cdef class interval_bernstein_polynomial_integer(interval_bernstein_polynomial):
                 indicator = '='
             if bitsize(err) > 17:
                 shift = bitsize(err) - 15
-                for i in xrange(len(ribp)):
+                for i in range(len(ribp)):
                     ribp[i] = ribp[i] >> shift
                 max_err = max_err >> shift
                 err = -((-err) >> shift)
@@ -936,7 +943,7 @@ cdef class interval_bernstein_polynomial_integer(interval_bernstein_polynomial):
             <IBP: ((0, 3, 12, 28) + [0 .. 1)) * 2^5>
         """
         p = self.coeffs.__copy__()
-        for i in xrange(len(p)):
+        for i in range(len(p)):
             p[i] = p[i] >> bits
         return interval_bernstein_polynomial_integer(p, self.lower, self.upper, self.lsign, self.usign, -((-self.error) >> bits), self.scale_log2 + bits, self.level, self.slope_err)
 
@@ -1251,8 +1258,9 @@ def de_casteljau_intvec(Vector_integer_dense c, int c_bitsize, Rational x, int u
 # double-rounding on x86 PCs.
 cdef double half_ulp = ldexp(1.0 * 65/64, -54)
 
+
 def intvec_to_doublevec(Vector_integer_dense b, long err):
-    """
+    r"""
     Given a vector of integers A = [a1, ..., an], and an integer
     error bound E, returns a vector of floating-point numbers
     B = [b1, ..., bn], lower and upper error bounds F1 and F2, and
@@ -2030,7 +2038,7 @@ def precompute_degree_reduction_cache(n):
         # polynomial, and be fairly certain (absolutely certain?) that
         # the error in the reduced polynomial will be no better
         # than this product.
-        expected_err = max([sum([abs(x) for x in bd.row(k)]) for k in xrange(next+1)])
+        expected_err = max([sum([abs(x) for x in bd.row(k)]) for k in range(next+1)])
 
         # bdd = bd.denominator()
         # bdi = MatrixSpace(ZZ, next+1, samps, sparse=False)(bd * bdd)
@@ -2105,14 +2113,14 @@ def bernstein_up(d1, d2, s=None):
     MS = MatrixSpace(QQ, s, d1+1, sparse=False)
     m = MS()
     scale = factorial(d2)/factorial(d2-d1)
-    for b in range(0, d1+1):
+    for b in range(d1 + 1):
         scale2 = scale / binomial(d1, b)
         if (d1 - b) & 1 == 1:
             scale2 = -scale2
         scale2 = ~scale2
-        for a in range(0, s):
+        for a in range(s):
             ra = ZZ(subsample_vec(a, s, d2 + 1))
-            m[a, b] = prod([ra-i for i in range(0, b)]) * prod([ra-i for i in range(d2-d1+b+1, d2+1)]) * scale2
+            m[a, b] = prod([ra-i for i in range(b)]) * prod([ra-i for i in range(d2-d1+b+1, d2+1)]) * scale2
 
     return m
 
@@ -2132,19 +2140,22 @@ cdef int subsample_vec(int a, int slen, int llen):
         sage: [subsample_vec_doctest(a, 3, 4) for a in range(3)]
         [1, 2, 3]
     """
-
     # round((a + 0.5) * (llen - 1) / slen)
     # round((2*a + 1) * (llen - 1) / (2 * slen)
     # floor(((2*a + 1) * (llen - 1) + slen) / (2 * slen))
     return ((2*a + 1) * (llen - 1) + slen) // (2 * slen)
 
+
 def subsample_vec_doctest(a, slen, llen):
     return subsample_vec(a, slen, llen)
 
+
 def maximum_root_first_lambda(p):
-    """
+    r"""
     Given a polynomial with real coefficients, computes an upper bound
-    on its largest real root, using the first-\lambda algorithm from
+    on its largest real root.
+
+    This is using the first-\lambda algorithm from
     "Implementations of a New Theorem for Computing Bounds for Positive
     Roots of Polynomials", by Akritas, Strzebo\'nski, and Vigklas.
 
@@ -2196,7 +2207,7 @@ def cl_maximum_root_first_lambda(cl):
     negCounter = 0
     pos = []
     neg = []
-    for j in xrange(n-1, -2, -1):
+    for j in range(n-1, -2, -1):
         if j < 0:
             coeff = 1
         else:
@@ -2220,7 +2231,7 @@ def cl_maximum_root_first_lambda(cl):
         return RIF.upper_field().zero()
 
     max_ub_log = RIF('-infinity')
-    for j in xrange(len(neg)):
+    for j in range(len(neg)):
         cur_ub_log = (-neg[j][0] / pos[j][0]).log() / (pos[j][1] - neg[j][1])
         max_ub_log = max_ub_log.union(cur_ub_log)
 
@@ -2272,7 +2283,7 @@ def cl_maximum_root_local_max(cl):
     max_pos_uses = 0
     max_ub_log = RIF('-infinity')
 
-    for j in xrange(n-1, -1, -1):
+    for j in range(n-1, -1, -1):
         if cl[j] < 0:
             max_pos_uses = max_pos_uses+1
             cur_ub_log = (-cl[j] / (max_pos_coeff >> max_pos_uses)).log() / (max_pos_exp - j)
@@ -2351,7 +2362,7 @@ def root_bounds(p):
     ub = cl_maximum_root(cl)
 
     neg_cl = copy(cl)
-    for j in xrange(n-1, -1, -2):
+    for j in range(n-1, -1, -2):
         neg_cl[j] = -neg_cl[j]
 
     lb = -cl_maximum_root(neg_cl)
@@ -3117,7 +3128,7 @@ cdef class ocean:
 
     def all_done(self):
         """
-        Returns true iff all islands are known to contain exactly one root.
+        Return ``True`` iff all islands are known to contain exactly one root.
 
         EXAMPLES::
 
@@ -4365,7 +4376,7 @@ def to_bernstein(p, low=0, high=1, degree=None):
         raise ValueError('Bernstein degree must be at least polynomial degree')
     vs = ZZ ** (degree + 1)
     c = vs(0)
-    for i in range(0, p.degree() + 1):
+    for i in range(p.degree() + 1):
         c[i] = p[i]
     scale = ZZ(1)
     if low == 0:
@@ -4381,7 +4392,8 @@ def to_bernstein(p, low=0, high=1, degree=None):
     reverse_intvec(c)
     taylor_shift1_intvec(c)
     reverse_intvec(c)
-    return ([c[k] / binomial(degree, k) for k in range(0, degree+1)], scale)
+    return ([c[k] / binomial(degree, k) for k in range(degree + 1)], scale)
+
 
 def to_bernstein_warp(p):
     """
@@ -4395,13 +4407,11 @@ def to_bernstein_warp(p):
         sage: to_bernstein_warp(1 + x + x^2 + x^3 + x^4 + x^5)
         [1, 1/5, 1/10, 1/10, 1/5, 1]
     """
-
     c = p.list()
-
     for i in range(len(c)):
         c[i] = c[i] / binomial(len(c) - 1, i)
-
     return c
+
 
 def bernstein_expand(Vector_integer_dense c, int d2):
     """

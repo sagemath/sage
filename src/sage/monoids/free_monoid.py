@@ -33,7 +33,7 @@ from .monoid import Monoid_class
 from sage.combinat.words.finite_word import FiniteWord_class
 
 from sage.structure.unique_representation import UniqueRepresentation
-from sage.rings.all import ZZ
+from sage.rings.integer_ring import ZZ
 
 
 def is_FreeMonoid(x):
@@ -166,7 +166,7 @@ class FreeMonoid(Monoid_class, UniqueRepresentation):
         if names is None:
             raise ValueError("names must be specified")
         names = normalize_names(index_set, names)
-        return super(FreeMonoid, cls).__classcall__(cls, index_set, names)
+        return super().__classcall__(cls, index_set, names)
 
     Element = FreeMonoidElement
 

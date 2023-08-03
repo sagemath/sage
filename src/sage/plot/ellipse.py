@@ -1,7 +1,7 @@
 """
 Ellipses
 """
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2010 Vincent Delecroix <20100.delecroix@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
@@ -13,8 +13,8 @@ Ellipses
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from .primitive import GraphicPrimitive
 from sage.misc.decorators import options, rename_keyword
@@ -192,7 +192,8 @@ class Ellipse(GraphicPrimitive):
         options = self.options()
         p = patches.Ellipse(
                 (self.x,self.y),
-                self.r1*2.,self.r2*2.,self.angle/pi*180.)
+                self.r1*2.,self.r2*2.,
+                angle=self.angle/pi*180.)
         p.set_linewidth(float(options['thickness']))
         p.set_fill(options['fill'])
         a = float(options['alpha'])
@@ -272,23 +273,51 @@ def ellipse(center, r1, r2, angle=0, **options):
         sage: ellipse((0,0),2,1)
         Graphics object consisting of 1 graphics primitive
 
+    .. PLOT::
+
+        E=ellipse((0,0),2,1)
+        sphinx_plot(E)
+
     More complicated examples with tilted axes and drawing options::
 
         sage: ellipse((0,0),3,1,pi/6,fill=True,alpha=0.3,linestyle="dashed")
         Graphics object consisting of 1 graphics primitive
+
+    .. PLOT::
+
+        E = ellipse((0,0),3,1,pi/6,fill=True,alpha=0.3,linestyle="dashed")
+        sphinx_plot(E)
+
+    other way to indicate dashed linestyle::
+
         sage: ellipse((0,0),3,1,pi/6,fill=True,alpha=0.3,linestyle="--")
         Graphics object consisting of 1 graphics primitive
 
-    ::
+    .. PLOT::
+
+        E =ellipse((0,0),3,1,pi/6,fill=True,alpha=0.3,linestyle='--')
+        sphinx_plot(E)
+
+    with colors ::
 
         sage: ellipse((0,0),3,1,pi/6,fill=True,edgecolor='black',facecolor='red')
         Graphics object consisting of 1 graphics primitive
+
+    .. PLOT::
+
+        E=ellipse((0,0),3,1,pi/6,fill=True,edgecolor='black',facecolor='red')
+        sphinx_plot(E)
 
     We see that ``rgbcolor`` overrides these other options, as this plot
     is green::
 
         sage: ellipse((0,0),3,1,pi/6,fill=True,edgecolor='black',facecolor='red',rgbcolor='green')
         Graphics object consisting of 1 graphics primitive
+
+    .. PLOT::
+
+        E=ellipse((0,0),3,1,pi/6,fill=True,edgecolor='black',facecolor='red',rgbcolor='green')
+        sphinx_plot(E)
 
     The default aspect ratio for ellipses is 1.0::
 
@@ -306,6 +335,12 @@ def ellipse(center, r1, r2, angle=0, **options):
 
         sage: ellipse((0,0),2,1,legend_label="My ellipse", legend_color='green')
         Graphics object consisting of 1 graphics primitive
+
+    .. PLOT::
+
+        E=ellipse((0,0),2,1,legend_label="My ellipse", legend_color='green')
+        sphinx_plot(E)
+
     """
     from sage.plot.all import Graphics
     g = Graphics()

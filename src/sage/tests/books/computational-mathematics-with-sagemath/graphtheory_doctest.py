@@ -86,7 +86,7 @@ Sage example in ./graphtheory.tex, line 332::
 Sage example in ./graphtheory.tex, line 340::
 
   sage: all( graphs.KneserGraph(n,k).chromatic_number() == n - 2*k + 2
-  ....:      for n in range(5,9) for k in range(2,floor(n/2)) )
+  ....:      for n in range(5, 9) for k in range(2, n // 2) )
   True
 
 Sage example in ./graphtheory.tex, line 459::
@@ -219,12 +219,12 @@ Sage example in ./graphtheory.tex, line 1625::
 
   sage: # Number of colors used
   sage: max(color.values()) + 1
-  6
+  5
 
 Sage example in ./graphtheory.tex, line 1635::
 
   sage: P = Permutations([0,1,2,3]); P.random_element()
-  [2, 0, 1, 3]
+  [3, 2, 1, 0]
 
 Sage example in ./graphtheory.tex, line 1646::
 
@@ -233,7 +233,7 @@ Sage example in ./graphtheory.tex, line 1646::
 Sage example in ./graphtheory.tex, line 1656::
 
   sage: n_tests = 30
-  sage: vertices = g.vertices()
+  sage: vertices = g.vertices(sort=False)
   sage: P = Permutations(range(n))
   sage: best_coloring = {}
   sage: best_chromatic_number = +oo
@@ -257,14 +257,14 @@ Sage example in ./graphtheory.tex, line 1678::
 Sage example in ./graphtheory.tex, line 1697::
 
   sage: best_chromatic_number # Number of colors used
-  4
+  5
 
 Sage example in ./graphtheory.tex, line 1718::
 
   sage: def greedy_coloring(g, permutation):
   ....:     n = g.order()
   ....:     available_colors = Set(range(n))
-  ....:     vertices = g.vertices()
+  ....:     vertices = g.vertices(sort=False)
   ....:     color = {}
   ....:     for i in range(n):
   ....:         u = vertices[permutation[i]]
@@ -283,7 +283,7 @@ Sage example in ./graphtheory.tex, line 1746::
   sage: n_colors, coloration = min([greedy_coloring(g, P.random_element())
   ....:     for i in range(50)], key=lambda c: c[0])
   sage: n_colors
-  4
+  5
 
 Sage example in ./graphtheory.tex, line 1782::
 
@@ -322,9 +322,9 @@ Sage example in ./graphtheory.tex, line 1989::
   ....:  # the function from V(H) to V(G) we aim to define:
   ....:  f = {}
   ....:  # set of vertices of G not yet used by f:
-  ....:  G_remain = G.vertices()
+  ....:  G_remain = G.vertices(sort=False)
   ....:  # set of vertices having no representative yet:
-  ....:  H_remain = H.vertices()
+  ....:  H_remain = H.vertices(sort=False)
   ....:  # while the function is not complete:
   ....:  while H_remain:
   ....:      v = H_remain.pop(0) # look for the next vertex of H
@@ -342,14 +342,14 @@ Sage example in ./graphtheory.tex, line 1989::
 
 Sage example in ./graphtheory.tex, line 2012::
 
-  sage: set_random_seed(3)
+  sage: set_random_seed(4)
 
 Sage example in ./graphtheory.tex, line 2021::
 
   sage: H = graphs.PetersenGraph()
   sage: G = graphs.RandomGNP(500,0.5)
   sage: find_induced(H,G)
-  {0: 0, 1: 4, 2: 3, 3: 7, 4: 35, 5: 10, 6: 67, 7: 108, 8: 240, 9: 39}
+  {0: 0, 1: 1, 2: 3, 3: 13, 4: 7, 5: 62, 6: 24, 7: 232, 8: 67, 9: 45}
 
 Sage example in ./graphtheory.tex, line 2070::
 
@@ -417,4 +417,3 @@ Sage example in ./graphtheory.tex, line 2260::
   sage: g.show(edge_colors=edge_coloring(g, hex_colors=True))
 
 """
-

@@ -186,8 +186,10 @@ class FacadeSets(CategoryWithAxiom):
             Returns whether ``element`` is in one of the parents
             ``self`` is a facade for.
 
-            .. warning:: this default implementation is currently
-            overridden by :meth:`Parent.__contains__`.
+            .. warning::
+
+                this default implementation is currently
+                overridden by :meth:`Parent.__contains__`.
 
             EXAMPLES::
 

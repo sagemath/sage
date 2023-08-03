@@ -22,10 +22,6 @@ Upstream Contact
 
 -  https://rpy2.bitbucket.io
 
-Dependencies
-------------
-
-
 Special Update/Build Instructions
 ---------------------------------
 

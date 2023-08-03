@@ -12,6 +12,7 @@ Modules
 # *****************************************************************************
 
 from sage.misc.cachefunc import cached_method
+from sage.misc.abstract_method import abstract_method
 from sage.misc.lazy_import import LazyImport
 from sage.categories.category_with_axiom import CategoryWithAxiom_over_base_ring
 from sage.categories.morphism import SetMorphism
@@ -19,7 +20,7 @@ from sage.categories.homsets import HomsetsCategory
 from sage.categories.homset import Hom
 from .category import Category
 from .category_types import Category_module
-from sage.categories.tensor import TensorProductsCategory, tensor
+from sage.categories.tensor import TensorProductsCategory, TensorProductFunctor, tensor
 from .dual import DualObjectsCategory
 from sage.categories.cartesian_product import CartesianProductsCategory
 from sage.categories.sets_cat import Sets
@@ -71,10 +72,12 @@ class Modules(Category_module):
         Category of modules over Ring of integers modulo 9
 
         sage: Modules(Integers(9)).super_categories()
-        [Category of bimodules over Ring of integers modulo 9 on the left and Ring of integers modulo 9 on the right]
+        [Category of bimodules over Ring of integers modulo 9 on the left
+                                and Ring of integers modulo 9 on the right]
 
         sage: Modules(ZZ).super_categories()
-        [Category of bimodules over Integer Ring on the left and Integer Ring on the right]
+        [Category of bimodules over Integer Ring on the left
+                                and Integer Ring on the right]
 
         sage: Modules == RingModules
         True
@@ -112,7 +115,7 @@ class Modules(Category_module):
     """
 
     @staticmethod
-    def __classcall_private__(cls, base_ring, dispatch = True):
+    def __classcall_private__(cls, base_ring, dispatch=True):
         r"""
         Implement the dispatching of ``Modules(field)`` to
         ``VectorSpaces(field)``.
@@ -152,7 +155,7 @@ class Modules(Category_module):
                                         and base_ring.is_subcategory(_Fields)):
                 from .vector_spaces import VectorSpaces
                 return VectorSpaces(base_ring, check=False)
-        result = super(Modules, cls).__classcall__(cls, base_ring)
+        result = super().__classcall__(cls, base_ring)
         result._reduction[2]['dispatch'] = False
         return result
 
@@ -161,7 +164,8 @@ class Modules(Category_module):
         EXAMPLES::
 
             sage: Modules(ZZ).super_categories()
-            [Category of bimodules over Integer Ring on the left and Integer Ring on the right]
+            [Category of bimodules over Integer Ring on the left
+                                    and Integer Ring on the right]
 
         Nota bene::
 
@@ -171,7 +175,7 @@ class Modules(Category_module):
             [Category of modules over Rational Field]
         """
         R = self.base_ring()
-        return [Bimodules(R,R)]
+        return [Bimodules(R, R)]
 
     def additional_structure(self):
         r"""
@@ -203,7 +207,8 @@ class Modules(Category_module):
             EXAMPLES::
 
                 sage: C = Modules(QQ) & Semigroups(); C
-                Join of Category of semigroups and Category of vector spaces over Rational Field
+                Join of Category of semigroups
+                    and Category of vector spaces over Rational Field
                 sage: C.base_ring()
                 Rational Field
                 sage: C.base_ring.__module__
@@ -216,16 +221,16 @@ class Modules(Category_module):
                 sage: C.base_ring.__module__
                 'sage.categories.modules'
 
-                sage: C = DescentAlgebra(QQ,3).B().category()
-                sage: C.base_ring.__module__
+                sage: C = DescentAlgebra(QQ,3).B().category()                           # optional - sage.combinat sage.modules
+                sage: C.base_ring.__module__                                            # optional - sage.combinat sage.modules
                 'sage.categories.modules'
-                sage: C.base_ring()
+                sage: C.base_ring()                                                     # optional - sage.combinat sage.modules
                 Rational Field
 
-                sage: C = QuasiSymmetricFunctions(QQ).F().category()
-                sage: C.base_ring.__module__
+                sage: C = QuasiSymmetricFunctions(QQ).F().category()                    # optional - sage.combinat sage.modules
+                sage: C.base_ring.__module__                                            # optional - sage.combinat sage.modules
                 'sage.categories.modules'
-                sage: C.base_ring()
+                sage: C.base_ring()                                                     # optional - sage.combinat sage.modules
                 Rational Field
             """
             for C in self.super_categories():
@@ -350,6 +355,27 @@ class Modules(Category_module):
                 'sage.categories.modules'
             """
             return self._with_axiom("FiniteDimensional")
+
+        @cached_method
+        def FinitelyPresented(self):
+            r"""
+            Return the full subcategory of the finitely presented objects of ``self``.
+
+            EXAMPLES::
+
+                sage: Modules(ZZ).FinitelyPresented()
+                Category of finitely presented modules over Integer Ring
+                sage: A = SteenrodAlgebra(2)                                            # optional - sage.combinat sage.modules
+                sage: from sage.modules.fp_graded.module import FPModule                # optional - sage.combinat sage.modules
+                sage: FPModule(A, [0, 1], [[Sq(2), Sq(1)]]).category()                  # optional - sage.combinat sage.modules
+                Category of finitely presented graded modules
+                 over mod 2 Steenrod algebra, milnor basis
+
+            TESTS::
+
+                sage: TestSuite(Modules(ZZ).FinitelyPresented()).run()
+            """
+            return self._with_axiom("FinitelyPresented")
 
         @cached_method
         def Filtered(self, base_ring=None):
@@ -495,7 +521,57 @@ class Modules(Category_module):
                 [Category of finite sets]
                 sage: Modules(ZZ).FiniteDimensional().extra_super_categories()
                 []
-                sage: Modules(GF(5)).FiniteDimensional().is_subcategory(Sets().Finite())
+                sage: Modules(GF(5)).FiniteDimensional().is_subcategory(Sets().Finite())    # optional - sage.rings.finite_rings
+                True
+                sage: Modules(ZZ).FiniteDimensional().is_subcategory(Sets().Finite())
+                False
+
+                sage: Modules(Rings().Finite()).FiniteDimensional().is_subcategory(Sets().Finite())
+                True
+                sage: Modules(Rings()).FiniteDimensional().is_subcategory(Sets().Finite())
+                False
+            """
+            base_ring = self.base_ring()
+            FiniteSets = Sets().Finite()
+            if (isinstance(base_ring, Category) and
+                    base_ring.is_subcategory(FiniteSets)) or \
+                base_ring in FiniteSets:
+                return [FiniteSets]
+            else:
+                return []
+
+        class TensorProducts(TensorProductsCategory):
+
+            def extra_super_categories(self):
+                """
+                Implement the fact that a (finite) tensor product of
+                finite dimensional modules is a finite dimensional module.
+
+                EXAMPLES::
+
+                    sage: Modules(ZZ).FiniteDimensional().TensorProducts().extra_super_categories()
+                    [Category of finite dimensional modules over Integer Ring]
+                    sage: Modules(QQ).FiniteDimensional().TensorProducts().FiniteDimensional()
+                    Category of tensor products of finite dimensional vector spaces
+                     over Rational Field
+
+                """
+                return [self.base_category()]
+
+    class FinitelyPresented(CategoryWithAxiom_over_base_ring):
+
+        def extra_super_categories(self):
+            """
+            Implement the fact that a finitely presented module over a finite
+            ring is finite.
+
+            EXAMPLES::
+
+                sage: Modules(IntegerModRing(4)).FiniteDimensional().extra_super_categories()
+                [Category of finite sets]
+                sage: Modules(ZZ).FiniteDimensional().extra_super_categories()
+                []
+                sage: Modules(GF(5)).FiniteDimensional().is_subcategory(Sets().Finite())    # optional - sage.rings.finite_rings
                 True
                 sage: Modules(ZZ).FiniteDimensional().is_subcategory(Sets().Finite())
                 False
@@ -542,9 +618,9 @@ class Modules(Category_module):
 
             EXAMPLES::
 
-                sage: m = matrix([[0,1],[1,1]])
-                sage: J.<a,b,c> = JordanAlgebra(m)
-                sage: J.linear_combination(((a+b, 1), (-2*b + c, -1)))
+                sage: m = matrix([[0,1], [1,1]])                                        # optional - sage.modules
+                sage: J.<a,b,c> = JordanAlgebra(m)                                      # optional - sage.combinat sage.modules
+                sage: J.linear_combination(((a+b, 1), (-2*b + c, -1)))                  # optional - sage.combinat sage.modules
                 1 + (3, -1)
             """
             if factor_on_left:
@@ -561,8 +637,8 @@ class Modules(Category_module):
 
             EXAMPLES::
 
-                sage: A = HopfAlgebrasWithBasis(QQ).example()
-                sage: A.tensor_square()
+                sage: A = HopfAlgebrasWithBasis(QQ).example()                           # optional - sage.groups sage.modules
+                sage: A.tensor_square()                                                 # optional - sage.groups sage.modules
                 An example of Hopf algebra with basis:
                  the group algebra of the Dihedral group of order 6
                  as a permutation group over Rational Field # An example
@@ -591,12 +667,14 @@ class Modules(Category_module):
 
             EXAMPLES::
 
-                sage: V = FiniteRankFreeModule(QQ, 2)
-                sage: e = V.basis('e'); e
-                Basis (e_0,e_1) on the 2-dimensional vector space over the Rational Field
-                sage: neg = V.module_morphism(function=operator.neg, codomain=V); neg
-                Generic endomorphism of 2-dimensional vector space over the Rational Field
-                sage: neg(e[0])
+                sage: V = FiniteRankFreeModule(QQ, 2)                                   # optional - sage.modules
+                sage: e = V.basis('e'); e                                               # optional - sage.modules
+                Basis (e_0,e_1) on the
+                 2-dimensional vector space over the Rational Field
+                sage: neg = V.module_morphism(function=operator.neg, codomain=V); neg   # optional - sage.modules
+                Generic endomorphism of
+                 2-dimensional vector space over the Rational Field
+                sage: neg(e[0])                                                         # optional - sage.modules
                 Element -e_0 of the 2-dimensional vector space over the Rational Field
 
             """
@@ -605,6 +683,38 @@ class Modules(Category_module):
             if category is None:
                 category = Modules(self.base_ring())
             return SetMorphism(Hom(self, codomain, category), function)
+
+        def quotient(self, submodule, check=True, **kwds):
+            r"""
+            Construct the quotient module ``self`` / ``submodule``.
+
+            INPUT:
+
+            - ``submodule`` -- a submodule with basis of ``self``, or
+              something that can be turned into one via
+              ``self.submodule(submodule)``
+
+            - ``check``, other keyword arguments: passed on to
+              :meth:`quotient_module`.
+
+            This method just delegates to :meth:`quotient_module`.
+            Classes implementing modules should override that method.
+
+            Parents in categories with additional structure may override
+            :meth:`quotient`. For example, in algebras, :meth:`quotient` will
+            be the same as :meth:`quotient_ring`.
+
+            EXAMPLES::
+
+                sage: C = CombinatorialFreeModule(QQ, ['a','b','c'])                    # optional - sage.modules
+                sage: TA = TensorAlgebra(C)                                             # optional - sage.modules
+                sage: TA.quotient                                                       # optional - sage.modules
+                <bound method Rings.ParentMethods.quotient of
+                 Tensor Algebra of Free module generated by {'a', 'b', 'c'}
+                 over Rational Field>
+
+            """
+            return self.quotient_module(submodule, check=check, **kwds)
 
     class ElementMethods:
         pass
@@ -647,21 +757,21 @@ class Modules(Category_module):
 
                 EXAMPLES::
 
-                    sage: E = CombinatorialFreeModule(ZZ, [1,2,3])
-                    sage: F = CombinatorialFreeModule(ZZ, [2,3,4])
-                    sage: H = Hom(E, F)
-                    sage: H.base_ring()
+                    sage: E = CombinatorialFreeModule(ZZ, [1,2,3])                      # optional - sage.modules
+                    sage: F = CombinatorialFreeModule(ZZ, [2,3,4])                      # optional - sage.modules
+                    sage: H = Hom(E, F)                                                 # optional - sage.modules
+                    sage: H.base_ring()                                                 # optional - sage.modules
                     Integer Ring
 
                 This ``base_ring`` method is actually overridden by
                 :meth:`sage.structure.category_object.CategoryObject.base_ring`::
 
-                    sage: H.base_ring.__module__
+                    sage: H.base_ring.__module__                                        # optional - sage.modules
 
                 Here we call it directly::
 
-                    sage: method = H.category().parent_class.base_ring
-                    sage: method.__get__(H)()
+                    sage: method = H.category().parent_class.base_ring                  # optional - sage.modules
+                    sage: method.__get__(H)()                                           # optional - sage.modules
                     Integer Ring
                 """
                 return self.domain().base_ring()
@@ -671,24 +781,24 @@ class Modules(Category_module):
                 """
                 EXAMPLES::
 
-                    sage: E = CombinatorialFreeModule(ZZ, [1,2,3])
-                    sage: F = CombinatorialFreeModule(ZZ, [2,3,4])
-                    sage: H = Hom(E, F)
-                    sage: f = H.zero()
-                    sage: f
+                    sage: E = CombinatorialFreeModule(ZZ, [1,2,3])                      # optional - sage.modules
+                    sage: F = CombinatorialFreeModule(ZZ, [2,3,4])                      # optional - sage.modules
+                    sage: H = Hom(E, F)                                                 # optional - sage.modules
+                    sage: f = H.zero()                                                  # optional - sage.modules
+                    sage: f                                                             # optional - sage.modules
                     Generic morphism:
                       From: Free module generated by {1, 2, 3} over Integer Ring
                       To:   Free module generated by {2, 3, 4} over Integer Ring
-                    sage: f(E.monomial(2))
+                    sage: f(E.monomial(2))                                              # optional - sage.modules
                     0
-                    sage: f(E.monomial(3)) == F.zero()
+                    sage: f(E.monomial(3)) == F.zero()                                  # optional - sage.modules
                     True
 
                 TESTS:
 
                 We check that ``H.zero()`` is picklable::
 
-                    sage: loads(dumps(f.parent().zero()))
+                    sage: loads(dumps(f.parent().zero()))                               # optional - sage.modules
                     Generic morphism:
                       From: Free module generated by {1, 2, 3} over Integer Ring
                       To:   Free module generated by {2, 3, 4} over Integer Ring
@@ -712,7 +822,7 @@ class Modules(Category_module):
                     sage: Modules(ZZ).Endsets().extra_super_categories()
                     [Category of magmatic algebras over Integer Ring]
 
-                    sage: End(ZZ^3) in Algebras(ZZ)
+                    sage: End(ZZ^3) in Algebras(ZZ)                                     # optional - sage.modules
                     True
                 """
                 from .magmatic_algebras import MagmaticAlgebras
@@ -751,38 +861,46 @@ class Modules(Category_module):
 
                 EXAMPLES::
 
-                    sage: E = CombinatorialFreeModule(ZZ, [1,2,3])
-                    sage: F = CombinatorialFreeModule(ZZ, [2,3,4])
-                    sage: C = cartesian_product([E, F]); C
+                    sage: E = CombinatorialFreeModule(ZZ, [1,2,3])                                                      # optional - sage.modules
+                    sage: F = CombinatorialFreeModule(ZZ, [2,3,4])                                                      # optional - sage.modules
+                    sage: C = cartesian_product([E, F]); C                                                              # optional - sage.modules
                     Free module generated by {1, 2, 3} over Integer Ring (+)
                     Free module generated by {2, 3, 4} over Integer Ring
-                    sage: C.base_ring()
+                    sage: C.base_ring()                                                                                 # optional - sage.modules
                     Integer Ring
 
                 Check that :trac:`29225` is fixed::
 
-                    sage: M = cartesian_product((ZZ^2, ZZ^3)); M
-                    The Cartesian product of (Ambient free module of rank 2 over the principal ideal domain Integer Ring, Ambient free module of rank 3 over the principal ideal domain Integer Ring)
-                    sage: M.category()
-                    Category of Cartesian products of modules with basis over (euclidean domains and infinite enumerated sets and metric spaces)
-                    sage: M.base_ring()
+                    sage: M = cartesian_product((ZZ^2, ZZ^3)); M                                                        # optional - sage.modules
+                    The Cartesian product of
+                     (Ambient free module of rank 2 over the principal ideal domain Integer Ring,
+                      Ambient free module of rank 3 over the principal ideal domain Integer Ring)
+                    sage: M.category()                                                                                  # optional - sage.modules
+                    Category of Cartesian products of modules with basis
+                     over (euclidean domains and infinite enumerated sets and metric spaces)
+                    sage: M.base_ring()                                                                                 # optional - sage.modules
                     Integer Ring
 
-                    sage: A = cartesian_product((QQ^2, QQ['x'])); A
-                    The Cartesian product of (Vector space of dimension 2 over Rational Field, Univariate Polynomial Ring in x over Rational Field)
-                    sage: A.category()
-                    Category of Cartesian products of vector spaces over (number fields and quotient fields and metric spaces)
-                    sage: A.base_ring()
+                    sage: A = cartesian_product((QQ^2, QQ['x'])); A                                                     # optional - sage.modules
+                    The Cartesian product of
+                     (Vector space of dimension 2 over Rational Field,
+                      Univariate Polynomial Ring in x over Rational Field)
+                    sage: A.category()                                                                                  # optional - sage.modules
+                    Category of Cartesian products of vector spaces
+                     over (number fields and quotient fields and metric spaces)
+                    sage: A.base_ring()                                                                                 # optional - sage.modules
                     Rational Field
 
                 This currently only works if all factors have the same
                 base ring::
 
-                    sage: B = cartesian_product((ZZ['x'], QQ^3)); B
-                    The Cartesian product of (Univariate Polynomial Ring in x over Integer Ring, Vector space of dimension 3 over Rational Field)
-                    sage: B.category()
+                    sage: B = cartesian_product((ZZ['x'], QQ^3)); B                                                     # optional - sage.modules
+                    The Cartesian product of
+                     (Univariate Polynomial Ring in x over Integer Ring,
+                      Vector space of dimension 3 over Rational Field)
+                    sage: B.category()                                                                                  # optional - sage.modules
                     Category of Cartesian products of commutative additive groups
-                    sage: B.base_ring()
+                    sage: B.base_ring()                                                                                 # optional - sage.modules
                 """
                 factors = self._sets
                 if factors:
@@ -798,14 +916,16 @@ class Modules(Category_module):
 
                 EXAMPLES::
 
-                    sage: A = FreeModule(ZZ, 2)
-                    sage: B = cartesian_product([A, A]); B
-                    The Cartesian product of (Ambient free module of rank 2 over the principal ideal domain Integer Ring, Ambient free module of rank 2 over the principal ideal domain Integer Ring)
-                    sage: 5*B(([1, 2], [3, 4]))
+                    sage: A = FreeModule(ZZ, 2)                                                                         # optional - sage.modules
+                    sage: B = cartesian_product([A, A]); B                                                              # optional - sage.modules
+                    The Cartesian product of
+                     (Ambient free module of rank 2 over the principal ideal domain Integer Ring,
+                      Ambient free module of rank 2 over the principal ideal domain Integer Ring)
+                    sage: 5*B(([1, 2], [3, 4]))                                                                         # optional - sage.modules
                     ((5, 10), (15, 20))
                 """
                 return self.parent()._cartesian_product_of_elements(
-                    x*y for y in self.cartesian_factors())
+                    x * y for y in self.cartesian_factors())
 
     class TensorProducts(TensorProductsCategory):
         """
@@ -823,3 +943,55 @@ class Modules(Category_module):
             """
             return [self.base_category()]
 
+        class ParentMethods:
+            """
+            Implement operations on tensor products of modules.
+            """
+            def construction(self):
+                """
+                Return the construction of ``self``.
+
+                EXAMPLES::
+
+                    sage: A = algebras.Free(QQ, 2)                                      # optional - sage.combinat sage.modules
+                    sage: T = A.tensor(A)                                               # optional - sage.combinat sage.modules
+                    sage: T.construction()                                              # optional - sage.combinat sage.modules
+                    (The tensor functorial construction,
+                     (Free Algebra on 2 generators (None0, None1) over Rational Field,
+                      Free Algebra on 2 generators (None0, None1) over Rational Field))
+                """
+                try:
+                    factors = self.tensor_factors()
+                except (TypeError, NotImplementedError):
+                    from sage.misc.superseded import deprecation
+                    deprecation(34393, "implementations of Modules().TensorProducts() now must define the method tensor_factors")
+                    return None
+                return (TensorProductFunctor(),
+                        factors)
+
+            @abstract_method(optional=True)
+            def tensor_factors(self):
+                """
+                Return the tensor factors of this tensor product.
+
+                EXAMPLES::
+
+                    sage: F = CombinatorialFreeModule(ZZ, [1,2])                        # optional - sage.modules
+                    sage: F.rename("F")                                                 # optional - sage.modules
+                    sage: G = CombinatorialFreeModule(ZZ, [3,4])                        # optional - sage.modules
+                    sage: G.rename("G")                                                 # optional - sage.modules
+                    sage: T = tensor([F, G]); T                                         # optional - sage.modules
+                    F # G
+                    sage: T.tensor_factors()                                            # optional - sage.modules
+                    (F, G)
+
+                TESTS::
+
+                    sage: Cat = ModulesWithBasis(ZZ).FiniteDimensional().TensorProducts()                               # optional - sage.modules
+                    sage: M = CombinatorialFreeModule(ZZ, ((1, 1), (1, 2), (2, 1), (2, 2)), category=Cat)               # optional - sage.modules
+                    sage: M.construction()                                                                              # optional - sage.modules
+                    doctest:warning...
+                    DeprecationWarning: implementations of Modules().TensorProducts() now must define the method tensor_factors
+                    See https://github.com/sagemath/sage/issues/34393 for details.
+                    (VectorFunctor, Integer Ring)
+                """

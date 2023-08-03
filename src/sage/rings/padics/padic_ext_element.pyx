@@ -5,7 +5,7 @@
 # distutils: extra_link_args = NTL_LIBEXTRA
 # distutils: language = c++
 r"""
-p-Adic Extension Element
+`p`-adic Extension Element
 
 A common superclass for all elements of extension rings and field of `\ZZ_p` and
 `\QQ_p`.
@@ -16,8 +16,7 @@ AUTHORS:
 
 - Julian Rueth (2012-10-18): added residue
 """
-
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2007-2010 David Roe <roed.math@gmail.com>
 #                     2012 Julian Rueth <julian.rueth@fsfe.org>
 #
@@ -25,11 +24,10 @@ AUTHORS:
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.rings.padics.pow_computer cimport PowComputer_class
-from sage.rings.integer import Integer
 from sage.libs.ntl.ntl_ZZ_p cimport ntl_ZZ_p
 
 cdef class pAdicExtElement(pAdicGenericElement):
@@ -368,6 +366,7 @@ cdef class pAdicExtElement(pAdicGenericElement):
 
         An error will be raised if the parent of self is a ramified extension::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<a> = Qp(5).extension(x^2 - 5)
             sage: a.frobenius()
             Traceback (most recent call last):
@@ -509,4 +508,3 @@ cdef class pAdicExtElement(pAdicGenericElement):
             return R.residue_field()(self.expansion(0))
         else:
             raise NotImplementedError("residue() not implemented in extensions for absprec larger than one")
-

@@ -182,7 +182,8 @@ imported and is fully functional without importing :class:`FiniteGroups`.
     :trac:`15648`), one should pass the option ``as_name`` to
     :class:`~sage.misc.lazy_import.LazyImport`::
 
-        Finite = LazyImport('sage.categories.finite_groups', 'FiniteGroups', as_name='Finite')
+        Finite = LazyImport('sage.categories.finite_groups', 'FiniteGroups',
+                            as_name='Finite')
 
     in order to prevent ``Groups.Finite`` to keep on reimporting
     ``FiniteGroups``.
@@ -358,7 +359,7 @@ always evaluates to this method, regardless of whether ``Ds`` has a
 nested class ``Ds.Green`` or not (an implementation detail)::
 
     sage: Cs().Green
-    <bound method Cs_with_category.Green of Category of cs>
+    <bound method Cs.SubcategoryMethods.Green of Category of cs>
 
 Thanks to this feature (implemented in :meth:`CategoryWithAxiom.__classget__`),
 the user is systematically referred to the documentation of this
@@ -927,7 +928,7 @@ to an infinite recursion.
 
     Supporting similar deduction rules will be an important feature in
     the future, with quite a few occurrences already implemented in
-    upcoming tickets. For the time being though there is a single
+    upcoming issues. For the time being though there is a single
     occurrence of this idiom outside of the tests. So this would be an
     easy thing to refactor after :trac:`10963` if a better idiom is
     found.
@@ -1679,7 +1680,7 @@ all_axioms += ("Flying", "Blue",
                "Facade", "Finite", "Infinite","Enumerated",
                "Complete",
                "Nilpotent",
-               "FiniteDimensional", "Connected",
+               "FiniteDimensional", "FinitelyPresented", "Connected",
                "FinitelyGeneratedAsLambdaBracketAlgebra",
                "WithBasis",
                "Irreducible",
@@ -1730,7 +1731,8 @@ def base_category_class_and_axiom(cls):
         (<class 'sage.categories.sets_cat.Sets'>, 'Finite')
 
         sage: base_category_class_and_axiom(FiniteDimensionalHopfAlgebrasWithBasis)
-        (<class 'sage.categories.hopf_algebras_with_basis.HopfAlgebrasWithBasis'>, 'FiniteDimensional')
+        (<class 'sage.categories.hopf_algebras_with_basis.HopfAlgebrasWithBasis'>,
+         'FiniteDimensional')
 
         sage: base_category_class_and_axiom(HopfAlgebrasWithBasis)
         (<class 'sage.categories.hopf_algebras.HopfAlgebras'>, 'WithBasis')
@@ -1742,7 +1744,9 @@ def base_category_class_and_axiom(cls):
         sage: base_category_class_and_axiom(FacadeSemigroups)
         Traceback (most recent call last):
         ...
-        AssertionError: Missing (lazy import) link for <class 'sage.categories.semigroups.Semigroups'> to <class '__main__.FacadeSemigroups'> for axiom Facade?
+        AssertionError: Missing (lazy import) link
+        for <class 'sage.categories.semigroups.Semigroups'>
+        to <class '__main__.FacadeSemigroups'> for axiom Facade?
 
         sage: Semigroups.Facade = FacadeSemigroups
         sage: base_category_class_and_axiom(FacadeSemigroups)
@@ -1760,7 +1764,8 @@ def base_category_class_and_axiom(cls):
             sage: base_category_class_and_axiom(Sets.Infinite)
             Traceback (most recent call last):
             ...
-            TypeError: Could not retrieve the base category class and axiom for <class 'sage.categories.sets_cat.Sets.Infinite'>.
+            TypeError: Could not retrieve the base category class and axiom
+            for <class 'sage.categories.sets_cat.Sets.Infinite'>.
             ...
     """
     if "." in cls.__name__:
@@ -1812,7 +1817,8 @@ def axiom_of_nested_class(cls, nested_cls):
         sage: from sage.categories.category_with_axiom import TestObjects, axiom_of_nested_class
         sage: axiom_of_nested_class(TestObjects, TestObjects.FiniteDimensional)
         'FiniteDimensional'
-        sage: axiom_of_nested_class(TestObjects.FiniteDimensional, TestObjects.FiniteDimensional.Finite)
+        sage: axiom_of_nested_class(TestObjects.FiniteDimensional,
+        ....:                       TestObjects.FiniteDimensional.Finite)
         'Finite'
         sage: axiom_of_nested_class(Sets, FiniteSets)
         'Finite'
@@ -1993,7 +1999,7 @@ class CategoryWithAxiom(Category):
         """
         (base_category_class, axiom) = cls._base_category_class_and_axiom
         if len(args) == 1 and not options and isinstance(args[0], base_category_class):
-            return super(CategoryWithAxiom, cls).__classcall__(cls, args[0])
+            return super().__classcall__(cls, args[0])
         else:
             # The "obvious" idiom
             ##   return cls(base_category_class(*args, **options))
@@ -2070,7 +2076,7 @@ class CategoryWithAxiom(Category):
             setattr(base_category_class, cls._axiom, cls)
 
         if base_category is None:
-             return cls
+            return cls
         # For Rings().Finite, this returns the method
         # Sets.SubcategoryMethods.Finite, with its first argument bound to Rings()
         return getattr(super(base_category.__class__.__base__, base_category), cls._axiom)
@@ -2177,8 +2183,8 @@ class CategoryWithAxiom(Category):
                                    for category in base_category._super_categories
                                    for cat in category._with_axiom_as_tuple(axiom)) +
                              tuple(self.extra_super_categories()),
-                             ignore_axioms = ((base_category, axiom),),
-                             as_list = True)
+                             ignore_axioms=((base_category, axiom),),
+                             as_list=True)
 
     def additional_structure(self):
         r"""
@@ -2352,7 +2358,7 @@ class CategoryWithAxiom(Category):
         additive magma is implemented as
         ``MagmasAndAdditiveMagmas.Distributive.AdditiveAssociative.AdditiveCommutative``
         and not
-        ``MagmasAndAdditiveMagmas.Distributive.AdditiveCommutative.AdditiveAssociative``::
+        ``MagmasAndAdditiveMagmas.Distributive.AdditiveCommutative.AdditiveAssociative``.
 
         EXAMPLES::
 
@@ -2456,9 +2462,9 @@ class CategoryWithAxiom(Category):
             sage: C.axioms()
             frozenset({'Finite'})
 
-            sage: C = Modules(GF(5)).FiniteDimensional(); C
+            sage: C = Modules(GF(5)).FiniteDimensional(); C                             # optional - sage.rings.finite_rings
             Category of finite dimensional vector spaces over Finite Field of size 5
-            sage: sorted(C.axioms())
+            sage: sorted(C.axioms())                                                    # optional - sage.rings.finite_rings
             ['AdditiveAssociative', 'AdditiveCommutative', 'AdditiveInverse',
              'AdditiveUnital', 'Finite', 'FiniteDimensional']
 
@@ -2466,7 +2472,7 @@ class CategoryWithAxiom(Category):
             ['AdditiveAssociative', 'AdditiveCommutative', 'AdditiveInverse',
              'AdditiveUnital', 'Associative', 'Distributive',
              'FiniteDimensional', 'Unital', 'WithBasis']
-            sage: sorted(FiniteMonoids().Algebras(GF(3)).axioms())
+            sage: sorted(FiniteMonoids().Algebras(GF(3)).axioms())                      # optional - sage.rings.finite_rings
             ['AdditiveAssociative', 'AdditiveCommutative', 'AdditiveInverse',
              'AdditiveUnital', 'Associative', 'Distributive', 'Finite',
              'FiniteDimensional', 'Unital', 'WithBasis']
@@ -2543,7 +2549,8 @@ The following workaround is needed until any :class:`CategoryWithAxiom` of a
     sage: isinstance(C, Category_over_base_ring)          # todo: not implemented
     True
     sage: C.FiniteDimensional()
-    Category of finite dimensional connected test objects over base ring over Ring of integers modulo 2
+    Category of finite dimensional connected test objects
+     over base ring over Ring of integers modulo 2
     sage: C.Connected()
     Category of connected test objects over base ring over Ring of integers modulo 2
 """
@@ -2609,11 +2616,11 @@ class Blahs(Category_singleton):
 
     class SubcategoryMethods:
         FiniteDimensional = axiom("FiniteDimensional")
-        Commutative       = axiom("Commutative")
-        Unital            = axiom("Unital")
-        Connected         = axiom("Connected")
-        Flying            = axiom("Flying")
-        Blue              = axiom("Blue")
+        Commutative = axiom("Commutative")
+        Unital = axiom("Unital")
+        Connected = axiom("Connected")
+        Flying = axiom("Flying")
+        Blue = axiom("Blue")
 
     class FiniteDimensional(CategoryWithAxiom):
         pass
@@ -2757,6 +2764,7 @@ class TestObjects(Category_singleton):
     class FiniteDimensional(CategoryWithAxiom):
         class Finite(CategoryWithAxiom):
             pass
+
         class Unital(CategoryWithAxiom):
             class Commutative(CategoryWithAxiom):
                 pass
@@ -2764,13 +2772,16 @@ class TestObjects(Category_singleton):
     class Commutative(CategoryWithAxiom):
         class Facade(CategoryWithAxiom):
             pass
+
         class FiniteDimensional(CategoryWithAxiom):
             pass
+
         class Finite(CategoryWithAxiom):
             pass
 
     class Unital(CategoryWithAxiom):
         pass
+
 
 class TestObjectsOverBaseRing(Category_over_base_ring):
     r"""
@@ -2790,13 +2801,15 @@ class TestObjectsOverBaseRing(Category_over_base_ring):
             Category of unital test objects over base ring over Rational Field
             sage: TestObjectsOverBaseRing.FiniteDimensional.Unital.an_instance()
             Category of finite dimensional unital test objects over base ring over Rational Field
-            sage: TestSuite(TestObjectsOverBaseRing(QQ).FiniteDimensional().Unital().Commutative()).run()
+            sage: C = TestObjectsOverBaseRing(QQ).FiniteDimensional().Unital().Commutative()
+            sage: TestSuite(C).run()
         """
         return [TestObjects()]
 
     class FiniteDimensional(CategoryWithAxiom_over_base_ring):
         class Finite(CategoryWithAxiom_over_base_ring):
             pass
+
         class Unital(CategoryWithAxiom_over_base_ring):
             class Commutative(CategoryWithAxiom_over_base_ring):
                 pass
@@ -2804,8 +2817,10 @@ class TestObjectsOverBaseRing(Category_over_base_ring):
     class Commutative(CategoryWithAxiom_over_base_ring):
         class Facade(CategoryWithAxiom_over_base_ring):
             pass
+
         class FiniteDimensional(CategoryWithAxiom_over_base_ring):
             pass
+
         class Finite(CategoryWithAxiom_over_base_ring):
             pass
 

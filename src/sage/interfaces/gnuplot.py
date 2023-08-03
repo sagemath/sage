@@ -159,7 +159,7 @@ class Gnuplot(SageObject):
 
         EXAMPLES::
 
-            sage: gnuplot.plot3d_parametric('v^2*sin(u), v*cos(u), v*(1-v)')   # optional - gnuplot  (not tested, since something pops up).
+            sage: gnuplot.plot3d_parametric('v^2*sin(u), v*cos(u), v*(1-v)')   # optional - gnuplot, not tested (since something pops up)
         """
         if title is None:
             title = str(f)
@@ -179,11 +179,10 @@ class Gnuplot(SageObject):
             self(cmd)
 
     def interact(self, cmd):
-        from sage.misc.all import SAGE_TMP
-        file = os.path.join(SAGE_TMP, 'gnuplot')
-        with open(file, 'w') as f:
+        import tempfile
+        with tempfile.NamedTemporaryFile(mode="w+t") as f:
             f.write(cmd + '\n pause -1 "Press return to continue (no further rotation possible)"')
-        os.system('sage-native-execute gnuplot -persist %s'%file)
+            os.system(f'gnuplot -persist {f.name}')
 
     def console(self):
         gnuplot_console()
@@ -196,8 +195,4 @@ def gnuplot_console():
     from sage.repl.rich_output.display_manager import get_display_manager
     if not get_display_manager().is_in_terminal():
         raise RuntimeError('Can use the console only in the terminal. Try %%gnuplot magics instead.')
-    os.system('sage-native-execute gnuplot')
-
-
-
-
+    os.system('gnuplot')

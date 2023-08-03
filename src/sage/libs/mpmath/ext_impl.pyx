@@ -44,10 +44,8 @@ from sage.rings.integer cimport Integer
 from sage.libs.gmp.pylong cimport *
 
 cdef mpz_set_integer(mpz_t v, x):
-    if isinstance(x, long):
+    if isinstance(x, int):
         mpz_set_pylong(v, x)
-    elif isinstance(x, int):
-        mpz_set_si(v, PyInt_AS_LONG(x))
     elif isinstance(x, Integer):
         mpz_set(v, (<Integer>x).value)
     else:
@@ -415,11 +413,16 @@ cdef void MPF_neg(MPF *r, MPF *s):
     Sets r = -s. MPF_neg(x, x) negates in place.
     """
     if s.special:
-        if   s.special == S_ZERO: r.special = S_ZERO #r.special = S_NZERO
-        elif s.special == S_NZERO: r.special = S_ZERO
-        elif s.special == S_INF: r.special = S_NINF
-        elif s.special == S_NINF: r.special = S_INF
-        else: r.special = s.special
+        if s.special == S_ZERO:
+            r.special = S_ZERO  # r.special = S_NZERO
+        elif s.special == S_NZERO:
+            r.special = S_ZERO
+        elif s.special == S_INF:
+            r.special = S_NINF
+        elif s.special == S_NINF:
+            r.special = S_INF
+        else:
+            r.special = s.special
         return
     r.special = s.special
     mpz_neg(r.man, s.man)
@@ -431,8 +434,10 @@ cdef void MPF_abs(MPF *r, MPF *s):
     Sets r = abs(s). MPF_abs(r, r) sets the absolute value in place.
     """
     if s.special:
-        if    s.special == S_NINF: r.special = S_INF
-        else: r.special = s.special
+        if s.special == S_NINF:
+            r.special = S_INF
+        else:
+            r.special = s.special
         return
     r.special = s.special
     mpz_abs(r.man, s.man)
@@ -1849,8 +1854,8 @@ cdef MPF_complex_pow_int(MPF *zre, MPF *zim, MPF *xre, MPF *xim, mpz_t n, MPopts
     xret = MPF_to_tuple(xre)
     ximt = MPF_to_tuple(xim)
     from mpmath.libmp import mpc_pow_int
-    vr, vi = mpc_pow_int((xret, ximt), mpzi(n), \
-        opts.prec, rndmode_to_python(opts.rounding))
+    vr, vi = mpc_pow_int((xret, ximt), mpzi(n),
+                         opts.prec, rndmode_to_python(opts.rounding))
     MPF_set_tuple(zre, vr)
     MPF_set_tuple(zim, vi)
 
@@ -1893,9 +1898,9 @@ cdef MPF_complex_pow_re(MPF *zre, MPF *zim, MPF *xre, MPF *xim, MPF *y, MPopts o
     xret = MPF_to_tuple(xre)
     ximt = MPF_to_tuple(xim)
     yret = MPF_to_tuple(y)
-    from mpmath.libmp import mpc_pow_mpf, fzero
-    vr, vi = mpc_pow_mpf((xret, ximt), yret, \
-        opts.prec, rndmode_to_python(opts.rounding))
+    from mpmath.libmp import mpc_pow_mpf
+    vr, vi = mpc_pow_mpf((xret, ximt), yret,
+                         opts.prec, rndmode_to_python(opts.rounding))
     MPF_set_tuple(zre, vr)
     MPF_set_tuple(zim, vi)
 
@@ -1912,8 +1917,8 @@ cdef MPF_complex_pow(MPF *zre, MPF *zim, MPF *xre, MPF *xim, MPF *yre, MPF *yim,
     yret = MPF_to_tuple(yre)
     yimt = MPF_to_tuple(yim)
     from mpmath.libmp import mpc_pow
-    vr, vi = mpc_pow((xret,ximt), (yret,yimt), \
-        opts.prec, rndmode_to_python(opts.rounding))
+    vr, vi = mpc_pow((xret, ximt), (yret, yimt),
+                     opts.prec, rndmode_to_python(opts.rounding))
     MPF_set_tuple(zre, vr)
     MPF_set_tuple(zim, vi)
 
@@ -2036,7 +2041,7 @@ cdef MPF_hypsum(MPF *a, MPF *b, int p, int q, param_types, str ztype, coeffs, z,
         mpz_set_complex_tuple_fixed(ZRE, ZIM, z, wp)
     else:
         mpz_set_tuple_fixed(ZRE, z, wp)
-    for i in range(0,p):
+    for i in range(p):
         sig_check()
         if param_types[i] == 'Z':
             mpz_init(AINT[aint])

@@ -149,7 +149,7 @@ class Random(_random.Random):
 
 ## -------------------- integer methods  -------------------
 
-    def randrange(self, start, stop=None, step=1, _int=int, _maxwidth=1<<BPF):
+    def randrange(self, start, stop=None, step=1, _int=int, _maxwidth=1 << BPF):
         """Choose a random item from range(start, stop[, step]).
 
         This fixes the problem with randint() which includes the
@@ -216,10 +216,9 @@ class Random(_random.Random):
     def randint(self, a, b):
         """Return random integer in range [a, b], including both end points.
         """
+        return self.randrange(a, b + 1)
 
-        return self.randrange(a, b+1)
-
-    def _randbelow(self, n, _log=_log, _int=int, _maxwidth=1<<BPF,
+    def _randbelow(self, n, _log=_log, _int=int, _maxwidth=1 << BPF,
                    _Method=_MethodType, _BuiltinMethod=_BuiltinMethodType):
         """Return a random int in the range [0,n)
 
@@ -471,7 +470,7 @@ class Random(_random.Random):
 
         Conditions on the parameters are alpha > 0 and beta > 0.
 
-        The probability distribution function is:
+        The probability distribution function is::
 
                     x ** (alpha - 1) * math.exp(-x / beta)
           pdf(x) =  --------------------------------------

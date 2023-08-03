@@ -35,6 +35,11 @@ cimport sage.libs.flint.padic
 cimport sage.libs.flint.types
 cimport sage.libs.flint.ulong_extras
 
-
-def free_flint_stack():
-    _fmpz_cleanup_mpz_content()
+# Try to clean up after ourselves before sage terminates. This
+# probably doesn't do anything if your copy of flint is re-entrant
+# (and most are). Moreover it isn't strictly necessary, because the OS
+# will reclaim these resources anyway after sage terminates. However
+# this might reveal other bugs, and can help tools like valgrind do
+# their jobs.
+import atexit
+atexit.register(_fmpz_cleanup_mpz_content)

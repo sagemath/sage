@@ -135,7 +135,7 @@ cdef class dancing_linksWrapper:
             sage: x
             Dancing links solver for 3 columns and 2 rows
             sage: type(x)
-            <... 'sage.combinat.matrices.dancing_links.dancing_linksWrapper'>
+            <class 'sage.combinat.matrices.dancing_links.dancing_linksWrapper'>
 
         TESTS:
 
@@ -193,8 +193,8 @@ cdef class dancing_linksWrapper:
         r"""
         Reinitialization of the search algorithm
 
-        This recreates an empty `dancing_links` object and adds the rows to
-        the instance of dancing_links.
+        This recreates an empty ``dancing_links`` object and adds the rows to
+        the instance of ``dancing_links.``
 
         EXAMPLES::
 
@@ -329,7 +329,6 @@ cdef class dancing_linksWrapper:
             0
         """
         return PyObject_RichCompare(left._rows, right._rows, op)
-
 
     def get_solution(self):
         """
@@ -473,7 +472,7 @@ cdef class dancing_linksWrapper:
         from copy import copy
         rows = copy(self._rows)
         ncols = self.ncols()
-        for i,row_index in enumerate(indices):
+        for i, row_index in enumerate(indices):
             # in the line below we want the creation of a new list
             rows[row_index] = rows[row_index] + [ncols+i]
         return dlx_solver(rows)
@@ -546,8 +545,8 @@ cdef class dancing_linksWrapper:
         if not 0 <= column < self.ncols():
             raise ValueError("column(={}) must be in range(ncols) "
                              "where ncols={}".format(column, self.ncols()))
-        indices = [i for (i,row) in enumerate(self._rows) if column in row]
-        return {i:self.restrict([i]) for i in indices}
+        indices = (i for i, row in enumerate(self._rows) if column in row)
+        return {i: self.restrict([i]) for i in indices}
 
     def solutions_iterator(self):
         r"""
@@ -666,6 +665,7 @@ cdef class dancing_linksWrapper:
                              "where ncols={}".format(column, self.ncols()))
 
         from sage.parallel.decorate import parallel
+
         @parallel(ncpus=ncpus)
         def first_solution(i):
             dlx = self.restrict([i])
@@ -674,9 +674,9 @@ cdef class dancing_linksWrapper:
             else:
                 return None
 
-        indices = [i for (i,row) in enumerate(self._rows) if column in row]
+        indices = [i for (i, row) in enumerate(self._rows) if column in row]
         for (args_kwds, val) in first_solution(indices):
-            if not val is None:
+            if val is not None:
                 return val
 
     def all_solutions(self, ncpus=None, column=None):
@@ -782,6 +782,7 @@ cdef class dancing_linksWrapper:
                              "where ncols={}".format(column, self.ncols()))
 
         from sage.parallel.decorate import parallel
+
         @parallel(ncpus=ncpus)
         def all_solutions(i):
             dlx = self.restrict([i])
@@ -790,7 +791,7 @@ cdef class dancing_linksWrapper:
                 L.append(dlx.get_solution())
             return L
 
-        indices = [i for (i,row) in enumerate(self._rows) if column in row]
+        indices = [i for i, row in enumerate(self._rows) if column in row]
         L = []
         for (args_kwds, val) in all_solutions(indices):
             L.extend(val)
@@ -803,7 +804,7 @@ cdef class dancing_linksWrapper:
         INPUT:
 
         - ``ncpus`` -- integer (default: ``None``), maximal number of
-          subprocesses to use at the same time. If `ncpus>1` the dancing
+          subprocesses to use at the same time. If ``ncpus>1`` the dancing
           links problem is split into independent subproblems to allow
           parallel computation. If ``None``, it detects the number of
           effective CPUs in the system using
@@ -881,6 +882,7 @@ cdef class dancing_linksWrapper:
                              "where ncols={}".format(column, self.ncols()))
 
         from sage.parallel.decorate import parallel
+
         @parallel(ncpus=ncpus)
         def nb_sol(i):
             dlx = self.restrict([i])
@@ -889,7 +891,7 @@ cdef class dancing_linksWrapper:
                 N += 1
             return N
 
-        indices = [i for (i,row) in enumerate(self._rows) if column in row]
+        indices = [i for i, row in enumerate(self._rows) if column in row]
         return sum(val for (args_kwds, val) in nb_sol(indices))
 
     @cached_method
@@ -922,7 +924,7 @@ cdef class dancing_linksWrapper:
 
         Using some optional SAT solvers::
 
-            sage: x.to_sat_solver('cryptominisat')          # optional - cryptominisat
+            sage: x.to_sat_solver('cryptominisat')          # optional - pycryptosat
             CryptoMiniSat solver: 4 variables, 7 clauses.
 
         """
@@ -932,7 +934,7 @@ cdef class dancing_linksWrapper:
         # Note that row number i is associated to SAT variable i+1 to
         # avoid a variable zero
         columns = [[] for _ in range(self.ncols())]
-        for i,row in enumerate(self.rows(), start=1):
+        for i, row in enumerate(self.rows(), start=1):
             for a in row:
                 columns[a].append(i)
 
@@ -943,8 +945,8 @@ cdef class dancing_linksWrapper:
         # At most one 1 in each column
         import itertools
         for clause in columns:
-            for p,q in itertools.combinations(clause, 2):
-                sub_clause = [-p,-q]
+            for p, q in itertools.combinations(clause, 2):
+                sub_clause = [-p, -q]
                 s.add_clause(sub_clause)
 
         return s
@@ -965,8 +967,8 @@ cdef class dancing_linksWrapper:
 
         .. NOTE::
 
-            When comparing the time taken by method `one_solution`,
-            have in mind that `one_solution_using_sat_solver` first
+            When comparing the time taken by method ``one_solution``,
+            have in mind that ``one_solution_using_sat_solver`` first
             creates the SAT solver instance from the dancing links
             solver. This copy of data may take many seconds depending on
             the size of the problem.
@@ -992,13 +994,12 @@ cdef class dancing_linksWrapper:
             sage: d = dlx_solver(rows)
             sage: d.one_solution_using_sat_solver() is None
             True
-
         """
         sat_solver = self.to_sat_solver(solver)
         solution = sat_solver()
         if not solution:
             return None
-        return [key for (key,val) in enumerate(solution, start=-1) if val]
+        return [key for key, val in enumerate(solution, start=-1) if val]
 
     @cached_method
     def to_milp(self, solver=None):
@@ -1027,7 +1028,7 @@ cdef class dancing_linksWrapper:
             sage: d = dlx_solver(rows)
             sage: p,x = d.to_milp()
             sage: p
-            Boolean Program (no objective, 4 variables, 4 constraints)
+            Boolean Program (no objective, 4 variables, ... constraints)
             sage: x
             MIPVariable with 4 binary components
 
@@ -1038,7 +1039,7 @@ cdef class dancing_linksWrapper:
             Maximization:
             <BLANKLINE>
             <BLANKLINE>
-            Constraints:
+            Constraints:...
               one 1 in 0-th column: 1.0 <= x_0 + x_1 <= 1.0
               one 1 in 1-th column: 1.0 <= x_0 + x_2 <= 1.0
               one 1 in 2-th column: 1.0 <= x_0 + x_1 <= 1.0
@@ -1064,17 +1065,17 @@ cdef class dancing_linksWrapper:
 
         # Construction of the columns (transpose of the rows)
         columns = [[] for _ in range(self.ncols())]
-        for i,row in enumerate(self.rows()):
+        for i, row in enumerate(self.rows()):
             for a in row:
                 columns[a].append(i)
 
         # Constraints: exactly one 1 in each column
-        for j,column in enumerate(columns):
+        for j, column in enumerate(columns):
             S = p.sum(x[a] for a in column)
             name = "one 1 in {}-th column".format(j)
-            p.add_constraint(S==1, name=name)
+            p.add_constraint(S == 1, name=name)
 
-        return p,x
+        return p, x
 
     def one_solution_using_milp_solver(self, solver=None, integrality_tolerance=1e-3):
         r"""
@@ -1093,8 +1094,8 @@ cdef class dancing_linksWrapper:
 
         .. NOTE::
 
-            When comparing the time taken by method `one_solution`, have in
-            mind that `one_solution_using_milp_solver` first creates (and
+            When comparing the time taken by method ``one_solution``, have in
+            mind that ``one_solution_using_milp_solver`` first creates (and
             caches) the MILP solver instance from the dancing links solver.
             This copy of data may take many seconds depending on the size
             of the problem.
@@ -1120,18 +1121,17 @@ cdef class dancing_linksWrapper:
             sage: d = dlx_solver(rows)
             sage: d.one_solution_using_milp_solver() is None
             True
-
         """
         from sage.numerical.mip import MIPSolverException
-        p,x = self.to_milp(solver)
+        p, x = self.to_milp(solver)
         try:
             p.solve()
         except MIPSolverException:
             return None
-        else:
-            soln = p.get_values(x, convert=bool, tolerance=integrality_tolerance)
-            support = sorted(key for key in soln if soln[key])
-            return support
+
+        soln = p.get_values(x, convert=bool, tolerance=integrality_tolerance)
+        return sorted(key for key in soln if soln[key])
+
 
 def dlx_solver(rows):
     """

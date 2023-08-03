@@ -91,6 +91,7 @@ Libraries of algorithms
    sage/graphs/traversals
    sage/graphs/graph_plot
    sage/graphs/graph_plot_js
+   sage/graphs/graph_decompositions/tree_decomposition
    sage/graphs/graph_decompositions/vertex_separation
    sage/graphs/graph_decompositions/rankwidth
    sage/graphs/graph_decompositions/bandwidth
@@ -112,6 +113,7 @@ Libraries of algorithms
    sage/graphs/generic_graph_pyx
    sage/graphs/orientations
    sage/graphs/connectivity
+   sage/graphs/edge_connectivity
    sage/graphs/domination
 
 .. include:: ../footer.txt

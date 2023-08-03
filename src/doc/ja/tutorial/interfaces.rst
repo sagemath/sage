@@ -55,7 +55,7 @@ GPは送られて来た文字列を評価し，結果を変数に格納する(�
     sage: type(gp('znprimroot(10007)'))
     <class 'sage.interfaces.gp.GpElement'>
     sage: type(pari('znprimroot(10007)'))
-    <type 'cypari2.gen.Gen'>
+    <class 'cypari2.gen.Gen'>
 
 では，どちらの方法を選ぶべきだろうか？
 答は目的による、としか言えない．
@@ -84,7 +84,7 @@ PARI Cライブラリ インターフェイスについて言うと，こちら�
     sage: v
     [1, 2, 3, 4, 5]
     sage: type(v)
-    <type 'cypari2.gen.Gen'>
+    <class 'cypari2.gen.Gen'>
 
 
 PARIのオブジェクトは全て ``Gen`` 型になる．
@@ -239,8 +239,8 @@ Sage/Maximaインターフェイスの使い方を例示するため，ここで
     matrix([1,1/2,1/3,1/4],[0,0,0,0],[0,0,0,0],[0,0,0,0])
     sage: A.eigenvalues()
     [[0,4],[3,1]]
-    sage: A.eigenvectors()
-    [[[0,4],[3,1]],[[[1,0,0,-4],[0,1,0,-2],[0,0,1,-4/3]],[[1,2,3,4]]]]
+    sage: A.eigenvectors().sage()
+    [[[0, 4], [3, 1]], [[[1, 0, 0, -4], [0, 1, 0, -2], [0, 0, 1, -4/3]], [[1, 2, 3, 4]]]]
 
 
 使用例をもう一つ示す:
@@ -299,11 +299,8 @@ Sage/Maximaインターフェイスの使い方を例示するため，ここで
 
 ::
 
-    sage: maxima("expr_1: 5*cos(x)*(cos(x/2)*cos(y) + sin(x/2)*sin(2*y)+ 3.0) - 10.0")
-    5*cos(x)*(sin(x/2)*sin(2*y)+cos(x/2)*cos(y)+3.0)-10.0
-    sage: maxima("expr_2: -5*sin(x)*(cos(x/2)*cos(y) + sin(x/2)*sin(2*y)+ 3.0)")
-    -5*sin(x)*(sin(x/2)*sin(2*y)+cos(x/2)*cos(y)+3.0)
-    sage: maxima("expr_3: 5*(-sin(x/2)*cos(y) + cos(x/2)*sin(2*y))")
-    5*(cos(x/2)*sin(2*y)-sin(x/2)*cos(y))
+    sage: _ = maxima("expr_1: 5*cos(x)*(cos(x/2)*cos(y) + sin(x/2)*sin(2*y)+ 3.0) - 10.0")
+    sage: _ = maxima("expr_2: -5*sin(x)*(cos(x/2)*cos(y) + sin(x/2)*sin(2*y)+ 3.0)")
+    sage: _ = maxima("expr_3: 5*(-sin(x/2)*cos(y) + cos(x/2)*sin(2*y))")
     sage: maxima.plot3d ("[expr_1, expr_2, expr_3]", "[x, -%pi, %pi]",  # not tested
     ....:     "[y, -%pi, %pi]", "['grid, 40, 40]", '[plot_format, openmath]')

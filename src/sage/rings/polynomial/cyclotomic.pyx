@@ -32,16 +32,15 @@ from cysignals.signals cimport sig_on, sig_off
 
 from sage.structure.element cimport parent
 
-from sage.arith.all import factor
+from sage.arith.misc import factor
 from sage.rings.integer_ring import ZZ
-from sage.misc.all import prod, subsets
-from sage.rings.integer cimport Integer
-from sage.rings.rational cimport Rational
+from sage.misc.misc_c import prod
+from sage.combinat.subset import subsets
 from sage.libs.pari.all import pari
 
 
 def cyclotomic_coeffs(nn, sparse=None):
-    u"""
+    """
     Return the coefficients of the n-th cyclotomic polynomial
     by using the formula
 
@@ -93,8 +92,6 @@ def cyclotomic_coeffs(nn, sparse=None):
     The polynomial is a palindrome for any n::
 
         sage: n = ZZ.random_element(50000)
-        sage: factor(n)
-        3 * 10009
         sage: v = cyclotomic_coeffs(n, sparse=False)
         sage: v == list(reversed(v))
         True
@@ -339,10 +336,10 @@ def cyclotomic_value(n, x):
             mu = 1
             num = x - 1
             den = 1
-        for i in xrange(L):
+        for i in range(L):
             ti = 1 << i
             p = primes[i]
-            for j in xrange(ti):
+            for j in range(ti):
                 xpow = xd[j]**p
                 xd.append(xpow)
                 md[ti + j] = -md[j]
@@ -373,7 +370,7 @@ def cyclotomic_value(n, x):
         # If root_of_unity = (1<<L) - (1<<(i-1)) - 1 for some i < L,
         # then n/d == primes[i] and we need to multiply by primes[i],
         # otherwise n/d is composite and nothing more needs to be done.
-        for i in xrange(L):
+        for i in range(L):
             if root_of_unity + (1 << i) + 1 == 1 << L:
                 ans *= primes[i]
                 break
@@ -396,4 +393,4 @@ def bateman_bound(nn):
     _, n = nn.val_unit(2)
     primes = [p for p, _ in factor(n)]
     j = len(primes)
-    return prod(primes[k] ** (2 ** (j - k - 2) - 1) for k in xrange(j - 2))
+    return prod(primes[k] ** (2 ** (j - k - 2) - 1) for k in range(j - 2))

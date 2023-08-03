@@ -1,5 +1,5 @@
 #!/usr/bin/env sage-python
-# -*- coding: utf-8 -*-
+# -*- coding: utf-8; mode: python -*-
 
 import os
 import sys
@@ -13,13 +13,10 @@ logger = logging.getLogger()
 from sage.misc.banner import banner
 
 
-class NotebookJupyter(object):
+_system_jupyter_url = "https://doc.sagemath.org/html/en/installation/launching.html#setting-up-sagemath-as-a-jupyter-kernel-in-an-existing-jupyter-notebook-or-jupyterlab-installation"
 
-    PREREQUISITE_ERROR = textwrap.dedent("""
-    The Jupyter notebook requires ssl, even if you do not use
-    https. Install the openssl development packages in your system and
-    then rebuild Python (sage -f python3).
-    """)
+
+class NotebookJupyter():
 
     def print_banner(self):
         banner()
@@ -31,15 +28,22 @@ class NotebookJupyter(object):
 
     def __init__(self, argv):
         self.print_banner()
-        from sage.repl.ipython_kernel.install import have_prerequisites
-        if not have_prerequisites():
-            print(self.PREREQUISITE_ERROR)
+        try:
+            from notebook.notebookapp import main
+        except ImportError:
+            import traceback
+            traceback.print_exc()
+            print("The Jupyter notebook is not installed (at least not in this Sage installation).")
+            print("You can install it by running")
+            print("  sage -i notebook")
+            print("Alternatively, you can follow the instructions at")
+            print("  " + _system_jupyter_url)
+            print("to use Sage with an existing Jupyter notebook installation.")
             raise SystemExit(1)
-        from notebook.notebookapp import main
         main(argv)
 
 
-class NotebookJupyterlab(object):
+class NotebookJupyterlab():
     def print_banner(self):
         banner()
         print('Please wait while the Jupyterlab server starts...')
@@ -52,12 +56,60 @@ class NotebookJupyterlab(object):
         try:
             from jupyterlab.labapp import main
         except ImportError:
+            import traceback
+            traceback.print_exc()
             print("Jupyterlab is not installed (at least not in this Sage installation).")
             print("You can install it by running")
-            print("  sage -i jupyterlab_widgets")
-            print("which includes support for interacts and the ability to download and")
-            print("install other Jupyterlab extensions. For a minimal installation, run")
             print("  sage -i jupyterlab")
+            print("Alternatively, you can follow the instructions at")
+            print("  " + _system_jupyter_url)
+            print("to use Sage with an existing Jupyterlab installation.")
+            raise SystemExit(1)
+        self.print_banner()
+        main(argv)
+
+
+class NotebookNbclassic():
+    def print_banner(self):
+        banner()
+        print('Please wait while the Jupyterlab server starts...')
+
+    @classmethod
+    def print_help(cls):
+        cls(['help'])
+
+    def __init__(self, argv):
+        try:
+            from nbclassic.notebookapp import main
+        except ImportError:
+            import traceback
+            traceback.print_exc()
+            print("Jupyterlab is not installed (at least not in this Sage installation).")
+            print("You can install it by running")
+            print("  sage -i jupyterlab")
+            raise SystemExit(1)
+        self.print_banner()
+        main(argv)
+
+
+class NotebookRetrolab():
+    def print_banner(self):
+        banner()
+        print('Please wait while the Jupyterlab server starts...')
+
+    @classmethod
+    def print_help(cls):
+        cls(['help'])
+
+    def __init__(self, argv):
+        try:
+            from retrolab.app import main
+        except ImportError:
+            import traceback
+            traceback.print_exc()
+            print("Retrolab is not installed (at least not in this Sage installation).")
+            print("You can install it by running")
+            print("  sage -i retrolab")
             raise SystemExit(1)
         self.print_banner()
         main(argv)
@@ -101,13 +153,10 @@ epilog = \
 """
 EXAMPLES:
 
-* Run default notebook on port 1234. Note that the first argument
-  after "-n" will be interpreted as notebook name unless you stop
-  processing with "--":
+* Run default notebook on port 1234.
 
-      sage -n default port=1234
-      sage -n -- port=1234      # equivalent
-      sage -n port=1234         # ERROR: invalid notebook name
+      sage -n default --port=1234
+      sage -n --port=1234      # equivalent
 
 * Run Jupyter notebook in custom directory:
 
@@ -129,8 +178,11 @@ notebook_launcher = {
     'ipython': NotebookJupyter,
     'jupyter': NotebookJupyter,
     'jupyterlab': NotebookJupyterlab,
+    'nbclassic': NotebookNbclassic,
+    'retrolab': NotebookRetrolab,
     'export': SageNBExport,
 }
+
 
 notebook_names = ', '.join(notebook_launcher.keys())
 
@@ -199,6 +251,9 @@ if __name__ == '__main__':
         print('Use \"sage --notebook=export\" to export SageNB notebooks '
               'to Jupyter')
         sys.exit(1)
+
+    from sage.repl.ipython_kernel.install import SageKernelSpec
+    SageKernelSpec.check()
 
     try:
         launcher = notebook_launcher[args.notebook]

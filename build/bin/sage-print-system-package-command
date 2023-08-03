@@ -5,6 +5,7 @@ shift
 IF_VERBOSE=:
 SUDO=
 PROMPT=
+SPKG=no
 if [ -n "$OUTPUT_RST" ]; then
     COMMENT=""
 else
@@ -13,6 +14,10 @@ fi
 while :
 do
     case "$1" in
+        --spkg)
+            # Whether given package names are SPKG names instead of system package names
+            SPKG=yes
+            ;;
         --verbose=*)
             IF_VERBOSE=
             COMMENT="${1#--verbose=}"
@@ -48,10 +53,21 @@ done
 command=$1
 shift
 if [ -z "$system" -o -z "$command" ]; then
-    echo >&2 "usage: $0 {debian|arch|conda|...} [--verbose] [--sudo] [--prompt] {update|install|setup-build-env|remove|...} PACKAGES..."
+    echo >&2 "usage: $0 {auto|debian|arch|conda|...} [--verbose] [--sudo] [--prompt] {update|install|setup-build-env|remove|...} PACKAGES..."
     exit 1
 fi
-system_packages="$*"
+if [ "$system" = auto ]; then
+    system=$(sage-guess-package-system 2>/dev/null)
+    if [ "$system" = unknown ]; then
+        echo >&2 "unknown package system"
+        exit 1
+    fi
+fi
+if [ "$SPKG" = "yes" ]; then
+    system_packages=$(echo $(sage-get-system-packages $system $*))
+else
+    system_packages="$*"
+fi
 options=
 env=
 shopt -s extglob
@@ -126,7 +142,7 @@ case $system:$command in
         ;;
     *conda*:install)
         [ "$YES" = yes ] && options="$options --yes"
-        [ -n "$system_packages" ] && print_shell_command "conda install $system_packages"
+        [ -n "$system_packages" ] && print_shell_command "conda install $options $system_packages"
         ;;
     homebrew*:install)
         [ -n "$system_packages" ] && print_shell_command "brew install $system_packages"
@@ -148,6 +164,9 @@ case $system:$command in
         ;;
     pip:install)
         [ -n "$system_packages" ] && print_shell_command "sage -pip install $system_packages"
+        ;;
+    cpan:install)
+        [ -n "$system_packages" ] && print_shell_command "cpan -i $system_packages"
         ;;
     repology:install)
         if [ -n "$system_packages" ]; then

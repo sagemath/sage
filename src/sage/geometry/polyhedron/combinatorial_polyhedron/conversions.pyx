@@ -33,9 +33,9 @@ Obtain the Vrepresentation of a polyhedron as facet-incidences stored in
 
     sage: from sage.geometry.polyhedron.combinatorial_polyhedron.conversions \
     ....:         import incidence_matrix_to_bit_rep_of_Vrep
-    sage: P = polytopes.associahedron(['A',4])
-    sage: face_list = incidence_matrix_to_bit_rep_of_Vrep(P.incidence_matrix())
-    sage: face_list.compute_dimension()
+    sage: P = polytopes.associahedron(['A',4])                                   # optional - sage.combinat
+    sage: face_list = incidence_matrix_to_bit_rep_of_Vrep(P.incidence_matrix())  # optional - sage.combinat
+    sage: face_list.compute_dimension()                                          # optional - sage.combinat
     4
 
 Obtain the facets of a polyhedron as :class:`~sage.geometry.polyhedron.combinatorial_polyhedron.list_of_faces.ListOfFaces` from a facet list::
@@ -58,7 +58,7 @@ AUTHOR:
 """
 
 #*****************************************************************************
-#       Copyright (C) 2019 Jonathan Kliem <jonathan.kliem@fu-berlin.de>
+#       Copyright (C) 2019 Jonathan Kliem <jonathan.kliem@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -69,13 +69,10 @@ AUTHOR:
 
 from memory_allocator                 cimport MemoryAllocator
 
-from sage.structure.element import is_Matrix
-from sage.matrix.matrix_integer_dense cimport Matrix_integer_dense
+from sage.matrix.matrix_dense cimport Matrix_dense
 
 from .list_of_faces                   cimport ListOfFaces
 from .face_data_structure             cimport face_next_atom, face_add_atom_safe, facet_set_coatom, face_clear
-from .face_list_data_structure        cimport face_list_t
-
 
 cdef extern from "Python.h":
     int unlikely(int) nogil  # Defined by Cython
@@ -187,7 +184,7 @@ cdef int incidences_to_bit_rep(tuple incidences, face_t output) except -1:
             # Vrep ``entry`` is contained in the face, so set the corresponding bit
             face_add_atom_safe(output, entry)
 
-def incidence_matrix_to_bit_rep_of_facets(Matrix_integer_dense matrix):
+def incidence_matrix_to_bit_rep_of_facets(Matrix_dense matrix):
     r"""
     Initialize facets in Bit-representation as :class:`~sage.geometry.polyhedron.combinatorial_polyhedron.list_of_faces.ListOfFaces`.
 
@@ -196,7 +193,7 @@ def incidence_matrix_to_bit_rep_of_facets(Matrix_integer_dense matrix):
     - ``matrix`` -- an incidence matrix as in
       :meth:`sage.geometry.polyhedron.base.Polyhedron_base.incidence_matrix`
       with columns corresponding to equations deleted
-      of type :class:`sage.matrix.matrix_integer_dense.Matrix_integer_dense`
+      of type :class:`sage.matrix.matrix_dense.Matrix_dense`
 
     OUTPUT:
 
@@ -251,7 +248,7 @@ def incidence_matrix_to_bit_rep_of_facets(Matrix_integer_dense matrix):
                 face_add_atom_safe(output, entry)
     return facets
 
-def incidence_matrix_to_bit_rep_of_Vrep(Matrix_integer_dense matrix):
+def incidence_matrix_to_bit_rep_of_Vrep(Matrix_dense matrix):
     r"""
     Initialize Vrepresentatives in Bit-representation as :class:`~sage.geometry.polyhedron.combinatorial_polyhedron.list_of_faces.ListOfFaces`.
 
@@ -263,7 +260,7 @@ def incidence_matrix_to_bit_rep_of_Vrep(Matrix_integer_dense matrix):
     - ``matrix`` -- an incidence matrix as in
       :meth:`sage.geometry.polyhedron.base.Polyhedron_base.incidence_matrix`
       with columns corresponding to equations deleted
-      of type :class:`sage.matrix.matrix_integer_dense.Matrix_integer_dense`
+      of type :class:`sage.matrix.matrix_dense.Matrix_dense`
 
     OUTPUT:
 

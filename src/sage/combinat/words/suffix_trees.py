@@ -162,7 +162,7 @@ class SuffixTrie(SageObject):
             sage: t.process_letter("d")
             Traceback (most recent call last):
             ...
-            ValueError: d not in alphabet!
+            ValueError: d not in alphabet
         """
         # Make certain that letter is a word containing one letter.
         letter = Words(self._alphabet)([letter])
@@ -286,14 +286,13 @@ class SuffixTrie(SageObject):
         if word.is_empty():
             return 0
         if word.length() == 1:
-            return self._transition_function[(node,word)]
-        else:
-            return self.transition_function( \
-                    self._transition_function[(node,word[0:1])], word[1:])
+            return self._transition_function[(node, word)]
+        return self.transition_function(
+            self._transition_function[(node, word[0:1])], word[1:])
 
     def states(self):
         r"""
-        Returns the states of the automaton defined by the suffix trie.
+        Return the states of the automaton defined by the suffix trie.
 
         EXAMPLES::
 
@@ -438,9 +437,9 @@ class SuffixTrie(SageObject):
             sage: from sage.combinat.words.suffix_trees import SuffixTrie
             sage: w = Words("cao")("cac")
             sage: t = SuffixTrie(w)
-            sage: d = t.to_digraph(); d
+            sage: d = t.to_digraph(); d                                                 # optional - sage.graphs
             Digraph on 6 vertices
-            sage: d.adjacency_matrix()
+            sage: d.adjacency_matrix()                                                  # optional - sage.graphs sage.modules
             [0 1 0 1 0 0]
             [0 0 1 0 0 0]
             [0 0 0 0 1 0]
@@ -462,13 +461,13 @@ class SuffixTrie(SageObject):
         EXAMPLES::
 
             sage: from sage.combinat.words.suffix_trees import SuffixTrie
-            sage: SuffixTrie(Word("cacao")).plot()
+            sage: SuffixTrie(Word("cacao")).plot()                                      # optional - sage.plot
             Graphics object consisting of 38 graphics primitives
 
         TESTS::
 
             sage: from sage.combinat.words.suffix_trees import SuffixTrie
-            sage: type(SuffixTrie(Word("cacao")).plot())
+            sage: type(SuffixTrie(Word("cacao")).plot())                                # optional - sage.plot
             <class 'sage.plot.graphics.Graphics'>
         """
         tree = self.to_digraph()
@@ -492,7 +491,7 @@ class SuffixTrie(SageObject):
             sage: from sage.combinat.words.suffix_trees import SuffixTrie
             sage: w = Words("cao")("cac")
             sage: t = SuffixTrie(w)
-            sage: t.show()
+            sage: t.show()                                                              # optional - sage.plot
         """
         self.plot(*args, **kwds).show()
         return
@@ -830,7 +829,7 @@ class ImplicitSuffixTree(SageObject):
             sage: from sage.combinat.words.suffix_trees import ImplicitSuffixTree
             sage: W = Words([0,1,2])
             sage: t = ImplicitSuffixTree(W([0,1,0,1,2]))
-            sage: t.to_digraph()
+            sage: t.to_digraph()                                                        # optional - sage.graphs
             Digraph on 8 vertices
         """
         if not self._letters:
@@ -866,17 +865,17 @@ class ImplicitSuffixTree(SageObject):
         EXAMPLES::
 
             sage: from sage.combinat.words.suffix_trees import ImplicitSuffixTree
-            sage: ImplicitSuffixTree(Word('cacao')).plot(word_labels=True)
+            sage: ImplicitSuffixTree(Word('cacao')).plot(word_labels=True)              # optional - sage.graphs sage.plot
             Graphics object consisting of 23 graphics primitives
-            sage: ImplicitSuffixTree(Word('cacao')).plot(word_labels=False)
+            sage: ImplicitSuffixTree(Word('cacao')).plot(word_labels=False)             # optional - sage.graphs sage.plot
             Graphics object consisting of 23 graphics primitives
 
         TESTS::
 
             sage: from sage.combinat.words.suffix_trees import ImplicitSuffixTree
-            sage: type(ImplicitSuffixTree(Word('cacao')).plot(word_labels=True))
+            sage: type(ImplicitSuffixTree(Word('cacao')).plot(word_labels=True))        # optional - sage.graphs sage.plot
             <class 'sage.plot.graphics.Graphics'>
-            sage: type(ImplicitSuffixTree(Word('cacao')).plot(word_labels=False))
+            sage: type(ImplicitSuffixTree(Word('cacao')).plot(word_labels=False))       # optional - sage.graphs sage.plot
             <class 'sage.plot.graphics.Graphics'>
         """
         tree = self.to_digraph(word_labels=word_labels)
@@ -884,7 +883,7 @@ class ImplicitSuffixTree(SageObject):
             for (u,v,label) in tree.edge_iterator():
                 tree.set_edge_label(u, v, label.string_rep())
         if vertex_colors is None:
-            vertex_colors = {'#fec7b8':tree.vertices()}
+            vertex_colors = {'#fec7b8':tree.vertices(sort=True)}
         return tree.plot(layout=layout, tree_root=tree_root,
                 tree_orientation=tree_orientation,
                 vertex_colors=vertex_colors, edge_labels=edge_labels,
@@ -905,8 +904,8 @@ class ImplicitSuffixTree(SageObject):
             sage: from sage.combinat.words.suffix_trees import ImplicitSuffixTree
             sage: w = Words("cao")("cacao")
             sage: t = ImplicitSuffixTree(w)
-            sage: t.show(word_labels=True)
-            sage: t.show(word_labels=False)
+            sage: t.show(word_labels=True)                                              # optional - sage.plot
+            sage: t.show(word_labels=False)                                             # optional - sage.plot
         """
         self.plot(word_labels=word_labels, *args, **kwds).show()
         return
@@ -1186,34 +1185,33 @@ class ImplicitSuffixTree(SageObject):
         """
         if n is None:
             length_word = self.word().length()
-            num_factors = 1 # empty word
-            for (u,v,(i,j)) in self.edge_iterator():
+            num_factors = 1  # empty word
+            for (u, v, (i, j)) in self.edge_iterator():
                 if j is None:
                     num_factors += length_word - i
                 else:
                     num_factors += j - i
         elif isinstance(n, (int, Integer)):
-            length_word = self.word().length()
             num_factors = 0
             queue = [(0, 0)]
             while queue:
-                (v,l) = queue.pop()
+                (v, l) = queue.pop()
                 if l == n:
                     num_factors += 1
                 if l < n:
                     if self._transition_function[v] != {}:
-                        for ((i,j),u) in self._transition_function[v].items():
+                        for ((i, j), u) in self._transition_function[v].items():
                             if j is None:
                                 j = self.word().length()
                             if j - i >= n - l:
                                 num_factors += 1
                             else:
-                                queue.append((u,l+j-i+1))
+                                queue.append((u, l + j - i + 1))
         else:
             raise TypeError("not an integer or None: %s" % n)
         return num_factors
 
-    def factor_iterator(self,n=None):
+    def factor_iterator(self, n=None):
         r"""
         Generate distinct factors of ``self``.
 
@@ -1508,7 +1506,7 @@ class ImplicitSuffixTree(SageObject):
             sage: abbab = Words("ab")("abbab")
             sage: s = SuffixTrie(abbab)
             sage: t = ImplicitSuffixTree(abbab)
-            sage: t.uncompactify().is_isomorphic(s.to_digraph())
+            sage: t.uncompactify().is_isomorphic(s.to_digraph())                        # optional - sage.graphs
             True
         """
         tree = self.to_digraph(word_labels=True)
@@ -1571,7 +1569,7 @@ class DecoratedSuffixTree(ImplicitSuffixTree):
     A *decorated suffix tree* of a word `w` is the suffix tree of `w`
     marked with the end point of all squares in the `w`.
 
-    The symbol ``"$"`` is appended to ``w`` to ensure that each final
+    The symbol ``$`` is appended to ``w`` to ensure that each final
     state is a leaf of the suffix tree.
 
     INPUT:
@@ -1730,7 +1728,7 @@ class DecoratedSuffixTree(ImplicitSuffixTree):
         EXAMPLES::
 
             sage: from sage.combinat.words.suffix_trees import DecoratedSuffixTree
-            sage: w=Word('aabbaaba')
+            sage: w = Word('aabbaaba')
             sage: DecoratedSuffixTree(w)._complete_labeling()
             {(2, 7): [1], (5, 4): [1]}
         """
@@ -1746,7 +1744,7 @@ class DecoratedSuffixTree(ImplicitSuffixTree):
             - ``(u, v)`` -- edge on which the point is registered
             - ``l`` -- depth of the registered point on (u,v)
             - ``start`` -- beginning of the squares registered by the label
-            ``(u, v), l``
+              ``(u, v), l``
             """
             # Mark the point in labeling
             if (u, v) in labeling:

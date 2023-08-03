@@ -1,5 +1,4 @@
-readline libpng $(MP_LIBRARY) mpfr mpfi ntl gsl pari glpk curl
+readline libpng $(MP_LIBRARY) mpfr mpfi ntl gsl pari glpk curl cliquer ecm $(findstring libnauty,$(OPTIONAL_INSTALLED_PACKAGES))
 
 ----------
 All lines of this file are ignored except the first.
-It is copied by SAGE_ROOT/build/install into SAGE_ROOT/build/Makefile.

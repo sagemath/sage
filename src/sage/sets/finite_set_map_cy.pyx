@@ -145,7 +145,7 @@ cdef class FiniteSetMap_MN(ClonableIntArray):
         return self._getitem(i)
 
     # Needed by generic power which refuses to compute 0^0
-    def __nonzero__(self):
+    def __bool__(self):
         """
         Returns whether ``self`` is non zero; this is always ``True``.
 
@@ -463,7 +463,8 @@ cdef class FiniteSetMap_Set(FiniteSetMap_MN):
         for i, el in enumerate(parent.domain().list()):
             self._setitem(i, parent._rank_codomain(fun(el)))
         self.set_immutable()
-        if check: self.check()
+        if check:
+            self.check()
 
     from_list = classmethod(FiniteSetMap_Set_from_list)
     from_dict = classmethod(FiniteSetMap_Set_from_dict)

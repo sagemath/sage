@@ -19,14 +19,6 @@ Upstream Contact
 - Author: Aaron O'Leary
 - Home page: https://github.com/aaren/pandoc-attributes
 
-Dependencies
-------------
-
--  Python
--  setuptools
--  pandocfilters
-
-
 Special Update/Build Instructions
 ---------------------------------
 

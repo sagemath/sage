@@ -36,7 +36,7 @@ List the perfect matchings of a given ground set::
 REFERENCES:
 
 .. [MV] combinatorics of orthogonal polynomials (A. de Medicis et
-   X.Viennot, Moments des q-polynomes de Laguerre et la bijection de
+   X.Viennot, Moments des q-polynômes de Laguerre et la bijection de
    Foata-Zeilberger, Adv. Appl. Math., 15 (1994), 262-304)
 
 .. [McD] combinatorics of hyperoctahedral group, double coset algebra and
@@ -44,8 +44,8 @@ REFERENCES:
    polynomials, Oxford University Press, second edition, 1995, chapter
    VII).
 
-.. [CM] Benoit Collins, Sho Matsumoto, On some properties of
-   orthogonal Weingarten functions, :arxiv:`0903.5143`.
+.. [CM] Benoit Collins, Sho Matsumoto, *On some properties of
+   orthogonal Weingarten functions*, :arxiv:`0903.5143`.
 """
 # ****************************************************************************
 #       Copyright (C) 2010 Valentin Feray <feray@labri.fr>
@@ -224,7 +224,7 @@ class PerfectMatching(SetPartition):
         EXAMPLES::
 
             sage: P = PerfectMatching([(1,3),(2,5),(4,6)])
-            sage: latex(P)  # random
+            sage: latex(P)  # random                                                    # optional - sage.graphs
             \begin{tikzpicture}
             ...
             \end{tikzpicture}
@@ -234,7 +234,7 @@ class PerfectMatching(SetPartition):
         Above we added ``random`` since warnings might be displayed
         once. The second time, there should be no warnings::
 
-            sage: print(P._latex_())
+            sage: print(P._latex_())                                                    # optional - sage.graphs
             \begin{tikzpicture}
             ...
             \end{tikzpicture}
@@ -377,10 +377,12 @@ class PerfectMatching(SetPartition):
             sage: loops = sorted(loops, key=len)
             sage: sorted(loops[0])
             ['d', 'f']
-            sage: G = SymmetricGroup(4)
-            sage: g = G([(1,2,3,4)])
-            sage: ((loops[1] in [permutation_action(g**i, ['a', 'e', 'c', 'b']) for i in range(4)])
-            ....:      or (loops[1] in [permutation_action(g**i, ['a', 'b', 'c', 'e']) for i in range(4)]))
+            sage: G = SymmetricGroup(4)                                                 # optional - sage.groups
+            sage: g = G([(1,2,3,4)])                                                    # optional - sage.groups
+            sage: ((loops[1] in [permutation_action(g**i, ['a', 'e', 'c', 'b'])         # optional - sage.groups
+            ....:                for i in range(4)])
+            ....:      or (loops[1] in [permutation_action(g**i, ['a', 'b', 'c', 'e'])
+            ....:                       for i in range(4)]))
             True
         """
         return list(self.loops_iterator(other))
@@ -453,11 +455,11 @@ class PerfectMatching(SetPartition):
 
         EXAMPLES::
 
-            sage: var('N')
+            sage: var('N')                                                              # optional - sage.symbolic
             N
             sage: m = PerfectMatching([(1,3),(2,4)])
             sage: n = PerfectMatching([(1,2),(3,4)])
-            sage: factor(m.Weingarten_function(N,n))
+            sage: factor(m.Weingarten_function(N, n))                                   # optional - sage.symbolic
             -1/((N + 2)*(N - 1)*N)
         """
         if other is None:
@@ -475,11 +477,13 @@ class PerfectMatching(SetPartition):
 
         EXAMPLES::
 
-            sage: PerfectMatching([[1,3], [4,2]]).to_graph().edges(labels=False)
+            sage: PerfectMatching([[1,3], [4,2]]).to_graph().edges(sort=True,           # optional - sage.graphs
+            ....:                                                  labels=False)
             [(1, 3), (2, 4)]
-            sage: PerfectMatching([[1,4], [3,2]]).to_graph().edges(labels=False)
+            sage: PerfectMatching([[1,4], [3,2]]).to_graph().edges(sort=True,           # optional - sage.graphs
+            ....:                                                  labels=False)
             [(1, 4), (2, 3)]
-            sage: PerfectMatching([]).to_graph().edges(labels=False)
+            sage: PerfectMatching([]).to_graph().edges(sort=True, labels=False)         # optional - sage.graphs
             []
         """
         from sage.graphs.graph import Graph
@@ -552,7 +556,7 @@ class PerfectMatchings(SetPartitions_set):
 
     Test that ``x = M.an_element()`` is actually a perfect matching::
 
-        sage: set([]).union(*x) == M.base_set()
+        sage: set().union(*x) == M.base_set()
         True
         sage: sum([len(a) for a in x]) == M.base_set().cardinality()
         True
@@ -603,7 +607,7 @@ class PerfectMatchings(SetPartitions_set):
             except AttributeError:
                 pass
             s = frozenset(s)
-        return super(PerfectMatchings, cls).__classcall__(cls, s)
+        return super().__classcall__(cls, s)
 
     def _repr_(self):
         """
@@ -764,8 +768,8 @@ class PerfectMatchings(SetPartitions_set):
 
         EXAMPLES::
 
-            sage: M = PerfectMatchings(4).Weingarten_matrix(var('N'))
-            sage: N*(N-1)*(N+2)*M.apply_map(factor)
+            sage: M = PerfectMatchings(4).Weingarten_matrix(var('N'))                   # optional - sage.symbolic
+            sage: N*(N-1)*(N+2)*M.apply_map(factor)                                     # optional - sage.symbolic
             [N + 1    -1    -1]
             [   -1 N + 1    -1]
             [   -1    -1 N + 1]

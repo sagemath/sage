@@ -22,7 +22,7 @@ speed, we provide a class that wraps our struct.
 
 
 """
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2010 Tom Boothby <tomas.boothby@gmail.com>
 #       Copyright (C) 2017 Travis Scrimshaw <tscrim@ucdavis.edu>
 #       Copyright (C) 2017 Vincent Delecroix <20100.delecroix@gmail.com>
@@ -30,12 +30,10 @@ speed, we provide a class that wraps our struct.
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 cimport cython
-
-from cpython.object cimport PyObject
 
 from cysignals.memory cimport check_allocarray, sig_free
 
@@ -203,17 +201,17 @@ cpdef bint next_perm(array l):
         sage: L = array('I', [1, 1, 2, 3])
         sage: while next_perm(L):
         ....:     print(L)
-        array('I', [1L, 1L, 3L, 2L])
-        array('I', [1L, 2L, 1L, 3L])
-        array('I', [1L, 2L, 3L, 1L])
-        array('I', [1L, 3L, 1L, 2L])
-        array('I', [1L, 3L, 2L, 1L])
-        array('I', [2L, 1L, 1L, 3L])
-        array('I', [2L, 1L, 3L, 1L])
-        array('I', [2L, 3L, 1L, 1L])
-        array('I', [3L, 1L, 1L, 2L])
-        array('I', [3L, 1L, 2L, 1L])
-        array('I', [3L, 2L, 1L, 1L])
+        array('I', [1, 1, 3, 2])
+        array('I', [1, 2, 1, 3])
+        array('I', [1, 2, 3, 1])
+        array('I', [1, 3, 1, 2])
+        array('I', [1, 3, 2, 1])
+        array('I', [2, 1, 1, 3])
+        array('I', [2, 1, 3, 1])
+        array('I', [2, 3, 1, 1])
+        array('I', [3, 1, 1, 2])
+        array('I', [3, 1, 2, 1])
+        array('I', [3, 2, 1, 1])
     """
     cdef Py_ssize_t n = len(l)
 
@@ -248,7 +246,7 @@ cpdef bint next_perm(array l):
     #mset_list = mset_list[:two] + [x for x in reversed(mset_list[two:])]
     n -= 1 # In the loop, we only need n-1, so just do it once here
     cdef Py_ssize_t i
-    for i in xrange((n+1 - two) // 2 - 1, -1, -1):
+    for i in range((n + 1 - two) // 2 - 1, -1, -1):
         t = l.data.as_uints[i + two]
         l.data.as_uints[i + two] = l.data.as_uints[n - i]
         l.data.as_uints[n - i] = t
@@ -414,4 +412,3 @@ cpdef list right_action_product(list S, list rp):
     for i in range(len(rp)+1, len(S)+1):
         rp.append(i)
     return right_action_same_n(S, rp)
-

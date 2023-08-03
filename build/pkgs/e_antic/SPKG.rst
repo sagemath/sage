@@ -19,10 +19,3 @@ Upstream Contact
 ----------------
 
 -  https://github.com/videlec/e-antic
-
-Dependencies
-------------
-
--  GMP/MPIR
--  FLINT
--  ARB

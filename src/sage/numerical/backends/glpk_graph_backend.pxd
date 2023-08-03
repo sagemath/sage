@@ -25,7 +25,7 @@ ctypedef struct c_a_data:
          double x
 
 
-cdef class GLPKGraphBackend(object):
+cdef class GLPKGraphBackend():
     cdef glp_graph * graph
     cpdef add_vertex(self, name = ?)
     cpdef list add_vertices(self, vertices)

@@ -43,7 +43,7 @@ from sage.structure.element cimport have_same_parent
 from sage.structure.coerce cimport coercion_model
 from sage.misc.prandom import randint
 
-from sage.rings.all import ZZ
+from sage.rings.integer_ring import ZZ
 from sage.rings.integer cimport Integer
 from sage.rings.infinity import Infinity
 
@@ -702,7 +702,7 @@ cdef class RelaxedElement(pAdicGenericElement):
           use the default halting precision of the parent
 
         - ``secure`` -- a boolean (default: ``False`` if ``prec`` is given,
-          ``True`` otherwise); when the elements cannot be distingiushed
+          ``True`` otherwise); when the elements cannot be distinguished
           at the given precision, raise an error if ``secure`` is ``True``,
           return ``True`` otherwise.
 
@@ -809,7 +809,7 @@ cdef class RelaxedElement(pAdicGenericElement):
             return a == b
         return self.is_equal_to(other, secure=self._parent.is_secure())
 
-    def __nonzero__(self):
+    def __bool__(self):
         r"""
         Return ``True`` if this element is indistinguishable from zero.
 
@@ -2001,7 +2001,7 @@ cdef class RelaxedElement(pAdicGenericElement):
             :func:`dumps`, :func:`loads`
         """
         tester = self._tester(**options)
-        from sage.misc.all import loads, dumps
+        from sage.misc.persist import loads, dumps
         if self._precbound >= maxordp:
             tester.assertEqual(loads(dumps(self)), self.at_precision_relative())
         else:
@@ -4030,7 +4030,7 @@ cdef class RelaxedElement_zeroone(RelaxedElementWithDigits):
         return ERROR_NOTDEFINED
 
 
-cdef class ExpansionIter(object):
+cdef class ExpansionIter():
     """
     An iterator over a `p`-adic expansion.
 

@@ -15,7 +15,7 @@ def is_RealIntervalField(x):
 
         sage: from sage.rings.real_interval_field import is_RealIntervalField as is_RIF
         doctest:...: DeprecationWarning: sage.rings.real_interval_field is deprecated
-        See http://trac.sagemath.org/24371 for details.
+        See https://github.com/sagemath/sage/issues/24371 for details.
         sage: is_RIF(RIF)
         True
     """

@@ -1,7 +1,7 @@
 
 from .calculus import maxima as maxima_calculus
 from .calculus import (laplace, inverse_laplace,
-                      limit, lim)
+                       limit, lim)
 
 from .integration import numerical_integral, monte_carlo_integral
 integral_numerical = numerical_integral
@@ -9,17 +9,17 @@ integral_numerical = numerical_integral
 from .interpolation import spline, Spline
 
 from .functional import (diff, derivative,
-                        expand,
-                        taylor, simplify)
+                         expand,
+                         taylor, simplify)
 
-from .functions import (wronskian,jacobian)
+from .functions import (wronskian, jacobian)
 
 from .ode import ode_solver, ode_system
 
 from .desolvers import (desolve, desolve_laplace, desolve_system,
-                       eulers_method, eulers_method_2x2,
-                       eulers_method_2x2_plot, desolve_rk4, desolve_system_rk4,
-                       desolve_odeint, desolve_mintides, desolve_tides_mpfr)
+                        eulers_method, eulers_method_2x2,
+                        eulers_method_2x2_plot, desolve_rk4, desolve_system_rk4,
+                        desolve_odeint, desolve_mintides, desolve_tides_mpfr)
 
 from .var import (var, function, clear_vars)
 
@@ -27,10 +27,12 @@ from .transforms.all import *
 
 # We lazy_import the following modules since they import numpy which slows down sage startup
 from sage.misc.lazy_import import lazy_import
-lazy_import("sage.calculus.riemann",["Riemann_Map"])
-lazy_import("sage.calculus.interpolators",["polygon_spline","complex_cubic_spline"])
+lazy_import("sage.calculus.riemann", ["Riemann_Map"])
+lazy_import("sage.calculus.interpolators", ["polygon_spline", "complex_cubic_spline"])
 
-from sage.modules.all import vector
+from sage.modules.free_module_element import vector
+from sage.matrix.constructor import matrix
+
 
 def symbolic_expression(x):
     """
@@ -49,15 +51,15 @@ def symbolic_expression(x):
         sage: a = symbolic_expression(3/2); a
         3/2
         sage: type(a)
-        <type 'sage.symbolic.expression.Expression'>
+        <class 'sage.symbolic.expression.Expression'>
         sage: R.<x> = QQ[]; type(x)
-        <type 'sage.rings.polynomial.polynomial_rational_flint.Polynomial_rational_flint'>
+        <class 'sage.rings.polynomial.polynomial_rational_flint.Polynomial_rational_flint'>
         sage: a = symbolic_expression(2*x^2 + 3); a
         2*x^2 + 3
         sage: type(a)
-        <type 'sage.symbolic.expression.Expression'>
-        sage: from sage.symbolic.expression import is_Expression
-        sage: is_Expression(a)
+        <class 'sage.symbolic.expression.Expression'>
+        sage: from sage.structure.element import Expression
+        sage: isinstance(a, Expression)
         True
         sage: a in SR
         True
@@ -75,24 +77,50 @@ def symbolic_expression(x):
 
     If ``x`` is a list or tuple, create a vector of symbolic expressions::
 
-        sage: v=symbolic_expression([x,1]); v
+        sage: v = symbolic_expression([x,1]); v
         (x, 1)
         sage: v.base_ring()
         Symbolic Ring
-        sage: v=symbolic_expression((x,1)); v
+        sage: v = symbolic_expression((x,1)); v
         (x, 1)
         sage: v.base_ring()
         Symbolic Ring
-        sage: v=symbolic_expression((3,1)); v
+        sage: v = symbolic_expression((3,1)); v
         (3, 1)
         sage: v.base_ring()
         Symbolic Ring
         sage: E = EllipticCurve('15a'); E
         Elliptic Curve defined by y^2 + x*y + y = x^3 + x^2 - 10*x - 10 over Rational Field
-        sage: v=symbolic_expression([E,E]); v
+        sage: v = symbolic_expression([E,E]); v
         (x*y + y^2 + y == x^3 + x^2 - 10*x - 10, x*y + y^2 + y == x^3 + x^2 - 10*x - 10)
         sage: v.base_ring()
         Symbolic Ring
+
+    Likewise, if ``x`` is a vector, create a vector of symbolic expressions::
+
+        sage: u = vector([1, 2, 3])
+        sage: v = symbolic_expression(u); v
+        (1, 2, 3)
+        sage: v.parent()
+        Vector space of dimension 3 over Symbolic Ring
+
+    If ``x`` is a list or tuple of lists/tuples/vectors, create a matrix of symbolic expressions::
+
+        sage: M = symbolic_expression([[1, x, x^2], (x, x^2, x^3), vector([x^2, x^3, x^4])]); M
+        [  1   x x^2]
+        [  x x^2 x^3]
+        [x^2 x^3 x^4]
+        sage: M.parent()
+        Full MatrixSpace of 3 by 3 dense matrices over Symbolic Ring
+
+    If ``x`` is a matrix, create a matrix of symbolic expressions::
+
+        sage: A = matrix([[1, 2, 3], [4, 5, 6]])
+        sage: B = symbolic_expression(A); B
+        [1 2 3]
+        [4 5 6]
+        sage: B.parent()
+        Full MatrixSpace of 2 by 3 dense matrices over Symbolic Ring
 
     If ``x`` is a function, for example defined by a ``lambda`` expression, create a
     symbolic function::
@@ -120,6 +148,22 @@ def symbolic_expression(x):
 
     TESTS:
 
+    Lists, tuples, and vectors of length 0 become vectors over a symbolic ring::
+
+        sage: symbolic_expression([]).parent()
+        Vector space of dimension 0 over Symbolic Ring
+        sage: symbolic_expression(()).parent()
+        Vector space of dimension 0 over Symbolic Ring
+        sage: symbolic_expression(vector(QQ, 0)).parent()
+        Vector space of dimension 0 over Symbolic Ring
+
+    If a matrix has dimension 0, the result is still a matrix over a symbolic ring::
+
+        sage: symbolic_expression(matrix(QQ, 2, 0)).parent()
+        Full MatrixSpace of 2 by 0 dense matrices over Symbolic Ring
+        sage: symbolic_expression(matrix(QQ, 0, 3)).parent()
+        Full MatrixSpace of 0 by 3 dense matrices over Symbolic Ring
+
     Also functions defined using ``def`` can be used, but we do not advertise it as a use case::
 
         sage: def sos(x, y):
@@ -146,12 +190,28 @@ def symbolic_expression(x):
     """
     from sage.symbolic.expression import Expression
     from sage.symbolic.ring import SR
+    from sage.modules.free_module_element import is_FreeModuleElement
+    from sage.structure.element import is_Matrix
+
     if isinstance(x, Expression):
         return x
     elif hasattr(x, '_symbolic_'):
         return x._symbolic_(SR)
-    elif isinstance(x, (tuple, list)):
-        return vector([symbolic_expression(item) for item in x])
+    elif isinstance(x, (tuple, list)) or is_FreeModuleElement(x):
+        expressions = [symbolic_expression(item) for item in x]
+        if not expressions:
+            # Make sure it is symbolic also when length is 0
+            return vector(SR, 0)
+        if is_FreeModuleElement(expressions[0]):
+            return matrix(expressions)
+        return vector(expressions)
+    elif is_Matrix(x):
+        if not x.nrows() or not x.ncols():
+            # Make sure it is symbolic and of correct dimensions
+            # also when a matrix dimension is 0
+            return matrix(SR, x.nrows(), x.ncols())
+        rows = [symbolic_expression(row) for row in x.rows()]
+        return matrix(rows)
     elif callable(x):
         from inspect import signature, Parameter
         try:
@@ -168,5 +228,6 @@ def symbolic_expression(x):
                 else:
                     return SR(result).function(*vars)
     return SR(x)
+
 
 from . import desolvers

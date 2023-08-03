@@ -71,7 +71,7 @@ def _pyrand():
         sage: _pyrand()
         <...random.Random object at 0x...>
         sage: _pyrand().getrandbits(10)
-        114L
+        114
     """
     return current_randstate().python_random()
 
@@ -142,9 +142,9 @@ def choice(seq):
 
     EXAMPLES::
 
-        sage: s = [choice(list(primes(10, 100))) for i in range(5)]; s  # random
+        sage: s = [choice(list(primes(10, 100))) for i in range(5)]; s  # random        # optional - sage.libs.pari
         [17, 47, 11, 31, 47]
-        sage: all(t in primes(10, 100) for t in s)
+        sage: all(t in primes(10, 100) for t in s)                                      # optional - sage.libs.pari
         True
     """
     return _pyrand().choice(seq)
@@ -227,9 +227,9 @@ def uniform(a, b):
         sage: 0.0 <= s <= 1.0
         True
 
-        sage: s = uniform(e, pi); s  # random
+        sage: s = uniform(e, pi); s  # random                                           # optional - sage.symbolic
         0.5143475134191677*pi + 0.48565248658083227*e
-        sage: bool(e <= s <= pi)
+        sage: bool(e <= s <= pi)                                                        # optional - sage.symbolic
         True
     """
     return _pyrand().uniform(a, b)

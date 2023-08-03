@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.rings.finite_rings
 r"""
 Resolvable Balanced Incomplete Block Design (RBIBD)
 
@@ -47,12 +48,13 @@ References:
 Functions
 ---------
 """
-
-from sage.arith.all import is_prime_power
+from itertools import repeat
+from sage.arith.misc import is_prime_power
 from sage.combinat.designs.bibd import BalancedIncompleteBlockDesign
 from sage.categories.sets_cat import EmptySetError
 from .bibd import balanced_incomplete_block_design
 from sage.misc.unknown import Unknown
+
 
 def resolvable_balanced_incomplete_block_design(v,k,existence=False):
     r"""
@@ -124,7 +126,7 @@ def resolvable_balanced_incomplete_block_design(v,k,existence=False):
 
         B = BalancedIncompleteBlockDesign(v,
                                           sum(classes,[]),
-                                          k = k,
+                                          k=k,
                                           check=True,
                                           copy=False)
         B._classes = classes
@@ -256,9 +258,9 @@ def kirkman_triple_system(v,existence=False):
         a = K.primitive_element()
         t = (q - 1) // 6
         A0 = [(0,0),(0,1),(0,2)]
-        B  = [[(a**i,j),(a**(i+2*t),j),(a**(i+4*t),j)] for j in range(3)
+        B = [[(a**i,j),(a**(i+2*t),j),(a**(i+4*t),j)] for j in range(3)
               for i in range(t)]
-        A  = [[(a**i,0),(a**(i+2*t),1),(a**(i+4*t),2)] for i in range(6*t)]
+        A = [[(a**i,0),(a**(i+2*t),1),(a**(i+4*t),2)] for i in range(6*t)]
 
         # Action of K on the points
         action = lambda v,x: (v+x[0],x[1])
@@ -268,7 +270,7 @@ def kirkman_triple_system(v,existence=False):
                    for i,p in enumerate(K)
                    for j in range(3)}
 
-        B0  = [A0] + B + A[t:2*t] + A[3*t:4*t] + A[5*t:6*t]
+        B0 = [A0] + B + A[t:2*t] + A[3*t:4*t] + A[5*t:6*t]
 
         # Classes
         classes = [[[relabel[action(p,x)] for x in tr] for tr in B0]
@@ -343,8 +345,8 @@ def kirkman_triple_system(v,existence=False):
             B.pop(0)
 
         # Pasting the KTS(n') without {x,x',\infty} blocks
-        classes = [[] for i in range((v-1) // 2)]
-        gdd = {4:gdd4, 7: gdd7}
+        classes = [[] for _ in repeat(None, (v - 1) // 2)]
+        gdd = {4: gdd4, 7: gdd7}
         for B in PBD_4_7((v-1)//2,check=False):
             for i,classs in enumerate(gdd[len(B)]):
                 classes[B[i]].extend([[2*B[x//2]+x%2 for x in BB] for BB in classs])
@@ -354,7 +356,7 @@ def kirkman_triple_system(v,existence=False):
             classs.append([2*i,2*i+1,v-1])
 
         KTS = BalancedIncompleteBlockDesign(v,
-                                            blocks = [tr for cl in classes for tr in cl],
+                                            blocks=[tr for cl in classes for tr in cl],
                                             k=3,
                                             lambd=1,
                                             check=True,
@@ -398,9 +400,9 @@ def v_4_1_rbibd(v,existence=False):
 
     TESTS::
 
-        sage: for q in prime_powers(2,30):
+        sage: for q in prime_powers(2,30):  # indirect doctest
         ....:     if (3*q+1)%12 == 4:
-        ....:         _ = designs.resolvable_balanced_incomplete_block_design(3*q+1,4) # indirect doctest
+        ....:         _ = designs.resolvable_balanced_incomplete_block_design(3*q+1,4)
     """
     # Volume 1, VII.7.5.a from [BJL99]_
     if v%3 != 1 or not is_prime_power((v-1)//3):
@@ -427,7 +429,7 @@ def v_4_1_rbibd(v,existence=False):
                for g in G]
 
     BIBD = BalancedIncompleteBlockDesign(v,
-                                         blocks = sum(classes,[]),
+                                         blocks=sum(classes,[]),
                                          k=4,
                                          check=True,
                                          copy=False)
@@ -558,7 +560,7 @@ def PBD_4_7(v,check=True, existence=False):
         from .group_divisible_designs import group_divisible_design
         from .orthogonal_arrays       import transversal_design
         GDD = group_divisible_design(3*5,K=[4],G=[3],check=False)
-        TD  = transversal_design(5,5)
+        TD = transversal_design(5,5)
 
         # A (75,{4},{15})-GDD
         GDD2 = [[3*B[x//3]+x%3 for x in BB] for B in TD for BB in GDD]
@@ -591,19 +593,19 @@ def PBD_4_7(v,check=True, existence=False):
         parall = []
         plus_one = None
         for S in AF:
-            if all(all(x not in SS for x in S) for SS in parall):
+            if all(x not in SS for SS in parall for x in S):
                 parall.append(S)
             elif plus_one is None:
                 plus_one = S
             if len(parall) == 4 and plus_one is not None:
                 break
-        X = set(sum(parall,plus_one))
+        X = set(sum(parall, plus_one))
 
         S_4_5_7 = [X.intersection(S) for S in AF]
         S_4_5_7 = [S for S in S_4_5_7 if len(S)>1]
         S_4_5_7 = PairwiseBalancedDesign(X,
-                                         blocks = S_4_5_7,
-                                         K = [4,5,7],
+                                         blocks=S_4_5_7,
+                                         K=[4,5,7],
                                          check=False)
         S_4_5_7.relabel()
         return PBD_4_7_from_Y(S_4_5_7,check=check)
@@ -625,11 +627,11 @@ def PBD_4_7(v,check=True, existence=False):
             groups = [[x] for x in range(40)]
             groups.append(list(range(40,40+points_to_add)))
         GDD = GroupDivisibleDesign(40+points_to_add,
-                                   groups = groups,
-                                   blocks = GDD,
-                                   K = [2,4,5,7],
-                                   check = False,
-                                   copy = False)
+                                   groups=groups,
+                                   blocks=GDD,
+                                   K=[2,4,5,7],
+                                   check=False,
+                                   copy=False)
 
         return PBD_4_7_from_Y(GDD,check=check)
 
@@ -668,18 +670,18 @@ def PBD_4_7(v,check=True, existence=False):
                 domain = set(range(vv))
                 GDD = transversal_design(5,g)
                 GDD = GroupDivisibleDesign(vv,
-                                           groups = [[x for x in gr if x in domain] for gr in GDD.groups()],
-                                           blocks = [[x for x in B if x in domain] for B in GDD],
-                                           G = set([g,u]),
-                                           K = [4,5],
+                                           groups=[[x for x in gr if x in domain] for gr in GDD.groups()],
+                                           blocks=[[x for x in B if x in domain] for B in GDD],
+                                           G=set([g,u]),
+                                           K=[4,5],
                                            check=False)
                 return PBD_4_7_from_Y(GDD,check=check)
 
     return PairwiseBalancedDesign(v,
-                                  blocks = blocks,
-                                  K = [4,7],
-                                  check = check,
-                                  copy = False)
+                                  blocks=blocks,
+                                  K=[4,7],
+                                  check=check,
+                                  copy=False)
 
 def PBD_4_7_from_Y(gdd,check=True):
     r"""
@@ -770,7 +772,7 @@ def PBD_4_7_from_Y(gdd,check=True):
                         for x in B])
 
     return PairwiseBalancedDesign(3*gdd.num_points()+1,
-                                  blocks = PBD,
-                                  K = [4,7],
-                                  check = check,
-                                  copy = False)
+                                  blocks=PBD,
+                                  K=[4,7],
+                                  check=check,
+                                  copy=False)

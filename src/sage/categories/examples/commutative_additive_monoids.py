@@ -10,7 +10,7 @@ Examples of commutative additive monoids
 
 from sage.misc.cachefunc import cached_method
 from sage.structure.parent import Parent
-from sage.categories.all import CommutativeAdditiveMonoids
+from sage.categories.commutative_additive_monoids import CommutativeAdditiveMonoids
 from .commutative_additive_semigroups import FreeCommutativeAdditiveSemigroup
 
 class FreeCommutativeAdditiveMonoid(FreeCommutativeAdditiveSemigroup):
@@ -32,7 +32,7 @@ class FreeCommutativeAdditiveMonoid(FreeCommutativeAdditiveSemigroup):
         sage: S.additive_semigroup_generators()
         Family (a, b, c, d)
 
-    with product rule given by $a \times b = a$ for all $a, b$::
+    with product rule given by `a \times b = a` for all `a, b`::
 
         sage: (a,b,c,d) = S.additive_semigroup_generators()
 
@@ -84,7 +84,7 @@ class FreeCommutativeAdditiveMonoid(FreeCommutativeAdditiveSemigroup):
 
         """
         self.alphabet = alphabet
-        Parent.__init__(self, category = CommutativeAdditiveMonoids())
+        Parent.__init__(self, category=CommutativeAdditiveMonoids())
 
     def _repr_(self):
         r"""
@@ -112,7 +112,7 @@ class FreeCommutativeAdditiveMonoid(FreeCommutativeAdditiveSemigroup):
         return self(())
 
     class Element(FreeCommutativeAdditiveSemigroup.Element):
-        def __bool__(self):
+        def __bool__(self) -> bool:
             """
             Check if ``self`` is not the zero of the monoid
 
@@ -124,8 +124,7 @@ class FreeCommutativeAdditiveMonoid(FreeCommutativeAdditiveSemigroup):
                 sage: [bool(m) for m in M.additive_semigroup_generators()]
                 [True, True, True, True]
             """
-            return any(x for x in self.value.values())
+            return any(self.value.values())
 
-        __nonzero__ = __bool__
 
 Example = FreeCommutativeAdditiveMonoid

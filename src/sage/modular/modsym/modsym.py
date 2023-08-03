@@ -71,7 +71,7 @@ This tests the bugs reported in :trac:`20932`::
     Modular Symbols space of dimension 20460 and level 184137, weight 2, character [2, 2], sign 1, over Finite Field of size 3
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Sage: Open Source Mathematical Software
 #
 #       Copyright (C) 2005 William Stein <wstein@gmail.com>
@@ -85,8 +85,8 @@ This tests the bugs reported in :trac:`20932`::
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 import weakref
 
@@ -112,10 +112,10 @@ def canonical_parameters(group, weight, sign, base_ring):
         sage: p1 == p2
         True
         sage: type(p1[1])
-        <type 'sage.rings.integer.Integer'>
+        <class 'sage.rings.integer.Integer'>
     """
     sign = rings.Integer(sign)
-    if not (sign in [-1,0,1]):
+    if sign not in [-1, 0, 1]:
         raise ValueError("sign must be -1, 0, or 1")
 
     weight = rings.Integer(weight)
@@ -137,14 +137,16 @@ def canonical_parameters(group, weight, sign, base_ring):
         base_ring = rational_field.RationalField()
 
     if not isinstance(base_ring, rings.CommutativeRing):
-        raise TypeError("base_ring (=%s) must be a commutative ring"%base_ring)
+        raise TypeError(f"base_ring (={base_ring}) must be a commutative ring")
 
     if not base_ring.is_field():
-        raise TypeError("(currently) base_ring (=%s) must be a field"%base_ring)
+        raise TypeError(f"(currently) base_ring (={base_ring}) must be a field")
 
     return group, weight, sign, base_ring
 
+
 _cache = {}
+
 
 def ModularSymbols_clear_cache():
     """
@@ -167,25 +169,24 @@ def ModularSymbols_clear_cache():
     Make sure :trac:`10548` is fixed::
 
         sage: import gc
-        sage: m=ModularSymbols(Gamma1(29))
-        sage: m=[]
+        sage: m = ModularSymbols(Gamma1(29))
+        sage: m = []
         sage: ModularSymbols_clear_cache()
         sage: gc.collect() # random
         3422
-        sage: a=[x for x in gc.get_objects() if isinstance(x,sage.modular.modsym.ambient.ModularSymbolsAmbient_wtk_g1)]
+        sage: a = [x for x in gc.get_objects() if isinstance(x,sage.modular.modsym.ambient.ModularSymbolsAmbient_wtk_g1)]
         sage: a
         []
-
     """
     global _cache
     _cache = {}
 
 
-def ModularSymbols(group  = 1,
-                   weight = 2,
-                   sign   = 0,
-                   base_ring = None,
-                   use_cache = True,
+def ModularSymbols(group=1,
+                   weight=2,
+                   sign=0,
+                   base_ring=None,
+                   use_cache=True,
                    custom_init=None):
     r"""
     Create an ambient space of modular symbols.
@@ -349,16 +350,16 @@ def ModularSymbols(group  = 1,
         if M is not None:
             return M
 
-    (group, weight, sign, base_ring) = key
+    group, weight, sign, base_ring = key
 
     M = None
     if arithgroup.is_Gamma0(group):
-            if weight == 2:
-                M = ambient.ModularSymbolsAmbient_wt2_g0(
-                    group.level(),sign, base_ring, custom_init=custom_init)
-            else:
-                M = ambient.ModularSymbolsAmbient_wtk_g0(
-                    group.level(), weight, sign, base_ring, custom_init=custom_init)
+        if weight == 2:
+            M = ambient.ModularSymbolsAmbient_wt2_g0(
+                group.level(), sign, base_ring, custom_init=custom_init)
+        else:
+            M = ambient.ModularSymbolsAmbient_wtk_g0(
+                group.level(), weight, sign, base_ring, custom_init=custom_init)
 
     elif arithgroup.is_Gamma1(group):
 
@@ -381,4 +382,3 @@ def ModularSymbols(group  = 1,
     if use_cache:
         _cache[key] = weakref.ref(M)
     return M
-

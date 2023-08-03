@@ -61,9 +61,9 @@ class LFSRCipher(SymmetricKeyCipher):
             sage: E == loads(dumps(E))
             True
         """
-        SymmetricKeyCipher.__init__(self, parent, key = (poly, IS))
+        SymmetricKeyCipher.__init__(self, parent, key=(poly, IS))
 
-    def __call__(self, M, mode = "ECB"):
+    def __call__(self, M, mode="ECB"):
         r"""
         Generate key stream from the binary string ``M``.
 
@@ -179,7 +179,7 @@ class ShrinkingGeneratorCipher(SymmetricKeyCipher):
             raise TypeError("Argument e1 (= %s) must be a LFSR cipher." % e1)
         if not isinstance(e2, LFSRCipher):
             raise TypeError("Argument e2 (= %s) must be a LFSR cipher." % e2)
-        SymmetricKeyCipher.__init__(self, parent, key = (e1, e2))
+        SymmetricKeyCipher.__init__(self, parent, key=(e1, e2))
 
     def keystream_cipher(self):
         """
@@ -221,7 +221,7 @@ class ShrinkingGeneratorCipher(SymmetricKeyCipher):
         """
         return self.key()[1]
 
-    def __call__(self, M, mode = "ECB"):
+    def __call__(self, M, mode="ECB"):
         r"""
         INPUT:
 
@@ -265,18 +265,18 @@ class ShrinkingGeneratorCipher(SymmetricKeyCipher):
         IS_2 = e2.initial_state()
         k = 0
         N = len(M)
-        n = max(n1,n2)
+        n = max(n1, n2)
         CStream = []
         while k < N:
             r = max(N-k,2*n)
             KStream = lfsr_sequence(g1.list(), IS_1, r)
             DStream = lfsr_sequence(g2.list(), IS_2, r)
-            for i in range(r-n):
-                 if DStream[i] != 0:
-                     CStream.append(int(MStream[k]+KStream[i]))
-                     k += 1
-                 if k == N:
-                     break
+            for i in range(r - n):
+                if DStream[i] != 0:
+                    CStream.append(int(MStream[k] + KStream[i]))
+                    k += 1
+                if k == N:
+                    break
             IS_1 = KStream[r-n-1:r-n+n1]
             IS_2 = DStream[r-n-1:r-n+n2]
         return B(CStream)

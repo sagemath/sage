@@ -1,17 +1,18 @@
 """
 Non Negative Integers
 """
-#*****************************************************************************
+# ****************************************************************************
 #  Copyright (C) 2009 Florent Hivert <Florent.Hivert@univ-rouen.fr>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.structure.parent import Parent
 from sage.categories.infinite_enumerated_sets import InfiniteEnumeratedSets
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.rings.integer import Integer
+
 
 class NonNegativeIntegers(UniqueRepresentation, Parent):
     r"""
@@ -80,7 +81,8 @@ class NonNegativeIntegers(UniqueRepresentation, Parent):
             sage: TestSuite(NN).run()
         """
         from sage.rings.integer_ring import ZZ
-        Parent.__init__(self, facade = ZZ, category = InfiniteEnumeratedSets().or_subcategory(category) )
+        Parent.__init__(self, facade=ZZ,
+                        category=InfiniteEnumeratedSets().or_subcategory(category))
 
     def _repr_(self):
         """
@@ -95,6 +97,7 @@ class NonNegativeIntegers(UniqueRepresentation, Parent):
         """
         EXAMPLES::
 
+            sage: NN = NonNegativeIntegers()
             sage: 1 in NN
             True
             sage: -1 in NN
@@ -114,7 +117,7 @@ class NonNegativeIntegers(UniqueRepresentation, Parent):
         """
         try:
             i = Integer(elt)
-            return  i >= Integer(0) and i == elt
+            return i >= Integer(0) and i == elt
         except (TypeError, ValueError):
             return False
 
@@ -160,8 +163,7 @@ class NonNegativeIntegers(UniqueRepresentation, Parent):
         """
         if i in self:
             return self.from_integer(i)
-        else:
-            raise ValueError("Value %s in not in %s."%(i, self))
+        raise ValueError("Value %s in not in %s." % (i, self))
 
     from_integer = Integer
 
@@ -181,8 +183,8 @@ class NonNegativeIntegers(UniqueRepresentation, Parent):
             yield self.from_integer(i)
             i += 1
             # Uncomment the following two lines to catch infinite loops when debugging
-            #if i > 200:
-            #    raise ValueError, "Infinite loop during DEBUG! TODO: remove me"
+            # if i > 200:
+            #     raise ValueError("Infinite loop during DEBUG! TODO:remove me")
 
     def an_element(self):
         """
@@ -210,7 +212,7 @@ class NonNegativeIntegers(UniqueRepresentation, Parent):
             sage: NN.next(3)
             4
         """
-        return self.from_integer(o+1)
+        return self.from_integer(o + 1)
 
     def unrank(self, rnk):
         """

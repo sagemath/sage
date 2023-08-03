@@ -11,7 +11,6 @@ AUTHORS:
 
 - Thierry Monteil (2018): initial version.
 """
-
 import sys
 import re
 
@@ -27,7 +26,7 @@ wrong_title_fixed = False
 
 # processing
 new_file = ''
-for i,line in enumerate(lines):
+for i, line in enumerate(lines):
     if line.startswith(' # ') and not wrong_title_fixed:
         new_file += re.sub('^ # ', '', line)
         new_file += '=' * (len(line) - 4) + '\n'
@@ -44,4 +43,3 @@ for i,line in enumerate(lines):
 # write new file
 with open(file_name, 'w') as f:
     f.write(new_file)
-

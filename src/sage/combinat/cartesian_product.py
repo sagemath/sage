@@ -51,29 +51,30 @@ class CartesianProduct_iters(EnumeratedSetFromIterator):
 
         sage: F1 = ['a', 'b']
         sage: F2 = [1, 2, 3, 4]
-        sage: F3 = Permutations(3)
+        sage: F3 = Permutations(3)                                                      # optional - sage.combinat
         sage: from sage.combinat.cartesian_product import CartesianProduct_iters
-        sage: C = CartesianProduct_iters(F1, F2, F3)
-        sage: c = cartesian_product([F1, F2, F3])
+        sage: C = CartesianProduct_iters(F1, F2, F3)                                    # optional - sage.combinat
+        sage: c = cartesian_product([F1, F2, F3])                                       # optional - sage.combinat
 
-        sage: type(C.an_element())
-        <... 'list'>
-        sage: type(c.an_element())
+        sage: type(C.an_element())                                                      # optional - sage.combinat
+        <class 'list'>
+        sage: type(c.an_element())                                                      # optional - sage.combinat
         <class 'sage.sets.cartesian_product.CartesianProduct_with_category.element_class'>
 
-        sage: l = ['a', 1, Permutation([3,2,1])]
-        sage: l in C
+        sage: l = ['a', 1, Permutation([3,2,1])]                                        # optional - sage.combinat
+        sage: l in C                                                                    # optional - sage.combinat
         True
-        sage: l in c
+        sage: l in c                                                                    # optional - sage.combinat
         False
-        sage: elt = c(l)
-        sage: elt
+        sage: elt = c(l)                                                                # optional - sage.combinat
+        sage: elt                                                                       # optional - sage.combinat
         ('a', 1, [3, 2, 1])
-        sage: elt in c
+        sage: elt in c                                                                  # optional - sage.combinat
         True
-        sage: elt.parent() is c
+        sage: elt.parent() is c                                                         # optional - sage.combinat
         True
     """
+
     def __init__(self, *iters):
         """
         TESTS::
@@ -273,11 +274,11 @@ class CartesianProduct_iters(EnumeratedSetFromIterator):
             sage: CartesianProduct_iters(4,4).is_finite()
             Traceback (most recent call last):
             ...
-            ValueError: Unable to determine whether this product is finite
+            ValueError: unable to determine whether this product is finite
         """
         finites = [_is_finite(L, fallback=None) for L in self.iters]
         if any(f is None for f in finites):
-            raise ValueError("Unable to determine whether this product is finite")
+            raise ValueError("unable to determine whether this product is finite")
         if all(f is True for f in finites):
             return True
         lens = [_len(L) for L in self.iters]
@@ -319,11 +320,11 @@ class CartesianProduct_iters(EnumeratedSetFromIterator):
         if x != 0:
             raise IndexError("x larger than the size of the Cartesian Product")
         positions.reverse()
-        return [unrank(L, i) for L,i in zip(self.iters, positions)]
+        return [unrank(L, i) for L, i in zip(self.iters, positions)]
 
     def random_element(self):
         r"""
-        Returns a random element from the Cartesian product of \*iters.
+        Return a random element from the Cartesian product of \*iters.
 
         EXAMPLES::
 
@@ -332,4 +333,4 @@ class CartesianProduct_iters(EnumeratedSetFromIterator):
             sage: c in CartesianProduct_iters('dog', 'cat')
             True
         """
-        return [rnd.choice(_) for _ in self.iters]
+        return [rnd.choice(w) for w in self.iters]

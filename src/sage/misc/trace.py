@@ -26,9 +26,10 @@ def trace(code, preparse=True):
 
     ::
 
+        sage: from sage.misc.trace import trace
         sage: trace("factor(100)")             # not tested
 
-    then at the (Pdb) prompt type ``s`` (or ``step``), then press return
+    then at the (Pdb) prompt type ``s`` (or ``step``), then press :kbd:`Return`
     over and over to step through every line of Python that is called
     in the course of the above computation. Type ``?`` at any time for
     help on how to use the debugger (e.g., ``l`` lists 11 lines around
@@ -55,7 +56,7 @@ def trace(code, preparse=True):
 
         sage: import pexpect
         sage: s = pexpect.spawn('sage')
-        sage: _ = s.sendline("trace('print(factor(10))'); print(3+97)")
+        sage: _ = s.sendline("from sage.misc.trace import trace; trace('print(factor(10))'); print(3+97)")
         sage: _ = s.expect('ipdb>', timeout=90)
         sage: _ = s.sendline("s"); _ = s.sendline("c")
         sage: _ = s.expect('100', timeout=90)

@@ -1,9 +1,18 @@
-traitlets: A configuration system for Python applications
-=========================================================
+traitlets: Traitlets Python configuration system
+================================================
 
 Description
 -----------
 
-Traitlets Python config system
+Traitlets Python configuration system
 
-A configuration system for Python applications.
+License
+-------
+
+BSD
+
+Upstream Contact
+----------------
+
+https://pypi.org/project/traitlets/
+

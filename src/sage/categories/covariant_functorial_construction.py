@@ -134,12 +134,13 @@ class CovariantFunctorialConstruction(UniqueRepresentation, SageObject):
 
         EXAMPLES::
 
-            sage: E = CombinatorialFreeModule(QQ, ["a", "b", "c"])
-            sage: tensor.category_from_parents((E, E, E))
-            Category of tensor products of vector spaces with basis over Rational Field
+            sage: E = CombinatorialFreeModule(QQ, ["a", "b", "c"])                      # optional - sage.modules
+            sage: tensor.category_from_parents((E, E, E))                               # optional - sage.modules
+            Category of tensor products of
+             finite dimensional vector spaces with basis over Rational Field
         """
         from sage.structure.parent import Parent
-        assert(all(isinstance(parent, Parent) for parent in parents))
+        assert all(isinstance(parent, Parent) for parent in parents)
         # Should we pass a set of categories to reduce the cache size?
         # But then this would impose that, for any constructor, the
         # category of the result does not depend on the order/repetition
@@ -169,7 +170,7 @@ class CovariantFunctorialConstruction(UniqueRepresentation, SageObject):
             sage: cartesian_product.category_from_categories((Cat1, Cat2))
             Category of Cartesian products of monoids
         """
-        assert(len(categories) > 0)
+        assert len(categories) > 0
         return self.category_from_category(Category.meet(categories))
 
     def category_from_category(self, category):
@@ -205,6 +206,7 @@ class CovariantFunctorialConstruction(UniqueRepresentation, SageObject):
         Functorial construction application
 
         INPUT:
+
          - ``self``: a covariant functorial construction `F`
          - ``args``: a tuple (or iterable) of parents or elements
 
@@ -212,14 +214,15 @@ class CovariantFunctorialConstruction(UniqueRepresentation, SageObject):
 
         EXAMPLES::
 
-            sage: E = CombinatorialFreeModule(QQ, ["a", "b", "c"]); E.rename("E")
-            sage: tensor((E, E, E))
+            sage: E = CombinatorialFreeModule(QQ, ["a", "b", "c"]); E.rename("E")       # optional - sage.modules
+            sage: tensor((E, E, E))                                                     # optional - sage.modules
             E # E # E
         """
-        args = tuple(args) # a bit brute force; let's see if this becomes a bottleneck later
-        assert(all( hasattr(arg, self._functor_name) for arg in args))
-        assert(len(args) > 0)
+        args = tuple(args)  # a bit brute force; let's see if this becomes a bottleneck later
+        assert all(hasattr(arg, self._functor_name) for arg in args)
+        assert len(args) > 0
         return getattr(args[0], self._functor_name)(*args[1:], **kwargs)
+
 
 class FunctorialConstructionCategory(Category): # Should this be CategoryWithBase?
     """
@@ -284,7 +287,7 @@ class FunctorialConstructionCategory(Category): # Should this be CategoryWithBas
         """
         module_name = cls.__module__.replace(cls._functor_category.lower() + "_","")
         import sys
-        name   = cls.__name__.replace(cls._functor_category, "")
+        name = cls.__name__.replace(cls._functor_category, "")
         __import__(module_name)
         module = sys.modules[module_name]
         return (module.__dict__[name],)
@@ -315,7 +318,7 @@ class FunctorialConstructionCategory(Category): # Should this be CategoryWithBas
         """
         base_category_class = cls._base_category_class[0]
         if isinstance(category, base_category_class):
-            return super(FunctorialConstructionCategory, cls).__classcall__(cls, category, *args)
+            return super().__classcall__(cls, category, *args)
         else:
             return cls.category_of(base_category_class(category, *args))
 
@@ -345,11 +348,11 @@ class FunctorialConstructionCategory(Category): # Should this be CategoryWithBas
         It also forces the resolution of lazy imports (see :trac:`15648`)::
 
             sage: type(Algebras.__dict__["Graded"])
-            <type 'sage.misc.lazy_import.LazyImport'>
+            <class 'sage.misc.lazy_import.LazyImport'>
             sage: Algebras.Graded
             <class 'sage.categories.graded_algebras.GradedAlgebras'>
             sage: type(Algebras.__dict__["Graded"])
-            <type 'sage.misc.classcall_metaclass.ClasscallMetaclass'>
+            <class 'sage.misc.classcall_metaclass.ClasscallMetaclass'>
 
         .. TODO::
 
@@ -397,10 +400,12 @@ class FunctorialConstructionCategory(Category): # Should this be CategoryWithBas
 
         EXAMPLES::
 
-            sage: sage.categories.tensor.TensorProductsCategory.category_of(ModulesWithBasis(QQ))
+            sage: C = sage.categories.tensor.TensorProductsCategory
+            sage: C.category_of(ModulesWithBasis(QQ))
             Category of tensor products of vector spaces with basis over Rational Field
 
-            sage: sage.categories.algebra_functor.AlgebrasCategory.category_of(FiniteMonoids(), QQ)
+            sage: C = sage.categories.algebra_functor.AlgebrasCategory
+            sage: C.category_of(FiniteMonoids(), QQ)
             Join of Category of finite dimensional algebras with basis over Rational Field
                 and Category of monoid algebras over Rational Field
                 and Category of finite set algebras over Rational Field
@@ -435,7 +440,7 @@ class FunctorialConstructionCategory(Category): # Should this be CategoryWithBas
         assert isinstance(category, Category)
         self._base_category = category
         self._args = args
-        super(FunctorialConstructionCategory, self).__init__(*args)
+        super().__init__(*args)
 
     def base_category(self):
         """
@@ -480,7 +485,7 @@ class FunctorialConstructionCategory(Category): # Should this be CategoryWithBas
         """
         return Category.join([self.__class__.default_super_categories(self.base_category(), *self._args)] +
                              self.extra_super_categories(),
-                             as_list = True)
+                             as_list=True)
 
     def _repr_object_names(self):
         """
@@ -538,7 +543,8 @@ class CovariantConstructionCategory(FunctorialConstructionCategory):
         Bialgebras are both algebras and coalgebras::
 
             sage: Bialgebras(QQ).super_categories()
-            [Category of algebras over Rational Field, Category of coalgebras over Rational Field]
+            [Category of algebras over Rational Field,
+             Category of coalgebras over Rational Field]
 
         Hence tensor products of bialgebras are tensor products of
         algebras and tensor products of coalgebras::
@@ -549,8 +555,10 @@ class CovariantConstructionCategory(FunctorialConstructionCategory):
 
         Here is how :meth:`default_super_categories` was called internally::
 
-            sage: sage.categories.tensor.TensorProductsCategory.default_super_categories(Bialgebras(QQ))
-            Join of Category of tensor products of algebras over Rational Field and Category of tensor products of coalgebras over Rational Field
+            sage: C = sage.categories.tensor.TensorProductsCategory
+            sage: C.default_super_categories(Bialgebras(QQ))
+            Join of Category of tensor products of algebras over Rational Field
+                and Category of tensor products of coalgebras over Rational Field
 
         We now show a similar example, with the ``Algebra`` functor
         which takes a parameter `\QQ`::
@@ -568,7 +576,8 @@ class CovariantConstructionCategory(FunctorialConstructionCategory):
 
         Here is how :meth:`default_super_categories` was called internally::
 
-            sage: sage.categories.algebra_functor.AlgebrasCategory.default_super_categories(FiniteMonoids(), QQ)
+            sage: C = sage.categories.algebra_functor.AlgebrasCategory
+            sage: C.default_super_categories(FiniteMonoids(), QQ)
             Join of Category of finite dimensional algebras with basis over Rational Field
                 and Category of monoid algebras over Rational Field
                 and Category of finite set algebras over Rational Field
@@ -607,7 +616,8 @@ class CovariantConstructionCategory(FunctorialConstructionCategory):
                 sage: Bialgebras(QQ).Graded().is_construction_defined_by_base()
                 Traceback (most recent call last):
                 ...
-                AttributeError: 'JoinCategory_with_category' object has no attribute 'is_construction_defined_by_base'
+                AttributeError: 'JoinCategory_with_category' object has
+                no attribute 'is_construction_defined_by_base'
         """
         base = self.base_category()
         f = self._functor_category
@@ -684,4 +694,5 @@ class RegressiveCovariantConstructionCategory(CovariantConstructionCategory):
             sage: C.__class__.default_super_categories(C.base_category(), *C._args)
             Category of unital subquotients of semigroups
         """
-        return Category.join([category, super(RegressiveCovariantConstructionCategory, cls).default_super_categories(category, *args)])
+        return Category.join([category,
+                              super().default_super_categories(category, *args)])

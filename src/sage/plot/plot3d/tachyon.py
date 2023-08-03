@@ -13,7 +13,7 @@ tube, and render the result using Tachyon.
     sage: M = S + S.translate((2,0,0)) + L
     sage: M.show(viewer='tachyon')
 
-A number of options can be given to the 
+A number of options can be given to the
 :meth:`~sage.plot.plot3d.base.Graphics3d.show` method and
 correspondingly to the
 :meth:`~sage.plot.plot3d.base.Graphics3d.save` method for saving
@@ -22,12 +22,12 @@ the generated image to a file::
     sage: M.show(viewer='tachyon',
     ....:    antialiasing=True, raydepth=3,
     ....:    figsize=[12,8], # the image resolution is 100*figsize
-    ....:    camera_position=[4, 4.4, 1], # a distant camera position combined with 
+    ....:    camera_position=[4, 4.4, 1], # a distant camera position combined with
     ....:    zoom=3, # a large zoom factor will decrease perspective distortion.
     ....:    updir=(0, -0.1, 1), # the camera is slightly tilted
     ....:    viewdir=(-2.,-2.,-0.5), # slightly off-center
     ....:    light_position=(4.0, -3.0, 2.0),
-    ....:   ) 
+    ....:   )
 
 One can also directly control Tachyon by creating a ``Tachyon`` object
 and adding elements of the scene one by one, which gives a huge amount of
@@ -387,7 +387,7 @@ class Tachyon(WithEqualityById, SageObject):
             self._camera_position = camera_position
         elif camera_center is not None: # make sure that old programs continue to work
             self._camera_position = camera_center
-        else:        
+        else:
             self._camera_position = (-3, 0, 0) # default value
         self._updir = updir
         self._projection = projection
@@ -1022,7 +1022,7 @@ class Tachyon(WithEqualityById, SageObject):
             sage: t.plot(f,(2.,2.),(-2.,2.),'')
             Traceback (most recent call last):
             ...
-            ValueError: Plot rectangle is really a line.  Make sure min_x != max_x and min_y != max_y.
+            ValueError: plot rectangle is really a line; make sure min_x != max_x and min_y != max_y
         """
         (xmin, xmax) = xmin_xmax
         (ymin, ymax) = ymin_ymax
@@ -1055,7 +1055,7 @@ class Tachyon(WithEqualityById, SageObject):
                            e_rel=.01, e_abs=.01))
 
 
-class Light(object):
+class Light():
     r"""
     Represent lighting objects.
 
@@ -1095,7 +1095,7 @@ class Light(object):
                     light center  1.0 1.0 1.0
                           rad 1.0
                           color  1.0 1.0 1.0
- 
+
         """
         return r"""
         light center %s
@@ -1105,7 +1105,7 @@ class Light(object):
                tostr(self._color))
 
 
-class Texfunc(object):
+class Texfunc():
 
     def __init__(self, ttype=0, center=(0, 0, 0), rotate=(0, 0, 0),
                  scale=(1, 1, 1), imagefile=''):
@@ -1167,7 +1167,7 @@ class Texfunc(object):
             raise ValueError
 
 
-class Texture(object):
+class Texture():
 
     def __init__(self, name, ambient=0.2, diffuse=0.8,
                  specular=0.0, opacity=1.0,
@@ -1242,7 +1242,7 @@ class Texture(object):
                self._texfunc)
 
 
-class Sphere(object):
+class Sphere():
     r"""
     A class for creating spheres in tachyon.
     """
@@ -1282,7 +1282,7 @@ class Sphere(object):
         """ % (tostr(self._center), self._radius, self._texture)
 
 
-class Ring(object):
+class Ring():
     r"""
     An annulus of zero thickness.
     """
@@ -1323,7 +1323,7 @@ class Ring(object):
                self._inner, self._outer, self._texture)
 
 
-class FractalLandscape(object):
+class FractalLandscape():
     r"""
     Axis-aligned fractal landscape.
 
@@ -1365,7 +1365,7 @@ class FractalLandscape(object):
                tostr(self._center), self._texture)
 
 
-class Cylinder(object):
+class Cylinder():
     r"""
     An infinite cylinder.
     """
@@ -1405,7 +1405,7 @@ class Cylinder(object):
         """ % (tostr(self._center), tostr(self._axis), self._radius, self._texture)
 
 
-class Plane(object):
+class Plane():
     r"""
     An infinite plane.
     """
@@ -1442,7 +1442,7 @@ class Plane(object):
         """ % (tostr(self._center), tostr(self._normal), self._texture)
 
 
-class FCylinder(object):
+class FCylinder():
     r"""
     A finite cylinder.
     """
@@ -1480,7 +1480,7 @@ class FCylinder(object):
         """ % (tostr(self._center), tostr(self._axis), self._radius, self._texture)
 
 
-class Axis_aligned_box(object):
+class Axis_aligned_box():
     r"""
     Box with axis-aligned edges with the given min and max coordinates.
     """
@@ -1635,7 +1635,7 @@ class TachyonTriangleFactory(TriangleFactory):
         return self._tachyon.texture_recolor(self._texture, list)
 
 
-class ParametricPlot(object):
+class ParametricPlot():
     r"""
     Parametric plotting routines.
     """

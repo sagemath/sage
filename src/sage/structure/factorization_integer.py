@@ -79,9 +79,9 @@ class IntegerFactorization(Factorization):
                 self.simplify()
 
         else:
-            super(IntegerFactorization, self).__init__(x, unit=unit, cr=cr,
-                                                       sort=sort,
-                                                       simplify=simplify)
+            super().__init__(x, unit=unit, cr=cr,
+                             sort=sort,
+                             simplify=simplify)
 
     def __sort__(self, key=None):
         """

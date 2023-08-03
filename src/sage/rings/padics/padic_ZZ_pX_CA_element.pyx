@@ -4,8 +4,8 @@
 # distutils: library_dirs = NTL_LIBDIR
 # distutils: extra_link_args = NTL_LIBEXTRA
 # distutils: language = c++
-"""
-`p`-Adic ``ZZ_pX`` CA Element
+r"""
+`p`-adic ``ZZ_pX`` CA Element
 
 This file implements elements of Eisenstein and unramified extensions
 of ``Zp`` with capped absolute precision.
@@ -56,7 +56,7 @@ element contains the following data:
     ``prime_pow.get_top_context`` -- obtain an
     ``ntl_ZZ_pContext_class`` corresponding to `p^n`.  The capdiv
     version divides by ``prime_pow.e`` as appropriate.
-    ``top_context`` corresponds to `p^{prec_cap}`.
+    ``top_context`` corresponds to `p^{\texttt{prec\_cap}}`.
 
   + ``prime_pow.restore_context``,
     ``prime_pow.restore_context_capdiv``,
@@ -175,18 +175,13 @@ from sage.libs.ntl.ntl_ZZX cimport ntl_ZZX
 from sage.libs.ntl.ntl_ZZ cimport ntl_ZZ
 from sage.libs.ntl.ntl_ZZ_p cimport ntl_ZZ_p
 from sage.libs.ntl.ntl_ZZ_pContext cimport ntl_ZZ_pContext_class
-from sage.libs.ntl.ntl_ZZ_pContext import ntl_ZZ_pContext
 from sage.rings.padics.padic_generic_element cimport pAdicGenericElement
 from sage.libs.pari.all import pari_gen
-from sage.interfaces.gp import GpElement
+from sage.interfaces.abc import GpElement
 from sage.rings.finite_rings.integer_mod import is_IntegerMod
-from sage.rings.all import IntegerModRing
+from sage.rings.finite_rings.integer_mod_ring import IntegerModRing
 from sage.rings.padics.padic_ext_element cimport pAdicExtElement
 from sage.rings.padics.precision_error import PrecisionError
-
-from sage.rings.padics.pow_computer_ext cimport PowComputer_ZZ_pX
-from sage.rings.padics.pow_computer_ext cimport PowComputer_ZZ_pX_small_Eis
-from sage.rings.padics.pow_computer_ext cimport PowComputer_ZZ_pX_big_Eis
 
 cdef object infinity
 from sage.rings.infinity import infinity
@@ -361,7 +356,7 @@ cdef class pAdicZZpXCAElement(pAdicZZpXElement):
             tmp_Int = PY_NEW(Integer)
             ZZ_to_mpz(tmp_Int.value, &(<ntl_ZZ>x).x)
             x = tmp_Int
-        elif isinstance(x, (int, long)):
+        elif isinstance(x, int):
             x = Integer(x)
         elif x in parent.residue_field() and x.parent().is_finite():
             # Should only reach here if x is not in F_p
@@ -755,7 +750,7 @@ cdef class pAdicZZpXCAElement(pAdicZZpXElement):
         if ZZ_pX_IsZero(poly[0]):
             self._set_inexact_zero(absprec)
             return 0
-        cdef long val, index
+        cdef long val = 0, index = 0
         ZZ_pX_min_val_coeff(val, index, poly[0], self.prime_pow.pow_ZZ_tmp(1)[0])
         if self.prime_pow.e == 1:
             self._set_prec_both_with_ordp(val, absprec, relprec) #restores context
@@ -1253,7 +1248,7 @@ cdef class pAdicZZpXCAElement(pAdicZZpXElement):
         cdef long i
         if self._is_inexact_zero():
             # If an integer exponent, return an inexact zero of valuation right * self_ordp.  Otherwise raise an error.
-            if isinstance(_right, (int, long)):
+            if isinstance(_right, int):
                 _right = Integer(_right)
             if isinstance(_right, Integer):
                 mpz_init_set_si(tmp, self_ordp)
@@ -1270,7 +1265,7 @@ cdef class pAdicZZpXCAElement(pAdicZZpXElement):
                 raise ValueError("need more precision")
             else:
                 raise TypeError("exponent must be an integer, rational or base p-adic with the same prime")
-        if isinstance(_right, (int, long)):
+        if isinstance(_right, int):
             _right = Integer(_right)
         cdef pAdicZZpXCAElement unit
         if isinstance(_right, Integer):
@@ -1546,7 +1541,7 @@ cdef class pAdicZZpXCAElement(pAdicZZpXElement):
         return self.to_fraction_field() * (~right)
 
     def _integer_(self, Z=None):
-        """
+        r"""
         Returns an integer congruent to this element modulo
         `\pi`^``self.absolute_precision()``, if possible.
 
@@ -1951,8 +1946,8 @@ cdef class pAdicZZpXCAElement(pAdicZZpXElement):
         return [zero] * ordp + ulist
 
     def matrix_mod_pn(self):
-        """
-        Returns the matrix of right multiplication by the element on
+        r"""
+        Return the matrix of right multiplication by the element on
         the power basis `1, x, x^2, \ldots, x^{d-1}` for this
         extension field.  Thus the *rows* of this matrix give the
         images of each of the `x^i`.  The entries of the matrices are
@@ -1972,7 +1967,7 @@ cdef class pAdicZZpXCAElement(pAdicZZpXElement):
             [1590 1375 1695 1032 2358]
             [2415  590 2370 2970 1032]
         """
-        from sage.matrix.all import matrix
+        from sage.matrix.constructor import matrix
         # this may be the wrong precision when ram_prec_cap is not divisible by e.
         R = IntegerModRing(self.prime_pow.pow_Integer(self.prime_pow.capdiv(self.absprec)))
         n = self.prime_pow.deg
@@ -2243,7 +2238,7 @@ cdef class pAdicZZpXCAElement(pAdicZZpXElement):
         """
         if ZZ_pX_IsZero(self.value):
             return self.absprec
-        cdef long minval, mini, val
+        cdef long minval = 0, mini = 0, val
         ZZ_pX_min_val_coeff(minval, mini, self.value, self.prime_pow.pow_ZZ_tmp(1)[0])
         if self.prime_pow.e == 1:
             if minval <= self.absprec:
@@ -2351,4 +2346,3 @@ def make_ZZpXCAElement(parent, value, absprec, version):
         return ans
     else:
         raise ValueError("unknown unpickling version")
-

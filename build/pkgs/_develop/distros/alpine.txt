@@ -1,0 +1,2 @@
+gnupg-gpgconf
+openssh-client

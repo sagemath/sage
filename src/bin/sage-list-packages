@@ -6,9 +6,6 @@ This is script can be called with one argument which might be either
 "all", "standard", "optional", or "experimental". It is mostly a
 script interface to sage_setup.packages.list_packages.
 """
-
-from __future__ import absolute_import, print_function
-
 import os
 import argparse
 
@@ -48,7 +45,7 @@ args = vars(parser.parse_args())
 ################
 
 if args['category'] == 'installed':
-    WARN   = "*" * 60 + "\n"
+    WARN = "*" * 60 + "\n"
     WARN += 'The "installed" category is deprecated. Use\n'
     WARN += '"list-packages all --installed-only" instead\n'
     WARN += "*" * 60
@@ -91,16 +88,16 @@ else:
 if WARN:
     print(WARN)
 if args['installed_only']:
-    L = [pkg for pkg in L if pkg['installed']]
+    L = [pkg for pkg in L if pkg.is_installed()]
 elif args['not_installed_only']:
-    L = [pkg for pkg in L if not pkg['installed']]
+    L = [pkg for pkg in L if not pkg.is_installed()]
 
-L.sort(key=lambda pkg: pkg['name'])
+L.sort(key=lambda pkg: pkg.name)
 
 # print (while getting rid of None in versions)
 for pkg in L:
-    pkg['installed_version'] = pkg['installed_version'] or 'not_installed'
-    pkg['remote_version'] = pkg['remote_version'] or '?'
-    print(format_string.format(**pkg))
+    pkg = pkg._replace(installed_version=pkg.installed_version or 'not_installed',
+                       remote_version=pkg.remote_version or '?')
+    print(format_string.format(**pkg._asdict()))
 if WARN:
     print(WARN)

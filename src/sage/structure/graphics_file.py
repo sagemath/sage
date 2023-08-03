@@ -1,28 +1,33 @@
 # -*- coding: utf-8 -*-
 """
 Wrapper for Graphics Files
+
+This module is deprecated.
 """
 
 import os
 
 from sage.misc.temporary_file import tmp_filename
+from sage.misc.superseded import deprecation
 from sage.structure.sage_object import SageObject
 import sage.doctest
 
 
-class Mime(object):
-    TEXT = u'text/plain'
-    HTML = u'text/html'
-    LATEX = u'text/latex'
-    JSON = u'application/json'
-    JAVASCRIPT = u'application/javascript'
-    PDF = u'application/pdf'
-    PNG = u'image/png'
-    JPG = u'image/jpeg'
-    SVG = u'image/svg+xml'
+deprecation(32988, 'the module sage.structure.graphics_file is deprecated')
 
-    JMOL = u'application/jmol'
 
+class Mime():
+    TEXT = 'text/plain'
+    HTML = 'text/html'
+    LATEX = 'text/latex'
+    JSON = 'application/json'
+    JAVASCRIPT = 'application/javascript'
+    PDF = 'application/pdf'
+    PNG = 'image/png'
+    JPG = 'image/jpeg'
+    SVG = 'image/svg+xml'
+
+    JMOL = 'application/jmol'
 
     @classmethod
     def validate(cls, value):
@@ -41,8 +46,11 @@ class Mime(object):
         EXAMPLES::
 
             sage: from sage.structure.graphics_file import Mime
+            doctest:warning...
+            DeprecationWarning: the module sage.structure.graphics_file is deprecated
+            See https://github.com/sagemath/sage/issues/32988 for details.
             sage: Mime.validate('image/png')
-            u'image/png'
+            'image/png'
             sage: Mime.validate('foo/bar')
             Traceback (most recent call last):
             ...
@@ -188,22 +196,6 @@ class GraphicsFile(SageObject):
             f.write('script SCRIPT\n')
         os.system('jmol {0} 2>/dev/null 1>/dev/null &'
                   .format(launch_script))
-
-    def sagenb_embedding(self):
-        """
-        Embed in SageNB
-
-        This amounts to just placing the file in the cell
-        directory. The notebook will then try to guess what we want
-        with it.
-        """
-        from sage.misc.temporary_file import tmp_filename
-        ext = "." + Mime.extension(self.mime())
-        fn = tmp_filename(ext=ext)
-        self.save_as(fn)
-        # Client-server sagenb requires this to be world-readable.
-        # See Trac #17755.
-        os.chmod(fn, 0o644)
 
 
 def graphics_from_save(save_function, preferred_mime_types,

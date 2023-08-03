@@ -44,7 +44,7 @@ class GradedHopfAlgebrasWithBasis(GradedModulesCategory):
 
         TESTS::
 
-            sage: GradedHopfAlgebrasWithBasis(QQ).example()
+            sage: GradedHopfAlgebrasWithBasis(QQ).example()                             # optional - sage.modules
             An example of a graded connected Hopf algebra with basis over Rational Field
         """
         from sage.categories.examples.graded_connected_hopf_algebras_with_basis import \
@@ -85,7 +85,7 @@ class GradedHopfAlgebrasWithBasis(GradedModulesCategory):
 
             TESTS::
 
-                sage: GradedHopfAlgebrasWithBasis(QQ).Connected().example()
+                sage: GradedHopfAlgebrasWithBasis(QQ).Connected().example()             # optional - sage.modules
                 An example of a graded connected Hopf algebra with basis over Rational Field
             """
             from sage.categories.examples.graded_connected_hopf_algebras_with_basis import \
@@ -114,10 +114,10 @@ class GradedHopfAlgebrasWithBasis(GradedModulesCategory):
 
                 EXAMPLES::
 
-                    sage: H = GradedHopfAlgebrasWithBasis(QQ).Connected().example()
-                    sage: H.monomial(4).counit() # indirect doctest
+                    sage: H = GradedHopfAlgebrasWithBasis(QQ).Connected().example()     # optional - sage.modules
+                    sage: H.monomial(4).counit()  # indirect doctest                    # optional - sage.modules
                     0
-                    sage: H.monomial(0).counit() # indirect doctest
+                    sage: H.monomial(0).counit()  # indirect doctest                    # optional - sage.modules
                     1
                 """
                 if i == self.one_basis():
@@ -144,14 +144,14 @@ class GradedHopfAlgebrasWithBasis(GradedModulesCategory):
 
                 TESTS::
 
-                    sage: H = GradedHopfAlgebrasWithBasis(QQ).Connected().example()
-                    sage: H.monomial(0).antipode() # indirect doctest
+                    sage: H = GradedHopfAlgebrasWithBasis(QQ).Connected().example()     # optional - sage.modules
+                    sage: H.monomial(0).antipode()  # indirect doctest                  # optional - sage.modules
                     P0
-                    sage: H.monomial(1).antipode() # indirect doctest
+                    sage: H.monomial(1).antipode()  # indirect doctest                  # optional - sage.modules
                     -P1
-                    sage: H.monomial(2).antipode() # indirect doctest
+                    sage: H.monomial(2).antipode()  # indirect doctest                  # optional - sage.modules
                     P2
-                    sage: H.monomial(3).antipode() # indirect doctest
+                    sage: H.monomial(3).antipode()  # indirect doctest                  # optional - sage.modules
                     -P3
                 """
                 if self.monomial(index) == self.one():
@@ -168,4 +168,3 @@ class GradedHopfAlgebrasWithBasis(GradedModulesCategory):
 
         class ElementMethods:
             pass
-

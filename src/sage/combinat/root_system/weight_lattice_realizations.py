@@ -21,9 +21,9 @@ Weight lattice realizations
 from sage.misc.abstract_method import abstract_method
 from sage.misc.cachefunc import cached_method
 from sage.misc.lazy_attribute import lazy_attribute
-from sage.misc.all import prod
+from sage.misc.misc_c import prod
 from sage.categories.category_types import Category_over_base_ring
-from sage.combinat.family import Family
+from sage.sets.family import Family
 from .root_lattice_realizations import RootLatticeRealizations
 
 
@@ -165,27 +165,26 @@ class WeightLatticeRealizations(Category_over_base_ring):
             """
 
         def is_extended(self):
-          """
-          Returns whether this is a realization of the extended weight lattice
+            """
+            Return whether this is a realization of the extended weight lattice
 
-          .. SEEALSO:: :class:`sage.combinat.root_system.weight_space.WeightSpace`
+            .. SEEALSO:: :class:`sage.combinat.root_system.weight_space.WeightSpace`
 
-          EXAMPLES::
+            EXAMPLES::
 
-              sage: RootSystem(["A",3,1]).weight_lattice().is_extended()
-              False
-              sage: RootSystem(["A",3,1]).weight_lattice(extended=True).is_extended()
-              True
+                sage: RootSystem(["A",3,1]).weight_lattice().is_extended()
+                False
+                sage: RootSystem(["A",3,1]).weight_lattice(extended=True).is_extended()
+                True
 
-          This method is irrelevant for finite root systems, since the
-          weight lattice need not be extended to ensure that the root
-          lattice embeds faithfully::
+            This method is irrelevant for finite root systems, since the
+            weight lattice need not be extended to ensure that the root
+            lattice embeds faithfully::
 
-              sage: RootSystem(["A",3]).weight_lattice().is_extended()
-              False
-
-          """
-          return False
+                sage: RootSystem(["A",3]).weight_lattice().is_extended()
+                False
+            """
+            return False
 
         def __init_extra__(self):
             r"""
@@ -215,7 +214,7 @@ class WeightLatticeRealizations(Category_over_base_ring):
                 The embeddings are systematically tested in
                 :meth:`_test_weight_lattice_realization`.
             """
-            from sage.rings.all import ZZ
+            from sage.rings.integer_ring import ZZ
             from .weight_space import WeightSpace
             K = self.base_ring()
             # If self is the root lattice or the root space, we don't want
@@ -229,9 +228,8 @@ class WeightLatticeRealizations(Category_over_base_ring):
             # Build and register the embeddings
             for domain in domains:
                 domain.module_morphism(self.fundamental_weight,
-                                       codomain = self
+                                       codomain=self
                                        ).register_as_coercion()
-
 
         def _test_weight_lattice_realization(self, **options):
             """
@@ -247,9 +245,9 @@ class WeightLatticeRealizations(Category_over_base_ring):
 
                 sage: RootSystem(['A',3]).weight_lattice()._test_weight_lattice_realization()
             """
-            from sage.rings.all import ZZ
-            tester     = self._tester(**options)
-            Lambda     = self.fundamental_weights()
+            from sage.rings.integer_ring import ZZ
+            tester = self._tester(**options)
+            Lambda = self.fundamental_weights()
             alphacheck = self.simple_coroots()
             tester.assertEqual(tuple(Lambda.keys()), self.index_set())
 
@@ -264,9 +262,9 @@ class WeightLatticeRealizations(Category_over_base_ring):
             # For an affine root system, this will check the embedding of
             # the extended ones, and also of the non extended ones if this
             # realization is not extended
-            domains = [self.root_system.weight_space(base_ring, extended = extended)
+            domains = [self.root_system.weight_space(base_ring, extended=extended)
                        for base_ring in set([ZZ, self.base_ring()])
-                       for extended  in set([self.cartan_type().is_affine(), self.is_extended()])]
+                       for extended in set([self.cartan_type().is_affine(), self.is_extended()])]
             for domain in domains:
                 tester.assertIsNot(self._internal_coerce_map_from(domain), None)
                 for i in self.index_set():
@@ -695,7 +693,6 @@ class WeightLatticeRealizations(Category_over_base_ring):
                         tester.assertIn(root, rank_simple_roots)
                         permutation[i] = rank_simple_roots[root]
                     tester.assertEqual(set(permutation), set(self.index_set()))
-                    #print permutation
                     # It could be nicer to test equality of G and its relabelling
                     for i in self.index_set():
                         for j in self.index_set():
@@ -709,7 +706,6 @@ class WeightLatticeRealizations(Category_over_base_ring):
                 # automorphisms, which are in bijection with the special nodes
                 #from sage.groups.perm_gps.permgroup import PermutationGroup
                 #P = PermutationGroup([[i+1 for i in permutation] for permutation in permutations])
-                #print P, len(P)
                 #tester.assertEqual(P, G.automorphism_group())
                 pass
 
@@ -817,7 +813,7 @@ class WeightLatticeRealizations(Category_over_base_ring):
             Lambda = self.fundamental_weights()
             return rho - Lambda[0] * rho.level() / Lambda[0].level()
 
-        def embed_at_level(self, x, level = 1):
+        def embed_at_level(self, x, level=1):
             r"""
             Embed the classical weight `x` in the level ``level`` hyperplane
 
@@ -868,7 +864,7 @@ class WeightLatticeRealizations(Category_over_base_ring):
                 16
 
                 sage: type(RootSystem(['A',3]).ambient_lattice().weyl_dimension([2,1,0,0]))
-                <... 'sage.rings.integer.Integer'>
+                <class 'sage.rings.integer.Integer'>
             """
             highest_weight = self(highest_weight)
             if not highest_weight.is_dominant():
@@ -947,7 +943,7 @@ class WeightLatticeRealizations(Category_over_base_ring):
             M = M.inverse()
 
             if a[0] != 1:
-                from sage.rings.all import QQ
+                from sage.rings.rational_field import QQ
                 S = matrix([~a[0]]+[0]*(r-1))
                 A = cm.symmetrized_matrix().change_ring(QQ).stack(S)
             else:
@@ -1069,7 +1065,7 @@ class WeightLatticeRealizations(Category_over_base_ring):
         #    assert( t == self.plus(t.scalar(alphac[i]) * Lambda[i] for i in self.index_set() ) )
         #    t = self.plus( t.scalar(alphac[i]) * c[i] * Lambda[i] for i in self.index_set() )
 
-        def to_weight_space(self, base_ring = None):
+        def to_weight_space(self, base_ring=None):
             r"""
             Map ``self`` to the weight space.
 

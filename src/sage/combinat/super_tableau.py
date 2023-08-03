@@ -19,11 +19,11 @@ AUTHORS:
 # (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-
+from __future__ import annotations
 
 from sage.sets.disjoint_union_enumerated_sets import DisjointUnionEnumeratedSets
 from sage.sets.non_negative_integers import NonNegativeIntegers
-from sage.rings.all import ZZ
+from sage.rings.integer_ring import ZZ
 from sage.sets.family import Family
 from sage.structure.parent import Parent
 from sage.rings.integer import Integer
@@ -31,7 +31,7 @@ from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
 from sage.categories.infinite_enumerated_sets import InfiniteEnumeratedSets
 from sage.combinat.shifted_primed_tableau import PrimedEntry
 from sage.combinat.tableau import (Tableau, Tableaux, SemistandardTableaux,
-                                    StandardTableaux)
+                                   StandardTableaux)
 
 
 class SemistandardSuperTableau(Tableau):
@@ -108,7 +108,7 @@ class SemistandardSuperTableau(Tableau):
         # We must verify ``t`` is a list of iterables, and also
         # normalize it to be a list of tuples.
         try:
-            t = [tuple(_) for _ in t]
+            t = [tuple(it) for it in t]
         except TypeError:
             raise ValueError("a tableau must be a list of iterables")
         SST = SemistandardSuperTableaux_all()
@@ -134,14 +134,15 @@ class SemistandardSuperTableau(Tableau):
         """
         if not preprocessed:
             t = self._preprocess(t)
-        super(SemistandardSuperTableau, self).__init__(parent, t, check=check)
+        super().__init__(parent, t, check=check)
 
     @staticmethod
     def _preprocess(t):
         """
         Preprocessing list ``T`` to initialize the tableau.
+
         The output is a list of rows as tuples, with entries being
-        ``PrimedEntry``s.
+        ``PrimedEntry`` instances.
 
         TESTS::
 
@@ -185,12 +186,12 @@ class SemistandardSuperTableau(Tableau):
             ValueError: the entries of a semistandard super tableau must be
             non-negative primed integers
         """
-        super(SemistandardSuperTableau, self).check()
+        super().check()
         for row in self:
             if not all(isinstance(c, PrimedEntry) and c > 0 for c in row):
                 raise ValueError("the entries of a semistandard super tableau"
                                  " must be non-negative primed integers")
-            if any(row[c] > row[c+1] for c in range(len(row)-1)):
+            if any(row[c] > row[c + 1] for c in range(len(row) - 1)):
                 raise ValueError("the entries in each row of a semistandard"
                                  " super tableau must be weakly increasing")
 
@@ -210,9 +211,9 @@ class SemistandardSuperTableau(Tableau):
 
             # Check that primed letters are row strict
             for row in self:
-                if not all(row[c] < row[c+1]
-                           for c in range(len(row)-1)
-                           if (row[c].is_primed() or row[c+1].is_primed())):
+                if not all(row[c] < row[c + 1]
+                           for c in range(len(row) - 1)
+                           if (row[c].is_primed() or row[c + 1].is_primed())):
                     raise ValueError("the primed entries in each row must be"
                                      " strictly increasing")
 
@@ -298,7 +299,7 @@ class StandardSuperTableau(SemistandardSuperTableau):
             ValueError: the entries in each row of a semistandard super
             tableau must be weakly increasing
         """
-        super(StandardSuperTableau, self).check()
+        super().check()
         # t is semistandard so we only need to check
         # that its entries are in bijection with {1',1,2', 2, ..., n}
         flattened_list = [i for row in self for i in row]
@@ -312,7 +313,7 @@ class StandardSuperTableau(SemistandardSuperTableau):
             raise ValueError("the entries in a standard tableau must be in"
                              " bijection with 1',1,2',2,...,n")
 
-    def is_standard(self):
+    def is_standard(self) -> bool:
         """
         Return ``True`` since ``self`` is a standard super tableau.
 
@@ -358,7 +359,7 @@ class SemistandardSuperTableaux(SemistandardTableaux):
 
     Element = SemistandardSuperTableau
 
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         """
         Return ``True`` if ``t`` can be interpreted as a
         :class:`SemistandardSuperTableau`.
@@ -393,11 +394,11 @@ class SemistandardSuperTableaux(SemistandardTableaux):
         elif Tableaux.__contains__(self, x):
             x = SemistandardSuperTableau._preprocess(x)
             for row in x:
-                if any(row[c] > row[c+1] for c in range(len(row)-1)):
+                if any(row[c] > row[c + 1] for c in range(len(row) - 1)):
                     return False
-                if not all(row[c] < row[c+1]
-                           for c in range(len(row)-1)
-                           if (row[c].is_primed() or row[c+1].is_primed())):
+                if not all(row[c] < row[c + 1]
+                           for c in range(len(row) - 1)
+                           if (row[c].is_primed() or row[c + 1].is_primed())):
                     return False
             for row, next in zip(x, x[1:]):
                 if any(row[c] > next[c] for c in range(len(next))):
@@ -415,6 +416,7 @@ class SemistandardSuperTableaux_all(SemistandardSuperTableaux):
     """
     All semistandard super tableaux.
     """
+
     def __init__(self):
         r"""
         Initializes the class of all semistandard super tableaux.
@@ -428,7 +430,7 @@ class SemistandardSuperTableaux_all(SemistandardSuperTableaux):
         Parent.__init__(self, category=InfiniteEnumeratedSets())
         SemistandardSuperTableaux.__init__(self)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         TESTS::
 
@@ -546,7 +548,7 @@ class StandardSuperTableaux(SemistandardSuperTableaux, Parent):
 
     Element = StandardSuperTableau
 
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         """
         Return ``True`` if ``t`` can be interpreted as a
         :class:`StandardSuperTableau`.
@@ -584,10 +586,9 @@ class StandardSuperTableaux(SemistandardSuperTableaux, Parent):
                 a = a.increase_half()
             # return True
             return sorted(flattened_list) == primed_list and (x or
-                    (all(row[i]<row[i+1] for row in x for i in range(len(row)-1)) and
-                        all(x[r][c]<x[r+1][c] for r in range(len(x)-1)
-                                              for c in range(len(x[r+1])))
-                     ))
+                    (all(row[i] < row[i + 1] for row in x for i in range(len(row) - 1)) and
+                     all(x[r][c] < x[r + 1][c] for r in range(len(x) - 1)
+                         for c in range(len(x[r + 1])))))
         else:
             return False
 
@@ -597,6 +598,7 @@ class StandardSuperTableaux_all(StandardSuperTableaux,
     """
     All standard super tableaux.
     """
+
     def __init__(self):
         r"""
         Initializes the class of all standard super tableaux.
@@ -614,7 +616,7 @@ class StandardSuperTableaux_all(StandardSuperTableaux,
                                                     StandardSuperTableaux_size),
                                              facade=True, keepkey=False)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         TESTS::
 
@@ -649,6 +651,7 @@ class StandardSuperTableaux_size(StandardSuperTableaux,
          [[1', 1], [2'], [2]],
          [[1'], [1], [2'], [2]]]
     """
+
     def __init__(self, n):
         r"""
         Initializes the class of all standard super tableaux of size ``n``.
@@ -666,7 +669,7 @@ class StandardSuperTableaux_size(StandardSuperTableaux,
                                              facade=True, keepkey=False)
         self.size = Integer(n)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         TESTS::
 
@@ -675,7 +678,7 @@ class StandardSuperTableaux_size(StandardSuperTableaux,
         """
         return "Standard super tableaux of size %s" % self.size
 
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         """
         TESTS::
 
@@ -729,6 +732,7 @@ class StandardSuperTableaux_shape(StandardSuperTableaux):
     """
     Standard super tableaux of a fixed shape `p`.
     """
+
     def __init__(self, p):
         r"""
         Initializes the class of all standard super tableaux of a given shape.
@@ -737,12 +741,11 @@ class StandardSuperTableaux_shape(StandardSuperTableaux):
 
             sage: TestSuite( StandardSuperTableaux([2,2,1]) ).run()
         """
-        super(StandardSuperTableaux_shape, self).__init__(
-                                            category=FiniteEnumeratedSets())
+        super().__init__(category=FiniteEnumeratedSets())
         StandardSuperTableaux.__init__(self)
         self.shape = p
 
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         """
         EXAMPLES::
 
@@ -757,9 +760,9 @@ class StandardSuperTableaux_shape(StandardSuperTableaux):
             False
         """
         return (StandardSuperTableaux.__contains__(self, x) and
-                [len(_) for _ in x] == self.shape)
+                [len(w) for w in x] == self.shape)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         TESTS::
 
@@ -814,5 +817,5 @@ class StandardSuperTableaux_shape(StandardSuperTableaux):
         """
         pi = self.shape
         for tableau in StandardTableaux(pi):
-            yield self.element_class(self, [[PrimedEntry(ZZ(val)/2) for val in row]
+            yield self.element_class(self, [[PrimedEntry(ZZ(val) / 2) for val in row]
                                             for row in tableau])

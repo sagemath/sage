@@ -468,25 +468,6 @@ Sage example in ./programmation.tex, line 2907::
   sage: L.sort(reverse = True) ; L
   [9, 8, 5, 2, 1]
 
-Sage example in ./programmation.tex, line 2986::
-
-  sage: def alpha (P, Q):     # len(P) = len(Q) by hypothesis
-  ....:   i = 0
-  ....:   while True:
-  ....:     if i == len(P): return int(0)
-  ....:     elif P[i] < Q[i]: return int(-1)
-  ....:     elif P[i] > Q[i]: return int(1)
-  ....:     else: i = i+1
-  sage: alpha ([2, 3, 4, 6, 5], [2, 3, 4, 5, 6])
-  1
-
-Sage example in ./programmation.tex, line 3006::
-
-  sage: L = [[2, 2, 5], [2, 3, 4], [3, 2, 4], [3, 3, 3],\
-  ....: [1, 1, 2], [1, 2, 7]]
-  sage: L.sort (cmp = alpha) ; L  # py2
-  [[1, 1, 2], [1, 2, 7], [2, 2, 5], [2, 3, 4], [3, 2, 4], [3, 3, 3]]
-
 Sage example in ./programmation.tex, line 3031::
 
   sage: def homogLex (P, Q):
@@ -680,4 +661,3 @@ Sage example in ./programmation.tex, line 3894::
   ....:   return len(D) == len (Set(D.values()))
 
 """
-

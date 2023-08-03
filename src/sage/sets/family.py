@@ -22,7 +22,7 @@ Check :trac:`12482` (shall be run in a fresh session)::
     Category of finite enumerated sets
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2008 Nicolas Thiery <nthiery at users.sf.net>,
 #                          Mike Hansen <mhansen@gmail.com>,
 #                          Florent Hivert <Florent.Hivert@univ-rouen.fr>
@@ -32,11 +32,13 @@ Check :trac:`12482` (shall be run in a fresh session)::
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
 #                  https://www.gnu.org/licenses/
-#*****************************************************************************
+# ****************************************************************************
 import types
 from copy import copy
 from pprint import pformat, saferepr
+from collections.abc import Iterable
 
+from sage.misc.abstract_method import abstract_method
 from sage.misc.cachefunc import cached_method
 from sage.structure.parent import Parent
 from sage.categories.enumerated_sets import EnumeratedSets
@@ -46,7 +48,10 @@ from sage.sets.finite_enumerated_set import FiniteEnumeratedSet
 from sage.misc.lazy_import import lazy_import
 from sage.rings.integer import Integer
 from sage.misc.call import AttrCallObject
+from sage.sets.non_negative_integers import NonNegativeIntegers
+from sage.rings.infinity import Infinity
 lazy_import('sage.combinat.combinat', 'CombinatorialClass')
+
 
 def Family(indices, function=None, hidden_keys=[], hidden_function=None, lazy=False, name=None):
     r"""
@@ -324,7 +329,7 @@ def Family(indices, function=None, hidden_keys=[], hidden_function=None, lazy=Fa
         sage: f = Family({1:'a', 2:'b', 3:'c'}, lazy=True)
         Traceback (most recent call last):
         ...
-        ValueError: lazy keyword only makes sense together with function keyword !
+        ValueError: lazy keyword only makes sense together with function keyword
 
     ::
 
@@ -375,8 +380,8 @@ def Family(indices, function=None, hidden_keys=[], hidden_function=None, lazy=Fa
         sage: f[5]
         1
     """
-    assert(isinstance(hidden_keys, list))
-    assert(isinstance(lazy, bool))
+    assert isinstance(hidden_keys, list)
+    assert isinstance(lazy, bool)
 
     if not hidden_keys:
         if hidden_function is not None:
@@ -384,33 +389,34 @@ def Family(indices, function=None, hidden_keys=[], hidden_function=None, lazy=Fa
                              "together with hidden_keys keyword !")
         if function is None:
             if lazy:
-                raise ValueError("lazy keyword only makes sense together with function keyword !")
+                raise ValueError("lazy keyword only makes sense together with function keyword")
             if isinstance(indices, dict):
                 return FiniteFamily(indices)
-            if isinstance(indices, (list, tuple) ):
+            if isinstance(indices, (list, tuple)):
                 return TrivialFamily(indices)
-            if isinstance(indices, (FiniteFamily, LazyFamily, TrivialFamily) ):
+            if isinstance(indices, (FiniteFamily, LazyFamily, TrivialFamily)):
                 return indices
             if (indices in EnumeratedSets()
-                or isinstance(indices, CombinatorialClass)):
+                    or isinstance(indices, CombinatorialClass)):
                 return EnumeratedFamily(indices)
-            if hasattr(indices, "__iter__"):
+            if isinstance(indices, Iterable):
                 return TrivialFamily(indices)
 
             raise NotImplementedError
         if (isinstance(indices, (list, tuple, FiniteEnumeratedSet))
-               and not lazy):
+                and not lazy):
             return FiniteFamily({i: function(i) for i in indices},
                                 keys=indices)
 
         return LazyFamily(indices, function, name)
     if lazy:
-        raise ValueError("lazy keyword is incompatible with hidden keys !")
+        raise ValueError("lazy keyword is incompatible with hidden keys")
     if hidden_function is None:
         hidden_function = function
     return FiniteFamilyWithHiddenKeys({i: function(i) for i in indices},
                                       hidden_keys, hidden_function,
                                       keys=indices)
+
 
 class AbstractFamily(Parent):
     """
@@ -430,6 +436,45 @@ class AbstractFamily(Parent):
         """
         return []
 
+    @abstract_method
+    def keys(self):
+        """
+        Return the keys of the family.
+
+        EXAMPLES::
+
+            sage: f = Family({3: 'a', 4: 'b', 7: 'd'})
+            sage: sorted(f.keys())
+            [3, 4, 7]
+        """
+
+    @abstract_method(optional=True)
+    def values(self):
+        """
+        Return the elements (values) of this family.
+
+        EXAMPLES::
+
+            sage: f = Family(["c", "a", "b"], lambda x: x + x)
+            sage: sorted(f.values())
+            ['aa', 'bb', 'cc']
+        """
+
+    def items(self):
+        """
+        Return an iterator for key-value pairs.
+
+        A key can only appear once, but if the function is not injective, values may
+        appear multiple times.
+
+        EXAMPLES::
+
+            sage: f = Family([-2, -1, 0, 1, 2], abs)
+            sage: list(f.items())
+            [(-2, 2), (-1, 1), (0, 0), (1, 1), (2, 2)]
+        """
+        return zip(self.keys(), self.values())
+
     def zip(self, f, other, name=None):
         r"""
         Given two families with same index set `I` (and same hidden
@@ -446,13 +491,14 @@ class AbstractFamily(Parent):
             sage: list(h)
             ['a1', 'b2', 'd3']
         """
-        assert(self.keys() == other.keys())
-        assert(self.hidden_keys() == other.hidden_keys())
-        return Family(self.keys(), lambda i: f(self[i],other[i]), hidden_keys=self.hidden_keys(), name=name)
+        assert self.keys() == other.keys()
+        assert self.hidden_keys() == other.hidden_keys()
+        return Family(self.keys(), lambda i: f(self[i], other[i]),
+                      hidden_keys=self.hidden_keys(), name=name)
 
     def map(self, f, name=None):
         r"""
-        Returns the family `( f(\mathtt{self}[i]) )_{i \in I}`, where
+        Return the family `( f(\mathtt{self}[i]) )_{i \in I}`, where
         `I` is the index set of self.
 
         .. TODO:: good name?
@@ -485,9 +531,9 @@ class AbstractFamily(Parent):
 
             sage: Family((3,4,7)).inverse_family()
             Finite family {3: 0, 4: 1, 7: 2}
-
         """
-        return Family( dict( (self[k], k) for k in self.keys()) )
+        return Family({self[k]: k for k in self.keys()})
+
 
 class FiniteFamily(AbstractFamily):
     r"""
@@ -611,7 +657,7 @@ class FiniteFamily(AbstractFamily):
             ['c', 'a', 'b']
         """
         return (self._keys if self._keys is not None
-                           else list(self._dictionary))
+                else list(self._dictionary))
 
     def values(self):
         """
@@ -666,7 +712,7 @@ class FiniteFamily(AbstractFamily):
             False
         """
         return (isinstance(other, self.__class__) and
-                self._keys       == other._keys and
+                self._keys == other._keys and
                 self._dictionary == other._dictionary)
 
     def _repr_(self):
@@ -780,7 +826,8 @@ class FiniteFamily(AbstractFamily):
             sage: f
             Finite family {4: 'b'}
         """
-        self.__init__(state['dictionary'], keys = state.get("keys"))
+        self.__init__(state['dictionary'], keys=state.get("keys"))
+
 
 class FiniteFamilyWithHiddenKeys(FiniteFamily):
     r"""
@@ -806,7 +853,7 @@ class FiniteFamilyWithHiddenKeys(FiniteFamily):
 
         # would be better to define as usual method
         # any better to unset the def of __getitem__ by FiniteFamily?
-        #self.__getitem__ = lambda i: dictionary[i] if dictionary.has_key(i) else hidden_dictionary[i]
+        # self.__getitem__ = lambda i: dictionary[i] if dictionary.has_key(i) else hidden_dictionary[i]
 
     def __getitem__(self, i):
         """
@@ -876,7 +923,7 @@ class FiniteFamilyWithHiddenKeys(FiniteFamily):
         """
         hidden_function = d['hidden_function']
         if isinstance(hidden_function, str):
-        # Let's assume that hidden_function is an unpickled function.
+            # Let's assume that hidden_function is an unpickled function.
             from sage.misc.fpickle import unpickle_function
             hidden_function = unpickle_function(hidden_function)
         self.__init__(d['dictionary'], d['hidden_keys'], hidden_function)
@@ -967,7 +1014,7 @@ class LazyFamily(AbstractFamily):
 
         ::
 
-            sage: class X(object):
+            sage: class X():
             ....:     def __call__(self, x):
             ....:         return x
             ....:     __hash__ = None
@@ -978,7 +1025,7 @@ class LazyFamily(AbstractFamily):
         try:
             return hash(self.keys()) + hash(self.function)
         except (TypeError, ValueError):
-            return super(LazyFamily, self).__hash__()
+            return super().__hash__()
 
     def __eq__(self, other):
         """
@@ -1027,15 +1074,15 @@ class LazyFamily(AbstractFamily):
         """
         if self.function_name is not None:
             name = self.function_name + "(i)"
-        elif isinstance(self.function, type(lambda x:1)):
+        elif isinstance(self.function, type(lambda x: 1)):
             name = self.function.__name__
-            name = name+"(i)"
+            name = name + "(i)"
         else:
             name = repr(self.function)
             if isinstance(self.function, AttrCallObject):
-                name = "i"+name[1:]
+                name = "i" + name[1:]
             else:
-                name = name+"(i)"
+                name = name + "(i)"
         return "Lazy family ({})_{{i in {}}}".format(name, self.set)
 
     def keys(self):
@@ -1174,7 +1221,7 @@ class LazyFamily(AbstractFamily):
         """
         function = d['function']
         if isinstance(function, bytes):
-        # Let's assume that function is an unpickled function.
+            # Let's assume that function is an unpickled function.
             from sage.misc.fpickle import unpickle_function
             function = unpickle_function(function)
 
@@ -1200,7 +1247,7 @@ class TrivialFamily(AbstractFamily):
             Family (3, 4, 7)
             sage: TestSuite(f).run()
         """
-        Parent.__init__(self, category = FiniteEnumeratedSets())
+        Parent.__init__(self, category=FiniteEnumeratedSets())
         self._enumeration = tuple(enumeration)
 
     def __bool__(self):
@@ -1252,7 +1299,7 @@ class TrivialFamily(AbstractFamily):
             sage: f = TrivialFamily([3,4,7]); f # indirect doctest
             Family (3, 4, 7)
         """
-        return "Family %s"%((self._enumeration),)
+        return "Family %s" % ((self._enumeration),)
 
     def keys(self):
         """
@@ -1338,14 +1385,29 @@ class TrivialFamily(AbstractFamily):
         """
         self.__init__(state['_enumeration'])
 
+    def map(self, f, name=None):
+        r"""
+        Return the family `( f(\mathtt{self}[i]) )_{i \in I}`,
+        where `I` is the index set of ``self``.
 
-from sage.sets.non_negative_integers import NonNegativeIntegers
-from sage.rings.infinity import Infinity
+        The result is again a :class:`TrivialFamily`.
+
+        EXAMPLES::
+
+            sage: from sage.sets.family import TrivialFamily
+            sage: f = TrivialFamily(['a', 'b', 'd'])
+            sage: g = f.map(lambda x: x + '1'); g
+            Family ('a1', 'b1', 'd1')
+        """
+        # tuple([... for ...]) is faster than tuple(... for ...)
+        return Family(tuple([f(x) for x in self._enumeration]), name=name)
+
 
 class EnumeratedFamily(LazyFamily):
     r"""
     :class:`EnumeratedFamily` turns an enumerated set ``c`` into a family
-    indexed by the set `\{0,\dots, |c|-1\}`.
+    indexed by the set `\{0,\dots, |c|-1\}` (or ``NN`` if `|c|` is
+    countably infinite).
 
     Instances should be created via the :func:`Family` factory. See its
     documentation for examples and tests.
@@ -1373,6 +1435,8 @@ class EnumeratedFamily(LazyFamily):
             True
             sage: Family(Permutations()).keys()
             Non negative integers
+            sage: type(Family(NN))
+            <class 'sage.sets.family.EnumeratedFamily_with_category'>
         """
         if enumset.cardinality() == Infinity:
             baseset = NonNegativeIntegers()
@@ -1405,8 +1469,8 @@ class EnumeratedFamily(LazyFamily):
         """
 #        return "Family ((%s)[i])_(i=1...%s)"%(self.enumset, self.enumset.cardinality())
         if isinstance(self.enumset, FiniteEnumeratedSet):
-            return "Family %s"%(self.enumset._elements,)
-        return "Family (%s)"%(self.enumset)
+            return "Family %s" % (self.enumset._elements,)
+        return "Family (%s)" % (self.enumset)
 
     def __contains__(self, x):
         """

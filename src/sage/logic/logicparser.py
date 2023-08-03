@@ -82,7 +82,7 @@ Find the full syntax parse tree of a boolean formula from a list of tokens::
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 #*****************************************************************************
 
 import string
@@ -158,7 +158,7 @@ def polish_parse(s):
         raise SyntaxError("malformed statement")
 
     toks, vars_order = tokenize(s)
-    tree = tree_parse(toks, polish = True)
+    tree = tree_parse(toks, polish=True)
     # special case where the formula s is a single variable
     if isinstance(tree, str):
         return vars_order
@@ -568,7 +568,7 @@ def tree_parse(toks, polish=False):
             while tok != '(':
                 tok = stack.pop()
                 lrtoks.insert(0, tok)
-            branch = parse_ltor(lrtoks[1:-1], polish = polish)
+            branch = parse_ltor(lrtoks[1:-1], polish=polish)
             stack.append(branch)
     return stack[0]
 
@@ -643,7 +643,7 @@ def parse_ltor(toks, n=0, polish=False):
                         toks[j - 1] = args
                         del toks[j]
                         j -= 1
-                    return parse_ltor(toks, n = n, polish = polish)
+                    return parse_ltor(toks, n=n, polish=polish)
             else:
                 args = [toks[i - 1], toks[i], toks[i + 1]]
                 toks[i - 1] = [args[1], args[0], args[2]]
@@ -703,5 +703,3 @@ def apply_func(tree, func):
         lval = tree[1]
         rval = tree[2]
     return func([tree[0], lval, rval])
-
-

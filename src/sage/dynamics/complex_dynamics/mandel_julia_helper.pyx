@@ -9,27 +9,25 @@ AUTHORS:
 - Ben Barros
 
 """
-
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2017 BEN BARROS <bbarros@slu.edu>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.plot.colors import Color
 from sage.repl.image import Image
 from copy import copy
 from cysignals.signals cimport sig_check
 from sage.rings.complex_mpfr import ComplexField
-from sage.functions.log import exp, log
-from sage.symbolic.constants import pi
+from sage.functions.log import exp
 from sage.symbolic.relation import solve
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
-from sage.rings.all import CC
+from sage.rings.cc import CC
 from sage.rings.real_double import RDF
 from sage.rings.complex_double import CDF
 from sage.ext.fast_callable import fast_callable
@@ -38,7 +36,9 @@ from sage.symbolic.ring import SR
 from sage.calculus.var import var
 from sage.rings.fraction_field import is_FractionField
 from sage.categories.function_fields import FunctionFields
+from cypari2.handle_error import PariError
 from math import sqrt
+
 
 def _color_to_RGB(color):
     """
@@ -680,6 +680,15 @@ cpdef polynomial_mandelbrot(f, parameter=None, double x_center=0,
         sage: f = z^4 - z + c
         sage: polynomial_mandelbrot(f, pixel_count=100)
         100x100px 24-bit RGB image
+
+    ::
+
+        sage: from sage.dynamics.complex_dynamics.mandel_julia_helper import polynomial_mandelbrot
+        sage: B.<c> = CC[]
+        sage: R.<z> = B[]
+        sage: f = z^2*(z-c) + c
+        sage: polynomial_mandelbrot(f, pixel_count=100)
+        100x100px 24-bit RGB image
     """
 
     cdef:
@@ -744,7 +753,7 @@ cpdef polynomial_mandelbrot(f, parameter=None, double x_center=0,
     # Split function into real and imaginary parts
     R = PolynomialRing(CC, [variable,parameter])
     if len(R.gens()) > 2:
-        raise NotImplementedError("Base ring must have only 2 variables")
+        raise NotImplementedError("base ring must have only 2 variables")
     z, c = R.gens()
     f = R(str(f))
     S = PolynomialRing(f.base_ring(), 'x,y,J,cr,ci')
@@ -763,7 +772,7 @@ cpdef polynomial_mandelbrot(f, parameter=None, double x_center=0,
         df = f.derivative(z).univariate_polynomial()
         critical_pts = df.roots(multiplicities=False)
         constant_c = True
-    except:
+    except (PariError, TypeError):
         constant_c = False
 
     # If c is in the constant term of the polynomial, then the critical points
@@ -942,7 +951,7 @@ cpdef general_julia(f, double x_center=0, double y_center=0, image_width=4,
     sage: from sage.dynamics.complex_dynamics.mandel_julia_helper import general_julia
     sage: from sage.plot.colors import Color
     sage: R.<z> = CC[]
-    sage: f = z^5 - 1 
+    sage: f = z^5 - 1
     sage: general_julia(f)
     500x500px 24-bit RGB image
     """

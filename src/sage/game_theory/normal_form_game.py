@@ -635,8 +635,8 @@ from collections.abc import MutableMapping
 from itertools import product
 from .parser import Parser
 from sage.misc.latex import latex
-from sage.misc.misc import powerset
-from sage.rings.all import QQ
+from sage.combinat.subset import powerset
+from sage.rings.rational_field import QQ
 from sage.structure.sage_object import SageObject
 from sage.matrix.constructor import matrix
 from sage.matrix.constructor import vector
@@ -744,7 +744,7 @@ class NormalFormGame(SageObject, MutableMapping):
             sage: error = NormalFormGame(p1, p2)
             Traceback (most recent call last):
             ...
-            TypeError: __init__() takes from 1 to 2 positional arguments but 3 were given
+            TypeError: ...__init__() takes from 1 to 2 positional arguments but 3 were given
 
         When initiating, argument passed must be a list or nothing::
 
@@ -1137,7 +1137,7 @@ class NormalFormGame(SageObject, MutableMapping):
             { "" 3, 5, 8 }
             { "" 2, 6, 4 }
             }
-            1 2 3 4 5 6 7 8 
+            1 2 3 4 5 6 7 8
             <BLANKLINE>
         """
         from decimal import Decimal
@@ -1674,17 +1674,17 @@ class NormalFormGame(SageObject, MutableMapping):
         if not self._is_complete():
             raise ValueError("utilities have not been populated")
 
-        from sage.features.lrs import Lrs
+        from sage.features.lrs import LrsNash
         if not algorithm:
             if self.is_constant_sum():
                 algorithm = "lp"
-            elif Lrs().is_present():
+            elif LrsNash().is_present():
                 algorithm = "lrs"
             else:
                 algorithm = "enumeration"
 
         if algorithm == "lrs":
-            Lrs().require()
+            LrsNash().require()
             return self._solve_lrs(maximization)
 
         if algorithm == "LCP":
@@ -1754,14 +1754,10 @@ class NormalFormGame(SageObject, MutableMapping):
         with open(game_name, 'w') as game_file:
             game_file.write(game_str)
 
-        try:
-            process = Popen(['lrsnash', game_name],
-                    stdout=PIPE,
-                    stderr=PIPE)
-        except OSError as e:
-            from sage.features.lrs import Lrs
-            from sage.features import FeatureNotPresentError
-            raise FeatureNotPresentError(Lrs(), reason=f'Calling lrsnash failed with {e}')
+        from sage.features.lrs import LrsNash
+        LrsNash().require()
+        process = Popen([LrsNash().absolute_filename(), game_name],
+                        stdout=PIPE, stderr=PIPE)
 
         lrs_output = [bytes_to_str(row) for row in process.stdout]
         process.terminate()
@@ -1809,7 +1805,7 @@ class NormalFormGame(SageObject, MutableMapping):
         """
         if Game is None:
             raise NotImplementedError("gambit is not installed")
-        g = self._gambit_(maximization = maximization)
+        g = self._gambit_(maximization=maximization)
         output = ExternalLPSolver().solve(g)
         nasheq = Parser(output).format_gambit(g)
         return sorted(nasheq)
@@ -2209,11 +2205,11 @@ class NormalFormGame(SageObject, MutableMapping):
             False
         """
         # Check that supports are obeyed
-        if not(all(a[i] > 0 for i in p1_support) and
-               all(b[j] > 0 for j in p2_support) and
-               all(a[i] == 0 for i in range(len(a))
+        if not (all(a[i] > 0 for i in p1_support) and
+                all(b[j] > 0 for j in p2_support) and
+                all(a[i] == 0 for i in range(len(a))
                     if i not in p1_support) and
-               all(b[j] == 0 for j in range(len(b))
+                all(b[j] == 0 for j in range(len(b))
                     if j not in p2_support)):
             return False
 
@@ -2251,7 +2247,7 @@ class NormalFormGame(SageObject, MutableMapping):
             doctest:warning...
             DeprecationWarning: NormalFormGame._Hrepresentation is deprecated as it
             creates the legacy input format. Use NormalFormGame._lrs_nash_format instead
-            See https://trac.sagemath.org/27745 for details.
+            See https://github.com/sagemath/sage/issues/27745 for details.
             H-representation
             linearity 1 5
             begin
@@ -2319,7 +2315,7 @@ class NormalFormGame(SageObject, MutableMapping):
         return s, t
 
     def _lrs_nash_format(self, m1, m2):
-        """
+        r"""
         Create the input format for ``lrsnash``, version 6.1 or newer.
 
         EXAMPLES:
@@ -2345,7 +2341,7 @@ class NormalFormGame(SageObject, MutableMapping):
             doctest:warning...
             DeprecationWarning: NormalFormGame._Hrepresentation is deprecated as it
             creates the legacy input format. Use NormalFormGame._lrs_nash_format instead
-            See https://trac.sagemath.org/27745 for details.
+            See https://github.com/sagemath/sage/issues/27745 for details.
             sage: print('*game: player 1\n', legacy_format[0])
             *game: player 1
             H-representation
@@ -2747,8 +2743,8 @@ class NormalFormGame(SageObject, MutableMapping):
             sage: g._is_degenerate_pure()
             True
 
-            Whilst this game is not degenerate in pure strategies, it is
-            actually degenerate, but only in mixed strategies.
+        Whilst this game is not degenerate in pure strategies, it is
+        actually degenerate, but only in mixed strategies::
 
             sage: A = matrix([[3, 0], [0, 3], [1.5, 1.5]])
             sage: B = matrix([[4, 3], [2, 6], [3, 1]])

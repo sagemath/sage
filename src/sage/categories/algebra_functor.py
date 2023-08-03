@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# sage.doctest: optional - sage.groups
 r"""
 Group algebras and beyond: the Algebra functorial construction
 
@@ -380,7 +380,7 @@ Coercion from the base ring takes precedences over coercion from the
 group::
 
     sage: G = GL(2,7)
-    sage: OG = GroupAlgebra(G, ZZ[sqrt(5)])
+    sage: OG = GroupAlgebra(G, ZZ[AA(5).sqrt()])
     sage: OG(2)
     2*[1 0]
     [0 1]
@@ -393,7 +393,7 @@ group::
     ...
     TypeError: Attempt to coerce non-integral RealNumber to Integer
     sage: OG(OG.base_ring().basis()[1])
-    sqrt5*[1 0]
+    a*[1 0]
     [0 1]
 
 Coercions from other group algebras::
@@ -631,7 +631,7 @@ class GroupAlgebraFunctor(ConstructionFunctor):
             2*() + 2*(2,3) + (1,2,3) + 4*(1,3,2)
         """
         from sage.categories.rings import Rings
-        domain   = self(f.domain())
+        domain = self(f.domain())
         codomain = self(f.codomain())
         # we would want to use something like:
         # domain.module_morphism(on_coefficients=h, codomain=codomain, category=Rings())

@@ -89,10 +89,10 @@ variável pode possuir valores de qualquer tipo em determinado escopo:
 
     sage: a = 5   # a is an integer
     sage: type(a)
-    <type 'sage.rings.integer.Integer'>
+    <class 'sage.rings.integer.Integer'>
     sage: a = 5/3  # now a is a rational number
     sage: type(a)
-    <type 'sage.rings.rational.Rational'>
+    <class 'sage.rings.rational.Rational'>
     sage: a = 'hello'  # now a is a string
     sage: type(a)
     <... 'str'>

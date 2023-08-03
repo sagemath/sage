@@ -1,3 +1,4 @@
+# sage.doctest: optional - sage.libs.pari
 """
 Basic arithmetic with C integers
 """
@@ -36,13 +37,7 @@ Basic arithmetic with C integers
 # The int definitions
 
 from libc.math cimport sqrt
-from sage.libs.gmp.mpz cimport mpz_set_ui
 
-from sage.ext.stdsage cimport PY_NEW
-
-from cypari2.paridecl cimport *
-from cypari2.gen cimport Gen as pari_gen
-from sage.libs.pari.all import pari
 from sage.rings.integer cimport Integer
 
 cpdef prime_range(start, stop=None, algorithm=None, bint py_ints=False):
@@ -64,16 +59,16 @@ cpdef prime_range(start, stop=None, algorithm=None, bint py_ints=False):
 
     - ``algorithm`` -- optional string (default: ``None``), one of:
 
-        - ``None``: Use  algorithm ``"pari_primes"`` if ``stop`` <= 436273009
-          (approximately 4.36E8). Otherwise use algorithm ``"pari_isprime"``.
+      - ``None``: Use  algorithm ``"pari_primes"`` if ``stop`` <= 436273009
+        (approximately 4.36E8). Otherwise use algorithm ``"pari_isprime"``.
 
-        - ``"pari_primes"``: Use PARI's :pari:`primes` function to generate all
-          primes from 2 to stop. This is fast but may crash if there is
-          insufficient memory. Raises an error if ``stop`` > 436273009.
+      - ``"pari_primes"``: Use PARI's :pari:`primes` function to generate all
+        primes from 2 to stop. This is fast but may crash if there is
+        insufficient memory. Raises an error if ``stop`` > 436273009.
 
-        - ``"pari_isprime"``: Wrapper for ``list(primes(start, stop))``. Each (odd)
-          integer in the specified range is tested for primality by applying PARI's
-          :pari:`isprime` function. This is slower but will work for much larger input.
+      - ``"pari_isprime"``: Wrapper for ``list(primes(start, stop))``. Each (odd)
+        integer in the specified range is tested for primality by applying PARI's
+        :pari:`isprime` function. This is slower but will work for much larger input.
 
     - ``py_ints`` -- optional boolean (default ``False``), return Python ints rather
       than Sage Integers (faster). Ignored unless algorithm ``"pari_primes"`` is being
@@ -102,9 +97,9 @@ cpdef prime_range(start, stop=None, algorithm=None, bint py_ints=False):
         sage: prime_range(10**30,10**30+100,"pari_isprime")
         [1000000000000000000000000000057, 1000000000000000000000000000099]
         sage: type(prime_range(8)[0])
-        <type 'sage.rings.integer.Integer'>
+        <class 'sage.rings.integer.Integer'>
         sage: type(prime_range(8,algorithm="pari_isprime")[0])
-        <type 'sage.rings.integer.Integer'>
+        <class 'sage.rings.integer.Integer'>
 
     .. NOTE::
 
@@ -151,9 +146,6 @@ cpdef prime_range(start, stop=None, algorithm=None, bint py_ints=False):
     - Kevin Stueve (added primes iterator option) 2010-10-16
     - Robert Bradshaw (speedup using Pari prime table, py_ints option)
     """
-    cdef Integer z
-    cdef long c_start, c_stop, p
-    cdef byteptr pari_prime_ptr
     # input to pari.init_primes cannot be greater than 436273290 (hardcoded bound)
     DEF init_primes_max = 436273290
     DEF small_prime_max = 436273009  #  a prime < init_primes_max (preferably the largest)
@@ -187,6 +179,8 @@ cpdef prime_range(start, stop=None, algorithm=None, bint py_ints=False):
             algorithm = "pari_isprime"
 
     if algorithm == "pari_primes":
+        from sage.libs.pari.convert_sage import pari_maxprime, pari_prime_range
+        from sage.libs.pari import pari
 
         if max(start, stop or 0) > small_prime_max:
             raise ValueError('algorithm "pari_primes" is limited to primes larger than'
@@ -194,38 +188,26 @@ cpdef prime_range(start, stop=None, algorithm=None, bint py_ints=False):
 
         if stop is None:
             # In this case, "start" is really stop
-            c_start = 1
-            c_stop = start
+            stop = start
+            start = 1
         else:
-            c_start = start
-            c_stop = stop
-            if c_start < 1:
-                c_start = 1
-        if c_stop <= c_start:
+            start = start
+            stop = stop
+            if start < 1:
+                start = 1
+        if stop <= start:
             return []
 
-        if maxprime() < c_stop:
+        if pari_maxprime() < stop:
             # Adding prime_gap_bound should be sufficient to guarantee an
             # additional prime, given that c_stop <= small_prime_max.
-            pari.init_primes(min(c_stop + prime_gap_bound, init_primes_max))
-            assert maxprime() >= c_stop
+            pari.init_primes(min(stop + prime_gap_bound, init_primes_max))
+            assert pari_maxprime() >= stop
 
-        pari_prime_ptr = diffptr
-        p = 0
-        res = []
-        while p < c_start:
-            NEXT_PRIME_VIADIFF(p, pari_prime_ptr)
-        while p < c_stop:
-            if py_ints:
-                res.append(p)
-            else:
-                z = <Integer>PY_NEW(Integer)
-                mpz_set_ui(z.value, p)
-                res.append(z)
-            NEXT_PRIME_VIADIFF(p, pari_prime_ptr)
+        res = pari_prime_range(start, stop, py_ints)
 
     elif (algorithm == "pari_isprime") or (algorithm == "pari_primes"):
-        from sage.arith.all import primes
+        from sage.arith.misc import primes
         res = list(primes(start, stop))
     else:
         raise ValueError('algorithm must be "pari_primes" or "pari_isprime"')
@@ -341,7 +323,7 @@ cdef class arith_int:
             q = u2/v2   # floor is implicit
             t0=u0-q*v0; t1=u1-q*v1; t2=u2-q*v2
             u0=v0; u1=v1; u2=v2
-            v0=t0; v1=t1; v2=t2;
+            v0=t0; v1=t1; v2=t2
 
         x = self.abs_int(v1); y = v2
         if v1<0:  y = -1*y
@@ -471,7 +453,7 @@ cdef class arith_llong:
             q = u2/v2   # floor is implicit
             t0=u0-q*v0; t1=u1-q*v1; t2=u2-q*v2
             u0=v0; u1=v1; u2=v2
-            v0=t0; v1=t1; v2=t2;
+            v0=t0; v1=t1; v2=t2
 
         x = self.abs_longlong(v1); y = v2
         if v1<0:  y = -1*y

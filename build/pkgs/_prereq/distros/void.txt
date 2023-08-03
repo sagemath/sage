@@ -1,9 +1,10 @@
+bc
 binutils
-make
+gcc
+libgomp-devel
 m4
+make
 perl
 python3
 tar
-bc
-gcc
 which

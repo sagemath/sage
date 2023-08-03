@@ -1,6 +1,5 @@
 r"""
 Combinatorics quickref
-----------------------
 
 Integer Sequences::
 
@@ -47,15 +46,15 @@ Polytopes::
 
     sage: points = random_matrix(ZZ, 6, 3, x=7).rows()
     sage: L = LatticePolytope(points)
-    sage: L.npoints(); L.plot3d()                         # random
+    sage: L.npoints(); L.plot3d()                         # random                      # optional - sage.plot
 
-:ref:`Root systems, Coxeter and Weyl groups <sage.combinat.root_system>`::
+:ref:`Root systems, Coxeter and Weyl groups <sage.combinat.root_system.all>`::
 
     sage: WeylGroup(["B",3]).bruhat_poset()
     Finite poset containing 48 elements
     sage: RootSystem(["A",2,1]).weight_lattice().plot()   # not tested
 
-:ref:`Crystals <sage.combinat.crystals>`::
+:ref:`Crystals <sage.combinat.crystals.all>`::
 
     sage: CrystalOfTableaux(["A",3], shape = [3,2]).some_flashy_feature() # not tested
 
@@ -72,7 +71,7 @@ Polytopes::
     sage: M.an_element() * S.an_element()
     x0
 
-Graph theory, posets, lattices (:ref:`sage.graphs`, :ref:`sage.combinat.posets`)::
+Graph theory, posets, lattices (:ref:`sage.graphs`, :ref:`sage.combinat.posets.all`)::
 
     sage: Poset({1: [2,3], 2: [4], 3: [4]}).linear_extensions().cardinality()
     2

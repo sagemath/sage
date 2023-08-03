@@ -6,6 +6,12 @@ computer with a command line interface that runs when you give the ``math``
 command. The interface lets you send certain Sage objects to Mathematica,
 run Mathematica functions, import certain Mathematica expressions to Sage,
 or any combination of the above.
+The Sage command::
+
+    sage: print(mathematica._install_hints())
+    ...
+
+prints more information on Mathematica installation.
 
 To send a Sage object ``sobj`` to Mathematica, call ``mathematica(sobj)``.
 This exports the Sage object to Mathematica and returns a new Sage object
@@ -297,7 +303,7 @@ If you want to convert more complicated Mathematica expressions, you can
 instead call ``mobj._sage_()`` and supply a translation dictionary::
 
     sage: m = mathematica('NewFn[x]')       # optional - mathematica
-    sage: m._sage_(locals={'NewFn': sin})   # optional - mathematica
+    sage: m._sage_(locals={('NewFn', 1): sin})   # optional - mathematica
     sin(x)
 
 For more details, see the documentation for ``._sage_()``.
@@ -363,6 +369,45 @@ as Sage's `e` (:trac:`29833`)::
     e^x
     sage: exp(x)._mathematica_().sage() # optional -- mathematica
     e^x
+
+Check that all trig/hyperbolic functions and their reciprocals are correctly
+translated to Mathematica (:trac:`34087`)::
+
+    sage: x=var('x')                               # optional - mathematica
+    sage: FL=[sin, cos, tan, csc, sec, cot,        # optional - mathematica
+    ....:     sinh, cosh, tanh, csch, sech, coth]
+    sage: IFL=[arcsin, arccos, arctan, arccsc,     # optional - mathematica
+    ....:      arcsec, arccot, arcsinh, arccosh,
+    ....:      arctanh, arccsch, arcsech, arccoth]
+    sage: [mathematica.TrigToExp(u(x)).sage()      # optional - mathematica
+    ....:  for u in FL]
+    [-1/2*I*e^(I*x) + 1/2*I*e^(-I*x),
+     1/2*e^(I*x) + 1/2*e^(-I*x),
+     (-I*e^(I*x) + I*e^(-I*x))/(e^(I*x) + e^(-I*x)),
+     2*I/(e^(I*x) - e^(-I*x)),
+     2/(e^(I*x) + e^(-I*x)),
+     -(-I*e^(I*x) - I*e^(-I*x))/(e^(I*x) - e^(-I*x)),
+     -1/2*e^(-x) + 1/2*e^x,
+     1/2*e^(-x) + 1/2*e^x,
+     -e^(-x)/(e^(-x) + e^x) + e^x/(e^(-x) + e^x),
+     -2/(e^(-x) - e^x),
+     2/(e^(-x) + e^x),
+     -(e^(-x) + e^x)/(e^(-x) - e^x)]
+    sage: [mathematica.TrigToExp(u(x)).sage()      # optional - mathematica
+    ....:  for u in IFL]
+    [-I*log(I*x + sqrt(-x^2 + 1)),
+     1/2*pi + I*log(I*x + sqrt(-x^2 + 1)),
+     -1/2*I*log(I*x + 1) + 1/2*I*log(-I*x + 1),
+     -I*log(sqrt(-1/x^2 + 1) + I/x),
+     1/2*pi + I*log(sqrt(-1/x^2 + 1) + I/x),
+     -1/2*I*log(I/x + 1) + 1/2*I*log(-I/x + 1),
+     log(x + sqrt(x^2 + 1)),
+     log(sqrt(x + 1)*sqrt(x - 1) + x),
+     1/2*log(x + 1) - 1/2*log(-x + 1),
+     log(sqrt(1/x^2 + 1) + 1/x),
+     log(sqrt(1/x + 1)*sqrt(1/x - 1) + 1/x),
+     1/2*log(1/x + 1) - 1/2*log(-1/x + 1)]
+
 """
 
 # ****************************************************************************
@@ -388,7 +433,7 @@ from sage.interfaces.expect import (Expect, ExpectElement, ExpectFunction,
                                     FunctionElement)
 from sage.interfaces.interface import AsciiArtString
 from sage.interfaces.tab_completion import ExtraTabCompletion
-from sage.docs.instancedoc import instancedoc
+from sage.misc.instancedoc import instancedoc
 from sage.structure.richcmp import rich_to_bool
 
 
@@ -408,14 +453,14 @@ def _un_camel(name):
 
     EXAMPLES::
 
-    sage: sage.interfaces.mathematica._un_camel('CamelCase')
-    'camel_case'
-    sage: sage.interfaces.mathematica._un_camel('EllipticE')
-    'elliptic_e'
-    sage: sage.interfaces.mathematica._un_camel('FindRoot')
-    'find_root'
-    sage: sage.interfaces.mathematica._un_camel('GCD')
-    'gcd'
+        sage: sage.interfaces.mathematica._un_camel('CamelCase')
+        'camel_case'
+        sage: sage.interfaces.mathematica._un_camel('EllipticE')
+        'elliptic_e'
+        sage: sage.interfaces.mathematica._un_camel('FindRoot')
+        'find_root'
+        sage: sage.interfaces.mathematica._un_camel('GCD')
+        'gcd'
     """
     s1 = re.sub('(.)([A-Z][a-z]+)', r'\1_\2', name)
     return re.sub('([a-z0-9])([A-Z])', r'\1_\2', s1).lower()
@@ -498,28 +543,33 @@ remote connection to a server running Mathematica -- for hints, type
     print(mathematica._install_hints_ssh())
 
 
-  (1) You might have to buy Mathematica (http://www.wolfram.com/).
+  (1) You might have to buy Mathematica (https://www.wolfram.com/), or
+  install a currently (Feb 2022) free for personal use Wolfram Engine
+  (https://www.wolfram.com/engine/).
 
   (2) * LINUX: The math script usually comes standard with your Mathematica install.
-        However, on some systems it may be called wolfram, while math is absent.
-        In this case, assuming wolfram is in your PATH,
+        However, on some systems it may be called wolfram,
+        or, in case of Wolfram Engine, wolframengine, while math is absent.
+        In this case, assuming wolfram, respectively, wolframengine,
+        is in your PATH,
           (a) create a file called math (in your PATH):
               #!/bin/sh
               /usr/bin/env wolfram $@
 
+        respectively,
+          (a') create a file called math (in your PATH):
+              #!/bin/sh
+              /usr/bin/env wolframengine $@
+
           (b) Make the file executable.
                 chmod +x math
 
-      * WINDOWS:
-
-        Install Mathematica for Linux into the VMware virtual machine (sorry,
-        that's the only way at present).
-
-
-      * APPLE OS X:
+      * Apple macOS: for Mathematica,
           (a) create a file called math (in your PATH):
               #!/bin/sh
               /Applications/Mathematica.app/Contents/MacOS/MathKernel $@
+
+          (a') for Wolfram Engine, follow the Linux step (a') above.
 
           The path in the above script must be modified if you installed
           Mathematica elsewhere or installed an old version of
@@ -530,15 +580,12 @@ remote connection to a server running Mathematica -- for hints, type
 
       * WINDOWS:
 
-        Install Mathematica for Linux into the VMware virtual machine (sorry,
-        that's the only way at present).
+        Install Mathematica for Linux into the VMware virtual machine, or in
+        a WSL/WSL2 Linux installation with Sage installed there (sorry,
+        that's the only ways at present).
 """
 
-#          The following only works with Sage for Cygwin (not colinux).
-#          Note that Sage colinux is the preferred way to run Sage in Windows,
-#          and I do not know how to use Mathematica from colinux Sage (unless
-#          you install Mathematica-for-linux into the colinux machine, which
-#          is possible).
+#          The following only works with Sage for Cygwin.
 
 #          Create a file named "math", which you place in the Sage root
 #          directory.  The file contained a single line, which was the
@@ -717,17 +764,20 @@ class MathematicaElement(ExpectElement):
 
         This method works successfully when Mathematica returns a result
         or list of results that consist only of:
+
         - numbers, i.e. integers, floats, complex numbers;
         - functions and named constants also present in Sage, where:
             - Sage knows how to translate the function or constant's name
-            from Mathematica's naming scheme, or
+              from Mathematica's naming scheme, or
             - you provide a translation dictionary `locals`, or
             - the Sage name for the function or constant is simply the
-             Mathematica name in lower case;
-        - symbolic variables whose names don't pathologically overlap with
+              Mathematica name in lower case;
+
+        - symbolic variables whose names do not pathologically overlap with
           objects already defined in Sage.
 
         This method will not work when Mathematica's output includes:
+
         - strings;
         - functions unknown to Sage that are not specified in `locals`;
         - Mathematica functions with different parameters/parameter order to
@@ -762,7 +812,7 @@ class MathematicaElement(ExpectElement):
         ::
 
             sage: m = mathematica('NewFn[x]')       # optional - mathematica
-            sage: m._sage_(locals={'NewFn': sin})   # optional - mathematica
+            sage: m._sage_(locals={('NewFn', 1): sin})   # optional - mathematica
             sin(x)
 
         ::
@@ -801,7 +851,7 @@ class MathematicaElement(ExpectElement):
             sage: mathematica(RealField(100)(1/3)).sage()  # optional - mathematica
             0.3333333333333333333333333333335
         """
-        from sage.libs.pynac.pynac import symbol_table
+        from sage.symbolic.expression import symbol_table
         from sage.symbolic.constants import constants_name_table as constants
         from sage.calculus.calculus import symbolic_expression_from_string
         from sage.calculus.calculus import _find_func as find_func
@@ -815,8 +865,8 @@ class MathematicaElement(ExpectElement):
         # Find all the mathematica functions, constants and symbolic variables
         # present in `res`.  Convert MMA functions and constants to their
         # Sage equivalents (if possible), using `locals` and
-        # `sage.libs.pynac.pynac.symbol_table['mathematica']` as translation
-        # dictionaries.  If a MMA function or constant is not either
+        # `sage.symbolic.pynac.symbol_table['mathematica']` as translation
+        # dictionaries.  If a MMA function or constant is not in either
         # dictionary, then we use a variety of tactics listed in `autotrans`.
         # If a MMA variable is not in any dictionary, then create an
         # identically named Sage equivalent.
@@ -983,7 +1033,7 @@ class MathematicaElement(ExpectElement):
 
             sage: Q = mathematica('Sin[x Cos[y]]/Sqrt[1-x^2]')   # optional - mathematica
             sage: show(Q)                                        # optional - mathematica
-            <html>\(\frac{\sin (x \cos (y))}{\sqrt{1-x^2}}\)</html>
+            Sin[x*Cos[y]]/Sqrt[1 - x^2]
 
         The following example starts a Mathematica frontend to do the rendering
         (:trac:`28819`)::
@@ -1028,8 +1078,6 @@ class MathematicaElement(ExpectElement):
         P = self._check_valid()
         cmd = '%s===%s' % (self._name, P._false_symbol())
         return P.eval(cmd).strip() != P._true_symbol()
-
-    __nonzero__ = __bool__
 
     def n(self, *args, **kwargs):
         r"""
@@ -1128,17 +1176,18 @@ def request_wolfram_alpha(input, verbose=False):
          'timing',
          'version']
     """
-    # import compatible with py2 and py3
     from urllib.parse import urlencode
-    from urllib.request import Request, build_opener, HTTPCookieProcessor
+    from urllib.request import Request, build_opener, HTTPCookieProcessor, HTTPSHandler
     import json
     from http.cookiejar import CookieJar
+    from ssl import create_default_context as default_context
 
     # we need cookies for this...
     cj = CookieJar()
-    opener = build_opener(HTTPCookieProcessor(cj))
+    opener = build_opener(HTTPCookieProcessor(cj),
+                          HTTPSHandler(context=default_context()))
     # build initial query for code
-    req = Request("http://www.wolframalpha.com/input/api/v1/code")
+    req = Request("https://www.wolframalpha.com/input/api/v1/code")
     resp = opener.open(req)
     # the website returns JSON containing the code
     page_data = json.loads(resp.read().decode("utf-8"))
@@ -1211,14 +1260,14 @@ def parse_moutput_from_json(page_data, verbose=False):
         sage: from sage.interfaces.mathematica import parse_moutput_from_json
         sage: page_data = request_wolfram_alpha('integrate Sin[x]') # optional internet
         sage: parse_moutput_from_json(page_data)                    # optional internet
-        [u'-Cos[x]']
+        ['-Cos[x]']
 
     ::
 
         sage: page_data = request_wolfram_alpha('Sin[x]')           # optional internet
         sage: L = parse_moutput_from_json(page_data)                # optional internet
         sage: sorted(L)                                             # optional internet
-        ['-Cos[x]', '{{x == 0}}', '{{x == Pi C[1], Element[C[1], Integers]}}']
+        ['-Cos[x]', '{x == 0}', '{x == Pi C[1], Element[C[1], Integers]}']
 
     TESTS::
 
@@ -1244,7 +1293,7 @@ def parse_moutput_from_json(page_data, verbose=False):
             print("    Title: {}".format(result['title']))
         if 'subpods' not in result:
             continue
-        subpods = result[u'subpods']
+        subpods = result['subpods']
         for j, subpod in enumerate(subpods):
             if verbose:
                 print("    Subpod #{}".format(j))
@@ -1272,10 +1321,10 @@ def symbolic_expression_from_mathematica_string(mexpr):
     EXAMPLES::
 
         sage: from sage.interfaces.mathematica import symbolic_expression_from_mathematica_string
-        sage: symbolic_expression_from_mathematica_string(u'-Cos[x]')
+        sage: symbolic_expression_from_mathematica_string('-Cos[x]')
         -cos(x)
     """
-    from sage.libs.pynac.pynac import symbol_table
+    from sage.symbolic.expression import symbol_table
     from sage.symbolic.constants import constants_name_table as constants
     from sage.calculus.calculus import symbolic_expression_from_string
     from sage.calculus.calculus import _find_func as find_func
@@ -1284,6 +1333,7 @@ def symbolic_expression_from_mathematica_string(mexpr):
     expr = expr.replace('[', '(').replace(']', ')')
     expr = expr.replace('{', '[').replace('}', ']')
     lsymbols = symbol_table['mathematica'].copy()
+    lsymbols_names_only = [s[0] for s in lsymbols]
     autotrans = [lambda x:x.lower(),      # Try it in lower case
                  _un_camel,      # Convert `CamelCase` to `camel_case`
                  lambda x: x]     # Try the original name
@@ -1294,7 +1344,7 @@ def symbolic_expression_from_mathematica_string(mexpr):
     for m in p.finditer(expr):
         # If the function, variable or constant is already in the
         # translation dictionary, then just move on.
-        if m.group() in lsymbols:
+        if m.group() in lsymbols_names_only:
             pass
         # Now try to translate all other functions -- try each strategy
         # in `autotrans` and check if the function exists in Sage
@@ -1302,7 +1352,7 @@ def symbolic_expression_from_mathematica_string(mexpr):
             for t in autotrans:
                 f = find_func(t(m.group()), create_when_missing=False)
                 if f is not None:
-                    lsymbols[m.group()] = f
+                    lsymbols[(m.group(), f.number_of_arguments())] = f
                     break
             else:
                 raise NotImplementedError("Don't know a Sage equivalent for Mathematica function '%s'." % m.group())
@@ -1310,6 +1360,6 @@ def symbolic_expression_from_mathematica_string(mexpr):
         else:
             for t in autotrans:
                 if t(m.group()) in constants:
-                    lsymbols[m.group()] = constants[t(m.group())]
+                    lsymbols[(m.group(), 0)] = constants[t(m.group())]
                     break
     return symbolic_expression_from_string(expr, lsymbols, accept_sequence=True)

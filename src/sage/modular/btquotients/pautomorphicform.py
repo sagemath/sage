@@ -40,26 +40,29 @@ This can then be lifted to an overconvergent `p`-adic modular form::
     p-adic automorphic form of cohomological weight 0
 """
 
-from sage.modular.btquotients.btquotient import DoubleCosetReduction
-from sage.structure.unique_representation import UniqueRepresentation
-from sage.structure.richcmp import op_EQ, op_NE
-
-from sage.matrix.matrix_space import MatrixSpace
-from sage.structure.element import ModuleElement
-from sage.modules.module import Module
-from sage.rings.all import Integer
-from sage.matrix.constructor import Matrix, zero_matrix
-from sage.rings.all import Qp, QQ, ZZ
 from copy import copy
-from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
-from sage.rings.laurent_series_ring import LaurentSeriesRing
-from sage.modular.hecke.all import (AmbientHeckeModule, HeckeModuleElement)
-from sage.rings.infinity import Infinity
+
 import sage.modular.hecke.hecke_operator
+
+from sage.matrix.constructor import Matrix, zero_matrix
+from sage.matrix.matrix_space import MatrixSpace
 from sage.misc.verbose import verbose
-from sage.rings.real_mpfr import RR
-from sage.modular.pollack_stevens.sigma0 import Sigma0ActionAdjuster
+from sage.modular.btquotients.btquotient import DoubleCosetReduction
+from sage.modular.hecke.all import AmbientHeckeModule, HeckeModuleElement
 from sage.modular.pollack_stevens.distributions import OverconvergentDistributions, Symk
+from sage.modular.pollack_stevens.sigma0 import Sigma0ActionAdjuster
+from sage.modules.module import Module
+from sage.rings.infinity import Infinity
+from sage.rings.integer import Integer
+from sage.rings.integer_ring import ZZ
+from sage.rings.laurent_series_ring import LaurentSeriesRing
+from sage.rings.padics.factory import Qp
+from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+from sage.rings.rational_field import QQ
+from sage.rings.real_mpfr import RR
+from sage.structure.element import ModuleElement
+from sage.structure.richcmp import op_EQ, op_NE
+from sage.structure.unique_representation import UniqueRepresentation
 
 # Need this to be pickleable
 
@@ -672,7 +675,7 @@ class BruhatTitsHarmonicCocycles(AmbientHeckeModule, UniqueRepresentation):
         - ``k`` - integer - The weight. It must be even.
 
         - ``prec`` - integer (default: None). If specified, the
-        precision for the coefficient module
+          precision for the coefficient module
 
         - ``basis_matrix`` - a matrix (default: None).
 
@@ -698,9 +701,9 @@ class BruhatTitsHarmonicCocycles(AmbientHeckeModule, UniqueRepresentation):
         - Cameron Franc (2012-02-20)
         - Marc Masdeu
         """
-        return super(BruhatTitsHarmonicCocycles, cls).__classcall__(cls, X, k, prec,
-                                                                    basis_matrix,
-                                                                    base_field)
+        return super().__classcall__(cls, X, k, prec,
+                                     basis_matrix,
+                                     base_field)
 
     def __init__(self, X, k, prec=None, basis_matrix=None, base_field=None):
         """
@@ -1664,8 +1667,6 @@ class pAdicAutomorphicFormElement(ModuleElement):
         """
         return any(not o.is_zero() for o in self._value)
 
-    __nonzero__ = __bool__
-
     def __getitem__(self, e1):
         r"""
         Evaluate a `p`-adic automorphic form on a matrix in `GL_2(\QQ_p)`.
@@ -1904,7 +1905,7 @@ class pAdicAutomorphicFormElement(ModuleElement):
         - Marc Masdeu (2012-02-20)
         """
         E = self.parent()._source._BT.get_balls(center, level)
-        R1 = LaurentSeriesRing(f.base_ring(), 'r1', default_prec = self.parent()._U.base_ring().precision_cap() + 1)
+        R1 = LaurentSeriesRing(f.base_ring(), 'r1', default_prec=self.parent()._U.base_ring().precision_cap() + 1)
         R2 = PolynomialRing(f.base_ring(), 'x')
         x = R2.gen()
         value = 0
@@ -1912,16 +1913,14 @@ class pAdicAutomorphicFormElement(ModuleElement):
         if method == 'riemann_sum':
             for e in E:
                 ii += 1
-                #print(ii,"/",len(E))
                 exp = ((R1([e[1, 1], e[1, 0]])) ** (self.parent()._U.weight()) * e.determinant() ** (-(self.parent()._U.weight()) / 2)) * f(R1([e[0, 1], e[0, 0]]) / R1([e[1, 1], e[1, 0]]))
-                #exp = R2([tmp[jj] for jj in range(self.parent()._k-1)])
+                # exp = R2([tmp[jj] for jj in range(self.parent()._k-1)])
                 new = eval_dist_at_powseries(self.evaluate(e), exp.truncate(self.parent()._U.weight() + 1))
                 value += new
         elif method == 'moments':
             n = self.parent()._U.weight()
             for e in E:
                 ii += 1
-                #print(ii,"/",len(E))
                 a, b, c, d = e.list()
                 delta = e.determinant()
                 verbose('%s' % (R2([e[0, 1], e[0, 0]])
@@ -2223,12 +2222,12 @@ class pAdicAutomorphicForms(Module, UniqueRepresentation):
           it automatically from ``prec``, ``U`` and the ``overconvergent`` flag.
 
         - ``R`` -- (default : None). If specified, coefficient field of the automorphic forms.
-        If not specified it defaults to the base ring of the distributions ``U``, or to `Q_p`
-        with the working precision ``prec``.
+          If not specified it defaults to the base ring of the distributions ``U``, or to `Q_p`
+          with the working precision ``prec``.
 
         - ``overconvergent`` -- Boolean (default = False). If True, will construct overconvergent
-        `p`-adic automorphic forms. Otherwise it constructs the finite dimensional space of
-        `p`-adic automorphic forms which is isomorphic to the space of harmonic cocycles.
+          `p`-adic automorphic forms. Otherwise it constructs the finite dimensional space of
+          `p`-adic automorphic forms which is isomorphic to the space of harmonic cocycles.
 
         EXAMPLES:
 
@@ -2246,9 +2245,9 @@ class pAdicAutomorphicForms(Module, UniqueRepresentation):
         - Cameron Franc (2012-02-20)
         - Marc Masdeu (2012-02-20)
         """
-        return super(pAdicAutomorphicForms, cls).__classcall__(cls, domain, U,
-                                                           prec, t, R,
-                                                           overconvergent)
+        return super().__classcall__(cls, domain, U,
+                                     prec, t, R,
+                                     overconvergent)
 
     def __init__(self, domain, U, prec=None, t=None, R=None,
                  overconvergent=False):
@@ -2271,7 +2270,7 @@ class pAdicAutomorphicForms(Module, UniqueRepresentation):
                 self._R = Qp(domain._p, prec)
         else:
             self._R = R
-        #U is a CoefficientModuleSpace
+        # U is a CoefficientModuleSpace
         if isinstance(U, Integer):
             if t is None:
                 if overconvergent:
@@ -2280,11 +2279,11 @@ class pAdicAutomorphicForms(Module, UniqueRepresentation):
                     t = 0
             if overconvergent:
                 self._U = OverconvergentDistributions(U - 2, base=self._R,
-                                        prec_cap=U - 1 + t,
-                                        act_on_left=True,
-                                        adjuster=_btquot_adjuster(),
-                                        dettwist=-ZZ((U - 2) // 2),
-                                        act_padic=True)
+                                                      prec_cap=U - 1 + t,
+                                                      act_on_left=True,
+                                                      adjuster=_btquot_adjuster(),
+                                                      dettwist=-ZZ((U - 2) // 2),
+                                                      act_padic=True)
             else:
                 self._U = Symk(U - 2, base=self._R, act_on_left=True,
                                adjuster=_btquot_adjuster(),
@@ -2464,14 +2463,14 @@ class pAdicAutomorphicForms(Module, UniqueRepresentation):
 
             sage: X = BruhatTitsQuotient(13,5)
             sage: H = X.harmonic_cocycles(2,prec=10)
-            sage: h=H.an_element() # indirect doctest
+            sage: h = H.an_element()  # indirect doctest
             sage: A = X.padic_automorphic_forms(2,prec=10)
             sage: A(h)
             p-adic automorphic form of cohomological weight 0
         """
         # Code how to coerce x into the space
         # Admissible values of x?
-        if type(data) is list:
+        if isinstance(data, list):
             return self.element_class(self, [self._U(o, normalize=False) for o in data])
 
         if isinstance(data, pAdicAutomorphicFormElement):
@@ -2484,13 +2483,14 @@ class pAdicAutomorphicForms(Module, UniqueRepresentation):
             F = []
             Uold = data.parent()._U
             for ii in range(len(data._F)):
-                newtmp = data.parent()._Sigma0(E[ii].rep.inverse(), check=False) * Uold(data._F[ii],normalize=False)
+                newtmp = data.parent()._Sigma0(E[ii].rep.inverse(), check=False) * Uold(data._F[ii],
+                                                                                        normalize=False)
                 tmp.append(newtmp)
                 F.append(newtmp)
-            A = data.parent()._Sigma0(Matrix(QQ,2,2,[0,1/self.prime(),1,0]),check=False)
+            A = data.parent()._Sigma0(Matrix(QQ, 2, 2, [0, ~self.prime(), 1, 0]), check=False)
             for ii in range(len(data._F)):
                 F.append(-(A * tmp[ii]))
-            vals = self._make_invariant([self._U(o,normalize=False) for o in F])
+            vals = self._make_invariant([self._U(o, normalize=False) for o in F])
             return self.element_class(self, vals)
         if data == 0:
             return self.zero()
@@ -2604,11 +2604,12 @@ class pAdicAutomorphicForms(Module, UniqueRepresentation):
                 m = M[ii]
                 for v in Si:
                     s += 1
-                    g = self._Sigma0(m.adjugate() * self._source.embed_quaternion(v[0], prec=self._prec).adjugate() * m,check = False)
+                    g = self._Sigma0(m.adjugate() * self._source.embed_quaternion(v[0], prec=self._prec).adjugate() * m,
+                                     check=False)
                     newFi += g * x
                 newF.append((QQ(1) / s) * newFi)
             else:
-                newF.append(self._U(x,normalize=False))
+                newF.append(self._U(x, normalize=False))
         return newF
 
     def _apply_Up_operator(self, f, scale=False, original_moments=None):
@@ -2649,7 +2650,8 @@ class pAdicAutomorphicForms(Module, UniqueRepresentation):
             for gg, edge_list in HeckeData:
                 u = edge_list[jj]
                 tprec = 2 * (prec_cap + u.power) + 1
-                r = S0(self._p ** -u.power * (u.t(tprec) * gg).adjugate(),check=False)
+                r = S0(self._p ** -u.power * (u.t(tprec) * gg).adjugate(),
+                       check=False)
                 tmp += r * f._value[u.label]
             tmp *= factor
             for ii in range(self._n + 1):

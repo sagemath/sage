@@ -14,10 +14,10 @@ AUTHORS:
 #
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from sage.rings.all import ZZ
+from sage.rings.integer_ring import ZZ
 from .set import Set_generic
 from sage.categories.infinite_enumerated_sets import InfiniteEnumeratedSets
-from sage.arith.all import nth_prime
+from sage.arith.misc import nth_prime
 from sage.structure.unique_representation import UniqueRepresentation
 
 
@@ -57,7 +57,7 @@ class Primes(Set_generic, UniqueRepresentation):
             sage: Primes(proof=False) is Primes()
             False
         """
-        return super(Primes, cls).__classcall__(cls, proof)
+        return super().__classcall__(cls, proof)
 
     def __init__(self, proof):
         """
@@ -95,8 +95,8 @@ class Primes(Set_generic, UniqueRepresentation):
             sage: P != x^2+x
             True
         """
-        super(Primes, self).__init__(facade=ZZ,
-                                     category=InfiniteEnumeratedSets())
+        super().__init__(facade=ZZ,
+                         category=InfiniteEnumeratedSets())
         self.__proof = proof
 
     def _repr_(self):
@@ -184,4 +184,4 @@ class Primes(Set_generic, UniqueRepresentation):
             sage: P.unrank(42)
             191
         """
-        return nth_prime(n+1)
+        return nth_prime(n + 1)

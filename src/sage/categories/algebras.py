@@ -68,12 +68,12 @@ class Algebras(CategoryWithAxiom_over_base_ring):
             sage: QQ['x'] in Algebras(QQ)
             True
 
-            sage: QQ^3 in Algebras(QQ)
+            sage: QQ^3 in Algebras(QQ)                                                  # optional - sage.modules
             False
             sage: QQ['x'] in Algebras(CDF)
             False
         """
-        if super(Algebras, self).__contains__(x):
+        if super().__contains__(x):
             return True
         from sage.rings.ring import Algebra
         return isinstance(x, Algebra) and x.base_ring() == self.base_ring()
@@ -154,15 +154,15 @@ class Algebras(CategoryWithAxiom_over_base_ring):
 
             EXAMPLES::
 
-                sage: C = AlgebrasWithBasis(QQ).example()
-                sage: x = C(2); x
+                sage: C = AlgebrasWithBasis(QQ).example()                               # optional - sage.combinat
+                sage: x = C(2); x                                                       # optional - sage.combinat
                 2*B[word: ]
-                sage: y = C.algebra_generators().first(); y
+                sage: y = C.algebra_generators().first(); y                             # optional - sage.combinat
                 B[word: a]
 
-                sage: y._div_(x)
+                sage: y._div_(x)                                                        # optional - sage.combinat
                 1/2*B[word: a]
-                sage: x._div_(y)
+                sage: x._div_(y)                                                        # optional - sage.combinat
                 Traceback (most recent call last):
                 ...
                 ValueError: cannot invert self (= B[word: a])

@@ -20,6 +20,7 @@ from sage.misc.callable_dict import CallableDict
 from sage.structure.parent import Parent
 from sage.categories.enumerated_sets import EnumeratedSets
 
+
 def from_list(l):
     """
     Returns a ranker from the list l.
@@ -84,7 +85,7 @@ def rank_from_list(l):
     implementation detail::
 
         sage: type(r)
-        <... 'sage.misc.callable_dict.CallableDict'>
+        <class 'sage.misc.callable_dict.CallableDict'>
         sage: r
         {'a': 0, 'b': 1, 'c': 2}
 
@@ -106,6 +107,7 @@ def rank_from_list(l):
     """
     return CallableDict((x,i) for i,x in enumerate(l))
 
+
 def unrank_from_list(l):
     """
     Returns an unrank function from a list.
@@ -122,6 +124,7 @@ def unrank_from_list(l):
     """
     unrank = lambda j: l[j]
     return unrank
+
 
 def on_fly():
     """
@@ -151,13 +154,13 @@ def on_fly():
         sage: unrank(3)
         'd'
 
-    .. todo:: add tests as in combinat::rankers
+    .. TODO:: add tests as in combinat::rankers
     """
     def count():
         i = 0
         while True:
             yield i
-            i+=1
+            i += 1
 
     counter = count()
 
@@ -172,6 +175,7 @@ def on_fly():
         return None
 
     return [rank, unrank]
+
 
 def unrank(L, i):
     r"""
@@ -203,7 +207,7 @@ def unrank(L, i):
 
     Enumerated sets::
 
-        sage: unrank(GF(7), 2)
+        sage: unrank(GF(7), 2)                                                          # optional - sage.rings.finite_rings
         2
         sage: unrank(IntegerModRing(29), 10)
         10
@@ -245,7 +249,7 @@ def unrank(L, i):
         ...
         IndexError: index out of range
     """
-    if L in EnumeratedSets:
+    if L in EnumeratedSets():
         return L.unrank(i)
     if isinstance(L, Sequence):
         return L[i]
@@ -263,4 +267,4 @@ def unrank(L, i):
             return next(it)
         except StopIteration:
             raise IndexError("index out of range")
-    raise ValueError("Don't know how to unrank on {}".format(L))
+    raise ValueError("do not know how to unrank on {}".format(L))

@@ -2,9 +2,9 @@ r"""
 Root systems
 ============
 
-See :ref:`sage.combinat.root_system` for an overview.
+See :ref:`sage.combinat.root_system.all` for an overview.
 """
-#*****************************************************************************
+# ***************************************************************************
 #       Copyright (C) 2007      Mike Hansen <mhansen@gmail.com>,
 #                               Justin Walker <justin at mac.com>
 #                     2008-2009 Nicolas M. Thiery <nthiery at users.sf.net>
@@ -12,14 +12,15 @@ See :ref:`sage.combinat.root_system` for an overview.
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ***************************************************************************
 # Design largely inspired from MuPAD-Combinat
 from sage.structure.sage_object import SageObject
 from sage.structure.unique_representation import UniqueRepresentation
 from .cartan_type import CartanType
-from sage.rings.all import ZZ, QQ
-from sage.misc.all import cached_method
+from sage.rings.integer_ring import ZZ
+from sage.rings.rational_field import QQ
+from sage.misc.cachefunc import cached_method
 from .root_space import RootSpace
 from .weight_space import WeightSpace
 
@@ -217,7 +218,7 @@ class RootSystem(UniqueRepresentation, SageObject):
     We can also plot various components of the ambient spaces::
 
         sage: L = RootSystem(['A',2]).ambient_space()
-        sage: L.plot()
+        sage: L.plot()                                                                  # optional - sage.plot sage.symbolic
         Graphics object consisting of 13 graphics primitives
 
     For more on plotting, see :ref:`sage.combinat.root_system.plot`.
@@ -310,7 +311,7 @@ class RootSystem(UniqueRepresentation, SageObject):
             sage: RootSystem(["B",3], as_dual_of=None) is RootSystem("B3")
             True
         """
-        return super(RootSystem, cls).__classcall__(cls, CartanType(cartan_type), as_dual_of)
+        return super().__classcall__(cls, CartanType(cartan_type), as_dual_of)
 
     def __init__(self, cartan_type, as_dual_of=None):
         """
@@ -336,7 +337,6 @@ class RootSystem(UniqueRepresentation, SageObject):
         else:
             self.dual_side = True
             self.dual = as_dual_of
-
 
     def _test_root_lattice_realizations(self, **options):
         """
@@ -373,9 +373,9 @@ class RootSystem(UniqueRepresentation, SageObject):
             Dual of root system of type ['B', 3]
         """
         if self.dual_side:
-            return "Dual of root system of type %s"%self.dual.cartan_type()
+            return "Dual of root system of type %s" % self.dual.cartan_type()
         else:
-            return "Root system of type %s"%self.cartan_type()
+            return "Root system of type %s" % self.cartan_type()
 
     def cartan_type(self):
         """
@@ -506,7 +506,7 @@ class RootSystem(UniqueRepresentation, SageObject):
             sage: Phi.cover_relations()
             [[alpha[2], alpha[1] + alpha[2]], [alpha[1], alpha[1] + alpha[2]], [alpha[1] + alpha[2], alpha[1] + 2*alpha[2]]]
         """
-        return self.root_lattice().root_poset(restricted=restricted,facade=facade)
+        return self.root_lattice().root_poset(restricted=restricted, facade=facade)
 
     def coroot_lattice(self):
         """
@@ -531,7 +531,7 @@ class RootSystem(UniqueRepresentation, SageObject):
         return self.dual.root_space(base_ring)
 
     @cached_method
-    def weight_lattice(self, extended = False):
+    def weight_lattice(self, extended=False):
         """
         Returns the weight lattice associated to self.
 
@@ -549,10 +549,10 @@ class RootSystem(UniqueRepresentation, SageObject):
             sage: RootSystem(['A',3,1]).weight_space(extended = True)
             Extended weight space over the Rational Field of the Root system of type ['A', 3, 1]
         """
-        return WeightSpace(self, ZZ, extended = extended)
+        return WeightSpace(self, ZZ, extended=extended)
 
     @cached_method
-    def weight_space(self, base_ring=QQ, extended = False):
+    def weight_space(self, base_ring=QQ, extended=False):
         """
         Returns the weight space associated to self.
 
@@ -570,9 +570,9 @@ class RootSystem(UniqueRepresentation, SageObject):
             sage: RootSystem(['A',3,1]).weight_space(extended = True)
             Extended weight space over the Rational Field of the Root system of type ['A', 3, 1]
         """
-        return WeightSpace(self, base_ring, extended = extended)
+        return WeightSpace(self, base_ring, extended=extended)
 
-    def coweight_lattice(self, extended = False):
+    def coweight_lattice(self, extended=False):
         """
         Returns the coweight lattice associated to self.
 
@@ -592,9 +592,9 @@ class RootSystem(UniqueRepresentation, SageObject):
             sage: RootSystem(['A',3,1]).coweight_lattice(extended = True)
             Extended coweight lattice of the Root system of type ['A', 3, 1]
         """
-        return self.dual.weight_lattice(extended = extended)
+        return self.dual.weight_lattice(extended=extended)
 
-    def coweight_space(self, base_ring=QQ, extended = False):
+    def coweight_space(self, base_ring=QQ, extended=False):
         """
         Returns the coweight space associated to self.
 
@@ -614,8 +614,7 @@ class RootSystem(UniqueRepresentation, SageObject):
             sage: RootSystem(['A',3,1]).coweight_space(extended=True)
             Extended coweight space over the Rational Field of the Root system of type ['A', 3, 1]
         """
-        return self.dual.weight_space(base_ring, extended = extended)
-
+        return self.dual.weight_space(base_ring, extended=extended)
 
     def ambient_lattice(self):
         r"""

@@ -12,7 +12,7 @@ EXAMPLES::
     sage: a
     10
     sage: type(a)
-    <type 'sage.libs.gap.element.GapElement_Integer'>
+    <class 'sage.libs.gap.element.GapElement_Integer'>
     sage: a*a
     100
     sage: timeit('a*a')   # random output
@@ -35,7 +35,7 @@ objects to GAP objects, for example strings to strings::
     sage: libgap('List([1..10], i->i^2)')
     "List([1..10], i->i^2)"
     sage: type(_)
-    <type 'sage.libs.gap.element.GapElement_String'>
+    <class 'sage.libs.gap.element.GapElement_String'>
 
 You can usually use the :meth:`~sage.libs.gap.element.GapElement.sage`
 method to convert the resulting GAP element back to its Sage
@@ -44,7 +44,7 @@ equivalent::
     sage: a.sage()
     10
     sage: type(_)
-    <type 'sage.rings.integer.Integer'>
+    <class 'sage.rings.integer.Integer'>
 
     sage: libgap.eval('5/3 + 7*E(3)').sage()
     7*zeta3 + 5/3
@@ -93,7 +93,7 @@ can be used as follows::
     sage: lst = libgap([1,5,7]);  lst
     [ 1, 5, 7 ]
     sage: type(lst)
-    <type 'sage.libs.gap.element.GapElement_List'>
+    <class 'sage.libs.gap.element.GapElement_List'>
     sage: len(lst)
     3
     sage: lst[0]
@@ -101,7 +101,7 @@ can be used as follows::
     sage: [ x^2 for x in lst ]
     [1, 25, 49]
     sage: type(_[0])
-    <type 'sage.libs.gap.element.GapElement_Integer'>
+    <class 'sage.libs.gap.element.GapElement_Integer'>
 
 Note that you can access the elements of GAP ``List`` objects as you
 would expect from Python (with indexing starting at 0), but the
@@ -211,13 +211,16 @@ AUTHORS:
 #
 ##############################################################################
 
+from pathlib import Path
+
 from .gap_includes cimport *
 from .util cimport *
 from .element cimport *
 
+from sage.cpython.string cimport str_to_bytes
 from sage.structure.parent cimport Parent
 from sage.structure.element cimport Vector
-from sage.rings.all import ZZ
+from sage.rings.integer_ring import ZZ
 from sage.misc.cachefunc import cached_method
 from sage.misc.randstate cimport current_randstate
 
@@ -307,8 +310,10 @@ class Gap(Parent):
             return make_GapElement_Boolean(self, GAP_True if x else GAP_False)
         elif isinstance(x, int):
             return make_GapElement_Integer(self, make_gap_integer(x))
-        elif isinstance(x, basestring):
+        elif isinstance(x, str):
             return make_GapElement_String(self, make_gap_string(x))
+        elif isinstance(x, Path):
+            return make_GapElement_String(self, make_gap_string(str(x)))
         else:
             try:
                 return x._libgap_()
@@ -393,7 +398,7 @@ class Gap(Parent):
         """
         cdef GapElement elem
 
-        if not isinstance(gap_command, basestring):
+        if not isinstance(gap_command, str):
             gap_command = str(gap_command._libgap_init_())
 
         initialize()
@@ -474,9 +479,7 @@ class Gap(Parent):
             1
             sage: libgap.unset_global('FooBar')
             sage: libgap.get_global('FooBar')
-            Traceback (most recent call last):
-            ...
-            GAPError: Error, VAL_GVAR: No value bound to FooBar
+            NULL
         """
         is_bound = self.function_factory('IsBoundGlobal')
         bind_global = self.function_factory('BindGlobal')
@@ -499,9 +502,7 @@ class Gap(Parent):
             1
             sage: libgap.unset_global('FooBar')
             sage: libgap.get_global('FooBar')
-            Traceback (most recent call last):
-            ...
-            GAPError: Error, VAL_GVAR: No value bound to FooBar
+            NULL
         """
         is_readonlyglobal = self.function_factory('IsReadOnlyGlobal')
         make_readwrite = self.function_factory('MakeReadWriteGlobal')
@@ -531,12 +532,9 @@ class Gap(Parent):
             1
             sage: libgap.unset_global('FooBar')
             sage: libgap.get_global('FooBar')
-            Traceback (most recent call last):
-            ...
-            GAPError: Error, VAL_GVAR: No value bound to FooBar
+            NULL
         """
-        value_global = self.function_factory('ValueGlobal')
-        return value_global(variable)
+        return make_any_gap_element(self, GAP_ValueGlobalVariable(str_to_bytes(variable)))
 
     def global_context(self, variable, value):
         """
@@ -637,7 +635,7 @@ class Gap(Parent):
         EXAMPLES::
 
             sage: type(libgap)
-            <type 'sage.misc.lazy_import.LazyImport'>
+            <class 'sage.misc.lazy_import.LazyImport'>
             sage: type(libgap._get_object())
             <class 'sage.libs.gap.libgap.Gap'>
         """
@@ -691,7 +689,7 @@ class Gap(Parent):
             sage: libgap.List
             <Gap function "List">
             sage: libgap.GlobalRandomSource
-            <RandomSource in IsGlobalRandomSource>
+            <RandomSource in IsGAPRandomSource>
         """
         if name in dir(self.__class__):
             return getattr(self.__class__, name)
@@ -778,9 +776,7 @@ class Gap(Parent):
             sage: libgap.collect()
         """
         initialize()
-        rc = CollectBags(0, 1)
-        if rc != 1:
-            raise RuntimeError('Garbage collection failed.')
+        GAP_CollectBags(1)
 
 
 libgap = Gap()

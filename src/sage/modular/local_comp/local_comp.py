@@ -20,7 +20,10 @@ AUTHORS:
 """
 
 from sage.structure.sage_object     import SageObject
-from sage.rings.all                 import ZZ, QQbar, PolynomialRing, polygen
+from sage.rings.integer_ring        import ZZ
+from sage.rings.polynomial.polynomial_ring import polygen
+from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+from sage.rings.qqbar               import QQbar
 from sage.misc.abstract_method      import abstract_method
 from sage.misc.cachefunc            import cached_method
 from sage.misc.verbose              import verbose
@@ -74,9 +77,11 @@ def LocalComponent(f, p, twist_factor=None):
         Character of Q_7*, of level 0, mapping 7 |--> 1
         sage: Pi.species()
         'Supercuspidal'
-        sage: sorted(Pi.characters(), key=str)
-        [Character of unramified extension Q_7(s)* (s^2 + 6*s + 3 = 0), of level 1, mapping s |--> -d, 7 |--> 1,
-         Character of unramified extension Q_7(s)* (s^2 + 6*s + 3 = 0), of level 1, mapping s |--> d, 7 |--> 1]
+        sage: Pi.characters()
+        [
+        Character of unramified extension Q_7(s)* (s^2 + 6*s + 3 = 0), of level 1, mapping s |--> -d, 7 |--> 1,
+        Character of unramified extension Q_7(s)* (s^2 + 6*s + 3 = 0), of level 1, mapping s |--> d, 7 |--> 1
+        ]
     """
     p = ZZ(p)
     if not p.is_prime():
@@ -634,9 +639,11 @@ class PrimitiveSupercuspidal(PrimitiveLocalComponent):
 
             sage: f = Newform('50a')
             sage: Pi = LocalComponent(f, 5)
-            sage: chars = Pi.characters(); sorted(chars, key=str)
-            [Character of unramified extension Q_5(s)* (s^2 + 4*s + 2 = 0), of level 1, mapping s |--> -d - 1, 5 |--> 1,
-             Character of unramified extension Q_5(s)* (s^2 + 4*s + 2 = 0), of level 1, mapping s |--> d, 5 |--> 1]
+            sage: chars = Pi.characters(); chars
+            [
+            Character of unramified extension Q_5(s)* (s^2 + 4*s + 2 = 0), of level 1, mapping s |--> -d - 1, 5 |--> 1,
+            Character of unramified extension Q_5(s)* (s^2 + 4*s + 2 = 0), of level 1, mapping s |--> d, 5 |--> 1
+            ]
             sage: chars[0].base_ring()
             Number Field in d with defining polynomial x^2 + x + 1
 
@@ -650,9 +657,11 @@ class PrimitiveSupercuspidal(PrimitiveLocalComponent):
             sage: f = Newforms(GammaH(25, [6]), 3, names='j')[0]; f
             q + j0*q^2 + 1/3*j0^3*q^3 - 1/3*j0^2*q^4 + O(q^6)
             sage: Pi = LocalComponent(f, 5)
-            sage: sorted(Pi.characters(), key=str)
-            [Character of unramified extension Q_5(s)* (s^2 + 4*s + 2 = 0), of level 1, mapping s |--> -1/3*j0^2*d, 5 |--> 5,
-             Character of unramified extension Q_5(s)* (s^2 + 4*s + 2 = 0), of level 1, mapping s |--> 1/3*j0^2*d - 1/3*j0^3, 5 |--> 5]
+            sage: Pi.characters()
+            [
+            Character of unramified extension Q_5(s)* (s^2 + 4*s + 2 = 0), of level 1, mapping s |--> 1/3*j0^2*d - 1/3*j0^3, 5 |--> 5,
+            Character of unramified extension Q_5(s)* (s^2 + 4*s + 2 = 0), of level 1, mapping s |--> -1/3*j0^2*d, 5 |--> 5
+            ]
             sage: Pi.characters()[0].base_ring()
             Number Field in d with defining polynomial x^2 - j0*x + 1/3*j0^2 over its base field
 
@@ -667,9 +676,11 @@ class PrimitiveSupercuspidal(PrimitiveLocalComponent):
 
             sage: f = Newform('81a', names='j'); f
             q + j0*q^2 + q^4 - j0*q^5 + O(q^6)
-            sage: sorted(LocalComponent(f, 3).characters(), key=str)  # long time (12s on sage.math, 2012)
-            [Character of unramified extension Q_3(s)* (s^2 + 2*s + 2 = 0), of level 2, mapping -2*s |--> -2*d + j0, 4 |--> 1, 3*s + 1 |--> -j0*d + 1, 3 |--> 1,
-             Character of unramified extension Q_3(s)* (s^2 + 2*s + 2 = 0), of level 2, mapping -2*s |--> 2*d - j0, 4 |--> 1, 3*s + 1 |--> j0*d - 2, 3 |--> 1]
+            sage: LocalComponent(f, 3).characters()  # long time (12s on sage.math, 2012)
+            [
+            Character of unramified extension Q_3(s)* (s^2 + 2*s + 2 = 0), of level 2, mapping -2*s |--> -2*d + j0, 4 |--> 1, 3*s + 1 |--> -j0*d + 1, 3 |--> 1,
+            Character of unramified extension Q_3(s)* (s^2 + 2*s + 2 = 0), of level 2, mapping -2*s |--> 2*d - j0, 4 |--> 1, 3*s + 1 |--> j0*d - 2, 3 |--> 1
+            ]
 
         Some ramified examples::
 
@@ -699,9 +710,11 @@ class PrimitiveSupercuspidal(PrimitiveLocalComponent):
             Character of unramified extension Q_2(s)* (s^2 + s + 1 = 0), of level 3, mapping s |--> 1, 2*s + 1 |--> 1/2*a0, 4*s + 1 |--> 1, -1 |--> 1, 2 |--> 1,
             Character of unramified extension Q_2(s)* (s^2 + s + 1 = 0), of level 3, mapping s |--> 1, 2*s + 1 |--> 1/2*a0, 4*s + 1 |--> -1, -1 |--> 1, 2 |--> 1
             ]
-            sage: sorted(Newform('243a',names='a').local_component(3).characters(), key=str)  # long time
-            [Character of ramified extension Q_3(s)* (s^2 - 6 = 0), of level 4, mapping -2*s - 1 |--> -d - 1, 4 |--> 1, 3*s + 1 |--> -d - 1, s |--> 1,
-             Character of ramified extension Q_3(s)* (s^2 - 6 = 0), of level 4, mapping -2*s - 1 |--> d, 4 |--> 1, 3*s + 1 |--> d, s |--> 1]
+            sage: Newform('243a',names='a').local_component(3).characters() # long time
+            [
+            Character of ramified extension Q_3(s)* (s^2 - 6 = 0), of level 4, mapping -2*s - 1 |--> -d - 1, 4 |--> 1, 3*s + 1 |--> -d - 1, s |--> 1,
+            Character of ramified extension Q_3(s)* (s^2 - 6 = 0), of level 4, mapping -2*s - 1 |--> d, 4 |--> 1, 3*s + 1 |--> d, s |--> 1
+            ]
         """
         T = self.type_space()
         p = self.prime()
@@ -872,9 +885,8 @@ class PrimitiveSupercuspidal(PrimitiveLocalComponent):
                     G = G.base_extend(F)
                 c1q2, c2q2 = flatten([[x]*e for x,e in theta_poly.roots(G.base_ring())])
 
-
-                pairA = [ [c1q, c1q2], [c2q,c2q2] ]
-                pairB = [ [c1q, c2q2], [c2q, c1q2] ]
+                pairA = [[c1q, c1q2], [c2q, c2q2]]
+                pairB = [[c1q, c2q2], [c2q, c1q2]]
 
                 A_fail = 0
                 B_fail = 0

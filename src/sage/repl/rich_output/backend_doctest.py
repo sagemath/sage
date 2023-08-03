@@ -65,6 +65,7 @@ class BackendDoctest(BackendBase):
             sage: backend = BackendIPythonCommandline()
             sage: backend.default_preferences()
             Display preferences:
+            * align_latex is not specified
             * graphics is not specified
             * supplemental_plot = never
             * text is not specified

@@ -9,6 +9,8 @@ Root system data for (untwisted) type A affine
 #*****************************************************************************
 
 from .cartan_type import CartanType_standard_untwisted_affine, CartanType_simply_laced
+
+
 class CartanType(CartanType_standard_untwisted_affine):
     def __init__(self, n):
         """
@@ -62,7 +64,7 @@ class CartanType(CartanType_standard_untwisted_affine):
             sage: latex(ct)
             A_{4}^{(1)}
         """
-        return "A_{%s}^{(1)}"%self.n
+        return "A_{%s}^{(1)}" % self.n
 
     def dynkin_diagram(self):
         """
@@ -79,7 +81,7 @@ class CartanType(CartanType_standard_untwisted_affine):
              O---O---O
              1   2   3
              A3~
-            sage: sorted(a.edges())
+            sage: a.edges(sort=True)
             [(0, 1, 1),
              (0, 3, 1),
              (1, 0, 1),
@@ -94,7 +96,7 @@ class CartanType(CartanType_standard_untwisted_affine):
             O<=>O
             0   1
             A1~
-            sage: sorted(a.edges())
+            sage: a.edges(sort=True)
             [(0, 1, 2), (1, 0, 2)]
         """
         from .dynkin_diagram import DynkinDiagram_class
@@ -185,7 +187,7 @@ class CartanType(CartanType_standard_untwisted_affine):
             l0 = label(0)
             l1 = label(1)
             return "{}<=>{}\n{!s:4}{}".format(node(l0), node(l1), l0, l1)
-        ret  = "{}\n{}".format(label(0), node(label(0)))
+        ret = "{}\n{}".format(label(0), node(label(0)))
         ret += "----"*(n-2) + "---+\n|" + "    "*(n-2) + "   |\n|" + "    "*(n-2) + "   |\n"
         ret += "---".join(node(label(i)) for i in range(1,n+1)) + "\n"
         ret += "".join("{!s:4}".format(label(i)) for i in range(1,n+1))

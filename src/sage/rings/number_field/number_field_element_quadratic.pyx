@@ -4,10 +4,10 @@
 # distutils: library_dirs = NTL_LIBDIR
 # distutils: extra_link_args = NTL_LIBEXTRA
 # distutils: language = c++
-"""
+r"""
 Optimized Quadratic Number Field Elements
 
-This file defines a Cython class ``NumberFieldElement_quadratic`` to speed up
+This file defines a Cython class :class:`NumberFieldElement_quadratic` to speed up
 computations in quadratic extensions of `\QQ`.
 
 AUTHORS:
@@ -23,16 +23,15 @@ AUTHORS:
     The ``_new()`` method should be overridden in this class to copy the ``D``
     and ``standard_embedding`` attributes
 """
-
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2007 Robert Bradshaw <robertwb@math.washington.edu>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 include "sage/libs/ntl/decl.pxi"
 from cpython.object cimport Py_EQ, Py_NE, Py_LE, Py_GE, Py_LT, Py_GT
@@ -49,6 +48,7 @@ from sage.libs.ntl.ntl_ZZX cimport ntl_ZZX
 from sage.libs.mpfi cimport *
 
 
+from sage.structure.parent cimport Parent
 from sage.structure.parent_base cimport ParentWithBase
 from sage.structure.element cimport Element
 from sage.structure.richcmp cimport rich_to_bool_sgn
@@ -56,8 +56,6 @@ from sage.structure.richcmp cimport rich_to_bool_sgn
 from sage.rings.rational cimport Rational
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
-from sage.rings.real_double import RDF
-from sage.rings.complex_double import CDF
 from sage.categories.morphism cimport Morphism
 from sage.rings.number_field.number_field_element import _inverse_mod_generic
 from sage.rings.real_mpfi cimport RealIntervalField_class
@@ -74,7 +72,8 @@ def __make_NumberFieldElement_quadratic0(parent, a, b, denom):
 
     TESTS::
 
-        sage: K.<a> = NumberField(x^2-x+13)
+        sage: x = polygen(ZZ, 'x')
+        sage: K.<a> = NumberField(x^2 - x + 13)
         sage: loads(dumps(a)) == a # indirect doctest
         True
     """
@@ -86,7 +85,8 @@ def __make_NumberFieldElement_quadratic1(parent, cls, a, b, denom):
 
     TESTS::
 
-        sage: K.<a> = NumberField(x^2-x+13)
+        sage: x = polygen(ZZ, 'x')
+        sage: K.<a> = NumberField(x^2 - x + 13)
         sage: loads(dumps(a)) == a # indirect doctest
         True
 
@@ -101,11 +101,11 @@ def __make_NumberFieldElement_quadratic1(parent, cls, a, b, denom):
 
 cdef class NumberFieldElement_quadratic(NumberFieldElement_absolute):
     r"""
-    A NumberFieldElement_quadratic object gives an efficient representation of
+    A :class:`NumberFieldElement_quadratic` object gives an efficient representation of
     an element of a quadratic extension of `\QQ`.
 
     Elements are represented internally as triples `(a, b, c)` of integers,
-    where `{\rm gcd}(a, b, c) = 1` and `c > 0`, representing the element `(a +
+    where `\gcd(a, b, c) = 1` and `c > 0`, representing the element `(a +
     b \sqrt{D}) / c`. Note that if the discriminant `D` is `1 \bmod 4`,
     integral elements do not necessarily have `c = 1`.
 
@@ -116,19 +116,20 @@ cdef class NumberFieldElement_quadratic(NumberFieldElement_absolute):
 
     We set up some fields::
 
-        sage: K.<a> = NumberField(x^2+23)
+        sage: x = polygen(ZZ, 'x')
+        sage: K.<a> = NumberField(x^2 + 23)
         sage: a.parts()
         (0, 1)
-        sage: F.<b> = NumberField(x^2-x+7)
+        sage: F.<b> = NumberField(x^2 - x + 7)
         sage: b.parts()
         (1/2, 3/2)
 
-    We construct elements of these fields in various ways - firstly, from
+    We construct elements of these fields in various ways -- firstly, from
     polynomials::
 
-        sage: NumberFieldElement_quadratic_sqrt(K, x-1)
+        sage: NumberFieldElement_quadratic_sqrt(K, x - 1)
         a - 1
-        sage: NumberFieldElement_quadratic(F, x-1)
+        sage: NumberFieldElement_quadratic(F, x - 1)
         b - 1
 
     From triples of Integers::
@@ -142,11 +143,11 @@ cdef class NumberFieldElement_quadratic(NumberFieldElement_absolute):
 
     From pairs of Rationals::
 
-        sage: NumberFieldElement_quadratic_sqrt(K, (1/2,1/3))
+        sage: NumberFieldElement_quadratic_sqrt(K, (1/2, 1/3))
         1/3*a + 1/2
-        sage: NumberFieldElement_quadratic(F, (1/2,1/3))
+        sage: NumberFieldElement_quadratic(F, (1/2, 1/3))
         2/9*b + 7/18
-        sage: NumberFieldElement_quadratic(F, (1/2,1/3)).parts()
+        sage: NumberFieldElement_quadratic(F, (1/2, 1/3)).parts()
         (1/2, 1/3)
 
     Direct from Rationals::
@@ -158,7 +159,7 @@ cdef class NumberFieldElement_quadratic(NumberFieldElement_absolute):
 
     This checks a bug when converting from lists::
 
-        sage: w = CyclotomicField(3)([1/2,1])
+        sage: w = CyclotomicField(3)([1/2, 1])
         sage: w == w.__invert__().__invert__()
         True
     """
@@ -172,7 +173,7 @@ cdef class NumberFieldElement_quadratic(NumberFieldElement_absolute):
             sage: F.<a> = QuadraticField(-7)
             sage: c = a + 7
             sage: type(c) # indirect doctest
-            <type 'sage.rings.number_field.number_field_element_quadratic.NumberFieldElement_quadratic_sqrt'>
+            <class 'sage.rings.number_field.number_field_element_quadratic.NumberFieldElement_quadratic_sqrt'>
         """
         self.D = parent._D
         cdef Integer a, b, denom
@@ -294,9 +295,9 @@ cdef class NumberFieldElement_quadratic(NumberFieldElement_absolute):
         EXAMPLES::
 
             sage: K.<a> = QuadraticField(-1)
-            sage: (1/3 + a/2)._sympy_()
+            sage: (1/3 + a/2)._sympy_()                                                 # optional - sympy
             1/3 + I/2
-            sage: type(_)
+            sage: type(_)                                                               # optional - sympy
             <class 'sympy.core.add.Add'>
         """
         a = self.parent().gen()
@@ -313,12 +314,12 @@ cdef class NumberFieldElement_quadratic(NumberFieldElement_absolute):
         EXAMPLES::
 
             sage: K.<sqrt5> = QuadraticField(5)
-            sage: polymake(3+2*sqrt5)                 # optional - polymake
+            sage: polymake(3 + 2*sqrt5)               # optional - jupymake
             3+2r5
-            sage: polymake(2**100/7 - 2*sqrt5/3**50)  # optional - polymake
+            sage: polymake(2**100/7 - 2*sqrt5/3**50)  # optional - jupymake
             1267650600228229401496703205376/7-2/717897987691852588770249r5
             sage: K.<i> = QuadraticField(-1)
-            sage: polymake(i)                         # optional - polymake
+            sage: polymake(i)                         # optional - jupymake
             Traceback (most recent call last):
             ...
             TypeError: Negative values for the root of the extension ... Bad Thing...
@@ -330,9 +331,9 @@ cdef class NumberFieldElement_quadratic(NumberFieldElement_absolute):
             sage: x = polygen(QQ, 'x')
             sage: K = NumberField(x^2 - x -1, 'a', embedding=(1-AA(5).sqrt())/2)
             sage: L = NumberField(x^2 - x -1, 'a', embedding=(1+AA(5).sqrt())/2)
-            sage: polymake(K.gen())  # optional - polymake
+            sage: polymake(K.gen())  # optional - jupymake
             1/2-1/2r5
-            sage: polymake(L.gen())  # optional - polymake
+            sage: polymake(L.gen())  # optional - jupymake
             1/2+1/2r5
         """
         cdef Integer a = Integer.__new__(Integer)
@@ -349,30 +350,52 @@ cdef class NumberFieldElement_quadratic(NumberFieldElement_absolute):
             mpz_set(denom.value, self.denom)
             return "new QuadraticExtension({}, {}, {})".format(a/denom, b/denom, self.D)
 
-    def __copy__(self):
+    cpdef _copy_for_parent(self, Parent parent):
         r"""
-        Returns a new copy of self.
+        Return a copy of ``self`` with the parent replaced by ``parent``.
 
-        TESTS::
+        EXAMPLES::
 
-            sage: K.<a> = QuadraticField(-3)
-            sage: b = a + 3
-            sage: c = b.__copy__()
-            sage: b
-            a + 3
-            sage: c
-            a + 3
-            sage: b is c
-            False
-            sage: b == c
+            sage: K.<a> = QuadraticField(3)
+            sage: L.<b> = K.change_names()
+            sage: La = a._copy_for_parent(L)
+            sage: La.parent() is L
+            True
+            sage: La == b
             True
         """
         cdef NumberFieldElement_quadratic x = <NumberFieldElement_quadratic>self._new()
         mpz_set(x.a, self.a)
         mpz_set(x.b, self.b)
         mpz_set(x.denom, self.denom)
+        x._set_parent(parent)
         return x
 
+    def __copy__(self):
+        r"""
+        TESTS::
+
+            sage: K.<a> = QuadraticField(-3)
+            sage: b = a + 3
+            sage: c = b.__copy__()
+            sage: b is c
+            True
+        """
+        # immutable
+        return self
+
+    def __deepcopy__(self, memo):
+        r"""
+        TESTS::
+
+            sage: K.<a> = QuadraticField(-3)
+            sage: b = a + 3
+            sage: c = deepcopy(b)
+            sage: b is c
+            True
+        """
+        # immutable
+        return self
 
     def __cinit__(self):
         r"""
@@ -400,7 +423,8 @@ cdef class NumberFieldElement_quadratic(NumberFieldElement_absolute):
 
         TESTS:
 
-            sage: K.<a> = NumberField(x^2-13)
+            sage: x = polygen(ZZ, 'x')
+            sage: K.<a> = NumberField(x^2 - 13)
             sage: loads(dumps(a)) == a
             True
             sage: loads(dumps(a/3+5)) == a/3+5
@@ -870,7 +894,7 @@ cdef class NumberFieldElement_quadratic(NumberFieldElement_absolute):
 
     cpdef tuple parts(self):
         r"""
-        This function returns a pair of rationals `a` and `b` such that self `=
+        Return a pair of rationals `a` and `b` such that ``self`` `=
         a+b\sqrt{D}`.
 
         This is much closer to the internal storage format of the
@@ -880,19 +904,20 @@ cdef class NumberFieldElement_quadratic(NumberFieldElement_absolute):
 
         EXAMPLES::
 
-            sage: K.<a> = NumberField(x^2-13)
+            sage: x = polygen(ZZ, 'x')
+            sage: K.<a> = NumberField(x^2 - 13)
             sage: K.discriminant()
             13
             sage: a.parts()
             (0, 1)
-            sage: (a/2-4).parts()
+            sage: (a/2 - 4).parts()
             (-4, 1/2)
-            sage: K.<a> = NumberField(x^2-7)
+            sage: K.<a> = NumberField(x^2 - 7)
             sage: K.discriminant()
             28
             sage: a.parts()
             (0, 1)
-            sage: K.<a> = NumberField(x^2-x+7)
+            sage: K.<a> = NumberField(x^2 - x + 7)
             sage: a.parts()
             (1/2, 3/2)
             sage: a._coefficients()
@@ -921,7 +946,7 @@ cdef class NumberFieldElement_quadratic(NumberFieldElement_absolute):
 
     def sign(self):
         r"""
-        Returns the sign of self (0 if zero, +1 if positive and -1 if negative).
+        Returns the sign of ``self`` (`0` if zero, `+1` if positive, and `-1` if negative).
 
         EXAMPLES::
 
@@ -961,8 +986,9 @@ cdef class NumberFieldElement_quadratic(NumberFieldElement_absolute):
             sage: (-a-2).sign()
             -1
 
-            sage: K.<b> = NumberField(x^2 + 2*x + 7, 'b', embedding=CC(-1,-sqrt(6)))
-            sage: b.sign()
+            sage: x = polygen(ZZ, 'x')
+            sage: K.<b> = NumberField(x^2 + 2*x + 7, 'b', embedding=CC(-1,-sqrt(6)))    # optional - sage.symbolic
+            sage: b.sign()                                                              # optional - sage.symbolic
             Traceback (most recent call last):
             ...
             ValueError: a complex number has no sign!
@@ -1024,6 +1050,7 @@ cdef class NumberFieldElement_quadratic(NumberFieldElement_absolute):
         Make some random tests to check that the order is compatible with the
         ones of the real field (RR) and complex field (CC)::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K1 = NumberField(x^2 - 2, 'a', embedding=RR(1.4))
             sage: K2 = NumberField(x^2 - 2, 'a', embedding=RR(-1.4))
             sage: for _ in range(500):  # long time
@@ -1213,7 +1240,7 @@ cdef class NumberFieldElement_quadratic(NumberFieldElement_absolute):
             sage: K.<sqrt2> = QuadraticField(2)
             sage: sqrt2.continued_fraction_list()
             ((1,), (2,))
-            sage: (1/2+sqrt2/3).continued_fraction_list()
+            sage: (1/2 + sqrt2/3).continued_fraction_list()
             ((0, 1, 33), (1, 32))
 
         For rational entries a pair of tuples is also returned but the second
@@ -1294,7 +1321,8 @@ cdef class NumberFieldElement_quadratic(NumberFieldElement_absolute):
         """
         EXAMPLES::
 
-            sage: K.<a> = NumberField(x^2-5)
+            sage: x = polygen(ZZ, 'x')
+            sage: K.<a> = NumberField(x^2 - 5)
             sage: K.discriminant()
             5
             sage: a+a # indirect doctest
@@ -1351,7 +1379,8 @@ cdef class NumberFieldElement_quadratic(NumberFieldElement_absolute):
         """
         EXAMPLES::
 
-            sage: K.<a> = NumberField(x^2-13)
+            sage: x = polygen(ZZ, 'x')
+            sage: K.<a> = NumberField(x^2 - 13)
             sage: b = (a-3)/10; b # indirect doctest
             1/10*a - 3/10
             sage: b-1
@@ -1398,7 +1427,8 @@ cdef class NumberFieldElement_quadratic(NumberFieldElement_absolute):
         """
         EXAMPLES::
 
-            sage: K.<a> = NumberField(x^2+163)
+            sage: x = polygen(ZZ, 'x')
+            sage: K.<a> = NumberField(x^2 + 163)
             sage: -a
             -a
             sage: -(a+4)
@@ -1417,7 +1447,8 @@ cdef class NumberFieldElement_quadratic(NumberFieldElement_absolute):
         """
         EXAMPLES::
 
-            sage: K.<a> = NumberField(x^2+23)
+            sage: x = polygen(ZZ, 'x')
+            sage: K.<a> = NumberField(x^2 + 23)
             sage: a*a # indirect doctest
             -23
             sage: (a+1)*(a-1)
@@ -1484,7 +1515,8 @@ cdef class NumberFieldElement_quadratic(NumberFieldElement_absolute):
         """
         EXAMPLES::
 
-            sage: K.<a> = NumberField(x^2+43)
+            sage: x = polygen(ZZ, 'x')
+            sage: K.<a> = NumberField(x^2 + 43)
             sage: (1+a)*3 # indirect doctest
             3*a + 3
         """
@@ -1500,7 +1532,8 @@ cdef class NumberFieldElement_quadratic(NumberFieldElement_absolute):
         """
         EXAMPLES::
 
-            sage: K.<a> = NumberField(x^2+43)
+            sage: x = polygen(ZZ, 'x')
+            sage: K.<a> = NumberField(x^2 + 43)
             sage: 5*(a-1/5) # indirect doctest
             5*a - 1
         """
@@ -1516,7 +1549,8 @@ cdef class NumberFieldElement_quadratic(NumberFieldElement_absolute):
         """
         EXAMPLES::
 
-            sage: K.<a> = NumberField(x^2-5)
+            sage: x = polygen(ZZ, 'x')
+            sage: K.<a> = NumberField(x^2 - 5)
             sage: ~a
             1/5*a
             sage: ~(a+1)
@@ -1532,7 +1566,7 @@ cdef class NumberFieldElement_quadratic(NumberFieldElement_absolute):
             sage: (3*a-2)/7 * b
             1
 
-        This fixes ticket :trac:`9357`::
+        This fixes issue :trac:`9357`::
 
             sage: K.<a> = NumberField(x^2+1)
             sage: d = K(0)
@@ -1589,6 +1623,7 @@ cdef class NumberFieldElement_quadratic(NumberFieldElement_absolute):
             sage: a.galois_conjugate()
             -a
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<a> = NumberField(x^2 - 5*x + 1)
             sage: a.galois_conjugate()
             -a + 5
@@ -1611,7 +1646,7 @@ cdef class NumberFieldElement_quadratic(NumberFieldElement_absolute):
 #################################################################################
 
     def __hash__(self):
-        """
+        r"""
         Return hash of this number field element.
 
         For elements in `\ZZ` or `\QQ` the hash coincides with the one in the
@@ -1639,13 +1674,14 @@ cdef class NumberFieldElement_quadratic(NumberFieldElement_absolute):
         h += 42082631 * mpz_pythonhash(self.b)
         return h
 
-    def __nonzero__(self):
+    def __bool__(self):
         """
         Check whether this element is not zero.
 
         EXAMPLES::
 
-            sage: K.<a> = NumberField(x^2+163)
+            sage: x = polygen(ZZ, 'x')
+            sage: K.<a> = NumberField(x^2 + 163)
             sage: not a
             False
             sage: not (a-a)
@@ -1657,7 +1693,8 @@ cdef class NumberFieldElement_quadratic(NumberFieldElement_absolute):
         """
         EXAMPLES::
 
-            sage: K.<a> = NumberField(x^2+163)
+            sage: x = polygen(ZZ, 'x')
+            sage: K.<a> = NumberField(x^2 + 163)
             sage: (a+1-a)._integer_()
             1
             sage: (a+1/2-a)._integer_()
@@ -1677,7 +1714,8 @@ cdef class NumberFieldElement_quadratic(NumberFieldElement_absolute):
         """
         EXAMPLES::
 
-            sage: K.<a> = NumberField(x^2+163)
+            sage: x = polygen(ZZ, 'x')
+            sage: K.<a> = NumberField(x^2 + 163)
             sage: (a+1/2-a)._rational_()
             1/2
             sage: (a+1/2)._rational_()
@@ -1733,7 +1771,7 @@ cdef class NumberFieldElement_quadratic(NumberFieldElement_absolute):
             sage: K.<sqrt3> = QuadraticField(3)
             sage: sqrt3.is_rational()
             False
-            sage: (sqrt3-1/2).is_rational()
+            sage: (sqrt3 - 1/2).is_rational()
             False
             sage: K(0).is_rational()
             True
@@ -1758,7 +1796,7 @@ cdef class NumberFieldElement_quadratic(NumberFieldElement_absolute):
             sage: K.<sqrt3> = QuadraticField(3)
             sage: sqrt3.is_integer()
             False
-            sage: (sqrt3-1/2).is_integer()
+            sage: (sqrt3 - 1/2).is_integer()
             False
             sage: K(0).is_integer()
             True
@@ -1821,12 +1859,13 @@ cdef class NumberFieldElement_quadratic(NumberFieldElement_absolute):
             sage: parent(i.imag())
             Rational Field
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<a> = NumberField(x^2 + x + 1, embedding=CDF.0)
             sage: a.imag()
             1/2*sqrt3
             sage: a.real()
             -1/2
-            sage: SR(a)
+            sage: SR(a)                                                                 # optional - sage.symbolic
             1/2*I*sqrt(3) - 1/2
             sage: bool(QQbar(I)*QQbar(a.imag()) + QQbar(a.real()) == QQbar(a))
             True
@@ -1894,13 +1933,11 @@ cdef class NumberFieldElement_quadratic(NumberFieldElement_absolute):
         """
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: F.<b> = NumberField(x^2 - x + 7)
             sage: b._coefficients()
             [0, 1]
         """
-        # In terms of the generator...
-        cdef Rational const = <Rational>Rational.__new__(Rational)
-        cdef Rational lin = <Rational>Rational.__new__(Rational)
         if not self:
             return []
         ad, bd = self.parts()
@@ -1916,11 +1953,12 @@ cdef class NumberFieldElement_quadratic(NumberFieldElement_absolute):
         r"""
         Return the denominator of ``self``.
 
-        This is the LCM of the denominators of the coefficients of `self``, and
+        This is the LCM of the denominators of the coefficients of ``self``, and
         thus it may well be `> 1` even when the element is an algebraic integer.
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<a> = NumberField(x^2 - 5)
             sage: b = (a + 1)/2
             sage: b.denominator()
@@ -1928,7 +1966,7 @@ cdef class NumberFieldElement_quadratic(NumberFieldElement_absolute):
             sage: b.is_integral()
             True
 
-            sage: K.<c> = NumberField(x^2-x+7)
+            sage: K.<c> = NumberField(x^2 - x + 7)
             sage: c.denominator()
             1
         """
@@ -1948,7 +1986,8 @@ cdef class NumberFieldElement_quadratic(NumberFieldElement_absolute):
 
         EXAMPLES::
 
-            sage: K.<a> = NumberField(x^2+x+41)
+            sage: x = polygen(ZZ, 'x')
+            sage: K.<a> = NumberField(x^2 + x + 41)
             sage: b = (2*a+1)/6
             sage: b.denominator()
             6
@@ -1966,7 +2005,8 @@ cdef class NumberFieldElement_quadratic(NumberFieldElement_absolute):
         """
         EXAMPLES::
 
-            sage: K.<a> = NumberField(x^2+x+41)
+            sage: x = polygen(ZZ, 'x')
+            sage: K.<a> = NumberField(x^2 + x + 41)
             sage: a.trace()
             -1
             sage: a.matrix()
@@ -1975,14 +2015,14 @@ cdef class NumberFieldElement_quadratic(NumberFieldElement_absolute):
 
         The trace is additive::
 
-            sage: K.<a> = NumberField(x^2+7)
-            sage: (a+1).trace()
+            sage: K.<a> = NumberField(x^2 + 7)
+            sage: (a + 1).trace()
             2
             sage: K(3).trace()
             6
-            sage: (a+4).trace()
+            sage: (a + 4).trace()
             8
-            sage: (a/3+1).trace()
+            sage: (a/3 + 1).trace()
             2
         """
         # trace = 2*self.a / self.denom
@@ -1996,28 +2036,30 @@ cdef class NumberFieldElement_quadratic(NumberFieldElement_absolute):
         mpq_canonicalize(res.value)
         return res
 
-
     def norm(self, K=None):
-        """
-        Return the norm of self. If the second argument is None, this is the
-        norm down to `\QQ`. Otherwise, return the norm down to K (which had
+        r"""
+        Return the norm of ``self``.
+
+        If the second argument is ``None``, this is the
+        norm down to `\QQ`. Otherwise, return the norm down to `K` (which had
         better be either `\QQ` or this number field).
 
         EXAMPLES::
 
-            sage: K.<a> = NumberField(x^2-x+3)
+            sage: x = polygen(ZZ, 'x')
+            sage: K.<a> = NumberField(x^2 - x + 3)
             sage: a.norm()
             3
             sage: a.matrix()
             [ 0  1]
             [-3  1]
-            sage: K.<a> = NumberField(x^2+5)
-            sage: (1+a).norm()
+            sage: K.<a> = NumberField(x^2 + 5)
+            sage: (1 + a).norm()
             6
 
         The norm is multiplicative::
 
-            sage: K.<a> = NumberField(x^2-3)
+            sage: K.<a> = NumberField(x^2 - 3)
             sage: a.norm()
             -3
             sage: K(3).norm()
@@ -2106,16 +2148,23 @@ cdef class NumberFieldElement_quadratic(NumberFieldElement_absolute):
         # D = 1 mod 4
         return mpz_fdiv_ui(self.D.value, 4) == 1
 
-    def charpoly(self, var='x'):
+    def charpoly(self, var='x', algorithm=None):
         r"""
         The characteristic polynomial of this element over `\QQ`.
 
+        INPUT:
+
+        - ``var`` -- the minimal polynomial is defined over a polynomial ring
+           in a variable with this name. If not specified, this defaults to ``'x'``
+        - ``algorithm`` -- for compatibility with general number field elements; ignored
+
         EXAMPLES::
 
-            sage: K.<a> = NumberField(x^2-x+13)
+            sage: x = polygen(ZZ, 'x')
+            sage: K.<a> = NumberField(x^2 - x + 13)
             sage: a.charpoly()
             x^2 - x + 13
-            sage: b = 3-a/2
+            sage: b = 3 - a/2
             sage: f = b.charpoly(); f
             x^2 - 11/2*x + 43/4
             sage: f(b)
@@ -2124,24 +2173,25 @@ cdef class NumberFieldElement_quadratic(NumberFieldElement_absolute):
         R = QQ[var]
         return R([self.norm(), -self.trace(), 1])
 
-    def minpoly(self, var='x'):
+    def minpoly(self, var='x', algorithm=None):
         r"""
         The minimal polynomial of this element over `\QQ`.
 
         INPUT:
 
-        -  ``var`` -- the minimal polynomial is defined over a polynomial ring
-           in a variable with this name. If not specified this defaults to
-           ``x``.
+        - ``var`` -- the minimal polynomial is defined over a polynomial ring
+           in a variable with this name. If not specified, this defaults to ``'x'``
+        - ``algorithm`` -- for compatibility with general number field elements: and ignored
 
         EXAMPLES::
 
-            sage: K.<a> = NumberField(x^2+13)
+            sage: x = polygen(ZZ, 'x')
+            sage: K.<a> = NumberField(x^2 + 13)
             sage: a.minpoly()
             x^2 + 13
             sage: a.minpoly('T')
             T^2 + 13
-            sage: (a+1/2-a).minpoly()
+            sage: (a + 1/2 - a).minpoly()
             x - 1/2
         """
         if self.is_rational():
@@ -2162,7 +2212,8 @@ cdef class NumberFieldElement_quadratic(NumberFieldElement_absolute):
             sage: abs(a+2)  # indirect test
             a + 2
 
-            sage: K.<a> = NumberField(x^2+1, embedding=CDF.gen())
+            sage: x = polygen(ZZ, 'x')
+            sage: K.<a> = NumberField(x^2 + 1, embedding=CDF.gen())
             sage: abs(a+1)
             sqrt(2)
         """
@@ -2178,18 +2229,18 @@ cdef class NumberFieldElement_quadratic(NumberFieldElement_absolute):
 
     def floor(self):
         r"""
-        Returns the floor of x.
+        Returns the floor of ``self``.
 
         EXAMPLES::
 
-            sage: K.<sqrt2> = QuadraticField(2,name='sqrt2')
+            sage: K.<sqrt2> = QuadraticField(2, name='sqrt2')
             sage: sqrt2.floor()
             1
             sage: (-sqrt2).floor()
             -2
             sage: (13/197 + 3702/123*sqrt2).floor()
             42
-            sage: (13/197-3702/123*sqrt2).floor()
+            sage: (13/197 - 3702/123*sqrt2).floor()
             -43
 
         TESTS::
@@ -2244,7 +2295,7 @@ cdef class NumberFieldElement_quadratic(NumberFieldElement_absolute):
 
     def ceil(self):
         r"""
-        Returns the ceil.
+        Return the ceil.
 
         EXAMPLES::
 
@@ -2280,7 +2331,8 @@ cdef class NumberFieldElement_quadratic(NumberFieldElement_absolute):
 
     def round(self):
         r"""
-        Returns the round (nearest integer).
+        Return the round (nearest integer) of this number field element. In case
+        of ties, this relies on the default rounding for rational numbers.
 
         EXAMPLES::
 
@@ -2302,12 +2354,14 @@ cdef class NumberFieldElement_quadratic(NumberFieldElement_absolute):
             sage: for _ in range(100):
             ....:    a = QQ.random_element(1000,20)
             ....:    b = QQ.random_element(1000,20)
-            ....:    assert round(a) == round(K2(a)), a
-            ....:    assert round(a) == round(K3(a)), a
-            ....:    assert round(a) == round(K5(a)), a
+            ....:    assert a.round() == round(K2(a)), a
+            ....:    assert a.round() == round(K3(a)), a
+            ....:    assert a.round() == round(K5(a)), a
             ....:    assert round(a+b*sqrt(2.)) == round(a+b*sqrt2), (a, b)
             ....:    assert round(a+b*sqrt(3.)) == round(a+b*sqrt3), (a, b)
             ....:    assert round(a+b*sqrt(5.)) == round(a+b*sqrt5), (a, b)
+            doctest...: DeprecationWarning: the default rounding for rationals, currently `away`, will be changed to `even`.
+            See https://github.com/sagemath/sage/issues/35473 for details.
         """
         n = self.floor()
         test = 2 * (self - n).abs()
@@ -2323,7 +2377,7 @@ cdef class NumberFieldElement_quadratic(NumberFieldElement_absolute):
 
 cdef class NumberFieldElement_quadratic_sqrt(NumberFieldElement_quadratic):
     r"""
-    A NumberFieldElement_quadratic object gives an efficient representation of
+    A :class:`NumberFieldElement_quadratic_sqrt` object gives an efficient representation of
     an element of a quadratic extension of `\QQ` for the case when
     :func:`is_sqrt_disc()` is ``True``.
     """
@@ -2331,12 +2385,13 @@ cdef class NumberFieldElement_quadratic_sqrt(NumberFieldElement_quadratic):
         r"""
         Return the denominator of ``self``.
 
-        This is the LCM of the denominators of the coefficients of `self``, and
+        This is the LCM of the denominators of the coefficients of ``self``, and
         thus it may well be `> 1` even when the element is an algebraic integer.
 
         EXAMPLES::
 
-            sage: K.<a> = NumberField(x^2+x+41)
+            sage: x = polygen(ZZ, 'x')
+            sage: K.<a> = NumberField(x^2 + x + 41)
             sage: a.denominator()
             1
             sage: b = (2*a+1)/6
@@ -2365,7 +2420,8 @@ cdef class NumberFieldElement_quadratic_sqrt(NumberFieldElement_quadratic):
         """
         EXAMPLES::
 
-            sage: K.<a> = NumberField(x^2+41)
+            sage: x = polygen(ZZ, 'x')
+            sage: K.<a> = NumberField(x^2 + 41)
             sage: a._coefficients()
             [0, 1]
             sage: K.zero()._coefficients()
@@ -2373,8 +2429,6 @@ cdef class NumberFieldElement_quadratic_sqrt(NumberFieldElement_quadratic):
             sage: (3/2*K.one())._coefficients()
             [3/2]
         """
-        # In terms of the generator... Rational const = <Rational>Rational.__new__(Rational)
-        cdef Rational lin = <Rational>Rational.__new__(Rational)
         if not self:
             return []
         cdef tuple parts = self.parts()
@@ -2391,7 +2445,8 @@ cdef class NumberFieldElement_quadratic_sqrt(NumberFieldElement_quadratic):
 
         EXAMPLES::
 
-            sage: K.<a> = NumberField(x^2-13)
+            sage: x = polygen(ZZ, 'x')
+            sage: K.<a> = NumberField(x^2 - 13)
             sage: elt = a/4 + 1/3
             sage: elt[0]
             1/3
@@ -2451,11 +2506,11 @@ cdef class NumberFieldElement_gaussian(NumberFieldElement_quadratic_sqrt):
         r"""
         EXAMPLES::
 
-            sage: SR(1 + 2*i)
+            sage: SR(1 + 2*i)                                                           # optional - sage.symbolic
             2*I + 1
 
             sage: K.<mi> = QuadraticField(-1, embedding=CC(0,-1))
-            sage: SR(1 + mi)
+            sage: SR(1 + mi)                                                            # optional - sage.symbolic
             -I + 1
         """
         from sage.symbolic.constants import I
@@ -2561,7 +2616,7 @@ cdef class NumberFieldElement_gaussian(NumberFieldElement_quadratic_sqrt):
 
         EXAMPLES::
 
-            sage: I.log()
+            sage: I.log()                                                               # optional - sage.symbolic
             1/2*I*pi
         """
         from sage.symbolic.ring import SR
@@ -2573,6 +2628,7 @@ cdef class OrderElement_quadratic(NumberFieldElement_quadratic):
 
     EXAMPLES::
 
+        sage: x = polygen(ZZ, 'x')
         sage: K.<a> = NumberField(x^2 + 1)
         sage: O2 = K.order(2*a)
         sage: w = O2.1; w
@@ -2586,10 +2642,11 @@ cdef class OrderElement_quadratic(NumberFieldElement_quadratic):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: OK.<y> = EquationOrder(x^2 + 5)
             sage: v = OK.1 # indirect doctest
             sage: type(v)
-            <type 'sage.rings.number_field.number_field_element_quadratic.OrderElement_quadratic'>
+            <class 'sage.rings.number_field.number_field_element_quadratic.OrderElement_quadratic'>
         """
         K = order.number_field()
         NumberFieldElement_quadratic.__init__(self, K, f)
@@ -2601,6 +2658,7 @@ cdef class OrderElement_quadratic(NumberFieldElement_quadratic):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<a> = NumberField(x^2 + 3)
             sage: O2 = K.order(2*a)
             sage: w = O2.gen(1); w
@@ -2618,6 +2676,7 @@ cdef class OrderElement_quadratic(NumberFieldElement_quadratic):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<a> = NumberField(x^2 - 5)
             sage: R = K.ring_of_integers()
             sage: b = R((1+a)/2)
@@ -2628,13 +2687,21 @@ cdef class OrderElement_quadratic(NumberFieldElement_quadratic):
         """
         return ZZ(NumberFieldElement_quadratic.trace(self))
 
-    def charpoly(self, var='x'):
+    def charpoly(self, var='x', algorithm=None):
         r"""
         The characteristic polynomial of this element, which is over `\ZZ`
         because this element is an algebraic integer.
 
+        INPUT:
+
+        - ``var`` -- the minimal polynomial is defined over a polynomial ring
+           in a variable with this name. If not specified, this defaults to ``'x'``
+        - ``algorithm`` -- for compatibility with general number field elements; ignored
+
+
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<a> = NumberField(x^2 - 5)
             sage: R = K.ring_of_integers()
             sage: b = R((5+a)/2)
@@ -2648,12 +2715,19 @@ cdef class OrderElement_quadratic(NumberFieldElement_quadratic):
         R = ZZ[var]
         return R([self.norm(), -self.trace(), 1])
 
-    def minpoly(self, var='x'):
+    def minpoly(self, var='x', algorithm=None):
         r"""
         The minimal polynomial of this element over `\ZZ`.
 
+        INPUT:
+
+        - ``var`` -- the minimal polynomial is defined over a polynomial ring
+           in a variable with this name. If not specified, this defaults to ``'x'``
+        - ``algorithm`` -- for compatibility with general number field elements; ignored
+
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<a> = NumberField(x^2 + 163)
             sage: R = K.ring_of_integers()
             sage: f = R(a).minpoly('x'); f
@@ -2680,7 +2754,8 @@ cdef class OrderElement_quadratic(NumberFieldElement_quadratic):
         """
         EXAMPLES::
 
-            sage: K.<a> = NumberField(x^2-27)
+            sage: x = polygen(ZZ, 'x')
+            sage: K.<a> = NumberField(x^2 - 27)
             sage: R = K.ring_of_integers()
             sage: aa = R.gen(1); aa
             1/3*a
@@ -2699,7 +2774,8 @@ cdef class OrderElement_quadratic(NumberFieldElement_quadratic):
         """
         EXAMPLES::
 
-            sage: K.<a> = NumberField(x^2+43)
+            sage: x = polygen(ZZ, 'x')
+            sage: K.<a> = NumberField(x^2 + 43)
             sage: R = K.ring_of_integers()
             sage: aa = R.gen(0); aa
             1/2*a + 1/2
@@ -2721,7 +2797,8 @@ cdef class OrderElement_quadratic(NumberFieldElement_quadratic):
 
         EXAMPLES::
 
-            sage: K = NumberField(x^2 -x + 2, 'a')
+            sage: x = polygen(ZZ, 'x')
+            sage: K = NumberField(x^2 - x + 2, 'a')
             sage: OK = K.ring_of_integers()
             sage: a = OK(K.gen())
             sage: (~a).parent() is K
@@ -2735,19 +2812,18 @@ cdef class OrderElement_quadratic(NumberFieldElement_quadratic):
 
     def inverse_mod(self, I):
         r"""
-        Return an inverse of self modulo the given ideal.
+        Return an inverse of ``self`` modulo the given ideal.
 
         INPUT:
 
-
-        -  ``I`` - may be an ideal of self.parent(), or an
-           element or list of elements of self.parent() generating a nonzero
-           ideal. A ValueError is raised if I is non-integral or is zero.
-           A ZeroDivisionError is raised if I + (x) != (1).
-
+        -  ``I`` -- may be an ideal of ``self.parent()``, or an
+           element or list of elements of ``self.parent()`` generating a nonzero
+           ideal. A :class:`ValueError` is raised if `I` is non-integral or is zero.
+           A :class:`ZeroDivisionError` is raised if `I + (x) \neq (1)`.
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: OE.<w> = EquationOrder(x^2 - x + 2)
             sage: w.inverse_mod(13) == 6*w - 6
             True
@@ -2767,15 +2843,13 @@ cdef class OrderElement_quadratic(NumberFieldElement_quadratic):
         """
         EXAMPLES::
 
-            sage: K.<a> = NumberField(x^2-27)
+            sage: x = polygen(ZZ, 'x')
+            sage: K.<a> = NumberField(x^2 - 27)
             sage: R = K.ring_of_integers()
             sage: aa = R.gen(1)
             sage: aa._coefficients()
             [0, 1/3]
         """
-        # In terms of the generator...
-        cdef Rational const = <Rational>Rational.__new__(Rational)
-        cdef Rational lin = <Rational>Rational.__new__(Rational)
         if not self:
             return []
         ad, bd = self.parts()
@@ -2794,12 +2868,13 @@ cdef class OrderElement_quadratic(NumberFieldElement_quadratic):
         r"""
         Return the denominator of ``self``.
 
-        This is the LCM of the denominators of the coefficients of `self``, and
+        This is the LCM of the denominators of the coefficients of ``self``, and
         thus it may well be `> 1` even when the element is an algebraic integer.
 
         EXAMPLES::
 
-            sage: K.<a> = NumberField(x^2-27)
+            sage: x = polygen(ZZ, 'x')
+            sage: K.<a> = NumberField(x^2 - 27)
             sage: R = K.ring_of_integers()
             sage: aa = R.gen(1)
             sage: aa.denominator()
@@ -2827,7 +2902,7 @@ cdef class OrderElement_quadratic(NumberFieldElement_quadratic):
 cdef class Z_to_quadratic_field_element(Morphism):
     """
     Morphism that coerces from integers to elements of a quadratic number
-    field K.
+    field `K`.
 
     EXAMPLES::
 
@@ -2855,14 +2930,14 @@ cdef class Z_to_quadratic_field_element(Morphism):
             sage: K.<a> = QuadraticField(3)
             sage: phi = K.coerce_map_from(ZZ) # indirect doctest
             sage: type(phi)
-            <type 'sage.rings.number_field.number_field_element_quadratic.Z_to_quadratic_field_element'>
+            <class 'sage.rings.number_field.number_field_element_quadratic.Z_to_quadratic_field_element'>
             sage: phi == loads(dumps(phi)) # todo: comparison not implemented
             True
 
             sage: R.<b> = CyclotomicField(6)
             sage: psi = R.coerce_map_from(ZZ) # indirect doctest
             sage: type(psi)
-            <type 'sage.rings.number_field.number_field_element_quadratic.Z_to_quadratic_field_element'>
+            <class 'sage.rings.number_field.number_field_element_quadratic.Z_to_quadratic_field_element'>
             sage: psi == loads(dumps(psi)) # todo: comparison not implemented
             True
         """
@@ -2929,7 +3004,7 @@ cdef class Z_to_quadratic_field_element(Morphism):
 cdef class Q_to_quadratic_field_element(Morphism):
     """
     Morphism that coerces from rationals to elements of a quadratic number
-    field K.
+    field `K`.
 
     EXAMPLES::
 
@@ -2957,14 +3032,14 @@ cdef class Q_to_quadratic_field_element(Morphism):
             sage: K.<a> = QuadraticField(3)
             sage: phi = K.coerce_map_from(QQ) # indirect doctest
             sage: type(phi)
-            <type 'sage.rings.number_field.number_field_element_quadratic.Q_to_quadratic_field_element'>
+            <class 'sage.rings.number_field.number_field_element_quadratic.Q_to_quadratic_field_element'>
             sage: phi == loads(dumps(phi))  # todo: comparison not implemented
             True
 
             sage: R.<b> = CyclotomicField(6)
             sage: psi = R.coerce_map_from(QQ)
             sage: type(psi)
-            <type 'sage.rings.number_field.number_field_element_quadratic.Q_to_quadratic_field_element'>
+            <class 'sage.rings.number_field.number_field_element_quadratic.Q_to_quadratic_field_element'>
             sage: psi == loads(dumps(psi))  # todo: comparison not implemented
             True
         """
@@ -3029,6 +3104,7 @@ cpdef bint is_sqrt_disc(Rational ad, Rational bd):
 
     EXAMPLES::
 
+        sage: x = polygen(ZZ, 'x')
         sage: F.<b> = NumberField(x^2 - x + 7)
         sage: b.denominator()  # indirect doctest
         1
@@ -3051,4 +3127,3 @@ cpdef bint is_sqrt_disc(Rational ad, Rational bd):
     mpz_clear(denom)
 
     return ret
-

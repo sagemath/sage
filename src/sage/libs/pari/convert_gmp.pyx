@@ -17,10 +17,10 @@ AUTHORS:
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 #*****************************************************************************
 
-from cysignals.signals cimport sig_on, sig_off
+from cysignals.signals cimport sig_on
 
 from sage.libs.gmp.all cimport *
 
@@ -159,7 +159,7 @@ cdef Gen rational_matrix(mpq_t** B, long nr, long nc):
     """
     Create a new PARI matrix of type ``t_MAT`` from a given
     array of GMP rationals ``mpq_t``.
-    
+
     INPUT:
 
     - ``B`` -- a 2-dimensional array of ``mpq_t`` values. This array is

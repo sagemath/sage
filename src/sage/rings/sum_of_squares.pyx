@@ -66,7 +66,8 @@ cdef int two_squares_c(uint_fast32_t n, uint_fast32_t res[2]):
                 # j = (j+nn/j)/2
                 jj = j*j
             if jj == nn:
-                res[0] = i<<fac; res[1] = j<<fac
+                res[0] = i<<fac
+                res[1] = j<<fac
                 return 1
             i += 1
             ii = i*i
@@ -84,7 +85,8 @@ cdef int two_squares_c(uint_fast32_t n, uint_fast32_t res[2]):
                 # j = (j+nn/j)/2
                 jj = j*j
             if jj == nn:
-                res[0] = i<<fac; res[1] = j<<fac
+                res[0] = i<<fac
+                res[1] = j<<fac
                 return 1
             i += 2
             ii = i*i
@@ -138,7 +140,7 @@ def two_squares_pyx(uint32_t n):
 
     .. SEEALSO::
 
-        :func:`~sage.arith.all.two_squares` is much more suited for large inputs
+        :func:`~sage.arith.misc.two_squares` is much more suited for large inputs
 
     EXAMPLES::
 
@@ -164,7 +166,7 @@ def two_squares_pyx(uint32_t n):
     TESTS::
 
         sage: s = lambda t: sum(i^2 for i in t)
-        sage: for ij in Subsets(Subsets(45000,15).random_element(),2):
+        sage: for ij in Subsets(Subsets(45000, 15).random_element(), 2):                # optional - sage.combinat
         ....:     if s(two_squares_pyx(s(ij))) != s(ij):
         ....:         print("hey")
 
@@ -252,7 +254,7 @@ def three_squares_pyx(uint32_t n):
     TESTS::
 
         sage: s = lambda t: sum(i^2 for i in t)
-        sage: for ijk in Subsets(Subsets(35000,15).random_element(),3):
+        sage: for ijk in Subsets(Subsets(35000,15).random_element(),3):                 # optional - sage.combinat
         ....:     if s(three_squares_pyx(s(ijk))) != s(ijk):
         ....:         print("hey")
     """
@@ -276,7 +278,7 @@ def four_squares_pyx(uint32_t n):
 
     .. SEEALSO::
 
-        :func:`~sage.arith.all.four_squares` is much more suited for large input
+        :func:`~sage.arith.misc.four_squares` is much more suited for large input
 
     EXAMPLES::
 
@@ -305,7 +307,7 @@ def four_squares_pyx(uint32_t n):
         sage: all(s(four_squares_pyx(n)) == n for n in range(5000,10000))
         True
     """
-    cdef uint_fast32_t fac, j, nn
+    cdef uint_fast32_t fac, j
     cdef uint_fast32_t i[3]
 
     if n == 0:
@@ -313,7 +315,7 @@ def four_squares_pyx(uint32_t n):
 
     # division by power of 4
     fac = 0
-    while n%4 == 0:
+    while n % 4 == 0:
         n >>= 2
         fac += 1
 

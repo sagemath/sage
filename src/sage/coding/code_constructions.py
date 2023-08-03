@@ -1,3 +1,4 @@
+# sage.doctest: optional - sage.modules sage.rings.finite_rings
 r"""
 Linear code constructors that do not preserve the structural information
 
@@ -40,20 +41,17 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.misc.all import prod
-from sage.arith.all import quadratic_residues, gcd
-
-from sage.structure.sequence import Sequence, Sequence_generic
-
-from sage.matrix.matrix_space import MatrixSpace
+from sage.arith.misc import gcd, quadratic_residues
 from sage.matrix.constructor import matrix
+from sage.matrix.matrix_space import MatrixSpace
 from sage.matrix.special import random_matrix
-
+from sage.misc.misc_c import prod
 from sage.rings.finite_rings.finite_field_constructor import FiniteField as GF
 from sage.rings.finite_rings.integer_mod import Mod
 from sage.rings.finite_rings.integer_mod_ring import IntegerModRing
-from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.integer import Integer
+from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+from sage.structure.sequence import Sequence, Sequence_generic
 
 from .linear_code import LinearCode
 
@@ -212,44 +210,47 @@ def _lift2smallest_field(a):
     if d == k:
         return a, FF
     p = FF.characteristic()
-    F = GF(p**d,"z")
-    b = pol.roots(F,multiplicities=False)[0]
+    F = GF((p, d), "z")
+    b = pol.roots(F, multiplicities=False)[0]
     return b, F
 
-def permutation_action(g,v):
+
+def permutation_action(g, v):
     r"""
-    Returns permutation of rows g\*v. Works on lists, matrices,
+    Returns permutation of rows `g * v`.
+
+    Works on lists, matrices,
     sequences and vectors (by permuting coordinates). The code requires
-    switching from i to i+1 (and back again) since the SymmetricGroup
-    is, by convention, the symmetric group on the "letters" 1, 2, ...,
-    n (not 0, 1, ..., n-1).
+    switching from `i` to `i+1` (and back again) since the :class:`SymmetricGroup`
+    is, by convention, the symmetric group on the "letters" `1`, `2`, ...,
+    `n` (not `0`, `1`, ..., `n-1`).
 
     EXAMPLES::
 
         sage: V = VectorSpace(GF(3),5)
         sage: v = V([0,1,2,0,1])
-        sage: G = SymmetricGroup(5)
-        sage: g = G([(1,2,3)])
-        sage: permutation_action(g,v)
+        sage: G = SymmetricGroup(5)                                                     # optional - sage.groups
+        sage: g = G([(1,2,3)])                                                          # optional - sage.groups
+        sage: permutation_action(g,v)                                                   # optional - sage.groups
         (1, 2, 0, 0, 1)
-        sage: g = G([()])
-        sage: permutation_action(g,v)
+        sage: g = G([()])                                                               # optional - sage.groups
+        sage: permutation_action(g,v)                                                   # optional - sage.groups
         (0, 1, 2, 0, 1)
-        sage: g = G([(1,2,3,4,5)])
-        sage: permutation_action(g,v)
+        sage: g = G([(1,2,3,4,5)])                                                      # optional - sage.groups
+        sage: permutation_action(g,v)                                                   # optional - sage.groups
         (1, 2, 0, 1, 0)
         sage: L = Sequence([1,2,3,4,5])
-        sage: permutation_action(g,L)
+        sage: permutation_action(g,L)                                                   # optional - sage.groups
         [2, 3, 4, 5, 1]
         sage: MS = MatrixSpace(GF(3),3,7)
         sage: A = MS([[1,0,0,0,1,1,0],[0,1,0,1,0,1,0],[0,0,0,0,0,0,1]])
-        sage: S5 = SymmetricGroup(5)
-        sage: g = S5([(1,2,3)])
+        sage: S5 = SymmetricGroup(5)                                                    # optional - sage.groups
+        sage: g = S5([(1,2,3)])                                                         # optional - sage.groups
         sage: A
         [1 0 0 0 1 1 0]
         [0 1 0 1 0 1 0]
         [0 0 0 0 0 0 1]
-        sage: permutation_action(g,A)
+        sage: permutation_action(g,A)                                                   # optional - sage.groups
         [0 1 0 1 0 1 0]
         [0 0 0 0 0 0 1]
         [1 0 0 0 1 1 0]
@@ -257,16 +258,16 @@ def permutation_action(g,v):
     It also works on lists and is a "left action"::
 
         sage: v = [0,1,2,0,1]
-        sage: G = SymmetricGroup(5)
-        sage: g = G([(1,2,3)])
-        sage: gv = permutation_action(g,v); gv
+        sage: G = SymmetricGroup(5)                                                     # optional - sage.groups
+        sage: g = G([(1,2,3)])                                                          # optional - sage.groups
+        sage: gv = permutation_action(g,v); gv                                          # optional - sage.groups
         [1, 2, 0, 0, 1]
-        sage: permutation_action(g,v) == g(v)
+        sage: permutation_action(g,v) == g(v)                                           # optional - sage.groups
         True
-        sage: h = G([(3,4)])
-        sage: gv = permutation_action(g,v)
-        sage: hgv = permutation_action(h,gv)
-        sage: hgv == permutation_action(h*g,v)
+        sage: h = G([(3,4)])                                                            # optional - sage.groups
+        sage: gv = permutation_action(g,v)                                              # optional - sage.groups
+        sage: hgv = permutation_action(h,gv)                                            # optional - sage.groups
+        sage: hgv == permutation_action(h*g,v)                                          # optional - sage.groups
         True
 
     AUTHORS:
@@ -369,8 +370,8 @@ def DuadicCodeEvenPair(F,S1,S2):
     x = P2.gen()
     gg1 = P2([_lift2smallest_field(c)[0] for c in g1.coefficients(sparse=False)])
     gg2 = P2([_lift2smallest_field(c)[0] for c in g2.coefficients(sparse=False)])
-    C1 = CyclicCode(length = n, generator_pol = gg1)
-    C2 = CyclicCode(length = n, generator_pol = gg2)
+    C1 = CyclicCode(length=n, generator_pol=gg1)
+    C2 = CyclicCode(length=n, generator_pol=gg2)
     return C1,C2
 
 def DuadicCodeOddPair(F,S1,S2):
@@ -424,8 +425,8 @@ def DuadicCodeOddPair(F,S1,S2):
     gg2 = P2(coeffs2)
     gg1 = gcd(gg1, x**n - 1)
     gg2 = gcd(gg2, x**n - 1)
-    C1 = CyclicCode(length = n, generator_pol = gg1)
-    C2 = CyclicCode(length = n, generator_pol = gg2)
+    C1 = CyclicCode(length=n, generator_pol=gg1)
+    C2 = CyclicCode(length=n, generator_pol=gg2)
     return C1,C2
 
 def ExtendedQuadraticResidueCode(n,F):
@@ -438,28 +439,28 @@ def ExtendedQuadraticResidueCode(n,F):
     INPUT:
 
 
-    -  ``n`` - an odd prime
+    -  ``n`` -- an odd prime
 
-    -  ``F`` - a finite prime field F whose order must be a
-       quadratic residue modulo n.
+    -  ``F`` -- a finite prime field whose order must be a
+       quadratic residue modulo `n`.
 
 
     OUTPUT: Returns an extended quadratic residue code.
 
     EXAMPLES::
 
-        sage: C1 = codes.QuadraticResidueCode(7,GF(2))
+        sage: C1 = codes.QuadraticResidueCode(7, GF(2))
         sage: C2 = C1.extended_code()
-        sage: C3 = codes.ExtendedQuadraticResidueCode(7,GF(2)); C3
+        sage: C3 = codes.ExtendedQuadraticResidueCode(7, GF(2)); C3
         Extension of [7, 4] Cyclic Code over GF(2)
         sage: C2 == C3
         True
-        sage: C = codes.ExtendedQuadraticResidueCode(17,GF(2))
+        sage: C = codes.ExtendedQuadraticResidueCode(17, GF(2))
         sage: C
         Extension of [17, 9] Cyclic Code over GF(2)
-        sage: C3 = codes.QuadraticResidueCodeOddPair(7,GF(2))[0]
+        sage: C3 = codes.QuadraticResidueCodeOddPair(7, GF(2))[0]
         sage: C3x = C3.extended_code()
-        sage: C4 = codes.ExtendedQuadraticResidueCode(7,GF(2))
+        sage: C4 = codes.ExtendedQuadraticResidueCode(7, GF(2))
         sage: C3x == C4
         True
 
@@ -498,37 +499,37 @@ def QuadraticResidueCode(n,F):
     A quadratic residue code (or QR code) is a cyclic code whose
     generator polynomial is the product of the polynomials
     `x-\alpha^i` (`\alpha` is a primitive
-    `n^{th}` root of unity; `i` ranges over the set of
+    `n`'th root of unity; `i` ranges over the set of
     quadratic residues modulo `n`).
 
-    See QuadraticResidueCodeEvenPair and QuadraticResidueCodeOddPair
-    for a more general construction.
+    See :class:`QuadraticResidueCodeEvenPair` and
+    :class:`QuadraticResidueCodeOddPair` for a more general construction.
 
     INPUT:
 
 
-    -  ``n`` - an odd prime
+    -  ``n`` -- an odd prime
 
-    -  ``F`` - a finite prime field F whose order must be a
-       quadratic residue modulo n.
+    -  ``F`` -- a finite prime field whose order must be a
+       quadratic residue modulo `n`.
 
 
     OUTPUT: Returns a quadratic residue code.
 
     EXAMPLES::
 
-        sage: C = codes.QuadraticResidueCode(7,GF(2))
+        sage: C = codes.QuadraticResidueCode(7, GF(2))
         sage: C
         [7, 4] Cyclic Code over GF(2)
-        sage: C = codes.QuadraticResidueCode(17,GF(2))
+        sage: C = codes.QuadraticResidueCode(17, GF(2))
         sage: C
         [17, 9] Cyclic Code over GF(2)
-        sage: C1 = codes.QuadraticResidueCodeOddPair(7,GF(2))[0]
-        sage: C2 = codes.QuadraticResidueCode(7,GF(2))
+        sage: C1 = codes.QuadraticResidueCodeOddPair(7, GF(2))[0]
+        sage: C2 = codes.QuadraticResidueCode(7, GF(2))
         sage: C1 == C2
         True
-        sage: C1 = codes.QuadraticResidueCodeOddPair(17,GF(2))[0]
-        sage: C2 = codes.QuadraticResidueCode(17,GF(2))
+        sage: C1 = codes.QuadraticResidueCodeOddPair(17, GF(2))[0]
+        sage: C2 = codes.QuadraticResidueCode(17, GF(2))
         sage: C1 == C2
         True
 
@@ -539,16 +540,16 @@ def QuadraticResidueCode(n,F):
     return QuadraticResidueCodeOddPair(n,F)[0]
 
 def QuadraticResidueCodeEvenPair(n,F):
-    """
+    r"""
     Quadratic residue codes of a given odd prime length and base ring
     either don't exist at all or occur as 4-tuples - a pair of
     "odd-like" codes and a pair of "even-like" codes. If `n > 2` is prime
-    then (Theorem 6.6.2 in [HP2003]_) a QR code exists over `GF(q)` iff q is a
+    then (Theorem 6.6.2 in [HP2003]_) a QR code exists over `\GF{q}` iff q is a
     quadratic residue mod `n`.
 
     They are constructed as "even-like" duadic codes associated the
-    splitting (Q,N) mod n, where Q is the set of non-zero quadratic
-    residues and N is the non-residues.
+    splitting `(Q,N)` mod `n`, where `Q` is the set of non-zero quadratic
+    residues and `N` is the non-residues.
 
     EXAMPLES::
 
@@ -558,16 +559,16 @@ def QuadraticResidueCodeEvenPair(n,F):
         sage: codes.QuadraticResidueCodeEvenPair(17, GF(2))
         ([17, 8] Cyclic Code over GF(2),
          [17, 8] Cyclic Code over GF(2))
-        sage: codes.QuadraticResidueCodeEvenPair(13,GF(9,"z"))  # known bug (#25896)
+        sage: codes.QuadraticResidueCodeEvenPair(13, GF(9,"z"))  # known bug (#25896)
         ([13, 6] Cyclic Code over GF(9),
          [13, 6] Cyclic Code over GF(9))
-        sage: C1,C2 = codes.QuadraticResidueCodeEvenPair(7,GF(2))
+        sage: C1,C2 = codes.QuadraticResidueCodeEvenPair(7, GF(2))
         sage: C1.is_self_orthogonal()
         True
         sage: C2.is_self_orthogonal()
         True
-        sage: C3 = codes.QuadraticResidueCodeOddPair(17,GF(2))[0]
-        sage: C4 = codes.QuadraticResidueCodeEvenPair(17,GF(2))[1]
+        sage: C3 = codes.QuadraticResidueCodeOddPair(17, GF(2))[0]
+        sage: C4 = codes.QuadraticResidueCodeEvenPair(17, GF(2))[1]
         sage: C3.systematic_generator_matrix() == C4.dual_code().systematic_generator_matrix()
         True
 
@@ -579,11 +580,11 @@ def QuadraticResidueCodeEvenPair(n,F):
         Traceback (most recent call last):
         ...
         ValueError: the argument F must be a finite field
-        sage: codes.QuadraticResidueCodeEvenPair(14,GF(2))
+        sage: codes.QuadraticResidueCodeEvenPair(14, GF(2))
         Traceback (most recent call last):
         ...
         ValueError: the argument n must be an odd prime
-        sage: codes.QuadraticResidueCodeEvenPair(5,GF(2))
+        sage: codes.QuadraticResidueCodeEvenPair(5, GF(2))
         Traceback (most recent call last):
         ...
         ValueError: the order of the finite field must be a quadratic residue modulo n
@@ -605,16 +606,16 @@ def QuadraticResidueCodeEvenPair(n,F):
 
 
 def QuadraticResidueCodeOddPair(n,F):
-    """
+    r"""
     Quadratic residue codes of a given odd prime length and base ring
     either don't exist at all or occur as 4-tuples - a pair of
     "odd-like" codes and a pair of "even-like" codes. If n 2 is prime
-    then (Theorem 6.6.2 in [HP2003]_) a QR code exists over GF(q) iff q is a
-    quadratic residue mod n.
+    then (Theorem 6.6.2 in [HP2003]_) a QR code exists over `\GF{q} iff `q` is a
+    quadratic residue mod `n`.
 
     They are constructed as "odd-like" duadic codes associated the
-    splitting (Q,N) mod n, where Q is the set of non-zero quadratic
-    residues and N is the non-residues.
+    splitting `(Q,N)` mod `n`, where `Q` is the set of non-zero quadratic
+    residues and `N` is the non-residues.
 
     EXAMPLES::
 
@@ -643,7 +644,7 @@ def QuadraticResidueCodeOddPair(n,F):
 
     TESTS::
 
-        sage: codes.QuadraticResidueCodeOddPair(9,GF(2))
+        sage: codes.QuadraticResidueCodeOddPair(9, GF(2))
         Traceback (most recent call last):
         ...
         ValueError: the argument n must be an odd prime
@@ -701,23 +702,23 @@ def ToricCode(P,F):
 
     .. MATH::
 
-        \mathrm{eval_T} : V \rightarrow F^n,
+        \operatorname{eval}_T : V \rightarrow F^n,
 
 
     where `x^e` is the multi-index notation
     (`x=(x_1,...,x_d)`, `e=(e_1,...,e_d)`, and
     `x^e = x_1^{e_1}...x_d^{e_d}`), where
-    `eval_T (f(x)) = (f(t_1),...,f(t_n))`, and where
+    `\operatorname{eval}_T (f(x)) = (f(t_1),...,f(t_n))`, and where
     `T=\{t_1,...,t_n\}`. This function returns the toric
     codes discussed in [Joy2004]_.
 
     INPUT:
 
 
-    -  ``P`` - all the integer lattice points in a polytope
+    -  ``P`` -- all the integer lattice points in a polytope
        defining the toric variety.
 
-    -  ``F`` - a finite field.
+    -  ``F`` -- a finite field.
 
 
     OUTPUT: Returns toric code with length n = , dimension k over field
@@ -725,21 +726,28 @@ def ToricCode(P,F):
 
     EXAMPLES::
 
-         sage: C = codes.ToricCode([[0,0],[1,0],[2,0],[0,1],[1,1]],GF(7))
+         sage: C = codes.ToricCode([[0,0],[1,0],[2,0],[0,1],[1,1]], GF(7))
          sage: C
          [36, 5] linear code over GF(7)
          sage: C.minimum_distance()
          24
-         sage: C = codes.ToricCode([[-2,-2],[-1,-2],[-1,-1],[-1,0],[0,-1],[0,0],[0,1],[1,-1],[1,0]],GF(5))
+         sage: C.minimum_distance(algorithm="guava")  # optional - gap_packages (Guava package)
+         ...
+         24
+         sage: C = codes.ToricCode([[-2,-2],[-1,-2],[-1,-1],[-1,0],
+         ....:                      [0,-1],[0,0],[0,1],[1,-1],[1,0]], GF(5))
          sage: C
          [16, 9] linear code over GF(5)
          sage: C.minimum_distance()
          6
-         sage: C = codes.ToricCode([ [0,0],[1,1],[1,2],[1,3],[1,4],[2,1],[2,2],[2,3],[3,1],[3,2],[4,1]],GF(8,"a"))
+         sage: C.minimum_distance(algorithm="guava")  # optional - gap_packages (Guava package)
+         6
+         sage: C = codes.ToricCode([[0,0],[1,1],[1,2],[1,3],[1,4],[2,1],
+         ....:                      [2,2],[2,3],[3,1],[3,2],[4,1]], GF(8,"a"))
          sage: C
          [49, 11] linear code over GF(8)
 
-    This is in fact a [49,11,28] code over GF(8). If you type next
+    This is in fact a [49,11,28] code over `\GF{8}`. If you type next
     ``C.minimum_distance()`` and wait overnight (!), you
     should get 28.
 
@@ -747,20 +755,21 @@ def ToricCode(P,F):
 
     - David Joyner (07-2006)
     """
-    from sage.combinat.all import Tuples
-    mset = [x for x in F if x!=0]
+    from sage.combinat.tuple import Tuples
+    mset = [x for x in F if x != 0]
     d = len(P[0])
-    pts = Tuples(mset,d).list()
-    n = len(pts) # (q-1)^d
+    pts = Tuples(mset, d).list()
+    n = len(pts)  # (q-1)^d
     k = len(P)
     e = P[0]
     B = []
     for e in P:
-       tmpvar = [prod([t[i]**e[i] for i in range(d)]) for t in pts]
-       B.append(tmpvar)
+        tmpvar = [prod([t[i]**e[i] for i in range(d)]) for t in pts]
+        B.append(tmpvar)
     # now B0 *should* be a full rank matrix
-    MS = MatrixSpace(F,k,n)
+    MS = MatrixSpace(F, k, n)
     return LinearCode(MS(B))
+
 
 def WalshCode(m):
     r"""
@@ -780,7 +789,7 @@ def WalshCode(m):
         [1, 0, 0, 0, 7, 0, 0, 0, 0]
         sage: C.minimum_distance()
         4
-        sage: C.minimum_distance(algorithm='gap') # check d=2^(m-1)
+        sage: C.minimum_distance(algorithm='gap')  # check d=2^(m-1)
         4
 
     REFERENCES:

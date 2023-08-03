@@ -66,7 +66,8 @@ matrices and Latin squares. See:
 from sage.rings.ring import is_Ring
 import sage.matrix.matrix_space as matrix_space
 from sage.modules.free_module_element import vector
-from sage.structure.element import is_Matrix
+from sage.structure.element import is_Matrix, parent
+from sage.structure.sequence import Sequence
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
 from sage.rings.integer import Integer
@@ -399,9 +400,9 @@ def random_matrix(ring, nrows, ncols=None, algorithm='randomize', implementation
 
         sage: K.<a> = FiniteField(2^8)
         sage: type(random_matrix(K, 2, 5))
-        <type 'sage.matrix.matrix_gf2e_dense.Matrix_gf2e_dense'>
+        <class 'sage.matrix.matrix_gf2e_dense.Matrix_gf2e_dense'>
         sage: type(random_matrix(K, 2, 5, implementation="generic"))
-        <type 'sage.matrix.matrix_generic_dense.Matrix_generic_dense'>
+        <class 'sage.matrix.matrix_generic_dense.Matrix_generic_dense'>
 
     Random rational matrices.  Now ``num_bound`` and ``den_bound`` control the
     generation of random elements, by specifying limits on the absolute value of
@@ -867,7 +868,7 @@ def diagonal_matrix(arg0=None, arg1=None, arg2=None, sparse=True):
         nrows = nentries
 
     # provide a default ring for an empty list
-    if not len(entries) and ring is None:
+    if not nentries and ring is None:
         ring = ZZ
 
     # Convert entries to a list v over a common ring
@@ -1486,7 +1487,7 @@ def circulant(v, sparse=None):
     Return the circulant matrix specified by its 1st row `v`
 
     A circulant `n \times n` matrix specified by the 1st row `v=(v_0...v_{n-1})` is
-    the matrix $(c_{ij})_{0 \leq i,j\leq n-1}$, where $c_{ij}=v_{j-i \mod b}$.
+    the matrix `(c_{ij})_{0 \leq i,j\leq n-1}`, where `c_{ij}=v_{j-i \mod b}`.
 
     INPUT:
 
@@ -1904,6 +1905,12 @@ def block_matrix(*args, **kwds):
         sage: block_matrix(A)
         [ 3  5]
         [ 8 13]
+        sage: block_matrix([[A, 0r], [1r, A]])
+        [ 3  5| 0  0]
+        [ 8 13| 0  0]
+        [-----+-----]
+        [ 1  0| 3  5]
+        [ 0  1| 8 13]
     """
     args = list(args)
     sparse = kwds.get('sparse', None)
@@ -2019,7 +2026,7 @@ def block_matrix(*args, **kwds):
         ring = ZZ
         for row in sub_matrices:
             for M in row:
-                R = M.base_ring() if is_Matrix(M) else M.parent()
+                R = M.base_ring() if is_Matrix(M) else parent(M)
                 if R is not ZZ:
                     ring = sage.categories.pushout.pushout(ring, R)
 
@@ -2332,6 +2339,9 @@ def companion_matrix(poly, format='right'):
         ...
         ValueError: polynomial cannot be specified by an empty list
 
+        sage: companion_matrix([QQ.one()]).parent()
+        Full MatrixSpace of 0 by 0 dense matrices over Rational Field
+
     AUTHOR:
 
     - Rob Beezer (2011-05-19)
@@ -2340,7 +2350,7 @@ def companion_matrix(poly, format='right'):
     if format not in ['right', 'left', 'top', 'bottom']:
         raise ValueError("format must be 'right', 'left', 'top' or 'bottom', not {0}".format(format))
     try:
-        poly = list(poly)
+        poly = Sequence(poly)
     except TypeError:
         raise TypeError('input must be a polynomial (not a symbolic expression, see docstring), or other iterable, not {0}'.format(poly))
     n = len(poly) - 1
@@ -2348,31 +2358,30 @@ def companion_matrix(poly, format='right'):
         raise ValueError('polynomial cannot be specified by an empty list')
     if not poly[n] == 1:
         raise ValueError('polynomial (or the polynomial implied by coefficients) must be monic, not a leading coefficient of {0}'.format(poly[n]))
-    entries = [0] * (n * n)
+    try:
+        M = sage.matrix.constructor.matrix(poly.universe(), n, n)
+    except TypeError:
+        raise TypeError("unable to find common ring for coefficients from polynomial")
     # 1's below diagonal, or above diagonal
     if format in ['right', 'top']:
         for i in range(n - 1):
-            entries[(i+1)*n + i] = 1
+            M[i+1, i] = 1
     else:
         for i in range(n-1):
-            entries[i*n + i+1] = 1
+            M[i, i+1] = 1
     # right side, left side (reversed), bottom edge, top edge (reversed)
     if format == 'right':
         for i in range(n):
-            entries[i*n + n-1] = -poly[i]
+            M[i, n-1] = -poly[i]
     elif format == 'left':
         for i in range(n):
-            entries[(n-1-i)*n + 0] = -poly[i]
+            M[n-1-i, 0] = -poly[i]
     elif format == 'bottom':
         for i in range(n):
-            entries[(n-1)*n + i] = -poly[i]
+            M[n-1, i] = -poly[i]
     elif format == 'top':
         for i in range(n):
-            entries[0*n + n-1-i] = -poly[i]
-    try:
-        M = sage.matrix.constructor.matrix(n, n, entries)
-    except TypeError:
-        raise TypeError("unable to find common ring for coefficients from polynomial")
+            M[0, n-1-i] = -poly[i]
     return M
 
 
@@ -2963,8 +2972,8 @@ def random_unimodular_matrix(parent, upper_bound=None, max_tries=100):
 
     A matrix over the number Field in `y` with defining polynomial `y^2-2y-2`. ::
 
-        sage: y = var('y')
-        sage: K = NumberField(y^2-2*y-2, 'y')
+        sage: y = polygen(ZZ, 'y')
+        sage: K = NumberField(y^2 - 2*y - 2, 'y')
         sage: C = random_matrix(K, 3, algorithm='unimodular')
         sage: det(C)
         1
@@ -3238,7 +3247,7 @@ def vector_on_axis_rotation_matrix(v, i, ring=None):
 
     INPUT:
 
-    - ``v``` -- vector
+    - ``v`` -- vector
     - ``i`` -- integer
     - ``ring`` -- ring (optional, default: ``None``) of the resulting matrix
 
@@ -3308,7 +3317,7 @@ def ith_to_zero_rotation_matrix(v, i, ring=None):
 
     INPUT:
 
-    - ``v``` -- vector
+    - ``v`` -- vector
     - ``i`` -- integer
     - ``ring`` -- ring (optional, default: ``None``) of the resulting matrix
 
@@ -3402,7 +3411,7 @@ def ith_to_zero_rotation_matrix(v, i, ring=None):
     a, b = v[j], v[i]
     if b == 0:
         return identity_matrix(dim, sparse=True)
-    from sage.functions.all import sqrt
+    from sage.misc.functional import sqrt
     norm = sqrt(a * a + b * b)
     aa = a / norm
     bb = b / norm

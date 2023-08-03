@@ -24,8 +24,3 @@ Upstream Contact
 - Mailing list: http://groups.google.com/group/python-virtualenv
 - Docs: https://pip.pypa.io/
 
-Dependencies
-------------
-
--  python
--  setuptools

@@ -41,14 +41,13 @@ by developers producing new classes, not casual users.
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
 #
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 ########################################################################
 
 from sage.structure.sage_object import SageObject
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
 from sage.misc.abstract_method import abstract_method
-from sage.homology.chains import Chains, Cochains
 
 
 class GenericCellComplex(SageObject):
@@ -80,7 +79,7 @@ class GenericCellComplex(SageObject):
         sage: from sage.topology.cell_complex import GenericCellComplex
         sage: A = GenericCellComplex()
     """
-    def __eq__(self,right):
+    def __eq__(self, right):
         """
         Comparisons of cell complexes are not implemented.
 
@@ -95,7 +94,7 @@ class GenericCellComplex(SageObject):
         """
         raise NotImplementedError
 
-    def __ne__(self,right):
+    def __ne__(self, right):
         """
         Comparisons of cell complexes are not implemented.
 
@@ -255,7 +254,7 @@ class GenericCellComplex(SageObject):
             sage: cubical_complexes.KleinBottle().f_vector()
             [1, 42, 84, 42]
         """
-        return [self._f_dict()[n] for n in range(-1, self.dimension()+1)]
+        return [self._f_dict()[n] for n in range(-1, self.dimension() + 1)]
 
     def _f_dict(self):
         """
@@ -291,7 +290,7 @@ class GenericCellComplex(SageObject):
             sage: cubical_complexes.KleinBottle().euler_characteristic()
             0
         """
-        return sum([(-1)**n * self.f_vector()[n+1] for n in range(self.dimension() + 1)])
+        return sum((-1)**n * self.f_vector()[n + 1] for n in range(self.dimension() + 1))
 
     ############################################################
     # end of methods using self.cells()
@@ -466,13 +465,11 @@ class GenericCellComplex(SageObject):
            Compute homology relative to this subcomplex.
         :type subcomplex: optional, default empty
         :param generators: If ``True``, return generators for the homology
-           groups along with the groups.  NOTE: Since :trac:`6100`, the result
-           may not be what you expect when not using CHomP since its return
-           is in terms of the chain complex.
+           groups along with the groups.
         :type generators: boolean; optional, default False
         :param cohomology: If True, compute cohomology rather than homology.
         :type cohomology: boolean; optional, default False
-        :param algorithm: The options are 'auto', 'dhsw', 'pari' or 'no_chomp'.
+        :param algorithm: The options are 'auto', 'dhsw', or 'pari'.
            See below for a description of what they mean.
         :type algorithm: string; optional, default 'pari'
         :param verbose: If True, print some messages as the homology is
@@ -483,39 +480,26 @@ class GenericCellComplex(SageObject):
 
         ALGORITHM:
 
-        If ``algorithm`` is set to 'auto', then use
-        CHomP if available.  (CHomP is available at the web page
-        http://chomp.rutgers.edu/.  It is also an optional package
-        for Sage.)
+        Compute the chain complex of ``self`` and compute its homology
+        groups.  To do this: over a field, just compute ranks and
+        nullities, thus obtaining dimensions of the homology groups as
+        vector spaces.  Over the integers, compute Smith normal form
+        of the boundary matrices defining the chain complex according
+        to the value of ``algorithm``.  If ``algorithm`` is
+        ``'auto'``, then for each relatively small matrix, use the
+        standard Sage method, which calls the Pari package.  For any
+        large matrix, reduce it using the Dumas, Heckenbach, Saunders,
+        and Welker elimination algorithm [DHSW2003]_: see
+        :func:`~sage.homology.matrix_utils.dhsw_snf` for details.
 
-        CHomP computes homology, not cohomology, and only works over
-        the integers or finite prime fields.  Therefore if any of
-        these conditions fails, or if CHomP is not present, or if
-        ``algorithm`` is set to 'no_chomp', go to plan B: if this complex
-        has a ``_homology`` method -- each simplicial complex has
-        this, for example -- then call that.  Such a method implements
-        specialized algorithms for the particular type of cell
-        complex.
+        ``'no_chomp'`` is a synonym for ``'auto'``, maintained for
+        backward-compatibility.
 
-        Otherwise, move on to plan C: compute the chain complex of
-        this complex and compute its homology groups.  To do this: over a
-        field, just compute ranks and nullities, thus obtaining
-        dimensions of the homology groups as vector spaces.  Over the
-        integers, compute Smith normal form of the boundary matrices
-        defining the chain complex according to the value of
-        ``algorithm``.  If ``algorithm`` is 'auto' or 'no_chomp', then
-        for each relatively small matrix, use the standard Sage
-        method, which calls the Pari package.  For any large matrix,
-        reduce it using the Dumas, Heckenbach, Saunders, and Welker
-        elimination algorithm: see
-        :func:`sage.homology.matrix_utils.dhsw_snf` for details.
-
-        Finally, ``algorithm`` may also be 'pari' or 'dhsw', which
+        ``algorithm`` may also be ``'pari'`` or ``'dhsw'``, which
         forces the named algorithm to be used regardless of the size
-        of the matrices and regardless of whether CHomP is available.
+        of the matrices.
 
         As of this writing, ``'pari'`` is the fastest standard option.
-        The optional CHomP package may be better still.
 
         EXAMPLES::
 
@@ -524,24 +508,22 @@ class GenericCellComplex(SageObject):
             {0: 0, 1: C2, 2: 0}
             sage: P.homology(reduced=False)
             {0: Z, 1: C2, 2: 0}
-            sage: P.homology(base_ring=GF(2))
+            sage: P.homology(base_ring=GF(2))                                           # optional - sage.modules sage.rings.finite_rings
             {0: Vector space of dimension 0 over Finite Field of size 2,
              1: Vector space of dimension 1 over Finite Field of size 2,
              2: Vector space of dimension 1 over Finite Field of size 2}
             sage: S7 = delta_complexes.Sphere(7)
-            sage: S7.homology(7)
+            sage: S7.homology(7)                                                        # optional - sage.modules
             Z
-            sage: cubical_complexes.KleinBottle().homology(1, base_ring=GF(2))
+            sage: cubical_complexes.KleinBottle().homology(1, base_ring=GF(2))          # optional - sage.modules sage.rings.finite_rings
             Vector space of dimension 2 over Finite Field of size 2
 
         Sage can compute generators of homology groups::
 
             sage: S2 = simplicial_complexes.Sphere(2)
-            sage: S2.homology(dim=2, generators=True, base_ring=GF(2), algorithm='no_chomp')
-            [(Vector space of dimension 1 over Finite Field of size 2, (0, 1, 2) + (0, 1, 3) + (0, 2, 3) + (1, 2, 3))]
-
-        Note: the answer may be formatted differently if the optional
-        package CHomP is installed.
+            sage: S2.homology(dim=2, generators=True, base_ring=GF(2))                  # optional - sage.modules sage.rings.finite_rings
+            [(Vector space of dimension 1 over Finite Field of size 2,
+              (0, 1, 2) + (0, 1, 3) + (0, 2, 3) + (1, 2, 3))]
 
         When generators are computed, Sage returns a pair for each
         dimension: the group and the list of generators.  For
@@ -550,20 +532,17 @@ class GenericCellComplex(SageObject):
         complexes, each generator is a linear combination of cubes::
 
             sage: S2_cub = cubical_complexes.Sphere(2)
-            sage: S2_cub.homology(dim=2, generators=True, algorithm='no_chomp')
+            sage: S2_cub.homology(dim=2, generators=True)                               # optional - sage.modules
             [(Z,
-             [0,0] x [0,1] x [0,1] - [0,1] x [0,0] x [0,1] + [0,1] x [0,1] x [0,0] - [0,1] x [0,1] x [1,1] + [0,1] x [1,1] x [0,1] - [1,1] x [0,1] x [0,1])]
+             [0,0] x [0,1] x [0,1] - [0,1] x [0,0] x [0,1] + [0,1] x [0,1] x [0,0]
+             - [0,1] x [0,1] x [1,1] + [0,1] x [1,1] x [0,1] - [1,1] x [0,1] x [0,1])]
 
         Similarly for simpicial sets::
 
             sage: S = simplicial_sets.Sphere(2)
-            sage: S.homology(generators=True)
+            sage: S.homology(generators=True)                                           # optional - sage.modules
             {0: [], 1: 0, 2: [(Z, sigma_2)]}
         """
-        from sage.interfaces.chomp import have_chomp, homcubes, homsimpl
-        from sage.topology.cubical_complex import CubicalComplex
-        from sage.topology.simplicial_complex import SimplicialComplex
-        from sage.modules.all import VectorSpace
         from sage.homology.homology_group import HomologyGroup
 
         if dim is not None:
@@ -576,34 +555,6 @@ class GenericCellComplex(SageObject):
             dims = range(low, high)
         else:
             dims = None
-
-        # try to use CHomP if computing homology (not cohomology) and
-        # working over Z or F_p, p a prime.
-        if (algorithm == 'auto' and cohomology is False
-            and (base_ring == ZZ or (base_ring.is_prime_field()
-                                     and base_ring != QQ))):
-            # homcubes, homsimpl seems fastest if all of homology is computed.
-            H = None
-            if isinstance(self, CubicalComplex):
-                if have_chomp('homcubes'):
-                    H = homcubes(self, subcomplex, base_ring=base_ring,
-                                 verbose=verbose, generators=generators)
-            elif isinstance(self, SimplicialComplex):
-                if have_chomp('homsimpl'):
-                    H = homsimpl(self, subcomplex, base_ring=base_ring,
-                                 verbose=verbose, generators=generators)
-
-            # now pick off the requested dimensions
-            if H:
-                answer = {}
-                if not dims:
-                    dims = range(self.dimension() + 1)
-                for d in dims:
-                    answer[d] = H.get(d, HomologyGroup(0, base_ring))
-                if dim is not None:
-                    if not isinstance(dim, (list, tuple, range)):
-                        answer = answer.get(dim, HomologyGroup(0, base_ring))
-                return answer
 
         # Derived classes can implement specialized algorithms using a
         # _homology_ method.  See SimplicialComplex for one example.
@@ -645,8 +596,8 @@ class GenericCellComplex(SageObject):
         return answer.get(dim, zero)
 
     def cohomology(self, dim=None, base_ring=ZZ, subcomplex=None,
-                 generators=False, algorithm='pari',
-                 verbose=False, reduced=True):
+                   generators=False, algorithm='pari',
+                   verbose=False, reduced=True):
         r"""
         The reduced cohomology of this cell complex.
 
@@ -670,28 +621,32 @@ class GenericCellComplex(SageObject):
             0
             sage: circle.cohomology(1)
             Z
-            sage: P2 = SimplicialComplex([[0,1,2], [0,2,3], [0,1,5], [0,4,5], [0,3,4], [1,2,4], [1,3,4], [1,3,5], [2,3,5], [2,4,5]])   # projective plane
-            sage: P2.cohomology(2)
+
+        Projective plane::
+
+            sage: P2 = SimplicialComplex([[0,1,2], [0,2,3], [0,1,5], [0,4,5], [0,3,4],
+            ....:                         [1,2,4], [1,3,4], [1,3,5], [2,3,5], [2,4,5]])
+            sage: P2.cohomology(2)                                                      # optional - sage.modules
             C2
-            sage: P2.cohomology(2, base_ring=GF(2))
+            sage: P2.cohomology(2, base_ring=GF(2))                                     # optional - sage.modules sage.rings.finite_rings
             Vector space of dimension 1 over Finite Field of size 2
-            sage: P2.cohomology(2, base_ring=GF(3))
+            sage: P2.cohomology(2, base_ring=GF(3))                                     # optional - sage.modules sage.rings.finite_rings
             Vector space of dimension 0 over Finite Field of size 3
 
-            sage: cubical_complexes.KleinBottle().cohomology(2)
+            sage: cubical_complexes.KleinBottle().cohomology(2)                         # optional - sage.modules
             C2
 
         Relative cohomology::
 
             sage: T = SimplicialComplex([[0,1]])
             sage: U = SimplicialComplex([[0], [1]])
-            sage: T.cohomology(1, subcomplex=U)
+            sage: T.cohomology(1, subcomplex=U)                                         # optional - sage.modules
             Z
 
         A `\Delta`-complex example::
 
             sage: s5 = delta_complexes.Sphere(5)
-            sage: s5.cohomology(base_ring=GF(7))[5]
+            sage: s5.cohomology(base_ring=GF(7))[5]                                     # optional - sage.modules sage.rings.finite_rings
             Vector space of dimension 1 over Finite Field of size 7
         """
         return self.homology(dim=dim, cohomology=True, base_ring=base_ring,
@@ -822,6 +777,8 @@ class GenericCellComplex(SageObject):
             sage: list(simplicial_complexes.Sphere(2).n_chains(1, QQ, cochains=True).basis())
             [\chi_(0, 1), \chi_(0, 2), \chi_(0, 3), \chi_(1, 2), \chi_(1, 3), \chi_(2, 3)]
         """
+        from sage.homology.chains import Chains, Cochains
+
         n_cells = tuple(self._n_cells_sorted(n))
         if cochains:
             return Cochains(self, n, n_cells, base_ring)
@@ -883,25 +840,26 @@ class GenericCellComplex(SageObject):
         EXAMPLES::
 
             sage: K = simplicial_complexes.KleinBottle()
-            sage: H = K.homology_with_basis(QQ); H
+            sage: H = K.homology_with_basis(QQ); H                                      # optional - sage.modules
             Homology module of Minimal triangulation of the Klein bottle
              over Rational Field
-            sage: sorted(H.basis(), key=str)
+            sage: sorted(H.basis(), key=str)                                            # optional - sage.modules
             [h_{0,0}, h_{1,0}]
-            sage: H = K.homology_with_basis(GF(2)); H
+            sage: H = K.homology_with_basis(GF(2)); H                                   # optional - sage.modules sage.rings.finite_rings
             Homology module of Minimal triangulation of the Klein bottle
              over Finite Field of size 2
-            sage: sorted(H.basis(), key=str)
+            sage: sorted(H.basis(), key=str)                                            # optional - sage.modules sage.rings.finite_rings
             [h_{0,0}, h_{1,0}, h_{1,1}, h_{2,0}]
 
         The homology is constructed as a graded object, so for
         example, you can ask for the basis in a single degree::
 
-            sage: H.basis(1)
+            sage: H.basis(1)                                                            # optional - sage.modules sage.rings.finite_rings
             Finite family {(1, 0): h_{1,0}, (1, 1): h_{1,1}}
+
             sage: S3 = delta_complexes.Sphere(3)
-            sage: H = S3.homology_with_basis(QQ, cohomology=True)
-            sage: list(H.basis(3))
+            sage: H = S3.homology_with_basis(QQ, cohomology=True)                       # optional - sage.modules
+            sage: list(H.basis(3))                                                      # optional - sage.modules
             [h^{3,0}]
         """
         from sage.homology.homology_vector_space_with_basis import HomologyVectorSpaceWithBasis
@@ -946,10 +904,10 @@ class GenericCellComplex(SageObject):
              over Rational Field
             sage: sorted(H.basis(), key=str)
             [h^{0,0}, h^{1,0}]
-            sage: H = K.cohomology_ring(GF(2)); H
+            sage: H = K.cohomology_ring(GF(2)); H                                       # optional - sage.rings.finite_rings
             Cohomology ring of Minimal triangulation of the Klein bottle
              over Finite Field of size 2
-            sage: sorted(H.basis(), key=str)
+            sage: sorted(H.basis(), key=str)                                            # optional - sage.rings.finite_rings
             [h^{0,0}, h^{1,0}, h^{1,1}, h^{2,0}]
 
             sage: X = delta_complexes.SurfaceOfGenus(2)
@@ -980,12 +938,12 @@ class GenericCellComplex(SageObject):
 
         Cohomology operations::
 
-            sage: RP2 = simplicial_complexes.RealProjectivePlane()
-            sage: K = RP2.suspension()
-            sage: K.set_immutable()
-            sage: y = K.cohomology_ring(GF(2)).basis()[2,0]; y
+            sage: RP2 = simplicial_complexes.RealProjectivePlane()                      # optional - sage.groups
+            sage: K = RP2.suspension()                                                  # optional - sage.graphs sage.groups
+            sage: K.set_immutable()                                                     # optional - sage.graphs sage.groups
+            sage: y = K.cohomology_ring(GF(2)).basis()[2,0]; y                          # optional - sage.graphs sage.groups sage.rings.finite_rings
             h^{2,0}
-            sage: y.Sq(1)
+            sage: y.Sq(1)                                                               # optional - sage.graphs sage.groups sage.rings.finite_rings
             h^{3,0}
 
         To compute the cohomology ring, the complex must be
@@ -1002,7 +960,7 @@ class GenericCellComplex(SageObject):
             sage: T.cohomology_ring()
             Traceback (most recent call last):
             ...
-            ValueError: This simplicial complex must be immutable. Call set_immutable().
+            ValueError: this simplicial complex must be immutable; call set_immutable()
             sage: T.set_immutable()
             sage: T.cohomology_ring()
             Cohomology ring of Simplicial complex with 9 vertices and
@@ -1078,13 +1036,13 @@ class GenericCellComplex(SageObject):
 
         EXAMPLES::
 
-            sage: P = SimplicialComplex([[0, 1], [1,2], [2,3]]).face_poset(); P
+            sage: P = SimplicialComplex([[0, 1], [1,2], [2,3]]).face_poset(); P         # optional - sage.combinat sage.graphs
             Finite poset containing 7 elements
-            sage: sorted(P.list())
+            sage: sorted(P.list())                                                      # optional - sage.combinat sage.graphs
             [(0,), (0, 1), (1,), (1, 2), (2,), (2, 3), (3,)]
 
             sage: S2 = cubical_complexes.Sphere(2)
-            sage: S2.face_poset()
+            sage: S2.face_poset()                                                       # optional - sage.combinat sage.graphs
             Finite poset containing 26 elements
         """
         from sage.combinat.posets.posets import Poset
@@ -1126,27 +1084,26 @@ class GenericCellComplex(SageObject):
 
         EXAMPLES::
 
-            sage: V = SimplicialComplex([[0,1,2],[3]])
-            sage: V
+            sage: V = SimplicialComplex([[0,1,2],[3]]); V
             Simplicial complex with vertex set (0, 1, 2, 3) and facets {(3,), (0, 1, 2)}
-            sage: V.is_connected()
+            sage: V.is_connected()                                                      # optional - sage.graphs
             False
             sage: X = SimplicialComplex([[0,1,2]])
-            sage: X.is_connected()
+            sage: X.is_connected()                                                      # optional - sage.graphs
             True
             sage: U = simplicial_complexes.ChessboardComplex(3,3)
-            sage: U.is_connected()
+            sage: U.is_connected()                                                      # optional - sage.graphs
             True
             sage: W = simplicial_complexes.Sphere(3)
-            sage: W.is_connected()
+            sage: W.is_connected()                                                      # optional - sage.graphs
             True
             sage: S = SimplicialComplex([[0,1],[2,3]])
-            sage: S.is_connected()
+            sage: S.is_connected()                                                      # optional - sage.graphs
             False
 
-            sage: cubical_complexes.Sphere(0).is_connected()
+            sage: cubical_complexes.Sphere(0).is_connected()                            # optional - sage.graphs
             False
-            sage: cubical_complexes.Sphere(2).is_connected()
+            sage: cubical_complexes.Sphere(2).is_connected()                            # optional - sage.graphs
             True
         """
         return self.graph().is_connected()
@@ -1226,5 +1183,3 @@ class GenericCellComplex(SageObject):
         else:
             cells_string = " and 1 %s" % cell_name
         return Name + " complex " + vertex_string + cells_string
-
-

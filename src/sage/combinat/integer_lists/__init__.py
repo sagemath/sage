@@ -1,4 +1,3 @@
-
 from .base import IntegerListsBackend, Envelope
 from .lists import IntegerLists
 from .invlex import IntegerListsLex

@@ -17,8 +17,8 @@ le shell Sage affiche un message de ce genre :
 ::
 
     ┌────────────────────────────────────────────────────────────────────┐
-    │ SageMath version 9.0, Release Date: 2020-01-01                     │
-    │ Using Python 3.7.3. Type "help()" for help.                        │
+    │ SageMath version 9.7, Release Date: 2022-01-10                     │
+    │ Using Python 3.10.4. Type "help()" for help.                       │
     └────────────────────────────────────────────────────────────────────┘
 
 
@@ -182,8 +182,8 @@ session future (en rechargeant le fichier journal).
 
     was@form:~$ sage
     ┌────────────────────────────────────────────────────────────────────┐
-    │ SageMath version 9.0, Release Date: 2020-01-01                     │
-    │ Using Python 3.7.3. Type "help()" for help.                        │
+    │ SageMath version 9.7, Release Date: 2022-01-10                     │
+    │ Using Python 3.10.4. Type "help()" for help.                       │
     └────────────────────────────────────────────────────────────────────┘
 
     sage: logstart setup
@@ -201,8 +201,8 @@ session future (en rechargeant le fichier journal).
     Exiting Sage (CPU time 0m0.61s, Wall time 0m50.39s).
     was@form:~$ sage
     ┌────────────────────────────────────────────────────────────────────┐
-    │ SageMath version 9.0, Release Date: 2020-01-01                     │
-    │ Using Python 3.7.3. Type "help()" for help.                        │
+    │ SageMath version 9.7, Release Date: 2022-01-10                     │
+    │ Using Python 3.10.4. Type "help()" for help.                       │
     └────────────────────────────────────────────────────────────────────┘
 
     sage: load("setup")
@@ -387,34 +387,6 @@ celui-ci. Vous voudrez peut-être consulter la `documentation complète de IPyth
 astuces utiles -- qui reposent sur ce que IPython appelle des « commandes
 magiques » :
 
-- La commande magique ``%bg`` lance une commande en arrière-plan. Le résultat
-  sera ensuite accessible à travers l'objet ``jobs``, comme dans l'exemple
-  ci-dessous. (Les commentaires « not tested » sont là parce que ``%bg`` ne
-  fonctionne pas correctement dans l'infrastructure de test automatisé de Sage,
-  mais si vous reproduisez l'exemple, il devrait fonctionner comme indiqué.
-  Naturellement, ``%bg`` est surtout utile pour les commandes dont l'exécution
-  prend beaucoup de temps.)
-
-  ::
-
-    sage: def quick(m): return 2*m
-    sage: %bg quick(20)  # not tested
-    Starting job # 0 in a separate thread.
-    sage: jobs.status()  # not tested
-    Completed jobs:
-    0 : quick(20)
-    sage: jobs[0].result  # the actual answer, not tested
-    40
-
-  Attention, les tâches lancées en arrière-plan ignorent le préprocesseur Sage
-  (voir section :ref:`section-mathannoy`). Une manière (certes pas très
-  commode) de contourner le problème est la suivante ::
-
-    sage: %bg eval(preparse('quick(20)')) # not tested
-
-  Mais il est plus simple et plus sûr de réserver ``%bg`` aux commandes en pur
-  Python, qui ne font pas appel au préprocesseur.
-
 - Lorsque l'on souhaite saisir un morceau de code complexe, on peut utiliser
   ``%edit`` (ou ``%ed``, ou ``ed``) pour ouvrir un éditeur de texte.
   Assurez-vous que la variable d'environnement :envvar:`EDITOR` est réglée à
@@ -460,8 +432,9 @@ Erreurs et exceptions
 Quand quelque chose ne marche pas, cela se manifeste habituellement par
 une « exception » Python. Python essaie de plus de donner une idée de ce
 qui a pu déclencher l'exception. Bien souvent, il affiche le nom de
-l'exception (par exemple ``NameError`` ou ``ValueError``, voir le manuel
-de référence de la bibliothèque de Python [PyLR]_ pour une liste complète). Par exemple :
+l'exception (par exemple :class:`NameError` ou :class:`ValueError`, voir
+le manuel de référence de la bibliothèque de Python [PyLR]_ pour une liste
+complète). Par exemple :
 
 .. skip
 
@@ -472,7 +445,7 @@ de référence de la bibliothèque de Python [PyLR]_ pour une liste complète). 
        File "<console>", line 1
          ZZ(3)_2
                ^
-    SyntaxError: invalid syntax
+    SyntaxError: invalid ...
 
     sage: EllipticCurve([0,infinity])
     ------------------------------------------------------------
@@ -495,7 +468,7 @@ pile d'exécution. Par exemple :
     Automatic pdb calling has been turned ON
     sage: EllipticCurve([1,infinity])
     ---------------------------------------------------------------------------
-    <type 'exceptions.TypeError'>             Traceback (most recent call last)
+    <class 'exceptions.TypeError'>             Traceback (most recent call last)
     ...
 
     ipdb>
@@ -604,7 +577,7 @@ d'une fonction, tapez son nom suivi d'un point d'interrogation.
     sage: V = QQ^3
     sage: V.coordinates?
     Type:           instancemethod
-    Base Class:     <type 'instancemethod'>
+    Base Class:     <class 'instancemethod'>
     String Form:    <bound method FreeModule_ambient_field.coordinates of Vector
     space of dimension 3 over Rational Field>
     Namespace:      Interactive

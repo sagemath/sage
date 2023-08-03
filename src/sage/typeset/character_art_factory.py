@@ -84,7 +84,9 @@ class CharacterArtFactory(SageObject):
 
         EXAMPLES::
 
-            sage: ascii_art(integral(exp(x+x^2)/(x+1), x))
+            sage: result = ascii_art(integral(exp(x+x^2)/(x+1), x))
+            ...
+            sage: result
                 /
                |
                |   2
@@ -199,12 +201,10 @@ class CharacterArtFactory(SageObject):
         TESTS::
 
             sage: from sage.typeset.ascii_art import _ascii_art_factory as factory
-            sage: factory.build_from_string(u'a\nbb\nccc')  # same with unicode
-            a
+            sage: factory.build_from_string('à\nbb\nccc')  # same with unicode
+            à
             bb
             ccc
-
-        ::
 
             sage: a = factory.build_from_string('a\nbb\nccc', baseline=2)
             sage: a + ascii_art('<-')
@@ -327,7 +327,7 @@ class CharacterArtFactory(SageObject):
 
         Check that :trac:`29447` is fixed::
 
-            sage: ascii_art({'a': '', '': ''})  # py3
+            sage: ascii_art({'a': '', '': ''})
             { a:, : }
         """
         comma = self.art_type([self.string_type(', ')],

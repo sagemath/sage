@@ -16,12 +16,12 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.groups.matrix_gps.finitely_generated import FinitelyGeneratedMatrixGroup_gap
+from sage.groups.matrix_gps.finitely_generated_gap import FinitelyGeneratedMatrixGroup_gap
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.rings.number_field.number_field import CyclotomicField
 from sage.matrix.matrix_space import MatrixSpace
 from sage.categories.groups import Groups
-from sage.rings.all import ZZ
+from sage.rings.integer_ring import ZZ
 
 
 class BinaryDihedralGroup(UniqueRepresentation, FinitelyGeneratedMatrixGroup_gap):

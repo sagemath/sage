@@ -42,14 +42,15 @@ AUTHORS:
 - Kwankyu Lee (2021-05-21): initial version
 
 """
-#*****************************************************************************
+
+# ****************************************************************************
 #       Copyright (C) 2021 Kwankyu Lee <ekwankyu@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
 #                  http://www.gnu.org/licenses/
-#*****************************************************************************
+# ****************************************************************************
 
 from sage.matrix.matrix cimport Matrix
 from sage.rings.polynomial.polynomial_element cimport Polynomial
@@ -184,4 +185,3 @@ def reversed_hermite_form(Matrix mat, bint transformation=False):
 
     if transformation:
         return U
-

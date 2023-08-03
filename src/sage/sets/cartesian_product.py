@@ -28,6 +28,7 @@ from sage.structure.element_wrapper import ElementWrapperCheckWrappedClass
 from sage.categories.rings import Rings
 _Rings = Rings()
 
+
 class CartesianProduct(UniqueRepresentation, Parent):
     """
     A class implementing a raw data structure for Cartesian products
@@ -74,12 +75,12 @@ class CartesianProduct(UniqueRepresentation, Parent):
             sage: cartesian_product([ZZ, ZZ], blub=None)
             Traceback (most recent call last):
             ...
-            TypeError: __init__() got an unexpected keyword argument 'blub'
+            TypeError: ...__init__() got an unexpected keyword argument 'blub'
         """
         self._sets = tuple(sets)
         Parent.__init__(self, category=category)
 
-    def _element_constructor_(self,x):
+    def _element_constructor_(self, x):
         r"""
         Construct an element of a Cartesian product from a list or iterable
 
@@ -141,7 +142,7 @@ class CartesianProduct(UniqueRepresentation, Parent):
             sage: cartesian_product([QQ, ZZ, ZZ]) # indirect doctest
             The Cartesian product of (Rational Field, Integer Ring, Integer Ring)
         """
-        return "The Cartesian product of %s"%(self._sets,)
+        return "The Cartesian product of %s" % (self._sets,)
 
     def __contains__(self, x):
         """
@@ -160,8 +161,8 @@ class CartesianProduct(UniqueRepresentation, Parent):
                 return True
         elif not isinstance(x, tuple):
             return False
-        return ( len(x) == len(self._sets)
-                 and all(elt in self._sets[i] for i,elt in enumerate(x)) )
+        return (len(x) == len(self._sets)
+                and all(elt in self._sets[i] for i, elt in enumerate(x)))
 
     def cartesian_factors(self):
         """
@@ -294,7 +295,7 @@ class CartesianProduct(UniqueRepresentation, Parent):
             if len(S_factors) == len(R_factors):
                 if all(r.has_coerce_map_from(s) for r, s in zip(R_factors, S_factors)):
                     return True
-        return super(CartesianProduct, self)._coerce_map_from_(S)
+        return super()._coerce_map_from_(S)
 
     an_element = Sets.CartesianProducts.ParentMethods.an_element
 

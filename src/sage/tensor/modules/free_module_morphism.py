@@ -23,8 +23,15 @@ REFERENCES:
 #  the License, or (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # *****************************************************************************
-from sage.rings.integer import Integer
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
+
 from sage.categories.morphism import Morphism
+from sage.rings.integer import Integer
+
+if TYPE_CHECKING:
+    from sage.tensor.modules.free_module_element import FiniteRankFreeModuleElement
 
 
 class FiniteRankFreeModuleMorphism(Morphism):
@@ -259,10 +266,10 @@ class FiniteRankFreeModuleMorphism(Morphism):
         if is_identity:
             # Construction of the identity endomorphism
             if fmodule1 != fmodule2:
-                raise TypeError("the domain and codomain must coincide " + \
+                raise TypeError("the domain and codomain must coincide " +
                                 "for the identity endomorphism.")
             if bases[0] != bases[1]:
-                raise TypeError("the two bases must coincide for " + \
+                raise TypeError("the two bases must coincide for " +
                                 "constructing the identity endomorphism.")
             self._is_identity = True
             zero = ring.zero()
@@ -334,7 +341,7 @@ class FiniteRankFreeModuleMorphism(Morphism):
         if self._latex_name is None:
             return r'\mbox{' + str(self) + r'}'
         else:
-           return self._latex_name
+            return self._latex_name
 
     def __eq__(self, other):
         r"""
@@ -681,7 +688,6 @@ class FiniteRankFreeModuleMorphism(Morphism):
             resu._matrices[bases] = scalar * mat
         return resu
 
-
     #
     #  Other module methods
     #
@@ -764,7 +770,9 @@ class FiniteRankFreeModuleMorphism(Morphism):
     # Map methods
     #
 
-    def _call_(self, element):
+    def _call_(
+        self, element: FiniteRankFreeModuleElement
+    ) -> FiniteRankFreeModuleElement:
         r"""
         Action of the homomorphism ``self`` on some free module element
 
@@ -1047,11 +1055,11 @@ class FiniteRankFreeModuleMorphism(Morphism):
             sage: phi.matrix()     # default bases
             [-1  2  0]
             [ 5  1  2]
-            sage: phi.matrix(e,f)  # bases explicited
+            sage: phi.matrix(e, f)  # given bases
             [-1  2  0]
             [ 5  1  2]
             sage: type(phi.matrix())
-            <type 'sage.matrix.matrix_integer_dense.Matrix_integer_dense'>
+            <class 'sage.matrix.matrix_integer_dense.Matrix_integer_dense'>
 
         Matrix in bases different from those in which the homomorphism has
         been defined::
@@ -1105,7 +1113,7 @@ class FiniteRankFreeModuleMorphism(Morphism):
         if basis1 is None:
             basis1 = fmodule1.default_basis()
         elif basis1 not in fmodule1.bases():
-            raise TypeError(str(basis1) + " is not a basis on the " + \
+            raise TypeError(str(basis1) + " is not a basis on the " +
                             str(fmodule1) + ".")
         if basis2 is None:
             if self.is_endomorphism():
@@ -1113,7 +1121,7 @@ class FiniteRankFreeModuleMorphism(Morphism):
             else:
                 basis2 = fmodule2.default_basis()
         elif basis2 not in fmodule2.bases():
-            raise TypeError(str(basis2) + " is not a basis on the " + \
+            raise TypeError(str(basis2) + " is not a basis on the " +
                             str(fmodule2) + ".")
         if (basis1, basis2) not in self._matrices:
             if self._is_identity:

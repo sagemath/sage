@@ -5,7 +5,7 @@
 # distutils: extra_link_args = NTL_LIBEXTRA
 # distutils: language = c++
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2005 William Stein <wstein@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
@@ -17,8 +17,8 @@
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from cysignals.signals cimport sig_on, sig_off
 
@@ -32,10 +32,7 @@ from cpython.object cimport Py_EQ, Py_NE
 from sage.libs.ntl.ntl_ZZ cimport ntl_ZZ
 from sage.libs.ntl.ntl_ZZ import unpickle_class_value
 
-from sage.rings.integer import Integer
 from sage.rings.integer_ring import IntegerRing
-from sage.rings.integer cimport Integer
-from sage.rings.integer_ring cimport IntegerRing_class
 from sage.arith.power cimport generic_power_pos
 
 ZZ = IntegerRing()
@@ -79,9 +76,9 @@ cdef proof_flag(t):
 ##############################################################################
 
 
-cdef class ntl_ZZX(object):
+cdef class ntl_ZZX():
     r"""
-    The class \class{ZZX} implements polynomials in $\Z[X]$, i.e.,
+    The class \class{ZZX} implements polynomials in `\Z[X]`, i.e.,
     univariate polynomials with integer coefficients.
 
     Polynomial multiplication is very fast, and is implemented using
@@ -131,7 +128,7 @@ cdef class ntl_ZZX(object):
 
         if v is None:
             return
-        elif isinstance(v, list) or isinstance(v, tuple):
+        elif isinstance(v, (list, tuple)):
             for i from 0 <= i < len(v):
                 x = v[i]
                 if not isinstance(x, ntl_ZZ):
@@ -144,10 +141,12 @@ cdef class ntl_ZZX(object):
 
     def __reduce__(self):
         """
-        sage: from sage.libs.ntl.ntl_ZZX import ntl_ZZX
-        sage: f = ntl_ZZX([1,2,0,4])
-        sage: loads(dumps(f)) == f
-        True
+        EXAMPLES::
+
+            sage: from sage.libs.ntl.ntl_ZZX import ntl_ZZX
+            sage: f = ntl_ZZX([1,2,0,4])
+            sage: loads(dumps(f)) == f
+            True
         """
         return unpickle_class_value, (ntl_ZZX, self.list())
 
@@ -183,6 +182,8 @@ cdef class ntl_ZZX(object):
 
     def __setitem__(self, long i, a):
         """
+        EXAMPLES::
+
             sage: n=ntl.ZZX([1,2,3])
             sage: n
             [1 2 3]
@@ -226,7 +227,7 @@ cdef class ntl_ZZX(object):
         sage: x[0]
          129381729371289371237128318293718237
         sage: type(x[0])
-         <type 'sage.libs.ntl.ntl_ZZ.ntl_ZZ'>
+         <class 'sage.libs.ntl.ntl_ZZ.ntl_ZZ'>
         sage: x[1]
          2
         sage: x[2]
@@ -278,7 +279,7 @@ cdef class ntl_ZZX(object):
             sage: L = x.list(); L
             [129381729371289371237128318293718237, 2, -3, 0, 4]
             sage: type(L[0])
-            <type 'sage.libs.ntl.ntl_ZZ.ntl_ZZ'>
+            <class 'sage.libs.ntl.ntl_ZZ.ntl_ZZ'>
             sage: x = ntl.ZZX()
             sage: L = x.list(); L
             []
@@ -527,7 +528,7 @@ cdef class ntl_ZZX(object):
             [1 0 0 2]
         """
         if ZZX_IsZero(self.x):
-             return False
+            return False
         cdef ZZ_c lc
         lc = ZZX_LeadCoeff(self.x)
         return <bint>ZZ_IsOne(lc)
@@ -692,23 +693,24 @@ cdef class ntl_ZZX(object):
         return (self*other).quo_rem(g)[0]
 
     def xgcd(self, ntl_ZZX other, proof=None):
-        """
-        If self and other are coprime over the rationals, return r, s,
-        t such that r = s*self + t*other.  Otherwise return 0.  This
-        is \emph{not} the same as the \sage function on polynomials
-        over the integers, since here the return value r is always an
-        integer.
+        r"""
+        If ``self`` and ``other`` are coprime over the rationals,
+        return ``r, s, t`` such that ``r = s*self + t*other``.
+        Otherwise return 0.
+
+        This is \emph{not} the same as the \sage function on
+        polynomials over the integers, since here the return value r
+        is always an integer.
 
         Here r is the resultant of a and b; if r != 0, then this
         function computes s and t such that: a*s + b*t = r; otherwise
         s and t are both 0.  If proof = False (*not* the default),
         then resultant computation may use a randomized strategy that
-        errors with probability no more than $2^{-80}$.  The default is
+        errors with probability no more than `2^{-80}`.  The default is
         default is proof=None, see proof.polynomial or sage.structure.proof,
         but the global default is True), then this function may use a
         randomized strategy that errors with probability no more than
-        $2^{-80}$.
-
+        `2^{-80}`.
 
         EXAMPLES::
 
@@ -717,7 +719,8 @@ cdef class ntl_ZZX(object):
             sage: f.xgcd(g)   # nothing since they are not coprime
             (0, [], [])
 
-        In this example the input quadratic polynomials have a common root modulo 13.
+        In this example the input quadratic polynomials have a common root modulo 13::
+
             sage: f = ntl.ZZX([5,0,1])
             sage: g = ntl.ZZX([18,0,1])
             sage: f.xgcd(g)
@@ -805,7 +808,8 @@ cdef class ntl_ZZX(object):
             sage: f == g
             True
 
-        Though f and g are equal, they are not the same objects in memory:
+        Though f and g are equal, they are not the same objects in memory::
+
             sage: f is g
             False
         """
@@ -929,7 +933,7 @@ cdef class ntl_ZZX(object):
 
     def invert_and_truncate(self, long m):
         """
-        Compute and return the inverse of self modulo $x^m$.
+        Compute and return the inverse of self modulo `x^m`.
         The constant term of self must be 1 or -1.
 
         EXAMPLES::
@@ -968,7 +972,7 @@ cdef class ntl_ZZX(object):
     def trace_mod(self, ntl_ZZX modulus):
         """
         Return the trace of this polynomial modulus the modulus.
-        The modulus must be monic, and of positive degree degree bigger
+        The modulus must be monic, and of positive degree bigger
         than the degree of self.
 
         EXAMPLES::
@@ -983,7 +987,7 @@ cdef class ntl_ZZX(object):
 
     def trace_list(self):
         """
-        Return the list of traces of the powers $x^i$ of the
+        Return the list of traces of the powers `x^i` of the
         monomial x modulo this polynomial for i = 0, ..., deg(f)-1.
         This polynomial must be monic.
 
@@ -1016,7 +1020,7 @@ cdef class ntl_ZZX(object):
         default is proof=None, see proof.polynomial or sage.structure.proof,
         but the global default is True), then this function may use a
         randomized strategy that errors with probability no more than
-        $2^{-80}$.
+        `2^{-80}`.
 
         EXAMPLES::
 
@@ -1041,7 +1045,7 @@ cdef class ntl_ZZX(object):
         is proof=None, see proof.polynomial or sage.structure.proof,
         but the global default is proof=True) then it may use a
         randomized strategy that errors with probability no more than
-        $2^{-80}$.
+        `2^{-80}`.
 
         EXAMPLES::
 
@@ -1070,7 +1074,7 @@ cdef class ntl_ZZX(object):
         proof.polynomial or sage.structure.proof, but the global
         default is proof=True), then this function may use a
         randomized strategy that errors with probability no more than
-        $2^{-80}$.
+        `2^{-80}`.
 
         EXAMPLES::
 
@@ -1096,7 +1100,7 @@ cdef class ntl_ZZX(object):
         proof.polynomial or sage.structure.proof, but the global
         default is proof=True), then this function may use a
         randomized strategy that errors with probability no more than
-        $2^{-80}$.
+        `2^{-80}`.
 
         EXAMPLES::
 
@@ -1115,7 +1119,7 @@ cdef class ntl_ZZX(object):
         Return the minimal polynomial of this polynomial modulo the
         modulus.  The modulus must be monic of degree bigger than
         self.  In all cases, this function may use a randomized
-        strategy that errors with probability no more than $2^{-80}$.
+        strategy that errors with probability no more than `2^{-80}`.
 
         EXAMPLES::
 
@@ -1124,8 +1128,8 @@ cdef class ntl_ZZX(object):
             sage: f.charpoly_mod(g)
             [0 0 0 0 1]
 
-        However, since $f^2 = 0$ modulo $g$, its minimal polynomial
-        is of degree $2$::
+        However, since `f^2 = 0` modulo `g`, its minimal polynomial
+        is of degree `2`::
 
             sage: f.minpoly_mod_noproof(g)
             [0 0 1]

@@ -2,9 +2,10 @@ from sage.libs.gsl.types cimport gsl_complex
 
 cimport sage.structure.element
 cimport sage.rings.ring
+cimport sage.rings.abc
 
 
-cdef class ComplexDoubleField_class(sage.rings.ring.Field):
+cdef class ComplexDoubleField_class(sage.rings.abc.ComplexDoubleField):
     pass
 
 

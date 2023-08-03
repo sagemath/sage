@@ -325,7 +325,7 @@ class FilteredAlgebrasWithBasis(FilteredModulesCategory):
                 sage: def map_on_basis(m):  # redefining map_on_basis
                 ....:     d = m.dict()
                 ....:     i = d.get('x', 0); j = d.get('y', 0); k = d.get('z', 0)
-                ....:     g = (h[1] ** i) * (h[2] ** (floor(j/2))) * (h[3] ** (floor(k/3)))
+                ....:     g = (h[1] ** i) * (h[2] ** (j // 2) * (h[3] ** (k // 3)))
                 ....:     g += i * (h[1] ** (i+j+k))
                 ....:     return g
                 sage: f = A.module_morphism(on_basis=map_on_basis,
@@ -517,6 +517,7 @@ class FilteredAlgebrasWithBasis(FilteredModulesCategory):
             from sage.categories.graded_modules_with_basis import GradedModulesWithBasis
             cat = GradedModulesWithBasis(self.base_ring())
             from_gr = self.from_graded_conversion()
+
             def on_basis(m):
                 i = grA.degree_on_basis(m)
                 lifted_img_of_m = f(from_gr(grA.monomial(m)))
@@ -539,4 +540,3 @@ class FilteredAlgebrasWithBasis(FilteredModulesCategory):
 
     class ElementMethods:
         pass
-

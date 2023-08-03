@@ -1,3 +1,4 @@
+# sage.doctest: optional - sage.rings.padics
 r"""
 Local Generic
 
@@ -196,7 +197,7 @@ class LocalGeneric(CommutativeRing):
             O(5^8)
             sage: S = ZpLC(5, 15)
             doctest:...: FutureWarning: This class/method/function is marked as experimental. It, its functionality or its interface might change without a formal deprecation.
-            See http://trac.sagemath.org/23505 for details.
+            See https://github.com/sagemath/sage/issues/23505 for details.
             sage: S.is_lattice_prec()
             True
             sage: x = S(25, 8)
@@ -230,7 +231,7 @@ class LocalGeneric(CommutativeRing):
             sage: latex(Zq(27,names='a')) #indirect doctest
             \Bold{Z}_{3^{3}}
         """
-        return self._repr_(do_latex = True)
+        return self._repr_(do_latex=True)
 
     def change(self, **kwds):
         r"""
@@ -375,11 +376,31 @@ class LocalGeneric(CommutativeRing):
             37-adic Ring with lattice-cap precision (label: change)
             sage: S.change(label = "new")
             37-adic Ring with lattice-cap precision (label: new)
+
+
+        TESTS:
+
+        The `secure` attribute for relaxed type is copied::
+
+            sage: R = ZpER(5, secure=True); R
+            5-adic Ring handled with relaxed arithmetics
+            sage: K = R.change(field=True); K
+            5-adic Field handled with relaxed arithmetics
+            sage: K.is_secure()
+            True
+
+        The `check=False` option works for relaxed type::
+
+            sage: R = ZpER(5) ; R
+            5-adic Ring handled with relaxed arithmetics
+            sage: K = R.change(field=True, check=False) ; K
+            5-adic Field handled with relaxed arithmetics
         """
         # We support both print_* and * for *=mode, pos, sep, alphabet
         for atr in ('print_mode', 'print_pos', 'print_sep', 'print_alphabet'):
             if atr in kwds:
                 kwds[atr[6:]] = kwds.pop(atr)
+
         def get_unramified_modulus(q, res_name):
             from sage.rings.finite_rings.finite_field_constructor import FiniteField as GF
             return GF(q, res_name).modulus().change_ring(ZZ)
@@ -681,7 +702,6 @@ class LocalGeneric(CommutativeRing):
         """
         return self
 
-
     def absolute_degree(self):
         r"""
         Return the degree of this extension over the prime p-adic field/ring.
@@ -734,7 +754,6 @@ class LocalGeneric(CommutativeRing):
             return self.absolute_degree()
         else:
             raise NotImplementedError("For a relative p-adic ring or field you must use relative_degree or absolute_degree as appropriate")
-
 
     def absolute_e(self):
         r"""
@@ -842,7 +861,6 @@ class LocalGeneric(CommutativeRing):
             2
         """
         return self.e()
-
 
     def absolute_f(self):
         r"""
@@ -1055,7 +1073,7 @@ class LocalGeneric(CommutativeRing):
         tester = self._tester(**options)
         for x in tester.some_elements():
             tester.assertEqual(x.add_bigoh(x.precision_absolute()), x)
-            from sage.rings.all import infinity
+            from sage.rings.infinity import infinity
             tester.assertEqual(x.add_bigoh(infinity), x)
             tester.assertEqual(x.add_bigoh(x.precision_absolute()+1), x)
 
@@ -1171,7 +1189,6 @@ class LocalGeneric(CommutativeRing):
                 M[i,j] <<= s
         return shift_rows, shift_cols
 
-
     def _matrix_smith_form(self, M, transformation, integral, exact):
         r"""
         Return the Smith normal form of the matrix `M`.
@@ -1276,7 +1293,7 @@ class LocalGeneric(CommutativeRing):
             [O(5^10) O(5^10)]
             [O(5^10) O(5^10)]
         """
-        from sage.rings.all import infinity
+        from sage.rings.infinity import infinity
         from .precision_error import PrecisionError
         from copy import copy
         n = M.nrows()
@@ -1458,7 +1475,7 @@ class LocalGeneric(CommutativeRing):
         tester.assertEqual(self.residue_field().characteristic(), self.residue_characteristic())
 
         from itertools import chain
-        from sage.all import MatrixSpace
+        from sage.matrix.matrix_space import MatrixSpace
         from .precision_error import PrecisionError
         matrices = chain(*[MatrixSpace(self, n, m).some_elements() for n in (1,3,7) for m in (1,4,7)])
         for M in tester.some_elements(matrices):

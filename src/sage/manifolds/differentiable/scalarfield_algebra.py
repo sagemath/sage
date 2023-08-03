@@ -32,7 +32,7 @@ REFERENCES:
 #******************************************************************************
 
 from sage.rings.infinity import infinity
-from sage.symbolic.ring import SR
+from sage.symbolic.ring import SymbolicRing
 from sage.manifolds.scalarfield_algebra import ScalarFieldAlgebra
 from sage.manifolds.differentiable.scalarfield import DiffScalarField
 
@@ -406,6 +406,10 @@ class DiffScalarFieldAlgebra(ScalarFieldAlgebra):
             sage: CM = M.scalar_field_algebra()
             sage: CM._coerce_map_from_(SR)
             True
+            sage: SCR = SR.subring(no_variables=True); SCR
+            Symbolic Constants Subring
+            sage: CM._coerce_map_from_(SCR)
+            True
             sage: CM._coerce_map_from_(X.function_ring())
             True
             sage: U = M.open_subset('U', coord_def={X: x>0})
@@ -418,7 +422,7 @@ class DiffScalarFieldAlgebra(ScalarFieldAlgebra):
         """
         from sage.manifolds.chart_func import ChartFunctionRing
 
-        if other is SR:
+        if isinstance(other, SymbolicRing):
             return True  # coercion from the base ring (multiplication by the
                          # algebra unit, i.e. self.one())
                          # cf. ScalarField._lmul_() for the implementation of

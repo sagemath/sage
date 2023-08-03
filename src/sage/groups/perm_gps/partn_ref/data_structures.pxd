@@ -13,7 +13,6 @@ from sage.data_structures.bitset_base cimport *
 from libc.string cimport memcpy
 from libc.stdlib cimport rand
 from sage.libs.gmp.mpz cimport *
-from sage.groups.perm_gps.partn_ref2.refinement_generic cimport PartitionRefinement_generic
 
 
 cdef enum:
@@ -151,7 +150,8 @@ cdef inline int OP_merge_list_perm(OrbitPartition *OP, int *gamma):
     """
     cdef int i, i_root, gamma_i_root, changed = 0
     for i from 0 <= i < OP.degree:
-        if gamma[i] == i: continue
+        if gamma[i] == i:
+            continue
         i_root = OP_find(OP, i)
         gamma_i_root = OP_find(OP, gamma[i])
         if i_root != gamma_i_root:
@@ -259,8 +259,7 @@ cdef PS_print(PartitionStack *PS)
 
 cdef void PS_unit_partition(PartitionStack *PS)
 
-cdef int PS_first_smallest(PartitionStack *PS, bitset_t b, int *second_pos=?,
-        PartitionRefinement_generic partn_ref_alg=?)
+cdef int PS_first_smallest(PartitionStack *PS, bitset_t b, int *second_pos=?)
 
 cdef PartitionStack *PS_from_list(list L)
 
@@ -508,8 +507,10 @@ cdef inline bint SC_contains(StabilizerChain *SC, int level, int *pi, bint modif
     for i from level <= i < SC.base_size:
         b = SC.base_orbits[i][0]
         x = perm[b]
-        if x == b: continue
-        if SC.parents[i][x] == -1: return 0
+        if x == b:
+            continue
+        if SC.parents[i][x] == -1:
+            return 0
         SC_compose_up_to_base(SC, i, x, perm)
     return SC_perm_is_identity(perm, n)
 

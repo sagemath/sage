@@ -1,7 +1,6 @@
 """
-Number-Theoretic Functions
+Number-theoretic functions
 """
-
 # ****************************************************************************
 #       Copyright (C) 2005 William Stein <wstein@gmail.com>
 #
@@ -16,12 +15,13 @@ Number-Theoretic Functions
 #
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-
 import sys
-import sage.rings.complex_mpfr as complex_field
 
-from sage.rings.all import (ComplexField, ZZ, RR, RDF)
-from sage.rings.complex_mpfr import is_ComplexNumber
+from sage.rings.integer_ring import ZZ
+from sage.rings.real_mpfr import RR
+from sage.rings.real_double import RDF
+from sage.rings.complex_mpfr import ComplexField, is_ComplexNumber
+from sage.rings.cc import CC
 from sage.rings.real_mpfr import (RealField, is_RealNumber)
 
 from sage.symbolic.function import GinacFunction, BuiltinFunction
@@ -32,7 +32,6 @@ from sage.combinat.combinat import bernoulli_polynomial
 from .gamma import psi
 from .other import factorial
 
-CC = complex_field.ComplexField()
 I = CC.gen(0)
 
 
@@ -140,8 +139,20 @@ class Function_zeta(GinacFunction):
             +infinity
             sage: zeta(SR(1.0))
             Infinity
+
+        Fixed conversion::
+
+            sage: zeta(3)._maple_init_()
+            'Zeta(3)'
+            sage: zeta(3)._maple_().sage()  # optional - maple
+            zeta(3)
         """
-        GinacFunction.__init__(self, 'zeta', conversions={'giac':'Zeta'})
+        GinacFunction.__init__(self, 'zeta',
+                               conversions={'giac': 'Zeta',
+                                            'maple': 'Zeta',
+                                            'sympy': 'zeta',
+                                            'mathematica': 'Zeta'})
+
 
 zeta = Function_zeta()
 
@@ -197,6 +208,7 @@ class Function_stieltjes(GinacFunction):
                             conversions=dict(mathematica='StieltjesGamma',
                                 sympy='stieltjes'),
                             latex_name=r'\gamma')
+
 
 stieltjes = Function_stieltjes()
 
@@ -267,6 +279,7 @@ class Function_HurwitzZeta(BuiltinFunction):
         else:
             raise NotImplementedError('derivative with respect to first '
                                       'argument')
+
 
 hurwitz_zeta_func = Function_HurwitzZeta()
 
@@ -354,7 +367,8 @@ class Function_zetaderiv(GinacFunction):
             sage: zetaderiv(b, 1)
             zetaderiv([1.500000000 +/- 1.01e-10], 1)
         """
-        GinacFunction.__init__(self, "zetaderiv", nargs=2)
+        GinacFunction.__init__(self, "zetaderiv", nargs=2,
+                               conversions=dict(maple="Zeta"))
 
     def _evalf_(self, n, x, parent=None, algorithm=None):
         r"""
@@ -377,7 +391,9 @@ class Function_zetaderiv(GinacFunction):
         """
         return [x, k]
 
+
 zetaderiv = Function_zetaderiv()
+
 
 def zeta_symmetric(s):
     r"""
@@ -432,10 +448,12 @@ def zeta_symmetric(s):
     if s == 1:  # deal with poles, hopefully
         return R(0.5)
 
-    return (s/2 + 1).gamma()   *    (s-1)   * (R.pi()**(-s/2))  *  s.zeta()
+    return (s/2 + 1).gamma() * (s-1) * (R.pi()**(-s/2)) * s.zeta()
+
 
 import math
 from sage.rings.polynomial.polynomial_real_mpfr_dense import PolynomialRealDense
+
 
 class DickmanRho(BuiltinFunction):
     r"""
@@ -652,5 +670,6 @@ class DickmanRho(BuiltinFunction):
             xi -= y/dydxi
             y = (exp(xi)-1.0)/xi - x
         return (-x*xi + RR(xi).eint()).exp() / (sqrt(2*pi*x)*xi)
+
 
 dickman_rho = DickmanRho()

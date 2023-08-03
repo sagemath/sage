@@ -17,7 +17,7 @@ import sys
 import traceback
 
 
-class TestSuite(object):
+class TestSuite():
     """
     Test suites for Sage objects.
 
@@ -576,7 +576,7 @@ class InstanceTester(unittest.TestCase):
         return list(some_tuples(S, repeat, self._max_runs, self._max_samples))
 
 
-class PythonObjectWithTests(object):
+class PythonObjectWithTests():
     """
     Utility class for running basis tests on a plain Python object
     (that is not in SageObject). More test methods can be added here.
@@ -610,7 +610,7 @@ class PythonObjectWithTests(object):
             :func:`dumps`, :func:`loads`
         """
         tester = instance_tester(self, **options)
-        from sage.misc.all import loads, dumps
+        from sage.misc.persist import loads, dumps
         tester.assertEqual(loads(dumps(self._instance)), self._instance)
 
     def _test_new(self, **options):

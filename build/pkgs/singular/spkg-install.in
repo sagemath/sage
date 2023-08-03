@@ -93,16 +93,12 @@ config()
 
 build_singular()
 {
-    for subdir in omalloc gfanlib resources omalloc factory libpolys gfanlib IntegerProgramming; do
-        sdh_make -w -C $subdir
-    done
-    # Possible parallelization bugs in subdirectory Singular
-    sdh_make -j1
+    sdh_make
     sdh_make_install
 
     # Singular tarballs made using "make dist" (without --enable-doc-build) do not contain built documentation.
     if [ ! -e doc/doc.tbz2 ]; then
-        (cd doc && make singular.hlp && sdh_install singular.hlp "$SAGE_SHARE/info/") || sdh_die "Building documentation failed"
+        (cd doc && make singular.info && sdh_install singular.info "$SAGE_SHARE/info/") || sdh_die "Building documentation failed"
     fi
 }
 

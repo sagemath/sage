@@ -91,7 +91,7 @@ Sage example in ./sol/polynomes.tex, line 408::
 
 Sage example in ./sol/polynomes.tex, line 428::
 
-  sage: s.rational_reconstruct(mul(x-i for i in range(4)), 1, 2)
+  sage: s.rational_reconstruction(mul(x-i for i in range(4)), 1, 2)
   (15*x + 2, x^2 + 11*x + 15)
 
 Sage example in ./sol/polynomes.tex, line 454::
@@ -106,4 +106,3 @@ Sage example in ./sol/polynomes.tex, line 454::
   + 21844/6081075*x^13 + O(x^15)
 
 """
-

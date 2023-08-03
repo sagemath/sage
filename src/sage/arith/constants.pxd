@@ -3,7 +3,7 @@
 # float. We use these instead of decimal constants like 3.1415...
 # because the hex floats are exactly representable as "double", so there
 # shouldn't be any rounding issues in the compiler.
-# See https://trac.sagemath.org/ticket/23919#comment:15
+# See https://github.com/sagemath/sage/issues/23919#comment:15
 #
 # Hex floats are standardized in C99, but GCC accepts them
 # unconditionally, also for C++ code.

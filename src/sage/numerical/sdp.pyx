@@ -217,21 +217,20 @@ AUTHORS:
 - Dima Pasechnik      (2014-)    : supervision, minor fixes, duality
 
 """
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2014 Ingolfur Edvardsson <ingolfured@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.structure.parent cimport Parent
 from sage.structure.element cimport Element
-from sage.misc.cachefunc import cached_method
 from sage.numerical.linear_functions import is_LinearFunction, is_LinearConstraint
-from sage.matrix.all import Matrix
+from sage.matrix.constructor import Matrix
 from sage.structure.element import is_Matrix
 
 
@@ -380,7 +379,7 @@ cdef class SemidefiniteProgram(SageObject):
 
              sage: p = SemidefiniteProgram()
              sage: p.linear_function({0:1})
-             x_0 
+             x_0
         """
         parent = self.linear_functions_parent()
         return parent(x)
@@ -388,37 +387,36 @@ cdef class SemidefiniteProgram(SageObject):
     linear_function = __call__
 
     def _repr_(self):
-         r"""
-         Returns a short description of the ``SemidefiniteProgram``.
+        r"""
+        Return a short description of the ``SemidefiniteProgram``.
 
-         EXAMPLES::
+        EXAMPLES::
 
-             sage: p = SemidefiniteProgram()
-             sage: x = p.new_variable()
-             sage: a1 = matrix([[1, 2.], [2., 3.]])
-             sage: a2 = matrix([[3, 4.], [4., 5.]])
-             sage: a3 = matrix([[5, 6.], [6., 7.]])
-             sage: b1 = matrix([[1, 1.], [1., 1.]])
-             sage: b2 = matrix([[2, 2.], [2., 2.]])
-             sage: b3 = matrix([[3, 3.], [3., 3.]])
-             sage: p.add_constraint(a1*x[0] + a2*x[1] <= a3)
-             sage: p.add_constraint(b1*x[0] + b2*x[1] <= b3)
-             sage: p.add_constraint(b1*x[0] + b2*x[1] <= a1)
-             sage: print(p)
-             Semidefinite Program ( maximization, 2 variables, 3 constraints )
-         """
-         cdef GenericSDPBackend b = self._backend
+            sage: p = SemidefiniteProgram()
+            sage: x = p.new_variable()
+            sage: a1 = matrix([[1, 2.], [2., 3.]])
+            sage: a2 = matrix([[3, 4.], [4., 5.]])
+            sage: a3 = matrix([[5, 6.], [6., 7.]])
+            sage: b1 = matrix([[1, 1.], [1., 1.]])
+            sage: b2 = matrix([[2, 2.], [2., 2.]])
+            sage: b3 = matrix([[3, 3.], [3., 3.]])
+            sage: p.add_constraint(a1*x[0] + a2*x[1] <= a3)
+            sage: p.add_constraint(b1*x[0] + b2*x[1] <= b3)
+            sage: p.add_constraint(b1*x[0] + b2*x[1] <= a1)
+            sage: print(p)
+            Semidefinite Program ( maximization, 2 variables, 3 constraints )
+        """
+        cdef GenericSDPBackend b = self._backend
 
-         return ("Semidefinite Program "+
+        return ("Semidefinite Program " +
 
-                 ( "\"" +self._backend.problem_name()+ "\""
-                   if (str(self._backend.problem_name()) != "") else "")+
+                ( "\"" +self._backend.problem_name()+ "\""
+                  if (str(self._backend.problem_name()) != "") else "")+
 
-                 " ( " + ("maximization" if b.is_maximization() else "minimization" ) +
+                " ( " + ("maximization" if b.is_maximization() else "minimization" ) +
 
-                 ", " + str(b.ncols()) + " variables, " +
-                 str(b.nrows()) + " constraints )")
-
+                ", " + str(b.ncols()) + " variables, " +
+                str(b.nrows()) + " constraints )")
 
     def __getitem__(self, v):
         r"""
@@ -1238,7 +1236,7 @@ cdef class SDPVariable(Element):
             sage: p.new_variable()
             SDPVariable
         """
-        super(SDPVariable, self).__init__(parent)
+        super().__init__(parent)
         self._dict = {}
         self._p = sdp
         self._name = name

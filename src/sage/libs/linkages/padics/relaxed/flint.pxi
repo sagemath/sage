@@ -259,7 +259,7 @@ cdef inline void digit_smallest(cdigit res, cdigit carry, cdigit a, PowComputer_
     - ``a`` -- a ``cdigit``, the digit to reduce
     - ``prime_pow`` -- the PowComputer for the ring
 
-    NOTE::
+    .. NOTE::
 
         This function assumes that ``a`` is always reduced in the
         usual sense, that is belongs to the range `[0, p-1]`.
@@ -383,7 +383,7 @@ cdef inline void element_get_slice(fmpz_poly_t res, fmpz_poly_t x, slong start, 
     - ``start`` -- an integer, the start position of the slice
     - ``length`` -- an integer, the length of the slice
 
-    NOTE::
+    .. NOTE::
 
         The function only sets up a pointer to the requested slice
         (the slice is not copied). Hence any future modification

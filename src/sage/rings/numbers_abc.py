@@ -14,8 +14,6 @@ Support Python's numbers abstract base class
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-import numbers
-
 
 def register_sage_classes():
     """
@@ -59,29 +57,11 @@ def register_sage_classes():
 
     Because we do this, NumPy's ``isscalar()`` recognizes Sage types::
 
-        sage: from numpy import isscalar
-        sage: isscalar(3.141)
+        sage: from numpy import isscalar                                                # optional - numpy
+        sage: isscalar(3.141)                                                           # optional - numpy
         True
-        sage: isscalar(4/17)
+        sage: isscalar(4/17)                                                            # optional - numpy
         True
     """
-    from sage.rings.integer import Integer
-    from sage.rings.rational import Rational
-    from sage.rings.real_mpfr import RealNumber
-    from sage.rings.real_double import RealDoubleElement
-    from sage.rings.complex_mpfr import ComplexNumber
-    from sage.rings.complex_double import ComplexDoubleElement
-    from sage.rings.complex_mpc import MPComplexNumber
-    from sage.rings.qqbar import AlgebraicReal, AlgebraicNumber
-
-    numbers.Integral.register(Integer)
-    numbers.Rational.register(Rational)
-    numbers.Real.register(RealNumber)
-    numbers.Real.register(RealDoubleElement)
-    numbers.Real.register(AlgebraicReal)
-    numbers.Complex.register(ComplexNumber)
-    numbers.Complex.register(MPComplexNumber)
-    numbers.Complex.register(ComplexDoubleElement)
-    numbers.Complex.register(AlgebraicNumber)
-
-register_sage_classes()
+    from sage.misc.superseded import deprecation
+    deprecation(32641, "register_sage_classes is a deprecated no-op")

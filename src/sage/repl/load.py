@@ -73,8 +73,8 @@ def load_cython(name):
 
 def load(filename, globals, attach=False):
     r"""
-    Execute a file in the scope given by ``globals``. If the name
-    starts with ``http://``, it is treated as a URL and downloaded.
+    Execute a file in the scope given by ``globals``. If the name starts with
+    ``http://`` or ``https://``, it is treated as a URL and downloaded.
 
     .. NOTE::
 
@@ -148,7 +148,7 @@ def load(filename, globals, attach=False):
 
     We load a file given at a remote URL (not tested for security reasons)::
 
-        sage: sage.repl.load.load('http://www.sagemath.org/files/loadtest.py', globals())  # not tested
+        sage: sage.repl.load.load('https://www.sagemath.org/files/loadtest.py', globals())  # not tested
         hi from the net
         5
 
@@ -168,7 +168,7 @@ def load(filename, globals, attach=False):
 
     You cannot attach remote URLs (yet)::
 
-        sage: sage.repl.load.load('http://www.sagemath.org/files/loadtest.py', globals(), attach=True)  # optional - internet
+        sage: sage.repl.load.load('https://www.sagemath.org/files/loadtest.py', globals(), attach=True)  # optional - internet
         Traceback (most recent call last):
         ...
         NotImplementedError: you cannot attach a URL
@@ -213,7 +213,7 @@ def load(filename, globals, attach=False):
         sage: sage.repl.load.load("this file should not exist", globals())
         Traceback (most recent call last):
         ...
-        IOError: did not find file 'this file should not exist' to load or attach
+        OSError: did not find file 'this file should not exist' to load or attach
     """
     if attach:
         from sage.repl.attach import add_attached_file
@@ -258,7 +258,7 @@ def load(filename, globals, attach=False):
             # Preparse to a file to enable tracebacks with
             # code snippets. Use preparse_file_named to make
             # the file name appear in the traceback as well.
-            # See Trac 11812.
+            # See Issue 11812.
             if attach:
                 add_attached_file(fpath)
             with open(preparse_file_named(fpath)) as f:

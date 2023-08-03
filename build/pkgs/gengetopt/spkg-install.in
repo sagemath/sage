@@ -1,0 +1,7 @@
+cd src
+
+# Only run "make install" in the src directory to avoid the
+# documentation, which currently (due to a bug) tries to invoke the
+# "makeinfo" program.
+cd src
+sdh_make_install

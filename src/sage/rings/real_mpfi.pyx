@@ -230,10 +230,10 @@ specified if given a non-interval and an interval::
 
 TESTS::
 
-    sage: import numpy
-    sage: RIF(2) == numpy.int8('2')
+    sage: import numpy                                                                  # optional - numpy
+    sage: RIF(2) == numpy.int8('2')                                                     # optional - numpy
     True
-    sage: numpy.int8('2') == RIF(2)
+    sage: numpy.int8('2') == RIF(2)                                                     # optional - numpy
     True
     sage: RIF(0,1) < float('2')
     Traceback (most recent call last):
@@ -264,7 +264,7 @@ from sage.libs.mpfi cimport *
 from sage.arith.constants cimport LOG_TEN_TWO_PLUS_EPSILON
 
 cimport sage.structure.element
-from sage.structure.element cimport RingElement, Element, ModuleElement
+from sage.structure.element cimport RingElement, Element
 from sage.structure.element cimport have_same_parent
 from sage.structure.parent cimport Parent
 from sage.structure.richcmp cimport richcmp
@@ -272,13 +272,10 @@ from sage.structure.richcmp cimport richcmp
 from .convert.mpfi cimport mpfi_set_sage
 from .real_mpfr cimport RealField_class, RealNumber, RealField
 from .integer cimport Integer
-from .real_double cimport RealDoubleElement
-from .real_double import RDF
 from .integer_ring import ZZ
 from .rational_field import QQ
-from sage.categories.morphism cimport Map
 
-cimport sage.rings.real_mpfr as real_mpfr
+cimport sage.rings.abc
 
 import math  # for log
 import sys
@@ -345,7 +342,7 @@ cpdef RealIntervalField_class RealIntervalField(prec=53, sci_not=False):
         return R
 
 
-cdef class RealIntervalField_class(Field):
+cdef class RealIntervalField_class(sage.rings.abc.RealIntervalField):
     """
     Class of the real interval field.
 
@@ -534,6 +531,7 @@ cdef class RealIntervalField_class(Field):
         self.__lower_field = RealField(prec, sci_not, "RNDD")
         self.__middle_field = RealField(prec, sci_not, "RNDN")
         self.__upper_field = RealField(prec, sci_not, "RNDU")
+        self._multiplicative_order = None
         from sage.categories.fields import Fields
         Field.__init__(self, self, category=Fields().Infinite())
         self._populate_coercion_lists_(convert_method_name="_real_mpfi_")
@@ -813,8 +811,7 @@ cdef class RealIntervalField_class(Field):
             return True
         if isinstance(S, RealIntervalField_class):
             return (<RealIntervalField_class>S).__prec >= prec
-        from .number_field.number_field import NumberField_quadratic
-        if isinstance(S, NumberField_quadratic):
+        if isinstance(S, sage.rings.abc.NumberField_quadratic):
             return S.discriminant() > 0
 
         # If coercion to RR is possible and there is a _real_mpfi_
@@ -870,19 +867,17 @@ cdef class RealIntervalField_class(Field):
 
         EXAMPLES::
 
-            sage: RIF.random_element()
-            0.15363619378561300?
-            sage: RIF.random_element()
-            -0.50298737524751780?
-            sage: RIF.random_element(-100, 100)
-            60.958996432224126?
+            sage: RIF.random_element().parent() is RIF
+            True
+            sage: -100 <= RIF.random_element(-100, 100) <= 100
+            True
 
         Passes extra positional or keyword arguments through::
 
-            sage: RIF.random_element(min=0, max=100)
-            2.5572702830891970?
-            sage: RIF.random_element(min=-100, max=0)
-            -1.5803457307118123?
+            sage: 0 <= RIF.random_element(min=0, max=100) <= 100
+            True
+            sage: -100 <= RIF.random_element(min=-100, max=0) <= 0
+            True
         """
         return self(self.middle_field().random_element(*args, **kwds))
 
@@ -960,7 +955,7 @@ cdef class RealIntervalField_class(Field):
             False
         """
         try:
-            s = codomain._coerce_(self(1))
+            s = codomain.coerce(self(1))
         except TypeError:
             return False
         return s == im_gens[0]
@@ -978,7 +973,7 @@ cdef class RealIntervalField_class(Field):
         """
         if key == 'element_is_atomic':
             return True
-        return super(RealIntervalField_class, self)._repr_option(key)
+        return super()._repr_option(key)
 
     def characteristic(self):
         """
@@ -1285,7 +1280,7 @@ cdef class RealIntervalFieldElement(RingElement):
         """
         return (__create__RealIntervalFieldElement_version1, (self._parent, self.upper(), self.lower()))
 
-    def  __dealloc__(self):
+    def __dealloc__(self):
         """
         Deallocate ``self``.
 
@@ -1944,12 +1939,12 @@ cdef class RealIntervalFieldElement(RingElement):
 
         cdef long digits
         digits = strlen(lower_s)
-        if lower_s[0] == '-':
+        if lower_s[0] == b'-':
             digits -= 1
         lower_expo -= digits
 
         digits = strlen(upper_s)
-        if upper_s[0] == '-':
+        if upper_s[0] == b'-':
             digits -= 1
         upper_expo -= digits
 
@@ -2118,7 +2113,7 @@ cdef class RealIntervalFieldElement(RingElement):
             raise MemoryError("Unable to allocate memory for the mantissa of an interval")
         mpz_get_str(tmp_cstr, base, lower_mpz)
         digits = strlen(tmp_cstr)
-        if tmp_cstr[0] == '-':
+        if tmp_cstr[0] == b'-':
             digits -= 1
             mant_string = bytes_to_str(tmp_cstr+1)
             sign_string = bytes_to_str(b'-')
@@ -2182,6 +2177,16 @@ cdef class RealIntervalFieldElement(RingElement):
 
             sage: a = RIF(3.5)
             sage: copy(a) is  a
+            True
+        """
+        return self
+
+    def __deepcopy__(self, memo):
+        """
+        EXAMPLES::
+
+            sage: a = RIF(3.5)
+            sage: deepcopy(a) is  a
             True
         """
         return self
@@ -2577,7 +2582,7 @@ cdef class RealIntervalFieldElement(RingElement):
             sage: RIF(1) + RR(1)
             doctest:...:
             DeprecationWarning: automatic conversions from floating-point numbers to intervals are deprecated
-            See http://trac.sagemath.org/15114 for details.
+            See https://github.com/sagemath/sage/issues/15114 for details.
             2
             sage: import warnings; warnings.resetwarnings()
         """
@@ -2601,7 +2606,7 @@ cdef class RealIntervalFieldElement(RingElement):
             sage: RIF(2) - RR(1)
             doctest:...:
             DeprecationWarning: automatic conversions from floating-point numbers to intervals are deprecated
-            See http://trac.sagemath.org/15114 for details.
+            See https://github.com/sagemath/sage/issues/15114 for details.
             1
             sage: import warnings; warnings.resetwarnings()
         """
@@ -2625,7 +2630,7 @@ cdef class RealIntervalFieldElement(RingElement):
             sage: RIF(1) * RR(1)
             doctest:...:
             DeprecationWarning: automatic conversions from floating-point numbers to intervals are deprecated
-            See http://trac.sagemath.org/15114 for details.
+            See https://github.com/sagemath/sage/issues/15114 for details.
             1
             sage: import warnings; warnings.resetwarnings()
         """
@@ -2649,7 +2654,7 @@ cdef class RealIntervalFieldElement(RingElement):
             sage: RIF(1) / RR(1/2)
             doctest:...:
             DeprecationWarning: automatic conversions from floating-point numbers to intervals are deprecated
-            See http://trac.sagemath.org/15114 for details.
+            See https://github.com/sagemath/sage/issues/15114 for details.
             2
             sage: import warnings; warnings.resetwarnings()
         """
@@ -2903,7 +2908,7 @@ cdef class RealIntervalFieldElement(RingElement):
             sage: RIF(1.0) << 32
             4294967296
         """
-        if isinstance(x, RealIntervalFieldElement) and isinstance(y, (int,long, Integer)):
+        if isinstance(x, RealIntervalFieldElement) and isinstance(y, (int, Integer)):
             return x._lshift_(y)
         return sage.structure.element.bin_op(x, y, operator.lshift)
 
@@ -2926,8 +2931,9 @@ cdef class RealIntervalFieldElement(RingElement):
 
     def __rshift__(x, y):
         """
-        Returns `x / 2^y`, for `y` an integer. Much faster
-        than an ordinary division.
+        Return `x / 2^y`, for `y` an integer.
+
+        Much faster than an ordinary division.
 
         EXAMPLES::
 
@@ -2935,7 +2941,7 @@ cdef class RealIntervalFieldElement(RingElement):
             0.062500000000000000?
         """
         if isinstance(x, RealIntervalFieldElement) and \
-               isinstance(y, (int,long,Integer)):
+               isinstance(y, (int, Integer)):
             return x._rshift_(y)
         return sage.structure.element.bin_op(x, y, operator.rshift)
 
@@ -3893,7 +3899,7 @@ cdef class RealIntervalFieldElement(RingElement):
         elif op == Py_GE:  # >=
             return mpfr_lessequal_p(&rt.value.right, &lt.value.left)
 
-    def __nonzero__(self):
+    def __bool__(self):
         """
         Return ``True`` if ``self`` is not known to be exactly zero.
 
@@ -4315,7 +4321,6 @@ cdef class RealIntervalFieldElement(RingElement):
     # Special Functions
     ############################
 
-
     def sqrt(self):
         """
             Return a square root of ``self``. Raises an error if ``self`` is
@@ -4403,13 +4408,13 @@ cdef class RealIntervalFieldElement(RingElement):
         """
         if exponent == 2:
             return self.square()
-        if isinstance(exponent, (int, long, Integer)):
+        if isinstance(exponent, (int, Integer)):
             q, r = divmod (exponent, 2)
-            if r == 0: # x^(2q) = (x^q)^2
-               xq = RingElement.__pow__(self, q)
-               return xq.abs().square()
+            if r == 0:  # x^(2q) = (x^q)^2
+                xq = RingElement.__pow__(self, q)
+                return xq.abs().square()
             else:
-               return RingElement.__pow__(self, exponent)
+                return RingElement.__pow__(self, exponent)
         return (self.log() * exponent).exp()
 
     def log(self, base='e'):
@@ -4535,7 +4540,7 @@ cdef class RealIntervalFieldElement(RingElement):
         return x
 
     def exp2(self):
-        """
+        r"""
         Returns `2^\mathtt{self}`
 
         EXAMPLES::
@@ -5348,7 +5353,8 @@ def __create__RealIntervalField_version0(prec, sci_not):
     """
     return RealIntervalField(prec, sci_not)
 
-## Keep all old versions!!!
+
+# Keep all old versions!!!
 def __create__RealIntervalFieldElement_version0(parent, x, base=10):
     """
     For pickling.
@@ -5359,6 +5365,7 @@ def __create__RealIntervalFieldElement_version0(parent, x, base=10):
         2.2000000000000002?
     """
     return RealIntervalFieldElement(parent, x, base=base)
+
 
 def __create__RealIntervalFieldElement_version1(parent, lower, upper):
     """

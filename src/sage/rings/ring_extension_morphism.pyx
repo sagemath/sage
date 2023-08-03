@@ -93,7 +93,7 @@ cdef class RingExtensionHomomorphism(RingMap):
                 a |--> 1 - a
 
         sage: type(phi)
-        <type 'sage.rings.ring_extension_morphism.RingExtensionHomomorphism'>
+        <class 'sage.rings.ring_extension_morphism.RingExtensionHomomorphism'>
 
         sage: TestSuite(phi).run()
 
@@ -160,7 +160,7 @@ cdef class RingExtensionHomomorphism(RingMap):
                 gens = domain.gens(base)
             else:
                 base = domain
-                gens = tuple([])
+                gens = tuple()
                 while True:
                     if len(gens) == len(defn):
                         break
@@ -241,6 +241,7 @@ cdef class RingExtensionHomomorphism(RingMap):
 
         EXAMPLES::
 
+            sage: x = polygen(QQ, 'x')
             sage: A.<sqrt2> = QQ.extension(x^2 - 2)
             sage: K.<sqrt2> = A.over()
             sage: f = K.hom([-sqrt2])
@@ -477,6 +478,7 @@ cdef class RingExtensionHomomorphism(RingMap):
 
         TESTS::
 
+            sage: x = polygen(ZZ, 'x')
             sage: A.<sqrt5> = QQ.extension(x^2 - 5)
             sage: K.<sqrt5> = A.over()
             sage: f = K.hom([-sqrt5])
@@ -546,7 +548,7 @@ cdef class RingExtensionBackendIsomorphism(RingExtensionHomomorphism):
           To:   Field in z9 with defining polynomial x^3 + (9*z3^2 + 5*z3 + 1)*x^2 + (4*z3 + 3)*x + 10*z3 over its base
 
         sage: type(f)
-        <type 'sage.rings.ring_extension_morphism.RingExtensionBackendIsomorphism'>
+        <class 'sage.rings.ring_extension_morphism.RingExtensionBackendIsomorphism'>
 
         sage: TestSuite(f).run()
     """
@@ -556,6 +558,7 @@ cdef class RingExtensionBackendIsomorphism(RingExtensionHomomorphism):
 
         TESTS::
 
+            sage: x = polygen(ZZ, 'x')
             sage: A.<a> = QQ.extension(x^2 - 5)
             sage: K = A.over()
             sage: K.coerce_map_from(A)
@@ -637,7 +640,7 @@ cdef class RingExtensionBackendReverseIsomorphism(RingExtensionHomomorphism):
           To:   Finite Field in z9 of size 11^9
 
         sage: type(f)
-        <type 'sage.rings.ring_extension_morphism.RingExtensionBackendReverseIsomorphism'>
+        <class 'sage.rings.ring_extension_morphism.RingExtensionBackendReverseIsomorphism'>
 
         sage: TestSuite(f).run()
 
@@ -648,6 +651,7 @@ cdef class RingExtensionBackendReverseIsomorphism(RingExtensionHomomorphism):
 
         TESTS::
 
+            sage: x = polygen(ZZ, 'x')
             sage: A.<a> = QQ.extension(x^2 - 5)
             sage: K = A.over()
             sage: A.convert_map_from(K)
@@ -723,7 +727,7 @@ cdef class MapFreeModuleToRelativeRing(Map):
         sage: K = GF(5^2).over()
         sage: V, i, j = K.free_module()
         sage: type(i)
-        <type 'sage.rings.ring_extension_morphism.MapFreeModuleToRelativeRing'>
+        <class 'sage.rings.ring_extension_morphism.MapFreeModuleToRelativeRing'>
 
     """
     def __init__(self, E, K):
@@ -810,7 +814,7 @@ cdef class MapRelativeRingToFreeModule(Map):
         sage: K = GF(5^2).over()
         sage: V, i, j = K.free_module()
         sage: type(j)
-        <type 'sage.rings.ring_extension_morphism.MapRelativeRingToFreeModule'>
+        <class 'sage.rings.ring_extension_morphism.MapRelativeRingToFreeModule'>
 
     """
     def __init__(self, E, K):

@@ -1,0 +1,15 @@
+prune sage
+
+global-include all__sagemath_environment.py
+
+include sage/env.py
+include sage/version.py
+include sage/misc/package.py
+include sage/misc/package_dir.py
+include sage/misc/temporary_file.py
+include sage/misc/viewer.py
+graft sage/features
+
+include VERSION.txt
+
+global-exclude *.py[co]

@@ -1,5 +1,5 @@
 r"""
-Hypergeometric Functions
+Hypergeometric functions
 
 This module implements manipulation of infinite hypergeometric series
 represented in standard parametric form (as `\,_pF_q` functions).
@@ -19,8 +19,11 @@ Examples from :trac:`9908`::
     sage: sum(((2*I)^x/(x^3 + 1)*(1/4)^x), x, 0, oo)
     hypergeometric((1, 1, -1/2*I*sqrt(3) - 1/2, 1/2*I*sqrt(3) - 1/2),...
     (2, -1/2*I*sqrt(3) + 1/2, 1/2*I*sqrt(3) + 1/2), 1/2*I)
-    sage: sum((-1)^x/((2*x + 1)*factorial(2*x + 1)), x, 0, oo)
+    sage: res = sum((-1)^x/((2*x + 1)*factorial(2*x + 1)), x, 0, oo)
+    sage: res  # not tested - depends on maxima version
     hypergeometric((1/2,), (3/2, 3/2), -1/4)
+    sage: res in [hypergeometric((1/2,), (3/2, 3/2), -1/4), sin_integral(1)]
+    True
 
 Simplification (note that ``simplify_full`` does not yet call
 ``simplify_hypergeometric``)::
@@ -145,7 +148,7 @@ Series expansions of confluent hypergeometric functions::
 
     sage: hypergeometric_M(2, 2, x).series(x, 3)
     1 + 1*x + 1/2*x^2 + Order(x^3)
-    sage: hypergeometric_U(2, 2, x).series(x == 3, 100).subs(x=1).n() # known bug (see :trac:`25688`)
+    sage: hypergeometric_U(2, 2, x).series(x == 3, 100).subs(x=1).n()
     0.403652637676806
     sage: hypergeometric_U(2, 2, 1).n()
     0.403652637676806
@@ -162,27 +165,27 @@ Series expansions of confluent hypergeometric functions::
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
+from functools import reduce
+
+from sage.arith.misc import binomial, factorial, rising_factorial
+from sage.calculus.functional import derivative
+from sage.functions.error import erf
+from sage.functions.gamma import gamma
+from sage.functions.hyperbolic import cosh, sinh
+from sage.functions.log import exp, log
+from sage.functions.other import sqrt, real_part
+from sage.libs.mpmath import utils as mpmath_utils
+from sage.misc.latex import latex
+from sage.misc.misc_c import prod
+from sage.rings.infinity import Infinity
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
-from sage.rings.infinity import Infinity
-from sage.arith.all import binomial, rising_factorial, factorial
+from sage.structure.element import get_coercion_model
 from sage.symbolic.constants import pi
+from sage.symbolic.expression import Expression
 from sage.symbolic.function import BuiltinFunction
 from sage.symbolic.ring import SR
-from sage.structure.element import get_coercion_model
-from sage.misc.latex import latex
-from sage.misc.misc_c import prod
-from sage.libs.mpmath import utils as mpmath_utils
-from sage.symbolic.expression import Expression
-from sage.calculus.functional import derivative
-from functools import reduce
-
-from .gamma import gamma
-from .other import sqrt, real_part
-from .log import exp, log
-from .hyperbolic import cosh, sinh
-from .error import erf
 
 
 def rational_param_as_tuple(x):
@@ -388,25 +391,7 @@ class Hypergeometric(BuiltinFunction):
         return (t * derivative(z, diff_param) *
                 hypergeometric([c + 1 for c in a], [c + 1 for c in b], z))
 
-    class EvaluationMethods(object):
-        def _fast_float_(self, *args):
-            """
-            Do not support the old ``fast_float``.
-
-            OUTPUT:
-
-            This method raises ``NotImplementedError``; use the newer
-            ``fast_callable`` implementation.
-
-            EXAMPLES::
-
-                sage: f = hypergeometric([], [], x)
-                sage: f._fast_float_()
-                Traceback (most recent call last):
-                ...
-                NotImplementedError
-            """
-            raise NotImplementedError
+    class EvaluationMethods():
 
         def _fast_callable_(self, a, b, z, etb):
             """
@@ -429,8 +414,6 @@ class Hypergeometric(BuiltinFunction):
                 (x, y)
                 sage: f = fast_callable(hypergeometric([y], [], x), vars=[x, y])
                 sage: f(3, 4)
-                doctest:...: DeprecationWarning: Substitution using function-call syntax and unnamed arguments is deprecated and will be removed from a future release of Sage; you can use named arguments instead, like EXPR(x=..., y=...)
-                See http://trac.sagemath.org/5930 for details.
                 hypergeometric((4,), (), 3)
             """
             return etb.call(self, *map(etb.var, etb._vars))
@@ -1024,7 +1007,7 @@ class Hypergeometric_M(BuiltinFunction):
         raise NotImplementedError('derivative of hypergeometric function '
                                   'with respect to parameters')
 
-    class EvaluationMethods(object):
+    class EvaluationMethods():
         def generalized(self, a, b, z):
             """
             Return as a generalized hypergeometric function.
@@ -1129,7 +1112,7 @@ class Hypergeometric_U(BuiltinFunction):
         raise NotImplementedError('derivative of hypergeometric function '
                                   'with respect to parameters')
 
-    class EvaluationMethods(object):
+    class EvaluationMethods():
         def generalized(self, a, b, z):
             """
             Return in terms of the generalized hypergeometric function.

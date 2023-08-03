@@ -1,3 +1,4 @@
+# nodoctest
 # Sage documentation build configuration file, created by
 # sphinx-quickstart on Thu Aug 21 20:15:55 2008.
 #
@@ -11,13 +12,13 @@
 
 import os
 from sage.env import SAGE_DOC_SRC, SAGE_DOC
-from sage.docs.conf import release, latex_elements, exclude_patterns
-from sage.docs.conf import *
+from sage_docbuild.conf import release, latex_elements, exclude_patterns
+from sage_docbuild.conf import *
 
 # Add any paths that contain custom static files (such as style sheets),
 # relative to this directory to html_static_path. They are copied after the
 # builtin static files, so a file named "default.css" will overwrite the
-# builtin "default.css". html_common_static_path imported from sage.docs.conf
+# builtin "default.css". html_common_static_path imported from sage_docbuild.conf
 # contains common paths.
 html_static_path = [] + html_common_static_path
 
@@ -25,22 +26,19 @@ ref_src = os.path.join(SAGE_DOC_SRC, 'en', 'reference')
 ref_out = os.path.join(SAGE_DOC, 'html', 'en', 'reference')
 
 # General information about the project.
-project = "Sage Reference Manual"
-name = "reference"
+project = "Reference Manual"
 
-# The name for this set of Sphinx documents.  If None, it defaults to
-# "<project> v<release> documentation".
-html_title = project + " v"+release
-
-html_short_title = 'Sage Reference v' + release
+# The name for this set of Sphinx documents.
+html_title = project
+html_short_title = project
 
 # Output file base name for HTML help builder.
-htmlhelp_basename = name
+htmlhelp_basename = 'reference'
 
 # Grouping the document tree into LaTeX files. List of tuples
 # (source start file, target name, title, author, document class [howto/manual]).
 latex_documents = [
-  ('index', name + '.tex', 'Sage Reference Manual',
+  ('index', 'reference.tex', 'Reference Manual',
    'The Sage Development Team', 'manual'),
 ]
 

@@ -1,11 +1,11 @@
 """
-Vectors with integer mod n entries, with n small
+Vectors with integer mod `n` entries, with small `n`
 
 EXAMPLES::
 
     sage: v = vector(Integers(8),[1,2,3,4,5])
     sage: type(v)
-    <type 'sage.modules.vector_modn_dense.Vector_modn_dense'>
+    <class 'sage.modules.vector_modn_dense.Vector_modn_dense'>
     sage: v
     (1, 2, 3, 4, 5)
     sage: 3*v
@@ -64,13 +64,13 @@ TESTS::
 
     sage: K = GF(previous_prime(2^31))
     sage: v = vector(K, [42]);  type(v[0])
-    <type 'sage.rings.finite_rings.integer_mod.IntegerMod_int64'>
+    <class 'sage.rings.finite_rings.integer_mod.IntegerMod_int64'>
     sage: ~v[0]
     2096353084
 
     sage: K = GF(next_prime(2^31))
     sage: v = vector(K, [42]);  type(v[0])
-    <type 'sage.rings.finite_rings.integer_mod.IntegerMod_gmp'>
+    <class 'sage.rings.finite_rings.integer_mod.IntegerMod_gmp'>
     sage: ~v[0]
     1482786336
 
@@ -128,10 +128,10 @@ cdef mod_int ivalue(IntegerMod_abstract x) except -1:
     else:
         raise TypeError("non-fixed size integer")
 
-from sage.structure.element cimport Element, ModuleElement, RingElement, Vector
+from sage.structure.element cimport Element, Vector
 
 cimport sage.modules.free_module_element as free_module_element
-from .free_module_element import vector
+
 
 cdef class Vector_modn_dense(free_module_element.FreeModuleElement):
     cdef _new_c(self):
@@ -163,7 +163,7 @@ cdef class Vector_modn_dense(free_module_element.FreeModuleElement):
     def __cinit__(self, parent=None, x=None, coerce=True, copy=True):
         self._entries = NULL
         self._is_immutable = 0
-        if not parent is None:
+        if parent is not None:
             self._init(parent.degree(), parent, parent.base_ring().order())
 
     def __init__(self, parent, x, coerce=True, copy=True):

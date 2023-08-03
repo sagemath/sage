@@ -209,8 +209,8 @@ cdef class ElementWrapper(Element):
             sage: from sage.structure.element_wrapper import DummyParent
             sage: ElementWrapper(DummyParent("A parent"), 1)._ascii_art_()
             1
-            sage: x = var('x')
-            sage: ElementWrapper(DummyParent("A parent"), x^2 + x)._ascii_art_()
+            sage: x = var('x')                                                          # optional - sage.symbolic
+            sage: ElementWrapper(DummyParent("A parent"), x^2 + x)._ascii_art_()        # optional - sage.symbolic
              2
             x  + x
         """
@@ -226,8 +226,8 @@ cdef class ElementWrapper(Element):
             sage: from sage.structure.element_wrapper import DummyParent
             sage: ElementWrapper(DummyParent("A parent"), 1)._ascii_art_()
             1
-            sage: x = var('x')
-            sage: ElementWrapper(DummyParent("A parent"), x^2 + x)._unicode_art_()
+            sage: x = var('x')                                                          # optional - sage.symbolic
+            sage: ElementWrapper(DummyParent("A parent"), x^2 + x)._unicode_art_()      # optional - sage.symbolic
              2
             x  + x
         """
@@ -275,7 +275,7 @@ cdef class ElementWrapper(Element):
         Check that elements of equal-but-not-identical parents compare
         properly (see :trac:`19488`)::
 
-            sage: from sage.misc.nested_class_test import TestParent4
+            sage: from sage.misc.test_nested_class import TestParent4
             sage: P = TestParent4()
             sage: Q = TestParent4()
             sage: P == Q
@@ -418,8 +418,8 @@ cdef class ElementWrapper(Element):
             sage: o4.__class__
             <class '__main__.bla'>
         """
-        # Note : copy(super(ElementWrapper, self)) does not work.
-        res = super(ElementWrapper, self).__copy__()
+        # Note : copy(super()) does not work.
+        res = super().__copy__()
         res.value = copy(self.value)
         return res
 
@@ -485,7 +485,7 @@ class ElementWrapperTester(ElementWrapper):
             [n=0, value=[]]
         """
         from sage.categories.sets_cat import Sets
-        super(ElementWrapperTester, self).__init__(Sets().example("facade"), [])
+        super().__init__(Sets().example("facade"), [])
         self.n = 0
 
     def append(self, x):
@@ -561,8 +561,8 @@ cdef class ElementWrapperCheckWrappedClass(ElementWrapper):
         ::
 
             sage: A = cartesian_product([ZZ, ZZ])
-            sage: B = cartesian_product([GF(3), GF(5)])
-            sage: A((3,5)) == B((0,0))
+            sage: B = cartesian_product([GF(3), GF(5)])                                 # optional - sage.rings.finite_rings
+            sage: A((3,5)) == B((0,0))                                                  # optional - sage.rings.finite_rings
             True
         """
         if type(self) is type(right):

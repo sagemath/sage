@@ -1,3 +1,4 @@
+# sage.doctest: optional - sage.groups
 r"""
 Groupoid
 """
@@ -27,10 +28,9 @@ class Groupoid(CategoryWithParameters):
 
         sage: Groupoid(DihedralGroup(3))
         Groupoid with underlying set Dihedral group of order 6 as a permutation group
-
     """
 
-    def __init__(self, G = None):
+    def __init__(self, G=None):
         """
         TESTS::
 

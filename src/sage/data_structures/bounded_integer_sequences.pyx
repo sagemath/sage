@@ -77,7 +77,7 @@ cimported in Cython modules:
 
 - ``cdef size_t biseq_getitem_py(biseq_t S, mp_size_t index)``
 
-  Return ``S[index]`` as Python ``int`` or ``long``, without checking margins.
+  Return ``S[index]`` as Python ``int``, without checking margins.
 
 - ``cdef biseq_inititem(biseq_t S, mp_size_t index, size_t item)``
 
@@ -112,7 +112,6 @@ from sage.data_structures.bitset_base cimport *
 
 from cpython.int cimport PyInt_FromSize_t
 from cpython.slice cimport PySlice_GetIndicesEx
-from sage.libs.gmp.mpn cimport mpn_rshift, mpn_lshift, mpn_copyi, mpn_ior_n, mpn_zero, mpn_copyd, mpn_cmp
 from sage.libs.flint.flint cimport FLINT_BIT_COUNT as BIT_COUNT
 from sage.structure.richcmp cimport richcmp_not_equal, rich_to_bool
 
@@ -291,7 +290,7 @@ cdef inline size_t biseq_getitem(biseq_t S, mp_size_t index):
 
 cdef biseq_getitem_py(biseq_t S, mp_size_t index):
     """
-    Get item ``S[index]`` as a Python ``int`` or ``long``, without
+    Get item ``S[index]`` as a Python ``int``, without
     checking margins.
 
     """
@@ -769,7 +768,7 @@ cdef class BoundedIntegerSequence:
         """
         return self.data.length
 
-    def __nonzero__(self):
+    def __bool__(self):
         """
         A bounded integer sequence is nonzero if and only if its length is nonzero.
 
@@ -1081,16 +1080,16 @@ cdef class BoundedIntegerSequence:
             sage: T = BoundedIntegerSequence(27, L0)
             sage: S.startswith(T)
             True
-            sage: L0[-1] += 1
+            sage: L0[-1] = (L0[-1] + 1) % 27
             sage: T = BoundedIntegerSequence(27, L0)
             sage: S.startswith(T)
             False
-            sage: L0[-1] -= 1
-            sage: L0[0] += 1
+            sage: L0[-1] = (L0[-1] - 1) % 27
+            sage: L0[0] = (L0[0] + 1) % 27
             sage: T = BoundedIntegerSequence(27, L0)
             sage: S.startswith(T)
             False
-            sage: L0[0] -= 1
+            sage: L0[0] = (L0[0] - 1) % 27
 
         The bounds of the sequences must be compatible, or :meth:`startswith`
         returns ``False``::
@@ -1212,7 +1211,7 @@ cdef class BoundedIntegerSequence:
             sage: T+None
             Traceback (most recent call last):
             ...
-            TypeError: Cannot concatenate bounded integer sequence and None
+            TypeError: cannot concatenate bounded integer sequence and None
 
         TESTS:
 
@@ -1228,7 +1227,7 @@ cdef class BoundedIntegerSequence:
         """
         cdef BoundedIntegerSequence myself, right, out
         if other is None or self is None:
-            raise TypeError('Cannot concatenate bounded integer sequence and None')
+            raise TypeError('cannot concatenate bounded integer sequence and None')
         myself = self  # may result in a type error
         right = other  #  --"--
         if right.data.itembitsize != myself.data.itembitsize:

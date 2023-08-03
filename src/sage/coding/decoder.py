@@ -1,3 +1,4 @@
+# sage.doctest: optional - sage.modules sage.rings.finite_rings
 r"""
 Decoders
 
@@ -35,8 +36,7 @@ class Decoder(SageObject):
     - inherit from :class:`Decoder`
 
     - call ``Decoder.__init__`` in the subclass constructor.
-      Example: ``super(SubclassName, self).__init__(code, input_space,
-      connected_encoder_name)``.
+      Example: ``super().__init__(code, input_space, connected_encoder_name)``.
       By doing that, your subclass will have all the parameters described above initialized.
 
     - Then, you need to override one of decoding methods, either :meth:`decode_to_code` or
@@ -107,7 +107,7 @@ class Decoder(SageObject):
             sage: codes.decoders.LinearCodeSyndromeDecoder.decoder_type()
             {'dynamic', 'hard-decision'}
 
-        We can also call it on a instance of a Decoder class::
+        We can also call it on a instance of a :class:`Decoder` class::
 
             sage: G = Matrix(GF(2), [[1, 0, 0, 1], [0, 1, 1, 1]])
             sage: C = LinearCode(G)
@@ -160,7 +160,7 @@ class Decoder(SageObject):
             ....:   def __init__(self, code):
             ....:       in_space = code.ambient_space()
             ....:       connected_enc = "GeneratorMatrix"
-            ....:       super(DecoderExample, self).__init__(code, in_space, connected_enc)
+            ....:       super().__init__(code, in_space, connected_enc)
 
         We now create a member of our brand new class::
 
@@ -223,7 +223,7 @@ class Decoder(SageObject):
 
     def decode_to_code(self, r):
         r"""
-        Correct the errors in ``r`` and returns a codeword.
+        Correct the errors in ``r`` and return a codeword.
 
         This is a default implementation which assumes that the method
         :meth:`decode_to_message` has been implemented, else it returns an exception.
@@ -238,7 +238,8 @@ class Decoder(SageObject):
 
         EXAMPLES::
 
-            sage: G = Matrix(GF(2), [[1,1,1,0,0,0,0],[1,0,0,1,1,0,0],[0,1,0,1,0,1,0],[1,1,0,1,0,0,1]])
+            sage: G = Matrix(GF(2), [[1,1,1,0,0,0,0], [1,0,0,1,1,0,0],
+            ....:                    [0,1,0,1,0,1,0], [1,1,0,1,0,0,1]])
             sage: C = LinearCode(G)
             sage: word = vector(GF(2), (1, 1, 0, 0, 1, 1, 0))
             sage: word in C
@@ -262,7 +263,8 @@ class Decoder(SageObject):
 
         EXAMPLES::
 
-            sage: G = Matrix(GF(2), [[1,1,1,0,0,0,0],[1,0,0,1,1,0,0],[0,1,0,1,0,1,0],[1,1,0,1,0,0,1]])
+            sage: G = Matrix(GF(2), [[1,1,1,0,0,0,0], [1,0,0,1,1,0,0],
+            ....:                    [0,1,0,1,0,1,0], [1,1,0,1,0,0,1]])
             sage: C = LinearCode(G)
             sage: D = C.decoder()
             sage: D.connected_encoder()
@@ -288,7 +290,8 @@ class Decoder(SageObject):
 
         EXAMPLES::
 
-            sage: G = Matrix(GF(2), [[1,1,1,0,0,0,0],[1,0,0,1,1,0,0],[0,1,0,1,0,1,0],[1,1,0,1,0,0,1]])
+            sage: G = Matrix(GF(2), [[1,1,1,0,0,0,0], [1,0,0,1,1,0,0],
+            ....:                    [0,1,0,1,0,1,0], [1,1,0,1,0,0,1]])
             sage: C = LinearCode(G)
             sage: word = vector(GF(2), (1, 1, 0, 0, 1, 1, 0))
             sage: w_err = word + vector(GF(2), (1, 0, 0, 0, 0, 0, 0))
@@ -305,7 +308,8 @@ class Decoder(SageObject):
 
         EXAMPLES::
 
-            sage: G = Matrix(GF(2), [[1,1,1,0,0,0,0],[1,0,0,1,1,0,0],[0,1,0,1,0,1,0],[1,1,0,1,0,0,1]])
+            sage: G = Matrix(GF(2), [[1,1,1,0,0,0,0], [1,0,0,1,1,0,0],
+            ....:                    [0,1,0,1,0,1,0], [1,1,0,1,0,0,1]])
             sage: C = LinearCode(G)
             sage: D = C.decoder()
             sage: D.code()
@@ -319,7 +323,8 @@ class Decoder(SageObject):
 
         EXAMPLES::
 
-            sage: G = Matrix(GF(2), [[1,1,1,0,0,0,0],[1,0,0,1,1,0,0],[0,1,0,1,0,1,0],[1,1,0,1,0,0,1]])
+            sage: G = Matrix(GF(2), [[1,1,1,0,0,0,0], [1,0,0,1,1,0,0],
+            ....:                    [0,1,0,1,0,1,0], [1,1,0,1,0,0,1]])
             sage: C = LinearCode(G)
             sage: D = C.decoder()
             sage: D.message_space()
@@ -333,7 +338,8 @@ class Decoder(SageObject):
 
         EXAMPLES::
 
-            sage: G = Matrix(GF(2), [[1,1,1,0,0,0,0],[1,0,0,1,1,0,0],[0,1,0,1,0,1,0],[1,1,0,1,0,0,1]])
+            sage: G = Matrix(GF(2), [[1,1,1,0,0,0,0], [1,0,0,1,1,0,0],
+            ....:                    [0,1,0,1,0,1,0], [1,1,0,1,0,0,1]])
             sage: C = LinearCode(G)
             sage: D = C.decoder()
             sage: D.input_space()
@@ -344,7 +350,7 @@ class Decoder(SageObject):
         else:
             raise NotImplementedError("Decoder does not have an _input_space parameter")
 
-    @abstract_method(optional = True)
+    @abstract_method(optional=True)
     def decoding_radius(self, **kwargs):
         r"""
         Return the maximal number of errors that ``self`` is able to correct.
@@ -353,7 +359,8 @@ class Decoder(SageObject):
 
         EXAMPLES::
 
-            sage: G = Matrix(GF(2), [[1,1,1,0,0,0,0],[1,0,0,1,1,0,0],[0,1,0,1,0,1,0],[1,1,0,1,0,0,1]])
+            sage: G = Matrix(GF(2), [[1,1,1,0,0,0,0], [1,0,0,1,1,0,0],
+            ....:                    [0,1,0,1,0,1,0], [1,1,0,1,0,0,1]])
             sage: C = LinearCode(G)
             sage: D = codes.decoders.LinearCodeSyndromeDecoder(C)
             sage: D.decoding_radius()

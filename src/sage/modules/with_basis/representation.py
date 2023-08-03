@@ -1,19 +1,20 @@
 """
-Representations Of A Semigroup
+Representations of a semigroup
 
 AUTHORS:
 
-- Travis Scrimshaw (2015-11-21): Initial version
-- Siddharth Singh  (2020-03-21): Signed Representation
+- Travis Scrimshaw (2015-11-21): initial version
+- Siddharth Singh  (2020-03-21): signed representation
+
 """
 
-####################################################################################
+##############################################################################
 #       Copyright (C) 2015 Travis Scrimshaw <tscrimsh at umn.edu>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  The full text of the GPL is available at:
 #                  http://www.gnu.org/licenses/
-####################################################################################
+##############################################################################
 
 from sage.misc.abstract_method import abstract_method
 from sage.structure.element import Element
@@ -154,7 +155,7 @@ class Representation_abstract(CombinatorialFreeModule):
         Create the isotypic component of the action of ``G`` on
         ``self`` with irreducible character given by ``chi``.
 
-        .. SEEALSO:
+        .. SEEALSO::
 
             - :class:`~sage.modules.with_basis.invariant.FiniteDimensionalTwistedInvariantModule`
 
@@ -198,6 +199,7 @@ class Representation_abstract(CombinatorialFreeModule):
             side = "left"
 
         return super().twisted_invariant_module(G, chi, side=side, **kwargs)
+
 
 class Representation(Representation_abstract):
     """
@@ -274,7 +276,7 @@ class Representation(Representation_abstract):
             sage: G = CyclicPermutationGroup(3)
             sage: M = algebras.Exterior(QQ, 'x', 3)
             sage: from sage.modules.with_basis.representation import Representation
-            sage: on_basis = lambda g,m: M.prod([M.monomial((g(j+1)-1,)) for j in m]) #cyclically permute generators
+            sage: on_basis = lambda g,m: M.prod([M.monomial(FrozenBitset([g(j+1)-1])) for j in m]) #cyclically permute generators
             sage: from sage.categories.algebras import Algebras
             sage: R = Representation(G, M, on_basis, category=Algebras(QQ).WithBasis().FiniteDimensional())
             sage: r = R.an_element(); r
@@ -315,19 +317,19 @@ class Representation(Representation_abstract):
             pass
 
         category = kwargs.pop('category', Modules(module.base_ring()).WithBasis())
-        
+
         if side not in ["left", "right"]:
             raise ValueError('side must be "left" or "right"')
-        
+
         self._left_repr = (side == "left")
         self._on_basis = on_basis
         self._module = module
-        
+
         indices = module.basis().keys()
-        
+
         if 'FiniteDimensional' in module.category().axioms():
             category = category.FiniteDimensional()
-        
+
         Representation_abstract.__init__(self, semigroup, module.base_ring(), indices,
                                          category=category, **module.print_options())
 
@@ -349,7 +351,7 @@ class Representation(Representation_abstract):
             sage: R = Representation(G, M, on_basis, side="right")
             sage: R._test_representation(max_runs=500)
         """
-        from sage.functions.other import sqrt
+        from sage.misc.functional import sqrt
         tester = self._tester(**options)
         S = tester.some_elements()
         L = []
@@ -425,7 +427,7 @@ class Representation(Representation_abstract):
         """
         if isinstance(x, Element) and x.parent() is self._module:
             return self._from_dict(x.monomial_coefficients(copy=False), remove_zeros=False)
-        return super(Representation, self)._element_constructor_(x)
+        return super()._element_constructor_(x)
 
     def product_by_coercion(self, left, right):
         """
@@ -449,10 +451,10 @@ class Representation(Representation_abstract):
             ...
             TypeError: unsupported operand parent(s) for *:
              'Representation of The Klein 4 group of order 4, as a permutation
-             group indexed by Subsets of {0, 1, 2, 3} over Rational Field' and 
-             'Representation of The Klein 4 group of order 4, as a permutation 
-             group indexed by Subsets of {0, 1, 2, 3} over Rational Field'
-            
+             group indexed by Subsets of {0,1,...,3} over Rational Field' and
+             'Representation of The Klein 4 group of order 4, as a permutation
+             group indexed by Subsets of {0,1,...,3} over Rational Field'
+
             sage: from sage.categories.algebras import Algebras
             sage: category = Algebras(QQ).FiniteDimensional().WithBasis()
             sage: T = Representation(G, E, on_basis, category=category)
@@ -491,7 +493,6 @@ class Representation(Representation_abstract):
             'right'
         """
         return "left" if self._left_repr else "right"
-
 
     class Element(CombinatorialFreeModule.Element):
         def _acted_upon_(self, scalar, self_on_left=False):
@@ -963,13 +964,13 @@ class SignRepresentationPermgroup(SignRepresentation_abstract):
     def _default_sign(self, elem):
         """
         Return the sign of the element
-        
+
         INPUT:
-      
+
         - ``elem`` -- the element of the group
 
         EXAMPLES::
-        
+
             sage: G = groups.permutation.PGL(2, 3)
             sage: V = G.sign_representation()
             sage: elem = G.an_element()
@@ -1026,7 +1027,7 @@ class SignRepresentationCoxeterGroup(SignRepresentation_abstract):
     def _default_sign(self, elem):
         """
         Return the sign of the element
-        
+
         INPUT:
 
         - ``elem`` -- the element of the group
@@ -1039,5 +1040,4 @@ class SignRepresentationCoxeterGroup(SignRepresentation_abstract):
             sage: V._default_sign(elem)
             1
         """
-        return -1 if elem.length() % 2 == 1 else 1
-
+        return -1 if elem.length() % 2 else 1

@@ -15,9 +15,9 @@ r"""
 
 
 from sage.misc.cachefunc import cached_function
-from sage.misc.all import prod
+from sage.misc.misc_c import prod
 from sage.structure.element import parent
-from sage.rings.all import ZZ
+from sage.rings.integer_ring import ZZ
 from sage.combinat.dyck_word import DyckWords
 from sage.combinat.partition import _Partitions
 
@@ -172,7 +172,8 @@ def q_binomial(n, k, q=None, algorithm='auto'):
       uses the naive algorithm. When both ``n`` and ``k`` are big, one
       uses the cyclotomic algorithm.
 
-    - If ``q`` is in the symbolic ring, one uses the cyclotomic algorithm.
+    - If ``q`` is in the symbolic ring (or a symbolic subring), one uses
+      the cyclotomic algorithm.
 
     - Otherwise one uses the naive algorithm, unless ``q`` is a root of
       unity, then one uses the cyclotomic algorithm.
@@ -247,18 +248,18 @@ def q_binomial(n, k, q=None, algorithm='auto'):
 
     This also works for variables in the symbolic ring::
 
-        sage: z = var('z')
-        sage: factor(q_binomial(4,2,z))
+        sage: z = var('z')                                                              # optional - sage.symbolic
+        sage: factor(q_binomial(4, 2, z))                                               # optional - sage.symbolic
         (z^2 + z + 1)*(z^2 + 1)
 
     This also works for complex roots of unity::
 
-        sage: q_binomial(10, 4, QQbar(I))
+        sage: q_binomial(10, 4, QQbar(I))                                               # optional - sage.rings.number_field
         2
 
     Note that the symbolic computation works (see :trac:`14982`)::
 
-        sage: q_binomial(10, 4, I)
+        sage: q_binomial(10, 4, I)                                                      # optional - sage.rings.number_field
         2
 
     Check that the algorithm does not matter::
@@ -276,7 +277,7 @@ def q_binomial(n, k, q=None, algorithm='auto'):
         sage: r = q_binomial(3r, 2r, 1r); r
         3
         sage: type(r)
-        <type 'int'>
+        <class 'int'>
 
     Check that arbitrary polynomials work::
 
@@ -346,8 +347,8 @@ def q_binomial(n, k, q=None, algorithm='auto'):
         elif is_polynomial:
             algorithm = 'cyclotomic'
         else:
-            from sage.symbolic.ring import SR
-            if R is SR:
+            import sage.rings.abc
+            if isinstance(R, sage.rings.abc.SymbolicRing):
                 algorithm = 'cyclotomic'
             else:
                 algorithm = 'naive'
@@ -516,7 +517,7 @@ def qt_catalan_number(n):
         sage: qt_catalan_number(-2)
         Traceback (most recent call last):
         ...
-        ValueError: Argument (-2) must be a nonnegative integer.
+        ValueError: argument (-2) must be a nonnegative integer
     """
     if n in ZZ and n >= 0:
         ZZqt = ZZ['q', 't']
@@ -526,7 +527,7 @@ def qt_catalan_number(n):
             d[tup] = d.get(tup, 0) + 1
         return ZZqt(d)
     else:
-        raise ValueError("Argument (%s) must be a nonnegative integer." % n)
+        raise ValueError("argument (%s) must be a nonnegative integer" % n)
 
 
 def q_pochhammer(n, a, q=None):
@@ -577,7 +578,7 @@ def q_pochhammer(n, a, q=None):
         1
         sage: q_pochhammer(0, 1)
         1
-        sage: q_pochhammer(0, var('a'))
+        sage: q_pochhammer(0, var('a'))                                                 # optional - sage.symbolic
         1
 
     We check that :trac:`25715` is fixed::
@@ -636,7 +637,7 @@ def q_jordan(t, q=None):
         [615195, 40635, 5643, 2331, 1491, 515, 147, 87, 47, 11, 1]
         sage: q_jordan([3,2,1])
         16*q^4 + 24*q^3 + 14*q^2 + 5*q + 1
-        sage: q_jordan([2,1], x)
+        sage: q_jordan([2,1], x)                                                        # optional - sage.symbolic
         2*x + 1
 
     If the partition is trivial (i.e. has only one part), we get

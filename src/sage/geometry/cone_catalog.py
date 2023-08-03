@@ -177,7 +177,7 @@ def nonnegative_orthant(ambient_dim=None, lattice=None):
 
     OUTPUT:
 
-    A :class:`.ConvexRationalPolyhedralCone` living in ``lattice``
+    A :class:`~sage.geometry.cone.ConvexRationalPolyhedralCone` living in ``lattice``
     and having ``ambient_dim`` standard basis vectors as its
     generators. Each generating ray has the integer ring as its
     base ring.
@@ -207,7 +207,6 @@ def nonnegative_orthant(ambient_dim=None, lattice=None):
 
     The nonnegative orthant is a proper cone::
 
-        sage: set_random_seed()
         sage: ambient_dim = ZZ.random_element(10)
         sage: K = cones.nonnegative_orthant(ambient_dim)
         sage: K.is_proper()
@@ -237,7 +236,7 @@ def nonnegative_orthant(ambient_dim=None, lattice=None):
     """
     from sage.geometry.cone import Cone
     from sage.matrix.constructor import matrix
-    from sage.rings.all import ZZ
+    from sage.rings.integer_ring import ZZ
 
     (ambient_dim, lattice) = _preprocess_args(ambient_dim, lattice)
 
@@ -288,7 +287,7 @@ def rearrangement(p, ambient_dim=None, lattice=None):
 
     OUTPUT:
 
-    A :class:`.ConvexRationalPolyhedralCone` representing the
+    A :class:`~sage.geometry.cone.ConvexRationalPolyhedralCone` representing the
     rearrangement cone of order ``p`` living in ``lattice``, with
     ambient dimension ``ambient_dim``. Each generating ray has the
     integer ring as its base ring.
@@ -375,15 +374,14 @@ def rearrangement(p, ambient_dim=None, lattice=None):
         sage: ambient_dim = ZZ.random_element(2,10).abs()
         sage: p = ZZ.random_element(1, ambient_dim)
         sage: K = cones.rearrangement(p, ambient_dim)
-        sage: P = SymmetricGroup(ambient_dim).random_element().matrix()
-        sage: all( K.contains(P*r) for r in K )
+        sage: P = SymmetricGroup(ambient_dim).random_element().matrix()     # optional - sage.groups
+        sage: all(K.contains(P*r) for r in K)                               # optional - sage.groups
         True
 
     The smallest ``p`` components of every element of the rearrangement
     cone should sum to a nonnegative number. In other words, the
     generators really are what we think they are::
 
-        sage: set_random_seed()
         sage: def _has_rearrangement_property(v,p):
         ....:     return sum( sorted(v)[0:p] ) >= 0
         sage: all(
@@ -399,7 +397,6 @@ def rearrangement(p, ambient_dim=None, lattice=None):
     The rearrangement cone of order ``p`` is, almost by definition,
     contained in the rearrangement cone of order ``p + 1``::
 
-        sage: set_random_seed()
         sage: ambient_dim = ZZ.random_element(2,10)
         sage: p = ZZ.random_element(1, ambient_dim)
         sage: K1 = cones.rearrangement(p, ambient_dim)
@@ -412,7 +409,6 @@ def rearrangement(p, ambient_dim=None, lattice=None):
     cone of order ``ambient_dim - p`` when ``p`` is less than
     ``ambient_dim``::
 
-        sage: set_random_seed()
         sage: ambient_dim = ZZ.random_element(2,10)
         sage: p = ZZ.random_element(1, ambient_dim)
         sage: K1 = cones.rearrangement(p, ambient_dim)
@@ -466,16 +462,16 @@ def rearrangement(p, ambient_dim=None, lattice=None):
     """
     from sage.geometry.cone import Cone
     from sage.matrix.constructor import matrix
-    from sage.rings.all import ZZ
+    from sage.rings.integer_ring import ZZ
 
     (ambient_dim, lattice) = _preprocess_args(ambient_dim, lattice)
 
-    if p < 1 or p > ambient_dim or not p in ZZ:
+    if p < 1 or p > ambient_dim or p not in ZZ:
         raise ValueError("order p=%s should be an integer between 1 "
                          "and ambient_dim=%d, inclusive" % (p, ambient_dim))
 
     I = matrix.identity(ZZ, ambient_dim)
-    M = matrix.ones(ZZ, ambient_dim) - p*I
+    M = matrix.ones(ZZ, ambient_dim) - p * I
     G = matrix.identity(ZZ, ambient_dim).rows() + M.rows()
     return Cone(G, lattice=lattice)
 
@@ -510,7 +506,7 @@ def schur(ambient_dim=None, lattice=None):
 
     OUTPUT:
 
-    A :class:`.ConvexRationalPolyhedralCone` representing the Schur
+    A :class:`~sage.geometry.cone.ConvexRationalPolyhedralCone` representing the Schur
     cone living in ``lattice``, with ambient dimension ``ambient_dim``.
     Each generating ray has the integer ring as its base ring.
 
@@ -533,17 +529,16 @@ def schur(ambient_dim=None, lattice=None):
 
         sage: P = cones.schur(5)
         sage: Q = cones.nonnegative_orthant(5)
-        sage: G = ( g.change_ring(QQbar).normalized() for g in P )
-        sage: H = ( h.change_ring(QQbar).normalized() for h in Q )
-        sage: actual = max(arccos(u.inner_product(v)) for u in G for v in H)
-        sage: expected = 3*pi/4
-        sage: abs(actual - expected).n() < 1e-12
+        sage: G = ( g.change_ring(QQbar).normalized() for g in P )              # optional - sage.rings.number_fields
+        sage: H = ( h.change_ring(QQbar).normalized() for h in Q )              # optional - sage.rings.number_fields
+        sage: actual = max(arccos(u.inner_product(v)) for u in G for v in H)    # optional - sage.rings.number_fields
+        sage: expected = 3*pi/4                                                 # optional - sage.rings.number_fields
+        sage: abs(actual - expected).n() < 1e-12                                # optional - sage.rings.number_fields
         True
 
     The dual of the Schur cone is the "downward monotonic cone"
     [GS2010]_, whose elements' entries are in non-increasing order::
 
-        sage: set_random_seed()
         sage: ambient_dim = ZZ.random_element(10)
         sage: K = cones.schur(ambient_dim).dual()
         sage: x = K.random_element()
@@ -560,7 +555,6 @@ def schur(ambient_dim=None, lattice=None):
     The Schur cone induces the majorization ordering, as in Iusem
     and Seeger's [IS2005]_ Example 7.3::
 
-        sage: set_random_seed()
         sage: def majorized_by(x,y):
         ....:     return (all(sum(x[0:i]) <= sum(y[0:i])
         ....:                 for i in range(x.degree()-1))
@@ -572,7 +566,7 @@ def schur(ambient_dim=None, lattice=None):
         True
         sage: x = V.random_element()
         sage: y = V.random_element()
-        sage: majorized_by(x,y) == ( (y-x) in S )
+        sage: majorized_by(x,y) == ( (y-x) in S )                               # optional - sage.rings.number_fields
         True
 
     If a ``lattice`` was given, it is actually used::
@@ -599,7 +593,7 @@ def schur(ambient_dim=None, lattice=None):
     """
     from sage.geometry.cone import Cone
     from sage.matrix.constructor import matrix
-    from sage.rings.all import ZZ
+    from sage.rings.integer_ring import ZZ
 
     (ambient_dim, lattice) = _preprocess_args(ambient_dim, lattice)
 
@@ -641,7 +635,7 @@ def trivial(ambient_dim=None, lattice=None):
 
     OUTPUT:
 
-    A :class:`.ConvexRationalPolyhedralCone` representing the
+    A :class:`~sage.geometry.cone.ConvexRationalPolyhedralCone` representing the
     trivial cone with no nonzero generators living in ``lattice``,
     with ambient dimension ``ambient_dim``.
 

@@ -1,3 +1,4 @@
+# sage.doctest: optional - sage.graphs sage.combinat
 r"""
 Loop Crystals
 """
@@ -19,8 +20,7 @@ from sage.categories.crystals import Crystals
 from sage.categories.regular_crystals import RegularCrystals
 from sage.categories.tensor import TensorProductsCategory
 from sage.categories.map import Map
-from sage.graphs.dot2tex_utils import have_dot2tex
-from sage.functions.other import ceil
+
 
 class LoopCrystals(Category_singleton):
     r"""
@@ -59,7 +59,7 @@ class LoopCrystals(Category_singleton):
         """
         return [Crystals()]
 
-    def example(self, n = 3):
+    def example(self, n=3):
         """
         Return an example of Kirillov-Reshetikhin crystals, as per
         :meth:`Category.example`.
@@ -117,12 +117,12 @@ class LoopCrystals(Category_singleton):
                 {...'edge_options': <function ... at ...>...}
                 sage: view(G, tightpage=True)  # optional - dot2tex graphviz, not tested (opens external window)
             """
+            from sage.graphs.dot2tex_utils import have_dot2tex
+
             G = Crystals().parent_class.digraph(self, subset, index_set)
             if have_dot2tex():
                 def eopt(u_v_label):
-                    if u_v_label[2] == 0:
-                        return {"dir": "back"}
-                    return {}
+                    return {"backward": u_v_label[2] == 0}
                 G.set_latex_options(edge_options=eopt)
             return G
 
@@ -391,11 +391,17 @@ class KirillovReshetikhinCrystals(Category_singleton):
                 sage: K2 = crystals.KirillovReshetikhin(['A',2,1],2,1)
                 sage: T1 = crystals.TensorProduct(K1,K2)
                 sage: T2 = crystals.TensorProduct(K2,K1)
-                sage: T1.digraph().is_isomorphic(T2.digraph(), edge_labels=True, certificate=True) #todo: not implemented (see #10904 and #10549)
-                (True, {[[[1]], [[2], [3]]]: [[[1], [3]], [[2]]], [[[3]], [[2], [3]]]: [[[2], [3]], [[3]]],
-                [[[3]], [[1], [3]]]: [[[1], [3]], [[3]]], [[[1]], [[1], [3]]]: [[[1], [3]], [[1]]], [[[1]],
-                [[1], [2]]]: [[[1], [2]], [[1]]], [[[2]], [[1], [2]]]: [[[1], [2]], [[2]]], [[[3]],
-                [[1], [2]]]: [[[2], [3]], [[1]]], [[[2]], [[1], [3]]]: [[[1], [2]], [[3]]], [[[2]], [[2], [3]]]: [[[2], [3]], [[2]]]})
+                sage: T1.digraph().is_isomorphic(T2.digraph(), edge_labels=True,  # todo: not implemented (see #10904 and #10549)
+                ....:                            certificate=True)
+                (True, {[[[1]], [[2], [3]]]: [[[1], [3]], [[2]]],
+                        [[[3]], [[2], [3]]]: [[[2], [3]], [[3]]],
+                        [[[3]], [[1], [3]]]: [[[1], [3]], [[3]]],
+                        [[[1]], [[1], [3]]]: [[[1], [3]], [[1]]], [[[1]],
+                        [[1], [2]]]: [[[1], [2]], [[1]]],
+                        [[[2]], [[1], [2]]]: [[[1], [2]], [[2]]], [[[3]],
+                        [[1], [2]]]: [[[2], [3]], [[1]]],
+                        [[[2]], [[1], [3]]]: [[[1], [2]], [[3]]],
+                        [[[2]], [[2], [3]]]: [[[2], [3]], [[2]]]})
             """
             from sage.combinat.crystals.tensor_product import TensorProductOfCrystals
             T1 = TensorProductOfCrystals(self, K)
@@ -458,7 +464,7 @@ class KirillovReshetikhinCrystals(Category_singleton):
             bsharp = None
             for b in self:
                 phi = b.Phi()
-                if phi.support() == [0] and phi[0] < ell:
+                if list(phi.support()) == [0] and phi[0] < ell:
                     bsharp = b
                     ell = phi[0]
             return bsharp
@@ -515,7 +521,7 @@ class KirillovReshetikhinCrystals(Category_singleton):
                 sage: K.is_perfect()
                 True
 
-                sage: K = crystals.KirillovReshetikhin(['E',6,1], 1,3)
+                sage: K = crystals.KirillovReshetikhin(['E',6,1], 1, 3)
                 sage: K.is_perfect()
                 True
 
@@ -524,7 +530,7 @@ class KirillovReshetikhinCrystals(Category_singleton):
             Check that this works correctly for `B^{n,s}`
             of type `A_{2n}^{(2)\dagger}` (:trac:`24364`)::
 
-                sage: K = crystals.KirillovReshetikhin(CartanType(['A',6,2]).dual(), 3,1)
+                sage: K = crystals.KirillovReshetikhin(CartanType(['A',6,2]).dual(), 3, 1)
                 sage: K.is_perfect()
                 True
                 sage: K.is_perfect(1)
@@ -836,7 +842,8 @@ class KirillovReshetikhinCrystals(Category_singleton):
                     sage: R = RootSystem(['A',2,1])
                     sage: La = R.weight_space().basis()
                     sage: LS = crystals.ProjectedLevelZeroLSPaths(2*La[1])
-                    sage: LS.one_dimensional_configuration_sum() == T.one_dimensional_configuration_sum() # long time
+                    sage: (LS.one_dimensional_configuration_sum()  # long time
+                    ....:  == T.one_dimensional_configuration_sum())
                     True
 
                 TESTS::
@@ -855,13 +862,13 @@ class KirillovReshetikhinCrystals(Category_singleton):
                     True
                 """
                 if q is None:
-                    from sage.rings.all import QQ
+                    from sage.rings.rational_field import QQ
                     q = QQ['q'].gens()[0]
                 P0 = self.weight_lattice_realization().classical()
                 B = P0.algebra(q.parent())
                 if group_components:
                     G = self.digraph(index_set=self.cartan_type().classical().index_set())
-                    C = G.connected_components()
+                    C = G.connected_components(sort=False)
                     return B.sum(q**(c[0].energy_function())*B.sum(B(P0(b.weight())) for b in c)
                                  for c in C)
                 return B.sum(q**(b.energy_function())*B(P0(b.weight())) for b in self)
@@ -961,6 +968,8 @@ class KirillovReshetikhinCrystals(Category_singleton):
                     ....:     for b in hw)
                     True
                 """
+                from sage.arith.misc import integer_ceil as ceil
+
                 C = self.parent().crystals[0]
                 ell = ceil(C.s()/C.cartan_type().c()[C.r()])
                 is_perfect = all(ell == K.s()/K.cartan_type().c()[K.r()]
@@ -1092,6 +1101,8 @@ class KirillovReshetikhinCrystals(Category_singleton):
                     ....:     for elt in hw)
                     True
                 """
+                from sage.arith.misc import integer_ceil as ceil
+
                 ell = max(ceil(K.s()/K.cartan_type().c()[K.r()])
                           for K in self.parent().crystals)
                 if self.cartan_type().dual().type() == 'BC':
@@ -1271,4 +1282,3 @@ class LocalEnergyFunction(Map):
             self._known_values[y] = baseline + visited[y]
 
         return self._known_values[x]
-

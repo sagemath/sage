@@ -1,0 +1,4 @@
+$(PYTHON) | $(PYTHON_TOOLCHAIN) hatchling
+
+----------
+All lines of this file are ignored except the first.

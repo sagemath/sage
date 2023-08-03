@@ -1,5 +1,4 @@
-$(PYTHON) r cffi tzlocal pytz | $(PYTHON_TOOLCHAIN) pycparser $(and $(filter-out no,$(SAGE_CHECK_rpy2)), pytest numpy ipython)
+$(PYTHON) r cffi tzlocal pytz jinja2 | $(PYTHON_TOOLCHAIN) pycparser
 
 ----------
 All lines of this file are ignored except the first.
-It is copied by SAGE_ROOT/build/make/install into SAGE_ROOT/build/make/Makefile.

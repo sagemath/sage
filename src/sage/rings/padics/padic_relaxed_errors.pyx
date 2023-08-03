@@ -69,4 +69,3 @@ def raise_error(error, permissive=False):
             raise PrecisionError("not enough precision")
         if error & ERROR_ABANDON:
             raise PrecisionError("computation has been abandoned; try to increase precision")
-

@@ -35,7 +35,7 @@ the faces in a particular dimension, use the
 or :meth:`~sage.geometry.polyhedron.base.face_lattice` to get the
 whole face lattice as a poset::
 
-    sage: P.face_lattice()
+    sage: P.face_lattice()                                                              # optional - sage.combinat
     Finite lattice containing 28 elements
 
 The faces are printed in shorthand notation where each integer is the
@@ -404,7 +404,7 @@ class PolyhedronFace(ConvexSet_closed):
         EXAMPLES::
 
             sage: square = polytopes.hypercube(2)
-            sage: for face in square.face_lattice():
+            sage: for face in square.face_lattice():                                    # optional - sage.combinat
             ....:     print(face.ambient_Hrepresentation())
             (An inequality (-1, 0) x + 1 >= 0, An inequality (0, -1) x + 1 >= 0,
              An inequality (1, 0) x + 1 >= 0, An inequality (0, 1) x + 1 >= 0)
@@ -445,7 +445,7 @@ class PolyhedronFace(ConvexSet_closed):
         EXAMPLES::
 
             sage: square = polytopes.hypercube(2)
-            sage: for fl in square.face_lattice():
+            sage: for fl in square.face_lattice():                                      # optional - sage.combinat
             ....:     print(fl.ambient_Vrepresentation())
             ()
             (A vertex at (1, -1),)
@@ -478,15 +478,14 @@ class PolyhedronFace(ConvexSet_closed):
         EXAMPLES::
 
             sage: p = polytopes.cross_polytope(4)
-            sage: face = p.face_lattice()[5]
-            sage: face
+            sage: face = p.face_lattice()[5]; face                                      # optional - sage.combinat
             A 1-dimensional face of a Polyhedron in ZZ^4 defined as the convex hull of 2 vertices
-            sage: face.ambient_Hrepresentation()
+            sage: face.ambient_Hrepresentation()                                        # optional - sage.combinat
             (An inequality (1, -1, 1, -1) x + 1 >= 0,
              An inequality (1, 1, 1, 1) x + 1 >= 0,
              An inequality (1, 1, 1, -1) x + 1 >= 0,
              An inequality (1, -1, 1, 1) x + 1 >= 0)
-            sage: face.n_ambient_Hrepresentation()
+            sage: face.n_ambient_Hrepresentation()                                      # optional - sage.combinat
             4
         """
         return len(self.ambient_Hrepresentation())
@@ -505,12 +504,11 @@ class PolyhedronFace(ConvexSet_closed):
         EXAMPLES::
 
             sage: p = polytopes.cross_polytope(4)
-            sage: face = p.face_lattice()[5]
-            sage: face
+            sage: face = p.face_lattice()[5]; face                                      # optional - sage.combinat
             A 1-dimensional face of a Polyhedron in ZZ^4 defined as the convex hull of 2 vertices
-            sage: face.ambient_Vrepresentation()
+            sage: face.ambient_Vrepresentation()                                        # optional - sage.combinat
             (A vertex at (-1, 0, 0, 0), A vertex at (0, 0, -1, 0))
-            sage: face.n_ambient_Vrepresentation()
+            sage: face.n_ambient_Vrepresentation()                                      # optional - sage.combinat
             2
         """
         return len(self.ambient_Vrepresentation())
@@ -595,8 +593,8 @@ class PolyhedronFace(ConvexSet_closed):
 
         EXAMPLES::
 
-            sage: fl = polytopes.dodecahedron().face_lattice()
-            sage: sorted([ x.dim() for x in fl ])
+            sage: fl = polytopes.dodecahedron().face_lattice()                          # optional - sage.combinat sage.rings.number_field
+            sage: sorted(x.dim() for x in fl)                                           # optional - sage.combinat sage.rings.number_field
             [-1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
               1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
               1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 3]
@@ -605,7 +603,7 @@ class PolyhedronFace(ConvexSet_closed):
 
         Check that :trac:`28650` is fixed::
 
-            sage: P = Polyhedron(vertices=[[1,0]], rays=[[1,0],[0,1]])
+            sage: P = Polyhedron(vertices=[[1,0]], rays=[[1,0], [0,1]])
             sage: P.faces(2)
             (A 2-dimensional face of a Polyhedron in QQ^2 defined as the convex hull of 1 vertex and 2 rays,)
         """
@@ -630,8 +628,8 @@ class PolyhedronFace(ConvexSet_closed):
         EXAMPLES::
 
             sage: square = polytopes.hypercube(2)
-            sage: a_face = list( square.face_lattice() )[8]
-            sage: a_face.__repr__()
+            sage: a_face = list( square.face_lattice() )[8]                     # optional - sage.combinat
+            sage: a_face.__repr__()                                             # optional - sage.combinat
             'A 1-dimensional face of a Polyhedron in ZZ^2 defined as the convex hull of 2 vertices'
         """
         desc = ''
@@ -679,8 +677,7 @@ class PolyhedronFace(ConvexSet_closed):
 
             sage: P = polytopes.cross_polytope(3); P
             A 3-dimensional polyhedron in ZZ^3 defined as the convex hull of 6 vertices
-            sage: face = P.facets()[3]
-            sage: face
+            sage: face = P.facets()[3]; face
             A 2-dimensional face of a Polyhedron in ZZ^3 defined as the convex hull of 3 vertices
             sage: face.polyhedron()
             A 3-dimensional polyhedron in ZZ^3 defined as the convex hull of 6 vertices
@@ -704,10 +701,11 @@ class PolyhedronFace(ConvexSet_closed):
 
             sage: half_plane = Polyhedron(ieqs=[(0,1,0)])
             sage: line = half_plane.faces(1)[0]; line
-            A 1-dimensional face of a Polyhedron in QQ^2 defined as the convex hull of 1 vertex and 1 line
+            A 1-dimensional face of a
+             Polyhedron in QQ^2 defined as the convex hull of 1 vertex and 1 line
             sage: line.ambient_vector_space()
             Vector space of dimension 2 over Rational Field
-            sage: line.ambient_vector_space(AA)
+            sage: line.ambient_vector_space(AA)                                         # optional - sage.rings.number_field
             Vector space of dimension 2 over Algebraic Real Field
         """
         return self.polyhedron().ambient_vector_space(base_field=base_field)
@@ -716,15 +714,14 @@ class PolyhedronFace(ConvexSet_closed):
         r"""
         Return whether ``self`` is relatively open.
 
-        OUTPUT:
-
-        Boolean.
+        OUTPUT: Boolean.
 
         EXAMPLES::
 
             sage: half_plane = Polyhedron(ieqs=[(0,1,0)])
             sage: line = half_plane.faces(1)[0]; line
-            A 1-dimensional face of a Polyhedron in QQ^2 defined as the convex hull of 1 vertex and 1 line
+            A 1-dimensional face of a
+             Polyhedron in QQ^2 defined as the convex hull of 1 vertex and 1 line
             sage: line.is_relatively_open()
             True
         """
@@ -734,15 +731,14 @@ class PolyhedronFace(ConvexSet_closed):
         r"""
         Return whether ``self`` is compact.
 
-        OUTPUT:
-
-        Boolean.
+        OUTPUT: Boolean.
 
         EXAMPLES::
 
             sage: half_plane = Polyhedron(ieqs=[(0,1,0)])
             sage: line = half_plane.faces(1)[0]; line
-            A 1-dimensional face of a Polyhedron in QQ^2 defined as the convex hull of 1 vertex and 1 line
+            A 1-dimensional face of a
+             Polyhedron in QQ^2 defined as the convex hull of 1 vertex and 1 line
             sage: line.is_compact()
             False
         """
@@ -750,7 +746,7 @@ class PolyhedronFace(ConvexSet_closed):
                        for V in self.ambient_Vrepresentation())
 
     @cached_method
-    def as_polyhedron(self):
+    def as_polyhedron(self, **kwds):
         """
         Return the face as an independent polyhedron.
 
@@ -762,9 +758,9 @@ class PolyhedronFace(ConvexSet_closed):
 
             sage: P = polytopes.cross_polytope(3);  P
             A 3-dimensional polyhedron in ZZ^3 defined as the convex hull of 6 vertices
-            sage: face = P.faces(2)[3]
-            sage: face
-            A 2-dimensional face of a Polyhedron in ZZ^3 defined as the convex hull of 3 vertices
+            sage: face = P.faces(2)[3]; face
+            A 2-dimensional face of a
+             Polyhedron in ZZ^3 defined as the convex hull of 3 vertices
             sage: face.as_polyhedron()
             A 2-dimensional polyhedron in ZZ^3 defined as the convex hull of 3 vertices
 
@@ -774,7 +770,12 @@ class PolyhedronFace(ConvexSet_closed):
         P = self._polyhedron
         parent = P.parent()
         Vrep = (self.vertices(), self.rays(), self.lines())
-        return P.__class__(parent, Vrep, None)
+        result = P.__class__(parent, Vrep, None)
+        if any(kwds.get(kwd) is not None
+               for kwd in ('base_ring', 'backend')):
+            from .constructor import Polyhedron
+            return Polyhedron(result, **kwds)
+        return result
 
     def _some_elements_(self):
         r"""
@@ -786,9 +787,9 @@ class PolyhedronFace(ConvexSet_closed):
 
             sage: P = polytopes.cross_polytope(3);  P
             A 3-dimensional polyhedron in ZZ^3 defined as the convex hull of 6 vertices
-            sage: face = P.faces(2)[3]
-            sage: face
-            A 2-dimensional face of a Polyhedron in ZZ^3 defined as the convex hull of 3 vertices
+            sage: face = P.faces(2)[3]; face
+            A 2-dimensional face of a
+             Polyhedron in ZZ^3 defined as the convex hull of 3 vertices
             sage: face.as_polyhedron().vertices()
             (A vertex at (0, -1, 0), A vertex at (0, 0, -1), A vertex at (1, 0, 0))
             sage: face.an_element()              # indirect doctest
@@ -810,7 +811,8 @@ class PolyhedronFace(ConvexSet_closed):
 
             sage: half_plane = Polyhedron(ieqs=[(0,1,0)])
             sage: line = half_plane.faces(1)[0]; line
-            A 1-dimensional face of a Polyhedron in QQ^2 defined as the convex hull of 1 vertex and 1 line
+            A 1-dimensional face of a
+             Polyhedron in QQ^2 defined as the convex hull of 1 vertex and 1 line
             sage: line.contains([0, 1])
             True
 
@@ -859,7 +861,7 @@ class PolyhedronFace(ConvexSet_closed):
 
         EXAMPLES::
 
-            sage: p = Polyhedron(vertices = [[1,2],[2,1],[-2,2],[-2,-2],[2,-2]])
+            sage: p = Polyhedron(vertices=[[1,2], [2,1], [-2,2], [-2,-2], [2,-2]])
             sage: for v in p.face_generator(0):
             ....:     vect = v.vertices()[0].vector()
             ....:     nc = v.normal_cone().rays_list()
@@ -889,11 +891,14 @@ class PolyhedronFace(ConvexSet_closed):
             sage: f2 = p.faces(1)[0]
             sage: f3 = p.faces(2)[0]
             sage: f1.normal_cone()
-            A 3-dimensional polyhedron in ZZ^3 defined as the convex hull of 1 vertex, 2 rays, 1 line
+            A 3-dimensional polyhedron in ZZ^3 defined as
+             the convex hull of 1 vertex, 2 rays, 1 line
             sage: f2.normal_cone()
-            A 2-dimensional polyhedron in ZZ^3 defined as the convex hull of 1 vertex, 1 ray, 1 line
+            A 2-dimensional polyhedron in ZZ^3 defined as
+             the convex hull of 1 vertex, 1 ray, 1 line
             sage: f3.normal_cone()
-            A 1-dimensional polyhedron in ZZ^3 defined as the convex hull of 1 vertex and 1 line
+            A 1-dimensional polyhedron in ZZ^3 defined as
+             the convex hull of 1 vertex and 1 line
 
         Normal cones are only defined for non-empty faces::
 
@@ -936,8 +941,8 @@ class PolyhedronFace(ConvexSet_closed):
 
             sage: half_plane_in_space = Polyhedron(ieqs=[(0,1,0,0)], eqns=[(0,0,0,1)])
             sage: line = half_plane_in_space.faces(1)[0]; line
-            A 1-dimensional face
-             of a Polyhedron in QQ^3 defined as the convex hull of 1 vertex and 1 line
+            A 1-dimensional face of a
+             Polyhedron in QQ^3 defined as the convex hull of 1 vertex and 1 line
             sage: T_line = line.affine_tangent_cone()
             sage: T_line == half_plane_in_space
             True
@@ -949,10 +954,22 @@ class PolyhedronFace(ConvexSet_closed):
             sage: T_edge = edge.affine_tangent_cone()
             sage: T_edge.Vrepresentation()
             (A line in the direction (0, 1, 0),
-            A ray in the direction (0, 0, 1),
-            A vertex at (1, 0, -1),
-            A ray in the direction (-1, 0, 0))
+             A ray in the direction (0, 0, 1),
+             A vertex at (1, 0, -1),
+             A ray in the direction (-1, 0, 0))
+
+        TESTS:
+
+        Check that :trac:`32658` is fixed::
+
+            sage: P = polytopes.hypercube(2)
+            sage: P.faces(-1)[0].affine_tangent_cone()
+            Traceback (most recent call last):
+            ...
+            ValueError: affine tangent cone of the empty face not defined
         """
+        if self.dim() == -1:
+            raise ValueError("affine tangent cone of the empty face not defined")
         parent = self.polyhedron().parent()
         new_ieqs = [H for H in self.ambient_Hrepresentation()
                     if H.is_inequality()]
@@ -1017,9 +1034,9 @@ def combinatorial_face_to_polyhedral_face(polyhedron, combinatorial_face):
     INPUT:
 
     - ``polyhedron`` -- a polyhedron containing ``combinatorial_face``
-    - ``combinatorial_face`` -- a ``CombinatorialFace``
+    - ``combinatorial_face`` -- a :class:`CombinatorialFace`
 
-    OUTPUT: a ``PolyhedronFace``.
+    OUTPUT: a :class:`PolyhedronFace`.
 
     EXAMPLES::
 
@@ -1042,9 +1059,9 @@ def combinatorial_face_to_polyhedral_face(polyhedron, combinatorial_face):
         0
         sage: polytopes.simplex(backend='cdd').equations()[0].index()
         4
-        sage: polytopes.simplex(backend='normaliz').equations()[0].index() # optional - pynormaliz
+        sage: polytopes.simplex(backend='normaliz').equations()[0].index()   # optional - pynormaliz
         4
-        sage: polytopes.simplex(backend='polymake').equations()[0].index() # optional - polymake
+        sage: polytopes.simplex(backend='polymake').equations()[0].index()   # optional - jupymake
         4
     """
     V_indices = combinatorial_face.ambient_V_indices()
@@ -1054,10 +1071,10 @@ def combinatorial_face_to_polyhedral_face(polyhedron, combinatorial_face):
         # Equations before inequalities in Hrep.
         H_indices = tuple(range(n_equations))
         H_indices += tuple(x+n_equations for x in combinatorial_face.ambient_H_indices(add_equations=False))
-    elif polyhedron.backend() in ('normaliz', 'cdd', 'field', 'polymake'):
+    elif polyhedron.backend() in ('normaliz', 'cdd', 'field', 'number_field', 'polymake'):
         # Equations after the inequalities in Hrep.
         n_ieqs = polyhedron.n_inequalities()
-        H_indices = tuple(x for x in combinatorial_face.ambient_H_indices(add_equations=False))
+        H_indices = tuple(combinatorial_face.ambient_H_indices(add_equations=False))
         H_indices += tuple(range(n_ieqs, n_ieqs + n_equations))
     else:
         raise NotImplementedError("unknown backend")

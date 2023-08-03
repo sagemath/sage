@@ -1,5 +1,5 @@
 r"""
-Univariate Ore Polynomial Rings
+Univariate Ore polynomial rings
 
 This module provides the
 :class:`~sage.rings.polynomial.ore_polynomial_ring.OrePolynomialRing`,
@@ -20,7 +20,6 @@ AUTHOR:
 #    (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ***************************************************************************
-
 
 from sage.misc.prandom import randint
 from sage.misc.cachefunc import cached_method
@@ -259,7 +258,7 @@ class OrePolynomialRing(UniqueRepresentation, Algebra):
     _fraction_field_class = None
 
     @staticmethod
-    def __classcall_private__(cls, base_ring, twist=None, names=None, sparse=False):
+    def __classcall_private__(cls, base_ring, twist=None, names=None, sparse=False, polcast=True):
         r"""
         Construct the Ore polynomial ring associated to the given parameters.
 
@@ -298,6 +297,21 @@ class OrePolynomialRing(UniqueRepresentation, Algebra):
             sage: S.<x> = SkewPolynomialRing(k, Frob)
             sage: type(S)
             <class 'sage.rings.polynomial.skew_polynomial_ring.SkewPolynomialRing_finite_field_with_category'>
+
+        If there is no twisting derivation and that the twisting morphism is
+        `None` ot the identity, a regular `PolynomialRing` is created, unless
+        specified otherwise::
+
+            sage: k.<a> = GF(5^2)
+            sage: Frob = k.frobenius_endomorphism(2)
+            sage: Frob.is_identity()
+            True
+            sage: S.<x> = OrePolynomialRing(k, Frob)
+            sage: S
+            Univariate Polynomial Ring in x over Finite Field in a of size 5^2
+            sage: S.<x> = OrePolynomialRing(k, Frob, polcast=False)
+            sage: S
+            Ore Polynomial Ring in x over Finite Field in a of size 5^2 twisted by Identity
         """
         if base_ring not in CommutativeRings():
             raise TypeError('base_ring must be a commutative ring')
@@ -305,7 +319,7 @@ class OrePolynomialRing(UniqueRepresentation, Algebra):
             if (twist.domain() is not base_ring
              or twist.codomain() is not base_ring):
                 raise TypeError("the twisting morphism must be an endomorphism of base_ring (=%s)" % base_ring)
-            if twist.is_identity():
+            if twist.is_identity() and polcast:
                 morphism = None
             else:
                 morphism = twist
@@ -328,9 +342,9 @@ class OrePolynomialRing(UniqueRepresentation, Algebra):
         except IndexError:
             raise NotImplementedError("multivariate Ore polynomials rings not supported")
 
-        # If there is no twisting morphism and no twisting derivation
-        # we return a classical polynomial ring
-        if derivation is None and morphism is None:
+        # If `polcast` is `True` and there is no twisting morphism and no
+        # twisting derivation we return a classical polynomial ring
+        if polcast and derivation is None and morphism is None:
             return PolynomialRing(base_ring, names, sparse=sparse)
 
         # We find the best constructor
@@ -338,7 +352,7 @@ class OrePolynomialRing(UniqueRepresentation, Algebra):
             raise NotImplementedError("sparse Ore polynomial rings are not implemented")
 
         from sage.rings.polynomial import skew_polynomial_ring
-        constructors = [ ]
+        constructors = []
         if derivation is None:
             if base_ring in _Fields:
                 try:
@@ -467,6 +481,7 @@ class OrePolynomialRing(UniqueRepresentation, Algebra):
             return C(self, a, check=check, construct=construct)
         if isinstance(a, Element):
             P = a.parent()
+
             def build(check):
                 if a.is_zero():
                     return P.zero()
@@ -574,7 +589,7 @@ class OrePolynomialRing(UniqueRepresentation, Algebra):
             if P.variable_name() == self.variable_name():
                 return base_ring.has_coerce_map_from(P.base_ring())
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation of ``self``.
 
@@ -602,7 +617,7 @@ class OrePolynomialRing(UniqueRepresentation, Algebra):
             s = "Sparse " + s
         return s
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return a latex representation of ``self``.
 
@@ -754,34 +769,6 @@ class OrePolynomialRing(UniqueRepresentation, Algebra):
                 else:
                     raise ValueError("Unexpected error in iterating the twisting morphism: %s", e)
 
-    def twist_map(self, n=1):
-        r"""
-        Return the twisting endomorphism defining this Ore polynomial ring
-        iterated ``n`` times or ``None`` if this Ore polynomial ring is not
-        twisted by an endomorphism.
-
-        This method is deprecated. Use :meth:`twisting_morphism` instead.
-
-        INPUT:
-
-        -  ``n`` - an integer (default: 1)
-
-        EXAMPLES::
-
-            sage: R.<t> = QQ[]
-            sage: sigma = R.hom([t+1])
-            sage: S.<x> = R['x', sigma]
-            sage: S.twist_map()
-            ...
-            DeprecationWarning: The method twist_map is deprecated; use twisting_morphism (same semantic) instead
-            See https://trac.sagemath.org/29629 for details.
-            Ring endomorphism of Univariate Polynomial Ring in t over Rational Field
-              Defn: t |--> t + 1
-        """
-        from sage.misc.superseded import deprecation
-        deprecation(29629, "The method twist_map is deprecated; use twisting_morphism (same semantic) instead")
-        return self.twisting_morphism(n)
-
     def twisting_derivation(self):
         r"""
         Return the twisting derivation defining this Ore polynomial ring
@@ -846,7 +833,7 @@ class OrePolynomialRing(UniqueRepresentation, Algebra):
         """
         if n != 0:
             raise IndexError("generator %s not defined" % n)
-        return self.Element(self, [0,1])
+        return self.Element(self, [0, 1])
 
     parameter = gen
 
@@ -943,13 +930,13 @@ class OrePolynomialRing(UniqueRepresentation, Algebra):
         """
         return 1
 
-    def random_element(self, degree=2, monic=False, *args, **kwds):
+    def random_element(self, degree=(-1, 2), monic=False, *args, **kwds):
         r"""
         Return a random Ore polynomial in this ring.
 
         INPUT:
 
-        - ``degree`` -- (default: 2) integer with degree
+        - ``degree`` -- (default: ``(-1,2)``) integer with degree
           or a tuple of integers with minimum and maximum degrees
 
         - ``monic`` -- (default: ``False``) if ``True``, return a monic
@@ -977,19 +964,8 @@ class OrePolynomialRing(UniqueRepresentation, Algebra):
         Use ``degree`` to obtain polynomials of higher degree::
 
             sage: p = S.random_element(degree=5)   # random
-            (t^2 + 3*t)*x^4 + (4*t + 4)*x^3 + (4*t^2 + 4*t)*x^2 + (2*t^2 + 1)*x + 3
-            sage: p.degree() <= 5
-            True
-
-        When ``monic`` is ``False``, the returned Ore polynomial may have
-        a degree less than ``degree`` (it happens when the random leading
-        coefficient is zero). However, if ``monic`` is ``True``, this
-        cannot happen::
-
-            sage: p = S.random_element(degree=4, monic=True)
-            sage: p.leading_coefficient() == S.base_ring().one()
-            True
-            sage: p.degree() == 4
+            (t^2 + 3*t)*x^5 + (4*t + 4)*x^3 + (4*t^2 + 4*t)*x^2 + (2*t^2 + 1)*x + 3
+            sage: p.degree() == 5
             True
 
         If a tuple of two integers is given for the degree argument, a random
@@ -1000,6 +976,8 @@ class OrePolynomialRing(UniqueRepresentation, Algebra):
             (3*t^2 + 1)*x^4 + (4*t + 2)*x^3 + (4*t + 1)*x^2
              + (t^2 + 3*t + 3)*x + 3*t^2 + 2*t + 2
 
+        TESTS:
+
         If the first tuple element is greater than the second, a
         ``ValueError`` is raised::
 
@@ -1007,6 +985,13 @@ class OrePolynomialRing(UniqueRepresentation, Algebra):
             Traceback (most recent call last):
             ...
             ValueError: first degree argument must be less or equal to the second
+
+        There is no monic polynomial of negative degree::
+
+            sage: S.random_element(degree=-1, monic=True)
+            Traceback (most recent call last):
+            ...
+            ValueError: there is no monic polynomial with negative degree
         """
         R = self.base_ring()
         if isinstance(degree, (list, tuple)):
@@ -1014,11 +999,21 @@ class OrePolynomialRing(UniqueRepresentation, Algebra):
                 raise ValueError("degree argument must be an integer or a tuple of 2 integers (min_degree, max_degree)")
             if degree[0] > degree[1]:
                 raise ValueError("first degree argument must be less or equal to the second")
-            degree = randint(*degree)
-        if monic:
-            return self([R.random_element(*args, **kwds) for _ in range(degree)] + [R.one()])
+            degree = list(degree)
         else:
-            return self([R.random_element(*args, **kwds) for _ in range(degree+1)])
+            degree = [degree, degree]
+        if monic:
+            degree[0] = max(0, degree[0])
+            if degree[1] < 0:
+                raise ValueError("there is no monic polynomial with negative degree")
+        degree = randint(*degree)
+        if degree < 0:
+            return self.zero()
+        coeffs = [R.random_element(*args, **kwds) for _ in range(degree)]
+        if monic:
+            return self(coeffs + [R.one()])
+        else:
+            return self(coeffs + [R._random_nonzero_element()])
 
     def random_irreducible(self, degree=2, monic=True, *args, **kwds):
         r"""
@@ -1046,12 +1041,10 @@ class OrePolynomialRing(UniqueRepresentation, Algebra):
             sage: k.<t> = GF(5^3)
             sage: Frob = k.frobenius_endomorphism()
             sage: S.<x> = k['x',Frob]
-            sage: A = S.random_irreducible(); A
-            x^2 + (4*t^2 + 3*t + 4)*x + 4*t^2 + t
+            sage: A = S.random_irreducible()
             sage: A.is_irreducible()
             True
-            sage: B = S.random_irreducible(degree=3,monic=False); B  # random
-            (4*t + 1)*x^3 + (t^2 + 3*t + 3)*x^2 + (3*t^2 + 2*t + 2)*x + 3*t^2 + 3*t + 1
+            sage: B = S.random_irreducible(degree=3, monic=False)
             sage: B.is_irreducible()
             True
         """
@@ -1062,11 +1055,11 @@ class OrePolynomialRing(UniqueRepresentation, Algebra):
                 raise ValueError("minimum degree must be less or equal than maximum degree")
             degree = randint(*degree)
         while True:
-            irred = self.random_element((degree,degree), monic=monic)
+            irred = self.random_element((degree, degree), monic=monic)
             if irred.is_irreducible():
                 return irred
 
-    def is_commutative(self):
+    def is_commutative(self) -> bool:
         r"""
         Return ``True`` if this Ore polynomial ring is commutative, i.e. if the
         twisting morphism is the identity and the twisting derivation vanishes.
@@ -1095,7 +1088,7 @@ class OrePolynomialRing(UniqueRepresentation, Algebra):
         """
         return self._morphism is None and self._derivation is None
 
-    def is_field(self, proof=False):
+    def is_field(self, proof=False) -> bool:
         r"""
         Return always ``False`` since Ore polynomial rings are never
         fields.

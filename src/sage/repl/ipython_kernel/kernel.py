@@ -6,14 +6,14 @@ Version of the Jupyter kernel when running Sage inside the Jupyter
 notebook or remote Jupyter sessions.
 """
 
-#*****************************************************************************
+# ***************************************************************************
 #       Copyright (C) 2015 Volker Braun <vbraun.name@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ***************************************************************************
 
 import sys
 from ipykernel.ipkernel import IPythonKernel
@@ -23,6 +23,7 @@ from traitlets import Type
 from sage.env import SAGE_VERSION
 from sage.repl.interpreter import SageNotebookInteractiveShell
 from sage.repl.ipython_extension import SageJupyterCustomizations
+
 
 class SageZMQInteractiveShell(SageNotebookInteractiveShell, ZMQInteractiveShell):
     pass
@@ -48,7 +49,7 @@ class SageKernel(IPythonKernel):
             sage: SageKernel.__new__(SageKernel)
             <sage.repl.ipython_kernel.kernel.SageKernel object at 0x...>
         """
-        super(SageKernel, self).__init__(**kwds)
+        super().__init__(**kwds)
         SageJupyterCustomizations(self.shell)
 
     @property
@@ -93,40 +94,43 @@ class SageKernel(IPythonKernel):
             sage: sk = SageKernel.__new__(SageKernel)
             sage: sk.help_links
             [{'text': 'Sage Documentation',
-              'url': 'kernelspecs/sagemath/doc/index.html'},
+              'url': 'kernelspecs/sagemath/doc/html/en/index.html'},
              ...]
         """
         from sage.repl.ipython_kernel.install import SageKernelSpec
         identifier = SageKernelSpec.identifier()
-        kernel_url = lambda x: 'kernelspecs/{0}/{1}'.format(identifier, x)
+
+        def kernel_url(x):
+            return 'kernelspecs/{0}/{1}'.format(identifier, x)
+
         return [
             {
                 'text': 'Sage Documentation',
-                'url': kernel_url('doc/index.html'),
+                'url': kernel_url('doc/html/en/index.html'),
             },
             {
-                'text': 'Sage Tutorial',
-                'url': kernel_url('doc/tutorial/index.html'),
+                'text': 'Tutorial',
+                'url': kernel_url('doc/html/en/tutorial/index.html'),
             },
             {
                 'text': 'Thematic Tutorials',
-                'url': kernel_url('doc/thematic_tutorials/index.html'),
+                'url': kernel_url('doc/html/en/thematic_tutorials/index.html'),
             },
             {
                 'text': 'FAQs',
-                'url': kernel_url('doc/faq/index.html'),
+                'url': kernel_url('doc/html/en/faq/index.html'),
             },
             {
                 'text': 'PREP Tutorials',
-                'url': kernel_url('doc/prep/index.html'),
+                'url': kernel_url('doc/html/en/prep/index.html'),
             },
             {
-                'text': 'Sage Reference',
-                'url': kernel_url('doc/reference/index.html'),
+                'text': 'Reference',
+                'url': kernel_url('doc/html/en/reference/index.html'),
             },
             {
                 'text': "Developer's Guide",
-                'url': kernel_url('doc/developer/index.html'),
+                'url': kernel_url('doc/html/en/developer/index.html'),
             },
             {
                 'text': "Python",

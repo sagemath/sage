@@ -1,8 +1,11 @@
-###############################################
-# Options for building the Sage documentation #
-###############################################
+r"""
+Build options
 
-import os, re
+This module defines options for building Sage documentation.
+"""
+
+import os
+import re
 
 from sage.env import SAGE_DOC_SRC, SAGE_DOC
 
@@ -16,16 +19,12 @@ if PAPER:
 else:
     PAPEROPTS = ""
 
-#Note that this needs to have the doctrees dir
+# Note that this needs to have the doctrees dir
 ALLSPHINXOPTS = SPHINXOPTS + " " + PAPEROPTS + " "
 WEBSITESPHINXOPTS = ""
 
 # Number of threads to use for parallel-building the documentation.
 NUM_THREADS = int(os.environ.get('SAGE_NUM_THREADS', 1))
-
-# Minimize GAP RAM usage in the builder, docbuild already uses too much
-from sage.interfaces.gap import set_gap_memory_pool_size
-set_gap_memory_pool_size(80 * 1024 * 1024)
 
 INCREMENTAL_BUILD = os.path.isdir(SAGE_DOC)
 

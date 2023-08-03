@@ -17,7 +17,7 @@
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 #*****************************************************************************
 
 include 'misc.pxi'
@@ -25,25 +25,25 @@ include 'decl.pxi'
 
 from sage.ext.cplusplus cimport ccrepr
 from sage.libs.ntl.ntl_ZZ_pX cimport ntl_ZZ_pX
-from sage.libs.ntl.ntl_ZZ_pContext import ntl_ZZ_pContext
-from sage.libs.ntl.ntl_ZZ cimport ntl_ZZ
 
 
 ZZ_pEContextDict = {}
 
 
-cdef class ntl_ZZ_pEContext_class(object):
+cdef class ntl_ZZ_pEContext_class():
     def __init__(self, ntl_ZZ_pX f):
         """
         EXAMPLES:
 
-            # You can construct contexts manually.
+        You can construct contexts manually::
+
             sage: c=ntl.ZZ_pEContext(ntl.ZZ_pX([4,1,6],25))
             sage: n1=c.ZZ_pE([10,17,12])
             sage: n1
             [2 15]
 
-            # or You can construct contexts implicitly.
+        Or you can construct contexts implicitly::
+
             sage: n2=ntl.ZZ_pE(12, ntl.ZZ_pX([1,1,1],7))
             sage: n2
             [5]
@@ -65,9 +65,11 @@ cdef class ntl_ZZ_pEContext_class(object):
 
     def __reduce__(self):
         """
-        sage: c=ntl.ZZ_pEContext(ntl.ZZ_pX([1,1,1],7))
-        sage: loads(dumps(c)) is c
-        True
+        EXAMPLES::
+
+           sage: c=ntl.ZZ_pEContext(ntl.ZZ_pX([1,1,1],7))
+           sage: loads(dumps(c)) is c
+           True
         """
         return ntl_ZZ_pEContext, (self.f,)
 

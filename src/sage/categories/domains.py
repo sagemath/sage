@@ -57,23 +57,23 @@ class Domains(CategoryWithAxiom):
                 In rings whose elements can not be represented exactly, there
                 may be zero divisors in practice, even though these rings do
                 not have them in theory. For such inexact rings, these tests
-                are not performed:
+                are not performed::
 
-                sage: R = ZpFM(5); R
-                5-adic Ring of fixed modulus 5^20
-                sage: R.is_exact()
-                False
-                sage: a = R(5^19)
-                sage: a.is_zero()
-                False
-                sage: (a*a).is_zero()
-                True
-                sage: R._test_zero_divisors()
+                    sage: R = ZpFM(5); R                                                # optional - sage.rings.padics
+                    5-adic Ring of fixed modulus 5^20
+                    sage: R.is_exact()                                                  # optional - sage.rings.padics
+                    False
+                    sage: a = R(5^19)                                                   # optional - sage.rings.padics
+                    sage: a.is_zero()                                                   # optional - sage.rings.padics
+                    False
+                    sage: (a * a).is_zero()                                             # optional - sage.rings.padics
+                    True
+                    sage: R._test_zero_divisors()                                       # optional - sage.rings.padics
 
             EXAMPLES::
 
                 sage: ZZ._test_zero_divisors()
-                sage: ZpFM(5)._test_zero_divisors()
+                sage: ZpFM(5)._test_zero_divisors()                                     # optional - sage.rings.padics
 
             """
             if not self.is_exact():

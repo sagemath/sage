@@ -14,8 +14,8 @@ EXAMPLES:
 
 In most cases, this module is used indirectly, e.g. ::
 
-    sage: fan = toric_varieties.dP6().fan()
-    sage: fan.plot()
+    sage: fan = toric_varieties.dP6().fan()                                     # optional - palp
+    sage: fan.plot()                                                            # optional - palp sage.plot
     Graphics object consisting of 31 graphics primitives
 
 You may change default plotting options as follows::
@@ -25,12 +25,12 @@ You may change default plotting options as follows::
     sage: toric_plotter.options(show_rays=False)
     sage: toric_plotter.options("show_rays")
     False
-    sage: fan.plot()
+    sage: fan.plot()                                                            # optional - palp sage.plot
     Graphics object consisting of 19 graphics primitives
     sage: toric_plotter.reset_options()
     sage: toric_plotter.options("show_rays")
     True
-    sage: fan.plot()
+    sage: fan.plot()                                                            # optional - palp sage.plot
     Graphics object consisting of 31 graphics primitives
 """
 
@@ -51,11 +51,13 @@ from math import pi
 
 from sage.functions.all import arccos, arctan2, ceil, floor
 from sage.geometry.polyhedron.constructor import Polyhedron
-from sage.modules.all import vector
-from sage.plot.all import (Color, Graphics,
-                           arrow, disk, line, point, polygon, rainbow, text)
-from sage.plot.plot3d.all import text3d
-from sage.rings.all import RDF
+from sage.modules.free_module_element import vector
+from sage.misc.lazy_import import lazy_import
+lazy_import("sage.plot.all", ["Color", "Graphics",
+                              "arrow", "disk", "line", "point",
+                              "polygon", "rainbow", "text"])
+lazy_import("sage.plot.plot3d.all", "text3d")
+from sage.rings.real_double import RDF
 from sage.structure.sage_object import SageObject
 
 
@@ -132,10 +134,10 @@ class ToricPlotter(SageObject):
     directly. Instead, use plotting method of the object which you want to
     plot, e.g. ::
 
-        sage: fan = toric_varieties.dP6().fan()
-        sage: fan.plot()
+        sage: fan = toric_varieties.dP6().fan()                                 # optional - palp
+        sage: fan.plot()                                                        # optional - palp sage.plot
         Graphics object consisting of 31 graphics primitives
-        sage: print(fan.plot())
+        sage: print(fan.plot())                                                 # optional - palp sage.plot
         Graphics object consisting of 31 graphics primitives
 
     If you do want to create your own plotting function for some toric
@@ -162,23 +164,23 @@ class ToricPlotter(SageObject):
     follows::
 
         sage: from sage.geometry.toric_plotter import ToricPlotter
-        sage: options = dict() # use default for everything
-        sage: tp = ToricPlotter(options, fan.lattice().degree())
-        sage: tp.include_points(fan.rays())
-        sage: tp.adjust_options()
-        sage: tp.set_rays(fan.rays())
-        sage: result = tp.plot_lattice()
-        sage: result += tp.plot_rays()
-        sage: result += tp.plot_generators()
-        sage: result += tp.plot_walls(fan(2))
-        sage: result
+        sage: options = dict()  # use default for everything
+        sage: tp = ToricPlotter(options, fan.lattice().degree())                # optional - palp
+        sage: tp.include_points(fan.rays())                                     # optional - palp
+        sage: tp.adjust_options()                                               # optional - palp
+        sage: tp.set_rays(fan.rays())                                           # optional - palp
+        sage: result = tp.plot_lattice()                                        # optional - palp sage.plot
+        sage: result += tp.plot_rays()                                          # optional - palp sage.plot
+        sage: result += tp.plot_generators()                                    # optional - palp sage.plot
+        sage: result += tp.plot_walls(fan(2))                                   # optional - palp sage.plot
+        sage: result                                                            # optional - palp sage.plot
         Graphics object consisting of 31 graphics primitives
 
     In most situations it is only necessary to include generators of rays, in
     this case they can be passed to the constructor as an optional argument.
     In the example above, the toric plotter can be completely set up using ::
 
-        sage: tp = ToricPlotter(options, fan.lattice().degree(), fan.rays())
+        sage: tp = ToricPlotter(options, fan.lattice().degree(), fan.rays())    # optional - palp
 
     All options are exposed as attributes of toric plotters and can be modified
     after constructions, however you will have to manually call
@@ -196,7 +198,7 @@ class ToricPlotter(SageObject):
             sage: tp = ToricPlotter(dict(), 2)
             sage: TestSuite(tp).run()
         """
-        super(ToricPlotter, self).__init__()
+        super().__init__()
         sd = self.__dict__
         extra_options = dict()
         self.extra_options = extra_options
@@ -387,7 +389,7 @@ class ToricPlotter(SageObject):
 
             sage: from sage.geometry.toric_plotter import ToricPlotter
             sage: tp = ToricPlotter(dict(), 2, [(3,4)])
-            sage: tp.plot_generators()
+            sage: tp.plot_generators()                                                  # optional - sage.plot
             Graphics object consisting of 1 graphics primitive
         """
         generators = self.generators
@@ -438,7 +440,7 @@ class ToricPlotter(SageObject):
 
             sage: from sage.geometry.toric_plotter import ToricPlotter
             sage: tp = ToricPlotter(dict(), 2)
-            sage: tp.plot_labels("u", [(1.5,0)])
+            sage: tp.plot_labels("u", [(1.5,0)])                                        # optional - sage.plot
             Graphics object consisting of 1 graphics primitive
         """
         result = Graphics()
@@ -472,7 +474,7 @@ class ToricPlotter(SageObject):
             sage: from sage.geometry.toric_plotter import ToricPlotter
             sage: tp = ToricPlotter(dict(), 2)
             sage: tp.adjust_options()
-            sage: tp.plot_lattice()
+            sage: tp.plot_lattice()                                                     # optional - sage.plot
             Graphics object consisting of 1 graphics primitive
         """
         if not self.show_lattice:
@@ -516,7 +518,7 @@ class ToricPlotter(SageObject):
             sage: from sage.geometry.toric_plotter import ToricPlotter
             sage: tp = ToricPlotter(dict(), 2)
             sage: tp.adjust_options()
-            sage: tp.plot_points([(1,0), (0,1)])
+            sage: tp.plot_points([(1,0), (0,1)])                                        # optional - sage.plot
             Graphics object consisting of 1 graphics primitive
         """
         return point(points, color=self.point_color, size=self.point_size,
@@ -540,7 +542,7 @@ class ToricPlotter(SageObject):
 
             sage: from sage.geometry.toric_plotter import ToricPlotter
             sage: tp = ToricPlotter(dict(), 2, [(3,4)])
-            sage: tp.plot_ray_labels()
+            sage: tp.plot_ray_labels()                                                  # optional - sage.plot
             Graphics object consisting of 1 graphics primitive
         """
         return self.plot_labels(self.ray_label,
@@ -561,7 +563,7 @@ class ToricPlotter(SageObject):
 
             sage: from sage.geometry.toric_plotter import ToricPlotter
             sage: tp = ToricPlotter(dict(), 2, [(3,4)])
-            sage: tp.plot_rays()
+            sage: tp.plot_rays()                                                        # optional - sage.plot
             Graphics object consisting of 2 graphics primitives
         """
         result = Graphics()
@@ -603,14 +605,14 @@ class ToricPlotter(SageObject):
             sage: quadrant = Cone([(1,0), (0,1)])
             sage: from sage.geometry.toric_plotter import ToricPlotter
             sage: tp = ToricPlotter(dict(), 2, quadrant.rays())
-            sage: tp.plot_walls([quadrant])
+            sage: tp.plot_walls([quadrant])                                             # optional - sage.plot
             Graphics object consisting of 2 graphics primitives
 
         Let's also check that the truncating polyhedron is functioning
         correctly::
 
             sage: tp = ToricPlotter({"mode": "box"}, 2, quadrant.rays())
-            sage: tp.plot_walls([quadrant])
+            sage: tp.plot_walls([quadrant])                                             # optional - sage.plot
             Graphics object consisting of 2 graphics primitives
         """
         result = Graphics()
@@ -700,12 +702,12 @@ class ToricPlotter(SageObject):
             sage: from sage.geometry.toric_plotter import ToricPlotter
             sage: tp = ToricPlotter(dict(), 2)
             sage: tp.adjust_options()
-            sage: tp.plot_rays()
+            sage: tp.plot_rays()                                                        # optional - sage.plot
             Traceback (most recent call last):
             ...
             AttributeError: 'ToricPlotter' object has no attribute 'rays'
             sage: tp.set_rays([(0,1)])
-            sage: tp.plot_rays()
+            sage: tp.plot_rays()                                                        # optional - sage.plot
             Graphics object consisting of 2 graphics primitives
         """
         d = self.dimension
@@ -729,7 +731,7 @@ class ToricPlotter(SageObject):
             rays = generators
         elif self.mode == "round":
             r = self.radius
-            rays = [r  * gen / gen.norm() for gen in generators]
+            rays = [r * gen / gen.norm() for gen in generators]
         self.rays = rays
 
 
@@ -780,20 +782,20 @@ def color_list(color, n):
     EXAMPLES::
 
         sage: from sage.geometry.toric_plotter import color_list
-        sage: color_list("grey", 1)
+        sage: color_list("grey", 1)                                                     # optional - sage.plot
         [RGB color (0.5019607843137255, 0.5019607843137255, 0.5019607843137255)]
-        sage: len(color_list("grey", 3))
+        sage: len(color_list("grey", 3))                                                # optional - sage.plot
         3
-        sage: L = color_list("rainbow", 3)
-        sage: L
+        sage: L = color_list("rainbow", 3)                                              # optional - sage.plot
+        sage: L                                                                         # optional - sage.plot
         [RGB color (1.0, 0.0, 0.0),
          RGB color (0.0, 1.0, 0.0),
          RGB color (0.0, 0.0, 1.0)]
-        sage: color_list(L, 3)
+        sage: color_list(L, 3)                                                          # optional - sage.plot
         [RGB color (1.0, 0.0, 0.0),
          RGB color (0.0, 1.0, 0.0),
          RGB color (0.0, 0.0, 1.0)]
-        sage: color_list(L, 4)
+        sage: color_list(L, 4)                                                          # optional - sage.plot
         Traceback (most recent call last):
         ...
         ValueError: expected 4 colors, got 3!
@@ -834,7 +836,7 @@ def label_list(label, n, math_mode, index_set=None):
 
     If ``label`` was a list of ``n`` entries, it is returned without changes.
     If ``label`` is ``None``, a list of ``n`` ``None``'s is returned. If
-    ``label`` is a string, a list of strings of the form "$label_{i}$" is
+    ``label`` is a string, a list of strings of the form ``$label_{i}$`` is
     returned, where `i` ranges over ``index_set``. (If ``math_mode=False``, the
     form "label_i" is used instead.) If ``n=1``, there is no subscript added,
     unless ``index_set`` was specified explicitly.

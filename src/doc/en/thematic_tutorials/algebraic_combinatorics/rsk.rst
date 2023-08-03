@@ -20,7 +20,10 @@ which is containment of partitions::
     sage: ord = lambda x,y: y.contains(x)
     sage: Y = Poset((elements,ord), facade=True)
     sage: H = Y.hasse_diagram()
-    sage: view(H)  # optional - dot2tex graphviz
+
+The resulting image looks best when ``dot2tex`` is installed::
+
+    sage: view(H)  # not tested
 
 .. image:: ../media/young_lattice.png
    :scale: 60

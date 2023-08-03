@@ -34,9 +34,9 @@ AUTHOR:
 from libc.math cimport log
 from cysignals.signals cimport sig_on, sig_off
 
-from sage.finance.time_series cimport TimeSeries
+from sage.stats.time_series cimport TimeSeries
 from sage.structure.element import is_Matrix
-from sage.matrix.all import matrix
+from sage.matrix.constructor import matrix
 from sage.misc.randstate cimport current_randstate, randstate
 from cpython.object cimport PyObject_RichCompare
 
@@ -61,7 +61,7 @@ cdef class HiddenMarkovModel:
             sage: pi = m.initial_probabilities(); pi
             [0.2000, 0.8000]
             sage: type(pi)
-            <... 'sage.finance.time_series.TimeSeries'>
+            <... 'sage.stats.time_series.TimeSeries'>
 
         The returned time series is a copy, so changing it does not
         change the model.
@@ -112,7 +112,7 @@ cdef class HiddenMarkovModel:
             [0.4 0.6]
         """
         from sage.matrix.constructor import matrix
-        from sage.rings.all import RDF
+        from sage.rings.real_double import RDF
         return matrix(RDF, self.N, self.A.list())
 
     def graph(self, eps=1e-3):
@@ -133,7 +133,7 @@ cdef class HiddenMarkovModel:
             sage: m = hmm.DiscreteHiddenMarkovModel([[.3,0,.7],[0,0,1],[.5,.5,0]], [[.5,.5,.2]]*3, [1/3]*3)
             sage: G = m.graph(); G
             Looped digraph on 3 vertices
-            sage: G.edges()
+            sage: G.edges(sort=True)
             [(0, 0, 0.3), (0, 2, 0.7), (1, 2, 1.0), (2, 0, 0.5), (2, 1, 0.5)]
             sage: G.plot()
             Graphics object consisting of 11 graphics primitives
@@ -144,7 +144,7 @@ cdef class HiddenMarkovModel:
             for j in range(self.N):
                 if m[i,j] < eps:
                     m[i,j] = 0
-        from sage.graphs.all import DiGraph
+        from sage.graphs.digraph import DiGraph
         return DiGraph(m, weighted=True)
 
     def sample(self, Py_ssize_t length, number=None, starting_state=None):
@@ -409,7 +409,7 @@ cdef class DiscreteHiddenMarkovModel(HiddenMarkovModel):
             [0.5 0.5]
         """
         from sage.matrix.constructor import matrix
-        from sage.rings.all import RDF
+        from sage.rings.real_double import RDF
         return matrix(RDF, self.N, self.n_out, self.B.list())
 
 

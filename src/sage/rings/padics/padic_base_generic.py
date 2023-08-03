@@ -1,5 +1,5 @@
 r"""
-`p`-Adic Base Generic
+`p`-adic Base Generic
 
 A superclass for implementations of `\ZZ_p` and `\QQ_p`.
 
@@ -30,8 +30,10 @@ from sage.rings.padics.padic_capped_absolute_element import pAdicCoercion_ZZ_CA,
 from sage.rings.padics.padic_fixed_mod_element import pAdicCoercion_ZZ_FM, pAdicConvert_QQ_FM
 from sage.rings.padics.padic_floating_point_element import pAdicCoercion_ZZ_FP, pAdicCoercion_QQ_FP, pAdicConvert_QQ_FP
 
+
 class pAdicBaseGeneric(pAdicGeneric):
     _implementation = 'GMP'
+
     def __init__(self, p, prec, print_mode, names, element_class):
         """
         Initialization
@@ -108,7 +110,7 @@ class pAdicBaseGeneric(pAdicGeneric):
             \Bold{Z}_{7}
             sage: K = ZpLF(2); K   # indirect doctest
             doctest:...: FutureWarning: This class/method/function is marked as experimental. It, its functionality or its interface might change without a formal deprecation.
-            See http://trac.sagemath.org/23505 for details.
+            See https://github.com/sagemath/sage/issues/23505 for details.
             2-adic Ring with lattice-float precision
             sage: latex(K)
             \Bold{Z}_{2}

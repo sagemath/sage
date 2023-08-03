@@ -60,7 +60,7 @@ they are Sage's symbolic variables::
     sage: y
     y
     sage: type(y)
-    <type 'sage.symbolic.expression.Expression'>
+    <class 'sage.symbolic.expression.Expression'>
 
 The South pole is the point of coordinates `(x, y) = (0, 0)` in the above
 chart::
@@ -309,7 +309,7 @@ REFERENCES:
 
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2015-2020 Eric Gourgoulhon <eric.gourgoulhon@obspm.fr>
 #       Copyright (C) 2015      Travis Scrimshaw <tscrimsh@umn.edu>
 #       Copyright (C) 2016      Andrew Mathas
@@ -322,30 +322,44 @@ REFERENCES:
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
+from __future__ import annotations
+
+from typing import TYPE_CHECKING, Optional, Union, overload
+
+import sage.rings.abc
 from sage.categories.fields import Fields
-from sage.categories.manifolds import Manifolds
 from sage.categories.homset import Hom
-from sage.rings.all import CC
-from sage.rings.real_mpfr import RR, RealField_class
-from sage.rings.complex_mpfr import ComplexField_class
-from sage.misc.prandom import getrandbits
-from sage.misc.cachefunc import cached_method
-from sage.rings.integer import Integer
-from sage.structure.global_options import GlobalOptions
+from sage.categories.manifolds import Manifolds
+from sage.manifolds.structure import (
+    DifferentialStructure,
+    RealDifferentialStructure,
+    RealTopologicalStructure,
+    TopologicalStructure,
+)
 from sage.manifolds.subset import ManifoldSubset
-from sage.manifolds.structure import(
-                            TopologicalStructure, RealTopologicalStructure,
-                            DifferentialStructure, RealDifferentialStructure)
+from sage.misc.cachefunc import cached_method
+from sage.misc.prandom import getrandbits
+from sage.rings.cc import CC
+from sage.rings.integer import Integer
+from sage.rings.real_mpfr import RR
+from sage.structure.global_options import GlobalOptions
+
+if TYPE_CHECKING:
+    from sage.manifolds.chart import Chart
+    from sage.manifolds.continuous_map import ContinuousMap
+    from sage.manifolds.differentiable.diff_map import DiffMap
+    from sage.manifolds.differentiable.manifold import DifferentiableManifold
+    from sage.manifolds.scalarfield import ScalarField
 
 
 #############################################################################
-## Global options
+# Global options
 
 #############################################################################
-## Class
+# Class
 
 class TopologicalManifold(ManifoldSubset):
     r"""
@@ -506,6 +520,8 @@ class TopologicalManifold(ManifoldSubset):
 
         :mod:`sage.manifolds.manifold`
     """
+    _dim: int
+
     def __init__(self, n, name, field, structure, base_manifold=None,
                  latex_name=None, start_index=0, category=None,
                  unique_tag=None):
@@ -531,9 +547,12 @@ class TopologicalManifold(ManifoldSubset):
             sage: TestSuite(U).run()
             sage: U.category() is M.category().Subobjects()
             True
-
         """
         # Initialization of the attributes _dim, _field, _field_type:
+        if not isinstance(n, (int, Integer)):
+            raise TypeError("the manifold dimension must be an integer")
+        if n < 1:
+            raise ValueError("the manifold dimension must be strictly positive")
         self._dim = n
         if field == 'real':
             self._field = RR
@@ -545,9 +564,9 @@ class TopologicalManifold(ManifoldSubset):
             if field not in Fields():
                 raise TypeError("the argument 'field' must be a field")
             self._field = field
-            if isinstance(field, RealField_class):
+            if isinstance(field, sage.rings.abc.RealField):
                 self._field_type = 'real'
-            elif isinstance(field, ComplexField_class):
+            elif isinstance(field, sage.rings.abc.ComplexField):
                 self._field_type = 'complex'
             else:
                 self._field_type = 'neither_real_nor_complex'
@@ -669,7 +688,7 @@ class TopologicalManifold(ManifoldSubset):
             sage: p in V
             True
             sage: p.coord()
-            (-pi - 1, 0)
+            (-pi - 1, 2)
 
         """
         from sage.rings.infinity import Infinity
@@ -885,10 +904,10 @@ class TopologicalManifold(ManifoldSubset):
 
         INPUT:
 
-        - ``resu`` -- an instance of ``:class:`TopologicalManifold` or
+        - ``resu`` -- an instance of :class:`TopologicalManifold` or
           a subclass.
 
-        - ``coord_def`` -- (default: {}) definition of the subset in
+        - ``coord_def`` -- (default: ``{}``) definition of the subset in
           terms of coordinates; ``coord_def`` must a be dictionary with keys
           charts on the manifold and values the symbolic expressions formed
           by the coordinates to define the subset
@@ -1079,20 +1098,21 @@ class TopologicalManifold(ManifoldSubset):
         """
         return self._sindex
 
-    def irange(self, start=None):
+    def irange(self, start=None, end=None):
         r"""
         Single index generator.
 
         INPUT:
 
         - ``start`` -- (default: ``None``) initial value `i_0` of the index;
-          if none are provided, the value returned by :meth:`start_index()`
-          is assumed
+          if ``None``, the value returned by :meth:`start_index()` is assumed
+        - ``end`` -- (default: ``None``) final value `i_n` of the index;
+          if ``None``, the value returned by :meth:`start_index()` plus
+          `n - 1`, where `n` is the manifold dimension, is assumed
 
         OUTPUT:
 
-        - an iterable index, starting from `i_0` and ending at
-          `i_0 + n - 1`, where `n` is the manifold's dimension
+        - an iterable index, starting from `i_0` and ending at `i_0 + i_n`
 
         EXAMPLES:
 
@@ -1101,16 +1121,24 @@ class TopologicalManifold(ManifoldSubset):
             sage: M = Manifold(4, 'M', structure='topological')
             sage: list(M.irange())
             [0, 1, 2, 3]
-            sage: list(M.irange(2))
+            sage: list(M.irange(start=2))
             [2, 3]
+            sage: list(M.irange(end=2))
+            [0, 1, 2]
+            sage: list(M.irange(start=1, end=2))
+            [1, 2]
 
         Index range on a 4-dimensional manifold with starting index=1::
 
             sage: M = Manifold(4, 'M', structure='topological', start_index=1)
             sage: list(M.irange())
             [1, 2, 3, 4]
-            sage: list(M.irange(2))
+            sage: list(M.irange(start=2))
             [2, 3, 4]
+            sage: list(M.irange(end=2))
+            [1, 2]
+            sage: list(M.irange(start=2, end=3))
+            [2, 3]
 
         In general, one has always::
 
@@ -1119,11 +1147,14 @@ class TopologicalManifold(ManifoldSubset):
 
         """
         si = self._sindex
-        imax = self._dim + si
         if start is None:
             i = si
         else:
             i = start
+        if end is None:
+            imax = self._dim + si
+        else:
+            imax = end + 1
         while i < imax:
             yield i
             i += 1
@@ -1177,7 +1208,7 @@ class TopologicalManifold(ManifoldSubset):
                         ind[pos] = si
                         ret = 1
 
-    def atlas(self):
+    def atlas(self) -> list[Chart]:
         r"""
         Return the list of charts that have been defined on the manifold.
 
@@ -1429,8 +1460,13 @@ class TopologicalManifold(ManifoldSubset):
         """
         return bool(self._covering_charts)
 
-    def chart(self, coordinates='', names=None, calc_method=None,
-              coord_restrictions=None):
+    def chart(
+        self,
+        coordinates: str = "",
+        names=None,
+        calc_method=None,
+        coord_restrictions=None,
+    ) -> Chart:
         r"""
         Define a chart, the domain of which is the manifold.
 
@@ -1550,7 +1586,7 @@ class TopologicalManifold(ManifoldSubset):
             sage: y
             y
             sage: type(y)
-            <type 'sage.symbolic.expression.Expression'>
+            <class 'sage.symbolic.expression.Expression'>
 
         But a shorter way to proceed is to use the operator ``<,>`` in the
         left-hand side of the chart declaration (there is then no need to
@@ -1910,8 +1946,9 @@ class TopologicalManifold(ManifoldSubset):
         """
         return self._scalar_field_algebra
 
-    def scalar_field(self, coord_expression=None, chart=None, name=None,
-                     latex_name=None):
+    def scalar_field(
+        self, coord_expression=None, chart=None, name=None, latex_name=None
+    ) -> ScalarField:
         r"""
         Define a scalar field on the manifold.
 
@@ -2169,7 +2206,7 @@ class TopologicalManifold(ManifoldSubset):
             sage: M.options._reset()
         """
         NAME = 'manifolds'
-        module = 'sage.manifolds'
+        module = 'sage.manifolds.manifold'
         option_class = 'TopologicalManifold'
         textbook_output = dict(default=True,
                              description='textbook-like output instead of the Pynac output for derivatives',
@@ -2427,6 +2464,10 @@ class TopologicalManifold(ManifoldSubset):
         return homset(coord_functions, name=name, latex_name=latex_name,
                       is_isomorphism=True)
 
+    @overload
+    def identity_map(self: TopologicalManifold) -> ContinuousMap: ...
+    @overload
+    def identity_map(self: DifferentiableManifold) -> DiffMap: ...
     @cached_method
     def identity_map(self):
         r"""
@@ -2511,7 +2552,7 @@ class TopologicalManifold(ManifoldSubset):
             sage: f.expr()
             x^2 + cos(y)*sin(x)
             sage: type(f.expr())
-            <type 'sage.symbolic.expression.Expression'>
+            <class 'sage.symbolic.expression.Expression'>
             sage: parent(f.expr())
             Symbolic Ring
             sage: f.display()
@@ -2684,8 +2725,16 @@ class TopologicalManifold(ManifoldSubset):
 
 _manifold_id = Integer(0)
 
-def Manifold(dim, name, latex_name=None, field='real', structure='smooth',
-             start_index=0, **extra_kwds):
+
+def Manifold(
+    dim: int,
+    name: Optional[str],
+    latex_name: Optional[str] = None,
+    field: str = "real",
+    structure: Optional[str] = None,
+    start_index: int = 0,
+    **extra_kwds,
+) -> Union[TopologicalManifold, DifferentiableManifold]:
     r"""
     Construct a manifold of a given type over a topological field.
 
@@ -2838,6 +2887,15 @@ def Manifold(dim, name, latex_name=None, field='real', structure='smooth',
         sage: M.diff_degree()
         +Infinity
 
+    Other parameters can change the default of the parameter ``structure``::
+
+        sage: M = Manifold(3, 'M', diff_degree=0); M
+        3-dimensional topological manifold M
+        sage: M = Manifold(3, 'M', diff_degree=2); M
+        3-dimensional differentiable manifold M
+        sage: M = Manifold(3, 'M', metric_name='g'); M
+        3-dimensional Riemannian manifold M
+
     For a complex smooth manifold, we have to set the parameter ``field``::
 
         sage: M = Manifold(3, 'M', field='complex'); M
@@ -2947,27 +3005,30 @@ def Manifold(dim, name, latex_name=None, field='real', structure='smooth',
 
     global _manifold_id
 
-    # Some sanity checks
-    if not isinstance(dim, (int, Integer)):
-        raise TypeError("the manifold dimension must be an integer")
-    if dim < 1:
-        raise ValueError("the manifold dimension must be strictly positive")
-
     _manifold_id += 1
     unique_tag = lambda: getrandbits(128)*_manifold_id
 
+    if structure is None:
+        if any(extra_kwds.get(x, None) is not None
+               for x in ('metric_name', 'metric_latex_name', 'signature')):
+            structure = 'pseudo-Riemannian'
+
+    if structure is None:
+        diff_degree = extra_kwds.get('diff_degree', infinity)
+        if diff_degree == infinity:
+            structure = 'smooth'
+        elif diff_degree > 0:
+            structure = 'differentiable'
+        else:
+            structure = 'topological'
+
     if structure in ['topological', 'top']:
-        if field == 'real' or isinstance(field, RealField_class):
+        if field == 'real' or isinstance(field, sage.rings.abc.RealField):
             structure = RealTopologicalStructure()
         else:
             structure = TopologicalStructure()
         if 'ambient' in extra_kwds:
             ambient = extra_kwds['ambient']
-            if not isinstance(ambient, TopologicalManifold):
-                raise TypeError("ambient must be a manifold")
-            if dim>ambient._dim:
-                raise ValueError("the submanifold must be of smaller "
-                                 + "dimension than its ambient manifold")
             return TopologicalSubmanifold(dim, name, field, structure,
                                           ambient=ambient,
                                           latex_name=latex_name,
@@ -2985,17 +3046,12 @@ def Manifold(dim, name, latex_name=None, field='real', structure='smooth',
                                  "not compatible with a smooth structure")
         else:
             diff_degree = infinity
-        if field == 'real' or isinstance(field, RealField_class):
+        if field == 'real' or isinstance(field, sage.rings.abc.RealField):
             structure = RealDifferentialStructure()
         else:
             structure = DifferentialStructure()
         if 'ambient' in extra_kwds:
             ambient = extra_kwds['ambient']
-            if not isinstance(ambient, DifferentiableManifold):
-                raise TypeError("ambient must be a differentiable manifold")
-            if dim>ambient._dim:
-                raise ValueError("the submanifold must be of smaller "
-                                 + "dimension than its ambient manifold")
             return DifferentiableSubmanifold(dim, name, field, structure,
                                              ambient=ambient,
                                              diff_degree=diff_degree,
@@ -3008,27 +3064,15 @@ def Manifold(dim, name, latex_name=None, field='real', structure='smooth',
                                       start_index=start_index,
                                       unique_tag=unique_tag())
     elif structure in ['pseudo-Riemannian', 'Riemannian', 'Lorentzian','degenerate_metric']:
-        if 'diff_degree' in extra_kwds:
-            diff_degree = extra_kwds['diff_degree']
-        else:
-            diff_degree = infinity
-        if 'metric_name' in extra_kwds:
-            metric_name = extra_kwds['metric_name']
-        else:
-            metric_name = 'g'
-        if 'metric_latex_name' in extra_kwds:
-            metric_latex_name = extra_kwds['metric_latex_name']
-        else:
-            metric_latex_name = None
+        diff_degree = extra_kwds.get('diff_degree', infinity)
+        metric_name = extra_kwds.get('metric_name', None)
+        metric_latex_name = extra_kwds.get('metric_latex_name', None)
         if structure == 'pseudo-Riemannian':
-            if 'signature' in extra_kwds:
-                signature = extra_kwds['signature']
-            else:
-                signature = None
+            signature = extra_kwds.get('signature', None)
         elif structure == 'Riemannian':
             signature = dim
         elif structure == 'degenerate_metric':
-            signature = (0,dim-1,1)
+            signature = (0, dim-1, 1)
         elif structure == 'Lorentzian':
             if 'signature' in extra_kwds:
                 signat = extra_kwds['signature']
@@ -3044,13 +3088,8 @@ def Manifold(dim, name, latex_name=None, field='real', structure='smooth',
                 signature = dim - 2  # default value for a Lorentzian manifold
         if 'ambient' in extra_kwds:
             ambient = extra_kwds['ambient']
-            if not isinstance(ambient, (PseudoRiemannianManifold, DegenerateManifold)):
-                raise TypeError("ambient must be a pseudo-Riemannian manifold")
-            if dim>ambient._dim:
-                raise ValueError("the submanifold must be of smaller "
-                                 + "dimension than its ambient manifold")
             if structure == 'degenerate_metric':
-                return DegenerateSubmanifold(dim, name, ambient = ambient,
+                return DegenerateSubmanifold(dim, name, ambient=ambient,
                                                metric_name=metric_name,
                                                signature=signature,
                                                diff_degree=diff_degree,
@@ -3058,7 +3097,7 @@ def Manifold(dim, name, latex_name=None, field='real', structure='smooth',
                                                metric_latex_name=metric_latex_name,
                                                start_index=start_index,
                                                unique_tag=unique_tag())
-            return PseudoRiemannianSubmanifold(dim, name, ambient = ambient,
+            return PseudoRiemannianSubmanifold(dim, name, ambient=ambient,
                                                metric_name=metric_name,
                                                signature=signature,
                                                diff_degree=diff_degree,

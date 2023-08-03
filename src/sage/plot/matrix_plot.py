@@ -1,5 +1,5 @@
 """
-Matrix Plots
+Matrix plots
 """
 #*****************************************************************************
 #       Copyright (C) 2006 Alex Clemesha <clemesha@gmail.com>,
@@ -241,7 +241,6 @@ class MatrixPlot(GraphicPrimitive):
         else:
             subplot.xaxis.tick_bottom()
         subplot.xaxis.set_ticks_position('both') #only tick marks, not tick labels
-
 
 
 @suboptions('colorbar', orientation='vertical', format=None)
@@ -515,7 +514,10 @@ def matrix_plot(mat, xrange=None, yrange=None, **options):
     TESTS::
 
         sage: P.<t> = RR[]
-        sage: matrix_plot(random_matrix(P, 3, 3))
+        sage: M = random_matrix(P, 3, 3)
+        sage: (i,j) = (ZZ.random_element(3), ZZ.random_element(3))
+        sage: M[i,j] = P.random_element(degree=(1,5))  # always nonconstant
+        sage: matrix_plot(M)
         Traceback (most recent call last):
         ...
         TypeError: cannot convert nonconstant polynomial
@@ -549,7 +551,7 @@ def matrix_plot(mat, xrange=None, yrange=None, **options):
 
         sage: matrix_plot(identity_matrix(100), origin='lower')
         doctest:...: DeprecationWarning: the option 'origin' is replaced by 'flip_y'
-        See https://trac.sagemath.org/27891 for details.
+        See https://github.com/sagemath/sage/issues/27891 for details.
         Graphics object consisting of 1 graphics primitive
     """
     if 'origin' in options:
@@ -562,7 +564,7 @@ def matrix_plot(mat, xrange=None, yrange=None, **options):
     import scipy.sparse as scipysparse
     from sage.plot.all import Graphics
     from sage.structure.element import is_Matrix
-    from sage.rings.all import RDF
+    from sage.rings.real_double import RDF
     orig_mat=mat
     if is_Matrix(mat):
         sparse = mat.is_sparse()
@@ -582,12 +584,11 @@ def matrix_plot(mat, xrange=None, yrange=None, **options):
     else:
         sparse = False
 
-
     try:
         if sparse:
             xy_data_array = mat
         else:
-            xy_data_array = np.asarray(mat, dtype = float)
+            xy_data_array = np.asarray(mat, dtype=float)
     except TypeError:
         raise TypeError("mat must be a Matrix or a two dimensional array")
     except ValueError:

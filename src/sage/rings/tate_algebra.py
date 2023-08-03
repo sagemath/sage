@@ -91,8 +91,7 @@ We can also evaluate series in a point of the domain of convergence
     sage: f(a^2, 2*a)
     1 + 2^2 + a*2^4 + O(2^5)
 
-    sage: var('u')
-    u
+    sage: u = polygen(ZZ, 'u')
     sage: L.<pi> = K.change(print_mode="series").extension(u^3 - 2)
     sage: g(pi, 2*pi)
     pi^7 + pi^8 + pi^19 + pi^20 + O(pi^21)
@@ -239,7 +238,6 @@ class TateAlgebraFactory(UniqueFactory):
     AUTHORS:
 
     - Xavier Caruso, Thibaut Verron (2018-09)
-
     """
     def create_key(self, base, prec=None, log_radii=ZZ(0), names=None, order='degrevlex'):
         """
@@ -251,7 +249,7 @@ class TateAlgebraFactory(UniqueFactory):
 
         - ``prec`` -- an integer or ``None`` (default: ``None``)
 
-        - ``log_radii`` -- an integer or a list or a tuple of integers 
+        - ``log_radii`` -- an integer or a list or a tuple of integers
           (default: ``0``)
 
         - ``names`` -- names of the indeterminates
@@ -684,7 +682,6 @@ class TateTermMonoid(Monoid_class, UniqueRepresentation):
         return elts
 
 
-
 # Tate algebras
 ###############
 
@@ -843,6 +840,7 @@ class TateAlgebra_generic(CommutativeAlgebra):
             sage: from sage.categories.pushout import pushout
             sage: R = Zp(2)
             sage: R1.<a> = Zq(4)
+            sage: x = polygen(ZZ, 'x')
             sage: R2.<pi> = R.extension(x^2 - 2)
 
             sage: A.<u,v> = TateAlgebra(R, log_radii=[1,2])
@@ -1148,7 +1146,7 @@ class TateAlgebra_generic(CommutativeAlgebra):
         """
         Return the precision cap of this Tate algebra.
 
-        NOTE::
+        .. NOTE::
 
             The precision cap is the truncation precision
             used for arithmetic operations computed by
@@ -1198,6 +1196,7 @@ class TateAlgebra_generic(CommutativeAlgebra):
             sage: A.absolute_e()
             1
 
+            sage: x = polygen(ZZ, 'x')
             sage: S.<a> = R.extension(x^2 - 2)
             sage: A.<u,v> = TateAlgebra(S)
             sage: A.absolute_e()
@@ -1275,8 +1274,8 @@ class TateAlgebra_generic(CommutativeAlgebra):
             gens = [ self.element_class(self, g) for g in self._integer_ring._gens ]
         return self.element_class(self, polring.random_element(degree, terms)(*gens), prec)
 
-    def is_integral_domain(self):
-        """
+    def is_integral_domain(self, proof=True):
+        r"""
         Return ``True`` since any Tate algebra is an integral domain.
 
         EXAMPLES::
@@ -1285,5 +1284,13 @@ class TateAlgebra_generic(CommutativeAlgebra):
             sage: A.is_integral_domain()
             True
 
+        TESTS:
+
+        Check that :trac:`34372` is fixed::
+
+            sage: A.<x,y> = TateAlgebra(Zp(3))
+            sage: R.<a,b> = PolynomialRing(A)
+            sage: R.is_integral_domain(proof=True)
+            True
         """
         return True

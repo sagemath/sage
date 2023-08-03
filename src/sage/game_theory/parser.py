@@ -1,7 +1,6 @@
 """
 Parser For gambit And lrs Nash Equilibria
 """
-
 # ****************************************************************************
 #       Copyright (C) 2014 James Campbell james.campbell@tanti.org.uk
 #                     2015 Vincent Knight
@@ -12,6 +11,7 @@ Parser For gambit And lrs Nash Equilibria
 # (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
+
 
 class Parser():
     r"""
@@ -39,7 +39,9 @@ class Parser():
             sage: game_name = tmp_filename()
             sage: with open(game_name, 'w') as game_file:
             ....:     _ = game_file.write(game_str)
-            sage: process = Popen(['lrsnash', game_name], stdout=PIPE, stderr=PIPE)  # optional - lrslib
+            sage: from sage.features.lrs import LrsNash
+            sage: process = Popen([LrsNash().absolute_filename(), game_name],        # optional - lrslib
+            ....:                 stdout=PIPE, stderr=PIPE)
             sage: lrs_output = [bytes_to_str(row) for row in process.stdout]         # optional - lrslib
             sage: Parser(lrs_output).format_lrs()                                    # optional - lrslib
             [[(1,), (1,)]]
@@ -65,14 +67,16 @@ class Parser():
             sage: game_name = tmp_filename()
             sage: with open(game_name, 'w') as game_file:
             ....:     _ = game_file.write(game_str)
-            sage: process = Popen(['lrsnash', game_name], stdout=PIPE, stderr=PIPE)  # optional - lrslib
+            sage: from sage.features.lrs import LrsNash
+            sage: process = Popen([LrsNash().absolute_filename(), game_name],        # optional - lrslib
+            ....:                 stdout=PIPE, stderr=PIPE)
             sage: lrs_output = [bytes_to_str(row) for row in process.stdout]         # optional - lrslib
 
         The above creates a game, writes the H representations to
         temporary files, calls lrs and stores the output in ``lrs_output``
-        (here slicing to get rid of some system parameters that get returned)::
+        (ignoring some system parameters that get returned)::
 
-            sage: lrs_output[:-2]                                                    # optional - lrslib
+            sage: lrs_output                                                         # optional - lrslib
             [...,
              '2  0  1  2 \n',
              '1  1/2  1/2 -2 \n',
@@ -83,7 +87,7 @@ class Parser():
              '*Number of equilibria found: 2\n',
              '*Player 1: vertices=3 bases=3 pivots=5\n',
              '*Player 2: vertices=2 bases=1 pivots=6\n',
-             '\n']
+             '\n',...]
 
         The above is pretty messy, here is the output when we put it through
         the parser::
@@ -105,9 +109,11 @@ class Parser():
             sage: game_name = tmp_filename()
             sage: with open(game_name, 'w') as game_file:
             ....:     _ = game_file.write(game_str)
-            sage: process = Popen(['lrsnash', game_name], stdout=PIPE, stderr=PIPE)  # optional - lrslib
+            sage: from sage.features.lrs import LrsNash
+            sage: process = Popen([LrsNash().absolute_filename(), game_name],        # optional - lrslib
+            ....:                 stdout=PIPE, stderr=PIPE)
             sage: lrs_output = [bytes_to_str(row) for row in process.stdout]         # optional - lrslib
-            sage: print(lrs_output[:-2])                                             # optional - lrslib
+            sage: print(lrs_output)                                                  # optional - lrslib
             [...,
              '2  0  1/6  5/6  10/3 \n',
              '2  1/7  0  6/7  23/7 \n',
@@ -122,7 +128,7 @@ class Parser():
              '*Number of equilibria found: 4\n',
              '*Player 1: vertices=6 bases=7 pivots=10\n',
              '*Player 2: vertices=4 bases=2 pivots=14\n',
-             '\n']
+             '\n',...]
 
             sage: nasheq = Parser(lrs_output).format_lrs()                           # optional - lrslib
             sage: sorted(nasheq)                                                     # optional - lrslib
@@ -144,14 +150,16 @@ class Parser():
             doctest:warning...
             DeprecationWarning: NormalFormGame._Hrepresentation is deprecated as it
             creates the legacy input format. Use NormalFormGame._lrs_nash_format instead
-            See https://trac.sagemath.org/27745 for details.
+            See https://github.com/sagemath/sage/issues/27745 for details.
             sage: g1_name, g2_name = tmp_filename(), tmp_filename()
             sage: g1_file, g2_file = open(g1_name, 'w'), open(g2_name, 'w')
             sage: _ = g1_file.write(game1_str)
             sage: g1_file.close()
             sage: _ = g2_file.write(game2_str)
             sage: g2_file.close()
-            sage: process = Popen(['lrsnash', g1_name, g2_name], stdout=PIPE, stderr=PIPE)  # not tested, optional - lrslib
+            sage: from sage.features.lrs import LrsNash
+            sage: process = Popen([LrsNash().absolute_filename(), g1_name, g2_name],        # optional - lrslib
+            ....:                 stdout=PIPE, stderr=PIPE)
             sage: lrs_output = [bytes_to_str(row) for row in process.stdout]                # not tested, optional - lrslib
             sage: nasheq = Parser(lrs_output).format_lrs(legacy_format=True)                # not tested, optional - lrslib
             sage: nasheq                                                                    # not tested, optional - lrslib
@@ -290,4 +298,3 @@ class Parser():
             nice_stuff.append(profile)
 
         return nice_stuff
-

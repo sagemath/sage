@@ -8,7 +8,7 @@ The Sage Manuals
 
 Sage's manuals are written in `ReST <http://docutils.sourceforge.net/rst.html>`_
 (reStructuredText), and generated with the software `Sphinx
-<http://sphinx.pocoo.org>`_:
+<https://www.sphinx-doc.org/>`_:
 
 .. LIST-TABLE::
    :widths: 4 12
@@ -83,8 +83,8 @@ The documentation can contain links toward modules, classes, or methods, e.g.::
     :mod:`sage.module_name` (here the link's text is the module's name)
 
 For links toward classes, methods, or function, replace **:mod:** by
-**:class:**, **:meth:** or **func:** respectively.  See `Sphinx' documentation
-<http://sphinx.pocoo.org/markup/inline.html>`_.
+**:class:**, **:meth:** or **:func:** respectively.  See `Sphinx' documentation
+<https://www.sphinx-doc.org/en/master/usage/restructuredtext/roles.html>`_.
 
 **Short links:** the link ``:func:`~sage.mod1.mod2.mod3.func1``` is equivalent
 to ``:func:`func1 <sage.mod1.mod2.mod3.func1>```: the function's name will be
@@ -107,9 +107,9 @@ by Sage, you can link toward it without specifying its full path:
    :widths: 4 4 4
    :header-rows: 0
 
-   * - Trac server
-     - ``:trac:`17596```
-     - :trac:`17596`
+   * - GitHub issue
+     - ``issue:`17596```
+     - :issue:`17596`
 
    * - Wikipedia
      - ``:wikipedia:`Sage_(mathematics_software)```
@@ -149,7 +149,7 @@ another option is to use `anonymous hyperlinks
 
 .. _section-add-file:
 
-Adding a New File
+Adding a new file
 =================
 
 If you added a new file to Sage (e.g. ``sage/matroids/my_algorithm.py``) and you
@@ -168,7 +168,7 @@ procedure is different:
 
 .. _section-building-manuals:
 
-Building the Manuals
+Building the manuals
 ====================
 
 *(Do you want to edit the documentation?* :ref:`Click here
@@ -195,7 +195,7 @@ Two **help** commands which give plenty of documentation for the ``sage
     sage --docbuild -H # a more comprehensive one
 
 **Output formats:** All output formats supported by Sphinx (e.g. pdf) can be
-used in Sage. See `<http://sphinx.pocoo.org/builders.html>`_.
+used in Sage. See `<http://www.sphinx-doc.org/builders.html>`_.
 
 **Broken links:** in order to build the documentation while reporting the broken
 links that it contains, use the ``--warn-links`` flag. Note that Sphinx will not
@@ -206,7 +206,7 @@ links::
 
 .. _section-manuals-names:
 
-Document Names
+Document names
 --------------
 
 The ``<document-name>`` has the form:
@@ -228,7 +228,7 @@ To specify the French version of the tutorial, you would simply run::
     sage --docbuild fr/tutorial html
 
 
-Syntax Highlighting Cython Code
+Syntax highlighting Cython code
 ===============================
 
 If you want to write :ref:`Cython <chapter-cython>` code in a ReST file, precede

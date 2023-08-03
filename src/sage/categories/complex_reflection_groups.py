@@ -64,18 +64,18 @@ class ComplexReflectionGroups(Category_singleton):
 
     An example of a reflection group::
 
-        sage: W = ComplexReflectionGroups().example(); W
+        sage: W = ComplexReflectionGroups().example(); W                                # optional - sage.combinat sage.groups
         5-colored permutations of size 3
 
     ``W`` is in the category of complex reflection groups::
 
-        sage: W in ComplexReflectionGroups()
+        sage: W in ComplexReflectionGroups()                                            # optional - sage.combinat sage.groups
         True
 
     TESTS::
 
-        sage: TestSuite(W).run()
-        sage: TestSuite(ComplexReflectionGroups()).run()
+        sage: TestSuite(W).run()                                                        # optional - sage.combinat sage.groups
+        sage: TestSuite(ComplexReflectionGroups()).run()                                # optional - sage.combinat sage.groups
     """
 
     @cached_method
@@ -115,7 +115,7 @@ class ComplexReflectionGroups(Category_singleton):
         EXAMPLES::
 
             sage: from sage.categories.complex_reflection_groups import ComplexReflectionGroups
-            sage: ComplexReflectionGroups().example()
+            sage: ComplexReflectionGroups().example()                                   # optional - sage.combinat sage.groups
             5-colored permutations of size 3
         """
         from sage.combinat.colored_permutations import ColoredPermutations
@@ -133,12 +133,11 @@ class ComplexReflectionGroups(Category_singleton):
 
             EXAMPLES::
 
-                sage: W = CoxeterGroups().example(); W
+                sage: W = CoxeterGroups().example(); W                                  # optional - sage.groups
                 The symmetric group on {0, ..., 3}
-                sage: W.rank()
+                sage: W.rank()                                                          # optional - sage.groups
                 3
             """
 
     Finite = LazyImport('sage.categories.finite_complex_reflection_groups',
                         'FiniteComplexReflectionGroups', as_name='Finite')
-

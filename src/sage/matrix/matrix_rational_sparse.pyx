@@ -54,7 +54,6 @@ import sage.matrix.matrix_space
 from .matrix_integer_sparse cimport Matrix_integer_sparse
 from .matrix_rational_dense cimport Matrix_rational_dense
 
-from sage.misc.verbose import verbose
 
 cdef class Matrix_rational_sparse(Matrix_sparse):
     def __cinit__(self):
@@ -103,7 +102,7 @@ cdef class Matrix_rational_sparse(Matrix_sparse):
         mpq_vector_get_entry(x.value, &self._matrix[i], j)
         return x
 
-    cdef bint get_is_zero_unsafe(self, Py_ssize_t i, Py_ssize_t j):
+    cdef bint get_is_zero_unsafe(self, Py_ssize_t i, Py_ssize_t j) except -1:
         """
         Return 1 if the entry ``(i, j)`` is zero, otherwise 0.
 
@@ -229,7 +228,7 @@ cdef class Matrix_rational_sparse(Matrix_sparse):
             [ 9 12 15]
             [19 26 33]
             sage: type(c)
-            <type 'sage.matrix.matrix_rational_dense.Matrix_rational_dense'>
+            <class 'sage.matrix.matrix_rational_dense.Matrix_rational_dense'>
         """
         cdef Matrix_rational_sparse right
         cdef Matrix_rational_dense ans
@@ -301,7 +300,7 @@ cdef class Matrix_rational_sparse(Matrix_sparse):
         be dangerous if you change entries of the returned dict.
         """
         d = self.fetch('dict')
-        if not d is None:
+        if d is not None:
             return d
 
         cdef Py_ssize_t i, j, k
@@ -337,10 +336,9 @@ cdef class Matrix_rational_sparse(Matrix_sparse):
             [0 1 0 0 0 0 1 0]
             sage: M.nonzero_positions()
             [(0, 3), (1, 1), (1, 6)]
-
         """
         x = self.fetch('nonzero_positions')
-        if not x is None:
+        if x is not None:
             if copy:
                 return list(x)
             return x
@@ -520,7 +518,8 @@ cdef class Matrix_rational_sparse(Matrix_sparse):
         """
 
         x = self.fetch('in_echelon_form')
-        if not x is None: return  # already known to be in echelon form
+        if x is not None:
+            return  # already known to be in echelon form
         self.check_mutability()
 
         pivots = self._echelonize_multimodular(height_guess, proof, **kwds)
@@ -557,9 +556,10 @@ cdef class Matrix_rational_sparse(Matrix_sparse):
         """
         label = 'echelon_form_%s'%algorithm
         x = self.fetch(label)
-        if not x is None:
+        if x is not None:
             return x
-        if self.fetch('in_echelon_form'): return self
+        if self.fetch('in_echelon_form'):
+            return self
 
         E, pivots = self._echelon_form_multimodular(height_guess, proof=proof)
 
@@ -620,9 +620,9 @@ cdef class Matrix_rational_sparse(Matrix_sparse):
         EXAMPLES::
 
             sage: a = matrix(QQ,2,[1..4],sparse=True); type(a)
-            <type 'sage.matrix.matrix_rational_sparse.Matrix_rational_sparse'>
+            <class 'sage.matrix.matrix_rational_sparse.Matrix_rational_sparse'>
             sage: type(a.dense_matrix())
-            <type 'sage.matrix.matrix_rational_dense.Matrix_rational_dense'>
+            <class 'sage.matrix.matrix_rational_dense.Matrix_rational_dense'>
             sage: a.dense_matrix()
             [1 2]
             [3 4]
@@ -805,4 +805,3 @@ cdef class Matrix_rational_sparse(Matrix_sparse):
 cdef mpq_t minus_one
 mpq_init(minus_one)
 mpq_set_si(minus_one, -1,1)
-

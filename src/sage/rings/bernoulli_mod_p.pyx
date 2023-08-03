@@ -15,19 +15,18 @@ AUTHOR:
 - David Harvey (2007-08-31): algorithm for a single Bernoulli number mod p
 - David Harvey (2008-06): added interface to bernmm, removed old code
 """
-
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2006 William Stein <wstein@gmail.com>
 #                     2006 David Harvey <dmharvey@math.harvard.edu>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 cimport sage.rings.fast_arith
 import sage.rings.fast_arith
 cdef sage.rings.fast_arith.arith_int arith_int
-arith_int  = sage.rings.fast_arith.arith_int()
+arith_int = sage.rings.fast_arith.arith_int()
 
 ctypedef long long llong
 
@@ -35,14 +34,12 @@ import sage.arith.all
 
 from sage.libs.ntl import all as ntl
 from sage.libs.ntl.ntl_ZZ_pX cimport ntl_ZZ_pX
-from sage.rings.finite_rings.integer_mod_ring import Integers
 from sage.rings.bernmm import bernmm_bern_modp
 
 
-
 def verify_bernoulli_mod_p(data):
-    """
-    Computes checksum for Bernoulli numbers.
+    r"""
+    Compute checksum for Bernoulli numbers.
 
     It checks the identity
 
@@ -54,11 +51,9 @@ def verify_bernoulli_mod_p(data):
 
     INPUT:
 
-        data -- list, same format as output of bernoulli_mod_p function
+    - ``data`` -- list, same format as output of :func:`bernoulli_mod_p` function
 
-    OUTPUT:
-
-        bool -- True if checksum passed
+    OUTPUT: bool -- True if checksum passed
 
     EXAMPLES::
 
@@ -103,7 +98,7 @@ def bernoulli_mod_p(int p):
 
     INPUT:
 
-    p -- integer, a prime
+    - ``p`` -- integer, a prime
 
     OUTPUT:
 
@@ -135,10 +130,8 @@ def bernoulli_mod_p(int p):
 
     AUTHOR:
 
-    -- David Harvey (2006-08-06)
-
+    - David Harvey (2006-08-06)
     """
-
     if p <= 2:
         raise ValueError("p (=%s) must be a prime >= 3" % p)
 
@@ -234,12 +227,12 @@ def bernoulli_mod_p_single(long p, long k):
     r"""
     Return the Bernoulli number `B_k` mod `p`.
 
-    If `B_k` is not `p`-integral, an ArithmeticError is raised.
+    If `B_k` is not `p`-integral, an :class:`ArithmeticError` is raised.
 
     INPUT:
 
-    - p -- integer, a prime
-    - k -- non-negative integer
+    - ``p`` -- integer, a prime
+    - ``k`` -- non-negative integer
 
     OUTPUT:
 
@@ -275,7 +268,7 @@ def bernoulli_mod_p_single(long p, long k):
         ...
         ValueError: k must be non-negative
 
-    Check results against bernoulli_mod_p::
+    Check results against :class:`bernoulli_mod_p`::
 
         sage: bernoulli_mod_p(37)
          [1, 31, 16, 15, 16, 4, 17, 32, 22, 31, 15, 15, 17, 12, 29, 2, 0, 2]
@@ -304,17 +297,14 @@ def bernoulli_mod_p_single(long p, long k):
 
     AUTHOR:
 
-    -- David Harvey (2007-08-31)
-    -- David Harvey (2008-06): rewrote to use bernmm library
-
+    - David Harvey (2007-08-31)
+    - David Harvey (2008-06): rewrote to use bernmm library
     """
     if p <= 2:
         raise ValueError("p (=%s) must be a prime >= 3" % p)
 
     if not sage.arith.all.is_prime(p):
         raise ValueError("p (=%s) must be a prime" % p)
-
-    R = Integers(p)
 
     cdef long x = bernmm_bern_modp(p, k)
     if x == -1:

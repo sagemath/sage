@@ -15,16 +15,11 @@ AUTHOR:
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 #*****************************************************************************
-
-
-from sage.rings.polynomial.multi_polynomial_libsingular cimport new_MP
-
 from sage.matrix.matrix_generic_dense cimport Matrix_generic_dense
 from sage.matrix.matrix2 cimport Matrix
 
-from sage.rings.polynomial.multi_polynomial_libsingular cimport MPolynomial_libsingular
 from sage.rings.polynomial.multi_polynomial_libsingular cimport MPolynomialRing_libsingular
 from sage.rings.polynomial.polynomial_singular_interface import can_convert_to_singular
 
@@ -62,7 +57,7 @@ cdef class Matrix_mpolynomial_dense(Matrix_generic_dense):
 
         The row echelon form of A depending on the chosen algorithm,
         as an immutable matrix.  Note that ``self`` is *not* changed
-        by this command. Use ``A.echelonize()``` to change `A` in
+        by this command. Use ``A.echelonize()`` to change `A` in
         place.
 
         EXAMPLES::
@@ -106,7 +101,7 @@ cdef class Matrix_mpolynomial_dense(Matrix_generic_dense):
         x = self.fetch('echelon_form_'+algorithm)
         if x is not None: return x
 
-        if  algorithm == "frac":
+        if algorithm == "frac":
             E = self.matrix_over_field()
             E.echelonize(**kwds)
         else:
@@ -150,7 +145,7 @@ cdef class Matrix_mpolynomial_dense(Matrix_generic_dense):
             2
         """
         x = self.fetch('pivots')
-        if not x is None:
+        if x is not None:
             return x
 
         self.echelon_form('frac')
@@ -159,7 +154,6 @@ cdef class Matrix_mpolynomial_dense(Matrix_generic_dense):
         if x is None:
             raise RuntimeError("BUG: matrix pivots should have been set but weren't, matrix parent = '%s'"%self.parent())
         return x
-
 
     def echelonize(self, algorithm='row_reduction', **kwds):
         """
@@ -219,7 +213,7 @@ cdef class Matrix_mpolynomial_dense(Matrix_generic_dense):
             return
 
         x = self.fetch('in_echelon_form_'+algorithm)
-        if not x is None:
+        if x is not None:
             return  # already known to be in echelon form
 
         if algorithm == 'bareiss':
@@ -257,7 +251,7 @@ cdef class Matrix_mpolynomial_dense(Matrix_generic_dense):
         cdef R = self.base_ring()
 
         x = self.fetch('in_echelon_form_bareiss')
-        if not x is None:
+        if x is not None:
             return  # already known to be in echelon form
 
         if isinstance(self.base_ring(), MPolynomialRing_libsingular):
@@ -271,13 +265,13 @@ cdef class Matrix_mpolynomial_dense(Matrix_generic_dense):
             m = len(E)
             n = len(E[0])
 
-            for r in xrange(m):
+            for r in range(m):
                 for c in range(n):
                     self.set_unsafe(r, c, E[r][c])
-                for c in xrange(n, self.ncols()):
+                for c in range(n, self.ncols()):
                     self.set_unsafe(r, c, R._zero_element)
-            for r in xrange(m, self.nrows()):
-                for c in xrange(self.ncols()):
+            for r in range(m, self.nrows()):
+                for c in range(self.ncols()):
                     self.set_unsafe(r, c, R._zero_element)
 
             from sage.rings.integer_ring import ZZ
@@ -388,7 +382,8 @@ cdef class Matrix_mpolynomial_dense(Matrix_generic_dense):
         cdef int c, r, i, j, rc, start_row, nr, nc
 
         x = self.fetch('in_echelon_form_row_reduction')
-        if not x is None: return  # already known to be in echelon form
+        if x is not None:
+            return  # already known to be in echelon form
 
         nr,nc = self.nrows(),self.ncols()
         F = self.base_ring().base_ring()
@@ -437,7 +432,7 @@ cdef class Matrix_mpolynomial_dense(Matrix_generic_dense):
         of the Gauss-Bareiss algorithm (see :meth:`echelon_form` for details).
 
         The tuple as length equal to the rank of self and the value at the
-        $i$-th position indicates the source column which was put as the $i$-th
+        `i`-th position indicates the source column which was put as the `i`-th
         column.
 
         If no Gauss-Bareiss reduction was performed yet, None is
@@ -526,7 +521,7 @@ cdef class Matrix_mpolynomial_dense(Matrix_generic_dense):
 
         d = self.fetch('det')
 
-        if not d is None:
+        if d is not None:
             return d
 
         if self._nrows == 0:
@@ -538,7 +533,7 @@ cdef class Matrix_mpolynomial_dense(Matrix_generic_dense):
         elif self.fetch('charpoly') is not None:
             # if charpoly known, then det is easy.
             D = self.fetch('charpoly')
-            if not D is None:
+            if D is not None:
                 c = D[0]
                 if self._nrows % 2:
                     c = -c
@@ -559,6 +554,3 @@ cdef class Matrix_mpolynomial_dense(Matrix_generic_dense):
 
         self.cache('det', d)
         return d
-
-
-

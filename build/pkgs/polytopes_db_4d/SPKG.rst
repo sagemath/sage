@@ -20,7 +20,3 @@ SPKG Maintainers
 
 Volker Braun <vbraun.name@gmail.com>
 
-Dependencies
-------------
-
-None

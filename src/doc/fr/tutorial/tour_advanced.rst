@@ -402,6 +402,7 @@ d'espaces de formes modulaires. Par exemple,
 
 ::
 
+    sage: from sage.modular.dims import dimension_cusp_forms
     sage: dimension_cusp_forms(Gamma0(11),2)
     1
     sage: dimension_cusp_forms(Gamma0(1),12)

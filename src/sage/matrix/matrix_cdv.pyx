@@ -30,7 +30,7 @@ cpdef hessenbergize_cdvf(Matrix_generic_dense H):
         a complete discrete valuation field.
 
         The pivot on each column is always chosen
-        with maximal relative precision, which ensures 
+        with maximal relative precision, which ensures
         the numerical stability of the algorithm.
 
     TESTS::

@@ -19,10 +19,11 @@ Power sum symmetric functions
 #*****************************************************************************
 from . import sfa, multiplicative, classical
 from sage.combinat.partition import Partition
-from sage.arith.all import divisors
-from sage.rings.all import infinity
+from sage.arith.misc import divisors
+from sage.rings.infinity import infinity
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
-from sage.misc.all import prod
+from sage.misc.misc_c import prod
+
 
 class SymmetricFunctionAlgebra_power(multiplicative.SymmetricFunctionAlgebra_multiplicative):
     def __init__(self, Sym):
@@ -476,8 +477,8 @@ class SymmetricFunctionAlgebra_power(multiplicative.SymmetricFunctionAlgebra_mul
 
                 :meth:`~sage.combinat.sf.sfa.SymmetricFunctionAlgebra_generic_Element.plethysm`
             """
-            dct = {Partition([n * i for i in lam]): coeff
-                   for (lam, coeff) in self.monomial_coefficients().items()}
+            dct = {lam.stretch(n): coeff
+                   for lam, coeff in self.monomial_coefficients().items()}
             return self.parent()._from_dict(dct)
 
         adams_operation = frobenius
@@ -759,11 +760,11 @@ class SymmetricFunctionAlgebra_power(multiplicative.SymmetricFunctionAlgebra_mul
 
                 sage: p = SymmetricFunctions(QQ).p()
                 sage: x = p[8,7,3,1]
-                sage: x.principal_specialization(3, q=var("q"))
+                sage: x.principal_specialization(3, q=var("q"))                         # optional - sage.symbolic
                 (q^24 - 1)*(q^21 - 1)*(q^9 - 1)/((q^8 - 1)*(q^7 - 1)*(q - 1))
 
                 sage: x = 5*p[1,1,1] + 3*p[2,1] + 1
-                sage: x.principal_specialization(3, q=var("q"))
+                sage: x.principal_specialization(3, q=var("q"))                         # optional - sage.symbolic
                 5*(q^3 - 1)^3/(q - 1)^3 + 3*(q^6 - 1)*(q^3 - 1)/((q^2 - 1)*(q - 1)) + 1
 
             By default, we return a rational function in `q`::
@@ -773,7 +774,7 @@ class SymmetricFunctionAlgebra_power(multiplicative.SymmetricFunctionAlgebra_mul
 
             If ``n`` is not given we return the stable principal specialization::
 
-                sage: x.principal_specialization(q=var("q"))
+                sage: x.principal_specialization(q=var("q"))                            # optional - sage.symbolic
                 3/((q^2 - 1)*(q - 1)) - 5/(q - 1)^3 + 1
 
             TESTS::
@@ -804,11 +805,12 @@ class SymmetricFunctionAlgebra_power(multiplicative.SymmetricFunctionAlgebra_mul
                 from sage.rings.integer_ring import ZZ
                 ZZq = PolynomialRing(ZZ, "q")
                 q_lim = ZZq.gen()
+
                 def f(partition):
-                    denom = prod((1-q**part) for part in partition)
+                    denom = prod((1 - q**part) for part in partition)
                     try:
                         ~denom
-                        rational = prod((1-q**(n*part)) for part in partition)/denom
+                        rational = prod((1 - q**(n*part)) for part in partition) / denom
                         return q.parent()(rational)
                     except (ZeroDivisionError, NotImplementedError, TypeError):
                         # If denom is not invertible, we need to do the
@@ -879,12 +881,12 @@ class SymmetricFunctionAlgebra_power(multiplicative.SymmetricFunctionAlgebra_mul
                 sage: x.exponential_specialization()
                 0
                 sage: x = p[3] + 5*p[1,1] + 2*p[1] + 1
-                sage: x.exponential_specialization(t=var("t"))
+                sage: x.exponential_specialization(t=var("t"))                          # optional - sage.symbolic
                 5*t^2 + 2*t + 1
 
             We also support the `q`-exponential_specialization::
 
-                sage: factor(p[3].exponential_specialization(q=var("q"), t=var("t")))
+                sage: factor(p[3].exponential_specialization(q=var("q"), t=var("t")))   # optional - sage.symbolic
                 (q - 1)^2*t^3/(q^2 + q + 1)
 
             TESTS::
@@ -933,6 +935,7 @@ class SymmetricFunctionAlgebra_power(multiplicative.SymmetricFunctionAlgebra_mul
                 return (1-q)**n * t**n / m
 
             return self.parent()._apply_module_morphism(self, f, t.parent())
+
 
 # Backward compatibility for unpickling
 from sage.misc.persist import register_unpickle_override

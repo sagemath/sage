@@ -276,6 +276,22 @@ class RelativeInterior(ConvexSet_relatively_open):
             if p in self:
                 yield p
 
+    def representative_point(self):
+        """
+        Return a "generic" point of ``self``.
+
+        OUTPUT:
+
+        A point in ``self`` (thus, in the relative interior of ``self``) as a coordinate vector.
+
+        EXAMPLES::
+
+            sage: C = Cone([[1, 2, 0], [2, 1, 0]])
+            sage: C.relative_interior().representative_point()
+            (1, 1, 0)
+        """
+        return self._polyhedron.representative_point()
+
     def _repr_(self):
         r"""
         Return a description of ``self``.
@@ -308,11 +324,11 @@ class RelativeInterior(ConvexSet_relatively_open):
             sage: ri_segment = segment.relative_interior(); ri_segment
             Relative interior of
              a 1-dimensional polyhedron in ZZ^2 defined as the convex hull of 2 vertices
-            sage: segment2 = Polyhedron([[1, 2], [3, 4]], base_ring=AA)
-            sage: ri_segment2 = segment2.relative_interior(); ri_segment2
+            sage: segment2 = Polyhedron([[1, 2], [3, 4]], base_ring=AA)                 # optional - sage.rings.number_field
+            sage: ri_segment2 = segment2.relative_interior(); ri_segment2               # optional - sage.rings.number_field
             Relative interior of
              a 1-dimensional polyhedron in AA^2 defined as the convex hull of 2 vertices
-            sage: ri_segment == ri_segment2
+            sage: ri_segment == ri_segment2                                             # optional - sage.rings.number_field
             True
 
         TESTS::
@@ -339,11 +355,11 @@ class RelativeInterior(ConvexSet_relatively_open):
             sage: ri_segment = segment.relative_interior(); ri_segment
             Relative interior of
              a 1-dimensional polyhedron in ZZ^2 defined as the convex hull of 2 vertices
-            sage: segment2 = Polyhedron([[1, 2], [3, 4]], base_ring=AA)
-            sage: ri_segment2 = segment2.relative_interior(); ri_segment2
+            sage: segment2 = Polyhedron([[1, 2], [3, 4]], base_ring=AA)                 # optional - sage.rings.number_field
+            sage: ri_segment2 = segment2.relative_interior(); ri_segment2               # optional - sage.rings.number_field
             Relative interior of
              a 1-dimensional polyhedron in AA^2 defined as the convex hull of 2 vertices
-            sage: ri_segment != ri_segment2
+            sage: ri_segment != ri_segment2                                             # optional - sage.rings.number_field
             False
         """
         return not (self == other)

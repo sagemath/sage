@@ -89,9 +89,9 @@ computer. Here we merely make a few comments.
    will search.
 
    The documentation for using SageTeX is located in
-   ``$SAGE_ROOT/local/share/texmf/tex/latex/sagetex/``, where
+   ``$SAGE_ROOT/venv/share/texmf/tex/latex/sagetex/``, where
    "``$SAGE_ROOT``" refers to the directory where you installed Sage --
-   for example, ``/opt/sage-4.2.1``.
+   for example, ``/opt/sage-9.6``.
 
 Ways to Use Sage
 ================
@@ -99,7 +99,7 @@ Ways to Use Sage
 You can use Sage in several ways.
 
 
--  **Notebook graphical interface:** run `sage -n jupyter`; see
+-  **Notebook graphical interface:** run ``sage -n jupyter``; see
    `the Jupyter documentation on-line <https://jupyter-notebook.readthedocs.io/en/latest/notebook.html>`_,
 
 -  **Interactive command line:** see :ref:`chapter-interactive_shell`,

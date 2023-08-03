@@ -36,20 +36,19 @@ Functions
 # ****************************************************************************
 
 from sage.matrix.constructor import Matrix
-from sage.graphs.all import graphs
-
-from sage.rings.all import ZZ, GF
-from sage.schemes.all import ProjectiveSpace
-
-import sage.matroids.matroid
-import sage.matroids.basis_exchange_matroid
 from sage.matroids.basis_matroid import BasisMatroid
 from sage.matroids.circuit_closures_matroid import CircuitClosuresMatroid
+from sage.matroids.constructor import Matroid
 from sage.matroids.linear_matroid import (LinearMatroid, RegularMatroid,
                                           BinaryMatroid, TernaryMatroid,
                                           QuaternaryMatroid)
 from sage.matroids.rank_matroid import RankMatroid
-from sage.matroids.constructor import Matroid
+from sage.misc.lazy_import import lazy_import
+from sage.rings.integer_ring import ZZ
+
+lazy_import('sage.rings.finite_rings.finite_field_constructor', 'GF')
+lazy_import('sage.schemes.projective.projective_space', 'ProjectiveSpace')
+
 
 # The order is the same as in Oxley.
 
@@ -66,13 +65,13 @@ def Q6():
     EXAMPLES::
 
         sage: from sage.matroids.advanced import setprint
-        sage: M = matroids.named_matroids.Q6(); M
+        sage: M = matroids.named_matroids.Q6(); M                                       # needs sage.rings.finite_rings
         Q6: Quaternary matroid of rank 3 on 6 elements
-        sage: setprint(M.hyperplanes())
+        sage: setprint(M.hyperplanes())                                                 # needs sage.rings.finite_rings
         [{'a', 'b', 'd'}, {'a', 'c'}, {'a', 'e'}, {'a', 'f'}, {'b', 'c', 'e'},
          {'b', 'f'}, {'c', 'd'}, {'c', 'f'}, {'d', 'e'}, {'d', 'f'},
          {'e', 'f'}]
-        sage: M.nonspanning_circuits() == M.noncospanning_cocircuits()
+        sage: M.nonspanning_circuits() == M.noncospanning_cocircuits()                  # needs sage.rings.finite_rings
         False
     """
     F = GF(4, 'x')
@@ -105,7 +104,7 @@ def P6():
         {2: {{'a', 'b', 'c'}}, 3: {{'a', 'b', 'c', 'd', 'e', 'f'}}}
         sage: len(set(M.nonspanning_circuits()).difference(M.nonbases())) == 0
         True
-        sage: Matroid(matrix=random_matrix(GF(4, 'a'), ncols=5,
+        sage: Matroid(matrix=random_matrix(GF(4, 'a'), ncols=5,                         # needs sage.rings.finite_rings
         ....:                                          nrows=5)).has_minor(M)
         False
         sage: M.is_valid()
@@ -139,7 +138,7 @@ def R6():
         True
         sage: M.is_connected()
         True
-        sage: M.is_3connected()
+        sage: M.is_3connected()                                                         # needs sage.graphs
         False
     """
     A = Matrix(GF(3), [
@@ -171,7 +170,7 @@ def Fano():
         sage: setprint(sorted(M.nonspanning_circuits()))
         [{'a', 'b', 'f'}, {'a', 'c', 'e'}, {'a', 'd', 'g'}, {'b', 'c', 'd'},
          {'b', 'e', 'g'}, {'c', 'f', 'g'}, {'d', 'e', 'f'}]
-        sage: M.delete(M.groundset_list()[randrange(0,
+        sage: M.delete(M.groundset_list()[randrange(0,                                  # needs sage.graphs
         ....:                  7)]).is_isomorphic(matroids.CompleteGraphic(4))
         True
     """
@@ -202,9 +201,9 @@ def NonFano():
         sage: setprint(M.nonbases())
         [{'a', 'b', 'f'}, {'a', 'c', 'e'}, {'a', 'd', 'g'}, {'b', 'c', 'd'},
          {'b', 'e', 'g'}, {'c', 'f', 'g'}]
-        sage: M.delete('f').is_isomorphic(matroids.CompleteGraphic(4))
+        sage: M.delete('f').is_isomorphic(matroids.CompleteGraphic(4))                  # needs sage.graphs
         True
-        sage: M.delete('g').is_isomorphic(matroids.CompleteGraphic(4))
+        sage: M.delete('g').is_isomorphic(matroids.CompleteGraphic(4))                  # needs sage.graphs
         False
     """
     A = Matrix(GF(3), [
@@ -231,7 +230,7 @@ def O7():
 
         sage: M = matroids.named_matroids.O7(); M
         O7: Ternary matroid of rank 3 on 7 elements, type 0+
-        sage: M.delete('e').is_isomorphic(matroids.CompleteGraphic(4))
+        sage: M.delete('e').is_isomorphic(matroids.CompleteGraphic(4))                  # needs sage.graphs
         True
         sage: M.tutte_polynomial()
         y^4 + x^3 + x*y^2 + 3*y^3 + 4*x^2 + 5*x*y + 5*y^2 + 4*x + 4*y
@@ -262,7 +261,7 @@ def P7():
         P7: Ternary matroid of rank 3 on 7 elements, type 1+
         sage: M.f_vector()
         [1, 7, 11, 1]
-        sage: M.has_minor(matroids.CompleteGraphic(4))
+        sage: M.has_minor(matroids.CompleteGraphic(4))                                  # needs sage.graphs
         False
         sage: M.is_valid()
         True
@@ -306,7 +305,7 @@ def AG32prime():
          {'b', 'c', 'd', 'g'}, {'b', 'c', 'e', 'f'}, {'b', 'd', 'f', 'h'},
          {'b', 'e', 'g', 'h'}, {'c', 'd', 'e', 'h'}, {'c', 'f', 'g', 'h'},
          {'d', 'e', 'f', 'g'}]
-        sage: M.is_valid() # long time
+        sage: M.is_valid()                      # long time, needs sage.rings.finite_rings
         True
     """
     E = 'abcdefgh'
@@ -377,7 +376,7 @@ def F8():
         [...True...]
         sage: [N.is_isomorphic(matroids.named_matroids.NonFano()) for N in D]
         [...True...]
-        sage: M.is_valid() # long time
+        sage: M.is_valid()                      # long time, needs sage.rings.finite_rings
         True
     """
     E = 'abcdefgh'
@@ -590,7 +589,7 @@ def J():
         [{'a', 'b', 'f'}, {'a', 'c', 'g'}, {'a', 'd', 'h'}]
         sage: M.is_isomorphic(M.dual())
         True
-        sage: M.has_minor(matroids.CompleteGraphic(4))
+        sage: M.has_minor(matroids.CompleteGraphic(4))                                  # needs sage.graphs
         False
         sage: M.is_valid()
         True
@@ -622,7 +621,7 @@ def P8():
         P8: Ternary matroid of rank 4 on 8 elements, type 2+
         sage: M.is_isomorphic(M.dual())
         True
-        sage: Matroid(matrix=random_matrix(GF(4, 'a'), ncols=5,
+        sage: Matroid(matrix=random_matrix(GF(4, 'a'), ncols=5,                         # needs sage.rings.finite_rings
         ....:                              nrows=5)).has_minor(M)
         False
         sage: M.bicycle_dimension()
@@ -689,14 +688,16 @@ def K33dual():
 
     EXAMPLES::
 
-        sage: M = matroids.named_matroids.K33dual(); M
+        sage: M = matroids.named_matroids.K33dual(); M                                  # needs sage.graphs
         M*(K3, 3): Regular matroid of rank 4 on 9 elements with 81 bases
-        sage: any(N.is_3connected()
+        sage: any(N.is_3connected()                                                     # needs sage.graphs
         ....:     for N in M.linear_extensions(simple=True))
         False
-        sage: M.is_valid() # long time
+        sage: M.is_valid()                      # long time, needs sage.graphs
         True
     """
+    from sage.graphs.graph_generators import graphs
+
     E = 'abcdefghi'
     G = graphs.CompleteBipartiteGraph(3, 3)
     M = Matroid(groundset=E, graph=G, regular=True)
@@ -754,6 +755,7 @@ def CompleteGraphic(n):
 
     EXAMPLES::
 
+        sage: # needs sage.graphs
         sage: from sage.matroids.advanced import setprint
         sage: M = matroids.CompleteGraphic(5); M
         M(K5): Graphic matroid of rank 4 on 10 elements
@@ -767,6 +769,8 @@ def CompleteGraphic(n):
         sage: M.is_valid()
         True
     """
+    from sage.graphs.graph_generators import graphs
+
     M = Matroid(groundset=list(range((n * (n - 1)) // 2)),
                 graph=graphs.CompleteGraph(n))
     M.rename('M(K' + str(n) + '): ' + repr(M))
@@ -801,11 +805,11 @@ def Wheel(n, field=None, ring=None):
         sage: M.is_valid()
         True
         sage: M = matroids.Wheel(3)
-        sage: M.is_isomorphic(matroids.CompleteGraphic(4))
+        sage: M.is_isomorphic(matroids.CompleteGraphic(4))                              # needs sage.graphs
         True
-        sage: M.is_isomorphic(matroids.Wheel(3,field=GF(3)))
+        sage: M.is_isomorphic(matroids.Wheel(3, field=GF(3)))
         True
-        sage: M = matroids.Wheel(3,field=GF(3)); M
+        sage: M = matroids.Wheel(3, field=GF(3)); M
         Wheel(3): Ternary matroid of rank 3 on 6 elements, type 0+
     """
     base_ring = ZZ
@@ -862,7 +866,7 @@ def Whirl(n):
         sage: M.is_isomorphic(matroids.Wheel(5))
         False
         sage: M = matroids.Whirl(3)
-        sage: M.is_isomorphic(matroids.CompleteGraphic(4))
+        sage: M.is_isomorphic(matroids.CompleteGraphic(4))                              # needs sage.graphs
         False
 
     .. TODO::
@@ -962,7 +966,7 @@ def PG(n, q, x=None):
         sage: M = matroids.PG(2, 2)
         sage: M.is_isomorphic(matroids.named_matroids.Fano())
         True
-        sage: matroids.PG(5, 4, 'z').size() == (4^6 - 1) / (4 - 1)
+        sage: matroids.PG(5, 4, 'z').size() == (4^6 - 1) / (4 - 1)                      # needs sage.rings.finite_rings
         True
         sage: M = matroids.PG(4, 7); M
         PG(4, 7): Linear matroid of rank 5 on 2801 elements represented over
@@ -1005,7 +1009,7 @@ def AG(n, q, x=None):
         sage: M = matroids.AG(2, 3) \ 8
         sage: M.is_isomorphic(matroids.named_matroids.AG23minus())
         True
-        sage: matroids.AG(5, 4, 'z').size() == ((4 ^ 6 - 1) / (4 - 1) -
+        sage: matroids.AG(5, 4, 'z').size() == ((4 ^ 6 - 1) / (4 - 1) -                 # needs sage.rings.finite_rings
         ....:                                             (4 ^ 5 - 1)/(4 - 1))
         True
         sage: M = matroids.AG(4, 2); M
@@ -1044,7 +1048,7 @@ def R10():
         {4, 6}
         sage: M.equals(M.dual())
         False
-        sage: M.is_isomorphic(M.dual())
+        sage: M.is_isomorphic(M.dual())                                                 # needs sage.graphs
         True
         sage: M.is_valid()
         True
@@ -1082,7 +1086,7 @@ def R12():
         R12: Regular matroid of rank 6 on 12 elements with 441 bases
         sage: M.equals(M.dual())
         False
-        sage: M.is_isomorphic(M.dual())
+        sage: M.is_isomorphic(M.dual())                                                 # needs sage.graphs
         True
         sage: M.is_valid()
         True
@@ -1242,10 +1246,10 @@ def Q10():
 
     EXAMPLES::
 
-        sage: M = matroids.named_matroids.Q10()
-        sage: M.is_isomorphic(M.dual())
+        sage: M = matroids.named_matroids.Q10()                                         # needs sage.rings.finite_rings
+        sage: M.is_isomorphic(M.dual())                                                 # needs sage.rings.finite_rings
         True
-        sage: M.is_valid()
+        sage: M.is_valid()                                                              # needs sage.rings.finite_rings
         True
 
     Check the splitter property. By Seymour's Theorem, and using self-duality,
@@ -1254,8 +1258,8 @@ def Q10():
     are quaternary are `U_{2, 5}, U_{3, 5}, F_7, F_7^*`. As it happens, it
     suffices to check for `U_{2, 5}`:
 
-        sage: S = matroids.named_matroids.Q10().linear_extensions(simple=True)
-        sage: [M for M in S if not M.has_line_minor(5)] # long time
+        sage: S = matroids.named_matroids.Q10().linear_extensions(simple=True)          # needs sage.rings.finite_rings
+        sage: [M for M in S if not M.has_line_minor(5)]         # long time, needs sage.rings.finite_rings
         []
     """
     F = GF(4, 'x')
@@ -1365,8 +1369,8 @@ def Block_9_4():
         sage: M = matroids.named_matroids.Block_9_4()
         sage: M.is_valid() # long time
         True
-        sage: BD = BlockDesign(M.groundset(), M.nonspanning_circuits())
-        sage: BD.is_t_design(return_parameters=True)
+        sage: BD = BlockDesign(M.groundset(), M.nonspanning_circuits())                 # needs sage.graphs
+        sage: BD.is_t_design(return_parameters=True)                                    # needs sage.graphs
         (True, (2, 9, 4, 3))
     """
     E = 'abcdefghi'
@@ -1391,8 +1395,8 @@ def Block_10_5():
         sage: M = matroids.named_matroids.Block_10_5()
         sage: M.is_valid() # long time
         True
-        sage: BD = BlockDesign(M.groundset(), M.nonspanning_circuits())
-        sage: BD.is_t_design(return_parameters=True)
+        sage: BD = BlockDesign(M.groundset(), M.nonspanning_circuits())                 # needs sage.graphs
+        sage: BD.is_t_design(return_parameters=True)                                    # needs sage.graphs
         (True, (3, 10, 5, 3))
     """
 
@@ -1423,7 +1427,7 @@ def ExtendedBinaryGolayCode():
 
         sage: M = matroids.named_matroids.ExtendedBinaryGolayCode()
         sage: C = LinearCode(M.representation())
-        sage: C.is_permutation_equivalent(codes.GolayCode(GF(2))) # long time
+        sage: C.is_permutation_equivalent(codes.GolayCode(GF(2)))       # long time, needs sage.rings.finite_rings
         True
         sage: M.is_valid()
         True
@@ -1458,7 +1462,7 @@ def ExtendedTernaryGolayCode():
 
         sage: M = matroids.named_matroids.ExtendedTernaryGolayCode()
         sage: C = LinearCode(M.representation())
-        sage: C.is_permutation_equivalent(codes.GolayCode(GF(3))) # long time
+        sage: C.is_permutation_equivalent(codes.GolayCode(GF(3)))       # long time, needs sage.rings.finite_rings
         True
         sage: M.is_valid()
         True

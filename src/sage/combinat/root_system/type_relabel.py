@@ -15,6 +15,7 @@ from sage.combinat.root_system import cartan_type
 from sage.combinat.root_system import ambient_space
 from sage.combinat.root_system.root_lattice_realizations import RootLatticeRealizations
 
+
 class CartanType(cartan_type.CartanType_decorator):
     r"""
     A class for relabelled Cartan types.
@@ -88,7 +89,7 @@ class CartanType(cartan_type.CartanType_decorator):
             O---O---O=>=O
             2   3   4   1
             B4 relabelled by {1: 2, 2: 3, 3: 4, 4: 1}
-            sage: sorted(T.dynkin_diagram().edges())
+            sage: T.dynkin_diagram().edges(sort=True)
             [(1, 4, 1), (2, 3, 1), (3, 2, 1), (3, 4, 1), (4, 1, 2), (4, 3, 1)]
 
         Multiple relabelling are recomposed into a single one::
@@ -185,7 +186,7 @@ class CartanType(cartan_type.CartanType_decorator):
             # FIXME: Remove the is_crystallographic (and the short-circuiting
             #   super) check once the non-crystallographic finite types
             #   (i.e., H_3, H_4, I_2(p)) have an implementation of an
-            #   ambient space. See ticket #24892.
+            #   ambient space. See issue #24892.
             self.__class__ = CartanType_finite
         elif type.is_affine():
             self.__class__ = CartanType_affine
@@ -228,7 +229,7 @@ class CartanType(cartan_type.CartanType_decorator):
                 return 'D4^3'
             return "['D', 4, 3]"
         relab = pformat(self._relabelling)
-        return self._type._repr_(compact = compact) + " relabelled by {}".format(relab)
+        return self._type._repr_(compact=compact) + " relabelled by {}".format(relab)
 
     def _latex_(self):
         r"""
@@ -326,11 +327,11 @@ class CartanType(cartan_type.CartanType_decorator):
 
         To be compared with the examples in :meth:`ascii_art`::
 
-            sage: sorted(CartanType(["G", 2]).relabel({1:2,2:1}).dynkin_diagram().edges())
+            sage: CartanType(["G", 2]).relabel({1:2,2:1}).dynkin_diagram().edges(sort=True)
             [(1, 2, 3), (2, 1, 1)]
-            sage: sorted(CartanType(["B", 3, 1]).relabel([1,3,2,0]).dynkin_diagram().edges())
+            sage: CartanType(["B", 3, 1]).relabel([1,3,2,0]).dynkin_diagram().edges(sort=True)
             [(0, 2, 1), (1, 2, 1), (2, 0, 2), (2, 1, 1), (2, 3, 1), (3, 2, 1)]
-            sage: sorted(CartanType(["F", 4, 1]).relabel(lambda n: 4-n).dynkin_diagram().edges())
+            sage: CartanType(["F", 4, 1]).relabel(lambda n: 4-n).dynkin_diagram().edges(sort=True)
             [(0, 1, 1), (1, 0, 1), (1, 2, 1), (2, 1, 2), (2, 3, 1), (3, 2, 1), (3, 4, 1), (4, 3, 1)]
         """
         # Maybe we want to move this up as a relabel method for Dynkin diagram
@@ -404,6 +405,7 @@ class CartanType(cartan_type.CartanType_decorator):
         """
         return self._type.type()
 
+    @cached_method
     def coxeter_diagram(self):
         """
         Return the Coxeter diagram for ``self``.
@@ -413,14 +415,13 @@ class CartanType(cartan_type.CartanType_decorator):
             sage: ct = CartanType(['H', 3]).relabel({1:3,2:2,3:1})
             sage: G = ct.coxeter_diagram(); G
             Graph on 3 vertices
-            sage: G.edges()
+            sage: G.edges(sort=True)
             [(1, 2, 5), (2, 3, 3)]
         """
-        result = self._type.coxeter_diagram().copy()
-        result.relabel(self._relabelling)
-        return result
+        return self._type.coxeter_diagram().relabel(self._relabelling, inplace=False, immutable=True)
 
 ###########################################################################
+
 
 class AmbientSpace(ambient_space.AmbientSpace):
     """
@@ -543,6 +544,7 @@ class AmbientSpace(ambient_space.AmbientSpace):
         else:
             RootLatticeRealizations.ParentMethods.__dict__["_plot_projection"]
 
+
 class CartanType_finite(CartanType, cartan_type.CartanType_finite):
     AmbientSpace = AmbientSpace
 
@@ -620,6 +622,8 @@ class CartanType_finite(CartanType, cartan_type.CartanType_finite):
         return self._type.affine().relabel(relabelling)
 
 ###########################################################################
+
+
 class CartanType_affine(CartanType, cartan_type.CartanType_affine):
     """
     TESTS::

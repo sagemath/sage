@@ -3,15 +3,15 @@
 Package Creator
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2016 Volker Braun <vbraun.name@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 import os
 
@@ -19,7 +19,6 @@ import logging
 log = logging.getLogger()
 
 from sage_bootstrap.env import SAGE_ROOT
-
 
 
 class PackageCreator(object):
@@ -39,7 +38,7 @@ class PackageCreator(object):
         with open(os.path.join(self.path, 'package-version.txt'), 'w+') as f:
             f.write(version)
             f.write('\n')
-            
+
     def set_type(self, pkg_type):
         """
         Write the package type to ``type``
@@ -47,7 +46,7 @@ class PackageCreator(object):
         with open(os.path.join(self.path, 'type'), 'w+') as f:
             f.write(pkg_type)
             f.write('\n')
-            
+
     def set_tarball(self, tarball, upstream_url):
         """
         Write the tarball name pattern to ``checksums.ini``
@@ -58,7 +57,7 @@ class PackageCreator(object):
             if upstream_url:
                 f.write('upstream_url={0}'.format(upstream_url))
             f.write('\n')
-            
+
     def set_description(self, description, license, upstream_contact):
         """
         Write the ``SPKG.rst`` file
@@ -88,6 +87,8 @@ class PackageCreator(object):
         If ``source`` is ``"normal"``, write the files ``spkg-install.in`` and
         ``install-requires.txt``.
 
+        If ``source`` is ``"wheel"``, write the file ``install-requires.txt``.
+
         If ``source`` is ``"pip"``, write the file ``requirements.txt``.
         """
         if pypi_package_name is None:
@@ -100,10 +101,13 @@ class PackageCreator(object):
                 f.write('cd src\nsdh_pip_install .\n')
             with open(os.path.join(self.path, 'install-requires.txt'), 'w+') as f:
                 f.write('{0}\n'.format(pypi_package_name))
+        elif source == 'wheel':
+            with open(os.path.join(self.path, 'install-requires.txt'), 'w+') as f:
+                f.write('{0}\n'.format(pypi_package_name))
         elif source == 'pip':
             with open(os.path.join(self.path, 'requirements.txt'), 'w+') as f:
                 f.write('{0}\n'.format(pypi_package_name))
         elif source == 'script':
             pass
         else:
-            raise ValueError('package source must be one of normal, script, or pip')
+            raise ValueError('package source must be one of normal, script, pip, or wheel')

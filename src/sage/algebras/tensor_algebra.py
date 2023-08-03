@@ -375,7 +375,7 @@ class TensorAlgebra(CombinatorialFreeModule):
                                                 for i,M in enumerate(modules)]),
                                      codomain=self)
 
-        return super(TensorAlgebra, self)._coerce_map_from_(R)
+        return super()._coerce_map_from_(R)
 
     def construction(self):
         """
@@ -425,7 +425,7 @@ class TensorAlgebra(CombinatorialFreeModule):
     @cached_method
     def one_basis(self):
         r"""
-        Return the empty word, which indexes of `1` of this algebra.
+        Return the empty word, which indexes the `1` of this algebra.
 
         EXAMPLES::
 
@@ -702,4 +702,3 @@ class BaseRingLift(Morphism):
         T = self.codomain()
         R = T.base_ring()
         return T.term(T.indices().one(), R(x))
-

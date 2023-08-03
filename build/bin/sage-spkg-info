@@ -9,7 +9,7 @@ PKG_SCRIPTS="$SAGE_ROOT/build/pkgs/$PKG_BASE"
 for ext in rst txt; do
     SPKG_FILE="$PKG_SCRIPTS/SPKG.$ext"
     if [ -f "$SPKG_FILE" ]; then
-        cat "$SPKG_FILE"
+        sed "1,3s/^ *Sage: Open Source Mathematics Software:/$PKG_BASE:/" "$SPKG_FILE"
         break
     fi
 done
@@ -21,6 +21,34 @@ if [ -r "$PKG_SCRIPTS/type" ] ; then
     cat "$PKG_SCRIPTS/type"
     echo
 fi
+echo
+echo "Dependencies"
+echo "------------"
+echo
+dep=
+for dep_file in dependencies dependencies_order_only; do
+    if [ -r "$PKG_SCRIPTS/$dep_file" ] ; then
+        for dep in $(sed 's/^ *//; s/ *#.*//; q' "$PKG_SCRIPTS/$dep_file"); do
+            case "$dep" in
+                # Do not use order-only syntax, too much information
+                \|)         ;;
+                # Suppress dependencies on source file of the form $(SAGE_ROOT)/..., $(SAGE_SRC)/...
+                \$\(SAGE_*) ;;
+                # Suppress FORCE
+                FORCE)      ;;
+                # Dependencies like $(BLAS)
+                \$\(*)      echo "- $dep";;
+                # Looks like a package
+                *)          if [ -n "$OUTPUT_RST" -a -r "$SAGE_ROOT/build/pkgs/$dep/SPKG.rst" ]; then
+                                # This RST label is set in src/doc/bootstrap
+                                echo "- :ref:\`spkg_$dep\`"
+                            else
+                                echo "- $dep"
+                            fi;;
+            esac
+        done
+    fi
+done
 echo
 echo "Version Information"
 echo "-------------------"
@@ -56,7 +84,9 @@ done
 if [ $have_repology = yes ]; then
     systems="$systems repology"
 fi
+system=
 for system in $systems; do
+        system_package_file="$PKG_DISTROS"/$system.txt
         system_packages="$(echo $(sed 's/#.*//;' $system_package_file))"
         case $system in
             debian)
@@ -74,6 +104,7 @@ for system in $systems; do
                 ;;
         esac
         sage-print-system-package-command $system --prompt='    $ ' --sudo install $system_packages
+        echo
 done
 if [ -z "$system" ]; then
     echo "(none known)"
@@ -85,10 +116,10 @@ else
         echo "However, these system packages will not be used for building Sage"
         if [ -f "$PKG_SCRIPTS"/install-requires.txt ]; then
             echo "because using Python site-packages is not supported by the Sage distribution;"
-            echo "see https://trac.sagemath.org/ticket/29023"
+            echo "see https://github.com/sagemath/sage/issues/29023"
         else
             echo "because spkg-configure.m4 has not been written for this package;"
-            echo "see https://trac.sagemath.org/ticket/27330"
+            echo "see https://github.com/sagemath/sage/issues/27330"
         fi
     fi
 fi

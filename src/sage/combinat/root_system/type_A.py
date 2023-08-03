@@ -10,9 +10,10 @@ Root system data for type A
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from sage.rings.all import ZZ
+from sage.rings.integer_ring import ZZ
 from sage.combinat.root_system.root_lattice_realizations import RootLatticeRealizations
 from . import ambient_space
+
 
 class AmbientSpace(ambient_space.AmbientSpace):
     r"""
@@ -27,16 +28,16 @@ class AmbientSpace(ambient_space.AmbientSpace):
 
         sage: L = RootSystem(["A",2]).ambient_space()
         sage: e = L.basis()
-        sage: L._plot_projection(e[0])
+        sage: L._plot_projection(e[0])                                                  # optional - sage.symbolic
         (1/2, 989/1142)
-        sage: L._plot_projection(e[1])
+        sage: L._plot_projection(e[1])                                                  # optional - sage.symbolic
         (-1, 0)
-        sage: L._plot_projection(e[2])
+        sage: L._plot_projection(e[2])                                                  # optional - sage.symbolic
         (1/2, -989/1142)
         sage: L = RootSystem(["A",3]).ambient_space()
         sage: l = L.an_element(); l
         (2, 2, 3, 0)
-        sage: L._plot_projection(l)
+        sage: L._plot_projection(l)                                                     # optional - sage.symbolic
         (0, -1121/1189, 7/3)
 
     .. SEEALSO::
@@ -170,12 +171,15 @@ class AmbientSpace(ambient_space.AmbientSpace):
 
 
 from .cartan_type import CartanType_standard_finite, CartanType_simply_laced, CartanType_simple
+
+
 class CartanType(CartanType_standard_finite, CartanType_simply_laced, CartanType_simple):
     """
     Cartan Type `A_n`
 
     .. SEEALSO:: :func:`~sage.combinat.root_systems.cartan_type.CartanType`
     """
+
     def __init__(self, n):
         """
         EXAMPLES::
@@ -217,7 +221,7 @@ class CartanType(CartanType_standard_finite, CartanType_simply_laced, CartanType
             sage: latex(CartanType(['A',4]))
             A_{4}
         """
-        return "A_{%s}"%self.n
+        return "A_{%s}" % self.n
 
     AmbientSpace = AmbientSpace
 
@@ -254,7 +258,7 @@ class CartanType(CartanType_standard_finite, CartanType_simply_laced, CartanType
             O---O---O
             1   2   3
             A3
-            sage: sorted(a.edges())
+            sage: a.edges(sort=True)
             [(1, 2, 1), (2, 1, 1), (2, 3, 1), (3, 2, 1)]
 
         TESTS::
@@ -264,7 +268,7 @@ class CartanType(CartanType_standard_finite, CartanType_simply_laced, CartanType
             O
             1
             A1
-            sage: a.vertices(), a.edges()
+            sage: a.vertices(sort=False), a.edges(sort=False)
             ([1], [])
         """
         from .dynkin_diagram import DynkinDiagram_class
@@ -331,9 +335,10 @@ class CartanType(CartanType_standard_finite, CartanType_simply_laced, CartanType
             return ""
         if node is None:
             node = self._ascii_art_node
-        ret  = "---".join(node(label(i)) for i in range(1,n+1)) + "\n"
+        ret = "---".join(node(label(i)) for i in range(1,n+1)) + "\n"
         ret += "".join("{!s:4}".format(label(i)) for i in range(1,n+1))
         return ret
+
 
 # For unpickling backward compatibility (Sage <= 4.1)
 from sage.misc.persist import register_unpickle_override

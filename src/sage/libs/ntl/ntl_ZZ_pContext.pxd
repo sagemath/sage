@@ -3,7 +3,7 @@ from .ntl_ZZ cimport ntl_ZZ
 from .types cimport ZZ_c
 
 
-cdef class ntl_ZZ_pContext_class(object):
+cdef class ntl_ZZ_pContext_class():
     cdef ZZ_pContext_c x
     cdef void restore_c(self)
     cdef ntl_ZZ p
@@ -12,7 +12,7 @@ cdef class ntl_ZZ_pContext_class(object):
     cpdef void _assert_is_current_modulus(self) except *
 
 
-cdef class ntl_ZZ_pContext_factory(object):
+cdef class ntl_ZZ_pContext_factory():
     cdef object context_dict
     cdef ntl_ZZ_pContext_class make_c(self, ntl_ZZ v)
 

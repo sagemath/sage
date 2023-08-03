@@ -35,12 +35,6 @@ Upstream Contact
 
 Website: http://www.labri.fr/perso/lsimon/glucose/
 
-Dependencies
-------------
-
-zlib
-
-
 Special Update/Build Instructions
 ---------------------------------
 

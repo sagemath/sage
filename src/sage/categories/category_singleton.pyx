@@ -9,13 +9,11 @@ Singleton categories
 #                  https://www.gnu.org/licenses/
 # *****************************************************************************
 
-from sage.misc.cachefunc import cached_method, cached_function
 from sage.misc.constant_function import ConstantFunction
-from sage.misc.lazy_attribute import lazy_attribute, lazy_class_attribute
+from sage.misc.lazy_attribute import lazy_class_attribute
 from sage.categories.category import Category
 from sage.structure.category_object cimport CategoryObject
 from sage.structure.dynamic_class import DynamicMetaclass
-from sage.structure.unique_representation import UniqueRepresentation
 
 from cpython.type cimport PyType_IsSubtype
 
@@ -83,13 +81,14 @@ cdef class Category_contains_method_by_parent_class:
             except AttributeError:
                 return False
 
+
 class Category_singleton(Category):
     """
     A base class for implementing singleton category
 
     A *singleton* category is a category whose class takes no
     parameters like ``Fields()`` or ``Rings()``. See also the
-    `Singleton design pattern <https://en.wikipedia.org/wiki/Singleton_pattern>`_.
+    :wikipedia:`Singleton design pattern <Singleton_pattern>`.
 
     This is a subclass of :class:`Category`, with a couple
     optimizations for singleton categories.
@@ -136,13 +135,14 @@ class Category_singleton(Category):
     One sees that containment tests for the singleton class is a lot faster
     than for a usual class::
 
-        sage: timeit("R in MyRings()", number=10000)                  # not tested
+        sage: # not tested
+        sage: timeit("R in MyRings()", number=10000)
         10000 loops, best of 3: 7.12 µs per loop
-        sage: timeit("R1 in MyRings()", number=10000)                 # not tested
+        sage: timeit("R1 in MyRings()", number=10000)
         10000 loops, best of 3: 6.98 µs per loop
-        sage: timeit("R in MyRingsSingleton()", number=10000)         # not tested
+        sage: timeit("R in MyRingsSingleton()", number=10000)
         10000 loops, best of 3: 3.08 µs per loop
-        sage: timeit("R2 in MyRingsSingleton()", number=10000)        # not tested
+        sage: timeit("R2 in MyRingsSingleton()", number=10000)
         10000 loops, best of 3: 2.99 µs per loop
 
     So this is an improvement, but not yet competitive with a pure
@@ -218,8 +218,8 @@ class Category_singleton(Category):
              <class 'sage.categories.category.Category'>,
              <class 'sage.structure.unique_representation.UniqueRepresentation'>,
              <class 'sage.structure.unique_representation.CachedRepresentation'>,
-             <type 'sage.misc.fast_methods.WithEqualityById'>,
-             <type 'sage.structure.sage_object.SageObject'>,
+             <class 'sage.misc.fast_methods.WithEqualityById'>,
+             <class 'sage.structure.sage_object.SageObject'>,
              <class '__main__.R.subcategory_class'>,
              <class 'sage.categories.sets_cat.Sets.subcategory_class'>,
              <class 'sage.categories.sets_with_partial_maps.SetsWithPartialMaps.subcategory_class'>,
@@ -320,7 +320,7 @@ class Category_singleton(Category):
         from sage.categories.category_with_axiom import CategoryWithAxiom_singleton
         assert (cls.__mro__[1] is Category_singleton or cls.__mro__[1] is CategoryWithAxiom_singleton), \
             "{} is not a direct subclass of {}".format(cls, Category_singleton)
-        obj = super(Category_singleton, cls).__classcall__(cls, *args)
+        obj = super().__classcall__(cls, *args)
         cls._set_classcall(ConstantFunction(obj))
         obj.__class__._set_classcall(ConstantFunction(obj))
         return obj

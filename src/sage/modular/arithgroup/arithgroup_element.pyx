@@ -1,10 +1,9 @@
 """
-Elements of Arithmetic Subgroups
+Elements of arithmetic subgroups
 """
-
-################################################################################
+# ##############################################################################
 #
-#       Copyright (C) 2009, The Sage Group -- http://www.sagemath.org/
+#       Copyright (C) 2009, The Sage Group -- https://www.sagemath.org/
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #
@@ -12,12 +11,11 @@ Elements of Arithmetic Subgroups
 #
 #                  https://www.gnu.org/licenses/
 #
-################################################################################
+# ##############################################################################
 
-from sage.structure.element cimport MultiplicativeGroupElement, MonoidElement, Element
+from sage.structure.element cimport MultiplicativeGroupElement
 from sage.structure.richcmp cimport richcmp
-from sage.rings.all import ZZ
-from sage.modular.cusps import Cusp
+from sage.rings.integer_ring import ZZ
 
 from sage.matrix.matrix_space import MatrixSpace
 from sage.matrix.matrix_integer_dense cimport Matrix_integer_dense
@@ -27,7 +25,7 @@ M2Z = MatrixSpace(ZZ, 2)
 
 cdef class ArithmeticSubgroupElement(MultiplicativeGroupElement):
     r"""
-    An element of the group `{\rm SL}_2(\ZZ)`, i.e. a 2x2 integer matrix of
+    An element of the group `\SL_2(\ZZ)`, i.e. a 2x2 integer matrix of
     determinant 1.
     """
 
@@ -109,7 +107,7 @@ cdef class ArithmeticSubgroupElement(MultiplicativeGroupElement):
             sage: unpickle_build(si, (Gamma0(13), {'_ArithmeticSubgroupElement__x': x}))
         """
         from .congroup_sl2z import SL2Z
-        oldparent, kwdict = state
+        _, kwdict = state
         self._parent = SL2Z
         if '_ArithmeticSubgroupElement__x' in kwdict:
             self.__x = M2Z(kwdict['_ArithmeticSubgroupElement__x'])
@@ -193,8 +191,8 @@ cdef class ArithmeticSubgroupElement(MultiplicativeGroupElement):
         cdef ArithmeticSubgroupElement right = <ArithmeticSubgroupElement>right_r
         return richcmp(self.__x, right.__x, op)
 
-    def __nonzero__(self):
-        """
+    def __bool__(self):
+        r"""
         Return ``True``, since the ``self`` lives in SL(2,\Z), which does not
         contain the zero matrix.
 
@@ -254,7 +252,7 @@ cdef class ArithmeticSubgroupElement(MultiplicativeGroupElement):
             [4 5]
             [3 4]
             sage: type(x.matrix())
-            <type 'sage.matrix.matrix_integer_dense.Matrix_integer_dense'>
+            <class 'sage.matrix.matrix_integer_dense.Matrix_integer_dense'>
         """
         return self.__x
 
@@ -342,6 +340,7 @@ cdef class ArithmeticSubgroupElement(MultiplicativeGroupElement):
 
         An example involving the Gaussian numbers::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<i> = NumberField(x^2 + 1)
             sage: g.acton(i)
             1/1186*i + 77/1186

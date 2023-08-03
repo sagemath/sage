@@ -47,7 +47,7 @@ def _import_module_from_path(name, path=None):
 
 
 def _import_module_from_path_impl(name, path):
-    """Implement ``_import_module_from_path for Python 3.4+."""
+    """Implement ``_import_module_from_path`` for Python 3.4+."""
 
     # This is remarkably tricky to do right, considering that the new
     # importlib is supposed to make direct interaction with the import
@@ -204,11 +204,12 @@ class InlineFortran:
             if k[0] != '_':
                 globals[k] = x
 
-    def add_library(self,s):
-       self.libraries.append(s)
+    def add_library(self, s):
+        self.libraries.append(s)
 
-    def add_library_path(self,s):
-       self.library_paths.append(s)
+    def add_library_path(self, s):
+        self.library_paths.append(s)
+
 
 # An instance
 fortran = InlineFortran()

@@ -1,3 +1,5 @@
+# sage.doctest: optional - sage.rings.finite_rings
+# sage.doctest: optional - sage.rings.function_field
 r"""
 Valuation rings of function fields
 
@@ -53,8 +55,9 @@ AUTHORS:
 - Kwankyu Lee (2017-04-30): initial version
 
 """
+
 # ****************************************************************************
-#       Copyright (C) 2016 Kwankyu Lee <ekwankyu@gmail.com>
+#       Copyright (C) 2016-2019 Kwankyu Lee <ekwankyu@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
@@ -206,6 +209,3 @@ class FunctionFieldValuationRing(UniqueRepresentation, Parent):
         mor_from_k = morphism(Hom(k,self), from_k)
         mor_to_k = morphism(Hom(self,k), to_k)
         return k, mor_from_k, mor_to_k
-
-
-

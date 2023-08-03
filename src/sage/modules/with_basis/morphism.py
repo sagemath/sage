@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 r"""
-Module with basis morphisms
+Morphisms of modules with a basis
 
 This module contains a hierarchy of classes for morphisms of modules
 with a basis (category :class:`Modules.WithBasis`):
@@ -175,12 +175,12 @@ class ModuleMorphism(Morphism):
             sage: TestSuite(phi).run()
         """
         if category is None:
-            if not domain in ModulesWithBasis:
-                raise ValueError("domain(=%s) should be a module with basis"%(codomain))
+            if domain not in ModulesWithBasis:
+                raise ValueError("domain(=%s) should be a module with basis" % codomain)
             base_ring = domain.base_ring()
 
-            if not hasattr( codomain, 'base_ring' ):
-                raise ValueError("codomain(=%s) needs to have a base_ring attribute"%(codomain))
+            if not hasattr(codomain, 'base_ring'):
+                raise ValueError("codomain(=%s) needs to have a base_ring attribute" % codomain)
             # codomain should be a module over base_ring
             # The natural test would be ``codomains in Modules(base_ring)``
             # But this is not properly implemented yet::
@@ -227,6 +227,7 @@ class ModuleMorphism(Morphism):
         if not issubclass(self.__class__, H._abstract_element_class):
             self.__class__ = H.__make_element_class__(self.__class__)
 
+
 class ModuleMorphismFromFunction(ModuleMorphism, SetMorphism):
     """
     A class for module morphisms implemented by a plain function.
@@ -263,6 +264,7 @@ class ModuleMorphismFromFunction(ModuleMorphism, SetMorphism):
         # Caveat: This calls Morphism.__init__ twice ...
         ModuleMorphism.__init__(self, domain, codomain, category=category)
         SetMorphism.__init__(self, self.parent(), function)
+
 
 class ModuleMorphismByLinearity(ModuleMorphism):
     """
@@ -318,7 +320,7 @@ class ModuleMorphismByLinearity(ModuleMorphism):
             self._on_basis = on_basis
 
         self._is_module_with_basis_over_same_base_ring = \
-            codomain in ModulesWithBasis( base_ring ) and zero == codomain.zero()
+            codomain in ModulesWithBasis(base_ring) and zero == codomain.zero()
 
         ModuleMorphism.__init__(self, domain, codomain,
                                 category=category,
@@ -394,24 +396,25 @@ class ModuleMorphismByLinearity(ModuleMorphism):
             Add more tests for multi-parameter module morphisms.
         """
         before = args[0:self._position]
-        after = args[self._position+1:len(args)]
+        after = args[self._position + 1:len(args)]
         x = args[self._position]
-        assert(x.parent() is self.domain())
+        assert x.parent() is self.domain()
 
         mc = x.monomial_coefficients(copy=False)
         if self._is_module_with_basis_over_same_base_ring:
             return self.codomain().linear_combination(
-                    (self._on_basis(*(before+(index,)+after)), coeff )
-                    for (index, coeff) in mc.items())
+                (self._on_basis(*(before + (index,) + after)), coeff)
+                for (index, coeff) in mc.items())
         else:
-            return sum((coeff * self._on_basis(*(before+(index,)+after))
-                       for (index, coeff) in mc.items()), self._zero)
+            return sum((coeff * self._on_basis(*(before + (index,) + after))
+                        for (index, coeff) in mc.items()), self._zero)
 
     # As per the specs of Map, we should in fact implement _call_.
     # However we currently need to abuse Map.__call__ (which strict
     # type checking) for multi-parameter module morphisms
     # To be cleaned up
     _call_ = __call__
+
 
 class TriangularModuleMorphism(ModuleMorphism):
     r"""
@@ -681,13 +684,11 @@ class TriangularModuleMorphism(ModuleMorphism):
         self._inverse = inverse
 
         if inverse_on_support == "compute":
-            inverse_on_support = {
-                self._dominant_item(on_basis(i))[0] : i
-                for i in self.domain().basis().keys()
-            }.get
+            inverse_on_support = {self._dominant_item(on_basis(i))[0]: i
+                                  for i in self.domain().basis().keys()
+                                  }.get
 
         self._inverse_on_support = inverse_on_support
-
 
         if invertible is None and (domain.basis().keys() == codomain.basis().keys()) and \
            (self._inverse_on_support==identity or domain in Modules.FiniteDimensional):
@@ -847,6 +848,7 @@ class TriangularModuleMorphism(ModuleMorphism):
             retract_dom = None
         else:
             on_basis = self.on_basis()
+
             def retract_dom(i):
                 self._dominant_item(on_basis(i))[0]
 
@@ -880,7 +882,7 @@ class TriangularModuleMorphism(ModuleMorphism):
             sage: phi._invert_on_basis(2)
             B[2] - B[3]
         """
-        return self.preimage( self.codomain().monomial(i) )
+        return self.preimage(self.codomain().monomial(i))
 
     def preimage(self, f):
         r"""
@@ -954,7 +956,7 @@ class TriangularModuleMorphism(ModuleMorphism):
         F = self.domain()
         G = self.codomain()
         on_basis = self.on_basis()
-        if not f in G:
+        if f not in G:
             raise ValueError("f(={}) must be in the codomain of the morphism to have a preimage under the latter".format(f))
 
         remainder = f
@@ -1048,7 +1050,7 @@ class TriangularModuleMorphism(ModuleMorphism):
         .. NOTE:: Before :trac:`8678` this method used to be called co_reduced.
         """
         G = self.codomain()
-        if G.base_ring() not in Fields and not self._unitriangular:
+        if G.base_ring() not in Fields() and not self._unitriangular:
             raise NotImplementedError("coreduce for a triangular but not unitriangular morphism over a ring")
         on_basis = self.on_basis()
         assert y in G
@@ -1119,13 +1121,13 @@ class TriangularModuleMorphism(ModuleMorphism):
             NotImplementedError: cokernel_basis_indices implemented only for morphisms with a finite dimensional codomain
         """
         R = self.domain().base_ring()
-        if R not in Fields and not self._unitriangular:
+        if R not in Fields() and not self._unitriangular:
             raise NotImplementedError("cokernel_basis_indices for a triangular but not unitriangular morphism over a ring")
         if self.codomain() not in Modules(R).FiniteDimensional():
             raise NotImplementedError("cokernel_basis_indices implemented only for morphisms with a finite dimensional codomain")
         return [i for i in self.codomain().basis().keys() if self._inverse_on_support(i) is None]
 
-    def cokernel_projection(self, category = None):
+    def cokernel_projection(self, category=None):
         """
         Return a projection on the co-kernel of ``self``.
 
@@ -1312,16 +1314,11 @@ class ModuleMorphismFromMatrix(ModuleMorphismByLinearity):
             True
             sage: TestSuite(phi).run(skip=["_test_pickling"])
 
-        Pickling fails (:trac:`17957`) because ``phi._on_basis`` is
-        currently a ``dict.__getitem__`` which is not picklable in Python 2::
+        Pickling works (:trac:`17957`) in Python 3::
 
             sage: phi._on_basis
             <built-in method __getitem__ of dict object at ...>
-            sage: dumps(phi._on_basis) # py2
-            Traceback (most recent call last):
-            ...
-            TypeError: expected string or Unicode object, NoneType found
-            sage: loads(dumps(phi)) == phi # py3
+            sage: loads(dumps(phi)) == phi
             True
 
         The matrix is stored in the morphism, as if it was for an
@@ -1338,28 +1335,28 @@ class ModuleMorphismFromMatrix(ModuleMorphismByLinearity):
             [2 5]
         """
         C = ModulesWithBasis(domain.base_ring()).FiniteDimensional()
-        if not domain in C:
-            raise ValueError("The domain %s should be finite dimensional"%domain)
+        if domain not in C:
+            raise ValueError("The domain %s should be finite dimensional" % domain)
         if codomain is None:
             raise ValueError("The codomain %s should be specified")
-        if not codomain in C:
-            raise ValueError("The codomain %s should be finite dimensional"%codomain)
+        if codomain not in C:
+            raise ValueError("The codomain %s should be finite dimensional" % codomain)
         if not is_Matrix(matrix):
-            raise ValueError("matrix (=%s) should be a matrix"%matrix)
+            raise ValueError("matrix (=%s) should be a matrix" % matrix)
         import sage.combinat.ranker
         indices = tuple(domain.basis().keys())
-        rank_domain  = sage.combinat.ranker.rank_from_list(indices)
+        rank_domain = sage.combinat.ranker.rank_from_list(indices)
         if side == "left":
             matrix = matrix.transpose()
         if matrix.nrows() != len(indices):
             raise ValueError("The dimension of the matrix (%s) does not match with the dimension of the domain (%s)"
-                             %(matrix.nrows(), len(indices)))
+                             % (matrix.nrows(), len(indices)))
         if matrix.ncols() != codomain.dimension():
             raise ValueError("The dimension of the matrix (%s) does not match with the dimension of the codomain (%s)"
-                             %(matrix.ncols(), codomain.dimension()))
+                             % (matrix.ncols(), codomain.dimension()))
         self._matrix = matrix
-        d = { xt: codomain.from_vector(matrix.row(rank_domain(xt)))
-              for xt in domain.basis().keys() }
+        d = {xt: codomain.from_vector(matrix.row(rank_domain(xt)))
+             for xt in domain.basis().keys()}
 
         ModuleMorphismByLinearity.__init__(self, on_basis=d.__getitem__,
                                            domain=domain, codomain=codomain,
@@ -1520,7 +1517,7 @@ class DiagonalModuleMorphism(ModuleMorphismByLinearity):
         """
         return self.codomain().module_morphism(
             diagonal=pointwise_inverse_function(self._diagonal),
-            codomain=self.domain(), category = self.category_for())
+            codomain=self.domain(), category=self.category_for())
 
 
 def pointwise_inverse_function(f):
@@ -1552,6 +1549,7 @@ def pointwise_inverse_function(f):
     if hasattr(f, "pointwise_inverse"):
         return f.pointwise_inverse()
     return PointwiseInverseFunction(f)
+
 
 from sage.structure.sage_object import SageObject
 class PointwiseInverseFunction(SageObject):
@@ -1632,4 +1630,3 @@ class PointwiseInverseFunction(SageObject):
             True
         """
         return self._pointwise_inverse
-

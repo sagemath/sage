@@ -276,9 +276,7 @@ cdef class CircuitClosuresMatroid(Matroid):
 
             sage: M = matroids.named_matroids.Vamos()
             sage: X = M._max_independent(set(['a', 'c', 'd', 'e', 'f']))
-            sage: sorted(X) # py2
-            ['a', 'd', 'e', 'f']
-            sage: sorted(X) # py3 random
+            sage: sorted(X)  # random
             ['a', 'd', 'e', 'f']
             sage: M.is_independent(X)
             True
@@ -389,10 +387,10 @@ cdef class CircuitClosuresMatroid(Matroid):
 
             sage: from sage.matroids.advanced import *
             sage: M1 = CircuitClosuresMatroid(matroids.Wheel(3))
-            sage: M2 = matroids.CompleteGraphic(4)
-            sage: M1._is_isomorphic(M2)
+            sage: M2 = matroids.CompleteGraphic(4)                                      # needs sage.graphs
+            sage: M1._is_isomorphic(M2)                                                 # needs sage.graphs
             True
-            sage: M1._is_isomorphic(M2, certificate=True)
+            sage: M1._is_isomorphic(M2, certificate=True)                               # needs sage.graphs
             (True, {0: 0, 1: 1, 2: 2, 3: 3, 4: 5, 5: 4})
             sage: M1 = CircuitClosuresMatroid(matroids.named_matroids.Fano())
             sage: M2 = matroids.named_matroids.NonFano()
@@ -519,7 +517,7 @@ cdef class CircuitClosuresMatroid(Matroid):
             N.rename(getattr(self, '__custom_name'))
         return N
 
-    def __deepcopy__(self, memo={}):
+    def __deepcopy__(self, memo=None):
         """
         Create a deep copy.
 
@@ -536,6 +534,8 @@ cdef class CircuitClosuresMatroid(Matroid):
             sage: M.groundset() is N.groundset()
             False
         """
+        if memo is None:
+            memo = {}
         from copy import deepcopy
         # Since matroids are immutable, N cannot reference itself in correct code, so no need to worry about the recursion.
         N = CircuitClosuresMatroid(groundset=deepcopy(self._groundset, memo), circuit_closures=deepcopy(self._circuit_closures, memo))

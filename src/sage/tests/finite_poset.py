@@ -209,7 +209,7 @@ def test_finite_lattice(L):
         p = "is_"+p_
         if 'certificate' in sage_getargspec(getattr(L, p)).args:
             res = attrcall(p, certificate=True)(L)
-            if type(res) != type((1,2)) or len(res) != 2:
+            if not isinstance(res, tuple) or len(res) != 2:
                 raise ValueError("certificate-option does not return a pair in %s" % p)
             if P[p_] != res[0]:
                 raise ValueError("certificate-option changes result in %s" % p)
@@ -537,9 +537,9 @@ def test_finite_poset(P):
     P_dual = P.dual()
     selfdual_properties = ['chain', 'bounded', 'connected', 'graded', 'ranked', 'series_parallel', 'slender', 'lattice']
     for prop in selfdual_properties:
-        f = attrcall('is_'+prop)
+        f = attrcall('is_' + prop)
         if f(P) != f(P_dual):
-            raise ValueError("error in self-dual property %s" % prop)
+            raise ValueError(f"error in self-dual property {prop}")
     if P.is_graded():
         if P.is_bounded():
             if P.is_eulerian() != P_dual.is_eulerian():
@@ -547,7 +547,7 @@ def test_finite_poset(P):
             if P.is_eulerian():
                 P_ = P.star_product(P)
                 if not P_.is_eulerian():
-                    raise("error in star product / eulerian")
+                    raise ValueError("error in star product / eulerian")
         chain1 = P.random_maximal_chain()
         if len(chain1) != h1:
             raise ValueError("error in is_graded")
@@ -609,11 +609,11 @@ def test_finite_poset(P):
                       'jump_critical', 'meet_semilattice', 'slender']
     for p in bool_with_cert:
         try:  # some properties are not always defined for all posets
-            res1 = attrcall('is_'+p)(P)
+            res1 = attrcall('is_' + p)(P)
         except ValueError:
             continue
-        res2 = attrcall('is_'+p, certificate=True)(P)
-        if type(res2) != type((1,2)) or len(res2) != 2:
+        res2 = attrcall('is_' + p, certificate=True)(P)
+        if not isinstance(res2, tuple) or len(res2) != 2:
             raise ValueError("certificate-option does not return a pair in %s" % p)
         if res1 != res2[0]:
             raise ValueError("certificate-option changes result in %s" % p)

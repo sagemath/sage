@@ -8,7 +8,7 @@ This chapter discusses some issues with, and advice for, coding in
 Sage.
 
 
-Python Language Standard
+Python language standard
 ========================
 
 Sage library code needs to be compatible with all versions of Python
@@ -16,27 +16,36 @@ that Sage supports.  The information regarding the supported versions
 can be found in the files ``build/pkgs/python3/spkg-configure.m4`` and
 ``src/setup.cfg.m4``.
 
-As of Sage 9.4, Python 3.7 is the oldest supported version.  Hence,
-all language and library features that are available in Python 3.7 can
-be used; but features introduced in Python 3.8 cannot be used.  If a
+As of Sage 9.7, Python 3.8 is the oldest supported version.  Hence,
+all language and library features that are available in Python 3.8 can
+be used; but features introduced in Python 3.9 cannot be used.  If a
 feature is deprecated in a newer supported version, it must be ensured
 that deprecation warnings issued by Python do not lead to failures in
 doctests.
 
-Some key language and library features have been backported to Python 3.7
+Some key language and library features have been backported to Python 3.8
 using one of two mechanisms:
 
-- ``from __future__ import annotations`` (see
-  https://docs.python.org/3.7/library/__future__.html) modernizes type
-  annotations according to PEP 563 (Postponed evaluation of
-  annotations, see https://www.python.org/dev/peps/pep-0563).  All
-  Sage library code that uses type annotations should include this
-  ``__future__`` import and follow PEP 563.
+- ``from __future__ import annotations`` (see Python reference for
+  `__future__ <https://docs.python.org/3.8/library/__future__.html>`_)
+  modernizes type annotations according to `PEP 563
+  <https://www.python.org/dev/peps/pep-0563>`_ (Postponed evaluation
+  of annotations).  All Sage library code that uses type annotations
+  should include this ``__future__`` import and follow PEP 563.
 
-- The Sage distribution includes the backport packages ``importlib_metadata``
-  and ``importlib_resources``.
+- Backport packages
 
-Meta-ticket :trac:`29756` keeps track of newer Python features and serves
+  - `importlib_metadata <../reference/spkg/importlib_metadata>`_
+    (to be used in place of ``importlib.metadata``),
+  - `importlib_resources <../reference/spkg/importlib_resources>`_
+    (to be used in place of ``importlib.resources``),
+  - `typing_extensions <../reference/spkg/typing_extensions>`_
+    (to be used in place of ``typing``).
+
+  The Sage library declares these packages as dependencies and ensures that
+  versions that provide features of Python 3.11 are available.
+
+Meta :issue:`29756` keeps track of newer Python features and serves
 as a starting point for discussions on how to make use of them in the
 Sage library.
 
@@ -55,7 +64,7 @@ scratch. Try to figure out how your code should fit in with other Sage
 code, and design it accordingly.
 
 
-Special Sage Functions
+Special sage functions
 ======================
 
 Functions with leading and trailing double underscores ``__XXX__`` are
@@ -148,7 +157,7 @@ representing the object ``a``. Calling ``view(a)`` will display the
 typeset version of this.
 
 
-Print Representation
+Print representation
 --------------------
 
 The standard Python printing method is ``__repr__(self)``. In Sage,
@@ -161,7 +170,7 @@ the context.
 
 Here is an example of the ``_latex_`` and ``_repr_`` functions for the
 ``Pi`` class. It is from the file
-``SAGE_ROOT/src/sage/functions/constants.py``:
+``SAGE_ROOT/src/sage/symbolic/constants.py``:
 
 .. CODE-BLOCK:: python
 
@@ -184,7 +193,7 @@ Here is an example of the ``_latex_`` and ``_repr_`` functions for the
             return "\\pi"
 
 
-Matrix or Vector from Object
+Matrix or vector from object
 ----------------------------
 
 Provide a ``_matrix_`` method for an object that can be coerced to a
@@ -192,7 +201,7 @@ matrix over a ring `R`. Then the Sage function ``matrix`` will work
 for this object.
 
 The following is from
-``SAGE_ROOT/src/sage/graphs/graph.py``:
+``SAGE_ROOT/src/sage/graphs/generic_graph.py``:
 
 .. CODE-BLOCK:: python
 
@@ -211,7 +220,7 @@ The following is from
 Similarly, provide a ``_vector_`` method for an object that can be
 coerced to a vector over a ring `R`. Then the Sage function ``vector``
 will work for this object. The following is from the file
-``SAGE_ROOT/sage/sage/modules/free_module_element.pyx``:
+``SAGE_ROOT/src/sage/modules/free_module_element.pyx``:
 
 .. CODE-BLOCK:: python
 
@@ -223,7 +232,7 @@ will work for this object. The following is from the file
 
 .. _section-preparsing:
 
-Sage Preparsing
+Sage preparsing
 ===============
 
 To make Python even more usable interactively, there are a number of
@@ -261,7 +270,7 @@ replacements are made:
       <... 'int'>
       sage: b = 393939
       sage: type(b)
-      <type 'sage.rings.integer.Integer'>
+      <class 'sage.rings.integer.Integer'>
       sage: a == b
       True
 
@@ -298,7 +307,7 @@ In particular, the file ``preparse.py`` contains the Sage preparser
 code.
 
 
-The Sage Coercion Model
+The Sage coercion model
 =======================
 
 The primary goal of coercion is to be able to transparently do
@@ -337,7 +346,7 @@ immutable later. See the file
 ``SAGE_ROOT/src/sage/structure/mutability.py``.
 
 
-The  __hash__ Special Method
+The  __hash__ special method
 ============================
 
 Here is the definition of ``__hash__`` from the Python reference
@@ -465,11 +474,39 @@ Note that the syntax in ``except`` is to list all the exceptions that
 are caught as a tuple, followed by an error message.
 
 
+Integer return values
+=====================
+
+Many functions and methods in Sage return integer values.
+Those should usually be returned as Sage integers of class
+:class:`Integer <sage.rings.integer.Integer>` rather than
+as Python integers of class :class:`int`, as users may want
+to explore the resulting integers' number-theoretic properties
+such as prime factorization. Exceptions should be made when
+there are good reasons such as performance or compatibility
+with Python code, for instance in methods such as
+``__hash__``, ``__len__``, and ``__int__``.
+
+To return a Python integer ``i`` as a Sage integer, use:
+
+.. CODE-BLOCK:: python
+
+    from sage.rings.integer import Integer
+    return Integer(i)
+
+To return a Sage integer ``i`` as a Python ineger, use:
+
+.. CODE-BLOCK:: python
+
+    return int(i)
+
+
 Importing
 =========
 
 We mention two issues with importing: circular imports and importing
-large third-party modules.
+large third-party modules. See also :ref:`section_dependencies_distributions`
+for a discussion of imports from the viewpoint of modularization.
 
 First, you must avoid circular imports. For example, suppose that the
 file ``SAGE_ROOT/src/sage/algebras/steenrod_algebra.py``
@@ -515,7 +552,7 @@ look like this (omitting the documentation string):
         return steenrod_algebra_basis(n, basis=self._basis_name, p=self.prime)
 
 Second, do not import at the top level of your module a third-party
-module that will take a long time to initialize (e.g. matplotlib). As
+module that will take a long time to initialize (e.g. :mod:`matplotlib`). As
 above, you might instead import specific components of the module when
 they are needed, rather than at the top level of your file.
 
@@ -527,6 +564,25 @@ import but delay it until the object is actually used. See
 :mod:`sage.misc.lazy_import` for more details of lazy imports, and
 :ref:`chapter-directory-structure` for an example using lazy imports
 for a new module.
+
+If your module needs to make some precomputed data available at the top level,
+you can reduce its load time (and thus startup time, unless your module is
+imported using :mod:`sage.misc.lazy_import`) by using the decorator
+:func:`sage.misc.cachefunc.cached_function` instead. For example, replace
+
+.. CODE-BLOCK:: python
+
+    big_data = initialize_big_data()  # bad: runs at module load time
+
+by
+
+.. CODE-BLOCK:: python
+
+    from sage.misc.cachefunc import cached_function
+
+    @cached_function                  # good: runs on first use
+    def big_data():
+        return initialize_big_data()
 
 
 Deprecation
@@ -541,7 +597,7 @@ in the future. We call this a *deprecation*.
     Deprecated code can only be removed one year after the first
     stable release in which it appeared.
 
-Each deprecation warning contains the number of the trac ticket that defines
+Each deprecation warning contains the number of the GitHub PR that defines
 it. We use 666 in the examples below. For each entry, consult the function's
 documentation for more information on its behaviour and optional arguments.
 
@@ -614,7 +670,7 @@ documentation for more information on its behaviour and optional arguments.
       deprecation(666, "Do not use your computer to compute 1+1. Use your brain.")
 
 
-Experimental/Unstable Code
+Experimental/unstable code
 --------------------------
 
 You can mark your newly created code (classes/functions/methods) as
@@ -662,7 +718,7 @@ reviewing process.
       experimental_warning(66666, 'This code is not foolproof.')
 
 
-Using Optional Packages
+Using optional packages
 =======================
 
 If a function requires an optional package, that function should fail

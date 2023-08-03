@@ -5,7 +5,7 @@
 # distutils: extra_link_args = NTL_LIBEXTRA
 # distutils: language = c++
 """
-Finite field morphisms using Givaro
+Givaro finite field morphisms
 
 Special implementation for givaro finite fields of:
 
@@ -22,13 +22,13 @@ AUTHOR:
 - Xavier Caruso (2012-06-29)
 """
 
-#############################################################################
+# ###########################################################################
 #    Copyright (C) 2012 Xavier Caruso <xavier.caruso@normalesup.org>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #
-#                  http://www.gnu.org/licenses/
-#****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ***************************************************************************
 
 
 from sage.rings.finite_rings.finite_field_constructor import FiniteField
@@ -41,7 +41,6 @@ from .hom_prime_finite_field cimport FiniteFieldHomomorphism_prime
 
 from sage.categories.homset import Hom
 from sage.structure.element cimport Element
-from sage.rings.morphism cimport RingHomomorphism_im_gens
 
 from sage.rings.finite_rings.finite_field_givaro import FiniteField_givaro
 from .element_givaro cimport FiniteField_givaroElement
@@ -82,8 +81,12 @@ cdef class SectionFiniteFieldHomomorphism_givaro(SectionFiniteFieldHomomorphism_
         cdef long sb, sy
         while b != 0:
             q = a // b
-            sb = b; b = a-q*b; a = sb
-            sy = y; y = x-q*y; x = sy
+            sb = b
+            b = a - q * b
+            a = sb
+            sy = y
+            y = x - q * y
+            x = sy
 
         self._gcd = a
         if x < 0:
@@ -204,13 +207,13 @@ cdef class FrobeniusEndomorphism_givaro(FrobeniusEndomorphism_finite_field):
             sage: Frob = k.frobenius_endomorphism(); Frob
             Frobenius endomorphism t |--> t^5 on Finite Field in t of size 5^3
             sage: type(Frob)
-            <type 'sage.rings.finite_rings.hom_finite_field_givaro.FrobeniusEndomorphism_givaro'>
+            <class 'sage.rings.finite_rings.hom_finite_field_givaro.FrobeniusEndomorphism_givaro'>
 
             sage: k.<t> = GF(5^20)
             sage: Frob = k.frobenius_endomorphism(); Frob
             Frobenius endomorphism t |--> t^5 on Finite Field in t of size 5^20
             sage: type(Frob)
-            <type 'sage.rings.finite_rings.hom_finite_field.FrobeniusEndomorphism_finite_field'>
+            <class 'sage.rings.finite_rings.hom_finite_field.FrobeniusEndomorphism_finite_field'>
         """
         if not isinstance(domain, FiniteField_givaro):
             raise TypeError("The domain is not an instance of FiniteField_givaro")

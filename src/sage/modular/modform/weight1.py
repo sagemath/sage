@@ -12,7 +12,8 @@ AUTHORS:
 """
 
 from sage.misc.cachefunc import cached_function
-from sage.rings.all import PowerSeriesRing, ZZ
+from sage.rings.integer_ring import ZZ
+from sage.rings.power_series_ring import PowerSeriesRing
 from sage.misc.verbose import verbose
 from sage.structure.sequence import Sequence
 from sage.modular.arithgroup.all import Gamma0, GammaH

@@ -68,7 +68,11 @@ SAGE_SCRIPTS
         b[1].z += 1;
     }
 
-    var rRange = Math.sqrt( Math.pow( b[1].x - b[0].x, 2 )
+    var rxRange = Math.sqrt( Math.pow( b[1].z - b[0].z, 2 )
+                            + Math.pow( b[1].y - b[0].y, 2 ) );
+    var ryRange = Math.sqrt( Math.pow( b[1].x - b[0].x, 2 )
+                            + Math.pow( b[1].z - b[0].z, 2 ) );
+    var rzRange = Math.sqrt( Math.pow( b[1].x - b[0].x, 2 )
                             + Math.pow( b[1].y - b[0].y, 2 ) );
     var xRange = b[1].x - b[0].x;
     var yRange = b[1].y - b[0].y;
@@ -76,8 +80,12 @@ SAGE_SCRIPTS
 
     var ar = options.aspectRatio;
     var a = [ ar[0], ar[1], ar[2] ]; // aspect multipliers
+
+    var autoScaling = options.autoScaling;
     var autoAspect = 2.5;
-    if ( zRange > autoAspect * rRange && a[2] === 1 ) a[2] = autoAspect * rRange / zRange;
+    if ( xRange > autoAspect * rxRange && autoScaling[0] ) a[0] = autoAspect * rxRange / xRange;
+    if ( yRange > autoAspect * ryRange && autoScaling[1] ) a[1] = autoAspect * ryRange / yRange;
+    if ( zRange > autoAspect * rzRange && autoScaling[2] ) a[2] = autoAspect * rzRange / zRange;
 
     // Distance from (xMid,yMid,zMid) to any corner of the bounding box, after applying aspectRatio
     var midToCorner = Math.sqrt( a[0]*a[0]*xRange*xRange + a[1]*a[1]*yRange*yRange + a[2]*a[2]*zRange*zRange ) / 2;
@@ -206,7 +214,17 @@ SAGE_SCRIPTS
     camera.up.set( 0, 0, 1 );
     camera.position.set( a[0]*xMid, a[1]*yMid, a[2]*zMid );
 
-    var offset = new THREE.Vector3( a[0]*xRange, a[1]*yRange, a[2]*zRange );
+    // camera is positioned so that the line from the camera to the center
+    // of the bounding sphere of the objects makes an angle of 60 degrees with x-axis
+    // and an angle of 30 degrees with z-axis and the field of view of the camera looking
+    // at the center has an angle of 45 degrees.
+    const sin8 = Math.sin(Math.PI / 8);
+    const sin5 = Math.sin(Math.PI / 5);
+    const cos5 = Math.cos(Math.PI / 5);
+    const sin3 = Math.sin(Math.PI / 3);
+    const cos3 = Math.cos(Math.PI / 3);
+    var r = midToCorner / sin8;
+    var offset = new THREE.Vector3( r * sin3 * cos5, r * sin3 * sin5, r * cos3 );
 
     if ( options.viewpoint ) {
 
@@ -561,7 +579,7 @@ SAGE_SCRIPTS
         setTimeout( function() { m.style.display = 'none'; }, 2000 );
 
     }
-                                       
+
 </script>
 
 <div id="menu-container" onclick="toggleMenu()">&#x24d8;

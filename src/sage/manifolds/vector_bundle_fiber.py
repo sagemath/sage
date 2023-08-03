@@ -242,6 +242,19 @@ class VectorBundleFiber(FiniteRankFreeModule):
                             pass
                     self._basis_changes[(basis1, basis2)] = auto
 
+    def construction(self):
+        r"""
+        TESTS::
+
+            sage: M = Manifold(3, 'M', structure='top')
+            sage: X.<x,y,z> = M.chart()
+            sage: p = M((0,0,0), name='p')
+            sage: E = M.vector_bundle(2, 'E')
+            sage: E.fiber(p).construction() is None
+            True
+        """
+        return None
+
     def _repr_(self):
         r"""
         String representation of ``self``.

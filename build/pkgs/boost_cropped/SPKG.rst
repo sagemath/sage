@@ -31,8 +31,3 @@ Upstream Contact
 Website: http://www.boost.org/
 
 See mailing list page at http://www.boost.org/community/groups.html
-
-Dependencies
-------------
-
-None

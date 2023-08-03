@@ -1,0 +1,8 @@
+cd src
+mkdir build
+cd build
+sdh_cmake -DPAPILO_NO_BINARIES=1 \
+          -DBOOST_ROOT="$SAGE_LOCAL" \
+          ..
+sdh_make
+sdh_make_install

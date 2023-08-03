@@ -103,7 +103,7 @@ class GolayCode(AbstractLinearCode):
             self._dimension = 6
         if extended:
             length += 1
-        super(GolayCode, self).__init__(base_field, length, "GeneratorMatrix", "Syndrome")
+        super().__init__(base_field, length, "GeneratorMatrix", "Syndrome")
 
     def __eq__(self, other):
         r"""
@@ -118,7 +118,7 @@ class GolayCode(AbstractLinearCode):
         """
         return isinstance(other, GolayCode) \
                 and self.base_field() == other.base_field() \
-                and self.length() == other.length() \
+                and self.length() == other.length()
 
     def _repr_(self):
         r"""
@@ -133,8 +133,8 @@ class GolayCode(AbstractLinearCode):
         ext = ""
         if n % 2 == 0:
             ext = "Extended"
-        return "[%s, %s, %s] %s Golay code over GF(%s)"\
-                % (n, self.dimension(), self.minimum_distance(), ext, self.base_field().cardinality())
+        return "[%s, %s, %s] %s Golay code over GF(%s)" % (n, self.dimension(),
+            self.minimum_distance(), ext, self.base_field().cardinality())
 
     def _latex_(self):
         r"""
@@ -174,7 +174,7 @@ class GolayCode(AbstractLinearCode):
         n = self.length()
         if n % 2 == 0:
             return self
-        return super(GolayCode, self).dual_code()
+        return super().dual_code()
 
     def minimum_distance(self):
         r"""
@@ -394,8 +394,6 @@ class GolayCode(AbstractLinearCode):
         else:
             H = self.generator_matrix()
         return H
-
-
 
 
 ####################### registration ###############################

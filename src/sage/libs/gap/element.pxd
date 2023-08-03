@@ -15,7 +15,7 @@ from sage.structure.element cimport Element, ModuleElement, RingElement
 cdef Obj make_gap_list(sage_list) except NULL
 cdef Obj make_gap_matrix(sage_list, gap_ring) except NULL
 cdef Obj make_gap_record(sage_dict) except NULL
-cdef Obj make_gap_integer(sage_dict) except NULL
+cdef Obj make_gap_integer(sage_int) except NULL
 cdef Obj make_gap_string(sage_string) except NULL
 
 cdef GapElement make_any_gap_element(parent, Obj obj)
@@ -89,7 +89,7 @@ cdef class GapElement_MethodProxy(GapElement_Function):
 cdef class GapElement_Record(GapElement):
     cpdef UInt record_name_to_index(self, name)
 
-cdef class GapElement_RecordIterator(object):
+cdef class GapElement_RecordIterator():
     cdef GapElement_Record rec
     cdef UInt i
 

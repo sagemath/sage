@@ -1,5 +1,5 @@
 """
-Symbolic matrices
+Symbolic dense matrices
 
 EXAMPLES::
 
@@ -154,18 +154,33 @@ Check that :trac:`12778` is fixed::
     Full MatrixSpace of 3 by 4 dense matrices over Symbolic Ring
 """
 
-from sage.rings.polynomial.all import PolynomialRing
-from sage.structure.element cimport ModuleElement, RingElement, Element
+from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.structure.factorization import Factorization
 
 from .matrix_generic_dense cimport Matrix_generic_dense
-cimport sage.matrix.matrix as matrix
+from .constructor import matrix
 
 cdef maxima
 
-from sage.calculus.calculus import symbolic_expression_from_maxima_string, maxima
+from sage.calculus.calculus import maxima
+
 
 cdef class Matrix_symbolic_dense(Matrix_generic_dense):
+    def echelonize(self, **kwds):
+        """
+        Echelonize using the classical algorithm.
+
+
+        TESTS::
+
+            sage: m = matrix([[cos(pi/5), sin(pi/5)], [-sin(pi/5), cos(pi/5)]])
+            sage: m.echelonize(); m
+            [1 0]
+            [0 1]
+        """
+
+        return super().echelonize(algorithm="classical", **kwds)
+
     def eigenvalues(self, extend=True):
         """
         Compute the eigenvalues by solving the characteristic
@@ -264,7 +279,7 @@ cdef class Matrix_symbolic_dense(Matrix_generic_dense):
             sage: spectrum = am.eigenvectors_left()
             sage: symbolic_evalue = spectrum[2][0]
             sage: type(symbolic_evalue)
-            <type 'sage.symbolic.expression.Expression'>
+            <class 'sage.symbolic.expression.Expression'>
             sage: symbolic_evalue
             1/2*sqrt(5) - 1/2
 
@@ -387,7 +402,8 @@ cdef class Matrix_symbolic_dense(Matrix_generic_dense):
             [1/2*(e^(2*x) + 1)*e^(-x) 1/2*(e^(2*x) - 1)*e^(-x)]
             [1/2*(e^(2*x) - 1)*e^(-x) 1/2*(e^(2*x) + 1)*e^(-x)]
 
-        Exp works on 0x0 and 1x1 matrices::
+        Exponentiation works on 0x0 and 1x1 matrices, but the 1x1 example
+        requires a patched version of maxima (:trac:`32898`) for now::
 
             sage: m = matrix(SR,0,[]); m
             []
@@ -395,7 +411,7 @@ cdef class Matrix_symbolic_dense(Matrix_generic_dense):
             []
             sage: m = matrix(SR,1,[2]); m
             [2]
-            sage: m.exp()
+            sage: m.exp()  # not tested, requires patched maxima
             [e^2]
 
         Commuting matrices `m, n` have the property that
@@ -436,7 +452,6 @@ cdef class Matrix_symbolic_dense(Matrix_generic_dense):
             [                       0 1/2*(e^(2*x) + 1)*e^(-x) 1/2*(e^(2*x) - 1)*e^(-x)                        0]
             [                       0 1/2*(e^(2*x) - 1)*e^(-x) 1/2*(e^(2*x) + 1)*e^(-x)                        0]
             [1/2*(e^(2*x) - 1)*e^(-x)                        0                        0 1/2*(e^(2*x) + 1)*e^(-x)]
-
         """
         if not self.is_square():
             raise ValueError("exp only defined on square matrices")
@@ -484,7 +499,7 @@ cdef class Matrix_symbolic_dense(Matrix_generic_dense):
             sage: M = MatrixSpace(SR, 2)
             sage: A = M(range(0, 2^2))
             sage: type(A)
-            <type 'sage.matrix.matrix_symbolic_dense.Matrix_symbolic_dense'>
+            <class 'sage.matrix.matrix_symbolic_dense.Matrix_symbolic_dense'>
             sage: A.charpoly('x')
             x^2 - 3*x - 2
             sage: A.charpoly('y')
@@ -560,7 +575,7 @@ cdef class Matrix_symbolic_dense(Matrix_generic_dense):
         if mp is None:
             mp = self._maxima_lib_().jordan().minimalPoly().expand()
             d = mp.hipow('x')
-            mp = [mp.coeff('x', i) for i in xrange(int(d) + 1)]
+            mp = [mp.coeff('x', i) for i in range(int(d) + 1)]
             mp = PolynomialRing(self.base_ring(), 'x')(mp)
             self.cache('minpoly', mp)
         return mp.change_variable_name(var)
@@ -696,7 +711,7 @@ cdef class Matrix_symbolic_dense(Matrix_generic_dense):
         J = jordan_info.dispJordan()._sage_()
         if subdivide:
             v = [x[1] for x in jordan_info]
-            w = [sum(v[0:i]) for i in xrange(1, len(v))]
+            w = [sum(v[0:i]) for i in range(1, len(v))]
             J.subdivide(w, w)
         if transformation:
             P = A.diag_mode_matrix(jordan_info)._sage_()
@@ -973,7 +988,7 @@ cdef class Matrix_symbolic_dense(Matrix_generic_dense):
 
         return self.parent(new_entries)
 
-    cdef bint get_is_zero_unsafe(self, Py_ssize_t i, Py_ssize_t j):
+    cdef bint get_is_zero_unsafe(self, Py_ssize_t i, Py_ssize_t j) except -1:
         r"""
         Return 1 if the entry ``(i, j)`` is zero, otherwise 0.
 
@@ -993,3 +1008,20 @@ cdef class Matrix_symbolic_dense(Matrix_generic_dense):
         else:
             return 1
 
+    def function(self, *args):
+        """
+        Return a matrix over a callable symbolic expression ring.
+
+        EXAMPLES::
+
+            sage: x, y = var('x,y')
+            sage: v = matrix([[x,y],[x*sin(y), 0]])
+            sage: w = v.function([x,y]); w
+            [       (x, y) |--> x        (x, y) |--> y]
+            [(x, y) |--> x*sin(y)        (x, y) |--> 0]
+            sage: w.parent()
+            Full MatrixSpace of 2 by 2 dense matrices over Callable function ring with arguments (x, y)
+        """
+        from sage.symbolic.callable import CallableSymbolicExpressionRing
+        return matrix(CallableSymbolicExpressionRing(args),
+                      self.nrows(), self.ncols(), self.list())

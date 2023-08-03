@@ -92,14 +92,14 @@ def AllExactCovers(M):
 
     EXAMPLES: No exact covers::
 
-        sage: M = Matrix([[1,1,0],[1,0,1],[0,1,1]])
-        sage: [cover for cover in AllExactCovers(M)]
+        sage: M = Matrix([[1,1,0],[1,0,1],[0,1,1]])                                     # optional - sage.modules
+        sage: [cover for cover in AllExactCovers(M)]                                    # optional - sage.modules
         []
 
     Two exact covers::
 
-        sage: M = Matrix([[1,1,0],[1,0,1],[0,0,1],[0,1,0]])
-        sage: [cover for cover in AllExactCovers(M)]
+        sage: M = Matrix([[1,1,0],[1,0,1],[0,0,1],[0,1,0]])                             # optional - sage.modules
+        sage: [cover for cover in AllExactCovers(M)]                                    # optional - sage.modules
         [[(1, 1, 0), (0, 0, 1)], [(1, 0, 1), (0, 1, 0)]]
     """
     rows = []
@@ -119,15 +119,13 @@ def OneExactCover(M):
 
     EXAMPLES::
 
-        sage: M = Matrix([[1,1,0],[1,0,1],[0,1,1]])  #no exact covers
-        sage: print(OneExactCover(M))
+        sage: M = Matrix([[1,1,0],[1,0,1],[0,1,1]])  # no exact covers                  # optional - sage.modules
+        sage: print(OneExactCover(M))                                                   # optional - sage.modules
         None
-        sage: M = Matrix([[1,1,0],[1,0,1],[0,0,1],[0,1,0]]) #two exact covers
-        sage: OneExactCover(M)
+        sage: M = Matrix([[1,1,0],[1,0,1],[0,0,1],[0,1,0]]) # two exact covers          # optional - sage.modules
+        sage: OneExactCover(M)                                                          # optional - sage.modules
         [(1, 1, 0), (0, 0, 1)]
     """
 
     for s in AllExactCovers(M):
         return s
-
-

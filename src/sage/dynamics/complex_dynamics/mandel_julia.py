@@ -41,11 +41,14 @@ from sage.dynamics.complex_dynamics.mandel_julia_helper import (fast_mandelbrot_
                                                                 polynomial_mandelbrot,
                                                                 julia_helper)
 
-from sage.plot.colors import Color
+from sage.misc.lazy_import import lazy_import
+lazy_import("sage.plot.colors", "Color")
 from sage.repl.image import Image
 from sage.functions.log import logb
 from sage.functions.other import floor
-from sage.rings.all import QQ, CC, CDF
+from sage.rings.rational_field import QQ
+from sage.rings.cc import CC
+from sage.rings.complex_double import CDF
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.schemes.projective.projective_space import ProjectiveSpace
 from sage.misc.prandom import randint
@@ -127,29 +130,29 @@ def mandelbrot_plot(f=None, **kwds):
     ``interact`` to ``True``. (This is only implemented for ``z^2 + c``)::
 
         sage: mandelbrot_plot(interact=True)
-        interactive(children=(FloatSlider(value=0.0, description=u'Real center', max=1.0, min=-1.0, step=1e-05),
-        FloatSlider(value=0.0, description=u'Imag center', max=1.0, min=-1.0, step=1e-05),
-        FloatSlider(value=4.0, description=u'Width', max=4.0, min=1e-05, step=1e-05),
-        IntSlider(value=500, description=u'Iterations', max=1000),
-        IntSlider(value=500, description=u'Pixels', max=1000, min=10),
-        IntSlider(value=1, description=u'Color sep', max=20, min=1),
-        IntSlider(value=30, description=u'# Colors', min=1),
-        ColorPicker(value='#ff6347', description=u'Base color'), Output()),
-        _dom_classes=(u'widget-interact',))
+        ...interactive(children=(FloatSlider(value=0.0, description='Real center', max=1.0, min=-1.0, step=1e-05),
+        FloatSlider(value=0.0, description='Imag center', max=1.0, min=-1.0, step=1e-05),
+        FloatSlider(value=4.0, description='Width', max=4.0, min=1e-05, step=1e-05),
+        IntSlider(value=500, description='Iterations', max=1000),
+        IntSlider(value=500, description='Pixels', max=1000, min=10),
+        IntSlider(value=1, description='Color sep', max=20, min=1),
+        IntSlider(value=30, description='# Colors', min=1),
+        ColorPicker(value='#ff6347', description='Base color'), Output()),
+        _dom_classes=('widget-interact',))
 
     ::
 
         sage: mandelbrot_plot(interact=True, x_center=-0.75, y_center=0.25,
         ....: image_width=1/2, number_of_colors=75)
-        interactive(children=(FloatSlider(value=-0.75, description=u'Real center', max=1.0, min=-1.0, step=1e-05),
-        FloatSlider(value=0.25, description=u'Imag center', max=1.0, min=-1.0, step=1e-05),
-        FloatSlider(value=0.5, description=u'Width', max=4.0, min=1e-05, step=1e-05),
-        IntSlider(value=500, description=u'Iterations', max=1000),
-        IntSlider(value=500, description=u'Pixels', max=1000, min=10),
-        IntSlider(value=1, description=u'Color sep', max=20, min=1),
-        IntSlider(value=75, description=u'# Colors', min=1),
-        ColorPicker(value='#ff6347', description=u'Base color'), Output()),
-        _dom_classes=(u'widget-interact',))
+        ...interactive(children=(FloatSlider(value=-0.75, description='Real center', max=1.0, min=-1.0, step=1e-05),
+        FloatSlider(value=0.25, description='Imag center', max=1.0, min=-1.0, step=1e-05),
+        FloatSlider(value=0.5, description='Width', max=4.0, min=1e-05, step=1e-05),
+        IntSlider(value=500, description='Iterations', max=1000),
+        IntSlider(value=500, description='Pixels', max=1000, min=10),
+        IntSlider(value=1, description='Color sep', max=20, min=1),
+        IntSlider(value=75, description='# Colors', min=1),
+        ColorPicker(value='#ff6347', description='Base color'), Output()),
+        _dom_classes=('widget-interact',))
 
     Polynomial maps can be defined over a multivariate polynomial ring or a
     univariate polynomial ring tower::
@@ -164,7 +167,7 @@ def mandelbrot_plot(f=None, **kwds):
         sage: B.<c> = CC[]
         sage: R.<z> = B[]
         sage: f = z^5 + c
-        sage: mandelbrot_plot(f)
+        sage: mandelbrot_plot(f)  # long time
         500x500px 24-bit RGB image
 
     When the polynomial is defined over a multivariate polynomial ring it is
@@ -172,7 +175,7 @@ def mandelbrot_plot(f=None, **kwds):
 
         sage: R.<a,b> = CC[]
         sage: f = a^2 + b^3
-        sage: mandelbrot_plot(f, parameter=b)
+        sage: mandelbrot_plot(f, parameter=b)  # long time
         500x500px 24-bit RGB image
 
     Interact functionality is not implemented for general polynomial maps::
@@ -182,7 +185,7 @@ def mandelbrot_plot(f=None, **kwds):
         sage: mandelbrot_plot(f, interact=True)
         Traceback (most recent call last):
         ...
-        NotImplementedError: Interact only implemented for z^2 + c
+        NotImplementedError: interact only implemented for z^2 + c
     """
     parameter = kwds.pop("parameter", None)
     x_center = kwds.pop("x_center", 0.0)
@@ -203,21 +206,21 @@ def mandelbrot_plot(f=None, **kwds):
 
     from ipywidgets.widgets import FloatSlider, IntSlider, ColorPicker, interact
     widgets = dict(
-                   x_center = FloatSlider(min=-1.0, max=1.0, step=EPS,
+                   x_center=FloatSlider(min=-1.0, max=1.0, step=EPS,
                                           value=x_center, description="Real center"),
-                   y_center = FloatSlider(min=-1.0, max=1.0, step=EPS,
+                   y_center=FloatSlider(min=-1.0, max=1.0, step=EPS,
                                           value=y_center, description="Imag center"),
-                   image_width = FloatSlider(min=EPS, max=4.0, step=EPS,
+                   image_width=FloatSlider(min=EPS, max=4.0, step=EPS,
                                              value=image_width, description="Width"),
-                   max_iteration = IntSlider(min=0, max=1000,
+                   max_iteration=IntSlider(min=0, max=1000,
                                              value=max_iteration, description="Iterations"),
-                   pixel_count = IntSlider(min=10, max=1000,
+                   pixel_count=IntSlider(min=10, max=1000,
                                            value=pixel_count, description="Pixels"),
-                   level_sep = IntSlider(min=1, max=20,
+                   level_sep=IntSlider(min=1, max=20,
                                          value=level_sep, description="Color sep"),
-                   color_num = IntSlider(min=1, max=100,
+                   color_num=IntSlider(min=1, max=100,
                                          value=number_of_colors, description="# Colors"),
-                   base_color = ColorPicker(value=Color(base_color).html_color(),
+                   base_color=ColorPicker(value=Color(base_color).html_color(),
                                             description="Base color"),
                    )
 
@@ -272,7 +275,7 @@ def mandelbrot_plot(f=None, **kwds):
                  base_color)
         else:
             if interacts:
-                raise NotImplementedError("Interact only implemented for z^2 + c")
+                raise NotImplementedError("interact only implemented for z^2 + c")
             else:
                 # Set default of max_iteration to 50 for general polynomial maps
                 # This prevents the function from being very slow by default
@@ -280,9 +283,10 @@ def mandelbrot_plot(f=None, **kwds):
                     max_iteration = 50
 
                 # Mandelbrot of General Polynomial Map
-                return polynomial_mandelbrot(f, parameter, x_center, y_center, \
-                 image_width, max_iteration, pixel_count, level_sep, \
+                return polynomial_mandelbrot(f, parameter, x_center, y_center,
+                 image_width, max_iteration, pixel_count, level_sep,
                  number_of_colors, base_color)
+
 
 def external_ray(theta, **kwds):
     r"""
@@ -589,7 +593,7 @@ def julia_plot(f=None, **kwds):
 
         sage: R.<z> = CC[]
         sage: f = z^3 - z + 1
-        sage: julia_plot(f)
+        sage: julia_plot(f)  # long time
         500x500px 24-bit RGB image
 
     To display an interactive plot of the Julia set in the Notebook,
@@ -597,14 +601,14 @@ def julia_plot(f=None, **kwds):
     the form ``f = z^2 + c``)::
 
         sage: julia_plot(interact=True)
-        interactive(children=(FloatSlider(value=-1.0, description=u'Real c'...
+        ...interactive(children=(FloatSlider(value=-1.0, description='Real c'...
 
         ::
 
         sage: R.<z> = CC[]
         sage: f = z^2 + 1/2
         sage: julia_plot(f,interact=True)
-        interactive(children=(FloatSlider(value=0.5, description=u'Real c'...
+        ...interactive(children=(FloatSlider(value=0.5, description='Real c'...
 
     To return the Julia set of a random `c` value with (formal) cycle structure
     `(2,3)`, set ``period = [2,3]``::
@@ -691,11 +695,9 @@ def julia_plot(f=None, **kwds):
             R = f.parent()
             if not (R.is_integral_domain() and
                    (CC.is_subring(R) or CDF.is_subring(R))):
-                raise ValueError('Given `f` must be a complex polynomial.')
-            else:
-                raise NotImplementedError(
-                        'Julia sets not implemented for rational functions.'
-                        )
+                raise ValueError('given `f` must be a complex polynomial')
+            raise NotImplementedError(
+                'Julia sets not implemented for rational functions')
 
         if (f_poly - z*z) in CC: # f is specified and of the form z^2 + c.
             f_is_default_after_all = True
@@ -727,25 +729,25 @@ def julia_plot(f=None, **kwds):
             from ipywidgets.widgets import FloatSlider, IntSlider, \
                                            ColorPicker, interact
             widgets = dict(
-                c_real = FloatSlider(min=-2.0, max=2.0, step=EPS,
+                c_real=FloatSlider(min=-2.0, max=2.0, step=EPS,
                                   value=c_real, description="Real c"),
-                c_imag = FloatSlider(min=-2.0, max=2.0, step=EPS,
+                c_imag=FloatSlider(min=-2.0, max=2.0, step=EPS,
                                   value=c_imag, description="Imag c"),
-                x_center = FloatSlider(min=-1.0, max=1.0, step=EPS,
+                x_center=FloatSlider(min=-1.0, max=1.0, step=EPS,
                                   value=x_center, description="Real center"),
-                y_center = FloatSlider(min=-1.0, max=1.0, step=EPS,
+                y_center=FloatSlider(min=-1.0, max=1.0, step=EPS,
                                   value=y_center, description="Imag center"),
-                image_width = FloatSlider(min=EPS, max=4.0, step=EPS,
+                image_width=FloatSlider(min=EPS, max=4.0, step=EPS,
                                   value=image_width, description="Width"),
-                max_iteration = IntSlider(min=0, max=1000,
+                max_iteration=IntSlider(min=0, max=1000,
                                   value=max_iteration, description="Iterations"),
-                pixel_count = IntSlider(min=10, max=1000,
+                pixel_count=IntSlider(min=10, max=1000,
                                   value=pixel_count, description="Pixels"),
-                level_sep = IntSlider(min=1, max=20,
+                level_sep=IntSlider(min=1, max=20,
                                   value=level_sep, description="Color sep"),
-                color_num = IntSlider(min=1, max=100,
+                color_num=IntSlider(min=1, max=100,
                                   value=number_of_colors, description="# Colors"),
-                base_color = ColorPicker(value=base_color.html_color(),
+                base_color=ColorPicker(value=base_color.html_color(),
                                          description="Base color"),
             )
             if mandelbrot:
@@ -754,13 +756,12 @@ def julia_plot(f=None, **kwds):
                 return interact(**widgets).widget(julia_helper)
             else:
                 return interact(**widgets).widget(fast_julia_plot)
-        elif mandelbrot: # non-interactive with mandelbrot
+        elif mandelbrot:  # non-interactive with mandelbrot
             return julia_helper(c_real, c_imag, x_center, y_center,
                                 image_width, max_iteration, pixel_count,
                                 level_sep, number_of_colors, base_color,
                                 point_color)
-        else: # non-interactive without mandelbrot
+        else:  # non-interactive without mandelbrot
             return fast_julia_plot(c_real, c_imag, x_center, y_center,
                                    image_width, max_iteration, pixel_count,
                                    level_sep, number_of_colors, base_color)
-

@@ -198,7 +198,7 @@ class WeakReversePlanePartition(Tableau):
             sage: c.parent()
             Weak Reverse Plane Partitions
         """
-        C = super(WeakReversePlanePartition, self).conjugate()
+        C = super().conjugate()
         return WeakReversePlanePartition(C)
 
     def hillman_grassl_inverse(self):
@@ -437,7 +437,7 @@ class WeakReversePlanePartitions(Tableaux):
             # from sage.combinat.partition import Partition
             # return RibbonShapedTableaux_shape(Partition(shape))
 
-        return super(WeakReversePlanePartitions, cls).__classcall__(cls, **kwds)
+        return super().__classcall__(cls, **kwds)
 
     def __init__(self):
         """

@@ -17,4 +17,3 @@ Ribbons
 #*****************************************************************************
 
 from .ribbon_shaped_tableau import RibbonShapedTableau, StandardRibbonShapedTableaux
-

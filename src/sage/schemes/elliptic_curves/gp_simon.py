@@ -21,7 +21,8 @@ from sage.structure.parent_gens import localvars
 from sage.interfaces.gp import Gp
 from sage.misc.sage_eval import sage_eval
 from sage.misc.randstate import current_randstate
-from sage.rings.all import QQ, ZZ
+from sage.rings.integer_ring import ZZ
+from sage.rings.rational_field import QQ
 
 
 gp = None
@@ -48,14 +49,14 @@ def simon_two_descent(E, verbose=0, lim1=None, lim3=None, limtriv=None,
 
     .. NOTE::
 
-       Users should instead run E.simon_two_descent()
+        Users should instead run E.simon_two_descent()
 
     EXAMPLES::
 
         sage: import sage.schemes.elliptic_curves.gp_simon
         sage: E=EllipticCurve('389a1')
         sage: sage.schemes.elliptic_curves.gp_simon.simon_two_descent(E)
-        (2, 2, [(1 : 0 : 1), (-11/9 : 28/27 : 1)])
+        (2, 2, [(5/4 : 5/8 : 1), (-3/4 : 7/8 : 1)])
 
     TESTS::
 
@@ -83,7 +84,7 @@ def simon_two_descent(E, verbose=0, lim1=None, lim3=None, limtriv=None,
 
         sage: K.<w> = NumberField(x^2-x-232)
         sage: E = EllipticCurve([2-w,18+3*w,209+9*w,2581+175*w,852-55*w])
-        sage: E.simon_two_descent()
+        sage: E.simon_two_descent()  # long time
         (0, 2, [])
     """
     init()
@@ -116,7 +117,7 @@ def simon_two_descent(E, verbose=0, lim1=None, lim3=None, limtriv=None,
     # The block below mimics the defaults in Simon's scripts, and needs to be changed
     # when these are updated.
     if K is QQ:
-        cmd = 'ellrank(%s, %s);' % (list(E.ainvs()), [P.__pari__() for P in known_points])
+        cmd = 'ellQ_ellrank(%s, %s);' % (list(E.ainvs()), [P.__pari__() for P in known_points])
         if lim1 is None:
             lim1 = 5
         if lim3 is None:
@@ -132,18 +133,18 @@ def simon_two_descent(E, verbose=0, lim1=None, lim3=None, limtriv=None,
         if limtriv is None:
             limtriv = 2
 
-    gp('DEBUGLEVEL_ell=%s; LIM1=%s; LIM3=%s; LIMTRIV=%s; MAXPROB=%s; LIMBIGPRIME=%s;'%(
+    gp('DEBUGLEVEL_ell=%s; LIM1=%s; LIM3=%s; LIMTRIV=%s; MAXPROB=%s; LIMBIGPRIME=%s;' % (
        verbose, lim1, lim3, limtriv, maxprob, limbigprime))
 
     if verbose >= 2:
         print(cmd)
-    s = gp.eval('ans=%s;'%cmd)
+    s = gp.eval('ans=%s;' % cmd)
     if s.find(" *** ") != -1:
-        raise RuntimeError("\n%s\nAn error occurred while running Simon's 2-descent program"%s)
+        raise RuntimeError("\n%s\nAn error occurred while running Simon's 2-descent program" % s)
     if verbose > 0:
         print(s)
     v = gp.eval('ans')
-    if v=='ans': # then the call to ellrank() or bnfellrank() failed
+    if v == 'ans': # then the call to ellQ_ellrank() or bnfellrank() failed
         raise RuntimeError("An error occurred while running Simon's 2-descent program")
     if verbose >= 2:
         print("v = %s" % v)

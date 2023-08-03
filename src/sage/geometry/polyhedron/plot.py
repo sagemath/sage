@@ -11,19 +11,21 @@ Functions for plotting polyhedra
 #                  https://www.gnu.org/licenses/
 ########################################################################
 
-from sage.rings.all import RDF
+from math import pi
+
+from sage.misc.lazy_import import lazy_import
 from sage.structure.sage_object import SageObject
 from sage.modules.free_module_element import vector
 from sage.matrix.constructor import matrix, identity_matrix
 from sage.matrix.special import diagonal_matrix
 from sage.misc.functional import norm
 from sage.misc.latex import LatexExpr
-from sage.symbolic.constants import pi
 from sage.structure.sequence import Sequence
 
-from sage.plot.all import Graphics, point2d, line2d, arrow, polygon2d
-from sage.plot.plot3d.all import point3d, line3d, arrow3d, polygons3d
-from sage.plot.plot3d.transform import rotate_arbitrary
+lazy_import("sage.plot.all", ["Graphics", "point2d", "line2d", "arrow", "polygon2d", "rainbow"])
+lazy_import("sage.plot.plot3d.all", ["point3d", "line3d", "arrow3d", "polygons3d"])
+lazy_import("sage.plot.plot3d.transform", "rotate_arbitrary")
+lazy_import("sage.plot.plot3d.texture", "Texture")
 
 
 #############################################################
@@ -175,6 +177,8 @@ class ProjectionFuncStereographic():
             [ 0.7071067811...  0.7071067811...]
             sage: TestSuite(proj).run(skip='_test_pickling')
         """
+        from sage.rings.real_double import RDF
+
         self.projection_point = vector(projection_point)
         self.dim = self.projection_point.degree()
 
@@ -224,6 +228,8 @@ class ProjectionFuncStereographic():
             sage: proj.__call__(vector([1,0,0]))
             (0.5, 0.0)
         """
+        from sage.rings.real_double import RDF
+
         img = self.house * x
         denom = self.psize - img[self.dim - 1]
         if denom.is_zero():
@@ -276,6 +282,8 @@ class ProjectionFuncSchlegel():
             (2.0, 2.0, 0.0)
             sage: TestSuite(proj).run(skip='_test_pickling')
         """
+        from sage.rings.real_double import RDF
+
         self.facet = facet
         ineq = [h for h in facet.ambient_Hrepresentation() if h.is_inequality()][0]
         self.full_A = ineq.A()
@@ -338,23 +346,23 @@ class Projection(SageObject):
 
         EXAMPLES::
 
-            sage: p = polytopes.icosahedron(exact=False)
+            sage: p = polytopes.icosahedron(exact=False)                                                # optional - sage.groups
             sage: from sage.geometry.polyhedron.plot import Projection
-            sage: Projection(p)
+            sage: Projection(p)                                                                         # optional - sage.groups
             The projection of a polyhedron into 3 dimensions
             sage: def pr_12(x): return [x[1],x[2]]
-            sage: Projection(p, pr_12)
+            sage: Projection(p, pr_12)                                                                  # optional - sage.groups
             The projection of a polyhedron into 2 dimensions
-            sage: Projection(p,  lambda x: [x[1],x[2]] )   # another way of doing the same projection
+            sage: Projection(p,  lambda x: [x[1],x[2]] )   # another way of doing the same projection   # optional - sage.groups
             The projection of a polyhedron into 2 dimensions
-            sage: _.plot()   # plot of the projected icosahedron in 2d
+            sage: _.plot()   # plot of the projected icosahedron in 2d  # optional - sage.plot          # optional - sage.groups
             Graphics object consisting of 51 graphics primitives
-            sage: proj = Projection(p)
-            sage: proj.stereographic([1,2,3])
+            sage: proj = Projection(p)                                                                  # optional - sage.groups
+            sage: proj.stereographic([1,2,3])                                                           # optional - sage.groups
             The projection of a polyhedron into 2 dimensions
-            sage: proj.plot()
+            sage: proj.plot()  # optional - sage.plot                                                   # optional - sage.groups
             Graphics object consisting of 51 graphics primitives
-            sage: TestSuite(proj).run(skip='_test_pickling')
+            sage: TestSuite(proj).run(skip='_test_pickling')                                            # optional - sage.groups
         """
         self.parent_polyhedron = polyhedron
         self.coords = Sequence([])
@@ -403,12 +411,12 @@ class Projection(SageObject):
 
         EXAMPLES::
 
-            sage: p = polytopes.icosahedron(exact=False)
+            sage: p = polytopes.icosahedron(exact=False)                                        # optional - sage.groups
             sage: from sage.geometry.polyhedron.plot import Projection
-            sage: pproj = Projection(p)
+            sage: pproj = Projection(p)                                                         # optional - sage.groups
             sage: from sage.geometry.polyhedron.plot import ProjectionFuncStereographic
-            sage: pproj_stereo = pproj.__call__(proj = ProjectionFuncStereographic([1,2,3]))
-            sage: sorted(pproj_stereo.polygons)
+            sage: pproj_stereo = pproj.__call__(proj=ProjectionFuncStereographic([1, 2, 3]))    # optional - sage.groups
+            sage: sorted(pproj_stereo.polygons)                                                 # optional - sage.groups
             [[2, 0, 9],
              [3, 1, 10],
              [4, 0, 8],
@@ -427,11 +435,11 @@ class Projection(SageObject):
 
         EXAMPLES::
 
-            sage: p = polytopes.icosahedron(exact=False)
+            sage: p = polytopes.icosahedron(exact=False)                                # optional - sage.groups
             sage: from sage.geometry.polyhedron.plot import Projection
-            sage: pproj = Projection(p)
-            sage: ppid = pproj.identity()
-            sage: ppid.dimension
+            sage: pproj = Projection(p)                                                 # optional - sage.groups
+            sage: ppid = pproj.identity()                                               # optional - sage.groups
+            sage: ppid.dimension                                                        # optional - sage.groups
             3
         """
         return self(projection_func_identity)
@@ -448,12 +456,11 @@ class Projection(SageObject):
         EXAMPLES::
 
             sage: from sage.geometry.polyhedron.plot import Projection
-            sage: proj = Projection(polytopes.buckyball())  #long time
-            sage: proj                                      #long time
+            sage: proj = Projection(polytopes.buckyball()); proj  # long time
             The projection of a polyhedron into 3 dimensions
-            sage: proj.stereographic([5,2,3]).plot()        #long time
+            sage: proj.stereographic([5,2,3]).plot()              # long time           # optional - sage.plot
             Graphics object consisting of 123 graphics primitives
-            sage: Projection( polytopes.twenty_four_cell() ).stereographic([2,0,0,0])
+            sage: Projection(polytopes.twenty_four_cell()).stereographic([2,0,0,0])
             The projection of a polyhedron into 3 dimensions
         """
         if projection_point is None:
@@ -488,7 +495,7 @@ class Projection(SageObject):
             sage: from sage.geometry.polyhedron.plot import Projection
             sage: Projection(cube4).schlegel()
             The projection of a polyhedron into 3 dimensions
-            sage: _.plot()
+            sage: _.plot()  # optional - sage.plot
             Graphics3d Object
 
         The 4-cube with a truncated vertex seen into the resulting tetrahedron
@@ -497,24 +504,24 @@ class Projection(SageObject):
             sage: tcube4 = cube4.face_truncation(cube4.faces(0)[0])
             sage: tcube4.facets()[4]
             A 3-dimensional face of a Polyhedron in QQ^4 defined as the convex hull of 4 vertices
-            sage: into_tetra = Projection(tcube4).schlegel(tcube4.facets()[4])
-            sage: into_tetra.plot()
+            sage: into_tetra = Projection(tcube4).schlegel(tcube4.facets()[4])          # optional - sage.symbolic
+            sage: into_tetra.plot()                                                     # optional - sage.plot sage.symbolic
             Graphics3d Object
 
         Taking a larger value for the position changes the image::
 
-            sage: into_tetra_far = Projection(tcube4).schlegel(tcube4.facets()[4],4)
-            sage: into_tetra_far.plot()
+            sage: into_tetra_far = Projection(tcube4).schlegel(tcube4.facets()[4], 4)   # optional - sage.symbolic
+            sage: into_tetra_far.plot()                                                 # optional - sage.plot sage.symbolic
             Graphics3d Object
 
         A value which is too large or negative give a projection point that
         sees more than one facet resulting in a error::
 
-            sage: Projection(tcube4).schlegel(tcube4.facets()[4],5)
+            sage: Projection(tcube4).schlegel(tcube4.facets()[4], 5)
             Traceback (most recent call last):
             ...
             ValueError: the chosen position is too large
-            sage: Projection(tcube4).schlegel(tcube4.facets()[4],-1)
+            sage: Projection(tcube4).schlegel(tcube4.facets()[4], -1)
             Traceback (most recent call last):
             ...
             ValueError: 'position' should be a positive number
@@ -574,7 +581,7 @@ class Projection(SageObject):
 
             sage: p = polytopes.hypercube(3)
             sage: proj = p.projection()
-            sage: proj.coord_indices_of([vector((1,1,1)),vector((1,-1,1))])
+            sage: proj.coord_indices_of([vector((1,1,1)), vector((1,-1,1))])
             [2, 3]
         """
         return [self.coord_index_of(v) for v in v_list]
@@ -630,7 +637,7 @@ class Projection(SageObject):
 
         TESTS::
 
-            sage: p = Polyhedron(vertices = [[0,0],[0,1],[1,0],[1,1]])
+            sage: p = Polyhedron(vertices=[[0,0],[0,1],[1,0],[1,1]])
             sage: proj = p.projection()
             sage: [proj.coordinates_of([i]) for i in proj.points]
             [[[0, 0]], [[0, 1]], [[1, 0]], [[1, 1]]]
@@ -652,7 +659,7 @@ class Projection(SageObject):
 
         TESTS::
 
-            sage: p = Polyhedron(vertices = [[0,0,1],[0,1,2],[1,0,3],[1,1,5]])
+            sage: p = Polyhedron(vertices=[[0,0,1],[0,1,2],[1,0,3],[1,1,5]])
             sage: proj = p.projection()
             sage: [proj.coordinates_of([i]) for i in proj.points]
             [[[0, 0, 1]], [[0, 1, 2]], [[1, 0, 3]], [[1, 1, 5]]]
@@ -691,22 +698,43 @@ class Projection(SageObject):
 
         TESTS::
 
-            sage: p = Polyhedron(ieqs = [[1, 0, 0, 1],[1,1,0,0]])
+            sage: p = Polyhedron(ieqs=[[1, 0, 0, 1], [1, 1, 0, 0]])
             sage: pp = p.projection()
             sage: pp.arrows
-            [[0, 1], [0, 2]]
+            [[0, 1], [0, 2], [0, 3], [0, 4]]
             sage: del pp.arrows
             sage: pp.arrows = Sequence([])
             sage: pp._init_lines_arrows(p)
             sage: pp.arrows
-            [[0, 1], [0, 2]]
+            [[0, 1], [0, 2], [0, 3], [0, 4]]
+
+        We check that :trac:`31802` is fixed::
+
+            sage: x = Polyhedron(lines=[(1, 0, 0), (0, 1, 0)], rays=[(0, 0, 1)])
+            sage: y = x.projection()
+            sage: del y.arrows
+            sage: y.arrows = Sequence([])
+            sage: y._init_lines_arrows(x)
+            sage: y.arrows
+            [[0, 1], [0, 2], [0, 3], [0, 4], [0, 5]]
         """
         obj = polyhedron.Vrepresentation()
+        adj_matrix = polyhedron.vertex_adjacency_matrix()
         for i in range(len(obj)):
             if not obj[i].is_vertex():
-                continue
+                if any(adj_matrix[i, j] != 0
+                       for j in range(len(obj))):
+                    continue
+                # obj[i] is ray or line
+                v = polyhedron.vertices()[0].vector()
+                r = obj[i].vector()
+                self.arrows.append( [ self.coord_index_of(v),
+                                      self.coord_index_of(v + r) ] )
+                if obj[i].is_line():
+                    self.arrows.append( [ self.coord_index_of(v),
+                                          self.coord_index_of(v - r) ] )
             for j in range(len(obj)):
-                if polyhedron.vertex_adjacency_matrix()[i, j] == 0:
+                if adj_matrix[i, j] == 0:
                     continue
                 if i < j and obj[j].is_vertex():
                     l = [obj[i].vector(), obj[j].vector()]
@@ -793,6 +821,15 @@ class Projection(SageObject):
             sage: proj._init_solid_3d(p)
             sage: proj.polygons
             [[1, 0, 2], [3, 0, 1], [2, 0, 3], [3, 1, 2]]
+
+            sage: x = Polyhedron(rays=[(-1, 0, 0), (1, 0, 0), (0, 1, 0), (0, 0, 1)])
+            sage: y = x.projection()
+            sage: y.polygons
+            [[5, 2, 1, 6], [2, 7, 8, 1]]
+
+            sage: cylinder = Polyhedron(vertices=[(0, 0, 0), (1, 0, 0), (0, 1, 0)], lines=[(0, 0, 1)])
+            sage: len(cylinder.projection().polygons)
+            3
         """
         assert polyhedron.ambient_dim() == 3, "Requires polyhedron in 3d"
 
@@ -848,11 +885,11 @@ class Projection(SageObject):
         if polyhedron.n_lines() == 1:
             assert faces, "no vertices?"
             a_line = next(polyhedron.line_generator())
-            for shift in [a_line(), -a_line()]:
-                for coords in faces:
-                    assert len(coords) == 2, "There must be two points."
-                    polygons.append([coords[0], coords[1],
-                                     coords[1] + shift, coords[0] + shift])
+            shift = a_line()
+            for coords in faces:
+                assert len(coords) == 2, "There must be two points."
+                polygons.append([coords[0] - shift, coords[1] - shift,
+                                 coords[1] + shift, coords[0] + shift])
 
         if polyhedron.n_lines() == 2:
             [line1, line2] = [l for l in polyhedron.line_generator()]
@@ -880,8 +917,8 @@ class Projection(SageObject):
 
             sage: cube1 = polytopes.hypercube(1)
             sage: proj = cube1.projection()
-            sage: points = proj.render_points_1d()
-            sage: points._objects
+            sage: points = proj.render_points_1d()                                      # optional - sage.plot
+            sage: points._objects                                                       # optional - sage.plot
             [Point set defined by 2 point(s)]
         """
         return point2d([c + [0] for c in self.coordinates_of(self.points)], **kwds)
@@ -901,8 +938,8 @@ class Projection(SageObject):
 
         EXAMPLES::
 
-            sage: outline = polytopes.hypercube(1).projection().render_line_1d()
-            sage: outline._objects[0]
+            sage: outline = polytopes.hypercube(1).projection().render_line_1d()        # optional - sage.plot
+            sage: outline._objects[0]                                                   # optional - sage.plot
             Line defined by 2 points
         """
         if len(self.lines) == 0:
@@ -919,10 +956,10 @@ class Projection(SageObject):
 
         EXAMPLES::
 
-            sage: hex = polytopes.regular_polygon(6)
-            sage: proj = hex.projection()
-            sage: hex_points = proj.render_points_2d()
-            sage: hex_points._objects
+            sage: hex = polytopes.regular_polygon(6)                                    # optional - sage.rings.number_field
+            sage: proj = hex.projection()                                               # optional - sage.rings.number_field
+            sage: hex_points = proj.render_points_2d()                                  # optional - sage.plot sage.rings.number_field
+            sage: hex_points._objects                                                   # optional - sage.plot sage.rings.number_field
             [Point set defined by 6 point(s)]
         """
         return point2d(self.coordinates_of(self.points), **kwds)
@@ -933,9 +970,9 @@ class Projection(SageObject):
 
         EXAMPLES::
 
-            sage: penta = polytopes.regular_polygon(5)
-            sage: outline = penta.projection().render_outline_2d()
-            sage: outline._objects[0]
+            sage: penta = polytopes.regular_polygon(5)                                  # optional - sage.rings.number_field
+            sage: outline = penta.projection().render_outline_2d()                      # optional - sage.plot sage.rings.number_field
+            sage: outline._objects[0]                                                   # optional - sage.plot sage.rings.number_field
             Line defined by 2 points
         """
         wireframe = []
@@ -953,11 +990,11 @@ class Projection(SageObject):
 
         EXAMPLES::
 
-            sage: cps = [i^3 for i in srange(-2,2,1/5)]
-            sage: p = Polyhedron(vertices = [[(t^2-1)/(t^2+1),2*t/(t^2+1)] for t in cps])
+            sage: cps = [i^3 for i in srange(-2, 2, 1/5)]
+            sage: p = Polyhedron(vertices=[[(t^2-1)/(t^2+1), 2*t/(t^2+1)] for t in cps])
             sage: proj = p.projection()
-            sage: filled_poly = proj.render_fill_2d()
-            sage: filled_poly.axes_width()
+            sage: filled_poly = proj.render_fill_2d()                                   # optional - sage.plot
+            sage: filled_poly.axes_width()                                              # optional - sage.plot
             0.8
         """
         poly = [polygon2d(self.coordinates_of(p), **kwds)
@@ -972,8 +1009,8 @@ class Projection(SageObject):
 
             sage: p = polytopes.cross_polytope(3)
             sage: proj = p.projection()
-            sage: verts = proj.render_vertices_3d()
-            sage: verts.bounding_box()
+            sage: verts = proj.render_vertices_3d()                                     # optional - sage.plot
+            sage: verts.bounding_box()                                                  # optional - sage.plot
             ((-1.0, -1.0, -1.0), (1.0, 1.0, 1.0))
         """
         return point3d(self.coordinates_of(self.points), **kwds)
@@ -986,8 +1023,8 @@ class Projection(SageObject):
 
             sage: cube = polytopes.hypercube(3)
             sage: cube_proj = cube.projection()
-            sage: wire = cube_proj.render_wireframe_3d()
-            sage: print(wire.tachyon().split('\n')[77])  # for testing
+            sage: wire = cube_proj.render_wireframe_3d()                                # optional - sage.plot
+            sage: print(wire.tachyon().split('\n')[77])  # for testing                  # optional - sage.plot
             FCylinder base 1.0 1.0 -1.0 apex -1.0 1.0 -1.0 rad 0.005 texture...
         """
         wireframe = []
@@ -1006,13 +1043,20 @@ class Projection(SageObject):
         EXAMPLES::
 
             sage: p = polytopes.hypercube(3).projection()
-            sage: p_solid = p.render_solid_3d(opacity = .7)
-            sage: type(p_solid)
-            <type 'sage.plot.plot3d.index_face_set.IndexFaceSet'>
+            sage: p_solid = p.render_solid_3d(opacity=.7)                               # optional - sage.plot
+            sage: type(p_solid)                                                         # optional - sage.plot
+            <class 'sage.plot.plot3d.index_face_set.IndexFaceSet'>
         """
         polys = self.polygons
+        n = len(polys)
         N = max([-1] + [i for p in polys for i in p]) + 1
-        return polygons3d(polys, self.coordinates_of(range(N)), **kwds)
+        coords = self.coordinates_of(range(N))
+        col = kwds.pop('color', (0, 0, 1))
+        if col == 'rainbow':
+            t_list = [Texture(rainbow(n, 'rgbtuple')[i]) for i in range(n)]
+            return polygons3d(polys, coords, texture_list=t_list, **kwds)
+        else:
+            return polygons3d(polys, coords, color=col, **kwds)
 
     def render_0d(self, point_opts=None, line_opts=None, polygon_opts=None):
         """
@@ -1030,9 +1074,10 @@ class Projection(SageObject):
 
         EXAMPLES::
 
-            sage: print(Polyhedron([]).projection().render_0d().description())
+            sage: print(Polyhedron([]).projection().render_0d().description())          # optional - sage.plot
             <BLANKLINE>
-            sage: print(Polyhedron(ieqs=[(1,)]).projection().render_0d().description())
+            sage: P = Polyhedron(ieqs=[(1,)])
+            sage: print(P.projection().render_0d().description())                       # optional - sage.plot
             Point set defined by 1 point(s):    [(0.0, 0.0)]
         """
         if point_opts is None:
@@ -1061,7 +1106,7 @@ class Projection(SageObject):
 
         EXAMPLES::
 
-            sage: Polyhedron([(0,), (1,)]).projection().render_1d()
+            sage: Polyhedron([(0,), (1,)]).projection().render_1d()                     # optional - sage.plot
             Graphics object consisting of 2 graphics primitives
         """
         plt = Graphics()
@@ -1093,8 +1138,8 @@ class Projection(SageObject):
             sage: q3 = p3.projection()
             sage: p4 = Polyhedron(vertices=[[2,0]], rays=[[1,-1]], lines=[[1,1]])
             sage: q4 = p4.projection()
-            sage: q1.plot() + q2.plot() + q3.plot() + q4.plot()
-            Graphics object consisting of 17 graphics primitives
+            sage: q1.plot() + q2.plot() + q3.plot() + q4.plot()                         # optional - sage.plot
+            Graphics object consisting of 18 graphics primitives
          """
         plt = Graphics()
         if point_opts is None:
@@ -1124,29 +1169,33 @@ class Projection(SageObject):
 
             sage: p1 = Polyhedron(vertices=[[1,1,1]], rays=[[1,1,1]])
             sage: p2 = Polyhedron(vertices=[[2,0,0], [0,2,0], [0,0,2]])
-            sage: p3 = Polyhedron(vertices=[[1,0,0], [0,1,0], [0,0,1]], rays=[[-1,-1,-1]])
-            sage: p1.projection().plot() + p2.projection().plot() + p3.projection().plot()
+            sage: p3 = Polyhedron(vertices=[[1,0,0], [0,1,0], [0,0,1]],
+            ....:                 rays=[[-1,-1,-1]])
+            sage: (p1.projection().plot() + p2.projection().plot()                      # optional - sage.plot
+            ....:   + p3.projection().plot())
             Graphics3d Object
 
         It correctly handles various degenerate cases::
 
-            sage: Polyhedron(lines=[[1,0,0],[0,1,0],[0,0,1]]).plot()           # whole space
+            sage: Polyhedron(lines=[[1,0,0], [0,1,0], [0,0,1]]).plot()  # whole space   # optional - sage.plot
             Graphics3d Object
-            sage: Polyhedron(vertices=[[1,1,1]], rays=[[1,0,0]],
-            ....:            lines=[[0,1,0],[0,0,1]]).plot()                   # half space
+            sage: Polyhedron(vertices=[[1,1,1]], rays=[[1,0,0]],                        # optional - sage.plot
+            ....:            lines=[[0,1,0], [0,0,1]]).plot()           # half space
             Graphics3d Object
-            sage: Polyhedron(vertices=[[1,1,1]],
-            ....:            lines=[[0,1,0],[0,0,1]]).plot()                   # R^2 in R^3
+            sage: Polyhedron(lines=[[0,1,0], [0,0,1]],                                  # optional - sage.plot
+            ....:            vertices=[[1,1,1]]).plot()      # R^2 in R^3
             Graphics3d Object
-            sage: Polyhedron(rays=[[0,1,0],[0,0,1]], lines=[[1,0,0]]).plot()   # quadrant wedge in R^2
+            sage: Polyhedron(rays=[[0,1,0], [0,0,1]],        # quadrant wedge in R^2    # optional - sage.plot
+            ....:            lines=[[1,0,0]]).plot()
             Graphics3d Object
-            sage: Polyhedron(rays=[[0,1,0]], lines=[[1,0,0]]).plot()           # upper half plane in R^3
+            sage: Polyhedron(rays=[[0,1,0]],                 # upper half plane in R^3  # optional - sage.plot
+            ....:            lines=[[1,0,0]]).plot()
             Graphics3d Object
-            sage: Polyhedron(lines=[[1,0,0]]).plot()                           # R^1 in R^2
+            sage: Polyhedron(lines=[[1,0,0]]).plot()         # R^1 in R^2               # optional - sage.plot
             Graphics3d Object
-            sage: Polyhedron(rays=[[0,1,0]]).plot()                            # Half-line in R^3
+            sage: Polyhedron(rays=[[0,1,0]]).plot()          # Half-line in R^3         # optional - sage.plot
             Graphics3d Object
-            sage: Polyhedron(vertices=[[1,1,1]]).plot()                        # point in R^3
+            sage: Polyhedron(vertices=[[1,1,1]]).plot()      # point in R^3             # optional - sage.plot
             Graphics3d Object
 
         The origin is not included, if it is not in the polyhedron (:trac:`23555`)::
@@ -1154,9 +1203,14 @@ class Projection(SageObject):
             sage: Q = Polyhedron([[100],[101]])
             sage: P = Q*Q*Q; P
             A 3-dimensional polyhedron in ZZ^3 defined as the convex hull of 8 vertices
-            sage: p = P.plot()
-            sage: p.bounding_box()
+            sage: p = P.plot()                                                          # optional - sage.plot
+            sage: p.bounding_box()                                                      # optional - sage.plot
             ((100.0, 100.0, 100.0), (101.0, 101.0, 101.0))
+
+        Plot 3d polytope with rainbow colors::
+
+            sage: polytopes.hypercube(3).plot(polygon='rainbow', alpha=0.4)             # optional - sage.plot
+            Graphics3d Object
         """
         pplt = None
         lplt = None
@@ -1168,42 +1222,53 @@ class Projection(SageObject):
         if polygon_opts is None:
             polygon_opts = {}
         if isinstance(point_opts, dict):
-            point_opts.setdefault('width', 3)
+            point_opts.setdefault('size', 10)
             pplt = self.render_vertices_3d(**point_opts)
         if isinstance(line_opts, dict):
-            line_opts.setdefault('width', 3)
+            line_opts.setdefault('width', 1) # controls the width of arrow3d for a ray
+            line_opts.setdefault('thickness', 1) # controls the thickness of line3d
             lplt = self.render_wireframe_3d(**line_opts)
         if isinstance(polygon_opts, dict):
+            if 'threejs_flat_shading' not in polygon_opts:
+                polygon_opts['threejs_flat_shading'] = True
             pgplt = self.render_solid_3d(**polygon_opts)
+        # zorder is not available
         return sum(_ for _ in [pplt, lplt, pgplt] if _ is not None)
 
     def tikz(self, view=[0, 0, 1], angle=0, scale=1,
              edge_color='blue!95!black', facet_color='blue!95!black',
-             opacity=0.8, vertex_color='green', axis=False):
+             opacity=0.8, vertex_color='green', axis=False,
+             output_type=None):
         r"""
-        Return a string ``tikz_pic`` consisting of a tikz picture of ``self``
+        Return a tikz picture of ``self`` as a string or as a
+        :class:`~sage.misc.latex_standalone.TikzPicture`
         according to a projection ``view`` and an angle ``angle``
-        obtained via Jmol through the current state property.
+        obtained via the threejs viewer.
 
         INPUT:
 
-        - ``view`` - list (default: [0,0,1]) representing the rotation axis (see note below).
-        - ``angle`` - integer (default: 0) angle of rotation in degree from 0 to 360 (see note
+        - ``view`` -- list (default: [0,0,1]) representing the rotation axis (see note below).
+        - ``angle`` -- integer (default: 0) angle of rotation in degree from 0 to 360 (see note
           below).
-        - ``scale`` - integer (default: 1) specifying the scaling of the tikz picture.
-        - ``edge_color`` - string (default: 'blue!95!black') representing colors which tikz
+        - ``scale`` -- integer (default: 1) specifying the scaling of the tikz picture.
+        - ``edge_color`` -- string (default: 'blue!95!black') representing colors which tikz
           recognize.
-        - ``facet_color`` - string (default: 'blue!95!black') representing colors which tikz
+        - ``facet_color`` -- string (default: 'blue!95!black') representing colors which tikz
           recognize.
-        - ``vertex_color`` - string (default: 'green') representing colors which tikz
+        - ``vertex_color`` -- string (default: 'green') representing colors which tikz
           recognize.
-        - ``opacity`` - real number (default: 0.8) between 0 and 1 giving the opacity of
+        - ``opacity`` -- real number (default: 0.8) between 0 and 1 giving the opacity of
           the front facets.
-        - ``axis`` - Boolean (default: False) draw the axes at the origin or not.
+        - ``axis`` -- Boolean (default: False) draw the axes at the origin or not.
+        - ``output_type`` -- string (default: ``None``), valid values
+          are ``None`` (deprecated), ``'LatexExpr'`` and ``'TikzPicture'``,
+          whether to return a :class:`LatexExpr` object (which inherits from Python
+          :class:`str`) or a :class:`TikzPicture` object from module
+          :mod:`sage.misc.latex_standalone`
 
         OUTPUT:
 
-        - LatexExpr -- containing the TikZ picture.
+        :class:`LatexExpr` object or :class:`TikzPicture` object
 
         .. NOTE::
 
@@ -1235,20 +1300,64 @@ class Projection(SageObject):
 
         EXAMPLES::
 
-            sage: P1 = polytopes.small_rhombicuboctahedron()
-            sage: Image1 = P1.projection().tikz([1,3,5], 175, scale=4)
-            sage: type(Image1)
-            <class 'sage.misc.latex.LatexExpr'>
-            sage: print('\n'.join(Image1.splitlines()[:4]))
+            sage: P1 = polytopes.small_rhombicuboctahedron()                            # optional - sage.rings.number_field
+            sage: Image1 = P1.projection().tikz([1,3,5], 175, scale=4,                  # optional - sage.rings.number_field
+            ....:                               output_type='TikzPicture')
+            sage: type(Image1)                                                          # optional - sage.rings.number_field
+            <class 'sage.misc.latex_standalone.TikzPicture'>
+            sage: Image1                                                                # optional - sage.rings.number_field
+            \documentclass[tikz]{standalone}
+            \begin{document}
             \begin{tikzpicture}%
-                [x={(-0.939161cm, 0.244762cm)},
-                y={(0.097442cm, -0.482887cm)},
-                z={(0.329367cm, 0.840780cm)},
-            sage: with open('polytope-tikz1.tex', 'w') as f:  # not tested
-            ....:     _ = f.write(Image1)
+                    [x={(-0.939161cm, 0.244762cm)},
+                    y={(0.097442cm, -0.482887cm)},
+                    z={(0.329367cm, 0.840780cm)},
+                    scale=4.000000,
+            ...
+            Use print to see the full content.
+            ...
+            \node[vertex] at (-2.41421, 1.00000, -1.00000)     {};
+            \node[vertex] at (-2.41421, -1.00000, 1.00000)     {};
+            %%
+            %%
+            \end{tikzpicture}
+            \end{document}
+            sage: _ = Image1.tex('polytope-tikz1.tex')          # not tested            # optional - sage.rings.number_field
+            sage: _ = Image1.png('polytope-tikz1.png')          # not tested            # optional - sage.rings.number_field
+            sage: _ = Image1.pdf('polytope-tikz1.pdf')          # not tested            # optional - sage.rings.number_field
+            sage: _ = Image1.svg('polytope-tikz1.svg')          # not tested            # optional - sage.rings.number_field
 
-            sage: P2 = Polyhedron(vertices=[[1, 1],[1, 2],[2, 1]])
-            sage: Image2 = P2.projection().tikz(scale=3, edge_color='blue!95!black', facet_color='orange!95!black', opacity=0.4, vertex_color='yellow', axis=True)
+        A second example::
+
+            sage: P2 = Polyhedron(vertices=[[1, 1], [1, 2], [2, 1]])
+            sage: Image2 = P2.projection().tikz(scale=3, edge_color='blue!95!black',
+            ....:                               facet_color='orange!95!black', opacity=0.4,
+            ....:                               vertex_color='yellow', axis=True,
+            ....:                               output_type='TikzPicture')
+            sage: Image2
+            \documentclass[tikz]{standalone}
+            \begin{document}
+            \begin{tikzpicture}%
+                    [scale=3.000000,
+                    back/.style={loosely dotted, thin},
+                    edge/.style={color=blue!95!black, thick},
+                    facet/.style={fill=orange!95!black,fill opacity=0.400000},
+            ...
+            Use print to see the full content.
+            ...
+            \node[vertex] at (1.00000, 2.00000)     {};
+            \node[vertex] at (2.00000, 1.00000)     {};
+            %%
+            %%
+            \end{tikzpicture}
+            \end{document}
+
+        The second example using a LatexExpr as output type::
+
+            sage: Image2 = P2.projection().tikz(scale=3, edge_color='blue!95!black',
+            ....:                               facet_color='orange!95!black', opacity=0.4,
+            ....:                               vertex_color='yellow', axis=True,
+            ....:                               output_type='LatexExpr')
             sage: type(Image2)
             <class 'sage.misc.latex.LatexExpr'>
             sage: print('\n'.join(Image2.splitlines()[:4]))
@@ -1259,22 +1368,43 @@ class Projection(SageObject):
             sage: with open('polytope-tikz2.tex', 'w') as f:  # not tested
             ....:     _ = f.write(Image2)
 
-            sage: P3 = Polyhedron(vertices=[[-1, -1, 2],[-1, 2, -1],[2, -1, -1]])
-            sage: P3
-            A 2-dimensional polyhedron in ZZ^3 defined as the convex hull of 3 vertices
-            sage: Image3 = P3.projection().tikz([0.5,-1,-0.1], 55, scale=3, edge_color='blue!95!black',facet_color='orange!95!black', opacity=0.7, vertex_color='yellow', axis=True)
-            sage: print('\n'.join(Image3.splitlines()[:4]))
-            \begin{tikzpicture}%
-                [x={(0.658184cm, -0.242192cm)},
-                y={(-0.096240cm, 0.912008cm)},
-                z={(-0.746680cm, -0.331036cm)},
-            sage: with open('polytope-tikz3.tex', 'w') as f:  # not tested
-            ....:     _ = f.write(Image3)
+        A third example::
 
-            sage: P = Polyhedron(vertices=[[1,1,0,0],[1,2,0,0],[2,1,0,0],[0,0,1,0],[0,0,0,1]])
-            sage: P
+            sage: P3 = Polyhedron(vertices=[[-1, -1, 2], [-1, 2, -1], [2, -1, -1]]); P3
+            A 2-dimensional polyhedron in ZZ^3 defined as the convex hull of 3 vertices
+            sage: Image3 = P3.projection().tikz([0.5, -1, -0.1], 55, scale=3,           # optional - sage.plot
+            ....:                               edge_color='blue!95!black',
+            ....:                               facet_color='orange!95!black', opacity=0.7,
+            ....:                               vertex_color='yellow', axis=True,
+            ....:                               output_type='TikzPicture')
+            sage: Image3                                                                # optional - sage.plot
+            \documentclass[tikz]{standalone}
+            \begin{document}
+            \begin{tikzpicture}%
+                    [x={(0.658184cm, -0.242192cm)},
+                    y={(-0.096240cm, 0.912008cm)},
+                    z={(-0.746680cm, -0.331036cm)},
+                    scale=3.000000,
+            ...
+            Use print to see the full content.
+            ...
+            \node[vertex] at (-1.00000, 2.00000, -1.00000)     {};
+            \node[vertex] at (2.00000, -1.00000, -1.00000)     {};
+            %%
+            %%
+            \end{tikzpicture}
+            \end{document}
+            sage: _ = Image3.tex('polytope-tikz3.tex')          # not tested            # optional - sage.plot
+            sage: _ = Image3.png('polytope-tikz3.png')          # not tested            # optional - sage.plot
+            sage: _ = Image3.pdf('polytope-tikz3.pdf')          # not tested            # optional - sage.plot
+            sage: _ = Image3.svg('polytope-tikz3.svg')          # not tested            # optional - sage.plot
+
+        A fourth example::
+
+            sage: P = Polyhedron(vertices=[[1,1,0,0], [1,2,0,0],
+            ....:                          [2,1,0,0], [0,0,1,0], [0,0,0,1]]); P
             A 4-dimensional polyhedron in ZZ^4 defined as the convex hull of 5 vertices
-            sage: P.projection().tikz()
+            sage: P.projection().tikz(output_type='TikzPicture')
             Traceback (most recent call last):
             ...
             NotImplementedError: The polytope has to live in 2 or 3 dimensions.
@@ -1283,10 +1413,10 @@ class Projection(SageObject):
 
             Make it possible to draw Schlegel diagram for 4-polytopes. ::
 
-                sage: P=Polyhedron(vertices=[[1,1,0,0],[1,2,0,0],[2,1,0,0],[0,0,1,0],[0,0,0,1]])
-                sage: P
+                sage: P = Polyhedron(vertices=[[1,1,0,0], [1,2,0,0],
+                ....:                          [2,1,0,0], [0,0,1,0], [0,0,0,1]]); P
                 A 4-dimensional polyhedron in ZZ^4 defined as the convex hull of 5 vertices
-                sage: P.projection().tikz()
+                sage: P.projection().tikz(output_type='TikzPicture')
                 Traceback (most recent call last):
                 ...
                 NotImplementedError: The polytope has to live in 2 or 3 dimensions.
@@ -1298,14 +1428,39 @@ class Projection(SageObject):
         elif self.polyhedron_dim < 2 or self.polyhedron_dim > 3:
             raise NotImplementedError("The polytope has to be 2 or 3-dimensional.")
         elif self.polyhedron_ambient_dim == 2:  # self is a polygon in 2-space
-            return self._tikz_2d(scale, edge_color, facet_color, opacity,
+            tikz_string = self._tikz_2d(scale, edge_color, facet_color, opacity,
                                  vertex_color, axis)
         elif self.polyhedron_dim == 2:  # self is a polygon in 3-space
-            return self._tikz_2d_in_3d(view, angle, scale, edge_color,
+            tikz_string = self._tikz_2d_in_3d(view, angle, scale, edge_color,
                                        facet_color, opacity, vertex_color, axis)
         else:  # self is a 3-polytope in 3-space
-            return self._tikz_3d_in_3d(view, angle, scale, edge_color,
+            tikz_string = self._tikz_3d_in_3d(view, angle, scale, edge_color,
                                        facet_color, opacity, vertex_color, axis)
+
+        # set default value
+        if output_type is None:
+            from sage.misc.superseded import deprecation
+            msg = ("The default type of the returned object will soon be "
+                   "changed from `sage.misc.latex.LatexExpr` to "
+                   "`sage.misc.latex_standalone.TikzPicture`.  Please "
+                   "update your code to specify the desired output type as "
+                   "`.tikz(output_type='LatexExpr')` to keep the old "
+                   "behavior or `.tikz(output_type='TikzPicture')` to use "
+                   "the future default behavior.")
+            deprecation(33002, msg)
+            output_type = 'LatexExpr'
+
+        # return
+        if output_type == 'LatexExpr':
+            return tikz_string
+        elif output_type == 'TikzPicture':
+            from sage.misc.latex_standalone import TikzPicture
+            return TikzPicture(tikz_string, standalone_config=None,
+                    usepackage=None, usetikzlibrary=None, macros=None,
+                    use_sage_preamble=False)
+        else:
+            raise ValueError("output_type (='{}') must be 'LatexExpr' or"
+                    " 'TikzPicture'".format(output_type))
 
     def _tikz_2d(self, scale, edge_color, facet_color, opacity, vertex_color, axis):
         r"""
@@ -1314,25 +1469,27 @@ class Projection(SageObject):
 
         INPUT:
 
-        - ``scale`` - integer specifying the scaling of the tikz picture.
-        - ``edge_color`` - string representing colors which tikz
+        - ``scale`` -- integer specifying the scaling of the tikz picture.
+        - ``edge_color`` -- string representing colors which tikz
           recognize.
-        - ``facet_color`` - string representing colors which tikz
+        - ``facet_color`` -- string representing colors which tikz
           recognize.
-        - ``vertex_color`` - string representing colors which tikz
+        - ``vertex_color`` -- string representing colors which tikz
           recognize.
-        - ``opacity`` - real number between 0 and 1 giving the opacity of
+        - ``opacity`` -- real number between 0 and 1 giving the opacity of
           the front facets.
-        - ``axis`` - Boolean (default: False) draw the axes at the origin or not.
+        - ``axis`` -- Boolean (default: ``False``) draw the axes at the origin or not.
 
         OUTPUT:
 
-        - LatexExpr -- containing the TikZ picture.
+        :class:`LatexExpr` -- containing the TikZ picture.
 
         EXAMPLES::
 
-            sage: P = Polyhedron(vertices=[[1, 1],[1, 2],[2, 1]])
-            sage: Image = P.projection()._tikz_2d(scale=3, edge_color='black', facet_color='orange', opacity=0.75, vertex_color='yellow', axis=True)
+            sage: P = Polyhedron(vertices=[[1, 1], [1, 2], [2, 1]])
+            sage: Image = P.projection()._tikz_2d(scale=3, edge_color='black',
+            ....:                                 facet_color='orange', opacity=0.75,
+            ....:                                 vertex_color='yellow', axis=True)
             sage: type(Image)
             <class 'sage.misc.latex.LatexExpr'>
             sage: print('\n'.join(Image.splitlines()[:4]))
@@ -1345,9 +1502,9 @@ class Projection(SageObject):
 
         Scientific notation is not used in the output (:trac:`16519`)::
 
-            sage: P=Polyhedron([[2*10^-10,0],[0,1],[1,0]],base_ring=QQ)
-            sage: tikzstr=P.projection().tikz()
-            sage: 'e-10' in tikzstr
+            sage: P = Polyhedron([[2*10^-10,0], [0,1], [1,0]], base_ring=QQ)
+            sage: tikz = P.projection().tikz(output_type='TikzPicture')
+            sage: 'e-10' in tikz.content()
             False
 
         .. NOTE::
@@ -1389,14 +1546,14 @@ class Projection(SageObject):
 
         # Gives the reproduction information
         from sage.env import SAGE_VERSION
-        tikz_pic += "%% This TikZ-picture was produce with Sagemath version {}\n".format(SAGE_VERSION)
+        tikz_pic += "%% This TikZ-picture was produced with Sagemath version {}\n".format(SAGE_VERSION)
         tikz_pic += "%% with the command: ._tikz_2d and parameters:\n"
         tikz_pic += "%% scale = {}\n".format(scale)
         tikz_pic += "%% edge_color = {}\n".format(edge_color)
         tikz_pic += "%% facet_color = {}\n".format(facet_color)
         tikz_pic += "%% opacity = {}\n".format(opacity)
         tikz_pic += "%% vertex_color = {}\n".format(vertex_color)
-        tikz_pic += "%% axis = {}\n\n".format(axis)
+        tikz_pic += "%% axis = {}\n%%\n".format(axis)
 
         # Draws the axes if True
         if axis:
@@ -1442,41 +1599,45 @@ class Projection(SageObject):
 
         INPUT:
 
-        - ``view`` - list (default: [0,0,1]) representing the rotation axis.
-        - ``angle`` - integer angle of rotation in degree from 0 to 360.
-        - ``scale`` - integer specifying the scaling of the tikz picture.
-        - ``edge_color`` - string representing colors which tikz
+        - ``view`` -- list (default: [0,0,1]) representing the rotation axis.
+        - ``angle`` -- integer angle of rotation in degree from 0 to 360.
+        - ``scale`` -- integer specifying the scaling of the tikz picture.
+        - ``edge_color`` -- string representing colors which tikz
           recognize.
-        - ``facet_color`` - string representing colors which tikz
+        - ``facet_color`` -- string representing colors which tikz
           recognize.
-        - ``vertex_color`` - string representing colors which tikz
+        - ``vertex_color`` -- string representing colors which tikz
           recognize.
-        - ``opacity`` - real number between 0 and 1 giving the opacity of
+        - ``opacity`` -- real number between 0 and 1 giving the opacity of
           the front facets.
-        - ``axis`` - Boolean draw the axes at the origin or not.
+        - ``axis`` -- Boolean draw the axes at the origin or not.
 
         OUTPUT:
 
-        - LatexExpr -- containing the TikZ picture.
+        :class:`LatexExpr` -- containing the TikZ picture.
 
         EXAMPLES::
 
-            sage: P = Polyhedron(vertices=[[-1, -1, 2],[-1, 2, -1],[2, -1, -1]])
+            sage: P = Polyhedron(vertices=[[-1, -1, 2], [-1, 2, -1], [2, -1, -1]])
             sage: P
             A 2-dimensional polyhedron in ZZ^3 defined as the convex hull of 3 vertices
-            sage: Image = P.projection()._tikz_2d_in_3d(view=[0.5,-1,-0.5], angle=55, scale=3, edge_color='blue!95!black', facet_color='orange', opacity=0.5, vertex_color='yellow', axis=True)
-            sage: print('\n'.join(Image.splitlines()[:4]))
+            sage: Image = P.projection()._tikz_2d_in_3d(view=[0.5, -1, -0.5], angle=55, scale=3,            # optional - sage.plot
+            ....:                                       edge_color='blue!95!black', facet_color='orange',
+            ....:                                       opacity=0.5, vertex_color='yellow', axis=True)
+            sage: print('\n'.join(Image.splitlines()[:4]))                                                  # optional - sage.plot
             \begin{tikzpicture}%
                 [x={(0.644647cm, -0.476559cm)},
                 y={(0.192276cm, 0.857859cm)},
                 z={(-0.739905cm, -0.192276cm)},
-            sage: with open('polytope-tikz3.tex', 'w') as f:  # not tested
+            sage: with open('polytope-tikz3.tex', 'w') as f:  # not tested                                  # optional - sage.plot
             ....:     _ = f.write(Image)
 
-            sage: p = Polyhedron(vertices=[[1,0,0],[0,1,0],[0,0,1]])
+        ::
+
+            sage: p = Polyhedron(vertices=[[1, 0, 0], [0, 1, 0], [0, 0, 1]])
             sage: proj = p.projection()
-            sage: Img = proj.tikz([1,1,1],130,axis=True)
-            sage: print('\n'.join(Img.splitlines()[12:21]))
+            sage: Img = proj.tikz([1, 1, 1], 130, axis=True, output_type='LatexExpr')                       # optional - sage.plot
+            sage: print('\n'.join(Img.splitlines()[12:21]))                                                 # optional - sage.plot
             %% with the command: ._tikz_2d_in_3d and parameters:
             %% view = [1, 1, 1]
             %% angle = 130
@@ -1491,6 +1652,8 @@ class Projection(SageObject):
 
             The ``facet_color`` is the filing color of the polytope (polygon).
         """
+        from sage.rings.real_double import RDF
+
         view_vector = vector(RDF, view)
         rot = rotate_arbitrary(view_vector, -(angle/360)*2*pi)
         rotation_matrix = rot[:2].transpose()
@@ -1534,7 +1697,7 @@ class Projection(SageObject):
 
         # Gives the reproduction information
         from sage.env import SAGE_VERSION
-        tikz_pic += "%% This TikZ-picture was produce with Sagemath version {}\n".format(SAGE_VERSION)
+        tikz_pic += "%% This TikZ-picture was produced with Sagemath version {}\n".format(SAGE_VERSION)
         tikz_pic += "%% with the command: ._tikz_2d_in_3d and parameters:\n"
         tikz_pic += "%% view = {}\n".format(view)
         tikz_pic += "%% angle = {}\n".format(angle)
@@ -1543,7 +1706,7 @@ class Projection(SageObject):
         tikz_pic += "%% facet_color = {}\n".format(facet_color)
         tikz_pic += "%% opacity = {}\n".format(opacity)
         tikz_pic += "%% vertex_color = {}\n".format(vertex_color)
-        tikz_pic += "%% axis = {}\n\n".format(axis)
+        tikz_pic += "%% axis = {}\n%%\n".format(axis)
 
         # Draws the axes if True
         if axis:
@@ -1590,40 +1753,47 @@ class Projection(SageObject):
 
         INPUT:
 
-        - ``view`` - list (default: [0,0,1]) representing the rotation axis.
-        - ``angle`` - integer angle of rotation in degree from 0 to 360.
-        - ``scale`` - integer specifying the scaling of the tikz picture.
-        - ``edge_color`` - string representing colors which tikz
+        - ``view`` -- list (default: [0,0,1]) representing the rotation axis.
+        - ``angle`` -- integer angle of rotation in degree from 0 to 360.
+        - ``scale`` -- integer specifying the scaling of the tikz picture.
+        - ``edge_color`` -- string representing colors which tikz
           recognize.
-        - ``facet_color`` - string representing colors which tikz
+        - ``facet_color`` -- string representing colors which tikz
           recognize.
-        - ``vertex_color`` - string representing colors which tikz
+        - ``vertex_color`` -- string representing colors which tikz
           recognize.
-        - ``opacity`` - real number between 0 and 1 giving the opacity of
+        - ``opacity`` -- real number between 0 and 1 giving the opacity of
           the front facets.
-        - ``axis`` - Boolean draw the axes at the origin or not.
+        - ``axis`` -- Boolean draw the axes at the origin or not.
 
         OUTPUT:
 
-        - LatexExpr -- containing the TikZ picture.
+        :class:`LatexExpr` -- containing the TikZ picture.
 
         EXAMPLES::
 
-            sage: P = polytopes.small_rhombicuboctahedron()
-            sage: Image = P.projection()._tikz_3d_in_3d([3,7,5], 100, scale=3, edge_color='blue', facet_color='orange', opacity=0.5, vertex_color='green', axis=True)
-            sage: type(Image)
+            sage: P = polytopes.small_rhombicuboctahedron()                                             # optional - sage.rings.number_field
+            sage: Image = P.projection()._tikz_3d_in_3d([3, 7, 5], 100, scale=3,                        # optional - sage.rings.number_field
+            ....:                                       edge_color='blue', facet_color='orange',
+            ....:                                       opacity=0.5, vertex_color='green', axis=True)
+            sage: type(Image)                                                                           # optional - sage.rings.number_field
             <class 'sage.misc.latex.LatexExpr'>
-            sage: print('\n'.join(Image.splitlines()[:4]))
+            sage: print('\n'.join(Image.splitlines()[:4]))                                              # optional - sage.rings.number_field
             \begin{tikzpicture}%
                 [x={(-0.046385cm, 0.837431cm)},
                 y={(-0.243536cm, 0.519228cm)},
                 z={(0.968782cm, 0.170622cm)},
-            sage: with open('polytope-tikz1.tex', 'w') as f:  # not tested
+            sage: with open('polytope-tikz1.tex', 'w') as f:  # not tested                              # optional - sage.rings.number_field
             ....:     _ = f.write(Image)
 
-            sage: Associahedron = Polyhedron(vertices=[[1,0,1],[1,0,0],[1,1,0],[0,0,-1],[0,1,0],[-1,0,0],[0,1,1],[0,0,1],[0,-1,0]]).polar()
-            sage: ImageAsso = Associahedron.projection().tikz([-15,-755,-655], 116, scale=1)
-            sage: print('\n'.join(ImageAsso.splitlines()[12:30]))
+        ::
+
+            sage: Associahedron = Polyhedron(vertices=[[1, 0, 1], [1, 0, 0], [1, 1, 0],
+            ....:                                      [0, 0, -1], [0, 1, 0], [-1, 0, 0],
+            ....:                                      [0, 1, 1], [0, 0, 1], [0, -1, 0]]).polar()
+            sage: ImageAsso = Associahedron.projection().tikz([-15, -755, -655], 116, scale=1,          # optional - sage.plot
+            ....:                                             output_type='LatexExpr')
+            sage: print('\n'.join(ImageAsso.splitlines()[12:30]))                                       # optional - sage.plot
             %% with the command: ._tikz_3d_in_3d and parameters:
             %% view = [-15, -755, -655]
             %% angle = 116
@@ -1633,7 +1803,7 @@ class Projection(SageObject):
             %% opacity = 0.8
             %% vertex_color = green
             %% axis = False
-            <BLANKLINE>
+            %%
             %% Coordinate of the vertices:
             %%
             \coordinate (0.00000, 1.00000, -1.00000) at (0.00000, 1.00000, -1.00000);
@@ -1643,6 +1813,8 @@ class Projection(SageObject):
             \coordinate (1.00000, -1.00000, 0.00000) at (1.00000, -1.00000, 0.00000);
             \coordinate (1.00000, 0.00000, -1.00000) at (1.00000, 0.00000, -1.00000);
         """
+        from sage.rings.real_double import RDF
+
         view_vector = vector(RDF, view)
         rot = rotate_arbitrary(view_vector, -(angle/360)*2*pi)
         rotation_matrix = rot[:2].transpose()
@@ -1732,7 +1904,7 @@ class Projection(SageObject):
 
         # Gives the reproduction information
         from sage.env import SAGE_VERSION
-        tikz_pic += "%% This TikZ-picture was produce with Sagemath version {}\n".format(SAGE_VERSION)
+        tikz_pic += "%% This TikZ-picture was produced with Sagemath version {}\n".format(SAGE_VERSION)
         tikz_pic += "%% with the command: ._tikz_3d_in_3d and parameters:\n"
         tikz_pic += "%% view = {}\n".format(view)
         tikz_pic += "%% angle = {}\n".format(angle)
@@ -1741,7 +1913,7 @@ class Projection(SageObject):
         tikz_pic += "%% facet_color = {}\n".format(facet_color)
         tikz_pic += "%% opacity = {}\n".format(opacity)
         tikz_pic += "%% vertex_color = {}\n".format(vertex_color)
-        tikz_pic += "%% axis = {}\n\n".format(axis)
+        tikz_pic += "%% axis = {}\n%%\n".format(axis)
 
         # Draws the axes if True
         if axis:
@@ -1767,9 +1939,10 @@ class Projection(SageObject):
 
         # Draw the facets in the front by going in cycles for every facet.
         tikz_pic += '%%\n%%\n%% Drawing the facets\n%%\n'
+        vertex_to_index = {v: i for i, v in enumerate(vertices)}
         for index_facet in front_facets:
             cyclic_vert = cyclic_sort_vertices_2d(list(facets[index_facet].incident()))
-            cyclic_indices = [vertices.index(v) for v in cyclic_vert]
+            cyclic_indices = [vertex_to_index[v] for v in cyclic_vert]
             tikz_pic += '\\fill[facet] '
             for v in cyclic_indices:
                 if v in dict_drawing:

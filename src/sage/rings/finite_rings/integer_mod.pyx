@@ -1,4 +1,3 @@
-# cython: language_level=2
 r"""
 Elements of `\ZZ/n\ZZ`
 
@@ -54,9 +53,9 @@ TESTS::
     851127
 
     sage: type(IntegerModRing(2^31-1).an_element())
-    <type 'sage.rings.finite_rings.integer_mod.IntegerMod_int64'>
+    <class 'sage.rings.finite_rings.integer_mod.IntegerMod_int64'>
     sage: type(IntegerModRing(2^31).an_element())
-    <type 'sage.rings.finite_rings.integer_mod.IntegerMod_gmp'>
+    <class 'sage.rings.finite_rings.integer_mod.IntegerMod_gmp'>
 """
 # ****************************************************************************
 #       Copyright (C) 2006 Robert Bradshaw <robertwb@math.washington.edu>
@@ -75,35 +74,31 @@ from cpython.int cimport *
 from cpython.list cimport *
 from cpython.ref cimport *
 
-from libc.math cimport log, ceil
+from libc.math cimport log2, ceil
 
 from sage.libs.gmp.all cimport *
-
-import operator
 
 cdef bint use_32bit_type(int_fast64_t modulus):
     return modulus <= INTEGER_MOD_INT32_LIMIT
 
 from sage.arith.long cimport (
-    integer_check_long, integer_check_long_py, is_small_python_int, ERR_OVERFLOW)
+    integer_check_long, integer_check_long_py, is_small_python_int)
 
 import sage.rings.rational as rational
 from sage.libs.pari.all import pari, PariError
 import sage.rings.integer_ring as integer_ring
 import sage.rings.rational_field
 
-import sage.interfaces.all
-
 import sage.rings.integer
 cimport sage.rings.integer
 from sage.rings.integer cimport Integer
 
 from sage.structure.coerce cimport py_scalar_to_element
-from sage.structure.richcmp import rich_to_bool_sgn, rich_to_bool
+from sage.structure.richcmp cimport rich_to_bool_sgn, rich_to_bool
 import sage.structure.element
 cimport sage.structure.element
 coerce_binop = sage.structure.element.coerce_binop
-from sage.structure.element cimport RingElement, ModuleElement, Element
+from sage.structure.element cimport Element
 from sage.categories.morphism cimport Morphism
 from sage.categories.map cimport Map
 
@@ -111,10 +106,16 @@ from sage.misc.persist import register_unpickle_override
 
 from sage.structure.parent cimport Parent
 
+from sage.arith.misc import CRT as crt
+from sage.arith.functions import lcm
+from sage.groups.generic import discrete_log
+
+
 cdef Integer one_Z = Integer(1)
 
+
 def Mod(n, m, parent=None):
-    """
+    r"""
     Return the equivalence class of `n` modulo `m` as
     an element of `\ZZ/m\ZZ`.
 
@@ -146,7 +147,6 @@ def Mod(n, m, parent=None):
         return n
 
     # m is non-zero, so return n mod m
-    cdef IntegerMod_abstract x
     if parent is None:
         from .integer_mod_ring import IntegerModRing
         parent = IntegerModRing(m)
@@ -169,7 +169,7 @@ def IntegerMod(parent, value):
         sage: from sage.rings.finite_rings.integer_mod import IntegerMod
         sage: R = IntegerModRing(100)
         sage: type(R._pyx_order.table)
-        <type 'list'>
+        <class 'list'>
         sage: IntegerMod(R, 42)
         42
         sage: IntegerMod(R, 142)
@@ -331,7 +331,7 @@ cdef class IntegerMod_abstract(FiniteRingElement):
             sage: a = Mod(10, 30^10); a
             10
             sage: type(a)
-            <type 'sage.rings.finite_rings.integer_mod.IntegerMod_gmp'>
+            <class 'sage.rings.finite_rings.integer_mod.IntegerMod_gmp'>
             sage: loads(a.dumps()) == a
             True
 
@@ -346,11 +346,11 @@ cdef class IntegerMod_abstract(FiniteRingElement):
             sage: TestSuite(Zmod(2^10 * 3^5)).run()
             sage: TestSuite(Zmod(2^30 * 3^50 * 5^20)).run()
 
-            sage: GF(29)(SR(1/3))
+            sage: GF(29)(SR(1/3))                                                       # optional - sage.rings.finite_rings sage.symbolic
             10
             sage: Integers(30)(QQ['x'](1/7))
             13
-            sage: Integers(30)(SR(1/4))
+            sage: Integers(30)(SR(1/4))                                                 # optional - sage.symbolic
             Traceback (most recent call last):
             ...
             ZeroDivisionError: inverse of Mod(4, 30) does not exist
@@ -376,7 +376,7 @@ cdef class IntegerMod_abstract(FiniteRingElement):
             try:
                 z = integer_ring.Z(value)
             except (TypeError, ValueError):
-                from sage.symbolic.expression import Expression
+                from sage.structure.element import Expression
                 if isinstance(value, Expression):
                     value = value.pyobject()
                 else:
@@ -458,7 +458,7 @@ cdef class IntegerMod_abstract(FiniteRingElement):
             2
         """
         # The generators are irrelevant (Zmod(n) is its own base), so we ignore base_map
-        return codomain._coerce_(self)
+        return codomain.coerce(self)
 
     def __mod__(self, modulus):
         """
@@ -502,7 +502,7 @@ cdef class IntegerMod_abstract(FiniteRingElement):
         EXAMPLES::
 
             sage: a = Integers(90384098234^3)
-            sage: factor(a.order())
+            sage: factor(a.order())                                                     # optional - sage.libs.pari
             2^3 * 191^3 * 236607587^3
             sage: b = a(2*191)
             sage: b.is_nilpotent()
@@ -543,13 +543,13 @@ cdef class IntegerMod_abstract(FiniteRingElement):
         EXAMPLES::
 
             sage: a = Mod(2,19)
-            sage: gap(a)
+            sage: gap(a)                                                                # optional - sage.libs.gap
             Z(19)
-            sage: gap(Mod(3, next_prime(10000)))
+            sage: gap(Mod(3, next_prime(10000)))                                        # optional - sage.libs.gap
             Z(10007)^6190
-            sage: gap(Mod(3, next_prime(100000)))
+            sage: gap(Mod(3, next_prime(100000)))                                       # optional - sage.libs.gap
             ZmodpZObj( 3, 100003 )
-            sage: gap(Mod(4, 48))
+            sage: gap(Mod(4, 48))                                                       # optional - sage.libs.gap
             ZmodnZObj( 4, 48 )
         """
         return '%s*One(ZmodnZ(%s))' % (self, self.__modulus.sageInteger)
@@ -602,18 +602,18 @@ cdef class IntegerMod_abstract(FiniteRingElement):
 
         EXAMPLES::
 
-            sage: K = GF(7)
-            sage: sage_input(K(5), verify=True)
+            sage: K = GF(7)                                                             # optional - sage.rings.finite_rings
+            sage: sage_input(K(5), verify=True)                                         # optional - sage.rings.finite_rings
             # Verified
             GF(7)(5)
-            sage: sage_input(K(5) * polygen(K), verify=True)
+            sage: sage_input(K(5) * polygen(K), verify=True)                            # optional - sage.rings.finite_rings
             # Verified
             R.<x> = GF(7)[]
             5*x
             sage: from sage.misc.sage_input import SageInputBuilder
-            sage: K(5)._sage_input_(SageInputBuilder(), False)
+            sage: K(5)._sage_input_(SageInputBuilder(), False)                          # optional - sage.rings.finite_rings
             {call: {call: {atomic:GF}({atomic:7})}({atomic:5})}
-            sage: K(5)._sage_input_(SageInputBuilder(), True)
+            sage: K(5)._sage_input_(SageInputBuilder(), True)                           # optional - sage.rings.finite_rings
             {atomic:5}
         """
         v = sib.int(self.lift())
@@ -622,9 +622,11 @@ cdef class IntegerMod_abstract(FiniteRingElement):
         else:
             return sib(self.parent())(v)
 
-    def log(self, b=None, logarithm_exists=False):
+    def log(self, b=None, logarithm_exists=None):
         r"""
-        Return an integer `x` such that `b^x = a`, where
+        Compute the discrete logarithm of this element to base `b`,
+        that is,
+        return an integer `x` such that `b^x = a`, where
         `a` is ``self``.
 
         INPUT:
@@ -636,52 +638,51 @@ cdef class IntegerMod_abstract(FiniteRingElement):
            ``R.multiplicative_generator()`` is used, where
            ``R`` is the parent of ``self``.
 
-        -  ``logarithm_exists`` - a boolean (default ``False``). If ``True``
-           it assumes that the logarithm exists in order to speed up
-           the computation, the code might end up in an infinite loop if this
-           is set to ``True`` but the logarithm does not exist.
-
 
         OUTPUT: Integer `x` such that `b^x = a`, if this exists; a ValueError otherwise.
 
         .. NOTE::
 
-           If the modulus is prime and b is a generator, this calls Pari's ``znlog``
-           function, which is rather fast. If not, it falls back on the generic
-           discrete log implementation in :meth:`sage.groups.generic.discrete_log`.
+           The algorithm first factors the modulus, then invokes Pari's ``znlog``
+           function for each odd prime power in the factorization of the modulus.
+           This method can be quite slow for large moduli.
 
         EXAMPLES::
 
             sage: r = Integers(125)
-            sage: b = r.multiplicative_generator()^3
-            sage: a = b^17
-            sage: a.log(b)
+            sage: b = r.multiplicative_generator()^3                                    # optional - sage.libs.pari
+            sage: a = b^17                                                              # optional - sage.libs.pari
+            sage: a.log(b)                                                              # optional - sage.libs.pari
             17
-            sage: a.log()
+            sage: a.log()                                                               # optional - sage.libs.pari
             51
 
         A bigger example::
 
-            sage: FF = FiniteField(2^32+61)
-            sage: c = FF(4294967356)
-            sage: x = FF(2)
-            sage: a = c.log(x)
-            sage: a
+            sage: FF = FiniteField(2^32 + 61)                                           # optional - sage.rings.finite_rings
+            sage: c = FF(4294967356)                                                    # optional - sage.rings.finite_rings
+            sage: x = FF(2)                                                             # optional - sage.rings.finite_rings
+            sage: a = c.log(x)                                                          # optional - sage.rings.finite_rings
+            sage: a                                                                     # optional - sage.rings.finite_rings
             2147483678
-            sage: x^a
+            sage: x^a                                                                   # optional - sage.rings.finite_rings
             4294967356
 
-        Things that can go wrong. E.g., if the base is not a generator for
-        the multiplicative group, or not even a unit.
+        An example with a highly composite modulus::
 
-        ::
+            sage: m = 2^99 * 77^7 * 123456789 * 13712923537615486607^2
+            sage: (Mod(5,m)^5735816763073854953388147237921).log(5)                     # optional - sage.libs.pari
+            5735816763073854953388147237921
 
-            sage: Mod(3, 7).log(Mod(2, 7))
+        Errors are generated if the logarithm doesn't exist
+        or the inputs are not units::
+
+            sage: Mod(3, 7).log(Mod(2, 7))                                              # optional - sage.libs.pari
             Traceback (most recent call last):
             ...
-            ValueError: No discrete log of 3 found to base 2 modulo 7
-            sage: a = Mod(16, 100); b = Mod(4,100)
-            sage: a.log(b)
+            ValueError: no logarithm of 3 found to base 2 modulo 7
+            sage: a = Mod(16, 100); b = Mod(4, 100)                                     # optional - sage.libs.pari
+            sage: a.log(b)                                                              # optional - sage.libs.pari
             Traceback (most recent call last):
             ...
             ValueError: logarithm of 16 is not defined since it is not a unit modulo 100
@@ -690,25 +691,52 @@ cdef class IntegerMod_abstract(FiniteRingElement):
 
         We check that :trac:`9205` is fixed::
 
-            sage: Mod(5,9).log(Mod(2, 9))
+            sage: Mod(5, 9).log(Mod(2, 9))                                              # optional - sage.libs.pari
             5
 
         We test against a bug (side effect on PARI) fixed in :trac:`9438`::
 
             sage: R.<a, b> = QQ[]
-            sage: pari(b)
+            sage: pari(b)                                                               # optional - sage.libs.pari
             b
-            sage: GF(7)(5).log()
+            sage: GF(7)(5).log()                                                        # optional - sage.rings.finite_rings
             5
-            sage: pari(b)
+            sage: pari(b)                                                               # optional - sage.libs.pari
             b
 
         We test that :trac:`23927` is fixed::
 
             sage: x = mod(48475563673907791151, 10^20 + 763)^2
             sage: e = 25248843418589594761
-            sage: (x^e).log(x)==e
+            sage: (x^e).log(x) == e                                                     # optional - sage.libs.pari
             True
+
+        Examples like this took extremely long before :trac:`32375`::
+
+            sage: (Mod(5, 123337052926643**4) ^ (10^50-1)).log(5)                       # optional - sage.libs.pari
+            99999999999999999999999999999999999999999999999999
+
+        We check that non-existence of solutions is detected:
+
+        No local solutions::
+
+            sage: Mod(1111, 1234567).log(1111**3)                                       # optional - sage.libs.pari
+            Traceback (most recent call last):
+            ...
+            ValueError: no logarithm of 1111 found to base 961261 modulo 1234567 (no solution modulo 9721)
+
+        Incompatible local solutions::
+
+            sage: Mod(230, 323).log(173)                                                # optional - sage.libs.pari
+            Traceback (most recent call last):
+            ...
+            ValueError: no logarithm of 230 found to base 173 modulo 323 (incompatible local solutions)
+
+        We test that :trac:`12419` is fixed::
+
+            sage: R.<x,y> = GF(2)[]                                                     # optional - sage.rings.finite_rings
+            sage: R(1).factor()                                                         # optional - sage.rings.finite_rings
+            1
 
         AUTHORS:
 
@@ -718,40 +746,60 @@ cdef class IntegerMod_abstract(FiniteRingElement):
           by David Kohel.
 
         - Simon King (2010-07-07): fix a side effect on PARI
+
+        - Lorenz Panny (2021): speedups for composite moduli
         """
+
+        if logarithm_exists is not None:
+            from sage.misc.superseded import deprecation
+            deprecation(32375, 'The "logarithm_exists" argument to .log() is no longer necessary and will be removed at some point.')
+
         if not self.is_unit():
-            raise ValueError("logarithm of %s is not defined since it is not a unit modulo %s"%(self, self.modulus()))
+            raise ValueError(f"logarithm of {self} is not defined since it is not a unit modulo {self.modulus()}")
 
         if b is None:
             b = self._parent.multiplicative_generator()
-            logarithm_exists = True
         else:
             b = self._parent(b)
-            if not (logarithm_exists or b.is_unit()):
-                raise ValueError("logarithm with base %s is not defined since it is not a unit modulo %s"%(b, b.modulus()))
+            if not b.is_unit():
+                raise ValueError(f"logarithm with base {b} is not defined since it is not a unit modulo {b.modulus()}")
 
-        if logarithm_exists or self.modulus().is_prime():
-            if not logarithm_exists:
-                oa = self.multiplicative_order()
-                ob = b.multiplicative_order()
-                if not oa.divides(ob):
-                    raise ValueError("No discrete log of %s found to base %s modulo %s"%(self, b, self.modulus()))
+        cdef Integer n = Integer()
+        cdef Integer m = one_Z
+        cdef Integer q, na, nb
+
+        for p, e in self.modulus().factor():
+            q = p**e
+            a_red = Mod(self.lift(), q)
+            b_red = Mod(b.lift(), q)
+
+            na = a_red.multiplicative_order()
+            nb = b_red.multiplicative_order()
+            if not na.divides(nb):  # cannot be a power
+                raise ValueError(f"no logarithm of {self} found to base {b} modulo {self.modulus()}"
+                              + (f" (no solution modulo {q})" if q != self.modulus() else ""))
+
+            if p == 2 and e >= 3:   # (ZZ/2^e)* is not cyclic; must not give unsolvable DLPs to Pari
+                try:
+                    v = discrete_log(a_red, b_red, nb)
+                except ValueError:
+                    raise ValueError(f"no logarithm of {self} found to base {b} modulo {self.modulus()}"
+                                  + (f" (no solution modulo {q})" if q != self.modulus() else ""))
+            else:
+                try:
+                    v = pari(a_red).znlog(pari(b_red)).sage()
+                except PariError as msg:
+                    raise RuntimeError(f"{msg}\nPARI failed to compute discrete log modulo {q} (perhaps base is not a generator or is too large)")
+                assert v != []  # if this happens, we've made a mistake above (or there is a Pari bug)
 
             try:
-                n = pari(self).znlog(pari(b), pari(b.multiplicative_order()))
-                n = n.sage()
-            except PariError as msg:
-                raise RuntimeError("%s\nPARI failed to compute discrete log (perhaps base is not a generator or is too large)" % msg)
-            else:
-                if n == []:
-                    raise ValueError("No discrete log of %s found to base %s modulo %s"%(self, b, self.modulus()))
-                return n
+                n = crt(n, v, m, nb)
+            except ValueError:
+                raise ValueError(f"no logarithm of {self} found to base {b} modulo {self.modulus()} (incompatible local solutions)")
+            m = lcm(m, nb)
 
-
-        else: # fall back on slower native implementation
-
-            from sage.groups.generic import discrete_log
-            return discrete_log(self, b)
+#        assert b**n == self
+        return n
 
     def generalised_log(self):
         r"""
@@ -767,9 +815,9 @@ cdef class IntegerMod_abstract(FiniteRingElement):
         EXAMPLES::
 
             sage: m = Mod(3, 1568)
-            sage: v = m.generalised_log(); v
+            sage: v = m.generalised_log(); v                                            # optional - sage.libs.pari
             [1, 3, 1]
-            sage: prod([Zmod(1568).unit_gens()[i] ** v[i] for i in [0..2]])
+            sage: prod([Zmod(1568).unit_gens()[i] ** v[i] for i in [0..2]])             # optional - sage.libs.pari
             3
 
         .. SEEALSO::
@@ -818,11 +866,11 @@ cdef class IntegerMod_abstract(FiniteRingElement):
 
         EXAMPLES::
 
-            sage: k = GF(3)
-            sage: a = k.gen()
-            sage: a.charpoly('x')
+            sage: k = GF(3)                                                             # optional - sage.rings.finite_rings
+            sage: a = k.gen()                                                           # optional - sage.rings.finite_rings
+            sage: a.charpoly('x')                                                       # optional - sage.rings.finite_rings
             x + 2
-            sage: a + 2
+            sage: a + 2                                                                 # optional - sage.rings.finite_rings
             0
 
         AUTHORS:
@@ -838,7 +886,7 @@ cdef class IntegerMod_abstract(FiniteRingElement):
 
         EXAMPLES::
 
-            sage: GF(241, 'a')(1).minpoly()
+            sage: GF(241, 'a')(1).minpoly()                                             # optional - sage.rings.finite_rings
             x + 240
         """
         return self.charpoly(var)
@@ -849,7 +897,7 @@ cdef class IntegerMod_abstract(FiniteRingElement):
 
         EXAMPLES::
 
-            sage: GF(241, 'a')(1).minimal_polynomial(var = 'z')
+            sage: GF(241, 'a')(1).minimal_polynomial(var = 'z')                         # optional - sage.rings.finite_rings
             z + 240
         """
         return self.minpoly(var)
@@ -860,13 +908,13 @@ cdef class IntegerMod_abstract(FiniteRingElement):
 
         EXAMPLES::
 
-            sage: k = GF(7)
-            sage: a = k.gen(); a
+            sage: k = GF(7)                                                             # optional - sage.rings.finite_rings
+            sage: a = k.gen(); a                                                        # optional - sage.rings.finite_rings
             1
-            sage: a.polynomial()
+            sage: a.polynomial()                                                        # optional - sage.rings.finite_rings
             1
-            sage: type(a.polynomial())
-            <type 'sage.rings.polynomial.polynomial_zmod_flint.Polynomial_zmod_flint'>
+            sage: type(a.polynomial())                                                  # optional - sage.rings.finite_rings
+            <class 'sage.rings.polynomial.polynomial_zmod_flint.Polynomial_zmod_flint'>
         """
         R = self.parent()[var]
         return R(self)
@@ -878,9 +926,9 @@ cdef class IntegerMod_abstract(FiniteRingElement):
 
         EXAMPLES::
 
-            sage: k = GF(691)
-            sage: a = k(389)
-            sage: a.norm()
+            sage: k = GF(691)                                                           # optional - sage.rings.finite_rings
+            sage: a = k(389)                                                            # optional - sage.rings.finite_rings
+            sage: a.norm()                                                              # optional - sage.rings.finite_rings
             389
 
         AUTHORS:
@@ -896,9 +944,9 @@ cdef class IntegerMod_abstract(FiniteRingElement):
 
         EXAMPLES::
 
-            sage: k = GF(691)
-            sage: a = k(389)
-            sage: a.trace()
+            sage: k = GF(691)                                                           # optional - sage.rings.finite_rings
+            sage: a = k(389)                                                            # optional - sage.rings.finite_rings
+            sage: a.trace()                                                             # optional - sage.rings.finite_rings
             389
 
         AUTHORS:
@@ -951,7 +999,7 @@ cdef class IntegerMod_abstract(FiniteRingElement):
     @coerce_binop
     def divides(self, other):
         r"""
-        Test wheter ``self`` divides ``other``.
+        Test whether ``self`` divides ``other``.
 
         EXAMPLES::
 
@@ -977,27 +1025,27 @@ cdef class IntegerMod_abstract(FiniteRingElement):
         r"""
         EXAMPLES::
 
-            sage: Mod(3,17).is_square()
+            sage: Mod(3, 17).is_square()
             False
-            sage: Mod(9,17).is_square()
+            sage: Mod(9, 17).is_square()                                                # optional - sage.libs.pari
             True
-            sage: Mod(9,17*19^2).is_square()
+            sage: Mod(9, 17*19^2).is_square()                                           # optional - sage.libs.pari
             True
-            sage: Mod(-1,17^30).is_square()
+            sage: Mod(-1, 17^30).is_square()                                            # optional - sage.libs.pari
             True
-            sage: Mod(1/9, next_prime(2^40)).is_square()
+            sage: Mod(1/9, next_prime(2^40)).is_square()                                # optional - sage.libs.pari
             True
-            sage: Mod(1/25, next_prime(2^90)).is_square()
+            sage: Mod(1/25, next_prime(2^90)).is_square()                               # optional - sage.libs.pari
             True
 
         TESTS::
 
-            sage: Mod(1/25, 2^8).is_square()
+            sage: Mod(1/25, 2^8).is_square()                                                        # optional - sage.libs.pari
             True
-            sage: Mod(1/25, 2^40).is_square()
+            sage: Mod(1/25, 2^40).is_square()                                                       # optional - sage.libs.pari
             True
 
-            sage: for p,q,r in cartesian_product_iterator([[3,5],[11,13],[17,19]]): # long time
+            sage: for p,q,r in cartesian_product_iterator([[3,5],[11,13],[17,19]]): # long time     # optional - sage.libs.pari
             ....:     for ep,eq,er in cartesian_product_iterator([[0,1,2,3],[0,1,2,3],[0,1,2,3]]):
             ....:         for e2 in [0, 1, 2, 3, 4]:
             ....:             n = p^ep * q^eq * r^er * 2^e2
@@ -1064,9 +1112,8 @@ cdef class IntegerMod_abstract(FiniteRingElement):
         them `p`-adically and uses the CRT to find a square root
         mod `n`.
 
-        See also ``square_root_mod_prime_power`` and
-        ``square_root_mod_prime`` (in this module) for more
-        algorithmic details.
+        See also :meth:`square_root_mod_prime_power` and
+        :meth:`square_root_mod_prime` for more algorithmic details.
 
         EXAMPLES::
 
@@ -1076,21 +1123,21 @@ cdef class IntegerMod_abstract(FiniteRingElement):
             86
             sage: mod(7, 18).sqrt()
             5
-            sage: a = mod(14, 5^60).sqrt()
-            sage: a*a
+            sage: a = mod(14, 5^60).sqrt()                                              # optional - sage.libs.pari
+            sage: a*a                                                                   # optional - sage.libs.pari
             14
-            sage: mod(15, 389).sqrt(extend=False)
+            sage: mod(15, 389).sqrt(extend=False)                                       # optional - sage.libs.pari
             Traceback (most recent call last):
             ...
             ValueError: self must be a square
-            sage: Mod(1/9, next_prime(2^40)).sqrt()^(-2)
+            sage: Mod(1/9, next_prime(2^40)).sqrt()^(-2)                                # optional - sage.libs.pari
             9
-            sage: Mod(1/25, next_prime(2^90)).sqrt()^(-2)
+            sage: Mod(1/25, next_prime(2^90)).sqrt()^(-2)                               # optional - sage.libs.pari
             25
 
         ::
 
-            sage: a = Mod(3,5); a
+            sage: a = Mod(3, 5); a
             3
             sage: x = Mod(-1, 360)
             sage: x.sqrt(extend=False)
@@ -1121,22 +1168,22 @@ cdef class IntegerMod_abstract(FiniteRingElement):
 
             sage: R = Integers(5*13^3*37); R
             Ring of integers modulo 406445
-            sage: v = R(-1).sqrt(all=True); v
+            sage: v = R(-1).sqrt(all=True); v                                           # optional - sage.libs.pari
             [78853, 111808, 160142, 193097, 213348, 246303, 294637, 327592]
-            sage: [x^2 for x in v]
+            sage: [x^2 for x in v]                                                      # optional - sage.libs.pari
             [406444, 406444, 406444, 406444, 406444, 406444, 406444, 406444]
-            sage: v = R(169).sqrt(all=True); min(v), -max(v), len(v)
+            sage: v = R(169).sqrt(all=True); min(v), -max(v), len(v)                    # optional - sage.libs.pari
             (13, 13, 104)
-            sage: all(x^2 == 169 for x in v)
+            sage: all(x^2 == 169 for x in v)                                            # optional - sage.libs.pari
             True
 
         ::
 
-            sage: t = FiniteField(next_prime(2^100))(4)
-            sage: t.sqrt(extend = False, all = True)
+            sage: t = FiniteField(next_prime(2^100))(4)                                 # optional - sage.rings.finite_rings
+            sage: t.sqrt(extend=False, all=True)                                        # optional - sage.rings.finite_rings
             [2, 1267650600228229401496703205651]
-            sage: t = FiniteField(next_prime(2^100))(2)
-            sage: t.sqrt(extend = False, all = True)
+            sage: t = FiniteField(next_prime(2^100))(2)                                 # optional - sage.rings.finite_rings
+            sage: t.sqrt(extend=False, all=True)                                        # optional - sage.rings.finite_rings
             []
 
         Modulo a power of 2::
@@ -1185,7 +1232,7 @@ cdef class IntegerMod_abstract(FiniteRingElement):
             if all and e > 1 and not self.is_unit():
                 if self.is_zero():
                     # All multiples of p^ciel(e/2) vanish
-                    return [self._parent(x) for x in xrange(0, self.__modulus.sageInteger, p**((e+1)/2))]
+                    return [self._parent(x) for x in range(0, self.__modulus.sageInteger, p**((e+1)/2))]
                 else:
                     z = self.lift()
                     val = z.valuation(p)/2  # square => valuation is even
@@ -1207,7 +1254,7 @@ cdef class IntegerMod_abstract(FiniteRingElement):
                     p_exp = p**exp
                     w = [self._parent(a.lift() * p_val + b)
                             for a in u.sqrt(all=True)
-                            for b in xrange(0, self.__modulus.sageInteger, p_exp)]
+                            for b in range(0, self.__modulus.sageInteger, p_exp)]
                     if p == 2:
                         w = list(set(w))
                     w.sort()
@@ -1249,7 +1296,7 @@ cdef class IntegerMod_abstract(FiniteRingElement):
                     vmod.append(w)
                     moduli.append(k)
                 # Now combine in all possible ways using the CRT
-                from sage.arith.all import CRT_basis
+                from sage.arith.misc import CRT_basis
                 basis = CRT_basis(moduli)
                 from sage.misc.mrange import cartesian_product_iterator
                 v = []
@@ -1301,7 +1348,7 @@ cdef class IntegerMod_abstract(FiniteRingElement):
 
            The 'extend' option is not implemented (yet).
 
-        NOTES:
+        NOTE:
 
         - If `n = 0`:
 
@@ -1328,38 +1375,39 @@ cdef class IntegerMod_abstract(FiniteRingElement):
         EXAMPLES::
 
 
-            sage: K = GF(31)
-            sage: a = K(22)
-            sage: K(22).nth_root(7)
+            sage: K = GF(31)                                                            # optional - sage.rings.finite_rings
+            sage: a = K(22)                                                             # optional - sage.rings.finite_rings
+            sage: K(22).nth_root(7)                                                     # optional - sage.rings.finite_rings
             13
-            sage: K(25).nth_root(5)
+            sage: K(25).nth_root(5)                                                     # optional - sage.rings.finite_rings
             5
-            sage: K(23).nth_root(3)
+            sage: K(23).nth_root(3)                                                     # optional - sage.rings.finite_rings
             29
-            sage: mod(225,2^5*3^2).nth_root(4, all=True)
-            [225, 129, 33, 63, 255, 159, 9, 201, 105, 279, 183, 87, 81, 273, 177, 207, 111, 15, 153, 57, 249, 135, 39, 231]
-            sage: mod(275,2^5*7^4).nth_root(7, all=True)
+            sage: mod(225, 2^5*3^2).nth_root(4, all=True)                               # optional - sage.rings.padics
+            [225, 129, 33, 63, 255, 159, 9, 201, 105, 279, 183, 87, 81,
+             273, 177, 207, 111, 15, 153, 57, 249, 135, 39, 231]
+            sage: mod(275, 2^5*7^4).nth_root(7, all=True)                               # optional - sage.rings.padics
             [58235, 25307, 69211, 36283, 3355, 47259, 14331]
-            sage: mod(1,8).nth_root(2,all=True)
+            sage: mod(1,8).nth_root(2, all=True)                                        # optional - sage.rings.padics
             [1, 7, 5, 3]
-            sage: mod(4,8).nth_root(2,all=True)
+            sage: mod(4,8).nth_root(2, all=True)                                        # optional - sage.rings.padics
             [2, 6]
-            sage: mod(1,16).nth_root(4,all=True)
+            sage: mod(1,16).nth_root(4, all=True)                                       # optional - sage.rings.padics
             [1, 15, 13, 3, 9, 7, 5, 11]
-            sage: (mod(22,31)^200).nth_root(200)
+            sage: (mod(22,31)^200).nth_root(200)                                        # optional - sage.groups
             5
-            sage: mod(3,6).nth_root(0,all=True)
+            sage: mod(3,6).nth_root(0, all=True)                                        # optional - sage.rings.padics
             []
             sage: mod(3,6).nth_root(0)
             Traceback (most recent call last):
             ...
             ValueError
-            sage: mod(1,6).nth_root(0,all=True)
+            sage: mod(1,6).nth_root(0, all=True)                                        # optional - sage.rings.padics
             [1, 2, 3, 4, 5]
 
         TESTS::
 
-            sage: for p in [1009,2003,10007,100003]:
+            sage: for p in [1009,2003,10007,100003]:                                    # optional - sage.rings.finite_rings
             ....:     K = GF(p)
             ....:     for r in (p-1).divisors():
             ....:         if r == 1: continue
@@ -1369,7 +1417,7 @@ cdef class IntegerMod_abstract(FiniteRingElement):
             ....:         if (y^41).nth_root(41*r)**(41*r) != y^41: raise RuntimeError
             ....:         if (y^307).nth_root(307*r)**(307*r) != y^307: raise RuntimeError
 
-            sage: for t in range(200):
+            sage: for t in range(200):                                                  # optional - sage.libs.pari
             ....:     n = randint(1,2^63)
             ....:     K = Integers(n)
             ....:     b = K.random_element()
@@ -1384,29 +1432,28 @@ cdef class IntegerMod_abstract(FiniteRingElement):
 
         We check that :trac:`13172` is resolved::
 
-            sage: mod(-1, 4489).nth_root(2, all=True)
+            sage: mod(-1, 4489).nth_root(2, all=True)                                   # optional - sage.rings.padics
             []
 
         We check that :trac:`32084` is fixed::
 
-            sage: mod(24, 25).nth_root(50)^50
+            sage: mod(24, 25).nth_root(50)^50                                           # optional - sage.rings.padics
             24
 
         Check that the code path cunningham might be used::
 
             sage: a = Mod(9,11)
-            sage: a.nth_root(2, False, True, 'Johnston', cunningham = True) # optional - cunningham_tables
+            sage: a.nth_root(2, False, True, 'Johnston', cunningham=True)   # optional - cunningham_tables
             [3, 8]
 
-        ALGORITHMS:
+        ALGORITHM:
 
-        - The default for prime modulus is currently an algorithm described in the following paper:
-
-        Johnston, Anna M. A generalized qth root algorithm. Proceedings of the tenth annual ACM-SIAM symposium on Discrete algorithms. Baltimore, 1999: pp 929-930.
+        The default for prime modulus is currently an algorithm
+        described in [Joh1999]_.
 
         AUTHORS:
 
-        - David Roe (2010-2-13)
+        - David Roe (2010-02-13)
         """
         if extend:
             raise NotImplementedError
@@ -1474,9 +1521,8 @@ cdef class IntegerMod_abstract(FiniteRingElement):
                     return [K(a.lift()*p**(pval // n) + p**(k - (pval - pval//n)) * b) for a in mod(upart, p**(k-pval)).nth_root(n, all=True, algorithm=algorithm) for b in range(p**(pval - pval//n))]
                 else:
                     return K(p**(pval // n) * mod(upart, p**(k-pval)).nth_root(n, algorithm=algorithm).lift())
-            from sage.rings.padics.all import ZpFM
+            from sage.rings.padics.factory import ZpFM
             R = ZpFM(p,k)
-            self_orig = self
             if p == 2:
                 sign = [1]
                 if self % 4 == 3:
@@ -1508,7 +1554,7 @@ cdef class IntegerMod_abstract(FiniteRingElement):
             if nval >= plog.valuation() + (-1 if p == 2 else 0):
                 if self == 1:
                     if all:
-                        return [s*K(p*k+m.lift()) for k in range(p**(k-(2 if p==2 else 1))) for m in modp for s in sign]
+                        return [s*K(p*a+m.lift()) for a in range(p**(k-(2 if p==2 else 1))) for m in modp for s in sign]
                     else:
                         return K(modp.lift())
                 else:
@@ -1549,7 +1595,7 @@ cdef class IntegerMod_abstract(FiniteRingElement):
         return [a for a in self.parent() if a**n == self]
 
     def _balanced_abs(self):
-        """
+        r"""
         This function returns `x` or `-x`, whichever has a
         positive representative in `-n/2 < x \leq n/2`.
 
@@ -1559,8 +1605,7 @@ cdef class IntegerMod_abstract(FiniteRingElement):
         """
         if self.lift() > self.__modulus.sageInteger >> 1:
             return -self
-        else:
-            return self
+        return self
 
     def rational_reconstruction(self):
         """
@@ -1578,11 +1623,11 @@ cdef class IntegerMod_abstract(FiniteRingElement):
 
         This method is also inherited by prime finite fields elements::
 
-            sage: k = GF(97)
-            sage: a = k(RationalField()('2/3'))
-            sage: a
+            sage: k = GF(97)                                                            # optional - sage.rings.finite_rings
+            sage: a = k(RationalField()('2/3'))                                         # optional - sage.rings.finite_rings
+            sage: a                                                                     # optional - sage.rings.finite_rings
             33
-            sage: a.rational_reconstruction()
+            sage: a.rational_reconstruction()                                           # optional - sage.rings.finite_rings
             2/3
         """
         return self.lift().rational_reconstruction(self.modulus())
@@ -1597,21 +1642,21 @@ cdef class IntegerMod_abstract(FiniteRingElement):
 
         EXAMPLES::
 
-            sage: a = mod(3,5)
-            sage: b = mod(2,7)
+            sage: a = mod(3, 5)
+            sage: b = mod(2, 7)
             sage: a.crt(b)
             23
 
         ::
 
-            sage: a = mod(37,10^8)
-            sage: b = mod(9,3^8)
+            sage: a = mod(37, 10^8)
+            sage: b = mod(9, 3^8)
             sage: a.crt(b)
             125900000037
 
         ::
 
-            sage: b = mod(0,1)
+            sage: b = mod(0, 1)
             sage: a.crt(b) == a
             True
             sage: a.crt(b).modulus()
@@ -1619,17 +1664,17 @@ cdef class IntegerMod_abstract(FiniteRingElement):
 
         TESTS::
 
-            sage: mod(0,1).crt(mod(4,2^127))
+            sage: mod(0, 1).crt(mod(4, 2^127))
             4
-            sage: mod(4,2^127).crt(mod(0,1))
+            sage: mod(4, 2^127).crt(mod(0, 1))
             4
-            sage: mod(4,2^30).crt(mod(0,1))
+            sage: mod(4, 2^30).crt(mod(0, 1))
             4
-            sage: mod(0,1).crt(mod(4,2^30))
+            sage: mod(0, 1).crt(mod(4, 2^30))
             4
-            sage: mod(0,1).crt(mod(4,2^15))
+            sage: mod(0, 1).crt(mod(4, 2^15))
             4
-            sage: mod(4,2^15).crt(mod(0,1))
+            sage: mod(4, 2^15).crt(mod(0, 1))
             4
 
         AUTHORS:
@@ -1688,20 +1733,20 @@ cdef class IntegerMod_abstract(FiniteRingElement):
 
         EXAMPLES::
 
-            sage: mod(1,2).is_primitive_root()
+            sage: mod(1, 2).is_primitive_root()
             True
-            sage: mod(3,4).is_primitive_root()
+            sage: mod(3, 4).is_primitive_root()
             True
-            sage: mod(2,7).is_primitive_root()
+            sage: mod(2, 7).is_primitive_root()                                         # optional - sage.libs.pari
             False
-            sage: mod(3,98).is_primitive_root()
+            sage: mod(3, 98).is_primitive_root()                                        # optional - sage.libs.pari
             True
-            sage: mod(11,1009^2).is_primitive_root()
+            sage: mod(11, 1009^2).is_primitive_root()                                   # optional - sage.libs.pari
             True
 
         TESTS::
 
-            sage: for p in prime_range(3,12):
+            sage: for p in prime_range(3,12):                                           # optional - sage.libs.pari
             ....:     for k in range(1,4):
             ....:         for even in [1,2]:
             ....:             n = even*p^k
@@ -1714,14 +1759,14 @@ cdef class IntegerMod_abstract(FiniteRingElement):
 
         `0` is not a primitive root mod `n` (:trac:`23624`) except for `n=0`::
 
-            sage: mod(0, 17).is_primitive_root()
+            sage: mod(0, 17).is_primitive_root()                                        # optional - sage.libs.pari
             False
-            sage: all(not mod(0, n).is_primitive_root() for n in srange(2, 20))
+            sage: all(not mod(0, n).is_primitive_root() for n in srange(2, 20))         # optional - sage.libs.pari
             True
             sage: mod(0, 1).is_primitive_root()
             True
 
-            sage: all(not mod(p^j, p^k).is_primitive_root()
+            sage: all(not mod(p^j, p^k).is_primitive_root()                             # optional - sage.libs.pari
             ....:     for p in prime_range(3, 12)
             ....:     for k in srange(1, 4)
             ....:     for j in srange(0, k))
@@ -1776,14 +1821,15 @@ cdef class IntegerMod_abstract(FiniteRingElement):
 
         EXAMPLES::
 
-            sage: Mod(-1,5).multiplicative_order()
+            sage: Mod(-1, 5).multiplicative_order()                                     # optional - sage.libs.pari
             2
-            sage: Mod(1,5).multiplicative_order()
+            sage: Mod(1, 5).multiplicative_order()                                      # optional - sage.libs.pari
             1
-            sage: Mod(0,5).multiplicative_order()
+            sage: Mod(0, 5).multiplicative_order()                                      # optional - sage.libs.pari
             Traceback (most recent call last):
             ...
-            ArithmeticError: multiplicative order of 0 not defined since it is not a unit modulo 5
+            ArithmeticError: multiplicative order of 0 not defined
+            since it is not a unit modulo 5
         """
         try:
             return sage.rings.integer.Integer(self.__pari__().znorder())
@@ -1793,7 +1839,7 @@ cdef class IntegerMod_abstract(FiniteRingElement):
 
     def valuation(self, p):
         """
-        The largest power r such that m is in the ideal generated by p^r or infinity if there is not a largest such power.
+        The largest power `r` such that `m` is in the ideal generated by `p^r` or infinity if there is not a largest such power.
         However it is an error to take the valuation with respect to a unit.
 
         .. NOTE::
@@ -1802,13 +1848,13 @@ cdef class IntegerMod_abstract(FiniteRingElement):
 
         EXAMPLES:
 
-        This example shows that the (a*b).valuation(n) is not always the same as a.valuation(n) + b.valuation(n)
+        This example shows that ``(a*b).valuation(n)`` is not always the same as ``a.valuation(n) + b.valuation(n)``
 
         ::
 
-            sage: R=ZZ.quo(9)
-            sage: a=R(3)
-            sage: b=R(6)
+            sage: R = ZZ.quo(9)
+            sage: a = R(3)
+            sage: b = R(6)
             sage: a.valuation(3)
             1
             sage: a.valuation(3) + b.valuation(3)
@@ -1827,9 +1873,9 @@ cdef class IntegerMod_abstract(FiniteRingElement):
 
         TESTS::
 
-            sage: R=ZZ.quo(12)
-            sage: a=R(2)
-            sage: b=R(4)
+            sage: R = ZZ.quo(12)
+            sage: a = R(2)
+            sage: b = R(4)
             sage: a.valuation(2)
             1
             sage: b.valuation(2)
@@ -1847,7 +1893,7 @@ cdef class IntegerMod_abstract(FiniteRingElement):
             r += 1
             power *= p
             if not power.divides(self.__modulus.sageInteger):
-                from sage.rings.all import infinity
+                from sage.rings.infinity import infinity
                 return infinity
         return r
 
@@ -1857,7 +1903,7 @@ cdef class IntegerMod_abstract(FiniteRingElement):
 
         EXAMPLES::
 
-            sage: GF(7)(3) // 5
+            sage: GF(7)(3) // 5                                                         # optional - sage.rings.finite_rings
             2
         """
         return self._mul_(~right)
@@ -1884,9 +1930,9 @@ cdef class IntegerMod_abstract(FiniteRingElement):
 
         EXAMPLES::
 
-            sage: F.<a> = GF(13)
-            sage: V = F.vector_space(map=False)
-            sage: V(a)
+            sage: F.<a> = GF(13)                                                        # optional - sage.rings.finite_rings
+            sage: V = F.vector_space(map=False)                                         # optional - sage.rings.finite_rings
+            sage: V(a)                                                                  # optional - sage.rings.finite_rings
             (1)
         """
         return self.parent().vector_space(map=False)([self])
@@ -1898,7 +1944,7 @@ cdef class IntegerMod_abstract(FiniteRingElement):
 
 
 cdef class IntegerMod_gmp(IntegerMod_abstract):
-    """
+    r"""
     Elements of `\ZZ/n\ZZ` for n not small enough
     to be operated on in word size.
 
@@ -1929,8 +1975,8 @@ cdef class IntegerMod_gmp(IntegerMod_abstract):
         r"""
         EXAMPLES::
 
-            sage: p = next_prime(2^32)
-            sage: GF(p)(int(p+1))
+            sage: p = next_prime(2^32)                                                  # optional - sage.libs.pari
+            sage: GF(p)(int(p + 1))                                                     # optional - sage.rings.finite_rings
             1
         """
         mpz_set_si(self.value, value)
@@ -2038,7 +2084,7 @@ cdef class IntegerMod_gmp(IntegerMod_abstract):
         """
         return mpz_cmp_si(self.value, 1) == 0
 
-    def __nonzero__(IntegerMod_gmp self):
+    def __bool__(IntegerMod_gmp self):
         """
         Returns ``True`` if this is not `0`, otherwise
         ``False``.
@@ -2054,7 +2100,7 @@ cdef class IntegerMod_gmp(IntegerMod_abstract):
 
     cpdef bint is_unit(self):
         """
-        Return True iff this element is a unit.
+        Return ``True`` iff this element is a unit.
 
         EXAMPLES::
 
@@ -2086,12 +2132,29 @@ cdef class IntegerMod_gmp(IntegerMod_abstract):
         except ZeroDivisionError:
             raise ZeroDivisionError("moduli must be coprime")
 
-
     def __copy__(IntegerMod_gmp self):
-        cdef IntegerMod_gmp x
-        x = self._new_c()
-        mpz_set(x.value, self.value)
-        return x
+        """
+        EXAMPLES::
+
+            sage: R = Integers(10^10)
+            sage: R7 = R(7)
+            sage: copy(R7) is R7
+            True
+        """
+        # immutable
+        return self
+
+    def __deepcopy__(IntegerMod_gmp self, memo):
+        """
+        EXAMPLES::
+
+            sage: R = Integers(10^10)
+            sage: R7 = R(7)
+            sage: deepcopy(R7) is R7
+            True
+        """
+        # immutable
+        return self
 
     cpdef _add_(self, right):
         """
@@ -2106,7 +2169,7 @@ cdef class IntegerMod_gmp(IntegerMod_abstract):
         mpz_add(x.value, self.value, (<IntegerMod_gmp>right).value)
         if mpz_cmp(x.value, self.__modulus.sageInteger.value)  >= 0:
             mpz_sub(x.value, x.value, self.__modulus.sageInteger.value)
-        return x;
+        return x
 
     cpdef _sub_(self, right):
         """
@@ -2121,7 +2184,7 @@ cdef class IntegerMod_gmp(IntegerMod_abstract):
         mpz_sub(x.value, self.value, (<IntegerMod_gmp>right).value)
         if mpz_sgn(x.value) == -1:
             mpz_add(x.value, x.value, self.__modulus.sageInteger.value)
-        return x;
+        return x
 
     cpdef _neg_(self):
         """
@@ -2185,9 +2248,9 @@ cdef class IntegerMod_gmp(IntegerMod_abstract):
             sage: R = Integers(10^10)
             sage: R(2)^1000
             5668069376
-            sage: p = next_prime(11^10)
-            sage: R = Integers(p)
-            sage: R(9876)^(p-1)
+            sage: p = next_prime(11^10)                                                 # optional - sage.libs.pari
+            sage: R = Integers(p)                                                       # optional - sage.libs.pari
+            sage: R(9876)^(p-1)                                                         # optional - sage.libs.pari
             1
             sage: mod(3, 10^100)^-2
             8888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888889
@@ -2200,14 +2263,14 @@ cdef class IntegerMod_gmp(IntegerMod_abstract):
 
         We define ``0^0`` to be unity, :trac:`13894`::
 
-            sage: p = next_prime(11^10)
-            sage: R = Integers(p)
-            sage: R(0)^0
+            sage: p = next_prime(11^10)                                                 # optional - sage.libs.pari
+            sage: R = Integers(p)                                                       # optional - sage.libs.pari
+            sage: R(0)^0                                                                # optional - sage.libs.pari
             1
 
         The value returned from ``0^0`` should belong to our ring::
 
-            sage: type(R(0)^0) == type(R(0))
+            sage: type(R(0)^0) == type(R(0))                                            # optional - sage.libs.pari
             True
 
         When the modulus is ``1``, the only element in the ring is
@@ -2218,7 +2281,7 @@ cdef class IntegerMod_gmp(IntegerMod_abstract):
             ....:     import IntegerMod_gmp
             sage: zero = IntegerMod_gmp(Integers(1),0)
             sage: type(zero)
-            <type 'sage.rings.finite_rings.integer_mod.IntegerMod_gmp'>
+            <class 'sage.rings.finite_rings.integer_mod.IntegerMod_gmp'>
             sage: zero^0
             0
 
@@ -2238,7 +2301,7 @@ cdef class IntegerMod_gmp(IntegerMod_abstract):
         EXAMPLES::
 
             sage: a = mod(3,10^100); type(a)
-            <type 'sage.rings.finite_rings.integer_mod.IntegerMod_gmp'>
+            <class 'sage.rings.finite_rings.integer_mod.IntegerMod_gmp'>
             sage: ~a
             6666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666667
             sage: ~mod(2,10^100)
@@ -2262,7 +2325,7 @@ cdef class IntegerMod_gmp(IntegerMod_abstract):
         EXAMPLES::
 
             sage: a = Mod(8943, 2^70); type(a)
-            <type 'sage.rings.finite_rings.integer_mod.IntegerMod_gmp'>
+            <class 'sage.rings.finite_rings.integer_mod.IntegerMod_gmp'>
             sage: lift(a)
             8943
             sage: a.lift()
@@ -2288,7 +2351,7 @@ cdef class IntegerMod_gmp(IntegerMod_abstract):
 
     @coerce_binop
     def gcd(self, IntegerMod_gmp other):
-        """
+        r"""
         Greatest common divisor
 
         Returns the "smallest" generator in `\ZZ / N\ZZ` of the ideal
@@ -2321,7 +2384,7 @@ cdef class IntegerMod_gmp(IntegerMod_abstract):
 
 
 cdef class IntegerMod_int(IntegerMod_abstract):
-    """
+    r"""
     Elements of `\ZZ/n\ZZ` for n small enough to
     be operated on in 32 bits
 
@@ -2408,7 +2471,7 @@ cdef class IntegerMod_int(IntegerMod_abstract):
         """
         return self.ivalue == 1 or self.__modulus.int32 == 1
 
-    def __nonzero__(IntegerMod_int self):
+    def __bool__(IntegerMod_int self):
         """
         Returns ``True`` if this is not `0`, otherwise
         ``False``.
@@ -2424,7 +2487,7 @@ cdef class IntegerMod_int(IntegerMod_abstract):
 
     cpdef bint is_unit(IntegerMod_int self):
         """
-        Return True iff this element is a unit
+        Return ``True`` iff this element is a unit
 
         EXAMPLES::
 
@@ -2468,13 +2531,29 @@ cdef class IntegerMod_int(IntegerMod_abstract):
         except ZeroDivisionError:
             raise ZeroDivisionError("moduli must be coprime")
 
-
     def __copy__(IntegerMod_int self):
-        cdef IntegerMod_int x = IntegerMod_int.__new__(IntegerMod_int)
-        x._parent = self._parent
-        x.__modulus = self.__modulus
-        x.ivalue = self.ivalue
-        return x
+        """
+        EXAMPLES::
+
+            sage: R = Integers(10)
+            sage: R7 = R(7)
+            sage: copy(R7) is R7
+            True
+        """
+        # immutable
+        return self
+
+    def __deepcopy__(IntegerMod_int self, memo):
+        """
+        EXAMPLES::
+
+            sage: R = Integers(10)
+            sage: R7 = R(7)
+            sage: deepcopy(R7) is R7
+            True
+        """
+        # immutable
+        return self
 
     cpdef _add_(self, right):
         """
@@ -2749,7 +2828,7 @@ cdef class IntegerMod_int(IntegerMod_abstract):
         EXAMPLES::
 
             sage: a = Mod(8943, 2^10); type(a)
-            <type 'sage.rings.finite_rings.integer_mod.IntegerMod_int'>
+            <class 'sage.rings.finite_rings.integer_mod.IntegerMod_int'>
             sage: lift(a)
             751
             sage: a.lift()
@@ -2816,9 +2895,8 @@ cdef class IntegerMod_int(IntegerMod_abstract):
         them `p`-adically and uses the CRT to find a square root
         mod `n`.
 
-        See also ``square_root_mod_prime_power`` and
-        ``square_root_mod_prime`` (in this module) for more
-        algorithmic details.
+        See also :meth:`square_root_mod_prime_power` and
+        :meth:`square_root_mod_prime` for more algorithmic details.
 
         EXAMPLES::
 
@@ -2828,16 +2906,16 @@ cdef class IntegerMod_int(IntegerMod_abstract):
             86
             sage: mod(7, 18).sqrt()
             5
-            sage: a = mod(14, 5^60).sqrt()
-            sage: a*a
+            sage: a = mod(14, 5^60).sqrt()                                              # optional - sage.libs.pari
+            sage: a*a                                                                   # optional - sage.libs.pari
             14
             sage: mod(15, 389).sqrt(extend=False)
             Traceback (most recent call last):
             ...
             ValueError: self must be a square
-            sage: Mod(1/9, next_prime(2^40)).sqrt()^(-2)
+            sage: Mod(1/9, next_prime(2^40)).sqrt()^(-2)                                # optional - sage.libs.pari
             9
-            sage: Mod(1/25, next_prime(2^90)).sqrt()^(-2)
+            sage: Mod(1/25, next_prime(2^90)).sqrt()^(-2)                               # optional - sage.libs.pari
             25
 
         ::
@@ -2852,7 +2930,8 @@ cdef class IntegerMod_int(IntegerMod_abstract):
             sage: y = x.sqrt(); y
             sqrt359
             sage: y.parent()
-            Univariate Quotient Polynomial Ring in sqrt359 over Ring of integers modulo 360 with modulus x^2 + 1
+            Univariate Quotient Polynomial Ring in sqrt359
+             over Ring of integers modulo 360 with modulus x^2 + 1
             sage: y^2
             359
 
@@ -2868,20 +2947,20 @@ cdef class IntegerMod_int(IntegerMod_abstract):
             [1, 19, 71, 89, 91, 109, 161, 179, 181, 199, 251, 269, 271, 289, 341, 359]
             sage: R(0).sqrt(all=True)
             [0, 60, 120, 180, 240, 300]
-            sage: GF(107)(0).sqrt(all=True)
+            sage: GF(107)(0).sqrt(all=True)                                             # optional - sage.rings.finite_rings
             [0]
 
         ::
 
             sage: R = Integers(5*13^3*37); R
             Ring of integers modulo 406445
-            sage: v = R(-1).sqrt(all=True); v
+            sage: v = R(-1).sqrt(all=True); v                                           # optional - sage.libs.pari
             [78853, 111808, 160142, 193097, 213348, 246303, 294637, 327592]
-            sage: [x^2 for x in v]
+            sage: [x^2 for x in v]                                                      # optional - sage.libs.pari
             [406444, 406444, 406444, 406444, 406444, 406444, 406444, 406444]
-            sage: v = R(169).sqrt(all=True); min(v), -max(v), len(v)
+            sage: v = R(169).sqrt(all=True); min(v), -max(v), len(v)                    # optional - sage.libs.pari
             (13, 13, 104)
-            sage: all(x^2 == 169 for x in v)
+            sage: all(x^2 == 169 for x in v)                                            # optional - sage.libs.pari
             True
 
         Modulo a power of 2::
@@ -2900,7 +2979,7 @@ cdef class IntegerMod_int(IntegerMod_abstract):
 
         Check for :trac:`30797`::
 
-            sage: GF(103)(-1).sqrt(extend=False, all=True)
+            sage: GF(103)(-1).sqrt(extend=False, all=True)                              # optional - sage.rings.finite_rings
             []
         """
         cdef int_fast32_t i, n = self.__modulus.int32
@@ -2941,20 +3020,18 @@ cdef class IntegerMod_int(IntegerMod_abstract):
         # Either it failed but extend was True, or the generic algorithm is better
         return IntegerMod_abstract.sqrt(self, extend=extend, all=all)
 
-
     def _balanced_abs(self):
-        """
+        r"""
         This function returns `x` or `-x`, whichever has a
         positive representative in `-n/2 < x \leq n/2`.
         """
         if self.ivalue > self.__modulus.int32 / 2:
             return -self
-        else:
-            return self
+        return self
 
     @coerce_binop
     def gcd(self, IntegerMod_int other):
-        """
+        r"""
         Greatest common divisor
 
         Returns the "smallest" generator in `\ZZ / N\ZZ` of the ideal
@@ -3132,7 +3209,7 @@ cdef int jacobi_int(int_fast32_t a, int_fast32_t m) except -2:
 ######################################################################
 
 cdef class IntegerMod_int64(IntegerMod_abstract):
-    """
+    r"""
     Elements of `\ZZ/n\ZZ` for n small enough to
     be operated on in 64 bits
 
@@ -3141,7 +3218,7 @@ cdef class IntegerMod_int64(IntegerMod_abstract):
         sage: a = Mod(10,3^10); a
         10
         sage: type(a)
-        <type 'sage.rings.finite_rings.integer_mod.IntegerMod_int64'>
+        <class 'sage.rings.finite_rings.integer_mod.IntegerMod_int64'>
         sage: loads(a.dumps()) == a
         True
         sage: Mod(5, 2^31)
@@ -3218,7 +3295,7 @@ cdef class IntegerMod_int64(IntegerMod_abstract):
         """
         return self.ivalue == 1
 
-    def __nonzero__(IntegerMod_int64 self):
+    def __bool__(IntegerMod_int64 self):
         """
         Returns ``True`` if this is not `0`, otherwise
         ``False``.
@@ -3234,7 +3311,7 @@ cdef class IntegerMod_int64(IntegerMod_abstract):
 
     cpdef bint is_unit(IntegerMod_int64 self):
         """
-        Return True iff this element is a unit.
+        Return ``True`` iff this element is a unit.
 
         EXAMPLES::
 
@@ -3288,7 +3365,28 @@ cdef class IntegerMod_int64(IntegerMod_abstract):
             raise ZeroDivisionError("moduli must be coprime")
 
     def __copy__(IntegerMod_int64 self):
-        return self._new_c(self.ivalue)
+        """
+        EXAMPLES::
+
+            sage: R = Integers(10^5)
+            sage: R7 = R(7)
+            sage: copy(R7) is R7
+            True
+        """
+        # immutable
+        return self
+
+    def __deepcopy__(IntegerMod_int64 self, memo):
+        """
+        EXAMPLES::
+
+            sage: R = Integers(10^5)
+            sage: R7 = R(7)
+            sage: deepcopy(R7) is R7
+            True
+        """
+        # immutable
+        return self
 
     cpdef _add_(self, right):
         """
@@ -3448,9 +3546,9 @@ cdef class IntegerMod_int64(IntegerMod_abstract):
             sage: R = Integers(10)
             sage: R(2)^10
             4
-            sage: p = next_prime(10^5)
-            sage: R = Integers(p)
-            sage: R(1234)^(p-1)
+            sage: p = next_prime(10^5)                                                  # optional - sage.libs.pari
+            sage: R = Integers(p)                                                       # optional - sage.libs.pari
+            sage: R(1234)^(p - 1)                                                       # optional - sage.libs.pari
             1
             sage: R = Integers(17^5)
             sage: R(17)^5
@@ -3472,18 +3570,18 @@ cdef class IntegerMod_int64(IntegerMod_abstract):
         TESTS::
 
             sage: type(R(0))
-            <type 'sage.rings.finite_rings.integer_mod.IntegerMod_int64'>
+            <class 'sage.rings.finite_rings.integer_mod.IntegerMod_int64'>
 
         We define ``0^0`` to be unity, :trac:`13894`::
 
-            sage: p = next_prime(10^5)
-            sage: R = Integers(p)
-            sage: R(0)^0
+            sage: p = next_prime(10^5)                                                  # optional - sage.libs.pari
+            sage: R = Integers(p)                                                       # optional - sage.libs.pari
+            sage: R(0)^0                                                                # optional - sage.libs.pari
             1
 
         The value returned from ``0^0`` should belong to our ring::
 
-            sage: type(R(0)^0) == type(R(0))
+            sage: type(R(0)^0) == type(R(0))                                            # optional - sage.libs.pari
             True
 
         When the modulus is ``1``, the only element in the ring is
@@ -3494,7 +3592,7 @@ cdef class IntegerMod_int64(IntegerMod_abstract):
             ....:     import IntegerMod_int64
             sage: zero = IntegerMod_int64(Integers(1),0)
             sage: type(zero)
-            <type 'sage.rings.finite_rings.integer_mod.IntegerMod_int64'>
+            <class 'sage.rings.finite_rings.integer_mod.IntegerMod_int64'>
             sage: zero^0
             0
 
@@ -3538,7 +3636,7 @@ cdef class IntegerMod_int64(IntegerMod_abstract):
         EXAMPLES::
 
             sage: a = mod(7,2^40); type(a)
-            <type 'sage.rings.finite_rings.integer_mod.IntegerMod_gmp'>
+            <class 'sage.rings.finite_rings.integer_mod.IntegerMod_gmp'>
             sage: ~a
             471219269047
             sage: a
@@ -3553,7 +3651,7 @@ cdef class IntegerMod_int64(IntegerMod_abstract):
         EXAMPLES::
 
             sage: a = Mod(8943, 2^25); type(a)
-            <type 'sage.rings.finite_rings.integer_mod.IntegerMod_int64'>
+            <class 'sage.rings.finite_rings.integer_mod.IntegerMod_int64'>
             sage: lift(a)
             8943
             sage: a.lift()
@@ -3586,22 +3684,20 @@ cdef class IntegerMod_int64(IntegerMod_abstract):
             sage: hash(a)
             8943
         """
-
         return hash(self.ivalue)
 
     def _balanced_abs(self):
-        """
+        r"""
         This function returns `x` or `-x`, whichever has a
         positive representative in `-n/2 < x \leq n/2`.
         """
         if self.ivalue > self.__modulus.int64 / 2:
             return -self
-        else:
-            return self
+        return self
 
     @coerce_binop
     def gcd(self, IntegerMod_int64 other):
-        """
+        r"""
         Greatest common divisor
 
         Returns the "smallest" generator in `\ZZ / N\ZZ` of the ideal
@@ -3786,66 +3882,94 @@ def square_root_mod_prime_power(IntegerMod_abstract a, p, e):
     Calculates the square root of `a`, where `a` is an
     integer mod `p^e`.
 
-    ALGORITHM: Perform `p`-adically by stripping off even
-    powers of `p` to get a unit and lifting
-    `\sqrt{unit} \bmod p` via Newton's method.
+    ALGORITHM: Compute `p`-adically by stripping off even powers of `p`
+    to get a unit and lifting `\sqrt{unit} \bmod p` via Newton's method
+    whenever `p` is odd and by a variant of Hensel lifting for `p = 2`.
 
     AUTHORS:
 
     - Robert Bradshaw
+    - Lorenz Panny (2022): polynomial-time algorithm for `p = 2`
 
     EXAMPLES::
 
         sage: from sage.rings.finite_rings.integer_mod import square_root_mod_prime_power
-        sage: a=Mod(17,2^20)
-        sage: b=square_root_mod_prime_power(a,2,20)
+        sage: a = Mod(17,2^20)
+        sage: b = square_root_mod_prime_power(a,2,20)
         sage: b^2 == a
         True
 
     ::
 
-        sage: a=Mod(72,97^10)
-        sage: b=square_root_mod_prime_power(a,97,10)
-        sage: b^2 == a
+        sage: a = Mod(72, 97^10)
+        sage: b = square_root_mod_prime_power(a, 97, 10)                                # optional - sage.libs.pari
+        sage: b^2 == a                                                                  # optional - sage.libs.pari
         True
-        sage: mod(100, 5^7).sqrt()^2
+        sage: mod(100, 5^7).sqrt()^2                                                    # optional - sage.libs.pari
         100
+
+    TESTS:
+
+    A big example for the binary case (:trac:`33961`)::
+
+        sage: y = Mod(-7, 2^777)
+        sage: hex(y.sqrt()^2 - y)                                                       # optional - sage.libs.pari
+        '0x0'
+
+    Testing with random squares in random rings::
+
+        sage: p = random_prime(999)                                                     # optional - sage.libs.pari
+        sage: e = randrange(1, 999)                                                     # optional - sage.libs.pari
+        sage: x = Zmod(p^e).random_element()                                            # optional - sage.libs.pari
+        sage: (x^2).sqrt()^2 == x^2                                                     # optional - sage.libs.pari
+        True
     """
     if a.is_zero() or a.is_one():
         return a
 
-    if p == 2:
-        if e == 1:
-            return a
-        # TODO: implement something that isn't totally idiotic.
-        for x in a.parent():
-            if x**2 == a:
-                return x
-
     # strip off even powers of p
     cdef int i, val = a.lift().valuation(p)
     if val % 2 == 1:
-        raise ValueError("self must be a square.")
+        raise ValueError("self must be a square")
     if val > 0:
         unit = a._parent(a.lift() // p**val)
     else:
         unit = a
 
-    # find square root of unit mod p
-    x = unit.parent()(square_root_mod_prime(mod(unit, p), p))
+    cdef int n
 
-    # lift p-adically using Newton iteration
-    # this is done to higher precision than necessary except at the last step
-    one_half = ~(a._new_c_from_long(2))
-    # need at least (e - val//2) p-adic digits of precision, which doubles
-    # at each step
-    cdef int n = <int>ceil(log(e - val//2)/log(2))
-    for i in range(n):
-        x = (x+unit/x) * one_half
+    if p == 2:
+        # squares in Z/2^e are of the form 4^n*(1+8*m)
+        if unit.lift() % 8 != 1:
+            raise ValueError("self must be a square")
+
+        u = unit.lift()
+        x = next(i for i in range(1,8,2) if i*i & 31 == u & 31)
+        t = (x*x - u) >> 5
+        for i in range(4, e-1 - val//2):
+            if t & 1:
+                x |= one_Z << i
+                t += x - (one_Z << i-1)
+            t >>= 1
+#            assert t << i+2 == x*x - u
+        x = a.parent()(x)
+
+    else:
+        # find square root of unit mod p
+        x = unit.parent()(square_root_mod_prime(mod(unit, p), p))
+
+        # lift p-adically using Newton iteration
+        # this is done to higher precision than necessary except at the last step
+        one_half = ~(a._new_c_from_long(2))
+        # need at least (e - val//2) p-adic digits of precision, which doubles
+        # at each step
+        n = <int>ceil(log2(e - val//2))
+        for i in range(n):
+            x = (x + unit/x) * one_half
 
     # multiply in powers of p (if any)
     if val > 0:
-        x *= p**(val // 2)
+        x *= p**(val//2)
     return x
 
 cpdef square_root_mod_prime(IntegerMod_abstract a, p=None):
@@ -3892,7 +4016,7 @@ cpdef square_root_mod_prime(IntegerMod_abstract a, p=None):
     ::
 
         sage: from sage.rings.finite_rings.integer_mod import square_root_mod_prime   # sqrt() uses brute force for small p
-        sage: all(square_root_mod_prime(a*a)^2 == a*a
+        sage: all(square_root_mod_prime(a*a)^2 == a*a                                   # optional - sage.libs.pari
         ....:     for p in prime_range(100)
         ....:     for a in Integers(p))
         True
@@ -3905,11 +4029,8 @@ cpdef square_root_mod_prime(IntegerMod_abstract a, p=None):
     p = Integer(p)
 
     cdef int p_mod_16 = p % 16
-    cdef double bits = log(float(p))/log(2)
+    cdef double bits = log2(float(p))
     cdef long r, m
-
-    cdef Integer resZ
-
 
     if p_mod_16 % 2 == 0:  # p == 2
         return a
@@ -3978,7 +4099,7 @@ def lucas_q1(mm, IntegerMod_abstract P):
     TESTS::
 
         sage: from sage.rings.finite_rings.integer_mod import lucas_q1
-        sage: all(lucas_q1(k, a) == BinaryRecurrenceSequence(a, -1, 2, a)(k)
+        sage: all(lucas_q1(k, a) == BinaryRecurrenceSequence(a, -1, 2, a)(k)            # optional - sage.combinat
         ....:     for a in Integers(23)
         ....:     for k in range(13))
         True
@@ -4045,16 +4166,16 @@ def lucas(k, P, Q=1, n=None):
         sage: from sage.rings.finite_rings.integer_mod import lucas
         sage: p = randint(0,100000)
         sage: q = randint(0,100000)
-        sage: n = randint(0,100)
-        sage: all(lucas(k,p,q,n)[0] == Mod(lucas_number2(k,p,q),n)
+        sage: n = randint(1,100)
+        sage: all(lucas(k, p, q, n)[0] == Mod(lucas_number2(k, p, q), n)                # optional - sage.combinat
         ....:     for k in Integers(20))
         True
         sage: from sage.rings.finite_rings.integer_mod import lucas
         sage: p = randint(0,100000)
         sage: q = randint(0,100000)
-        sage: n = randint(0,100)
+        sage: n = randint(1,100)
         sage: k = randint(0,100)
-        sage: lucas(k,p,q,n) == [Mod(lucas_number2(k,p,q),n),Mod(q^(int(k/2)),n)]
+        sage: lucas(k, p, q, n) == [Mod(lucas_number2(k, p, q), n), Mod(q^(int(k/2)), n)]           # optional - sage.combinat
         True
 
     EXAMPLES::
@@ -4192,8 +4313,14 @@ cdef class IntegerMod_to_IntegerMod(IntegerMod_hom):
         sage: from sage.rings.finite_rings.integer_mod import IntegerMod_to_IntegerMod
         sage: Rs = [Integers(3**k) for k in range(1,30,5)]
         sage: [type(R(0)) for R in Rs]
-        [<type 'sage.rings.finite_rings.integer_mod.IntegerMod_int'>, <type 'sage.rings.finite_rings.integer_mod.IntegerMod_int'>, <type 'sage.rings.finite_rings.integer_mod.IntegerMod_int64'>, <type 'sage.rings.finite_rings.integer_mod.IntegerMod_int64'>, <type 'sage.rings.finite_rings.integer_mod.IntegerMod_gmp'>, <type 'sage.rings.finite_rings.integer_mod.IntegerMod_gmp'>]
-        sage: fs = [IntegerMod_to_IntegerMod(S, R) for R in Rs for S in Rs if S is not R and S.order() > R.order()]
+        [<class 'sage.rings.finite_rings.integer_mod.IntegerMod_int'>,
+         <class 'sage.rings.finite_rings.integer_mod.IntegerMod_int'>,
+         <class 'sage.rings.finite_rings.integer_mod.IntegerMod_int64'>,
+         <class 'sage.rings.finite_rings.integer_mod.IntegerMod_int64'>,
+         <class 'sage.rings.finite_rings.integer_mod.IntegerMod_gmp'>,
+         <class 'sage.rings.finite_rings.integer_mod.IntegerMod_gmp'>]
+        sage: fs = [IntegerMod_to_IntegerMod(S, R)
+        ....:       for R in Rs for S in Rs if S is not R and S.order() > R.order()]
         sage: all(f(-1) == f.codomain()(-1) for f in fs)
         True
         sage: [f(-1) for f in fs]
@@ -4262,7 +4389,9 @@ cdef class Integer_to_IntegerMod(IntegerMod_hom):
         sage: from sage.rings.finite_rings.integer_mod import Integer_to_IntegerMod
         sage: Rs = [Integers(10), Integers(10^5), Integers(10^10)]
         sage: [type(R(0)) for R in Rs]
-        [<type 'sage.rings.finite_rings.integer_mod.IntegerMod_int'>, <type 'sage.rings.finite_rings.integer_mod.IntegerMod_int64'>, <type 'sage.rings.finite_rings.integer_mod.IntegerMod_gmp'>]
+        [<class 'sage.rings.finite_rings.integer_mod.IntegerMod_int'>,
+         <class 'sage.rings.finite_rings.integer_mod.IntegerMod_int64'>,
+         <class 'sage.rings.finite_rings.integer_mod.IntegerMod_gmp'>]
         sage: fs = [Integer_to_IntegerMod(R) for R in Rs]
         sage: [f(-1) for f in fs]
         [9, 99999, 9999999999]
@@ -4324,7 +4453,7 @@ cdef class IntegerMod_to_Integer(Map):
 
     EXAMPLES::
 
-        sage: ZZ.convert_map_from(GF(2))
+        sage: ZZ.convert_map_from(GF(2))                                                # optional - sage.rings.finite_rings
         Lifting map:
           From: Finite Field of size 2
           To:   Integer Ring
@@ -4336,11 +4465,11 @@ cdef class IntegerMod_to_Integer(Map):
         Lifting maps are morphisms in the category of sets (see
         :trac:`15618`)::
 
-            sage: ZZ.convert_map_from(GF(2)).parent()
+            sage: ZZ.convert_map_from(GF(2)).parent()                                   # optional - sage.rings.finite_rings
             Set of Morphisms from Finite Field of size 2 to Integer Ring in Category of sets
         """
         import sage.categories.homset
-        from sage.categories.all import Sets
+        from sage.categories.sets_cat import Sets
         Morphism.__init__(self, sage.categories.homset.Hom(R, integer_ring.ZZ, Sets()))
 
     cpdef Element _call_(self, x):
@@ -4368,7 +4497,11 @@ cdef class Int_to_IntegerMod(IntegerMod_hom):
         sage: from sage.rings.finite_rings.integer_mod import Int_to_IntegerMod
         sage: Rs = [Integers(2**k) for k in range(1,50,10)]
         sage: [type(R(0)) for R in Rs]
-        [<type 'sage.rings.finite_rings.integer_mod.IntegerMod_int'>, <type 'sage.rings.finite_rings.integer_mod.IntegerMod_int'>, <type 'sage.rings.finite_rings.integer_mod.IntegerMod_int64'>, <type 'sage.rings.finite_rings.integer_mod.IntegerMod_gmp'>, <type 'sage.rings.finite_rings.integer_mod.IntegerMod_gmp'>]
+        [<class 'sage.rings.finite_rings.integer_mod.IntegerMod_int'>,
+         <class 'sage.rings.finite_rings.integer_mod.IntegerMod_int'>,
+         <class 'sage.rings.finite_rings.integer_mod.IntegerMod_int64'>,
+         <class 'sage.rings.finite_rings.integer_mod.IntegerMod_gmp'>,
+         <class 'sage.rings.finite_rings.integer_mod.IntegerMod_gmp'>]
         sage: fs = [Int_to_IntegerMod(R) for R in Rs]
         sage: [f(-1) for f in fs]
         [1, 2047, 2097151, 2147483647, 2199023255551]

@@ -48,17 +48,20 @@ from .jacobi import (jacobi, inverse_jacobi, jacobi_nd, jacobi_ns, jacobi_nc,
                     inverse_jacobi_cn, inverse_jacobi_cd, inverse_jacobi_cs)
 
 from .orthogonal_polys import (chebyshev_T,
-                              chebyshev_U,
-                              gen_laguerre,
-                              gen_legendre_P,
-                              gen_legendre_Q,
-                              hermite,
-                              jacobi_P,
-                              laguerre,
-                              legendre_P,
-                              legendre_Q,
-                              ultraspherical,
-                              gegenbauer)
+                               chebyshev_U,
+                               gen_laguerre,
+                               gen_legendre_P,
+                               gen_legendre_Q,
+                               hermite,
+                               jacobi_P,
+                               laguerre,
+                               legendre_P,
+                               legendre_Q,
+                               ultraspherical,
+                               gegenbauer,
+                               krawtchouk,
+                               meixner,
+                               hahn)
 
 from .spike_function import spike_function
 

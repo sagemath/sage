@@ -108,7 +108,7 @@ class WeierstrassTransformation(SchemeMorphism_polynomial):
             (1/3 : 0 : 1)
         """
         Hom = domain.Hom(codomain)
-        super(WeierstrassTransformation, self).__init__(Hom, defining_polynomials)
+        super().__init__(Hom, defining_polynomials)
         self._post = post_multiplication
 
     def post_rescaling(self):

@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.rings.finite_rings
 r"""
 Orthogonal arrays (OA)
 
@@ -360,7 +361,7 @@ def transversal_design(k, n, resolvable=False, check=True, existence=False):
                 return False
             raise EmptySetError("There exists no TD({},{})!".format(k,n))
 
-        OA = orthogonal_array(k,n, check = False)
+        OA = orthogonal_array(k,n, check=False)
         TD = [[i*n+c for i,c in enumerate(l)] for l in OA]
 
     else:
@@ -1180,11 +1181,12 @@ def incomplete_orthogonal_array(k,n,holes,resolvable=False, existence=False):
 
     10 holes of size 9 through the product construction::
 
-        sage: iOA = designs.incomplete_orthogonal_array(10,153,[9]*10)  # long time
-        sage: OA9 = designs.orthogonal_arrays.build(10,9)               # long time
-        sage: for i in range(10):                                       # long time
-        ....:     iOA.extend([[153-9*(i+1)+x for x in B] for B in OA9]) # long time
-        sage: is_orthogonal_array(iOA,10,153)                           # long time
+        sage: # long time
+        sage: iOA = designs.incomplete_orthogonal_array(10,153,[9]*10)
+        sage: OA9 = designs.orthogonal_arrays.build(10,9)
+        sage: for i in range(10):
+        ....:     iOA.extend([[153-9*(i+1)+x for x in B] for B in OA9])
+        sage: is_orthogonal_array(iOA,10,153)
         True
 
     An `OA(9,82)-OA(9,9)-OA(9,1)`::
@@ -1227,10 +1229,10 @@ def incomplete_orthogonal_array(k,n,holes,resolvable=False, existence=False):
     if not holes:
         return orthogonal_array(k,n,existence=existence,resolvable=resolvable)
 
-    sum_of_holes    = sum(holes)
+    sum_of_holes = sum(holes)
     number_of_holes = len(holes)
-    max_hole        = max(holes)
-    min_hole        = min(holes)
+    max_hole = max(holes)
+    min_hole = min(holes)
 
     if sum_of_holes > n:
         if existence:
@@ -1362,7 +1364,7 @@ def incomplete_orthogonal_array(k,n,holes,resolvable=False, existence=False):
             if uu == sum_of_holes and mu <= 1 and lmbda == 1 and k <= kk + 1:
                 break
         G,M = f()
-        OA  = OA_from_quasi_difference_matrix(M,G,fill_hole=False)
+        OA = OA_from_quasi_difference_matrix(M,G,fill_hole=False)
         return [B[:k] for B in OA]
 
     # Equal holes [h,h,...] with h>1 through OA product construction
@@ -1375,7 +1377,7 @@ def incomplete_orthogonal_array(k,n,holes,resolvable=False, existence=False):
           incomplete_orthogonal_array(k,n//min_hole,[1]*number_of_holes,existence=True)): # OA(k,n/h)-x.OA(k,1)
         if existence:
             return True
-        h    = min_hole
+        h = min_hole
         iOA1 = incomplete_orthogonal_array(k,n//holes[0],[1]*number_of_holes)
         iOA2 = orthogonal_array(k,h)
 
@@ -1567,7 +1569,7 @@ def OA_n_times_2_pow_c_from_matrix(k,c,G,A,Y,check=True):
 
     - let `s_1` and `s_2` denote the two values of `s` given above, then exactly
       one of `C_{i,s_1} - C_{j,s_1}` and `C_{i,s_2} - C_{j,s_2}` belongs to the
-      `GF(2)`-hyperplane `(Y_i - Y_j) \cdot H` (we implicitely assumed that `Y_i
+      `GF(2)`-hyperplane `(Y_i - Y_j) \cdot H` (we implicitly assumed that `Y_i
       \not= Y_j`).
 
     Under these conditions, it is easy to check that the array whose `k-1` rows
@@ -1843,7 +1845,7 @@ def OA_from_Vmt(m,t,V):
         sage: _ = designs.orthogonal_arrays.build(6,46) # indirect doctest
     """
     Fq, M = QDM_from_Vmt(m,t,V)
-    return OA_from_quasi_difference_matrix(M,Fq,add_col = False)
+    return OA_from_quasi_difference_matrix(M,Fq,add_col=False)
 
 
 def QDM_from_Vmt(m,t,V):
@@ -1954,7 +1956,8 @@ def OA_from_PBD(k,n,PBD, check=True):
         sage: OA_from_PBD(4,10,pbd)
         Traceback (most recent call last):
         ...
-        EmptySetError: There is no OA(n+1,n) - 3.OA(n+1,1) as all blocks intersect in a projective plane.
+        EmptySetError: There is no OA(n+1,n) - 3.OA(n+1,1)
+        as all blocks intersect in a projective plane.
 
     Or an `OA(3,6)` (as the PBD has 10 points)::
 
@@ -2088,7 +2091,7 @@ class OAMainFunctions():
         """
         raise RuntimeError("This is not a function but a class. You want to call the designs.orthogonal_arrays.* functions")
 
-    largest_available_k  = staticmethod(largest_available_k)
+    largest_available_k = staticmethod(largest_available_k)
 
     @staticmethod
     def explain_construction(k,n,t=2):

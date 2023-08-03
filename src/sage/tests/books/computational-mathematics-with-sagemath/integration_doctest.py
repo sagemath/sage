@@ -11,7 +11,9 @@ document.
 Sage example in ./integration.tex, line 73::
 
   sage: x = var('x'); f(x) = exp(-x^2) * log(x)
-  sage: N(integrate(f, x, 1, 3))  # abs tol 1e-14
+  sage: result = integrate(f, x, 1, 3)
+  ...
+  sage: N(result)  # abs tol 1e-14
   0.03586029499126769
 
 Sage example in ./integration.tex, line 78::
@@ -146,10 +148,11 @@ Sage example in ./integration.tex, line 824::
 
 Sage example in ./integration.tex, line 846::
 
-  sage: mpmath.quad(sin(sin(x)), [0, 1])
+  sage: f(x) = sin(sin(x))
+  sage: mpmath.quad(f, [0, 1])
   Traceback (most recent call last):
   ...
-  TypeError: no canonical coercion from <type 'sage.libs.mpmath.ext_main.mpf'> to Symbolic Ring
+  TypeError: no canonical coercion from <class 'sage.libs.mpmath.ext_main.mpf'> to ...
 
 Sage example in ./integration.tex, line 866::
 
@@ -286,4 +289,3 @@ Sage example in ./integration.tex, line 1497::
   mpf('2.7135204235459511323824699502438')
 
 """
-

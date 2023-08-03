@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# sage.doctest: needs sage.graphs sage.modules
 r"""
 Quiver
 
@@ -37,16 +37,18 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.structure.sage_object import SageObject
 from copy import copy
-from sage.rings.all import ZZ, CC, infinity
-from sage.graphs.all import Graph, DiGraph
+
+from sage.structure.sage_object import SageObject
+from sage.rings.integer_ring import ZZ
+from sage.rings.infinity import infinity
+from sage.graphs.digraph import DiGraph
+from sage.graphs.graph import Graph
 from sage.graphs.views import EdgesView
 from sage.arith.misc import gcd
-from sage.modules.free_module_element import vector
-from sage.matrix.constructor import matrix
 from sage.categories.cartesian_product import cartesian_product
 from sage.misc.misc_c import prod
+from sage.misc.lazy_import import lazy_import
 from sage.rings.rational_field import QQ
 from sage.rings.polynomial.polynomial_ring import polygen
 from sage.combinat.cluster_algebra_quiver.quiver_mutation_type import QuiverMutationType, QuiverMutationType_Irreducible, QuiverMutationType_Reducible, _edge_list_to_matrix
@@ -54,6 +56,9 @@ from sage.combinat.cluster_algebra_quiver.mutation_class import _principal_part,
 from sage.combinat.cluster_algebra_quiver.mutation_type import _connected_mutation_type, _mutation_type_from_data, is_mutation_finite
 
 from sage.combinat.cluster_algebra_quiver.interact import cluster_interact
+
+lazy_import('sage.modules.free_module_element', 'vector')
+lazy_import('sage.matrix.constructor', 'matrix')
 
 
 class ClusterQuiver(SageObject):
@@ -64,14 +69,14 @@ class ClusterQuiver(SageObject):
 
     - ``data`` -- can be any of the following::
 
-        * QuiverMutationType
-        * str - a string representing a QuiverMutationType or a common quiver type (see Examples)
-        * ClusterQuiver
-        * Matrix - a skew-symmetrizable matrix
-        * DiGraph - must be the input data for a quiver
-        * List of edges - must be the edge list of a digraph for a quiver
+      * :class:`QuiverMutationType`
+      * :class:`str` -- a string representing a :class:`QuiverMutationType` or a common quiver type (see Examples)
+      * :class:`ClusterQuiver`
+      * :class:`Matrix` -- a skew-symmetrizable matrix
+      * :class:`DiGraph` -- must be the input data for a quiver
+      * List of edges -- must be the edge list of a digraph for a quiver
 
-    - ``frozen`` -- (default:``None``) sets the list of frozen variables
+    - ``frozen`` -- (default: ``None``) sets the list of frozen variables
       if the input type is a :class:`DiGraph`, it is ignored otherwise
 
     - ``user_labels`` -- (default:``None``) sets the names of the labels for
@@ -181,7 +186,7 @@ class ClusterQuiver(SageObject):
 
         sage: Q = ClusterQuiver(['A',[2,5],1]); Q
         Quiver on 7 vertices of type ['A', [2, 5], 1]
-        sage: T = ClusterQuiver( Q._digraph.edges() ); T
+        sage: T = ClusterQuiver( Q._digraph.edges(sort=True) ); T
         Quiver on 7 vertices
 
         sage: Q = ClusterQuiver([[1, 2], [2, 3], [3, 4], [4, 1]]); Q
@@ -209,6 +214,7 @@ class ClusterQuiver(SageObject):
         ...
         ValueError: the input data was not recognized
     """
+
     def __init__(self, data, frozen=None, user_labels=None):
         """
         TESTS::
@@ -232,7 +238,6 @@ class ClusterQuiver(SageObject):
                 print('The input specifies a mutation type, so the'
                       ' additional parameter frozen is ignored.'
                       ' Use set_frozen to freeze vertices.')
-
 
             mutation_type = data
             self.__init__( mutation_type.standard_quiver() )
@@ -271,11 +276,11 @@ class ClusterQuiver(SageObject):
                 else:
                     self.__init__( mutation_type.standard_quiver() )
             elif len(data) == 3 and isinstance(data[0], str):
-                if (data[0] == 'F' and data[1] == 4 and data[2] == [2,1])   or (data[0] == 'G' and data[1] == 2 and data[2] == [3,1]):
+                if (data[0] == 'F' and data[1] == 4 and data[2] == [2,1]) or (data[0] == 'G' and data[1] == 2 and data[2] == [3,1]):
                     quiv = ClusterQuiver( QuiverMutationType_Irreducible( data[0], data[1], tuple(data[2]) )._digraph )
                     quiv._mutation_type = mutation_type
                     self.__init__( quiv )
-                elif (data[0] == 'F' and data[1] == 4 and data[2] == (2,1) )   or (data[0] == 'G' and data[1] == 2 and data[2] == (3,1) ):
+                elif (data[0] == 'F' and data[1] == 4 and data[2] == (2,1) ) or (data[0] == 'G' and data[1] == 2 and data[2] == (3,1) ):
                     quiv = ClusterQuiver( QuiverMutationType_Irreducible( data[0], data[1], data[2] )._digraph )
                     quiv._mutation_type = mutation_type
                     self.__init__( quiv )
@@ -518,9 +523,9 @@ class ClusterQuiver(SageObject):
             else:
                 name += ' of type ' + str(self._mutation_type)
         if self._m == 1:
-            name += ' with %s frozen vertex'%self._m
+            name += ' with %s frozen vertex' % self._m
         elif self._m > 1:
-            name += ' with %s frozen vertices'%self._m
+            name += ' with %s frozen vertices' % self._m
         return name
 
     def plot(self, circular=True, center=(0, 0), directed=True, mark=None,
@@ -546,18 +551,21 @@ class ClusterQuiver(SageObject):
         EXAMPLES::
 
             sage: Q = ClusterQuiver(['A',5])
-            sage: Q.plot()
+            sage: Q.plot()                                                              # needs sage.plot sage.symbolic
             Graphics object consisting of 15 graphics primitives
-            sage: Q.plot(circular=True)
+            sage: Q.plot(circular=True)                                                 # needs sage.plot sage.symbolic
             Graphics object consisting of 15 graphics primitives
-            sage: Q.plot(circular=True, mark=1)
+            sage: Q.plot(circular=True, mark=1)                                         # needs sage.plot sage.symbolic
             Graphics object consisting of 15 graphics primitives
         """
         from sage.plot.colors import rainbow
         from sage.graphs.graph_generators import GraphGenerators
-        from sage.all import e, pi, I
+        from sage.symbolic.constants import e, pi
+        from sage.rings.cc import CC
+        from sage.rings.imaginary_unit import I
         graphs = GraphGenerators()
         # returns positions for graph vertices on two concentric cycles with radius 1 and 2
+
         def _graphs_concentric_circles(n, m):
             g1 = graphs.CycleGraph(n).get_pos()
             g2 = graphs.CycleGraph(m).get_pos()
@@ -582,7 +590,7 @@ class ClusterQuiver(SageObject):
             dg = Graph( self._digraph )
 
         # For each edge in our graph we assign a color
-        for edge in dg.edges():
+        for edge in dg.edges(sort=True):
             v1,v2,(a,b) = edge
 
             if v1 in nlist and v2 in nlist:
@@ -694,8 +702,8 @@ class ClusterQuiver(SageObject):
         TESTS::
 
             sage: S = ClusterQuiver(['A',4])
-            sage: S.interact()
-            VBox(children=...
+            sage: S.interact()                                                          # needs sage.plot sage.symbolic
+            ...VBox(children=...
         """
         return cluster_interact(self, fig_size, circular, kind="quiver")
 
@@ -711,7 +719,9 @@ class ClusterQuiver(SageObject):
         EXAMPLES::
 
             sage: Q = ClusterQuiver(['F',4,[1,2]])
-            sage: Q.save_image(os.path.join(SAGE_TMP, 'sage.png'))
+            sage: import tempfile
+            sage: with tempfile.NamedTemporaryFile(suffix=".png") as f:                 # needs sage.plot sage.symbolic
+            ....:     Q.save_image(f.name)
         """
         graph_plot = self.plot(circular=circular)
         graph_plot.save(filename=filename)
@@ -734,14 +744,18 @@ class ClusterQuiver(SageObject):
         EXAMPLES::
 
             sage: Q = ClusterQuiver(['F',4,[1,2]])
-            sage: Q.qmu_save(os.path.join(SAGE_TMP, 'sage.qmu'))
+            sage: import tempfile
+            sage: with tempfile.NamedTemporaryFile(suffix=".qmu") as f:                 # needs sage.plot sage.symbolic
+            ....:     Q.qmu_save(f.name)
 
         Make sure we can save quivers with `m != n` frozen variables, see :trac:`14851`::
 
             sage: S = ClusterSeed(['A',3])
             sage: T1 = S.principal_extension()
             sage: Q = T1.quiver()
-            sage: Q.qmu_save(os.path.join(SAGE_TMP, 'sage.qmu'))
+            sage: import tempfile
+            sage: with tempfile.NamedTemporaryFile(suffix=".qmu") as f:                 # needs sage.plot sage.symbolic
+            ....:     Q.qmu_save(f.name)
         """
         M = self.b_matrix()
         if self.m():
@@ -839,26 +853,26 @@ class ClusterQuiver(SageObject):
             Digraph on 1 vertex
             sage: list(ClusterQuiver(['A',1]).digraph())
             [0]
-            sage: ClusterQuiver(['A',1]).digraph().edges()
+            sage: ClusterQuiver(['A',1]).digraph().edges(sort=True)
             []
 
             sage: ClusterQuiver(['A',4]).digraph()
             Digraph on 4 vertices
-            sage: ClusterQuiver(['A',4]).digraph().edges()
+            sage: ClusterQuiver(['A',4]).digraph().edges(sort=True)
             [(0, 1, (1, -1)), (2, 1, (1, -1)), (2, 3, (1, -1))]
 
             sage: ClusterQuiver(['B',4]).digraph()
             Digraph on 4 vertices
-            sage: ClusterQuiver(['A',4]).digraph().edges()
+            sage: ClusterQuiver(['A',4]).digraph().edges(sort=True)
             [(0, 1, (1, -1)), (2, 1, (1, -1)), (2, 3, (1, -1))]
 
             sage: ClusterQuiver(QuiverMutationType([['A',2],['B',2]])).digraph()
             Digraph on 4 vertices
 
-            sage: ClusterQuiver(QuiverMutationType([['A',2],['B',2]])).digraph().edges()
+            sage: ClusterQuiver(QuiverMutationType([['A',2],['B',2]])).digraph().edges(sort=True)
             [(0, 1, (1, -1)), (2, 3, (1, -2))]
 
-            sage: ClusterQuiver(['C', 4], user_labels = ['x', 'y', 'z', 'w']).digraph().edges()
+            sage: ClusterQuiver(['C', 4], user_labels = ['x', 'y', 'z', 'w']).digraph().edges(sort=True)
             [('x', 'y', (1, -1)), ('z', 'w', (2, -1)), ('z', 'y', (1, -1))]
         """
         return copy(self._digraph)
@@ -993,7 +1007,7 @@ class ClusterQuiver(SageObject):
 
             # checking the type for each connected component
             mutation_type = []
-            connected_components = sorted(dg.connected_components())
+            connected_components = sorted(dg.connected_components(sort=False))
             for component in connected_components:
                 # constructing the digraph for this component
                 dg_component = dg.subgraph( component )
@@ -1065,7 +1079,7 @@ class ClusterQuiver(SageObject):
             sage: Q.m()
             0
 
-            sage: T = ClusterQuiver(Q.digraph().edges(), frozen=[3])
+            sage: T = ClusterQuiver(Q.digraph().edges(sort=True), frozen=[3])
             sage: T.n()
             3
             sage: T.m()
@@ -1113,14 +1127,14 @@ class ClusterQuiver(SageObject):
 
         EXAMPLES::
 
-            sage: Q = ClusterQuiver(['A',4]); Q.digraph().edges()
+            sage: Q = ClusterQuiver(['A',4]); Q.digraph().edges(sort=True)
             [(0, 1, (1, -1)), (2, 1, (1, -1)), (2, 3, (1, -1))]
 
-            sage: T = Q.canonical_label(); T.digraph().edges()
+            sage: T = Q.canonical_label(); T.digraph().edges(sort=True)
             [(0, 3, (1, -1)), (1, 2, (1, -1)), (1, 3, (1, -1))]
 
             sage: T, iso = Q.canonical_label(certificate=True)
-            sage: T.digraph().edges(); iso
+            sage: T.digraph().edges(sort=True); iso
             [(0, 3, (1, -1)), (1, 2, (1, -1)), (1, 3, (1, -1))]
             {0: 0, 1: 3, 2: 1, 3: 2}
 
@@ -1143,7 +1157,7 @@ class ClusterQuiver(SageObject):
             if dg.is_connected():
                 Q._mutation_type = self._mutation_type
             else:
-                CC = sorted( self._digraph.connected_components() )
+                CC = sorted(self._digraph.connected_components(sort=False))
                 CC_new = sorted(zip([sorted(iso[i] for i in L) for L in CC],
                                     range(len(CC))))
                 comp_iso = [L[1] for L in CC_new]
@@ -1200,11 +1214,11 @@ class ClusterQuiver(SageObject):
         EXAMPLES::
 
             sage: Q = ClusterQuiver(['A',4])
-            sage: T = ClusterQuiver(Q.digraph().edges(), frozen=[3])
-            sage: T.digraph().edges()
+            sage: T = ClusterQuiver(Q.digraph().edges(sort=True), frozen=[3])
+            sage: T.digraph().edges(sort=True)
             [(0, 1, (1, -1)), (2, 1, (1, -1)), (2, 3, (1, -1))]
 
-            sage: T.exchangeable_part().digraph().edges()
+            sage: T.exchangeable_part().digraph().edges(sort=True)
             [(0, 1, (1, -1)), (2, 1, (1, -1))]
 
             sage: Q2 = Q.principal_extension()
@@ -1230,11 +1244,11 @@ class ClusterQuiver(SageObject):
             Quiver on 4 vertices of type ['A', 2] with 2 frozen vertices
             sage: T2 = T.principal_extension(); T2
             Quiver on 6 vertices of type ['A', 2] with 4 frozen vertices
-            sage: Q.digraph().edges()
+            sage: Q.digraph().edges(sort=True)
             [(0, 1, (1, -1))]
-            sage: T.digraph().edges()
+            sage: T.digraph().edges(sort=True)
             [(0, 1, (1, -1)), (2, 0, (1, -1)), (3, 1, (1, -1))]
-            sage: T2.digraph().edges()
+            sage: T2.digraph().edges(sort=True)
             [(0, 1, (1, -1)), (2, 0, (1, -1)), (3, 1, (1, -1)), (4, 0, (1, -1)), (5, 1, (1, -1))]
         """
         dg = DiGraph(self._digraph)
@@ -1399,7 +1413,7 @@ class ClusterQuiver(SageObject):
             sage: dg = DiGraph([['a', 'b'], ['b', 'c']], format='list_of_edges')
             sage: Q = ClusterQuiver(dg);Q
             Quiver on 3 vertices
-            sage: Q.mutate(['a','b'],inplace=False).digraph().edges()
+            sage: Q.mutate(['a','b'],inplace=False).digraph().edges(sort=True)
             [('a', 'b', (1, -1)), ('c', 'b', (1, -1))]
 
         TESTS::
@@ -1424,7 +1438,7 @@ class ClusterQuiver(SageObject):
                 data = getattr(self, data)()
 
         # If we get a function, execute it
-        if hasattr(data, '__call__'):
+        if callable(data):
             # function should return either integer or sequence
             data = data(self)
 
@@ -1464,14 +1478,16 @@ class ClusterQuiver(SageObject):
         INPUT:
 
         - ``sequence`` -- a list or tuple of vertices of ``self``.
-        - ``show_sequence`` -- (default: False) if True, a png containing the mutation sequence is shown.
+        - ``show_sequence`` -- (default: ``False``) if ``True``, a png containing the mutation sequence is shown.
         - ``fig_size`` -- (default: 1.2) factor by which the size of the sequence is expanded.
 
         EXAMPLES::
 
             sage: Q = ClusterQuiver(['A',4])
             sage: seq = Q.mutation_sequence([0,1]); seq
-            [Quiver on 4 vertices of type ['A', 4], Quiver on 4 vertices of type ['A', 4], Quiver on 4 vertices of type ['A', 4]]
+            [Quiver on 4 vertices of type ['A', 4],
+             Quiver on 4 vertices of type ['A', 4],
+             Quiver on 4 vertices of type ['A', 4]]
             sage: [T.b_matrix() for T in seq]
             [
             [ 0  1  0  0]  [ 0 -1  0  0]  [ 0  1 -1  0]
@@ -1480,8 +1496,6 @@ class ClusterQuiver(SageObject):
             [ 0  0 -1  0], [ 0  0 -1  0], [ 0  0 -1  0]
             ]
         """
-        from sage.plot.plot import Graphics
-        from sage.plot.text import text
         n = self._n
         m = self._m
         if m == 0:
@@ -1509,9 +1523,13 @@ class ClusterQuiver(SageObject):
             quiver_sequence.append( copy( quiver ) )
 
         if show_sequence:
+            from sage.plot.plot import Graphics
+            from sage.plot.text import text
+
             def _plot_arrow( v, k, center=(0,0) ):
                 return text(r"$\longleftrightarrow$",(center[0],center[1]), fontsize=25) + text(r"$\mu_"+str(v)+"$",(center[0],center[1]+0.15), fontsize=15) \
                     + text("$"+str(k)+"$",(center[0],center[1]-0.2), fontsize=15)
+
             plot_sequence = [ quiver_sequence[i].plot( circular=True, center=(i*width_factor,0) ) for i in range(len(quiver_sequence)) ]
             arrow_sequence = [ _plot_arrow( sequence[i],i+1,center=((i+0.5)*width_factor,0) ) for i in range(len(sequence)) ]
             sequence = []
@@ -1575,24 +1593,24 @@ class ClusterQuiver(SageObject):
 
         if set(data) == set(range(self._n + self._m)):
             dg_new = DiGraph()
-            for edge in self._digraph.edges():
+            for edge in self._digraph.edges(sort=True):
                 if data.index(edge[0]) < data.index(edge[1]):
                     dg_new.add_edge(edge[0], edge[1], edge[2])
                 else:
                     dg_new.add_edge(edge[1], edge[0], edge[2])
             self._digraph = dg_new
-            self._M = _edge_list_to_matrix(dg_new.edges(),
+            self._M = _edge_list_to_matrix(dg_new.edges(sort=True),
                                            self._nlist, self._mlist)
             self._M.set_immutable()
             self._mutation_type = None
         elif isinstance(first, (list, tuple)) and len(first) == 2:
-            edges = self._digraph.edges(labels=False)
+            edges = self._digraph.edges(sort=True, labels=False)
             for edge in data:
                 if (edge[1], edge[0]) in edges:
                     label = self._digraph.edge_label(edge[1], edge[0])
                     self._digraph.delete_edge(edge[1], edge[0])
                     self._digraph.add_edge(edge[0], edge[1], label)
-            self._M = _edge_list_to_matrix(self._digraph.edges(),
+            self._M = _edge_list_to_matrix(self._digraph.edges(sort=True),
                                            self._nlist, self._mlist)
             self._M.set_immutable()
             self._mutation_type = None
@@ -1952,7 +1970,7 @@ class ClusterQuiver(SageObject):
             sage: S = ClusterQuiver(['B',4]); S.number_of_edges()
             3
         """
-        digraph_edges = self.digraph().edges()
+        digraph_edges = self.digraph().edges(sort=True)
 
         total_edges = 0
         for edge in digraph_edges:
@@ -2086,7 +2104,7 @@ class ClusterQuiver(SageObject):
         Eu = matrix(ZZ, n, n,
                     lambda i, j: -b_mat[i, j] if b_mat[i, j] > 0 else 0)
         Eu = 1 + Eu
-        edges = list(self.digraph().edges(labels=False))
+        edges = list(self.digraph().edges(sort=True, labels=False))
 
         mu_d = theta.dot_product(d) / sum(d)
 

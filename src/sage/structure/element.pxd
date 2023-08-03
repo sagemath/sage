@@ -132,12 +132,12 @@ cpdef inline bint have_same_parent(left, right):
     These have different types but the same parent::
 
         sage: a = RLF(2)
-        sage: b = exp(a)
-        sage: type(a)
+        sage: b = exp(a)                                                                # optional - sage.symbolic
+        sage: type(a)                                                                   # optional - sage.symbolic
         <... 'sage.rings.real_lazy.LazyWrapper'>
-        sage: type(b)
+        sage: type(b)                                                                   # optional - sage.symbolic
         <... 'sage.rings.real_lazy.LazyNamedUnop'>
-        sage: have_same_parent(a, b)
+        sage: have_same_parent(a, b)                                                    # optional - sage.symbolic
         True
     """
     return HAVE_SAME_PARENT(classify_elements(left, right))
@@ -236,9 +236,11 @@ cdef class AlgebraElement(RingElement):
 cdef class CommutativeAlgebraElement(CommutativeRingElement):
     pass
 
-cdef class InfinityElement(RingElement):
+cdef class Expression(CommutativeRingElement):
     pass
 
+cdef class InfinityElement(RingElement):
+    pass
 
 cdef class Vector(ModuleElementWithMutability):
     cdef Py_ssize_t _degree

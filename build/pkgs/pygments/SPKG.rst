@@ -35,12 +35,6 @@ Upstream Contact
 - Author: Georg Brandl
 - Home Page: https://pygments.org
 
-Dependencies
-------------
-
-Python
-
-
 Special Update/Build Instructions
 ---------------------------------
 

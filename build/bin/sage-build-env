@@ -27,6 +27,14 @@ if [ "x$SAGE_BUILD_ENV_SOURCED" = "x" ]; then
     if [ "x$SAGE_DEBUG" = "x" ]; then
         export SAGE_DEBUG="$CONFIGURED_SAGE_DEBUG"
     fi
+    # Likewise for SAGE_EDITABLE
+    if [ "x$SAGE_EDITABLE" = "x" ]; then
+        export SAGE_EDITABLE="$CONFIGURED_SAGE_EDITABLE"
+    fi
+    # Likewise for SAGE_WHEELS
+    if [ "x$SAGE_WHEELS" = "x" ]; then
+        export SAGE_WHEELS="$CONFIGURED_SAGE_WHEELS"
+    fi
 
     # This is usually blank if the system GMP is used, or $SAGE_LOCAL otherwise
     if [ -n "$SAGE_GMP_PREFIX" ]; then
@@ -170,5 +178,8 @@ if [ "x$SAGE_BUILD_ENV_SOURCED" = "x" ]; then
 fi
 
 # Trac #31335: Avoid include paths leaking in from homebrew python3's distutils.cfg
-# by using setuptools' own copy of distutils instead of relying on stdlib distutils.
-export SETUPTOOLS_USE_DISTUTILS=local
+# by using setuptools' own copy of distutils instead of relying on stdlib distutils
+# Trac #32944: Only do this on homebrew.
+if [ -n "$HOMEBREW" ]; then
+    export SETUPTOOLS_USE_DISTUTILS=local
+fi

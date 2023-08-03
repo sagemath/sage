@@ -2,46 +2,6 @@
 """
 The Sage Preparser
 
-AUTHORS:
-
-    - William Stein (2006-02-19)
-
-      - Fixed bug when loading .py files.
-
-    - William Stein (2006-03-09)
-
-      - Fixed crash in parsing exponentials.
-      - Precision of real literals now determined by digits of input
-        (like Mathematica).
-
-    - Joe Wetherell (2006-04-14)
-
-      - Added MAGMA-style constructor preparsing.
-
-    - Bobby Moretti (2007-01-25)
-
-      - Added preliminary function assignment notation.
-
-    - Robert Bradshaw (2007-09-19)
-
-      - Added strip_string_literals, containing_block utility
-        functions. Arrr!
-      - Added [1,2,..,n] notation.
-
-    - Robert Bradshaw (2008-01-04)
-
-      - Implicit multiplication (off by default).
-
-    - Robert Bradshaw (2008-09-23)
-
-      - Factor out constants.
-
-    - Robert Bradshaw (2000-01)
-
-      - Simplify preparser by making it modular and using regular
-        expressions.
-      - Bug fixes, complex numbers, and binary input.
-
 EXAMPLES:
 
 Preparsing::
@@ -86,15 +46,15 @@ A hex literal::
 Raw and hex work correctly::
 
     sage: type(0xa1)
-    <type 'sage.rings.integer.Integer'>
+    <class 'sage.rings.integer.Integer'>
     sage: type(0xa1r)
-    <type 'int'>
+    <class 'int'>
     sage: type(0Xa1R)
-    <type 'int'>
+    <class 'int'>
 
 The preparser can handle PEP 515 (see :trac:`28490`)::
 
-    sage: 1_000_000 + 3_000 # py3
+    sage: 1_000_000 + 3_000
     1003000
 
 In Sage, methods can also be called on integer and real literals (note
@@ -118,22 +78,22 @@ frequently request it::
     sage: eval('4.__add__(3)')
     Traceback (most recent call last):
     ...
-    SyntaxError: invalid syntax
+    SyntaxError: invalid ...
 
 Symbolic functional notation::
 
-    sage: a=10; f(theta, beta) = theta + beta; b = x^2 + theta
-    sage: f
+    sage: a=10; f(theta, beta) = theta + beta; b = x^2 + theta              # optional - sage.symbolic
+    sage: f                                                                 # optional - sage.symbolic
     (theta, beta) |--> beta + theta
-    sage: a
+    sage: a                                                                 # optional - sage.symbolic
     10
-    sage: b
+    sage: b                                                                 # optional - sage.symbolic
     x^2 + theta
-    sage: f(theta,theta)
+    sage: f(theta,theta)                                                    # optional - sage.symbolic
     2*theta
 
-    sage: a = 5; f(x,y) = x*y*sqrt(a)
-    sage: f
+    sage: a = 5; f(x,y) = x*y*sqrt(a)                                       # optional - sage.symbolic
+    sage: f                                                                 # optional - sage.symbolic
     (x, y) |--> sqrt(5)*x*y
 
 This involves an =-, but should still be turned into a symbolic
@@ -141,8 +101,8 @@ expression::
 
     sage: preparse('a(x) =- 5')
     '__tmp__=var("x"); a = symbolic_expression(- Integer(5)).function(x)'
-    sage: f(x)=-x
-    sage: f(10)
+    sage: f(x)=-x                                                           # optional - sage.symbolic
+    sage: f(10)                                                             # optional - sage.symbolic
     -10
 
 This involves -=, which should not be turned into a symbolic
@@ -165,7 +125,7 @@ We create a raw integer::
     sage: a
     393939
     sage: type(a)
-    <type 'int'>
+    <class 'int'>
 
 We create a raw float::
 
@@ -173,7 +133,7 @@ We create a raw float::
     sage: z
     1.5949
     sage: type(z)
-    <type 'float'>
+    <class 'float'>
 
 You can also use an upper case letter::
 
@@ -181,7 +141,7 @@ You can also use an upper case letter::
     sage: z
     3.1415
     sage: type(z)
-    <type 'float'>
+    <class 'float'>
 
 This next example illustrates how raw literals can be very useful in
 certain cases.  We make a list of even integers up to 10000::
@@ -245,6 +205,26 @@ Nested F-strings are also supported::
     sage: f'''1{ f"2{ f'4{ 2^3 }4' }2" }1'''
     '1248421'
 
+AUTHORS:
+
+- William Stein (2006-02-19): fixed bug when loading .py files
+
+- William Stein (2006-03-09): fixed crash in parsing exponentials; precision of
+  real literals now determined by digits of input (like Mathematica)
+
+- Joe Wetherell (2006-04-14): added MAGMA-style constructor preparsing
+
+- Bobby Moretti (2007-01-25): added preliminary function assignment notation
+
+- Robert Bradshaw (2007-09-19): added strip_string_literals, containing_block
+  utility functions. Arrr!; added [1,2,..,n] notation
+
+- Robert Bradshaw (2008-01-04): implicit multiplication (off by default)
+
+- Robert Bradshaw (2008-09-23): factor out constants
+
+- Robert Bradshaw (2009-01): simplify preparser by making it modular and using
+  regular expressions; bug fixes, complex numbers, and binary input
 """
 
 # ****************************************************************************
@@ -317,12 +297,13 @@ def implicit_multiplication(level=None):
     global implicit_mul_level
     if level is None:
         return implicit_mul_level
-    elif level is True:
+    if level is True:
         implicit_mul_level = 5
     else:
         implicit_mul_level = level
 
-def isalphadigit_(s):
+
+def isalphadigit_(s) -> bool:
     """
     Return ``True`` if ``s`` is a non-empty string of alphabetic characters
     or a non-empty string of digits or just a single ``_``
@@ -341,12 +322,15 @@ def isalphadigit_(s):
     """
     return s.isalpha() or s.isdigit() or s == "_"
 
+
 in_single_quote = False
 in_double_quote = False
 in_triple_quote = False
 
-def in_quote():
+
+def in_quote() -> bool:
     return in_single_quote or in_double_quote or in_triple_quote
+
 
 class QuoteStack:
     """The preserved state of parsing in :func:`strip_string_literals`."""
@@ -360,9 +344,8 @@ class QuoteStack:
             sage: qs = sage.repl.preparse.QuoteStack()
             sage: len(qs)
             0
-
         """
-        self._stack = [] # list of QuoteStackFrame
+        self._stack = []  # list of QuoteStackFrame
         self._single_quote_safe = True
         self._double_quote_safe = True
 
@@ -380,7 +363,6 @@ class QuoteStack:
             QuoteStackFrame(...)
             sage: len(qs)
             0
-
         """
         return len(self._stack)
 
@@ -396,7 +378,6 @@ class QuoteStack:
             [QuoteStackFrame(...delim='"'...)]
             sage: qs.push(sage.repl.preparse.QuoteStackFrame("'")); qs
             [QuoteStackFrame(...delim='"'...), QuoteStackFrame(...delim="'"...)]
-
         """
         return repr(self._stack)
 
@@ -411,7 +392,6 @@ class QuoteStack:
             sage: qs.push(sage.repl.preparse.QuoteStackFrame('"'))
             sage: qs.peek()
             QuoteStackFrame(...delim='"'...)
-
         """
         return self._stack[-1] if self._stack else None
 
@@ -431,7 +411,6 @@ class QuoteStack:
             sage: qs.push(sage.repl.preparse.QuoteStackFrame('"'))
             sage: qs.pop()
             QuoteStackFrame(...delim='"'...)
-
         """
         return self._stack.pop()
 
@@ -448,7 +427,6 @@ class QuoteStack:
             sage: qs.push(sage.repl.preparse.QuoteStackFrame("'"))
             sage: len(qs)
             1
-
         """
         self._stack.append(frame)
         if frame.f_string:
@@ -489,21 +467,19 @@ class QuoteStack:
             sage: s.push(QuoteStackFrame('"', f_string=True))
             sage: s.safe_delimiter() is None
             True
-
         """
         if self._single_quote_safe:
             return "'"
-        elif self._double_quote_safe:
+        if self._double_quote_safe:
             return '"'
-        else:
-            return None
+        return None
+
 
 class QuoteStackFrame(SimpleNamespace):
     """
     The state of a single level of a string literal being parsed.
 
     Only F-strings have more than one level.
-
     """
 
     def __init__(self, delim, raw=False, f_string=False, braces=0, parens=0, brackets=0,
@@ -557,7 +533,7 @@ def strip_string_literals(code, state=None):
 
     - ``code`` - a string; the input
 
-    - ``state`` - a :class:`QuoteStack` (default: None); state with which to
+    - ``state`` - a :class:`QuoteStack` (default: ``None``); state with which to
       continue processing, e.g., across multiple calls to this function
 
     OUTPUT:
@@ -607,7 +583,7 @@ def strip_string_literals(code, state=None):
 
         sage: s, literals, state = strip_string_literals(r"r'somethin\' funny'"); s
         'r%(L1)s'
-        sage: dep_regex = r'^ *(?:(?:cimport +([\w\. ,]+))|(?:from +(\w+) +cimport)|(?:include *[\'"]([^\'"]+)[\'"])|(?:cdef *extern *from *[\'"]([^\'"]+)[\'"]))' # Ticket 5821
+        sage: dep_regex = r'^ *(?:(?:cimport +([\w\. ,]+))|(?:from +(\w+) +cimport)|(?:include *[\'"]([^\'"]+)[\'"])|(?:cdef *extern *from *[\'"]([^\'"]+)[\'"]))' # Issue 5821
 
     Some extra tests for escaping with odd/even numbers of backslashes::
 
@@ -741,13 +717,12 @@ def strip_string_literals(code, state=None):
         ' f\'{r"abc".upper()[1:]:{width:10}}\' '
         sage: s_broken_up == s_one_time
         True
-
     """
     new_code = []
     literals = {}
-    counter = 0 # to assign unique label numbers
-    start = 0 # characters before this point have been added to new_code or literals
-    q = 0 # current search position in code string
+    counter = 0  # to assign unique label numbers
+    start = 0  # characters before this point have been added to new_code or literals
+    q = 0  # current search position in code string
     state = state or QuoteStack()
     quote = state.peek()
 
@@ -755,10 +730,9 @@ def strip_string_literals(code, state=None):
         """In the literal portion of a string?"""
         if not quote:
             return False
-        elif not quote.f_string or not quote.braces or quote.nested_fmt_spec:
+        if not quote.f_string or not quote.braces or quote.nested_fmt_spec:
             return True
-        else:
-            return quote.fmt_spec and quote.braces == 1
+        return quote.fmt_spec and quote.braces == 1
 
     match = ssl_search_chars.search(code)
     while match:
@@ -784,17 +758,17 @@ def strip_string_literals(code, state=None):
             if in_literal():
                 # Deal with escaped quotes (odd number of backslashes preceding).
                 escaped = False
-                if q>0 and code[q-1] == '\\':
+                if q > 0 and code[q - 1] == '\\':
                     k = 2
-                    while q >= k and code[q-k] == '\\':
+                    while q >= k and code[q - k] == '\\':
                         k += 1
-                    if k % 2 == 0:
+                    if not k % 2:
                         escaped = True
                 # Check for end of quote.
-                if not escaped and code[q:q+len(quote.delim)] == quote.delim:
+                if not escaped and code[q:q + len(quote.delim)] == quote.delim:
                     counter += 1
                     label = "L%s" % counter
-                    literals[label] = code[start:q+len(quote.delim)]
+                    literals[label] = code[start:q + len(quote.delim)]
                     new_code.append("%%(%s)s" % label)
                     q += len(quote.delim)
                     start = q
@@ -802,17 +776,17 @@ def strip_string_literals(code, state=None):
                     quote = state.peek()
             else:
                 # Check prefixes for raw or F-string.
-                if q>0 and code[q-1] in 'rR':
+                if q > 0 and code[q - 1] in 'rR':
                     raw = True
-                    f_string = q>1 and code[q-2] in 'fF'
-                elif q>0 and code[q-1] in 'fF':
+                    f_string = q > 1 and code[q - 2] in 'fF'
+                elif q > 0 and code[q - 1] in 'fF':
                     f_string = True
-                    raw = q>1 and code[q-2] in 'rR'
+                    raw = q > 1 and code[q - 2] in 'rR'
                 else:
                     raw = f_string = False
                 # Short or long string?
-                if len(code) >= q+3 and (code[q+1] == ch == code[q+2]):
-                    delim = ch*3
+                if len(code) >= q + 3 and (code[q + 1] == ch == code[q + 2]):
+                    delim = ch * 3
                 else:
                     delim = ch
                 # Now inside quotes.
@@ -831,7 +805,7 @@ def strip_string_literals(code, state=None):
                     newline = len(code)
                 counter += 1
                 label = "L%s" % counter
-                literals[label] = code[q+1:newline]
+                literals[label] = code[q + 1:newline]
                 new_code.append(code[start:q].replace('%', '%%'))
                 new_code.append("#%%(%s)s" % label)
                 start = q = newline
@@ -850,13 +824,13 @@ def strip_string_literals(code, state=None):
                     handle_colon = True
                 if handle_colon:
                     # Treat the preceding substring and the colon itself as code.
-                    new_code.append(code[start:q+1].replace('%', '%%'))
-                    start = q+1
+                    new_code.append(code[start:q + 1].replace('%', '%%'))
+                    start = q + 1
 
         elif ch == '{' or ch == '}':
             if quote and quote.f_string:
                 # Skip over {{ and }} escape sequences outside of replacement sections.
-                if not quote.braces and q+1 < len(code) and code[q+1] == ch:
+                if not quote.braces and q + 1 < len(code) and code[q + 1] == ch:
                     q += 2
                 else:
                     # Handle the substring preceding the brace.
@@ -876,7 +850,7 @@ def strip_string_literals(code, state=None):
                             quote.braces -= 1
                         # We can no longer be in a nested format specifier following a }.
                         quote.nested_fmt_spec = False
-                    start = q+1
+                    start = q + 1
 
         # Move to the next character if we have not already moved elsewhere.
         if q == orig_q:
@@ -897,7 +871,7 @@ def strip_string_literals(code, state=None):
     return "".join(new_code), literals, state
 
 
-def containing_block(code, idx, delimiters=['()','[]','{}'], require_delim=True):
+def containing_block(code, idx, delimiters=['()', '[]', '{}'], require_delim=True):
     """
     Find the code block given by balanced delimiters that contains the position ``idx``.
 
@@ -912,8 +886,8 @@ def containing_block(code, idx, delimiters=['()','[]','{}'], require_delim=True)
       character and no character can at the same time be opening and
       closing delimiter.
 
-    - ``require_delim`` - a boolean (default: True); whether to raise
-      a SyntaxError if delimiters are present. If the delimiters are
+    - ``require_delim`` - a boolean (default: ``True``); whether to raise
+      a ``SyntaxError`` if delimiters are present. If the delimiters are
       unbalanced, an error will be raised in any case.
 
     OUTPUT:
@@ -951,27 +925,27 @@ def containing_block(code, idx, delimiters=['()','[]','{}'], require_delim=True)
         sage: containing_block('((a{))',0)
         Traceback (most recent call last):
         ...
-        SyntaxError: Unbalanced delimiters
+        SyntaxError: unbalanced delimiters
         sage: containing_block('((a{))',1)
         Traceback (most recent call last):
         ...
-        SyntaxError: Unbalanced delimiters
+        SyntaxError: unbalanced delimiters
         sage: containing_block('((a{))',2)
         Traceback (most recent call last):
         ...
-        SyntaxError: Unbalanced delimiters
+        SyntaxError: unbalanced delimiters
         sage: containing_block('((a{))',3)
         Traceback (most recent call last):
         ...
-        SyntaxError: Unbalanced delimiters
+        SyntaxError: unbalanced delimiters
         sage: containing_block('((a{))',4)
         Traceback (most recent call last):
         ...
-        SyntaxError: Unbalanced delimiters
+        SyntaxError: unbalanced delimiters
         sage: containing_block('((a{))',5)
         Traceback (most recent call last):
         ...
-        SyntaxError: Unbalanced delimiters
+        SyntaxError: unbalanced delimiters
         sage: containing_block('(()()',1)
         (1, 3)
         sage: containing_block('(()()',3)
@@ -981,14 +955,13 @@ def containing_block(code, idx, delimiters=['()','[]','{}'], require_delim=True)
         sage: containing_block('(()()',0)
         Traceback (most recent call last):
         ...
-        SyntaxError: Unbalanced delimiters
+        SyntaxError: unbalanced delimiters
         sage: containing_block('(()()',0, require_delim=False)
         (0, 5)
         sage: containing_block('((})()',1, require_delim=False)
         (0, 6)
         sage: containing_block('abc',1, require_delim=False)
         (0, 3)
-
     """
     openings = "".join(d[0] for d in delimiters)
     closings = "".join(d[-1] for d in delimiters)
@@ -1007,12 +980,12 @@ def containing_block(code, idx, delimiters=['()','[]','{}'], require_delim=True)
         start -= 1
     if start == -1:
         if require_delim:
-            raise SyntaxError("Unbalanced or missing delimiters")
+            raise SyntaxError("unbalanced or missing delimiters")
         else:
             return 0, len(code)
-    if levels.count(0) != len(levels)-1:
+    if levels.count(0) != len(levels) - 1:
         if require_delim:
-            raise SyntaxError("Unbalanced delimiters")
+            raise SyntaxError("unbalanced delimiters")
         else:
             return 0, len(code)
     p0 = p
@@ -1024,7 +997,7 @@ def containing_block(code, idx, delimiters=['()','[]','{}'], require_delim=True)
         if code[end] in closings:
             p = closings.index(code[end])
             levels[p] += 1
-            if p==p0 and levels[p] == 0:
+            if p == p0 and levels[p] == 0:
                 break
         elif code[end] in openings and end > idx:
             p = openings.index(code[end])
@@ -1033,10 +1006,10 @@ def containing_block(code, idx, delimiters=['()','[]','{}'], require_delim=True)
     if levels.count(0) != len(levels):
         # This also occurs when end==len(code) without finding a closing delimiter
         if require_delim:
-            raise SyntaxError("Unbalanced delimiters")
+            raise SyntaxError("unbalanced delimiters")
         else:
             return 0, len(code)
-    return start, end+1
+    return start, end + 1
 
 
 def parse_ellipsis(code, preparse_step=True):
@@ -1047,7 +1020,7 @@ def parse_ellipsis(code, preparse_step=True):
 
     - ``code`` - a string
 
-    - ``preparse_step`` - a boolean (default: True)
+    - ``preparse_step`` - a boolean (default: ``True``)
 
     OUTPUT:
 
@@ -1074,36 +1047,37 @@ def parse_ellipsis(code, preparse_step=True):
     ix = code.find('..')
     while ix != -1:
         if ix == 0:
-            raise SyntaxError("Cannot start line with ellipsis.")
-        elif code[ix-1]=='.':
+            raise SyntaxError("cannot start line with ellipsis")
+        elif code[ix - 1] == '.':
             # '...' be valid Python in index slices
-            code = code[:ix-1] + "Ellipsis" + code[ix+2:]
-        elif len(code) >= ix+3 and code[ix+2]=='.':
+            code = code[:ix - 1] + "Ellipsis" + code[ix + 2:]
+        elif len(code) >= ix + 3 and code[ix + 2] == '.':
             # '...' be valid Python in index slices
-            code = code[:ix] + "Ellipsis" + code[ix+3:]
+            code = code[:ix] + "Ellipsis" + code[ix + 3:]
         else:
-            start_list, end_list = containing_block(code, ix, ['()','[]'])
+            start_list, end_list = containing_block(code, ix, ['()', '[]'])
 
-            #search the current containing block for other '..' occurrences that may
-            #be contained in proper subblocks. Those need to be processed before
-            #we can deal with the present level of ellipses.
-            ix = code.find('..',ix+2,end_list)
+            # search the current containing block for other '..' occurrences that may
+            # be contained in proper subblocks. Those need to be processed before
+            # we can deal with the present level of ellipses.
+            ix = code.find('..', ix + 2, end_list)
             while ix != -1:
-                if code[ix-1]!='.' and code[ix+2]!='.':
-                    start_list,end_list = containing_block(code,ix,['()','[]'])
-                ix = code.find('..',ix+2,end_list)
+                if code[ix - 1] != '.' and code[ix + 2] != '.':
+                    start_list, end_list = containing_block(code, ix, ['()', '[]'])
+                ix = code.find('..', ix + 2, end_list)
 
-            arguments = code[start_list+1:end_list-1].replace('...', ',Ellipsis,').replace('..', ',Ellipsis,')
+            arguments = code[start_list + 1:end_list - 1].replace('...', ',Ellipsis,').replace('..', ',Ellipsis,')
             arguments = re.sub(r',\s*,', ',', arguments)
             if preparse_step:
                 arguments = arguments.replace(';', ', step=')
-            range_or_iter = 'range' if code[start_list]=='[' else 'iter'
-            code = "%s(ellipsis_%s(%s))%s" %  (code[:start_list],
-                                               range_or_iter,
-                                               arguments,
-                                               code[end_list:])
+            range_or_iter = 'range' if code[start_list] == '[' else 'iter'
+            code = "%s(ellipsis_%s(%s))%s" % (code[:start_list],
+                                              range_or_iter,
+                                              arguments,
+                                              code[end_list:])
         ix = code.find('..')
     return code
+
 
 def extract_numeric_literals(code):
     """
@@ -1138,7 +1112,9 @@ def extract_numeric_literals(code):
     """
     return preparse_numeric_literals(code, True)
 
+
 all_num_regex = None
+
 
 def preparse_numeric_literals(code, extract=False, quotes="'"):
     """
@@ -1173,9 +1149,9 @@ def preparse_numeric_literals(code, extract=False, quotes="'"):
         sage: preparse_numeric_literals("5jr")
         '5J'
         sage: preparse_numeric_literals("5l")
-        '5l'
+        '5'
         sage: preparse_numeric_literals("5L")
-        '5L'
+        '5'
         sage: preparse_numeric_literals("1.5")
         "RealNumber('1.5')"
         sage: preparse_numeric_literals("1.5j")
@@ -1315,11 +1291,11 @@ def preparse_numeric_literals(code, extract=False, quotes="'"):
             # The Sage preparser does extra things with numbers, which we need to handle here.
             if '.' in num:
                 if start > 0 and num[0] == '.':
-                    if code[start-1] == '.':
+                    if code[start - 1] == '.':
                         # handle Ellipsis
                         start += 1
                         num = num[1:]
-                    elif re.match(r'[\w\])]', code[start-1]):
+                    elif re.match(r'[\w\])]', code[start - 1]):
                         # handle R.0
                         continue
                 elif end < len(code) and num[-1] == '.':
@@ -1330,7 +1306,7 @@ def preparse_numeric_literals(code, extract=False, quotes="'"):
             elif end < len(code) and code[end] == '.' and not postfix and re.match(r'\d+(_\d+)*$', num):
                 # \b does not match after the . for floating point
                 # two dots in a row would be an ellipsis
-                if end+1 == len(code) or code[end+1] != '.':
+                if end + 1 == len(code) or code[end + 1] != '.':
                     end += 1
                     num += '.'
 
@@ -1361,7 +1337,7 @@ def preparse_numeric_literals(code, extract=False, quotes="'"):
 
         new_code.append(code[last:start])
         if extract:
-            new_code.append(num_name+' ')
+            new_code.append(num_name + ' ')
         else:
             new_code.append(num_make)
         last = end
@@ -1376,7 +1352,7 @@ def preparse_numeric_literals(code, extract=False, quotes="'"):
 
 def strip_prompts(line):
     r"""
-    Removes leading sage: and >>> prompts so that pasting of examples
+    Remove leading sage: and >>> prompts so that pasting of examples
     from the documentation works.
 
     INPUT:
@@ -1397,10 +1373,9 @@ def strip_prompts(line):
         sage: strip_prompts("  2 + 4")
         '  2 + 4'
     """
-    for prompt in ['sage:', '>>>']:
+    for prompt, length in [('sage:', 5), ('>>>', 3)]:
         if line.startswith(prompt):
-            line = line[len(prompt):].lstrip()
-            break
+            return line[length:].lstrip()
     return line
 
 
@@ -1458,7 +1433,7 @@ def preparse_calculus(code):
         sage: preparse_calculus(";f(_sage_const_)=x;")
         Traceback (most recent call last):
         ...
-        ValueError: Argument names should be valid python identifiers.
+        ValueError: argument names should be valid python identifiers
 
     Although preparse_calculus returns something for f(1)=x, when
     preparsing a file an exception is raised because it is invalid python::
@@ -1470,13 +1445,13 @@ def preparse_calculus(code):
         sage: preparse_file("f(1)=x")
         Traceback (most recent call last):
         ...
-        ValueError: Argument names should be valid python identifiers.
+        ValueError: argument names should be valid python identifiers
 
         sage: from sage.repl.preparse import preparse_file
         sage: preparse_file("f(x,1)=2")
         Traceback (most recent call last):
         ...
-        ValueError: Argument names should be valid python identifiers.
+        ValueError: argument names should be valid python identifiers
 
     Check support for unicode characters (:trac:`29278`)::
 
@@ -1493,11 +1468,17 @@ def preparse_calculus(code):
         ....: ''')
         '\n__tmp__=var("a,b,c,d"); f = symbolic_expression(a + b*Integer(2) + c*Integer(3) + d*Integer(4)).function(a,b,c,d)\n'
 
+    Check that :trac:`30953` is fixed::
+
+        sage: preparse('''
+        ....: f(x) = (x + (x*x) +  # some comment with matching )
+        ....:         1); f''')
+        '\n__tmp__=var("x"); f = symbolic_expression((x + (x*x) +  # some comment with matching )\n        Integer(1))).function(x); f'
     """
     new_code = []
     last_end = 0
     #                                 f         (  vars  )   =      expr
-    for m in re.finditer(r";(\s*)([^\W\d]\w*) *\(([^()]+)\) *= *([^;#=][^;#]*)", code):
+    for m in re.finditer(r";(\s*)([^\W\d]\w*) *\(([^()]+)\) *= *([^;#=][^;]*)", code):
         ident, func, vars, expr = m.groups()
         # Semicolons are removed in order to allow the vars to span multiple lines.
         # (preparse having converted all \n into ;\n;)
@@ -1506,7 +1487,7 @@ def preparse_calculus(code):
         # the argument name for the symbolic expression is a numeric literal
         # such as f(2)=5
         if any(n.startswith(numeric_literal_prefix) for n in stripped_vars):
-            raise ValueError("Argument names should be valid python identifiers.")
+            raise ValueError("argument names should be valid python identifiers")
         vars = ','.join(stripped_vars)
 
         new_code.append(code[last_end:m.start()])
@@ -1516,14 +1497,14 @@ def preparse_calculus(code):
 
     if last_end == 0:
         return code
-    else:
-        new_code.append(code[m.end():])
-        return ''.join(new_code)
+
+    new_code.append(code[m.end():])
+    return ''.join(new_code)
 
 
 def preparse_generators(code):
     r"""
-    Parses generator syntax, converting::
+    Parse generator syntax, converting::
 
         obj.<gen0,gen1,...,genN> = objConstructor(...)
 
@@ -1646,11 +1627,25 @@ def preparse_generators(code):
 
         sage: preparse('Ω.<λ,μ> = QQ[]')
         "Ω = QQ['λ, μ']; (λ, μ,) = Ω._first_ngens(2)"
+
+    Check that :trac:`30953` is fixed::
+
+        sage: preparse('''
+        ....: K.<a> = QuadraticField(2 +
+        ....:                        1)''')
+        "\nK = QuadraticField(Integer(2) +\n                       Integer(1), names=('a',)); (a,) = K._first_ngens(1)"
+        sage: preparse('''
+        ....: K.<a> = QuadraticField(2 + (1 + 1) + # some comment
+        ....:                        1)''')
+        "\nK = QuadraticField(Integer(2) + (Integer(1) + Integer(1)) + # some comment\n                       Integer(1), names=('a',)); (a,) = K._first_ngens(1)"
+        sage: preparse('''
+        ....: K.<a> = QuadraticField(2)  # some comment''')
+        "\nK = QuadraticField(Integer(2), names=('a',)); (a,) = K._first_ngens(1)# some comment"
     """
     new_code = []
     last_end = 0
     #                                obj       .< gens >      ,  other   =   constructor
-    for m in re.finditer(r";(\s*)([^\W\d]\w*)\.<([^>]+)> *((?:,[\w, ]+)?)= *([^;#]+)", code):
+    for m in re.finditer(r";(\s*)([^\W\d]\w*)\.<([^>]+)> *((?:,[\w, ]+)?)= *([^;]+)", code):
         ident, obj, gens, other_objs, constructor = m.groups()
         gens = [v.strip() for v in gens.split(',')]
         constructor = constructor.rstrip()
@@ -1658,21 +1653,21 @@ def preparse_generators(code):
             pass   # SyntaxError will be raised by Python later
         elif constructor[-1] == ')':
             if '(' not in constructor:
-                raise SyntaxError("Mismatched ')'")
+                raise SyntaxError("mismatched ')'")
             opening = constructor.rindex('(')
             # Only use comma if there are already arguments to the constructor
-            comma = ', ' if constructor[opening+1:-1].strip() != '' else ''
+            comma = ', ' if constructor[opening + 1:-1].strip() else ''
             names = "('%s',)" % "', '".join(gens)
             constructor = constructor[:-1] + comma + "names=%s)" % names
         elif constructor[-1] == ']':
             # Could be nested.
             if '[' not in constructor:
-                raise SyntaxError("Mismatched ']'")
+                raise SyntaxError("mismatched ']'")
             opening = constructor.rindex('[')
             closing = constructor.index(']', opening)
-            if constructor[opening+1:closing].strip() == '':
+            if not constructor[opening + 1:closing].strip():
                 names = "'" + ', '.join(gens) + "'"
-                constructor = constructor[:opening+1] + names + constructor[closing:]
+                constructor = constructor[:opening + 1] + names + constructor[closing:]
         else:
             pass
         gens_tuple = "(%s,)" % ', '.join(gens)
@@ -1683,29 +1678,30 @@ def preparse_generators(code):
 
     if last_end == 0:
         return code
-    else:
-        new_code.append(code[m.end():])
-        return ''.join(new_code)
+
+    new_code.append(code[m.end():])
+    return ''.join(new_code)
 
 
 quote_state = None
 
+
 def preparse(line, reset=True, do_time=False, ignore_prompts=False,
              numeric_literals=True):
     r"""
-    Preparses a line of input.
+    Preparse a line of input.
 
     INPUT:
 
     - ``line`` - a string
 
-    - ``reset`` - a boolean (default: True)
+    - ``reset`` - a boolean (default: ``True``)
 
-    - ``do_time`` - a boolean (default: False)
+    - ``do_time`` - a boolean (default: ``False``)
 
-    - ``ignore_prompts`` - a boolean (default: False)
+    - ``ignore_prompts`` - a boolean (default: ``False``)
 
-    - ``numeric_literals`` - a boolean (default: True)
+    - ``numeric_literals`` - a boolean (default: ``True``)
 
     OUTPUT:
 
@@ -1745,7 +1741,7 @@ def preparse(line, reset=True, do_time=False, ignore_prompts=False,
         'a  * BackslashOperator() * b \\'
 
         sage: preparse("time R.<x> = ZZ[]", do_time=True)
-        '__time__=cputime(); __wall__=walltime(); R = ZZ[\'x\']; print("Time: CPU %.2f s, Wall: %.2f s"%(cputime(__time__), walltime(__wall__))); (x,) = R._first_ngens(1)'
+        '__time__ = cputime(); __wall__ = walltime(); R = ZZ[\'x\']; print("Time: CPU {:.2f} s, Wall: {:.2f} s".format(cputime(__time__), walltime(__wall__))); (x,) = R._first_ngens(1)'
 
     TESTS:
 
@@ -1767,6 +1763,13 @@ def preparse(line, reset=True, do_time=False, ignore_prompts=False,
         # some comment
         __tmp__=var("x"); f = symbolic_expression(x + Integer(1)).function(x)
 
+    TESTS::
+
+        sage: from sage.repl.preparse import preparse
+        sage: lots_of_numbers = "[%s]" % ", ".join(str(i) for i in range(3000))
+        sage: _ = preparse(lots_of_numbers)
+        sage: print(preparse("type(100r), type(100)"))
+        type(100), type(Integer(100))
     """
     global quote_state
     if reset:
@@ -1776,7 +1779,8 @@ def preparse(line, reset=True, do_time=False, ignore_prompts=False,
 
     if L.startswith('...'):
         i = line.find('...')
-        return line[:i+3] + preparse(line[i+3:], reset=reset, do_time=do_time, ignore_prompts=ignore_prompts)
+        return line[:i + 3] + preparse(line[i + 3:], reset=reset,
+                                       do_time=do_time, ignore_prompts=ignore_prompts)
 
     if ignore_prompts:
         # Get rid of leading sage: and >>> so that pasting of examples from
@@ -1798,7 +1802,7 @@ def preparse(line, reset=True, do_time=False, ignore_prompts=False,
     if implicit_mul_level:
         # Implicit Multiplication
         # 2x -> 2*x
-        L = implicit_mul(L, level = implicit_mul_level)
+        L = implicit_mul(L, level=implicit_mul_level)
 
     if numeric_literals:
         # Wrapping
@@ -1817,7 +1821,21 @@ def preparse(line, reset=True, do_time=False, ignore_prompts=False,
     L = L.replace('\\\n', '')
 
     # Make it easy to match statement ends
-    L = ';%s;' % L.replace('\n', ';\n;')
+    ends = []
+    counta = 0
+    countb = 0
+    for i in range(len(L)):
+        if L[i] in ('[', ']'):
+            counta += 1 if L[i] == '[' else -1
+        elif L[i] in ('(', ')'):
+            countb += 1 if L[i] == '(' else -1
+        elif L[i] in ('\n', '#'):
+            if counta == countb == 0:
+                ends.append(i)
+    while ends:
+        i = ends.pop()
+        L = L[:i] + ';%s;' % L[i] + L[i + 1:]
+    L = ';' + L + ';'
 
     if do_time:
         # Separate time statement
@@ -1837,26 +1855,27 @@ def preparse(line, reset=True, do_time=False, ignore_prompts=False,
 
     if do_time:
         # Time keyword
-        L = re.sub(r';time;(\s*)(\S[^;]*)',
-                   r';\1__time__=cputime(); __wall__=walltime(); \2; print(' +
-                        '"Time: CPU %%.2f s, Wall: %%.2f s"%%(cputime(__time__), walltime(__wall__)))',
-                   L)
+        L = re.sub(r';time;(\s*)(\S[^;\n]*)',
+                   r';\1__time__ = cputime(); __wall__ = walltime(); \2; print(' +
+                   r'"Time: CPU {:.2f} s, Wall: {:.2f} s".format(cputime(__time__), walltime(__wall__)))',
+                   L, flags=re.MULTILINE)
 
     # Remove extra ;'s
+    L = L.replace(';#;', '#')
     L = L.replace(';\n;', '\n')[1:-1]
 
-    line = L % literals
-
-    return line
+    return L % literals
 
 
 ######################################################
-## Apply the preparser to an entire file
+#  Apply the preparser to an entire file
 ######################################################
 
 def preparse_file(contents, globals=None, numeric_literals=True):
     """
-    Preparses input, attending to numeric literals and load/attach
+    Preparse ``contents`` which is input from a file such as ``.sage`` files.
+
+    Special attentions are given to numeric literals and load/attach
     file directives.
 
     .. note:: Temporarily, if @parallel is in the input, then
@@ -1866,11 +1885,11 @@ def preparse_file(contents, globals=None, numeric_literals=True):
 
     - ``contents`` - a string
 
-    - ``globals`` - dict or None (default: None); if given, then
+    - ``globals`` - dict or None (default: ``None``); if given, then
       arguments to load/attach are evaluated in the namespace of this
       dict.
 
-    - ``numeric_literals`` - bool (default: True), whether to factor
+    - ``numeric_literals`` - bool (default: ``True``), whether to factor
       out wrapping of integers and floats, so they do not get created
       repeatedly inside loops
 
@@ -1886,18 +1905,29 @@ def preparse_file(contents, globals=None, numeric_literals=True):
         sage: print(preparse_file("type(100r), type(100)"))
         _sage_const_100 = Integer(100)
         type(100 ), type(_sage_const_100 )
+
+    Check that :trac:`4545` is fixed::
+
+        sage: file_contents = '''
+        ....: @parallel(8)
+        ....: def func(p):
+        ....:     t = cputime()
+        ....:     M = ModularSymbols(p^2,sign=1)
+        ....:     w = M.atkin_lehner_operator(p)
+        ....:     K = (w-1).kernel()'''
+        sage: t = tmp_filename(ext=".sage")
+        sage: with open(t, 'w') as file:
+        ....:     file.write(file_contents)
+        137
+        sage: load(t)
+        sage: sorted(list(func([11,17])))
+        [(((11,), {}), None), (((17,), {}), None)]
     """
     if not isinstance(contents, str):
         raise TypeError("contents must be a string")
 
     if globals is None:
         globals = {}
-
-    # This is a hack, since when we use @parallel to parallelize code,
-    # the numeric literals that are factored out do not get copied
-    # to the subprocesses properly.  See trac #4545.
-    if '@parallel' in contents:
-        numeric_literals = False
 
     if numeric_literals:
         contents, literals, state = strip_string_literals(contents)
@@ -1910,7 +1940,7 @@ def preparse_file(contents, globals=None, numeric_literals=True):
             if ix == -1:
                 ix = len(contents)
             if not re.match(r"^ *(#.*)?$", contents[:ix]):
-                contents = "\n"+contents
+                contents = "\n" + contents
             assignments = ["%s = %s" % x for x in nums.items()]
             # the preparser recurses on semicolons, so we only attempt
             # to preserve line numbers if there are a few
@@ -1926,7 +1956,7 @@ def preparse_file(contents, globals=None, numeric_literals=True):
         # Preparse contents prior to the load/attach.
         lines_out += preparse(contents[start:m.start()], **preparse_opts).splitlines()
         # Wrap the load/attach itself.
-        lines_out.append(m.group(1) + load_wrap(m.group(3), m.group(2)=='attach'))
+        lines_out.append(m.group(1) + load_wrap(m.group(3), m.group(2) == 'attach'))
         # Further preparsing should start after this load/attach line.
         start = m.end()
     # Preparse the remaining contents.
@@ -1982,12 +2012,19 @@ def implicit_mul(code, level=5):
 
         sage: implicit_mul('3λ')
         '3*λ'
+
+    Check support for complex literals (:trac:`30477`)::
+
+        sage: implicit_mul('2r-1JR')
+        '2r-1JR'
+        sage: implicit_mul('1E3 + 0.3E-3rj')
+        '1e3 + 0.3e-3rj'
     """
     from keyword import iskeyword
     keywords_py2 = ['print', 'exec']
 
     def re_no_keyword(pattern, code):
-        for _ in range(2): # do it twice in because matches do not overlap
+        for _ in range(2):  # do it twice in because matches do not overlap
             for m in reversed(list(re.finditer(pattern, code))):
                 left, right = m.groups()
                 if not iskeyword(left) and not iskeyword(right) \
@@ -2003,11 +2040,11 @@ def implicit_mul(code, level=5):
         no_mul_token = " '''_no_mult_token_''' "
         code = re.sub(r'\b0x', r'0%sx' % no_mul_token, code)  # hex digits
         code = re.sub(r'( *)time ', r'\1time %s' % no_mul_token, code)  # first word may be magic 'time'
-        code = re.sub(r'\b(\d+(?:\.\d+)?(?:e\d+)?)([rR]\b)', r'\1%s\2' % no_mul_token, code)  # exclude such things as 10r
-        code = re.sub(r'\b(\d+(?:\.\d+)?)e([-\d])', r'\1%se%s\2' % (no_mul_token, no_mul_token), code)  # exclude such things as 1e5
+        code = re.sub(r'\b(\d+(?:\.\d+)?(?:e\d+)?)(rj?\b|j?r\b)', r'\1%s\2' % no_mul_token, code, flags=re.I)  # exclude such things as 10r, 10rj, 10jr
+        code = re.sub(r'\b(\d+(?:\.\d+)?)e([-\d])', r'\1%se%s\2' % (no_mul_token, no_mul_token), code, flags=re.I)  # exclude such things as 1e5
         code = re_no_keyword(r'\b((?:\d+(?:\.\d+)?)|(?:%s[0-9eEpn]*\b)) *([^\W\d(]\w*)\b' % numeric_literal_prefix, code)
     if level >= 2:
-        code = re.sub(r'(\%\(L\d+\))s', r'\1%ss%s' % (no_mul_token, no_mul_token), code) # literal strings
+        code = re.sub(r'(\%\(L\d+\))s', r'\1%ss%s' % (no_mul_token, no_mul_token), code)  # literal strings
         code = re_no_keyword(r'(\)) *(\w+)', code)
     if level >= 3:
         code = re_no_keyword(r'(\w+) +(\w+)', code)
@@ -2017,10 +2054,9 @@ def implicit_mul(code, level=5):
     return code % literals
 
 
-
 def _strip_quotes(s):
     """
-    Strips one set of outer quotes.
+    Strip one set of outer quotes.
 
     INPUT:
 
@@ -2046,7 +2082,7 @@ def _strip_quotes(s):
         sage: sage.repl.preparse._strip_quotes('""foo".sage""')
         '"foo".sage"'
     """
-    if len(s) == 0:
+    if not s:
         return s
     if s[0] in ["'", '"']:
         s = s[1:]
@@ -2133,7 +2169,6 @@ def handle_encoding_declaration(contents, out):
         # -*- coding: utf-42 -*-
         '#!/usr/local/bin/python\nimport os, sys'
 
-
     .. NOTE::
 
         - :pep:`263` says that Python will interpret a UTF-8
@@ -2155,13 +2190,14 @@ def handle_encoding_declaration(contents, out):
     for num, line in enumerate(lines[:2]):
         if re.search(r"coding[:=]\s*([-\w.]+)", line):
             out.write(line + '\n')
-            return '\n'.join(lines[:num] + lines[(num+1):])
+            return '\n'.join(lines[:num] + lines[(num + 1):])
 
     # If we did not find any encoding hints, use utf-8. This is not in
     # conformance with PEP 263, which says that Python files default to
     # ascii encoding.
     out.write("# -*- coding: utf-8 -*-\n")
     return contents
+
 
 def preparse_file_named_to_stream(name, out):
     r"""
@@ -2173,10 +2209,11 @@ def preparse_file_named_to_stream(name, out):
         contents = f.read()
     contents = handle_encoding_declaration(contents, out)
     parsed = preparse_file(contents)
-    out.write('#'*70+'\n')
-    out.write('# This file was *autogenerated* from the file %s.\n' % name)
-    out.write('#'*70+'\n')
+    out.write('#' * 70 + '\n')
+    out.write(f'# This file was *autogenerated* from the file {name}.\n')
+    out.write('#' * 70 + '\n')
     out.write(parsed)
+
 
 def preparse_file_named(name):
     r"""

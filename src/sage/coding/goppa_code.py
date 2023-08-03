@@ -1,3 +1,4 @@
+# sage.doctest: optional - sage.modules sage.rings.finite_rings
 r"""
 Goppa code
 
@@ -113,7 +114,7 @@ class GoppaCode(AbstractLinearCode):
         self._generating_pol = generating_pol
         self._defining_set = defining_set
 
-        super(GoppaCode, self).__init__(self._field, self._length, "GoppaEncoder", "Syndrome")
+        super().__init__(self._field, self._length, "GoppaEncoder", "Syndrome")
 
         if not generating_pol.is_monic():
             raise ValueError("generating polynomial must be monic")
@@ -139,7 +140,9 @@ class GoppaCode(AbstractLinearCode):
             [8, 2] Goppa code over GF(2)
         """
         return "[{}, {}] Goppa code over GF({})".format(
-                self.length(), self.dimension(), self.base_field().cardinality())
+            self.length(), self.dimension(),
+            self.base_field().cardinality())
+
     def _latex_(self):
         r"""
         Return a latex representation of ``self``.
@@ -353,7 +356,7 @@ class GoppaCodeEncoder(Encoder):
             sage: E = codes.encoders.GoppaCodeEncoder(C)
             sage: TestSuite(E).run()
         """
-        super(GoppaCodeEncoder, self).__init__(code)
+        super().__init__(code)
 
     def _repr_(self):
         """

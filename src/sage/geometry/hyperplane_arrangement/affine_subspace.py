@@ -33,8 +33,8 @@ EXAMPLES::
     True
     sage: c < b
     False
-    sage: A = AffineSubspace([8,38,21,250], VectorSpace(GF(19),4))
-    sage: A
+    sage: A = AffineSubspace([8,38,21,250], VectorSpace(GF(19),4))                  # optional - sage.libs.pari
+    sage: A                                                                         # optional - sage.libs.pari
     Affine space p + W where:
        p = (8, 0, 2, 3)
        W = Vector space of dimension 4 over Finite Field of size 19
@@ -108,7 +108,7 @@ class AffineSubspace(SageObject):
             (0, 0, 0, 0)
         """
         R = V.base_ring()
-        from sage.categories.all import Fields
+        from sage.categories.fields import Fields
         if R not in Fields():
             R = R.fraction_field()
             V = V.change_ring(R)
@@ -131,7 +131,7 @@ class AffineSubspace(SageObject):
         """
         # note that the point is not canonically chosen, but the linear part is
         return hash(self._linear_part)
-    
+
     def _repr_(self):
         r"""
         String representation for an :class:`AffineSubspace`.
@@ -384,9 +384,9 @@ class AffineSubspace(SageObject):
             []
             sage: A.intersection(C).intersection(B)
 
-            sage: D = AffineSubspace([1,2,3], VectorSpace(GF(5),3))
-            sage: E = AffineSubspace([3,4,5], VectorSpace(GF(5),3))
-            sage: D.intersection(E)
+            sage: D = AffineSubspace([1,2,3], VectorSpace(GF(5),3))                 # optional - sage.libs.pari
+            sage: E = AffineSubspace([3,4,5], VectorSpace(GF(5),3))                 # optional - sage.libs.pari
+            sage: D.intersection(E)                                                 # optional - sage.libs.pari
             Affine space p + W where:
               p = (3, 4, 0)
               W = Vector space of dimension 3 over Finite Field of size 5
@@ -407,4 +407,3 @@ class AffineSubspace(SageObject):
         new_p = p + t[:m.nrows()]*m
         new_V = self.linear_part().intersection(other._linear_part)
         return AffineSubspace(new_p, new_V)
-

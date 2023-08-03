@@ -21,12 +21,3 @@ Fabien de Montgolfier
 
 http://www.liafa.jussieu.fr/~fm/
 
-Dependencies
-------------
-
-None
-
-Patches
--------
-
-None

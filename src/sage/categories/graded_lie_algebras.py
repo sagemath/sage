@@ -87,4 +87,3 @@ class GradedLieAlgebras(GradedModulesCategory):
                 """
                 from sage.categories.lie_algebras import LieAlgebras
                 return [LieAlgebras(self.base_ring()).Nilpotent()]
-

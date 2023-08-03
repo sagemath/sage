@@ -15,7 +15,7 @@ Manifold Subsets Defined as Pullbacks of Subsets under Continuous Maps
 
 from sage.categories.sets_cat import Sets, EmptySetError
 from sage.categories.metric_spaces import MetricSpaces
-from sage.modules.free_module import is_FreeModule, FreeModule
+from sage.modules.free_module import is_FreeModule
 from sage.rings.infinity import infinity, minus_infinity
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
@@ -28,7 +28,7 @@ from sage.manifolds.subset import ManifoldSubset
 from sage.manifolds.chart import Chart
 from sage.manifolds.scalarfield import ScalarField
 from sage.sets.real_set import RealSet
-from sage.geometry.polyhedron.base import is_Polyhedron
+import sage.geometry.abc
 from sage.geometry.relative_interior import RelativeInterior
 
 
@@ -261,23 +261,23 @@ class ManifoldSubsetPullback(ManifoldSubset):
 
         PPL polyhedra and not-necessarily-closed polyhedra::
 
-            sage: from ppl import Variable, C_Polyhedron, NNC_Polyhedron, Constraint_System
-            sage: u = Variable(0)
-            sage: v = Variable(1)
-            sage: CS = Constraint_System()
-            sage: CS.insert(0 < u)
-            sage: CS.insert(u < 1)
-            sage: CS.insert(0 < v)
-            sage: CS.insert(v < 1)
-            sage: CS.insert(u + v <= 3)       # redundant inequality
-            sage: P = NNC_Polyhedron(CS); P
+            sage: from ppl import Variable, C_Polyhedron, NNC_Polyhedron, Constraint_System                             # optional - pplpy
+            sage: u = Variable(0)                                                                                       # optional - pplpy
+            sage: v = Variable(1)                                                                                       # optional - pplpy
+            sage: CS = Constraint_System()                                                                              # optional - pplpy
+            sage: CS.insert(0 < u)                                                                                      # optional - pplpy
+            sage: CS.insert(u < 1)                                                                                      # optional - pplpy
+            sage: CS.insert(0 < v)                                                                                      # optional - pplpy
+            sage: CS.insert(v < 1)                                                                                      # optional - pplpy
+            sage: CS.insert(u + v <= 3)       # redundant inequality                                                    # optional - pplpy
+            sage: P = NNC_Polyhedron(CS); P                                                                             # optional - pplpy
             A 2-dimensional polyhedron in QQ^2 defined as the convex hull of 1 point, 4 closure_points
-            sage: ManifoldSubsetPullback._is_open(P)
+            sage: ManifoldSubsetPullback._is_open(P)                                                                    # optional - pplpy
             True
-            sage: CS.insert(u + v <= 1)
-            sage: T = NNC_Polyhedron(CS); T
+            sage: CS.insert(u + v <= 1)                                                                                 # optional - pplpy
+            sage: T = NNC_Polyhedron(CS); T                                                                             # optional - pplpy
             A 2-dimensional polyhedron in QQ^2 defined as the convex hull of 1 point, 3 closure_points
-            sage: ManifoldSubsetPullback._is_open(T)
+            sage: ManifoldSubsetPullback._is_open(T)                                                                    # optional - pplpy
             False
 
         """
@@ -288,7 +288,7 @@ class ManifoldSubsetPullback(ManifoldSubset):
         if isinstance(codomain_subset, RealSet):
             return codomain_subset.is_open()
 
-        if is_Polyhedron(codomain_subset):
+        if isinstance(codomain_subset, sage.geometry.abc.Polyhedron):
             return codomain_subset.is_empty() or codomain_subset.is_universe()
 
         if isinstance(codomain_subset, RelativeInterior):
@@ -540,7 +540,7 @@ class ManifoldSubsetPullback(ManifoldSubset):
                 return {chart: ManifoldSubsetPullback._realset_restriction(chart[0],
                                                                            codomain_subset)}
 
-            if isinstance(codomain_subset, RelativeInterior) and is_Polyhedron(codomain_subset.closure()):
+            if isinstance(codomain_subset, RelativeInterior) and isinstance(codomain_subset.closure(), sage.geometry.abc.Polyhedron):
                 return {chart: ManifoldSubsetPullback._polyhedron_restriction(
                                    chart, codomain_subset.closure(), relint=True)}
 
@@ -573,6 +573,7 @@ class ManifoldSubsetPullback(ManifoldSubset):
                 if chart.domain().dimension() != 1:
                     raise ValueError('to pull back a set of scalars by a chart, the manifold must be 1-dimensional')
                 map = chart.domain().scalar_field({chart: chart[0]})
+
                 def _inverse(coord):
                     return self.point((coord,), chart=chart)
             else:
@@ -803,7 +804,7 @@ class ManifoldSubsetPullback(ManifoldSubset):
         elif isinstance(self._codomain_subset, RealSet):
             # RealSet can decide closedness authoritatively
             return self._codomain_subset.is_closed()
-        elif is_Polyhedron(self._codomain_subset):
+        elif isinstance(self._codomain_subset, sage.geometry.abc.Polyhedron):
             # Regardless of their base_ring, we treat polyhedra as closed
             # convex subsets of R^n
             return True

@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# sage.doctest: optional - sage.modules sage.rings.finite_rings
 r"""
 Kasami code
 
@@ -9,10 +9,10 @@ The extended Kasami code with parameters `(s,t)` is defined as
 
 .. MATH::
 
-    \{ v \in GF(2)^s \mid
-    \sum_{a \in GF(s)} v_a =
-    \sum_{a \in GF(s)} a v_a =
-    \sum_{a \in GF(s)} a^{t+1} v_a = 0 \}
+    \{ v \in \GF{2}^s \mid
+    \sum_{a \in \GF{s}} v_a =
+    \sum_{a \in \GF{s}} a v_a =
+    \sum_{a \in \GF{s}} a^{t+1} v_a = 0 \}
 
 
 It follows that these are subfield subcodes of the code having those three
@@ -73,16 +73,16 @@ class KasamiCode(AbstractLinearCode):
 
     .. MATH::
 
-        \{ v \in GF(2)^s \mid
-        \sum_{a \in GF(s)} v_a =
-        \sum_{a \in GF(s)} a v_a =
-        \sum_{a \in GF(s)} a^{t+1} v_a = 0 \}
+        \{ v \in \GF{2}^s \mid
+        \sum_{a \in \GF{s}} v_a =
+        \sum_{a \in \GF{s}} a v_a =
+        \sum_{a \in \GF{s}} a^{t+1} v_a = 0 \}
 
     The only valid parameters `s,t` are given by the below,
     where `q` is a power of 2:
 
-        * `s = q^{2j+1}`, `t = q^m` with `m \leq j` and `\gcd(m,2j+1) = 1`
-        * `s = q^2`, `t=q`
+    * `s = q^{2j+1}`, `t = q^m` with `m \leq j` and `\gcd(m,2j+1) = 1`
+    * `s = q^2`, `t=q`
 
     The Kasami code `(s,t)` is obtained from the extended
     Kasami code `(s,t)`, via truncation of all words.
@@ -196,12 +196,11 @@ class KasamiCode(AbstractLinearCode):
         self._t = t
         self._extended = extended
 
-        length = s-1
+        length = s - 1
         if extended:
             length += 1
 
-        super(KasamiCode, self).__init__(GF(2), length,
-                                         "GeneratorMatrix", "Syndrome")
+        super().__init__(GF(2), length, "GeneratorMatrix", "Syndrome")
 
     def parameters(self):
         r"""
@@ -295,7 +294,7 @@ class KasamiCode(AbstractLinearCode):
 
         We build the parity check matrix given by the three equations that
         the codewords must satisfy. Then we generate the parity check matrix
-        over `GF(2)` and from this the obtain the generator matrix for the
+        over `\GF{2}` and from this the obtain the generator matrix for the
         extended Kasami codes.
 
         For the Kasami codes, we truncate the last column.
@@ -322,7 +321,7 @@ class KasamiCode(AbstractLinearCode):
             sage: C.minimum_distance()
             3
         """
-        from sage.functions.log import log
+        from sage.misc.functional import log
 
         m = log(self._s, 2)
         F = GF(self._s)

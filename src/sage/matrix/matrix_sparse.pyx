@@ -1,7 +1,6 @@
 r"""
 Base class for sparse matrices
 """
-
 # ****************************************************************************
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -16,10 +15,9 @@ from cysignals.signals cimport sig_check
 
 cimport sage.matrix.matrix as matrix
 cimport sage.matrix.matrix0 as matrix0
-from sage.structure.element cimport Element, RingElement, ModuleElement, Vector
+from sage.structure.element cimport Element, Vector
 from sage.structure.richcmp cimport richcmp_item, rich_to_bool
 from sage.rings.ring import is_Ring
-from sage.misc.verbose import verbose
 
 from cpython cimport *
 from cpython.object cimport Py_EQ, Py_NE
@@ -45,6 +43,7 @@ cdef class Matrix_sparse(matrix.Matrix):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: A = matrix(QQ['x,y'], 2, [0,-1,2*x,-2], sparse=True); A
             [  0  -1]
             [2*x  -2]
@@ -176,7 +175,7 @@ cdef class Matrix_sparse(matrix.Matrix):
 
             sage: A = matrix(QQ['x,y'], 2, [0,-1,2,-2], sparse=True)
             sage: type(A)
-            <type 'sage.matrix.matrix_generic_sparse.Matrix_generic_sparse'>
+            <class 'sage.matrix.matrix_generic_sparse.Matrix_generic_sparse'>
             sage: B = matrix(QQ['x,y'], 2, [-1,-1,-2,-2], sparse=True)
             sage: A * B
             [2 2]
@@ -239,7 +238,7 @@ cdef class Matrix_sparse(matrix.Matrix):
 
             sage: A = matrix(QQ['x,y'], 2, [0,-1,2,-2], sparse=True)
             sage: type(A)
-            <type 'sage.matrix.matrix_generic_sparse.Matrix_generic_sparse'>
+            <class 'sage.matrix.matrix_generic_sparse.Matrix_generic_sparse'>
             sage: B = matrix(QQ['x,y'], 2, [-1,-1,-2,-2], sparse=True)
             sage: A._multiply_classical_with_cache(B)
             [2 2]
@@ -1005,7 +1004,7 @@ cdef class Matrix_sparse(matrix.Matrix):
             [ 0  1  2  3]
             [ 4  5  6  7]
 
-        TESTS::
+        TESTS:
 
         One can stack matrices over different rings (:trac:`16399`). ::
 
@@ -1141,10 +1140,10 @@ cdef class Matrix_sparse(matrix.Matrix):
             True
             """
         cdef int i, j
-        from sage.modules.free_module import FreeModule
-        if self.nrows() != v.degree():
+        if self._nrows != v._degree:
             raise ArithmeticError("number of rows of matrix must equal degree of vector")
-        s = FreeModule(self.base_ring(), self.ncols(), sparse=v.is_sparse()).zero_vector()
+        parent = self.row_ambient_module(base_ring=None, sparse=v.is_sparse_c())
+        s = parent.zero_vector()
         for (i, j), a in self._dict().iteritems():
             s[j] += v[i] * a
         return s
@@ -1193,10 +1192,10 @@ cdef class Matrix_sparse(matrix.Matrix):
             (x*y)
         """
         cdef int i, j
-        from sage.modules.free_module import FreeModule
-        if self.ncols() != v.degree():
+        if self._ncols != v._degree:
             raise ArithmeticError("number of columns of matrix must equal degree of vector")
-        s = FreeModule(v.base_ring(), self.nrows(), sparse=v.is_sparse()).zero_vector()
+        parent = self.column_ambient_module(base_ring=None, sparse=v.is_sparse_c())
+        s = parent.zero_vector()
         for (i, j), a in self._dict().iteritems():
             s[i] += a * v[j]
         return s

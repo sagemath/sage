@@ -44,7 +44,6 @@ representing the elements of the spin crystal by sequences of signs
 
 from cpython.object cimport Py_EQ, Py_NE, Py_LE, Py_GE, Py_LT, Py_GT
 from cysignals.memory cimport sig_malloc, sig_free
-from sage.misc.cachefunc import cached_method
 from sage.misc.lazy_attribute import lazy_attribute
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.structure.parent cimport Parent
@@ -100,6 +99,7 @@ def CrystalOfSpins(ct):
     else:
         raise NotImplementedError
 
+
 #########################
 # Type D spins
 #########################
@@ -136,6 +136,7 @@ def CrystalOfSpinsPlus(ct):
     else:
         raise NotImplementedError
 
+
 def CrystalOfSpinsMinus(ct):
     r"""
     Return the minus spin crystal of the given type D.
@@ -169,6 +170,7 @@ def CrystalOfSpinsMinus(ct):
     else:
         raise NotImplementedError
 
+
 class GenericCrystalOfSpins(UniqueRepresentation, Parent):
     """
     A generic crystal of spins.
@@ -182,11 +184,11 @@ class GenericCrystalOfSpins(UniqueRepresentation, Parent):
         """
         self._cartan_type = CartanType(ct)
         if case == "spins":
-            self.rename("The crystal of spins for type %s"%ct)
+            self.rename("The crystal of spins for type %s" % ct)
         elif case == "plus":
-            self.rename("The plus crystal of spins for type %s"%ct)
+            self.rename("The plus crystal of spins for type %s" % ct)
         else:
-            self.rename("The minus crystal of spins for type %s"%ct)
+            self.rename("The minus crystal of spins for type %s" % ct)
 
         self.Element = element_class
         Parent.__init__(self, category=ClassicalCrystals())
@@ -250,6 +252,7 @@ class GenericCrystalOfSpins(UniqueRepresentation, Parent):
         if parent(x) is not self or parent(y) is not self:
             raise ValueError("both elements must be in this crystal")
         return self._digraph_closure.has_edge(x, y)
+
 
 cdef class Spin(Element):
     """
@@ -748,6 +751,5 @@ cdef class Spin_crystal_type_D_element(Spin):
         if i < 1 or i > self._n:
             raise ValueError("i is not in the index set")
         if i == self._n:
-            return not self._value[i-1] and not self._value[i-2]
-        return self._value[i] and not self._value[i-1]
-
+            return not self._value[i - 1] and not self._value[i - 2]
+        return self._value[i] and not self._value[i - 1]

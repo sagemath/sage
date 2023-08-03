@@ -108,7 +108,7 @@ class PathAlgebra(CombinatorialFreeModule):
         sage: x.degree()
         Traceback (most recent call last):
         ...
-        ValueError: Element is not homogeneous.
+        ValueError: element is not homogeneous
         sage: y.is_homogeneous()
         True
         sage: y.degree()
@@ -165,11 +165,11 @@ class PathAlgebra(CombinatorialFreeModule):
         self._quiver = P.quiver()
         self._semigroup = P
         self._ordstr = order
-        super(PathAlgebra, self).__init__(k, self._semigroup,
-                                          prefix='',
-                                          # element_class=self.Element,
-                                          category=GradedAlgebrasWithBasis(k),
-                                          bracket=False)
+        super().__init__(k, self._semigroup,
+                         prefix='',
+                         # element_class=self.Element,
+                         category=GradedAlgebrasWithBasis(k),
+                         bracket=False)
         self._assign_names(self._semigroup.variable_names())
 
     def order_string(self):
@@ -329,7 +329,7 @@ class PathAlgebra(CombinatorialFreeModule):
             return self.element_class(self, x)
 
         # Otherwise let CombinatorialFreeModule try
-        return super(PathAlgebra, self)._element_constructor_(x)
+        return super()._element_constructor_(x)
 
     def _coerce_map_from_(self, other):
         """
@@ -461,7 +461,7 @@ class PathAlgebra(CombinatorialFreeModule):
             sage: A = DiGraph({0:{1:['a'], 2:['b']}, 1:{0:['c'], 1:['d']}, 2:{0:['e'],2:['f']}}).path_semigroup().algebra(ZZ.quo(15))
             sage: X = sage_eval('a+2*b+3*c+5*e_0+3*e_2', A.gens_dict())
             sage: latex(X)  # indirect doctest
-            5e_0 + a + 2b + 3c + 3e_2
+            5 e_0 + a + 2 b + 3 c + 3 e_2
 
         """
         arrows = self.variable_names()

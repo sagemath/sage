@@ -54,9 +54,9 @@ def random_testing(fn):
     fails (raises an exception).
 
     If you want a very long-running test using this setup, you should do
-    something like (in Python 2)::
+    something like::
 
-        for _ in xrange(10^10): test_foo(100)
+        for _ in range(10^10): test_foo(100)
 
     instead of::
 
@@ -178,7 +178,7 @@ def test_add_commutes(trials, verbose=False):
         sage: test_add_commutes(10)
         sage: test_add_commutes(1000) # long time
     """
-    from sage.rings.all import QQ
+    from sage.rings.rational_field import QQ
     for _ in range(trials):
         a = QQ.random_element()
         b = QQ.random_element()
@@ -252,7 +252,7 @@ def test_add_is_mul(trials, verbose=False):
         Random seed: 216390410596009428782506007128692114173
         AssertionError()
     """
-    from sage.rings.all import QQ
+    from sage.rings.rational_field import QQ
     for _ in range(trials):
         a = QQ.random_element()
         b = QQ.random_element()

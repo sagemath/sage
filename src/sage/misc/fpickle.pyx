@@ -5,7 +5,6 @@ Function pickling
 
 REFERENCE: The python cookbook.
 """
-
 import copyreg
 import pickle
 import sys
@@ -34,6 +33,12 @@ def reduce_code(co):
         sage: def foo(N): return N+1
         sage: sage.misc.fpickle.reduce_code(foo.__code__)
         (<cyfunction code_ctor at ...>, ...)
+
+    Test that the constructed code matches the original code::
+
+        sage: ctor, args = sage.misc.fpickle.reduce_code(foo.__code__)
+        sage: ctor(*args) == foo.__code__
+        True
     """
     if co.co_freevars or co.co_cellvars:
         raise ValueError("Cannot pickle code objects from closures")
@@ -44,7 +49,12 @@ def reduce_code(co):
     co_args += (co.co_kwonlyargcount, co.co_nlocals,
                 co.co_stacksize, co.co_flags, co.co_code,
                 co.co_consts, co.co_names, co.co_varnames, co.co_filename,
-                co.co_name, co.co_firstlineno, co.co_lnotab)
+                co.co_name)
+    if sys.version_info.minor >= 11:
+        co_args += (co.co_qualname, co.co_firstlineno,
+                    co.co_linetable, co.co_exceptiontable)
+    else:
+        co_args += (co.co_firstlineno, co.co_lnotab)
 
     return (code_ctor, co_args)
 
@@ -80,6 +90,7 @@ def pickle_function(func):
     """
     return pickle.dumps(func.__code__)
 
+
 def unpickle_function(pickled):
     """
     Unpickle a pickled function.
@@ -95,14 +106,15 @@ def unpickle_function(pickled):
     return types.FunctionType(recovered, globals())
 
 
-
 def call_pickled_function(fpargs):
     import sage.all
-    from sage.misc.fpickle import unpickle_function
+    from sage.misc.fpickle import unpickle_function  # used below
     (fp, (args, kwds)) = fpargs
-    f = eval("unpickle_function(fp)", sage.all.__dict__, {'fp':fp})
-    res = eval("f(*args, **kwds)",sage.all.__dict__, {'args':args, 'kwds':kwds, 'f':f})
+    f = eval("unpickle_function(fp)", sage.all.__dict__, {'fp': fp})
+    res = eval("f(*args, **kwds)", sage.all.__dict__,
+               {'args': args, 'kwds': kwds, 'f': f})
     return ((args, kwds), res)
+
 
 # The following four methods are taken from twisted.persisted.styles - the
 # import of twisted.persisted.styles takes a long time and we do not use
@@ -117,11 +129,11 @@ def pickleMethod(method):
 
 
 def unpickleMethod(im_name,
-                    __self__,
-                    im_class):
+                   __self__,
+                   im_class):
     'support function for copyreg to unpickle method refs'
     try:
-        unbound = getattr(im_class,im_name)
+        unbound = getattr(im_class, im_name)
         if __self__ is None:
             return unbound
 
@@ -143,21 +155,25 @@ def unpickleMethod(im_name,
                                  __self__)
         return bound
 
+
 copyreg.pickle(types.MethodType,
-                pickleMethod,
-                unpickleMethod)
+               pickleMethod,
+               unpickleMethod)
 
 oldModules = {}
+
 
 def pickleModule(module):
     'support function for copyreg to pickle module refs'
     return unpickleModule, (module.__name__,)
 
+
 def unpickleModule(name):
     'support function for copyreg to unpickle module refs'
     if name in oldModules:
         name = oldModules[name]
-    return __import__(name,{},{},'x')
+    return __import__(name, {}, {}, 'x')
+
 
 copyreg.pickle(types.ModuleType,
                pickleModule,

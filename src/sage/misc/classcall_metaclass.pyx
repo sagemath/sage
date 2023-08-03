@@ -217,12 +217,10 @@ cdef class ClasscallMetaclass(NestedClassMetaclass):
         We now show the usage of ``__classcall_private__``::
 
             sage: class FooNoInherits(object, metaclass=ClasscallMetaclass):
-            ....:     __metaclass__ = ClasscallMetaclass
             ....:     @staticmethod
             ....:     def __classcall_private__(cls):
             ....:         print("calling private classcall")
             ....:         return type.__call__(cls)
-            ...
             sage: FooNoInherits()
             calling private classcall
             <__main__.FooNoInherits object at ...>
@@ -391,9 +389,7 @@ cdef class ClasscallMetaclass(NestedClassMetaclass):
 
                 sage: bind = obj.Inner
                 calling __classget__(<class '__main__.Outer.Inner'>, <__main__.Outer object at 0x...>, <class '__main__.Outer'>)
-                sage: bind  # py2
-                <functools.partial object at 0x...>
-                sage: bind  # py3
+                sage: bind
                 functools.partial(<class '__main__.Outer.Inner'>, <__main__.Outer object at 0x...>)
         """
         if cls.classget:
@@ -464,30 +460,20 @@ def typecall(pytype cls, *args, **kwds):
     EXAMPLES::
 
         sage: from sage.misc.classcall_metaclass import typecall
-        sage: class Foo(object): pass
+        sage: class Foo(): pass
         sage: typecall(Foo)
         <__main__.Foo object at 0x...>
         sage: typecall(list)
         []
         sage: typecall(Integer, 2)
         2
-
-    .. warning::
-
-        :func:`typecall` doesn't work for old style class (not inheriting from
-        :class:`object`)::
-
-            sage: class Bar: pass
-            sage: typecall(Bar)  # py2
-            Traceback (most recent call last):
-            ...
-            TypeError: Argument 'cls' has incorrect type (expected type, got classobj)
     """
     return (<PyTypeObject*>type).tp_call(cls, args, kwds)
 
+
 # Class for timing::
 
-class CRef(object):
+class CRef():
     def __init__(self, i):
         """
         TESTS::
@@ -497,6 +483,7 @@ class CRef(object):
             3
         """
         self.i = i+1
+
 
 class C2(object, metaclass=ClasscallMetaclass):
     def __init__(self, i):
@@ -509,6 +496,7 @@ class C2(object, metaclass=ClasscallMetaclass):
         """
         self.i = i+1
 
+
 class C3(object, metaclass = ClasscallMetaclass):
     def __init__(self, i):
         """
@@ -519,6 +507,7 @@ class C3(object, metaclass = ClasscallMetaclass):
             3
         """
         self.i = i+1
+
 
 class C2C(object, metaclass=ClasscallMetaclass):
     @staticmethod
@@ -531,6 +520,7 @@ class C2C(object, metaclass=ClasscallMetaclass):
             3
         """
         return i+1
+
 
 def timeCall(T, int n, *args):
     r"""
@@ -548,7 +538,7 @@ def timeCall(T, int n, *args):
         625 loops, best of 3: 41.4 µs per loop
 
         sage: i1 = int(1); i3 = int(3) # don't use Sage's Integer
-        sage: class PRef(object):
+        sage: class PRef():
         ....:     def __init__(self, i):
         ....:         self.i = i+i1
 

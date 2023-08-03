@@ -40,21 +40,30 @@ Characters are themselves group elements, and basic arithmetic on them works::
     sage: chi.multiplicative_order()
     +Infinity
 """
+
 import operator
-from sage.structure.element import MultiplicativeGroupElement, parent
-from sage.structure.parent import Parent
-from sage.structure.sequence import Sequence
-from sage.structure.richcmp import richcmp_not_equal, richcmp
-from sage.rings.all import QQ, ZZ, Zmod, NumberField
-from sage.misc.cachefunc import cached_method
-from sage.misc.abstract_method import abstract_method
-from sage.misc.misc_c import prod
+
+from sage.arith.functions import lcm
 from sage.arith.misc import crt
 from sage.categories.groups import Groups
 from sage.categories.rings import Rings
+from sage.misc.abstract_method import abstract_method
+from sage.misc.cachefunc import cached_method
+from sage.misc.misc_c import prod
 from sage.misc.mrange import xmrange
 from sage.misc.verbose import verbose
 from sage.modular.dirichlet import DirichletGroup
+from sage.rings.finite_rings.conway_polynomials import conway_polynomial
+from sage.rings.finite_rings.integer_mod_ring import Zmod
+from sage.rings.infinity import Infinity
+from sage.rings.integer_ring import ZZ
+from sage.rings.number_field.number_field import NumberField
+from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+from sage.rings.rational_field import QQ
+from sage.structure.element import MultiplicativeGroupElement, parent
+from sage.structure.parent import Parent
+from sage.structure.richcmp import richcmp_not_equal, richcmp
+from sage.structure.sequence import Sequence
 
 
 class SmoothCharacterGeneric(MultiplicativeGroupElement):
@@ -168,8 +177,6 @@ class SmoothCharacterGeneric(MultiplicativeGroupElement):
             sage: G.character(0, [1]).multiplicative_order()
             1
         """
-        from sage.arith.all import lcm
-        from sage.rings.infinity import Infinity
         if self._values_on_gens[-1].multiplicative_order() == Infinity:
             return Infinity
         else:
@@ -828,7 +835,7 @@ class SmoothCharacterGroupGeneric(Parent):
                 L = tuple(self.discrete_log(c, y))
                 if L not in logs:
                     logs.append(L)
-            T.assertTrue(n2 * len(logs) == n1, "Kernel gens at level %s don't generate everything!" % c)
+            T.assertEqual(n2 * len(logs), n1, "Kernel gens at level %s don't generate everything!" % c)
 
     def compose_with_norm(self, chi):
         r"""
@@ -1468,7 +1475,6 @@ class SmoothCharacterGroupUnramifiedQuadratic(SmoothCharacterGroupQuadratic):
             sage: SmoothCharacterGroupUnramifiedQuadratic(2, QQ, 'c').number_field()
             Number Field in c with defining polynomial x^2 + x + 1
         """
-        from sage.rings.all import conway_polynomial, PolynomialRing
         fbar = conway_polynomial(self.prime(), 2)
         f = PolynomialRing(QQ, 'x')([a.lift() for a in fbar])
         return NumberField(f, self._name)
@@ -1704,7 +1710,7 @@ class SmoothCharacterGroupRamifiedQuadratic(SmoothCharacterGroupQuadratic):
             sage: SmoothCharacterGroupRamifiedQuadratic(7, 1, Zmod(6), 'c').number_field()
             Number Field in c with defining polynomial x^2 - 35
         """
-        from sage.rings.all import PolynomialRing
+        from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
         R, x = PolynomialRing(QQ, 'x').objgen()
         f = x**2 - self._unif_sqr
         return NumberField(f, self._name)

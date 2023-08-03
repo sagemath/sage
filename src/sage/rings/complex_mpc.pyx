@@ -69,7 +69,7 @@ from sage.libs.mpfr cimport *
 from sage.libs.mpc cimport *
 from sage.structure.parent cimport Parent
 from sage.structure.parent_gens cimport ParentWithGens
-from sage.structure.element cimport RingElement, Element, ModuleElement
+from sage.structure.element cimport Element
 from sage.structure.richcmp cimport rich_to_bool
 from sage.categories.map cimport Map
 from sage.libs.pari.all import pari
@@ -137,15 +137,15 @@ cdef inline mpfr_rnd_t rnd_im(mpc_rnd_t rnd):
 sign = '[+-]'
 digit_ten = '[0123456789]'
 exponent_ten = '[e@]' + sign + '?[0123456789]+'
-number_ten = 'inf(?:inity)?|@inf@|nan(?:\([0-9A-Z_]*\))?|@nan@(?:\([0-9A-Z_]*\))?'\
-    '|(?:' + digit_ten + '*\.' + digit_ten + '+|' + digit_ten + '+\.?)(?:' + exponent_ten + ')?'
-imaginary_ten = 'i(?:\s*\*\s*(?:' + number_ten + '))?|(?:' + number_ten + ')\s*\*\s*i'
-complex_ten = '(?P<im_first>(?P<im_first_im_sign>' + sign + ')?\s*(?P<im_first_im_abs>' + imaginary_ten + ')' \
-    '(\s*(?P<im_first_re_sign>' + sign + ')\s*(?P<im_first_re_abs>' + number_ten + '))?)' \
+number_ten = r'inf(?:inity)?|@inf@|nan(?:\([0-9A-Z_]*\))?|@nan@(?:\([0-9A-Z_]*\))?'\
+    '|(?:' + digit_ten + r'*\.' + digit_ten + '+|' + digit_ten + r'+\.?)(?:' + exponent_ten + ')?'
+imaginary_ten = r'i(?:\s*\*\s*(?:' + number_ten + '))?|(?:' + number_ten + r')\s*\*\s*i'
+complex_ten = '(?P<im_first>(?P<im_first_im_sign>' + sign + r')?\s*(?P<im_first_im_abs>' + imaginary_ten + r')' \
+    r'(\s*(?P<im_first_re_sign>' + sign + r')\s*(?P<im_first_re_abs>' + number_ten + '))?)' \
     '|' \
-    '(?P<re_first>(?P<re_first_re_sign>' + sign + ')?\s*(?P<re_first_re_abs>' + number_ten + ')' \
-    '(\s*(?P<re_first_im_sign>' + sign + ')\s*(?P<re_first_im_abs>' + imaginary_ten + '))?)'
-re_complex_ten = re.compile('^\s*(?:' + complex_ten + ')\s*$', re.I)
+    '(?P<re_first>(?P<re_first_re_sign>' + sign + r')?\s*(?P<re_first_re_abs>' + number_ten + r')' \
+    r'(\s*(?P<re_first_im_sign>' + sign + r')\s*(?P<re_first_im_abs>' + imaginary_ten + '))?)'
+re_complex_ten = re.compile(r'^\s*(?:' + complex_ten + r')\s*$', re.I)
 
 cpdef inline split_complex_string(string, int base=10):
     """
@@ -185,17 +185,17 @@ cpdef inline split_complex_string(string, int base=10):
 
         # Warning: number, imaginary, and complex should be enclosed in parentheses
         # when used as regexp because of alternatives '|'
-        number = '@nan@(?:\([0-9A-Z_]*\))?|@inf@|(?:' + digit + '*\.' + digit + '+|' + digit + '+\.?)(?:' + exponent + ')?'
+        number = r'@nan@(?:\([0-9A-Z_]*\))?|@inf@|(?:' + digit + r'*\.' + digit + '+|' + digit + r'+\.?)(?:' + exponent + ')?'
         if base <= 10:
-            number = 'nan(?:\([0-9A-Z_]*\))?|inf(?:inity)?|' + number
-        imaginary = 'i(?:\s*\*\s*(?:' + number + '))?|(?:' + number + ')\s*\*\s*i'
-        complex = '(?P<im_first>(?P<im_first_im_sign>' + sign + ')?\s*(?P<im_first_im_abs>' + imaginary + ')' \
-            '(\s*(?P<im_first_re_sign>' + sign + ')\s*(?P<im_first_re_abs>' + number + '))?)' \
+            number = r'nan(?:\([0-9A-Z_]*\))?|inf(?:inity)?|' + number
+        imaginary = r'i(?:\s*\*\s*(?:' + number + '))?|(?:' + number + r')\s*\*\s*i'
+        complex = '(?P<im_first>(?P<im_first_im_sign>' + sign + r')?\s*(?P<im_first_im_abs>' + imaginary + r')' \
+            r'(\s*(?P<im_first_re_sign>' + sign + r')\s*(?P<im_first_re_abs>' + number + '))?)' \
             '|' \
-            '(?P<re_first>(?P<re_first_re_sign>' + sign + ')?\s*(?P<re_first_re_abs>' + number + ')' \
-            '(\s*(?P<re_first_im_sign>' + sign + ')\s*(?P<re_first_im_abs>' + imaginary + '))?)'
+            '(?P<re_first>(?P<re_first_re_sign>' + sign + r')?\s*(?P<re_first_re_abs>' + number + r')' \
+            r'(\s*(?P<re_first_im_sign>' + sign + r')\s*(?P<re_first_im_abs>' + imaginary + '))?)'
 
-        z = re.match('^\s*(?:' + complex + ')\s*$', string, re.I)
+        z = re.match(r'^\s*(?:' + complex + r')\s*$', string, re.I)
 
     x, y = None, None
     if z is not None:
@@ -206,19 +206,19 @@ cpdef inline split_complex_string(string, int base=10):
         else:
             return None
 
-        if  z.group(prefix + '_re_abs') is not None:
-            x = z.expand('\g<' + prefix + '_re_abs>')
+        if z.group(prefix + '_re_abs') is not None:
+            x = z.expand(r'\g<' + prefix + '_re_abs>')
             if z.group(prefix + '_re_sign') is not None:
-                x = z.expand('\g<' + prefix + '_re_sign>') + x
+                x = z.expand(r'\g<' + prefix + '_re_sign>') + x
 
         if z.group(prefix + '_im_abs') is not None:
-            y = re.search('(?P<im_part>' + number + ')', z.expand('\g<' + prefix + '_im_abs>'), re.I)
+            y = re.search('(?P<im_part>' + number + ')', z.expand(r'\g<' + prefix + '_im_abs>'), re.I)
             if y is None:
                 y = '1'
             else:
-                y = y.expand('\g<im_part>')
+                y = y.expand(r'\g<im_part>')
             if z.group(prefix + '_im_sign') is not None:
-                y = z.expand('\g<' + prefix + '_im_sign>') + y
+                y = z.expand(r'\g<' + prefix + '_im_sign>') + y
 
     return x, y
 
@@ -253,7 +253,7 @@ def MPComplexField(prec=53, rnd="RNDNN", names=None):
     if mykey in cache:
         X = cache[mykey]
         C = X()
-        if not C is None:
+        if C is not None:
             return C
     C = MPComplexField_class(prec, rnd)
     cache[mykey] = weakref.ref(C)
@@ -313,8 +313,8 @@ cdef class MPComplexField_class(sage.rings.ring.Field):
         try:
             n = _mpc_rounding_modes.index(rnd)
         except ValueError:
-            raise ValueError("rnd (=%s) must be of the form RNDxy"\
-                "where x and y are one of N, Z, U, D" % rnd)
+            raise ValueError("rnd (=%s) must be of the form RNDxy"
+                             "where x and y are one of N, Z, U, D" % rnd)
         self.__rnd = n
         self.__rnd_str = rnd
 
@@ -409,7 +409,7 @@ cdef class MPComplexField_class(sage.rings.ring.Field):
             sage: C20(i*4, 7)
             Traceback (most recent call last):
             ...
-            TypeError: unable to coerce to a ComplexNumber: <type 'sage.rings.number_field.number_field_element_quadratic.NumberFieldElement_gaussian'>
+            TypeError: unable to coerce to a ComplexNumber: <class 'sage.rings.number_field.number_field_element_quadratic.NumberFieldElement_gaussian'>
 
         Each part can be set with strings (written in base ten)::
 
@@ -816,7 +816,6 @@ cdef class MPComplexNumber(sage.structure.element.FieldElement):
         """
         # This should not be called except when the number is being created.
         # Complex Numbers are supposed to be immutable.
-        cdef RealNumber x
         cdef mpc_rnd_t rnd
         rnd =(<MPComplexField_class>self._parent).__rnd
         if y is None:
@@ -846,7 +845,7 @@ cdef class MPComplexNumber(sage.structure.element.FieldElement):
                 return
             elif isinstance(z, sage.libs.pari.all.pari_gen):
                 real, imag = z.real(), z.imag()
-            elif isinstance(z, list) or isinstance(z, tuple):
+            elif isinstance(z, (list, tuple)):
                 real, imag = z
             elif isinstance(z, complex):
                 real, imag = z.real, z.imag
@@ -869,7 +868,7 @@ cdef class MPComplexNumber(sage.structure.element.FieldElement):
             elif isinstance(z, Integer):
                 mpc_set_z(self.value, (<Integer>z).value, rnd)
                 return
-            elif isinstance(z, (int, long)):
+            elif isinstance(z, int):
                 mpc_set_si(self.value, z, rnd)
                 return
             else:
@@ -1101,6 +1100,16 @@ cdef class MPComplexNumber(sage.structure.element.FieldElement):
         """
         return self    # since object is immutable.
 
+    def __deepcopy__(self, memo):
+        """
+        EXAMPLES::
+
+            sage: a = MPComplexField()(3.5, 3)
+            sage: deepcopy(a) is  a
+            True
+        """
+        return self    # since object is immutable.
+
     def __int__(self):
         r"""
         Method for converting ``self`` to type ``int``.
@@ -1148,8 +1157,8 @@ cdef class MPComplexNumber(sage.structure.element.FieldElement):
             TypeError: can...t convert complex to float; use abs(z)
         """
         if mpfr_zero_p(self.value.im):
-            return mpfr_get_d(self.value.re,\
-                                   rnd_re((<MPComplexField_class>self._parent).__rnd))
+            return mpfr_get_d(self.value.re,
+                              rnd_re((<MPComplexField_class>self._parent).__rnd))
         else:
             raise TypeError("can't convert complex to float; use abs(z)")
 
@@ -1278,7 +1287,7 @@ cdef class MPComplexNumber(sage.structure.element.FieldElement):
             cim = MPC_INEX_IM(c)
             return rich_to_bool(op, cim)
 
-    def __nonzero__(self):
+    def __bool__(self):
         """
         Return ``True`` if ``self`` is not zero.
 
@@ -1361,7 +1370,7 @@ cdef class MPComplexNumber(sage.structure.element.FieldElement):
             sage: p(z)
             1.11022302462516e-16
         """
-        from sage.arith.all import algdep
+        from sage.arith.misc import algdep
         return algdep(self, n, **kwds)
 
     ################################
@@ -1613,7 +1622,7 @@ cdef class MPComplexNumber(sage.structure.element.FieldElement):
         x = <MPComplexNumber>self
         z = x._new()
 
-        if isinstance(right, (int,long)):
+        if isinstance(right, int):
             mpc_pow_si(z.value, x.value, right, (<MPComplexField_class>x._parent).__rnd)
         elif isinstance(right, Integer):
             mpc_pow_z(z.value, x.value, (<Integer>right).value, (<MPComplexField_class>x._parent).__rnd)
@@ -1691,7 +1700,7 @@ cdef class MPComplexNumber(sage.structure.element.FieldElement):
         return z
 
     def cosh(self):
-        """
+        r"""
         Return the hyperbolic cosine of this complex number:
 
         .. MATH::
@@ -1711,7 +1720,7 @@ cdef class MPComplexNumber(sage.structure.element.FieldElement):
         return z
 
     def sinh(self):
-        """
+        r"""
         Return the hyperbolic sine of this complex number:
 
         .. MATH::
@@ -2053,7 +2062,7 @@ cdef class MPComplexNumber(sage.structure.element.FieldElement):
         return z
 
     def exp(self):
-        """
+        r"""
         Return the exponential of this complex number:
 
         .. MATH::
@@ -2174,7 +2183,7 @@ cdef class MPComplexNumber(sage.structure.element.FieldElement):
         tt= RealNumber(R)
 
         cdef list zlist = [z]
-        for i in xrange(1,n):
+        for i in range(1,n):
             z = self._new()
             mpfr_mul_ui(tt.value, t.value, i, rrnd)
             mpfr_add(tt.value, tt.value, a.value, rrnd)
@@ -2328,12 +2337,11 @@ cdef class MPComplexNumber(sage.structure.element.FieldElement):
             sage: u.agm(v, algorithm="optimal")
             -0.410522769709397 + 4.60061063922097*I
         """
-        if algorithm=="pari":
+        if algorithm == "pari":
             t = self._parent(right).__pari__()
             return self._parent(self.__pari__().agm(t))
 
         cdef MPComplexNumber a, b, d, s, res
-        cdef mpfr_t sn,dn
         cdef mp_exp_t rel_prec
         cdef bint optimal = algorithm == "optimal"
 
@@ -2565,3 +2573,8 @@ cdef class CCtoMPC(Map):
         y = (<MPComplexField_class>self.codomain())._new()
         mpc_set_fr_fr(y.value, (<ComplexNumber>z).__re, (<ComplexNumber>z).__im, rnd)
         return y
+
+
+# Support Python's numbers abstract base class
+# import numbers
+from sage.rings.complex_mpc import MPComplexNumber

@@ -23,7 +23,7 @@ REFERENCES:
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 #*****************************************************************************
 
 from libc.math cimport log, ceil
@@ -33,7 +33,10 @@ from cysignals.memory cimport sig_malloc, sig_calloc, sig_realloc, sig_free
 
 from sage.data_structures.bitset_base cimport *
 from sage.rings.integer cimport Integer
-from sage.libs.flint.ulong_extras cimport n_is_prime
+# from sage.libs.flint.ulong_extras cimport n_is_prime
+# -- avoid modularization obstruction -- function is only used for a doctest helper
+from sage.arith.misc import is_prime as n_is_prime
+
 
 # OrbitPartition (OP)
 
@@ -134,7 +137,8 @@ def OP_represent(int n, merges, perm):
         if not OP_find(OP, i) == i:
             print("Failed at i = %d!" % i)
             good = False
-    if good: print("Each element reports itself as its root.")
+    if good:
+        print("Each element reports itself as its root.")
     print("Merging:")
     for i,j in merges:
         OP_join(OP, i, j)
@@ -280,8 +284,7 @@ cdef PS_print_partition(PartitionStack *PS, int k):
     s = s[:-1] + ')'
     print(s)
 
-cdef int PS_first_smallest(PartitionStack *PS, bitset_t b, int *second_pos=NULL,
-                           PartitionRefinement_generic partn_ref_alg=None):
+cdef int PS_first_smallest(PartitionStack *PS, bitset_t b, int *second_pos=NULL):
     """
     Find the first occurrence of the smallest cell of size greater than one,
     which is admissible (checked by the function ``test_allowance``).
@@ -289,29 +292,29 @@ cdef int PS_first_smallest(PartitionStack *PS, bitset_t b, int *second_pos=NULL,
     """
     cdef int i = 0, j = 0, location = 0, n = PS.degree
     bitset_zero(b)
-    while 1:
+    while True:
         if PS.levels[i] <= PS.depth:
-            if i != j and n > i - j + 1 and (partn_ref_alg is None or
-                                partn_ref_alg._minimization_allowed_on_col(PS.entries[j])):
+            if i != j and n > i - j + 1:
                 n = i - j + 1
                 location = j
             j = i + 1
-        if PS.levels[i] == -1: break
+        if PS.levels[i] == -1:
+            break
         i += 1
     # location now points to the beginning of the first, smallest,
     # nontrivial cell
     i = location
-    while 1:
+    while True:
         bitset_flip(b, PS.entries[i])
-        if PS.levels[i] <= PS.depth: break
+        if PS.levels[i] <= PS.depth:
+            break
         i += 1
 
     if second_pos != NULL:
-        if n==2:
-            second_pos[0] = PS.entries[location+1]
+        if n == 2:
+            second_pos[0] = PS.entries[location + 1]
         else:
             second_pos[0] = -1
-
 
     return PS.entries[location]
 
@@ -480,7 +483,8 @@ def PS_represent(partition, splits):
     if not PS.degree == n or not PS.depth == 0:
         print("Incorrect degree or depth!")
         good = False
-    if good: print("Everything seems in order, deallocating.")
+    if good:
+        print("Everything seems in order, deallocating.")
     PS_dealloc(PS)
     print("Deallocated.")
     print("Creating PartitionStack from partition %s."%partition)
@@ -633,11 +637,13 @@ cdef inline int SC_realloc_gens(StabilizerChain *SC, int level, int size):
     cdef int n = SC.degree
 
     temp = <int *> sig_realloc( SC.generators[level],   n * size * sizeof(int) )
-    if temp is NULL: return 1
+    if temp is NULL:
+        return 1
     SC.generators[level] = temp
 
     temp = <int *> sig_realloc( SC.gen_inverses[level], n * size * sizeof(int) )
-    if temp is NULL: return 1
+    if temp is NULL:
+        return 1
     SC.gen_inverses[level] = temp
 
     SC.array_size[level] = size
@@ -751,7 +757,8 @@ cdef int SC_realloc_bitsets(StabilizerChain *SC, unsigned long size):
     Returns 1 in case of an allocation failure.
     """
     cdef unsigned long size_old = SC.gen_used.size
-    if size <= size_old: return 0
+    if size <= size_old:
+        return 0
     cdef unsigned long new_size = size_old
     while new_size < size:
         new_size *= 2
@@ -828,11 +835,12 @@ cdef SC_print_level(StabilizerChain *SC, int level):
         print('| labels  {}'.format([SC.labels        [level][i] for i from 0 <= i < n]))
         print('|')
         print('| generators  {}'.format([[SC.generators  [level][n*i + j] for j from 0 <= j < n] for i from 0 <= i < SC.num_gens[level]]))
-        print('\ inverses    {}'.format([[SC.gen_inverses[level][n*i + j] for j from 0 <= j < n] for i from 0 <= i < SC.num_gens[level]]))
+        print(r'\ inverses    {}'.format([[SC.gen_inverses[level][n*i + j] for j from 0 <= j < n] for i from 0 <= i < SC.num_gens[level]]))
     else:
         print('/ level {}'.format(level))
         print('|')
-        print('\ base_size {}'.format(SC.base_size))
+        print(r'\ base_size {}'.format(SC.base_size))
+
 
 cdef StabilizerChain *SC_new_base(StabilizerChain *SC, int *base, int base_len):
     """
@@ -1040,8 +1048,10 @@ cdef int SC_insert_and_sift(StabilizerChain *SC, int level, int *pi, int num_per
                     break
             else:
                 bitset_set(&SC.gen_is_id, perm_gen_index)
-            if b != -1: break
-        if b == -1: return 0
+            if b != -1:
+                break
+        if b == -1:
+            return 0
     if sift and level == SC.base_size:
         SC_add_base_point(SC, b)
     else:
@@ -1063,18 +1073,22 @@ cdef int SC_insert_and_sift(StabilizerChain *SC, int level, int *pi, int num_per
         for i from 0 <= i < SC.orbit_sizes[level]:
             x = SC.base_orbits[level][i]
             for perm_gen_index from 0 <= perm_gen_index < num_perms:
-                if sift and bitset_check(&SC.gen_is_id, perm_gen_index): continue
+                if sift and bitset_check(&SC.gen_is_id, perm_gen_index):
+                    continue
                 perm = pi + n*perm_gen_index
                 if SC.parents[level][perm[x]] == -1:
                     # now we have an x which maps to a new point under perm,
                     re_treed = 1
-                    if sift: bitset_set(&SC.gen_used, perm_gen_index)
+                    if sift:
+                        bitset_set(&SC.gen_used, perm_gen_index)
                     if SC_re_tree(SC, level, perm, x):
                         return 1
                     start_over = 1 # we must look anew
                     break
-            if start_over: break
-            if not re_treed: continue
+            if start_over:
+                break
+            if not re_treed:
+                continue
             for perm_gen_index from 0 <= perm_gen_index < old_num_gens:
                 perm = SC.generators[level] + n*perm_gen_index
                 if SC.parents[level][perm[x]] == -1:
@@ -1083,7 +1097,8 @@ cdef int SC_insert_and_sift(StabilizerChain *SC, int level, int *pi, int num_per
                         return 1
                     start_over = 1 # we must look anew
                     break
-            if start_over: break
+            if start_over:
+                break
             for j from level < j < SC.base_size:
                 for perm_gen_index from 0 <= perm_gen_index < SC.num_gens[j]:
                     perm = SC.generators[j] + n*perm_gen_index
@@ -1220,7 +1235,7 @@ def SC_test_list_perms(list L, int n, int limit, bint gap, bint limit_complain, 
         sage: for i in range(2,9):
         ....:     test_Sn_on_m_points(i,i,0,1)
         sage: for i in range(2,9):           # long time
-        ....:     test_Sn_on_m_points(i,i,1,1) # long time
+        ....:     test_Sn_on_m_points(i,i,1,1)
         sage: test_Sn_on_m_points(8,8,1,1)
         sage: def test_stab_chain_fns_1(n, gap, contains):
         ....:     perm1 = sum([[2*i+1,2*i] for i in range(n)], [])
@@ -1231,7 +1246,7 @@ def SC_test_list_perms(list L, int n, int limit, bint gap, bint limit_complain, 
         sage: for n in range(1,11):
         ....:     test_stab_chain_fns_1(n, 0, 1)
         sage: for n in range(1,9):              # long time
-        ....:     test_stab_chain_fns_1(n, 1, 1)  # long time
+        ....:     test_stab_chain_fns_1(n, 1, 1)
         sage: test_stab_chain_fns_1(11, 1, 1)
         sage: def test_stab_chain_fns_2(n, gap, contains):
         ....:     perms = []
@@ -1244,7 +1259,7 @@ def SC_test_list_perms(list L, int n, int limit, bint gap, bint limit_complain, 
         sage: for n in range(2,11):
         ....:     test_stab_chain_fns_2(n, 0, 1)
         sage: for n in range(2,11):            # long time
-        ....:     test_stab_chain_fns_2(n, 1, 1) # long time
+        ....:     test_stab_chain_fns_2(n, 1, 1)
         sage: test_stab_chain_fns_2(11, 1, 1)
         sage: def test_stab_chain_fns_3(n, gap, contains):
         ....:     perm1 = [(-i)%n for i in range( n )]
@@ -1255,7 +1270,7 @@ def SC_test_list_perms(list L, int n, int limit, bint gap, bint limit_complain, 
         sage: for n in range(2,20):
         ....:     test_stab_chain_fns_3(n, 0, 1)
         sage: for n in range(2,14):            # long time
-        ....:     test_stab_chain_fns_3(n, 1, 1) # long time
+        ....:     test_stab_chain_fns_3(n, 1, 1)
         sage: test_stab_chain_fns_3(20, 1, 1)
         sage: def test_stab_chain_fns_4(n, g, gap, contains):
         ....:     perms = []
@@ -1265,22 +1280,22 @@ def SC_test_list_perms(list L, int n, int limit, bint gap, bint limit_complain, 
         ....:         perms.append(perm)
         ....:     SC_test_list_perms(perms, n, limit, gap, 0, contains)
         sage: for n in range(4,9):                # long time
-        ....:     test_stab_chain_fns_4(n, 1, 1, 0) # long time
-        ....:     test_stab_chain_fns_4(n, 2, 1, 0) # long time
-        ....:     test_stab_chain_fns_4(n, 2, 1, 0) # long time
-        ....:     test_stab_chain_fns_4(n, 2, 1, 0) # long time
-        ....:     test_stab_chain_fns_4(n, 2, 1, 0) # long time
-        ....:     test_stab_chain_fns_4(n, 3, 1, 0) # long time
-        sage: for n in range(4,9):
+        ....:     test_stab_chain_fns_4(n, 1, 1, 0)
+        ....:     test_stab_chain_fns_4(n, 2, 1, 0)
+        ....:     test_stab_chain_fns_4(n, 2, 1, 0)
+        ....:     test_stab_chain_fns_4(n, 2, 1, 0)
+        ....:     test_stab_chain_fns_4(n, 2, 1, 0)
+        ....:     test_stab_chain_fns_4(n, 3, 1, 0)
+        sage: for n in range(4,9):  # not tested, known bug (see :trac:`32187`)
         ....:     test_stab_chain_fns_4(n, 1, 0, 1)
         ....:     for j in range(6):
         ....:         test_stab_chain_fns_4(n, 2, 0, 1)
         ....:     test_stab_chain_fns_4(n, 3, 0, 1)
         sage: for n in range(4,8):                # long time
-        ....:     test_stab_chain_fns_4(n, 1, 1, 1) # long time
-        ....:     test_stab_chain_fns_4(n, 2, 1, 1) # long time
-        ....:     test_stab_chain_fns_4(n, 2, 1, 1) # long time
-        ....:     test_stab_chain_fns_4(n, 3, 1, 1) # long time
+        ....:     test_stab_chain_fns_4(n, 1, 1, 1)
+        ....:     test_stab_chain_fns_4(n, 2, 1, 1)
+        ....:     test_stab_chain_fns_4(n, 2, 1, 1)
+        ....:     test_stab_chain_fns_4(n, 3, 1, 1)
         sage: test_stab_chain_fns_4(8, 2, 1, 1)
         sage: def test_stab_chain_fns_5(n, gap, contains):
         ....:     perms = []
@@ -1293,12 +1308,12 @@ def SC_test_list_perms(list L, int n, int limit, bint gap, bint limit_complain, 
         ....:     perm2 = list(range(m)) + perm2
         ....:     SC_test_list_perms([perm1, perm2], n, limit, gap, 0, contains)
         sage: for n in [4..9]:                     # long time
-        ....:     for _ in range(2):                 # long time
-        ....:         test_stab_chain_fns_5(n, 1, 0) # long time
+        ....:     for _ in range(2):
+        ....:         test_stab_chain_fns_5(n, 1, 0)
         sage: for n in [4..8]:                     # long time
-        ....:     test_stab_chain_fns_5(n, 0, 1)     # long time
+        ....:     test_stab_chain_fns_5(n, 0, 1)
         sage: for n in [4..9]:                     # long time
-        ....:     test_stab_chain_fns_5(n, 1, 1)     # long time
+        ....:     test_stab_chain_fns_5(n, 1, 1)
         sage: def random_perm(x):
         ....:     shuffle(x)
         ....:     return x
@@ -1309,9 +1324,9 @@ def SC_test_list_perms(list L, int n, int limit, bint gap, bint limit_complain, 
         ....:         perms.append(perm)
         ....:     SC_test_list_perms(perms, m*(n//m), limit, gap, 0, contains)
         sage: for m in range(2,9):                         # long time
-        ....:     for n in range(m,3*m):                     # long time
-        ....:         for k in range(1,3):                   # long time
-        ....:             test_stab_chain_fns_6(m,n,k, 1, 0) # long time
+        ....:     for n in range(m,3*m):
+        ....:         for k in range(1,3):
+        ....:             test_stab_chain_fns_6(m,n,k, 1, 0)
         sage: for m in range(2,10):
         ....:     for n in range(m,4*m):
         ....:         for k in range(1,3):
@@ -1339,8 +1354,8 @@ def SC_test_list_perms(list L, int n, int limit, bint gap, bint limit_complain, 
         ....:     test_stab_chain_fns_7(n, 1, 0, 1)
         ....:     test_stab_chain_fns_7(n, 0, 0, 1)
         sage: for n in [6..14]:                   # long time
-        ....:     test_stab_chain_fns_7(n, 1, 1, 1) # long time
-        ....:     test_stab_chain_fns_7(n, 0, 1, 1) # long time
+        ....:     test_stab_chain_fns_7(n, 1, 1, 1)
+        ....:     test_stab_chain_fns_7(n, 0, 1, 1)
         sage: test_stab_chain_fns_7(20, 1, 1, 1)
         sage: test_stab_chain_fns_7(20, 0, 1, 1)
 
@@ -1360,7 +1375,8 @@ def SC_test_list_perms(list L, int n, int limit, bint gap, bint limit_complain, 
     if gap:
         G = PermutationGroup([[i+1 for i in p] for p in L])
         if G.order() > limit:
-            if limit_complain: print('TOO BIG')
+            if limit_complain:
+                print('TOO BIG')
             return
     SC = SC_new(n)
     cdef int *perm = <int *>sig_malloc(n * (len(L)+3) * sizeof(int))
@@ -1410,7 +1426,7 @@ def SC_test_list_perms(list L, int n, int limit, bint gap, bint limit_complain, 
         if SC_is_giant(n, len(L), perm, 0.9, giant_support):
             giant = True
             m = bitset_len(giant_support)
-            from sage.arith.all import factorial
+            from sage.arith.misc import factorial
             if not (order == factorial(m) or order == factorial(m)/2):
                 print("SC_is_giant failed: %s %s"%(str(L), order))
                 raise AssertionError
@@ -1529,7 +1545,7 @@ def SC_test_list_perms(list L, int n, int limit, bint gap, bint limit_complain, 
                     perm[n*j + i] = Lperm[i]
                 j += 1
             if SC_is_giant(n, len(L), perm, 0.9, giant_support):
-                from sage.arith.all import factorial
+                from sage.arith.misc import factorial
                 m = bitset_len(giant_support)
                 if order != factorial(m) and order != factorial(m)/2:
                     print("SC_is_giant failed: %s %s"%(str(L), order))

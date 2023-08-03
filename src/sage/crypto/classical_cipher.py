@@ -1,18 +1,17 @@
 """
 Classical Ciphers
 """
-
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2007 David Kohel <kohel@maths.usyd.edu.au>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
-
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 from .cipher import SymmetricKeyCipher
 from sage.monoids.string_monoid_element import StringMonoidElement
 from sage.modules.free_module import FreeModule
+
 
 class AffineCipher(SymmetricKeyCipher):
     r"""
@@ -504,7 +503,7 @@ class TranspositionCipher(SymmetricKeyCipher):
             raise ValueError("key (= %s) must have block length %s" % (key, n))
         SymmetricKeyCipher.__init__(self, parent, key)
 
-    def __call__(self, M, mode = "ECB"):
+    def __call__(self, M, mode="ECB"):
         S = self.domain() # = plaintext_space = ciphertext_space
         if not isinstance(M, StringMonoidElement) and M.parent() == S:
             raise TypeError("Argument M (= %s) must be a string in the plaintext space." % M)
@@ -556,7 +555,7 @@ class VigenereCipher(SymmetricKeyCipher):
         """
         SymmetricKeyCipher.__init__(self, parent, key)
 
-    def __call__(self, M, mode = "ECB"):
+    def __call__(self, M, mode="ECB"):
         S = self.domain() # = plaintext_space = ciphertext_space
         if not isinstance(M, StringMonoidElement) and M.parent() == S:
             raise TypeError("Argument M (= %s) must be a string in the plaintext space." % M)
@@ -574,7 +573,3 @@ class VigenereCipher(SymmetricKeyCipher):
         E = self.parent()
         K = E.inverse_key(self.key())
         return E(K)
-
-
-
-

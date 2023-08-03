@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
 r"""
-This is Sage's version of the sphinx-build script
+Sphinx build script
 
-We redirect stdout and stderr to our own logger, and remove some unwanted chatter.
+This is Sage's version of the ``sphinx-build`` script. We redirect ``stdout`` and
+``stderr`` to our own logger, and remove some unwanted chatter.
 """
 # ****************************************************************************
 #       Copyright (C) 2013-2014 Volker Braun <vbraun.name@gmail.com>
@@ -18,20 +19,24 @@ We redirect stdout and stderr to our own logger, and remove some unwanted chatte
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 # ****************************************************************************
-
-import os, sys, re, sphinx
+import os
+import sys
+import re
+import sphinx
 import sphinx.cmd.build
+
 
 # override the fancy multi-line formatting
 def term_width_line(text):
     return text + '\n'
 
+
 sphinx.util.console.term_width_line = term_width_line
 
 
-class SageSphinxLogger(object):
+class SageSphinxLogger():
     r"""
     This implements the file object interface to serve as
     ``sys.stdout``/``sys.stderr`` replacement.
@@ -45,7 +50,7 @@ class SageSphinxLogger(object):
         self._stream = stream
         self._color = stream.isatty()
         prefix = prefix[0:self.prefix_len]
-        prefix = ('[{0:'+str(self.prefix_len)+'}]').format(prefix)
+        prefix = ('[{0:' + str(self.prefix_len) + '}]').format(prefix)
         self._is_stdout = (stream.fileno() == 1)
         self._is_stderr = (stream.fileno() == 2)
         if self._is_stdout:
@@ -99,7 +104,7 @@ class SageSphinxLogger(object):
             re.compile('language "hu" not supported'),
             re.compile('^$'),
             re.compile('^WARNING:$'),
-            )
+        )
 
         # We fail whenever a line starts with "WARNING:", however, we ignore
         # these warnings, as they are not relevant.
@@ -130,18 +135,18 @@ class SageSphinxLogger(object):
             ignored = (
                 re.compile('WARNING: citation not found:'),
                 re.compile("WARNING: search index couldn't be loaded, but not all documents will be built: the index will be incomplete.")
-                )
+            )
             self._ignored_warnings += ignored
             self._useless_chatter += ignored
 
         # Regular expressions indicating a problem with docbuilding. Raise an
         # exception if any of these occur.
         self._error_patterns = (re.compile('Segmentation fault'),
-                    re.compile('SEVERE'),
-                    re.compile('ERROR'),
-                    re.compile('^make.*Error'),
-                    re.compile('Exception occurred'),
-                    re.compile('Sphinx error'))
+                                re.compile('SEVERE'),
+                                re.compile('ERROR'),
+                                re.compile('^make.*Error'),
+                                re.compile('Exception occurred'),
+                                re.compile('Sphinx error'))
 
         # We want all warnings to actually be errors.
         # Exceptions:
@@ -232,7 +237,7 @@ class SageSphinxLogger(object):
         if not skip_this_line:
             # sphinx does produce messages in the current locals which
             # could be non-ascii
-            # see https://trac.sagemath.org/ticket/27706
+            # see https://github.com/sagemath/sage/issues/27706
             self._stream.write(line if isinstance(line, str) else line.encode('utf8'))
             self._stream.flush()
 
@@ -263,13 +268,12 @@ class SageSphinxLogger(object):
         self._line_buffer += string
         lines = self._line_buffer.splitlines()
         for i, line in enumerate(lines):
-            last = (i == len(lines)-1)
+            last = (i == len(lines) - 1)
             if last and not self._line_buffer.endswith('\n'):
                 self._line_buffer = line
                 return
             self._log_line(line)
         self._line_buffer = ''
-
 
     # file object interface follows
 

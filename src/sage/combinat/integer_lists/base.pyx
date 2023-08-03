@@ -8,7 +8,7 @@ Enumerated set of lists of integers with constraints: base classes
   function under constraints.
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2015 Bryan Gillespie <Brg008@gmail.com>
 #                          Nicolas M. Thiery <nthiery at users.sf.net>
 #                          Anne Schilling <anne@math.ucdavis.edu>
@@ -18,11 +18,11 @@ Enumerated set of lists of integers with constraints: base classes
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 
-from cpython.object cimport Py_LT, Py_LE, Py_EQ, Py_NE, Py_GT, Py_GE
+from cpython.object cimport Py_LE, Py_EQ, Py_NE, Py_GE
 from sage.misc.constant_function import ConstantFunction
 from sage.structure.element cimport RingElement
 from sage.rings.integer cimport Integer
@@ -31,7 +31,7 @@ Infinity = float('+inf')
 MInfinity = float('-inf')
 
 
-cdef class IntegerListsBackend(object):
+cdef class IntegerListsBackend():
     """
     Base class for the Cython back-end of an enumerated set of lists of
     integers with specified constraints.
@@ -268,8 +268,8 @@ cdef class IntegerListsBackend(object):
         self.__init__(**state)
 
 
-cdef class Envelope(object):
-    """
+cdef class Envelope():
+    r"""
     The (currently approximated) upper (lower) envelope of a function
     under the specified constraints.
 
@@ -523,7 +523,7 @@ cdef class Envelope(object):
         return self.f_limit_start
 
     def limit(self):
-        """
+        r"""
         Return a bound on the limit of ``self``.
 
         OUTPUT: a nonnegative integer or `\infty`

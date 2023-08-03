@@ -1,3 +1,4 @@
+# sage.doctest: optional - sage.combinat sage.modules
 r"""
 Recognizable Series
 
@@ -38,7 +39,7 @@ such that the coefficient corresponding to a word `w\in A^*` equals
         doctest:...: FutureWarning: This class/method/function is
         marked as experimental. It, its functionality or its interface
         might change without a formal deprecation.
-        See http://trac.sagemath.org/21202 for details.
+        See https://github.com/sagemath/sage/issues/21202 for details.
 
 
 Various
@@ -65,15 +66,15 @@ ACKNOWLEDGEMENT:
 Classes and Methods
 ===================
 """
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2016 Daniel Krenn <dev@danielkrenn.at>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from functools import wraps
 
@@ -84,7 +85,7 @@ from sage.structure.parent import Parent
 from sage.structure.unique_representation import UniqueRepresentation
 
 
-class PrefixClosedSet(object):
+class PrefixClosedSet():
     def __init__(self, words):
         r"""
         A prefix-closed set.
@@ -180,13 +181,13 @@ class PrefixClosedSet(object):
             sage: P.add(W([1, 1]))
             Traceback (most recent call last):
             ...
-            ValueError: Cannot add as not all prefixes of 11 are included yet.
+            ValueError: cannot add as not all prefixes of 11 are included yet
         """
         if check and any(p not in self.elements
                          for p in w.prefixes_iterator()
                          if p != w):
-            raise ValueError('Cannot add as not all prefixes of '
-                             '{} are included yet.'.format(w))
+            raise ValueError('cannot add as not all prefixes of '
+                             '{} are included yet'.format(w))
         self.elements.append(w)
 
     def iterate_possible_additions(self):
@@ -263,7 +264,7 @@ class PrefixClosedSet(object):
         while n < len(self.elements):
             try:
                 nn = next(it)
-                yield self.elements[n] + nn #next(it)
+                yield self.elements[n] + nn  # next(it)
             except StopIteration:
                 n += 1
                 it = self.words.iterate_by_length(1)
@@ -317,13 +318,19 @@ def minimize_result(operation):
       if ``False``, then not. If this argument is ``None``, then
       the default specified by the parent's ``minimize_results`` is used.
 
+    .. NOTE::
+
+        If the result of ``operation`` is ``self``, then minimization is
+        not applied unless ``minimize=True`` is explicitly set,
+        in particular, independent of the parent's ``minimize_results``.
+
     TESTS::
 
         sage: from sage.combinat.recognizable_series import minimize_result
-        sage: class P(object):
+        sage: class P():
         ....:     pass
         sage: p = P()
-        sage: class S(object):
+        sage: class S():
         ....:     def __init__(self, s):
         ....:         self.s = s
         ....:     def __repr__(self):
@@ -351,14 +358,39 @@ def minimize_result(operation):
         some result minimized
         sage: S('some').operation(minimize=False)
         some result
+
+    ::
+
+        sage: class T(S):
+        ....:     @minimize_result
+        ....:     def nooperation(self):
+        ....:         return self
+        sage: t = T('some')
+        sage: p.minimize_results = True
+        sage: t.nooperation() is t
+        True
+        sage: t.nooperation(minimize=True) is t
+        False
+        sage: t.nooperation(minimize=False) is t
+        True
+        sage: p.minimize_results = False
+        sage: t.nooperation() is t
+        True
+        sage: t.nooperation(minimize=True) is t
+        False
+        sage: t.nooperation(minimize=False) is t
+        True
     """
     @wraps(operation)
     def minimized(self, *args, **kwds):
         minimize = kwds.pop('minimize', None)
-        if minimize is None:
-            minimize = self.parent().minimize_results
 
         result = operation(self, *args, **kwds)
+        if minimize is not True and result is self:
+            return result
+
+        if minimize is None:
+            minimize = self.parent().minimize_results
 
         if minimize:
             result = result.minimized()
@@ -441,6 +473,7 @@ class RecognizableSeries(ModuleElement):
         super(RecognizableSeries, self).__init__(parent=parent)
 
         from copy import copy
+        from sage.matrix.constructor import Matrix
         from sage.modules.free_module_element import vector
         from sage.sets.family import Family
 
@@ -456,11 +489,11 @@ class RecognizableSeries(ModuleElement):
             return m
 
         if isinstance(mu, dict):
-            mu = dict((a, immutable(M)) for a, M in mu.items())
+            mu = {a: Matrix(M, immutable=True) for a, M in mu.items()}
         mu = Family(mu)
 
         if not mu.is_finite():
-            raise NotImplementedError('mu is not a finite family of matrices.')
+            raise NotImplementedError('mu is not a finite family of matrices')
 
         self._left_ = immutable(vector(left))
         self._mu_ = mu
@@ -753,11 +786,11 @@ class RecognizableSeries(ModuleElement):
             sage: S._mu_of_word_(-1)
             Traceback (most recent call last):
             ...
-            ValueError: Index -1 is not in Finite words over {0, 1}.
+            ValueError: index -1 is not in Finite words over {0, 1}
         """
         W = self.parent().indices()
         if w not in W:
-            raise ValueError('Index {} is not in {}.'.format(w, W))
+            raise ValueError('index {} is not in {}'.format(w, W))
         from sage.misc.misc_c import prod
         return prod((self.mu[a] for a in w), z=self._mu_of_empty_word_())
 
@@ -901,8 +934,6 @@ class RecognizableSeries(ModuleElement):
                 return False
         return True
 
-    __nonzero__ = __bool__
-
     def __hash__(self):
         r"""
         A hash value of this recognizable series.
@@ -961,7 +992,7 @@ class RecognizableSeries(ModuleElement):
 
             sage: S == S
             True
-            sage: x == None
+            sage: S == None
             False
         """
         if other is None:
@@ -973,7 +1004,7 @@ class RecognizableSeries(ModuleElement):
 
     def __ne__(self, other):
         r"""
-        Return whether this recognizable series is equal to ``other``.
+        Return whether this recognizable series is not equal to ``other``.
 
         INPUT:
 
@@ -1065,15 +1096,20 @@ class RecognizableSeries(ModuleElement):
 
         A :class:`RecognizableSeries`
 
-        ALOGRITHM:
+        ALGORITHM:
 
         This method implements the minimization algorithm presented in
         Chapter 2 of [BR2010a]_.
 
+        .. NOTE::
+
+            Due to the algorithm, the left vector of the result
+            is always `(1, 0, \ldots, 0)`, i.e., the first vector of the
+            standard basis.
+
         EXAMPLES::
 
             sage: from itertools import islice
-            sage: from six.moves import zip
             sage: Rec = RecognizableSeriesSpace(ZZ, [0, 1])
 
             sage: S = Rec((Matrix([[3, 6], [0, 1]]), Matrix([[0, -6], [1, 5]])),
@@ -1087,6 +1123,8 @@ class RecognizableSeries(ModuleElement):
             [3 0]  [ 0  1]
             [6 1], [-6  5], (1, 0), (0, 1)
             )
+            sage: M.left == vector([1, 0])
+            True
             sage: all(c == d and v == w
             ....:     for (c, v), (d, w) in islice(zip(iter(S), iter(M)), 20))
             True
@@ -1208,11 +1246,11 @@ class RecognizableSeries(ModuleElement):
         mu_prime = []
         for a in self.parent().alphabet():
             a = self.parent().indices()([a])
-            M = Matrix([alpha(c) if c in C else tuple(ZZ(c==q) for q in P)
+            M = Matrix([alpha(c) if c in C else tuple(ZZ(c == q) for q in P)
                         for c in (p + a for p in P)])
             mu_prime.append(M)
 
-        left_prime = vector([ZZ(1)] + (len(P)-1)*[ZZ(0)])
+        left_prime = vector([ZZ.one()] + (len(P) - 1) * [ZZ.zero()])
         right_prime = vector(self.coefficient_of_word(p) for p in P)
 
         P = self.parent()
@@ -1359,7 +1397,7 @@ class RecognizableSeries(ModuleElement):
         if other.is_one():
             return self
         P = self.parent()
-        return P.element_class(P, self.mu, other*self.left, self.right)
+        return P.element_class(P, self.mu, other * self.left, self.right)
 
     def _lmul_(self, other):
         r"""
@@ -1414,7 +1452,7 @@ class RecognizableSeries(ModuleElement):
         if other.is_one():
             return self
         P = self.parent()
-        return P.element_class(P, self.mu, self.left, self.right*other)
+        return P.element_class(P, self.mu, self.left, self.right * other)
 
     @minimize_result
     def hadamard_product(self, other):
@@ -1641,7 +1679,7 @@ class RecognizableSeriesSpace(UniqueRepresentation, Parent):
             sage: RecognizableSeriesSpace([0, 1], [0, 1])
             Traceback (most recent call last):
             ...
-            ValueError: Coefficient ring [0, 1] is not a semiring.
+            ValueError: coefficient ring [0, 1] is not a semiring
 
         ::
 
@@ -1649,42 +1687,42 @@ class RecognizableSeriesSpace(UniqueRepresentation, Parent):
             sage: RecognizableSeriesSpace(ZZ)
             Traceback (most recent call last):
             ...
-            ValueError: Specify either 'alphabet' or 'indices'.
+            ValueError: specify either 'alphabet' or 'indices'
             sage: RecognizableSeriesSpace(ZZ, alphabet=[0, 1], indices=W)
             Traceback (most recent call last):
             ...
-            ValueError: Specify either 'alphabet' or 'indices'.
+            ValueError: specify either 'alphabet' or 'indices'
             sage: RecognizableSeriesSpace(alphabet=[0, 1])
             Traceback (most recent call last):
             ...
-            ValueError: No coefficient ring specified.
+            ValueError: no coefficient ring specified
             sage: RecognizableSeriesSpace(ZZ, indices=Words(ZZ))
             Traceback (most recent call last):
             ...
-            NotImplementedError: Alphabet is not finite.
+            NotImplementedError: alphabet is not finite
         """
         if (alphabet is None) == (indices is None):
-            raise ValueError("Specify either 'alphabet' or 'indices'.")
+            raise ValueError("specify either 'alphabet' or 'indices'")
 
         if indices is None:
             from sage.combinat.words.words import Words
             indices = Words(alphabet, infinite=False)
         if not indices.alphabet().is_finite():
-            raise NotImplementedError('Alphabet is not finite.')
+            raise NotImplementedError('alphabet is not finite')
 
         if coefficient_ring is None:
-            raise ValueError('No coefficient ring specified.')
+            raise ValueError('no coefficient ring specified')
         from sage.categories.semirings import Semirings
-        if coefficient_ring not in Semirings:
+        if coefficient_ring not in Semirings():
             raise ValueError(
-                'Coefficient ring {} is not a semiring.'.format(coefficient_ring))
+                'coefficient ring {} is not a semiring'.format(coefficient_ring))
 
         from sage.categories.modules import Modules
         category = category or Modules(coefficient_ring)
 
         return (coefficient_ring, indices, category, minimize_results)
 
-    @experimental(trac_number=21202)
+    @experimental(issue_number=21202)
     def __init__(self, coefficient_ring, indices, category, minimize_results):
         r"""
         See :class:`RecognizableSeriesSpace` for details.
@@ -1756,7 +1794,6 @@ class RecognizableSeriesSpace(UniqueRepresentation, Parent):
         """
         return _pickle_RecognizableSeriesSpace, \
             (self.coefficient_ring(), self.indices(), self.category())
-
 
     def alphabet(self):
         r"""
@@ -1846,11 +1883,11 @@ class RecognizableSeriesSpace(UniqueRepresentation, Parent):
 
     def _an_element_(self):
         r"""
-        Return an element of this recognizable series.
+        Return an element of this recognizable series space.
 
         OUTPUT:
 
-        A :class:`recognizable_series`
+        A :class:`RecognizableSeries`
 
         EXAMPLES::
 
@@ -1863,14 +1900,13 @@ class RecognizableSeriesSpace(UniqueRepresentation, Parent):
         z = self.coefficient_ring().zero()
         o = self.coefficient_ring().one()
         e = self.coefficient_ring().an_element()
-        return self(list(Matrix([[o, z], [i*o, o]])
+        return self(list(Matrix([[o, z], [i * o, o]])
                          for i, _ in enumerate(self.alphabet())),
                     vector([z, e]), right=vector([e, z]))
 
-
     def some_elements(self, **kwds):
         r"""
-        Return some elements of this recognizable series.
+        Return some elements of this recognizable series space.
 
         See :class:`TestSuite` for a typical use case.
 
@@ -1899,13 +1935,12 @@ class RecognizableSeriesSpace(UniqueRepresentation, Parent):
              210*[] + ...,
              2210*[] - 170*[0] + 170*[1] + ...)
         """
-        from itertools import count, islice
+        from itertools import islice
         from sage.matrix.matrix_space import MatrixSpace
         from sage.modules.free_module import FreeModule
         yield self.an_element()
 
         C = self.coefficient_ring()
-        some_elements_base = iter(C.some_elements())
         k = len(self.alphabet())
         for dim in range(1, 11):
             elements_M = MatrixSpace(C, dim).some_elements()
@@ -1916,7 +1951,6 @@ class RecognizableSeriesSpace(UniqueRepresentation, Parent):
                 if len(mu) != k or len(LR) != 2:
                     break
                 yield self(mu, *LR, **kwds)
-
 
     @cached_method
     def one_hadamard(self):
@@ -1975,19 +2009,19 @@ class RecognizableSeriesSpace(UniqueRepresentation, Parent):
             sage: Rec((M0, M1))
             Traceback (most recent call last):
             ...
-            ValueError: Left or right vector is None.
+            ValueError: left or right vector is None
             sage: Rec((M0, M1), [0, 1])
             Traceback (most recent call last):
             ...
-            ValueError: Left or right vector is None.
+            ValueError: left or right vector is None
             sage: Rec((M0, M1), left=[0, 1])
             Traceback (most recent call last):
             ...
-            ValueError: Left or right vector is None.
+            ValueError: left or right vector is None
             sage: Rec((M0, M1), right=[0, 1])
             Traceback (most recent call last):
             ...
-            ValueError: Left or right vector is None.
+            ValueError: left or right vector is None
         """
         if isinstance(data, int) and data == 0:
             from sage.matrix.constructor import Matrix
@@ -2007,7 +2041,7 @@ class RecognizableSeriesSpace(UniqueRepresentation, Parent):
         else:
             mu = data
             if left is None or right is None:
-                raise ValueError('Left or right vector is None.')
+                raise ValueError('left or right vector is None')
 
             element = self.element_class(self, mu, left, right)
 

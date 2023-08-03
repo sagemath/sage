@@ -1,6 +1,6 @@
 #from symmetrica import *
 
-from .symmetrica import start, end
+from .symmetrica import start
 
 #kostka
 from .symmetrica import kostka_number_symmetrica as kostka_number

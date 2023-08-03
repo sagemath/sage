@@ -68,8 +68,10 @@ List all fields in the database ramified at 101::
 
 import os
 
-from sage.rings.all import NumberField, RationalField, PolynomialRing
-from sage.misc.misc import powerset
+from sage.rings.number_field.number_field import NumberField
+from sage.rings.rational_field import RationalField
+from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+from sage.combinat.subset import powerset
 from sage.env import SAGE_SHARE
 
 from sage.misc.persist import load, save
@@ -145,10 +147,9 @@ class JonesDatabase:
 
         This takes about 5 seconds.
         """
-        from sage.misc.misc import sage_makedirs
         x = PolynomialRing(RationalField(), 'x').gen()
         self.root = {}
-        self.root[tuple([])] = [x - 1]
+        self.root[tuple()] = [x - 1]
         if not os.path.exists(path):
             raise IOError("Path %s does not exist." % path)
         for X in os.listdir(path):
@@ -158,7 +159,7 @@ class JonesDatabase:
                 for Y in os.listdir(Z):
                     if Y[-3:] == ".gp":
                         self._load(Z, Y)
-        sage_makedirs(JONESDATA)
+        os.makedirs(JONESDATA, exist_ok=True)
         save(self.root, JONESDATA + "/jones.sobj")
 
     def unramified_outside(self, S, d=None, var='a'):
@@ -226,7 +227,7 @@ class JonesDatabase:
             ValueError: S must be a list of primes
         """
         if self.root is None:
-            self.root = load(DatabaseJones().absolute_path())
+            self.root = load(DatabaseJones().absolute_filename())
         try:
             S = list(S)
         except TypeError:

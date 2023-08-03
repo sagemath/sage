@@ -57,7 +57,7 @@ and ``y`` have been created and are available to form symbolic expressions::
     sage: y
     y
     sage: type(y)
-    <type 'sage.symbolic.expression.Expression'>
+    <class 'sage.symbolic.expression.Expression'>
     sage: assumptions()
     [x is real, y is real]
 
@@ -410,7 +410,7 @@ REFERENCES:
 #*****************************************************************************
 
 from sage.functions.trig import cos, sin, atan2
-from sage.functions.other import sqrt
+from sage.misc.functional import sqrt
 from sage.misc.latex import latex
 from sage.rings.real_mpfr import RR
 from sage.categories.manifolds import Manifolds
@@ -694,7 +694,7 @@ class EuclideanSpace(PseudoRiemannianManifold):
                     if names[1] in ['p', 'ph', 'phi']:
                         names[1] = names[1] + ':\\phi'
 
-            symbols = ' '.join(x for x in names)
+            symbols = ' '.join(names)
 
         # Technical bit for UniqueRepresentation
         from sage.misc.prandom import getrandbits
@@ -717,7 +717,7 @@ class EuclideanSpace(PseudoRiemannianManifold):
                                       start_index=start_index,
                                       unique_tag=unique_tag)
 
-        return super(cls, EuclideanSpace).__classcall__(cls,
+        return super().__classcall__(cls,
                                      n, name=name, latex_name=latex_name,
                                      coordinates=coordinates, symbols=symbols,
                                      metric_name=metric_name,
@@ -772,7 +772,7 @@ class EuclideanSpace(PseudoRiemannianManifold):
         if category is None:
             category = Manifolds(RR).Smooth().Connected() & MetricSpaces().Complete()
             # NB: RR is a proxy for the field of real numbers, until
-            #     Trac #24456 is ready
+            #     Issue #24456 is ready
         PseudoRiemannianManifold.__init__(self, n, name, metric_name=metric_name,
                                           signature=n, base_manifold=base_manifold,
                                           latex_name=latex_name,
@@ -2480,7 +2480,7 @@ class Euclidean3dimSpace(EuclideanSpace):
 
             \epsilon(u,v,w) = u \cdot (v \times w).
 
-        The scalar triple product operator $\epsilon$ is a *3-form*, i.e. a
+        The scalar triple product operator `\epsilon` is a *3-form*, i.e. a
         field of fully antisymmetric trilinear forms; it is also called the
         *volume form* of `E` or the *Levi-Civita tensor* of `E`.
 
@@ -2494,7 +2494,7 @@ class Euclidean3dimSpace(EuclideanSpace):
 
         OUTPUT:
 
-        - the scalar triple product operator $\epsilon$, as an instance of
+        - the scalar triple product operator `\epsilon`, as an instance of
           :class:`~sage.manifolds.differentiable.diff_form.DiffFormParal`
 
         EXAMPLES::
@@ -2547,5 +2547,3 @@ class Euclidean3dimSpace(EuclideanSpace):
             name = 'epsilon'
         eps.set_name(name=name, latex_name=latex_name)
         return eps
-
-

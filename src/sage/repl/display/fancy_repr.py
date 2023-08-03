@@ -24,7 +24,7 @@ from sage.repl.display.util import format_list
 _baseclass_reprs = (object.__repr__,)
 
 
-class ObjectReprABC(object):
+class ObjectReprABC():
     """
     The abstract base class of an object representer.
 
@@ -200,10 +200,7 @@ class LargeMatrixHelpRepr(ObjectReprABC):
         if not p.toplevel():
             # Do not print the help for matrices inside containers
             return False
-        try:
-            from sage.matrix.matrix1 import Matrix
-        except ModuleNotFoundError:
-            return False
+        from sage.structure.element import Matrix
         if not isinstance(obj, Matrix):
             return False
         from sage.matrix.constructor import options
@@ -244,14 +241,14 @@ class PlainPythonRepr(ObjectReprABC):
             sage: from sage.repl.display.fancy_repr import PlainPythonRepr
             sage: pp = PlainPythonRepr()
             sage: pp.format_string(type(1))
-            "<type 'sage.rings.integer.Integer'>"
+            "<class 'sage.rings.integer.Integer'>"
 
         Do not swallow a trailing newline at the end of the output of
         a custom representer. Note that it is undesirable to have a
         trailing newline, and if we don't display it you can't fix
         it::
 
-            sage: class Newline(object):
+            sage: class Newline():
             ....:     def __repr__(self):
             ....:         return 'newline\n'
             sage: n = Newline()
@@ -320,7 +317,7 @@ class TallListRepr(ObjectReprABC):
 
         Check that :trac:`18743` is fixed::
 
-            sage: class Foo(object):
+            sage: class Foo():
             ....:     def __repr__(self):
             ....:         return '''BBB    AA   RRR
             ....: B  B  A  A  R  R

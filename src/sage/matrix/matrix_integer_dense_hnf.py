@@ -8,14 +8,13 @@ AUTHORS:
 
 from copy import copy
 
-from sage.misc.misc import cputime
+from sage.arith.misc import CRT_list, previous_prime
+from sage.matrix.constructor import identity_matrix, matrix, random_matrix
+from sage.misc.timing import cputime
 from sage.misc.verbose import verbose
-from sage.matrix.constructor import (random_matrix, matrix, identity_matrix)
-
+from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
 from sage.rings.real_mpfr import RR
-from sage.rings.integer import Integer
-from sage.arith.all import previous_prime, CRT_list
 
 
 def max_det_prime(n):
@@ -617,7 +616,7 @@ def hnf_square(A, proof):
             # weird cases where the det is large.
             # E.g., matrix all of whose rows but 1 are multiplied by some
             # fixed scalar n.
-            raise NotImplementedError("fallback to PARI!")
+            raise NotImplementedError("fallback to PARI")
             # H = W.hermite_form(algorithm='pari')
     else:
         H = W._hnf_mod(2 * g)
@@ -1103,13 +1102,18 @@ def hnf(A, include_zero_rows=True, proof=True):
             return H.matrix_from_rows(range(len(pivots))), pivots
 
     while True:
-        H, pivots = probable_hnf(A, include_zero_rows=include_zero_rows,
+        try:
+            H, pivots = probable_hnf(A, include_zero_rows=include_zero_rows,
                                  proof=True)
+        except ValueError:
+            verbose("The attempt failed since the pivots must have been wrong. We try again.")
+            continue
+
         if is_in_hnf_form(H, pivots):
             if not include_zero_rows and len(pivots) > H.nrows():
                 H = H.matrix_from_rows(range(len(pivots)))
             return H, pivots
-        verbose("After attempt the return matrix is not in HNF form since pivots must have been wrong.  We try again.")
+        verbose("After attempt the return matrix is not in HNF form since pivots must have been wrong. We try again.")
 
 
 def hnf_with_transformation(A, proof=True):
@@ -1184,9 +1188,9 @@ def benchmark_hnf(nrange, bits=4):
     EXAMPLES::
 
         sage: import sage.matrix.matrix_integer_dense_hnf as hnf
-        sage: hnf.benchmark_hnf([50,100],32)
-        ('sage', 50, 32, ...),
-        ('sage', 100, 32, ...),
+        sage: hnf.benchmark_hnf([10,25],32)
+        ('sage', 10, 32, ...),
+        ('sage', 25, 32, ...),
     """
     b = 2**bits
     for n in nrange:
@@ -1206,7 +1210,7 @@ def benchmark_magma_hnf(nrange, bits=4):
         ('magma', 50, 32, ...),
         ('magma', 100, 32, ...),
     """
-    from sage.interfaces.all import magma
+    from sage.interfaces.magma import magma
     b = 2**bits
     for n in nrange:
         a = magma('MatrixAlgebra(IntegerRing(),%s)![Random(%s,%s) : i in [1..%s]]' % (n, -b, b, n**2))
@@ -1256,7 +1260,7 @@ def sanity_checks(times=50, n=8, m=5, proof=True, stabilize=2,
         0 1 2 3 4  (done)
     """
     if check_using_magma:
-        from sage.interfaces.all import magma
+        from sage.interfaces.magma import magma
 
     def __do_check(v):
         """

@@ -1,71 +1,137 @@
-# -*- conf-unix -*-
+include(`sage_spkg_versions.m4')dnl' -*- conf-unix -*-
 [metadata]
 name = sagemath-standard
 version = file: VERSION.txt
 description = Sage: Open Source Mathematics Software: Standard Python Library
 long_description = file: README.rst
 long_description_content_type = text/x-rst
-license = GNU General Public License (GPL) v2 or later
-license_file = LICENSE.txt
-author = The Sage Developers
-author_email = sage-support@googlegroups.com
-url = https://www.sagemath.org
-
-classifiers =
-    Development Status :: 6 - Mature
-    Intended Audience :: Education
-    Intended Audience :: Science/Research
-    License :: OSI Approved :: GNU General Public License v2 or later (GPLv2+)
-    Operating System :: POSIX
-    Operating System :: MacOS :: MacOS X
-    Programming Language :: Python :: 3 :: Only
-    Programming Language :: Python :: 3.7
-    Programming Language :: Python :: 3.8
-    Programming Language :: Python :: 3.9
-    Programming Language :: Python :: Implementation :: CPython
-    Topic :: Scientific/Engineering :: Mathematics
+license_files = LICENSE.txt
+include(`setup_cfg_metadata.m4')dnl'
 
 [options]
-python_requires = >=3.7, <3.10
+python_requires = >=3.8, <3.12
 install_requires =
-    sage_conf
-    esyscmd(`sage-get-system-packages install-requires \
-        six \
-        | sed "2,\$s/^/    /;"')dnl
+    SPKG_INSTALL_REQUIRES_sage_conf
+    SPKG_INSTALL_REQUIRES_six
 dnl From build/pkgs/sagelib/dependencies
-    esyscmd(`sage-get-system-packages install-requires \
-        cypari         \
-        cysignals      \
-        cython         \
-        gmpy2          \
-        jinja2         \
-        jupyter_core   \
-        numpy          \
-        pkgconfig      \
-        pplpy          \
-        | sed "2,\$s/^/    /;"')dnl
+    SPKG_INSTALL_REQUIRES_cypari
+    SPKG_INSTALL_REQUIRES_cysignals
+    SPKG_INSTALL_REQUIRES_cython
+    SPKG_INSTALL_REQUIRES_gmpy2
+    SPKG_INSTALL_REQUIRES_importlib_metadata
+    SPKG_INSTALL_REQUIRES_importlib_resources
+    SPKG_INSTALL_REQUIRES_jinja2
+    SPKG_INSTALL_REQUIRES_jupyter_core
+    SPKG_INSTALL_REQUIRES_lrcalc_python
+    SPKG_INSTALL_REQUIRES_memory_allocator
+    SPKG_INSTALL_REQUIRES_numpy
+    SPKG_INSTALL_REQUIRES_pkgconfig
+    SPKG_INSTALL_REQUIRES_pplpy
+    SPKG_INSTALL_REQUIRES_primecountpy
+    SPKG_INSTALL_REQUIRES_requests
+    SPKG_INSTALL_REQUIRES_typing_extensions
 dnl From Makefile.in: SAGERUNTIME
-    esyscmd(`sage-get-system-packages install-requires \
-        ipython        \
-        pexpect        \
-        psutil         \
-        | sed "2,\$s/^/    /;"')dnl
+    SPKG_INSTALL_REQUIRES_ipython
+    SPKG_INSTALL_REQUIRES_pexpect
 dnl From Makefile.in: DOC_DEPENDENCIES
-    esyscmd(`sage-get-system-packages install-requires \
-        sphinx         \
-        networkx       \
-        scipy          \
-        sympy          \
-        matplotlib     \
-        pillow         \
-        mpmath         \
-        ipykernel      \
-        jupyter_client \
-        ipywidgets     \
-        | sed "2,\$s/^/    /;"')dnl
-dnl Other Python packages that are standard spkg, used in doctests
-    esyscmd(`sage-get-system-packages install-requires \
-        rpy2           \
-        fpylll         \
-        | sed "2,\$s/^/    /;"')dnl
+    SPKG_INSTALL_REQUIRES_sphinx
+    SPKG_INSTALL_REQUIRES_networkx
+    SPKG_INSTALL_REQUIRES_scipy
+    SPKG_INSTALL_REQUIRES_sympy
+    SPKG_INSTALL_REQUIRES_matplotlib
+    SPKG_INSTALL_REQUIRES_pillow
+    SPKG_INSTALL_REQUIRES_mpmath
+    SPKG_INSTALL_REQUIRES_ipykernel
+    SPKG_INSTALL_REQUIRES_jupyter_client
+    SPKG_INSTALL_REQUIRES_ipywidgets
+    SPKG_INSTALL_REQUIRES_fpylll
 dnl pycryptosat  # Sage distribution installs it as part of cryptominisat. According to its README on https://pypi.org/project/pycryptosat/: "The pycryptosat python package compiles while compiling CryptoMiniSat. It cannot be compiled on its own, it must be compiled at the same time as CryptoMiniSat."
+dnl Packages with important upper version bounds
+    SPKG_INSTALL_REQUIRES_ptyprocess
+
+scripts =
+    # The sage script
+    bin/sage
+    # Other scripts that should be in the path also for OS packaging of sage:
+    bin/sage-eval
+    # Included because it is useful for doctesting/coverage testing user scripts too:
+    bin/sage-runtests
+    bin/sage-fixdoctests
+    bin/sage-coverage
+    # The following is deprecated but might still be used in user package install scripts
+    bin/sage-cython
+    # Helper scripts invoked by sage script
+    # (they would actually belong to something like libexec)
+    bin/sage-cachegrind
+    bin/sage-callgrind
+    bin/sage-massif
+    bin/sage-omega
+    bin/sage-valgrind
+    bin/sage-venv-config
+    bin/sage-version.sh
+    bin/sage-cleaner
+    # Only makes sense in sage-the-distribution. TODO: Move to another installation script.
+    bin/sage-list-packages
+    # Uncategorized scripts in alphabetical order
+    bin/math-readline
+    bin/sage-env
+    # sage-env-config -- installed by sage_conf
+    # sage-env-config.in -- not to be installed
+    bin/sage-grep
+    bin/sage-grepdoc
+    bin/sage-inline-fortran
+    bin/sage-ipynb2rst
+    bin/sage-ipython
+    bin/sage-notebook
+    bin/sage-num-threads.py
+    bin/sage-preparse
+    bin/sage-python
+    bin/sage-rebase.bat
+    bin/sage-rebase.sh
+    bin/sage-rebaseall.bat
+    bin/sage-rebaseall.sh
+    bin/sage-run
+    bin/sage-run-cython
+    bin/sage-startuptime.py
+    bin/sage-update-version
+
+[options.package_data]
+
+sage.libs.gap =
+    sage.gaprc
+
+sage.interfaces =
+    sage-maxima.lisp
+
+sage.doctest =
+    tests/*
+
+sage.repl.rich_output =
+    example*
+
+sage =
+    ext_data/*
+    ext_data/kenzo/*
+    ext_data/singular/*
+    ext_data/singular/function_field/*
+    ext_data/images/*
+    ext_data/doctest/*
+    ext_data/doctest/invalid/*
+    ext_data/gap/*
+    ext_data/gap/joyner/*
+    ext_data/mwrank/*
+    ext_data/notebook-ipython/*
+    ext_data/nbconvert/*
+    ext_data/graphs/*
+    ext_data/pari/*
+    ext_data/pari/dokchitser/*
+    ext_data/pari/buzzard/*
+    ext_data/pari/simon/*
+    ext_data/magma/*
+    ext_data/magma/latex/*
+    ext_data/magma/sage/*
+    ext_data/valgrind/*
+    ext_data/threejs/*
+
+[options.extras_require]
+R = SPKG_INSTALL_REQUIRES_rpy2

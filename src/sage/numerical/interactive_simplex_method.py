@@ -64,7 +64,7 @@ you can run these commands with typeset mode on (``%display typeset``) and get
 
 Since it has only two variables, we can solve it graphically::
 
-    sage: P.plot()
+    sage: P.plot()                                                                      # optional - sage.plot
     Graphics object consisting of 19 graphics primitives
 
 
@@ -182,24 +182,27 @@ import re
 from copy import copy
 
 from sage.misc.abstract_method import abstract_method
-from sage.geometry.all import Polyhedron
-from sage.matrix.all import (column_matrix,
-                             identity_matrix,
-                             matrix,
-                             random_matrix)
-from sage.misc.all import (LatexExpr,
-                           cached_function,
-                           cached_method,
-                           latex,
-                           randint,
-                           random)
+from sage.geometry.polyhedron.constructor import Polyhedron
+from sage.matrix.special import column_matrix
+from sage.matrix.special import identity_matrix
+from sage.matrix.constructor import Matrix as matrix
+from sage.matrix.special import random_matrix
+from sage.misc.latex import LatexExpr, latex
+from sage.misc.cachefunc import cached_function, cached_method
+from sage.misc.prandom import randint, random
 from sage.misc.html import HtmlFragment
 from sage.misc.misc import get_main_globals
-from sage.modules.all import random_vector, vector
-from sage.plot.all import Graphics, arrow, line, point, rainbow, text
-from sage.rings.all import Infinity, PolynomialRing, QQ, RDF, ZZ
+from sage.modules.free_module_element import random_vector
+from sage.modules.free_module_element import free_module_element as vector
+from sage.misc.lazy_import import lazy_import
+lazy_import("sage.plot.all", ["Graphics", "arrow", "line", "point", "rainbow", "text"])
+from sage.rings.infinity import Infinity
+from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+from sage.rings.rational_field import QQ
+from sage.rings.real_double import RDF
+from sage.rings.integer_ring import ZZ
 from sage.structure.all import SageObject
-from sage.symbolic.all import SR
+from sage.symbolic.ring import SR
 
 
 # We produce rather complicated LaTeX code which needs some tweaks to be
@@ -643,7 +646,7 @@ class InteractiveLPProblem(SageObject):
             sage: P = InteractiveLPProblem(A, b, c, ["C", "B"], variable_type=">=")
             sage: TestSuite(P).run()
         """
-        super(InteractiveLPProblem, self).__init__()
+        super().__init__()
         A = matrix(A)
         b = vector(b)
         c = vector(c)
@@ -787,7 +790,7 @@ class InteractiveLPProblem(SageObject):
                                 latex(xj), r"\geq" if vt == ">=" else r"\leq")
                             for xj, vt in zip(x, self._variable_types) if vt))
         lines.append(r"\end{array}")
-        return  "\n".join(lines)
+        return "\n".join(lines)
 
     def _repr_(self):
         r"""
@@ -1531,19 +1534,19 @@ class InteractiveLPProblem(SageObject):
             sage: b = (1000, 1500)
             sage: c = (10, 5)
             sage: P = InteractiveLPProblem(A, b, c, ["C", "B"], variable_type=">=")
-            sage: p = P.plot()
-            sage: p.show()
+            sage: p = P.plot()                                                          # optional - sage.plot
+            sage: p.show()                                                              # optional - sage.plot
 
         In this case the plot works better with the following axes ranges::
 
-            sage: p = P.plot(0, 1000, 0, 1500)
-            sage: p.show()
+            sage: p = P.plot(0, 1000, 0, 1500)                                          # optional - sage.plot
+            sage: p.show()                                                              # optional - sage.plot
 
         TESTS:
 
         We check that zero objective can be dealt with::
 
-            sage: InteractiveLPProblem(A, b, (0, 0), ["C", "B"], variable_type=">=").plot()
+            sage: InteractiveLPProblem(A, b, (0, 0), ["C", "B"], variable_type=">=").plot()         # optional - sage.plot
             Graphics object consisting of 8 graphics primitives
         """
         FP = self.plot_feasible_set(*args, **kwds)
@@ -1608,13 +1611,13 @@ class InteractiveLPProblem(SageObject):
             sage: b = (1000, 1500)
             sage: c = (10, 5)
             sage: P = InteractiveLPProblem(A, b, c, ["C", "B"], variable_type=">=")
-            sage: p = P.plot_feasible_set()
-            sage: p.show()
+            sage: p = P.plot_feasible_set()                                             # optional - sage.plot
+            sage: p.show()                                                              # optional - sage.plot
 
         In this case the plot works better with the following axes ranges::
 
-            sage: p = P.plot_feasible_set(0, 1000, 0, 1500)
-            sage: p.show()
+            sage: p = P.plot_feasible_set(0, 1000, 0, 1500)                             # optional - sage.plot
+            sage: p.show()                                                              # optional - sage.plot
         """
         if self.n() != 2:
             raise ValueError("only problems with 2 variables can be plotted")
@@ -1975,7 +1978,7 @@ class InteractiveLPProblemStandardForm(InteractiveLPProblem):
         if problem_type not in ("max", "-max"):
             raise ValueError("problems in standard form must be of (negative) "
                              "maximization type")
-        super(InteractiveLPProblemStandardForm, self).__init__(
+        super().__init__(
             A, b, c, x,
             problem_type=problem_type,
             constraint_type="<=",
@@ -1999,7 +2002,7 @@ class InteractiveLPProblemStandardForm(InteractiveLPProblem):
             if len(slack_variables) != m:
                 raise ValueError("wrong number of slack variables")
         if auxiliary_variable is None:
-           auxiliary_variable = x + "0" if isinstance(x, str) else "x0"
+            auxiliary_variable = x + "0" if isinstance(x, str) else "x0"
         names = [str(auxiliary_variable)]
         names.extend([str(s) for s in self.x()])
         names.extend(slack_variables)
@@ -2735,7 +2738,7 @@ class LPAbstractDictionary(SageObject):
             sage: P = InteractiveLPProblemStandardForm(A, b, c)
             sage: D = P.initial_dictionary()    # indirect doctest
         """
-        super(LPAbstractDictionary, self).__init__()
+        super().__init__()
         self._entering = None
         self._leaving = None
 
@@ -3894,7 +3897,7 @@ class LPDictionary(LPAbstractDictionary):
             sage: D = LPDictionary(A, b, c, 0, R.gens()[2:], R.gens()[:2], "z")
             sage: TestSuite(D).run()
         """
-        super(LPDictionary, self).__init__()
+        super().__init__()
         # We are going to change stuff while InteractiveLPProblem has immutable data.
         A = copy(A)
         b = copy(b)
@@ -4039,7 +4042,7 @@ class LPDictionary(LPAbstractDictionary):
             e = 2 * tuple(N).index(self._entering) + 4
             for i, lin in enumerate(lines):
                 lin = lin[:-2].split("&")
-                # Trac #30809: The MathJaX version of \color takes an argument
+                # Issue #30809: The MathJaX version of \color takes an argument
                 if len(lin) > 1:
                     lin[e] = r"\color{green}{%s}" % (lin[e],)
                     lines[i] = "&".join(lin) + r"\\"
@@ -4047,7 +4050,7 @@ class LPDictionary(LPAbstractDictionary):
             # Highlight the leaving variable row
             l = tuple(B).index(self._leaving)
             if style() == "UAlberta":
-               l += 3
+                l += 3
             if style() == "Vanderbei":
                 l += 4
             lin = lines[l][:-2].split("&")
@@ -4056,7 +4059,7 @@ class LPDictionary(LPAbstractDictionary):
             lin = "&".join(lin) + r"\\"
             lin = lin.replace(r"\color{red}{\color{green}{", r"\color{blue}{{")
             lines[l] = lin
-        return  "\n".join(lines)
+        return "\n".join(lines)
 
     def add_row(self, nonbasic_coefficients, constant, basic_variable=None):
         r"""
@@ -4505,9 +4508,9 @@ class LPRevisedDictionary(LPAbstractDictionary):
         if problem.auxiliary_variable() == problem.decision_variables()[0]:
             raise ValueError("revised dictionaries should not be constructed "
                              "for auxiliary problems")
-        super(LPRevisedDictionary, self).__init__()
+        super().__init__()
         self._problem = problem
-        R =  problem.coordinate_ring()
+        R = problem.coordinate_ring()
         self._x_B = vector(R, [variable(R, v) for v in basic_variables])
 
     def __eq__(self, other):
@@ -4608,7 +4611,7 @@ class LPRevisedDictionary(LPAbstractDictionary):
             headers.append("B^{-1} A_{%s}" % latex(entering))
         if show_ratios:
             headers.append(r"\hbox{Ratio}")
-        lines.append(" & ".join(headers) +  r" \\")
+        lines.append(" & ".join(headers) + r" \\")
         lines.append(r"\hline")
         Bi = self.B_inverse()
         c_B = self.c_B()
@@ -4632,7 +4635,7 @@ class LPRevisedDictionary(LPAbstractDictionary):
                 for j, t in enumerate(terms):
                     if j == m + 2:
                         continue
-                    # Trac #30809: The MathJaX version of \color takes an argument
+                    # Issue #30809: The MathJaX version of \color takes an argument
                     terms[j] = r"\color{red}{" + t + "}"
             lines.append(" & ".join(terms) + r" \\")
         lines.append(r"\end{array}")
@@ -4708,7 +4711,7 @@ class LPRevisedDictionary(LPAbstractDictionary):
             \end{equation*}
         """
         return HtmlFragment("\n".join([
-            super(LPRevisedDictionary, self)._preupdate_output(direction),
+            super()._preupdate_output(direction),
             r"\begin{equation*}",
             r"B_\mathrm{new}^{-1} = E^{-1} B_\mathrm{old}^{-1} = ",
             latex(self.E_inverse()),

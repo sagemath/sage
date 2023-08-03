@@ -104,17 +104,12 @@ REFERENCES:
 
 from sage.arith.functions import lcm
 from sage.arith.misc import gcd
-from sage.ext.fast_callable import fast_callable
-from sage.rings.big_oh import O
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
 from sage.rings.complex_mpfr import ComplexField
 from sage.rings.infinity import infinity
 from sage.rings.laurent_series_ring_element cimport LaurentSeries
-from sage.rings.laurent_series_ring import LaurentSeriesRing
-from sage.rings.power_series_ring_element cimport PowerSeries
-from sage.structure.element cimport (Element, ModuleElement,
-                                     RingElement, AlgebraElement)
+from sage.structure.element cimport (Element, AlgebraElement)
 from sage.structure.richcmp cimport richcmp
 
 
@@ -272,8 +267,10 @@ cdef class PuiseuxSeries(AlgebraElement):
             exponents = [ZZ(exp) for exp in set(laurent.exponents() + [laurent.prec()])]
 
         # sort exponents such that the largest will be replaced first
-        exp_pos = [exp for exp in exponents if exp >= 0]; exp_pos.sort(reverse=True)
-        exp_neg = [exp for exp in exponents if exp < 0]; exp_neg.sort()
+        exp_pos = [exp for exp in exponents if exp >= 0]
+        exp_pos.sort(reverse=True)
+        exp_neg = [exp for exp in exponents if exp < 0]
+        exp_neg.sort()
         exponents = exp_neg + exp_pos
 
         # replacing exponents
@@ -579,7 +576,7 @@ cdef class PuiseuxSeries(AlgebraElement):
         """
         return self.shift(-r)
 
-    def __nonzero__(self):
+    def __bool__(self):
         """
         Return whether ``self`` is not zero.
 
@@ -1050,4 +1047,3 @@ cdef class PuiseuxSeries(AlgebraElement):
             25*x^(23/2) + O(x^(27/2))
         """
         return self.__invert__()
-

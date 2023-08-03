@@ -1,13 +1,13 @@
 r"""
 Hecke algebra representations
 """
-#*****************************************************************************
+# ***************************************************************************
 #       Copyright (C) 2013 Nicolas M. Thiery <nthiery at users.sf.net>
 #                          Anne Schilling <anne at math.ucdavis.edu>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ***************************************************************************
 import functools
 from sage.misc.abstract_method import abstract_method
 from sage.misc.cachefunc import cached_method
@@ -18,6 +18,7 @@ from sage.sets.family import Family
 from sage.combinat.subset import Subsets
 from sage.rings.infinity import infinity
 from sage.rings.integer_ring import ZZ
+
 
 class HeckeAlgebraRepresentation(WithEqualityById, SageObject):
     r"""
@@ -82,6 +83,7 @@ class HeckeAlgebraRepresentation(WithEqualityById, SageObject):
 
     - [HST2008]_
     """
+
     def __init__(self, domain, on_basis, cartan_type, q1, q2, q=ZZ.one(), side="right"):
         r"""
         TESTS::
@@ -355,7 +357,7 @@ class HeckeAlgebraRepresentation(WithEqualityById, SageObject):
             sage: q1, q2 = K.gens()
             sage: KW = W.algebra(K)
             sage: x = KW.an_element(); x
-            123 + 3*32 + 2*3 + e
+            123 + 3*2312 + 2*31 + e
 
             sage: T = KW.demazure_lusztig_operators(q1,q2)
             sage: T12 = T.Tw( (1,2) )
@@ -390,13 +392,12 @@ class HeckeAlgebraRepresentation(WithEqualityById, SageObject):
         """
         word = self.straighten_word(word)
         result = self._domain.module_morphism(functools.partial(self.on_basis, word=word, signs=signs, scalar=scalar),
-                                            codomain = self._domain)
+                                            codomain=self._domain)
         # For debugging purpose, make the parameters easily accessible:
         result.word = word
         result.signs = signs
         result.scalar = scalar
         return result
-
 
     def Tw_inverse(self, word):
         r"""
@@ -460,6 +461,7 @@ class HeckeAlgebraRepresentation(WithEqualityById, SageObject):
         q1 = self._q1
         q2 = self._q2
         T = self
+
         def Ti(x,i,c):
             return T[i](x)+c*x
         # Check the quadratic relation
@@ -611,7 +613,6 @@ class HeckeAlgebraRepresentation(WithEqualityById, SageObject):
         alphacheck = P_check.simple_roots()
         c = Q_check.cartan_type().translation_factors()
         t = P_check.linear_combination( (alphacheck[i], c[i] * coeff) for i,coeff in lambdacheck )
-        #print lambdacheck, "=", t
         # In type BC, c[i] may introduce rational coefficients
         # If we want to work in the lattice we might want to use the
         # following workaround after the fact ...
@@ -753,6 +754,8 @@ class HeckeAlgebraRepresentation(WithEqualityById, SageObject):
         return CherednikOperatorsEigenvectors(self)
 
 # TODO: this should probably inherit from family!
+
+
 class CherednikOperatorsEigenvectors(UniqueRepresentation, SageObject):
     r"""
     A class for the family of eigenvectors of the `Y` Cherednik
@@ -798,7 +801,8 @@ class CherednikOperatorsEigenvectors(UniqueRepresentation, SageObject):
         Add tests for the above assumptions, and also that the
         classical operators `T_1, \ldots, T_n` from `T` and `T_Y` coincide.
     """
-    def __init__(self, T, T_Y = None, normalized = True):
+
+    def __init__(self, T, T_Y=None, normalized=True):
         r"""
         INPUT:
 
@@ -1138,9 +1142,7 @@ class CherednikOperatorsEigenvectors(UniqueRepresentation, SageObject):
         muaffi = self.twist(muaff, i)
         mui = self.affine_retract(muaffi)
         E_mui = self[mui]
-        #print "Computing %s from E_%s=%s with T_%s"%(l, mui, E_mui, i)
-        q1,q2 = self.hecke_parameters(i)
-        #print q1, q2, self.eigenvalue(mui, -alphacheck[i])
+        q1, q2 = self.hecke_parameters(i)
         coroot = alphacheck[i]
         ct = self.cartan_type()
         special_node = ct.special_node()

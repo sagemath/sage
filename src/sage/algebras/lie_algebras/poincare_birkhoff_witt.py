@@ -111,8 +111,8 @@ class PoincareBirkhoffWittBasis(CombinatorialFreeModule):
             sage: P1 is P2
             True
         """
-        return super(PoincareBirkhoffWittBasis, cls).__classcall__(cls,
-                            g, basis_key, prefix, **kwds)
+        return super().__classcall__(cls,
+                                     g, basis_key, prefix, **kwds)
 
     def __init__(self, g, basis_key, prefix, **kwds):
         """
@@ -325,8 +325,12 @@ class PoincareBirkhoffWittBasis(CombinatorialFreeModule):
         if R == self._g:
             # Make this into the lift map
             I = self._indices
-            def basis_function(x): return self.monomial(I.gen(x))
-            def inv_supp(m): return None if m.length() != 1 else m.leading_support()
+
+            def basis_function(x):
+                return self.monomial(I.gen(x))
+
+            def inv_supp(m):
+                return None if m.length() != 1 else m.leading_support()
             # TODO: this diagonal, but with a smaller indexing set...
             return self._g.module_morphism(basis_function, codomain=self,
                                            triangular='upper', unitriangular=True,
@@ -339,20 +343,24 @@ class PoincareBirkhoffWittBasis(CombinatorialFreeModule):
         if isinstance(R, PoincareBirkhoffWittBasis):
             if self._g == R._g:
                 I = self._indices
+
                 def basis_function(x):
-                    return self.prod(self.monomial(I.gen(g)**e) for g,e in x._sorted_items())
+                    return self.prod(self.monomial(I.gen(g)**e)
+                                     for g, e in x._sorted_items())
                 # TODO: this diagonal, but with a smaller indexing set...
                 return R.module_morphism(basis_function, codomain=self)
             coerce_map = self._g.coerce_map_from(R._g)
             if coerce_map:
                 I = self._indices
                 lift = self.coerce_map_from(self._g)
+
                 def basis_function(x):
-                    return self.prod(lift(coerce_map(g))**e for g,e in x._sorted_items())
+                    return self.prod(lift(coerce_map(g))**e
+                                     for g, e in x._sorted_items())
                 # TODO: this diagonal, but with a smaller indexing set...
                 return R.module_morphism(basis_function, codomain=self)
 
-        return super(PoincareBirkhoffWittBasis, self)._coerce_map_from_(R)
+        return super()._coerce_map_from_(R)
 
     def lie_algebra(self):
         """
@@ -488,6 +496,46 @@ class PoincareBirkhoffWittBasis(CombinatorialFreeModule):
         """
         return m.length()
 
+    def casimir_element(self, order=2):
+        r"""
+        Return the Casimir element of ``self``.
+
+        .. SEEALSO::
+
+            :meth:`~sage.categories.finite_dimensional_lie_algebras_with_basis.FiniteDimensionalLieAlgebrasWithBasis.ParentMethods.casimir_element`
+
+        INPUT:
+
+        - ``order`` -- (default: ``2``) the order of the Casimir element
+
+        EXAMPLES::
+
+            sage: L = LieAlgebra(QQ, cartan_type=['G', 2])
+            sage: U = L.pbw_basis()
+            sage: C = U.casimir_element(); C
+            1/4*PBW[alpha[2]]*PBW[-alpha[2]] + 1/12*PBW[alpha[1]]*PBW[-alpha[1]]
+             + 1/12*PBW[alpha[1] + alpha[2]]*PBW[-alpha[1] - alpha[2]] + 1/12*PBW[2*alpha[1] + alpha[2]]*PBW[-2*alpha[1] - alpha[2]]
+             + 1/4*PBW[3*alpha[1] + alpha[2]]*PBW[-3*alpha[1] - alpha[2]]
+             + 1/4*PBW[3*alpha[1] + 2*alpha[2]]*PBW[-3*alpha[1] - 2*alpha[2]]
+             + 1/12*PBW[alphacheck[1]]^2 + 1/4*PBW[alphacheck[1]]*PBW[alphacheck[2]]
+             + 1/4*PBW[alphacheck[2]]^2 - 5/12*PBW[alphacheck[1]] - 3/4*PBW[alphacheck[2]]
+            sage: all(g * C == C * g for g in U.algebra_generators())
+            True
+
+        TESTS::
+
+            sage: H = lie_algebras.Heisenberg(QQ, oo)
+            sage: U = H.pbw_basis()
+            sage: U.casimir_element()
+            Traceback (most recent call last):
+            ...
+            ValueError: the Lie algebra must be finite dimensional
+        """
+        from sage.rings.infinity import Infinity
+        if self._g.dimension() == Infinity:
+            raise ValueError("the Lie algebra must be finite dimensional")
+        return self._g.casimir_element(order=order, UEA=self)
+
     class Element(CombinatorialFreeModule.Element):
         def _act_on_(self, x, self_on_left):
             """
@@ -534,4 +582,3 @@ class PoincareBirkhoffWittBasis(CombinatorialFreeModule):
                         ret += term
                     return ret
             return None
-

@@ -63,7 +63,6 @@ cdef object binary_tree_get(binary_tree_node *self, int key):
 
 cdef object binary_tree_delete(binary_tree_node *self, int key):
     cdef object t
-    cdef binary_tree_node *cur
     if self.key > key:
         if self.left == NULL:
             return None
@@ -420,6 +419,7 @@ cdef class BinaryTree:
         min = <object>cur.left.value
         cur.left = binary_tree_left_excise(cur.left)
         return min
+
     def is_empty(BinaryTree self):
         """
         Returns True if the tree has no nodes.
@@ -434,12 +434,9 @@ cdef class BinaryTree:
             sage: t.is_empty()
             False
         """
-        if self.head == NULL:
-            return True
-        else:
-            return False
+        return self.head == NULL
 
-    def keys(BinaryTree self, order = "inorder"):
+    def keys(BinaryTree self, order="inorder"):
         """
         Returns the keys sorted according to "order" parameter, which can be one of
         "inorder", "preorder", or "postorder"
@@ -447,13 +444,16 @@ cdef class BinaryTree:
         if self.head == NULL:
             return []
 
-        if order == "postorder": o = LIST_POSTORDER
-        elif order == "inorder": o = LIST_INORDER
-        else:                    o = LIST_PREORDER
+        if order == "postorder":
+            o = LIST_POSTORDER
+        elif order == "inorder":
+            o = LIST_INORDER
+        else:
+            o = LIST_PREORDER
 
         return binary_tree_list(self.head, LIST_KEYS + o)
 
-    def values(BinaryTree self, order = "inorder"):
+    def values(BinaryTree self, order="inorder"):
         """
         Returns the keys sorted according to "order" parameter, which can be one of
         "inorder", "preorder", or "postorder"
@@ -461,9 +461,12 @@ cdef class BinaryTree:
         if self.head == NULL:
             return []
 
-        if order == "postorder": o = LIST_POSTORDER
-        elif order == "inorder": o = LIST_INORDER
-        else:                    o = LIST_PREORDER
+        if order == "postorder":
+            o = LIST_POSTORDER
+        elif order == "inorder":
+            o = LIST_INORDER
+        else:
+            o = LIST_PREORDER
 
         return binary_tree_list(self.head, LIST_VALUES + o)
 
@@ -503,9 +506,9 @@ class Test:
         """
         from sage.misc.prandom import randint
         t = BinaryTree()
-        for i in xrange(cycles):
-            r = randint(0,8)
-            s = randint(0,values)
+        for i in range(cycles):
+            r = randint(0, 8)
+            s = randint(0, values)
             if r==1:
                 t.insert(s)
             elif r == 2:

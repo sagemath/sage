@@ -40,9 +40,7 @@ Dependencies
 -  M4RIE
 -  Givaro
 -  FFLAS/FFPACK
--  ATLAS (non-OSX)/The Accelerate FrameWork (on OSX)
--  ATLAS (non-MacOS X) / The Accelerate FrameWork (on MacOS X), or GSL's
-   CBLAS
+-  a BLAS implementation such as openblas
 
 
 Special Update/Build Instructions

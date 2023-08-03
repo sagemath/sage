@@ -20,7 +20,7 @@ AUTHORS:
 # ****************************************************************************
 
 import operator
-from sage.misc.all import cached_method
+from sage.misc.cachefunc import cached_method
 from sage.categories.semigroups import Semigroups
 from sage.categories.sets_cat import Sets
 from sage.categories.monoids import Monoids
@@ -119,7 +119,7 @@ class AutomaticSemigroup(UniqueRepresentation, Parent):
 
         sage: G = M.cayley_graph(side = "twosided"); G
         Looped multi-digraph on 4 vertices
-        sage: sorted(G.edges(), key=str)
+        sage: G.edges(sort=True, key=str)
         [([1, 1], [1, 1], (2, 'left')),
          ([1, 1], [1, 1], (2, 'right')),
          ([1, 1], [1], (1, 'left')),
@@ -302,7 +302,7 @@ class AutomaticSemigroup(UniqueRepresentation, Parent):
                 ambient = one.parent()
             else:
                 raise ValueError("AutomaticSemigroup requires at least one generator or `one` to determine the ambient space")
-        elif ambient not in Sets:
+        elif ambient not in Sets():
             raise ValueError("ambient (=%s) should be a set" % ambient)
 
         # if mul is not operator.mul  and category.is_subcategory(Monoids().Subobjects())  error
@@ -338,7 +338,8 @@ class AutomaticSemigroup(UniqueRepresentation, Parent):
             category = default_category
         else:
             category = default_category & category
-        return super(AutomaticSemigroup, cls).__classcall__(cls, generators, ambient=ambient, one=one, mul=mul, category=category)
+        return super().__classcall__(cls, generators, ambient=ambient,
+                                     one=one, mul=mul, category=category)
 
     def __init__(self, generators, ambient, one, mul, category):
         """
@@ -556,7 +557,7 @@ class AutomaticSemigroup(UniqueRepresentation, Parent):
             sage: [m.lift() for m in M]
             [1, 3, 5, 9, 0, 10, 12, 6]
         """
-        assert(x in self)
+        assert x in self
         return x.lift()
 
     def semigroup_generators(self):
@@ -743,14 +744,14 @@ class AutomaticSemigroup(UniqueRepresentation, Parent):
             sage: a*b
             [1]
         """
-        assert(x in self)
-        assert(y in self)
+        assert x in self
+        assert y in self
         red = y._reduced_word
         if red is None:
             return self._retract(self._mul(x.lift(), y.lift()))
-        else:
-            for i in red:
-                x = x.transition(i)
+
+        for i in red:
+            x = x.transition(i)
         return x
 
     def from_reduced_word(self, l):
@@ -912,7 +913,7 @@ class AutomaticSemigroup(UniqueRepresentation, Parent):
                 sage: m.lift()
                 3
                 sage: type(m.lift())
-                <type 'sage.rings.finite_rings.integer_mod.IntegerMod_int'>
+                <class 'sage.rings.finite_rings.integer_mod.IntegerMod_int'>
             """
             return self.value
 
@@ -941,7 +942,7 @@ class AutomaticSemigroup(UniqueRepresentation, Parent):
                 [1, 2]
             """
             parent = self.parent()
-            assert(i in parent._generators.keys())
+            assert i in parent._generators.keys()
             return parent._retract(parent._mul(self.lift(), parent._generators_in_ambient[i]))
 
         def _repr_(self):

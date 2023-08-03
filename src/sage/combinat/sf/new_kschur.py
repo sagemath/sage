@@ -16,7 +16,8 @@
 #
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from sage.rings.all import Integer, ZZ
+from sage.rings.integer import Integer
+from sage.rings.integer_ring import ZZ
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.structure.parent import Parent
 from sage.categories.realizations import Realizations, Category_realization_of_parent
@@ -307,7 +308,7 @@ class KBoundedSubspaceBases(Category_realization_of_parent):
             sage: KBB.super_categories()
             [Category of realizations of 3-bounded Symmetric Functions over Univariate Polynomial Ring in t over Rational Field,
              Join of Category of graded coalgebras with basis over Univariate Polynomial Ring in t over Rational Field
-                 and Category of subobjects of sets]
+                 and Category of subobjects of filtered modules with basis over Univariate Polynomial Ring in t over Rational Field]
         """
         R = self.base().base_ring()
         category = GradedHopfAlgebrasWithBasis(R) if self.t == 1 else GradedCoalgebrasWithBasis(R)
@@ -973,6 +974,7 @@ class kSchur(CombinatorialFreeModule):
         sage: f.coefficient(f.support()[0])
         1
     """
+
     def __init__(self, kBoundedRing):
         r"""
         TESTS::

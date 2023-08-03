@@ -17,7 +17,7 @@ EXAMPLES::
     sage: a.rank()
     2
     sage: type(a)
-    <type 'sage.matrix.matrix_mod2_dense.Matrix_mod2_dense'>
+    <class 'sage.matrix.matrix_mod2_dense.Matrix_mod2_dense'>
     sage: a[0,0] = 1
     sage: a.rank()
     3
@@ -106,17 +106,15 @@ TESTS::
 # ****************************************************************************
 
 from cysignals.memory cimport check_malloc, sig_free
-from cysignals.signals cimport sig_check, sig_on, sig_str, sig_off
+from cysignals.signals cimport sig_on, sig_str, sig_off
 
 cimport sage.matrix.matrix_dense as matrix_dense
 from .args cimport SparseEntry, MatrixArgs_init
 from libc.stdio cimport *
-from sage.structure.element cimport (Matrix, Vector,
-                                     ModuleElement, Element)
+from sage.structure.element cimport (Matrix, Vector)
 from sage.modules.free_module_element cimport FreeModuleElement
 from sage.libs.gmp.random cimport *
 from sage.misc.randstate cimport randstate, current_randstate
-from sage.misc.misc import cputime
 from sage.misc.verbose import verbose, get_verbose
 VectorSpace = None
 from sage.modules.vector_mod2_dense cimport Vector_mod2_dense
@@ -145,13 +143,8 @@ cdef extern from "gd.h":
 
 # Construct global Gray code tables
 m4ri_build_all_codes()
-
-def free_m4ri():
-    """
-    Free global Gray code tables.
-    """
-    m4ri_destroy_all_codes()
-
+import atexit
+atexit.register(m4ri_destroy_all_codes)
 
 cdef class Matrix_mod2_dense(matrix_dense.Matrix_dense):   # dense or sparse
     """
@@ -237,7 +230,7 @@ cdef class Matrix_mod2_dense(matrix_dense.Matrix_dense):   # dense or sparse
         EXAMPLES::
 
             sage: type(random_matrix(GF(2),2,2))
-            <type 'sage.matrix.matrix_mod2_dense.Matrix_mod2_dense'>
+            <class 'sage.matrix.matrix_mod2_dense.Matrix_mod2_dense'>
 
             sage: Matrix(GF(2),3,3,1)
             [1 0 0]
@@ -336,7 +329,7 @@ cdef class Matrix_mod2_dense(matrix_dense.Matrix_dense):   # dense or sparse
         return h
 
     # this exists for compatibility with matrix_modn_dense
-    cdef set_unsafe_int(self, Py_ssize_t i, Py_ssize_t j, int value):
+    cdef void set_unsafe_int(self, Py_ssize_t i, Py_ssize_t j, int value):
         """
         Set the (i,j) entry of self to the int value.
         """
@@ -1045,7 +1038,8 @@ cdef class Matrix_mod2_dense(matrix_dense.Matrix_dense):   # dense or sparse
         full = int(reduced)
 
         x = self.fetch('in_echelon_form')
-        if not x is None: return  # already known to be in echelon form
+        if x is not None:
+            return  # already known to be in echelon form
 
         if algorithm == 'heuristic':
 
@@ -1214,17 +1208,19 @@ cdef class Matrix_mod2_dense(matrix_dense.Matrix_dense):   # dense or sparse
         cdef m4ri_word mask = 0
 
         # Original code, before adding the ``nonzero`` option.
+        cdef m4ri_word *row
         if not nonzero:
             if density == 1:
                 assert(sizeof(m4ri_word) == 8)
                 mask = __M4RI_LEFT_BITMASK(self._entries.ncols % m4ri_radix)
                 for i from 0 <= i < self._nrows:
+                    row = mzd_row(self._entries, i)
                     for j from 0 <= j < self._entries.width:
                         # for portability we get 32-bit twice rather than 64-bit once
                         low = gmp_urandomb_ui(rstate.gmp_state, 32)
                         high = gmp_urandomb_ui(rstate.gmp_state, 32)
-                        self._entries.rows[i][j] = m4ri_swap_bits( ((<unsigned long long>high)<<32) | (<unsigned long long>low) )
-                    self._entries.rows[i][self._entries.width - 1] &= mask
+                        row[j] = m4ri_swap_bits( ((<unsigned long long>high)<<32) | (<unsigned long long>low) )
+                    row[self._entries.width - 1] &= mask
             else:
                 nc = self._ncols
                 num_per_row = int(density * nc)
@@ -1253,8 +1249,8 @@ cdef class Matrix_mod2_dense(matrix_dense.Matrix_dense):   # dense or sparse
             sage: A.row(0)
             (0, 0, 0)
         """
-        if (int(multiple)%2) == 0:
-            mzd_row_clear_offset(self._entries, row, start_col);
+        if not int(multiple) % 2:
+            mzd_row_clear_offset(self._entries, row, start_col)
 
     cdef add_multiple_of_row_c(self,  Py_ssize_t row_to, Py_ssize_t row_from, multiple,
                                Py_ssize_t start_col):
@@ -1267,7 +1263,7 @@ cdef class Matrix_mod2_dense(matrix_dense.Matrix_dense):   # dense or sparse
             sage: A.row(0) == B.row(0) + B.row(1)
             True
         """
-        if (int(multiple)%2) != 0:
+        if int(multiple) % 2:
             mzd_row_add_offset(self._entries, row_to, row_from, start_col)
 
     cdef swap_rows_c(self, Py_ssize_t row1, Py_ssize_t row2):
@@ -1528,7 +1524,7 @@ cdef class Matrix_mod2_dense(matrix_dense.Matrix_dense):   # dense or sparse
             Traceback (most recent call last):
             ...
             TypeError: right must either be a matrix or a vector. Not
-            <type 'sage.rings.integer.Integer'>
+            <class 'sage.rings.integer.Integer'>
         """
         cdef Matrix_mod2_dense other
 
@@ -1842,7 +1838,7 @@ cdef class Matrix_mod2_dense(matrix_dense.Matrix_dense):   # dense or sparse
             0
         """
         x = self.fetch('rank')
-        if not x is None:
+        if x is not None:
             return x
         if self._nrows == 0 or self._ncols == 0:
             return 0
@@ -1963,17 +1959,17 @@ for i from 0 <= i < 256:
 # assembly instructions, could be faster
 cpdef inline unsigned long parity(m4ri_word a):
     """
-    Returns the parity of the number of bits in a.
+    Return the parity of the number of bits in a.
 
     EXAMPLES::
 
         sage: from sage.matrix.matrix_mod2_dense import parity
         sage: parity(1)
-        1L
+        1
         sage: parity(3)
-        0L
+        0
         sage: parity(0x10000101011)
-        1L
+        1
     """
     if sizeof(m4ri_word) == 8:
         a ^= a >> 32

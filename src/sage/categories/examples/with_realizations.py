@@ -1,3 +1,4 @@
+# sage.doctest: optional - sage.combinat sage.modules
 r"""
 Examples of parents endowed with multiple realizations
 """
@@ -10,7 +11,9 @@ Examples of parents endowed with multiple realizations
 
 from sage.misc.cachefunc import cached_method
 from sage.misc.bindable_class import BindableClass
-from sage.categories.all import Rings, Algebras, AlgebrasWithBasis
+from sage.categories.rings import Rings
+from sage.categories.algebras import Algebras
+from sage.categories.algebras_with_basis import AlgebrasWithBasis
 from sage.categories.realizations import Category_realization_of_parent
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.structure.parent import Parent
@@ -166,19 +169,19 @@ class SubsetAlgebra(UniqueRepresentation, Parent):
                       From: The subset algebra of {1, 2, 3} over Rational Field in the Fundamental basis
                       To:   The subset algebra of {1, 2, 3} over Rational Field in the Out basis
         """
-        assert(R in Rings())
-        self._base = R # Won't be needed when CategoryObject won't override anymore base_ring
+        assert R in Rings()
+        self._base = R  # Won't be needed when CategoryObject won't override anymore base_ring
         self._S = S
-        Parent.__init__(self, category = Algebras(R).Commutative().WithRealizations())
+        Parent.__init__(self, category=Algebras(R).Commutative().WithRealizations())
 
         # Initializes the bases and change of bases of ``self``
 
-        F   = self.F()
-        In  = self.In()
+        F = self.F()
+        In = self.In()
         Out = self.Out()
 
         category = self.Bases()
-        key = lambda x: self.indices_key(x)
+        key = self.indices_key
         In_to_F = In.module_morphism(F.sum_of_monomials * Subsets,
                                      codomain=F, category=category,
                                      triangular='upper', unitriangular=True,
@@ -300,7 +303,6 @@ class SubsetAlgebra(UniqueRepresentation, Parent):
             category = Algebras(A.base_ring()).Commutative()
             return [A.Realizations(),
                     category.Realizations().WithBasis()]
-
 
         class ParentMethods:
 

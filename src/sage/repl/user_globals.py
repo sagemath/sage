@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.modules
 r"""
 User-interface globals
 
@@ -17,7 +18,7 @@ EXAMPLES:
 This is how a typical user interface initializes the globals::
 
     sage: ui_globals = globals()  # or wherever the user interface stores its globals
-    sage: from sage import all_cmdline  # or all_notebook
+    sage: from sage import all_cmdline
     sage: from sage.repl.user_globals import initialize_globals
     sage: _ = initialize_globals(all_cmdline, ui_globals)
 
@@ -156,6 +157,8 @@ def initialize_globals(all, g=None):
     for key in dir(all):
         if key[0] != '_':
             user_globals[key] = getattr(all, key)
+    from sage.misc.lazy_import import clean_namespace
+    clean_namespace(user_globals)
 
 
 def get_global(name):

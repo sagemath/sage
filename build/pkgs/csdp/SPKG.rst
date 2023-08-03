@@ -19,10 +19,6 @@ Upstream Contact
 
 Dmitrii Pasechnik <dimpase+sage@gmail.com>
 
-Dependencies
-------------
-
-
 Special Update/Build Instructions
 ---------------------------------
 

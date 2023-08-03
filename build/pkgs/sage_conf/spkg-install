@@ -10,7 +10,11 @@ if [ $? -ne 0 ]; then
     exit 1
 fi
 cd src
-# Need to build a wheel manually because pip does not
-# follow symlinks.
-sdh_setup_bdist_wheel
-sdh_store_and_pip_install_wheel .
+if [ "$SAGE_EDITABLE" = yes ]; then
+    sdh_pip_editable_install .
+    if [ "$SAGE_WHEELS" = yes ]; then
+        sdh_setup_bdist_wheel && sdh_store_wheel .
+    fi
+else
+    sdh_pip_install .
+fi

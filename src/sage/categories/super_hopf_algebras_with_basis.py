@@ -42,20 +42,21 @@ class SuperHopfAlgebrasWithBasis(SuperModulesCategory):
 
             EXAMPLES::
 
-                sage: A = SteenrodAlgebra(7)
-                sage: a = A.an_element()
-                sage: a, A.antipode(a)
+                sage: A = SteenrodAlgebra(7)                                            # optional - sage.combinat sage.modules
+                sage: a = A.an_element()                                                # optional - sage.combinat sage.modules
+                sage: a, A.antipode(a)                                                  # optional - sage.combinat sage.modules
                 (6 Q_1 Q_3 P(2,1), Q_1 Q_3 P(2,1))
 
             TESTS::
 
-                sage: E.<x,y> = ExteriorAlgebra(QQ)
-                sage: [b.antipode() for b in E.basis()]
+                sage: E.<x,y> = ExteriorAlgebra(QQ)                                     # optional - sage.combinat sage.modules
+                sage: [b.antipode() for b in E.basis()]                                 # optional - sage.combinat sage.modules
                 [1, -x, -y, x*y]
             """
             if self.antipode_on_basis is not NotImplemented:
                 # Should give the information that this is an anti-morphism of algebra
-                return self._module_morphism(self.antipode_on_basis, codomain = self)
+                return self._module_morphism(self.antipode_on_basis,
+                                             codomain=self)
             elif hasattr(self, "antipode_by_coercion"):
                 return self.antipode_by_coercion
 
@@ -87,8 +88,8 @@ class SuperHopfAlgebrasWithBasis(SuperModulesCategory):
 
             TESTS::
 
-                sage: A = SteenrodAlgebra(7)
-                sage: A._test_antipode()  # long time
+                sage: A = SteenrodAlgebra(7)                                            # optional - sage.combinat sage.modules
+                sage: A._test_antipode()  # long time                                   # optional - sage.combinat sage.modules
             """
             tester = self._tester(**options)
 
@@ -122,4 +123,3 @@ class SuperHopfAlgebrasWithBasis(SuperModulesCategory):
 
                 # mu * (I # S) * delta == counit * unit
                 tester.assertEqual(IS(x), self.counit(x) * self.one())
-

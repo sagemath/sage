@@ -1,0 +1,21 @@
+{#-
+    The sidebar brand template modified from theme/furo/sidebar/brand.html
+-#}
+<a class="sidebar-brand{% if logo %} centered{% endif %}" href="{% if refsub %}{{ reference_root }}{% else %}{{ documentation_root }}{% endif %}">
+  {% block brand_content %}
+  {%- if logo_url %}
+  <div class="sidebar-logo-container">
+    <img class="sidebar-logo" src="{{ logo_url }}" alt="Logo"/>
+  </div>
+  {%- endif %}
+  {%- if theme_light_logo and theme_dark_logo %}
+  <div class="sidebar-logo-container">
+    <img class="sidebar-logo only-light" src="{{ pathto('_static/' + theme_light_logo, 1) }}" alt="Light Logo"/>
+    <img class="sidebar-logo only-dark" src="{{ pathto('_static/' + theme_dark_logo, 1) }}" alt="Dark Logo"/>
+  </div>
+  {%- endif %}
+  {% if not theme_sidebar_hide_name %}
+      <span class="sidebar-brand-text">{% if refsub %}{{ reference_title }}{% else %}{{ documentation_title }}{% endif %}</span>
+  {%- endif %}
+  {% endblock brand_content %}
+</a>

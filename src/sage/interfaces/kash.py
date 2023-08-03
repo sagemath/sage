@@ -38,14 +38,13 @@ The KASH interface offers three pieces of functionality:
 Issues
 ------
 
-For some reason hitting Control-C to interrupt a calculation
-doesn't work correctly. (TODO)
+For some reason hitting :kbd:`Control` + :kbd:`C` to interrupt a calculation
+does not work correctly. (TODO)
 
 Tutorial
 --------
 
-The examples in this tutorial require that kash
-be installed.
+The examples in this tutorial require that kash be installed.
 
 Basics
 ~~~~~~
@@ -426,7 +425,7 @@ unlike for the other interfaces.
 # ****************************************************************************
 
 from .expect import Expect, ExpectElement
-from sage.docs.instancedoc import instancedoc
+from sage.misc.instancedoc import instancedoc
 import os
 
 from sage.misc.sage_eval import sage_eval
@@ -558,24 +557,6 @@ class Kash(Expect):
         else:
             return s.replace("\\\n", "")
 
-#     def help(self, name=None):
-#         """
-#         Return help on KASH commands.
-
-#         EXAMPLES::
-
-#             sage: X = kash.help('IntegerRing')   # optional - kash
-
-#         """
-#         if name is None:
-#           print '\nTo use KASH help enter kash.help(s). '
-#           print 'The syntax of the string s is given below.\n'
-#           print self.eval('?')
-#         elif name[0] == '?':
-#           print self.eval(name)
-#         else:
-#           print self.eval('?%s'%name)
-
     def help(self, name=None):
         """
         Return help on KASH commands.
@@ -691,7 +672,7 @@ class Kash(Expect):
 
         EXAMPLES::
 
-            sage: kash._function_call_string('Expand', ['x', 'y'], ['Prec:=10'])
+            sage: Kash()._function_call_string('Expand', ['x', 'y'], ['Prec:=10'])
             'Expand(x,y,rec(Prec:=10))'
         """
         if not kwds:
@@ -738,7 +719,7 @@ class KashElement(ExpectElement):
         # Kash has separate integer and boolean types, and FALSE does not
         # compare equal to 0 (i.e, FALSE = 0 is FALSE)
 
-        # Python 2.x uses __nonzero__ for type conversion to 'bool', so we
+        # Python 3.x uses __bool__ for type conversion to 'bool', so we
         # have to test against FALSE, and sage.structure.element.Element's
         # default implementation of is_zero() is to return 'not self', so
         # our boolean conversion also has to test against 0.
@@ -746,8 +727,6 @@ class KashElement(ExpectElement):
         P = self.parent()
         return (P.eval('%s = FALSE' % self.name()) == 'FALSE' and
                 P.eval('%s = 0' % self.name()) == 'FALSE')
-
-    __nonzero__ = __bool__
 
     def _sage_(self, locals={}, *args):
         """
@@ -805,6 +784,22 @@ class KashDocumentation(list):
 
 
 def is_KashElement(x):
+    """
+    Returns True if ``x`` is of type :class:`KashElement`.
+
+    EXAMPLES::
+
+        sage: from sage.interfaces.kash import is_KashElement
+        sage: is_KashElement(2)
+        doctest:...: DeprecationWarning: the function is_KashElement is deprecated; use isinstance(x, sage.interfaces.abc.KashElement) instead
+        See https://github.com/sagemath/sage/issues/34804 for details.
+        False
+        sage: is_KashElement(kash(2))  # optional - kash
+        True
+    """
+    from sage.misc.superseded import deprecation
+    deprecation(34804, "the function is_KashElement is deprecated; use isinstance(x, sage.interfaces.abc.KashElement) instead")
+
     return isinstance(x, KashElement)
 
 ######

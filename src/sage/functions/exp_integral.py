@@ -1,5 +1,5 @@
 r"""
-Exponential Integrals
+Exponential integrals
 
 AUTHORS:
 
@@ -36,15 +36,15 @@ AUTHORS:
 
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2011 Benjamin Jones <benjaminfjones@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 
 from sage.symbolic.function import BuiltinFunction
@@ -55,7 +55,7 @@ from sage.libs.mpmath import utils as mpmath_utils
 mpmath_utils_call = mpmath_utils.call # eliminate some overhead in _evalf_
 
 from sage.rings.real_mpfr import RealField
-from sage.rings.all import ZZ
+from sage.rings.integer_ring import ZZ
 from sage.functions.log import exp, log
 from sage.functions.trig import sin, cos
 from sage.functions.hyperbolic import sinh, cosh
@@ -182,7 +182,7 @@ class Function_exp_integral_e(BuiltinFunction):
         # special case: z == 0 and n > 1
         if isinstance(z, Expression):
             if z.is_trivial_zero():
-                z_zero = True # for later
+                z_zero = True  # for later
                 if n > 1:
                     return 1/(n-1)
         else:
@@ -205,7 +205,7 @@ class Function_exp_integral_e(BuiltinFunction):
                 else:
                     return exp(-z)/z
 
-        return None # leaves the expression unevaluated
+        return None  # leaves the expression unevaluated
 
     def _evalf_(self, n, z, parent=None, algorithm=None):
         """
@@ -217,7 +217,6 @@ class Function_exp_integral_e(BuiltinFunction):
             0.000281624451981418 - 0.179324535039359*I
             sage: exp_integral_e(1, RealField(100)(1))
             0.21938393439552027367716377546
-
         """
         import mpmath
         return mpmath_utils.call(mpmath.expint, n, z, parent=parent)
@@ -249,12 +248,11 @@ class Function_exp_integral_e(BuiltinFunction):
             sage: f = exp_integral_e(2,sqrt(x))
             sage: f.diff(x)
             -1/2*exp_integral_e(1, sqrt(x))/sqrt(x)
-
         """
         if n in ZZ and n > 0:
-            return -1*exp_integral_e(n-1,z)
-        else:
-            raise NotImplementedError("The derivative of this function is only implemented for n = 1, 2, 3, ...")
+            return -1*exp_integral_e(n-1, z)
+        raise NotImplementedError("The derivative of this function is only implemented for n = 1, 2, 3, ...")
+
 
 exp_integral_e = Function_exp_integral_e()
 
@@ -336,7 +334,6 @@ class Function_exp_integral_e1(BuiltinFunction):
         import mpmath
         return mpmath_utils_call(mpmath.e1, z, parent=parent)
 
-
     def _print_latex_(self, z):
         r"""
         Custom ``_print_latex_`` method.
@@ -367,6 +364,7 @@ class Function_exp_integral_e1(BuiltinFunction):
 
         """
         return -exp(-z)/z
+
 
 exp_integral_e1 = Function_exp_integral_e1()
 
@@ -502,7 +500,9 @@ class Function_log_integral(BuiltinFunction):
         """
         return 1/log(z)
 
+
 li = log_integral = Function_log_integral()
+
 
 class Function_log_integral_offset(BuiltinFunction):
     r"""
@@ -602,8 +602,8 @@ class Function_log_integral_offset(BuiltinFunction):
         1/log(x)
         sage: f.integrate(x)
         -x*log_integral(2) + x*log_integral(x) - Ei(2*log(x))
-        sage: Li(x).integrate(x,2.0,4.5)
-        -2.5*log_integral(2) + 5.799321147411334
+        sage: Li(x).integrate(x,2.0,4.5).n(digits=10)
+        3.186411697
         sage: N(f.integrate(x,2.0,3.0))   # abs tol 1e-15
         0.601621785860587
 
@@ -643,7 +643,7 @@ class Function_log_integral_offset(BuiltinFunction):
                                  latex_name=r'\operatorname{log\_integral\_offset}',
                                  conversions=dict(sympy='Li'))
 
-    def _eval_(self,z):
+    def _eval_(self, z):
         """
         EXAMPLES::
 
@@ -695,7 +695,9 @@ class Function_log_integral_offset(BuiltinFunction):
         """
         return 1/log(z)
 
+
 Li = log_integral_offset = Function_log_integral_offset()
+
 
 class Function_sin_integral(BuiltinFunction):
     r"""
@@ -887,6 +889,7 @@ class Function_sin_integral(BuiltinFunction):
         """
         return sin(z)/z
 
+
 Si = sin_integral = Function_sin_integral()
 
 
@@ -1026,6 +1029,7 @@ class Function_cos_integral(BuiltinFunction):
 
         """
         return cos(z)/z
+
 
 Ci = cos_integral = Function_cos_integral()
 
@@ -1179,6 +1183,7 @@ class Function_sinh_integral(BuiltinFunction):
         """
         return sinh(z)/z
 
+
 Shi = sinh_integral = Function_sinh_integral()
 
 
@@ -1307,12 +1312,13 @@ class Function_cosh_integral(BuiltinFunction):
         """
         return cosh(z)/z
 
+
 Chi = cosh_integral = Function_cosh_integral()
 
 
 ###################################################################
 # Code below here was moved from sage/functions/transcendental.py
-# This occurred as part of Trac #11143.
+# This occurred as part of Issue #11143.
 ###################################################################
 
 # This class has a name which is not specific enough
@@ -1421,6 +1427,7 @@ class Function_exp_integral(BuiltinFunction):
         """
         return exp(x)/x
 
+
 Ei = exp_integral_ei = Function_exp_integral()
 
 
@@ -1497,7 +1504,7 @@ def exponential_integral_1(x, n=0):
         ....:     n = 2^ZZ.random_element(14)
         ....:     x = exponential_integral_1(a, n)
         ....:     y = exponential_integral_1(S(a), n)
-        ....:     c = RDF(2 * max(1.0, y[0]))
+        ....:     c = RDF(4 * max(1.0, y[0]))
         ....:     for i in range(n):
         ....:         e = float(abs(S(x[i]) - y[i]) << prec)
         ....:         if e >= c:

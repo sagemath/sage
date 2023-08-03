@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# sage.doctest: optional - sage.graphs          (because all doctests use the catalogs simplicial_complexes, cubical_complexes)
 r"""
 Chains and cochains
 
@@ -10,14 +10,14 @@ homogeneous dimension only, and that they reference their cell
 complex.
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2016 Volker Braun <vbraun.name@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 
 from sage.combinat.free_module import CombinatorialFreeModule
@@ -25,7 +25,7 @@ from sage.rings.integer_ring import ZZ
 from sage.structure.element import coercion_model
 
 
-class CellComplexReference(object):
+class CellComplexReference():
 
     def __init__(self, cell_complex, degree, cells=None):
         """
@@ -672,9 +672,9 @@ class Cochains(CellComplexReference, CombinatorialFreeModule):
             accumulator = codomain.zero()
             for cell in codomain.indices():
                 for (coeff, left_cell, right_cell) in cx.alexander_whitney(cell, left_deg):
-                        if not coeff:
-                            continue
-                        left = left_chains(left_cell)
-                        right = right_chains(right_cell)
-                        accumulator += codomain(cell) * coeff * self.eval(left) * cochain.eval(right)
+                    if not coeff:
+                        continue
+                    left = left_chains(left_cell)
+                    right = right_chains(right_cell)
+                    accumulator += codomain(cell) * coeff * self.eval(left) * cochain.eval(right)
             return accumulator

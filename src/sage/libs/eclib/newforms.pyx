@@ -22,7 +22,7 @@ from sage.modular.all import Cusp
 
 
 cdef class ECModularSymbol:
-    """
+    r"""
     Modular symbol associated with an elliptic curve,  using John Cremona's newforms class.
 
     EXAMPLES::
@@ -32,18 +32,18 @@ cdef class ECModularSymbol:
         sage: M = ECModularSymbol(E,1); M
         Modular symbol with sign 1 over Rational Field attached to Elliptic Curve defined by y^2 + y = x^3 - x^2 - 10*x - 20 over Rational Field
 
-    By default, symbols are based at the cusp $\infty$, i.e. we evaluate $\{\infty,r\}$::
+    By default, symbols are based at the cusp `\infty`, i.e. we evaluate `\{\infty,r\}`::
 
         sage: [M(1/i) for i in range(1,11)]
         [2/5, -8/5, -3/5, 7/5, 12/5, 12/5, 7/5, -3/5, -8/5, 2/5]
 
-    We can also switch the base point to the cusp $0$::
+    We can also switch the base point to the cusp `0`::
 
         sage: [M(1/i, base_at_infinity=False) for i in range(1,11)]
         [0, -2, -1, 1, 2, 2, 1, -1, -2, 0]
 
     For the minus symbols this makes no difference since
-    $\{0,\infty\}$ is in the plus space.  Note that to evaluate minus
+    `\{0,\infty\}` is in the plus space.  Note that to evaluate minus
     symbols the space must be defined with sign 0, which makes both
     signs available::
 
@@ -211,8 +211,8 @@ cdef class ECModularSymbol:
         n = I2int(N)
         self.n = n
         if not (sign == 0 or sign == 1):
-           sig_off()
-           raise ValueError("ECModularSymbol can only be created with signs +1 or 0, not {}".format(sign))
+            sig_off()
+            raise ValueError("ECModularSymbol can only be created with signs +1 or 0, not {}".format(sign))
         self.sign = sign
 
         self.nfs = new newforms(n, 0)
@@ -347,8 +347,8 @@ cdef class ECModularSymbol:
             n = n % d
         sig_on()
         _r = rational(n, d)
-        if sign is None or not sign in [-1, 0, 1]:
-           sign = self.sign
+        if sign is None or sign not in [-1, 0, 1]:
+            sign = self.sign
         if sign == +1:
             _sp = self.nfs.plus_modular_symbol(_r, 0, int(base_at_infinity))
         elif sign == -1:
@@ -384,7 +384,7 @@ cdef class ECModularSymbol:
             sage: E = EllipticCurve('11a')
             sage: M = ECModularSymbol(E)
             sage: M.__reduce__()
-            (<type 'sage.libs.eclib.newforms.ECModularSymbol'>,
+            (<class 'sage.libs.eclib.newforms.ECModularSymbol'>,
              (Elliptic Curve defined by y^2 + y = x^3 - x^2 - 10*x - 20 over Rational Field,
               1))
         """

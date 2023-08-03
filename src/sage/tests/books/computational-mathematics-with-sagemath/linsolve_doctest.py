@@ -356,7 +356,7 @@ Sage example in ./linsolve.tex, line 2230::
 
 Sage example in ./linsolve.tex, line 2609::
 
-  sage: from scipy.sparse.linalg.dsolve import *
+  sage: from scipy.sparse.linalg import factorized
   sage: from scipy.sparse import lil_matrix
   sage: from numpy import array
   sage: n = 200

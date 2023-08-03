@@ -15,6 +15,7 @@ Thematic tutorial document tree
    coding_theory
    structures_in_coding_theory
    geometry
+   steenrod_algebra_modules
    tutorial-programming-python
    tutorial-comprehensions
    tutorial-objects-and-classes

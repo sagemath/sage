@@ -12,16 +12,18 @@ Root system data for type F
 # ****************************************************************************
 
 from . import ambient_space
-from sage.rings.all import ZZ
-from sage.combinat.family import Family
+from sage.rings.integer_ring import ZZ
+from sage.sets.family import Family
 
 # TODO: double check that this can't be defined over ZZ
+
 
 class AmbientSpace(ambient_space.AmbientSpace):
     """
     The lattice behind `F_4`.  The computations are based on Bourbaki,
     Groupes et Algèbres de Lie, Ch. 4,5,6 (planche VIII).
     """
+
     def __init__(self, root_system, base_ring):
         r"""
         Initialize the ambient lattice for the root system of type `F_4`.
@@ -44,7 +46,6 @@ class AmbientSpace(ambient_space.AmbientSpace):
                      self.root(3),
                      v*(self.root(0)-self.root(1)-self.root(2)-self.root(3))]
 
-
     def dimension(self):
         """
         Return the dimension of ``self``.
@@ -56,7 +57,6 @@ class AmbientSpace(ambient_space.AmbientSpace):
             4
         """
         return self.root_system.cartan_type().rank()
-
 
     def root(self, i, j=None, k=None, l=None, p1=0, p2=0, p3=0, p4=0):
         """
@@ -198,7 +198,10 @@ class AmbientSpace(ambient_space.AmbientSpace):
                         3: v*(3*self.monomial(0)+self.monomial(1)+self.monomial(2)+self.monomial(3)),
                         4: self.monomial(0)})
 
+
 from .cartan_type import CartanType_standard_finite, CartanType_simple, CartanType_crystallographic
+
+
 class CartanType(CartanType_standard_finite, CartanType_simple, CartanType_crystallographic):
     def __init__(self):
         """
@@ -277,7 +280,7 @@ class CartanType(CartanType_standard_finite, CartanType_simple, CartanType_cryst
             O---O=>=O---O
             1   2   3   4
             F4
-            sage: sorted(f.edges())
+            sage: f.edges(sort=True)
             [(1, 2, 1), (2, 1, 1), (2, 3, 2), (3, 2, 1), (3, 4, 1), (4, 3, 1)]
 
         """
@@ -374,6 +377,7 @@ class CartanType(CartanType_standard_finite, CartanType_simple, CartanType_cryst
         """
         from sage.combinat.root_system.type_folded import CartanTypeFolded
         return CartanTypeFolded(self, ['E', 6], [[2], [4], [3, 5], [1, 6]])
+
 
 # For unpickling backward compatibility (Sage <= 4.1)
 from sage.misc.persist import register_unpickle_override

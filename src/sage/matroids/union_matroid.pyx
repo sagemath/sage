@@ -11,6 +11,20 @@ cdef class MatroidUnion(Matroid):
 
         `I= \{\bigcup_{i=1}^n J_i | J_i \in I_i \}`.
 
+    EXAMPLES::
+
+        sage: M1 = matroids.Uniform(3,3)
+        sage: M2 = Matroid(bases = [frozenset({3}), frozenset({4})])
+        sage: M = M1.union(M2); M
+        Matroid of rank 4 on 5 elements as matroid union of
+        Matroid of rank 3 on 3 elements with circuit-closures
+        {}
+        Matroid of rank 1 on 2 elements with 2 bases
+        sage: M.bases()
+        Iterator over a system of subsets
+        sage: M.circuits()
+        [frozenset({3, 4})]
+
     INPUT:
 
     - ``matroids`` -- a iterator of matroids.
@@ -93,7 +107,7 @@ cdef class MatroidUnion(Matroid):
         sum_matroid = MatroidSum(summands)
         d = {}
         for (i,x) in sum_matroid.groundset():
-            if not x in d:
+            if x not in d:
                 d[x]=set()
             d[x].add(i)
         part_matroid = PartitionMatroid([[(i,x) for i in d[x]] for x in d])
@@ -218,7 +232,7 @@ cdef class MatroidSum(Matroid):
         """
         partition = {}
         for (i,x) in X:
-            if not i in partition:
+            if i not in partition:
                 partition[i] = set()
             partition[i].add(x)
         rk = 0

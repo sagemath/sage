@@ -18,7 +18,7 @@ AUTHORS:
 # * _point_morphism_class -> _morphism
 # * _homset_class -> _point_homset
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2011 Volker Braun <vbraun.name@gmail.com>
 #       Copyright (C) 2006 David Kohel <kohel@maths.usyd.edu.au>
 #       Copyright (C) 2006 William Stein <wstein@gmail.com>
@@ -26,16 +26,18 @@ AUTHORS:
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.categories.number_fields import NumberFields
-_NumberFields = NumberFields()
 from sage.rings.integer_ring import ZZ
 from sage.rings.number_field.order import is_NumberFieldOrder
 from sage.rings.real_mpfr import RealField
 from sage.schemes.generic.morphism import (SchemeMorphism_point, SchemeMorphism, is_SchemeMorphism)
 from sage.structure.sequence import Sequence
+
+_NumberFields = NumberFields()
+
 
 ############################################################################
 # Rational points on schemes, which we view as morphisms determined
@@ -76,21 +78,21 @@ class SchemeMorphism_point_affine(SchemeMorphism_point):
         """
         SchemeMorphism.__init__(self, X)
         if check:
-            from sage.rings.ring import CommutativeRing
+            from sage.categories.commutative_rings import CommutativeRings
             if is_SchemeMorphism(v):
                 v = list(v)
             else:
                 try:
-                    if isinstance(v.parent(), CommutativeRing):
+                    if v.parent() in CommutativeRings():
                         v = [v]
                 except AttributeError:
                     pass
             # Verify that there are the right number of coords
             d = self.codomain().ambient_space().ngens()
             if len(v) != d:
-                raise TypeError("argument v (=%s) must have %s coordinates"%(v, d))
+                raise TypeError("argument v (=%s) must have %s coordinates" % (v, d))
             if not isinstance(v, (list, tuple)):
-                raise TypeError("argument v (= %s) must be a scheme point, list, or tuple"%str(v))
+                raise TypeError("argument v (= %s) must be a scheme point, list, or tuple" % str(v))
             # Make sure the coordinates all lie in the appropriate ring
             v = Sequence(v, X.value_ring())
             # Verify that the point satisfies the equations of X.
@@ -105,7 +107,7 @@ class SchemeMorphism_point_affine(SchemeMorphism_point):
 
         - ``mat`` -- a matrix
 
-        - ``dom`` -- (unused) needed for consistent function call with projective 
+        - ``dom`` -- (unused) needed for consistent function call with projective
 
         OUTPUT: a scheme point given by ``mat*self``
 
@@ -137,9 +139,9 @@ class SchemeMorphism_point_affine(SchemeMorphism_point):
             ...
             ValueError: matrix size is incompatible
         """
-        #input checking done in projective implementation
+        # input checking done in projective implementation
         d = self.codomain().ngens()
-        P = mat*self.homogenize(d)
+        P = mat * self.homogenize(d)
         if P[-1] == 0:
             raise ValueError("resulting point not affine")
         return P.dehomogenize(d)
@@ -194,9 +196,9 @@ class SchemeMorphism_point_affine(SchemeMorphism_point):
         ::
 
             sage: R.<x> = PolynomialRing(QQ)
-            sage: k.<w> = NumberField(x^2+5)
-            sage: A = AffineSpace(k, 2, 'z')
-            sage: A([3, 5*w+1]).global_height(prec=100)
+            sage: k.<w> = NumberField(x^2 + 5)                                          # optional - sage.rings.number_field
+            sage: A = AffineSpace(k, 2, 'z')                                            # optional - sage.rings.number_field
+            sage: A([3, 5*w + 1]).global_height(prec=100)                               # optional - sage.rings.number_field
             2.4181409534757389986565376694
 
         .. TODO::
@@ -209,7 +211,7 @@ class SchemeMorphism_point_affine(SchemeMorphism_point):
             else:
                 R = RealField(prec)
             H = max([self[i].abs() for i in range(self.codomain().ambient_space().dimension_relative())])
-            return R(max(H,1)).log()
+            return R(max(H, 1)).log()
         if self.domain().base_ring() in _NumberFields or is_NumberFieldOrder(self.domain().base_ring()):
             return max([self[i].global_height(prec) for i in range(self.codomain().ambient_space().dimension_relative())])
         else:
@@ -249,26 +251,23 @@ class SchemeMorphism_point_affine(SchemeMorphism_point):
 class SchemeMorphism_point_affine_field(SchemeMorphism_point_affine):
 
     def __hash__(self):
-       r"""
-       Computes the hash value of this affine point.
+        r"""
+        Compute the hash value of this affine point.
 
-       EXAMPLES::
+        EXAMPLES::
 
-           sage: A.<x,y> = AffineSpace(QQ, 2)
-           sage: X = A.subscheme(x - y)
-           sage: hash(X([1, 1])) == hash((1,1))
-           True
+            sage: A.<x,y> = AffineSpace(QQ, 2)
+            sage: X = A.subscheme(x - y)
+            sage: hash(X([1, 1])) == hash((1,1))
+            True
 
-       ::
-
-           sage: A.<x,y> = AffineSpace(QQ, 2)
-           sage: X = A.subscheme(x^2 - y^3)
-           sage: pt = X([1, 1])
-           sage: hash(pt) == hash(tuple(pt))
-           True
-
-       """
-       return hash(tuple(self))
+            sage: A.<x,y> = AffineSpace(QQ, 2)
+            sage: X = A.subscheme(x^2 - y^3)
+            sage: pt = X([1, 1])
+            sage: hash(pt) == hash(tuple(pt))
+            True
+        """
+        return hash(tuple(self))
 
     def weil_restriction(self):
         r"""
@@ -292,24 +291,24 @@ class SchemeMorphism_point_affine_field(SchemeMorphism_point_affine):
 
         EXAMPLES::
 
-            sage: A.<x,y,z> = AffineSpace(GF(5^3, 't'), 3)
-            sage: X = A.subscheme([y^2-x*z, z^2+y])
-            sage: Y = X.weil_restriction()
-            sage: P = X([1, -1, 1])
-            sage: Q = P.weil_restriction();Q
+            sage: A.<x,y,z> = AffineSpace(GF(5^3, 't'), 3)                              # optional - sage.rings.finite_rings
+            sage: X = A.subscheme([y^2 - x*z, z^2 + y])                                 # optional - sage.rings.finite_rings
+            sage: Y = X.weil_restriction()                                              # optional - sage.rings.finite_rings
+            sage: P = X([1, -1, 1])                                                     # optional - sage.rings.finite_rings
+            sage: Q = P.weil_restriction();Q                                            # optional - sage.rings.finite_rings
             (1, 0, 0, 4, 0, 0, 1, 0, 0)
-            sage: Q.codomain() == Y
+            sage: Q.codomain() == Y                                                     # optional - sage.rings.finite_rings
             True
 
         ::
 
             sage: R.<x> = QQ[]
-            sage: K.<w> = NumberField(x^5-2)
-            sage: R.<x> = K[]
-            sage: L.<v> = K.extension(x^2+w)
-            sage: A.<x,y> = AffineSpace(L, 2)
-            sage: P = A([w^3-v,1+w+w*v])
-            sage: P.weil_restriction()
+            sage: K.<w> = NumberField(x^5 - 2)                                          # optional - sage.rings.number_field
+            sage: R.<x> = K[]                                                           # optional - sage.rings.number_field
+            sage: L.<v> = K.extension(x^2 + w)                                          # optional - sage.rings.number_field
+            sage: A.<x,y> = AffineSpace(L, 2)                                           # optional - sage.rings.number_field
+            sage: P = A([w^3 - v, 1 + w + w*v])                                         # optional - sage.rings.number_field
+            sage: P.weil_restriction()                                                  # optional - sage.rings.number_field
             (w^3, -1, w + 1, w)
         """
         L = self.codomain().base_ring()
@@ -321,20 +320,20 @@ class SchemeMorphism_point_affine_field(SchemeMorphism_point_affine):
             newP = []
             for t in self:
                 c = t.polynomial().coefficients(sparse=False)
-                c = c + (d-len(c))*[0]
+                c = c + (d - len(c)) * [0]
                 newP += c
         else:
             d = L.relative_degree()
             if d == 1:
                 return self
-            #create a CoordinateFunction that gets the relative coordinates in terms of powers
+            # create a CoordinateFunction that gets the relative coordinates in terms of powers
             from sage.rings.number_field.number_field_element import CoordinateFunction
             v = L.gen()
             V, from_V, to_V = L.relative_vector_space()
             h = L(1)
             B = [to_V(h)]
             f = v.minpoly()
-            for i in range(f.degree()-1):
+            for i in range(f.degree() - 1):
                 h *= v
                 B.append(to_V(h))
             W = V.span_of_basis(B)
@@ -359,14 +358,14 @@ class SchemeMorphism_point_affine_field(SchemeMorphism_point_affine):
 
         EXAMPLES::
 
-            sage: A.<x,y> = AffineSpace(GF(17), 2)
-            sage: X = A.subscheme([y^2 - x^3 + 2*x^2 - x])
-            sage: Y = A.subscheme([y - 2*x + 2])
-            sage: Q1 = Y([1,0])
-            sage: Q1.intersection_multiplicity(X)
+            sage: A.<x,y> = AffineSpace(GF(17), 2)                                      # optional - sage.rings.finite_rings
+            sage: X = A.subscheme([y^2 - x^3 + 2*x^2 - x])                              # optional - sage.rings.finite_rings
+            sage: Y = A.subscheme([y - 2*x + 2])                                        # optional - sage.rings.finite_rings
+            sage: Q1 = Y([1,0])                                                         # optional - sage.rings.finite_rings
+            sage: Q1.intersection_multiplicity(X)                                       # optional - sage.rings.finite_rings
             2
-            sage: Q2 = X([4,6])
-            sage: Q2.intersection_multiplicity(Y)
+            sage: Q2 = X([4,6])                                                         # optional - sage.rings.finite_rings
+            sage: Q2.intersection_multiplicity(Y)                                       # optional - sage.rings.finite_rings
             1
 
         ::
@@ -409,6 +408,7 @@ class SchemeMorphism_point_affine_field(SchemeMorphism_point_affine):
             raise TypeError("this point must be a point on an affine subscheme")
         return self.codomain().multiplicity(self)
 
+
 class SchemeMorphism_point_affine_finite_field(SchemeMorphism_point_affine_field):
 
     def __hash__(self):
@@ -419,29 +419,29 @@ class SchemeMorphism_point_affine_finite_field(SchemeMorphism_point_affine_field
 
         EXAMPLES::
 
-            sage: P.<x,y,z> = AffineSpace(GF(5), 3)
-            sage: hash(P(2, 1, 2))
+            sage: P.<x,y,z> = AffineSpace(GF(5), 3)                                     # optional - sage.rings.finite_rings
+            sage: hash(P(2, 1, 2))                                                      # optional - sage.rings.finite_rings
             57
 
         ::
 
-            sage: P.<x,y,z> = AffineSpace(GF(7), 3)
-            sage: X = P.subscheme(x^2-y^2)
-            sage: hash(X(1, 1, 2))
+            sage: P.<x,y,z> = AffineSpace(GF(7), 3)                                     # optional - sage.rings.finite_rings
+            sage: X = P.subscheme(x^2 - y^2)                                            # optional - sage.rings.finite_rings
+            sage: hash(X(1, 1, 2))                                                      # optional - sage.rings.finite_rings
             106
 
         ::
 
-            sage: P.<x,y> = AffineSpace(GF(13), 2)
-            sage: hash(P(3, 4))
+            sage: P.<x,y> = AffineSpace(GF(13), 2)                                      # optional - sage.rings.finite_rings
+            sage: hash(P(3, 4))                                                         # optional - sage.rings.finite_rings
             55
 
         ::
 
-            sage: P.<x,y> = AffineSpace(GF(13^3, 't'), 2)
-            sage: hash(P(3, 4))
+            sage: P.<x,y> = AffineSpace(GF(13^3, 't'), 2)                               # optional - sage.rings.finite_rings
+            sage: hash(P(3, 4))                                                         # optional - sage.rings.finite_rings
             8791
         """
         p = self.codomain().base_ring().order()
         N = self.codomain().ambient_space().dimension_relative()
-        return int(sum(hash(self[i])*p**i for i in range(N)))
+        return int(sum(hash(self[i]) * p**i for i in range(N)))

@@ -2,7 +2,7 @@ Quadratic Forms
 ===============
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
    sage/quadratic_forms/quadratic_form
    sage/quadratic_forms/binary_qf

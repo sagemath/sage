@@ -13,12 +13,14 @@ Root system data for type Q
 from .cartan_type import CartanType_standard_finite
 from sage.combinat.root_system.root_system import RootSystem
 
+
 class CartanType(CartanType_standard_finite):
     """
     Cartan Type `Q_n`
 
     .. SEEALSO:: :func:`~sage.combinat.root_systems.cartan_type.CartanType`
     """
+
     def __init__(self, m):
         """
         EXAMPLES::
@@ -47,7 +49,7 @@ class CartanType(CartanType_standard_finite):
         assert m >= 2
         CartanType_standard_finite.__init__(self, "Q", m-1)
 
-    def _repr_(self, compact = False):
+    def _repr_(self, compact=False):
         """
         TESTS::
 

@@ -1,3 +1,4 @@
+# sage.doctest: optional - sage.modules
 r"""
 Examples of a Lie algebra with basis
 """
@@ -189,4 +190,3 @@ class IndexedPolynomialRing(CombinatorialFreeModule):
         I = self._indices
         return Family(I._indices, lambda x: self.monomial(I.gen(x)),
                       name="algebra generator map")
-

@@ -6,8 +6,7 @@ Python method by marking it as implementing a *combinatorial map*,
 that is a map between two :class:`enumerated sets <EnumeratedSets>`::
 
     sage: from sage.combinat.combinatorial_map import combinatorial_map
-    sage: class MyPermutation(object):
-    ....:
+    sage: class MyPermutation():
     ....:     @combinatorial_map()
     ....:     def reverse(self):
     ....:         '''
@@ -55,6 +54,7 @@ thereof, for all the combinatorial maps that apply to it.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
+
 def combinatorial_map_trivial(f=None, order=None, name=None):
     r"""
     Combinatorial map decorator
@@ -77,15 +77,13 @@ def combinatorial_map_trivial(f=None, order=None, name=None):
     EXAMPLES::
 
         sage: from sage.combinat.combinatorial_map import combinatorial_map_trivial as combinatorial_map
-        sage: class MyPermutation(object):
-        ....:
+        sage: class MyPermutation():
         ....:     @combinatorial_map
         ....:     def reverse(self):
         ....:         '''
         ....:         Reverse the permutation
         ....:         '''
         ....:         # ... code ...
-        ....:
         ....:     @combinatorial_map(name='descent set of permutation')
         ....:     def descent_set(self):
         ....:         '''
@@ -103,6 +101,7 @@ def combinatorial_map_trivial(f=None, order=None, name=None):
         return lambda f: f
     else:
         return f
+
 
 def combinatorial_map_wrapper(f=None, order=None, name=None):
     r"""
@@ -130,29 +129,25 @@ def combinatorial_map_wrapper(f=None, order=None, name=None):
     the :obj:`combinatorial_map` decorator with its various arguments::
 
         sage: from sage.combinat.combinatorial_map import combinatorial_map_wrapper as combinatorial_map
-        sage: class MyPermutation(object):
-        ....:
+        sage: class MyPermutation():
         ....:     @combinatorial_map()
         ....:     def reverse(self):
         ....:         '''
         ....:         Reverse the permutation
         ....:         '''
         ....:         pass
-        ....:
         ....:     @combinatorial_map(order=2)
         ....:     def inverse(self):
         ....:         '''
         ....:         The inverse of the permutation
         ....:         '''
         ....:         pass
-        ....:
         ....:     @combinatorial_map(name='descent set of permutation')
         ....:     def descent_set(self):
         ....:         '''
         ....:         The descent set of the permutation
         ....:         '''
         ....:         pass
-        ....:
         ....:     def major_index(self):
         ....:         '''
         ....:         The major index of the permutation
@@ -194,13 +189,15 @@ def combinatorial_map_wrapper(f=None, order=None, name=None):
     else:
         return CombinatorialMap(f, order=order, name=name)
 
+
 ##############################################################################
 # Edit here to customize the combinatorial_map hook
 ##############################################################################
 combinatorial_map = combinatorial_map_trivial
-#combinatorial_map = combinatorial_map_wrapper
+# combinatorial_map = combinatorial_map_wrapper
 
-class CombinatorialMap(object):
+
+class CombinatorialMap():
     r"""
     This is a wrapper class for methods that are *combinatorial maps*.
 
@@ -208,6 +205,7 @@ class CombinatorialMap(object):
     :ref:`sage.combinat.combinatorial_map` and
     :func:`combinatorial_map_wrapper`.
     """
+
     def __init__(self, f, order=None, name=None):
         """
         Constructor for combinatorial maps.
@@ -229,7 +227,7 @@ class CombinatorialMap(object):
         """
         import types
         if not isinstance(f, types.FunctionType):
-            raise ValueError("Only plain functions are supported")
+            raise ValueError("only plain functions are supported")
         self._f = f
         self._order = order
         self._name = name
@@ -253,7 +251,7 @@ class CombinatorialMap(object):
             sage: p.left_tableau.__repr__()
             'Combinatorial map: Robinson-Schensted insertion tableau'
         """
-        return "Combinatorial map: %s" %self.name()
+        return "Combinatorial map: %s" % self.name()
 
     def _sage_src_lines_(self):
         r"""
@@ -304,9 +302,9 @@ class CombinatorialMap(object):
             sage: p = Permutation([1,3,2,4])
             sage: cm = type(p).left_tableau; cm
             Combinatorial map: Robinson-Schensted insertion tableau
-            sage: cm(p)
+            sage: cm(p)                                                                 # optional - sage.combinat
             [[1, 2, 4], [3]]
-            sage: cm(Permutation([4,3,2,1]))
+            sage: cm(Permutation([4,3,2,1]))                                            # optional - sage.combinat
             [[1], [2], [3], [4]]
         """
         if self._inst is not None:

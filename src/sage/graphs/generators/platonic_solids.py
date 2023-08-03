@@ -19,6 +19,7 @@ The methods defined here appear in :mod:`sage.graphs.graph_generators`.
 from sage.graphs.graph import Graph
 from math import sin, cos, pi
 
+
 def TetrahedralGraph():
     """
     Return a tetrahedral graph (with 4 nodes).
@@ -42,24 +43,24 @@ def TetrahedralGraph():
 
     The following example requires networkx::
 
-        sage: import networkx as NX
+        sage: import networkx as NX                                                     # optional - networkx
 
     Compare this Tetrahedral, Wheel(4), Complete(4), and the Tetrahedral plotted
     with the spring-layout algorithm below in a Sage graphics array::
 
         sage: tetra_pos = graphs.TetrahedralGraph()
-        sage: tetra_spring = Graph(NX.tetrahedral_graph())
+        sage: tetra_spring = Graph(NX.tetrahedral_graph())                              # optional - networkx
         sage: wheel = graphs.WheelGraph(4)
         sage: complete = graphs.CompleteGraph(4)
-        sage: g = [tetra_pos, tetra_spring, wheel, complete]
+        sage: g = [tetra_pos, tetra_spring, wheel, complete]                            # optional - networkx
         sage: j = []
-        sage: for i in range(2):
+        sage: for i in range(2):                                                        # optional - networkx sage.plot
         ....:     n = []
         ....:     for m in range(2):
         ....:         n.append(g[i + m].plot(vertex_size=50, vertex_labels=False))
         ....:     j.append(n)
-        sage: G = graphics_array(j)
-        sage: G.show()  # long time
+        sage: G = graphics_array(j)                                                     # optional - networkx sage.plot
+        sage: G.show()  # long time                                                     # optional - networkx sage.plot
     """
     edges = [(0, 1), (0, 2), (0, 3), (1, 2), (1, 3), (2, 3)]
     pos = {0: (0, 0),
@@ -67,6 +68,7 @@ def TetrahedralGraph():
            2: (cos(3.5*pi/3), sin(3.5*pi/3)),
            3: (cos(5.5*pi/3), sin(5.5*pi/3))}
     return Graph(edges, name="Tetrahedron", pos=pos)
+
 
 def HexahedralGraph():
     """
@@ -96,13 +98,13 @@ def HexahedralGraph():
         sage: for i in range(9):
         ....:     k = graphs.HexahedralGraph()
         ....:     g.append(k)
-        sage: for i in range(3):
+        sage: for i in range(3):                                                        # optional - sage.plot
         ....:     n = []
         ....:     for m in range(3):
         ....:         n.append(g[3*i + m].plot(vertex_size=50, vertex_labels=False))
         ....:     j.append(n)
-        sage: G = graphics_array(j)
-        sage: G.show()  # long time
+        sage: G = graphics_array(j)                                                     # optional - sage.plot
+        sage: G.show()  # long time                                                     # optional - sage.plot
     """
     adj = {0: [1, 3, 4], 1: [2, 5], 2: [3, 6], 3: [7], 4: [5, 7], 5: [6], 6: [7]}
     pos = {
@@ -116,6 +118,7 @@ def HexahedralGraph():
         6: (1.5, 1.5)
         }
     return Graph(adj, name="Hexahedron", pos=pos)
+
 
 def OctahedralGraph():
     """
@@ -147,19 +150,20 @@ def OctahedralGraph():
         sage: for i in range(9):
         ....:     k = graphs.OctahedralGraph()
         ....:     g.append(k)
-        sage: for i in range(3):
+        sage: for i in range(3):                                                        # optional - sage.plot
         ....:     n = []
         ....:     for m in range(3):
         ....:         n.append(g[3*i + m].plot(vertex_size=50, vertex_labels=False))
         ....:     j.append(n)
-        sage: G = graphics_array(j)
-        sage: G.show()  # long time
+        sage: G = graphics_array(j)                                                     # optional - sage.plot
+        sage: G.show()  # long time                                                     # optional - sage.plot
     """
     adj = {0: [1, 2, 3, 4], 1: [2, 3, 5], 2: [4, 5], 3: [4, 5], 4: [5]}
     G = Graph(adj, format='dict_of_lists', name="Octahedron")
     G._circle_embedding([0, 1, 2], radius=5, angle=pi/2)
     G._circle_embedding([4, 3, 5], radius=1, angle=pi/6)
     return G
+
 
 def IcosahedralGraph():
     """
@@ -190,13 +194,13 @@ def IcosahedralGraph():
         sage: for i in range(9):
         ....:     k = graphs.IcosahedralGraph()
         ....:     g.append(k)
-        sage: for i in range(3):
+        sage: for i in range(3):                                                        # optional - sage.plot
         ....:     n = []
         ....:     for m in range(3):
         ....:         n.append(g[3*i + m].plot(vertex_size=50, vertex_labels=False))
         ....:     j.append(n)
-        sage: G = graphics_array(j)
-        sage: G.show()  # long time
+        sage: G = graphics_array(j)                                                     # optional - sage.plot
+        sage: G.show()  # long time                                                     # optional - sage.plot
     """
     adj = {0: [1, 5, 7, 8, 11], 1: [2, 5, 6, 8], 2: [3, 6, 8, 9],
            3: [4, 6, 9, 10], 4: [5, 6, 10, 11], 5: [6, 11],
@@ -205,6 +209,7 @@ def IcosahedralGraph():
     G._circle_embedding([2, 8, 7, 11, 4, 6], radius=5, angle=pi/6)
     G._circle_embedding([1, 9, 0, 10, 5, 3], radius=2, angle=pi/6)
     return G
+
 
 def DodecahedralGraph():
     """
@@ -233,13 +238,13 @@ def DodecahedralGraph():
         sage: for i in range(9):
         ....:     k = graphs.DodecahedralGraph()
         ....:     g.append(k)
-        sage: for i in range(3):
+        sage: for i in range(3):                                                        # optional - sage.plot
         ....:     n = []
         ....:     for m in range(3):
         ....:         n.append(g[3*i + m].plot(vertex_size=50, vertex_labels=False))
         ....:     j.append(n)
-        sage: G = graphics_array(j)
-        sage: G.show()  # long time
+        sage: G = graphics_array(j)                                                     # optional - sage.plot
+        sage: G.show()  # long time                                                     # optional - sage.plot
     """
     adj = {0: [1, 10, 19], 1: [2, 8], 2: [3, 6], 3: [4, 19], 4: [5, 17],
            5: [6, 15], 6: [7], 7: [8, 14], 8: [9], 9: [10, 13], 10: [11],

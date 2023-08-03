@@ -104,7 +104,7 @@ def CrystalOfLetters(cartan_type, element_print_style=None, dual=None):
         else:
             return ClassicalCrystalOfLetters(ct,
                                              Crystal_of_letters_type_E6_element_dual,
-                                             element_print_style, dual = True)
+                                             element_print_style, dual=True)
     elif ct.letter == 'E' and ct.rank() == 7:
         return ClassicalCrystalOfLetters(ct, Crystal_of_letters_type_E7_element)
     elif ct.letter == 'E' and ct.rank() == 8 or ct.letter == 'F':
@@ -115,6 +115,7 @@ def CrystalOfLetters(cartan_type, element_print_style=None, dual=None):
         return CrystalOfQueerLetters(ct)
     else:
         raise NotImplementedError
+
 
 class ClassicalCrystalOfLetters(UniqueRepresentation, Parent):
     r"""
@@ -136,7 +137,8 @@ class ClassicalCrystalOfLetters(UniqueRepresentation, Parent):
     time: ``list``, ``cmp``, (todo: ``phi``, ``epsilon``, ``e``, and
     ``f`` with caching)
     """
-    def __init__(self, cartan_type, element_class, element_print_style = None, dual = None):
+    def __init__(self, cartan_type, element_class,
+                 element_print_style=None, dual=None):
         """
         EXAMPLES::
 
@@ -146,15 +148,15 @@ class ClassicalCrystalOfLetters(UniqueRepresentation, Parent):
             sage: TestSuite(C).run()
         """
         self.Element = element_class
-        Parent.__init__(self, category = ClassicalCrystals())
+        Parent.__init__(self, category=ClassicalCrystals())
         self._cartan_type = CartanType(cartan_type)
-        self.rename("The crystal of letters for type %s"%self._cartan_type)
+        self.rename("The crystal of letters for type %s" % self._cartan_type)
         if cartan_type.type() == 'E':
             if cartan_type.rank() == 6:
                 if dual:
                     self.module_generators = (self._element_constructor_((6,)),)
                     self._ambient = CrystalOfLetters(CartanType(['E',6]))
-                    self.rename("%s (dual)"%self)
+                    self.rename("%s (dual)" % self)
                 else:
                     self.module_generators = (self._element_constructor_((1,)),)
             elif cartan_type.rank() == 7:
@@ -166,7 +168,7 @@ class ClassicalCrystalOfLetters(UniqueRepresentation, Parent):
                 C = CrystalOfNakajimaMonomials(cartan_type, la)
                 hw = C.highest_weight_vector()
                 self.module_generators = (self._element_constructor_(hw),)
-            self._list = [x for x in super(ClassicalCrystalOfLetters, self).__iter__()]
+            self._list = list(super(ClassicalCrystalOfLetters, self).__iter__())
         elif cartan_type.type() == 'F':
             from sage.combinat.crystals.monomial_crystals import CrystalOfNakajimaMonomials
             from sage.combinat.root_system.root_system import RootSystem
@@ -174,7 +176,7 @@ class ClassicalCrystalOfLetters(UniqueRepresentation, Parent):
             C = CrystalOfNakajimaMonomials(cartan_type, la)
             hw = C.highest_weight_vector()
             self.module_generators = (self._element_constructor_(hw),)
-            self._list = [x for x in super(ClassicalCrystalOfLetters, self).__iter__()]
+            self._list = list(super(ClassicalCrystalOfLetters, self).__iter__())
         else:
             self.module_generators = (self._element_constructor_(1),)
             if cartan_type.type() == 'G':
@@ -187,12 +189,12 @@ class ClassicalCrystalOfLetters(UniqueRepresentation, Parent):
                               self._element_constructor_(-1)]
             else:
                 self._list = [self._element_constructor_(i)
-                              for i in xrange(1, cartan_type.rank() + 1)]
+                              for i in range(1, cartan_type.rank() + 1)]
                 if cartan_type.type() == 'B':
                     self._list.append(self._element_constructor_(0))
                 if cartan_type.type() != 'A':
                     self._list += [self._element_constructor_(-i)
-                                   for i in xrange(cartan_type.rank(), 0, -1)]
+                                   for i in range(cartan_type.rank(), 0, -1)]
                 else:
                     self._list.append(self._element_constructor_(cartan_type.rank() + 1))
         self._element_print_style = element_print_style
@@ -316,6 +318,7 @@ class ClassicalCrystalOfLetters(UniqueRepresentation, Parent):
 
     # temporary workaround while an_element is overridden by Parent
     _an_element_ = EnumeratedSets.ParentMethods._an_element_
+
 
 # Utility. Note: much of this class should be factored out at some point!
 cdef class Letter(Element):
@@ -509,8 +512,9 @@ cdef class Letter(Element):
             return self.value == x.value or x._parent.lt_elements(x, self)
         return False
 
+
 cdef class EmptyLetter(Element):
-    """
+    r"""
     The affine letter `\emptyset` thought of as a classical crystal letter
     in classical type `B_n` and `C_n`.
 
@@ -558,7 +562,7 @@ cdef class EmptyLetter(Element):
         return 'E'
 
     def _latex_(self):
-        """
+        r"""
         Return a latex representation of ``self``.
 
         EXAMPLES::
@@ -606,7 +610,7 @@ cdef class EmptyLetter(Element):
             False
         """
         if isinstance(left, EmptyLetter) and isinstance(right, EmptyLetter):
-           return op == Py_EQ or op == Py_LE or op == Py_GE
+            return op == Py_EQ or op == Py_LE or op == Py_GE
         return op == Py_NE
 
     def weight(self):
@@ -1182,7 +1186,7 @@ cdef class Crystal_of_letters_type_G_element(Letter):
         elif self.value == -1:
             return self._parent.weight_lattice_realization()((-1, 0, 1))
         else:
-            raise RuntimeError("G2 crystal of letters element %d not valid"%self.value)
+            raise RuntimeError("G2 crystal of letters element %d not valid" % self.value)
 
     cpdef Letter e(self, int i):
         r"""
@@ -1491,7 +1495,7 @@ cdef class Crystal_of_letters_type_E6_element(LetterTuple):
         sage: all(b.e(i).f(i) == b for i in C.index_set() for b in C if b.e(i) is not None)
         True
         sage: G = C.digraph()
-        sage: G.show(edge_labels=true, figsize=12, vertex_size=1)
+        sage: G.show(edge_labels=true, figsize=12, vertex_size=1)                       # optional - sage.plot
     """
 
     def _repr_(self):
@@ -1748,7 +1752,7 @@ cdef class Crystal_of_letters_type_E6_element_dual(LetterTuple):
         sage: all(b.e(i).f(i) == b for i in C.index_set() for b in C if b.e(i) is not None)
         True
         sage: G = C.digraph()
-        sage: G.show(edge_labels=true, figsize=12, vertex_size=1)
+        sage: G.show(edge_labels=true, figsize=12, vertex_size=1)                       # optional - sage.plot
     """
 
     def _repr_(self):
@@ -1908,7 +1912,7 @@ cdef class Crystal_of_letters_type_E7_element(LetterTuple):
         sage: all(b.e(i).f(i) == b for i in C.index_set() for b in C if b.e(i) is not None)
         True
         sage: G = C.digraph()
-        sage: G.show(edge_labels=true, figsize=12, vertex_size=1)
+        sage: G.show(edge_labels=true, figsize=12, vertex_size=1)                       # optional - sage.plot
     """
 
     def weight(self):
@@ -2492,8 +2496,9 @@ cdef class BKKLetter(Letter):
             return -ret
         return ret
 
+
 class CrystalOfBKKLetters(ClassicalCrystalOfLetters):
-    """
+    r"""
     Crystal of letters for Benkart-Kang-Kashiwara supercrystals.
 
     This implements the `\mathfrak{gl}(m|n)` crystal of
@@ -2518,7 +2523,7 @@ class CrystalOfBKKLetters(ClassicalCrystalOfLetters):
         if dual is None:
             dual = False
         ct = CartanType(ct)
-        return super(CrystalOfBKKLetters, cls).__classcall__(cls, ct, dual)
+        return super().__classcall__(cls, ct, dual)
 
     def __init__(self, ct, dual):
         """
@@ -2557,7 +2562,7 @@ class CrystalOfBKKLetters(ClassicalCrystalOfLetters):
             sage: crystals.Letters(['A', [2, 1]])
             The crystal of letters for type ['A', [2, 1]]
         """
-        ret = "The crystal of letters for type %s"%self._cartan_type
+        ret = "The crystal of letters for type %s" % self._cartan_type
         if self._dual:
             ret += " (dual)"
         return ret
@@ -2566,6 +2571,7 @@ class CrystalOfBKKLetters(ClassicalCrystalOfLetters):
     _an_element_ = EnumeratedSets.ParentMethods._an_element_
 
     Element = BKKLetter
+
 
 #################
 # Type q(n) queer
@@ -2611,7 +2617,7 @@ class CrystalOfQueerLetters(ClassicalCrystalOfLetters):
             The queer crystal of letters for q(3)
         """
         ct = CartanType(ct)
-        return super(CrystalOfQueerLetters, cls).__classcall__(cls, ct)
+        return super().__classcall__(cls, ct)
 
     def __init__(self, ct):
         """
@@ -2655,7 +2661,8 @@ class CrystalOfQueerLetters(ClassicalCrystalOfLetters):
             sage: crystals.Letters(['Q',3])
             The queer crystal of letters for q(3)
         """
-        return "The queer crystal of letters for q(%s)"%(self._cartan_type.n+1)
+        return "The queer crystal of letters for q(%s)" % (
+            self._cartan_type.n + 1)
 
     def index_set(self):
         """
@@ -2719,11 +2726,10 @@ cdef class QueerLetter_element(Letter):
             [(2, 1, 1), (3, 2, 2), (3, -2, 2), (2, -1, 1)]
         """
         if self.value == -i+1:
-           return self._parent._element_constructor_(self.value-1)
+            return self._parent._element_constructor_(self.value-1)
         if self.value == i+1:
             return self._parent._element_constructor_(self.value-1)
-        else:
-            return None
+        return None
 
     cpdef Letter f(self, int i):
         r"""
@@ -2736,11 +2742,10 @@ cdef class QueerLetter_element(Letter):
             [(1, 1, 2), (2, 2, 3), (2, -2, 3), (1, -1, 2)]
         """
         if self.value == -i:
-           return self._parent._element_constructor_(-i+1)
+            return self._parent._element_constructor_(-i+1)
         if self.value == i:
             return self._parent._element_constructor_(self.value+1)
-        else:
-            return None
+        return None
 
     cpdef int epsilon(self, int i):
         r"""
@@ -2978,6 +2983,7 @@ cdef class LetterWrapped(Element):
         """
         return self.value.phi(i)
 
+
 class ClassicalCrystalOfLettersWrapped(ClassicalCrystalOfLetters):
     r"""
     Crystal of letters by wrapping another crystal.
@@ -3047,4 +3053,3 @@ class ClassicalCrystalOfLettersWrapped(ClassicalCrystalOfLetters):
             False
         """
         return {elt._to_tuple(): elt for elt in self}
-

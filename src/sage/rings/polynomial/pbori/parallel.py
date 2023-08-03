@@ -183,7 +183,7 @@ copyreg.pickle(BooleSet, pickle_bset)
 
 
 def pickle_monom(self):
-    return (Monomial, ([var for var in self.variables()], ))
+    return (Monomial, (list(self.variables()),))
 
 
 copyreg.pickle(Monomial, pickle_monom)
@@ -204,7 +204,7 @@ def _decode_ring(code):
     try:
         _polybori_parallel_rings
     except NameError:
-        _polybori_parallel_rings = dict()
+        _polybori_parallel_rings = {}
 
     for key in [key for key in _polybori_parallel_rings
                 if not _polybori_parallel_rings[key][0]()]:
@@ -234,7 +234,7 @@ def _encode_ring(ring):
     try:
         _polybori_parallel_rings
     except NameError:
-        _polybori_parallel_rings = dict()
+        _polybori_parallel_rings = {}
 
     for key in [key for key in _polybori_parallel_rings
                 if not _polybori_parallel_rings[key][0]()]:

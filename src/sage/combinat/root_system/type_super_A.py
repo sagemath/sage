@@ -11,7 +11,7 @@ Root system data for super type A
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.rings.all import ZZ
+from sage.rings.integer_ring import ZZ
 from sage.misc.cachefunc import cached_method
 from . import ambient_space
 from .cartan_type import SuperCartanType_standard
@@ -33,6 +33,7 @@ class AmbientSpace(ambient_space.AmbientSpace):
          1: (0, 0, 0, 1, 0),
          2: (0, 0, 0, 0, 1)}
     """
+
     def __init__(self, root_system, base_ring, index_set=None):
         """
         Initialize ``self``.
@@ -446,12 +447,14 @@ class AmbientSpace(ambient_space.AmbientSpace):
             return all(l[i] * self.inner_product(alpha[i]) in NN
                        for i in self.parent().index_set())
 
+
 class CartanType(SuperCartanType_standard):
     """
     Cartan Type `A(m|n)`.
 
     .. SEEALSO:: :func:`~sage.combinat.root_systems.cartan_type.CartanType`
     """
+
     def __init__(self, m, n):
         """
         EXAMPLES::
@@ -490,7 +493,7 @@ class CartanType(SuperCartanType_standard):
             sage: latex(CartanType(['A',[4,3]]))
             A(4|3)
         """
-        return "A(%s|%s)"%(self.m, self.n)
+        return "A(%s|%s)" % (self.m, self.n)
 
     def index_set(self):
         """
@@ -601,7 +604,7 @@ class CartanType(SuperCartanType_standard):
             O---O---O---O---X---O---O
             -4  -3  -2  -1  0   1   2
             A4|2
-            sage: sorted(a.edges())
+            sage: a.edges(sort=True)
             [(-4, -3, 1), (-3, -4, 1), (-3, -2, 1), (-2, -3, 1),
              (-2, -1, 1), (-1, -2, 1), (-1, 0, 1), (0, -1, 1),
              (0, 1, 1), (1, 0, -1), (1, 2, 1), (2, 1, 1)]
@@ -612,21 +615,21 @@ class CartanType(SuperCartanType_standard):
             X
             0
             A0|0
-            sage: a.vertices(), a.edges()
+            sage: a.vertices(sort=False), a.edges(sort=False)
             ([0], [])
 
             sage: a = DynkinDiagram(['A', [1,0]]); a
             O---X
             -1  0
             A1|0
-            sage: a.vertices(), a.edges()
+            sage: a.vertices(sort=True), a.edges(sort=True)
             ([-1, 0], [(-1, 0, 1), (0, -1, 1)])
 
             sage: a = DynkinDiagram(['A', [0,1]]); a
             X---O
             0   1
             A0|1
-            sage: a.vertices(), a.edges()
+            sage: a.vertices(sort=True), a.edges(sort=True)
             ([0, 1], [(0, 1, 1), (1, 0, -1)])
         """
         from .dynkin_diagram import DynkinDiagram_class
@@ -812,7 +815,7 @@ class CartanType(SuperCartanType_standard):
         """
         if node is None:
             node = lambda i: 'O'
-        ret  = "---".join(node(label(i)) for i in range(1,self.m+1))
+        ret = "---".join(node(label(i)) for i in range(1,self.m+1))
         if self.m == 0:
             if self.n == 0:
                 ret = "X"

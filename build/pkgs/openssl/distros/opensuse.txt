@@ -1,1 +1,1 @@
-"pkgconfig(libssl)"
+libopenssl-3-devel

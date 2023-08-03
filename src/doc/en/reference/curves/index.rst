@@ -17,7 +17,7 @@ Plane conics
 ============
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
    sage/schemes/plane_conics/constructor
    sage/schemes/plane_conics/con_field
@@ -30,7 +30,7 @@ Plane quartics
 =========================
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
    sage/schemes/plane_quartics/quartic_constructor
    sage/schemes/plane_quartics/quartic_generic
@@ -39,7 +39,7 @@ Riemann surfaces
 ================
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
    sage/schemes/riemann_surfaces/riemann_surface
 

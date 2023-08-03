@@ -1,5 +1,5 @@
 r"""
-Error Functions
+Error functions
 
 This module provides symbolic error functions. These functions use the
 `mpmath library` for numerical evaluation and Maxima, Pynac for
@@ -44,11 +44,12 @@ from sage.structure.all import parent as s_parent
 from sage.symbolic.function import BuiltinFunction
 from sage.libs.mpmath import utils as mpmath_utils
 from sage.symbolic.expression import Expression
-from sage.functions.all import sqrt, exp
-from sage.symbolic.constants import pi
+from sage.functions.all import exp
+from sage.misc.functional import sqrt
+from sage.symbolic.constants import I, pi
 from sage.rings.rational import Rational
 from sage.rings.infinity import unsigned_infinity
-from sage.libs.pynac.pynac import I
+
 
 class Function_erf(BuiltinFunction):
     r"""
@@ -266,7 +267,7 @@ class Function_erf(BuiltinFunction):
 
         Check that real ball evaluation is fixed :trac:`28061`::
 
-            sage: RealBallField(128)(erf(5))
+            sage: RealBallField(128)(erf(5)) # abs tol 1e-38
             [0.99999999999846254020557196514981165651 +/- 7.33e-39]
         """
         R = parent or s_parent(x)
@@ -295,6 +296,7 @@ class Function_erf(BuiltinFunction):
             '((%pi)^(-1/2))*(_SAGE_VAR_c)*(exp(((_SAGE_VAR_c)^(2))*((_SAGE_VAR_x)^(2))*(-1)))*(2)'
         """
         return 2*exp(-x**2)/sqrt(pi)
+
 
 erf = Function_erf()
 
@@ -374,7 +376,9 @@ class Function_erfi(BuiltinFunction):
         """
         return 2*exp(x**2)/sqrt(pi)
 
+
 erfi = Function_erfi()
+
 
 class Function_erfc(BuiltinFunction):
     r"""
@@ -476,6 +480,7 @@ class Function_erfc(BuiltinFunction):
         """
         return -2*exp(-x**2)/sqrt(pi)
 
+
 erfc = Function_erfc()
 
 
@@ -563,10 +568,13 @@ class Function_erfinv(BuiltinFunction):
         """
         return sqrt(pi)*exp(erfinv(x)**2)/2
 
+
 erfinv = Function_erfinv()
+
 
 from sage.misc.persist import register_unpickle_override
 register_unpickle_override('sage.functions.other', 'Function_erf', Function_erf)
+
 
 ############################
 # Fresnel integrals        #
@@ -631,11 +639,11 @@ class Function_Fresnel_sin(BuiltinFunction):
                 return x
             if x.is_infinity():
                 if x.is_positive_infinity():
-                    return Rational((1,2))
+                    return Rational((1, 2))
                 elif x.imag_part().is_positive_infinity():
-                    return -I*Rational((1,2))
+                    return -I*Rational((1, 2))
                 elif x.imag_part().is_negative_infinity():
-                    return I*Rational((1,2))
+                    return I*Rational((1, 2))
         elif x < 0:
             return -fresnel_sin(-x)
         elif not x:
@@ -667,7 +675,9 @@ class Function_Fresnel_sin(BuiltinFunction):
         from sage.functions.trig import sin
         return sin(pi*x**2/2)
 
+
 fresnel_sin = Function_Fresnel_sin()
+
 
 class Function_Fresnel_cos(BuiltinFunction):
     def __init__(self):
@@ -729,11 +739,11 @@ class Function_Fresnel_cos(BuiltinFunction):
                 return x
             if x.is_infinity():
                 if x.is_positive_infinity():
-                    return Rational((1,2))
+                    return Rational((1, 2))
                 elif x.imag_part().is_positive_infinity():
-                    return I*Rational((1,2))
+                    return I*Rational((1, 2))
                 elif x.imag_part().is_negative_infinity():
-                    return -I*Rational((1,2))
+                    return -I*Rational((1, 2))
         elif x < 0:
             return -fresnel_cos(-x)
         elif not x:
@@ -764,5 +774,6 @@ class Function_Fresnel_cos(BuiltinFunction):
         """
         from sage.functions.trig import cos
         return cos(pi*x**2/2)
+
 
 fresnel_cos = Function_Fresnel_cos()

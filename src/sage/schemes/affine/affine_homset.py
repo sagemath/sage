@@ -23,30 +23,34 @@ AUTHORS:
 - Ben Hutz (2018): add numerical point support
 """
 
-
-#*****************************************************************************
-#       Copyright (C) 2006 William Stein <wstein@gmail.com>
+# *****************************************************************************
+#        Copyright (C) 2006 William Stein <wstein@gmail.com>
 #
-#  Distributed under the terms of the GNU General Public License (GPL)
-#  as published by the Free Software Foundation; either version 2 of
-#  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#   Distributed under the terms of the GNU General Public License (GPL)
+#   as published by the Free Software Foundation; either version 2 of
+#   the License, or (at your option) any later version.
+#                   http://www.gnu.org/licenses/
+# *****************************************************************************
+
+from copy import copy
 
 from sage.misc.verbose import verbose
-from sage.rings.all import ZZ, CC, RR
+from sage.rings.integer_ring import ZZ
+from sage.rings.real_mpfr import RR
+from sage.rings.cc import CC
 from sage.rings.rational_field import is_RationalField
 from sage.categories.fields import Fields
 from sage.categories.number_fields import NumberFields
-from sage.rings.finite_rings.finite_field_constructor import is_FiniteField
+from sage.rings.finite_rings.finite_field_base import FiniteField
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
-import sage.schemes.generic.homset
-from copy import copy
+from sage.schemes.generic.homset import SchemeHomset_points, SchemeHomset_generic
 
-#*******************************************************************
-# Affine varieties
-#*******************************************************************
-class SchemeHomset_points_spec(sage.schemes.generic.homset.SchemeHomset_generic):
+
+# *******************************************************************
+#  Affine varieties
+# *******************************************************************
+
+class SchemeHomset_points_spec(SchemeHomset_generic):
     """
     Set of rational points of an affine variety.
 
@@ -60,7 +64,6 @@ class SchemeHomset_points_spec(sage.schemes.generic.homset.SchemeHomset_generic)
         sage: SchemeHomset_points_spec(Spec(QQ), Spec(QQ))
         Set of rational points of Spectrum of Rational Field
     """
-
     def _element_constructor_(self, *args, **kwds):
         """
         The element constructor.
@@ -84,7 +87,7 @@ class SchemeHomset_points_spec(sage.schemes.generic.homset.SchemeHomset_generic)
               Defn: Ring endomorphism of Rational Field
                       Defn: 1 |--> 1
         """
-        return sage.schemes.generic.homset.SchemeHomset_generic._element_constructor_(self, *args, **kwds)
+        return super()._element_constructor_(*args, **kwds)
 
     def _repr_(self):
         """
@@ -99,14 +102,47 @@ class SchemeHomset_points_spec(sage.schemes.generic.homset.SchemeHomset_generic)
             sage: S._repr_()
             'Set of rational points of Spectrum of Rational Field'
         """
-        return 'Set of rational points of '+str(self.codomain())
+        return 'Set of rational points of {}'.format(self.codomain())
 
 
+class SchemeHomset_polynomial_affine_space(SchemeHomset_generic):
+    """
+    Set of morphisms between affine spaces defined by polynomials.
 
-#*******************************************************************
-# Affine varieties
-#*******************************************************************
-class SchemeHomset_points_affine(sage.schemes.generic.homset.SchemeHomset_points):
+    EXAMPLES::
+
+        sage: A.<x,y> = AffineSpace(2, QQ)
+        sage: Hom(A, A)
+        Set of morphisms
+          From: Affine Space of dimension 2 over Rational Field
+          To:   Affine Space of dimension 2 over Rational Field
+    """
+    def identity(self):
+        """
+        The identity morphism of this homset.
+
+        EXAMPLES::
+
+            sage: A.<x,y> = AffineSpace(2, QQ)
+            sage: I = A.identity_morphism()
+            sage: I.parent()
+            Set of morphisms
+              From: Affine Space of dimension 2 over Rational Field
+              To:   Affine Space of dimension 2 over Rational Field
+            sage: _.identity() == I
+            True
+        """
+        if self.is_endomorphism_set():
+            from sage.schemes.generic.morphism import SchemeMorphism_polynomial_id
+            return SchemeMorphism_polynomial_id(self.domain())
+        raise TypeError("identity map is only defined for endomorphisms")
+
+
+# *******************************************************************
+#  Affine varieties
+# *******************************************************************
+
+class SchemeHomset_points_affine(SchemeHomset_points):
     """
     Set of rational points of an affine variety.
 
@@ -175,14 +211,14 @@ class SchemeHomset_points_affine(sage.schemes.generic.homset.SchemeHomset_points
         EXAMPLES: The bug reported at #11526 is fixed::
 
             sage: A2 = AffineSpace(ZZ, 2)
-            sage: F = GF(3)
-            sage: A2(F).points()
+            sage: F = GF(3)                                                             # optional - sage.rings.finite_rings
+            sage: A2(F).points()                                                        # optional - sage.rings.finite_rings
             [(0, 0), (0, 1), (0, 2), (1, 0), (1, 1), (1, 2), (2, 0), (2, 1), (2, 2)]
 
         ::
 
             sage: A.<x,y> = ZZ[]
-            sage: I = A.ideal(x^2-y^2-1)
+            sage: I = A.ideal(x^2 - y^2 - 1)
             sage: V = AffineSpace(ZZ, 2)
             sage: X = V.subscheme(I)
             sage: M = X(ZZ)
@@ -192,9 +228,9 @@ class SchemeHomset_points_affine(sage.schemes.generic.homset.SchemeHomset_points
         ::
 
             sage: u = QQ['u'].0
-            sage: K.<v> = NumberField(u^2 + 3)
-            sage: A.<x,y> = AffineSpace(K, 2)
-            sage: len(A(K).points(bound=2))
+            sage: K.<v> = NumberField(u^2 + 3)                                          # optional - sage.rings.number_field
+            sage: A.<x,y> = AffineSpace(K, 2)                                           # optional - sage.rings.number_field
+            sage: len(A(K).points(bound=2))                                             # optional - sage.rings.number_field
             1849
 
         ::
@@ -209,16 +245,20 @@ class SchemeHomset_points_affine(sage.schemes.generic.homset.SchemeHomset_points
             sage: A.<x,y> = AffineSpace(CC, 2)
             sage: E = A.subscheme([y^3 - x^3 - x^2, x*y])
             sage: E(A.base_ring()).points()
-            verbose 0 (124: affine_homset.py, points) Warning: computations in the numerical fields are inexact;points may be computed partially or incorrectly.
+            verbose 0 (...: affine_homset.py, points)
+            Warning: computations in the numerical fields are inexact;points
+            may be computed partially or incorrectly.
             [(-1.00000000000000, 0.000000000000000),
-            (0.000000000000000, 0.000000000000000)]
+             (0.000000000000000, 0.000000000000000)]
 
         ::
 
             sage: A.<x1,x2> = AffineSpace(CDF, 2)
             sage: E = A.subscheme([x1^2 + x2^2 + x1*x2, x1 + x2])
             sage: E(A.base_ring()).points()
-            verbose 0 (124: affine_homset.py, points) Warning: computations in the numerical fields are inexact;points may be computed partially or incorrectly.
+            verbose 0 (...: affine_homset.py, points)
+            Warning: computations in the numerical fields are inexact;points
+            may be computed partially or incorrectly.
             [(0.0, 0.0)]
         """
         from sage.schemes.affine.affine_space import is_AffineSpace
@@ -235,63 +275,63 @@ class SchemeHomset_points_affine(sage.schemes.generic.homset.SchemeHomset_points
                 numerical = False
             # Then X must be a subscheme
             dim_ideal = X.defining_ideal().dimension()
-            if dim_ideal < 0: # no points
+            if dim_ideal < 0:  # no points
                 return []
-            if dim_ideal == 0: # if X zero-dimensional
+            if dim_ideal == 0:  # if X zero-dimensional
                 rat_points = []
                 AS = X.ambient_space()
                 N = AS.dimension_relative()
                 BR = X.base_ring()
-                #need a lexicographic ordering for elimination
+                # need a lexicographic ordering for elimination
                 R = PolynomialRing(BR, N, AS.gens(), order='lex')
                 I = R.ideal(X.defining_polynomials())
                 I0 = R.ideal(0)
-                #Determine the points through elimination
-                #This is much faster than using the I.variety() function on each affine chart.
+                # Determine the points through elimination
+                # This is much faster than using the I.variety() function on each affine chart.
                 G = I.groebner_basis()
                 if G != [1]:
                     P = {}
                     points = [P]
-                    #work backwards from solving each equation for the possible
-                    #values of the next coordinate
+                    # work backwards from solving each equation for the possible
+                    # values of the next coordinate
                     for i in range(len(G) - 1, -1, -1):
                         new_points = []
                         good = 0
                         for P in points:
-                            #substitute in our dictionary entry that has the values
-                            #of coordinates known so far. This results in a single
-                            #variable polynomial (by elimination)
+                            # substitute in our dictionary entry that has the values
+                            # of coordinates known so far. This results in a single
+                            # variable polynomial (by elimination)
                             L = G[i].substitute(P)
                             if R(L).degree() > 0:
                                 if numerical:
                                     for pol in L.univariate_polynomial().roots(multiplicities=False):
                                         r = L.variables()[0]
                                         varindex = R.gens().index(r)
-                                        P.update({R.gen(varindex):pol})
+                                        P.update({R.gen(varindex): pol})
                                         new_points.append(copy(P))
                                         good = 1
                                 else:
                                     L = L.factor()
-                                #the linear factors give the possible rational values of
-                                #this coordinate
+                                # the linear factors give the possible rational values of
+                                # this coordinate
                                     for pol, pow in L:
                                         if pol.degree() == 1 and len(pol.variables()) == 1:
                                             good = 1
                                             r = pol.variables()[0]
                                             varindex = R.gens().index(r)
-                                            #add this coordinates information to
-                                            #each dictionary entry
-                                            P.update({R.gen(varindex):-pol.constant_coefficient() /
-                                            pol.monomial_coefficient(r)})
+                                            # add this coordinates information to
+                                            # each dictionary entry
+                                            P.update({R.gen(varindex):
+                                                      -pol.constant_coefficient() / pol.monomial_coefficient(r)})
                                             new_points.append(copy(P))
                             else:
                                 new_points.append(P)
                                 good = 1
                         if good:
                             points = new_points
-                    #the dictionary entries now have values for all coordinates
-                    #they are the rational solutions to the equations
-                    #make them into affine points
+                    # the dictionary entries now have values for all coordinates
+                    # they are the rational solutions to the equations
+                    # make them into affine points
                     for i in range(len(points)):
                         if numerical:
                             if len(points[i]) == N:
@@ -311,19 +351,19 @@ class SchemeHomset_points_affine(sage.schemes.generic.homset.SchemeHomset_points
         prec = kwds.pop('precision', 53)
         if is_RationalField(R) or R == ZZ:
             if not B > 0:
-                raise TypeError("a positive bound B (= %s) must be specified"%B)
+                raise TypeError("a positive bound B (= %s) must be specified" % B)
             from sage.schemes.affine.affine_rational_point import enum_affine_rational_field
-            return enum_affine_rational_field(self,B)
+            return enum_affine_rational_field(self, B)
         if R in NumberFields():
             if not B > 0:
-                raise TypeError("a positive bound B (= %s) must be specified"%B)
+                raise TypeError("a positive bound B (= %s) must be specified" % B)
             from sage.schemes.affine.affine_rational_point import enum_affine_number_field
             return enum_affine_number_field(self, bound=B, tolerance=tol, precision=prec)
-        elif is_FiniteField(R):
+        elif isinstance(R, FiniteField):
             from sage.schemes.affine.affine_rational_point import enum_affine_finite_field
             return enum_affine_finite_field(self)
         else:
-            raise TypeError("unable to enumerate points over %s"%R)
+            raise TypeError("unable to enumerate points over %s" % R)
 
     def numerical_points(self, F=None, **kwds):
         """
@@ -353,14 +393,14 @@ class SchemeHomset_points_affine(sage.schemes.generic.homset.SchemeHomset_points
 
         EXAMPLES::
 
-            sage: K.<v> = QuadraticField(3)
-            sage: A.<x,y> = AffineSpace(K, 2)
-            sage: X = A.subscheme([x^3 - v^2*y, y - v*x^2 + 3])
-            sage: L = X(K).numerical_points(F=RR); L  # abs tol 1e-14
+            sage: K.<v> = QuadraticField(3)                                             # optional - sage.rings.number_field
+            sage: A.<x,y> = AffineSpace(K, 2)                                           # optional - sage.rings.number_field
+            sage: X = A.subscheme([x^3 - v^2*y, y - v*x^2 + 3])                         # optional - sage.rings.number_field
+            sage: L = X(K).numerical_points(F=RR); L  # abs tol 1e-14                   # optional - sage.rings.number_field
             [(-1.18738247880014, -0.558021142104134),
              (1.57693558184861, 1.30713548084184),
              (4.80659931965815, 37.0162574656220)]
-            sage: L[0].codomain()
+            sage: L[0].codomain()                                                       # optional - sage.rings.number_field
             Affine Space of dimension 2 over Real Field with 53 bits of precision
 
         ::
@@ -398,7 +438,7 @@ class SchemeHomset_points_affine(sage.schemes.generic.homset.SchemeHomset_points
         from sage.schemes.affine.affine_space import is_AffineSpace
         if F is None:
             F = CC
-        if not F in Fields() or not hasattr(F, 'precision'):
+        if F not in Fields() or not hasattr(F, 'precision'):
             raise TypeError('F must be a numerical field')
         X = self.codomain()
         if X.base_ring() not in NumberFields():
@@ -408,7 +448,7 @@ class SchemeHomset_points_affine(sage.schemes.generic.homset.SchemeHomset_points
         if not is_AffineSpace(X) and X.base_ring() in Fields():
             # Then X must be a subscheme
             dim_ideal = X.defining_ideal().dimension()
-            if dim_ideal != 0: # no points
+            if dim_ideal != 0:  # no points
                 return []
         else:
             return []

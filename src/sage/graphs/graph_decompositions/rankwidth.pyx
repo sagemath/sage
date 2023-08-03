@@ -66,7 +66,7 @@ from the smaller of the two and its complement.
     sage: tree.has_edge(u,v)
     True
     sage: m = min(u,v)
-    sage: bipartition = (m, Set(g.vertices()) - m)
+    sage: bipartition = (m, Set(g.vertices(sort=False)) - m)
     sage: bipartition
     ({8, 9}, {0, 1, 2, 3, 4, 5, 6, 7})
 
@@ -95,7 +95,7 @@ Methods
 """
 
 # ****************************************************************************
-#       Copyright (C) 2011 Nathann Cohen <nathann.cohen@gail.com>
+#       Copyright (C) 2011 Nathann Cohen <nathann.cohen@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -111,6 +111,7 @@ from libc.string cimport memset
 
 cdef list id_to_vertices
 cdef dict vertices_to_id
+
 
 def rank_decomposition(G, verbose=False):
     r"""
@@ -198,6 +199,7 @@ def rank_decomposition(G, verbose=False):
 
     return (rank_width, g)
 
+
 cdef int sage_graph_to_matrix(G):
     r"""
     Convert the given Sage graph as an adjacency matrix.
@@ -224,7 +226,7 @@ cdef int sage_graph_to_matrix(G):
     vertices_to_id = {v: i for i, v in enumerate(id_to_vertices)}
 
     # Filling the matrix
-    for u,v in G.edge_iterator(labels=False):
+    for u, v in G.edge_iterator(labels=False):
         if u == v:
             continue
         set_am(vertices_to_id[u], vertices_to_id[v], 1)
@@ -232,8 +234,10 @@ cdef int sage_graph_to_matrix(G):
     # All is fine.
     return 0
 
+
 cdef uint_fast32_t bitmask(int i):
     return (1ul << i)
+
 
 cdef void set_am(int i, int j, int val):
     r"""
@@ -249,6 +253,7 @@ cdef void set_am(int i, int j, int val):
     if val:
         adjacency_matrix[i] |= bitmask(j)
         adjacency_matrix[j] |= bitmask(i)
+
 
 cdef void print_rank_dec(subset_t s, int l):
     r"""
@@ -267,6 +272,7 @@ cdef void print_rank_dec(subset_t s, int l):
         return
     print_rank_dec(cslots[s], l + 1)
     print_rank_dec(s & ~cslots[s], l + 1)
+
 
 def mkgraph(int num_vertices):
     r"""
@@ -313,6 +319,7 @@ def mkgraph(int num_vertices):
 
     sig_free(tab)
     return g
+
 
 cdef bitset_to_vertex_set(subset_t s):
     """

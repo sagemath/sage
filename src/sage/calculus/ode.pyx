@@ -106,7 +106,8 @@ cdef int c_f(double t,double* y, double* dydt,void *params):
     except Exception:
         return -1
 
-class ode_solver(object):
+
+class ode_solver():
     r"""
     :meth:`ode_solver` is a class that wraps the GSL libraries ode
     solver routines To use it instantiate a class,::
@@ -236,8 +237,9 @@ class ode_solver(object):
         sage: T.function=f_1
         sage: T.jacobian=j_1
         sage: T.ode_solve(y_0=[1,0],t_span=[0,100],params=[10.0],num_points=1000)
-        sage: outfile = os.path.join(SAGE_TMP, 'sage.png')
-        sage: T.plot_solution(filename=outfile)
+        sage: import tempfile
+        sage: with tempfile.NamedTemporaryFile(suffix=".png") as f:
+        ....:     T.plot_solution(filename=f.name)
 
     The solver line is equivalent to::
 
@@ -261,9 +263,10 @@ class ode_solver(object):
 
     By default T.plot_solution() plots the y_0, to plot general y_i use::
 
-        sage: T.plot_solution(i=0, filename=outfile)
-        sage: T.plot_solution(i=1, filename=outfile)
-        sage: T.plot_solution(i=2, filename=outfile)
+        sage: with tempfile.NamedTemporaryFile(suffix=".png") as f:
+        ....:     T.plot_solution(i=0, filename=f.name)
+        ....:     T.plot_solution(i=1, filename=f.name)
+        ....:     T.plot_solution(i=2, filename=f.name)
 
     The method interpolate_solution will return a spline interpolation
     through the points found by the solver. By default y_0 is
@@ -321,13 +324,16 @@ class ode_solver(object):
     following (WARNING: the following is *not* automatically
     doctested)::
 
-        sage: T = ode_solver()                     # not tested
-        sage: T.algorithm = "bsimp"                # not tested
-        sage: vander = van_der_pol()               # not tested
-        sage: T.function=vander                    # not tested
-        sage: T.ode_solve(y_0 = [1,0], t_span=[0,2000], num_points=1000)   # not tested
-        sage: T.plot_solution(i=0, filename=os.path.join(SAGE_TMP, 'test.png'))        # not tested
-
+        sage: # not tested
+        sage: T = ode_solver()
+        sage: T.algorithm = "bsimp"
+        sage: vander = van_der_pol()
+        sage: T.function = vander
+        sage: T.ode_solve(y_0=[1, 0], t_span=[0, 2000],
+        ....:             num_points=1000)
+        sage: from tempfile import NamedTemporaryFile
+        sage: with NamedTemporaryFile(suffix=".png") as f:
+        ....:     T.plot_solution(i=0, filename=f.name)
 
     """
     def __init__(self,function=None,jacobian=None,h = 1e-2,error_abs=1e-10,error_rel=1e-10, a=False,a_dydt=False,scale_abs=False,algorithm="rkf45",y_0=None,t_span=None,params = []):
@@ -396,9 +402,8 @@ class ode_solver(object):
             G.save(filename=filename)
 
     def ode_solve(self,t_span=False,y_0=False,num_points=False,params=[]):
-        import inspect
         cdef double h # step size
-        h=self.h
+        h = self.h
         cdef int i
         cdef int j
         cdef int type
@@ -430,7 +435,6 @@ class ode_solver(object):
             elif self.params!=[]:
                 wrapper.the_parameters = self.params
             wrapper.y_n = dim
-
 
         cdef double t
         cdef double t_end
@@ -473,13 +477,11 @@ class ode_solver(object):
         else:
             raise TypeError("algorithm not valid")
 
-
         cdef gsl_odeiv_step * s
         s  = gsl_odeiv_step_alloc (T, dim)
         if s==NULL:
             sig_free(y)
             raise MemoryError("error setting up solver")
-
 
         cdef gsl_odeiv_control * c
 
@@ -502,7 +504,6 @@ class ode_solver(object):
             sig_free(scale_abs_array)
             raise MemoryError("error setting up solver")
 
-
         cdef gsl_odeiv_evolve * e
         e  = gsl_odeiv_evolve_alloc(dim)
 
@@ -512,7 +513,6 @@ class ode_solver(object):
             sig_free(y)
             sig_free(scale_abs_array)
             raise MemoryError("error setting up solver")
-
 
         cdef gsl_odeiv_system sys
         if type:               # The user has passed a class with a compiled function, use that for the system
@@ -525,7 +525,6 @@ class ode_solver(object):
             sys.jacobian = c_jac
             sys.params = <void *> wrapper
         sys.dimension = dim
-
 
         cdef int status
         import copy
@@ -588,12 +587,11 @@ class ode_solver(object):
                         sig_free(scale_abs_array)
                         raise ValueError("error solving")
 
-                for j from 0<=j<dim:
-                    v[j]=<double> y[j]
-                result.append( (t,copy.copy(v)) )
+                for j in range(dim):
+                    v[j] = <double> y[j]
+                result.append((t, copy.copy(v)))
 
-                t=self.t_span[i]
-
+                t = self.t_span[i]
 
         gsl_odeiv_evolve_free (e)
         gsl_odeiv_control_free (c)

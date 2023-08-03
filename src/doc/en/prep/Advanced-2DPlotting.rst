@@ -39,9 +39,10 @@ following sections:
 
 - :ref:`Saving`
 
-This tutorial assumes that one is familiar with the basics of Sage, such
-as evaluating a cell by clicking the "evaluate" link, or by pressing
-Shift\-Enter (hold down Shift while pressing the Enter key).
+This tutorial assumes that one is familiar with the basics of Sage,
+such as evaluating a cell by clicking the "evaluate" link, or by
+pressing :kbd:`Shift` + :kbd:`Enter` (hold down :kbd:`Shift` while
+pressing the :kbd:`Enter` key).
 
 .. fixme - if log plots are in by the time this makes it in, put them in!!!
 
@@ -238,7 +239,7 @@ to put together.
     ....:     graph +=  arrow( [0,0], [360, 0], color = "#000" )
     ....:     # let's set tics
     ....:     # or http://aghitza.org/posts/tweak_labels_and_ticks_in_2d_plots_using_matplotlib/
-    ....:     # or wayt for http://trac.sagemath.org/sage_trac/ticket/1431
+    ....:     # or wayt for https://github.com/sagemath/sage/issues/1431
     ....:     # ['$-\pi/3$', '$2\pi/3$', '$5\pi/3$']
     ....:     for x in range(0, 361, 30):
     ....:         graph += point( [x, 0] )

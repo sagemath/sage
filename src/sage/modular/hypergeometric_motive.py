@@ -392,7 +392,7 @@ def gamma_list_to_cyclotomic(galist):
             sorted(d for d in resu for k in range(-resu[d])))
 
 
-class HypergeometricData(object):
+class HypergeometricData():
     _gauss_table = {}
 
     def __init__(self, cyclotomic=None, alpha_beta=None, gamma_list=None):
@@ -688,11 +688,10 @@ class HypergeometricData(object):
         alpha = self._alpha
         beta = self._beta
         if flip_beta:
-            return(sum(1 for a in alpha if a <= x) -
-                   sum(1 for b in beta if 1 - b <= x))
-        else:
-            return(sum(1 for a in alpha if a <= x) -
-                   sum(1 for b in beta if b <= x))
+            return (sum(1 for a in alpha if a <= x) -
+                    sum(1 for b in beta if 1 - b <= x))
+        return (sum(1 for a in alpha if a <= x) -
+                sum(1 for b in beta if b <= x))
 
     def weight(self):
         """
@@ -1094,7 +1093,7 @@ class HypergeometricData(object):
         d = gcd(g)
         return HypergeometricData(gamma_list=[x / d for x in g])
 
-### L-functions
+    # ----- L-functions -----
 
     def gauss_table(self, p, f, prec):
         """
@@ -1409,14 +1408,14 @@ class HypergeometricData(object):
         if ring is None:
             ring = UniversalCyclotomicField()
         gamma = self.gamma_array()
-        q = p ** f
+        q = p**f
 
         m = {r: beta.count(QQ((r, q - 1))) for r in range(q - 1)}
         D = -min(self.zigzag(x, flip_beta=True) for x in alpha + beta)
         # also: D = (self.weight() + 1 - m[0]) // 2
         M = self.M_value()
 
-        Fq = GF(q)
+        Fq = GF((p, f))
         gen = Fq.multiplicative_generator()
         zeta_q = ring.zeta(q - 1)
 

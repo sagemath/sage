@@ -269,6 +269,8 @@ Sage example in ./linalg.tex, line 1818::
   sage: A = random_matrix(R,2,3); A                    # random
   [      3*x^2 + x       x^2 + 2*x       2*x^2 + 2]
   [    x^2 + x + 2 2*x^2 + 4*x + 3   x^2 + 4*x + 3]
+  sage: while A.rank() < 2:
+  ....:     A = random_matrix(R,2,3)
 
 Sage example in ./linalg.tex, line 1830::
 
@@ -456,4 +458,3 @@ Sage example in ./linalg.tex, line 2949::
   True
 
 """
-

@@ -27,7 +27,7 @@ debugger.
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 #*****************************************************************************
 
 from cysignals.memory cimport sig_malloc, sig_free
@@ -35,7 +35,7 @@ from cysignals.memory cimport sig_malloc, sig_free
 from .data_structures cimport *
 from .automorphism_group_canonical_label cimport (
     get_aut_gp_and_can_lab, aut_gp_and_can_lab,
-    allocate_agcl_output, deallocate_agcl_output)
+    deallocate_agcl_output)
 from .double_coset cimport double_coset
 from sage.rings.integer cimport Integer
 
@@ -471,7 +471,6 @@ def aut_gp_and_can_lab_python(S, partition, n,
     """
     obj_wrapper = PythonObjectWrapper(S, all_children_are_equivalent, refine_and_return_invariant, compare_structures, n)
     cdef aut_gp_and_can_lab *output
-    cdef PythonPartitionStack Py_PS = PythonPartitionStack(n)
     cdef int i, j
     cdef Integer I
 
@@ -486,11 +485,11 @@ def aut_gp_and_can_lab_python(S, partition, n,
         canonical_label, NULL, NULL, NULL)
 
     list_of_gens = []
-    for i from 0 <= i < output.num_gens:
-        list_of_gens.append([output.generators[j+i*n] for j from 0 <= j < n])
+    for i in range(output.num_gens):
+        list_of_gens.append([output.generators[j+i*n] for j in range(n)])
     return_tuple = [list_of_gens]
     if canonical_label:
-        return_tuple.append([output.relabeling[i] for i from 0 <= i < n])
+        return_tuple.append([output.relabeling[i] for i in range(n)])
     if base:
         return_tuple.append([output.group.base_orbits[i][0] for i from 0 <= i < output.group.base_size])
     if order:
@@ -582,6 +581,3 @@ def double_coset_python(S1, S2, partition1, ordering2, n,
         output_py = False
     sig_free(output)
     return output_py
-
-
-

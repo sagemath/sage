@@ -83,13 +83,13 @@ possède la classe CSS "math", laquelle indique de faire appel à MathJax. ::
     sage: var('z')
     z
     sage: mj(z^12)
-    <html>\[\newcommand{\Bold}[1]{\mathbf{#1}}z^{12}\]</html>
+    <html>\[z^{12}\]</html>
     sage: mj(QQ)
     <html>\[\newcommand{\Bold}[1]{\mathbf{#1}}\Bold{Q}\]</html>
     sage: mj(ZZ['x'])
     <html>\[\newcommand{\Bold}[1]{\mathbf{#1}}\Bold{Z}[x]\]</html>
     sage: mj(integrate(z^4, z))
-    <html>\[\newcommand{\Bold}[1]{\mathbf{#1}}\frac{1}{5} \, z^{5}\]</html>
+    <html>\[\frac{1}{5} \, z^{5}\]</html>
 
 Utilisation de base
 ===================
@@ -220,7 +220,7 @@ bloc-notes. ::
     sage: from sage.misc.html import MathJax
     sage: mj=MathJax()
     sage: mj(x+y)
-    <html>\[\newcommand{\Bold}[1]{\mathbf{#1}}\newcommand{\foo}{bar}x + y\]</html>
+    <html>\[\newcommand{\foo}{bar}x + y\]</html>
 
 Ces macros supplémentaires sont disponibles aussi quand Sage appelle TeX pour
 compiler un fragment de document trop gros pour MathJax. C'est la fonction
@@ -306,17 +306,18 @@ d'appeler latex (ou plus généralement le moteur choisi via ``latex.engine()``)
 au lieu MathJax. Les méthodes ``latex.add_to_mathjax_avoid_list`` et
 ``latex.mathjax_avoid_list`` permettent de gérer le contenu de cette liste. ::
 
-    sage: latex.mathjax_avoid_list([])  # not tested
-    sage: latex.mathjax_avoid_list()    # not tested
+    sage: # not tested
+    sage: latex.mathjax_avoid_list([])
+    sage: latex.mathjax_avoid_list()
     []
-    sage: latex.mathjax_avoid_list(['foo', 'bar'])  # not tested
-    sage: latex.mathjax_avoid_list()                # not tested
+    sage: latex.mathjax_avoid_list(['foo', 'bar'])
+    sage: latex.mathjax_avoid_list()
     ['foo', 'bar']
-    sage: latex.add_to_mathjax_avoid_list('tikzpicture')  # not tested
-    sage: latex.mathjax_avoid_list()                      # not tested
+    sage: latex.add_to_mathjax_avoid_list('tikzpicture')
+    sage: latex.mathjax_avoid_list()
     ['foo', 'bar', 'tikzpicture']
-    sage: latex.mathjax_avoid_list([])  # not tested
-    sage: latex.mathjax_avoid_list()    # not tested
+    sage: latex.mathjax_avoid_list([])
+    sage: latex.mathjax_avoid_list()
     []
 
 Supposons maintenant que, dans le bloc-notes, un appel à ``view()`` ou

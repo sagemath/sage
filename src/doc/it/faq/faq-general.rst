@@ -21,10 +21,10 @@ dei Numeri, ma da ricercatori in tutte le scienze matematiche.
 Sage si avvale ed estende le funzionalità di molti dei pacchetti inglobati.
 Anche dal principio, quando Sage veiniva usato principalmente per la Teoria dei
 Numeri, includeva:
-`Givaro <http://ljk.imag.fr/CASYS/LOGICIELS/givaro>`_,
-`MPIR <http://www.mpir.org>`_,
-`NTL <http://www.shoup.net/ntl>`_,
-`Pari/GP <http://pari.math.u-bordeaux.fr>`_,
+`Givaro <https://casys.gricad-pages.univ-grenoble-alpes.fr/givaro>`_,
+`GMP <https://gmplib.org>`_,
+`NTL <https://www.shoup.net/ntl>`_,
+`Pari/GP <https://pari.math.u-bordeaux.fr>`_,
 e molti altri troppo numerosi per essere elencati qui. Studenti, insegnanti,
 professori universitari, ricercatori di tutto il mondo usano Sage perché vogliono
 un pacchetto open-source comprensivo per la matematica che offra calcolo sia
@@ -168,9 +168,6 @@ Perché avete scritto Sage da zero, invece di usare software e librerie preesist
 Sage non è stato scritto da zero. La maggior parte delle sue funzionalità sono
 realizzate attraverso progetti FOSS come
 
-* `ATLAS <http://math-atlas.sourceforge.net>`_ --- libreria software per Algebra
-  Lineare ottimizzata automaticamente.
-
 * `BLAS <http://www.netlib.org/blas>`_ --- sottoprogrammi per Algebra
   Lineare di base.
 
@@ -188,7 +185,7 @@ realizzate attraverso progetti FOSS come
 * `NumPy <http://numpy.scipy.org>`_ --- algebra lineare numerica ed altre
   funzioni di calcolo numerico per Python.
 
-* `Pari/GP <http://pari.math.u-bordeaux.fr>`_ --- software matematico per
+* `Pari/GP <https://pari.math.u-bordeaux.fr>`_ --- software matematico per
   calcolo veloce in Teoria dei Numeri.
 
 * `Pynac <http://pynac.sagemath.org>`_ --- versione modificata di GiNaC che

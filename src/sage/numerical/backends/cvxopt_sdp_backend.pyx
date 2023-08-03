@@ -20,7 +20,7 @@ AUTHORS:
 #*****************************************************************************
 
 from sage.numerical.sdp import SDPSolverException
-from sage.matrix.all import Matrix
+from sage.matrix.constructor import Matrix
 from .matrix_sdp_backend cimport MatrixSDPBackend
 
 
@@ -40,7 +40,7 @@ cdef class CVXOPTSDPBackend(MatrixSDPBackend):
 
         """
 
-        from sage.rings.all import RDF
+        from sage.rings.real_double import RDF
         if base_ring is None:
             base_ring = RDF
         if base_ring is not RDF:
@@ -101,7 +101,7 @@ cdef class CVXOPTSDPBackend(MatrixSDPBackend):
 
         """
         from cvxopt import matrix as c_matrix, solvers
-        from sage.rings.all import RDF
+        from sage.rings.real_double import RDF
         G_matrix = []
         h_matrix = []
         debug_g = []

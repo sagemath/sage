@@ -6,7 +6,7 @@ The Data Encryption Standard.
 This file implements the Data Encryption Standard and the corresponding key
 schedule as described in [U.S1999]_.
 
-Note, this implementation is ment for experimental and educational usage only,
+This implementation is meant for experimental and educational usage only,
 do not use it in production code!
 
 EXAMPLES:
@@ -472,8 +472,8 @@ class DES(SageObject):
             DES block cipher with 16 rounds and the following key schedule:
             Original DES key schedule with 16 rounds
         """
-        return('DES block cipher with %s rounds and the following key '
-               'schedule:\n%s' % (self._rounds, self.keySchedule.__repr__()))
+        return ('DES block cipher with %s rounds and the following key '
+                'schedule:\n%s' % (self._rounds, self.keySchedule.__repr__()))
 
     def encrypt(self, plaintext, key):
         r"""

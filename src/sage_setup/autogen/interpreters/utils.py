@@ -33,6 +33,7 @@ JINJA_ENV.filters['i'] = JINJA_ENV.filters['indent']
 def je(template, **kwargs):
     r"""
     A convenience method for creating strings with Jinja templates.
+
     The name je stands for "Jinja evaluate".
 
     The first argument is the template string; remaining keyword
@@ -51,13 +52,13 @@ def je(template, **kwargs):
 
         sage: from sage_setup.autogen.interpreters import je
         sage: je("{{ a }} > {{ b }} * {{ c }}", a='"a suffusion of yellow"', b=3, c=7)
-        u'"a suffusion of yellow" > 3 * 7'
+        '"a suffusion of yellow" > 3 * 7'
     """
-    if len(template) > 0 and template[0] == '\n':
+    if template and template[0] == '\n':
         template = template[1:]
 
     # It looks like Jinja2 automatically removes one trailing newline?
-    if len(template) > 0 and template[-1] == '\n':
+    if template and template[-1] == '\n':
         template = template + '\n'
 
     tmpl = JINJA_ENV.from_string(template)

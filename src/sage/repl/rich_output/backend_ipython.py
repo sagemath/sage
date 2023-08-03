@@ -6,14 +6,14 @@ This module defines the IPython backends for
 :mod:`sage.repl.rich_output`.
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2015 Volker Braun <vbraun.name@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 import os
 import sys
@@ -142,6 +142,7 @@ class BackendIPythonCommandline(BackendIPython):
             sage: backend = BackendIPythonCommandline()
             sage: backend.default_preferences()
             Display preferences:
+            * align_latex is not specified
             * graphics is not specified
             * supplemental_plot = never
             * text is not specified
@@ -226,7 +227,7 @@ class BackendIPythonCommandline(BackendIPython):
             sage: from sage.repl.rich_output.backend_ipython import BackendIPythonCommandline
             sage: backend = BackendIPythonCommandline()
             sage: backend.displayhook(plain_text, plain_text)
-            ({u'text/plain': u'Example plain text output'}, {})
+            ({'text/plain': 'Example plain text output'}, {})
 
         TESTS:
 
@@ -234,11 +235,11 @@ class BackendIPythonCommandline(BackendIPython):
 
             sage: class Foo(sage.structure.sage_object.SageObject):
             ....:     def _rich_repr_(self, dm):
-            ....:         return dm.types.OutputPlainText(u'Motörhead')
+            ....:         return dm.types.OutputPlainText('Motörhead')
             sage: from sage.repl.rich_output import get_display_manager
             sage: dm = get_display_manager()
             sage: dm.displayhook(Foo())
-            ({u'text/plain': u'Mot\xf6rhead'}, {})
+            ({'text/plain': 'Mot\xf6rhead'}, {})
         """
         if isinstance(rich_output, OutputPlainText):
             return ({'text/plain': rich_output.text.get_str()}, {})
@@ -303,7 +304,7 @@ class BackendIPythonCommandline(BackendIPython):
             Example plain text output
         """
         formatdata, metadata = self.displayhook(plain_text, rich_output)
-        print(formatdata[u'text/plain'])
+        print(formatdata['text/plain'])
 
     def launch_viewer(self, image_file, plain_text):
         """
@@ -419,6 +420,7 @@ class BackendIPythonCommandline(BackendIPython):
 
         if sys.platform == 'cygwin':
             import cygwin
+
             def normpath(p):
                 return 'file:///' + cygwin.cygpath(p, 'w').replace('\\', '/')
             script = normpath(script)
@@ -426,8 +428,7 @@ class BackendIPythonCommandline(BackendIPython):
         return '\n<script src="{0}"></script>'.format(script)
 
 
-IFRAME_TEMPLATE = \
-"""
+IFRAME_TEMPLATE = """
 <iframe srcdoc="{escaped_html}"
         width="{width}"
         height="{height}"
@@ -528,7 +529,7 @@ class BackendIPythonNotebook(BackendIPython):
             sage: from sage.repl.rich_output.backend_ipython import BackendIPythonNotebook
             sage: backend = BackendIPythonNotebook()
             sage: backend.displayhook(plain_text, plain_text)
-            ({u'text/plain': u'Example plain text output'}, {})
+            ({'text/plain': 'Example plain text output'}, {})
         """
         if isinstance(rich_output, OutputPlainText):
             return ({'text/plain': rich_output.text.get_str()}, {})
@@ -541,35 +542,35 @@ class BackendIPythonNotebook(BackendIPython):
                      'text/plain': plain_text.text.get_str(),
             }, {})
         elif isinstance(rich_output, OutputHtml):
-            data = {'text/html':  rich_output.html.get_str(),
+            data = {'text/html': rich_output.html.get_str(),
                     'text/plain': plain_text.text.get_str()}
             if rich_output.latex:
                 data['text/latex'] = rich_output.latex.get_str()
             return (data, {})
         elif isinstance(rich_output, OutputImagePng):
-            return ({'image/png':  rich_output.png.get(),
+            return ({'image/png': rich_output.png.get(),
                      'text/plain': plain_text.text.get_str(),
             }, {})
         elif isinstance(rich_output, OutputImageGif):
-            return ({'text/html':  rich_output.html_fragment(),
+            return ({'text/html': rich_output.html_fragment(),
                      'text/plain': plain_text.text.get_str(),
             }, {})
         elif isinstance(rich_output, OutputImageJpg):
-            return ({'image/jpeg':  rich_output.jpg.get(),
-                     'text/plain':  plain_text.text.get_str(),
+            return ({'image/jpeg': rich_output.jpg.get(),
+                     'text/plain': plain_text.text.get_str(),
             }, {})
         elif isinstance(rich_output, OutputImageSvg):
             return ({'image/svg+xml': rich_output.svg.get(),
-                     'text/plain':    plain_text.text.get_str(),
+                     'text/plain': plain_text.text.get_str(),
             }, {})
         elif isinstance(rich_output, OutputImagePdf):
-            return ({'image/png':  rich_output.png.get(),
+            return ({'image/png': rich_output.png.get(),
                      'text/plain': plain_text.text.get_str(),
             }, {})
         elif isinstance(rich_output, OutputSceneJmol):
             from sage.repl.display.jsmol_iframe import JSMolHtml
             jsmol = JSMolHtml(rich_output, height=500)
-            return ({'text/html':  jsmol.iframe(),
+            return ({'text/html': jsmol.iframe(),
                      'text/plain': plain_text.text.get_str(),
             }, {})
         elif isinstance(rich_output, OutputSceneThreejs):
@@ -579,7 +580,7 @@ class BackendIPythonNotebook(BackendIPython):
                 width='100%',
                 height=400,
             )
-            return ({'text/html':  iframe,
+            return ({'text/html': iframe,
                      'text/plain': plain_text.text.get_str(),
             }, {})
         else:

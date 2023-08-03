@@ -374,15 +374,14 @@ Sage example in ./recequadiff.tex, line 1700::
 Sage example in ./recequadiff.tex, line 1707::
 
   sage: from sympy import rsolve
-  sage: rsolve(f, u(n), {u(0):-1,u(1):1})
-  3 - 4*2**(-n)
+  sage: rsolve(f, u(n), {u(0):-1,u(1):1}) == 3 - 4*2**(-n)
+  True
 
 Sage example in ./recequadiff.tex, line 1798::
 
   sage: from sympy import rsolve_hyper
   sage: from sympy.abc import n
   sage: rsolve_hyper([-2,1],2**(n+2),n)
-  2**n*C0 + 2**(n + 2)*(C0 + n/2)
+  2**n*C0 + 2**(n + 1)*n
 
 """
-

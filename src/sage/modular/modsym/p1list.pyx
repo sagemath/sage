@@ -1,8 +1,8 @@
-# distutils: libraries = gmp zn_poly
+# distutils: libraries = gmp
 # distutils: extra_compile_args = -D_XPG6
 
 r"""
-Lists of Manin symbols (elements of `\mathbb{P}^1(\ZZ/N\ZZ)`) over `\QQ`
+Lists of Manin symbols over `\QQ`, elements of `\mathbb{P}^1(\ZZ/N\ZZ)`
 """
 
 from cysignals.memory cimport check_allocarray, sig_free
@@ -15,7 +15,7 @@ cimport sage.rings.fast_arith
 import sage.rings.fast_arith
 cdef sage.rings.fast_arith.arith_int arith_int
 cdef sage.rings.fast_arith.arith_llong arith_llong
-arith_int  = sage.rings.fast_arith.arith_int()
+arith_int = sage.rings.fast_arith.arith_int()
 arith_llong = sage.rings.fast_arith.arith_llong()
 
 ctypedef long long llong
@@ -30,13 +30,12 @@ ctypedef long long llong
 cdef int c_p1_normalize_int(int N, int u, int v,
                             int* uu, int* vv, int* ss,
                             int compute_s) except -1:
-    """
+    r"""
     Computes the canonical representative of
     `\mathbb{P}^1(\ZZ/N\ZZ)` equivalent to
     `(u,v)` along with a transforming scalar.
 
     INPUT:
-
 
     -  ``N`` - an integer
 
@@ -44,9 +43,7 @@ cdef int c_p1_normalize_int(int N, int u, int v,
 
     -  ``v`` - an integer
 
-
     OUTPUT: If gcd(u,v,N) = 1, then returns
-
 
     -  ``uu`` - an integer
 
@@ -71,8 +68,10 @@ cdef int c_p1_normalize_int(int N, int u, int v,
 
     u = u % N
     v = v % N
-    if u<0: u = u + N
-    if v<0: v = v + N
+    if u < 0:
+        u += N
+    if v < 0:
+        v += N
     if u == 0:
         uu[0] = 0
         if arith_int.c_gcd_int(v,N) == 1:
@@ -84,7 +83,8 @@ cdef int c_p1_normalize_int(int N, int u, int v,
 
     g = arith_int.c_xgcd_int(u, N, &s, &t)
     s = s % N
-    if s<0: s = s + N
+    if s < 0:
+        s += N
     if arith_int.c_gcd_int(g, v) != 1:
         uu[0] = 0
         vv[0] = 0
@@ -102,7 +102,8 @@ cdef int c_p1_normalize_int(int N, int u, int v,
     u = g
     v = (s*v) % N
 
-    min_v = v; min_t = 1
+    min_v = v
+    min_t = 1
     if g!=1:
         Ng = N/g
         vNg = (v*Ng) % N
@@ -111,15 +112,19 @@ cdef int c_p1_normalize_int(int N, int u, int v,
             v = (v + vNg) % N
             t = (t + Ng) % N
             if v<min_v and arith_int.c_gcd_int(t,N)==1:
-                min_v = v; min_t = t
+                min_v = v
+                min_t = t
     v = min_v
-    if u<0: u = u+N
-    if v<0: v = v+N
+    if u < 0:
+        u += N
+    if v < 0:
+        v += N
     uu[0] = u
     vv[0] = v
     if compute_s:
-        ss[0] = arith_int.c_inverse_mod_int(s*min_t, N);
+        ss[0] = arith_int.c_inverse_mod_int(s*min_t, N)
     return 0
+
 
 def p1_normalize_int(N, u, v):
     r"""
@@ -161,8 +166,9 @@ def p1_normalize_int(N, u, v):
         78
     """
     cdef int uu, vv, ss
-    c_p1_normalize_int(N, u%N, v%N, &uu, &vv, &ss, 1)
-    return (uu,vv,ss)
+    c_p1_normalize_int(N, u % N, v % N, &uu, &vv, &ss, 1)
+    return (uu, vv, ss)
+
 
 def p1list_int(int N):
     r"""
@@ -209,29 +215,30 @@ def p1list_int(int N):
     cdef int g, u, v, s, c, d, h, d1, cmax
     cdef object lst
 
-    if N==1: return [(0,0)]
+    if N == 1:
+        return [(0, 0)]
 
     lst = [(0,1)]
     c = 1
     for d from 0 <= d < N:
         lst.append((c,d))
 
-    cmax = N/2
-    if N%2:   # N odd, max divisor is <= N/3
-        if N%3:  # N not a multiple of 3 either, max is N/5
-            cmax = N/5
+    cmax = N // 2
+    if N % 2:   # N odd, max divisor is <= N/3
+        if N % 3:  # N not a multiple of 3 either, max is N/5
+            cmax = N // 5
         else:
-            cmax = N/3
+            cmax = N // 3
 
     for c from 2 <= c <= cmax:
-        if N%c == 0:  # c is a proper divisor
-            h = N/c
-            g = arith_int.c_gcd_int(c,h)
+        if N % c == 0:  # c is a proper divisor
+            h = N // c
+            g = arith_int.c_gcd_int(c, h)
             for d from 1 <= d <= h:
                 sig_check()
-                if arith_int.c_gcd_int(d,g)==1:
+                if arith_int.c_gcd_int(d, g) == 1:
                     d1 = d
-                    while arith_int.c_gcd_int(d1,c)!=1:
+                    while arith_int.c_gcd_int(d1, c) != 1:
                         d1 += h
                     c_p1_normalize_int(N, c, d1, &u, &v, &s, 0)
                     lst.append((u,v))
@@ -322,8 +329,10 @@ cdef int c_p1_normalize_llong(int N, int u, int v,
 
     u = u % N
     v = v % N
-    if u<0: u = u + N
-    if v<0: v = v + N
+    if u < 0:
+        u += N
+    if v < 0:
+        v += N
     if u == 0:
         uu[0] = 0
         if arith_int.c_gcd_int(v,N) == 1:
@@ -338,7 +347,8 @@ cdef int c_p1_normalize_llong(int N, int u, int v,
     s = <int>(ll_s % ll_N)
     t = <int>(ll_t % ll_N)
     s = s % N
-    if s<0: s = s + N
+    if s < 0:
+        s += N
     if arith_int.c_gcd_int(g, v) != 1:
         uu[0] = 0
         vv[0] = 0
@@ -355,9 +365,10 @@ cdef int c_p1_normalize_llong(int N, int u, int v,
     # Multiply [u,v] by s; then [s*u,s*v] = [g,s*v] (mod N)
     u = g
     # v = (s*v) % N
-    v = <int> ( ((<llong>s) * (<llong>v)) % ll_N )
+    v = <int> (((<llong>s) * (<llong>v)) % ll_N)
 
-    min_v = v; min_t = 1
+    min_v = v
+    min_t = 1
     if g!=1:
         Ng = N/g
         vNg = <int> ((<llong>v * <llong> Ng) % ll_N)
@@ -366,15 +377,19 @@ cdef int c_p1_normalize_llong(int N, int u, int v,
             v = (v + vNg) % N
             t = (t + Ng) % N
             if v<min_v and arith_int.c_gcd_int(t,N)==1:
-                min_v = v; min_t = t
+                min_v = v
+                min_t = t
     v = min_v
-    if u<0: u = u+N
-    if v<0: v = v+N
+    if u < 0:
+        u += N
+    if v < 0:
+        v += N
     uu[0] = u
     vv[0] = v
     if compute_s:
         ss[0] = <int> (arith_llong.c_inverse_mod_longlong((<llong> s)*(<llong> min_t), N) % ll_N)
     return 0
+
 
 def p1_normalize_llong(N, u, v):
     r"""
@@ -416,8 +431,9 @@ def p1_normalize_llong(N, u, v):
         78
     """
     cdef int uu, vv, ss
-    c_p1_normalize_llong(N, u%N, v%N, &uu, &vv, &ss, 1)
-    return (uu,vv,ss)
+    c_p1_normalize_llong(N, u % N, v % N, &uu, &vv, &ss, 1)
+    return (uu, vv, ss)
+
 
 def p1list_llong(int N):
     r"""
@@ -451,37 +467,39 @@ def p1list_llong(int N):
         [(0, 1), (34603, 1), (34603, 2), (34603, 3)]
     """
     cdef int g, u, v, s, c, d, h, d1, cmax
-    if N==1: return [(0,0)]
+    if N == 1:
+        return [(0, 0)]
 
     lst = [(0,1)]
     c = 1
     for d from 0 <= d < N:
         lst.append((c,d))
 
-    cmax = N/2
-    if N%2:   # N odd, max divisor is <= N/3
-        if N%3:  # N not a multiple of 3 either, max is N/5
-            cmax = N/5
+    cmax = N // 2
+    if N % 2:   # N odd, max divisor is <= N/3
+        if N % 3:  # N not a multiple of 3 either, max is N/5
+            cmax = N // 5
         else:
-            cmax = N/3
+            cmax = N // 3
 
     for c from 2 <= c <= cmax:
-        if N%c == 0:  # c is a proper divisor
-            h = N/c
-            g = arith_int.c_gcd_int(c,h)
+        if N % c == 0:  # c is a proper divisor
+            h = N // c
+            g = arith_int.c_gcd_int(c, h)
             for d from 1 <= d <= h:
-                if arith_int.c_gcd_int(d,g)==1:
+                if arith_int.c_gcd_int(d, g) == 1:
                     sig_check()
                     d1 = d
-                    while arith_int.c_gcd_int(d1,c)!=1:
+                    while arith_int.c_gcd_int(d1, c) != 1:
                         d1 += h
                     c_p1_normalize_llong(N, c, d1, &u, &v, &s, 0)
                     lst.append((u,v))
     lst.sort()
     return lst
 
+
 def p1list(N):
-    """
+    r"""
     Return the elements of the projective line modulo `N`,
     `\mathbb{P}^1(\ZZ/N\ZZ)`, as a plain list of 2-tuples.
 
@@ -499,10 +517,9 @@ def p1list(N):
         sage: from sage.modular.modsym.p1list import p1list
         sage: list(p1list(7))
         [(0, 1), (1, 0), (1, 1), (1, 2), (1, 3), (1, 4), (1, 5), (1, 6)]
-        sage: N=23456
+        sage: N = 23456
         sage: len(p1list(N)) == N*prod([1+1/p for p,e in N.factor()])
         True
-
     """
     if N <= 0:
         raise ValueError("N must be a positive integer")
@@ -510,8 +527,8 @@ def p1list(N):
         return p1list_int(N)
     if N <= 2147483647:
         return p1list_llong(N)
-    else:
-        raise OverflowError("p1list not defined for such large N.")
+    raise OverflowError("p1list not defined for such large N")
+
 
 def p1_normalize(int N, int u, int v):
     r"""
@@ -571,6 +588,7 @@ def p1_normalize(int N, int u, int v):
     else:
         raise OverflowError
 
+
 cdef int p1_normalize_xgcdtable(int N, int u, int v,
                                 int compute_s,
                                 int *t_g, int *t_a, int *t_b,
@@ -602,11 +620,13 @@ cdef int p1_normalize_xgcdtable(int N, int u, int v,
 
     u = u % N
     v = v % N
-    if u<0: u = u + N
-    if v<0: v = v + N
+    if u < 0:
+        u += N
+    if v < 0:
+        v += N
     if u == 0:
         uu[0] = 0
-        if t_g[v] == 1:    #  "if arith_int.c_gcd_int(v,N) == 1"
+        if t_g[v] == 1:    # "if arith_int.c_gcd_int(v,N) == 1"
             vv[0] = 1
         else:
             vv[0] = 0
@@ -618,7 +638,8 @@ cdef int p1_normalize_xgcdtable(int N, int u, int v,
     s = t_a[u]
     t = t_b[u]
     s = s % N
-    if s<0: s = s + N
+    if s < 0:
+        s += N
     if g != 1 and arith_int.c_gcd_int(g, v) != 1:
         uu[0] = 0
         vv[0] = 0
@@ -636,7 +657,8 @@ cdef int p1_normalize_xgcdtable(int N, int u, int v,
     u = g
     v = (s*v) % N
 
-    min_v = v; min_t = 1
+    min_v = v
+    min_t = 1
     if g!=1:
         Ng = N/g
         vNg = (v*Ng) % N
@@ -644,21 +666,24 @@ cdef int p1_normalize_xgcdtable(int N, int u, int v,
         for k from 2 <= k <= g:
             v = (v + vNg) % N
             t = (t + Ng) % N
-            if v<min_v and t_g[t] == 1:                           #arith_int.c_gcd_int(t,N)==1:
-                min_v = v; min_t = t
+            if v < min_v and t_g[t] == 1:     # arith_int.c_gcd_int(t,N)==1:
+                min_v = v
+                min_t = t
     v = min_v
-    if u<0: u = u+N
-    if v<0: v = v+N
+    if u < 0:
+        u += N
+    if v < 0:
+        v += N
     uu[0] = u
     vv[0] = v
     if compute_s:
-        #ss[0] = arith_int.c_inverse_mod_int(s*min_t, N);
-        ss[0] = t_a[(s*min_t)%N]
+        # ss[0] = arith_int.c_inverse_mod_int(s*min_t, N);
+        ss[0] = t_a[(s*min_t) % N]
     return 0
 
 
-cdef class P1List(object):
-    """
+cdef class P1List():
+    r"""
     The class for `\mathbb{P}^1(\ZZ/N\ZZ)`, the projective line modulo `N`.
 
     EXAMPLES::
@@ -676,14 +701,12 @@ cdef class P1List(object):
         True
     """
     def __init__(self, int N):
-        """
+        r"""
         The constructor for the class P1List.
 
         INPUT:
 
-
         -  ``N`` - positive integer (the modulus or level).
-
 
         OUTPUT:
 
@@ -710,7 +733,9 @@ cdef class P1List(object):
         self.__end_hash = dict([(x,i) for i, x in enumerate(self.__list[N+1:])])
 
         # Allocate memory for xgcd table.
-        self.g = NULL; self.s = NULL; self.t = NULL
+        self.g = NULL
+        self.s = NULL
+        self.t = NULL
         self.g = <int*>check_allocarray(N, sizeof(int))
         self.s = <int*>check_allocarray(N, sizeof(int))
         self.t = <int*>check_allocarray(N, sizeof(int))
@@ -727,7 +752,7 @@ cdef class P1List(object):
                 self.s[i] = <int>(ll_s % ll_N)
                 self.t[i] = <int>(ll_t % ll_N)
 
-    def  __dealloc__(self):
+    def __dealloc__(self):
         """
         Deallocates memory for an object of the class P1List.
         """
@@ -824,10 +849,10 @@ cdef class P1List(object):
             'The projective line over the integers modulo 8'
 
         """
-        return "The projective line over the integers modulo %s"%self.__N
+        return "The projective line over the integers modulo %s" % self.__N
 
     def lift_to_sl2z(self, int i):
-        """
+        r"""
         Lift the `i`'th element of this P1list to an element of
         `SL(2,\ZZ)`.
 
@@ -837,7 +862,6 @@ cdef class P1List(object):
         `N`) and `d=d'` (mod `N`).
 
         INPUT:
-
 
         -  ``i`` - integer (the index of the element to lift).
 
@@ -1036,7 +1060,7 @@ cdef class P1List(object):
             s[0] = 1
             return
 
-        cdef int uu, vv, ss
+        cdef int uu, vv
         p1_normalize_xgcdtable(self.__N, u, v, 1, self.g, self.s, self.t, &uu, &vv, s)
         if uu == 1:
             i[0] = vv + 1
@@ -1189,8 +1213,9 @@ cdef class export:
                                   int compute_s) except -1:
         return c_p1_normalize_llong(N, u, v, uu, vv, ss, compute_s)
 
+
 def lift_to_sl2z_int(int c, int d, int N):
-    """
+    r"""
     Lift a pair `(c, d)` to an element of `SL(2, \ZZ)`.
 
     `(c,d)` is assumed to be an element of
@@ -1208,8 +1233,7 @@ def lift_to_sl2z_int(int c, int d, int N):
         sage: from sage.modular.modsym.p1list import lift_to_sl2z_int
         sage: lift_to_sl2z_int(2,6,11)
         [1, 8, 2, 17]
-        sage: m=Matrix(Integers(),2,2,lift_to_sl2z_int(2,6,11))
-        sage: m
+        sage: m = Matrix(Integers(),2,2,lift_to_sl2z_int(2,6,11)); m
         [ 1  8]
         [ 2 17]
 
@@ -1251,13 +1275,14 @@ def lift_to_sl2z_int(int c, int d, int N):
         if g == 1:
             break
         m = m / g
-    d = d + N*m
+    d += N * m
     g = arith_int.c_xgcd_int(c, d, &z1, &z2)
 
     if g != 1:
         raise ValueError("input must have gcd 1")
 
     return [z2, -z1, c, d]
+
 
 def lift_to_sl2z_llong(llong c, llong d, int N):
     r"""
@@ -1277,10 +1302,8 @@ def lift_to_sl2z_llong(llong c, llong d, int N):
 
         sage: from sage.modular.modsym.p1list import lift_to_sl2z_llong
         sage: lift_to_sl2z_llong(2,6,11)
-        [1L, 8L, 2L, 17L] # 32-bit
-        [1, 8, 2, 17]     # 64-bit
-        sage: m=Matrix(Integers(),2,2,lift_to_sl2z_llong(2,6,11))
-        sage: m
+        [1, 8, 2, 17]
+        sage: m = Matrix(Integers(),2,2,lift_to_sl2z_llong(2,6,11)); m
         [ 1  8]
         [ 2 17]
 
@@ -1322,13 +1345,14 @@ def lift_to_sl2z_llong(llong c, llong d, int N):
         if g == 1:
             break
         m = m / g
-    d = d + N*m
+    d += N * m
     g = arith_llong.c_xgcd_longlong(c, d, &z1, &z2)
 
     if g != 1:
         raise ValueError("input must have gcd 1")
 
     return [z2, -z1, c, d]
+
 
 def lift_to_sl2z(c, d, N):
     r"""
@@ -1345,8 +1369,7 @@ def lift_to_sl2z(c, d, N):
         sage: lift_to_sl2z(2,3,6)
         [1, 1, 2, 3]
         sage: lift_to_sl2z(2,3,6000000)
-        [1L, 1L, 2L, 3L] # 32-bit
-        [1, 1, 2, 3]     # 64-bit
+        [1, 1, 2, 3]
 
     You will get a ValueError exception if the input is invalid.  Note
     that here gcd(15,6,24)=3::
@@ -1387,9 +1410,9 @@ def _make_p1list(n):
         sage: from sage.modular.modsym.p1list import _make_p1list
         sage: _make_p1list(3)
         doctest:...: DeprecationWarning: _make_p1list() is deprecated
-        See https://trac.sagemath.org/25848 for details.
+        See https://github.com/sagemath/sage/issues/25848 for details.
         The projective line over the integers modulo 3
     """
-    from sage.misc.superseded import deprecation
+    from sage.misc.superseded import deprecation_cython as deprecation
     deprecation(25848, '_make_p1list() is deprecated')
     return P1List(n)

@@ -67,7 +67,7 @@ class VectorSpaces(Category_module):
                     (isinstance(K, Category) and K.is_subcategory(_Fields))):
                 raise ValueError("base must be a field or a subcategory of Fields();" +
                                  " got {}".format(K))
-        return super(VectorSpaces, cls).__classcall__(cls, K)
+        return super().__classcall__(cls, K)
 
     def __init__(self, K):
         """
@@ -82,8 +82,8 @@ class VectorSpaces(Category_module):
 
         TESTS::
 
-            sage: C = QQ^10      # vector space
-            sage: TestSuite(C).run()
+            sage: C = QQ^10      # vector space                                         # optional - sage.modules
+            sage: TestSuite(C).run()                                                    # optional - sage.modules
             sage: TestSuite(VectorSpaces(QQ)).run()
         """
         Category_module.__init__(self, K)
@@ -94,15 +94,15 @@ class VectorSpaces(Category_module):
 
         EXAMPLES::
 
-            sage: VectorSpaces(QQ)(ZZ^3)
+            sage: VectorSpaces(QQ)(ZZ^3)                                                # optional - sage.modules
             Vector space of dimension 3 over Rational Field
 
         TESTS:
 
         Check whether :trac:`30174` is fixed::
 
-            sage: Q3 = FiniteRankFreeModule(QQ, 3)
-            sage: Modules(QQ)(Q3) is Q3
+            sage: Q3 = FiniteRankFreeModule(QQ, 3)                                      # optional - sage.modules
+            sage: Modules(QQ)(Q3) is Q3                                                 # optional - sage.modules
             True
 
         """
@@ -134,7 +134,7 @@ class VectorSpaces(Category_module):
             [Category of modules over Rational Field]
         """
         R = self.base_field()
-        return [Modules(R, dispatch = False)]
+        return [Modules(R, dispatch=False)]
 
     def additional_structure(self):
         r"""
@@ -162,15 +162,15 @@ class VectorSpaces(Category_module):
 
             EXAMPLES::
 
-                sage: M = FreeModule(FiniteField(19), 100)
-                sage: W = M.submodule([M.gen(50)])
-                sage: W.dimension()
+                sage: M = FreeModule(FiniteField(19), 100)                              # optional - sage.modules sage.rings.finite_rings
+                sage: W = M.submodule([M.gen(50)])                                      # optional - sage.modules sage.rings.finite_rings
+                sage: W.dimension()                                                     # optional - sage.modules sage.rings.finite_rings
                 1
 
-                sage: M = FiniteRankFreeModule(QQ, 3)
-                sage: M.dimension()
+                sage: M = FiniteRankFreeModule(QQ, 3)                                   # optional - sage.modules
+                sage: M.dimension()                                                     # optional - sage.modules
                 3
-                sage: M.tensor_module(1,2).dimension()
+                sage: M.tensor_module(1, 2).dimension()                                 # optional - sage.modules
                 27
 
             """
@@ -222,6 +222,25 @@ class VectorSpaces(Category_module):
                 """
                 return [self.base_category()]
 
+        class FiniteDimensional(CategoryWithAxiom_over_base_ring):
+
+            class TensorProducts(TensorProductsCategory):
+
+                def extra_super_categories(self):
+                    """
+                    Implement the fact that a (finite) tensor product of
+                    finite dimensional vector spaces is a finite dimensional vector space.
+
+                    EXAMPLES::
+
+                        sage: VectorSpaces(QQ).WithBasis().FiniteDimensional().TensorProducts().extra_super_categories()
+                        [Category of finite dimensional vector spaces with basis over Rational Field]
+                        sage: VectorSpaces(QQ).WithBasis().FiniteDimensional().TensorProducts().FiniteDimensional()
+                        Category of tensor products of finite dimensional vector spaces with basis over Rational Field
+
+                    """
+                    return [self.base_category()]
+
         class Graded(GradedModulesCategory):
             """
             Category of graded vector spaces with basis.
@@ -234,7 +253,7 @@ class VectorSpaces(Category_module):
 
                 EXAMPLES::
 
-                    sage: Modules(QQ).WithBasis().Graded().example()
+                    sage: Modules(QQ).WithBasis().Graded().example()                    # optional - sage.combinat sage.modules
                     An example of a graded module with basis:
                      the free module on partitions over Rational Field
                 """
@@ -255,7 +274,7 @@ class VectorSpaces(Category_module):
 
                 EXAMPLES::
 
-                    sage: Modules(QQ).WithBasis().Graded().example()
+                    sage: Modules(QQ).WithBasis().Graded().example()                    # optional - sage.combinat sage.modules
                     An example of a graded module with basis:
                      the free module on partitions over Rational Field
                 """
@@ -263,6 +282,25 @@ class VectorSpaces(Category_module):
                 if base_ring is None:
                     base_ring = self.base_ring()
                 return FilteredPartitionModule(base_ring=base_ring)
+
+    class FiniteDimensional(CategoryWithAxiom_over_base_ring):
+
+        class TensorProducts(TensorProductsCategory):
+
+            def extra_super_categories(self):
+                """
+                Implement the fact that a (finite) tensor product of
+                finite dimensional vector spaces is a finite dimensional vector space.
+
+                EXAMPLES::
+
+                    sage: VectorSpaces(QQ).FiniteDimensional().TensorProducts().extra_super_categories()
+                    [Category of finite dimensional vector spaces over Rational Field]
+                    sage: VectorSpaces(QQ).FiniteDimensional().TensorProducts().FiniteDimensional()
+                    Category of tensor products of finite dimensional vector spaces over Rational Field
+
+                """
+                return [self.base_category()]
 
     class DualObjects(DualObjectsCategory):
 
@@ -318,4 +356,3 @@ class VectorSpaces(Category_module):
         """
         Category of graded vector spaces.
         """
-

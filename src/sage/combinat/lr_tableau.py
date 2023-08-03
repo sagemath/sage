@@ -97,7 +97,7 @@ class LittlewoodRichardsonTableau(SemistandardTableau):
         """
         self._shape = parent._shape
         self._weight = parent._weight
-        super(LittlewoodRichardsonTableau, self).__init__(parent, list(t))
+        super().__init__(parent, list(t))
 
     def check(self):
         r"""
@@ -116,24 +116,25 @@ class LittlewoodRichardsonTableau(SemistandardTableau):
             Traceback (most recent call last):
             ...
             ValueError: [[1, 1, 2], [3, 3], [4]] is not an element of
-             Littlewood-Richardson Tableaux of shape [3, 2, 1] and weight ([2, 1], [2, 1]).
+             Littlewood-Richardson Tableaux of shape [3, 2, 1] and weight ([2, 1], [2, 1])
             sage: LR([[1, 1, 2, 3], [3], [4]])
             Traceback (most recent call last):
             ...
             ValueError: [[1, 1, 2, 3], [3], [4]] is not an element of
-             Littlewood-Richardson Tableaux of shape [3, 2, 1] and weight ([2, 1], [2, 1]).
+             Littlewood-Richardson Tableaux of shape [3, 2, 1] and weight ([2, 1], [2, 1])
             sage: LR([[1, 1, 3], [3, 3], [4]])
             Traceback (most recent call last):
             ...
             ValueError: weight of the parent does not agree with the weight of the tableau
         """
-        super(LittlewoodRichardsonTableau, self).check()
+        super().check()
         if not [i for a in self.parent()._weight for i in a] == self.weight():
             raise ValueError("weight of the parent does not agree "
                              "with the weight of the tableau")
         if not self.shape() == self.parent()._shape:
             raise ValueError("shape of the parent does not agree "
                              "with the shape of the tableau")
+
 
 class LittlewoodRichardsonTableaux(SemistandardTableaux):
     r"""
@@ -201,7 +202,7 @@ class LittlewoodRichardsonTableaux(SemistandardTableaux):
             sage: LittlewoodRichardsonTableaux([3,2,1],[[2,1],[2,1]])
             Littlewood-Richardson Tableaux of shape [3, 2, 1] and weight ([2, 1], [2, 1])
         """
-        return "Littlewood-Richardson Tableaux of shape %s and weight %s"%(self._shape, self._weight)
+        return "Littlewood-Richardson Tableaux of shape %s and weight %s" % (self._shape, self._weight)
 
     def __iter__(self):
         r"""
@@ -286,6 +287,7 @@ def is_littlewood_richardson(t, heights):
         if not subword.is_yamanouchi():
             return False
     return True
+
 
 def _tableau_join(t1, t2, shift=0):
     """

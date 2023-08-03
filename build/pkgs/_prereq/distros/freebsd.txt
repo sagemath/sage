@@ -16,4 +16,4 @@ gmake
 automake
 bash
 dash
-python	# python metaport for bootstrapping the build
+python # python metaport for bootstrapping the build

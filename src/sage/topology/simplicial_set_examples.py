@@ -9,12 +9,14 @@ see a complete list.
 AUTHORS:
 
 - John H. Palmieri (2016-07)
+
+- Miguel Marco (2022-12)
 """
-#*****************************************************************************
+# ****************************************************************************
 #  Copyright (C) 2016 John H. Palmieri <palmieri at math.washington.edu>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 #
 #    This code is distributed in the hope that it will be useful,
 #    but WITHOUT ANY WARRANTY; without even the implied warranty
@@ -23,16 +25,14 @@ AUTHORS:
 #  See the GNU General Public License for more details; the full text
 #  is available at:
 #
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 #
-#*****************************************************************************
+# ****************************************************************************
 
 import re
 import os
-from pyparsing import OneOrMore, nestedExpr
 
 from sage.env import SAGE_ENV
-from sage.groups.abelian_gps.abelian_group import AbelianGroup
 from sage.misc.cachefunc import cached_method, cached_function
 from sage.misc.latex import latex
 from sage.rings.infinity import Infinity
@@ -48,7 +48,8 @@ import sage.topology.simplicial_complex_catalog as simplicial_complexes
 from sage.misc.lazy_import import lazy_import
 lazy_import('sage.categories.simplicial_sets', 'SimplicialSets')
 
-########################################################################
+
+# ######################################################################
 # The nerve of a finite monoid, used in sage.categories.finite_monoid.
 
 class Nerve(SimplicialSet_arbitrary):
@@ -106,11 +107,11 @@ class Nerve(SimplicialSet_arbitrary):
 
         EXAMPLES::
 
-            sage: C3 = groups.misc.MultiplicativeAbelian([3])
-            sage: C3.nerve() == C3.nerve()
+            sage: C3 = groups.misc.MultiplicativeAbelian([3])                           # optional - sage.groups
+            sage: C3.nerve() == C3.nerve()                                              # optional - sage.groups
             False
-            sage: BC3 = C3.nerve()
-            sage: BC3 == BC3
+            sage: BC3 = C3.nerve()                                                      # optional - sage.groups
+            sage: BC3 == BC3                                                            # optional - sage.groups
             True
         """
         return (isinstance(other, Nerve)
@@ -123,11 +124,11 @@ class Nerve(SimplicialSet_arbitrary):
 
         EXAMPLES::
 
-            sage: C3 = groups.misc.MultiplicativeAbelian([3])
-            sage: G3 = groups.permutation.Cyclic(3)
-            sage: C3.nerve() != G3.nerve()
+            sage: C3 = groups.misc.MultiplicativeAbelian([3])                           # optional - sage.groups
+            sage: G3 = groups.permutation.Cyclic(3)                                     # optional - sage.groups
+            sage: C3.nerve() != G3.nerve()                                              # optional - sage.groups
             True
-            sage: C3.nerve() != C3.nerve()
+            sage: C3.nerve() != C3.nerve()                                              # optional - sage.groups
             True
         """
         return not self == other
@@ -139,17 +140,17 @@ class Nerve(SimplicialSet_arbitrary):
 
         EXAMPLES::
 
-            sage: G3 = groups.permutation.Cyclic(3)
-            sage: hash(G3.nerve()) # random
+            sage: G3 = groups.permutation.Cyclic(3)                                     # optional - sage.groups
+            sage: hash(G3.nerve()) # random                                             # optional - sage.groups
             17
 
         Different instances yield different base points, hence different hashes::
 
-            sage: X = G3.nerve()
-            sage: Y = G3.nerve()
-            sage: X.base_point() != Y.base_point()
+            sage: X = G3.nerve()                                                        # optional - sage.groups
+            sage: Y = G3.nerve()                                                        # optional - sage.groups
+            sage: X.base_point() != Y.base_point()                                      # optional - sage.groups
             True
-            sage: hash(X) != hash(Y)
+            sage: hash(X) != hash(Y)                                                    # optional - sage.groups
             True
         """
         return hash(self._monoid) ^ hash(self.base_point())
@@ -167,13 +168,13 @@ class Nerve(SimplicialSet_arbitrary):
 
         EXAMPLES::
 
-            sage: K4 = groups.misc.MultiplicativeAbelian([2,2])
-            sage: BK4 = simplicial_sets.ClassifyingSpace(K4)
-            sage: BK4.n_skeleton(3)
+            sage: K4 = groups.misc.MultiplicativeAbelian([2,2])                         # optional - sage.groups
+            sage: BK4 = simplicial_sets.ClassifyingSpace(K4)                            # optional - sage.groups
+            sage: BK4.n_skeleton(3)                                                     # optional - sage.groups
             Simplicial set with 40 non-degenerate simplices
-            sage: BK4.n_cells(1) == BK4.n_skeleton(3).n_cells(1)
+            sage: BK4.n_cells(1) == BK4.n_skeleton(3).n_cells(1)                        # optional - sage.groups
             True
-            sage: BK4.n_cells(3) == BK4.n_skeleton(1).n_cells(3)
+            sage: BK4.n_cells(3) == BK4.n_skeleton(1).n_cells(3)                        # optional - sage.groups
             False
         """
         from .simplicial_set_constructions import SubSimplicialSet
@@ -225,7 +226,7 @@ class Nerve(SimplicialSet_arbitrary):
                     # constructor.
                     x = AbstractSimplex(d,
                                         name=' * '.join(str(_) for _ in chain),
-                                        latex_name = ' * '.join(latex(_) for _ in chain))
+                                        latex_name=' * '.join(latex(_) for _ in chain))
                     new_faces[chain] = x
 
                     # Compute faces of x.
@@ -238,7 +239,7 @@ class Nerve(SimplicialSet_arbitrary):
                                 face = e.apply_degeneracies(i)
                             else:
                                 face = (face_dict[chain[:i]
-                                         + chain[i+2:]].apply_degeneracies(i))
+                                                  + chain[i+2:]].apply_degeneracies(i))
                         else:
                             # Non-degenerate.
                             face = (face_dict[chain[:i]
@@ -288,7 +289,7 @@ def Sphere(n):
     if n == 0:
         w_0 = AbstractSimplex(0, name='w_0')
         return SimplicialSet_finite({v_0: None, w_0: None}, base_point=v_0,
-                             name='S^0')
+                                    name='S^0')
     degens = range(n-2, -1, -1)
     degen_v = v_0.apply_degeneracies(*degens)
     sigma = AbstractSimplex(n, name='sigma_{}'.format(n),
@@ -312,17 +313,16 @@ def ClassifyingSpace(group):
 
     EXAMPLES::
 
-        sage: C2 = groups.misc.MultiplicativeAbelian([2])
-        sage: BC2 = simplicial_sets.ClassifyingSpace(C2)
-        sage: H = BC2.homology(range(9), base_ring=GF(2))
-        sage: [H[i].dimension() for i in range(9)]
+        sage: C2 = groups.misc.MultiplicativeAbelian([2])                               # optional - sage.groups
+        sage: BC2 = simplicial_sets.ClassifyingSpace(C2)                                # optional - sage.groups
+        sage: H = BC2.homology(range(9), base_ring=GF(2))                               # optional - sage.groups sage.modules sage.rings.finite_rings
+        sage: [H[i].dimension() for i in range(9)]                                      # optional - sage.groups sage.modules sage.rings.finite_rings
         [0, 1, 1, 1, 1, 1, 1, 1, 1]
 
-        sage: Klein4 = groups.misc.MultiplicativeAbelian([2, 2])
-        sage: BK = simplicial_sets.ClassifyingSpace(Klein4)
-        sage: BK
+        sage: Klein4 = groups.misc.MultiplicativeAbelian([2, 2])                        # optional - sage.groups
+        sage: BK = simplicial_sets.ClassifyingSpace(Klein4); BK                         # optional - sage.groups
         Classifying space of Multiplicative Abelian group isomorphic to C2 x C2
-        sage: BK.homology(range(5), base_ring=GF(2))  # long time (1 second)
+        sage: BK.homology(range(5), base_ring=GF(2))  # long time (1 second)            # optional - sage.groups sage.modules sage.rings.finite_rings
         {0: Vector space of dimension 0 over Finite Field of size 2,
          1: Vector space of dimension 2 over Finite Field of size 2,
          2: Vector space of dimension 3 over Finite Field of size 2,
@@ -344,21 +344,23 @@ def RealProjectiveSpace(n):
 
     EXAMPLES::
 
-        sage: simplicial_sets.RealProjectiveSpace(7)
+        sage: simplicial_sets.RealProjectiveSpace(7)                                    # optional - sage.groups
         RP^7
-        sage: RP5 = simplicial_sets.RealProjectiveSpace(5)
-        sage: RP5.homology()
+        sage: RP5 = simplicial_sets.RealProjectiveSpace(5)                              # optional - sage.groups
+        sage: RP5.homology()                                                            # optional - sage.groups
         {0: 0, 1: C2, 2: 0, 3: C2, 4: 0, 5: Z}
-        sage: RP5
+        sage: RP5                                                                       # optional - sage.groups
         RP^5
-        sage: latex(RP5)
+        sage: latex(RP5)                                                                # optional - sage.groups
         RP^{5}
 
-        sage: BC2 = simplicial_sets.RealProjectiveSpace(Infinity)
-        sage: latex(BC2)
+        sage: BC2 = simplicial_sets.RealProjectiveSpace(Infinity)                       # optional - sage.groups
+        sage: latex(BC2)                                                                # optional - sage.groups
         RP^{\infty}
     """
     if n == Infinity:
+        from sage.groups.abelian_gps.abelian_group import AbelianGroup
+
         X = AbelianGroup([2]).nerve()
         X.rename('RP^oo')
         X.rename_latex('RP^{\\infty}')
@@ -381,7 +383,7 @@ def KleinBottle():
         sage: K = simplicial_sets.KleinBottle()
         sage: K.f_vector()
         [1, 3, 2]
-        sage: K.homology(reduced=False)
+        sage: K.homology(reduced=False)                                                 # optional - sage.modules
         {0: Z, 1: Z x C2, 2: 0}
         sage: K
         Klein bottle
@@ -389,7 +391,7 @@ def KleinBottle():
     temp = SimplicialSet_finite(delta_complexes.KleinBottle())
     pt = temp.n_cells(0)[0]
     return SimplicialSet_finite(temp.face_data(), base_point=pt,
-                         name='Klein bottle')
+                                name='Klein bottle')
 
 
 def Torus():
@@ -406,7 +408,7 @@ def Torus():
         sage: T = simplicial_sets.Torus()
         sage: T.f_vector()
         [1, 3, 2]
-        sage: T.homology(reduced=False)
+        sage: T.homology(reduced=False)                                                 # optional - sage.modules
         {0: Z, 1: Z x Z, 2: Z}
     """
     S1 = Sphere(1)
@@ -488,10 +490,10 @@ def Point():
 
 def Horn(n, k):
     r"""
-    Return the horn $\Lambda^n_k$.
+    Return the horn `\Lambda^n_k`.
 
-    This is the subsimplicial set of the $n$-simplex obtained by
-    removing its $k$-th face.
+    This is the subsimplicial set of the `n`-simplex obtained by
+    removing its `k`-th face.
 
     EXAMPLES::
 
@@ -532,23 +534,23 @@ def ComplexProjectiveSpace(n):
 
         sage: simplicial_sets.ComplexProjectiveSpace(2).homology(reduced=False)
         {0: Z, 1: 0, 2: Z, 3: 0, 4: Z}
-        sage: CP3 = simplicial_sets.ComplexProjectiveSpace(3)
-        sage: CP3
+        sage: CP3 = simplicial_sets.ComplexProjectiveSpace(3)                           # optional - pyparsing
+        sage: CP3                                                                       # optional - pyparsing
         CP^3
-        sage: latex(CP3)
+        sage: latex(CP3)                                                                # optional - pyparsing
         CP^{3}
-        sage: CP3.f_vector()
+        sage: CP3.f_vector()                                                            # optional - pyparsing
         [1, 0, 3, 10, 25, 30, 15]
 
-        sage: K = CP3.suspension() # long time (1 second)
-        sage: R = K.cohomology_ring(GF(2)) # long time
-        sage: R.gens()        # long time
+        sage: K = CP3.suspension()              # long time (1 second)                  # optional - pyparsing
+        sage: R = K.cohomology_ring(GF(2))      # long time                             # optional - pyparsing
+        sage: R.gens()                          # long time                             # optional - pyparsing
         (h^{0,0}, h^{3,0}, h^{5,0}, h^{7,0})
-        sage: x = R.gens()[1] # long time
-        sage: x.Sq(2)         # long time
+        sage: x = R.gens()[1]                   # long time                             # optional - pyparsing
+        sage: x.Sq(2)                           # long time                             # optional - pyparsing
         h^{5,0}
 
-        sage: simplicial_sets.ComplexProjectiveSpace(4).f_vector()
+        sage: simplicial_sets.ComplexProjectiveSpace(4).f_vector()                      # optional - pyparsing
         [1, 0, 4, 22, 97, 255, 390, 315, 105]
 
         sage: simplicial_sets.ComplexProjectiveSpace(5)
@@ -581,31 +583,31 @@ def ComplexProjectiveSpace(n):
         f4_201110 = AbstractSimplex(4, name='tau_1', latex_name='\\tau_1')
         f4_211010 = AbstractSimplex(4, name='tau_2', latex_name='\\tau_2')
         K = SimplicialSet_finite({f2_1: (v.apply_degeneracies(0),
-                                  v.apply_degeneracies(0),
-                                  v.apply_degeneracies(0)),
-                           f2_2: (v.apply_degeneracies(0),
-                                  v.apply_degeneracies(0),
-                                  v.apply_degeneracies(0)),
-                           f3_110: (f2_1, f2_2, f2_1, v.apply_degeneracies(1, 0)),
-                           f3_011: (f2_1, f2_1, f2_1, f2_1),
-                           f3_111: (v.apply_degeneracies(1, 0), f2_1, f2_2, f2_1),
-                           f4_101101: (f2_1.apply_degeneracies(0),
-                                       f2_1.apply_degeneracies(0),
-                                       f3_011,
-                                       f2_1.apply_degeneracies(2),
-                                       f2_1.apply_degeneracies(2)),
-                           f4_201110: (f2_1.apply_degeneracies(1),
-                                       f3_111,
-                                       f3_011,
-                                       f3_110,
-                                       f2_1.apply_degeneracies(1)),
-                           f4_211010: (f2_1.apply_degeneracies(2),
-                                       f3_111,
-                                       f2_1.apply_degeneracies(1),
-                                       f3_110,
-                                       f2_1.apply_degeneracies(0))},
-                           base_point=v, name='CP^2',
-                           latex_name='CP^{2}')
+                                         v.apply_degeneracies(0),
+                                         v.apply_degeneracies(0)),
+                                  f2_2: (v.apply_degeneracies(0),
+                                         v.apply_degeneracies(0),
+                                         v.apply_degeneracies(0)),
+                                  f3_110: (f2_1, f2_2, f2_1, v.apply_degeneracies(1, 0)),
+                                  f3_011: (f2_1, f2_1, f2_1, f2_1),
+                                  f3_111: (v.apply_degeneracies(1, 0), f2_1, f2_2, f2_1),
+                                  f4_101101: (f2_1.apply_degeneracies(0),
+                                              f2_1.apply_degeneracies(0),
+                                              f3_011,
+                                              f2_1.apply_degeneracies(2),
+                                              f2_1.apply_degeneracies(2)),
+                                  f4_201110: (f2_1.apply_degeneracies(1),
+                                              f3_111,
+                                              f3_011,
+                                              f3_110,
+                                              f2_1.apply_degeneracies(1)),
+                                  f4_211010: (f2_1.apply_degeneracies(2),
+                                              f3_111,
+                                              f2_1.apply_degeneracies(1),
+                                              f3_110,
+                                              f2_1.apply_degeneracies(0))},
+                                 base_point=v, name='CP^2',
+                                 latex_name='CP^{2}')
         return K
     if n == 3:
         file = os.path.join(SAGE_ENV['SAGE_EXTCODE'], 'kenzo', 'CP3.txt')
@@ -642,10 +644,12 @@ def simplicial_data_from_kenzo_output(filename):
         sage: from sage.topology.simplicial_set_examples import simplicial_data_from_kenzo_output
         sage: from sage.topology.simplicial_set import SimplicialSet
         sage: sphere = os.path.join(SAGE_ENV['SAGE_EXTCODE'], 'kenzo', 'S4.txt')
-        sage: S4 = SimplicialSet(simplicial_data_from_kenzo_output(sphere))
-        sage: S4.homology(reduced=False)
+        sage: S4 = SimplicialSet(simplicial_data_from_kenzo_output(sphere))             # optional - pyparsing
+        sage: S4.homology(reduced=False)                                                # optional - pyparsing
         {0: Z, 1: 0, 2: 0, 3: 0, 4: Z}
     """
+    from pyparsing import OneOrMore, nestedExpr
+
     with open(filename, 'r') as f:
         data = f.read()
     dim = 0
@@ -728,14 +732,14 @@ def HopfMap():
 
     Using the Hopf map to attach a cell::
 
-        sage: X = g.mapping_cone()
-        sage: CP2 = simplicial_sets.ComplexProjectiveSpace(2)
-        sage: X.homology() == CP2.homology()
+        sage: X = g.mapping_cone()                                                      # optional - sage.graphs
+        sage: CP2 = simplicial_sets.ComplexProjectiveSpace(2)                           # optional - sage.graphs
+        sage: X.homology() == CP2.homology()                                            # optional - sage.graphs
         True
 
-        sage: X.f_vector()
+        sage: X.f_vector()                                                              # optional - sage.graphs
         [1, 0, 5, 9, 6]
-        sage: CP2.f_vector()
+        sage: CP2.f_vector()                                                            # optional - sage.graphs
         [1, 0, 2, 3, 3]
     """
     # The 2-sphere and its simplices.
@@ -768,26 +772,85 @@ def HopfMap():
     alpha_5 = AbstractSimplex(3, name='alpha_5', latex_name='\\alpha_5')
     alpha_6 = AbstractSimplex(3, name='alpha_6', latex_name='\\alpha_6')
     S3 = SimplicialSet_finite({beta_11: (w_0, w_0), beta_22: (w_0, w_0),
-                        beta_23: (w_0, w_0), beta_44: (w_0, w_0),
-                        beta_1: (w_1, beta_11, w_1),
-                        beta_2: (w_1, beta_22, beta_23),
-                        beta_3: (w_1, beta_23, w_1),
-                        beta_4: (w_1, beta_44, w_1),
-                        alpha_12: (beta_11, beta_23, w_1),
-                        alpha_23: (beta_11, beta_22, w_1),
-                        alpha_34: (beta_11, beta_22, beta_44),
-                        alpha_45: (w_1, beta_23, beta_44),
-                        alpha_56: (w_1, beta_23, w_1),
-                        alpha_1: (beta_1, beta_3, alpha_12, w_2),
-                        alpha_2: (beta_11.apply_degeneracies(1), beta_2,
-                                  alpha_23, alpha_12),
-                        alpha_3: (beta_11.apply_degeneracies(0), alpha_34,
-                                  alpha_23, beta_4),
-                        alpha_4: (beta_1, beta_2, alpha_34, alpha_45),
-                        alpha_5: (w_2, alpha_45, alpha_56, beta_4),
-                        alpha_6: (w_2, beta_3, alpha_56, w_2)},
-                       base_point=w_0)
-    return S3.Hom(S2)({alpha_1:s0_sigma, alpha_2:s1_sigma,
-                       alpha_3:s2_sigma, alpha_4:s0_sigma,
-                       alpha_5:s2_sigma, alpha_6:s1_sigma})
+                               beta_23: (w_0, w_0), beta_44: (w_0, w_0),
+                               beta_1: (w_1, beta_11, w_1),
+                               beta_2: (w_1, beta_22, beta_23),
+                               beta_3: (w_1, beta_23, w_1),
+                               beta_4: (w_1, beta_44, w_1),
+                               alpha_12: (beta_11, beta_23, w_1),
+                               alpha_23: (beta_11, beta_22, w_1),
+                               alpha_34: (beta_11, beta_22, beta_44),
+                               alpha_45: (w_1, beta_23, beta_44),
+                               alpha_56: (w_1, beta_23, w_1),
+                               alpha_1: (beta_1, beta_3, alpha_12, w_2),
+                               alpha_2: (beta_11.apply_degeneracies(1), beta_2,
+                                         alpha_23, alpha_12),
+                               alpha_3: (beta_11.apply_degeneracies(0), alpha_34,
+                                         alpha_23, beta_4),
+                               alpha_4: (beta_1, beta_2, alpha_34, alpha_45),
+                               alpha_5: (w_2, alpha_45, alpha_56, beta_4),
+                               alpha_6: (w_2, beta_3, alpha_56, w_2)},
+                              base_point=w_0)
+    return S3.Hom(S2)({alpha_1: s0_sigma, alpha_2: s1_sigma,
+                       alpha_3: s2_sigma, alpha_4: s0_sigma,
+                       alpha_5: s2_sigma, alpha_6: s1_sigma})
 
+
+def PresentationComplex(G):
+    r"""
+    Return a simplicial set constructed from a group presentation.
+    The result is a subdivision of the presentation complex.
+
+    The presentation complex has a single vertex and it has one edge for
+    each generator. Then triangles (and eventually new edges
+    to glue them) are added to realize the relations.
+
+    INPUT:
+
+    - "G" -- a finitely presented group
+
+    EXAMPLES::
+
+        sage: G = SymmetricGroup(2).as_finitely_presented_group(); G                    # optional - sage.groups
+        Finitely presented group < a | a^2 >
+        sage: S = simplicial_sets.PresentationComplex(G); S                             # optional - sage.groups
+        Simplicial set with 5 non-degenerate simplices
+        sage: S.face_data()                                                             # optional - sage.groups
+        {Delta^0: None,
+         a: (Delta^0, Delta^0),
+         a^-1: (Delta^0, Delta^0),
+         Ta: (a, s_0 Delta^0, a^-1),
+         a^2: (a, s_0 Delta^0, a)}
+        sage: S.fundamental_group()                                                     # optional - sage.groups
+        Finitely presented group < e0 | e0^2 >
+    """
+    O = AbstractSimplex(0)
+    SO = O.apply_degeneracies(0)
+    edges = {g: AbstractSimplex(1, name=str(g)) for g in G.gens()}
+    inverseedges = {g.inverse(): AbstractSimplex(1, name=str(g.inverse())) for g in G.gens()}
+    all_edges = {}
+    all_edges.update(edges)
+    all_edges.update(inverseedges)
+    triangles = {g: AbstractSimplex(2, name='T' + str(g)) for g in G.gens()}
+    face_maps = {g: [O, O] for g in all_edges.values()}
+    face_maps.update({triangles[t]: [all_edges[t], SO, all_edges[t.inverse()]] for t in triangles})
+    for r in G.relations():
+        if len(r.Tietze()) == 1:
+            pass
+        elif len(r.Tietze()) == 2:
+            a = all_edges[G([r.Tietze()[0]])]
+            b = all_edges[G([r.Tietze()[1]])]
+            T = AbstractSimplex(2, name=str(r))
+            face_maps[T] = [a, SO, b]
+        else:
+            words = [all_edges[G([a])] for a in r.Tietze()]
+            words[-1] = all_edges[G([-r.Tietze()[-1]])]
+            while len(words) > 3:
+                auxedge = AbstractSimplex(1)
+                face_maps[auxedge] = [O, O]
+                auxtring = AbstractSimplex(2)
+                face_maps[auxtring] = [words[1], auxedge, words[0]]
+                words = [auxedge] + words[2:]
+            auxtring = AbstractSimplex(2)
+            face_maps[auxtring] = [words[1], words[2], words[0]]
+    return SimplicialSet_finite(face_maps, base_point=O)

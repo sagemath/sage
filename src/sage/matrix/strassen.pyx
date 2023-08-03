@@ -371,7 +371,7 @@ cdef strassen_echelon_c(MatrixWindow A, Py_ssize_t cutoff, Py_ssize_t mul_cutoff
             # Subtract off C time top from the bottom_right
             if bottom_cut < ncols:
                 bottom_right = bottom.matrix_window(0, bottom_cut, nrows-split, ncols-bottom_cut)
-                subtract_strassen_product(bottom_right, clear, top.matrix_window(0, bottom_cut, top_h, ncols-bottom_cut), mul_cutoff);
+                subtract_strassen_product(bottom_right, clear, top.matrix_window(0, bottom_cut, top_h, ncols-bottom_cut), mul_cutoff)
             # [  I      A'B   ]
             # [  *   D - CA'B ]
 
@@ -429,7 +429,7 @@ cdef strassen_echelon_c(MatrixWindow A, Py_ssize_t cutoff, Py_ssize_t mul_cutoff
                 if top_cut < ncols:
 
                     top_right = top.matrix_window(0, top_cut, top_h, ncols - top_cut)
-                    subtract_strassen_product(top_right, clear, bottom.matrix_window(0, top_cut, bottom_h, ncols - top_cut), mul_cutoff);
+                    subtract_strassen_product(top_right, clear, bottom.matrix_window(0, top_cut, bottom_h, ncols - top_cut), mul_cutoff)
 
                 # [  I  *  G - EF ]
                 # [  0  I     F   ]
@@ -556,7 +556,7 @@ class int_range:
         if indices is None:
             self._intervals = []
             return
-        elif not range is None:
+        elif range is not None:
             self._intervals = [(int(indices), int(range))]
         else:
             self._intervals = []
@@ -801,10 +801,12 @@ def test(n, m, R, c=2):
         3 True
         4 True
     """
-    from sage.matrix.all import matrix
-    A = matrix(R,n,m,range(n*m))
-    B = A.__copy__(); B._echelon_in_place_classical()
-    C = A.__copy__(); C._echelon_strassen(c)
+    from sage.matrix.constructor import matrix
+    A = matrix(R, n, m, range(n * m))
+    B = A.__copy__()
+    B._echelon_in_place_classical()
+    C = A.__copy__()
+    C._echelon_strassen(c)
     return B == C
 
 
@@ -865,4 +867,3 @@ def test(n, m, R, c=2):
 
 ##         sage: C == D
 ##         True
-

@@ -38,7 +38,7 @@ from .combinat import catalan_number
 from sage.categories.infinite_enumerated_sets import InfiniteEnumeratedSets
 from sage.categories.sets_with_grading import SetsWithGrading
 from sage.categories.monoids import Monoids
-from sage.rings.all import NN
+from sage.rings.semirings.non_negative_integer_semiring import NN
 from sage.rings.integer import Integer
 from sage.structure.element import Element
 from sage.structure.parent import Parent
@@ -173,6 +173,7 @@ class NonDecreasingParkingFunction(Element):
         ...
         ValueError: [1, 1, 4] is not a non-decreasing parking function
     """
+
     def __init__(self, lst):
         """
         TESTS::
@@ -418,8 +419,7 @@ class NonDecreasingParkingFunctions_all(UniqueRepresentation, Parent):
             [[], [1], [1, 1], [1, 2], [1, 1, 1], [1, 1, 2], [1, 1, 3], [1, 2, 2]]
         """
         for n in NN:
-            for pf in NonDecreasingParkingFunctions_n(n):
-                yield pf
+            yield from NonDecreasingParkingFunctions_n(n)
 
     def graded_component(self, n):
         """
@@ -466,6 +466,7 @@ class NonDecreasingParkingFunctions_n(UniqueRepresentation, Parent):
 
     - Florent Hivert
     """
+
     def __init__(self, n):
         """
         TESTS::

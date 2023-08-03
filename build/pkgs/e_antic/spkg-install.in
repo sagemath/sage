@@ -1,10 +1,6 @@
-###############################################################################
-#
-# e-antic Sage install script
-#
-###############################################################################
 cd src
 
-sdh_configure
+# Following https://github.com/Normaliz/Normaliz/blob/master/install_scripts_opt/install_nmz_e-antic.sh
+sdh_configure --without-byexample --without-doc --without-benchmark --without-pyeantic
 sdh_make
 sdh_make_install

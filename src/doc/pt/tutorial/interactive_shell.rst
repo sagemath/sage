@@ -16,8 +16,8 @@ obtém o seguinte:
 ::
 
     ┌────────────────────────────────────────────────────────────────────┐
-    │ SageMath version 9.0, Release Date: 2020-01-01                     │
-    │ Using Python 3.7.3. Type "help()" for help.                        │
+    │ SageMath version 9.7, Release Date: 2022-01-10                     │
+    │ Using Python 3.10.4. Type "help()" for help.                       │
     └────────────────────────────────────────────────────────────────────┘
     sage:
 
@@ -174,8 +174,8 @@ arquivo log).
 
     was@form:~$ sage
     ┌────────────────────────────────────────────────────────────────────┐
-    │ SageMath version 9.0, Release Date: 2020-01-01                     │
-    │ Using Python 3.7.3. Type "help()" for help.                        │
+    │ SageMath version 9.7, Release Date: 2022-01-10                     │
+    │ Using Python 3.10.4. Type "help()" for help.                       │
     └────────────────────────────────────────────────────────────────────┘
     
     sage: logstart setup
@@ -193,8 +193,8 @@ arquivo log).
     Exiting Sage (CPU time 0m0.61s, Wall time 0m50.39s).
     was@form:~$ sage
     ┌────────────────────────────────────────────────────────────────────┐
-    │ SageMath version 9.0, Release Date: 2020-01-01                     │
-    │ Using Python 3.7.3. Type "help()" for help.                        │
+    │ SageMath version 9.7, Release Date: 2022-01-10                     │
+    │ Using Python 3.10.4. Type "help()" for help.                       │
     └────────────────────────────────────────────────────────────────────┘
     
     sage: load "setup"
@@ -372,34 +372,6 @@ pode usar quaisquer comandos e recursos do IPython. Você pode ler a
 `Documentação completa do IPython
 <http://ipython.scipy.org/moin/Documentation>`_ (em inglês).
 
-- Você pode usar ``%bg`` para executar um comando no background, e
-  então usar ``jobs`` para acessar os resultados, da seguinte forma.
-  (Os comentários ``not tested`` estão aqui porque a sintaxe ``%bg``
-  não funciona bem com o sistema de testes automáticos do Sage. Se
-  você digitar esses comandos, eles devem funcionar. Isso é obviamente
-  mais útil com comandos que demoram para serem completados.)
-
-  ::
-
-    sage: def quick(m): return 2*m
-    sage: %bg quick(20)  # not tested
-    Starting job # 0 in a separate thread.
-    sage: jobs.status()  # not tested
-    Completed jobs:
-    0 : quick(20)
-    sage: jobs[0].result  # the actual answer, not tested
-    40
-
-  Note que os comandos executados no background não usam o
-  pre-processador (preparser) do Sage -- veja :ref:`section-mathannoy`
-  para mais informações. Uma forma (estranha talvez) de contornar esse
-  problema seria executar ::
-
-    sage: %bg eval(preparse('quick(20)')) # not tested
-
-  É mais seguro e simples, todavia, usar ``%bg`` apenas em comandos
-  que não requerem o pre-processador (preparser).
-
 - Você pode usar ``%edit`` (ou ``%ed`` ou ``ed``) para abrir um
   editor, se você desejar digitar algum código mais complexo. Antes de
   iniciar o Sage, certifique-se de que a variável de ambiente
@@ -439,7 +411,7 @@ Erros e Exceções
 
 Quando algo errado ocorre, você usualmente verá uma "exceção" do
 Python. O Python até mesmo tenta sugerir o que ocasionou a exceção,
-por exemplo, ``NameError`` ou ``ValueError`` (veja o Referência da
+por exemplo, :class:`NameError` ou :class:`ValueError` (veja o Referência da
 Biblioteca Python [PyLR]_ para uma lista completa de exceções). Por
 exemplo,
 
@@ -452,7 +424,7 @@ exemplo,
        File "<console>", line 1
          ZZ(3)_2
                ^
-    SyntaxError: invalid syntax
+    SyntaxError: invalid ...
     
     sage: EllipticCurve([0,infinity])
     ------------------------------------------------------------
@@ -475,7 +447,7 @@ cima e para baixo. Por exemplo,
     Automatic pdb calling has been turned ON
     sage: EllipticCurve([1,infinity])
     ---------------------------------------------------------------------------
-    <type 'exceptions.TypeError'>             Traceback (most recent call last)
+    <class 'exceptions.TypeError'>             Traceback (most recent call last)
     ...
     
     ipdb> 
@@ -582,7 +554,7 @@ seguido de ? para ver informações sobre a função.
     sage: V = QQ^3
     sage: V.coordinates?
     Type:           instancemethod
-    Base Class:     <type 'instancemethod'>
+    Base Class:     <class 'instancemethod'>
     String Form:    <bound method FreeModule_ambient_field.coordinates of Vector 
     space of dimension 3 over Rational Field>
     Namespace:      Interactive

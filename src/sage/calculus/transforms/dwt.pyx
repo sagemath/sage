@@ -11,20 +11,19 @@ AUTHOR:
 
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2006 Joshua Kantor <jkantor@math.washington.edu>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
-import sage.plot.all
 
 def WaveletTransform(n, wavelet_type, wavelet_k):
-    """
+    r"""
     This function initializes an GSLDoubleArray of length n which
     can perform a discrete wavelet transform.
 
@@ -96,7 +95,9 @@ def WaveletTransform(n, wavelet_type, wavelet_k):
         raise NotImplementedError("discrete wavelet transform only implemented when n is a 2-power")
     return DiscreteWaveletTransform(_n,1,wavelet_type,_k)
 
+
 DWT = WaveletTransform
+
 
 cdef class DiscreteWaveletTransform(GSLDoubleArray):
     """
@@ -135,23 +136,24 @@ cdef class DiscreteWaveletTransform(GSLDoubleArray):
     def backward_transform(self):
         gsl_wavelet_transform_inverse(self.wavelet,self.data,self.stride,self.n,self.workspace)
 
-    def plot(self,xmin=None,xmax=None,**args):
+    def plot(self, xmin=None, xmax=None, **args):
+        from sage.plot.point import point
+
         cdef int i
         cdef double x
         v = []
-        point = sage.plot.all.point
         if xmin is None:
             x_min = 0
         if xmax is None:
-            x_max=self.n
-        for i from x_min <=i < x_max:
+            x_max = self.n
+        for i from x_min <= i < x_max:
             x = self.data[i]
-            if i >0:
-                v.append(point([(i,x)],hue=(1,1,1),**args))
+            if i > 0:
+                v.append(point([(i, x)], hue=(1, 1, 1), **args))
         return sum(v)
 
 
 def is2pow(unsigned int n):
-    while n != 0 and n%2 == 0:
+    while n and not n % 2:
         n = n >> 1
     return n == 1

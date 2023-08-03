@@ -1,3 +1,4 @@
+# sage.doctest: optional - sage.modules sage.rings.finite_rings
 r"""
 Guruswami-Sudan utility methods
 
@@ -19,7 +20,8 @@ AUTHORS:
 #*****************************************************************************
 
 
-from sage.functions.other import floor, sqrt
+from sage.functions.other import floor
+from sage.misc.functional import sqrt
 from sage.rings.integer_ring import ZZ
 from sage.rings.integer import Integer
 

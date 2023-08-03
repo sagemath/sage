@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-Discrete Subgroups of `\\ZZ^n`
+Discrete subgroups of `\\ZZ^n`
 
 AUTHORS:
 
@@ -259,10 +259,11 @@ class FreeModule_submodule_with_basis_integer(FreeModule_submodule_with_basis_pi
             sage: M.row_space() == L.matrix().row_space()
             True
 
-            sage: K.<a> = NumberField(x^8+1)
-            sage: O = K.ring_of_integers()
-            sage: f = O(a^7 - a^6 + 4*a^5 - a^4 + a^3 + 1)
-            sage: IntegerLattice(f)
+            sage: x = polygen(ZZ, 'x')
+            sage: K.<a> = NumberField(x^8 + 1)                                          # optional - sage.rings.number_field
+            sage: O = K.ring_of_integers()                                              # optional - sage.rings.number_field
+            sage: f = O(a^7 - a^6 + 4*a^5 - a^4 + a^3 + 1)                              # optional - sage.rings.number_field
+            sage: IntegerLattice(f)                                                     # optional - sage.rings.number_field
             Free module of degree 8 and rank 8 over Integer Ring
             User basis matrix:
             [ 0  1  0  1  0  3  3  0]
@@ -364,10 +365,10 @@ class FreeModule_submodule_with_basis_integer(FreeModule_submodule_with_basis_pi
             ...
             sage: L.reduced_basis == A
             True
-            sage: old_min = min(v.norm().n() for v in L.reduced_basis)
+            sage: old = L.reduced_basis[0].norm().n()
             sage: _ = L.LLL()
-            sage: new_min = L.reduced_basis[0].norm().n()
-            sage: new_min <= old_min
+            sage: new = L.reduced_basis[0].norm().n()
+            sage: new <= old
             True
         """
         basis = self.reduced_basis
@@ -622,7 +623,7 @@ class FreeModule_submodule_with_basis_integer(FreeModule_submodule_with_basis_pi
         """
         w = matrix(ZZ, w)
         L = w.stack(self.reduced_basis).LLL()
-        assert(L[0] == 0)
+        assert L[0] == 0
         self._reduced_basis = L.matrix_from_rows(range(1, L.nrows()))
 
     @cached_method
@@ -756,6 +757,13 @@ class FreeModule_submodule_with_basis_integer(FreeModule_submodule_with_basis_pi
             sage: u = vector([-423434678248195, -18882583298608161305227077482])
             sage: L.closest_vector(u) in L
             True
+
+        Check that the example, of non-maximal rank, from :trac:`32486` works::
+
+            from sage.modules.free_module_integer import IntegerLattice
+            L = IntegerLattice([[-1,  0,  1],[1,0,2]])
+            L.closest_vector((1,1,1))
+            (2, 0, 1)
         """
         voronoi_cell = self.voronoi_cell()
 

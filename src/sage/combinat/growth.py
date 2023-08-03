@@ -470,7 +470,7 @@ The labels are now alternating between vertices and edge-colors::
 #
 #                  https://www.gnu.org/licenses/
 # ***************************************************************************
-
+from __future__ import annotations
 from copy import copy
 from itertools import zip_longest
 
@@ -489,6 +489,7 @@ from sage.combinat.k_tableau import WeakTableau, StrongTableau
 from sage.combinat.shifted_primed_tableau import ShiftedPrimedTableau
 from sage.graphs.digraph import DiGraph
 
+
 def _make_partition(l):
     """
     Return the list as a partition.
@@ -505,6 +506,7 @@ def _make_partition(l):
         Partitions
     """
     return _Partitions.element_class(_Partitions, l)
+
 
 class GrowthDiagram(SageObject):
     r"""
@@ -642,6 +644,7 @@ class GrowthDiagram(SageObject):
         0  0  0  1
         1  0
     """
+
     def __init__(self, rule, filling=None, shape=None, labels=None):
         r"""
         Initialize ``self``.
@@ -794,8 +797,8 @@ class GrowthDiagram(SageObject):
         """
         l = self._lambda[0]
         h = len(self._lambda)
-        shape_lambda = [l-p for p in self._mu] + [l]*(h-len(self._mu))
-        shape_mu     = [l-p for p in self._lambda]
+        shape_lambda = [l - p for p in self._mu] + [l] * (h - len(self._mu))
+        shape_mu = [l - p for p in self._lambda]
         shape = SkewPartition([shape_lambda[::-1], shape_mu[::-1]])
         F = {(l-i-1, h-j-1): v for (i,j),v in self._filling.items()}
         return GrowthDiagram(self.rule,
@@ -1226,7 +1229,7 @@ class GrowthDiagram(SageObject):
         is_P_edge = getattr(rule, "is_P_edge", None)
         is_Q_edge = getattr(rule, "is_Q_edge", None)
         if rule.has_multiple_edges:
-            def right_left(la, mu, e):
+            def right_left_multi(la, mu, e) -> int:
                 if rule.rank(la) < rule.rank(mu):
                     if is_Q_edge is not None and e not in is_Q_edge(la, mu):
                         raise ValueError("%s has smaller rank than %s but there is no edge of color %s in Q" % (la, mu, e))
@@ -1235,13 +1238,12 @@ class GrowthDiagram(SageObject):
                     if is_P_edge is not None and e not in is_P_edge(mu, la):
                         raise ValueError("%s has smaller rank than %s but there is no edge of color %s in P" % (mu, la, e))
                     return 0
-                else:
-                    raise ValueError("can only determine the shape of the growth"
-                                     " diagram if ranks of successive labels differ")
-            return _Partitions.from_zero_one([right_left(labels[i], labels[i+2], labels[i+1])
+                raise ValueError("can only determine the shape of the growth"
+                                 " diagram if ranks of successive labels differ")
+            return _Partitions.from_zero_one([right_left_multi(labels[i], labels[i+2], labels[i+1])
                                               for i in range(0, len(labels)-2, 2)])
         else:
-            def right_left(la, mu):
+            def right_left(la, mu) -> int:
                 if rule.rank(la) < rule.rank(mu):
                     if is_Q_edge is not None and not is_Q_edge(la, mu):
                         raise ValueError("%s has smaller rank than %s but is not covered by it in Q" % (la, mu))
@@ -1250,9 +1252,8 @@ class GrowthDiagram(SageObject):
                     if is_P_edge is not None and not is_P_edge(mu, la):
                         raise ValueError("%s has smaller rank than %s but is not covered by it in P" % (mu, la))
                     return 0
-                else:
-                    raise ValueError("can only determine the shape of the growth"
-                                     " diagram if ranks of successive labels differ")
+                raise ValueError("can only determine the shape of the growth"
+                                 " diagram if ranks of successive labels differ")
             return _Partitions.from_zero_one([right_left(labels[i], labels[i+1])
                                               for i in range(len(labels)-1)])
 
@@ -1610,6 +1611,7 @@ class GrowthDiagram(SageObject):
 # ABC for rules of growth diagrams
 ######################################################################
 
+
 class Rule(UniqueRepresentation):
     r"""
     Generic base class for a rule for a growth diagram.
@@ -1823,8 +1825,7 @@ class Rule(UniqueRepresentation):
             return D
         else:
             return Poset(([w for k in range(n) for w in self.vertices(k)],
-                          lambda x, y: self.is_P_edge(x, y)),
-                         cover_relations=True)
+                          self.is_P_edge), cover_relations=True)
 
     def Q_graph(self, n):
         r"""
@@ -1843,21 +1844,21 @@ class Rule(UniqueRepresentation):
             [[1, 1, 1, 1], [3, 1], [2, 2]]
         """
         if self.has_multiple_edges:
-            D = DiGraph([(x,y,e) for k in range(n-1)
-                            for x in self.vertices(k)
-                            for y in self.vertices(k+1)
-                            for e in self.is_Q_edge(x, y)], multiedges=True)
+            D = DiGraph([(x, y, e) for k in range(n - 1)
+                         for x in self.vertices(k)
+                         for y in self.vertices(k + 1)
+                         for e in self.is_Q_edge(x, y)], multiedges=True)
             # unfortunately, layout_acyclic will not show multiple edges
             # D.layout_default = D.layout_acyclic
             return D
         else:
             return Poset(([w for k in range(n) for w in self.vertices(k)],
-                          lambda x,y: self.is_Q_edge(x, y)),
-                         cover_relations=True)
+                          self.is_Q_edge), cover_relations=True)
 
 ######################################################################
 # Specific rules of growth diagrams
 ######################################################################
+
 
 class RuleShiftedShapes(Rule):
     r"""
@@ -2195,13 +2196,12 @@ class RuleShiftedShapes(Rule):
                     g, z = 1, _make_partition(y).add_cell(row) # black
                 else:
                     g, z = 2, _make_partition(y).add_cell(row) # blue
-            elif x == y != t and f in [1, 3]: # black or red
+            elif x == y != t and f in [1, 3]:  # black or red
                 c = SkewPartition([x, t]).cells()[0]
                 col = c[0] + c[1] + 1
-                # print y, t, x, c, col
                 for i in range(len(y)):
                     if i + y[i] == col:
-                        z = y[:i] + [y[i]+1] + y[i+1:]
+                        z = y[:i] + [y[i] + 1] + y[i + 1:]
                         break
                 g = 3
             else:
@@ -2294,6 +2294,7 @@ class RuleShiftedShapes(Rule):
                                 t = y[:i] + [y[i]-1] + y[i+1:]
                                 return (0, t, 3, 0)
                     raise ValueError("this should not happen")
+
 
 class RuleLLMS(Rule):
     r"""
@@ -2607,11 +2608,12 @@ class RuleLLMS(Rule):
                 # the addable cell with largest content at most e
                 cprime = sorted([c for c in y.to_partition().addable_cells()
                                  if c[1]-c[0] <= e],
-                                key = lambda c: -(c[1]-c[0]))[0]
+                                key=lambda c: -(c[1]-c[0]))[0]
                 h = cprime[1] - cprime[0]
                 z = y.affine_symmetric_group_simple_action(h % self.k)
 
         return g, z, h
+
 
 class RuleBinaryWord(Rule):
     r"""
@@ -2874,6 +2876,7 @@ class RuleBinaryWord(Rule):
             else:
                 return (x[:-1], 0)
 
+
 class RuleSylvester(Rule):
     r"""
     A rule modelling a Schensted-like correspondence for binary trees.
@@ -2964,7 +2967,7 @@ class RuleSylvester(Rule):
         sage: list(Sylvester(labels=G.out_labels())) == list(G)
         True
     """
-    zero = BinaryTree()
+    zero = BinaryTree()  # type:ignore
 
     def normalize_vertex(self, v):
         r"""
@@ -3157,7 +3160,6 @@ class RuleSylvester(Rule):
             S, T = Q_chain[i-1], Q_chain[i]
             L = add_label(L, S, T, i)
         return L
-
 
     @staticmethod
     def _delete_right_most_node(b):
@@ -3355,6 +3357,7 @@ class RuleSylvester(Rule):
                 t = RuleSylvester._delete_right_most_node(y)
                 return (t, 0)
 
+
 class RuleYoungFibonacci(Rule):
     r"""
     A rule modelling a Schensted-like correspondence for
@@ -3407,7 +3410,7 @@ class RuleYoungFibonacci(Rule):
         sage: G = YF(labels=[[1],[1,0],[1]])
         Traceback (most recent call last):
         ...
-        ValueError: 0 not in alphabet!
+        ValueError: 0 not in alphabet
 
         sage: G = YF(labels=[[1,1],[1,2]])
         Traceback (most recent call last):
@@ -3598,6 +3601,7 @@ class RuleYoungFibonacci(Rule):
             elif z[0] == 2:
                 return (z[1:], 0)
 
+
 class RulePartitions(Rule):
     r"""
     A rule for growth diagrams on Young's lattice on integer
@@ -3682,6 +3686,7 @@ class RulePartitions(Rule):
         """
         return SkewTableau(chain=Q_chain)
 
+
 class RuleRSK(RulePartitions):
     r"""
     A rule modelling Robinson-Schensted-Knuth insertion.
@@ -3737,14 +3742,15 @@ class RuleRSK(RulePartitions):
         sage: [G.P_symbol(), G.Q_symbol()] == RSK(m.transpose())
         True
 
-        sage: n=5; l=[(pi, RuleRSK(pi)) for pi in Permutations(n)]
+        sage: n = 5; l = [(pi, RuleRSK(pi)) for pi in Permutations(n)]
         sage: all([G.P_symbol(), G.Q_symbol()] == RSK(pi) for pi, G in l)
         True
 
-        sage: n=5; l=[(w, RuleRSK(w)) for w in Words([1,2,3], 5)]
+        sage: n = 5; l = [(w, RuleRSK(w)) for w in Words([1,2,3], 5)]
         sage: all([G.P_symbol(), G.Q_symbol()] == RSK(pi) for pi, G in l)
         True
     """
+
     def forward_rule(self, y, t, x, content):
         r"""
         Return the output shape given three shapes and the content.
@@ -3896,6 +3902,7 @@ class RuleBurge(RulePartitions):
     sequences of cells with weakly decreasing row indices and weakly
     increasing column indices.
     """
+
     def forward_rule(self, y, t, x, content):
         r"""
         Return the output shape given three shapes and the content.
@@ -3988,6 +3995,7 @@ class RuleBurge(RulePartitions):
             carry += -s + la_i - max(mu_i, nu_i)
         t.reverse()
         return (_make_partition(t), carry)
+
 
 class RuleDomino(Rule):
     r"""
@@ -4333,7 +4341,8 @@ class RuleDomino(Rule):
 ## Set the rules available from GrowthDiagram.rules.<tab>
 #####################################################################
 
-class Rules(object):
+
+class Rules():
     """
     Catalog of rules for growth diagrams.
     """
@@ -4345,5 +4354,6 @@ class Rules(object):
     RSK = RuleRSK
     Burge = RuleBurge
     Domino = RuleDomino
+
 
 GrowthDiagram.rules = Rules

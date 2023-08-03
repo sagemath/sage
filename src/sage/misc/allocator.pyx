@@ -1,21 +1,10 @@
 from cpython.ref cimport Py_INCREF
 
-cdef hook_tp_functions(object global_dummy, newfunc tp_new, destructor tp_dealloc, bint useGC):
+cdef _hook_tp_functions_type(PyTypeObject *t, newfunc tp_new, destructor tp_dealloc, bint useGC):
     """
     Initialize the fast integer creation functions.
     """
     cdef long flag
-
-    cdef PyObject* o = <PyObject*>global_dummy
-    cdef PyTypeObject* t = Py_TYPE(global_dummy)
-
-    # Make sure this never, ever gets collected.
-    # This is not necessary for cdef'ed variables as the global
-    # dummy integer, as such objects do not get automatically collected.
-    # In fact there is no obvious reason to prevent collection when Sage quits
-    # and we are certain no further call to the allocation function will be
-    # made; so this could be removed when the code is clean enough.
-    Py_INCREF(global_dummy)
 
     # By default every object created in Pyrex is garbage
     # collected. This means it may have references to other objects
@@ -34,3 +23,24 @@ cdef hook_tp_functions(object global_dummy, newfunc tp_new, destructor tp_deallo
     # to be constructed/destructed.
     t.tp_new = tp_new
     t.tp_dealloc = tp_dealloc
+
+
+cdef hook_tp_functions_type(object tp, newfunc tp_new, destructor tp_dealloc, bint useGC):
+    cdef PyTypeObject *t = <PyTypeObject *>tp
+    _hook_tp_functions_type(t, tp_new, tp_dealloc, useGC)
+
+
+cdef hook_tp_functions(object global_dummy, newfunc tp_new, destructor tp_dealloc, bint useGC):
+    """
+    Initialize the fast integer creation functions.
+    """
+    # Make sure this never, ever gets collected.
+    # This is not necessary for cdef'ed variables as the global
+    # dummy integer, as such objects do not get automatically collected.
+    # In fact there is no obvious reason to prevent collection when Sage quits
+    # and we are certain no further call to the allocation function will be
+    # made; so this could be removed when the code is clean enough.
+    Py_INCREF(global_dummy)
+
+    cdef PyTypeObject* t = Py_TYPE(global_dummy)
+    _hook_tp_functions_type(t, tp_new, tp_dealloc, useGC)

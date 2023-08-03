@@ -847,7 +847,7 @@ class FreeModuleAutomorphism(FreeModuleTensor, MultiplicativeGroupElement):
             True
 
         """
-        # No need for consistency check since self and other are guaranted
+        # No need for consistency check since self and other are guaranteed
         # to have the same parent. In particular, they are defined on the same
         # free module.
         #

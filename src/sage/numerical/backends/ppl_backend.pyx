@@ -9,22 +9,23 @@ AUTHORS:
   constraints and objective function (:trac:`16755`)
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2010 Risan <ptrrsn.1@gmail.com>
 #       Copyright (C) 2014 Jeroen Demeyer <jdemeyer@cage.ugent.be>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.numerical.mip import MIPSolverException
-from ppl import MIP_Problem, Variable, Variables_Set, Linear_Expression, Constraint, Generator
+from ppl import MIP_Problem, Variable, Variables_Set, Linear_Expression
 from sage.rings.integer cimport Integer
 from sage.rings.rational cimport Rational
 from .generic_backend cimport GenericBackend
 from copy import copy
+
 
 cdef class PPLBackend(GenericBackend):
 
@@ -67,7 +68,7 @@ cdef class PPLBackend(GenericBackend):
         """
 
         if base_ring is not None:
-            from sage.rings.all import QQ
+            from sage.rings.rational_field import QQ
             if base_ring is not QQ:
                 raise TypeError('The PPL backend only supports rational data.')
 
@@ -90,7 +91,7 @@ cdef class PPLBackend(GenericBackend):
             self.set_sense(-1)
 
     cpdef base_ring(self):
-        from sage.rings.all import QQ
+        from sage.rings.rational_field import QQ
         return QQ
 
     cpdef zero(self):
@@ -140,7 +141,7 @@ cdef class PPLBackend(GenericBackend):
             sage: p.base_ring()
             Rational Field
             sage: type(p.zero())
-            <type 'sage.rings.rational.Rational'>
+            <class 'sage.rings.rational.Rational'>
             sage: p.init_mip()
         """
 
@@ -257,9 +258,9 @@ cdef class PPLBackend(GenericBackend):
 
         - ``binary`` -- ``True`` if the variable is binary (default: ``False``).
 
-        - ``continuous`` -- ``True`` if the variable is binary (default: ``True``).
+        - ``continuous`` -- ``True`` if the variable is continuous (default: ``True``).
 
-        - ``integer`` -- ``True`` if the variable is binary (default: ``False``).
+        - ``integer`` -- ``True`` if the variable is integral (default: ``False``).
 
         - ``obj`` -- (optional) coefficient of this variable in the objective function (default: 0)
 
@@ -289,7 +290,7 @@ cdef class PPLBackend(GenericBackend):
             3
         """
         cdef int vtype = int(bool(binary)) + int(bool(continuous)) + int(bool(integer))
-        if  vtype == 0:
+        if vtype == 0:
             continuous = True
         elif vtype != 1:
             raise ValueError("Exactly one parameter of 'binary', 'integer' and 'continuous' must be 'True'.")
@@ -328,9 +329,9 @@ cdef class PPLBackend(GenericBackend):
 
         - ``binary`` -- ``True`` if the variable is binary (default: ``False``).
 
-        - ``continuous`` -- ``True`` if the variable is binary (default: ``True``).
+        - ``continuous`` -- ``True`` if the variable is continuous (default: ``True``).
 
-        - ``integer`` -- ``True`` if the variable is binary (default: ``False``).
+        - ``integer`` -- ``True`` if the variable is integral (default: ``False``).
 
         - ``obj`` -- (optional) coefficient of all variables in the objective function (default: 0)
 
@@ -1070,7 +1071,7 @@ cdef class PPLBackend(GenericBackend):
         - ``index`` (integer) -- the variable's id
 
         - ``value`` -- real value, or ``None`` to mean that the
-          variable has not upper bound. When set to ``None``
+          variable has not upper bound. When set to ``False``
           (default), the method returns the current value.
 
         EXAMPLES::
@@ -1102,7 +1103,7 @@ cdef class PPLBackend(GenericBackend):
         - ``index`` (integer) -- the variable's id
 
         - ``value`` -- real value, or ``None`` to mean that the
-          variable has not lower bound. When set to ``None``
+          variable has not lower bound. When set to ``False``
           (default), the method returns the current value.
 
         EXAMPLES::

@@ -3,7 +3,7 @@ SAGE_SPKG_CONFIGURE([ecl], [
   # Default to installing the SPKG
   sage_spkg_install_ecl=yes
 
-  SAGE_SPKG_DEPCHECK([gcc gc gmp mpir], [
+  SAGE_SPKG_DEPCHECK([gcc gc gmp], [
     AC_PATH_PROG([ECL_CONFIG], [ecl-config])
     AS_IF([test x$ECL_CONFIG != x], [
       # "CPPFLAGS" is not a typo, the --cflags output from
@@ -35,10 +35,7 @@ SAGE_SPKG_CONFIGURE([ecl], [
     AC_SUBST(SAGE_ECL_CONFIG, [$ECL_CONFIG])
   fi
 
-  # Maxima cannot yet be provided by the system, so we always use
+  # Kenzo cannot yet be provided by the system, so we always use
   # the SAGE_LOCAL path for now.
-  AC_SUBST(SAGE_MAXIMA_FAS, ['${prefix}'/lib/ecl/maxima.fas])
-
-  # Likewise for the optional Kenzo SPKG
   AC_SUBST(SAGE_KENZO_FAS, ['${prefix}'/lib/ecl/kenzo.fas])
 ])

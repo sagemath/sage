@@ -273,7 +273,7 @@ convention is that the generated elements are the ``s := f(n)``, except when
     ....:     st = set(st) # make a copy
     ....:     if st:
     ....:        el = st.pop()
-    ....:        for i in range(0, len(lst)+1):
+    ....:        for i in range(len(lst)+1):
     ....:            yield (lst[0:i]+[el]+lst[i:], st)
     sage: list(children(([1,2], {3,7,9})))
     [([9, 1, 2], {3, 7}), ([1, 9, 2], {3, 7}), ([1, 2, 9], {3, 7})]
@@ -567,7 +567,7 @@ cdef class RecursivelyEnumeratedSet_generic(Parent):
             sage: C.__setstate__(C.__getstate__())
         """
         self._graded_component = l[0]
-        # Since trac ticket #21312, the graded component iterator is not used
+        # Since github issue #21312, the graded component iterator is not used
         # anymore but maybe some previously pickled object still have it
         # self._graded_component_it = l[1]
 
@@ -827,8 +827,7 @@ cdef class RecursivelyEnumeratedSet_generic(Parent):
         current_level = self._seeds
         known = set(current_level)
         if max_depth >= 0:
-            for x in current_level:
-                yield x
+            yield from current_level
         depth = 0
         while current_level and depth < max_depth:
             next_level = []
@@ -1078,8 +1077,7 @@ cdef class RecursivelyEnumeratedSet_symmetric(RecursivelyEnumeratedSet_generic):
         B = self._seeds
         set_B = set(B)
         if max_depth >= 0:
-            for x in B:
-                yield x
+            yield from B
         depth = 0
         while B and depth < max_depth:
             C = list()
@@ -1329,8 +1327,7 @@ cdef class RecursivelyEnumeratedSet_graded(RecursivelyEnumeratedSet_generic):
             max_depth = self._max_depth
         current_level = self._seeds
         if max_depth >= 0:
-            for x in current_level:
-                yield x
+            yield from current_level
         depth = 0
         while current_level and depth < max_depth:
             next_level = list()
@@ -1735,16 +1732,13 @@ class RecursivelyEnumeratedSet_forest(Parent):
         ....:     def __init__(self):
         ....:         RecursivelyEnumeratedSet_forest.__init__(self, algorithm = 'breadth',
         ....:                               category=InfiniteEnumeratedSets())
-        ....:
         ....:     def roots(self):
         ....:         return [()]
-        ....:
         ....:     def children(self, x):
         ....:         if sum(x) < 3:
         ....:             return [x+(0,), x+(1,)]
         ....:         else:
         ....:             return []
-        ....:
         ....:     def post_process(self, x):
         ....:         if sum(x) == 0 or x[-1] == 0:
         ....:             return None
@@ -1939,12 +1933,10 @@ class RecursivelyEnumeratedSet_forest(Parent):
             []
         """
         if depth == 0:
-            for node in self.roots():
-                yield node
+            yield from self.roots()
         else:
             for father in self._elements_of_depth_iterator_rec(depth - 1):
-                for node in self.children(father):
-                    yield node
+                yield from self.children(father)
 
     def elements_of_depth_iterator(self, depth=0):
         r"""

@@ -15,16 +15,16 @@ from .sets_cat import Sets
 
 #############################################################
 # GSets
-#     $G$-Sets play an important role in permutation groups.
+#     `G`-Sets play an important role in permutation groups.
 #############################################################
 class GSets(Category):
     """
-    The category of $G$-sets, for a group $G$.
+    The category of `G`-sets, for a group `G`.
 
     EXAMPLES::
 
-        sage: S = SymmetricGroup(3)
-        sage: GSets(S)
+        sage: S = SymmetricGroup(3)                                                     # optional - sage.groups
+        sage: GSets(S)                                                                  # optional - sage.groups
         Category of G-sets for Symmetric group of order 3! as a permutation group
 
     TODO: should this derive from Category_over_base?
@@ -33,8 +33,8 @@ class GSets(Category):
         """
         TESTS::
 
-            sage: S8 = SymmetricGroup(8)
-            sage: TestSuite(GSets(S8)).run()
+            sage: S8 = SymmetricGroup(8)                                                # optional - sage.groups
+            sage: TestSuite(GSets(S8)).run()                                            # optional - sage.groups
         """
         Category.__init__(self)
         self.__G = G
@@ -43,7 +43,7 @@ class GSets(Category):
         """
         EXAMPLES::
 
-            sage: GSets(SymmetricGroup(8)) # indirect doctests
+            sage: GSets(SymmetricGroup(8))  # indirect doctests                         # optional - sage.groups
             Category of G-sets for Symmetric group of order 8! as a permutation group
         """
         return "G-sets for %s"%self.__G
@@ -55,7 +55,7 @@ class GSets(Category):
         """
         EXAMPLES::
 
-            sage: GSets(SymmetricGroup(8)).super_categories()
+            sage: GSets(SymmetricGroup(8)).super_categories()                           # optional - sage.groups
             [Category of sets]
         """
         return [Sets()]
@@ -67,7 +67,7 @@ class GSets(Category):
 
         EXAMPLES::
 
-            sage: GSets.an_instance() # indirect doctest
+            sage: GSets.an_instance()  # indirect doctest                               # optional - sage.groups
             Category of G-sets for Symmetric group of order 8! as a permutation group
         """
         from sage.groups.perm_gps.permgroup_named import SymmetricGroup

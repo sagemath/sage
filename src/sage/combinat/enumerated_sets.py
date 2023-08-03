@@ -1,6 +1,5 @@
 """
 Enumerated sets and combinatorial objects
-=========================================
 
 .. TODO:: Proofread / point to the main classes rather than the modules
 
@@ -132,7 +131,7 @@ Backtracking solvers and generic enumerated sets
 - :ref:`sage.combinat.tiling`
 - :ref:`sage.combinat.dlx`
 - :ref:`sage.combinat.matrices.dlxcpp`
-- :ref:`sage.combinat.species`
+- :ref:`sage.combinat.species.all`
 - :class:`~sage.combinat.integer_lists.IntegerListsLex`
 - :class:`~sage.combinat.integer_vectors_mod_permgroup.IntegerVectorsModPermutationGroup`
 

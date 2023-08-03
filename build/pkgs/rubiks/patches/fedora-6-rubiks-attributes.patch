@@ -1,0 +1,204 @@
+--- a/dietz/cu2/cu2.h	2008-01-04 01:26:59.000000000 -0700
++++ b/dietz/cu2/cu2.h	2020-10-29 17:42:21.874430487 -0600
+@@ -24,11 +24,11 @@ public:
+   static const int N=2;                 // cube size (NxNxN)
+   static const int MOV=3;               // number of move groups
+   static int numcubes;                  // number of instantiated cubes
+-  const bool operator==(const cu2 &q);  // overloaded == comparison
+-  const bool operator!=(const cu2 &q);  // overloaded != comparison
+-  int *face(int x, int y, int z);       // pointer to cube array
++  const bool __attribute__((pure)) operator==(const cu2 &q);  // overloaded == comparison
++  const bool __attribute__((pure)) operator!=(const cu2 &q);  // overloaded != comparison
++  int * __attribute__((const)) face(int x, int y, int z);       // pointer to cube array
+   const void renderscreen();            // display cube diagram
+-  const bool issolved();                // return solvedness of cube
++  const bool __attribute__((pure)) issolved();                // return solvedness of cube
+   const void resetcube();               // reset the cube
+   void copytemp(int c[N+2][N+2][N+2], int t[N+2][N+2][N+2]);    // temporary copier function
+   const void slice_l(int s);            // rotate given slice left
+--- a/dietz/cu2/main.cpp	2008-01-04 01:26:59.000000000 -0700
++++ b/dietz/cu2/main.cpp	2020-10-29 17:38:42.082615130 -0600
+@@ -66,7 +66,7 @@ void myrenderscreen(cu2 c)
+ }
+ 
+ // return the number associated with a given char
+-int chartocol(char c)
++int __attribute__((pure)) chartocol(char c)
+ {
+   for (int i = 1; i <= 6; i++)
+     if (coltochar[i] == c)
+--- a/dietz/mcube/main.cpp	2008-01-04 01:26:59.000000000 -0700
++++ b/dietz/mcube/main.cpp	2020-10-29 17:42:48.234408343 -0600
+@@ -66,7 +66,7 @@ void myrenderscreen(mcube c)
+ }
+ 
+ // return the number associated with a given char
+-int chartocol(char c)
++int __attribute__((pure)) chartocol(char c)
+ {
+   for (int i = 1; i <= 6; i++)
+     if (coltochar[i] == c)
+--- a/dietz/mcube/mcube.h	2008-01-04 01:26:59.000000000 -0700
++++ b/dietz/mcube/mcube.h	2020-10-29 17:43:47.266358762 -0600
+@@ -24,11 +24,11 @@ public:
+   static const int N=4;                 // cube size (NxNxN)
+   static const int MOV=11;              // number of move groups
+   static int numcubes;                  // number of instantiated cubes
+-  const bool operator==(const mcube &q);// overloaded == comparison
+-  const bool operator!=(const mcube &q);// overloaded != comparison
+-  int *face(int x, int y, int z);       // pointer to cube array
++  const bool __attribute__((pure)) operator==(const mcube &q);// overloaded == comparison
++  const bool __attribute__((pure)) operator!=(const mcube &q);// overloaded != comparison
++  int * __attribute__((const)) face(int x, int y, int z);       // pointer to cube array
+   const void renderscreen();            // display cube diagram
+-  const bool issolved();                // return solvedness of cube
++  const bool __attribute__((pure)) issolved();                // return solvedness of cube
+   const void resetcube();               // reset the cube
+   void copytemp(int c[N+2][N+2][N+2], int t[N+2][N+2][N+2]);    // temporary copier function
+   const void slice_l(int s);            // rotate given slice left
+--- a/dietz/solver/cubex.h	2008-04-14 15:09:53.000000000 -0600
++++ b/dietz/solver/cubex.h	2020-10-29 17:45:21.114280405 -0600
+@@ -28,11 +28,11 @@ public:
+   const static char* author;
+   const static int N = 3; // <-- size of the cube (NxNxN)
+   const static int MOV = 8;
+-  const bool operator==(const Cubex &q);
+-  const bool operator!=(const Cubex &q);
+-  int *face(int x, int y, int z);
++  const bool __attribute__((pure)) operator==(const Cubex &q);
++  const bool __attribute__((pure)) operator!=(const Cubex &q);
++  int * __attribute__((const)) face(int x, int y, int z);
+   const void RenderScreen();
+-  const bool IsSolved();
++  const bool __attribute__((pure)) IsSolved();
+   const void ResetCube();
+   const bool XML(int a, bool n);
+   const bool XMR(int a, bool n);
+--- a/reid/optimal.c	2008-01-04 01:26:59.000000000 -0700
++++ b/reid/optimal.c	2020-10-29 17:51:55.580957052 -0600
+@@ -308,7 +308,7 @@ static sigjmp_buf       jump_env;
+ 
+ 
+ /* ========================================================================= */
+-   void  exit_w_error_message(char  *msg)
++   void __attribute__((noreturn)) exit_w_error_message(char  *msg)
+ /* ------------------------------------------------------------------------- */
+ 
+ {
+@@ -320,7 +320,7 @@ return;
+ 
+ 
+ /* ========================================================================= */
+-   void  user_interrupt(int  unused_arg)
++   void  __attribute__((noreturn)) user_interrupt(int  unused_arg)
+ /* ------------------------------------------------------------------------- */
+ 
+ {
+@@ -355,7 +355,7 @@ return;
+ 
+ 
+ /* ========================================================================= */
+-   int  perm_n_pack(int  nn, int  array_in[])
++   int __attribute__((pure)) perm_n_pack(int  nn, int  array_in[])
+ /* ------------------------------------------------------------------------- */
+ 
+ {
+@@ -378,7 +378,7 @@ return indx;
+ 
+ 
+ /* ========================================================================= */
+-   int  perm_n_check(int  nn, int  array_in[])
++   int __attribute__((pure)) perm_n_check(int  nn, int  array_in[])
+ /* ------------------------------------------------------------------------- */
+ 
+ {
+@@ -405,7 +405,7 @@ return 0;
+ 
+ 
+ /* ========================================================================= */
+-   int  perm_n_parity(int  nn, int  array_in[])
++   int __attribute__((pure)) perm_n_parity(int  nn, int  array_in[])
+ /* ------------------------------------------------------------------------- */
+ 
+ {
+@@ -566,7 +566,7 @@ return;
+ 
+ 
+ /* ========================================================================= */
+-   int  cube_compare(Cube  *cube0, Cube  *cube1)
++   int __attribute__((pure)) cube_compare(Cube  *cube0, Cube  *cube1)
+ /* ------------------------------------------------------------------------- */
+ 
+ {
+@@ -1109,7 +1109,7 @@ return;
+ 
+ 
+ /* ========================================================================= */
+-   int  is_single_twist(int  syllable)
++   int __attribute__((const)) is_single_twist(int  syllable)
+ /* ------------------------------------------------------------------------- */
+ 
+ {
+@@ -1252,7 +1252,7 @@ return;
+ 
+ 
+ /* ========================================================================= */
+-   int  twists_in_wrong_order(int  twists[2])
++   int __attribute((pure)) twists_in_wrong_order(int  twists[2])
+ /* ------------------------------------------------------------------------- */
+ 
+ {
+@@ -1295,7 +1295,7 @@ return;
+ 
+ 
+ /* ========================================================================= */
+-   int  which_subgroup(int  subgroup[N_CUBESYM],
++   int __attribute__((pure)) which_subgroup(int  subgroup[N_CUBESYM],
+                        int  subgroup_list[N_SYMSUBGRP][N_CUBESYM])
+ /* ------------------------------------------------------------------------- */
+ 
+@@ -1638,7 +1638,7 @@ return SYLLABLE_INVALID;
+ 
+ 
+ /* ========================================================================= */
+-   int  not_minimal_one_twist(int  subgroup[N_CUBESYM],
++   int __attribute__((pure)) not_minimal_one_twist(int  subgroup[N_CUBESYM],
+                               int  sym_on_twist[N_CUBESYM][N_TWIST],
+                               int  twist)
+ /* ------------------------------------------------------------------------- */
+@@ -1853,7 +1853,7 @@ return;
+ 
+ 
+ /* ========================================================================= */
+-   int  corner_pack(int  array_in[8])
++   int __attribute__((pure)) corner_pack(int  array_in[8])
+ /* ------------------------------------------------------------------------- */
+ 
+ /*  input:  array_in[]  */
+@@ -2523,7 +2523,7 @@ return;
+ 
+ 
+ /* ========================================================================= */
+-   int  eflip_pack(int  array_in[12])
++   int __attribute__((pure)) eflip_pack(int  array_in[12])
+ /* ------------------------------------------------------------------------- */
+ 
+ {
+@@ -2955,7 +2955,7 @@ return;
+ 
+ 
+ /* ========================================================================= */
+-   int  cornerperm_pack(int  array_in[8])
++   int __attribute__((pure)) cornerperm_pack(int  array_in[8])
+ /* ------------------------------------------------------------------------- */
+ 
+ {
+@@ -3394,7 +3394,7 @@ return;
+ 
+ 
+ /* ========================================================================= */
+-   int  neighbors_are_previous(int  corner, int  edge, Search_data  *p_data)
++   int __attribute__((pure)) neighbors_are_previous(int  corner, int  edge, Search_data  *p_data)
+ /* ------------------------------------------------------------------------- */
+ 
+ {

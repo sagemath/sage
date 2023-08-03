@@ -56,12 +56,11 @@ from sage.libs.singular.decl cimport scKBase, poly, testHomog, idSkipZeroes, id_
 from sage.libs.singular.decl cimport OPT_REDTAIL, singular_options, kInterRed, t_rep_gb, p_GetCoeff
 from sage.libs.singular.decl cimport pp_Mult_nn, p_Delete, n_Delete
 from sage.libs.singular.decl cimport rIsPluralRing
-from sage.libs.singular.decl cimport n_unknown, n_Zp, n_Q, n_R, n_GF, n_long_R, n_algExt,n_transExt,n_long_C, n_Z, n_Zn, n_Znm, n_Z2m, n_CF
+from sage.libs.singular.decl cimport n_Z, n_Zn, n_Znm, n_Z2m
 
 from sage.rings.polynomial.multi_polynomial_libsingular cimport new_MP
 from sage.rings.polynomial.plural cimport new_NCP
 
-from sage.rings.polynomial.multi_polynomial_ideal import MPolynomialIdeal
 from sage.rings.polynomial.multi_polynomial_libsingular cimport MPolynomial_libsingular
 from sage.rings.polynomial.multi_polynomial_libsingular cimport MPolynomialRing_libsingular
 from sage.structure.sequence import Sequence
@@ -133,7 +132,7 @@ cdef ideal *sage_ideal_to_singular_ideal(I) except NULL:
     else:
         raise TypeError("Ring must be of type 'MPolynomialRing_libsingular'")
 
-    rChangeCurrRing(r);
+    rChangeCurrRing(r)
 
     i = idInit(len(gens),1)
     for j,f in enumerate(gens):
@@ -329,7 +328,7 @@ def interred_libsingular(I):
                 n = r.cf.cfInvers(n,r.cf)
             result.m[j] = pp_Mult_nn(p, n, r)
             p_Delete(&p,r)
-            n_Delete(&n,r)
+            n_Delete(&n,r.cf)
 
     id_Delete(&i,r)
 

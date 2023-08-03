@@ -14,8 +14,8 @@ Sageを起動すると，すぐに次のような画面が現れる:
 ::
 
     ┌────────────────────────────────────────────────────────────────────┐
-    │ SageMath version 9.0, Release Date: 2020-01-01                     │
-    │ Using Python 3.7.3. Type "help()" for help.                        │
+    │ SageMath version 9.7, Release Date: 2022-01-10                     │
+    │ Using Python 3.10.4. Type "help()" for help.                       │
     └────────────────────────────────────────────────────────────────────┘
 
 
@@ -163,8 +163,8 @@ Sageセッションのロギングと，セッションの保存(:ref:`section-s
 
     was@form:~$ sage
     ┌────────────────────────────────────────────────────────────────────┐
-    │ SageMath version 9.0, Release Date: 2020-01-01                     │
-    │ Using Python 3.7.3. Type "help()" for help.                        │
+    │ SageMath version 9.7, Release Date: 2022-01-10                     │
+    │ Using Python 3.10.4. Type "help()" for help.                       │
     └────────────────────────────────────────────────────────────────────┘
 
     sage: logstart setup
@@ -182,8 +182,8 @@ Sageセッションのロギングと，セッションの保存(:ref:`section-s
     Exiting Sage (CPU time 0m0.61s, Wall time 0m50.39s).
     was@form:~$ sage
     ┌────────────────────────────────────────────────────────────────────┐
-    │ SageMath version 9.0, Release Date: 2020-01-01                     │
-    │ Using Python 3.7.3. Type "help()" for help.                        │
+    │ SageMath version 9.7, Release Date: 2022-01-10                     │
+    │ Using Python 3.10.4. Type "help()" for help.                       │
     └────────────────────────────────────────────────────────────────────┘
 
     sage: load("setup")
@@ -353,33 +353,6 @@ IPythonトリック
 <http://ipython.scipy.org/moin/Documentation>`_ を読んみてほしい．
 そのかわり，ここではIPythonの「マジックコマンド」と呼ばれる，お便利なトリックをいくつか紹介させていただこう:
 
-- ``%bg`` を使えばコマンドをバックグラウンドで実行し， 結果には ``jobs`` でアクセスすることができる．(この機能は ``not tested`` とコメントされている．というのは ``%bg`` 書法がSageの自動テスト機能とは余り相性が良くないからだ．ユーザ各自が入力してやれば，その通り動作するはずである．もちろん，この機能が最も役立つのは実行に時間のかかるコマンドと組み合わせる場合である．)
-
-  使用例を以下に示す．
-
-  ::
-
-    sage: def quick(m): return 2*m
-    sage: %bg quick(20)  # not tested
-    Starting job # 0 in a separate thread.
-    sage: jobs.status()  # not tested
-    Completed jobs:
-    0 : quick(20)
-    sage: jobs[0].result  # the actual answer, not tested
-    40
-
-  バックグラウンドに送られるジョブはSageの前処理パーサを経由しないことに注意 -- 詳細は :ref:`section-mathannoy` 節を参照されたい．
-  パーサを通すための(不器用であるけれども)１つの方法は
-
-  ::
-
-    sage: %bg eval(preparse('quick(20)')) # not tested
-
-  とすることだろう．
-
-  ただし，より安全で簡単なのは前処理パーサを必要としないコマンドで ``%bg`` を使うことだろう．
-
-
 - ``%edit`` (``%ed`` や ``ed`` でもいい)を使ってエディタを起動すれば，複雑なコードの入力が楽になる．
   Sageの使用前に，環境変数 :envvar:`EDITOR` に好みのエディタ名を設定しておこう(``export EDITOR=/usr/bin/emacs`` または ``export EDITOR=/usr/bin/vim`` とするか， ``.profile`` ファイルなどで同様の設定をする)．
   するとSageプロンプトで ``%edit`` を実行すれば設定したエディタが起動する．そのエディタで関数
@@ -418,7 +391,7 @@ IPythonのクイック レファレンスガイドを見たければ， ``%quick
 =====================
 
 処理中に何かまずいことが起きると，Pythonはふつう『例外』(exception)を発生し，その例外を引き起こした原因を教えてくれることもある．
-よくお目にかかることになるのは， ``NameError`` や ``ValueError`` といった名称の例外だ(Pythonライブラリーリファレンス [PyLR]_ に例外名の包括的なリストがある)．
+よくお目にかかることになるのは， :class:`NameError` や :class:`ValueError` といった名称の例外だ(Pythonライブラリーリファレンス [PyLR]_ に例外名の包括的なリストがある)．
 実例を見てみよう:
 
 ::
@@ -442,7 +415,7 @@ IPythonのクイック レファレンスガイドを見たければ， ``%quick
     Automatic pdb calling has been turned ON
     sage: EllipticCurve([1,infinity])
     ---------------------------------------------------------------------------
-    <type 'exceptions.TypeError'>             Traceback (most recent call last)
+    <class 'exceptions.TypeError'>             Traceback (most recent call last)
     ...
 
     ipdb>
@@ -542,7 +515,7 @@ Sageの特長の一つは，総合的なヘルプ機能の装備である．
     sage: V = QQ^3
     sage: V.coordinates?
     Type:           instancemethod
-    Base Class:     <type 'instancemethod'>
+    Base Class:     <class 'instancemethod'>
     String Form:    <bound method FreeModule_ambient_field.coordinates of Vector
     space of dimension 3 over Rational Field>
     Namespace:      Interactive

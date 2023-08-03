@@ -62,7 +62,7 @@ The most likely usage for the code is through the functions
 ``modular_symbol_numerical``::
 
     sage: E = EllipticCurve("5077a1")
-    sage: M = E.modular_symbol(implementation = "num")
+    sage: M = E.modular_symbol(implementation="num")
     sage: M(0)
     0
     sage: M(1/123)
@@ -80,7 +80,8 @@ accessible, too)::
     35261176
     sage: M = E.modular_symbol(implementation="num", sign=-1)
     sage: M
-    Numerical modular symbol attached to Elliptic Curve defined by y^2 = x^3 + 101*x + 103 over Rational Field
+    Numerical modular symbol attached to
+     Elliptic Curve defined by y^2 = x^3 + 101*x + 103 over Rational Field
 
 We can then compute the value `[13/17]^{-}` and `[1/17]^{+}` by calling
 the function ``M``. The value of `[0]^{+}=0` tells us that the rank of
@@ -140,8 +141,7 @@ can twist to a semistable curve, like in this example::
     sage: M(1/101)
     41
 
-
-AUTHOR:
+AUTHORS:
 
 - Chris Wuthrich (2013-16)
 
@@ -165,18 +165,16 @@ AUTHOR:
 from cysignals.memory cimport sig_malloc, sig_free, sig_realloc
 from cysignals.signals cimport sig_check
 
+from sage.arith.misc import euler_phi, kronecker as kronecker_symbol
 from sage.misc.cachefunc import cached_method
-
+from sage.misc.misc_c import prod
+from sage.misc.verbose import verbose
 from sage.rings.complex_mpfr cimport ComplexNumber
 from sage.rings.complex_mpfr import ComplexField
-from sage.rings.real_mpfr cimport RealNumber, RealField
-from sage.rings.rational cimport Rational
 from sage.rings.integer cimport Integer
+from sage.rings.rational cimport Rational
+from sage.rings.real_mpfr cimport RealNumber, RealField
 
-from sage.misc.all import prod
-from sage.misc.verbose import verbose
-from sage.arith.all import kronecker_symbol
-from sage.arith.misc import euler_phi
 
 cdef extern from "<math.h>":
     double log(double)
@@ -203,7 +201,7 @@ cdef llong llgcd(llong a, llong b) except -1:
     return fa.gcd_longlong(a,b)
 
 cdef llong llinvmod(llong a, llong m):
-    return  fa.inverse_mod_longlong(a,m)
+    return fa.inverse_mod_longlong(a, m)
 
 DEF TWOPI = 6.28318530717958647
 
@@ -315,17 +313,17 @@ cdef int proj_normalise(llong N, llong u, llong  v,
 
     INPUT:
 
-    -  ``N`` -- an integer (the modulus or level)
+    - ``N`` -- an integer (the modulus or level)
 
-    -  ``u`` -- an integer (the first coordinate of (u:v))
+    - ``u`` -- an integer (the first coordinate of (u:v))
 
-    -  ``v`` -- an integer (the second coordinate of (u:v))
+    - ``v`` -- an integer (the second coordinate of (u:v))
 
     OUTPUT: If gcd(u,v,N) = 1, then returns (in a pointer)
 
-    -  ``uu`` - an integer
+    - ``uu`` -- an integer
 
-    -  ``vv`` - an integer
+    - ``vv`` -- an integer
 
     if `\gcd(u,v,N) \not= 1`, returns 0, 0, 0.
     """
@@ -782,20 +780,20 @@ cdef class ModularSymbolNumerical:
         self._set_den_bounds()
         self.__cached_methods = {}
 
-        #self.nc_sums = Integer(0)
-        #self.nc_direct = Integer(0)
-        #self.nc_indirect = Integer(0)
-        #self.nc_terms = Integer(0)
+        # self.nc_sums = Integer(0)
+        # self.nc_direct = Integer(0)
+        # self.nc_indirect = Integer(0)
+        # self.nc_terms = Integer(0)
 
         # this is a bound to decide when to go directly to ioo
         # rather than using further convergents.
         # see symbol(r) where it is used
         self._cut_val = <llong>( E.conductor().isqrt() // 4 )
         if self._cut_val < 100:
-           self._cut_val = 100
+            self._cut_val = 100
         # this is can be used to disable it
-        #self._cut_val = <long>(-1)
-        #verbose("       leaving __init__", level=5)
+        # self._cut_val = <long>(-1)
+        # verbose("       leaving __init__", level=5)
 
     def __dealloc__(self):
         r"""
@@ -844,7 +842,7 @@ cdef class ModularSymbolNumerical:
         - ``sign`` -- optional either +1 or -1, or 0 (default),
           in which case the sign passed to the class is taken.
 
-        - ``use_twist`` -- boolean (default:True); decides if we
+        - ``use_twist`` -- boolean (default: True); decides if we
           allow to use a quadratic twist.
 
         OUTPUT: a rational number
@@ -971,7 +969,7 @@ cdef class ModularSymbolNumerical:
         ans = self._evaluate_approx(ra, eps)
 
         if prec > self._om1.parent().prec():
-            L = self._E.period_lattice().basis(prec = prec)
+            L = self._E.period_lattice().basis(prec=prec)
             self._om1 = L[0]
             self._om2 = L[1].imag()
             cinf = self._E.real_components()
@@ -1169,7 +1167,7 @@ cdef class ModularSymbolNumerical:
         # have to make sure that when twisting by a
         # prime ell, the twisted curve does not have
         # additive reduction. Otherwise, unitary
-        # cusps will become non-movalble.
+        # cusps will become non-movable.
         if D != 1:
             Nt = Et.conductor()
             for ell in D.prime_divisors():
@@ -1359,7 +1357,6 @@ cdef class ModularSymbolNumerical:
             sage: M.clear_cache()
             sage: M(0)
             1/5
-
         """
         cadi = self.__cached_methods
         for me in cadi:
@@ -1843,11 +1840,11 @@ cdef class ModularSymbolNumerical:
         for ke in cac:
             mm, zz, eeps = ke[0]
             if mm == m and zz == z:
-                if eps == None:
-                    if eeps == None or eeps <= epsi:
+                if eps is None:
+                    if eeps is None or eeps <= epsi:
                         return cac[ke]
                 else:
-                    if eeps != None and eeps <= eps:
+                    if eeps is not None and eeps <= eps:
                         return cac[ke]
 
         T, prec = self._get_truncation_and_prec(y, epsi)
@@ -2028,7 +2025,7 @@ cdef class ModularSymbolNumerical:
 
         INPUT:
 
-        - ``r``, ``rr` -- two Rationals
+        - ``r``, ``rr`` -- two Rationals
 
         - ``espQ`` and ``espQ`` -- two Integers
 
@@ -2158,10 +2155,8 @@ cdef class ModularSymbolNumerical:
             ans = su
         return CC(ans)
 
-
-
     def _from_r_to_rr_approx(self, Rational r, Rational rr, double eps,
-                             method = None, int use_partials=2):
+                             method=None, int use_partials=2):
         r"""
         Given a cusp `r` this computes the integral `\lambda(r\to r')`
         from `r` to `r'` to the given precision ``eps``.
@@ -2174,7 +2169,7 @@ cdef class ModularSymbolNumerical:
 
         - ``eps`` -- a positive real number
 
-        - ``method`` - a string or None: either "direct", "indirect",
+        - ``method`` -- a string or None: either "direct", "indirect",
           "both". When method is not given (default), then the better
           of the two is chosen. "both" raises an error if the two
           methods differ by more than ``eps``.
@@ -2315,7 +2310,7 @@ cdef class ModularSymbolNumerical:
 
         if method == "indirect" or method == "both":
             verbose("  using the indirect integration from %s to %s "
-                    "with %s terms to sum"%(r, rr, T1+T2), level =2)
+                    "with %s terms to sum"%(r, rr, T1+T2), level=2)
             #self.nc_indirect += 1
             ans2 = ( self._from_ioo_to_r_approx(r, eps/2,
                                                 use_partials=use_partials)
@@ -2347,9 +2342,9 @@ cdef class ModularSymbolNumerical:
 
         - ``r`` -- a rational number
 
-        - ``rr`` - another rational number
+        - ``rr`` -- another rational number
 
-        - ``eps`` - a positive real number
+        - ``eps`` -- a positive real number
 
         OUTPUT: a complex number
 
@@ -2476,7 +2471,7 @@ cdef class ModularSymbolNumerical:
 
     # (key=lambda r,sign,use_partials:(r,sign)) lead to a compiler crash
     @cached_method
-    def _value_ioo_to_r(self, Rational r, int sign = 0,
+    def _value_ioo_to_r(self, Rational r, int sign=0,
                         int use_partials=2):
         r"""
         Return `[r]^+` or `[r]^-` for a rational `r`.
@@ -2534,7 +2529,7 @@ cdef class ModularSymbolNumerical:
         return self._round(lap, sign, True)
 
     @cached_method
-    def _value_r_to_rr(self, Rational r, Rational rr, int sign = 0,
+    def _value_r_to_rr(self, Rational r, Rational rr, int sign=0,
                        int use_partials=2):
         r"""
         Return the rational number `[r']^+ - [r]^+`. However the
@@ -2605,7 +2600,7 @@ cdef class ModularSymbolNumerical:
         return self._round(lap, sign, True)
 
     @cached_method
-    def transportable_symbol(self, Rational r, Rational rr, int sign = 0):
+    def transportable_symbol(self, Rational r, Rational rr, int sign=0):
         r"""
         Return the symbol `[r']^+ - [r]^+` where `r'=\gamma(r)` for some
         `\gamma\in\Gamma_0(N)`. These symbols can be computed by transporting
@@ -2862,8 +2857,7 @@ cdef class ModularSymbolNumerical:
                     res -= self._value_ioo_to_r(rr,sign, use_partials=2)
                 return res
 
-
-    def manin_symbol(self, llong u, llong v, int sign = 0):
+    def manin_symbol(self, llong u, llong v, int sign=0):
         r"""
         Given a pair `(u,v)` presenting a point in
         `\mathbb{P}^1(\mathbb{Z}/N\mathbb{Z})` and hence a coset of
@@ -2879,7 +2873,6 @@ cdef class ModularSymbolNumerical:
 
         - ``sign`` -- optional either +1 or -1, or 0 (default),
           in which case the sign passed to the class is taken.
-
 
         EXAMPLES::
 
@@ -3112,7 +3105,7 @@ cdef class ModularSymbolNumerical:
                 else:
                     y += m
                     x -= a
-            # Note: it could still still be non-unitary.
+            # Note: it could still be non-unitary.
             # Example: N=36 a=2, m=5
             uu = (-y) % N
             vv = m % N
@@ -3164,7 +3157,6 @@ cdef class ModularSymbolNumerical:
             {1/12: 1/5, 5/12: -23/10, 7/12: -23/10, 11/12: 1/5}
             sage: M.all_values_for_one_denominator(12, -1)
             {1/12: 0, 5/12: 1/2, 7/12: -1/2, 11/12: 0}
-
 
             sage: E = EllipticCurve('20a1')
             sage: M = E.modular_symbol(implementation="num")
@@ -3325,7 +3317,6 @@ cdef class ModularSymbolNumerical:
             sage: m = E.modular_symbol_numerical()
             sage: m(1/2)          #abs tol 1e-4
             -0.166666666666667
-
         """
         #verbose("       enter _evaluate_approx with r=%s, eps=%s"%(r,eps),
         #        level=5)
@@ -3366,21 +3357,21 @@ cdef class ModularSymbolNumerical:
         #        level=4)
         # make the cusp -x/y unitary if possible.
         B = y.gcd(N)
-        if B.gcd(N//B) != 1:
+        if B.gcd(N // B) != 1:
             if y > 0:
                 y -= m
                 x += a
             else:
                 y += m
                 x -= a
-        r2 = - x/y
+        r2 = - x / y
         B = y.gcd(N)
         Q = N // B
-        if Q.gcd(N//Q) != 1: # r2 is not unitary
-            return  self._symbol_non_unitary_approx(r, eps)
+        if Q.gcd(N // Q) != 1: # r2 is not unitary
+            return self._symbol_non_unitary_approx(r, eps)
 
-        r2 = - x/y
-        verbose("Next piece: integrate to the cusp %s "%r2, level=2)
+        r2 = - x / y
+        verbose("Next piece: integrate to the cusp %s " % r2, level=2)
         res = self._from_r_to_rr_approx(r, r2, eps,
                                         use_partials=2)
         res += self._evaluate_approx(r2, eps)
@@ -3545,7 +3536,6 @@ def _test_init(E):
       _set_den_bounds
 
     - four real numbers which are allowed errors in computations
-
 
     EXAMPLES::
 
@@ -3730,7 +3720,7 @@ def _test_against_table(range_of_conductors, other_implementation="sage", list_o
 
     - ``list_of_cusps`` -- a list of rationals to be tested
 
-    - ``verb`` - if True (default) prints the values
+    - ``verb`` -- if True (default) prints the values
 
     OUTPUT: Boolean. If False the function also prints information.
 
@@ -3761,7 +3751,7 @@ def _test_against_table(range_of_conductors, other_implementation="sage", list_o
             Mr = M(r)
             M2r = M(r, sign=-1)
             if verb:
-                print("r={} : ({},{}),({}, {})".format(r,mr,m2r,Mr,M2r), end= "  ", flush=True)
+                print("r={} : ({},{}),({}, {})".format(r,mr,m2r,Mr,M2r), end="  ", flush=True)
             if mr != Mr or m2r != M2r:
                 print (("B u g : curve = {}, cusp = {}, sage's symbols"
                         + "({},{}), our symbols ({}, {})").format(C.label(), r,

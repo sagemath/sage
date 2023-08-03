@@ -21,7 +21,7 @@ AUTHORS:
 
 from sage.numerical.mip import MIPSolverException
 from sage.numerical.interactive_simplex_method import InteractiveLPProblem, default_variable_name
-from sage.modules.all import vector
+from sage.modules.free_module_element import vector
 from copy import copy
 
 
@@ -53,22 +53,22 @@ cdef class InteractiveLPBackend:
 
         This backend can work with irrational algebraic numbers::
 
-            sage: poly = polytopes.dodecahedron(base_ring=AA)
-            sage: lp, x = poly.to_linear_program(solver='InteractiveLP', return_variable=True)
-            sage: lp.set_objective(x[0] + x[1] + x[2])
-            sage: lp.solve()
+            sage: poly = polytopes.dodecahedron(base_ring=AA)                                   # optional - sage.rings.number_field
+            sage: lp, x = poly.to_linear_program(solver='InteractiveLP', return_variable=True)  # optional - sage.rings.number_field
+            sage: lp.set_objective(x[0] + x[1] + x[2])                                          # optional - sage.rings.number_field
+            sage: lp.solve()                                                                    # optional - sage.rings.number_field
             2.291796067500631?
-            sage: lp.get_values(x[0], x[1], x[2])
+            sage: lp.get_values(x[0], x[1], x[2])                                               # optional - sage.rings.number_field
             [0.763932022500211?, 0.763932022500211?, 0.763932022500211?]
-            sage: lp.set_objective(x[0] - x[1] - x[2])
-            sage: lp.solve()
+            sage: lp.set_objective(x[0] - x[1] - x[2])                                          # optional - sage.rings.number_field
+            sage: lp.solve()                                                                    # optional - sage.rings.number_field
             2.291796067500631?
-            sage: lp.get_values(x[0], x[1], x[2])
+            sage: lp.get_values(x[0], x[1], x[2])                                               # optional - sage.rings.number_field
             [0.763932022500211?, -0.763932022500211?, -0.763932022500211?]
         """
 
         if base_ring is None:
-            from sage.rings.all import QQ
+            from sage.rings.rational_field import QQ
             base_ring = QQ
 
         self.lp = InteractiveLPProblem([], [], [], base_ring=base_ring)
@@ -191,9 +191,9 @@ cdef class InteractiveLPBackend:
 
         - ``binary`` - ``True`` if the variable is binary (default: ``False``).
 
-        - ``continuous`` - ``True`` if the variable is binary (default: ``True``).
+        - ``continuous`` - ``True`` if the variable is continuous (default: ``True``).
 
-        - ``integer`` - ``True`` if the variable is binary (default: ``False``).
+        - ``integer`` - ``True`` if the variable is integral (default: ``False``).
 
         - ``obj`` - (optional) coefficient of this variable in the objective function (default: 0)
 
@@ -228,7 +228,7 @@ cdef class InteractiveLPBackend:
         """
         A, b, c, x, constraint_types, variable_types, problem_type, ring, d = self._AbcxCVPRd()
         cdef int vtype = int(binary) + int(continuous) + int(integer)
-        if  vtype == 0:
+        if vtype == 0:
             continuous = True
         elif vtype != 1:
             raise ValueError("Exactly one parameter of 'binary', 'integer' and 'continuous' must be 'True'.")
@@ -487,8 +487,10 @@ cdef class InteractiveLPBackend:
         """
         A, b, c, x, constraint_types, variable_types, problem_type, ring, d = self._AbcxCVPRd()
         A = A.delete_rows((i,))
-        b = list(b); del b[i]
-        constraint_types=list(constraint_types); del constraint_types[i]
+        b = list(b)
+        del b[i]
+        constraint_types = list(constraint_types)
+        del constraint_types[i]
         self.lp = InteractiveLPProblem(A, b, c, x,
                                        constraint_types, variable_types,
                                        problem_type, ring, objective_constant_term=d)
@@ -528,11 +530,11 @@ cdef class InteractiveLPBackend:
         """
         A, b, c, x, constraint_types, variable_types, problem_type, ring, d = self._AbcxCVPRd()
         if lower_bound is None:
-           if upper_bound is None:
-               raise ValueError("At least one of lower_bound and upper_bound must be provided")
-           else:
-               constraint_types = constraint_types + ("<=",)
-               b = tuple(b) + (upper_bound,)
+            if upper_bound is None:
+                raise ValueError("At least one of lower_bound and upper_bound must be provided")
+            else:
+                constraint_types = constraint_types + ("<=",)
+                b = tuple(b) + (upper_bound,)
         else:
             if upper_bound is None:
                 constraint_types = constraint_types + (">=",)
@@ -983,7 +985,7 @@ cdef class InteractiveLPBackend:
         - ``index`` (integer) -- the variable's id
 
         - ``value`` -- real value, or ``None`` to mean that the
-          variable has not upper bound. When set to ``None``
+          variable has not upper bound. When set to ``False``
           (default), the method returns the current value.
 
         EXAMPLES::
@@ -1027,7 +1029,7 @@ cdef class InteractiveLPBackend:
         - ``index`` (integer) -- the variable's id
 
         - ``value`` -- real value, or ``None`` to mean that the
-          variable has no lower bound. When set to ``None``
+          variable has no lower bound. When set to ``False``
           (default), the method returns the current value.
 
         EXAMPLES::

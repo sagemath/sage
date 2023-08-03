@@ -2,7 +2,7 @@ Vector Fields
 =============
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
    sage/manifolds/differentiable/vectorfield_module
 

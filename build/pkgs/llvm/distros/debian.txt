@@ -1,1 +1,1 @@
-llvm-toolchain
+clang

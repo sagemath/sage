@@ -1,0 +1,8 @@
+cd src
+mkdir build
+cd build
+sdh_cmake -DCMAKE_BUILD_WITH_INSTALL_NAME_DIR=ON \
+          -DPAPILO=on -DPAPILO_DIR="${SAGE_LOCAL}" \
+          ..
+sdh_make
+sdh_make_install

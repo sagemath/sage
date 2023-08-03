@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 r"""
-Piecewise-defined Functions
+Piecewise functions
 
 This module implement piecewise functions in a single variable. See
 :mod:`sage.sets.real_set` for more information about how to construct
@@ -108,7 +108,7 @@ class PiecewiseFunction(BuiltinFunction):
           domain and a symbolic function.
 
         - ``var=x`` -- a symbolic variable or ``None`` (default). The
-        real variable in which the function is piecewise in.
+          real variable in which the function is piecewise in.
 
         OUTPUT:
 
@@ -283,8 +283,39 @@ class PiecewiseFunction(BuiltinFunction):
         """
         raise NotImplementedError
 
+    def _tderivative_(self, parameters, variable, *args, **kwds):
+        """
+        Return the derivative of the piecewise function by applying the
+        derivative to each piece.
 
-    class EvaluationMethods(object):
+        EXAMPLES::
+
+            sage: f = piecewise([ [(-1,1), x**2], [(1,3), x**3]])
+            sage: f.diff()
+            piecewise(x|-->2*x on (-1, 1), x|-->3*x^2 on (1, 3); x)
+            sage: f.diff(x,x)
+            piecewise(x|-->2 on (-1, 1), x|-->6*x on (1, 3); x)
+
+        This still fails miserably::
+
+            sage: y = SR.var('y')
+            sage: f = piecewise([ [(-6,0), x+y], [(0,8), x*y]],var=x)
+            sage: f.derivative(x)  # known bug
+            piecewise(x|-->1 on (-6, 0), x|-->y on (0, 8); x)
+            sage: f.derivative(y)  # known bug
+            piecewise(x|-->1 on (-6, 0), x|-->x on (0, 8); x)
+
+        TESTS::
+
+            sage: f = piecewise([((-oo, -1),0), ((-1, 1),exp(-1/(1 - x^2))), ((1, oo),0)])
+            sage: f.diff()
+            piecewise(x|-->0 on (-oo, -1), x|-->-2*x*e^(1/(x^2 - 1))/(x^2 - 1)^2 on (-1, 1), x|-->0 on (1, +oo); x)
+        """
+        return piecewise([(domain, func.derivative(*args))
+                          for domain, func in parameters],
+                         var=variable)
+
+    class EvaluationMethods():
 
         def __pow__(self, parameters, variable, n):
             """
@@ -468,25 +499,6 @@ class PiecewiseFunction(BuiltinFunction):
             if value is not None:
                 substitution[variable] = value
             return self.subs(substitution)
-
-        def _fast_float_(self, *args):
-            """
-            Do not support the old ``fast_float``
-
-            OUTPUT:
-
-            This method raises ``NotImplementedError`` so that
-            plotting uses the newer `fast_callable` implementation.
-
-            EXAMPLES::
-
-                sage: f = piecewise([([0,0], sin(x)), ((0,2), cos(x))])
-                sage: f._fast_float_()
-                Traceback (most recent call last):
-                ...
-                NotImplementedError
-            """
-            raise NotImplementedError
 
         def _fast_callable_(self, parameters, variable, etb):
             """
@@ -715,7 +727,7 @@ class PiecewiseFunction(BuiltinFunction):
                     funcs.append(ex)
             return piecewise(zip(domain, funcs))
 
-        def integral(self, parameters, variable, x=None, a=None, b=None, definite=False):
+        def integral(self, parameters, variable, x=None, a=None, b=None, definite=False, **kwds):
             r"""
             By default, return the indefinite integral of the function.
 
@@ -786,7 +798,9 @@ class PiecewiseFunction(BuiltinFunction):
 
                 sage: f1(x) = e^(-abs(x))
                 sage: f = piecewise([[(-infinity, infinity), f1]])
-                sage: f.integral(definite=True)
+                sage: result = f.integral(definite=True)
+                ...
+                sage: result
                 2
                 sage: f.integral()
                 piecewise(x|-->-integrate(e^(-abs(x)), x, x, +Infinity) on (-oo, +oo); x)
@@ -796,7 +810,6 @@ class PiecewiseFunction(BuiltinFunction):
                 sage: f = piecewise([((0, 5), cos(x))])
                 sage: f.integral()
                 piecewise(x|-->sin(x) on (0, 5); x)
-
 
             TESTS:
 
@@ -813,9 +826,16 @@ class PiecewiseFunction(BuiltinFunction):
                 sage: f.integral(x,0,1)
                 0
 
+            Check that the algorithm keyword can be used::
+
+                sage: ex = piecewise([([0, 1], 1), ((1, oo), 1/x**2)])
+                sage: integral(ex,x,0,100,algorithm='giac')
+                199/100
+                sage: integral(ex,x,algorithm='giac')
+                piecewise(x|-->x on [0, 1], x|-->-1/x + 2 on (1, +oo); x)
             """
             if a is not None and b is not None:
-                F = self.integral(x)
+                F = self.integral(x, **kwds)
                 return F(b) - F(a)
 
             if a is not None or b is not None:
@@ -847,16 +867,16 @@ class PiecewiseFunction(BuiltinFunction):
                     start = interval.lower()
                     end = interval.upper()
                     if start == -infinity and not definite:
-                        fun_integrated = fun.integral(x, end, x)
+                        fun_integrated = fun.integral(x, end, x, **kwds)
                     else:
                         try:
                             assume(start < x)
                         except ValueError: # Assumption is redundant
                             pass
-                        fun_integrated = fun.integral(x, start, x) + area
+                        fun_integrated = fun.integral(x, start, x, **kwds) + area
                         forget(start < x)
                         if definite or end != infinity:
-                            area += fun.integral(x, start, end)
+                            area += fun.integral(x, start, end, **kwds)
                     new_pieces.append([interval, SR(fun_integrated).function(x)])
 
             if definite:
@@ -1069,7 +1089,9 @@ class PiecewiseFunction(BuiltinFunction):
                 sage: f.laplace(t,s)
                 (s + 1)*e^(-s)/s^2 + 2*e^(-s)/s - 1/s^2
             """
-            from sage.all import assume, exp, forget
+            from sage.symbolic.assumptions import assume, forget
+            from sage.functions.log import exp
+
             x = SR.var(x)
             s = SR.var(s)
             assume(s>0)
@@ -1160,7 +1182,8 @@ class PiecewiseFunction(BuiltinFunction):
                 -3/5/pi
 
             """
-            from sage.all import cos, pi
+            from sage.functions.trig import cos
+            from sage.symbolic.constants import pi
             L0 = (self.domain().sup() - self.domain().inf()) / 2
             if not L:
                 L = L0
@@ -1250,7 +1273,8 @@ class PiecewiseFunction(BuiltinFunction):
                 4/3/pi
 
             """
-            from sage.all import sin, pi
+            from sage.functions.trig import sin
+            from sage.symbolic.constants import pi
             L0 = (self.domain().sup() - self.domain().inf()) / 2
             if not L:
                 L = L0
@@ -1338,7 +1362,10 @@ class PiecewiseFunction(BuiltinFunction):
                  - 4/9*sin(3*pi*x)/pi^2 + 4*sin(pi*x)/pi^2 + 1/4
 
             """
-            from sage.all import pi, sin, cos, srange
+            from sage.symbolic.constants import pi
+            from sage.functions.trig import cos, sin
+            from sage.arith.srange import srange
+
             if not L:
                 L = (self.domain().sup() - self.domain().inf()) / 2
             x = self.default_variable()
@@ -1371,6 +1398,40 @@ class PiecewiseFunction(BuiltinFunction):
                      domain._sympy_condition_(variable))
                     for domain, func in parameters]
             return pw(*args)
+
+        def _giac_init_(self, parameters, variable):
+            """
+            Convert this piecewise expression to its Giac equivalent.
+
+            Backward conversion is not yet implemented.
+
+            EXAMPLES::
+
+                sage: ex = piecewise([((0, 1), pi), ([1, 2], x)])
+                sage: f = ex._giac_(); f
+                piecewise(((sageVARx>0) and (1>sageVARx)),pi,((sageVARx>=1) and (2>=sageVARx)),sageVARx)
+                sage: f.diff(x)
+                piecewise(((sageVARx>0) and (1>sageVARx)),0,((sageVARx>=1) and (2>=sageVARx)),1)
+
+                sage: ex = piecewise([((-100, -2), 1/x), ((1, +oo), cos(x))])
+                sage: g = ex._giac_(); g
+                piecewise(((sageVARx>-100) and ((-2)>sageVARx)),1/sageVARx,sageVARx>1,cos(sageVARx))
+                sage: g.diff(x)
+                piecewise(((sageVARx>-100) and ((-2)>sageVARx)),-1/sageVARx^2,sageVARx>1,-sin(sageVARx))
+
+            TESTS::
+
+                sage: f = piecewise([([0,1],x),((1,2),3*x)])
+                sage: a = libgiac(f) # random because verbose
+                sage: a
+                piecewise(((sageVARx>=0) and (1>=sageVARx)),sageVARx,((sageVARx>1) and (2>sageVARx)),sageVARx*3)
+            """
+            from sage.misc.flatten import flatten
+            args = [(domain._giac_condition_(variable),
+                     func._giac_init_())
+                    for domain, func in parameters]
+            args = ",".join(flatten(args))
+            return f"piecewise({args})"
 
 
 piecewise = PiecewiseFunction()

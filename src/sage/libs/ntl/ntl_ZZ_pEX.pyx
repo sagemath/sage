@@ -5,14 +5,15 @@
 # distutils: extra_link_args = NTL_LIBEXTRA
 # distutils: language = c++
 
-"""
-Wrapper for NTL's polynomials over finite ring extensions of $\Z / p\Z.$
+r"""
+Wrapper for NTL's polynomials over finite ring extensions of `\Z / p\Z.`
 
 AUTHORS:
-  -- David Roe (2007-10-10)
+
+- David Roe (2007-10-10)
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2007 William Stein <wstein@gmail.com>
 #                          David Roe     <roed@math.harvard.edu>
 #
@@ -25,8 +26,8 @@ AUTHORS:
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from cysignals.signals cimport sig_on, sig_off
 from sage.ext.cplusplus cimport ccrepr
@@ -35,14 +36,10 @@ include 'misc.pxi'
 include 'decl.pxi'
 
 from cpython.object cimport Py_EQ, Py_NE
-from sage.libs.ntl.ntl_ZZ cimport ntl_ZZ
-from sage.libs.ntl.ntl_ZZ_p cimport ntl_ZZ_p
 from sage.libs.ntl.ntl_ZZ_pE cimport ntl_ZZ_pE
-from sage.libs.ntl.ntl_ZZ_pX cimport ntl_ZZ_pX
 from sage.libs.ntl.ntl_ZZ_pEContext cimport ntl_ZZ_pEContext_class
 from sage.libs.ntl.ntl_ZZ_pEContext import ntl_ZZ_pEContext
 from sage.libs.ntl.ntl_ZZ_pContext cimport ntl_ZZ_pContext_class
-from sage.libs.ntl.ntl_ZZ import unpickle_class_args
 from sage.arith.power cimport generic_power_pos
 
 ##############################################################################
@@ -51,11 +48,11 @@ from sage.arith.power cimport generic_power_pos
 #
 ##############################################################################
 
-cdef class ntl_ZZ_pEX(object):
+cdef class ntl_ZZ_pEX():
     r"""
-    The class \class{ZZ_pEX} implements polynomials over finite ring extensions of $\Z / p\Z$.
+    The class \class{ZZ_pEX} implements polynomials over finite ring extensions of `\Z / p\Z`.
 
-    It can be used, for example, for arithmetic in $GF(p^n)[X]$.
+    It can be used, for example, for arithmetic in `GF(p^n)[X]`.
     However, except where mathematically necessary (e.g., GCD computations),
     ZZ_pE need not be a field.
     """
@@ -87,7 +84,7 @@ cdef class ntl_ZZ_pEX(object):
 
         if v is None:
             return
-        elif isinstance(v, list) or isinstance(v, tuple):
+        elif isinstance(v, (list, tuple)):
             for i from 0 <= i < len(v):
                 x = v[i]
                 if not isinstance(x, ntl_ZZ_pE):
@@ -449,7 +446,7 @@ cdef class ntl_ZZ_pEX(object):
 
     def square(self):
         """
-        Return $f^2$.
+        Return `f^2`.
 
         EXAMPLES::
 
@@ -588,7 +585,7 @@ cdef class ntl_ZZ_pEX(object):
         #return bool(ZZ_pEX_is_monic(self.x))
 
         if ZZ_pEX_IsZero(self.x):
-             return False
+            return False
         cdef ZZ_pE_c x = ZZ_pEX_LeadCoeff(self.x)
         return bool(ZZ_pE_IsOne(x))
 
@@ -997,7 +994,7 @@ cdef class ntl_ZZ_pEX(object):
 
     def invert_and_truncate(self, long m):
         """
-        Compute and return the inverse of self modulo $x^m$.
+        Compute and return the inverse of self modulo `x^m`.
         The constant term of self must be invertible.
 
         EXAMPLES::
@@ -1048,7 +1045,7 @@ cdef class ntl_ZZ_pEX(object):
     def trace_mod(self, ntl_ZZ_pEX modulus):
         """
         Return the trace of this polynomial modulo the modulus.
-        The modulus must be monic, and of positive degree degree bigger
+        The modulus must be monic, and of positive degree bigger
         than the degree of self.
 
         EXAMPLES::
@@ -1251,6 +1248,6 @@ def make_ZZ_pEX(v, modulus):
         sage: sage.libs.ntl.ntl_ZZ_pEX.make_ZZ_pEX([a,b,b], c)
         [[3 2] [1 2] [1 2]]
         sage: type(sage.libs.ntl.ntl_ZZ_pEX.make_ZZ_pEX([a,b,b], c))
-        <type 'sage.libs.ntl.ntl_ZZ_pEX.ntl_ZZ_pEX'>
+        <class 'sage.libs.ntl.ntl_ZZ_pEX.ntl_ZZ_pEX'>
     """
     return ntl_ZZ_pEX(v, modulus)

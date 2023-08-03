@@ -54,7 +54,8 @@ cdef class AttributeErrorMessage:
         Traceback (most recent call last):
         ...
         AttributeError: 'sage.rings.integer.Integer' object has no attribute 'bla'
-        sage: QQ[x].gen().bla
+        sage: x = polygen(ZZ, 'x')
+        sage: QQ[x].gen().bla                                                           # optional - sage.libs.flint
         Traceback (most recent call last):
         ...
         AttributeError: 'sage.rings.polynomial.polynomial_rational_flint.Polynomial_rational_flint' object has no attribute 'bla'
@@ -83,7 +84,7 @@ cdef class AttributeErrorMessage:
         ....: except AttributeError as exc:
         ....:     ElementError2 = exc
         sage: ElementError
-        AttributeError('sage.symbolic.expression.Expression' object has no attribute '__bla'...)
+        AttributeError('sage.rings.polynomial...' object has no attribute '__bla'...)
         sage: ElementError2.args[0] is ElementError.args[0]
         True
         sage: isinstance(ElementError.args[0], sage.cpython.getattr.AttributeErrorMessage)
@@ -247,7 +248,7 @@ cpdef getattr_from_other_class(self, cls, name):
     EXAMPLES::
 
         sage: from sage.cpython.getattr import getattr_from_other_class
-        sage: class A(object):
+        sage: class A():
         ....:      def inc(self):
         ....:          return self + 1
         ....:
@@ -310,8 +311,6 @@ cpdef getattr_from_other_class(self, cls, name):
 
         sage: "__weakref__" in dir(A)
         True
-        sage: "__weakref__" in dir(1)  # py2
-        False
         sage: 1.__weakref__
         Traceback (most recent call last):
         ...
@@ -341,15 +340,6 @@ cpdef getattr_from_other_class(self, cls, name):
         Traceback (most recent call last):
         ...
         AttributeError: 'sage.rings.integer.Integer' object has no attribute '__name__'
-
-    This does not work with an old-style class::
-
-        sage: class OldStyle:  # py2 -- no 'old-style' classes in Python 3
-        ....:     pass
-        sage: getattr_from_other_class(1, OldStyle, "foo")  # py2
-        Traceback (most recent call last):
-        ...
-        TypeError: <class __main__.OldStyle at ...> is not a type
 
     Non-strings as "name" are handled gracefully::
 
@@ -397,11 +387,11 @@ def dir_with_other_class(self, *cls):
 
     EXAMPLES::
 
-        sage: class A(object):
+        sage: class A():
         ....:    a = 1
         ....:    b = 2
         ....:    c = 3
-        sage: class B(object):
+        sage: class B():
         ....:    b = 2
         ....:    c = 3
         ....:    d = 4
@@ -410,20 +400,20 @@ def dir_with_other_class(self, *cls):
         sage: from sage.cpython.getattr import dir_with_other_class
         sage: dir_with_other_class(x, B)
         [..., 'a', 'b', 'c', 'd', 'e']
-        sage: class C(object):
+        sage: class C():
         ....:    f = 6
         sage: dir_with_other_class(x, B, C)
         [..., 'a', 'b', 'c', 'd', 'e', 'f']
 
     Check that objects without dicts are well handled::
 
-        sage: cython("cdef class A:\n    cdef public int a")
-        sage: cython("cdef class B:\n    cdef public int b")
-        sage: x = A()
-        sage: x.a = 1
-        sage: hasattr(x,'__dict__')
+        sage: cython("cdef class A:\n    cdef public int a")                            # optional - sage.misc.cython
+        sage: cython("cdef class B:\n    cdef public int b")                            # optional - sage.misc.cython
+        sage: x = A()                                                                   # optional - sage.misc.cython
+        sage: x.a = 1                                                                   # optional - sage.misc.cython
+        sage: hasattr(x,'__dict__')                                                     # optional - sage.misc.cython
         False
-        sage: dir_with_other_class(x, B)
+        sage: dir_with_other_class(x, B)                                                # optional - sage.misc.cython
         [..., 'a', 'b']
 
     TESTS:

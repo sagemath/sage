@@ -176,8 +176,8 @@ def is_line_graph(g, certificate=False):
 
     This is indeed the subgraph returned::
 
-        sage: C = graphs.PetersenGraph().is_line_graph(certificate=True)[1]
-        sage: C.is_isomorphic(graphs.ClawGraph())
+        sage: C = graphs.PetersenGraph().is_line_graph(certificate=True)[1]             # optional - sage.modules
+        sage: C.is_isomorphic(graphs.ClawGraph())                                       # optional - sage.modules
         True
 
     The house graph is a line graph::
@@ -188,11 +188,11 @@ def is_line_graph(g, certificate=False):
 
     But what is the graph whose line graph is the house ?::
 
-        sage: is_line, R, isom = g.is_line_graph(certificate=True)
-        sage: R.sparse6_string()
+        sage: is_line, R, isom = g.is_line_graph(certificate=True)                      # optional - sage.modules
+        sage: R.sparse6_string()                                                        # optional - sage.modules
         ':DaHI~'
-        sage: R.show()
-        sage: isom
+        sage: R.show()                                                                  # optional - sage.modules sage.plot
+        sage: isom                                                                      # optional - sage.modules
         {0: (0, 1), 1: (0, 2), 2: (1, 3), 3: (2, 3), 4: (3, 4)}
 
     TESTS:
@@ -201,8 +201,8 @@ def is_line_graph(g, certificate=False):
 
         sage: g = 2 * graphs.CycleGraph(3)
         sage: gl = g.line_graph().relabel(inplace=False)
-        sage: new_g = gl.is_line_graph(certificate=True)[1]
-        sage: g.line_graph().is_isomorphic(gl)
+        sage: new_g = gl.is_line_graph(certificate=True)[1]                             # optional - sage.modules
+        sage: g.line_graph().is_isomorphic(gl)                                          # optional - sage.modules
         True
 
     Verify that :trac:`29740` is fixed::
@@ -307,14 +307,14 @@ def line_graph(g, labels=True):
 
         sage: g = graphs.CompleteGraph(4)
         sage: h = g.line_graph()
-        sage: h.vertices()
+        sage: h.vertices(sort=True)
         [(0, 1, None),
-        (0, 2, None),
-        (0, 3, None),
-        (1, 2, None),
-        (1, 3, None),
-        (2, 3, None)]
-        sage: h.am()
+         (0, 2, None),
+         (0, 3, None),
+         (1, 2, None),
+         (1, 3, None),
+         (2, 3, None)]
+        sage: h.am()                                                                    # optional - sage.modules
         [0 1 1 1 1 0]
         [1 0 1 1 0 1]
         [1 1 0 0 1 1]
@@ -322,20 +322,20 @@ def line_graph(g, labels=True):
         [1 0 1 1 0 1]
         [0 1 1 1 1 0]
         sage: h2 = g.line_graph(labels=False)
-        sage: h2.vertices()
+        sage: h2.vertices(sort=True)
         [(0, 1), (0, 2), (0, 3), (1, 2), (1, 3), (2, 3)]
         sage: h2.am() == h.am()
         True
         sage: g = DiGraph([[1..4], lambda i,j: i < j])
         sage: h = g.line_graph()
-        sage: h.vertices()
+        sage: h.vertices(sort=True)
         [(1, 2, None),
-        (1, 3, None),
-        (1, 4, None),
-        (2, 3, None),
-        (2, 4, None),
-        (3, 4, None)]
-        sage: h.edges()
+         (1, 3, None),
+         (1, 4, None),
+         (2, 3, None),
+         (2, 4, None),
+         (3, 4, None)]
+        sage: h.edges(sort=True)
         [((1, 2, None), (2, 3, None), None),
          ((1, 2, None), (2, 4, None), None),
          ((1, 3, None), (3, 4, None), None),
@@ -363,10 +363,10 @@ def line_graph(g, labels=True):
         for v in g:
             # Connect appropriate incident edges of the vertex v
             G.add_edges((e, f) for e in g.incoming_edge_iterator(v, labels=labels)
-                         for f in g.outgoing_edge_iterator(v, labels=labels))
+                        for f in g.outgoing_edge_iterator(v, labels=labels))
         return G
     else:
-        from sage.graphs.all import Graph
+        from sage.graphs.graph import Graph
         G = Graph()
 
         # We must sort the edges' endpoints so that (1,2,None) is seen as the
@@ -414,9 +414,10 @@ def line_graph(g, labels=True):
 
         return G
 
+
 def root_graph(g, verbose=False):
     r"""
-    Return the root graph corresponding to the given graph ``g``
+    Return the root graph corresponding to the given graph ``g``.
 
     See the documentation of :mod:`sage.graphs.line_graph` to know how it works.
 
@@ -441,9 +442,9 @@ def root_graph(g, verbose=False):
         ....:    gl = g.line_graph(labels=False)
         ....:    d = root_graph(gl)
         sage: for i,g in enumerate(graphs(6)): # long time
-        ....:   if not g.is_connected():       # long time
-        ....:     continue                     # long time
-        ....:   test(g)                        # long time
+        ....:   if not g.is_connected():
+        ....:     continue
+        ....:   test(g)
 
     Non line-graphs::
 
@@ -490,7 +491,7 @@ def root_graph(g, verbose=False):
     # Diamond Graph ?
     elif g.order() == 4 and g.size() == 5:
         from sage.graphs.graph import Graph
-        root = Graph([(0,1),(1,2),(2,0),(0,3)])
+        root = Graph([(0, 1), (1, 2), (2, 0), (0, 3)])
         return (root,
                 g.is_isomorphic(root.line_graph(labels=False), certificate=True)[1])
 
@@ -573,7 +574,7 @@ def root_graph(g, verbose=False):
         # together in any clique we have found so far, we add xy to the list of
         # cliques describing our covering.
 
-        for x,y in [(u, v), (v, w), (w, u)]:
+        for x, y in [(u, v), (v, w), (w, u)]:
 
             # If edge xy does not appear in any of the cliques associated with y
             if all(x not in C for C in v_cliques[y]):
@@ -629,7 +630,3 @@ def root_graph(g, verbose=False):
         return R, isom
     else:
         raise ValueError(not_line_graph)
-
-
-
-

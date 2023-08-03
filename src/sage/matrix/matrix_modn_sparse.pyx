@@ -16,7 +16,7 @@ EXAMPLES::
     [3 4 5]
     [6 7 8]
     sage: type(a)
-    <type 'sage.matrix.matrix_modn_sparse.Matrix_modn_sparse'>
+    <class 'sage.matrix.matrix_modn_sparse.Matrix_modn_sparse'>
     sage: parent(a)
     Full MatrixSpace of 3 by 3 sparse matrices over Ring of integers modulo 37
     sage: a^2
@@ -83,7 +83,7 @@ TESTS::
 from libc.stdint cimport uint64_t
 from libc.limits cimport UINT_MAX
 
-from cysignals.memory cimport check_calloc, sig_malloc, sig_free
+from cysignals.memory cimport check_calloc, sig_free
 from cysignals.signals cimport sig_on, sig_off
 
 from sage.ext.stdsage cimport PY_NEW
@@ -91,7 +91,6 @@ from sage.ext.stdsage cimport PY_NEW
 from sage.libs.flint.fmpz cimport fmpz_get_mpz, fmpz_set_mpz
 from sage.libs.flint.fmpz_mat cimport fmpz_mat_entry
 
-from sage.structure.element import is_Vector
 from sage.modules.vector_modn_sparse cimport *
 
 cimport sage.libs.linbox.givaro as givaro
@@ -100,7 +99,6 @@ cimport sage.libs.linbox.linbox as linbox
 from sage.libs.linbox.conversion cimport *
 
 from .matrix2 cimport Matrix
-from sage.libs.gmp.mpz cimport mpz_init_set_si
 cimport sage.matrix.matrix as matrix
 cimport sage.matrix.matrix_sparse as matrix_sparse
 cimport sage.matrix.matrix_dense as matrix_dense
@@ -113,20 +111,15 @@ from sage.misc.verbose import verbose, get_verbose
 
 from sage.matrix.matrix2 import Matrix as Matrix2
 from .args cimport SparseEntry, MatrixArgs_init
-from sage.arith.all import is_prime
-
-from sage.structure.element import is_Vector
+from sage.arith.misc import is_prime
 
 cimport sage.structure.element
 
 from sage.data_structures.binary_search cimport *
 from sage.modules.vector_integer_sparse cimport *
 
-from .matrix_integer_sparse cimport Matrix_integer_sparse
 from .matrix_integer_dense cimport Matrix_integer_dense
 from sage.modules.vector_integer_dense cimport Vector_integer_dense
-
-from sage.misc.decorators import rename_keyword
 
 ################
 # TODO: change this to use extern cdef's methods.
@@ -137,7 +130,7 @@ ai = arith_int()
 
 # The 46341 below is because the mod-n sparse code still uses
 # int's, even on 64-bit computers.  Improving this is
-# Trac Ticket #12679.
+# Github Issue #12679.
 MAX_MODULUS = 46341
 
 cdef class Matrix_modn_sparse(matrix_sparse.Matrix_sparse):
@@ -192,7 +185,7 @@ cdef class Matrix_modn_sparse(matrix_sparse.Matrix_sparse):
         n.ivalue = get_entry(&self.rows[i], j)
         return n
 
-    cdef bint get_is_zero_unsafe(self, Py_ssize_t i, Py_ssize_t j):
+    cdef bint get_is_zero_unsafe(self, Py_ssize_t i, Py_ssize_t j) except -1:
         """
         Return 1 if the entry ``(i, j)`` is zero, otherwise 0.
 
@@ -231,7 +224,7 @@ cdef class Matrix_modn_sparse(matrix_sparse.Matrix_sparse):
             Finite Field of size 13
         """
         d = self.fetch('dict')
-        if not d is None:
+        if d is not None:
             return d
 
         cdef Py_ssize_t i, j, k
@@ -359,13 +352,13 @@ cdef class Matrix_modn_sparse(matrix_sparse.Matrix_sparse):
             [ 9 12 15]
             [19 26 33]
             sage: type(c)
-            <type 'sage.matrix.matrix_modn_dense_double.Matrix_modn_dense_double'>
+            <class 'sage.matrix.matrix_modn_dense_double.Matrix_modn_dense_double'>
 
             sage: a = matrix(GF(2), 20, 20, sparse=True)
             sage: a*a == a._matrix_times_matrix_dense(a)
             True
             sage: type(a._matrix_times_matrix_dense(a))
-            <type 'sage.matrix.matrix_mod2_dense.Matrix_mod2_dense'>
+            <class 'sage.matrix.matrix_mod2_dense.Matrix_mod2_dense'>
         """
         cdef Matrix_modn_sparse right
         cdef matrix_dense.Matrix_dense ans
@@ -427,7 +420,8 @@ cdef class Matrix_modn_sparse(matrix_sparse.Matrix_sparse):
         """
         from sage.misc.verbose import verbose, get_verbose
         x = self.fetch('in_echelon_form')
-        if not x is None and x: return  # already known to be in echelon form
+        if x is not None and x:
+            return  # already known to be in echelon form
         self.check_mutability()
 
         cdef Py_ssize_t i, r, c, min, min_row,  start_row
@@ -501,7 +495,7 @@ cdef class Matrix_modn_sparse(matrix_sparse.Matrix_sparse):
             [(0, 3), (1, 1), (1, 6)]
         """
         x = self.fetch('nonzero_positions')
-        if not x is None:
+        if x is not None:
             if copy:
                 return list(x)
             return x
@@ -1025,7 +1019,7 @@ cdef class Matrix_modn_sparse(matrix_sparse.Matrix_sparse):
             ....:         x, d = m._solve_vector_linbox(b, algorithm=algo)
             ....:         assert m * x == d * b
         """
-        Vin = self._column_ambient_module().dense_module()
+        Vin = self.column_ambient_module(base_ring=None, sparse=False)
         v = Vin(v)
 
         if self._nrows == 0 or self._ncols == 0:
@@ -1056,7 +1050,7 @@ cdef class Matrix_modn_sparse(matrix_sparse.Matrix_sparse):
         elif method == METHOD_BLACKBOX:
             linbox.solve(res[0], D, A[0], b[0], linbox.Method.Blackbox())
 
-        Vout = self._row_ambient_module().dense_module()
+        Vout = self.row_ambient_module(base_ring=None, sparse=False)
         res_sage = new_sage_vector_integer_dense(Vout, res[0])
         cdef Integer d = PY_NEW(Integer)
         mpz_set(d.value, D.get_mpz_const())

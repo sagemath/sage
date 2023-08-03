@@ -437,7 +437,7 @@ class ConjugacyClassGAP(ConjugacyClass):
             sage: cc.cardinality()
             3840
             sage: type(cc.cardinality())
-            <type 'sage.rings.integer.Integer'>
+            <class 'sage.rings.integer.Integer'>
         """
         return self._gap_().Size().sage()
 

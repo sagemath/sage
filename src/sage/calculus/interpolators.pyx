@@ -29,6 +29,7 @@ cimport numpy as np
 from math import pi
 cdef double TWOPI = 2*pi
 
+
 def polygon_spline(pts):
     """
     Creates a polygon from a set of complex or `(x,y)` points. The polygon
@@ -61,6 +62,7 @@ def polygon_spline(pts):
     """
     return PSpline(pts)
 
+
 cdef class PSpline:
     """
     A ``CCSpline`` object contains a polygon interpolation of a figure
@@ -87,7 +89,7 @@ cdef class PSpline:
             sage: pts = [(-1, -1), (1, -1), (1, 1), (-1, 1)]
             sage: ps = polygon_spline(pts)
         """
-        if type(pts[0]) == type((0,0)):
+        if isinstance(pts[0], tuple):
             self.pts = np.array(
                 [complex(i[0], i[1]) for i in pts], dtype=np.complex128)
         else:
@@ -160,6 +162,7 @@ cdef class PSpline:
         pt2 = self.pts[(int(t1) + 1) % self.N]
         return (pt2 - pt1) * self.N / TWOPI
 
+
 def complex_cubic_spline(pts):
     """
     Creates a cubic spline interpolated figure from a set of complex or
@@ -192,6 +195,7 @@ def complex_cubic_spline(pts):
     """
     return CCSpline(pts)
 
+
 cdef class CCSpline:
     """
     A ``CCSpline`` object contains a cubic interpolation of a figure
@@ -209,7 +213,7 @@ cdef class CCSpline:
         (0.9549296...-0.9549296...j)
     """
     cdef int N
-    cdef np.ndarray avec,bvec,cvec,dvec
+    cdef np.ndarray avec, bvec, cvec, dvec
 
     #standard cubic interpolation method
     def __init__(self, pts):
@@ -219,27 +223,27 @@ cdef class CCSpline:
             sage: pts = [(-1, -1), (1, -1), (1, 1), (-1, 1)]
             sage: cs = complex_cubic_spline(pts)
         """
-        if type(pts[0]) == type((0,0)):
+        if isinstance(pts[0], tuple):
             pts = np.array(
                 [complex(pt[0], pt[1]) for pt in pts], dtype=np.complex128)
-        cdef int N, i, k
+        cdef int N, i
         N = len(pts)
         yvec = np.zeros(N, dtype=np.complex128)
-        for i in xrange(N):
+        for i in range(N):
             yvec[i] = 3 * (pts[(i - 1) % N] - 2*pts[i] + pts[(i + 1) % N])
         bmat = np.zeros([N, N], dtype=np.complex128)
-        for i in xrange(N):
+        for i in range(N):
             bmat[i, i] = 4
             bmat[(i - 1) % N, i] = 1
             bmat[(i + 1) % N, i] = 1
         bvec = (np.linalg.solve(bmat, yvec))
         cvec = np.zeros(N, dtype=np.complex128)
-        for i in xrange(N):
+        for i in range(N):
             cvec[i] = (pts[(i + 1) % N] - pts[i] - 1.0/3.0 *
                        bvec[(i + 1) % N] - 2./3. * bvec[i])
         dvec = np.array(pts, dtype=np.complex128)
         avec = np.zeros(N, dtype=np.complex128)
-        for i in xrange(N):
+        for i in range(N):
             avec[i] = 1.0/3.0 * (bvec[(i + 1) % N] - bvec[i])
         self.avec = avec
         self.bvec = bvec

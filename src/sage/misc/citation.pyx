@@ -3,7 +3,7 @@
 Dependency usage tracking for citations
 """
 
-from sage.misc.all import tmp_filename
+from sage.misc.temporary_file import tmp_filename
 from sage.env import SAGE_LOCAL, SAGE_VENV
 
 systems = {}
@@ -23,7 +23,6 @@ systems['Mathematica'] = ['sage.interfaces.mathematica']
 systems['MuPAD'] = ['sage.interfaces.mupad']
 systems['Octave'] = ['sage.interfaces.octave']
 systems['povray'] = ['sage.interfaces.povray']
-systems['qsieve'] = ['sage.interfaces.qsieve']
 systems['Macaulay2'] = ['sage.interfaces.macaulay2']
 systems['mwrank'] = ['sage.interfaces.mwrank', 'sage.libs.eclib']
 systems['matlab'] = ['sage.interfaces.matlab']
@@ -81,7 +80,9 @@ def get_systems(cmd):
         sage: get_systems('I.primary_decomposition()')
         ['Singular']
     """
-    import cProfile, pstats, re
+    import cProfile
+    import pstats
+    import re
 
     if not cython_profile_enabled():
         from warnings import warn
@@ -90,7 +91,7 @@ def get_systems(cmd):
              "Rebuild Sage with the environment variable 'SAGE_PROFILE=yes' "
              "to enable profiling.")
 
-    if not isinstance(cmd, basestring):
+    if not isinstance(cmd, str):
         raise TypeError("command must be a string")
 
     from sage.repl.preparse import preparse

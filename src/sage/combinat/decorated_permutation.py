@@ -24,7 +24,7 @@ from sage.misc.inherit_comparison import InheritComparisonClasscallMetaclass
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.structure.parent import Parent
 from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
-from sage.arith.all import factorial
+from sage.arith.misc import factorial
 from sage.rings.integer import Integer
 from sage.combinat.permutation import Permutations
 from sage.combinat.subset import Subsets
@@ -52,6 +52,26 @@ class DecoratedPermutation(ClonableArray,
 
             sage: DecoratedPermutation([2, 1, -3])
             [2, 1, -3]
+
+        TESTS:
+
+        Check that hashing and comparison works::
+
+            sage: S = DecoratedPermutations(3)
+            sage: elt1 = S([2, 1, -3])
+            sage: elt2 = DecoratedPermutation([2, 1, -3])
+            sage: elt1 == elt2
+            True
+
+            sage: elt1 == [2, 1, -3]
+            False
+
+            sage: elt2 = DecoratedPermutation([2, 1, 3])
+            sage: elt1 != elt2
+            True
+
+            sage: hash(elt1)                                                    # random
+            915443076393556996
 
         """
         pi = list(pi)
@@ -85,46 +105,6 @@ class DecoratedPermutation(ClonableArray,
         """
         if self not in self.parent():
             raise ValueError("{} is not a decorated permutation".format(self))
-
-    def __eq__(self, other):
-        """
-        Check whether ``self`` is equal to ``other``.
-
-        INPUT:
-
-        - ``other`` -- the element that ``self`` is compared to
-
-        OUTPUT: Boolean
-
-        EXAMPLES::
-
-            sage: S = DecoratedPermutations(3)
-            sage: elt1 = S([2, 1, -3])
-            sage: elt2 = DecoratedPermutation([2, 1, -3])
-            sage: elt1 == elt2
-            True
-        """
-        return isinstance(other, DecoratedPermutation) and list(self) == list(other)
-
-    def __ne__(self, other):
-        """
-        Check whether ``self`` is not equal to ``other``.
-
-        INPUT:
-
-        - ``other`` -- the element that ``self`` is compared to
-
-        OUTPUT: Boolean
-
-        EXAMPLES::
-
-            sage: S = DecoratedPermutations(3)
-            sage: elt1 = S([2, 1, -3])
-            sage: elt2 = DecoratedPermutation([2, 1, 3])
-            sage: elt1 != elt2
-            True
-        """
-        return not (self == other)
 
     def size(self):
         """
@@ -171,6 +151,7 @@ class DecoratedPermutations(UniqueRepresentation, Parent):
         16
 
     """
+
     def __init__(self, n):
         r"""
         Initialize ``self``.
@@ -232,7 +213,7 @@ class DecoratedPermutations(UniqueRepresentation, Parent):
         if isinstance(pi, DecoratedPermutation):
             if pi.parent() is self:
                 return pi
-            raise ValueError("Cannot convert between decorated permutations of different sizes")
+            raise ValueError("cannot convert between decorated permutations of different sizes")
 
         pi = tuple(pi)
         if check and pi not in self:

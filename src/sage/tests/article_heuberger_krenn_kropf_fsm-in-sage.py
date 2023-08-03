@@ -1,5 +1,5 @@
 r"""
-This file contains doctests of the article
+This file contains doctests of the article ::
 
     Automata and Transducers
     in the Computer Algebra System Sage
@@ -7,10 +7,12 @@ This file contains doctests of the article
 by Clemens Heuberger, Daniel Krenn, and Sara Kropf, :arxiv:`1404.7458`.
 
 IF IT BECOMES NECESSARY TO CHANGE ANY TESTS IN THIS FILE, THERE
-NEEDS TO BE A ONE-YEAR DEPRECATION PERIOD. ALSO, PLEASE INFORM
-    Clemens Heuberger <clemens.heuberger@aau.at>,
-    Daniel Krenn <devel@danielkrenn.at>, AND
-    Sara Kropf <sara.kropf@aau.at>
+NEEDS TO BE A ONE-YEAR DEPRECATION PERIOD. ALSO, PLEASE INFORM:
+
+- Clemens Heuberger <clemens.heuberger@aau.at>,
+- Daniel Krenn <devel@danielkrenn.at>, AND
+- Sara Kropf <sara.kropf@aau.at>
+
 IN THIS CASE REGARDING THE CHANGES!
 """
 
