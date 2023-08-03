@@ -100,15 +100,15 @@ def _palp_PM_max(self, check=False):
             continue
         # otherwise:
         for i in range(1, n_v):
-            max_element = PM[k, (<PermutationGroupElement> permutations[n_s][1](i + 1)) - 1]
-            m = i + 1
+            max_element = PM[k, (<PermutationGroupElement> permutations[n_s][1])(i + 1) - 1]
+            m = i
             for j in range(i + 1, n_v):
-                element = PM[k, (<PermutationGroupElement> permutations[n_s][1](j+1)) - 1]
+                element = PM[k, (<PermutationGroupElement> permutations[n_s][1])(j + 1) - 1]
                 if element > max_element:
                     max_element = element
                     m = j
-            if m > i + 1:
-                permutations[n_s][1] = (<PermutationGroupElement> permutations[n_s][1])._transpose_left(i + 1, m)
+            if m > i:
+                permutations[n_s][1] = (<PermutationGroupElement> permutations[n_s][1])._transpose_left(i + 1, m + 1)
             if d == 0:
                 d = (PM[k, (<PermutationGroupElement> permutations[n_s][1])(i+1) - 1]
                      - (<PermutationGroupElement> permutations[0][1])(first_row)[i])
