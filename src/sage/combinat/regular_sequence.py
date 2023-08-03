@@ -1282,7 +1282,7 @@ class RegularSequence(RecognizableSeries):
 
         Thue--Morse Sequence::
 
-            sage: Seq2 = kRegularSequenceSpace(2, ZZ)
+            sage: Seq2 = RegularSequenceRing(2, ZZ)
             sage: TM = Seq2([Matrix([[1, 0], [0, 1]]), Matrix([[0, 1], [1, 0]])],
             ....:           left=vector([1, 0]), right=vector([0, 1]))
             sage: TM.is_bounded()
@@ -1362,7 +1362,7 @@ class RegularSequence(RecognizableSeries):
 
         .. SEEALSO::
 
-            :mod:`boundedness of `k`-regular sequences <sage.combinat.k_regular_sequence_bounded>`
+            :mod:`boundedness of `k`-regular sequences <sage.combinat.regular_sequence_bounded>`
 
         TESTS::
 
@@ -1382,8 +1382,8 @@ class RegularSequence(RecognizableSeries):
             sage: S.is_bounded()
             True
         """
-        from sage.combinat.k_regular_sequence_bounded import k_regular_sequence_is_bounded
-        return k_regular_sequence_is_bounded(self)
+        from sage.combinat.regular_sequence_bounded import regular_sequence_is_bounded
+        return regular_sequence_is_bounded(self)
 
 
 def _pickle_RegularSequenceRing(k, coefficients, category):

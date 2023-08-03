@@ -11,7 +11,7 @@ Various
 
 .. SEEALSO::
 
-    :mod:`sage.combinat.k_regular_sequence`,
+    :mod:`sage.combinat.regular_sequence`,
     :mod:`recognizable series <sage.combinat.recognizable_series>`,
     :mod:`sage.rings.cfinite_sequence`,
     :mod:`sage.combinat.binary_recurrence_sequences`.
@@ -48,7 +48,7 @@ def multiply_reduce(A, B):
     Return the matrix `A\cdot B` with entries `\min{(A\cdot B)_{ij},2}`.
 
     This function is used in
-    :func:`<sage.combinat.k_regular_sequence_bounded.mandel_simon_algorithm>`.
+    :func:`<sage.combinat.regular_sequence_bounded.mandel_simon_algorithm>`.
 
     INPUT:
 
@@ -61,7 +61,7 @@ def multiply_reduce(A, B):
 
     EXAMPLES::
 
-        sage: from sage.combinat.k_regular_sequence_bounded import multiply_reduce
+        sage: from sage.combinat.regular_sequence_bounded import multiply_reduce
         sage: A = Matrix([[2, 0], [0, 2]])
         sage: B = Matrix([[-2, 0], [0, 2]])
         sage: A*B
@@ -102,7 +102,7 @@ def construct_phi(matrices):
 
     EXAMPLES::
 
-        sage: from sage.combinat.k_regular_sequence_bounded import construct_phi
+        sage: from sage.combinat.regular_sequence_bounded import construct_phi
         sage: L = [Matrix([[2, 2], [1, 3]]), Matrix([[0, 2], [1, 1]])]
         sage: construct_phi(L)
         [
@@ -184,7 +184,7 @@ def is_integer_valued(matrices):
 
     EXAMPLES::
 
-        sage: from sage.combinat.k_regular_sequence_bounded import is_integer_valued
+        sage: from sage.combinat.regular_sequence_bounded import is_integer_valued
         sage: matrices = [Matrix([[1, 2], [-1, 0]]), Matrix([[42, -42], [0, 0]])]
         sage: is_integer_valued(matrices)
         True
@@ -227,7 +227,7 @@ def is_non_negative(matrices):
 
     EXAMPLES::
 
-        sage: from sage.combinat.k_regular_sequence_bounded import is_non_negative
+        sage: from sage.combinat.regular_sequence_bounded import is_non_negative
         sage: matrices = [Matrix([[1, 2], [1, 0]]), Matrix([[42, -42], [0, 0]])]
         sage: is_non_negative(matrices)
         False
@@ -267,14 +267,14 @@ def is_bounded_via_mandel_simon_algorithm(matrices):
 
     EXAMPLES::
 
-        sage: from sage.combinat.k_regular_sequence_bounded import is_bounded_via_mandel_simon_algorithm
+        sage: from sage.combinat.regular_sequence_bounded import is_bounded_via_mandel_simon_algorithm
         sage: J = [Matrix([[1, 0, 1], [0, 1, 1], [0, 0, 0]])]
         sage: is_bounded_via_mandel_simon_algorithm(J)
         True
 
     ::
 
-        sage: from sage.combinat.k_regular_sequence_bounded import is_bounded_via_mandel_simon_algorithm
+        sage: from sage.combinat.regular_sequence_bounded import is_bounded_via_mandel_simon_algorithm
         sage: K = [Matrix([[1, 1], [1, 1]])]
         sage: is_bounded_via_mandel_simon_algorithm(K)
         False
@@ -326,7 +326,7 @@ def has_bounded_matrix_powers(matrices):
     algebraic multiplicity equals geometric multiplicity
     for all eigenvalues with absolute value `=1`::
 
-        sage: from sage.combinat.k_regular_sequence_bounded import has_bounded_matrix_powers
+        sage: from sage.combinat.regular_sequence_bounded import has_bounded_matrix_powers
         sage: matrices = [Matrix([[-1, 1, 1], [-1, 1, 1], [1, -1, 1]]),
         ....:             Matrix([[-1, 1, 1], [-1, 0, 0], [1, 1, 1]])]
         sage: has_bounded_matrix_powers(matrices)
@@ -376,7 +376,7 @@ def make_positive(matrices):
 
     EXAMPLES::
 
-        sage: from sage.combinat.k_regular_sequence_bounded import make_positive
+        sage: from sage.combinat.regular_sequence_bounded import make_positive
         sage: matrices = [Matrix([[1, 2], [1, 0]]), Matrix([[42, 42], [0, 0]])]
         sage: make_positive(matrices)
         [
@@ -413,7 +413,7 @@ def make_positive(matrices):
     return list(do(mat) for mat in matrices)
 
 
-def k_regular_sequence_is_bounded(S):
+def regular_sequence_is_bounded(S):
     r"""
     Return whether this `k`-regular sequence is bounded.
 
@@ -429,50 +429,46 @@ def k_regular_sequence_is_bounded(S):
 
     Thue--Morse Sequence::
 
-        sage: from sage.combinat.k_regular_sequence_bounded import k_regular_sequence_is_bounded
-        sage: Seq2 = kRegularSequenceSpace(2, ZZ)
-        doctest:...: FutureWarning: This class/method/function is
-        marked as experimental. It, its functionality or its interface
-        might change without a formal deprecation.
-        See http://trac.sagemath.org/21202 for details.
+        sage: from sage.combinat.regular_sequence_bounded import regular_sequence_is_bounded
+        sage: Seq2 = RegularSequenceRing(2, ZZ)
         sage: TM = Seq2([Matrix([[1, 0], [0, 1]]), Matrix([[0, 1], [1, 0]])],
         ....:            left=vector([1, 0]), right=vector([0, 1]))
-        sage: k_regular_sequence_is_bounded(TM)
+        sage: regular_sequence_is_bounded(TM)
         True
 
     Binary Sum of Digits::
 
         sage: SD = Seq2([Matrix([[1, 0], [0, 1]]), Matrix([[0, -1], [1, 2]])],
         ....:           left=vector([0, 1]), right=vector([1, 0]))
-        sage: k_regular_sequence_is_bounded(SD)
+        sage: regular_sequence_is_bounded(SD)
         False
 
     Sequence of All Natural Numbers::
 
         sage: N = Seq2([Matrix([[2, 0], [2, 1]]), Matrix([[0, 1], [-2, 3]])],
         ....:          left=vector([1, 0]), right=vector([0, 1]))
-        sage: k_regular_sequence_is_bounded(N)
+        sage: regular_sequence_is_bounded(N)
         False
 
     Indicator Function of Even Integers::
 
         sage: E = Seq2([Matrix([[0, 1], [0, 1]]), Matrix([[0, 0], [0, 1]])],
         ....:          left=vector([1, 0]), right=vector([1, 1]))
-        sage: k_regular_sequence_is_bounded(E)
+        sage: regular_sequence_is_bounded(E)
         True
 
     Indicator Function of Odd Integers::
 
         sage: O = Seq2([Matrix([[0, 0], [0, 1]]), Matrix([[0, 1], [0, 1]])],
         ....:          left=vector([1, 0]), right=vector([0, 1]))
-        sage: k_regular_sequence_is_bounded(O)
+        sage: regular_sequence_is_bounded(O)
         True
 
     Number of Odd Entries in Pascal's Triangle::
 
         sage: U = Seq2([Matrix([[3, 0], [6, 1]]), Matrix([[0, 1], [-6, 5]])],
         ....:          left=vector([1, 0]), right=vector([0, 1]))
-        sage: k_regular_sequence_is_bounded(U)
+        sage: regular_sequence_is_bounded(U)
         False
 
     Counting '10' in the Binary Representation::
@@ -483,7 +479,7 @@ def k_regular_sequence_is_bounded(S):
         ....:                   [0, 0, 1, 0], [-1, 0, 1, 1]])],
         ....:                  left=vector([1, 0, 0, 0]),
         ....:                  right=vector([0, 0, 1, 0]))
-        sage: k_regular_sequence_is_bounded(C)
+        sage: regular_sequence_is_bounded(C)
         False
 
     Numbers Starting with '10'::
@@ -494,14 +490,14 @@ def k_regular_sequence_is_bounded(S):
         ....:                   [0, 2, 0, 1], [0, -2, 0, 3]])],
         ....:                  left=vector([1, 0, 0, 0]),
         ....:                  right=vector([2, 2, 2, 5]))
-        sage: k_regular_sequence_is_bounded(D)
+        sage: regular_sequence_is_bounded(D)
         False
 
     Signum Function::
 
         sage: S = Seq2([Matrix([[1, 0], [0, 1]]), Matrix([[0, 1], [0, 1]])],
         ....:          left=vector([1, 0]), right=vector([0, 1]))
-        sage: k_regular_sequence_is_bounded(S)
+        sage: regular_sequence_is_bounded(S)
         True
 
     Number of Digits from the Right to the First '1'::
@@ -509,7 +505,7 @@ def k_regular_sequence_is_bounded(S):
         sage: S = Seq2([Matrix([[0, 1, 0], [-1, 2, 0], [0, 0, 1]]),
         ....:           Matrix([[0, 0, 1], [0, 0, 2], [0, 0, 1]])],
         ....:          left=vector([1, 0, 0]), right=vector([0, 0, 1]))
-        sage: k_regular_sequence_is_bounded(S)
+        sage: regular_sequence_is_bounded(S)
         False
 
     TESTS::
@@ -517,7 +513,7 @@ def k_regular_sequence_is_bounded(S):
         sage: S = Seq2((Matrix([[0, 1, 0], [0, 0, 1], [-1, 2, 0]]),
         ....: Matrix([[-1, 0, 0], [-3/4, -1/4, 3/4], [-1/4, 1/4, -3/4]])),
         ....: left=vector([1, 0, 0]), right=vector([-4, -4, -4]))
-        sage: k_regular_sequence_is_bounded(S)
+        sage: regular_sequence_is_bounded(S)
         False
 
     ::
@@ -525,7 +521,7 @@ def k_regular_sequence_is_bounded(S):
         sage: S = Seq2((Matrix([[1, 0], [1, 0]]), Matrix([[0, 1],[1, 0]])),
         ....:          left = vector([1, 1]), right = vector([1, 0]),
         ....:          allow_degenerated_sequence=True)
-        sage: k_regular_sequence_is_bounded(S)
+        sage: regular_sequence_is_bounded(S)
         True
     """
     from sage.arith.srange import srange
