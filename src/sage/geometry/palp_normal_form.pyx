@@ -1,4 +1,6 @@
+from sage.groups.perm_gps.permgroup_element cimport PermutationGroupElement
 from sage.groups.perm_gps.permgroup_named import SymmetricGroup
+from sage.matrix.matrix_integer_dense cimport Matrix_integer_dense
 
 
 def _palp_PM_max(self, check=False):
@@ -62,9 +64,9 @@ def _palp_PM_max(self, check=False):
         sage: all(results)  # long time
         True
     """
-    PM = self.vertex_facet_pairing_matrix()
-    n_v = PM.ncols()
-    n_f = PM.nrows()
+    cdef Matrix_integer_dense PM = self.vertex_facet_pairing_matrix()
+    cdef int n_v = PM.ncols()
+    cdef int n_f = PM.nrows()
     S_v = SymmetricGroup(n_v)
     S_f = SymmetricGroup(n_f)
 
@@ -73,12 +75,14 @@ def _palp_PM_max(self, check=False):
         # returns the index of max of any iterable
         return max(enumerate(iterable), key=lambda x: x[1])[0]
 
-    n_s = 1
-    permutations = {0: [S_f.one(), S_v.one()]}
+    cdef int n_s = 1
+    cdef dict permutations = {0: [S_f.one(), S_v.one()]}
+    cdef int j, k, m, d
+
     for j in range(n_v):
         m = index_of_max(PM[0, i] for i in range(j, n_v))
         if m > 0:
-            permutations[0][1] = permutations[0][1]._transpose_left(j + 1, m + j + 1)
+            permutations[0][1] = (<PermutationGroupElement> permutations[0][1])._transpose_left(j + 1, m + j + 1)
     first_row = list(PM[0])
 
     # Arrange other rows one by one and compare with first row
@@ -87,28 +91,27 @@ def _palp_PM_max(self, check=False):
         permutations[n_s] = [S_f.one(), S_v.one()]
         m = index_of_max(PM[k, permutations[n_s][1](j+1) - 1] for j in range(n_v))
         if m > 0:
-            permutations[n_s][1] = permutations[n_s][1]._transpose_left(1, m + 1)
-        d = (PM[k, permutations[n_s][1](1) - 1]
-            - permutations[0][1](first_row)[0])
+            permutations[n_s][1] = (<PermutationGroupElement> permutations[n_s][1])._transpose_left(1, m + 1)
+        d = PM[k, (<PermutationGroupElement> permutations[n_s][1])(1) - 1] - (<PermutationGroupElement> permutations[0][1])(first_row)[0]
         if d < 0:
             # The largest elt of this row is smaller than largest elt
             # in 1st row, so nothing to do
             continue
         # otherwise:
         for i in range(1, n_v):
-            m = index_of_max(PM[k, permutations[n_s][1](j+1) - 1] for j in range(i,n_v))
+            m = index_of_max(PM[k, (<PermutationGroupElement> permutations[n_s][1](j+1)) - 1] for j in range(i,n_v))
             if m > 0:
-                permutations[n_s][1] = permutations[n_s][1]._transpose_left(i + 1, m + i + 1)
+                permutations[n_s][1] = (<PermutationGroupElement> permutations[n_s][1])._transpose_left(i + 1, m + i + 1)
             if d == 0:
-                d = (PM[k, permutations[n_s][1](i+1) - 1]
-                    -permutations[0][1](first_row)[i])
+                d = (PM[k, (<PermutationGroupElement> permutations[n_s][1])(i+1) - 1]
+                     - (<PermutationGroupElement> permutations[0][1])(first_row)[i])
                 if d < 0:
                     break
         if d < 0:
             # This row is smaller than 1st row, so nothing to do
             del permutations[n_s]
             continue
-        permutations[n_s][0] = permutations[n_s][0]._transpose_left(1, k + 1)
+        permutations[n_s][0] = (<PermutationGroupElement> permutations[n_s][0])._transpose_left(1, k + 1)
         if d == 0:
             # This row is the same, so we have a symmetry!
             n_s += 1
@@ -120,20 +123,24 @@ def _palp_PM_max(self, check=False):
             n_s = 1
     permutations = {k: permutations[k] for k in permutations if k < n_s}
 
-    b = tuple(PM[permutations[0][0](1) - 1, permutations[0][1](j+1) - 1] for j in range(n_v))
+    cdef tuple b = tuple(PM[(<PermutationGroupElement> permutations[0][0])(1) - 1,
+                            (<PermutationGroupElement> permutations[0][1])(j+1) - 1] for j in range(n_v))
     # Work out the restrictions the current permutations
     # place on other permutations as a automorphisms
     # of the first row
     # The array is such that:
     # S = [i, 1, ..., 1 (ith), j, i+1, ..., i+1 (jth), k ... ]
     # describes the "symmetry blocks"
-    S = list(range(1, n_v + 1))
+    cdef list S = list(range(1, n_v + 1))
     for i in range(1, n_v):
         if b[i-1] == b[i]:
             S[i] = S[i-1]
             S[S[i]-1] += 1
         else:
             S[i] = i + 1
+
+    cdef int l, np, cf, ccf, n_s_bar, d1, v0, vc, vj
+    cdef list l_r
 
     # We determine the other rows of PM_max in turn by use of perms and
     # aut on previous rows.
@@ -154,19 +161,23 @@ def _palp_PM_max(self, check=False):
             # between 0 and S(0)
             for s in range(l, n_f):
                 for j in range(1, S[0]):
-                    v0 = PM[permutations_bar[n_p][0](s+1) - 1, permutations_bar[n_p][1](1) - 1]
-                    vj = PM[permutations_bar[n_p][0](s+1) - 1, permutations_bar[n_p][1](j+1) - 1]
+                    v0 = PM[(<PermutationGroupElement> permutations_bar[n_p][0])(s+1) - 1,
+                            (<PermutationGroupElement> permutations_bar[n_p][1])(1) - 1]
+                    vj = PM[(<PermutationGroupElement> permutations_bar[n_p][0])(s+1) - 1,
+                            (<PermutationGroupElement> permutations_bar[n_p][1])(j+1) - 1]
                     if v0 < vj:
-                        permutations_bar[n_p][1] = permutations_bar[n_p][1]._transpose_left(1, j + 1)
+                        permutations_bar[n_p][1] = (<PermutationGroupElement> permutations_bar[n_p][1])._transpose_left(1, j + 1)
                 if ccf == 0:
-                    l_r[0] = PM[permutations_bar[n_p][0](s+1) - 1, permutations_bar[n_p][1](1) - 1]
+                    l_r[0] = PM[(<PermutationGroupElement> permutations_bar[n_p][0])(s+1) - 1,
+                                (<PermutationGroupElement> permutations_bar[n_p][1])(1) - 1]
                     if s != l:
-                        permutations_bar[n_p][0] = permutations_bar[n_p][0]._transpose_left(l + 1, s + 1)
+                        permutations_bar[n_p][0] = (<PermutationGroupElement> permutations_bar[n_p][0])._transpose_left(l + 1, s + 1)
                     n_p += 1
                     ccf = 1
                     permutations_bar[n_p] = list(permutations[k])
                 else:
-                    d1 = PM[permutations_bar[n_p][0](s+1) - 1, permutations_bar[n_p][1](1) - 1]
+                    d1 = PM[(<PermutationGroupElement> permutations_bar[n_p][0])(s+1) - 1,
+                            (<PermutationGroupElement> permutations_bar[n_p][1])(1) - 1]
                     d = d1 - l_r[0]
                     if d < 0:
                         # We move to the next line
@@ -174,7 +185,7 @@ def _palp_PM_max(self, check=False):
                     elif d==0:
                         # Maximal values agree, so possible symmetry
                         if s != l:
-                            permutations_bar[n_p][0] = permutations_bar[n_p][0]._transpose_left(l + 1, s + 1)
+                            permutations_bar[n_p][0] = (<PermutationGroupElement> permutations_bar[n_p][0])._transpose_left(l + 1, s + 1)
                         n_p += 1
                         permutations_bar[n_p] = list(permutations[k])
                     else:
@@ -182,7 +193,7 @@ def _palp_PM_max(self, check=False):
                         # It becomes our new reference:
                         l_r[0] = d1
                         if s != l:
-                            permutations_bar[n_p][0] = permutations_bar[n_p][0]._transpose_left(l + 1, s + 1)
+                            permutations_bar[n_p][0] = (<PermutationGroupElement> permutations_bar[n_p][0])._transpose_left(l + 1, s + 1)
                         # Forget previous work done
                         cf = 0
                         permutations_bar = {0: list(permutations_bar[n_p])}
@@ -204,16 +215,20 @@ def _palp_PM_max(self, check=False):
                     s -= 1
                     # Find the largest value in this symmetry block
                     for j in range(c + 1, h):
-                        vc = PM[(permutations_bar[s][0])(l+1) - 1, (permutations_bar[s][1])(c+1) - 1]
-                        vj = PM[(permutations_bar[s][0])(l+1) - 1, (permutations_bar[s][1])(j+1) - 1]
-                        if (vc < vj):
-                            permutations_bar[s][1] = permutations_bar[s][1]._transpose_left(c + 1, j + 1)
+                        vc = PM[(<PermutationGroupElement> permutations_bar[s][0])(l+1) - 1,
+                                (<PermutationGroupElement> permutations_bar[s][1])(c+1) - 1]
+                        vj = PM[(<PermutationGroupElement> permutations_bar[s][0])(l+1) - 1,
+                                (<PermutationGroupElement> permutations_bar[s][1])(j+1) - 1]
+                        if vc < vj:
+                            permutations_bar[s][1] = (<PermutationGroupElement> permutations_bar[s][1])._transpose_left(c + 1, j + 1)
                     if ccf == 0:
                         # Set reference and carry on to next permutation
-                        l_r[c] = PM[(permutations_bar[s][0])(l+1) - 1, (permutations_bar[s][1])(c+1) - 1]
+                        l_r[c] = PM[(<PermutationGroupElement> permutations_bar[s][0])(l+1) - 1,
+                                    (<PermutationGroupElement> permutations_bar[s][1])(c+1) - 1]
                         ccf = 1
                     else:
-                        d1 = PM[(permutations_bar[s][0])(l+1) - 1, (permutations_bar[s][1])(c+1) - 1]
+                        d1 = PM[(<PermutationGroupElement> permutations_bar[s][0])(l+1) - 1,
+                                (<PermutationGroupElement> permutations_bar[s][1])(c+1) - 1]
                         d = d1 - l_r[c]
                         if d < 0:
                             n_p -= 1
@@ -242,7 +257,8 @@ def _palp_PM_max(self, check=False):
             # the restrictions the last worked out
             # row imposes.
             c = 0
-            M = tuple(PM[permutations[0][0](l+1) - 1, permutations[0][1](j+1) - 1] for j in range(n_v))
+            M = tuple(PM[(<PermutationGroupElement> permutations[0][0])(l+1) - 1,
+                         (<PermutationGroupElement> permutations[0][1])(j+1) - 1] for j in range(n_v))
             while c < n_v:
                 s = S[c] + 1
                 S[c] = c + 1
