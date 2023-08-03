@@ -3087,6 +3087,101 @@ cdef class Matrix_modn_dense_template(Matrix_dense):
             ans.append(M)
         return ans
 
+    def matrix_from_rows(self, rows):
+        """
+        Return the matrix constructed from self using rows with indices in
+        the rows list.
+
+        EXAMPLES::
+
+            sage: M = MatrixSpace(Integers(8),3,3)
+            sage: A = M(range(9)); A
+            [0 1 2]
+            [3 4 5]
+            [6 7 0]
+            sage: A.matrix_from_rows([2,1])
+            [6 7 0]
+            [3 4 5]
+        """
+        #rows = PySequence_Fast(rows, "rows is not iterable")
+        cdef Py_ssize_t nrows = len(rows)
+
+        # Construct new matrix
+        cdef Matrix_modn_dense_template A = self.new_matrix(nrows=nrows)
+
+        cdef Py_ssize_t i, row
+        for i, row in enumerate(rows):
+            if row < 0 or row >= self._nrows:
+                raise IndexError("row index out of range")
+            memcpy(A._entries+(i*self._ncols), self._entries+(row*self._ncols), sizeof(celement)*self._ncols)
+
+            #for j in range(self._ncols):
+            #    A.set_unsafe(i, j, self.get_unsafe(row, j))
+        return A
+
+    def matrix_from_rows_and_columns(self, rows, columns):
+        """
+        Return the matrix constructed from self from the given rows and
+        columns.
+
+        EXAMPLES::
+
+            sage: M = MatrixSpace(Integers(8),3,3)
+            sage: A = M(range(9)); A
+            [0 1 2]
+            [3 4 5]
+            [6 7 0]
+            sage: A.matrix_from_rows_and_columns([1], [0,2])
+            [3 5]
+            sage: A.matrix_from_rows_and_columns([1,2], [1,2])
+            [4 5]
+            [7 0]
+
+        Note that row and column indices can be reordered or repeated::
+
+            sage: A.matrix_from_rows_and_columns([2,1], [2,1])
+            [0 7]
+            [5 4]
+
+        For example here we take from row 1 columns 2 then 0 twice, and do
+        this 3 times.
+
+        ::
+
+            sage: A.matrix_from_rows_and_columns([1,1,1],[2,0,0])
+            [5 3 3]
+            [5 3 3]
+            [5 3 3]
+
+        AUTHORS:
+
+        - Jaap Spies (2006-02-18)
+
+        - Didier Deshommes: some Pyrex speedups implemented
+        """
+        #rows = PySequence_Fast(rows, "rows is not iterable")
+        #columns = PySequence_Fast(columns, "columns is not iterable")
+
+        cdef Py_ssize_t ncols = len(columns)
+        cdef Py_ssize_t nrows = len(rows)
+
+        # Check whether column indices are valid
+        cdef Py_ssize_t i, j, row, col
+        for col in columns:
+            if col < 0 or col >= self._ncols:
+                raise IndexError("column index out of range")
+
+        # Construct new matrix
+        cdef Matrix_modn_dense_template A = self.new_matrix(nrows=nrows, ncols=ncols)
+        for i, row in enumerate(rows):
+            if row < 0 or row >= self._nrows:
+                raise IndexError("row index out of range")
+            for j, col in enumerate(columns):
+                A._matrix[i][j] = self._matrix[row][col]
+
+                #memcpy(A._entries+(j+i*self._ncols), self._entries+(col+row*self._ncols), sizeof(celement))
+        return A
+
     def __bool__(self):
         """
         Test whether this matrix is zero.
