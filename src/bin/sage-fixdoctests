@@ -370,7 +370,7 @@ def block_filename(block):
     return m.group(1)
 
 def expanded_filename_args():
-    DD = DocTestDefaults(optional='all')
+    DD = DocTestDefaults(optional='all', warn_long=10000)
     DC = DocTestController(DD, input_filenames)
     DC.add_files()
     DC.expand_files_into_sources()
