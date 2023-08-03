@@ -2321,10 +2321,10 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
             K = number_field_pt.codomain().base_ring()
             f = self._number_field_from_algebraics().as_dynamical_system()
 
-            if K == QQ:
+            if K is QQ:
                 K = f.base_ring()
                 number_field_pt = number_field_pt.change_ring(K)
-            elif f.base_ring() == QQ:
+            elif f.base_ring() is QQ:
                 f = f.change_ring(K)
             else:
                 K, phi, psi, b = K.composite_fields(f.base_ring(), both_maps=True)[0]
@@ -2359,7 +2359,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
             d = self.degree()
             R = RealField(prec)
             N = kwds.get('N', 10)
-            err = kwds.get('error_bound', None)
+            err_bound = kwds.get('error_bound', None)
 
             H = 0
             h = R.zero()
@@ -2372,20 +2372,20 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
 
                 # Compute the error bound as defined in Algorithm 3.1 of [WELLS]
                 if Res > 1:
-                    if err is not None:
-                        err /= 2
-                        N = ceil((R(Res).log().log() - R(d-1).log() - R(err).log())/(R(d).log()))
+                    if err_bound is not None:
+                        err_bound /= 2
+                        N = ceil((R(Res).log().log() - R(d - 1).log() - R(err_bound).log()) / R(d).log())
                         if N < 1:
                             N = 1
 
-                        kwds.update({'error_bound': err})
+                        kwds.update({'error_bound': err_bound})
                         kwds.update({'N': N})
 
                     for n in range(N):
                         x = A(x_i, y_i) % Res**(N - n)
                         y = B(x_i, y_i) % Res**(N - n)
                         g = gcd([x, y, Res])
-                        H = H + R(g).abs().log() / d**(n+1)
+                        H = H + R(g).abs().log() / d**(n + 1)
                         x_i = x / g
                         y_i = y / g
 
@@ -2400,8 +2400,8 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
                 if h < 0:
                     # This should be impossible. The error bound for Wells' is rigorous
                     # and the actual height is always >= 0.
-                    # If we see something less than -err, something has gone wrong.
-                    assert h > -err, "A negative height less than -error_bound was computed. " + \
+                    # If we see something less than -err_bound, something has gone wrong.
+                    assert h > -err_bound, "A negative height less than -error_bound was computed. " + \
                     "This should be impossible, please report bug on https://github.com/sagemath/sage/issues"
                     h = R(0)
                 return h
@@ -2422,13 +2422,13 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
 
                 # Compute the error bound as defined in Algorithm 3.1 of [WELLS]
                 if Res > 1:
-                    if err is not None:
-                        err /= 2
-                        N = ceil((R(Res).log().log() - R(d-1).log() - R(err).log()) / R(d).log())
+                    if err_bound is not None:
+                        err_bound /= 2
+                        N = ceil((R(Res).log().log() - R(d - 1).log() - R(err_bound).log()) / R(d).log())
                         if N < 1:
                             N = 1
 
-                        kwds.update({'error_bound': err})
+                        kwds.update({'error_bound': err_bound})
                         kwds.update({'N': N})
 
                     for n in range(N):
@@ -2436,7 +2436,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
                         x = order_quotient(A(x_i, y_i)).lift()
                         y = order_quotient(B(x_i, y_i)).lift()
                         g = gcd([x, y, Res])
-                        H += R(g).abs().log() / d**(n+1)
+                        H += R(g).abs().log() / d**(n + 1)
                         x_i = O(x / g)
                         y_i = O(y / g)
 
@@ -2453,8 +2453,8 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
                 if h < 0:
                     # This should be impossible. The error bound for Wells' is rigorous
                     # and the actual height is always >= 0.
-                    # If we see something less than -err, something has gone wrong.
-                    assert h > -err, "A negative height less than -error_bound was computed. " + \
+                    # If we see something less than -err_bound, something has gone wrong.
+                    assert h > -err_bound, "A negative height less than -error_bound was computed. " + \
                     "This should be impossible, please report bug on https://github.com/sagemath/sage/issues"
                     h = R(0)
                 return h
@@ -2472,14 +2472,11 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
 
         emb = K.places(prec=prec)
 
+        # Update the ``kwds`` dictionary for use in ``green_function``
         if error_bound is not None:
             num_places = len(emb) + len(bad_primes)
             error_bound /= num_places
 
-        R = RealField(prec)
-        h = R.zero()
-
-        # Update the ``kwds`` dictionary for use in ``green_function``
         kwds.update({"bad_primes": bad_primes})
         kwds.update({"error_bound": error_bound})
 
@@ -2487,6 +2484,9 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
         # WARNING: If places is fed the default Sage precision of 53 bits, then
         # it uses Real or Complex Double Field in place of RealField(prec) or ComplexField(prec).
         # RealDoubleField is an instance of a separate class.
+        R = RealField(prec)
+        h = R.zero()
+
         for v in emb:
             if isinstance(v.codomain(), (sage.rings.abc.RealField, sage.rings.abc.RealDoubleField)):
                 dv = R.one()
