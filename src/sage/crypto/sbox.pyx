@@ -638,6 +638,54 @@ cdef class SBox(SageObject):
             [0 0 2 2 2 2 0 0]
             [0 2 2 0 0 2 2 0]
             [0 0 0 0 2 2 2 2]
+            sage: S = SBox(7,4,8,6)
+            sage: S.difference_distribution_table()
+            [4 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0]
+            [0 0 0 2 0 0 0 0 0 0 0 0 0 0 2 0]
+            [0 0 2 0 0 0 0 0 0 0 0 0 0 0 0 2]
+            [0 2 0 0 0 0 0 0 0 0 0 0 2 0 0 0]
+
+        TESTS::
+
+        Testing square SBoxes::
+        
+            sage: from sage.crypto.sbox import SBox
+            sage: S = SBox(7,6,0,4,2,5,1,3)
+            sage: S.difference_distribution_table()
+            [8 0 0 0 0 0 0 0]
+            [0 2 2 0 2 0 0 2]
+            [0 0 2 2 0 0 2 2]
+            [0 2 0 2 2 0 2 0]
+            [0 2 0 2 0 2 0 2]
+            [0 0 2 2 2 2 0 0]
+            [0 2 2 0 0 2 2 0]
+            [0 0 0 0 2 2 2 2]
+
+        Testing non-square SBoxes::
+
+            sage: from sage.crypto.sbox import SBox
+            sage: S = SBox(8,8,8,8)
+            sage: S.difference_distribution_table()
+            [4 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0]
+            [4 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0]
+            [4 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0]
+            [4 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0]
+            sage: S = SBox(7,4,8,6)
+            sage: S.difference_distribution_table()
+            [4 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0]
+            [0 0 0 2 0 0 0 0 0 0 0 0 0 0 2 0]
+            [0 0 2 0 0 0 0 0 0 0 0 0 0 0 0 2]
+            [0 2 0 0 0 0 0 0 0 0 0 0 2 0 0 0]
+            sage: S = SBox(0,0,0,1,0,0,1,3)
+            sage: S.difference_distribution_table()
+            [8 0 0 0]
+            [4 2 2 0]
+            [2 4 0 2]
+            [2 4 0 2]
+            [4 2 2 0]
+            [6 0 0 2]
+            [2 4 0 2]
+            [2 4 0 2]
         """
         cdef Py_ssize_t nrows = 1 << self.m
         cdef Py_ssize_t ncols = 1 << self.n
