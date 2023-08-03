@@ -1316,7 +1316,7 @@ class BinaryQF(SageObject):
             sage: Q1.is_equivalent(Q2, proper=True)                                     # optional - sage.libs.pari
             True
         """
-        if type(other) != type(self):
+        if type(other) is not type(self):
             raise TypeError("%s is not a BinaryQF" % other)
         if self.discriminant() != other.discriminant():
             return False

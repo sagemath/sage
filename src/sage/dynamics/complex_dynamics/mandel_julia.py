@@ -396,7 +396,7 @@ def external_ray(theta, **kwds):
             pixel[i, j] = old_pixel[i, j]
 
     # Make sure that theta is a list so loop below works
-    if type(theta) != list:
+    if not isinstance(theta, list):
         theta = [theta]
 
     # Check if theta is in the interval [0,1]

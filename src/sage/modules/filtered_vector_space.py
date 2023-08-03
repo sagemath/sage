@@ -929,7 +929,7 @@ class FilteredVectorSpace_class(FreeModule_ambient_field):
             sage: FilteredVectorSpace(2, base_ring=QQ) == FilteredVectorSpace(2, base_ring=GF(5))
             False
         """
-        if type(self) != type(other):
+        if type(self) is not type(other):
             return False
         if self.base_ring() != other.base_ring():
             return False

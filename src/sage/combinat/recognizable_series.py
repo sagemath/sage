@@ -2032,7 +2032,7 @@ class RecognizableSeriesSpace(UniqueRepresentation, Parent):
                 self, Family(self.alphabet(), lambda a: Matrix()),
                 vector([]), vector([]))
 
-        if type(data) == self.element_class and data.parent() == self:
+        if isinstance(data, self.element_class) and data.parent() == self:
             element = data
 
         elif isinstance(data, RecognizableSeries):

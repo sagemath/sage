@@ -1160,7 +1160,7 @@ class QuantumGroupMorphism(Morphism):
             False
         """
         if op == op_EQ:
-            return (type(self) == type(other)
+            return (type(self) is type(other)
                     and self.domain() is other.domain()
                     and self._im_gens == other._im_gens)
         if op == op_NE:

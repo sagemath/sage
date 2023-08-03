@@ -609,7 +609,7 @@ class Chain_class(ModuleElement):
             sage: c == C(0)
             False
         """
-        if type(self) != type(other) or self.parent() != other.parent():
+        if type(self) is not type(other) or self.parent() != other.parent():
             return False
         return self._vec == other._vec
 

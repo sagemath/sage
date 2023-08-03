@@ -1070,7 +1070,7 @@ class MacLaneApproximantNode():
             True
 
         """
-        if type(self) != type(other):
+        if type(self) is not type(other):
             return False
         return (self.valuation, self.parent, self.ef, self.principal_part_bound, self.coefficients, self.valuations, self.forced_leaf) == (other.valuation, other.parent, other.ef, other.principal_part_bound, other.coefficients, other.valuations, other.forced_leaf)
 

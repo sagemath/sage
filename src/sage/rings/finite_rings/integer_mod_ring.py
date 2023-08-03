@@ -1344,7 +1344,7 @@ In the latter case, please inform the developers.""".format(self.order()))
         try:
             c = bool(other.__class__.__base__ != self.__class__.__base__)
         except AttributeError:  # __base__ does not always exists
-            c = bool(type(other) != type(self))
+            c = bool(type(other) is not type(self))
         if c:
             return NotImplemented
         return richcmp(self.__order, other.__order, op)
