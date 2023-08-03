@@ -84,7 +84,8 @@ def _palp_PM_max(self, check=False):
         m = index_of_max(PM[0, i] for i in range(j, n_v))
         if m > 0:
             permutations[0][1] = (<PermutationGroupElement> permutations[0][1])._transpose_left(j + 1, m + j + 1)
-    first_row = list(PM[0])
+
+    cdef first_row_index = 0
 
     # Arrange other rows one by one and compare with first row
     for k in range(1, n_f):
@@ -93,7 +94,8 @@ def _palp_PM_max(self, check=False):
         m = index_of_max(PM[k, (<PermutationGroupElement> permutations[n_s][1])(j+1) - 1] for j in range(n_v))
         if m > 0:
             permutations[n_s][1] = (<PermutationGroupElement> permutations[n_s][1])._transpose_left(1, m + 1)
-        d = PM[k, (<PermutationGroupElement> permutations[n_s][1])(1) - 1] - (<PermutationGroupElement> permutations[0][1])(first_row)[0]
+        d = (PM[k, (<PermutationGroupElement> permutations[n_s][1])(1) - 1]
+             - PM[first_row_index, (<PermutationGroupElement> permutations[0][1])(1) - 1])
         if d < 0:
             # The largest elt of this row is smaller than largest elt
             # in 1st row, so nothing to do
@@ -111,7 +113,7 @@ def _palp_PM_max(self, check=False):
                 permutations[n_s][1] = (<PermutationGroupElement> permutations[n_s][1])._transpose_left(i + 1, m + 1)
             if d == 0:
                 d = (PM[k, (<PermutationGroupElement> permutations[n_s][1])(i+1) - 1]
-                     - (<PermutationGroupElement> permutations[0][1])(first_row)[i])
+                     - PM[first_row_index, (<PermutationGroupElement> permutations[0][1])(i + 1) - 1])
                 if d < 0:
                     break
         if d < 0:
@@ -125,7 +127,7 @@ def _palp_PM_max(self, check=False):
         else:
             # This row is larger, so it becomes the first row and
             # the symmetries reset.
-            first_row = list(PM[k])
+            first_row_index = k
             permutations = {0: permutations[n_s]}
             n_s = 1
     permutations = {k: permutations[k] for k in permutations if k < n_s}
