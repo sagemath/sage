@@ -38,10 +38,10 @@ def fan_isomorphic_necessary_conditions(fan1, fan2):
 
     EXAMPLES::
 
-        sage: fan1 = toric_varieties.P2().fan()                                 # optional - palp
-        sage: fan2 = toric_varieties.dP8().fan()                                # optional - palp
+        sage: fan1 = toric_varieties.P2().fan()                                         # needs palp
+        sage: fan2 = toric_varieties.dP8().fan()                                        # needs palp
         sage: from sage.geometry.fan_isomorphism import fan_isomorphic_necessary_conditions
-        sage: fan_isomorphic_necessary_conditions(fan1, fan2)                   # optional - palp
+        sage: fan_isomorphic_necessary_conditions(fan1, fan2)                           # needs palp
         False
     """
     if fan1.lattice_dim() != fan2.lattice_dim():
@@ -78,9 +78,9 @@ def fan_isomorphism_generator(fan1, fan2):
 
     EXAMPLES::
 
-        sage: fan = toric_varieties.P2().fan()                                  # optional - palp
+        sage: fan = toric_varieties.P2().fan()                                          # needs palp
         sage: from sage.geometry.fan_isomorphism import fan_isomorphism_generator
-        sage: sorted(fan_isomorphism_generator(fan, fan))                       # optional - palp
+        sage: sorted(fan_isomorphism_generator(fan, fan))                               # needs palp
         [
         [-1 -1]  [-1 -1]  [ 0  1]  [0 1]  [ 1  0]  [1 0]
         [ 0  1], [ 1  0], [-1 -1], [1 0], [-1 -1], [0 1]
@@ -216,14 +216,14 @@ def find_isomorphism(fan1, fan2, check=False):
         sage: fan2 = Fan(cones, [vector(r)*m for r in rays])
 
         sage: from sage.geometry.fan_isomorphism import find_isomorphism
-        sage: find_isomorphism(fan1, fan2, check=True)                                  # optional - sage.graphs
+        sage: find_isomorphism(fan1, fan2, check=True)                                  # needs sage.graphs
         Fan morphism defined by the matrix
         [-2  3]
         [ 1 -1]
         Domain fan: Rational polyhedral fan in 2-d lattice N
         Codomain fan: Rational polyhedral fan in 2-d lattice N
 
-        sage: find_isomorphism(fan1, toric_varieties.P2().fan())                # optional - palp
+        sage: find_isomorphism(fan1, toric_varieties.P2().fan())                        # needs palp
         Traceback (most recent call last):
         ...
         FanNotIsomorphicError
@@ -311,14 +311,14 @@ def fan_2d_echelon_forms(fan):
 
     EXAMPLES::
 
-        sage: fan = toric_varieties.P2().fan()                                  # optional - palp
+        sage: fan = toric_varieties.P2().fan()                                          # needs palp
         sage: from sage.geometry.fan_isomorphism import fan_2d_echelon_forms
-        sage: fan_2d_echelon_forms(fan)                                         # optional - palp
+        sage: fan_2d_echelon_forms(fan)                                                 # needs palp
         frozenset({[ 1  0 -1]
                    [ 0  1 -1]})
 
-        sage: fan = toric_varieties.dP7().fan()                                 # optional - palp
-        sage: sorted(fan_2d_echelon_forms(fan))                                 # optional - palp
+        sage: fan = toric_varieties.dP7().fan()                                         # needs palp
+        sage: sorted(fan_2d_echelon_forms(fan))                                         # needs palp
         [
         [ 1  0 -1 -1  0]  [ 1  0 -1 -1  0]  [ 1  0 -1 -1  1]  [ 1  0 -1  0  1]
         [ 0  1  0 -1 -1], [ 0  1  1  0 -1], [ 0  1  1  0 -1], [ 0  1  0 -1 -1],
@@ -382,9 +382,9 @@ def fan_2d_echelon_form(fan):
 
     EXAMPLES::
 
-        sage: fan = toric_varieties.P2().fan()                                  # optional - palp
+        sage: fan = toric_varieties.P2().fan()                                          # needs palp
         sage: from sage.geometry.fan_isomorphism import fan_2d_echelon_form
-        sage: fan_2d_echelon_form(fan)                                          # optional - palp
+        sage: fan_2d_echelon_form(fan)                                                  # needs palp
         [ 1  0 -1]
         [ 0  1 -1]
     """

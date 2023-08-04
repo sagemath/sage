@@ -79,7 +79,7 @@ class Polyhedron_ZZ(Polyhedron_QQ):
 
             sage: polytopes.cross_polytope(3).is_lattice_polytope()
             True
-            sage: polytopes.regular_polygon(5).is_lattice_polytope()  # optional - sage.rings.number_field
+            sage: polytopes.regular_polygon(5).is_lattice_polytope()                    # needs sage.rings.number_field
             False
 
         TESTS:
@@ -172,16 +172,17 @@ class Polyhedron_ZZ(Polyhedron_QQ):
 
         The unit hypercubes::
 
+            sage: # optional - latte_int
             sage: from itertools import product
             sage: def hypercube(d):
             ....:     return Polyhedron(vertices=list(product([0,1],repeat=d)))
-            sage: hypercube(3)._ehrhart_polynomial_latte()   # optional - latte_int
+            sage: hypercube(3)._ehrhart_polynomial_latte()
             t^3 + 3*t^2 + 3*t + 1
-            sage: hypercube(4)._ehrhart_polynomial_latte()   # optional - latte_int
+            sage: hypercube(4)._ehrhart_polynomial_latte()
             t^4 + 4*t^3 + 6*t^2 + 4*t + 1
-            sage: hypercube(5)._ehrhart_polynomial_latte()   # optional - latte_int
+            sage: hypercube(5)._ehrhart_polynomial_latte()
             t^5 + 5*t^4 + 10*t^3 + 10*t^2 + 5*t + 1
-            sage: hypercube(6)._ehrhart_polynomial_latte()   # optional - latte_int
+            sage: hypercube(6)._ehrhart_polynomial_latte()
             t^6 + 6*t^5 + 15*t^4 + 20*t^3 + 15*t^2 + 6*t + 1
 
         TESTS:
@@ -399,27 +400,29 @@ class Polyhedron_ZZ(Polyhedron_QQ):
         hypercube, and the coefficient of the leading monomial equals the
         volume of the unit hypercube::
 
+            sage: # optional - latte_int
             sage: from itertools import product
             sage: def hypercube(d):
             ....:     return Polyhedron(vertices=list(product([0,1],repeat=d)))
-            sage: hypercube(3).ehrhart_polynomial()   # optional - latte_int
+            sage: hypercube(3).ehrhart_polynomial()
             t^3 + 3*t^2 + 3*t + 1
-            sage: hypercube(4).ehrhart_polynomial()   # optional - latte_int
+            sage: hypercube(4).ehrhart_polynomial()
             t^4 + 4*t^3 + 6*t^2 + 4*t + 1
-            sage: hypercube(5).ehrhart_polynomial()   # optional - latte_int
+            sage: hypercube(5).ehrhart_polynomial()
             t^5 + 5*t^4 + 10*t^3 + 10*t^2 + 5*t + 1
-            sage: hypercube(6).ehrhart_polynomial()   # optional - latte_int
+            sage: hypercube(6).ehrhart_polynomial()
             t^6 + 6*t^5 + 15*t^4 + 20*t^3 + 15*t^2 + 6*t + 1
 
+            sage: # optional - pynormaliz
             sage: def hypercube(d):
             ....:     return Polyhedron(vertices=list(product([0,1],repeat=d)),backend='normaliz')
-            sage: hypercube(3).ehrhart_polynomial(engine='normaliz') # optional - pynormaliz
+            sage: hypercube(3).ehrhart_polynomial(engine='normaliz')
             t^3 + 3*t^2 + 3*t + 1
-            sage: hypercube(4).ehrhart_polynomial(engine='normaliz') # optional - pynormaliz
+            sage: hypercube(4).ehrhart_polynomial(engine='normaliz')
             t^4 + 4*t^3 + 6*t^2 + 4*t + 1
-            sage: hypercube(5).ehrhart_polynomial(engine='normaliz') # optional - pynormaliz
+            sage: hypercube(5).ehrhart_polynomial(engine='normaliz')
             t^5 + 5*t^4 + 10*t^3 + 10*t^2 + 5*t + 1
-            sage: hypercube(6).ehrhart_polynomial(engine='normaliz') # optional - pynormaliz
+            sage: hypercube(6).ehrhart_polynomial(engine='normaliz')
             t^6 + 6*t^5 + 15*t^4 + 20*t^3 + 15*t^2 + 6*t + 1
 
         An empty polyhedron::
@@ -626,8 +629,8 @@ class Polyhedron_ZZ(Polyhedron_QQ):
 
         EXAMPLES::
 
-            sage: P = Polyhedron(toric_varieties.P4_11169().fan().rays(), base_ring=ZZ)     # optional - palp
-            sage: list(P.fibration_generator(2))                                            # optional - palp
+            sage: P = Polyhedron(toric_varieties.P4_11169().fan().rays(), base_ring=ZZ)             # needs palp
+            sage: list(P.fibration_generator(2))                                        # needs palp
             [A 2-dimensional polyhedron in ZZ^4 defined as the convex hull of 3 vertices]
         """
         from sage.combinat.combination import Combinations
