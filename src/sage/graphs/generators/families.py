@@ -544,16 +544,17 @@ def BalancedTree(r, h):
 
     A tree is bipartite. If its vertex set is finite, then it is planar. ::
 
+        sage: # needs networkx
         sage: r = randint(2, 5); h = randint(1, 7)
-        sage: T = graphs.BalancedTree(r, h)                                             # needs networkx
-        sage: T.is_bipartite()                                                          # needs networkx
+        sage: T = graphs.BalancedTree(r, h)
+        sage: T.is_bipartite()
         True
-        sage: T.is_planar()                                                             # needs networkx
+        sage: T.is_planar()
         True
-        sage: v = (r^(h + 1) - 1) / (r - 1)                                             # needs networkx
-        sage: T.order() == v                                                            # needs networkx
+        sage: v = (r^(h + 1) - 1) / (r - 1)
+        sage: T.order() == v
         True
-        sage: T.size() == v - 1                                                         # needs networkx
+        sage: T.size() == v - 1
         True
 
     TESTS:
@@ -627,11 +628,13 @@ def BarbellGraph(n1, n2):
         True
         sage: K_n1 = graphs.CompleteGraph(n1)
         sage: P_n2 = graphs.PathGraph(n2)
-        sage: s_K = g.subgraph_search(K_n1, induced=True)                               # needs sage.modules
-        sage: s_P = g.subgraph_search(P_n2, induced=True)                               # needs sage.modules
-        sage: K_n1.is_isomorphic(s_K)                                                   # needs sage.modules
+
+        sage: # needs sage.modules
+        sage: s_K = g.subgraph_search(K_n1, induced=True)
+        sage: s_P = g.subgraph_search(P_n2, induced=True)
+        sage: K_n1.is_isomorphic(s_K)
         True
-        sage: P_n2.is_isomorphic(s_P)                                                   # needs sage.modules
+        sage: P_n2.is_isomorphic(s_P)
         True
 
     TESTS::
@@ -1076,51 +1079,54 @@ def CirculantGraph(n, adjacency):
     EXAMPLES: Compare plotting using the predefined layout and
     networkx::
 
-        sage: import networkx                                                           # needs networkx
-        sage: n = networkx.cycle_graph(23)                                              # needs networkx
-        sage: spring23 = Graph(n)                                                       # needs networkx
+        sage: # needs networkx
+        sage: import networkx
+        sage: n = networkx.cycle_graph(23)
+        sage: spring23 = Graph(n)
         sage: posdict23 = graphs.CirculantGraph(23,2)
-        sage: spring23.show()                   # long time                             # needs networkx
+        sage: spring23.show()                   # long time
         sage: posdict23.show()  # long time
 
     We next view many cycle graphs as a Sage graphics array. First we
     use the ``CirculantGraph`` constructor, which fills in
     the position dictionary::
 
+        sage: # needs sage.plot
         sage: g = []
         sage: j = []
         sage: for i in range(9):
         ....:     k = graphs.CirculantGraph(i+4, i+1)
         ....:     g.append(k)
-        sage: for i in range(3):                                                        # needs sage.plot
+        sage: for i in range(3):
         ....:     n = []
         ....:     for m in range(3):
         ....:         n.append(g[3*i + m].plot(vertex_size=50, vertex_labels=False))
         ....:     j.append(n)
-        sage: G = graphics_array(j)                                                     # needs sage.plot
-        sage: G.show()                          # long time                             # needs sage.plot
+        sage: G = graphics_array(j)
+        sage: G.show()                          # long time
 
     Compare to plotting with the spring-layout algorithm::
 
+        sage: # needs networkx sage.plot
         sage: g = []
         sage: j = []
-        sage: for i in range(9):                                                        # needs networkx
+        sage: for i in range(9):
         ....:     spr = networkx.cycle_graph(i+3)
         ....:     k = Graph(spr)
         ....:     g.append(k)
-        sage: for i in range(3):                                                        # needs networkx sage.plot
+        sage: for i in range(3):
         ....:  n = []
         ....:  for m in range(3):
         ....:      n.append(g[3*i + m].plot(vertex_size=50, vertex_labels=False))
         ....:  j.append(n)
-        sage: G = graphics_array(j)                                                     # needs networkx sage.plot
-        sage: G.show()                          # long time                             # needs networkx sage.plot
+        sage: G = graphics_array(j)
+        sage: G.show()                          # long time
 
     Passing a 1 into adjacency should give the cycle.
 
     ::
 
-        sage: graphs.CirculantGraph(6,1)==graphs.CycleGraph(6)
+        sage: graphs.CirculantGraph(6,1) == graphs.CycleGraph(6)
         True
         sage: graphs.CirculantGraph(7,[1,3]).edges(sort=True, labels=false)
         [(0, 1),
@@ -1187,20 +1193,21 @@ def CubeGraph(n, embedding=1):
 
     Plot several `n`-cubes in a Sage Graphics Array::
 
+        sage: # needs sage.plot
         sage: g = []
         sage: j = []
         sage: for i in range(6):
         ....:  k = graphs.CubeGraph(i+1)
         ....:  g.append(k)
         ...
-        sage: for i in range(2):                                                        # needs sage.plot
+        sage: for i in range(2):
         ....:  n = []
         ....:  for m in range(3):
         ....:      n.append(g[3*i + m].plot(vertex_size=50, vertex_labels=False))
         ....:  j.append(n)
         ...
-        sage: G = graphics_array(j)                                                     # needs sage.plot
-        sage: G.show(figsize=[6,4])             # long time                             # needs sage.plot
+        sage: G = graphics_array(j)
+        sage: G.show(figsize=[6,4])             # long time
 
     Use the plot options to display larger `n`-cubes::
 
@@ -1438,17 +1445,18 @@ def FriendshipGraph(n):
 
     The first few friendship graphs. ::
 
+        sage: # needs sage.plot
         sage: A = []; B = []
         sage: for i in range(9):
         ....:     g = graphs.FriendshipGraph(i + 1)
         ....:     A.append(g)
-        sage: for i in range(3):                                                        # needs sage.plot
+        sage: for i in range(3):
         ....:     n = []
         ....:     for j in range(3):
         ....:         n.append(A[3*i + j].plot(vertex_size=20, vertex_labels=False))
         ....:     B.append(n)
-        sage: G = graphics_array(B)                                                     # needs sage.plot
-        sage: G.show()                          # long time                             # needs sage.plot
+        sage: G = graphics_array(B)
+        sage: G.show()                          # long time
 
     For `n = 1`, the friendship graph `F_1` is isomorphic to the cycle
     graph `C_3`, whose visual representation is a triangle. ::
@@ -2225,13 +2233,14 @@ def LCFGraph(n, shift_list, repeats):
 
     The largest cubic nonplanar graph of diameter three::
 
-        sage: G = graphs.LCFGraph(20, [-10,-7,-5,4,7,-10,-7,-4,5,7,                     # needs networkx
+        sage: # needs networkx
+        sage: G = graphs.LCFGraph(20, [-10,-7,-5,4,7,-10,-7,-4,5,7,
         ....:                          -10,-7,6,-5,7,-10,-7,5,-6,7], 1)
-        sage: G.degree()                                                                # needs networkx
+        sage: G.degree()
         [3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3]
-        sage: G.diameter()                                                              # needs networkx
+        sage: G.diameter()
         3
-        sage: G.show()                          # long time                             # needs networkx sage.plot
+        sage: G.show()                          # long time                             # needs sage.plot
 
     PLOTTING: LCF Graphs are plotted as an n-cycle with edges in the
     middle, as described above.
@@ -2630,14 +2639,15 @@ def SquaredSkewHadamardMatrixGraph(n):
 
     EXAMPLES::
 
-        sage: G = graphs.SquaredSkewHadamardMatrixGraph(4)                              # needs sage.modules
-        sage: G.is_strongly_regular(parameters=True)                                    # needs sage.modules
+        sage: # needs sage.modules
+        sage: G = graphs.SquaredSkewHadamardMatrixGraph(4)
+        sage: G.is_strongly_regular(parameters=True)
         (225, 112, 55, 56)
-        sage: G = graphs.SquaredSkewHadamardMatrixGraph(5)                              # needs sage.modules
-        sage: G.is_strongly_regular(parameters=True)    # long time                     # needs sage.modules
+        sage: G = graphs.SquaredSkewHadamardMatrixGraph(5)
+        sage: G.is_strongly_regular(parameters=True)    # long time
         (361, 180, 89, 90)
-        sage: G = graphs.SquaredSkewHadamardMatrixGraph(9)                              # needs sage.modules
-        sage: G.is_strongly_regular(parameters=True)    # not tested                    # needs sage.modules
+        sage: G = graphs.SquaredSkewHadamardMatrixGraph(9)
+        sage: G.is_strongly_regular(parameters=True)    # not tested
         (1225, 612, 305, 306)
 
     TESTS::
@@ -3187,7 +3197,8 @@ def SierpinskiGasketGraph(n):
 
     EXAMPLES::
 
-        sage: s4 = graphs.SierpinskiGasketGraph(4); s4                                  # needs sage.modules
+        sage: # needs sage.modules
+        sage: s4 = graphs.SierpinskiGasketGraph(4); s4
         Graph on 42 vertices
         sage: s4.size()                                                                 # needs sage.modules
         81
@@ -3284,6 +3295,7 @@ def GeneralizedSierpinskiGraph(G, k, stretch=None):
     The generalized Sierpinski graph of dimension `k` of any graph `G` with `n`
     vertices and `m` edges has `n^k` vertices and `m\sum_{i=0}^{k-1}n^i` edges::
 
+        sage: # needs sage.modules
         sage: n = randint(2, 6)
         sage: k = randint(1, 5)
         sage: G = graphs.RandomGNP(n, .5)
@@ -3322,7 +3334,8 @@ def GeneralizedSierpinskiGraph(G, k, stretch=None):
 
     TESTS::
 
-        sage: graphs.GeneralizedSierpinskiGraph(Graph(), 3)                             # needs sage.modules
+        sage: # needs sage.modules
+        sage: graphs.GeneralizedSierpinskiGraph(Graph(), 3)
         Generalized Sierpinski Graph of Graph on 0 vertices of dimension 3: Graph on 0 vertices
         sage: graphs.GeneralizedSierpinskiGraph(Graph(1), 3).vertices(sort=False)       # needs sage.modules
         [(0, 0, 0)]
@@ -3401,46 +3414,49 @@ def WheelGraph(n):
     We view many wheel graphs with a Sage Graphics Array, first with this
     constructor (i.e., the position dictionary filled)::
 
+        sage: # needs sage.plot
         sage: g = []
         sage: j = []
         sage: for i in range(9):
         ....:  k = graphs.WheelGraph(i+3)
         ....:  g.append(k)
         ...
-        sage: for i in range(3):                                                        # needs sage.plot
+        sage: for i in range(3):
         ....:  n = []
         ....:  for m in range(3):
         ....:      n.append(g[3*i + m].plot(vertex_size=50, vertex_labels=False))
         ....:  j.append(n)
         ...
-        sage: G = graphics_array(j)                                                     # needs sage.plot
-        sage: G.show()                          # long time                             # needs sage.plot
+        sage: G = graphics_array(j)
+        sage: G.show()                          # long time
 
     Next, using the spring-layout algorithm::
 
-        sage: import networkx                                                           # needs networkx
+        sage: # needs networkx sage.plot
+        sage: import networkx
         sage: g = []
         sage: j = []
-        sage: for i in range(9):                                                        # needs networkx
+        sage: for i in range(9):
         ....:  spr = networkx.wheel_graph(i+3)
         ....:  k = Graph(spr)
         ....:  g.append(k)
         ...
-        sage: for i in range(3):                                                        # needs networkx sage.plot
+        sage: for i in range(3):
         ....:  n = []
         ....:  for m in range(3):
         ....:      n.append(g[3*i + m].plot(vertex_size=50, vertex_labels=False))
         ....:  j.append(n)
         ...
-        sage: G = graphics_array(j)                                                     # needs networkx sage.plot
-        sage: G.show()                          # long time                             # needs networkx sage.plot
+        sage: G = graphics_array(j)
+        sage: G.show()                          # long time
 
     Compare the plotting::
 
-        sage: n = networkx.wheel_graph(23)                                              # needs networkx
-        sage: spring23 = Graph(n)                                                       # needs networkx
+        sage: # needs networkx sage.plot
+        sage: n = networkx.wheel_graph(23)
+        sage: spring23 = Graph(n)
         sage: posdict23 = graphs.WheelGraph(23)
-        sage: spring23.show()                   # long time                             # needs networkx
+        sage: spring23.show()                   # long time
         sage: posdict23.show()  # long time
     """
     from sage.graphs.generators.basic import CycleGraph
@@ -3744,10 +3760,11 @@ def RingedTree(k, vertex_labels=True):
 
     EXAMPLES::
 
-        sage: G = graphs.RingedTree(5)                                                  # needs networkx
-        sage: P = G.plot(vertex_labels=False, vertex_size=10)                           # needs networkx sage.plot
-        sage: P.show()                          # long time                             # needs networkx sage.plot
-        sage: G.vertices(sort=True)                                                     # needs networkx
+        sage: # needs networkx
+        sage: G = graphs.RingedTree(5)
+        sage: P = G.plot(vertex_labels=False, vertex_size=10)                           # needs sage.plot
+        sage: P.show()                          # long time                             # needs sage.plot
+        sage: G.vertices(sort=True)
         ['', '0', '00', '000', '0000', '0001', '001', '0010', '0011', '01',
          '010', '0100', '0101', '011', '0110', '0111', '1', '10', '100',
          '1000', '1001', '101', '1010', '1011', '11', '110', '1100', '1101',
@@ -3900,11 +3917,12 @@ def MathonPseudocyclicStronglyRegularGraph(t, G=None, L=None):
 
     Supplying ``G`` and ``L`` (constructed from the automorphism group of ``G``). ::
 
-        sage: G = graphs.PaleyGraph(9)                                                  # needs sage.rings.finite_rings
-        sage: a = G.automorphism_group(partition=[sorted(G)])                           # needs sage.groups sage.rings.finite_rings
-        sage: it = (x for x in a.normal_subgroups() if x.order() == 9)                  # needs sage.groups sage.rings.finite_rings
-        sage: subg = next(iter(it))                                                     # needs sage.groups sage.rings.finite_rings
-        sage: r = [matrix(libgap.PermutationMat(libgap(z), 9).sage())                   # needs sage.groups sage.libs.gap sage.rings.finite_rings
+        sage: # needs sage.groups sage.libs.gap sage.rings.finite_rings
+        sage: G = graphs.PaleyGraph(9)
+        sage: a = G.automorphism_group(partition=[sorted(G)])
+        sage: it = (x for x in a.normal_subgroups() if x.order() == 9)
+        sage: subg = next(iter(it))
+        sage: r = [matrix(libgap.PermutationMat(libgap(z), 9).sage())
         ....:      for z in subg]
         sage: ff = list(map(lambda y: (y[0]-1,y[1]-1),                                  # needs sage.groups sage.libs.gap sage.rings.finite_rings
         ....:          Permutation(map(lambda x: 1+r.index(x^-1), r)).cycle_tuples()[1:]))
@@ -3919,16 +3937,17 @@ def MathonPseudocyclicStronglyRegularGraph(t, G=None, L=None):
         [-4 -3 -2  2  3  4 -1  0  1]
         [-2 -4 -3  4  2  3  1 -1  0]
 
-        sage: G.relabel(range(9))                                                       # needs sage.rings.finite_rings
-        sage: G3x3 = graphs.MathonPseudocyclicStronglyRegularGraph(2, G=G, L=L)         # needs sage.modules sage.rings.finite_rings
-        sage: G3x3.is_strongly_regular(parameters=True)                                 # needs sage.modules sage.rings.finite_rings
+        sage: # needs sage.modules sage.rings.finite_rings
+        sage: G.relabel(range(9))
+        sage: G3x3 = graphs.MathonPseudocyclicStronglyRegularGraph(2, G=G, L=L)         # needs sage.groups sage.libs.gap
+        sage: G3x3.is_strongly_regular(parameters=True)
         (441, 220, 109, 110)
-        sage: G3x3.automorphism_group(algorithm="bliss").order()        # optional - bliss, needs sage.modules sage.rings.finite_rings
+        sage: G3x3.automorphism_group(algorithm="bliss").order()        # optional - bliss
         27
-        sage: G9 = graphs.MathonPseudocyclicStronglyRegularGraph(2)                     # needs sage.modules sage.rings.finite_rings
-        sage: G9.is_strongly_regular(parameters=True)                                   # needs sage.modules sage.rings.finite_rings
+        sage: G9 = graphs.MathonPseudocyclicStronglyRegularGraph(2)
+        sage: G9.is_strongly_regular(parameters=True)
         (441, 220, 109, 110)
-        sage: G9.automorphism_group(algorithm="bliss").order()  # optional - bliss, needs sage.modules sage.rings.finite_rings
+        sage: G9.automorphism_group(algorithm="bliss").order()  # optional - bliss
         9
 
     TESTS::
@@ -4137,9 +4156,10 @@ def MuzychukS6Graph(n, d, Phi='fixed', Sigma='fixed', verbose=False):
 
     TESTS::
 
-        sage: graphs.MuzychukS6Graph(2,2,Phi='random',Sigma='random').is_strongly_regular(parameters=True)              # needs sage.modules sage.rings.finite_rings
+        sage: # needs sage.modules
+        sage: graphs.MuzychukS6Graph(2,2,Phi='random',Sigma='random').is_strongly_regular(parameters=True)              # needs sage.rings.finite_rings
         (16, 5, 0, 2)
-        sage: graphs.MuzychukS6Graph(3,3,Phi='random',Sigma='random').is_strongly_regular(parameters=True)              # needs sage.modules sage.rings.finite_rings
+        sage: graphs.MuzychukS6Graph(3,3,Phi='random',Sigma='random').is_strongly_regular(parameters=True)              # needs sage.rings.finite_rings
         (378, 116, 34, 36)
         sage: graphs.MuzychukS6Graph(3,2)                                               # needs sage.modules
         Traceback (most recent call last):
@@ -4153,11 +4173,11 @@ def MuzychukS6Graph(n, d, Phi='fixed', Sigma='fixed', verbose=False):
         Traceback (most recent call last):
         ...
         AssertionError: d must be at least 2
-        sage: graphs.MuzychukS6Graph(3,3,Phi=42)                                        # needs sage.modules sage.rings.finite_rings
+        sage: graphs.MuzychukS6Graph(3,3,Phi=42)                                        # needs sage.rings.finite_rings
         Traceback (most recent call last):
         ...
         AssertionError: Phi must be a dictionary or 'random' or 'fixed'
-        sage: graphs.MuzychukS6Graph(3,3,Sigma=42)                                      # needs sage.modules sage.rings.finite_rings
+        sage: graphs.MuzychukS6Graph(3,3,Sigma=42)                                      # needs sage.rings.finite_rings
         Traceback (most recent call last):
         ...
         ValueError: Sigma must be 'random' or 'fixed'

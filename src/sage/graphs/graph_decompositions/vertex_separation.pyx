@@ -766,13 +766,16 @@ def vertex_separation(G, algorithm="BAB", cut_off=None, upper_bound=None, verbos
     Comparison of methods::
 
         sage: from sage.graphs.graph_decompositions.vertex_separation import vertex_separation
-        sage: G = digraphs.DeBruijn(2,3)                                                # needs sage.combinat
-        sage: vs,L = vertex_separation(G, algorithm="BAB"); vs                          # needs sage.combinat
+
+        sage: # needs sage.combinat
+        sage: G = digraphs.DeBruijn(2,3)
+        sage: vs,L = vertex_separation(G, algorithm="BAB"); vs
         2
-        sage: vs,L = vertex_separation(G, algorithm="exponential"); vs                  # needs sage.combinat
+        sage: vs,L = vertex_separation(G, algorithm="exponential"); vs
         2
-        sage: vs,L = vertex_separation(G, algorithm="MILP"); vs                         # needs sage.combinat sage.numerical.mip
+        sage: vs,L = vertex_separation(G, algorithm="MILP"); vs                         # needs sage.numerical.mip
         2
+
         sage: G = graphs.Grid2dGraph(3,3)
         sage: vs,L = vertex_separation(G, algorithm="BAB"); vs
         3

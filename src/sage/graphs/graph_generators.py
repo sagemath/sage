@@ -1239,8 +1239,9 @@ class GraphGenerators():
 
         There are two sets of cospectral graphs on six vertices with no isolated vertices::
 
-            sage: g = graphs.cospectral_graphs(6, graphs=lambda x: min(x.degree())>0)   # needs sage.modules
-            sage: sorted(sorted(g.graph6_string() for g in glist) for glist in g)       # needs sage.modules
+            sage: # needs sage.modules
+            sage: g = graphs.cospectral_graphs(6, graphs=lambda x: min(x.degree())>0)
+            sage: sorted(sorted(g.graph6_string() for g in glist) for glist in g)
             [['Ep__', 'Er?G'], ['ExGg', 'ExoG']]
             sage: g[0][1].am().charpoly()==g[0][1].am().charpoly()                      # needs sage.modules
             True
@@ -1258,8 +1259,9 @@ class GraphGenerators():
         There are two sets of cospectral graphs (with respect to the
         Laplacian matrix) on six vertices::
 
-            sage: g = graphs.cospectral_graphs(6, matrix_function=lambda g: g.laplacian_matrix())   # needs sage.modules
-            sage: sorted(sorted(g.graph6_string() for g in glist) for glist in g)                   # needs sage.modules
+            sage: # needs sage.modules
+            sage: g = graphs.cospectral_graphs(6, matrix_function=lambda g: g.laplacian_matrix())
+            sage: sorted(sorted(g.graph6_string() for g in glist) for glist in g)
             [['Edq_', 'ErcG'], ['Exoo', 'EzcG']]
             sage: g[0][1].laplacian_matrix().charpoly()==g[0][1].laplacian_matrix().charpoly()      # needs sage.modules
             True
@@ -1464,11 +1466,12 @@ class GraphGenerators():
         The unique fullerene graph on 20 vertices is isomorphic to the dodecahedron
         graph. ::
 
-            sage: gen = graphs.fullerenes(20)  # optional buckygen
-            sage: g = next(gen)  # optional buckygen
-            sage: g.is_isomorphic(graphs.DodecahedralGraph()) # optional buckygen
+            sage: # optional - buckygen
+            sage: gen = graphs.fullerenes(20)
+            sage: g = next(gen)
+            sage: g.is_isomorphic(graphs.DodecahedralGraph())
             True
-            sage: g.get_embedding()  # optional buckygen
+            sage: g.get_embedding()
             {1: [2, 3, 4],
              2: [1, 5, 6],
              3: [1, 7, 8],
@@ -1489,7 +1492,7 @@ class GraphGenerators():
              18: [12, 20, 13],
              19: [14, 20, 15],
              20: [17, 19, 18]}
-            sage: g.plot3d(layout='spring')  # optional buckygen
+            sage: g.plot3d(layout='spring')
             Graphics3d Object
         """
         # number of vertices should be positive
@@ -1742,12 +1745,13 @@ class GraphGenerators():
         (usually inside a loop). Or it can be used to create an entire list all
         at once if there is sufficient memory to contain it::
 
-            sage: gen = graphs.plantri_gen("6")  # optional plantri
-            sage: next(gen)                      # optional plantri
+            sage: # optional - plantri
+            sage: gen = graphs.plantri_gen("6")
+            sage: next(gen)
             Graph on 6 vertices
-            sage: next(gen)                      # optional plantri
+            sage: next(gen)
             Graph on 6 vertices
-            sage: next(gen)                      # optional plantri
+            sage: next(gen)
             Traceback (most recent call last):
             ...
             StopIteration
@@ -1916,13 +1920,14 @@ class GraphGenerators():
 
         Specifying lower and upper bounds on the number of edges::
 
-            sage: len(list(graphs.planar_graphs(4)))  # optional plantri
+            sage: # optional - plantri
+            sage: len(list(graphs.planar_graphs(4)))
             6
-            sage: len(list(graphs.planar_graphs(4, minimum_edges=4)))  # optional plantri
+            sage: len(list(graphs.planar_graphs(4, minimum_edges=4)))
             4
-            sage: len(list(graphs.planar_graphs(4, maximum_edges=4)))  # optional plantri
+            sage: len(list(graphs.planar_graphs(4, maximum_edges=4)))
             4
-            sage: len(list(graphs.planar_graphs(4, minimum_edges=4, maximum_edges=4)))  # optional plantri
+            sage: len(list(graphs.planar_graphs(4, minimum_edges=4, maximum_edges=4)))
             2
 
         Specifying the maximum size of a face::
@@ -1937,11 +1942,12 @@ class GraphGenerators():
         The number of edges in a planar graph is equal to the number of edges in
         its dual::
 
-            sage: planar      = list(graphs.planar_graphs(5,dual=True))  # optional -- plantri
-            sage: dual_planar = list(graphs.planar_graphs(5,dual=False)) # optional -- plantri
-            sage: planar_sizes      = [g.size() for g in planar]         # optional -- plantri
-            sage: dual_planar_sizes = [g.size() for g in dual_planar]    # optional -- plantri
-            sage: planar_sizes == dual_planar_sizes                      # optional -- plantri
+            sage: # optional - plantri
+            sage: planar      = list(graphs.planar_graphs(5,dual=True))
+            sage: dual_planar = list(graphs.planar_graphs(5,dual=False))
+            sage: planar_sizes      = [g.size() for g in planar]
+            sage: dual_planar_sizes = [g.size() for g in dual_planar]
+            sage: planar_sizes == dual_planar_sizes
             True
         """
         if order < 0:
@@ -2263,11 +2269,12 @@ class GraphGenerators():
 
         The cube is the only 3-connected planar quadrangulation on 8 vertices::
 
-            sage: gen = graphs.quadrangulations(8, minimum_connectivity=3)  # optional plantri
-            sage: g = next(gen)                                            # optional plantri
-            sage: g.is_isomorphic(graphs.CubeGraph(3))                      # optional plantri
+            sage: # optional - plantri
+            sage: gen = graphs.quadrangulations(8, minimum_connectivity=3)
+            sage: g = next(gen)
+            sage: g.is_isomorphic(graphs.CubeGraph(3))
             True
-            sage: next(gen)                                                # optional plantri
+            sage: next(gen)
             Traceback (most recent call last):
             ...
             StopIteration

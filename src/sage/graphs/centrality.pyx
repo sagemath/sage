@@ -638,34 +638,36 @@ def centrality_closeness_top_k(G, int k=1, int verbose=0):
 
     The result is correct::
 
+        sage: # needs networkx
         sage: from sage.graphs.centrality import centrality_closeness_top_k
         sage: import random
         sage: n = 20
         sage: m = random.randint(1, n * (n - 1) / 2)
         sage: k = random.randint(1, n)
-        sage: g = graphs.RandomGNM(n, m)                                                # needs networkx
-        sage: topk = centrality_closeness_top_k(g, k)                                   # needs networkx
-        sage: centr = g.centrality_closeness(algorithm='BFS')                           # needs networkx
-        sage: sorted_centr = sorted(centr.values(), reverse=True)                       # needs networkx
-        sage: len(topk) == min(k, len(sorted_centr))                                    # needs networkx
+        sage: g = graphs.RandomGNM(n, m)
+        sage: topk = centrality_closeness_top_k(g, k)
+        sage: centr = g.centrality_closeness(algorithm='BFS')
+        sage: sorted_centr = sorted(centr.values(), reverse=True)
+        sage: len(topk) == min(k, len(sorted_centr))
         True
-        sage: all(abs(topk[i][0] - sorted_centr[i]) < 1e-12 for i in range(len(topk)))  # needs networkx
+        sage: all(abs(topk[i][0] - sorted_centr[i]) < 1e-12 for i in range(len(topk)))
         True
 
     Directed case::
 
+        sage: # needs networkx
         sage: from sage.graphs.centrality import centrality_closeness_top_k
         sage: import random
         sage: n = 20
         sage: m = random.randint(1, n * (n - 1))
         sage: k = random.randint(1, n)
-        sage: g = digraphs.RandomDirectedGNM(n, m)                                      # needs networkx
-        sage: topk = centrality_closeness_top_k(g, k)                                   # needs networkx
-        sage: centr = g.centrality_closeness(algorithm='BFS')                           # needs networkx
-        sage: sorted_centr = sorted(centr.values(), reverse=True)                       # needs networkx
-        sage: len(topk) == min(k, len(sorted_centr))                                    # needs networkx
+        sage: g = digraphs.RandomDirectedGNM(n, m)
+        sage: topk = centrality_closeness_top_k(g, k)
+        sage: centr = g.centrality_closeness(algorithm='BFS')
+        sage: sorted_centr = sorted(centr.values(), reverse=True)
+        sage: len(topk) == min(k, len(sorted_centr))
         True
-        sage: all(abs(topk[i][0] - sorted_centr[i]) < 1e-12 for i in range(len(topk)))  # needs networkx
+        sage: all(abs(topk[i][0] - sorted_centr[i]) < 1e-12 for i in range(len(topk)))
         True
     """
     cdef list res

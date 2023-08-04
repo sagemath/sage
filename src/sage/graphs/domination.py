@@ -312,6 +312,7 @@ def dominating_sets(g, k=1, independent=False, total=False,
 
     Independent distance-`k` dominating sets of a Path graph::
 
+        sage: # needs sage.numerical.mip
         sage: G = graphs.PathGraph(6)
         sage: sorted(G.dominating_sets(k=1, independent=True))                          # needs sage.numerical.mip
         [[1, 4]]
@@ -323,6 +324,7 @@ def dominating_sets(g, k=1, independent=False, total=False,
     The dominating set is calculated for both the directed and undirected graphs
     (modification introduced in :trac:`17905`)::
 
+        sage: # needs sage.numerical.mip
         sage: g = digraphs.Path(3)
         sage: g.dominating_set(value_only=True)                                         # needs sage.numerical.mip
         2
@@ -780,32 +782,32 @@ def minimal_dominating_sets(G, to_dominate=None, work_on_copy=False, k=1):
 
         sage: ll = list(graphs.PetersenGraph().minimal_dominating_sets())
         sage: pp = [{0, 2, 6},
-        ....: {0, 9, 3},
-        ....: {0, 8, 7},
-        ....: {1, 3, 7},
-        ....: {1, 4, 5},
-        ....: {8, 1, 9},
-        ....: {8, 2, 4},
-        ....: {9, 2, 5},
-        ....: {3, 5, 6},
-        ....: {4, 6, 7},
-        ....: {0, 8, 2, 9},
-        ....: {0, 3, 6, 7},
-        ....: {1, 3, 5, 9},
-        ....: {8, 1, 4, 7},
-        ....: {2, 4, 5, 6},
-        ....: {0, 1, 2, 3, 4},
-        ....: {0, 1, 2, 5, 7},
-        ....: {0, 1, 4, 6, 9},
-        ....: {0, 1, 5, 6, 8},
-        ....: {0, 8, 3, 4, 5},
-        ....: {0, 9, 4, 5, 7},
-        ....: {8, 1, 2, 3, 6},
-        ....: {1, 2, 9, 6, 7},
-        ....: {9, 2, 3, 4, 7},
-        ....: {8, 2, 3, 5, 7},
-        ....: {8, 9, 3, 4, 6},
-        ....: {8, 9, 5, 6, 7}]
+        ....:       {0, 9, 3},
+        ....:       {0, 8, 7},
+        ....:       {1, 3, 7},
+        ....:       {1, 4, 5},
+        ....:       {8, 1, 9},
+        ....:       {8, 2, 4},
+        ....:       {9, 2, 5},
+        ....:       {3, 5, 6},
+        ....:       {4, 6, 7},
+        ....:       {0, 8, 2, 9},
+        ....:       {0, 3, 6, 7},
+        ....:       {1, 3, 5, 9},
+        ....:       {8, 1, 4, 7},
+        ....:       {2, 4, 5, 6},
+        ....:       {0, 1, 2, 3, 4},
+        ....:       {0, 1, 2, 5, 7},
+        ....:       {0, 1, 4, 6, 9},
+        ....:       {0, 1, 5, 6, 8},
+        ....:       {0, 8, 3, 4, 5},
+        ....:       {0, 9, 4, 5, 7},
+        ....:       {8, 1, 2, 3, 6},
+        ....:       {1, 2, 9, 6, 7},
+        ....:       {9, 2, 3, 4, 7},
+        ....:       {8, 2, 3, 5, 7},
+        ....:       {8, 9, 3, 4, 6},
+        ....:       {8, 9, 5, 6, 7}]
         sage: len(ll) == len(pp) and all(x in pp for x in ll) and all(x in ll for x in pp)
         True
 

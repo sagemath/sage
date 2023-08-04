@@ -1424,7 +1424,8 @@ def BuckyBall():
     The Bucky Ball can also be created by extracting the 1-skeleton of the Bucky
     Ball polyhedron, but this is much slower::
 
-        sage: g = polytopes.buckyball().vertex_graph()                                  # needs sage.geometry.polyhedron sage.rings.number_field
+        sage: # needs sage.geometry.polyhedron sage.rings.number_field
+        sage: g = polytopes.buckyball().vertex_graph()
         sage: g.remove_loops()
         sage: h = graphs.BuckyBall()
         sage: g.is_isomorphic(h)
@@ -2107,7 +2108,7 @@ def HortonGraph():
         96
         sage: g.chromatic_number()
         2
-        sage: g.is_hamiltonian()                # not tested                            # needs sage.numerical.mip
+        sage: g.is_hamiltonian()                # not tested (veeeery long)             # needs sage.numerical.mip
         False
     """
     g = Graph(name="Horton Graph")
@@ -2167,7 +2168,7 @@ def EllinghamHorton54Graph():
 
     It is 3-connected and bipartite::
 
-        sage: g.vertex_connectivity()  # not tested - too long
+        sage: g.vertex_connectivity()   # not tested - too long
         3
         sage: g.is_bipartite()
         True
@@ -2244,7 +2245,7 @@ def EllinghamHorton78Graph():
 
     It is 3-connected and bipartite::
 
-        sage: g.vertex_connectivity()  # not tested - too long
+        sage: g.vertex_connectivity()   # not tested (too long)
         3
         sage: g.is_bipartite()
         True
@@ -2256,11 +2257,11 @@ def EllinghamHorton78Graph():
 
     ... and it has a nice drawing ::
 
-        sage: g.show(figsize=[10,10])  # not tested - too long
+        sage: g.show(figsize=[10,10])   # not tested (too long)
 
     TESTS::
 
-        sage: g.show(figsize=[10, 10])  # not tested - too long
+        sage: g.show(figsize=[10, 10])  # not tested (too long)
     """
     g = Graph({
             0: [1, 5, 60], 1: [2, 12], 2: [3, 7], 3: [4, 14], 4: [5, 9],
@@ -4663,6 +4664,7 @@ def WienerArayaGraph():
         False
         sage: g.delete_vertex(g.random_vertex())
         sage: g.is_hamiltonian()                                                        # needs sage.numerical.mip
+>>>>>>> 85d4a8d443 (./sage -fixdoctests --probe all --distribution 'sagemath-graphs[modules]'  src/sage/graphs/generators/smallgraphs.py; ./sage -fixdoctests src/sage/graphs/generators/smallgraphs.py)
         True
     """
     g = Graph(name="Wiener-Araya Graph")

@@ -429,14 +429,15 @@ def OrthogonalArrayBlockGraph(k, n, OA=None):
 
     Two graphs built from different orthogonal arrays are also different::
 
+        sage: # needs sage.modules
         sage: k = 4; n = 10
-        sage: OAa = designs.orthogonal_arrays.build(k,n)                                # needs sage.modules
-        sage: OAb = [[(x+1)%n for x in R] for R in OAa]                                 # needs sage.modules
-        sage: set(map(tuple,OAa)) == set(map(tuple,OAb))                                # needs sage.modules
+        sage: OAa = designs.orthogonal_arrays.build(k,n)
+        sage: OAb = [[(x+1)%n for x in R] for R in OAa]
+        sage: set(map(tuple,OAa)) == set(map(tuple,OAb))
         False
-        sage: Ga = graphs.OrthogonalArrayBlockGraph(k, n, OAa)                          # needs sage.modules
-        sage: Gb = graphs.OrthogonalArrayBlockGraph(k, n, OAb)                          # needs sage.modules
-        sage: Ga == Gb                                                                  # needs sage.modules
+        sage: Ga = graphs.OrthogonalArrayBlockGraph(k, n, OAa)
+        sage: Gb = graphs.OrthogonalArrayBlockGraph(k, n, OAb)
+        sage: Ga == Gb
         False
 
     As ``OAb`` was obtained from ``OAa`` by a relabelling the two graphs are

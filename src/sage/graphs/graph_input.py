@@ -613,113 +613,121 @@ def from_networkx_graph(G, gnx, weighted=None, loops=None, multiedges=None,
 
     Feeding a :class:`Graph` with a NetworkX ``Graph``::
 
+        sage: # needs networkx
         sage: from sage.graphs.graph_input import from_networkx_graph
-        sage: import networkx                                                           # needs networkx
+        sage: import networkx
         sage: G = Graph()
-        sage: _ = gnx = networkx.Graph()                                                # needs networkx
-        sage: _ = gnx.add_edge(0, 1)                                                    # needs networkx
-        sage: _ = gnx.add_edge(1, 2)                                                    # needs networkx
-        sage: from_networkx_graph(G, gnx)                                               # needs networkx
-        sage: G.edges(sort=True, labels=False)                                          # needs networkx
+        sage: _ = gnx = networkx.Graph()
+        sage: _ = gnx.add_edge(0, 1)
+        sage: _ = gnx.add_edge(1, 2)
+        sage: from_networkx_graph(G, gnx)
+        sage: G.edges(sort=True, labels=False)
         [(0, 1), (1, 2)]
 
     Feeding a :class:`Graph` with a NetworkX ``MultiGraph``::
 
+        sage: # needs networkx
         sage: G = Graph()
-        sage: gnx = networkx.MultiGraph()                                               # needs networkx
-        sage: _ = gnx.add_edge(0, 1)                                                    # needs networkx
-        sage: _ = gnx.add_edge(0, 1)                                                    # needs networkx
-        sage: from_networkx_graph(G, gnx)                                               # needs networkx
-        sage: G.edges(sort=True, labels=False)                                          # needs networkx
+        sage: gnx = networkx.MultiGraph()
+        sage: _ = gnx.add_edge(0, 1)
+        sage: _ = gnx.add_edge(0, 1)
+        sage: from_networkx_graph(G, gnx)
+        sage: G.edges(sort=True, labels=False)
         [(0, 1), (0, 1)]
         sage: G = Graph()
-        sage: from_networkx_graph(G, gnx, multiedges=False)                             # needs networkx
-        sage: G.edges(sort=True, labels=False)                                          # needs networkx
+        sage: from_networkx_graph(G, gnx, multiedges=False)
+        sage: G.edges(sort=True, labels=False)
         [(0, 1)]
 
     When feeding a :class:`Graph` `G` with a NetworkX ``DiGraph`` `D`, `G` has
     one edge `(u, v)` whenever `D` has arc `(u, v)` or `(v, u)` or both::
 
+        sage: # needs networkx
         sage: G = Graph()
-        sage: D = networkx.DiGraph()                                                    # needs networkx
-        sage: _ = D.add_edge(0, 1)                                                      # needs networkx
-        sage: from_networkx_graph(G, D)                                                 # needs networkx
-        sage: G.edges(sort=True, labels=False)                                          # needs networkx
+        sage: D = networkx.DiGraph()
+        sage: _ = D.add_edge(0, 1)
+        sage: from_networkx_graph(G, D)
+        sage: G.edges(sort=True, labels=False)
         [(0, 1)]
         sage: G = Graph()
-        sage: _ = D.add_edge(1, 0)                                                      # needs networkx
-        sage: from_networkx_graph(G, D)                                                 # needs networkx
-        sage: G.edges(sort=True, labels=False)                                          # needs networkx
+        sage: _ = D.add_edge(1, 0)
+        sage: from_networkx_graph(G, D)
+        sage: G.edges(sort=True, labels=False)
         [(0, 1)]
 
     When feeding a :class:`Graph` `G` with a NetworkX ``MultiDiGraph`` `D`, the
     number of edges between `u` and `v` in `G` is the maximum between the number
     of arcs `(u, v)` and the number of arcs `(v, u)` in D`::
 
+        sage: # needs networkx
         sage: G = Graph()
-        sage: D = networkx.MultiDiGraph()                                               # needs networkx
-        sage: _ = D.add_edge(0, 1)                                                      # needs networkx
-        sage: _ = D.add_edge(1, 0)                                                      # needs networkx
-        sage: _ = D.add_edge(1, 0)                                                      # needs networkx
-        sage: D.edges()                                                                 # needs networkx
+        sage: D = networkx.MultiDiGraph()
+        sage: _ = D.add_edge(0, 1)
+        sage: _ = D.add_edge(1, 0)
+        sage: _ = D.add_edge(1, 0)
+        sage: D.edges()
         OutMultiEdgeDataView([(0, 1), (1, 0), (1, 0)])
-        sage: from_networkx_graph(G, D)                                                 # needs networkx
-        sage: G.edges(sort=True, labels=False)                                          # needs networkx
+        sage: from_networkx_graph(G, D)
+        sage: G.edges(sort=True, labels=False)
         [(0, 1), (0, 1)]
 
     Feeding a :class:`DiGraph` with a NetworkX ``DiGraph``::
 
+        sage: # needs networkx
         sage: from sage.graphs.graph_input import from_networkx_graph
-        sage: import networkx                                                           # needs networkx
+        sage: import networkx
         sage: G = DiGraph()
-        sage: _ = gnx = networkx.DiGraph()                                              # needs networkx
-        sage: _ = gnx.add_edge(0, 1)                                                    # needs networkx
-        sage: _ = gnx.add_edge(1, 2)                                                    # needs networkx
-        sage: from_networkx_graph(G, gnx)                                               # needs networkx
-        sage: G.edges(sort=True, labels=False)                                          # needs networkx
+        sage: _ = gnx = networkx.DiGraph()
+        sage: _ = gnx.add_edge(0, 1)
+        sage: _ = gnx.add_edge(1, 2)
+        sage: from_networkx_graph(G, gnx)
+        sage: G.edges(sort=True, labels=False)
         [(0, 1), (1, 2)]
 
     Feeding a :class:`DiGraph` with a NetworkX ``MultiDiGraph``::
 
+        sage: # needs networkx
         sage: G = DiGraph()
-        sage: gnx = networkx.MultiDiGraph()                                             # needs networkx
-        sage: _ = gnx.add_edge(0, 1)                                                    # needs networkx
-        sage: _ = gnx.add_edge(0, 1)                                                    # needs networkx
-        sage: from_networkx_graph(G, gnx)                                               # needs networkx
-        sage: G.edges(sort=True, labels=False)                                          # needs networkx
+        sage: gnx = networkx.MultiDiGraph()
+        sage: _ = gnx.add_edge(0, 1)
+        sage: _ = gnx.add_edge(0, 1)
+        sage: from_networkx_graph(G, gnx)
+        sage: G.edges(sort=True, labels=False)
         [(0, 1), (0, 1)]
         sage: G = DiGraph()
-        sage: from_networkx_graph(G, gnx, multiedges=False)                             # needs networkx
-        sage: G.edges(sort=True, labels=False)                                          # needs networkx
+        sage: from_networkx_graph(G, gnx, multiedges=False)
+        sage: G.edges(sort=True, labels=False)
         [(0, 1)]
 
     When feeding a :class:`DiGraph` `G` with a NetworkX ``Graph`` `H`, `G` has
     both arcs `(u, v)` and `(v, u)` if `G` has edge `(u, v)`::
 
+        sage: # needs networkx
         sage: G = DiGraph()
-        sage: H = networkx.Graph()                                                      # needs networkx
-        sage: _ = H.add_edge(0, 1)                                                      # needs networkx
-        sage: from_networkx_graph(G, H)                                                 # needs networkx
-        sage: G.edges(labels=False, sort=True)                                          # needs networkx
+        sage: H = networkx.Graph()
+        sage: _ = H.add_edge(0, 1)
+        sage: from_networkx_graph(G, H)
+        sage: G.edges(labels=False, sort=True)
         [(0, 1), (1, 0)]
 
     When feeding a :class:`DiGraph` `G` with a NetworkX ``MultiGraph`` `H`, `G`
     has `k` arcs `(u, v)` and `k` arcs `(v, u)` if `H` has `k` edges `(u, v)`,
     unless parameter ``multiedges`` is set to ``False``::
 
+        sage: # needs networkx
         sage: G = DiGraph()
-        sage: H = networkx.MultiGraph()                                                 # needs networkx
-        sage: _ = H.add_edge(0, 1)                                                      # needs networkx
-        sage: _ = H.add_edge(0, 1)                                                      # needs networkx
-        sage: _ = H.add_edge(0, 1)                                                      # needs networkx
-        sage: H.edges()                                                                 # needs networkx
+        sage: H = networkx.MultiGraph()
+        sage: _ = H.add_edge(0, 1)
+        sage: _ = H.add_edge(0, 1)
+        sage: _ = H.add_edge(0, 1)
+        sage: H.edges()
         MultiEdgeDataView([(0, 1), (0, 1), (0, 1)])
-        sage: from_networkx_graph(G, H)                                                 # needs networkx
-        sage: G.edges(labels=False, sort=True)                                          # needs networkx
+        sage: from_networkx_graph(G, H)
+        sage: G.edges(labels=False, sort=True)
         [(0, 1), (0, 1), (0, 1), (1, 0), (1, 0), (1, 0)]
         sage: G = DiGraph()
-        sage: from_networkx_graph(G, H, multiedges=False)                               # needs networkx
-        sage: G.edges(labels=False, sort=True)                                          # needs networkx
+        sage: from_networkx_graph(G, H, multiedges=False)
+        sage: G.edges(labels=False, sort=True)
         [(0, 1), (1, 0)]
 
     TESTS:

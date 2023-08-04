@@ -162,18 +162,19 @@ def RandomBarabasiAlbert(n, m, seed=None):
 
     We view many random graphs using a graphics array::
 
+        sage: # needs networkx sage.plot
         sage: g = []
         sage: j = []
-        sage: for i in range(1,10):                                                     # needs networkx
+        sage: for i in range(1,10):
         ....:     k = graphs.RandomBarabasiAlbert(i+3, 3)
         ....:     g.append(k)
-        sage: for i in range(3):                                                        # needs networkx sage.plot
+        sage: for i in range(3):
         ....:     n = []
         ....:     for m in range(3):
         ....:         n.append(g[3*i + m].plot(vertex_size=50, vertex_labels=False))
         ....:     j.append(n)
-        sage: G = graphics_array(j)                                                     # needs networkx sage.plot
-        sage: G.show()                          # long time                             # needs networkx sage.plot
+        sage: G = graphics_array(j)
+        sage: G.show()                          # long time
 
     When `m = 1`, the generated graph is a tree::
 
@@ -690,18 +691,19 @@ def RandomGNM(n, m, dense=False, seed=None):
 
     We view many random graphs using a graphics array::
 
+        sage: # needs networkx sage.plot
         sage: g = []
         sage: j = []
-        sage: for i in range(9):                                                        # needs networkx
+        sage: for i in range(9):
         ....:     k = graphs.RandomGNM(i+3, i^2-i)
         ....:     g.append(k)
-        sage: for i in range(3):                                                        # needs networkx sage.plot
+        sage: for i in range(3):
         ....:     n = []
         ....:     for m in range(3):
         ....:         n.append(g[3*i + m].plot(vertex_size=50, vertex_labels=False))
         ....:     j.append(n)
-        sage: G = graphics_array(j)                                                     # needs networkx sage.plot
-        sage: G.show()                          # long time                             # needs networkx sage.plot
+        sage: G = graphics_array(j)
+        sage: G.show()                          # long time
     """
     if seed is None:
         seed = int(current_randstate().long_seed() % sys.maxsize)
@@ -1446,7 +1448,7 @@ def RandomTreePowerlaw(n, gamma=3, tries=1000, seed=None):
     ::
 
         sage: G = graphs.RandomTreePowerlaw(15, 2)                                      # needs networkx
-        sage: if G:                             # random output         # long time     # needs networkx sage.plot
+        sage: if G:                             # random output         # long time, needs networkx sage.plot
         ....:     G.show()
     """
     if seed is None:
@@ -1486,7 +1488,7 @@ def RandomRegular(d, n, seed=None):
     ::
 
         sage: G = graphs.RandomRegular(3, 20)                                           # needs networkx
-        sage: if G:                             # random output         # long time     # needs networkx sage.plot
+        sage: if G:                             # random output         # long time, needs networkx sage.plot
         ....:     G.show()
 
     REFERENCES:
@@ -2101,17 +2103,18 @@ def RandomBicubicPlanar(n, seed=None):
 
     EXAMPLES::
 
+        sage: # needs sage.combinat
         sage: n = randint(200, 300)
-        sage: G = graphs.RandomBicubicPlanar(n)                                         # needs sage.combinat
-        sage: G.order() == 2*n                                                          # needs sage.combinat
+        sage: G = graphs.RandomBicubicPlanar(n)
+        sage: G.order() == 2*n
         True
-        sage: G.size() == 3*n                                                           # needs sage.combinat
+        sage: G.size() == 3*n
         True
-        sage: G.is_bipartite() and G.is_planar() and G.is_regular(3)                    # needs sage.combinat
+        sage: G.is_bipartite() and G.is_planar() and G.is_regular(3)
         True
-        sage: dic = {'red': [v for v in G.vertices(sort=False) if v[0] == 'n'],         # needs sage.combinat
+        sage: dic = {'red': [v for v in G.vertices(sort=False) if v[0] == 'n'],
         ....:        'blue': [v for v in G.vertices(sort=False) if v[0] != 'n']}
-        sage: G.plot(vertex_labels=False, vertex_size=20, vertex_colors=dic)            # needs sage.combinat sage.plot
+        sage: G.plot(vertex_labels=False, vertex_size=20, vertex_colors=dic)            # needs sage.plot
         Graphics object consisting of ... graphics primitives
 
     .. PLOT::
@@ -2213,17 +2216,18 @@ def RandomUnitDiskGraph(n, radius=.1, side=1, seed=None):
 
     When using twice the same seed, the vertices get the same positions::
 
+        sage: # needs scipy
         sage: from sage.misc.randstate import current_randstate
         sage: seed = current_randstate().seed()
-        sage: G = graphs.RandomUnitDiskGraph(20, radius=.5, side=1, seed=seed)          # needs scipy
-        sage: H = graphs.RandomUnitDiskGraph(20, radius=.2, side=1, seed=seed)          # needs scipy
-        sage: H.is_subgraph(G, induced=False)                                           # needs scipy
+        sage: G = graphs.RandomUnitDiskGraph(20, radius=.5, side=1, seed=seed)
+        sage: H = graphs.RandomUnitDiskGraph(20, radius=.2, side=1, seed=seed)
+        sage: H.is_subgraph(G, induced=False)
         True
-        sage: H.size() <= G.size()                                                      # needs scipy
+        sage: H.size() <= G.size()
         True
-        sage: Gpos = G.get_pos()                                                        # needs scipy
-        sage: Hpos = H.get_pos()                                                        # needs scipy
-        sage: all(Gpos[u] == Hpos[u] for u in G)                                        # needs scipy
+        sage: Gpos = G.get_pos()
+        sage: Hpos = H.get_pos()
+        sage: all(Gpos[u] == Hpos[u] for u in G)
         True
 
     When the radius is more than `\sqrt{2 \text{side}}`, the graph is a clique::
