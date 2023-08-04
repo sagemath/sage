@@ -2903,18 +2903,18 @@ cdef class CombinatorialPolyhedron(SageObject):
             sage: # needs sage.graphs sage.rings.number_field
             sage: P = polytopes.regular_polygon(4).pyramid()
             sage: C = CombinatorialPolyhedron(P)
-            sage: D = C.hasse_diagram(); D                                              # needs sage.graphs
+            sage: D = C.hasse_diagram(); D
             Digraph on 20 vertices
-            sage: D.average_degree()                                                    # needs sage.graphs
+            sage: D.average_degree()
             21/5
-            sage: D.relabel(C.face_by_face_lattice_index)                               # needs sage.graphs
-            sage: dim_0_vert = D.vertices(sort=True)[1:6]; dim_0_vert                   # needs sage.graphs
+            sage: D.relabel(C.face_by_face_lattice_index)
+            sage: dim_0_vert = D.vertices(sort=True)[1:6]; dim_0_vert
             [A 0-dimensional face of a 3-dimensional combinatorial polyhedron,
              A 0-dimensional face of a 3-dimensional combinatorial polyhedron,
              A 0-dimensional face of a 3-dimensional combinatorial polyhedron,
              A 0-dimensional face of a 3-dimensional combinatorial polyhedron,
              A 0-dimensional face of a 3-dimensional combinatorial polyhedron]
-            sage: sorted(D.out_degree(vertices=dim_0_vert))                             # needs sage.graphs
+            sage: sorted(D.out_degree(vertices=dim_0_vert))
             [3, 3, 3, 3, 4]
         """
         if not self._face_lattice_incidences:
@@ -3000,13 +3000,13 @@ cdef class CombinatorialPolyhedron(SageObject):
             sage: # needs sage.combinat
             sage: P = polytopes.cube()
             sage: C = CombinatorialPolyhedron(P)
-            sage: F = C.face_lattice()                                                  # needs sage.combinat
-            sage: F                                                                     # needs sage.combinat
+            sage: F = C.face_lattice()
+            sage: F
             Finite lattice containing 28 elements
-            sage: G = F.relabel(C.face_by_face_lattice_index)                           # needs sage.combinat
-            sage: G.level_sets()[0]                                                     # needs sage.combinat
+            sage: G = F.relabel(C.face_by_face_lattice_index)
+            sage: G.level_sets()[0]
             [A -1-dimensional face of a 3-dimensional combinatorial polyhedron]
-            sage: G.level_sets()[3]                                                     # needs sage.combinat
+            sage: G.level_sets()[3]
             [A 2-dimensional face of a 3-dimensional combinatorial polyhedron,
              A 2-dimensional face of a 3-dimensional combinatorial polyhedron,
              A 2-dimensional face of a 3-dimensional combinatorial polyhedron,

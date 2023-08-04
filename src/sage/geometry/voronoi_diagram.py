@@ -264,14 +264,14 @@ class VoronoiDiagram(SageObject):
             sage: # needs sage.plot
             sage: P = [[0.671, 0.650], [0.258, 0.767], [0.562, 0.406],
             ....:      [0.254, 0.709], [0.493, 0.879]]
-            sage: V = VoronoiDiagram(P); S=V.plot()                                     # needs sage.plot
-            sage: show(S, xmin=0, xmax=1, ymin=0, ymax=1, aspect_ratio=1, axes=false)   # needs sage.plot
-            sage: S = V.plot(cell_colors={0: 'red', 1: 'blue', 2: 'green',                                 # needs sage.plot
+            sage: V = VoronoiDiagram(P); S=V.plot()
+            sage: show(S, xmin=0, xmax=1, ymin=0, ymax=1, aspect_ratio=1, axes=false)
+            sage: S = V.plot(cell_colors={0: 'red', 1: 'blue', 2: 'green',
             ....:                         3: 'white', 4: 'yellow'})
-            sage: show(S, xmin=0, xmax=1, ymin=0, ymax=1, aspect_ratio=1, axes=false)   # needs sage.plot
-            sage: S = V.plot(cell_colors=['red', 'blue', 'red', 'white', 'white'])           # needs sage.plot
-            sage: show(S, xmin=0, xmax=1, ymin=0, ymax=1, aspect_ratio=1, axes=false)   # needs sage.plot
-            sage: S = V.plot(cell_colors='something else')                                # needs sage.plot
+            sage: show(S, xmin=0, xmax=1, ymin=0, ymax=1, aspect_ratio=1, axes=false)
+            sage: S = V.plot(cell_colors=['red', 'blue', 'red', 'white', 'white'])
+            sage: show(S, xmin=0, xmax=1, ymin=0, ymax=1, aspect_ratio=1, axes=false)
+            sage: S = V.plot(cell_colors='something else')
             Traceback (most recent call last):
             ...
             AssertionError: 'cell_colors' must be a list or a dictionary

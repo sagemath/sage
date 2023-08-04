@@ -112,15 +112,15 @@ The standard example of a non-regular triangulation (requires TOPCOM)::
     sage: PointConfiguration.set_engine('topcom')
     sage: p = PointConfiguration([[-1,-5/9], [0,10/9], [1,-5/9],
     ....:                         [-2,-10/9], [0,20/9], [2,-10/9]])
-    sage: p_regular = p.restrict_to_regular_triangulations(True)        # optional - topcom
-    sage: regular = p_regular.triangulations_list()                     # optional - topcom
-    sage: p_nonregular = p.restrict_to_regular_triangulations(False)    # optional - topcom
-    sage: nonregular = p_nonregular.triangulations_list()               # optional - topcom
-    sage: len(regular)                                                  # optional - topcom
+    sage: p_regular = p.restrict_to_regular_triangulations(True)
+    sage: regular = p_regular.triangulations_list()
+    sage: p_nonregular = p.restrict_to_regular_triangulations(False)
+    sage: nonregular = p_nonregular.triangulations_list()
+    sage: len(regular)
     16
-    sage: len(nonregular)                                               # optional - topcom
+    sage: len(nonregular)
     2
-    sage: nonregular[0].plot(aspect_ratio=1, axes=False)                # optional - topcom, needs sage.plot
+    sage: nonregular[0].plot(aspect_ratio=1, axes=False)                                # needs sage.plot
     Graphics object consisting of 25 graphics primitives
     sage: PointConfiguration.set_engine('internal')   # to make doctests independent of TOPCOM
 
@@ -382,7 +382,7 @@ class PointConfiguration(UniqueRepresentation, PointConfiguration_base):
             sage: p.triangulate()
             (<1,3,4>, <2,3,4>)
             sage: p.set_engine('topcom')
-            sage: p.triangulate()          # optional - topcom
+            sage: p.triangulate()
             (<0,1,2>, <0,1,4>, <0,2,4>, <1,2,3>)
             sage: p.set_engine('internal')
         """
@@ -743,9 +743,9 @@ class PointConfiguration(UniqueRepresentation, PointConfiguration_base):
             sage: # optional - topcom
             sage: p = PointConfiguration([[0,0], [0,1], [1,0], [1,1], [-1,-1]])
             sage: p.set_engine('topcom')
-            sage: p._TOPCOM_triangulate(verbose=False)   # optional - topcom
+            sage: p._TOPCOM_triangulate(verbose=False)
             (<0,1,2>, <0,1,4>, <0,2,4>, <1,2,3>)
-            sage: list( p.triangulate() )                # optional - topcom
+            sage: list( p.triangulate() )
             [(0, 1, 2), (0, 1, 4), (0, 2, 4), (1, 2, 3)]
             sage: p.set_engine('internal')
         """
