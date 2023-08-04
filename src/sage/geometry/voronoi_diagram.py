@@ -232,7 +232,7 @@ class VoronoiDiagram(SageObject):
 
             sage: V = VoronoiDiagram(polytopes.regular_polygon(3).vertices()); V        # needs sage.rings.number_field
             The Voronoi diagram of 3 points of dimension 2 in the Algebraic Real Field
-            sage: VoronoiDiagram([])                                                    # needs sage.rings.number_field
+            sage: VoronoiDiagram([])
             The empty Voronoi diagram.
         """
         if self._n:

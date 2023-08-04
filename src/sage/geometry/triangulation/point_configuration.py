@@ -108,7 +108,7 @@ A 3-dimensional point configuration::
 
 The standard example of a non-regular triangulation (requires TOPCOM)::
 
-    sage: PointConfiguration.set_engine('topcom')                       # optional - topcom
+    sage: PointConfiguration.set_engine('topcom')
     sage: p = PointConfiguration([[-1,-5/9], [0,10/9], [1,-5/9],
     ....:                         [-2,-10/9], [0,20/9], [2,-10/9]])
     sage: p_regular = p.restrict_to_regular_triangulations(True)        # optional - topcom
@@ -379,10 +379,10 @@ class PointConfiguration(UniqueRepresentation, PointConfiguration_base):
             sage: p.set_engine('internal')   # to make doctests independent of TOPCOM
             sage: p.triangulate()
             (<1,3,4>, <2,3,4>)
-            sage: p.set_engine('topcom')   # optional - topcom
+            sage: p.set_engine('topcom')
             sage: p.triangulate()          # optional - topcom
             (<0,1,2>, <0,1,4>, <0,2,4>, <1,2,3>)
-            sage: p.set_engine('internal') # optional - topcom
+            sage: p.set_engine('internal')
         """
         engine = engine.lower()
         if engine not in ['auto', 'topcom', 'internal']:
@@ -739,12 +739,12 @@ class PointConfiguration(UniqueRepresentation, PointConfiguration_base):
         EXAMPLES::
 
             sage: p = PointConfiguration([[0,0], [0,1], [1,0], [1,1], [-1,-1]])
-            sage: p.set_engine('topcom')                 # optional - topcom
+            sage: p.set_engine('topcom')
             sage: p._TOPCOM_triangulate(verbose=False)   # optional - topcom
             (<0,1,2>, <0,1,4>, <0,2,4>, <1,2,3>)
             sage: list( p.triangulate() )                # optional - topcom
             [(0, 1, 2), (0, 1, 4), (0, 2, 4), (1, 2, 3)]
-            sage: p.set_engine('internal')               # optional - topcom
+            sage: p.set_engine('internal')
         """
         assert self._regular is not False, \
             'When asked for a single triangulation TOPCOM ' + \
@@ -787,7 +787,7 @@ class PointConfiguration(UniqueRepresentation, PointConfiguration_base):
             fine, not necessarily regular.
             sage: len(p.triangulations_list())
             4
-            sage: PointConfiguration.set_engine('topcom')            # optional - topcom
+            sage: PointConfiguration.set_engine('topcom')
             sage: p_regular = p.restrict_to_regular_triangulations() # optional - topcom
             sage: len(p_regular.triangulations_list())               # optional - topcom
             4
@@ -831,7 +831,7 @@ class PointConfiguration(UniqueRepresentation, PointConfiguration_base):
             fine, not necessarily regular.
             sage: len(p.triangulations_list())
             4
-            sage: PointConfiguration.set_engine('topcom')                          # optional - topcom
+            sage: PointConfiguration.set_engine('topcom')
             sage: p_all = p.restrict_to_connected_triangulations(connected=False)  # optional - topcom
             sage: len(p_all.triangulations_list())                                 # optional - topcom
             4
@@ -1018,10 +1018,10 @@ class PointConfiguration(UniqueRepresentation, PointConfiguration_base):
             [(<0,1,2>, <1,2,3>), (<0,1,3>, <0,2,3>)]
             sage: list(map(list, p.triangulations_list()))
             [[(0, 1, 2), (1, 2, 3)], [(0, 1, 3), (0, 2, 3)]]
-            sage: p.set_engine('topcom')       # optional - topcom
+            sage: p.set_engine('topcom')
             sage: p.triangulations_list()      # optional - topcom
             [(<0,1,2>, <1,2,3>), (<0,1,3>, <0,2,3>)]
-            sage: p.set_engine('internal')     # optional - topcom
+            sage: p.set_engine('internal')
         """
         return list(self.triangulations(verbose))
 

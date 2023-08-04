@@ -1155,11 +1155,11 @@ class Polyhedron_base3(Polyhedron_base2):
 
         EXAMPLES::
 
-            sage: polytopes.hypersimplex(4,2).simplicity()                              # needs sage.combinat
+            sage: polytopes.hypersimplex(4,2).simplicity()
             1
-            sage: polytopes.hypersimplex(5,2).simplicity()                              # needs sage.combinat
+            sage: polytopes.hypersimplex(5,2).simplicity()
             2
-            sage: polytopes.hypersimplex(6,2).simplicity()                              # needs sage.combinat
+            sage: polytopes.hypersimplex(6,2).simplicity()
             3
             sage: polytopes.simplex(3).simplicity()
             3
@@ -1208,7 +1208,7 @@ class Polyhedron_base3(Polyhedron_base2):
 
             sage: polytopes.cyclic_polytope(10,4).simpliciality()
             3
-            sage: polytopes.hypersimplex(5,2).simpliciality()                           # needs sage.combinat
+            sage: polytopes.hypersimplex(5,2).simpliciality()
             2
             sage: polytopes.cross_polytope(4).simpliciality()
             3
@@ -1464,9 +1464,9 @@ class Polyhedron_base3(Polyhedron_base2):
 
         EXAMPLES::
 
-            sage: P = polytopes.hypersimplex(5,2)                                       # needs sage.combinat
-            sage: L = P.lawrence_polytope()                                             # needs sage.combinat
-            sage: L.is_lattice_polytope()                                               # needs sage.combinat
+            sage: P = polytopes.hypersimplex(5,2)
+            sage: L = P.lawrence_polytope()
+            sage: L.is_lattice_polytope()
             True
 
             sage: egyptian_pyramid = polytopes.regular_polygon(4).pyramid()             # needs sage.number_field

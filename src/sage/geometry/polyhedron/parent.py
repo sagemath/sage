@@ -115,7 +115,7 @@ def Polyhedra(ambient_space_or_base_ring=None, ambient_dim=None, backend=None, *
         ...
         ValueError: the 'polymake' backend for polyhedron cannot be used with Algebraic Real Field
 
-        sage: Polyhedra(QQ, 2, backend='normaliz')                           # optional - pynormaliz
+        sage: Polyhedra(QQ, 2, backend='normaliz')
         Polyhedra in QQ^2
         sage: Polyhedra(SR, 2, backend='normaliz')      # optional - pynormaliz         # needs sage.symbolic
         Polyhedra in (Symbolic Ring)^2
@@ -272,13 +272,14 @@ class Polyhedra_base(UniqueRepresentation, Parent):
             sage: P.cardinality()
             +Infinity
 
-            sage: P = Polyhedra(AA, 0)                                                  # needs sage.rings.number_field
-            sage: P.category()                                                          # needs sage.rings.number_field
+            sage: # needs sage.rings.number_field
+            sage: P = Polyhedra(AA, 0)
+            sage: P.category()
             Category of finite enumerated polyhedral sets over Algebraic Real Field
-            sage: P.list()                                                              # needs sage.rings.number_field
+            sage: P.list()
             [The empty polyhedron in AA^0,
              A 0-dimensional polyhedron in AA^0 defined as the convex hull of 1 vertex]
-            sage: P.cardinality()                                                       # needs sage.rings.number_field
+            sage: P.cardinality()
             2
         """
         if self.ambient_dim():
@@ -607,13 +608,14 @@ class Polyhedra_base(UniqueRepresentation, Parent):
 
         Check that :trac:`21270` is fixed::
 
-            sage: poly = polytopes.regular_polygon(7)                                   # needs sage.rings.number_field
-            sage: lp, x = poly.to_linear_program(solver='InteractiveLP',                # needs sage.rings.number_field
+            sage: # needs sage.rings.number_field
+            sage: poly = polytopes.regular_polygon(7)
+            sage: lp, x = poly.to_linear_program(solver='InteractiveLP',
             ....:                                return_variable=True)
-            sage: lp.set_objective(x[0] + x[1])                                         # needs sage.rings.number_field
-            sage: b = lp.get_backend()                                                  # needs sage.rings.number_field
-            sage: P = b.interactive_lp_problem()                                        # needs sage.rings.number_field
-            sage: p = P.plot()                                                          # needs sage.plot sage.rings.number_field
+            sage: lp.set_objective(x[0] + x[1])
+            sage: b = lp.get_backend()
+            sage: P = b.interactive_lp_problem()
+            sage: p = P.plot()                                                          # needs sage.plot
 
             sage: Q = Polyhedron(ieqs=[[-499999, 1000000], [1499999, -1000000]])
             sage: P = Polyhedron(ieqs=[[0, 1.0], [1.0, -1.0]], base_ring=RDF)
@@ -635,11 +637,12 @@ class Polyhedra_base(UniqueRepresentation, Parent):
 
         When the parent of the object is not ``self``, the default is not to copy::
 
-            sage: Q = P.base_extend(AA)                                                 # needs sage.rings.number_field
-            sage: q = Q._element_constructor_(p)                                        # needs sage.rings.number_field
-            sage: q is p                                                                # needs sage.rings.number_field
+            sage: # needs sage.rings.number_field
+            sage: Q = P.base_extend(AA)
+            sage: q = Q._element_constructor_(p)
+            sage: q is p
             False
-            sage: q = Q._element_constructor_(p, copy=False)                            # needs sage.rings.number_field
+            sage: q = Q._element_constructor_(p, copy=False)
             Traceback (most recent call last):
             ...
             ValueError: you need to make a copy when changing the parent
@@ -728,7 +731,7 @@ class Polyhedra_base(UniqueRepresentation, Parent):
 
             sage: P = Polyhedra(AA, 3, backend='field')                                 # needs sage.rings.number_field
             sage: vertices = [(0, 0, 0), (1, 0, 0), (0, 1, 0), (0, 0, 1)]
-            sage: p = Polyhedron(vertices=vertices)                                     # needs sage.rings.number_field
+            sage: p = Polyhedron(vertices=vertices)
             sage: P(p)                                                                  # needs sage.rings.number_field
             A 3-dimensional polyhedron in AA^3 defined as the convex hull of 4 vertices
         """

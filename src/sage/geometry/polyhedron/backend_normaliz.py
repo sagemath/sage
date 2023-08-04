@@ -248,23 +248,24 @@ class Polyhedron_normaliz(Polyhedron_base_number_field):
             ...
             NormalizError: Some error in the normaliz input data detected: Unknown ConeProperty...
 
-            sage: x = polygen(QQ, 'x')                                                  # needs sage.rings.number_field
-            sage: K.<a> = NumberField(x^3 - 3, embedding=AA(3)**(1/3))                  # needs sage.rings.number_field
-            sage: p = Polyhedron(vertices=[(0, 0), (1, 1), (a, 3), (-1, a**2)],         # needs sage.rings.number_field
+            sage: # needs sage.rings.number_field
+            sage: x = polygen(QQ, 'x')
+            sage: K.<a> = NumberField(x^3 - 3, embedding=AA(3)**(1/3))
+            sage: p = Polyhedron(vertices=[(0, 0), (1, 1), (a, 3), (-1, a**2)],
             ....:                rays=[(-1,-a)], backend='normaliz')
-            sage: sorted(p._nmz_result(p._normaliz_cone, 'VerticesOfPolyhedron'))       # needs sage.rings.number_field
+            sage: sorted(p._nmz_result(p._normaliz_cone, 'VerticesOfPolyhedron'))
             [[-1, a^2, 1], [1, 1, 1], [a, 3, 1]]
-            sage: triangulation_generators = p._nmz_result(p._normaliz_cone,            # needs sage.rings.number_field
+            sage: triangulation_generators = p._nmz_result(p._normaliz_cone,
             ....:                                          'Triangulation')[1]
-            sage: sorted(triangulation_generators)                                      # needs sage.rings.number_field
+            sage: sorted(triangulation_generators)
             [[-a^2, -3, 0], [-1, a^2, 1], [0, 0, 1], [1, 1, 1], [a, 3, 1]]
-            sage: p._nmz_result(p._normaliz_cone, 'AffineDim') == 2                     # needs sage.rings.number_field
+            sage: p._nmz_result(p._normaliz_cone, 'AffineDim') == 2
             True
-            sage: p._nmz_result(p._normaliz_cone, 'EmbeddingDim') == 3                  # needs sage.rings.number_field
+            sage: p._nmz_result(p._normaliz_cone, 'EmbeddingDim') == 3
             True
-            sage: p._nmz_result(p._normaliz_cone, 'ExtremeRays')                        # needs sage.rings.number_field
+            sage: p._nmz_result(p._normaliz_cone, 'ExtremeRays')
             [[-1/3*a^2, -1, 0]]
-            sage: p._nmz_result(p._normaliz_cone, 'MaximalSubspace')                    # needs sage.rings.number_field
+            sage: p._nmz_result(p._normaliz_cone, 'MaximalSubspace')
             []
         """
         def rational_handler(list):
@@ -593,17 +594,18 @@ class Polyhedron_normaliz(Polyhedron_base_number_field):
 
         Check that :trac:`30248` is fixed, that maps as input works::
 
-            sage: q = Polyhedron(backend='normaliz', base_ring=AA,                      # needs sage.rings.number_field
+            sage: # needs sage.rings.number_field
+            sage: q = Polyhedron(backend='normaliz', base_ring=AA,
             ....:                rays=[(0, 0, 1), (0, 1, -1), (1, 0, -1)])
             sage: def make_new_Hrep(h):
             ....:     return tuple(x if i == 0 else -1*x
             ....:                  for i, x in enumerate(h._vector))
-            sage: new_inequalities = map(make_new_Hrep, q.inequality_generator())       # needs sage.rings.number_field
-            sage: new_equations = map(make_new_Hrep, q.equation_generator())            # needs sage.rings.number_field
-            sage: parent = q.parent()                                                   # needs sage.rings.number_field
-            sage: new_q = parent.element_class(parent, None,                            # needs sage.rings.number_field
+            sage: new_inequalities = map(make_new_Hrep, q.inequality_generator())
+            sage: new_equations = map(make_new_Hrep, q.equation_generator())
+            sage: parent = q.parent()
+            sage: new_q = parent.element_class(parent, None,
             ....:                              [new_inequalities, new_equations])
-            sage: new_q                                                                 # needs sage.rings.number_field
+            sage: new_q
             A 3-dimensional polyhedron in AA^3 defined as the convex hull of 1 vertex and 3 rays
         """
 
@@ -1271,11 +1273,12 @@ class Polyhedron_normaliz(Polyhedron_base_number_field):
             sage: P2 == P
             True
 
-            sage: P = polytopes.dodecahedron(backend='normaliz')                        # needs sage.rings.number_field
-            sage: P1 = loads(dumps(P))                                                  # needs sage.rings.number_field
-            sage: P2 = Polyhedron_normaliz(P1.parent(), None, None, P1._normaliz_cone,  # needs sage.rings.number_field
+            sage: # needs sage.rings.number_field
+            sage: P = polytopes.dodecahedron(backend='normaliz')
+            sage: P1 = loads(dumps(P))
+            sage: P2 = Polyhedron_normaliz(P1.parent(), None, None, P1._normaliz_cone,
             ....:                          internal_base_ring=P1._internal_base_ring)
-            sage: P == P2                                                               # needs sage.rings.number_field
+            sage: P == P2
             True
 
         Test that :trac:`31820` is fixed::

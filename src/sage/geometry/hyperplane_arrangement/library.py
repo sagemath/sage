@@ -571,7 +571,7 @@ class HyperplaneArrangementLibrary():
 
         EXAMPLES::
 
-            sage: hyperplane_arrangements.semiorder(4)                                  # needs sage.combinat
+            sage: hyperplane_arrangements.semiorder(4)
             Arrangement of 12 hyperplanes of dimension 4 and rank 3
 
         TESTS::
@@ -656,7 +656,7 @@ class HyperplaneArrangementLibrary():
         If the Cartan type is not crystallographic, the Shi arrangement
         is not defined::
 
-            sage: hyperplane_arrangements.Shi("H4")                                     # needs sage.combinat
+            sage: hyperplane_arrangements.Shi("H4")
             Traceback (most recent call last):
             ...
             NotImplementedError: Shi arrangements are not defined for non crystallographic Cartan types

@@ -524,7 +524,7 @@ class Triangulation(Element):
             sage: triangulation = pc.triangulate()
             sage: fan = triangulation.fan(); fan
             Rational polyhedral fan in 2-d lattice N
-            sage: fan.is_equivalent(toric_varieties.P2().fan())                         # needs palp
+            sage: fan.is_equivalent(toric_varieties.P2().fan())                         # needs palp sage.graphs
             True
 
         Toric diagrams (the `\ZZ_5` hyperconifold)::

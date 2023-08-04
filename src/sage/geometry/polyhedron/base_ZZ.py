@@ -163,11 +163,11 @@ class Polyhedron_ZZ(Polyhedron_QQ):
             7/2*t^3 + 2*t^2 - 1/2*t + 1
             sage: p(1)                                 # optional - latte_int
             6
-            sage: len(P.integral_points())             # optional - latte_int
+            sage: len(P.integral_points())
             6
             sage: p(2)                                 # optional - latte_int
             36
-            sage: len((2*P).integral_points())         # optional - latte_int
+            sage: len((2*P).integral_points())
             36
 
         The unit hypercubes::
@@ -282,7 +282,7 @@ class Polyhedron_ZZ(Polyhedron_QQ):
         Receive a type error if the backend is not normaliz::
 
             sage: c = Polyhedron(vertices = [[0,0,0],[0,0,1],[0,1,0],[0,1,1],[1,0,0],[1,0,1],[1,1,0],[1,1,1]])
-            sage: c._ehrhart_polynomial_normaliz()             # optional - pynormaliz
+            sage: c._ehrhart_polynomial_normaliz()
             Traceback (most recent call last):
             ...
             TypeError: The polyhedron's backend should be 'normaliz'
@@ -368,11 +368,11 @@ class Polyhedron_ZZ(Polyhedron_QQ):
             7/2*t^3 + 2*t^2 - 1/2*t + 1
             sage: poly(1)                                              # optional - latte_int
             6
-            sage: len(simplex.integral_points())                       # optional - latte_int
+            sage: len(simplex.integral_points())
             6
             sage: poly(2)                                              # optional - latte_int
             36
-            sage: len((2*simplex).integral_points())                   # optional - latte_int
+            sage: len((2*simplex).integral_points())
             36
 
         Now we find the same Ehrhart polynomial, this time using
@@ -388,7 +388,7 @@ class Polyhedron_ZZ(Polyhedron_QQ):
         it returns an error::
 
             sage: simplex = Polyhedron(vertices=[(0,0,0),(3,3,3),(-3,2,1),(1,-1,-2)])
-            sage: simplex.ehrhart_polynomial(engine='normaliz')        # optional - pynormaliz
+            sage: simplex.ehrhart_polynomial(engine='normaliz')
             Traceback (most recent call last):
             ...
             TypeError: The polyhedron's backend should be 'normaliz'
@@ -629,8 +629,8 @@ class Polyhedron_ZZ(Polyhedron_QQ):
 
         EXAMPLES::
 
-            sage: P = Polyhedron(toric_varieties.P4_11169().fan().rays(), base_ring=ZZ)             # needs palp
-            sage: list(P.fibration_generator(2))                                        # needs palp
+            sage: P = Polyhedron(toric_varieties.P4_11169().fan().rays(), base_ring=ZZ)             # needs palp sage.graphs
+            sage: list(P.fibration_generator(2))                                        # needs palp sage.graphs
             [A 2-dimensional polyhedron in ZZ^4 defined as the convex hull of 3 vertices]
         """
         from sage.combinat.combination import Combinations

@@ -129,7 +129,7 @@ them are parallel by making sure all of the `a` chosen are different, and we
 avoid a common crossing of three lines by adding a random noise to `b`::
 
     sage: n = 20
-    sage: l = sorted(zip(Subsets(20*n, n).random_element(),                             # needs sage.combinat
+    sage: l = sorted(zip(Subsets(20*n, n).random_element(),
     ....:                [randint(0, 20*n) + random() for i in range(n)]))
     sage: print(l[:5])                          # not tested                            # needs sage.combinat
     [(96, 278.0130613051349), (74, 332.92512282478714), (13, 155.65820951249867),
@@ -140,14 +140,14 @@ We can now compute for each `i` the order in which line `i` meets the other line
     sage: permutations = [[0..i-1] + [i+1..n-1] for i in range(n)]
     sage: def a(x): return l[x][0]
     sage: def b(x): return l[x][1]
-    sage: for i, perm in enumerate(permutations):                                       # needs sage.combinat
+    sage: for i, perm in enumerate(permutations):
     ....:     perm.sort(key=lambda j: (b(j)-b(i))/(a(i)-a(j)))
 
 And finally build the line arrangement::
 
     sage: from sage.geometry.pseudolines import PseudolineArrangement
-    sage: p = PseudolineArrangement(permutations)                                       # needs sage.combinat
-    sage: print(p)                                                                      # needs sage.combinat
+    sage: p = PseudolineArrangement(permutations)
+    sage: print(p)
     Arrangement of pseudolines of size 20
     sage: p.show(figsize=[20,8])                                                        # needs sage.combinat sage.plot
 

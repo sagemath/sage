@@ -58,20 +58,21 @@ class Polyhedron_base_number_field(Polyhedron_base):
 
         EXAMPLES::
 
-            sage: p = Polyhedron(vertices=[(0,1/2), (2,0), (4,5/6)],    # optional - pynormaliz, needs sage.rings.number_field
+            sage: # optional - pynormaliz, needs sage.rings.number_field
+            sage: p = Polyhedron(vertices=[(0,1/2), (2,0), (4,5/6)],
             ....:                base_ring=AA, backend='normaliz')
-            sage: def convert_QQ(ieqs, eqs):                            # optional - pynormaliz
+            sage: def convert_QQ(ieqs, eqs):
             ....:     return [[1000*x for x in ieq] for ieq in ieqs], \
             ....:            [[1000*x for x in eq] for eq in eqs]
-            sage: def convert_NF(ieqs, eqs):                            # optional - pynormaliz
+            sage: def convert_NF(ieqs, eqs):
             ....:     return ieqs, eqs
-            sage: p._compute_data_lists_and_internal_base_ring(         # optional - pynormaliz, needs sage.rings.number_field
+            sage: p._compute_data_lists_and_internal_base_ring(
             ....:     [[[1]], [[1/2]]], convert_QQ, convert_NF)
             (([[1000]], [[500]]), Rational Field)
-            sage: p._compute_data_lists_and_internal_base_ring(         # optional - pynormaliz, needs sage.rings.number_field
+            sage: p._compute_data_lists_and_internal_base_ring(
             ....:     [[[AA(1)]], [[1/2]]], convert_QQ, convert_NF)
             (([[1000]], [[500]]), Rational Field)
-            sage: p._compute_data_lists_and_internal_base_ring(         # optional - pynormaliz, needs sage.rings.number_field
+            sage: p._compute_data_lists_and_internal_base_ring(
             ....:     [[[AA(sqrt(2))]], [[1/2]]], convert_QQ, convert_NF)
             ([[[a]], [[1/2]]],
              Number Field in a with defining polynomial y^2 - 2 with a = 1.414213562373095?)

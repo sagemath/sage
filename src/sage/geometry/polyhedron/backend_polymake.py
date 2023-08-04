@@ -253,7 +253,7 @@ class Polyhedron_polymake(Polyhedron_base):
         TESTS::
 
             sage: p = Polyhedron(backend='polymake')                       # optional - jupymake
-            sage: from sage.geometry.polyhedron.backend_polymake import Polyhedron_polymake   # optional - jupymake
+            sage: from sage.geometry.polyhedron.backend_polymake import Polyhedron_polymake
             sage: Polyhedron_polymake._init_from_Hrepresentation(p, [], [])  # indirect doctest  # optional - jupymake
         """
         self._polymake_polytope = polymake_polytope
@@ -284,7 +284,7 @@ class Polyhedron_polymake(Polyhedron_base):
         EXAMPLES::
 
             sage: p = Polyhedron(backend='polymake')                       # optional - jupymake
-            sage: from sage.geometry.polyhedron.backend_polymake import Polyhedron_polymake   # optional - jupymake
+            sage: from sage.geometry.polyhedron.backend_polymake import Polyhedron_polymake
             sage: Polyhedron_polymake._init_from_Vrepresentation(p, [], [], [])   # optional - jupymake
         """
         from sage.interfaces.polymake import polymake
@@ -351,7 +351,7 @@ class Polyhedron_polymake(Polyhedron_base):
         EXAMPLES::
 
             sage: p = Polyhedron(backend='polymake')                       # optional - jupymake
-            sage: from sage.geometry.polyhedron.backend_polymake import Polyhedron_polymake   # optional - jupymake
+            sage: from sage.geometry.polyhedron.backend_polymake import Polyhedron_polymake
             sage: Polyhedron_polymake._init_from_Hrepresentation(p, [], [])   # optional - jupymake
         """
         from sage.interfaces.polymake import polymake

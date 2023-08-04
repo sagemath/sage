@@ -30,7 +30,7 @@ The implementation works over any exact field that is embedded in
     sage: from sage.geometry.polyhedron.double_description import StandardAlgorithm
     sage: A = matrix(AA, [(1,0,1), (0,1,1), (-AA(2).sqrt(),-AA(3).sqrt(),1),            # needs sage.rings.number_field
     ....:                 (-AA(3).sqrt(),-AA(2).sqrt(),1)])
-    sage: alg = StandardAlgorithm(A)                                                    # needs sage.rings.number_field
+    sage: alg = StandardAlgorithm(A)
     sage: alg.run().R                                                                   # needs sage.rings.number_field
     [(-0.4177376677004119?, 0.5822623322995881?, 0.4177376677004119?),
      (-0.2411809548974793?, -0.2411809548974793?, 0.2411809548974793?),

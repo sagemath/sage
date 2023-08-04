@@ -207,13 +207,13 @@ cdef class FaceIterator_base(SageObject):
 
         EXAMPLES::
 
-            sage: P = polytopes.permutahedron(4)                                        # needs sage.combinat
-            sage: C = CombinatorialPolyhedron(P)                                        # needs sage.combinat
-            sage: it = C.face_generator() # indirect doctest                            # needs sage.combinat
+            sage: P = polytopes.permutahedron(4)
+            sage: C = CombinatorialPolyhedron(P)
+            sage: it = C.face_generator() # indirect doctest
 
             sage: f_vector = [1, 0, 0, 0, 1]
-            sage: for face in it: f_vector[face.dimension()+1] += 1                     # needs sage.combinat
-            sage: print ('f_vector of permutahedron(4): ', f_vector)                    # needs sage.combinat
+            sage: for face in it: f_vector[face.dimension()+1] += 1
+            sage: print ('f_vector of permutahedron(4): ', f_vector)
             f_vector of permutahedron(4):  [1, 24, 36, 14, 1]
 
             sage: TestSuite(sage.geometry.polyhedron.combinatorial_polyhedron.face_iterator.FaceIterator).run()
@@ -849,8 +849,8 @@ cdef class FaceIterator_base(SageObject):
         The face iterator must not have the output dimension specified::
 
             sage: P = polytopes.dodecahedron()                                          # needs sage.rings.number_field
-            sage: it = P.face_generator(2)                                              # needs sage.rings.number_field
-            sage: it._meet_of_coatoms(1,2)                                              # needs sage.rings.number_field
+            sage: it = P.face_generator(2)
+            sage: it._meet_of_coatoms(1,2)
             Traceback (most recent call last):
             ...
             ValueError: face iterator must not have the output dimension specified
@@ -974,8 +974,8 @@ cdef class FaceIterator_base(SageObject):
         The face iterator must not have the output dimension specified::
 
             sage: P = polytopes.dodecahedron()                                          # needs sage.rings.number_field
-            sage: it = P.face_generator(2)                                              # needs sage.rings.number_field
-            sage: it._join_of_atoms(1,2)                                                # needs sage.rings.number_field
+            sage: it = P.face_generator(2)
+            sage: it._join_of_atoms(1,2)
             Traceback (most recent call last):
             ...
             ValueError: face iterator must not have the output dimension specified

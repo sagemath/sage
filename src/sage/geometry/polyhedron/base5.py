@@ -2253,10 +2253,10 @@ class Polyhedron_base5(Polyhedron_base4):
             sage: W1.is_combinatorially_isomorphic(triangular_prism)                    # needs sage.graphs
             True
 
-            sage: Q = polytopes.hypersimplex(4,2)                                       # needs sage.combinat
-            sage: W2 = Q.wedge(Q.faces(2)[7]); W2                                       # needs sage.combinat
+            sage: Q = polytopes.hypersimplex(4,2)
+            sage: W2 = Q.wedge(Q.faces(2)[7]); W2
             A 4-dimensional polyhedron in QQ^5 defined as the convex hull of 9 vertices
-            sage: W2.vertices()                                                         # needs sage.combinat
+            sage: W2.vertices()
             (A vertex at (1, 1, 0, 0, 1),
              A vertex at (1, 1, 0, 0, -1),
              A vertex at (1, 0, 1, 0, 1),
@@ -2267,9 +2267,9 @@ class Polyhedron_base5(Polyhedron_base4):
              A vertex at (0, 1, 1, 0, 0),
              A vertex at (0, 1, 0, 1, 0))
 
-            sage: W3 = Q.wedge(Q.faces(1)[11]); W3                                      # needs sage.combinat
+            sage: W3 = Q.wedge(Q.faces(1)[11]); W3
             A 4-dimensional polyhedron in QQ^5 defined as the convex hull of 10 vertices
-            sage: W3.vertices()                                                         # needs sage.combinat
+            sage: W3.vertices()
             (A vertex at (1, 1, 0, 0, -2),
              A vertex at (1, 1, 0, 0, 2),
              A vertex at (1, 0, 1, 0, -2),
