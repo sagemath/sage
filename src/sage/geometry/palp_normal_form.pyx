@@ -91,35 +91,35 @@ def _palp_PM_max(self, check=False):
     for k in range(1, n_f):
         # Error for k == 1 already!
         permutations[n_s] = [S_f.one(), S_v.one()]
-        max_element = PM[k, (<PermutationGroupElement> permutations[n_s][1])(1) - 1]
+        max_element = PM.get_unsafe_int(k, (<PermutationGroupElement> permutations[n_s][1])(1) - 1)
         m = 0
         for j in range(1, n_v):
-            element = PM[k, (<PermutationGroupElement> permutations[n_s][1])(j + 1) - 1]
+            element = PM.get_unsafe_int(k, (<PermutationGroupElement> permutations[n_s][1])(j + 1) - 1)
             if element > max_element:
                 max_element = element
                 m = j
         if m > 0:
             permutations[n_s][1] = (<PermutationGroupElement> permutations[n_s][1])._transpose_left(1, m + 1)
-        d = (PM[k, (<PermutationGroupElement> permutations[n_s][1])(1) - 1]
-             - PM[first_row_index, (<PermutationGroupElement> permutations[0][1])(1) - 1])
+        d = (PM.get_unsafe_int(k, (<PermutationGroupElement> permutations[n_s][1])(1) - 1)
+             - PM.get_unsafe_int(first_row_index, (<PermutationGroupElement> permutations[0][1])(1) - 1))
         if d < 0:
             # The largest elt of this row is smaller than largest elt
             # in 1st row, so nothing to do
             continue
         # otherwise:
         for i in range(1, n_v):
-            max_element = PM[k, (<PermutationGroupElement> permutations[n_s][1])(i + 1) - 1]
+            max_element = PM.get_unsafe_int(k, (<PermutationGroupElement> permutations[n_s][1])(i + 1) - 1)
             m = i
             for j in range(i + 1, n_v):
-                element = PM[k, (<PermutationGroupElement> permutations[n_s][1])(j + 1) - 1]
+                element = PM.get_unsafe_int(k, (<PermutationGroupElement> permutations[n_s][1])(j + 1) - 1)
                 if element > max_element:
                     max_element = element
                     m = j
             if m > i:
                 permutations[n_s][1] = (<PermutationGroupElement> permutations[n_s][1])._transpose_left(i + 1, m + 1)
             if d == 0:
-                d = (PM[k, (<PermutationGroupElement> permutations[n_s][1])(i+1) - 1]
-                     - PM[first_row_index, (<PermutationGroupElement> permutations[0][1])(i + 1) - 1])
+                d = (PM.get_unsafe_int(k, (<PermutationGroupElement> permutations[n_s][1])(i+1) - 1)
+                     - PM.get_unsafe_int(first_row_index, (<PermutationGroupElement> permutations[0][1])(i + 1) - 1))
                 if d < 0:
                     break
         if d < 0:
@@ -138,8 +138,9 @@ def _palp_PM_max(self, check=False):
             n_s = 1
     permutations = {k: permutations[k] for k in permutations if k < n_s}
 
-    cdef tuple b = tuple(PM[(<PermutationGroupElement> permutations[0][0])(1) - 1,
-                            (<PermutationGroupElement> permutations[0][1])(j+1) - 1] for j in range(n_v))
+    cdef tuple b = tuple(PM.get_unsafe_int((<PermutationGroupElement> permutations[0][0])(1) - 1,
+                                           (<PermutationGroupElement> permutations[0][1])(j+1) - 1)
+                         for j in range(n_v))
     # Work out the restrictions the current permutations
     # place on other permutations as a automorphisms
     # of the first row
@@ -176,23 +177,23 @@ def _palp_PM_max(self, check=False):
             # between 0 and S(0)
             for s in range(l, n_f):
                 for j in range(1, S[0]):
-                    v0 = PM[(<PermutationGroupElement> permutations_bar[n_p][0])(s+1) - 1,
-                            (<PermutationGroupElement> permutations_bar[n_p][1])(1) - 1]
-                    vj = PM[(<PermutationGroupElement> permutations_bar[n_p][0])(s+1) - 1,
-                            (<PermutationGroupElement> permutations_bar[n_p][1])(j+1) - 1]
+                    v0 = PM.get_unsafe_int((<PermutationGroupElement> permutations_bar[n_p][0])(s+1) - 1,
+                                           (<PermutationGroupElement> permutations_bar[n_p][1])(1) - 1)
+                    vj = PM.get_unsafe_int((<PermutationGroupElement> permutations_bar[n_p][0])(s+1) - 1,
+                                           (<PermutationGroupElement> permutations_bar[n_p][1])(j+1) - 1)
                     if v0 < vj:
                         permutations_bar[n_p][1] = (<PermutationGroupElement> permutations_bar[n_p][1])._transpose_left(1, j + 1)
                 if ccf == 0:
-                    l_r[0] = PM[(<PermutationGroupElement> permutations_bar[n_p][0])(s+1) - 1,
-                                (<PermutationGroupElement> permutations_bar[n_p][1])(1) - 1]
+                    l_r[0] = PM.get_unsafe_int((<PermutationGroupElement> permutations_bar[n_p][0])(s+1) - 1,
+                                               (<PermutationGroupElement> permutations_bar[n_p][1])(1) - 1)
                     if s != l:
                         permutations_bar[n_p][0] = (<PermutationGroupElement> permutations_bar[n_p][0])._transpose_left(l + 1, s + 1)
                     n_p += 1
                     ccf = 1
                     permutations_bar[n_p] = list(permutations[k])
                 else:
-                    d1 = PM[(<PermutationGroupElement> permutations_bar[n_p][0])(s+1) - 1,
-                            (<PermutationGroupElement> permutations_bar[n_p][1])(1) - 1]
+                    d1 = PM.get_unsafe_int((<PermutationGroupElement> permutations_bar[n_p][0])(s+1) - 1,
+                                           (<PermutationGroupElement> permutations_bar[n_p][1])(1) - 1)
                     d = d1 - l_r[0]
                     if d < 0:
                         # We move to the next line
@@ -230,20 +231,20 @@ def _palp_PM_max(self, check=False):
                     s -= 1
                     # Find the largest value in this symmetry block
                     for j in range(c + 1, h):
-                        vc = PM[(<PermutationGroupElement> permutations_bar[s][0])(l+1) - 1,
-                                (<PermutationGroupElement> permutations_bar[s][1])(c+1) - 1]
-                        vj = PM[(<PermutationGroupElement> permutations_bar[s][0])(l+1) - 1,
-                                (<PermutationGroupElement> permutations_bar[s][1])(j+1) - 1]
+                        vc = PM.get_unsafe_int((<PermutationGroupElement> permutations_bar[s][0])(l+1) - 1,
+                                               (<PermutationGroupElement> permutations_bar[s][1])(c+1) - 1)
+                        vj = PM.get_unsafe_int((<PermutationGroupElement> permutations_bar[s][0])(l+1) - 1,
+                                               (<PermutationGroupElement> permutations_bar[s][1])(j+1) - 1)
                         if vc < vj:
                             permutations_bar[s][1] = (<PermutationGroupElement> permutations_bar[s][1])._transpose_left(c + 1, j + 1)
                     if ccf == 0:
                         # Set reference and carry on to next permutation
-                        l_r[c] = PM[(<PermutationGroupElement> permutations_bar[s][0])(l+1) - 1,
-                                    (<PermutationGroupElement> permutations_bar[s][1])(c+1) - 1]
+                        l_r[c] = PM.get_unsafe_int((<PermutationGroupElement> permutations_bar[s][0])(l+1) - 1,
+                                                   (<PermutationGroupElement> permutations_bar[s][1])(c+1) - 1)
                         ccf = 1
                     else:
-                        d1 = PM[(<PermutationGroupElement> permutations_bar[s][0])(l+1) - 1,
-                                (<PermutationGroupElement> permutations_bar[s][1])(c+1) - 1]
+                        d1 = PM.get_unsafe_int((<PermutationGroupElement> permutations_bar[s][0])(l+1) - 1,
+                                               (<PermutationGroupElement> permutations_bar[s][1])(c+1) - 1)
                         d = d1 - l_r[c]
                         if d < 0:
                             n_p -= 1
@@ -272,8 +273,9 @@ def _palp_PM_max(self, check=False):
             # the restrictions the last worked out
             # row imposes.
             c = 0
-            M = tuple(PM[(<PermutationGroupElement> permutations[0][0])(l+1) - 1,
-                         (<PermutationGroupElement> permutations[0][1])(j+1) - 1] for j in range(n_v))
+            M = tuple(PM.get_unsafe_int((<PermutationGroupElement> permutations[0][0])(l+1) - 1,
+                                        (<PermutationGroupElement> permutations[0][1])(j+1) - 1)
+                      for j in range(n_v))
             while c < n_v:
                 s = S[c] + 1
                 S[c] = c + 1
