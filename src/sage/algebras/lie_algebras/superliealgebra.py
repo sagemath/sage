@@ -13,7 +13,6 @@ import unittest
 from sage.modules.free_module_morphism import FreeModuleMorphism
 from sage.modules.with_basis.morphism import ModuleMorphism
 from sage.structure.unique_representation import UniqueRepresentation
-from sage.misc.cachefunc import cached_method
 from sage.misc.lazy_attribute import lazy_attribute
 
 class SuperLieAlgebra(CombinatorialFreeModule, UniqueRepresentation):
