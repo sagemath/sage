@@ -77,13 +77,14 @@ class Polyhedron_polymake(Polyhedron_base):
 
     It can also be obtained differently::
 
-        sage: P=Polyhedron(ieqs=[[-2, 1, 1], [-3, -1, -1], [-4, 1, -2]],   # optional - jupymake
+        sage: # optional - jupymake
+        sage: P=Polyhedron(ieqs=[[-2, 1, 1], [-3, -1, -1], [-4, 1, -2]],
         ....:              backend='polymake')
-        sage: P                                                            # optional - jupymake
+        sage: P
         The empty polyhedron in QQ^2
-        sage: P.Vrepresentation()                                          # optional - jupymake
+        sage: P.Vrepresentation()
         ()
-        sage: P.Hrepresentation()                                          # optional - jupymake
+        sage: P.Hrepresentation()
         (An equation -1 == 0,)
 
     The full polyhedron::
@@ -227,14 +228,15 @@ class Polyhedron_polymake(Polyhedron_base):
 
         ::
 
-            sage: p = Polyhedron(rays=[[1,1]], backend='polymake')                     # optional - jupymake
-            sage: TestSuite(p).run()                                                   # optional - jupymake
-            sage: p = Polyhedron(rays=[[1]], backend='polymake')                       # optional - jupymake
-            sage: TestSuite(p).run()                                                   # optional - jupymake
-            sage: p = Polyhedron(rays=[[1,1,1]], lines=[[1,0,0]], backend='polymake')  # optional - jupymake
-            sage: TestSuite(p).run()                                                   # optional - jupymake
-            sage: p = Polyhedron(vertices=[[]], backend='polymake')                    # optional - jupymake
-            sage: TestSuite(p).run()                                                   # optional - jupymake
+            sage: # optional - jupymake
+            sage: p = Polyhedron(rays=[[1,1]], backend='polymake')
+            sage: TestSuite(p).run()
+            sage: p = Polyhedron(rays=[[1]], backend='polymake')
+            sage: TestSuite(p).run()
+            sage: p = Polyhedron(rays=[[1,1,1]], lines=[[1,0,0]], backend='polymake')
+            sage: TestSuite(p).run()
+            sage: p = Polyhedron(vertices=[[]], backend='polymake')
+            sage: TestSuite(p).run()
         """
         if polymake_polytope is not None:
             if Hrep is not None or Vrep is not None:

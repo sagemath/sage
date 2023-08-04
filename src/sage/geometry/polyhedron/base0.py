@@ -83,10 +83,10 @@ class Polyhedron_base0(Element, sage.geometry.abc.Polyhedron):
 
             sage: from sage.geometry.polyhedron.backend_field import Polyhedron_field
             sage: from sage.geometry.polyhedron.parent import Polyhedra_field
-            sage: parent = Polyhedra_field(AA, 1, 'field')                             # optional - sage.rings.number_field
+            sage: parent = Polyhedra_field(AA, 1, 'field')                              # needs sage.rings.number_field
             sage: Vrep = [[[0], [1/2], [1]], [], []]
             sage: Hrep = [[[0, 1], [1, -1]], []]
-            sage: p = Polyhedron_field(parent, Vrep, Hrep,                             # optional - sage.rings.number_field
+            sage: p = Polyhedron_field(parent, Vrep, Hrep,                              # needs sage.rings.number_field
             ....:                      Vrep_minimal=False, Hrep_minimal=True)
             Traceback (most recent call last):
             ...
@@ -406,13 +406,13 @@ class Polyhedron_base0(Element, sage.geometry.abc.Polyhedron):
             ...
             TypeError: cannot change the base ring to the Integer Ring
 
-            sage: P = polytopes.regular_polygon(3); P                           # optional - sage.rings.number_field
+            sage: P = polytopes.regular_polygon(3); P                                   # needs sage.rings.number_field
             A 2-dimensional polyhedron in AA^2 defined as the convex hull of 3 vertices
-            sage: P.vertices()                                                  # optional - sage.rings.number_field
+            sage: P.vertices()                                                          # needs sage.rings.number_field
             (A vertex at (0.?e-16, 1.000000000000000?),
              A vertex at (0.866025403784439?, -0.500000000000000?),
              A vertex at (-0.866025403784439?, -0.500000000000000?))
-            sage: P.change_ring(QQ)                                             # optional - sage.rings.number_field
+            sage: P.change_ring(QQ)                                                     # needs sage.rings.number_field
             Traceback (most recent call last):
             ...
             TypeError: cannot change the base ring to the Rational Field
@@ -425,11 +425,11 @@ class Polyhedron_base0(Element, sage.geometry.abc.Polyhedron):
             base ring from an exact ring into ``RDF`` may cause a
             loss of data::
 
-                sage: P = Polyhedron([[2/3,0],[6666666666666667/10^16,0]], base_ring=AA); P   # optional - sage.rings.number_field
+                sage: P = Polyhedron([[2/3,0],[6666666666666667/10^16,0]], base_ring=AA); P         # needs sage.rings.number_field
                 A 1-dimensional polyhedron in AA^2 defined as the convex hull of 2 vertices
-                sage: Q = P.change_ring(RDF); Q                                 # optional - sage.rings.number_field
+                sage: Q = P.change_ring(RDF); Q                                         # needs sage.rings.number_field
                 A 0-dimensional polyhedron in RDF^2 defined as the convex hull of 1 vertex
-                sage: P.n_vertices() == Q.n_vertices()                          # optional - sage.rings.number_field
+                sage: P.n_vertices() == Q.n_vertices()                                  # needs sage.rings.number_field
                 False
         """
         from sage.categories.rings import Rings
@@ -577,8 +577,8 @@ class Polyhedron_base0(Element, sage.geometry.abc.Polyhedron):
 
         EXAMPLES::
 
-            sage: p = polytopes.icosahedron()                                   # optional - sage.rings.number_field
-            sage: p.is_compact()                                                # optional - sage.rings.number_field
+            sage: p = polytopes.icosahedron()                                           # needs sage.rings.number_field
+            sage: p.is_compact()                                                        # needs sage.rings.number_field
             True
             sage: p = Polyhedron(ieqs = [[0,1,0,0],[0,0,1,0],[0,0,0,1],[1,-1,0,0]])
             sage: p.is_compact()
@@ -890,11 +890,12 @@ class Polyhedron_base0(Element, sage.geometry.abc.Polyhedron):
              An inequality (0, 1, 0) x + 0 >= 0,
              An inequality (0, 0, 1) x + 0 >= 0)
 
-            sage: p3 = Polyhedron(vertices=Permutations([1, 2, 3, 4]))          # optional - sage.combinat
-            sage: ieqs = p3.inequalities()                                      # optional - sage.combinat
-            sage: ieqs[0]                                                       # optional - sage.combinat
+            sage: # needs sage.combinat
+            sage: p3 = Polyhedron(vertices=Permutations([1, 2, 3, 4]))
+            sage: ieqs = p3.inequalities()
+            sage: ieqs[0]
             An inequality (0, 1, 1, 1) x - 6 >= 0
-            sage: list(_)                                                       # optional - sage.combinat
+            sage: list(_)
             [-6, 0, 1, 1, 1]
         """
         return tuple(self.inequality_generator())
@@ -915,13 +916,14 @@ class Polyhedron_base0(Element, sage.geometry.abc.Polyhedron):
             sage: p.inequalities_list()[0:3]
             [[0, 1, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]]
 
-            sage: p3 = Polyhedron(vertices=Permutations([1, 2, 3, 4]))          # optional - sage.combinat
-            sage: ieqs = p3.inequalities_list()                                 # optional - sage.combinat
-            sage: ieqs[0]                                                       # optional - sage.combinat
+            sage: # needs sage.combinat
+            sage: p3 = Polyhedron(vertices=Permutations([1, 2, 3, 4]))
+            sage: ieqs = p3.inequalities_list()
+            sage: ieqs[0]
             [-6, 0, 1, 1, 1]
-            sage: ieqs[-1]                                                      # optional - sage.combinat
+            sage: ieqs[-1]
             [-3, 0, 1, 0, 1]
-            sage: ieqs == [list(x) for x in p3.inequality_generator()]          # optional - sage.combinat
+            sage: ieqs == [list(x) for x in p3.inequality_generator()]
             True
         """
         return [list(x) for x in self.inequality_generator()]
@@ -1317,8 +1319,8 @@ class Polyhedron_base0(Element, sage.geometry.abc.Polyhedron):
             sage: triangle = Polyhedron(vertices = [[1, 0], [0, 1], [1, 1]])
             sage: triangle.backend()
             'ppl'
-            sage: D = polytopes.dodecahedron()  # optional - sage.rings.number_field
-            sage: D.backend()                   # optional - sage.rings.number_field
+            sage: D = polytopes.dodecahedron()                                          # needs sage.rings.number_field
+            sage: D.backend()                                                           # needs sage.rings.number_field
             'field'
             sage: P = Polyhedron([[1.23]])
             sage: P.backend()
@@ -1352,10 +1354,10 @@ class Polyhedron_base0(Element, sage.geometry.abc.Polyhedron):
             end
             <BLANKLINE>
 
-            sage: triangle = Polyhedron(vertices=[[1,0], [0,1], [1,1]], base_ring=AA)   # optional - sage.rings.number_field
-            sage: triangle.base_ring()                                                  # optional - sage.rings.number_field
+            sage: triangle = Polyhedron(vertices=[[1,0], [0,1], [1,1]], base_ring=AA)   # needs sage.rings.number_field
+            sage: triangle.base_ring()                                                  # needs sage.rings.number_field
             Algebraic Real Field
-            sage: triangle.cdd_Hrepresentation()                                        # optional - sage.rings.number_field
+            sage: triangle.cdd_Hrepresentation()                                        # needs sage.rings.number_field
             Traceback (most recent call last):
             ...
             TypeError: the base ring must be ZZ, QQ, or RDF
