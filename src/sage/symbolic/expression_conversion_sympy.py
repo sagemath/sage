@@ -114,11 +114,12 @@ class SympyConverter(Converter):
         """
         EXAMPLES::
 
-            sage: from sage.symbolic.expression_conversions import SympyConverter       # needs sympy
-            sage: s = SympyConverter()                                                  # needs sympy
-            sage: s.symbol(x)                                                           # needs sympy
+            sage: # needs sympy
+            sage: from sage.symbolic.expression_conversions import SympyConverter
+            sage: s = SympyConverter()
+            sage: s.symbol(x)
             x
-            sage: type(_)                                                               # needs sympy
+            sage: type(_)
             <class 'sympy.core.symbol.Symbol'>
         """
         import sympy

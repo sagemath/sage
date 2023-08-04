@@ -136,14 +136,15 @@ def fricas_integrator(expression, v, a=None, b=None, noPole=True):
 
     EXAMPLES::
 
-        sage: from sage.symbolic.integration.external import fricas_integrator  # optional - fricas
-        sage: fricas_integrator(sin(x), x)                                      # optional - fricas
+        sage: # optional - fricas
+        sage: from sage.symbolic.integration.external import fricas_integrator
+        sage: fricas_integrator(sin(x), x)
         -cos(x)
-        sage: fricas_integrator(cos(x), x)                                      # optional - fricas
+        sage: fricas_integrator(cos(x), x)
         sin(x)
-        sage: fricas_integrator(1/(x^2-2), x, 0, 1)                             # optional - fricas
+        sage: fricas_integrator(1/(x^2-2), x, 0, 1)
         -1/8*sqrt(2)*(log(2) - log(-24*sqrt(2) + 34))
-        sage: fricas_integrator(1/(x^2+6), x, -oo, oo)                          # optional - fricas
+        sage: fricas_integrator(1/(x^2+6), x, -oo, oo)
         1/6*sqrt(6)*pi
 
     TESTS:

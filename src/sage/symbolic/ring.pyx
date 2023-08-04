@@ -1192,12 +1192,13 @@ cdef class NumpyToSRMorphism(Morphism):
 
         EXAMPLES::
 
-            sage: import numpy                                                          # needs numpy
+            sage: # needs numpy
+            sage: import numpy
             sage: from sage.symbolic.ring import NumpyToSRMorphism
-            sage: f = NumpyToSRMorphism(numpy.float64)                                  # needs numpy
-            sage: f(numpy.float64('2.0'))                                               # needs numpy
+            sage: f = NumpyToSRMorphism(numpy.float64)
+            sage: f(numpy.float64('2.0'))
             2.0
-            sage: _.parent()                                                            # needs numpy
+            sage: _.parent()
             Symbolic Ring
 
             sage: NumpyToSRMorphism(str)                                                # needs numpy
@@ -1227,18 +1228,17 @@ cdef class NumpyToSRMorphism(Morphism):
         This should be called when coercing or converting a NumPy
         float or complex to the Symbolic Ring::
 
-            sage: import numpy                                                          # needs numpy
-            sage: SR(numpy.int32('1')).pyobject().parent()                              # needs numpy
+            sage: # needs numpy
+            sage: import numpy
+            sage: SR(numpy.int32('1')).pyobject().parent()
             Integer Ring
-            sage: SR(numpy.int64('-2')).pyobject().parent()                             # needs numpy
+            sage: SR(numpy.int64('-2')).pyobject().parent()
             Integer Ring
-
-            sage: SR(numpy.float16('1')).pyobject().parent()                            # needs numpy
+            sage: SR(numpy.float16('1')).pyobject().parent()
             Real Double Field
-            sage: SR(numpy.float64('2.0')).pyobject().parent()                          # needs numpy
+            sage: SR(numpy.float64('2.0')).pyobject().parent()
             Real Double Field
-
-            sage: SR(numpy.complex64(1jr)).pyobject().parent()                          # needs numpy
+            sage: SR(numpy.complex64(1jr)).pyobject().parent()
             Complex Double Field
         """
         return new_Expression_from_pyobject(self.codomain(), self._intermediate_ring(a), True)

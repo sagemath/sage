@@ -1,10 +1,11 @@
 r"""
 EXAMPLES::
 
-    sage: import symengine                                             # optional - symengine_py
-    sage: x, y = symengine.var("x y")                                  # optional - symengine_py
-    sage: expr = (x + symengine.GoldenRatio * symengine.exp(y))**2     # optional - symengine_py
-    sage: SR(expr)                                                     # optional - symengine_py
+    sage: # optional - symengine_py
+    sage: import symengine
+    sage: x, y = symengine.var("x y")
+    sage: expr = (x + symengine.GoldenRatio * symengine.exp(y))**2
+    sage: SR(expr)
     (golden_ratio*e^y + x)^2
 
     sage: # optional - symengine_py

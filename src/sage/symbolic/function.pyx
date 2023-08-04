@@ -514,11 +514,12 @@ cdef class Function(SageObject):
 
         Check that ``real_part`` and ``imag_part`` still works after :trac:`21216`::
 
-            sage: import numpy                                                          # needs numpy
-            sage: a = numpy.array([1+2*I, -2-3*I], dtype=complex)                       # needs numpy
-            sage: real_part(a)                                                          # needs numpy
+            sage: # needs numpy
+            sage: import numpy
+            sage: a = numpy.array([1+2*I, -2-3*I], dtype=complex)
+            sage: real_part(a)
             array([ 1., -2.])
-            sage: imag_part(a)                                                          # needs numpy
+            sage: imag_part(a)
             array([ 2., -3.])
         """
         if self._nargs > 0 and len(args) != self._nargs:
