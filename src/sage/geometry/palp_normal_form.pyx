@@ -91,7 +91,13 @@ def _palp_PM_max(self, check=False):
     for k in range(1, n_f):
         # Error for k == 1 already!
         permutations[n_s] = [S_f.one(), S_v.one()]
-        m = index_of_max(PM[k, (<PermutationGroupElement> permutations[n_s][1])(j+1) - 1] for j in range(n_v))
+        max_element = PM[k, (<PermutationGroupElement> permutations[n_s][1])(1) - 1]
+        m = 0
+        for j in range(1, n_v):
+            element = PM[k, (<PermutationGroupElement> permutations[n_s][1])(j + 1) - 1]
+            if element > max_element:
+                max_element = element
+                m = j
         if m > 0:
             permutations[n_s][1] = (<PermutationGroupElement> permutations[n_s][1])._transpose_left(1, m + 1)
         d = (PM[k, (<PermutationGroupElement> permutations[n_s][1])(1) - 1]
