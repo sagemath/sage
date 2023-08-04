@@ -51,6 +51,7 @@ exclude sage/graphs/mcqd.p*
 exclude sage/libs/meataxe.p*
 exclude sage/matrix/matrix_gfpn_dense.p*
 exclude sage/graphs/graph_decompositions/sage_tdlib.cpp
+exclude sage/graphs/graph_decomposition/tdlib.p*
 
 # Exclude all__*.py files belonging to distributions related to optional packages
 global-exclude all__sagemath_bliss.py
