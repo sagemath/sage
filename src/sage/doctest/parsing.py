@@ -1075,8 +1075,16 @@ class SageDocTestParser(doctest.DocTestParser):
         TESTS::
 
             sage: parse("::\n\n    sage: # needs sage.combinat\n    sage: from sage.geometry.polyhedron.combinatorial_polyhedron.conversions \\\n    ....:         import incidence_matrix_to_bit_rep_of_Vrep\n    sage: P = polytopes.associahedron(['A',3])\n\n")
-
-
+            ['::\n\n',
+            '',
+            (None,
+            'from sage.geometry.polyhedron.combinatorial_polyhedron.conversions import incidence_matrix_to_bit_rep_of_Vrep\n',
+            'from sage.geometry.polyhedron.combinatorial_polyhedron.conversions import incidence_matrix_to_bit_rep_of_Vrep\n'),
+            '',
+            (None,
+            "P = polytopes.associahedron(['A',3])\n",
+            "P = polytopes.associahedron(['A',Integer(3)])\n"),
+            '\n']
         """
         # Regular expressions
         find_sage_prompt = re.compile(r"^(\s*)sage: ", re.M)
