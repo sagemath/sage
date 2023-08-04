@@ -441,14 +441,18 @@ cpdef __matrix_from_rows_of_matrices(X):
 
 
 cdef class Matrix_modn_dense_template(Matrix_dense):
-    def __cinit__(self):
+    def __cinit__(self, *args, bint zeroed_alloc=True, **kwds):
         cdef long p = self._base_ring.characteristic()
         self.p = p
         if p >= MAX_MODULUS:
             raise OverflowError("p (=%s) must be < %s."%(p, MAX_MODULUS))
 
-        self._entries = <celement *>check_calloc(self._nrows * self._ncols, sizeof(celement))
-        self._matrix = <celement **>check_calloc(self._nrows, sizeof(celement*))
+        if zeroed_alloc:
+            self._entries = <celement *>check_calloc(self._nrows * self._ncols, sizeof(celement))
+            self._matrix = <celement **>check_calloc(self._nrows, sizeof(celement*))
+        else:
+            self._entries = <celement *>check_allocarray(self._nrows * self._ncols, sizeof(celement))
+            self._matrix = <celement **>check_allocarray(self._nrows, sizeof(celement*))
 
         cdef unsigned int k
         cdef Py_ssize_t i
@@ -866,7 +870,7 @@ cdef class Matrix_modn_dense_template(Matrix_dense):
             False
         """
         cdef Matrix_modn_dense_template A
-        A = self.__class__.__new__(self.__class__, self._parent, 0, 0, 0)
+        A = self.__class__.__new__(self.__class__, self._parent, 0, 0, 0, zeroed_alloc=False)
         memcpy(A._entries, self._entries, sizeof(celement)*self._nrows*self._ncols)
         if self._subdivisions is not None:
             A.subdivide(*self.subdivisions())
