@@ -966,10 +966,11 @@ class Function_arctan2(GinacFunction):
 
         The function also works with numpy arrays as input::
 
-            sage: import numpy                                                          # needs numpy
-            sage: a = numpy.linspace(1, 3, 3)                                           # needs numpy
-            sage: b = numpy.linspace(3, 6, 3)                                           # needs numpy
-            sage: atan2(a, b)                                                           # needs numpy
+            sage: # needs numpy
+            sage: import numpy
+            sage: a = numpy.linspace(1, 3, 3)
+            sage: b = numpy.linspace(3, 6, 3)
+            sage: atan2(a, b)
             array([0.32175055, 0.41822433, 0.46364761])
 
             sage: atan2(1,a)                                                            # needs numpy

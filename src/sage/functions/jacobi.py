@@ -952,7 +952,7 @@ def jacobi(kind, z, m, **kwargs):
         ....:  RDF(jacobi('cn', 1, 1/2) / jacobi('dn', 1, 1/2)))
         (0.5959765676721407, 0.8231610016315962, 0.7240097216593705)
         sage: jsn = jacobi('sn', x, 1)                                                  # needs sage.symbolic
-        sage: P = plot(jsn, 0, 1)                                                       # needs sage.plot
+        sage: P = plot(jsn, 0, 1)                                                       # needs sage.plot sage.symbolic
     """
     if kind == 'nd':
         return jacobi_nd(z, m, **kwargs)

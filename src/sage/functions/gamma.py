@@ -619,7 +619,7 @@ class Function_gamma_inc_lower(BuiltinFunction):
         r"""
         EXAMPLES::
 
-            sage: gamma_inc_lower(4/3, 1)._mathematica_()  # indirect doctest  # optional - mathematica, needs sage.symbolic
+            sage: gamma_inc_lower(4/3, 1)._mathematica_()  # indirect doctest   # optional - mathematica, needs sage.symbolic
             Gamma[4/3, 0, 1]
         """
         args_mathematica = []

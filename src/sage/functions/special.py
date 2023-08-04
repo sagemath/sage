@@ -203,12 +203,13 @@ class SphericalHarmonic(BuiltinFunction):
     The convention regarding the Condon-Shortley phase `(-1)^m` is the same
     as for SymPy's spherical harmonics and :wikipedia:`Spherical_harmonics`::
 
-        sage: spherical_harmonic(1, 1, x, y)                                            # needs sage.symbolic
+        sage: # needs sage.symbolic
+        sage: spherical_harmonic(1, 1, x, y)
         -1/4*sqrt(3)*sqrt(2)*e^(I*y)*sin(x)/sqrt(pi)
-        sage: from sympy import Ynm                                                     # needs sympy sage.symbolic
-        sage: Ynm(1, 1, x, y).expand(func=True)                                         # needs sympy sage.symbolic
+        sage: from sympy import Ynm                                                     # needs sympy
+        sage: Ynm(1, 1, x, y).expand(func=True)                                         # needs sympy
         -sqrt(6)*exp(I*y)*sin(x)/(4*sqrt(pi))
-        sage: spherical_harmonic(1, 1, x, y) - Ynm(1, 1, x, y)                          # needs sympy sage.symbolic
+        sage: spherical_harmonic(1, 1, x, y) - Ynm(1, 1, x, y)                          # needs sympy
         0
 
     It also agrees with SciPy's spherical harmonics::
