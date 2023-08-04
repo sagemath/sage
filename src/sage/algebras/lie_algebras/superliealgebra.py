@@ -12,6 +12,7 @@ from sage.rings.quotient_ring_element import QuotientRingElement
 import unittest
 from sage.modules.free_module_morphism import FreeModuleMorphism
 from sage.modules.with_basis.morphism import ModuleMorphism
+from sage.structure.unique_representation import UniqueRepresentation
 
 
 class SuperLieAlgebra(CombinatorialFreeModule, UniqueRepresentation):
