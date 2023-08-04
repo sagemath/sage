@@ -527,13 +527,14 @@ def schur(ambient_dim=None, lattice=None):
     generators of the Schur cone and the nonnegative orthant in
     dimension five is `\left(3/4\right)\pi`::
 
+        sage: # needs sage.rings.number_fields
         sage: P = cones.schur(5)
         sage: Q = cones.nonnegative_orthant(5)
         sage: G = ( g.change_ring(QQbar).normalized() for g in P )
         sage: H = ( h.change_ring(QQbar).normalized() for h in Q )
-        sage: actual = max(arccos(u.inner_product(v)) for u in G for v in H)            # needs sage.rings.number_fields
-        sage: expected = 3*pi/4                                                         # needs sage.rings.number_fields
-        sage: abs(actual - expected).n() < 1e-12                                        # needs sage.rings.number_fields
+        sage: actual = max(arccos(u.inner_product(v)) for u in G for v in H)
+        sage: expected = 3*pi/4
+        sage: abs(actual - expected).n() < 1e-12
         True
 
     The dual of the Schur cone is the "downward monotonic cone"

@@ -7,15 +7,16 @@ allows you to define polyhedra.
 
 EXAMPLES::
 
+    sage: # needs sage.rings.number_field
     sage: p0 = (0, 0)
     sage: p1 = (1, 0)
-    sage: p2 = (1/2, AA(3).sqrt()/2)                                                    # needs sage.rings.number_field
-    sage: equilateral_triangle = Polyhedron([p0, p1, p2])                               # needs sage.rings.number_field
-    sage: equilateral_triangle.vertices()                                               # needs sage.rings.number_field
+    sage: p2 = (1/2, AA(3).sqrt()/2)
+    sage: equilateral_triangle = Polyhedron([p0, p1, p2])
+    sage: equilateral_triangle.vertices()
     (A vertex at (0, 0),
      A vertex at (1, 0),
      A vertex at (0.500000000000000?, 0.866025403784439?))
-    sage: equilateral_triangle.inequalities()                                           # needs sage.rings.number_field
+    sage: equilateral_triangle.inequalities()
     (An inequality (-1, -0.5773502691896258?) x + 1 >= 0,
      An inequality (1, -0.5773502691896258?) x + 0 >= 0,
      An inequality (0, 1.154700538379252?) x + 0 >= 0)

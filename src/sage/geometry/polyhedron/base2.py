@@ -208,7 +208,7 @@ class Polyhedron_base2(Polyhedron_base1):
 
         EXAMPLES::
 
-            sage: Polyhedron(vertices=[(-1,-1),(1,0),(1,1),(0,1)])._integral_points_PALP()          # needs palp
+            sage: Polyhedron(vertices=[(-1,-1),(1,0),(1,1),(0,1)])._integral_points_PALP()                              # needs palp
             [M(-1, -1), M(0, 1), M(1, 0), M(1, 1), M(0, 0)]
             sage: Polyhedron(vertices=[(-1/2,-1/2),(1,0),(1,1),(0,1)]).lattice_polytope(True).points()                  # needs palp
             M(-1, -1),
@@ -219,7 +219,7 @@ class Polyhedron_base2(Polyhedron_base1):
             M( 1,  0),
             M( 0,  0)
             in 2-d lattice M
-            sage: Polyhedron(vertices=[(-1/2,-1/2),(1,0),(1,1),(0,1)])._integral_points_PALP()      # needs palp
+            sage: Polyhedron(vertices=[(-1/2,-1/2),(1,0),(1,1),(0,1)])._integral_points_PALP()                          # needs palp
             [M(1, 1), M(0, 1), M(1, 0), M(0, 0)]
         """
         if not self.is_compact():
@@ -643,13 +643,15 @@ class Polyhedron_base2(Polyhedron_base1):
         EXAMPLES::
 
             sage: P = Polyhedron(vertices=[(-1,-1),(1,0),(1,1),(0,1)])
-            sage: P.random_integral_point()  # random
+            sage: P.random_integral_point()                                     # random
             (0, 0)
             sage: P.random_integral_point() in P.integral_points()
             True
-            sage: P.random_integral_point(explicit_enumeration_threshold=0, triangulation='cddlib')  # random, optional - latte_int
+            sage: P.random_integral_point(explicit_enumeration_threshold=0,     # random, optional - latte_int
+            ....:                         triangulation='cddlib')
             (1, 1)
-            sage: P.random_integral_point(explicit_enumeration_threshold=0, triangulation='cddlib', foo=7)  # optional - latte_int
+            sage: P.random_integral_point(explicit_enumeration_threshold=0,     # optional - latte_int
+            ....:                         triangulation='cddlib', foo=7)
             Traceback (most recent call last):
             ...
             RuntimeError: ...
@@ -766,36 +768,37 @@ class Polyhedron_base2(Polyhedron_base1):
 
         EXAMPLES::
 
-            sage: P2 = (
-            ....:   Polyhedron(ieqs=[(0, 0, 0, 1), (0, 0, 1, 0), (0, 1, 0, -1)]),
-            ....:   Polyhedron(ieqs=[(0, -1, 0, 1), (0, 1, 0, 0), (0, 0, 1, 0)]))
-            sage: P2[0].generating_function_of_integral_points(sort_factors=True)       # needs sage.combinat
+            sage: # needs sage.combinat
+            sage: P2 = (Polyhedron(ieqs=[(0, 0, 0, 1), (0, 0, 1, 0), (0, 1, 0, -1)]),
+            ....:       Polyhedron(ieqs=[(0, -1, 0, 1), (0, 1, 0, 0), (0, 0, 1, 0)]))
+            sage: P2[0].generating_function_of_integral_points(sort_factors=True)
             1 * (-y0 + 1)^-1 * (-y1 + 1)^-1 * (-y0*y2 + 1)^-1
-            sage: P2[1].generating_function_of_integral_points(sort_factors=True)       # needs sage.combinat
+            sage: P2[1].generating_function_of_integral_points(sort_factors=True)
             1 * (-y1 + 1)^-1 * (-y2 + 1)^-1 * (-y0*y2 + 1)^-1
             sage: (P2[0] & P2[1]).Hrepresentation()
             (An equation (1, 0, -1) x + 0 == 0,
              An inequality (1, 0, 0) x + 0 >= 0,
              An inequality (0, 1, 0) x + 0 >= 0)
-            sage: (P2[0] & P2[1]).generating_function_of_integral_points(sort_factors=True)         # needs sage.combinat
+            sage: (P2[0] & P2[1]).generating_function_of_integral_points(sort_factors=True)
             1 * (-y1 + 1)^-1 * (-y0*y2 + 1)^-1
 
         The number of integer partitions
         `1 \leq r_0 \leq r_1 \leq r_2 \leq r_3 \leq r_4`::
 
+            sage: # needs sage.combinat
             sage: P = Polyhedron(ieqs=[(-1, 1, 0, 0, 0, 0), (0, -1, 1, 0, 0, 0),
             ....:                      (0, 0, -1, 1, 0, 0), (0, 0, 0, -1, 1, 0),
             ....:                      (0, 0, 0, 0, -1, 1)])
-            sage: f = P.generating_function_of_integral_points(sort_factors=True); f    # needs sage.combinat
+            sage: f = P.generating_function_of_integral_points(sort_factors=True); f
             y0*y1*y2*y3*y4 * (-y4 + 1)^-1 * (-y3*y4 + 1)^-1 * (-y2*y3*y4 + 1)^-1 *
             (-y1*y2*y3*y4 + 1)^-1 * (-y0*y1*y2*y3*y4 + 1)^-1
-            sage: f = f.value()                                                         # needs sage.combinat
+            sage: f = f.value()
             sage: P.<z> = PowerSeriesRing(ZZ)
-            sage: c = f.subs({y: z for y in f.parent().gens()}); c                      # needs sage.combinat
+            sage: c = f.subs({y: z for y in f.parent().gens()}); c
             z^5 + z^6 + 2*z^7 + 3*z^8 + 5*z^9 + 7*z^10 + 10*z^11 + 13*z^12 + 18*z^13 +
             23*z^14 + 30*z^15 + 37*z^16 + 47*z^17 + 57*z^18 + 70*z^19 + 84*z^20 +
             101*z^21 + 119*z^22 + 141*z^23 + 164*z^24 + O(z^25)
-            sage: ([Partitions(k, length=5).cardinality() for k in range(5,20)] ==      # needs sage.combinat
+            sage: ([Partitions(k, length=5).cardinality() for k in range(5,20)] ==
             ....:     c.truncate().coefficients(sparse=False)[5:20])
             True
 

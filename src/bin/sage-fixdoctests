@@ -314,9 +314,9 @@ def process_block(block, src_in_lines, file_optional_tags):
 def output_filename(filename):
     if len(args.filename) == 2 and not args.overwrite and not args.no_overwrite:
         if args.filename[0] == filename:
-            print("sage-fixdoctests: When passing two filenames, the second one is taken as an output filename; "
-                  "this is deprecated. To pass two input filenames, use the option --overwrite.")
             return args.filename[1]
+        else:
+            return None
         return filename + ".fixed"
     if args.no_overwrite:
         return filename + ".fixed"
@@ -340,7 +340,14 @@ else:
            print(f'Doctester exited with error status {status}')
            sys.exit(status)
     # Run the doctester, putting the output of the test into sage's temporary directory
-    input_args = " ".join(shlex.quote(f) for f in args.filename)
+    if len(args.filename) == 2 and not args.overwrite and not args.no_overwrite:
+        print("sage-fixdoctests: When passing two filenames, the second one is taken as an output filename; "
+              "this is deprecated. To pass two input filenames, use the option --overwrite.")
+
+        input_filenames = [args.filename[0]]
+    else:
+        input_filenames = args.filename
+    input_args = " ".join(shlex.quote(f) for f in input_filenames)
     cmdline = f'{shlex.quote(executable)} -t -p {environment_args}{long_args}{probe_args}{lib_args}{input_args}'
     print(f'Running "{cmdline}"')
     os.system(f'{cmdline} > {shlex.quote(doc_file)}')
@@ -363,8 +370,8 @@ def block_filename(block):
     return m.group(1)
 
 def expanded_filename_args():
-    DD = DocTestDefaults(optional='all')
-    DC = DocTestController(DD, args.filename)
+    DD = DocTestDefaults(optional='all', warn_long=10000)
+    DC = DocTestController(DD, input_filenames)
     DC.add_files()
     DC.expand_files_into_sources()
     for source in DC.sources:
@@ -418,22 +425,23 @@ def process_grouped_blocks(grouped_iterator):
                 persistent_optional_tags = {}
 
         if src_in_lines != shallow_copy_of_src_in_lines:
-            output = output_filename(input)
-            with open(output, 'w') as test_output:
-                for line in src_in_lines:
-                    if line is None:
-                        continue
-                    test_output.write(line)
-                    test_output.write('\n')
-
-            # Show summary of changes
-            if input != output:
-                print("The fixed doctests have been saved as '{0}'.".format(output))
+            if (output := output_filename(input)) is None:
+                print(f"Not saving modifications made in '{input}'")
             else:
-                relative = os.path.relpath(output, SAGE_ROOT)
-                print(f"The input file '{output}' has been overwritten.")
-                if not relative.startswith('..'):
-                    subprocess.call(['git', '--no-pager', 'diff', relative], cwd=SAGE_ROOT)
+                with open(output, 'w') as test_output:
+                    for line in src_in_lines:
+                        if line is None:
+                            continue
+                        test_output.write(line)
+                        test_output.write('\n')
+                # Show summary of changes
+                if input != output :
+                    print("The fixed doctests have been saved as '{0}'.".format(output))
+                else:
+                    relative = os.path.relpath(output, SAGE_ROOT)
+                    print(f"The input file '{output}' has been overwritten.")
+                    if not relative.startswith('..'):
+                        subprocess.call(['git', '--no-pager', 'diff', relative], cwd=SAGE_ROOT)
         else:
             print(f"No fixes made in '{input}'")
 

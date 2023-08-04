@@ -196,11 +196,12 @@ a new fan.
 
 We can also make ``fan3`` smooth, but it will take a bit more work::
 
+    sage: # needs palp
     sage: cube = lattice_polytope.cross_polytope(3).polar()
-    sage: sk = cube.skeleton_points(2)                                                  # needs palp
-    sage: rays = [cube.point(p) for p in sk]                                            # needs palp
-    sage: fan4 = fan3.subdivide(new_rays=rays)                                          # needs palp
-    sage: fan4.is_smooth()                                                              # needs palp
+    sage: sk = cube.skeleton_points(2)
+    sage: rays = [cube.point(p) for p in sk]
+    sage: fan4 = fan3.subdivide(new_rays=rays)
+    sage: fan4.is_smooth()
     True
 
 Let's see how "different" are ``fan2`` and ``fan4``::

@@ -763,17 +763,18 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
 
         Check that :trac:`28741` is fixed::
 
+            sage: # needs sage.graphs
             sage: p = LatticePolytope([], lattice=ToricLattice(3).dual()); p
             -1-d lattice polytope in 3-d lattice M
-            sage: a = p.faces()[0][0]                                                   # needs sage.graphs
+            sage: a = p.faces()[0][0]
             sage: p = LatticePolytope([], lattice=ToricLattice(3).dual()); p
             -1-d lattice polytope in 3-d lattice M
-            sage: a = p.faces()[0][0]; a                                                # needs sage.graphs
+            sage: a = p.faces()[0][0]; a
             -1-d lattice polytope in 3-d lattice M
-            sage: a.facet_normals()                                                     # needs sage.graphs
+            sage: a.facet_normals()
             Empty collection
             in 3-d lattice N
-            sage: a                                                                     # needs sage.graphs
+            sage: a
             -1-d lattice polytope in 3-d lattice M
         """
         assert not hasattr(self, "_facet_normals")
@@ -1098,22 +1099,23 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
 
         For a reflexive polytope construct the polar polytope::
 
+            sage: # needs palp
             sage: p = LatticePolytope([(1,0), (0,1), (-1,-1)])
             sage: p.vertices()
             M( 1,  0),
             M( 0,  1),
             M(-1, -1)
             in 2-d lattice M
-            sage: s = p.poly_x("e")                                                     # needs palp
-            sage: print(s)                                                              # needs palp
+            sage: s = p.poly_x("e")
+            sage: print(s)
             3 2  Vertices of P-dual <-> Equations of P
                2  -1
               -1   2
               -1  -1
-            sage: "_polar" in p.__dict__                                                # needs palp
+            sage: "_polar" in p.__dict__
             False
-            sage: p._read_equations(s)                                                  # needs palp
-            sage: p._polar._vertices                                                    # needs palp
+            sage: p._read_equations(s)
+            sage: p._polar._vertices
             N( 2, -1),
             N(-1,  2),
             N(-1, -1)
@@ -1121,6 +1123,7 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
 
         For a non-reflexive polytope cache facet equations::
 
+            sage: # needs palp
             sage: p = LatticePolytope([(1,0), (0,2), (-1,-3 )])
             sage: p.vertices()
             M( 1,  0),
@@ -1131,19 +1134,19 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
             False
             sage: "_facet_constants" in p.__dict__
             False
-            sage: s = p.poly_x("e")                                                     # needs palp
-            sage: print(s)                                                              # needs palp
+            sage: s = p.poly_x("e")
+            sage: print(s)
             3 2  Equations of P
                5  -1     2
               -2  -1     2
               -3   2     3
-            sage: p._read_equations(s)                                                  # needs palp
-            sage: p._facet_normals                                                      # needs palp
+            sage: p._read_equations(s)
+            sage: p._facet_normals
             N( 5, -1),
             N(-2, -1),
             N(-3,  2)
             in 2-d lattice N
-            sage: p._facet_constants                                                    # needs palp
+            sage: p._facet_constants
             (2, 2, 3)
         """
         if isinstance(data, str):
@@ -1505,12 +1508,14 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
             3-d reflexive polytope in 3-d lattice M
             sage: o.ambient() is o
             True
-            sage: face = o.faces(1)[0]                                                  # needs sage.graphs
-            sage: face                                                                  # needs sage.graphs
+
+            sage: # needs sage.graphs
+            sage: face = o.faces(1)[0]
+            sage: face
             1-d face of 3-d reflexive polytope in 3-d lattice M
-            sage: face.ambient()                                                        # needs sage.graphs
+            sage: face.ambient()
             3-d reflexive polytope in 3-d lattice M
-            sage: face.ambient() is o                                                   # needs sage.graphs
+            sage: face.ambient() is o
             True
         """
         return self._ambient
@@ -1842,16 +1847,17 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
 
         EXAMPLES::
 
+            sage: # needs sage.graphs
             sage: o = lattice_polytope.cross_polytope(4)
-            sage: e = o.edges()[0]; e                                                   # needs sage.graphs
+            sage: e = o.edges()[0]; e
             1-d face of 4-d reflexive polytope in 4-d lattice M
-            sage: ed = e.dual(); ed                                                     # needs sage.graphs
+            sage: ed = e.dual(); ed
             2-d face of 4-d reflexive polytope in 4-d lattice N
-            sage: ed.ambient() is e.ambient().polar()                                   # needs sage.graphs
+            sage: ed.ambient() is e.ambient().polar()
             True
-            sage: e.ambient_vertex_indices() == ed.ambient_facet_indices()              # needs sage.graphs
+            sage: e.ambient_vertex_indices() == ed.ambient_facet_indices()
             True
-            sage: e.ambient_facet_indices() == ed.ambient_vertex_indices()              # needs sage.graphs
+            sage: e.ambient_facet_indices() == ed.ambient_vertex_indices()
             True
         """
         for f in self._ambient.polar().faces(codim=self.dim() + 1):
@@ -1994,22 +2000,23 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
         Note that if ``p`` is a face of ``superp``, then the face
         lattice of ``p`` consists of (appropriate) faces of ``superp``::
 
+            sage: # needs sage.graphs
             sage: superp = LatticePolytope([(1,2,3,4), (5,6,7,8),
             ....:                           (1,2,4,8), (1,3,9,7)])
-            sage: superp.face_lattice()                                                 # needs sage.graphs
+            sage: superp.face_lattice()
             Finite lattice containing 16 elements with distinguished linear extension
-            sage: superp.face_lattice().top()                                           # needs sage.graphs
+            sage: superp.face_lattice().top()
             3-d lattice polytope in 4-d lattice M
-            sage: p = superp.facets()[0]                                                # needs sage.graphs
-            sage: p                                                                     # needs sage.graphs
+            sage: p = superp.facets()[0]
+            sage: p
             2-d face of 3-d lattice polytope in 4-d lattice M
-            sage: p.face_lattice()                                                      # needs sage.graphs
+            sage: p.face_lattice()
             Finite poset containing 8 elements with distinguished linear extension
-            sage: p.face_lattice().bottom()                                             # needs sage.graphs
+            sage: p.face_lattice().bottom()
             -1-d face of 3-d lattice polytope in 4-d lattice M
-            sage: p.face_lattice().top()                                                # needs sage.graphs
+            sage: p.face_lattice().top()
             2-d face of 3-d lattice polytope in 4-d lattice M
-            sage: p.face_lattice().top() is p                                           # needs sage.graphs
+            sage: p.face_lattice().top() is p
             True
         """
         if self._ambient is self:
@@ -2365,13 +2372,14 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
 
         EXAMPLES::
 
+            sage: # needs sage.graphs
             sage: square = LatticePolytope([(0,0), (1,0), (1,1), (0,1)])
-            sage: square.facet_of()                                                     # needs sage.graphs
+            sage: square.facet_of()
             ()
-            sage: face = square.faces(0)[0]                                             # needs sage.graphs
-            sage: len(face.facet_of())                                                  # needs sage.graphs
+            sage: face = square.faces(0)[0]
+            sage: len(face.facet_of())
             2
-            sage: face.facet_of()[1]                                                    # needs sage.graphs
+            sage: face.facet_of()[1]
             1-d face of 2-d lattice polytope in 2-d lattice M
         """
         L = self._ambient.face_lattice()
@@ -3165,18 +3173,18 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
             True
             sage: P2 = ReflexivePolytope(2, 0)
             sage: PM_max, permutations = P2._palp_PM_max(check=True)                    # needs sage.groups
-            sage: PM_max
+            sage: PM_max                                                                # needs sage.graphs
             [3 0 0]
             [0 3 0]
             [0 0 3]
-            sage: list(permutations.values())
+            sage: list(permutations.values())                                           # needs sage.groups
             [[(1,2,3), (1,2,3)],
              [(1,3,2), (1,3,2)],
              [(1,3), (1,3)],
              [(1,2), (1,2)],
              [(), ()],
              [(2,3), (2,3)]]
-            sage: PM_max.automorphisms_of_rows_and_columns()
+            sage: PM_max.automorphisms_of_rows_and_columns()                            # needs sage.graphs
             [((), ()),
              ((1,2,3), (1,2,3)),
              ((1,3,2), (1,3,2)),
@@ -4731,14 +4739,15 @@ class NefPartition(SageObject, Hashable):
         Currently, you need to request Hodge numbers when you compute
         nef-partitions::
 
+            sage: # long time, needs palp
             sage: p = lattice_polytope.cross_polytope(5)
-            sage: np = p.nef_partitions()[0]                    # long time (4s on sage.math, 2011), needs palp
-            sage: np.hodge_numbers()                            # long time             # needs palp
+            sage: np = p.nef_partitions()[0]                    # 4s on sage.math, 2011
+            sage: np.hodge_numbers()
             Traceback (most recent call last):
             ...
             NotImplementedError: use nef_partitions(hodge_numbers=True)!
-            sage: np = p.nef_partitions(hodge_numbers=True)[0]  # long time (13s on sage.math, 2011), needs palp
-            sage: np.hodge_numbers()                            # long time             # needs palp
+            sage: np = p.nef_partitions(hodge_numbers=True)[0]  # 13s on sage.math, 2011
+            sage: np.hodge_numbers()
             (19, 19)
         """
         try:
@@ -5083,13 +5092,14 @@ def _palp(command, polytopes, reduce_dimension=False):
 
     TESTS::
 
+        sage: # needs palp
         sage: o = lattice_polytope.cross_polytope(3)
-        sage: result_name = lattice_polytope._palp("poly.x -f", [o])                    # needs palp
-        sage: f = open(result_name)                                                     # needs palp
-        sage: f.readlines()                                                             # needs palp
+        sage: result_name = lattice_polytope._palp("poly.x -f", [o])
+        sage: f = open(result_name)
+        sage: f.readlines()
         ['M:7 6 N:27 8 Pic:17 Cor:0\n']
-        sage: f.close()                                                                 # needs palp
-        sage: os.remove(result_name)                                                    # needs palp
+        sage: f.close()
+        sage: os.remove(result_name)
 
         sage: p = LatticePolytope([(1,0,0), (0,1,0), (-1,0,0), (0,-1,0)])
         sage: lattice_polytope._palp("poly.x -f", [p])                                  # needs palp
@@ -5336,9 +5346,10 @@ def _read_poly_x_incidences(data, dim):
 
     TESTS::
 
+        sage: # needs palp
         sage: p = lattice_polytope.cross_polytope(2)
-        sage: result_name = lattice_polytope._palp("poly.x -fi", [p])                   # needs palp
-        sage: with open(result_name) as f:                                              # needs palp
+        sage: result_name = lattice_polytope._palp("poly.x -fi", [p])
+        sage: with open(result_name) as f:
         ....:     print(f.read())
         Incidences as binary numbers [F-vector=(4 4)]:
         v[d][i]: sum_j Incidence(i'th dim-d-face, j-th vertex) x 2^j
@@ -5347,12 +5358,12 @@ def _read_poly_x_incidences(data, dim):
         f[d][i]: sum_j Incidence(i'th dim-d-face, j-th facet) x 2^j
         f[0]: 0011 0101 1010 1100
         f[1]: 0001 0010 0100 1000
-        sage: f = open(result_name)                                                     # needs palp
-        sage: l = f.readline()                                                          # needs palp
-        sage: lattice_polytope._read_poly_x_incidences(f, 2)                            # needs palp
+        sage: f = open(result_name)
+        sage: l = f.readline()
+        sage: lattice_polytope._read_poly_x_incidences(f, 2)
         [[[3], [0], [2], [1]], [[0, 3], [2, 3], [0, 1], [1, 2]]]
-        sage: f.close()                                                                 # needs palp
-        sage: os.remove(result_name)                                                    # needs palp
+        sage: f.close()
+        sage: os.remove(result_name)
     """
     data.readline()
     lines = [data.readline().split() for i in range(dim)]
@@ -5754,10 +5765,11 @@ def read_all_polytopes(file_name):
 
     We use poly.x to compute two polar polytopes and read them::
 
+        sage: # needs palp
         sage: d = lattice_polytope.cross_polytope(2)
         sage: o = lattice_polytope.cross_polytope(3)
-        sage: result_name = lattice_polytope._palp("poly.x -fe", [d, o])                # needs palp
-        sage: with open(result_name) as f:                                              # needs palp
+        sage: result_name = lattice_polytope._palp("poly.x -fe", [d, o])
+        sage: with open(result_name) as f:
         ....:     print(f.read())
         4 2  Vertices of P-dual <-> Equations of P
           -1   1
@@ -5773,10 +5785,10 @@ def read_all_polytopes(file_name):
            1  -1  -1
           -1   1  -1
            1   1  -1
-        sage: lattice_polytope.read_all_polytopes(result_name)                          # needs palp
+        sage: lattice_polytope.read_all_polytopes(result_name)
         [2-d reflexive polytope #14 in 2-d lattice M,
          3-d reflexive polytope in 3-d lattice M]
-        sage: os.remove(result_name)                                                    # needs palp
+        sage: os.remove(result_name)
     """
     polytopes = []
     with open(file_name) as f:
@@ -5917,10 +5929,11 @@ def skip_palp_matrix(data, n=1):
     EXAMPLES: We create a file with vertices of the square and the cube,
     but read only the second set::
 
+        sage: # needs palp
         sage: d = lattice_polytope.cross_polytope(2)
         sage: o = lattice_polytope.cross_polytope(3)
-        sage: result_name = lattice_polytope._palp("poly.x -fe", [d, o])                # needs palp
-        sage: with open(result_name) as f:                                              # needs palp
+        sage: result_name = lattice_polytope._palp("poly.x -fe", [d, o])
+        sage: with open(result_name) as f:
         ....:     print(f.read())
         4 2  Vertices of P-dual <-> Equations of P
           -1   1
@@ -5936,14 +5949,14 @@ def skip_palp_matrix(data, n=1):
            1  -1  -1
           -1   1  -1
            1   1  -1
-        sage: f = open(result_name)                                                     # needs palp
-        sage: lattice_polytope.skip_palp_matrix(f)                                      # needs palp
-        sage: lattice_polytope.read_palp_matrix(f)                                      # needs palp
+        sage: f = open(result_name)
+        sage: lattice_polytope.skip_palp_matrix(f)
+        sage: lattice_polytope.read_palp_matrix(f)
         [-1  1 -1  1 -1  1 -1  1]
         [-1 -1  1  1 -1 -1  1  1]
         [ 1  1  1  1 -1 -1 -1 -1]
-        sage: f.close()                                                                 # needs palp
-        sage: os.remove(result_name)                                                    # needs palp
+        sage: f.close()
+        sage: os.remove(result_name)
     """
     for i in range(n):
         line = data.readline()

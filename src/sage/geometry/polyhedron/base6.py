@@ -388,21 +388,22 @@ class Polyhedron_base6(Polyhedron_base5):
 
         Check that :trac:`31802` is fixed::
 
+            sage: # needs sage.plot
             sage: halfspace = Polyhedron(rays=[(0, 0, 1)], lines=[(1, 0, 0), (0, 1, 0)])
             sage: len(halfspace.projection().arrows)
             5
-            sage: halfspace.plot(fill=(0, 1, 0))                                        # needs sage.plot
+            sage: halfspace.plot(fill=(0, 1, 0))
             Graphics3d Object
             sage: fullspace = Polyhedron(lines=[(1, 0, 0), (0, 1, 0), (0, 0, 1)])
             sage: len(fullspace.projection().arrows)
             6
-            sage: fullspace.plot(color=(1, 0, 0), alpha=0.5)                            # needs sage.plot
+            sage: fullspace.plot(color=(1, 0, 0), alpha=0.5)
             Graphics3d Object
             sage: cone = Polyhedron(rays=[(1, 0, 0), (0, 1, 0), (0, 0, 1)])
-            sage: cone.plot(fill='rainbow', alpha=0.6)                                  # needs sage.plot
+            sage: cone.plot(fill='rainbow', alpha=0.6)
             Graphics3d Object
             sage: p = Polyhedron(vertices=[(0, 0, 0), (1, 0, 0)], rays=[(-1, 1, 0), (1, 1, 0), (0, 0, 1)])
-            sage: p.plot(fill='mediumspringgreen', point='red', size=30, width=2)       # needs sage.plot
+            sage: p.plot(fill='mediumspringgreen', point='red', size=30, width=2)
             Graphics3d Object
 
             sage: cylinder = Polyhedron(vertices=[(0, 0, 0), (1, 0, 0), (0, 1, 0)], lines=[(0, 0, 1)])
@@ -552,9 +553,10 @@ class Polyhedron_base6(Polyhedron_base5):
 
         EXAMPLES::
 
+            sage: # needs sage.plot
             sage: co = polytopes.cuboctahedron()
-            sage: Img = co.tikz([0, 0, 1], 0, output_type='TikzPicture')                # needs sage.plot
-            sage: Img                                                                   # needs sage.plot
+            sage: Img = co.tikz([0, 0, 1], 0, output_type='TikzPicture')
+            sage: Img
             \documentclass[tikz]{standalone}
             \begin{document}
             \begin{tikzpicture}%
@@ -571,7 +573,7 @@ class Polyhedron_base6(Polyhedron_base5):
             %%
             \end{tikzpicture}
             \end{document}
-            sage: print('\n'.join(Img.content().splitlines()[12:21]))                   # needs sage.plot
+            sage: print('\n'.join(Img.content().splitlines()[12:21]))
             %% with the command: ._tikz_3d_in_3d and parameters:
             %% view = [0, 0, 1]
             %% angle = 0
@@ -581,7 +583,7 @@ class Polyhedron_base6(Polyhedron_base5):
             %% opacity = 0.8
             %% vertex_color = green
             %% axis = False
-            sage: print('\n'.join(Img.content().splitlines()[22:26]))                   # needs sage.plot
+            sage: print('\n'.join(Img.content().splitlines()[22:26]))
             %% Coordinate of the vertices:
             %%
             \coordinate (-1.00000, -1.00000, 0.00000) at (-1.00000, -1.00000, 0.00000);
@@ -589,9 +591,9 @@ class Polyhedron_base6(Polyhedron_base5):
 
         When output type is a :class:`sage.misc.latex_standalone.TikzPicture`::
 
+            sage: # needs sage.plot
             sage: co = polytopes.cuboctahedron()
-            sage: t = co.tikz([674, 108, -731], 112, output_type='TikzPicture')         # needs sage.plot
-            sage: t                                                                     # needs sage.plot
+            sage: t = co.tikz([674, 108, -731], 112, output_type='TikzPicture'); t
             \documentclass[tikz]{standalone}
             \begin{document}
             \begin{tikzpicture}%
@@ -608,7 +610,7 @@ class Polyhedron_base6(Polyhedron_base5):
             %%
             \end{tikzpicture}
             \end{document}
-            sage: path_to_file = t.pdf()        # not tested                            # needs sage.plot
+            sage: path_to_file = t.pdf()        # not tested
 
         """
         return self.projection().tikz(view, angle, scale,
@@ -1237,13 +1239,14 @@ class Polyhedron_base6(Polyhedron_base5):
 
         With the parameter ``minimal`` one can get a minimal base ring::
 
+            sage: # needs sage.rings.number_field
             sage: s = polytopes.simplex(3)
-            sage: s_AA = s.affine_hull_projection(orthonormal=True, extend=True)        # needs sage.rings.number_field
-            sage: s_AA.base_ring()                                                      # needs sage.rings.number_field
+            sage: s_AA = s.affine_hull_projection(orthonormal=True, extend=True)
+            sage: s_AA.base_ring()
             Algebraic Real Field
-            sage: s_full = s.affine_hull_projection(orthonormal=True, extend=True,      # needs sage.rings.number_field
+            sage: s_full = s.affine_hull_projection(orthonormal=True, extend=True,
             ....:                                   minimal=True)
-            sage: s_full.base_ring()                                                    # needs sage.rings.number_field
+            sage: s_full.base_ring()
             Number Field in a with defining polynomial y^4 - 4*y^2 + 1
              with a = 0.5176380902050415?
 
@@ -1608,24 +1611,25 @@ class Polyhedron_base6(Polyhedron_base5):
 
         EXAMPLES::
 
+            sage: # needs sage.symbolic
             sage: triangle = Polyhedron([(1, 0, 0), (0, 1, 0), (0, 0, 1)]);  triangle
             A 2-dimensional polyhedron in ZZ^3 defined as the convex hull of 3 vertices
-            sage: A = triangle.affine_hull_manifold(name='A'); A                        # needs sage.symbolic
+            sage: A = triangle.affine_hull_manifold(name='A'); A
             2-dimensional Riemannian submanifold A embedded in the Euclidean space E^3
-            sage: A.embedding().display()                                               # needs sage.symbolic
+            sage: A.embedding().display()
             A → E^3
                (x0, x1) ↦ (x, y, z) = (t0 + x0, t0 + x1, t0 - x0 - x1 + 1)
-            sage: A.embedding().inverse().display()                                     # needs sage.symbolic
+            sage: A.embedding().inverse().display()
             E^3 → A
                (x, y, z) ↦ (x0, x1) = (x, y)
-            sage: A.adapted_chart()                                                     # needs sage.symbolic
+            sage: A.adapted_chart()
             [Chart (E^3, (x0_E3, x1_E3, t0_E3))]
-            sage: A.normal().display()                                                  # needs sage.symbolic
+            sage: A.normal().display()
             n = 1/3*sqrt(3) e_x + 1/3*sqrt(3) e_y + 1/3*sqrt(3) e_z
-            sage: A.induced_metric()       # Need to call this before volume_form       # needs sage.symbolic
+            sage: A.induced_metric()       # Need to call this before volume_form
             Riemannian metric gamma on the
              2-dimensional Riemannian submanifold A embedded in the Euclidean space E^3
-            sage: A.volume_form()                                                       # needs sage.symbolic
+            sage: A.volume_form()
             2-form eps_gamma on the
              2-dimensional Riemannian submanifold A embedded in the Euclidean space E^3
 
@@ -1643,14 +1647,14 @@ class Polyhedron_base6(Polyhedron_base5):
 
         Arrangement of affine hull of facets::
 
-            sage: # needs sage.rings.number_field
+            sage: # needs sage.rings.number_field sage.symbolic
             sage: D = polytopes.dodecahedron()
-            sage: E3 = EuclideanSpace(3)                                                # needs sage.symbolic
-            sage: submanifolds = [              # long time                             # needs sage.symbolic
+            sage: E3 = EuclideanSpace(3)
+            sage: submanifolds = [              # long time
             ....:     F.as_polyhedron().affine_hull_manifold(name=f'F{i}',
             ....:                                            orthogonal=True, ambient_space=E3)
             ....:     for i, F in enumerate(D.facets())]
-            sage: sum(FM.plot({},               # long time, not tested                 # needs sage.plot sage.symbolic
+            sage: sum(FM.plot({},               # long time, not tested                 # needs sage.plot
             ....:             srange(-2, 2, 0.1), srange(-2, 2, 0.1),
             ....:             opacity=0.2)
             ....:     for FM in submanifolds) + D.plot()

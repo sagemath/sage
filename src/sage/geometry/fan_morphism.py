@@ -528,13 +528,14 @@ class FanMorphism(FreeModuleMorphism):
 
         TESTS::
 
-            sage: Sigma = toric_varieties.dP8().fan()                                   # needs palp
+            sage: # needs palp
+            sage: Sigma = toric_varieties.dP8().fan()
             sage: Sigma_p = toric_varieties.P1().fan()
-            sage: phi = FanMorphism(matrix([[1], [-1]]), Sigma, Sigma_p)                # needs palp
-            sage: phi._ray_index_map()                                                  # needs palp
+            sage: phi = FanMorphism(matrix([[1], [-1]]), Sigma, Sigma_p)
+            sage: phi._ray_index_map()
             (-1, 1, -1, 0)
-            sage: xi = FanMorphism(matrix([[1, 0]]), Sigma_p, Sigma)                    # needs palp
-            sage: xi._ray_index_map()                                                   # needs palp
+            sage: xi = FanMorphism(matrix([[1, 0]]), Sigma_p, Sigma)
+            sage: xi._ray_index_map()
             Traceback (most recent call last):
             ...
             ValueError: ray #1 is mapped into a 2-d cone!
@@ -1039,22 +1040,23 @@ class FanMorphism(FreeModuleMorphism):
 
         EXAMPLES::
 
-            sage: Sigma = toric_varieties.dP8().fan()                                   # needs palp
+            sage: # needs palp
+            sage: Sigma = toric_varieties.dP8().fan()
             sage: Sigma_p = toric_varieties.P1().fan()
-            sage: phi = FanMorphism(matrix([[1], [-1]]), Sigma, Sigma_p)                # needs palp
-            sage: phi.index()                                                           # needs palp
+            sage: phi = FanMorphism(matrix([[1], [-1]]), Sigma, Sigma_p)
+            sage: phi.index()
             1
-            sage: psi = FanMorphism(matrix([[2], [-2]]), Sigma, Sigma_p)                # needs palp
-            sage: psi.index()                                                           # needs palp
+            sage: psi = FanMorphism(matrix([[2], [-2]]), Sigma, Sigma_p)
+            sage: psi.index()
             2
-            sage: xi = FanMorphism(matrix([[1, 0]]), Sigma_p, Sigma)                    # needs palp
-            sage: xi.index()                                                            # needs palp
+            sage: xi = FanMorphism(matrix([[1, 0]]), Sigma_p, Sigma)
+            sage: xi.index()
             +Infinity
 
         Infinite index in the last example indicates that the image has positive
         codimension in the codomain. Let's look at the rays of our fans::
 
-            sage: Sigma_p.rays()
+            sage: Sigma_p.rays()                                                        # needs palp
             N( 1),
             N(-1)
             in 1-d lattice N
@@ -1087,18 +1089,19 @@ class FanMorphism(FreeModuleMorphism):
 
         TESTS::
 
-            sage: Sigma = toric_varieties.dP8().fan()                                   # needs palp
+            sage: # needs palp
+            sage: Sigma = toric_varieties.dP8().fan()
             sage: Sigma_p = toric_varieties.Cube_nonpolyhedral().fan()
             sage: m = matrix([[2,6,10], [7,11,13]])
-            sage: zeta = FanMorphism(m, Sigma, Sigma_p, subdivide=True)                 # needs palp
-            sage: [zeta.index(cone) for cone in flatten(Sigma_p.cones())]               # needs palp
+            sage: zeta = FanMorphism(m, Sigma, Sigma_p, subdivide=True)
+            sage: [zeta.index(cone) for cone in flatten(Sigma_p.cones())]
             [+Infinity, None, None, None, None, None, None, None, None, None,
              4, 4, None, 4, None, None, 2, None, 4, None, 4, 1, 1, 1, 1, 1, 1]
-            sage: zeta = prod(zeta.factor()[1:])                                        # needs palp
-            sage: Sigma_p = zeta.codomain_fan()                                         # needs palp
-            sage: [zeta.index(cone) for cone in flatten(Sigma_p.cones())]               # needs palp
+            sage: zeta = prod(zeta.factor()[1:])
+            sage: Sigma_p = zeta.codomain_fan()
+            sage: [zeta.index(cone) for cone in flatten(Sigma_p.cones())]
             [4, 4, 4, 1, 4, 4, 4, 1, 1, 1, 1, 1, 1]
-            sage: zeta.index() == zeta.index(Sigma_p(0)[0])                             # needs palp
+            sage: zeta.index() == zeta.index(Sigma_p(0)[0])
             True
         """
         if cone is None:
@@ -1129,14 +1132,15 @@ class FanMorphism(FreeModuleMorphism):
 
         EXAMPLES::
 
-            sage: Sigma = toric_varieties.dP8().fan()                                   # needs palp
+            sage: # needs palp
+            sage: Sigma = toric_varieties.dP8().fan()
             sage: Sigma_p = toric_varieties.P1().fan()
-            sage: phi = FanMorphism(matrix([[1], [-1]]), Sigma, Sigma_p)                # needs palp
-            sage: psi = FanMorphism(matrix([[2], [-2]]), Sigma, Sigma_p)                # needs palp
-            sage: xi = FanMorphism(matrix([[1, 0]]), Sigma_p, Sigma)                    # needs palp
-            sage: phi.index(), psi.index(), xi.index()                                  # needs palp
+            sage: phi = FanMorphism(matrix([[1], [-1]]), Sigma, Sigma_p)
+            sage: psi = FanMorphism(matrix([[2], [-2]]), Sigma, Sigma_p)
+            sage: xi = FanMorphism(matrix([[1, 0]]), Sigma_p, Sigma)
+            sage: phi.index(), psi.index(), xi.index()
             (1, 2, +Infinity)
-            sage: phi.is_birational(), psi.is_birational(), xi.is_birational()          # needs palp
+            sage: phi.is_birational(), psi.is_birational(), xi.is_birational()
             (True, False, False)
         """
         return self.index() == 1
@@ -1177,26 +1181,27 @@ class FanMorphism(FreeModuleMorphism):
         We consider several maps between fans of a del Pezzo surface and the
         projective line::
 
-            sage: Sigma = toric_varieties.dP8().fan()                                   # needs palp
+            sage: # needs palp
+            sage: Sigma = toric_varieties.dP8().fan()
             sage: Sigma_p = toric_varieties.P1().fan()
-            sage: phi = FanMorphism(matrix([[1], [-1]]), Sigma, Sigma_p)                # needs palp
-            sage: psi = FanMorphism(matrix([[2], [-2]]), Sigma, Sigma_p)                # needs palp
-            sage: xi = FanMorphism(matrix([[1, 0]]), Sigma_p, Sigma)                    # needs palp
-            sage: phi.is_bundle()                                                       # needs palp
+            sage: phi = FanMorphism(matrix([[1], [-1]]), Sigma, Sigma_p)
+            sage: psi = FanMorphism(matrix([[2], [-2]]), Sigma, Sigma_p)
+            sage: xi = FanMorphism(matrix([[1, 0]]), Sigma_p, Sigma)
+            sage: phi.is_bundle()
             True
-            sage: phi.is_fibration()                                                    # needs palp
+            sage: phi.is_fibration()
             True
-            sage: phi.index()                                                           # needs palp
+            sage: phi.index()
             1
-            sage: psi.is_bundle()                                                       # needs palp
+            sage: psi.is_bundle()
             False
-            sage: psi.is_fibration()                                                    # needs palp
+            sage: psi.is_fibration()
             True
-            sage: psi.index()                                                           # needs palp
+            sage: psi.index()
             2
-            sage: xi.is_fibration()                                                     # needs palp
+            sage: xi.is_fibration()
             False
-            sage: xi.index()                                                            # needs palp
+            sage: xi.index()
             +Infinity
 
         The first of these maps induces not only a fibration, but a fiber
@@ -1269,26 +1274,27 @@ class FanMorphism(FreeModuleMorphism):
         We consider several maps between fans of a del Pezzo surface and the
         projective line::
 
-            sage: Sigma = toric_varieties.dP8().fan()                                   # needs palp
+            sage: # needs palp
+            sage: Sigma = toric_varieties.dP8().fan()
             sage: Sigma_p = toric_varieties.P1().fan()
-            sage: phi = FanMorphism(matrix([[1], [-1]]), Sigma, Sigma_p)                # needs palp
-            sage: psi = FanMorphism(matrix([[2], [-2]]), Sigma, Sigma_p)                # needs palp
-            sage: xi = FanMorphism(matrix([[1, 0]]), Sigma_p, Sigma)                    # needs palp
-            sage: phi.is_bundle()                                                       # needs palp
+            sage: phi = FanMorphism(matrix([[1], [-1]]), Sigma, Sigma_p)
+            sage: psi = FanMorphism(matrix([[2], [-2]]), Sigma, Sigma_p)
+            sage: xi = FanMorphism(matrix([[1, 0]]), Sigma_p, Sigma)
+            sage: phi.is_bundle()
             True
-            sage: phi.is_fibration()                                                    # needs palp
+            sage: phi.is_fibration()
             True
-            sage: phi.index()                                                           # needs palp
+            sage: phi.index()
             1
-            sage: psi.is_bundle()                                                       # needs palp
+            sage: psi.is_bundle()
             False
-            sage: psi.is_fibration()                                                    # needs palp
+            sage: psi.is_fibration()
             True
-            sage: psi.index()                                                           # needs palp
+            sage: psi.index()
             2
-            sage: xi.is_fibration()                                                     # needs palp
+            sage: xi.is_fibration()
             False
-            sage: xi.index()                                                            # needs palp
+            sage: xi.index()
             +Infinity
 
         The first of these maps induces not only a fibration, but a fiber
@@ -1563,15 +1569,16 @@ class FanMorphism(FreeModuleMorphism):
 
         We check that reviewer's example from :trac:`9972` is handled correctly::
 
+            sage: # needs palp
             sage: N1 = ToricLattice(1)
             sage: N2 = ToricLattice(2)
             sage: Hom21 = Hom(N2, N1)
             sage: pr = Hom21([N1.0,0])
-            sage: P1xP1 = toric_varieties.P1xP1()                                       # needs palp
-            sage: f = FanMorphism(pr, P1xP1.fan())                                      # needs palp
-            sage: c = f.image_cone(Cone([(1,0), (0,1)])); c                             # needs palp
+            sage: P1xP1 = toric_varieties.P1xP1()
+            sage: f = FanMorphism(pr, P1xP1.fan())
+            sage: c = f.image_cone(Cone([(1,0), (0,1)])); c
             1-d cone of Rational polyhedral fan in 1-d lattice N
-            sage: f.preimage_cones(c)                                                   # needs palp
+            sage: f.preimage_cones(c)
             (1-d cone of Rational polyhedral fan in 2-d lattice N,
              2-d cone of Rational polyhedral fan in 2-d lattice N,
              2-d cone of Rational polyhedral fan in 2-d lattice N)

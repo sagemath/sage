@@ -346,18 +346,19 @@ def plot_hyperplane(hyperplane, **kwds):
         sage: b.plot(**opts)                                                            # needs sage.plot
         Graphics object consisting of 2 graphics primitives
 
+        sage: # needs sage.plot
         sage: H3.<x,y,z> = HyperplaneArrangements(QQ)
         sage: c = 2*x + 3*y + 4*z + 5
-        sage: c.plot()                                                                  # needs sage.plot
+        sage: c.plot()
         Graphics3d Object
-        sage: c.plot(label_offset=(1,0,1), color='green', label_color='red',            # needs sage.plot
+        sage: c.plot(label_offset=(1,0,1), color='green', label_color='red',
         ....:        frame=False)
         Graphics3d Object
         sage: d = -3*x + 2*y + 2*z + 3
-        sage: d.plot(opacity=0.8)                                                       # needs sage.plot
+        sage: d.plot(opacity=0.8)
         Graphics3d Object
         sage: e = 4*x + 2*z + 3
-        sage: e.plot(ranges=[[-1,1],[0,8]], label_offset=(2,2,1), aspect_ratio=1)       # needs sage.plot
+        sage: e.plot(ranges=[[-1,1],[0,8]], label_offset=(2,2,1), aspect_ratio=1)
         Graphics3d Object
     """
     if hyperplane.base_ring().characteristic():

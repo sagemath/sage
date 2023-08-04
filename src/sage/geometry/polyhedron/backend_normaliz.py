@@ -2241,16 +2241,17 @@ class Polyhedron_QQ_normaliz(Polyhedron_normaliz, Polyhedron_QQ):
         is equal to 1 = `\chi_{trivial}` (Prop 6.1 [Stap2011]_).
         Here is the computation for the 3-dimensional standard simplex::
 
+            sage: # needs sage.groups
             sage: S = polytopes.simplex(3, backend='normaliz'); S
             A 3-dimensional polyhedron in ZZ^4 defined as the convex hull of 4 vertices
-            sage: G = S.restricted_automorphism_group(output='permutation')             # needs sage.groups
-            sage: G.is_isomorphic(SymmetricGroup(4))                                    # needs sage.groups
+            sage: G = S.restricted_automorphism_group(output='permutation')
+            sage: G.is_isomorphic(SymmetricGroup(4))
             True
-            sage: len(G)                                                                # needs sage.groups
+            sage: len(G)
             24
-            sage: Hstar = S._Hstar_function_normaliz(G); Hstar                          # needs sage.groups
+            sage: Hstar = S._Hstar_function_normaliz(G); Hstar
             chi_4
-            sage: G.character_table()                                                   # needs sage.groups
+            sage: G.character_table()
             [ 1 -1  1  1 -1]
             [ 3 -1  0 -1  1]
             [ 2  0 -1  2  0]
@@ -2262,23 +2263,24 @@ class Polyhedron_QQ_normaliz(Polyhedron_normaliz, Polyhedron_QQ):
         `\pm(0,0,1),\pm(1,0,1), \pm(0,1,1), \pm(1,1,1)` and let
         G = `\Zmod{2}` act on P as follows::
 
+            sage: # needs sage.groups
             sage: P = Polyhedron(vertices=[[0,0,1], [0,0,-1], [1,0,1], [-1,0,-1],
             ....:                          [0,1,1], [0,-1,-1], [1,1,1], [-1,-1,-1]],
             ....:                backend='normaliz')
-            sage: K = P.restricted_automorphism_group(output='permutation')             # needs sage.groups
-            sage: G = K.subgroup(gens=[K([(0,2),(1,3),(4,6),(5,7)])])                   # needs sage.groups
-            sage: conj_reps = G.conjugacy_classes_representatives()                     # needs sage.groups
-            sage: Dict = P.permutations_to_matrices(conj_reps, acting_group=G)          # needs sage.groups
-            sage: list(Dict.keys())[0]                                                  # needs sage.groups
+            sage: K = P.restricted_automorphism_group(output='permutation')
+            sage: G = K.subgroup(gens=[K([(0,2),(1,3),(4,6),(5,7)])])
+            sage: conj_reps = G.conjugacy_classes_representatives()
+            sage: Dict = P.permutations_to_matrices(conj_reps, acting_group=G)
+            sage: list(Dict.keys())[0]
             (0,2)(1,3)(4,6)(5,7)
-            sage: list(Dict.values())[0]                                                # needs sage.groups
+            sage: list(Dict.values())[0]
             [-1  0  1  0]
             [ 0  1  0  0]
             [ 0  0  1  0]
             [ 0  0  0  1]
-            sage: len(G)                                                                # needs sage.groups
+            sage: len(G)
             2
-            sage: G.character_table()                                                   # needs sage.groups
+            sage: G.character_table()
             [ 1  1]
             [ 1 -1]
 
@@ -2478,30 +2480,32 @@ class Polyhedron_QQ_normaliz(Polyhedron_normaliz, Polyhedron_QQ):
         The `H^*` series of the two-dimensional permutahedron under the action
         of the symmetric group is effective::
 
+            sage: # needs sage.groups
             sage: p3 = polytopes.permutahedron(3, backend='normaliz')
-            sage: G = p3.restricted_automorphism_group(output='permutation')            # needs sage.groups
-            sage: reflection12 = G([(0,2),(1,4),(3,5)])                                 # needs sage.groups
-            sage: reflection23 = G([(0,1),(2,3),(4,5)])                                 # needs sage.groups
-            sage: S3 = G.subgroup(gens=[reflection12, reflection23])                    # needs sage.groups
-            sage: S3.is_isomorphic(SymmetricGroup(3))                                   # needs sage.groups
+            sage: G = p3.restricted_automorphism_group(output='permutation')
+            sage: reflection12 = G([(0,2),(1,4),(3,5)])
+            sage: reflection23 = G([(0,1),(2,3),(4,5)])
+            sage: S3 = G.subgroup(gens=[reflection12, reflection23])
+            sage: S3.is_isomorphic(SymmetricGroup(3))
             True
-            sage: Hstar = p3.Hstar_function(S3)                                         # needs sage.groups sage.rings.number_field
-            sage: Hlin  = p3.Hstar_function(S3, output='Hstar_as_lin_comb')             # needs sage.groups sage.rings.number_field
-            sage: p3._is_effective_normaliz(Hstar, Hlin)                                # needs sage.groups sage.rings.number_field
+            sage: Hstar = p3.Hstar_function(S3)                                         # needs sage.rings.number_field
+            sage: Hlin  = p3.Hstar_function(S3, output='Hstar_as_lin_comb')             # needs sage.rings.number_field
+            sage: p3._is_effective_normaliz(Hstar, Hlin)                                # needs sage.rings.number_field
             True
 
         If the `H^*`-series is not polynomial, then it is not effective::
 
+            sage: # needs sage.groups
             sage: P = Polyhedron(vertices=[[0,0,1], [0,0,-1], [1,0,1], [-1,0,-1],
             ....:                          [0,1,1], [0,-1,-1], [1,1,1], [-1,-1,-1]],
             ....:                backend='normaliz')
-            sage: G = P.restricted_automorphism_group(output='permutation')             # needs sage.groups
-            sage: H = G.subgroup(gens = [G([(0,2),(1,3),(4,6),(5,7)])])                 # needs sage.groups
-            sage: Hstar = P.Hstar_function(H); Hstar                                    # needs sage.groups sage.rings.number_field
+            sage: G = P.restricted_automorphism_group(output='permutation')
+            sage: H = G.subgroup(gens = [G([(0,2),(1,3),(4,6),(5,7)])])
+            sage: Hstar = P.Hstar_function(H); Hstar                                    # needs sage.rings.number_field
             (chi_0*t^4 + (3*chi_0 + 3*chi_1)*t^3
               + (8*chi_0 + 2*chi_1)*t^2 + (3*chi_0 + 3*chi_1)*t + chi_0)/(t + 1)
-            sage: Hstar_lin = P.Hstar_function(H, output='Hstar_as_lin_comb')           # needs sage.groups sage.rings.number_field
-            sage: P._is_effective_normaliz(Hstar, Hstar_lin)                            # needs sage.groups sage.rings.number_field
+            sage: Hstar_lin = P.Hstar_function(H, output='Hstar_as_lin_comb')           # needs sage.rings.number_field
+            sage: P._is_effective_normaliz(Hstar, Hstar_lin)                            # needs sage.rings.number_field
             False
         """
         if not Hstar.denominator().is_unit():

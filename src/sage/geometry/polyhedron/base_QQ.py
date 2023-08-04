@@ -946,16 +946,16 @@ class Polyhedron_QQ(Polyhedron_base):
 
         Here is an example for the square::
 
-            sage: # optional - pynormaliz
+            sage: # optional - pynormaliz, needs sage.groups
             sage: p = polytopes.hypercube(2, backend='normaliz'); p
             A 2-dimensional polyhedron in ZZ^2 defined as the convex hull of 4 vertices
-            sage: aut_p = p.restricted_automorphism_group(                              # needs sage.groups
+            sage: aut_p = p.restricted_automorphism_group(
             ....:             output='permutation')
-            sage: aut_p.order()                                                         # needs sage.groups
+            sage: aut_p.order()
             8
-            sage: conj_list = aut_p.conjugacy_classes_representatives()                 # needs sage.groups
-            sage: fixedpolytopes_dict = p.fixed_subpolytopes(conj_list)                 # needs sage.groups
-            sage: fixedpolytopes_dict[aut_p([(0,3),(1,2)])]                             # needs sage.groups
+            sage: conj_list = aut_p.conjugacy_classes_representatives()
+            sage: fixedpolytopes_dict = p.fixed_subpolytopes(conj_list)
+            sage: fixedpolytopes_dict[aut_p([(0,3),(1,2)])]
             A 0-dimensional polyhedron in QQ^2 defined as the convex hull of 1 vertex
 
         TESTS::

@@ -135,8 +135,9 @@ class Polyhedron_base3(Polyhedron_base2):
             [1 0 1 0 0 1]
             [1 0 0 0 1 1]
 
-            sage: P = polytopes.dodecahedron().faces(2)[0].as_polyhedron()                          # needs sage.rings.number_field
-            sage: P.slack_matrix()                                                                  # needs sage.rings.number_field
+            sage: # needs sage.rings.number_field
+            sage: P = polytopes.dodecahedron().faces(2)[0].as_polyhedron()
+            sage: P.slack_matrix()
             [1/2*sqrt5 - 1/2               0               0               1 1/2*sqrt5 - 1/2               0]
             [              0               0 1/2*sqrt5 - 1/2 1/2*sqrt5 - 1/2               1               0]
             [              0 1/2*sqrt5 - 1/2               1               0 1/2*sqrt5 - 1/2               0]
@@ -153,7 +154,7 @@ class Polyhedron_base3(Polyhedron_base2):
 
             sage: Polyhedron().slack_matrix()
             []
-            sage: Polyhedron(base_ring=QuadraticField(2)).slack_matrix().base_ring()                # needs sage.rings.number_field
+            sage: Polyhedron(base_ring=QuadraticField(2)).slack_matrix().base_ring()    # needs sage.rings.number_field
             Number Field in a with defining polynomial x^2 - 2 with a = 1.41...
         """
         if not self.n_Vrepresentation() or not self.n_Hrepresentation():
