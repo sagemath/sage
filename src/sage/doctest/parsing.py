@@ -1087,13 +1087,8 @@ class SageDocTestParser(doctest.DocTestParser):
         # doctest system.
         m = backslash_replacer.search(string)
         while m is not None:
-            next_prompt = find_sage_prompt.search(string, m.end())
             g = m.groups()
-            if next_prompt:
-                future = string[m.end():next_prompt.start()] + '\n' + string[next_prompt.start():]
-            else:
-                future = string[m.end():]
-            string = string[:m.start()] + g[0] + "sage:" + g[1] + future
+            string = string[:m.start()] + g[0] + "sage:" + g[1] + string[m.end():]
             m = backslash_replacer.search(string, m.start())
 
         replace_ellipsis = not python_prompt.search(string)
