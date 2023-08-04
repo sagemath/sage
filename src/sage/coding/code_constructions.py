@@ -732,8 +732,7 @@ def ToricCode(P,F):
          sage: C.minimum_distance()
          24
          sage: C.minimum_distance(algorithm="guava")  # optional - gap_packages (Guava package)
-         ...
-         24
+         ...24
          sage: C = codes.ToricCode([[-2,-2],[-1,-2],[-1,-1],[-1,0],
          ....:                      [0,-1],[0,0],[0,1],[1,-1],[1,0]], GF(5))
          sage: C
