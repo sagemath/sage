@@ -319,17 +319,18 @@ class Polyhedron_base(Polyhedron_base7):
 
         The boundary complex of the octahedron::
 
+            sage: # needs sage.graphs
             sage: oc = polytopes.octahedron()
-            sage: sc_oc = oc.boundary_complex()                                         # needs sage.graphs
-            sage: fl_oc = oc.face_lattice()                                             # needs sage.combinat sage.graphs
-            sage: fl_sc = sc_oc.face_poset()                                            # needs sage.combinat sage.graphs
-            sage: [len(x) for x in fl_oc.level_sets()]                                  # needs sage.combinat sage.graphs
+            sage: sc_oc = oc.boundary_complex()
+            sage: fl_oc = oc.face_lattice()                                             # needs sage.combinat
+            sage: fl_sc = sc_oc.face_poset()                                            # needs sage.combinat
+            sage: [len(x) for x in fl_oc.level_sets()]                                  # needs sage.combinat
             [1, 6, 12, 8, 1]
-            sage: [len(x) for x in fl_sc.level_sets()]                                  # needs sage.combinat sage.graphs
+            sage: [len(x) for x in fl_sc.level_sets()]                                  # needs sage.combinat
             [6, 12, 8]
-            sage: sc_oc.euler_characteristic()                                          # needs sage.graphs
+            sage: sc_oc.euler_characteristic()
             2
-            sage: sc_oc.homology()                                                      # needs sage.graphs
+            sage: sc_oc.homology()
             {0: 0, 1: 0, 2: Z}
 
         The polyhedron should be simplicial::
@@ -971,7 +972,7 @@ class Polyhedron_base(Polyhedron_base7):
         `\pm 1` 2-dimensional square. The permutations are written in terms
         of the vertices of the square::
 
-            sage: # optional - pynormaliz
+            sage: # optional - pynormaliz, needs sage.groups
             sage: square = Polyhedron(vertices=[[1,1], [-1,1],
             ....:                               [-1,-1], [1,-1]],
             ....:                     backend='normaliz')
@@ -980,11 +981,11 @@ class Polyhedron_base(Polyhedron_base7):
              A vertex at (-1, 1),
              A vertex at (1, -1),
              A vertex at (1, 1))
-            sage: aut_square = square.restricted_automorphism_group(output='permutation')           # needs sage.groups
-            sage: conj_reps = aut_square.conjugacy_classes_representatives()            # needs sage.groups
-            sage: gens_dict = square.permutations_to_matrices(conj_reps)                # needs sage.groups
-            sage: rotation_180 = aut_square([(0,3),(1,2)])                              # needs sage.groups
-            sage: rotation_180, gens_dict[rotation_180]                                 # needs sage.groups
+            sage: aut_square = square.restricted_automorphism_group(output='permutation')
+            sage: conj_reps = aut_square.conjugacy_classes_representatives()
+            sage: gens_dict = square.permutations_to_matrices(conj_reps)
+            sage: rotation_180 = aut_square([(0,3),(1,2)])
+            sage: rotation_180, gens_dict[rotation_180]
             (
                         [-1  0  0]
                         [ 0 -1  0]
@@ -993,13 +994,14 @@ class Polyhedron_base(Polyhedron_base7):
 
         This example tests the functionality for additional elements::
 
+            sage: # needs sage.groups sage.rings.real_mpfr
             sage: C = polytopes.cross_polytope(2)
-            sage: G = C.restricted_automorphism_group(output='permutation')             # needs sage.groups sage.rings.real_mpfr
-            sage: conj_reps = G.conjugacy_classes_representatives()                     # needs sage.groups sage.rings.real_mpfr
-            sage: add_elt = G([(0, 2, 3, 1)])                                           # needs sage.groups sage.rings.real_mpfr
-            sage: dict = C.permutations_to_matrices(conj_reps,                          # needs sage.groups sage.rings.real_mpfr
+            sage: G = C.restricted_automorphism_group(output='permutation')
+            sage: conj_reps = G.conjugacy_classes_representatives()
+            sage: add_elt = G([(0, 2, 3, 1)])
+            sage: dict = C.permutations_to_matrices(conj_reps,
             ....:                                   additional_elts=[add_elt])
-            sage: dict[add_elt]                                                         # needs sage.groups sage.rings.real_mpfr
+            sage: dict[add_elt]
              [ 0  1  0]
              [-1  0  0]
              [ 0  0  1]
@@ -1146,15 +1148,16 @@ class Polyhedron_base(Polyhedron_base7):
 
         Non-pointed polyhedron::
 
+            sage: # optional - jupymake
             sage: P = Polyhedron(vertices=[[1, 0], [0, 1]], lines=[[1, 0]])
-            sage: PP = polymake(P)         # optional - jupymake
-            sage: PP.VERTICES              # optional - jupymake
+            sage: PP = polymake(P)
+            sage: PP.VERTICES
             1 0 1
             1 0 0
-            sage: PP.FACETS                # optional - jupymake
+            sage: PP.FACETS
             1 0 -1
             0 0 1
-            sage: PP.LINEALITY_SPACE       # optional - jupymake
+            sage: PP.LINEALITY_SPACE
             0 1 0
 
         Algebraic polyhedron::
@@ -1167,7 +1170,7 @@ class Polyhedron_base(Polyhedron_base7):
             sage: print("Maybe recompile warning"); PP = polymake(P); PP        # optional - jupymake, needs sage.rings.number_field
             Maybe recompile warning...
             Polytope<QuadraticExtension<Rational>>[...]
-            sage: sorted(PP.VERTICES[:], key=repr)[0]   # optional - jupymake           # needs sage.rings.number_field
+            sage: sorted(PP.VERTICES[:], key=repr)[0]                           # optional - jupymake, needs sage.rings.number_field
             1 -1+1r5 -4+2r5 0
 
         Floating-point polyhedron::
@@ -1177,7 +1180,7 @@ class Polyhedron_base(Polyhedron_base7):
             sage: print("Maybe recompile warning"); PP = polymake(P); PP        # optional - jupymake, needs sage.groups
             There may be a recompilation warning...
             Polytope<Float>[...]
-            sage: sorted(PP.VERTICES[:], key=repr)[0]   # optional - jupymake           # needs sage.groups
+            sage: sorted(PP.VERTICES[:], key=repr)[0]                           # optional - jupymake, needs sage.groups
             1 -0.472135955 0 -1.236067978
 
         """

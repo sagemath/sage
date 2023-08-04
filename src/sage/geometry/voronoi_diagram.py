@@ -51,7 +51,8 @@ class VoronoiDiagram(SageObject):
     Get the Voronoi diagram of a regular pentagon in ``AA^2``.
     All cells meet at the origin::
 
-        sage: DV = VoronoiDiagram([[AA(c) for c in v] for v in polytopes.regular_polygon(5).vertices_list()]); DV       # needs sage.rings.number_field
+        sage: DV = VoronoiDiagram([[AA(c) for c in v]                                   # needs sage.rings.number_field
+        ....:                      for v in polytopes.regular_polygon(5).vertices_list()]); DV
         The Voronoi diagram of 5 points of dimension 2 in the Algebraic Real Field
         sage: all(P.contains([0, 0]) for P in DV.regions().values())                    # needs sage.rings.number_field
         True
@@ -260,18 +261,17 @@ class VoronoiDiagram(SageObject):
 
         EXAMPLES::
 
-            sage: P = [[0.671, 0.650], [0.258, 0.767], [0.562, 0.406], [0.254, 0.709], [0.493, 0.879]]
-
+            sage: # needs sage.plot
+            sage: P = [[0.671, 0.650], [0.258, 0.767], [0.562, 0.406],
+            ....:      [0.254, 0.709], [0.493, 0.879]]
             sage: V = VoronoiDiagram(P); S=V.plot()                                     # needs sage.plot
             sage: show(S, xmin=0, xmax=1, ymin=0, ymax=1, aspect_ratio=1, axes=false)   # needs sage.plot
-
-            sage: S=V.plot(cell_colors={0:'red', 1:'blue', 2:'green', 3:'white', 4:'yellow'})       # needs sage.plot
+            sage: S = V.plot(cell_colors={0: 'red', 1: 'blue', 2: 'green',                                 # needs sage.plot
+            ....:                         3: 'white', 4: 'yellow'})
             sage: show(S, xmin=0, xmax=1, ymin=0, ymax=1, aspect_ratio=1, axes=false)   # needs sage.plot
-
-            sage: S=V.plot(cell_colors=['red','blue','red','white', 'white'])           # needs sage.plot
+            sage: S = V.plot(cell_colors=['red', 'blue', 'red', 'white', 'white'])           # needs sage.plot
             sage: show(S, xmin=0, xmax=1, ymin=0, ymax=1, aspect_ratio=1, axes=false)   # needs sage.plot
-
-            sage: S=V.plot(cell_colors='something else')                                # needs sage.plot
+            sage: S = V.plot(cell_colors='something else')                                # needs sage.plot
             Traceback (most recent call last):
             ...
             AssertionError: 'cell_colors' must be a list or a dictionary

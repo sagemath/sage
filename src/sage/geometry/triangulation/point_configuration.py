@@ -108,6 +108,7 @@ A 3-dimensional point configuration::
 
 The standard example of a non-regular triangulation (requires TOPCOM)::
 
+    sage: # optional - topcom
     sage: PointConfiguration.set_engine('topcom')
     sage: p = PointConfiguration([[-1,-5/9], [0,10/9], [1,-5/9],
     ....:                         [-2,-10/9], [0,20/9], [2,-10/9]])
@@ -375,6 +376,7 @@ class PointConfiguration(UniqueRepresentation, PointConfiguration_base):
 
         EXAMPLES::
 
+            sage: # optional - topcom
             sage: p = PointConfiguration([[0,0], [0,1], [1,0], [1,1], [-1,-1]])
             sage: p.set_engine('internal')   # to make doctests independent of TOPCOM
             sage: p.triangulate()
@@ -738,6 +740,7 @@ class PointConfiguration(UniqueRepresentation, PointConfiguration_base):
 
         EXAMPLES::
 
+            sage: # optional - topcom
             sage: p = PointConfiguration([[0,0], [0,1], [1,0], [1,1], [-1,-1]])
             sage: p.set_engine('topcom')
             sage: p._TOPCOM_triangulate(verbose=False)   # optional - topcom

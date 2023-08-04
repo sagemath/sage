@@ -2900,7 +2900,7 @@ cdef class CombinatorialPolyhedron(SageObject):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.number_field
+            sage: # needs sage.graphs sage.rings.number_field
             sage: P = polytopes.regular_polygon(4).pyramid()
             sage: C = CombinatorialPolyhedron(P)
             sage: D = C.hasse_diagram(); D                                              # needs sage.graphs
@@ -2997,6 +2997,7 @@ cdef class CombinatorialPolyhedron(SageObject):
 
         EXAMPLES::
 
+            sage: # needs sage.combinat
             sage: P = polytopes.cube()
             sage: C = CombinatorialPolyhedron(P)
             sage: F = C.face_lattice()                                                  # needs sage.combinat

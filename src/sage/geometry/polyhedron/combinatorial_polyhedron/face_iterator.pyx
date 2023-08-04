@@ -848,7 +848,8 @@ cdef class FaceIterator_base(SageObject):
 
         The face iterator must not have the output dimension specified::
 
-            sage: P = polytopes.dodecahedron()                                          # needs sage.rings.number_field
+            sage: # needs sage.rings.number_field
+            sage: P = polytopes.dodecahedron()
             sage: it = P.face_generator(2)
             sage: it._meet_of_coatoms(1,2)
             Traceback (most recent call last):
@@ -973,7 +974,8 @@ cdef class FaceIterator_base(SageObject):
 
         The face iterator must not have the output dimension specified::
 
-            sage: P = polytopes.dodecahedron()                                          # needs sage.rings.number_field
+            sage: # needs sage.rings.number_field
+            sage: P = polytopes.dodecahedron()
             sage: it = P.face_generator(2)
             sage: it._join_of_atoms(1,2)
             Traceback (most recent call last):

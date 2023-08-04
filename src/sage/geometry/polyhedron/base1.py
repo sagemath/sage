@@ -621,14 +621,15 @@ class Polyhedron_base1(Polyhedron_base0, ConvexSet_closed):
         The point need not have coordinates in the same field as the
         polyhedron::
 
+            sage: # needs sage.symbolic
             sage: ray = Polyhedron(vertices=[(0,0)], rays=[(1,0)], base_ring=QQ)
-            sage: ray.contains([sqrt(2)/3,0])        # irrational coordinates are ok    # needs sage.symbolic
+            sage: ray.contains([sqrt(2)/3,0])        # irrational coordinates are ok
             True
-            sage: a = var('a')                                                          # needs sage.symbolic
-            sage: ray.contains([a,0])                # a might be negative!             # needs sage.symbolic
+            sage: a = var('a')
+            sage: ray.contains([a,0])                # a might be negative!
             False
-            sage: assume(a>0)                                                           # needs sage.symbolic
-            sage: ray.contains([a,0])                                                   # needs sage.symbolic
+            sage: assume(a>0)
+            sage: ray.contains([a,0])
             True
             sage: ray.contains(['hello', 'kitty'])   # no common ring for coordinates
             False
