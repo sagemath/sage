@@ -86,7 +86,7 @@ cdef class String:
             sage: all([tb > ta1, tb >= ta1, tb >= tb])                 # optional - coxeter3
             True
         """
-        if type(other) != type(self):
+        if type(other) is not type(self):
             return False
 
         s = repr(self)
@@ -199,7 +199,7 @@ cdef class Type:
             sage: all([tb > ta1, tb >= ta1, tb >= tb])                 # optional - coxeter3
             True
         """
-        if type(other) != type(self):
+        if type(other) is not type(self):
             return False
 
         s = repr(self)
@@ -363,7 +363,7 @@ cdef class CoxGroup(SageObject):
             sage: B4 >= A5                                                              # optional - coxeter3
             True
         """
-        if type(other) != type(self):
+        if type(other) is not type(self):
             return False
 
         s_t = self.type()
@@ -839,7 +839,7 @@ cdef class CoxGroupElement:
             sage: w1 != v1                                        # optional - coxeter3
             True
         """
-        if type(other) != type(self):
+        if type(other) is not type(self):
             return False
 
         s_p = self.parent_group()
