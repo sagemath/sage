@@ -38,7 +38,7 @@ but rather work with the corresponding simplicial complex.
     One of the more useful properties will be the
     :meth:`bigraded Betti numbers<sage.topology.simplicial_complex.bigraded_betti_numbers>`,
     and the underlying theorem which makes this possible is Hochter's formula, which
-    can be found on page 104 of :arxiv:`Toric topoloogy<1210.2368>`.
+    can be found on page 104 of [BT2014]_.
 
 EXAMPLES::
 
@@ -81,23 +81,24 @@ from .simplicial_complex import SimplicialComplex, copy
 from .simplicial_complex_examples import Sphere, Simplex
 from itertools import combinations
 
-#TODO's:
+# TODO's:
 # - Documentation (examples and tests)
 # - add literature and references to bibliography!!!
-# - add latex_name parameter?
+# - add latex_name parameter or something similar?
 # - add moment_angle_complex to simplicial_complex
-# - add a method simplicial_complex()?
+# - add a method simplicial_complex() (returns the associated simplicial_complex)?
 # - use different UniqueRepresentation complexes for components?
-# - different way of computing euler characteristic
+# - different way of computing euler characteristic?
+# - bigraded betti numbers? (page 161 buchstaber panov)
 
-
-#Future TODO's:
+# Future TODO's:
 # - explicitly state the vertices for construction
 # - polyhedral products and real moment-angle complexes
 # - golod decomposition
 # - return for odd dimensional simplicial complexes in golod_decomposition?
 
-# maybe make private?
+
+# maybe make hidden?
 def union(c1, c2):
     """
     Return the union of cubical complexes.
@@ -136,6 +137,7 @@ def union(c1, c2):
     for f in c2.maximal_cells():
         facets.append(f)
     return CubicalComplex(facets)
+
 
 class MomentAngleComplex(SageObject, UniqueRepresentation):
     r"""
@@ -240,7 +242,7 @@ class MomentAngleComplex(SageObject, UniqueRepresentation):
         else:
             immutable_complex = SimplicialComplex(is_mutable=False)
         return super().__classcall__(cls, immutable_complex)
-        #behaviour for MomentAngleComplex()? maybe allow for simplexes?
+        # behaviour for MomentAngleComplex()? maybe allow for simplexes?
 
     def _repr_(self):
         """
@@ -421,9 +423,9 @@ class MomentAngleComplex(SageObject, UniqueRepresentation):
         dim = self._simplicial_complex.dimension()
         return number_of_vertices + dim + 1
 
-    def trivial_massey_product(self):
+    def has_trivial_lowest_deg_massey_product(self):
         """
-        Return whether ``self`` has a non-trivial Massey product.
+        Return whether ``self`` has a non-trivial lowest degree Massey product.
 
         This is the Massey product in the cohomology of the
         moment-angle complex.
@@ -449,8 +451,8 @@ class MomentAngleComplex(SageObject, UniqueRepresentation):
 
         return not any(one_skeleton.subgraph_search(g) is not None for g in obstruction_graphs)
 
-    #needs work
-    def golod_decomposition(self):
+    # needs work
+    def _golod_decomposition(self):
         """
         Determine whether ``self`` can be written (is homeomorphic) to a
         connected sum of sphere products, with two spheres in each product.
@@ -468,7 +470,7 @@ class MomentAngleComplex(SageObject, UniqueRepresentation):
 
         B = self._simplicial_complex.bigraded_betti_numbers()
         x = {(B.get((a, b)), a+b) for (a, b) in B}
-        D = {a : [] for (a, b) in x}
+        D = {a: [] for (a, b) in x}
         for (a, b) in x:
             D[a].append(b)
 
@@ -486,16 +488,14 @@ class MomentAngleComplex(SageObject, UniqueRepresentation):
         # needs work
         return out
 
-    @cached_method # maybe ignore the algorithm?
-    def _homology_group(self, l, base_ring=ZZ, cohomology=False,
-                     algorithm='pari', verbose=False, reduced=True):
+    @cached_method  # maybe ignore the algorithm?
+    def _homology_group(self, i, base_ring=ZZ, cohomology=False, algorithm='pari', verbose=False, reduced=True):
         """
-        The `l`-th (reduced) homology group of this moment-angle complex.
+        The `i`-th (reduced) homology group of this moment-angle complex.
 
         INPUT:
 
-        - ``dim`` -- integer, or a list of integers; represents the
-          homology (or homologies) we want to compute
+        - ``i`` -- integer; represents the homology we want to compute
 
         - ``base_ring`` -- commutative ring, must be ``ZZ`` or a field
           (default: ``ZZ``)
@@ -516,7 +516,7 @@ class MomentAngleComplex(SageObject, UniqueRepresentation):
         ALGORITHM:
 
         This algorithm is adopted from theorem 4.5.8. on page 154 of
-        :arxiv:`Toric topoloogy<1210.2368>`.
+        [BT2014]_.
 
         The (co)homology of the moment-angle complex is closely related
         to the (co)homologies of certain full subcomplexes of the
@@ -564,11 +564,11 @@ class MomentAngleComplex(SageObject, UniqueRepresentation):
             for x in combinations(vertices, j):
                 S = self._simplicial_complex.generated_subcomplex(x)
                 if base_ring.is_field():
-                    invfac.append(S.homology(l-j-1, base_ring=base_ring,
+                    invfac.append(S.homology(i-j-1, base_ring=base_ring,
                                              cohomology=cohomology, algorithm=algorithm,
                                              verbose=verbose, reduced=reduced).dimension())
                 else:
-                    invfac.extend(S.homology(l-j-1, base_ring=base_ring,
+                    invfac.extend(S.homology(i-j-1, base_ring=base_ring,
                                              cohomology=cohomology, algorithm=algorithm,
                                              verbose=verbose, reduced=reduced)._original_invts)
 
@@ -578,7 +578,6 @@ class MomentAngleComplex(SageObject, UniqueRepresentation):
         m = len(invfac)
         return HomologyGroup(m, base_ring, invfac)
 
-    # improve the documentation for optional arguments, see the dev guide
     def homology(self, dim=None, base_ring=ZZ, cohomology=False,
                  algorithm='pari', verbose=False, reduced=True):
         """
@@ -608,7 +607,7 @@ class MomentAngleComplex(SageObject, UniqueRepresentation):
         ALGORITHM:
 
         This algorithm is adopted from theorem 4.5.8. on page 154 of
-        :arxiv:`Toric topoloogy<1210.2368>`.
+        [BT2014]_.
 
         The (co)homology of the moment-angle complex is closely related
         to the (co)homologies of certain full subcomplexes of the
@@ -689,13 +688,12 @@ class MomentAngleComplex(SageObject, UniqueRepresentation):
         else:
             dims = range(self.dimension()+1)
 
-        answer = {i : self._homology_group(i, base_ring=base_ring,
-                                             cohomology=cohomology, algorithm=algorithm,
-                                             verbose=verbose, reduced=reduced) for i in dims}
+        answer = {i: self._homology_group(i, base_ring=base_ring, cohomology=cohomology,
+                                          algorithm=algorithm, verbose=verbose, reduced=reduced) for i in dims}
         return answer
 
     def cohomology(self, dim=None, base_ring=ZZ, algorithm='pari',
-                 verbose=False, reduced=True):
+                   verbose=False, reduced=True):
         r"""
         The reduced cohomology of this moment-angle complex.
 
@@ -708,12 +706,12 @@ class MomentAngleComplex(SageObject, UniqueRepresentation):
 
         EXAMPLES::
 
-            sage: X = SimplicialComplex([[0,1],[1,2],[2,3],[3,0]])  # an empty square
+            sage: X = SimplicialComplex([[0,1],[1,2],[2,3],[3,0]])  # boundary of a square
             sage: Z = MomentAngleComplex(X)
 
         It is known that the previous moment-angle complex is homeomorphic
         to a product of two 3-spheres (which can be seen by looking at the
-        output of ``components()``).
+        output of ``components()``)::
 
             sage: from sage.topology.simplicial_complex_examples import Sphere as S
             sage: product_of_spheres = S(3).product(S(3))
@@ -786,11 +784,22 @@ class MomentAngleComplex(SageObject, UniqueRepresentation):
 
         It is known that the product of two moment-angle complexes
         is a moment-angle complex over the join of the two corresponding
-        simplicial complexes.
+        simplicial complexes. This result can be found on page 138 of
+        [BT2014]_.
+
+        OUTPUT: a moment-angle complex which is the product of the
+        parsed moment-angle complexes
 
         EXAMPLES::
 
-        <Lots and lots of examples>
+            sage: X = SimplicialComplex([[0,1,2,3], [1,4], [3,2,4]])
+            sage: Y = SimplicialComplex([[1,2,3],[1,2,4],[3,5],[4,5]])
+            sage: Z = MomentAngleComplex(X)
+            sage: M = MomentAngleComplex(Y)
+            sage: Z.product(M)
+            Moment-angle complex over a simplicial complex with 10 vertices and 12 facets
+            sage: Z.product(M) == MomentAngleComplex(X*Y)
+            True
         """
         simplicial_complex = self._simplicial_complex.join(other._simplicial_complex, rename_vertices=True)
         return MomentAngleComplex(simplicial_complex)
