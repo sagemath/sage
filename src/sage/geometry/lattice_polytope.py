@@ -3165,18 +3165,18 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
             True
             sage: P2 = ReflexivePolytope(2, 0)
             sage: PM_max, permutations = P2._palp_PM_max(check=True)                    # needs sage.groups
-            sage: PM_max
+            sage: PM_max                                                                # needs sage.graphs
             [3 0 0]
             [0 3 0]
             [0 0 3]
-            sage: list(permutations.values())
+            sage: list(permutations.values())                                           # needs sage.groups
             [[(1,2,3), (1,2,3)],
              [(1,3,2), (1,3,2)],
              [(1,3), (1,3)],
              [(1,2), (1,2)],
              [(), ()],
              [(2,3), (2,3)]]
-            sage: PM_max.automorphisms_of_rows_and_columns()
+            sage: PM_max.automorphisms_of_rows_and_columns()                            # needs sage.graphs
             [((), ()),
              ((1,2,3), (1,2,3)),
              ((1,3,2), (1,3,2)),

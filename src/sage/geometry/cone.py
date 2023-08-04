@@ -2752,17 +2752,17 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
         We also ensure that a call to this function does not break
         :meth:`facets` method (see :trac:`9780`)::
 
-            sage: # needs palp
-            sage: cone = toric_varieties.dP8().fan().generating_cone(0); cone           # needs sage.graphs
+            sage: # needs palp sage.graphs
+            sage: cone = toric_varieties.dP8().fan().generating_cone(0); cone
             2-d cone of Rational polyhedral fan in 2-d lattice N
-            sage: for f in cone.facets(): print(f.rays())                               # needs sage.graphs
+            sage: for f in cone.facets(): print(f.rays())
             N(1, 1)
             in 2-d lattice N
             N(0, 1)
             in 2-d lattice N
-            sage: len(cone.faces())                                                     # needs sage.graphs
+            sage: len(cone.faces())
             3
-            sage: for f in cone.facets(): print(f.rays())                               # needs sage.graphs
+            sage: for f in cone.facets(): print(f.rays())
             N(1, 1)
             in 2-d lattice N
             N(0, 1)
