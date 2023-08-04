@@ -43,16 +43,17 @@ class Polyhedron_base7(Polyhedron_base6):
 
     TESTS::
 
+        sage: # needs sage.combinat
         sage: from sage.geometry.polyhedron.base7 import Polyhedron_base7
-        sage: P = polytopes.associahedron(['A', 3])                                     # needs sage.combinat
-        sage: Polyhedron_base7.centroid(P)                                              # needs sage.combinat
+        sage: P = polytopes.associahedron(['A', 3])
+        sage: Polyhedron_base7.centroid(P)
         (81/632, 36/79, 81/632)
-        sage: Polyhedron_base7.triangulate(P)                                           # needs sage.combinat
+        sage: Polyhedron_base7.triangulate(P)
         (<0,1,2,13>, <0,1,7,13>, <0,2,5,13>, <0,6,7,12>, <0,6,8,13>,
          <0,6,12,13>, <0,7,12,13>, <1,2,7,12>, <1,2,12,13>, <1,7,12,13>,
          <2,3,7,12>, <2,3,12,13>, <3,4,7,12>, <3,11,12,13>, <6,8,9,12>,
          <6,8,12,13>, <6,9,10,12>, <8,9,12,13>)
-        sage: Polyhedron_base7.volume(P, measure='induced')                             # needs sage.combinat
+        sage: Polyhedron_base7.volume(P, measure='induced')
         79/3
     """
     @cached_method(do_pickle=True)
@@ -258,15 +259,16 @@ class Polyhedron_base7(Polyhedron_base6):
 
         The normaliz engine can triangulate pointed cones::
 
-            sage: C1 = Polyhedron(rays=[[0,0,1], [1,0,1],               # optional - pynormaliz
+            sage: # optional - pynormaliz
+            sage: C1 = Polyhedron(rays=[[0,0,1], [1,0,1],
             ....:                       [0,1,1], [1,1,1]],
             ....:                 backend='normaliz')
-            sage: C1.triangulate(engine='normaliz')                     # optional - pynormaliz
+            sage: C1.triangulate(engine='normaliz')
             (<0,1,2>, <1,2,3>)
-            sage: C2 = Polyhedron(rays=[[1,0,1], [0,0,1],               # optional - pynormaliz
+            sage: C2 = Polyhedron(rays=[[1,0,1], [0,0,1],
             ....:                       [0,1,1], [1,1,10/9]],
             ....:                 backend='normaliz')
-            sage: C2.triangulate(engine='normaliz')                     # optional - pynormaliz
+            sage: C2.triangulate(engine='normaliz')
             (<0,1,2>, <1,2,3>)
 
         They can also be affine cones::
@@ -389,13 +391,14 @@ class Polyhedron_base7(Polyhedron_base6):
 
         EXAMPLES::
 
-            sage: polytopes.hypercube(3)._volume_latte()                # optional - latte_int
+            sage: # optional - latte_int
+            sage: polytopes.hypercube(3)._volume_latte()
             8
-            sage: (polytopes.hypercube(3)*2)._volume_latte()            # optional - latte_int
+            sage: (polytopes.hypercube(3)*2)._volume_latte()
             64
-            sage: polytopes.twenty_four_cell()._volume_latte()          # optional - latte_int
+            sage: polytopes.twenty_four_cell()._volume_latte()
             2
-            sage: polytopes.cuboctahedron()._volume_latte()             # optional - latte_int
+            sage: polytopes.cuboctahedron()._volume_latte()
             20/3
 
         TESTS:
@@ -538,31 +541,33 @@ class Polyhedron_base7(Polyhedron_base6):
             sage: P.volume(measure='induced_rational')                  # optional - latte_int
             1
 
-            sage: S = polytopes.regular_polygon(6); S                                   # needs sage.rings.number_field
+            sage: # needs sage.rings.number_field
+            sage: S = polytopes.regular_polygon(6); S
             A 2-dimensional polyhedron in AA^2 defined as the convex hull of 6 vertices
-            sage: edge = S.faces(1)[4].as_polyhedron()                                  # needs sage.rings.number_field
-            sage: edge.vertices()                                                       # needs sage.rings.number_field
+            sage: edge = S.faces(1)[4].as_polyhedron()
+            sage: edge.vertices()
             (A vertex at (0.866025403784439?, 1/2), A vertex at (0, 1))
-            sage: edge.volume()                                                         # needs sage.rings.number_field
+            sage: edge.volume()
             0
-            sage: edge.volume(measure='induced')                                        # needs sage.rings.number_field
+            sage: edge.volume(measure='induced')
             1
 
-            sage: P = Polyhedron(backend='normaliz',                    # optional - pynormaliz
+            sage: # optional - pynormaliz
+            sage: P = Polyhedron(backend='normaliz',
             ....:                vertices=[[1,0,0], [0,0,1],
             ....:                          [-1,1,1], [-1,2,0]])
-            sage: P.volume()                                            # optional - pynormaliz
+            sage: P.volume()
             0
-            sage: P.volume(measure='induced')                           # optional - pynormaliz, needs sage.rings.number_field
+            sage: P.volume(measure='induced')                                           # needs sage.rings.number_field
             2.598076211353316?
-            sage: P.volume(measure='induced', engine='normaliz')        # optional - pynormaliz
+            sage: P.volume(measure='induced', engine='normaliz')
             2.598076211353316
-            sage: P.volume(measure='induced_rational')                  # optional - pynormaliz latte_int
+            sage: P.volume(measure='induced_rational')                  # optional - latte_int
             3/2
-            sage: P.volume(measure='induced_rational',                  # optional - pynormaliz
+            sage: P.volume(measure='induced_rational',
             ....:          engine='normaliz')
             3/2
-            sage: P.volume(measure='induced_lattice')                   # optional - pynormaliz
+            sage: P.volume(measure='induced_lattice')
             3
 
         The same polytope without normaliz backend::
@@ -571,20 +576,22 @@ class Polyhedron_base7(Polyhedron_base6):
             sage: P.volume(measure='induced_lattice', engine='latte')   # optional - latte_int
             3
 
-            sage: Dexact = polytopes.dodecahedron()                                     # needs sage.groups sage.rings.number_field
-            sage: F0 = Dexact.faces(2)[0].as_polyhedron()                               # needs sage.groups sage.rings.number_field
-            sage: v = F0.volume(measure='induced', engine='internal'); v                # needs sage.groups sage.rings.number_field
+            sage: # needs sage.groups sage.rings.number_field
+            sage: Dexact = polytopes.dodecahedron()
+            sage: F0 = Dexact.faces(2)[0].as_polyhedron()
+            sage: v = F0.volume(measure='induced', engine='internal'); v
             1.53406271079097?
-            sage: F4 = Dexact.faces(2)[4].as_polyhedron()                               # needs sage.groups sage.rings.number_field
-            sage: v = F4.volume(measure='induced', engine='internal'); v                # needs sage.groups sage.rings.number_field
+            sage: F4 = Dexact.faces(2)[4].as_polyhedron()
+            sage: v = F4.volume(measure='induced', engine='internal'); v
             1.53406271079097?
-            sage: RDF(v)    # abs tol 1e-9                                              # needs sage.groups sage.rings.number_field
+            sage: RDF(v)    # abs tol 1e-9
             1.53406271079044
 
-            sage: Dinexact = polytopes.dodecahedron(exact=False)                        # needs sage.groups
-            sage: F2 = Dinexact.faces(2)[2].as_polyhedron()                             # needs sage.groups
-            sage: w = F2.volume(measure='induced', engine='internal')                   # needs sage.groups
-            sage: RDF(w)    # abs tol 1e-9                                              # needs sage.groups
+            sage: # needs sage.groups
+            sage: Dinexact = polytopes.dodecahedron(exact=False)
+            sage: F2 = Dinexact.faces(2)[2].as_polyhedron()
+            sage: w = F2.volume(measure='induced', engine='internal')
+            sage: RDF(w)    # abs tol 1e-9
             1.5340627082974878
 
             sage: all(polytopes.simplex(d).volume(measure='induced')                    # needs sage.rings.number_field sage.symbolic
@@ -628,7 +635,7 @@ class Polyhedron_base7(Polyhedron_base6):
             0
             sage: P.volume(measure='induced_rational')                  # optional - pynormaliz
             +Infinity
-            sage: P.volume(measure='induced_rational',engine='latte')   # optional - latte_int
+            sage: P.volume(measure='induced_rational',engine='latte')
             +Infinity
 
         The volume in `0`-dimensional space is taken by counting measure::
@@ -809,7 +816,7 @@ class Polyhedron_base7(Polyhedron_base6):
 
             sage: x, y = polygens(QQ, 'x, y')
             sage: P = Polyhedron(vertices=[[0,0], [1,1]])
-            sage: P.integrate(x*y)                                      # optional - latte_int
+            sage: P.integrate(x*y)
             0
             sage: ixy = P.integrate(x*y, measure='induced'); ixy        # optional - latte_int
             0.4714045207910317?
@@ -870,7 +877,7 @@ class Polyhedron_base7(Polyhedron_base6):
         Testing a polytope with floating point coordinates::
 
             sage: P = Polyhedron(vertices=[[0, 0], [1, 0], [1.1, 1.1], [0, 1]])
-            sage: P.integrate('[[1,[2,2]]]')                            # optional - latte_int
+            sage: P.integrate('[[1,[2,2]]]')
             Traceback (most recent call last):
             ...
             TypeError: LattE integrale cannot be applied over inexact rings

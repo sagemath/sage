@@ -26,7 +26,7 @@ object to define the variables `x`, `y`, `z`::
     (3, 2, -5)
     sage: h.constant_term()
     -7
-    sage: h.change_ring(GF(3))                                                          # needs sage.rings.finite_rings
+    sage: h.change_ring(GF(3))
     Hyperplane 0*x + 2*y + z + 2
     sage: h.point()
     (21/38, 7/19, -35/38)
@@ -238,9 +238,9 @@ class Hyperplane(LinearExpression):
             sage: (x + 3/2*y - 2*z)._normal_pivot()
             2
 
-            sage: H.<x,y,z> = HyperplaneArrangements(GF(5))                             # needs sage.rings.finite_rings
-            sage: V = H.ambient_space()                                                 # needs sage.rings.finite_rings
-            sage: (x + 3*y - 4*z)._normal_pivot()                                       # needs sage.rings.finite_rings
+            sage: H.<x,y,z> = HyperplaneArrangements(GF(5))
+            sage: V = H.ambient_space()
+            sage: (x + 3*y - 4*z)._normal_pivot()
             1
         """
         try:
@@ -405,9 +405,9 @@ class Hyperplane(LinearExpression):
             sage: h.point().base_ring()
             Finite Field of size 3
 
-            sage: H.<x,y,z> = HyperplaneArrangements(GF(3))                             # needs sage.rings.finite_rings
-            sage: h = x + y + z + 1                                                     # needs sage.rings.finite_rings
-            sage: h.point()                                                             # needs sage.rings.finite_rings
+            sage: H.<x,y,z> = HyperplaneArrangements(GF(3))
+            sage: h = x + y + z + 1
+            sage: h.point()
             (2, 0, 0)
         """
         P = self.parent()

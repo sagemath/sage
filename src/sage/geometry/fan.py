@@ -1027,12 +1027,13 @@ class Cone_of_fan(ConvexRationalPolyhedralCone):
 
     The intended way to get objects of this class is the following::
 
-        sage: fan = toric_varieties.P1xP1().fan()                                       # needs palp
-        sage: cone = fan.generating_cone(0); cone                                       # needs palp
+        sage: # needs palp
+        sage: fan = toric_varieties.P1xP1().fan()
+        sage: cone = fan.generating_cone(0); cone
         2-d cone of Rational polyhedral fan in 2-d lattice N
-        sage: cone.ambient_ray_indices()                                                # needs palp
+        sage: cone.ambient_ray_indices()
         (0, 2)
-        sage: cone.star_generator_indices()                                             # needs palp
+        sage: cone.star_generator_indices()
         (0,)
     """
 
@@ -1065,11 +1066,12 @@ class Cone_of_fan(ConvexRationalPolyhedralCone):
 
         TESTS::
 
-            sage: P1xP1 = toric_varieties.P1xP1()                                       # needs palp
-            sage: cone = P1xP1.fan().generating_cone(0)                                 # needs palp
-            sage: cone._repr_()                                                         # needs palp
+            sage: # needs palp
+            sage: P1xP1 = toric_varieties.P1xP1()
+            sage: cone = P1xP1.fan().generating_cone(0)
+            sage: cone._repr_()
             '2-d cone of Rational polyhedral fan in 2-d lattice N'
-            sage: cone.facets()[0]._repr_()                                             # needs palp
+            sage: cone.facets()[0]._repr_()
             '1-d cone of Rational polyhedral fan in 2-d lattice N'
         """
         # The base class would print "face of" instead of  "cone of"
@@ -2526,12 +2528,13 @@ class RationalPolyhedralFan(IntegralRayCollection, Callable, Container):
 
         EXAMPLES::
 
-            sage: dP8 = toric_varieties.dP8()                                           # needs palp
-            sage: g = dP8.fan().vertex_graph(); g                                       # needs palp
+            sage: # needs palp
+            sage: dP8 = toric_varieties.dP8()
+            sage: g = dP8.fan().vertex_graph(); g
             Graph on 4 vertices
-            sage: set(dP8.fan(1)) == set(g.vertices(sort=False))                        # needs palp
+            sage: set(dP8.fan(1)) == set(g.vertices(sort=False))
             True
-            sage: g.edge_labels()  # all edge labels the same since every cone is smooth            # needs palp
+            sage: g.edge_labels()  # all edge labels the same since every cone is smooth
             [(1, 0), (1, 0), (1, 0), (1, 0)]
 
             sage: g = toric_varieties.Cube_deformation(10).fan().vertex_graph()
@@ -3320,18 +3323,19 @@ class RationalPolyhedralFan(IntegralRayCollection, Callable, Container):
 
         EXAMPLES::
 
-            sage: fan = toric_varieties.P(3).fan()                                      # needs palp
-            sage: cone = fan(2)[0]                                                      # needs palp
-            sage: bdry = fan.oriented_boundary(cone);  bdry                             # needs palp
+            sage: # needs palp
+            sage: fan = toric_varieties.P(3).fan()
+            sage: cone = fan(2)[0]
+            sage: bdry = fan.oriented_boundary(cone);  bdry
             -1-d cone of Rational polyhedral fan in 3-d lattice N
             + 1-d cone of Rational polyhedral fan in 3-d lattice N
-            sage: bdry[0]                                                               # needs palp
+            sage: bdry[0]
             (-1, 1-d cone of Rational polyhedral fan in 3-d lattice N)
-            sage: bdry[1]                                                               # needs palp
+            sage: bdry[1]
             (1, 1-d cone of Rational polyhedral fan in 3-d lattice N)
-            sage: fan.oriented_boundary(bdry[0][1])                                     # needs palp
+            sage: fan.oriented_boundary(bdry[0][1])
             -0-d cone of Rational polyhedral fan in 3-d lattice N
-            sage: fan.oriented_boundary(bdry[1][1])                                     # needs palp
+            sage: fan.oriented_boundary(bdry[1][1])
             -0-d cone of Rational polyhedral fan in 3-d lattice N
 
         If you pass the fan itself, this method returns the
@@ -3506,14 +3510,15 @@ class RationalPolyhedralFan(IntegralRayCollection, Callable, Container):
 
         EXAMPLES::
 
-            sage: fan = toric_varieties.P(3).fan()                                      # needs palp
-            sage: K_normal = fan.complex(); K_normal                                    # needs palp
+            sage: # needs palp
+            sage: fan = toric_varieties.P(3).fan()
+            sage: K_normal = fan.complex(); K_normal
             Chain complex with at most 4 nonzero terms over Integer Ring
-            sage: K_normal.homology()                                                   # needs palp
+            sage: K_normal.homology()
             {0: Z, 1: 0, 2: 0, 3: 0}
-            sage: K_extended = fan.complex(extended=True); K_extended                   # needs palp
+            sage: K_extended = fan.complex(extended=True); K_extended
             Chain complex with at most 5 nonzero terms over Integer Ring
-            sage: K_extended.homology()                                                 # needs palp
+            sage: K_extended.homology()
             {-1: 0, 0: 0, 1: 0, 2: 0, 3: 0}
 
         Homology computations are much faster over `\QQ` if you do not

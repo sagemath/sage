@@ -34,7 +34,7 @@ Obtain the Vrepresentation of a polyhedron as facet-incidences stored in
     sage: from sage.geometry.polyhedron.combinatorial_polyhedron.conversions \
     ....:         import incidence_matrix_to_bit_rep_of_Vrep
     sage: P = polytopes.associahedron(['A',4])                                          # needs sage.combinat
-    sage: face_list = incidence_matrix_to_bit_rep_of_Vrep(P.incidence_matrix())         # needs sage.combinat
+    sage: face_list = incidence_matrix_to_bit_rep_of_Vrep(P.incidence_matrix())
     sage: face_list.compute_dimension()                                                 # needs sage.combinat
     4
 

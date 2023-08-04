@@ -126,7 +126,7 @@ class Polyhedron_base(Polyhedron_base7):
     ::
 
         sage: p = polytopes.flow_polytope(digraphs.DeBruijn(3,2))                       # needs sage.combinat sage.graphs
-        sage: TestSuite(p).run()                                                        # needs sage.combinat sage.graphs
+        sage: TestSuite(p).run()
 
     ::
 
@@ -137,13 +137,13 @@ class Polyhedron_base(Polyhedron_base7):
     ::
 
         sage: P3 = polytopes.permutahedron(3)
-        sage: P = P3 * Polyhedron(rays=[[0,0,1], [0,1,1], [1,2,3]])                     # needs sage.combinat
-        sage: TestSuite(P).run()                                                        # needs sage.combinat
+        sage: P = P3 * Polyhedron(rays=[[0,0,1], [0,1,1], [1,2,3]])
+        sage: TestSuite(P).run()
 
     ::
 
-        sage: P = P3 * Polyhedron(rays=[[0,0,1], [0,1,1]], lines=[[1,0,0]])             # needs sage.combinat
-        sage: TestSuite(P).run()                                                        # needs sage.combinat
+        sage: P = P3 * Polyhedron(rays=[[0,0,1], [0,1,1]], lines=[[1,0,0]])
+        sage: TestSuite(P).run()
 
     ::
 
@@ -235,32 +235,34 @@ class Polyhedron_base(Polyhedron_base7):
 
         Irrational algebraic linear program over an embedded number field::
 
-            sage: p = polytopes.icosahedron()                                           # needs sage.rings.number_field
-            sage: lp, x = p.to_linear_program(return_variable=True)                     # needs sage.rings.number_field
-            sage: lp.set_objective(x[0] + x[1] + x[2])                                  # needs sage.rings.number_field
-            sage: lp.solve()                                                            # needs sage.rings.number_field
+            sage: # needs sage.rings.number_field
+            sage: p = polytopes.icosahedron()
+            sage: lp, x = p.to_linear_program(return_variable=True)
+            sage: lp.set_objective(x[0] + x[1] + x[2])
+            sage: lp.solve()
             1/4*sqrt5 + 3/4
 
         Same example with floating point::
 
-            sage: lp, x = p.to_linear_program(return_variable=True, base_ring=RDF)      # needs sage.rings.number_field
-            sage: lp.set_objective(x[0] + x[1] + x[2])                                  # needs sage.rings.number_field
+            sage: lp, x = p.to_linear_program(return_variable=True, base_ring=RDF)
+            sage: lp.set_objective(x[0] + x[1] + x[2])
             sage: lp.solve()                                               # tol 1e-5   # needs sage.rings.number_field
             1.3090169943749475
 
         Same example with a specific floating point solver::
 
-            sage: lp, x = p.to_linear_program(return_variable=True, solver='GLPK')      # needs sage.rings.number_field
-            sage: lp.set_objective(x[0] + x[1] + x[2])                                  # needs sage.rings.number_field
+            sage: lp, x = p.to_linear_program(return_variable=True, solver='GLPK')
+            sage: lp.set_objective(x[0] + x[1] + x[2])
             sage: lp.solve()                                               # tol 1e-8   # needs sage.rings.number_field
             1.3090169943749475
 
         Irrational algebraic linear program over `AA`::
 
-            sage: p = polytopes.icosahedron(base_ring=AA)                               # needs sage.rings.number_field
-            sage: lp, x = p.to_linear_program(return_variable=True)                     # needs sage.rings.number_field
-            sage: lp.set_objective(x[0] + x[1] + x[2])                                  # needs sage.rings.number_field
-            sage: lp.solve()                    # long time                             # needs sage.rings.number_field
+            sage: # needs sage.rings.number_field
+            sage: p = polytopes.icosahedron(base_ring=AA)
+            sage: lp, x = p.to_linear_program(return_variable=True)
+            sage: lp.set_objective(x[0] + x[1] + x[2])
+            sage: lp.solve()                    # long time
             1.309016994374948?
 
         TESTS::
@@ -268,7 +270,7 @@ class Polyhedron_base(Polyhedron_base7):
             sage: p = polytopes.flow_polytope(digraphs.DeBruijn(3,2)); p                # needs sage.combinat sage.graphs
             A 19-dimensional polyhedron in QQ^27
              defined as the convex hull of 1 vertex and 148 rays
-            sage: p.to_linear_program().polyhedron() == p                               # needs sage.combinat sage.graphs
+            sage: p.to_linear_program().polyhedron() == p
             True
 
             sage: p = polytopes.icosahedron()                                           # needs sage.rings.number_field
@@ -557,7 +559,7 @@ class Polyhedron_base(Polyhedron_base7):
             sage: V = P.Vrepresentation()
             sage: H = P.Hrepresentation()
             sage: parent = P.parent()
-            sage: for V1 in Permutations(V):                                            # needs sage.combinat
+            sage: for V1 in Permutations(V):
             ....:     P1 = parent._element_constructor_(
             ....:         [V1, [], []], [H, []], Vrep_minimal=True, Hrep_minimal=True)
             ....:     assert P1.is_inscribed()
@@ -625,7 +627,7 @@ class Polyhedron_base(Polyhedron_base7):
         EXAMPLES::
 
             sage: p = polytopes.hypercube(2)
-            sage: p.hyperplane_arrangement()                                            # needs sage.combinat
+            sage: p.hyperplane_arrangement()
             Arrangement <-t0 + 1 | -t1 + 1 | t1 + 1 | t0 + 1>
         """
         names = tuple('t' + str(i) for i in range(self.ambient_dim()))
@@ -970,19 +972,20 @@ class Polyhedron_base(Polyhedron_base7):
         `\pm 1` 2-dimensional square. The permutations are written in terms
         of the vertices of the square::
 
-            sage: square = Polyhedron(vertices=[[1,1], [-1,1],          # optional - pynormaliz
+            sage: # optional - pynormaliz
+            sage: square = Polyhedron(vertices=[[1,1], [-1,1],
             ....:                               [-1,-1], [1,-1]],
             ....:                     backend='normaliz')
-            sage: square.vertices()                                     # optional - pynormaliz
+            sage: square.vertices()
             (A vertex at (-1, -1),
              A vertex at (-1, 1),
              A vertex at (1, -1),
              A vertex at (1, 1))
-            sage: aut_square = square.restricted_automorphism_group(output='permutation')  # optional - pynormaliz, needs sage.groups
-            sage: conj_reps = aut_square.conjugacy_classes_representatives()    # optional - pynormaliz, needs sage.groups
-            sage: gens_dict = square.permutations_to_matrices(conj_reps)        # optional - pynormaliz, needs sage.groups
-            sage: rotation_180 = aut_square([(0,3),(1,2)])              # optional - pynormaliz, needs sage.groups
-            sage: rotation_180, gens_dict[rotation_180]                 # optional - pynormaliz, needs sage.groups
+            sage: aut_square = square.restricted_automorphism_group(output='permutation')           # needs sage.groups
+            sage: conj_reps = aut_square.conjugacy_classes_representatives()            # needs sage.groups
+            sage: gens_dict = square.permutations_to_matrices(conj_reps)                # needs sage.groups
+            sage: rotation_180 = aut_square([(0,3),(1,2)])                              # needs sage.groups
+            sage: rotation_180, gens_dict[rotation_180]                                 # needs sage.groups
             (
                         [-1  0  0]
                         [ 0 -1  0]

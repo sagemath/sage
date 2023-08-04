@@ -529,8 +529,8 @@ def schur(ambient_dim=None, lattice=None):
 
         sage: P = cones.schur(5)
         sage: Q = cones.nonnegative_orthant(5)
-        sage: G = ( g.change_ring(QQbar).normalized() for g in P )                      # needs sage.rings.number_fields
-        sage: H = ( h.change_ring(QQbar).normalized() for h in Q )                      # needs sage.rings.number_fields
+        sage: G = ( g.change_ring(QQbar).normalized() for g in P )
+        sage: H = ( h.change_ring(QQbar).normalized() for h in Q )
         sage: actual = max(arccos(u.inner_product(v)) for u in G for v in H)            # needs sage.rings.number_fields
         sage: expected = 3*pi/4                                                         # needs sage.rings.number_fields
         sage: abs(actual - expected).n() < 1e-12                                        # needs sage.rings.number_fields
@@ -566,7 +566,7 @@ def schur(ambient_dim=None, lattice=None):
         True
         sage: x = V.random_element()
         sage: y = V.random_element()
-        sage: majorized_by(x,y) == ( (y-x) in S )                                       # needs sage.rings.number_fields
+        sage: majorized_by(x,y) == ( (y-x) in S )
         True
 
     If a ``lattice`` was given, it is actually used::

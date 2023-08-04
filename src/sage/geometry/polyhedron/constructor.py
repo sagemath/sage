@@ -450,26 +450,28 @@ def Polyhedron(vertices=None, rays=None, lines=None,
     by the cyclic shifts of `(0, \pm 1, \pm (1+\sqrt(5))/2)`, cf.
     :wikipedia:`Regular_icosahedron`. It needs a number field::
 
-        sage: R0.<r0> = QQ[]                                                            # needs sage.rings.number_field
-        sage: R1.<r1> = NumberField(r0^2-5, embedding=AA(5)**(1/2))                     # needs sage.rings.number_field
-        sage: gold = (1+r1)/2                                                           # needs sage.rings.number_field
-        sage: v = [[0, 1, gold], [0, 1, -gold], [0, -1, gold], [0, -1, -gold]]          # needs sage.rings.number_field
-        sage: pp = Permutation((1, 2, 3))                                               # needs sage.combinat sage.rings.number_field
-        sage: icosah = Polyhedron(                                                      # needs sage.combinat sage.rings.number_field
+        sage: # needs sage.rings.number_field
+        sage: R0.<r0> = QQ[]
+        sage: R1.<r1> = NumberField(r0^2-5, embedding=AA(5)**(1/2))
+        sage: gold = (1+r1)/2
+        sage: v = [[0, 1, gold], [0, 1, -gold], [0, -1, gold], [0, -1, -gold]]
+        sage: pp = Permutation((1, 2, 3))
+        sage: icosah = Polyhedron(                                                      # needs sage.combinat
         ....:    [(pp^2).action(w) for w in v] + [pp.action(w) for w in v] + v,
         ....:    base_ring=R1)
-        sage: len(icosah.faces(2))                                                      # needs sage.combinat sage.rings.number_field
+        sage: len(icosah.faces(2))                                                      # needs sage.combinat
         20
 
     When the input contains elements of a Number Field, they require an
     embedding::
 
+        sage: # needs sage.rings.number_field
         sage: x = polygen(ZZ, 'x')
-        sage: K = NumberField(x^2 - 2,'s')                                              # needs sage.rings.number_field
-        sage: s = K.0                                                                   # needs sage.rings.number_field
-        sage: L = NumberField(x^3 - 2,'t')                                              # needs sage.rings.number_field
-        sage: t = L.0                                                                   # needs sage.rings.number_field
-        sage: P = Polyhedron(vertices=[[0,s], [t,0]])                                   # needs sage.rings.number_field
+        sage: K = NumberField(x^2 - 2,'s')
+        sage: s = K.0
+        sage: L = NumberField(x^3 - 2,'t')
+        sage: t = L.0
+        sage: P = Polyhedron(vertices=[[0,s], [t,0]])
         Traceback (most recent call last):
         ...
         ValueError: invalid base ring
@@ -506,12 +508,13 @@ def Polyhedron(vertices=None, rays=None, lines=None,
         sage: Polyhedron(o, base_ring=QQ)
         A 2-dimensional polyhedron in QQ^2 defined as the convex hull of 4 vertices
 
-        sage: H.<x,y> = HyperplaneArrangements(QQ)                                      # needs sage.combinat
-        sage: h = x + y - 1; h                                                          # needs sage.combinat
+        sage: # needs sage.combinat
+        sage: H.<x,y> = HyperplaneArrangements(QQ)
+        sage: h = x + y - 1; h
         Hyperplane x + y - 1
-        sage: Polyhedron(h, base_ring=ZZ)                                               # needs sage.combinat
+        sage: Polyhedron(h, base_ring=ZZ)
         A 1-dimensional polyhedron in ZZ^2 defined as the convex hull of 1 vertex and 1 line
-        sage: Polyhedron(h)                                                             # needs sage.combinat
+        sage: Polyhedron(h)
         A 1-dimensional polyhedron in QQ^2 defined as the convex hull of 1 vertex and 1 line
 
     .. NOTE::

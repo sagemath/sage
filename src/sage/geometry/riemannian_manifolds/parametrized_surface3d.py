@@ -255,6 +255,7 @@ class ParametrizedSurface3D(SageObject):
     We can easily generate a color plot of the Gaussian curvature of a surface.
     Here we deal with the ellipsoid::
 
+        sage: # needs numpy
         sage: u1, u2 = var('u1,u2', domain='real')
         sage: u = [u1,u2]
         sage: ellipsoid_equation(u1,u2) = [2*cos(u1)*cos(u2),1.5*cos(u1)*sin(u2),sin(u1)]
@@ -264,13 +265,13 @@ class ParametrizedSurface3D(SageObject):
         sage: u2min, u2max = 0, 6.28
         sage: u1num, u2num = 10, 20
         sage: # make the arguments array
-        sage: from numpy import linspace                                                # needs numpy
-        sage: u1_array = linspace(u1min, u1max, u1num)                                  # needs numpy
-        sage: u2_array = linspace(u2min, u2max, u2num)                                  # needs numpy
-        sage: u_array = [(uu1,uu2) for uu1 in u1_array for uu2 in u2_array]             # needs numpy
+        sage: from numpy import linspace
+        sage: u1_array = linspace(u1min, u1max, u1num)
+        sage: u2_array = linspace(u2min, u2max, u2num)
+        sage: u_array = [(uu1,uu2) for uu1 in u1_array for uu2 in u2_array]
         sage: # Find the gaussian curvature
-        sage: K(u1,u2) = ellipsoid.gauss_curvature()                                    # needs numpy
-        sage: # Make array of K values # needs numpy
+        sage: K(u1,u2) = ellipsoid.gauss_curvature()
+        sage: # Make array of K values
         sage: K_array = [K(uu[0],uu[1]) for uu in u_array]
         sage: # Find minimum and max of the Gauss curvature
         sage: K_max = max(K_array)

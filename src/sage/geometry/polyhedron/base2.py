@@ -263,10 +263,11 @@ class Polyhedron_base2(Polyhedron_base1):
         volume = `\frac{1}{dim(S)!}`) is always 1. Here we test this on
         simplices up to dimension 3::
 
-            sage: s1 = polytopes.simplex(1,backend='normaliz')                      # optional - pynormaliz
-            sage: s2 = polytopes.simplex(2,backend='normaliz')                      # optional - pynormaliz
-            sage: s3 = polytopes.simplex(3,backend='normaliz')                      # optional - pynormaliz
-            sage: [s1.h_star_vector(), s2.h_star_vector(), s3.h_star_vector()]      # optional - pynormaliz
+            sage: # optional - pynormaliz
+            sage: s1 = polytopes.simplex(1,backend='normaliz')
+            sage: s2 = polytopes.simplex(2,backend='normaliz')
+            sage: s3 = polytopes.simplex(3,backend='normaliz')
+            sage: [s1.h_star_vector(), s2.h_star_vector(), s3.h_star_vector()]
             [[1], [1], [1]]
 
         For a less trivial example, we compute the `h^*`-vector of the
@@ -276,8 +277,8 @@ class Polyhedron_base2(Polyhedron_base1):
             sage: cube = polytopes.cube(intervals='zero_one', backend='normaliz')   # optional - pynormaliz
             sage: cube.h_star_vector()                                              # optional - pynormaliz
             [1, 4, 1]
-            sage: from sage.combinat.combinat import eulerian_number                    # needs sage.combinat
-            sage: [eulerian_number(3,i) for i in range(3)]                              # needs sage.combinat
+            sage: from sage.combinat.combinat import eulerian_number
+            sage: [eulerian_number(3,i) for i in range(3)]
             [1, 4, 1]
 
         TESTS::
@@ -789,7 +790,7 @@ class Polyhedron_base2(Polyhedron_base1):
             y0*y1*y2*y3*y4 * (-y4 + 1)^-1 * (-y3*y4 + 1)^-1 * (-y2*y3*y4 + 1)^-1 *
             (-y1*y2*y3*y4 + 1)^-1 * (-y0*y1*y2*y3*y4 + 1)^-1
             sage: f = f.value()                                                         # needs sage.combinat
-            sage: P.<z> = PowerSeriesRing(ZZ)                                           # needs sage.combinat
+            sage: P.<z> = PowerSeriesRing(ZZ)
             sage: c = f.subs({y: z for y in f.parent().gens()}); c                      # needs sage.combinat
             z^5 + z^6 + 2*z^7 + 3*z^8 + 5*z^9 + 7*z^10 + 10*z^11 + 13*z^12 + 18*z^13 +
             23*z^14 + 30*z^15 + 37*z^16 + 47*z^17 + 57*z^18 + 70*z^19 + 84*z^20 +

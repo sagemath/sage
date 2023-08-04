@@ -24,7 +24,7 @@ Obtain a face from a face lattice index::
     sage: C = CombinatorialPolyhedron(P)
     sage: sorted(C.face_lattice()._elements)                                            # needs sage.combinat
     [0, 1, 2, 3, 4, 5, 6, 7]
-    sage: face = C.face_by_face_lattice_index(0); face                                  # needs sage.combinat
+    sage: face = C.face_by_face_lattice_index(0); face
     A -1-dimensional face of a 2-dimensional combinatorial polyhedron
 
 Obtain further information regarding a face::
@@ -100,7 +100,7 @@ cdef class CombinatorialFace(SageObject):
         sage: F = C.face_lattice()                                                      # needs sage.combinat
         sage: F._elements[3]                                                            # needs sage.combinat
         34
-        sage: C.face_by_face_lattice_index(29)                                          # needs sage.combinat
+        sage: C.face_by_face_lattice_index(29)
         A 1-dimensional face of a 5-dimensional combinatorial polyhedron
 
     Obtain the dimension of a combinatorial face::
@@ -351,7 +351,7 @@ cdef class CombinatorialFace(SageObject):
             sage: F2 = C.face_by_face_lattice_index(1)
             sage: F1 < F2
             True
-            sage: for i,j in Combinations(range(28), 2):                                # needs sage.combinat
+            sage: for i,j in Combinations(range(28), 2):
             ....:     F1 = C.face_by_face_lattice_index(i)
             ....:     F2 = C.face_by_face_lattice_index(j)
             ....:     if F1.dim() != F2.dim():
@@ -363,7 +363,7 @@ cdef class CombinatorialFace(SageObject):
             sage: F2 = C.face_by_face_lattice_index(1)
             sage: F1 < F2
             True
-            sage: for i,j in Combinations(range(28), 2):                                # needs sage.combinat
+            sage: for i,j in Combinations(range(28), 2):
             ....:     F1 = C.face_by_face_lattice_index(i)
             ....:     F2 = C.face_by_face_lattice_index(j)
             ....:     if F1.dim() != F2.dim():

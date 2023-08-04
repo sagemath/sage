@@ -14,7 +14,7 @@ EXAMPLES:
 
 In most cases, this module is used indirectly, e.g. ::
 
-    sage: fan = toric_varieties.dP6().fan()                                             # needs palp
+    sage: fan = toric_varieties.dP6().fan()                                             # needs palp sage.graphs
     sage: fan.plot()                                                                    # needs palp sage.plot
     Graphics object consisting of 31 graphics primitives
 
@@ -134,7 +134,7 @@ class ToricPlotter(SageObject):
     directly. Instead, use plotting method of the object which you want to
     plot, e.g. ::
 
-        sage: fan = toric_varieties.dP6().fan()                                         # needs palp
+        sage: fan = toric_varieties.dP6().fan()                                         # needs palp sage.graphs
         sage: fan.plot()                                                                # needs palp sage.plot
         Graphics object consisting of 31 graphics primitives
         sage: print(fan.plot())                                                         # needs palp sage.plot
@@ -1107,9 +1107,9 @@ def sector(ray1, ray2, **extra_options):
     EXAMPLES::
 
         sage: from sage.geometry.toric_plotter import sector
-        sage: sector((1,0), (0,1))
+        sage: sector((1,0), (0,1))                                                      # needs sage.symbolic
         Graphics object consisting of 1 graphics primitive
-        sage: sector((3,2,1), (1,2,3))
+        sage: sector((3,2,1), (1,2,3))                                                  # needs sage.plot
         Graphics3d Object
     """
     from sage.functions.all import arccos, arctan2

@@ -134,6 +134,7 @@ class Polyhedron_RDF_cdd(Polyhedron_cdd, Polyhedron_RDF):
 
         Test that :trac:`29568` is fixed::
 
+            sage: # needs sage.groups
             sage: P = polytopes.buckyball(exact=False)
             sage: Q = P + P.center()
             sage: P.is_combinatorially_isomorphic(Q)

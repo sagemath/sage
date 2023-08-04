@@ -95,14 +95,15 @@ class Polyhedron_base1(Polyhedron_base0, ConvexSet_closed):
         r"""
         TESTS::
 
-            sage: K.<a> = QuadraticField(2)                                             # needs sage.rings.number_field
-            sage: p = Polyhedron(vertices=[(0, 1, a), (3, a, 5)],                       # needs sage.rings.number_field
+            sage: # needs sage.rings.number_field
+            sage: K.<a> = QuadraticField(2)
+            sage: p = Polyhedron(vertices=[(0, 1, a), (3, a, 5)],
             ....:                rays=[(a, 2, 3), (0, 0, 1)],
             ....:                base_ring=K)
-            sage: q = Polyhedron(vertices=[(3, a, 5), (0, 1, a)],                       # needs sage.rings.number_field
+            sage: q = Polyhedron(vertices=[(3, a, 5), (0, 1, a)],
             ....:                rays=[(0, 0, 1), (a, 2, 3)],
             ....:                base_ring=K)
-            sage: hash(p) == hash(q)                                                    # needs sage.rings.number_field
+            sage: hash(p) == hash(q)
             True
         """
         # TODO: find something better *but* fast

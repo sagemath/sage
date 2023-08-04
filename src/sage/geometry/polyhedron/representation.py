@@ -800,7 +800,7 @@ class Inequality(Hrepresentation):
             sage: Q.inequalities()[0].is_facet_defining_inequality(P)
             True
             sage: Q = Polyhedron(ieqs=[[0,AA(2).sqrt(),0,3]])                           # needs sage.rings.number_field
-            sage: Q.inequalities()[0].is_facet_defining_inequality(P)                   # needs sage.rings.number_field
+            sage: Q.inequalities()[0].is_facet_defining_inequality(P)
             True
             sage: Q = Polyhedron(ieqs=[[1,1,0,0]])
             sage: Q.inequalities()[0].is_facet_defining_inequality(P)

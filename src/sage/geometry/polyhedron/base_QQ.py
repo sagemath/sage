@@ -132,7 +132,7 @@ class Polyhedron_QQ(Polyhedron_base):
             sage: Q = P*(8/9)
             sage: Q.integral_points_count()
             1
-            sage: Q.integral_points_count(explicit_enumeration_threshold=0)  # optional - latte_int
+            sage: Q.integral_points_count(explicit_enumeration_threshold=0)
             1
 
         Unbounded polyhedra (with or without lattice points) are not supported::
@@ -150,7 +150,7 @@ class Polyhedron_QQ(Polyhedron_base):
 
         "Fibonacci" knapsacks (preprocessing helps a lot)::
 
-            sage: def fibonacci_knapsack(d, b, backend=None):                           # needs sage.combinat
+            sage: def fibonacci_knapsack(d, b, backend=None):
             ....:     lp = MixedIntegerLinearProgram(base_ring=QQ)
             ....:     x = lp.new_variable(nonnegative=True)
             ....:     lp.add_constraint(lp.sum(fibonacci(i+3)*x[i] for i in range(d)) <= b)
@@ -163,10 +163,10 @@ class Polyhedron_QQ(Polyhedron_base):
         We check that :trac:`21491` is fixed::
 
             sage: P = Polyhedron(ieqs=[], eqns=[[-10,0,1],[-10,1,0]])
-            sage: P.integral_points_count() # optional - latte_int
+            sage: P.integral_points_count()
             1
             sage: P = Polyhedron(ieqs=[], eqns=[[-11,0,2],[-10,1,0]])
-            sage: P.integral_points_count() # optional - latte_int
+            sage: P.integral_points_count()
             0
         """
         if self.is_empty():
@@ -296,11 +296,11 @@ class Polyhedron_QQ(Polyhedron_base):
             7/2*t^3 + 2*t^2 - 1/2*t + 1
             sage: poly(1)                                               # optional - latte_int
             6
-            sage: len(simplex.integral_points())                        # optional - latte_int
+            sage: len(simplex.integral_points())
             6
             sage: poly(2)                                               # optional - latte_int
             36
-            sage: len((2*simplex).integral_points())                    # optional - latte_int
+            sage: len((2*simplex).integral_points())
             36
 
         Now we find the same Ehrhart polynomial, this time using
@@ -322,7 +322,7 @@ class Polyhedron_QQ(Polyhedron_base):
             sage: simplex = Polyhedron(vertices=[(0,0,0), (3,3,3),
             ....:                                (-3,2,1), (1,-1,-2)])
             sage: simplex = simplex.change_ring(QQ)
-            sage: simplex.ehrhart_polynomial(engine='normaliz')         # optional - pynormaliz
+            sage: simplex.ehrhart_polynomial(engine='normaliz')
             Traceback (most recent call last):
             ...
             TypeError: The backend of the polyhedron should be 'normaliz'
@@ -631,7 +631,7 @@ class Polyhedron_QQ(Polyhedron_base):
         TESTS::
 
             sage: line_seg = Polyhedron(vertices=[[0],[1/2]])
-            sage: line_seg._ehrhart_quasipolynomial_normaliz()          # optional - pynormaliz
+            sage: line_seg._ehrhart_quasipolynomial_normaliz()
             Traceback (most recent call last):
             ...
             TypeError: The backend of the polyhedron should be 'normaliz'
@@ -714,11 +714,11 @@ class Polyhedron_QQ(Polyhedron_base):
             7/2*t^3 + 2*t^2 - 1/2*t + 1
             sage: p(1)                                                  # optional - latte_int
             6
-            sage: len(P.integral_points())                              # optional - latte_int
+            sage: len(P.integral_points())
             6
             sage: p(2)                                                  # optional - latte_int
             36
-            sage: len((2*P).integral_points())                          # optional - latte_int
+            sage: len((2*P).integral_points())
             36
 
         The unit hypercubes::

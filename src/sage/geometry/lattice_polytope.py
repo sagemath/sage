@@ -1533,14 +1533,15 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
 
         But each of its other faces is contained in one or more facets::
 
-            sage: face = o.faces(1)[0]                                                  # needs sage.graphs
-            sage: face.ambient_facet_indices()                                          # needs sage.graphs
+            sage: # needs sage.graphs
+            sage: face = o.faces(1)[0]
+            sage: face.ambient_facet_indices()
             (4, 5)
-            sage: face.vertices()                                                       # needs sage.graphs
+            sage: face.vertices()
             M(1, 0, 0),
             M(0, 1, 0)
             in 3-d lattice M
-            sage: o.facets()[face.ambient_facet_indices()[0]].vertices()                # needs sage.graphs
+            sage: o.facets()[face.ambient_facet_indices()[0]].vertices()
             M(1, 0,  0),
             M(0, 1,  0),
             M(0, 0, -1)
@@ -1949,7 +1950,7 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
 
             sage: face.ambient_vertex_indices()                                         # needs sage.graphs
             (0,)
-            sage: square.vertex(0)                                                      # needs sage.graphs
+            sage: square.vertex(0)
             M(0, 0)
 
         An alternative to extracting faces from the face lattice is to use
@@ -1971,21 +1972,22 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
         However, you can achieve some of this functionality using
         :meth:`facets`, :meth:`facet_of`, and :meth:`adjacent` methods::
 
-            sage: face = square.faces(0)[0]                                             # needs sage.graphs
-            sage: face                                                                  # needs sage.graphs
+            sage: # needs sage.graphs
+            sage: face = square.faces(0)[0]
+            sage: face
             0-d face of 2-d lattice polytope in 2-d lattice M
-            sage: face.vertices()                                                       # needs sage.graphs
+            sage: face.vertices()
             M(0, 0)
             in 2-d lattice M
-            sage: face.facets()                                                         # needs sage.graphs
+            sage: face.facets()
             (-1-d face of 2-d lattice polytope in 2-d lattice M,)
-            sage: face.facet_of()                                                       # needs sage.graphs
+            sage: face.facet_of()
             (1-d face of 2-d lattice polytope in 2-d lattice M,
              1-d face of 2-d lattice polytope in 2-d lattice M)
-            sage: face.adjacent()                                                       # needs sage.graphs
+            sage: face.adjacent()
             (0-d face of 2-d lattice polytope in 2-d lattice M,
              0-d face of 2-d lattice polytope in 2-d lattice M)
-            sage: face.adjacent()[0].vertices()                                         # needs sage.graphs
+            sage: face.adjacent()[0].vertices()
             M(1, 0)
             in 2-d lattice M
 
@@ -3162,7 +3164,7 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
             sage: PM_max == o._palp_PM_max()                                            # needs sage.graphs sage.groups
             True
             sage: P2 = ReflexivePolytope(2, 0)
-            sage: PM_max, permutations = P2._palp_PM_max(check=True)
+            sage: PM_max, permutations = P2._palp_PM_max(check=True)                    # needs sage.groups
             sage: PM_max
             [3 0 0]
             [0 3 0]
@@ -4001,14 +4003,14 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
 
         3-skeleton includes all points::
 
-            sage: c.skeleton_points(k=3)                                                # needs palp sage.graphs
+            sage: c.skeleton_points(k=3)                                                # needs palp
             [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17,
              18, 19, 20, 21, 22, 23, 24, 25, 26]
 
         It is OK to compute higher dimensional skeletons - you will get the
         list of all points::
 
-            sage: c.skeleton_points(k=100)                                              # needs palp sage.graphs
+            sage: c.skeleton_points(k=100)                                              # needs palp
             [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17,
              18, 19, 20, 21, 22, 23, 24, 25, 26]
         """
@@ -5095,13 +5097,14 @@ def _palp(command, polytopes, reduce_dimension=False):
         ...
         ValueError: Cannot run PALP for a 2-dimensional polytope in a 3-dimensional space!
 
-        sage: result_name = lattice_polytope._palp("poly.x -f", [p],                    # needs palp
+        sage: # needs palp
+        sage: result_name = lattice_polytope._palp("poly.x -f", [p],
         ....:                                      reduce_dimension=True)
-        sage: f = open(result_name)                                                     # needs palp
-        sage: f.readlines()                                                             # needs palp
+        sage: f = open(result_name)
+        sage: f.readlines()
         ['M:5 4 F:4\n']
-        sage: f.close()                                                                 # needs palp
-        sage: os.remove(result_name)                                                    # needs palp
+        sage: f.close()
+        sage: os.remove(result_name)
     """
     if _palp_dimension is not None:
         dot = command.find(".")

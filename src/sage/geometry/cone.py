@@ -129,31 +129,33 @@ You can also perform these checks::
 
 You can work with subcones that form faces of other cones::
 
-    sage: face = four_rays.faces(dim=2)[0]                                              # needs sage.graphs
-    sage: face                                                                          # needs sage.graphs
+    sage: # needs sage.graphs
+    sage: face = four_rays.faces(dim=2)[0]
+    sage: face
     2-d face of 3-d cone in 3-d lattice N
-    sage: face.rays()                                                                   # needs sage.graphs
+    sage: face.rays()
     N(-1, -1, 1),
     N(-1,  1, 1)
     in 3-d lattice N
-    sage: face.ambient_ray_indices()                                                    # needs sage.graphs
+    sage: face.ambient_ray_indices()
     (2, 3)
-    sage: four_rays.rays(face.ambient_ray_indices())                                    # needs sage.graphs
+    sage: four_rays.rays(face.ambient_ray_indices())
     N(-1, -1, 1),
     N(-1,  1, 1)
     in 3-d lattice N
 
 If you need to know inclusion relations between faces, you can use ::
 
-    sage: L = four_rays.face_lattice()                                                  # needs sage.graphs
-    sage: [len(s) for s in L.level_sets()]                                              # needs sage.graphs
+    sage: # needs sage.graphs
+    sage: L = four_rays.face_lattice()
+    sage: [len(s) for s in L.level_sets()]
     [1, 4, 4, 1]
-    sage: face = L.level_sets()[2][0]                                                   # needs sage.graphs
-    sage: face.rays()                                                                   # needs sage.graphs
+    sage: face = L.level_sets()[2][0]
+    sage: face.rays()
     N(1,  1, 1),
     N(1, -1, 1)
     in 3-d lattice N
-    sage: L.hasse_diagram().neighbors_in(face)                                          # needs sage.graphs
+    sage: L.hasse_diagram().neighbors_in(face)
     [1-d face of 3-d cone in 3-d lattice N,
      1-d face of 3-d cone in 3-d lattice N]
 
@@ -2105,13 +2107,14 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
 
         EXAMPLES::
 
+            sage: # needs sage.graphs
             sage: octant = Cone([(1,0,0), (0,1,0), (0,0,1)])
-            sage: octant.adjacent()                                                     # needs sage.graphs
+            sage: octant.adjacent()
             ()
-            sage: one_face = octant.faces(1)[0]                                         # needs sage.graphs
-            sage: len(one_face.adjacent())                                              # needs sage.graphs
+            sage: one_face = octant.faces(1)[0]
+            sage: len(one_face.adjacent())
             2
-            sage: one_face.adjacent()[1]                                                # needs sage.graphs
+            sage: one_face.adjacent()[1]
             1-d face of 3-d cone in 3-d lattice N
 
         Things are a little bit subtle with fans, as we illustrate below.
@@ -2186,12 +2189,14 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
             3-d cone in 3-d lattice N
             sage: cone.ambient() is cone
             True
-            sage: face = cone.faces(1)[0]                                               # needs sage.graphs
-            sage: face                                                                  # needs sage.graphs
+
+            sage: # needs sage.graphs
+            sage: face = cone.faces(1)[0]
+            sage: face
             1-d face of 3-d cone in 3-d lattice N
-            sage: face.ambient()                                                        # needs sage.graphs
+            sage: face.ambient()
             3-d cone in 3-d lattice N
-            sage: face.ambient() is cone                                                # needs sage.graphs
+            sage: face.ambient() is cone
             True
         """
         return self._ambient
@@ -2387,22 +2392,23 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
         If we want to operate with this ray as a face of the cone, we need to
         embed it first::
 
-            sage: e_ray = c.embed(ray)                                                  # needs sage.graphs
-            sage: e_ray                                                                 # needs sage.graphs
+            sage: # needs sage.graphs
+            sage: e_ray = c.embed(ray)
+            sage: e_ray
             1-d face of 3-d cone in 3-d lattice N
-            sage: e_ray.rays()                                                          # needs sage.graphs
+            sage: e_ray.rays()
             N(0, -1, 1)
             in 3-d lattice N
-            sage: e_ray is ray                                                          # needs sage.graphs
+            sage: e_ray is ray
             False
-            sage: e_ray.is_equivalent(ray)                                              # needs sage.graphs
+            sage: e_ray.is_equivalent(ray)
             True
-            sage: e_ray.ambient_ray_indices()                                           # needs sage.graphs
+            sage: e_ray.ambient_ray_indices()
             (3,)
-            sage: e_ray.adjacent()                                                      # needs sage.graphs
+            sage: e_ray.adjacent()
             (1-d face of 3-d cone in 3-d lattice N,
              1-d face of 3-d cone in 3-d lattice N)
-            sage: e_ray.ambient()                                                       # needs sage.graphs
+            sage: e_ray.ambient()
             3-d cone in 3-d lattice N
 
         Not every cone can be embedded into a fixed ambient cone::
@@ -2502,19 +2508,20 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
         However, you can achieve some of this functionality using
         :meth:`facets`, :meth:`facet_of`, and :meth:`adjacent` methods::
 
-            sage: face = quadrant.faces(1)[0]                                           # needs sage.graphs
-            sage: face                                                                  # needs sage.graphs
+            sage: # needs sage.graphs
+            sage: face = quadrant.faces(1)[0]
+            sage: face
             1-d face of 2-d cone in 2-d lattice N
-            sage: face.rays()                                                           # needs sage.graphs
+            sage: face.rays()
             N(1, 0)
             in 2-d lattice N
-            sage: face.facets()                                                         # needs sage.graphs
+            sage: face.facets()
             (0-d face of 2-d cone in 2-d lattice N,)
-            sage: face.facet_of()                                                       # needs sage.graphs
+            sage: face.facet_of()
             (2-d cone in 2-d lattice N,)
-            sage: face.adjacent()                                                       # needs sage.graphs
+            sage: face.adjacent()
             (1-d face of 2-d cone in 2-d lattice N,)
-            sage: face.adjacent()[0].rays()                                             # needs sage.graphs
+            sage: face.adjacent()[0].rays()
             N(0, 1)
             in 2-d lattice N
 
@@ -2731,7 +2738,7 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
             sage: halfplane.faces()                                                     # needs sage.graphs
             ((1-d face of 2-d cone in 2-d lattice N,),
              (2-d cone in 2-d lattice N,))
-            sage: plane = Cone([(1,0), (0,1), (-1,-1)])                                 # needs sage.graphs
+            sage: plane = Cone([(1,0), (0,1), (-1,-1)])
             sage: plane.faces(1)                                                        # needs sage.graphs
             ()
             sage: plane.faces()                                                         # needs sage.graphs
@@ -2756,16 +2763,17 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
         We also ensure that a call to this function does not break
         :meth:`facets` method (see :trac:`9780`)::
 
-            sage: cone = toric_varieties.dP8().fan().generating_cone(0); cone           # needs palp
+            sage: # needs palp
+            sage: cone = toric_varieties.dP8().fan().generating_cone(0); cone           # needs sage.graphs
             2-d cone of Rational polyhedral fan in 2-d lattice N
-            sage: for f in cone.facets(): print(f.rays())                               # needs palp sage.graphs
+            sage: for f in cone.facets(): print(f.rays())                               # needs sage.graphs
             N(1, 1)
             in 2-d lattice N
             N(0, 1)
             in 2-d lattice N
-            sage: len(cone.faces())                                                     # needs palp sage.graphs
+            sage: len(cone.faces())                                                     # needs sage.graphs
             3
-            sage: for f in cone.facets(): print(f.rays())                               # needs palp sage.graphs
+            sage: for f in cone.facets(): print(f.rays())                               # needs sage.graphs
             N(1, 1)
             in 2-d lattice N
             N(0, 1)
@@ -3274,7 +3282,7 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
             sage: K.is_isomorphic(K)                                                    # needs sage.graphs
             True
             sage: K = cones.trivial(2)
-            sage: K.is_isomorphic(K)                                                    # needs sage.graphs
+            sage: K.is_isomorphic(K)
             True
 
         A random (strictly convex) cone is isomorphic to itself::
@@ -6067,19 +6075,20 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
         The cross-positive operators of a permuted cone can be obtained by
         conjugation::
 
+            sage: # needs sage.groups
             sage: K = random_cone(max_ambient_dim=3)
             sage: L = ToricLattice(K.lattice_dim()**2)
-            sage: p = SymmetricGroup(K.lattice_dim()).random_element().matrix()         # needs sage.groups
-            sage: pK = Cone((p*k for k in K), K.lattice(), check=False)                 # needs sage.groups
-            sage: cp_gens = pK.cross_positive_operators_gens()                          # needs sage.groups
-            sage: actual = Cone((g.list() for g in cp_gens),                            # needs sage.groups
+            sage: p = SymmetricGroup(K.lattice_dim()).random_element().matrix()
+            sage: pK = Cone((p*k for k in K), K.lattice(), check=False)
+            sage: cp_gens = pK.cross_positive_operators_gens()
+            sage: actual = Cone((g.list() for g in cp_gens),
             ....:               lattice=L,
             ....:               check=False)
             sage: cp_gens = K.cross_positive_operators_gens()
-            sage: expected = Cone(((p*g*p.inverse()).list() for g in cp_gens),          # needs sage.groups
+            sage: expected = Cone(((p*g*p.inverse()).list() for g in cp_gens),
             ....:                 lattice=L,
             ....:                 check=False)
-            sage: actual.is_equivalent(expected)                                        # needs sage.groups
+            sage: actual.is_equivalent(expected)
             True
 
         An operator is cross-positive on a cone if and only if its

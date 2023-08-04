@@ -746,9 +746,9 @@ cdef class CombinatorialPolyhedron(SageObject):
 
         EXAMPLES::
 
-            sage: P = polytopes.permutahedron(3)                                        # needs sage.combinat
-            sage: C = CombinatorialPolyhedron(P)                                        # needs sage.combinat
-            sage: C.Hrepresentation()                                                   # needs sage.combinat
+            sage: P = polytopes.permutahedron(3)
+            sage: C = CombinatorialPolyhedron(P)
+            sage: C.Hrepresentation()
             (An inequality (1, 1, 0) x - 3 >= 0,
              An inequality (-1, -1, 0) x + 5 >= 0,
              An inequality (0, 1, 0) x - 1 >= 0,
@@ -1607,7 +1607,7 @@ cdef class CombinatorialPolyhedron(SageObject):
             sage: C.facet_graph(names=False)                                            # needs sage.graphs
             Graph on 6 vertices
 
-            sage: C = CombinatorialPolyhedron(polytopes.hypersimplex(5,2)); C           # needs sage.combinat
+            sage: C = CombinatorialPolyhedron(polytopes.hypersimplex(5,2)); C
             A 4-dimensional combinatorial polyhedron with 10 facets
             sage: C.facet_graph()                                                       # needs sage.combinat sage.graphs
             Graph on 10 vertices
@@ -1763,9 +1763,9 @@ cdef class CombinatorialPolyhedron(SageObject):
 
         EXAMPLES::
 
-            sage: P = polytopes.permutahedron(5)                                        # needs sage.combinat
-            sage: C = CombinatorialPolyhedron(P)                                        # needs sage.combinat
-            sage: C.f_vector()                                                          # needs sage.combinat
+            sage: P = polytopes.permutahedron(5)
+            sage: C = CombinatorialPolyhedron(P)
+            sage: C.f_vector()
             (1, 120, 240, 150, 30, 1)
 
             sage: P = polytopes.cyclic_polytope(6,10)
@@ -1775,9 +1775,9 @@ cdef class CombinatorialPolyhedron(SageObject):
 
         Using two threads::
 
-            sage: P = polytopes.permutahedron(5)                                        # needs sage.combinat
-            sage: C = CombinatorialPolyhedron(P)                                        # needs sage.combinat
-            sage: C.f_vector(num_threads=2)                                             # needs sage.combinat
+            sage: P = polytopes.permutahedron(5)
+            sage: C = CombinatorialPolyhedron(P)
+            sage: C.f_vector(num_threads=2)
             (1, 120, 240, 150, 30, 1)
 
         TESTS::
@@ -2113,8 +2113,8 @@ cdef class CombinatorialPolyhedron(SageObject):
             sage: CombinatorialPolyhedron(cyclic).simpliciality()
             3
 
-            sage: hypersimplex = polytopes.hypersimplex(5,2)                            # needs sage.combinat
-            sage: CombinatorialPolyhedron(hypersimplex).simpliciality()                 # needs sage.combinat
+            sage: hypersimplex = polytopes.hypersimplex(5,2)
+            sage: CombinatorialPolyhedron(hypersimplex).simpliciality()
             2
 
             sage: cross = polytopes.cross_polytope(4)
@@ -2221,16 +2221,16 @@ cdef class CombinatorialPolyhedron(SageObject):
 
         EXAMPLES::
 
-            sage: hyper4 = polytopes.hypersimplex(4,2)                                  # needs sage.combinat
-            sage: CombinatorialPolyhedron(hyper4).simplicity()                          # needs sage.combinat
+            sage: hyper4 = polytopes.hypersimplex(4,2)
+            sage: CombinatorialPolyhedron(hyper4).simplicity()
             1
 
-            sage: hyper5 = polytopes.hypersimplex(5,2)                                  # needs sage.combinat
-            sage: CombinatorialPolyhedron(hyper5).simplicity()                          # needs sage.combinat
+            sage: hyper5 = polytopes.hypersimplex(5,2)
+            sage: CombinatorialPolyhedron(hyper5).simplicity()
             2
 
-            sage: hyper6 = polytopes.hypersimplex(6,2)                                  # needs sage.combinat
-            sage: CombinatorialPolyhedron(hyper6).simplicity()                          # needs sage.combinat
+            sage: hyper6 = polytopes.hypersimplex(6,2)
+            sage: CombinatorialPolyhedron(hyper6).simplicity()
             3
 
             sage: P = polytopes.simplex(3)
@@ -2880,8 +2880,8 @@ cdef class CombinatorialPolyhedron(SageObject):
             sage: C.face_lattice().is_isomorphic(C1.face_lattice())                     # needs sage.combinat
             True
 
-            sage: P = polytopes.permutahedron(5)                                        # needs sage.combinat
-            sage: C = CombinatorialPolyhedron(P)                                        # needs sage.combinat
+            sage: P = polytopes.permutahedron(5)
+            sage: C = CombinatorialPolyhedron(P)
             sage: C.face_lattice()                                                      # needs sage.combinat
             Finite lattice containing 542 elements
 
@@ -2892,8 +2892,8 @@ cdef class CombinatorialPolyhedron(SageObject):
             sage: C.face_lattice().is_isomorphic(P.face_lattice())                      # needs sage.combinat
             True
 
-            sage: P = polytopes.permutahedron(4)                                        # needs sage.combinat
-            sage: C = CombinatorialPolyhedron(P)                                        # needs sage.combinat
+            sage: P = polytopes.permutahedron(4)
+            sage: C = CombinatorialPolyhedron(P)
             sage: C.face_lattice().is_isomorphic(P.face_lattice())                      # needs sage.combinat
             True
         """
