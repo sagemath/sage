@@ -604,7 +604,7 @@ class Pi(Constant):
         EXAMPLES::
 
             sage: import sympy                                                          # needs sympy
-            sage: sympy.pi == pi # indirect doctest                                     # needs sympy
+            sage: sympy.pi == pi  # indirect doctest                                    # needs sympy
             True
         """
         import sympy
@@ -851,7 +851,7 @@ class GoldenRatio(Constant):
         EXAMPLES::
 
             sage: import sympy                                                          # needs sympy
-            sage: sympy.GoldenRatio == golden_ratio # indirect doctest                  # needs sympy
+            sage: sympy.GoldenRatio == golden_ratio  # indirect doctest                 # needs sympy
             True
         """
         import sympy
@@ -1008,7 +1008,7 @@ class EulerGamma(Constant):
         EXAMPLES::
 
             sage: import sympy                                                          # needs sympy
-            sage: sympy.EulerGamma == euler_gamma # indirect doctest                    # needs sympy
+            sage: sympy.EulerGamma == euler_gamma  # indirect doctest                   # needs sympy
             True
         """
         import sympy
@@ -1078,7 +1078,7 @@ class Catalan(Constant):
         EXAMPLES::
 
             sage: import sympy                                                          # needs sympy
-            sage: sympy.Catalan == catalan # indirect doctest                           # needs sympy
+            sage: sympy.Catalan == catalan  # indirect doctest                          # needs sympy
             True
         """
         import sympy
