@@ -161,10 +161,10 @@ class CharacterArt(SageObject):
 
         EXAMPLES::
 
-            sage: M = matrix([[1,2],[3,4]])                                             # optional - sage.matrix
-            sage: format(ascii_art(M))                                                  # optional - sage.matrix
+            sage: M = matrix([[1,2],[3,4]])                                             # needs sage.matrix
+            sage: format(ascii_art(M))                                                  # needs sage.matrix
             '[1 2]\n[3 4]'
-            sage: format(unicode_art(M))                                                # optional - sage.matrix
+            sage: format(unicode_art(M))                                                # needs sage.matrix
             '\u239b1 2\u239e\n\u239d3 4\u23a0'
         """
         return format(self._string_type(self), fmt)
