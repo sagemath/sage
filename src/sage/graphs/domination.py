@@ -356,7 +356,7 @@ def dominating_sets(g, k=1, independent=False, total=False,
     if not k:
         yield list(g)
         return
-    elif k < 0:
+    if k < 0:
         raise ValueError("the domination distance must be a non-negative integer")
 
     from sage.numerical.mip import MixedIntegerLinearProgram
@@ -991,7 +991,7 @@ def minimal_dominating_sets(G, to_dominate=None, work_on_copy=True, k=1):
         # the empty set/list is the only minimal DS of the empty set
         yield set()
         return
-    elif k > 1:
+    if k > 1:
         # We build a graph H with an edge between u and v if these vertices are
         # at distance at most k in G
         H = G.__class__(G.order())
