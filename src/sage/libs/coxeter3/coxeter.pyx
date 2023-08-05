@@ -87,7 +87,9 @@ cdef class String:
             True
         """
         if type(other) is not type(self):
-            return False
+            if op in (Py_LT, Py_LE, Py_GT, Py_GE):
+                return NotImplemented
+            return op == Py_NE
 
         s = repr(self)
         o = repr(other)
@@ -200,7 +202,9 @@ cdef class Type:
             True
         """
         if type(other) is not type(self):
-            return False
+            if op in (Py_LT, Py_LE, Py_GT, Py_GE):
+                return NotImplemented
+            return op == Py_NE
 
         s = repr(self)
         o = repr(other)
@@ -364,7 +368,9 @@ cdef class CoxGroup(SageObject):
             True
         """
         if type(other) is not type(self):
-            return False
+            if op in (Py_LT, Py_LE, Py_GT, Py_GE):
+                return NotImplemented
+            return op == Py_NE
 
         s_t = self.type()
         o_t = other.type()
@@ -840,7 +846,9 @@ cdef class CoxGroupElement:
             True
         """
         if type(other) is not type(self):
-            return False
+            if op in (Py_LT, Py_LE, Py_GT, Py_GE):
+                return NotImplemented
+            return op == Py_NE
 
         s_p = self.parent_group()
         o_p = other.parent_group()
