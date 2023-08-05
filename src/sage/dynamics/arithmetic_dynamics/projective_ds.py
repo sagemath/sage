@@ -2343,7 +2343,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
 
         # The original implementation uses Wells' Algorithm if the maps and
         # points are defined on P^1(QQ). Current implementation extends this
-        # to general number fields.
+        # to general number fields with unique factorisation.
         # Otherwise, apply the usual algorithm using local Green's functions:
         rel_dim = self.codomain().ambient_space().dimension_relative()
 
@@ -2363,6 +2363,8 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
 
             H = 0
             h = R.zero()
+
+            # import pdb; pdb.set_trace()
 
             if K is QQ:
                 Res = f.resultant(normalize=True).abs()
@@ -2385,7 +2387,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
                         x = A(x_i, y_i) % Res**(N - n)
                         y = B(x_i, y_i) % Res**(N - n)
                         g = gcd([x, y, Res])
-                        H = H + R(g).abs().log() / d**(n + 1)
+                        H += R(g).abs().log() / d**(n + 1)
                         x_i = x / g
                         y_i = y / g
 
@@ -2438,7 +2440,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
                         x = order_quotient(A(x_i, y_i)).lift()
                         y = order_quotient(B(x_i, y_i)).lift()
                         g = gcd([x, y, Res])
-                        H += R(g.norm()).abs().log() / d**(n + 1)
+                        H += R(g).abs().log() / d**(n + 1)
                         x_i = O(x / g)
                         y_i = O(y / g)
 
@@ -2448,8 +2450,9 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
                 # between what Wells' calls H_infty and what Green's function returns
                 # for the infinite place.
                 h = number_field_pt.global_height() - H
-                for v in K.places():
-                    h += f.green_function(number_field_pt, v) + R(v(1).abs()).log()
+                if Res > 1:
+                    for v in K.places():
+                        h += f.green_function(number_field_pt, v)
 
                 # The value returned by Wells' Algorithm may be negative.
                 # As the canonical height is always non-negative, hence return 0 if
@@ -2462,7 +2465,6 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
                     "This should be impossible, please report bug on https://github.com/sagemath/sage/issues"
                     h = R(0)
                 return h
-                # return R(H) / K.degree()
 
         if bad_primes is None:
             bad_primes = []
