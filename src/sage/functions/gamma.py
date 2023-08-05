@@ -158,10 +158,10 @@ class Function_gamma(GinacFunction):
         Check that the implementations roughly agrees (note there might be
         difference of several ulp on more complicated entries)::
 
-            sage: import sage.libs.mpmath                                               # needs mpmath
-            sage: float(gamma(10.)) == gamma(10.r) == float(gamma(sage.libs.mpmath.all.mpf(10)))    # needs mpmath
+            sage: import mpmath                                                         # needs mpmath
+            sage: float(gamma(10.)) == gamma(10.r) == float(gamma(mpmath.mpf(10)))      # needs mpmath
             True
-            sage: float(gamma(8.5)) == gamma(8.5r) == float(gamma(sage.libs.mpmath.all.mpf(8.5)))   # needs mpmath
+            sage: float(gamma(8.5)) == gamma(8.5r) == float(gamma(mpmath.mpf(8.5)))     # needs mpmath
             True
 
         Check that ``QQbar`` half integers work with the ``pi`` formula::

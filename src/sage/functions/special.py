@@ -591,7 +591,7 @@ class EllipticE(BuiltinFunction):
             0.535647771608740 + 1.63996015168665*I
         """
         R = parent or s_parent(z)
-        return _mpmath_call(_mpmath_ellipe, z, m, parent=R)
+        return _mpmath_utils_call(_mpmath_ellipe, z, m, parent=R)
 
     def _derivative_(self, z, m, diff_param):
         """
@@ -697,7 +697,7 @@ class EllipticEC(BuiltinFunction):
             1.63241178144043 - 0.369219492375499*I
         """
         R = parent or s_parent(x)
-        return _mpmath_call(_mpmath_ellipe, x, parent=R)
+        return _mpmath_utils_call(_mpmath_ellipe, x, parent=R)
 
     def _derivative_(self, x, diff_param):
         """
@@ -770,7 +770,7 @@ class EllipticEU(BuiltinFunction):
             0.7615941559557648881194582...
         """
         R = parent or s_parent(u)
-        return _mpmath_call(elliptic_eu_f, u, m, parent=R)
+        return _mpmath_utils_call(elliptic_eu_f, u, m, parent=R)
 
     def _derivative_(self, u, m, diff_param):
         """
@@ -942,7 +942,7 @@ class EllipticF(BuiltinFunction):
             0.149965060031782 + 0.925097284105771*I
         """
         R = parent or s_parent(z)
-        return _mpmath_call(_mpmath_ellipf, z, m, parent=R)
+        return _mpmath_utils_call(_mpmath_ellipf, z, m, parent=R)
 
     def _derivative_(self, z, m, diff_param):
         """
@@ -1065,7 +1065,7 @@ class EllipticKC(BuiltinFunction):
             1.42127228104504 + 0.295380284214777*I
         """
         R = parent or s_parent(z)
-        return _mpmath_call(_mpmath_ellipk, z, parent=R)
+        return _mpmath_utils_call(_mpmath_ellipk, z, parent=R)
 
     def _derivative_(self, z, diff_param):
         """
@@ -1157,7 +1157,7 @@ class EllipticPi(BuiltinFunction):
             0.0542471560940594 + 0.552096453413081*I
         """
         R = parent or s_parent(z)
-        return _mpmath_call(_mpmath_ellippi, n, z, m, parent=R)
+        return _mpmath_utils_call(_mpmath_ellippi, n, z, m, parent=R)
 
     def _derivative_(self, n, z, m, diff_param):
         """
