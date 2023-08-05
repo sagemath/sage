@@ -273,7 +273,8 @@ cdef llong llxgcd(llong a, llong b, llong *ss, llong *tt) except -1:
     tt[0] = q * qsign
     return a
 
-def _test_llfunctions(a,b):
+
+def _test_llfunctions(a, b):
     r"""
     Doctest function for the above three functions.
     Given a, b this returns the absolute value of a,
@@ -299,6 +300,7 @@ def _test_llfunctions(a,b):
     a5 = Integer(t)
     assert a*a4 + b*a5 == a3
     return (a1,a2,a3,a4,a5)
+
 
 # ================================
 
@@ -391,7 +393,8 @@ cdef int proj_normalise(llong N, llong u, llong  v,
     #verbose("       leaving proj_normalise with s=%s, t=%s"%(u,v), level=5)
     return 0
 
-def _test_proj_normalise(N,u,v):
+
+def _test_proj_normalise(N, u, v):
     r"""
     The doctest function for proj_normalise.
 
@@ -411,8 +414,9 @@ def _test_proj_normalise(N,u,v):
         (1, 7)
      """
     cdef llong uu, vv
-    ans = proj_normalise(N,u,v,&uu,&vv)
+    _ = proj_normalise(N,u,v,&uu,&vv)
     return (Integer(uu), Integer(vv))
+
 
 cdef int best_proj_point(llong u, llong v, llong N,
                          llong* uu, llong* vv) except -1:
@@ -518,7 +522,8 @@ cdef int best_proj_point(llong u, llong v, llong N,
         vv[0] = t1
         return 0
 
-def _test_best_proj_point(u,v,N):
+
+def _test_best_proj_point(u, v, N):
     r"""
     Doctest function of best_proj_point.
 
@@ -545,6 +550,7 @@ def _test_best_proj_point(u,v,N):
     a = best_proj_point(u, v, N, &uu, &vv)
     assert a == 0
     return (Integer(uu), Integer(vv))
+
 
 #======================================================================
 
@@ -614,7 +620,7 @@ cdef class _CuspsForModularSymbolNumerical:
         four [a,b,c,d] corresponds to
         [[a,b],[c,d]].
         """
-        cdef llong Q, B, c, g, x, y
+        cdef llong Q, B, c, x, y
 
         #verbose("       enter atkin_lehner for cusp r=%s"%self._r, level=5)
         Q = self._width
@@ -623,7 +629,7 @@ cdef class _CuspsForModularSymbolNumerical:
         if llgcd(Q, B) != 1:
             raise ValueError("This cusp is not in the Atkin-Lehner "
                              "orbit of oo.")
-        g = llxgcd( self._a * Q, self._m, &x, &y)
+        _ = llxgcd( self._a * Q, self._m, &x, &y)
         res[0] = Q * x
         res[1] = y
         res[2] = -c * self._N_level
@@ -633,7 +639,8 @@ cdef class _CuspsForModularSymbolNumerical:
         #        level=5)
         return 0
 
-def _test_cusps(r,N):
+
+def _test_cusps(r, N):
     r"""
     Doctest function for the above class.
 
@@ -658,12 +665,12 @@ def _test_cusps(r,N):
         sage: _test_cusps(5/27,27)
         (1, 1, [[11, -2], [-27, 5]])
     """
-    cdef llong *wQ = [0L,0L,0L,0L]
-    rc = _CuspsForModularSymbolNumerical(r,N)
+    cdef llong *wQ = [0L, 0L, 0L, 0L]
+    rc = _CuspsForModularSymbolNumerical(r, N)
     a1 = rc._width
     a2 = rc.is_unitary()
     if a2:
-        a3 = rc.atkin_lehner(wQ)
+        _ = rc.atkin_lehner(wQ)
     a = Integer(wQ[0])
     b = Integer(wQ[1])
     c = Integer(wQ[2])
@@ -802,7 +809,7 @@ cdef class ModularSymbolNumerical:
         sig_free(self._ans_num)
         sig_free(self._ans)
 
-# == basics ================
+    # == basics ================
 
     def __repr__(self):
         """
@@ -815,7 +822,7 @@ cdef class ModularSymbolNumerical:
             sage: M
             Numerical modular symbol attached to Elliptic Curve defined by y^2 + x*y + y = x^3 + 4*x - 6 over Rational Field
         """
-        return "Numerical modular symbol attached to %s"%(self._E)
+        return "Numerical modular symbol attached to %s" % (self._E)
 
     def elliptic_curve(self):
         r"""
@@ -867,9 +874,8 @@ cdef class ModularSymbolNumerical:
             0
             sage: M(112379/43568779)
             5
-            """
-        cdef llong Q
-        cdef Rational ra, ans
+        """
+        cdef Rational ra
 
         if sign == 0:
             sign = self._global_sign
@@ -882,7 +888,7 @@ cdef class ModularSymbolNumerical:
             ra = Rational( (0,1) )
         elif isinstance(r, sage.rings.infinity.PlusInfinity):
             return Rational(0)
-        else: #who knows
+        else:  # who knows
             raise ValueError("The modular symbol can be evaluated at a "
                              "rational number only.")
         if use_twist:
@@ -891,7 +897,6 @@ cdef class ModularSymbolNumerical:
             if self._D != 1:
                 return self._twisted_symbol(ra, sign=sign)
         return self._evaluate(ra, sign=sign)
-
 
     def approximative_value(self, r, int sign=0, int prec=20, use_twist=True):
         r"""
@@ -936,13 +941,11 @@ cdef class ModularSymbolNumerical:
             sage: M.approximative_value(1/7,prec=10) # abs tol 1e-11
             0.999999972802649
         """
-        cdef llong Q
         cdef Rational ra
         cdef ComplexNumber ans
         cdef double eps
         cdef object L
         cdef int cinf
-
 
         if sign == 0:
             sign = self._global_sign
@@ -953,7 +956,7 @@ cdef class ModularSymbolNumerical:
             ra = r
         elif isinstance(r, Integer):
             ra = Rational( (0,1) )
-        else: #who knows
+        else:  # who knows
             raise ValueError("The modular symbol can be evaluated at a"
                              "rational number only.")
         if use_twist:
@@ -981,8 +984,7 @@ cdef class ModularSymbolNumerical:
         else:
             return ans.imag()/ self._om2
 
-
-# == initialisation ========
+    # == initialisation ========
 
     def _set_epsQs(self):
         r"""
@@ -997,10 +999,9 @@ cdef class ModularSymbolNumerical:
             sage: E = EllipticCurve("20a2")
             sage: M = E.modular_symbol(implementation="num") #indirect doctest
         """
-        self._epsQs = dict(
-            [d,prod(self._E.root_number(p)
-                for p in d.prime_divisors() )]
-            for d in Integer( self._N_E ).divisors())
+        self._epsQs = {d: prod(self._E.root_number(p)
+                               for p in d.prime_divisors())
+                       for d in Integer(self._N_E).divisors()}
 
     def _set_den_bounds(self):
         r"""
@@ -1152,11 +1153,11 @@ cdef class ModularSymbolNumerical:
         EXAMPLES::
 
             sage: E = EllipticCurve("63a2")
-            sage: M =E.modular_symbol(implementation="num")
+            sage: M = E.modular_symbol(implementation="num")
             sage: M(3/4, use_twist=True) # indirect doctest
             -1
         """
-        cdef Integer D, ell, de, ve, Dmax, DD, Nmin
+        cdef Integer D, ell
         cdef RealNumber qq, Db
 
         #verbose("       enter _set_up_twist", level=5)
@@ -1199,7 +1200,6 @@ cdef class ModularSymbolNumerical:
                 self._twist_q =  Rational( (qq.round(), 2) )
                 qq = self._om1 * Db/self._Mt._om2 * 2
                 assert self._twist_q == Rational( ( qq.round(),2))
-
 
     def _round(self, RealNumber val, int sign, int unitary):
         r"""
@@ -1343,7 +1343,6 @@ cdef class ModularSymbolNumerical:
             # last n such that ans[n] is allowed
             self._lans = T
 
-
     def clear_cache(self):
         r"""
         Clear the cached values in all methods of this class
@@ -1362,8 +1361,7 @@ cdef class ModularSymbolNumerical:
         for me in cadi:
             cadi[me].clear_cache()
 
-
-#================== Low level summation =========
+    #================== Low level summation =========
 
     def _integration_to_tau(self, ComplexNumber tau,
                             int  number_of_terms, int prec):
@@ -1648,8 +1646,7 @@ cdef class ModularSymbolNumerical:
         #        " %s, %s, ... %s"%(res[0], res[1], res[m-1]), level=5)
         return res
 
-
-#================
+    #================
 
     def _get_truncation_and_prec(self, double y, double eps):
         r"""
@@ -1867,7 +1864,7 @@ cdef class ModularSymbolNumerical:
             ra = <double *> sig_malloc( m * sizeof(double))
             if ra is NULL:
                 raise MemoryError
-            oi = self._partial_real_sums_double(y, m, T, ra)
+            _ = self._partial_real_sums_double(y, m, T, ra)
             res = [ra[j] for j in range(m)]
             sig_free(ra)
         #verbose("       leaving _kappa with"
@@ -1925,8 +1922,8 @@ cdef class ModularSymbolNumerical:
         #        " and eps=%s"%(r,eps), level=5)
         cdef:
             llong m, Q, epsQ, a, u
-            double yy, taui, zz, epsi
-            int T, prec, j, oi, preci
+            double yy, taui
+            int T, prec, j
             double complex  tauc, tauphc, int1c, int2c, twopii, ze1, ze2, su
             ComplexNumber tau, tauph, int1, int2
             llong * wQ = [0L, 0L, 0L, 0L]
@@ -1934,7 +1931,7 @@ cdef class ModularSymbolNumerical:
 
         rc = _CuspsForModularSymbolNumerical(r, self._N_E)
         Q = rc._width
-        oi = rc.atkin_lehner(wQ)
+        _ = rc.atkin_lehner(wQ)
         m = rc._m
         epsQ = self._epsQs[Q]
         r = rc._r
@@ -1969,7 +1966,6 @@ cdef class ModularSymbolNumerical:
             int2 *= -epsQ
             verbose("  yields %s"%int2, level=2)
             return int2 + int1
-
 
         elif not use_partials: # prec = 53
             taui = <double>(Q)
@@ -2051,7 +2047,7 @@ cdef class ModularSymbolNumerical:
             RealNumber x1, x2, s
             complex tau0c, tau1c, int1c, int2c, ze1, ze2, su, twopii
             llong g, u, v, uu, vv, D, a, aa, m, mm, Q, QQ, z, xi, xixi
-            int oi, j, preci
+            int oi, j
             double x1d, x2d, sd
 
         #verbose("       enter _from_r_to_rr_approx_direct with r=%s,"
@@ -2225,7 +2221,6 @@ cdef class ModularSymbolNumerical:
             llong * wQ = [0L, 0L, 0L, 0L]
             llong * wQQ = [0L, 0L, 0L, 0L]
             Integer epsQ, epsQQ
-            Rational csq, x
             double s, yy
             ComplexNumber ans, ans2
             int  T=0, prec=0, T1=0, T2=0, oi
@@ -2698,7 +2693,7 @@ cdef class ModularSymbolNumerical:
         #verbose("       enter _symbol_non_unitary with r=%s,"
         #        " sign=%s"%(r,sign), level=5)
         cdef:
-            llong a, m, B, Q, N_ell, aell, u, N = self._N_E
+            llong m, B, N_ell, aell, u, N = self._N_E
             Integer ell
             Rational r2, res
 
@@ -2707,9 +2702,7 @@ cdef class ModularSymbolNumerical:
 
         rc = _CuspsForModularSymbolNumerical(r, N)
         r = rc._r
-        a = rc._a
         m = rc._m
-        Q = rc._width
         B = llgcd(m, N)
 
         # find a prime congruent to 1 modulo B
@@ -2722,14 +2715,14 @@ cdef class ModularSymbolNumerical:
             aell = Integer(self._ans[ell])
         N_ell = ell + 1 - aell
         # {ell * r , r}
-        verbose("     Compute symbol {ell*r -> r} = {%s -> %s}"%(ell*r,r),
+        verbose("     Compute symbol {ell*r -> r} = {%s -> %s}" % (ell*r, r),
                 level=4)
         res = self.transportable_symbol(ell * r, r, sign=sign)
         # {(r + u)/ ell, r}
         u = Integer(0)
         while u < ell:
             r2 = (r+u) / ell
-            verbose("     Compute symbol {r2-> r} = {%s -> %s}"%(r2,r),
+            verbose("     Compute symbol {r2-> r} = {%s -> %s}" % (r2, r),
                     level=4)
             res += self.transportable_symbol(r2, r, sign=sign)
             u += 1
@@ -2781,7 +2774,6 @@ cdef class ModularSymbolNumerical:
         cdef:
             llong c, d, x, y, N = self._N_E, Mu, Mv, Qu, Qv, du=1, dv=1
             Rational r, rr, res
-            int oi
 
         #verbose("       enter _manin_symbol_with_cache with u=%s, v=%s,"
         #        " sign =%s"%(u,v,sign), level=5)
@@ -2802,9 +2794,9 @@ cdef class ModularSymbolNumerical:
             Mv = llgcd(v,N)
             Qv = N/Mv
             isunitary = ( llgcd(Qu,Mu) == 1 and llgcd(Qv,Mv) == 1 )
-            if isunitary: # unitary case
-                oi = best_proj_point(u, v, self._N_E, &c, &d)
-            else: # at least one of the two cusps is not unitary
+            if isunitary:  # unitary case
+                _ = best_proj_point(u, v, self._N_E, &c, &d)
+            else:  # at least one of the two cusps is not unitary
                 du = llgcd(Qu,Mu)
                 dv = llgcd(Qv,Mv)
                 NMM = N/Mv/Mu
@@ -2986,10 +2978,9 @@ cdef class ModularSymbolNumerical:
 
         return res
 
+    # ===============================
 
-# ===============================
-
-    @cached_method # not sure this is not a waist
+    @cached_method  # not sure this is not a waist
     def _evaluate(self, Rational r, int sign=0):
         r"""
         Given a rational number `r` this computes the modular symbol
@@ -3417,16 +3408,14 @@ cdef class ModularSymbolNumerical:
         #verbose("       enter _symbol_nonunitary_approx with r=%s,"
         #        " eps=%s"%(r,eps), level=5)
         cdef:
-            llong a, m, B, Q, N_ell, aell, u, N = self._N_E
+            llong m, B, N_ell, aell, u, N = self._N_E
             Integer ell
             Rational r2
             ComplexNumber res
 
         rc = _CuspsForModularSymbolNumerical(r, N)
         r = rc._r
-        a = rc._a
         m = rc._m
-        Q = rc._width
         B = llgcd(m, N)
 
         # find a prime congruent to 1 modulo B
@@ -3619,7 +3608,8 @@ def _test_init(E):
     e2 = M._eps_minus
     e3 = M._eps_unitary_plus
     e4 = M._eps_unitary_minus
-    return e, [a1,a2,a3,a4,a5], [t1,t2,t3,t4], [e1,e2,e3,e4]
+    return e, [a1, a2, a3, a4, a5], [t1, t2, t3, t4], [e1, e2, e3, e4]
+
 
 def _test_integration(E, a, b, T):
     r"""
@@ -3661,6 +3651,7 @@ def _test_integration(E, a, b, T):
     ans = M._integration_to_tau_double(c,tt)
     return ans
 
+
 def _test_integration_via_partials(E, y, m, T):
     r"""
     Doctest for the numerical integration in
@@ -3692,15 +3683,13 @@ def _test_integration_via_partials(E, y, m, T):
         sage: _test_integration_via_partials(E,0.03,3,7000)  # abs tol 1e-11
         [0.49198993741342784, 0.6601504274130793, 0.3177042713926389]
         """
-    cdef int oi, mm = <int>(m)
+    cdef int mm = <int>(m)
     cdef double * ra
     ra = <double *> sig_malloc( mm * sizeof(double))
     if ra is NULL:
         raise MemoryError
     M = ModularSymbolNumerical(E)
-    yy = <double>(y)
-    tt = <int>T
-    oi = M._partial_real_sums_double(y, m, T, ra)
+    _ = M._partial_real_sums_double(y, m, T, ra)
     res = [ra[j] for j in range(m)]
     sig_free(ra)
     return res

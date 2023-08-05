@@ -132,11 +132,12 @@ def treedecomposition_exact(G, lb=-1):
 
     TESTS::
 
-        sage: import sage.graphs.graph_decompositions.tdlib as tdlib # optional - tdlib
-        sage: G = graphs.HouseGraph()                                # optional - tdlib
-        sage: T = tdlib.treedecomposition_exact(G)                   # optional - tdlib
-        sage: G = graphs.PetersenGraph()                             # optional - tdlib
-        sage: T = tdlib.treedecomposition_exact(G)                   # optional - tdlib
+        sage: # optional - tdlib
+        sage: import sage.graphs.graph_decompositions.tdlib as tdlib
+        sage: G = graphs.HouseGraph()
+        sage: T = tdlib.treedecomposition_exact(G)
+        sage: G = graphs.PetersenGraph()
+        sage: T = tdlib.treedecomposition_exact(G)
 
     """
     cdef vector[unsigned int] V_G, E_G, E_T

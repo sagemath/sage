@@ -545,7 +545,7 @@ def is_distance_regular(G, parameters=False):
 
         sage: graphs.PathGraph(2).is_distance_regular(parameters=True)
         ([1, None], [None, 1])
-        sage: graphs.Tutte12Cage().is_distance_regular(parameters=True)                 # optional - networkx
+        sage: graphs.Tutte12Cage().is_distance_regular(parameters=True)                 # needs networkx
         ([3, 2, 2, 2, 2, 2, None], [None, 1, 1, 1, 1, 1, 3])
 
     """
@@ -843,8 +843,8 @@ cdef uint32_t * c_eccentricity_DHV(short_digraph sd) except NULL:
 
     TESTS:
 
-        sage: G = graphs.RandomBarabasiAlbert(50, 2)                                    # optional - networkx
-        sage: eccentricity(G, algorithm='bounds') == eccentricity(G, algorithm='DHV')   # optional - networkx
+        sage: G = graphs.RandomBarabasiAlbert(50, 2)                                    # needs networkx
+        sage: eccentricity(G, algorithm='bounds') == eccentricity(G, algorithm='DHV')   # needs networkx
         True
     """
     cdef uint32_t n = sd.n
@@ -1777,26 +1777,28 @@ def diameter(G, algorithm=None, source=None):
 
     Comparison of exact algorithms for graphs::
 
-        sage: G = graphs.RandomBarabasiAlbert(100, 2)                                   # optional - networkx
-        sage: d1 = diameter(G, algorithm='standard')                                    # optional - networkx
-        sage: d2 = diameter(G, algorithm='iFUB')                                        # optional - networkx
-        sage: d3 = diameter(G, algorithm='iFUB', source=G.random_vertex())              # optional - networkx
-        sage: d4 = diameter(G, algorithm='DHV')                                         # optional - networkx
-        sage: if d1 != d2 or d1 != d3 or d1 != d4: print("Something goes wrong!")       # optional - networkx
+        sage: # needs networkx
+        sage: G = graphs.RandomBarabasiAlbert(100, 2)
+        sage: d1 = diameter(G, algorithm='standard')
+        sage: d2 = diameter(G, algorithm='iFUB')
+        sage: d3 = diameter(G, algorithm='iFUB', source=G.random_vertex())
+        sage: d4 = diameter(G, algorithm='DHV')
+        sage: if d1 != d2 or d1 != d3 or d1 != d4: print("Something goes wrong!")
 
     Comparison of lower bound algorithms::
 
-        sage: lb2 = diameter(G, algorithm='2sweep')                                     # optional - networkx
-        sage: lbm = diameter(G, algorithm='multi-sweep')                                # optional - networkx
-        sage: if not (lb2 <= lbm and lbm <= d3): print("Something goes wrong!")         # optional - networkx
+        sage: lb2 = diameter(G, algorithm='2sweep')                                     # needs networkx
+        sage: lbm = diameter(G, algorithm='multi-sweep')                                # needs networkx
+        sage: if not (lb2 <= lbm and lbm <= d3): print("Something goes wrong!")         # needs networkx
 
     Comparison of exact algorithms for digraphs::
 
-        sage: D = DiGraph(graphs.RandomBarabasiAlbert(50, 2))                           # optional - networkx
-        sage: d1 = diameter(D, algorithm='standard')                                    # optional - networkx
-        sage: d2 = diameter(D, algorithm='DiFUB')                                       # optional - networkx
-        sage: d3 = diameter(D, algorithm='DiFUB', source=D.random_vertex())             # optional - networkx
-        sage: d1 == d2 and d1 == d3                                                     # optional - networkx
+        sage: # needs networkx
+        sage: D = DiGraph(graphs.RandomBarabasiAlbert(50, 2))
+        sage: d1 = diameter(D, algorithm='standard')
+        sage: d2 = diameter(D, algorithm='DiFUB')
+        sage: d3 = diameter(D, algorithm='DiFUB', source=D.random_vertex())
+        sage: d1 == d2 and d1 == d3
         True
 
     TESTS:
@@ -2294,10 +2296,11 @@ def szeged_index(G, algorithm=None):
 
     Check that both algorithms return same value::
 
-        sage: G = graphs.RandomBarabasiAlbert(100, 2)  # long time
-        sage: a = szeged_index(G, algorithm='low')  # long time
-        sage: b = szeged_index(G, algorithm='high')  # long time
-        sage: a == b  # long time
+        sage: # long time
+        sage: G = graphs.RandomBarabasiAlbert(100, 2)
+        sage: a = szeged_index(G, algorithm='low')
+        sage: b = szeged_index(G, algorithm='high')
+        sage: a == b
         True
 
     The Szeged index of a directed circuit of order `n` is `(n-1)^2`::
@@ -2438,8 +2441,8 @@ def distances_distribution(G):
 
     The de Bruijn digraph dB(2,3)::
 
-        sage: D = digraphs.DeBruijn(2,3)                                                # optional - sage.combinat
-        sage: D.distances_distribution()                                                # optional - sage.combinat
+        sage: D = digraphs.DeBruijn(2,3)                                                # needs sage.combinat
+        sage: D.distances_distribution()                                                # needs sage.combinat
         {1: 1/4, 2: 11/28, 3: 5/14}
     """
     cdef size_t n = G.order()
