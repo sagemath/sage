@@ -27,27 +27,13 @@ such that the coefficient corresponding to a word `w\in A^*` equals
     In particular, minimization is called before checking if a series is
     nonzero.
 
-.. WARNING::
-
-    As this code is experimental, warnings are thrown when a
-    recognizable series space is created for the first time in a
-    session (see :class:`sage.misc.superseded.experimental`).
-
-    TESTS::
-
-        sage: Rec = RecognizableSeriesSpace(ZZ, [0, 1])
-        doctest:...: FutureWarning: This class/method/function is
-        marked as experimental. It, its functionality or its interface
-        might change without a formal deprecation.
-        See https://github.com/sagemath/sage/issues/21202 for details.
-
 
 Various
 =======
 
 .. SEEALSO::
 
-    :mod:`k-regular sequence <sage.combinat.k_regular_sequence>`,
+    :mod:`k-regular sequence <sage.combinat.regular_sequence>`,
     :mod:`sage.rings.cfinite_sequence`,
     :mod:`sage.combinat.binary_recurrence_sequences`.
 
@@ -79,7 +65,6 @@ Classes and Methods
 from functools import wraps
 
 from sage.misc.cachefunc import cached_method
-from sage.misc.superseded import experimental
 from sage.structure.element import ModuleElement
 from sage.structure.parent import Parent
 from sage.structure.unique_representation import UniqueRepresentation
@@ -1297,7 +1282,7 @@ class RecognizableSeries(ModuleElement):
 
         EXAMPLES::
 
-            sage: Seq2 = kRegularSequenceSpace(2, ZZ)
+            sage: Seq2 = RegularSequenceRing(2, ZZ)
             sage: E = Seq2((Matrix([[0, 1], [0, 1]]), Matrix([[0, 0], [0, 1]])),
             ....:          vector([1, 0]), vector([1, 1]))
             sage: E
@@ -1336,7 +1321,7 @@ class RecognizableSeries(ModuleElement):
 
         EXAMPLES::
 
-            sage: Seq2 = kRegularSequenceSpace(2, ZZ)
+            sage: Seq2 = RegularSequenceRing(2, ZZ)
             sage: E = Seq2((Matrix([[0, 1], [0, 1]]), Matrix([[0, 0], [0, 1]])),
             ....:          vector([1, 0]), vector([1, 1]))
             sage: -E
@@ -1363,7 +1348,7 @@ class RecognizableSeries(ModuleElement):
 
         EXAMPLES::
 
-            sage: Seq2 = kRegularSequenceSpace(2, ZZ)
+            sage: Seq2 = RegularSequenceRing(2, ZZ)
             sage: E = Seq2((Matrix([[0, 1], [0, 1]]), Matrix([[0, 0], [0, 1]])),
             ....:          vector([1, 0]), vector([1, 1]))
             sage: M = 2 * E  # indirect doctest
@@ -1427,7 +1412,7 @@ class RecognizableSeries(ModuleElement):
 
         EXAMPLES::
 
-            sage: Seq2 = kRegularSequenceSpace(2, ZZ)
+            sage: Seq2 = RegularSequenceRing(2, ZZ)
             sage: E = Seq2((Matrix([[0, 1], [0, 1]]), Matrix([[0, 0], [0, 1]])),
             ....:          vector([1, 0]), vector([1, 1]))
             sage: M = E * 2 # indirect doctest
@@ -1497,7 +1482,7 @@ class RecognizableSeries(ModuleElement):
 
         EXAMPLES::
 
-            sage: Seq2 = kRegularSequenceSpace(2, ZZ)
+            sage: Seq2 = RegularSequenceRing(2, ZZ)
 
             sage: E = Seq2((Matrix([[0, 1], [0, 1]]), Matrix([[0, 0], [0, 1]])),
             ....:          vector([1, 0]), vector([1, 1]))
@@ -1741,7 +1726,6 @@ class RecognizableSeriesSpace(UniqueRepresentation, Parent):
 
         return (coefficient_ring, indices, category, minimize_results)
 
-    @experimental(issue_number=21202)
     def __init__(self, coefficient_ring, indices, category, minimize_results):
         r"""
         See :class:`RecognizableSeriesSpace` for details.
