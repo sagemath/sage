@@ -203,7 +203,7 @@ def load_submodules(module=None, exclude_pattern=None):
             sys.stdout.write("failed\n")
 
 
-def find_objects_from_name(name, module_name=None):
+def find_objects_from_name(name, module_name=None, include_lazy_imports=False):
     r"""
     Return the list of objects from ``module_name`` whose name is ``name``.
 
@@ -253,7 +253,7 @@ def find_objects_from_name(name, module_name=None):
             continue
         if hasattr(smodule, '__dict__') and name in smodule.__dict__:
             u = smodule.__dict__[name]
-            if not isinstance(u, LazyImport) and all(v is not u for v in obj):
+            if (not isinstance(u, LazyImport) or include_lazy_imports) and all(v is not u for v in obj):
                 obj.append(u)
 
     return obj
@@ -548,10 +548,10 @@ def import_statements(*objects, **kwds):
                 obj = [G[name]]
             else:
                 # 1.b. object inside a submodule of sage
-                obj = find_objects_from_name(name, 'sage')
+                obj = find_objects_from_name(name, 'sage', include_lazy_imports=True)
                 if not obj:
                     # 1.c. object from something already imported
-                    obj = find_objects_from_name(name)
+                    obj = find_objects_from_name(name, include_lazy_imports=True)
 
             # remove lazy imported objects from list obj
             i = 0
