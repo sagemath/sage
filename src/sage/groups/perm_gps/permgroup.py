@@ -164,7 +164,7 @@ def load_hap():
 
     EXAMPLES::
 
-        sage: sage.groups.perm_gps.permgroup.load_hap() # optional - gap_package_hap
+        sage: sage.groups.perm_gps.permgroup.load_hap()         # optional - gap_package_hap
     """
     from sage.features.gap import GapPackage
     GapPackage("hap", spkg="gap_packages").require()
@@ -179,16 +179,17 @@ def hap_decorator(f):
 
     EXAMPLES::
 
+        sage: # optional - gap_package_hap
         sage: from sage.groups.perm_gps.permgroup import hap_decorator
         sage: def foo(self, n, p=0): print("Done")
         sage: foo = hap_decorator(foo)
-        sage: foo(None, 3)    #optional - gap_package_hap
+        sage: foo(None, 3)
         Done
-        sage: foo(None, 3, 0) # optional - gap_package_hap
+        sage: foo(None, 3, 0)
         Done
-        sage: foo(None, 3, 5) # optional - gap_package_hap
+        sage: foo(None, 3, 5)
         Done
-        sage: foo(None, 3, 4) #optional - gap_package_hap
+        sage: foo(None, 3, 4)
         Traceback (most recent call last):
         ...
         ValueError: p must be 0 or prime
