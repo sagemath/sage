@@ -1011,9 +1011,9 @@ def is_polhill(int v, int k, int l, int mu):
         sage: from sage.graphs.strongly_regular_db import is_polhill
         sage: t = is_polhill(1024, 231,  38,  56); t
         [<cyfunction is_polhill.<locals>.<lambda> at ...>]
-        sage: g = t[0](*t[1:]); g                    # not tested (too long)
+        sage: g = t[0](*t[1:]); g                       # not tested (too long)
         Graph on 1024 vertices
-        sage: g.is_strongly_regular(parameters=True) # not tested (too long)
+        sage: g.is_strongly_regular(parameters=True)    # not tested (too long)
         (1024, 231, 38, 56)
         sage: t = is_polhill(1024, 264,  56,  72); t
         [<cyfunction is_polhill.<locals>.<lambda> at ...>]
@@ -1496,7 +1496,7 @@ def is_twograph_descendant_of_srg(int v, int k0, int l, int mu):
 
         sage: graphs.strongly_regular_graph(279, 150, 85, 75, existence=True)
         True
-        sage: graphs.strongly_regular_graph(279, 150, 85, 75).is_strongly_regular(parameters=True) # optional - gap_package_design internet
+        sage: graphs.strongly_regular_graph(279, 150, 85, 75).is_strongly_regular(parameters=True)  # optional - gap_package_design internet
         (279, 150, 85, 75)
     """
     cdef int b, k, s
@@ -1642,7 +1642,7 @@ def is_switch_OA_srg(int v, int k, int l, int mu):
 
     EXAMPLES::
 
-        sage: graphs.strongly_regular_graph(170, 78, 35, 36) # indirect doctest
+        sage: graphs.strongly_regular_graph(170, 78, 35, 36)  # indirect doctest
         Graph on 170 vertices
 
     TESTS::
@@ -1909,8 +1909,8 @@ def SRG_100_44_18_20():
     EXAMPLES::
 
         sage: from sage.graphs.strongly_regular_db import SRG_100_44_18_20
-        sage: G = SRG_100_44_18_20()                 # long time
-        sage: G.is_strongly_regular(parameters=True) # long time
+        sage: G = SRG_100_44_18_20()                    # long time
+        sage: G.is_strongly_regular(parameters=True)    # long time
         (100, 44, 18, 20)
     """
     L = ['100', '110', '130', '140', '200', '230', '240', '300', '310', '320',
@@ -1931,8 +1931,8 @@ def SRG_100_45_20_20():
     EXAMPLES::
 
         sage: from sage.graphs.strongly_regular_db import SRG_100_45_20_20
-        sage: G = SRG_100_45_20_20()              # long time
-        sage: G.is_strongly_regular(parameters=True) # long time
+        sage: G = SRG_100_45_20_20()                    # long time
+        sage: G.is_strongly_regular(parameters=True)    # long time
         (100, 45, 20, 20)
     """
     L = ['120', '140', '200', '210', '201', '401', '411', '321', '002', '012',
@@ -1985,8 +1985,8 @@ def SRG_120_77_52_44():
     EXAMPLES::
 
         sage: from sage.graphs.strongly_regular_db import SRG_120_77_52_44
-        sage: G = SRG_120_77_52_44()                 # optional - gap_package_design
-        sage: G.is_strongly_regular(parameters=True) # optional - gap_package_design
+        sage: G = SRG_120_77_52_44()                    # optional - gap_package_design
+        sage: G.is_strongly_regular(parameters=True)    # optional - gap_package_design
         (120, 77, 52, 44)
     """
     from sage.combinat.designs.block_design import WittDesign
@@ -2290,8 +2290,8 @@ def SRG_280_135_70_60():
     EXAMPLES::
 
         sage: from sage.graphs.strongly_regular_db import SRG_280_135_70_60
-        sage: g=SRG_280_135_70_60()                  # long time # optional - internet
-        sage: g.is_strongly_regular(parameters=True) # long time # optional - internet
+        sage: g=SRG_280_135_70_60()                     # long time, optional - internet
+        sage: g.is_strongly_regular(parameters=True)    # long time, optional - internet
         (280, 135, 70, 60)
     """
     from sage.libs.gap.libgap import libgap
@@ -2398,8 +2398,8 @@ def SRG_416_100_36_20():
     EXAMPLES::
 
         sage: from sage.graphs.strongly_regular_db import SRG_416_100_36_20
-        sage: g = SRG_416_100_36_20()                # long time # optional - internet
-        sage: g.is_strongly_regular(parameters=True) # long time # optional - internet
+        sage: g = SRG_416_100_36_20()                   # long time, optional - internet
+        sage: g.is_strongly_regular(parameters=True)    # long time, optional - internet
         (416, 100, 36, 20)
     """
     from sage.libs.gap.libgap import libgap
@@ -2422,8 +2422,8 @@ def SRG_560_208_72_80():
     EXAMPLES::
 
         sage: from sage.graphs.strongly_regular_db import SRG_560_208_72_80
-        sage: g = SRG_560_208_72_80()                # not tested (~2s)
-        sage: g.is_strongly_regular(parameters=True) # not tested (~2s)
+        sage: g = SRG_560_208_72_80()                   # not tested (~2s)
+        sage: g.is_strongly_regular(parameters=True)    # not tested (~2s)
         (560, 208, 72, 80)
     """
     from sage.libs.gap.libgap import libgap
@@ -2662,8 +2662,8 @@ def SRG_1288_792_476_504():
     EXAMPLES::
 
         sage: from sage.graphs.strongly_regular_db import SRG_1288_792_476_504
-        sage: G = SRG_1288_792_476_504()             # long time
-        sage: G.is_strongly_regular(parameters=True) # long time
+        sage: G = SRG_1288_792_476_504()                # long time
+        sage: G.is_strongly_regular(parameters=True)    # long time
         (1288, 792, 476, 504)
     """
     from sage.coding.golay_code import GolayCode
@@ -3109,7 +3109,7 @@ def _build_small_srg_database():
 
         sage: graphs.strongly_regular_graph(81, 50, 31, 30)
         complement(two-intersection set in PG(4,3)): Graph on 81 vertices
-        sage: graphs.strongly_regular_graph(243, 220, 199, 200) # long time
+        sage: graphs.strongly_regular_graph(243, 220, 199, 200)                 # long time
         two-weight code: [55, 5] linear code over GF(3): Graph on 243 vertices
         sage: graphs.strongly_regular_graph(256, 153, 92, 90)
         complement(two-intersection set in PG(4,4)): Graph on 256 vertices
@@ -3117,40 +3117,40 @@ def _build_small_srg_database():
         complement(two-intersection set in PG(8,2)): Graph on 256 vertices
         sage: graphs.strongly_regular_graph(256, 187, 138, 132)
         complement(two-intersection set in PG(8,2)): Graph on 256 vertices
-        sage: graphs.strongly_regular_graph(512, 73, 12, 10)    # not tested (too long)
+        sage: graphs.strongly_regular_graph(512, 73, 12, 10)                    # not tested (too long)
         two-weight code: [219, 9] linear code over GF(2): Graph on 512 vertices
-        sage: graphs.strongly_regular_graph(512, 219, 106, 84)  # long time
+        sage: graphs.strongly_regular_graph(512, 219, 106, 84)                  # long time
         two-intersection set in PG(9,2): Graph on 512 vertices
-        sage: graphs.strongly_regular_graph(512, 315, 202, 180) # not tested (too long)
+        sage: graphs.strongly_regular_graph(512, 315, 202, 180)                 # not tested (too long)
         two-weight code: [70, 9] linear code over GF(2): Graph on 512 vertices
-        sage: graphs.strongly_regular_graph(625, 364, 213, 210) # long time
+        sage: graphs.strongly_regular_graph(625, 364, 213, 210)                 # long time
         complement(two-intersection set in PG(4,5)): Graph on 625 vertices
-        sage: graphs.strongly_regular_graph(625, 416, 279, 272) # long time
+        sage: graphs.strongly_regular_graph(625, 416, 279, 272)                 # long time
         complement(two-intersection set in PG(4,5)): Graph on 625 vertices
-        sage: graphs.strongly_regular_graph(625, 468, 353, 342) # long time
+        sage: graphs.strongly_regular_graph(625, 468, 353, 342)                 # long time
         complement(two-intersection set in PG(4,5)): Graph on 625 vertices
-        sage: graphs.strongly_regular_graph(729, 336, 153,156)  # not tested (too long)
+        sage: graphs.strongly_regular_graph(729, 336, 153,156)                  # not tested (too long)
         two-intersection set in PG(6,3): Graph on 729 vertices
-        sage: graphs.strongly_regular_graph(729, 420, 243, 240) # not tested (too long)
+        sage: graphs.strongly_regular_graph(729, 420, 243, 240)                 # not tested (too long)
         complement(two-intersection set in PG(6,3)): Graph on 729 vertices
-        sage: graphs.strongly_regular_graph(729, 448, 277, 272) # not tested (too long)
+        sage: graphs.strongly_regular_graph(729, 448, 277, 272)                 # not tested (too long)
         complement(two-intersection set in PG(6,3)): Graph on 729 vertices
-        sage: graphs.strongly_regular_graph(729, 476, 313, 306) # not tested (too long)
+        sage: graphs.strongly_regular_graph(729, 476, 313, 306)                 # not tested (too long)
         complement(two-intersection set in PG(6,3)): Graph on 729 vertices
-        sage: graphs.strongly_regular_graph(729, 532, 391, 380) # not tested (too long)
+        sage: graphs.strongly_regular_graph(729, 532, 391, 380)                 # not tested (too long)
         complement(two-intersection set in PG(6,3)): Graph on 729 vertices
-        sage: graphs.strongly_regular_graph(729, 560, 433, 420) # not tested (too long)
+        sage: graphs.strongly_regular_graph(729, 560, 433, 420)                 # not tested (too long)
         complement(two-intersection set in PG(6,3)): Graph on 729 vertices
         Graph on 729 vertices
-        sage: graphs.strongly_regular_graph(729, 616, 523, 506) # not tested (too long)
+        sage: graphs.strongly_regular_graph(729, 616, 523, 506)                 # not tested (too long)
         complement(two-intersection set in PG(6,3)): Graph on 729 vertices
-        sage: graphs.strongly_regular_graph(1024, 363, 122, 132)# not tested (too long)
+        sage: graphs.strongly_regular_graph(1024, 363, 122, 132)                # not tested (too long)
         two-intersection set in PG(5,4): Graph on 1024 vertices
-        sage: graphs.strongly_regular_graph(1024, 396, 148, 156)# not tested (too long)
+        sage: graphs.strongly_regular_graph(1024, 396, 148, 156)                # not tested (too long)
         two-intersection set in PG(5,4): Graph on 1024 vertices
-        sage: graphs.strongly_regular_graph(1024, 429, 176, 182)# not tested (too long)
+        sage: graphs.strongly_regular_graph(1024, 429, 176, 182)                # not tested (too long)
         two-intersection set in PG(5,4): Graph on 1024 vertices
-        sage: graphs.strongly_regular_graph(1024, 825, 668, 650)# not tested (too long)
+        sage: graphs.strongly_regular_graph(1024, 825, 668, 650)                # not tested (too long)
         complement(two-intersection set in PG(10,2)): Graph on 1024 vertices
     """
     from sage.graphs.generators.smallgraphs import McLaughlinGraph

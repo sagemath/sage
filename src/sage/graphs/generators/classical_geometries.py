@@ -1276,8 +1276,8 @@ def CossidentePenttilaGraph(q):
 
     TESTS::
 
-        sage: G = graphs.CossidentePenttilaGraph(7)     # optional - gap_package_grape # long time
-        sage: G.is_strongly_regular(parameters=True)    # optional - gap_package_grape # long time
+        sage: G = graphs.CossidentePenttilaGraph(7)     # optional - gap_package_grape, long time
+        sage: G.is_strongly_regular(parameters=True)    # optional - gap_package_grape, long time
         (1376, 150, 2, 18)
         sage: graphs.CossidentePenttilaGraph(2)
         Traceback (most recent call last):
