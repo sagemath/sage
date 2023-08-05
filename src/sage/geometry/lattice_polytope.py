@@ -3155,8 +3155,8 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
         INPUT:
 
         - ``check`` -- Boolean (default: ``False``), whether to return
-            the permutations leaving the maximal vertex-facet pairing
-            matrix invariant.
+          the permutations leaving the maximal vertex-facet pairing
+          matrix invariant.
 
         OUTPUT:
 
@@ -3200,7 +3200,7 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
             True
         """
         from .palp_normal_form import _palp_PM_max
-        return _palp_PM_max(self, check)
+        return _palp_PM_max(self.vertex_facet_pairing_matrix(), check)
 
     def npoints(self):
         r"""
@@ -4978,12 +4978,13 @@ def _palp_canonical_order(V, PM_max, permutations):
 
     - ``PM_max`` -- the maximal vertex-facet pairing matrix
 
-    - ``permutation`` -- the permutations of the vertices yielding
+    - ``permutations`` -- the permutations of the vertices yielding
         ``PM_max``.
 
     OUTPUT:
 
-    The PALP normal form as a :class:`point collection <PointCollection>`.
+    The PALP normal form as a :class:`point collection <PointCollection>`
+    and a permutation.
 
     TESTS::
 
@@ -4998,32 +4999,15 @@ def _palp_canonical_order(V, PM_max, permutations):
          M(-1,  0)
          in 2-d lattice M, (1,3,2,4))
     """
-    n_v = PM_max.ncols()
-    S_v = SymmetricGroup(n_v)
-    p_c = S_v.one()
-    M_max = [max(row[j] for row in PM_max.rows()) for j in range(n_v)]
-    S_max = sum(PM_max)
-    for i in range(n_v):
-        k = i
-        for j in range(i + 1, n_v):
-            if M_max[j] < M_max[k] or \
-               (M_max[j] == M_max[k] and S_max[j] < S_max[k]):
-                k = j
-        if not k == i:
-            M_max[i], M_max[k] = M_max[k], M_max[i]
-            S_max[i], S_max[k] = S_max[k], S_max[i]
-            p_c = S_v((1 + i, 1 + k), check=False) * p_c
-    # Create array of possible NFs.
-    permutations = [p_c * l[1] for l in permutations.values()]
+    from .palp_normal_form import _palp_canonical_order
+
     Vmatrix = V.column_matrix()
-    Vs = [(Vmatrix.with_permuted_columns(sig).hermite_form(), sig)
-          for sig in permutations]
-    Vmin = min(Vs, key=lambda x:x[0])
     Vmodule = V.module()
-    vertices = [Vmodule(_) for _ in Vmin[0].columns()]
+    vertices, permutation = _palp_canonical_order(Vmatrix, PM_max, permutations)
+    vertices = [Vmodule(v) for v in vertices]
     for v in vertices:
         v.set_immutable()
-    return (PointCollection(vertices, Vmodule), Vmin[1])
+    return PointCollection(vertices, Vmodule), permutation
 
 
 def _palp_convert_permutation(permutation):

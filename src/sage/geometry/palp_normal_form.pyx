@@ -1,9 +1,11 @@
 from sage.groups.perm_gps.permgroup_element cimport PermutationGroupElement
 from sage.groups.perm_gps.permgroup_named import SymmetricGroup
 from sage.matrix.matrix_integer_dense cimport Matrix_integer_dense
+from sage.matrix.special import column_matrix
+from sage.structure.element import Matrix
 
 
-def _palp_PM_max(self, check=False):
+def _palp_PM_max(Matrix_integer_dense PM, check=False):
     r"""
     Compute the permutation normal form of the vertex facet pairing
     matrix .
@@ -64,7 +66,6 @@ def _palp_PM_max(self, check=False):
         sage: all(results)  # long time
         True
     """
-    cdef Matrix_integer_dense PM = self.vertex_facet_pairing_matrix()
     cdef int n_v = PM.ncols()
     cdef int n_f = PM.nrows()
     S_v = SymmetricGroup(n_v)
@@ -293,3 +294,68 @@ def _palp_PM_max(self, check=False):
         return (PM_max, permutations)
     else:
         return PM_max
+
+
+def _palp_canonical_order(vertices, PM_max, permutations):
+    r"""
+    Compute the PALP normal form of vertices of a lattice polytope
+    using auxiliary data computed elsewhere.
+
+    This is a helper function for
+    :meth:`~sage.geometry.lattice_polytope.LatticePolytopeClass.normal_form`
+    and should not be called directly.
+
+    Given an iterable of vertices, the maximal vertex-facet pairing matrix
+    and the permutations realizing this matrix, apply the last part of the
+    PALP algorithm and return the normal form.
+
+    INPUT:
+
+    - ``vertices`` -- iterable of iterables. The vertices.
+
+    - ``PM_max`` -- the maximal vertex-facet pairing matrix
+
+    - ``permutation`` -- the permutations of the vertices yielding ``PM_max``.
+
+    OUTPUT:
+
+    The PALP normal form as an iterable of integer vectors.
+
+    TESTS::
+
+        sage: L = lattice_polytope.cross_polytope(2)
+        sage: V = L.vertices()
+        sage: PM_max, permutations = L._palp_PM_max(check=True)                         # optional - sage.groups
+        sage: from sage.geometry.lattice_polytope import _palp_canonical_order
+        sage: _palp_canonical_order(V, PM_max, permutations)                            # optional - sage.groups
+        (M( 1,  0),
+         M( 0,  1),
+         M( 0, -1),
+         M(-1,  0)
+         in 2-d lattice M, (1,3,2,4))
+    """
+    n_v = PM_max.ncols()
+    S_v = SymmetricGroup(n_v)
+    p_c = S_v.one()
+    M_max = [max(row[j] for row in PM_max.rows()) for j in range(n_v)]
+    S_max = sum(PM_max)
+    for i in range(n_v):
+        k = i
+        for j in range(i + 1, n_v):
+            if M_max[j] < M_max[k] or \
+               (M_max[j] == M_max[k] and S_max[j] < S_max[k]):
+                k = j
+        if not k == i:
+            M_max[i], M_max[k] = M_max[k], M_max[i]
+            S_max[i], S_max[k] = S_max[k], S_max[i]
+            p_c = S_v((1 + i, 1 + k), check=False) * p_c
+    # Create array of possible NFs.
+    permutations = [p_c * l[1] for l in permutations.values()]
+    if isinstance(vertices, Matrix):
+        Vmatrix = vertices
+    else:
+        Vmatrix = column_matrix(vertices)
+    Vs = [(Vmatrix.with_permuted_columns(sig).hermite_form(), sig)
+          for sig in permutations]
+    Vmin = min(Vs, key=lambda x: x[0])
+    return Vmin[0].columns(), Vmin[1]
