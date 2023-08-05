@@ -47,7 +47,7 @@ def strong_orientations_iterator(G):
 
     A strong orientation of a graph is an orientation of its edges such that the
     obtained digraph is strongly connected (i.e. there exist a directed path
-    between each pair of vertices). According Robin's theorem (see the
+    between each pair of vertices). According to Robbin's theorem (see the
     :wikipedia:`Robbins_theorem`), the graphs that have strong orientations are
     exactly the 2-edge-connected graphs (i.e., the bridgeless graphs).
 
@@ -176,8 +176,7 @@ def strong_orientations_iterator(G):
             Dg.reverse_edge(A[bit][1], A[bit][0])
             existingAedges[bit] = 0
         # launch the algorithm for enumeration of the solutions
-        for sol in _strong_orientations_of_a_mixed_graph(Dg, V, treeEdges):
-            yield sol
+        yield from _strong_orientations_of_a_mixed_graph(Dg, V, treeEdges)
 
 
 def _strong_orientations_of_a_mixed_graph(Dg, V, E):
