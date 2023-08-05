@@ -4664,7 +4664,6 @@ def WienerArayaGraph():
         False
         sage: g.delete_vertex(g.random_vertex())
         sage: g.is_hamiltonian()                                                        # needs sage.numerical.mip
->>>>>>> 85d4a8d443 (./sage -fixdoctests --probe all --distribution 'sagemath-graphs[modules]'  src/sage/graphs/generators/smallgraphs.py; ./sage -fixdoctests src/sage/graphs/generators/smallgraphs.py)
         True
     """
     g = Graph(name="Wiener-Araya Graph")
