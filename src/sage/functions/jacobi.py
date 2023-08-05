@@ -376,17 +376,17 @@ class Jacobi(BuiltinFunction):
         sn, cn, and dn are analytic for all real ``x``, so we can check
         that the derivatives are correct by computing the series::
 
-            sage: # needs mpmath
-            sage: from sage.libs.mpmath.all import almosteq
+            sage: # needs mpmath sage.symbolic
+            sage: from mpmath import almosteq
             sage: a = 0.9327542442482303
             sage: b = 0.7402326293643771
-            sage: almosteq(jacobi_sn(x, b).series(x, 10).subs(x=a),                     # needs sage.symbolic
+            sage: almosteq(jacobi_sn(x, b).series(x, 10).subs(x=a),
             ....:          jacobi_sn(a, b), abs_eps=0.01)
             True
-            sage: almosteq(jacobi_cn(x, b).series(x, 10).subs(x=a),                     # needs sage.symbolic
+            sage: almosteq(jacobi_cn(x, b).series(x, 10).subs(x=a),
             ....:          jacobi_cn(a, b), abs_eps=0.01)
             True
-            sage: almosteq(jacobi_dn(x, b).series(x, 10).subs(x=a),                     # needs sage.symbolic
+            sage: almosteq(jacobi_dn(x, b).series(x, 10).subs(x=a),
             ....:          jacobi_dn(a, b), abs_eps=0.01)
             True
         """
@@ -568,7 +568,7 @@ class InverseJacobi(BuiltinFunction):
         Check that the simplifications are correct::
 
             sage: # needs mpmath sage.symbolic
-            sage: from sage.libs.mpmath.all import almosteq
+            sage: from mpmath import almosteq
             sage: almosteq(n(inverse_jacobi_cd(1, -8, hold=True)),
             ....:          n(inverse_jacobi_cd(1, -8)))
             True
@@ -734,7 +734,7 @@ class InverseJacobi(BuiltinFunction):
         Check that ``dy/dx * dx/dy == 1``, where ``y = jacobi_pq(x, m)`` and
         ``x = inverse_jacobi_pq(y, m)``::
 
-            sage: from sage.libs.mpmath.all import almosteq                             # needs mpmath
+            sage: from mpmath import almosteq                                           # needs mpmath
             sage: a = 0.130103220857094
             sage: b = 0.437176765041986
             sage: m = var('m')                                                                                          # needs sage.symbolic
@@ -1157,7 +1157,7 @@ def inverse_jacobi_f(kind, x, m):
 
     TESTS::
 
-        sage: from sage.libs.mpmath.all import ellipfun, chop                           # needs mpmath
+        sage: from mpmath import ellipfun, chop                                         # needs mpmath
         sage: from sage.functions.jacobi import inverse_jacobi_f
 
         sage: # needs mpmath
@@ -1633,7 +1633,7 @@ def jacobi_am_f(x, m):
     TESTS::
 
         sage: # needs mpmath
-        sage: from sage.libs.mpmath.all import ellipf
+        sage: from mpmath import ellipf
         sage: from sage.functions.jacobi import jacobi_am_f
         sage: ellipf(jacobi_am_f(0.5, 1), 1)
         mpf('0.5')

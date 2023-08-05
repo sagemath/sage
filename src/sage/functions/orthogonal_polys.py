@@ -2330,8 +2330,8 @@ class Func_ultraspherical(GinacFunction):
     Numerical evaluation with the mpmath library::
 
         sage: # needs mpmath
-        sage: from sage.libs.mpmath.all import gegenbauer as gegenbauer_mp
-        sage: from sage.libs.mpmath.all import mp
+        sage: from mpmath import gegenbauer as gegenbauer_mp
+        sage: from mpmath import mp
         sage: mp.pretty = True; mp.dps=25
         sage: gegenbauer_mp(-7,0.5,0.3)
         0.1291811875
