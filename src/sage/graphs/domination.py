@@ -841,6 +841,19 @@ def minimal_dominating_sets(G, to_dominate=None, work_on_copy=True, k=1):
         sage: list(G.minimal_dominating_sets(k=3))
         [{(0, 0)}, {(0, 1)}, {(0, 2)}, {(1, 0)}, {(1, 1)}, {(1, 2)}]
 
+    When parameter ``work_on_copy`` is ``False``, the input graph is modified
+    (relabeled)::
+
+        sage: G = Graph([('A', 'B')])
+        sage: _ = list(G.minimal_dominating_sets(work_on_copy=True))
+        sage: set(G) == {'A', 'B'}
+        True
+        sage: _ = list(G.minimal_dominating_sets(work_on_copy=False))
+        sage: set(G) == {'A', 'B'}
+        False
+        sage: set(G) == {0, 1}
+        True
+
     TESTS:
 
     The empty graph is handled correctly::
