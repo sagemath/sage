@@ -491,8 +491,8 @@ cdef class Function(SageObject):
 
         Make sure we can pass mpmath arguments (:trac:`13608`)::
 
-            sage: from sage.libs.mpmath.all import workprec, mpc                        # needs mpmath
-            sage: with workprec(128): sin(mpc('0.5', '1.2'))                            # needs mpmath
+            sage: import mpmath                                                         # needs mpmath
+            sage: with mpmath.workprec(128): sin(mpmath.mpc('0.5', '1.2'))              # needs mpmath
             mpc(real='0.86807452059118713192871150787046523179886',
                 imag='1.3246769633571289324095313649562791720086')
 
@@ -574,13 +574,13 @@ cdef class Function(SageObject):
 
         EXAMPLES::
 
-            sage: foo = function("foo", nargs=2)                                        # needs sage.symbolic
-            sage: foo.number_of_arguments()                                             # needs sage.symbolic
+            sage: # needs sage.symbolic
+            sage: foo = function("foo", nargs=2)
+            sage: foo.number_of_arguments()
             2
-            sage: foo(x, x)                                                             # needs sage.symbolic
+            sage: foo(x, x)
             foo(x, x)
-
-            sage: foo(x)                                                                # needs sage.symbolic
+            sage: foo(x)
             Traceback (most recent call last):
             ...
             TypeError: Symbolic function foo takes exactly 2 arguments (1 given)
@@ -780,8 +780,8 @@ cdef class Function(SageObject):
         implementation, using sage reals instead of mpmath ones. This
         might change when aliases for these functions are established::
 
-            sage: from sage.libs.mpmath.all import workprec, mpf                        # needs mpmath
-            sage: with workprec(128): arcsin(mpf('0.5'))                                # needs mpmath
+            sage: import mpmath                                                         # needs mpmath
+            sage: with mpmath.workprec(128): arcsin(mpmath.mpf('0.5'))                  # needs mpmath
             mpf('0.52359877559829887307710723054658381403157')
 
         TESTS:
@@ -791,7 +791,7 @@ cdef class Function(SageObject):
         will certainly never get created in mpmath. ::
 
             sage: # needs mpmath
-            sage: from sage.libs.mpmath.all import workprec, mpf
+            sage: import mpmath
             sage: from sage.symbolic.function import BuiltinFunction
             sage: class NoMpmathFn(BuiltinFunction):
             ....:         def _eval_(self, arg):
@@ -800,12 +800,12 @@ cdef class Function(SageObject):
             ....:                 assert parent == RealField(prec)
             ....:                 return prec
             sage: noMpmathFn = NoMpmathFn("noMpmathFn")
-            sage: with workprec(64): noMpmathFn(sqrt(mpf('2')))                         # needs sage.symbolic
+            sage: with mpmath.workprec(64): noMpmathFn(sqrt(mpmath.mpf('2')))
             64
-            sage: sage.libs.mpmath.all.noMpmathFn = lambda x: 123
-            sage: with workprec(64): noMpmathFn(sqrt(mpf('2')))
+            sage: mpmath.noMpmathFn = lambda x: 123
+            sage: with mpmath.workprec(64): noMpmathFn(sqrt(mpmath.mpf('2')))
             123
-            sage: del sage.libs.mpmath.all.noMpmathFn
+            sage: del mpmath.noMpmathFn
 
         """
         import mpmath
@@ -837,7 +837,7 @@ cdef class GinacFunction(BuiltinFunction):
         TESTS::
 
             sage: from sage.functions.trig import Function_sin
-            sage: s = Function_sin() # indirect doctest
+            sage: s = Function_sin()  # indirect doctest
             sage: s(0)                                                                  # needs sage.symbolic
             0
             sage: s(pi)                                                                 # needs sage.symbolic
@@ -957,10 +957,11 @@ cdef class BuiltinFunction(Function):
             (1.5430806348152437-0j)
             sage: assert type(_) is complex
 
-            sage: import sage.libs.mpmath.all                                           # needs mpmath
-            sage: cos(sage.libs.mpmath.all.mpf('1.321412'))                             # needs mpmath
+            sage: # needs mpmath
+            sage: import mpmath
+            sage: cos(mpmath.mpf('1.321412'))
             mpf('0.24680737898640387')
-            sage: cos(sage.libs.mpmath.all.mpc(1,1))                                    # needs mpmath
+            sage: cos(mpmath.mpc(1,1))
             mpc(real='0.83373002513114902', imag='-0.98889770576286506')
 
             sage: import numpy                                                          # needs numpy
