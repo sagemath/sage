@@ -125,17 +125,18 @@ used to tile the plane::
     sage: T.save(fname_png)
     sage: r2 = os.system('convert '+fname_png+' '+fname_ppm)    # optional -- ImageMagick
 
-    sage: T = Tachyon(xres=800, yres=600,                       # optional -- ImageMagick
+    sage: # optional - imagemagick
+    sage: T = Tachyon(xres=800, yres=600,
     ....:             camera_position=(-2.0,-.1,.3),
     ....:             projection='fisheye',
     ....:             frustum=(-1.0, 1.0, -1.0, 1.0))
-    sage: T.texture('t1', color=(1,0,0), specular=.9)           # optional -- ImageMagick
-    sage: T.texture('p1', color=(1,1,1), opacity=.1,            # optional -- ImageMagick
+    sage: T.texture('t1', color=(1,0,0), specular=.9)
+    sage: T.texture('p1', color=(1,1,1), opacity=.1,
     ....:           imagefile=fname_ppm, texfunc=9)
-    sage: T.sphere((0,0,0), .5, 't1')                           # optional -- ImageMagick
-    sage: T.plane((0,0,-1), (0,0,1), 'p1')                      # optional -- ImageMagick
-    sage: T.light((-4,-4,4), .1, (1,1,1))                       # optional -- ImageMagick
-    sage: T.show()                                              # optional -- ImageMagick
+    sage: T.sphere((0,0,0), .5, 't1')
+    sage: T.plane((0,0,-1), (0,0,1), 'p1')
+    sage: T.light((-4,-4,4), .1, (1,1,1))
+    sage: T.show()
 
 AUTHOR:
 
@@ -258,24 +259,26 @@ class Tachyon(WithEqualityById, SageObject):
     Points on an elliptic curve, their height indicated by their height
     above the axis::
 
+        sage: # needs sage.schemes
         sage: t = Tachyon(camera_position=(5,2,2), look_at=(0,1,0))
         sage: t.light((10,3,2), 0.2, (1,1,1))
         sage: t.texture('t0', ambient=0.1, diffuse=0.9, specular=0.5, opacity=1.0, color=(1,0,0))
         sage: t.texture('t1', ambient=0.1, diffuse=0.9, specular=0.5, opacity=1.0, color=(0,1,0))
         sage: t.texture('t2', ambient=0.1, diffuse=0.9, specular=0.5, opacity=1.0, color=(0,0,1))
-        sage: E = EllipticCurve('37a')                                                  # optional - sage.schemes
-        sage: P = E([0,0])                                                              # optional - sage.schemes
-        sage: Q = P                                                                     # optional - sage.schemes
+        sage: E = EllipticCurve('37a')                                                  # needs sage.schemes
+        sage: P = E([0,0])                                                              # needs sage.schemes
+        sage: Q = P                                                                     # needs sage.schemes
         sage: n = 100
-        sage: for i in range(n):   # increase 20 for a better plot                      # optional - sage.schemes
+        sage: for i in range(n):   # increase 20 for a better plot                      # needs sage.schemes
         ....:    Q = Q + P
         ....:    t.sphere((Q[1], Q[0], ZZ(i)/n), 0.1, 't%s'%(i%3))
-        sage: t.show()                                                                  # optional - sage.schemes
+        sage: t.show()                                                                  # needs sage.schemes
 
     A beautiful picture of rational points on a rank 1 elliptic curve.
 
     ::
 
+        sage: # needs sage.schemes
         sage: t = Tachyon(xres=1000, yres=800, camera_position=(2,7,4),
         ....:             look_at=(2,0,0), raydepth=4)
         sage: t.light((10,3,2), 1, (1,1,1))
@@ -286,16 +289,16 @@ class Tachyon(WithEqualityById, SageObject):
         sage: t.plane((0,0,0),(0,0,1),'grey')
         sage: t.cylinder((0,0,0),(1,0,0),.01,'black')
         sage: t.cylinder((0,0,0),(0,1,0),.01,'black')
-        sage: E = EllipticCurve('37a')                                                  # optional - sage.schemes
-        sage: P = E([0,0])                                                              # optional - sage.schemes
-        sage: Q = P                                                                     # optional - sage.schemes
+        sage: E = EllipticCurve('37a')                                                  # needs sage.schemes
+        sage: P = E([0,0])                                                              # needs sage.schemes
+        sage: Q = P                                                                     # needs sage.schemes
         sage: n = 100
-        sage: for i in range(n):                                                        # optional - sage.schemes
+        sage: for i in range(n):                                                        # needs sage.schemes
         ....:    Q = Q + P
         ....:    c = i/n + .1
         ....:    t.texture('r%s'%i,color=(float(i/n),0,0))
         ....:    t.sphere((Q[0], -Q[1], .01), .04, 'r%s'%i)
-        sage: t.show()    # long time, e.g., 10-20 seconds                              # optional - sage.schemes
+        sage: t.show()                          # long time                             # needs sage.schemes
 
     A beautiful spiral.
 
@@ -305,11 +308,11 @@ class Tachyon(WithEqualityById, SageObject):
         sage: t.light((0,0,100), 1, (1,1,1))
         sage: t.texture('r', ambient=0.1, diffuse=0.9, specular=0.5,
         ....:           opacity=1.0, color=(1,0,0))
-        sage: for i in srange(0,50,0.1):                                                # optional - sage.schemes
-        ....:    t.sphere((i/10,sin(i),cos(i)), 0.05, 'r')
+        sage: for i in srange(0,50,0.1):
+        ....:    t.sphere((i/10.0,sin(i),cos(i)), 0.05, 'r')
         sage: t.texture('white', color=(1,1,1), opacity=1, specular=1, diffuse=1)
         sage: t.plane((0,0,-100), (0,0,-100), 'white')
-        sage: t.show()                                                                  # optional - sage.schemes
+        sage: t.show()
 
     If the optional parameter ``viewdir`` is not set, the camera
     center should not coincide with the point which
@@ -326,12 +329,11 @@ class Tachyon(WithEqualityById, SageObject):
         ....:             projection='fisheye', frustum=(-1.0, 1.0, -1.0, 1.0))
         sage: T.texture('t1', color=(0,0,1))
         sage: cedges = [[[1, 1, 1], [-1, 1, 1]], [[1, 1, 1], [1, -1, 1]],
-        ....: [[1, 1, 1], [1, 1, -1]], [[-1, 1, 1], [-1, -1, 1]], [[-1, 1, 1],
-        ....: [-1, 1, -1]], [[1, -1, 1], [-1, -1, 1]], [[1, -1, 1],
-        ....: [1, -1, -1]],
-        ....: [[-1, -1, 1], [-1, -1, -1]], [[1, 1, -1], [-1, 1, -1]],
-        ....: [[1, 1, -1], [1, -1, -1]], [[-1, 1, -1], [-1, -1, -1]],
-        ....: [[1, -1, -1], [-1, -1, -1]]]
+        ....:           [[1, 1, 1], [1, 1, -1]], [[-1, 1, 1], [-1, -1, 1]],
+        ....:           [[-1, 1, 1], [-1, 1, -1]], [[1, -1, 1], [-1, -1, 1]],
+        ....:           [[1, -1, 1], [1, -1, -1]], [[-1, -1, 1], [-1, -1, -1]],
+        ....:           [[1, 1, -1], [-1, 1, -1]], [[1, 1, -1], [1, -1, -1]],
+        ....:           [[-1, 1, -1], [-1, -1, -1]], [[1, -1, -1], [-1, -1, -1]]]
         sage: for ed in cedges:
         ....:     T.fcylinder(ed[0], ed[1], .05, 't1')
         sage: T.light((-4,-4,4), .1, (1,1,1))
@@ -560,11 +562,11 @@ class Tachyon(WithEqualityById, SageObject):
             sage: def f(x,y): return float(sin(x*y))
             sage: h.texture('t0', ambient=0.1, diffuse=0.9, specular=0.1,
             ....:           opacity=1.0, color=(1.0,0,0))
-            sage: h.plot(f, (-4,4), (-4,4), "t0", max_depth=5, initial_depth=3,    # optional -- sage.symbolic
+            sage: h.plot(f, (-4,4), (-4,4), "t0", max_depth=5, initial_depth=3,         # needs sage.symbolic
             ....:        num_colors=60)  # increase min_depth for better picture
             sage: from sage.misc.verbose import set_verbose, get_verbose
             sage: set_verbose(0)
-            sage: h.show()                                                         # optional -- sage.symbolic
+            sage: h.show()                                                              # needs sage.symbolic
 
         This second example, using a "medium" global verbosity
         setting of 1, displays some extra technical information then
@@ -578,10 +580,10 @@ class Tachyon(WithEqualityById, SageObject):
             sage: def f(x,y): return float(sin(x*y))
             sage: s.texture('t0', ambient=0.1, diffuse=0.9, specular=0.1,
             ....:           opacity=1.0, color=(1.0,0,0))
-            sage: s.plot(f, (-4,4), (-4,4), "t0", max_depth=5, initial_depth=3,    # optional -- sage.symbolic
+            sage: s.plot(f, (-4,4), (-4,4), "t0", max_depth=5, initial_depth=3,         # needs sage.symbolic
             ....:        num_colors=60)  # increase min_depth for better picture
             sage: set_verbose(1)
-            sage: s.show()                                                         # optional -- sage.symbolic
+            sage: s.show()                                                              # needs sage.symbolic
             tachyon ...
             Scene contains 2713 objects.
             ...
@@ -601,11 +603,11 @@ class Tachyon(WithEqualityById, SageObject):
             sage: def f(x,y): return float(sin(x*y))
             sage: d.texture('t0', ambient=0.1, diffuse=0.9, specular=0.1,
             ....:           opacity=1.0, color=(1.0,0,0))
-            sage: d.plot(f,(-4,4),(-4,4),"t0",max_depth=5,initial_depth=3,         # optional -- sage.symbolic
+            sage: d.plot(f,(-4,4),(-4,4),"t0",max_depth=5,initial_depth=3,              # needs sage.symbolic
             ....:        num_colors=60)  # increase min_depth for better picture
             sage: get_verbose()
             0
-            sage: d.show(verbose=2)                                                # optional -- sage.symbolic
+            sage: d.show(verbose=2)                                                     # needs sage.symbolic
             tachyon ...
             Scene contains 2713 objects.
             ...
@@ -1013,9 +1015,9 @@ class Tachyon(WithEqualityById, SageObject):
             sage: def f(x,y): return float(sin(x*y))
             sage: t.texture('t0', ambient=0.1, diffuse=0.9, specular=0.1,
             ....:           opacity=1.0, color=(1.0,0,0))
-            sage: t.plot(f, (-4,4), (-4,4), "t0", max_depth=5, initial_depth=3,    # optional -- sage.symbolic
+            sage: t.plot(f, (-4,4), (-4,4), "t0", max_depth=5, initial_depth=3,         # needs sage.symbolic
             ....:        num_colors=60)  # increase min_depth for better picture
-            sage: t.show(verbose=1)                                                # optional -- sage.symbolic
+            sage: t.show(verbose=1)                                                     # needs sage.symbolic
             tachyon ...
             Scene contains 2713 objects.
             ...
@@ -1030,9 +1032,9 @@ class Tachyon(WithEqualityById, SageObject):
             sage: def g(x,y): return (float(y*cos(x*y)), float(x*cos(x*y)), 1)
             sage: t.texture('t0', ambient=0.1, diffuse=0.9, specular=0.1,
             ....:           opacity=1.0, color=(1.0,0,0))
-            sage: t.plot(f, (-4,4), (-4,4), "t0", max_depth=5, initial_depth=3,    # optional -- sage.symbolic
+            sage: t.plot(f, (-4,4), (-4,4), "t0", max_depth=5, initial_depth=3,         # needs sage.symbolic
             ....:        grad_f=g)  # increase min_depth for better picture
-            sage: t.show(verbose=1)                                                # optional -- sage.symbolic
+            sage: t.show(verbose=1)                                                     # needs sage.symbolic
             tachyon ...
             Scene contains 2713 objects.
             ...

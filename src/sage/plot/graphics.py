@@ -138,15 +138,15 @@ class Graphics(WithEqualityById, SageObject):
 
         sage: h = 10; c = 0.4; p = 0.5
         sage: G = Graphics()
-        sage: for x in srange(1, h+1):                                                  # optional - sage.symbolic
+        sage: for x in srange(1, h+1):                                                  # needs sage.symbolic
         ....:     l = [[0,x*sqrt(3)],[-x/2,-x*sqrt(3)/2],[x/2,-x*sqrt(3)/2],[0,x*sqrt(3)]]
         ....:     G += line(l, color=hue(c + p*(x/h)))
-        sage: G.show(figsize=[5,5])                                                     # optional - sage.symbolic
+        sage: G.show(figsize=[5,5])                                                     # needs sage.symbolic
 
     We can change the scale of the axes in the graphics before displaying.::
 
-        sage: G = plot(exp, 1, 10)      # long time                                     # optional - sage.symbolic
-        sage: G.show(scale='semilogy')  # long time                                     # optional - sage.symbolic
+        sage: G = plot(exp, 1, 10)              # long time                             # needs sage.symbolic
+        sage: G.show(scale='semilogy')          # long time                             # needs sage.symbolic
 
     TESTS:
 
@@ -212,32 +212,32 @@ class Graphics(WithEqualityById, SageObject):
         EXAMPLES: We create a plot of the upper half of a circle, but it
         doesn't look round because the aspect ratio is off::
 
-            sage: P = plot(sqrt(1-x^2),(x,-1,1)); P                                     # optional - sage.symbolic
+            sage: P = plot(sqrt(1-x^2),(x,-1,1)); P                                     # needs sage.symbolic
             Graphics object consisting of 1 graphics primitive
 
         So we set the aspect ratio and now it is round::
 
-            sage: P.set_aspect_ratio(1)                                                 # optional - sage.symbolic
-            sage: P.aspect_ratio()                                                      # optional - sage.symbolic
+            sage: P.set_aspect_ratio(1)                                                 # needs sage.symbolic
+            sage: P.aspect_ratio()                                                      # needs sage.symbolic
             1.0
-            sage: P                                                                     # optional - sage.symbolic
+            sage: P                                                                     # needs sage.symbolic
             Graphics object consisting of 1 graphics primitive
 
         Note that the aspect ratio is inherited upon addition (which takes
         the max of aspect ratios of objects whose aspect ratio has been
         set)::
 
-            sage: P + plot(sqrt(4-x^2),(x,-2,2))                                        # optional - sage.symbolic
+            sage: P + plot(sqrt(4-x^2),(x,-2,2))                                        # needs sage.symbolic
             Graphics object consisting of 2 graphics primitives
 
         In the following example, both plots produce a circle that looks
         twice as tall as wide::
 
             sage: Q = circle((0,0), 0.5); Q.set_aspect_ratio(2)
-            sage: (P + Q).aspect_ratio(); P + Q                                         # optional - sage.symbolic
+            sage: (P + Q).aspect_ratio(); P + Q                                         # needs sage.symbolic
             2.0
             Graphics object consisting of 2 graphics primitives
-            sage: (Q + P).aspect_ratio(); Q + P                                         # optional - sage.symbolic
+            sage: (Q + P).aspect_ratio(); Q + P                                         # needs sage.symbolic
             2.0
             Graphics object consisting of 2 graphics primitives
         """
@@ -293,23 +293,24 @@ class Graphics(WithEqualityById, SageObject):
 
         By default no legend is displayed::
 
-            sage: P = plot(sin)                                                         # optional - sage.symbolic
-            sage: P.legend()                                                            # optional - sage.symbolic
+            sage: P = plot(sin)                                                         # needs sage.symbolic
+            sage: P.legend()                                                            # needs sage.symbolic
             False
 
         But if we put a label then the legend is shown::
 
-            sage: P = plot(sin, legend_label='sin')                                     # optional - sage.symbolic
-            sage: P.legend()                                                            # optional - sage.symbolic
+            sage: P = plot(sin, legend_label='sin')                                     # needs sage.symbolic
+            sage: P.legend()                                                            # needs sage.symbolic
             True
 
         We can turn it on or off::
 
-            sage: P.legend(False)                                                       # optional - sage.symbolic
-            sage: P.legend()                                                            # optional - sage.symbolic
+            sage: # needs sage.symbolic
+            sage: P.legend(False)
+            sage: P.legend()
             False
-            sage: P.legend(True)                                                        # optional - sage.symbolic
-            sage: P  #  show with the legend                                            # optional - sage.symbolic
+            sage: P.legend(True)
+            sage: P  #  show with the legend
             Graphics object consisting of 1 graphics primitive
         """
         if show is None:
@@ -405,30 +406,30 @@ class Graphics(WithEqualityById, SageObject):
 
         By default, no options are set::
 
-            sage: p = plot(tan, legend_label='tan')                                     # optional - sage.symbolic
-            sage: p.set_legend_options()                                                # optional - sage.symbolic
+            sage: p = plot(tan, legend_label='tan')                                     # needs sage.symbolic
+            sage: p.set_legend_options()                                                # needs sage.symbolic
             {}
 
         We build a legend without a shadow::
 
-            sage: p.set_legend_options(shadow=False)                                    # optional - sage.symbolic
-            sage: p.set_legend_options()['shadow']                                      # optional - sage.symbolic
+            sage: p.set_legend_options(shadow=False)                                    # needs sage.symbolic
+            sage: p.set_legend_options()['shadow']                                      # needs sage.symbolic
             False
 
         To set the legend position to the center of the plot, all these
         methods are roughly equivalent::
 
-            sage: p.set_legend_options(loc='center'); p                                 # optional - sage.symbolic
+            sage: p.set_legend_options(loc='center'); p                                 # needs sage.symbolic
             Graphics object consisting of 1 graphics primitive
 
         ::
 
-            sage: p.set_legend_options(loc=10); p                                       # optional - sage.symbolic
+            sage: p.set_legend_options(loc=10); p                                       # needs sage.symbolic
             Graphics object consisting of 1 graphics primitive
 
         ::
 
-            sage: p.set_legend_options(loc=(0.5,0.5)); p  # aligns the bottom of the box to the center   # optional - sage.symbolic
+            sage: p.set_legend_options(loc=(0.5,0.5)); p  # aligns the bottom of the box to the center                  # needs sage.symbolic
             Graphics object consisting of 1 graphics primitive
         """
         if len(kwds) == 0:
@@ -623,16 +624,17 @@ class Graphics(WithEqualityById, SageObject):
 
         EXAMPLES::
 
-            sage: p = plot(sin(x^2), (x, -3, 3), axes_labels=['$x$','$y$'])             # optional - sage.symbolic
-            sage: p.axes_labels_size()  # default value                                 # optional - sage.symbolic
+            sage: # needs sage.symbolic
+            sage: p = plot(sin(x^2), (x, -3, 3), axes_labels=['$x$','$y$'])
+            sage: p.axes_labels_size()  # default value
             1.6
-            sage: p.axes_labels_size(2.5)                                               # optional - sage.symbolic
-            sage: p.axes_labels_size()                                                  # optional - sage.symbolic
+            sage: p.axes_labels_size(2.5)
+            sage: p.axes_labels_size()
             2.5
 
         Now the axes labels are large w.r.t. the tick marks::
 
-            sage: p                                                                     # optional - sage.symbolic
+            sage: p                                                                     # needs sage.symbolic
             Graphics object consisting of 1 graphics primitive
 
         """
@@ -759,20 +761,20 @@ class Graphics(WithEqualityById, SageObject):
 
         ::
 
-            sage: p = plot(sin(x), (x, 0, 10))                                          # optional - sage.symbolic
-            sage: p.axes_labels(['$x$','$y$'])                                          # optional - sage.symbolic
-            sage: p.axes_labels()                                                       # optional - sage.symbolic
+            sage: p = plot(sin(x), (x, 0, 10))                                          # needs sage.symbolic
+            sage: p.axes_labels(['$x$','$y$'])                                          # needs sage.symbolic
+            sage: p.axes_labels()                                                       # needs sage.symbolic
             ('$x$', '$y$')
 
         Now when you plot p, you see x and y axes labels::
 
-            sage: p                                                                     # optional - sage.symbolic
+            sage: p                                                                     # needs sage.symbolic
             Graphics object consisting of 1 graphics primitive
 
         Notice that some may prefer axes labels which are not
         typeset::
 
-            sage: plot(sin(x), (x, 0, 10), axes_labels=['x','y'])                       # optional - sage.symbolic
+            sage: plot(sin(x), (x, 0, 10), axes_labels=['x','y'])                       # needs sage.symbolic
             Graphics object consisting of 1 graphics primitive
 
         TESTS:
@@ -823,25 +825,25 @@ class Graphics(WithEqualityById, SageObject):
 
         ::
 
-            sage: p = plot(sin, (-1,1))                                                 # optional - sage.symbolic
-            sage: p.axes_label_color()                                                  # optional - sage.symbolic
+            sage: p = plot(sin, (-1,1))                                                 # needs sage.symbolic
+            sage: p.axes_label_color()                                                  # needs sage.symbolic
             (0, 0, 0)
 
         We change the labels to be red, and confirm this::
 
-            sage: p.axes_label_color((1,0,0))                                           # optional - sage.symbolic
-            sage: p.axes_label_color()                                                  # optional - sage.symbolic
+            sage: p.axes_label_color((1,0,0))                                           # needs sage.symbolic
+            sage: p.axes_label_color()                                                  # needs sage.symbolic
             (1.0, 0.0, 0.0)
 
         We set labels, since otherwise we won't see anything.
 
         ::
 
-            sage: p.axes_labels(['$x$ axis', '$y$ axis'])                               # optional - sage.symbolic
+            sage: p.axes_labels(['$x$ axis', '$y$ axis'])                               # needs sage.symbolic
 
         In the plot below, notice that the labels are red::
 
-            sage: p                                                                     # optional - sage.symbolic
+            sage: p                                                                     # needs sage.symbolic
             Graphics object consisting of 1 graphics primitive
         """
         if c is None:
@@ -871,18 +873,19 @@ class Graphics(WithEqualityById, SageObject):
 
         ::
 
-            sage: p = plot(cos, (-3,3))                                                 # optional - sage.symbolic
-            sage: p.axes_width()                                                        # optional - sage.symbolic
+            sage: # needs sage.symbolic
+            sage: p = plot(cos, (-3,3))
+            sage: p.axes_width()
             0.8
-            sage: p.axes_width(10)                                                      # optional - sage.symbolic
-            sage: p.axes_width()                                                        # optional - sage.symbolic
+            sage: p.axes_width(10)
+            sage: p.axes_width()
             10.0
 
         Finally we plot the result, which is a graph with very fat axes.
 
         ::
 
-            sage: p
+            sage: p                                                                     # needs sage.symbolic
             Graphics object consisting of 1 graphics primitive
         """
         if w is None:
@@ -908,13 +911,14 @@ class Graphics(WithEqualityById, SageObject):
 
         EXAMPLES::
 
-            sage: p = plot(cos, (-3,3))                                                 # optional - sage.symbolic
-            sage: p.tick_label_color()                                                  # optional - sage.symbolic
+            sage: # needs sage.symbolic
+            sage: p = plot(cos, (-3,3))
+            sage: p.tick_label_color()
             (0, 0, 0)
-            sage: p.tick_label_color((1,0,0))                                           # optional - sage.symbolic
-            sage: p.tick_label_color()                                                  # optional - sage.symbolic
+            sage: p.tick_label_color((1,0,0))
+            sage: p.tick_label_color()
             (1.0, 0.0, 0.0)
-            sage: p                                                                     # optional - sage.symbolic
+            sage: p
             Graphics object consisting of 1 graphics primitive
         """
         if c is None:
@@ -938,27 +942,27 @@ class Graphics(WithEqualityById, SageObject):
         We create a plot and call :meth:`show` on it, which causes it
         to be displayed as a plot::
 
-            sage: P = plot(cos, (-1,1))                                                 # optional - sage.symbolic
-            sage: P.show()                                                              # optional - sage.symbolic
+            sage: P = plot(cos, (-1,1))                                                 # needs sage.symbolic
+            sage: P.show()                                                              # needs sage.symbolic
 
         Just doing this also displays the plot::
 
-            sage: P                                                                     # optional - sage.symbolic
+            sage: P                                                                     # needs sage.symbolic
             Graphics object consisting of 1 graphics primitive
 
         Using the Python `repr` or `str` commands do not display the
         plot::
 
-            sage: repr(P)                                                               # optional - sage.symbolic
+            sage: repr(P)                                                               # needs sage.symbolic
             'Graphics object consisting of 1 graphics primitive'
-            sage: str(P)                                                                # optional - sage.symbolic
+            sage: str(P)                                                                # needs sage.symbolic
             'Graphics object consisting of 1 graphics primitive'
-            sage: print(P)                                                              # optional - sage.symbolic
+            sage: print(P)                                                              # needs sage.symbolic
             Graphics object consisting of 1 graphics primitive
 
         TESTS::
 
-            sage: P._repr_()                                                            # optional - sage.symbolic
+            sage: P._repr_()                                                            # needs sage.symbolic
             'Graphics object consisting of 1 graphics primitive'
         """
         return str(self)
@@ -1140,50 +1144,53 @@ class Graphics(WithEqualityById, SageObject):
 
         EXAMPLES::
 
-            sage: g1 = plot(abs(sqrt(x^3-1)), (x,1,5), frame=True)                      # optional - sage.symbolic
-            sage: g2 = plot(-abs(sqrt(x^3-1)), (x,1,5), color='red')                    # optional - sage.symbolic
-            sage: g1 + g2  # displays the plot                                          # optional - sage.symbolic
+            sage: g1 = plot(abs(sqrt(x^3-1)), (x,1,5), frame=True)                      # needs sage.symbolic
+            sage: g2 = plot(-abs(sqrt(x^3-1)), (x,1,5), color='red')                    # needs sage.symbolic
+            sage: g1 + g2  # displays the plot                                          # needs sage.symbolic
             Graphics object consisting of 2 graphics primitives
 
         TESTS:
 
         Extra keywords to show are propagated::
 
-            sage: (g1 + g2)._extra_kwds=={'aspect_ratio': 'automatic', 'frame': True}   # optional - sage.symbolic
+            sage: # needs sage.symbolic
+            sage: (g1 + g2)._extra_kwds=={'aspect_ratio': 'automatic', 'frame': True}
             True
-            sage: g1.set_aspect_ratio(2)                                                # optional - sage.symbolic
-            sage: (g1+g2).aspect_ratio()                                                # optional - sage.symbolic
+            sage: g1.set_aspect_ratio(2)
+            sage: (g1+g2).aspect_ratio()
             2.0
-            sage: g2.set_aspect_ratio(3)                                                # optional - sage.symbolic
-            sage: (g1+g2).aspect_ratio()                                                # optional - sage.symbolic
+            sage: g2.set_aspect_ratio(3)
+            sage: (g1+g2).aspect_ratio()
             3.0
 
         As are legend options, :trac:`12936`::
 
-            sage: p1 = plot(x, x, 0, 1)                                                 # optional - sage.symbolic
-            sage: p2 = p1                                                               # optional - sage.symbolic
-            sage: p1.set_legend_options(back_color='black')                             # optional - sage.symbolic
-            sage: p2.set_legend_options(shadow=False)                                   # optional - sage.symbolic
-            sage: p3 = p1 + p2                                                          # optional - sage.symbolic
-            sage: p3._legend_opts                                                       # optional - sage.symbolic
+            sage: # needs sage.symbolic
+            sage: p1 = plot(x, x, 0, 1)
+            sage: p2 = p1
+            sage: p1.set_legend_options(back_color='black')
+            sage: p2.set_legend_options(shadow=False)
+            sage: p3 = p1 + p2
+            sage: p3._legend_opts
             {'back_color': 'black', 'shadow': False}
 
         If the same legend option is specified more than once, the
         latter takes precedence::
 
-            sage: p1 = plot(x, x, 0, 1)                                                 # optional - sage.symbolic
-            sage: p2 = p1                                                               # optional - sage.symbolic
-            sage: p1.set_legend_options(shadow=True)                                    # optional - sage.symbolic
-            sage: p2.set_legend_options(shadow=False)                                   # optional - sage.symbolic
-            sage: p3 = p1 + p2                                                          # optional - sage.symbolic
-            sage: p3._legend_opts                                                       # optional - sage.symbolic
+            sage: # needs sage.symbolic
+            sage: p1 = plot(x, x, 0, 1)
+            sage: p2 = p1
+            sage: p1.set_legend_options(shadow=True)
+            sage: p2.set_legend_options(shadow=False)
+            sage: p3 = p1 + p2
+            sage: p3._legend_opts
             {'shadow': False}
 
         Flipped axes take precedence over non-flipped axes::
 
-            sage: p1 = plot(x, x, 0, 1, flip_x=True, flip_y=True)                       # optional - sage.symbolic
-            sage: p2 = plot(x^2, x, 0, 1)                                               # optional - sage.symbolic
-            sage: [p._extra_kwds[k] for p in [p1 + p2, p2 + p1]                         # optional - sage.symbolic
+            sage: p1 = plot(x, x, 0, 1, flip_x=True, flip_y=True)                       # needs sage.symbolic
+            sage: p2 = plot(x^2, x, 0, 1)                                               # needs sage.symbolic
+            sage: [p._extra_kwds[k] for p in [p1 + p2, p2 + p1]                         # needs sage.symbolic
             ....:  for k in ['flip_x', 'flip_y']]
             [True, True, True, True]
         """
@@ -1274,7 +1281,7 @@ class Graphics(WithEqualityById, SageObject):
 
         EXAMPLES::
 
-            sage: sum(plot(z*sin(x), 0, 10).plot3d(z)  # long time                      # optional - sage.symbolic
+            sage: sum(plot(z*sin(x), 0, 10).plot3d(z)   # long time                     # needs sage.symbolic
             ....:     for z in range(6))
             Graphics3d Object
         """
@@ -1726,112 +1733,112 @@ class Graphics(WithEqualityById, SageObject):
 
         You can turn off the drawing of the axes::
 
-            sage: show(plot(sin,-4,4), axes=False)                                      # optional - sage.symbolic
+            sage: show(plot(sin,-4,4), axes=False)                                      # needs sage.symbolic
 
         You can also label the axes.  Putting something in dollar
         signs formats it as a mathematical expression::
 
-            sage: show(plot(sin,-4,4), axes_labels=('$x$','$y$'))                       # optional - sage.symbolic
+            sage: show(plot(sin,-4,4), axes_labels=('$x$','$y$'))                       # needs sage.symbolic
 
         You can add a title to a plot::
 
-            sage: show(plot(sin,-4,4), title=r'A plot of $\sin(x)$')                    # optional - sage.symbolic
+            sage: show(plot(sin,-4,4), title=r'A plot of $\sin(x)$')                    # needs sage.symbolic
 
         You can also provide the position for the title to the plot. In the
         plot below the title is placed on the bottom left of the figure.::
 
-            sage: plot(sin, -4, 4, title='Plot sin(x)', title_pos=(0.05,-0.05))         # optional - sage.symbolic
+            sage: plot(sin, -4, 4, title='Plot sin(x)', title_pos=(0.05,-0.05))         # needs sage.symbolic
             Graphics object consisting of 1 graphics primitive
 
         If you want all the text to be rendered by using an external LaTeX
         installation then set the ``typeset`` to ``"latex"``. This
         requires that LaTeX, dvipng and Ghostscript be installed::
 
-            sage: plot(x, typeset='latex')                                      # optional - latex sage.symbolic
+            sage: plot(x, typeset='latex')                                      # optional - latex, needs sage.symbolic
             Graphics object consisting of 1 graphics primitive
 
         If you want all the text in your plot to use Type 1 fonts, then
         set the ``typeset`` option to ``"type1"``. This requires that
         LaTeX, dvipng and Ghostscript be installed::
 
-            sage: plot(x, typeset='type1')                                      # optional - latex sage.symbolic
+            sage: plot(x, typeset='type1')                                      # optional - latex, needs sage.symbolic
             Graphics object consisting of 1 graphics primitive
 
         You can turn on the drawing of a frame around the plots::
 
-            sage: show(plot(sin,-4,4), frame=True)                                      # optional - sage.symbolic
+            sage: show(plot(sin,-4,4), frame=True)                                      # needs sage.symbolic
 
         You can make the background transparent::
 
-            sage: plot(sin(x), (x, -4, 4), transparent=True)                            # optional - sage.symbolic
+            sage: plot(sin(x), (x, -4, 4), transparent=True)                            # needs sage.symbolic
             Graphics object consisting of 1 graphics primitive
 
         Prior to :trac:`19485`, legends by default had a shadowless gray
         background. This behavior can be recovered by passing in certain
         ``legend_options``::
 
-            sage: p = plot(sin(x), legend_label=r'$\sin(x)$')                           # optional - sage.symbolic
-            sage: p.show(legend_options={'back_color': (0.9,0.9,0.9),                   # optional - sage.symbolic
+            sage: p = plot(sin(x), legend_label=r'$\sin(x)$')                           # needs sage.symbolic
+            sage: p.show(legend_options={'back_color': (0.9,0.9,0.9),                   # needs sage.symbolic
             ....:                        'shadow': False})
 
         We can change the scale of the axes in the graphics before
         displaying::
 
-            sage: G = plot(exp, 1, 10)                                                  # optional - sage.symbolic
-            sage: G.show(scale='semilogy')                                              # optional - sage.symbolic
+            sage: G = plot(exp, 1, 10)                                                  # needs sage.symbolic
+            sage: G.show(scale='semilogy')                                              # needs sage.symbolic
 
         We can change the base of the logarithm too. The following changes
         the vertical axis to be on log scale, and with base 2. Note that
         the ``base`` argument will ignore any changes to the axis which is
         in linear scale.::
 
-            sage: G.show(scale='semilogy', base=2)  # y axis as powers of 2         # long time, optional - sage.symbolic
+            sage: G.show(scale='semilogy', base=2)  # y axis as powers of 2         # long time, needs sage.symbolic
 
         ::
 
-            sage: G.show(scale='semilogy', base=(3,2)) # base ignored for x-axis        # optional - sage.symbolic
+            sage: G.show(scale='semilogy', base=(3,2)) # base ignored for x-axis        # needs sage.symbolic
 
         The scale can be also given as a 2-tuple or a 3-tuple.::
 
-            sage: G.show(scale=('loglog', 2.1))   # both x and y axes in base 2.1   # long time, optional - sage.symbolic
+            sage: G.show(scale=('loglog', 2.1))   # both x and y axes in base 2.1   # long time, needs sage.symbolic
 
         ::
 
-            sage: G.show(scale=('loglog', 2, 3))  # x in base 2, y in base 3        # long time, optional - sage.symbolic
+            sage: G.show(scale=('loglog', 2, 3))  # x in base 2, y in base 3        # long time, needs sage.symbolic
 
         The base need not be an integer, though it does have to be made
         a float.::
 
-            sage: G.show(scale='semilogx', base=float(e))  # base is e                  # optional - sage.symbolic
+            sage: G.show(scale='semilogx', base=float(e))  # base is e                  # needs sage.symbolic
 
         Logarithmic scale can be used for various kinds of plots. Here are
         some examples.::
 
-            sage: G = list_plot([10**i for i in range(10)])                         # long time, optional - sage.symbolic
+            sage: G = list_plot([10**i for i in range(10)])                         # long time, needs sage.symbolic
             sage: G.show(scale='semilogy')                                          # long time
 
         ::
 
-            sage: G = parametric_plot((x, x**2), (x, 1, 10))                            # optional - sage.symbolic
-            sage: G.show(scale='loglog')                                                # optional - sage.symbolic
+            sage: G = parametric_plot((x, x**2), (x, 1, 10))                            # needs sage.symbolic
+            sage: G.show(scale='loglog')                                                # needs sage.symbolic
 
         ::
 
-            sage: disk((5,5), 4, (0, 3*pi/2)).show(scale='loglog',base=2)               # optional - sage.symbolic
+            sage: disk((5,5), 4, (0, 3*pi/2)).show(scale='loglog',base=2)               # needs sage.symbolic
 
         ::
 
-            sage: x, y = var('x, y')                                                    # optional - sage.symbolic
-            sage: G = plot_vector_field((2^x,y^2), (x,1,10), (y,1,100))                 # optional - sage.symbolic
-            sage: G.show(scale='semilogx',base=2)                                       # optional - sage.symbolic
+            sage: x, y = var('x, y')                                                    # needs sage.symbolic
+            sage: G = plot_vector_field((2^x,y^2), (x,1,10), (y,1,100))                 # needs sage.symbolic
+            sage: G.show(scale='semilogx',base=2)                                       # needs sage.symbolic
 
         Flip the horizontal or vertical axis.
 
         ::
 
-            sage: G = plot(x^3, -2, 3)                                                  # optional - sage.symbolic
-            sage: G.show(flip_x=True)                                                   # optional - sage.symbolic
-            sage: G.show(flip_y=True)                                                   # optional - sage.symbolic
+            sage: G = plot(x^3, -2, 3)                                                  # needs sage.symbolic
+            sage: G.show(flip_x=True)                                                   # needs sage.symbolic
+            sage: G.show(flip_y=True)                                                   # needs sage.symbolic
 
         Add grid lines at the major ticks of the axes.
 
@@ -1846,27 +1853,28 @@ class Graphics(WithEqualityById, SageObject):
 
         ::
 
-            sage: u,v = var('u v')                                                      # optional - sage.symbolic
-            sage: f = exp(-(u^2+v^2))                                                   # optional - sage.symbolic
-            sage: p = plot_vector_field(f.gradient(), (u,-2,2), (v,-2,2))               # optional - sage.symbolic
-            sage: p.show(gridlines="minor")                                             # optional - sage.symbolic
+            sage: # needs sage.symbolic
+            sage: u,v = var('u v')
+            sage: f = exp(-(u^2+v^2))
+            sage: p = plot_vector_field(f.gradient(), (u,-2,2), (v,-2,2))
+            sage: p.show(gridlines="minor")
 
         Add only horizontal or vertical grid lines.
 
         ::
 
-            sage: p = plot(sin, -10, 20)                                                # optional - sage.symbolic
-            sage: p.show(gridlines=[None, "automatic"])                                 # optional - sage.symbolic
-            sage: p.show(gridlines=["minor", False])                                    # optional - sage.symbolic
+            sage: p = plot(sin, -10, 20)                                                # needs sage.symbolic
+            sage: p.show(gridlines=[None, "automatic"])                                 # needs sage.symbolic
+            sage: p.show(gridlines=["minor", False])                                    # needs sage.symbolic
 
         Add grid lines at specific positions (using lists/tuples).
 
         ::
 
-            sage: x, y = var('x, y')                                                    # optional - sage.symbolic
-            sage: p = implicit_plot((y^2-x^2)*(x-1)*(2*x-3) - 4*(x^2+y^2-2*x)^2,        # optional - sage.symbolic
+            sage: x, y = var('x, y')                                                    # needs sage.symbolic
+            sage: p = implicit_plot((y^2-x^2)*(x-1)*(2*x-3) - 4*(x^2+y^2-2*x)^2,        # needs sage.symbolic
             ....:                   (x,-2,2), (y,-2,2), plot_points=1000)
-            sage: p.show(gridlines=[[1,0],[-1,0,1]])                                    # optional - sage.symbolic
+            sage: p.show(gridlines=[[1,0],[-1,0,1]])                                    # needs sage.symbolic
 
         Add grid lines at specific positions (using iterators).
 
@@ -1874,18 +1882,18 @@ class Graphics(WithEqualityById, SageObject):
 
             sage: def maple_leaf(t):
             ....:     return (100/(100+(t-pi/2)^8))*(2-sin(7*t)-cos(30*t)/2)
-            sage: p = polar_plot(maple_leaf, -pi/4, 3*pi/2,                         # long time, optional - sage.symbolic
+            sage: p = polar_plot(maple_leaf, -pi/4, 3*pi/2,                         # long time, needs sage.symbolic
             ....:                color="red",plot_points=1000)
-            sage: p.show(gridlines=([-3,-2.75,..,3], range(-1,5,2)))                # long time, optional - sage.symbolic
+            sage: p.show(gridlines=([-3,-2.75,..,3], range(-1,5,2)))                # long time, needs sage.symbolic
 
         Add grid lines at specific positions (using functions).
 
         ::
 
-            sage: y = x^5 + 4*x^4 - 10*x^3 - 40*x^2 + 9*x + 36                          # optional - sage.symbolic
-            sage: p = plot(y, -4.1, 1.1)                                                # optional - sage.symbolic
-            sage: xlines = lambda a, b: [z for z, m in y.roots()]                       # optional - sage.symbolic
-            sage: p.show(gridlines=[xlines, [0]], frame=True, axes=False)               # optional - sage.symbolic
+            sage: y = x^5 + 4*x^4 - 10*x^3 - 40*x^2 + 9*x + 36                          # needs sage.symbolic
+            sage: p = plot(y, -4.1, 1.1)                                                # needs sage.symbolic
+            sage: xlines = lambda a, b: [z for z, m in y.roots()]                       # needs sage.symbolic
+            sage: p.show(gridlines=[xlines, [0]], frame=True, axes=False)               # needs sage.symbolic
 
         Change the style of all the grid lines.
 
@@ -1900,8 +1908,8 @@ class Graphics(WithEqualityById, SageObject):
 
         ::
 
-            sage: p = polar_plot(2 + 2*cos(x), 0, 2*pi, color=hue(0.3))                 # optional - sage.symbolic
-            sage: p.show(gridlines=True,                                                # optional - sage.symbolic
+            sage: p = polar_plot(2 + 2*cos(x), 0, 2*pi, color=hue(0.3))                 # needs sage.symbolic
+            sage: p.show(gridlines=True,                                                # needs sage.symbolic
             ....:        hgridlinesstyle=dict(color="orange", linewidth=1.0),
             ....:        vgridlinesstyle=dict(color="blue", linestyle=":"))
 
@@ -1909,10 +1917,10 @@ class Graphics(WithEqualityById, SageObject):
 
         ::
 
-            sage: x, y = var('x, y')                                                    # optional - sage.symbolic
-            sage: p = implicit_plot((y^2-x^2)*(x-1)*(2*x-3) - 4*(x^2+y^2-2*x)^2,        # optional - sage.symbolic
+            sage: x, y = var('x, y')                                                    # needs sage.symbolic
+            sage: p = implicit_plot((y^2-x^2)*(x-1)*(2*x-3) - 4*(x^2+y^2-2*x)^2,        # needs sage.symbolic
             ....:                   (x,-2,2), (y,-2,2), plot_points=1000)
-            sage: p.show(gridlines=(                                                    # optional - sage.symbolic
+            sage: p.show(gridlines=(                                                    # needs sage.symbolic
             ....:    [
             ....:     (1,{"color":"red","linestyle":":"}),
             ....:     (0,{"color":"blue","linestyle":"--"})
@@ -1929,9 +1937,9 @@ class Graphics(WithEqualityById, SageObject):
 
         ::
 
-            sage: f = sin(x^2 + y^2)*cos(x)*sin(y)                                      # optional - sage.symbolic
-            sage: c = contour_plot(f, (x, -4, 4), (y, -4, 4), plot_points=100)          # optional - sage.symbolic
-            sage: c.show(gridlines=True,                                                # optional - sage.symbolic
+            sage: f = sin(x^2 + y^2)*cos(x)*sin(y)                                      # needs sage.symbolic
+            sage: c = contour_plot(f, (x, -4, 4), (y, -4, 4), plot_points=100)          # needs sage.symbolic
+            sage: c.show(gridlines=True,                                                # needs sage.symbolic
             ....:        gridlinesstyle={'linestyle': ':', 'linewidth': 1, 'color': 'red'})
 
         Grid lines can be added to matrix plots.
@@ -1951,10 +1959,10 @@ class Graphics(WithEqualityById, SageObject):
 
         ::
 
-            sage: (plot(sin(x), (x, -pi, pi), thickness=2)                              # optional - sage.symbolic
+            sage: (plot(sin(x), (x, -pi, pi), thickness=2)                              # needs sage.symbolic
             ....:   + point((pi, -1), pointsize=15))
             Graphics object consisting of 2 graphics primitives
-            sage: (plot(sin(x), (x, -pi, pi), thickness=2, axes_pad=0)                  # optional - sage.symbolic
+            sage: (plot(sin(x), (x, -pi, pi), thickness=2, axes_pad=0)                  # needs sage.symbolic
             ....:   + point((pi, -1), pointsize=15))
             Graphics object consisting of 2 graphics primitives
 
@@ -1967,10 +1975,10 @@ class Graphics(WithEqualityById, SageObject):
 
         ::
 
-            sage: plot_loglog(x, (1.1*10**-2, 9990))                                    # optional - sage.symbolic
+            sage: plot_loglog(x, (1.1*10**-2, 9990))                                    # needs sage.symbolic
             Graphics object consisting of 1 graphics primitive
 
-            sage: plot_loglog(x, (1.1*10**-2, 9990), axes_pad=0)                        # optional - sage.symbolic
+            sage: plot_loglog(x, (1.1*10**-2, 9990), axes_pad=0)                        # needs sage.symbolic
             Graphics object consisting of 1 graphics primitive
 
         Via matplotlib, Sage allows setting of custom ticks.  See above
@@ -1978,39 +1986,39 @@ class Graphics(WithEqualityById, SageObject):
 
         Here the labels are not so useful::
 
-            sage: plot(sin(pi*x), (x, -8, 8))                                           # optional - sage.symbolic
+            sage: plot(sin(pi*x), (x, -8, 8))                                           # needs sage.symbolic
             Graphics object consisting of 1 graphics primitive
 
         Now put ticks at multiples of 2::
 
-            sage: plot(sin(pi*x), (x, -8, 8), ticks=2)                                  # optional - sage.symbolic
+            sage: plot(sin(pi*x), (x, -8, 8), ticks=2)                                  # needs sage.symbolic
             Graphics object consisting of 1 graphics primitive
 
         Or just choose where you want the ticks::
 
-            sage: plot(sin(pi*x), (x, -8, 8), ticks=[[-7,-3,0,3,7], [-1/2,0,1/2]])      # optional - sage.symbolic
+            sage: plot(sin(pi*x), (x, -8, 8), ticks=[[-7,-3,0,3,7], [-1/2,0,1/2]])      # needs sage.symbolic
             Graphics object consisting of 1 graphics primitive
 
         Or no ticks at all::
 
-            sage: plot(sin(pi*x), (x, -8, 8), ticks=[[], []])                           # optional - sage.symbolic
+            sage: plot(sin(pi*x), (x, -8, 8), ticks=[[], []])                           # needs sage.symbolic
             Graphics object consisting of 1 graphics primitive
 
         This can be very helpful in showing certain features of plots. ::
 
-            sage: plot(1.5/(1+e^(-x)), (x, -10, 10))  # doesn't quite show value of inflection point    # optional - sage.symbolic
+            sage: plot(1.5/(1+e^(-x)), (x, -10, 10))  # doesn't quite show value of inflection point                    # needs sage.symbolic
             Graphics object consisting of 1 graphics primitive
 
         ::
 
-            sage: plot(1.5/(1+e^(-x)), (x, -10, 10),  # It's right at f(x)=0.75!        # optional - sage.symbolic
+            sage: plot(1.5/(1+e^(-x)), (x, -10, 10),  # It's right at f(x)=0.75!        # needs sage.symbolic
             ....:      ticks=[None, 1.5/4])
             Graphics object consisting of 1 graphics primitive
 
         But be careful to leave enough room for at least two major ticks, so that
         the user can tell what the scale is::
 
-            sage: plot(x^2, (x,1,8), ticks=6).show()                                    # optional - sage.symbolic
+            sage: plot(x^2, (x,1,8), ticks=6).show()                                    # needs sage.symbolic
             Traceback (most recent call last):
             ...
             ValueError: Expand the range of the independent variable to
@@ -2019,7 +2027,7 @@ class Graphics(WithEqualityById, SageObject):
         We can also do custom formatting if you need it.  See above for full
         details::
 
-            sage: plot(2*x + 1, (x,0,5),  # not tested (broken with matplotlib 3.6)     # optional - sage.symbolic
+            sage: plot(2*x + 1, (x,0,5),        # not tested (broken with matplotlib 3.6), needs sage.symbolic
             ....:      ticks=[[0,1,e,pi,sqrt(20)], 2],
             ....:      tick_formatter="latex")
             Graphics object consisting of 1 graphics primitive
@@ -2029,20 +2037,20 @@ class Graphics(WithEqualityById, SageObject):
 
         ::
 
-            sage: plot(sin(x), (x,0,2*pi), ticks=pi/3, tick_formatter=pi)               # optional - sage.symbolic
+            sage: plot(sin(x), (x,0,2*pi), ticks=pi/3, tick_formatter=pi)               # needs sage.symbolic
             Graphics object consisting of 1 graphics primitive
 
         But keep in mind that you will get exactly the formatting you asked
         for if you specify both formatters.  The first syntax is recommended
         for best style in that case. ::
 
-            sage: plot(arcsin(x), (x,-1,1), ticks=[None, pi/6],  # Nice-looking!        # optional - sage.symbolic
+            sage: plot(arcsin(x), (x,-1,1), ticks=[None, pi/6],  # Nice-looking!        # needs sage.symbolic
             ....:      tick_formatter=["latex", pi])
             Graphics object consisting of 1 graphics primitive
 
         ::
 
-            sage: plot(arcsin(x), (x,-1,1), ticks=[None, pi/6],  # Not so nice-looking  # optional - sage.symbolic
+            sage: plot(arcsin(x), (x,-1,1), ticks=[None, pi/6],  # Not so nice-looking  # needs sage.symbolic
             ....:      tick_formatter=[None, pi])
             Graphics object consisting of 1 graphics primitive
 
@@ -2050,21 +2058,21 @@ class Graphics(WithEqualityById, SageObject):
         ``tick_formatter`` with the list of labels, and simultaneously
         providing the keyword ``ticks`` with the positions of the labels. ::
 
-            sage: plot(x, (x,0,3), ticks=[[1,2.5], [0.5,1,2]],                          # optional - sage.symbolic
+            sage: plot(x, (x,0,3), ticks=[[1,2.5], [0.5,1,2]],                          # needs sage.symbolic
             ....:      tick_formatter=[["$x_1$","$x_2$"], ["$y_1$","$y_2$","$y_3$"]])
             Graphics object consisting of 1 graphics primitive
 
         The following sets the custom tick labels only along the horizontal
         axis. ::
 
-            sage: plot(x**2, (x,0,2), ticks=[[1,2], None],                              # optional - sage.symbolic
+            sage: plot(x**2, (x,0,2), ticks=[[1,2], None],                              # needs sage.symbolic
             ....:      tick_formatter=[["$x_1$","$x_2$"], None])
             Graphics object consisting of 1 graphics primitive
 
         If the number of tick labels do not match the number of positions of
         tick labels, then it results in an error.::
 
-            sage: plot(x**2, (x,0,2), ticks=[[2], None],                                # optional - sage.symbolic
+            sage: plot(x**2, (x,0,2), ticks=[[2], None],                                # needs sage.symbolic
             ....:      tick_formatter=[["$x_1$","$x_2$"], None]).show()
             Traceback (most recent call last):
             ...
@@ -2103,7 +2111,7 @@ class Graphics(WithEqualityById, SageObject):
         When using ``title_pos``, it must be ensured that a list or a tuple
         of length two is used. Otherwise, a warning is raised::
 
-            sage: plot(x, -4, 4, title='Plot x', title_pos=0.05)                        # optional - sage.symbolic
+            sage: plot(x, -4, 4, title='Plot x', title_pos=0.05)                        # needs sage.symbolic
             doctest:...: ...RichReprWarning: Exception in _rich_repr_ while displaying
             object: 'title_pos' must be a list or tuple of two real numbers.
             Graphics object consisting of 1 graphics primitive
@@ -2132,25 +2140,26 @@ class Graphics(WithEqualityById, SageObject):
         The following tests ensure we give a good error message for
         negative figsizes::
 
-            sage: P = plot(x^2,(x,0,1))                                                 # optional - sage.symbolic
-            sage: P.show(figsize=[-1,1])                                                # optional - sage.symbolic
+            sage: # needs sage.symbolic
+            sage: P = plot(x^2,(x,0,1))
+            sage: P.show(figsize=[-1,1])
             Traceback (most recent call last):
             ...
             ValueError: figsize should be positive numbers, not -1.0 and 1.0
-            sage: P.show(figsize=-1)                                                    # optional - sage.symbolic
+            sage: P.show(figsize=-1)
             Traceback (most recent call last):
             ...
             ValueError: figsize should be positive, not -1.0
-            sage: P.show(figsize=x^2)                                                   # optional - sage.symbolic
+            sage: P.show(figsize=x^2)
             Traceback (most recent call last):
             ...
             TypeError: figsize should be a positive number, not x^2
-            sage: P.show(figsize=[2,3,4])                                               # optional - sage.symbolic
+            sage: P.show(figsize=[2,3,4])
             Traceback (most recent call last):
             ...
             ValueError: figsize should be a positive number or
             a list of two positive numbers, not [2, 3, 4]
-            sage: P.show(figsize=[sqrt(2),sqrt(3)])                                     # optional - sage.symbolic
+            sage: P.show(figsize=[sqrt(2),sqrt(3)])
         """
         from sage.repl.rich_output import get_display_manager
         dm = get_display_manager()
@@ -2360,11 +2369,12 @@ class Graphics(WithEqualityById, SageObject):
 
         EXAMPLES::
 
+            sage: # needs sage.symbolic
             sage: from matplotlib.figure import Figure
-            sage: p = plot(x); d = p.get_minmax_data()                                  # optional - sage.symbolic
-            sage: subplot = Figure().add_subplot(111)                                   # optional - sage.symbolic
-            sage: p._objects[0]._render_on_subplot(subplot)                             # optional - sage.symbolic
-            sage: p._matplotlib_tick_formatter(subplot, **d)                            # optional - sage.symbolic
+            sage: p = plot(x); d = p.get_minmax_data()
+            sage: subplot = Figure().add_subplot(111)
+            sage: p._objects[0]._render_on_subplot(subplot)
+            sage: p._matplotlib_tick_formatter(subplot, **d)
             (<Axes...>,
             <matplotlib.ticker.MaxNLocator object at ...>,
             <matplotlib.ticker.MaxNLocator object at ...>,
@@ -2673,41 +2683,43 @@ class Graphics(WithEqualityById, SageObject):
 
         ::
 
-            sage: p = plot(sin(x), (x, -2*pi, 2*pi))                                    # optional - sage.symbolic
-            sage: figure = p.matplotlib()                                               # optional - sage.symbolic
-            sage: axes = figure.axes[0]                                                 # optional - sage.symbolic
+            sage: p = plot(sin(x), (x, -2*pi, 2*pi))                                    # needs sage.symbolic
+            sage: figure = p.matplotlib()                                               # needs sage.symbolic
+            sage: axes = figure.axes[0]                                                 # needs sage.symbolic
 
         TESTS:
 
         We verify that :trac:`10291` is fixed::
 
-            sage: p = plot(sin(x), (x, -2*pi, 2*pi))                                    # optional - sage.symbolic
-            sage: figure = p.matplotlib()                                               # optional - sage.symbolic
-            sage: axes_range = p.get_axes_range()                                       # optional - sage.symbolic
-            sage: figure = p.matplotlib()                                               # optional - sage.symbolic
-            sage: axes_range2 = p.get_axes_range()                                      # optional - sage.symbolic
-            sage: axes_range == axes_range2                                             # optional - sage.symbolic
+            sage: # needs sage.symbolic
+            sage: p = plot(sin(x), (x, -2*pi, 2*pi))
+            sage: figure = p.matplotlib()
+            sage: axes_range = p.get_axes_range()
+            sage: figure = p.matplotlib()
+            sage: axes_range2 = p.get_axes_range()
+            sage: axes_range == axes_range2
             True
 
         We verify that legend options are properly handled (:trac:`12960`).
         First, we test with no options, and next with an incomplete set of
         options.::
 
-            sage: p = plot(x, legend_label='aha')                                       # optional - sage.symbolic
-            sage: p.legend(True)                                                        # optional - sage.symbolic
-            sage: pm = p.matplotlib()                                                   # optional - sage.symbolic
-            sage: pm = p.matplotlib(legend_options={'font_size': 'small'})              # optional - sage.symbolic
+            sage: # needs sage.symbolic
+            sage: p = plot(x, legend_label='aha')
+            sage: p.legend(True)
+            sage: pm = p.matplotlib()
+            sage: pm = p.matplotlib(legend_options={'font_size': 'small'})
 
         The title should not overlap with the axes labels nor the frame in
         the following plot (see :trac:`10512`)::
 
-            sage: plot(sin(x^2), (x, -3, 3), title='Plot of sin(x^2)',                  # optional - sage.symbolic
+            sage: plot(sin(x^2), (x, -3, 3), title='Plot of sin(x^2)',                  # needs sage.symbolic
             ....:      axes_labels=['x','y'], frame=True)
             Graphics object consisting of 1 graphics primitive
 
         ``typeset`` must not be set to an arbitrary string::
 
-            sage: plot(x, typeset='garbage')                                            # optional - sage.symbolic
+            sage: plot(x, typeset='garbage')                                            # needs sage.symbolic
             doctest:...: ...RichReprWarning: Exception in _rich_repr_ while
             displaying object: typeset must be set to one of 'default',
             'latex', or 'type1'; got 'garbage'.
@@ -2717,17 +2729,19 @@ class Graphics(WithEqualityById, SageObject):
         By default, Sage 5.10 changes float objects to the `RealLiteral` type.
         The patch changes them to float before creating `matplotlib` objects.::
 
-            sage: f = lambda x, y: abs(cos((x + I * y) ** 4)) - 1        # long time    # optional - sage.symbolic
-            sage: g = implicit_plot(f, (-4, 4), (-3, 3), linewidth=0.6)  # long time    # optional - sage.symbolic
-            sage: gm = g.matplotlib() # long time # without the patch, this goes BOOM -- er, TypeError  # optional - sage.symbolic
+            sage: # long time, needs sage.symbolic
+            sage: f = lambda x, y: abs(cos((x + I * y) ** 4)) - 1               # long time, needs sage.symbolic
+            sage: g = implicit_plot(f, (-4, 4), (-3, 3), linewidth=0.6)         # long time, needs sage.symbolic
+            sage: gm = g.matplotlib()                                           # long time, needs sage.symbolic
 
         If the axes are flipped, the limits of the axes get swapped::
 
-            sage: p = plot(2*x, 1, 2)                                                   # optional - sage.symbolic
-            sage: sub, = p.matplotlib(flip_y=True, flip_x=True).axes                    # optional - sage.symbolic
-            sage: xmin, xmax = sub.get_xlim()                                           # optional - sage.symbolic
-            sage: ymin, ymax = sub.get_ylim()                                           # optional - sage.symbolic
-            sage: xmin > xmax, ymin > ymax                                              # optional - sage.symbolic
+            sage: # needs sage.symbolic
+            sage: p = plot(2*x, 1, 2)
+            sage: sub, = p.matplotlib(flip_y=True, flip_x=True).axes
+            sage: xmin, xmax = sub.get_xlim()
+            sage: ymin, ymax = sub.get_ylim()
+            sage: xmin > xmax, ymin > ymax
             (True, True)
         """
         if not isinstance(ticks, (list, tuple)):
@@ -3281,11 +3295,11 @@ class Graphics(WithEqualityById, SageObject):
         You can also pass extra options to the plot command instead of this
         method, e.g. ::
 
-            sage: plot(x^2 - 5, (x, 0, 5), ymin=0).save(tmp_filename(ext='.png'))       # optional - sage.symbolic
+            sage: plot(x^2 - 5, (x, 0, 5), ymin=0).save(tmp_filename(ext='.png'))       # needs sage.symbolic
 
         will save the same plot as the one shown by this command::
 
-            sage: plot(x^2 - 5, (x, 0, 5), ymin=0)                                      # optional - sage.symbolic
+            sage: plot(x^2 - 5, (x, 0, 5), ymin=0)                                      # needs sage.symbolic
             Graphics object consisting of 1 graphics primitive
 
         (This test verifies that :trac:`8632` is fixed.)
@@ -3294,26 +3308,27 @@ class Graphics(WithEqualityById, SageObject):
 
         Legend labels should save correctly::
 
-            sage: P = plot(x,(x,0,1),legend_label='$xyz$')                              # optional - sage.symbolic
-            sage: P.set_legend_options(back_color=(1,0,0))                              # optional - sage.symbolic
-            sage: P.set_legend_options(loc=7)                                           # optional - sage.symbolic
+            sage: # needs sage.symbolic
+            sage: P = plot(x,(x,0,1),legend_label='$xyz$')
+            sage: P.set_legend_options(back_color=(1,0,0))
+            sage: P.set_legend_options(loc=7)
             sage: import tempfile
-            sage: with tempfile.NamedTemporaryFile(suffix=".png") as f:                 # optional - sage.symbolic
+            sage: with tempfile.NamedTemporaryFile(suffix=".png") as f:
             ....:     P.save(f.name)
 
         This plot should save with the frame shown, showing :trac:`7524`
         is fixed (same issue as :trac:`7981` and :trac:`8632`)::
 
-            sage: var('x,y')                                                            # optional - sage.symbolic
+            sage: var('x,y')                                                            # needs sage.symbolic
             (x, y)
-            sage: a = plot_vector_field((x,-y),(x,-1,1),(y,-1,1))                       # optional - sage.symbolic
+            sage: a = plot_vector_field((x,-y),(x,-1,1),(y,-1,1))                       # needs sage.symbolic
             sage: import tempfile
-            sage: with tempfile.NamedTemporaryFile(suffix=".png") as f:                 # optional - sage.symbolic
+            sage: with tempfile.NamedTemporaryFile(suffix=".png") as f:                 # needs sage.symbolic
             ....:     a.save(f.name)
 
         The following plot should show the axes; fixes :trac:`14782` ::
 
-            sage: plot(x^2, (x, 1, 2), ticks=[[], []])
+            sage: plot(x^2, (x, 1, 2), ticks=[[], []])                                  # needs sage.symbolic
             Graphics object consisting of 1 graphics primitive
 
         """
@@ -3428,7 +3443,7 @@ class Graphics(WithEqualityById, SageObject):
 
         EXAMPLES::
 
-            sage: print(polytopes.hypercube(2).plot().description())                    # optional - sage.geometry.polyhedron
+            sage: print(polytopes.hypercube(2).plot().description())                    # needs sage.geometry.polyhedron
             Polygon defined by 4 points: [(-1.0, -1.0), (1.0, -1.0), (1.0, 1.0), (-1.0, 1.0)]
             Line defined by 2 points: [(-1.0, 1.0), (-1.0, -1.0)]
             Line defined by 2 points: [(1.0, -1.0), (-1.0, -1.0)]
@@ -3473,11 +3488,12 @@ class Graphics(WithEqualityById, SageObject):
 
         EXAMPLES::
 
-            sage: f(x) = x^2*sin(1/x)                                                   # optional - sage.symbolic
-            sage: g1 = plot(f(x), (x, -2, 2), axes_labels=['$x$', '$y$'])               # optional - sage.symbolic
-            sage: g2 = plot(f(x), (x, -0.3, 0.3), axes_labels=['$x$', '$y$'],           # optional - sage.symbolic
+            sage: # needs sage.symbolic
+            sage: f(x) = x^2*sin(1/x)
+            sage: g1 = plot(f(x), (x, -2, 2), axes_labels=['$x$', '$y$'])
+            sage: g2 = plot(f(x), (x, -0.3, 0.3), axes_labels=['$x$', '$y$'],
             ....:           frame=True)
-            sage: g1.inset(g2)                                                          # optional - sage.symbolic
+            sage: g1.inset(g2)
             Multigraphics with 2 elements
 
         .. PLOT::
@@ -3490,7 +3506,7 @@ class Graphics(WithEqualityById, SageObject):
 
         Using non-default values for the position/size and the font size::
 
-            sage: g1.inset(g2, pos=(0.15, 0.7, 0.25, 0.25), fontsize=8)                 # optional - sage.symbolic
+            sage: g1.inset(g2, pos=(0.15, 0.7, 0.25, 0.25), fontsize=8)                 # needs sage.symbolic
             Multigraphics with 2 elements
 
         .. PLOT::
@@ -3503,10 +3519,10 @@ class Graphics(WithEqualityById, SageObject):
 
         We can add another inset by invoking ``inset`` on the last output::
 
-            sage: g1g2 = _                                                              # optional - sage.symbolic
-            sage: g3 = plot(f(x), (x, -0.05, 0.05), axes_labels=['$x$', '$y$'],         # optional - sage.symbolic
+            sage: g1g2 = _                                                              # needs sage.symbolic
+            sage: g3 = plot(f(x), (x, -0.05, 0.05), axes_labels=['$x$', '$y$'],         # needs sage.symbolic
             ....:           frame=True)
-            sage: g1g2.inset(g3, pos=(0.65, 0.12, 0.25, 0.25))                          # optional - sage.symbolic
+            sage: g1g2.inset(g3, pos=(0.65, 0.12, 0.25, 0.25))                          # needs sage.symbolic
             Multigraphics with 3 elements
 
         .. PLOT::
