@@ -72,16 +72,16 @@ def count_modp__by_gauss_sum(n, p, m, Qdet):
 
     # Compute the Gauss sum
     neg1 = -1
-    if not (m % p):
+    if not m % p:
         if n % 2:
-            count = (p**(n-1))
+            count = p**(n-1)
         else:
-            count = (p**(n-1)) + (p-1) * (p**((n-2)/2)) * kronecker_symbol(((neg1**(n/2)) * Qdet) % p, p)
+            count = p**(n-1) + (p-1) * (p**((n-2)//2)) * kronecker_symbol(((neg1**(n//2)) * Qdet) % p, p)
     else:
         if n % 2:
-            count = (p**(n-1)) + (p**((n-1)/2)) * kronecker_symbol(((neg1**((n-1)/2)) * Qdet * m) % p, p)
+            count = p**(n-1) + p**((n-1)//2) * kronecker_symbol(((neg1**((n-1)//2)) * Qdet * m) % p, p)
         else:
-            count = (p**(n-1)) - (p**((n-2)/2)) * kronecker_symbol(((neg1**(n/2)) * Qdet) % p, p)
+            count = p**(n-1) - p**((n-2)//2) * kronecker_symbol(((neg1**(n//2)) * Qdet) % p, p)
 
     # Return the result
     return count
@@ -243,7 +243,7 @@ cdef local_solution_type_cdef(Q, p, w, zvec, nzvec):
             return <long> 1
     if p == 2:
         for i in range(n - 1):
-            if ((Q[i, i+1] % p)) and (((w[i] % p)) or ((w[i+1] % p))):
+            if Q[i, i+1] % p and (w[i] % p or w[i+1] % p):
                 return <long> 1
 
     # 2: Check Zero-type
