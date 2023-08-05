@@ -834,3 +834,41 @@ class Polyhedron_ZZ(Polyhedron_QQ):
             decompositions.append((X, Y))
             summands += [X, Y]
         return tuple(decompositions)
+
+    def normal_form(self, algorithm="palp_native", permutation=False):
+        r"""
+        EXAMPLES:
+
+        We compute the normal form of the "diamond"::
+
+            sage: d = Polyhedron([(1,0), (0,1), (-1,0), (0,-1)])
+            sage: d.vertices()
+            (A vertex at (-1, 0),
+             A vertex at (0, -1),
+             A vertex at (0, 1),
+             A vertex at (1, 0))
+            sage: d.normal_form()
+            [(1, 0), (0, 1), (0, -1), (-1, 0)]
+
+        It is not possible to compute normal forms for polytopes which do not
+        span the space::
+
+            sage: p = Polyhedron([(1,0,0), (0,1,0), (-1,0,0), (0,-1,0)])
+            sage: p.normal_form()
+            Traceback (most recent call last):
+            ...
+            ValueError: normal form is not defined for A 2-dimensional polyhedron in ZZ^3 defined as the convex hull of 4 vertices
+        """
+        from sage.geometry.palp_normal_form import _palp_PM_max, _palp_canonical_order
+
+        if self.dim() < self.ambient_dim():
+            raise ValueError("normal form is not defined for %s" % self)
+
+        PM = self.slack_matrix().transpose()
+        PM_max, permutations = _palp_PM_max(PM, check=True)
+        out = _palp_canonical_order(self.vertices(), PM_max, permutations)
+
+        if permutation:
+            return out
+        else:
+            return out[0]

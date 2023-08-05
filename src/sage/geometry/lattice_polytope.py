@@ -5024,7 +5024,7 @@ def _palp_convert_permutation(permutation):
 
     OUTPUT:
 
-    A :class:`permutation group element <sage.groups.perm_gps.permgroup_element.PermmutationGroupElement>`.
+    A :class:`permutation group element <sage.groups.perm_gps.permgroup_element.PermutationGroupElement>`.
 
     EXAMPLES::
 
