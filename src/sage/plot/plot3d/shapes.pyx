@@ -80,7 +80,7 @@ def validate_frame_size(size):
         Traceback (most recent call last):
         ...
         ValueError: each box dimension must be nonnegative
-        sage: validate_frame_size([sqrt(-1),3,2])                                       # optional - sage.symbolic
+        sage: validate_frame_size([sqrt(-1),3,2])                                       # needs sage.symbolic
         Traceback (most recent call last):
         ...
         TypeError: each box dimension must coerce to a float
@@ -138,10 +138,10 @@ class Box(IndexFaceSet):
 
     A sinusoidal stack of multicolored boxes::
 
-        sage: B = sum(Box([2,4,1/4],                                                    # optional - sage.symbolic
+        sage: B = sum(Box([2,4,1/4],                                                    # needs sage.symbolic
         ....:             color=(i/4,i/5,1)).translate((sin(i),0,5-i))
         ....:         for i in [0..20])
-        sage: show(B, figsize=6)                                                        # optional - sage.symbolic
+        sage: show(B, figsize=6)                                                        # needs sage.symbolic
 
     .. PLOT::
 
@@ -292,7 +292,7 @@ cdef class Cone(ParametricSurface):
 
     A spiky plot of the sine function::
 
-        sage: sum(Cone(.1, sin(n), color='yellow').translate(n, sin(n), 0)              # optional - sage.symbolic
+        sage: sum(Cone(.1, sin(n), color='yellow').translate(n, sin(n), 0)              # needs sage.symbolic
         ....:     for n in [0..10, step=.1])
         Graphics3d Object
 
@@ -303,11 +303,11 @@ cdef class Cone(ParametricSurface):
 
     A Christmas tree::
 
-        sage: T = sum(Cone(exp(-n/5), 4/3*exp(-n/5),                                    # optional - sage.symbolic
+        sage: T = sum(Cone(exp(-n/5), 4/3*exp(-n/5),                                    # needs sage.symbolic
         ....:              color=(0, .5, 0)).translate(0, 0, -3*exp(-n/5))
         ....:         for n in [1..7])
-        sage: T += Cone(1/8, 1, color='brown').translate(0, 0, -3)                      # optional - sage.symbolic
-        sage: T.show(aspect_ratio=1, frame=False)                                       # optional - sage.symbolic
+        sage: T += Cone(1/8, 1, color='brown').translate(0, 0, -3)                      # needs sage.symbolic
+        sage: T.show(aspect_ratio=1, frame=False)                                       # needs sage.symbolic
 
     .. PLOT::
 
@@ -413,11 +413,11 @@ cdef class Cylinder(ParametricSurface):
     Some gears::
 
         sage: G = Cylinder(1, .5) + Cylinder(.25, 3).translate(0, 0, -3)
-        sage: G += sum(Cylinder(.2, 1).translate(cos(2*pi*n/9), sin(2*pi*n/9), 0)       # optional - sage.symbolic
+        sage: G += sum(Cylinder(.2, 1).translate(cos(2*pi*n/9), sin(2*pi*n/9), 0)       # needs sage.symbolic
         ....:          for n in [1..9])
-        sage: G += G.translate(2.3, 0, -.5)                                             # optional - sage.symbolic
-        sage: G += G.translate(3.5, 2, -1)                                              # optional - sage.symbolic
-        sage: G.show(aspect_ratio=1, frame=False)                                       # optional - sage.symbolic
+        sage: G += G.translate(2.3, 0, -.5)                                             # needs sage.symbolic
+        sage: G += G.translate(3.5, 2, -1)                                              # needs sage.symbolic
+        sage: G.show(aspect_ratio=1, frame=False)                                       # needs sage.symbolic
 
     .. PLOT::
 
@@ -731,7 +731,7 @@ def arrow3d(start, end, width=1, radius=None, head_radius=None, head_len=None, *
 
     Many arrows arranged in a circle (flying spears?)::
 
-        sage: sum(arrow3d((cos(t),sin(t),0), (cos(t),sin(t),1))                         # optional - sage.symbolic
+        sage: sum(arrow3d((cos(t),sin(t),0), (cos(t),sin(t),1))                         # needs sage.symbolic
         ....:     for t in [0,0.3,..,2*pi])
         Graphics3d Object
 

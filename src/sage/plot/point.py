@@ -4,12 +4,12 @@ Points
 
 TESTS::
 
-    sage: E = EllipticCurve('37a')                                                      # optional - sage.schemes
-    sage: P = E(0,0)                                                                    # optional - sage.schemes
+    sage: E = EllipticCurve('37a')                                                      # needs sage.schemes
+    sage: P = E(0,0)                                                                    # needs sage.schemes
     sage: def get_points(n):
     ....:     return sum(point(list(i*P)[:2], size=3)
     ....:                for i in range(-n,n) if i != 0 and (i*P)[0] < 3)
-    sage: sum(get_points(15*n).plot3d(z=n) for n in range(1,10))                        # optional - sage.schemes
+    sage: sum(get_points(15*n).plot3d(z=n) for n in range(1,10))                        # needs sage.schemes
     Graphics3d Object
 """
 
@@ -371,10 +371,10 @@ def point(points, **kwds):
 
     Extra options will get passed on to show(), as long as they are valid::
 
-        sage: point([(cos(theta), sin(theta))                                           # optional - sage.symbolic
+        sage: point([(cos(theta), sin(theta))                                           # needs sage.symbolic
         ....:        for theta in srange(0, 2*pi, pi/8)], frame=True)
         Graphics object consisting of 1 graphics primitive
-        sage: point([(cos(theta), sin(theta))               # These are equivalent      # optional - sage.symbolic
+        sage: point([(cos(theta), sin(theta))               # These are equivalent      # needs sage.symbolic
         ....:        for theta in srange(0, 2*pi, pi/8)]).show(frame=True)
 
     TESTS:
@@ -508,7 +508,7 @@ def point2d(points, **options):
 
         sage: P = points([(0, 0), (1, 0)], pointsize=40,
         ....:            legend_label='origin', legend_color='red')
-        sage: P + plot(x^2, (x, 0, 1), legend_label='plot', legend_color='green')       # optional - sage.symbolic
+        sage: P + plot(x^2, (x, 0, 1), legend_label='plot', legend_color='green')       # needs sage.symbolic
         Graphics object consisting of 2 graphics primitives
 
     .. PLOT::
@@ -519,10 +519,10 @@ def point2d(points, **options):
 
     Extra options will get passed on to show(), as long as they are valid::
 
-        sage: point([(cos(theta), sin(theta))                                           # optional - sage.symbolic
+        sage: point([(cos(theta), sin(theta))                                           # needs sage.symbolic
         ....:        for theta in srange(0, 2*pi, pi/8)], frame=True)
         Graphics object consisting of 1 graphics primitive
-        sage: point([(cos(theta), sin(theta))               # These are equivalent      # optional - sage.symbolic
+        sage: point([(cos(theta), sin(theta))               # These are equivalent      # needs sage.symbolic
         ....:        for theta in srange(0, 2*pi, pi/8)]).show(frame=True)
 
     .. PLOT::
@@ -553,9 +553,9 @@ def point2d(points, **options):
 
     We can plot a single complex number::
 
-        sage: point(1 + I, pointsize=100)                                               # optional - sage.symbolic
+        sage: point(1 + I, pointsize=100)                                               # needs sage.symbolic
         Graphics object consisting of 1 graphics primitive
-        sage: point(sqrt(2) + I, pointsize=100)                                         # optional - sage.symbolic
+        sage: point(sqrt(2) + I, pointsize=100)                                         # needs sage.symbolic
         Graphics object consisting of 1 graphics primitive
 
     .. PLOT::
@@ -568,7 +568,7 @@ def point2d(points, **options):
 
     We can also plot a list of complex numbers::
 
-        sage: point([I, 1 + I, 2 + 2*I], pointsize=100)                                 # optional - sage.symbolic
+        sage: point([I, 1 + I, 2 + 2*I], pointsize=100)                                 # needs sage.symbolic
         Graphics object consisting of 1 graphics primitive
 
     .. PLOT::

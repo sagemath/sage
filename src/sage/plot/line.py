@@ -131,9 +131,9 @@ class Line(GraphicPrimitive_xydata):
 
         EXAMPLES::
 
-            sage: E = EllipticCurve('37a').plot(thickness=5).plot3d()                   # optional - sage.schemes
-            sage: F = EllipticCurve('37a').plot(thickness=5).plot3d(z=2)                # optional - sage.schemes
-            sage: E + F  # long time (5s on sage.math, 2012)                            # optional - sage.schemes
+            sage: E = EllipticCurve('37a').plot(thickness=5).plot3d()                   # needs sage.schemes
+            sage: F = EllipticCurve('37a').plot(thickness=5).plot3d(z=2)                # needs sage.schemes
+            sage: E + F                         # long time (5s on sage.math, 2012), needs sage.schemes
             Graphics3d Object
 
         .. PLOT::
@@ -391,14 +391,14 @@ def line2d(points, **options):
 
         sage: line([])      #returns an empty plot
         Graphics object consisting of 0 graphics primitives
-        sage: import numpy; line(numpy.array([]))                                       # optional - numpy
+        sage: import numpy; line(numpy.array([]))                                       # needs numpy
         Graphics object consisting of 0 graphics primitives
         sage: line([(1,1)])
         Graphics object consisting of 1 graphics primitive
 
     A line with numpy arrays::
 
-        sage: line(numpy.array([[1,2], [3,4]]))                                         # optional - numpy
+        sage: line(numpy.array([[1,2], [3,4]]))                                         # needs numpy
         Graphics object consisting of 1 graphics primitive
 
     A line with a legend::
@@ -574,10 +574,11 @@ def line2d(points, **options):
 
     A purple plot of the Hasse-Weil `L`-function `L(E, 1 + it)`, `-1 < t < 10`::
 
-        sage: E = EllipticCurve('37a')                                                  # optional - sage.schemes
-        sage: vals = E.lseries().values_along_line(1-I, 1+10*I, 100)  # critical line   # optional - sage.schemes
-        sage: L = [(z[1].real(), z[1].imag()) for z in vals]                            # optional - sage.schemes
-        sage: line(L, rgbcolor=(3/4,1/2,5/8))                                           # optional - sage.schemes
+        sage: # needs sage.schemes
+        sage: E = EllipticCurve('37a')
+        sage: vals = E.lseries().values_along_line(1-I, 1+10*I, 100)  # critical line
+        sage: L = [(z[1].real(), z[1].imag()) for z in vals]
+        sage: line(L, rgbcolor=(3/4,1/2,5/8))
         Graphics object consisting of 1 graphics primitive
 
     .. PLOT ::

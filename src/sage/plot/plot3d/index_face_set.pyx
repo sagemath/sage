@@ -398,21 +398,22 @@ cdef class IndexFaceSet(PrimitiveObject):
 
         EXAMPLES::
 
-            sage: var('x,y,z')                                                          # optional - sage.symbolic
+            sage: # needs sage.symbolic
+            sage: var('x,y,z')
             (x, y, z)
-            sage: G = implicit_plot3d(x^2+y^2+z^2 - 1,                                  # optional - sage.symbolic
+            sage: G = implicit_plot3d(x^2+y^2+z^2 - 1,
             ....:                     (x, -2, 2), (y, -2, 2), (z, -2, 2), plot_points=6)
-            sage: G.triangulate()  # indirect doctest                                   # optional - sage.symbolic
-            sage: len(G.face_list())                                                    # optional - sage.symbolic
+            sage: G.triangulate()  # indirect doctest
+            sage: len(G.face_list())
             44
-            sage: len(G.vertex_list())                                                  # optional - sage.symbolic
+            sage: len(G.vertex_list())
             132
-            sage: G = implicit_plot3d(x^2+y^2+z^2 - 100,                                # optional - sage.symbolic
+            sage: G = implicit_plot3d(x^2+y^2+z^2 - 100,
             ....:                     (x, -2, 2), (y, -2, 2), (z, -2, 2), plot_points=6)
-            sage: G.triangulate()  # indirect doctest                                   # optional - sage.symbolic
-            sage: len(G.face_list())                                                    # optional - sage.symbolic
+            sage: G.triangulate()  # indirect doctest
+            sage: len(G.face_list())
             0
-            sage: len(G.vertex_list())                                                  # optional - sage.symbolic
+            sage: len(G.vertex_list())
             0
         """
         self.vs = <point_c*>check_reallocarray(self.vs, vcount, sizeof(point_c))
@@ -900,9 +901,9 @@ cdef class IndexFaceSet(PrimitiveObject):
 
         EXAMPLES::
 
-            sage: x,y = var('x,y')                                                      # optional - sage.symbolic
-            sage: p = plot3d(sqrt(sin(x)*sin(y)), (x,0,2*pi), (y,0,2*pi))               # optional - sage.symbolic
-            sage: p.bounding_box()                                                      # optional - sage.symbolic
+            sage: x,y = var('x,y')                                                      # needs sage.symbolic
+            sage: p = plot3d(sqrt(sin(x)*sin(y)), (x,0,2*pi), (y,0,2*pi))               # needs sage.symbolic
+            sage: p.bounding_box()                                                      # needs sage.symbolic
             ((0.0, 0.0, 0.0), (6.283185307179586, 6.283185307179586, 0.9991889981715697))
         """
         if self.vcount == 0:
@@ -1010,12 +1011,12 @@ cdef class IndexFaceSet(PrimitiveObject):
 
         EXAMPLES::
 
-            sage: var('x,y,z')                                                          # optional - sage.symbolic
+            sage: var('x,y,z')                                                          # needs sage.symbolic
             (x, y, z)
-            sage: P = implicit_plot3d(z-x*y,(-2,2),(-2,2),(-2,2))                       # optional - sage.symbolic
+            sage: P = implicit_plot3d(z-x*y,(-2,2),(-2,2),(-2,2))                       # needs sage.symbolic
             sage: def condi(x,y,z):
             ....:     return bool(x*x+y*y+z*z <= Integer(1))
-            sage: R = P.add_condition(condi, 20); R                                     # optional - sage.symbolic
+            sage: R = P.add_condition(condi, 20); R                                     # needs sage.symbolic
             Graphics3d Object
 
         .. PLOT::
@@ -1032,9 +1033,9 @@ cdef class IndexFaceSet(PrimitiveObject):
             ....:     return bool(x*x+y*y <= 1.1)
             sage: cm = colormaps.hsv
             sage: cf = lambda x,y,z: float(x+y) % 1
-            sage: P = implicit_plot3d(x**2+y**2+z**2-1-x**2*z+y**2*z,                   # optional - sage.symbolic
+            sage: P = implicit_plot3d(x**2+y**2+z**2-1-x**2*z+y**2*z,                   # needs sage.symbolic
             ....:                     (-2,2),(-2,2),(-2,2),color=(cm,cf))
-            sage: R = P.add_condition(condi,40); R                                      # optional - sage.symbolic
+            sage: R = P.add_condition(condi,40); R                                      # needs sage.symbolic
             Graphics3d Object
 
         .. PLOT::
@@ -1049,11 +1050,11 @@ cdef class IndexFaceSet(PrimitiveObject):
 
         An example with transparency::
 
-            sage: P = implicit_plot3d(x**4+y**4+z**2-4, (x,-2,2), (y,-2,2), (z,-2,2),   # optional - sage.symbolic
+            sage: P = implicit_plot3d(x**4+y**4+z**2-4, (x,-2,2), (y,-2,2), (z,-2,2),   # needs sage.symbolic
             ....:                     alpha=0.3)
             sage: def cut(a,b,c):
             ....:     return a*a+c*c > 2
-            sage: Q = P.add_condition(cut,40); Q                                        # optional - sage.symbolic
+            sage: Q = P.add_condition(cut,40); Q                                        # needs sage.symbolic
             Graphics3d Object
 
         .. PLOT::
@@ -1066,11 +1067,11 @@ cdef class IndexFaceSet(PrimitiveObject):
 
         A sombrero with quadrilaterals::
 
-            sage: P = plot3d(-sin(2*x*x+2*y*y)*exp(-x*x-y*y), (x,-2,2), (y,-2,2),       # optional - sage.symbolic
+            sage: P = plot3d(-sin(2*x*x+2*y*y)*exp(-x*x-y*y), (x,-2,2), (y,-2,2),       # needs sage.symbolic
             ....:            color='gold')
             sage: def cut(x,y,z):
             ....:     return x*x+y*y < 1
-            sage: Q = P.add_condition(cut);Q                                            # optional - sage.symbolic
+            sage: Q = P.add_condition(cut);Q                                            # needs sage.symbolic
             Graphics3d Object
 
         .. PLOT::
@@ -1085,13 +1086,14 @@ cdef class IndexFaceSet(PrimitiveObject):
 
         One test for preservation of transparency :trac:`28783`::
 
-            sage: x,y,z = var('x,y,z')                                                  # optional - sage.symbolic
-            sage: P = plot3d(cos(x*y),(x,-2,2),(y,-2,2),color='red',opacity=0.1)        # optional - sage.symbolic
+            sage: # needs sage.symbolic
+            sage: x,y,z = var('x,y,z')
+            sage: P = plot3d(cos(x*y),(x,-2,2),(y,-2,2),color='red',opacity=0.1)
             sage: def condi(x,y,z):
             ....:     return not(x*x+y*y <= 1)
-            sage: Q = P.add_condition(condi, 40)                                        # optional - sage.symbolic
-            sage: L = Q.json_repr(Q.default_render_params())                            # optional - sage.symbolic
-            sage: '"opacity":0.1' in L[-1]                                              # optional - sage.symbolic
+            sage: Q = P.add_condition(condi, 40)
+            sage: L = Q.json_repr(Q.default_render_params())
+            sage: '"opacity":0.1' in L[-1]
             True
 
         A test that this works with polygons::
@@ -1099,7 +1101,7 @@ cdef class IndexFaceSet(PrimitiveObject):
             sage: p = polygon3d([[2,0,0], [0,2,0], [0,0,3]])
             sage: def f(x,y,z):
             ....:     return bool(x*x+y*y+z*z<=5)
-            sage: cut = p.add_condition(f,60,1.0e-12); cut.face_list()                  # optional - sage.symbolic
+            sage: cut = p.add_condition(f,60,1.0e-12); cut.face_list()                  # needs sage.symbolic
             [[(0.556128491210302, 0.0, 2.165807263184547),
             (2.0, 0.0, 0.0),
             (0.0, 2.0, 0.0),

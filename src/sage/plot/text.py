@@ -81,8 +81,8 @@ class Text(GraphicPrimitive):
 
         EXAMPLES::
 
-            sage: T = text("I like cool constants", (pi,e))                             # optional - sage.symbolic
-            sage: t = T[0];t                                                            # optional - sage.symbolic
+            sage: T = text("I like cool constants", (pi,e))                             # needs sage.symbolic
+            sage: t = T[0];t                                                            # needs sage.symbolic
             Text 'I like cool constants' at the point (3.1415926535...,2.7182818284...)
         """
         return "Text '%s' at the point (%s,%s)" % (self.string, self.x, self.y)
