@@ -1,4 +1,4 @@
-# sage.doctest: optional - sage.rings.finite_rings
+# sage.doctest: needs sage.rings.finite_rings
 r"""
 Finite fields
 
@@ -125,9 +125,10 @@ We output the base rings of several finite fields.
 
 ::
 
-    sage: k = GF(9,'alpha'); type(k)                                                    # needs sage.libs.linbox
+    sage: # needs sage.libs.linbox
+    sage: k = GF(9,'alpha'); type(k)
     <class 'sage.rings.finite_rings.finite_field_givaro.FiniteField_givaro_with_category'>
-    sage: k.base_ring()                                                                 # needs sage.libs.linbox
+    sage: k.base_ring()
     Finite Field of size 3
 
 ::

@@ -397,7 +397,7 @@ def _frobenius_shift(K, generators, check_only=False):
 
     EXAMPLES::
 
-        sage: # needs sage.rings.finite_rings
+        sage: # needs sage.libs.ntl sage.rings.finite_rings
         sage: R.<x> = GF(2)[]
         sage: f30 = x^30 + x^28 + x^27 + x^25 + x^24 + x^20 + x^19 + x^18 + x^16 + x^15 + x^12 + x^10 + x^7 + x^2 + 1
         sage: f20 = x^20 + x^19 + x^15 + x^13 + x^12 + x^11 + x^9 + x^8 + x^7 + x^4 + x^2 + x + 1
