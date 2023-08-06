@@ -162,6 +162,7 @@ include sage/rings/polynomial/term_order.p*
 include sage/rings/polynomial/flatten.p*
 include sage/rings/polynomial/cyclotomic.p*
 include sage/rings/polynomial/laurent_polynomial_ring*.p*
+include sage/rings/polynomial/laurent_polynomial_ideal.p*
 include sage/rings/polynomial/laurent_polynomial.p*                     # but not laurent_polynomial_mpair, which needs Matrix
 include sage/rings/polynomial/ideal.p*
 include sage/rings/polynomial/toy*.p*
