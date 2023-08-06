@@ -38,7 +38,7 @@ but rather work with the corresponding simplicial complex.
     One of the more useful properties will be the
     :meth:`bigraded Betti numbers<sage.topology.simplicial_complex.bigraded_betti_numbers>`,
     and the underlying theorem which makes this possible is Hochter's formula, which
-    can be found on page 104 of [BT2014]_.
+    can be found on page 104 of [BP2014]_.
 
 EXAMPLES::
 
@@ -487,7 +487,7 @@ class MomentAngleComplex(SageObject, UniqueRepresentation):
         ALGORITHM:
 
         This algorithm is adopted from theorem 4.5.8. on page 154 of
-        [BT2014]_.
+        [BP2014]_.
 
         The (co)homology of the moment-angle complex is closely related
         to the (co)homologies of certain full subcomplexes of the
@@ -578,7 +578,7 @@ class MomentAngleComplex(SageObject, UniqueRepresentation):
         ALGORITHM:
 
         This algorithm is adopted from theorem 4.5.8. on page 154 of
-        [BT2014]_.
+        [BP2014]_.
 
         The (co)homology of the moment-angle complex is closely related
         to the (co)homologies of certain full subcomplexes of the
@@ -756,7 +756,7 @@ class MomentAngleComplex(SageObject, UniqueRepresentation):
         It is known that the product of two moment-angle complexes
         is a moment-angle complex over the join of the two corresponding
         simplicial complexes. This result can be found on page 138 of
-        [BT2014]_.
+        [BP2014]_.
 
         OUTPUT: a moment-angle complex which is the product of the
         parsed moment-angle complexes
