@@ -338,10 +338,10 @@ class DynamicalSemigroup(Parent, metaclass=InheritComparisonClasscallMetaclass):
             ...
             TypeError: unable to convert {(4 : 1), (2 : 1)} to an element of Rational Field
         """
-        result = []
+        result = set()
         for ds in self.defining_systems():
-            result.append(ds(self.domain()(input)))
-        return set(result)
+            result.add(ds(self.domain()(input)))
+        return result
 
     def base_ring(self):
         r"""
@@ -434,10 +434,10 @@ class DynamicalSemigroup(Parent, metaclass=InheritComparisonClasscallMetaclass):
             sage: f.defining_polynomials()
             {(x, y), (x^2, y^2)}
         """
-        result = []
+        result = set()
         for ds in self.defining_systems():
-            result.append(ds.defining_polynomials())
-        return set(result)
+            result.add(ds.defining_polynomials())
+        return result
 
     def defining_systems(self):
         r"""
