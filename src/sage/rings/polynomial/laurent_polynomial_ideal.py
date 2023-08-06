@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# sage.doctest: needs sage.libs.singular sage.modules (because all doctests need laurent_polynomial_mpair, Groebner bases)
 r"""
 Ideals in Laurent polynomial rings.
 
@@ -58,14 +58,15 @@ class LaurentPolynomialIdeal( Ideal_generic ):
             Ideal (x, y) of Multivariate Laurent Polynomial Ring in x, y
             over Integer Ring
             sage: R.<x0,x1> = LaurentPolynomialRing(GF(3), 2)
-            sage: R.ideal([x0^2, x1^-3])                                                # needs sage.rings.finite_rings
+            sage: R.ideal([x0^2, x1^-3])
             Ideal (x0^2, x1^-3) of Multivariate Laurent Polynomial Ring in x0, x1
             over Finite Field of size 3
 
             sage: P.<x,y> = LaurentPolynomialRing(QQ, 2)
             sage: I = P.ideal([~x + ~y - 1])
             sage: print(I)
-            Ideal (-1 + y^-1 + x^-1) of Multivariate Laurent Polynomial Ring in x, y over Rational Field
+            Ideal (-1 + y^-1 + x^-1) of
+             Multivariate Laurent Polynomial Ring in x, y over Rational Field
             sage: I.is_zero()
             False
             sage: (x^(-2) + x^(-1)*y^(-1) - x^(-1)) in I

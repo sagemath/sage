@@ -439,12 +439,13 @@ class SectionSkewPolynomialCenterInjection(Section):
             sage: iota = S.convert_map_from(Z)
             sage: sigma = iota.section()
 
-            sage: s = loads(dumps(sigma))                                               # needs sage.rings.finite_rings
-            sage: s == sigma                                                            # needs sage.rings.finite_rings
+            sage: # needs sage.rings.finite_rings
+            sage: s = loads(dumps(sigma))
+            sage: s == sigma
             True
-            sage: s != sigma                                                            # needs sage.rings.finite_rings
+            sage: s != sigma
             False
-            sage: s is sigma                                                            # needs sage.rings.finite_rings
+            sage: s is sigma
             False
         """
         if op == op_EQ:

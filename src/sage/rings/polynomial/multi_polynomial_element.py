@@ -660,11 +660,11 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
         ::
 
             sage: x, y = ZZ['x','y'].gens()
-            sage: GF(3037000453)['x','y'].gen(0).degree(x)                              # needs sage.rings.finie_rings
+            sage: GF(3037000453)['x','y'].gen(0).degree(x)                              # needs sage.rings.finite_rings
             1
 
             sage: x0, y0 = QQ['x','y'].gens()
-            sage: GF(3037000453)['x','y'].gen(0).degree(x0)                             # needs sage.rings.finie_rings
+            sage: GF(3037000453)['x','y'].gen(0).degree(x0)                             # needs sage.rings.finite_rings
             Traceback (most recent call last):
             ...
             TypeError: x must canonically coerce to parent
@@ -997,6 +997,7 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
 
         ::
 
+            sage: # needs sage.rings.real_mpfr
             sage: R.<x,y> = RR[]
             sage: f = x*y + 5
             sage: c = f.coefficient({x: 0, y: 0}); c
@@ -2329,7 +2330,7 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
             sage: R.<x,y> = RR[]
             sage: p = x + y
             sage: q = x*y
-            sage: p.resultant(q)
+            sage: p.resultant(q)                                                        # needs sage.modules
             -y^2
 
         Check that this method works over QQbar (:trac:`25351`)::

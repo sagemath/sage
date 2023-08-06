@@ -775,7 +775,7 @@ class PolynomialRing_general(ring.Algebra):
         Over the integers, there is a coercion from the NTL and generic
         implementation to the default FLINT implementation::
 
-            sage: R = S = T = None  # clear values from doctests above
+            sage: del R, S  # clear values from doctests above
             sage: R = PolynomialRing(ZZ, 't', implementation="NTL")                     # needs sage.libs.ntl
             sage: S = PolynomialRing(ZZ, 't', implementation="FLINT")                   # needs sage.libs.flint
             sage: T = PolynomialRing(ZZ, 't', implementation="generic")
@@ -2512,8 +2512,8 @@ class PolynomialRing_dense_finite_field(PolynomialRing_field):
             sage: type(R(0))
             <class 'sage.rings.polynomial.polynomial_ring.PolynomialRing_dense_finite_field_with_category.element_class'>
 
-            sage: S = PolynomialRing_dense_finite_field(GF(25, 'a'), implementation='NTL')          # needs sage.rings.finite_rings
-            sage: type(S(0))                                                                        # needs sage.rings.finite_rings
+            sage: S = PolynomialRing_dense_finite_field(GF(25, 'a'), implementation='NTL')          # needs sage.libs.ntl sage.rings.finite_rings
+            sage: type(S(0))                                                                        # needs sage.libs.ntl sage.rings.finite_rings
             <class 'sage.rings.polynomial.polynomial_zz_pex.Polynomial_ZZ_pEX'>
 
             sage: S = PolynomialRing_dense_finite_field(GF(64), implementation='superfast')         # needs sage.rings.finite_rings
@@ -3325,9 +3325,9 @@ class PolynomialRing_dense_mod_p(PolynomialRing_dense_finite_field,
             sage: type(P.gen())                                                         # needs sage.rings.finite_rings
             <class 'sage.rings.polynomial.polynomial_modn_dense_ntl.Polynomial_dense_mod_p'>
 
-            sage: P = PolynomialRing_dense_mod_p(GF(9223372036854775837), 'x'); P       # needs sage.rings.finite_rings
+            sage: P = PolynomialRing_dense_mod_p(GF(9223372036854775837), 'x'); P       # needs sage.libs.ntl sage.rings.finite_rings
             Univariate Polynomial Ring in x over Finite Field of size 9223372036854775837 (using NTL)
-            sage: type(P.gen())                                                         # needs sage.rings.finite_rings
+            sage: type(P.gen())                                                         # needs sage.libs.ntl sage.rings.finite_rings
             <class 'sage.rings.polynomial.polynomial_modn_dense_ntl.Polynomial_dense_mod_p'>
 
         This caching bug was fixed in :trac:`24264`::

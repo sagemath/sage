@@ -628,6 +628,7 @@ cdef class Polynomial(CommutativePolynomial):
 
         The following test came up in :trac:`9051`::
 
+            sage: # needs sage.rings.complex_interval_field
             sage: Cif = ComplexIntervalField(64)                                        # needs sage.rings.complex_interval_field
             sage: R.<x> = Cif[]
             sage: f = 2*x-1
@@ -1028,6 +1029,7 @@ cdef class Polynomial(CommutativePolynomial):
         Test that comparisons are consistent when using interval
         coefficients::
 
+            sage: # needs sage.rings.real_interval_field
             sage: R.<x> = RIF[]
             sage: a = RIF(0,1) * x
             sage: b = RIF(1,2) * x

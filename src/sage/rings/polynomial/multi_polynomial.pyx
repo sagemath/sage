@@ -1546,7 +1546,7 @@ cdef class MPolynomial(CommutativePolynomial):
             sage: f = x^5*y + 3*x^2*y^2 - 2*x + y - 1
             sage: f.discriminant(y)                                                     # needs sage.libs.singular
             x^10 + 2*x^5 + 24*x^3 + 12*x^2 + 1
-            sage: f.polynomial(y).discriminant()                                        # needs sage.libs.singular
+            sage: f.polynomial(y).discriminant()
             x^10 + 2*x^5 + 24*x^3 + 12*x^2 + 1
             sage: f.discriminant(y).parent() == f.polynomial(y).discriminant().parent()             # needs sage.libs.singular
             False

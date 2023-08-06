@@ -1,4 +1,4 @@
-# sage.doctest: optional - sage.libs.singular
+# sage.doctest: needs sage.libs.singular
 r"""
 Ideals in multivariate polynomial rings
 
