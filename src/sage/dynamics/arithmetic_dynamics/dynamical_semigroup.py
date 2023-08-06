@@ -459,7 +459,7 @@ class DynamicalSemigroup(Parent, metaclass=InheritComparisonClasscallMetaclass):
                Defn: Defined on coordinates by sending (x : y) to
                      (x^2 : y^2))
         """
-        return tuple(self.defining_systems())
+        return tuple(self._dynamical_systems)
 
     def nth_iterate(self, p, n):
         r"""
