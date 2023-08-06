@@ -111,6 +111,7 @@ include sage/rings/finite_rings/stdint.*
 include sage/rings/finite_rings/finite_field_base.p*
 include sage/rings/finite_rings/finite_field_constructor.p*
 include sage/rings/finite_rings/finite_field_prime_modn.p*
+include sage/rings/finite_rings/residue_field.p*
 include sage/rings/finite_rings/hom_finite_field.p*
 include sage/rings/finite_rings/hom_prime_finite_field.p*
 include sage/rings/finite_rings/homset.p*
@@ -123,6 +124,7 @@ include sage/rings/algebraic_closure_finite_field.p*
 
 include sage/rings/number_field/number_field_base.p*
 include sage/rings/number_field/number_field_element_base.p*
+include sage/rings/number_field/number_field_ideal.p*
 include sage/rings/real_double.p*
 
 include sage/rings/real_lazy.p*
