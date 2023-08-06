@@ -180,6 +180,34 @@ class MomentAngleComplex(SageObject, UniqueRepresentation):
 
         sage: TestSuite(Z).run()
     """
+    @staticmethod
+    def __classcall_private__(cls, simplicial_complex):
+        """
+        TESTS::
+
+            sage: MomentAngleComplex([[0,2], [1,2,3]]) is MomentAngleComplex([[0,2], [1,2,3]])
+            True
+            sage: Z = MomentAngleComplex([[0,2], [1,2,3]])
+            sage: Z is MomentAngleComplex(Z)
+            True
+        """
+        if simplicial_complex:
+            if isinstance(simplicial_complex, MomentAngleComplex):
+                # Allows for copy constructor
+                immutable_complex = SimplicialComplex(simplicial_complex._simplicial_complex, is_mutable=False)
+            elif not isinstance(simplicial_complex, SimplicialComplex):
+                # Try to create a SimplicialComplex out of simplicial_complex
+                # in case that simplicial_complex is a list of facets, or
+                # something that can generate a SimplicialComplex
+                immutable_complex = SimplicialComplex(simplicial_complex, is_mutable=False)
+            elif simplicial_complex.is_mutable():
+                immutable_complex = SimplicialComplex(simplicial_complex, is_mutable=False)
+            else:
+                immutable_complex = simplicial_complex
+        else:
+            immutable_complex = SimplicialComplex(is_mutable=False)
+        return super().__classcall__(cls, immutable_complex)
+        # behaviour for MomentAngleComplex()? maybe allow for simplexes?
 
     def __init__(self, simplicial_complex):
         """
@@ -214,35 +242,6 @@ class MomentAngleComplex(SageObject, UniqueRepresentation):
                     Y.append(Sphere(1))
 
             self._components[facet] = Y
-
-    @staticmethod
-    def __classcall_private__(cls, simplicial_complex):
-        """
-        TESTS::
-
-            sage: MomentAngleComplex([[0,2], [1,2,3]]) is MomentAngleComplex([[0,2], [1,2,3]])
-            True
-            sage: Z = MomentAngleComplex([[0,2], [1,2,3]])
-            sage: Z is MomentAngleComplex(Z)
-            True
-        """
-        if simplicial_complex:
-            if isinstance(simplicial_complex, MomentAngleComplex):
-                # Allows for copy constructor
-                immutable_complex = SimplicialComplex(simplicial_complex._simplicial_complex, is_mutable=False)
-            elif not isinstance(simplicial_complex, SimplicialComplex):
-                # Try to create a SimplicialComplex out of simplicial_complex
-                # in case that simplicial_complex is a list of facets, or
-                # something that can generate a SimplicialComplex
-                immutable_complex = SimplicialComplex(simplicial_complex, is_mutable=False)
-            elif simplicial_complex.is_mutable():
-                immutable_complex = SimplicialComplex(simplicial_complex, is_mutable=False)
-            else:
-                immutable_complex = simplicial_complex
-        else:
-            immutable_complex = SimplicialComplex(is_mutable=False)
-        return super().__classcall__(cls, immutable_complex)
-        # behaviour for MomentAngleComplex()? maybe allow for simplexes?
 
     def _repr_(self):
         """
@@ -422,61 +421,6 @@ class MomentAngleComplex(SageObject, UniqueRepresentation):
         number_of_vertices = len(self._simplicial_complex.vertices())
         dim = self._simplicial_complex.dimension()
         return number_of_vertices + dim + 1
-
-    def has_trivial_lowest_deg_massey_product(self):
-        """
-        Return whether ``self`` has a non-trivial lowest degree triple Massey product.
-
-        This is the Massey product in the cohomology of this
-        moment-angle complex. This relies on the theorem which was
-        proven in the following paper:
-        :arxiv:`Lowest-degree triple Massey products in moment-angle complexes<1908.02222v2>`.
-
-        ALGORITHM:
-
-        We obtain the one-skeleton from the associated simplicial complex,
-        which we consider to be a graph. We then perform ``subgraph_search``,
-        searching for any subgraph isomorphic to one of the 8 obstruction
-        graphs listed in the mentioned paper.
-
-        EXAMPLES:
-
-        A simplex will not have a trivial triple lowest-degree Massey product, because its
-        one-skeleton certainly does contain a subcomplex isomorphic to one of the 8 mentioned in
-        the paper::
-
-            sage: Z = MomentAngleComplex([[1,2,3,4,5,6]])
-            sage: Z.has_trivial_lowest_deg_massey_product()
-            False
-
-        The following is one of the 8 obstruction graphs::
-
-            sage: Z = MomentAngleComplex([[1, 2], [1, 4], [2, 3], [3, 5], [5, 6], [4, 5], [1, 6]])
-            sage: Z.has_trivial_lowest_deg_massey_product()
-            False
-
-        A hexagon is not isomorphic to any of the 8 obstruction graphs::
-
-            sage: Z = MomentAngleComplex([[0,1], [1,2], [2,3], [3,4], [4,5], [5,0]])
-            sage: Z.has_trivial_lowest_deg_massey_product()
-            True
-        """
-        from sage.graphs.graph import Graph
-
-        one_skeleton = self._simplicial_complex.graph()
-
-        obstruction_graphs = [
-            Graph([(1, 2), (1, 4), (2, 3), (3, 5), (5, 6), (4, 5), (1, 6)]),
-            Graph([(1, 2), (1, 4), (2, 3), (3, 5), (5, 6), (4, 5), (1, 6), (2, 6)]),
-            Graph([(1, 2), (1, 4), (2, 3), (3, 5), (5, 6), (4, 5), (1, 6), (4, 6)]),
-            Graph([(1, 2), (1, 4), (2, 3), (3, 5), (5, 6), (4, 5), (1, 6), (2, 6), (4, 6)]),
-            Graph([(1, 2), (1, 4), (2, 3), (3, 5), (5, 6), (3, 4), (2, 6), (1, 6), (4, 5)]),
-            Graph([(1, 2), (1, 4), (2, 3), (3, 5), (5, 6), (3, 4), (2, 6), (1, 6), (4, 5), (4, 6)]),
-            Graph([(1, 2), (1, 4), (2, 3), (3, 5), (5, 6), (3, 4), (2, 6), (4, 5), (4, 6)]),
-            Graph([(1, 2), (1, 4), (2, 3), (3, 5), (5, 6), (3, 4), (2, 6), (4, 6)]),
-        ]
-
-        return not any(one_skeleton.subgraph_search(g) is not None for g in obstruction_graphs)
 
 #    needs work
 #    def _golod_decomposition(self):
@@ -830,3 +774,58 @@ class MomentAngleComplex(SageObject, UniqueRepresentation):
         """
         simplicial_complex = self._simplicial_complex.join(other._simplicial_complex, rename_vertices=True)
         return MomentAngleComplex(simplicial_complex)
+
+    def has_trivial_lowest_deg_massey_product(self):
+        """
+        Return whether ``self`` has a non-trivial lowest degree triple Massey product.
+
+        This is the Massey product in the cohomology of this
+        moment-angle complex. This relies on the theorem which was
+        proven in the following paper:
+        :arxiv:`Lowest-degree triple Massey products in moment-angle complexes<1908.02222v2>`.
+
+        ALGORITHM:
+
+        We obtain the one-skeleton from the associated simplicial complex,
+        which we consider to be a graph. We then perform ``subgraph_search``,
+        searching for any subgraph isomorphic to one of the 8 obstruction
+        graphs listed in the mentioned paper.
+
+        EXAMPLES:
+
+        A simplex will not have a trivial triple lowest-degree Massey product, because its
+        one-skeleton certainly does contain a subcomplex isomorphic to one of the 8 mentioned in
+        the paper::
+
+            sage: Z = MomentAngleComplex([[1,2,3,4,5,6]])
+            sage: Z.has_trivial_lowest_deg_massey_product()
+            False
+
+        The following is one of the 8 obstruction graphs::
+
+            sage: Z = MomentAngleComplex([[1, 2], [1, 4], [2, 3], [3, 5], [5, 6], [4, 5], [1, 6]])
+            sage: Z.has_trivial_lowest_deg_massey_product()
+            False
+
+        A hexagon is not isomorphic to any of the 8 obstruction graphs::
+
+            sage: Z = MomentAngleComplex([[0,1], [1,2], [2,3], [3,4], [4,5], [5,0]])
+            sage: Z.has_trivial_lowest_deg_massey_product()
+            True
+        """
+        from sage.graphs.graph import Graph
+
+        one_skeleton = self._simplicial_complex.graph()
+
+        obstruction_graphs = [
+            Graph([(1, 2), (1, 4), (2, 3), (3, 5), (5, 6), (4, 5), (1, 6)]),
+            Graph([(1, 2), (1, 4), (2, 3), (3, 5), (5, 6), (4, 5), (1, 6), (2, 6)]),
+            Graph([(1, 2), (1, 4), (2, 3), (3, 5), (5, 6), (4, 5), (1, 6), (4, 6)]),
+            Graph([(1, 2), (1, 4), (2, 3), (3, 5), (5, 6), (4, 5), (1, 6), (2, 6), (4, 6)]),
+            Graph([(1, 2), (1, 4), (2, 3), (3, 5), (5, 6), (3, 4), (2, 6), (1, 6), (4, 5)]),
+            Graph([(1, 2), (1, 4), (2, 3), (3, 5), (5, 6), (3, 4), (2, 6), (1, 6), (4, 5), (4, 6)]),
+            Graph([(1, 2), (1, 4), (2, 3), (3, 5), (5, 6), (3, 4), (2, 6), (4, 5), (4, 6)]),
+            Graph([(1, 2), (1, 4), (2, 3), (3, 5), (5, 6), (3, 4), (2, 6), (4, 6)]),
+        ]
+
+        return not any(one_skeleton.subgraph_search(g) is not None for g in obstruction_graphs)
