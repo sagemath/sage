@@ -1017,7 +1017,7 @@ def _sympysage_true(self):
 
 
 #------------------------------------------------------------------
-from sage.repl.ipython_extension import run_once
+from sage.misc.misc import run_once
 
 @run_once
 def sympy_init():

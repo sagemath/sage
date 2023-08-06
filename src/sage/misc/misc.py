@@ -21,8 +21,12 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
+import contextlib
+import functools
 import os
 import pdb
+import sys
+import warnings
 
 from .lazy_string import lazy_string
 from sage.env import DOT_SAGE, HOSTNAME
@@ -951,3 +955,34 @@ def is_in_string(line, pos):
                     in_double_quote = False
         i += 1
     return in_quote()
+
+
+@contextlib.contextmanager
+def increase_recursion_limit(increment):
+    r"""
+    Context manager to temporarily change the Python maximum recursion depth.
+
+    INPUT:
+
+    - `increment`: increment to add to the current limit
+
+    EXAMPLES::
+
+        sage: from sage.misc.misc import increase_recursion_limit
+        sage: def rec(n): None if n == 0 else rec(n-1)
+        sage: rec(10000)
+        Traceback (most recent call last):
+        ...
+        RecursionError: maximum recursion depth exceeded...
+        sage: with increase_recursion_limit(10000): rec(10000)
+        sage: rec(10000)
+        Traceback (most recent call last):
+        ...
+        RecursionError: maximum recursion depth exceeded...
+    """
+    old_limit = sys.getrecursionlimit()
+    sys.setrecursionlimit(old_limit + increment)
+    try:
+        yield
+    finally:
+        sys.setrecursionlimit(old_limit)

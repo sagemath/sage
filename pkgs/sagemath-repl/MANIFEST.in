@@ -1,7 +1,5 @@
 prune sage
 
-global-include all__sagemath_repl.py
-
 graft sage/doctest
 graft sage/repl
 graft sage/tests
@@ -22,6 +20,9 @@ include sage/misc/cython.py
 include sage/misc/inline_fortran.py
 
 include VERSION.txt
+
+global-exclude all__*.py
+global-include all__sagemath_repl.py
 
 global-exclude __pycache__
 global-exclude *.py[co]

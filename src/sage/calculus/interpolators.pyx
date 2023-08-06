@@ -1,4 +1,4 @@
-# sage.doctest: optional - numpy
+# sage.doctest: needs numpy
 """
 Complex Interpolation
 
