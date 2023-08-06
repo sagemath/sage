@@ -112,9 +112,9 @@ though it is equal to the number two in the ring of integers (
 when comparing elements of *distinct* algebraic structures!!). Hence, we
 have::
 
-    sage: GF(5)(2) == GF(3)(2)                                                          # needs sage.rings.finite_rings
+    sage: GF(5)(2) == GF(3)(2)
     False
-    sage: C(GF(3)(2)) is C(GF(5)(2))                                                    # needs sage.rings.finite_rings
+    sage: C(GF(3)(2)) is C(GF(5)(2))
     False
 
 Normalising the arguments
