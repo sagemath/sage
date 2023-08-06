@@ -45,8 +45,8 @@ is ``Objects()``, the elements are not guaranteed to have any
 special parent.  This is what should happen, e.g., with finite field
 elements of different characteristics::
 
-    sage: v = Sequence([GF(3)(1), GF(7)(1)])                                            # needs sage.rings.finite_rings
-    sage: v.universe()                                                                  # needs sage.rings.finite_rings
+    sage: v = Sequence([GF(3)(1), GF(7)(1)])
+    sage: v.universe()
     Category of objects
 
 You can make a list immutable with ``v.freeze()``.  Assignment is
