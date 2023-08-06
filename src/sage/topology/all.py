@@ -6,15 +6,13 @@ from .delta_complex import DeltaComplex, delta_complexes
 
 from .cubical_complex import CubicalComplex, cubical_complexes
 
-from .moment_angle_complex import MomentAngleComplex
-#avoid this, use lazy import
-
 from sage.misc.lazy_import import lazy_import
 lazy_import('sage.topology.filtered_simplicial_complex', 'FilteredSimplicialComplex')
 
 lazy_import('sage.topology', 'simplicial_complex_catalog', 'simplicial_complexes')
 lazy_import('sage.topology', 'simplicial_set_catalog', 'simplicial_sets')
 
+lazy_import('sage.topology.moment_angle_complex', 'MomentAngleComplex')
 
 # # For taking care of old pickles
 # from sage.misc.persist import register_unpickle_override
