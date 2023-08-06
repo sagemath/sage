@@ -463,7 +463,7 @@ class DynamicalSemigroup(Parent, metaclass=InheritComparisonClasscallMetaclass):
 
     def nth_iterate(self, p, n):
         r"""
-        Return a tuple of values that results from evaluating this dynamical semigroup
+        Return a set of values that results from evaluating this dynamical semigroup
         on the value ``p`` a total of ``n`` times.
 
         INPUT:
@@ -471,49 +471,49 @@ class DynamicalSemigroup(Parent, metaclass=InheritComparisonClasscallMetaclass):
         - ``p`` -- a value on which dynamical systems can evaluate
         - ``n`` -- a nonnegative integer
 
-        OUTPUT: a tuple of values
+        OUTPUT: a set of values
 
         EXAMPLES::
 
             sage: P.<x,y> = ProjectiveSpace(QQ, 1)
             sage: f = DynamicalSemigroup(([x^2, y^2],))
             sage: f.nth_iterate(2, 0)
-            ((2 : 1),)
+            {(2 : 1)}
 
         ::
 
             sage: P.<x,y> = ProjectiveSpace(QQ, 1)
             sage: f = DynamicalSemigroup(([x^2, y^2],))
             sage: f.nth_iterate(2, 1)
-            ((4 : 1),)
+            {(4 : 1)}
 
         ::
 
             sage: P.<x,y> = ProjectiveSpace(QQ, 1)
             sage: f = DynamicalSemigroup(([x^2, y^2],))
             sage: f.nth_iterate(2, 2)
-            ((16 : 1),)
+            {(16 : 1)}
 
         ::
 
             sage: P.<x,y> = ProjectiveSpace(QQ, 1)
             sage: f = DynamicalSemigroup(([x + y, x - y], [x^2, y^2]))
             sage: f.nth_iterate(2, 0)
-            ((2 : 1),)
+            {(2 : 1)}
 
         ::
 
             sage: P.<x,y> = ProjectiveSpace(QQ, 1)
             sage: f = DynamicalSemigroup(([x + y, x - y], [x^2, y^2]))
             sage: f.nth_iterate(2, 1)
-            ((3 : 1), (4 : 1))
+            {(3 : 1), (4 : 1)}
 
         ::
 
             sage: P.<x,y> = ProjectiveSpace(QQ, 1)
             sage: f = DynamicalSemigroup(([x + y, x - y], [x^2, y^2]))
             sage: f.nth_iterate(2, 2)
-            ((2 : 1), (9 : 1), (5/3 : 1), (16 : 1))
+            {(5/3 : 1), (2 : 1), (9 : 1), (16 : 1)}
 
         TESTS::
 
@@ -537,7 +537,8 @@ class DynamicalSemigroup(Parent, metaclass=InheritComparisonClasscallMetaclass):
 
             sage: P.<x,y> = ProjectiveSpace(QQ, 1)
             sage: f = DynamicalSemigroup(([x + y, x - y], [x^2, y^2]))
-            sage: (f * f)(3)
+            sage: f.nth_iterate(3, 2) == (f * f)(3)
+            True
         """
         if not isinstance(n, Integer) and not isinstance(n, int):
             raise TypeError(str(n) + " must be an integer")
@@ -549,7 +550,7 @@ class DynamicalSemigroup(Parent, metaclass=InheritComparisonClasscallMetaclass):
             for point in result:
                 next_iteration.extend(self(point))
             result = next_iteration
-        return tuple(result)
+        return set(result)
 
     def _mul_(self, other_dynamical_semigroup):
         r"""
@@ -612,19 +613,13 @@ class DynamicalSemigroup(Parent, metaclass=InheritComparisonClasscallMetaclass):
             sage: f = DynamicalSemigroup((f1, f2))
             sage: g = DynamicalSemigroup((g1, g2))
             sage: f*g
-            Dynamical semigroup over Projective Space of dimension 1 over Rational Field defined by 4 dynamical systems:
+            Dynamical semigroup over Projective Space of dimension 1 over Rational Field defined by 2 dynamical systems:
             Dynamical System of Projective Space of dimension 1 over Rational Field
               Defn: Defined on coordinates by sending (x : y) to
                     (x^6 + 2*x^5*y + 2*x^4*y^2 + 2*x^3*y^3 + x^2*y^4 : x^4*y^2 + 2*x^3*y^3 + 2*x^2*y^4 + 2*x*y^5 + y^6)
             Dynamical System of Projective Space of dimension 1 over Rational Field
               Defn: Defined on coordinates by sending (x : y) to
                     (x^6 - 2*x^5*y + 2*x^3*y^3 - x^2*y^4 : -x^4*y^2 + 2*x^3*y^3 - 2*x*y^5 + y^6)
-            Dynamical System of Projective Space of dimension 1 over Rational Field
-              Defn: Defined on coordinates by sending (x : y) to
-                    (x^6 + 2*x^5*y - 2*x^3*y^3 - x^2*y^4 : -x^4*y^2 - 2*x^3*y^3 + 2*x*y^5 + y^6)
-            Dynamical System of Projective Space of dimension 1 over Rational Field
-              Defn: Defined on coordinates by sending (x : y) to
-                    (x^6 - 2*x^5*y + 2*x^4*y^2 - 2*x^3*y^3 + x^2*y^4 : x^4*y^2 - 2*x^3*y^3 + 2*x^2*y^4 - 2*x*y^5 + y^6)
 
         TESTS::
 
