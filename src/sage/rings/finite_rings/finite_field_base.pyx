@@ -1,4 +1,4 @@
-# sage.doctest: optional - sage.rings.finite_rings
+# sage.doctest: needs sage.rings.finite_rings
 """
 Base class for finite fields
 
@@ -1012,7 +1012,7 @@ cdef class FiniteField(Field):
 
         The given modulus is always made monic::
 
-            sage: k.<a> = GF(7^2, modulus=2*x^2-3, impl="pari_ffelt")
+            sage: k.<a> = GF(7^2, modulus=2*x^2 - 3, impl="pari_ffelt")
             sage: k.modulus()
             x^2 + 2
 
@@ -1022,19 +1022,19 @@ cdef class FiniteField(Field):
 
             sage: GF(2, impl="modn").modulus()
             x + 1
-            sage: GF(2, impl="givaro").modulus()
+            sage: GF(2, impl="givaro").modulus()                                        # needs sage.libs.linbox
             x + 1
-            sage: GF(2, impl="ntl").modulus()
+            sage: GF(2, impl="ntl").modulus()                                           # needs sage.libs.ntl
             x + 1
             sage: GF(2, impl="modn", modulus=x).modulus()
             x
-            sage: GF(2, impl="givaro", modulus=x).modulus()
+            sage: GF(2, impl="givaro", modulus=x).modulus()                             # needs sage.libs.linbox
             x
-            sage: GF(2, impl="ntl", modulus=x).modulus()
+            sage: GF(2, impl="ntl", modulus=x).modulus()                                # needs sage.libs.ntl
             x
-            sage: GF(13^2, 'a', impl="givaro", modulus=x^2+2).modulus()
+            sage: GF(13^2, 'a', impl="givaro", modulus=x^2 + 2).modulus()               # needs sage.libs.linbox
             x^2 + 2
-            sage: GF(13^2, 'a', impl="pari_ffelt", modulus=x^2+2).modulus()
+            sage: GF(13^2, 'a', impl="pari_ffelt", modulus=x^2 + 2).modulus()           # needs sage.libs.pari
             x^2 + 2
         """
         # Normally, this is set by the constructor of the implementation
@@ -1086,6 +1086,7 @@ cdef class FiniteField(Field):
             sage: f(F.gen())
             0
 
+            sage: # needs sage.libs.ntl
             sage: k.<a> = GF(2^20, impl='ntl')
             sage: k.polynomial()
             a^20 + a^10 + a^9 + a^7 + a^6 + a^5 + a^4 + a + 1
@@ -1234,7 +1235,7 @@ cdef class FiniteField(Field):
             (1, 0)
             (0, 1)
 
-            sage: F = GF(9, 't', modulus=(x^2+x-1))
+            sage: F = GF(9, 't', modulus=x^2 + x - 1)
             sage: E = GF(81)
             sage: h = Hom(F,E).an_element()
             sage: V, from_V, to_V = E.vector_space(h, map=True)
@@ -1514,13 +1515,16 @@ cdef class FiniteField(Field):
               To:   Finite Field in b of size 5^2
               Defn: 1 |--> 1
             sage: f.parent()
-            Set of field embeddings from Finite Field of size 5 to Finite Field in b of size 5^2
+            Set of field embeddings
+             from Finite Field of size 5
+               to Finite Field in b of size 5^2
 
         Extensions of non-prime finite fields by polynomials are not yet
         supported: we fall back to generic code::
 
             sage: k.extension(x^5 + x^2 + x - 1)
-            Univariate Quotient Polynomial Ring in x over Finite Field in z4 of size 3^4 with modulus x^5 + x^2 + x + 2
+            Univariate Quotient Polynomial Ring in x over Finite Field in z4 of size 3^4
+             with modulus x^5 + x^2 + x + 2
 
         TESTS:
 
@@ -1799,12 +1803,14 @@ cdef class FiniteField(Field):
               Ring morphism:
                   From: Finite Field in z3 of size 2^3
                   To:   Finite Field in z21 of size 2^21
-                  Defn: z3 |--> z21^20 + z21^19 + z21^17 + z21^15 + z21^11 + z21^9 + z21^8 + z21^6 + z21^2),
+                  Defn: z3 |--> z21^20 + z21^19 + z21^17 + z21^15 + z21^11
+                                 + z21^9 + z21^8 + z21^6 + z21^2),
              (Finite Field in z7 of size 2^7,
               Ring morphism:
                   From: Finite Field in z7 of size 2^7
                   To:   Finite Field in z21 of size 2^21
-                  Defn: z7 |--> z21^20 + z21^19 + z21^17 + z21^15 + z21^14 + z21^6 + z21^4 + z21^3 + z21),
+                  Defn: z7 |--> z21^20 + z21^19 + z21^17 + z21^15 + z21^14
+                                 + z21^6 + z21^4 + z21^3 + z21),
              (Finite Field in z21 of size 2^21,
               Identity endomorphism of Finite Field in z21 of size 2^21)]
         """
@@ -2065,13 +2071,13 @@ cdef class FiniteField(Field):
             sage: e = [a^0, a^1, a^2, a^3, a^4, a^5, a^6, a^7]
             sage: d = F.dual_basis(e, check=False); d
             [6*a^6 + 4*a^5 + 4*a^4 + a^3 + 6*a^2 + 3,
-            6*a^7 + 4*a^6 + 4*a^5 + 2*a^4 + a^2,
-            4*a^6 + 5*a^5 + 5*a^4 + 4*a^3 + 5*a^2 + a + 6,
-            5*a^7 + a^6 + a^4 + 4*a^3 + 4*a^2 + 1,
-            2*a^7 + 5*a^6 + a^5 + a^3 + 5*a^2 + 2*a + 4,
-            a^7 + 2*a^6 + 5*a^5 + a^4 + 5*a^2 + 4*a + 4,
-            a^7 + a^6 + 2*a^5 + 5*a^4 + a^3 + 4*a^2 + 4*a + 6,
-            5*a^7 + a^6 + a^5 + 2*a^4 + 5*a^3 + 6*a]
+             6*a^7 + 4*a^6 + 4*a^5 + 2*a^4 + a^2,
+             4*a^6 + 5*a^5 + 5*a^4 + 4*a^3 + 5*a^2 + a + 6,
+             5*a^7 + a^6 + a^4 + 4*a^3 + 4*a^2 + 1,
+             2*a^7 + 5*a^6 + a^5 + a^3 + 5*a^2 + 2*a + 4,
+             a^7 + 2*a^6 + 5*a^5 + a^4 + 5*a^2 + 4*a + 4,
+             a^7 + a^6 + 2*a^5 + 5*a^4 + a^3 + 4*a^2 + 4*a + 6,
+             5*a^7 + a^6 + a^5 + 2*a^4 + 5*a^3 + 6*a]
             sage: F.dual_basis(d)
             [1, a, a^2, a^3, a^4, a^5, a^6, a^7]
 
