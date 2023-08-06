@@ -1,4 +1,4 @@
-# sage.doctest: optional - sage.rings.finite_rings       (because all doctests use finite fields)
+# sage.doctest: needs sage.rings.finite_rings       (because all doctests use finite fields)
 """
 Places of function fields: rational
 """
@@ -78,13 +78,13 @@ class FunctionFieldPlace_rational(FunctionFieldPlace):
             sage: O = F.maximal_order()
             sage: p = O.ideal(x^2 + x + 1).place()
             sage: k, fr_k, to_k = p.residue_field()                                     # needs sage.rings.function_field
-            sage: k
+            sage: k                                                                     # needs sage.rings.function_field
             Finite Field in z2 of size 2^2
-            sage: fr_k
+            sage: fr_k                                                                  # needs sage.rings.function_field
             Ring morphism:
               From: Finite Field in z2 of size 2^2
               To:   Valuation ring at Place (x^2 + x + 1)
-            sage: to_k
+            sage: to_k                                                                  # needs sage.rings.function_field
             Ring morphism:
               From: Valuation ring at Place (x^2 + x + 1)
               To:   Finite Field in z2 of size 2^2
@@ -170,7 +170,7 @@ class FunctionFieldPlace_rational(FunctionFieldPlace):
 
             sage: K.<x> = FunctionField(GF(2)); _.<Y> = K[]
             sage: L.<y> = K.extension(Y^2 + Y + x + 1/x)                                # needs sage.rings.function_field
-            sage: p = L.places_finite()[0]
+            sage: p = L.places_finite()[0]                                              # needs sage.rings.function_field
             sage: p.valuation_ring()
             Valuation ring at Place (x, x*y)
         """

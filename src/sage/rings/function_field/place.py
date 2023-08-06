@@ -24,7 +24,7 @@ constant field::
     sage: F.<x> = FunctionField(GF(2))
     sage: O = F.maximal_order()
     sage: p = O.ideal(x^2 + x + 1).place()                                              # needs sage.libs.pari
-    sage: k, fr_k, to_k = p.residue_field()                                             # needs sage.rings.function_field
+    sage: k, fr_k, to_k = p.residue_field()                                             # needs sage.libs.pari sage.rings.function_field
     sage: k                                                                             # needs sage.rings.function_field
     Finite Field in z2 of size 2^2
 

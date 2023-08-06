@@ -1,5 +1,5 @@
-# sage.doctest: optional - sage.rings.finite_rings
-# sage.doctest: optional - sage.rings.function_field
+# sage.doctest: needs sage.rings.finite_rings
+# sage.doctest: needs sage.rings.function_field
 r"""
 Valuation rings of function fields
 
