@@ -1250,6 +1250,19 @@ class EllipticCurveIsogeny(EllipticCurveHom):
             sage: phi = E.isogeny(3^99*P)                                               # optional - sage.rings.finite_rings
             sage: phi(Q)._order                                                         # optional - sage.rings.finite_rings
             27
+
+        Test for :trac:`35983`::
+
+            sage: E = EllipticCurve([1,0,0,-1,0])                                       # optional - sage.rings.finite_rings
+            sage: P = E([1,0])                                                          # optional - sage.rings.finite_rings
+            sage: P.order()                                                             # optional - sage.rings.finite_rings
+            +Infinity
+            sage: phi = E.isogenies_prime_degree(2)[0]                                  # optional - sage.rings.finite_rings
+            sage: Q = phi(P); Q                                                         # optional - sage.rings.finite_rings
+            (0 : 1 : 1)
+            sage: Q.order()                                                             # optional - sage.rings.finite_rings
+            +Infinity
+
         """
         if P.is_zero():
             return self._codomain(0)
@@ -1281,14 +1294,15 @@ class EllipticCurveIsogeny(EllipticCurveHom):
             xP = self.__posti_ratl_maps[0](xP)
 
         Q = self._codomain(xP, yP)
-        if hasattr(P, '_order') and P._order.gcd(self._degree).is_one():
+        if hasattr(P, '_order'):
+            if P.has_infinite_order() or P._order.gcd(self._degree).is_one():
+                Q._order = P._order
             # TODO: For non-coprime degree, the order of the point
-            # gets reduced by a divisor of the degree when passing
+            # may get reduced by a divisor of the degree when passing
             # through the isogeny. We could run something along the
             # lines of order_from_multiple() to determine the new
             # order, but this probably shouldn't happen by default
             # as it'll be detrimental to performance in some cases.
-            Q._order = P._order
         return Q
 
     def __getitem__(self, i):

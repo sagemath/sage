@@ -328,9 +328,9 @@ def complete_poly(n):
 
     Checking the numerical results up to 20::
 
-        sage: from sage.functions.orthogonal_polys import hermite       # optional - sage.symbolic
-        sage: p = lambda n: 2^(-n/2)*hermite(n, x/sqrt(2))              # optional - sage.symbolic
-        sage: all(p(i) == complete_poly(i) for i in range(2, 20))       # optional - sage.symbolic
+        sage: from sage.functions.orthogonal_polys import hermite                       # needs sage.symbolic
+        sage: p = lambda n: 2^(-n/2)*hermite(n, x/sqrt(2))                              # needs sage.symbolic
+        sage: all(p(i) == complete_poly(i) for i in range(2, 20))                       # needs sage.symbolic
         True
     """
     # global complete_matching_polys # if we do eventually make it a C array...

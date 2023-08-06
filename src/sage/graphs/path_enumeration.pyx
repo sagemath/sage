@@ -346,41 +346,49 @@ def shortest_simple_paths(self, source, target, weight_function=None,
 
     EXAMPLES::
 
-        sage: g = DiGraph([(1, 2, 20), (1, 3, 10), (1, 4, 30), (2, 5, 20), (3, 5, 10), (4, 5, 30)])
+        sage: g = DiGraph([(1, 2, 20), (1, 3, 10), (1, 4, 30),
+        ....:              (2, 5, 20), (3, 5, 10), (4, 5, 30)])
         sage: list(g.shortest_simple_paths(1, 5, by_weight=True, algorithm="Yen"))
         [[1, 3, 5], [1, 2, 5], [1, 4, 5]]
         sage: list(g.shortest_simple_paths(1, 5, algorithm="Yen"))
         [[1, 2, 5], [1, 3, 5], [1, 4, 5]]
         sage: list(g.shortest_simple_paths(1, 1))
         [[1]]
-        sage: list(g.shortest_simple_paths(1, 5, by_weight=True, report_edges=True, report_weight=True, labels=True))
+        sage: list(g.shortest_simple_paths(1, 5, by_weight=True,
+        ....:                              report_edges=True, report_weight=True, labels=True))
         [(20, [(1, 3, 10), (3, 5, 10)]),
          (40, [(1, 2, 20), (2, 5, 20)]),
          (60, [(1, 4, 30), (4, 5, 30)])]
-        sage: list(g.shortest_simple_paths(1, 5, by_weight=True, algorithm="Feng", report_edges=True, report_weight=True))
+        sage: list(g.shortest_simple_paths(1, 5, by_weight=True, algorithm="Feng",
+        ....:                              report_edges=True, report_weight=True))
         [(20, [(1, 3), (3, 5)]), (40, [(1, 2), (2, 5)]), (60, [(1, 4), (4, 5)])]
         sage: list(g.shortest_simple_paths(1, 5, report_edges=True, report_weight=True))
         [(2, [(1, 4), (4, 5)]), (2, [(1, 3), (3, 5)]), (2, [(1, 2), (2, 5)])]
         sage: list(g.shortest_simple_paths(1, 5, by_weight=True, report_edges=True))
         [[(1, 3), (3, 5)], [(1, 2), (2, 5)], [(1, 4), (4, 5)]]
-        sage: list(g.shortest_simple_paths(1, 5, by_weight=True, algorithm="Feng", report_edges=True, labels=True))
+        sage: list(g.shortest_simple_paths(1, 5, by_weight=True, algorithm="Feng",
+        ....:                              report_edges=True, labels=True))
         [[(1, 3, 10), (3, 5, 10)], [(1, 2, 20), (2, 5, 20)], [(1, 4, 30), (4, 5, 30)]]
-        sage: g = Graph([(1, 2, 20), (1, 3, 10), (1, 4, 30), (2, 5, 20), (3, 5, 10), (4, 5, 30), (1, 6, 100), (5, 6, 5)])
+        sage: g = Graph([(1, 2, 20), (1, 3, 10), (1, 4, 30), (2, 5, 20),
+        ....:            (3, 5, 10), (4, 5, 30), (1, 6, 100), (5, 6, 5)])
         sage: list(g.shortest_simple_paths(1, 6, by_weight = True))
         [[1, 3, 5, 6], [1, 2, 5, 6], [1, 4, 5, 6], [1, 6]]
         sage: list(g.shortest_simple_paths(1, 6, algorithm="Yen"))
         [[1, 6], [1, 2, 5, 6], [1, 3, 5, 6], [1, 4, 5, 6]]
-        sage: list(g.shortest_simple_paths(1, 6, report_edges=True, report_weight=True, labels=True))
+        sage: list(g.shortest_simple_paths(1, 6,
+        ....:                              report_edges=True, report_weight=True, labels=True))
         [(1, [(1, 6, 100)]),
          (3, [(1, 2, 20), (2, 5, 20), (5, 6, 5)]),
          (3, [(1, 3, 10), (3, 5, 10), (5, 6, 5)]),
          (3, [(1, 4, 30), (4, 5, 30), (5, 6, 5)])]
-        sage: list(g.shortest_simple_paths(1, 6, report_edges=True, report_weight=True, labels=True, by_weight=True))
+        sage: list(g.shortest_simple_paths(1, 6, by_weight=True,
+        ....:                              report_edges=True, report_weight=True, labels=True))
         [(25, [(1, 3, 10), (3, 5, 10), (5, 6, 5)]),
          (45, [(1, 2, 20), (2, 5, 20), (5, 6, 5)]),
          (65, [(1, 4, 30), (4, 5, 30), (5, 6, 5)]),
          (100, [(1, 6, 100)])]
-        sage: list(g.shortest_simple_paths(1, 6, report_edges=True, labels=True, by_weight=True))
+        sage: list(g.shortest_simple_paths(1, 6, by_weight=True,
+        ....:                              report_edges=True, labels=True))
         [[(1, 3, 10), (3, 5, 10), (5, 6, 5)],
          [(1, 2, 20), (2, 5, 20), (5, 6, 5)],
          [(1, 4, 30), (4, 5, 30), (5, 6, 5)],
@@ -432,6 +440,8 @@ def shortest_simple_paths(self, source, target, weight_function=None,
          [1, 2, 3, 4, 5],
          [1, 6, 9, 3, 4, 5],
          [1, 6, 9, 11, 10, 5]]
+
+        sage: # needs sage.combinat
         sage: G = digraphs.DeBruijn(2, 3)
         sage: for u,v in G.edges(sort=True, labels=False):
         ....:     G.set_edge_label(u, v, 1)
@@ -470,6 +480,7 @@ def shortest_simple_paths(self, source, target, weight_function=None,
 
     Check for consistency of results of Yen's and Feng's::
 
+        sage: # needs sage.combinat
         sage: G = digraphs.DeBruijn(2, 4)
         sage: s = set()
         sage: for p in G.shortest_simple_paths('0000', '1111', by_weight=False, algorithm='Yen'):
