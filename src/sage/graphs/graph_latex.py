@@ -84,12 +84,12 @@ setup should work in the notebook or at the command-line.::
 
     sage: H = graphs.HeawoodGraph()
     sage: H.set_latex_options(
-    ....: graphic_size=(5,5),
-    ....: vertex_size=0.2,
-    ....: edge_thickness=0.04,
-    ....: edge_color='green',
-    ....: vertex_color='green',
-    ....: vertex_label_color='red'
+    ....:     graphic_size=(5,5),
+    ....:     vertex_size=0.2,
+    ....:     edge_thickness=0.04,
+    ....:     edge_color='green',
+    ....:     vertex_color='green',
+    ....:     vertex_label_color='red'
     ....: )
 
 At this point, ``view(H)`` should call ``pdflatex`` to process the string
@@ -265,49 +265,50 @@ the possible options available through Sage's interface to the ``tkz-graph``
 package.  So it is worth viewing this in the notebook to see the effects of
 various defaults and choices.::
 
-    sage: var('x y u w')                                                        # optional - sage.symbolic
+    sage: # needs sage.symbolic
+    sage: var('x y u w')
     (x, y, u, w)
     sage: G = Graph(loops=True)
-    sage: for i in range(5):                                                    # optional - sage.symbolic
+    sage: for i in range(5):
     ....:    for j in range(i+1, 5):
     ....:         G.add_edge((i, j), label=(x^i*y^j).expand())
-    sage: G.add_edge((0,0), label=sin(u))                                       # optional - sage.symbolic
-    sage: G.add_edge((4,4), label=w^5)                                          # optional - sage.symbolic
+    sage: G.add_edge((0,0), label=sin(u))
+    sage: G.add_edge((4,4), label=w^5)
     sage: G.set_pos(G.layout_circular())
     sage: G.set_latex_options(
-    ....: units='in',
-    ....: graphic_size=(8,8),
-    ....: margins=(1,2,2,1),
-    ....: scale=0.5,
-    ....: vertex_color='0.8',
-    ....: vertex_colors={1:'aqua', 3:'y', 4:'#0000FF'},
-    ....: vertex_fill_color='blue',
-    ....: vertex_fill_colors={1:'green', 3:'b', 4:'#FF00FF'},
-    ....: vertex_label_color='brown',
-    ....: vertex_label_colors={0:'g',1:'purple',2:'#007F00'},
-    ....: vertex_shape='diamond',
-    ....: vertex_shapes={1:'rectangle', 2:'sphere', 3:'sphere', 4:'circle'},
-    ....: vertex_size=0.3,
-    ....: vertex_sizes={0:1.0, 2:0.3, 4:1.0},
-    ....: vertex_label_placements = {2:(0.6, 180), 4:(0,45)},
-    ....: edge_color='purple',
-    ....: edge_colors={(0,2):'g',(3,4):'red'},
-    ....: edge_fills=True,
-    ....: edge_fill_color='green',
-    ....: edge_label_colors={(2,3):'y',(0,4):'blue'},
-    ....: edge_thickness=0.05,
-    ....: edge_thicknesses={(3,4):0.2, (0,4):0.02},
-    ....: edge_labels=True,
-    ....: edge_label_sloped=True,
-    ....: edge_label_slopes={(0,3):False, (2,4):False},
-    ....: edge_label_placement=0.50,
-    ....: edge_label_placements={(0,4):'above', (2,3):'left', (0,0):'above', (4,4):'below'},
-    ....: loop_placement=(2.0, 'NO'),
-    ....: loop_placements={4:(8.0, 'EA')}
+    ....:     units='in',
+    ....:     graphic_size=(8,8),
+    ....:     margins=(1,2,2,1),
+    ....:     scale=0.5,
+    ....:     vertex_color='0.8',
+    ....:     vertex_colors={1:'aqua', 3:'y', 4:'#0000FF'},
+    ....:     vertex_fill_color='blue',
+    ....:     vertex_fill_colors={1:'green', 3:'b', 4:'#FF00FF'},
+    ....:     vertex_label_color='brown',
+    ....:     vertex_label_colors={0:'g',1:'purple',2:'#007F00'},
+    ....:     vertex_shape='diamond',
+    ....:     vertex_shapes={1:'rectangle', 2:'sphere', 3:'sphere', 4:'circle'},
+    ....:     vertex_size=0.3,
+    ....:     vertex_sizes={0:1.0, 2:0.3, 4:1.0},
+    ....:     vertex_label_placements = {2:(0.6, 180), 4:(0,45)},
+    ....:     edge_color='purple',
+    ....:     edge_colors={(0,2):'g',(3,4):'red'},
+    ....:     edge_fills=True,
+    ....:     edge_fill_color='green',
+    ....:     edge_label_colors={(2,3):'y',(0,4):'blue'},
+    ....:     edge_thickness=0.05,
+    ....:     edge_thicknesses={(3,4):0.2, (0,4):0.02},
+    ....:     edge_labels=True,
+    ....:     edge_label_sloped=True,
+    ....:     edge_label_slopes={(0,3):False, (2,4):False},
+    ....:     edge_label_placement=0.50,
+    ....:     edge_label_placements={(0,4):'above', (2,3):'left', (0,0):'above', (4,4):'below'},
+    ....:     loop_placement=(2.0, 'NO'),
+    ....:     loop_placements={4:(8.0, 'EA')}
     ....: )
     sage: from sage.graphs.graph_latex import check_tkz_graph
     sage: check_tkz_graph()  # random - depends on TeX installation
-    sage: print(latex(G))                                                       # optional - sage.symbolic
+    sage: print(latex(G))
     \begin{tikzpicture}
     \definecolor{cv0}{rgb}{0.8,0.8,0.8}
     \definecolor{cfv0}{rgb}{0.0,0.0,1.0}
