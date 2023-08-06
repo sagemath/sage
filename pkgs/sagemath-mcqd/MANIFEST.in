@@ -1,13 +1,14 @@
 prune sage
 
-global-include all__sagemath_mcqd.py
-
 include VERSION.txt
 
 include sage/graphs/mcqd.p*
 
 global-exclude *.c
 global-exclude *.cpp
+
+global-exclude all__sagemath_*.*
+global-include all__sagemath_mcqd.py
 
 global-exclude __pycache__
 global-exclude *.py[co]

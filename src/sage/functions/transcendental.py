@@ -17,6 +17,7 @@ Number-theoretic functions
 # ****************************************************************************
 import sys
 
+from sage.misc.misc import increase_recursion_limit
 from sage.rings.integer_ring import ZZ
 from sage.rings.real_mpfr import RR
 from sage.rings.real_double import RDF
@@ -551,9 +552,8 @@ class DickmanRho(BuiltinFunction):
             max = x.parent()(1.1)*x + 10
             abs_prec = (-self.approximate(max).log2() + rel_prec + 2*max.log2()).ceil()
             self._f = {}
-            if sys.getrecursionlimit() < max + 10:
-                sys.setrecursionlimit(int(max) + 10)
-            self._compute_power_series(max.floor(), abs_prec, cache_ring=x.parent())
+            with increase_recursion_limit(int(max)):
+                self._compute_power_series(max.floor(), abs_prec, cache_ring=x.parent())
         return self._f[n](2*(x-n-x.parent()(0.5)))
 
     def power_series(self, n, abs_prec):
