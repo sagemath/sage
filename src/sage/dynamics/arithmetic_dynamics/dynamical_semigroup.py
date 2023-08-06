@@ -1028,7 +1028,7 @@ class DynamicalSemigroup_projective(DynamicalSemigroup):
                     (x : y) dehomogenized at (1, 0) is not a `DynamicalSystem_affine` object
         """
         new_systems = []
-        for ds in self._dynamical_systems:
+        for ds in self.defining_systems():
             new_system = ds.dehomogenize(n)
             if not isinstance(new_system, DynamicalSystem_affine):
                 raise ValueError(str(ds) + " dehomogenized at " + str(n) + " is not a `DynamicalSystem_affine` object")
@@ -1308,7 +1308,7 @@ class DynamicalSemigroup_affine(DynamicalSemigroup):
                     (x1^2 : x0^2)
         """
         new_systems = []
-        for ds in self._dynamical_systems:
+        for ds in self.defining_systems():
             new_system = ds.homogenize(n)
             if not isinstance(new_system, DynamicalSystem_projective):
                 raise ValueError(str(ds) + " homogenized at " + str(n) + " is not a `DynamicalSystem_projective` object")
