@@ -736,16 +736,16 @@ class RationalField(Singleton, number_field_base.NumberField):
 
         INPUT:
 
-        -  ``p`` - a prime integer.
+        -  ``p`` -- a prime integer.
 
-        -  ``check`` (default ``True``) - if ``True``, check the primality of
+        -  ``check`` (default ``True``) -- if ``True``, check the primality of
            `p`, else do not.
 
         OUTPUT: The residue field at this prime.
 
         EXAMPLES::
 
-            sage: QQ.residue_field(5)                                                   # needs sage.rings.finite_rings
+            sage: QQ.residue_field(5)
             Residue field of Integers modulo 5
             sage: QQ.residue_field(next_prime(10^9))                                    # needs sage.rings.finite_rings
             Residue field of Integers modulo 1000000007

@@ -1004,7 +1004,7 @@ cdef class IntegerRing_class(PrincipalIdealDomain):
 
         Construction can be from a prime ideal instead of a prime::
 
-            sage: ZZ.residue_field(ZZ.ideal(97))                                        # needs sage.libs.pari
+            sage: ZZ.residue_field(ZZ.ideal(97))
             Residue field of Integers modulo 97
 
         TESTS::

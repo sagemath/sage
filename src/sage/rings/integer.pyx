@@ -2660,6 +2660,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
 
         ::
 
+            sage: # needs sage.rings.real_mpfr
             sage: x.exact_log(3)
             100000
             sage: (x + 1).exact_log(3)
@@ -2669,6 +2670,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
 
         ::
 
+            sage: # needs sage.rings.real_mpfr
             sage: x.exact_log(2.5)
             Traceback (most recent call last):
             ...
@@ -3912,7 +3914,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
             sage: p = next_prime(10^20)
             sage: q = next_prime(10^21)
             sage: n = p * q
-            sage: n.factor(algorithm='qsieve')
+            sage: n.factor(algorithm='qsieve')                                          # needs sage.libs.flint
             doctest:... RuntimeWarning: the factorization returned
             by qsieve may be incomplete (the factors may not be prime)
             or even wrong; see qsieve? for details

@@ -697,7 +697,7 @@ class UnsignedInfinityRing_class(Singleton, Ring):
             (Infinity, Infinity)
             sage: UnsignedInfinityRing(CC(oo)), UnsignedInfinityRing(CC(-oo))           # needs sage.rings.real_mpfr
             (Infinity, Infinity)
-            sage: UnsignedInfinityRing(RIF(oo)), UnsignedInfinityRing(RIF(-oo))
+            sage: UnsignedInfinityRing(RIF(oo)), UnsignedInfinityRing(RIF(-oo))         # needs sage.rings.real_interval_field
             (Infinity, Infinity)
             sage: UnsignedInfinityRing(float('+inf')), UnsignedInfinityRing(float('-inf'))
             (Infinity, Infinity)
@@ -1139,7 +1139,7 @@ class InfinityRing_class(Singleton, Ring):
             (+Infinity, -Infinity)
             sage: InfinityRing(RR(oo)), InfinityRing(RR(-oo))
             (+Infinity, -Infinity)
-            sage: InfinityRing(RIF(oo)), InfinityRing(RIF(-oo))
+            sage: InfinityRing(RIF(oo)), InfinityRing(RIF(-oo))                         # needs sage.rings.real_interval_field
             (+Infinity, -Infinity)
             sage: InfinityRing(float('+inf')), InfinityRing(float('-inf'))
             (+Infinity, -Infinity)
@@ -1231,7 +1231,7 @@ class InfinityRing_class(Singleton, Ring):
             True
             sage: InfinityRing.has_coerce_map_from(RDF)
             True
-            sage: InfinityRing.has_coerce_map_from(RIF)
+            sage: InfinityRing.has_coerce_map_from(RIF)                                 # needs sage.rings.real_interval_field
             True
 
         As explained above, comparison works by coercing to the
@@ -1859,8 +1859,11 @@ def test_signed_infinity(pos_inf):
     EXAMPLES::
 
         sage: from sage.rings.infinity import test_signed_infinity
-        sage: for pos_inf in [oo, float('+inf'), RLF(oo), RIF(oo), SR(oo)]:
-        ....:     test_signed_infinity(pos_inf)
+        sage: test_signed_infinity(oo)
+        sage: test_signed_infinity(float('+inf'))
+        sage: test_signed_infinity(RLF(oo))
+        sage: test_signed_infinity(RIF(oo))                                             # needs sage.rings.real_interval_field
+        sage: test_signed_infinity(SR(oo))                                              # needs sage.symbolic
     """
     msg = 'testing {} ({})'.format(pos_inf, type(pos_inf))
     assert InfinityRing(pos_inf) is infinity, msg

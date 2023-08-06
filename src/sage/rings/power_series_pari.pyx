@@ -349,16 +349,14 @@ cdef class PowerSeries_pari(PowerSeries):
 
         Substituting `p`-adic numbers::
 
+            sage: # needs sage.rings.padics
             sage: f(100 + O(5^7))
             5^4 + 3*5^5 + 4*5^6 + 2*5^7 + 2*5^8 + O(5^9)
-
             sage: ff = PowerSeriesRing(pAdicRing(5), 't', implementation='pari')(f)
             sage: ff
             (1 + O(5^20))*t^2 + (1 + O(5^20))*t^3 + O(t^6)
-
             sage: ff(100 + O(5^7))
             5^4 + 3*5^5 + 4*5^6 + 2*5^7 + 2*5^8 + O(5^9)
-
             sage: ff(100 + O(2^7))
             Traceback (most recent call last):
             ...
@@ -375,17 +373,14 @@ cdef class PowerSeries_pari(PowerSeries):
             Traceback (most recent call last):
             ...
             ValueError: can only substitute elements of positive valuation
-
             sage: f(t^-2)
             Traceback (most recent call last):
             ...
             ValueError: can only substitute elements of positive valuation
-
-            sage: f(2 + O(5^3))
+            sage: f(2 + O(5^3))                                                         # needs sage.rings.padics
             Traceback (most recent call last):
             ...
             ValueError: can only substitute elements of positive valuation
-
             sage: g = t^2 + t^3
             sage: g(1 + t + O(t^2))
             2 + 5*t + O(t^2)
@@ -494,7 +489,7 @@ cdef class PowerSeries_pari(PowerSeries):
             sage: f[:4]
             32 - 80*t + 80*t^2 - 40*t^3
 
-            sage: f = 1 + t^3 - 4*t^4 + O(t^7) ; f
+            sage: f = 1 + t^3 - 4*t^4 + O(t^7); f
             1 + t^3 - 4*t^4 + O(t^7)
             sage: f[:4]
             1 + t^3 + O(t^7)
