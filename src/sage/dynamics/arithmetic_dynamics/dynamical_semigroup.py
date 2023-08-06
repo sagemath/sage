@@ -6,7 +6,7 @@ the endomorphism ring of a subscheme of projective or affine space.
 
 AUTHORS:
 
- - Dang Phan (July 21st, 2023): initial implementation
+ - Dang Phan (August 6th, 2023): initial implementation
 """
 
 #*****************************************************************************
