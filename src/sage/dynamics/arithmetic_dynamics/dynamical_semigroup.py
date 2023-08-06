@@ -400,10 +400,10 @@ class DynamicalSemigroup(Parent, metaclass=InheritComparisonClasscallMetaclass):
             ...
             TypeError: unable to convert {(4 : 1), (2 : 1)} to an element of Rational Field
         """
-        result = []
+        result = set()
         for ds in self.defining_systems():
-            result.append(ds(self.domain()(input)))
-        return set(result)
+            result.add(ds(self.domain()(input)))
+        return result
 
     def base_ring(self):
         r"""
@@ -496,10 +496,10 @@ class DynamicalSemigroup(Parent, metaclass=InheritComparisonClasscallMetaclass):
             sage: f.defining_polynomials()
             {(x, y), (x^2, y^2)}
         """
-        result = []
+        result = set()
         for ds in self.defining_systems():
-            result.append(ds.defining_polynomials())
-        return set(result)
+            result.add(ds.defining_polynomials())
+        return result
 
     def defining_systems(self):
         r"""
@@ -604,13 +604,13 @@ class DynamicalSemigroup(Parent, metaclass=InheritComparisonClasscallMetaclass):
             raise TypeError(str(n) + " must be an integer")
         if n < 0:
             raise ValueError(str(n) + " must be a nonnegative integer")
-        result = (self.domain()(p),)
+        result = {self.domain()(p)}
         for i in range(1, n + 1):
-            next_iteration = []
+            next_iteration = set()
             for point in result:
-                next_iteration.extend(self(point))
+                next_iteration.update(self(point))
             result = next_iteration
-        return set(result)
+        return result
 
     def orbit(self, p, n):
         r"""
