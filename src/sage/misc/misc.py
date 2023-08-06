@@ -957,6 +957,40 @@ def is_in_string(line, pos):
     return in_quote()
 
 
+# from https://stackoverflow.com/questions/4103773/efficient-way-of-having-a-function-only-execute-once-in-a-loop
+def run_once(func):
+    """
+    Runs a function (successfully) only once.
+
+    The running can be reset by setting the ``has_run`` attribute to False
+
+    TESTS::
+
+        sage: from sage.repl.ipython_extension import run_once
+        sage: @run_once
+        ....: def foo(work):
+        ....:     if work:
+        ....:         return 'foo worked'
+        ....:     raise RuntimeError("foo didn't work")
+        sage: foo(False)
+        Traceback (most recent call last):
+        ...
+        RuntimeError: foo didn't work
+        sage: foo(True)
+        'foo worked'
+        sage: foo(False)
+        sage: foo(True)
+    """
+    @functools.wraps(func)
+    def wrapper(*args, **kwargs):
+        if not wrapper.has_run:
+            result = func(*args, **kwargs)
+            wrapper.has_run = True
+            return result
+    wrapper.has_run = False
+    return wrapper
+
+
 @contextlib.contextmanager
 def increase_recursion_limit(increment):
     r"""
