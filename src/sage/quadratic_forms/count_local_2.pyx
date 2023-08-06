@@ -278,7 +278,7 @@ cdef local_solution_type_cdef(Q, p, w, zvec, nzvec):
         return <long> 4
 
     # 5: Check Bad-type II
-    if wS1_nonzero_flag:
+    if not wS1_nonzero_flag:
         return <long> 5
 
     # Error if we get here! =o
