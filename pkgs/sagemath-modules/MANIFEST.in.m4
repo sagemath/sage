@@ -200,6 +200,7 @@ exclude sage/homology/simplicial_*.p*
 exclude sage/homology/tests.p*
 
 include sage/rings/derivation.p*
+include sage/rings/finite_rings/maps_finite_field.p*                     # vector space morphisms
 include sage/rings/function_field/differential.p*
 include sage/rings/function_field/derivations.p*                         # module elements
 include sage/rings/function_field/derivations_rational.p*                # module elements
