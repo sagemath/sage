@@ -1,5 +1,4 @@
-# sage_setup: distribution = sagemath-ntl
-# sage.doctest: optional - sage.libs.pari
+# sage.doctest: needs sage.libs.pari sage.rings.number_field
 """
 Number Field Ideals
 
