@@ -175,11 +175,11 @@ cdef class EdgesView:
 
     With a directed graph::
 
-        sage: G = digraphs.DeBruijn(2, 2)                                               # optional - sage.combinat
-        sage: E = EdgesView(G, labels=False, sort=True); E                              # optional - sage.combinat
+        sage: G = digraphs.DeBruijn(2, 2)                                               # needs sage.combinat
+        sage: E = EdgesView(G, labels=False, sort=True); E                              # needs sage.combinat
         [('00', '00'), ('00', '01'), ('01', '10'), ('01', '11'),
          ('10', '00'), ('10', '01'), ('11', '10'), ('11', '11')]
-        sage: E = EdgesView(G, labels=False, sort=True, key=lambda e:(e[1], e[0])); E   # optional - sage.combinat
+        sage: E = EdgesView(G, labels=False, sort=True, key=lambda e:(e[1], e[0])); E   # needs sage.combinat
         [('00', '00'), ('10', '00'), ('00', '01'), ('10', '01'),
          ('01', '10'), ('11', '10'), ('01', '11'), ('11', '11')]
 

@@ -65,7 +65,7 @@ your Windows. Make sure you allocate WSL sufficient RAM; 5GB is known to work, w
 Then all instructions for installation in Linux apply.
 
 As an alternative, you can also run Linux on Windows using Docker (see
-above) or other virtualization solutions.
+below) or other virtualization solutions.
 
 [macOS] Preparing the Platform
 ------------------------------
@@ -415,6 +415,18 @@ For installation of `sage` in python using `pip` you need to install `sagemath-s
 You need to install `sage_conf`, a wheelhouse of various python packages. You can list the wheels using `ls $(sage-config SAGE_SPKG_WHEELS)`. After manual installation of these wheels, you can install the sage library, `sagemath-standard`. 
 
 **NOTE:** You can find `sage` and `sagemath` pip packages but with these packages, you will encounter `ModuleNotFoundError`.
+
+SageMath Docker images
+----------------------
+
+[![Docker Status](http://dockeri.co/image/sagemath/sagemath)](https://hub.docker.com/r/sagemath/sagemath)
+
+SageMath is available on Docker Hub and can be downloaded by:
+``` bash
+docker pull sagemath/sagemath
+```
+
+Currently, only stable versions are kept up to date.
 
 Troubleshooting
 ---------------
