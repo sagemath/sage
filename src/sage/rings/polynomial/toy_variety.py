@@ -241,15 +241,16 @@ def triangular_factorization(B, n=-1):
 
     EXAMPLES::
 
+        sage: # needs sage.rings.finite_rings
         sage: from sage.misc.verbose import set_verbose
         sage: set_verbose(0)
         sage: from sage.rings.polynomial.toy_variety import triangular_factorization
-        sage: R.<x,y,z> = PolynomialRing(GF(32003))                                     # needs sage.rings.finite_rings
-        sage: p1 = x^2*(x-1)^3*y^2*(z-3)^3                                              # needs sage.rings.finite_rings
-        sage: p2 = z^2 - z                                                              # needs sage.rings.finite_rings
-        sage: p3 = (x-2)^2*(y-1)^3                                                      # needs sage.rings.finite_rings
-        sage: I = R.ideal(p1,p2,p3)                                                     # needs sage.rings.finite_rings
-        sage: triangular_factorization(I.groebner_basis())                              # needs sage.rings.finite_rings
+        sage: R.<x,y,z> = PolynomialRing(GF(32003))
+        sage: p1 = x^2*(x-1)^3*y^2*(z-3)^3
+        sage: p2 = z^2 - z
+        sage: p3 = (x-2)^2*(y-1)^3
+        sage: I = R.ideal(p1,p2,p3)
+        sage: triangular_factorization(I.groebner_basis())                              # needs sage.libs.singular
         [[x^2 - 4*x + 4, y, z],
          [x^5 - 3*x^4 + 3*x^3 - x^2, y - 1, z],
          [x^2 - 4*x + 4, y, z - 1],
@@ -315,15 +316,16 @@ def elim_pol(B, n=-1):
 
     EXAMPLES::
 
+        sage: # needs sage.rings.finite_rings
         sage: from sage.misc.verbose import set_verbose
         sage: set_verbose(0)
         sage: from sage.rings.polynomial.toy_variety import elim_pol
-        sage: R.<x,y,z> = PolynomialRing(GF(32003))                                     # needs sage.rings.finite_rings
-        sage: p1 = x^2*(x-1)^3*y^2*(z-3)^3                                              # needs sage.rings.finite_rings
-        sage: p2 = z^2 - z                                                              # needs sage.rings.finite_rings
-        sage: p3 = (x-2)^2*(y-1)^3                                                      # needs sage.rings.finite_rings
-        sage: I = R.ideal(p1,p2,p3)                                                     # needs sage.rings.finite_rings
-        sage: elim_pol(I.groebner_basis())                                              # needs sage.rings.finite_rings
+        sage: R.<x,y,z> = PolynomialRing(GF(32003))
+        sage: p1 = x^2*(x-1)^3*y^2*(z-3)^3
+        sage: p2 = z^2 - z
+        sage: p3 = (x-2)^2*(y-1)^3
+        sage: I = R.ideal(p1,p2,p3)
+        sage: elim_pol(I.groebner_basis())                                              # needs sage.libs.singular
         z^2 - z
     """
     # type checking in a probably vain attempt to avoid stupid errors

@@ -225,11 +225,11 @@ def PolynomialSequence(arg1, arg2=None, immutable=False, cr=False, cr_str=None):
     EXAMPLES::
 
         sage: P.<a,b,c,d> = PolynomialRing(GF(127), 4)
-        sage: I = sage.rings.ideal.Katsura(P)                                           # needs sage.rings.finite_rings
+        sage: I = sage.rings.ideal.Katsura(P)                                           # needs sage.libs.singular
 
     If a list of tuples is provided, those form the parts::
 
-        sage: F = Sequence([I.gens(),I.gens()], I.ring()); F # indirect doctest         # needs sage.rings.finite_rings
+        sage: F = Sequence([I.gens(),I.gens()], I.ring()); F # indirect doctest         # needs sage.libs.singular
         [a + 2*b + 2*c + 2*d - 1,
          a^2 + 2*b^2 + 2*c^2 + 2*d^2 - a,
          2*a*b + 2*b*c + 2*c*d - b,
@@ -238,12 +238,12 @@ def PolynomialSequence(arg1, arg2=None, immutable=False, cr=False, cr_str=None):
          a^2 + 2*b^2 + 2*c^2 + 2*d^2 - a,
          2*a*b + 2*b*c + 2*c*d - b,
          b^2 + 2*a*c + 2*b*d - c]
-        sage: F.nparts()                                                                # needs sage.rings.finite_rings
+        sage: F.nparts()                                                                # needs sage.libs.singular
         2
 
     If an ideal is provided, the generators are used::
 
-        sage: Sequence(I)                                                               # needs sage.rings.finite_rings
+        sage: Sequence(I)                                                               # needs sage.libs.singular
         [a + 2*b + 2*c + 2*d - 1,
          a^2 + 2*b^2 + 2*c^2 + 2*d^2 - a,
          2*a*b + 2*b*c + 2*c*d - b,
@@ -251,12 +251,12 @@ def PolynomialSequence(arg1, arg2=None, immutable=False, cr=False, cr_str=None):
 
     If a list of polynomials is provided, the system has only one part::
 
-        sage: F = Sequence(I.gens(), I.ring()); F                                       # needs sage.rings.finite_rings
+        sage: F = Sequence(I.gens(), I.ring()); F                                       # needs sage.libs.singular
         [a + 2*b + 2*c + 2*d - 1,
          a^2 + 2*b^2 + 2*c^2 + 2*d^2 - a,
          2*a*b + 2*b*c + 2*c*d - b,
          b^2 + 2*a*c + 2*b*d - c]
-         sage: F.nparts()                                                               # needs sage.rings.finite_rings
+         sage: F.nparts()                                                               # needs sage.libs.singular
          1
 
     We test that the ring is inferred correctly::
@@ -720,23 +720,22 @@ class PolynomialSequence_generic(Sequence_generic):
 
         EXAMPLES::
 
+            sage: # needs sage.libs.singular
             sage: P.<a,b,c,d> = PolynomialRing(GF(127), 4)
-            sage: I = sage.rings.ideal.Katsura(P)                                       # needs sage.rings.finite_rings
-            sage: I.gens()                                                              # needs sage.rings.finite_rings
+            sage: I = sage.rings.ideal.Katsura(P)
+            sage: I.gens()
             [a + 2*b + 2*c + 2*d - 1,
              a^2 + 2*b^2 + 2*c^2 + 2*d^2 - a,
              2*a*b + 2*b*c + 2*c*d - b,
              b^2 + 2*a*c + 2*b*d - c]
-
-            sage: F = Sequence(I)                                                       # needs sage.rings.finite_rings
-            sage: A,v = F.coefficient_matrix()                                          # needs sage.rings.finite_rings
-            sage: A                                                                     # needs sage.rings.finite_rings
+            sage: F = Sequence(I)
+            sage: A,v = F.coefficient_matrix()
+            sage: A
             [  0   0   0   0   0   0   0   0   0   1   2   2   2 126]
             [  1   0   2   0   0   2   0   0   2 126   0   0   0   0]
             [  0   2   0   0   2   0   0   2   0   0 126   0   0   0]
             [  0   0   1   2   0   0   2   0   0   0   0 126   0   0]
-
-            sage: v                                                                     # needs sage.rings.finite_rings
+            sage: v
             [a^2]
             [a*b]
             [b^2]
@@ -751,8 +750,7 @@ class PolynomialSequence_generic(Sequence_generic):
             [  c]
             [  d]
             [  1]
-
-            sage: A*v                                                                   # needs sage.rings.finite_rings
+            sage: A*v
             [        a + 2*b + 2*c + 2*d - 1]
             [a^2 + 2*b^2 + 2*c^2 + 2*d^2 - a]
             [      2*a*b + 2*b*c + 2*c*d - b]
@@ -806,14 +804,15 @@ class PolynomialSequence_generic(Sequence_generic):
 
         EXAMPLES::
 
+            sage: # needs sage.libs.singular
             sage: P.<a,b,c,d> = PolynomialRing(GF(127))
-            sage: I = sage.rings.ideal.Katsura(P)                                       # needs sage.rings.finite_rings
-            sage: F = Sequence(I); F                                                    # needs sage.rings.finite_rings
+            sage: I = sage.rings.ideal.Katsura(P)
+            sage: F = Sequence(I); F
             [a + 2*b + 2*c + 2*d - 1,
              a^2 + 2*b^2 + 2*c^2 + 2*d^2 - a,
              2*a*b + 2*b*c + 2*c*d - b,
              b^2 + 2*a*c + 2*b*d - c]
-            sage: F._singular_()                                                        # needs sage.rings.finite_rings
+            sage: F._singular_()
             a+2*b+2*c+2*d-1,
             a^2+2*b^2+2*c^2+2*d^2-a,
             2*a*b+2*b*c+2*c*d-b,
@@ -851,9 +850,10 @@ class PolynomialSequence_generic(Sequence_generic):
 
         EXAMPLES::
 
+            sage: # needs sage.libs.singular
             sage: P.<a,b,c,d> = PolynomialRing(GF(127))
-            sage: I = sage.rings.ideal.Katsura(P)                                       # needs sage.rings.finite_rings
-            sage: F = Sequence(I); F # indirect doctest                                 # needs sage.rings.finite_rings
+            sage: I = sage.rings.ideal.Katsura(P)
+            sage: F = Sequence(I); F  # indirect doctest
             [a + 2*b + 2*c + 2*d - 1,
              a^2 + 2*b^2 + 2*c^2 + 2*d^2 - a,
              2*a*b + 2*b*c + 2*c*d - b,
@@ -879,24 +879,25 @@ class PolynomialSequence_generic(Sequence_generic):
 
         EXAMPLES::
 
+            sage: # needs sage.libs.singular
             sage: P.<a,b,c,d> = PolynomialRing(GF(127))
-            sage: I = sage.rings.ideal.Katsura(P)                                       # needs sage.rings.finite_rings
-            sage: F = Sequence(I)                                                       # needs sage.rings.finite_rings
-            sage: F + [a^127 + a]                                                       # needs sage.rings.finite_rings
+            sage: I = sage.rings.ideal.Katsura(P)
+            sage: F = Sequence(I)
+            sage: F + [a^127 + a]
             [a + 2*b + 2*c + 2*d - 1,
              a^2 + 2*b^2 + 2*c^2 + 2*d^2 - a,
              2*a*b + 2*b*c + 2*c*d - b,
              b^2 + 2*a*c + 2*b*d - c,
              a^127 + a]
 
-            sage: F + P.ideal([a^127 + a])                                              # needs sage.rings.finite_rings
+            sage: F + P.ideal([a^127 + a])                                              # needs sage.libs.singular
             [a + 2*b + 2*c + 2*d - 1,
              a^2 + 2*b^2 + 2*c^2 + 2*d^2 - a,
              2*a*b + 2*b*c + 2*c*d - b,
              b^2 + 2*a*c + 2*b*d - c,
              a^127 + a]
 
-            sage: F + Sequence([a^127 + a], P)                                          # needs sage.rings.finite_rings
+            sage: F + Sequence([a^127 + a], P)                                          # needs sage.libs.singular
             [a + 2*b + 2*c + 2*d - 1,
              a^2 + 2*b^2 + 2*c^2 + 2*d^2 - a,
              2*a*b + 2*b*c + 2*c*d - b,
@@ -1029,7 +1030,7 @@ class PolynomialSequence_generic(Sequence_generic):
 
             sage: P.<x,y,z> = PolynomialRing(GF(127))
             sage: F = Sequence([x*y + z, y + z + 1])
-            sage: F._groebner_strategy()                                                # needs sage.rings.finite_rings
+            sage: F._groebner_strategy()                                                # needs sage.libs.singular
             Groebner Strategy for ideal generated by 2 elements over
             Multivariate Polynomial Ring in x, y, z over Finite Field of size 127
         """
@@ -1044,11 +1045,11 @@ class PolynomialSequence_generic(Sequence_generic):
 
             sage: P.<x,y,z> = PolynomialRing(GF(7))
             sage: F = Sequence([x*y + x, x])
-            sage: F.maximal_degree()                                                    # needs sage.rings.finite_rings
+            sage: F.maximal_degree()
             2
             sage: P.<x,y,z> = PolynomialRing(GF(7))
             sage: F = Sequence([], universe=P)
-            sage: F.maximal_degree()                                                    # needs sage.rings.finite_rings
+            sage: F.maximal_degree()
             -1
 
         """

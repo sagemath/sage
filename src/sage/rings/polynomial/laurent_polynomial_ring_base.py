@@ -1,4 +1,4 @@
-# sage.doctest: optional - sage.modules
+# sage.doctest: needs sage.modules
 r"""
 Ring of Laurent Polynomials (base class)
 
@@ -212,6 +212,7 @@ class LaurentPolynomialRing_generic(CommutativeRing, Parent):
             sage: 1 / g
             -x^-1 + 1 + O(x^19)
 
+            sage: # needs sage.combinat
             sage: PP = P.completion(x, prec=oo); PP
             Lazy Laurent Series Ring in x over Rational Field
             sage: g = 1 / PP(f); g

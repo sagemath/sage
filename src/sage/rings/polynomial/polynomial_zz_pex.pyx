@@ -1,4 +1,4 @@
-# sage.doctest: optional - sage.libs.ntl sage.rings.finite_rings
+# sage.doctest: needs sage.libs.ntl sage.rings.finite_rings
 # distutils: libraries = NTL_LIBRARIES gmp
 # distutils: extra_compile_args = NTL_CFLAGS
 # distutils: include_dirs = NTL_INCDIR

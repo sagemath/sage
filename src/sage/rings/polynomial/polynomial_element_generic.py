@@ -86,11 +86,11 @@ class Polynomial_generic_sparse(Polynomial):
         """
         TESTS::
 
-            sage: PolynomialRing(RIF, 'z', sparse=True)([RIF(-1, 1), RIF(-1,1)])
+            sage: PolynomialRing(RIF, 'z', sparse=True)([RIF(-1, 1), RIF(-1,1)])                    # needs sage.rings.real_interval_field
             0.?*z + 0.?
-            sage: PolynomialRing(RIF, 'z', sparse=True)((RIF(-1, 1), RIF(-1,1)))
+            sage: PolynomialRing(RIF, 'z', sparse=True)((RIF(-1, 1), RIF(-1,1)))                    # needs sage.rings.real_interval_field
             0.?*z + 0.?
-            sage: PolynomialRing(CIF, 'z', sparse=True)([CIF(RIF(-1,1), RIF(-1,1)), RIF(-1,1)])
+            sage: PolynomialRing(CIF, 'z', sparse=True)([CIF(RIF(-1,1), RIF(-1,1)), RIF(-1,1)])     # needs sage.rings.complex_interval_field
             0.?*z + 0.? + 0.?*I
         """
         Polynomial.__init__(self, parent, is_gen=is_gen)
@@ -371,8 +371,8 @@ class Polynomial_generic_sparse(Polynomial):
 
         TESTS::
 
-            sage: pol = RIF['x']([0, 0, (-1,1)])
-            sage: PolynomialRing(RIF, 'x', sparse=True)(pol)
+            sage: pol = RIF['x']([0, 0, (-1,1)])                                        # needs sage.rings.real_interval_field
+            sage: PolynomialRing(RIF, 'x', sparse=True)(pol)                            # needs sage.rings.real_interval_field
             0.?*x^2
 
         AUTHOR:
@@ -1201,7 +1201,7 @@ class Polynomial_generic_cdv(Polynomial_generic_domain):
             sage: S.<x> = PowerSeriesRing(GF(5))
             sage: R.<y> = S[]
             sage: p = x^2 + y + x*y^2
-            sage: p.newton_polygon()                                                    # needs sage.rings.finite_rings
+            sage: p.newton_polygon()                                                    # needs sage.geometry.polyhedron
             Finite Newton polygon with 3 vertices: (0, 2), (1, 0), (2, 1)
 
         AUTHOR:
@@ -1443,7 +1443,7 @@ class Polynomial_generic_cdv(Polynomial_generic_domain):
             sage: S.<x> = PowerSeriesRing(GF(5))
             sage: R.<y> = S[]
             sage: p = x^2 + y + x*y^2
-            sage: p.slope_factorization()                                               # needs sage.rings.finite_rings
+            sage: p.slope_factorization()                                               # needs sage.geometry.polyhedron
             (x)
             * ((x + O(x^22))*y + 1 + 4*x^3 + 4*x^6 + 3*x^9 + x^15 + 3*x^18 + O(x^21))
             * ((x^-1 + O(x^20))*y + x + x^4 + 2*x^7 + 4*x^13 + 2*x^16 + 2*x^19 + O(x^22))

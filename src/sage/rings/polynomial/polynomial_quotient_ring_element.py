@@ -1,4 +1,4 @@
-# sage.doctest: optional - sage.libs.pari
+# sage.doctest: needs sage.libs.pari
 r"""
 Elements of Quotients of Univariate Polynomial Rings
 
@@ -100,9 +100,9 @@ class PolynomialQuotientRingElement(polynomial_singular_interface.Polynomial_sin
         sage: Q.<xi> = P.quo([(x^2 + 1)])
         sage: xi^2
         -1
-        sage: singular(xi)
+        sage: singular(xi)                                                              # needs sage.libs.singular
         xi
-        sage: (singular(xi)*singular(xi)).NF('std(0)')
+        sage: (singular(xi)*singular(xi)).NF('std(0)')                                  # needs sage.libs.singular
         -1
 
     """

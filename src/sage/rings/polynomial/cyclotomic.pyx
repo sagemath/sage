@@ -271,8 +271,9 @@ def cyclotomic_value(n, x):
         6
         sage: a.parent()
         Ring of integers modulo 11
-        sage: cyclotomic_value(30, -1.0)
+        sage: cyclotomic_value(30, -1.0)                                                # needs sage.rings.real_mpfr
         1.00000000000000
+
         sage: S.<t> = R.quotient(R.cyclotomic_polynomial(15))                           # needs sage.libs.pari
         sage: cyclotomic_value(15, t)                                                   # needs sage.libs.pari
         0
