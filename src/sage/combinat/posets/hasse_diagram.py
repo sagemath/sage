@@ -1067,12 +1067,13 @@ class HasseDiagram(DiGraph):
             [ 0  0  0  0  0  0  0  1]
 
         TESTS::
-            sage: # needs sage.modules
-            sage: H.moebius_function_matrix().is_immutable()                            # optional - sage.libs.flint
+
+            sage: # needs sage.modules sage.libs.flint
+            sage: H.moebius_function_matrix().is_immutable()
             True
-            sage: hasattr(H,'_moebius_function_matrix')                                 # optional - sage.libs.flint
+            sage: hasattr(H,'_moebius_function_matrix')
             True
-            sage: H.moebius_function == H._moebius_function_from_matrix                 # optional - sage.libs.flint
+            sage: H.moebius_function == H._moebius_function_from_matrix
             True
             sage: H = posets.TamariLattice(3)._hasse_diagram
             sage: M = H.moebius_function_matrix('matrix'); M
@@ -1081,13 +1082,13 @@ class HasseDiagram(DiGraph):
             [ 0  0  1 -1  0]
             [ 0  0  0  1 -1]
             [ 0  0  0  0  1]
-            sage: _ = H.__dict__.pop('_moebius_function_matrix')                        # optional - sage.modules
-            sage: H.moebius_function_matrix('cython') == M                              # optional - sage.libs.flint sage.modules
+            sage: _ = H.__dict__.pop('_moebius_function_matrix')
+            sage: H.moebius_function_matrix('cython') == M
             True
-            sage: _ = H.__dict__.pop('_moebius_function_matrix')                        # optional - sage.libs.flint sage.modules
-            sage: H.moebius_function_matrix('recursive') == M                           # optional - sage.modules
+            sage: _ = H.__dict__.pop('_moebius_function_matrix')
+            sage: H.moebius_function_matrix('recursive') == M
             True
-            sage: _ = H.__dict__.pop('_moebius_function_matrix')                        # optional - sage.modules
+            sage: _ = H.__dict__.pop('_moebius_function_matrix')
             sage: H.moebius_function_matrix('banana')
             Traceback (most recent call last):
             ...
@@ -1158,7 +1159,6 @@ class HasseDiagram(DiGraph):
 
         EXAMPLES::
 
-            sage: # needs sage.modules
             sage: # needs sage.libs.flint sage.modules
             sage: P = posets.PentagonPoset()._hasse_diagram
             sage: M = P.coxeter_transformation(); M
@@ -1173,7 +1173,6 @@ class HasseDiagram(DiGraph):
 
         TESTS::
 
-            sage: # needs sage.modules
             sage: # needs sage.libs.flint sage.modules
             sage: P = posets.PentagonPoset()._hasse_diagram
             sage: M = P.coxeter_transformation()
