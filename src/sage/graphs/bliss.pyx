@@ -764,24 +764,23 @@ cpdef automorphism_group(G, partition=None, use_edge_labels=True):
         sage: G.add_edges((i,j,"D") for i in range(9,14) for j in range(14,20))
         sage: A = automorphism_group(G)
         sage: print(A.gens())               # random
-        [(9,13), (18,19), (17,18), (16,17), (15,16), (14,15), (12,9), (11,12),
-         (10,11), (7,8), (6,7), (5,6), (3,4), (2,3), (0,1)]
+        ((12,13), (11,12), (10,11), (9,10), (7,8), (6,7), (5,6), (3,4),
+         (2,3), (1,0), (18,19), (17,18), (16,17), (15,16), (14,15))
         sage: A.cardinality() == prod(factorial(n) for n in [2,3,4,5,6])
         True
 
-        sage: alpha = "abcdefghijklmnopqrstuvwxyz"
-
         sage: # optional - bliss
         sage: G = Graph()
+        sage: alpha = "abcdefghijklmnopqrstuvwxyz"
         sage: G.add_edges((alpha[i],alpha[j],"A") for i in range(0, 2) for j in range(14,20))
         sage: G.add_edges((alpha[i],alpha[j],"B") for i in range(2, 5) for j in range(14,20))
         sage: G.add_edges((alpha[i],alpha[j],"C") for i in range(5, 9) for j in range(14,20))
         sage: G.add_edges((alpha[i],alpha[j],"D") for i in range(9,14) for j in range(14,20))
         sage: A = automorphism_group(G)
         sage: print(A.gens())
-        [('r','t'), ('s','r'), ('p','s'), ('q','p'), ('o','q'), ('l','n'),
-         ('m','l'), ('j','m'), ('k','j'), ('i','h'), ('f','i'), ('g','f'),
-         ('e','d'), ('c','e'), ('a','b')]
+        (('m','n'), ('l','m'), ('k','l'), ('j','k'), ('h','i'),
+         ('g','h'), ('f','g'), ('d','e'), ('c','d'), ('s','t'),
+         ('r','s'), ('q','r'), ('p','q'), ('o','p'), ('a','b'))
         sage: A.cardinality() == prod(factorial(n) for n in [2,3,4,5,6])
         True
 
