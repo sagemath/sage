@@ -425,14 +425,41 @@ class MomentAngleComplex(SageObject, UniqueRepresentation):
 
     def has_trivial_lowest_deg_massey_product(self):
         """
-        Return whether ``self`` has a non-trivial lowest degree Massey product.
+        Return whether ``self`` has a non-trivial lowest degree triple Massey product.
 
-        This is the Massey product in the cohomology of the
-        moment-angle complex.
+        This is the Massey product in the cohomology of this
+        moment-angle complex. This relies on the theorem which was
+        proven in the following paper:
+        :arxiv:`Lowest-degree triple Massey products in moment-angle complexes<1908.02222v2>`.
 
-        EXAMPLES::
+        ALGORITHM:
 
-        <Lots and lots of examples>
+        We obtain the one-skeleton from the associated simplicial complex,
+        which we consider to be a graph. We then perform ``subgraph_search``,
+        searching for any subgraph isomorphic to one of the 8 obstruction
+        graphs listed in the mentioned paper.
+
+        EXAMPLES:
+
+        A simplex will not have a trivial triple lowest-degree Massey product, because its
+        one-skeleton certainly does contain a subcomplex isomorphic to one of the 8 mentioned in
+        the paper::
+
+            sage: Z = MomentAngleComplex([[1,2,3,4,5,6]])
+            sage: Z.has_trivial_lowest_deg_massey_product()
+            False
+
+        The following is one of the 8 obstruction graphs::
+
+            sage: Z = MomentAngleComplex([[1, 2], [1, 4], [2, 3], [3, 5], [5, 6], [4, 5], [1, 6]])
+            sage: Z.has_trivial_lowest_deg_massey_product()
+            False
+
+        A hexagon is not isomorphic to any of the 8 obstruction graphs::
+
+            sage: Z = MomentAngleComplex([[0,1], [1,2], [2,3], [3,4], [4,5], [5,0]])
+            sage: Z.has_trivial_lowest_deg_massey_product()
+            True
         """
         from sage.graphs.graph import Graph
 
@@ -451,42 +478,42 @@ class MomentAngleComplex(SageObject, UniqueRepresentation):
 
         return not any(one_skeleton.subgraph_search(g) is not None for g in obstruction_graphs)
 
-    # needs work
-    def _golod_decomposition(self):
-        """
-        Determine whether ``self`` can be written (is homeomorphic) to a
-        connected sum of sphere products, with two spheres in each product.
-
-        This is done by checking the dimension and minimal non-Golodness of
-        the associated simplicial complex.
-
-        EXAMPLES::
-
-        <Lots and lots of examples>
-        """
-        if self._simplicial_complex.dimension() % 2 != 0 or not self._simplicial_complex.is_minimally_non_golod():
-            return False
-            # or maybe NotImplementedError?
-
-        B = self._simplicial_complex.bigraded_betti_numbers()
-        x = {(B.get((a, b)), a+b) for (a, b) in B}
-        D = {a: [] for (a, b) in x}
-        for (a, b) in x:
-            D[a].append(b)
-
-        D.pop(1)
-
-        out = ""
-        for num in D:
-            c1 = "S^" + str(D[num][0])
-            if len(D[num]) == 1:
-                c2 = " x " + c1
-            for i in range(1, len(D[num])):
-                c2 = " x S^" + str(D[num][i])
-
-            out = out + " #(" + c1 + c2 + ")^" + str(num)
-        # needs work
-        return out
+#    needs work
+#    def _golod_decomposition(self):
+#        """
+#        Determine whether ``self`` can be written (is homeomorphic) to a
+#        connected sum of sphere products, with two spheres in each product.
+#
+#        This is done by checking the dimension and minimal non-Golodness of
+#        the associated simplicial complex.
+#
+#        EXAMPLES::
+#
+#        <Lots and lots of examples>
+#        """
+#        if self._simplicial_complex.dimension() % 2 != 0 or not self._simplicial_complex.is_minimally_non_golod():
+#            return False
+#            # or maybe NotImplementedError?
+#
+#        B = self._simplicial_complex.bigraded_betti_numbers()
+#        x = {(B.get((a, b)), a+b) for (a, b) in B}
+#        D = {a: [] for (a, b) in x}
+#        for (a, b) in x:
+#            D[a].append(b)
+#
+#        D.pop(1)
+#
+#        out = ""
+#        for num in D:
+#            c1 = "S^" + str(D[num][0])
+#            if len(D[num]) == 1:
+#                c2 = " x " + c1
+#            for i in range(1, len(D[num])):
+#                c2 = " x S^" + str(D[num][i])
+#
+#            out = out + " #(" + c1 + c2 + ")^" + str(num)
+#        # needs work
+#        return out
 
     @cached_method  # maybe ignore the algorithm?
     def _homology_group(self, i, base_ring=ZZ, cohomology=False, algorithm='pari', verbose=False, reduced=True):
