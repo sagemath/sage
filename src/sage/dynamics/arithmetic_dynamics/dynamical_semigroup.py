@@ -303,7 +303,7 @@ class DynamicalSemigroup(Parent, metaclass=InheritComparisonClasscallMetaclass):
                     (x^2 : y^2)
         """
 
-        self._dynamical_systems = systems
+        self._dynamical_systems = _remove_duplicates_of_(systems)
         Parent.__init__(self, category=Semigroups().FinitelyGeneratedAsMagma())
 
     def __call__(self, input):
@@ -315,35 +315,35 @@ class DynamicalSemigroup(Parent, metaclass=InheritComparisonClasscallMetaclass):
         - ``input`` -- one value that can be evaluated
           with the generators of this dynamical semigroup.
 
-        OUTPUT: A tuple of the resulting values after applying all of this dynamical semigroup's generators to ``input``.
+        OUTPUT: A set of the resulting values after applying all of this dynamical semigroup's generators to ``input``.
 
         EXAMPLES::
 
             sage: P.<x,y> = ProjectiveSpace(QQ, 1)
             sage: f = DynamicalSemigroup(([x, y], [x^2, y^2]))
             sage: f(2)
-            ((2 : 1), (4 : 1))
+            {(2 : 1), (4 : 1)}
 
         ::
 
             sage: P.<x,y> = ProjectiveSpace(QQ, 1)
             sage: f = DynamicalSemigroup(([x, y], [x^2, y^2]))
             sage: f([2, 1])
-            ((2 : 1), (4 : 1))
+            {(2 : 1), (4 : 1)}
 
-        ::
+        TESTS::
 
             sage: P.<x,y> = ProjectiveSpace(QQ, 1)
             sage: f = DynamicalSemigroup(([x, y], [x^2, y^2]))
             sage: f(f(2))
             Traceback (most recent call last):
             ...
-            TypeError: unable to convert (2 : 1) to an element of Rational Field
+            TypeError: unable to convert {(4 : 1), (2 : 1)} to an element of Rational Field
         """
         result = []
         for ds in self.defining_systems():
             result.append(ds(self.domain()(input)))
-        return tuple(result)
+        return set(result)
 
     def base_ring(self):
         r"""
@@ -425,21 +425,21 @@ class DynamicalSemigroup(Parent, metaclass=InheritComparisonClasscallMetaclass):
 
     def defining_polynomials(self):
         r"""
-        Return the tuple of polynomials that define the generators of this dynamical semigroup.
+        Return the set of polynomials that define the generators of this dynamical semigroup.
 
-        OUTPUT: A tuple of polynomials.
+        OUTPUT: A set of polynomials.
 
         EXAMPLES::
 
             sage: P.<x,y> = ProjectiveSpace(QQ, 1)
             sage: f = DynamicalSemigroup(([x, y], [x^2, y^2]))
             sage: f.defining_polynomials()
-            ((x, y), (x^2, y^2))
+            {(x, y), (x^2, y^2)}
         """
         result = []
         for ds in self.defining_systems():
             result.append(ds.defining_polynomials())
-        return tuple(result)
+        return set(result)
 
     def defining_systems(self):
         r"""
@@ -1490,6 +1490,30 @@ class DynamicalSemigroup_affine_field(DynamicalSemigroup_affine):
 
 class DynamicalSemigroup_affine_finite_field(DynamicalSemigroup_affine_field):
     pass
+
+def _remove_duplicates_of_(list):
+    r"""
+    Removes duplicate elements from a list.
+
+    INPUT:
+
+    - ``list`` -- any list
+
+    OUTPUT: the original list without duplicate elements
+
+    EXAMPLES::
+
+        sage: numbers = [1, 1, 2, 3, 3, 2, 1, 5, 4, 3]
+        sage: sage.dynamics.arithmetic_dynamics.dynamical_semigroup._remove_duplicates_of_(numbers)
+        [1, 2, 3, 5, 4]
+    """
+    seen = []
+
+    for item in list:
+        if item not in seen:
+            seen.append(item)
+
+    return seen
 
 def _standardize_domains_of_(systems):
     r"""
