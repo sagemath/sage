@@ -457,13 +457,14 @@ class LocalizationElement(IntegralDomainElement):
 
         EXAMPLES::
 
+            sage: # needs sage.libs.pari sage.singular
             sage: P.<x,y,z> = QQ[]
-            sage: L = P.localization((x, y*z))                                          # needs sage.libs.pari
-            sage: L(y*z).is_unit()                                                      # needs sage.libs.pari
+            sage: L = P.localization((x, y*z))
+            sage: L(y*z).is_unit()
             True
-            sage: L(z).is_unit()                                                        # needs sage.libs.pari
+            sage: L(z).is_unit()
             True
-            sage: L(x*y*z).is_unit()                                                    # needs sage.libs.pari
+            sage: L(x*y*z).is_unit()
             True
         """
         return self.parent()._cut_off_extra_units_from_base_ring_element(self._value.numerator()).is_unit()
@@ -490,7 +491,7 @@ class LocalizationElement(IntegralDomainElement):
         """
         EXAMPLES::
 
-           sage: # needs sage.rings.finite_rings
+           sage: # needs sage.libs.singular
            sage: P.<x,y,z> = GF(7)[]
            sage: L = Localization(P, (x, y, z))
            sage: L(1/x) < L(3/(x*y*z)**3)
@@ -906,7 +907,7 @@ class Localization(IntegralDomain, UniqueRepresentation):
 
         EXAMPLES::
 
-            sage: # needs sage.libs.pari
+            sage: # needs sage.libs.pari sage.libs.singular
             sage: P.<x,y,z> = QQ[]
             sage: d = x**2 + y**2 + z**2
             sage: L = Localization(P, d)
@@ -917,7 +918,7 @@ class Localization(IntegralDomain, UniqueRepresentation):
 
         TESTS::
 
-            sage: TestSuite(L).run()
+            sage: TestSuite(L).run()                                                    # needs sage.libs.pari sage.libs.singular
         """
         potential_non_unit_denom = self._cut_off_extra_units_from_base_ring_element(x.denominator())
         if potential_non_unit_denom.is_unit():
@@ -933,23 +934,24 @@ class Localization(IntegralDomain, UniqueRepresentation):
 
         EXAMPLES::
 
+            sage: # needs sage.libs.pari sage.libs.singular
             sage: P.<x,y,z> = QQ[]
             sage: L = Localization(P, y*z)
-            sage: M = Localization(P, (x, y, z))                                        # needs sage.libs.pari
-            sage: M._coerce_map_from_(L)                                                # needs sage.libs.pari
+            sage: M = Localization(P, (x, y, z))
+            sage: M._coerce_map_from_(L)
             True
-            sage: L._coerce_map_from_(M)                                                # needs sage.libs.pari
+            sage: L._coerce_map_from_(M)
             False
             sage: Q.<u, v, w> = ZZ[]
             sage: N = Localization(Q, v*w)
             sage: L._coerce_map_from_(N)
             True
-            sage: N._coerce_map_from_(M)                                                # needs sage.libs.pari
+            sage: N._coerce_map_from_(M)
             False
-            sage: O = Localization(L, x**2 + 1)                                         # needs sage.libs.pari
-            sage: O._coerce_map_from_(M)                                                # needs sage.libs.pari
+            sage: O = Localization(L, x**2 + 1)
+            sage: O._coerce_map_from_(M)
             False
-            sage: O._coerce_map_from_(L)                                                # needs sage.libs.pari
+            sage: O._coerce_map_from_(L)
             True
         """
         if S is self.base_ring():

@@ -1,4 +1,4 @@
-# sage.doctest: optional - sage.rings.real_mpfr
+# sage.doctest: needs sage.rings.real_mpfr
 """
 Lazy real and complex numbers
 

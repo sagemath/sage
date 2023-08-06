@@ -1,4 +1,4 @@
-# sage.doctest: optional - sage.rings.finite_rings
+# sage.doctest: needs sage.rings.finite_rings
 
 #############################################################################
 #    Copyright (C) 2019 Xavier Caruso <xavier.caruso@normalesup.org>

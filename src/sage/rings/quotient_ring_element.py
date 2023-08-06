@@ -659,7 +659,7 @@ class QuotientRingElement(RingElement):
         The issue from :trac:`8005` was most likely fixed as part of
         :trac:`9138`::
 
-            sage: # needs sage.rings.finite_rings
+            sage: # needs sage.libs.singular
             sage: F = GF(5)
             sage: R.<x,y> = F[]
             sage: I = Ideal(R, [x, y])
@@ -687,7 +687,7 @@ class QuotientRingElement(RingElement):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
+            sage: # needs sage.libs.singular
             sage: R.<x,y,z> = PolynomialRing(GF(7), 3, order='lex')
             sage: I = sage.rings.ideal.FieldIdeal(R)
             sage: Q = R.quo(I)
@@ -710,7 +710,7 @@ class QuotientRingElement(RingElement):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
+            sage: # needs sage.libs.singular
             sage: R.<x,y,z> = PolynomialRing(GF(7), 3, order='lex')
             sage: I = sage.rings.ideal.FieldIdeal(R)
             sage: Q = R.quo(I)
@@ -734,7 +734,7 @@ class QuotientRingElement(RingElement):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
+            sage: # needs sage.libs.singular
             sage: R.<x,y,z> = PolynomialRing(GF(7), 3, order='lex')
             sage: I = sage.rings.ideal.FieldIdeal(R)
             sage: Q = R.quo(I)
@@ -811,7 +811,7 @@ class QuotientRingElement(RingElement):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
+            sage: # needs sage.libs.singular
             sage: P.<x,y> = PolynomialRing(GF(2), 2)
             sage: I = sage.rings.ideal.FieldIdeal(P)
             sage: Q = P.quo(I)
@@ -834,11 +834,12 @@ class QuotientRingElement(RingElement):
 
         TESTS::
 
-            sage: R.<x,y> = QQ[]; S.<a,b> = R.quo(x^2 + y^2); type(a)                   # needs sage.libs.singular
+            sage: # needs sage.libs.singular
+            sage: R.<x,y> = QQ[]; S.<a,b> = R.quo(x^2 + y^2); type(a)
             <class 'sage.rings.quotient_ring.QuotientRing_generic_with_category.element_class'>
-            sage: (a - 2/3*b)._singular_()                                              # needs sage.libs.singular
+            sage: (a - 2/3*b)._singular_()
             x-2/3*y
-            sage: S((a - 2/3*b)._singular_())                                           # needs sage.libs.singular
+            sage: S((a - 2/3*b)._singular_())
             a - 2/3*b
         """
         if singular is None:
@@ -851,7 +852,7 @@ class QuotientRingElement(RingElement):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
+            sage: # needs sage.libs.singular
             sage: P.<x,y> = PolynomialRing(GF(2))
             sage: Q = P.quotient(sage.rings.ideal.FieldIdeal(P))
             sage: xbar, ybar = Q.gens()
@@ -870,7 +871,7 @@ class QuotientRingElement(RingElement):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
+            sage: # needs sage.libs.singular
             sage: R.<x,y> = PolynomialRing(GF(7), 2)
             sage: Q = R.quotient([x^2 - y])
             sage: x, y = Q.gens()
@@ -895,7 +896,7 @@ class QuotientRingElement(RingElement):
 
         ::
 
-            sage: # needs sage.rings.finite_rings
+            sage: # needs sage.libs.singular
             sage: R.<x,y> = PolynomialRing(GF(7), 2)
             sage: Q = R.quotient([x^2 - y], names=R.gens())
             sage: x, y = Q.gens()
@@ -912,7 +913,7 @@ class QuotientRingElement(RingElement):
         Check that changing the currently defined global variables (`x`, `y`,
         ...) in Macaulay2 does not affect the result of this conversion::
 
-            sage: # needs sage.rings.finite_rings
+            sage: # needs sage.libs.singular
             sage: R.<x,y> = PolynomialRing(GF(7), 2)
             sage: Q = R.quotient([x^2 - y], names=R.gens())
             sage: x, y = Q.gens()
@@ -950,7 +951,7 @@ class QuotientRingElement(RingElement):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
+            sage: # needs sage.libs.singular
             sage: P.<a,b,c,d,e> = PolynomialRing(GF(2), 5, order='lex')
             sage: I1 = ideal([a*b + c*d + 1, a*c*e + d*e,
             ....:             a*b*e + c*e, b*c + c*d*e + 1])
@@ -962,7 +963,7 @@ class QuotientRingElement(RingElement):
 
         Notice that the result above is not minimal::
 
-            sage: I2.reduce(f)                                                          # needs sage.rings.finite_rings
+            sage: I2.reduce(f)                                                          # needs sage.libs.singular
             0
         """
         try:

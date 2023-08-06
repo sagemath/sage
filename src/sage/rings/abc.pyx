@@ -227,7 +227,7 @@ cdef class RealIntervalField(Field):
     EXAMPLES::
 
         sage: import sage.rings.abc
-        sage: isinstance(RIF, sage.rings.abc.RealIntervalField)
+        sage: isinstance(RIF, sage.rings.abc.RealIntervalField)                         # needs sage.rings.real_interval_field
         True
 
     By design, there is a unique direct subclass::
@@ -327,7 +327,7 @@ class ComplexIntervalField(Field):
     EXAMPLES::
 
         sage: import sage.rings.abc
-        sage: isinstance(CIF, sage.rings.abc.ComplexIntervalField)
+        sage: isinstance(CIF, sage.rings.abc.ComplexIntervalField)                      # needs sage.rings.complex_interval_field
         True
 
     By design, there is a unique direct subclass::
