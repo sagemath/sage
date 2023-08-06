@@ -1,4 +1,4 @@
-# sage.doctest: optional - sage.rings.number_field
+# sage.doctest: needs sage.rings.number_field
 """
 Base class for all number fields
 
