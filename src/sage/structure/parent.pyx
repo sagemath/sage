@@ -1083,54 +1083,56 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
             True
             sage: 5 in QQ
             True
-            sage: I in RR                                                               # needs sage.rings.real_mpfr
+            sage: I in RR                                                               # needs sage.rings.real_mpfr sage.symbolic
             False
-            sage: SR(2) in ZZ                                                           # needs sage.symbolic
+            sage: RIF(1, 2) in RIF                                                      # needs sage.rings.real_interval_field
             True
-            sage: RIF(1, 2) in RIF
+
+            sage: # needs sage.symbolic
+            sage: SR(2) in ZZ
             True
-            sage: pi in RIF  # there is no element of RIF equal to pi                   # needs sage.symbolic
+            sage: pi in RIF  # there is no element of RIF equal to pi
             False
-            sage: sqrt(2) in CC                                                         # needs sage.symbolic
+            sage: sqrt(2) in CC
             True
-            sage: pi in RR                                                              # needs sage.symbolic
+            sage: pi in RR
             True
-            sage: pi in CC                                                              # needs sage.symbolic
+            sage: pi in CC
             True
-            sage: pi in RDF                                                             # needs sage.symbolic
+            sage: pi in RDF
             True
-            sage: pi in CDF                                                             # needs sage.symbolic
+            sage: pi in CDF
             True
 
         Note that we have
 
         ::
 
-            sage: 3/2 in RIF
+            sage: 3/2 in RIF                                                            # needs sage.rings.real_interval_field
             True
 
         because ``3/2`` has an exact representation in ``RIF`` (i.e. can be
         represented as an interval that contains exactly one value)::
 
-            sage: RIF(3/2).is_exact()
+            sage: RIF(3/2).is_exact()                                                   # needs sage.rings.real_interval_field
             True
 
         On the other hand, we have
 
         ::
 
-            sage: 2/3 in RIF
+            sage: 2/3 in RIF                                                            # needs sage.rings.real_interval_field
             False
 
         because ``2/3`` has no exact representation in ``RIF``. Since
         ``RIF(2/3)`` is a nontrivial interval, it cannot be equal to anything
         (not even itself)::
 
-            sage: RIF(2/3).is_exact()
+            sage: RIF(2/3).is_exact()                                                   # needs sage.rings.real_interval_field
             False
-            sage: RIF(2/3).endpoints()
+            sage: RIF(2/3).endpoints()                                                  # needs sage.rings.real_interval_field
             (0.666666666666666, 0.666666666666667)
-            sage: RIF(2/3) == RIF(2/3)
+            sage: RIF(2/3) == RIF(2/3)                                                  # needs sage.rings.real_interval_field
             False
 
         TESTS:

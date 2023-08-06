@@ -782,7 +782,8 @@ cdef class IntegerMulAction(IntegerAction):
 
         Check that large multiplications can be interrupted::
 
-            sage: alarm(0.001); 2^(10^7) * P                                            # needs sage.schemes
+            sage: # needs sage.schemes
+            sage: alarm(0.001); 2^(10^7) * P
             Traceback (most recent call last):
             ...
             AlarmInterrupt
@@ -790,8 +791,9 @@ cdef class IntegerMulAction(IntegerAction):
         Verify that cysignals correctly detects that the above
         exception has been handled::
 
+            sage: # needs sage.schemes
             sage: from cysignals.tests import print_sig_occurred
-            sage: print_sig_occurred()                                                  # needs sage.schemes
+            sage: print_sig_occurred()
             No current exception
         """
         cdef int err = 0
