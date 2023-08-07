@@ -1659,7 +1659,7 @@ class TermOrder(SageObject):
             sage: T = P.term_order()
             sage: T.singular_str()
             '(lp(3),Dp(5),lp(2))'
-            sage: P._singular_()                                                        # needs sage.rings.finite_rings
+            sage: P._singular_()                                                        # needs sage.libs.singular
             polynomial ring, over a field, global ordering
             //   coefficients: ZZ/127
             //   number of vars : 10
