@@ -547,7 +547,7 @@ cdef class BooleanPolynomialRing(BooleanPolynomialRing_base):
         """
         return tuple(new_BP_from_PBVar(self,
                                        self._pbring.variable(self.pbind[i]))
-                     for i in range(self.__ngens))
+                     for i in range(self._ngens))
 
     def change_ring(self, base_ring=None, names=None, order=None):
         """
