@@ -1177,7 +1177,7 @@ cdef class BasisMatroid(BasisExchangeMatroid):
 
         """
         N = BasisMatroid(M=self)
-        N.rename(getattr(self, '__custom_name'))
+        N.rename(getattr(self, '_custom_name'))
         return N
 
     def __deepcopy__(self, memo=None):
@@ -1201,7 +1201,7 @@ cdef class BasisMatroid(BasisExchangeMatroid):
         if memo is None:
             memo = {}
         N = BasisMatroid(M=self)
-        N.rename(getattr(self, '__custom_name'))
+        N.rename(getattr(self, '_custom_name'))
         return N
 
     def __reduce__(self):
@@ -1230,7 +1230,7 @@ cdef class BasisMatroid(BasisExchangeMatroid):
         """
         import sage.matroids.unpickling
         BB = bitset_pickle(self._bb)
-        data = (self._E, self._matroid_rank, getattr(self, '__custom_name'), BB)
+        data = (self._E, self._matroid_rank, getattr(self, '_custom_name'), BB)
         version = 0
         return sage.matroids.unpickling.unpickle_basis_matroid, (version, data)
 

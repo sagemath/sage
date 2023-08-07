@@ -1417,7 +1417,7 @@ class SingularElement(ExtraTabCompletion, ExpectElement, sage.interfaces.abc.Sin
         """
         s = super(SingularElement, self)._repr_()
         if self._name in s:
-            if (not hasattr(self, "__custom_name")) and self.type() == 'matrix':
+            if (not hasattr(self, "_custom_name")) and self.type() == 'matrix':
                 s = self.parent().eval('pmat(%s,20)'%(self.name()))
         return s
 

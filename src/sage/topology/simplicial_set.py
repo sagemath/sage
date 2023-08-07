@@ -565,13 +565,13 @@ class AbstractSimplex_class(SageObject):
             return True
         if self.degeneracies() and other.degeneracies() and self.degeneracies() != other.degeneracies():
             return self.degeneracies() < other.degeneracies()
-        if hasattr(self.nondegenerate(), '__custom_name'):
-            if hasattr(other.nondegenerate(), '__custom_name'):
+        if hasattr(self.nondegenerate(), '_custom_name'):
+            if hasattr(other.nondegenerate(), '_custom_name'):
                 return str(self) < str(other)
             return True
 
-        if (hasattr(other, '__custom_name')
-                or hasattr(other.nondegenerate(), '__custom_name')):
+        if (hasattr(other, '_custom_name')
+                or hasattr(other.nondegenerate(), '_custom_name')):
             return False
         return id(self) < id(other)
 
@@ -788,7 +788,7 @@ class AbstractSimplex_class(SageObject):
         # dimension, the degeneracies, and the name (with a prime
         # added).
         sigma = AbstractSimplex(self._dim, degeneracies=self.degeneracies())
-        if hasattr(self, '__custom_name'):
+        if hasattr(self, '_custom_name'):
             sigma.rename(str(self) + "'")
         return sigma
 
@@ -833,7 +833,7 @@ class AbstractSimplex_class(SageObject):
             return memo[underlying].apply_degeneracies(*degens)
         except KeyError:
             sigma = AbstractSimplex(underlying._dim)
-            if hasattr(underlying, '__custom_name'):
+            if hasattr(underlying, '_custom_name'):
                 sigma.rename(str(self) + "'")
             memo[underlying] = sigma
             return sigma.apply_degeneracies(*degens)
@@ -890,11 +890,11 @@ class AbstractSimplex_class(SageObject):
         """
         if self._latex_name is not None:
             return self._latex_name
-        if hasattr(self, '__custom_name'):
+        if hasattr(self, '_custom_name'):
             return str(self)
         if self.nondegenerate()._latex_name is not None:
             simplex = self.nondegenerate()._latex_name
-        elif hasattr(self.nondegenerate(), '__custom_name'):
+        elif hasattr(self.nondegenerate(), '_custom_name'):
             simplex = str(self.nondegenerate())
         else:
             simplex = "\\Delta^{{{}}}".format(self._dim)

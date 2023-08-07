@@ -217,7 +217,7 @@ class EnumeratedSetFromIterator(Parent):
                 (self._func,                            # func
                  getattr(self, '_args', None),          # args
                  getattr(self, '_kwds', None),          # kwds
-                 getattr(self, '__custom_name', None),  # name
+                 getattr(self, '_custom_name', None),  # name
                  self.category(),                       # category
                  hasattr(self, '_cache'))               # cache
                 )

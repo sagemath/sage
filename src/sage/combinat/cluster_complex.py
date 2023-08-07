@@ -223,9 +223,9 @@ class ClusterComplex(SubwordComplex):
         self._w0 = w
         self._k = k
         if k == 1:
-            self.__custom_name = 'Cluster complex'
+            self._custom_name = 'Cluster complex'
         else:
-            self.__custom_name = 'Multi-cluster complex'
+            self._custom_name = 'Multi-cluster complex'
 
         self.set_immutable()
 
@@ -271,7 +271,7 @@ class ClusterComplex(SubwordComplex):
             sage: ClusterComplex(['A', 2])._repr_()
             "Cluster complex of type ['A', 2] with 5 vertices and 5 facets"
         """
-        name = self.__custom_name
+        name = self._custom_name
         name += (' of type %s with %s vertices and %s facets'
                  % (self.cartan_type(), len(self.vertices()),
                     len(self._facets)))

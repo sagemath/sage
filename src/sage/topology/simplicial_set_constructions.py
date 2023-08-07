@@ -176,7 +176,7 @@ class SubSimplicialSet(SimplicialSet_finite, UniqueRepresentation):
         else:
             SimplicialSet_finite.__init__(self, data)
         if self == ambient:
-            if hasattr(ambient, '__custom_name'):
+            if hasattr(ambient, '_custom_name'):
                 self.rename(str(ambient))
             self._latex_name = latex(ambient)
         # When constructing the inclusion map, we do not need to check

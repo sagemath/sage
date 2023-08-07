@@ -66,8 +66,8 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
 
     Let `X` and `Y` be two modules with basis. We can build `Hom(X,Y)`::
 
-        sage: X = CombinatorialFreeModule(QQ, [1,2]); X.__custom_name = "X"             # optional - sage.modules
-        sage: Y = CombinatorialFreeModule(QQ, [3,4]); Y.__custom_name = "Y"             # optional - sage.modules
+        sage: X = CombinatorialFreeModule(QQ, [1,2]); X._custom_name = "X"             # optional - sage.modules
+        sage: Y = CombinatorialFreeModule(QQ, [3,4]); Y._custom_name = "Y"             # optional - sage.modules
         sage: H = Hom(X, Y); H                                                          # optional - sage.modules
         Set of Morphisms from X to Y
          in Category of finite dimensional vector spaces with basis over Rational Field

@@ -486,8 +486,8 @@ class MinorMatroid(Matroid):
             True
         """
         N = MinorMatroid(self._matroid, self._contractions, self._deletions)
-        if getattr(self, '__custom_name') is not None:  # because of name wrangling, this is not caught by the default copy
-            N.rename(getattr(self, '__custom_name'))
+        if getattr(self, '_custom_name') is not None:  # because of name wrangling, this is not caught by the default copy
+            N.rename(getattr(self, '_custom_name'))
         return N
 
     def __deepcopy__(self, memo={}):
@@ -512,8 +512,8 @@ class MinorMatroid(Matroid):
         from copy import deepcopy
         # Since matroids are immutable, N cannot reference itself in correct code, so no need to worry about the recursion.
         N = MinorMatroid(deepcopy(self._matroid, memo), deepcopy(self._contractions, memo), deepcopy(self._deletions, memo))
-        if getattr(self, '__custom_name') is not None:  # because of name wrangling, this is not caught by the default deepcopy
-            N.rename(deepcopy(getattr(self, '__custom_name'), memo))
+        if getattr(self, '_custom_name') is not None:  # because of name wrangling, this is not caught by the default deepcopy
+            N.rename(deepcopy(getattr(self, '_custom_name'), memo))
         return N
 
     def __reduce__(self):
@@ -534,6 +534,6 @@ class MinorMatroid(Matroid):
              4: {{'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'}}}
         """
         import sage.matroids.unpickling
-        data = (self._matroid, self._contractions, self._deletions, getattr(self, '__custom_name'))
+        data = (self._matroid, self._contractions, self._deletions, getattr(self, '_custom_name'))
         version = 0
         return sage.matroids.unpickling.unpickle_minor_matroid, (version, data)

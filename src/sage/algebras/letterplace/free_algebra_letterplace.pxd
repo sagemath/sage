@@ -29,7 +29,7 @@ cdef class FreeAlgebra_letterplace(Algebra):
     cdef int _ngens
     cdef int _nb_slackvars
     cdef object __monoid
-    cdef public object __custom_name
+    cdef public object _custom_name
     cdef str exponents_to_string(self, E)
     cdef str exponents_to_latex(self, E)
     cdef tuple _degrees
