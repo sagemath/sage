@@ -1687,14 +1687,14 @@ cdef class IntegerMod_abstract(FiniteRingElement):
             if other._modulus.int64 == 1: return self
             new_modulus = self._modulus.int64 * other._modulus.int64
             if new_modulus < INTEGER_MOD_INT32_LIMIT:
-                return self.__crt(other)
+                return self._crt(other)
 
             elif new_modulus < INTEGER_MOD_INT64_LIMIT:
                 if not isinstance(self, IntegerMod_int64):
                     self = IntegerMod_int64(self._parent, self.lift())
                 if not isinstance(other, IntegerMod_int64):
                     other = IntegerMod_int64(other._parent, other.lift())
-                return self.__crt(other)
+                return self._crt(other)
 
         if not isinstance(self, IntegerMod_gmp):
             if self._modulus.int64 == 1: return other
@@ -1704,7 +1704,7 @@ cdef class IntegerMod_abstract(FiniteRingElement):
             if other._modulus.int64 == 1: return self
             other = IntegerMod_gmp(other._parent, other.lift())
 
-        return self.__crt(other)
+        return self._crt(other)
 
     def additive_order(self):
         r"""
@@ -2111,7 +2111,7 @@ cdef class IntegerMod_gmp(IntegerMod_abstract):
         """
         return self.lift().gcd(self.modulus()) == 1
 
-    def __crt(IntegerMod_gmp self, IntegerMod_gmp other):
+    def _crt(IntegerMod_gmp self, IntegerMod_gmp other):
         cdef IntegerMod_gmp lift, x
         cdef sage.rings.integer.Integer modulus, other_modulus
 
@@ -2500,7 +2500,7 @@ cdef class IntegerMod_int(IntegerMod_abstract):
         """
         return gcd_int(self.ivalue, self._modulus.int32) == 1
 
-    def __crt(IntegerMod_int self, IntegerMod_int other):
+    def _crt(IntegerMod_int self, IntegerMod_int other):
         """
         Use the Chinese Remainder Theorem to find an element of the
         integers modulo the product of the moduli that reduces to self and
@@ -3322,7 +3322,7 @@ cdef class IntegerMod_int64(IntegerMod_abstract):
         """
         return gcd_int64(self.ivalue, self._modulus.int64) == 1
 
-    def __crt(IntegerMod_int64 self, IntegerMod_int64 other):
+    def _crt(IntegerMod_int64 self, IntegerMod_int64 other):
         """
         Use the Chinese Remainder Theorem to find an element of the
         integers modulo the product of the moduli that reduces to self and
