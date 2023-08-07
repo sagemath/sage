@@ -105,7 +105,7 @@ ctypedef double Double
 cdef class Lfunction:
     cdef void *thisptr
     cdef void _init_fun(self, char *NAME, int what_type, dirichlet_coeff, long long Period, double q,  c_Complex w, int A, double *g, c_Complex *l, int n_poles, c_Complex *p, c_Complex *r)
-    cdef c_Complex __value(self,c_Complex s,int derivative)
+    cdef c_Complex _value(self,c_Complex s,int derivative)
     cdef c_Complex __hardy_z_function(self,c_Complex s)
     cdef int __compute_rank(self)
     #strange bug, replacing Double with double gives me a compile error
