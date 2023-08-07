@@ -223,7 +223,7 @@ cdef class Lfunction:
         #This takes s -> .5 + I*s
         cdef ComplexNumber complexified_s = CCC(0.5)+ CCC(0,1)*CCC(s)
         cdef c_Complex z = new_Complex(mpfr_get_d(complexified_s.__re, MPFR_RNDN), mpfr_get_d(complexified_s.__im, MPFR_RNDN))
-        cdef c_Complex result = self.__hardy_z_function(z)
+        cdef c_Complex result = self._hardy_z_function(z)
         return CCC(result.real(),result.imag())
 
 
@@ -414,7 +414,7 @@ cdef class Lfunction:
     cdef c_Complex _value(self,c_Complex s,int derivative):
         raise NotImplementedError
 
-    cdef c_Complex __hardy_z_function(self,c_Complex s):
+    cdef c_Complex _hardy_z_function(self,c_Complex s):
         raise NotImplementedError
 
     cdef int __compute_rank(self):
@@ -510,7 +510,7 @@ cdef class Lfunction_I(Lfunction):
     cdef inline c_Complex _value(self,c_Complex s,int derivative):
         return (<c_Lfunction_I *>(self.thisptr)).value(s, derivative, "pure")
 
-    cdef inline c_Complex __hardy_z_function(self,c_Complex s):
+    cdef inline c_Complex _hardy_z_function(self,c_Complex s):
         return (<c_Lfunction_I *>(self.thisptr)).value(s, 0, "rotated pure")
 
     cdef int __compute_rank(self):
@@ -648,7 +648,7 @@ cdef class Lfunction_D(Lfunction):
         return (<c_Lfunction_D *>(self.thisptr)).value(s, derivative, "pure")
 
 
-    cdef inline c_Complex __hardy_z_function(self,c_Complex s):
+    cdef inline c_Complex _hardy_z_function(self,c_Complex s):
         return (<c_Lfunction_D *>(self.thisptr)).value(s, 0, "rotated pure")
 
     cdef inline int __compute_rank(self):
@@ -792,7 +792,7 @@ cdef class Lfunction_C:
         return (<c_Lfunction_C *>(self.thisptr)).value(s, derivative, "pure")
 
 
-    cdef inline c_Complex __hardy_z_function(self,c_Complex s):
+    cdef inline c_Complex _hardy_z_function(self,c_Complex s):
         return (<c_Lfunction_C *>(self.thisptr)).value(s, 0,"rotated pure")
 
     cdef inline int __compute_rank(self):
@@ -877,7 +877,7 @@ cdef class Lfunction_Zeta(Lfunction):
         return (<c_Lfunction_Zeta *>(self.thisptr)).value(s, derivative, "pure")
 
 
-    cdef inline c_Complex __hardy_z_function(self,c_Complex s):
+    cdef inline c_Complex _hardy_z_function(self,c_Complex s):
         return (<c_Lfunction_Zeta *>(self.thisptr)).value(s, 0, "rotated pure")
 
     cdef inline int __compute_rank(self):
