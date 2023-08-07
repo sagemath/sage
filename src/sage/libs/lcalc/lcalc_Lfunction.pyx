@@ -180,7 +180,7 @@ cdef class Lfunction:
         """
         cdef ComplexNumber complexified_s = CCC(s)
         cdef c_Complex z = new_Complex(mpfr_get_d(complexified_s.__re, MPFR_RNDN), mpfr_get_d(complexified_s.__im, MPFR_RNDN))
-        cdef c_Complex result = self.__value(z, derivative)
+        cdef c_Complex result = self._value(z, derivative)
         return CCC(result.real(),result.imag())
 
     def hardy_z_function(self, s):
@@ -411,7 +411,7 @@ cdef class Lfunction:
     cdef void _init_fun(self, char *NAME, int what_type, dirichlet_coeff, long long Period, double q,  c_Complex w, int A, double *g, c_Complex *l, int n_poles, c_Complex *p, c_Complex *r):
         raise NotImplementedError
 
-    cdef c_Complex __value(self,c_Complex s,int derivative):
+    cdef c_Complex _value(self,c_Complex s,int derivative):
         raise NotImplementedError
 
     cdef c_Complex __hardy_z_function(self,c_Complex s):
@@ -507,7 +507,7 @@ cdef class Lfunction_I(Lfunction):
         self.thisptr=new_c_Lfunction_I(NAME, what_type,  N, coeffs, Period, q,  w,  A, g, l, n_poles, p, r)
         del_ints(coeffs)
 
-    cdef inline c_Complex __value(self,c_Complex s,int derivative):
+    cdef inline c_Complex _value(self,c_Complex s,int derivative):
         return (<c_Lfunction_I *>(self.thisptr)).value(s, derivative, "pure")
 
     cdef inline c_Complex __hardy_z_function(self,c_Complex s):
@@ -644,7 +644,7 @@ cdef class Lfunction_D(Lfunction):
         self.thisptr=new_c_Lfunction_D(NAME, what_type,  N, coeffs, Period, q,  w,  A, g, l, n_poles, p, r)
         del_doubles(coeffs)
 
-    cdef inline c_Complex __value(self,c_Complex s,int derivative):
+    cdef inline c_Complex _value(self,c_Complex s,int derivative):
         return (<c_Lfunction_D *>(self.thisptr)).value(s, derivative, "pure")
 
 
@@ -788,7 +788,7 @@ cdef class Lfunction_C:
 
         del_Complexes(coeffs)
 
-    cdef inline c_Complex __value(self,c_Complex s,int derivative):
+    cdef inline c_Complex _value(self,c_Complex s,int derivative):
         return (<c_Lfunction_C *>(self.thisptr)).value(s, derivative, "pure")
 
 
@@ -873,7 +873,7 @@ cdef class Lfunction_Zeta(Lfunction):
         self.thisptr = new_c_Lfunction_Zeta()
         self._repr = "The Riemann zeta function"
 
-    cdef inline c_Complex __value(self,c_Complex s,int derivative):
+    cdef inline c_Complex _value(self,c_Complex s,int derivative):
         return (<c_Lfunction_Zeta *>(self.thisptr)).value(s, derivative, "pure")
 
 
