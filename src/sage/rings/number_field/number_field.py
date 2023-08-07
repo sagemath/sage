@@ -1112,7 +1112,7 @@ class CyclotomicFieldFactory(UniqueFactory):
     If called without a parameter, we get the :class:`universal cyclotomic
     field<sage.rings.universal_cyclotomic_field.UniversalCyclotomicField>`::
 
-        sage: CyclotomicField()
+        sage: CyclotomicField()                                                         # optional - sage.libs.gap
         Universal Cyclotomic Field
 
     We create the `7`\th cyclotomic field
@@ -11371,12 +11371,12 @@ class NumberField_cyclotomic(NumberField_absolute, sage.rings.abc.NumberField_cy
         Conversion of elements of the :class:`~sage.rings.universal_cyclotomic_field.UniversalCyclotomicField`::
 
             sage: CF = CyclotomicField(5)
-            sage: UCF.<E> = UniversalCyclotomicField()
-            sage: CF(E(5))
+            sage: UCF.<E> = UniversalCyclotomicField()                                  # optional - sage.libs.gap
+            sage: CF(E(5))                                                              # optional - sage.libs.gap
             zeta5
 
             sage: CF = CyclotomicField(10)
-            sage: CF(E(5))
+            sage: CF(E(5))                                                              # optional - sage.libs.gap
             zeta10^2
 
         Coercion of GAP cyclotomic elements is also supported::
