@@ -4472,8 +4472,8 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
         ::
 
             sage: P.<x,y> = ProjectiveSpace(ZZ, 1)
-            sage: f = DynamicalSystem_projective([x^2 - y^2, y^2])
-            sage: f.preperiodic_points(1, 1)
+            sage: f = DynamicalSystem_projective([4*x^2 - 7*y^2, 4*y^2])
+            sage: f.preperiodic_points(1, 2)
             0
 
         ::
