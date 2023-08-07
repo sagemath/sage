@@ -256,7 +256,8 @@ class FiniteDimensionalAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
 
             TESTS::
 
-                sage: TestSuite(radical).run()                                          # needs sage.graphs sage.modules
+                sage: # needs sage.graphs sage.modules
+                sage: TestSuite(radical).run()
             """
             category = AssociativeAlgebras(self.base_ring()).WithBasis().FiniteDimensional().Subobjects()
             radical = self.submodule(self.radical_basis(),
