@@ -812,7 +812,7 @@ cdef class Matrix_modn_dense_template(Matrix_dense):
         cdef Matrix_modn_dense_template M
         cdef celement p = self.p
 
-        M = self.__class__.__new__(self.__class__, self._parent,None,None,None)
+        M = self.__class__.__new__(self.__class__, self._parent,None,None,None, zeroed_alloc=False)
 
         sig_on()
         for i in range(self._nrows*self._ncols):
@@ -851,7 +851,7 @@ cdef class Matrix_modn_dense_template(Matrix_dense):
         cdef celement p = self.p
         cdef celement a = left
 
-        M = self.__class__.__new__(self.__class__, self._parent,None,None,None)
+        M = self.__class__.__new__(self.__class__, self._parent,None,None,None,zeroed_alloc=False)
 
         sig_on()
         for i in range(self._nrows*self._ncols):
@@ -909,7 +909,7 @@ cdef class Matrix_modn_dense_template(Matrix_dense):
         cdef celement k, p
         cdef Matrix_modn_dense_template M
 
-        M = self.__class__.__new__(self.__class__, self._parent,None,None,None)
+        M = self.__class__.__new__(self.__class__, self._parent,None,None,None,zeroed_alloc=False)
         p = self.p
         cdef celement* other_ent = (<Matrix_modn_dense_template>right)._entries
 
@@ -946,7 +946,7 @@ cdef class Matrix_modn_dense_template(Matrix_dense):
         cdef celement k, p
         cdef Matrix_modn_dense_template M
 
-        M = self.__class__.__new__(self.__class__, self._parent, None, None, None)
+        M = self.__class__.__new__(self.__class__, self._parent, None, None, None, zeroed_alloc=False)
         p = self.p
         cdef celement* other_ent = (<Matrix_modn_dense_template>right)._entries
 
