@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.combinat sage.modules sage.groups
 r"""
 Representations of the Symmetric Group
 

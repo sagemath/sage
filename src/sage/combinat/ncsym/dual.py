@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.combinat sage.modules
 """
 Dual Symmetric Functions in Non-Commuting Variables
 
