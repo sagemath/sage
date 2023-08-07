@@ -396,7 +396,7 @@ cdef class Matrix_cyclo_dense(Matrix_dense):
             # Now set k-th entry of x's numerator to tmp
             fmpz_get_mpz(tmp, ftmp)
             mpz_to_ZZ(&coeff, tmp)
-            ZZX_SetCoeff(x.__numerator, k, coeff)
+            ZZX_SetCoeff(x._numerator, k, coeff)
 
         # Set the denominator of x to denom.
         fmpz_get_mpz(tmp, denom)

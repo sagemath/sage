@@ -621,7 +621,7 @@ cdef class NumberFieldElement_quadratic(NumberFieldElement_absolute):
         for i from 0 <= i <= ZZX_deg(elt_num):
             tmp = ZZX_coeff(elt_num, i)
             ZZX_SetCoeff(result, i*rel, tmp)
-        ZZX_rem(x.__numerator, result, _num.x)
+        ZZX_rem(x._numerator, result, _num.x)
         (<NumberFieldElement_absolute>x)._reduce_c_()
         return x
 
@@ -1642,7 +1642,7 @@ cdef class NumberFieldElement_quadratic(NumberFieldElement_absolute):
         return res
 
 #################################################################################
-# We must override everything that makes uses of self.__numerator/_denominator
+# We must override everything that makes uses of self._numerator/_denominator
 #################################################################################
 
     def __hash__(self):
