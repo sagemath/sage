@@ -97,7 +97,7 @@ cdef class PowerSeries_poly(PowerSeries):
             sage: f == loads(dumps(f)) # indirect doctest
             True
         """
-        return self.__class__, (self._parent, self.__f, self._prec, self.__is_gen)
+        return self.__class__, (self._parent, self.__f, self._prec, self._PowerSeries__is_gen)
 
     def polynomial(self):
         """

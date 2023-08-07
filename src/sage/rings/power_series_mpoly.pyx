@@ -65,7 +65,7 @@ cdef class PowerSeries_mpoly(PowerSeries):
 
     def __reduce__(self):
         # do *not* delete old versions.
-        return make_powerseries_mpoly_v0, (self._parent, self.__f, self._prec, self.__is_gen)
+        return make_powerseries_mpoly_v0, (self._parent, self.__f, self._prec, self._PowerSeries__is_gen)
 
     def __call__(self, *args, **kwds):
         if len(kwds) == 0 and len(args) == 1:
