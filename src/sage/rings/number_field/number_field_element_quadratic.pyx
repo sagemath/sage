@@ -610,7 +610,7 @@ cdef class NumberFieldElement_quadratic(NumberFieldElement_absolute):
         mpz_clear(tmp_mpz)
 
         x._parent = <ParentWithBase>new_parent
-        x.__fld_numerator, x.__fld_denominator = new_parent.polynomial_ntl()
+        x.__fld_numerator, x._fld_denominator = new_parent.polynomial_ntl()
         x._denominator = elt_den
         cdef ZZX_c result
         cdef ZZ_c tmp

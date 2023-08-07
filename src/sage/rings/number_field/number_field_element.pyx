@@ -219,7 +219,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
         cdef NumberFieldElement x = <NumberFieldElement>t.__new__(t)
         x._parent = self._parent
         x.__fld_numerator = self.__fld_numerator
-        x.__fld_denominator = self.__fld_denominator
+        x._fld_denominator = self._fld_denominator
         return x
 
     cdef number_field(self):
@@ -317,7 +317,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
             True
         """
         FieldElement.__init__(self, parent)
-        self.__fld_numerator, self.__fld_denominator = parent.absolute_polynomial_ntl()
+        self.__fld_numerator, self._fld_denominator = parent.absolute_polynomial_ntl()
 
         cdef ZZ_c coeff
         if isinstance(f, (int, Integer_sage)):
@@ -417,7 +417,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
         cdef type t = type(self)
         cdef NumberFieldElement x = <NumberFieldElement>t.__new__(t)
         x._parent = <ParentWithBase>new_parent
-        x.__fld_numerator, x.__fld_denominator = new_parent.polynomial_ntl()
+        x.__fld_numerator, x._fld_denominator = new_parent.polynomial_ntl()
         x._denominator = self._denominator
         cdef ZZX_c result
         cdef ZZ_c tmp
@@ -2577,11 +2577,11 @@ cdef class NumberFieldElement(NumberFieldElement_base):
         else:
             ZZX_mul(x._numerator, self._numerator, _right._numerator)
             if ZZX_deg(x._numerator) >= ZZX_deg(self.__fld_numerator.x):
-                ZZX_mul_ZZ( x._numerator, x._numerator, self.__fld_denominator.x )
+                ZZX_mul_ZZ( x._numerator, x._numerator, self._fld_denominator.x )
                 ZZX_mul_ZZ( temp, self.__fld_numerator.x, x._denominator )
                 ZZ_power(temp1,ZZX_LeadCoeff(temp),ZZX_deg(x._numerator)-ZZX_deg(self.__fld_numerator.x)+1)
                 ZZX_PseudoRem(x._numerator, x._numerator, temp)
-                ZZ_mul(x._denominator, x._denominator, self.__fld_denominator.x)
+                ZZ_mul(x._denominator, x._denominator, self._fld_denominator.x)
                 ZZ_mul(x._denominator, x._denominator, temp1)
         sig_off()
         x._reduce_c_()
@@ -5321,7 +5321,7 @@ cdef class OrderElement_absolute(NumberFieldElement_absolute):
         x._parent = self._parent
         x._number_field = self._parent.number_field()
         x.__fld_numerator = self.__fld_numerator
-        x.__fld_denominator = self.__fld_denominator
+        x._fld_denominator = self._fld_denominator
         return x
 
     cdef number_field(self):
@@ -5442,7 +5442,7 @@ cdef class OrderElement_relative(NumberFieldElement_relative):
         x._parent = self._parent
         x._number_field = self._parent.number_field()
         x.__fld_numerator = self.__fld_numerator
-        x.__fld_denominator = self.__fld_denominator
+        x._fld_denominator = self._fld_denominator
         return x
 
     def __invert__(self):
