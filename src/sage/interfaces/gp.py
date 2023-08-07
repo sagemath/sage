@@ -1,4 +1,5 @@
-# sage.doctest: optional - sage.libs.pari
+# sage_setup: distribution = sagemath-pari
+# sage.doctest: needs sage.libs.pari
 r"""
 Interface to the GP calculator of PARI/GP
 
