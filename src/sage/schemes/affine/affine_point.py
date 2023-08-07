@@ -290,7 +290,7 @@ class SchemeMorphism_point_affine_field(SchemeMorphism_point_affine):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
+            sage: # needs sage.libs.singular sage.rings.finite_rings
             sage: A.<x,y,z> = AffineSpace(GF(5^3, 't'), 3)
             sage: X = A.subscheme([y^2 - x*z, z^2 + y])
             sage: Y = X.weil_restriction()
@@ -302,6 +302,7 @@ class SchemeMorphism_point_affine_field(SchemeMorphism_point_affine):
 
         ::
 
+            sage: # needs sage.libs.singular sage.rings.number_field
             sage: R.<x> = QQ[]
             sage: K.<w> = NumberField(x^5 - 2)                                          # needs sage.rings.number_field
             sage: R.<x> = K[]                                                           # needs sage.rings.number_field
@@ -358,14 +359,15 @@ class SchemeMorphism_point_affine_field(SchemeMorphism_point_affine):
 
         EXAMPLES::
 
+            sage: # needs sage.libs.singular
             sage: A.<x,y> = AffineSpace(GF(17), 2)
             sage: X = A.subscheme([y^2 - x^3 + 2*x^2 - x])
             sage: Y = A.subscheme([y - 2*x + 2])
             sage: Q1 = Y([1,0])
-            sage: Q1.intersection_multiplicity(X)                                       # needs sage.rings.finite_rings
+            sage: Q1.intersection_multiplicity(X)
             2
             sage: Q2 = X([4,6])
-            sage: Q2.intersection_multiplicity(Y)                                       # needs sage.rings.finite_rings
+            sage: Q2.intersection_multiplicity(Y)
             1
 
         ::

@@ -1044,9 +1044,9 @@ class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
 
             sage: # needs sage.rings.number_field
             sage: R.<x> = QQ[]
-            sage: F.<a> = NumberField(x^4 - 8*x^2 + 3)                                  # needs sage.rings.number_field
-            sage: P.<x,y,z> = ProjectiveSpace(F, 2)                                     # needs sage.rings.number_field
-            sage: all(exp(p.global_height()) <= 1                                       # needs sage.rings.number_field sage.symbolic
+            sage: F.<a> = NumberField(x^4 - 8*x^2 + 3)
+            sage: P.<x,y,z> = ProjectiveSpace(F, 2)
+            sage: all(exp(p.global_height()) <= 1                                       # needs sage.symbolic
             ....:     for p in P.points_of_bounded_height(bound=1))
             True
 
@@ -1077,10 +1077,10 @@ class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
 
             sage: # needs sage.rings.number_field
             sage: R.<x> = QQ[]
-            sage: K.<v> = NumberField(x^5 + x^3 + 1)                                    # needs sage.rings.number_field
-            sage: P.<x,y,z> = ProjectiveSpace(K, 2)                                     # needs sage.rings.number_field
-            sage: L = P.points_of_bounded_height(bound=1.2)                             # needs sage.rings.number_field
-            sage: len(list(L))                                                          # needs sage.rings.number_field
+            sage: K.<v> = NumberField(x^5 + x^3 + 1)
+            sage: P.<x,y,z> = ProjectiveSpace(K, 2)
+            sage: L = P.points_of_bounded_height(bound=1.2)
+            sage: len(list(L))
             109
 
         ::
@@ -2148,11 +2148,12 @@ class ProjectiveSpace_field(ProjectiveSpace_ring):
 
         ::
 
+            sage: # needs sage.libs.singular
             sage: P.<x0,x1,x2,x3> = ProjectiveSpace(GF(7), 3)
             sage: X = P.subscheme([x3^2 + x1*x2, x2 - x0])
-            sage: Ch = X.Chow_form(); Ch                                                # needs sage.rings.finite_rings
+            sage: Ch = X.Chow_form(); Ch
             t0^2 - 2*t0*t3 + t3^2 - t2*t4 - t4*t5
-            sage: Y = P.subscheme_from_Chow_form(Ch, 1); Y                              # needs sage.rings.finite_rings
+            sage: Y = P.subscheme_from_Chow_form(Ch, 1); Y
             Closed subscheme of Projective Space of dimension 3
              over Finite Field of size 7 defined by:
               x1*x2 + x3^2,
@@ -2163,8 +2164,8 @@ class ProjectiveSpace_field(ProjectiveSpace_ring):
               -2*x0*x3 + 2*x2*x3,
               2*x0*x3 - 2*x2*x3,
               x0^2 - 2*x0*x2 + x2^2
-            sage: I = Y.defining_ideal()                                                # needs sage.rings.finite_rings
-            sage: I.saturation(I.ring().ideal(list(I.ring().gens())))[0]                # needs sage.rings.finite_rings
+            sage: I = Y.defining_ideal()
+            sage: I.saturation(I.ring().ideal(list(I.ring().gens())))[0]
             Ideal (x0 - x2, x1*x2 + x3^2) of Multivariate Polynomial Ring
              in x0, x1, x2, x3 over Finite Field of size 7
         """
@@ -2361,9 +2362,10 @@ class ProjectiveSpace_finite_field(ProjectiveSpace_field):
             sage: P = ProjectiveSpace(1, GF(3))
             sage: P.rational_points()
             [(0 : 1), (1 : 1), (2 : 1), (1 : 0)]
-            sage: P.rational_points(GF(3^2, 'b'))                                       # needs sage.rings.finite_rings
-            [(0 : 1), (b : 1), (b + 1 : 1), (2*b + 1 : 1), (2 : 1), (2*b : 1),
-             (2*b + 2 : 1), (b + 2 : 1), (1 : 1), (1 : 0)]
+            sage: sorted(P.rational_points(GF(3^2, 'b')), key=str)                      # needs sage.rings.finite_rings
+            [(0 : 1), (1 : 0), (1 : 1), (2 : 1),
+             (2*b + 1 : 1), (2*b + 2 : 1), (2*b : 1),
+             (b + 1 : 1), (b + 2 : 1), (b : 1)]
         """
         if F is None:
             return [P for P in self]

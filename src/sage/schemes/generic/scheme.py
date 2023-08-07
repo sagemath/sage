@@ -674,9 +674,10 @@ class Scheme(Parent):
 
         EXAMPLES::
 
+            sage: # needs sage.schemes
             sage: P.<x> = PolynomialRing(GF(3))
-            sage: C = HyperellipticCurve(x^3 + x^2 + 1)                                 # needs sage.rings.finite_rings
-            sage: C.count_points(4)                                                     # needs sage.rings.finite_rings
+            sage: C = HyperellipticCurve(x^3 + x^2 + 1)
+            sage: C.count_points(4)
             [6, 12, 18, 96]
             sage: C.base_extend(GF(9,'a')).count_points(2)                              # needs sage.rings.finite_rings
             [12, 96]
@@ -758,8 +759,9 @@ class Scheme(Parent):
 
             sage: P.<x,y,z> = ProjectiveSpace(GF(4, 't'), 2)                            # needs sage.rings.finite_rings
             sage: X = P.subscheme([y^2*z - x^3 - z^3])                                  # needs sage.rings.finite_rings
+
             sage: R.<t> = PowerSeriesRing(Integers())
-            sage: X.zeta_series(2, t)                                                   # needs sage.rings.finite_rings
+            sage: X.zeta_series(2, t)                                                   # needs sage.libs.singular
             1 + 5*t + 21*t^2 + O(t^3)
 
         TESTS::

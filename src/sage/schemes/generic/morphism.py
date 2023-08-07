@@ -516,9 +516,10 @@ class SchemeMorphism(Element):
 
         ::
 
-            sage: E = EllipticCurve(GF((17,2)), [1,2,3,4,5])                            # needs sage.rings.finite_rings
-            sage: P = E.random_point()                                                  # needs sage.rings.finite_rings
-            sage: P.base_ring()                                                         # needs sage.rings.finite_rings
+            sage: # needs sage.rings.finite_rings sage,schemes
+            sage: E = EllipticCurve(GF((17,2)), [1,2,3,4,5])
+            sage: P = E.random_point()
+            sage: P.base_ring()
             Finite Field in z2 of size 17^2
         """
         return self.domain().base_ring()

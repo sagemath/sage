@@ -455,9 +455,9 @@ class AlgebraicScheme_subscheme_affine(AlgebraicScheme_subscheme):
         ::
 
             sage: A.<x,y,z,w,v> = AffineSpace(GF(23), 5)
-            sage: C = A.curve([x^8 - y, y^7 - z, z^3 - 1, w^5 - v^3])                   # needs sage.rings.finite_rings
+            sage: C = A.curve([x^8 - y, y^7 - z, z^3 - 1, w^5 - v^3])                   # needs sage.schemes
             sage: Q = A([22,1,1,0,0])
-            sage: C.multiplicity(Q)                                                     # needs sage.rings.finite_rings
+            sage: C.multiplicity(Q)                                                     # needs sage.libs.singular sage.schemes
             3
 
         ::

@@ -301,6 +301,7 @@ class SchemeMorphism_point_projective_ring(SchemeMorphism_point):
 
         Check that :trac:`17429` is fixed::
 
+            sage: # needs sage.rings.complex_interval_field
             sage: R.<x> = PolynomialRing(QQ)
             sage: r = (x^2 - x - 3).polynomial(x).roots(ComplexIntervalField(), multiplicities=False)
             sage: P.<x,y> = ProjectiveSpace(ComplexIntervalField(), 1)
