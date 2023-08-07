@@ -1,4 +1,4 @@
-# sage.doctest: optional - sage.rings.real_mpfr
+# sage.doctest: needs sage.rings.real_mpfr
 
 cpdef inline long digits_to_bits(d) except -1:
     """
