@@ -1,4 +1,4 @@
-# sage.doctest: optional - sage.misc.cython
+# sage.doctest: needs sage.misc.cython
 r"""
 Fast conversion of Python objects to C long
 """
