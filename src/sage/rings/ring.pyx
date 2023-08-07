@@ -1345,12 +1345,12 @@ cdef class CommutativeRing(Ring):
             sage: R.<x>=QQ[]; R.ideal_monoid()
             Monoid of ideals of Univariate Polynomial Ring in x over Rational Field
         """
-        if self.__ideal_monoid is not None:
-            return self.__ideal_monoid
+        if self._Ring__ideal_monoid is not None:
+            return self._Ring__ideal_monoid
         else:
             from sage.rings.ideal_monoid import IdealMonoid
             M = IdealMonoid(self)
-            self.__ideal_monoid = M
+            self._Ring__ideal_monoid = M
             return M
 
     def extension(self, poly, name=None, names=None, **kwds):
