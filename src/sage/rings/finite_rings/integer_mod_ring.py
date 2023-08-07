@@ -889,26 +889,27 @@ In the latter case, please inform the developers.""".format(self.order()))
 
         EXAMPLES::
 
+            sage: # needs sage.groups sage.libs.pari
             sage: R = Integers(7); R
             Ring of integers modulo 7
-            sage: R.multiplicative_generator()                                          # needs sage.libs.pari
+            sage: R.multiplicative_generator()
             3
             sage: R = Integers(9)
-            sage: R.multiplicative_generator()                                          # needs sage.libs.pari
+            sage: R.multiplicative_generator()
             2
             sage: Integers(8).multiplicative_generator()
             Traceback (most recent call last):
             ...
             ValueError: multiplicative group of this ring is not cyclic
-            sage: Integers(4).multiplicative_generator()                                # needs sage.libs.pari
+            sage: Integers(4).multiplicative_generator()
             3
-            sage: Integers(25*3).multiplicative_generator()                             # needs sage.libs.pari
+            sage: Integers(25*3).multiplicative_generator()
             Traceback (most recent call last):
             ...
             ValueError: multiplicative group of this ring is not cyclic
-            sage: Integers(25*3).unit_gens()                                            # needs sage.libs.pari
+            sage: Integers(25*3).unit_gens()
             (26, 52)
-            sage: Integers(162).unit_gens()                                             # needs sage.libs.pari
+            sage: Integers(162).unit_gens()
             (83,)
         """
         try:

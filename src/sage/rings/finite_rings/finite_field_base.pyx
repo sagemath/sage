@@ -338,11 +338,11 @@ cdef class FiniteField(Field):
 
             sage: L = []
             sage: from sage.rings.finite_rings.finite_field_base import FiniteField
-            sage: for impl in ("givaro", "pari", "ntl"):
-            ....:     k = GF(8, impl=impl, names="z")
-            ....:     print(list(FiniteField.__iter__(k)))
+            sage: print(list(FiniteField.__iter__(GF(8, impl="givaro", names="z"))))    # needs sage.libs.linbox
             [0, 1, z, z + 1, z^2, z^2 + 1, z^2 + z, z^2 + z + 1]
+            sage: print(list(FiniteField.__iter__(GF(8, impl="pari", names="z"))))
             [0, 1, z, z + 1, z^2, z^2 + 1, z^2 + z, z^2 + z + 1]
+            sage: print(list(FiniteField.__iter__(GF(8, impl="ntl", names="z"))))       # needs sage.libs.ntl
             [0, 1, z, z + 1, z^2, z^2 + 1, z^2 + z, z^2 + z + 1]
         """
         cdef Py_ssize_t n = self.degree()
@@ -1123,12 +1123,12 @@ cdef class FiniteField(Field):
         EXAMPLES::
 
             sage: k = GF(19^4, 'a')
-            sage: k.random_element().parent() is k
+            sage: k.random_element().parent() is k                                      # needs sage.modules
             True
 
         Passes extra positional or keyword arguments through::
 
-            sage: k.random_element(prob=0)
+            sage: k.random_element(prob=0)                                              # needs sage.modules
             0
 
         """
@@ -1145,7 +1145,7 @@ cdef class FiniteField(Field):
         EXAMPLES::
 
             sage: k = GF(2^8,'a')
-            sage: k.some_elements() # random output
+            sage: k.some_elements()  # random output                                    # needs sage.modules
             [a^4 + a^3 + 1, a^6 + a^4 + a^3, a^5 + a^4 + a, a^2 + a]
         """
         return [self.random_element() for i in range(4)]
@@ -1206,9 +1206,10 @@ cdef class FiniteField(Field):
 
         EXAMPLES::
 
-            sage: GF(27,'a').vector_space(map=False)
+            sage: GF(27,'a').vector_space(map=False)                                    # needs sage.modules
             Vector space of dimension 3 over Finite Field of size 3
 
+            sage: # needs sage.modules
             sage: F = GF(8)
             sage: E = GF(64)
             sage: V, from_V, to_V = E.vector_space(F, map=True)
@@ -1223,6 +1224,7 @@ cdef class FiniteField(Field):
             sage: all(to_V(c * e) == c * to_V(e) for e in E for c in F)
             True
 
+            sage: # needs sage.modules
             sage: basis = [E.gen(), E.gen() + 1]
             sage: W, from_W, to_W = E.vector_space(F, basis, map=True)
             sage: all(from_W(to_W(e)) == e for e in E)
@@ -1235,6 +1237,7 @@ cdef class FiniteField(Field):
             (1, 0)
             (0, 1)
 
+            sage: # needs sage.modules
             sage: F = GF(9, 't', modulus=x^2 + x - 1)
             sage: E = GF(81)
             sage: h = Hom(F,E).an_element()
@@ -1399,16 +1402,16 @@ cdef class FiniteField(Field):
 
         EXAMPLES::
 
-            sage: K.<a> = Qq(49); k = K.residue_field()
-            sage: k.convert_map_from(K)
+            sage: K.<a> = Qq(49); k = K.residue_field()                                 # needs sage.rings.padics
+            sage: k.convert_map_from(K)                                                 # needs sage.rings.padics
             Reduction morphism:
               From: 7-adic Unramified Extension Field in a defined by x^2 + 6*x + 3
               To:   Finite Field in a0 of size 7^2
 
         Check that :trac:`8240 is resolved::
 
-            sage: R.<a> = Zq(81); k = R.residue_field()
-            sage: k.convert_map_from(R)
+            sage: R.<a> = Zq(81); k = R.residue_field()                                 # needs sage.rings.padics
+            sage: k.convert_map_from(R)                                                 # needs sage.rings.padics
             Reduction morphism:
               From: 3-adic Unramified Extension Ring in a defined by x^4 + 2*x^3 + 2
               To:   Finite Field in a0 of size 3^4
@@ -1953,8 +1956,8 @@ cdef class FiniteField(Field):
             sage: Frob = k.frobenius_endomorphism(); Frob
             Frobenius endomorphism t |--> t^3 on Finite Field in t of size 3^5
 
-            sage: a = k.random_element()
-            sage: Frob(a) == a^3
+            sage: a = k.random_element()                                                # needs sage.modules
+            sage: Frob(a) == a^3                                                        # needs sage.modules
             True
 
         We can specify a power::
@@ -1990,8 +1993,8 @@ cdef class FiniteField(Field):
 
         EXAMPLES::
 
-            sage: G = GF(3^6).galois_group()
-            sage: G
+            sage: # needs sage.groups
+            sage: G = GF(3^6).galois_group(); G
             Galois group C6 of GF(3^6)
             sage: F = G.gen()
             sage: F^2
@@ -2047,13 +2050,14 @@ cdef class FiniteField(Field):
         EXAMPLES::
 
             sage: F.<a> = GF(2^4)
-            sage: F.dual_basis(basis=None, check=False)
+            sage: F.dual_basis(basis=None, check=False)                                 # needs sage.modules
             [a^3 + 1, a^2, a, 1]
 
         We can test that the dual basis returned satisfies the defining
         property of a dual basis:
         `\mathrm{Tr}(e_i d_j) = \delta_{i,j}, 0 \leq i,j \leq n-1` ::
 
+            sage: # needs sage.modules
             sage: F.<a> = GF(7^4)
             sage: e = [4*a^3, 2*a^3 + a^2 + 3*a + 5,
             ....:      3*a^3 + 5*a^2 + 4*a + 2, 2*a^3 + 2*a^2 + 2]
@@ -2067,6 +2071,7 @@ cdef class FiniteField(Field):
         We can test that if `d` is the dual basis of `e`, then `e` is the dual
         basis of `d`::
 
+            sage: # needs sage.modules
             sage: F.<a> = GF(7^8)
             sage: e = [a^0, a^1, a^2, a^3, a^4, a^5, a^6, a^7]
             sage: d = F.dual_basis(e, check=False); d
@@ -2085,12 +2090,12 @@ cdef class FiniteField(Field):
         ::
 
             sage: F.<a> = GF(2^3)
-            sage: F.dual_basis([a], check=True)
+            sage: F.dual_basis([a], check=True)                                         # needs sage.modules
             Traceback (most recent call last):
             ...
             ValueError: basis length should be 3, not 1
 
-            sage: F.dual_basis([a^0, a, a^0 + a], check=True)
+            sage: F.dual_basis([a^0, a, a^0 + a], check=True)                           # needs sage.modules
             Traceback (most recent call last):
             ...
             ValueError: value of 'basis' keyword is not a basis

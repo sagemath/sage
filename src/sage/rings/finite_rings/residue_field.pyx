@@ -508,7 +508,7 @@ class ResidueField_generic(Field):
         sage: R.<t> = GF(29)[]; P = R.ideal(t^2 + 2); k.<a> = ResidueField(P); k
         Residue field in a of Principal ideal (t^2 + 2) of
          Univariate Polynomial Ring in t over Finite Field of size 29
-        sage: type(k)
+        sage: type(k)                                                                   # needs sage.libs.linbox
         <class 'sage.rings.finite_rings.residue_field_givaro.ResidueFiniteField_givaro_with_category'>
     """
     def __init__(self, p):
@@ -550,7 +550,7 @@ class ResidueField_generic(Field):
 
             sage: TestSuite(F).run()
 
-            sage: # needs sage.rings.finite_rings
+            sage: # needs sage.modules sage.rings.finite_rings
             sage: TestSuite(k).run()
         """
         self.p = p
@@ -982,7 +982,7 @@ cdef class ReductionMap(Map):
                     Univariate Polynomial Ring in t over Finite Field of size 2 (using GF2X)
               To:   Residue field in tbar of Principal ideal (t^7 + t^6 + t^5 + t^4 + 1) of
                     Univariate Polynomial Ring in t over Finite Field of size 2 (using GF2X)
-            sage: type(k)
+            sage: type(k)                                                               # needs sage.libs.linbox
             <class 'sage.rings.finite_rings.residue_field_givaro.ResidueFiniteField_givaro_with_category'>
         """
         self._K = K
@@ -1099,7 +1099,7 @@ cdef class ReductionMap(Map):
             sage: f(1/h)
             Traceback (most recent call last):
             ...
-            ZeroDivisionError: division by zero in finite field
+            ZeroDivisionError...
 
         An example to show that the issue raised in :trac:`1951`
         has been fixed::

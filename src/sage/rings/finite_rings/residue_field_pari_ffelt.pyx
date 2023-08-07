@@ -69,6 +69,7 @@ class ResidueFiniteField_pari_ffelt(ResidueField_generic, FiniteField_pari_ffelt
 
         We create a residue field with implementation ``pari_ffelt``::
 
+            sage: # needs sage.rings.number_field
             sage: x = polygen(ZZ, 'x')
             sage: K.<a> = NumberField(x^3 - 7)
             sage: P = K.ideal(923478923).factor()[0][0]
