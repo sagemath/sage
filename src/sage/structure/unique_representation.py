@@ -439,11 +439,13 @@ instances of quite different classes::
     sage: K5 = GF(5)
     sage: type(K5)
     <class 'sage.rings.finite_rings.finite_field_prime_modn.FiniteField_prime_modn_with_category'>
-    sage: K25 = GF(25, 'x')                                                                         # needs sage.rings.finite_rings
-    sage: type(K25)                                                                                 # needs sage.rings.finite_rings
+
+    sage: # needs sage.rings.finite_rings
+    sage: K25 = GF(25, 'x')
+    sage: type(K25)                                                                     # needs sage.libs.linbox
     <class 'sage.rings.finite_rings.finite_field_givaro.FiniteField_givaro_with_category'>
-    sage: Kp = GF(next_prime_power(1000000)^2, 'x')                                                 # needs sage.rings.finite_rings
-    sage: type(Kp)                                                                                  # needs sage.rings.finite_rings
+    sage: Kp = GF(next_prime_power(1000000)^2, 'x')
+    sage: type(Kp)
     <class 'sage.rings.finite_rings.finite_field_pari_ffelt.FiniteField_pari_ffelt_with_category'>
 
 This can be confusing to the user. Namely, the user might determine the class
