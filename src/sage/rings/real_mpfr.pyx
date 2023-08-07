@@ -4300,7 +4300,7 @@ cdef class RealNumber(sage.structure.element.RingElement):
         if (<RealField_class>self._parent)._prec > 10*SIG_PREC_THRESHOLD: sig_off()
         return x
 
-    def __pow(self, RealNumber exponent):
+    def _pow(self, RealNumber exponent):
         """
         Compute ``self`` raised to the power of exponent, rounded in the
         direction specified by the parent of ``self``.
@@ -4309,7 +4309,7 @@ cdef class RealNumber(sage.structure.element.RingElement):
 
             sage: R = RealField(30)
             sage: a = R('1.23456')
-            sage: a.__pow(20.0)
+            sage: a._pow(20.0)
             67.646297
         """
         cdef RealNumber x

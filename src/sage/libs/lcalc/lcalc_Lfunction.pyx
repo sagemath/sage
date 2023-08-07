@@ -251,7 +251,7 @@ cdef class Lfunction:
         """
         return self._compute_rank()
 
-    def __N(self, T):
+    def _N(self, T):
         """
         Compute the number of zeroes upto height `T` using the formula for
         `N(T)` with the error of `S(T)`. Please do not use this. It is only
@@ -262,7 +262,7 @@ cdef class Lfunction:
             sage: from sage.libs.lcalc.lcalc_Lfunction import *
             sage: chi = DirichletGroup(5)[2] #This is a quadratic character
             sage: L=Lfunction_from_character(chi, type="complex")
-            sage: L.__N(10) # abs tol 1e-8
+            sage: L._N(10) # abs tol 1e-8
             4.0
         """
         cdef RealNumber real_T=RRR(T)
