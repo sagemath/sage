@@ -19,7 +19,7 @@ cdef class BasisExchangeMatroid(Matroid):
 
     cdef __pack(self, bitset_t, X)
     cdef __unpack(self, bitset_t)
-    cdef bint __is_exchange_pair(self, long x, long y) except -1
+    cdef bint _is_exchange_pair(self, long x, long y) except -1
     cdef int __exchange(self, long x, long y) except -1
     cdef int __move(self, bitset_t X, bitset_t Y) except -1
     cdef __fundamental_cocircuit(self, bitset_t, long x)

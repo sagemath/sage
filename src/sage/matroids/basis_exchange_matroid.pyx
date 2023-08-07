@@ -57,9 +57,9 @@ cdef class BasisExchangeMatroid(Matroid):
 
     This base exchange graph is not stored as such, but should be provided
     implicitly by the child class in the form of two methods
-    ``__is_exchange_pair(x, y)`` and ``__exchange(x, y)``, as well as an
+    ``_is_exchange_pair(x, y)`` and ``__exchange(x, y)``, as well as an
     initial basis. At any moment, BasisExchangeMatroid keeps a current basis
-    `B`. The method ``__is_exchange_pair(x, y)`` should return a boolean
+    `B`. The method ``_is_exchange_pair(x, y)`` should return a boolean
     indicating whether `B - x + y` is a basis. The method ``__exchange(x, y)``
     is called when the current basis `B` is replaced by said `B-x + y`. It is
     up to the child class to update its internal data structure to make
@@ -81,14 +81,14 @@ cdef class BasisExchangeMatroid(Matroid):
     - :class:`BasisMatroid <sage.matroids.basis_matroid.BasisMatroid>`: keeps
       a list of all bases.
 
-        - ``__is_exchange_pair(x, y)`` reduces to a query whether `B - x + y`
+        - ``_is_exchange_pair(x, y)`` reduces to a query whether `B - x + y`
           is a basis.
         - ``__exchange(x, y)`` has no work to do.
 
     - :class:`LinearMatroid <sage.matroids.linear_matroid.LinearMatroid>`:
       keeps a matrix representation `A` of the matroid so that `A[B] = I`.
 
-        - ``__is_exchange_pair(x, y)`` reduces to testing whether `A[r, y]`
+        - ``_is_exchange_pair(x, y)`` reduces to testing whether `A[r, y]`
           is nonzero, where `A[r, x]=1`.
         - ``__exchange(x, y)`` should modify the matrix so that `A[B - x + y]`
           becomes `I`, which means pivoting on `A[r, y]`.
@@ -100,7 +100,7 @@ cdef class BasisExchangeMatroid(Matroid):
       edge `(A_i,e)` if `e` is in the subset `A_i`. At any time you keep a
       maximum matching `M` of `G` covering the current basis `B`.
 
-        - ``__is_exchange_pair(x, y)`` checks for the existence of an
+        - ``_is_exchange_pair(x, y)`` checks for the existence of an
           `M`-alternating path `P` from `y` to `x`.
         - ``__exchange(x, y)`` replaces `M` by the symmetric difference of
           `M` and `E(P)`.
@@ -108,7 +108,7 @@ cdef class BasisExchangeMatroid(Matroid):
     - ``AlgebraicMatroid`` (not yet implemented): keeps a list of polynomials
       in variables `E - B + e` for each variable `e` in `B`.
 
-        - ``__is_exchange_pair(x, y)`` checks whether the polynomial that
+        - ``_is_exchange_pair(x, y)`` checks whether the polynomial that
           relates `y` to `E-B` uses `x`.
         - ``__exchange(x, y)`` make new list of polynomials by computing
           resultants.
@@ -252,7 +252,7 @@ cdef class BasisExchangeMatroid(Matroid):
         return frozenset(F)
 
     # this method needs to be overridden by child class
-    cdef bint __is_exchange_pair(self, long x, long y) except -1:
+    cdef bint _is_exchange_pair(self, long x, long y) except -1:
         """
         Test if current_basis-x + y is a basis
         """
@@ -275,7 +275,7 @@ cdef class BasisExchangeMatroid(Matroid):
         while x >= 0:
             y = bitset_first(Y)
             while y >= 0:
-                if self.__is_exchange_pair(x, y):
+                if self._is_exchange_pair(x, y):
                     self.__exchange(x, y)
                     bitset_discard(Y, y)
                     bitset_discard(X, x)
@@ -295,7 +295,7 @@ cdef class BasisExchangeMatroid(Matroid):
         bitset_complement(self._temp, self._current_basis)
         y = bitset_first(self._temp)
         while y >= 0:
-            if self.__is_exchange_pair(x, y):
+            if self._is_exchange_pair(x, y):
                 bitset_add(C, y)
             y = bitset_next(self._temp, y + 1)
         bitset_add(C, x)
@@ -308,7 +308,7 @@ cdef class BasisExchangeMatroid(Matroid):
         bitset_clear(C)
         x = bitset_first(self._current_basis)
         while x >= 0:
-            if self.__is_exchange_pair(x, y):
+            if self._is_exchange_pair(x, y):
                 bitset_add(C, x)
             x = bitset_next(self._current_basis, x + 1)
         bitset_add(C, y)
@@ -335,7 +335,7 @@ cdef class BasisExchangeMatroid(Matroid):
         while y >= 0:
             x = bitset_first(self._inside)
             while x >= 0:
-                if self.__is_exchange_pair(x, y):
+                if self._is_exchange_pair(x, y):
                     self.__exchange(x, y)
                     bitset_discard(self._outside, y)
                     bitset_discard(self._inside, x)
@@ -387,7 +387,7 @@ cdef class BasisExchangeMatroid(Matroid):
         while x >= 0:
             y = bitset_first(self._outside)
             while y >= 0:
-                if self.__is_exchange_pair(x, y):
+                if self._is_exchange_pair(x, y):
                     self.__exchange(x, y)
                     bitset_discard(self._outside, y)
                     bitset_discard(self._inside, x)
@@ -2409,7 +2409,7 @@ cdef class BasisExchangeMatroid(Matroid):
                     foundpair = False
                     y = bitset_first(self._input2)
                     while y >= 0:  # for y in Y-X
-                        if self.__is_exchange_pair(y, x):
+                        if self._is_exchange_pair(y, x):
                             foundpair = True
                             y = -1
                         else:
