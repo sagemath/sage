@@ -379,6 +379,7 @@ cdef class Element(SageObject):
     .. automethod:: __mod__
     """
     @cython.binding(False)
+    @cython.always_allow_keywords(False)
     def __getmetaclass__(_):
         from sage.misc.inherit_comparison import InheritComparisonMetaclass
         return InheritComparisonMetaclass
