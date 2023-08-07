@@ -1049,6 +1049,7 @@ cdef class FinitePolyExtElement(FiniteRingElement):
 
         TESTS::
 
+            sage: # needs sage.modules
             sage: p = random_prime(2^99)
             sage: k = randrange(2,10)
             sage: F.<t> = GF((p, k))
