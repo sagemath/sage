@@ -894,7 +894,7 @@ cdef class Ring(ParentWithGens):
 
         Forward the proof flag to ``is_field``, see :trac:`22910`::
 
-            sage: # needs sage.rings.finite_rings
+            sage: # needs sage.libs.singular
             sage: R1.<x> = GF(5)[]
             sage: F1 = R1.quotient_ring(x^2 + x + 1)
             sage: R2.<x> = F1[]
