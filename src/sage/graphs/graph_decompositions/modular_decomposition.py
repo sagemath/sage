@@ -451,7 +451,7 @@ def gamma_classes(graph):
     pieces = DisjointSet(frozenset(e) for e in graph.edge_iterator(labels=False))
     for v in graph:
         neighborhood = graph.subgraph(vertices=graph.neighbors(v))
-        for component in neighborhood.complement().connected_components():
+        for component in neighborhood.complement().connected_components(sort=False):
             v1 = component[0]
             e = frozenset([v1, v])
             for vi in component[1:]:
@@ -610,7 +610,7 @@ def habib_maurer_algorithm(graph, g_classes=None):
     decompositions. ::
 
         sage: from sage.graphs.graph_decompositions.modular_decomposition import permute_decomposition
-        sage: permute_decomposition(2, habib_maurer_algorithm, 20, 0.5)                 # optional - sage.groups
+        sage: permute_decomposition(2, habib_maurer_algorithm, 20, 0.5)                 # needs sage.groups
     """
     if graph.is_directed():
         raise ValueError("Graph must be undirected")
@@ -625,7 +625,7 @@ def habib_maurer_algorithm(graph, g_classes=None):
     elif not graph.is_connected():
         root = create_parallel_node()
         root.children = [habib_maurer_algorithm(graph.subgraph(vertices=sg), g_classes)
-                         for sg in graph.connected_components()]
+                         for sg in graph.connected_components(sort=False)]
         return root
 
     g_comp = graph.complement()
@@ -650,7 +650,7 @@ def habib_maurer_algorithm(graph, g_classes=None):
 
     root = create_series_node()
     root.children = [habib_maurer_algorithm(graph.subgraph(vertices=sg), g_classes)
-                     for sg in g_comp.connected_components()]
+                     for sg in g_comp.connected_components(sort=False)]
     return root
 
 

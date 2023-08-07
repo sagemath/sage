@@ -103,12 +103,24 @@ jobs:
         run: pyright
         working-directory: ./worktree-image
 
-      - name: Build (fallback to non-incremental)
-        id: build
+      - name: Clean (fallback to non-incremental)
+        id: clean
         if: always() && steps.worktree.outcome == 'success' && steps.incremental.outcome != 'success'
         run: |
           set -ex
-          ./bootstrap && make doc-clean doc-uninstall sagelib-clean && git clean -fx src/sage && ./config.status && make build
+          ./bootstrap && make doc-clean doc-uninstall sagelib-clean && git clean -fx src/sage && ./config.status
+        working-directory: ./worktree-image
+        env:
+          MAKE: make -j2
+          SAGE_NUM_THREADS: 2
+
+      - name: Build
+        # This step is needed because building the modularized distributions installs some optional packages,
+        # so the editable install of sagelib needs to build the corresponding optional extension modules.
+        id: build
+        if: always() && (steps.incremental.outcome == 'success' || steps.clean.outcome == 'success')
+        run: |
+          make build
         working-directory: ./worktree-image
         env:
           MAKE: make -j2
@@ -125,14 +137,14 @@ jobs:
           COLUMNS: 120
 
       - name: Test all files (sage -t --all --long)
-        if: always() && (steps.incremental.outcome == 'success' || steps.build.outcome == 'success')
+        if: always() && steps.build.outcome == 'success'
         run: |
           ../sage -python -m pip install coverage
           ../sage -python -m coverage run ./bin/sage-runtests --all --long -p2 --random-seed=286735480429121101562228604801325644303
         working-directory: ./worktree-image/src
 
       - name: Prepare coverage results
-        if: always() && (steps.incremental.outcome == 'success' || steps.build.outcome == 'success')
+        if: always() && steps.build.outcome == 'success'
         run: |
           ./venv/bin/python3 -m coverage combine src/.coverage/
           ./venv/bin/python3 -m coverage xml
@@ -140,7 +152,7 @@ jobs:
         working-directory: ./worktree-image
 
       - name: Upload coverage to codecov
-        if: always() && (steps.incremental.outcome == 'success' || steps.build.outcome == 'success')
+        if: always() && steps.build.outcome == 'success'
         uses: codecov/codecov-action@v3
         with:
           files: ./worktree-image/coverage.xml
