@@ -1,4 +1,4 @@
-# sage.doctest: optional - sage.combinat sage.rings.finite_rings
+# sage.doctest: needs sage.combinat sage.rings.finite_rings
 """
 Stream Cryptosystems
 """
