@@ -605,7 +605,7 @@ cdef class LinearMatroid(BasisExchangeMatroid):
                     self._representation = self._basic_representation(B)
                 A = self._representation
             else:
-                B = self.__subset(B)
+                B = self._Matroid__subset(B)
                 A = self._basic_representation(B)
             A = A.matrix_from_rows_and_columns(range(A.nrows()), order_idx)
             if lift_map is None:
@@ -622,7 +622,7 @@ cdef class LinearMatroid(BasisExchangeMatroid):
             if B is None:
                 B = frozenset(self.basis())
             else:
-                B = self.__subset(B)
+                B = self._Matroid__subset(B)
             A = self._reduced_representation(B)
             R, C = self._current_rows_cols()
             Ri = []
