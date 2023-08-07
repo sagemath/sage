@@ -1,4 +1,4 @@
-# sage.doctest: optional - sage.libs.pari sage.rings.number_field
+# sage.doctest: needs sage.libs.pari sage.rings.number_field
 """
 Local Representation Conditions
 """
