@@ -1,4 +1,4 @@
-# sage.doctest: optional - sage.numerical.mip
+# sage.doctest: needs sage.numerical.mip
 r"""
 Solve SAT problems Integer Linear Programming
 
