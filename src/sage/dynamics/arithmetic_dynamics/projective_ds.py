@@ -6630,7 +6630,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
         r_vals = sorted([val for val in r.values() if val != 1])
         return r_vals == [0, 2, 2]
 
-    def is_lattes(self):
+    def is_Lattes(self):
         r"""
         Check if ``self`` is a Lattes map
 
@@ -6640,41 +6640,41 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
 
             sage: P.<x,y> = ProjectiveSpace(QQ, 1)
             sage: F = DynamicalSystem_projective([x^3, y^3])
-            sage: F.is_lattes()
+            sage: F.is_Lattes()
             False
 
         ::
 
             sage: P.<x,y> = ProjectiveSpace(QQ, 1)
             sage: F = DynamicalSystem_projective([x^2 - 2*y^2, y^2])
-            sage: F.is_lattes()
+            sage: F.is_Lattes()
             False
 
         ::
 
             sage: P.<x,y,z> = ProjectiveSpace(QQ, 2)
             sage: F = DynamicalSystem_projective([x^2 + y^2 + z^2, y^2, z^2])
-            sage: F.is_lattes()
+            sage: F.is_Lattes()
             False
 
         ::
 
             sage: P.<x,y> = ProjectiveSpace(QQ, 1)
             sage: F = DynamicalSystem_projective([(x + y)*(x - y)^3, y*(2*x + y)^3])
-            sage: F.is_lattes()
+            sage: F.is_Lattes()
             True
 
         ::
 
             sage: P.<x,y> = ProjectiveSpace(QQ, 1)
             sage: F = DynamicalSystem_projective([(x + y)^4, 16*x*y*(x - y)^2])
-            sage: F.is_lattes()
+            sage: F.is_Lattes()
             True
 
         ::
 
             sage: f = P.Lattes_map(EllipticCurve([0, 0, 0, 0, 2]),2)
-            sage: f.is_lattes()
+            sage: f.is_Lattes()
             True
 
         ::
@@ -6686,7 +6686,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
             Dynamical System of Projective Space of dimension 1 over Cyclotomic Field of order 4 and degree 2
               Defn: Defined on coordinates by sending (x : y) to
                     ((-1/4*i)*x^4 + (-4*i)*x*y^3 : (-i)*x^3*y + (2*i)*y^4)
-            sage: f.is_lattes()
+            sage: f.is_Lattes()
             True
 
         REFERENCES:
