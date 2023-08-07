@@ -765,8 +765,7 @@ class MomentAngleComplex(SageObject, UniqueRepresentation):
 
         This is the Massey product in the cohomology of this
         moment-angle complex. This relies on the theorem which was
-        proven in the following paper:
-        :arxiv:`Lowest-degree triple Massey products in moment-angle complexes<1908.02222v2>`.
+        proven in [GL2019]_.
 
         ALGORITHM:
 
