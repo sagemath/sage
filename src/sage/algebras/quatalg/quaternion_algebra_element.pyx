@@ -1727,7 +1727,7 @@ cdef class QuaternionAlgebraElement_number_field(QuaternionAlgebraElement_abstra
         fmpz_poly_set_ZZX(self.a, a._numerator)     # we will assume that the denominator of a and b are 1
         fmpz_poly_set_ZZX(self.b, b._numerator)
 
-        fmpz_poly_set_ZZX(self.modulus, (<NumberFieldElement>x).__fld_numerator.x)  # and same for the modulus
+        fmpz_poly_set_ZZX(self.modulus, (<NumberFieldElement>x)._fld_numerator.x)  # and same for the modulus
 
     def __getitem__(self, int i):
         """

@@ -218,7 +218,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
         cdef type t = type(self)
         cdef NumberFieldElement x = <NumberFieldElement>t.__new__(t)
         x._parent = self._parent
-        x.__fld_numerator = self.__fld_numerator
+        x._fld_numerator = self._fld_numerator
         x._fld_denominator = self._fld_denominator
         return x
 
@@ -317,7 +317,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
             True
         """
         FieldElement.__init__(self, parent)
-        self.__fld_numerator, self._fld_denominator = parent.absolute_polynomial_ntl()
+        self._fld_numerator, self._fld_denominator = parent.absolute_polynomial_ntl()
 
         cdef ZZ_c coeff
         if isinstance(f, (int, Integer_sage)):
@@ -417,7 +417,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
         cdef type t = type(self)
         cdef NumberFieldElement x = <NumberFieldElement>t.__new__(t)
         x._parent = <ParentWithBase>new_parent
-        x.__fld_numerator, x._fld_denominator = new_parent.polynomial_ntl()
+        x._fld_numerator, x._fld_denominator = new_parent.polynomial_ntl()
         x._denominator = self._denominator
         cdef ZZX_c result
         cdef ZZ_c tmp
@@ -427,7 +427,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
         for i from 0 <= i <= ZZX_deg(self._numerator):
             tmp = ZZX_coeff(self._numerator, i)
             ZZX_SetCoeff(result, i*rel, tmp)
-        ZZX_rem(x._numerator, result, x.__fld_numerator.x)
+        ZZX_rem(x._numerator, result, x._fld_numerator.x)
         return x
 
     def __reduce__(self):
@@ -966,7 +966,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
             # set the denominator
             mpz_set_si(denom_temp.value, 1)
             mpz_to_ZZ(&self._denominator, (<Integer>denom_temp).value)
-            for i from 0 <= i < ZZX_deg(self.__fld_numerator.x):
+            for i from 0 <= i < ZZX_deg(self._fld_numerator.x):
                 tmp_integer = <Integer>(ZZ.random_element(x=num_bound,
                                                    distribution=distribution))
                 mpz_to_ZZ(&ntl_temp, (<Integer>tmp_integer).value)
@@ -977,7 +977,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
             mpz_set_si(denom_temp.value, 1)
             tmp_integer = Integer.__new__(Integer)
 
-            for i from 0 <= i < ZZX_deg(self.__fld_numerator.x):
+            for i from 0 <= i < ZZX_deg(self._fld_numerator.x):
                 tmp_rational = <Rational>(QQ.random_element(num_bound=num_bound,
                                                             den_bound=den_bound,
                                                             distribution=distribution))
@@ -992,7 +992,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
             mpz_to_ZZ(&self._denominator, (<Integer>denom_temp).value)
 
             # now the coefficients themselves.
-            for i from 0 <= i < ZZX_deg(self.__fld_numerator.x):
+            for i from 0 <= i < ZZX_deg(self._fld_numerator.x):
                 # calculate the new numerator. if our old entry is
                 # p/q, and the lcm is k, it's just pk/q, which we
                 # also know is integral -- so we can use mpz_divexact
@@ -2572,14 +2572,14 @@ cdef class NumberFieldElement(NumberFieldElement_base):
         # MulMod doesn't handle non-monic polynomials.
         # Therefore, we handle the non-monic case entirely separately.
         ZZ_mul(x._denominator, self._denominator, _right._denominator)
-        if ZZ_IsOne(ZZX_LeadCoeff(self.__fld_numerator.x)):
-            ZZX_MulMod(x._numerator, self._numerator, _right._numerator, self.__fld_numerator.x)
+        if ZZ_IsOne(ZZX_LeadCoeff(self._fld_numerator.x)):
+            ZZX_MulMod(x._numerator, self._numerator, _right._numerator, self._fld_numerator.x)
         else:
             ZZX_mul(x._numerator, self._numerator, _right._numerator)
-            if ZZX_deg(x._numerator) >= ZZX_deg(self.__fld_numerator.x):
+            if ZZX_deg(x._numerator) >= ZZX_deg(self._fld_numerator.x):
                 ZZX_mul_ZZ( x._numerator, x._numerator, self._fld_denominator.x )
-                ZZX_mul_ZZ( temp, self.__fld_numerator.x, x._denominator )
-                ZZ_power(temp1,ZZX_LeadCoeff(temp),ZZX_deg(x._numerator)-ZZX_deg(self.__fld_numerator.x)+1)
+                ZZX_mul_ZZ( temp, self._fld_numerator.x, x._denominator )
+                ZZ_power(temp1,ZZX_LeadCoeff(temp),ZZX_deg(x._numerator)-ZZX_deg(self._fld_numerator.x)+1)
                 ZZX_PseudoRem(x._numerator, x._numerator, temp)
                 ZZ_mul(x._denominator, x._denominator, self._fld_denominator.x)
                 ZZ_mul(x._denominator, x._denominator, temp1)
@@ -2835,7 +2835,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
             # but may fail if NTL runs out of FFT primes.
             x = self._new()
             sig_on()
-            ZZX_XGCD(x._denominator, x._numerator, temp, self._numerator, self.__fld_numerator.x, 1)
+            ZZX_XGCD(x._denominator, x._numerator, temp, self._numerator, self._fld_numerator.x, 1)
             ZZX_mul_ZZ(x._numerator, x._numerator, self._denominator)
             x._reduce_c_()
             sig_off()
@@ -5320,7 +5320,7 @@ cdef class OrderElement_absolute(NumberFieldElement_absolute):
         cdef OrderElement_absolute x = <OrderElement_absolute>t.__new__(t)
         x._parent = self._parent
         x._number_field = self._parent.number_field()
-        x.__fld_numerator = self.__fld_numerator
+        x._fld_numerator = self._fld_numerator
         x._fld_denominator = self._fld_denominator
         return x
 
@@ -5441,7 +5441,7 @@ cdef class OrderElement_relative(NumberFieldElement_relative):
         cdef OrderElement_relative x = <OrderElement_relative>t.__new__(t)
         x._parent = self._parent
         x._number_field = self._parent.number_field()
-        x.__fld_numerator = self.__fld_numerator
+        x._fld_numerator = self._fld_numerator
         x._fld_denominator = self._fld_denominator
         return x
 
