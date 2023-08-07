@@ -1,4 +1,4 @@
-# sage.doctest: optional - sage.libs.pari sage.modules
+# sage.doctest: needs sage.libs.pari sage.modules
 r"""
 Splitting Algebras
 

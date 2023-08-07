@@ -1,4 +1,4 @@
-# sage.doctest: optional - sage.libs.pari (for factorization)
+# sage.doctest: needs sage.libs.pari (for factorization)
 r"""
 Cubic Hecke Base Rings
 
