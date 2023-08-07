@@ -110,7 +110,7 @@ cdef class Lfunction:
     cdef int _compute_rank(self)
     #strange bug, replacing Double with double gives me a compile error
     cdef Double _typedN(self, double T)
-    cdef void __find_zeros_v(self, double T1, double T2, double stepsize,doublevec *result)
+    cdef void _find_zeros_v(self, double T1, double T2, double stepsize,doublevec *result)
     cdef int __find_zeros(self, long count, long start, double max_refine, int rank, const char* message_stamp, doublevec* result)
 
     cdef str _repr

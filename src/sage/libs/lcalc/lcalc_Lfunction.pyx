@@ -323,7 +323,7 @@ cdef class Lfunction:
         cdef RealNumber real_T2 = RRR(T2)
         cdef RealNumber real_stepsize = RRR(stepsize)
         sig_on()
-        self.__find_zeros_v( mpfr_get_d(real_T1.value, MPFR_RNDN), mpfr_get_d(real_T2.value, MPFR_RNDN), mpfr_get_d(real_stepsize.value, MPFR_RNDN),&result)
+        self._find_zeros_v( mpfr_get_d(real_T1.value, MPFR_RNDN), mpfr_get_d(real_T2.value, MPFR_RNDN), mpfr_get_d(real_stepsize.value, MPFR_RNDN),&result)
         sig_off()
         i=result.size()
         returnvalue = []
@@ -423,7 +423,7 @@ cdef class Lfunction:
     cdef double _typedN(self,double T):
         raise NotImplementedError
 
-    cdef void __find_zeros_v(self,double T1, double T2, double stepsize, doublevec *result):
+    cdef void _find_zeros_v(self,double T1, double T2, double stepsize, doublevec *result):
         raise NotImplementedError
 
     cdef int __find_zeros(self, long count, long start, double max_refine, int rank, const char* message_stamp, doublevec *result):
@@ -516,7 +516,7 @@ cdef class Lfunction_I(Lfunction):
     cdef int _compute_rank(self):
         return (<c_Lfunction_I *>(self.thisptr)).compute_rank()
 
-    cdef void __find_zeros_v(self, double T1, double T2, double stepsize, doublevec *result):
+    cdef void _find_zeros_v(self, double T1, double T2, double stepsize, doublevec *result):
         (<c_Lfunction_I *>self.thisptr).find_zeros_v(T1,T2,stepsize,result[0])
 
     cdef double _typedN(self, double T):
@@ -654,7 +654,7 @@ cdef class Lfunction_D(Lfunction):
     cdef inline int _compute_rank(self):
         return (<c_Lfunction_D *>(self.thisptr)).compute_rank()
 
-    cdef void __find_zeros_v(self, double T1, double T2, double stepsize, doublevec *result):
+    cdef void _find_zeros_v(self, double T1, double T2, double stepsize, doublevec *result):
         (<c_Lfunction_D *>self.thisptr).find_zeros_v(T1,T2,stepsize,result[0])
 
     cdef double _typedN(self, double T):
@@ -799,7 +799,7 @@ cdef class Lfunction_C:
         return (<c_Lfunction_C *>(self.thisptr)).compute_rank()
 
 
-    cdef void __find_zeros_v(self, double T1, double T2, double stepsize, doublevec *result):
+    cdef void _find_zeros_v(self, double T1, double T2, double stepsize, doublevec *result):
         (<c_Lfunction_C *>self.thisptr).find_zeros_v(T1,T2,stepsize,result[0])
 
     cdef double _typedN(self, double T):
@@ -884,7 +884,7 @@ cdef class Lfunction_Zeta(Lfunction):
         return (<c_Lfunction_Zeta *>(self.thisptr)).compute_rank()
 
 
-    cdef void __find_zeros_v(self, double T1, double T2, double stepsize, doublevec *result):
+    cdef void _find_zeros_v(self, double T1, double T2, double stepsize, doublevec *result):
         (<c_Lfunction_Zeta *>self.thisptr).find_zeros_v(T1,T2,stepsize,result[0])
 
     cdef double _typedN(self, double T):
