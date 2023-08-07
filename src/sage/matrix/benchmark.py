@@ -1,4 +1,4 @@
-# sage.doctest: optional - sage.flint
+# sage.doctest: needs sage.flint
 """
 Benchmarks for matrices
 
