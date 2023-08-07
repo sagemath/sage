@@ -267,9 +267,9 @@ class RankMatroid(Matroid):
         N = RankMatroid(groundset=[], rank_function=None)
         N._groundset = self._groundset
         N._rank_function = self._rank_function
-        if getattr(self, '__custom_name') is not None:
+        if getattr(self, '_custom_name') is not None:
             # because of name wrangling, this is not caught by the default copy
-            N.rename(getattr(self, '__custom_name'))
+            N.rename(getattr(self, '_custom_name'))
         return N
 
     def __deepcopy__(self, memo={}):
@@ -293,8 +293,8 @@ class RankMatroid(Matroid):
         from copy import deepcopy
         # Since matroids are immutable, N cannot reference itself in correct code, so no need to worry about the recursion.
         N = RankMatroid(groundset=deepcopy(self._groundset), rank_function=deepcopy(self._rank_function))
-        if getattr(self, '__custom_name') is not None:  # because of name wrangling, this is not caught by the default deepcopy
-            N.rename(deepcopy(getattr(self, '__custom_name'), memo))
+        if getattr(self, '_custom_name') is not None:  # because of name wrangling, this is not caught by the default deepcopy
+            N.rename(deepcopy(getattr(self, '_custom_name'), memo))
         return N
 
     def __reduce__(self):

@@ -1171,7 +1171,7 @@ class InterfaceElement(Element):
             s = self._repr_()
         if self._name in s:
             try:
-                s = s.replace(self._name, getattr(self, '__custom_name'))
+                s = s.replace(self._name, getattr(self, '_custom_name'))
             except AttributeError:
                 pass
         if cr:

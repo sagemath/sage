@@ -1297,8 +1297,8 @@ class QuiverRepElement(ModuleElement):
             sage: v.get_element(1)
             (1, 0)
         """
-        if hasattr(self, '__custom_name'):
-            name = self.__custom_name
+        if hasattr(self, '_custom_name'):
+            name = self._custom_name
         else:
             name = None
         return self.parent()(self._elems.copy(), name)

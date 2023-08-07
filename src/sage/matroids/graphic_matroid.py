@@ -481,8 +481,8 @@ class GraphicMatroid(Matroid):
             False
         """
         N = GraphicMatroid(self._G)
-        if getattr(self, '__custom_name') is not None:  # because of name wrangling, this is not caught by the default copy
-            N.rename(getattr(self, '__custom_name'))
+        if getattr(self, '_custom_name') is not None:  # because of name wrangling, this is not caught by the default copy
+            N.rename(getattr(self, '_custom_name'))
         return N
 
     def __deepcopy__(self, memo={}):
@@ -502,8 +502,8 @@ class GraphicMatroid(Matroid):
         """
         # The only real difference between this and __copy__() is the memo
         N = GraphicMatroid(deepcopy(self._G, memo))
-        if getattr(self, '__custom_name') is not None:  # because of name wrangling, this is not caught by the default deepcopy
-            N.rename(deepcopy(getattr(self, '__custom_name'), memo))
+        if getattr(self, '_custom_name') is not None:  # because of name wrangling, this is not caught by the default deepcopy
+            N.rename(deepcopy(getattr(self, '_custom_name'), memo))
         return N
 
     def __reduce__(self):
@@ -519,7 +519,7 @@ class GraphicMatroid(Matroid):
             Graphic matroid of rank 9 on 15 elements
         """
         from .unpickling import unpickle_graphic_matroid
-        data = (self._G, getattr(self, '__custom_name'))
+        data = (self._G, getattr(self, '_custom_name'))
         version = 0
         return unpickle_graphic_matroid, (version, data)
 

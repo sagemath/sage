@@ -22,7 +22,7 @@ cdef class PermutationGroupElement(MultiplicativeGroupElement):
     cpdef PermutationGroupElement _generate_new_GAP(self, old)
     cpdef _gap_list(self)
     cpdef domain(self)
-    cdef public __custom_name
+    cdef public _custom_name
     cpdef list _act_on_list_on_position(self, list x)
     cpdef ClonableIntArray _act_on_array_on_position(self, ClonableIntArray x)
     cpdef ETuple _act_on_etuple_on_position(self, ETuple x)

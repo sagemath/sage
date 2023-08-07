@@ -1,7 +1,6 @@
 from sage.structure.sage_object cimport SageObject
 
 cdef class Matroid(SageObject):
-    cdef public __custom_name
     cdef public _custom_name
     cdef public _cached_info
     cdef int _stored_full_rank

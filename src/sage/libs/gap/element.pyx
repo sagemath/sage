@@ -720,7 +720,7 @@ cdef class GapElement(RingElement):
             ...
             AttributeError: 'some_name' does not define a GAP function
         """
-        if name in ('__dict__', '_getAttributeNames', '__custom_name', 'keys'):
+        if name in ('__dict__', '_getAttributeNames', '_custom_name', 'keys'):
             raise AttributeError('Python special name, not a GAP function.')
         try:
             proxy = make_GapElement_MethodProxy\

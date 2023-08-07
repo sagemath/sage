@@ -110,15 +110,15 @@ cdef class SageObject:
            a lot of memory.
 
            To support them for a specific class, add a
-           ``cdef public __custom_name`` attribute.
+           ``cdef public _custom_name`` attribute.
         """
         if x is None:
-            #if hasattr(self, '__custom_name'):
+            #if hasattr(self, '_custom_name'):
             # that's tested in reset_name anyway...
             self.reset_name()
         else:
             try:
-                self.__custom_name = str(x)
+                self._custom_name = str(x)
             except AttributeError:
                 raise NotImplementedError("object does not support renaming: %s" % self)
 
@@ -138,8 +138,8 @@ cdef class SageObject:
             sage: P
             Univariate Polynomial Ring in x over Rational Field
         """
-        if hasattr(self, '__custom_name'):
-            del self.__custom_name
+        if hasattr(self, '_custom_name'):
+            del self._custom_name
 
     def __repr__(self):
         """
@@ -181,7 +181,7 @@ cdef class SageObject:
             <sage.structure.sage_object.SageObject object at ...>
         """
         try:
-            name = self.__custom_name
+            name = self._custom_name
             if name is not None:
                 return name
         except AttributeError:
