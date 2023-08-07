@@ -1,4 +1,4 @@
-# sage.doctest: optional - sage.libs.gap sage.libs.pari sage.libs.singular sage.symbolic
+# sage.doctest: needs sage.libs.gap sage.libs.pari sage.libs.singular sage.symbolic
 r"""
 Common Interface Functionality
 
