@@ -51,10 +51,11 @@ class Tuples(Parent, UniqueRepresentation):
     ::
 
         sage: K.<a> = GF(4, 'a')                                                        # needs sage.rings.finite_rings
-        sage: mset = [x for x in K if x != 0]                                           # needs sage.rings.finite_rings
-        sage: Tuples(mset,2).list()                                                     # needs sage.rings.finite_rings
-        [(a, a), (a + 1, a), (1, a), (a, a + 1), (a + 1, a + 1), (1, a + 1),
-         (a, 1), (a + 1, 1), (1, 1)]
+        sage: mset = sorted((x for x in K if x != 0), key=str)                          # needs sage.rings.finite_rings
+        sage: Tuples(mset, 2).list()                                                    # needs sage.rings.finite_rings
+        [(1, 1),     (a, 1),     (a + 1, 1),
+         (1, a),     (a, a),     (a + 1, a),
+         (1, a + 1), (a, a + 1), (a + 1, a + 1)]
     """
     @staticmethod
     def __classcall_private__(cls, S, k):
