@@ -69,7 +69,7 @@ cdef class PowComputer_relative(PowComputer_class):
             sage: PC = PowComputer_relative_maker(3, 20, 20, 60, False, f, shift_seed, 'fixed-mod')
 
         """
-        self.__allocated = 4
+        self._allocated = 4
 
     def __init__(self, Integer prime, long cache_limit, long prec_cap, long ram_prec_cap, bint in_field, poly, shift_seed):
         r"""
