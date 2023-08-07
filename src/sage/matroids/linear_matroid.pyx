@@ -3173,11 +3173,11 @@ cdef class BinaryMatroid(LinearMatroid):
         """
         bitset_copy(C, (<BinaryMatrix>self._A)._M[self._prow[x]])
 
-    cdef __coclosure(self, bitset_t R, bitset_t F):
+    cdef _coclosure_internal(self, bitset_t R, bitset_t F):
         """
         Bitpacked version of ``coclosure``.
 
-        This function overrides the internal function BasisExchangeMatroid.__coclosure() of the parent class.
+        This function overrides the internal function BasisExchangeMatroid._coclosure_internal() of the parent class.
         The implementation should be more efficient for BinaryMatroid, due to the fact that in this class,
         __fundamental_cocircuit is much faster than __fundamental_circuit.
         """
@@ -4241,11 +4241,11 @@ cdef class TernaryMatroid(LinearMatroid):
         """
         bitset_copy(C, (<TernaryMatrix>self._A)._M0[self._prow[x]])
 
-    cdef __coclosure(self, bitset_t R, bitset_t F):
+    cdef _coclosure_internal(self, bitset_t R, bitset_t F):
         """
         Bitpacked version of ``coclosure``.
 
-        This function overrides the internal function BasisExchangeMatroid.__coclosure() of the parent class.
+        This function overrides the internal function BasisExchangeMatroid._coclosure_internal() of the parent class.
         The implementation should be more efficient for TernaryMatroid, due to the fact that in this class,
         __fundamental_cocircuit is much faster than __fundamental_circuit.
         """
@@ -5143,11 +5143,11 @@ cdef class QuaternaryMatroid(LinearMatroid):
         """
         bitset_union(C, (<QuaternaryMatrix>self._A)._M0[self._prow[x]], (<QuaternaryMatrix>self._A)._M1[self._prow[x]])
 
-    cdef __coclosure(self, bitset_t R, bitset_t F):
+    cdef _coclosure_internal(self, bitset_t R, bitset_t F):
         """
         Bitpacked version of ``coclosure``.
 
-        This function overrides the internal function BasisExchangeMatroid.__coclosure() of the parent class.
+        This function overrides the internal function BasisExchangeMatroid._coclosure_internal() of the parent class.
         The implementation should be more efficient for QuaternaryMatroid, due to the fact that in this class,
         __fundamental_cocircuit is much faster than __fundamental_circuit.
         """

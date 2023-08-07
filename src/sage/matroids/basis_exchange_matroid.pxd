@@ -30,7 +30,7 @@ cdef class BasisExchangeMatroid(Matroid):
     cdef __closure(self, bitset_t, bitset_t)
     cdef __max_coindependent(self, bitset_t, bitset_t)
     cdef __cocircuit(self, bitset_t, bitset_t)
-    cdef __coclosure(self, bitset_t, bitset_t)
+    cdef _coclosure_internal(self, bitset_t, bitset_t)
 
     cdef __augment(self, bitset_t, bitset_t, bitset_t)
     cdef bint __is_independent(self, bitset_t F) except -1

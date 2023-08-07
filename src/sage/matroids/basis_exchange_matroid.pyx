@@ -401,7 +401,7 @@ cdef class BasisExchangeMatroid(Matroid):
                 return
             x = bitset_next(self._inside, x + 1)
 
-    cdef __coclosure(self, bitset_t R, bitset_t F):
+    cdef _coclosure_internal(self, bitset_t R, bitset_t F):
         """
         Bitpacked version of ``closure``.
         """
@@ -944,7 +944,7 @@ cdef class BasisExchangeMatroid(Matroid):
 
         """
         self.__pack(self._input, F)
-        self.__coclosure(self._output, self._input)
+        self._coclosure_internal(self._output, self._input)
         return self.__unpack(self._output)
 
     cpdef _augment(self, X, Y):
@@ -1421,7 +1421,7 @@ cdef class BasisExchangeMatroid(Matroid):
         Rcoflats = SetSystem(self._E)
         i = 0
         bitset_clear(todo[0])
-        self.__coclosure(coflats[0], todo[0])
+        self._coclosure_internal(coflats[0], todo[0])
         bitset_complement(todo[0], coflats[0])
         self._coflats_rec(Rcoflats, r, coflats, todo, 0, 0)
         for i in range(r + 1):
@@ -1443,7 +1443,7 @@ cdef class BasisExchangeMatroid(Matroid):
         while e >= 0:
             bitset_copy(self._input, coflats[i])
             bitset_add(self._input, e)
-            self.__coclosure(coflats[i + 1], self._input)
+            self._coclosure_internal(coflats[i + 1], self._input)
             bitset_difference(todo[i], todo[i], coflats[i + 1])
             bitset_difference(todo[i + 1], coflats[i + 1], coflats[i])
             if bitset_first(todo[i + 1]) == e:
