@@ -24,7 +24,7 @@ EXAMPLES:
 We compute the size of a minimum dominating set of the Petersen graph::
 
     sage: g = graphs.PetersenGraph()
-    sage: g.dominating_set(value_only=True)
+    sage: g.dominating_set(value_only=True)                                             # needs sage.numerical.mip
     3
 
 We enumerate the minimal dominating sets of the 5-star graph::
@@ -281,7 +281,7 @@ def dominating_sets(g, k=1, independent=False, total=False,
     Number of distance-`k` dominating sets of a Path graph of order 10::
 
         sage: g = graphs.PathGraph(10)
-        sage: [sum(1 for _ in g.dominating_sets(k=k)) for k in range(11)]
+        sage: [sum(1 for _ in g.dominating_sets(k=k)) for k in range(11)]               # needs sage.numerical.mip
         [1, 13, 1, 13, 25, 2, 4, 6, 8, 10, 10]
 
     If we build a graph from two disjoint stars, then link their centers we will
@@ -290,15 +290,15 @@ def dominating_sets(g, k=1, independent=False, total=False,
 
         sage: g = 2 * graphs.StarGraph(5)
         sage: g.add_edge(0, 6)
-        sage: [sum(1 for _ in g.dominating_sets(k=k)) for k in range(11)]
+        sage: [sum(1 for _ in g.dominating_sets(k=k)) for k in range(11)]               # needs sage.numerical.mip
         [1, 1, 2, 12, 12, 12, 12, 12, 12, 12, 12]
 
     The total dominating set of the Petersen graph has cardinality 4::
 
         sage: G = graphs.PetersenGraph()
-        sage: G.dominating_set(total=True, value_only=True)
+        sage: G.dominating_set(total=True, value_only=True)                             # needs sage.numerical.mip
         4
-        sage: sorted(G.dominating_sets(k=1))
+        sage: sorted(G.dominating_sets(k=1))                                            # needs sage.numerical.mip
         [[0, 2, 6],
          [0, 3, 9],
          [0, 7, 8],
@@ -312,6 +312,7 @@ def dominating_sets(g, k=1, independent=False, total=False,
 
     Independent distance-`k` dominating sets of a Path graph::
 
+        sage: # needs sage.numerical.mip
         sage: G = graphs.PathGraph(6)
         sage: sorted(G.dominating_sets(k=1, independent=True))
         [[1, 4]]
@@ -323,6 +324,7 @@ def dominating_sets(g, k=1, independent=False, total=False,
     The dominating set is calculated for both the directed and undirected graphs
     (modification introduced in :trac:`17905`)::
 
+        sage: # needs sage.numerical.mip
         sage: g = digraphs.Path(3)
         sage: g.dominating_set(value_only=True)
         2
@@ -339,7 +341,7 @@ def dominating_sets(g, k=1, independent=False, total=False,
     TESTS::
 
         sage: g = Graph([(0, 1)])
-        sage: next(g.dominating_sets(k=-1))
+        sage: next(g.dominating_sets(k=-1))                                             # needs sage.numerical.mip
         Traceback (most recent call last):
         ...
         ValueError: the domination distance must be a non-negative integer
@@ -468,7 +470,7 @@ def dominating_set(g, k=1, independent=False, total=False, value_only=False,
     A basic illustration on a ``PappusGraph``::
 
         sage: g = graphs.PappusGraph()
-        sage: g.dominating_set(value_only=True)
+        sage: g.dominating_set(value_only=True)                                         # needs sage.numerical.mip
         5
 
     If we build a graph from two disjoint stars, then link their centers we will
@@ -477,34 +479,34 @@ def dominating_set(g, k=1, independent=False, total=False, value_only=False,
 
         sage: g = 2 * graphs.StarGraph(5)
         sage: g.add_edge(0, 6)
-        sage: len(g.dominating_set())
+        sage: len(g.dominating_set())                                                   # needs sage.numerical.mip
         2
-        sage: len(g.dominating_set(independent=True))
+        sage: len(g.dominating_set(independent=True))                                   # needs sage.numerical.mip
         6
 
     The total dominating set of the Petersen graph has cardinality 4::
 
         sage: G = graphs.PetersenGraph()
-        sage: G.dominating_set(total=True, value_only=True)
+        sage: G.dominating_set(total=True, value_only=True)                             # needs sage.numerical.mip
         4
 
     The dominating set is calculated for both the directed and undirected graphs
     (modification introduced in :trac:`17905`)::
 
         sage: g = digraphs.Path(3)
-        sage: g.dominating_set(value_only=True)
+        sage: g.dominating_set(value_only=True)                                         # needs sage.numerical.mip
         2
         sage: g = graphs.PathGraph(3)
-        sage: g.dominating_set(value_only=True)
+        sage: g.dominating_set(value_only=True)                                         # needs sage.numerical.mip
         1
 
     Cardinality of distance-`k` dominating sets::
 
         sage: G = graphs.PetersenGraph()
-        sage: [G.dominating_set(k=k, value_only=True) for k in range(G.radius() + 1)]
+        sage: [G.dominating_set(k=k, value_only=True) for k in range(G.radius() + 1)]   # needs sage.numerical.mip
         [10, 3, 1]
         sage: G = graphs.PathGraph(5)
-        sage: [G.dominating_set(k=k, value_only=True) for k in range(G.radius() + 1)]
+        sage: [G.dominating_set(k=k, value_only=True) for k in range(G.radius() + 1)]   # needs sage.numerical.mip
         [5, 2, 1]
     """
     dom = next(dominating_sets(g, k=k, independent=independent, total=total,
@@ -780,32 +782,32 @@ def minimal_dominating_sets(G, to_dominate=None, work_on_copy=False, k=1):
 
         sage: ll = list(graphs.PetersenGraph().minimal_dominating_sets())
         sage: pp = [{0, 2, 6},
-        ....: {0, 9, 3},
-        ....: {0, 8, 7},
-        ....: {1, 3, 7},
-        ....: {1, 4, 5},
-        ....: {8, 1, 9},
-        ....: {8, 2, 4},
-        ....: {9, 2, 5},
-        ....: {3, 5, 6},
-        ....: {4, 6, 7},
-        ....: {0, 8, 2, 9},
-        ....: {0, 3, 6, 7},
-        ....: {1, 3, 5, 9},
-        ....: {8, 1, 4, 7},
-        ....: {2, 4, 5, 6},
-        ....: {0, 1, 2, 3, 4},
-        ....: {0, 1, 2, 5, 7},
-        ....: {0, 1, 4, 6, 9},
-        ....: {0, 1, 5, 6, 8},
-        ....: {0, 8, 3, 4, 5},
-        ....: {0, 9, 4, 5, 7},
-        ....: {8, 1, 2, 3, 6},
-        ....: {1, 2, 9, 6, 7},
-        ....: {9, 2, 3, 4, 7},
-        ....: {8, 2, 3, 5, 7},
-        ....: {8, 9, 3, 4, 6},
-        ....: {8, 9, 5, 6, 7}]
+        ....:       {0, 9, 3},
+        ....:       {0, 8, 7},
+        ....:       {1, 3, 7},
+        ....:       {1, 4, 5},
+        ....:       {8, 1, 9},
+        ....:       {8, 2, 4},
+        ....:       {9, 2, 5},
+        ....:       {3, 5, 6},
+        ....:       {4, 6, 7},
+        ....:       {0, 8, 2, 9},
+        ....:       {0, 3, 6, 7},
+        ....:       {1, 3, 5, 9},
+        ....:       {8, 1, 4, 7},
+        ....:       {2, 4, 5, 6},
+        ....:       {0, 1, 2, 3, 4},
+        ....:       {0, 1, 2, 5, 7},
+        ....:       {0, 1, 4, 6, 9},
+        ....:       {0, 1, 5, 6, 8},
+        ....:       {0, 8, 3, 4, 5},
+        ....:       {0, 9, 4, 5, 7},
+        ....:       {8, 1, 2, 3, 6},
+        ....:       {1, 2, 9, 6, 7},
+        ....:       {9, 2, 3, 4, 7},
+        ....:       {8, 2, 3, 5, 7},
+        ....:       {8, 9, 3, 4, 6},
+        ....:       {8, 9, 5, 6, 7}]
         sage: len(ll) == len(pp) and all(x in pp for x in ll) and all(x in ll for x in pp)
         True
 

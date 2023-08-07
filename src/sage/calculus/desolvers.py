@@ -874,8 +874,8 @@ def desolve_system(des, vars, ics=None, ivar=None, algorithm="maxima"):
 
     ::
 
-        sage: P1 = plot([solx,soly], (0,1))
-        sage: P2 = parametric_plot((solx,soly), (0,1))
+        sage: P1 = plot([solx,soly], (0,1))                                             # needs sage.plot
+        sage: P2 = parametric_plot((solx,soly), (0,1))                                  # needs sage.plot
 
     Now type ``show(P1)``, ``show(P2)`` to view these plots.
 
@@ -892,7 +892,8 @@ def desolve_system(des, vars, ics=None, ivar=None, algorithm="maxima"):
         sage: desolve_system([de1, de2], [x1, x2], ics=[1,1], ivar=t)
         Traceback (most recent call last):
         ...
-        ValueError: Initial conditions aren't complete: number of vars is different from number of dependent variables. Got ics = [1, 1], vars = [x1(t), x2(t)]
+        ValueError: Initial conditions aren't complete: number of vars is different
+        from number of dependent variables. Got ics = [1, 1], vars = [x1(t), x2(t)]
 
     Check that :trac:`9825` is fixed::
 
@@ -1013,9 +1014,9 @@ def eulers_method(f, x0, y0, h, x1, algorithm="table"):
     ::
 
         sage: pts = eulers_method(5*x+y-5,0,1,1/2,1,algorithm="none")
-        sage: P1 = list_plot(pts)
-        sage: P2 = line(pts)
-        sage: (P1+P2).show()
+        sage: P1 = list_plot(pts)                                                       # needs sage.plot
+        sage: P2 = line(pts)                                                            # needs sage.plot
+        sage: (P1 + P2).show()                                                          # needs sage.plot
 
     AUTHORS:
 
@@ -1163,7 +1164,7 @@ def eulers_method_2x2_plot(f, g, t0, x0, y0, h, t1):
 
         sage: from sage.calculus.desolvers import eulers_method_2x2_plot
         sage: f = lambda z : z[2]; g = lambda z : -sin(z[1])
-        sage: P = eulers_method_2x2_plot(f,g, 0.0, 0.75, 0.0, 0.1, 1.0)
+        sage: P = eulers_method_2x2_plot(f,g, 0.0, 0.75, 0.0, 0.1, 1.0)                 # needs sage.plot
     """
     from sage.plot.line import line
 
@@ -1430,13 +1431,14 @@ def desolve_system_rk4(des, vars, ics=None, ivar=None, end_points=None, step=0.1
     Lotka Volterra system::
 
         sage: from sage.calculus.desolvers import desolve_system_rk4
-        sage: x,y,t=var('x y t')
-        sage: P=desolve_system_rk4([x*(1-y),-y*(1-x)],[x,y],ics=[0,0.5,2],ivar=t,end_points=20)
-        sage: Q=[ [i,j] for i,j,k in P]
-        sage: LP=list_plot(Q)
+        sage: x,y,t = var('x y t')
+        sage: P = desolve_system_rk4([x*(1-y),-y*(1-x)], [x,y], ics=[0,0.5,2],
+        ....:                        ivar=t, end_points=20)
+        sage: Q = [[i,j] for i,j,k in P]
+        sage: LP = list_plot(Q)                                                         # needs sage.plot
 
-        sage: Q=[ [j,k] for i,j,k in P]
-        sage: LP=list_plot(Q)
+        sage: Q = [[j,k] for i,j,k in P]
+        sage: LP = list_plot(Q)                                                         # needs sage.plot
 
     ALGORITHM:
 
@@ -1570,49 +1572,52 @@ def desolve_odeint(des, ics, times, dvars, ivar=None, compute_jac=False, args=()
     Lotka Volterra Equations::
 
         sage: from sage.calculus.desolvers import desolve_odeint
-        sage: x,y=var('x,y')
-        sage: f=[x*(1-y),-y*(1-x)]
-        sage: sol=desolve_odeint(f,[0.5,2],srange(0,10,0.1),[x,y])
-        sage: p=line(zip(sol[:,0],sol[:,1]))
-        sage: p.show()
+        sage: x,y = var('x,y')
+        sage: f = [x*(1-y), -y*(1-x)]
+        sage: sol = desolve_odeint(f, [0.5,2], srange(0,10,0.1), [x,y])                 # needs scipy
+        sage: p = line(zip(sol[:,0],sol[:,1]))                                          # needs scipy sage.plot
+        sage: p.show()                                                                  # needs scipy sage.plot
 
     Lorenz Equations::
 
-        sage: x,y,z=var('x,y,z')
+        sage: x,y,z = var('x,y,z')
         sage: # Next we define the parameters
-        sage: sigma=10
-        sage: rho=28
-        sage: beta=8/3
+        sage: sigma = 10
+        sage: rho = 28
+        sage: beta = 8/3
         sage: # The Lorenz equations
-        sage: lorenz=[sigma*(y-x),x*(rho-z)-y,x*y-beta*z]
+        sage: lorenz = [sigma*(y-x),x*(rho-z)-y,x*y-beta*z]
         sage: # Time and initial conditions
-        sage: times=srange(0,50.05,0.05)
-        sage: ics=[0,1,1]
-        sage: sol=desolve_odeint(lorenz,ics,times,[x,y,z],rtol=1e-13,atol=1e-14)
+        sage: times = srange(0,50.05,0.05)
+        sage: ics = [0,1,1]
+        sage: sol = desolve_odeint(lorenz, ics, times, [x,y,z],                         # needs scipy
+        ....:                      rtol=1e-13, atol=1e-14)
 
     One-dimensional stiff system::
 
-        sage: y= var('y')
-        sage: epsilon=0.01
-        sage: f=y^2*(1-y)
-        sage: ic=epsilon
-        sage: t=srange(0,2/epsilon,1)
-        sage: sol=desolve_odeint(f,ic,t,y,rtol=1e-9,atol=1e-10,compute_jac=True)
-        sage: p=points(zip(t,sol[:,0]))
-        sage: p.show()
+        sage: y = var('y')
+        sage: epsilon = 0.01
+        sage: f = y^2*(1-y)
+        sage: ic = epsilon
+        sage: t = srange(0,2/epsilon,1)
+        sage: sol = desolve_odeint(f, ic, t, y,                                         # needs scipy
+        ....:                      rtol=1e-9, atol=1e-10, compute_jac=True)
+        sage: p = points(zip(t,sol[:,0]))                                               # needs scipy sage.plot
+        sage: p.show()                                                                  # needs scipy sage.plot
 
     Another stiff system with some optional parameters with no
     default value::
 
-        sage: y1,y2,y3=var('y1,y2,y3')
-        sage: f1=77.27*(y2+y1*(1-8.375*1e-6*y1-y2))
-        sage: f2=1/77.27*(y3-(1+y1)*y2)
-        sage: f3=0.16*(y1-y3)
-        sage: f=[f1,f2,f3]
-        sage: ci=[0.2,0.4,0.7]
-        sage: t=srange(0,10,0.01)
-        sage: v=[y1,y2,y3]
-        sage: sol=desolve_odeint(f,ci,t,v,rtol=1e-3,atol=1e-4,h0=0.1,hmax=1,hmin=1e-4,mxstep=1000,mxords=17)
+        sage: y1,y2,y3 = var('y1,y2,y3')
+        sage: f1 = 77.27*(y2+y1*(1-8.375*1e-6*y1-y2))
+        sage: f2 = 1/77.27*(y3-(1+y1)*y2)
+        sage: f3 = 0.16*(y1-y3)
+        sage: f = [f1,f2,f3]
+        sage: ci = [0.2,0.4,0.7]
+        sage: t = srange(0,10,0.01)
+        sage: v = [y1,y2,y3]
+        sage: sol = desolve_odeint(f, ci, t, v, rtol=1e-3, atol=1e-4,                   # needs scipy
+        ....:                      h0=0.1, hmax=1, hmin=1e-4, mxstep=1000, mxords=17)
 
     AUTHOR:
 

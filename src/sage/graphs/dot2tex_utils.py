@@ -74,7 +74,7 @@ def quoted_latex(x):
 
     EXAMPLES::
 
-        sage: sage.graphs.dot2tex_utils.quoted_latex(matrix([[1,1],[0,1],[0,0]]))       # optional - sage.modules
+        sage: sage.graphs.dot2tex_utils.quoted_latex(matrix([[1,1],[0,1],[0,0]]))       # needs sage.modules
         '\\left(\\begin{array}{rr}1 & 1 \\\\0 & 1 \\\\0 & 0\\end{array}\\right)'
     """
     return re.sub("\"|\r|(%[^\n]*)?\n", "", latex(x))
@@ -89,9 +89,9 @@ def quoted_str(x):
 
     EXAMPLES::
 
-        sage: sage.graphs.dot2tex_utils.quoted_str(matrix([[1,1],[0,1],[0,0]]))         # optional - sage.modules
+        sage: sage.graphs.dot2tex_utils.quoted_str(matrix([[1,1],[0,1],[0,0]]))         # needs sage.modules
         '[1 1]\\n\\\n[0 1]\\n\\\n[0 0]'
-        sage: print(sage.graphs.dot2tex_utils.quoted_str(matrix([[1,1],[0,1],[0,0]])))  # optional - sage.modules
+        sage: print(sage.graphs.dot2tex_utils.quoted_str(matrix([[1,1],[0,1],[0,0]])))  # needs sage.modules
         [1 1]\n\
         [0 1]\n\
         [0 0]
