@@ -848,7 +848,7 @@ class ProductProjectiveSpaces_ring(AmbientSpace):
             sage: I = X.defining_ideal(); I
             Ideal (x - y, z - w) of Multivariate Polynomial Ring in x, y, z, w
              over Finite Field of size 5
-            sage: X.dimension()                                                         # needs sage.rings.finite_rings
+            sage: X.dimension()                                                         # needs sage.libs.singular
             0
             sage: X.base_ring()
             Finite Field of size 5
@@ -1282,14 +1282,12 @@ class ProductProjectiveSpaces_finite_field(ProductProjectiveSpaces_field):
         ::
 
             sage: P = ProductProjectiveSpaces([1, 1], GF(2))
-            sage: P.rational_points(GF(2^2, 'a'))                                       # needs sage.rings.finite_rings
-            [(0 : 1 , 0 : 1), (a : 1 , 0 : 1), (a + 1 : 1 , 0 : 1), (1 : 1 , 0 : 1),
-             (1 : 0 , 0 : 1), (0 : 1 , a : 1), (a : 1 , a : 1), (a + 1 : 1 , a : 1),
-             (1 : 1 , a : 1), (1 : 0 , a : 1), (0 : 1 , a + 1 : 1), (a : 1 , a + 1 : 1),
-             (a + 1 : 1 , a + 1 : 1), (1 : 1 , a + 1 : 1), (1 : 0 , a + 1 : 1),
-             (0 : 1 , 1 : 1), (a : 1 , 1 : 1), (a + 1 : 1 , 1 : 1), (1 : 1 , 1 : 1),
-             (1 : 0 , 1 : 1), (0 : 1 , 1 : 0), (a : 1 , 1 : 0), (a + 1 : 1 , 1 : 0),
-             (1 : 1 , 1 : 0), (1 : 0 , 1 : 0)]
+            sage: sorted(P.rational_points(GF(2^2, 'a')), key=str)                      # needs sage.rings.finite_rings
+            [(0 : 1 , 0 : 1), (0 : 1 , 1 : 0), (0 : 1 , 1 : 1), (0 : 1 , a + 1 : 1), (0 : 1 , a : 1),
+             (1 : 0 , 0 : 1), (1 : 0 , 1 : 0), (1 : 0 , 1 : 1), (1 : 0 , a + 1 : 1), (1 : 0 , a : 1),
+             (1 : 1 , 0 : 1), (1 : 1 , 1 : 0), (1 : 1 , 1 : 1), (1 : 1 , a + 1 : 1), (1 : 1 , a : 1),
+             (a + 1 : 1 , 0 : 1), (a + 1 : 1 , 1 : 0), (a + 1 : 1 , 1 : 1), (a + 1 : 1 , a + 1 : 1), (a + 1 : 1 , a : 1),
+             (a : 1 , 0 : 1), (a : 1 , 1 : 0), (a : 1 , 1 : 1), (a : 1 , a + 1 : 1), (a : 1 , a : 1)]
         """
         if F is None:
             return list(self)
