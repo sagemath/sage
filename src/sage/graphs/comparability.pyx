@@ -417,20 +417,20 @@ def is_comparability_MILP(g, certificate=False, solver=None, verbose=0):
     The 5-cycle or the Petersen Graph are not transitively orientable::
 
       sage: from sage.graphs.comparability import is_comparability_MILP as is_comparability
-      sage: is_comparability(graphs.CycleGraph(5), certificate = True)
+      sage: is_comparability(graphs.CycleGraph(5), certificate=True)                    # needs sage.numerical.mip
       (False, None)
       sage: g = graphs.PetersenGraph()
-      sage: is_comparability(g, certificate = True)
+      sage: is_comparability(g, certificate=True)                                       # needs sage.numerical.mip
       (False, None)
 
     But the Bull graph is::
 
       sage: g = graphs.BullGraph()
-      sage: is_comparability(g)
+      sage: is_comparability(g)                                                         # needs sage.numerical.mip
       True
-      sage: is_comparability(g, certificate = True)
+      sage: is_comparability(g, certificate=True)                                       # needs sage.numerical.mip
       (True, Digraph on 5 vertices)
-      sage: is_comparability(g, certificate = True)[1].is_transitive()
+      sage: is_comparability(g, certificate=True)[1].is_transitive()                    # needs sage.numerical.mip
       True
     """
     from sage.numerical.mip import MixedIntegerLinearProgram, MIPSolverException
@@ -642,7 +642,7 @@ def is_permutation(g, algorithm="greedy", certificate=False, check=True,
         sage: p1 = Permutation([nn+1 for nn in perm[0]])
         sage: p2 = Permutation([nn+1 for nn in perm[1]])
         sage: p = p2 * p1.inverse()
-        sage: p.show(representation="braid")                                            # optional - sage.plot
+        sage: p.show(representation="braid")                                            # needs sage.plot
 
     TESTS:
 
@@ -664,7 +664,7 @@ def is_permutation(g, algorithm="greedy", certificate=False, check=True,
     Then with MILP::
 
        sage: from sage.graphs.comparability import is_permutation
-       sage: for i in range(20):
+       sage: for i in range(20):                                                        # needs sage.numerical.mip
        ....:     p = Permutations(10).random_element()
        ....:     g1 = graphs.PermutationGraph(p)
        ....:     isit, certif = is_permutation(g1, algorithm="MILP", certificate=True)
@@ -745,15 +745,15 @@ def is_transitive(g, certificate=False):
         (0, 2)
         sage: digraphs.RandomDirectedGNP(30,.2).is_transitive()
         False
-        sage: D = digraphs.DeBruijn(5, 2)                                               # optional - sage.combinat
-        sage: D.is_transitive()                                                         # optional - sage.combinat
+        sage: D = digraphs.DeBruijn(5, 2)                                               # needs sage.combinat
+        sage: D.is_transitive()                                                         # needs sage.combinat
         False
-        sage: cert = D.is_transitive(certificate=True)                                  # optional - sage.combinat
-        sage: D.has_edge(*cert)                                                         # optional - sage.combinat
+        sage: cert = D.is_transitive(certificate=True)                                  # needs sage.combinat
+        sage: D.has_edge(*cert)                                                         # needs sage.combinat
         False
-        sage: bool(D.shortest_path(*cert))                                              # optional - sage.combinat
+        sage: bool(D.shortest_path(*cert))                                              # needs sage.combinat
         True
-        sage: digraphs.RandomDirectedGNP(20,.2).transitive_closure().is_transitive()    # optional - networkx
+        sage: digraphs.RandomDirectedGNP(20,.2).transitive_closure().is_transitive()    # needs networkx
         True
     """
     cdef int n = g.order()
