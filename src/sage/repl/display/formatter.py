@@ -7,7 +7,7 @@ formatters. It has two main features, by default the displayhook
 contains a new facility for displaying lists of matrices in an easier
 to read format::
 
-    sage: [identity_matrix(i) for i in range(2, 5)]                                     # optional - sage.modules
+    sage: [identity_matrix(i) for i in range(2, 5)]                                     # needs sage.modules
     [
                     [1 0 0 0]
            [1 0 0]  [0 1 0 0]
