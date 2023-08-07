@@ -33,7 +33,7 @@ cdef void lmul_gen(list A, Morphism m, d)
 cdef class OrePolynomial_generic_dense(OrePolynomial):
     cdef list _coeffs
 
-    cdef void __normalize(self)
+    cdef void _normalize(self)
     cpdef _add_(self, other)
     cdef list _mul_list(self, list A)
     cpdef _mul_(self, other)

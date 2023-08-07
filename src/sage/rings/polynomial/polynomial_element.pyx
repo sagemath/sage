@@ -11326,7 +11326,7 @@ cdef class Polynomial_generic_dense(Polynomial):
         if isinstance(x, (list, tuple)):
             if check:
                 self.__coeffs = [R(t) for t in x]
-                self.__normalize()
+                self._normalize()
             else:
                 self.__coeffs = x
             return
@@ -11351,7 +11351,7 @@ cdef class Polynomial_generic_dense(Polynomial):
             else:
                 self.__coeffs = [R(a, **kwds) for a in x.list(copy=False)]
                 if check:
-                    self.__normalize()
+                    self._normalize()
                 return
 
         elif isinstance(x, int) and x == 0:
@@ -11372,7 +11372,7 @@ cdef class Polynomial_generic_dense(Polynomial):
 #                x = []    # zero polynomial
         if check:
             self.__coeffs = [R(z, **kwds) for z in x]
-            self.__normalize()
+            self._normalize()
         else:
             self.__coeffs = x
 
@@ -11474,10 +11474,10 @@ cdef class Polynomial_generic_dense(Polynomial):
         cdef Polynomial_generic_dense res = self._new_c(v, self._parent)
         #if not v[len(v)-1]:
         # "normalize" checks this anyway...
-        res.__normalize()
+        res._normalize()
         return res
 
-    cdef int __normalize(self) except -1:
+    cdef int _normalize(self) except -1:
         """
         TESTS:
 
@@ -11550,7 +11550,7 @@ cdef class Polynomial_generic_dense(Polynomial):
         if n >= 0 and n < len(self.__coeffs):
             self.__coeffs[n] = value
             if n == len(self.__coeffs) and value == 0:
-                self.__normalize()
+                self._normalize()
         elif n < 0:
             raise IndexError("polynomial coefficient index must be nonnegative")
         elif value != 0:
@@ -11598,7 +11598,7 @@ cdef class Polynomial_generic_dense(Polynomial):
         P = parent(self)
         d = P.base_ring()(right)
         cdef Polynomial_generic_dense res = (<Polynomial_generic_dense>self)._new_c([c // d for c in (<Polynomial_generic_dense>self).__coeffs], P)
-        res.__normalize()
+        res._normalize()
         return res
 
     cpdef _add_(self, right):
@@ -11627,7 +11627,7 @@ cdef class Polynomial_generic_dense(Polynomial):
         cdef list low = [x[i] + y[i] for i from 0 <= i < min]
         if len(x) == len(y):
             res = self._new_c(low, self._parent)
-            res.__normalize()
+            res._normalize()
             return res
         else:
             return self._new_c(low + high, self._parent)
@@ -11648,7 +11648,7 @@ cdef class Polynomial_generic_dense(Polynomial):
         low = [x[i] - y[i] for i from 0 <= i < min]
         if len(x) == len(y):
             res = self._new_c(low, self._parent)
-            res.__normalize()
+            res._normalize()
             return res
         else:
             return self._new_c(low + high, self._parent)
@@ -11662,7 +11662,7 @@ cdef class Polynomial_generic_dense(Polynomial):
         cdef Polynomial_generic_dense res = self._new_c(v, self._parent)
         #if not v[len(v)-1]:
         # "normalize" checks this anyway...
-        res.__normalize()
+        res._normalize()
         return res
 
     cpdef _lmul_(self, Element c):
@@ -11674,7 +11674,7 @@ cdef class Polynomial_generic_dense(Polynomial):
         cdef Polynomial_generic_dense res = self._new_c(v, self._parent)
         #if not v[len(v)-1]:
         # "normalize" checks this anyway...
-        res.__normalize()
+        res._normalize()
         return res
 
     cpdef constant_coefficient(self):
@@ -12076,7 +12076,7 @@ cdef class Polynomial_generic_dense_inexact(Polynomial_generic_dense):
 
     - Xavier Caruso (2013-03)
     """
-    cdef int __normalize(self) except -1:
+    cdef int _normalize(self) except -1:
         r"""
         TESTS::
 

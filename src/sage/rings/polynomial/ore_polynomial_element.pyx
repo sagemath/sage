@@ -2246,7 +2246,7 @@ cdef class OrePolynomial_generic_dense(OrePolynomial):
         if isinstance(x, list):
             if check:
                 self._coeffs = [R(t) for t in x]
-                self.__normalize()
+                self._normalize()
             else:
                 self._coeffs = x
             return
@@ -2265,7 +2265,7 @@ cdef class OrePolynomial_generic_dense(OrePolynomial):
             else:
                 self._coeffs = [R(a, **kwds) for a in x.list()]
                 if check:
-                    self.__normalize()
+                    self._normalize()
                 return
 
         elif isinstance(x, int) and x == 0:
@@ -2279,7 +2279,7 @@ cdef class OrePolynomial_generic_dense(OrePolynomial):
             x = [x]
         if check:
             self._coeffs = [R(z, **kwds) for z in x]
-            self.__normalize()
+            self._normalize()
         else:
             self._coeffs = x
 
@@ -2354,10 +2354,10 @@ cdef class OrePolynomial_generic_dense(OrePolynomial):
         f._parent = P
         f._coeffs = coeffs
         if check:
-            f.__normalize()
+            f._normalize()
         return f
 
-    cdef void __normalize(self):
+    cdef void _normalize(self):
         r"""
         Remove higher order `0`-coefficients from the representation of ``self``.
 
