@@ -3087,6 +3087,38 @@ cdef class Matrix_modn_dense_template(Matrix_dense):
             ans.append(M)
         return ans
 
+    def matrix_from_columns(self, columns):
+        """
+        Return the matrix constructed from self using columns with indices
+        in the columns list.
+
+        EXAMPLES::
+
+            sage: M = MatrixSpace(Integers(8),3,3)
+            sage: A = M(range(9)); A
+            [0 1 2]
+            [3 4 5]
+            [6 7 0]
+            sage: A.matrix_from_columns([2,1])
+            [2 1]
+            [5 4]
+            [0 7]
+        """
+        #columns = PySequence_Fast(columns, "columns is not iterable")
+        cdef Py_ssize_t ncols = len(columns)
+
+        # Construct new matrix
+        cdef Matrix_modn_dense_template A = self.new_matrix(ncols=ncols)
+        cdef Py_ssize_t i, j, col
+        for j, col in enumerate(columns):
+            if col < 0 or col >= self._ncols:
+                raise IndexError("column index out of range")
+            for i in range(self._nrows):
+                A._matrix[i][j] = self._matrix[i][col]
+                
+                #A.set_unsafe(i, j, self.get_unsafe(i, col))
+        return A
+        
     def matrix_from_rows(self, rows):
         """
         Return the matrix constructed from self using rows with indices in
@@ -3178,8 +3210,8 @@ cdef class Matrix_modn_dense_template(Matrix_dense):
                 raise IndexError("row index out of range")
             for j, col in enumerate(columns):
                 A._matrix[i][j] = self._matrix[row][col]
-
-                #memcpy(A._entries+(j+i*self._ncols), self._entries+(col+row*self._ncols), sizeof(celement))
+                
+                #A.set_unsafe(i, j, self.get_unsafe(row, col))
         return A
 
     def __bool__(self):
