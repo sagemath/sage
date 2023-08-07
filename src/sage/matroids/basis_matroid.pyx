@@ -263,7 +263,7 @@ cdef class BasisMatroid(BasisExchangeMatroid):
 
     # support for parent BasisExchangeMatroid
 
-    cdef bint __is_exchange_pair(self, long x, long y) except -1:      # test if current_basis-x + y is a basis
+    cdef bint _is_exchange_pair(self, long x, long y) except -1:      # test if current_basis-x + y is a basis
         """
         Test if `B-e + f` is a basis of the current matroid.
 
