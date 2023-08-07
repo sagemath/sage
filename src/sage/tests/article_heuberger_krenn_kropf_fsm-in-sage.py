@@ -508,14 +508,14 @@ Sage example in fsm-in-sage.tex, line 1091::
 
     sage: var('y')                                                                      # optional - sage.symbolic
     y
-    sage: def am_entry(trans):                                                          # optional - sage.symbolic
+    sage: def am_entry(trans):
     ....:     return y^add(trans.word_out) / 2
     sage: A = W.adjacency_matrix(entry=am_entry)                                        # optional - sage.symbolic
 
 
 Sage example in fsm-in-sage.tex, line 1097::
 
-    sage: latex.matrix_column_alignment('c')                                            # optional - sage.symbolic
+    sage: latex.matrix_column_alignment('c')
 
 
 Sage example in fsm-in-sage.tex, line 1099::

@@ -84,16 +84,17 @@ Sage example in ./kschurnotes/notes-mike-anne.tex, line 398::
 
 Sage example in ./kschurnotes/notes-mike-anne.tex, line 406::
 
-    sage: w = W.an_element(); w         # long time
+    sage: # long time
+    sage: w = W.an_element(); w
     [ 2  0  0  1 -2]
     [ 2  0  0  0 -1]
     [ 1  1  0  0 -1]
     [ 1  0  1  0 -1]
     [ 1  0  0  1 -1]
-    sage: w.reduced_word()              # long time
+    sage: w.reduced_word()
     [0, 1, 2, 3, 4]
-    sage: w = W.from_reduced_word([2,1,0]) # long time
-    sage: w.is_affine_grassmannian()       # long time
+    sage: w = W.from_reduced_word([2,1,0])
+    sage: w.is_affine_grassmannian()
     True
 
 Sage example in ./kschurnotes/notes-mike-anne.tex, line 464::

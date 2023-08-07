@@ -656,10 +656,11 @@ cdef class Function(SageObject):
             sage: hurwitz_zeta(1/2, b)
             hurwitz_zeta(1/2, [1.500000000 +/- 1.01e-10])
 
-            sage: iv = RIF(1, 1.0001)
-            sage: airy_ai(iv)
+            sage: iv = RIF(1, 1.0001)                                                   # needs sage.rings.real_interval_field
+
+            sage: airy_ai(iv)                                                           # needs sage.rings.real_interval_field
             airy_ai(1.0001?)
-            sage: airy_ai(CIF(iv))
+            sage: airy_ai(CIF(iv))                                                      # needs sage.rings.complex_interval_field
             airy_ai(1.0001?)
         """
         if isinstance(x, (float, complex)):
