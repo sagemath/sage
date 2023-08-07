@@ -249,7 +249,7 @@ cdef class Lfunction:
             3
 
         """
-        return self.__compute_rank()
+        return self._compute_rank()
 
     def __N(self, T):
         """
@@ -417,7 +417,7 @@ cdef class Lfunction:
     cdef c_Complex _hardy_z_function(self,c_Complex s):
         raise NotImplementedError
 
-    cdef int __compute_rank(self):
+    cdef int _compute_rank(self):
         raise NotImplementedError
 
     cdef double __typedN(self,double T):
@@ -513,7 +513,7 @@ cdef class Lfunction_I(Lfunction):
     cdef inline c_Complex _hardy_z_function(self,c_Complex s):
         return (<c_Lfunction_I *>(self.thisptr)).value(s, 0, "rotated pure")
 
-    cdef int __compute_rank(self):
+    cdef int _compute_rank(self):
         return (<c_Lfunction_I *>(self.thisptr)).compute_rank()
 
     cdef void __find_zeros_v(self, double T1, double T2, double stepsize, doublevec *result):
@@ -651,7 +651,7 @@ cdef class Lfunction_D(Lfunction):
     cdef inline c_Complex _hardy_z_function(self,c_Complex s):
         return (<c_Lfunction_D *>(self.thisptr)).value(s, 0, "rotated pure")
 
-    cdef inline int __compute_rank(self):
+    cdef inline int _compute_rank(self):
         return (<c_Lfunction_D *>(self.thisptr)).compute_rank()
 
     cdef void __find_zeros_v(self, double T1, double T2, double stepsize, doublevec *result):
@@ -795,7 +795,7 @@ cdef class Lfunction_C:
     cdef inline c_Complex _hardy_z_function(self,c_Complex s):
         return (<c_Lfunction_C *>(self.thisptr)).value(s, 0,"rotated pure")
 
-    cdef inline int __compute_rank(self):
+    cdef inline int _compute_rank(self):
         return (<c_Lfunction_C *>(self.thisptr)).compute_rank()
 
 
@@ -880,7 +880,7 @@ cdef class Lfunction_Zeta(Lfunction):
     cdef inline c_Complex _hardy_z_function(self,c_Complex s):
         return (<c_Lfunction_Zeta *>(self.thisptr)).value(s, 0, "rotated pure")
 
-    cdef inline int __compute_rank(self):
+    cdef inline int _compute_rank(self):
         return (<c_Lfunction_Zeta *>(self.thisptr)).compute_rank()
 
 
