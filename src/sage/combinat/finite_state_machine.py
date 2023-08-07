@@ -1,4 +1,4 @@
-# sage.doctest: optional - sage.graphs sage.modules
+# sage.doctest: needs sage.graphs sage.modules
 r"""
 Finite state machines, automata, transducers
 

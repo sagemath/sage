@@ -1,4 +1,4 @@
-# sage.doctest: optional - sage.geometry.polyhedron sage.plot sage.symbolic
+# sage.doctest: needs sage.geometry.polyhedron sage.plot sage.symbolic
 r"""
 Tutorial: visualizing root systems
 

@@ -1,4 +1,4 @@
-# sage.doctest: optional - sage.combinat sage.graphs sage.modules
+# sage.doctest: needs sage.combinat sage.graphs sage.modules
 r"""
 Subword complex
 

@@ -1,4 +1,4 @@
-# sage.doctest: optional - sage.libs.gap sage.groups
+# sage.doctest: needs sage.libs.gap sage.groups
 r"""
 Hecke algebra representations
 """

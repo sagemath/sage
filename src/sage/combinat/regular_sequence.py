@@ -1,4 +1,4 @@
-# sage.doctest: optional - sage.combinat sage.modules sage.symbolic
+# sage.doctest: needs sage.combinat sage.modules sage.symbolic
 r"""
 `k`-regular sequences
 

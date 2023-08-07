@@ -1,4 +1,4 @@
-# sage.doctest: optional - sage.combinat sage.groups sage.modules
+# sage.doctest: needs sage.combinat sage.groups sage.modules
 r"""
 Latin Squares
 

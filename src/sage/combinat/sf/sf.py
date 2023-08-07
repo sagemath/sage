@@ -1,4 +1,4 @@
-# sage.doctest: optional - sage.combinat sage.modules
+# sage.doctest: needs sage.combinat sage.modules
 """
 Symmetric functions, with their multiple realizations
 """

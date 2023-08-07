@@ -1,4 +1,4 @@
-# sage.doctest: optional - sage.combinat sage.modules
+# sage.doctest: needs sage.combinat sage.modules
 r"""
 Tensor Product of Kirillov-Reshetikhin Tableaux Elements
 

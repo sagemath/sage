@@ -1,4 +1,4 @@
-# sage.doctest: optional - sage.modules
+# sage.doctest: needs sage.modules
 
 cpdef int _flip_c(W, set positions, list extended_root_conf_indices,
                   int i, side="both"):

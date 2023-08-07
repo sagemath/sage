@@ -1,4 +1,4 @@
-# sage.doctest: optional - sage.combinat sage.groups
+# sage.doctest: needs sage.combinat sage.groups
 r"""
 Integer vectors modulo the action of a permutation group
 """

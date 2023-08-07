@@ -1,4 +1,4 @@
-# sage.doctest: optional - sage.libs.gap
+# sage.doctest: needs sage.libs.gap
 r"""
 Pieri Factors
 """

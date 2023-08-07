@@ -1,4 +1,4 @@
-# sage.doctest: optional - sage.combinat sage.modules
+# sage.doctest: needs sage.combinat sage.modules
 r"""
 Crystal Of Mirković-Vilonen (MV) Polytopes
 

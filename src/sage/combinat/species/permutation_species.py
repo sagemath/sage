@@ -1,4 +1,4 @@
-# sage.doctest: optional - sage.groups sage.libs.flint
+# sage.doctest: needs sage.groups sage.libs.flint
 """
 Permutation species
 """
