@@ -89,6 +89,7 @@ from itertools import combinations
 # - add a method simplicial_complex() (returns the associated simplicial complex)?
 # - use different UniqueRepresentation complexes for components?
 # - different way of computing euler characteristic?
+# - make _moment_angle_complex a lazy attribute
 # - bigraded betti numbers? (page 161 buchstaber panov)
 
 # Future TODO's:
@@ -464,17 +465,15 @@ class MomentAngleComplex(SageObject, UniqueRepresentation):
         INPUT:
 
         - ``i`` -- integer; represents the homology we want to compute
-        - ``base_ring`` -- commutative ring, must be ``ZZ`` or a field
-          (default: ``ZZ``)
+        - ``base_ring`` -- commutative ring (default: ``ZZ``); must be ``ZZ`` or a field
         - ``cohomology`` -- boolean (default: ``False``);
-          if ``True``, compute cohomology rather than homology.
-        - ``algorithm`` -- a string which represents the method for
-          computing homology. The options are 'auto', 'dhsw', or 'pari'
-          (default: `pari`). See below for a description of what they mean.
+          if ``True``, compute cohomology rather than homology
+        - ``algorithm`` -- string (default: ``'pari'``); the options are ``'auto'``, ``'dhsw'``, or ``'pari'``;
+          see below for a description of what they mean
         - ``verbose`` -- boolean (default: ``False``); if ``True``,
-          print some messages as the homology is computed.
-        - ``reduced`` -- boolean (default: ``True``); If ``True``,
-          return the reduced homology.
+          print some messages as the homology is computed
+        - ``reduced`` -- boolean (default: ``True``); if ``True``,
+          return the reduced homology
 
         ALGORITHM:
 
