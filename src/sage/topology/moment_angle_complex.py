@@ -86,7 +86,7 @@ from itertools import combinations
 # - add literature and references to bibliography!!!
 # - add latex_name parameter or something similar?
 # - add moment_angle_complex to simplicial_complex
-# - add a method simplicial_complex() (returns the associated simplicial_complex)?
+# - add a method simplicial_complex() (returns the associated simplicial complex)?
 # - use different UniqueRepresentation complexes for components?
 # - different way of computing euler characteristic?
 # - bigraded betti numbers? (page 161 buchstaber panov)
@@ -150,7 +150,7 @@ class MomentAngleComplex(SageObject, UniqueRepresentation):
 
     EXAMPLES:
 
-    If the associated simplicial_complex is an `n`-simplex, then the
+    If the associated simplicial complex is an `n`-simplex, then the
     corresponding moment-angle complex is a polydisc (a complex ball) of
     complex dimension `n+1`::
 
@@ -163,7 +163,7 @@ class MomentAngleComplex(SageObject, UniqueRepresentation):
         sage: Z.components()
         {(0, 1, 2): [The 2-simplex, The 2-simplex, The 2-simplex]}
 
-    If the associated simplicial_complex is a disjoint union of 2 points,
+    If the associated simplicial complex is a disjoint union of 2 points,
     then the corresponding moment-angle complex is homeomorphic to a boundary
     of a 3-sphere::
 
@@ -464,20 +464,15 @@ class MomentAngleComplex(SageObject, UniqueRepresentation):
         INPUT:
 
         - ``i`` -- integer; represents the homology we want to compute
-
         - ``base_ring`` -- commutative ring, must be ``ZZ`` or a field
           (default: ``ZZ``)
-
         - ``cohomology`` -- boolean (default: ``False``);
           if ``True``, compute cohomology rather than homology.
-
         - ``algorithm`` -- a string which represents the method for
           computing homology. The options are 'auto', 'dhsw', or 'pari'
           (default: `pari`). See below for a description of what they mean.
-
         - ``verbose`` -- boolean (default: ``False``); if ``True``,
           print some messages as the homology is computed.
-
         - ``reduced`` -- boolean (default: ``True``); If ``True``,
           return the reduced homology.
 
