@@ -5912,10 +5912,10 @@ def _key_complex_for_display(a):
         sage: key_c(CC(5, 5))                                                           # needs sage.rings.real_mpfr
         (1, 5.00000000, 5.00000000000000)
 
-        sage: CIF200 = ComplexIntervalField(200)
-        sage: key_c(CIF200(5))
+        sage: CIF200 = ComplexIntervalField(200)                                        # needs sage.rings.complex_interval_field
+        sage: key_c(CIF200(5))                                                          # needs sage.rings.complex_interval_field
         (0, 5)
-        sage: key_c(CIF200(5, 5))
+        sage: key_c(CIF200(5, 5))                                                       # needs sage.rings.complex_interval_field
         (1, 5.00000000, 5)
     """
     ar = a.real()
