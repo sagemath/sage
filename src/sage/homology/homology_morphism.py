@@ -1,4 +1,4 @@
-# sage.doctest: optional - sage.graphs          (because all doctests use the catalog simplicial_complexes)
+# sage.doctest: needs sage.graphs          (because all doctests use the catalog simplicial_complexes)
 r"""
 Induced morphisms on homology
 
