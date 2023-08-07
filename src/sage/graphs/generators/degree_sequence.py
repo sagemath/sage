@@ -41,25 +41,25 @@ def DegreeSequence(deg_sequence):
 
     EXAMPLES::
 
-        sage: G = graphs.DegreeSequence([3,3,3,3])                                      # optional - networkx
-        sage: G.edges(sort=True, labels=False)                                          # optional - networkx
+        sage: G = graphs.DegreeSequence([3,3,3,3])                                      # needs networkx
+        sage: G.edges(sort=True, labels=False)                                          # needs networkx
         [(0, 1), (0, 2), (0, 3), (1, 2), (1, 3), (2, 3)]
-        sage: G.show()  # long time                                                     # optional - networkx sage.plot
+        sage: G.show()                          # long time                             # needs networkx sage.plot
 
     ::
 
-        sage: G = graphs.DegreeSequence([3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3])  # optional - networkx
-        sage: G.show()  # long time                                                     # optional - networkx sage.plot
+        sage: G = graphs.DegreeSequence([3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3])  # needs networkx
+        sage: G.show()                          # long time                             # needs networkx sage.plot
 
     ::
 
-        sage: G = graphs.DegreeSequence([4,4,4,4,4,4,4,4])                              # optional - networkx
-        sage: G.show()  # long time                                                     # optional - networkx sage.plot
+        sage: G = graphs.DegreeSequence([4,4,4,4,4,4,4,4])                              # needs networkx
+        sage: G.show()                          # long time                             # needs networkx sage.plot
 
     ::
 
-        sage: G = graphs.DegreeSequence([1,2,3,4,3,4,3,2,3,2,1])                        # optional - networkx
-        sage: G.show()  # long time                                                     # optional - networkx sage.plot
+        sage: G = graphs.DegreeSequence([1,2,3,4,3,4,3,2,3,2,1])                        # needs networkx
+        sage: G.show()                          # long time                             # needs networkx sage.plot
     """
     import networkx
     return Graph(networkx.havel_hakimi_graph([int(i) for i in deg_sequence]))
@@ -93,15 +93,15 @@ def DegreeSequenceBipartite(s1, s2):
     If we are given as sequences ``[2,2,2,2,2]`` and ``[5,5]`` we are given as
     expected the complete bipartite graph `K_{2,5}`::
 
-        sage: g = graphs.DegreeSequenceBipartite([2,2,2,2,2],[5,5])                     # optional - sage.modules
-        sage: g.is_isomorphic(graphs.CompleteBipartiteGraph(5,2))                       # optional - sage.modules
+        sage: g = graphs.DegreeSequenceBipartite([2,2,2,2,2],[5,5])                     # needs sage.modules
+        sage: g.is_isomorphic(graphs.CompleteBipartiteGraph(5,2))                       # needs sage.modules
         True
 
     Some sequences being incompatible if, for example, their sums are different,
     the functions raises a ``ValueError`` when no graph corresponding to the
     degree sequences exists::
 
-        sage: g = graphs.DegreeSequenceBipartite([2,2,2,2,1],[5,5])                     # optional - sage.modules
+        sage: g = graphs.DegreeSequenceBipartite([2,2,2,2,1],[5,5])                     # needs sage.modules
         Traceback (most recent call last):
         ...
         ValueError: there exists no bipartite graph corresponding to the given degree sequences
@@ -110,7 +110,7 @@ def DegreeSequenceBipartite(s1, s2):
 
     :trac:`12155`::
 
-        sage: graphs.DegreeSequenceBipartite([2,2,2,2,2],[5,5]).complement()            # optional - sage.modules
+        sage: graphs.DegreeSequenceBipartite([2,2,2,2,2],[5,5]).complement()            # needs sage.modules
         Graph on 7 vertices
     """
     from sage.combinat.integer_vector import gale_ryser_theorem
@@ -147,20 +147,21 @@ def DegreeSequenceConfigurationModel(deg_sequence, seed=None):
 
     EXAMPLES::
 
-        sage: G = graphs.DegreeSequenceConfigurationModel([1,1])                        # optional - networkx
-        sage: G.adjacency_matrix()                                                      # optional - networkx sage.modules
+        sage: G = graphs.DegreeSequenceConfigurationModel([1,1])                        # needs networkx
+        sage: G.adjacency_matrix()                                                      # needs networkx sage.modules
         [0 1]
         [1 0]
 
     The output is allowed to contain both loops and multiple edges::
 
-        sage: deg_sequence = [3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3]                  # optional - networkx
-        sage: G = graphs.DegreeSequenceConfigurationModel(deg_sequence)                 # optional - networkx
-        sage: G.order(), G.size()                                                       # optional - networkx
+        sage: # needs networkx
+        sage: deg_sequence = [3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3]
+        sage: G = graphs.DegreeSequenceConfigurationModel(deg_sequence)
+        sage: G.order(), G.size()
         (20, 30)
-        sage: G.has_loops() or G.has_multiple_edges()  # random                         # optional - networkx
+        sage: G.has_loops() or G.has_multiple_edges()  # random
         True
-        sage: G.show()  # long time                                                     # optional - networkx sage.plot
+        sage: G.show()                          # long time                             # needs sage.plot
 
     REFERENCE:
 
@@ -191,9 +192,9 @@ def DegreeSequenceTree(deg_sequence):
 
     EXAMPLES::
 
-        sage: G = graphs.DegreeSequenceTree([3,1,3,3,1,1,1,2,1]); G                     # optional - networkx
+        sage: G = graphs.DegreeSequenceTree([3,1,3,3,1,1,1,2,1]); G                     # needs networkx
         Graph on 9 vertices
-        sage: G.show()  # long time                                                     # optional - networkx sage.plot
+        sage: G.show()                          # long time                             # needs networkx sage.plot
     """
     import networkx
     return Graph(networkx.degree_sequence_tree([int(i) for i in deg_sequence]))
@@ -219,9 +220,9 @@ def DegreeSequenceExpected(deg_sequence, seed=None):
 
     EXAMPLES::
 
-        sage: G = graphs.DegreeSequenceExpected([1,2,3,2,3]); G                         # optional - networkx
+        sage: G = graphs.DegreeSequenceExpected([1,2,3,2,3]); G                         # needs networkx
         Looped graph on 5 vertices
-        sage: G.show()  # long time                                                     # optional - networkx sage.plot
+        sage: G.show()                          # long time                             # needs networkx sage.plot
 
     REFERENCE:
 
