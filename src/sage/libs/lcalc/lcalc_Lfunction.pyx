@@ -399,7 +399,7 @@ cdef class Lfunction:
         cdef const char* message_stamp = ""
         cdef doublevec result
         sig_on()
-        self.__find_zeros(count, start, max_refine, rank, message_stamp, &result)
+        self._find_zeros(count, start, max_refine, rank, message_stamp, &result)
         sig_off()
         returnvalue = []
         for i in range(result.size()):
@@ -426,7 +426,7 @@ cdef class Lfunction:
     cdef void _find_zeros_v(self,double T1, double T2, double stepsize, doublevec *result):
         raise NotImplementedError
 
-    cdef int __find_zeros(self, long count, long start, double max_refine, int rank, const char* message_stamp, doublevec *result):
+    cdef int _find_zeros(self, long count, long start, double max_refine, int rank, const char* message_stamp, doublevec *result):
         raise NotImplementedError
 
 ##############################################################################
@@ -522,7 +522,7 @@ cdef class Lfunction_I(Lfunction):
     cdef double _typedN(self, double T):
         return (<c_Lfunction_I *>self.thisptr).N(T)
 
-    cdef int __find_zeros(self, long count, long start, double max_refine, int rank, const char* message_stamp, doublevec *result):
+    cdef int _find_zeros(self, long count, long start, double max_refine, int rank, const char* message_stamp, doublevec *result):
         (<c_Lfunction_I *>self.thisptr).find_zeros(count, start, max_refine, rank, message_stamp, result)
 
     # debug tools
@@ -660,7 +660,7 @@ cdef class Lfunction_D(Lfunction):
     cdef double _typedN(self, double T):
         return (<c_Lfunction_D *>self.thisptr).N(T)
 
-    cdef int __find_zeros(self, long count, long start,double max_refine, int rank, const char* message_stamp, doublevec *result):
+    cdef int _find_zeros(self, long count, long start,double max_refine, int rank, const char* message_stamp, doublevec *result):
         (<c_Lfunction_D *>self.thisptr).find_zeros(count, start, max_refine, rank, message_stamp, result)
 
     # debug tools
@@ -805,7 +805,7 @@ cdef class Lfunction_C:
     cdef double _typedN(self, double T):
         return (<c_Lfunction_C *>self.thisptr).N(T)
 
-    cdef int __find_zeros(self, long count, long start, double max_refine, int rank, const char* message_stamp, doublevec *result):
+    cdef int _find_zeros(self, long count, long start, double max_refine, int rank, const char* message_stamp, doublevec *result):
         (<c_Lfunction_C *>self.thisptr).find_zeros(count, start, max_refine, rank, message_stamp, result)
 
     # debug tools
@@ -890,7 +890,7 @@ cdef class Lfunction_Zeta(Lfunction):
     cdef double _typedN(self, double T):
         return (<c_Lfunction_Zeta *>self.thisptr).N(T)
 
-    cdef int __find_zeros(self, long count, long start, double max_refine, int rank, const char* message_stamp, doublevec *result):
+    cdef int _find_zeros(self, long count, long start, double max_refine, int rank, const char* message_stamp, doublevec *result):
         (<c_Lfunction_Zeta *>self.thisptr).find_zeros(count, start, max_refine, rank, message_stamp, result)
 
     def __dealloc__(self):
