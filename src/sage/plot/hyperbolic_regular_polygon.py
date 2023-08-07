@@ -1,4 +1,4 @@
-# sage.doctest: optional - sage.symbolic
+# sage.doctest: needs sage.symbolic
 """
 Regular polygons in the upper half model for hyperbolic plane
 
