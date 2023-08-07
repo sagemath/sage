@@ -267,7 +267,7 @@ cdef class Lfunction:
         """
         cdef RealNumber real_T=RRR(T)
         cdef double double_T = mpfr_get_d(real_T.value, MPFR_RNDN)
-        cdef double res_d = self.__typedN(double_T)
+        cdef double res_d = self._typedN(double_T)
         return RRR(res_d)
 
     def find_zeros(self, T1, T2, stepsize):
@@ -420,7 +420,7 @@ cdef class Lfunction:
     cdef int _compute_rank(self):
         raise NotImplementedError
 
-    cdef double __typedN(self,double T):
+    cdef double _typedN(self,double T):
         raise NotImplementedError
 
     cdef void __find_zeros_v(self,double T1, double T2, double stepsize, doublevec *result):
@@ -519,7 +519,7 @@ cdef class Lfunction_I(Lfunction):
     cdef void __find_zeros_v(self, double T1, double T2, double stepsize, doublevec *result):
         (<c_Lfunction_I *>self.thisptr).find_zeros_v(T1,T2,stepsize,result[0])
 
-    cdef double __typedN(self, double T):
+    cdef double _typedN(self, double T):
         return (<c_Lfunction_I *>self.thisptr).N(T)
 
     cdef int __find_zeros(self, long count, long start, double max_refine, int rank, const char* message_stamp, doublevec *result):
@@ -657,7 +657,7 @@ cdef class Lfunction_D(Lfunction):
     cdef void __find_zeros_v(self, double T1, double T2, double stepsize, doublevec *result):
         (<c_Lfunction_D *>self.thisptr).find_zeros_v(T1,T2,stepsize,result[0])
 
-    cdef double __typedN(self, double T):
+    cdef double _typedN(self, double T):
         return (<c_Lfunction_D *>self.thisptr).N(T)
 
     cdef int __find_zeros(self, long count, long start,double max_refine, int rank, const char* message_stamp, doublevec *result):
@@ -802,7 +802,7 @@ cdef class Lfunction_C:
     cdef void __find_zeros_v(self, double T1, double T2, double stepsize, doublevec *result):
         (<c_Lfunction_C *>self.thisptr).find_zeros_v(T1,T2,stepsize,result[0])
 
-    cdef double __typedN(self, double T):
+    cdef double _typedN(self, double T):
         return (<c_Lfunction_C *>self.thisptr).N(T)
 
     cdef int __find_zeros(self, long count, long start, double max_refine, int rank, const char* message_stamp, doublevec *result):
@@ -887,7 +887,7 @@ cdef class Lfunction_Zeta(Lfunction):
     cdef void __find_zeros_v(self, double T1, double T2, double stepsize, doublevec *result):
         (<c_Lfunction_Zeta *>self.thisptr).find_zeros_v(T1,T2,stepsize,result[0])
 
-    cdef double __typedN(self, double T):
+    cdef double _typedN(self, double T):
         return (<c_Lfunction_Zeta *>self.thisptr).N(T)
 
     cdef int __find_zeros(self, long count, long start, double max_refine, int rank, const char* message_stamp, doublevec *result):
