@@ -366,7 +366,7 @@ cdef class localvars:
             self._latex_names = latex_names
 
     def __enter__(self):
-        self._orig = self._obj.__temporarily_change_names(self._names, self._latex_names)
+        self._orig = self._obj._temporarily_change_names(self._names, self._latex_names)
 
     def __exit__(self, type, value, traceback):
-        self._obj.__temporarily_change_names(self._orig[0], self._orig[1])
+        self._obj._temporarily_change_names(self._orig[0], self._orig[1])

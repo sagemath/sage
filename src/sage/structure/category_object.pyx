@@ -489,7 +489,7 @@ cdef class CategoryObject(SageObject):
         """
         return self.variable_names()[0]
 
-    def __temporarily_change_names(self, names, latex_names):
+    def _temporarily_change_names(self, names, latex_names):
         """
         This is used by the variable names context manager.
 

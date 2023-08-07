@@ -1491,7 +1491,7 @@ cdef class MPolynomialRing_libsingular(MPolynomialRing_base):
         return unpickle_MPolynomialRing_libsingular, \
             (self.base_ring(), self.variable_names(), self.term_order())
 
-    def __temporarily_change_names(self, names, latex_names):
+    def _temporarily_change_names(self, names, latex_names):
         """
         This is used by the variable names context manager.
 
