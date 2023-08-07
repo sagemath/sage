@@ -219,7 +219,7 @@ cdef class BasisMatroid(BasisExchangeMatroid):
                     raise ValueError("basis has wrong cardinality.")
                 if not b.issubset(self._groundset):
                     raise ValueError("basis is not a subset of the groundset")
-                self.__pack(self._b, b)
+                self._BasisExchangeMatroid__pack(self._b, b)
                 i = set_to_index(self._b)
                 if not bitset_in(self._bb, i):
                     self._bcount += 1
@@ -234,7 +234,7 @@ cdef class BasisMatroid(BasisExchangeMatroid):
                         raise ValueError("nonbasis has wrong cardinality")
                     if not b.issubset(self._groundset):
                         raise ValueError("nonbasis is not a subset of the groundset")
-                    self.__pack(self._b, b)
+                    self._BasisExchangeMatroid__pack(self._b, b)
                     i = set_to_index(self._b)
                     if bitset_in(self._bb, i):
                         self._bcount -= 1
@@ -326,7 +326,7 @@ cdef class BasisMatroid(BasisExchangeMatroid):
             sage: M._is_basis(set(['a', 'b', 'c', 'd']))
             False
         """
-        self.__pack(self._b, X)
+        self._BasisExchangeMatroid__pack(self._b, X)
         return bitset_in(self._bb, set_to_index(self._b))
 
     # dual and minors
