@@ -761,12 +761,16 @@ cdef class CachedFunction():
         else:
             self.__name__ = f.__name__
         try:
-            self.__module__ = f.__module__
+            self.__cached_module__ = f.__module__
         except AttributeError:
-            self.__module__ = f.__objclass__.__module__
+            self.__cached_module__ = f.__objclass__.__module__
         if argument_fixer is not None: # it is None unless the argument fixer
                                        # was known previously. See #15038.
             self._argument_fixer = argument_fixer
+
+    @property
+    def __module__(self):
+        return self.__cached_module__
 
     cdef get_key_args_kwds(self, tuple args, dict kwds):
         """
@@ -828,7 +832,7 @@ cdef class CachedFunction():
             sage: loads(dumps(hilbert_class_polynomial)) is hilbert_class_polynomial  #indirect doctest
             True
         """
-        return _cached_function_unpickle, (self.__module__, self.__name__, self.cache)
+        return _cached_function_unpickle, (self.__cached_module__, self.__name__, self.cache)
 
     #########
     ## Introspection
@@ -2675,7 +2679,11 @@ cdef class CachedMethod():
         self._cache_name = '_cache__' + (name or f.__name__)
         self._cachedfunc = CachedFunction(f, classmethod=True, name=name, key=key, do_pickle=do_pickle)
         self.__name__ = self._cachedfunc.__name__
-        self.__module__ = self._cachedfunc.__module__
+        self.__cached_module__ = self._cachedfunc.__module__
+
+    @property
+    def __module__(self):
+        return self.__cached_module__
 
     def __call__(self, inst, *args, **kwds):
         """
