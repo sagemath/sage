@@ -1,4 +1,4 @@
-# sage.doctest: optional - sage.combinat sage.modules
+# sage.doctest: needs sage.combinat sage.modules
 
 cdef extern from 'symmetrica/def.h':
     INT outerproduct_schur(OP parta, OP partb, OP result)

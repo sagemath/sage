@@ -1,4 +1,4 @@
-# sage.doctest: optional - sage.combinat sage.modules
+# sage.doctest: needs sage.combinat sage.modules
 
 from cpython.object cimport *
 from cysignals.signals cimport sig_on, sig_off
