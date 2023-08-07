@@ -1173,8 +1173,8 @@ class Set_object_enumerated(Set_object):
 
             sage: X = Set(GF(8,'c'))                                                    # needs sage.rings.finite_rings
             sage: Y = Set([GF(8,'c').0, 1, 2, 3])                                       # needs sage.rings.finite_rings
-            sage: X.intersection(Y)                                                     # needs sage.rings.finite_rings
-            {1, c}
+            sage: sorted(X.intersection(Y), key=str)                                    # needs sage.rings.finite_rings
+            [1, c]
         """
         if not isinstance(other, Set_object_enumerated):
             return Set_object.intersection(self, other)
