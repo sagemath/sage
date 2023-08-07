@@ -99,7 +99,7 @@ cdef class Lfunction:
             tmpc=CCC(residue[i])
             r[i+1] = new_Complex(mpfr_get_d(tmpc.__re, MPFR_RNDN), mpfr_get_d(tmpc.__im, MPFR_RNDN))
 
-        self.__init_fun(NAME, what_type, dirichlet_coefficient, Period, q,  w,  A, g, l, n_poles, p, r)
+        self._init_fun(NAME, what_type, dirichlet_coefficient, Period, q,  w,  A, g, l, n_poles, p, r)
 
         if name:
             name += ': '
@@ -408,7 +408,7 @@ cdef class Lfunction:
         return returnvalue
 
     # Needs to be overriden
-    cdef void __init_fun(self, char *NAME, int what_type, dirichlet_coeff, long long Period, double q,  c_Complex w, int A, double *g, c_Complex *l, int n_poles, c_Complex *p, c_Complex *r):
+    cdef void _init_fun(self, char *NAME, int what_type, dirichlet_coeff, long long Period, double q,  c_Complex w, int A, double *g, c_Complex *l, int n_poles, c_Complex *p, c_Complex *r):
         raise NotImplementedError
 
     cdef c_Complex __value(self,c_Complex s,int derivative):
@@ -497,7 +497,7 @@ cdef class Lfunction_I(Lfunction):
         self._repr += " with integer Dirichlet coefficients"
 
     # override
-    cdef void __init_fun(self, char *NAME, int what_type, dirichlet_coeff, long long Period, double q,  c_Complex w, int A, double *g, c_Complex *l, int n_poles, c_Complex *p, c_Complex *r):
+    cdef void _init_fun(self, char *NAME, int what_type, dirichlet_coeff, long long Period, double q,  c_Complex w, int A, double *g, c_Complex *l, int n_poles, c_Complex *p, c_Complex *r):
         cdef int N = len(dirichlet_coeff)
         cdef Integer tmpi
         cdef int * coeffs = new_ints(N+1) #lcalc ignores 0the coefficient
@@ -633,7 +633,7 @@ cdef class Lfunction_D(Lfunction):
         self._repr += " with real Dirichlet coefficients"
 
     # override
-    cdef void __init_fun(self, char *NAME, int what_type, dirichlet_coeff, long long Period, double q,  c_Complex w, int A, double *g, c_Complex *l, int n_poles, c_Complex *p, c_Complex *r):
+    cdef void _init_fun(self, char *NAME, int what_type, dirichlet_coeff, long long Period, double q,  c_Complex w, int A, double *g, c_Complex *l, int n_poles, c_Complex *p, c_Complex *r):
         cdef int i
         cdef RealNumber tmpr
         cdef int N = len(dirichlet_coeff)
@@ -773,7 +773,7 @@ cdef class Lfunction_C:
         self._repr += " with complex Dirichlet coefficients"
 
     # override
-    cdef void __init_fun(self, char *NAME, int what_type, dirichlet_coeff, long long Period, double q,  c_Complex w, int A, double *g, c_Complex *l, int n_poles, c_Complex *p, c_Complex *r):
+    cdef void _init_fun(self, char *NAME, int what_type, dirichlet_coeff, long long Period, double q,  c_Complex w, int A, double *g, c_Complex *l, int n_poles, c_Complex *p, c_Complex *r):
         cdef int i
         cdef int N = len(dirichlet_coeff)
         cdef ComplexNumber tmpc
