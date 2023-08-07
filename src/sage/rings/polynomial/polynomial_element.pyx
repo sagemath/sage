@@ -9598,7 +9598,7 @@ cdef class Polynomial(CommutativePolynomial):
             0
         """
         # __getitem__ already returns a polynomial!!
-        # We must not have check=False, since 0 must not have __coeffs = [0].
+        # We must not have check=False, since 0 must not have _coeffs = [0].
         return <Polynomial>self._parent(self[:n])#, check=False)
 
     cdef _inplace_truncate(self, long prec):
@@ -11319,16 +11319,16 @@ cdef class Polynomial_generic_dense(Polynomial):
     def __init__(self, parent, x=None, int check=1, is_gen=False, int construct=0, **kwds):
         Polynomial.__init__(self, parent, is_gen=is_gen)
         if x is None:
-            self.__coeffs = []
+            self._coeffs = []
             return
 
         R = parent.base_ring()
         if isinstance(x, (list, tuple)):
             if check:
-                self.__coeffs = [R(t) for t in x]
+                self._coeffs = [R(t) for t in x]
                 self._normalize()
             else:
-                self.__coeffs = x
+                self._coeffs = x
             return
 
         if sage.rings.fraction_field_element.is_FractionFieldElement(x):
@@ -11343,19 +11343,19 @@ cdef class Polynomial_generic_dense(Polynomial):
             elif R.has_coerce_map_from((<Element>x)._parent):# is R or (<Element>x)._parent == R:
                 try:
                     if x.is_zero():
-                        self.__coeffs = []
+                        self._coeffs = []
                         return
                 except (AttributeError, TypeError):
                     pass
                 x = [x]
             else:
-                self.__coeffs = [R(a, **kwds) for a in x.list(copy=False)]
+                self._coeffs = [R(a, **kwds) for a in x.list(copy=False)]
                 if check:
                     self._normalize()
                 return
 
         elif isinstance(x, int) and x == 0:
-            self.__coeffs = []
+            self._coeffs = []
             return
 
         elif isinstance(x, dict):
@@ -11371,16 +11371,16 @@ cdef class Polynomial_generic_dense(Polynomial):
 #            else:
 #                x = []    # zero polynomial
         if check:
-            self.__coeffs = [R(z, **kwds) for z in x]
+            self._coeffs = [R(z, **kwds) for z in x]
             self._normalize()
         else:
-            self.__coeffs = x
+            self._coeffs = x
 
     cdef Polynomial_generic_dense _new_c(self, list coeffs, Parent P):
         cdef type t = type(self)
         cdef Polynomial_generic_dense f = <Polynomial_generic_dense>t.__new__(t)
         f._parent = P
-        f.__coeffs = coeffs
+        f._coeffs = coeffs
         return f
 
     cpdef Polynomial _new_constant_poly(self, a, Parent P):
@@ -11422,10 +11422,10 @@ cdef class Polynomial_generic_dense(Polynomial):
             sage: type(f)
             <class 'sage.rings.polynomial.polynomial_element.Polynomial_generic_dense'>
         """
-        return make_generic_polynomial, (self._parent, self.__coeffs)
+        return make_generic_polynomial, (self._parent, self._coeffs)
 
     def __bool__(self):
-        return bool(self.__coeffs)
+        return bool(self._coeffs)
 
     cpdef bint is_term(self) except -1:
         """
@@ -11444,10 +11444,10 @@ cdef class Polynomial_generic_dense(Polynomial):
             sage: (1 + 3*x^5).is_term()                                                 # optional - sage.symbolic
             False
         """
-        if not self.__coeffs:
+        if not self._coeffs:
             return False
 
-        for c in self.__coeffs[:-1]:
+        for c in self._coeffs[:-1]:
             if c:
                 return False
         return True
@@ -11459,9 +11459,9 @@ cdef class Polynomial_generic_dense(Polynomial):
         Return the product ``self * term``, where ``term`` is a polynomial
         with a single term.
         """
-        cdef Py_ssize_t d = len( (<Polynomial_generic_dense> term).__coeffs ) - 1
+        cdef Py_ssize_t d = len( (<Polynomial_generic_dense> term)._coeffs ) - 1
         cdef Py_ssize_t i
-        cdef list x = self.__coeffs
+        cdef list x = self._coeffs
         cdef Py_ssize_t ell = len(x)
         c = term.get_unsafe(d)
         cdef list v = [self.base_ring().zero()] * (d + ell)
@@ -11495,7 +11495,7 @@ cdef class Polynomial_generic_dense(Polynomial):
             ...
             NotImplementedError: cannot check whether number is non-zero
         """
-        cdef list x = self.__coeffs
+        cdef list x = self._coeffs
         cdef Py_ssize_t n = len(x) - 1
         while n >= 0 and not x[n]:
             del x[n]
@@ -11524,7 +11524,7 @@ cdef class Polynomial_generic_dense(Polynomial):
             sage: f[:3]
             40.0*x^2 + 10.0*x + 1.0
         """
-        return self.__coeffs[n]
+        return self._coeffs[n]
 
     def _unsafe_mutate(self, n, value):
         """
@@ -11547,17 +11547,17 @@ cdef class Polynomial_generic_dense(Polynomial):
         """
         n = int(n)
         value = self.base_ring()(value)
-        if n >= 0 and n < len(self.__coeffs):
-            self.__coeffs[n] = value
-            if n == len(self.__coeffs) and value == 0:
+        if n >= 0 and n < len(self._coeffs):
+            self._coeffs[n] = value
+            if n == len(self._coeffs) and value == 0:
                 self._normalize()
         elif n < 0:
             raise IndexError("polynomial coefficient index must be nonnegative")
         elif value != 0:
             zero = self.base_ring().zero()
-            for _ in range(len(self.__coeffs), n):
-                self.__coeffs.append(zero)
-            self.__coeffs.append(value)
+            for _ in range(len(self._coeffs), n):
+                self._coeffs.append(zero)
+            self._coeffs.append(value)
 
     def __floordiv__(self, right):
         """
@@ -11597,7 +11597,7 @@ cdef class Polynomial_generic_dense(Polynomial):
             return (<Polynomial_generic_dense>self)._floordiv_(<Polynomial_generic_dense>right)
         P = parent(self)
         d = P.base_ring()(right)
-        cdef Polynomial_generic_dense res = (<Polynomial_generic_dense>self)._new_c([c // d for c in (<Polynomial_generic_dense>self).__coeffs], P)
+        cdef Polynomial_generic_dense res = (<Polynomial_generic_dense>self)._new_c([c // d for c in (<Polynomial_generic_dense>self)._coeffs], P)
         res._normalize()
         return res
 
@@ -11614,8 +11614,8 @@ cdef class Polynomial_generic_dense(Polynomial):
         """
         cdef Polynomial_generic_dense res
         cdef Py_ssize_t check=0, i, min
-        x = (<Polynomial_generic_dense>self).__coeffs
-        y = (<Polynomial_generic_dense>right).__coeffs
+        x = (<Polynomial_generic_dense>self)._coeffs
+        y = (<Polynomial_generic_dense>right)._coeffs
         if len(x) > len(y):
             min = len(y)
             high = x[min:]
@@ -11635,8 +11635,8 @@ cdef class Polynomial_generic_dense(Polynomial):
     cpdef _sub_(self, right):
         cdef Polynomial_generic_dense res
         cdef Py_ssize_t check=0, i, min
-        x = (<Polynomial_generic_dense>self).__coeffs
-        y = (<Polynomial_generic_dense>right).__coeffs
+        x = (<Polynomial_generic_dense>self)._coeffs
+        y = (<Polynomial_generic_dense>right)._coeffs
         if len(x) > len(y):
             min = len(y)
             high = x[min:]
@@ -11654,11 +11654,11 @@ cdef class Polynomial_generic_dense(Polynomial):
             return self._new_c(low + high, self._parent)
 
     cpdef _rmul_(self, Element c):
-        if not self.__coeffs:
+        if not self._coeffs:
             return self
-        if c._parent is not (<Element>self.__coeffs[0])._parent:
-            c = (<Element>self.__coeffs[0])._parent.coerce(c)
-        v = [c * a for a in self.__coeffs]
+        if c._parent is not (<Element>self._coeffs[0])._parent:
+            c = (<Element>self._coeffs[0])._parent.coerce(c)
+        v = [c * a for a in self._coeffs]
         cdef Polynomial_generic_dense res = self._new_c(v, self._parent)
         #if not v[len(v)-1]:
         # "normalize" checks this anyway...
@@ -11666,11 +11666,11 @@ cdef class Polynomial_generic_dense(Polynomial):
         return res
 
     cpdef _lmul_(self, Element c):
-        if not self.__coeffs:
+        if not self._coeffs:
             return self
-        if c._parent is not (<Element>self.__coeffs[0])._parent:
-            c = (<Element>self.__coeffs[0])._parent.coerce(c)
-        v = [a * c for a in self.__coeffs]
+        if c._parent is not (<Element>self._coeffs[0])._parent:
+            c = (<Element>self._coeffs[0])._parent.coerce(c)
+        v = [a * c for a in self._coeffs]
         cdef Polynomial_generic_dense res = self._new_c(v, self._parent)
         #if not v[len(v)-1]:
         # "normalize" checks this anyway...
@@ -11691,10 +11691,10 @@ cdef class Polynomial_generic_dense(Polynomial):
             sage: f.constant_coefficient()
             t
         """
-        if not self.__coeffs:
+        if not self._coeffs:
             return self.base_ring().zero()
         else:
-            return self.__coeffs[0]
+            return self._coeffs[0]
 
     cpdef list list(self, bint copy=True):
         """
@@ -11709,9 +11709,9 @@ cdef class Polynomial_generic_dense(Polynomial):
             [1, 9, 12, 8]
         """
         if copy:
-            return list(self.__coeffs)
+            return list(self._coeffs)
         else:
-            return self.__coeffs
+            return self._coeffs
 
     def degree(self, gen=None):
         """
@@ -11730,7 +11730,7 @@ cdef class Polynomial_generic_dense(Polynomial):
             <class 'sage.rings.integer.Integer'>
 
         """
-        return smallInteger(len(self.__coeffs) - 1)
+        return smallInteger(len(self._coeffs) - 1)
 
     def shift(self, Py_ssize_t n):
         r"""
@@ -11768,13 +11768,13 @@ cdef class Polynomial_generic_dense(Polynomial):
             return self
         if n > 0:
             output = [self.base_ring().zero()] * n
-            output.extend(self.__coeffs)
+            output.extend(self._coeffs)
             return self._new_c(output, self._parent)
         if n < 0:
-            if n > len(self.__coeffs) - 1:
+            if n > len(self._coeffs) - 1:
                 return self._parent([])
             else:
-                return self._new_c(self.__coeffs[-int(n):], self._parent)
+                return self._new_c(self._coeffs[-int(n):], self._parent)
 
     @coerce_binop
     def quo_rem(self, other):
@@ -11847,8 +11847,8 @@ cdef class Polynomial_generic_dense(Polynomial):
             return self, self
 
         R = self._parent.base_ring()
-        cdef list x = list((<Polynomial_generic_dense>self).__coeffs) # make a copy
-        cdef list y = (<Polynomial_generic_dense>other).__coeffs
+        cdef list x = list((<Polynomial_generic_dense>self)._coeffs) # make a copy
+        cdef list y = (<Polynomial_generic_dense>other)._coeffs
         cdef Py_ssize_t m = len(x)  # deg(self)=m-1
         cdef Py_ssize_t n = len(y)  # deg(other)=n-1
         if m < n:
@@ -11909,18 +11909,18 @@ cdef class Polynomial_generic_dense(Polynomial):
             sage: type(f)
             <class 'sage.rings.polynomial.polynomial_element.Polynomial_generic_dense'>
         """
-        l = len(self.__coeffs)
+        l = len(self._coeffs)
         if n > l:
             n = l
-        while n > 0 and not self.__coeffs[n-1]:
+        while n > 0 and not self._coeffs[n-1]:
             n -= 1
-        return self._new_c(self.__coeffs[:n], self._parent)
+        return self._new_c(self._coeffs[:n], self._parent)
 
     cdef _inplace_truncate(self, long n):
-        if n < len(self.__coeffs):
-            while n > 0 and not self.__coeffs[n-1]:
+        if n < len(self._coeffs):
+            while n > 0 and not self._coeffs[n-1]:
                 n -= 1
-        self.__coeffs = self.__coeffs[:n]
+        self._coeffs = self._coeffs[:n]
         return self
 
 def make_generic_polynomial(parent, coeffs):
@@ -12087,7 +12087,7 @@ cdef class Polynomial_generic_dense_inexact(Polynomial_generic_dense):
             sage: S([1, R(0, 20)])                                                      # optional - sage.rings.padics
             O(5^20)*x + 1 + O(5^20)
         """
-        cdef list x = self.__coeffs
+        cdef list x = self._coeffs
         cdef Py_ssize_t n = len(x) - 1
         cdef RingElement c
         while n >= 0:
@@ -12145,7 +12145,7 @@ cdef class Polynomial_generic_dense_inexact(Polynomial_generic_dense):
 
         - Xavier Caruso (2013-03)
         """
-        coeffs = self.__coeffs
+        coeffs = self._coeffs
         d = len(coeffs) - 1
         while d >= 0:
             c = coeffs[d]
@@ -12188,7 +12188,7 @@ cdef class Polynomial_generic_dense_inexact(Polynomial_generic_dense):
 
         - Xavier Caruso (2013-03)
         """
-        return len(self.__coeffs) - 1
+        return len(self._coeffs) - 1
 
 
 cdef class ConstantPolynomialSection(Map):
