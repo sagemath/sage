@@ -397,7 +397,7 @@ cdef class LinearMatroid(BasisExchangeMatroid):
         """
         return self._A.is_nonzero(self._prow[x], self._prow[y])
 
-    cdef int __exchange(self, long x, long y) except -1:
+    cdef int _exchange(self, long x, long y) except -1:
         """
         Put element indexed by ``x`` into basis, taking out element ``y``.
         Assumptions are that this is a valid basis exchange.
@@ -420,7 +420,7 @@ cdef class LinearMatroid(BasisExchangeMatroid):
         self._A.set_unsafe(px, py, pivi)
         self._prow[y] = px
         self._prow[x] = py
-        BasisExchangeMatroid.__exchange(self, x, y)
+        BasisExchangeMatroid._exchange(self, x, y)
 
     cdef  __exchange_value(self, long x, long y):
         r"""
@@ -3158,14 +3158,14 @@ cdef class BinaryMatroid(LinearMatroid):
         """
         return (<BinaryMatrix>self._A).is_nonzero(self._prow[x], y)
 
-    cdef int __exchange(self, long x, long y) except -1:
+    cdef int _exchange(self, long x, long y) except -1:
         r"""
         Replace ``self.basis() with ``self.basis() - x + y``. Internal method, does no checks.
         """
         cdef long p = self._prow[x]
         self._A.pivot(p, y)   # Not a Sage matrix operation
         self._prow[y] = p
-        BasisExchangeMatroid.__exchange(self, x, y)
+        BasisExchangeMatroid._exchange(self, x, y)
 
     cdef  __fundamental_cocircuit(self, bitset_t C, long x):
         r"""
@@ -4226,14 +4226,14 @@ cdef class TernaryMatroid(LinearMatroid):
         """
         return (<TernaryMatrix>self._A).is_nonzero(self._prow[x], y)
 
-    cdef int __exchange(self, long x, long y) except -1:
+    cdef int _exchange(self, long x, long y) except -1:
         r"""
         Replace ``self.basis() with ``self.basis() - x + y``. Internal method, does no checks.
         """
         cdef long p = self._prow[x]
         self._A.pivot(p, y)   # Not a Sage matrix operation
         self._prow[y] = p
-        BasisExchangeMatroid.__exchange(self, x, y)
+        BasisExchangeMatroid._exchange(self, x, y)
 
     cdef  __fundamental_cocircuit(self, bitset_t C, long x):
         r"""
@@ -5128,14 +5128,14 @@ cdef class QuaternaryMatroid(LinearMatroid):
         """
         return (<QuaternaryMatrix>self._A).is_nonzero(self._prow[x], y)
 
-    cdef int __exchange(self, long x, long y) except -1:
+    cdef int _exchange(self, long x, long y) except -1:
         r"""
         Replace ``self.basis() with ``self.basis() - x + y``. Internal method, does no checks.
         """
         cdef long p = self._prow[x]
         self._A.pivot(p, y)   # Not a Sage matrix operation
         self._prow[y] = p
-        BasisExchangeMatroid.__exchange(self, x, y)
+        BasisExchangeMatroid._exchange(self, x, y)
 
     cdef  __fundamental_cocircuit(self, bitset_t C, long x):
         r"""
@@ -5844,7 +5844,7 @@ cdef class RegularMatroid(LinearMatroid):
         """
         return (<PlusMinusOneMatrix>self._A).is_nonzero(self._prow[x], self._prow[y])
 
-    cdef int __exchange(self, long x, long y) except -1:
+    cdef int _exchange(self, long x, long y) except -1:
         """
         Put element indexed by ``x`` into basis, taking out element ``y``. Assumptions are that this is a valid basis exchange.
 
@@ -5867,7 +5867,7 @@ cdef class RegularMatroid(LinearMatroid):
         (<PlusMinusOneMatrix>self._A).set(px, py, pivi)   # Not a Sage matrix operation
         self._prow[y] = px
         self._prow[x] = py
-        BasisExchangeMatroid.__exchange(self, x, y)
+        BasisExchangeMatroid._exchange(self, x, y)
 
     cdef  __exchange_value(self, long x, long y):
         r"""
