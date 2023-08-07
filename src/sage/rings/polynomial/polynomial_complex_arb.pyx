@@ -75,7 +75,7 @@ cdef class Polynomial_complex_arb(Polynomial):
             sage: ComplexBallField(2)['y']()
             0
         """
-        acb_poly_init(self.__poly)
+        acb_poly_init(self._poly)
 
     def __dealloc__(self):
         r"""
@@ -84,7 +84,7 @@ cdef class Polynomial_complex_arb(Polynomial):
             sage: pol = CBF['x']()
             sage: del pol
         """
-        acb_poly_clear(self.__poly)
+        acb_poly_clear(self._poly)
 
     cdef Polynomial_complex_arb _new(self):
         r"""
@@ -140,49 +140,49 @@ cdef class Polynomial_complex_arb(Polynomial):
         Polynomial.__init__(self, parent, is_gen=is_gen)
 
         if is_gen:
-            acb_poly_set_coeff_si(self.__poly, 1, 1)
+            acb_poly_set_coeff_si(self._poly, 1, 1)
         elif x is None:
-            acb_poly_zero(self.__poly)
+            acb_poly_zero(self._poly)
         elif isinstance(x, Polynomial_complex_arb):
-            acb_poly_set(self.__poly, (<Polynomial_complex_arb> x).__poly)
+            acb_poly_set(self._poly, (<Polynomial_complex_arb> x)._poly)
         elif isinstance(x, ComplexBall):
-            acb_poly_set_coeff_acb(self.__poly, 0, (<ComplexBall> x).value)
+            acb_poly_set_coeff_acb(self._poly, 0, (<ComplexBall> x).value)
         else:
             Coeff = parent.base_ring()
             if isinstance(x, list):
                 lst = <list> x
                 length = len(lst)
-                sig_on(); acb_poly_fit_length(self.__poly, length); sig_off()
+                sig_on(); acb_poly_fit_length(self._poly, length); sig_off()
                 for i in range(length):
                     ball = Coeff(lst[i])
-                    acb_poly_set_coeff_acb(self.__poly, i, ball.value)
+                    acb_poly_set_coeff_acb(self._poly, i, ball.value)
             elif isinstance(x, tuple):
                 tpl = <tuple> x
                 length = len(tpl)
-                sig_on(); acb_poly_fit_length(self.__poly, length); sig_off()
+                sig_on(); acb_poly_fit_length(self._poly, length); sig_off()
                 for i in range(length):
                     ball = Coeff(tpl[i])
-                    acb_poly_set_coeff_acb(self.__poly, i, ball.value)
+                    acb_poly_set_coeff_acb(self._poly, i, ball.value)
             elif isinstance(x, Polynomial):
                 pol = <Polynomial> x
                 length = pol.degree() + 1
-                sig_on(); acb_poly_fit_length(self.__poly, length); sig_off()
+                sig_on(); acb_poly_fit_length(self._poly, length); sig_off()
                 for i in range(length):
                     ball = Coeff(pol.get_unsafe(i))
-                    acb_poly_set_coeff_acb(self.__poly, i, ball.value)
+                    acb_poly_set_coeff_acb(self._poly, i, ball.value)
             elif isinstance(x, dict):
                 dct = <dict> x
                 if len(dct) == 0:
-                    acb_poly_zero(self.__poly)
+                    acb_poly_zero(self._poly)
                 else:
                     length = max(int(i) for i in dct) + 1
-                    sig_on(); acb_poly_fit_length(self.__poly, length); sig_off()
+                    sig_on(); acb_poly_fit_length(self._poly, length); sig_off()
                     for i, c in dct.iteritems():
                         ball = Coeff(c)
-                        acb_poly_set_coeff_acb(self.__poly, i, ball.value)
+                        acb_poly_set_coeff_acb(self._poly, i, ball.value)
             else:
                 ball = Coeff(x)
-                acb_poly_set_coeff_acb(self.__poly, 0, ball.value)
+                acb_poly_set_coeff_acb(self._poly, 0, ball.value)
 
     def __reduce__(self):
         r"""
@@ -219,12 +219,12 @@ cdef class Polynomial_complex_arb(Polynomial):
             sage: Pol([1, 0, 0, 0]).degree()
             0
         """
-        return smallInteger(acb_poly_degree(self.__poly))
+        return smallInteger(acb_poly_degree(self._poly))
 
     cdef get_unsafe(self, Py_ssize_t n):
         cdef ComplexBall res = ComplexBall.__new__(ComplexBall)
         res._parent = self._parent._base
-        acb_poly_get_coeff_acb(res.value, self.__poly, n)
+        acb_poly_get_coeff_acb(res.value, self._poly, n)
         return res
 
     cpdef list list(self, bint copy=True):
@@ -241,7 +241,7 @@ cdef class Polynomial_complex_arb(Polynomial):
             sage: Pol([0, 1, RBF(0, rad=.1), 0]).list()
             [0, 1.000000000000000, [+/- 0.101]]
         """
-        cdef unsigned long length = acb_poly_length(self.__poly)
+        cdef unsigned long length = acb_poly_length(self._poly)
         return [self.get_unsafe(n) for n in range(length)]
 
     def __bool__(self):
@@ -257,7 +257,7 @@ cdef class Polynomial_complex_arb(Polynomial):
             sage: bool(z)
             True
         """
-        return acb_poly_length(self.__poly)
+        return acb_poly_length(self._poly)
 
     # Ring and Euclidean arithmetic
 
@@ -274,9 +274,9 @@ cdef class Polynomial_complex_arb(Polynomial):
         cdef Polynomial_complex_arb res = self._new()
         sig_on()
         acb_poly_add(
-                res.__poly,
-                self.__poly,
-                (<Polynomial_complex_arb> other).__poly,
+                res._poly,
+                self._poly,
+                (<Polynomial_complex_arb> other)._poly,
                 prec(self))
         sig_off()
         return res
@@ -293,7 +293,7 @@ cdef class Polynomial_complex_arb(Polynomial):
         """
         cdef Polynomial_complex_arb res = self._new()
         sig_on()
-        acb_poly_neg(res.__poly, self.__poly)
+        acb_poly_neg(res._poly, self._poly)
         sig_off()
         return res
 
@@ -310,9 +310,9 @@ cdef class Polynomial_complex_arb(Polynomial):
         cdef Polynomial_complex_arb res = self._new()
         sig_on()
         acb_poly_sub(
-                res.__poly,
-                self.__poly,
-                (<Polynomial_complex_arb> other).__poly,
+                res._poly,
+                self._poly,
+                (<Polynomial_complex_arb> other)._poly,
                 prec(self))
         sig_off()
         return res
@@ -331,9 +331,9 @@ cdef class Polynomial_complex_arb(Polynomial):
         cdef Polynomial_complex_arb res = self._new()
         sig_on()
         acb_poly_mul(
-                res.__poly,
-                self.__poly,
-                (<Polynomial_complex_arb> other).__poly,
+                res._poly,
+                self._poly,
+                (<Polynomial_complex_arb> other)._poly,
                 prec(self))
         sig_off()
         return res
@@ -354,7 +354,7 @@ cdef class Polynomial_complex_arb(Polynomial):
         """
         cdef Polynomial_complex_arb res = self._new()
         sig_on()
-        acb_poly_scalar_mul(res.__poly, self.__poly, (<ComplexBall> a).value, prec(self))
+        acb_poly_scalar_mul(res._poly, self._poly, (<ComplexBall> a).value, prec(self))
         sig_off()
         return res
 
@@ -406,8 +406,8 @@ cdef class Polynomial_complex_arb(Polynomial):
         cdef Polynomial_complex_arb quo = self._new()
         cdef Polynomial_complex_arb rem = self._new()
         sig_on()
-        cdef bint success = acb_poly_divrem(quo.__poly, rem.__poly, self.__poly,
-                div.__poly, prec(self))
+        cdef bint success = acb_poly_divrem(quo._poly, rem._poly, self._poly,
+                div._poly, prec(self))
         sig_off()
         if success:
             return quo, rem
@@ -442,15 +442,15 @@ cdef class Polynomial_complex_arb(Polynomial):
         if n < 0:
             n = 0
         sig_on()
-        acb_poly_set(res.__poly, self.__poly)
-        acb_poly_truncate(res.__poly, n)
+        acb_poly_set(res._poly, self._poly)
+        acb_poly_truncate(res._poly, n)
         sig_off()
         return res
 
     cdef _inplace_truncate(self, long n):
         if n < 0:
             n = 0
-        acb_poly_truncate(self.__poly, n)
+        acb_poly_truncate(self._poly, n)
         return self
 
     def __lshift__(val, n):
@@ -482,7 +482,7 @@ cdef class Polynomial_complex_arb(Polynomial):
         cdef Polynomial_complex_arb self = (<Polynomial_complex_arb> val)
         cdef Polynomial_complex_arb res = self._new()
         sig_on()
-        acb_poly_shift_left(res.__poly, self.__poly, n)
+        acb_poly_shift_left(res._poly, self._poly, n)
         sig_off()
         return res
 
@@ -515,7 +515,7 @@ cdef class Polynomial_complex_arb(Polynomial):
         cdef Polynomial_complex_arb self = (<Polynomial_complex_arb> val)
         cdef Polynomial_complex_arb res = self._new()
         sig_on()
-        acb_poly_shift_right(res.__poly, self.__poly, n)
+        acb_poly_shift_right(res._poly, self._poly, n)
         sig_off()
         return res
 
@@ -545,7 +545,7 @@ cdef class Polynomial_complex_arb(Polynomial):
         if n < 0:
             n = 0
         sig_on()
-        acb_poly_mullow(res.__poly, self.__poly, my_other.__poly, n, prec(self))
+        acb_poly_mullow(res._poly, self._poly, my_other._poly, n, prec(self))
         sig_off()
         return res
 
@@ -573,7 +573,7 @@ cdef class Polynomial_complex_arb(Polynomial):
         if n < 0:
             n = 0
         sig_on()
-        acb_poly_inv_series(res.__poly, self.__poly, n, prec(self))
+        acb_poly_inv_series(res._poly, self._poly, n, prec(self))
         sig_off()
         return res
 
@@ -609,7 +609,7 @@ cdef class Polynomial_complex_arb(Polynomial):
         if n < 0:
             n = 0
         sig_on()
-        acb_poly_pow_ui_trunc_binexp(res.__poly, self.__poly, expo, n, prec(self))
+        acb_poly_pow_ui_trunc_binexp(res._poly, self._poly, expo, n, prec(self))
         sig_off()
         return res
 
@@ -645,7 +645,7 @@ cdef class Polynomial_complex_arb(Polynomial):
         if n < 0:
             n = 0
         sig_on()
-        acb_poly_log_series(res.__poly, self.__poly, n, prec(self))
+        acb_poly_log_series(res._poly, self._poly, n, prec(self))
         sig_off()
         return res
 
@@ -669,7 +669,7 @@ cdef class Polynomial_complex_arb(Polynomial):
         if n < 0:
             n = 0
         sig_on()
-        acb_poly_exp_series(res.__poly, self.__poly, n, prec(self))
+        acb_poly_exp_series(res._poly, self._poly, n, prec(self))
         sig_off()
         return res
 
@@ -694,7 +694,7 @@ cdef class Polynomial_complex_arb(Polynomial):
         if n < 0:
             n = 0
         sig_on()
-        acb_poly_sqrt_series(res.__poly, self.__poly, n, prec(self))
+        acb_poly_sqrt_series(res._poly, self._poly, n, prec(self))
         sig_off()
         return res
 
@@ -713,7 +713,7 @@ cdef class Polynomial_complex_arb(Polynomial):
         if n < 0:
             n = 0
         sig_on()
-        acb_poly_gamma_series(res.__poly, self.__poly, n, prec(self))
+        acb_poly_gamma_series(res._poly, self._poly, n, prec(self))
         sig_off()
         return res
 
@@ -732,7 +732,7 @@ cdef class Polynomial_complex_arb(Polynomial):
         if n < 0:
             n = 0
         sig_on()
-        acb_poly_lgamma_series(res.__poly, self.__poly, n, prec(self))
+        acb_poly_lgamma_series(res._poly, self._poly, n, prec(self))
         sig_off()
         return res
 
@@ -751,7 +751,7 @@ cdef class Polynomial_complex_arb(Polynomial):
         if n < 0:
             n = 0
         sig_on()
-        acb_poly_rgamma_series(res.__poly, self.__poly, n, prec(self))
+        acb_poly_rgamma_series(res._poly, self._poly, n, prec(self))
         sig_off()
         return res
 
@@ -781,7 +781,7 @@ cdef class Polynomial_complex_arb(Polynomial):
         if n < 0:
             n = 0
         sig_on()
-        acb_poly_lambertw_series(res.__poly, self.__poly, _branch, 0, n, prec(self))
+        acb_poly_lambertw_series(res._poly, self._poly, _branch, 0, n, prec(self))
         sig_off()
         fmpz_clear(_branch)
         return res
@@ -811,7 +811,7 @@ cdef class Polynomial_complex_arb(Polynomial):
         cdef ComplexBall _a = <ComplexBall> (self._parent._base.coerce(a))
         cdef Polynomial_complex_arb res = self._new()
         sig_on()
-        acb_poly_zeta_series(res.__poly, self.__poly, _a.value, deflate, n, prec(self))
+        acb_poly_zeta_series(res._poly, self._poly, _a.value, deflate, n, prec(self))
         sig_off()
         return res
 
@@ -843,24 +843,24 @@ cdef class Polynomial_complex_arb(Polynomial):
         cdef Polynomial_complex_arb res = self._new()
         cdef acb_poly_t self_ts, other_ts
         cdef acb_ptr cc
-        if acb_poly_length(other1.__poly) > 0:
-            cc = acb_poly_get_coeff_ptr(other1.__poly, 0)
+        if acb_poly_length(other1._poly) > 0:
+            cc = acb_poly_get_coeff_ptr(other1._poly, 0)
             if not acb_is_zero(cc):
                 sig_on()
                 try:
                     acb_poly_init(self_ts)
                     acb_poly_init(other_ts)
-                    acb_poly_taylor_shift(self_ts, self.__poly, cc, prec(self))
-                    acb_poly_set(other_ts, other1.__poly)
+                    acb_poly_taylor_shift(self_ts, self._poly, cc, prec(self))
+                    acb_poly_set(other_ts, other1._poly)
                     acb_zero(acb_poly_get_coeff_ptr(other_ts, 0))
-                    acb_poly_compose_series(res.__poly, self_ts, other_ts, n, prec(self))
+                    acb_poly_compose_series(res._poly, self_ts, other_ts, n, prec(self))
                 finally:
                     acb_poly_clear(other_ts)
                     acb_poly_clear(self_ts)
                     sig_off()
                 return res
         sig_on()
-        acb_poly_compose_series(res.__poly, self.__poly, other1.__poly, n, prec(self))
+        acb_poly_compose_series(res._poly, self._poly, other1._poly, n, prec(self))
         sig_off()
         return res
 
@@ -892,12 +892,12 @@ cdef class Polynomial_complex_arb(Polynomial):
         cdef Polynomial_complex_arb res = self._new()
         if n < 0:
             n = 0
-        if not acb_is_zero(acb_poly_get_coeff_ptr(self.__poly, 0)):
+        if not acb_is_zero(acb_poly_get_coeff_ptr(self._poly, 0)):
             raise ValueError("the constant coefficient must be zero")
-        if acb_contains_zero(acb_poly_get_coeff_ptr(self.__poly, 1)):
+        if acb_contains_zero(acb_poly_get_coeff_ptr(self._poly, 1)):
             raise ValueError("the linear term must be nonzero")
         sig_on()
-        acb_poly_revert_series(res.__poly, self.__poly, n, prec(self))
+        acb_poly_revert_series(res._poly, self._poly, n, prec(self))
         sig_off()
         return res
 
@@ -935,15 +935,15 @@ cdef class Polynomial_complex_arb(Polynomial):
                 ball = ComplexBall.__new__(ComplexBall)
                 ball._parent = self._parent._base
                 sig_on()
-                acb_poly_evaluate(ball.value, self.__poly,
+                acb_poly_evaluate(ball.value, self._poly,
                         (<ComplexBall> point).value, prec(self))
                 sig_off()
                 return ball
             elif isinstance(point, Polynomial_complex_arb):
                 poly = (<Polynomial_complex_arb> point)._new()
                 sig_on()
-                acb_poly_compose(poly.__poly, self.__poly,
-                        (<Polynomial_complex_arb> point).__poly, prec(self))
+                acb_poly_compose(poly._poly, self._poly,
+                        (<Polynomial_complex_arb> point)._poly, prec(self))
                 sig_off()
                 return poly
             # TODO: perhaps add more special cases, e.g. for real ball,

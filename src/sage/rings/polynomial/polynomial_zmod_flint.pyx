@@ -110,7 +110,7 @@ cdef class Polynomial_zmod_flint(Polynomial_template):
             return
         elif isinstance(x, Polynomial_integer_dense_flint):
             Polynomial_template.__init__(self, parent, 0, check, is_gen, construct)
-            self._set_fmpz_poly((<Polynomial_integer_dense_flint>x).__poly)
+            self._set_fmpz_poly((<Polynomial_integer_dense_flint>x)._poly)
             return
         else:
             if isinstance(x, ntl_zz_pX):

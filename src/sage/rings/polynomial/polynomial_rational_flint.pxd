@@ -11,7 +11,7 @@ from sage.libs.flint.types cimport fmpq_poly_t
 from sage.rings.polynomial.polynomial_element cimport Polynomial
 
 cdef class Polynomial_rational_flint(Polynomial):
-    cdef fmpq_poly_t __poly
+    cdef fmpq_poly_t _poly
 
     cdef Polynomial_rational_flint _new(self)
     cpdef _mod_(self, right)

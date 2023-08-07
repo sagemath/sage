@@ -81,5 +81,5 @@ def hilbert_class_polynomial(D):
     cdef long n = D
     cdef Polynomial_integer_dense_flint poly
     poly = PolynomialRing(ZZ, "x", implementation="FLINT")()
-    acb_modular_hilbert_class_poly(poly.__poly, n)
+    acb_modular_hilbert_class_poly(poly._poly, n)
     return poly

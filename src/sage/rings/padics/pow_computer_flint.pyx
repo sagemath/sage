@@ -208,7 +208,7 @@ cdef class PowComputer_flint_1step(PowComputer_flint):
 
         """
         cdef Polynomial_integer_dense_flint poly = _poly
-        cdef long length = fmpz_poly_length(poly.__poly)
+        cdef long length = fmpz_poly_length(poly._poly)
 
         cdef Py_ssize_t i
 
@@ -268,10 +268,10 @@ cdef class PowComputer_flint_1step(PowComputer_flint):
         PowComputer_flint.__init__(self, prime, cache_limit, prec_cap, ram_prec_cap, in_field, _poly, shift_seed)
 
         cdef Polynomial_integer_dense_flint poly = _poly
-        cdef long length = fmpz_poly_length(poly.__poly)
+        cdef long length = fmpz_poly_length(poly._poly)
         self.deg = length - 1
 
-        fmpz_poly_set(self.modulus, poly.__poly)
+        fmpz_poly_set(self.modulus, poly._poly)
 
         cdef Py_ssize_t i
         cdef fmpz* coeffs = self.modulus.coeffs
@@ -427,9 +427,9 @@ cdef class PowComputer_flint_1step(PowComputer_flint):
         x = R.gen()
         cdef Polynomial_integer_dense_flint ans = (<Polynomial_integer_dense_flint?>x)._new()
         if _n is None:
-            fmpz_poly_set(ans.__poly, self.modulus)
+            fmpz_poly_set(ans._poly, self.modulus)
         else:
-            fmpz_poly_set(ans.__poly, self.get_modulus(_n)[0])
+            fmpz_poly_set(ans._poly, self.get_modulus(_n)[0])
         return ans
 
     cdef _new_fmpz_poly(self, fmpz_poly_t value, var='x'):
@@ -440,7 +440,7 @@ cdef class PowComputer_flint_1step(PowComputer_flint):
         R = ZZ[var]
         x = R.gen()
         cdef Polynomial_integer_dense_flint ans = (<Polynomial_integer_dense_flint?>x)._new()
-        fmpz_poly_set(ans.__poly, value)
+        fmpz_poly_set(ans._poly, value)
         return ans
 
 cdef class PowComputer_flint_unram(PowComputer_flint_1step):
