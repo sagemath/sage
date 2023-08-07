@@ -13,7 +13,7 @@ cdef extern from *:
     ctypedef long Py_hash_t
 
 cdef class NCPolynomialRing_plural(Ring):
-    cdef object __ngens
+    cdef object _ngens
     cdef object _c
     cdef object _d
     cdef object __term_order
