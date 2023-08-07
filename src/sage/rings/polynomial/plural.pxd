@@ -16,7 +16,7 @@ cdef class NCPolynomialRing_plural(Ring):
     cdef object _ngens
     cdef object _c
     cdef object _d
-    cdef object __term_order
+    cdef object _term_order
     cdef public object _has_singular
     cdef public object _magma_gens, _magma_cache
 

@@ -3,7 +3,7 @@ from sage.structure.parent cimport Parent
 
 cdef class MPolynomialRing_base(sage.rings.ring.CommutativeRing):
     cdef object _ngens
-    cdef object __term_order
+    cdef object _term_order
     cdef public object _has_singular
     cdef public object _magma_gens
     cdef public dict _magma_cache
