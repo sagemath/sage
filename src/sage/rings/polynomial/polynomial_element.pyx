@@ -666,8 +666,8 @@ cdef class Polynomial(CommutativePolynomial):
             Univariate Polynomial Ring in x over Rational Field
 
             sage: zero = QQ['x'](0)
-            sage: a = matrix(ZZ, [[1]])
-            sage: zero(a).parent()
+            sage: a = matrix(ZZ, [[1]])                                                 # needs sage.modules
+            sage: zero(a).parent()                                                      # needs sage.modules
             Full MatrixSpace of 1 by 1 dense matrices over Rational Field
 
             sage: pol(y, x).parent() is pol(x, y).parent() is pol(y, y).parent() is Pol_xy
@@ -677,11 +677,11 @@ cdef class Polynomial(CommutativePolynomial):
             Univariate Polynomial Ring in x over Rational Field
 
             sage: one = Pol_xy(1)
-            sage: one(1, 1.).parent()
+            sage: one(1, 1.).parent()                                                   # needs sage.rings.real_mpfr
             Real Field with 53 bits of precision
 
             sage: zero = GF(2)['x'](0)
-            sage: zero(1.).parent()
+            sage: zero(1.).parent()                                                     # needs sage.rings.real_mpfr
             Traceback (most recent call last):
             ...
             TypeError: no common canonical parent for objects with parents:
