@@ -1,4 +1,4 @@
-# sage.doctest: optional - sage.rings.polynomial.pbori
+# sage.doctest: needs sage.rings.polynomial.pbori
 """
 SAT Functions for Boolean Polynomials
 
