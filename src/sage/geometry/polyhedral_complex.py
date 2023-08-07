@@ -1,4 +1,4 @@
-# sage.doctest: optional - sage.graphs
+# sage.doctest: needs sage.graphs
 r"""
 Finite polyhedral complexes
 
