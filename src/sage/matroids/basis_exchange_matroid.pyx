@@ -57,10 +57,10 @@ cdef class BasisExchangeMatroid(Matroid):
 
     This base exchange graph is not stored as such, but should be provided
     implicitly by the child class in the form of two methods
-    ``_is_exchange_pair(x, y)`` and ``__exchange(x, y)``, as well as an
+    ``_is_exchange_pair(x, y)`` and ``_exchange(x, y)``, as well as an
     initial basis. At any moment, BasisExchangeMatroid keeps a current basis
     `B`. The method ``_is_exchange_pair(x, y)`` should return a boolean
-    indicating whether `B - x + y` is a basis. The method ``__exchange(x, y)``
+    indicating whether `B - x + y` is a basis. The method ``_exchange(x, y)``
     is called when the current basis `B` is replaced by said `B-x + y`. It is
     up to the child class to update its internal data structure to make
     information relative to the new basis more accessible. For instance, a
@@ -83,14 +83,14 @@ cdef class BasisExchangeMatroid(Matroid):
 
         - ``_is_exchange_pair(x, y)`` reduces to a query whether `B - x + y`
           is a basis.
-        - ``__exchange(x, y)`` has no work to do.
+        - ``_exchange(x, y)`` has no work to do.
 
     - :class:`LinearMatroid <sage.matroids.linear_matroid.LinearMatroid>`:
       keeps a matrix representation `A` of the matroid so that `A[B] = I`.
 
         - ``_is_exchange_pair(x, y)`` reduces to testing whether `A[r, y]`
           is nonzero, where `A[r, x]=1`.
-        - ``__exchange(x, y)`` should modify the matrix so that `A[B - x + y]`
+        - ``_exchange(x, y)`` should modify the matrix so that `A[B - x + y]`
           becomes `I`, which means pivoting on `A[r, y]`.
 
     - ``TransversalMatroid`` (not yet implemented): If `A` is a set of subsets
@@ -102,7 +102,7 @@ cdef class BasisExchangeMatroid(Matroid):
 
         - ``_is_exchange_pair(x, y)`` checks for the existence of an
           `M`-alternating path `P` from `y` to `x`.
-        - ``__exchange(x, y)`` replaces `M` by the symmetric difference of
+        - ``_exchange(x, y)`` replaces `M` by the symmetric difference of
           `M` and `E(P)`.
 
     - ``AlgebraicMatroid`` (not yet implemented): keeps a list of polynomials
@@ -110,7 +110,7 @@ cdef class BasisExchangeMatroid(Matroid):
 
         - ``_is_exchange_pair(x, y)`` checks whether the polynomial that
           relates `y` to `E-B` uses `x`.
-        - ``__exchange(x, y)`` make new list of polynomials by computing
+        - ``_exchange(x, y)`` make new list of polynomials by computing
           resultants.
 
     All but the first of the above matroids are algebraic, and all
@@ -259,7 +259,7 @@ cdef class BasisExchangeMatroid(Matroid):
         raise NotImplementedError
 
     # if this method is overridden by a child class, the child class needs to call this method
-    cdef int __exchange(self, long x, long y) except -1:
+    cdef int _exchange(self, long x, long y) except -1:
         """
         put current_basis <-- current_basis-x + y
         """
@@ -276,7 +276,7 @@ cdef class BasisExchangeMatroid(Matroid):
             y = bitset_first(Y)
             while y >= 0:
                 if self._is_exchange_pair(x, y):
-                    self.__exchange(x, y)
+                    self._exchange(x, y)
                     bitset_discard(Y, y)
                     bitset_discard(X, x)
                     if bitset_isempty(Y):
@@ -336,7 +336,7 @@ cdef class BasisExchangeMatroid(Matroid):
             x = bitset_first(self._inside)
             while x >= 0:
                 if self._is_exchange_pair(x, y):
-                    self.__exchange(x, y)
+                    self._exchange(x, y)
                     bitset_discard(self._outside, y)
                     bitset_discard(self._inside, x)
                     if bitset_isempty(self._outside):
@@ -388,7 +388,7 @@ cdef class BasisExchangeMatroid(Matroid):
             y = bitset_first(self._outside)
             while y >= 0:
                 if self._is_exchange_pair(x, y):
-                    self.__exchange(x, y)
+                    self._exchange(x, y)
                     bitset_discard(self._outside, y)
                     bitset_discard(self._inside, x)
                     if bitset_isempty(self._inside):
