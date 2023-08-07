@@ -92,10 +92,10 @@ cdef class PowerSeries_mpoly(PowerSeries):
         return self.__list
 
     def polynomial(self):
-        if self.__poly is None:
+        if self._poly is None:
             S = self.parent()._mpoly_ring()
-            self.__poly = self.__f.polynomial(S.gens()[-1])
-        return self.__poly
+            self._poly = self.__f.polynomial(S.gens()[-1])
+        return self._poly
 
     def _mpoly(self):
         return self.__f
