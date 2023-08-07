@@ -1,4 +1,4 @@
-# sage.doctest: optional - sage.rings.number_field
+# sage.doctest: needs sage.rings.number_field
 r"""
 Lists of Manin symbols over number fields, elements of `\mathbb{P}^1(R/N)`
 
