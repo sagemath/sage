@@ -400,7 +400,7 @@ cdef class Matrix_cyclo_dense(Matrix_dense):
 
         # Set the denominator of x to denom.
         fmpz_get_mpz(tmp, denom)
-        mpz_to_ZZ(&x.__denominator, tmp)
+        mpz_to_ZZ(&x._denominator, tmp)
         fmpz_clear(denom)
         mpz_clear(tmp)
         fmpz_clear(ftmp)

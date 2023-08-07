@@ -611,7 +611,7 @@ cdef class NumberFieldElement_quadratic(NumberFieldElement_absolute):
 
         x._parent = <ParentWithBase>new_parent
         x.__fld_numerator, x.__fld_denominator = new_parent.polynomial_ntl()
-        x.__denominator = elt_den
+        x._denominator = elt_den
         cdef ZZX_c result
         cdef ZZ_c tmp
         cdef int i
@@ -1642,7 +1642,7 @@ cdef class NumberFieldElement_quadratic(NumberFieldElement_absolute):
         return res
 
 #################################################################################
-# We must override everything that makes uses of self.__numerator/__denominator
+# We must override everything that makes uses of self.__numerator/_denominator
 #################################################################################
 
     def __hash__(self):

@@ -1705,10 +1705,10 @@ cdef class QuaternionAlgebraElement_number_field(QuaternionAlgebraElement_abstra
         fmpz_poly_set_ZZX(self.z, (<NumberFieldElement>z).__numerator)
         fmpz_poly_set_ZZX(self.w, (<NumberFieldElement>w).__numerator)
 
-        ZZ_to_mpz(T1, &(<NumberFieldElement>x).__denominator)
-        ZZ_to_mpz(T2, &(<NumberFieldElement>y).__denominator)
-        ZZ_to_mpz(t3, &(<NumberFieldElement>z).__denominator)
-        ZZ_to_mpz(t4, &(<NumberFieldElement>w).__denominator)
+        ZZ_to_mpz(T1, &(<NumberFieldElement>x)._denominator)
+        ZZ_to_mpz(T2, &(<NumberFieldElement>y)._denominator)
+        ZZ_to_mpz(t3, &(<NumberFieldElement>z)._denominator)
+        ZZ_to_mpz(t4, &(<NumberFieldElement>w)._denominator)
 
         mpz_lcm(self.d, T1, T2)
         mpz_lcm(self.d, self.d, t3)
@@ -1766,7 +1766,7 @@ cdef class QuaternionAlgebraElement_number_field(QuaternionAlgebraElement_abstra
         else:
             raise IndexError("quaternion element index out of range")
 
-        mpz_to_ZZ(&item.__denominator, self.d)
+        mpz_to_ZZ(&item._denominator, self.d)
 
         return item
 
