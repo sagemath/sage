@@ -102,6 +102,7 @@ class FunctionFieldPlace_rational(FunctionFieldPlace):
 
         EXAMPLES::
 
+            sage: # needs sage.modules
             sage: F.<x> = FunctionField(GF(2))
             sage: O = F.maximal_order()
             sage: i = O.ideal(x^2 + x + 1)
@@ -171,7 +172,7 @@ class FunctionFieldPlace_rational(FunctionFieldPlace):
             sage: K.<x> = FunctionField(GF(2)); _.<Y> = K[]
             sage: L.<y> = K.extension(Y^2 + Y + x + 1/x)                                # needs sage.rings.function_field
             sage: p = L.places_finite()[0]                                              # needs sage.rings.function_field
-            sage: p.valuation_ring()
+            sage: p.valuation_ring()                                                    # needs sage.rings.function_field
             Valuation ring at Place (x, x*y)
         """
         from .valuation_ring import FunctionFieldValuationRing
