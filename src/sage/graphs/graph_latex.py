@@ -1,4 +1,4 @@
-# sage.doctest: optional - sage.plot
+# sage.doctest: needs sage.plot
 r"""
 LaTeX options for graphs
 
