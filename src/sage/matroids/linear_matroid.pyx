@@ -3184,7 +3184,7 @@ cdef class BinaryMatroid(LinearMatroid):
         bitset_complement(R, F)
         bitset_difference(self._inside, self._current_basis, R)
         bitset_difference(self._outside, R, self._current_basis)
-        self.__move(self._inside, self._outside)
+        self._BasisExchangeMatroid__move(self._inside, self._outside)
 
         bitset_copy(R, F)
         bitset_difference(self._inside, self._current_basis, F)
@@ -4252,7 +4252,7 @@ cdef class TernaryMatroid(LinearMatroid):
         bitset_complement(R, F)
         bitset_difference(self._inside, self._current_basis, R)
         bitset_difference(self._outside, R, self._current_basis)
-        self.__move(self._inside, self._outside)
+        self._BasisExchangeMatroid__move(self._inside, self._outside)
 
         bitset_copy(R, F)
         bitset_difference(self._inside, self._current_basis, F)
@@ -5154,7 +5154,7 @@ cdef class QuaternaryMatroid(LinearMatroid):
         bitset_complement(R, F)
         bitset_difference(self._inside, self._current_basis, R)
         bitset_difference(self._outside, R, self._current_basis)
-        self.__move(self._inside, self._outside)
+        self._BasisExchangeMatroid__move(self._inside, self._outside)
 
         bitset_copy(R, F)
         bitset_difference(self._inside, self._current_basis, F)
