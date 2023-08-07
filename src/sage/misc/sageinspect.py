@@ -1527,8 +1527,8 @@ def sage_getargspec(obj):
     The following tests against various bugs that were fixed in
     :trac:`9976`::
 
-        sage: from sage.rings.polynomial.real_roots import bernstein_polynomial_factory_ratlist
-        sage: sage_getargspec(bernstein_polynomial_factory_ratlist.coeffs_bitsize)
+        sage: from sage.rings.polynomial.real_roots import bernstein_polynomial_factory_ratlist     # needs sage.modules
+        sage: sage_getargspec(bernstein_polynomial_factory_ratlist.coeffs_bitsize)                  # needs sage.modules
         FullArgSpec(args=['self'], varargs=None, varkw=None, defaults=None,
                     kwonlyargs=[], kwonlydefaults=None, annotations={})
         sage: from sage.rings.polynomial.pbori.pbori import BooleanMonomialMonoid       # needs sage.rings.polynomial.pbori
@@ -1536,7 +1536,7 @@ def sage_getargspec(obj):
         FullArgSpec(args=['self', 'i'], varargs=None, varkw=None, defaults=(0,),
                     kwonlyargs=[], kwonlydefaults=None, annotations={})
         sage: I = P*[x,y]
-        sage: sage_getargspec(I.groebner_basis)
+        sage: sage_getargspec(I.groebner_basis)                                         # needs sage.libs.singular
         FullArgSpec(args=['self', 'algorithm', 'deg_bound', 'mult_bound', 'prot'],
                     varargs='args', varkw='kwds', defaults=('', None, None, False),
                     kwonlyargs=[], kwonlydefaults=None, annotations={})
@@ -2363,12 +2363,12 @@ def sage_getsourcelines(obj):
 
         sage: P.<x,y> = QQ[]
         sage: I = P*[x,y]
-        sage: sage_getsourcelines(P)
+        sage: sage_getsourcelines(P)                                                    # needs sage.libs.singular
         (['cdef class MPolynomialRing_libsingular(MPolynomialRing_base):\n',
           '\n',
           '    def __cinit__(self):\n',
         ...)
-        sage: sage_getsourcelines(I)
+        sage: sage_getsourcelines(I)                                                    # needs sage.libs.singular
         ([...'class MPolynomialIdeal(MPolynomialIdeal_singular_repr,\n',
         ...)
         sage: x = var('x')                                                              # needs sage.symbolic
