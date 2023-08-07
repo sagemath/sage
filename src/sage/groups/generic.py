@@ -541,7 +541,7 @@ def discrete_log_rho(a, base, ord=None, operation='*', identity=None, inverse=No
         sage: discrete_log_rho(g^1234, g)                                               # needs sage.rings.finite_rings
         1234
 
-        sage: # needs sage.rings.finite_rings
+        sage: # needs sage.rings.finite_rings sage.schemes
         sage: F.<a> = GF(37^5)
         sage: E = EllipticCurve(F, [1,1])
         sage: G = (3*31*2^4)*E.lift_x(a)
@@ -998,9 +998,10 @@ def discrete_log_lambda(a, base, bounds, operation='*', identity=None, inverse=N
         sage: discrete_log_lambda(a^1234567, a, (1200000,1250000))                      # needs sage.rings.finite_rings
         1234567
 
-        sage: F.<a> = GF(37^5)                                                          # needs sage.rings.finite_rings
-        sage: E = EllipticCurve(F, [1,1])                                               # needs sage.rings.finite_rings
-        sage: P = E.lift_x(a); P                                                        # needs sage.rings.finite_rings
+        sage: # needs sage.rings.finite_rings sage.schemes
+        sage: F.<a> = GF(37^5)
+        sage: E = EllipticCurve(F, [1,1])
+        sage: P = E.lift_x(a); P
         (a : 28*a^4 + 15*a^3 + 14*a^2 + 7 : 1)
 
     This will return a multiple of the order of P::
@@ -1105,7 +1106,7 @@ def linear_relation(P, Q, operation='+', identity=None, inverse=None, op=None):
 
     An additive example (in an elliptic curve group)::
 
-        sage: # needs sage.rings.finite_rings
+        sage: # needs sage.rings.finite_rings sage.schemes
         sage: F.<a> = GF(3^6,'a')
         sage: E = EllipticCurve([a^5 + 2*a^3 + 2*a^2 + 2*a, a^4 + a^3 + 2*a + 1])
         sage: P = E(a^5 + a^4 + a^3 + a^2 + a + 2, 0)
@@ -1213,6 +1214,8 @@ def order_from_multiple(P, m, plist=None, factorization=None, check=True,
         sage: b = a^4
         sage: order_from_multiple(b, 5^5 - 1, operation='*')
         781
+
+        sage: # needs sage.rings.finite_rings sage.schemes
         sage: E = EllipticCurve(k, [2,4])
         sage: P = E(3*a^4 + 3*a, 2*a + 1)
         sage: M = E.cardinality(); M
@@ -1353,6 +1356,8 @@ def order_from_bounds(P, bounds, d=None, operation='+',
         sage: b = a^4
         sage: order_from_bounds(b, (5^4, 5^5), operation='*')
         781
+
+        sage: # needs sage.rings.finite_rings sage.schemes
         sage: E = EllipticCurve(k, [2,4])
         sage: P = E(3*a^4 + 3*a, 2*a + 1)
         sage: bounds = Hasse_bounds(5^5)
