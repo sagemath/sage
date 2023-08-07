@@ -325,12 +325,12 @@ cdef class NumberFieldElement(NumberFieldElement_base):
             # fast pathway
             mpz_to_ZZ(&coeff, (<Integer>ZZ(f)).value)
             ZZX_SetCoeff( self.__numerator, 0, coeff )
-            ZZ_conv_from_int( self.__denominator, 1 )
+            ZZ_conv_from_int( self._denominator, 1 )
             return
         elif isinstance(f, NumberFieldElement):
             if type(self) is type(f):
                 self.__numerator = (<NumberFieldElement>f).__numerator
-                self.__denominator = (<NumberFieldElement>f).__denominator
+                self._denominator = (<NumberFieldElement>f)._denominator
                 return
             else:
                 f = f.polynomial()
@@ -342,7 +342,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
 
         cdef long i
         den = f.denominator()
-        mpz_to_ZZ(&self.__denominator, (<Integer>ZZ(den)).value)
+        mpz_to_ZZ(&self._denominator, (<Integer>ZZ(den)).value)
         num = f * den
         for i from 0 <= i <= num.degree():
             mpz_to_ZZ(&coeff, (<Integer>ZZ(num[i])).value)
@@ -418,7 +418,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
         cdef NumberFieldElement x = <NumberFieldElement>t.__new__(t)
         x._parent = <ParentWithBase>new_parent
         x.__fld_numerator, x.__fld_denominator = new_parent.polynomial_ntl()
-        x.__denominator = self.__denominator
+        x._denominator = self._denominator
         cdef ZZX_c result
         cdef ZZ_c tmp
         cdef int i
@@ -858,7 +858,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
         cdef int res
 
         # fast equality check
-        res = left.__numerator == _right.__numerator and left.__denominator == _right.__denominator
+        res = left.__numerator == _right.__numerator and left._denominator == _right._denominator
         if res:
             if op == Py_EQ or op == Py_GE or op == Py_LE:
                 return True
@@ -883,8 +883,8 @@ cdef class NumberFieldElement(NumberFieldElement_base):
         if P._embedded_real:
             mpz_init(ld)
             mpz_init(rd)
-            ZZ_to_mpz(ld, &left.__denominator)
-            ZZ_to_mpz(rd, &_right.__denominator)
+            ZZ_to_mpz(ld, &left._denominator)
+            ZZ_to_mpz(rd, &_right._denominator)
 
             v = <RealIntervalFieldElement> P._get_embedding_approx(0)
             mpfi_init2(la, mpfi_get_prec(v.value))
@@ -951,7 +951,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
 
         # It seems like a simpler approach would be to simply generate
         # random integers for each coefficient of self.__numerator
-        # and an integer for self.__denominator. However, this would
+        # and an integer for self._denominator. However, this would
         # generate things with a fairly fixed shape: in particular,
         # we'd be very unlikely to get elements like 1/3*a^3 + 1/7,
         # or anything where the denominators are actually unrelated
@@ -965,7 +965,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
 
             # set the denominator
             mpz_set_si(denom_temp.value, 1)
-            mpz_to_ZZ(&self.__denominator, (<Integer>denom_temp).value)
+            mpz_to_ZZ(&self._denominator, (<Integer>denom_temp).value)
             for i from 0 <= i < ZZX_deg(self.__fld_numerator.x):
                 tmp_integer = <Integer>(ZZ.random_element(x=num_bound,
                                                    distribution=distribution))
@@ -989,7 +989,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
             # scale the numerators and set everything appropriately
 
             # first, the denominator (easy)
-            mpz_to_ZZ(&self.__denominator, (<Integer>denom_temp).value)
+            mpz_to_ZZ(&self._denominator, (<Integer>denom_temp).value)
 
             # now the coefficients themselves.
             for i from 0 <= i < ZZX_deg(self.__fld_numerator.x):
@@ -1158,7 +1158,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
             mpz_init(den)
 
             ZZX_getitem_as_mpz(num, &self.__numerator, 0)
-            ZZ_to_mpz(den, &self.__denominator)
+            ZZ_to_mpz(den, &self._denominator)
 
             ans = PY_NEW(Integer)
             mpz_fdiv_q(ans.value, num, den)
@@ -1183,7 +1183,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
         mpz_init(den)
         mpfi_init2(a, mpfi_get_prec(v.value))
 
-        ZZ_to_mpz(den, &self.__denominator)
+        ZZ_to_mpz(den, &self._denominator)
 
         ZZX_evaluation_mpfi(a, self.__numerator, v.value)
         mpfi_div_z(a, a, den)
@@ -2483,17 +2483,17 @@ cdef class NumberFieldElement(NumberFieldElement_base):
         cdef ZZ_c gcd
         cdef ZZ_c t1
         cdef ZZX_c t2
-        if ZZ_IsOne(self.__denominator):
+        if ZZ_IsOne(self._denominator):
             return
         ZZX_content(t1, self.__numerator)
-        ZZ_GCD(gcd, t1, self.__denominator)
-        if ZZ_sign(gcd) != ZZ_sign(self.__denominator):
+        ZZ_GCD(gcd, t1, self._denominator)
+        if ZZ_sign(gcd) != ZZ_sign(self._denominator):
             ZZ_negate(t1, gcd)
             gcd = t1
         ZZX_div_ZZ(t2, self.__numerator, gcd)
-        ZZ_div(t1, self.__denominator, gcd)
+        ZZ_div(t1, self._denominator, gcd)
         self.__numerator = t2
-        self.__denominator = t1
+        self._denominator = t1
 
     cpdef _add_(self, right):
         r"""
@@ -2509,11 +2509,11 @@ cdef class NumberFieldElement(NumberFieldElement_base):
         cdef NumberFieldElement _right = right
         cdef ZZ_c g, q1, q2
         x = self._new()
-        ZZ_GCD(g, self.__denominator, _right.__denominator)
-        ZZ_div(q1, self.__denominator, g)
-        ZZ_div(q2, _right.__denominator, g)
-        ZZ_mul(x.__denominator, q1, q2)
-        ZZ_mul(x.__denominator, x.__denominator, g)
+        ZZ_GCD(g, self._denominator, _right._denominator)
+        ZZ_div(q1, self._denominator, g)
+        ZZ_div(q2, _right._denominator, g)
+        ZZ_mul(x._denominator, q1, q2)
+        ZZ_mul(x._denominator, x._denominator, g)
         cdef ZZX_c t1, t2
         ZZX_mul_ZZ(t1, self.__numerator, q2)
         ZZX_mul_ZZ(t2, _right.__numerator, q1)
@@ -2534,11 +2534,11 @@ cdef class NumberFieldElement(NumberFieldElement_base):
         cdef NumberFieldElement _right = right
         cdef ZZ_c g, q1, q2
         x = self._new()
-        ZZ_GCD(g, self.__denominator, _right.__denominator)
-        ZZ_div(q1, self.__denominator, g)
-        ZZ_div(q2, _right.__denominator, g)
-        ZZ_mul(x.__denominator, q1, q2)
-        ZZ_mul(x.__denominator, x.__denominator, g)
+        ZZ_GCD(g, self._denominator, _right._denominator)
+        ZZ_div(q1, self._denominator, g)
+        ZZ_div(q2, _right._denominator, g)
+        ZZ_mul(x._denominator, q1, q2)
+        ZZ_mul(x._denominator, x._denominator, g)
         cdef ZZX_c t1, t2
         ZZX_mul_ZZ(t1, self.__numerator, q2)
         ZZX_mul_ZZ(t2, _right.__numerator, q1)
@@ -2571,18 +2571,18 @@ cdef class NumberFieldElement(NumberFieldElement_base):
         sig_on()
         # MulMod doesn't handle non-monic polynomials.
         # Therefore, we handle the non-monic case entirely separately.
-        ZZ_mul(x.__denominator, self.__denominator, _right.__denominator)
+        ZZ_mul(x._denominator, self._denominator, _right._denominator)
         if ZZ_IsOne(ZZX_LeadCoeff(self.__fld_numerator.x)):
             ZZX_MulMod(x.__numerator, self.__numerator, _right.__numerator, self.__fld_numerator.x)
         else:
             ZZX_mul(x.__numerator, self.__numerator, _right.__numerator)
             if ZZX_deg(x.__numerator) >= ZZX_deg(self.__fld_numerator.x):
                 ZZX_mul_ZZ( x.__numerator, x.__numerator, self.__fld_denominator.x )
-                ZZX_mul_ZZ( temp, self.__fld_numerator.x, x.__denominator )
+                ZZX_mul_ZZ( temp, self.__fld_numerator.x, x._denominator )
                 ZZ_power(temp1,ZZX_LeadCoeff(temp),ZZX_deg(x.__numerator)-ZZX_deg(self.__fld_numerator.x)+1)
                 ZZX_PseudoRem(x.__numerator, x.__numerator, temp)
-                ZZ_mul(x.__denominator, x.__denominator, self.__fld_denominator.x)
-                ZZ_mul(x.__denominator, x.__denominator, temp1)
+                ZZ_mul(x._denominator, x._denominator, self.__fld_denominator.x)
+                ZZ_mul(x._denominator, x._denominator, temp1)
         sig_off()
         x._reduce_c_()
         return x
@@ -2718,7 +2718,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
         cdef NumberFieldElement x
         x = self._new()
         ZZX_mul_long(x.__numerator, self.__numerator, -1)
-        x.__denominator = self.__denominator
+        x._denominator = self._denominator
         return x
 
     cpdef _copy_for_parent(self, Parent parent):
@@ -2739,7 +2739,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
         cdef NumberFieldElement x
         x = self._new()
         x.__numerator = self.__numerator
-        x.__denominator = self.__denominator
+        x._denominator = self._denominator
         x._set_parent(parent)
         return x
 
@@ -2835,8 +2835,8 @@ cdef class NumberFieldElement(NumberFieldElement_base):
             # but may fail if NTL runs out of FFT primes.
             x = self._new()
             sig_on()
-            ZZX_XGCD(x.__denominator, x.__numerator, temp, self.__numerator, self.__fld_numerator.x, 1)
-            ZZX_mul_ZZ(x.__numerator, x.__numerator, self.__denominator)
+            ZZX_XGCD(x._denominator, x.__numerator, temp, self.__numerator, self.__fld_numerator.x, 1)
+            ZZX_mul_ZZ(x.__numerator, x.__numerator, self._denominator)
             x._reduce_c_()
             sig_off()
         except NTLError:
@@ -2882,7 +2882,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
         cdef Integer num = Integer.__new__(Integer)
         ZZX_getitem_as_mpz(num.value, &self.__numerator, 0)
         cdef Integer den = Integer.__new__(Integer)
-        ZZ_to_mpz(den.value, &self.__denominator)
+        ZZ_to_mpz(den.value, &self._denominator)
         return num / den
 
     def _algebraic_(self, parent):
@@ -3276,7 +3276,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
             # magic number below is floor(2^63 / (2+sqrt(2)))
             h ^= mpz_pythonhash(z) + (<Py_hash_t> 2701463124188384701) + (h << 16) + (h >> 2)
 
-        ZZ_to_mpz(z, &self.__denominator)
+        ZZ_to_mpz(z, &self._denominator)
         # magic number below is floor((1+sqrt(5)) * 2^61)
         h += (mpz_pythonhash(z) - 1) * (<Py_hash_t> 7461864723258187525)
 
@@ -3305,7 +3305,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
         cdef int i
         cdef mpz_t den
         mpz_init(den)
-        ZZ_to_mpz(den, &self.__denominator)
+        ZZ_to_mpz(den, &self._denominator)
         cdef int size = ZZX_deg(self.__numerator) + 1
         cdef list coeffs = [None]*size
         for i in range(size):
@@ -3325,7 +3325,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
 
     cdef void _ntl_denom_as_mpz(self, mpz_t z):
         cdef Integer denom = Integer.__new__(Integer)
-        ZZ_to_mpz(denom.value, &self.__denominator)
+        ZZ_to_mpz(denom.value, &self._denominator)
         mpz_set(z, denom.value)
 
     def denominator(self):
@@ -3344,7 +3344,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
             15
         """
         cdef Integer ans = Integer.__new__(Integer)
-        ZZ_to_mpz(ans.value, &self.__denominator)
+        ZZ_to_mpz(ans.value, &self._denominator)
         return ans
 
     def _set_multiplicative_order(self, n):
@@ -3475,7 +3475,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
             False
         """
         return ZZX_IsOne(self.__numerator) == 1 and \
-               ZZ_IsOne(self.__denominator) == 1
+               ZZ_IsOne(self._denominator) == 1
 
     cpdef bint is_rational(self):
         r"""
@@ -3527,7 +3527,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
             sage: K(1/2).is_integer()
             False
         """
-        return ZZX_deg(self.__numerator) <= 0 and ZZ_IsOne(self.__denominator) == 1
+        return ZZX_deg(self.__numerator) <= 0 and ZZ_IsOne(self._denominator) == 1
 
     def trace(self, K=None):
         r"""
