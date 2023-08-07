@@ -1,4 +1,4 @@
-# sage.doctest: optional - sage.groups sage.libs.gap sage.libs.ntl sage.libs.pari
+# sage.doctest: needs sage.groups sage.libs.gap sage.libs.ntl sage.libs.pari
 r"""
 Random Number States
 
