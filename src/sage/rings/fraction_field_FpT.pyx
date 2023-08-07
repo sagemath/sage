@@ -1650,7 +1650,7 @@ cdef class FpT_Fp_section(Section):
                 raise ValueError("not constant")
         ans = IntegerMod_int.__new__(IntegerMod_int)
         ans._parent = self.codomain()
-        ans.__modulus = ans._parent._pyx_order
+        ans._modulus = ans._parent._pyx_order
         if nmod_poly_get_coeff_ui(x._denom, 0) != 1:
             normalize(x._numer, x._denom, self.p)
         ans.ivalue = nmod_poly_get_coeff_ui(x._numer, 0)

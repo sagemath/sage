@@ -20,7 +20,7 @@ cdef class NativeIntStruct:
 
 
 cdef class IntegerMod_abstract(FiniteRingElement):
-    cdef NativeIntStruct __modulus
+    cdef NativeIntStruct _modulus
     cdef _new_c_from_long(self, long value)
     cdef IntegerMod_abstract _new_c_fast(self, unsigned long value)
     cdef void set_from_mpz(self, mpz_t value)

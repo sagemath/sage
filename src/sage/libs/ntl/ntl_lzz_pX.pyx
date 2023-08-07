@@ -108,17 +108,17 @@ cdef class ntl_zz_pX():
             a = ls[i]
 
             if isinstance(a, IntegerMod_int):
-                if (self.c.p == (<IntegerMod_int>a).__modulus.int32): ## this is slow
+                if (self.c.p == (<IntegerMod_int>a)._modulus.int32): ## this is slow
                     zz_pX_SetCoeff_long(self.x, i, (<IntegerMod_int>a).ivalue)
                 else:
                     raise ValueError("Mismatched modulus for converting to zz_pX.")
             elif isinstance(a, IntegerMod_int64):
-                if (self.c.p == (<IntegerMod_int64>a).__modulus.int64): ## this is slow
+                if (self.c.p == (<IntegerMod_int64>a)._modulus.int64): ## this is slow
                     zz_pX_SetCoeff_long(self.x, i, (<IntegerMod_int64>a).ivalue)
                 else:
                     raise ValueError("Mismatched modulus for converting to zz_pX.")
             elif isinstance(a, IntegerMod_gmp):
-                if (p_sage == (<IntegerMod_gmp>a).__modulus.sageInteger): ## this is slow
+                if (p_sage == (<IntegerMod_gmp>a)._modulus.sageInteger): ## this is slow
                     zz_pX_SetCoeff_long(self.x, i, mpz_get_si((<IntegerMod_gmp>a).value))
                 else:
                     raise ValueError("Mismatched modulus for converting to zz_pX.")
