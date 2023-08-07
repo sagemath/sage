@@ -18,7 +18,7 @@ cdef class PowComputer_relative(PowComputer_class):
     cdef Polynomial_generic_dense shift_rem
     cdef Polynomial_generic_dense aliasing
     # allow cached methods
-    cdef public dict __cached_methods
+    cdef public dict _cached_methods
 
     cdef unsigned long capdiv(self, unsigned long n)
 
