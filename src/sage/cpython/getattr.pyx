@@ -421,7 +421,7 @@ def dir_with_other_class(self, *cls):
 
     Check that :trac:`13043` is fixed::
 
-        sage: len(dir(RIF))==len(set(dir(RIF)))
+        sage: len(dir(RIF))==len(set(dir(RIF)))                                         # needs sage.rings.real_interval_field
         True
     """
     ret = set()
