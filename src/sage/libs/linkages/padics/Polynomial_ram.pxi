@@ -64,7 +64,7 @@ cdef inline bint creduce(celement out, celement a, long prec, PowComputer_ prime
         if i == break_pt:
             coeff_prec -= 1
         out.__coeffs[i] = out.__coeffs[i].add_bigoh(coeff_prec)
-    out.__normalize()
+    out._normalize()
     return out == 0
 
 cdef inline bint creduce_small(celement out, celement a, long prec, PowComputer_ prime_pow) except -1:

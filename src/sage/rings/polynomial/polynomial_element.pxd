@@ -50,7 +50,7 @@ cdef class Polynomial(CommutativePolynomial):
 cdef class Polynomial_generic_dense(Polynomial):
     cdef Polynomial_generic_dense _new_c(self, list coeffs, Parent P)
     cdef list __coeffs
-    cdef int __normalize(self) except -1
+    cdef int _normalize(self) except -1
     cpdef list list(self, bint copy=*)
 
 cdef class Polynomial_generic_dense_inexact(Polynomial_generic_dense):
