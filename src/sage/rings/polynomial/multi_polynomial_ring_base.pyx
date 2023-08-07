@@ -86,7 +86,7 @@ cdef class MPolynomialRing_base(sage.rings.ring.CommutativeRing):
                              "have more than 0 variables.")
         order = TermOrder(order, n)
         self._ngens = n
-        self.__term_order = order
+        self._term_order = order
         self._has_singular = False  # cannot convert to Singular by default
         self._magma_cache = {}
         # Ring.__init__ already does assign the names.
@@ -642,10 +642,10 @@ cdef class MPolynomialRing_base(sage.rings.ring.CommutativeRing):
 
         lx = (lft.base_ring(), lft._ngens,
               lft.variable_names(),
-              lft.__term_order)
+              lft._term_order)
         rx = (other.base_ring(), other._ngens,
               other.variable_names(),
-              other.__term_order)
+              other._term_order)
         return richcmp(lx, rx, op)
 
     def _repr_(self):
@@ -846,7 +846,7 @@ cdef class MPolynomialRing_base(sage.rings.ring.CommutativeRing):
         return False
 
     def term_order(self):
-        return self.__term_order
+        return self._term_order
 
     def characteristic(self):
         """

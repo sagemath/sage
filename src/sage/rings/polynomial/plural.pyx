@@ -337,7 +337,7 @@ cdef class NCPolynomialRing_plural(Ring):
         self._ring.ShortOut = 0
 
         self._ngens = n
-        self.__term_order = order
+        self._term_order = order
 
         Ring.__init__(self, base_ring, names, category=category)
         self._populate_coercion_lists_()
@@ -673,7 +673,7 @@ cdef class NCPolynomialRing_plural(Ring):
             sage: P.term_order()
             Degree reverse lexicographic term order
         """
-        return self.__term_order
+        return self._term_order
 
     def is_commutative(self):
         """
@@ -2891,7 +2891,7 @@ cpdef MPolynomialRing_libsingular new_CRing(RingWrap rw, base_ring):
     self._ring.ShortOut = 0
 
     self._ngens = rw.ngens()
-    self.__term_order =  TermOrder(rw.ordering_string(), force=True)
+    self._term_order =  TermOrder(rw.ordering_string(), force=True)
 
     ParentWithGens.__init__(self, base_ring, tuple(rw.var_names()),
                             normalize=False)
@@ -2963,7 +2963,7 @@ cpdef NCPolynomialRing_plural new_NRing(RingWrap rw, base_ring):
     self._ring.ShortOut = 0
 
     self._ngens = rw.ngens()
-    self.__term_order =  TermOrder(rw.ordering_string(), force=True)
+    self._term_order =  TermOrder(rw.ordering_string(), force=True)
 
     ParentWithGens.__init__(self, base_ring, rw.var_names())
 #    self._populate_coercion_lists_()  # ???
