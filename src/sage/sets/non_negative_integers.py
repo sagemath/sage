@@ -108,11 +108,11 @@ class NonNegativeIntegers(UniqueRepresentation, Parent):
             False
             sage: QQbar(sqrt(2)) in NN                                                  # needs sage.rings.number_field sage.symbolic
             False
-            sage: RIF(1,2) in NN
+            sage: RIF(1,2) in NN                                                        # needs sage.rings.real_interval_field
             False
             sage: QQbar(2) in NN                                                        # needs sage.rings.number_field
             True
-            sage: RIF(2) in NN
+            sage: RIF(2) in NN                                                          # needs sage.rings.real_interval_field
             True
         """
         try:
