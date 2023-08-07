@@ -422,7 +422,7 @@ cdef class LinearMatroid(BasisExchangeMatroid):
         self._prow[x] = py
         BasisExchangeMatroid._exchange(self, x, y)
 
-    cdef  __exchange_value(self, long x, long y):
+    cdef  _exchange_value_internal(self, long x, long y):
         r"""
         Return the (x, y) entry of the current representation.
         """
@@ -1493,7 +1493,7 @@ cdef class LinearMatroid(BasisExchangeMatroid):
             sage: M._exchange_value(1, 3)
             4
         """
-        return self.__exchange_value(self._idx[e], self._idx[f])
+        return self._exchange_value_internal(self._idx[e], self._idx[f])
 
     cpdef fundamental_cycle(self, B, e):
         """
@@ -3196,7 +3196,7 @@ cdef class BinaryMatroid(LinearMatroid):
                 bitset_add(R, y)
             y = bitset_next(self._inside, y + 1)
 
-    cdef  __exchange_value(self, long x, long y):
+    cdef  _exchange_value_internal(self, long x, long y):
         r"""
         Return the (x, y) entry of the current representation.
         """
@@ -4264,7 +4264,7 @@ cdef class TernaryMatroid(LinearMatroid):
                 bitset_add(R, y)
             y = bitset_next(self._inside, y + 1)
 
-    cdef  __exchange_value(self, long x, long y):
+    cdef  _exchange_value_internal(self, long x, long y):
         r"""
         Return the (x, y) entry of the current representation.
         """
@@ -5166,7 +5166,7 @@ cdef class QuaternaryMatroid(LinearMatroid):
                 bitset_add(R, y)
             y = bitset_next(self._inside, y + 1)
 
-    cdef  __exchange_value(self, long x, long y):
+    cdef  _exchange_value_internal(self, long x, long y):
         r"""
         Return the (x, y) entry of the current representation.
         """
@@ -5869,7 +5869,7 @@ cdef class RegularMatroid(LinearMatroid):
         self._prow[x] = py
         BasisExchangeMatroid._exchange(self, x, y)
 
-    cdef  __exchange_value(self, long x, long y):
+    cdef  _exchange_value_internal(self, long x, long y):
         r"""
         Return the (x, y) entry of the current representation.
 
