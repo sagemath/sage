@@ -1,4 +1,4 @@
-# sage.doctest: optional - sage.geometry.polyhedron sage.graphs
+# sage.doctest: needs sage.geometry.polyhedron sage.graphs
 r"""
 Weierstrass for elliptic curves in higher codimension
 
