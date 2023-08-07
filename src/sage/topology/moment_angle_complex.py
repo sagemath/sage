@@ -108,9 +108,7 @@ def union(c1, c2):
 
     INPUT:
 
-    - ``c1`` -- a cubical complex
-
-    - ``c2`` -- a cubical complex
+    - ``c1``, ``c2`` -- a cubical complex
 
     OUTPUT: the union of cubical complexes ``c1`` and ``c2``
 
@@ -141,14 +139,14 @@ def union(c1, c2):
 
 class MomentAngleComplex(SageObject, UniqueRepresentation):
     r"""
-    Define a moment-angle complex.
+    A moment-angle complex.
 
     INPUT:
 
     - ``simplicial_complex`` -- an instance of ``SimplicialComplex``,
       or an object from which an instance of ``SimplicialComplex`` can be
       created (e.g., list of facets), which represents the associated
-      simplicial complex over which this moment-angle complex is created.
+      simplicial complex over which this moment-angle complex is created
 
     EXAMPLES:
 
@@ -211,8 +209,7 @@ class MomentAngleComplex(SageObject, UniqueRepresentation):
 
     def __init__(self, simplicial_complex):
         """
-        Define a moment-angle complex. See :class:`MomentAngleComplex`
-        for full documentation.
+        Initialize ``self``.
 
         TESTS::
 
@@ -260,7 +257,7 @@ class MomentAngleComplex(SageObject, UniqueRepresentation):
             sage: Z._repr_()
             'Moment-angle complex over a simplicial complex with 20 vertices and 1 facets'
         """
-        return "Moment-angle complex over a " + self._simplicial_complex._repr_().lower()
+        return "Moment-angle complex of " + repr(self._simplicial_complex)
 
     @cached_method
     def _create_complex(self):
@@ -393,7 +390,7 @@ class MomentAngleComplex(SageObject, UniqueRepresentation):
 
     def dimension(self):
         r"""
-        The dimension of this moment-angle complex.
+        The dimension of ``self``.
 
         The dimension of a moment-angle complex is the dimension
         of the constructed (cubical) complex. It is not difficult to
@@ -558,27 +555,19 @@ class MomentAngleComplex(SageObject, UniqueRepresentation):
 
         - ``dim`` -- integer, or a list of integers; represents the
           homology (or homologies) we want to compute
-
-        - ``base_ring`` -- commutative ring, must be ``ZZ`` or a field
-          (default: ``ZZ``)
-
+        - ``base_ring`` -- commutative ring (default: ``ZZ``); must be ``ZZ`` or a field
         - ``cohomology`` -- boolean (default: ``False``);
-          if ``True``, compute cohomology rather than homology.
-
-        - ``algorithm`` -- a string which represents the method for
-          computing homology. The options are 'auto', 'dhsw', or 'pari'
-          (default: `pari`). See below for a description of what they mean.
-
+          if ``True``, compute cohomology rather than homology
+        - ``algorithm`` -- string (default: ``'pari'``); the options are ``'auto'``, ``'dhsw'``, or ``'pari'``;
+          see below for a description of what they mean
         - ``verbose`` -- boolean (default: ``False``); if ``True``,
-          print some messages as the homology is computed.
-
-        - ``reduced`` -- boolean (default: ``True``); If ``True``,
-          return the reduced homology.
+          print some messages as the homology is computed
+        - ``reduced`` -- boolean (default: ``True``); if ``True``,
+          return the reduced homology
 
         ALGORITHM:
 
-        This algorithm is adopted from theorem 4.5.8. on page 154 of
-        [BP2014]_.
+        This algorithm is adopted from Theorem 4.5.8 of [BP2014]_.
 
         The (co)homology of the moment-angle complex is closely related
         to the (co)homologies of certain full subcomplexes of the
@@ -702,7 +691,7 @@ class MomentAngleComplex(SageObject, UniqueRepresentation):
 
         INPUT:
 
-        - ``dim`` -- an integer or a list of integers (default: ``None``)
+        - ``dim`` -- (optional) an integer or a list of integers
 
         OUTPUT:
 
@@ -747,7 +736,7 @@ class MomentAngleComplex(SageObject, UniqueRepresentation):
             sage: Z.euler_characteristic()
             1
         """
-        return sum([(-1)**n * self.betti()[n] for n in range(self.dimension() + 1)])
+        return sum((-1)**n * self.betti()[n] for n in range(self.dimension() + 1))
 
     def product(self, other):
         """

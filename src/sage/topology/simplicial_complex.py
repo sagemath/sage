@@ -4977,7 +4977,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
         r"""
         Return whether ``self`` is minimally non-Golod.
 
-        If a simplicial complex itself is not Golod, but deleting each vertex
+        If a simplicial complex itself is not Golod, but deleting any vertex
         gives us a full subcomplex that is Golod, then we say that a simplicial
         complex is minimally non-Golod.
 
