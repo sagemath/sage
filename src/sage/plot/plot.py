@@ -421,7 +421,7 @@ Pi Axis::
     sage: g1 = plot(sin(x), 0, 2*pi)
     sage: g2 = plot(cos(x), 0, 2*pi, linestyle="--")
     sage: (g1 + g2).show(ticks=pi/6,        # show their sum, nicely formatted  # long time
-....:                    tick_formatter=pi)
+    ....:                tick_formatter=pi)
 
 .. PLOT::
 
