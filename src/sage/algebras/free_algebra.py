@@ -35,10 +35,11 @@ arithmetic is much faster than in the generic implementation.
 Moreover, we can compute Groebner bases with degree bound for its
 two-sided ideals, and thus provide ideal containment tests::
 
-    sage: F.<x,y,z> = FreeAlgebra(QQ, implementation='letterplace'); F                  # optional - sage.libs.singular
+    sage: # needs sage.libs.singular
+    sage: F.<x,y,z> = FreeAlgebra(QQ, implementation='letterplace'); F
     Free Associative Unital Algebra on 3 generators (x, y, z) over Rational Field
-    sage: I = F*[x*y+y*z,x^2+x*y-y*x-y^2]*F                                             # optional - sage.libs.singular
-    sage: I.groebner_basis(degbound=4)                                                  # optional - sage.libs.singular
+    sage: I = F*[x*y+y*z,x^2+x*y-y*x-y^2]*F
+    sage: I.groebner_basis(degbound=4)
     Twosided Ideal (x*y + y*z,
         x*x - y*x - y*y - y*z,
         y*y*y - y*y*z + y*z*y - y*z*z,
@@ -48,67 +49,72 @@ two-sided ideals, and thus provide ideal containment tests::
         y*y*z*x + y*y*z*z + y*z*z*x + y*z*z*z,
         y*z*y*x + y*z*y*z + y*z*z*x + y*z*z*z) of Free Associative Unital
         Algebra on 3 generators (x, y, z) over Rational Field
-    sage: y*z*y*y*z*z + 2*y*z*y*z*z*x + y*z*y*z*z*z - y*z*z*y*z*x + y*z*z*z*z*x in I    # optional - sage.libs.singular
+    sage: y*z*y*y*z*z + 2*y*z*y*z*z*x + y*z*y*z*z*z - y*z*z*y*z*x + y*z*z*z*z*x in I
     True
 
 Positive integral degree weights for the letterplace implementation
 was introduced in :trac:`7797`::
 
-    sage: F.<x,y,z> = FreeAlgebra(QQ, implementation='letterplace', degrees=[2,1,3])    # optional - sage.libs.singular
-    sage: x.degree()                                                                    # optional - sage.libs.singular
+    sage: # needs sage.libs.singular
+    sage: F.<x,y,z> = FreeAlgebra(QQ, implementation='letterplace', degrees=[2,1,3])
+    sage: x.degree()
     2
-    sage: y.degree()                                                                    # optional - sage.libs.singular
+    sage: y.degree()
     1
-    sage: z.degree()                                                                    # optional - sage.libs.singular
+    sage: z.degree()
     3
-    sage: I = F*[x*y-y*x, x^2+2*y*z, (x*y)^2-z^2]*F                                     # optional - sage.libs.singular
-    sage: Q.<a,b,c> = F.quo(I)                                                          # optional - sage.libs.singular
-    sage: TestSuite(Q).run()                                                            # optional - sage.libs.singular
-    sage: a^2*b^2                                                                       # optional - sage.libs.singular
+    sage: I = F*[x*y-y*x, x^2+2*y*z, (x*y)^2-z^2]*F
+    sage: Q.<a,b,c> = F.quo(I)
+    sage: TestSuite(Q).run()
+    sage: a^2*b^2
     c*c
 
 TESTS::
 
-    sage: F = FreeAlgebra(GF(5),3,'x')                                                  # optional - sage.rings.finite_rings
-    sage: TestSuite(F).run()                                                            # optional - sage.rings.finite_rings
-    sage: F is loads(dumps(F))                                                          # optional - sage.rings.finite_rings
+    sage: # needs sage.rings.finite_rings
+    sage: F = FreeAlgebra(GF(5),3,'x')
+    sage: TestSuite(F).run()
+    sage: F is loads(dumps(F))
     True
-    sage: F = FreeAlgebra(GF(5),3,'x', implementation='letterplace')                    # optional - sage.libs.singular sage.rings.finite_rings
-    sage: TestSuite(F).run()                                                            # optional - sage.libs.singular sage.rings.finite_rings
-    sage: F is loads(dumps(F))                                                          # optional - sage.libs.singular sage.rings.finite_rings
-    True
-
-::
-
-    sage: F.<x,y,z> = FreeAlgebra(GF(5),3)                                              # optional - sage.rings.finite_rings
-    sage: TestSuite(F).run()                                                            # optional - sage.rings.finite_rings
-    sage: F is loads(dumps(F))                                                          # optional - sage.rings.finite_rings
-    True
-    sage: F.<x,y,z> = FreeAlgebra(GF(5),3, implementation='letterplace')                # optional - sage.libs.singular sage.rings.finite_rings
-    sage: TestSuite(F).run()                                                            # optional - sage.libs.singular sage.rings.finite_rings
-    sage: F is loads(dumps(F))                                                          # optional - sage.libs.singular sage.rings.finite_rings
+    sage: F = FreeAlgebra(GF(5),3,'x', implementation='letterplace')                    # needs sage.libs.singular
+    sage: TestSuite(F).run()                                                            # needs sage.libs.singular
+    sage: F is loads(dumps(F))                                                          # needs sage.libs.singular
     True
 
 ::
 
-    sage: F = FreeAlgebra(GF(5),3, ['xx', 'zba', 'Y'])                                  # optional - sage.rings.finite_rings
-    sage: TestSuite(F).run()                                                            # optional - sage.rings.finite_rings
-    sage: F is loads(dumps(F))                                                          # optional - sage.rings.finite_rings
+    sage: # needs sage.rings.finite_rings
+    sage: F.<x,y,z> = FreeAlgebra(GF(5),3)
+    sage: TestSuite(F).run()
+    sage: F is loads(dumps(F))
     True
-    sage: F = FreeAlgebra(GF(5),3, ['xx', 'zba', 'Y'], implementation='letterplace')    # optional - sage.libs.singular sage.rings.finite_rings
-    sage: TestSuite(F).run()                                                            # optional - sage.libs.singular sage.rings.finite_rings
-    sage: F is loads(dumps(F))                                                          # optional - sage.libs.singular sage.rings.finite_rings
+    sage: F.<x,y,z> = FreeAlgebra(GF(5),3, implementation='letterplace')                # needs sage.libs.singular
+    sage: TestSuite(F).run()                                                            # needs sage.libs.singular
+    sage: F is loads(dumps(F))                                                          # needs sage.libs.singular
     True
 
 ::
 
-    sage: F = FreeAlgebra(GF(5),3, 'abc')                                               # optional - sage.rings.finite_rings
-    sage: TestSuite(F).run()                                                            # optional - sage.rings.finite_rings
-    sage: F is loads(dumps(F))                                                          # optional - sage.rings.finite_rings
+    sage: # needs sage.rings.finite_rings
+    sage: F = FreeAlgebra(GF(5),3, ['xx', 'zba', 'Y'])
+    sage: TestSuite(F).run()
+    sage: F is loads(dumps(F))
     True
-    sage: F = FreeAlgebra(GF(5),3, 'abc', implementation='letterplace')                 # optional - sage.libs.singular sage.rings.finite_rings
-    sage: TestSuite(F).run()                                                            # optional - sage.libs.singular sage.rings.finite_rings
-    sage: F is loads(dumps(F))                                                          # optional - sage.libs.singular sage.rings.finite_rings
+    sage: F = FreeAlgebra(GF(5),3, ['xx', 'zba', 'Y'], implementation='letterplace')    # needs sage.libs.singular
+    sage: TestSuite(F).run()                                                            # needs sage.libs.singular
+    sage: F is loads(dumps(F))                                                          # needs sage.libs.singular
+    True
+
+::
+
+    sage: # needs sage.rings.finite_rings
+    sage: F = FreeAlgebra(GF(5),3, 'abc')
+    sage: TestSuite(F).run()
+    sage: F is loads(dumps(F))
+    True
+    sage: F = FreeAlgebra(GF(5),3, 'abc', implementation='letterplace')                 # needs sage.libs.singular
+    sage: TestSuite(F).run()                                                            # needs sage.libs.singular
+    sage: F is loads(dumps(F))                                                          # needs sage.libs.singular
     True
 
 ::
@@ -121,7 +127,7 @@ TESTS::
 Note that the letterplace implementation can only be used if the corresponding
 (multivariate) polynomial ring has an implementation in Singular::
 
-    sage: FreeAlgebra(FreeAlgebra(ZZ,2,'ab'), 2, 'x', implementation='letterplace')     # optional - sage.libs.singular sage.rings.finite_rings
+    sage: FreeAlgebra(FreeAlgebra(ZZ,2,'ab'), 2, 'x', implementation='letterplace')     # needs sage.libs.singular sage.rings.finite_rings
     Traceback (most recent call last):
     ...
     NotImplementedError: polynomials over Free Algebra on 2 generators (a, b) over Integer Ring are not supported in Singular
@@ -168,18 +174,18 @@ class FreeAlgebraFactory(UniqueFactory):
 
     EXAMPLES::
 
-        sage: FreeAlgebra(GF(5),3,'x')                                                  # optional - sage.rings.finite_rings
+        sage: FreeAlgebra(GF(5),3,'x')                                                  # needs sage.rings.finite_rings
         Free Algebra on 3 generators (x0, x1, x2) over Finite Field of size 5
-        sage: F.<x,y,z> = FreeAlgebra(GF(5),3)                                          # optional - sage.rings.finite_rings
-        sage: (x+y+z)^2                                                                 # optional - sage.rings.finite_rings
+        sage: F.<x,y,z> = FreeAlgebra(GF(5),3)                                          # needs sage.rings.finite_rings
+        sage: (x+y+z)^2                                                                 # needs sage.rings.finite_rings
         x^2 + x*y + x*z + y*x + y^2 + y*z + z*x + z*y + z^2
-        sage: FreeAlgebra(GF(5),3, 'xx, zba, Y')                                        # optional - sage.rings.finite_rings
+        sage: FreeAlgebra(GF(5),3, 'xx, zba, Y')                                        # needs sage.rings.finite_rings
         Free Algebra on 3 generators (xx, zba, Y) over Finite Field of size 5
-        sage: FreeAlgebra(GF(5),3, 'abc')                                               # optional - sage.rings.finite_rings
+        sage: FreeAlgebra(GF(5),3, 'abc')                                               # needs sage.rings.finite_rings
         Free Algebra on 3 generators (a, b, c) over Finite Field of size 5
-        sage: FreeAlgebra(GF(5),1, 'z')                                                 # optional - sage.rings.finite_rings
+        sage: FreeAlgebra(GF(5),1, 'z')                                                 # needs sage.rings.finite_rings
         Free Algebra on 1 generators (z,) over Finite Field of size 5
-        sage: FreeAlgebra(GF(5),1, ['alpha'])                                           # optional - sage.rings.finite_rings
+        sage: FreeAlgebra(GF(5),1, ['alpha'])                                           # needs sage.rings.finite_rings
         Free Algebra on 1 generators (alpha,) over Finite Field of size 5
         sage: FreeAlgebra(FreeAlgebra(ZZ,1,'a'), 2, 'x')
         Free Algebra on 2 generators (x0, x1) over
@@ -191,14 +197,14 @@ class FreeAlgebraFactory(UniqueFactory):
         sage: G = FreeAlgebra(ZZ,3,'x,y,z')
         sage: F is G
         True
-        sage: F.<x,y,z> = FreeAlgebra(GF(5),3)  # indirect doctest                      # optional - sage.rings.finite_rings
-        sage: F is loads(dumps(F))                                                      # optional - sage.rings.finite_rings
+        sage: F.<x,y,z> = FreeAlgebra(GF(5),3)  # indirect doctest                      # needs sage.rings.finite_rings
+        sage: F is loads(dumps(F))                                                      # needs sage.rings.finite_rings
         True
-        sage: F is FreeAlgebra(GF(5),['x','y','z'])                                     # optional - sage.rings.finite_rings
+        sage: F is FreeAlgebra(GF(5),['x','y','z'])                                     # needs sage.rings.finite_rings
         True
-        sage: copy(F) is F is loads(dumps(F))                                           # optional - sage.rings.finite_rings
+        sage: copy(F) is F is loads(dumps(F))                                           # needs sage.rings.finite_rings
         True
-        sage: TestSuite(F).run()                                                        # optional - sage.rings.finite_rings
+        sage: TestSuite(F).run()                                                        # needs sage.rings.finite_rings
 
     By :trac:`7797`, we provide a different implementation of free
     algebras, based on Singular's "letterplace rings". Our letterplace
@@ -207,27 +213,29 @@ class FreeAlgebraFactory(UniqueFactory):
     elements are supported. Of course, isomorphic algebras in different
     implementations are not identical::
 
-        sage: G = FreeAlgebra(GF(5),['x','y','z'], implementation='letterplace')        # optional - sage.libs.singular sage.rings.finite_rings
-        sage: F == G                                                                    # optional - sage.libs.singular sage.rings.finite_rings
+        sage: # needs sage.libs.singular sage.rings.finite_rings
+        sage: G = FreeAlgebra(GF(5),['x','y','z'], implementation='letterplace')
+        sage: F == G
         False
-        sage: G is FreeAlgebra(GF(5),['x','y','z'], implementation='letterplace')       # optional - sage.libs.singular sage.rings.finite_rings
+        sage: G is FreeAlgebra(GF(5),['x','y','z'], implementation='letterplace')
         True
-        sage: copy(G) is G is loads(dumps(G))                                           # optional - sage.libs.singular sage.rings.finite_rings
+        sage: copy(G) is G is loads(dumps(G))
         True
-        sage: TestSuite(G).run()                                                        # optional - sage.libs.singular sage.rings.finite_rings
+        sage: TestSuite(G).run()
 
     ::
 
-        sage: H = FreeAlgebra(GF(5), ['x','y','z'], implementation='letterplace',       # optional - sage.libs.singular sage.rings.finite_rings
+        sage: # needs sage.libs.singular sage.rings.finite_rings
+        sage: H = FreeAlgebra(GF(5), ['x','y','z'], implementation='letterplace',
         ....:                 degrees=[1,2,3])
-        sage: F != H != G                                                               # optional - sage.libs.singular sage.rings.finite_rings
+        sage: F != H != G
         True
-        sage: H is FreeAlgebra(GF(5),['x','y','z'], implementation='letterplace',       # optional - sage.libs.singular sage.rings.finite_rings
+        sage: H is FreeAlgebra(GF(5),['x','y','z'], implementation='letterplace',
         ....:                  degrees=[1,2,3])
         True
-        sage: copy(H) is H is loads(dumps(H))                                           # optional - sage.libs.singular sage.rings.finite_rings
+        sage: copy(H) is H is loads(dumps(H))
         True
-        sage: TestSuite(H).run()                                                        # optional - sage.libs.singular sage.rings.finite_rings
+        sage: TestSuite(H).run()
 
     Free algebras commute with their base ring.
     ::
@@ -255,22 +263,23 @@ class FreeAlgebraFactory(UniqueFactory):
 
         TESTS::
 
-            sage: FreeAlgebra.create_key(GF(5),['x','y','z'])                           # optional - sage.rings.finite_rings
+            sage: # needs sage.rings.finite_rings
+            sage: FreeAlgebra.create_key(GF(5),['x','y','z'])
             (Finite Field of size 5, ('x', 'y', 'z'))
-            sage: FreeAlgebra.create_key(GF(5),['x','y','z'],3)                         # optional - sage.rings.finite_rings
+            sage: FreeAlgebra.create_key(GF(5),['x','y','z'],3)
             (Finite Field of size 5, ('x', 'y', 'z'))
-            sage: FreeAlgebra.create_key(GF(5),3,'xyz')                                 # optional - sage.rings.finite_rings
+            sage: FreeAlgebra.create_key(GF(5),3,'xyz')
             (Finite Field of size 5, ('x', 'y', 'z'))
-            sage: FreeAlgebra.create_key(GF(5),['x','y','z'],                           # optional - sage.libs.singular sage.rings.finite_rings
+            sage: FreeAlgebra.create_key(GF(5),['x','y','z'],                           # needs sage.libs.singular
             ....:                        implementation='letterplace')
             (Multivariate Polynomial Ring in x, y, z over Finite Field of size 5,)
-            sage: FreeAlgebra.create_key(GF(5),['x','y','z'],3,                         # optional - sage.libs.singular sage.rings.finite_rings
+            sage: FreeAlgebra.create_key(GF(5),['x','y','z'],3,                         # needs sage.libs.singular
             ....:                        implementation='letterplace')
             (Multivariate Polynomial Ring in x, y, z over Finite Field of size 5,)
-            sage: FreeAlgebra.create_key(GF(5),3,'xyz',                                 # optional - sage.libs.singular sage.rings.finite_rings
+            sage: FreeAlgebra.create_key(GF(5),3,'xyz',                                 # needs sage.libs.singular
             ....:                        implementation='letterplace')
             (Multivariate Polynomial Ring in x, y, z over Finite Field of size 5,)
-            sage: FreeAlgebra.create_key(GF(5),3,'xyz',                                 # optional - sage.libs.singular sage.rings.finite_rings
+            sage: FreeAlgebra.create_key(GF(5),3,'xyz',                                 # needs sage.libs.singular
             ....:                        implementation='letterplace', degrees=[1,2,3])
             ((1, 2, 3), Multivariate Polynomial Ring in x, y, z, x_ over Finite Field of size 5)
 
@@ -552,21 +561,23 @@ class FreeAlgebra_generic(CombinatorialFreeModule, Algebra):
 
         TESTS::
 
-            sage: F.<x,y,z> = FreeAlgebra(GF(5),3)                                      # optional - sage.rings.finite_rings
-            sage: L.<x,y,z> = FreeAlgebra(ZZ,3,implementation='letterplace')            # optional - sage.libs.singular sage.rings.finite_rings
-            sage: F(x)     # indirect doctest                                           # optional - sage.libs.singular sage.rings.finite_rings
+            sage: # needs sage.rings.finite_rings
+            sage: F.<x,y,z> = FreeAlgebra(GF(5),3)
+            sage: L.<x,y,z> = FreeAlgebra(ZZ,3,implementation='letterplace')            # needs sage.libs.singular
+            sage: F(x)     # indirect doctest                                           # needs sage.libs.singular
             x
-            sage: F.1*L.2                                                               # optional - sage.libs.singular sage.rings.finite_rings
+            sage: F.1*L.2                                                               # needs sage.libs.singular
             y*z
-            sage: (F.1*L.2).parent() is F                                               # optional - sage.libs.singular sage.rings.finite_rings
+            sage: (F.1*L.2).parent() is F                                               # needs sage.libs.singular
             True
 
        ::
 
-            sage: K.<z> = GF(25)                                                        # optional - sage.rings.finite_rings
-            sage: F.<a,b,c> = FreeAlgebra(K,3)                                          # optional - sage.rings.finite_rings
-            sage: L.<a,b,c> = FreeAlgebra(K,3, implementation='letterplace')            # optional - sage.libs.singular sage.rings.finite_rings
-            sage: F.1+(z+1)*L.2                                                         # optional - sage.libs.singular sage.rings.finite_rings
+            sage: # needs sage.rings.finite_rings
+            sage: K.<z> = GF(25)
+            sage: F.<a,b,c> = FreeAlgebra(K,3)
+            sage: L.<a,b,c> = FreeAlgebra(K,3, implementation='letterplace')            # needs sage.libs.singular
+            sage: F.1+(z+1)*L.2                                                         # needs sage.libs.singular
             b + (z+1)*c
 
         Check that :trac:`15169` is fixed::
@@ -676,23 +687,23 @@ class FreeAlgebra_generic(CombinatorialFreeModule, Algebra):
             sage: F.has_coerce_map_from(PolynomialRing(ZZ, 3, 'x,y,z'))
             False
 
-            sage: K.<z> = GF(25)                                                        # optional - sage.rings.finite_rings
-            sage: F.<a,b,c> = FreeAlgebra(K,3)                                          # optional - sage.rings.finite_rings
-            sage: F._coerce_map_from_(ZZ)                                               # optional - sage.rings.finite_rings
+            sage: K.<z> = GF(25)                                                        # needs sage.rings.finite_rings
+            sage: F.<a,b,c> = FreeAlgebra(K,3)                                          # needs sage.rings.finite_rings
+            sage: F._coerce_map_from_(ZZ)                                               # needs sage.rings.finite_rings
             True
-            sage: F._coerce_map_from_(QQ)                                               # optional - sage.rings.finite_rings
+            sage: F._coerce_map_from_(QQ)                                               # needs sage.rings.finite_rings
             False
-            sage: F._coerce_map_from_(F.monoid())                                       # optional - sage.rings.finite_rings
+            sage: F._coerce_map_from_(F.monoid())                                       # needs sage.rings.finite_rings
             True
-            sage: F._coerce_map_from_(F.pbw_basis())                                    # optional - sage.rings.finite_rings
+            sage: F._coerce_map_from_(F.pbw_basis())                                    # needs sage.rings.finite_rings
             True
             sage: G = FreeAlgebra(ZZ, 3, 'a,b,c')
-            sage: F._coerce_map_from_(G)                                                # optional - sage.rings.finite_rings
+            sage: F._coerce_map_from_(G)                                                # needs sage.rings.finite_rings
             True
-            sage: G._coerce_map_from_(F)                                                # optional - sage.rings.finite_rings
+            sage: G._coerce_map_from_(F)                                                # needs sage.rings.finite_rings
             False
-            sage: L.<a,b,c> = FreeAlgebra(K,3, implementation='letterplace')            # optional - sage.libs.singular sage.rings.finite_rings
-            sage: F.1 + (z+1) * L.2                                                     # optional - sage.libs.singular sage.rings.finite_rings
+            sage: L.<a,b,c> = FreeAlgebra(K,3, implementation='letterplace')            # needs sage.libs.singular sage.rings.finite_rings
+            sage: F.1 + (z+1) * L.2                                                     # needs sage.libs.singular sage.rings.finite_rings
             b + (z+1)*c
         """
         if self._indices.has_coerce_map_from(R):

@@ -298,15 +298,16 @@ This also performs mutations of F-polynomials::
 which might not be a good idea in algebras that are too big. One workaround is
 to first disable F-polynomials and then recompute only the desired mutations::
 
-    sage: A.reset_exploring_iterator(mutating_F=False)  # long time
-    sage: v = (-1, 1, -2, 2, -1, 1, -1, 1, 1)  # long time
-    sage: seq = A.find_g_vector(v); seq  # long time random
+    sage: # long time
+    sage: A.reset_exploring_iterator(mutating_F=False)
+    sage: v = (-1, 1, -2, 2, -1, 1, -1, 1, 1)
+    sage: seq = A.find_g_vector(v); seq
     [1, 0, 2, 6, 5, 4, 3, 8, 1]
-    sage: S = A.initial_seed().mutate(seq, inplace=False)   # long time
-    sage: v in S.g_vectors()   # long time
+    sage: S = A.initial_seed().mutate(seq, inplace=False)
+    sage: v in S.g_vectors()
     True
-    sage: A.current_seed().mutate(seq)    # long time
-    sage: A.F_polynomial((-1, 1, -2, 2, -1, 1, -1, 1, 1))   # long time
+    sage: A.current_seed().mutate(seq)
+    sage: A.F_polynomial((-1, 1, -2, 2, -1, 1, -1, 1, 1))
     u0*u1^2*u2^2*u3*u4*u5*u6*u8 +
     ...
     2*u2 + u4 + u6 + 1
@@ -2373,7 +2374,7 @@ class ClusterAlgebra(Parent, UniqueRepresentation):
         EXAMPLES::
 
             sage: A = ClusterAlgebra(['A', 2])
-            sage: A.cluster_fan()                                                       # optional - sage.geometry.polyhedron
+            sage: A.cluster_fan()                                                       # needs sage.geometry.polyhedron
             Rational polyhedral fan in 2-d lattice N
         """
         seeds = self.seeds(depth=depth, mutating_F=False)

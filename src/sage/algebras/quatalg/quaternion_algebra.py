@@ -119,10 +119,10 @@ class QuaternionAlgebraFactory(UniqueFactory):
         Quaternion Algebra (2, 3) with base ring Finite Field of size 5
         sage: QuaternionAlgebra(2, GF(5)(3))
         Quaternion Algebra (2, 3) with base ring Finite Field of size 5
-        sage: QuaternionAlgebra(QQ[sqrt(2)](-1), -5)                                    # optional - sage.symbolic
+        sage: QuaternionAlgebra(QQ[sqrt(2)](-1), -5)                                    # needs sage.symbolic
         Quaternion Algebra (-1, -5) with base ring Number Field in sqrt2
          with defining polynomial x^2 - 2 with sqrt2 = 1.414213562373095?
-        sage: QuaternionAlgebra(sqrt(-1), sqrt(-3))                                     # optional - sage.symbolic
+        sage: QuaternionAlgebra(sqrt(-1), sqrt(-3))                                     # needs sage.symbolic
         Quaternion Algebra (I, sqrt(-3)) with base ring Symbolic Ring
         sage: QuaternionAlgebra(1r,1)
         Quaternion Algebra (1, 1) with base ring Rational Field
@@ -162,7 +162,7 @@ class QuaternionAlgebraFactory(UniqueFactory):
 
         sage: QuaternionAlgebra(QQ, -7, -21)
         Quaternion Algebra (-7, -21) with base ring Rational Field
-        sage: QuaternionAlgebra(QQ[sqrt(2)], -2,-3)                                     # optional - sage.symbolic
+        sage: QuaternionAlgebra(QQ[sqrt(2)], -2,-3)                                     # needs sage.symbolic
         Quaternion Algebra (-2, -3) with base ring Number Field in sqrt2
          with defining polynomial x^2 - 2 with sqrt2 = 1.414213562373095?
 
@@ -545,8 +545,8 @@ class QuaternionAlgebra_abstract(Algebra):
 
         EXAMPLES::
 
-            sage: g = QuaternionAlgebra(QQ[sqrt(2)], -3, 7).random_element()            # optional - sage.symbolic
-            sage: g.parent() is QuaternionAlgebra(QQ[sqrt(2)], -3, 7)                   # optional - sage.symbolic
+            sage: g = QuaternionAlgebra(QQ[sqrt(2)], -3, 7).random_element()            # needs sage.symbolic
+            sage: g.parent() is QuaternionAlgebra(QQ[sqrt(2)], -3, 7)                   # needs sage.symbolic
             True
             sage: g = QuaternionAlgebra(-3, 19).random_element()
             sage: g.parent() is QuaternionAlgebra(-3, 19)
@@ -1048,7 +1048,7 @@ class QuaternionAlgebra_ab(QuaternionAlgebra_abstract):
             sage: B.discriminant()
             Fractional ideal (2)
 
-            sage: QuaternionAlgebra(QQ[sqrt(2)], 3, 19).discriminant()                  # optional - sage.symbolic
+            sage: QuaternionAlgebra(QQ[sqrt(2)], 3, 19).discriminant()                  # needs sage.symbolic
             Fractional ideal (1)
         """
         if not is_RationalField(self.base_ring()):
@@ -1093,13 +1093,13 @@ class QuaternionAlgebra_ab(QuaternionAlgebra_abstract):
 
         A more complicated example involving a quaternion algebra over a number field::
 
-            sage: K.<a> = QQ[sqrt(2)]; Q = QuaternionAlgebra(K,-1,a); Q                 # optional - sage.symbolic
+            sage: K.<a> = QQ[sqrt(2)]; Q = QuaternionAlgebra(K,-1,a); Q                 # needs sage.symbolic
             Quaternion Algebra (-1, sqrt2) with base ring Number Field in sqrt2
              with defining polynomial x^2 - 2 with sqrt2 = 1.414213562373095?
-            sage: magma(Q)                                              # optional - magma sage.symbolic
+            sage: magma(Q)                                              # optional - magma, needs sage.symbolic
             Quaternion Algebra with base ring Number Field with defining polynomial
              x^2 - 2 over the Rational Field, defined by i^2 = -1, j^2 = sqrt2
-            sage: Q._magma_init_(magma)                                 # optional - magma sage.symbolic
+            sage: Q._magma_init_(magma)                                 # optional - magma, needs sage.symbolic
             'QuaternionAlgebra(_sage_[...],(_sage_[...]![-1, 0]),(_sage_[...]![0, 1]))'
         """
         R = magma(self.base_ring())
@@ -2510,12 +2510,13 @@ class QuaternionFractionalIdeal_rational(QuaternionFractionalIdeal):
             sage: [I.norm() for I in C]
             [16, 32, 32]
 
-            sage: (a,b) = M.quaternion_algebra().invariants()                                       # optional - magma
-            sage: magma.eval('A<i,j,k> := QuaternionAlgebra<Rationals() | %s, %s>' % (a,b))         # optional - magma
+            sage: # optional - magma
+            sage: (a,b) = M.quaternion_algebra().invariants()
+            sage: magma.eval('A<i,j,k> := QuaternionAlgebra<Rationals() | %s, %s>' % (a,b))
             ''
-            sage: magma.eval('O := QuaternionOrder(%s)' % str(list(C[0].right_order().basis())))    # optional - magma
+            sage: magma.eval('O := QuaternionOrder(%s)' % str(list(C[0].right_order().basis())))
             ''
-            sage: [ magma('rideal<O | %s>' % str(list(I.basis()))).Norm() for I in C]               # optional - magma
+            sage: [ magma('rideal<O | %s>' % str(list(I.basis()))).Norm() for I in C]
             [16, 32, 32]
 
             sage: A.<i,j,k> = QuaternionAlgebra(-1,-1)

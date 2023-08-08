@@ -191,7 +191,7 @@ class FreeAlgebraQuotient(UniqueRepresentation, Algebra, object):
             True
             sage: H._coerce_map_from_(QQ)
             True
-            sage: H._coerce_map_from_(GF(7))                                            # optional - sage.rings.finite_rings
+            sage: H._coerce_map_from_(GF(7))                                            # needs sage.rings.finite_rings
             False
         """
         return S == self or self.__free_algebra.has_coerce_map_from(S)

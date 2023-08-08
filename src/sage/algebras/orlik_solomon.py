@@ -624,11 +624,12 @@ class OrlikSolomonInvariantAlgebra(FiniteDimensionalInvariantModule):
     Next, we look at the same matroid but with an `S_3 \times S_3` action
     (here realized as a Young subgroup of `S_6`)::
 
-        sage: H = G.young_subgroup([3, 3])                                              # needs sage.graphs sage.groups
-        sage: OSH = M.orlik_solomon_algebra(QQ, invariant=H)                            # needs sage.graphs sage.groups
-        sage: OSH.basis()                                                               # needs sage.graphs sage.groups
+        sage: # needs sage.graphs sage.groups
+        sage: H = G.young_subgroup([3, 3])
+        sage: OSH = M.orlik_solomon_algebra(QQ, invariant=H)
+        sage: OSH.basis()
         Finite family {0: B[0], 1: B[1], 2: B[2]}
-        sage: [OSH.lift(b) for b in OSH.basis()]                                        # needs sage.graphs sage.groups
+        sage: [OSH.lift(b) for b in OSH.basis()]
         [OS{}, OS{4} + OS{5} + OS{6}, OS{1} + OS{2} + OS{3}]
 
     We implement an `S_4` action on the vertices::
@@ -648,10 +649,11 @@ class OrlikSolomonInvariantAlgebra(FiniteDimensionalInvariantModule):
 
     We use this to describe the Young subgroup `S_2 \times S_2` action::
 
-        sage: H = G.young_subgroup([2,2])                                               # needs sage.graphs sage.groups
-        sage: OSH = M.orlik_solomon_algebra(QQ, invariant=(H, vert_action))             # needs sage.graphs sage.groups
-        sage: B = OSH.basis()                                                           # needs sage.graphs sage.groups
-        sage: [OSH.lift(b) for b in B]                                                  # needs sage.graphs sage.groups
+        sage: # needs sage.graphs sage.groups
+        sage: H = G.young_subgroup([2,2])
+        sage: OSH = M.orlik_solomon_algebra(QQ, invariant=(H, vert_action))
+        sage: B = OSH.basis()
+        sage: [OSH.lift(b) for b in B]
         [OS{}, OS{5}, OS{1} + OS{2} + OS{3} + OS{4}, OS{0},
          -1/2*OS{1, 2} + OS{1, 5} - 1/2*OS{3, 4} + OS{3, 5},
          OS{0, 5}, OS{0, 1} + OS{0, 2} + OS{0, 3} + OS{0, 4},
@@ -790,12 +792,13 @@ class OrlikSolomonInvariantAlgebra(FiniteDimensionalInvariantModule):
 
         We also check that the ordering is respected::
 
-            sage: fset = frozenset({1,2})                                               # needs sage.graphs sage.groups
-            sage: OS1 = M.orlik_solomon_algebra(QQ)                                     # needs sage.graphs sage.groups
-            sage: OS1.subset_image(fset)                                                # needs sage.graphs sage.groups
+            sage: # needs sage.graphs sage.groups
+            sage: fset = frozenset({1,2})
+            sage: OS1 = M.orlik_solomon_algebra(QQ)
+            sage: OS1.subset_image(fset)
             -OS{0, 1} + OS{0, 2}
-            sage: OS2 = M.orlik_solomon_algebra(QQ, range(2,-1,-1))                     # needs sage.graphs sage.groups
-            sage: OS2.subset_image(fset)                                                # needs sage.graphs sage.groups
+            sage: OS2 = M.orlik_solomon_algebra(QQ, range(2,-1,-1))
+            sage: OS2.subset_image(fset)
             OS{1, 2}
 
             sage: OSG2 = M.orlik_solomon_algebra(QQ,                                    # needs sage.graphs sage.groups

@@ -461,8 +461,8 @@ class LieAlgebraMorphism_from_generators(LieAlgebraHomomorphism_im_gens):
 
     A quotient type Lie algebra morphism::
 
-        sage: K.<A,B> = LieAlgebra(SR, abelian=True)                                    # optional - sage.symbolic
-        sage: L.morphism({X: A, Y: B})                                                  # optional - sage.symbolic
+        sage: K.<A,B> = LieAlgebra(SR, abelian=True)                                    # needs sage.symbolic
+        sage: L.morphism({X: A, Y: B})                                                  # needs sage.symbolic
         Lie algebra morphism:
           From: Lie algebra on 4 generators (X, Y, Z, W) over Rational Field
           To:   Abelian Lie algebra on 2 generators (A, B) over Symbolic Ring
@@ -623,17 +623,17 @@ class LieAlgebraMorphism_from_generators(LieAlgebraHomomorphism_im_gens):
         EXAMPLES::
 
             sage: L.<X,Y,Z,W> = LieAlgebra(QQ, {('X','Y'): {'Z':1}, ('X','Z'): {'W':1}})
-            sage: K.<A,B> = LieAlgebra(SR, abelian=True)                                # optional - sage.symbolic
-            sage: phi = L.morphism({X: A, Y: B})                                        # optional - sage.symbolic
-            sage: phi(X)                                                                # optional - sage.symbolic
+            sage: K.<A,B> = LieAlgebra(SR, abelian=True)                                # needs sage.symbolic
+            sage: phi = L.morphism({X: A, Y: B})                                        # needs sage.symbolic
+            sage: phi(X)                                                                # needs sage.symbolic
             A
-            sage: phi(Y)                                                                # optional - sage.symbolic
+            sage: phi(Y)                                                                # needs sage.symbolic
             B
-            sage: phi(Z)                                                                # optional - sage.symbolic
+            sage: phi(Z)                                                                # needs sage.symbolic
             0
-            sage: phi(W)                                                                # optional - sage.symbolic
+            sage: phi(W)                                                                # needs sage.symbolic
             0
-            sage: phi(-X + 3*Y)                                                         # optional - sage.symbolic
+            sage: phi(-X + 3*Y)                                                         # needs sage.symbolic
             -A + 3*B
 
             sage: K.<A,B,C> = LieAlgebra(QQ, {('A','B'): {'C':2}})
