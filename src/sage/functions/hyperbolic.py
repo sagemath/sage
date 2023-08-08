@@ -172,13 +172,13 @@ class Function_tanh(GinacFunction):
             sage: # needs sage.symbolic
             sage: tanh(1+2*I).n()
             1.16673625724092 - 0.243458201185725*I
-            sage: tanh(1+2*I).real().n()                                                # optional - sage.symbolic
+            sage: tanh(1+2*I).real().n()
             1.16673625724092
-            sage: tanh(1+2*I).imag().n()                                                # optional - sage.symbolic
+            sage: tanh(1+2*I).imag().n()
             -0.243458201185725
-            sage: tanh(x).real()                                                        # optional - sage.symbolic
+            sage: tanh(x).real()
             sinh(2*real_part(x))/(cos(2*imag_part(x)) + cosh(2*real_part(x)))
-            sage: tanh(x).imag()                                                        # optional - sage.symbolic
+            sage: tanh(x).imag()
             sin(2*imag_part(x))/(cos(2*imag_part(x)) + cosh(2*real_part(x)))
         """
         GinacFunction.__init__(self, "tanh", latex_name=r"\tanh")
@@ -220,9 +220,9 @@ class Function_coth(GinacFunction):
             sage: # needs sage.symbolic
             sage: bool(diff(coth(x), x) == diff(1/tanh(x), x))
             True
-            sage: diff(coth(x), x)                                                      # optional - sage.symbolic
+            sage: diff(coth(x), x)
             -1/sinh(x)^2
-            sage: latex(coth(x))                                                        # optional - sage.symbolic
+            sage: latex(coth(x))
             \coth\left(x\right)
             sage: coth(x)._sympy_()                                                     # needs sympy
             coth(x)
@@ -275,9 +275,9 @@ class Function_sech(GinacFunction):
             sage: # needs sage.symbolic
             sage: bool(diff(sech(x), x) == diff(1/cosh(x), x))
             True
-            sage: diff(sech(x), x)                                                      # optional - sage.symbolic
+            sage: diff(sech(x), x)
             -sech(x)*tanh(x)
-            sage: latex(sech(x))                                                        # optional - sage.symbolic
+            sage: latex(sech(x))
             \operatorname{sech}\left(x\right)
             sage: sech(x)._sympy_()                                                     # needs sympy
             sech(x)
@@ -328,9 +328,9 @@ class Function_csch(GinacFunction):
             sage: # needs sage.symbolic
             sage: bool(diff(csch(x), x) == diff(1/sinh(x), x))
             True
-            sage: diff(csch(x), x)                                                      # optional - sage.symbolic
+            sage: diff(csch(x), x)
             -coth(x)*csch(x)
-            sage: latex(csch(x))                                                        # optional - sage.symbolic
+            sage: latex(csch(x))
             \operatorname{csch}\left(x\right)
             sage: csch(x)._sympy_()                                                     # needs sympy
             csch(x)
@@ -389,17 +389,17 @@ class Function_arcsinh(GinacFunction):
             sage: # needs sage.symbolic
             sage: conjugate(asinh(x))
             conjugate(arcsinh(x))
-            sage: var('y', domain='positive')                                           # optional - sage.symbolic
+            sage: var('y', domain='positive')
             y
-            sage: conjugate(asinh(y))                                                   # optional - sage.symbolic
+            sage: conjugate(asinh(y))
             arcsinh(y)
-            sage: conjugate(asinh(y+I))                                                 # optional - sage.symbolic
+            sage: conjugate(asinh(y+I))
             conjugate(arcsinh(y + I))
-            sage: conjugate(asinh(1/16))                                                # optional - sage.symbolic
+            sage: conjugate(asinh(1/16))
             arcsinh(1/16)
-            sage: conjugate(asinh(I/2))                                                 # optional - sage.symbolic
+            sage: conjugate(asinh(I/2))
             arcsinh(-1/2*I)
-            sage: conjugate(asinh(2*I))                                                 # optional - sage.symbolic
+            sage: conjugate(asinh(2*I))
             conjugate(arcsinh(2*I))
 
         TESTS::
@@ -476,17 +476,17 @@ class Function_arccosh(GinacFunction):
             sage: # needs sage.symbolic
             sage: conjugate(acosh(x))
             conjugate(arccosh(x))
-            sage: var('y', domain='positive')                                           # optional - sage.symbolic
+            sage: var('y', domain='positive')
             y
-            sage: conjugate(acosh(y))                                                   # optional - sage.symbolic
+            sage: conjugate(acosh(y))
             conjugate(arccosh(y))
-            sage: conjugate(acosh(y+I))                                                 # optional - sage.symbolic
+            sage: conjugate(acosh(y+I))
             conjugate(arccosh(y + I))
-            sage: conjugate(acosh(1/16))                                                # optional - sage.symbolic
+            sage: conjugate(acosh(1/16))
             conjugate(arccosh(1/16))
-            sage: conjugate(acosh(2))                                                   # optional - sage.symbolic
+            sage: conjugate(acosh(2))
             arccosh(2)
-            sage: conjugate(acosh(I/2))                                                 # optional - sage.symbolic
+            sage: conjugate(acosh(I/2))
             arccosh(-1/2*I)
 
         TESTS::
@@ -537,17 +537,17 @@ class Function_arctanh(GinacFunction):
             sage: # needs sage.symbolic
             sage: conjugate(atanh(x))
             conjugate(arctanh(x))
-            sage: var('y', domain='positive')                                           # optional - sage.symbolic
+            sage: var('y', domain='positive')
             y
-            sage: conjugate(atanh(y))                                                   # optional - sage.symbolic
+            sage: conjugate(atanh(y))
             conjugate(arctanh(y))
             sage: conjugate(atanh(y + I))
             conjugate(arctanh(y + I))
-            sage: conjugate(atanh(1/16))                                                # optional - sage.symbolic
+            sage: conjugate(atanh(1/16))
             1/2*log(17/15)
-            sage: conjugate(atanh(I/2))                                                 # optional - sage.symbolic
+            sage: conjugate(atanh(I/2))
             arctanh(-1/2*I)
-            sage: conjugate(atanh(-2*I))                                                # optional - sage.symbolic
+            sage: conjugate(atanh(-2*I))
             arctanh(2*I)
 
         TESTS::
@@ -578,11 +578,11 @@ class Function_arccoth(GinacFunction):
             sage: # needs sage.symbolic
             sage: acoth(2.0)
             0.549306144334055
-            sage: acoth(2)                                                              # optional - sage.symbolic
+            sage: acoth(2)
             1/2*log(3)
-            sage: acoth(1 + I*1.0)                                                      # optional - sage.symbolic
+            sage: acoth(1 + I*1.0)
             0.402359478108525 - 0.553574358897045*I
-            sage: acoth(2).n(200)                                                       # optional - sage.symbolic
+            sage: acoth(2).n(200)
             0.54930614433405484569762261846126285232374527891137472586735
 
             sage: bool(diff(acoth(x), x) == diff(atanh(x), x))                          # needs sage.symbolic
@@ -640,13 +640,13 @@ class Function_arcsech(GinacFunction):
             sage: # needs sage.symbolic
             sage: asech(0.5)
             1.31695789692482
-            sage: asech(1/2)                                                            # optional - sage.symbolic
+            sage: asech(1/2)
             arcsech(1/2)
-            sage: asech(1 + I*1.0)                                                      # optional - sage.symbolic
+            sage: asech(1 + I*1.0)
             0.530637530952518 - 1.11851787964371*I
-            sage: asech(1/2).n(200)                                                     # optional - sage.symbolic
+            sage: asech(1/2).n(200)
             1.3169578969248167086250463473079684440269819714675164797685
-            sage: float(asech(1/2))                                                     # optional - sage.symbolic
+            sage: float(asech(1/2))
             1.3169578969248168
 
             sage: diff(asech(x), x)                                                     # needs sage.symbolic
@@ -688,13 +688,13 @@ class Function_arccsch(GinacFunction):
             sage: # needs sage.symbolic
             sage: acsch(2.0)
             0.481211825059603
-            sage: acsch(2)                                                              # optional - sage.symbolic
+            sage: acsch(2)
             arccsch(2)
-            sage: acsch(1 + I*1.0)                                                      # optional - sage.symbolic
+            sage: acsch(1 + I*1.0)
             0.530637530952518 - 0.452278447151191*I
-            sage: acsch(1).n(200)                                                       # optional - sage.symbolic
+            sage: acsch(1).n(200)
             0.88137358701954302523260932497979230902816032826163541075330
-            sage: float(acsch(1))                                                       # optional - sage.symbolic
+            sage: float(acsch(1))
             0.881373587019543
 
             sage: diff(acsch(x), x)                                                     # needs sage.symbolic
