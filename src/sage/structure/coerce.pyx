@@ -1871,10 +1871,10 @@ cdef class CoercionModel:
         Check that :trac:`18221` is fixed::
 
             sage: # needs sage.combinat sage.modules
-            sage: F.<x> = FreeAlgebra(QQ)                                               # needs sage.combinat sage.modules
-            sage: x / 2                                                                 # needs sage.combinat sage.modules
+            sage: F.<x> = FreeAlgebra(QQ)
+            sage: x / 2
             1/2*x
-            sage: cm.discover_action(F, ZZ, operator.truediv)                           # needs sage.combinat sage.modules
+            sage: cm.discover_action(F, ZZ, operator.truediv)
             Right inverse action by Rational Field on
              Free Algebra on 1 generators (x,) over Rational Field
              with precomposition on right by Natural morphism:
