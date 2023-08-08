@@ -1673,15 +1673,16 @@ class CubicalComplex(GenericCellComplex):
 
         EXAMPLES::
 
+            sage: # needs sage.modules
             sage: RP2 = cubical_complexes.RealProjectivePlane()
             sage: phi, M = RP2.algebraic_topological_model(GF(2))
-            sage: M.homology()                                                          # needs sage.modules
+            sage: M.homology()
             {0: Vector space of dimension 1 over Finite Field of size 2,
              1: Vector space of dimension 1 over Finite Field of size 2,
              2: Vector space of dimension 1 over Finite Field of size 2}
             sage: T = cubical_complexes.Torus()
-            sage: phi, M = T.algebraic_topological_model(QQ)                            # needs sage.modules
-            sage: M.homology()                                                          # needs sage.modules
+            sage: phi, M = T.algebraic_topological_model(QQ)
+            sage: M.homology()
             {0: Vector space of dimension 1 over Rational Field,
              1: Vector space of dimension 2 over Rational Field,
              2: Vector space of dimension 1 over Rational Field}

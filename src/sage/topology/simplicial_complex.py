@@ -2498,15 +2498,16 @@ class SimplicialComplex(Parent, GenericCellComplex):
 
         EXAMPLES::
 
+            sage: # needs sage.modules
             sage: RP2 = simplicial_complexes.RealProjectivePlane()
             sage: phi, M = RP2.algebraic_topological_model(GF(2))
-            sage: M.homology()                                                          # needs sage.modules
+            sage: M.homology()
             {0: Vector space of dimension 1 over Finite Field of size 2,
              1: Vector space of dimension 1 over Finite Field of size 2,
              2: Vector space of dimension 1 over Finite Field of size 2}
             sage: T = simplicial_complexes.Torus()
-            sage: phi, M = T.algebraic_topological_model(QQ)                            # needs sage.modules
-            sage: M.homology()                                                          # needs sage.modules
+            sage: phi, M = T.algebraic_topological_model(QQ)
+            sage: M.homology()
             {0: Vector space of dimension 1 over Rational Field,
              1: Vector space of dimension 2 over Rational Field,
              2: Vector space of dimension 1 over Rational Field}
@@ -4905,20 +4906,21 @@ class SimplicialComplex(Parent, GenericCellComplex):
 
         EXAMPLES::
 
+            sage: # needs sage.modules
             sage: X = SimplicialComplex([[0,1],[1,2],[2,0],[1,3]])
-            sage: X.bigraded_betti_number(-1, 4, base_ring=QQ)                          # needs sage.modules
+            sage: X.bigraded_betti_number(-1, 4, base_ring=QQ)
             2
-            sage: X.bigraded_betti_number(-1, 8)                                        # needs sage.modules
+            sage: X.bigraded_betti_number(-1, 8)
             0
             sage: X.bigraded_betti_number(-2, 5)
             0
             sage: X.bigraded_betti_number(0, 0)
             1
-            sage: sorted(X.bigraded_betti_numbers().items(), reverse=True)              # needs sage.modules
+            sage: sorted(X.bigraded_betti_numbers().items(), reverse=True)
             [((0, 0), 1), ((-1, 6), 1), ((-1, 4), 2), ((-2, 8), 1), ((-2, 6), 1)]
-            sage: X.bigraded_betti_number(-1, 4, base_ring=QQ)                          # needs sage.modules
+            sage: X.bigraded_betti_number(-1, 4, base_ring=QQ)
             2
-            sage: X.bigraded_betti_number(-1, 8)                                        # needs sage.modules
+            sage: X.bigraded_betti_number(-1, 8)
             0
         """
         if b % 2:
@@ -4964,6 +4966,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
 
         EXAMPLES::
 
+            sage: # needs sage.modules
             sage: X = SimplicialComplex([[0,1],[1,2],[2,3],[3,0]])
             sage: Y = SimplicialComplex([[0,1,2],[0,2],[0,4]])
             sage: X.is_golod()
@@ -4991,6 +4994,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
 
         EXAMPLES::
 
+            sage: # needs sage.modules
             sage: X = SimplicialComplex([[0,1],[1,2],[2,3],[3,0]])
             sage: Y = SimplicialComplex([[1,2,3],[1,2,4],[3,5],[4,5]])
             sage: X.is_golod()

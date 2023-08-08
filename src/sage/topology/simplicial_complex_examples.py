@@ -636,7 +636,7 @@ def PoincareHomologyThreeSphere():
         sage: Sigma3 = simplicial_complexes.PoincareHomologyThreeSphere()
         sage: S3.homology() == Sigma3.homology()                                        # needs sage.modules
         True
-        sage: Sigma3.fundamental_group().cardinality()  # long time, needs sage.groups
+        sage: Sigma3.fundamental_group().cardinality()  # long time                     # needs sage.groups
         120
     """
     return UniqueSimplicialComplex(
@@ -1325,7 +1325,7 @@ def SumComplex(n, A):
         C23
         sage: S = simplicial_complexes.SumComplex(11, [0, 1, 2, 3, 4, 7]); S
         Sum complex on vertices Z/11Z associated to {0, 1, 2, 3, 4, 7}
-        sage: S.homology()                      # long time, needs sage.modules
+        sage: S.homology()                      # long time                             # needs sage.modules
         {0: 0, 1: 0, 2: 0, 3: 0, 4: C645679, 5: 0}
         sage: factor(645679)
         23 * 67 * 419
@@ -1338,13 +1338,13 @@ def SumComplex(n, A):
         3 * 53
         sage: S = simplicial_complexes.SumComplex(13, [0, 1, 2, 5]); S
         Sum complex on vertices Z/13Z associated to {0, 1, 2, 5}
-        sage: S.homology()                      # long time, needs sage.modules
+        sage: S.homology()                      # long time                             # needs sage.modules
         {0: 0, 1: 0, 2: C146989209, 3: 0}
         sage: factor(1648910295)
         3^2 * 5 * 53 * 521 * 1327
         sage: S = simplicial_complexes.SumComplex(13, [0, 1, 2, 3, 5]); S
         Sum complex on vertices Z/13Z associated to {0, 1, 2, 3, 5}
-        sage: S.homology()                      # long time, needs sage.modules
+        sage: S.homology()                      # long time                             # needs sage.modules
         {0: 0, 1: 0, 2: 0, 3: C3 x C237 x C706565607945, 4: 0}
         sage: factor(706565607945)                                                      # needs sage.libs.pari
         3 * 5 * 53 * 79 * 131 * 157 * 547
@@ -1363,7 +1363,7 @@ def SumComplex(n, A):
         11 * 191 * 2699
         sage: S = simplicial_complexes.SumComplex(31, [0, 1, 4]); S
         Sum complex on vertices Z/31Z associated to {0, 1, 4}
-        sage: S.homology(1)                     # long time, needs sage.modules
+        sage: S.homology(1)                     # long time                             # needs sage.modules
         C5 x C5 x C5 x C5 x C26951480558170926865
         sage: factor(26951480558170926865)                                              # needs sage.libs.pari
         5 * 311 * 683 * 1117 * 11657 * 1948909
