@@ -2786,13 +2786,13 @@ class FreeModule_generic(Module_free_ambient):
         symbols::
 
             sage: M = ModularSymbols(54)                                                # needs sage.modular
-            sage: S = M.cuspidal_subspace()
+            sage: S = M.cuspidal_subspace()                                             # needs sage.modular
             sage: K = S.integral_structure(); K
             Free module of degree 19 and rank 8 over Integer Ring
             Echelon basis matrix:
             [ 0  1  0  0 -1  0  0  0  0  0  0  0  0  0  0  0  0  0  0]
             ...
-            sage: L = M[0].integral_structure(); L
+            sage: L = M[0].integral_structure(); L                                      # needs sage.modular
             Free module of degree 19 and rank 2 over Integer Ring
             Echelon basis matrix:
             [ 0  1  1  0 -2  1 -1  1 -1 -2  2  0  0  0  0  0  0  0  0]
@@ -3825,8 +3825,8 @@ class FreeModule_generic_pid(FreeModule_generic_domain):
             sage: L.<w> = NumberField(x^2 - x + 2)                                      # needs sage.rings.number_field
             sage: OL = L.ring_of_integers()
             sage: V = L**3
-            sage: W1 = V.span([[0,w/5,0], [1,0,-1/17]], OL)
-            sage: W2 = V.span([[0,(1-w)/5,0]], OL)
+            sage: W1 = V.span([[0,w/5,0], [1,0,-1/17]], OL)                             # needs sage.rings.number_field
+            sage: W2 = V.span([[0,(1-w)/5,0]], OL)                                      # needs sage.rings.number_field
             sage: W1.intersection(W2)
             Free module of degree 3 and rank 1 over Maximal Order in
              Number Field in w with defining polynomial x^2 - x + 2

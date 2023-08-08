@@ -112,8 +112,8 @@ def IntegerLattice(basis, lll_reduce=True):
     We construct an ideal lattice from an element of an absolute order::
 
         sage: K.<a>  = CyclotomicField(17)                                              # needs sage.rings.number_field
-        sage: O = K.ring_of_integers()
-        sage: f = O(-a^15 + a^13 + 4*a^12 - 12*a^11 - 256*a^10 + a^9 - a^7
+        sage: O = K.ring_of_integers()                                                  # needs sage.rings.number_field
+        sage: f = O(-a^15 + a^13 + 4*a^12 - 12*a^11 - 256*a^10 + a^9 - a^7              # needs sage.rings.number_field
         ....:       - 4*a^6 + a^5 + 210*a^4 + 2*a^3 - 2*a^2 + 2*a - 2)
         sage: from sage.modules.free_module_integer import IntegerLattice
         sage: IntegerLattice(f)

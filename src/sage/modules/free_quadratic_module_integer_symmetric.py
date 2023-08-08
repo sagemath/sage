@@ -1183,30 +1183,32 @@ class FreeQuadraticModule_integer_symmetric(FreeQuadraticModule_submodule_with_b
 
         The group acts from the right on the lattice and its discriminant group::
 
-            sage: x = A4.an_element()                                                   # needs sage.graphs
-            sage: g = Aut.an_element(); g                                               # needs sage.graphs sage.libs.gap
+            sage: # needs sage.graphs
+            sage: x = A4.an_element()
+            sage: g = Aut.an_element(); g                                               # needs sage.libs.gap
             [-1 -1 -1  0]
             [ 0  0  1  0]
             [ 0  0 -1 -1]
             [ 0  1  1  1]
-            sage: x*g                                                                   # needs sage.graphs sage.libs.gap
+            sage: x*g                                                                   # needs sage.libs.gap
             (-1, -1, -1, 0)
-            sage: (x*g).parent() == A4                                                  # needs sage.graphs sage.libs.gap
+            sage: (x*g).parent() == A4                                                  # needs sage.libs.gap
             True
-            sage: (g*x).parent()                                                        # needs sage.graphs sage.libs.gap
+            sage: (g*x).parent()                                                        # needs sage.libs.gap
             Vector space of dimension 4 over Rational Field
-            sage: y = A4.discriminant_group().an_element()                              # needs sage.graphs sage.libs.gap
-            sage: y*g                                                                   # needs sage.graphs sage.libs.gap
+            sage: y = A4.discriminant_group().an_element()                              # needs sage.libs.gap
+            sage: y*g                                                                   # needs sage.libs.gap
             (4)
 
         If the group is finite we can compute the usual things::
 
-            sage: Aut.order()                                                           # needs sage.graphs sage.libs.gap
+            sage: # needs sage.graphs sage.libs.gap
+            sage: Aut.order()
             240
-            sage: conj = Aut.conjugacy_classes_representatives()                        # needs sage.graphs sage.libs.gap
-            sage: len(conj)                                                             # needs sage.graphs sage.libs.gap
+            sage: conj = Aut.conjugacy_classes_representatives()
+            sage: len(conj)
             14
-            sage: Aut.structure_description()                                           # needs sage.graphs sage.libs.gap
+            sage: Aut.structure_description()
             'C2 x S5'
 
         The lattice can live in a larger ambient space::
@@ -1333,8 +1335,9 @@ class FreeQuadraticModule_integer_symmetric(FreeQuadraticModule_submodule_with_b
 
         EXAMPLES::
 
-            sage: L = IntegralLattice("D3", [[1,-1,0], [0,1,-1]])                       # needs sage.graphs
-            sage: L1 = L.tensor_product(L); L1                                          # needs sage.graphs
+            sage: # needs sage.graphs
+            sage: L = IntegralLattice("D3", [[1,-1,0], [0,1,-1]])
+            sage: L1 = L.tensor_product(L); L1
             Lattice of degree 9 and rank 4 over Integer Ring
             Basis matrix:
             [ 1 -1  0 -1  1  0  0  0  0]
@@ -1351,12 +1354,12 @@ class FreeQuadraticModule_integer_symmetric(FreeQuadraticModule_submodule_with_b
             [-2  1  1  0  0  0  4 -2 -2]
             [ 1 -2  0  0  0  0 -2  4  0]
             [ 1  0 -2  0  0  0 -2  0  4]
-            sage: L1.gram_matrix()                                                      # needs sage.graphs
+            sage: L1.gram_matrix()
             [ 36 -12 -12   4]
             [-12  24   4  -8]
             [-12   4  24  -8]
             [  4  -8  -8  16]
-            sage: L2 = L.tensor_product(L, True); L2                                    # needs sage.graphs
+            sage: L2 = L.tensor_product(L, True); L2
             Lattice of degree 4 and rank 4 over Integer Ring
             Standard basis
             Inner product matrix:
@@ -1596,16 +1599,17 @@ def local_modification(M, G, p, check=True):
 
     EXAMPLES::
 
+        sage: # needs sage.graphs
         sage: from sage.modules.free_quadratic_module_integer_symmetric import local_modification
-        sage: L = IntegralLattice("A3").twist(15)                                       # needs sage.graphs
-        sage: M = L.maximal_overlattice()                                               # needs sage.graphs
-        sage: for p in prime_divisors(L.determinant()):                                 # needs sage.graphs
+        sage: L = IntegralLattice("A3").twist(15)
+        sage: M = L.maximal_overlattice()
+        sage: for p in prime_divisors(L.determinant()):
         ....:     M = local_modification(M, L.gram_matrix(), p)
-        sage: M.genus() == L.genus()                                                    # needs sage.graphs
+        sage: M.genus() == L.genus()
         True
-        sage: L = IntegralLattice("D4").twist(3*4)                                      # needs sage.graphs
-        sage: M = L.maximal_overlattice()                                               # needs sage.graphs
-        sage: local_modification(M, L.gram_matrix(), 2)                                 # needs sage.graphs
+        sage: L = IntegralLattice("D4").twist(3*4)
+        sage: M = L.maximal_overlattice()
+        sage: local_modification(M, L.gram_matrix(), 2)
         Lattice of degree 4 and rank 4 over Integer Ring
         Basis matrix:
         [1/3   0 2/3 2/3]

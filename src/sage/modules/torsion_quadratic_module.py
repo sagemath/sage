@@ -847,7 +847,7 @@ class TorsionQuadraticModule(FGP_Module_class, CachedRepresentation):
             sage: OD.order()                                                            # needs sage.groups
             6
             sage: fd = D.hom([D.1, D.0, D.2])                                           # needs sage.symbolic
-            sage: OD(fd)                                                                # needs sage.groups
+            sage: OD(fd)                                                                # needs sage.groups sage.symbolic
             [0 1 0]
             [1 0 0]
             [0 0 1]
