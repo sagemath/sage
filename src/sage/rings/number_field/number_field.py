@@ -4614,13 +4614,14 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
 
         EXAMPLES::
 
+            sage: # needs sage.libs.gap
             sage: z = QQ['z'].0
             sage: K.<zeta> = NumberField(z^2 - 2)
-            sage: K._gap_init_()  # the following variable name $sage1 represents the F.base_ring() in gap and is somehow random                                # needs sage.libs.gap
+            sage: K._gap_init_()  # the following variable name $sage1 represents the F.base_ring() in gap and is somehow random
             'CallFuncList(function() local z,E; z:=Indeterminate($sage1,"z"); E:=AlgebraicExtension($sage1,z^2 - 2,"zeta"); return E; end,[])'
-            sage: k = gap(K); k                                                         # needs sage.libs.gap
+            sage: k = gap(K); k
             <algebraic extension over the Rationals of degree 2>
-            sage: k.GeneratorsOfDivisionRing()                                          # needs sage.libs.gap
+            sage: k.GeneratorsOfDivisionRing()
             [ zeta ]
 
         The following tests that it is possible to use a defining
@@ -4628,13 +4629,14 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
         ``E`` is used as a local variable in the above GAP
         ``CallFuncList``::
 
+            sage: # needs sage.libs.gap
             sage: P.<E> = QQ[]
             sage: L.<tau> = NumberField(E^3 - 2)
-            sage: l = gap(L); l                                                         # needs sage.libs.gap
+            sage: l = gap(L); l
             <algebraic extension over the Rationals of degree 3>
-            sage: l.GeneratorsOfField()                                                 # needs sage.libs.gap
+            sage: l.GeneratorsOfField()
             [ tau ]
-            sage: gap(tau)^3                                                            # needs sage.libs.gap
+            sage: gap(tau)^3
             !2
         """
         if not self.is_absolute():

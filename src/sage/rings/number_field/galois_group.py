@@ -98,11 +98,13 @@ class GaloisGroup_v1(SageObject):
             sage: G = GaloisGroup_v1(K.absolute_polynomial().galois_group(pari_group=True), K)
             ...DeprecationWarning: GaloisGroup_v1 is deprecated; please use GaloisGroup_v2
             See https://github.com/sagemath/sage/issues/28782 for details.
-            sage: L = QQ[sqrt(2)]                                                       # needs sage.symbolic
-            sage: H = GaloisGroup_v1(L.absolute_polynomial().galois_group(pari_group=True), L)      # needs sage.symbolic
-            sage: H == G                                                                # needs sage.symbolic
+
+            sage: # needs sage.symbolic
+            sage: L = QQ[sqrt(2)]
+            sage: H = GaloisGroup_v1(L.absolute_polynomial().galois_group(pari_group=True), L)
+            sage: H == G
             False
-            sage: H == H                                                                # needs sage.symbolic
+            sage: H == H
             True
             sage: G == G
             True
@@ -127,11 +129,13 @@ class GaloisGroup_v1(SageObject):
             sage: G = GaloisGroup_v1(K.absolute_polynomial().galois_group(pari_group=True), K)
             ...DeprecationWarning: GaloisGroup_v1 is deprecated; please use GaloisGroup_v2
             See https://github.com/sagemath/sage/issues/28782 for details.
-            sage: L = QQ[sqrt(2)]                                                       # needs sage.symbolic
-            sage: H = GaloisGroup_v1(L.absolute_polynomial().galois_group(pari_group=True), L)      # needs sage.symbolic
-            sage: H != G                                                                # needs sage.symbolic
+
+            sage: # needs sage.symbolic
+            sage: L = QQ[sqrt(2)]
+            sage: H = GaloisGroup_v1(L.absolute_polynomial().galois_group(pari_group=True), L)
+            sage: H != G
             True
-            sage: H != H                                                                # needs sage.symbolic
+            sage: H != H
             False
             sage: G != G
             False
