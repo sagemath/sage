@@ -1,0 +1,91 @@
+diff --git a/scipy/linalg.pxd b/scipy/linalg.pxd
+index 1f656b87..c7c49f9a 100644
+--- a/scipy/linalg.pxd
++++ b/scipy/linalg.pxd
+@@ -1 +1 @@
+-from .linalg cimport cython_blas, cython_lapack
++from scipy.linalg cimport cython_blas, cython_lapack
+diff --git a/scipy/meson.build b/scipy/meson.build
+index 21ea04d5..71d54804 100644
+--- a/scipy/meson.build
++++ b/scipy/meson.build
+@@ -197,7 +197,7 @@ _cython_tree = [
+   fs.copyfile('special.pxd'),
+ ]
+ 
+-cython_args = ['-3', '--fast-fail', '--output-file', '@OUTPUT@', '--include-dir', '@BUILD_ROOT@', '@INPUT@']
++cython_args = ['-3', '--fast-fail', '--directive', 'legacy_implicit_noexcept=True', '--output-file', '@OUTPUT@', '--include-dir', '@BUILD_ROOT@', '@INPUT@']
+ cython_cplus_args = ['--cplus'] + cython_args
+ 
+ cython_gen = generator(cython,
+diff --git a/scipy/optimize/cython_optimize.pxd b/scipy/optimize/cython_optimize.pxd
+index d5a0bdd7..d35f8da6 100644
+--- a/scipy/optimize/cython_optimize.pxd
++++ b/scipy/optimize/cython_optimize.pxd
+@@ -7,5 +7,5 @@
+ # support. Changing it causes an ABI forward-compatibility break
+ # (gh-11793), so we currently leave it as is (no further cimport
+ # statements should be used in this file).
+-from .cython_optimize._zeros cimport (
++from scipy.optimize.cython_optimize._zeros cimport (
+     brentq, brenth, ridder, bisect, zeros_full_output)
+diff --git a/scipy/optimize/meson.build b/scipy/optimize/meson.build
+index 05db6a68..07d46fb9 100644
+--- a/scipy/optimize/meson.build
++++ b/scipy/optimize/meson.build
+@@ -231,6 +231,10 @@ endif
+ 
+ _dummy_init_optimize = fs.copyfile('__init__.py')
+ 
++_cython_tree = [
++  fs.copyfile('cython_optimize.pxd'),
++]
++
+ opt_gen = generator(cython,
+   arguments : cython_args,
+   output : '@BASENAME@.c',
+diff --git a/scipy/special.pxd b/scipy/special.pxd
+index 62cb8280..1daa9fb3 100644
+--- a/scipy/special.pxd
++++ b/scipy/special.pxd
+@@ -1 +1 @@
+-from .special cimport cython_special
++from scipy.special cimport cython_special
+diff --git a/scipy/special/meson.build b/scipy/special/meson.build
+index f92183f5..09ad0a4f 100644
+--- a/scipy/special/meson.build
++++ b/scipy/special/meson.build
+@@ -362,7 +362,7 @@ py3.extension_module('_ufuncs_cxx',
+   [ufuncs_cxx_sources,
+     uf_cython_gen_cpp.process(cython_special[2]),  # _ufuncs_cxx.pyx
+     ],
+-  cpp_args: cython_cpp_args,
++  cpp_args: [cython_cpp_args, '-DCYTHON_EXTERN_C=extern "C"'],
+   include_directories: [inc_np, '../_lib/boost', '../_lib',
+                         '../_build_utils/src'],
+   link_args: version_link_args,
+diff --git a/scipy/special/setup.py b/scipy/special/setup.py
+index 7e8c9608..b38a6ec2 100644
+--- a/scipy/special/setup.py
++++ b/scipy/special/setup.py
+@@ -103,7 +103,7 @@ def configuration(parent_package='',top_path=None):
+                                           sources=ufuncs_cxx_src,
+                                           depends=ufuncs_cxx_dep,
+                                           include_dirs=[curdir] + inc_dirs,
+-                                          define_macros=define_macros,
++                                          define_macros=define_macros + [('CYTHON_EXTERN_C', 'extern "C"')],
+                                           extra_info=get_info("npymath"))
+     ufuncs_cxx_ext._pre_build_hook = set_cxx_flags_hook
+ 
+diff --git a/tools/cythonize.py b/tools/cythonize.py
+index 402824cb..7ad778da 100755
+--- a/tools/cythonize.py
++++ b/tools/cythonize.py
+@@ -94,6 +94,7 @@ def process_pyx(fromfile, tofile, cwd):
+     flags = ['--fast-fail', '-3']
+     if tofile.endswith('.cxx'):
+         flags += ['--cplus']
++    flags += ['--directive', 'legacy_implicit_noexcept=true']
+ 
+     try:
+         try:
