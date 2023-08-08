@@ -327,7 +327,7 @@ def ClassifyingSpace(group):
         sage: Klein4 = groups.misc.MultiplicativeAbelian([2, 2])                        # needs sage.groups
         sage: BK = simplicial_sets.ClassifyingSpace(Klein4); BK                         # needs sage.groups
         Classifying space of Multiplicative Abelian group isomorphic to C2 x C2
-        sage: BK.homology(range(5), base_ring=GF(2))    # long time (1 second), needs sage.groups sage.modules sage.rings.finite_rings
+        sage: BK.homology(range(5), base_ring=GF(2))    # long time (1 second)          # needs sage.groups sage.modules sage.rings.finite_rings
         {0: Vector space of dimension 0 over Finite Field of size 2,
          1: Vector space of dimension 2 over Finite Field of size 2,
          2: Vector space of dimension 3 over Finite Field of size 2,
