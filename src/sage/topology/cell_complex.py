@@ -503,19 +503,20 @@ class GenericCellComplex(SageObject):
 
         EXAMPLES::
 
+            sage: # needs sage.modules
             sage: P = delta_complexes.RealProjectivePlane()
-            sage: P.homology()                                                          # needs sage.modules
+            sage: P.homology()
             {0: 0, 1: C2, 2: 0}
-            sage: P.homology(reduced=False)                                             # needs sage.modules
+            sage: P.homology(reduced=False)
             {0: Z, 1: C2, 2: 0}
-            sage: P.homology(base_ring=GF(2))                                           # needs sage.modules
+            sage: P.homology(base_ring=GF(2))
             {0: Vector space of dimension 0 over Finite Field of size 2,
              1: Vector space of dimension 1 over Finite Field of size 2,
              2: Vector space of dimension 1 over Finite Field of size 2}
             sage: S7 = delta_complexes.Sphere(7)
-            sage: S7.homology(7)                                                        # needs sage.modules
+            sage: S7.homology(7)
             Z
-            sage: cubical_complexes.KleinBottle().homology(1, base_ring=GF(2))          # needs sage.modules
+            sage: cubical_complexes.KleinBottle().homology(1, base_ring=GF(2))
             Vector space of dimension 2 over Finite Field of size 2
 
         Sage can compute generators of homology groups::
@@ -624,13 +625,14 @@ class GenericCellComplex(SageObject):
 
         Projective plane::
 
+            sage: # needs sage.modules
             sage: P2 = SimplicialComplex([[0,1,2], [0,2,3], [0,1,5], [0,4,5], [0,3,4],
             ....:                         [1,2,4], [1,3,4], [1,3,5], [2,3,5], [2,4,5]])
-            sage: P2.cohomology(2)                                                      # needs sage.modules
+            sage: P2.cohomology(2)
             C2
-            sage: P2.cohomology(2, base_ring=GF(2))                                     # needs sage.modules
+            sage: P2.cohomology(2, base_ring=GF(2))
             Vector space of dimension 1 over Finite Field of size 2
-            sage: P2.cohomology(2, base_ring=GF(3))                                     # needs sage.modules
+            sage: P2.cohomology(2, base_ring=GF(3))
             Vector space of dimension 0 over Finite Field of size 3
 
             sage: cubical_complexes.KleinBottle().cohomology(2)                         # needs sage.modules
@@ -839,16 +841,17 @@ class GenericCellComplex(SageObject):
 
         EXAMPLES::
 
+            sage: # needs sage.modules
             sage: K = simplicial_complexes.KleinBottle()
-            sage: H = K.homology_with_basis(QQ); H                                      # needs sage.modules
+            sage: H = K.homology_with_basis(QQ); H
             Homology module of Minimal triangulation of the Klein bottle
              over Rational Field
-            sage: sorted(H.basis(), key=str)                                            # needs sage.modules
+            sage: sorted(H.basis(), key=str)
             [h_{0,0}, h_{1,0}]
-            sage: H = K.homology_with_basis(GF(2)); H                                   # needs sage.modules
+            sage: H = K.homology_with_basis(GF(2)); H
             Homology module of Minimal triangulation of the Klein bottle
              over Finite Field of size 2
-            sage: sorted(H.basis(), key=str)                                            # needs sage.modules
+            sage: sorted(H.basis(), key=str)
             [h_{0,0}, h_{1,0}, h_{1,1}, h_{2,0}]
 
         The homology is constructed as a graded object, so for
@@ -898,16 +901,17 @@ class GenericCellComplex(SageObject):
 
         EXAMPLES::
 
+            sage: # needs sage.modules
             sage: K = simplicial_complexes.KleinBottle()
-            sage: H = K.cohomology_ring(QQ); H                                          # needs sage.modules
+            sage: H = K.cohomology_ring(QQ); H
             Cohomology ring of Minimal triangulation of the Klein bottle
              over Rational Field
-            sage: sorted(H.basis(), key=str)                                            # needs sage.modules
+            sage: sorted(H.basis(), key=str)
             [h^{0,0}, h^{1,0}]
-            sage: H = K.cohomology_ring(GF(2)); H                                       # needs sage.modules
+            sage: H = K.cohomology_ring(GF(2)); H
             Cohomology ring of Minimal triangulation of the Klein bottle
              over Finite Field of size 2
-            sage: sorted(H.basis(), key=str)                                            # needs sage.modules
+            sage: sorted(H.basis(), key=str)
             [h^{0,0}, h^{1,0}, h^{1,1}, h^{2,0}]
 
             sage: X = delta_complexes.SurfaceOfGenus(2)
@@ -943,9 +947,9 @@ class GenericCellComplex(SageObject):
             sage: RP2 = simplicial_complexes.RealProjectivePlane()
             sage: K = RP2.suspension()
             sage: K.set_immutable()
-            sage: y = K.cohomology_ring(GF(2)).basis()[2,0]; y                          # needs sage.modules sage.rings.finite_rings
+            sage: y = K.cohomology_ring(GF(2)).basis()[2,0]; y                          # needs sage.modules
             h^{2,0}
-            sage: y.Sq(1)                                                               # needs sage.modules sage.rings.finite_rings
+            sage: y.Sq(1)                                                               # needs sage.modules
             h^{3,0}
 
         To compute the cohomology ring, the complex must be

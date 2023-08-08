@@ -752,12 +752,14 @@ class Factors():
             sage: K = S2.disjoint_union(S3)
             sage: K.factor(0)
             S^2
-            sage: G = groups.misc.MultiplicativeAbelian([2])                            # needs sage.groups
-            sage: B = simplicial_sets.ClassifyingSpace(G)                               # needs sage.groups
-            sage: X = B.wedge(S3, B)                                                    # needs sage.groups
-            sage: X.factor(1)                                                           # needs sage.groups
+
+            sage: # needs sage.groups
+            sage: G = groups.misc.MultiplicativeAbelian([2])
+            sage: B = simplicial_sets.ClassifyingSpace(G)
+            sage: X = B.wedge(S3, B)
+            sage: X.factor(1)
             S^3
-            sage: X.factor(2)                                                           # needs sage.groups
+            sage: X.factor(2)
             Classifying space of Multiplicative Abelian group isomorphic to C2
         """
         return self.factors()[i]
@@ -858,12 +860,12 @@ class ProductOfSimplicialSets(PullbackOfSimplicialSets, Factors):
             RP^oo x RP^oo
             sage: X.n_cells(1)
             [(f, f), (f, s_0 1), (s_0 1, f)]
-            sage: X.homology(range(3), base_ring=GF(2))                                 # needs sage.modules sage.rings.finite_rings
+            sage: X.homology(range(3), base_ring=GF(2))                                 # needs sage.modules
             {0: Vector space of dimension 0 over Finite Field of size 2,
              1: Vector space of dimension 2 over Finite Field of size 2,
              2: Vector space of dimension 3 over Finite Field of size 2}
             sage: Y = B.product(S2)
-            sage: Y.homology(range(5), base_ring=GF(2))                                 # needs sage.modules sage.rings.finite_rings
+            sage: Y.homology(range(5), base_ring=GF(2))                                 # needs sage.modules
             {0: Vector space of dimension 0 over Finite Field of size 2,
              1: Vector space of dimension 1 over Finite Field of size 2,
              2: Vector space of dimension 2 over Finite Field of size 2,
@@ -1059,11 +1061,13 @@ class ProductOfSimplicialSets_finite(ProductOfSimplicialSets, PullbackOfSimplici
             sage: T = simplicial_sets.Torus()
             sage: f_0 = T.projection_map(0)
             sage: f_1 = T.projection_map(1)
-            sage: m_0 = f_0.induced_homology_morphism().to_matrix(1) # matrix in dim 1  # needs sage.modules
-            sage: m_1 = f_1.induced_homology_morphism().to_matrix(1)                    # needs sage.modules
-            sage: m_0.rank()                                                            # needs sage.modules
+
+            sage: # needs sage.modules
+            sage: m_0 = f_0.induced_homology_morphism().to_matrix(1)  # matrix in dim 1
+            sage: m_1 = f_1.induced_homology_morphism().to_matrix(1)
+            sage: m_0.rank()
             1
-            sage: m_0 == m_1                                                            # needs sage.modules
+            sage: m_0 == m_1
             False
         """
         return self.structure_map(i)
@@ -2803,7 +2807,7 @@ class SuspensionOfSimplicialSet(SimplicialSet_arbitrary, UniqueRepresentation):
             sage: G = groups.misc.MultiplicativeAbelian([2])
             sage: B = simplicial_sets.ClassifyingSpace(G)
             sage: SigmaB = B.suspension()
-            sage: SigmaB.n_skeleton(4).homology(base_ring=GF(2))                        # needs sage.modules sage.rings.finite_rings
+            sage: SigmaB.n_skeleton(4).homology(base_ring=GF(2))                        # needs sage.modules
             {0: Vector space of dimension 0 over Finite Field of size 2,
              1: Vector space of dimension 0 over Finite Field of size 2,
              2: Vector space of dimension 1 over Finite Field of size 2,
