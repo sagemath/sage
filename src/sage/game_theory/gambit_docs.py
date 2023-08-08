@@ -115,18 +115,19 @@ If one really wants to use gambit directly in Sage (without using the
 converted to Python integers (due to the preparser). Here is an example
 showing the Battle of the Sexes::
 
-    sage: import gambit  # optional - gambit
-    sage: g = gambit.Game.new_table([2,2])  # optional - gambit
-    sage: g[int(0), int(0)][int(0)] = int(2)  # optional - gambit
-    sage: g[int(0), int(0)][int(1)] = int(1)  # optional - gambit
-    sage: g[int(0), int(1)][int(0)] = int(0)  # optional - gambit
-    sage: g[int(0), int(1)][int(1)] = int(0)  # optional - gambit
-    sage: g[int(1), int(0)][int(0)] = int(0)  # optional - gambit
-    sage: g[int(1), int(0)][int(1)] = int(0)  # optional - gambit
-    sage: g[int(1), int(1)][int(0)] = int(1)  # optional - gambit
-    sage: g[int(1), int(1)][int(1)] = int(2)  # optional - gambit
-    sage: solver = gambit.nash.ExternalLCPSolver()  # optional - gambit
-    sage: solver.solve(g)  # optional - gambit
+    sage: # optional - gambit
+    sage: import gambit
+    sage: g = gambit.Game.new_table([2,2])
+    sage: g[int(0), int(0)][int(0)] = int(2)
+    sage: g[int(0), int(0)][int(1)] = int(1)
+    sage: g[int(0), int(1)][int(0)] = int(0)
+    sage: g[int(0), int(1)][int(1)] = int(0)
+    sage: g[int(1), int(0)][int(0)] = int(0)
+    sage: g[int(1), int(0)][int(1)] = int(0)
+    sage: g[int(1), int(1)][int(0)] = int(1)
+    sage: g[int(1), int(1)][int(1)] = int(2)
+    sage: solver = gambit.nash.ExternalLCPSolver()
+    sage: solver.solve(g)
     [<NashProfile for '': [[1.0, 0.0], [1.0, 0.0]]>,
      <NashProfile for '': [[0.6666666667, 0.3333333333], [0.3333333333, 0.6666666667]]>,
      <NashProfile for '': [[0.0, 1.0], [0.0, 1.0]]>]
