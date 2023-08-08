@@ -373,7 +373,7 @@ categories and their super categories::
      Category of objects]
 
     sage: g = EuclideanDomains().category_graph()                                       # needs sage.graphs
-    sage: g.set_latex_options(format="dot2tex")                                         # needs sage.graphs
+    sage: g.set_latex_options(format="dot2tex")                                         # needs sage.graphs sage.plot
     sage: view(g)                               # not tested                            # needs sage.graphs sage.plot
 
 A bit of help from computer science

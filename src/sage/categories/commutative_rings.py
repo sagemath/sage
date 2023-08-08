@@ -298,10 +298,11 @@ class CommutativeRings(CategoryWithAxiom):
 
                 We compute some examples of minimal polynomials::
 
-                    sage: K = GF(27, 'z')                                               # needs sage.rings.finite_rings
-                    sage: a = K.multiplicative_generator()                              # needs sage.rings.finite_rings
-                    sage: R.<X> = PolynomialRing(K, 'X')                                # needs sage.rings.finite_rings
-                    sage: a.minimal_polynomial('X')                                     # needs sage.rings.finite_rings
+                    sage: # needs sage.rings.finite_rings
+                    sage: K = GF(27, 'z')
+                    sage: a = K.multiplicative_generator()
+                    sage: R.<X> = PolynomialRing(K, 'X')
+                    sage: a.minimal_polynomial('X')
                     X^3 + 2*X + 1
 
                     sage: cyc3 = Zmod(26).cyclotomic_cosets(3, cosets=[1]); cyc3

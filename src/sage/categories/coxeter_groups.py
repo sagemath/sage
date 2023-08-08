@@ -273,7 +273,7 @@ class CoxeterGroups(Category_singleton):
             EXAMPLES::
 
                 sage: W = CoxeterGroups().example()
-                sage: sorted(W.braid_orbit_iter([0, 1, 2, 1]))                # optional - sage.combinat sage.groups
+                sage: sorted(W.braid_orbit_iter([0, 1, 2, 1]))                          # needs sage.combinat sage.groups
                 [[0, 1, 2, 1], [0, 2, 1, 2], [2, 0, 1, 2]]
             """
             word = list(word)
@@ -1591,8 +1591,8 @@ class CoxeterGroups(Category_singleton):
 
             TESTS::
 
-                sage: W = CoxeterGroup(matrix(2,2,[1,7,7,1]), index_set='ab')     # needs sage.combinat sage.groups
-                sage: len([1 for w in W if w.is_fully_commutative()])             # needs sage.combinat sage.groups
+                sage: W = CoxeterGroup(matrix(2,2,[1,7,7,1]), index_set='ab')           # needs sage.combinat sage.groups
+                sage: len([1 for w in W if w.is_fully_commutative()])                   # needs sage.combinat sage.groups
                 13
             """
             word = self.reduced_word()
@@ -1693,7 +1693,7 @@ class CoxeterGroups(Category_singleton):
                 sage: W = CoxeterGroups().example()
                 sage: s = W.simple_reflections()
                 sage: w = s[0] * s[2]
-                sage: sorted(w.reduced_words_iter())                                    # optional - sage.combinat
+                sage: sorted(w.reduced_words_iter())                                    # needs sage.combinat
                 [[0, 2], [2, 0]]
             """
             return self.parent().braid_orbit_iter(self.reduced_word())
