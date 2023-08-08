@@ -62,7 +62,7 @@ cdef class PPLBackend(GenericBackend):
 
         Raise an error if a ``base_ring`` is requested that is not supported::
 
-            sage: p = MixedIntegerLinearProgram(solver="PPL", base_ring=AA)             # optional - sage.rings.number_field
+            sage: p = MixedIntegerLinearProgram(solver="PPL", base_ring=AA)             # needs sage.rings.number_field
             Traceback (most recent call last):
             ...
             TypeError: The PPL backend only supports rational data.

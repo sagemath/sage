@@ -36,7 +36,7 @@ cdef class CVXOPTSDPBackend(MatrixSDPBackend):
         EXAMPLES::
 
             sage: from sage.numerical.backends.generic_sdp_backend import get_solver
-            sage: p = get_solver(solver = "CVXOPT")                 # optional - cvxopt
+            sage: p = get_solver(solver = "CVXOPT")                                     # needs cvxopt
 
         """
 
@@ -68,9 +68,9 @@ cdef class CVXOPTSDPBackend(MatrixSDPBackend):
 
         EXAMPLES::
 
-            sage: p = SemidefiniteProgram(solver = "cvxopt", maximization=False)       # optional - cvxopt
-            sage: x = p.new_variable()                                                 # optional - cvxopt
-            sage: p.set_objective(x[0] - x[1] + x[2])                                  # optional - cvxopt
+            sage: p = SemidefiniteProgram(solver = "cvxopt", maximization=False)        # needs cvxopt
+            sage: x = p.new_variable()                                                  # needs cvxopt
+            sage: p.set_objective(x[0] - x[1] + x[2])                                   # needs cvxopt
             sage: a1 = matrix([[-7., -11.], [-11., 3.]])
             sage: a2 = matrix([[7., -18.], [-18., 8.]])
             sage: a3 = matrix([[-2., -8.], [-8., 1.]])
@@ -79,13 +79,13 @@ cdef class CVXOPTSDPBackend(MatrixSDPBackend):
             sage: b2 = matrix([[0.,  10.,  16.], [10., -10., -10.], [16., -10., 3.]])
             sage: b3 = matrix([[-5.,   2., -17.], [2.,  -6.,   8.], [-17.,  8., 6.]])
             sage: b4 = matrix([[14., 9., 40.], [9., 91., 10.], [40., 10., 15.]])
-            sage: p.add_constraint(a1*x[0] + a3*x[2] <= a4)                            # optional - cvxopt
-            sage: p.add_constraint(b1*x[0] + b2*x[1] + b3*x[2] <= b4)                  # optional - cvxopt
-            sage: N(p.solve(), digits=4)                                               # optional - cvxopt
+            sage: p.add_constraint(a1*x[0] + a3*x[2] <= a4)                             # needs cvxopt
+            sage: p.add_constraint(b1*x[0] + b2*x[1] + b3*x[2] <= b4)                   # needs cvxopt
+            sage: N(p.solve(), digits=4)                                                # needs cvxopt
             -3.225
-            sage: p = SemidefiniteProgram(solver = "cvxopt", maximization=False)       # optional - cvxopt
-            sage: x = p.new_variable()                                                 # optional - cvxopt
-            sage: p.set_objective(x[0] - x[1] + x[2])                                  # optional - cvxopt
+            sage: p = SemidefiniteProgram(solver = "cvxopt", maximization=False)        # needs cvxopt
+            sage: x = p.new_variable()                                                  # needs cvxopt
+            sage: p.set_objective(x[0] - x[1] + x[2])                                   # needs cvxopt
             sage: a1 = matrix([[-7., -11.], [-11., 3.]])
             sage: a2 = matrix([[7., -18.], [-18., 8.]])
             sage: a3 = matrix([[-2., -8.], [-8., 1.]])
@@ -94,9 +94,9 @@ cdef class CVXOPTSDPBackend(MatrixSDPBackend):
             sage: b2 = matrix([[0.,  10.,  16.], [10., -10., -10.], [16., -10., 3.]])
             sage: b3 = matrix([[-5.,   2., -17.], [2.,  -6.,   8.], [-17.,  8., 6.]])
             sage: b4 = matrix([[14., 9., 40.], [9., 91., 10.], [40., 10., 15.]])
-            sage: p.add_constraint(a1*x[0] + a2*x[1] + a3*x[2] <= a4)                  # optional - cvxopt
-            sage: p.add_constraint(b1*x[0] + b2*x[1] + b3*x[2] <= b4)                  # optional - cvxopt
-            sage: N(p.solve(), digits=4)                                               # optional - cvxopt
+            sage: p.add_constraint(a1*x[0] + a2*x[1] + a3*x[2] <= a4)                   # needs cvxopt
+            sage: p.add_constraint(b1*x[0] + b2*x[1] + b3*x[2] <= b4)                   # needs cvxopt
+            sage: N(p.solve(), digits=4)                                                # needs cvxopt
             -3.154
 
         """
@@ -171,9 +171,9 @@ cdef class CVXOPTSDPBackend(MatrixSDPBackend):
 
         EXAMPLES::
 
-            sage: p = SemidefiniteProgram(solver = "cvxopt", maximization=False)       # optional - cvxopt
-            sage: x = p.new_variable()                                                 # optional - cvxopt
-            sage: p.set_objective(x[0] - x[1] + x[2])                                  # optional - cvxopt
+            sage: p = SemidefiniteProgram(solver = "cvxopt", maximization=False)        # needs cvxopt
+            sage: x = p.new_variable()                                                  # needs cvxopt
+            sage: p.set_objective(x[0] - x[1] + x[2])                                   # needs cvxopt
             sage: a1 = matrix([[-7., -11.], [-11., 3.]])
             sage: a2 = matrix([[7., -18.], [-18., 8.]])
             sage: a3 = matrix([[-2., -8.], [-8., 1.]])
@@ -182,11 +182,11 @@ cdef class CVXOPTSDPBackend(MatrixSDPBackend):
             sage: b2 = matrix([[0.,  10.,  16.], [10., -10., -10.], [16., -10., 3.]])
             sage: b3 = matrix([[-5.,   2., -17.], [2.,  -6.,   8.], [-17.,  8., 6.]])
             sage: b4 = matrix([[14., 9., 40.], [9., 91., 10.], [40., 10., 15.]])
-            sage: p.add_constraint(a1*x[0] + a2*x[1] + a3*x[2] <= a4)                  # optional - cvxopt
-            sage: p.add_constraint(b1*x[0] + b2*x[1] + b3*x[2] <= b4)                  # optional - cvxopt
-            sage: N(p.solve(), digits=4)                                               # optional - cvxopt
+            sage: p.add_constraint(a1*x[0] + a2*x[1] + a3*x[2] <= a4)                   # needs cvxopt
+            sage: p.add_constraint(b1*x[0] + b2*x[1] + b3*x[2] <= b4)                   # needs cvxopt
+            sage: N(p.solve(), digits=4)                                                # needs cvxopt
             -3.154
-            sage: N(p.get_backend().get_objective_value(), digits=4)                   # optional - cvxopt
+            sage: N(p.get_backend().get_objective_value(), digits=4)                    # needs cvxopt
             -3.154
         """
         sum = self.obj_constant_term
@@ -204,20 +204,20 @@ cdef class CVXOPTSDPBackend(MatrixSDPBackend):
 
         TESTS::
 
-            sage: p = SemidefiniteProgram(maximization = False, solver='cvxopt')       # optional - cvxopt
-            sage: x = p.new_variable()                                                 # optional - cvxopt
-            sage: p.set_objective(x[0] - x[1])                                         # optional - cvxopt
+            sage: p = SemidefiniteProgram(maximization = False, solver='cvxopt')        # needs cvxopt
+            sage: x = p.new_variable()                                                  # needs cvxopt
+            sage: p.set_objective(x[0] - x[1])                                          # needs cvxopt
             sage: a1 = matrix([[1, 2.], [2., 3.]])
             sage: a2 = matrix([[3, 4.], [4., 5.]])
             sage: a3 = matrix([[5, 6.], [6., 7.]])
             sage: b1 = matrix([[1, 1.], [1., 1.]])
             sage: b2 = matrix([[2, 2.], [2., 2.]])
             sage: b3 = matrix([[3, 3.], [3., 3.]])
-            sage: p.add_constraint(a1*x[0] + a2*x[1] <= a3)                            # optional - cvxopt
-            sage: p.add_constraint(b1*x[0] + b2*x[1] <= b3)                            # optional - cvxopt
-            sage: p.solve();                                     # tol 1e-08           # optional - cvxopt
+            sage: p.add_constraint(a1*x[0] + a2*x[1] <= a3)                             # needs cvxopt
+            sage: p.add_constraint(b1*x[0] + b2*x[1] <= b3)                             # needs cvxopt
+            sage: p.solve();                                     # tol 1e-08            # needs cvxopt
             -3.0
-            sage: p.get_backend()._get_answer()                                        # optional - cvxopt
+            sage: p.get_backend()._get_answer()                                         # needs cvxopt
             {...}
         """
         return self.answer
@@ -232,9 +232,9 @@ cdef class CVXOPTSDPBackend(MatrixSDPBackend):
 
         EXAMPLES::
 
-            sage: p = SemidefiniteProgram(solver = "cvxopt", maximization=False)       # optional - cvxopt
-            sage: x = p.new_variable()                                                 # optional - cvxopt
-            sage: p.set_objective(x[0] - x[1] + x[2])                                  # optional - cvxopt
+            sage: p = SemidefiniteProgram(solver = "cvxopt", maximization=False)        # needs cvxopt
+            sage: x = p.new_variable()                                                  # needs cvxopt
+            sage: p.set_objective(x[0] - x[1] + x[2])                                   # needs cvxopt
             sage: a1 = matrix([[-7., -11.], [-11., 3.]])
             sage: a2 = matrix([[7., -18.], [-18., 8.]])
             sage: a3 = matrix([[-2., -8.], [-8., 1.]])
@@ -243,15 +243,15 @@ cdef class CVXOPTSDPBackend(MatrixSDPBackend):
             sage: b2 = matrix([[0.,  10.,  16.], [10., -10., -10.], [16., -10., 3.]])
             sage: b3 = matrix([[-5.,   2., -17.], [2.,  -6.,   8.], [-17.,  8., 6.]])
             sage: b4 = matrix([[14., 9., 40.], [9., 91., 10.], [40., 10., 15.]])
-            sage: p.add_constraint(a1*x[0] + a2*x[1] + a3*x[2] <= a4)                  # optional - cvxopt
-            sage: p.add_constraint(b1*x[0] + b2*x[1] + b3*x[2] <= b4)                  # optional - cvxopt
-            sage: N(p.solve(), digits=4)                                               # optional - cvxopt
+            sage: p.add_constraint(a1*x[0] + a2*x[1] + a3*x[2] <= a4)                   # needs cvxopt
+            sage: p.add_constraint(b1*x[0] + b2*x[1] + b3*x[2] <= b4)                   # needs cvxopt
+            sage: N(p.solve(), digits=4)                                                # needs cvxopt
             -3.154
-            sage: N(p.get_backend().get_variable_value(0), digits=3)                   # optional - cvxopt
+            sage: N(p.get_backend().get_variable_value(0), digits=3)                    # needs cvxopt
             -0.368
-            sage: N(p.get_backend().get_variable_value(1), digits=4)                   # optional - cvxopt
+            sage: N(p.get_backend().get_variable_value(1), digits=4)                    # needs cvxopt
             1.898
-            sage: N(p.get_backend().get_variable_value(2), digits=3)                   # optional - cvxopt
+            sage: N(p.get_backend().get_variable_value(2), digits=3)                    # needs cvxopt
             -0.888
         """
         return self.answer['x'][variable]
@@ -270,34 +270,34 @@ cdef class CVXOPTSDPBackend(MatrixSDPBackend):
 
         EXAMPLES::
 
-            sage: p = SemidefiniteProgram(maximization = False, solver='cvxopt')       # optional - cvxopt
-            sage: x = p.new_variable()                                                 # optional - cvxopt
-            sage: p.set_objective(x[0] - x[1])                                         # optional - cvxopt
+            sage: p = SemidefiniteProgram(maximization = False, solver='cvxopt')        # needs cvxopt
+            sage: x = p.new_variable()                                                  # needs cvxopt
+            sage: p.set_objective(x[0] - x[1])                                          # needs cvxopt
             sage: a1 = matrix([[1, 2.], [2., 3.]])
             sage: a2 = matrix([[3, 4.], [4., 5.]])
             sage: a3 = matrix([[5, 6.], [6., 7.]])
             sage: b1 = matrix([[1, 1.], [1., 1.]])
             sage: b2 = matrix([[2, 2.], [2., 2.]])
             sage: b3 = matrix([[3, 3.], [3., 3.]])
-            sage: p.add_constraint(a1*x[0] + a2*x[1] <= a3)                            # optional - cvxopt
-            sage: p.add_constraint(b1*x[0] + b2*x[1] <= b3)                            # optional - cvxopt
-            sage: p.solve()                                     # tol 1e-08            # optional - cvxopt
+            sage: p.add_constraint(a1*x[0] + a2*x[1] <= a3)                             # needs cvxopt
+            sage: p.add_constraint(b1*x[0] + b2*x[1] <= b3)                             # needs cvxopt
+            sage: p.solve()                                     # tol 1e-08             # needs cvxopt
             -3.0
-            sage: B=p.get_backend()                                                    # optional - cvxopt
-            sage: x=p.get_values(x).values()                                           # optional - cvxopt
-            sage: -(a3*B.dual_variable(0)).trace()-(b3*B.dual_variable(1)).trace()       # tol 1e-07   # optional - cvxopt
+            sage: B=p.get_backend()                                                     # needs cvxopt
+            sage: x=p.get_values(x).values()                                            # needs cvxopt
+            sage: -(a3*B.dual_variable(0)).trace()-(b3*B.dual_variable(1)).trace()       # tol 1e-07                    # needs cvxopt
             -3.0
-            sage: g = sum((B.slack(j)*B.dual_variable(j)).trace() for j in range(2)); g  # tol 1.5e-08 # optional - cvxopt
+            sage: g = sum((B.slack(j)*B.dual_variable(j)).trace() for j in range(2)); g  # tol 1.5e-08                  # needs cvxopt
             0.0
 
 
         TESTS::
 
-            sage: B.dual_variable(7)                                                   # optional - cvxopt
+            sage: B.dual_variable(7)                                                    # needs cvxopt
             Traceback (most recent call last):
             ...
             IndexError: list index out of range
-            sage: abs(g - B._get_answer()['gap'])   # tol 1e-22                        # optional - cvxopt
+            sage: abs(g - B._get_answer()['gap'])   # tol 1e-22                         # needs cvxopt
             0.0
 
         """
@@ -320,33 +320,33 @@ cdef class CVXOPTSDPBackend(MatrixSDPBackend):
 
         EXAMPLES::
 
-            sage: p = SemidefiniteProgram(maximization = False, solver='cvxopt')       # optional - cvxopt
-            sage: x = p.new_variable()                                                 # optional - cvxopt
-            sage: p.set_objective(x[0] - x[1])                                         # optional - cvxopt
+            sage: p = SemidefiniteProgram(maximization = False, solver='cvxopt')        # needs cvxopt
+            sage: x = p.new_variable()                                                  # needs cvxopt
+            sage: p.set_objective(x[0] - x[1])                                          # needs cvxopt
             sage: a1 = matrix([[1, 2.], [2., 3.]])
             sage: a2 = matrix([[3, 4.], [4., 5.]])
             sage: a3 = matrix([[5, 6.], [6., 7.]])
             sage: b1 = matrix([[1, 1.], [1., 1.]])
             sage: b2 = matrix([[2, 2.], [2., 2.]])
             sage: b3 = matrix([[3, 3.], [3., 3.]])
-            sage: p.add_constraint(a1*x[0] + a2*x[1] <= a3)                            # optional - cvxopt
-            sage: p.add_constraint(b1*x[0] + b2*x[1] <= b3)                            # optional - cvxopt
-            sage: p.solve()                         # tol 1e-08                        # optional - cvxopt
+            sage: p.add_constraint(a1*x[0] + a2*x[1] <= a3)                             # needs cvxopt
+            sage: p.add_constraint(b1*x[0] + b2*x[1] <= b3)                             # needs cvxopt
+            sage: p.solve()                         # tol 1e-08                         # needs cvxopt
             -3.0
-            sage: B = p.get_backend()                                                  # optional - cvxopt
-            sage: B1 = B.slack(1); B1               # tol 1e-08                        # optional - cvxopt
+            sage: B = p.get_backend()                                                   # needs cvxopt
+            sage: B1 = B.slack(1); B1               # tol 1e-08                         # needs cvxopt
             [0.0 0.0]
             [0.0 0.0]
-            sage: B1.is_positive_definite()                                            # optional - cvxopt
+            sage: B1.is_positive_definite()                                             # needs cvxopt
             True
-            sage: x = sorted(p.get_values(x).values())                                 # optional - cvxopt
-            sage: x[0]*b1 + x[1]*b2 - b3 + B1       # tol 1e-09                        # optional - cvxopt
+            sage: x = sorted(p.get_values(x).values())                                  # needs cvxopt
+            sage: x[0]*b1 + x[1]*b2 - b3 + B1       # tol 1e-09                         # needs cvxopt
             [0.0 0.0]
             [0.0 0.0]
 
         TESTS::
 
-            sage: B.slack(7)                                                           # optional - cvxopt
+            sage: B.slack(7)                                                            # needs cvxopt
             Traceback (most recent call last):
             ...
             IndexError: list index out of range
@@ -376,12 +376,13 @@ cdef class CVXOPTSDPBackend(MatrixSDPBackend):
 
         EXAMPLES::
 
+            sage: # needs cvxopt
             sage: from sage.numerical.backends.generic_sdp_backend import get_solver
-            sage: p = get_solver(solver = "CVXOPT")                                    # optional - cvxopt
-            sage: p.solver_parameter("show_progress")                                  # optional - cvxopt
+            sage: p = get_solver(solver = "CVXOPT")
+            sage: p.solver_parameter("show_progress")
             False
-            sage: p.solver_parameter("show_progress", True)                            # optional - cvxopt
-            sage: p.solver_parameter("show_progress")                                  # optional - cvxopt
+            sage: p.solver_parameter("show_progress", True)
+            sage: p.solver_parameter("show_progress")
             True
         """
         if value is None:
