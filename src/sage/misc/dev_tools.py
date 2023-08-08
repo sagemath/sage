@@ -219,15 +219,15 @@ def find_objects_from_name(name, module_name=None):
     EXAMPLES::
 
         sage: import sage.misc.dev_tools as dt
-        sage: dt.find_objects_from_name('FareySymbol')                                  # optional - sage.modular
+        sage: dt.find_objects_from_name('FareySymbol')                                  # needs sage.modular
         [<class 'sage.modular.arithgroup.farey_symbol.Farey'>]
 
-        sage: import sympy
-        sage: dt.find_objects_from_name('RR')
+        sage: import sympy                                                              # needs sympy
+        sage: dt.find_objects_from_name('RR')                                           # needs sympy
         [Real Field with 53 bits of precision, RR]
-        sage: dt.find_objects_from_name('RR', 'sage')
+        sage: dt.find_objects_from_name('RR', 'sage')                                   # needs sympy
         [Real Field with 53 bits of precision]
-        sage: dt.find_objects_from_name('RR', 'sympy')
+        sage: dt.find_objects_from_name('RR', 'sympy')                                  # needs sympy
         [RR]
 
     Examples that do not belong to the global namespace but in a loaded module::
@@ -270,7 +270,7 @@ def find_object_modules(obj):
     EXAMPLES::
 
         sage: from sage.misc.dev_tools import find_object_modules
-        sage: find_object_modules(RR)                                                   # optional - sage.rings.real_mpfr
+        sage: find_object_modules(RR)                                                   # needs sage.rings.real_mpfr
         {'sage.rings.real_mpfr': ['RR']}
         sage: find_object_modules(ZZ)
         {'sage.rings.integer_ring': ['Z', 'ZZ']}
@@ -353,7 +353,7 @@ def import_statements(*objects, **kwds):
 
     EXAMPLES::
 
-        sage: import_statements(WeylGroup, lazy_attribute)                              # optional - sage.libs.gap
+        sage: import_statements(WeylGroup, lazy_attribute)                              # needs sage.libs.gap
         from sage.combinat.root_system.weyl_group import WeylGroup
         from sage.misc.lazy_attribute import lazy_attribute
 
@@ -363,7 +363,7 @@ def import_statements(*objects, **kwds):
     If ``lazy`` is True, then :func:`lazy_import` statements are
     displayed instead::
 
-        sage: import_statements(WeylGroup, lazy_attribute, lazy=True)                   # optional - sage.libs.gap
+        sage: import_statements(WeylGroup, lazy_attribute, lazy=True)                   # needs sage.libs.gap
         from sage.misc.lazy_import import lazy_import
         lazy_import('sage.combinat.root_system.weyl_group', 'WeylGroup')
         lazy_import('sage.misc.lazy_attribute', 'lazy_attribute')
@@ -381,7 +381,7 @@ def import_statements(*objects, **kwds):
         sage: import_statements(euler_phi)
         from sage.arith.misc import euler_phi
 
-        sage: import_statements(x)                                                      # optional - sage.symbolic
+        sage: import_statements(x)                                                      # needs sage.symbolic
         from sage.calculus.predefined import x
 
     If you don't like the warning you can disable them with the option ``verbose``::
@@ -389,13 +389,13 @@ def import_statements(*objects, **kwds):
         sage: import_statements(ZZ, verbose=False)
         from sage.rings.integer_ring import Z
 
-        sage: import_statements(x, verbose=False)                                       # optional - sage.symbolic
+        sage: import_statements(x, verbose=False)                                       # needs sage.symbolic
         from sage.calculus.predefined import x
 
     If the object has several names, an other way to get the import
     statement you expect is to use a string instead of the object::
 
-        sage: import_statements(matrix)                                                 # optional - sage.modules
+        sage: import_statements(matrix)                                                 # needs sage.modules
         # ** Warning **: several names for that object: Matrix, matrix
         from sage.matrix.constructor import Matrix
 
@@ -410,7 +410,7 @@ def import_statements(*objects, **kwds):
     The strings are allowed to be comma-separated names, and parenthesis
     are stripped for convenience::
 
-        sage: import_statements('(floor, ceil)')                                        # optional - sage.symbolic
+        sage: import_statements('(floor, ceil)')                                        # needs sage.symbolic
         from sage.functions.other import floor, ceil
 
     Specifying a string is also useful for objects that are not
@@ -487,9 +487,9 @@ def import_statements(*objects, **kwds):
         from sage.combinat.partition_algebra import SetPartitionsAk
         sage: import_statements(CIF)
         from sage.rings.cif import CIF
-        sage: import_statements(NaN)                                                    # optional - sage.symbolic
+        sage: import_statements(NaN)                                                    # needs sage.symbolic
         from sage.symbolic.constants import NaN
-        sage: import_statements(pi)                                                     # optional - sage.symbolic
+        sage: import_statements(pi)                                                     # needs sage.symbolic
         from sage.symbolic.constants import pi
         sage: import_statements('SAGE_ENV')
         from sage.env import SAGE_ENV

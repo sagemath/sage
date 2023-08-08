@@ -67,7 +67,7 @@ def sage_wraps(wrapped, assigned=WRAPPER_ASSIGNMENTS, updated=WRAPPER_UPDATES):
         ....:     return x
         sage: g(2)
         4
-        sage: g(x)                                                                                                      # optional - sage.symbolic
+        sage: g(x)                                                                      # needs sage.symbolic
         x^2
         sage: g.__doc__
         'My little function'
@@ -104,7 +104,7 @@ def sage_wraps(wrapped, assigned=WRAPPER_ASSIGNMENTS, updated=WRAPPER_UPDATES):
         sage: I = P*[x,y]
         sage: sage_getfile(I.interreduced_basis)       # known bug
         '.../sage/rings/polynomial/multi_polynomial_ideal.py'
-        sage: sage_getsourcelines(I.interreduced_basis)                                 # optional - sage.libs.singular
+        sage: sage_getsourcelines(I.interreduced_basis)                                 # needs sage.libs.singular
         (['    @handle_AA_and_QQbar\n',
           '    @singular_gb_standard_options\n',
           '    @libsingular_gb_standard_options\n',
@@ -192,9 +192,9 @@ class infix_operator():
         ....: def dot(a, b):
         ....:     '''Dot product.'''
         ....:     return a.dot_product(b)
-        sage: u = vector([1, 2, 3])                                                                                     # optional - sage.modules
-        sage: v = vector([5, 4, 3])                                                                                     # optional - sage.modules
-        sage: u *dot* v                                                                                                 # optional - sage.modules
+        sage: u = vector([1, 2, 3])                                                     # needs sage.modules
+        sage: v = vector([5, 4, 3])                                                     # needs sage.modules
+        sage: u *dot* v                                                                 # needs sage.modules
         22
 
     An infix element-wise addition operator::
@@ -202,11 +202,11 @@ class infix_operator():
         sage: @infix_operator('add')
         ....: def eadd(a, b):
         ....:   return a.parent([i + j for i, j in zip(a, b)])
-        sage: u = vector([1, 2, 3])                                                                                     # optional - sage.modules
-        sage: v = vector([5, 4, 3])                                                                                     # optional - sage.modules
-        sage: u +eadd+ v                                                                                                # optional - sage.modules
+        sage: u = vector([1, 2, 3])                                                     # needs sage.modules
+        sage: v = vector([5, 4, 3])                                                     # needs sage.modules
+        sage: u +eadd+ v                                                                # needs sage.modules
         (6, 6, 6)
-        sage: 2*u +eadd+ v                                                                                              # optional - sage.modules
+        sage: 2*u +eadd+ v                                                              # needs sage.modules
         (7, 8, 9)
 
     A hack to simulate a postfix operator::
@@ -214,7 +214,7 @@ class infix_operator():
         sage: @infix_operator('or')
         ....: def thendo(a, b):
         ....:     return b(a)
-        sage: x |thendo| cos |thendo| (lambda x: x^2)                                                                   # optional - sage.symbolic
+        sage: x |thendo| cos |thendo| (lambda x: x^2)                                   # needs sage.symbolic
         cos(x)^2
     """
 

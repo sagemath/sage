@@ -71,7 +71,7 @@ def sage_eval(source, locals=None, cmds='', preparse=True):
         36
         sage: eval('bernoulli(6)')
         36
-        sage: sage_eval('bernoulli(6)')
+        sage: sage_eval('bernoulli(6)')                                                 # needs sage.libs.flint
         1/42
 
     ::
@@ -117,7 +117,7 @@ def sage_eval(source, locals=None, cmds='', preparse=True):
 
     ::
 
-        sage: sage_eval(('f(x) = x^2', 'f(3)'))                                         # optional - sage.symbolic
+        sage: sage_eval(('f(x) = x^2', 'f(3)'))                                         # needs sage.symbolic
         9
         sage: vars = {'rt2': sqrt(2.0)}
         sage: sage_eval(('rt2 += 1', 'rt2', vars))
@@ -132,13 +132,13 @@ def sage_eval(source, locals=None, cmds='', preparse=True):
     ::
 
         sage: R.<x> = PolynomialRing(RationalField())
-        sage: gap.eval('R:=PolynomialRing(Rationals,["x"]);')
+        sage: gap.eval('R:=PolynomialRing(Rationals,["x"]);')                           # needs sage.libs.gap
         'Rationals[x]'
-        sage: ff = gap.eval('x:=IndeterminatesOfPolynomialRing(R);; f:=x^2+1;'); ff
+        sage: ff = gap.eval('x:=IndeterminatesOfPolynomialRing(R);; f:=x^2+1;'); ff     # needs sage.libs.gap
         'x^2+1'
-        sage: sage_eval(ff, locals={'x':x})
+        sage: sage_eval(ff, locals={'x':x})                                             # needs sage.libs.gap
         x^2 + 1
-        sage: eval(ff)
+        sage: eval(ff)                                                                  # needs sage.libs.gap
         Traceback (most recent call last):
         ...
         RuntimeError: Use ** for exponentiation, not '^', which means xor
@@ -212,7 +212,7 @@ def sageobj(x, vars=None):
 
     EXAMPLES::
 
-        sage: type(sageobj(gp('34/56')))                                                            # optional - sage.libs.pari
+        sage: type(sageobj(gp('34/56')))                                                # needs sage.libs.pari
         <class 'sage.rings.rational.Rational'>
         sage: n = 5/2
         sage: sageobj(n) is n
@@ -224,17 +224,17 @@ def sageobj(x, vars=None):
 
     This illustrates interfaces::
 
-        sage: f = gp('2/3')                                                                         # optional - sage.libs.pari
-        sage: type(f)                                                                               # optional - sage.libs.pari
+        sage: f = gp('2/3')                                                             # needs sage.libs.pari
+        sage: type(f)                                                                   # needs sage.libs.pari
         <class 'sage.interfaces.gp.GpElement'>
-        sage: f._sage_()                                                                            # optional - sage.libs.pari
+        sage: f._sage_()                                                                # needs sage.libs.pari
         2/3
-        sage: type(f._sage_())                                                                      # optional - sage.libs.pari
+        sage: type(f._sage_())                                                          # needs sage.libs.pari
         <class 'sage.rings.rational.Rational'>
-        sage: a = gap(939393/2433)                                                                  # optional - sage.libs.gap
-        sage: a._sage_()                                                                            # optional - sage.libs.gap
+        sage: a = gap(939393/2433)                                                                  # needs sage.libs.gap
+        sage: a._sage_()                                                                            # needs sage.libs.gap
         313131/811
-        sage: type(a._sage_())                                                                      # optional - sage.libs.gap
+        sage: type(a._sage_())                                                                      # needs sage.libs.gap
         <class 'sage.rings.rational.Rational'>
     """
     try:

@@ -285,9 +285,9 @@ cdef class BinaryTree:
 
             sage: from sage.misc.binary_tree import BinaryTree
             sage: t = BinaryTree()
-            sage: t.insert(0, Matrix([[0,0], [1,1]]))                                                                   # optional - sage.modules
+            sage: t.insert(0, Matrix([[0,0], [1,1]]))                                   # needs sage.modules
             sage: t.insert(0, 1)
-            sage: t.get(0)                                                                                              # optional - sage.modules
+            sage: t.get(0)                                                              # needs sage.modules
             [0 0]
             [1 1]
         """
