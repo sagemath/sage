@@ -2693,14 +2693,15 @@ def SwitchedSquaredSkewHadamardMatrixGraph(n):
 
     EXAMPLES::
 
-        sage: g = graphs.SwitchedSquaredSkewHadamardMatrixGraph(4)                      # needs sage.modules
-        sage: g.is_strongly_regular(parameters=True)                                    # needs sage.modules
+        sage: # needs sage.modules
+        sage: g = graphs.SwitchedSquaredSkewHadamardMatrixGraph(4)
+        sage: g.is_strongly_regular(parameters=True)
         (226, 105, 48, 49)
         sage: from sage.combinat.designs.twographs import twograph_descendant
-        sage: twograph_descendant(g, 0).is_strongly_regular(parameters=True)            # needs sage.modules
+        sage: twograph_descendant(g, 0).is_strongly_regular(parameters=True)
         (225, 112, 55, 56)
-        sage: gc = g.complement()                                                       # needs sage.modules
-        sage: twograph_descendant(gc, 0).is_strongly_regular(parameters=True)           # needs sage.modules
+        sage: gc = g.complement()
+        sage: twograph_descendant(gc, 0).is_strongly_regular(parameters=True)
         (225, 112, 55, 56)
 
     TESTS::
