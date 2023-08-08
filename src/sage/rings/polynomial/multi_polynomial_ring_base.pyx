@@ -712,13 +712,14 @@ cdef class MPolynomialRing_base(sage.rings.ring.CommutativeRing):
         """
         EXAMPLES::
 
+            sage: # needs sage.rings.number_field
             sage: T.<t> = ZZ[]
-            sage: K.<i> = NumberField(t^2 + 1)                                          # needs sage.rings.number_field
-            sage: R.<x,y> = K[]                                                         # needs sage.rings.number_field
-            sage: Q5 = Qp(5); i5 = Q5(-1).sqrt()                                        # needs sage.rings.number_field
-            sage: R._is_valid_homomorphism_(Q5, [Q5.teichmuller(2), Q5(6).log()]) # no coercion     # needs sage.rings.number_field
+            sage: K.<i> = NumberField(t^2 + 1)
+            sage: R.<x,y> = K[]
+            sage: Q5 = Qp(5); i5 = Q5(-1).sqrt()
+            sage: R._is_valid_homomorphism_(Q5, [Q5.teichmuller(2), Q5(6).log()]) # no coercion
             False
-            sage: R._is_valid_homomorphism_(Q5, [Q5.teichmuller(2), Q5(6).log()], base_map=K.hom([i5]))                 # needs sage.rings.number_field
+            sage: R._is_valid_homomorphism_(Q5, [Q5.teichmuller(2), Q5(6).log()], base_map=K.hom([i5]))
             True
         """
         if base_map is None:
@@ -735,38 +736,39 @@ cdef class MPolynomialRing_base(sage.rings.ring.CommutativeRing):
 
         EXAMPLES::
 
+            sage: # optional - magma
             sage: R.<a,b,c,d,e,f,g,h,i,j> = PolynomialRing(GF(127),10)
-            sage: R._magma_init_(magma)         # optional - magma                      # needs sage.rings.finite_rings
+            sage: R._magma_init_(magma)
             'SageCreateWithNames(PolynomialRing(_sage_ref...,10,"grevlex"),["a","b","c","d","e","f","g","h","i","j"])'
             sage: R.<y,z,w> = PolynomialRing(QQ, 3)
-            sage: magma(R)                      # optional - magma                      # needs sage.rings.finite_rings
+            sage: magma(R)
             Polynomial ring of rank 3 over Rational Field
             Order: Graded Reverse Lexicographical
             Variables: y, z, w
 
         A complicated nested example::
 
-            sage: R.<a,b,c> = PolynomialRing(GF(9,'a')); S.<T,W> = R[]; S               # needs sage.rings.finite_rings
+            sage: # optional - magma, needs sage.rings.finite_rings
+            sage: R.<a,b,c> = PolynomialRing(GF(9,'a')); S.<T,W> = R[]; S
             Multivariate Polynomial Ring in T, W over Multivariate
             Polynomial Ring in a, b, c over Finite Field in a of size 3^2
-            sage: magma(S)                      # optional - magma                      # needs sage.rings.finite_rings
+            sage: magma(S)
             Polynomial ring of rank 2 over Polynomial ring of rank 3
             over GF(3^2)
             Order: Graded Reverse Lexicographical
             Variables: T, W
 
 
-            sage: magma(PolynomialRing(GF(7),4, 'x'))   # optional - magma              # needs sage.rings.finite_rings
+            sage: # optional - magma
+            sage: magma(PolynomialRing(GF(7),4, 'x'))
             Polynomial ring of rank 4 over GF(7)
             Order: Graded Reverse Lexicographical
             Variables: x0, x1, x2, x3
-
-            sage: magma(PolynomialRing(GF(49,'a'),10, 'x'))     # optional - magma, needs sage.rings.finite_rings
+            sage: magma(PolynomialRing(GF(49,'a'),10, 'x'))                             # needs sage.rings.finite_rings
             Polynomial ring of rank 10 over GF(7^2)
             Order: Graded Reverse Lexicographical
             Variables: x0, x1, x2, x3, x4, x5, x6, x7, x8, x9
-
-            sage: magma(PolynomialRing(ZZ['a,b,c'],3, 'x'))  # optional - magma
+            sage: magma(PolynomialRing(ZZ['a,b,c'],3, 'x'))
             Polynomial ring of rank 3 over Polynomial ring of rank 3
             over Integer Ring
             Order: Graded Reverse Lexicographical
@@ -1176,16 +1178,16 @@ cdef class MPolynomialRing_base(sage.rings.ring.CommutativeRing):
         Default values apply if no degree and/or number of terms is
         provided::
 
-            sage: M = random_matrix(QQ['x,y,z'], 2, 2)                                  # needs sage.modules
-            sage: all(a.degree() <= 2 for a in M.list())                                # needs sage.modules
+            sage: # needs sage.modules
+            sage: M = random_matrix(QQ['x,y,z'], 2, 2)
+            sage: all(a.degree() <= 2 for a in M.list())
             True
-            sage: all(len(list(a)) <= 5 for a in M.list())                              # needs sage.modules
+            sage: all(len(list(a)) <= 5 for a in M.list())
             True
-
-            sage: M = random_matrix(QQ['x,y,z'], 2, 2, terms=1, degree=2)               # needs sage.modules
-            sage: all(a.degree() <= 2 for a in M.list())                                # needs sage.modules
+            sage: M = random_matrix(QQ['x,y,z'], 2, 2, terms=1, degree=2)
+            sage: all(a.degree() <= 2 for a in M.list())
             True
-            sage: all(len(list(a)) <= 1 for a in M.list())                              # needs sage.modules
+            sage: all(len(list(a)) <= 1 for a in M.list())
             True
 
             sage: P.random_element(0, 1) in QQ

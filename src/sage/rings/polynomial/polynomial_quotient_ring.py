@@ -1622,8 +1622,8 @@ class PolynomialQuotientRing_generic(QuotientRing_generic):
 
             sage: # needs sage.libs.pari sage.rings.number_field
             sage: R.<x> = QQ[]
-            sage: S.<xbar> = R.quotient((x^2 + 23) * (x^2 + 47))                        # needs sage.libs.pari
-            sage: S.class_group()                                                       # needs sage.rings.number_field
+            sage: S.<xbar> = R.quotient((x^2 + 23) * (x^2 + 47))
+            sage: S.class_group()
             [((1/12*xbar^2 + 47/12,
                1/48*xbar^3 - 1/48*xbar^2 + 47/48*xbar - 47/48),
               3),
@@ -1658,10 +1658,10 @@ class PolynomialQuotientRing_generic(QuotientRing_generic):
         Note that all the returned values live where we expect them to::
 
             sage: # needs sage.libs.pari sage.rings.number_field
-            sage: CG = S.class_group()                                                  # needs sage.rings.number_field
-            sage: type(CG[0][0][1])                                                     # needs sage.rings.number_field
+            sage: CG = S.class_group()
+            sage: type(CG[0][0][1])
             <class 'sage.rings.polynomial.polynomial_quotient_ring.PolynomialQuotientRing_generic_with_category.element_class'>
-            sage: type(CG[0][1])                                                        # needs sage.rings.number_field
+            sage: type(CG[0][1])
             <class 'sage.rings.integer.Integer'>
 
         """
@@ -2469,8 +2469,8 @@ class PolynomialQuotientRing_field(PolynomialQuotientRing_domain, Field):
             sage: R.<x> = QQ[]
             sage: f = x^5 + x + 17
             sage: k = R.quotient(f)
-            sage: v = k.complex_embeddings(100)                                         # needs sage.rings.number_field
-            sage: [phi(k.0^2) for phi in v]                                             # needs sage.rings.number_field
+            sage: v = k.complex_embeddings(100)
+            sage: [phi(k.0^2) for phi in v]
             [2.9757207403766761469671194565,
              -2.4088994371613850098316292196 + 1.9025410530350528612407363802*I,
              -2.4088994371613850098316292196 - 1.9025410530350528612407363802*I,

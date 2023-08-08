@@ -38,6 +38,7 @@ def refine_root(ip, ipd, irt, fld):
 
     EXAMPLES::
 
+        sage: # needs sage.symbolic
         sage: from sage.rings.polynomial.refine_root import refine_root
         sage: x = polygen(ZZ)
         sage: p = x^9 - 1
@@ -45,13 +46,13 @@ def refine_root(ip, ipd, irt, fld):
         x^9 - 1
         sage: ipd = CIF['x'](p.derivative()); ipd
         9*x^8
-        sage: irt = CIF(CC(cos(2*pi/9), sin(2*pi/9))); irt                              # needs sage.symbolic
+        sage: irt = CIF(CC(cos(2*pi/9), sin(2*pi/9))); irt
         0.76604444311897802? + 0.64278760968653926?*I
-        sage: ip(irt)                                                                   # needs sage.symbolic
+        sage: ip(irt)
         0.?e-14 + 0.?e-14*I
-        sage: ipd(irt)                                                                  # needs sage.symbolic
+        sage: ipd(irt)
         6.89439998807080? - 5.78508848717885?*I
-        sage: refine_root(ip, ipd, irt, CIF)                                            # needs sage.symbolic
+        sage: refine_root(ip, ipd, irt, CIF)
         0.766044443118978? + 0.642787609686540?*I
     """
 

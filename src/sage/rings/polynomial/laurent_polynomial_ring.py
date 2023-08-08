@@ -481,16 +481,17 @@ class LaurentPolynomialRing_univariate(LaurentPolynomialRing_generic):
 
         ::
 
+            sage: # needs sage.modules
             sage: U = LaurentPolynomialRing(QQ, 'a')
             sage: V = LaurentPolynomialRing(QQ, 'c')
-            sage: L.<a, b, c, d> = LaurentPolynomialRing(QQ)                            # needs sage.modules
-            sage: M = LaurentPolynomialRing(QQ, 'c, d')                                 # needs sage.modules
-            sage: Mc, Md = M.gens()                                                     # needs sage.modules
-            sage: N = LaurentPolynomialRing(M, 'a, b')                                  # needs sage.modules
-            sage: Na, Nb = N.gens()                                                     # needs sage.modules
-            sage: U(Na)                                                                 # needs sage.modules
+            sage: L.<a, b, c, d> = LaurentPolynomialRing(QQ)
+            sage: M = LaurentPolynomialRing(QQ, 'c, d')
+            sage: Mc, Md = M.gens()
+            sage: N = LaurentPolynomialRing(M, 'a, b')
+            sage: Na, Nb = N.gens()
+            sage: U(Na)
             a
-            sage: V(Mc)                                                                 # needs sage.modules
+            sage: V(Mc)
             c
 
             sage: # needs sage.modules
@@ -691,34 +692,37 @@ class LaurentPolynomialRing_mpair(LaurentPolynomialRing_generic):
             sage: L(N(0))
             0
 
+            sage: # needs sage.modules
             sage: U = LaurentPolynomialRing(QQ, 'a')
             sage: Ua = U.gen()
             sage: V = LaurentPolynomialRing(QQ, 'c')
             sage: Vc = V.gen()
-            sage: L(Ua)                                                                 # needs sage.modules
+            sage: L(Ua)
             a
-            sage: L(Vc)                                                                 # needs sage.modules
+            sage: L(Vc)
             c
-            sage: N(Ua)                                                                 # needs sage.modules
+            sage: N(Ua)
             a
-            sage: M(Vc)                                                                 # needs sage.modules
+            sage: M(Vc)
             c
 
-            sage: P = LaurentPolynomialRing(QQ, 'a, b')                                 # needs sage.modules
-            sage: Q = LaurentPolynomialRing(P, 'c, d')                                  # needs sage.modules
-            sage: Q(P.0)                                                                # needs sage.modules
+            sage: # needs sage.modules
+            sage: P = LaurentPolynomialRing(QQ, 'a, b')
+            sage: Q = LaurentPolynomialRing(P, 'c, d')
+            sage: Q(P.0)
             a
 
         ::
 
+            sage: # needs sage.modules
             sage: A.<a> = LaurentPolynomialRing(QQ)
             sage: B.<b> = LaurentPolynomialRing(A)
-            sage: C = LaurentPolynomialRing(QQ, 'a, b')                                 # needs sage.modules
-            sage: C(B({1: a}))                                                          # needs sage.modules
+            sage: C = LaurentPolynomialRing(QQ, 'a, b')
+            sage: C(B({1: a}))
             a*b
-            sage: D.<d, e> = LaurentPolynomialRing(B)                                   # needs sage.modules
-            sage: F.<f, g> = LaurentPolynomialRing(D)                                   # needs sage.modules
-            sage: D(F(d*e))                                                             # needs sage.modules
+            sage: D.<d, e> = LaurentPolynomialRing(B)
+            sage: F.<f, g> = LaurentPolynomialRing(D)
+            sage: D(F(d*e))
             d*e
 
         ::
@@ -735,9 +739,10 @@ class LaurentPolynomialRing_mpair(LaurentPolynomialRing_generic):
 
         ::
 
-            sage: RL = R.localization(x + 1)                                            # needs sage.modules
-            sage: xi = RL(~x)                                                           # needs sage.modules
-            sage: R(xi) == ~x     # indirect doctests                                   # needs sage.modules
+            sage: # needs sage.modules
+            sage: RL = R.localization(x + 1)
+            sage: xi = RL(~x)
+            sage: R(xi) == ~x     # indirect doctests
             True
         """
         from sage.structure.element import Expression

@@ -1048,22 +1048,23 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
 
         Scaling should not change the result::
 
-            sage: # needs sage.rings.number_field
+            sage: # needs sage.rings.number_field sage.symbolic
             sage: R.<x, y> = PolynomialRing(QQbar, 2)
-            sage: f = 1/25*x^2 + 25/3*x + 1 + QQbar(sqrt(2))*y^2                        # needs sage.symbolic
-            sage: f.global_height()                                                     # needs sage.symbolic
+            sage: f = 1/25*x^2 + 25/3*x + 1 + QQbar(sqrt(2))*y^2
+            sage: f.global_height()
             6.43775164973640
-            sage: g = 100 * f                                                           # needs sage.symbolic
-            sage: g.global_height()                                                     # needs sage.symbolic
+            sage: g = 100 * f
+            sage: g.global_height()
             6.43775164973640
 
         ::
 
+            sage: # needs sage.rings.number_field
             sage: R.<x> = QQ[]
-            sage: K.<k> = NumberField(x^2 + 1)                                          # needs sage.rings.number_field
-            sage: Q.<q,r> = PolynomialRing(K, implementation='generic')                 # needs sage.rings.number_field
-            sage: f = 12 * q                                                            # needs sage.rings.number_field
-            sage: f.global_height()                                                     # needs sage.rings.number_field
+            sage: K.<k> = NumberField(x^2 + 1)
+            sage: Q.<q,r> = PolynomialRing(K, implementation='generic')
+            sage: f = 12 * q
+            sage: f.global_height()
             0.000000000000000
 
         ::
@@ -1127,12 +1128,13 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
 
         ::
 
+            sage: # needs sage.rings.number_field
             sage: R.<x> = QQ[]
-            sage: K.<k> = NumberField(x^2 - 5)                                          # needs sage.rings.number_field
-            sage: T.<t,w> = PolynomialRing(K, implementation='generic')                 # needs sage.rings.number_field
-            sage: I = K.ideal(3)                                                        # needs sage.rings.number_field
-            sage: f = 1/3*t*w + 3                                                       # needs sage.rings.number_field
-            sage: f.local_height(I)                                                     # needs sage.rings.number_field sage.symbolic
+            sage: K.<k> = NumberField(x^2 - 5)
+            sage: T.<t,w> = PolynomialRing(K, implementation='generic')
+            sage: I = K.ideal(3)
+            sage: f = 1/3*t*w + 3
+            sage: f.local_height(I)                                                     # needs sage.symbolic
             1.09861228866811
 
         ::
@@ -1176,11 +1178,12 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
 
         ::
 
+            sage: # needs sage.rings.number_field
             sage: R.<x> = QQ[]
-            sage: K.<k> = NumberField(x^2 - 5)                                          # needs sage.rings.number_field
-            sage: T.<t,w> = PolynomialRing(K, implementation='generic')                 # needs sage.rings.number_field
-            sage: f = 1/2*t*w + 3                                                       # needs sage.rings.number_field
-            sage: f.local_height_arch(1, prec=52)                                       # needs sage.rings.number_field
+            sage: K.<k> = NumberField(x^2 - 5)
+            sage: T.<t,w> = PolynomialRing(K, implementation='generic')
+            sage: f = 1/2*t*w + 3
+            sage: f.local_height_arch(1, prec=52)
             1.09861228866811
 
         ::
@@ -1973,10 +1976,9 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
             sage: f.integral(x).parent()
             Multivariate Polynomial Ring in x, y
              over Power Series Ring in t over Algebraic Field
-
-            sage: f.integral(y)   # with respect to y                                   # needs sage.rings.number_field
+            sage: f.integral(y)   # with respect to y
             (1/4*t^2 + O(t^3))*x^2*y^4 + (37*t^4 + O(t^5))*x^3*y
-            sage: f.integral(t)   # with respect to t (recurses into base ring)         # needs sage.rings.number_field
+            sage: f.integral(t)   # with respect to t (recurses into base ring)
             (1/3*t^3 + O(t^4))*x^2*y^3 + (37/5*t^5 + O(t^6))*x^3
 
         TESTS::
@@ -2122,7 +2124,9 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
             sage: R.<z> = PolynomialRing(CC,1)                                          # needs sage.rings.real_mpfr
             sage: f = z^4 - 6*z + 3                                                     # needs sage.rings.real_mpfr
             sage: f.factor()                                                            # needs sage.rings.real_mpfr
-            (z - 1.60443920904349) * (z - 0.511399619393097) * (z + 1.05791941421830 - 1.59281852704435*I) * (z + 1.05791941421830 + 1.59281852704435*I)
+            (z - 1.60443920904349) * (z - 0.511399619393097)
+             * (z + 1.05791941421830 - 1.59281852704435*I)
+             * (z + 1.05791941421830 + 1.59281852704435*I)
 
         We check a case that failed with an exception at some point::
 

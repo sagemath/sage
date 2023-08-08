@@ -889,15 +889,13 @@ class PolynomialSequence_generic(Sequence_generic):
              2*a*b + 2*b*c + 2*c*d - b,
              b^2 + 2*a*c + 2*b*d - c,
              a^127 + a]
-
-            sage: F + P.ideal([a^127 + a])                                              # needs sage.libs.singular
+            sage: F + P.ideal([a^127 + a])
             [a + 2*b + 2*c + 2*d - 1,
              a^2 + 2*b^2 + 2*c^2 + 2*d^2 - a,
              2*a*b + 2*b*c + 2*c*d - b,
              b^2 + 2*a*c + 2*b*d - c,
              a^127 + a]
-
-            sage: F + Sequence([a^127 + a], P)                                          # needs sage.libs.singular
+            sage: F + Sequence([a^127 + a], P)
             [a + 2*b + 2*c + 2*d - 1,
              a^2 + 2*b^2 + 2*c^2 + 2*d^2 - a,
              2*a*b + 2*b*c + 2*c*d - b,
@@ -1190,11 +1188,11 @@ class PolynomialSequence_generic(Sequence_generic):
         EXAMPLES::
 
             sage: R.<a,b,c,d,e,f,g,h,i,j> = PolynomialRing(GF(127), 10)
-            sage: I = sage.rings.ideal.Cyclic(R, 4)                                     # needs sage.rings.finite_rings
-            sage: I.basis.is_groebner()                                                 # needs sage.rings.finite_rings
+            sage: I = sage.rings.ideal.Cyclic(R, 4)
+            sage: I.basis.is_groebner()
             False
-            sage: I2 = Ideal(I.groebner_basis())                                        # needs sage.rings.finite_rings
-            sage: I2.basis.is_groebner()                                                # needs sage.rings.finite_rings
+            sage: I2 = Ideal(I.groebner_basis())
+            sage: I2.basis.is_groebner()
             True
 
         """
@@ -1282,7 +1280,6 @@ class PolynomialSequence_gf2(PolynomialSequence_generic):
             sage: S = Sequence([x*y*z + x*y + z*y + x*z, x + y + z + 1, x + y + z])     # needs sage.rings.polynomial.pbori
             sage: S.eliminate_linear_variables()                                        # needs sage.rings.polynomial.pbori
             [1]
-
             sage: R.<x,y,z> = BooleanPolynomialRing()                                   # needs sage.rings.polynomial.pbori
             sage: S = Sequence([x*y*z + x*y + z*y + x*z, x + y + z + 1, x + y + z])     # needs sage.rings.polynomial.pbori
             sage: S.eliminate_linear_variables(return_reductors=True)                   # needs sage.rings.polynomial.pbori
@@ -1313,7 +1310,6 @@ class PolynomialSequence_gf2(PolynomialSequence_generic):
             sage: f = a*d + a + b*d + c*d + 1                                           # needs sage.rings.polynomial.pbori
             sage: Sequence([f, a + b*c + c+d + 1]).eliminate_linear_variables()         # needs sage.rings.polynomial.pbori
             [a*d + a + b*d + c*d + 1, a + b*c + c + d + 1]
-
             sage: B.<a,b,c,d> = BooleanPolynomialRing()                                 # needs sage.rings.polynomial.pbori
             sage: f = a*d + a + b*d + c*d + 1                                           # needs sage.rings.polynomial.pbori
             sage: Sequence([f, a + b*c + c+d + 1]).eliminate_linear_variables(use_polybori=True)    # needs sage.rings.polynomial.pbori
