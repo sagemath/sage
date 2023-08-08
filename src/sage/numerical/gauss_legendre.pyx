@@ -79,11 +79,11 @@ def nodes_uncached(degree, prec):
 
         sage: from sage.numerical.gauss_legendre import nodes_uncached
         sage: L1 = nodes_uncached(24, 53)
-        sage: P = RR['x'](sage.functions.orthogonal_polys.legendre_P(24, x))            # optional - sage.symbolic
-        sage: Pdif = P.diff()                                                           # optional - sage.symbolic
-        sage: L2 = [((r + 1)/2, 1/(1 - r^2)/Pdif(r)^2)                                  # optional - sage.symbolic
+        sage: P = RR['x'](sage.functions.orthogonal_polys.legendre_P(24, x))            # needs sage.symbolic
+        sage: Pdif = P.diff()                                                           # needs sage.symbolic
+        sage: L2 = [((r + 1)/2, 1/(1 - r^2)/Pdif(r)^2)                                  # needs sage.symbolic
         ....:        for r, _ in RR['x'](P).roots()]
-        sage: all((a[0] - b[0]).abs() < 1e-15 and (a[1] - b[1]).abs() < 1e-9            # optional - sage.symbolic
+        sage: all((a[0] - b[0]).abs() < 1e-15 and (a[1] - b[1]).abs() < 1e-9            # needs sage.symbolic
         ....:      for a, b in zip(L1, L2))
         True
 
@@ -188,11 +188,11 @@ def nodes(degree, prec):
 
         sage: from sage.numerical.gauss_legendre import nodes
         sage: L1 = nodes(24, 53)
-        sage: P = RR['x'](sage.functions.orthogonal_polys.legendre_P(24, x))            # optional - sage.symbolic
-        sage: Pdif = P.diff()                                                           # optional - sage.symbolic
-        sage: L2 = [((r + 1)/2, 1/(1 - r^2)/Pdif(r)^2)                                  # optional - sage.symbolic
+        sage: P = RR['x'](sage.functions.orthogonal_polys.legendre_P(24, x))            # needs sage.symbolic
+        sage: Pdif = P.diff()                                                           # needs sage.symbolic
+        sage: L2 = [((r + 1)/2, 1/(1 - r^2)/Pdif(r)^2)                                  # needs sage.symbolic
         ....:        for r, _ in RR['x'](P).roots()]
-        sage: all((a[0] - b[0]).abs() < 1e-15 and (a[1] - b[1]).abs() < 1e-9            # optional - sage.symbolic
+        sage: all((a[0] - b[0]).abs() < 1e-15 and (a[1] - b[1]).abs() < 1e-9            # needs sage.symbolic
         ....:      for a, b in zip(L1, L2))
         True
 
@@ -343,8 +343,8 @@ def integrate_vector(f, prec, epsilon=None):
         sage: epsilon = K(2^(-prec + 4))
         sage: f = lambda t:V((1 + t^2, 1/(1 + t^2)))
         sage: I = integrate_vector(f, prec, epsilon=epsilon)
-        sage: J = V((4/3, pi/4))                                                        # optional - sage.symbolic
-        sage: max(c.abs() for c in (I - J)) < epsilon                                   # optional - sage.symbolic
+        sage: J = V((4/3, pi/4))                                                        # needs sage.symbolic
+        sage: max(c.abs() for c in (I - J)) < epsilon                                   # needs sage.symbolic
         True
 
     We can also use complex-valued integrands::
@@ -354,10 +354,10 @@ def integrate_vector(f, prec, epsilon=None):
         sage: K = ComplexField(prec)
         sage: V = VectorSpace(K, 2)
         sage: epsilon = Kreal(2^(-prec + 4))
-        sage: f = lambda t: V((t, K(exp(2*pi*t*K.0))))                                  # optional - sage.symbolic
-        sage: I = integrate_vector(f, prec, epsilon=epsilon)                            # optional - sage.symbolic
+        sage: f = lambda t: V((t, K(exp(2*pi*t*K.0))))                                  # needs sage.symbolic
+        sage: I = integrate_vector(f, prec, epsilon=epsilon)                            # needs sage.symbolic
         sage: J = V((1/2, 0))
-        sage: max(c.abs() for c in (I - J)) < epsilon                                   # optional - sage.symbolic
+        sage: max(c.abs() for c in (I - J)) < epsilon                                   # needs sage.symbolic
         True
     """
     results = []

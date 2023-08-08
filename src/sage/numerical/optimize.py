@@ -240,7 +240,7 @@ def find_local_minimum(f, a, b, tol=1.48e-08, maxfun=500):
         (-3.28837136189098..., 3.42575079030572...)
         sage: find_local_minimum(f, 1, 5, tol=1e-2, maxfun=10)
         (-3.28837084598..., 3.4250840220...)
-        sage: show(plot(f, 0, 20))                                                      # optional - sage.plot
+        sage: show(plot(f, 0, 20))                                                      # needs sage.plot
         sage: find_local_minimum(f, 1, 15)
         (-9.4772942594..., 9.5293344109...)
 
@@ -263,9 +263,9 @@ def find_local_minimum(f, a, b, tol=1.48e-08, maxfun=500):
     numerics (observe the small number of decimal places that we
     actually test)::
 
-        sage: plot(f, (x, -2.5, -1)).ymin()                                             # optional - sage.plot
+        sage: plot(f, (x, -2.5, -1)).ymin()                                             # needs sage.plot
         -2.182...
-        sage: plot(f, (x, -2.5, 2)).ymin()                                              # optional - sage.plot
+        sage: plot(f, (x, -2.5, 2)).ymin()                                              # needs sage.plot
         -2.182...
 
     ALGORITHM:
@@ -342,20 +342,20 @@ def minimize(func, x0, gradient=None, hessian=None, algorithm="default",
     Minimize a fourth order polynomial in three variables (see the
     :wikipedia:`Rosenbrock_function`)::
 
-        sage: vars = var('x y z')                                                       # optional - sage.symbolic
-        sage: f = 100*(y-x^2)^2 + (1-x)^2 + 100*(z-y^2)^2 + (1-y)^2                     # optional - sage.symbolic
-        sage: minimize(f, [.1,.3,.4]) # abs tol 1e-6                                    # optional - sage.symbolic
+        sage: vars = var('x y z')                                                       # needs sage.symbolic
+        sage: f = 100*(y-x^2)^2 + (1-x)^2 + 100*(z-y^2)^2 + (1-y)^2                     # needs sage.symbolic
+        sage: minimize(f, [.1,.3,.4]) # abs tol 1e-6                                    # needs sage.symbolic
         (1.0, 1.0, 1.0)
 
     Try the newton-conjugate gradient method; the gradient and hessian are
     computed automatically::
 
-        sage: minimize(f, [.1, .3, .4], algorithm="ncg")  # abs tol 1e-6                # optional - sage.symbolic
+        sage: minimize(f, [.1, .3, .4], algorithm="ncg")  # abs tol 1e-6                # needs sage.symbolic
         (1.0, 1.0, 1.0)
 
     We get additional convergence information with the `verbose` option::
 
-        sage: minimize(f, [.1, .3, .4], algorithm="ncg", verbose=True)                  # optional - sage.symbolic
+        sage: minimize(f, [.1, .3, .4], algorithm="ncg", verbose=True)                  # needs sage.symbolic
         Optimization terminated successfully.
         ...
         (0.9999999..., 0.999999..., 0.999999...)
@@ -372,9 +372,9 @@ def minimize(func, x0, gradient=None, hessian=None, algorithm="default",
 
         sage: def rosen(x): # The Rosenbrock function
         ....:    return sum(100.0r*(x[1r:]-x[:-1r]**2.0r)**2.0r + (1r-x[:-1r])**2.0r)
-        sage: import numpy                                                              # optional - numpy
-        sage: from numpy import zeros                                                   # optional - numpy
-        sage: def rosen_der(x):                                                         # optional - numpy
+        sage: import numpy                                                              # needs numpy
+        sage: from numpy import zeros                                                   # needs numpy
+        sage: def rosen_der(x):                                                         # needs numpy
         ....:    xm = x[1r:-1r]
         ....:    xm_m1 = x[:-2r]
         ....:    xm_p1 = x[2r:]
@@ -383,7 +383,7 @@ def minimize(func, x0, gradient=None, hessian=None, algorithm="default",
         ....:    der[0] = -400r*x[0r]*(x[1r]-x[0r]**2r) - 2r*(1r-x[0])
         ....:    der[-1] = 200r*(x[-1r]-x[-2r]**2r)
         ....:    return der
-        sage: minimize(rosen, [.1,.3,.4], gradient=rosen_der,  # abs tol 1e-6           # optional - numpy
+        sage: minimize(rosen, [.1,.3,.4], gradient=rosen_der,  # abs tol 1e-6           # needs numpy
         ....:          algorithm="bfgs")
         (1.0, 1.0, 1.0)
     """
@@ -478,14 +478,14 @@ def minimize_constrained(func,cons,x0,gradient=None,algorithm='default', **args)
 
     Let's find a minimum of `\sin(xy)`::
 
-        sage: x,y = var('x y')                                                          # optional - sage.symbolic
-        sage: f(x,y) = sin(x*y)                                                         # optional - sage.symbolic
-        sage: minimize_constrained(f, [(None,None),(4,10)],[5,5])                       # optional - sage.symbolic
+        sage: x,y = var('x y')                                                          # needs sage.symbolic
+        sage: f(x,y) = sin(x*y)                                                         # needs sage.symbolic
+        sage: minimize_constrained(f, [(None,None),(4,10)],[5,5])                       # needs sage.symbolic
         (4.8..., 4.8...)
 
     Check if L-BFGS-B finds the same minimum::
 
-        sage: minimize_constrained(f, [(None,None),(4,10)],[5,5],                       # optional - sage.symbolic
+        sage: minimize_constrained(f, [(None,None),(4,10)],[5,5],                       # needs sage.symbolic
         ....:                      algorithm='l-bfgs-b')
         (4.7..., 4.9...)
 
@@ -503,22 +503,24 @@ def minimize_constrained(func,cons,x0,gradient=None,algorithm='default', **args)
 
     Check if :trac:`6592` is fixed::
 
-        sage: x, y = var('x y')                                                         # optional - sage.symbolic
-        sage: f(x,y) = (100 - x) + (1000 - y)                                           # optional - sage.symbolic
-        sage: c(x,y) = x + y - 479  # > 0                                               # optional - sage.symbolic
-        sage: minimize_constrained(f, [c], [100, 300])                                  # optional - sage.symbolic
+        sage: # needs sage.symbolic
+        sage: x, y = var('x y')
+        sage: f(x,y) = (100 - x) + (1000 - y)
+        sage: c(x,y) = x + y - 479  # > 0
+        sage: minimize_constrained(f, [c], [100, 300])
         (805.985..., 1005.985...)
-        sage: minimize_constrained(f, c, [100, 300])                                    # optional - sage.symbolic
+        sage: minimize_constrained(f, c, [100, 300])
         (805.985..., 1005.985...)
 
     If ``func`` is symbolic, its minimizer should be in the same order
     as its arguments (:trac:`32511`)::
 
-        sage: x,y = SR.var('x,y')                                                       # optional - sage.symbolic
-        sage: f(y,x) = x - y                                                            # optional - sage.symbolic
-        sage: c1(y,x) = x                                                               # optional - sage.symbolic
-        sage: c2(y,x) = 1-y                                                             # optional - sage.symbolic
-        sage: minimize_constrained(f, [c1, c2], (0,0))                                  # optional - sage.symbolic
+        sage: # needs sage.symbolic
+        sage: x,y = SR.var('x,y')
+        sage: f(y,x) = x - y
+        sage: c1(y,x) = x
+        sage: c2(y,x) = 1-y
+        sage: minimize_constrained(f, [c1, c2], (0,0))
         (1.0, 0.0)
 
     """
@@ -620,20 +622,20 @@ def linear_program(c, G, h, A=None, b=None, solver=None):
         sage: c=vector(RDF,[-4,-5])
         sage: G=matrix(RDF,[[2,1],[1,2],[-1,0],[0,-1]])
         sage: h=vector(RDF,[3,3,0,0])
-        sage: sol=linear_program(c,G,h)                                                # optional - cvxopt
+        sage: sol=linear_program(c,G,h)                                                 # needs cvxopt
         doctest:warning...
         DeprecationWarning: linear_program is deprecated; use MixedIntegerLinearProgram instead
         See https://github.com/sagemath/sage/issues/32226 for details.
-        sage: sol['x']                                                                 # optional - cvxopt
+        sage: sol['x']                                                                  # needs cvxopt
         (0.999..., 1.000...)
 
     Here we solve the same problem with 'glpk' interface to 'cvxopt'::
 
-        sage: sol=linear_program(c,G,h,solver='glpk')                                  # optional - cvxopt
+        sage: sol=linear_program(c,G,h,solver='glpk')                                   # needs cvxopt
         GLPK Simplex Optimizer...
         ...
         OPTIMAL LP SOLUTION FOUND
-        sage: sol['x']                                                                 # optional - cvxopt
+        sage: sol['x']                                                                  # needs cvxopt
         (1.0, 1.0)
 
     Next, we maximize `x+y-50` subject to `50x + 24y \leq 2400`,
@@ -642,13 +644,13 @@ def linear_program(c, G, h, A=None, b=None, solver=None):
         sage: v=vector([-1.0,-1.0,-1.0])
         sage: m=matrix([[50.0,24.0,0.0],[30.0,33.0,0.0],[-1.0,0.0,0.0],[0.0,-1.0,0.0],[0.0,0.0,1.0],[0.0,0.0,-1.0]])
         sage: h=vector([2400.0,2100.0,-45.0,-5.0,1.0,-1.0])
-        sage: sol=linear_program(v,m,h)                                                # optional - cvxopt
-        sage: sol['x']                                                                 # optional - cvxopt
+        sage: sol=linear_program(v,m,h)                                                 # needs cvxopt
+        sage: sol['x']                                                                  # needs cvxopt
         (45.000000..., 6.2499999..., 1.00000000...)
-        sage: sol=linear_program(v,m,h,solver='glpk')                                  # optional - cvxopt
+        sage: sol=linear_program(v,m,h,solver='glpk')                                   # needs cvxopt
         GLPK Simplex Optimizer...
         OPTIMAL LP SOLUTION FOUND
-        sage: sol['x']                                                                 # optional - cvxopt
+        sage: sol['x']                                                                  # needs cvxopt
         (45.0..., 6.25..., 1.0...)
     """
     deprecation(32226, 'linear_program is deprecated; use MixedIntegerLinearProgram instead')
@@ -723,32 +725,32 @@ def find_fit(data, model, initial_guess=None, parameters=None, variables=None, s
     perturbations::
 
         sage: set_random_seed(0)
-        sage: data = [(i, 1.2 * sin(0.5*i-0.2) + 0.1 * normalvariate(0, 1))            # optional - sage.symbolic
+        sage: data = [(i, 1.2 * sin(0.5*i-0.2) + 0.1 * normalvariate(0, 1))             # needs sage.symbolic
         ....:         for i in xsrange(0, 4*pi, 0.2)]
-        sage: var('a, b, c, x')                                                        # optional - sage.symbolic
+        sage: var('a, b, c, x')                                                         # needs sage.symbolic
         (a, b, c, x)
 
     We define a function with free parameters `a`, `b` and `c`::
 
-        sage: model(x) = a * sin(b * x - c)                                            # optional - sage.symbolic
+        sage: model(x) = a * sin(b * x - c)                                             # needs sage.symbolic
 
     We search for the parameters that give the best fit to the data::
 
-        sage: find_fit(data, model)                                                    # optional - sage.symbolic
+        sage: find_fit(data, model)                                                     # needs sage.symbolic
         [a == 1.21..., b == 0.49..., c == 0.19...]
 
     We can also use a Python function for the model::
 
         sage: def f(x, a, b, c): return a * sin(b * x - c)
-        sage: fit = find_fit(data, f, parameters=[a, b, c], variables=[x],             # optional - sage.symbolic
+        sage: fit = find_fit(data, f, parameters=[a, b, c], variables=[x],              # needs sage.symbolic
         ....:                solution_dict = True)
-        sage: fit[a], fit[b], fit[c]                                                   # optional - sage.symbolic
+        sage: fit[a], fit[b], fit[c]                                                    # needs sage.symbolic
         (1.21..., 0.49..., 0.19...)
 
     We search for a formula for the `n`-th prime number::
 
         sage: dataprime = [(i, nth_prime(i)) for i in range(1, 5000, 100)]
-        sage: find_fit(dataprime, a * x * log(b * x),                                  # optional - sage.symbolic
+        sage: find_fit(dataprime, a * x * log(b * x),                                   # needs sage.symbolic
         ....:          parameters=[a, b], variables=[x])
         [a == 1.11..., b == 1.24...]
 

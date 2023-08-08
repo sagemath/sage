@@ -64,7 +64,7 @@ you can run these commands with typeset mode on (``%display typeset``) and get
 
 Since it has only two variables, we can solve it graphically::
 
-    sage: P.plot()                                                                      # optional - sage.plot
+    sage: P.plot()                                                                      # needs sage.plot
     Graphics object consisting of 19 graphics primitives
 
 
@@ -298,9 +298,9 @@ def _latex_product(coefficients, variables,
 
         sage: from sage.numerical.interactive_simplex_method import \
         ....:       _latex_product
-        sage: var("x, y")                                                               # optional - sage.symbolic
+        sage: var("x, y")                                                               # needs sage.symbolic
         (x, y)
-        sage: print(_latex_product([-1, 3], [x, y]))                                    # optional - sage.symbolic
+        sage: print(_latex_product([-1, 3], [x, y]))                                    # needs sage.symbolic
         - \mspace{-6mu}&\mspace{-6mu} x \mspace{-6mu}&\mspace{-6mu} + \mspace{-6mu}&\mspace{-6mu} 3 y
     """
     entries = []
@@ -1536,19 +1536,19 @@ class InteractiveLPProblem(SageObject):
             sage: b = (1000, 1500)
             sage: c = (10, 5)
             sage: P = InteractiveLPProblem(A, b, c, ["C", "B"], variable_type=">=")
-            sage: p = P.plot()                                                          # optional - sage.plot
-            sage: p.show()                                                              # optional - sage.plot
+            sage: p = P.plot()                                                          # needs sage.plot
+            sage: p.show()                                                              # needs sage.plot
 
         In this case the plot works better with the following axes ranges::
 
-            sage: p = P.plot(0, 1000, 0, 1500)                                          # optional - sage.plot
-            sage: p.show()                                                              # optional - sage.plot
+            sage: p = P.plot(0, 1000, 0, 1500)                                          # needs sage.plot
+            sage: p.show()                                                              # needs sage.plot
 
         TESTS:
 
         We check that zero objective can be dealt with::
 
-            sage: InteractiveLPProblem(A, b, (0, 0), ["C", "B"], variable_type=">=").plot()         # optional - sage.plot
+            sage: InteractiveLPProblem(A, b, (0, 0), ["C", "B"], variable_type=">=").plot()         # needs sage.plot
             Graphics object consisting of 8 graphics primitives
         """
         FP = self.plot_feasible_set(*args, **kwds)
@@ -1613,13 +1613,13 @@ class InteractiveLPProblem(SageObject):
             sage: b = (1000, 1500)
             sage: c = (10, 5)
             sage: P = InteractiveLPProblem(A, b, c, ["C", "B"], variable_type=">=")
-            sage: p = P.plot_feasible_set()                                             # optional - sage.plot
-            sage: p.show()                                                              # optional - sage.plot
+            sage: p = P.plot_feasible_set()                                             # needs sage.plot
+            sage: p.show()                                                              # needs sage.plot
 
         In this case the plot works better with the following axes ranges::
 
-            sage: p = P.plot_feasible_set(0, 1000, 0, 1500)                             # optional - sage.plot
-            sage: p.show()                                                              # optional - sage.plot
+            sage: p = P.plot_feasible_set(0, 1000, 0, 1500)                             # needs sage.plot
+            sage: p.show()                                                              # needs sage.plot
         """
         if self.n() != 2:
             raise ValueError("only problems with 2 variables can be plotted")
