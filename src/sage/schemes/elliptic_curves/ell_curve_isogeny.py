@@ -1219,16 +1219,17 @@ class EllipticCurveIsogeny(EllipticCurveHom):
 
         Tests for :trac:`10888`::
 
+            sage: # needs sage.rings.number_field
             sage: x = polygen(ZZ, 'x')
-            sage: K.<th> = NumberField(x^2 + 3)                                         # needs sage.rings.number_field
-            sage: E = EllipticCurve(K, [7,0])                                           # needs sage.rings.number_field
-            sage: phi = E.isogeny(E(0,0))                                               # needs sage.rings.number_field
-            sage: P = E(-3,4*th)                                                        # needs sage.rings.number_field
-            sage: phi(P)                                                                # needs sage.rings.number_field
+            sage: K.<th> = NumberField(x^2 + 3)
+            sage: E = EllipticCurve(K, [7,0])
+            sage: phi = E.isogeny(E(0,0))
+            sage: P = E(-3,4*th)
+            sage: phi(P)
             (-16/3 : 8/9*th : 1)
-            sage: Q = phi(P)                                                            # needs sage.rings.number_field
-            sage: phihat = phi.dual()                                                   # needs sage.rings.number_field
-            sage: phihat(Q)                                                             # needs sage.rings.number_field
+            sage: Q = phi(P)
+            sage: phihat = phi.dual()
+            sage: phihat(Q)
             (-1/48 : 127/576*th : 1)
 
         Call a composed isogeny (added for :trac:`16238`)::
@@ -1274,14 +1275,15 @@ class EllipticCurveIsogeny(EllipticCurveHom):
 
         Test for :trac:`35983`::
 
-            sage: E = EllipticCurve([1,0,0,-1,0])                                       # optional - sage.rings.finite_rings
-            sage: P = E([1,0])                                                          # optional - sage.rings.finite_rings
-            sage: P.order()                                                             # optional - sage.rings.finite_rings
+            sage: # needs sage.rings.finite_rings
+            sage: E = EllipticCurve([1,0,0,-1,0])
+            sage: P = E([1,0])
+            sage: P.order()
             +Infinity
-            sage: phi = E.isogenies_prime_degree(2)[0]                                  # optional - sage.rings.finite_rings
-            sage: Q = phi(P); Q                                                         # optional - sage.rings.finite_rings
+            sage: phi = E.isogenies_prime_degree(2)[0]
+            sage: Q = phi(P); Q
             (0 : 1 : 1)
-            sage: Q.order()                                                             # optional - sage.rings.finite_rings
+            sage: Q.order()
             +Infinity
 
         """
@@ -3686,7 +3688,7 @@ def compute_intermediate_curves(E1, E2):
         sage: K.<i> = NumberField(x^2 + 1)                                              # needs sage.rings.number_field
         sage: E = EllipticCurve(K, [0,0,0,1,0])                                         # needs sage.rings.number_field
         sage: E2 = EllipticCurve(K, [0,0,0,16,0])                                       # needs sage.rings.number_field
-        sage: compute_intermediate_curves(E, E2)                                        # needs sage.rings.number_field
+        sage: compute_intermediate_curves(E, E2)                                        # needs sage.rings.finite_rings sage.rings.number_field
         (Elliptic Curve defined by y^2 = x^3 + x
           over Number Field in i with defining polynomial x^2 + 1,
          Elliptic Curve defined by y^2 = x^3 + 16*x

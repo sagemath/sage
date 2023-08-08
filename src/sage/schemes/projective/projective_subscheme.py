@@ -1072,15 +1072,15 @@ class AlgebraicScheme_subscheme_projective(AlgebraicScheme_subscheme):
 
             sage: # needs sage.rings.number_field
             sage: R.<a> = QQ[]
-            sage: K.<b> = NumberField(a^4 + 1)                                          # needs sage.rings.number_field
-            sage: P.<x,y,z,w> = ProjectiveSpace(K, 3)                                   # needs sage.rings.number_field
-            sage: X = P.subscheme([x^2 + y^2 - z*w])                                    # needs sage.rings.number_field
-            sage: Y = P.subscheme([y*z - x*w, z - w])                                   # needs sage.rings.number_field
-            sage: Q1 = P([b^2,1,0,0])                                                   # needs sage.rings.number_field
-            sage: X.intersection_multiplicity(Y, Q1)                                    # needs sage.libs.singular sage.rings.number_field
+            sage: K.<b> = NumberField(a^4 + 1)
+            sage: P.<x,y,z,w> = ProjectiveSpace(K, 3)
+            sage: X = P.subscheme([x^2 + y^2 - z*w])
+            sage: Y = P.subscheme([y*z - x*w, z - w])
+            sage: Q1 = P([b^2,1,0,0])
+            sage: X.intersection_multiplicity(Y, Q1)                                    # needs sage.libs.singular
             1
-            sage: Q2 = P([1/2*b^3 - 1/2*b, 1/2*b^3 - 1/2*b, 1, 1])                      # needs sage.rings.number_field
-            sage: X.intersection_multiplicity(Y, Q2)                                    # needs sage.libs.singular sage.rings.number_field
+            sage: Q2 = P([1/2*b^3 - 1/2*b, 1/2*b^3 - 1/2*b, 1, 1])
+            sage: X.intersection_multiplicity(Y, Q2)                                    # needs sage.libs.singular
             1
 
         ::

@@ -1167,21 +1167,22 @@ class EllipticCurveCanonicalHeight:
 
         An example over a number field::
 
+            sage: # needs sage.rings.number_field
             sage: x = polygen(ZZ, 'x')
-            sage: K.<a> = NumberField(x^3 - 2)                                          # needs sage.rings.number_field
-            sage: E = EllipticCurve([0,0,0,0,a])                                        # needs sage.rings.number_field
-            sage: P = E.lift_x(1/3*a^2 + a + 5/3)                                       # needs sage.rings.number_field
-            sage: v = K.real_places()[0]                                                # needs sage.rings.number_field
-            sage: L = E.period_lattice(v)                                               # needs sage.rings.number_field
-            sage: L(P)                                                                  # needs sage.rings.number_field
+            sage: K.<a> = NumberField(x^3 - 2)
+            sage: E = EllipticCurve([0,0,0,0,a])
+            sage: P = E.lift_x(1/3*a^2 + a + 5/3)
+            sage: v = K.real_places()[0]
+            sage: L = E.period_lattice(v)
+            sage: L(P)
             3.51086196882538
-            sage: L(P) / L.real_period()                                                # needs sage.rings.number_field
+            sage: L(P) / L.real_period()
             0.867385122699931
-            sage: xP = v(P.xy()[0])                                                     # needs sage.rings.number_field
-            sage: H = E.height_function()                                               # needs sage.rings.number_field
-            sage: H.psi(xP, v)                                                          # needs sage.rings.number_field
+            sage: xP = v(P.xy()[0])
+            sage: H = E.height_function()
+            sage: H.psi(xP, v)
             0.867385122699931
-            sage: H.psi(1.23, v)                                                        # needs sage.rings.number_field
+            sage: H.psi(1.23, v)
             0.785854718241495
         """
         if xi > 1e9:
@@ -1223,12 +1224,13 @@ class EllipticCurveCanonicalHeight:
 
         An example over a number field::
 
+            sage: # needs sage.rings.number_field
             sage: x = polygen(ZZ, 'x')
-            sage: K.<a> = NumberField(x^3 - 2)                                          # needs sage.rings.number_field
-            sage: E = EllipticCurve([0,0,0,0,a])                                        # needs sage.rings.number_field
-            sage: v = K.real_places()[0]                                                # needs sage.rings.number_field
-            sage: H = E.height_function()                                               # needs sage.rings.number_field
-            sage: H.S(9, 10, v)                                                         # needs sage.rings.number_field
+            sage: K.<a> = NumberField(x^3 - 2)
+            sage: E = EllipticCurve([0,0,0,0,a])
+            sage: v = K.real_places()[0]
+            sage: H = E.height_function()
+            sage: H.S(9, 10, v)
             ([0.078119444725347..., 0.082342373201640...] U [0.91765762679836..., 0.92188055527465...])
         """
         L = self.E.period_lattice(v)
@@ -1275,15 +1277,16 @@ class EllipticCurveCanonicalHeight:
 
         An example over a number field::
 
+            sage: # needs sage.rings.number_field
             sage: x = polygen(ZZ, 'x')
-            sage: K.<a> = NumberField(x^3 - 2)                                          # needs sage.rings.number_field
-            sage: E = EllipticCurve([0,0,0,0,a])                                        # needs sage.rings.number_field
-            sage: v = K.real_places()[0]                                                # needs sage.rings.number_field
-            sage: H = E.height_function()                                               # needs sage.rings.number_field
-            sage: H.S(2, 3, v), H.Sn(2, 3, 1, v)                                        # needs sage.rings.number_field
+            sage: K.<a> = NumberField(x^3 - 2)
+            sage: E = EllipticCurve([0,0,0,0,a])
+            sage: v = K.real_places()[0]
+            sage: H = E.height_function()
+            sage: H.S(2, 3, v), H.Sn(2, 3, 1, v)
             (([0.142172065860075, 0.172845716928584] U [0.827154283071416, 0.857827934139925]),
              ([0.142172065860075, 0.172845716928584] U [0.827154283071416, 0.857827934139925]))
-            sage: H.Sn(2, 3, 6, v)                                                      # needs sage.rings.number_field
+            sage: H.Sn(2, 3, 6, v)
             ([0.0236953443100124, 0.0288076194880974] U [0.137859047178569, 0.142971322356654] U [0.190362010976679, 0.195474286154764] U [0.304525713845236, 0.309637989023321] U [0.357028677643346, 0.362140952821431] U [0.471192380511903, 0.476304655689988] U [0.523695344310012, 0.528807619488097] U [0.637859047178569, 0.642971322356654] U [0.690362010976679, 0.695474286154764] U [0.804525713845236, 0.809637989023321] U [0.857028677643346, 0.862140952821431] U [0.971192380511903, 0.976304655689988])
         """
         SS = 1/ZZ(n) * self.S(xi1, xi2, v)
@@ -1329,11 +1332,12 @@ class EllipticCurveCanonicalHeight:
 
         An example over a number field::
 
+            sage: # needs sage.rings.number_field
             sage: x = polygen(ZZ, 'x')
-            sage: K.<a> = NumberField(x^3 - 2)                                          # needs sage.rings.number_field
-            sage: E = EllipticCurve([0,0,0,0,a])                                        # needs sage.rings.number_field
-            sage: v = K.real_places()[0]                                                # needs sage.rings.number_field
-            sage: H = E.height_function()                                               # needs sage.rings.number_field
+            sage: K.<a> = NumberField(x^3 - 2)
+            sage: E = EllipticCurve([0,0,0,0,a])
+            sage: v = K.real_places()[0]
+            sage: H = E.height_function()
 
         The following two lines prove that the heights of non-torsion
         points on `E` with everywhere good reduction have canonical
@@ -1681,11 +1685,12 @@ class EllipticCurveCanonicalHeight:
 
         EXAMPLES::
 
+            sage: # needs sage.rings.number_field
             sage: x = polygen(ZZ, 'x')
-            sage: K.<a> = NumberField(x^3 - 2)                                          # needs sage.rings.number_field
-            sage: E = EllipticCurve([0,0,0,0,a])                                        # needs sage.rings.number_field
-            sage: v = K.complex_embeddings()[0]                                         # needs sage.rings.number_field
-            sage: H = E.height_function()                                               # needs sage.rings.number_field
+            sage: K.<a> = NumberField(x^3 - 2)
+            sage: E = EllipticCurve([0,0,0,0,a])
+            sage: v = K.complex_embeddings()[0]
+            sage: H = E.height_function()
 
         The following two lines prove that the heights of non-torsion
         points on `E` with everywhere good reduction have canonical

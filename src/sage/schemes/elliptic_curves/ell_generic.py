@@ -509,20 +509,21 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
 
         We create a point on an elliptic curve over a number field::
 
+            sage: # needs sage.rings.number_field
             sage: x = polygen(RationalField())
-            sage: K = NumberField(x**3 + x + 1, 'a'); a = K.gen()                       # needs sage.rings.number_field
-            sage: E = EllipticCurve([a, a])                                             # needs sage.rings.number_field
-            sage: E                                                                     # needs sage.rings.number_field
+            sage: K = NumberField(x**3 + x + 1, 'a'); a = K.gen()
+            sage: E = EllipticCurve([a, a])
+            sage: E
             Elliptic Curve defined by y^2 = x^3 + a*x + a
             over Number Field in a with defining polynomial x^3 + x + 1
-            sage: E = EllipticCurve([K(1), 1])                                          # needs sage.rings.number_field
-            sage: E                                                                     # needs sage.rings.number_field
+            sage: E = EllipticCurve([K(1), 1])
+            sage: E
             Elliptic Curve defined by y^2 = x^3 + x + 1
             over Number Field in a with defining polynomial x^3 + x + 1
-            sage: P = E([a,0,1])                                                        # needs sage.rings.number_field
-            sage: P                                                                     # needs sage.rings.number_field
+            sage: P = E([a,0,1])
+            sage: P
             (a : 0 : 1)
-            sage: P + P                                                                 # needs sage.rings.number_field
+            sage: P + P
             (0 : 1 : 0)
 
         Another example involving p-adics::

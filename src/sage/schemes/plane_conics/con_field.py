@@ -194,14 +194,15 @@ class ProjectiveConic_field(ProjectivePlaneCurve_field):
 
         An example in characteristic `2`::
 
-            sage: P.<t> = GF(2)[]                                                       # needs sage.rings.finite_rings
-            sage: c = Conic([t, 1, t^2, 1, 1, 0]); c                                    # needs sage.libs.ntl sage.rings.finite_rings
+            sage: # needs sage.rings.finite_rings
+            sage: P.<t> = GF(2)[]
+            sage: c = Conic([t, 1, t^2, 1, 1, 0]); c                                    # needs sage.libs.ntl
             Projective Conic Curve over Fraction Field of Univariate
              Polynomial Ring in t over Finite Field of size 2 (using GF2X)
              defined by t*x^2 + x*y + y^2 + (t^2)*x*z + y*z
-            sage: c.is_smooth()                                                         # needs sage.rings.finite_rings
+            sage: c.is_smooth()
             True
-            sage: c.derivative_matrix()                                                 # needs sage.rings.finite_rings
+            sage: c.derivative_matrix()
             [  0   1 t^2]
             [  1   0   1]
             [t^2   1   0]

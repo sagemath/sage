@@ -304,12 +304,12 @@ class SchemeMorphism_point_affine_field(SchemeMorphism_point_affine):
 
             sage: # needs sage.libs.singular sage.rings.number_field
             sage: R.<x> = QQ[]
-            sage: K.<w> = NumberField(x^5 - 2)                                          # needs sage.rings.number_field
-            sage: R.<x> = K[]                                                           # needs sage.rings.number_field
-            sage: L.<v> = K.extension(x^2 + w)                                          # needs sage.rings.number_field
-            sage: A.<x,y> = AffineSpace(L, 2)                                           # needs sage.rings.number_field
-            sage: P = A([w^3 - v, 1 + w + w*v])                                         # needs sage.rings.number_field
-            sage: P.weil_restriction()                                                  # needs sage.rings.number_field
+            sage: K.<w> = NumberField(x^5 - 2)
+            sage: R.<x> = K[]
+            sage: L.<v> = K.extension(x^2 + w)
+            sage: A.<x,y> = AffineSpace(L, 2)
+            sage: P = A([w^3 - v, 1 + w + w*v])
+            sage: P.weil_restriction()
             (w^3, -1, w + 1, w)
         """
         L = self.codomain().base_ring()

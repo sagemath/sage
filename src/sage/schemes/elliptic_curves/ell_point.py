@@ -192,14 +192,15 @@ class EllipticCurvePoint_field(SchemeMorphism_point_abelian_variety_field):
         Abelian group of points on
          Elliptic Curve defined by y^2 + y = x^3 - x over Rational Field
 
+        sage: # needs sage.rings.number_field
         sage: x = polygen(ZZ, 'x')
-        sage: K.<i> = NumberField(x^2 + 1)                                              # needs sage.rings.number_field
-        sage: E = EllipticCurve(K, [0,1,0,-160,308])                                    # needs sage.rings.number_field
-        sage: P = E(26, -120)                                                           # needs sage.rings.number_field
-        sage: Q = E(2+12*i, -36+48*i)                                                   # needs sage.rings.number_field
-        sage: P.order() == Q.order() == 4       # long time                             # needs sage.rings.number_field
+        sage: K.<i> = NumberField(x^2 + 1)
+        sage: E = EllipticCurve(K, [0,1,0,-160,308])
+        sage: P = E(26, -120)
+        sage: Q = E(2+12*i, -36+48*i)
+        sage: P.order() == Q.order() == 4       # long time
         True
-        sage: 2*P == 2*Q                                                                # needs sage.rings.number_field
+        sage: 2*P == 2*Q
         False
 
     ::
@@ -2385,22 +2386,23 @@ class EllipticCurvePoint_number_field(EllipticCurvePoint_field):
 
         ::
 
+            sage: # needs sage.rings.number_field
             sage: x = polygen(ZZ, 'x')
-            sage: K.<i> = NumberField(x^2 + 1)                                          # needs sage.rings.number_field
-            sage: E = EllipticCurve(K, [0,1,0,-160,308])                                # needs sage.rings.number_field
-            sage: P = E(26, -120)                                                       # needs sage.rings.number_field
-            sage: E.discriminant().support()                                            # needs sage.rings.number_field
+            sage: K.<i> = NumberField(x^2 + 1)
+            sage: E = EllipticCurve(K, [0,1,0,-160,308])
+            sage: P = E(26, -120)
+            sage: E.discriminant().support()
             [Fractional ideal (i + 1),
              Fractional ideal (-i - 2),
              Fractional ideal (2*i + 1),
              Fractional ideal (3)]
-            sage: [E.tamagawa_exponent(p) for p in E.discriminant().support()]          # needs sage.rings.number_field
+            sage: [E.tamagawa_exponent(p) for p in E.discriminant().support()]
             [1, 4, 4, 4]
-            sage: P.has_good_reduction()                                                # needs sage.rings.number_field
+            sage: P.has_good_reduction()
             False
-            sage: (2*P).has_good_reduction()                                            # needs sage.rings.number_field
+            sage: (2*P).has_good_reduction()
             False
-            sage: (4*P).has_good_reduction()                                            # needs sage.rings.number_field
+            sage: (4*P).has_good_reduction()
             True
 
         TESTS:
@@ -2496,13 +2498,14 @@ class EllipticCurvePoint_number_field(EllipticCurvePoint_field):
 
         ::
 
+            sage: # needs sage.rings.number_field
             sage: x = polygen(ZZ, 'x')
-            sage: F.<a> = NumberField(x^2 + 5)                                          # needs sage.rings.number_field
-            sage: E = EllipticCurve(F, [1,2,3,4,0])                                     # needs sage.rings.number_field
-            sage: Q = E(98, 931)                                                        # needs sage.rings.number_field
-            sage: Q.reduction(a)                                                        # needs sage.rings.number_field
+            sage: F.<a> = NumberField(x^2 + 5)
+            sage: E = EllipticCurve(F, [1,2,3,4,0])
+            sage: Q = E(98, 931)
+            sage: Q.reduction(a)
             (3 : 1 : 1)
-            sage: Q.reduction(11)                                                       # needs sage.rings.number_field
+            sage: Q.reduction(11)
             (10 : 7 : 1)
 
         ::
@@ -2725,18 +2728,19 @@ class EllipticCurvePoint_number_field(EllipticCurvePoint_field):
 
         An example to show that the bug at :trac:`12509` is fixed (precision issues)::
 
+            sage: # needs sage.rings.number_field
             sage: x = polygen(QQ)
-            sage: K.<a> = NumberField(x^2 - x - 1)                                      # needs sage.rings.number_field
-            sage: v = [0, a + 1, 1, 28665*a - 46382, 2797026*a - 4525688]               # needs sage.rings.number_field
-            sage: E = EllipticCurve(v)                                                  # needs sage.rings.number_field
-            sage: P = E([72*a - 509/5,  -682/25*a - 434/25])                            # needs sage.rings.number_field
-            sage: P.height()                                                            # needs sage.rings.number_field
+            sage: K.<a> = NumberField(x^2 - x - 1)
+            sage: v = [0, a + 1, 1, 28665*a - 46382, 2797026*a - 4525688]
+            sage: E = EllipticCurve(v)
+            sage: P = E([72*a - 509/5,  -682/25*a - 434/25])
+            sage: P.height()
             1.38877711688727
-            sage: (2*P).height()/P.height()                                             # needs sage.rings.number_field
+            sage: (2*P).height()/P.height()
             4.00000000000000
-            sage: (2*P).height(precision=100)/P.height(precision=100)                   # needs sage.rings.number_field
+            sage: (2*P).height(precision=100)/P.height(precision=100)
             4.0000000000000000000000000000
-            sage: (2*P).height(precision=1000)/P.height(precision=1000)                 # needs sage.rings.number_field
+            sage: (2*P).height(precision=1000)/P.height(precision=1000)
             4.00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 
         This shows that the bug reported at :trac:`13951` has been fixed::
@@ -2832,13 +2836,14 @@ class EllipticCurvePoint_number_field(EllipticCurvePoint_field):
             sage: P.archimedean_local_height(K.places(prec=170)[0]) / 2
             0.45754773287523276736211210741423654346576029814695
 
+            sage: # needs sage.rings.number_field
             sage: x = polygen(ZZ, 'x')
-            sage: K.<i> = NumberField(x^2 + 1)                                          # needs sage.rings.number_field
-            sage: E = EllipticCurve(K, [0,0,4,6*i,0]); E                                # needs sage.rings.number_field
+            sage: K.<i> = NumberField(x^2 + 1)
+            sage: E = EllipticCurve(K, [0,0,4,6*i,0]); E
             Elliptic Curve defined by y^2 + 4*y = x^3 + 6*i*x
              over Number Field in i with defining polynomial x^2 + 1
-            sage: P = E((0,0))                                                          # needs sage.rings.number_field
-            sage: P.archimedean_local_height(K.places()[0]) / 2                         # needs sage.rings.number_field
+            sage: P = E((0,0))
+            sage: P.archimedean_local_height(K.places()[0]) / 2
             0.510184995162373
 
             sage: Q = E.lift_x(-9/4); Q                                                 # needs sage.rings.number_field
@@ -2867,12 +2872,13 @@ class EllipticCurvePoint_number_field(EllipticCurvePoint_field):
 
         See :trac:`12509`::
 
+            sage: # needs sage.rings.number_field
             sage: x = polygen(QQ)
-            sage: K.<a> = NumberField(x^2 - x - 1)                                      # needs sage.rings.number_field
-            sage: v = [0, a + 1, 1, 28665*a - 46382, 2797026*a - 4525688]               # needs sage.rings.number_field
-            sage: E = EllipticCurve(v)                                                  # needs sage.rings.number_field
-            sage: P = E([72*a - 509/5,  -682/25*a - 434/25])                            # needs sage.rings.number_field
-            sage: P.archimedean_local_height()                                          # needs sage.rings.number_field
+            sage: K.<a> = NumberField(x^2 - x - 1)
+            sage: v = [0, a + 1, 1, 28665*a - 46382, 2797026*a - 4525688]
+            sage: E = EllipticCurve(v)
+            sage: P = E([72*a - 509/5,  -682/25*a - 434/25])
+            sage: P.archimedean_local_height()
             -0.220660795546828
 
         See :trac:`19276`::
@@ -3055,17 +3061,18 @@ class EllipticCurvePoint_number_field(EllipticCurvePoint_field):
 
         Examples 2 and 3 from [Sil1988]_::
 
+            sage: # needs sage.rings.number_field
             sage: x = polygen(ZZ, 'x')
-            sage: K.<i> = NumberField(x^2 + 1)                                          # needs sage.rings.number_field
-            sage: E = EllipticCurve(K, [0,0,4,6*i,0]); E                                # needs sage.rings.number_field
+            sage: K.<i> = NumberField(x^2 + 1)
+            sage: E = EllipticCurve(K, [0,0,4,6*i,0]); E
             Elliptic Curve defined by y^2 + 4*y = x^3 + 6*i*x
              over Number Field in i with defining polynomial x^2 + 1
-            sage: P = E((0,0))                                                          # needs sage.rings.number_field
-            sage: P.non_archimedean_local_height(K.ideal(i+1))                          # needs sage.rings.number_field
+            sage: P = E((0,0))
+            sage: P.non_archimedean_local_height(K.ideal(i+1))
             -1/2*log(2)
-            sage: P.non_archimedean_local_height(K.ideal(3))                            # needs sage.rings.number_field
+            sage: P.non_archimedean_local_height(K.ideal(3))
             0
-            sage: P.non_archimedean_local_height(K.ideal(1-2*i))                        # needs sage.rings.number_field
+            sage: P.non_archimedean_local_height(K.ideal(1-2*i))
             0
 
             sage: # needs sage.rings.number_field
@@ -3302,15 +3309,16 @@ class EllipticCurvePoint_number_field(EllipticCurvePoint_field):
 
         Examples over number fields::
 
+            sage: # needs sage.rings.number_field
             sage: x = polygen(ZZ, 'x')
-            sage: K.<a> = NumberField(x^3 - 2)                                          # needs sage.rings.number_field
-            sage: embs = K.embeddings(CC)                                               # needs sage.rings.number_field
-            sage: E = EllipticCurve([0,1,0,a,a])                                        # needs sage.rings.number_field
-            sage: Ls = [E.period_lattice(e) for e in embs]                              # needs sage.rings.number_field
-            sage: [L.real_flag for L in Ls]                                             # needs sage.rings.number_field
+            sage: K.<a> = NumberField(x^3 - 2)
+            sage: embs = K.embeddings(CC)
+            sage: E = EllipticCurve([0,1,0,a,a])
+            sage: Ls = [E.period_lattice(e) for e in embs]
+            sage: [L.real_flag for L in Ls]
             [0, 0, -1]
-            sage: P = E(-1,0)  # order 2                                                # needs sage.rings.number_field
-            sage: [L.elliptic_logarithm(P) for L in Ls]                                 # needs sage.rings.number_field
+            sage: P = E(-1,0)  # order 2
+            sage: [L.elliptic_logarithm(P) for L in Ls]
             [-1.73964256006716 - 1.07861534489191*I,
              -0.363756518406398 - 1.50699412135253*I, 1.90726488608927]
 

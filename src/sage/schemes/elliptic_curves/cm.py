@@ -367,14 +367,15 @@ def cm_j_invariants(K, proof=None):
 
     Over number fields K of many higher degrees this also works::
 
+        sage: # needs sage.rings.number_field
         sage: x = polygen(ZZ, 'x')
-        sage: K.<a> = NumberField(x^3 - 2)                                              # needs sage.rings.number_field
-        sage: cm_j_invariants(K)                                                        # needs sage.rings.number_field
+        sage: K.<a> = NumberField(x^3 - 2)
+        sage: cm_j_invariants(K)
         [-262537412640768000, -147197952000, -884736000, -884736, -32768,
          8000, -3375, 16581375, 1728, 287496, 0, 54000, -12288000,
          31710790944000*a^2 + 39953093016000*a + 50337742902000]
-        sage: K.<a> = NumberField(x^4 - 2)                                              # needs sage.rings.number_field
-        sage: len(cm_j_invariants(K))                                                   # needs sage.rings.number_field
+        sage: K.<a> = NumberField(x^4 - 2)
+        sage: len(cm_j_invariants(K))
         23
     """
     return sorted(j for D, f, j in cm_j_invariants_and_orders(K, proof=proof))
@@ -929,12 +930,13 @@ def is_cm_j_invariant(j, algorithm='CremonaSutherland', method=None):
         sage: is_cm_j_invariant(8000)
         (True, (-8, 1))
 
-        sage: K.<a> = QuadraticField(5)                                                 # needs sage.rings.number_field
-        sage: is_cm_j_invariant(282880*a + 632000)                                      # needs sage.rings.number_field
+        sage: # needs sage.rings.number_field
+        sage: K.<a> = QuadraticField(5)
+        sage: is_cm_j_invariant(282880*a + 632000)
         (True, (-20, 1))
         sage: x = polygen(ZZ, 'x')
-        sage: K.<a> = NumberField(x^3 - 2)                                              # needs sage.rings.number_field
-        sage: is_cm_j_invariant(31710790944000*a^2 + 39953093016000*a + 50337742902000)             # needs sage.rings.number_field
+        sage: K.<a> = NumberField(x^3 - 2)
+        sage: is_cm_j_invariant(31710790944000*a^2 + 39953093016000*a + 50337742902000)
         (True, (-3, 6))
 
     An example of large degree.  This is only possible using the default algorithm::

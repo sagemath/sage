@@ -761,7 +761,7 @@ class Scheme(Parent):
             sage: X = P.subscheme([y^2*z - x^3 - z^3])                                  # needs sage.rings.finite_rings
 
             sage: R.<t> = PowerSeriesRing(Integers())
-            sage: X.zeta_series(2, t)                                                   # needs sage.libs.singular
+            sage: X.zeta_series(2, t)                                                   # needs sage.libs.singular sage.rings.finite_rings
             1 + 5*t + 21*t^2 + O(t^3)
 
         TESTS::

@@ -516,7 +516,7 @@ class SchemeMorphism(Element):
 
         ::
 
-            sage: # needs sage.rings.finite_rings sage,schemes
+            sage: # optional - sage, needs sage.rings.finite_rings
             sage: E = EllipticCurve(GF((17,2)), [1,2,3,4,5])
             sage: P = E.random_point()
             sage: P.base_ring()
