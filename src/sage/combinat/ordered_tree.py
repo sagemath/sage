@@ -1092,7 +1092,7 @@ class OrderedTrees_size(OrderedTrees):
 
             sage: OrderedTrees(5).random_element()  # random                            # needs sage.combinat
             [[[], []], []]
-            sage: OrderedTrees(0).random_element()                                      # needs sage.combinat
+            sage: OrderedTrees(0).random_element()
             Traceback (most recent call last):
             ...
             EmptySetError: there are no ordered trees of size 0

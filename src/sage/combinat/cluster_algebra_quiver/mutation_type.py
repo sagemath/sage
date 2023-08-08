@@ -55,14 +55,15 @@ def is_mutation_finite(M, nr_of_checks=None):
 
         sage: from sage.combinat.cluster_algebra_quiver.mutation_type import is_mutation_finite
 
-        sage: Q = ClusterQuiver(['A',10])
+        sage: Q = ClusterQuiver(['A',10])                                               # needs sage.modules
         sage: M = Q.b_matrix()                                                          # needs sage.modules
         sage: is_mutation_finite(M)                                                     # needs sage.modules
         (True, None)
 
+        sage: # needs sage.modules
         sage: Q = ClusterQuiver([(0,1),(1,2),(2,3),(3,4),(4,5),(5,6),(6,7),(7,8),(2,9)])
-        sage: M = Q.b_matrix()                                                          # needs sage.modules
-        sage: is_mutation_finite(M)  # random                                           # needs sage.modules
+        sage: M = Q.b_matrix()
+        sage: is_mutation_finite(M)  # random
         (False, [9, 6, 9, 8, 9, 4, 0, 4, 5, 2, 1, 0, 1, 0, 7, 1, 9, 2, 5, 7, 8, 6, 3, 0, 2, 5, 4, 2, 6, 9, 2, 7, 3, 5, 3, 7, 9, 5, 9, 0, 2, 7, 9, 2, 4, 2, 1, 6, 9, 4, 3, 5, 0, 8, 2, 9, 5, 3, 7, 0, 1, 8, 3, 7, 2, 7, 3, 4, 8, 0, 4, 9, 5, 2, 8, 4, 8, 1, 7, 8, 9, 1, 5, 0, 8, 7, 4, 8, 9, 8, 0, 7, 4, 7, 1, 2, 8, 6, 1, 3, 9, 3, 9, 1, 3, 2, 4, 9, 5, 1, 2, 9, 4, 8, 5, 3, 4, 6, 8, 9, 2, 5, 9, 4, 6, 2, 1, 4, 9, 6, 0, 9, 8, 0, 4, 7, 9, 2, 1, 6])
 
     Check that :trac:`19495` is fixed::
@@ -100,6 +101,7 @@ def _triangles(dg):
 
     EXAMPLES::
 
+        sage: # needs sage.modules
         sage: from sage.combinat.cluster_algebra_quiver.mutation_type import _triangles
         sage: Q = ClusterQuiver(['A',3])
         sage: _triangles(Q.digraph())
@@ -154,6 +156,7 @@ def _all_induced_cycles_iter( dg ):
 
     EXAMPLES::
 
+        sage: # needs sage.modules
         sage: from sage.combinat.cluster_algebra_quiver.mutation_type import _all_induced_cycles_iter
         sage: Q = ClusterQuiver(['A',[6,0],1]); Q
         Quiver on 6 vertices of type ['D', 6]
@@ -220,6 +223,7 @@ def _reset_dg(dg, vertices, dict_in_out, del_vertices):
 
     EXAMPLES::
 
+        sage: # needs sage.modules
         sage: from sage.combinat.cluster_algebra_quiver.mutation_type import _reset_dg
         sage: dg = ClusterQuiver(['A',[2,2],1]).digraph(); dg
         Digraph on 4 vertices
@@ -326,6 +330,7 @@ def _connected_mutation_type(dg):
 
     EXAMPLES::
 
+        sage: # needs sage.modules
         sage: from sage.combinat.cluster_algebra_quiver.mutation_type import _connected_mutation_type
         sage: from sage.combinat.cluster_algebra_quiver.quiver import ClusterQuiver
         sage: dg = ClusterQuiver(['A',3]).digraph(); _connected_mutation_type( dg )
@@ -820,15 +825,14 @@ def _connected_mutation_type_AAtildeD(dg, ret_conn_vert=False):
 
     EXAMPLES::
 
+        sage: # needs sage.modules
         sage: from sage.combinat.cluster_algebra_quiver.mutation_type import _connected_mutation_type_AAtildeD
         sage: Q = ClusterQuiver(['A',[7,0],1]); Q.mutate([0,1,4])
         sage: _connected_mutation_type_AAtildeD(Q.digraph(),ret_conn_vert=True)
         [['D', 7], [0, 4]]
-
         sage: Q2 = ClusterQuiver(['A',[5,2],1]); Q2.mutate([4,5])
         sage: _connected_mutation_type_AAtildeD(Q2.digraph() )
         ['A', [2, 5], 1]
-
         sage: Q3 = ClusterQuiver(['E',6]); Q3.mutate([5,2,1])
         sage: _connected_mutation_type_AAtildeD(Q3.digraph(),ret_conn_vert=True)
         'unknown'
@@ -1305,6 +1309,7 @@ def _mutation_type_from_data( n, dig6, compute_if_necessary=True ):
 
     EXAMPLES::
 
+        sage: # needs sage.modules
         sage: from sage.combinat.cluster_algebra_quiver.mutation_class import _digraph_to_dig6
         sage: from sage.combinat.cluster_algebra_quiver.mutation_type import _mutation_type_from_data
         sage: from sage.combinat.cluster_algebra_quiver.quiver import ClusterQuiver
