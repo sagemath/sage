@@ -22,7 +22,7 @@ The following example caused Sage to crash before
 
     sage: R.<theta> = QQ[]
     sage: K.<a> = NumberField(theta^2 + 1)                                              # needs sage.rings.number_field
-    sage: K.absolute_polynomial().galois_group(pari_group=True)
+    sage: K.absolute_polynomial().galois_group(pari_group=True)                         # needs sage.rings.number_field
     PARI group [2, -1, 1, "S2"] of degree 2
 
 Before :trac:`15654`, this used to take a very long time.
@@ -31,7 +31,7 @@ Now it takes much less than a second::
     sage: pari.allocatemem(200000)
     PARI stack size set to 200000 bytes, maximum size set to ...
     sage: x = polygen(ZpFM(3,10))                                                       # needs sage.rings.padics
-    sage: pol = ((x-1)^50 + x)
+    sage: pol = ((x-1)^50 + x)                                                          # needs sage.rings.padics
     sage: pari(pol).poldisc()
     2*3 + 3^4 + 2*3^6 + 3^7 + 2*3^8 + 2*3^9 + O(3^10)
 
@@ -63,35 +63,35 @@ Number fields::
 
     sage: x = polygen(QQ)
     sage: K.<a> = NumberField(x^4 - 4*x^2 + 1)                                          # needs sage.rings.number_field
-    sage: pari(K).nf_get_pol()
+    sage: pari(K).nf_get_pol()                                                          # needs sage.rings.number_field
     y^4 - 4*y^2 + 1
-    sage: L.<b> = K.extension(x^2 - 5)
+    sage: L.<b> = K.extension(x^2 - 5)                                                  # needs sage.rings.number_field
     sage: pari(L).nf_get_pol()        # Absolute
     y^8 - 28*y^6 + 208*y^4 - 408*y^2 + 36
     sage: L.pari_rnf().nf_get_pol()   # Relative
     x^2 - 5
 
-    sage: K.pari_nf().nf_get_pol()
+    sage: K.pari_nf().nf_get_pol()                                                      # needs sage.rings.number_field
     y^4 - 4*y^2 + 1
-    sage: K.pari_bnf().nf_get_pol()
+    sage: K.pari_bnf().nf_get_pol()                                                     # needs sage.rings.number_field
     y^4 - 4*y^2 + 1
 
     sage: K.<a> = QuadraticField(-65)                                                   # needs sage.rings.number_field
-    sage: G = K.pari_bnf().bnf_get_gen(); G
+    sage: G = K.pari_bnf().bnf_get_gen(); G                                             # needs sage.rings.number_field
     [[3, 2; 0, 1], [2, 1; 0, 1]]
-    sage: [K.ideal(J) for J in G]
+    sage: [K.ideal(J) for J in G]                                                       # needs sage.rings.number_field
     [Fractional ideal (3, a + 2), Fractional ideal (2, a + 1)]
 
 Conversions::
 
     sage: K.<i> = QuadraticField(-1)                                                    # needs sage.rings.number_field
-    sage: F = pari(K).idealfactor(K.ideal(5)); F
+    sage: F = pari(K).idealfactor(K.ideal(5)); F                                        # needs sage.rings.number_field
     [[5, [-2, 1]~, 1, 1, [2, -1; 1, 2]], 1; [5, [2, 1]~, 1, 1, [-2, -1; 1, -2]], 1]
     sage: F[0,0].pr_get_p()
     5
 
     sage: K.<i> = QuadraticField(-1)                                                    # needs sage.rings.number_field
-    sage: J = pari(K).idealstar(K.ideal(4*i + 2))
+    sage: J = pari(K).idealstar(K.ideal(4*i + 2))                                       # needs sage.rings.number_field
     sage: J.bid_get_cyc()
     [4, 2]
 
@@ -102,7 +102,7 @@ Conversions::
     9223372036854775810
 
     sage: K = Qp(11,5)                                                                  # needs sage.rings.padics
-    sage: x = K(11^-10 + 5*11^-7 + 11^-6)
+    sage: x = K(11^-10 + 5*11^-7 + 11^-6)                                               # needs sage.rings.number_field
     sage: y = pari(x)
     sage: y.padicprime()
     11
@@ -130,7 +130,7 @@ Conversion from matrices and vectors is supported::
     sage: a = pari(matrix(2,3,[1,2,3,4,5,6])); a, a.type()                              # needs sage.modules
     ([1, 2, 3; 4, 5, 6], 't_MAT')
     sage: v = vector([1.2, 3.4, 5.6])                                                   # needs sage.modules
-    sage: pari(v)
+    sage: pari(v)                                                                       # needs sage.modules
     [1.20000000000000, 3.40000000000000, 5.60000000000000]
 
 Some more exotic examples::
@@ -1520,13 +1520,13 @@ General number fields::
 
     sage: x = polygen(QQ)
     sage: K.<a> = NumberField(x^2 - 1/8)                                                # needs sage.rings.number_field
-    sage: pari(x^2 - 2).factornf(K.pari_polynomial("a"))
+    sage: pari(x^2 - 2).factornf(K.pari_polynomial("a"))                                # needs sage.rings.number_field
     doctest:...: DeprecationWarning: the PARI/GP function factornf is obsolete (2016-08-08)
     [x + Mod(-a, a^2 - 2), 1; x + Mod(a, a^2 - 2), 1]
 
     sage: K.<z> = QuadraticField(-23)                                                   # needs sage.rings.number_field
-    sage: p = K.primes_above(3)[0]
-    sage: K.pari_bnf().bnrclassno(p._pari_bid_())
+    sage: p = K.primes_above(3)[0]                                                      # needs sage.rings.number_field
+    sage: K.pari_bnf().bnrclassno(p._pari_bid_())                                       # needs sage.rings.number_field
     3
 
     sage: # needs sage.symbolic
@@ -1587,7 +1587,7 @@ General number fields::
     sage: Q = F.ideal(2)
     sage: moduli = pari.matrix(2,2,[P.pari_prime(),4,Q.pari_prime(),4])                 # needs sage.symbolic
     sage: residues = pari.vector(2,[0,1])
-    sage: b = F(nf.idealchinese(moduli,residues))
+    sage: b = F(nf.idealchinese(moduli,residues))                                       # needs sage.symbolic
     sage: b.valuation(P) >= 4                                                           # needs sage.symbolic
     True
     sage: (b-1).valuation(Q) >= 2
@@ -1602,7 +1602,7 @@ General number fields::
     1
 
     sage: y = pari('[2, -2, 4]~')
-    sage: nf.idealcoprime(x, y)
+    sage: nf.idealcoprime(x, y)                                                         # needs sage.rings.number_field
     [5/43, 9/43, -1/43]~
 
     sage: # needs sage.rings.number_field

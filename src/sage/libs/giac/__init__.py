@@ -171,25 +171,25 @@ def groebner_basis(gens, proba_epsilon=None, threads=None, prot=False,
     EXAMPLES::
 
         sage: from sage.libs.giac import groebner_basis as gb_giac
-        sage: P = PolynomialRing(GF(previous_prime(2**31)), 6, 'x')                     # optional - sage.rings.finite_rings
-        sage: I = sage.rings.ideal.Cyclic(P)                                            # optional - sage.rings.finite_rings
-        sage: B = gb_giac(I.gens());B                                                   # optional - sage.rings.finite_rings
+        sage: P = PolynomialRing(GF(previous_prime(2**31)), 6, 'x')                     # needs sage.rings.finite_rings
+        sage: I = sage.rings.ideal.Cyclic(P)                                            # needs sage.rings.finite_rings
+        sage: B = gb_giac(I.gens());B                                                   # needs sage.rings.finite_rings
         <BLANKLINE>
         // Groebner basis computation time ...
         Polynomial Sequence with 45 Polynomials in 6 Variables
-        sage: B.is_groebner()                                                           # optional - sage.rings.finite_rings
+        sage: B.is_groebner()                                                           # needs sage.rings.finite_rings
         True
 
     Elimination ideals can be computed by passing ``elim_variables``::
 
-        sage: P = PolynomialRing(GF(previous_prime(2**31)), 5, 'x')                     # optional - sage.rings.finite_rings
-        sage: I = sage.rings.ideal.Cyclic(P)                                            # optional - sage.rings.finite_rings
-        sage: B = gb_giac(I.gens(), elim_variables=[P.gen(0), P.gen(2)])                # optional - sage.rings.finite_rings
+        sage: P = PolynomialRing(GF(previous_prime(2**31)), 5, 'x')                     # needs sage.rings.finite_rings
+        sage: I = sage.rings.ideal.Cyclic(P)                                            # needs sage.rings.finite_rings
+        sage: B = gb_giac(I.gens(), elim_variables=[P.gen(0), P.gen(2)])                # needs sage.rings.finite_rings
         <BLANKLINE>
         // Groebner basis computation time ...
-        sage: B.is_groebner()                                                           # optional - sage.rings.finite_rings
+        sage: B.is_groebner()                                                           # needs sage.rings.finite_rings
         True
-        sage: B.ideal() == I.elimination_ideal([P.gen(0), P.gen(2)])                    # optional - sage.rings.finite_rings
+        sage: B.ideal() == I.elimination_ideal([P.gen(0), P.gen(2)])                    # needs sage.rings.finite_rings
         True
 
     Computations over QQ can benefit from

@@ -103,11 +103,12 @@ class CoxeterGroup(UniqueRepresentation, Parent):
 
         EXAMPLES::
 
-            sage: W = CoxeterGroup(['A', 3], implementation='coxeter3')  # optional - coxeter3
-            sage: W.index_set()                                          # optional - coxeter3
+            sage: # optional - coxeter3
+            sage: W = CoxeterGroup(['A', 3], implementation='coxeter3')
+            sage: W.index_set()
             (1, 2, 3)
-            sage: C = CoxeterGroup(['A', 3,1], implementation='coxeter3') # optional - coxeter3
-            sage: C.index_set()                                           # optional - coxeter3
+            sage: C = CoxeterGroup(['A', 3,1], implementation='coxeter3')
+            sage: C.index_set()
             (0, 1, 2, 3)
         """
         return self.cartan_type().index_set()
@@ -247,11 +248,12 @@ class CoxeterGroup(UniqueRepresentation, Parent):
 
         EXAMPLES::
 
-            sage: W = CoxeterGroup(['A', 3], implementation='coxeter3')   # optional - coxeter3
-            sage: R = W.root_system(); R                                  # optional - coxeter3
+            sage: # optional - coxeter3
+            sage: W = CoxeterGroup(['A', 3], implementation='coxeter3')
+            sage: R = W.root_system(); R
             Root system of type ['A', 3]
-            sage: alpha = R.root_space().basis()                          # optional - coxeter3
-            sage: alpha[2] + alpha[3]                                     # optional - coxeter3
+            sage: alpha = R.root_space().basis()
+            sage: alpha[2] + alpha[3]
             alpha[2] + alpha[3]
         """
         return self.cartan_type().root_system()
@@ -303,13 +305,14 @@ class CoxeterGroup(UniqueRepresentation, Parent):
 
         EXAMPLES::
 
-            sage: W = CoxeterGroup(['A', 3], implementation='coxeter3')   # optional - coxeter3
-            sage: W.kazhdan_lusztig_polynomial([], [1,2, 1])              # optional - coxeter3
+            sage: # optional - coxeter3
+            sage: W = CoxeterGroup(['A', 3], implementation='coxeter3')
+            sage: W.kazhdan_lusztig_polynomial([], [1,2, 1])
             1
-            sage: W.kazhdan_lusztig_polynomial([1],[3,2])                 # optional - coxeter3
+            sage: W.kazhdan_lusztig_polynomial([1],[3,2])
             0
-            sage: W = CoxeterGroup(['A',3],implementation='coxeter3')     # optional - coxeter3
-            sage: W.kazhdan_lusztig_polynomial([2],[2,1,3,2])             # optional - coxeter3
+            sage: W = CoxeterGroup(['A',3],implementation='coxeter3')
+            sage: W.kazhdan_lusztig_polynomial([2],[2,1,3,2])
             q + 1
 
         .. NOTE::
@@ -437,13 +440,14 @@ class CoxeterGroup(UniqueRepresentation, Parent):
 
             Check that :trac:`32266` is fixed::
 
-                sage: A3 = CoxeterGroup('A3', implementation='coxeter3')       # optional - coxeter3
-                sage: s1,s2,s3 = A3.simple_reflections()                       # optional - coxeter3
-                sage: s1*s3                                                    # optional - coxeter3
+                sage: # optional - coxeter3
+                sage: A3 = CoxeterGroup('A3', implementation='coxeter3')
+                sage: s1,s2,s3 = A3.simple_reflections()
+                sage: s1*s3
                 [1, 3]
-                sage: s3*s1                                                    # optional - coxeter3
+                sage: s3*s1
                 [1, 3]
-                sage: s3*s1 == s1*s3                                           # optional - coxeter3
+                sage: s3*s1 == s1*s3
                 True
             """
             if not isinstance(x, CoxGroupElement):
@@ -484,12 +488,13 @@ class CoxeterGroup(UniqueRepresentation, Parent):
 
             EXAMPLES::
 
-                sage: W = CoxeterGroup(['B', 3], implementation='coxeter3')   # optional - coxeter3
-                sage: w = W([1,2,3])                                          # optional - coxeter3
-                sage: v = W([3,1,2])                                          # optional - coxeter3
-                sage: v < w                                            # optional - coxeter3
+                sage: # optional - coxeter3
+                sage: W = CoxeterGroup(['B', 3], implementation='coxeter3')
+                sage: w = W([1,2,3])
+                sage: v = W([3,1,2])
+                sage: v < w
                 False
-                sage: w < v                                            # optional - coxeter3
+                sage: w < v
                 True
 
             Some tests for equality::
@@ -534,11 +539,12 @@ class CoxeterGroup(UniqueRepresentation, Parent):
             """
             EXAMPLES::
 
-                sage: W = CoxeterGroup(['A', 3], implementation='coxeter3')   # optional - coxeter3
-                sage: w0 = W([1,2,1])                                         # optional - coxeter3
-                sage: w0[0]                                                   # optional - coxeter3
+                sage: # optional - coxeter3
+                sage: W = CoxeterGroup(['A', 3], implementation='coxeter3')
+                sage: w0 = W([1,2,1])
+                sage: w0[0]
                 1
-                sage: w0[1]                                                   # optional - coxeter3
+                sage: w0[1]
                 2
 
             """
@@ -549,13 +555,14 @@ class CoxeterGroup(UniqueRepresentation, Parent):
             """
             EXAMPLES::
 
-                sage: W = CoxeterGroup(['A', 3], implementation='coxeter3')   # optional - coxeter3
-                sage: s = W.gens()                                            # optional - coxeter3
-                sage: s[1]._mul_(s[1])                                        # optional - coxeter3
+                sage: # optional - coxeter3
+                sage: W = CoxeterGroup(['A', 3], implementation='coxeter3')
+                sage: s = W.gens()
+                sage: s[1]._mul_(s[1])
                 []
-                sage: s[1]*s[2]*s[1]                                          # optional - coxeter3
+                sage: s[1]*s[2]*s[1]
                 [1, 2, 1]
-                sage: s[2]*s[1]*s[2]                                          # optional - coxeter3
+                sage: s[2]*s[1]*s[2]
                 [1, 2, 1]
             """
             return self.__class__(self.parent(), self.value * y.value)
@@ -564,11 +571,12 @@ class CoxeterGroup(UniqueRepresentation, Parent):
             """
             EXAMPLES::
 
-                sage: W = CoxeterGroup(['A', 3], implementation='coxeter3')    # optional - coxeter3
-                sage: w = W([1,2,1])                                  # optional - coxeter3
-                sage: w.length()                                      # optional - coxeter3
+                sage: # optional - coxeter3
+                sage: W = CoxeterGroup(['A', 3], implementation='coxeter3')
+                sage: w = W([1,2,1])
+                sage: w.length()
                 3
-                sage: len(w)                                          # optional - coxeter3
+                sage: len(w)
                 3
             """
             return len(self.value)
@@ -594,13 +602,14 @@ class CoxeterGroup(UniqueRepresentation, Parent):
 
             EXAMPLES::
 
-                sage: W = CoxeterGroup(['A', 2], implementation='coxeter3')      # optional - coxeter3
-                sage: W.long_element().poincare_polynomial()                     # optional - coxeter3
+                sage: # optional - coxeter3
+                sage: W = CoxeterGroup(['A', 2], implementation='coxeter3')
+                sage: W.long_element().poincare_polynomial()
                 t^3 + 2*t^2 + 2*t + 1
-                sage: W = CoxeterGroup(['A', 3], implementation='coxeter3')      # optional - coxeter3
-                sage: W([2,1,3,2]).poincare_polynomial()                         # optional - coxeter3
+                sage: W = CoxeterGroup(['A', 3], implementation='coxeter3')
+                sage: W([2,1,3,2]).poincare_polynomial()
                 t^4 + 4*t^3 + 5*t^2 + 3*t + 1
-                sage: W([1,2,3,2,1]).poincare_polynomial()                       # optional - coxeter3
+                sage: W([1,2,3,2,1]).poincare_polynomial()
                 t^5 + 4*t^4 + 6*t^3 + 5*t^2 + 3*t + 1
 
                 sage: rw = sage.combinat.permutation.from_reduced_word           # optional - coxeter3
@@ -648,12 +657,13 @@ class CoxeterGroup(UniqueRepresentation, Parent):
 
             EXAMPLES::
 
-                sage: W = CoxeterGroup(['B', 3], implementation='coxeter3')   # optional - coxeter3
-                sage: R = W.root_system().root_space()                        # optional - coxeter3
-                sage: v = R.an_element(); v                                   # optional - coxeter3
+                sage: # optional - coxeter3
+                sage: W = CoxeterGroup(['B', 3], implementation='coxeter3')
+                sage: R = W.root_system().root_space()
+                sage: v = R.an_element(); v
                 2*alpha[1] + 2*alpha[2] + 3*alpha[3]
-                sage: w = W([1,2,3])                                          # optional - coxeter3
-                sage: w.action(v)                                             # optional - coxeter3
+                sage: w = W([1,2,3])
+                sage: w.action(v)
                 -alpha[1] + alpha[2] + alpha[3]
             """
             #TODO: Find a better way to do this
@@ -675,14 +685,15 @@ class CoxeterGroup(UniqueRepresentation, Parent):
 
             EXAMPLES::
 
-                sage: W = CoxeterGroup(['A', 3], implementation='coxeter3')   # optional - coxeter3
-                sage: S = PolynomialRing(QQ, 'x,y,z').fraction_field()        # optional - coxeter3
-                sage: x,y,z = S.gens()                                        # optional - coxeter3
-                sage: W([1]).action_on_rational_function(x+y+z)               # optional - coxeter3
+                sage: # optional - coxeter3
+                sage: W = CoxeterGroup(['A', 3], implementation='coxeter3')
+                sage: S = PolynomialRing(QQ, 'x,y,z').fraction_field()
+                sage: x,y,z = S.gens()
+                sage: W([1]).action_on_rational_function(x+y+z)
                 (x^2*y + x*z + 1)/x
-                sage: W([2]).action_on_rational_function(x+y+z)               # optional - coxeter3
+                sage: W([2]).action_on_rational_function(x+y+z)
                 (x*y^2 + y^2*z + 1)/y
-                sage: W([3]).action_on_rational_function(x+y+z)               # optional - coxeter3
+                sage: W([3]).action_on_rational_function(x+y+z)
                 (y*z^2 + x*z + 1)/z
             """
             Q = f.parent()
