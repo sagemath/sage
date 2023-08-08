@@ -2013,7 +2013,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
 
         INPUT:
 
-        - x -- string
+        - ``x`` -- string
 
         EXAMPLES::
 
@@ -2442,7 +2442,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
 
         - ``name`` -- a name for the generator of the new number field
 
-        - ``polred`` -- (boolean, default ``True``) whether to optimize the generator of
+        - ``polred`` -- (boolean, default ``True``); whether to optimize the generator of
           the newly created field
 
         - ``threshold`` -- (positive number, default ``None``) threshold to be passed to
@@ -7368,7 +7368,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
 
         INPUT:
 
-        - ``proof`` (bool, default True) flag passed to PARI.
+        - ``proof`` -- bool (default: ``True``); flag passed to PARI
 
         - ``S`` -- list or tuple of prime ideals, or an ideal, or a single
           ideal or element from which an ideal can be constructed, in
@@ -11975,7 +11975,7 @@ class NumberField_cyclotomic(NumberField_absolute, sage.rings.abc.NumberField_cy
         - ``n`` -- integer (default: ``None``, returns element of
           maximal order)
 
-        - ``all`` -- bool (default: ``False``) - whether to return
+        - ``all`` -- bool (default: ``False``); whether to return
           a list of all primitive `n`-th roots of unity.
 
         OUTPUT: root of unity or list
@@ -12573,7 +12573,9 @@ def put_natural_embedding_first(v):
     """
     Helper function for embeddings() functions for number fields.
 
-    INPUT: a list of embeddings of a number field
+    INPUT:
+
+    - ``v`` -- a list of embeddings of a number field
 
     OUTPUT: ``None``. The
     list is altered in-place, so that, if possible, the first embedding
