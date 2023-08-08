@@ -18,7 +18,7 @@ def reduced_binary_form1(self):
 
     EXAMPLES::
 
-        sage: QuadraticForm(ZZ, 2, [5,5,2]).reduced_binary_form1()                  # optional - sage.symbolic
+        sage: QuadraticForm(ZZ, 2, [5,5,2]).reduced_binary_form1()                      # needs sage.symbolic
         (
         Quadratic form in 2 variables over Integer Ring with coefficients:
         [ 2 -1 ]
@@ -30,12 +30,12 @@ def reduced_binary_form1(self):
 
     TESTS::
 
-        sage: QuadraticForm(ZZ, 2, [4,-7,6]).reduced_binary_form1()[0]               # optional - sage.symbolic
+        sage: QuadraticForm(ZZ, 2, [4,-7,6]).reduced_binary_form1()[0]                  # needs sage.symbolic
         Quadratic form in 2 variables over Integer Ring with coefficients:
         [ 3 -1 ]
         [ * 4 ]
 
-        sage: QuadraticForm(ZZ, 3, [1,2,3,4,5,6]).reduced_binary_form1()             # optional - sage.symbolic
+        sage: QuadraticForm(ZZ, 3, [1,2,3,4,5,6]).reduced_binary_form1()                # needs sage.symbolic
         Traceback (most recent call last):
         ...
         TypeError: only available for binary forms
@@ -92,7 +92,7 @@ def reduced_binary_form(self):
 
     EXAMPLES::
 
-        sage: QuadraticForm(ZZ, 2, [5,5,2]).reduced_binary_form()                   # optional - sage.symbolic
+        sage: QuadraticForm(ZZ, 2, [5,5,2]).reduced_binary_form()                       # needs sage.symbolic
         (
         Quadratic form in 2 variables over Integer Ring with coefficients:
         [ 2 -1 ]

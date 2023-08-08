@@ -150,7 +150,7 @@ def antiadjoint(self):
         [ 1 0 -1 ]
         [ * 2 -1 ]
         [ * * 5 ]
-        sage: Q.antiadjoint()                                                       # optional - sage.symbolic
+        sage: Q.antiadjoint()                                                           # needs sage.symbolic
         Traceback (most recent call last):
         ...
         ValueError: not an adjoint
@@ -174,7 +174,7 @@ def is_adjoint(self) -> bool:
     EXAMPLES::
 
         sage: Q = QuadraticForm(ZZ, 3, [1, 0, -1, 2, -1, 5])
-        sage: Q.is_adjoint()                                                        # optional - sage.symbolic
+        sage: Q.is_adjoint()                                                            # needs sage.symbolic
         False
         sage: Q.adjoint().is_adjoint()
         True
@@ -294,16 +294,16 @@ def hasse_conductor(self):
     EXAMPLES::
 
         sage: Q = QuadraticForm(ZZ, 3, [1, 0, -1, 2, -1, 5])
-        sage: Q.hasse_invariant(2)                                                  # optional - sage.libs.pari
+        sage: Q.hasse_invariant(2)                                                      # needs sage.libs.pari
         -1
-        sage: Q.hasse_invariant(37)                                                 # optional - sage.libs.pari
+        sage: Q.hasse_invariant(37)                                                     # needs sage.libs.pari
         -1
-        sage: Q.hasse_conductor()                                                   # optional - sage.libs.pari
+        sage: Q.hasse_conductor()                                                       # needs sage.libs.pari
         74
 
-        sage: DiagonalQuadraticForm(ZZ, [1, 1, 1]).hasse_conductor()                # optional - sage.libs.pari
+        sage: DiagonalQuadraticForm(ZZ, [1, 1, 1]).hasse_conductor()                    # needs sage.libs.pari
         1
-        sage: QuadraticForm(ZZ, 3, [2, -2, 0, 2, 0, 5]).hasse_conductor()           # optional - sage.libs.pari
+        sage: QuadraticForm(ZZ, 3, [2, -2, 0, 2, 0, 5]).hasse_conductor()               # needs sage.libs.pari
         10
     """
     return prod([x[0] for x in factor(2 * self.level())
@@ -323,13 +323,13 @@ def clifford_invariant(self, p):
     For hyperbolic spaces, the Clifford invariant is +1::
 
         sage: H = QuadraticForm(ZZ, 2, [0, 1, 0])
-        sage: H.clifford_invariant(2)                                               # optional - sage.libs.pari
+        sage: H.clifford_invariant(2)                                                   # needs sage.libs.pari
         1
-        sage: (H + H).clifford_invariant(2)                                         # optional - sage.libs.pari
+        sage: (H + H).clifford_invariant(2)                                             # needs sage.libs.pari
         1
-        sage: (H + H + H).clifford_invariant(2)                                     # optional - sage.libs.pari
+        sage: (H + H + H).clifford_invariant(2)                                         # needs sage.libs.pari
         1
-        sage: (H + H + H + H).clifford_invariant(2)                                 # optional - sage.libs.pari
+        sage: (H + H + H + H).clifford_invariant(2)                                     # needs sage.libs.pari
         1
     """
     n = self.dim() % 8
@@ -357,28 +357,28 @@ def clifford_conductor(self):
     EXAMPLES::
 
         sage: Q = QuadraticForm(ZZ, 3, [1, 0, -1, 2, -1, 5])
-        sage: Q.clifford_invariant(2)                                               # optional - sage.libs.pari
+        sage: Q.clifford_invariant(2)                                                   # needs sage.libs.pari
         1
-        sage: Q.clifford_invariant(37)                                              # optional - sage.libs.pari
+        sage: Q.clifford_invariant(37)                                                  # needs sage.libs.pari
         -1
-        sage: Q.clifford_conductor()                                                # optional - sage.libs.pari
+        sage: Q.clifford_conductor()                                                    # needs sage.libs.pari
         37
 
-        sage: DiagonalQuadraticForm(ZZ, [1, 1, 1]).clifford_conductor()             # optional - sage.libs.pari
+        sage: DiagonalQuadraticForm(ZZ, [1, 1, 1]).clifford_conductor()                 # needs sage.libs.pari
         2
-        sage: QuadraticForm(ZZ, 3, [2, -2, 0, 2, 0, 5]).clifford_conductor()        # optional - sage.libs.pari
+        sage: QuadraticForm(ZZ, 3, [2, -2, 0, 2, 0, 5]).clifford_conductor()            # needs sage.libs.pari
         30
 
     For hyperbolic spaces, the Clifford conductor is 1::
 
         sage: H = QuadraticForm(ZZ, 2, [0, 1, 0])
-        sage: H.clifford_conductor()                                                # optional - sage.libs.pari
+        sage: H.clifford_conductor()                                                    # needs sage.libs.pari
         1
-        sage: (H + H).clifford_conductor()                                          # optional - sage.libs.pari
+        sage: (H + H).clifford_conductor()                                              # needs sage.libs.pari
         1
-        sage: (H + H + H).clifford_conductor()                                      # optional - sage.libs.pari
+        sage: (H + H + H).clifford_conductor()                                          # needs sage.libs.pari
         1
-        sage: (H + H + H + H).clifford_conductor()                                  # optional - sage.libs.pari
+        sage: (H + H + H + H).clifford_conductor()                                      # needs sage.libs.pari
         1
     """
     return prod([x[0] for x in factor(2 * self.level())
@@ -460,10 +460,10 @@ def xi(self, p):
         sage: Q2 = QuadraticForm(ZZ, 3, [2, -1, 0, 2, 0, 50])
         sage: [Q1.omega(), Q2.omega()]
         [5, 5]
-        sage: [Q1.hasse_invariant(5),                   # equivalent over Q_5       # optional - sage.libs.pari
+        sage: [Q1.hasse_invariant(5),                   # equivalent over Q_5           # needs sage.libs.pari
         ....:  Q2.hasse_invariant(5)]
         [1, 1]
-        sage: [Q1.xi(5), Q2.xi(5)]                      # not equivalent over Z_5   # optional - sage.libs.pari
+        sage: [Q1.xi(5), Q2.xi(5)]                      # not equivalent over Z_5       # needs sage.libs.pari
         [1, -1]
     """
     if self.dim() == 2 and self.disc() % p:
@@ -483,18 +483,18 @@ def xi_rec(self,p):
 
         sage: Q1 = QuadraticForm(ZZ, 3, [1, 1, 1, 14, 3, 14])
         sage: Q2 = QuadraticForm(ZZ, 3, [2, -1, 0, 2, 0, 50])
-        sage: [Q1.clifford_conductor(),                 # equivalent over Q         # optional - sage.libs.pari
+        sage: [Q1.clifford_conductor(),                 # equivalent over Q             # needs sage.libs.pari
         ....:  Q2.clifford_conductor()]
         [3, 3]
-        sage: Q1.is_locally_equivalent_to(Q2)           # not in the same genus     # optional - sage.libs.pari
+        sage: Q1.is_locally_equivalent_to(Q2)           # not in the same genus         # needs sage.libs.pari
         False
-        sage: [Q1.delta(), Q2.delta()]                                              # optional - sage.libs.pari
+        sage: [Q1.delta(), Q2.delta()]                                                  # needs sage.libs.pari
         [480, 480]
-        sage: factor(480)                                                           # optional - sage.libs.pari
+        sage: factor(480)                                                               # needs sage.libs.pari
         2^5 * 3 * 5
-        sage: list(map(Q1.xi_rec, [-1,2,3,5]))                                      # optional - sage.libs.pari
+        sage: list(map(Q1.xi_rec, [-1,2,3,5]))                                          # needs sage.libs.pari
         [-1, -1, -1, 1]
-        sage: list(map(Q2.xi_rec, [-1,2,3,5]))                                      # optional - sage.libs.pari
+        sage: list(map(Q2.xi_rec, [-1,2,3,5]))                                          # needs sage.libs.pari
         [-1, -1, -1, -1]
     """
     return self.reciprocal().xi(p)
@@ -509,7 +509,7 @@ def lll(self):
         sage: Q = QuadraticForm(ZZ, 4, range(1,11))
         sage: Q.is_definite()
         True
-        sage: Q.lll()                                                               # optional - sage.libs.pari
+        sage: Q.lll()                                                                   # needs sage.libs.pari
         Quadratic form in 4 variables over Integer Ring with coefficients:
         [ 1 0 1 0 ]
         [ * 4 3 3 ]
@@ -526,7 +526,7 @@ def representation_number_list(self, B):
     EXAMPLES::
 
         sage: Q = DiagonalQuadraticForm(ZZ, [1,1,1,1,1,1,1,1])
-        sage: Q.representation_number_list(10)                                      # optional - sage.libs.pari
+        sage: Q.representation_number_list(10)                                          # needs sage.libs.pari
         [1, 16, 112, 448, 1136, 2016, 3136, 5504, 9328, 12112]
     """
     from sage.libs.pari.all import pari
@@ -544,7 +544,7 @@ def representation_vector_list(self, B, maxvectors=10**8):
     EXAMPLES::
 
         sage: Q = DiagonalQuadraticForm(ZZ, [1, 1])
-        sage: Q.representation_vector_list(10)                                      # optional - sage.libs.pari
+        sage: Q.representation_vector_list(10)                                          # needs sage.libs.pari
         [[(0, 0)],
          [(0, 1), (0, -1), (1, 0), (-1, 0)],
          [(1, 1), (-1, -1), (1, -1), (-1, 1)],
@@ -555,15 +555,15 @@ def representation_vector_list(self, B, maxvectors=10**8):
          [],
          [(2, 2), (-2, -2), (2, -2), (-2, 2)],
          [(0, 3), (0, -3), (3, 0), (-3, 0)]]
-        sage: list(map(len, _))                                                     # optional - sage.libs.pari
+        sage: list(map(len, _))                                                         # needs sage.libs.pari
         [1, 4, 4, 0, 4, 8, 0, 0, 4, 4]
-        sage: Q.representation_number_list(10)                                      # optional - sage.libs.pari
+        sage: Q.representation_number_list(10)                                          # needs sage.libs.pari
         [1, 4, 4, 0, 4, 8, 0, 0, 4, 4]
 
     TESTS::
 
         sage: R = QuadraticForm(ZZ, 2, [-4,-3,0])
-        sage: R.representation_vector_list(10)                                      # optional - sage.libs.pari
+        sage: R.representation_vector_list(10)                                          # needs sage.libs.pari
         Traceback (most recent call last):
         ...
         PariError: domain error in minim0: form is not positive definite

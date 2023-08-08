@@ -47,10 +47,10 @@ def is_globally_equivalent_to(self, other, return_matrix=False):
         sage: Q = DiagonalQuadraticForm(ZZ, [1,1,1,1])
         sage: M = Matrix(ZZ, 4, 4, [1,2,0,0, 0,1,0,0, 0,0,1,0, 0,0,0,1])
         sage: Q1 = Q(M)
-        sage: Q.is_globally_equivalent_to(Q1)                                           # optional - sage.libs.pari
+        sage: Q.is_globally_equivalent_to(Q1)                                           # needs sage.libs.pari
         True
-        sage: MM = Q.is_globally_equivalent_to(Q1, return_matrix=True)                  # optional - sage.libs.pari
-        sage: Q(MM) == Q1                                                               # optional - sage.libs.pari
+        sage: MM = Q.is_globally_equivalent_to(Q1, return_matrix=True)                  # needs sage.libs.pari
+        sage: Q(MM) == Q1                                                               # needs sage.libs.pari
         True
 
     ::
@@ -58,23 +58,23 @@ def is_globally_equivalent_to(self, other, return_matrix=False):
         sage: Q1 = QuadraticForm(ZZ, 3, [1, 0, -1, 2, -1, 5])
         sage: Q2 = QuadraticForm(ZZ, 3, [2, 1, 2, 2, 1, 3])
         sage: Q3 = QuadraticForm(ZZ, 3, [8, 6, 5, 3, 4, 2])
-        sage: Q1.is_globally_equivalent_to(Q2)                                          # optional - sage.libs.pari
+        sage: Q1.is_globally_equivalent_to(Q2)                                          # needs sage.libs.pari
         False
-        sage: Q1.is_globally_equivalent_to(Q2, return_matrix=True)                      # optional - sage.libs.pari
+        sage: Q1.is_globally_equivalent_to(Q2, return_matrix=True)                      # needs sage.libs.pari
         False
-        sage: Q1.is_globally_equivalent_to(Q3)                                          # optional - sage.libs.pari
+        sage: Q1.is_globally_equivalent_to(Q3)                                          # needs sage.libs.pari
         True
-        sage: M = Q1.is_globally_equivalent_to(Q3, True); M                             # optional - sage.libs.pari
+        sage: M = Q1.is_globally_equivalent_to(Q3, True); M                             # needs sage.libs.pari
         [-1 -1  0]
         [ 1  1  1]
         [-1  0  0]
-        sage: Q1(M) == Q3                                                               # optional - sage.libs.pari
+        sage: Q1(M) == Q3                                                               # needs sage.libs.pari
         True
 
     ::
 
         sage: Q = DiagonalQuadraticForm(ZZ, [1, -1])
-        sage: Q.is_globally_equivalent_to(Q)                                            # optional - sage.libs.pari
+        sage: Q.is_globally_equivalent_to(Q)                                            # needs sage.libs.pari
         Traceback (most recent call last):
         ...
         ValueError: not a definite form in QuadraticForm.is_globally_equivalent_to()
@@ -88,9 +88,9 @@ def is_globally_equivalent_to(self, other, return_matrix=False):
 
         sage: Q = QuadraticForm(ZZ, 2, [2, 3, 5])
         sage: P = QuadraticForm(ZZ, 2, [8, 6, 5])
-        sage: Q.is_globally_equivalent_to(P)                                            # optional - sage.libs.pari
+        sage: Q.is_globally_equivalent_to(P)                                            # needs sage.libs.pari
         False
-        sage: P.is_globally_equivalent_to(Q)                                            # optional - sage.libs.pari
+        sage: P.is_globally_equivalent_to(Q)                                            # needs sage.libs.pari
         False
     """
     from sage.quadratic_forms.quadratic_form import QuadraticForm
@@ -132,9 +132,9 @@ def is_locally_equivalent_to(self, other, check_primes_only=False, force_jordan_
 
         sage: Q1 = QuadraticForm(ZZ, 3, [1, 0, -1, 2, -1, 5])
         sage: Q2 = QuadraticForm(ZZ, 3, [2, 1, 2, 2, 1, 3])
-        sage: Q1.is_globally_equivalent_to(Q2)                                          # optional - sage.libs.pari
+        sage: Q1.is_globally_equivalent_to(Q2)                                          # needs sage.libs.pari
         False
-        sage: Q1.is_locally_equivalent_to(Q2)                                           # optional - sage.libs.pari
+        sage: Q1.is_locally_equivalent_to(Q2)                                           # needs sage.libs.pari
         True
     """
     # TO IMPLEMENT:
@@ -189,17 +189,17 @@ def has_equivalent_Jordan_decomposition_at_prime(self, other, p):
         sage: Q3 = QuadraticForm(ZZ, 3, [1, 0, 0, 1, 0, 11])
         sage: [Q1.level(), Q2.level(), Q3.level()]
         [44, 44, 44]
-        sage: Q1.has_equivalent_Jordan_decomposition_at_prime(Q2, 2)                # optional - sage.libs.pari
+        sage: Q1.has_equivalent_Jordan_decomposition_at_prime(Q2, 2)                    # needs sage.libs.pari
         False
-        sage: Q1.has_equivalent_Jordan_decomposition_at_prime(Q2, 11)               # optional - sage.libs.pari
+        sage: Q1.has_equivalent_Jordan_decomposition_at_prime(Q2, 11)                   # needs sage.libs.pari
         False
-        sage: Q1.has_equivalent_Jordan_decomposition_at_prime(Q3, 2)                # optional - sage.libs.pari
+        sage: Q1.has_equivalent_Jordan_decomposition_at_prime(Q3, 2)                    # needs sage.libs.pari
         False
-        sage: Q1.has_equivalent_Jordan_decomposition_at_prime(Q3, 11)               # optional - sage.libs.pari
+        sage: Q1.has_equivalent_Jordan_decomposition_at_prime(Q3, 11)                   # needs sage.libs.pari
         True
-        sage: Q2.has_equivalent_Jordan_decomposition_at_prime(Q3, 2)                # optional - sage.libs.pari
+        sage: Q2.has_equivalent_Jordan_decomposition_at_prime(Q3, 2)                    # needs sage.libs.pari
         True
-        sage: Q2.has_equivalent_Jordan_decomposition_at_prime(Q3, 11)               # optional - sage.libs.pari
+        sage: Q2.has_equivalent_Jordan_decomposition_at_prime(Q3, 11)                   # needs sage.libs.pari
         False
     """
     # Sanity Checks
@@ -318,34 +318,36 @@ def is_rationally_isometric(self, other, return_matrix=False):
 
         sage: V = DiagonalQuadraticForm(QQ, [1, 1, 2])
         sage: W = DiagonalQuadraticForm(QQ, [2, 2, 2])
-        sage: V.is_rationally_isometric(W)                                          # optional - sage.libs.pari
+        sage: V.is_rationally_isometric(W)                                              # needs sage.libs.pari
         True
 
     ::
 
+        sage: # needs sage.rings.number_field
         sage: x = polygen(ZZ, 'x')
-        sage: K.<a> = NumberField(x^2 - 3)                                          # optional - sage.rings.number_field
-        sage: V = QuadraticForm(K, 4, [1, 0, 0, 0, 2*a, 0, 0, a, 0, 2]); V          # optional - sage.rings.number_field
+        sage: K.<a> = NumberField(x^2 - 3)
+        sage: V = QuadraticForm(K, 4, [1, 0, 0, 0, 2*a, 0, 0, a, 0, 2]); V
         Quadratic form in 4 variables over Number Field in a
          with defining polynomial x^2 - 3 with coefficients:
         [ 1 0 0 0 ]
         [ * 2*a 0 0 ]
         [ * * a 0 ]
         [ * * * 2 ]
-        sage: W = QuadraticForm(K, 4, [1, 2*a, 4, 6, 3, 10, 2, 1, 2, 5]); W         # optional - sage.rings.number_field
+        sage: W = QuadraticForm(K, 4, [1, 2*a, 4, 6, 3, 10, 2, 1, 2, 5]); W
         Quadratic form in 4 variables over Number Field in a
          with defining polynomial x^2 - 3 with coefficients:
         [ 1 2*a 4 6 ]
         [ * 3 10 2 ]
         [ * * 1 2 ]
         [ * * * 5 ]
-        sage: V.is_rationally_isometric(W)                                          # optional - sage.rings.number_field
+        sage: V.is_rationally_isometric(W)
         False
 
     ::
 
-        sage: K.<a> = NumberField(x^4 + 2*x + 6)                                    # optional - sage.rings.number_field
-        sage: V = DiagonalQuadraticForm(K, [a, 2, 3, 2, 1]); V                      # optional - sage.rings.number_field
+        sage: # needs sage.rings.number_field
+        sage: K.<a> = NumberField(x^4 + 2*x + 6)
+        sage: V = DiagonalQuadraticForm(K, [a, 2, 3, 2, 1]); V
         Quadratic form in 5 variables over Number Field in a
          with defining polynomial x^4 + 2*x + 6 with coefficients:
         [ a 0 0 0 0 ]
@@ -353,7 +355,7 @@ def is_rationally_isometric(self, other, return_matrix=False):
         [ * * 3 0 0 ]
         [ * * * 2 0 ]
         [ * * * * 1 ]
-        sage: W = DiagonalQuadraticForm(K, [a, a, a, 2, 1]); W                      # optional - sage.rings.number_field
+        sage: W = DiagonalQuadraticForm(K, [a, a, a, 2, 1]); W
         Quadratic form in 5 variables over Number Field in a
          with defining polynomial x^4 + 2*x + 6 with coefficients:
         [ a 0 0 0 0 ]
@@ -361,88 +363,92 @@ def is_rationally_isometric(self, other, return_matrix=False):
         [ * * a 0 0 ]
         [ * * * 2 0 ]
         [ * * * * 1 ]
-        sage: V.is_rationally_isometric(W)                                          # optional - sage.rings.number_field
+        sage: V.is_rationally_isometric(W)
         False
 
     ::
 
-        sage: K.<a> = NumberField(x^2 - 3)                                          # optional - sage.rings.number_field
-        sage: V = DiagonalQuadraticForm(K, [-1, a, -2*a])                           # optional - sage.rings.number_field
-        sage: W = DiagonalQuadraticForm(K, [-1, -a, 2*a])                           # optional - sage.rings.number_field
-        sage: V.is_rationally_isometric(W)                                          # optional - sage.rings.number_field
+        sage: # needs sage.rings.number_field
+        sage: K.<a> = NumberField(x^2 - 3)
+        sage: V = DiagonalQuadraticForm(K, [-1, a, -2*a])
+        sage: W = DiagonalQuadraticForm(K, [-1, -a, 2*a])
+        sage: V.is_rationally_isometric(W)
         True
 
-        sage: V = DiagonalQuadraticForm(QQ, [1, 1, 2])                              # optional - sage.rings.number_field
-        sage: W = DiagonalQuadraticForm(QQ, [2, 2, 2])                              # optional - sage.rings.number_field
-        sage: T = V.is_rationally_isometric(W, True); T                             # optional - sage.rings.number_field
+        sage: # needs sage.rings.number_field
+        sage: V = DiagonalQuadraticForm(QQ, [1, 1, 2])
+        sage: W = DiagonalQuadraticForm(QQ, [2, 2, 2])
+        sage: T = V.is_rationally_isometric(W, True); T
         [   0    0    1]
         [-1/2 -1/2    0]
         [ 1/2 -1/2    0]
-        sage: V.Gram_matrix() == T.transpose() * W.Gram_matrix() * T                # optional - sage.rings.number_field
+        sage: V.Gram_matrix() == T.transpose() * W.Gram_matrix() * T
         True
 
-        sage: T = W.is_rationally_isometric(V, True); T                             # optional - sage.rings.number_field
+        sage: T = W.is_rationally_isometric(V, True); T                                 # needs sage.rings.number_field
         [ 0 -1  1]
         [ 0 -1 -1]
         [ 1  0  0]
-        sage: W.Gram_matrix() == T.T * V.Gram_matrix() * T                          # optional - sage.rings.number_field
+        sage: W.Gram_matrix() == T.T * V.Gram_matrix() * T                              # needs sage.rings.number_field
         True
 
     ::
 
         sage: L = QuadraticForm(QQ, 3, [2, 2, 0, 2, 2, 5])
         sage: M = QuadraticForm(QQ, 3, [2, 2, 0, 3, 2, 3])
-        sage: L.is_rationally_isometric(M, True)                                    # optional - sage.libs.pari
+        sage: L.is_rationally_isometric(M, True)                                        # needs sage.libs.pari
         False
 
     ::
 
         sage: A = DiagonalQuadraticForm(QQ, [1, 5])
         sage: B = QuadraticForm(QQ, 2, [1, 12, 81])
-        sage: T = A.is_rationally_isometric(B, True); T                             # optional - sage.libs.pari
+        sage: T = A.is_rationally_isometric(B, True); T                                 # needs sage.libs.pari
         [  1  -2]
         [  0 1/3]
-        sage: A.Gram_matrix() == T.T * B.Gram_matrix() * T                          # optional - sage.libs.pari
+        sage: A.Gram_matrix() == T.T * B.Gram_matrix() * T                              # needs sage.libs.pari
         True
 
     ::
 
         sage: C = DiagonalQuadraticForm(QQ, [1, 5, 9])
         sage: D = DiagonalQuadraticForm(QQ, [6, 30, 1])
-        sage: T = C.is_rationally_isometric(D, True); T                             # optional - sage.libs.pari
+        sage: T = C.is_rationally_isometric(D, True); T                                 # needs sage.libs.pari
         [   0 -5/6  1/2]
         [   0  1/6  1/2]
         [  -1    0    0]
-        sage: C.Gram_matrix() == T.T * D.Gram_matrix() * T                          # optional - sage.libs.pari
+        sage: C.Gram_matrix() == T.T * D.Gram_matrix() * T                              # needs sage.libs.pari
         True
 
     ::
 
         sage: E = DiagonalQuadraticForm(QQ, [1, 1])
         sage: F = QuadraticForm(QQ, 2, [17, 94, 130])
-        sage: T = F.is_rationally_isometric(E, True); T                             # optional - sage.libs.pari
+        sage: T = F.is_rationally_isometric(E, True); T                                 # needs sage.libs.pari
         [     -4 -189/17]
         [     -1  -43/17]
-        sage: F.Gram_matrix() == T.T * E.Gram_matrix() * T                          # optional - sage.libs.pari
+        sage: F.Gram_matrix() == T.T * E.Gram_matrix() * T                              # needs sage.libs.pari
         True
 
     TESTS::
 
-        sage: K.<a> = QuadraticField(3)                                             # optional - sage.rings.number_field
-        sage: V = DiagonalQuadraticForm(K, [1, 2])                                  # optional - sage.rings.number_field
-        sage: W = DiagonalQuadraticForm(K, [1, 0])                                  # optional - sage.rings.number_field
-        sage: V.is_rationally_isometric(W)                                          # optional - sage.rings.number_field
+        sage: # needs sage.rings.number_field
+        sage: K.<a> = QuadraticField(3)
+        sage: V = DiagonalQuadraticForm(K, [1, 2])
+        sage: W = DiagonalQuadraticForm(K, [1, 0])
+        sage: V.is_rationally_isometric(W)
         Traceback (most recent call last):
         ...
         NotImplementedError: This only tests regular forms
 
     Forms must have the same base ring otherwise a `TypeError` is raised::
 
-        sage: K1.<a> = QuadraticField(5)                                            # optional - sage.rings.number_field
-        sage: K2.<b> = QuadraticField(7)                                            # optional - sage.rings.number_field
-        sage: V = DiagonalQuadraticForm(K1, [1, a])                                 # optional - sage.rings.number_field
-        sage: W = DiagonalQuadraticForm(K2, [1, b])                                 # optional - sage.rings.number_field
-        sage: V.is_rationally_isometric(W)                                          # optional - sage.rings.number_field
+        sage: # needs sage.rings.number_field
+        sage: K1.<a> = QuadraticField(5)
+        sage: K2.<b> = QuadraticField(7)
+        sage: V = DiagonalQuadraticForm(K1, [1, a])
+        sage: W = DiagonalQuadraticForm(K2, [1, b])
+        sage: V.is_rationally_isometric(W)
         Traceback (most recent call last):
         ...
         TypeError: forms must have the same base ring.
@@ -456,18 +462,20 @@ def is_rationally_isometric(self, other, return_matrix=False):
 
     Forms whose determinants do not differ by a square in the base field are not isometric::
 
-        sage: K.<a> = NumberField(x^2 - 3)                                          # optional - sage.rings.number_field
-        sage: V = DiagonalQuadraticForm(K, [-1, a, -2*a])                           # optional - sage.rings.number_field
-        sage: W = DiagonalQuadraticForm(K, [-1, a, 2*a])                            # optional - sage.rings.number_field
-        sage: V.is_rationally_isometric(W)                                          # optional - sage.rings.number_field
+        sage: # needs sage.rings.number_field
+        sage: K.<a> = NumberField(x^2 - 3)
+        sage: V = DiagonalQuadraticForm(K, [-1, a, -2*a])
+        sage: W = DiagonalQuadraticForm(K, [-1, a, 2*a])
+        sage: V.is_rationally_isometric(W)
         False
 
     ::
 
-        sage: K.<a> = NumberField(x^5 - x + 2, 'a')                                 # optional - sage.rings.number_field
-        sage: Q = QuadraticForm(K, 3, [a, 1, 0, -a**2, -a**3, -1])                  # optional - sage.rings.number_field
-        sage: m = Q.matrix()                                                        # optional - sage.rings.number_field
-        sage: for _ in range(5):                                                    # optional - sage.rings.number_field
+        sage: # needs sage.rings.number_field
+        sage: K.<a> = NumberField(x^5 - x + 2, 'a')
+        sage: Q = QuadraticForm(K, 3, [a, 1, 0, -a**2, -a**3, -1])
+        sage: m = Q.matrix()
+        sage: for _ in range(5):
         ....:     t = random_matrix(ZZ, 3, algorithm='unimodular')
         ....:     m2 = t*m*t.transpose()
         ....:     Q2 = QuadraticForm(K, 3, [m2[i,j] / (2 if i==j else 1)
@@ -565,18 +573,18 @@ def _diagonal_isometry(V, W):
         sage: Q = DiagonalQuadraticForm(QQ, [1, 2, 4])
         sage: F = DiagonalQuadraticForm(QQ, [2, 2, 2])
 
-        sage: T = _diagonal_isometry(Q, F); T                                       # optional - sage.libs.pari
+        sage: T = _diagonal_isometry(Q, F); T                                           # needs sage.libs.pari
         [   0    1    0]
         [-1/2    0    1]
         [ 1/2    0    1]
-        sage: Q.Gram_matrix() == T.T * F.Gram_matrix() * T                          # optional - sage.libs.pari
+        sage: Q.Gram_matrix() == T.T * F.Gram_matrix() * T                              # needs sage.libs.pari
         True
 
-        sage: T = _diagonal_isometry(F, Q); T                                       # optional - sage.libs.pari
+        sage: T = _diagonal_isometry(F, Q); T                                           # needs sage.libs.pari
         [   0   -1   -1]
         [   1    0    0]
         [   0 -1/2  1/2]
-        sage: F.Gram_matrix() == T.T * Q.Gram_matrix() * T                          # optional - sage.libs.pari
+        sage: F.Gram_matrix() == T.T * Q.Gram_matrix() * T                              # needs sage.libs.pari
         True
     """
     import copy

@@ -32,7 +32,7 @@ def BezoutianQuadraticForm(f, g):
         sage: R = PolynomialRing(ZZ, 'x')
         sage: f = R([1,2,3])
         sage: g = R([2,5])
-        sage: Q = BezoutianQuadraticForm(f, g); Q                                       # optional - sage.libs.singular
+        sage: Q = BezoutianQuadraticForm(f, g); Q                                       # needs sage.libs.singular
         Quadratic form in 2 variables over Integer Ring with coefficients:
         [ 1 -12 ]
         [ * -15 ]

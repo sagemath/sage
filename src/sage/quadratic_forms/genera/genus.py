@@ -3162,7 +3162,7 @@ class GenusSymbol_global_ring():
 
             sage: A = matrix.diagonal(ZZ, [1, 1, 1, 1])
             sage: GS = Genus(A)
-            sage: GS._standard_mass()                                                   # optional - sage.symbolic
+            sage: GS._standard_mass()                                                   # needs sage.symbolic
             1/48
 
         """
@@ -3215,7 +3215,7 @@ class GenusSymbol_global_ring():
 
             sage: from sage.quadratic_forms.genera.genus import genera
             sage: G = genera((8,0), 1, even=True)[0]
-            sage: G.mass()                                                              # optional - sage.symbolic
+            sage: G.mass()                                                              # needs sage.symbolic
             1/696729600
             sage: G.mass(backend='magma')  # optional - magma
             1/696729600
