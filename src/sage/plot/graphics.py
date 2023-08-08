@@ -2730,9 +2730,9 @@ class Graphics(WithEqualityById, SageObject):
         The patch changes them to float before creating `matplotlib` objects.::
 
             sage: # long time, needs sage.symbolic
-            sage: f = lambda x, y: abs(cos((x + I * y) ** 4)) - 1               # long time, needs sage.symbolic
-            sage: g = implicit_plot(f, (-4, 4), (-3, 3), linewidth=0.6)         # long time, needs sage.symbolic
-            sage: gm = g.matplotlib()                                           # long time, needs sage.symbolic
+            sage: f = lambda x, y: abs(cos((x + I * y) ** 4)) - 1
+            sage: g = implicit_plot(f, (-4, 4), (-3, 3), linewidth=0.6)
+            sage: gm = g.matplotlib()
 
         If the axes are flipped, the limits of the axes get swapped::
 
