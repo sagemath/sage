@@ -80,23 +80,23 @@ test to determine that there is a saddle point at (0,-1/2).
 
 ::
 
-    sage: f(x,y)=x^2*y+y^2+y
-    sage: f.diff() # gradient
+    sage: f(x,y) = x^2*y + y^2 + y
+    sage: f.diff()  # gradient
     (x, y) |--> (2*x*y, x^2 + 2*y + 1)
-    sage: solve(list(f.diff()),[x,y])
+    sage: solve(list(f.diff()), [x,y])
     [[x == -I, y == 0], [x == I, y == 0], [x == 0, y == (-1/2)]]
     sage: H=f.diff(2); H  # Hessian matrix
     [(x, y) |--> 2*y (x, y) |--> 2*x]
     [(x, y) |--> 2*x   (x, y) |--> 2]
-    sage: H(x=0,y=-1/2)
+    sage: H(x=0, y=-1/2)
     [-1  0]
     [ 0  2]
-    sage: H(x=0,y=-1/2).eigenvalues()
+    sage: H(x=0, y=-1/2).eigenvalues()
     [-1, 2]
 
 Here we calculate the Jacobian for the polar coordinate transformation::
 
-    sage: T(r,theta)=[r*cos(theta),r*sin(theta)]
+    sage: T(r,theta) = [r*cos(theta),r*sin(theta)]
     sage: T
     (r, theta) |--> (r*cos(theta), r*sin(theta))
     sage: T.diff() # Jacobian matrix
@@ -117,7 +117,7 @@ exception when differentiating::
     ValueError: No differentiation variable specified.
 
 Simplifying symbolic sums is also possible, using the
-sum command, which also uses Maxima in the background::
+:func:`sum` command, which also uses Maxima in the background::
 
     sage: k, m = var('k, m')
     sage: sum(1/k^4, k, 1, oo)
@@ -182,19 +182,19 @@ It is no longer allowed to call expressions with positional arguments::
     sage: f(x=pi)
     0
 
-We can also make a ``CallableSymbolicExpression``,
-which is a ``SymbolicExpression`` that is a function of
+We can also make a :class:`CallableSymbolicExpression`,
+which is a :class:`SymbolicExpression` that is a function of
 specified variables in a fixed order. Each
-``SymbolicExpression`` has a
+:class:`SymbolicExpression` has a
 ``function(...)`` method that is used to create a
-``CallableSymbolicExpression``, as illustrated below::
+:class:`CallableSymbolicExpression`, as illustrated below::
 
     sage: u = log((2-x)/(y+5))
     sage: f = u.function(x, y); f
     (x, y) |--> log(-(x - 2)/(y + 5))
 
 There is an easier way of creating a
-``CallableSymbolicExpression``, which relies on the
+:class:`CallableSymbolicExpression`, which relies on the
 Sage preparser.
 
 ::
@@ -267,7 +267,8 @@ We coerce various symbolic expressions into the complex numbers::
     sage: CC(f)
     1.12762596520638 + 1.17520119364380*I
     sage: ComplexField(200)(f)
-    1.1276259652063807852262251614026720125478471180986674836290 + 1.1752011936438014568823818505956008151557179813340958702296*I
+    1.1276259652063807852262251614026720125478471180986674836290
+     + 1.1752011936438014568823818505956008151557179813340958702296*I
     sage: ComplexField(100)(f)
     1.1276259652063807852262251614 + 1.1752011936438014568823818506*I
 
@@ -286,8 +287,9 @@ available for use::
 
 We can, of course, substitute::
 
-    sage: f(n9=9,n7=n6)
-    1/n1 + 1/n2^2 + 1/n3^3 + 1/n4^4 + 1/n5^5 + 1/n6^6 + 1/n6^7 + 1/n8^8 + 387420490/387420489
+    sage: f(n9=9, n7=n6)
+    1/n1 + 1/n2^2 + 1/n3^3 + 1/n4^4 + 1/n5^5 + 1/n6^6 + 1/n6^7 + 1/n8^8
+     + 387420490/387420489
 
 TESTS:
 
@@ -317,7 +319,7 @@ system-wide version::
     sage: maxima.eval('expand((x+y)^3)')
     '27'
 
-If the copy of maxima used by the symbolic calculus package were
+If the copy of Maxima used by the symbolic calculus package were
 the same as the default one, then the following would return 27,
 which would be very confusing indeed!
 
@@ -446,27 +448,27 @@ def symbolic_sum(expression, v, a, b, algorithm='maxima', hold=False):
 
     INPUT:
 
-    - ``expression`` - a symbolic expression
+    - ``expression`` -- a symbolic expression
 
-    - ``v`` - a variable or variable name
+    - ``v`` -- a variable or variable name
 
-    - ``a`` - lower endpoint of the sum
+    - ``a`` -- lower endpoint of the sum
 
-    - ``b`` - upper endpoint of the sum
+    - ``b`` -- upper endpoint of the sum
 
-    - ``algorithm`` - (default: ``'maxima'``)  one of
+    - ``algorithm`` -- (default: ``'maxima'``)  one of
 
-      - ``'maxima'`` - use Maxima (the default)
+      - ``'maxima'`` -- use Maxima (the default)
 
-      - ``'maple'`` - (optional) use Maple
+      - ``'maple'`` -- (optional) use Maple
 
-      - ``'mathematica'`` - (optional) use Mathematica
+      - ``'mathematica'`` -- (optional) use Mathematica
 
-      - ``'giac'`` - (optional) use Giac
+      - ``'giac'`` -- (optional) use Giac
 
-      - ``'sympy'`` - use SymPy
+      - ``'sympy'`` -- use SymPy
 
-    - ``hold`` - (default: ``False``) if ``True`` don't evaluate
+    - ``hold`` -- (default: ``False``) if ``True``, don't evaluate
 
     EXAMPLES::
 
@@ -493,13 +495,13 @@ def symbolic_sum(expression, v, a, b, algorithm='maxima', hold=False):
     And some truncations thereof::
 
         sage: assume(n>1)
-        sage: symbolic_sum(binomial(n,k),k,1,n)
+        sage: symbolic_sum(binomial(n,k), k, 1, n)
         2^n - 1
-        sage: symbolic_sum(binomial(n,k),k,2,n)
+        sage: symbolic_sum(binomial(n,k), k, 2, n)
         2^n - n - 1
-        sage: symbolic_sum(binomial(n,k),k,0,n-1)
+        sage: symbolic_sum(binomial(n,k), k, 0, n-1)
         2^n - 1
-        sage: symbolic_sum(binomial(n,k),k,1,n-1)
+        sage: symbolic_sum(binomial(n,k), k, 1, n-1)
         2^n - 2
 
     The binomial theorem::
@@ -556,22 +558,22 @@ def symbolic_sum(expression, v, a, b, algorithm='maxima', hold=False):
         ...
         ValueError: Sum is divergent.
         sage: forget()
-        sage: assumptions() # check the assumptions were really forgotten
+        sage: assumptions()  # check the assumptions were really forgotten
         []
 
     A summation performed by Mathematica::
 
-        sage: symbolic_sum(1/(1+k^2), k, -oo, oo, algorithm = 'mathematica')     # optional - mathematica
+        sage: symbolic_sum(1/(1+k^2), k, -oo, oo, algorithm='mathematica')     # optional - mathematica
         pi*coth(pi)
 
     An example of this summation with Giac::
 
-        sage: symbolic_sum(1/(1+k^2), k, -oo, oo, algorithm = 'giac')
+        sage: symbolic_sum(1/(1+k^2), k, -oo, oo, algorithm='giac')
         (pi*e^(2*pi) - pi*e^(-2*pi))/(e^(2*pi) + e^(-2*pi) - 2)
 
     The same summation is solved by SymPy::
 
-        sage: symbolic_sum(1/(1+k^2), k, -oo, oo, algorithm = 'sympy')
+        sage: symbolic_sum(1/(1+k^2), k, -oo, oo, algorithm='sympy')
         pi/tanh(pi)
 
     SymPy and Maxima 5.39.0 can do the following (see
@@ -584,7 +586,7 @@ def symbolic_sum(expression, v, a, b, algorithm='maxima', hold=False):
 
     Use Maple as a backend for summation::
 
-        sage: symbolic_sum(binomial(n,k)*x^k, k, 0, n, algorithm = 'maple')      # optional - maple
+        sage: symbolic_sum(binomial(n,k)*x^k, k, 0, n, algorithm='maple')      # optional - maple
         (x + 1)^n
 
     If you don't want to evaluate immediately give the ``hold`` keyword::
@@ -686,17 +688,17 @@ def nintegral(ex, x, a, b,
 
     INPUT:
 
-    - ``x`` - variable to integrate with respect to
+    - ``x`` -- variable to integrate with respect to
 
-    - ``a`` - lower endpoint of integration
+    - ``a`` -- lower endpoint of integration
 
-    - ``b`` - upper endpoint of integration
+    - ``b`` -- upper endpoint of integration
 
-    - ``desired_relative_error`` - (default: '1e-8') the
+    - ``desired_relative_error`` -- (default: ``1e-8``) the
       desired relative error
 
-    - ``maximum_num_subintervals`` - (default: 200)
-      maxima number of subintervals
+    - ``maximum_num_subintervals`` -- (default: 200)
+      maximal number of subintervals
 
     OUTPUT:
 
@@ -709,26 +711,26 @@ def nintegral(ex, x, a, b,
 
     - an error code:
 
-      - ``0`` - no problems were encountered
+      - ``0`` -- no problems were encountered
 
-      - ``1`` - too many subintervals were done
+      - ``1`` -- too many subintervals were done
 
-      - ``2`` - excessive roundoff error
+      - ``2`` -- excessive roundoff error
 
-      - ``3`` - extremely bad integrand behavior
+      - ``3`` -- extremely bad integrand behavior
 
-      - ``4`` - failed to converge
+      - ``4`` -- failed to converge
 
-      - ``5`` - integral is probably divergent or slowly
+      - ``5`` -- integral is probably divergent or slowly
         convergent
 
-      - ``6`` - the input is invalid; this includes the case of
-                desired_relative_error being too small to be achieved
+      - ``6`` -- the input is invalid; this includes the case of
+        ``desired_relative_error`` being too small to be achieved
 
-    ALIAS: nintegrate is the same as nintegral
+    ALIAS: :func:`nintegrate` is the same as :func:`nintegral`
 
     REMARK: There is also a function
-    ``numerical_integral`` that implements numerical
+    :func:`numerical_integral` that implements numerical
     integration using the GSL C library. It is potentially much faster
     and applies to arbitrary user defined functions.
 
@@ -741,7 +743,7 @@ def nintegral(ex, x, a, b,
     ::
 
         sage: f = x
-        sage: f.nintegral(x,0,1,1e-14)
+        sage: f.nintegral(x, 0, 1, 1e-14)
         (0.0, 0.0, 0, 6)
 
     EXAMPLES::
@@ -750,7 +752,7 @@ def nintegral(ex, x, a, b,
         sage: f.nintegral(x, 0, 1)
         (0.5284822353142306, 4.163...e-11, 231, 0)
 
-    We can also use the ``numerical_integral`` function,
+    We can also use the :func:`numerical_integral` function,
     which calls the GSL C library.
 
     ::
@@ -785,7 +787,7 @@ def nintegral(ex, x, a, b,
         sage: f.nintegrate(x,0,1)
         (-480.000000000000..., 5.32907051820075...e-12, 21, 0)
 
-    It is just because every floating point evaluation of return -480.0
+    It is just because every floating point evaluation of `f` returns `-480.0`
     in floating point.
 
     Important note: using PARI/GP one can compute numerical integrals
@@ -831,25 +833,25 @@ def symbolic_product(expression, v, a, b, algorithm='maxima', hold=False):
 
     INPUT:
 
-    - ``expression`` - a symbolic expression
+    - ``expression`` -- a symbolic expression
 
-    - ``v`` - a variable or variable name
+    - ``v`` -- a variable or variable name
 
-    - ``a`` - lower endpoint of the product
+    - ``a`` -- lower endpoint of the product
 
-    - ``b`` - upper endpoint of the prduct
+    - ``b`` -- upper endpoint of the prduct
 
-    - ``algorithm`` - (default: ``'maxima'``)  one of
+    - ``algorithm`` -- (default: ``'maxima'``)  one of
 
-      - ``'maxima'`` - use Maxima (the default)
+      - ``'maxima'`` -- use Maxima (the default)
 
-      - ``'giac'`` - use Giac
+      - ``'giac'`` -- use Giac
 
-      - ``'sympy'`` - use SymPy
+      - ``'sympy'`` -- use SymPy
 
-      - ``'mathematica'`` - (optional) use Mathematica
+      - ``'mathematica'`` -- (optional) use Mathematica
 
-    - ``hold`` - (default: ``False``) if ``True`` don't evaluate
+    - ``hold`` - (default: ``False``) if ``True``, don't evaluate
 
     EXAMPLES::
 
@@ -935,50 +937,50 @@ def symbolic_product(expression, v, a, b, algorithm='maxima', hold=False):
 
 def minpoly(ex, var='x', algorithm=None, bits=None, degree=None, epsilon=0):
     r"""
-    Return the minimal polynomial of self, if possible.
+    Return the minimal polynomial of ``self``, if possible.
 
     INPUT:
 
-    - ``var`` - polynomial variable name (default 'x')
+    - ``var`` -- polynomial variable name (default 'x')
 
-    - ``algorithm`` - 'algebraic' or 'numerical' (default
+    - ``algorithm`` -- ``'algebraic'`` or ``'numerical'`` (default
       both, but with numerical first)
 
-    - ``bits`` - the number of bits to use in numerical
+    - ``bits`` -- the number of bits to use in numerical
       approx
 
-    - ``degree`` - the expected algebraic degree
+    - ``degree`` -- the expected algebraic degree
 
-    - ``epsilon`` - return without error as long as
+    - ``epsilon`` -- return without error as long as
       f(self) epsilon, in the case that the result cannot be proven.
 
-      All of the above parameters are optional, with epsilon=0, bits and
-      degree tested up to 1000 and 24 by default respectively. The
+      All of the above parameters are optional, with epsilon=0, ``bits`` and
+      ``degree`` tested up to 1000 and 24 by default respectively. The
       numerical algorithm will be faster if bits and/or degree are given
       explicitly. The algebraic algorithm ignores the last three
       parameters.
 
 
-    OUTPUT: The minimal polynomial of self. If the numerical algorithm
-    is used then it is proved symbolically when epsilon=0 (default).
+    OUTPUT: The minimal polynomial of ``self``. If the numerical algorithm
+    is used, then it is proved symbolically when ``epsilon=0`` (default).
 
     If the minimal polynomial could not be found, two distinct kinds of
     errors are raised. If no reasonable candidate was found with the
-    given bit/degree parameters, a ``ValueError`` will be
+    given ``bits``/``degree`` parameters, a :class:`ValueError` will be
     raised. If a reasonable candidate was found but (perhaps due to
     limits in the underlying symbolic package) was unable to be proved
-    correct, a ``NotImplementedError`` will be raised.
+    correct, a :class:`NotImplementedError` will be raised.
 
     ALGORITHM: Two distinct algorithms are used, depending on the
     algorithm parameter. By default, the numerical algorithm is
     attempted first, then the algebraic one.
 
-    Algebraic: Attempt to evaluate this expression in QQbar, using
+    Algebraic: Attempt to evaluate this expression in ``QQbar``, using
     cyclotomic fields to resolve exponential and trig functions at
-    rational multiples of pi, field extensions to handle roots and
+    rational multiples of `\pi`, field extensions to handle roots and
     rational exponents, and computing compositums to represent the full
     expression as an element of a number field where the minimal
-    polynomial can be computed exactly. The bits, degree, and epsilon
+    polynomial can be computed exactly. The ``bits``, ``degree``, and ``epsilon``
     parameters are ignored.
 
     Numerical: Computes a numerical approximation of
@@ -989,8 +991,8 @@ def minpoly(ex, var='x', algorithm=None, bits=None, degree=None, epsilon=0):
     vanishing. If this fails, and ``epsilon`` is non-zero,
     return `f` if and only if
     `f(\mathtt{self}) < \mathtt{epsilon}`.
-    Otherwise raise a ``ValueError`` (if no suitable
-    candidate was found) or a ``NotImplementedError`` (if a
+    Otherwise raise a :class:`ValueError` (if no suitable
+    candidate was found) or a :class:`NotImplementedError` (if a
     likely candidate was found but could not be proved correct).
 
     EXAMPLES: First some simple examples::
@@ -1014,7 +1016,8 @@ def minpoly(ex, var='x', algorithm=None, bits=None, degree=None, epsilon=0):
         sage: sin(pi/7).minpoly()
         x^6 - 7/4*x^4 + 7/8*x^2 - 7/64
         sage: minpoly(exp(I*pi/17))
-        x^16 - x^15 + x^14 - x^13 + x^12 - x^11 + x^10 - x^9 + x^8 - x^7 + x^6 - x^5 + x^4 - x^3 + x^2 - x + 1
+        x^16 - x^15 + x^14 - x^13 + x^12 - x^11 + x^10 - x^9 + x^8
+         - x^7 + x^6 - x^5 + x^4 - x^3 + x^2 - x + 1
 
     Here we verify it gives the same result as the abstract number
     field.
@@ -1027,14 +1030,15 @@ def minpoly(ex, var='x', algorithm=None, bits=None, degree=None, epsilon=0):
         sage: (a+b+a*b).absolute_minpoly()
         x^4 - 22*x^2 - 48*x - 23
 
-    The minpoly function is used implicitly when creating
+    The :func:`minpoly` function is used implicitly when creating
     number fields::
 
         sage: x = var('x')
         sage: eqn =  x^3 + sqrt(2)*x + 5 == 0
         sage: a = solve(eqn, x)[0].rhs()
         sage: QQ[a]
-        Number Field in a with defining polynomial x^6 + 10*x^3 - 2*x^2 + 25 with a = 0.7185272465828846? - 1.721353471724806?*I
+        Number Field in a with defining polynomial x^6 + 10*x^3 - 2*x^2 + 25
+         with a = 0.7185272465828846? - 1.721353471724806?*I
 
     Here we solve a cubic and then recover it from its complicated
     radical expansion.
@@ -1043,7 +1047,8 @@ def minpoly(ex, var='x', algorithm=None, bits=None, degree=None, epsilon=0):
 
         sage: f = x^3 - x + 1
         sage: a = f.solve(x)[0].rhs(); a
-        -1/2*(1/18*sqrt(23)*sqrt(3) - 1/2)^(1/3)*(I*sqrt(3) + 1) - 1/6*(-I*sqrt(3) + 1)/(1/18*sqrt(23)*sqrt(3) - 1/2)^(1/3)
+        -1/2*(1/18*sqrt(23)*sqrt(3) - 1/2)^(1/3)*(I*sqrt(3) + 1)
+         - 1/6*(-I*sqrt(3) + 1)/(1/18*sqrt(23)*sqrt(3) - 1/2)^(1/3)
         sage: a.minpoly()
         x^3 - x + 1
 
@@ -1056,7 +1061,9 @@ def minpoly(ex, var='x', algorithm=None, bits=None, degree=None, epsilon=0):
         sage: f = a.minpoly(); f
         x^8 - 40*x^6 + 352*x^4 - 960*x^2 + 576
         sage: f(a)
-        (sqrt(5) + sqrt(3) + sqrt(2))^8 - 40*(sqrt(5) + sqrt(3) + sqrt(2))^6 + 352*(sqrt(5) + sqrt(3) + sqrt(2))^4 - 960*(sqrt(5) + sqrt(3) + sqrt(2))^2 + 576
+        (sqrt(5) + sqrt(3) + sqrt(2))^8 - 40*(sqrt(5) + sqrt(3) + sqrt(2))^6
+         + 352*(sqrt(5) + sqrt(3) + sqrt(2))^4 - 960*(sqrt(5) + sqrt(3) + sqrt(2))^2
+         + 576
         sage: f(a).expand()
         0
 
@@ -1083,9 +1090,11 @@ def minpoly(ex, var='x', algorithm=None, bits=None, degree=None, epsilon=0):
     ::
 
         sage: cos(pi/33).minpoly(algorithm='algebraic')
-        x^10 + 1/2*x^9 - 5/2*x^8 - 5/4*x^7 + 17/8*x^6 + 17/16*x^5 - 43/64*x^4 - 43/128*x^3 + 3/64*x^2 + 3/128*x + 1/1024
+        x^10 + 1/2*x^9 - 5/2*x^8 - 5/4*x^7 + 17/8*x^6 + 17/16*x^5
+         - 43/64*x^4 - 43/128*x^3 + 3/64*x^2 + 3/128*x + 1/1024
         sage: cos(pi/33).minpoly(algorithm='numerical')
-        x^10 + 1/2*x^9 - 5/2*x^8 - 5/4*x^7 + 17/8*x^6 + 17/16*x^5 - 43/64*x^4 - 43/128*x^3 + 3/64*x^2 + 3/128*x + 1/1024
+        x^10 + 1/2*x^9 - 5/2*x^8 - 5/4*x^7 + 17/8*x^6 + 17/16*x^5
+         - 43/64*x^4 - 43/128*x^3 + 3/64*x^2 + 3/128*x + 1/1024
 
     Sometimes it fails, as it must given that some numbers aren't algebraic::
 
@@ -1162,12 +1171,12 @@ def limit(ex, dir=None, taylor=False, algorithm='maxima', **argv):
 
     INPUT:
 
-    - ``dir`` - (default: None); dir may have the value
-      'plus' (or '+' or 'right' or 'above') for a limit from above,
-      'minus' (or '-' or 'left' or 'below') for a limit from below, or may be omitted
+    - ``dir`` -- (default: ``None``); may have the value
+      ``'plus'`` (or ``'+'`` or ``'right'`` or ``'above'``) for a limit from above,
+      ``'minus'`` (or ``'-'`` or ``'left'`` or ``'below'``) for a limit from below, or may be omitted
       (implying a two-sided limit is to be computed).
 
-    - ``taylor`` - (default: False); if True, use Taylor
+    - ``taylor`` -- (default: ``False``); if ``True``, use Taylor
       series, which allows more limits to be computed (but may also
       crash in some obscure cases due to bugs in Maxima).
 
@@ -1175,8 +1184,8 @@ def limit(ex, dir=None, taylor=False, algorithm='maxima', **argv):
 
     .. note::
 
-        The output may also use 'und' (undefined), 'ind'
-        (indefinite but bounded), and 'infinity' (complex
+        The output may also use ``und`` (undefined), ``ind``
+        (indefinite but bounded), and ``infinity`` (complex
         infinity).
 
     EXAMPLES::
@@ -1488,7 +1497,7 @@ def mma_free_limit(expression, v, a, dir=None):
     - ``expression`` -- symbolic expression
     - ``v`` -- variable
     - ``a`` -- value where the variable goes to
-    - ``dir`` -- ``'+'``, ``'-'`` or ``None`` (optional, default:``None``)
+    - ``dir`` -- ``'+'``, ``'-'`` or ``None`` (optional, default: ``None``)
 
     EXAMPLES::
 
@@ -1547,19 +1556,19 @@ def laplace(ex, t, s, algorithm='maxima'):
 
     INPUT:
 
-    - ``ex`` - a symbolic expression
+    - ``ex`` -- a symbolic expression
 
-    - ``t`` - independent variable
+    - ``t`` -- independent variable
 
-    - ``s`` - transform parameter
+    - ``s`` -- transform parameter
 
-    - ``algorithm`` - (default: ``'maxima'``)  one of
+    - ``algorithm`` -- (default: ``'maxima'``)  one of
 
-      - ``'maxima'`` - use Maxima (the default)
+      - ``'maxima'`` -- use Maxima (the default)
 
-      - ``'sympy'`` - use SymPy
+      - ``'sympy'`` -- use SymPy
 
-      - ``'giac'`` - use Giac
+      - ``'giac'`` -- use Giac
 
     .. NOTE::
 
@@ -1622,7 +1631,7 @@ def laplace(ex, t, s, algorithm='maxima'):
 
     Next we form the augmented matrix of the above system::
 
-        sage: A = matrix([[s, 16, 270],[1, s, 90+1/s]])
+        sage: A = matrix([[s, 16, 270], [1, s, 90+1/s]])
         sage: E = A.echelon_form()
         sage: xt = E[0,2].inverse_laplace(s,t)
         sage: yt = E[1,2].inverse_laplace(s,t)
@@ -1630,11 +1639,11 @@ def laplace(ex, t, s, algorithm='maxima'):
         -91/2*e^(4*t) + 629/2*e^(-4*t) + 1
         sage: yt
         91/8*e^(4*t) + 629/8*e^(-4*t)
-        sage: p1 = plot(xt,0,1/2,rgbcolor=(1,0,0))
-        sage: p2 = plot(yt,0,1/2,rgbcolor=(0,1,0))
+        sage: p1 = plot(xt, 0, 1/2, rgbcolor=(1,0,0))                                   # needs sage.plot
+        sage: p2 = plot(yt, 0, 1/2, rgbcolor=(0,1,0))                                   # needs sage.plot
         sage: import tempfile
-        sage: with tempfile.NamedTemporaryFile(suffix=".png") as f:
-        ....:     (p1+p2).save(f.name)
+        sage: with tempfile.NamedTemporaryFile(suffix=".png") as f:                     # needs sage.plot
+        ....:     (p1 + p2).save(f.name)
 
     Another example::
 
@@ -1789,19 +1798,19 @@ def inverse_laplace(ex, s, t, algorithm='maxima'):
 
     INPUT:
 
-    - ``ex`` - a symbolic expression
+    - ``ex`` -- a symbolic expression
 
-    - ``s`` - transform parameter
+    - ``s`` -- transform parameter
 
-    - ``t`` - independent variable
+    - ``t`` -- independent variable
 
-    - ``algorithm`` - (default: ``'maxima'``)  one of
+    - ``algorithm`` -- (default: ``'maxima'``)  one of
 
-      - ``'maxima'`` - use Maxima (the default)
+      - ``'maxima'`` -- use Maxima (the default)
 
-      - ``'sympy'`` - use SymPy
+      - ``'sympy'`` -- use SymPy
 
-      - ``'giac'`` - use Giac
+      - ``'giac'`` -- use Giac
 
     .. SEEALSO::
 
@@ -1843,9 +1852,11 @@ def inverse_laplace(ex, s, t, algorithm='maxima'):
 
     Transform a rational expression::
 
-        sage: inverse_laplace((2*s^2*exp(-2*s) - exp(-s))/(s^3+1), s, t, algorithm='giac')
-        -1/3*(sqrt(3)*e^(1/2*t - 1/2)*sin(1/2*sqrt(3)*(t - 1)) - cos(1/2*sqrt(3)*(t - 1))*e^(1/2*t - 1/2) +
-        e^(-t + 1))*heaviside(t - 1) + 2/3*(2*cos(1/2*sqrt(3)*(t - 2))*e^(1/2*t - 1) + e^(-t + 2))*heaviside(t - 2)
+        sage: inverse_laplace((2*s^2*exp(-2*s) - exp(-s))/(s^3+1), s, t,
+        ....:                 algorithm='giac')
+        -1/3*(sqrt(3)*e^(1/2*t - 1/2)*sin(1/2*sqrt(3)*(t - 1))
+         - cos(1/2*sqrt(3)*(t - 1))*e^(1/2*t - 1/2) + e^(-t + 1))*heaviside(t - 1)
+         + 2/3*(2*cos(1/2*sqrt(3)*(t - 2))*e^(1/2*t - 1) + e^(-t + 2))*heaviside(t - 2)
 
         sage: inverse_laplace(1/(s - 1), s, x)
         e^x
@@ -1955,7 +1966,7 @@ def at(ex, *args, **kwds):
     We do not import ``at`` at the top level, but we can use it
     as a synonym for substitution if we import it::
 
-        sage: g = x^3-3
+        sage: g = x^3 - 3
         sage: from sage.calculus.calculus import at
         sage: at(g, x=1)
         -2
@@ -1970,15 +1981,16 @@ def at(ex, *args, **kwds):
         u(h + x)
         sage: diff(u(x+h), x)
         D[0](u)(h + x)
-        sage: taylor(u(x+h),h,0,4)
-        1/24*h^4*diff(u(x), x, x, x, x) + 1/6*h^3*diff(u(x), x, x, x) + 1/2*h^2*diff(u(x), x, x) + h*diff(u(x), x) + u(x)
+        sage: taylor(u(x+h), h, 0, 4)
+        1/24*h^4*diff(u(x), x, x, x, x) + 1/6*h^3*diff(u(x), x, x, x)
+         + 1/2*h^2*diff(u(x), x, x) + h*diff(u(x), x) + u(x)
 
     We compute a Laplace transform::
 
         sage: var('s,t')
         (s, t)
-        sage: f=function('f')(t)
-        sage: f.diff(t,2)
+        sage: f = function('f')(t)
+        sage: f.diff(t, 2)
         diff(f(t), t, t)
         sage: f.diff(t,2).laplace(t,s)
         s^2*laplace(f(t), t, s) - s*f(0) - D[0](f)(0)
@@ -2078,7 +2090,7 @@ def dummy_laplace(*args):
         sage: from sage.calculus.calculus import dummy_laplace
         sage: s,t = var('s,t')
         sage: f = function('f')
-        sage: dummy_laplace(f(t),t,s)
+        sage: dummy_laplace(f(t), t, s)
         laplace(f(t), t, s)
     """
     return _laplace(args[0], var(repr(args[1])), var(repr(args[2])))
@@ -2086,7 +2098,7 @@ def dummy_laplace(*args):
 
 def dummy_inverse_laplace(*args):
     """
-    This function is called to create formal wrappers of inverse laplace
+    This function is called to create formal wrappers of inverse Laplace
     transforms that Maxima can't compute:
 
     EXAMPLES::
@@ -2094,7 +2106,7 @@ def dummy_inverse_laplace(*args):
         sage: from sage.calculus.calculus import dummy_inverse_laplace
         sage: s,t = var('s,t')
         sage: F = function('F')
-        sage: dummy_inverse_laplace(F(s),s,t)
+        sage: dummy_inverse_laplace(F(s), s, t)
         ilt(F(s), s, t)
     """
     return _inverse_laplace(args[0], var(repr(args[1])), var(repr(args[2])))
@@ -2108,7 +2120,7 @@ def dummy_pochhammer(*args):
 
         sage: from sage.calculus.calculus import dummy_pochhammer
         sage: s,t = var('s,t')
-        sage: dummy_pochhammer(s,t)
+        sage: dummy_pochhammer(s, t)
         gamma(s + t)/gamma(s)
     """
     x, y = args
@@ -2224,12 +2236,12 @@ def symbolic_expression_from_maxima_string(x, equals_sub=False, maxima=maxima):
 
     INPUT:
 
-    - ``x`` - a string
+    - ``x`` -- a string
 
-    - ``equals_sub`` - (default: False) if True, replace
+    - ``equals_sub`` -- (default: ``False``) if ``True``, replace
       '=' by '==' in self
 
-    - ``maxima`` - (default: the calculus package's
+    - ``maxima`` -- (default: the calculus package's copy of
       Maxima) the Maxima interpreter to use.
 
     EXAMPLES::
@@ -2415,7 +2427,7 @@ def mapped_opts(v):
 
     INPUT:
 
-    - ``v`` - an object
+    - ``v`` -- an object
 
     OUTPUT: a string.
 
@@ -2548,13 +2560,13 @@ def symbolic_expression_from_string(s, syms=None, accept_sequence=False, *, pars
 
     INPUT:
 
-    - ``s`` - a string
+    - ``s`` -- a string
 
-    - ``syms`` - (default: {}) dictionary of
-      strings to be regarded as symbols or functions ;
+    - ``syms`` -- (default: ``{}``) dictionary of
+      strings to be regarded as symbols or functions;
       keys are pairs (string, number of arguments)
 
-    - ``accept_sequence`` - (default: False) controls whether
+    - ``accept_sequence`` -- (default: ``False``) controls whether
       to allow a (possibly nested) set of lists and tuples
       as input
 
@@ -2562,23 +2574,25 @@ def symbolic_expression_from_string(s, syms=None, accept_sequence=False, *, pars
 
     EXAMPLES::
 
+        sage: from sage.calculus.calculus import symbolic_expression_from_string
         sage: y = var('y')
-        sage: sage.calculus.calculus.symbolic_expression_from_string('[sin(0)*x^2,3*spam+e^pi]',syms={('spam',0):y},accept_sequence=True)
+        sage: symbolic_expression_from_string('[sin(0)*x^2,3*spam+e^pi]',
+        ....:                                 syms={('spam',0): y}, accept_sequence=True)
         [0, 3*y + e^pi]
 
     TESTS:
 
     Check that the precision is preserved (:trac:`28814`)::
 
-        sage: sage.calculus.calculus.symbolic_expression_from_string(str(RealField(100)(1/3)))
+        sage: symbolic_expression_from_string(str(RealField(100)(1/3)))
         0.3333333333333333333333333333
-        sage: sage.calculus.calculus.symbolic_expression_from_string(str(RealField(100)(10^-500/3)))
+        sage: symbolic_expression_from_string(str(RealField(100)(10^-500/3)))
         3.333333333333333333333333333e-501
 
     The Giac interface uses a different parser (:trac:`30133`)::
 
         sage: from sage.calculus.calculus import SR_parser_giac
-        sage: sage.calculus.calculus.symbolic_expression_from_string(repr(giac(SR.var('e'))), parser=SR_parser_giac)
+        sage: symbolic_expression_from_string(repr(giac(SR.var('e'))), parser=SR_parser_giac)
         e
     """
     if syms is None:
