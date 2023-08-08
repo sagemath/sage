@@ -661,15 +661,16 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
 
         ::
 
-            sage: F.<b> = QuadraticField(23)                                            # needs sage.rings.number_field
+            sage: # needs sage.rings.number_field
+            sage: F.<b> = QuadraticField(23)
             sage: x = polygen(ZZ, 'x')
-            sage: G.<a> = F.extension(x^3 + 5)                                          # needs sage.rings.number_field
-            sage: E = EllipticCurve(j=1728*b).change_ring(G)                            # needs sage.rings.number_field
-            sage: EF = E.descend_to(F); EF                                              # needs sage.rings.number_field
+            sage: G.<a> = F.extension(x^3 + 5)
+            sage: E = EllipticCurve(j=1728*b).change_ring(G)
+            sage: EF = E.descend_to(F); EF
             [Elliptic Curve defined by y^2 = x^3 + (27*b-621)*x + (-1296*b+2484)
               over Number Field in b with defining polynomial x^2 - 23
               with b = 4.795831523312720?]
-            sage: all(Ei.change_ring(G).is_isomorphic(E) for Ei in EF)                  # needs sage.rings.number_field
+            sage: all(Ei.change_ring(G).is_isomorphic(E) for Ei in EF)
             True
 
         ::
@@ -1817,16 +1818,17 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
 
         Ordinary curve over finite extension field of degree 2::
 
+            sage: # needs sage.rings.finite_rings
             sage: x = polygen(ZZ, 'x')
-            sage: E = EllipticCurve(GF(59^2, "i", x^2 + 1), j=5)                        # needs sage.rings.finite_rings
-            sage: G = E.isogeny_ell_graph(5, directed=False, label_by_j=True); G        # needs sage.graphs sage.rings.finite_rings
+            sage: E = EllipticCurve(GF(59^2, "i", x^2 + 1), j=5)
+            sage: G = E.isogeny_ell_graph(5, directed=False, label_by_j=True); G        # needs sage.graphs
             Graph on 20 vertices
-            sage: G.vertices(sort=True)                                                 # needs sage.graphs sage.rings.finite_rings
+            sage: G.vertices(sort=True)                                                 # needs sage.graphs
             ['1',
              '12',
              ...
              'i + 55']
-            sage: G.edges(sort=True)                                                    # needs sage.graphs sage.rings.finite_rings
+            sage: G.edges(sort=True)                                                    # needs sage.graphs
             [('1', '28*i + 11', None),
              ('1', '31*i + 11', None),
              ...

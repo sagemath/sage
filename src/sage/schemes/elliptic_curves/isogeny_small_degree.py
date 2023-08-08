@@ -990,12 +990,13 @@ def isogenies_5_1728(E, minimal_models=True):
 
     An example of 5-isogenies over a number field::
 
+        sage: # needs sage.rings.number_field
         sage: x = polygen(QQ, 'x')
-        sage: K.<a> = NumberField(x**4 + 20*x**2 - 80)                                  # needs sage.rings.number_field
-        sage: K(5).is_square()  # necessary but not sufficient!                         # needs sage.rings.number_field
+        sage: K.<a> = NumberField(x**4 + 20*x**2 - 80)
+        sage: K(5).is_square()  # necessary but not sufficient!
         True
-        sage: E = EllipticCurve(K, [0,0,0,1,0])                                         # needs sage.rings.number_field
-        sage: isogenies_5_1728(E)                                                       # needs sage.rings.number_field
+        sage: E = EllipticCurve(K, [0,0,0,1,0])
+        sage: isogenies_5_1728(E)
         [Isogeny of degree 5
           from Elliptic Curve defined by y^2 = x^3 + x
                over Number Field in a with defining polynomial x^4 + 20*x^2 - 80
@@ -1137,11 +1138,12 @@ def isogenies_7_0(E, minimal_models=True):
             to Elliptic Curve defined by y^2 + y = x^3 + (-7) over Number Field in r
                with defining polynomial x^2 + 3 with r = 1.732050807568878?*I]
 
+        sage: # needs sage.rings.number_field
         sage: x = polygen(QQ, 'x')
-        sage: K.<a> = NumberField(x^6 + 1512*x^3 - 21168)                               # needs sage.rings.number_field
-        sage: E = EllipticCurve(K, [0,1])                                               # needs sage.rings.number_field
-        sage: isogs = isogenies_7_0(E)                                                  # needs sage.rings.number_field
-        sage: [phi.codomain().a_invariants() for phi in isogs]                          # needs sage.rings.number_field
+        sage: K.<a> = NumberField(x^6 + 1512*x^3 - 21168)
+        sage: E = EllipticCurve(K, [0,1])
+        sage: isogs = isogenies_7_0(E)
+        sage: [phi.codomain().a_invariants() for phi in isogs]
         [(0,
           0,
           0,
@@ -1154,7 +1156,7 @@ def isogenies_7_0(E, minimal_models=True):
           -24485/392*a^5 - 1080/7*a^4 - 2255/7*a^3 - 1340865/14*a^2 - 230040*a - 553500,
           1753037/56*a^5 + 8345733/112*a^4 + 374275/2*a^3
                          + 95377029/2*a^2 + 458385345/4*a + 275241835)]
-        sage: [phi.codomain().j_invariant() for phi in isogs]                           # needs sage.rings.number_field
+        sage: [phi.codomain().j_invariant() for phi in isogs]
         [158428486656000/7*a^3 - 313976217600000,
         -158428486656000/7*a^3 - 34534529335296000]
     """
@@ -1245,20 +1247,21 @@ def isogenies_7_1728(E, minimal_models=True):
 
     ::
 
+        sage: # needs sage.rings.number_field
         sage: x = polygen(QQ, 'x')
-        sage: K.<a> = NumberField(x^8 + 84*x^6 - 1890*x^4 + 644*x^2 - 567)              # needs sage.rings.number_field
-        sage: E = EllipticCurve(K, [1, 0])                                              # needs sage.rings.number_field
-        sage: isogs = isogenies_7_1728(E)                                               # needs sage.rings.number_field
-        sage: [phi.codomain().j_invariant() for phi in isogs]                           # needs sage.rings.number_field
+        sage: K.<a> = NumberField(x^8 + 84*x^6 - 1890*x^4 + 644*x^2 - 567)
+        sage: E = EllipticCurve(K, [1, 0])
+        sage: isogs = isogenies_7_1728(E)
+        sage: [phi.codomain().j_invariant() for phi in isogs]
         [-526110256146528/53*a^6 + 183649373229024*a^4
                                  - 3333881559996576/53*a^2 + 2910267397643616/53,
          -526110256146528/53*a^6 + 183649373229024*a^4
                                  - 3333881559996576/53*a^2 + 2910267397643616/53]
-        sage: E1 = isogs[0].codomain()                                                  # needs sage.rings.number_field
-        sage: E2 = isogs[1].codomain()                                                  # needs sage.rings.number_field
-        sage: E1.is_isomorphic(E2)                                                      # needs sage.rings.number_field
+        sage: E1 = isogs[0].codomain()
+        sage: E2 = isogs[1].codomain()
+        sage: E1.is_isomorphic(E2)
         False
-        sage: E1.is_quadratic_twist(E2)                                                 # needs sage.rings.number_field
+        sage: E1.is_quadratic_twist(E2)
         -1
     """
     if E.j_invariant() != 1728:
@@ -2181,13 +2184,14 @@ def isogenies_prime_degree_genus_plus_0_j1728(E, l, minimal_models=True):
 
         sage: from sage.schemes.elliptic_curves.isogeny_small_degree import isogenies_prime_degree_genus_plus_0_j1728
 
+        sage: # needs sage.rings.number_field
         sage: u = polygen(QQ)
-        sage: K.<a> = NumberField(u^6 - 522*u^5 - 10017*u^4                             # needs sage.rings.number_field
+        sage: K.<a> = NumberField(u^6 - 522*u^5 - 10017*u^4
         ....:                     + 2484*u^3 - 5265*u^2 + 12150*u - 5103)
-        sage: E = EllipticCurve(K, [-75295/1335852*a^5 + 13066735/445284*a^4            # needs sage.rings.number_field
+        sage: E = EllipticCurve(K, [-75295/1335852*a^5 + 13066735/445284*a^4
         ....:                       + 44903485/74214*a^3 + 17086861/24738*a^2
         ....:                       + 11373021/16492*a - 1246245/2356, 0])
-        sage: isogenies_prime_degree_genus_plus_0_j1728(E, 11)                          # needs sage.rings.number_field
+        sage: isogenies_prime_degree_genus_plus_0_j1728(E, 11)
         [Isogeny of degree 11
           from Elliptic Curve defined by
                y^2 = x^3 + (-75295/1335852*a^5+13066735/445284*a^4+44903485/74214*a^3+17086861/24738*a^2+11373021/16492*a-1246245/2356)*x
@@ -2208,9 +2212,9 @@ def isogenies_prime_degree_genus_plus_0_j1728(E, l, minimal_models=True):
                       + (3540460*a^3-30522492*a^2+7043652*a+5031180)
                over Number Field in a with defining polynomial
                x^6 - 522*x^5 - 10017*x^4 + 2484*x^3 - 5265*x^2 + 12150*x - 5103]
-        sage: i = QuadraticField(-1,'i').gen()                                          # needs sage.rings.number_field
-        sage: E = EllipticCurve([-1 - 2*i, 0])                                          # needs sage.rings.number_field
-        sage: isogenies_prime_degree_genus_plus_0_j1728(E, 17)                          # needs sage.rings.number_field
+        sage: i = QuadraticField(-1,'i').gen()
+        sage: E = EllipticCurve([-1 - 2*i, 0])
+        sage: isogenies_prime_degree_genus_plus_0_j1728(E, 17)
         [Isogeny of degree 17
           from Elliptic Curve defined by y^2 = x^3 + (-2*i-1)*x
                over Number Field in i with defining polynomial x^2 + 1 with i = 1*I
@@ -2221,8 +2225,8 @@ def isogenies_prime_degree_genus_plus_0_j1728(E, l, minimal_models=True):
                over Number Field in i with defining polynomial x^2 + 1 with i = 1*I
             to Elliptic Curve defined by y^2 = x^3 + (-562*i+319)*x
                over Number Field in i with defining polynomial x^2 + 1 with i = 1*I]
-        sage: Emin = E.global_minimal_model()                                           # needs sage.rings.number_field
-        sage: [(p, len(isogenies_prime_degree_genus_plus_0_j1728(Emin, p)))             # needs sage.rings.number_field
+        sage: Emin = E.global_minimal_model()
+        sage: [(p, len(isogenies_prime_degree_genus_plus_0_j1728(Emin, p)))
         ....:  for p in [17, 29, 41]]
         [(17, 2), (29, 2), (41, 2)]
     """

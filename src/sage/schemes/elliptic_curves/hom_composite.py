@@ -301,14 +301,15 @@ class EllipticCurveHom_composite(EllipticCurveHom):
 
         The given kernel generators need not be independent::
 
+            sage: # needs sage.rings.number_field
             sage: x = polygen(ZZ, 'x')
-            sage: K.<a> = NumberField(x^2 - x - 5)                                      # needs sage.rings.number_field
-            sage: E = EllipticCurve('210.b6').change_ring(K)                            # needs sage.rings.number_field
-            sage: E.torsion_subgroup()                                                  # needs sage.rings.number_field
+            sage: K.<a> = NumberField(x^2 - x - 5)
+            sage: E = EllipticCurve('210.b6').change_ring(K)
+            sage: E.torsion_subgroup()
             Torsion Subgroup isomorphic to Z/12 + Z/2 associated to the Elliptic Curve
              defined by y^2 + x*y + y = x^3 + (-578)*x + 2756
               over Number Field in a with defining polynomial x^2 - x - 5
-            sage: EllipticCurveHom_composite(E, E.torsion_points())                     # needs sage.rings.number_field
+            sage: EllipticCurveHom_composite(E, E.torsion_points())
             Composite morphism of degree 24 = 2^3*3:
               From: Elliptic Curve defined by y^2 + x*y + y = x^3 + (-578)*x + 2756
                     over Number Field in a with defining polynomial x^2 - x - 5
@@ -435,7 +436,7 @@ class EllipticCurveHom_composite(EllipticCurveHom):
         TESTS::
 
             sage: E = EllipticCurve('4730k1')
-            sage: EllipticCurveHom_composite.from_factors([], E) == E.scalar_multiplication(1)
+            sage: EllipticCurveHom_composite.from_factors([], E) == E.scalar_multiplication(1)      # needs sage.rings.finite_rings
             True
 
         ::
@@ -477,13 +478,14 @@ class EllipticCurveHom_composite(EllipticCurveHom):
 
         TESTS::
 
+            sage: # needs sage.rings.number_field
             sage: from sage.schemes.elliptic_curves.hom_composite import EllipticCurveHom_composite
             sage: x = polygen(ZZ, 'x')
-            sage: K.<a> = NumberField(x^2 - x - 5)                                                  # needs sage.rings.number_field
-            sage: E = EllipticCurve('210.b6').change_ring(K)                                        # needs sage.rings.number_field
-            sage: psi = EllipticCurveHom_composite(E, E.torsion_points())                           # needs sage.rings.number_field
-            sage: R = E.lift_x(15/4 * (a+3))                                                        # needs sage.rings.number_field
-            sage: psi(R)    # indirect doctest                                                      # needs sage.rings.number_field
+            sage: K.<a> = NumberField(x^2 - x - 5)
+            sage: E = EllipticCurve('210.b6').change_ring(K)
+            sage: psi = EllipticCurveHom_composite(E, E.torsion_points())
+            sage: R = E.lift_x(15/4 * (a+3))
+            sage: psi(R)    # indirect doctest
             (1033648757/303450 : -58397496786187/1083316500*a + 54706287407197/2166633000 : 1)
 
         Check that copying the order over works::
@@ -678,10 +680,10 @@ class EllipticCurveHom_composite(EllipticCurveHom):
             sage: # needs sage.rings.finite_rings
             sage: E = EllipticCurve(GF(431**2), [1,0])
             sage: P,Q = E.gens()
-            sage: phi1 = EllipticCurveHom_composite(E, P)
-            sage: phi2 = EllipticCurveHom_composite(phi1.codomain(), phi1(Q))
-            sage: psi1 = EllipticCurveHom_composite(E, Q)
-            sage: psi2 = EllipticCurveHom_composite(psi1.codomain(), psi1(P))
+            sage: phi1 = EllipticCurveHom_composite(E, P)                               # needs sage.rings.number_field
+            sage: phi2 = EllipticCurveHom_composite(phi1.codomain(), phi1(Q))           # needs sage.rings.number_field
+            sage: psi1 = EllipticCurveHom_composite(E, Q)                               # needs sage.rings.number_field
+            sage: psi2 = EllipticCurveHom_composite(psi1.codomain(), psi1(P))           # needs sage.rings.number_field
             sage: phi2 * phi1 == psi2 * psi1
             True
         """

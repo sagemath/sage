@@ -77,7 +77,7 @@ Let us look at one affine patch, for example the one where `x_0=1` ::
       -x1^2 + x2,
       -x1*x2 + x3,
       -x2^2 + x1*x3
-    sage: patch.embedding_morphism()                                                    # needs sage.libs.singular
+    sage: patch.embedding_morphism()                                                    # needs sage.libs.singular sage.modules
     Scheme morphism:
       From: Closed subscheme of Affine Space of dimension 3 over Rational Field
             defined by: -x1^2 + x2, -x1*x2 + x3, -x2^2 + x1*x3

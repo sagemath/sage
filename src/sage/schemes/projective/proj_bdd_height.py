@@ -256,10 +256,46 @@ def points_of_bounded_height(PS, K, dim, bound, prec=53):
 
         sage: from sage.schemes.projective.proj_bdd_height import points_of_bounded_height
         sage: x = polygen(ZZ, 'x')
-        sage: K.<a> = NumberField(x^3 - 7)                                                          # needs sage.rings.number_field
-        sage: P.<x,y,z> = ProjectiveSpace(K, 2)                                                     # needs sage.rings.number_field
-        sage: len(list(points_of_bounded_height(P, K, 2, 1)))                                       # needs sage.geometry.polyhedron sage.libs.pari sage.rings.number_field
-        13
+
+        sage: # needs sage.geometry.polyhedron sage.libs.pari sage.rings.number_field
+        sage: K.<a> = NumberField(x^3 - 7)
+        sage: P.<x,y,z> = ProjectiveSpace(K, 2)
+        sage: sorted(list(points_of_bounded_height(P, K, 2, 1)))
+        [(0 : 0 : 1), (0 : 1 : 0), (1 : 0 : 0), (0 : -1 : 1), (0 : 1 : 1),
+         (-1 : 0 : 1), (1 : 0 : 1), (1 : 1 : 0), (-1 : 1 : 0), (-1 : -1 : 1),
+         (-1 : 1 : 1), (1 : -1 : 1), (1 : 1 : 1)]
+
+    ::
+
+        sage: # needs sage.geometry.polyhedron sage.libs.pari sage.rings.number_field
+        sage: R.<x> = QQ[]
+        sage: K.<a> = NumberField(3*x^2 + 1)
+        sage: O = K.maximal_order()
+        sage: P.<z,w> = ProjectiveSpace(O, 1)
+        sage: len(list(P.points_of_bounded_height(bound=2)))
+        44
+
+    ::
+
+        sage: # needs sage.geometry.polyhedron sage.libs.pari sage.rings.number_field
+        sage: R.<x> = QQ[]
+        sage: K.<a> = NumberField(3*x^2 + 1)
+        sage: O = K.maximal_order()
+        sage: P.<z,w> = ProjectiveSpace(O, 1)
+        sage: sorted(list(P.points_of_bounded_height(bound=1)))
+        [(-1 : 1), (-3/2*a - 1/2 : 1), (3/2*a - 1/2 : 1), (0 : 1),
+         (-3/2*a + 1/2 : 0), (-3/2*a + 1/2 : 1), (3/2*a + 1/2 : 1), (1 : 1)]
+
+    ::
+
+        sage: # needs sage.geometry.polyhedron sage.libs.pari sage.rings.number_field
+        sage: R.<x> = QQ[]
+        sage: K.<z> = NumberField(x^2 - 2)
+        sage: R2.<y> = K[]
+        sage: L.<w> = K.extension(y^2 - 3)
+        sage: P.<a,b> = ProjectiveSpace(L, 1)
+        sage: len(list(P.points_of_bounded_height(bound=2)))
+        256
     """
     if bound < 1:
         return iter([])
