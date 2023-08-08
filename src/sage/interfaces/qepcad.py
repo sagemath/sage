@@ -404,13 +404,14 @@ For programmatic access to cells, we have defined a \sage wrapper class
 A :class:`QepcadCell` has accessor methods for the important state held
 within a cell.  For instance::
 
-    sage: c.level()                                  # optional - qepcad
+    sage: # optional - qepcad
+    sage: c.level()
     2
-    sage: c.index()                                  # optional - qepcad
+    sage: c.index()
     (3, 4)
-    sage: qe.cell(3).number_of_children()            # optional - qepcad
+    sage: qe.cell(3).number_of_children()
     5
-    sage: len(qe.cell(3))                            # optional - qepcad
+    sage: len(qe.cell(3))
     5
 
 One particularly useful thing we can get from a cell is its sample point,
@@ -574,19 +575,20 @@ Tests related to the not tested examples (nondeterministic order of atoms)::
     sage: _qepcad_atoms(qepcad(F, solution='extended'))            # optional - qepcad
     {'x > _root_1 2 x^2 - 3', 'x^2 - 3 <= 0'}
 
-    sage: qe = qepcad(qf.and_(ellipse == 0, circle == 0), interact=True)       # optional - qepcad
-    sage: qe.go(); qe.go(); qe.go()                         # optional - qepcad
+    sage: # optional - qepcad
+    sage: qe = qepcad(qf.and_(ellipse == 0, circle == 0), interact=True)
+    sage: qe.go(); qe.go(); qe.go()
     QEPCAD object has moved to phase 'Before Projection (y)'
     QEPCAD object has moved to phase 'Before Choice'
     QEPCAD object has moved to phase 'Before Solution'
-    sage: for c in qe.cell():                               # optional - qepcad
+    sage: for c in qe.cell():
     ....:     count_ellipse = 0
     ....:     count_circle = 0
     ....:     for c2 in c:
     ....:         count_ellipse += (c2.signs()[1][0] == 0)
     ....:         count_circle += (c2.signs()[1][1] == 0)
     ....:     c.set_truth(count_ellipse == 2 and count_circle == 2)
-    sage: _qepcad_atoms(qe.solution_extension('G'))                # optional - qepcad
+    sage: _qepcad_atoms(qe.solution_extension('G'))
     {'8 x^2 - 8 x - 29 < 0', 'x^2 - 3 < 0'}
 
 
@@ -1043,24 +1045,25 @@ class Qepcad:
 
         EXAMPLES::
 
-            sage: qe = qepcad(x > 2/3, interact=True) # optional - qepcad
-            sage: qe.phase() # optional - qepcad
+            sage: # optional - qepcad
+            sage: qe = qepcad(x > 2/3, interact=True)
+            sage: qe.phase()
             'Before Normalization'
-            sage: qe.go() # optional - qepcad
+            sage: qe.go()
             QEPCAD object has moved to phase 'At the end of projection phase'
-            sage: qe.phase() # optional  - qepcad
+            sage: qe.phase()
             'At the end of projection phase'
-            sage: qe.go() # optional - qepcad
+            sage: qe.go()
             QEPCAD object has moved to phase 'Before Choice'
-            sage: qe.phase() # optional - qepcad
+            sage: qe.phase()
             'Before Choice'
-            sage: qe.go() # optional - qepcad
+            sage: qe.go()
             QEPCAD object has moved to phase 'Before Solution'
-            sage: qe.phase() # optional - qepcad
+            sage: qe.phase()
             'Before Solution'
-            sage: qe.go() # optional - qepcad
+            sage: qe.go()
             3 x - 2 > 0
-            sage: qe.phase() # optional - qepcad
+            sage: qe.phase()
             'EXITED'
         """
         match = self._qex.expect().match
@@ -1078,13 +1081,14 @@ class Qepcad:
 
         EXAMPLES::
 
-            sage: qe = qepcad(x^2 > 2, interact=True) # optional - qepcad
-            sage: qe.finish() # optional - qepcad
+            sage: # optional - qepcad
+            sage: qe = qepcad(x^2 > 2, interact=True)
+            sage: qe.finish()
             x^2 - 2 > 0
-            sage: (ans, stats) = qe._parse_answer_stats() # optional - qepcad
-            sage: ans # optional - qepcad
+            sage: (ans, stats) = qe._parse_answer_stats()
+            sage: ans
             'x^2 - 2 > 0'
-            sage: stats # random, optional - qepcad
+            sage: stats
             '-----------------------------------------------------------------------------\r\n0 Garbage collections, 0 Cells and 0 Arrays reclaimed, in 0 milliseconds.\r\n492514 Cells in AVAIL, 500000 Cells in SPACE.\r\n\r\nSystem time: 16 milliseconds.\r\nSystem time after the initialization: 4 milliseconds.\r\n-----------------------------------------------------------------------------\r\n'
         """
         if self.phase() != 'EXITED':
@@ -1167,14 +1171,15 @@ class Qepcad:
 
         EXAMPLES::
 
-            sage: qe = qepcad(x + 3 == 42, interact=True) # optional - qepcad
-            sage: qe.go(); qe.go(); qe.go() # optional - qepcad
+            sage: # optional - qepcad
+            sage: qe = qepcad(x + 3 == 42, interact=True)
+            sage: qe.go(); qe.go(); qe.go()
             QEPCAD object has moved to phase 'At the end of projection phase'
             QEPCAD object has moved to phase 'Before Choice'
             QEPCAD object has moved to phase 'Before Solution'
-            sage: qe.cell(2) # optional - qepcad
+            sage: qe.cell(2)
             QEPCAD cell (2)
-            sage: qe.cell(2) is qe.cell(2) # optional - qepcad
+            sage: qe.cell(2) is qe.cell(2)
             True
         """
         index_str = _format_cell_index(index)
@@ -2695,16 +2700,17 @@ class QepcadCell:
 
         EXAMPLES::
 
-            sage: qe = qepcad(x^2 - x - 1 == 0, interact=True) # optional - qepcad
-            sage: qe.go(); qe.go(); qe.go() # optional - qepcad
+            sage: # optional - qepcad
+            sage: qe = qepcad(x^2 - x - 1 == 0, interact=True)
+            sage: qe.go(); qe.go(); qe.go()
             QEPCAD object has moved to phase 'At the end of projection phase'
             QEPCAD object has moved to phase 'Before Choice'
             QEPCAD object has moved to phase 'Before Solution'
-            sage: v1 = qe.cell(2).sample_point()[0]; v1 # optional - qepcad
+            sage: v1 = qe.cell(2).sample_point()[0]; v1
             -0.618033988749895?
-            sage: v2 = qe.cell(4).sample_point()[0]; v2 # optional - qepcad
+            sage: v2 = qe.cell(4).sample_point()[0]; v2
             1.618033988749895?
-            sage: v1 + v2 == 1 # optional - qepcad
+            sage: v1 + v2 == 1
             True
         """
         try:

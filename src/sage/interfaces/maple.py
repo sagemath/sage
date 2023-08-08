@@ -24,15 +24,16 @@ Maple (and get the result back as a string).
 
 EXAMPLES::
 
-    sage: maple('3 * 5')                                 # optional - maple
+    sage: # optional - maple
+    sage: maple('3 * 5')
     15
-    sage: maple.eval('ifactor(2005)')                    # optional - maple
+    sage: maple.eval('ifactor(2005)')
     '``(5)*``(401)'
-    sage: maple.ifactor(2005)                            # optional - maple
+    sage: maple.ifactor(2005)
     ``(5)*``(401)
-    sage: maple.fsolve('x^2=cos(x)+4', 'x=0..5')         # optional - maple
+    sage: maple.fsolve('x^2=cos(x)+4', 'x=0..5')
     1.914020619
-    sage: maple.factor('x^5 - y^5')                      # optional - maple
+    sage: maple.factor('x^5 - y^5')
     (x-y)*(x^4+x^3*y+x^2*y^2+x*y^3+y^4)
 
 If the string "error" (case insensitive) occurs in the output of
@@ -192,12 +193,13 @@ provably correct answer, whereas Maple is sometimes wrong).
 
 ::
 
-    sage: alpha = maple('(1+sqrt(5))/2')         # optional - maple
-    sage: beta = maple('(1-sqrt(5))/2')          # optional - maple
-    sage: f19  = alpha^19 - beta^19/maple('sqrt(5)')      # optional - maple
-    sage: f19                                             # optional - maple
+    sage: # optional - maple
+    sage: alpha = maple('(1+sqrt(5))/2')
+    sage: beta = maple('(1-sqrt(5))/2')
+    sage: f19  = alpha^19 - beta^19/maple('sqrt(5)')
+    sage: f19
     (1/2+1/2*5^(1/2))^19-1/5*(1/2-1/2*5^(1/2))^19*5^(1/2)
-    sage: f19.simplify()                # somewhat randomly ordered output; optional - maple
+    sage: f19.simplify()
     6765+5778/5*5^(1/2)
 
 Let's say we want to write a maple program now that squares a
@@ -356,11 +358,12 @@ class Maple(ExtraTabCompletion, Expect):
 
         ::
 
-            sage: filename = tmp_filename()  # optional - maple
-            sage: with open(filename, 'w') as f:   # optional - maple
+            sage: # optional - maple
+            sage: filename = tmp_filename()
+            sage: with open(filename, 'w') as f:
             ....:     _ = f.write('xx := 22;\n')
-            sage: maple.read(filename)    # optional - maple
-            sage: maple.get('xx').strip() # optional - maple
+            sage: maple.read(filename)
+            sage: maple.get('xx').strip()
             '22'
         """
         return 'read "%s"' % filename
@@ -374,12 +377,13 @@ class Maple(ExtraTabCompletion, Expect):
 
         ::
 
-            sage: m = Maple()        # optional - maple
-            sage: a = m(2)           # optional - maple
-            sage: m.is_running()     # optional - maple
+            sage: # optional - maple
+            sage: m = Maple()
+            sage: a = m(2)
+            sage: m.is_running()
             True
-            sage: m.quit()           # optional - maple
-            sage: m.is_running()     # optional - maple
+            sage: m.quit()
+            sage: m.is_running()
             False
         """
         return 'quit'
@@ -428,13 +432,14 @@ connection to a server running Maple; for hints, type
 
         EXAMPLES::
 
-            sage: m = Maple()          # optional - maple
-            sage: m.expect() is None   # optional - maple
+            sage: # optional - maple
+            sage: m = Maple()
+            sage: m.expect() is None
             True
-            sage: m._start()           # optional - maple
-            sage: m.expect()           # optional - maple
+            sage: m._start()
+            sage: m.expect()
             Maple with PID ...
-            sage: m.quit()             # optional - maple
+            sage: m.quit()
         """
         return self._expect
 
@@ -593,13 +598,14 @@ connection to a server running Maple; for hints, type
 
         EXAMPLES::
 
-            sage: t = maple.cputime() # optional - maple
-            sage: t                   # random; optional - maple
+            sage: # optional - maple
+            sage: t = maple.cputime()
+            sage: t
             0.02
-            sage: x = maple('x')      # optional - maple
-            sage: maple.diff(x^2, x)  # optional - maple
+            sage: x = maple('x')
+            sage: maple.diff(x^2, x)
             2*x
-            sage: maple.cputime(t)    # random; optional - maple
+            sage: maple.cputime(t)
             0.0
         """
         if t is None:
@@ -800,17 +806,18 @@ connection to a server running Maple; for hints, type
 
         ::
 
-            sage: maple.quit()   # reset maple; optional -- maple
-            sage: maple('partition(10)')              # optional - maple
+            sage: # optional - maple
+            sage: maple.quit()
+            sage: maple('partition(10)')
             partition(10)
-            sage: maple('bell(10)')                   # optional - maple
+            sage: maple('bell(10)')
             bell(10)
-            sage: maple.with_package('combinat')      # optional - maple
-            sage: maple('partition(10)')              # optional - maple
+            sage: maple.with_package('combinat')
+            sage: maple('partition(10)')
             [[1, 1, 1, 1, 1, 1, 1, 1, 1, 1], [1, 1, 1, 1, 1, 1, 1, 1, 2], [1, 1, 1, 1, 1, 1, 2, 2], [1, 1, 1, 1, 2, 2, 2], [1, 1, 2, 2, 2, 2], [2, 2, 2, 2, 2], [1, 1, 1, 1, 1, 1, 1, 3], [1, 1, 1, 1, 1, 2, 3], [1, 1, 1, 2, 2, 3], [1, 2, 2, 2, 3], [1, 1, 1, 1, 3, 3], [1, 1, 2, 3, 3], [2, 2, 3, 3], [1, 3, 3, 3], [1, 1, 1, 1, 1, 1, 4], [1, 1, 1, 1, 2, 4], [1, 1, 2, 2, 4], [2, 2, 2, 4], [1, 1, 1, 3, 4], [1, 2, 3, 4], [3, 3, 4], [1, 1, 4, 4], [2, 4, 4], [1, 1, 1, 1, 1, 5], [1, 1, 1, 2, 5], [1, 2, 2, 5], [1, 1, 3, 5], [2, 3, 5], [1, 4, 5], [5, 5], [1, 1, 1, 1, 6], [1, 1, 2, 6], [2, 2, 6], [1, 3, 6], [4, 6], [1, 1, 1, 7], [1, 2, 7], [3, 7], [1, 1, 8], [2, 8], [1, 9], [10]]
-            sage: maple('bell(10)')                   # optional - maple
+            sage: maple('bell(10)')
             115975
-            sage: maple('fibonacci(10)')              # optional - maple
+            sage: maple('fibonacci(10)')
             55
         """
         self.eval('with(%s)' % package)
@@ -826,11 +833,12 @@ connection to a server running Maple; for hints, type
 
         EXAMPLES::
 
-            sage: maple.set('xx', '2')  # optional - maple
-            sage: maple.get('xx')       # optional - maple
+            sage: # optional - maple
+            sage: maple.set('xx', '2')
+            sage: maple.get('xx')
             '2'
-            sage: maple.clear('xx')     # optional - maple
-            sage: maple.get('xx')       # optional - maple
+            sage: maple.clear('xx')
+            sage: maple.get('xx')
             'xx'
         """
         self.set(var, "'{}'".format(var))
@@ -934,15 +942,16 @@ class MapleElement(ExtraTabCompletion, ExpectElement):
 
         EXAMPLES::
 
-            sage: m = maple('x^2+y^2')                      # optional - maple
-            sage: m.__hash__()                              # optional - maple
+            sage: # optional - maple
+            sage: m = maple('x^2+y^2')
+            sage: m.__hash__()
             188724254834261060184983038723355865733
-            sage: hash(m)               # random            # optional - maple
+            sage: hash(m)               # random
             5035731711831192733
-            sage: m = maple('x^2+y^3')                      # optional - maple
-            sage: m.__hash__()          # random            # optional - maple
+            sage: m = maple('x^2+y^3')
+            sage: m.__hash__()          # random
             264835029579301191531663246434344770556
-            sage: hash(m)               # random            # optional - maple
+            sage: hash(m)               # random
             -2187277978252104690
         """
         return int(maple.eval('StringTools:-Hash(convert(%s, string))' % self.name())[1:-1], 16)
@@ -956,23 +965,25 @@ class MapleElement(ExtraTabCompletion, ExpectElement):
 
         EXAMPLES::
 
-            sage: a = maple(5)                             # optional - maple
-            sage: b = maple(5)                             # optional - maple
-            sage: a == b                                   # optional - maple
+            sage: # optional - maple
+            sage: a = maple(5)
+            sage: b = maple(5)
+            sage: a == b
             True
-            sage: a == 5                                   # optional - maple
+            sage: a == 5
             True
 
         ::
 
-            sage: c = maple(3)                             # optional - maple
-            sage: a == c                                   # optional - maple
+            sage: # optional - maple
+            sage: c = maple(3)
+            sage: a == c
             False
-            sage: a < c                                    # optional - maple
+            sage: a < c
             False
-            sage: a < 6                                    # optional - maple
+            sage: a < 6
             True
-            sage: c <= a                                   # optional - maple
+            sage: c <= a
             True
 
         ::
@@ -1024,14 +1035,15 @@ class MapleElement(ExtraTabCompletion, ExpectElement):
 
         EXAMPLES::
 
-            sage: t = maple(5); u = maple(3)                # optional - maple
-            sage: t*u                                       # optional - maple
+            sage: # optional - maple
+            sage: t = maple(5); u = maple(3)
+            sage: t*u
             15
-            sage: t._mul_(u)                                # optional - maple
+            sage: t._mul_(u)
             15
-            sage: M = matrix(ZZ,2,range(4))                 # optional - maple
-            sage: Mm = maple(M)                             # optional - maple
-            sage: Mm*Mm                                     # optional - maple
+            sage: M = matrix(ZZ,2,range(4))
+            sage: Mm = maple(M)
+            sage: Mm*Mm
             Matrix(2, 2, [[2,3],[6,11]])
 
         ::

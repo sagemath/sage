@@ -91,18 +91,19 @@ The interface to GAP3 offers the following functionality.
     ``gap_element.recfield`` provides a means to access the record element
     corresponding to the field ``recfield``::
 
-        sage: S5.IsRec()                                   #optional - gap3
+        sage: # optional - gap3
+        sage: S5.IsRec()
         true
-        sage: S5.recfields()                               #optional - gap3
+        sage: S5.recfields()
         ['isDomain', 'isGroup', 'identity', 'generators', 'operations',
         'isPermGroup', 'isFinite', '1', '2', '3', '4', 'degree']
-        sage: S5.identity                                  #optional - gap3
+        sage: S5.identity
         ()
-        sage: S5.degree                                    #optional - gap3
+        sage: S5.degree
         5
-        sage: S5.1                                         #optional - gap3
+        sage: S5.1
         (1,5)
-        sage: S5.2                                         #optional - gap3
+        sage: S5.2
         (2,5)
 
 #.  By typing ``%gap3`` or ``gap3.interact()`` at the command-line, you can
@@ -178,33 +179,35 @@ Load a GAP3 package::
 
 Working with GAP3 lists. Note that GAP3 lists are 1-indexed::
 
-    sage: L = gap3([1,2,3])                                #optional - gap3
-    sage: L[1]                                             #optional - gap3
+    sage: # optional - gap3
+    sage: L = gap3([1,2,3])
+    sage: L[1]
     1
-    sage: L[2]                                             #optional - gap3
+    sage: L[2]
     2
-    sage: 3 in L                                           #optional - gap3
+    sage: 3 in L
     True
-    sage: 4 in L                                           #optional - gap3
+    sage: 4 in L
     False
-    sage: m = gap3([[1,2],[3,4]])                          #optional - gap3
-    sage: m[2,1]                                           #optional - gap3
+    sage: m = gap3([[1,2],[3,4]])
+    sage: m[2,1]
     3
-    sage: [1,2] in m                                       #optional - gap3
+    sage: [1,2] in m
     True
-    sage: [3,2] in m                                       #optional - gap3
+    sage: [3,2] in m
     False
-    sage: gap3([1,2]) in m                                 #optional - gap3
+    sage: gap3([1,2]) in m
     True
 
 Controlling variable names used by GAP3::
 
-    sage: gap3('2', name='x')                              #optional - gap3
+    sage: # optional - gap3
+    sage: gap3('2', name='x')
     2
-    sage: gap3('x')                                        #optional - gap3
+    sage: gap3('x')
     2
-    sage: gap3.unbind('x')                                 #optional - gap3
-    sage: gap3('x')                                        #optional - gap3
+    sage: gap3.unbind('x')
+    sage: gap3('x')
     Traceback (most recent call last):
     ...
     TypeError: Gap3 produced error output
@@ -445,19 +448,20 @@ class Gap3(Gap_generic):
 
         TESTS::
 
-            sage: m = gap3([[1,2,3],[4,5,6]]); m           #optional - gap3
+            sage: # optional - gap3
+            sage: m = gap3([[1,2,3],[4,5,6]]); m
             [ [ 1, 2, 3 ], [ 4, 5, 6 ] ]
-            sage: gap3.help('help', pager=False)           #optional - gap3
+            sage: gap3.help('help', pager=False)
             Help _______________________________________________________...
-            sage: m                                        #optional - gap3
+            sage: m
             [ [ 1, 2, 3 ], [ 4, 5, 6 ] ]
-            sage: m.Print()                                #optional - gap3
+            sage: m.Print()
             [ [ 1, 2, 3 ], [ 4, 5, 6 ] ]
-            sage: gap3.help('Group', pager=False)          #optional - gap3
+            sage: gap3.help('Group', pager=False)
             Group ______________________________________________________...
-            sage: m                                        #optional - gap3
+            sage: m
             [ [ 1, 2, 3 ], [ 4, 5, 6 ] ]
-            sage: m.Print()                                #optional - gap3
+            sage: m.Print()
             [ [ 1, 2, 3 ], [ 4, 5, 6 ] ]
         """
 
@@ -510,14 +514,15 @@ class Gap3(Gap_generic):
 
         EXAMPLES::
 
-            sage: t = gap3.cputime()                       #optional - gap3
-            sage: t  #random                               #optional - gap3
+            sage: # optional - gap3
+            sage: t = gap3.cputime()
+            sage: t  #random
             0.02
-            sage: gap3.SymmetricGroup(5).Size()            #optional - gap3
+            sage: gap3.SymmetricGroup(5).Size()
             120
-            sage: gap3.cputime()  #random                  #optional - gap3
+            sage: gap3.cputime()  #random
             0.14999999999999999
-            sage: gap3.cputime(t)  #random                 #optional - gap3
+            sage: gap3.cputime(t)  #random
             0.13
         """
         if t is not None:
@@ -713,16 +718,17 @@ class GAP3Element(GapElement_generic):
         r"""
         EXAMPLES::
 
-            sage: l = gap3('[1,2,3]')                      #optional - gap3
-            sage: l[1]                                     #optional - gap3
+            sage: # optional - gap3
+            sage: l = gap3('[1,2,3]')
+            sage: l[1]
             1
-            sage: a = gap3([1,2,3])                        #optional - gap3
-            sage: a[1]                                     #optional - gap3
+            sage: a = gap3([1,2,3])
+            sage: a[1]
             1
-            sage: m = gap3([[1,2,3],[4,5,6],[7,8,9]])      #optional - gap3
-            sage: m[1,3]                                   #optional - gap3
+            sage: m = gap3([[1,2,3],[4,5,6],[7,8,9]])
+            sage: m[1,3]
             3
-            sage: m[2][1]                                  #optional - gap3
+            sage: m[2][1]
             4
         """
         gap3_session = self._check_valid()
@@ -827,12 +833,13 @@ class GAP3Record(GAP3Element):
 
         EXAMPLES::
 
-            sage: S5 = gap3.SymmetricGroup(5)              #optional - gap3
-            sage: S5.__getattr__('Size')                   #optional - gap3
+            sage: # optional - gap3
+            sage: S5 = gap3.SymmetricGroup(5)
+            sage: S5.__getattr__('Size')
             Size
-            sage: gap3.IsFunc(S5.__getattr__('Size'))      #optional - gap3
+            sage: gap3.IsFunc(S5.__getattr__('Size'))
             true
-            sage: S5.__getattr__('generators')             #optional - gap3
+            sage: S5.__getattr__('generators')
             [ (1,5), (2,5), (3,5), (4,5) ]
         """
         gap3_session = self._check_valid()

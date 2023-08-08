@@ -31,14 +31,15 @@ object. However if you want to import Mathematica's output back to Sage,
 call the Mathematica wrapper object's ``sage()`` method. This method returns
 a native Sage object::
 
-    sage: mobj = mathematica(x^2-1)             # optional - mathematica
-    sage: mobj2 = mobj.Factor(); mobj2          # optional - mathematica
+    sage: # optional - mathematica
+    sage: mobj = mathematica(x^2-1)
+    sage: mobj2 = mobj.Factor(); mobj2
     (-1 + x)*(1 + x)
-    sage: mobj2.parent()                        # optional - mathematica
+    sage: mobj2.parent()
     Mathematica
-    sage: sobj = mobj2.sage(); sobj             # optional - mathematica
+    sage: sobj = mobj2.sage(); sobj
     (x + 1)*(x - 1)
-    sage: sobj.parent()                         # optional - mathematica
+    sage: sobj.parent()
     Symbolic Ring
 
 
@@ -122,16 +123,17 @@ Some typical input
 
 We solve an equation and a system of two equations::
 
-    sage: eqn = mathematica('3x + 5 == 14') # optional - mathematica
-    sage: eqn                               # optional - mathematica
+    sage: # optional - mathematica
+    sage: eqn = mathematica('3x + 5 == 14')
+    sage: eqn
     5 + 3*x == 14
-    sage: eqn.Solve('x')                    # optional - mathematica
+    sage: eqn.Solve('x')
     {{x -> 3}}
-    sage: sys = mathematica('{x^2 - 3y == 3, 2x - y == 1}')  # optional - mathematica
-    sage: print(sys)                        # optional - mathematica
+    sage: sys = mathematica('{x^2 - 3y == 3, 2x - y == 1}')
+    sage: print(sys)
                2
              {x  - 3 y == 3, 2 x - y == 1}
-    sage: sys.Solve('{x, y}')               # optional - mathematica
+    sage: sys.Solve('{x, y}')
     {{x -> 0, y -> -1}, {x -> 6, y -> 11}}
 
 Assignments and definitions
@@ -227,15 +229,16 @@ We can also factor a multivariate polynomial::
 
 We factor an integer::
 
-    sage: n = mathematica(2434500)           # optional - mathematica
-    sage: n.FactorInteger()                  # optional - mathematica
+    sage: # optional - mathematica
+    sage: n = mathematica(2434500)
+    sage: n.FactorInteger()
     {{2, 2}, {3, 2}, {5, 3}, {541, 1}}
-    sage: n = mathematica(2434500)           # optional - mathematica
-    sage: F = n.FactorInteger(); F           # optional - mathematica
+    sage: n = mathematica(2434500)
+    sage: F = n.FactorInteger(); F
     {{2, 2}, {3, 2}, {5, 3}, {541, 1}}
-    sage: F[1]                               # optional - mathematica
+    sage: F[1]
     {2, 2}
-    sage: F[4]                               # optional - mathematica
+    sage: F[4]
     {541, 1}
 
 Mathematica's ECM package is no longer available.
@@ -261,17 +264,18 @@ first examples test saving and loading to strings.
 
 ::
 
-    sage: x = mathematica(pi/2)     # optional - mathematica
-    sage: print(x)                  # optional - mathematica
+    sage: # optional - mathematica
+    sage: x = mathematica(pi/2)
+    sage: print(x)
              Pi
              --
              2
-    sage: loads(dumps(x)) == x      # optional - mathematica
+    sage: loads(dumps(x)) == x
     True
-    sage: n = x.N(50)               # optional - mathematica
-    sage: print(n)                  # optional - mathematica
+    sage: n = x.N(50)
+    sage: print(n)
                   1.5707963267948966192313216916397514420985846996876
-    sage: loads(dumps(n)) == n      # optional - mathematica
+    sage: loads(dumps(n)) == n
     True
 
 Complicated translations
@@ -351,13 +355,14 @@ TESTS:
 Check that numerical approximations via Mathematica's `N[]` function work
 correctly (:trac:`18888`, :trac:`28907`)::
 
-    sage: mathematica('Pi/2').N(10)           # optional -- mathematica
+    sage: # optional - mathematica
+    sage: mathematica('Pi/2').N(10)
     1.5707963268
-    sage: mathematica('Pi').N(10)             # optional -- mathematica
+    sage: mathematica('Pi').N(10)
     3.1415926536
-    sage: mathematica('Pi').N(50)             # optional -- mathematica
+    sage: mathematica('Pi').N(50)
     3.14159265358979323846264338327950288419716939937511
-    sage: str(mathematica('Pi*x^2-1/2').N())  # optional -- mathematica
+    sage: str(mathematica('Pi*x^2-1/2').N())
                     2
     -0.5 + 3.14159 x
 
@@ -373,13 +378,14 @@ as Sage's `e` (:trac:`29833`)::
 Check that all trig/hyperbolic functions and their reciprocals are correctly
 translated to Mathematica (:trac:`34087`)::
 
-    sage: x=var('x')                               # optional - mathematica
-    sage: FL=[sin, cos, tan, csc, sec, cot,        # optional - mathematica
+    sage: # optional - mathematica
+    sage: x=var('x')
+    sage: FL=[sin, cos, tan, csc, sec, cot,
     ....:     sinh, cosh, tanh, csch, sech, coth]
-    sage: IFL=[arcsin, arccos, arctan, arccsc,     # optional - mathematica
+    sage: IFL=[arcsin, arccos, arctan, arccsc,
     ....:      arcsec, arccot, arcsinh, arccosh,
     ....:      arctanh, arccsch, arcsech, arccoth]
-    sage: [mathematica.TrigToExp(u(x)).sage()      # optional - mathematica
+    sage: [mathematica.TrigToExp(u(x)).sage()
     ....:  for u in FL]
     [-1/2*I*e^(I*x) + 1/2*I*e^(-I*x),
      1/2*e^(I*x) + 1/2*e^(-I*x),
@@ -393,7 +399,7 @@ translated to Mathematica (:trac:`34087`)::
      -2/(e^(-x) - e^x),
      2/(e^(-x) + e^x),
      -(e^(-x) + e^x)/(e^(-x) - e^x)]
-    sage: [mathematica.TrigToExp(u(x)).sage()      # optional - mathematica
+    sage: [mathematica.TrigToExp(u(x)).sage()
     ....:  for u in IFL]
     [-I*log(I*x + sqrt(-x^2 + 1)),
      1/2*pi + I*log(I*x + sqrt(-x^2 + 1)),
@@ -789,12 +795,13 @@ class MathematicaElement(ExpectElement):
         Mathematica lists of numbers/constants become Sage lists of
         numbers/constants::
 
-            sage: m = mathematica('{{1., 4}, Pi, 3.2e100, I}')  # optional - mathematica
-            sage: s = m.sage(); s       # optional - mathematica
+            sage: # optional - mathematica
+            sage: m = mathematica('{{1., 4}, Pi, 3.2e100, I}')
+            sage: s = m.sage(); s
             [[1.00000000000000, 4], pi, 3.20000000000000*e100, I]
-            sage: s[1].n()              # optional - mathematica
+            sage: s[1].n()
             3.14159265358979
-            sage: s[3]^2                # optional - mathematica
+            sage: s[3]^2
             -1
 
         ::
@@ -825,11 +832,12 @@ class MathematicaElement(ExpectElement):
 
         ::
 
-            sage: m = mathematica('bla^2')          # optional - mathematica
-            sage: mb = m.sage()                     # optional - mathematica
-            sage: var('bla')                        # optional - mathematica
+            sage: # optional - mathematica
+            sage: m = mathematica('bla^2')
+            sage: mb = m.sage()
+            sage: var('bla')
             bla
-            sage: bla^2 - mb                        # optional - mathematica
+            sage: bla^2 - mb
             0
 
 

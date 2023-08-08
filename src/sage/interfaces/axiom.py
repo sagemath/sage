@@ -304,12 +304,13 @@ class PanAxiom(ExtraTabCompletion, Expect):
 
         EXAMPLES::
 
-            sage: cmds = axiom._commands() #optional - axiom
-            sage: len(cmds) > 100  #optional - axiom
+            sage: # optional - axiom
+            sage: cmds = axiom._commands()
+            sage: len(cmds) > 100
             True
-            sage: '<' in cmds      #optional - axiom
+            sage: '<' in cmds
             True
-            sage: 'factor' in cmds #optional - axiom
+            sage: 'factor' in cmds
             True
         """
         s = self.eval(")what things")
@@ -327,18 +328,19 @@ class PanAxiom(ExtraTabCompletion, Expect):
 
         EXAMPLES::
 
-            sage: c = axiom._tab_completion(use_disk_cache=False, verbose=False) #optional - axiom
-            sage: len(c) > 100  #optional - axiom
+            sage: # optional - axiom
+            sage: c = axiom._tab_completion(use_disk_cache=False, verbose=False)
+            sage: len(c) > 100
             True
-            sage: 'factor' in c  #optional - axiom
+            sage: 'factor' in c
             True
-            sage: '**' in c     #optional - axiom
+            sage: '**' in c
             False
-            sage: 'upperCase?' in c  #optional - axiom
+            sage: 'upperCase?' in c
             False
-            sage: 'upperCase_q' in c #optional - axiom
+            sage: 'upperCase_q' in c
             True
-            sage: 'upperCase_e' in c #optional - axiom
+            sage: 'upperCase_e' in c
             True
         """
         try:
@@ -396,11 +398,12 @@ class PanAxiom(ExtraTabCompletion, Expect):
 
         EXAMPLES::
 
-            sage: axiom.set('xx', '2')    #optional - axiom
-            sage: axiom.get('xx')         #optional - axiom
+            sage: # optional - axiom
+            sage: axiom.set('xx', '2')
+            sage: axiom.get('xx')
             '2'
-            sage: a = axiom('(1 + sqrt(2))^5') #optional - axiom
-            sage: axiom.get(a.name())          #optional - axiom
+            sage: a = axiom('(1 + sqrt(2))^5')
+            sage: axiom.get(a.name())
             '     +-+\r\r\n  29\\|2  + 41'
         """
         s = self._eval_line(str(var))
@@ -571,26 +574,28 @@ class PanAxiomElement(ExpectElement, sage.interfaces.abc.AxiomElement):
         """
         EXAMPLES::
 
-            sage: two = axiom(2)  #optional - axiom
-            sage: two == 2        #optional - axiom
+            sage: # optional - axiom
+            sage: two = axiom(2)
+            sage: two == 2
             True
-            sage: two == 3        #optional - axiom
+            sage: two == 3
             False
-            sage: two < 3         #optional - axiom
+            sage: two < 3
             True
-            sage: two > 1         #optional - axiom
+            sage: two > 1
             True
 
-            sage: a = axiom(1); b = axiom(2)  #optional - axiom
-            sage: a == b                      #optional - axiom
+            sage: # optional - axiom
+            sage: a = axiom(1); b = axiom(2)
+            sage: a == b
             False
-            sage: a < b                       #optional - axiom
+            sage: a < b
             True
-            sage: a > b                       #optional - axiom
+            sage: a > b
             False
-            sage: b < a                       #optional - axiom
+            sage: b < a
             False
-            sage: b > a                       #optional - axiom
+            sage: b > a
             True
 
         We can also compare more complicated object such as functions::
@@ -649,15 +654,16 @@ class PanAxiomElement(ExpectElement, sage.interfaces.abc.AxiomElement):
 
         EXAMPLES::
 
-            sage: v = axiom('[i*x^i for i in 0..5]'); v          # optional - axiom
+            sage: # optional - axiom
+            sage: v = axiom('[i*x^i for i in 0..5]'); v
                      2   3   4   5
               [0,x,2x ,3x ,4x ,5x ]
-            sage: v[4]                                           # optional - axiom
+            sage: v[4]
                 3
               3x
-            sage: v[1]                                           # optional - axiom
+            sage: v[1]
             0
-            sage: v[10]                                          # optional - axiom
+            sage: v[10]
             Traceback (most recent call last):
             ...
             IndexError: index out of range
@@ -677,12 +683,13 @@ class PanAxiomElement(ExpectElement, sage.interfaces.abc.AxiomElement):
 
         EXAMPLES::
 
-            sage: two = axiom(2)  #optional - axiom
-            sage: two.comma(3)    #optional - axiom
+            sage: # optional - axiom
+            sage: two = axiom(2)
+            sage: two.comma(3)
             [2,3]
-            sage: two.comma(3,4)  #optional - axiom
+            sage: two.comma(3,4)
             [2,3,4]
-            sage: _.type()        #optional - axiom
+            sage: _.type()
             Tuple PositiveInteger
         """
         P = self._check_valid()
@@ -810,16 +817,17 @@ class PanAxiomElement(ExpectElement, sage.interfaces.abc.AxiomElement):
 
 
         We can also convert Axiom's polynomials to Sage polynomials.
-            sage: a = axiom(x^2 + 1)            # optional - axiom                      # needs sage.symbolic
-            sage: a.type()                      # optional - axiom                      # needs sage.symbolic
+            sage: # optional - axiom, needs sage.symbolic
+            sage: a = axiom(x^2 + 1)
+            sage: a.type()
             Polynomial Integer
-            sage: a.sage()                      # optional - axiom                      # needs sage.symbolic
+            sage: a.sage()
             x^2 + 1
-            sage: _.parent()                    # optional - axiom                      # needs sage.symbolic
+            sage: _.parent()
             Univariate Polynomial Ring in x over Integer Ring
-            sage: axiom('x^2 + y^2 + 1/2').sage()       # optional - axiom              # needs sage.symbolic
+            sage: axiom('x^2 + y^2 + 1/2').sage()
             y^2 + x^2 + 1/2
-            sage: _.parent()                    # optional - axiom                      # needs sage.symbolic
+            sage: _.parent()
             Multivariate Polynomial Ring in y, x over Rational Field
 
 
@@ -902,12 +910,13 @@ class PanAxiomFunctionElement(FunctionElement):
         """
         TESTS::
 
-            sage: a = axiom('"Hello"') #optional - axiom
-            sage: a.upperCase_q        #optional - axiom
+            sage: # optional - axiom
+            sage: a = axiom('"Hello"')
+            sage: a.upperCase_q
             upperCase?
-            sage: a.upperCase_e        #optional - axiom
+            sage: a.upperCase_e
             upperCase!
-            sage: a.upperCase_e()      #optional - axiom
+            sage: a.upperCase_e()
             "HELLO"
         """
         if name.endswith("_q"):

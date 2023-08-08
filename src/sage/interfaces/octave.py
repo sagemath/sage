@@ -60,31 +60,32 @@ For example,
 
 ::
 
-    sage: octave("airy(3,2)")         # optional - octave
+    sage: # optional - octave
+    sage: octave("airy(3,2)")
     4.10068
-    sage: octave("beta(2,2)")         # optional - octave
+    sage: octave("beta(2,2)")
     0.166667
-    sage: octave("betainc(0.2,2,2)")  # optional - octave
+    sage: octave("betainc(0.2,2,2)")
     0.104
-    sage: octave("besselh(0,2)")      # optional - octave
+    sage: octave("besselh(0,2)")
     (0.223891,0.510376)
-    sage: octave("besselh(0,1)")      # optional - octave
+    sage: octave("besselh(0,1)")
     (0.765198,0.088257)
-    sage: octave("besseli(1,2)")      # optional - octave
+    sage: octave("besseli(1,2)")
     1.59064
-    sage: octave("besselj(1,2)")      # optional - octave
+    sage: octave("besselj(1,2)")
     0.576725
-    sage: octave("besselk(1,2)")      # optional - octave
+    sage: octave("besselk(1,2)")
     0.139866
-    sage: octave("erf(0)")            # optional - octave
+    sage: octave("erf(0)")
     0
-    sage: octave("erf(1)")            # optional - octave
+    sage: octave("erf(1)")
     0.842701
-    sage: octave("erfinv(0.842)")     # optional - octave
+    sage: octave("erfinv(0.842)")
     0.998315
-    sage: octave("gamma(1.5)")        # optional - octave
+    sage: octave("gamma(1.5)")
     0.886227
-    sage: octave("gammainc(1.5,1)")   # optional - octave
+    sage: octave("gammainc(1.5,1)")
     0.77687
 
 Tutorial
@@ -92,37 +93,39 @@ Tutorial
 
 EXAMPLES::
 
-    sage: octave('4+10')              # optional - octave
+    sage: # optional - octave
+    sage: octave('4+10')
     14
-    sage: octave('date')              # optional - octave; random output
+    sage: octave('date')
     18-Oct-2007
-    sage: octave('5*10 + 6')          # optional - octave
+    sage: octave('5*10 + 6')
     56
-    sage: octave('(6+6)/3')           # optional - octave
+    sage: octave('(6+6)/3')
     4
-    sage: octave('9')^2               # optional - octave
+    sage: octave('9')^2
     81
-    sage: a = octave(10); b = octave(20); c = octave(30)    # optional - octave
-    sage: avg = (a+b+c)/3             # optional - octave
-    sage: avg                         # optional - octave
+    sage: a = octave(10); b = octave(20); c = octave(30)
+    sage: avg = (a+b+c)/3
+    sage: avg
     20
-    sage: parent(avg)                 # optional - octave
+    sage: parent(avg)
     Octave
 
 ::
 
-    sage: my_scalar = octave('3.1415')       # optional - octave
-    sage: my_scalar                          # optional - octave
+    sage: # optional - octave
+    sage: my_scalar = octave('3.1415')
+    sage: my_scalar
     3.1415
-    sage: my_vector1 = octave('[1,5,7]')     # optional - octave
-    sage: my_vector1                         # optional - octave
+    sage: my_vector1 = octave('[1,5,7]')
+    sage: my_vector1
     1     5     7
-    sage: my_vector2 = octave('[1;5;7]')     # optional - octave
-    sage: my_vector2                         # optional - octave
+    sage: my_vector2 = octave('[1;5;7]')
+    sage: my_vector2
     1
     5
     7
-    sage: my_vector1 * my_vector2            # optional - octave
+    sage: my_vector1 * my_vector2
     75
 """
 
@@ -356,11 +359,12 @@ class Octave(Expect):
 
         EXAMPLES::
 
-            sage: o = Octave()    # optional - octave
-            sage: o.is_running()  # optional - octave
+            sage: # optional - octave
+            sage: o = Octave()
+            sage: o.is_running()
             False
-            sage: o._start()      # optional - octave
-            sage: o.is_running()  # optional - octave
+            sage: o._start()
+            sage: o.is_running()
             True
         """
         Expect._start(self)
@@ -647,13 +651,14 @@ class OctaveElement(ExpectElement):
 
         EXAMPLES::
 
-            sage: bool(octave('0'))                 # optional - octave
+            sage: # optional - octave
+            sage: bool(octave('0'))
             False
-            sage: bool(octave('[]'))                # optional - octave
+            sage: bool(octave('[]'))
             False
-            sage: bool(octave('[0,0]'))             # optional - octave
+            sage: bool(octave('[0,0]'))
             False
-            sage: bool(octave('[0,0,0;0,0,0]'))     # optional - octave
+            sage: bool(octave('[0,0,0;0,0,0]'))
             False
 
             sage: bool(octave('0.1'))               # optional - octave
@@ -685,12 +690,13 @@ class OctaveElement(ExpectElement):
             sage: _.base_ring()                 # optional - octave
             Complex Double Field
 
-            sage: A = octave('[1,2;3,4]')       # optional - octave
-            sage: matrix(ZZ, A)                 # optional - octave
+            sage: # optional - octave
+            sage: A = octave('[1,2;3,4]')
+            sage: matrix(ZZ, A)
             [1 2]
             [3 4]
-            sage: A = octave('[1,2;3,4.5]')     # optional - octave
-            sage: matrix(RR, A)                 # optional - octave
+            sage: A = octave('[1,2;3,4.5]')
+            sage: matrix(RR, A)
             [1.00000000000000 2.00000000000000]
             [3.00000000000000 4.50000000000000]
         """
@@ -716,14 +722,15 @@ class OctaveElement(ExpectElement):
 
         EXAMPLES::
 
-            sage: A = octave('[1,2,3,4]')       # optional - octave
-            sage: vector(ZZ, A)                 # optional - octave
+            sage: # optional - octave
+            sage: A = octave('[1,2,3,4]')
+            sage: vector(ZZ, A)
             (1, 2, 3, 4)
-            sage: A = octave('[1,2.3,4.5]')     # optional - octave
-            sage: vector(A)                     # optional - octave
+            sage: A = octave('[1,2.3,4.5]')
+            sage: vector(A)
             (1.0, 2.3, 4.5)
-            sage: A = octave('[1,I]')           # optional - octave
-            sage: vector(A)                     # optional - octave
+            sage: A = octave('[1,I]')
+            sage: vector(A)
             (1.0, 1.0*I)
         """
         from sage.modules.free_module import FreeModule
@@ -780,23 +787,24 @@ class OctaveElement(ExpectElement):
 
         EXAMPLES::
 
-            sage: A = octave('2833')           # optional - octave
-            sage: A.sage()                     # optional - octave
+            sage: # optional - octave
+            sage: A = octave('2833')
+            sage: A.sage()
             2833.0
-            sage: B = sqrt(A)                  # optional - octave
-            sage: B.sage()                     # optional - octave
+            sage: B = sqrt(A)
+            sage: B.sage()
             53.2259
-            sage: C = sqrt(-A)                 # optional - octave
-            sage: C.sage()                     # optional - octave
+            sage: C = sqrt(-A)
+            sage: C.sage()
             53.2259*I
-            sage: A = octave('[1,2,3,4]')      # optional - octave
-            sage: A.sage()                     # optional - octave
+            sage: A = octave('[1,2,3,4]')
+            sage: A.sage()
             (1.0, 2.0, 3.0, 4.0)
-            sage: A = octave('[1,2.3,4.5]')    # optional - octave
-            sage: A.sage()                     # optional - octave
+            sage: A = octave('[1,2.3,4.5]')
+            sage: A.sage()
             (1.0, 2.3, 4.5)
-            sage: A = octave('[1,2.3+I,4.5]')  # optional - octave
-            sage: A.sage()                     # optional - octave
+            sage: A = octave('[1,2.3+I,4.5]')
+            sage: A.sage()
             (1.0, 2.3 + 1.0*I, 4.5)
         """
         if self.isscalar():
