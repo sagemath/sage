@@ -2127,7 +2127,7 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
         EXAMPLES::
 
             sage: X = BruhatTitsQuotient(7,23)
-            sage: X.plot()
+            sage: X.plot()                                                              # needs sage.plot
             Graphics object consisting of 17 graphics primitives
         """
         S = self.get_graph()
@@ -2160,7 +2160,7 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
         EXAMPLES::
 
             sage: X = BruhatTitsQuotient(7,23)
-            sage: X.plot_fundom()
+            sage: X.plot_fundom()                                                       # needs sage.plot
             Graphics object consisting of 88 graphics primitives
         """
         S = self.get_fundom_graph()
