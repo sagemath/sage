@@ -305,7 +305,7 @@ def AG32prime():
          {'b', 'c', 'd', 'g'}, {'b', 'c', 'e', 'f'}, {'b', 'd', 'f', 'h'},
          {'b', 'e', 'g', 'h'}, {'c', 'd', 'e', 'h'}, {'c', 'f', 'g', 'h'},
          {'d', 'e', 'f', 'g'}]
-        sage: M.is_valid()                      # long time, needs sage.rings.finite_rings
+        sage: M.is_valid()                      # long time                             # needs sage.rings.finite_rings
         True
     """
     E = 'abcdefgh'
@@ -376,7 +376,7 @@ def F8():
         [...True...]
         sage: [N.is_isomorphic(matroids.named_matroids.NonFano()) for N in D]
         [...True...]
-        sage: M.is_valid()                      # long time, needs sage.rings.finite_rings
+        sage: M.is_valid()                      # long time                             # needs sage.rings.finite_rings
         True
     """
     E = 'abcdefgh'
@@ -693,7 +693,7 @@ def K33dual():
         sage: any(N.is_3connected()                                                     # needs sage.graphs
         ....:     for N in M.linear_extensions(simple=True))
         False
-        sage: M.is_valid()                      # long time, needs sage.graphs
+        sage: M.is_valid()                      # long time                             # needs sage.graphs
         True
     """
     from sage.graphs.graph_generators import graphs
@@ -1259,7 +1259,7 @@ def Q10():
     suffices to check for `U_{2, 5}`:
 
         sage: S = matroids.named_matroids.Q10().linear_extensions(simple=True)          # needs sage.rings.finite_rings
-        sage: [M for M in S if not M.has_line_minor(5)]         # long time, needs sage.rings.finite_rings
+        sage: [M for M in S if not M.has_line_minor(5)]         # long time             # needs sage.rings.finite_rings
         []
     """
     F = GF(4, 'x')
