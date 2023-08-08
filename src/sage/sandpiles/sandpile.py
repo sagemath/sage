@@ -84,17 +84,17 @@ Or just::
 
 A picture of the graph::
 
-    sage: S.show()  # long time                                                         # optional - sage.plot
+    sage: S.show()                              # long time                             # needs sage.plot
 
 The relevant Laplacian matrices::
 
-    sage: S.laplacian()                                                                 # optional - sage.modules
+    sage: S.laplacian()
     [ 0  0  0  0  0]
     [-1  3 -1 -1  0]
     [ 0 -1  3 -1 -1]
     [ 0 -1 -1  3 -1]
     [ 0  0 -1 -1  2]
-    sage: S.reduced_laplacian()                                                         # optional - sage.modules
+    sage: S.reduced_laplacian()
     [ 3 -1 -1  0]
     [-1  3 -1 -1]
     [-1 -1  3 -1]
@@ -213,12 +213,12 @@ the saturated homogeneous toppling ideal::
 
 its minimal free resolution::
 
-    sage: S.resolution()                                                                # optional - sage.modules
+    sage: S.resolution()
     'R^1 <-- R^7 <-- R^15 <-- R^13 <-- R^4'
 
 and its Betti numbers::
 
-    sage: S.betti()                                                                     # optional - sage.modules
+    sage: S.betti()
                0     1     2     3     4
     ------------------------------------
         0:     1     1     -     -     -
@@ -253,11 +253,11 @@ Distribution of avalanche sizes::
     ....:     m = m.add_random()
     ....:     m, f = m.stabilize(True)
     ....:     a.append(sum(f.values()))
-    sage: p = list_plot([[log(i + 1), log(a.count(i))]                                  # optional - sage.plot
+    sage: p = list_plot([[log(i + 1), log(a.count(i))]                                  # needs sage.plot
     ....:                for i in [0..max(a)] if a.count(i)])
-    sage: p.axes_labels(['log(N)', 'log(D(N))'])                                        # optional - sage.plot
-    sage: t = text("Distribution of avalanche sizes", (2,2), rgbcolor=(1,0,0))          # optional - sage.plot
-    sage: show(p + t, axes_labels=['log(N)', 'log(D(N))'])  # long time                 # optional - sage.plot
+    sage: p.axes_labels(['log(N)', 'log(D(N))'])                                        # needs sage.plot
+    sage: t = text("Distribution of avalanche sizes", (2,2), rgbcolor=(1,0,0))          # needs sage.plot
+    sage: show(p + t, axes_labels=['log(N)', 'log(D(N))'])      # long time             # needs sage.plot
 
 Working with sandpile divisors::
 
@@ -549,7 +549,7 @@ class Sandpile(DiGraph):
         become edge weights in the Sandpile. ::
 
             sage: s = Sandpile({0:[1,2,3], 1:[0,1,2,2,2], 2:[1,1,0,2,2,2,2]})
-            sage: s.laplacian()                                                         # optional - sage.modules
+            sage: s.laplacian()
             [ 3 -1 -1 -1]
             [-1  4 -3  0]
             [-1 -2  3  0]
@@ -566,7 +566,7 @@ class Sandpile(DiGraph):
             sage: s.sink()
             0
             sage: s = sandpiles.Cycle(4)
-            sage: s.laplacian()                                                         # optional - sage.modules
+            sage: s.laplacian()
             [ 2 -1  0 -1]
             [-1  2 -1  0]
             [ 0 -1  2 -1]
@@ -796,8 +796,8 @@ class Sandpile(DiGraph):
         EXAMPLES::
 
             sage: S = Sandpile({0:[], 1:[0,3,4], 2:[0,3,5], 3:[2,5], 4:[1,1], 5:[2,4]})
-            sage: S.show()                                                              # optional - sage.plot
-            sage: S.show(graph_border=True, edge_labels=True)                           # optional - sage.plot
+            sage: S.show()                                                              # needs sage.plot
+            sage: S.show(graph_border=True, edge_labels=True)                           # needs sage.plot
         """
 
         if self.is_undirected():
@@ -816,7 +816,7 @@ class Sandpile(DiGraph):
         EXAMPLES::
 
             sage: S = sandpiles.House()
-            sage: S.show3d()  # long time                                               # optional - sage.plot
+            sage: S.show3d()                    # long time                             # needs sage.plot
         """
 
         if self.is_undirected():
@@ -3761,11 +3761,11 @@ class SandpileConfig(dict):
             ....:     m = m.add_random()
             ....:     m, f = m.stabilize(True)
             ....:     a.append(sum(f.values()))
-            sage: p = list_plot([[log(i + 1), log(a.count(i))]                          # optional - sage.plot
+            sage: p = list_plot([[log(i + 1), log(a.count(i))]                          # needs sage.plot
             ....:                for i in [0..max(a)] if a.count(i)])
-            sage: p.axes_labels(['log(N)', 'log(D(N))'])                                # optional - sage.plot
-            sage: t = text("Distribution of avalanche sizes", (2,2), rgbcolor=(1,0,0))  # optional - sage.plot
-            sage: show(p + t, axes_labels=['log(N)', 'log(D(N))'])  # long time         # optional - sage.plot
+            sage: p.axes_labels(['log(N)', 'log(D(N))'])                                # needs sage.plot
+            sage: t = text("Distribution of avalanche sizes", (2,2), rgbcolor=(1,0,0))  # needs sage.plot
+            sage: show(p + t, axes_labels=['log(N)', 'log(D(N))'])      # long time, needs sage.plot
 
         .. NOTE::
 
@@ -4144,9 +4144,9 @@ class SandpileConfig(dict):
 
             sage: S = sandpiles.Diamond()
             sage: c = S.identity()
-            sage: c.show()                                                              # optional - sage.plot
-            sage: c.show(directed=False)                                                # optional - sage.plot
-            sage: c.show(sink=False, colors=False, heights=True)                        # optional - sage.plot
+            sage: c.show()                                                              # needs sage.plot
+            sage: c.show(directed=False)                                                # needs sage.plot
+            sage: c.show(sink=False, colors=False, heights=True)                        # needs sage.plot
         """
         if directed:
             T = DiGraph(self.sandpile())
@@ -5825,11 +5825,11 @@ class SandpileDivisor(dict):
 
             sage: S = sandpiles.House()
             sage: p = SandpileDivisor(S, [1,2,1,0,0]).Dcomplex()
-            sage: p.homology()                                                          # optional - sage.modules
+            sage: p.homology()
             {0: 0, 1: Z x Z, 2: 0}
             sage: p.f_vector()
             [1, 5, 10, 4]
-            sage: p.betti()                                                             # optional - sage.modules
+            sage: p.betti()
             {0: 1, 1: 2, 2: 0}
 
         .. NOTE::
@@ -5851,7 +5851,7 @@ class SandpileDivisor(dict):
 
             sage: S = sandpiles.Cycle(3)
             sage: D = SandpileDivisor(S, [2,0,1])
-            sage: D.betti()                                                             # optional - sage.modules
+            sage: D.betti()
             {0: 1, 1: 1}
 
         .. NOTE::
@@ -6045,7 +6045,7 @@ class SandpileDivisor(dict):
 
             sage: S = sandpiles.Diamond()
             sage: D = SandpileDivisor(S, [1,-2,0,2])
-            sage: D.show(graph_border=True, vertex_size=700, directed=False)            # optional - sage.plot
+            sage: D.show(graph_border=True, vertex_size=700, directed=False)            # needs sage.plot
         """
         if directed:
             T = DiGraph(self.sandpile())
@@ -6361,7 +6361,7 @@ def firing_graph(S, eff):
         sage: S = sandpiles.Cycle(6)
         sage: D = SandpileDivisor(S, [1,1,1,1,2,0])
         sage: eff = D.effective_div()
-        sage: firing_graph(S, eff).show3d(edge_size=.005,               # long time     # optional - sage.plot
+        sage: firing_graph(S, eff).show3d(edge_size=.005,               # long time, needs sage.plot
         ....:                             vertex_size=0.01)
     """
     g = DiGraph()
@@ -6398,7 +6398,7 @@ def parallel_firing_graph(S, eff):
         sage: S = sandpiles.Cycle(6)
         sage: D = SandpileDivisor(S, [1,1,1,1,2,0])
         sage: eff = D.effective_div()
-        sage: parallel_firing_graph(S, eff).show3d(edge_size=.005,      # long time       # optional - sage.plot
+        sage: parallel_firing_graph(S, eff).show3d(edge_size=.005,      # long time, needs sage.plot
         ....:                                      vertex_size=0.01)
     """
     g = DiGraph()
