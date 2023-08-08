@@ -31,34 +31,3 @@ cdef class CVXPYBackend(MatrixBackend):
                            except -1
 
     cpdef cvxpy_problem(self)
-
-#cdef class CVXPYBackend(GenericBackend):
-
-#   cdef object variables
-#    cdef object problem
-#    cdef object prob_name
-#    cdef object constraint_names
-
-#    cdef object _cvxpy_solver
-#    cdef object _cvxpy_solver_args
-
-#    cdef list objective_coefficients
-#    cdef list Matrix
-
-#    cdef list row_lower_bound
-#    cdef list row_upper_bound
-#    cdef list col_lower_bound
-#    cdef list col_upper_bound
-
-#    cpdef int add_variable(self,
-#                           lower_bound=*,
-#                           upper_bound=*,
-#                           binary=*,
-#                           continuous=*,
-#                           integer=*,
-#                           obj=*,
-#                           name=*,
-#                           coefficients=*) \
-#                           except -1
-#
-#    cpdef cvxpy_problem(self)

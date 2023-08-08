@@ -19,6 +19,7 @@ other classes implementing solvers.
 
 from sage.matrix.constructor import Matrix as matrix
 from .generic_backend cimport GenericBackend
+from copy import copy
 import numpy
 
 cdef class MatrixBackend(GenericBackend):
@@ -49,15 +50,12 @@ cdef class MatrixBackend(GenericBackend):
 
         """
 
-        #Sage Matrix and Vector instead of Python lists
+        #Sage Matrix instead of Python lists
 
         self.prob_name = ''
         self.obj_constant_term = 0
         self.is_maximize = 1
 
-        #if base_ring is None:
-        #    from sage.rings.rational_field import QQ
-        #    base_ring = QQ
         self._init_base_ring(base_ring=base_ring)
 
         if numpy_implementation:
@@ -86,8 +84,6 @@ cdef class MatrixBackend(GenericBackend):
             self.set_sense(+1)
         else:
             self.set_sense(-1)
-
-        #self._base_ring = base_ring
     
     def _init_base_ring(self, base_ring=None):
         if base_ring is None:
@@ -133,15 +129,12 @@ cdef class MatrixBackend(GenericBackend):
             6.0
         """
         cdef MatrixBackend mat = type(self)(base_ring=self.base_ring())
-        #cp.problem = self.problem                   # it's considered immutable; so no need to copy.
-        #cp.variables = copy(self.variables)
-        #cp.constraint_names = copy(self.constraint_names)
-        mat.Matrix = self.Matrix.__copy__()
-        mat.row_lower_bound = self.row_lower_bound.__copy__()
-        mat.row_upper_bound = self.row_upper_bound.__copy__()
-        mat.col_lower_bound = self.col_lower_bound.__copy__()
-        mat.col_upper_bound = self.col_upper_bound.__copy__()
-        mat.objective_coefficients = self.objective_coefficients.__copy__()
+        mat.Matrix = copy(self.Matrix)
+        mat.row_lower_bound = copy(self.row_lower_bound)
+        mat.row_upper_bound = copy(self.row_upper_bound)
+        mat.col_lower_bound = copy(self.col_lower_bound)
+        mat.col_upper_bound = copy(self.col_upper_bound)
+        mat.objective_coefficients = copy(self.objective_coefficients)
         mat.obj_constant_term = self.obj_constant_term
         return mat
 
@@ -945,9 +938,6 @@ cdef class MatrixBackend(GenericBackend):
             # This is how the other backends behave, and this method is
             # unable to raise a python exception as currently defined.
             return False
-
-        #if index >= len(self.is_binary):
-        #    raise IndexError("Variable index out of bounds")
             
         return self.is_binary[index]
 
@@ -978,11 +968,7 @@ cdef class MatrixBackend(GenericBackend):
         if index < 0 or index >= len(self.is_integer):
             # This is how the other backends behave, and this method is
             # unable to raise a python exception as currently defined.
-            return False
-
-        #if index >= len(self.is_integer):
-        #    raise IndexError("Variable index out of bounds")
-        
+            return False      
         
         return self.is_integer[index]
 
@@ -1019,9 +1005,6 @@ cdef class MatrixBackend(GenericBackend):
             # This is how the other backends behave, and this method is
             # unable to raise a python exception as currently defined.
             return False
-
-        #if index >= len(self.is_continuous):
-        #    raise IndexError("Variable index out of bounds")
 
         return self.is_continuous[index]
 
