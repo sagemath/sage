@@ -221,8 +221,8 @@ class SageMagics(Magics):
         That means you do not have to use :func:`ascii_art` to get an ASCII art
         output::
 
-            sage: shell.run_cell("i = var('i')")                                        # optional - sage.symbolic
-            sage: shell.run_cell('sum(i^2*x^i, i, 0, 10)')                              # optional - sage.symbolic
+            sage: shell.run_cell("i = var('i')")                                        # needs sage.symbolic
+            sage: shell.run_cell('sum(i^2*x^i, i, 0, 10)')                              # needs sage.symbolic
                  10       9       8       7       6       5       4      3      2
             100*x   + 81*x  + 64*x  + 49*x  + 36*x  + 25*x  + 16*x  + 9*x  + 4*x  + x
 
@@ -230,14 +230,14 @@ class SageMagics(Magics):
 
             sage: shell.run_cell('%display text plain')
             sage: shell.run_cell('%display plain')        # shortcut for "text plain"
-            sage: shell.run_cell('sum(i^2*x^i, i, 0, 10)')                              # optional - sage.symbolic
+            sage: shell.run_cell('sum(i^2*x^i, i, 0, 10)')                              # needs sage.symbolic
             100*x^10 + 81*x^9 + 64*x^8 + 49*x^7 + 36*x^6 + 25*x^5 + 16*x^4 + 9*x^3 + 4*x^2 + x
 
         Sometime you could have to use a special output width and you
         could specify it::
 
             sage: shell.run_cell('%display ascii_art')
-            sage: shell.run_cell('StandardTableaux(4).list()')                          # optional - sage.combinat
+            sage: shell.run_cell('StandardTableaux(4).list()')                          # needs sage.combinat
             [
             [                                                                  1  4    1  3
             [                 1  3  4    1  2  4    1  2  3    1  3    1  2    2       2
@@ -248,7 +248,7 @@ class SageMagics(Magics):
                3       3 ]
                4   ,   4 ]
             sage: shell.run_cell('%display ascii_art 50')
-            sage: shell.run_cell('StandardTableaux(4).list()')                          # optional - sage.combinat
+            sage: shell.run_cell('StandardTableaux(4).list()')                          # needs sage.combinat
             [
             [
             [                 1  3  4    1  2  4    1  2  3
@@ -352,13 +352,13 @@ class SageMagics(Magics):
 
             sage: from sage.repl.interpreter import get_test_shell
             sage: shell = get_test_shell()
-            sage: shell.run_cell(                                                       # optional - sage.misc.cython
+            sage: shell.run_cell(                                                       # needs sage.misc.cython
             ....: '''
             ....: %%cython
             ....: def f():
             ....:     print('test')
             ....: ''')
-            sage: f()                                                                   # optional - sage.misc.cython
+            sage: f()                                                                   # needs sage.misc.cython
             test
         """
         from sage.misc.cython import cython_compile
@@ -409,10 +409,10 @@ class SageMagics(Magics):
             ....: ''')
             sage: fib
             <fortran ...>
-            sage: from numpy import array                                               # optional - numpy
-            sage: a = array(range(10), dtype=float)                                     # optional - numpy
-            sage: fib(a, 10)                                                            # optional - numpy
-            sage: a                                                                     # optional - numpy
+            sage: from numpy import array                                               # needs numpy
+            sage: a = array(range(10), dtype=float)                                     # needs numpy
+            sage: fib(a, 10)                                                            # needs numpy
+            sage: a                                                                     # needs numpy
             array([  0.,   1.,   1.,   2.,   3.,   5.,   8.,  13.,  21.,  34.])
         """
         from sage.misc.inline_fortran import fortran

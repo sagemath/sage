@@ -82,18 +82,19 @@ frequently request it::
 
 Symbolic functional notation::
 
-    sage: a=10; f(theta, beta) = theta + beta; b = x^2 + theta                          # optional - sage.symbolic
-    sage: f                                                                             # optional - sage.symbolic
+    sage: # needs sage.symbolic
+    sage: a=10; f(theta, beta) = theta + beta; b = x^2 + theta
+    sage: f
     (theta, beta) |--> beta + theta
-    sage: a                                                                             # optional - sage.symbolic
+    sage: a
     10
-    sage: b                                                                             # optional - sage.symbolic
+    sage: b
     x^2 + theta
-    sage: f(theta,theta)                                                                # optional - sage.symbolic
+    sage: f(theta,theta)
     2*theta
 
-    sage: a = 5; f(x,y) = x*y*sqrt(a)                                                   # optional - sage.symbolic
-    sage: f                                                                             # optional - sage.symbolic
+    sage: a = 5; f(x,y) = x*y*sqrt(a)                                                   # needs sage.symbolic
+    sage: f                                                                             # needs sage.symbolic
     (x, y) |--> sqrt(5)*x*y
 
 This involves an =-, but should still be turned into a symbolic
@@ -101,8 +102,8 @@ expression::
 
     sage: preparse('a(x) =- 5')
     '__tmp__=var("x"); a = symbolic_expression(- Integer(5)).function(x)'
-    sage: f(x)=-x                                                                       # optional - sage.symbolic
-    sage: f(10)                                                                         # optional - sage.symbolic
+    sage: f(x)=-x                                                                       # needs sage.symbolic
+    sage: f(10)                                                                         # needs sage.symbolic
     -10
 
 This involves -=, which should not be turned into a symbolic
@@ -1719,7 +1720,7 @@ def preparse(line, reset=True, do_time=False, ignore_prompts=False,
         "ZZ = ZZ['u,v']; (x, y,) = ZZ._first_ngens(2)"
         sage: preparse("ZZ.<x> = QQ[2^(1/3)]")
         'ZZ = QQ[Integer(2)**(Integer(1)/Integer(3))]; (x,) = ZZ._first_ngens(1)'
-        sage: QQ[2^(1/3)]                                                               # optional - sage.symbolic sage.rings.number_field
+        sage: QQ[2^(1/3)]                                                               # needs sage.rings.number_field sage.symbolic
         Number Field in a with defining polynomial x^3 - 2 with a = 1.259921049894873?
 
         sage: preparse("a^b")
@@ -1920,7 +1921,7 @@ def preparse_file(contents, globals=None, numeric_literals=True):
         ....:     file.write(file_contents)
         137
         sage: load(t)
-        sage: sorted(list(func([11,17])))                                               # optional - sage.modular
+        sage: sorted(list(func([11,17])))                                               # needs sage.modular
         [(((11,), {}), None), (((17,), {}), None)]
     """
     if not isinstance(contents, str):

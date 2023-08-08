@@ -53,7 +53,7 @@ def _required_threejs_version():
     EXAMPLES::
 
         sage: from sage.repl.rich_output.display_manager import _required_threejs_version
-        sage: _required_threejs_version()                                               # optional - sage.plot
+        sage: _required_threejs_version()                                               # needs sage.plot
         'r...'
     """
     import os
@@ -710,14 +710,14 @@ class DisplayManager(SageObject):
 
             sage: from sage.repl.rich_output import get_display_manager
             sage: dm = get_display_manager()
-            sage: plt = plot(sin)                                                       # optional - sage.symbolic sage.plot
-            sage: out = dm.graphics_from_save(plt.save, dict(), '.png',                 # optional - sage.symbolic sage.plot
+            sage: plt = plot(sin)                                                       # needs sage.plot sage.symbolic
+            sage: out = dm.graphics_from_save(plt.save, dict(), '.png',                 # needs sage.plot sage.symbolic
             ....:                             dm.types.OutputImagePng)
-            sage: out                                                                   # optional - sage.symbolic sage.plot
+            sage: out                                                                   # needs sage.plot sage.symbolic
             OutputImagePng container
-            sage: out.png.get().startswith(b'\x89PNG')                                  # optional - sage.symbolic sage.plot
+            sage: out.png.get().startswith(b'\x89PNG')                                  # needs sage.plot sage.symbolic
             True
-            sage: out.png.filename()   # random                                         # optional - sage.symbolic sage.plot
+            sage: out.png.filename()   # random                                         # needs sage.plot sage.symbolic
             '/home/user/.sage/temp/localhost.localdomain/23903/tmp_pu5woK.png'
         """
         import os
@@ -759,9 +759,9 @@ class DisplayManager(SageObject):
         EXAMPLES::
 
             sage: from sage.repl.rich_output import get_display_manager
-            sage: get_display_manager().threejs_scripts(online=True)                    # optional - sage.plot
+            sage: get_display_manager().threejs_scripts(online=True)                    # needs sage.plot
             '...<script src="https://cdn.jsdelivr.net/gh/sagemath/threejs-sage@...'
-            sage: get_display_manager().threejs_scripts(online=False)                   # optional - sage.plot
+            sage: get_display_manager().threejs_scripts(online=False)                   # needs sage.plot
             Traceback (most recent call last):
             ...
             ValueError: current backend does not support

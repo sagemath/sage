@@ -132,7 +132,7 @@ def load(filename, globals, attach=False):
         sage: with open(t, 'w') as f:
         ....:     _ = f.write("print(('hi', 2^3)); z = -2^7")
         sage: z = 1
-        sage: sage.repl.load.load(t, globals())                                         # optional - sage.misc.cython
+        sage: sage.repl.load.load(t, globals())                                         # needs sage.misc.cython
         Compiling ...
         ('hi', 1)
         sage: z
