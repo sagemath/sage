@@ -2422,15 +2422,15 @@ def is_near_polygon(array):
         sage: # needs sage.combinat sage.libs.pari
         sage: from sage.graphs.generators.distance_regular import (
         ....: is_near_polygon, near_polygon_graph)
-        sage: is_near_polygon([7, 6, 6, 4, 4, 1, 1, 3, 3, 7])                           # needs sage.combinat sage.libs.pari
+        sage: is_near_polygon([7, 6, 6, 4, 4, 1, 1, 3, 3, 7])
         (4, (2, 2))
         sage: near_polygon_graph(4, (2, 2))
         Double Grassmann graph (5, 2, 2): Graph on 310 vertices
         sage: near_polygon_graph(*is_near_polygon([3, 2, 2, 1, 1, 3]))                  # needs sage.rings.finite_rings
         Generalised hexagon of order (1, 2): Graph on 14 vertices
-        sage: is_near_polygon([16, 12, 8, 4, 1, 2, 3, 4])                               # needs sage.combinat sage.libs.pari
+        sage: is_near_polygon([16, 12, 8, 4, 1, 2, 3, 4])
         (6, (4, 5))
-        sage: is_near_polygon([])                                                       # needs sage.combinat sage.libs.pari
+        sage: is_near_polygon([])
         False
         sage: is_near_polygon([25, 16, 9, 4, 1, 1, 4, 9, 16, 25])  # JohnsonGraph
         False
@@ -2735,11 +2735,11 @@ def distance_regular_graph(list arr, existence=False, check=True):
         sage: graphs.distance_regular_graph([14, 12, 10, 8, 6, 4, 2,
         ....:                                1, 2, 3, 4, 5, 6, 7])
         Hamming Graph with parameters 7,3: Graph on 2187 vertices
-        sage: graphs.distance_regular_graph([66, 45, 28, 1, 6, 30])                     # needs sage.combinat
+        sage: graphs.distance_regular_graph([66, 45, 28, 1, 6, 30])
         Graph on 1024 vertices
-        sage: graphs.distance_regular_graph([6,5,5,5,1,1,1,6])                          # needs sage.combinat
+        sage: graphs.distance_regular_graph([6,5,5,5,1,1,1,6])
         Generalised octagon of order (1, 5): Graph on 312 vertices
-        sage: graphs.distance_regular_graph([64, 60, 1, 1, 15, 64], check=True)         # needs sage.combinat
+        sage: graphs.distance_regular_graph([64, 60, 1, 1, 15, 64], check=True)
         Graph on 325 vertices
     """
     from sage.misc.unknown import Unknown

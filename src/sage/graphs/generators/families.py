@@ -2693,14 +2693,15 @@ def SwitchedSquaredSkewHadamardMatrixGraph(n):
 
     EXAMPLES::
 
-        sage: g = graphs.SwitchedSquaredSkewHadamardMatrixGraph(4)                      # needs sage.modules
-        sage: g.is_strongly_regular(parameters=True)                                    # needs sage.modules
+        sage: # needs sage.modules
+        sage: g = graphs.SwitchedSquaredSkewHadamardMatrixGraph(4)
+        sage: g.is_strongly_regular(parameters=True)
         (226, 105, 48, 49)
         sage: from sage.combinat.designs.twographs import twograph_descendant
-        sage: twograph_descendant(g, 0).is_strongly_regular(parameters=True)            # needs sage.modules
+        sage: twograph_descendant(g, 0).is_strongly_regular(parameters=True)
         (225, 112, 55, 56)
-        sage: gc = g.complement()                                                       # needs sage.modules
-        sage: twograph_descendant(gc, 0).is_strongly_regular(parameters=True)           # needs sage.modules
+        sage: gc = g.complement()
+        sage: twograph_descendant(gc, 0).is_strongly_regular(parameters=True)
         (225, 112, 55, 56)
 
     TESTS::
@@ -3200,11 +3201,11 @@ def SierpinskiGasketGraph(n):
         sage: # needs sage.modules
         sage: s4 = graphs.SierpinskiGasketGraph(4); s4
         Graph on 42 vertices
-        sage: s4.size()                                                                 # needs sage.modules
+        sage: s4.size()
         81
-        sage: s4.degree_histogram()                                                     # needs sage.modules
+        sage: s4.degree_histogram()
         [0, 0, 3, 0, 39]
-        sage: s4.is_hamiltonian()                                                       # needs sage.modules
+        sage: s4.is_hamiltonian()
         True
 
     REFERENCES:
@@ -3300,16 +3301,16 @@ def GeneralizedSierpinskiGraph(G, k, stretch=None):
         sage: k = randint(1, 5)
         sage: G = graphs.RandomGNP(n, .5)
         sage: m = G.size()
-        sage: S = graphs.GeneralizedSierpinskiGraph(G, k)                               # needs sage.modules
-        sage: S.order() == n**k                                                         # needs sage.modules
+        sage: S = graphs.GeneralizedSierpinskiGraph(G, k)
+        sage: S.order() == n**k
         True
-        sage: S.size() == m*sum([n**i for i in range(k)])                               # needs sage.modules
+        sage: S.size() == m*sum([n**i for i in range(k)])
         True
         sage: G = graphs.CompleteGraph(n)
-        sage: S = graphs.GeneralizedSierpinskiGraph(G, k)                               # needs sage.modules
-        sage: S.order() == n**k                                                         # needs sage.modules
+        sage: S = graphs.GeneralizedSierpinskiGraph(G, k)
+        sage: S.order() == n**k
         True
-        sage: S.size() == (n*(n - 1)/2)*sum([n**i for i in range(k)])                   # needs sage.modules
+        sage: S.size() == (n*(n - 1)/2)*sum([n**i for i in range(k)])
         True
 
     The positions of the vertices of the output graph are determined from the
@@ -3337,16 +3338,16 @@ def GeneralizedSierpinskiGraph(G, k, stretch=None):
         sage: # needs sage.modules
         sage: graphs.GeneralizedSierpinskiGraph(Graph(), 3)
         Generalized Sierpinski Graph of Graph on 0 vertices of dimension 3: Graph on 0 vertices
-        sage: graphs.GeneralizedSierpinskiGraph(Graph(1), 3).vertices(sort=False)       # needs sage.modules
+        sage: graphs.GeneralizedSierpinskiGraph(Graph(1), 3).vertices(sort=False)
         [(0, 0, 0)]
-        sage: G = graphs.GeneralizedSierpinskiGraph(Graph(2), 3)                        # needs sage.modules
-        sage: G.order(), G.size()                                                       # needs sage.modules
+        sage: G = graphs.GeneralizedSierpinskiGraph(Graph(2), 3)
+        sage: G.order(), G.size()
         (8, 0)
-        sage: graphs.GeneralizedSierpinskiGraph("foo", 1)                               # needs sage.modules
+        sage: graphs.GeneralizedSierpinskiGraph("foo", 1)
         Traceback (most recent call last):
         ...
         ValueError: parameter G must be a Graph
-        sage: graphs.GeneralizedSierpinskiGraph(Graph(), 0)                             # needs sage.modules
+        sage: graphs.GeneralizedSierpinskiGraph(Graph(), 0)
         Traceback (most recent call last):
         ...
         ValueError: parameter k must be >= 1
@@ -3924,9 +3925,9 @@ def MathonPseudocyclicStronglyRegularGraph(t, G=None, L=None):
         sage: subg = next(iter(it))
         sage: r = [matrix(libgap.PermutationMat(libgap(z), 9).sage())
         ....:      for z in subg]
-        sage: ff = list(map(lambda y: (y[0]-1,y[1]-1),                                  # needs sage.groups sage.libs.gap sage.rings.finite_rings
+        sage: ff = list(map(lambda y: (y[0]-1,y[1]-1),
         ....:          Permutation(map(lambda x: 1+r.index(x^-1), r)).cycle_tuples()[1:]))
-        sage: L = sum(i*(r[a]-r[b]) for i,(a,b) in zip(range(1,len(ff)+1), ff)); L      # needs sage.groups sage.libs.gap sage.rings.finite_rings
+        sage: L = sum(i*(r[a]-r[b]) for i,(a,b) in zip(range(1,len(ff)+1), ff)); L
         [ 0  1 -1 -3 -2 -4  3  4  2]
         [-1  0  1 -4 -3 -2  2  3  4]
         [ 1 -1  0 -2 -4 -3  4  2  3]
@@ -3940,9 +3941,9 @@ def MathonPseudocyclicStronglyRegularGraph(t, G=None, L=None):
         sage: # needs sage.modules sage.rings.finite_rings
         sage: G.relabel(range(9))
         sage: G3x3 = graphs.MathonPseudocyclicStronglyRegularGraph(2, G=G, L=L)         # needs sage.groups sage.libs.gap
-        sage: G3x3.is_strongly_regular(parameters=True)
+        sage: G3x3.is_strongly_regular(parameters=True)                                 # needs sage.groups sage.libs.gap
         (441, 220, 109, 110)
-        sage: G3x3.automorphism_group(algorithm="bliss").order()        # optional - bliss
+        sage: G3x3.automorphism_group(algorithm="bliss").order()        # optional - bliss, needs sage.groups sage.libs.gap
         27
         sage: G9 = graphs.MathonPseudocyclicStronglyRegularGraph(2)
         sage: G9.is_strongly_regular(parameters=True)
@@ -4161,15 +4162,15 @@ def MuzychukS6Graph(n, d, Phi='fixed', Sigma='fixed', verbose=False):
         (16, 5, 0, 2)
         sage: graphs.MuzychukS6Graph(3,3,Phi='random',Sigma='random').is_strongly_regular(parameters=True)              # needs sage.rings.finite_rings
         (378, 116, 34, 36)
-        sage: graphs.MuzychukS6Graph(3,2)                                               # needs sage.modules
+        sage: graphs.MuzychukS6Graph(3,2)
         Traceback (most recent call last):
         ...
         AssertionError: n must be even or d must be odd
-        sage: graphs.MuzychukS6Graph(6,2)                                               # needs sage.modules
+        sage: graphs.MuzychukS6Graph(6,2)
         Traceback (most recent call last):
         ...
         AssertionError: n must be a prime power
-        sage: graphs.MuzychukS6Graph(3,1)                                               # needs sage.modules
+        sage: graphs.MuzychukS6Graph(3,1)
         Traceback (most recent call last):
         ...
         AssertionError: d must be at least 2

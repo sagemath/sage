@@ -167,7 +167,7 @@ def AffineOrthogonalPolarGraph(d, q, sign="+"):
         Affine Polar Graph VO^-(6,2): Graph on 64 vertices
         sage: g.is_strongly_regular(parameters=True)    # optional - NameError: 'g' (with --distribution 'sagemath-graphs[modules]')
         (64, 27, 10, 12)
-        sage: g = graphs.AffineOrthogonalPolarGraph(6,2,"+"); g                         # needs sage.libs.gap
+        sage: g = graphs.AffineOrthogonalPolarGraph(6,2,"+"); g
         Affine Polar Graph VO^+(6,2): Graph on 64 vertices
         sage: g.is_strongly_regular(parameters=True)    # optional - NameError: 'g' (with --distribution 'sagemath-graphs[modules]')
         (64, 35, 18, 20)

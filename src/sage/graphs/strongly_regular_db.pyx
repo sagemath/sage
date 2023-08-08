@@ -1441,7 +1441,7 @@ def is_GQqmqp(int v, int k, int l, int mu):
         sage: (S,T) = (126,124)
         sage: t = is_GQqmqp((S+1)*(S*T+1), S*(T+1), S-1, T+1); t
         (<function AhrensSzekeresGeneralizedQuadrangleGraph at ...>, 125, True)
-        sage: t = is_GQqmqp(5,5,5,5); t                                                 # needs sage.libs.pari
+        sage: t = is_GQqmqp(5,5,5,5); t
     """
     # do we have GQ(s,t)? we must have mu=t+1, s=l+1,
     # v=(s+1)(st+1), k=s(t+1)
@@ -2435,8 +2435,8 @@ def SRG_560_208_72_80():
     EXAMPLES::
 
         sage: from sage.graphs.strongly_regular_db import SRG_560_208_72_80
-        sage: g = SRG_560_208_72_80()                   # not tested (~2s), needs sage.libs.gap
-        sage: g.is_strongly_regular(parameters=True)    # not tested (~2s), needs sage.libs.gap
+        sage: g = SRG_560_208_72_80()                   # not tested (~2s)              # needs sage.libs.gap
+        sage: g.is_strongly_regular(parameters=True)    # not tested (~2s)              # needs sage.libs.gap
         (560, 208, 72, 80)
     """
     from sage.libs.gap.libgap import libgap

@@ -1243,9 +1243,9 @@ class GraphGenerators():
             sage: g = graphs.cospectral_graphs(6, graphs=lambda x: min(x.degree())>0)
             sage: sorted(sorted(g.graph6_string() for g in glist) for glist in g)
             [['Ep__', 'Er?G'], ['ExGg', 'ExoG']]
-            sage: g[0][1].am().charpoly()==g[0][1].am().charpoly()                      # needs sage.modules
+            sage: g[0][1].am().charpoly()==g[0][1].am().charpoly()
             True
-            sage: g[1][1].am().charpoly()==g[1][1].am().charpoly()                      # needs sage.modules
+            sage: g[1][1].am().charpoly()==g[1][1].am().charpoly()
             True
 
         There is one pair of cospectral trees on eight vertices::
@@ -1263,9 +1263,9 @@ class GraphGenerators():
             sage: g = graphs.cospectral_graphs(6, matrix_function=lambda g: g.laplacian_matrix())
             sage: sorted(sorted(g.graph6_string() for g in glist) for glist in g)
             [['Edq_', 'ErcG'], ['Exoo', 'EzcG']]
-            sage: g[0][1].laplacian_matrix().charpoly()==g[0][1].laplacian_matrix().charpoly()      # needs sage.modules
+            sage: g[0][1].laplacian_matrix().charpoly()==g[0][1].laplacian_matrix().charpoly()
             True
-            sage: g[1][1].laplacian_matrix().charpoly()==g[1][1].laplacian_matrix().charpoly()      # needs sage.modules
+            sage: g[1][1].laplacian_matrix().charpoly()==g[1][1].laplacian_matrix().charpoly()
             True
 
         To find cospectral graphs with respect to the normalized

@@ -314,11 +314,11 @@ def dominating_sets(g, k=1, independent=False, total=False,
 
         sage: # needs sage.numerical.mip
         sage: G = graphs.PathGraph(6)
-        sage: sorted(G.dominating_sets(k=1, independent=True))                          # needs sage.numerical.mip
+        sage: sorted(G.dominating_sets(k=1, independent=True))
         [[1, 4]]
-        sage: sorted(G.dominating_sets(k=2, independent=True))                          # needs sage.numerical.mip
+        sage: sorted(G.dominating_sets(k=2, independent=True))
         [[0, 3], [0, 4], [0, 5], [1, 3], [1, 4], [1, 5], [2, 4], [2, 5]]
-        sage: sorted(G.dominating_sets(k=3, independent=True))                          # needs sage.numerical.mip
+        sage: sorted(G.dominating_sets(k=3, independent=True))
         [[2], [3]]
 
     The dominating set is calculated for both the directed and undirected graphs
@@ -326,16 +326,16 @@ def dominating_sets(g, k=1, independent=False, total=False,
 
         sage: # needs sage.numerical.mip
         sage: g = digraphs.Path(3)
-        sage: g.dominating_set(value_only=True)                                         # needs sage.numerical.mip
+        sage: g.dominating_set(value_only=True)
         2
-        sage: list(g.dominating_sets())                                                 # needs sage.numerical.mip
+        sage: list(g.dominating_sets())
         [[0, 1], [0, 2]]
-        sage: list(g.dominating_sets(k=2))                                              # needs sage.numerical.mip
+        sage: list(g.dominating_sets(k=2))
         [[0]]
         sage: g = graphs.PathGraph(3)
-        sage: g.dominating_set(value_only=True)                                         # needs sage.numerical.mip
+        sage: g.dominating_set(value_only=True)
         1
-        sage: next(g.dominating_sets())                                                 # needs sage.numerical.mip
+        sage: next(g.dominating_sets())
         [1]
 
     TESTS::

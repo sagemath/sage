@@ -1041,7 +1041,7 @@ def spectral_radius(G, prec=1e-10):
         sage: p                                                                         # needs sage.modules
         x^201 - x^199 - 1
         sage: r = p.roots(AA, multiplicities=False)[0]                                  # needs sage.modules
-        sage: e_min < r < e_max
+        sage: e_min < r < e_max                                                         # needs sage.modules
         True
 
     A much larger example::
