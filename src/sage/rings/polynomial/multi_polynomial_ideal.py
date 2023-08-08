@@ -4650,10 +4650,10 @@ class MPolynomialIdeal(MPolynomialIdeal_singular_repr,
         if not algorithm:
             try:
                 gb = self._groebner_basis_libsingular("groebner", deg_bound=deg_bound, mult_bound=mult_bound, *args, **kwds)
-            except (TypeError, NameError): # conversion to Singular not supported
+            except (TypeError, NameError, ImportError): # conversion to Singular not supported
                 try:
                     gb = self._groebner_basis_singular("groebner", deg_bound=deg_bound, mult_bound=mult_bound, *args, **kwds)
-                except (TypeError, NameError, NotImplementedError): # conversion to Singular not supported
+                except (TypeError, NameError, NotImplementedError, ImportError): # conversion to Singular not supported
                     R = self.ring()
                     B = R.base_ring()
                     if R.ngens() == 0:

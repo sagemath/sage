@@ -1290,7 +1290,8 @@ cdef class OrePolynomial(AlgebraElement):
             sage: a.left_gcd(b)
             Traceback (most recent call last):
             ...
-            NotImplementedError: inversion of the twisting morphism Ring endomorphism of Fraction Field of Univariate Polynomial Ring in t over Rational Field
+            NotImplementedError: inversion of the twisting morphism Ring endomorphism
+            of Fraction Field of Univariate Polynomial Ring in t over Rational Field
                 Defn: t |--> t^2
         """
         if self.base_ring() not in _Fields:

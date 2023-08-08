@@ -391,7 +391,7 @@ class PolynomialRing_general(ring.Algebra):
         Throw a TypeError if any of the coefficients cannot be coerced
         into the base ring (:trac:`6777`)::
 
-            sage: RealField(300)['x']( [ 1, ComplexField(300).gen(), 0 ])               # optional - sage.rings.real_mpfr
+            sage: RealField(300)['x']( [ 1, ComplexField(300).gen(), 0 ])               # needs sage.rings.real_mpfr
             Traceback (most recent call last):
             ...
             TypeError: unable to convert '1.00...00*I' to a real number
@@ -884,7 +884,7 @@ class PolynomialRing_general(ring.Algebra):
 
             sage: k.<a> = GF(9)                                                         # needs sage.rings.finite_rings
             sage: R.<x> = k[]                                                           # needs sage.rings.finite_rings
-            sage: magma(a^2*x^3 + (a+1)*x + a)  # optional - magma, needs sage.rings.finite_rings
+            sage: magma(a^2*x^3 + (a+1)*x + a)  # optional - magma                      # needs sage.rings.finite_rings
             a^2*x^3 + a^2*x + a
         """
         B = magma(self.base_ring())
@@ -1185,6 +1185,7 @@ class PolynomialRing_general(ring.Algebra):
             x^4 + 1
             sage: R.cyclotomic_polynomial(12)
             x^4 - x^2 + 1
+
             sage: S = PolynomialRing(FiniteField(7), 'x')
             sage: S.cyclotomic_polynomial(12)
             x^4 + 6*x^2 + 1
@@ -2066,15 +2067,15 @@ class PolynomialRing_field(PolynomialRing_integral_domain,
             Sparse Univariate Polynomial Ring in x over Rational Field
             sage: type(R.gen())
             <class 'sage.rings.polynomial.polynomial_ring.PolynomialRing_field_with_category.element_class'>
-            sage: R = PRing(CC, 'x'); R                                                 # optional - sage.rings.real_mpfr
+            sage: R = PRing(CC, 'x'); R                                                 # needs sage.rings.real_mpfr
             Univariate Polynomial Ring in x over Complex Field with 53 bits of precision
-            sage: type(R.gen())                                                         # optional - sage.rings.real_mpfr
+            sage: type(R.gen())                                                         # needs sage.rings.real_mpfr
             <class 'sage.rings.polynomial.polynomial_ring.PolynomialRing_field_with_category.element_class'>
 
         Demonstrate that :trac:`8762` is fixed::
 
             sage: R.<x> = PolynomialRing(GF(next_prime(10^20)), sparse=True)            # needs sage.rings.finite_rings
-            sage: x^(10^20) # this should be fast                                       # needs sage.rings.finite_rings
+            sage: x^(10^20)  # this should be fast                                      # needs sage.rings.finite_rings
             x^100000000000000000000
         """
         def _element_class():
@@ -2655,6 +2656,7 @@ class PolynomialRing_dense_finite_field(PolynomialRing_field):
 
         EXAMPLES::
 
+            sage: # needs sage.rings.finite_rings
             sage: F = GF(17)
             sage: Px.<x> = F[]
             sage: Pxy.<y> = Px[]
@@ -3281,11 +3283,11 @@ class PolynomialRing_dense_mod_n(PolynomialRing_commutative):
             Traceback (most recent call last):
             ...
             ArithmeticError: ideal is not maximal
-            sage: R.residue_field(0)                                                    # needs sage.rings.finite_rings
+            sage: R.residue_field(0)
             Traceback (most recent call last):
             ...
             ArithmeticError: ideal is not maximal
-            sage: R.residue_field(1)                                                    # needs sage.rings.finite_rings
+            sage: R.residue_field(1)
             Traceback (most recent call last):
             ...
             ArithmeticError: ideal is not maximal
@@ -3311,12 +3313,13 @@ class PolynomialRing_dense_mod_p(PolynomialRing_dense_finite_field,
             sage: from sage.rings.polynomial.polynomial_ring import PolynomialRing_dense_mod_p
             sage: P = PolynomialRing_dense_mod_p(GF(5), 'x'); P
             Univariate Polynomial Ring in x over Finite Field of size 5
-            sage: type(P.gen())                                                         # needs sage.rings.finite_rings
+            sage: type(P.gen())                                                         # needs sage.libs.flint
             <class 'sage.rings.polynomial.polynomial_zmod_flint.Polynomial_zmod_flint'>
 
-            sage: P = PolynomialRing_dense_mod_p(GF(5), 'x', implementation='NTL'); P   # needs sage.rings.finite_rings
+            sage: # needs sage.libs.ntl
+            sage: P = PolynomialRing_dense_mod_p(GF(5), 'x', implementation='NTL'); P
             Univariate Polynomial Ring in x over Finite Field of size 5 (using NTL)
-            sage: type(P.gen())                                                         # needs sage.rings.finite_rings
+            sage: type(P.gen())
             <class 'sage.rings.polynomial.polynomial_modn_dense_ntl.Polynomial_dense_mod_p'>
 
             sage: P = PolynomialRing_dense_mod_p(GF(9223372036854775837), 'x'); P       # needs sage.libs.ntl sage.rings.finite_rings
@@ -3326,12 +3329,13 @@ class PolynomialRing_dense_mod_p(PolynomialRing_dense_finite_field,
 
         This caching bug was fixed in :trac:`24264`::
 
+            sage: # needs sage.rings.finite_rings
             sage: p = 2^64 + 13
-            sage: A = GF(p^2)                                                           # needs sage.rings.finite_rings
-            sage: B = GF(p^3)                                                           # needs sage.rings.finite_rings
-            sage: R = A.modulus().parent()                                              # needs sage.rings.finite_rings
-            sage: S = B.modulus().parent()                                              # needs sage.rings.finite_rings
-            sage: R is S                                                                # needs sage.rings.finite_rings
+            sage: A = GF(p^2)
+            sage: B = GF(p^3)
+            sage: R = A.modulus().parent()
+            sage: S = B.modulus().parent()
+            sage: R is S
             True
         """
         if element_class is None:

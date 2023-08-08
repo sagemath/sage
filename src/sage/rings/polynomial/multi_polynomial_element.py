@@ -1090,7 +1090,7 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
         from sage.categories.number_fields import NumberFields
 
         K = self.base_ring()
-        if K in NumberFields() or isinstance(K, (sage.rings.abc.Order, IntegerRing_class)):
+        if K in NumberFields() or isinstance(K, (sage.rings.abc.Order, sage.rings.integer_ring.IntegerRing_class)):
             from sage.schemes.projective.projective_space import ProjectiveSpace
             Pr = ProjectiveSpace(K, self.number_of_terms()-1)
             return Pr.point(self.coefficients()).global_height(prec=prec)
