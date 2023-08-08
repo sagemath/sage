@@ -15,18 +15,18 @@ AUTHOR:
 
 EXAMPLES::
 
-    sage: n = var('n')                                                                  # optional - sage.symbolic
-    sage: integrate(n^2/x, x)                                                           # optional - sage.symbolic
+    sage: n = var('n')                                                                  # needs sage.symbolic
+    sage: integrate(n^2/x, x)                                                           # needs sage.symbolic
     n^2*log(x)
-    sage: ascii_art(integrate(n^2/x, x))                                                # optional - sage.symbolic
+    sage: ascii_art(integrate(n^2/x, x))                                                # needs sage.symbolic
      2
     n *log(x)
-    sage: ascii_art(integrate(n^2/(pi*x), x))                                           # optional - sage.symbolic
+    sage: ascii_art(integrate(n^2/(pi*x), x))                                           # needs sage.symbolic
      2
     n *log(x)
     ---------
         pi
-    sage: ascii_art(list(Partitions(6)))                                                # optional - sage.combinat sage.libs.flint
+    sage: ascii_art(list(Partitions(6)))                                                # needs sage.combinat sage.libs.flint
     [                                                       * ]
     [                                                   **  * ]
     [                                      ***      **  *   * ]
@@ -40,18 +40,18 @@ manager activated by the magic function: ``%display ascii_art``::
     sage: from sage.repl.interpreter import get_test_shell
     sage: shell = get_test_shell()
     sage: shell.run_cell('%display ascii_art')
-    sage: shell.run_cell("i = var('i')")                                                # optional - sage.symbolic
-    sage: shell.run_cell('sum(factorial(i)*x^i, i, 0, 10)')                             # optional - sage.symbolic
+    sage: shell.run_cell("i = var('i')")                                                # needs sage.symbolic
+    sage: shell.run_cell('sum(factorial(i)*x^i, i, 0, 10)')                             # needs sage.symbolic
              10           9          8         7        6        5       4      3
     3628800*x   + 362880*x  + 40320*x  + 5040*x  + 720*x  + 120*x  + 24*x  + 6*x
     <BLANKLINE>
          2
     + 2*x  + x + 1
-    sage: shell.run_cell('3/(7*x)')                                                     # optional - sage.symbolic
+    sage: shell.run_cell('3/(7*x)')                                                     # needs sage.symbolic
      3
     ---
     7*x
-    sage: shell.run_cell('list(Compositions(5))')                                       # optional - sage.combinat
+    sage: shell.run_cell('list(Compositions(5))')                                       # needs sage.combinat
     [ *
     [ *  **   *        *                   *
     [ *  *   **  ***   *   **    *         *   **    *          *
@@ -173,8 +173,8 @@ class AsciiArt(CharacterArt):
 
     EXAMPLES::
 
-        sage: i = var('i')                                                              # optional - sage.symbolic
-        sage: ascii_art(sum(pi^i/factorial(i)*x^i, i, 0, oo))                           # optional - sage.symbolic
+        sage: i = var('i')                                                              # needs sage.symbolic
+        sage: ascii_art(sum(pi^i/factorial(i)*x^i, i, 0, oo))                           # needs sage.symbolic
          pi*x
         e
     """
@@ -216,9 +216,9 @@ def ascii_art(*obj, **kwds):
 
     EXAMPLES::
 
-        sage: result = ascii_art(integral(exp(x+x^2)/(x+1), x))                         # optional - sage.symbolic
+        sage: result = ascii_art(integral(exp(x+x^2)/(x+1), x))                         # needs sage.symbolic
         ...
-        sage: result                                                                    # optional - sage.symbolic
+        sage: result                                                                    # needs sage.symbolic
             /
            |
            |   2
@@ -232,21 +232,21 @@ def ascii_art(*obj, **kwds):
     We can specify a separator object::
 
         sage: ident = lambda n: identity_matrix(ZZ, n)
-        sage: ascii_art(ident(1), ident(2), ident(3), sep=' : ')                        # optional - sage.modules
+        sage: ascii_art(ident(1), ident(2), ident(3), sep=' : ')                        # needs sage.modules
                       [1 0 0]
               [1 0]   [0 1 0]
         [1] : [0 1] : [0 0 1]
 
     We can specify the baseline::
 
-        sage: ascii_art(ident(2), baseline=-1) + ascii_art(ident(3))                    # optional - sage.modules
+        sage: ascii_art(ident(2), baseline=-1) + ascii_art(ident(3))                    # needs sage.modules
         [1 0][1 0 0]
         [0 1][0 1 0]
              [0 0 1]
 
     We can determine the baseline of the separator::
 
-        sage: ascii_art(ident(1), ident(2), ident(3), sep=' -- ', sep_baseline=-1)      # optional - sage.modules
+        sage: ascii_art(ident(1), ident(2), ident(3), sep=' -- ', sep_baseline=-1)      # needs sage.modules
                         [1 0 0]
             -- [1 0] -- [0 1 0]
         [1]    [0 1]    [0 0 1]
@@ -255,7 +255,7 @@ def ascii_art(*obj, **kwds):
     an ascii art separator::
 
         sage: sep_line = ascii_art('\n'.join(' | ' for _ in range(6)), baseline=6)
-        sage: ascii_art(*Partitions(6), separator=sep_line, sep_baseline=0)             # optional - sage.combinat sage.libs.flint
+        sage: ascii_art(*Partitions(6), separator=sep_line, sep_baseline=0)             # needs sage.combinat sage.libs.flint
                |       |      |      |     |     |     |    |    |    | *
                |       |      |      |     |     |     |    |    | ** | *
                |       |      |      |     |     | *** |    | ** | *  | *
@@ -265,14 +265,14 @@ def ascii_art(*obj, **kwds):
 
     TESTS::
 
-        sage: n = var('n')                                                              # optional - sage.symbolic
-        sage: ascii_art(sum(binomial(2 * n, n + 1) * x^n, n, 0, oo))                    # optional - sage.symbolic
+        sage: n = var('n')                                                              # needs sage.symbolic
+        sage: ascii_art(sum(binomial(2 * n, n + 1) * x^n, n, 0, oo))                    # needs sage.symbolic
          /        _________    \
         -\2*x + \/ 1 - 4*x  - 1/
         -------------------------
                    _________
              2*x*\/ 1 - 4*x
-        sage: ascii_art(list(DyckWords(3)))                                             # optional - sage.combinat
+        sage: ascii_art(list(DyckWords(3)))                                             # needs sage.combinat
         [                                   /\   ]
         [            /\    /\      /\/\    /  \  ]
         [ /\/\/\, /\/  \, /  \/\, /    \, /    \ ]
