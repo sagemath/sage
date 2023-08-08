@@ -134,7 +134,7 @@ cdef class Distribution:
         EXAMPLES::
 
             sage: P = hmm.GaussianMixtureDistribution([(.2,-10,.5),(.6,1,1),(.2,20,.5)])
-            sage: P.plot(-10,30)                                                        # optional - sage.plot
+            sage: P.plot(-10,30)                                                        # needs sage.plot
             Graphics object consisting of 1 graphics primitive
         """
         from sage.plot.all import plot
