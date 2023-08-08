@@ -44,12 +44,13 @@ EXAMPLES: We obtain the first table of elliptic curves.
 We type ``next(d)`` to get each isogeny class of
 curves from ``d``::
 
-    sage: C = next(d)                                   # optional - database_stein_watkins
-    sage: C                                             # optional - database_stein_watkins
+    sage: # optional - database_stein_watkins
+    sage: C = next(d)
+    sage: C
     Stein-Watkins isogeny class of conductor 11
-    sage: next(d)                                       # optional - database_stein_watkins
+    sage: next(d)
     Stein-Watkins isogeny class of conductor 14
-    sage: next(d)                                       # optional - database_stein_watkins
+    sage: next(d)
     Stein-Watkins isogeny class of conductor 15
 
 An isogeny class has a number of attributes that give data about
@@ -58,21 +59,22 @@ conductor, leading coefficient of `L`-function, etc.
 
 ::
 
-    sage: C.data                                         # optional - database_stein_watkins
+    sage: # optional - database_stein_watkins
+    sage: C.data
     ['11', '[11]', '0', '0.253842', '25', '+*1']
-    sage: C.curves                                       # optional - database_stein_watkins
+    sage: C.curves
     [[[0, -1, 1, 0, 0], '(1)', '1', '5'],
      [[0, -1, 1, -10, -20], '(5)', '1', '5'],
      [[0, -1, 1, -7820, -263580], '(1)', '1', '1']]
-    sage: C.conductor                                    # optional - database_stein_watkins
+    sage: C.conductor
     11
-    sage: C.leading_coefficient                          # optional - database_stein_watkins
+    sage: C.leading_coefficient
     '0.253842'
-    sage: C.modular_degree                               # optional - database_stein_watkins
+    sage: C.modular_degree
     '+*1'
-    sage: C.rank                                         # optional - database_stein_watkins
+    sage: C.rank
     0
-    sage: C.isogeny_number                               # optional - database_stein_watkins
+    sage: C.isogeny_number
     '25'
 
 If we were to continue typing ``next(d)`` we would
@@ -101,16 +103,17 @@ Next we access the prime-conductor data::
 Each call ``next(d)`` gives another elliptic curve of
 prime conductor::
 
-    sage: C = next(d)                                  # optional - database_stein_watkins
-    sage: C                                            # optional - database_stein_watkins
+    sage: # optional - database_stein_watkins
+    sage: C = next(d)
+    sage: C
     Stein-Watkins isogeny class of conductor 17
-    sage: C.curves                                     # optional - database_stein_watkins
+    sage: C.curves
     [[[1, -1, 1, -1, 0], '[1]', '1', '4'],
      [[1, -1, 1, -6, -4], '[2]', '1', '2x'],
      [[1, -1, 1, -1, -14], '(4)', '1', '4'],
      [[1, -1, 1, -91, -310], '[1]', '1', '2']]
-    sage: C = next(d)                                  # optional - database_stein_watkins
-    sage: C                                            # optional - database_stein_watkins
+    sage: C = next(d)
+    sage: C
     Stein-Watkins isogeny class of conductor 19
 
 REFERENCE:

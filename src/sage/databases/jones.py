@@ -256,20 +256,21 @@ class JonesDatabase:
 
         EXAMPLES::
 
-            sage: J = JonesDatabase()              # optional - database_jones_numfield
-            sage: J.ramified_at([101,109])         # optional - database_jones_numfield
+            sage: # optional - database_jones_numfield
+            sage: J = JonesDatabase()
+            sage: J.ramified_at([101,109])
             []
-            sage: J.ramified_at([109])             # optional - database_jones_numfield
+            sage: J.ramified_at([109])
             [Number Field in a with defining polynomial x^2 - 109,
              Number Field in a with defining polynomial x^3 - x^2 - 36*x + 4,
              Number Field in a with defining polynomial x^4 - x^3 + 14*x^2 + 34*x + 393]
-            sage: J.ramified_at(101)               # optional - database_jones_numfield
+            sage: J.ramified_at(101)
             [Number Field in a with defining polynomial x^2 - 101,
              Number Field in a with defining polynomial x^4 - x^3 + 13*x^2 - 19*x + 361,
              Number Field in a with defining polynomial x^5 + x^4 - 6*x^3 - x^2 + 18*x + 4,
              Number Field in a with defining polynomial x^5 + 2*x^4 + 7*x^3 + 4*x^2 + 11*x - 6,
              Number Field in a with defining polynomial x^5 - x^4 - 40*x^3 - 93*x^2 - 21*x + 17]
-            sage: J.ramified_at((2, 5, 29), 3, 'c') # optional - database_jones_numfield
+            sage: J.ramified_at((2, 5, 29), 3, 'c')
             [Number Field in c with defining polynomial x^3 - x^2 - 8*x - 28,
              Number Field in c with defining polynomial x^3 - x^2 + 10*x + 102,
              Number Field in c with defining polynomial x^3 - x^2 - 48*x - 188,

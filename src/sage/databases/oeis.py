@@ -109,25 +109,25 @@ primes ?
 
 ::
 
-    sage: x = var('x') ; f(x) = e^(e^x - 1)                                             # optional - sage.symbolic
-    sage: L = [a*factorial(b) for a,b in taylor(f(x), x, 0, 20).coefficients()]; L      # optional - sage.symbolic
+    sage: x = var('x') ; f(x) = e^(e^x - 1)                                             # needs sage.symbolic
+    sage: L = [a*factorial(b) for a,b in taylor(f(x), x, 0, 20).coefficients()]; L      # needs sage.symbolic
     [1, 1, 2, 5, 15, 52, 203, 877, 4140, 21147, 115975, 678570, 4213597,
      27644437, 190899322, 1382958545, 10480142147, 82864869804, 682076806159,
      5832742205057, 51724158235372]
 
-    sage: oeis(L)                                       # optional -- internet          # optional - sage.symbolic
+    sage: oeis(L)                                       # optional - internet           # needs sage.symbolic
     0: A000110: Bell or exponential numbers: number of ways to partition a set of n labeled elements.
     1: A292935: E.g.f.: exp(exp(-x) - 1).
 
-    sage: b = _[0]                                      # optional -- internet          # optional - sage.symbolic
+    sage: b = _[0]                                      # optional - internet           # needs sage.symbolic
 
-    sage: b.formulas()[0]                               # optional -- internet          # optional - sage.symbolic
+    sage: b.formulas()[0]                               # optional - internet           # needs sage.symbolic
     'E.g.f.: exp(exp(x) - 1).'
 
-    sage: [i for i in b.comments() if 'prime' in i][-1]     # optional -- internet      # optional - sage.symbolic
+    sage: [i for i in b.comments() if 'prime' in i][-1]         # optional - internet, needs sage.symbolic
     'Number n is prime if ...'
 
-    sage: [n for n in range(2, 20) if (b(n)-2) % n == 0]    # optional -- internet      # optional - sage.symbolic
+    sage: [n for n in range(2, 20) if (b(n)-2) % n == 0]        # optional - internet, needs sage.symbolic
     [2, 3, 5, 7, 11, 13, 17, 19]
 
 .. SEEALSO::
@@ -1033,8 +1033,8 @@ class OEISSequence(SageObject, UniqueRepresentation):
             sage: RDF(x) == RDF(euler_gamma)            # optional -- internet
             True
 
-            sage: cfg = continued_fraction(euler_gamma)                                 # optional - sage.symbolic
-            sage: x[:90] == cfg[:90]                    # optional -- internet          # optional - sage.symbolic
+            sage: cfg = continued_fraction(euler_gamma)                                 # needs sage.symbolic
+            sage: x[:90] == cfg[:90]                    # optional - internet           # needs sage.symbolic
             True
 
         ::
@@ -1440,14 +1440,15 @@ class OEISSequence(SageObject, UniqueRepresentation):
             sage: w = oeis(7540) ; w                    # optional -- internet
             A007540: Wilson primes: primes p such that (p-1)! == -1 (mod p^2).
 
-            sage: i = w.__iter__()                      # optional -- internet
-            sage: next(i)                               # optional -- internet
+            sage: # optional - internet
+            sage: i = w.__iter__()
+            sage: next(i)
             5
-            sage: next(i)                               # optional -- internet
+            sage: next(i)
             13
-            sage: next(i)                               # optional -- internet
+            sage: next(i)
             563
-            sage: next(i)                               # optional -- internet
+            sage: next(i)
             Traceback (most recent call last):
             ...
             LookupError: future values not provided by OEIS

@@ -20,16 +20,17 @@ def _dbz_to_string(name):
     r"""
     TESTS::
 
+        sage: # optional - database_kohel
         sage: from sage.databases.db_modular_polynomials import _dbz_to_string
-        sage: _dbz_to_string('PolMod/Atk/pol.002.dbz')                      # optional - database_kohel
+        sage: _dbz_to_string('PolMod/Atk/pol.002.dbz')
         '3 0 1 \n2 1 -1 \n2 0 744 \n1 1 -1 \n1 0 184512 \n0 2 1 \n0 1 7256 \n0 0 15252992 \n'
-        sage: _dbz_to_string('PolMod/Cls/pol.001.dbz')                      # optional - database_kohel
+        sage: _dbz_to_string('PolMod/Cls/pol.001.dbz')
         '1 0 1 \n'
-        sage: _dbz_to_string('PolMod/Eta/pol.002.dbz')                      # optional - database_kohel
+        sage: _dbz_to_string('PolMod/Eta/pol.002.dbz')
         '3 0 1 \n2 0 48 \n1 1 -1 \n1 0 768 \n0 0 4096 \n'
-        sage: _dbz_to_string('PolMod/EtaCrr/crr.02.002.dbz')                # optional - database_kohel
+        sage: _dbz_to_string('PolMod/EtaCrr/crr.02.002.dbz')
         '2 1 1 \n2 0 -48 \n1 1 2304 \n0 2 -4096 \n0 1 196608 \n'
-        sage: _dbz_to_string('PolHeeg/Cls/0000001-0005000/pol.0000003.dbz') # optional - database_kohel
+        sage: _dbz_to_string('PolHeeg/Cls/0000001-0005000/pol.0000003.dbz')
         '0\n1\n'
     """
     from sage.env import SAGE_SHARE
