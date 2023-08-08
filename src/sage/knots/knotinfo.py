@@ -2538,16 +2538,17 @@ class KnotInfoSeries(UniqueRepresentation, SageObject):
             sage: K6(2)                         # indirect doctest
             <KnotInfo.K6_2: '6_2'>
 
+            sage: # optional - database_knotinfo
             sage: from sage.knots.knotinfo import KnotInfo
-            sage: KnotInfo.L8a21_0_1_0.inject()  # optional - database_knotinfo
+            sage: KnotInfo.L8a21_0_1_0.inject()
             Defining L8a21_0_1_0
-            sage: L8a21_0_1_0.series().inject()  # optional - database_knotinfo
+            sage: L8a21_0_1_0.series().inject()
             Defining L8a
-            sage: L8a(1)                         # optional - database_knotinfo
+            sage: L8a(1)
             Series of links L8a1
-            sage: L8a(21)(2)     == L8a21_0_1_0  # optional - database_knotinfo
+            sage: L8a(21)(2)     == L8a21_0_1_0
             True
-            sage: L8a(21)('010') == L8a21_0_1_0  # optional - database_knotinfo
+            sage: L8a(21)('010') == L8a21_0_1_0
             True
         """
         if self._name_unoriented:
