@@ -514,7 +514,7 @@ class GeneralizedReedSolomonCode(AbstractLinearCode):
             sage: F = GF(11)
             sage: n, k = 10, 5
             sage: C = codes.GeneralizedReedSolomonCode(F.list()[:n], k)
-            sage: C.weight_distribution()                                               # optional - sage.symbolic
+            sage: C.weight_distribution()                                               # needs sage.symbolic
             [1, 0, 0, 0, 0, 0, 2100, 6000, 29250, 61500, 62200]
 
         TESTS:
@@ -523,11 +523,11 @@ class GeneralizedReedSolomonCode(AbstractLinearCode):
 
             sage: F = GF(7)
             sage: C = codes.GeneralizedReedSolomonCode(F.list(), 3)
-            sage: C.weight_distribution() == super(codes.GeneralizedReedSolomonCode, C).weight_distribution() # long time   # optional - sage.symbolic
+            sage: C.weight_distribution() == super(codes.GeneralizedReedSolomonCode, C).weight_distribution()  # long time, needs sage.symbolic
             True
             sage: F = GF(8)
             sage: C = codes.GeneralizedReedSolomonCode(F.list(), 3)
-            sage: C.weight_distribution() == super(codes.GeneralizedReedSolomonCode, C).weight_distribution() # long time   # optional - sage.symbolic
+            sage: C.weight_distribution() == super(codes.GeneralizedReedSolomonCode, C).weight_distribution()  # long time, needs sage.symbolic
             True
         """
         from sage.symbolic.ring import SR

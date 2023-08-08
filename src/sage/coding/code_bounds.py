@@ -199,20 +199,21 @@ def _check_n_q_d(n, q, d, field_based=True):
 
     TESTS::
 
+        sage: # needs sage.libs.pari
         sage: from sage.coding.code_bounds import _check_n_q_d
-        sage: _check_n_q_d(20, 16, 5)                                                   # optional - sage.libs.pari
+        sage: _check_n_q_d(20, 16, 5)
         True
-        sage: _check_n_q_d(20, 16, 6, field_based=False)                                # optional - sage.libs.pari
+        sage: _check_n_q_d(20, 16, 6, field_based=False)
         True
-        sage: _check_n_q_d(20, 21, 16)                                                  # optional - sage.libs.pari
+        sage: _check_n_q_d(20, 21, 16)
         Traceback (most recent call last):
         ...
         ValueError: The alphabet size does not make sense for a code over a field
-        sage: _check_n_q_d(20, -21, 16)                                                 # optional - sage.libs.pari
+        sage: _check_n_q_d(20, -21, 16)
         Traceback (most recent call last):
         ...
         ValueError: The alphabet size must be an integer >1
-        sage: _check_n_q_d(20, 2, 26)                                                   # optional - sage.libs.pari
+        sage: _check_n_q_d(20, 2, 26)
         Traceback (most recent call last):
         ...
         ValueError: The length or minimum distance does not make sense
@@ -253,15 +254,15 @@ def codesize_upper_bound(n, d, q, algorithm=None):
 
         sage: codes.bounds.codesize_upper_bound(10, 3, 2)
         93
-        sage: codes.bounds.codesize_upper_bound(24, 8, 2, algorithm="LP")               # optional - sage.numerical.mip
+        sage: codes.bounds.codesize_upper_bound(24, 8, 2, algorithm="LP")               # needs sage.numerical.mip
         4096
         sage: codes.bounds.codesize_upper_bound(10, 3, 2, algorithm="gap")      # optional - gap_package_guava
         85
-        sage: codes.bounds.codesize_upper_bound(11, 3, 4, algorithm=None)               # optional - sage.symbolic
+        sage: codes.bounds.codesize_upper_bound(11, 3, 4, algorithm=None)               # needs sage.symbolic
         123361
         sage: codes.bounds.codesize_upper_bound(11, 3, 4, algorithm="gap")      # optional - gap_package_guava
         123361
-        sage: codes.bounds.codesize_upper_bound(11, 3, 4, algorithm="LP")               # optional - sage.numerical.mip
+        sage: codes.bounds.codesize_upper_bound(11, 3, 4, algorithm="LP")               # needs sage.numerical.mip
         109226
 
     TESTS:
@@ -308,18 +309,18 @@ def dimension_upper_bound(n, d, q, algorithm=None):
 
     EXAMPLES::
 
-        sage: codes.bounds.dimension_upper_bound(10,3,2)                                # optional - sage.libs.pari
+        sage: codes.bounds.dimension_upper_bound(10,3,2)                                # needs sage.libs.pari
         6
-        sage: codes.bounds.dimension_upper_bound(30,15,4)                               # optional - sage.libs.pari
+        sage: codes.bounds.dimension_upper_bound(30,15,4)                               # needs sage.libs.pari
         13
-        sage: codes.bounds.dimension_upper_bound(30,15,4,algorithm="LP")                # optional - sage.libs.pari
+        sage: codes.bounds.dimension_upper_bound(30,15,4,algorithm="LP")                # needs sage.libs.pari
         12
 
     TESTS:
 
     Meaningless code parameters are rejected::
 
-        sage: codes.bounds.dimension_upper_bound(13,3,6)                                # optional - sage.libs.pari
+        sage: codes.bounds.dimension_upper_bound(13,3,6)                                # needs sage.libs.pari
         Traceback (most recent call last):
         ...
         ValueError: The alphabet size does not make sense for a code over a field
@@ -421,23 +422,23 @@ def griesmer_upper_bound(n,q,d,algorithm=None):
 
     The bound is reached for the ternary Golay codes::
 
-        sage: codes.bounds.griesmer_upper_bound(12,3,6)                                 # optional - sage.libs.pari
+        sage: codes.bounds.griesmer_upper_bound(12,3,6)                                 # needs sage.libs.pari
         729
-        sage: codes.bounds.griesmer_upper_bound(11,3,5)                                 # optional - sage.libs.pari
+        sage: codes.bounds.griesmer_upper_bound(11,3,5)                                 # needs sage.libs.pari
         729
 
     ::
 
-        sage: codes.bounds.griesmer_upper_bound(10,2,3)                                 # optional - sage.libs.pari
+        sage: codes.bounds.griesmer_upper_bound(10,2,3)                                 # needs sage.libs.pari
         128
-        sage: codes.bounds.griesmer_upper_bound(10,2,3,algorithm="gap")         # optional - gap_package_guava sage.libs.pari
+        sage: codes.bounds.griesmer_upper_bound(10,2,3,algorithm="gap")         # optional - gap_package_guava, needs sage.libs.pari
         128
 
     TESTS::
 
-        sage: codes.bounds.griesmer_upper_bound(11,3,6)                                 # optional - sage.libs.pari
+        sage: codes.bounds.griesmer_upper_bound(11,3,6)                                 # needs sage.libs.pari
         243
-        sage: codes.bounds.griesmer_upper_bound(11,3,6)                                 # optional - sage.libs.pari
+        sage: codes.bounds.griesmer_upper_bound(11,3,6)                                 # needs sage.libs.pari
         243
     """
     _check_n_q_d(n, q, d)
@@ -570,7 +571,7 @@ def gv_info_rate(n, delta, q):
 
     EXAMPLES::
 
-        sage: RDF(codes.bounds.gv_info_rate(100,1/4,3))  # abs tol 1e-15                # optional - sage.libs.pari
+        sage: RDF(codes.bounds.gv_info_rate(100,1/4,3))  # abs tol 1e-15                # needs sage.libs.pari
         0.36704992608261894
     """
     q = ZZ(q)
@@ -592,9 +593,9 @@ def entropy(x, q=2):
 
         sage: codes.bounds.entropy(0, 2)
         0
-        sage: codes.bounds.entropy(1/5,4).factor()    # optional - sage.symbolic
+        sage: codes.bounds.entropy(1/5,4).factor()                                      # needs sage.symbolic
         1/10*(log(3) - 4*log(4/5) - log(1/5))/log(2)
-        sage: codes.bounds.entropy(1, 3)              # optional - sage.symbolic
+        sage: codes.bounds.entropy(1, 3)                                                # needs sage.symbolic
         log(2)/log(3)
 
     Check that values not within the limits are properly handled::
@@ -678,10 +679,10 @@ def gv_bound_asymp(delta, q):
 
     EXAMPLES::
 
-        sage: RDF(codes.bounds.gv_bound_asymp(1/4,2))                                   # optional - sage.libs.pari
+        sage: RDF(codes.bounds.gv_bound_asymp(1/4,2))                                   # needs sage.libs.pari
         0.18872187554086...
         sage: f = lambda x: codes.bounds.gv_bound_asymp(x,2)
-        sage: plot(f,0,1)                                                               # optional - sage.libs.pari sage.plot
+        sage: plot(f,0,1)                                                               # needs sage.libs.pari sage.plot
         Graphics object consisting of 1 graphics primitive
     """
     return 1 - entropy(delta, q)
@@ -693,10 +694,10 @@ def hamming_bound_asymp(delta, q):
 
     EXAMPLES::
 
-        sage: RDF(codes.bounds.hamming_bound_asymp(1/4,2))                              # optional - sage.libs.pari
+        sage: RDF(codes.bounds.hamming_bound_asymp(1/4,2))                              # needs sage.libs.pari
         0.456435556800...
         sage: f = lambda x: codes.bounds.hamming_bound_asymp(x,2)
-        sage: plot(f,0,1)                                                               # optional - sage.libs.pari sage.plot
+        sage: plot(f,0,1)                                                               # needs sage.libs.pari sage.plot
         Graphics object consisting of 1 graphics primitive
     """
     return 1 - entropy(delta / 2, q)
@@ -711,7 +712,7 @@ def singleton_bound_asymp(delta, q):
         sage: codes.bounds.singleton_bound_asymp(1/4,2)
         3/4
         sage: f = lambda x: codes.bounds.singleton_bound_asymp(x,2)
-        sage: plot(f,0,1)                                                               # optional - sage.plot
+        sage: plot(f,0,1)                                                               # needs sage.plot
         Graphics object consisting of 1 graphics primitive
     """
     return 1 - delta
@@ -740,7 +741,7 @@ def elias_bound_asymp(delta, q):
 
     EXAMPLES::
 
-        sage: codes.bounds.elias_bound_asymp(1/4,2)                                     # optional - sage.symbolic
+        sage: codes.bounds.elias_bound_asymp(1/4,2)                                     # needs sage.symbolic
         0.39912396330...
     """
     r = 1 - 1 / q
@@ -755,7 +756,7 @@ def mrrw1_bound_asymp(delta, q):
 
     EXAMPLES::
 
-        sage: codes.bounds.mrrw1_bound_asymp(1/4,2)   # abs tol 4e-16                   # optional - sage.symbolic
+        sage: codes.bounds.mrrw1_bound_asymp(1/4,2)   # abs tol 4e-16                   # needs sage.symbolic
         0.3545789026652697
     """
     return RDF(entropy((q-1-delta*(q-2)-2*sqrt((q-1)*delta*(1-delta)))/q,q))

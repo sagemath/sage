@@ -229,28 +229,28 @@ def permutation_action(g, v):
 
         sage: V = VectorSpace(GF(3),5)
         sage: v = V([0,1,2,0,1])
-        sage: G = SymmetricGroup(5)                                                     # optional - sage.groups
-        sage: g = G([(1,2,3)])                                                          # optional - sage.groups
-        sage: permutation_action(g,v)                                                   # optional - sage.groups
+        sage: G = SymmetricGroup(5)                                                     # needs sage.groups
+        sage: g = G([(1,2,3)])                                                          # needs sage.groups
+        sage: permutation_action(g,v)                                                   # needs sage.groups
         (1, 2, 0, 0, 1)
-        sage: g = G([()])                                                               # optional - sage.groups
-        sage: permutation_action(g,v)                                                   # optional - sage.groups
+        sage: g = G([()])                                                               # needs sage.groups
+        sage: permutation_action(g,v)                                                   # needs sage.groups
         (0, 1, 2, 0, 1)
-        sage: g = G([(1,2,3,4,5)])                                                      # optional - sage.groups
-        sage: permutation_action(g,v)                                                   # optional - sage.groups
+        sage: g = G([(1,2,3,4,5)])                                                      # needs sage.groups
+        sage: permutation_action(g,v)                                                   # needs sage.groups
         (1, 2, 0, 1, 0)
         sage: L = Sequence([1,2,3,4,5])
-        sage: permutation_action(g,L)                                                   # optional - sage.groups
+        sage: permutation_action(g,L)                                                   # needs sage.groups
         [2, 3, 4, 5, 1]
         sage: MS = MatrixSpace(GF(3),3,7)
         sage: A = MS([[1,0,0,0,1,1,0],[0,1,0,1,0,1,0],[0,0,0,0,0,0,1]])
-        sage: S5 = SymmetricGroup(5)                                                    # optional - sage.groups
-        sage: g = S5([(1,2,3)])                                                         # optional - sage.groups
+        sage: S5 = SymmetricGroup(5)                                                    # needs sage.groups
+        sage: g = S5([(1,2,3)])                                                         # needs sage.groups
         sage: A
         [1 0 0 0 1 1 0]
         [0 1 0 1 0 1 0]
         [0 0 0 0 0 0 1]
-        sage: permutation_action(g,A)                                                   # optional - sage.groups
+        sage: permutation_action(g,A)                                                   # needs sage.groups
         [0 1 0 1 0 1 0]
         [0 0 0 0 0 0 1]
         [1 0 0 0 1 1 0]
@@ -258,16 +258,16 @@ def permutation_action(g, v):
     It also works on lists and is a "left action"::
 
         sage: v = [0,1,2,0,1]
-        sage: G = SymmetricGroup(5)                                                     # optional - sage.groups
-        sage: g = G([(1,2,3)])                                                          # optional - sage.groups
-        sage: gv = permutation_action(g,v); gv                                          # optional - sage.groups
+        sage: G = SymmetricGroup(5)                                                     # needs sage.groups
+        sage: g = G([(1,2,3)])                                                          # needs sage.groups
+        sage: gv = permutation_action(g,v); gv                                          # needs sage.groups
         [1, 2, 0, 0, 1]
-        sage: permutation_action(g,v) == g(v)                                           # optional - sage.groups
+        sage: permutation_action(g,v) == g(v)                                           # needs sage.groups
         True
-        sage: h = G([(3,4)])                                                            # optional - sage.groups
-        sage: gv = permutation_action(g,v)                                              # optional - sage.groups
-        sage: hgv = permutation_action(h,gv)                                            # optional - sage.groups
-        sage: hgv == permutation_action(h*g,v)                                          # optional - sage.groups
+        sage: h = G([(3,4)])                                                            # needs sage.groups
+        sage: gv = permutation_action(g,v)                                              # needs sage.groups
+        sage: hgv = permutation_action(h,gv)                                            # needs sage.groups
+        sage: hgv == permutation_action(h*g,v)                                          # needs sage.groups
         True
 
     AUTHORS:

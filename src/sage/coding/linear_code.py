@@ -1616,13 +1616,13 @@ class AbstractLinearCode(AbstractLinearCodeNoMetric):
             [5, 3] Hamming Code over GF(4)
             sage: G = C.permutation_automorphism_group(algorithm="partition"); G
             Permutation Group with generators [(1,3)(4,5), (1,4)(3,5)]
-            sage: GG = C.permutation_automorphism_group(algorithm="codecan")    # long time, needs sage.groups
-            sage: GG == G                                                       # long time, needs sage.groups
+            sage: GG = C.permutation_automorphism_group(algorithm="codecan")    # long time
+            sage: GG == G                                                       # long time
             True
-            sage: C.permutation_automorphism_group(algorithm="gap")     # optional - gap_package_guava, needs sage.groups
+            sage: C.permutation_automorphism_group(algorithm="gap")     # optional - gap_package_guava
             Permutation Group with generators [(1,3)(4,5), (1,4)(3,5)]
             sage: C = codes.GolayCode(GF(3), True)
-            sage: C.permutation_automorphism_group(algorithm="gap")     # optional - gap_package_guava, needs sage.groups
+            sage: C.permutation_automorphism_group(algorithm="gap")     # optional - gap_package_guava
             Permutation Group with generators
              [(5,7)(6,11)(8,9)(10,12), (4,6,11)(5,8,12)(7,10,9), (3,4)(6,8)(9,11)(10,12),
               (2,3)(6,11)(8,12)(9,10), (1,2)(5,10)(7,12)(8,9)]
