@@ -1238,7 +1238,7 @@ class FGP_Module_class(Module):
 
         Let us check::
 
-            sage: x == sum(v[i]*D.gen(i) for i in range(len(D.gens())))
+            sage: x == sum(v[i]*D.gen(i) for i in range(len(D.gens())))                 # needs sage.libs.pari
             True
         """
         x = self(x)

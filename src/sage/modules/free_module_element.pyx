@@ -1725,7 +1725,7 @@ cdef class FreeModuleElement(Vector):   # abstract base class
             Symbolic Ring
             sage: numeric = N(nrm); numeric                                             # needs sage.symbolic
             5.83095189484...
-            sage: numeric.parent()
+            sage: numeric.parent()                                                      # needs sage.symbolic
             Real Field with 53 bits of precision
 
         TESTS:
