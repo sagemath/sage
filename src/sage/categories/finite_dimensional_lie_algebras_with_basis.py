@@ -1151,7 +1151,7 @@ class FiniteDimensionalLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
             
             """
             if dual:
-                return self.chevalley_eilenberg(M, h, dual=False,
+                return self.chevalley_eilenberg_complex(M, h, dual=False,
                                                         sparse=sparse,
                                                         ncpus=ncpus).dual()
 
