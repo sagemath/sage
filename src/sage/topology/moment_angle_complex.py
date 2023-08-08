@@ -332,6 +332,22 @@ class MomentAngleComplex(SageObject, UniqueRepresentation):
         """
         return self._moment_angle_complex
 
+    def simplicial_complex(self):
+        """
+        The simplicial complex associated with this moment-angle complex.
+
+        EXAMPLES::
+
+            sage: RP2 = simplicial_complexes.RealProjectivePlane()
+            sage: Z = MomentAngleComplex(RP2)
+            sage: Z.simplicial_complex()
+            Simplicial complex with vertex set (0, 1, 2, 3, 4, 5) and 10 facets
+            sage: Z = MomentAngleComplex([[0], [1], [2]])
+            sage: Z.simplicial_complex()
+            Simplicial complex with vertex set (0, 1, 2) and facets {(0,), (1,), (2,)}
+        """
+        return self._simplicial_complex
+
     def components(self):
         """
         Return the dictionary of components of ``self``, indexed by facets
