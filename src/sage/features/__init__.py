@@ -389,7 +389,7 @@ class Feature(TrivialUniqueRepresentation):
             Use method `unhide` to make it available again.
 
             sage: Benzene().unhide()
-            sage: len(list(graphs.fusenes(2)))  # optional - benzene, needs sage.graphs
+            sage: len(list(graphs.fusenes(2)))  # optional - benzene                    # needs sage.graphs
             1
         """
         self._hidden = True

@@ -86,7 +86,7 @@ class sage__all(PythonModule):
     EXAMPLES::
 
         sage: from sage.features.sagemath import sage__all
-        sage: sage__all().is_present()                                                  # optional - sage.all
+        sage: sage__all().is_present()                                                  # needs sage.all
         FeatureTestResult('sage.all', True)
     """
 
@@ -342,7 +342,7 @@ class sage__libs__ecl(PythonModule):
     EXAMPLES::
 
         sage: from sage.features.sagemath import sage__libs__ecl
-        sage: sage__libs__ecl().is_present()                        # optional - sage.libs.ecl
+        sage: sage__libs__ecl().is_present()                                            # needs sage.libs.ecl
         FeatureTestResult('sage.libs.ecl', True)
     """
 
@@ -690,7 +690,7 @@ class sage__rings__complex_interval_field(PythonModule):
     TESTS::
 
         sage: from sage.features.sagemath import sage__rings__complex_interval_field
-        sage: sage__rings__complex_interval_field().is_present()                                # needs sage.rings.complex_interval_field
+        sage: sage__rings__complex_interval_field().is_present()                        # needs sage.rings.complex_interval_field
         FeatureTestResult('sage.rings.complex_interval_field', True)
     """
     def __init__(self):
@@ -925,7 +925,7 @@ class sage__rings__real_interval_field(PythonModule):
     TESTS::
 
         sage: from sage.features.sagemath import sage__rings__real_interval_field
-        sage: sage__rings__real_interval_field().is_present()                                   # needs sage.rings.real_interval_field
+        sage: sage__rings__real_interval_field().is_present()                           # needs sage.rings.real_interval_field
         FeatureTestResult('sage.rings.real_interval_field', True)
     """
     def __init__(self):
