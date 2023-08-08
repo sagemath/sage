@@ -1554,7 +1554,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
             sage: K.<a> = NumberField(x^3 + 2)
             sage: K._magma_polynomial_(magma)
             x^3 + 2
-            sage: magma2=Magma()
+            sage: magma2 = Magma()
             sage: K._magma_polynomial_(magma2)
             x^3 + 2
             sage: K._magma_polynomial_(magma) is K._magma_polynomial_(magma)
@@ -1696,7 +1696,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
 
             sage: x = polygen(ZZ, 'x')
             sage: K.<a> = NumberField(x^3 + 17)
-            sage: K(a) is a # indirect doctest
+            sage: K(a) is a  # indirect doctest
             True
             sage: K('a^2 + 2/3*a + 5')
             a^2 + 2/3*a + 5
@@ -1887,9 +1887,9 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
         will convert to the number field, e.g., this one in
         characteristic 7::
 
-            sage: f = GF(7)['y']([1,2,3]); f                                            # needs sage.rings.finite_rings
+            sage: f = GF(7)['y']([1,2,3]); f
             3*y^2 + 2*y + 1
-            sage: K._convert_non_number_field_element(f)                                # needs sage.rings.finite_rings
+            sage: K._convert_non_number_field_element(f)
             3*a^2 + 2*a + 1
 
         But not this one over a field of order 27::
@@ -2046,7 +2046,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
             sage: x = polygen(ZZ, 'x')
             sage: K.<i> = NumberField(x^2 + 1); K
             Number Field in i with defining polynomial x^2 + 1
-            sage: K.Hom(K) # indirect doctest
+            sage: K.Hom(K)  # indirect doctest
             Automorphism group of Number Field in i with defining polynomial x^2 + 1
             sage: Hom(K, QuadraticField(-1, 'b'))
             Set of field embeddings
@@ -3848,7 +3848,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
         ::
 
             sage: P2s = F.primes_above(2)
-            sage: P2s # random
+            sage: P2s  # random
             [Fractional ideal (-t)]
             sage: all(2 in P2 for P2 in P2s)
             True
@@ -8458,7 +8458,7 @@ class NumberField_absolute(NumberField_generic):
 
             sage: x = polygen(QQ, 'x')
             sage: S.<y> = NumberField(x^3 + x + 1)
-            sage: S.coerce(int(4)) # indirect doctest
+            sage: S.coerce(int(4))  # indirect doctest
             4
             sage: S.coerce(-Integer(2))
             -2
@@ -8919,13 +8919,13 @@ class NumberField_absolute(NumberField_generic):
             sage: K, CDF(a)
             (Number Field in a with defining polynomial x^4 - 23 with a = 2.189938703094843?,
              2.1899387030948425)
-            sage: Ss = K.subfields(); len(Ss) # indirect doctest
+            sage: Ss = K.subfields(); len(Ss)  # indirect doctest
             3
             sage: diffs = [ S.coerce_embedding()(S.gen()) - CDF(S_into_K(S.gen())) for S, S_into_K, _ in Ss ]
             sage: all(abs(diff) < 1e-5 for diff in diffs)
             True
 
-            sage: L1, _, _ = K.subfields(2)[0]; L1, CDF(L1.gen()) # indirect doctest
+            sage: L1, _, _ = K.subfields(2)[0]; L1, CDF(L1.gen())  # indirect doctest
             (Number Field in a0 with defining polynomial x^2 - 23 with a0 = -4.795831523312720?,
              -4.795831523312719)
 
@@ -8933,7 +8933,7 @@ class NumberField_absolute(NumberField_generic):
         different embedding of the degree 2 subfield::
 
             sage: K.<a> = NumberField(x^4 - 23, embedding=-50)
-            sage: L2, _, _ = K.subfields(2)[0]; L2, CDF(L2.gen()) # indirect doctest
+            sage: L2, _, _ = K.subfields(2)[0]; L2, CDF(L2.gen())  # indirect doctest
             (Number Field in a0 with defining polynomial x^2 - 23 with a0 = -4.795831523312720?,
              -4.795831523312719)
 
@@ -11123,7 +11123,7 @@ class NumberField_cyclotomic(NumberField_absolute, sage.rings.abc.NumberField_cy
             sage: Z = CyclotomicField(4)
             sage: Z.gen()
             zeta4
-            sage: latex(Z) # indirect doctest
+            sage: latex(Z)  # indirect doctest
             \Bold{Q}(\zeta_{4})
 
         Latex printing respects the generator name::
@@ -11171,7 +11171,7 @@ class NumberField_cyclotomic(NumberField_absolute, sage.rings.abc.NumberField_cy
 
             sage: K.<a> = CyclotomicField(12)
             sage: L.<b> = CyclotomicField(132)
-            sage: L.coerce_map_from(K) # indirect doctest
+            sage: L.coerce_map_from(K)  # indirect doctest
             Generic morphism:
               From: Cyclotomic Field of order 12 and degree 4
               To:   Cyclotomic Field of order 132 and degree 40
@@ -11401,7 +11401,7 @@ class NumberField_cyclotomic(NumberField_absolute, sage.rings.abc.NumberField_cy
             sage: a = k42.gen(0)
             sage: b = a^7; b
             zeta42^7
-            sage: k6(b) # indirect doctest
+            sage: k6(b)  # indirect doctest
             zeta6
             sage: b^2
             zeta42^7 - 1
@@ -11519,7 +11519,7 @@ class NumberField_cyclotomic(NumberField_absolute, sage.rings.abc.NumberField_cy
             -3*E(5)-2*E(5)^2-3*E(5)^3-3*E(5)^4
             sage: z^7 + 3                                                               # needs sage.libs.gap
             z^2 + 3
-            sage: k5(w) # indirect doctest                                              # needs sage.libs.gap
+            sage: k5(w)  # indirect doctest                                             # needs sage.libs.gap
             z^2 + 3
 
         It may be that GAP uses a name for the generator of the cyclotomic field.
@@ -11576,7 +11576,7 @@ class NumberField_cyclotomic(NumberField_absolute, sage.rings.abc.NumberField_cy
             sage: x = polygen(ZZ, 'x')
             sage: K.<a> = NumberField(x^2 + 3); K
             Number Field in a with defining polynomial x^2 + 3
-            sage: CyclotomicField(3).Hom(K) # indirect doctest
+            sage: CyclotomicField(3).Hom(K)  # indirect doctest
             Set of field embeddings
              from Cyclotomic Field of order 3 and degree 2
                to Number Field in a with defining polynomial x^2 + 3
@@ -12187,7 +12187,7 @@ class NumberField_quadratic(NumberField_absolute, sage.rings.abc.NumberField_qua
         EXAMPLES::
 
             sage: K.<a> = QuadraticField(-3)
-            sage: f = K.coerce_map_from(QQ); f # indirect doctest
+            sage: f = K.coerce_map_from(QQ); f  # indirect doctest
             Natural morphism:
               From: Rational Field
               To:   Number Field in a with defining polynomial x^2 + 3 with a = 1.732050807568878?*I
@@ -12196,7 +12196,7 @@ class NumberField_quadratic(NumberField_absolute, sage.rings.abc.NumberField_qua
             sage: parent(f(3/5)) is K
             True
 
-            sage: g = K.coerce_map_from(ZZ); g # indirect doctest
+            sage: g = K.coerce_map_from(ZZ); g  # indirect doctest
             Natural morphism:
               From: Integer Ring
               To:   Number Field in a with defining polynomial x^2 + 3 with a = 1.732050807568878?*I
@@ -12220,11 +12220,11 @@ class NumberField_quadratic(NumberField_absolute, sage.rings.abc.NumberField_qua
         EXAMPLES::
 
             sage: Z = QuadraticField(7)
-            sage: latex(Z) # indirect doctest
+            sage: latex(Z)  # indirect doctest
             \Bold{Q}(\sqrt{7})
 
             sage: Z = QuadraticField(7, latex_name='x')
-            sage: latex(Z) # indirect doctest
+            sage: latex(Z)  # indirect doctest
             \Bold{Q}[x]/(x^{2} - 7)
         """
         v = self.latex_variable_names()[0]
@@ -12243,7 +12243,7 @@ class NumberField_quadratic(NumberField_absolute, sage.rings.abc.NumberField_qua
         EXAMPLES::
 
             sage: Z = QuadraticField(7)
-            sage: polymake(Z)    # optional - jupymake # indirect doctest
+            sage: polymake(Z)    # optional - jupymake  # indirect doctest
             QuadraticExtension
 
         """
