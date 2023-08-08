@@ -496,7 +496,11 @@ class Macaulay2(ExtraTabCompletion, Expect):
             sage: 0 in a, 2 in a, 3 in a
             (True, True, False)
             sage: b = macaulay2('hashTable {"x" => 1, "y" => 2}')
+<<<<<<< HEAD
             sage: 'x' in b, '"x"' in b    # indirect doctest
+=======
+            sage: 'x' in b, '"x"' in b
+>>>>>>> a24a77aaaa1 (src/sage/interfaces: sage -fixdoctests --only-tags)
             (False, True)
         """
         return self.eval("%s#?%s" % (v2, v1)) == self._true_symbol()
@@ -645,7 +649,11 @@ class Macaulay2(ExtraTabCompletion, Expect):
             sage: R = macaulay2("QQ[x,y]")
             sage: x,y = R.gens()
             sage: a = (x+y+1)^20
+<<<<<<< HEAD
             sage: macaulay2.cputime()       # random
+=======
+            sage: macaulay2.cputime()
+>>>>>>> a24a77aaaa1 (src/sage/interfaces: sage -fixdoctests --only-tags)
             0.48393700000000001
         """
         _t = float(self.cpuTime()._sage_())
@@ -958,7 +966,7 @@ class Macaulay2Element(ExtraTabCompletion, ExpectElement, sage.interfaces.abc.Ma
             Sequence
             sage: str(macaulay2('1..25'))
             (1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25)
-            sage: macaulay2.options.after_print = False  # optional - macaulay2
+            sage: macaulay2.options.after_print = False
         """
         from sage.typeset.ascii_art import empty_ascii_art
         P = self.parent()
