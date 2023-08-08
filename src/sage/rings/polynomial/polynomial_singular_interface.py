@@ -167,7 +167,7 @@ def _do_singular_init_(singular, base_ring, char, _vars, order):
 
             return singular(f"std(ideal({base_ring.__minpoly}))", type='qring'), None
 
-    elif isinstance(base_ring, sage.rings.function_field.function_field_rational.RationalFunctionField) \
+    elif isinstance(base_ring, RationalFunctionField) \
             and base_ring.constant_field().is_prime_field():
         gen = str(base_ring.gen())
         return make_ring(f"({base_ring.characteristic()},{gen})"), None

@@ -171,7 +171,6 @@ from sage.misc.lazy_attribute import lazy_attribute
 import sage.rings.abc
 from sage.rings.fraction_field_element import FractionFieldElement
 from sage.rings.finite_rings.element_base import FiniteRingElement
-from sage.rings.power_series_ring_element import PowerSeries
 from sage.rings.polynomial.polynomial_singular_interface import PolynomialRing_singular_repr
 from sage.rings.polynomial.polynomial_singular_interface import can_convert_to_singular
 from sage.rings.power_series_ring_element import PowerSeries
@@ -179,11 +178,6 @@ from sage.rings.power_series_ring_element import PowerSeries
 _CommutativeRings = categories.commutative_rings.CommutativeRings()
 
 import sage.interfaces.abc
-
-try:
-    from sage.interfaces.singular import SingularElement
-except ImportError:
-    SingularElement = ()
 
 
 def is_PolynomialRing(x):
@@ -2088,8 +2082,8 @@ class PolynomialRing_field(PolynomialRing_integral_domain,
                 return element_class
             if sparse:
                 from sage.rings.polynomial.polynomial_element_generic import Polynomial_generic_sparse_field
-                element_class = Polynomial_generic_sparse_field
-            elif isinstance(base_ring, rational_field.RationalField):
+                return Polynomial_generic_sparse_field
+            if isinstance(base_ring, rational_field.RationalField):
                 try:
                     from sage.rings.polynomial.polynomial_rational_flint import Polynomial_rational_flint
                     return Polynomial_rational_flint
