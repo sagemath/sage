@@ -144,12 +144,13 @@ class FreeMonoidElement(MonoidElement):
 
         Check that :trac:`14509` is fixed::
 
-            sage: K.< alpha,b > = FreeAlgebra(SR)                                       # optional - sage.symbolic
-            sage: latex(alpha*b)                                                        # optional - sage.symbolic
+            sage: # needs sage.symbolic
+            sage: K.< alpha,b > = FreeAlgebra(SR)
+            sage: latex(alpha*b)
             \alpha b
-            sage: latex(b*alpha)                                                        # optional - sage.symbolic
+            sage: latex(b*alpha)
             b \alpha
-            sage: "%s" % latex(alpha*b)                                                 # optional - sage.symbolic
+            sage: "%s" % latex(alpha*b)
             '\\alpha b'
         """
         s = ""
@@ -176,9 +177,9 @@ class FreeMonoidElement(MonoidElement):
             2
             sage: (x*y).subs({x:z,y:z})
             z^2
-            sage: M1 = MatrixSpace(ZZ,1,2)                                              # optional - sage.modules
-            sage: M2 = MatrixSpace(ZZ,2,1)                                              # optional - sage.modules
-            sage: (x*y).subs({x: M1([1,2]), y: M2([3,4])})                              # optional - sage.modules
+            sage: M1 = MatrixSpace(ZZ,1,2)                                              # needs sage.modules
+            sage: M2 = MatrixSpace(ZZ,2,1)                                              # needs sage.modules
+            sage: (x*y).subs({x: M1([1,2]), y: M2([3,4])})                              # needs sage.modules
             [11]
 
             sage: M.<x,y> = FreeMonoid(2)
