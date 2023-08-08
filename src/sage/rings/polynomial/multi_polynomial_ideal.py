@@ -5048,7 +5048,6 @@ class MPolynomialIdeal(MPolynomialIdeal_singular_repr,
                     return False
         return True
 
-
     def degree_of_semi_regularity(self):
         r"""
         Return the degree of semi-regularity of this ideal under the

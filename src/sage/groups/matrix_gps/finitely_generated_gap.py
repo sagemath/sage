@@ -919,4 +919,3 @@ def _new_invariant_is_linearly_independent(F, invariants):
     if len(invariants)==0:
         return True
     return PolynomialSequence(invariants).coefficient_matrix()[0].rank() != PolynomialSequence(list(invariants)+[F]).coefficient_matrix()[0].rank()
- 
