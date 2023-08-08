@@ -35,7 +35,7 @@ def reset(vars=None, attached=False):
 
         sage: x = 5
         sage: reset()
-        sage: x                                                                 # optional - sage.symbolic
+        sage: x                                                                         # needs sage.symbolic
         x
 
         sage: fn = tmp_filename(ext='foo.py')
@@ -57,15 +57,15 @@ def reset(vars=None, attached=False):
 
     Confirm that assumptions don't survive a reset (:trac:`10855`)::
 
-        sage: assume(x > 3)                                                     # optional - sage.symbolic
-        sage: assumptions()                                                     # optional - sage.symbolic
+        sage: assume(x > 3)                                                             # needs sage.symbolic
+        sage: assumptions()                                                             # needs sage.symbolic
         [x > 3]
-        sage: bool(x > 3)                                                       # optional - sage.symbolic
+        sage: bool(x > 3)                                                               # needs sage.symbolic
         True
         sage: reset()
-        sage: assumptions()                                                     # optional - sage.symbolic
+        sage: assumptions()                                                             # needs sage.symbolic
         []
-        sage: bool(x > 3)                                                       # optional - sage.symbolic
+        sage: bool(x > 3)                                                               # needs sage.symbolic
         False
 
     """
@@ -112,9 +112,9 @@ def restore(vars=None):
         Rational Field
         sage: x
         10
-        sage: y = var('y')                                                      # optional - sage.symbolic
+        sage: y = var('y')                                                              # needs sage.symbolic
         sage: restore('x y')
-        sage: x                                                                 # optional - sage.symbolic
+        sage: x                                                                         # needs sage.symbolic
         x
         sage: y
         Traceback (most recent call last):
@@ -123,7 +123,7 @@ def restore(vars=None):
         sage: x = 10; y = 15/3; QQ='red'
         sage: ww = 15
         sage: restore()
-        sage: x, QQ, ww                                                         # optional - sage.symbolic
+        sage: x, QQ, ww                                                                 # needs sage.symbolic
         (x, Rational Field, 15)
         sage: restore('ww')
         sage: ww

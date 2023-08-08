@@ -25,20 +25,22 @@ class ElementWithLabel():
 
     EXAMPLES::
 
-        sage: P = Poset({1: [2,3]})                                                     # optional - sage.combinat sage.graphs
-        sage: labs = {i: P.rank(i) for i in range(1, 4)}                                # optional - sage.combinat sage.graphs
-        sage: print(labs)                                                               # optional - sage.combinat sage.graphs
+        sage: # needs sage.combinat sage.graphs
+        sage: P = Poset({1: [2,3]})
+        sage: labs = {i: P.rank(i) for i in range(1, 4)}
+        sage: print(labs)
         {1: 0, 2: 1, 3: 1}
-        sage: print(P.plot(element_labels=labs))                                        # optional - sage.combinat sage.graphs sage.plot
+        sage: print(P.plot(element_labels=labs))                                        # needs sage.plot
         Graphics object consisting of 6 graphics primitives
 
+        sage: # needs sage.combinat sage.modules
         sage: from sage.misc.element_with_label import ElementWithLabel
-        sage: W = WeylGroup("A1")                                                       # optional - sage.combinat sage.modules
-        sage: P = W.bruhat_poset(facade=True)                                           # optional - sage.combinat sage.graphs sage.modules
-        sage: D = W.domain()                                                            # optional - sage.combinat sage.graphs sage.modules
-        sage: v = D.rho() - D.fundamental_weight(1)                                     # optional - sage.combinat sage.graphs sage.modules
-        sage: nP = P.relabel(lambda w: ElementWithLabel(w, w.action(v)))                # optional - sage.combinat sage.graphs sage.modules
-        sage: list(nP)                                                                  # optional - sage.combinat sage.graphs sage.modules
+        sage: W = WeylGroup("A1")
+        sage: P = W.bruhat_poset(facade=True)                                           # needs sage.graphs
+        sage: D = W.domain()                                                            # needs sage.graphs
+        sage: v = D.rho() - D.fundamental_weight(1)                                     # needs sage.graphs
+        sage: nP = P.relabel(lambda w: ElementWithLabel(w, w.action(v)))                # needs sage.graphs
+        sage: list(nP)                                                                  # needs sage.graphs
         [(0, 0), (0, 0)]
     """
     def __init__(self, element, label):
@@ -65,11 +67,11 @@ class ElementWithLabel():
 
         TESTS::
 
-            sage: var('a_1')                                                            # optional - sage.symbolic
+            sage: var('a_1')                                                            # needs sage.symbolic
             a_1
             sage: from sage.misc.element_with_label import ElementWithLabel
-            sage: e = ElementWithLabel(1, a_1)                                          # optional - sage.symbolic
-            sage: latex(e)                                                              # optional - sage.symbolic
+            sage: e = ElementWithLabel(1, a_1)                                          # needs sage.symbolic
+            sage: latex(e)                                                              # needs sage.symbolic
             a_{1}
         """
         return latex(self.label)
@@ -81,11 +83,11 @@ class ElementWithLabel():
 
         TESTS::
 
-            sage: var('a_1')                                                            # optional - sage.symbolic
+            sage: var('a_1')                                                            # needs sage.symbolic
             a_1
             sage: from sage.misc.element_with_label import ElementWithLabel
-            sage: e = ElementWithLabel(1, a_1)                                          # optional - sage.symbolic
-            sage: str(e)                                                                # optional - sage.symbolic
+            sage: e = ElementWithLabel(1, a_1)                                          # needs sage.symbolic
+            sage: str(e)                                                                # needs sage.symbolic
             'a_1'
         """
         return str(self.label)
@@ -97,11 +99,11 @@ class ElementWithLabel():
 
         TESTS::
 
-            sage: var('a_1')                                                            # optional - sage.symbolic
+            sage: var('a_1')                                                            # needs sage.symbolic
             a_1
             sage: from sage.misc.element_with_label import ElementWithLabel
-            sage: e = ElementWithLabel(1, a_1)                                          # optional - sage.symbolic
-            sage: repr(e)                                                               # optional - sage.symbolic
+            sage: e = ElementWithLabel(1, a_1)                                          # needs sage.symbolic
+            sage: repr(e)                                                               # needs sage.symbolic
             'a_1'
         """
         return repr(self.label)

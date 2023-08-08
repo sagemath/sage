@@ -541,7 +541,7 @@ def package_versions(package_type, local=False):
         sage: # optional - sage_spkg
         sage: from sage.misc.package import package_versions
         sage: std = package_versions('standard', local=True)
-        sage: 'gap' in std  # optional - sage_spkg
+        sage: 'gap' in std
         True
         sage: std['zlib']
         ('1.2.11.p0', '1.2.11.p0')

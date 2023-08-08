@@ -52,7 +52,7 @@ def gen_rest_table_index(obj, names=None, sort=True, only_local_functions=True):
     EXAMPLES::
 
         sage: from sage.misc.rest_index_of_methods import gen_rest_table_index
-        sage: print(gen_rest_table_index([graphs.PetersenGraph]))                       # optional - sage.graphs
+        sage: print(gen_rest_table_index([graphs.PetersenGraph]))                       # needs sage.graphs
         .. csv-table::
            :class: contentstable
            :widths: 30, 70
@@ -77,7 +77,7 @@ def gen_rest_table_index(obj, names=None, sort=True, only_local_functions=True):
 
     The table of a class::
 
-        sage: print(gen_rest_table_index(Graph))                                        # optional - sage.graphs
+        sage: print(gen_rest_table_index(Graph))                                        # needs sage.graphs
         .. csv-table::
            :class: contentstable
            :widths: 30, 70
@@ -103,12 +103,13 @@ def gen_rest_table_index(obj, names=None, sort=True, only_local_functions=True):
 
     The inherited methods do not show up::
 
-        sage: gen_rest_table_index(sage.combinat.posets.lattices.FiniteLatticePoset).count('\n') < 75       # optional - sage.graphs
+        sage: # needs sage.graphs
+        sage: gen_rest_table_index(sage.combinat.posets.lattices.FiniteLatticePoset).count('\n') < 75
         True
-        sage: from sage.graphs.generic_graph import GenericGraph                        # optional - sage.graphs
-        sage: A = gen_rest_table_index(Graph).count('\n')                               # optional - sage.graphs
-        sage: B = gen_rest_table_index(GenericGraph).count('\n')                        # optional - sage.graphs
-        sage: A < B                                                                     # optional - sage.graphs
+        sage: from sage.graphs.generic_graph import GenericGraph
+        sage: A = gen_rest_table_index(Graph).count('\n')
+        sage: B = gen_rest_table_index(GenericGraph).count('\n')
+        sage: A < B
         True
 
     When ``only_local_functions`` is ``False``, we do not include
@@ -141,9 +142,9 @@ def gen_rest_table_index(obj, names=None, sort=True, only_local_functions=True):
     A function that is imported into a class under a different name is listed
     under its 'new' name::
 
-        sage: 'cliques_maximum' in gen_rest_table_index(Graph)                          # optional - sage.graphs
+        sage: 'cliques_maximum' in gen_rest_table_index(Graph)                          # needs sage.graphs
         True
-        sage: 'all_max_cliques`' in gen_rest_table_index(Graph)                         # optional - sage.graphs
+        sage: 'all_max_cliques`' in gen_rest_table_index(Graph)                         # needs sage.graphs
         False
     """
     if names is None:
@@ -223,17 +224,17 @@ def list_of_subfunctions(root, only_local_functions=True):
     EXAMPLES::
 
         sage: from sage.misc.rest_index_of_methods import list_of_subfunctions
-        sage: l = list_of_subfunctions(Graph)[0]                                        # optional - sage.graphs
-        sage: Graph.bipartite_color in l                                                # optional - sage.graphs
+        sage: l = list_of_subfunctions(Graph)[0]                                        # needs sage.graphs
+        sage: Graph.bipartite_color in l                                                # needs sage.graphs
         True
 
     TESTS:
 
     A ``staticmethod`` is not callable. We must handle them correctly, however::
 
-        sage: class A:                                                                  # optional - sage.graphs
+        sage: class A:                                                                  # needs sage.graphs
         ....:     x = staticmethod(Graph.order)
-        sage: list_of_subfunctions(A)                                                   # optional - sage.graphs
+        sage: list_of_subfunctions(A)                                                   # needs sage.graphs
         ([<function GenericGraph.order at 0x...>],
          {<function GenericGraph.order at 0x...>: 'x'})
 
@@ -295,8 +296,8 @@ def gen_thematic_rest_table_index(root,additional_categories=None,only_local_fun
     EXAMPLES::
 
         sage: from sage.misc.rest_index_of_methods import gen_thematic_rest_table_index, list_of_subfunctions
-        sage: l = list_of_subfunctions(Graph)[0]                                        # optional - sage.graphs
-        sage: Graph.bipartite_color in l                                                # optional - sage.graphs
+        sage: l = list_of_subfunctions(Graph)[0]                                        # needs sage.graphs
+        sage: Graph.bipartite_color in l                                                # needs sage.graphs
         True
     """
     from collections import defaultdict

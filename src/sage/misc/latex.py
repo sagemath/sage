@@ -184,7 +184,7 @@ def list_function(x):
         '\\left[1, 2, 3\\right]'
         sage: latex([1,2,3])  # indirect doctest
         \left[1, 2, 3\right]
-        sage: latex([Matrix(ZZ, 3, range(9)),   # indirect doctest                      # optional - sage.modules
+        sage: latex([Matrix(ZZ, 3, range(9)),   # indirect doctest                      # needs sage.modules
         ....:        Matrix(ZZ, 3, range(9))])
         \left[\left(\begin{array}{rrr}
         0 & 1 & 2 \\
@@ -367,12 +367,13 @@ def dict_function(x):
 
     EXAMPLES::
 
+        sage: # needs sage.symbolic
         sage: from sage.misc.latex import dict_function
-        sage: x,y,z = var('x,y,z')                                                      # optional - sage.symbolic
-        sage: print(dict_function({x/2: y^2}))                                          # optional - sage.symbolic
+        sage: x,y,z = var('x,y,z')
+        sage: print(dict_function({x/2: y^2}))
         \left\{\frac{1}{2} \, x : y^{2}\right\}
-        sage: d = {(1,2,x^2): [sin(z^2), y/2]}                                          # optional - sage.symbolic
-        sage: latex(d)                                                                  # optional - sage.symbolic
+        sage: d = {(1,2,x^2): [sin(z^2), y/2]}
+        sage: latex(d)
         \left\{\left(1, 2, x^{2}\right) :
                \left[\sin\left(z^{2}\right), \frac{1}{2} \, y\right]\right\}
     """
@@ -451,9 +452,9 @@ class LatexExpr(str):
 
     EXAMPLES::
 
-        sage: latex(x^20 + 1)                                                           # optional - sage.symbolic
+        sage: latex(x^20 + 1)                                                           # needs sage.symbolic
         x^{20} + 1
-        sage: LatexExpr(r"\frac{x^2 + 1}{x - 2}")                                       # optional - sage.symbolic
+        sage: LatexExpr(r"\frac{x^2 + 1}{x - 2}")                                       # needs sage.symbolic
         \frac{x^2 + 1}{x - 2}
 
     ``LatexExpr`` simply converts to string without doing anything
@@ -466,15 +467,15 @@ class LatexExpr(str):
 
     The result of :func:`latex` is of type ``LatexExpr``::
 
-        sage: L = latex(x^20 + 1)                                                       # optional - sage.symbolic
-        sage: L                                                                         # optional - sage.symbolic
+        sage: L = latex(x^20 + 1)                                                       # needs sage.symbolic
+        sage: L                                                                         # needs sage.symbolic
         x^{20} + 1
-        sage: type(L)                                                                   # optional - sage.symbolic
+        sage: type(L)                                                                   # needs sage.symbolic
         <class 'sage.misc.latex.LatexExpr'>
 
     A ``LatexExpr`` can be converted to a plain string::
 
-        sage: str(latex(x^20 + 1))                                                      # optional - sage.symbolic
+        sage: str(latex(x^20 + 1))                                                      # needs sage.symbolic
         'x^{20} + 1'
     """
     def __add__(self, other):
@@ -559,7 +560,7 @@ def has_latex_attr(x) -> bool:
     EXAMPLES::
 
         sage: from sage.misc.latex import has_latex_attr
-        sage: has_latex_attr(identity_matrix(3))                                        # optional - sage.modules
+        sage: has_latex_attr(identity_matrix(3))                                        # needs sage.modules
         True
         sage: has_latex_attr("abc")  # strings have no _latex_ method
         False
@@ -567,15 +568,16 @@ def has_latex_attr(x) -> bool:
     Types inherit the ``_latex_`` method of the class to which they refer,
     but calling it is broken::
 
-        sage: T = type(identity_matrix(3)); T                                           # optional - sage.modules
+        sage: # needs sage.modules
+        sage: T = type(identity_matrix(3)); T
         <class 'sage.matrix.matrix_integer_dense.Matrix_integer_dense'>
-        sage: hasattr(T, '_latex_')                                                     # optional - sage.modules
+        sage: hasattr(T, '_latex_')
         True
-        sage: T._latex_()                                                               # optional - sage.modules
+        sage: T._latex_()
         Traceback (most recent call last):
         ...
         TypeError: ..._latex_... needs an argument
-        sage: has_latex_attr(T)                                                         # optional - sage.modules
+        sage: has_latex_attr(T)
         False
     """
     return hasattr(x, '_latex_') and not isinstance(x, type)
@@ -919,12 +921,12 @@ class LatexCall:
             3
             sage: latex(1==0)
             \mathrm{False}
-            sage: print(latex([x, 2]))                                                  # optional - sage.symbolic
+            sage: print(latex([x, 2]))                                                  # needs sage.symbolic
             \left[x, 2\right]
 
         Check that :trac:`11775` is fixed::
 
-            sage: latex((x,2), combine_all=True)                                        # optional - sage.symbolic
+            sage: latex((x,2), combine_all=True)                                        # needs sage.symbolic
             x 2
         """
         if has_latex_attr(x):
@@ -963,9 +965,9 @@ class Latex(LatexCall):
 
     EXAMPLES::
 
-        sage: latex(x^20 + 1)                                                           # optional - sage.symbolic
+        sage: latex(x^20 + 1)                                                           # needs sage.symbolic
         x^{20} + 1
-        sage: latex(FiniteField(25,'a'))                                                # optional - sage.libs.pari
+        sage: latex(FiniteField(25,'a'))                                                # needs sage.libs.pari
         \Bold{F}_{5^{2}}
         sage: latex("hello")
         \text{\texttt{hello}}
@@ -975,7 +977,7 @@ class Latex(LatexCall):
     LaTeX expressions can be added; note that a space is automatically
     inserted::
 
-        sage: LatexExpr(r"y \neq") + latex(x^20 + 1)                                    # optional - sage.symbolic
+        sage: LatexExpr(r"y \neq") + latex(x^20 + 1)                                    # needs sage.symbolic
         y \neq x^{20} + 1
     """
     def __init__(self, debug=False, slide=False, density=150, pdflatex=None, engine=None):
@@ -1214,18 +1216,18 @@ class Latex(LatexCall):
 
         EXAMPLES::
 
-            sage: a = matrix(1, 1, [17])                                                # optional - sage.modules
-            sage: latex(a)                                                              # optional - sage.modules
+            sage: a = matrix(1, 1, [17])                                                # needs sage.modules
+            sage: latex(a)                                                              # needs sage.modules
             \left(\begin{array}{r}
             17
             \end{array}\right)
             sage: latex.matrix_delimiters("[", "]")
-            sage: latex(a)                                                              # optional - sage.modules
+            sage: latex(a)                                                              # needs sage.modules
             \left[\begin{array}{r}
             17
             \end{array}\right]
             sage: latex.matrix_delimiters(left="\\{")
-            sage: latex(a)                                                              # optional - sage.modules
+            sage: latex(a)                                                              # needs sage.modules
             \left\{\begin{array}{r}
             17
             \end{array}\right]
@@ -1275,14 +1277,14 @@ class Latex(LatexCall):
 
         EXAMPLES::
 
-            sage: a = vector(QQ, [1,2,3])                                               # optional - sage.modules
-            sage: latex(a)                                                              # optional - sage.modules
+            sage: a = vector(QQ, [1,2,3])                                               # needs sage.modules
+            sage: latex(a)                                                              # needs sage.modules
             \left(1,\,2,\,3\right)
             sage: latex.vector_delimiters("[", "]")
-            sage: latex(a)                                                              # optional - sage.modules
+            sage: latex(a)                                                              # needs sage.modules
             \left[1,\,2,\,3\right]
             sage: latex.vector_delimiters(right="\\}")
-            sage: latex(a)                                                              # optional - sage.modules
+            sage: latex(a)                                                              # needs sage.modules
             \left[1,\,2,\,3\right\}
             sage: latex.vector_delimiters()
             ['[', '\\}']
@@ -1320,18 +1322,18 @@ class Latex(LatexCall):
 
         EXAMPLES::
 
-            sage: a = matrix(1, 1, [42])                                                # optional - sage.modules
-            sage: latex(a)                                                              # optional - sage.modules
+            sage: a = matrix(1, 1, [42])                                                # needs sage.modules
+            sage: latex(a)                                                              # needs sage.modules
             \left(\begin{array}{r}
             42
             \end{array}\right)
             sage: latex.matrix_column_alignment('c')
-            sage: latex(a)                                                              # optional - sage.modules
+            sage: latex(a)                                                              # needs sage.modules
             \left(\begin{array}{c}
             42
             \end{array}\right)
             sage: latex.matrix_column_alignment('l')
-            sage: latex(a)                                                              # optional - sage.modules
+            sage: latex(a)                                                              # needs sage.modules
             \left(\begin{array}{l}
             42
             \end{array}\right)
@@ -1969,7 +1971,7 @@ def png(x, filename, density=150, debug=False,
 
         sage: from sage.misc.latex import png
         sage: import tempfile
-        sage: with tempfile.NamedTemporaryFile(suffix=".png") as f:  # random, optional - latex imagemagick             # optional - sage.plot
+        sage: with tempfile.NamedTemporaryFile(suffix=".png") as f:     # optional - imagemagick latex, needs sage.plot
         ....:     png(ZZ[x], f.name)
     """
     if not pdflatex:
@@ -2021,7 +2023,7 @@ def coeff_repr(c):
         sage: from sage.misc.latex import coeff_repr
         sage: coeff_repr(QQ(1/2))
         '\\frac{1}{2}'
-        sage: coeff_repr(-x^2)                                                          # optional - sage.symbolic
+        sage: coeff_repr(-x^2)                                                          # needs sage.symbolic
         '\\left(-x^{2}\\right)'
     """
     try:
@@ -2069,9 +2071,9 @@ def repr_lincomb(symbols, coeffs):
     Verify that :trac:`17299` (latex representation of modular symbols)
     is fixed::
 
-        sage: x = EllipticCurve('64a1').modular_symbol_space(sign=1).basis()[0]         # optional - sage.schemes
+        sage: x = EllipticCurve('64a1').modular_symbol_space(sign=1).basis()[0]         # needs sage.schemes
         sage: from sage.misc.latex import repr_lincomb
-        sage: latex(x.modular_symbol_rep())                                             # optional - sage.schemes
+        sage: latex(x.modular_symbol_rep())                                             # needs sage.schemes
         \left\{\frac{-3}{11}, \frac{-1}{4}\right\} - \left\{\frac{3}{13}, \frac{1}{4}\right\}
 
     Verify that it works when the symbols are numbers::
@@ -2200,8 +2202,8 @@ def latex_varify(a, is_fname=False):
 
     TESTS:
 
-        sage: abc = var('abc')                                                          # optional - sage.symbolic
-        sage: latex((abc/(abc+1)+42)/(abc-1))  # trac #15870                            # optional - sage.symbolic
+        sage: abc = var('abc')                                                          # needs sage.symbolic
+        sage: latex((abc/(abc+1)+42)/(abc-1))  # trac #15870                            # needs sage.symbolic
         \frac{\frac{\mathit{abc}}{\mathit{abc} + 1} + 42}{\mathit{abc} - 1}
     """
     if a in common_varnames:
@@ -2272,12 +2274,12 @@ def latex_variable_name(x, is_fname=False):
 
     TESTS::
 
-        sage: latex_variable_name('_C')  # trac #16007                                  # optional - sage.symbolic
+        sage: latex_variable_name('_C')  # trac #16007                                  # needs sage.symbolic
         'C'
-        sage: latex_variable_name('_K1')                                                # optional - sage.symbolic
+        sage: latex_variable_name('_K1')                                                # needs sage.symbolic
         'K_{1}'
 
-        sage: latex_variable_name('5')                                                  # optional - sage.symbolic
+        sage: latex_variable_name('5')                                                  # needs sage.symbolic
         '5'
     """
     # if x is an integer (it might be the case for padics), we return x
