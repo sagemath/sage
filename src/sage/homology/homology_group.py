@@ -165,7 +165,7 @@ def HomologyGroup(n, base_ring, invfac=None):
         Multiplicative Abelian group isomorphic to Z x Z x Z x Z
         sage: HomologyGroup(4, ZZ)
         Z x Z x Z x Z
-        sage: HomologyGroup(100, ZZ)                                                    # needs sage.libs.flint (o/w timeout)
+        sage: HomologyGroup(100, ZZ)
         Z^100
     """
     if base_ring.is_field():

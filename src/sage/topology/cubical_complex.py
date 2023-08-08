@@ -1168,28 +1168,30 @@ class CubicalComplex(GenericCellComplex):
 
         EXAMPLES::
 
+            sage: # needs sage.modules
             sage: S2 = cubical_complexes.Sphere(2)
-            sage: S2.chain_complex()                                                    # needs sage.modules
+            sage: S2.chain_complex()
             Chain complex with at most 3 nonzero terms over Integer Ring
             sage: Prod = S2.product(S2); Prod
             Cubical complex with 64 vertices and 676 cubes
-            sage: Prod.chain_complex()                                                  # needs sage.modules
+            sage: Prod.chain_complex()
             Chain complex with at most 5 nonzero terms over Integer Ring
-            sage: Prod.chain_complex(base_ring=QQ)                                      # needs sage.modules
+            sage: Prod.chain_complex(base_ring=QQ)
             Chain complex with at most 5 nonzero terms over Rational Field
             sage: C1 = cubical_complexes.Cube(1)
             sage: S0 = cubical_complexes.Sphere(0)
-            sage: C1.chain_complex(subcomplex=S0)                                       # needs sage.modules
+            sage: C1.chain_complex(subcomplex=S0)
             Chain complex with at most 1 nonzero terms over Integer Ring
-            sage: C1.homology(subcomplex=S0)                                            # needs sage.modules
+            sage: C1.homology(subcomplex=S0)
             {0: 0, 1: Z}
 
         Check that :trac:`32203` has been fixed::
 
+            sage: # needs sage.modules
             sage: Square = CubicalComplex([([0,1],[0,1])])
             sage: EdgesLTR = CubicalComplex([([0,0],[0,1]),([0,1],[1,1]),([1,1],[0,1])])
             sage: EdgesLBR = CubicalComplex([([0,0],[0,1]),([0,1],[0,0]),([1,1],[0,1])])
-            sage: Square.homology(subcomplex=EdgesLTR)[2] == Square.homology(subcomplex=EdgesLBR)[2]                    # needs sage.modules
+            sage: Square.homology(subcomplex=EdgesLTR)[2] == Square.homology(subcomplex=EdgesLBR)[2]
             True
         """
         from sage.homology.chain_complex import ChainComplex

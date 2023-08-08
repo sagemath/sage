@@ -1382,6 +1382,7 @@ class SimplicialSetMorphism(Morphism):
 
         EXAMPLES::
 
+            sage: # needs sage.modules
             sage: from sage.topology.simplicial_set import AbstractSimplex, SimplicialSet
             sage: v = AbstractSimplex(0, name='v')
             sage: w = AbstractSimplex(0, name='w')
@@ -1391,13 +1392,13 @@ class SimplicialSetMorphism(Morphism):
             sage: Y = SimplicialSet({e: (v, v)})
             sage: H = Hom(X, Y)
             sage: f = H({v: v, w: v, e: e, f: e})
-            sage: g = f.induced_homology_morphism()                                     # needs sage.modules
-            sage: g.to_matrix()                                                         # needs sage.modules
+            sage: g = f.induced_homology_morphism()
+            sage: g.to_matrix()
             [1|0]
             [-+-]
             [0|2]
-            sage: g3 = f.induced_homology_morphism(base_ring=GF(3), cohomology=True)    # needs sage.modules
-            sage: g3.to_matrix()                                                        # needs sage.modules
+            sage: g3 = f.induced_homology_morphism(base_ring=GF(3), cohomology=True)
+            sage: g3.to_matrix()
             [1|0]
             [-+-]
             [0|2]

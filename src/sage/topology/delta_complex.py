@@ -605,26 +605,27 @@ class DeltaComplex(GenericCellComplex):
 
         EXAMPLES::
 
+            sage: # needs sage.modules
             sage: circle = delta_complexes.Sphere(1)
-            sage: circle.chain_complex()                                                # needs sage.modules
+            sage: circle.chain_complex()
             Chain complex with at most 2 nonzero terms over Integer Ring
-            sage: circle.chain_complex()._latex_()                                      # needs sage.modules
+            sage: circle.chain_complex()._latex_()
             '\\Bold{Z}^{1} \\xrightarrow{d_{1}} \\Bold{Z}^{1}'
-            sage: circle.chain_complex(base_ring=QQ, augmented=True)                    # needs sage.modules
+            sage: circle.chain_complex(base_ring=QQ, augmented=True)
             Chain complex with at most 3 nonzero terms over Rational Field
-            sage: circle.homology(dim=1)                                                # needs sage.modules
+            sage: circle.homology(dim=1)
             Z
-            sage: circle.cohomology(dim=1)                                              # needs sage.modules
+            sage: circle.cohomology(dim=1)
             Z
             sage: T = delta_complexes.Torus()
-            sage: T.chain_complex(subcomplex=T)                                         # needs sage.modules
+            sage: T.chain_complex(subcomplex=T)
             Trivial chain complex over Integer Ring
-            sage: T.homology(subcomplex=T)                                              # needs sage.modules
+            sage: T.homology(subcomplex=T)
             {0: 0, 1: 0, 2: 0}
             sage: A = T.subcomplex({2: [1]})  # one of the two triangles forming T
-            sage: T.chain_complex(subcomplex=A)                                         # needs sage.modules
+            sage: T.chain_complex(subcomplex=A)
             Chain complex with at most 1 nonzero terms over Integer Ring
-            sage: T.homology(subcomplex=A)                                              # needs sage.modules
+            sage: T.homology(subcomplex=A)
             {0: 0, 1: 0, 2: Z}
         """
         from sage.homology.chain_complex import ChainComplex
@@ -944,20 +945,23 @@ class DeltaComplex(GenericCellComplex):
 
             sage: K = delta_complexes.KleinBottle()
             sage: X = K.product(K)
-            sage: X.homology(1)                                                         # needs sage.modules
+
+            sage: # needs sage.modules
+            sage: X.homology(1)
             Z x Z x C2 x C2
-            sage: X.homology(2)                                                         # needs sage.modules
+            sage: X.homology(2)
             Z x C2 x C2 x C2
-            sage: X.homology(3)                                                         # needs sage.modules
+            sage: X.homology(3)
             C2
-            sage: X.homology(4)                                                         # needs sage.modules
+            sage: X.homology(4)
             0
-            sage: X.homology(base_ring=GF(2))                                           # needs sage.modules
+            sage: X.homology(base_ring=GF(2))
             {0: Vector space of dimension 0 over Finite Field of size 2,
              1: Vector space of dimension 4 over Finite Field of size 2,
              2: Vector space of dimension 6 over Finite Field of size 2,
              3: Vector space of dimension 4 over Finite Field of size 2,
              4: Vector space of dimension 1 over Finite Field of size 2}
+
             sage: S1 = delta_complexes.Sphere(1)
             sage: K.product(S1).homology() == S1.product(K).homology()                  # needs sage.modules
             True
@@ -1144,16 +1148,17 @@ class DeltaComplex(GenericCellComplex):
 
         EXAMPLES::
 
+            sage: # needs sage.modules
             sage: T = delta_complexes.Torus()
             sage: S2 = delta_complexes.Sphere(2)
-            sage: T.connected_sum(S2).cohomology() == T.cohomology()                    # needs sage.modules
+            sage: T.connected_sum(S2).cohomology() == T.cohomology()
             True
             sage: RP2 = delta_complexes.RealProjectivePlane()
-            sage: T.connected_sum(RP2).homology(1)                                      # needs sage.modules
+            sage: T.connected_sum(RP2).homology(1)
             Z x Z x C2
-            sage: T.connected_sum(RP2).homology(2)                                      # needs sage.modules
+            sage: T.connected_sum(RP2).homology(2)
             0
-            sage: RP2.connected_sum(RP2).connected_sum(RP2).homology(1)                 # needs sage.modules
+            sage: RP2.connected_sum(RP2).connected_sum(RP2).homology(1)
             Z x Z x C2
         """
         if not self.dimension() == other.dimension():
@@ -1581,15 +1586,16 @@ class DeltaComplex(GenericCellComplex):
 
         EXAMPLES::
 
+            sage: # needs sage.modules
             sage: RP2 = delta_complexes.RealProjectivePlane()
-            sage: phi, M = RP2.algebraic_topological_model(GF(2))                       # needs sage.modules
-            sage: M.homology()                                                          # needs sage.modules
+            sage: phi, M = RP2.algebraic_topological_model(GF(2))
+            sage: M.homology()
             {0: Vector space of dimension 1 over Finite Field of size 2,
              1: Vector space of dimension 1 over Finite Field of size 2,
              2: Vector space of dimension 1 over Finite Field of size 2}
             sage: T = delta_complexes.Torus()
-            sage: phi, M = T.algebraic_topological_model(QQ)                            # needs sage.modules
-            sage: M.homology()                                                          # needs sage.modules
+            sage: phi, M = T.algebraic_topological_model(QQ)
+            sage: M.homology()
             {0: Vector space of dimension 1 over Rational Field,
              1: Vector space of dimension 2 over Rational Field,
              2: Vector space of dimension 1 over Rational Field}
@@ -1681,14 +1687,15 @@ class DeltaComplexExamples():
 
         EXAMPLES::
 
+            sage: # needs sage.modules
             sage: P = delta_complexes.RealProjectivePlane()
-            sage: P.cohomology(1)                                                       # needs sage.modules
+            sage: P.cohomology(1)
             0
-            sage: P.cohomology(2)                                                       # needs sage.modules
+            sage: P.cohomology(2)
             C2
-            sage: P.cohomology(dim=1, base_ring=GF(2))                                  # needs sage.modules
+            sage: P.cohomology(dim=1, base_ring=GF(2))
             Vector space of dimension 1 over Finite Field of size 2
-            sage: P.cohomology(dim=2, base_ring=GF(2))                                  # needs sage.modules
+            sage: P.cohomology(dim=2, base_ring=GF(2))
             Vector space of dimension 1 over Finite Field of size 2
         """
         return DeltaComplex((((), ()), ((1, 0), (1, 0), (0, 0)),

@@ -508,12 +508,13 @@ class FilteredSimplicialComplex(SageObject):
 
         TESTS::
 
+            sage: # needs sage.modules
             sage: X = FilteredSimplicialComplex([([0], 0), ([1, 2], 10)])
-            sage: int_list = X._persistent_homology()                                   # needs sage.modules
-            sage: int_list[0]                                                           # needs sage.modules
+            sage: int_list = X._persistent_homology()
+            sage: int_list[0]
             [(0, +Infinity), (10, +Infinity)]
-            sage: X._add_interval(Simplex([0]), Simplex([1, 2]), int_list)              # needs sage.modules
-            sage: int_list[0]                                                           # needs sage.modules
+            sage: X._add_interval(Simplex([0]), Simplex([1, 2]), int_list)
+            sage: int_list[0]
             [(0, +Infinity), (10, +Infinity), (0, 10)]
 
         Infinite interval::
@@ -604,13 +605,14 @@ class FilteredSimplicialComplex(SageObject):
 
         TESTS::
 
+            sage: # needs sage.modules
             sage: X = FilteredSimplicialComplex([([0], 0), ([1], 5), ([0, 1], 18), ([0, 2, 3], 32)])
-            sage: X._persistent_homology()                                              # needs sage.modules
+            sage: X._persistent_homology()
             [[(5, 18), (0, +Infinity)], [], []]
-            sage: a = X._chaingroup(Simplex([0, 1]))                                    # needs sage.modules
-            sage: b = X._chaingroup(Simplex([0, 3]))                                    # needs sage.modules
-            sage: d = a + b                                                             # needs sage.modules
-            sage: X._max_index(d)                                                       # needs sage.modules
+            sage: a = X._chaingroup(Simplex([0, 1]))
+            sage: b = X._chaingroup(Simplex([0, 3]))
+            sage: d = a + b
+            sage: X._max_index(d)
             6
         """
         currmax = -1

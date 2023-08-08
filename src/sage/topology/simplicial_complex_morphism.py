@@ -312,6 +312,7 @@ class SimplicialComplexMorphism(Morphism):
 
         EXAMPLES::
 
+            sage: # needs sage.modules
             sage: S = simplicial_complexes.Sphere(1)
             sage: T = simplicial_complexes.Sphere(2)
             sage: H = Hom(S,T)
@@ -324,11 +325,11 @@ class SimplicialComplexMorphism(Morphism):
               Defn: 0 |--> 0
                     1 |--> 1
                     2 |--> 2
-            sage: a = x.associated_chain_complex_morphism(); a                          # needs sage.modules
+            sage: a = x.associated_chain_complex_morphism(); a
             Chain complex morphism:
               From: Chain complex with at most 2 nonzero terms over Integer Ring
               To:   Chain complex with at most 3 nonzero terms over Integer Ring
-            sage: a._matrix_dictionary                                                  # needs sage.modules
+            sage: a._matrix_dictionary
             {0: [1 0 0]
                 [0 1 0]
                 [0 0 1]
@@ -340,19 +341,19 @@ class SimplicialComplexMorphism(Morphism):
                 [0 0 0]
                 [0 0 0],
              2: []}
-            sage: x.associated_chain_complex_morphism(augmented=True)                   # needs sage.modules
+            sage: x.associated_chain_complex_morphism(augmented=True)
             Chain complex morphism:
               From: Chain complex with at most 3 nonzero terms over Integer Ring
               To:   Chain complex with at most 4 nonzero terms over Integer Ring
-            sage: x.associated_chain_complex_morphism(cochain=True)                     # needs sage.modules
+            sage: x.associated_chain_complex_morphism(cochain=True)
             Chain complex morphism:
               From: Chain complex with at most 3 nonzero terms over Integer Ring
               To:   Chain complex with at most 2 nonzero terms over Integer Ring
-            sage: x.associated_chain_complex_morphism(augmented=True, cochain=True)     # needs sage.modules
+            sage: x.associated_chain_complex_morphism(augmented=True, cochain=True)
             Chain complex morphism:
               From: Chain complex with at most 4 nonzero terms over Integer Ring
               To:   Chain complex with at most 3 nonzero terms over Integer Ring
-            sage: x.associated_chain_complex_morphism(base_ring=GF(11))                 # needs sage.modules sage.rings.finite_rings
+            sage: x.associated_chain_complex_morphism(base_ring=GF(11))
             Chain complex morphism:
               From: Chain complex with at most 2 nonzero terms over Finite Field of size 11
               To:   Chain complex with at most 3 nonzero terms over Finite Field of size 11

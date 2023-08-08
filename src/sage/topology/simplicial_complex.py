@@ -2317,19 +2317,20 @@ class SimplicialComplex(Parent, GenericCellComplex):
 
         EXAMPLES::
 
+            sage: # needs sage.modules
             sage: circle = SimplicialComplex([[0,1], [1,2], [0, 2]])
-            sage: circle._homology_()                                                   # needs sage.modules
+            sage: circle._homology_()
             {0: 0, 1: Z}
             sage: sphere = SimplicialComplex([[0,1,2,3]])
             sage: sphere.remove_face([0,1,2,3])
             sage: sphere
             Simplicial complex with vertex set (0, 1, 2, 3) and
              facets {(0, 1, 2), (0, 1, 3), (0, 2, 3), (1, 2, 3)}
-            sage: sphere._homology_()                                                   # needs sage.modules
+            sage: sphere._homology_()
             {0: 0, 1: 0, 2: Z}
-            sage: sphere._homology_(reduced=False)                                      # needs sage.modules
+            sage: sphere._homology_(reduced=False)
             {0: Z, 1: 0, 2: Z}
-            sage: sphere._homology_(base_ring=GF(2), reduced=False)                     # needs sage.modules
+            sage: sphere._homology_(base_ring=GF(2), reduced=False)
             {0: Vector space of dimension 1 over Finite Field of size 2,
              1: Vector space of dimension 0 over Finite Field of size 2,
              2: Vector space of dimension 1 over Finite Field of size 2}
@@ -4783,15 +4784,16 @@ class SimplicialComplex(Parent, GenericCellComplex):
 
         Shellable complexes are partitionable::
 
+            sage: # needs sage.numerical.mip
             sage: X = SimplicialComplex([[1,3,5], [1,3,6], [1,4,5], [1,4,6],
             ....:                        [2,3,5], [2,3,6], [2,4,5]])
-            sage: X.is_partitionable()                                                  # needs sage.numerical.mip
+            sage: X.is_partitionable()
             True
-            sage: P = X.is_partitionable(certificate=True)                              # needs sage.numerical.mip
+            sage: P = X.is_partitionable(certificate=True)
             sage: def n_intervals_containing(f):
             ....:     return len([RF for RF in P
             ....:                    if RF[0].is_face(f) and f.is_face(RF[1])])
-            sage: all(n_intervals_containing(f) == 1                                    # needs sage.numerical.mip
+            sage: all(n_intervals_containing(f) == 1
             ....:     for k in X.faces().keys() for f in X.faces()[k])
             True
 
