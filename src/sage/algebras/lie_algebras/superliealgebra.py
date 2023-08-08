@@ -1,3 +1,16 @@
+"""
+Super Lie Algebras
+
+These are Z-graded Lie algebras satisfying graded antisymmetry and the graded Jacobi identity.
+
+AUTHORS:
+
+- Aditya Dwarkesh (Contact: ad19ms047@iiserkol.ac.in)
+- Martin Frankland (Contact: Martin.Frankland@uregina.ca)
+"""
+
+
+
 from sage.combinat.free_module import CombinatorialFreeModule
 from sage.categories.algebras import Algebras
 from sage.misc.cachefunc import cached_method
@@ -338,5 +351,5 @@ class SuperLieAlgebra(CombinatorialFreeModule, UniqueRepresentation):
 
 #Example:
 #d = {('x','y'):{'z':1}}
-#L.<x,y,z>=SuperLieAlgebra(QQ, s_coeff=d, degrees=(1,1,2))
+#L.<x,y,z>=SuperLieAlgebra(QQ, s_coeff=d, degrees=(1,1,2)) (Corresponding to Q^2+Q)
 #L.gradedmorphism({x:x, y:y, z:z}, L, L, x.bracket(y))
