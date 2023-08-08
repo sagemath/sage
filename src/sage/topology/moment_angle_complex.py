@@ -90,14 +90,13 @@ from itertools import combinations
 # - use different UniqueRepresentation complexes for components?
 # - different way of computing euler characteristic?
 # - make _moment_angle_complex a lazy attribute
-# - bigraded betti numbers? (page 161 buchstaber panov)
 
 # Future TODO's:
+# - bigraded betti numbers? (page 161 buchstaber panov)
 # - explicitly state the vertices for construction
 # - polyhedral products and real moment-angle complexes
 # - golod decomposition
 # - return for odd dimensional simplicial complexes in golod_decomposition?
-
 
 # maybe make hidden?
 def union(c1, c2):
@@ -489,7 +488,7 @@ class MomentAngleComplex(SageObject, UniqueRepresentation):
         .. SEEALSO::
 
             :meth:`homology`,
-            :meth:`.cell_complex.homology`.
+            :meth:`.cell_complex.GenericCellComplex.homology`.
 
         TESTS::
 
@@ -571,7 +570,7 @@ class MomentAngleComplex(SageObject, UniqueRepresentation):
 
         .. SEEALSO::
 
-            :meth:`.cell_complex.homology`.
+            :meth:`.cell_complex.GenericCellComplex.homology`.
 
         EXAMPLES::
 
