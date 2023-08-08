@@ -5,8 +5,7 @@ These are Z-graded Lie algebras satisfying graded antisymmetry and the graded Ja
 
 AUTHORS:
 
-- Aditya Dwarkesh (Contact: ad19ms047@iiserkol.ac.in)
-- Martin Frankland (Contact: Martin.Frankland@uregina.ca)
+- Aditya Dwarkesh (Contact: ad19ms047@iiserkol.ac.in), Martin Frankland (Contact: Martin.Frankland@uregina.ca): Initial version (08-08-2023)
 """
 
 
