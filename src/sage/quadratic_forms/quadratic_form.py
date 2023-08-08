@@ -100,24 +100,24 @@ def quadratic_form_from_invariants(F, rk, det, P, sminus):
     EXAMPLES::
 
         sage: P = [3,5]
-        sage: q = quadratic_form_from_invariants(QQ,2,-15,P,1); q                       # optional - sage.rings.padics
+        sage: q = quadratic_form_from_invariants(QQ,2,-15,P,1); q                       # needs sage.rings.padics
         Quadratic form in 2 variables over Rational Field with coefficients:
         [ 5 0 ]
         [ * -3 ]
-        sage: all(q.hasse_invariant(p) == -1 for p in P)                                # optional - sage.rings.padics
+        sage: all(q.hasse_invariant(p) == -1 for p in P)                                # needs sage.rings.padics
         True
 
     TESTS:
 
     This shows that :trac:`28955` is fixed::
 
-        sage: quadratic_form_from_invariants(QQ,3,2,[2],2)                              # optional - sage.rings.padics
+        sage: quadratic_form_from_invariants(QQ,3,2,[2],2)                              # needs sage.rings.padics
         Quadratic form in 3 variables over Rational Field with coefficients:
         [ -1 0 0 ]
         [ * 1 0 ]
         [ * * -2 ]
 
-        sage: quadratic_form_from_invariants(QQ,4,2,[2],4)                              # optional - sage.rings.padics
+        sage: quadratic_form_from_invariants(QQ,4,2,[2],4)                              # needs sage.rings.padics
         Traceback (most recent call last):
         ...
         ValueError: invariants do not define a rational quadratic form
@@ -669,23 +669,24 @@ class QuadraticForm(SageObject):
             sage: Q = QuadraticForm(ZZ, 2, [1,0,5])
             sage: Q.list_external_initializations()
             []
-            sage: T = Q.theta_series()                                                  # optional - sage.libs.pari
-            sage: Q.list_external_initializations()                                     # optional - sage.libs.pari
+            sage: T = Q.theta_series()                                                  # needs sage.libs.pari
+            sage: Q.list_external_initializations()                                     # needs sage.libs.pari
             []
-            sage: Q = QuadraticForm(ZZ, 2, [1,0,5], unsafe_initialization=False,        # optional - sage.libs.pari
+            sage: Q = QuadraticForm(ZZ, 2, [1,0,5], unsafe_initialization=False,        # needs sage.libs.pari
             ....:                   number_of_automorphisms=3, determinant=0)
-            sage: Q.list_external_initializations()                                     # optional - sage.libs.pari
+            sage: Q.list_external_initializations()                                     # needs sage.libs.pari
             []
 
         ::
 
-            sage: Q = QuadraticForm(ZZ, 2, [1,0,5], unsafe_initialization=False,        # optional - sage.libs.pari
+            sage: # needs sage.libs.pari
+            sage: Q = QuadraticForm(ZZ, 2, [1,0,5], unsafe_initialization=False,
             ....:                   number_of_automorphisms=3, determinant=0)
-            sage: Q.list_external_initializations()                                     # optional - sage.libs.pari
+            sage: Q.list_external_initializations()
             []
-            sage: Q = QuadraticForm(ZZ, 2, [1,0,5], unsafe_initialization=True,         # optional - sage.libs.pari
+            sage: Q = QuadraticForm(ZZ, 2, [1,0,5], unsafe_initialization=True,
             ....:                   number_of_automorphisms=3, determinant=0)
-            sage: Q.list_external_initializations()                                     # optional - sage.libs.pari
+            sage: Q.list_external_initializations()
             ['number_of_automorphisms', 'determinant']
         """
         return deepcopy(self._external_initialization_list)
@@ -697,7 +698,7 @@ class QuadraticForm(SageObject):
         EXAMPLES::
 
             sage: Q = QuadraticForm(ZZ, 2, [1,0,5])
-            sage: Q.__pari__()                                                          # optional - sage.libs.pari
+            sage: Q.__pari__()                                                          # needs sage.libs.pari
             [2, 0; 0, 10]
 
         """
@@ -710,7 +711,7 @@ class QuadraticForm(SageObject):
         EXAMPLES::
 
             sage: Q = QuadraticForm(ZZ, 2, [1,0,5])
-            sage: Q._pari_init_()                                                       # optional - sage.libs.pari
+            sage: Q._pari_init_()                                                       # needs sage.libs.pari
             'Mat([2,0;0,10])'
         """
         return self.matrix()._pari_init_()
@@ -837,10 +838,10 @@ class QuadraticForm(SageObject):
 
             sage: Q1 = QuadraticForm(QQ, 2, [1,1,1])
             sage: Q2 = QuadraticForm(QQ, 2, [1,1,1])
-            sage: Q3 = QuadraticForm(QuadraticField(2), 2, [1,1,1])                     # optional - sage.rings.number_field
+            sage: Q3 = QuadraticForm(QuadraticField(2), 2, [1,1,1])                     # needs sage.rings.number_field
             sage: hash(Q1) == hash(Q2)
             True
-            sage: hash(Q1) == hash(Q3)                                                  # optional - sage.rings.number_field
+            sage: hash(Q1) == hash(Q3)                                                  # needs sage.rings.number_field
             False
         """
         return hash(self.__base_ring) ^ hash(tuple(self.__coeffs))
@@ -1309,20 +1310,21 @@ class QuadraticForm(SageObject):
 
         ::
 
+            sage: # needs sage.rings.number_field
             sage: x = polygen(ZZ, 'x')
-            sage: F.<a> = NumberField(x^2 - 5)                                          # optional - sage.rings.number_field
-            sage: Z = F.ring_of_integers()                                              # optional - sage.rings.number_field
-            sage: Q = QuadraticForm(Z, 3, [2*a, 3*a, 0, 1 - a, 0, 2*a + 4])             # optional - sage.rings.number_field
-            sage: P = Q.polynomial(names='y'); P                                        # optional - sage.rings.number_field
+            sage: F.<a> = NumberField(x^2 - 5)
+            sage: Z = F.ring_of_integers()
+            sage: Q = QuadraticForm(Z, 3, [2*a, 3*a, 0, 1 - a, 0, 2*a + 4])
+            sage: P = Q.polynomial(names='y'); P
             2*a*y0^2 + 3*a*y0*y1 + (-a + 1)*y1^2 + (2*a + 4)*y2^2
-            sage: Q = QuadraticForm(F, 4,                                               # optional - sage.rings.number_field
+            sage: Q = QuadraticForm(F, 4,
             ....:                   [a, 3*a, 0, 1 - a, a - 3, 0, 2*a + 4, 4 + a, 0, 1])
-            sage: Q.polynomial(names='z')                                               # optional - sage.rings.number_field
+            sage: Q.polynomial(names='z')
             a*z0^2 + (3*a)*z0*z1 + (a - 3)*z1^2 + (a + 4)*z2^2
             + (-a + 1)*z0*z3 + (2*a + 4)*z1*z3 + z3^2
-            sage: B.<i,j,k> = QuaternionAlgebra(F,-1,-1)                                # optional - sage.rings.number_field
-            sage: Q = QuadraticForm(B, 3, [2*a, 3*a, i, 1 - a, 0, 2*a + 4])             # optional - sage.rings.number_field
-            sage: Q.polynomial()                                                        # optional - sage.rings.number_field
+            sage: B.<i,j,k> = QuaternionAlgebra(F,-1,-1)
+            sage: Q = QuadraticForm(B, 3, [2*a, 3*a, i, 1 - a, 0, 2*a + 4])
+            sage: Q.polynomial()
             Traceback (most recent call last):
             ...
             ValueError: Can only create polynomial rings over commutative rings.
@@ -1724,10 +1726,11 @@ class QuadraticForm(SageObject):
 
         This does not work if the characteristic is 2::
 
-            sage: Q = DiagonalQuadraticForm(GF(2), [1,1,1])                             # optional - sage.rings.finite_rings
-            sage: v = vector((1,1,1))                                                   # optional - sage.rings.finite_rings
-            sage: w = vector((1,1,1))                                                   # optional - sage.rings.finite_rings
-            sage: Q.bilinear_map(v, w)                                                  # optional - sage.rings.finite_rings
+            sage: # needs sage.rings.finite_rings
+            sage: Q = DiagonalQuadraticForm(GF(2), [1,1,1])
+            sage: v = vector((1,1,1))
+            sage: w = vector((1,1,1))
+            sage: Q.bilinear_map(v, w)
             Traceback (most recent call last):
             ...
             TypeError: not defined for rings of characteristic 2

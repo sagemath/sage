@@ -38,22 +38,24 @@ def gamma__exact(n):
         sage: gamma__exact(1)
         1
 
-        sage: gamma__exact(1/2)                                                         # optional - sage.symbolic
+        sage: # needs sage.symbolic
+        sage: gamma__exact(1/2)
         sqrt(pi)
-        sage: gamma__exact(3/2)                                                         # optional - sage.symbolic
+        sage: gamma__exact(3/2)
         1/2*sqrt(pi)
-        sage: gamma__exact(5/2)                                                         # optional - sage.symbolic
+        sage: gamma__exact(5/2)
         3/4*sqrt(pi)
-        sage: gamma__exact(7/2)                                                         # optional - sage.symbolic
+        sage: gamma__exact(7/2)
         15/8*sqrt(pi)
 
-        sage: gamma__exact(-1/2)                                                        # optional - sage.symbolic
+        sage: # needs sage.symbolic
+        sage: gamma__exact(-1/2)
         -2*sqrt(pi)
-        sage: gamma__exact(-3/2)                                                        # optional - sage.symbolic
+        sage: gamma__exact(-3/2)
         4/3*sqrt(pi)
-        sage: gamma__exact(-5/2)                                                        # optional - sage.symbolic
+        sage: gamma__exact(-5/2)
         -8/15*sqrt(pi)
-        sage: gamma__exact(-7/2)                                                        # optional - sage.symbolic
+        sage: gamma__exact(-7/2)
         16/105*sqrt(pi)
 
     TESTS::
@@ -105,7 +107,7 @@ def zeta__exact(n):
     Let us test the accuracy for negative special values::
 
         sage: RR = RealField(100)
-        sage: for i in range(1,10):                                                     # optional - sage.symbolic
+        sage: for i in range(1,10):                                                     # needs sage.symbolic
         ....:     print("zeta({}): {}".format(1 - 2*i,
         ....:                                 RR(zeta__exact(1-2*i)) - zeta(RR(1-2*i))))
         zeta(-1): 0.00000000000000000000000000000
@@ -120,13 +122,13 @@ def zeta__exact(n):
 
     Let us test the accuracy for positive special values::
 
-        sage: all(abs(RR(zeta__exact(2*i)) - zeta(RR(2*i))) < 10**(-28)                 # optional - sage.symbolic
+        sage: all(abs(RR(zeta__exact(2*i)) - zeta(RR(2*i))) < 10**(-28)                 # needs sage.symbolic
         ....:     for i in range(1,10))
         True
 
     TESTS::
 
-        sage: zeta__exact(4)                                                            # optional - sage.symbolic
+        sage: zeta__exact(4)                                                            # needs sage.symbolic
         1/90*pi^4
         sage: zeta__exact(-3)
         1/120
@@ -168,13 +170,13 @@ def QuadraticBernoulliNumber(k, d):
 
     Let us create a list of some odd negative fundamental discriminants::
 
-        sage: test_set = [d for d in srange(-163, -3, 4)                                # optional - sage.libs.pari
+        sage: test_set = [d for d in srange(-163, -3, 4)                                # needs sage.libs.pari
         ....:             if d.is_fundamental_discriminant()]
 
     In general, we have `B_{1, \chi_d} = -2 h/w` for odd negative fundamental
     discriminants::
 
-        sage: all(QuadraticBernoulliNumber(1, d)                                        # optional - sage.libs.pari
+        sage: all(QuadraticBernoulliNumber(1, d)                                        # needs sage.libs.pari
         ....:       == -len(BinaryQF_reduced_representatives(d))
         ....:     for d in test_set)
         True
@@ -209,16 +211,16 @@ def quadratic_L_function__exact(n, d):
 
     EXAMPLES::
 
-        sage: quadratic_L_function__exact(1, -4)                                        # optional - sage.libs.pari sage.symbolic
+        sage: quadratic_L_function__exact(1, -4)                                        # needs sage.libs.pari sage.symbolic
         1/4*pi
-        sage: quadratic_L_function__exact(-4, -4)                                       # optional - sage.libs.pari
+        sage: quadratic_L_function__exact(-4, -4)                                       # needs sage.libs.pari
         5/2
-        sage: quadratic_L_function__exact(2, 1)                                         # optional - sage.libs.pari sage.symbolic
+        sage: quadratic_L_function__exact(2, 1)                                         # needs sage.libs.pari sage.symbolic
         1/6*pi^2
 
     TESTS::
 
-        sage: quadratic_L_function__exact(2, -4)                                        # optional - sage.libs.pari
+        sage: quadratic_L_function__exact(2, -4)                                        # needs sage.libs.pari
         Traceback (most recent call last):
         ...
         TypeError: n must be a critical value (i.e. odd > 0 or even <= 0)
@@ -272,7 +274,7 @@ def quadratic_L_function__numerical(n, d, num_terms=1000):
     First, let us test several values for a given character::
 
         sage: RR = RealField(100)
-        sage: for i in range(5):                                                        # optional - sage.symbolic
+        sage: for i in range(5):                                                        # needs sage.symbolic
         ....:     print("L({}, (-4/.)): {}".format(1+2*i,
         ....:             RR(quadratic_L_function__exact(1+2*i, -4))
         ....:                - quadratic_L_function__numerical(RR(1+2*i), -4, 10000)))
@@ -293,7 +295,7 @@ def quadratic_L_function__numerical(n, d, num_terms=1000):
     Test for several characters that the result agrees with the exact
     value, to a given accuracy ::
 
-        sage: for d in range(-20,0):  # long time (2s on sage.math 2014)                # optional - sage.symbolic
+        sage: for d in range(-20,0):            # long time (2s on sage.math 2014), needs sage.symbolic
         ....:     if abs(RR(quadratic_L_function__numerical(1, d, 10000)
         ....:                - quadratic_L_function__exact(1, d))) > 0.001:
         ....:         print("We have a problem at d = {}: exact = {}, numerical = {}".format(d,

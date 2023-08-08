@@ -815,10 +815,10 @@ class TernaryQF(SageObject):
              (1, 2, 1)
              sage: Q((1, 2, 1))
              15
-             sage: v = Q.pseudorandom_primitive_zero_mod_p(1009)                        # optional - sage.libs.pari
-             sage: Q(v) % 1009                                                          # optional - sage.libs.pari
+             sage: v = Q.pseudorandom_primitive_zero_mod_p(1009)                        # needs sage.libs.pari
+             sage: Q(v) % 1009                                                          # needs sage.libs.pari
              0
-             sage: v[2]                                                                 # optional - sage.libs.pari
+             sage: v[2]                                                                 # needs sage.libs.pari
              1
         """
         [a,b,c,r,s,t] = self.coefficients()
@@ -851,10 +851,10 @@ class TernaryQF(SageObject):
             3 * 13 * 19
             sage: Q.find_zeros_mod_p(2)
             [(1, 0, 0), (1, 1, 0), (0, 0, 1)]
-            sage: zeros_17 = Q.find_zeros_mod_p(17)                                     # optional - sage.libs.pari
-            sage: len(zeros_17)                                                         # optional - sage.libs.pari
+            sage: zeros_17 = Q.find_zeros_mod_p(17)                                     # needs sage.libs.pari
+            sage: len(zeros_17)                                                         # needs sage.libs.pari
             18
-            sage: [Q(v)%17 for v in zeros_17]                                           # optional - sage.libs.pari
+            sage: [Q(v)%17 for v in zeros_17]                                           # needs sage.libs.pari
             [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
         """
 
@@ -890,18 +890,18 @@ class TernaryQF(SageObject):
             sage: Q.disc()
             29
             sage: v = (9, 7, 1)
-            sage: v in Q.find_zeros_mod_p(11)                                           # optional - sage.libs.pari
+            sage: v in Q.find_zeros_mod_p(11)                                           # needs sage.libs.pari
             True
-            sage: Q11, M = Q.find_p_neighbor_from_vec(11, v, mat=True)                  # optional - sage.libs.pari
-            sage: Q11                                                                   # optional - sage.libs.pari
+            sage: Q11, M = Q.find_p_neighbor_from_vec(11, v, mat=True)                  # needs sage.libs.pari
+            sage: Q11                                                                   # needs sage.libs.pari
             Ternary quadratic form with integer coefficients:
             [1 2 4]
             [-1 -1 0]
-            sage: M                                                                     # optional - sage.libs.pari
+            sage: M                                                                     # needs sage.libs.pari
             [    -1  -5/11   7/11]
             [     0 -10/11   3/11]
             [     0  -3/11  13/11]
-            sage: Q(M) == Q11                                                           # optional - sage.libs.pari
+            sage: Q(M) == Q11                                                           # needs sage.libs.pari
             True
         """
         if mat:
@@ -923,16 +923,16 @@ class TernaryQF(SageObject):
             Ternary quadratic form with integer coefficients:
             [1 3 3]
             [-2 0 -1]
-            sage: neig = Q0.find_p_neighbors(5)                                         # optional - sage.libs.pari
-            sage: len(neig)                                                             # optional - sage.libs.pari
+            sage: neig = Q0.find_p_neighbors(5)                                         # needs sage.libs.pari
+            sage: len(neig)                                                             # needs sage.libs.pari
             6
             sage: Q1 = TernaryQF([1, 1, 10, 1, 1, 1])
             sage: Q2 = TernaryQF([1, 2, 4, -1, -1, 0])
-            sage: neig.count(Q0)                                                        # optional - sage.libs.pari
+            sage: neig.count(Q0)                                                        # needs sage.libs.pari
             2
-            sage: neig.count(Q1)                                                        # optional - sage.libs.pari
+            sage: neig.count(Q1)                                                        # needs sage.libs.pari
             1
-            sage: neig.count(Q2)                                                        # optional - sage.libs.pari
+            sage: neig.count(Q2)                                                        # needs sage.libs.pari
             3
 
         """
