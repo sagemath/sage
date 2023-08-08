@@ -540,14 +540,14 @@ class FreeZinbielAlgebra(CombinatorialFreeModule):
 
         EXAMPLES::
 
-            sage: F = algebras.FreeZinbiel(GF(7), 'x,y,z'); F                           # optional - sage.rings.finite_rings
+            sage: F = algebras.FreeZinbiel(GF(7), 'x,y,z'); F                           # needs sage.rings.finite_rings
             Free Zinbiel algebra on generators (Z[x], Z[y], Z[z])
             over Finite Field of size 7
 
         Elements of the free Zinbiel algebra canonically coerce in::
 
-            sage: x, y, z = F.gens()                                                    # optional - sage.rings.finite_rings
-            sage: F.coerce(x+y) == x+y                                                  # optional - sage.rings.finite_rings
+            sage: x, y, z = F.gens()                                                    # needs sage.rings.finite_rings
+            sage: F.coerce(x+y) == x+y                                                  # needs sage.rings.finite_rings
             True
 
         The free Zinbiel algebra over `\ZZ` on `x, y, z` coerces in, since
@@ -555,15 +555,15 @@ class FreeZinbielAlgebra(CombinatorialFreeModule):
 
             sage: G = algebras.FreeZinbiel(ZZ, 'x,y,z')
             sage: Gx,Gy,Gz = G.gens()
-            sage: z = F.coerce(Gx+Gy); z                                                # optional - sage.rings.finite_rings
+            sage: z = F.coerce(Gx+Gy); z                                                # needs sage.rings.finite_rings
             Z[x] + Z[y]
-            sage: z.parent() is F                                                       # optional - sage.rings.finite_rings
+            sage: z.parent() is F                                                       # needs sage.rings.finite_rings
             True
 
         However, `\GF{7}` does not coerce to `\ZZ`, so the free Zinbiel
         algebra over `\GF{7}` does not coerce to the one over `\ZZ`::
 
-            sage: G.coerce(y)                                                           # optional - sage.rings.finite_rings
+            sage: G.coerce(y)                                                           # needs sage.rings.finite_rings
             Traceback (most recent call last):
             ...
             TypeError: no canonical coercion from Free Zinbiel algebra on
@@ -642,18 +642,18 @@ class ZinbielFunctor(ConstructionFunctor):
         sage: F = P.construction()[0]; F
         Zinbiel[x,y]
 
-        sage: A = GF(5)['a,b']                                                          # optional - sage.rings.finite_rings
-        sage: a, b = A.gens()                                                           # optional - sage.rings.finite_rings
-        sage: F(A)                                                                      # optional - sage.rings.finite_rings
+        sage: A = GF(5)['a,b']                                                          # needs sage.rings.finite_rings
+        sage: a, b = A.gens()                                                           # needs sage.rings.finite_rings
+        sage: F(A)                                                                      # needs sage.rings.finite_rings
         Free Zinbiel algebra on generators (Z[x], Z[y])
         over Multivariate Polynomial Ring in a, b over Finite Field of size 5
 
-        sage: f = A.hom([a+b,a-b],A)                                                    # optional - sage.rings.finite_rings
-        sage: F(f)                                                                      # optional - sage.rings.finite_rings
+        sage: f = A.hom([a+b,a-b],A)                                                    # needs sage.rings.finite_rings
+        sage: F(f)                                                                      # needs sage.rings.finite_rings
         Generic endomorphism of Free Zinbiel algebra on generators (Z[x], Z[y])
         over Multivariate Polynomial Ring in a, b over Finite Field of size 5
 
-        sage: F(f)(a * F(A)(x))                                                         # optional - sage.rings.finite_rings
+        sage: F(f)(a * F(A)(x))                                                         # needs sage.rings.finite_rings
         (a+b)*Z[x]
     """
     rank = 9
@@ -706,7 +706,7 @@ class ZinbielFunctor(ConstructionFunctor):
         TESTS::
 
             sage: R = algebras.FreeZinbiel(ZZ, 'x').construction()[0]
-            sage: R(ZZ.hom(GF(3)))  # indirect doctest                                  # optional - sage.rings.finite_rings
+            sage: R(ZZ.hom(GF(3)))  # indirect doctest                                  # needs sage.rings.finite_rings
             Generic morphism:
               From: Free Zinbiel algebra on generators (Z[x],)
                     over Integer Ring

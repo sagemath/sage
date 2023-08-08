@@ -298,14 +298,15 @@ class CubicHeckeExtensionRing(LaurentPolynomialRing_mpair):
 
         EXAMPLES::
 
-            sage: CHA3 = algebras.CubicHecke(3)                  # optional gap3
-            sage: GER = CHA3.extension_ring(generic=True)        # optional gap3
-            sage: sch7 = CHA3.chevie().SchurElements()[7]        # optional gap3
-            sage: GER(sch7)                                      # optional gap3
+            sage: # optional - gap3
+            sage: CHA3 = algebras.CubicHecke(3)
+            sage: GER = CHA3.extension_ring(generic=True)
+            sage: sch7 = CHA3.chevie().SchurElements()[7]
+            sage: GER(sch7)
             a*b*c^-2 + a^2*b^-1*c^-1 + a^-1*b^2*c^-1 + 2
             + a*b^-2*c + a^-2*b*c + a^-1*b^-1*c^2
-            sage: rep4_gap3 = CHA3.chevie().Representations(4)   # optional gap3
-            sage: matrix(GER, rep4_gap3[1])                      # optional gap3
+            sage: rep4_gap3 = CHA3.chevie().Representations(4)
+            sage: matrix(GER, rep4_gap3[1])
             [ b  0]
             [-b  c]
         """

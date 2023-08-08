@@ -949,9 +949,9 @@ class GCAlgebra(UniqueRepresentation, QuotientRing_nc):
 
         TESTS::
 
-            sage: A1 = GradedCommutativeAlgebra(GF(2), 'x,y', (3, 6))                   # optional - sage.rings.finite_rings
-            sage: A2 = GradedCommutativeAlgebra(GF(2), ['x', 'y'], [3, 6])              # optional - sage.rings.finite_rings
-            sage: A1 is A2
+            sage: A1 = GradedCommutativeAlgebra(GF(2), 'x,y', (3, 6))                   # needs sage.rings.finite_rings
+            sage: A2 = GradedCommutativeAlgebra(GF(2), ['x', 'y'], [3, 6])              # needs sage.rings.finite_rings
+            sage: A1 is A2                                                              # needs sage.rings.finite_rings
             True
 
         Testing the single generator case (:trac:`25276`)::
@@ -962,8 +962,8 @@ class GCAlgebra(UniqueRepresentation, QuotientRing_nc):
             sage: A4.<z> = GradedCommutativeAlgebra(QQ, degrees=[4])
             sage: z**2 == 0
             False
-            sage: A5.<z> = GradedCommutativeAlgebra(GF(2))                              # optional - sage.rings.finite_rings
-            sage: z**2 == 0                                                             # optional - sage.rings.finite_rings
+            sage: A5.<z> = GradedCommutativeAlgebra(GF(2))                              # needs sage.rings.finite_rings
+            sage: z**2 == 0                                                             # needs sage.rings.finite_rings
             False
         """
         if names is None:
@@ -1207,19 +1207,20 @@ class GCAlgebra(UniqueRepresentation, QuotientRing_nc):
 
         EXAMPLES::
 
-            sage: A.<x,y,z,t> = GradedCommutativeAlgebra(GF(5), degrees=(2, 2, 3, 4))   # optional - sage.rings.finite_rings
-            sage: I = A.ideal([x*t+z^2, x*y - t])                                       # optional - sage.rings.finite_rings
-            sage: B = A.quotient(I); B                                                  # optional - sage.rings.finite_rings
+            sage: # needs sage.rings.finite_rings
+            sage: A.<x,y,z,t> = GradedCommutativeAlgebra(GF(5), degrees=(2, 2, 3, 4))
+            sage: I = A.ideal([x*t+z^2, x*y - t])
+            sage: B = A.quotient(I); B
             Graded Commutative Algebra with generators ('x', 'y', 'z', 't')
              in degrees (2, 2, 3, 4) with relations [x*t, x*y - t]
              over Finite Field of size 5
-            sage: B(x*t)                                                                # optional - sage.rings.finite_rings
+            sage: B(x*t)
             0
-            sage: B(x*y)                                                                # optional - sage.rings.finite_rings
+            sage: B(x*y)
             t
-            sage: A.basis(7)                                                            # optional - sage.rings.finite_rings
+            sage: A.basis(7)
             [x^2*z, x*y*z, y^2*z, z*t]
-            sage: B.basis(7)                                                            # optional - sage.rings.finite_rings
+            sage: B.basis(7)
             [x^2*z, y^2*z, z*t]
         """
         if check and any(not i.is_homogeneous() for i in I.gens()):
@@ -1909,19 +1910,20 @@ class GCAlgebra_multigraded(GCAlgebra):
 
             EXAMPLES::
 
-                sage: A.<a,b,c> = GradedCommutativeAlgebra(GF(2),                       # optional - sage.rings.finite_rings
+                sage: # needs sage.rings.finite_rings
+                sage: A.<a,b,c> = GradedCommutativeAlgebra(GF(2),
                 ....:                                      degrees=((1,0), (0,1), (1,1)))
-                sage: (a**2*b).degree()                                                 # optional - sage.rings.finite_rings
+                sage: (a**2*b).degree()
                 (2, 1)
-                sage: (a**2*b).degree(total=True)                                       # optional - sage.rings.finite_rings
+                sage: (a**2*b).degree(total=True)
                 3
-                sage: (a**2*b + c).degree()                                             # optional - sage.rings.finite_rings
+                sage: (a**2*b + c).degree()
                 Traceback (most recent call last):
                 ...
                 ValueError: this element is not homogeneous
-                sage: (a**2*b + c).degree(total=True)                                   # optional - sage.rings.finite_rings
+                sage: (a**2*b + c).degree(total=True)
                 3
-                sage: A(0).degree()                                                     # optional - sage.rings.finite_rings
+                sage: A(0).degree()
                 Traceback (most recent call last):
                 ...
                 ValueError: the zero element does not have a well-defined degree
@@ -2388,23 +2390,23 @@ class DifferentialGCAlgebra(GCAlgebra):
         In contrast, the corresponding algebra in characteristic `p`
         has finitely generated cohomology::
 
-            sage: A3.<a,x,y> = GradedCommutativeAlgebra(GF(3), degrees=(1,2,2))         # optional - sage.rings.finite_rings
-            sage: B3 = A3.cdg_algebra(differential={y: a*x})                            # optional - sage.rings.finite_rings
-            sage: B3.cohomology_generators(16)                                          # optional - sage.rings.finite_rings
+            sage: A3.<a,x,y> = GradedCommutativeAlgebra(GF(3), degrees=(1,2,2))         # needs sage.rings.finite_rings
+            sage: B3 = A3.cdg_algebra(differential={y: a*x})                            # needs sage.rings.finite_rings
+            sage: B3.cohomology_generators(16)                                          # needs sage.rings.finite_rings
             {1: [a], 2: [x], 3: [a*y], 5: [a*y^2], 6: [y^3]}
 
         This method works with both singly graded and multi-graded algebras::
 
-            sage: Cs.<a,b,c,d> = GradedCommutativeAlgebra(GF(2), degrees=(1,2,2,3))     # optional - sage.rings.finite_rings
-            sage: Ds = Cs.cdg_algebra({a:c, b:d})                                       # optional - sage.rings.finite_rings
-            sage: Ds.cohomology_generators(10)                                          # optional - sage.rings.finite_rings
+            sage: Cs.<a,b,c,d> = GradedCommutativeAlgebra(GF(2), degrees=(1,2,2,3))     # needs sage.rings.finite_rings
+            sage: Ds = Cs.cdg_algebra({a:c, b:d})                                       # needs sage.rings.finite_rings
+            sage: Ds.cohomology_generators(10)                                          # needs sage.rings.finite_rings
             {2: [a^2], 4: [b^2]}
 
-            sage: Cm.<a,b,c,d> = GradedCommutativeAlgebra(GF(2),                        # optional - sage.rings.finite_rings
+            sage: Cm.<a,b,c,d> = GradedCommutativeAlgebra(GF(2),                        # needs sage.rings.finite_rings
             ....:                                         degrees=((1,0), (1,1),
             ....:                                                  (0,2), (0,3)))
-            sage: Dm = Cm.cdg_algebra({a:c, b:d})                                       # optional - sage.rings.finite_rings
-            sage: Dm.cohomology_generators(10)                                          # optional - sage.rings.finite_rings
+            sage: Dm = Cm.cdg_algebra({a:c, b:d})                                       # needs sage.rings.finite_rings
+            sage: Dm.cohomology_generators(10)                                          # needs sage.rings.finite_rings
             {2: [a^2], 4: [b^2]}
 
         TESTS:
@@ -3507,9 +3509,9 @@ def GradedCommutativeAlgebra(ring, names=None, degrees=None, max_degree=None,
     We can construct multi-graded rings as well. We work in characteristic 2
     for a change, so the algebras here are honestly commutative::
 
-        sage: C.<a,b,c,d> = GradedCommutativeAlgebra(GF(2),                             # optional - sage.rings.finite_rings
+        sage: C.<a,b,c,d> = GradedCommutativeAlgebra(GF(2),                             # needs sage.rings.finite_rings
         ....:                                        degrees=((1,0), (1,1), (0,2), (0,3)))
-        sage: D = C.cdg_algebra(differential={a: c, b: d}); D                           # optional - sage.rings.finite_rings
+        sage: D = C.cdg_algebra(differential={a: c, b: d}); D                           # needs sage.rings.finite_rings
         Commutative Differential Graded Algebra with generators ('a', 'b', 'c', 'd')
          in degrees ((1, 0), (1, 1), (0, 2), (0, 3)) over Finite Field of size 2
          with differential:
@@ -3522,46 +3524,46 @@ def GradedCommutativeAlgebra(ring, names=None, degrees=None, max_degree=None,
     Use tuples, lists, vectors, or elements of additive
     abelian groups to specify degrees::
 
-        sage: D.basis(3) # basis in total degree 3                                      # optional - sage.rings.finite_rings
+        sage: D.basis(3) # basis in total degree 3                                      # needs sage.rings.finite_rings
         [a^3, a*b, a*c, d]
-        sage: D.basis((1,2)) # basis in degree (1,2)                                    # optional - sage.rings.finite_rings
+        sage: D.basis((1,2)) # basis in degree (1,2)                                    # needs sage.rings.finite_rings
         [a*c]
-        sage: D.basis([1,2])                                                            # optional - sage.rings.finite_rings
+        sage: D.basis([1,2])                                                            # needs sage.rings.finite_rings
         [a*c]
-        sage: D.basis(vector([1,2]))                                                    # optional - sage.rings.finite_rings
+        sage: D.basis(vector([1,2]))                                                    # needs sage.rings.finite_rings
         [a*c]
         sage: G = AdditiveAbelianGroup([0,0]); G
         Additive abelian group isomorphic to Z + Z
-        sage: D.basis(G(vector([1,2])))                                                 # optional - sage.rings.finite_rings
+        sage: D.basis(G(vector([1,2])))                                                 # needs sage.rings.finite_rings
         [a*c]
 
     At this point, ``a``, for example, is an element of ``C``. We can
     redefine it so that it is instead an element of ``D`` in several
     ways, for instance using :meth:`gens` method::
 
-        sage: a, b, c, d = D.gens()                                                     # optional - sage.rings.finite_rings
-        sage: a.differential()                                                          # optional - sage.rings.finite_rings
+        sage: a, b, c, d = D.gens()                                                     # needs sage.rings.finite_rings
+        sage: a.differential()                                                          # needs sage.rings.finite_rings
         c
 
     Or the :meth:`inject_variables` method::
 
-        sage: D.inject_variables()                                                      # optional - sage.rings.finite_rings
+        sage: D.inject_variables()                                                      # needs sage.rings.finite_rings
         Defining a, b, c, d
-        sage: (a*b).differential()                                                      # optional - sage.rings.finite_rings
+        sage: (a*b).differential()                                                      # needs sage.rings.finite_rings
         b*c + a*d
-        sage: (a*b*c**2).degree()                                                       # optional - sage.rings.finite_rings
+        sage: (a*b*c**2).degree()                                                       # needs sage.rings.finite_rings
         (2, 5)
 
     Degrees are returned as elements of additive abelian groups::
 
-        sage: (a*b*c**2).degree() in G                                                  # optional - sage.rings.finite_rings
+        sage: (a*b*c**2).degree() in G                                                  # needs sage.rings.finite_rings
         True
 
-        sage: (a*b*c**2).degree(total=True)  # total degree                             # optional - sage.rings.finite_rings
+        sage: (a*b*c**2).degree(total=True)  # total degree                             # needs sage.rings.finite_rings
         7
-        sage: D.cohomology(4)                                                           # optional - sage.rings.finite_rings
+        sage: D.cohomology(4)                                                           # needs sage.rings.finite_rings
         Free module generated by {[a^4], [b^2]} over Finite Field of size 2
-        sage: D.cohomology((2,2))                                                       # optional - sage.rings.finite_rings
+        sage: D.cohomology((2,2))                                                       # needs sage.rings.finite_rings
         Free module generated by {[b^2]} over Finite Field of size 2
 
     Graded algebra with maximal degree::
@@ -4047,7 +4049,7 @@ class CohomologyClass(SageObject, CachedRepresentation):
         EXAMPLES::
 
             sage: from sage.algebras.commutative_dga import CohomologyClass
-            sage: CohomologyClass(x - 2)                                                # optional - sage.symbolic
+            sage: CohomologyClass(x - 2)                                                # needs sage.symbolic
             [x - 2]
         """
         self._x = x
@@ -4058,7 +4060,7 @@ class CohomologyClass(SageObject, CachedRepresentation):
         TESTS::
 
             sage: from sage.algebras.commutative_dga import CohomologyClass
-            sage: hash(CohomologyClass(sin)) == hash(sin)                               # optional - sage.symbolic
+            sage: hash(CohomologyClass(sin)) == hash(sin)                               # needs sage.symbolic
             True
         """
         return hash(self._x)
@@ -4068,7 +4070,7 @@ class CohomologyClass(SageObject, CachedRepresentation):
         EXAMPLES::
 
             sage: from sage.algebras.commutative_dga import CohomologyClass
-            sage: CohomologyClass(sin)                                                  # optional - sage.symbolic
+            sage: CohomologyClass(sin)                                                  # needs sage.symbolic
             [sin]
         """
         return '[{}]'.format(self._x)
@@ -4078,9 +4080,9 @@ class CohomologyClass(SageObject, CachedRepresentation):
         EXAMPLES::
 
             sage: from sage.algebras.commutative_dga import CohomologyClass
-            sage: latex(CohomologyClass(sin))                                           # optional - sage.symbolic
+            sage: latex(CohomologyClass(sin))                                           # needs sage.symbolic
             \left[ \sin \right]
-            sage: latex(CohomologyClass(x^2))                                           # optional - sage.symbolic
+            sage: latex(CohomologyClass(x^2))                                           # needs sage.symbolic
             \left[ x^{2} \right]
         """
         from sage.misc.latex import latex
@@ -4093,8 +4095,8 @@ class CohomologyClass(SageObject, CachedRepresentation):
         EXAMPLES::
 
             sage: from sage.algebras.commutative_dga import CohomologyClass
-            sage: x = CohomologyClass(sin)                                              # optional - sage.symbolic
-            sage: x.representative() == sin                                             # optional - sage.symbolic
+            sage: x = CohomologyClass(sin)                                              # needs sage.symbolic
+            sage: x.representative() == sin                                             # needs sage.symbolic
             True
         """
         return self._x
