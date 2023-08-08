@@ -76,19 +76,20 @@ Lift an MSymbol from P1NFList to a matrix in `SL(2, R)`
     sage: P.lift_to_sl2_Ok(3)
     [0, -1, 1, -2*a]
 """
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2009, Maite Aranes <M.T.Aranes@warwick.ac.uk>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.structure.richcmp import richcmp_method, richcmp
 from sage.structure.sage_object import SageObject
 
 from sage.misc.search import search
 
-_level_cache = {} # The info stored here is used in the normalization of MSymbols.
+_level_cache = {}  # The info stored here is used in the normalization of MSymbols.
+
 
 def P1NFList_clear_level_cache():
     """
@@ -201,16 +202,16 @@ class MSymbol(SageObject):
                     c1 = R(c[0])
                     d1 = R(c[1])
                 except (ValueError, TypeError):
-                    raise TypeError("Unable to create a Manin symbol from %s"%c)
+                    raise TypeError("Unable to create a Manin symbol from %s" % c)
         else:
             try:
                 c1 = R(c)
                 d1 = R(d)
             except (ValueError, TypeError):
-                raise TypeError("Unable to create a Manin symbol from (%s, %s)"%(c, d))
+                raise TypeError("Unable to create a Manin symbol from (%s, %s)" % (c, d))
         if check:
             if (c1.is_zero() and d1.is_zero()) or not N.is_coprime(k.ideal(c1, d1)):
-                raise ValueError("(%s, %s) is not an element of P1(R/N)."%(c1, d1))
+                raise ValueError("(%s, %s) is not an element of P1(R/N)." % (c1, d1))
         self.__c, self.__d = (c1, d1)
 
     def __repr__(self):
@@ -225,7 +226,7 @@ class MSymbol(SageObject):
             sage: MSymbol(N, 3, a)
             M-symbol (3: a) of level Fractional ideal (3, 1/2*a - 1/2)
         """
-        return "M-symbol (%s: %s) of level %s"%(self.__c, self.__d, self.__N)
+        return "M-symbol (%s: %s) of level %s" % (self.__c, self.__d, self.__N)
 
     def _latex_(self):
         r"""
@@ -468,9 +469,9 @@ class MSymbol(SageObject):
             return MSymbol(N, c, d)
 
 
-#**************************************************************************
-#*       P1NFList class                                                   *
-#**************************************************************************
+# ************************************************************************
+#        P1NFList class                                                  *
+# ************************************************************************
 
 
 @richcmp_method
@@ -588,9 +589,8 @@ class P1NFList(SageObject):
             sage: N = k.ideal(5, a+1)
             sage: P = P1NFList(N); P
             The projective line over the ring of integers modulo the Fractional ideal (5, a + 1)
-
         """
-        return "The projective line over the ring of integers modulo the %s"%self.__N
+        return "The projective line over the ring of integers modulo the %s" % self.__N
 
     def list(self):
         """
@@ -659,8 +659,8 @@ class P1NFList(SageObject):
         """
         if d is None:
             try:
-                c = MSymbol(self.__N, c) # check that c is an MSymbol
-            except ValueError: # catch special case of wrong level
+                c = MSymbol(self.__N, c)  # check that c is an MSymbol
+            except ValueError:  # catch special case of wrong level
                 raise ValueError("The MSymbol is of a different level")
             return c.normalize(with_scalar)
         return MSymbol(self.N(), c, d).normalize(with_scalar)
@@ -744,8 +744,8 @@ class P1NFList(SageObject):
         """
         if d is None:
             try:
-                c = MSymbol(self.__N, c) # check that c is an MSymbol
-            except ValueError: # catch special case of wrong level
+                c = MSymbol(self.__N, c)  # check that c is an MSymbol
+            except ValueError:  # catch special case of wrong level
                 raise ValueError("The MSymbol is of a different level")
             if with_scalar:
                 u, norm_c = c.normalize(with_scalar=True)
@@ -996,13 +996,13 @@ class P1NFList(SageObject):
         return j
 
 
-#**************************************************************************
+# *************************************************************************
 #  Global functions:
 #    - p1NFList --compute list of M-symbols
 #    - lift_to_sl2_Ok
 #    - make_coprime -- need it for ``lift_to_sl2_Ok``
 #    - psi -- useful to check cardinality of the M-symbols list
-#**************************************************************************
+# *************************************************************************
 
 def p1NFlist(N):
     """
@@ -1024,14 +1024,14 @@ def p1NFlist(N):
     """
     k = N.number_field()
 
-    L = [MSymbol(N, k(0),k(1), check=False)]
-    #N.residues() = iterator through the residues mod N
-    L = L+[MSymbol(N, k(1), r, check=False) for r in N.residues()]
+    L = [MSymbol(N, k(0), k(1), check=False)]
+    # N.residues() = iterator through the residues mod N
+    L = L + [MSymbol(N, k(1), r, check=False) for r in N.residues()]
 
     from sage.arith.misc import divisors
     for D in divisors(N):
-        if not D.is_trivial() and D!=N:
-            #we find Dp ideal coprime to N, in inverse class to D
+        if not D.is_trivial() and D != N:
+            # we find Dp ideal coprime to N, in inverse class to D
             if D.is_principal():
                 Dp = k.ideal(1)
                 c = D.gens_reduced()[0]
@@ -1041,7 +1041,7 @@ def p1NFlist(N):
                 while not Dp.is_coprime(N) or not (Dp*D).is_principal():
                     Dp = next(it)
                 c = (D*Dp).gens_reduced()[0]
-            #now we find all the (c,d)'s which have associated divisor D
+            # now we find all the (c,d)'s which have associated divisor D
             I = D + N/D
             for d in (N/D).residues():
                 if I.is_coprime(d):
@@ -1050,6 +1050,7 @@ def p1NFlist(N):
                     d1 = u*d + (1-u)
                     L.append(MSymbol(N, c, d1, check=False).normalize())
     return L
+
 
 def lift_to_sl2_Ok(N, c, d):
     """
@@ -1123,17 +1124,17 @@ def lift_to_sl2_Ok(N, c, d):
         ValueError: <0> + <7> and the Fractional ideal (7, a) are not coprime.
     """
     k = N.number_field()
-    #check the input
+    # check the input
     if c.is_zero() and d.is_zero():
-        raise ValueError("Cannot lift (%s, %s) to an element of Sl2(Ok)."%(c, d))
+        raise ValueError("Cannot lift (%s, %s) to an element of Sl2(Ok)." % (c, d))
     if not N.is_coprime(k.ideal(c, d)):
-        raise ValueError("<%s> + <%s> and the %s are not coprime."%(c, d, N))
-    #a few special cases
+        raise ValueError("<%s> + <%s> and the %s are not coprime." % (c, d, N))
+    # a few special cases
     if c - 1 in N:
         return [k(0), k(-1), 1, d]
     if d - 1 in N:
         return [k(1), k(0), c, 1]
-    if c.is_zero(): # and d!=1, so won't happen for normalized M-symbols (c: d)
+    if c.is_zero():  # and d!=1, so won't happen for normalized M-symbols (c: d)
         it = k.primes_of_degree_one_iter()
         q = k.ideal(1)
         while not (q.is_coprime(d) and (q*N).is_principal()):
@@ -1141,7 +1142,7 @@ def lift_to_sl2_Ok(N, c, d):
         m = (q*N).gens_reduced()[0]
         B = k.ideal(m).element_1_mod(k.ideal(d))
         return [(1-B)/d, -B/m, m, d]
-    if d.is_zero(): # and c!=1, so won't happen for normalized M-symbols (c: d)
+    if d.is_zero():  # and c!=1, so won't happen for normalized M-symbols (c: d)
         it = k.primes_of_degree_one_iter()
         q = k.ideal(1)
         while not (q.is_coprime(c) and (q*N).is_principal()):

@@ -18,7 +18,7 @@ AUTHORS:
 # * _point_morphism_class -> _morphism
 # * _homset_class -> _point_homset
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2011 Volker Braun <vbraun.name@gmail.com>
 #       Copyright (C) 2006 David Kohel <kohel@maths.usyd.edu.au>
 #       Copyright (C) 2006 William Stein <wstein@gmail.com>
@@ -26,16 +26,18 @@ AUTHORS:
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.categories.number_fields import NumberFields
-_NumberFields = NumberFields()
 from sage.rings.integer_ring import ZZ
 from sage.rings.number_field.order import is_NumberFieldOrder
 from sage.rings.real_mpfr import RealField
 from sage.schemes.generic.morphism import (SchemeMorphism_point, SchemeMorphism, is_SchemeMorphism)
 from sage.structure.sequence import Sequence
+
+_NumberFields = NumberFields()
+
 
 ############################################################################
 # Rational points on schemes, which we view as morphisms determined
@@ -88,9 +90,9 @@ class SchemeMorphism_point_affine(SchemeMorphism_point):
             # Verify that there are the right number of coords
             d = self.codomain().ambient_space().ngens()
             if len(v) != d:
-                raise TypeError("argument v (=%s) must have %s coordinates"%(v, d))
+                raise TypeError("argument v (=%s) must have %s coordinates" % (v, d))
             if not isinstance(v, (list, tuple)):
-                raise TypeError("argument v (= %s) must be a scheme point, list, or tuple"%str(v))
+                raise TypeError("argument v (= %s) must be a scheme point, list, or tuple" % str(v))
             # Make sure the coordinates all lie in the appropriate ring
             v = Sequence(v, X.value_ring())
             # Verify that the point satisfies the equations of X.
@@ -137,9 +139,9 @@ class SchemeMorphism_point_affine(SchemeMorphism_point):
             ...
             ValueError: matrix size is incompatible
         """
-        #input checking done in projective implementation
+        # input checking done in projective implementation
         d = self.codomain().ngens()
-        P = mat*self.homogenize(d)
+        P = mat * self.homogenize(d)
         if P[-1] == 0:
             raise ValueError("resulting point not affine")
         return P.dehomogenize(d)
@@ -209,7 +211,7 @@ class SchemeMorphism_point_affine(SchemeMorphism_point):
             else:
                 R = RealField(prec)
             H = max([self[i].abs() for i in range(self.codomain().ambient_space().dimension_relative())])
-            return R(max(H,1)).log()
+            return R(max(H, 1)).log()
         if self.domain().base_ring() in _NumberFields or is_NumberFieldOrder(self.domain().base_ring()):
             return max([self[i].global_height(prec) for i in range(self.codomain().ambient_space().dimension_relative())])
         else:
@@ -318,20 +320,20 @@ class SchemeMorphism_point_affine_field(SchemeMorphism_point_affine):
             newP = []
             for t in self:
                 c = t.polynomial().coefficients(sparse=False)
-                c = c + (d-len(c))*[0]
+                c = c + (d - len(c)) * [0]
                 newP += c
         else:
             d = L.relative_degree()
             if d == 1:
                 return self
-            #create a CoordinateFunction that gets the relative coordinates in terms of powers
+            # create a CoordinateFunction that gets the relative coordinates in terms of powers
             from sage.rings.number_field.number_field_element import CoordinateFunction
             v = L.gen()
             V, from_V, to_V = L.relative_vector_space()
             h = L(1)
             B = [to_V(h)]
             f = v.minpoly()
-            for i in range(f.degree()-1):
+            for i in range(f.degree() - 1):
                 h *= v
                 B.append(to_V(h))
             W = V.span_of_basis(B)
@@ -406,6 +408,7 @@ class SchemeMorphism_point_affine_field(SchemeMorphism_point_affine):
             raise TypeError("this point must be a point on an affine subscheme")
         return self.codomain().multiplicity(self)
 
+
 class SchemeMorphism_point_affine_finite_field(SchemeMorphism_point_affine_field):
 
     def __hash__(self):
@@ -441,4 +444,4 @@ class SchemeMorphism_point_affine_finite_field(SchemeMorphism_point_affine_field
         """
         p = self.codomain().base_ring().order()
         N = self.codomain().ambient_space().dimension_relative()
-        return int(sum(hash(self[i])*p**i for i in range(N)))
+        return int(sum(hash(self[i]) * p**i for i in range(N)))
