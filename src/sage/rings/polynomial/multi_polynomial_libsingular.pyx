@@ -5079,17 +5079,18 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
             sage: f = (x^3 + 2*y^2*x)^7; f
             x^21 + 2*x^7*y^14
 
-            sage: h = macaulay2(f); h           # optional - macaulay2                  # needs sage.rings.finite_rings
+            sage: # optional - macaulay2, needs sage.rings.finite_rings
+            sage: h = macaulay2(f); h
              21     7 14
             x   + 2x y
-            sage: k = macaulay2(x+y); k         # optional - macaulay2                  # needs sage.rings.finite_rings
+            sage: k = macaulay2(x+y); k
             x + y
-            sage: k + h                         # optional - macaulay2                  # needs sage.rings.finite_rings
+            sage: k + h
              21     7 14
             x   + 2x y   + x + y
-            sage: R(h)                          # optional - macaulay2                  # needs sage.rings.finite_rings
+            sage: R(h)
             x^21 + 2*x^7*y^14
-            sage: R(h^20) == f^20               # optional - macaulay2                  # needs sage.rings.finite_rings
+            sage: R(h^20) == f^20
             True
 
         TESTS:

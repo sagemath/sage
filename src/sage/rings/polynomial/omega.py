@@ -877,13 +877,14 @@ def _Omega_factors_denominator_(x, y):
 
     ::
 
-        sage: B.<zeta> = ZZ.extension(cyclotomic_polynomial(3))                         # needs sage.rings.number_field
-        sage: L.<x, y> = LaurentPolynomialRing(B)                                       # needs sage.rings.number_field
-        sage: _Omega_factors_denominator_(((x, -x),), ((y,),))                          # needs sage.rings.number_field
+        sage: # needs sage.rings.number_field
+        sage: B.<zeta> = ZZ.extension(cyclotomic_polynomial(3))
+        sage: L.<x, y> = LaurentPolynomialRing(B)
+        sage: _Omega_factors_denominator_(((x, -x),), ((y,),))
         (-x^2 + 1, -x^2*y^2 + 1)
-        sage: _Omega_factors_denominator_(((x, -x),), ((y, zeta*y, zeta^2*y),))         # needs sage.rings.number_field
+        sage: _Omega_factors_denominator_(((x, -x),), ((y, zeta*y, zeta^2*y),))
         (-x^2 + 1, -x^6*y^6 + 1)
-        sage: _Omega_factors_denominator_(((x, -x),), ((y, -y),))                       # needs sage.rings.number_field
+        sage: _Omega_factors_denominator_(((x, -x),), ((y, -y),))
         (-x^2 + 1, -x^2*y^2 + 1, -x^2*y^2 + 1)
 
     TESTS::

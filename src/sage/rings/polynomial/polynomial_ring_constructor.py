@@ -508,7 +508,7 @@ def PolynomialRing(base_ring, *args, **kwds):
         sage: P.<y,z> = PolynomialRing(RealIntervalField(2))
         sage: TestSuite(P).run(skip=['_test_elements', '_test_elements_eq_transitive'])             # needs sage.rings.real_mpfr
         sage: Q.<x> = PolynomialRing(P)                                                 # needs sage.rings.real_mpfr
-        sage: TestSuite(Q).run(skip=['_test_additive_associativity', '_test_associativity', '_test_distributivity', '_test_prod'])
+        sage: TestSuite(Q).run(skip=['_test_additive_associativity', '_test_associativity', '_test_distributivity', '_test_prod'])                              # needs sage.rings.real_mpfr
         sage: C = (y-x)^3
         sage: C(y/2)
         1.?*y^3
