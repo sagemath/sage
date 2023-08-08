@@ -272,11 +272,12 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
 
     ::
 
-        sage: K.<v> = QuadraticField(-7)                                                # needs sage.rings.number_field
-        sage: P.<x,y> = ProjectiveSpace(K, 1)                                           # needs sage.rings.number_field
-        sage: f = DynamicalSystem([x^3 + v*x*y^2, y^3])                                 # needs sage.rings.number_field
-        sage: fbar = f.change_ring(QQbar)                                               # needs sage.rings.number_field
-        sage: fbar.is_postcritically_finite()                                           # needs sage.rings.number_field
+        sage: # needs sage.rings.number_field
+        sage: K.<v> = QuadraticField(-7)
+        sage: P.<x,y> = ProjectiveSpace(K, 1)
+        sage: f = DynamicalSystem([x^3 + v*x*y^2, y^3])
+        sage: fbar = f.change_ring(QQbar)
+        sage: fbar.is_postcritically_finite()
         False
     """
 
@@ -771,7 +772,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
         ::
 
             sage: T.<v> = QuadraticField(33)                                            # needs sage.rings.number_field
-            sage: S.<t> = PolynomialRing(T)
+            sage: S.<t> = PolynomialRing(T)                                             # needs sage.rings.number_field
             sage: P.<x,y> = ProjectiveSpace(FractionField(S),1)
             sage: f = DynamicalSystem_projective([t*x^2 - 1/t*y^2, y^2])
             sage: f.dynatomic_polynomial([1, 2]).parent()                               # needs sage.libs.pari
@@ -1183,11 +1184,12 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
 
         EXAMPLES::
 
-            sage: K.<k> = CyclotomicField(3)                                            # needs sage.rings.number_field
-            sage: P.<x,y> = ProjectiveSpace(K, 1)                                       # needs sage.rings.number_field
-            sage: f = DynamicalSystem_projective([x^2 + (2*k + 2)*y^2, y^2])            # needs sage.rings.number_field
-            sage: g = DynamicalSystem_projective([x^2, y^2])                            # needs sage.rings.number_field
-            sage: pairingval = f.arakelov_zhang_pairing(g, n=5); pairingval             # needs sage.rings.number_field
+            sage: # needs sage.rings.number_field
+            sage: K.<k> = CyclotomicField(3)
+            sage: P.<x,y> = ProjectiveSpace(K, 1)
+            sage: f = DynamicalSystem_projective([x^2 + (2*k + 2)*y^2, y^2])
+            sage: g = DynamicalSystem_projective([x^2, y^2])
+            sage: pairingval = f.arakelov_zhang_pairing(g, n=5); pairingval
             0.409598197761958
 
         ::
@@ -1209,7 +1211,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
             sage: f = DynamicalSystem_projective([x^2 + 4*y^2, y^2])
             sage: g = DynamicalSystem_projective([x^2, y^2])
             sage: pairingval = f.arakelov_zhang_pairing(g, n=6, noise_multiplier=0)     # needs sage.rings.function_field
-            sage: pairingval
+            sage: pairingval                                                            # needs sage.rings.number_field
             0.650660018921632
             sage: dynheight = f.canonical_height(P(0, 1)); dynheight                    # needs sage.libs.pari
             0.75017839144364417318023000563
@@ -2032,14 +2034,15 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
 
         ::
 
-            sage: K.<w> = QuadraticField(3)                                             # needs sage.rings.number_field
-            sage: P.<x,y> = ProjectiveSpace(K,1)                                        # needs sage.rings.number_field
-            sage: f = DynamicalSystem_projective([17*x^2 + 1/7*y^2, 17*w*x*y])          # needs sage.rings.number_field
-            sage: f.green_function(P.point([w, 2], False), K.places()[1])               # needs sage.rings.number_field
+            sage: # needs sage.rings.number_field
+            sage: K.<w> = QuadraticField(3)
+            sage: P.<x,y> = ProjectiveSpace(K,1)
+            sage: f = DynamicalSystem_projective([17*x^2 + 1/7*y^2, 17*w*x*y])
+            sage: f.green_function(P.point([w, 2], False), K.places()[1])
             1.7236334013785676107373093775
-            sage: f.green_function(P([2, 1]), K.ideal(7), N=7)                          # needs sage.rings.number_field
+            sage: f.green_function(P([2, 1]), K.ideal(7), N=7)
             0.48647753726382832627633818586
-            sage: f.green_function(P([w, 1]), K.ideal(17), error_bound=0.001)           # needs sage.rings.number_field
+            sage: f.green_function(P([w, 1]), K.ideal(17), error_bound=0.001)
             -0.70813041039490996737374178059
 
         ::
@@ -3140,7 +3143,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
             sage: PS.<x,y> = ProjectiveSpace(ZZ,1)
             sage: f = DynamicalSystem_projective([6*x^2 + 12*x*y + 7*y^2, 12*x*y + 42*y^2])
             sage: g,M = f.minimal_model(return_transformation=True, algorithm='BM')     # needs sage.rings.function_field
-            sage: f.conjugate(M) == g
+            sage: f.conjugate(M) == g                                                   # needs sage.rings.function_field
             True
 
         ::
@@ -3313,10 +3316,10 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
             sage: c = 2^2*5^2*11^3
             sage: f = DynamicalSystem([x^3 - c^2*y^3, x*y^2])
             sage: MM = f.all_minimal_models(return_transformation=True, algorithm='BM')             # needs sage.rings.function_field
-            sage: all(f.conjugate(m) == F for F, m in MM)
+            sage: all(f.conjugate(m) == F for F, m in MM)                               # needs sage.rings.function_field
             True
             sage: MM = f.all_minimal_models(return_transformation=True, algorithm='HS')             # needs sage.rings.function_field
-            sage: all(f.conjugate(m) == F for F,m in MM)
+            sage: all(f.conjugate(m) == F for F,m in MM)                                # needs sage.rings.function_field
             True
 
         REFERENCES:
@@ -3402,7 +3405,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
 
         We can check that ``g`` has affine fixed points::
 
-            sage: g.periodic_points(1)
+            sage: g.periodic_points(1)                                                  # needs sage.rings.function_field
             [(-1 : -1 : 1),
              (-1/2 : -1 : 1),
              (-1/2 : -1/2 : 1),
@@ -3436,10 +3439,11 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
 
         ::
 
-            sage: K.<k> = CyclotomicField(3)                                            # needs sage.rings.number_field
-            sage: P.<x,y,z> = ProjectiveSpace(K, 2)                                     # needs sage.rings.number_field
-            sage: f = DynamicalSystem_projective([x^2 + k*x*y + y^2, z^2, y^2])         # needs sage.rings.number_field
-            sage: f.affine_preperiodic_model(1, 1)                                      # needs sage.rings.function_field sage.rings.number_field
+            sage: # needs sage.rings.number_field
+            sage: K.<k> = CyclotomicField(3)
+            sage: P.<x,y,z> = ProjectiveSpace(K, 2)
+            sage: f = DynamicalSystem_projective([x^2 + k*x*y + y^2, z^2, y^2])
+            sage: f.affine_preperiodic_model(1, 1)                                      # needs sage.rings.function_field
             Dynamical System of Projective Space of dimension 2
              over Cyclotomic Field of order 3 and degree 2
               Defn: Defined on coordinates by sending (x : y : z) to
@@ -3450,7 +3454,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
             sage: P.<x,y> = ProjectiveSpace(QQ, 1)
             sage: f = DynamicalSystem_projective([x^2 + y^2, y^2])
             sage: g, mat = f.affine_preperiodic_model(0, 1, return_conjugation=True)    # needs sage.rings.function_field
-            sage: g == f.conjugate(mat)
+            sage: g == f.conjugate(mat)                                                 # needs sage.rings.function_field
             True
 
         ::
@@ -3469,7 +3473,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
             sage: P.<x,y> = ProjectiveSpace(QQ, 1)
             sage: f = DynamicalSystem_projective([x^2 + 2*y^2, x^2])
             sage: g, mat = f.affine_preperiodic_model(0, 1, return_conjugation=True)    # needs sage.rings.function_field
-            sage: f.conjugate(mat) == g
+            sage: f.conjugate(mat) == g                                                 # needs sage.rings.function_field
             True
         """
         n = ZZ(n)
@@ -3640,7 +3644,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
             sage: f = DynamicalSystem_projective([3*x^2*y - y^3, x^3 - 3*x*y^2])
             sage: lst, label = f.automorphism_group(algorithm='CRT', return_functions=True,         # needs sage.libs.pari
             ....:                                   iso_type=True)
-            sage: sorted(lst), label
+            sage: sorted(lst), label                                                    # needs sage.libs.pari
             ([-1/x, 1/x, (-x - 1)/(x - 1), (-x + 1)/(x + 1), (x - 1)/(x + 1),
               (x + 1)/(x - 1), -x, x],
              'Dihedral of order 8')
@@ -3669,10 +3673,11 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
 
         ::
 
-            sage: K.<w> = CyclotomicField(3)                                            # needs sage.rings.number_field
-            sage: P.<x,y> = ProjectiveSpace(K, 1)                                       # needs sage.rings.number_field
-            sage: D6 = DynamicalSystem_projective([y^2, x^2])                           # needs sage.rings.number_field
-            sage: sorted(D6.automorphism_group())                                       # needs sage.rings.number_field
+            sage: # needs sage.rings.number_field
+            sage: K.<w> = CyclotomicField(3)
+            sage: P.<x,y> = ProjectiveSpace(K, 1)
+            sage: D6 = DynamicalSystem_projective([y^2, x^2])
+            sage: sorted(D6.automorphism_group())
             [
             [-w - 1      0]  [     0 -w - 1]  [w 0]  [0 w]  [0 1]  [1 0]
             [     0      1], [     1      0], [0 1], [1 0], [1 0], [0 1]
@@ -3787,7 +3792,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
             sage: f.critical_points()                                                   # needs sage.rings.function_field
             [(1 : 0)]
             sage: K.<w> = QuadraticField(6)                                             # needs sage.rings.number_field
-            sage: f.critical_points(K)
+            sage: f.critical_points(K)                                                  # needs sage.rings.number_field
             [(-1/3*w : 1), (1/3*w : 1), (1 : 0)]
 
         ::
@@ -3927,8 +3932,8 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
 
             sage: R.<z> = QQ[]
             sage: K.<v> = NumberField(z^8 + 3*z^6 + 3*z^4 + z^2 + 1)                    # needs sage.rings.number_field
-            sage: PS.<x,y> = ProjectiveSpace(K,1)
-            sage: f = DynamicalSystem_projective([x^3 + v*y^3, y^3])
+            sage: PS.<x,y> = ProjectiveSpace(K,1)                                       # needs sage.rings.number_field
+            sage: f = DynamicalSystem_projective([x^3 + v*y^3, y^3])                    # needs sage.rings.number_field
             sage: f.is_postcritically_finite() # long time
             True
 
@@ -4230,10 +4235,11 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
 
         ::
 
-            sage: K.<w> = QuadraticField(2)                                             # needs sage.rings.number_field
-            sage: P.<x,y> = ProjectiveSpace(K,1)                                        # needs sage.rings.number_field
-            sage: f = DynamicalSystem_projective([x^2 + w*y^2, y^2])                    # needs sage.rings.number_field
-            sage: f.critical_height()                                                   # needs sage.rings.number_field
+            sage: # needs sage.rings.number_field
+            sage: K.<w> = QuadraticField(2)
+            sage: P.<x,y> = ProjectiveSpace(K,1)
+            sage: f = DynamicalSystem_projective([x^2 + w*y^2, y^2])
+            sage: f.critical_height()
             0.16090842452312941163719755472
 
         Postcritically finite maps have critical height 0::
@@ -4392,7 +4398,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
 
             sage: P.<x,y> = ProjectiveSpace(QQ, 1)
             sage: K.<v> = QuadraticField(5)                                             # needs sage.rings.number_field
-            sage: phi = QQ.embeddings(K)[0]
+            sage: phi = QQ.embeddings(K)[0]                                             # needs sage.rings.number_field
             sage: f = DynamicalSystem_projective([x^2 - y^2, y^2])
             sage: f.preperiodic_points(1, 1, R=phi)
             [(-1/2*v - 1/2 : 1), (1/2*v - 1/2 : 1)]
@@ -4442,7 +4448,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
             sage: R.<z> = QQ[]
             sage: K.<v> = NumberField(z^4 - z^2 - 1)                                    # needs sage.rings.number_field
             sage: f = DynamicalSystem_projective([x^2 - y^2, y^2])
-            sage: sorted(f.preperiodic_points(2, 1, R=K), key=str)
+            sage: sorted(f.preperiodic_points(2, 1, R=K), key=str)                      # needs sage.rings.number_field
             [(-v : 1), (v : 1)]
 
         ::
@@ -5171,10 +5177,11 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
 
         ::
 
-            sage: K.<w> = QuadraticField(5)                                             # needs sage.rings.number_field
-            sage: P.<x,y,z> = ProjectiveSpace(K, 2)                                     # needs sage.rings.number_field
-            sage: f = DynamicalSystem_projective([x^2 + w*x*y + y^2, y^2, z^2])         # needs sage.rings.number_field
-            sage: f.multiplier_spectra(1)                               # long time, needs sage.rings.number_field
+            sage: # needs sage.rings.number_field
+            sage: K.<w> = QuadraticField(5)
+            sage: P.<x,y,z> = ProjectiveSpace(K, 2)
+            sage: f = DynamicalSystem_projective([x^2 + w*x*y + y^2, y^2, z^2])
+            sage: f.multiplier_spectra(1)                               # long time
             [
             [1.000000000000000? - 1.572302755514847?*I                                         0]
             [1.000000000000000? - 1.572302755514847?*I 0.618033988749895? - 1.757887921270715?*I]
@@ -5582,12 +5589,13 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
 
         ::
 
-            sage: K.<w> = QuadraticField(3)                                             # needs sage.rings.number_field
-            sage: P.<x,y> = ProjectiveSpace(K, 1)                                       # needs sage.rings.number_field
-            sage: f = DynamicalSystem_projective([x^2 - w*y^2, (1-w)*x*y])              # needs sage.rings.number_field
-            sage: f.sigma_invariants(2, formal=False, type='cycle')                     # needs sage.rings.number_field
+            sage: # needs sage.rings.number_field
+            sage: K.<w> = QuadraticField(3)
+            sage: P.<x,y> = ProjectiveSpace(K, 1)
+            sage: f = DynamicalSystem_projective([x^2 - w*y^2, (1-w)*x*y])
+            sage: f.sigma_invariants(2, formal=False, type='cycle')
             [6*w + 21, 78*w + 159, 210*w + 367, 90*w + 156]
-            sage: f.sigma_invariants(2, formal=False, type='point')                     # needs sage.rings.number_field
+            sage: f.sigma_invariants(2, formal=False, type='point')
             [6*w + 24, 96*w + 222, 444*w + 844, 720*w + 1257, 270*w + 468]
 
         ::
@@ -7037,10 +7045,11 @@ class DynamicalSystem_projective_field(DynamicalSystem_projective,
 
         ::
 
-            sage: K.<w> = QuadraticField(3)                                             # needs sage.rings.number_field
-            sage: P.<u,v> = ProjectiveSpace(K,1)                                        # needs sage.rings.number_field
-            sage: f = DynamicalSystem_projective([u^2 + v^2, v^2])                      # needs sage.rings.number_field
-            sage: f.all_rational_preimages(P(4))                                        # needs sage.rings.function_field sage.rings.number_field
+            sage: # needs sage.rings.number_field
+            sage: K.<w> = QuadraticField(3)
+            sage: P.<u,v> = ProjectiveSpace(K,1)
+            sage: f = DynamicalSystem_projective([u^2 + v^2, v^2])
+            sage: f.all_rational_preimages(P(4))                                        # needs sage.rings.function_field
             [(-w : 1), (w : 1)]
         """
         if self.domain().base_ring() not in NumberFields():
@@ -7142,10 +7151,11 @@ class DynamicalSystem_projective_field(DynamicalSystem_projective,
 
         ::
 
-            sage: K.<w> = QuadraticField(33)                                            # needs sage.rings.number_field
-            sage: PS.<x,y> = ProjectiveSpace(K,1)                                       # needs sage.rings.number_field
-            sage: f = DynamicalSystem_projective([x^2 - 71/48*y^2, y^2])                # needs sage.rings.number_field
-            sage: sorted(f.all_preperiodic_points())    # long time                     # needs sage.rings.number_field
+            sage: # needs sage.rings.number_field
+            sage: K.<w> = QuadraticField(33)
+            sage: PS.<x,y> = ProjectiveSpace(K,1)
+            sage: f = DynamicalSystem_projective([x^2 - 71/48*y^2, y^2])
+            sage: sorted(f.all_preperiodic_points())    # long time
             [(-1/12*w - 1 : 1),
              (-1/6*w - 1/4 : 1),
              (-1/12*w - 1/2 : 1),
@@ -7301,10 +7311,11 @@ class DynamicalSystem_projective_field(DynamicalSystem_projective,
 
         ::
 
-            sage: K.<w> = QuadraticField(-3)                                            # needs sage.rings.number_field
-            sage: P.<x,y> = ProjectiveSpace(K,1)                                        # needs sage.rings.number_field
-            sage: f = DynamicalSystem_projective([x^2 + y^2, y^2])                      # needs sage.rings.number_field
-            sage: f.rational_preperiodic_graph()        # long time                     # needs sage.rings.number_field
+            sage: # needs sage.rings.number_field
+            sage: K.<w> = QuadraticField(-3)
+            sage: P.<x,y> = ProjectiveSpace(K,1)
+            sage: f = DynamicalSystem_projective([x^2 + y^2, y^2])
+            sage: f.rational_preperiodic_graph()        # long time
             Looped digraph on 5 vertices
         """
         #input checking done in .rational_preperiodic_points()
@@ -7482,12 +7493,13 @@ class DynamicalSystem_projective_field(DynamicalSystem_projective,
 
         ::
 
-            sage: K.<w> = QuadraticField(-1)                                            # needs sage.rings.number_field
-            sage: P.<x,y> = ProjectiveSpace(K, 1)                                       # needs sage.rings.number_field
-            sage: f = DynamicalSystem_projective([x^2 + y^2, x*y])                      # needs sage.rings.number_field
-            sage: m = matrix(K, 2, 2, [1, 1, 2, 1])                                     # needs sage.rings.number_field
-            sage: g = f.conjugate(m)                                                    # needs sage.rings.number_field
-            sage: sorted(f.conjugating_set(g))                                          # needs sage.rings.number_field
+            sage: # needs sage.rings.number_field
+            sage: K.<w> = QuadraticField(-1)
+            sage: P.<x,y> = ProjectiveSpace(K, 1)
+            sage: f = DynamicalSystem_projective([x^2 + y^2, x*y])
+            sage: m = matrix(K, 2, 2, [1, 1, 2, 1])
+            sage: g = f.conjugate(m)
+            sage: sorted(f.conjugating_set(g))
             [
             [-1 -1]  [1 1]
             [ 2  1], [2 1]
@@ -7495,10 +7507,11 @@ class DynamicalSystem_projective_field(DynamicalSystem_projective,
 
         ::
 
-            sage: K.<i> = QuadraticField(-1)                                            # needs sage.rings.number_field
-            sage: P.<x,y> = ProjectiveSpace(K, 1)                                       # needs sage.rings.number_field
-            sage: D8 = DynamicalSystem_projective([y^3, x^3])                           # needs sage.rings.number_field
-            sage: sorted(D8.conjugating_set(D8))                                        # needs sage.rings.number_field
+            sage: # needs sage.rings.number_field
+            sage: K.<i> = QuadraticField(-1)
+            sage: P.<x,y> = ProjectiveSpace(K, 1)
+            sage: D8 = DynamicalSystem_projective([y^3, x^3])
+            sage: sorted(D8.conjugating_set(D8))
             [
             [-1  0]  [-i  0]  [ 0 -1]  [ 0 -i]  [0 i]  [0 1]  [i 0]  [1 0]
             [ 0  1], [ 0  1], [ 1  0], [ 1  0], [1 0], [1 0], [0 1], [0 1]
@@ -7574,8 +7587,8 @@ class DynamicalSystem_projective_field(DynamicalSystem_projective,
             sage: f = DynamicalSystem_projective([2*x + 12*y, 11*y + 2*z, x + z])
             sage: m1 = matrix(L, 3, 3, [1,4,v^2,0,2,1,1,1,1])                           # needs sage.rings.number_field
             sage: g = f.conjugate(m1)
-            sage: m = f.conjugating_set(g)[0]   # long time, needs sage.rings.number_field
-            sage: f.conjugate(m) == g           # long time, needs sage.rings.number_field
+            sage: m = f.conjugating_set(g)[0]   # long time                             # needs sage.rings.number_field
+            sage: f.conjugate(m) == g           # long time                             # needs sage.rings.number_field
             True
 
         TESTS:
@@ -7710,10 +7723,11 @@ class DynamicalSystem_projective_field(DynamicalSystem_projective,
 
         EXAMPLES::
 
-            sage: K.<w> = CyclotomicField(3)                                            # needs sage.rings.number_field
-            sage: P.<x,y> = ProjectiveSpace(K, 1)                                       # needs sage.rings.number_field
-            sage: D8 = DynamicalSystem_projective([y^2, x^2])                           # needs sage.rings.number_field
-            sage: D8.is_conjugate(D8)                                                   # needs sage.rings.number_field
+            sage: # needs sage.rings.number_field
+            sage: K.<w> = CyclotomicField(3)
+            sage: P.<x,y> = ProjectiveSpace(K, 1)
+            sage: D8 = DynamicalSystem_projective([y^2, x^2])
+            sage: D8.is_conjugate(D8)
             True
 
         We can speed up computation by increasing ``num_cpus``::
@@ -7895,18 +7909,20 @@ class DynamicalSystem_projective_field(DynamicalSystem_projective,
 
         ::
 
-            sage: K.<w> = QuadraticField(4/27)                                          # needs sage.rings.number_field
-            sage: P.<x,y> = ProjectiveSpace(K,1)                                        # needs sage.rings.number_field
-            sage: f = DynamicalSystem_projective([x**3 + w*y^3, x*y**2])                # needs sage.rings.number_field
-            sage: f.is_polynomial()                                                     # needs sage.rings.number_field
+            sage: # needs sage.rings.number_field
+            sage: K.<w> = QuadraticField(4/27)
+            sage: P.<x,y> = ProjectiveSpace(K,1)
+            sage: f = DynamicalSystem_projective([x**3 + w*y^3, x*y**2])
+            sage: f.is_polynomial()
             False
 
         ::
 
-            sage: K = GF(3**2, prefix='w')                                              # needs sage.rings.finite_rings
-            sage: P.<x,y> = ProjectiveSpace(K,1)                                        # needs sage.rings.finite_rings
-            sage: f = DynamicalSystem_projective([x**2 + K.gen()*y**2, x*y])            # needs sage.rings.finite_rings
-            sage: f.is_polynomial()                                                     # needs sage.rings.finite_rings
+            sage: # needs sage.rings.finite_rings
+            sage: K = GF(3**2, prefix='w')
+            sage: P.<x,y> = ProjectiveSpace(K,1)
+            sage: f = DynamicalSystem_projective([x**2 + K.gen()*y**2, x*y])
+            sage: f.is_polynomial()
             False
 
         ::
@@ -8045,10 +8061,11 @@ class DynamicalSystem_projective_field(DynamicalSystem_projective,
 
         ::
 
-            sage: K = GF(3^3, prefix='w')                                               # needs sage.rings.finite_rings
-            sage: P.<x,y> = ProjectiveSpace(K,1)                                        # needs sage.rings.finite_rings
-            sage: f = DynamicalSystem_projective([x^3 + 2*x^2*y + 2*x*y^2 + K.gen()*y^3, y^3])      # needs sage.rings.finite_rings
-            sage: f.normal_form()                                                       # needs sage.rings.finite_rings
+            sage: # needs sage.rings.finite_rings
+            sage: K = GF(3^3, prefix='w')
+            sage: P.<x,y> = ProjectiveSpace(K,1)
+            sage: f = DynamicalSystem_projective([x^3 + 2*x^2*y + 2*x*y^2 + K.gen()*y^3, y^3])
+            sage: f.normal_form()
             Dynamical System of Projective Space of dimension 1
              over Finite Field in w3 of size 3^3
               Defn: Defined on coordinates by sending (x : y) to
@@ -8401,10 +8418,11 @@ class DynamicalSystem_projective_field(DynamicalSystem_projective,
 
         EXAMPLES::
 
-            sage: K.<t> = GF(2^3)                                                       # needs sage.rings.finite_rings
-            sage: P.<x,y,z> = ProjectiveSpace(K, 2)                                     # needs sage.rings.finite_rings
-            sage: f = DynamicalSystem_projective([x^2 + y^2, y^2, z^2+z*y])             # needs sage.rings.finite_rings
-            sage: f.reduce_base_field()                                                 # needs sage.rings.finite_rings
+            sage: # needs sage.rings.finite_rings
+            sage: K.<t> = GF(2^3)
+            sage: P.<x,y,z> = ProjectiveSpace(K, 2)
+            sage: f = DynamicalSystem_projective([x^2 + y^2, y^2, z^2+z*y])
+            sage: f.reduce_base_field()
             Dynamical System of Projective Space of dimension 2 over Finite Field of size 2
               Defn: Defined on coordinates by sending (x : y : z) to
                     (x^2 + y^2 : y^2 : y*z + z^2)
@@ -8435,10 +8453,11 @@ class DynamicalSystem_projective_field(DynamicalSystem_projective,
 
         ::
 
-            sage: K.<v> = CyclotomicField(5)                                            # needs sage.rings.number_field
-            sage: A.<x,y> = ProjectiveSpace(K, 1)                                       # needs sage.rings.number_field
-            sage: f = DynamicalSystem_projective([3*x^2 + y^2, x*y])                    # needs sage.rings.number_field
-            sage: f.reduce_base_field()                                                 # needs sage.rings.number_field
+            sage: # needs sage.rings.number_field
+            sage: K.<v> = CyclotomicField(5)
+            sage: A.<x,y> = ProjectiveSpace(K, 1)
+            sage: f = DynamicalSystem_projective([3*x^2 + y^2, x*y])
+            sage: f.reduce_base_field()
             Dynamical System of Projective Space of dimension 1 over Rational Field
               Defn: Defined on coordinates by sending (x : y) to
                     (3*x^2 + y^2 : x*y)
@@ -8848,11 +8867,12 @@ class DynamicalSystem_projective_finite_field(DynamicalSystem_projective_field,
 
         ::
 
-            sage: R.<x,y> = ProjectiveSpace(GF(3^2,'t'),1)                              # needs sage.rings.finite_rings
-            sage: f = DynamicalSystem_projective([x^3, y^3])                            # needs sage.rings.finite_rings
-            sage: lst, label = f.automorphism_group(return_functions=True,      # long time, needs sage.rings.finite_rings
+            sage: # needs sage.rings.finite_rings
+            sage: R.<x,y> = ProjectiveSpace(GF(3^2,'t'),1)
+            sage: f = DynamicalSystem_projective([x^3, y^3])
+            sage: lst, label = f.automorphism_group(return_functions=True,      # long time
             ....:                                   iso_type=True)
-            sage: sorted(lst, key=str), label   # long time                             # needs sage.rings.finite_rings
+            sage: sorted(lst, key=str), label   # long time
             ([(2*x + 1)/(x + 1),
               (2*x + 1)/x,
               (2*x + 2)/(x + 2),

@@ -188,8 +188,8 @@ class DynamicalSystem_affine(SchemeMorphism_polynomial_affine_space,
 
     ::
 
-        sage: x = var('x')                                                              # optional - sage.symbolic
-        sage: DynamicalSystem_affine(x^2 + 1)                                           # optional - sage.symbolic
+        sage: x = var('x')                                                              # needs sage.symbolic
+        sage: DynamicalSystem_affine(x^2 + 1)                                           # needs sage.symbolic
         Traceback (most recent call last):
         ...
         TypeError: symbolic ring cannot be the base ring
@@ -397,10 +397,11 @@ class DynamicalSystem_affine(SchemeMorphism_polynomial_affine_space,
 
         ::
 
-            sage: R.<a> = PolynomialRing(QQbar)                                         # optional - sage.rings.number_field
-            sage: A.<x,y> = AffineSpace(R, 2)                                           # optional - sage.rings.number_field
-            sage: f = DynamicalSystem_affine([QQbar(sqrt(2))*x*y, a*x^2])               # optional - sage.rings.number_field sage.symbolic
-            sage: f.homogenize(2)                                                       # optional - sage.rings.number_field sage.symbolic
+            sage: # needs sage.rings.number_field
+            sage: R.<a> = PolynomialRing(QQbar)
+            sage: A.<x,y> = AffineSpace(R, 2)
+            sage: f = DynamicalSystem_affine([QQbar(sqrt(2))*x*y, a*x^2])               # needs sage.symbolic
+            sage: f.homogenize(2)                                                       # needs sage.symbolic
             Dynamical System of Projective Space of dimension 2 over Univariate
             Polynomial Ring in a over Algebraic Field
               Defn: Defined on coordinates by sending (x0 : x1 : x2) to
@@ -507,8 +508,8 @@ class DynamicalSystem_affine(SchemeMorphism_polynomial_affine_space,
         ::
 
             sage: A.<x> = AffineSpace(CC,1)
-            sage: F = DynamicalSystem_affine([1/2*x^2 + CC(sqrt(3))])                   # optional - sage.symbolic
-            sage: F.dynatomic_polynomial([1,1])                                         # optional - sage.symbolic
+            sage: F = DynamicalSystem_affine([1/2*x^2 + CC(sqrt(3))])                   # needs sage.symbolic
+            sage: F.dynatomic_polynomial([1,1])                                         # needs sage.symbolic
             (0.125000000000000*x^4 + 0.366025403784439*x^2 + 1.50000000000000)/(0.500000000000000*x^2 - x + 1.73205080756888)
 
         TESTS::
@@ -957,10 +958,10 @@ class DynamicalSystem_affine_field(DynamicalSystem_affine,
 
         ::
 
-            sage: A.<x,y> = AffineSpace(QQbar, 2)                                       # optional - sage.rings.number_field
-            sage: f = DynamicalSystem_affine([x^2 + QQbar(sqrt(3))*y^2,                 # optional - sage.rings.number_field sage.symbolic
+            sage: A.<x,y> = AffineSpace(QQbar, 2)                                       # needs sage.rings.number_field
+            sage: f = DynamicalSystem_affine([x^2 + QQbar(sqrt(3))*y^2,                 # needs sage.rings.number_field sage.symbolic
             ....:                             QQbar(sqrt(-1))*y^2])
-            sage: f.reduce_base_field()                                                 # optional - sage.rings.number_field sage.symbolic
+            sage: f.reduce_base_field()                                                 # needs sage.rings.number_field sage.symbolic
             Dynamical System of Affine Space of dimension 2 over Number Field in a
              with defining polynomial y^4 - y^2 + 1
              with a = -0.866025403784439? + 0.50000000000000000?*I
@@ -969,10 +970,11 @@ class DynamicalSystem_affine_field(DynamicalSystem_affine,
 
         ::
 
-            sage: K.<v> = CyclotomicField(5)                                            # optional - sage.rings.number_field
-            sage: A.<x,y> = AffineSpace(K, 2)                                           # optional - sage.rings.number_field
-            sage: f = DynamicalSystem_affine([(3*x^2 + y) / (5*x), (y^2+1) / (x+y)])    # optional - sage.rings.number_field
-            sage: f.reduce_base_field()                                                 # optional - sage.rings.number_field
+            sage: # needs sage.rings.number_field
+            sage: K.<v> = CyclotomicField(5)
+            sage: A.<x,y> = AffineSpace(K, 2)
+            sage: f = DynamicalSystem_affine([(3*x^2 + y) / (5*x), (y^2+1) / (x+y)])
+            sage: f.reduce_base_field()
             Dynamical System of Affine Space of dimension 2 over Rational Field
               Defn: Defined on coordinates by sending (x, y) to
                     ((3*x^2 + y)/(5*x), (5*y^2 + 5)/(5*x + 5*y))

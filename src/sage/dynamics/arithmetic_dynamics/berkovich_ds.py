@@ -146,19 +146,21 @@ class DynamicalSystem_Berkovich(Element, metaclass=InheritComparisonClasscallMet
     Creating a map on Berkovich space
     creates the Berkovich space it acts on::
 
-        sage: P.<x,y> = ProjectiveSpace(Qp(3), 1)                                       # needs sage.rings.padics
-        sage: f = DynamicalSystem_projective([x^2, y^2])                                # needs sage.rings.padics
-        sage: g = DynamicalSystem_Berkovich(f)                                          # needs sage.rings.padics
-        sage: B = g.domain(); B                                                         # needs sage.rings.padics
+        sage: # needs sage.rings.padics
+        sage: P.<x,y> = ProjectiveSpace(Qp(3), 1)
+        sage: f = DynamicalSystem_projective([x^2, y^2])
+        sage: g = DynamicalSystem_Berkovich(f)
+        sage: B = g.domain(); B
         Projective Berkovich line over Cp(3) of precision 20
 
     The image of type I point is the image of the center::
 
-        sage: P.<x,y> = ProjectiveSpace(Qp(3), 1)                                       # needs sage.rings.padics
-        sage: F = DynamicalSystem_Berkovich([x^2, y^2])                                 # needs sage.rings.padics
-        sage: B = F.domain()                                                            # needs sage.rings.padics
-        sage: Q1 = B(2)                                                                 # needs sage.rings.padics
-        sage: F(Q1)                                                                     # needs sage.rings.padics
+        sage: # needs sage.rings.padics
+        sage: P.<x,y> = ProjectiveSpace(Qp(3), 1)
+        sage: F = DynamicalSystem_Berkovich([x^2, y^2])
+        sage: B = F.domain()
+        sage: Q1 = B(2)
+        sage: F(Q1)
         Type I point centered at (1 + 3 + O(3^20) : 1 + O(3^20))
 
     For type II/III points with no poles in the corresponding disk,
@@ -171,10 +173,11 @@ class DynamicalSystem_Berkovich(Element, metaclass=InheritComparisonClasscallMet
 
     The image of any type II point can be computed::
 
-        sage: g = DynamicalSystem_projective([x^2 + y^2, x*y])                          # needs sage.rings.padics
-        sage: G = DynamicalSystem_Berkovich(g)                                          # needs sage.rings.padics
-        sage: Q3 = B(0, 1)                                                              # needs sage.rings.padics
-        sage: G(Q3)                                                                     # needs sage.rings.padics
+        sage: # needs sage.rings.padics
+        sage: g = DynamicalSystem_projective([x^2 + y^2, x*y])
+        sage: G = DynamicalSystem_Berkovich(g)
+        sage: Q3 = B(0, 1)
+        sage: G(Q3)
         Type II point centered at (0 : 1 + O(3^20)) of radius 3^0
 
     The image of type III points can be computed has long as the
@@ -289,10 +292,11 @@ class DynamicalSystem_Berkovich(Element, metaclass=InheritComparisonClasscallMet
 
         TESTS::
 
-            sage: P.<x,y> = ProjectiveSpace(Qp(3), 1)                                   # needs sage.rings.padics
-            sage: f = DynamicalSystem_projective([2*x^2 + 4*y^2, 3*x^2 + 9*y^2])        # needs sage.rings.padics
-            sage: g = DynamicalSystem_Berkovich(f)                                      # needs sage.rings.padics
-            sage: isinstance(g, DynamicalSystem_Berkovich)                              # needs sage.rings.padics
+            sage: # needs sage.rings.padics
+            sage: P.<x,y> = ProjectiveSpace(Qp(3), 1)
+            sage: f = DynamicalSystem_projective([2*x^2 + 4*y^2, 3*x^2 + 9*y^2])
+            sage: g = DynamicalSystem_Berkovich(f)
+            sage: isinstance(g, DynamicalSystem_Berkovich)
             True
         """
         self._system = dynamical_system
@@ -346,10 +350,11 @@ class DynamicalSystem_Berkovich(Element, metaclass=InheritComparisonClasscallMet
 
         EXAMPLES::
 
-            sage: Q.<x,y> = ProjectiveSpace(Qp(3), 1)                                   # needs sage.rings.padics
-            sage: f = DynamicalSystem_projective([3*x^2, 2*y^2])                        # needs sage.rings.padics
-            sage: g = DynamicalSystem_Berkovich(f)                                      # needs sage.rings.padics
-            sage: g.domain()                                                            # needs sage.rings.padics
+            sage: # needs sage.rings.padics
+            sage: Q.<x,y> = ProjectiveSpace(Qp(3), 1)
+            sage: f = DynamicalSystem_projective([3*x^2, 2*y^2])
+            sage: g = DynamicalSystem_Berkovich(f)
+            sage: g.domain()
             Projective Berkovich line over Cp(3) of precision 20
         """
         return self._domain
@@ -384,10 +389,11 @@ class DynamicalSystem_Berkovich(Element, metaclass=InheritComparisonClasscallMet
 
         EXAMPLES::
 
-            sage: P.<x,y> = ProjectiveSpace(Qp(3), 1)                                   # needs sage.rings.padics
-            sage: f = DynamicalSystem_projective([x^2 + y^2, 2*y^2])                    # needs sage.rings.padics
-            sage: g = DynamicalSystem_Berkovich(f)                                      # needs sage.rings.padics
-            sage: g[0]                                                                  # needs sage.rings.padics
+            sage: # needs sage.rings.padics
+            sage: P.<x,y> = ProjectiveSpace(Qp(3), 1)
+            sage: f = DynamicalSystem_projective([x^2 + y^2, 2*y^2])
+            sage: g = DynamicalSystem_Berkovich(f)
+            sage: g[0]
             x^2 + y^2
         """
         return self._system._polys[i]
@@ -401,10 +407,11 @@ class DynamicalSystem_Berkovich(Element, metaclass=InheritComparisonClasscallMet
 
         EXAMPLES::
 
-            sage: P.<x,y> = ProjectiveSpace(Qp(3), 1)                                   # needs sage.rings.padics
-            sage: f = DynamicalSystem_projective([2*x^2 + 4*y^2, 3*x^2 + 9*y^2])        # needs sage.rings.padics
-            sage: g = DynamicalSystem_Berkovich(f)                                      # needs sage.rings.padics
-            sage: g.defining_polynomials()                                              # needs sage.rings.padics
+            sage: # needs sage.rings.padics
+            sage: P.<x,y> = ProjectiveSpace(Qp(3), 1)
+            sage: f = DynamicalSystem_projective([2*x^2 + 4*y^2, 3*x^2 + 9*y^2])
+            sage: g = DynamicalSystem_Berkovich(f)
+            sage: g.defining_polynomials()
             ((2 + O(3^20))*x^2 + (1 + 3 + O(3^20))*y^2,
              (3 + O(3^21))*x^2 + (3^2 + O(3^22))*y^2)
         """
@@ -442,10 +449,11 @@ class DynamicalSystem_Berkovich(Element, metaclass=InheritComparisonClasscallMet
 
         EXAMPLES::
 
-            sage: Q.<x,y> = ProjectiveSpace(Qp(3), 1)                                   # needs sage.rings.padics
-            sage: f = DynamicalSystem_projective([3*x^2, 2*y^2])                        # needs sage.rings.padics
-            sage: f = DynamicalSystem_Berkovich(f)                                      # needs sage.rings.padics
-            sage: f._repr_()                                                            # needs sage.rings.padics
+            sage: # needs sage.rings.padics
+            sage: Q.<x,y> = ProjectiveSpace(Qp(3), 1)
+            sage: f = DynamicalSystem_projective([3*x^2, 2*y^2])
+            sage: f = DynamicalSystem_Berkovich(f)
+            sage: f._repr_()
             'Dynamical system of Projective Berkovich line over Cp(3) of precision 20 induced by the map\n
               Defn: Defined on coordinates by sending (x : y) to\n        ((3 + O(3^21))*x^2 : (2 + O(3^20))*y^2)'
         """
@@ -656,10 +664,11 @@ class DynamicalSystem_Berkovich_projective(DynamicalSystem_Berkovich):
 
         EXAMPLES::
 
-            sage: P.<x,y> = ProjectiveSpace(Qp(3), 1)                                   # needs sage.rings.padics
-            sage: f = DynamicalSystem_projective([x^2 + y^2, 2*y^2])                    # needs sage.rings.padics
-            sage: g = DynamicalSystem_Berkovich(f)                                      # needs sage.rings.padics
-            sage: g.conjugate(Matrix([[1, 1], [0, 1]]))                                 # needs sage.rings.padics
+            sage: # needs sage.rings.padics
+            sage: P.<x,y> = ProjectiveSpace(Qp(3), 1)
+            sage: f = DynamicalSystem_projective([x^2 + y^2, 2*y^2])
+            sage: g = DynamicalSystem_Berkovich(f)
+            sage: g.conjugate(Matrix([[1, 1], [0, 1]]))
             Dynamical system of Projective Berkovich line over Cp(3) of precision 20
              induced by the map
               Defn: Defined on coordinates by sending (x : y) to
@@ -750,10 +759,11 @@ class DynamicalSystem_Berkovich_projective(DynamicalSystem_Berkovich):
 
         EXAMPLES::
 
-            sage: P.<x,y> = ProjectiveSpace(Qp(3), 1)                                   # needs sage.rings.padics
-            sage: f = DynamicalSystem_projective([x^2 + y^2, x*y + y^2])                # needs sage.rings.padics
-            sage: g = DynamicalSystem_Berkovich(f)                                      # needs sage.rings.padics
-            sage: g.dehomogenize(1)                                                     # needs sage.rings.padics
+            sage: # needs sage.rings.padics
+            sage: P.<x,y> = ProjectiveSpace(Qp(3), 1)
+            sage: f = DynamicalSystem_projective([x^2 + y^2, x*y + y^2])
+            sage: g = DynamicalSystem_Berkovich(f)
+            sage: g.dehomogenize(1)
             Dynamical system of Affine Berkovich line over Cp(3) of precision 20
              induced by the map
               Defn: Defined on coordinates by sending (x) to
@@ -783,21 +793,23 @@ class DynamicalSystem_Berkovich_projective(DynamicalSystem_Berkovich):
 
         EXAMPLES::
 
-            sage: P.<x,y> = ProjectiveSpace(Qp(3), 1)                                   # needs sage.rings.padics
-            sage: g = DynamicalSystem_projective([x^2 + y^2, x*y])                      # needs sage.rings.padics
-            sage: G = DynamicalSystem_Berkovich(g)                                      # needs sage.rings.padics
-            sage: B = G.domain()                                                        # needs sage.rings.padics
-            sage: Q3 = B(0, 1)                                                          # needs sage.rings.padics
-            sage: G(Q3)                                                                 # needs sage.rings.padics
+            sage: # needs sage.rings.padics
+            sage: P.<x,y> = ProjectiveSpace(Qp(3), 1)
+            sage: g = DynamicalSystem_projective([x^2 + y^2, x*y])
+            sage: G = DynamicalSystem_Berkovich(g)
+            sage: B = G.domain()
+            sage: Q3 = B(0, 1)
+            sage: G(Q3)
             Type II point centered at (0 : 1 + O(3^20)) of radius 3^0
 
         ::
 
-            sage: P.<x,y> = ProjectiveSpace(Qp(3), 1)                                   # needs sage.rings.padics
-            sage: H = DynamicalSystem_Berkovich([x*y^2, x^3 + 20*y^3])                  # needs sage.rings.padics
-            sage: B = H.domain()                                                        # needs sage.rings.padics
-            sage: Q4 = B(1/9, 1.5)                                                      # needs sage.rings.padics
-            sage: H(Q4, False)                                                          # needs sage.rings.padics
+            sage: # needs sage.rings.padics
+            sage: P.<x,y> = ProjectiveSpace(Qp(3), 1)
+            sage: H = DynamicalSystem_Berkovich([x*y^2, x^3 + 20*y^3])
+            sage: B = H.domain()
+            sage: Q4 = B(1/9, 1.5)
+            sage: H(Q4, False)
             Type III point centered at (3^4 + 3^10 + 2*3^11 + 2*3^13 + 2*3^14 +
             2*3^15 + 3^17 + 2*3^18 + 2*3^19 + 3^20 + 3^21 + 3^22 + O(3^24) : 1 +
             O(3^20)) of radius 0.00205761316872428
@@ -1053,10 +1065,11 @@ class DynamicalSystem_Berkovich_affine(DynamicalSystem_Berkovich):
 
         EXAMPLES::
 
-            sage: A.<x> = AffineSpace(Qp(3), 1)                                         # needs sage.rings.padics
-            sage: f = DynamicalSystem_affine(1/x)                                       # needs sage.rings.padics
-            sage: f = DynamicalSystem_Berkovich(f)                                      # needs sage.rings.padics
-            sage: f.homogenize(1)                                                       # needs sage.rings.padics
+            sage: # needs sage.rings.padics
+            sage: A.<x> = AffineSpace(Qp(3), 1)
+            sage: f = DynamicalSystem_affine(1/x)
+            sage: f = DynamicalSystem_Berkovich(f)
+            sage: f.homogenize(1)
             Dynamical system of Projective Berkovich line over Cp(3) of precision 20
              induced by the map
               Defn: Defined on coordinates by sending (x0 : x1) to (x1 : x0)
@@ -1073,12 +1086,13 @@ class DynamicalSystem_Berkovich_affine(DynamicalSystem_Berkovich):
 
         EXAMPLES::
 
-            sage: P.<x> = AffineSpace(Qp(3), 1)                                         # needs sage.rings.padics
-            sage: f = DynamicalSystem_affine(x^2)                                       # needs sage.rings.padics
-            sage: g = DynamicalSystem_Berkovich(f)                                      # needs sage.rings.padics
-            sage: B = g.domain()                                                        # needs sage.rings.padics
-            sage: Q1 = B(2)                                                             # needs sage.rings.padics
-            sage: g(Q1)                                                                 # needs sage.rings.padics
+            sage: # needs sage.rings.padics
+            sage: P.<x> = AffineSpace(Qp(3), 1)
+            sage: f = DynamicalSystem_affine(x^2)
+            sage: g = DynamicalSystem_Berkovich(f)
+            sage: B = g.domain()
+            sage: Q1 = B(2)
+            sage: g(Q1)
             Type I point centered at 1 + 3 + O(3^20)
         """
         if not isinstance(x, Berkovich_Element_Cp_Affine):
