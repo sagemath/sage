@@ -1006,7 +1006,7 @@ def discrete_log_lambda(a, base, bounds, operation='*', identity=None, inverse=N
 
     This will return a multiple of the order of P::
 
-        sage: discrete_log_lambda(P.parent()(0), P, Hasse_bounds(F.order()),            # needs sage.rings.finite_rings
+        sage: discrete_log_lambda(P.parent()(0), P, Hasse_bounds(F.order()),            # needs sage.rings.finite_rings sage.schemes
         ....:                     operation='+')
         69327408
 
