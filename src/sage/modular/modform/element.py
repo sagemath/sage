@@ -2315,13 +2315,14 @@ class Newform(ModularForm_abstract):
             sage: f.twist(chi, level=11) == g
             True
 
-            sage: f = Newforms(575, 2, names='a')[4]    # long time
-            sage: g, chi = f.minimal_twist(5)           # long time
-            sage: g                                     # long time
+            sage: # long time
+            sage: f = Newforms(575, 2, names='a')[4]
+            sage: g, chi = f.minimal_twist(5)
+            sage: g
             q + a*q^2 - a*q^3 - 2*q^4 + (1/2*a + 2)*q^5 + O(q^6)
-            sage: chi                                   # long time
+            sage: chi
             Dirichlet character modulo 5 of conductor 5 mapping 2 |--> 1/2*a
-            sage: f.twist(chi, level=g.level()) == g    # long time
+            sage: f.twist(chi, level=g.level()) == g
             True
         """
         if p is None:
@@ -3236,7 +3237,7 @@ class GradedModularFormElement(ModuleElement):
             Traceback (most recent call last):
             ...
             TypeError: no canonical coercion from Modular Forms space of dimension 1 for Modular Group SL(2,Z) of weight 4 over Rational Field to Rational Field
-            sage: M([E4, x])                                                            # optional - sage.symbolic
+            sage: M([E4, x])                                                            # needs sage.symbolic
             Traceback (most recent call last):
             ...
             TypeError: no canonical coercion from Symbolic Ring to Rational Field

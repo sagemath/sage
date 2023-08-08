@@ -79,7 +79,7 @@ def rational_type(f, n=ZZ(3), base_ring=ZZ):
     EXAMPLES::
 
         sage: from sage.modular.modform_hecketriangle.constructor import rational_type
-        sage: (x,y,z,d) = var("x,y,z,d")                                                # optional - sage.symbolic
+        sage: (x,y,z,d) = var("x,y,z,d")                                                # needs sage.symbolic
 
         sage: rational_type(0, n=4)
         (True, True, 0, 1, zero)
@@ -87,37 +87,37 @@ def rational_type(f, n=ZZ(3), base_ring=ZZ):
         sage: rational_type(1, n=12)
         (True, True, 0, 1, modular)
 
-        sage: rational_type(x^3 - y^2)                                                  # optional - sage.symbolic
+        sage: rational_type(x^3 - y^2)                                                  # needs sage.symbolic
         (True, True, 12, 1, cuspidal)
 
-        sage: rational_type(x * z, n=7)                                                 # optional - sage.symbolic
+        sage: rational_type(x * z, n=7)                                                 # needs sage.symbolic
         (True, True, 14/5, -1, quasi modular)
 
-        sage: rational_type(1/(x^3 - y^2) + z/d)                                        # optional - sage.symbolic
+        sage: rational_type(1/(x^3 - y^2) + z/d)                                        # needs sage.symbolic
         (True, False, None, None, quasi weakly holomorphic modular)
 
-        sage: rational_type(x^3/(x^3 - y^2))                                            # optional - sage.symbolic
+        sage: rational_type(x^3/(x^3 - y^2))                                            # needs sage.symbolic
         (True, True, 0, 1, weakly holomorphic modular)
 
-        sage: rational_type(1/(x + z))                                                  # optional - sage.symbolic
+        sage: rational_type(1/(x + z))                                                  # needs sage.symbolic
         (False, False, None, None, None)
 
-        sage: rational_type(1/x + 1/z)                                                  # optional - sage.symbolic
+        sage: rational_type(1/x + 1/z)                                                  # needs sage.symbolic
         (True, False, None, None, quasi meromorphic modular)
 
-        sage: rational_type(d/x, n=10)                                                  # optional - sage.symbolic
+        sage: rational_type(d/x, n=10)                                                  # needs sage.symbolic
         (True, True, -1/2, 1, meromorphic modular)
 
-        sage: rational_type(1.1 * z * (x^8-y^2), n=8, base_ring=CC)                     # optional - sage.symbolic
+        sage: rational_type(1.1 * z * (x^8-y^2), n=8, base_ring=CC)                     # needs sage.symbolic
         (True, True, 22/3, -1, quasi cuspidal)
 
-        sage: rational_type(x-y^2, n=infinity)                                          # optional - sage.symbolic
+        sage: rational_type(x-y^2, n=infinity)                                          # needs sage.symbolic
         (True, True, 4, 1, modular)
 
-        sage: rational_type(x*(x-y^2), n=infinity)                                      # optional - sage.symbolic
+        sage: rational_type(x*(x-y^2), n=infinity)                                      # needs sage.symbolic
         (True, True, 8, 1, cuspidal)
 
-        sage: rational_type(1/x, n=infinity)                                            # optional - sage.symbolic
+        sage: rational_type(1/x, n=infinity)                                            # needs sage.symbolic
         (True, True, -4, 1, weakly holomorphic modular)
     """
 

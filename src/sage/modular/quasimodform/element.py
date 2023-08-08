@@ -605,7 +605,7 @@ class QuasiModularFormsElement(ModuleElement):
 
         TESTS::
 
-            sage: F[x]                                                                  # optional - sage.symbolic
+            sage: F[x]                                                                  # needs sage.symbolic
             Traceback (most recent call last):
             ...
             KeyError: 'the weight must be an integer'

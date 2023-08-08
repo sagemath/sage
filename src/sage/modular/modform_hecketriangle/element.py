@@ -260,16 +260,17 @@ class FormsElement(FormsRingElement):
             sage: L(10).n(53)
             -13.0290184579...
 
-            sage: f = (ModularForms(n=17, k=24).Delta()^2)    # long time
-            sage: L = f.lseries()    # long time
-            sage: L.check_functional_equation() < 2^(-50)    # long time
+            sage: # long time
+            sage: f = (ModularForms(n=17, k=24).Delta()^2)
+            sage: L = f.lseries()
+            sage: L.check_functional_equation() < 2^(-50)
             True
-            sage: L.taylor_series(12, 3)    # long time
+            sage: L.taylor_series(12, 3)
             0.000683924755280... - 0.000875942285963...*z + 0.000647618966023...*z^2 + O(z^3)
-            sage: coeffs = f.q_expansion_vector(min_exp=0, max_exp=20, fix_d=True)    # long time
-            sage: sum([coeffs[k]*k^(-30) for k in range(1,len(coeffs))]).n(53)    # long time
+            sage: coeffs = f.q_expansion_vector(min_exp=0, max_exp=20, fix_d=True)
+            sage: sum([coeffs[k]*k^(-30) for k in range(1,len(coeffs))]).n(53)
             9.31562890589...e-10
-            sage: L(30).n(53)    # long time
+            sage: L(30).n(53)
             9.31562890589...e-10
 
             sage: f = ModularForms(n=infinity, k=2, ep=-1).f_i()

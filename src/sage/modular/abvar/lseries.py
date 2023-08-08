@@ -99,29 +99,29 @@ class Lseries_complex(Lseries):
         EXAMPLES::
 
             sage: L = J0(23).lseries()
-            sage: L(1)                                                                  # optional - sage.symbolic
+            sage: L(1)                                                                  # needs sage.symbolic
             0.248431866590600
-            sage: L(1, prec=100)                                                        # optional - sage.symbolic
+            sage: L(1, prec=100)                                                        # needs sage.symbolic
             0.24843186659059968120725033931
 
             sage: L = J0(389)[0].lseries()
-            sage: L(1) # long time (2s) abstol 1e-10                                    # optional - sage.symbolic
+            sage: L(1)                          # long time (2s)                        # needs sage.symbolic
             -1.33139759782370e-19
-            sage: L(1, prec=100) # long time (2s) abstol 1e-20                          # optional - sage.symbolic
+            sage: L(1, prec=100)                # long time (2s)                        # needs sage.symbolic
             6.0129758648142797032650287762e-39
             sage: L.rational_part()
             0
 
             sage: L = J1(23)[0].lseries()
-            sage: L(1)                                                                  # optional - sage.symbolic
+            sage: L(1)                                                                  # needs sage.symbolic
             0.248431866590600
 
             sage: J = J0(11) * J1(11)
-            sage: J.lseries()(1)                                                        # optional - sage.symbolic
+            sage: J.lseries()(1)                                                        # needs sage.symbolic
             0.0644356903227915
 
             sage: L = JH(17,[2]).lseries()
-            sage: L(1)                                                                  # optional - sage.symbolic
+            sage: L(1)                                                                  # needs sage.symbolic
             0.386769938387780
 
         """
