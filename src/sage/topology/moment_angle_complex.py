@@ -71,6 +71,7 @@ We can perform a number of operations, such as find the dimension or compute the
 # ****************************************************************************
 
 from sage.misc.cachefunc import cached_method
+from sage.misc.lazy_attribute import lazy_attribute
 from sage.homology.homology_group import HomologyGroup
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
@@ -97,6 +98,7 @@ from itertools import combinations
 # - polyhedral products and real moment-angle complexes
 # - golod decomposition
 # - return for odd dimensional simplicial complexes in golod_decomposition?
+
 
 # maybe make hidden?
 def union(c1, c2):
@@ -222,9 +224,6 @@ class MomentAngleComplex(SageObject, UniqueRepresentation):
         """
         # The underlying simplicial complex
         self._simplicial_complex = copy(simplicial_complex)
-        # The moment-angle complex as a cubical complex
-        # if create_complex() is called, this is computed
-        self._moment_angle_complex = None
         # A dictionary of components indexed by facets
         self._components = {}
 
@@ -239,6 +238,47 @@ class MomentAngleComplex(SageObject, UniqueRepresentation):
                     Y.append(Sphere(1))
 
             self._components[facet] = Y
+
+    @lazy_attribute
+    def _moment_angle_complex(self):
+        """
+        Create the moment-angle complex as a cubical complex.
+
+        If this lazy attribute is accessed, we explicitly compute
+        the moment-angle complex, viewed as a cubical complex.
+
+        .. WARNING::
+
+            The construction can be very slow, it is not reccomended unless
+            the corresponding simplicial complex has 5 or less vertices.
+
+        TESTS::
+
+            sage: Z = MomentAngleComplex([[0], [1], [2]]); Z
+            Moment-angle complex of Simplicial complex with vertex set (0, 1, 2) and facets {(0,), (1,), (2,)}
+            sage: Z._moment_angle_complex
+            Cubical complex with 64 vertices and 705 cubes
+
+        This method is used in the ``cubical_complex()`` method::
+
+            sage: Z.cubical_complex()
+            Cubical complex with 64 vertices and 705 cubes
+            sage: Z.cubical_complex() == Z._moment_angle_complex
+            True
+        """
+        n = len(self._simplicial_complex.vertices())
+        D = [cubical_complexes.Cube(2)] * n
+        S = [cubical_complexes.Sphere(1)] * n
+
+        moment_angle_complex = CubicalComplex()
+        for component in self._components.values():
+            x = D[0] if component[0] == Simplex(2) else S[0]
+            for j in range(1, len(component)):
+                y = D[j] if component[j] == Simplex(2) else S[j]
+                x = x.product(y)
+            moment_angle_complex = union(moment_angle_complex, x)
+
+        return moment_angle_complex
 
     def _repr_(self):
         """
@@ -258,47 +298,6 @@ class MomentAngleComplex(SageObject, UniqueRepresentation):
             'Moment-angle complex of Simplicial complex with 20 vertices and 1 facets'
         """
         return "Moment-angle complex of " + repr(self._simplicial_complex)
-
-    @cached_method
-    def _create_complex(self):
-        """
-        Create the moment-angle complex as a cubical complex.
-
-        If this method is called, we also explicitly compute the
-        moment-angle complex, viewed as a cubical complex.
-
-        .. WARNING::
-
-            The construction can be very slow, it is not reccomended unless
-            the corresponding simplicial complex has 5 or less vertices.
-
-        TESTS::
-
-            sage: Z = MomentAngleComplex([[0], [1], [2]]); Z
-            Moment-angle complex of Simplicial complex with vertex set (0, 1, 2) and facets {(0,), (1,), (2,)}
-            sage: Z._create_complex()
-            sage: Z._moment_angle_complex
-            Cubical complex with 64 vertices and 705 cubes
-
-        This method is used in the ``cubical_complex()`` method::
-
-            sage: Z.cubical_complex()
-            Cubical complex with 64 vertices and 705 cubes
-            sage: Z.cubical_complex() == Z._moment_angle_complex
-            True
-        """
-        n = len(self._simplicial_complex.vertices())
-        D = [cubical_complexes.Cube(2)] * n
-        S = [cubical_complexes.Sphere(1)] * n
-
-        self._moment_angle_complex = CubicalComplex()
-        for component in self._components.values():
-            x = D[0] if component[0] == Simplex(2) else S[0]
-            for j in range(1, len(component)):
-                y = D[j] if component[j] == Simplex(2) else S[j]
-                x = x.product(y)
-
-            self._moment_angle_complex = union(self._moment_angle_complex, x)
 
     def cubical_complex(self):
         """
@@ -331,12 +330,7 @@ class MomentAngleComplex(SageObject, UniqueRepresentation):
             sage: Z.cubical_complex().f_vector()
             [1, 16, 32, 24, 8]
         """
-        if self._moment_angle_complex:
-            # We check whether it has aready been created
-            return self._moment_angle_complex
-        else:
-            self._create_complex()
-            return self._moment_angle_complex
+        return self._moment_angle_complex
 
     def components(self):
         """
