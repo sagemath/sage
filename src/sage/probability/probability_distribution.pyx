@@ -114,8 +114,8 @@ cdef class ProbabilityDistribution:
             sage: from sage.probability.probability_distribution import GeneralDiscreteDistribution
             sage: P = [0.3, 0.4, 0.3]
             sage: X = GeneralDiscreteDistribution(P)
-            sage: h, b = X.generate_histogram_data(bins=10)                             # optional - sage.plot
-            sage: h  # rel tol 1e-08                                                    # optional - sage.plot
+            sage: h, b = X.generate_histogram_data(bins=10)                             # needs sage.plot
+            sage: h  # rel tol 1e-08                                                    # needs sage.plot
             [1.6299999999999999,
              0.0,
              0.0,
@@ -126,7 +126,7 @@ cdef class ProbabilityDistribution:
              0.0,
              0.0,
              1.4650000000000003]
-            sage: b                                                                     # optional - sage.plot
+            sage: b                                                                     # needs sage.plot
             [0.0,
              0.2,
              0.4,
@@ -167,7 +167,7 @@ cdef class ProbabilityDistribution:
             sage: import tempfile
             sage: P = [0.3, 0.4, 0.3]
             sage: X = GeneralDiscreteDistribution(P)
-            sage: with tempfile.NamedTemporaryFile() as f:                              # optional - sage.plot
+            sage: with tempfile.NamedTemporaryFile() as f:                              # needs sage.plot
             ....:     X.generate_histogram_plot(f.name)
         """
         import pylab
@@ -963,7 +963,7 @@ cdef class RealDistribution(ProbabilityDistribution):
         EXAMPLES::
 
             sage: T = RealDistribution('uniform', [0, 2])
-            sage: P = T.plot()                                                          # optional - sage.plot
+            sage: P = T.plot()                                                          # needs sage.plot
         """
         from sage.plot.plot import plot
         return plot(self.distribution_function, *args, **kwds)
