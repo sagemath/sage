@@ -562,21 +562,21 @@ cdef class BooleanFunction(SageObject):
             sage: B.truth_table(format='hex')
             '43'
 
-            sage: BooleanFunction('00ab').truth_table(format='hex')
+            sage: BooleanFunction('00ab').truth_table(format='hex')                     # needs sage.rings.polynomial.pbori
             '00ab'
 
             sage: H = '0abbacadabbacad0'
             sage: len(H)
             16
-            sage: T = BooleanFunction(H).truth_table(format='hex')
+            sage: T = BooleanFunction(H).truth_table(format='hex')                      # needs sage.rings.polynomial.pbori
             sage: T == H
             True
             sage: H = H * 4
-            sage: T = BooleanFunction(H).truth_table(format='hex')
+            sage: T = BooleanFunction(H).truth_table(format='hex')                      # needs sage.rings.polynomial.pbori
             sage: T == H
             True
             sage: H = H * 4
-            sage: T = BooleanFunction(H).truth_table(format='hex')
+            sage: T = BooleanFunction(H).truth_table(format='hex')                      # needs sage.rings.polynomial.pbori
             sage: T == H
             True
             sage: len(T)
@@ -1070,7 +1070,7 @@ cdef class BooleanFunction(SageObject):
             2
 
             sage: R.<x> = GF(2^8,'a')[]                                                 # needs sage.rings.finite_rings
-            sage: B = BooleanFunction(x^31)                                             # needs sage.rings.finite_rings
+            sage: B = BooleanFunction(x^31)                                             # needs sage.rings.finite_rings sage.rings.polynomial.pbori
             sage: B.algebraic_immunity()                                                # needs sage.rings.finite_rings
             4
         """
