@@ -5080,7 +5080,7 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
 
             sage: # optional - macaulay2
             sage: R.<x,y> = PolynomialRing(GF(7), 2)
-            sage: f = (x^3 + 2*y^2*x)^7; f
+            sage: f = (x^3 + 2*y^2*x)^7; f          # indirect doctest
             x^21 + 2*x^7*y^14
             sage: h = macaulay2(f); h
              21     7 14

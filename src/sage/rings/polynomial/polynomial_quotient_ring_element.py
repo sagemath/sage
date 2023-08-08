@@ -161,16 +161,17 @@ class PolynomialQuotientRingElement(polynomial_singular_interface.Polynomial_sin
 
         EXAMPLES::
 
+            sage: # needs sage.rings.number_field
             sage: Zx.<x> = ZZ[]
-            sage: K.<i> = NumberField(x^2 + 1)                                          # needs sage.rings.number_field
-            sage: cc = K.hom([-i])                                                      # needs sage.rings.number_field
-            sage: S.<y> = K[]                                                           # needs sage.rings.number_field
-            sage: Q.<q> = S.quotient(y^2*(y-1)*(y-i))                                   # needs sage.rings.number_field
-            sage: T.<t> = S.quotient(y*(y+1))                                           # needs sage.rings.number_field
-            sage: phi = Q.hom([t+1], base_map=cc)                                       # needs sage.rings.number_field
-            sage: phi(q)                                                                # needs sage.rings.number_field
+            sage: K.<i> = NumberField(x^2 + 1)
+            sage: cc = K.hom([-i])
+            sage: S.<y> = K[]
+            sage: Q.<q> = S.quotient(y^2*(y-1)*(y-i))
+            sage: T.<t> = S.quotient(y*(y+1))
+            sage: phi = Q.hom([t+1], base_map=cc)
+            sage: phi(q)
             t + 1
-            sage: phi(i*q)                                                              # needs sage.rings.number_field
+            sage: phi(i*q)
             -i*t - i
         """
         return self._polynomial._im_gens_(codomain, im_gens, base_map=base_map)

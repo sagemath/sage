@@ -550,7 +550,7 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
         EXAMPLES::
 
             sage: R = GF(13)['a,b']['c,d']
-            sage: macaulay2(R('a^2 + c'))                       # optional - macaulay2, needs sage.rings.finite_rings
+            sage: macaulay2(R('a^2 + c'))                               # optional - macaulay2
                  2
             c + a
 
@@ -559,7 +559,7 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
         Elements of the base ring are coerced to the polynomial ring
         correctly::
 
-            sage: macaulay2(R('a^2')).ring()._operator('===', R)        # optional - macaulay2, needs sage.rings.finite_rings
+            sage: macaulay2(R('a^2')).ring()._operator('===', R)        # optional - macaulay2
             true
         """
         if macaulay2 is None:

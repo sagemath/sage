@@ -505,10 +505,12 @@ def PolynomialRing(base_ring, *args, **kwds):
     We verify that polynomials with interval coefficients from
     :trac:`7712` and :trac:`13760` are fixed::
 
+        sage: # needs sage.rings.real_interval_field
         sage: P.<y,z> = PolynomialRing(RealIntervalField(2))
-        sage: TestSuite(P).run(skip=['_test_elements', '_test_elements_eq_transitive'])             # needs sage.rings.real_mpfr
-        sage: Q.<x> = PolynomialRing(P)                                                 # needs sage.rings.real_mpfr
-        sage: TestSuite(Q).run(skip=['_test_additive_associativity', '_test_associativity', '_test_distributivity', '_test_prod'])                              # needs sage.rings.real_mpfr
+        sage: TestSuite(P).run(skip=['_test_elements', '_test_elements_eq_transitive'])
+        sage: Q.<x> = PolynomialRing(P)
+        sage: TestSuite(Q).run(skip=['_test_additive_associativity', '_test_associativity',
+        ....:                        '_test_distributivity', '_test_prod'])
         sage: C = (y-x)^3
         sage: C(y/2)
         1.?*y^3
@@ -954,14 +956,13 @@ def BooleanPolynomialRing_constructor(n=None, names=None, order="lex"):
 
     EXAMPLES::
 
-        sage: R.<x, y, z> = BooleanPolynomialRing(); R  # indirect doctest              # needs sage.rings.polynomial.pbori
+        sage: # needs sage.rings.polynomial.pbori
+        sage: R.<x, y, z> = BooleanPolynomialRing(); R  # indirect doctest
         Boolean PolynomialRing in x, y, z
-
-        sage: p = x*y + x*z + y*z                                                       # needs sage.rings.polynomial.pbori
-        sage: x*p                                                                       # needs sage.rings.polynomial.pbori
+        sage: p = x*y + x*z + y*z
+        sage: x*p
         x*y*z + x*y + x*z
-
-        sage: R.term_order()                                                            # needs sage.rings.polynomial.pbori
+        sage: R.term_order()
         Lexicographic term order
 
         sage: R = BooleanPolynomialRing(5, 'x', order='deglex(3),deglex(2)')            # needs sage.rings.polynomial.pbori
@@ -986,10 +987,11 @@ def BooleanPolynomialRing_constructor(n=None, names=None, order="lex"):
         sage: x > y                                                                     # needs sage.rings.polynomial.pbori
         True
 
-        sage: P.<x0, x1, x2, x3> = BooleanPolynomialRing(4, order='deglex(2),deglex(2)')            # needs sage.rings.polynomial.pbori
-        sage: x0 > x1                                                                               # needs sage.rings.polynomial.pbori
+        sage: # needs sage.rings.polynomial.pbori
+        sage: P.<x0, x1, x2, x3> = BooleanPolynomialRing(4, order='deglex(2),deglex(2)')
+        sage: x0 > x1
         True
-        sage: x2 > x3                                                                               # needs sage.rings.polynomial.pbori
+        sage: x2 > x3
         True
     """
     if isinstance(n, str):
