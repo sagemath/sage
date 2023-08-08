@@ -148,11 +148,11 @@ cdef class HiddenMarkovModel:
             sage: m = hmm.DiscreteHiddenMarkovModel([[.3,0,.7],[0,0,1],[.5,.5,0]],
             ....:                                   [[.5,.5,.2]]*3,
             ....:                                   [1/3]*3)
-            sage: G = m.graph(); G                                                      # optional - sage.graphs
+            sage: G = m.graph(); G                                                      # needs sage.graphs
             Looped digraph on 3 vertices
-            sage: G.edges(sort=True)                                                    # optional - sage.graphs
+            sage: G.edges(sort=True)                                                    # needs sage.graphs
             [(0, 0, 0.3), (0, 2, 0.7), (1, 2, 1.0), (2, 0, 0.5), (2, 1, 0.5)]
-            sage: G.plot()                                                              # optional - sage.graphs sage.plot
+            sage: G.plot()                                                              # needs sage.graphs sage.plot
             Graphics object consisting of 11 graphics primitives
         """
         cdef int i, j
@@ -314,7 +314,7 @@ cdef class DiscreteHiddenMarkovModel(HiddenMarkovModel):
         Initial probabilities: [0.0000, 1.0000]
         sage: m.sample(10)
         [0, 1, 0, 1, 0, 1, 0, 1, 0, 1]
-        sage: m.graph().plot()                                                          # optional - sage.plot
+        sage: m.graph().plot()                                                          # needs sage.plot
         Graphics object consisting of 6 graphics primitives
 
     A 3-state model that happens to always outputs 'b'::

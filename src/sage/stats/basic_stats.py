@@ -68,22 +68,22 @@ def mean(v):
 
     EXAMPLES::
 
-        sage: mean([pi, e])                                                             # optional - sage.symbolic
+        sage: mean([pi, e])                                                             # needs sage.symbolic
         doctest:warning...
         DeprecationWarning: sage.stats.basic_stats.mean is deprecated;
         use numpy.mean or numpy.nanmean instead
         See https://github.com/sagemath/sage/issues/29662 for details.
         1/2*pi + 1/2*e
-        sage: mean([])                                                                  # optional - sage.symbolic
+        sage: mean([])                                                                  # needs sage.symbolic
         NaN
-        sage: mean([I, sqrt(2), 3/5])                                                   # optional - sage.symbolic
+        sage: mean([I, sqrt(2), 3/5])                                                   # needs sage.symbolic
         1/3*sqrt(2) + 1/3*I + 1/5
         sage: mean([RIF(1.0103,1.0103), RIF(2)])
         1.5051500000000000?
         sage: mean(range(4))
         3/2
-        sage: v = stats.TimeSeries([1..100])                                            # optional - numpy
-        sage: mean(v)                                                                   # optional - numpy
+        sage: v = stats.TimeSeries([1..100])                                            # needs numpy
+        sage: mean(v)                                                                   # needs numpy
         50.5
     """
     deprecation(29662, 'sage.stats.basic_stats.mean is deprecated; use numpy.mean or numpy.nanmean instead')
@@ -198,8 +198,8 @@ def std(v, bias=False):
 
     EXAMPLES::
 
-        sage: # optional - sage.symbolic
-        sage: std([1..6], bias=True)                                                    # optional - sage.symbolic
+        sage: # needs sage.symbolic
+        sage: std([1..6], bias=True)
         doctest:warning...
         DeprecationWarning: sage.stats.basic_stats.std is deprecated;
         use numpy.std or numpy.nanstd instead
@@ -213,25 +213,25 @@ def std(v, bias=False):
         use numpy.mean or numpy.nanmean instead
         See https://github.com/sagemath/sage/issues/29662 for details.
         1/2*sqrt(35/3)
-        sage: std([1..6], bias=False)                                                   # optional - sage.symbolic
+        sage: std([1..6], bias=False)
         sqrt(7/2)
-        sage: std([e, pi])                                                              # optional - sage.symbolic
+        sage: std([e, pi])
         sqrt(1/2)*abs(pi - e)
-        sage: std([])                                                                   # optional - sage.symbolic
+        sage: std([])
         NaN
-        sage: std([I, sqrt(2), 3/5])                                                    # optional - sage.symbolic
+        sage: std([I, sqrt(2), 3/5])
         1/15*sqrt(1/2)*sqrt((10*sqrt(2) - 5*I - 3)^2
         + (5*sqrt(2) - 10*I + 3)^2 + (5*sqrt(2) + 5*I - 6)^2)
         sage: std([RIF(1.0103, 1.0103), RIF(2)])
         0.6998235813403261?
 
-        sage: # optional - numpy
-        sage: import numpy                                                              # optional - numpy
-        sage: x = numpy.array([1,2,3,4,5])                                              # optional - numpy
-        sage: std(x, bias=False)                                                        # optional - numpy
+        sage: # needs numpy
+        sage: import numpy
+        sage: x = numpy.array([1,2,3,4,5])
+        sage: std(x, bias=False)
         1.5811388300841898
-        sage: x = stats.TimeSeries([1..100])                                            # optional - numpy
-        sage: std(x)                                                                    # optional - numpy
+        sage: x = stats.TimeSeries([1..100])
+        sage: std(x)
         29.011491975882016
 
     TESTS::
@@ -294,18 +294,18 @@ def variance(v, bias=False):
         7/2
         sage: variance([1..6], bias=True)
         35/12
-        sage: variance([e, pi])                                                         # optional - sage.symbolic
+        sage: variance([e, pi])                                                         # needs sage.symbolic
         1/2*(pi - e)^2
         sage: variance([])
         NaN
-        sage: variance([I, sqrt(2), 3/5])                                               # optional - sage.symbolic
+        sage: variance([I, sqrt(2), 3/5])                                               # needs sage.symbolic
         1/450*(10*sqrt(2) - 5*I - 3)^2 + 1/450*(5*sqrt(2) - 10*I + 3)^2
         + 1/450*(5*sqrt(2) + 5*I - 6)^2
         sage: variance([RIF(1.0103, 1.0103), RIF(2)])
         0.4897530450000000?
-        sage: import numpy                                                                          # optional - numpy
-        sage: x = numpy.array([1,2,3,4,5])                                                          # optional - numpy
-        sage: variance(x, bias=False)                                                               # optional - numpy
+        sage: import numpy                                                              # needs numpy
+        sage: x = numpy.array([1,2,3,4,5])                                              # needs numpy
+        sage: variance(x, bias=False)                                                   # needs numpy
         2.5
         sage: x = stats.TimeSeries([1..100])
         sage: variance(x)
@@ -398,11 +398,11 @@ def median(v):
         use numpy.median or numpy.nanmedian instead
         See https://github.com/sagemath/sage/issues/29662 for details.
         3
-        sage: median([e, pi])                                                           # optional - sage.symbolic
+        sage: median([e, pi])                                                           # needs sage.symbolic
         1/2*pi + 1/2*e
         sage: median(['sage', 'linux', 'python'])
         'python'
-        sage: median([])                                                                # optional - sage.symbolic
+        sage: median([])                                                                # needs sage.symbolic
         NaN
         sage: class MyClass:
         ....:    def median(self):
@@ -459,7 +459,7 @@ def moving_average(v, n):
         [5/2, 7/2, 9/2, 11/2, 13/2, 15/2, 17/2]
         sage: moving_average([], 1)
         []
-        sage: moving_average([pi, e, I, sqrt(2), 3/5], 2)                               # optional - sage.symbolic
+        sage: moving_average([pi, e, I, sqrt(2), 3/5], 2)                               # needs sage.symbolic
         [1/2*pi + 1/2*e, 1/2*e + 1/2*I, 1/2*sqrt(2) + 1/2*I,
          1/2*sqrt(2) + 3/10]
 
@@ -468,10 +468,10 @@ def moving_average(v, n):
     different) meaning as defined above (the point is that the
     :meth:`simple_moving_average` on time series returns `n` values::
 
-        sage: a = stats.TimeSeries([1..10])                                             # optional - numpy
-        sage: stats.moving_average(a, 3)                                                # optional - numpy
+        sage: a = stats.TimeSeries([1..10])                                             # needs numpy
+        sage: stats.moving_average(a, 3)                                                # needs numpy
         [2.0000, 3.0000, 4.0000, 5.0000, 6.0000, 7.0000, 8.0000, 9.0000]
-        sage: stats.moving_average(list(a), 3)                                          # optional - numpy
+        sage: stats.moving_average(list(a), 3)                                          # needs numpy
         [2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0]
 
     """
