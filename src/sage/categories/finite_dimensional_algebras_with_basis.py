@@ -770,7 +770,6 @@ class FiniteDimensionalAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
             projective modules is the dimension of ``self``::
 
                 sage: sum([Qi.dimension() for Qi in Q]) == A.dimension()                # needs sage.graphs sage.modules sage.rings.number_field
-
                 True
 
             .. SEEALSO::

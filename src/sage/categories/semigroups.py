@@ -196,28 +196,29 @@ class Semigroups(CategoryWithAxiom):
 
             We start with the (right) Cayley graphs of some classical groups::
 
-                sage: # optional - grage.graphs, needs sage.groups
+                sage: # needs sage.graphs sage.groups
                 sage: D4 = DihedralGroup(4); D4
                 Dihedral group of order 8 as a permutation group
-                sage: G = D4.cayley_graph()                                             # needs sage.graphs
-                sage: show(G, color_by_label=True, edge_labels=True)                    # needs sage.graphs sage.plot
+                sage: G = D4.cayley_graph()
+                sage: show(G, color_by_label=True, edge_labels=True)                    # needs sage.plot
                 sage: A5 = AlternatingGroup(5); A5
                 Alternating group of order 5!/2 as a permutation group
-                sage: G = A5.cayley_graph()                                             # needs sage.graphs
-                sage: G.show3d(color_by_label=True, edge_size=0.01,                     # needs sage.graphs sage.plot
+                sage: G = A5.cayley_graph()
+                sage: G.show3d(color_by_label=True, edge_size=0.01,                     # needs sage.plot
                 ....:          edge_size2=0.02, vertex_size=0.03)
-                sage: G.show3d(vertex_size=0.03,        # long time (less than a minute), needs sage.graphs sage.plot
+                sage: G.show3d(vertex_size=0.03,        # long time (less than a minute), needs sage.plot
                 ....:          edge_size=0.01, edge_size2=0.02,
                 ....:          vertex_colors={(1,1,1): G.vertices(sort=True)},
                 ....:          bgcolor=(0,0,0), color_by_label=True,
                 ....:          xres=700, yres=700, iterations=200)
-                sage: G.num_edges()                                                     # needs sage.graphs
+                sage: G.num_edges()
                 120
 
-                sage: w = WeylGroup(['A', 3])                                           # needs sage.combinat sage.groups
-                sage: d = w.cayley_graph(); d                                           # needs sage.combinat sage.graphs sage.groups
+                sage: # needs sage.combinat sage.graphs sage.groups
+                sage: w = WeylGroup(['A', 3])
+                sage: d = w.cayley_graph(); d
                 Digraph on 24 vertices
-                sage: d.show3d(color_by_label=True, edge_size=0.01, vertex_size=0.03)   # needs sage.combinat sage.graphs sage.groups sage.plot
+                sage: d.show3d(color_by_label=True, edge_size=0.01, vertex_size=0.03)   # needs sage.plot
 
             Alternative generators may be specified::
 

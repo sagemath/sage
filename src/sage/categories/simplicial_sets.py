@@ -772,7 +772,7 @@ class SimplicialSets(Category_singleton):
 
                         sage: T = S1.product(S1)                                        # needs sage.graphs sage.groups
                         sage: X = T.smash_product(S1)                                   # needs sage.graphs sage.groups
-                        sage: X.homology(reduced=False)                                 # needs sage.graphs sage.modules
+                        sage: X.homology(reduced=False)                                 # needs sage.graphs sage.groups sage.modules
                         {0: Z, 1: 0, 2: Z x Z, 3: Z}
                     """
                     from sage.topology.simplicial_set_constructions import SmashProductOfSimplicialSets_finite

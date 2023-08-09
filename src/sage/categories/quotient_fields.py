@@ -94,8 +94,8 @@ class QuotientFields(Category_singleton):
             The following tests that the fraction field returns a correct gcd
             even if the base ring does not provide lcm and gcd::
 
-                sage: # needs sage.rings.number_field
-                sage: R = ZZ.extension(x^2 + 1, names='i')                              # needs sage.libs.pari
+                sage: # needs sage.libs.pari sage.rings.number_field
+                sage: R = ZZ.extension(x^2 + 1, names='i')
                 sage: i = R.1
                 sage: gcd(5, 3 + 4*i)
                 -i - 2
@@ -199,8 +199,8 @@ class QuotientFields(Category_singleton):
             The following tests that the fraction field returns a correct lcm
             even if the base ring does not provide lcm and gcd::
 
-                sage: # needs sage.rings.number_field
-                sage: R = ZZ.extension(x^2+1, names='i')                                # needs sage.libs.pari
+                sage: # needs sage.libs.pari sage.rings.number_field
+                sage: R = ZZ.extension(x^2+1, names='i')
                 sage: i = R.1
                 sage: P.<t> = R[]
                 sage: lcm(t, i)
@@ -366,21 +366,20 @@ class QuotientFields(Category_singleton):
 
         def partial_fraction_decomposition(self, decompose_powers=True):
             """
-            Decomposes fraction field element into a whole part and a list of
+            Decompose fraction field element into a whole part and a list of
             fraction field elements over prime power denominators.
 
             The sum will be equal to the original fraction.
 
             INPUT:
 
-            - decompose_powers -- whether to decompose prime power
-                                 denominators as opposed to having a single
-                                 term for each irreducible factor of the
-                                 denominator (default: True)
+            - ``decompose_powers`` -- boolean (default: ``True``);
+              whether to decompose prime power denominators as opposed to having
+              a single term for each irreducible factor of the denominator
 
             OUTPUT:
 
-            - Partial fraction decomposition of self over the base ring.
+            Partial fraction decomposition of ``self`` over the base ring.
 
             AUTHORS:
 
@@ -446,7 +445,7 @@ class QuotientFields(Category_singleton):
             Or we may work directly over an algebraically closed field::
 
                 sage: R.<x> = QQbar[]                                                   # needs sage.rings.number_field
-                sage: r =  1/(x^4+1)                                                    # needs sage.rings.number_field sage.symbolic
+                sage: r =  1/(x^4+1)                                                    # needs sage.rings.number_field
                 sage: r.partial_fraction_decomposition()                                # needs sage.rings.number_field
                 (0,
                  [(-0.1767766952966369? - 0.1767766952966369?*I)/(x - 0.7071067811865475? - 0.7071067811865475?*I),

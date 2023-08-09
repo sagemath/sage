@@ -295,12 +295,13 @@ cdef class Map(Element):
         invalid. This is why :meth:`_make_weak_references` should only be used
         if one really knows what one is doing::
 
-            sage: phi._make_weak_references()                                           # needs sage.rings.number_field
-            sage: _ = gc.collect()                                                      # needs sage.rings.number_field
-            sage: numberQuadFields == len([x for x in gc.get_objects()                  # needs sage.rings.number_field
+            sage: # needs sage.rings.number_field
+            sage: phi._make_weak_references()
+            sage: _ = gc.collect()
+            sage: numberQuadFields == len([x for x in gc.get_objects()
             ....:                          if isinstance(x, C)]) + 1
             True
-            sage: phi                                                                   # needs sage.rings.number_field
+            sage: phi
             Defunct map
         """
         if not isinstance(self.domain, ConstantFunction):
