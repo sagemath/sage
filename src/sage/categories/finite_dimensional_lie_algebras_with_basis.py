@@ -1200,28 +1200,28 @@ class FiniteDimensionalLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
                 Y.insert(0, k)
                 return 1, tuple(Y)
 
-            def HomAlgebra(Module):
+            def homalgebra(Module):
                 """
                 Define the endomorphism Lie algebra of M, with generators {gi}.
                 """
 
                 n = dim(Module)
-                MS=MatrixSpace(R, n)
-                keys=[]
-                values=[]
-                gln=lie_algebras.gl(R, n)
+                MS = MatrixSpace(R, n)
+                keys = []
+                values = []
+                gln = lie_algebras.gl(R, n)
         
                 family = gln.structure_coefficients()
         
                 for x in family.keys():
-                    i=gln.basis().keys().index(x[0])
-                    j=gln.basis().keys().index(x[1])
+                    i = gln.basis().keys().index(x[0])
+                    j = gln.basis().keys().index(x[1])
                     keys.append((f'g{i}', f'g{j}'))
         
                 for x in family.values():
                     D = x.monomial_coefficients()
-                    B=list(D.keys())
-                    C=list(D.values())
+                    B = list(D.keys())
+                    C = list(D.values())
                     bracket = {f'g{gln.basis().keys().index(B[i])}': C[i] for i in range(len(D))}
         
                     values.append(bracket)
@@ -1234,45 +1234,45 @@ class FiniteDimensionalLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
         
                 return A
 
-            def Lieaction(self, M, h, LieElement, ModuleElement):
+            def lieaction(self, M, h, LieElement, ModuleElement):
 
-                n=dim(M)
-                G=HomAlgebra(M)
-                preimage=list(h.keys())
+                n = dim(M)
+                G = homalgebra(M)
+                preimage = list(h.keys())
         
-                image=list(h.values())
+                image = list(h.values())
         
-                gln=lie_algebras.gl(R, n)
-                values=[]
+                gln = lie_algebras.gl(R, n)
+                values = []
                 for x in image:
-                    D=x.monomial_coefficients()
-                    B=list(D.keys())
-                    C=list(D.values())
-                    output=0
+                    D = x.monomial_coefficients()
+                    B = list(D.keys())
+                    C = list(D.values())
+                    output = 0
                     for i in range(len(B)):
-                        l=n*B[i][0]+B[i][1]
-                        output+=G.basis().values()[l]*C[i]
+                        l = n*B[i][0] + B[i][1]
+                        output += G.basis().values()[l]*C[i]
                     values.append(output)
         
         
                 d = {preimage[i]:values[i] for i in range(len(preimage))}
         
-                g=self.morphism(d)
+                g = self.morphism(d)
         
-                H=zero_matrix(R, n)
-                K=list(itertools.chain(*H))
+                H = zero_matrix(R, n)
+                K = list(itertools.chain(*H))
         
                 final = g(LieElement).monomial_coefficients()
-                F=list(final.keys())
-                N=list(final.values())
+                F = list(final.keys())
+                N = list(final.values())
         
                 for i in range(len(F)):
-                    l=G.basis().keys().index(F[i])
-                    K[l]+=N[i]
+                    l = G.basis().keys().index(F[i])
+                    K[l] += N[i]
         
-                MS=MatrixSpace(R, n)
+                MS = MatrixSpace(R, n)
         
-                return (vector(ModuleElement))*MS(K)
+                return (vector(ModuleElement)) * MS(K)
 
             from sage.parallel.decorate import parallel
 
@@ -1285,41 +1285,41 @@ class FiniteDimensionalLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
                 First_space = {X:i for i, X in enumerate(M_dim)}
                 values_cartesian_product = list(itertools.product(First_space.values(), Lambda_dim.values()))
                 Parentspace = {i: value for i, value in enumerate(values_cartesian_product)}
-                V=VectorSpace(R, len(Parentspace))
+                V = VectorSpace(R, len(Parentspace))
         
-                data=[]
+                data = []
                 zero = [0] * len(Parentspace)
         
-                Big_Lambda_dim = {i:tuple(X) for i,X in enumerate(combinations(L_dim, k), start=len(M_dim))}
+                Big_Lambda_dim = {i:tuple(X) for i,X in enumerate(combinations(L_dim, k), start = len(M_dim))}
                 big_values_cartesian_product = list(itertools.product(First_space.values(), Big_Lambda_dim.values()))
                 BigParentspace = {i: value for i, value in enumerate(big_values_cartesian_product)}
         
                 for j in BigParentspace.values():
                     met = list(zero)
                     total = list(zero)
-                    Y=list(j[1])
+                    Y = list(j[1])
         
                     if (k==1):
-                        vec = Lieaction(self, M, h, B[Y[0]], Mb[int(j[0])])
+                        vec = lieaction(self, M, h, B[Y[0]], Mb[int(j[0])])
                         for p in range(len(total)):
-                            total[p]+=vec[p]
+                            total[p] += vec[p]
         
                     else:
                         for i in range(k):
                             Ynew = Y[:i] + Y[i+1:]
-                            vec = (-1)**(i)*Lieaction(self, M, h, B[Y[i]], Mb[int(j[0])])
-                            action=list(vec)
-                            l=len(action)
+                            vec = (-1)**(i)*lieaction(self, M, h, B[Y[i]], Mb[int(j[0])])
+                            action = list(vec)
+                            l = len(action)
         
                             for d in range(l):
                                 key = [k for k, v in Parentspace.items() if v == (d, tuple(Ynew))][0]
-                                vector=action[d]*V.basis()[key]
+                                vector = action[d]*V.basis()[key]
         
                                 for t in range(len(vector)):
-                                    met[t]+=vector[t]
+                                    met[t] += vector[t]
         
                         for p in range(len(total)):
-                            total[p]+=met[p]
+                            total[p] += met[p]
         
                     data.append(total)
         
@@ -1336,7 +1336,7 @@ class FiniteDimensionalLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
                 Return the second term of the coboundary map.
                 """
                 Lambda_dim = {tuple(X): i for i,X in enumerate(combinations(L_dim, k-1))}
-                data=[]
+                data = []
                 zero = [0] * len(Lambda_dim)
                 for X in combinations(L_dim, k):
                     ret = list(zero)
@@ -1358,9 +1358,9 @@ class FiniteDimensionalLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
                 ncols = binomial(len(L_dim), k-1)
                 MS = MatrixSpace(R, nrows, ncols)
                 ret = MS(data).transpose()
-                Mdim=M.dimension()
-                A=matrix.identity(Mdim)
-                A1=matrix(A.tensor_product(ret))
+                Mdim = M.dimension()
+                A = matrix.identity(Mdim)
+                A1 = matrix(A.tensor_product(ret))
                 return A1
 
             @parallel
@@ -1368,12 +1368,12 @@ class FiniteDimensionalLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
                 """
                 Build the k-th differential (in parallel).
                 """
-                return f1(k)+f2(k)
+                return f1(k) + f2(k)
                 
             from sage.homology.chain_complex import ChainComplex
             
-            chain_data = {X[0][0]: M for X, M in compute_diff(list(range(1,len(L_dim)+1) ))}
-            C=ChainComplex(chain_data, degree_of_differential=-1)
+            chain_data = {X[0][0]: M for X, M in compute_diff(list(range(1,len(L_dim) + 1) ))}
+            C = ChainComplex(chain_data, degree_of_differential = -1)
             return C
 
         def homology(self, deg=None, M=None, sparse=True, ncpus=None):
