@@ -21,7 +21,6 @@ AUTHORS:
 
 from collections.abc import Collection
 from sage.categories.fields import Fields
-from sage.categories.homset import Hom
 from sage.categories.number_fields import NumberFields
 from sage.categories.semigroups import Semigroups
 from sage.dynamics.arithmetic_dynamics.affine_ds import DynamicalSystem_affine
@@ -30,7 +29,7 @@ from sage.dynamics.arithmetic_dynamics.projective_ds import DynamicalSystem_proj
 from sage.misc.classcall_metaclass import typecall
 from sage.misc.inherit_comparison import InheritComparisonClasscallMetaclass
 from sage.rings.finite_rings.finite_field_base import FiniteField
-from sage.rings.integer import Integer
+from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
 from sage.structure.parent import Parent
 
@@ -363,7 +362,10 @@ class DynamicalSemigroup(Parent, metaclass=InheritComparisonClasscallMetaclass):
                     (x^2 : y^2)
         """
 
-        self._dynamical_systems = _remove_duplicates_of_(systems)
+        self._dynamical_systems = []
+        for ds in systems:
+            if ds not in self._dynamical_systems:
+                self._dynamical_systems.append(ds)
         Parent.__init__(self, category=Semigroups().FinitelyGeneratedAsMagma())
 
     def __call__(self, input):
@@ -582,7 +584,7 @@ class DynamicalSemigroup(Parent, metaclass=InheritComparisonClasscallMetaclass):
             sage: f.nth_iterate(2, 3.5)
             Traceback (most recent call last):
             ...
-            TypeError: 3.50000000000000 must be an integer
+            TypeError: Attempt to coerce non-integral RealNumber to Integer
 
         ::
 
@@ -599,9 +601,17 @@ class DynamicalSemigroup(Parent, metaclass=InheritComparisonClasscallMetaclass):
             sage: f = DynamicalSemigroup(([x + y, x - y], [x^2, y^2]))
             sage: f.nth_iterate(3, 2) == (f * f)(3)
             True
+
+        ::
+
+            sage: P.<x,y> = ProjectiveSpace(QQ, 1)
+            sage: f = DynamicalSemigroup(([x + y, x - y], [x^2, y^2]))
+            sage: one = QQ(1)
+            sage: f.nth_iterate(2, one)
+            {(3 : 1), (4 : 1)}
+
         """
-        if not isinstance(n, Integer) and not isinstance(n, int):
-            raise TypeError(str(n) + " must be an integer")
+        n = ZZ(n)
         if n < 0:
             raise ValueError(str(n) + " must be a nonnegative integer")
         result = {self.domain()(p)}
@@ -900,6 +910,8 @@ class DynamicalSemigroup(Parent, metaclass=InheritComparisonClasscallMetaclass):
             ...
             TypeError: can only multiply dynamical semigroups with other dynamical semigroups of the same type
 
+        ::
+
             sage: P.<x,y> = ProjectiveSpace(QQ, 1)
             sage: A.<z> = AffineSpace(QQ, 1)
             sage: f1 = DynamicalSystem_projective([x, y], P)
@@ -1053,7 +1065,7 @@ class DynamicalSemigroup(Parent, metaclass=InheritComparisonClasscallMetaclass):
             sage: d^1.5
             Traceback (most recent call last):
             ...
-            TypeError: 1.50000000000000 must be an integer
+            TypeError: Attempt to coerce non-integral RealNumber to Integer
 
         ::
 
@@ -1065,9 +1077,20 @@ class DynamicalSemigroup(Parent, metaclass=InheritComparisonClasscallMetaclass):
             Traceback (most recent call last):
             ...
             ValueError: -1 must be a nonnegative integer
+
+        ::
+
+            sage: A.<x> = AffineSpace(QQ, 1)
+            sage: f = DynamicalSystem(x^2, A)
+            sage: d = DynamicalSemigroup(f)
+            sage: two = RR(2)
+            sage: d^two
+            Dynamical semigroup over Affine Space of dimension 1 over Rational Field defined by 1 dynamical system:
+            Dynamical System of Affine Space of dimension 1 over Rational Field
+              Defn: Defined on coordinates by sending (x) to
+                    (x^4)
         """
-        if not isinstance(n, Integer) and not isinstance(n, int):
-            raise TypeError(str(n) + " must be an integer")
+        n = ZZ(n)
         if n < 0:
             raise ValueError(str(n) + " must be a nonnegative integer")
         if n == 0:
@@ -1162,12 +1185,12 @@ class DynamicalSemigroup(Parent, metaclass=InheritComparisonClasscallMetaclass):
             sage: f == g
             Traceback (most recent call last):
             ...
-            ValueError: cannot compare dynamical semigroups with at least one generator of degree 1
+            NotImplementedError: cannot compare dynamical semigroups with at least one generator of degree 1
         """
         if isinstance(other, DynamicalSemigroup):
             if any(ds.degree() == 1 for ds in self.defining_systems()) or \
                 any(ds.degree() == 1 for ds in other.defining_systems()):
-                raise ValueError("cannot compare dynamical semigroups with at least one generator of degree 1")
+                raise NotImplementedError("cannot compare dynamical semigroups with at least one generator of degree 1")
             return all(ds in other.defining_systems() for ds in self.defining_systems()) and \
                 all(ds in self.defining_systems() for ds in other.defining_systems())
         return False
@@ -1255,6 +1278,21 @@ class DynamicalSemigroup_projective(DynamicalSemigroup):
               Defn: Defined on coordinates by sending (y) to
                     (y^2)
 
+        ::
+
+            sage: P.<x,y> = ProjectiveSpace(QQ, 1)
+            sage: f = DynamicalSystem([x, y], P)
+            sage: g = DynamicalSystem([x^2, y^2], P)
+            sage: d = DynamicalSemigroup((f, g))
+            sage: d.dehomogenize(1)
+            Dynamical semigroup over Affine Space of dimension 1 over Rational Field defined by 2 dynamical systems:
+            Dynamical System of Affine Space of dimension 1 over Rational Field
+              Defn: Defined on coordinates by sending (x) to
+                    (x)
+            Dynamical System of Affine Space of dimension 1 over Rational Field
+              Defn: Defined on coordinates by sending (x) to
+                    (x^2)
+
         TESTS::
 
             sage: P.<x,y> = ProjectiveSpace(QQ, 1)
@@ -1264,15 +1302,17 @@ class DynamicalSemigroup_projective(DynamicalSemigroup):
             sage: d.dehomogenize((1, 0))
             Traceback (most recent call last):
             ...
-            ValueError: Dynamical System of Projective Space of dimension 1 over Rational Field
-              Defn: Defined on coordinates by sending (x : y) to
-                    (x : y) dehomogenized at (1, 0) is not a `DynamicalSystem_affine` object
+            ValueError: Scheme morphism:
+              From: Affine Space of dimension 1 over Rational Field
+              To:   Affine Space of dimension 1 over Rational Field
+              Defn: Defined on coordinates by sending (x) to
+                    (1/x) is not a `DynamicalSystem_affine` object
         """
         new_systems = []
         for ds in self.defining_systems():
             new_system = ds.dehomogenize(n)
             if not isinstance(new_system, DynamicalSystem_affine):
-                raise ValueError(str(ds) + " dehomogenized at " + str(n) + " is not a `DynamicalSystem_affine` object")
+                raise ValueError(str(new_system) + " is not a `DynamicalSystem_affine` object")
             new_systems.append(new_system)
         return DynamicalSemigroup_affine(new_systems)
 
@@ -1381,10 +1421,7 @@ class DynamicalSemigroup_affine(DynamicalSemigroup):
         """
         new_systems = []
         for ds in self.defining_systems():
-            new_system = ds.homogenize(n)
-            if not isinstance(new_system, DynamicalSystem_projective):
-                raise ValueError(str(ds) + " homogenized at " + str(n) + " is not a `DynamicalSystem_projective` object")
-            new_systems.append(new_system)
+            new_systems.append(ds.homogenize(n))
         return DynamicalSemigroup_projective(new_systems)
 
 class DynamicalSemigroup_affine_field(DynamicalSemigroup_affine):
@@ -1392,30 +1429,6 @@ class DynamicalSemigroup_affine_field(DynamicalSemigroup_affine):
 
 class DynamicalSemigroup_affine_finite_field(DynamicalSemigroup_affine_field):
     pass
-
-def _remove_duplicates_of_(list):
-    r"""
-    Removes duplicate elements from a list.
-
-    INPUT:
-
-    - ``list`` -- any list
-
-    OUTPUT: the original list without duplicate elements
-
-    EXAMPLES::
-
-        sage: numbers = [1, 1, 2, 3, 3, 2, 1, 5, 4, 3]
-        sage: sage.dynamics.arithmetic_dynamics.dynamical_semigroup._remove_duplicates_of_(numbers)
-        [1, 2, 3, 5, 4]
-    """
-    seen = []
-
-    for item in list:
-        if item not in seen:
-            seen.append(item)
-
-    return seen
 
 def _standardize_domains_of_(systems):
     r"""
