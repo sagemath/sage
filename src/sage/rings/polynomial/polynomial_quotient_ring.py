@@ -563,15 +563,15 @@ class PolynomialQuotientRing_generic(QuotientRing_generic):
         TESTS::
 
             sage: P5.<x> = GF(5)[]
-            sage: Q = P5.quo([(x^2+1)^2])                                               # needs sage.rings.finite_rings
+            sage: Q = P5.quo([(x^2+1)^2])
             sage: P.<x> = ZZ[]
             sage: Q1 = P.quo([(x^2+1)^2*(x^2-3)])
             sage: Q2 = P.quo([(x^2+1)^2*(x^5+3)])
-            sage: Q.has_coerce_map_from(Q1)  #indirect doctest                          # needs sage.rings.finite_rings
+            sage: Q.has_coerce_map_from(Q1)  #indirect doctest
             True
-            sage: Q1.has_coerce_map_from(Q)                                             # needs sage.rings.finite_rings
+            sage: Q1.has_coerce_map_from(Q)
             False
-            sage: Q1.has_coerce_map_from(Q2)                                            # needs sage.rings.finite_rings
+            sage: Q1.has_coerce_map_from(Q2)
             False
 
         The following tests against a bug fixed in :trac:`8992`::
@@ -787,9 +787,9 @@ class PolynomialQuotientRing_generic(QuotientRing_generic):
             sage: F(R) == Q
             True
             sage: P.<t> = GF(3)[]
-            sage: Q = P.quo([2 + t^2])                                                  # needs sage.rings.finite_rings
-            sage: F, R = Q.construction()                                               # needs sage.rings.finite_rings
-            sage: F(R) == Q                                                             # needs sage.rings.finite_rings
+            sage: Q = P.quo([2 + t^2])
+            sage: F, R = Q.construction()
+            sage: F(R) == Q
             True
 
         AUTHOR:
@@ -910,7 +910,7 @@ class PolynomialQuotientRing_generic(QuotientRing_generic):
         ::
 
             sage: P.<v> = GF(2)[]
-            sage: P.quotient(v^2 - v).is_finite()                                       # needs sage.rings.finite_rings
+            sage: P.quotient(v^2 - v).is_finite()
             True
         """
         f = self.modulus()
@@ -927,8 +927,8 @@ class PolynomialQuotientRing_generic(QuotientRing_generic):
         EXAMPLES::
 
             sage: R.<x> = GF(3)[]
-            sage: Q = R.quo(x^3 - x^2 - x - 1)                                          # needs sage.rings.finite_rings
-            sage: list(Q)                                                               # needs sage.rings.finite_rings
+            sage: Q = R.quo(x^3 - x^2 - x - 1)
+            sage: list(Q)
             [0,
              1,
              2,
@@ -939,7 +939,7 @@ class PolynomialQuotientRing_generic(QuotientRing_generic):
              ...
              2*xbar^2 + 2*xbar + 1,
              2*xbar^2 + 2*xbar + 2]
-            sage: len(_) == Q.cardinality() == 27                                       # needs sage.rings.finite_rings
+            sage: len(_) == Q.cardinality() == 27
             True
         """
         if not self.is_finite():
@@ -978,8 +978,8 @@ class PolynomialQuotientRing_generic(QuotientRing_generic):
         EXAMPLES::
 
             sage: R.<x> = PolynomialRing(GF(3))
-            sage: S = R.quotient(x^2005 + 1)                                            # needs sage.rings.finite_rings
-            sage: S.degree()                                                            # needs sage.rings.finite_rings
+            sage: S = R.quotient(x^2005 + 1)
+            sage: S.degree()
             2005
         """
         return self.modulus().degree()
@@ -1191,8 +1191,8 @@ class PolynomialQuotientRing_generic(QuotientRing_generic):
         EXAMPLES::
 
             sage: R.<x> = PolynomialRing(GF(3))
-            sage: S = R.quotient(x^2 - 2)                                               # needs sage.rings.finite_rings
-            sage: S.modulus()                                                           # needs sage.rings.finite_rings
+            sage: S = R.quotient(x^2 - 2)
+            sage: S.modulus()
             x^2 + 1
         """
         return self.__polynomial
@@ -1458,7 +1458,7 @@ class PolynomialQuotientRing_generic(QuotientRing_generic):
         `x^2 + 31` from 12 to 2, i.e. we lose a generator of order 6 (this was
         fixed in :trac:`14489`)::
 
-            sage: S.S_class_group([K.ideal(a)])         # not tested                    # needs sage.rings.number_field
+            sage: S.S_class_group([K.ideal(a)])  # representation varies    # not tested, needs sage.rings.number_field
             [((1/4*xbar^2 + 31/4, (-1/8*a + 1/8)*xbar^2 - 31/8*a + 31/8,
                1/16*xbar^3 + 1/16*xbar^2 + 31/16*xbar + 31/16,
                -1/16*a*xbar^3 + (1/16*a + 1/8)*xbar^2 - 31/16*a*xbar + 31/16*a + 31/8),
@@ -1470,10 +1470,11 @@ class PolynomialQuotientRing_generic(QuotientRing_generic):
 
         Note that all the returned values live where we expect them to::
 
-            sage: CG = S.S_class_group([])                                              # needs sage.rings.number_field
-            sage: type(CG[0][0][1])                                                     # needs sage.rings.number_field
+            sage: # needs sage.rings.number_field
+            sage: CG = S.S_class_group([])
+            sage: type(CG[0][0][1])
             <class 'sage.rings.polynomial.polynomial_quotient_ring.PolynomialQuotientRing_generic_with_category.element_class'>
-            sage: type(CG[0][1])                                                        # needs sage.rings.number_field
+            sage: type(CG[0][1])
             <class 'sage.rings.integer.Integer'>
 
         TESTS:
