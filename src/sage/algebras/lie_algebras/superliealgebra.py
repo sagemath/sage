@@ -282,7 +282,7 @@ class SuperLieAlgebra(CombinatorialFreeModule):
                         for i3 in range(d):
                             i = degrees[i2]
                             j = degrees[i1]
-                            ret[i3] += (-1)**(i * j + 1) * prod_c1_c2 * v[i3]
+                            ret[i3] += (-1)**(i*j + 1) * prod_c1_c2 * v[i3]
 
             output = self.parent()._M(ret)
             final = 0
