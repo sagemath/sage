@@ -208,7 +208,7 @@ class SuperLieAlgebra(CombinatorialFreeModule):
             l = [m for m in self]
             monomials = [x[0] for x in l]
             dictionary = self.parent().name_degree_map
-            degrees=self.parent()._degrees
+            degrees = self.parent()._degrees
 
             values = [dictionary[key] for key in monomials if key in dictionary]
             if values:
@@ -222,11 +222,11 @@ class SuperLieAlgebra(CombinatorialFreeModule):
             l = [m for m in self]
             monomials = [x[0] for x in l]
             dictionary = self.parent().name_degree_map
-            degrees=self.parent()._degrees
+            degrees = self.parent()._degrees
 
             values = [dictionary[key] for key in monomials if key in dictionary]
             if values:
-                if len(values)!=1:
+                if len(values) != 1:
                     return "Not homogeneous"
                 else:
                     return values[0]
@@ -242,7 +242,7 @@ class SuperLieAlgebra(CombinatorialFreeModule):
 
             structurecoefficients = P._s_coeff
             d = P.dimension()
-            ret = [0]*d
+            ret = [0] * d
 
             if not self or not rt:
                 return P.zero()
@@ -253,7 +253,7 @@ class SuperLieAlgebra(CombinatorialFreeModule):
 
             vector1 = 0
             for i in range(len(l1)):
-                vector1 += self.coefficients()[i]*values1[i]
+                vector1 += self.coefficients()[i] * values1[i]
 
             l2 = [m for m in rt]
             monomials2 = [x[0] for x in l2]
@@ -261,7 +261,7 @@ class SuperLieAlgebra(CombinatorialFreeModule):
 
             vector2 = 0
             for i in range(len(l2)):
-                vector2 += rt.coefficients()[i]*values2[i]
+                vector2 += rt.coefficients()[i] * values2[i]
 
 
             for i1 in range(d):
@@ -280,9 +280,9 @@ class SuperLieAlgebra(CombinatorialFreeModule):
                     elif (i2, i1) in structurecoefficients:
                         v = structurecoefficients[i2, i1]
                         for i3 in range(d):
-                            i=degrees[i2]
-                            j=degrees[i1]
-                            ret[i3] += (-1)**(i*j+1)*prod_c1_c2 * v[i3]
+                            i = degrees[i2]
+                            j = degrees[i1]
+                            ret[i3] += (-1)**(i * j + 1) * prod_c1_c2 * v[i3]
 
             output = self.parent()._M(ret)
             final = 0
@@ -303,7 +303,7 @@ class SuperLieAlgebra(CombinatorialFreeModule):
         elts = tester.some_elements()
         zero = self.zero()
         for x in elts:
-            tester.assertEqual(self._bracket_(x, y), self._bracket_(y,x)*(-1)**(x.degree()*y.degree()+1))
+            tester.assertEqual(self._bracket_(x, y), self._bracket_(y,x) * (-1)**(x.degree() * y.degree() + 1))
 
     def _test_distributivity(self, **options):
             tester = self._tester(**options)
@@ -324,7 +324,7 @@ class SuperLieAlgebra(CombinatorialFreeModule):
         for x in elts:
                 for y in elts:
                     if self._bracket_(x,y).homdegree() != 0:
-                        tester.assertEqual(self._homdegree_(x)+self._homdegree_(y), (self._bracket_(x,y)).homdegree())
+                        tester.assertEqual(self._homdegree_(x) + self._homdegree_(y), (self._bracket_(x,y)).homdegree())
 
 
 
@@ -339,11 +339,11 @@ class SuperLieAlgebra(CombinatorialFreeModule):
                     for z in elts:
                         a = (-1)**(x.degree()*z.degree())*self._bracket_(x, self._bracket_(y, z))
                         b = (-1)**(y.degree()*x.degree())*self._bracket_(y, self._bracket_(z, x))
-                        c =  (-1)**(z.degree()*y.degree())*self._bracket_(z, self._bracket_(x, y))
+                        c = (-1)**(z.degree()*y.degree())*self._bracket_(z, self._bracket_(x, y))
                         tester.assertEqual(a+b+c, zero)
 
 
 #Example:
 #d = {('x','y'):{'z':1}}
-#L.<x,y,z>=SuperLieAlgebra(QQ, s_coeff=d, degrees=(1,1,2)) (Corresponding to Q^2+Q)
+#L.<x,y,z> = SuperLieAlgebra(QQ, s_coeff=d, degrees=(1,1,2)) (Corresponding to Q^2+Q)
 #L.gradedmorphism({x:x, y:y, z:z}, L, L, x.bracket(y))
