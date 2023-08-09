@@ -1,7 +1,7 @@
 """
 Super Lie Algebras
 
-These are Z-graded Lie algebras satisfying graded antisymmetry and the graded Jacobi identity.
+These are Z-graded Lie algebras satisfying graded antisymmetry and the graded Jacobi identity. The current implementation allows for globally finite dimensional algebras given by structure coefficients.
 
 AUTHORS:
 
