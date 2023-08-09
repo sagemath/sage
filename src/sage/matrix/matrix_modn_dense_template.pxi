@@ -90,7 +90,7 @@ We test corner cases for multiplication::
 from libc.stdint cimport uint64_t
 from cpython.bytes cimport *
 
-from cysignals.memory cimport check_malloc, check_allocarray, check_calloc, sig_malloc, sig_free
+from cysignals.memory cimport check_malloc, check_allocarray, sig_malloc, sig_free
 from cysignals.signals cimport sig_check, sig_on, sig_off
 
 from sage.libs.gmp.mpz cimport *
@@ -123,7 +123,7 @@ from sage.structure.proof.proof import get_flag as get_proof_flag
 from sage.structure.richcmp cimport rich_to_bool
 from sage.misc.randstate cimport randstate, current_randstate
 import sage.matrix.matrix_space as matrix_space
-from .args cimport SparseEntry, MatrixArgs_init
+from .args cimport MatrixArgs_init
 
 
 from sage.cpython.string cimport char_to_str
@@ -447,8 +447,8 @@ cdef class Matrix_modn_dense_template(Matrix_dense):
         if p >= MAX_MODULUS:
             raise OverflowError("p (=%s) must be < %s."%(p, MAX_MODULUS))
 
-        self._entries = <celement *>check_calloc(self._nrows * self._ncols, sizeof(celement))
-        self._matrix = <celement **>check_calloc(self._nrows, sizeof(celement*))
+        self._entries = <celement *>check_allocarray(self._nrows * self._ncols, sizeof(celement))
+        self._matrix = <celement **>check_allocarray(self._nrows, sizeof(celement*))
 
         cdef unsigned int k
         cdef Py_ssize_t i
@@ -518,49 +518,27 @@ cdef class Matrix_modn_dense_template(Matrix_dense):
         """
         ma = MatrixArgs_init(parent, entries)
         cdef long i, j
-        it = ma.iter(convert=False, sparse=True)
+        it = ma.iter(False)
         R = ma.base
         p = R.characteristic()
-        
-        for t in it:
-            se = <SparseEntry>t
-            x = se.entry
-            v = self._matrix[se.i]
-            if type(x) is int:
-                tmp = (<long>x) % p
-                v[se.j] = tmp + (tmp<0)*p
-            elif type(x) is IntegerMod_int and (<IntegerMod_int>x)._parent is R:
-                v[se.j] = <celement>(<IntegerMod_int>x).ivalue
-            elif type(x) is Integer:
-                if coerce:
-                    v[se.j] = mpz_fdiv_ui((<Integer>x).value, p)
+        for i in range(ma.nrows):
+            v = self._matrix[i]
+            for j in range(ma.ncols):
+                x = next(it)
+                if type(x) is int:
+                    tmp = (<long>x) % p
+                    v[j] = tmp + (tmp<0)*p
+                elif type(x) is IntegerMod_int and (<IntegerMod_int>x)._parent is R:
+                    v[j] = <celement>(<IntegerMod_int>x).ivalue
+                elif type(x) is Integer:
+                    if coerce:
+                        v[j] = mpz_fdiv_ui((<Integer>x).value, p)
+                    else:
+                        v[j] = mpz_get_ui((<Integer>x).value)
+                elif coerce:
+                    v[j] = R(x)
                 else:
                     v[j] = <celement>x
-                    v[se.j] = mpz_get_ui((<Integer>x).value)
-            elif coerce:
-                v[se.j] = R(x)
-            else:
-                v[se.j] = <celement>x
-
-	
-        #for i in range(ma.nrows):
-        #    v = self._matrix[i]
-        #    for j in range(ma.ncols):
-        #        x = next(it)
-        #        if type(x) is int:
-        #            tmp = (<long>x) % p
-        #            v[j] = tmp + (tmp<0)*p
-        #        elif type(x) is IntegerMod_int and (<IntegerMod_int>x)._parent is R:
-        #            v[j] = <celement>(<IntegerMod_int>x).ivalue
-        #        elif type(x) is Integer:
-        #            if coerce:
-        #                v[j] = mpz_fdiv_ui((<Integer>x).value, p)
-        #            else:
-        #                v[j] = mpz_get_ui((<Integer>x).value)
-        #        elif coerce:
-        #            v[j] = R(x)
-        #        else:
-        #            v[j] = <celement>x
 
     cdef long _hash_(self) except -1:
         """
@@ -3034,14 +3012,19 @@ cdef class Matrix_modn_dense_template(Matrix_dense):
         if nrows == -1:
             nrows = self._nrows - row
 
-        if col != 0 or ncols != self._ncols:
-            return self.matrix_from_rows_and_columns(range(row, row+nrows), range(col, col+ncols))
+        #if col != 0 or ncols != self._ncols:
+        #    return self.matrix_from_rows_and_columns(range(row, row+nrows), range(col, col+ncols))
 
         if nrows < 0 or row < 0 or row + nrows > self._nrows:
             raise IndexError("rows out of range")
 
-        cdef Matrix_modn_dense_template M = self.new_matrix(nrows=nrows, ncols=self._ncols)
-        memcpy(M._entries, self._entries+row*ncols, sizeof(celement)*ncols*nrows)
+        cdef Matrix_modn_dense_template M = self.new_matrix(nrows=nrows, ncols=ncols)
+        cdef Py_ssize_t i,r
+        for i,r in enumerate(range(row, row+nrows)) :
+            memcpy(M._entries + (i*ncols), self._entries+self._ncols*r+col, sizeof(celement)*ncols)
+
+        #cdef Matrix_modn_dense_template M = self.new_matrix(nrows=nrows, ncols=self._ncols)
+        #memcpy(M._entries, self._entries+row*ncols, sizeof(celement)*ncols*nrows)
         return M
 
     def _matrices_from_rows(self, Py_ssize_t nrows, Py_ssize_t ncols):
