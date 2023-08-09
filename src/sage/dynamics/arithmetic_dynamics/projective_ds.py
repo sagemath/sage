@@ -2394,7 +2394,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
                 # It looks different than Wells' Algorithm, because of the difference
                 # between what Wells' calls H_infty and what Green's function returns
                 # for the infinite place.
-                h = f.green_function(number_field_pt, 0, **kwds) - H + R(1).log() / (d - 1)
+                h = f.green_function(number_field_pt, 0, **kwds) - H
 
                 # The value returned by Wells' Algorithm may be negative.
                 # As the canonical height is always non-negative, hence return 0 if
@@ -2420,7 +2420,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
                 x_i = number_field_pt[0]
                 y_i = number_field_pt[1]
 
-                Res = O(f.resultant(normalize=True).abs())
+                Res = O(f.resultant(normalize=True)).abs()
 
                 # Compute the error bound as defined in Algorithm 3.1 of [WELLS]
                 if Res > 1:
@@ -2449,10 +2449,9 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
                 # It looks different than Wells' Algorithm, because of the difference
                 # between what Wells' calls H_infty and what Green's function returns
                 # for the infinite place.
-                h = number_field_pt.global_height() - H
-                if Res > 1:
-                    for v in K.places():
-                        h += f.green_function(number_field_pt, v)
+                h = -H
+                for v in K.places():
+                    h += f.green_function(number_field_pt, v)
 
                 # The value returned by Wells' Algorithm may be negative.
                 # As the canonical height is always non-negative, hence return 0 if
