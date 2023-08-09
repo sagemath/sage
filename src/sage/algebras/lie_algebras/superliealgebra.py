@@ -243,10 +243,8 @@ class SuperLieAlgebra(CombinatorialFreeModule):
             d = self.parent().dimension()
             ret = [0]*d
 
-            if self == 0:
-                return 0
-            if rt == 0:
-                return 0
+            if not self or not rt:
+                return P.zero()
 
             l1 = [m for m in self]
             monomials1 = [x[0] for x in l1]
