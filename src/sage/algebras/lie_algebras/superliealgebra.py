@@ -29,7 +29,7 @@ from sage.misc.cachefunc import cached_method
 from sage.misc.lazy_attribute import lazy_attribute
 from sage.categories.lie_algebras import LieAlgebras
 
-class SuperLieAlgebra(CombinatorialFreeModule, UniqueRepresentation):
+class SuperLieAlgebra(CombinatorialFreeModule):
 
     @staticmethod
     def __classcall_private__(cls, base, s_coeff, names=None, index_set=None, degrees=None, category=None, **kwargs):
@@ -72,7 +72,8 @@ class SuperLieAlgebra(CombinatorialFreeModule, UniqueRepresentation):
                                      degrees=degrees, category=category, **kwargs)
 
     #Standardizing the bracket dictionary:
-
+    
+    @staticmethod
     def _standardize_s_coeff(names, s_coeff, index_set, degrees):
 
         index_to_pos = {k: i for i,k in enumerate(index_set)}
@@ -138,11 +139,6 @@ class SuperLieAlgebra(CombinatorialFreeModule, UniqueRepresentation):
 
         return VectorSpace(QQ, len(list(self.basis())))
 
-    @cached_method
-    def zero(self):
-
-        return self.element_class(self, {})
-
     def bracket(self, lt, rt):
 
         return lt.bracket(rt)
@@ -150,7 +146,7 @@ class SuperLieAlgebra(CombinatorialFreeModule, UniqueRepresentation):
 
     #Morphisms of graded Lie algebras:
 
-    def gradedmorphism(self, on_generators, domain, codomain, argument):
+    def graded_morphism(self, on_generators, domain, codomain, argument):
 
         from sage.categories.lie_algebras import LieAlgebras
         from itertools import combinations
@@ -218,7 +214,7 @@ class SuperLieAlgebra(CombinatorialFreeModule, UniqueRepresentation):
             if values:
                 return max(values)
             else:
-                return 0
+                return ZZ.zero()
             
         #Returns the degree of a homogeneous expression:
         def homdegree(self):
