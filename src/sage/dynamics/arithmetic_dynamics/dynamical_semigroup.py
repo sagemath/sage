@@ -667,6 +667,14 @@ class DynamicalSemigroup(Parent, metaclass=InheritComparisonClasscallMetaclass):
 
             sage: P.<x,y> = ProjectiveSpace(QQ, 1)
             sage: d = DynamicalSemigroup(([x, y], [x^2, y^2]))
+            sage: one = QQ(1)
+            sage: d.orbit(2, one)
+            ({(2 : 1)}, {(2 : 1), (4 : 1)})
+
+        ::
+
+            sage: P.<x,y> = ProjectiveSpace(QQ, 1)
+            sage: d = DynamicalSemigroup(([x, y], [x^2, y^2]))
             sage: d.orbit(2, -2)
             Traceback (most recent call last):
             ...
@@ -679,7 +687,7 @@ class DynamicalSemigroup(Parent, metaclass=InheritComparisonClasscallMetaclass):
             sage: d.orbit(2, x)
             Traceback (most recent call last):
             ...
-            TypeError: x must be an integer or list or tuple of two integers
+            TypeError: not a constant polynomial
 
             sage: P.<x,y> = ProjectiveSpace(QQ, 1)
             sage: d = DynamicalSemigroup(([x, y], [x^2, y^2]))
@@ -706,12 +714,25 @@ class DynamicalSemigroup(Parent, metaclass=InheritComparisonClasscallMetaclass):
             ...
             ValueError: [2, 1] cannot be in descending order
         """
-        if isinstance(n, Integer) or isinstance(n, int):
+        # if isinstance(n, Integer) or isinstance(n, int):
+        #     if n < 0:
+        #         raise ValueError(str(n) + " must be a nonnegative integer")
+        #     return self.orbit(p, [0, n])
+        # if not isinstance(n, Collection):
+        #     raise TypeError(str(n) + " must be an integer or list or tuple of two integers")
+        # if not len(n) == 2:
+        #     raise ValueError(str(n) + " must be an integer or list or tuple of two integers")
+        # if n[0] < 0 or n[1] < 0:
+        #     raise ValueError(str(n) + " must contain exactly two nonnegative integers")
+        # if n[0] > n[1]:
+        #     raise ValueError(str(n) + " cannot be in descending order")
+
+        if not isinstance(n, Collection):
+            n = ZZ(n)
             if n < 0:
                 raise ValueError(str(n) + " must be a nonnegative integer")
             return self.orbit(p, [0, n])
-        if not isinstance(n, Collection):
-            raise TypeError(str(n) + " must be an integer or list or tuple of two integers")
+
         if not len(n) == 2:
             raise ValueError(str(n) + " must be an integer or list or tuple of two integers")
         if n[0] < 0 or n[1] < 0:
