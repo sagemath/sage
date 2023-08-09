@@ -1068,7 +1068,7 @@ class FiniteDimensionalLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
             return not self.killing_form_matrix().is_singular()
 
         @cached_method(key=lambda self,M,d,s,n: (M,d,s))
-        def chevalley_eilenberg_complex(self, M, h, dual=False, sparse=True, ncpus=None):
+        def chevalley_eilenberg_complex(self, M=None, h=None, dual=False, sparse=True, ncpus=None):
             r"""
             Return the Chevalley-Eilenberg complex of ``self``.
 
