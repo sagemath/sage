@@ -1827,8 +1827,7 @@ class TermOrder(SageObject):
 
         EXAMPLES::
 
-            sage: P = PolynomialRing(GF(127), 8, names='x',
-            ....:                    order='degrevlex(3),lex(5)')
+            sage: P = PolynomialRing(GF(127), 8, names='x', order='degrevlex(3),lex(5)')
             sage: T = P.term_order()
             sage: T.macaulay2_str()
             '{GRevLex => 3,Lex => 5}'

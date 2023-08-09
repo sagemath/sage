@@ -1406,13 +1406,12 @@ cdef class OrePolynomial(AlgebraElement):
             sage: k.<a> = GF(7^5)
             sage: Frob = k.frobenius_endomorphism(3)
             sage: S.<x> = k['x', Frob]
-            sage: # needs sage.rings.finite_rings
-            sage: D = S.random_element(degree=2)                                        # needs sage.misc.cython
-            sage: P = D * S.random_element(degree=2)                                    # needs sage.misc.cython
-            sage: Q = D * S.random_element(degree=2)                                    # needs sage.misc.cython
+            sage: D = S.random_element(degree=2)
+            sage: P = D * S.random_element(degree=2)
+            sage: Q = D * S.random_element(degree=2)
             sage: L = P.right_lcm(Q)
-            sage: U = right_lcm_cofactor(P, Q)                                          # needs sage.misc.cython
-            sage: (P*U).left_monic() == L                                               # needs sage.misc.cython
+            sage: U = right_lcm_cofactor(P, Q)
+            sage: (P*U).left_monic() == L
             True
         """
         cdef OrePolynomial Q, R, T

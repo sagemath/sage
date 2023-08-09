@@ -6790,7 +6790,7 @@ cdef class Polynomial(CommutativePolynomial):
 
         TESTS::
 
-            saeg: # needs sage.libs.giap
+            sage: # needs sage.libs.giac
             sage: R.<x> = GF(101)['e,i'][]
             sage: f = R('e*i') * x + x^2
             sage: f._giac_init_()
@@ -10263,16 +10263,16 @@ cdef class Polynomial(CommutativePolynomial):
 
         Some more tests::
 
-            saeg: # needs sage.libs.pari
-            sage: f = x^16 + x^14 - x^10 + x^8 - x^6 + x^2 + 1                          # needs sage.libs.pari
-            sage: f.is_cyclotomic(algorithm="pari")                                     # needs sage.libs.pari
+            sage: # needs sage.libs.pari
+            sage: f = x^16 + x^14 - x^10 + x^8 - x^6 + x^2 + 1
+            sage: f.is_cyclotomic(algorithm="pari")
             False
-            sage: f.is_cyclotomic(algorithm="sage")                                     # needs sage.libs.pari
+            sage: f.is_cyclotomic(algorithm="sage")
             False
-            sage: g = x^16 + x^14 - x^10 - x^8 - x^6 + x^2 + 1                          # needs sage.libs.pari
-            sage: g.is_cyclotomic(algorithm="pari")                                     # needs sage.libs.pari
+            sage: g = x^16 + x^14 - x^10 - x^8 - x^6 + x^2 + 1
+            sage: g.is_cyclotomic(algorithm="pari")
             True
-            sage: g.is_cyclotomic(algorithm="sage")                                     # needs sage.libs.pari
+            sage: g.is_cyclotomic(algorithm="sage")
             True
 
             sage: y = polygen(QQ)

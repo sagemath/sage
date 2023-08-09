@@ -391,15 +391,16 @@ class LaurentPolynomialRing_generic(CommutativeRing, Parent):
         """
         EXAMPLES::
 
+            sage: # needs sage.rings.number_field
             sage: T.<t> = ZZ[]
-            sage: K.<i> = NumberField(t^2 + 1)                                                      # needs sage.rings.number_field
-            sage: L.<x,y> = LaurentPolynomialRing(K)                                                # needs sage.rings.number_field
-            sage: L._is_valid_homomorphism_(K, (K(1/2), K(3/2)))                                    # needs sage.rings.number_field
+            sage: K.<i> = NumberField(t^2 + 1)
+            sage: L.<x,y> = LaurentPolynomialRing(K)
+            sage: L._is_valid_homomorphism_(K, (K(1/2), K(3/2)))
             True
             sage: Q5 = Qp(5); i5 = Q5(-1).sqrt()                                                    # needs sage.rings.padics
-            sage: L._is_valid_homomorphism_(Q5, (Q5(1/2), Q5(3/2))) # no coercion                   # needs sage.rings.number_field sage.rings.padics
+            sage: L._is_valid_homomorphism_(Q5, (Q5(1/2), Q5(3/2)))  # no coercion                  # needs sage.rings.padics
             False
-            sage: L._is_valid_homomorphism_(Q5, (Q5(1/2), Q5(3/2)), base_map=K.hom([i5]))           # needs sage.rings.number_field sage.rings.padics
+            sage: L._is_valid_homomorphism_(Q5, (Q5(1/2), Q5(3/2)), base_map=K.hom([i5]))           # needs sage.rings.padics
             True
         """
         if base_map is None and not codomain.has_coerce_map_from(self.base_ring()):

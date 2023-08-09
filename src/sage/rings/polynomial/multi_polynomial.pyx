@@ -41,7 +41,7 @@ cdef class MPolynomial(CommutativePolynomial):
         TESTS::
 
             sage: # needs sage.rings.real_mpfr
-            sage: ZZ(RR['x,y'](0)) # indirect doctest
+            sage: ZZ(RR['x,y'](0))  # indirect doctest
             0
             sage: ZZ(RR['x,y'](0.5))
             Traceback (most recent call last):
@@ -53,7 +53,7 @@ cdef class MPolynomial(CommutativePolynomial):
             TypeError: unable to convert non-constant polynomial x to Integer Ring
 
             sage: # needs sage.rings.real_mpfr
-            sage: RR(RR['x,y'](0)) # indirect doctest
+            sage: RR(RR['x,y'](0))  # indirect doctest
             0.000000000000000
             sage: RR(ZZ['x,y'].gen(0))
             Traceback (most recent call last):
@@ -61,7 +61,7 @@ cdef class MPolynomial(CommutativePolynomial):
             TypeError: unable to convert non-constant polynomial x to Real Field with 53 bits of precision
 
             sage: # needs sage.rings.real_mpfr
-            sage: CC(RR['x,y'](0)) # indirect doctest
+            sage: CC(RR['x,y'](0))  # indirect doctest
             0.000000000000000
             sage: CC(ZZ['x,y'].gen(0))
             Traceback (most recent call last):
@@ -77,27 +77,26 @@ cdef class MPolynomial(CommutativePolynomial):
             TypeError: unable to convert non-constant polynomial x to Real Double Field
 
             sage: # needs sage.rings.real_mpfr
-            sage: CDF(RR['x,y'](0)) # indirect doctest
+            sage: CDF(RR['x,y'](0))  # indirect doctest
             0.0
             sage: CDF(ZZ['x,y'].gen(0))
             Traceback (most recent call last):
             ...
             TypeError: unable to convert non-constant polynomial x to Complex Double Field
 
-            sage: # needs sage.rings.real_mpfr
+            sage: # needs sage.libs.flint sage.rings.real_mpfr
             sage: a = RR['x,y'](1)
-            sage: RBF(a)                                                                # needs sage.libs.flint
+            sage: RBF(a)
             1.000000000000000
             sage: RIF(a)
             1
-            sage: CBF(a)                                                                # needs sage.libs.flint
+            sage: CBF(a)
             1.000000000000000
             sage: CIF(a)
             1
-
-            sage: CBF(RR['x,y'](1)) # indirect doctest                                  # needs sage.libs.flint
+            sage: CBF(RR['x,y'](1))  # indirect doctest
             1.000000000000000
-            sage: CBF(ZZ['x,y'].gen(0))                                                 # needs sage.libs.flint
+            sage: CBF(ZZ['x,y'].gen(0))
             Traceback (most recent call last):
             ...
             TypeError: unable to convert non-constant polynomial x to Complex ball field with 53 bits of precision
@@ -132,7 +131,7 @@ cdef class MPolynomial(CommutativePolynomial):
             sage: type(RR['x, y'](0))
             <class 'sage.rings.polynomial.multi_polynomial_element.MPolynomial_polydict'>
 
-            sage: int(RR['x,y'](0)) # indirect doctest
+            sage: int(RR['x,y'](0))  # indirect doctest
             0
             sage: int(RR['x,y'](10))
             10
@@ -141,7 +140,7 @@ cdef class MPolynomial(CommutativePolynomial):
             ...
             TypeError: unable to convert non-constant polynomial x to <class 'int'>
 
-            sage: ZZ(RR['x,y'](0)) # indirect doctest
+            sage: ZZ(RR['x,y'](0))  # indirect doctest
             0
             sage: ZZ(RR['x,y'](0.5))
             Traceback (most recent call last):
@@ -158,7 +157,7 @@ cdef class MPolynomial(CommutativePolynomial):
         r"""
         TESTS::
 
-            sage: float(RR['x,y'](0)) # indirect doctest
+            sage: float(RR['x,y'](0))  # indirect doctest
             0.0
             sage: float(ZZ['x,y'].gen(0))
             Traceback (most recent call last):
@@ -171,7 +170,7 @@ cdef class MPolynomial(CommutativePolynomial):
         r"""
         TESTS::
 
-            sage: QQ(RR['x,y'](0.5)) # indirect doctest
+            sage: QQ(RR['x,y'](0.5))  # indirect doctest
             1/2
             sage: QQ(RR['x,y'].gen(0))
             Traceback (most recent call last):
@@ -2438,7 +2437,7 @@ cdef class MPolynomial(CommutativePolynomial):
             sage: R.<x,y> = PolynomialRing(RR)
             sage: F = (217.992172373276*x^3 + 96023.1505442490*x^2*y
             ....:      + 1.40987971253579e7*x*y^2 + 6.90016027113216e8*y^3)
-            sage: F.reduced_form(smallest_coeffs=False) # tol 1e-8                      # needs sage.modules sage.rings.complex_interval_field
+            sage: F.reduced_form(smallest_coeffs=False)  # tol 1e-8                     # needs sage.modules sage.rings.complex_interval_field
             (
             -39.5673942565918*x^3 + 111.874026298523*x^2*y
              + 231.052762985229*x*y^2 - 138.380829811096*y^3,
@@ -2481,7 +2480,7 @@ cdef class MPolynomial(CommutativePolynomial):
         emb = kwds.get('emb', None)
 
         # getting a numerical approximation of the roots of our polynomial
-        CF = ComplexIntervalField(prec=prec) # keeps trac of our precision error
+        CF = ComplexIntervalField(prec=prec)  # keeps trac of our precision error
         RF = RealField(prec=prec)
         R = self.parent()
         x,y = R.gens()
