@@ -22,6 +22,3 @@ def run_tests_in_module(mod: types.ModuleType) -> None:
 
 if __name__ == '__main__':
     run_tests()
-
-
-
