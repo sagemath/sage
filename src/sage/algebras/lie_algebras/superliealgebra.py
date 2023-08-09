@@ -236,12 +236,12 @@ class SuperLieAlgebra(CombinatorialFreeModule):
         def bracket(self, rt):
             P = self.parent()
             names = P._names
-            degrees=self.parent()._degrees
-            dictionary = self.parent().vector_presentation
-            basis=self.parent().basis()
+            degrees= P._degrees
+            dictionary = P.vector_presentation
+            basis= P.basis()
 
-            structurecoefficients = self.parent()._s_coeff
-            d = self.parent().dimension()
+            structurecoefficients = P._s_coeff
+            d = P.dimension()
             ret = [0]*d
 
             if not self or not rt:
