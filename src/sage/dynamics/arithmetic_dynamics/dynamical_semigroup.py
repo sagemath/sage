@@ -303,7 +303,10 @@ class DynamicalSemigroup(Parent, metaclass=InheritComparisonClasscallMetaclass):
                     (x^2 : y^2)
         """
 
-        self._dynamical_systems = _remove_duplicates_of_(systems)
+        self._dynamical_systems = []
+        for ds in systems:
+            if ds not in self._dynamical_systems:
+                self._dynamical_systems.append(ds)
         Parent.__init__(self, category=Semigroups().FinitelyGeneratedAsMagma())
 
     def __call__(self, input):
@@ -915,12 +918,12 @@ class DynamicalSemigroup(Parent, metaclass=InheritComparisonClasscallMetaclass):
             sage: f == g
             Traceback (most recent call last):
             ...
-            ValueError: cannot compare dynamical semigroups with at least one generator of degree 1
+            NotImplementedError: cannot compare dynamical semigroups with at least one generator of degree 1
         """
         if isinstance(other, DynamicalSemigroup):
             if any(ds.degree() == 1 for ds in self.defining_systems()) or \
                 any(ds.degree() == 1 for ds in other.defining_systems()):
-                raise ValueError("cannot compare dynamical semigroups with at least one generator of degree 1")
+                raise NotImplementedError("cannot compare dynamical semigroups with at least one generator of degree 1")
             return all(ds in other.defining_systems() for ds in self.defining_systems()) and \
                 all(ds in self.defining_systems() for ds in other.defining_systems())
         return False
@@ -1145,30 +1148,6 @@ class DynamicalSemigroup_affine_field(DynamicalSemigroup_affine):
 
 class DynamicalSemigroup_affine_finite_field(DynamicalSemigroup_affine_field):
     pass
-
-def _remove_duplicates_of_(list):
-    r"""
-    Removes duplicate elements from a list.
-
-    INPUT:
-
-    - ``list`` -- any list
-
-    OUTPUT: the original list without duplicate elements
-
-    EXAMPLES::
-
-        sage: numbers = [1, 1, 2, 3, 3, 2, 1, 5, 4, 3]
-        sage: sage.dynamics.arithmetic_dynamics.dynamical_semigroup._remove_duplicates_of_(numbers)
-        [1, 2, 3, 5, 4]
-    """
-    seen = []
-
-    for item in list:
-        if item not in seen:
-            seen.append(item)
-
-    return seen
 
 def _standardize_domains_of_(systems):
     r"""
