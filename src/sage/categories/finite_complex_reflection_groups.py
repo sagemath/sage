@@ -311,14 +311,15 @@ class FiniteComplexReflectionGroups(CategoryWithAxiom):
 
             EXAMPLES::
 
-                sage: W = ColoredPermutations(1,3)                                      # needs sage.combinat
-                sage: W.number_of_reflection_hyperplanes()                              # needs sage.combinat
+                sage: # needs sage.combinat
+                sage: W = ColoredPermutations(1,3)
+                sage: W.number_of_reflection_hyperplanes()
                 3
-                sage: W = ColoredPermutations(2,3)                                      # needs sage.combinat
-                sage: W.number_of_reflection_hyperplanes()                              # needs sage.combinat
+                sage: W = ColoredPermutations(2,3)
+                sage: W.number_of_reflection_hyperplanes()
                 9
-                sage: W = ColoredPermutations(4,3)                                      # needs sage.combinat
-                sage: W.number_of_reflection_hyperplanes()                              # needs sage.combinat
+                sage: W = ColoredPermutations(4,3)
+                sage: W.number_of_reflection_hyperplanes()
                 15
                 sage: W = ReflectionGroup((4,2,3))          # optional - gap3
                 sage: W.number_of_reflection_hyperplanes()  # optional - gap3

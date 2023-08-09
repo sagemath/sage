@@ -72,20 +72,21 @@ class QuotientFields(Category_singleton):
 
             EXAMPLES::
 
+                sage: # needs sage.libs.pari
                 sage: R.<x> = QQ['x']
                 sage: p = (1+x)^3*(1+2*x^2)/(1-x^5)
                 sage: q = (1+x)^2*(1+3*x^2)/(1-x^4)
-                sage: factor(p)                                                         # needs sage.libs.pari
+                sage: factor(p)
                 (-2) * (x - 1)^-1 * (x + 1)^3 * (x^2 + 1/2) * (x^4 + x^3 + x^2 + x + 1)^-1
-                sage: factor(q)                                                         # needs sage.libs.pari
+                sage: factor(q)
                 (-3) * (x - 1)^-1 * (x + 1) * (x^2 + 1)^-1 * (x^2 + 1/3)
                 sage: gcd(p, q)
                 (x + 1)/(x^7 + x^5 - x^2 - 1)
-                sage: factor(gcd(p, q))                                                 # needs sage.libs.pari
+                sage: factor(gcd(p, q))
                 (x - 1)^-1 * (x + 1) * (x^2 + 1)^-1 * (x^4 + x^3 + x^2 + x + 1)^-1
-                sage: factor(gcd(p, 1 + x))                                             # needs sage.libs.pari
+                sage: factor(gcd(p, 1 + x))
                 (x - 1)^-1 * (x + 1) * (x^4 + x^3 + x^2 + x + 1)^-1
-                sage: factor(gcd(1 + x, q))                                             # needs sage.libs.pari
+                sage: factor(gcd(1 + x, q))
                 (x - 1)^-1 * (x + 1) * (x^2 + 1)^-1
 
             TESTS:
@@ -94,7 +95,7 @@ class QuotientFields(Category_singleton):
             even if the base ring does not provide lcm and gcd::
 
                 sage: # needs sage.rings.number_field
-                sage: R = ZZ.extension(x^2 + 1, names='i')
+                sage: R = ZZ.extension(x^2 + 1, names='i')                              # needs sage.libs.pari
                 sage: i = R.1
                 sage: gcd(5, 3 + 4*i)
                 -i - 2
@@ -178,18 +179,19 @@ class QuotientFields(Category_singleton):
 
             Some more involved examples::
 
+                sage: # needs sage.libs.pari
                 sage: R.<x> = QQ[]
                 sage: p = (1+x)^3*(1+2*x^2)/(1-x^5)
                 sage: q = (1+x)^2*(1+3*x^2)/(1-x^4)
-                sage: factor(p)                                                         # needs sage.libs.pari
+                sage: factor(p)
                 (-2) * (x - 1)^-1 * (x + 1)^3 * (x^2 + 1/2) * (x^4 + x^3 + x^2 + x + 1)^-1
-                sage: factor(q)                                                         # needs sage.libs.pari
+                sage: factor(q)
                 (-3) * (x - 1)^-1 * (x + 1) * (x^2 + 1)^-1 * (x^2 + 1/3)
-                sage: factor(lcm(p, q))                                                 # needs sage.libs.pari
+                sage: factor(lcm(p, q))
                 (x - 1)^-1 * (x + 1)^3 * (x^2 + 1/3) * (x^2 + 1/2)
-                sage: factor(lcm(p, 1 + x))                                             # needs sage.libs.pari
+                sage: factor(lcm(p, 1 + x))
                 (x + 1)^3 * (x^2 + 1/2)
-                sage: factor(lcm(1 + x, q))                                             # needs sage.libs.pari
+                sage: factor(lcm(1 + x, q))
                 (x + 1) * (x^2 + 1/3)
 
             TESTS:
@@ -198,7 +200,7 @@ class QuotientFields(Category_singleton):
             even if the base ring does not provide lcm and gcd::
 
                 sage: # needs sage.rings.number_field
-                sage: R = ZZ.extension(x^2+1, names='i')
+                sage: R = ZZ.extension(x^2+1, names='i')                                # needs sage.libs.pari
                 sage: i = R.1
                 sage: P.<t> = R[]
                 sage: lcm(t, i)
@@ -386,27 +388,28 @@ class QuotientFields(Category_singleton):
 
             EXAMPLES::
 
+                sage: # needs sage.libs.pari
                 sage: S.<t> = QQ[]
                 sage: q = 1/(t+1) + 2/(t+2) + 3/(t-3); q
                 (6*t^2 + 4*t - 6)/(t^3 - 7*t - 6)
-                sage: whole, parts = q.partial_fraction_decomposition(); parts          # needs sage.libs.pari
+                sage: whole, parts = q.partial_fraction_decomposition(); parts
                 [3/(t - 3), 1/(t + 1), 2/(t + 2)]
-                sage: sum(parts) == q                                                   # needs sage.libs.pari
+                sage: sum(parts) == q
                 True
                 sage: q = 1/(t^3+1) + 2/(t^2+2) + 3/(t-3)^5
-                sage: whole, parts = q.partial_fraction_decomposition(); parts          # needs sage.libs.pari
+                sage: whole, parts = q.partial_fraction_decomposition(); parts
                 [1/3/(t + 1), 3/(t^5 - 15*t^4 + 90*t^3 - 270*t^2 + 405*t - 243),
                  (-1/3*t + 2/3)/(t^2 - t + 1), 2/(t^2 + 2)]
-                sage: sum(parts) == q                                                   # needs sage.libs.pari
+                sage: sum(parts) == q
                 True
                 sage: q = 2*t / (t + 3)^2
-                sage: q.partial_fraction_decomposition()                                # needs sage.libs.pari
+                sage: q.partial_fraction_decomposition()
                 (0, [2/(t + 3), -6/(t^2 + 6*t + 9)])
-                sage: for p in q.partial_fraction_decomposition()[1]:                   # needs sage.libs.pari
+                sage: for p in q.partial_fraction_decomposition()[1]:
                 ....:     print(p.factor())
                 (2) * (t + 3)^-1
                 (-6) * (t + 3)^-2
-                sage: q.partial_fraction_decomposition(decompose_powers=False)          # needs sage.libs.pari
+                sage: q.partial_fraction_decomposition(decompose_powers=False)
                 (0, [2*t/(t^2 + 6*t + 9)])
 
             We can decompose over a given algebraic extension::
@@ -418,21 +421,22 @@ class QuotientFields(Category_singleton):
                  [(-1/4*sqrt2*x + 1/2)/(x^2 - sqrt2*x + 1),
                   (1/4*sqrt2*x + 1/2)/(x^2 + sqrt2*x + 1)])
 
-                sage: R.<x> = QQ[I][]  # of QQ[sqrt(-1)]                                # needs sage.rings.number_field
-                sage: r =  1/(x^4+1)                                                    # needs sage.rings.number_field
-                sage: r.partial_fraction_decomposition()                                # needs sage.rings.number_field
+                sage: R.<x> = QQ[I][]  # of QQ[sqrt(-1)]                                # needs sage.rings.number_field sage.symbolic
+                sage: r =  1/(x^4+1)                                                    # needs sage.rings.number_field sage.symbolic
+                sage: r.partial_fraction_decomposition()                                # needs sage.rings.number_field sage.symbolic
                 (0, [(-1/2*I)/(x^2 - I), 1/2*I/(x^2 + I)])
 
             We can also ask Sage to find the least extension where the
             denominator factors in linear terms::
 
+                sage: # needs sage.rings.number_field
                 sage: R.<x> = QQ[]
                 sage: r = 1/(x^4+2)
-                sage: N = r.denominator().splitting_field('a'); N                       # needs sage.rings.number_field
+                sage: N = r.denominator().splitting_field('a'); N
                 Number Field in a with defining polynomial x^8 - 8*x^6 + 28*x^4 + 16*x^2 + 36
-                sage: R1.<x1> = N[]                                                     # needs sage.rings.number_field
-                sage: r1 = 1/(x1^4+2)                                                   # needs sage.rings.number_field
-                sage: r1.partial_fraction_decomposition()                               # needs sage.rings.number_field
+                sage: R1.<x1> = N[]
+                sage: r1 = 1/(x1^4+2)
+                sage: r1.partial_fraction_decomposition()
                 (0,
                  [(-1/224*a^6 + 13/448*a^4 - 5/56*a^2 - 25/224)/(x1 - 1/28*a^6 + 13/56*a^4 - 5/7*a^2 - 25/28),
                   (1/224*a^6 - 13/448*a^4 + 5/56*a^2 + 25/224)/(x1 + 1/28*a^6 - 13/56*a^4 + 5/7*a^2 + 25/28),
@@ -442,7 +446,7 @@ class QuotientFields(Category_singleton):
             Or we may work directly over an algebraically closed field::
 
                 sage: R.<x> = QQbar[]                                                   # needs sage.rings.number_field
-                sage: r =  1/(x^4+1)
+                sage: r =  1/(x^4+1)                                                    # needs sage.rings.number_field sage.symbolic
                 sage: r.partial_fraction_decomposition()                                # needs sage.rings.number_field
                 (0,
                  [(-0.1767766952966369? - 0.1767766952966369?*I)/(x - 0.7071067811865475? - 0.7071067811865475?*I),
@@ -452,15 +456,15 @@ class QuotientFields(Category_singleton):
 
             We do the best we can over inexact fields::
 
-                sage: # needs sage.rings.real_mpfr
+                sage: # needs sage.rings.number_field sage.rings.real_mpfr
                 sage: R.<x> = RealField(20)[]
                 sage: q = 1/(x^2 + x + 2)^2 + 1/(x-1); q
                 (x^4 + 2.0000*x^3
                   + 5.0000*x^2 + 5.0000*x + 3.0000)/(x^5 + x^4 + 3.0000*x^3 - x^2 - 4.0000)
-                sage: whole, parts = q.partial_fraction_decomposition(); parts          # needs sage.rings.number_field
+                sage: whole, parts = q.partial_fraction_decomposition(); parts
                 [1.0000/(x - 1.0000),
                  1.0000/(x^4 + 2.0000*x^3 + 5.0000*x^2 + 4.0000*x + 4.0000)]
-                sage: sum(parts)                                                        # needs sage.rings.number_field
+                sage: sum(parts)
                 (x^4 + 2.0000*x^3
                   + 5.0000*x^2 + 5.0000*x + 3.0000)/(x^5 + x^4 + 3.0000*x^3 - x^2 - 4.0000)
 
@@ -531,18 +535,19 @@ class QuotientFields(Category_singleton):
 
             This was fixed in :trac:`16240`::
 
+                sage: # needs sage.libs.pari
                 sage: R.<x> = QQ['x']
                 sage: p = 1/(-x + 1)
-                sage: whole,parts = p.partial_fraction_decomposition()                  # needs sage.libs.pari
-                sage: p == sum(parts)                                                   # needs sage.libs.pari
+                sage: whole, parts = p.partial_fraction_decomposition()
+                sage: p == sum(parts)
                 True
                 sage: p = 3/(-x^4 + 1)
-                sage: whole,parts = p.partial_fraction_decomposition()                  # needs sage.libs.pari
-                sage: p == sum(parts)                                                   # needs sage.libs.pari
+                sage: whole, parts = p.partial_fraction_decomposition()
+                sage: p == sum(parts)
                 True
                 sage: p = (6*x^2 - 9*x + 5)/(-x^3 + 3*x^2 - 3*x + 1)
-                sage: whole,parts = p.partial_fraction_decomposition()                  # needs sage.libs.pari
-                sage: p == sum(parts)                                                   # needs sage.libs.pari
+                sage: whole, parts = p.partial_fraction_decomposition()
+                sage: p == sum(parts)
                 True
             """
             denom = self.denominator()

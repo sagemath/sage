@@ -66,17 +66,18 @@ class Rings(CategoryWithAxiom):
 
             EXAMPLES::
 
+                sage: # needs sage.libs.singular
                 sage: R.<x,y> = QQ[]
-                sage: R.hom([x, y^2], R).is_injective()                                 # needs sage.libs.singular
+                sage: R.hom([x, y^2], R).is_injective()
                 True
-                sage: R.hom([x, x^2], R).is_injective()                                 # needs sage.libs.singular
+                sage: R.hom([x, x^2], R).is_injective()
                 False
-                sage: S.<u,v> = R.quotient(x^3*y)                                       # needs sage.libs.singular
-                sage: R.hom([v, u], S).is_injective()                                   # needs sage.libs.singular
+                sage: S.<u,v> = R.quotient(x^3*y)
+                sage: R.hom([v, u], S).is_injective()
                 False
-                sage: S.hom([-u, v], S).is_injective()                                  # needs sage.libs.singular
+                sage: S.hom([-u, v], S).is_injective()
                 True
-                sage: S.cover().is_injective()                                          # needs sage.libs.singular
+                sage: S.cover().is_injective()
                 False
 
             If the domain is a field, the homomorphism is injective::
@@ -831,14 +832,15 @@ class Rings(CategoryWithAxiom):
                 sage: S.gens()
                 (a,)
 
+                sage: # needs sage.libs.singular
                 sage: R.<x,y> = PolynomialRing(QQ, 2)
-                sage: S.<a,b> = R.quotient((x^2, y))                                    # needs sage.libs.singular
+                sage: S.<a,b> = R.quotient((x^2, y))
                 sage: S
                 Quotient of Multivariate Polynomial Ring in x, y over Rational Field
                  by the ideal (x^2, y)
-                sage: S.gens()                                                          # needs sage.libs.singular
+                sage: S.gens()
                 (a, 0)
-                sage: a == b                                                            # needs sage.libs.singular
+                sage: a == b
                 False
             """
             from sage.rings.quotient_ring import QuotientRing
@@ -1289,18 +1291,19 @@ class Rings(CategoryWithAxiom):
 
             EXAMPLES::
 
+                sage: # needs sage.modules
                 sage: R.<x> = QQ[[]]
-                sage: V, from_V, to_V = R.free_module(R)                                # needs sage.modules
-                sage: v = to_V(1 + x); v                                                # needs sage.modules
+                sage: V, from_V, to_V = R.free_module(R)
+                sage: v = to_V(1 + x); v
                 (1 + x)
-                sage: from_V(v)                                                         # needs sage.modules
+                sage: from_V(v)
                 1 + x
-                sage: W, from_W, to_W = R.free_module(R, basis=(1 - x))                 # needs sage.modules
-                sage: W is V                                                            # needs sage.modules
+                sage: W, from_W, to_W = R.free_module(R, basis=(1 - x))
+                sage: W is V
                 True
-                sage: w = to_W(1 + x); w                                                # needs sage.modules
+                sage: w = to_W(1 + x); w
                 (1 - x^2)
-                sage: from_W(w)                                                         # needs sage.modules
+                sage: from_W(w)
                 1 + x + O(x^20)
             """
             if base is None:

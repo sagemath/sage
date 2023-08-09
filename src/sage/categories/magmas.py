@@ -724,11 +724,12 @@ class Magmas(Category_singleton):
 
                     EXAMPLES::
 
-                        sage: from sage.combinat.root_system.extended_affine_weyl_group import ExtendedAffineWeylGroup  # needs sage.combinat sage.groups
-                        sage: PvW0 = ExtendedAffineWeylGroup(['A',2,1]).PvW0()          # needs sage.combinat sage.groups
-                        sage: PvW0 in Magmas().Unital().Realizations()                  # needs sage.combinat sage.groups
+                        sage: # needs sage.combinat sage.groups
+                        sage: from sage.combinat.root_system.extended_affine_weyl_group import ExtendedAffineWeylGroup
+                        sage: PvW0 = ExtendedAffineWeylGroup(['A',2,1]).PvW0()
+                        sage: PvW0 in Magmas().Unital().Realizations()
                         True
-                        sage: PvW0.one()                                                # needs sage.combinat sage.groups
+                        sage: PvW0.one()
                         1
                     """
                     return self(self.realization_of().a_realization().one())
@@ -960,17 +961,17 @@ class Magmas(Category_singleton):
             :class:`~sage.matrix.operation_table.OperationTable` for more
             comprehensive documentation. ::
 
-                sage: # needs sage.groups
+                sage: # needs sage.groups sage.modules
                 sage: G = AlternatingGroup(3)
-                sage: T = G.multiplication_table()                                      # needs sage.modules
-                sage: T.column_keys()                                                   # needs sage.modules
+                sage: T = G.multiplication_table()
+                sage: T.column_keys()
                 ((), (1,2,3), (1,3,2))
-                sage: T.translation()                                                   # needs sage.modules
+                sage: T.translation()
                 {'a': (), 'b': (1,2,3), 'c': (1,3,2)}
-                sage: T.change_names(['x', 'y', 'z'])                                   # needs sage.modules
-                sage: T.translation()                                                   # needs sage.modules
+                sage: T.change_names(['x', 'y', 'z'])
+                sage: T.translation()
                 {'x': (), 'y': (1,2,3), 'z': (1,3,2)}
-                sage: T                                                                 # needs sage.modules
+                sage: T
                 *  x y z
                  +------
                 x| x y z
@@ -1085,7 +1086,7 @@ class Magmas(Category_singleton):
                     sage: x * x
                     (1/4, 1, 1)
 
-                    sage: # needs sage.groups
+                    sage: # needs sage.groups sage.modules
                     sage: A = SymmetricGroupAlgebra(QQ, 3)
                     sage: x = cartesian_product([A([1,3,2]), A([2,3,1])])
                     sage: y = cartesian_product([A([1,3,2]), A([2,3,1])])

@@ -216,12 +216,13 @@ class AffineWeylGroups(Category_singleton):
 
             EXAMPLES::
 
+                sage: # needs sage.combinat sage.groups
                 sage: k = 2
-                sage: W = WeylGroup(['A', k, 1])                                        # needs sage.combinat sage.groups
-                sage: w = W.from_reduced_word([0,2,1,0])                                # needs sage.combinat sage.groups
-                sage: la = w.affine_grassmannian_to_partition(); la                     # needs sage.combinat sage.groups
+                sage: W = WeylGroup(['A', k, 1])
+                sage: w = W.from_reduced_word([0,2,1,0])
+                sage: la = w.affine_grassmannian_to_partition(); la
                 [2, 2]
-                sage: la.from_kbounded_to_grassmannian(k) == w                          # needs sage.combinat sage.groups
+                sage: la.from_kbounded_to_grassmannian(k) == w
                 True
             """
             return self.affine_grassmannian_to_core().to_bounded_partition()

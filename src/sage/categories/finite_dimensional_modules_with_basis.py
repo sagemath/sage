@@ -495,13 +495,14 @@ class FiniteDimensionalModulesWithBasis(CategoryWithAxiom_over_base_ring):
 
             EXAMPLES::
 
-                sage: M = CombinatorialFreeModule(QQ, [1,2,3])                          # needs sage.modules
-                sage: G = SymmetricGroup(3)                                             # needs sage.groups
+                sage: # needs sage.groups sage.modules
+                sage: M = CombinatorialFreeModule(QQ, [1,2,3])
+                sage: G = SymmetricGroup(3)
                 sage: def action(g,x): return(M.term(g(x)))  # permute coordinates
-                sage: T = M.twisted_invariant_module(G, [2,0,-1],                       # needs sage.groups sage.modules
+                sage: T = M.twisted_invariant_module(G, [2,0,-1],
                 ....:                                action_on_basis=action)
                 sage: import __main__; __main__.action = action
-                sage: TestSuite(T).run()                                                # needs sage.groups sage.modules
+                sage: TestSuite(T).run()
             """
 
             if action_on_basis is not None:

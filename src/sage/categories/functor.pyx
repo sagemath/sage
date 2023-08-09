@@ -250,14 +250,15 @@ cdef class Functor(SageObject):
 
         TESTS::
 
+            sage: # needs sage.rings.finite_rings
             sage: from sage.categories.functor import Functor
             sage: F = Functor(Rings(), Fields())
-            sage: k.<a> = GF(25)                                                        # needs sage.rings.finite_rings
-            sage: f = k.hom([-a - 4])                                                   # needs sage.rings.finite_rings
-            sage: R.<t> = k[]                                                           # needs sage.rings.finite_rings
-            sage: fR = R.hom(f, R)                                                      # needs sage.rings.finite_rings
-            sage: fF = F(fR)         # indirect doctest                                 # needs sage.rings.finite_rings
-            sage: fF                                                                    # needs sage.rings.finite_rings
+            sage: k.<a> = GF(25)
+            sage: f = k.hom([-a - 4])
+            sage: R.<t> = k[]
+            sage: fR = R.hom(f, R)
+            sage: fF = F(fR)         # indirect doctest
+            sage: fF
             Ring endomorphism of Fraction Field of
              Univariate Polynomial Ring in t over Finite Field in a of size 5^2
               Defn: Induced from base ring by
@@ -266,7 +267,7 @@ cdef class Functor(SageObject):
                       Defn: Induced from base ring by
                             Ring endomorphism of Finite Field in a of size 5^2
                               Defn: a |--> 4*a + 1
-            sage: fF((a^2+a)*t^2/(a*t - a^2))                                           # needs sage.rings.finite_rings
+            sage: fF((a^2+a)*t^2/(a*t - a^2))
             ((4*a + 2)*t^2)/(t + a + 4)
         """
         try:

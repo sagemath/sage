@@ -70,8 +70,8 @@ class GroupAlgebras(AlgebrasCategory):
     TESTS::
 
         sage: # needs sage.groups sage.modules
-        sage: A = GroupAlgebras(QQ).example(GL(3, GF(11)))                              # needs sage.rings.finite_rings
-        sage: A.one_basis()                                                             # needs sage.rings.finite_rings
+        sage: A = GroupAlgebras(QQ).example(GL(3, GF(11)))
+        sage: A.one_basis()
         [1 0 0]
         [0 1 0]
         [0 0 1]
@@ -170,7 +170,7 @@ class GroupAlgebras(AlgebrasCategory):
 
             EXAMPLES::
 
-                sage: GroupAlgebras(QQ).example(GL(3, GF(11))).group()                  # needs sage.groups sage.modules sage.rings.finite_rings
+                sage: GroupAlgebras(QQ).example(GL(3, GF(11))).group()                  # needs sage.groups sage.modules
                 General Linear Group of degree 3 over Finite Field of size 11
                 sage: SymmetricGroup(10).algebra(QQ).group()                            # needs sage.groups sage.modules
                 Symmetric group of order 10! as a permutation group

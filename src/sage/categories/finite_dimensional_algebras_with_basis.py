@@ -111,10 +111,10 @@ class FiniteDimensionalAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
 
             Let's work instead over a field of characteristic `2`::
 
-                sage: A = KleinFourGroup().algebra(GF(2))                               # needs sage.groups sage.modules sage.rings.finite_rings
+                sage: A = KleinFourGroup().algebra(GF(2))                               # needs sage.groups sage.modules
                 sage: A in Algebras(GF(2)).Semisimple()                                 # needs sage.groups sage.modules
                 False
-                sage: A.radical_basis()                                                 # needs sage.groups sage.modules sage.rings.finite_rings
+                sage: A.radical_basis()                                                 # needs sage.groups sage.modules
                 (() + (1,2)(3,4), (3,4) + (1,2)(3,4), (1,2) + (1,2)(3,4))
 
             We now implement the algebra `A = K[x] / (x^p-1)`, where `K`
@@ -122,7 +122,8 @@ class FiniteDimensionalAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
             radical; alas, we currently need to wrap `A` to make it a
             proper :class:`ModulesWithBasis`::
 
-                sage: class AnAlgebra(CombinatorialFreeModule):                         # needs sage.modules
+                sage: # needs sage.modules
+                sage: class AnAlgebra(CombinatorialFreeModule):
                 ....:     def __init__(self, F):
                 ....:         R.<x> = PolynomialRing(F)
                 ....:         I = R.ideal(x**F.characteristic()-F.one())
@@ -134,18 +135,18 @@ class FiniteDimensionalAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
                 ....:         return self.basis()[self.base_ring().one()]
                 ....:     def product_on_basis(self, w1, w2):
                 ....:         return self.from_vector(vector(w1*w2))
-                sage: AnAlgebra(GF(3)).radical_basis()                                  # needs sage.modules sage.rings.finite_rings
+                sage: AnAlgebra(GF(3)).radical_basis()
                 (B[1] + 2*B[xbar^2], B[xbar] + 2*B[xbar^2])
-                sage: AnAlgebra(GF(16,'a')).radical_basis()                             # needs sage.modules sage.rings.finite_rings
+                sage: AnAlgebra(GF(16,'a')).radical_basis()                             # needs sage.rings.finite_rings
                 (B[1] + B[xbar],)
-                sage: AnAlgebra(GF(49,'a')).radical_basis()                             # needs sage.modules sage.rings.finite_rings
+                sage: AnAlgebra(GF(49,'a')).radical_basis()                             # needs sage.rings.finite_rings
                 (B[1] + 6*B[xbar^6], B[xbar] + 6*B[xbar^6], B[xbar^2] + 6*B[xbar^6],
                  B[xbar^3] + 6*B[xbar^6], B[xbar^4] + 6*B[xbar^6], B[xbar^5] + 6*B[xbar^6])
 
             TESTS::
 
-                sage: A = KleinFourGroup().algebra(GF(2))                               # needs sage.groups sage.modules sage.rings.finite_rings
-                sage: A.radical_basis()                                                 # needs sage.groups sage.modules sage.rings.finite_rings
+                sage: A = KleinFourGroup().algebra(GF(2))                               # needs sage.groups sage.modules
+                sage: A.radical_basis()                                                 # needs sage.groups sage.modules
                 (() + (1,2)(3,4), (3,4) + (1,2)(3,4), (1,2) + (1,2)(3,4))
 
                 sage: A = KleinFourGroup().algebra(QQ, category=Monoids())              # needs sage.groups sage.modules
@@ -521,10 +522,11 @@ class FiniteDimensionalAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
             We construct orthogonal idempotents for the algebra of the
             `0`-Hecke monoid::
 
-                sage: from sage.monoids.hecke_monoid import HeckeMonoid                 # needs sage.combinat
-                sage: A = HeckeMonoid(SymmetricGroup(4)).algebra(QQ)                    # needs sage.combinat sage.groups
-                sage: idempotents = A.orthogonal_idempotents_central_mod_radical()      # needs sage.graphs sage.groups sage.modules
-                sage: A.is_identity_decomposition_into_orthogonal_idempotents(idempotents)          # needs sage.graphs sage.groups sage.modules
+                sage: # needs sage.combinat sage.graphs sage.groups sage.modules
+                sage: from sage.monoids.hecke_monoid import HeckeMonoid
+                sage: A = HeckeMonoid(SymmetricGroup(4)).algebra(QQ)
+                sage: idempotents = A.orthogonal_idempotents_central_mod_radical()
+                sage: A.is_identity_decomposition_into_orthogonal_idempotents(idempotents)
                 True
             """
             one = self.one()
@@ -751,15 +753,15 @@ class FiniteDimensionalAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
 
             EXAMPLES::
 
-                sage: # needs sage.graphs.sage.modules
+                sage: # needs sage.graphs sage.modules sage.rings.number_field
                 sage: A = Algebras(QQ).FiniteDimensional().WithBasis().example(); A
                 An example of a finite dimensional algebra with basis:
                 the path algebra of the Kronecker quiver
                 (containing the arrows a:x->y and b:x->y) over Rational Field
-                sage: Q = A.isotypic_projective_modules(side="left"); Q                 # needs sage.rings.number_field
+                sage: Q = A.isotypic_projective_modules(side="left"); Q
                 [Free module generated by {0} over Rational Field,
                  Free module generated by {0, 1, 2} over Rational Field]
-                sage: [[x.lift() for x in Qi.basis()]                                   # needs sage.rings.number_field
+                sage: [[x.lift() for x in Qi.basis()]
                 ....:  for Qi in Q]
                 [[x],
                  [y, a, b]]
@@ -767,7 +769,7 @@ class FiniteDimensionalAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
             We check that the sum of the dimensions of the isotypic
             projective modules is the dimension of ``self``::
 
-                sage: sum([Qi.dimension() for Qi in Q]) == A.dimension()                # needs sage.graphs.sage.modules sage.rings.number_field
+                sage: sum([Qi.dimension() for Qi in Q]) == A.dimension()                # needs sage.graphs sage.modules sage.rings.number_field
 
                 True
 
@@ -878,19 +880,19 @@ class FiniteDimensionalAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
 
             EXAMPLES::
 
-                sage: # needs sage.graphs.sage.modules
+                sage: # needs sage.graphs sage.groups sage.modules sage.rings.number_field
                 sage: A = Algebras(QQ).FiniteDimensional().WithBasis().example(); A
                 An example of a finite dimensional algebra with basis:
                 the path algebra of the Kronecker quiver
                 (containing the arrows a:x->y and b:x->y) over Rational Field
-                sage: A.orthogonal_idempotents_central_mod_radical()                    # needs sage.groups
+                sage: A.orthogonal_idempotents_central_mod_radical()
                 (x, y)
-                sage: decomposition = A.peirce_decomposition(); decomposition           # needs sage.groups sage.modules sage.rings.number_field
+                sage: decomposition = A.peirce_decomposition(); decomposition
                 [[Free module generated by {0} over Rational Field,
                   Free module generated by {0, 1} over Rational Field],
                  [Free module generated by {} over Rational Field,
                   Free module generated by {0} over Rational Field]]
-                sage: [ [[x.lift() for x in decomposition[i][j].basis()]                # needs sage.groups sage.modules sage.rings.number_field
+                sage: [ [[x.lift() for x in decomposition[i][j].basis()]
                 ....:    for j in range(2)]
                 ....:   for i in range(2)]
                 [[[x], [a, b]],
@@ -899,9 +901,10 @@ class FiniteDimensionalAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
             We recover that the group algebra of the symmetric group
             `S_4` is a block matrix algebra::
 
-                sage: A = SymmetricGroup(4).algebra(QQ)                                 # needs sage.groups sage.modules
-                sage: decomposition = A.peirce_decomposition()  # long time             # needs sage.groups sage.modules sage.rings.number_field
-                sage: [[decomposition[i][j].dimension()         # long time (4s)        # needs sage.groups sage.modules sage.rings.number_field
+                sage: # needs sage.groups sage.modules sage.rings.number_field
+                sage: A = SymmetricGroup(4).algebra(QQ)
+                sage: decomposition = A.peirce_decomposition()  # long time
+                sage: [[decomposition[i][j].dimension()         # long time (4s)
                 ....:   for j in range(len(decomposition))]
                 ....:  for i in range(len(decomposition))]
                 [[9, 0, 0, 0, 0],
@@ -952,7 +955,7 @@ class FiniteDimensionalAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
 
             Here the idempotents do not sum up to `1`::
 
-                sage: A.is_identity_decomposition_into_orthogonal_idempotents([x])      # needs sage.graphs sage.modules
+                sage: A.is_identity_decomposition_into_orthogonal_idempotents([x])                  # needs sage.graphs sage.modules
                 False
 
             Here `1+x` and `-x` are neither idempotent nor orthogonal::
@@ -965,7 +968,7 @@ class FiniteDimensionalAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
                 sage: # needs sage.combinat sage.groups sage.modules
                 sage: from sage.monoids.hecke_monoid import HeckeMonoid
                 sage: A = HeckeMonoid(SymmetricGroup(4)).algebra(QQ)
-                sage: idempotents = A.orthogonal_idempotents_central_mod_radical()      # needs sage.rings.number_field
+                sage: idempotents = A.orthogonal_idempotents_central_mod_radical()                  # needs sage.rings.number_field
                 sage: A.is_identity_decomposition_into_orthogonal_idempotents(idempotents)          # needs sage.rings.number_field
                 True
 

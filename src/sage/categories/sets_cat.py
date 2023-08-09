@@ -1629,15 +1629,15 @@ class Sets(Category_singleton):
             If `S` is a :class:`group <Groups>`, the result is its
             group algebra `KS`::
 
-                sage: # needs sage.groups
+                sage: # needs sage.groups sage.modules
                 sage: S = DihedralGroup(4); S
                 Dihedral group of order 8 as a permutation group
-                sage: A = S.algebra(QQ); A                                              # needs sage.modules
+                sage: A = S.algebra(QQ); A
                 Algebra of Dihedral group of order 8 as a permutation group
                  over Rational Field
-                sage: A.category()                                                      # needs sage.modules
+                sage: A.category()
                 Category of finite group algebras over Rational Field
-                sage: a = A.an_element(); a                                             # needs sage.modules
+                sage: a = A.an_element(); a
                 () + (1,3) + 2*(1,3)(2,4) + 3*(1,4,3,2)
 
             This space is endowed with an algebra structure, obtained
@@ -1667,18 +1667,18 @@ class Sets(Category_singleton):
             One may specify for which category one takes the algebra;
             here we build the algebra of the additive group `GF_3`::
 
+                sage: # needs sage.modules
                 sage: from sage.categories.additive_groups import AdditiveGroups
                 sage: S = GF(7)
-                sage: A = S.algebra(QQ, category=AdditiveGroups()); A                   # needs sage.modules
+                sage: A = S.algebra(QQ, category=AdditiveGroups()); A
                 Algebra of Finite Field of size 7 over Rational Field
-                sage: A.category()                                                      # needs sage.modules
+                sage: A.category()
                 Category of finite dimensional additive group algebras
                          over Rational Field
-
-                sage: a = A(S(1))                                                       # needs sage.modules
-                sage: a                                                                 # needs sage.modules
+                sage: a = A(S(1))
+                sage: a
                 1
-                sage: 1 + a * a * a                                                     # needs sage.modules
+                sage: 1 + a * a * a
                 0 + 3
 
             Note that the ``category`` keyword needs to be fed with
@@ -1721,20 +1721,21 @@ Please use, e.g., S.algebra(QQ, category=Semigroups())""".format(self))
 
             EXAMPLES::
 
+                sage: # needs sympy
                 sage: F = FiniteEnumeratedSets().example(); F
                 An example of a finite enumerated set: {1,2,3}
-                sage: sF = F._sympy_(); sF                                              # needs sympy
+                sage: sF = F._sympy_(); sF
                 SageSet(An example of a finite enumerated set: {1,2,3})
-                sage: sF.is_finite_set                                                  # needs sympy
+                sage: sF.is_finite_set
                 True
-                sage: bool(sF)                                                          # needs sympy
+                sage: bool(sF)
                 True
-                sage: len(sF)                                                           # needs sympy
+                sage: len(sF)
                 3
-                sage: list(sF)                                                          # needs sympy
+                sage: list(sF)
                 [1, 2, 3]
-                sage: from sympy import FiniteSet                                       # needs sympy
-                sage: FiniteSet.fromiter(sF)  # random - this output is sympy >= 1.9    # needs sympy
+                sage: from sympy import FiniteSet
+                sage: FiniteSet.fromiter(sF)  # random - this output is sympy >= 1.9
                 FiniteSet(1, 2, 3)
 
                 sage: RR._sympy_().is_finite_set                                        # needs sympy
@@ -2843,7 +2844,8 @@ Please use, e.g., S.algebra(QQ, category=Semigroups())""".format(self))
 
                 This method automates the process::
 
-                    sage: S.inject_shorthands()                                         # needs sage.combinat sage.modules
+                    sage: # needs sage.combinat sage.modules
+                    sage: S.inject_shorthands()
                     Defining e as shorthand for
                      Symmetric Functions over Integer Ring in the elementary basis
                     Defining f as shorthand for
@@ -2856,15 +2858,14 @@ Please use, e.g., S.algebra(QQ, category=Semigroups())""".format(self))
                      Symmetric Functions over Integer Ring in the powersum basis
                     Defining s as shorthand for
                      Symmetric Functions over Integer Ring in the Schur basis
-                    sage: s[1] + e[2] * p[1,1] + 2*h[3] + m[2,1]                        # needs sage.combinat sage.modules
+                    sage: s[1] + e[2] * p[1,1] + 2*h[3] + m[2,1]
                     s[1] - 2*s[1, 1, 1] + s[1, 1, 1, 1] + s[2, 1]
                     + 2*s[2, 1, 1] + s[2, 2] + 2*s[3] + s[3, 1]
-
-                    sage: e                                                             # needs sage.combinat sage.modules
+                    sage: e
                     Symmetric Functions over Integer Ring in the elementary basis
-                    sage: p                                                             # needs sage.combinat sage.modules
+                    sage: p
                     Symmetric Functions over Integer Ring in the powersum basis
-                    sage: s                                                             # needs sage.combinat sage.modules
+                    sage: s
                     Symmetric Functions over Integer Ring in the Schur basis
 
                 Sometimes, like for symmetric functions, one can
@@ -2899,17 +2900,16 @@ Please use, e.g., S.algebra(QQ, category=Semigroups())""".format(self))
 
                 The messages can be silenced by setting ``verbose=False``::
 
-                    sage: Q = QuasiSymmetricFunctions(ZZ)                               # needs sage.combinat sage.modules
-                    sage: Q.inject_shorthands(verbose=False)                            # needs sage.combinat sage.modules
-
-                    sage: F[1,2,1] + 5*M[1,3] + F[2]^2                                  # needs sage.combinat sage.modules
+                    sage: # needs sage.combinat sage.modules
+                    sage: Q = QuasiSymmetricFunctions(ZZ)
+                    sage: Q.inject_shorthands(verbose=False)
+                    sage: F[1,2,1] + 5*M[1,3] + F[2]^2
                     5*F[1, 1, 1, 1] - 5*F[1, 1, 2] - 3*F[1, 2, 1] + 6*F[1, 3] +
                     2*F[2, 2] + F[3, 1] + F[4]
-
-                    sage: F                                                             # needs sage.combinat sage.modules
+                    sage: F
                     Quasisymmetric functions over the Integer Ring in the
                      Fundamental basis
-                    sage: M                                                             # needs sage.combinat sage.modules
+                    sage: M
                     Quasisymmetric functions over the Integer Ring in the
                      Monomial basis
 

@@ -219,17 +219,18 @@ cdef class Map(Element):
         You can still obtain copies of the maps used by the coercion system with
         strong references::
 
-            sage: Q = QuadraticField(-5)                                                # needs sage.rings.number_field
-            sage: phi = CDF.convert_map_from(Q)                                         # needs sage.rings.number_field
-            sage: print(phi.parent())                                                   # needs sage.rings.number_field
+            sage: # needs sage.rings.number_field
+            sage: Q = QuadraticField(-5)
+            sage: phi = CDF.convert_map_from(Q)
+            sage: print(phi.parent())
             Set of field embeddings
              from Number Field in a with defining polynomial x^2 + 5
                   with a = 2.236067977499790?*I
                to Complex Double Field
             sage: import gc
-            sage: del Q                                                                 # needs sage.rings.number_field
+            sage: del Q
             sage: _ = gc.collect()
-            sage: phi.parent()                                                          # needs sage.rings.number_field
+            sage: phi.parent()
             Set of field embeddings
              from Number Field in a with defining polynomial x^2 + 5
                   with a = 2.236067977499790?*I
@@ -276,15 +277,16 @@ cdef class Map(Element):
 
         Now, as there is a strong reference, `Q` cannot be garbage collected::
 
+            sage: # needs sage.rings.number_field
             sage: import gc
             sage: _ = gc.collect()
-            sage: C = Q.__class__.__base__                                              # needs sage.rings.number_field
+            sage: C = Q.__class__.__base__
             sage: x = None
-            sage: numberQuadFields = len([x for x in gc.get_objects()                   # needs sage.rings.number_field
+            sage: numberQuadFields = len([x for x in gc.get_objects()
             ....:                         if isinstance(x, C)])
-            sage: del Q, x                                                              # needs sage.rings.number_field
+            sage: del Q, x
             sage: _ = gc.collect()
-            sage: numberQuadFields == len([x for x in gc.get_objects()                  # needs sage.rings.number_field
+            sage: numberQuadFields == len([x for x in gc.get_objects()
             ....:                          if isinstance(x, C)])
             True
 
@@ -294,7 +296,7 @@ cdef class Map(Element):
         if one really knows what one is doing::
 
             sage: phi._make_weak_references()                                           # needs sage.rings.number_field
-            sage: _ = gc.collect()
+            sage: _ = gc.collect()                                                      # needs sage.rings.number_field
             sage: numberQuadFields == len([x for x in gc.get_objects()                  # needs sage.rings.number_field
             ....:                          if isinstance(x, C)]) + 1
             True
@@ -342,15 +344,16 @@ cdef class Map(Element):
 
         Now, as there is a strong reference, `Q` cannot be garbage collected::
 
+            sage: # needs sage.rings.number_field
             sage: import gc
             sage: _ = gc.collect()
-            sage: C = Q.__class__.__base__                                              # needs sage.rings.number_field
+            sage: C = Q.__class__.__base__
             sage: x = None
-            sage: numberQuadFields = len([x for x in gc.get_objects()                   # needs sage.rings.number_field
+            sage: numberQuadFields = len([x for x in gc.get_objects()
             ....:                         if isinstance(x, C)])
-            sage: del Q, x                                                              # needs sage.rings.number_field
+            sage: del Q, x
             sage: _ = gc.collect()
-            sage: numberQuadFields == len([x for x in gc.get_objects()                  # needs sage.rings.number_field
+            sage: numberQuadFields == len([x for x in gc.get_objects()
             ....:                          if isinstance(x, C)])
             True
 
@@ -359,18 +362,19 @@ cdef class Map(Element):
         invalid. This is why :meth:`_make_weak_references` should only be used
         if one really knows what one is doing::
 
-            sage: phi._make_weak_references()                                           # needs sage.rings.number_field
+            sage: # needs sage.rings.number_field
+            sage: phi._make_weak_references()
             sage: _ = gc.collect()
-            sage: numberQuadFields == len([x for x in gc.get_objects()                  # needs sage.rings.number_field
+            sage: numberQuadFields == len([x for x in gc.get_objects()
             ....:                          if isinstance(x, C)]) + 1
             True
-            sage: phi                                                                   # needs sage.rings.number_field
+            sage: phi
             Defunct map
-            sage: phi._make_strong_references()                                         # needs sage.rings.number_field
+            sage: phi._make_strong_references()
             Traceback (most recent call last):
             ...
             RuntimeError: The domain of this map became garbage collected
-            sage: phi.parent()                                                          # needs sage.rings.number_field
+            sage: phi.parent()
             Traceback (most recent call last):
             ...
             ValueError: This map is in an invalid state, the domain has been garbage collected
@@ -566,16 +570,17 @@ cdef class Map(Element):
 
         TESTS::
 
-            sage: Q = QuadraticField(-5)                                                # needs sage.rings.number_field
-            sage: phi = CDF._internal_coerce_map_from(Q); phi                           # needs sage.rings.number_field
+            sage: # needs sage.rings.number_field
+            sage: Q = QuadraticField(-5)
+            sage: phi = CDF._internal_coerce_map_from(Q); phi
             (map internal to coercion system -- copy before use)
             Composite map:
               From: Number Field in a with defining polynomial x^2 + 5 with a = 2.236067977499790?*I
               To:   Complex Double Field
-            sage: del Q                                                                 # needs sage.rings.number_field
+            sage: del Q
             sage: import gc
             sage: _ = gc.collect()
-            sage: phi                                                                   # needs sage.rings.number_field
+            sage: phi
             Defunct map
         """
         D = self.domain()

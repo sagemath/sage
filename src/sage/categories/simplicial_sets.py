@@ -437,11 +437,12 @@ class SimplicialSets(Category_singleton):
 
                 EXAMPLES::
 
-                    sage: S1 = simplicial_sets.Sphere(1)                                # needs sage.graphs
-                    sage: W = S1.wedge(S1)                                              # needs sage.graphs
-                    sage: G = CyclicPermutationGroup(3)                                 # needs sage.groups
-                    sage: a, b = W.n_cells(1)                                           # needs sage.graphs
-                    sage: C = W.covering_map({a : G.gen(0), b : G.one()}); C            # needs sage.graphs sage.groups
+                    sage: # needs sage.graphs sage.groups
+                    sage: S1 = simplicial_sets.Sphere(1)
+                    sage: W = S1.wedge(S1)
+                    sage: G = CyclicPermutationGroup(3)
+                    sage: a, b = W.n_cells(1)
+                    sage: C = W.covering_map({a : G.gen(0), b : G.one()}); C
                     Simplicial set morphism:
                       From: Simplicial set with 9 non-degenerate simplices
                       To:   Wedge: (S^1 v S^1)
@@ -449,9 +450,9 @@ class SimplicialSets(Category_singleton):
                              (sigma_1, ()), (sigma_1, (1,2,3)), (sigma_1, (1,2,3)),
                              (sigma_1, (1,3,2)), (sigma_1, (1,3,2))]
                             --> [*, *, *, sigma_1, sigma_1, sigma_1, sigma_1, sigma_1, sigma_1]
-                    sage: C.domain()                                                    # needs sage.graphs sage.groups
+                    sage: C.domain()
                     Simplicial set with 9 non-degenerate simplices
-                    sage: C.domain().face_data()                                        # needs sage.graphs sage.groups
+                    sage: C.domain().face_data()
                     {(*, ()): None,
                      (*, (1,2,3)): None,
                      (*, (1,3,2)): None,
@@ -524,12 +525,13 @@ class SimplicialSets(Category_singleton):
 
                 EXAMPLES::
 
-                    sage: S1 = simplicial_sets.Sphere(1)                                # needs sage.graphs
-                    sage: W = S1.wedge(S1)                                              # needs sage.graphs
-                    sage: G = CyclicPermutationGroup(3)                                 # needs sage.groups
-                    sage: (a, b) = W.n_cells(1)                                         # needs sage.graphs
-                    sage: C = W.cover({a : G.gen(0), b : G.gen(0)^2})                   # needs sage.graphs sage.groups
-                    sage: C.face_data()                                                 # needs sage.graphs sage.groups
+                    sage: # needs sage.graphs sage.groups
+                    sage: S1 = simplicial_sets.Sphere(1)
+                    sage: W = S1.wedge(S1)
+                    sage: G = CyclicPermutationGroup(3)
+                    sage: (a, b) = W.n_cells(1)
+                    sage: C = W.cover({a : G.gen(0), b : G.gen(0)^2})
+                    sage: C.face_data()
                     {(*, ()): None,
                      (*, (1,2,3)): None,
                      (*, (1,3,2)): None,
@@ -539,9 +541,9 @@ class SimplicialSets(Category_singleton):
                      (sigma_1, (1,2,3)): ((*, ()), (*, (1,2,3))),
                      (sigma_1, (1,3,2)): ((*, ()), (*, (1,3,2))),
                      (sigma_1, (1,3,2)): ((*, (1,2,3)), (*, (1,3,2)))}
-                    sage: C.homology(1)                                                 # needs sage.graphs sage.groups sage.modules
+                    sage: C.homology(1)                                                 # needs sage.modules
                     Z x Z x Z x Z
-                    sage: C.fundamental_group()                                         # needs sage.graphs sage.groups
+                    sage: C.fundamental_group()
                     Finitely presented group < e0, e1, e2, e3 |  >
                 """
                 return self.covering_map(character).domain()
@@ -586,13 +588,13 @@ class SimplicialSets(Category_singleton):
 
                 EXAMPLES::
 
-                    sage: # needs sage.graphs
+                    sage: # needs sage.graphs sage.groups
                     sage: T = simplicial_sets.Torus()
-                    sage: T.is_simply_connected()                                       # needs sage.groups
+                    sage: T.is_simply_connected()
                     False
-                    sage: T.suspension().is_simply_connected()                          # needs sage.groups
+                    sage: T.suspension().is_simply_connected()
                     True
-                    sage: simplicial_sets.KleinBottle().is_simply_connected()           # needs sage.groups
+                    sage: simplicial_sets.KleinBottle().is_simply_connected()
                     False
 
                     sage: # needs sage.graphs
@@ -651,17 +653,17 @@ class SimplicialSets(Category_singleton):
 
                 EXAMPLES::
 
-                    sage: # needs sage.graphs
-                    sage: simplicial_sets.Sphere(3).connectivity()                      # needs sage.groups
+                    sage: # needs sage.graphs sage.groups
+                    sage: simplicial_sets.Sphere(3).connectivity()
                     2
                     sage: simplicial_sets.Sphere(0).connectivity()
                     -1
                     sage: K = simplicial_sets.Simplex(4)
                     sage: K = K.set_base_point(K.n_cells(0)[0])
-                    sage: K.connectivity()                                              # needs sage.groups
+                    sage: K.connectivity()
                     +Infinity
                     sage: X = simplicial_sets.Torus().suspension(2)
-                    sage: X.connectivity()                                              # needs sage.groups
+                    sage: X.connectivity()
                     2
 
                     sage: C2 = groups.misc.MultiplicativeAbelian([2])                   # needs sage.graphs sage.groups
@@ -758,18 +760,18 @@ class SimplicialSets(Category_singleton):
 
                     EXAMPLES::
 
-                        sage: # needs sage.graphs
+                        sage: # needs sage.graphs sage.groups
                         sage: S1 = simplicial_sets.Sphere(1)
-                        sage: RP2 = simplicial_sets.RealProjectiveSpace(2)              # needs sage.groups
-                        sage: X = S1.smash_product(RP2)                                 # needs sage.groups
-                        sage: X.homology(base_ring=GF(2))                               # needs sage.groups sage.modules sage.rings.finite_rings
+                        sage: RP2 = simplicial_sets.RealProjectiveSpace(2)
+                        sage: X = S1.smash_product(RP2)
+                        sage: X.homology(base_ring=GF(2))                               # needs sage.modules
                         {0: Vector space of dimension 0 over Finite Field of size 2,
                          1: Vector space of dimension 0 over Finite Field of size 2,
                          2: Vector space of dimension 1 over Finite Field of size 2,
                          3: Vector space of dimension 1 over Finite Field of size 2}
 
-                        sage: T = S1.product(S1)                                        # needs sage.graphs
-                        sage: X = T.smash_product(S1)                                   # needs sage.graphs
+                        sage: T = S1.product(S1)                                        # needs sage.graphs sage.groups
+                        sage: X = T.smash_product(S1)                                   # needs sage.graphs sage.groups
                         sage: X.homology(reduced=False)                                 # needs sage.graphs sage.modules
                         {0: Z, 1: 0, 2: Z x Z, 3: Z}
                     """
