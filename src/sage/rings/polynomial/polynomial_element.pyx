@@ -565,11 +565,11 @@ cdef class Polynomial(CommutativePolynomial):
         tuple containing the values to be substituted, though it is
         perhaps more natural to just unpack the list::
 
-            sage: f([2]) # calling with a list
+            sage: f([2])   # calling with a list
             3*x + 4
-            sage: f((2,)) # calling with a tuple
+            sage: f((2,))  # calling with a tuple
             3*x + 4
-            sage: f(*[2]) # unpacking the list to call normally
+            sage: f(*[2])  # unpacking the list to call normally
             3*x + 4
 
         The following results in an element of the symbolic ring. ::
@@ -710,11 +710,12 @@ cdef class Polynomial(CommutativePolynomial):
 
         These were drastically slower prior to :trac:`33165`::
 
-            sage: R.<x> = GF(31337)[]                                                   # needs sage.rings.finite_rings
+            sage: # needs sage.rings.finite_rings
+            sage: R.<x> = GF(31337)[]
             sage: f = R(list(range(100, 201)))
             sage: g = R(list(range(1, 1001)))
-            sage: S.<y> = R.quotient(f)                                                 # needs sage.rings.finite_rings
-            sage: g(y)                                                                  # needs sage.rings.finite_rings
+            sage: S.<y> = R.quotient(f)
+            sage: g(y)
             22537*y^99 + 4686*y^98 + 13285*y^97 + 4216*y^96 + ... + 6389*y^3 + 30062*y^2 + 13755*y + 11875
 
         ::
@@ -1300,7 +1301,7 @@ cdef class Polynomial(CommutativePolynomial):
               Defn: x |--> 5
             sage: f(x)
             5
-            sage: f(x^2 + 3) # indirect doctest
+            sage: f(x^2 + 3)  # indirect doctest
             28
 
             sage: # needs sage.rings.number_field
@@ -1383,7 +1384,7 @@ cdef class Polynomial(CommutativePolynomial):
             0.6324555320336758*I
             sage: CC(c)
             0.632455532033676*I
-            sage: CBF(c) # abs tol 1e-16                                                # needs sage.libs.flint
+            sage: CBF(c)  # abs tol 1e-16                                               # needs sage.libs.flint
             [0.6324555320336759 +/- 3.38e-17]*I
             sage: CIF(c)
             0.6324555320336758?*I
@@ -2455,12 +2456,13 @@ cdef class Polynomial(CommutativePolynomial):
 
         Check that the algorithm used is indeed correct::
 
+            sage: # needs sage.rings.finite_rings
             sage: from sage.arith.power import generic_power
-            sage: R1 = PolynomialRing(GF(8,'a'), 'x')                                   # needs sage.rings.finite_rings
-            sage: R2 = PolynomialRing(GF(9,'b'), 'x', sparse=True)                      # needs sage.rings.finite_rings
+            sage: R1 = PolynomialRing(GF(8,'a'), 'x')
+            sage: R2 = PolynomialRing(GF(9,'b'), 'x', sparse=True)
             sage: R3 = PolynomialRing(R2, 'y')
             sage: R4 = PolynomialRing(R1, 'y', sparse=True)
-            sage: for d in range(20,40):        # long time                             # needs sage.rings.finite_rings
+            sage: for d in range(20,40):        # long time
             ....:     for R in [R1, R2, R3, R3]:
             ....:         a = R.random_element()
             ....:         assert a^d == generic_power(a, d)
@@ -2595,16 +2597,16 @@ cdef class Polynomial(CommutativePolynomial):
         TESTS::
 
             sage: x = polygen(QQ)
-            sage: (3*x-5).power_trunc(2^200, 0)
+            sage: (3*x - 5).power_trunc(2^200, 0)
             0
             sage: x.power_trunc(-1, 10)
             Traceback (most recent call last):
             ...
             ValueError: n must be a non-negative integer
             sage: R.<y> = QQ['x']
-            sage: y.power_trunc(2**32-1, 2)
+            sage: y.power_trunc(2**32 - 1, 2)
             0
-            sage: y.power_trunc(2**64-1, 2)
+            sage: y.power_trunc(2**64 - 1, 2)
             0
         """
         cdef Integer ZZn = ZZ(n)
@@ -4256,7 +4258,7 @@ cdef class Polynomial(CommutativePolynomial):
             * (x + 0.9999908759550227 - 1.0000069659624138*I)
             * (x + 0.9999985293216753 - 0.9999886153831807*I)
             * (x + 1.0000105947233 - 1.0000044186544053*I)
-            sage: [f(t[0][0]).abs() for t in F] # abs tol 1e-13
+            sage: [f(t[0][0]).abs() for t in F]  # abs tol 1e-13
             [1.979365054e-14, 1.97936298566e-14, 1.97936990747e-14,
              3.6812407475e-14, 3.65211563729e-14, 3.65220890052e-14]
 
@@ -4398,20 +4400,22 @@ cdef class Polynomial(CommutativePolynomial):
 
         Test that :trac:`10279` is fixed::
 
+            sage: # needs sage.rings.number_field
             sage: R.<t> = PolynomialRing(QQ)
-            sage: K.<a> = NumberField(t^4 - t^2 + 1)                                    # needs sage.rings.number_field
-            sage: pol = t^3 + (-4*a^3 + 2*a)*t^2 - 11/3*a^2*t + 2/3*a^3 - 4/3*a         # needs sage.rings.number_field
-            sage: pol.factor()                                                          # needs sage.rings.number_field
+            sage: K.<a> = NumberField(t^4 - t^2 + 1)
+            sage: pol = t^3 + (-4*a^3 + 2*a)*t^2 - 11/3*a^2*t + 2/3*a^3 - 4/3*a
+            sage: pol.factor()
             (t - 2*a^3 + a) * (t - 4/3*a^3 + 2/3*a) * (t - 2/3*a^3 + 1/3*a)
 
         Test that this factorization really uses ``nffactor()`` internally::
 
-            sage: pari.default("debug", 3)                                              # needs sage.libs.pari
-            sage: F = pol.factor()                                                      # needs sage.rings.number_field
+            sage: # needs sage.libs.pari sage.rings.number_field
+            sage: pari.default("debug", 3)
+            sage: F = pol.factor()
             <BLANKLINE>
             Entering nffactor:
             ...
-            sage: pari.default("debug", 0)                                              # needs sage.libs.pari
+            sage: pari.default("debug", 0)
 
         Test that :trac:`10369` is fixed::
 
@@ -9827,6 +9831,7 @@ cdef class Polynomial(CommutativePolynomial):
         A generic implementation is available, which relies on gcd
         computations::
 
+            sage: # needs sage.libs.pari
             sage: R.<x> = ZZ[]
             sage: (2*x).is_squarefree()                                                 # needs sage.libs.pari
             True
@@ -9937,9 +9942,9 @@ cdef class Polynomial(CommutativePolynomial):
         EXAMPLES::
 
             sage: R.<x> = QQbar[]                                                       # needs sage.rings.number_field
-            sage: (x^2*(x + 1)).is_squarefree() # indirect doctest                      # needs sage.rings.number_field
+            sage: (x^2*(x + 1)).is_squarefree()  # indirect doctest                     # needs sage.rings.number_field
             False
-            sage: (x*(x+1)).is_squarefree() # indirect doctest                          # needs sage.rings.number_field
+            sage: (x*(x+1)).is_squarefree()  # indirect doctest                         # needs sage.rings.number_field
             True
 
         """
@@ -10162,22 +10167,24 @@ cdef class Polynomial(CommutativePolynomial):
 
         EXAMPLES::
 
-            sage: R.<x> = SR[]                                                          # needs sage.symbolic
-            sage: f = (1+I)*x^2 + 3*x - I                                               # needs sage.symbolic
-            sage: f.map_coefficients(lambda z: z.conjugate())                           # needs sage.symbolic
-            (-I + 1)*x^2 + 3*x + I
             sage: R.<x> = ZZ[]
             sage: f = x^2 + 2
             sage: f.map_coefficients(lambda a: a + 42)
             43*x^2 + 44
-            sage: R.<x> = PolynomialRing(SR, sparse=True)                               # needs sage.symbolic
-            sage: f = (1+I)*x^(2^32) - I                                                # needs sage.symbolic
-            sage: f.map_coefficients(lambda z: z.conjugate())                           # needs sage.symbolic
-            (-I + 1)*x^4294967296 + I
             sage: R.<x> = PolynomialRing(ZZ, sparse=True)
             sage: f = x^(2^32) + 2
             sage: f.map_coefficients(lambda a: a + 42)
             43*x^4294967296 + 44
+
+            sage: # needs sage.symbolic
+            sage: R.<x> = SR[]
+            sage: f = (1+I)*x^2 + 3*x - I
+            sage: f.map_coefficients(lambda z: z.conjugate())
+            (-I + 1)*x^2 + 3*x + I
+            sage: R.<x> = PolynomialRing(SR, sparse=True)
+            sage: f = (1+I)*x^(2^32) - I
+            sage: f.map_coefficients(lambda z: z.conjugate())
+            (-I + 1)*x^4294967296 + I
 
         Examples with different base ring::
 
@@ -12453,7 +12460,7 @@ cdef class ConstantPolynomialSection(Map):
             Generic map:
               From: Univariate Polynomial Ring in x over Rational Field
               To:   Rational Field
-            sage: m(x-x+1/2) # implicit
+            sage: m(x-x+1/2)  # implicit
             1/2
             sage: m(x-x)
             0
@@ -12598,7 +12605,7 @@ cdef class PolynomialBaseringInjection(Morphism):
             Polynomial base injection morphism:
               From: Integer Ring
               To:   Univariate Polynomial Ring in x over Integer Ring
-            sage: m(2) # indirect doctest
+            sage: m(2)  # indirect doctest
             2
             sage: parent(m(2))
             Univariate Polynomial Ring in x over Integer Ring
@@ -12649,7 +12656,7 @@ cdef class PolynomialBaseringInjection(Morphism):
 
         Check that :trac:`23203` has been resolved::
 
-            sage: R.is_subring(S) # indirect doctest
+            sage: R.is_subring(S)  # indirect doctest
             True
 
         """
