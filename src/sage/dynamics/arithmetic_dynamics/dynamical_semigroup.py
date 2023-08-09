@@ -656,6 +656,8 @@ class DynamicalSemigroup(Parent, metaclass=InheritComparisonClasscallMetaclass):
             ...
             TypeError: can only multiply dynamical semigroups with other dynamical semigroups of the same type
 
+        ::
+
             sage: P.<x,y> = ProjectiveSpace(QQ, 1)
             sage: A.<z> = AffineSpace(QQ, 1)
             sage: f1 = DynamicalSystem_projective([x, y], P)
@@ -1011,6 +1013,21 @@ class DynamicalSemigroup_projective(DynamicalSemigroup):
               Defn: Defined on coordinates by sending (y) to
                     (y^2)
 
+        ::
+
+            sage: P.<x,y> = ProjectiveSpace(QQ, 1)
+            sage: f = DynamicalSystem([x, y], P)
+            sage: g = DynamicalSystem([x^2, y^2], P)
+            sage: d = DynamicalSemigroup((f, g))
+            sage: d.dehomogenize(1)
+            Dynamical semigroup over Affine Space of dimension 1 over Rational Field defined by 2 dynamical systems:
+            Dynamical System of Affine Space of dimension 1 over Rational Field
+              Defn: Defined on coordinates by sending (x) to
+                    (x)
+            Dynamical System of Affine Space of dimension 1 over Rational Field
+              Defn: Defined on coordinates by sending (x) to
+                    (x^2)
+
         TESTS::
 
             sage: P.<x,y> = ProjectiveSpace(QQ, 1)
@@ -1020,15 +1037,17 @@ class DynamicalSemigroup_projective(DynamicalSemigroup):
             sage: d.dehomogenize((1, 0))
             Traceback (most recent call last):
             ...
-            ValueError: Dynamical System of Projective Space of dimension 1 over Rational Field
-              Defn: Defined on coordinates by sending (x : y) to
-                    (x : y) dehomogenized at (1, 0) is not a `DynamicalSystem_affine` object
+            ValueError: Scheme morphism:
+              From: Affine Space of dimension 1 over Rational Field
+              To:   Affine Space of dimension 1 over Rational Field
+              Defn: Defined on coordinates by sending (x) to
+                    (1/x) is not a `DynamicalSystem_affine` object
         """
         new_systems = []
         for ds in self.defining_systems():
             new_system = ds.dehomogenize(n)
             if not isinstance(new_system, DynamicalSystem_affine):
-                raise ValueError(str(ds) + " dehomogenized at " + str(n) + " is not a `DynamicalSystem_affine` object")
+                raise ValueError(str(new_system) + " is not a `DynamicalSystem_affine` object")
             new_systems.append(new_system)
         return DynamicalSemigroup_affine(new_systems)
 
@@ -1134,12 +1153,20 @@ class DynamicalSemigroup_affine(DynamicalSemigroup):
             Dynamical System of Projective Space of dimension 1 over Rational Field
               Defn: Defined on coordinates by sending (x0 : x1) to
                     (x1^2 : x0^2)
+
+        TESTS::
+
+            sage: A.<x,y,z> = AffineSpace(QQ, 3)
+            sage: f = DynamicalSystem([y^2, z^3, x^6], A)
+            sage: g = DynamicalSystem([1 + x^7, y + z^2, x + 9], A)
+            sage: d = DynamicalSemigroup((f, g))
+            sage: d.homogenize((0, 1))
         """
         new_systems = []
         for ds in self.defining_systems():
             new_system = ds.homogenize(n)
             if not isinstance(new_system, DynamicalSystem_projective):
-                raise ValueError(str(ds) + " homogenized at " + str(n) + " is not a `DynamicalSystem_projective` object")
+                raise ValueError(str(new_system) + " is not a `DynamicalSystem_projective` object")
             new_systems.append(new_system)
         return DynamicalSemigroup_projective(new_systems)
 
