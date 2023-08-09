@@ -1330,6 +1330,7 @@ class FiniteDimensionalLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
                 final = MS(data).transpose()
                 return final
             
+            @parallel
             def f2(k):
                 """
                 Return the second term of the coboundary map.
