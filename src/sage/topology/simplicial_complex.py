@@ -2338,8 +2338,9 @@ class SimplicialComplex(Parent, GenericCellComplex):
 
         We need an immutable complex to compute homology generators::
 
+            sage: # needs sage.modules
             sage: sphere.set_immutable()
-            sage: sphere._homology_(generators=True)                                    # needs sage.modules
+            sage: sphere._homology_(generators=True)
             {0: [], 1: [], 2: [(Z, (0, 1, 2) - (0, 1, 3) + (0, 2, 3) - (1, 2, 3))]}
 
         Another way to get a two-sphere: take a two-point space and take its
