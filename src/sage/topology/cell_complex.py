@@ -736,8 +736,7 @@ class GenericCellComplex(SageObject):
 
             sage: K = cubical_complexes.KleinBottle()
             sage: C = cubical_complexes.Cube(2)
-            sage: P = K.product(C)
-            sage: P
+            sage: P = K.product(C); P
             Cubical complex with 168 vertices and 1512 cubes
             sage: P.euler_characteristic()
             0
@@ -971,7 +970,7 @@ class GenericCellComplex(SageObject):
             sage: T.set_immutable()
             sage: T.cohomology_ring()                                                   # needs sage.modules
             Cohomology ring of Simplicial complex with 9 vertices and
-            18 facets over Rational Field
+             18 facets over Rational Field
         """
         from sage.homology.homology_vector_space_with_basis import CohomologyRing
         return CohomologyRing(base_ring, self)

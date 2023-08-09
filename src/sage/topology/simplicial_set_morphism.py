@@ -37,6 +37,7 @@ from sage.categories.homset import Hom, Homset
 from sage.categories.morphism import Morphism
 from sage.categories.simplicial_sets import SimplicialSets
 from sage.misc.latex import latex
+from sage.misc.lazy_import import lazy_import
 from sage.rings.integer_ring import ZZ
 
 from .simplicial_set import SimplicialSet_arbitrary

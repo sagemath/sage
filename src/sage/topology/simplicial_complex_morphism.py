@@ -317,10 +317,9 @@ class SimplicialComplexMorphism(Morphism):
             sage: # needs sage.modules
             sage: S = simplicial_complexes.Sphere(1)
             sage: T = simplicial_complexes.Sphere(2)
-            sage: H = Hom(S,T)
-            sage: f = {0:0,1:1,2:2}
-            sage: x = H(f)
-            sage: x
+            sage: H = Hom(S, T)
+            sage: f = {0:0, 1:1, 2:2}
+            sage: x = H(f); x
             Simplicial complex morphism:
               From: Minimal triangulation of the 1-sphere
               To:   Minimal triangulation of the 2-sphere
@@ -365,19 +364,22 @@ class SimplicialComplexMorphism(Morphism):
             sage: g = {0:1, 1:2, 2:0}
             sage: H(g).associated_chain_complex_morphism()._matrix_dictionary           # needs sage.modules
             {0: [0 0 1]
-             [1 0 0]
-             [0 1 0]
-             [0 0 0], 1: [ 0 -1  0]
-             [ 0  0 -1]
-             [ 0  0  0]
-             [ 1  0  0]
-             [ 0  0  0]
-             [ 0  0  0], 2: []}
+                [1 0 0]
+                [0 1 0]
+                [0 0 0],
+             1: [ 0 -1  0]
+                [ 0  0 -1]
+                [ 0  0  0]
+                [ 1  0  0]
+                [ 0  0  0]
+                [ 0  0  0],
+             2: []}
             sage: X = SimplicialComplex([[0, 1]], is_mutable=False)
             sage: g = {0:1, 1:0}
             sage: Hom(X, X)(X).associated_chain_complex_morphism()._matrix_dictionary   # needs sage.modules
             {0: [0 1]
-             [1 0], 1: [-1]}
+                [1 0],
+             1: [-1]}
         """
         from sage.homology.chain_complex_morphism import ChainComplexMorphism
 
@@ -636,8 +638,8 @@ class SimplicialComplexMorphism(Morphism):
             sage: T.homology() == simplicial_complexes.Torus().homology()               # needs sage.modules
             True
 
-            sage: f = Hom(C,C)({0:0,1:2,2:1})
-            sage: K = f.mapping_torus() ; K  # Klein Bottle
+            sage: f = Hom(C,C)({0:0, 1:2, 2:1})
+            sage: K = f.mapping_torus(); K                      # Klein Bottle
             Simplicial complex with 9 vertices and 18 facets
             sage: K.homology() == simplicial_complexes.KleinBottle().homology()         # needs sage.modules
             True
@@ -682,8 +684,10 @@ class SimplicialComplexMorphism(Morphism):
             sage: diag = H.diagonal_morphism()
             sage: h = diag.induced_homology_morphism(QQ); h                             # needs sage.modules
             Graded vector space morphism:
-              From: Homology module of Minimal triangulation of the 1-sphere over Rational Field
-              To:   Homology module of Simplicial complex with 9 vertices and 18 facets over Rational Field
+              From: Homology module of
+                    Minimal triangulation of the 1-sphere over Rational Field
+              To:   Homology module of
+                    Simplicial complex with 9 vertices and 18 facets over Rational Field
               Defn: induced by:
                 Simplicial complex morphism:
                   From: Minimal triangulation of the 1-sphere

@@ -69,7 +69,8 @@ TESTS::
     sage: from sage.topology.simplicial_complex_examples import PseudoQuaternionicProjectivePlane
     sage: H = PseudoQuaternionicProjectivePlane()                                       # needs sage.groups
     doctest:warning...:
-    DeprecationWarning: PseudoQuaternionicProjectivePlane is deprecated. Please use sage.topology.simplicial_complex_examples.QuaternionicProjectivePlane instead.
+    DeprecationWarning: PseudoQuaternionicProjectivePlane is deprecated.
+    Please use sage.topology.simplicial_complex_examples.QuaternionicProjectivePlane instead.
     See https://github.com/sagemath/sage/issues/34568 for details.
 """
 
@@ -1078,7 +1079,8 @@ def NotIConnectedGraphs(n, i):
 
     EXAMPLES::
 
-        sage: simplicial_complexes.NotIConnectedGraphs(5, 2).f_vector()
+        sage: NICG52 = simplicial_complexes.NotIConnectedGraphs(5, 2)
+        sage: NICG52.f_vector()
         [1, 10, 45, 120, 210, 240, 140, 20]
         sage: NICG52.homology(5).ngens()                                                # needs sage.modules
         6

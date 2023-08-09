@@ -216,7 +216,8 @@ Without the ``range`` argument, this would raise an error, since
     sage: B3.product(S1).homology()                                                     # needs sage.groups sage.modules
     Traceback (most recent call last):
     ...
-    NotImplementedError: this simplicial set may be infinite, so specify dimensions when computing homology
+    NotImplementedError: this simplicial set may be infinite,
+    so specify dimensions when computing homology
 
 It should be easy to construct many simplicial sets from the
 predefined ones using pushouts, pullbacks, etc., but they can also be
@@ -2075,7 +2076,8 @@ class SimplicialSet_arbitrary(Parent):
             sage: BC3.cohomology()                                                      # needs sage.groups
             Traceback (most recent call last):
             ...
-            NotImplementedError: this simplicial set may be infinite, so specify dimensions when computing homology
+            NotImplementedError: this simplicial set may be infinite,
+            so specify dimensions when computing homology
         """
         return self.homology(dim=dim, cohomology=True, **kwds)
 
