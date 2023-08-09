@@ -234,7 +234,8 @@ class SuperLieAlgebra(CombinatorialFreeModule):
                 return 0
 
         def bracket(self, rt):
-            names=self.parent()._names
+            P = self.parent()
+            names = P._names
             degrees=self.parent()._degrees
             dictionary = self.parent().vector_presentation
             basis=self.parent().basis()
