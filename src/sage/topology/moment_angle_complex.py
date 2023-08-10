@@ -268,7 +268,7 @@ class MomentAngleComplex(SageObject, UniqueRepresentation):
 
     def _repr_(self):
         """
-        Return a string representation of this moment-angle complex.
+        Return a string representation of ``self``.
 
         TESTS::
 
@@ -287,7 +287,7 @@ class MomentAngleComplex(SageObject, UniqueRepresentation):
 
     def cubical_complex(self):
         """
-        Return the cubical complex which represents this moment-angle complex.
+        Return the cubical complex which represents ``self``.
 
         This method returns returns a cubical complex which is
         derived by explicitly computing products and unions in the
@@ -320,7 +320,7 @@ class MomentAngleComplex(SageObject, UniqueRepresentation):
 
     def simplicial_complex(self):
         """
-        The simplicial complex associated with this moment-angle complex.
+        The simplicial complex associated with ``self``.
 
         EXAMPLES::
 
@@ -455,7 +455,7 @@ class MomentAngleComplex(SageObject, UniqueRepresentation):
     @cached_method  # maybe ignore the algorithm?
     def _homology_group(self, i, base_ring=ZZ, cohomology=False, algorithm='pari', verbose=False, reduced=True):
         """
-        The `i`-th (reduced) homology group of this moment-angle complex.
+        The `i`-th (reduced) homology group of ``self``.
 
         INPUT:
 
@@ -538,7 +538,7 @@ class MomentAngleComplex(SageObject, UniqueRepresentation):
     def homology(self, dim=None, base_ring=ZZ, cohomology=False,
                  algorithm='pari', verbose=False, reduced=True):
         """
-        The (reduced) homology of this moment-angle complex.
+        The (reduced) homology of ``self``.
 
         INPUT:
 
@@ -644,7 +644,7 @@ class MomentAngleComplex(SageObject, UniqueRepresentation):
     def cohomology(self, dim=None, base_ring=ZZ, algorithm='pari',
                    verbose=False, reduced=True):
         r"""
-        The reduced cohomology of this moment-angle complex.
+        The reduced cohomology of ``self``.
 
         This is equivalent to calling the ``homology()`` method,
         with ``cohomology=True`` as an argument.
@@ -674,7 +674,7 @@ class MomentAngleComplex(SageObject, UniqueRepresentation):
 
     def betti(self, dim=None):
         r"""
-        Return the Betti number (or numbers) of this moment-angle complex.
+        Return the Betti number (or numbers) of ``self``.
 
         The the `i`-th Betti number is the rank of the `i`-th homology group.
 
@@ -713,7 +713,7 @@ class MomentAngleComplex(SageObject, UniqueRepresentation):
         Return the Euler characteristic of ``self``.
 
         The Euler characteristic is defined as the alternating sum
-        of the Betti numbers of this moment-angle complex.
+        of the Betti numbers of ``self``.
 
         EXAMPLES::
 
@@ -729,7 +729,7 @@ class MomentAngleComplex(SageObject, UniqueRepresentation):
 
     def product(self, other):
         """
-        Return the product of this moment-angle complex with another one.
+        Return the product of ``self`` with ``other``.
 
         It is known that the product of two moment-angle complexes
         is a moment-angle complex over the join of the two corresponding
