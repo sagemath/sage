@@ -2369,7 +2369,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
             d = self.degree()
             R = RealField(prec)
             N = kwds.get('N', 10)
-            err_bound = kwds.get('error_bound', None)
+            error_bound = kwds.get('error_bound', None)
 
             H = 0
             h = R.zero()
@@ -2384,13 +2384,13 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
 
                 # Compute the error bound as defined in Algorithm 3.1 of [WELLS]
                 if Res > 1:
-                    if err_bound is not None:
-                        err_bound /= 2
-                        N = ceil((R(Res).log().log() - R(d - 1).log() - R(err_bound).log()) / R(d).log())
+                    if error_bound is not None:
+                        error_bound /= 2
+                        N = ceil((R(Res).log().log() - R(d - 1).log() - R(error_bound).log()) / R(d).log())
                         if N < 1:
                             N = 1
 
-                        kwds.update({'error_bound': err_bound})
+                        kwds.update({'error_bound': error_bound})
                         kwds.update({'N': N})
 
                     for n in range(N):
@@ -2412,8 +2412,8 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
                 if h < 0:
                     # This should be impossible. The error bound for Wells' is rigorous
                     # and the actual height is always >= 0.
-                    # If we see something less than -err_bound, something has gone wrong.
-                    assert h > -err_bound, "A negative height less than -error_bound was computed. " + \
+                    # If we see something less than -error_bound, something has gone wrong.
+                    assert h > -error_bound, "A negative height less than -error_bound was computed. " + \
                     "This should be impossible, please report bug on https://github.com/sagemath/sage/issues"
                     h = R(0)
                 return h
@@ -2432,22 +2432,16 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
 
                 Res = O(f.resultant(normalize=True).abs())
 
-                # if Res is Integer:
-                #     Res = Res.abs()
-                # else:
-                #     Res = Res.norm()
-
                 # Compute the error bound as defined in Algorithm 3.1 of [WELLS]
                 if Res > 1:
-                    if err_bound is not None:
-                        err_bound /= 2
-                        N = ceil((R(Res.norm()).log().log() - R(d - 1).log() - R(err_bound).log()) / R(d).log())
-                        # N = ceil((R(Res).log().log() - R(d - 1).log() - R(err_bound).log()) / R(d).log())
+                    if error_bound is not None:
+                        error_bound /= len(K.places()) + 1
+                        N = ceil((R(Res).log().log() - R(d - 1).log() - R(error_bound).log()) / R(d).log())
 
                         if N < 1:
                             N = 1
 
-                        kwds.update({'error_bound': err_bound})
+                        kwds.update({'error_bound': error_bound})
                         kwds.update({'N': N})
 
                     # import pdb; pdb.set_trace()
@@ -2467,12 +2461,12 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
                 # between what Wells' calls H_infty and what Green's function returns
                 # for the infinite place.
                 h = -H
-                for v in K.places():
+                for v in K.places(prec=prec):
                     if isinstance(v.codomain(), (sage.rings.abc.RealField, sage.rings.abc.RealDoubleField)):
                         dv = R.one()
                     else:
                         dv = R(2)
-                    h += dv * f.green_function(number_field_pt, v)
+                    h += dv * f.green_function(number_field_pt, v, **kwds)
 
                 # The value returned by Wells' Algorithm may be negative.
                 # As the canonical height is always non-negative, hence return 0 if
@@ -2480,8 +2474,8 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
                 if h < 0:
                     # This should be impossible. The error bound for Wells' is rigorous
                     # and the actual height is always >= 0.
-                    # If we see something less than -err_bound, something has gone wrong.
-                    assert h > -err_bound, "A negative height less than -error_bound was computed. " + \
+                    # If we see something less than -error_bound, something has gone wrong.
+                    assert h > -error_bound, "A negative height less than -error_bound was computed. " + \
                     "This should be impossible, please report bug on https://github.com/sagemath/sage/issues"
                     h = R(0)
                 return h
@@ -2501,8 +2495,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
 
         # Update the ``kwds`` dictionary for use in ``green_function``
         if error_bound is not None:
-            num_places = len(emb) + len(bad_primes)
-            error_bound /= num_places
+            error_bound /= len(emb) + len(bad_primes)
 
         kwds.update({"bad_primes": bad_primes})
         kwds.update({"error_bound": error_bound})
