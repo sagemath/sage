@@ -532,7 +532,7 @@ def tutte_polynomial(G, edge_selector=None, cache=None):
 
     The Tutte polynomial of any tree of order `n` is `x^{n-1}`::
 
-        sage: all(T.tutte_polynomial() == x**9 for T in graphs.trees(10))               # optional - sage.symbolic
+        sage: all(T.tutte_polynomial() == x**9 for T in graphs.trees(10))               # needs sage.symbolic
         True
 
     The Tutte polynomial of the Petersen graph is::
@@ -550,7 +550,7 @@ def tutte_polynomial(G, edge_selector=None, cache=None):
         sage: G = graphs.RandomGNP(10,0.6)
         sage: while not G.is_connected():
         ....:     G = graphs.RandomGNP(10,0.6)
-        sage: G.tutte_polynomial()(1,1) == G.spanning_trees_count()
+        sage: G.tutte_polynomial()(1,1) == G.spanning_trees_count()                     # needs sage.modules
         True
 
     Given that `T(x,y)` is the Tutte polynomial of a graph `G` with
@@ -560,7 +560,7 @@ def tutte_polynomial(G, edge_selector=None, cache=None):
         sage: G = graphs.OctahedralGraph()
         sage: T = G.tutte_polynomial()
         sage: R = PolynomialRing(ZZ, 'x')
-        sage: R((-1)^5*x*T(1-x,0)).factor()                                             # optional - sage.symbolic
+        sage: R((-1)^5*x*T(1-x,0)).factor()                                             # needs sage.symbolic
         (x - 2) * (x - 1) * x * (x^3 - 9*x^2 + 29*x - 32)
         sage: G.chromatic_polynomial().factor()
         (x - 2) * (x - 1) * x * (x^3 - 9*x^2 + 29*x - 32)
