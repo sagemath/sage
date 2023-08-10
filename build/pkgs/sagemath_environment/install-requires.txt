@@ -1,2 +1,2 @@
 # This file is updated on every release by the sage-update-version script
-sagemath-environment ~= 10.1b8
+sagemath-environment ~= 10.1b9

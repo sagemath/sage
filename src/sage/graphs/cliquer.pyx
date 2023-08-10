@@ -115,7 +115,7 @@ def all_max_clique(graph):
          [2, 6], [2, 8], [3, 4], [3, 7], [3, 9], [4, 5], [4, 8], [5, 10],
          [5, 11], [6, 10], [6, 11], [7, 8], [7, 11], [8, 10], [9, 10], [9, 11]]
         sage: G = Graph({0:[1,2,3], 1:[2], 3:[0,1]})
-        sage: G.show(figsize=[2,2])                                                     # optional - sage.plot
+        sage: G.show(figsize=[2,2])                                                     # needs sage.plot
         sage: G.cliques_maximum()
         [[0, 1, 2], [0, 1, 3]]
         sage: C = graphs.PetersenGraph()
@@ -302,7 +302,7 @@ def clique_number(graph):
         sage: C.clique_number()
         4
         sage: G = Graph({0:[1,2,3], 1:[2], 3:[0,1]})
-        sage: G.show(figsize=[2,2])                                                     # optional - sage.plot
+        sage: G.show(figsize=[2,2])                                                     # needs sage.plot
         sage: G.clique_number()
         3
 
