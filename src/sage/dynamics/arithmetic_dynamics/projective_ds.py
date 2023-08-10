@@ -6578,7 +6578,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
 
             # Check if critical point is infinity
             if crit[1] == 0:
-                g = g.subs(x = 1/x)
+                g = g.subs(x=1/x)
                 new_crit = F_crit.domain()([0, 1])
 
             # Check if output is infinity
