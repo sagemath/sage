@@ -38,7 +38,6 @@ from sage.rings.infinity import infinity
 from sage.rings.integer_ring import IntegerRing_class
 from sage.rings.integer_ring import ZZ
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
-from sage.rings.polynomial.laurent_polynomial_ring import LaurentPolynomialRing
 from sage.rings.rational_field import RationalField
 from sage.structure.sage_object import SageObject
 from sage.misc.latex import latex
@@ -133,7 +132,6 @@ class LPASeed(SageObject):
             self._coefficients = data._coefficients
             self._ambient_field = data._ambient_field
             self._polynomial_ring = data._polynomial_ring
-            self._laurent_poly_ring = data._laurent_poly_ring
             self._rank = data._rank
             self._exchange_polys = copy(data._exchange_polys)
             self._laurent_polys = copy(data._laurent_polys)
@@ -155,7 +153,7 @@ class LPASeed(SageObject):
                 # add the variables that are not already names
                 coefficients += tuple(name_poly_vars.difference(set(names)))
 
-        coefficients = tuple(coefficients)  # coefficients are immutable
+        coefficients = tuple(set(coefficients))  # coefficients are immutable and have no repeats
         exchange_polys = list(data.values())
 
         self._names = names
@@ -175,13 +173,11 @@ class LPASeed(SageObject):
 
         self._ambient_field = FractionField(self._polynomial_ring)
 
-        self._laurent_poly_ring = LaurentPolynomialRing(self._base_ring,
-                                                        names=variables)
         self._rank = len(self._names)
 
         # we get initial cluster variables by casting initial variables as
         # rational functions
-        self._cluster_vars = [self._laurent_poly_ring(self._names[i])
+        self._cluster_vars = [self._ambient_field(self._names[i])
                               for i in range(self._rank)]
 
         # take what input data we were given and try to use it to
@@ -304,10 +300,6 @@ class LPASeed(SageObject):
                     # divide exchange polynomial by this maximal power
                     laurent_polys[i] = laurent_polys[i] / (
                         self._polynomial_ring(self._names[j]) ** counter)
-
-                    # ensure laurent polynomials are in the correct ring
-                    laurent_polys[i] = self._laurent_poly_ring(
-                        laurent_polys[i])
 
         # after performing all substitutions, set internal laurent polynomials
         self._laurent_polys = laurent_polys
@@ -1201,6 +1193,91 @@ class LPASeed(SageObject):
             cvar_poly_pairs.append(latex(tuple([cvars[i], polys[i]])))
 
         return latex(tuple(cvar_poly_pairs))
+
+    def are_laurent_polys_trivial(self):
+        r"""
+        Returns whether this seed has Laurent polynomials with nontrivial denominators.
+        """
+        for poly in self.laurent_polys():
+
+            if poly.denominator() != 1:
+
+                return False
+
+        return True
+
+    def is_mutation_infinite(self, give_reason=True):
+        r"""
+        Performs some heuristic checks on the mutation class of this seed to work out if it is mutation infinite or not.
+        Completely probabilistic and may false positive; do not use in research setting.
+        Warning: This could take a long time for some seeds!
+        """
+
+        MAX_DEGREE = 20  # when to decide a seed mutation class is too large based on degrees of exchange polynomials
+        counter = 0
+        for seed in self.mutation_class_iter():
+            counter += 1
+            if not seed.passes_rank_two_check():  # type: ignore
+                if give_reason:
+                    print("Fails rank two check after mutating at indices %s" %
+                          (seed.mutation_sequence()))
+                return True
+
+            # check degrees of exchange polynomials
+
+            for poly in seed.exchange_polys():  # type: ignore
+
+                for var in poly.variables():
+
+                    if poly.degree(var) > MAX_DEGREE:
+                        if give_reason:
+                            print("Fails polynomial degree finiteness check after mutating at indices %s" % (
+                                seed.mutation_sequence()))
+                        return True
+
+        # if we managed to iterate through everything, then it must be finite
+
+        if give_reason:
+            print("Mutation finite, has %s seeds in mutation class" % (counter))
+        return False
+
+    def passes_rank_two_check(self):
+        r"""
+        Check that, when restricting to any two variables, that the product of the degrees is strictly less than 4.
+        """
+
+        N = self.rank()
+        polys = self.exchange_polys()
+
+        for i in range(N):
+            for j in range(i, N):
+                if polys[i].degree(self._polynomial_ring(self._names[j])) * polys[j].degree(self._polynomial_ring(self._names[i])) >= 4:
+                    return False
+
+        return True
+
+    def get_laurent_poly_denominators(self):
+        r"""
+        Returns a list containing the denominators of the Laurent polynomials for this seed.
+        """
+        return [poly.denominator() for poly in self.laurent_polys()]
+
+    @staticmethod
+    def create_generic_seed(vars, polys):
+
+        for i in range(len(polys)):
+
+            coefficients = []
+            M = polys[i].monomials()
+            new_coeffs = list(var('a_%d%d' % (i, j) for j in range(len(M))))
+            coefficients += new_coeffs
+            new_poly = 0
+            for j in range(len(M)):
+                new_poly += new_coeffs[j]*M[j]
+
+            polys[i] = new_poly
+
+        return LPASeed({k: v for k, v in zip(vars, polys)}, coefficients=coefficients)
 
 
 def _remove_repeat_indices(L):
