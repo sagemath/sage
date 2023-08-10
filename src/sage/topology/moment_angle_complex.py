@@ -453,33 +453,9 @@ class MomentAngleComplex(SageObject, UniqueRepresentation):
 #        return out
 
     @cached_method  # maybe ignore the algorithm?
-    def _homology_group(self, i, base_ring=ZZ, cohomology=False, algorithm='pari', verbose=False, reduced=True):
+    def _homology_group(self, i, base_ring, cohomology, algorithm, verbose, reduced):
         """
         The `i`-th (reduced) homology group of ``self``.
-
-        INPUT:
-
-        - ``i`` -- integer; represents the homology we want to compute
-        - ``base_ring`` -- commutative ring (default: ``ZZ``); must be ``ZZ`` or a field
-        - ``cohomology`` -- boolean (default: ``False``);
-          if ``True``, compute cohomology rather than homology
-        - ``algorithm`` -- string (default: ``'pari'``); the options are ``'auto'``, ``'dhsw'``, or ``'pari'``;
-          see below for a description of what they mean
-        - ``verbose`` -- boolean (default: ``False``); if ``True``,
-          print some messages as the homology is computed
-        - ``reduced`` -- boolean (default: ``True``); if ``True``,
-          return the reduced homology
-
-        ALGORITHM:
-
-        This algorithm is adopted from theorem 4.5.8. on page 154 of
-        [BP2014]_.
-
-        The (co)homology of the moment-angle complex is closely related
-        to the (co)homologies of certain full subcomplexes of the
-        associated simplicial complex. For more information, see the
-        theorem mentioned above. We find those subcomplexes, and then
-        we compute their (co)homologies with the parsed arguments.
 
         .. SEEALSO::
 
@@ -490,15 +466,15 @@ class MomentAngleComplex(SageObject, UniqueRepresentation):
 
             sage: Z = MomentAngleComplex([[0,1,2], [1,2,3]]); Z
             Moment-angle complex of Simplicial complex with vertex set (0, 1, 2, 3) and facets {(0, 1, 2), (1, 2, 3)}
-            sage: Z._homology_group(3)
+            sage: Z._homology_group(3, base_ring=ZZ, cohomology=False, algorithm='pari', verbose=False, reduced=True)
             Z
-            sage: Z._homology_group(4)
+            sage: Z._homology_group(4, base_ring=ZZ, cohomology=False, algorithm='pari', verbose=False, reduced=True)
             0
             sage: Z.homology()
             {0: 0, 1: 0, 2: 0, 3: Z, 4: 0, 5: 0, 6: 0, 7: 0}
             sage: RP = simplicial_complexes.RealProjectivePlane()
             sage: Z = MomentAngleComplex(RP)
-            sage: Z._homology_group(8)
+            sage: Z._homology_group(8, base_ring=ZZ, cohomology=False, algorithm='pari', verbose=False, reduced=True)
             C2
 
         This yields the same result as creating a cubical complex
@@ -510,7 +486,7 @@ class MomentAngleComplex(SageObject, UniqueRepresentation):
             Moment-angle complex of Simplicial complex with vertex set (0, 1, 2) and facets {(0, 1), (0, 2), (1, 2)}
             sage: Z.cubical_complex()
             Cubical complex with 64 vertices and 729 cubes
-            sage: Z.cubical_complex().homology(5) == Z._homology_group(5)
+            sage: Z.cubical_complex().homology(5) == Z._homology_group(5, base_ring=ZZ, cohomology=False, algorithm='pari', verbose=False, reduced=True)
             True
         """
         vertices = self._simplicial_complex.vertices()
