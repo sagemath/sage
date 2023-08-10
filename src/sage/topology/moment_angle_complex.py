@@ -1,63 +1,9 @@
-r"""
+"""
 Moment-angle complexes
 
 AUTHORS:
 
 - Ognjen Petrov (2023-06-25)
-
-This module implements the basic structure of moment-angle complexes.
-Given a simplicial complex `K`, with a set of vertices
-`V = \{v_1, v_2, \dotso, v_n\}`, a moment-angle complex over `K` is a
-topological space `Z`, which is a union of `X_{\sigma}`, where
-`\sigma \in K`, and `X_{\sigma} = Y_{v_1} \times Y_{v_2} \times \dotso \times Y_{v_n}`
-and `Y_{v_i}` is a 2-disk (a 2-simplex) if `v_i \in \sigma`, or a 1-sphere otherwise.
-
-.. MATH::
-
-    Y_{v_i} =
-    \begin{cases}
-        D^2, &v_i \in \sigma\\
-        S^1, &v_i \notin \sigma
-    \end{cases}
-
-.. NOTE::
-
-    The mentioned union is not a disjoint union of topological spaces. The unit disks
-    and the unit spheres are considered subsets of `\CC`, so the union is just
-    a normal union of subsets of `\CC^n`.
-
-They are one of the main topics of resarch in fields such as algebraic and
-toric topology, as well as combinatorial algebraic geometry.
-
-Here we moment-angle complexes as cubical complexes and try to compute mostly
-things which would not require computing the moment-angle complex itself,
-but rather work with the corresponding simplicial complex.
-
-.. NOTE::
-
-    One of the more useful properties will be the
-    :meth:`bigraded Betti numbers<sage.topology.simplicial_complex.bigraded_betti_numbers>`,
-    and the underlying theorem which makes this possible is Hochter's formula, which
-    can be found on page 104 of [BP2014]_.
-
-EXAMPLES::
-
-    sage: MomentAngleComplex([[1,2,3], [2,4], [3,4]])
-    Moment-angle complex of Simplicial complex with vertex set (1, 2, 3, 4) and facets {(2, 4), (3, 4), (1, 2, 3)}
-    sage: X = SimplicialComplex([[0,1], [1,2], [1,3], [2,3]])
-    sage: Z = MomentAngleComplex(X); Z
-    Moment-angle complex of Simplicial complex with vertex set (0, 1, 2, 3) and facets {(0, 1), (1, 2), (1, 3), (2, 3)}
-    sage: M = MomentAngleComplex([[1], [2]]); M
-    Moment-angle complex of Simplicial complex with vertex set (1, 2) and facets {(1,), (2,)}
-
-We can perform a number of operations, such as find the dimension or compute the homology::
-
-    sage: M.homology()
-    {0: 0, 1: 0, 2: 0, 3: Z}
-    sage: Z.dimension()
-    6
-    sage: Z.homology()
-    {0: 0, 1: 0, 2: 0, 3: Z x Z, 4: Z, 5: Z, 6: Z}
 """
 
 # ****************************************************************************
@@ -82,17 +28,9 @@ from .simplicial_complex import SimplicialComplex, copy
 from .simplicial_complex_examples import Sphere, Simplex
 from itertools import combinations
 
-# TODO's:
-# - Documentation (examples and tests)
-# - add literature and references to bibliography!!!
-# - add latex_name parameter or something similar?
-# - add moment_angle_complex to simplicial_complex
-# - add a method simplicial_complex() (returns the associated simplicial complex)?
-# - use different UniqueRepresentation complexes for components?
-# - different way of computing euler characteristic?
-# - make _moment_angle_complex a lazy attribute
-
 # Future TODO's:
+# - add latex_name parameter or something similar?
+# - different way of computing euler characteristic?
 # - bigraded betti numbers? (page 161 buchstaber panov)
 # - explicitly state the vertices for construction
 # - polyhedral products and real moment-angle complexes
@@ -143,6 +81,37 @@ class MomentAngleComplex(SageObject, UniqueRepresentation):
     r"""
     A moment-angle complex.
 
+    Given a simplicial complex `K`, with a set of vertices
+    `V = \{v_1, v_2, \dotso, v_n\}`, a moment-angle complex over `K` is a
+    topological space `Z`, which is a union of `X_{\sigma}`, where
+    `\sigma \in K`, and `X_{\sigma} = Y_{v_1} \times Y_{v_2} \times \dotso \times Y_{v_n}`
+    and `Y_{v_i}` is a 2-disk (a 2-simplex) if `v_i \in \sigma`, or a 1-sphere otherwise.
+
+    .. MATH::
+
+        Y_{v_i} =
+        \begin{cases}
+            D^2, &v_i \in \sigma\\
+            S^1, &v_i \notin \sigma
+        \end{cases}
+
+    .. NOTE::
+
+        The mentioned union is not a disjoint union of topological spaces. The unit disks
+        and the unit spheres are considered subsets of `\CC`, so the union is just
+        a normal union of subsets of `\CC^n`.
+
+    Here we view moment-angle complexes as cubical complexes and try to compute mostly
+    things which would not require computing the moment-angle complex itself,
+    but rather work with the corresponding simplicial complex.
+
+    .. NOTE::
+
+        One of the more useful properties will be the
+        :meth:`bigraded Betti numbers<sage.topology.simplicial_complex.bigraded_betti_numbers>`,
+        and the underlying theorem which makes this possible is Hochter's formula, which
+        can be found on page 104 of [BP2014]_.
+
     INPUT:
 
     - ``simplicial_complex`` -- an instance of ``SimplicialComplex``,
@@ -150,7 +119,24 @@ class MomentAngleComplex(SageObject, UniqueRepresentation):
       created (e.g., list of facets), which represents the associated
       simplicial complex over which this moment-angle complex is created
 
-    EXAMPLES:
+    EXAMPLES::
+
+        sage: MomentAngleComplex([[1,2,3], [2,4], [3,4]])
+        Moment-angle complex of Simplicial complex with vertex set (1, 2, 3, 4) and facets {(2, 4), (3, 4), (1, 2, 3)}
+        sage: X = SimplicialComplex([[0,1], [1,2], [1,3], [2,3]])
+        sage: Z = MomentAngleComplex(X); Z
+        Moment-angle complex of Simplicial complex with vertex set (0, 1, 2, 3) and facets {(0, 1), (1, 2), (1, 3), (2, 3)}
+        sage: M = MomentAngleComplex([[1], [2]]); M
+        Moment-angle complex of Simplicial complex with vertex set (1, 2) and facets {(1,), (2,)}
+
+    We can perform a number of operations, such as find the dimension or compute the homology::
+
+        sage: M.homology()
+        {0: 0, 1: 0, 2: 0, 3: Z}
+        sage: Z.dimension()
+        6
+        sage: Z.homology()
+        {0: 0, 1: 0, 2: 0, 3: Z x Z, 4: Z, 5: Z, 6: Z}
 
     If the associated simplicial complex is an `n`-simplex, then the
     corresponding moment-angle complex is a polydisc (a complex ball) of
