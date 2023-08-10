@@ -3012,19 +3012,16 @@ cdef class Matrix_modn_dense_template(Matrix_dense):
         if nrows == -1:
             nrows = self._nrows - row
 
-        #if col != 0 or ncols != self._ncols:
-        #    return self.matrix_from_rows_and_columns(range(row, row+nrows), range(col, col+ncols))
-
         if nrows < 0 or row < 0 or row + nrows > self._nrows:
             raise IndexError("rows out of range")
+        if ncols < 0 or col < 0 or col + ncols > self._ncols:
+            raise IndexError("columns out of range")
 
         cdef Matrix_modn_dense_template M = self.new_matrix(nrows=nrows, ncols=ncols)
         cdef Py_ssize_t i,r
         for i,r in enumerate(range(row, row+nrows)) :
             memcpy(M._entries + (i*ncols), self._entries+self._ncols*r+col, sizeof(celement)*ncols)
 
-        #cdef Matrix_modn_dense_template M = self.new_matrix(nrows=nrows, ncols=self._ncols)
-        #memcpy(M._entries, self._entries+row*ncols, sizeof(celement)*ncols*nrows)
         return M
 
     def _matrices_from_rows(self, Py_ssize_t nrows, Py_ssize_t ncols):
@@ -3087,7 +3084,6 @@ cdef class Matrix_modn_dense_template(Matrix_dense):
             [5 4]
             [0 7]
         """
-        #columns = PySequence_Fast(columns, "columns is not iterable")
         cdef Py_ssize_t ncols = len(columns)
 
         # Construct new matrix
@@ -3098,8 +3094,7 @@ cdef class Matrix_modn_dense_template(Matrix_dense):
                 raise IndexError("column index out of range")
             for i in range(self._nrows):
                 A._matrix[i][j] = self._matrix[i][col]
-                
-                #A.set_unsafe(i, j, self.get_unsafe(i, col))
+
         return A
         
     def matrix_from_rows(self, rows):
@@ -3118,7 +3113,6 @@ cdef class Matrix_modn_dense_template(Matrix_dense):
             [6 7 0]
             [3 4 5]
         """
-        #rows = PySequence_Fast(rows, "rows is not iterable")
         cdef Py_ssize_t nrows = len(rows)
 
         # Construct new matrix
@@ -3130,8 +3124,6 @@ cdef class Matrix_modn_dense_template(Matrix_dense):
                 raise IndexError("row index out of range")
             memcpy(A._entries+(i*self._ncols), self._entries+(row*self._ncols), sizeof(celement)*self._ncols)
 
-            #for j in range(self._ncols):
-            #    A.set_unsafe(i, j, self.get_unsafe(row, j))
         return A
 
     def matrix_from_rows_and_columns(self, rows, columns):
@@ -3174,9 +3166,6 @@ cdef class Matrix_modn_dense_template(Matrix_dense):
 
         - Didier Deshommes: some Pyrex speedups implemented
         """
-        #rows = PySequence_Fast(rows, "rows is not iterable")
-        #columns = PySequence_Fast(columns, "columns is not iterable")
-
         cdef Py_ssize_t ncols = len(columns)
         cdef Py_ssize_t nrows = len(rows)
 
@@ -3194,7 +3183,6 @@ cdef class Matrix_modn_dense_template(Matrix_dense):
             for j, col in enumerate(columns):
                 A._matrix[i][j] = self._matrix[row][col]
                 
-                #A.set_unsafe(i, j, self.get_unsafe(row, col))
         return A
 
     def __bool__(self):
