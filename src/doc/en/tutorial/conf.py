@@ -33,6 +33,6 @@ htmlhelp_basename = 'sage_tutorial'
 # Grouping the document tree into LaTeX files. List of tuples
 # (source start file, target name, title, author, document class [howto/manual]).
 latex_documents = [
-  ('index', 'sage_tutorial.tex', 'Tutorial',
+  ('index', 'SageTutorial.tex', project,
    'The Sage Development Team', 'manual'),
 ]
