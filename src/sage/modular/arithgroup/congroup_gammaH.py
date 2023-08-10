@@ -163,7 +163,7 @@ class GammaH_class(CongruenceSubgroup):
     The congruence subgroup `\Gamma_H(N)` for some subgroup `H \trianglelefteq
     (\ZZ / N\ZZ)^\times`, which is the subgroup of `\SL_2(\ZZ)` consisting of
     matrices of the form `\begin{pmatrix} a &
-    b \\ c & d \end{pmatrix}` with `N \mid c` and `a, b \in H`.
+    b \\ c & d \end{pmatrix}` with `N \mid c` and `a, d \in H`.
 
     TESTS:
 
