@@ -725,7 +725,8 @@ class MomentAngleComplex(SageObject, UniqueRepresentation):
             sage: Z.euler_characteristic()
             1
         """
-        return sum((-1)**n * self.betti()[n] for n in range(self.dimension() + 1))
+        betti_numbers = self.betti()
+        return ZZ.sum((-1)**n * betti_numbers[n] for n in range(self.dimension() + 1))
 
     def product(self, other):
         """
