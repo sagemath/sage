@@ -79,13 +79,14 @@ cdef class FiniteFieldHomomorphism_prime(FiniteFieldHomomorphism_generic):
         """
         TESTS::
 
+            sage: # needs sage.rings.finite_rings
             sage: from sage.rings.finite_rings.hom_prime_finite_field import FiniteFieldHomomorphism_prime
             sage: k = GF(3)
-            sage: K.<t> = GF(3^5)                                                       # needs sage.rings.finite_rings
-            sage: f = FiniteFieldHomomorphism_prime(Hom(k, K))                          # needs sage.rings.finite_rings
-            sage: a = f(4); a                                                           # needs sage.rings.finite_rings
+            sage: K.<t> = GF(3^5)
+            sage: f = FiniteFieldHomomorphism_prime(Hom(k, K))
+            sage: a = f(4); a
             1
-            sage: a.parent()                                                            # needs sage.rings.finite_rings
+            sage: a.parent()
             Finite Field in t of size 3^5
         """
         return self._codomain._element_constructor(x)
