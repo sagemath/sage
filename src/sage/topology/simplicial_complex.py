@@ -1,5 +1,4 @@
 # sage.doctest: needs sage.graphs
-# sage.doctest: needs sage.graphs
 r"""
 Finite simplicial complexes
 

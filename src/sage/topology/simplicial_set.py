@@ -201,13 +201,14 @@ When infinite simplicial sets are involved, most computations are done
 by taking an `n`-skeleton for an appropriate `n`, either implicitly or
 explicitly::
 
-    sage: G = groups.misc.MultiplicativeAbelian([3])                                    # needs sage.groups
-    sage: B3 = simplicial_sets.ClassifyingSpace(G)                                      # needs sage.groups
-    sage: B3.disjoint_union(B3).n_skeleton(3)                                           # needs sage.groups
+    sage: # needs sage.groups
+    sage: G = groups.misc.MultiplicativeAbelian([3])
+    sage: B3 = simplicial_sets.ClassifyingSpace(G)
+    sage: B3.disjoint_union(B3).n_skeleton(3)
     Disjoint union: (Simplicial set with 15 non-degenerate simplices
                       u Simplicial set with 15 non-degenerate simplices)
     sage: S1 = simplicial_sets.Sphere(1)
-    sage: B3.product(S1).homology(range(4))                                             # needs sage.groups sage.modules
+    sage: B3.product(S1).homology(range(4))                                             # needs sage.modules
     {0: 0, 1: Z x C3, 2: C3, 3: C3}
 
 Without the ``range`` argument, this would raise an error, since
@@ -1927,12 +1928,12 @@ class SimplicialSet_arbitrary(Parent):
 
             sage: C3 = groups.misc.MultiplicativeAbelian([3])                           # needs sage.groups
             sage: BC3 = simplicial_sets.ClassifyingSpace(C3)                            # needs sage.groups
-            sage: BC3.chain_complex(range(4), base_ring=GF(3))                          # needs sage.groups sage.modules sage.rings.finite_rings
+            sage: BC3.chain_complex(range(4), base_ring=GF(3))                          # needs sage.groups sage.modules
             Chain complex with at most 4 nonzero terms over Finite Field of size 3
 
         TESTS::
 
-            sage: BC3.chain_complex()                                                   # needs sage.groups sage.rings.finite_rings
+            sage: BC3.chain_complex()                                                   # needs sage.groups
             Traceback (most recent call last):
             ...
             NotImplementedError: this simplicial set may be infinite, so specify dimensions when computing its chain complex
@@ -1983,7 +1984,7 @@ class SimplicialSet_arbitrary(Parent):
 
             sage: C3 = groups.misc.MultiplicativeAbelian([3])                           # needs sage.groups
             sage: BC3 = simplicial_sets.ClassifyingSpace(C3)                            # needs sage.groups
-            sage: BC3.homology(range(4), base_ring=GF(3))                               # needs sage.groups sage.modules sage.rings.finite_rings
+            sage: BC3.homology(range(4), base_ring=GF(3))                               # needs sage.groups sage.modules
             {0: Vector space of dimension 0 over Finite Field of size 3,
              1: Vector space of dimension 1 over Finite Field of size 3,
              2: Vector space of dimension 1 over Finite Field of size 3,
@@ -2155,11 +2156,13 @@ class SimplicialSet_arbitrary(Parent):
             sage: C = S3.n_chains(3, cochains=True)                                     # needs sage.modules
             sage: list(C.basis())                                                       # needs sage.modules
             [\chi_sigma_3]
-            sage: Sigma3 = groups.permutation.Symmetric(3)                              # needs sage.groups
-            sage: BSigma3 = simplicial_sets.ClassifyingSpace(Sigma3)                    # needs sage.groups
-            sage: list(BSigma3.n_chains(1).basis())                                     # needs sage.groups sage.modules
+
+            sage: # needs sage.groups
+            sage: Sigma3 = groups.permutation.Symmetric(3)
+            sage: BSigma3 = simplicial_sets.ClassifyingSpace(Sigma3)
+            sage: list(BSigma3.n_chains(1).basis())                                     # needs sage.modules
             [(1,2), (1,2,3), (1,3), (1,3,2), (2,3)]
-            sage: list(BSigma3.n_chains(1, cochains=True).basis())                      # needs sage.groups sage.modules
+            sage: list(BSigma3.n_chains(1, cochains=True).basis())                      # needs sage.modules
             [\chi_(1,2), \chi_(1,2,3), \chi_(1,3), \chi_(1,3,2), \chi_(2,3)]
         """
         if self.is_finite():
@@ -2230,19 +2233,18 @@ class SimplicialSet_arbitrary(Parent):
             sage: RP5 = simplicial_sets.RealProjectiveSpace(5)
             sage: RP2 = RP5.n_skeleton(2)
             sage: RP5_2 = RP5.quotient(RP2)
-            sage: RP5_2.homology(base_ring=GF(2))                                       # needs sage.modules sage.rings.finite_rings
+            sage: RP5_2.homology(base_ring=GF(2))                                       # needs sage.modules
             {0: Vector space of dimension 0 over Finite Field of size 2,
              1: Vector space of dimension 0 over Finite Field of size 2,
              2: Vector space of dimension 0 over Finite Field of size 2,
              3: Vector space of dimension 1 over Finite Field of size 2,
              4: Vector space of dimension 1 over Finite Field of size 2,
              5: Vector space of dimension 1 over Finite Field of size 2}
-
-            sage: RP5_2.ambient()                                                       # needs sage.groups
+            sage: RP5_2.ambient()
             RP^5
-            sage: RP5_2.subcomplex()                                                    # needs sage.groups
+            sage: RP5_2.subcomplex()
             Simplicial set with 3 non-degenerate simplices
-            sage: RP5_2.quotient_map()                                                  # needs sage.groups
+            sage: RP5_2.quotient_map()
             Simplicial set morphism:
               From: RP^5
               To:   Quotient: (RP^5/Simplicial set with 3 non-degenerate simplices)
@@ -3641,16 +3643,17 @@ class SimplicialSet_finite(SimplicialSet_arbitrary, GenericCellComplex):
 
         EXAMPLES::
 
+            sage: # needs sage.modules
             sage: from sage.topology.simplicial_set import AbstractSimplex, SimplicialSet
             sage: v = AbstractSimplex(0)
             sage: degen = v.apply_degeneracies(1, 0) # s_1 s_0 applied to v
             sage: sigma = AbstractSimplex(3)
-            sage: S3 = SimplicialSet({sigma: (degen, degen, degen, degen)}) # the 3-sphere
-            sage: S3.chain_complex().homology()                                         # needs sage.modules
+            sage: S3 = SimplicialSet({sigma: (degen, degen, degen, degen)})  # the 3-sphere
+            sage: S3.chain_complex().homology()
             {0: Z, 3: Z}
-            sage: S3.chain_complex(augmented=True).homology()                           # needs sage.modules
+            sage: S3.chain_complex(augmented=True).homology()
             {-1: 0, 0: 0, 3: Z}
-            sage: S3.chain_complex(dimensions=range(3), base_ring=QQ).homology()        # needs sage.modules
+            sage: S3.chain_complex(dimensions=range(3), base_ring=QQ).homology()
             {0: Vector space of dimension 1 over Rational Field}
 
             sage: RP5 = simplicial_sets.RealProjectiveSpace(5)                          # needs sage.groups
@@ -3663,14 +3666,15 @@ class SimplicialSet_finite(SimplicialSet_arbitrary, GenericCellComplex):
         Convert some simplicial complexes and `\Delta`-complexes to
         simplicial sets, and compare homology calculations::
 
+            sage: # needs sage.modules
             sage: T = simplicial_complexes.Torus()
-            sage: T.homology() == SimplicialSet(T).homology()                           # needs sage.modules
+            sage: T.homology() == SimplicialSet(T).homology()
             True
             sage: RP2 = delta_complexes.RealProjectivePlane()
-            sage: RP2.homology() == SimplicialSet(RP2).homology()                       # needs sage.modules
+            sage: RP2.homology() == SimplicialSet(RP2).homology()
             True
-            sage: cohoRP2 = RP2.cohomology(base_ring=GF(2))                             # needs sage.modules
-            sage: cohoRP2 == SimplicialSet(RP2).cohomology(base_ring=GF(2))             # needs sage.modules
+            sage: cohoRP2 = RP2.cohomology(base_ring=GF(2))
+            sage: cohoRP2 == SimplicialSet(RP2).cohomology(base_ring=GF(2))
             True
         """
         from sage.homology.chain_complex import ChainComplex
@@ -3811,11 +3815,12 @@ class SimplicialSet_finite(SimplicialSet_arbitrary, GenericCellComplex):
         EXAMPLES::
 
             sage: RP2 = simplicial_sets.RealProjectiveSpace(2)                          # needs sage.groups
-            sage: phi, M = RP2.algebraic_topological_model(GF(2))                       # needs sage.groups sage.rings.finite_rings
-            sage: M.homology()                                                          # needs sage.groups sage.modules sage.rings.finite_rings
+            sage: phi, M = RP2.algebraic_topological_model(GF(2))                       # needs sage.groups
+            sage: M.homology()                                                          # needs sage.groups sage.modules
             {0: Vector space of dimension 1 over Finite Field of size 2,
              1: Vector space of dimension 1 over Finite Field of size 2,
              2: Vector space of dimension 1 over Finite Field of size 2}
+
             sage: T = simplicial_sets.Torus()
             sage: phi, M = T.algebraic_topological_model(QQ)                            # needs sage.modules
             sage: M.homology()                                                          # needs sage.modules

@@ -14,19 +14,20 @@ matrix morphisms.
 
 EXAMPLES::
 
-    sage: S = simplicial_complexes.Sphere(1); S                                         # needs sage.graphs
+    sage: # needs sage.graphs
+    sage: S = simplicial_complexes.Sphere(1); S
     Minimal triangulation of the 1-sphere
-    sage: C = S.chain_complex()                                                         # needs sage.graphs
-    sage: C.differential()                                                              # needs sage.graphs
+    sage: C = S.chain_complex()
+    sage: C.differential()
     {0: [], 1: [-1 -1  0]
      [ 1  0 -1]
      [ 0  1  1], 2: []}
     sage: f = {0: zero_matrix(ZZ,3,3), 1: zero_matrix(ZZ,3,3)}
-    sage: G = Hom(C, C)                                                                 # needs sage.graphs
-    sage: x = G(f); x                                                                   # needs sage.graphs
+    sage: G = Hom(C, C)
+    sage: x = G(f); x
     Chain complex endomorphism of
      Chain complex with at most 2 nonzero terms over Integer Ring
-    sage: x._matrix_dictionary                                                          # needs sage.graphs
+    sage: x._matrix_dictionary
     {0: [0 0 0]
         [0 0 0]
         [0 0 0],
@@ -92,21 +93,22 @@ class ChainComplexMorphism(Morphism):
 
         EXAMPLES::
 
-            sage: S = simplicial_complexes.Sphere(1); S                                 # needs sage.graphs
+            sage: # needs sage.graphs
+            sage: S = simplicial_complexes.Sphere(1); S
             Minimal triangulation of the 1-sphere
-            sage: C = S.chain_complex()                                                 # needs sage.graphs
-            sage: C.differential()                                                      # needs sage.graphs
+            sage: C = S.chain_complex()
+            sage: C.differential()
             {0: [],
              1: [-1 -1  0]
                 [ 1  0 -1]
                 [ 0  1  1],
              2: []}
             sage: f = {0:zero_matrix(ZZ,3,3),1:zero_matrix(ZZ,3,3)}
-            sage: G = Hom(C,C)                                                          # needs sage.graphs
-            sage: x = G(f); x                                                           # needs sage.graphs
+            sage: G = Hom(C,C)
+            sage: x = G(f); x
             Chain complex endomorphism of
              Chain complex with at most 2 nonzero terms over Integer Ring
-            sage: x._matrix_dictionary                                                  # needs sage.graphs
+            sage: x._matrix_dictionary
             {0: [0 0 0]
                 [0 0 0]
                 [0 0 0],
