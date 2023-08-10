@@ -34,7 +34,6 @@ Methods
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-cimport cython
 from memory_allocator cimport MemoryAllocator
 from sage.sets.disjoint_set cimport DisjointSet_of_hashables
 from sage.misc.decorators import rename_keyword
@@ -197,6 +196,7 @@ def kruskal(G, by_weight=True, weight_function=None, check_weight=False, check=F
 
     The input graph must be connected. ::
 
+        sage: # long time
         sage: def my_disconnected_graph(n, ntries, directed=False, multiedges=False, loops=False):
         ....:     G = Graph()
         ....:     k = randint(2, n)
@@ -217,14 +217,14 @@ def kruskal(G, by_weight=True, weight_function=None, check_weight=False, check=F
         ....:         v = randint(0, k-1)
         ....:         G.delete_edge(u, v)
         ....:     return G
-        sage: G = my_disconnected_graph(100, 50, directed=False, multiedges=False, loops=False)  # long time
-        sage: kruskal(G, check=True)  # long time
+        sage: G = my_disconnected_graph(100, 50, directed=False, multiedges=False, loops=False)
+        sage: kruskal(G, check=True)
         []
-        sage: G = my_disconnected_graph(100, 50, directed=False, multiedges=True, loops=False)  # long time
-        sage: kruskal(G, check=True)  # long time
+        sage: G = my_disconnected_graph(100, 50, directed=False, multiedges=True, loops=False)
+        sage: kruskal(G, check=True)
         []
-        sage: G = my_disconnected_graph(100, 50, directed=False, multiedges=True, loops=True)  # long time
-        sage: kruskal(G, check=True)  # long time
+        sage: G = my_disconnected_graph(100, 50, directed=False, multiedges=True, loops=True)
+        sage: kruskal(G, check=True)
         []
 
     If the input graph is a tree, then return its edges::
@@ -569,12 +569,14 @@ def filter_kruskal_iterator(G, threshold=10000, by_weight=True, weight_function=
     The weights of the spanning trees returned by :func:`kruskal_iterator` and
     :func:`filter_kruskal_iterator` are the same::
 
+        sage: # needs networkx
         sage: from sage.graphs.spanning_tree import kruskal_iterator
         sage: G = graphs.RandomBarabasiAlbert(50, 2)
         sage: for u, v in G.edge_iterator(labels=False):
         ....:     G.set_edge_label(u, v, randint(1, 10))
         sage: G.weighted(True)
-        sage: sum(e[2] for e in kruskal_iterator(G)) == sum(e[2] for e in filter_kruskal_iterator(G, threshold=20))
+        sage: sum(e[2] for e in kruskal_iterator(G)) == sum(e[2]
+        ....:     for e in filter_kruskal_iterator(G, threshold=20))
         True
 
     TESTS:
@@ -976,7 +978,7 @@ def random_spanning_tree(G, output_as_graph=False, by_weight=False, weight_funct
         sage: pos = G.get_pos()
         sage: T = G.random_spanning_tree(True)
         sage: T.set_pos(pos)
-        sage: T.show(vertex_labels=False)                                               # optional - sage.plot
+        sage: T.show(vertex_labels=False)                                               # needs sage.plot
 
     We can also use edge weights to change the probability of returning a
     spanning tree::
@@ -1000,6 +1002,7 @@ def random_spanning_tree(G, output_as_graph=False, by_weight=False, weight_funct
 
     Check that the spanning tree returned when using weights is a tree::
 
+        sage: # needs networkx
         sage: G = graphs.RandomBarabasiAlbert(50, 2)
         sage: for u, v in G.edge_iterator(labels=False):
         ....:     G.set_edge_label(u, v, randint(1, 10))
@@ -1088,12 +1091,12 @@ def spanning_trees(g, labels=False):
         sage: G = Graph([(1,2),(1,2),(1,3),(1,3),(2,3),(1,4)], multiedges=True)
         sage: len(list(G.spanning_trees()))
         8
-        sage: G.spanning_trees_count()
+        sage: G.spanning_trees_count()                                                  # needs sage.modules
         8
         sage: G = Graph([(1,2),(2,3),(3,1),(3,4),(4,5),(4,5),(4,6)], multiedges=True)
         sage: len(list(G.spanning_trees()))
         6
-        sage: G.spanning_trees_count()
+        sage: G.spanning_trees_count()                                                  # needs sage.modules
         6
 
     .. SEEALSO::
@@ -1178,8 +1181,8 @@ def spanning_trees(g, labels=False):
             # e=xy links the CC (connected component) of forest containing x
             # with the CC containing y. Any other edge which does that cannot be
             # added to forest anymore, and B is the list of them
-            c1 = forest.connected_component_containing_vertex(e[0])
-            c2 = forest.connected_component_containing_vertex(e[1])
+            c1 = forest.connected_component_containing_vertex(e[0], sort=False)
+            c2 = forest.connected_component_containing_vertex(e[1], sort=False)
             G.delete_edge(e)
             B = G.edge_boundary(c1, c2, sort=False)
             G.add_edge(e)

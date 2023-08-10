@@ -60,7 +60,7 @@ cdef is_FractionField
 cdef ZZ, QQ, RR, CC, RDF, CDF
 
 cimport cython
-from cpython.number cimport PyNumber_TrueDivide, PyNumber_Check
+from cpython.number cimport PyNumber_Check
 
 import operator
 import copy
@@ -70,14 +70,11 @@ from io import StringIO
 from sage.cpython.wrapperdescr cimport wrapperdescr_fastcall
 import sage.rings.rational
 import sage.rings.integer
-from . import polynomial_ring
 import sage.rings.integer_ring
 import sage.rings.rational_field
 import sage.rings.finite_rings.integer_mod_ring
 import sage.rings.fraction_field_element
 import sage.rings.infinity as infinity
-from sage.misc.sage_eval import sage_eval
-from sage.misc.abstract_method import abstract_method
 from sage.misc.latex import latex
 from sage.arith.power cimport generic_power
 from sage.arith.misc import crt
@@ -153,7 +150,7 @@ cpdef is_Polynomial(f):
         sage: R.<x> = ZZ[]
         sage: is_Polynomial(x^3 + x + 1)
         doctest:...: DeprecationWarning: the function is_Polynomial is deprecated;
-        use isinstance(x, sage.structure.element.Polynomial) instead
+        use isinstance(x, sage.rings.polynomial.polynomial_element.Polynomial) instead
         See https://github.com/sagemath/sage/issues/32709 for details.
         True
         sage: S.<y> = R[]
@@ -179,7 +176,7 @@ cpdef is_Polynomial(f):
         False
     """
     from sage.misc.superseded import deprecation
-    deprecation(32709, "the function is_Polynomial is deprecated; use isinstance(x, sage.structure.element.Polynomial) instead")
+    deprecation(32709, "the function is_Polynomial is deprecated; use isinstance(x, sage.rings.polynomial.polynomial_element.Polynomial) instead")
 
     return isinstance(f, Polynomial)
 
@@ -355,7 +352,7 @@ cdef class Polynomial(CommutativePolynomial):
             Graphics object consisting of 1 graphics primitive
         """
         R = self.base_ring()
-        from sage.plot.all import plot, point, line
+        from sage.plot.all import plot, point
         if R.characteristic() == 0:
             if xmin is None and xmax is None:
                 (xmin, xmax) = (-1,1)
@@ -903,7 +900,7 @@ cdef class Polynomial(CommutativePolynomial):
         if pol._compiled is None:
             if d < 4 or d > 50000:
                 result = pol.get_unsafe(d)
-                for i in xrange(d - 1, -1, -1):
+                for i in range(d - 1, -1, -1):
                     result = result * a + pol.get_unsafe(i)
                 return result
             pol._compiled = CompiledPolynomialFunction(pol.list())
@@ -1991,6 +1988,12 @@ cdef class Polynomial(CommutativePolynomial):
             False
             sage: R(0).is_square()
             True
+
+        Make sure :trac:`35860` is fixed::
+
+            sage: S.<x> = PolynomialRing(ZZ)
+            sage: is_square(S(1), True)[1].parent()
+            Univariate Polynomial Ring in x over Integer Ring
         """
         if self.is_zero():
             return (True, self) if root else True
@@ -2003,7 +2006,7 @@ cdef class Polynomial(CommutativePolynomial):
         u = self._parent.base_ring()(f.unit())
 
         if all(a[1] % 2 == 0 for a in f) and u.is_square():
-            g = u.sqrt()
+            g = self._parent(u.sqrt())
             for a in f:
                 g *= a[0] ** (a[1] // 2)
             return (True, g) if root else True
@@ -2813,7 +2816,7 @@ cdef class Polynomial(CommutativePolynomial):
             R1.<x> = ZZ[]
             R2.<y> = R1[]
             y^2 + (2*x + 2)*y + (x^2 + 2*x + 1)
-            sage: sage_input(RR(pi) * polygen(RR), verify=True)
+            sage: sage_input(RR(pi) * polygen(RR), verify=True)                         # optional - sage.symbolic
             # Verified
             R.<x> = RR[]
             3.1415926535897931*x
@@ -4038,7 +4041,7 @@ cdef class Polynomial(CommutativePolynomial):
         cdef dict X = {}
         cdef list Y = self.list(copy=False)
         cdef Py_ssize_t i
-        for i in xrange(len(Y)):
+        for i in range(len(Y)):
             c = Y[i]
             if c:
                 X[i] = c
@@ -4390,7 +4393,7 @@ cdef class Polynomial(CommutativePolynomial):
         A test where nffactor used to fail without a nf structure::
 
             sage: x = polygen(QQ)
-            sage: K = NumberField([x^2-1099511627777, x^3-3], 'a')                      # optional - sage.rings.number_field
+            sage: K = NumberField([x^2 - 1099511627777, x^3 - 3], 'a')                  # optional - sage.rings.number_field
             sage: x = polygen(K)                                                        # optional - sage.rings.number_field
             sage: f = x^3 - 3                                                           # optional - sage.rings.number_field
             sage: factor(f)                                                             # optional - sage.rings.number_field
@@ -11552,7 +11555,7 @@ cdef class Polynomial_generic_dense(Polynomial):
             raise IndexError("polynomial coefficient index must be nonnegative")
         elif value != 0:
             zero = self.base_ring().zero()
-            for _ in xrange(len(self.__coeffs), n):
+            for _ in range(len(self.__coeffs), n):
                 self.__coeffs.append(zero)
             self.__coeffs.append(value)
 

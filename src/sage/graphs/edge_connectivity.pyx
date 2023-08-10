@@ -56,27 +56,31 @@ cdef class GabowEdgeConnectivity:
     A random `d`-regular digraph is `d`-edge-connected::
 
         sage: from sage.graphs.edge_connectivity import GabowEdgeConnectivity
-        sage: D = DiGraph(graphs.RandomRegular(6, 50))
-        sage: while not D.is_strongly_connected():
+        sage: D = DiGraph(graphs.RandomRegular(6, 50))                                  # needs networkx
+        sage: while not D.is_strongly_connected():                                      # needs networkx
         ....:     D = DiGraph(graphs.RandomRegular(6, 50))
-        sage: GabowEdgeConnectivity(D).edge_connectivity()
+        sage: GabowEdgeConnectivity(D).edge_connectivity()                              # needs networkx
         6
 
     A complete digraph with `n` vertices is `n-1`-edge-connected::
 
         sage: from sage.graphs.edge_connectivity import GabowEdgeConnectivity
         sage: D = DiGraph(digraphs.Complete(10))
-        sage: GabowEdgeConnectivity(D, use_rec = True).edge_connectivity()
+        sage: GabowEdgeConnectivity(D, use_rec=True).edge_connectivity()
         9
 
     Check that we get the same result when with and without the DFS-based
     speed-up initialization proposed in [GKLP2021]_::
 
+        sage: # needs networkx
         sage: G = graphs.RandomBarabasiAlbert(100, 2)
         sage: D = DiGraph(G)
-        sage: ec1 = GabowEdgeConnectivity(D, dfs_preprocessing=False).edge_connectivity()
-        sage: ec2 = GabowEdgeConnectivity(D, dfs_preprocessing=True).edge_connectivity()
-        sage: ec3 = GabowEdgeConnectivity(D, dfs_preprocessing=True, use_rec=True).edge_connectivity()
+        sage: ec1 = GabowEdgeConnectivity(D,
+        ....:                             dfs_preprocessing=False).edge_connectivity()
+        sage: ec2 = GabowEdgeConnectivity(D,
+        ....:                             dfs_preprocessing=True).edge_connectivity()
+        sage: ec3 = GabowEdgeConnectivity(D, dfs_preprocessing=True,
+        ....:                             use_rec=True).edge_connectivity()
         sage: ec1 == ec2 and ec2 == ec3
         True
 

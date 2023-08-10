@@ -31,22 +31,17 @@ for :class:`KnotInfo` and :class:`KnotInfoSeries`, which can be seen in the open
 lines of the examples, are unnecessary.
 
 Be aware that there are a couple of conventions used differently on KnotInfo as
-in Sage, especially concerning the selection of the symmetry version of the link.
+in Sage.
 
-In this context you should note that the PD notation is recorded counter
-clockwise in KnotInfo (see note in :meth:`KnotInfoBase.link`). In our transition
-to Sage objects this is translated (by default) in order to avoid confusion about
-exchanged mirror versions.
+For different conventions regarding normalization of the polynomial invariants see
+the according documentation of :meth:`KnotInfoBase.homfly_polynomial`,
+:meth:`KnotInfoBase.jones_polynomial` and :meth:`KnotInfoBase.alexander_polynomial`.
 
 Also, note that the braid notation is used according to Sage, even thought in
 the source where it is taken from, the braid generators are assumed to have a
 negative crossing which would be opposite to the convention in Sage (see definition
 3 of
 :arxiv:`Gittings, T., "Minimum Braids: A Complete Invariant of Knots and Links" <math/0401051>`).
-
-For different conventions regarding normalization of the polynomial invariants see
-the according documentation of :meth:`KnotInfoBase.homfly_polynomial`,
-:meth:`KnotInfoBase.jones_polynomial` and :meth:`KnotInfoBase.alexander_polynomial`.
 
 Furthermore, note that not all columns available in the database are visible on the web
 pages (see also the related note under :meth:`KnotInfoBase.khovanov_polynomial`).
@@ -112,7 +107,7 @@ too::
 
     sage: type(l6s)                            # optional - snappy
     <class 'spherogram.links.invariants.Link'>
-    sage: l6  = L6.link().mirror_image()
+    sage: l6  = L6.link()
     sage: l6 == l6s.sage_link()                # optional - snappy
     True
     sage: L6.link(L6.items.name, snappy=True)  # optional - snappy
@@ -120,7 +115,8 @@ too::
     sage: l6sn = _                             # optional - snappy
     sage: l6s == l6sn                          # optional - snappy
     False
-    sage: l6sn.sage_link().is_isotopic(l6)     # optional - snappy
+    sage: l6m = l6.mirror_image()              # optional - snappy
+    sage: l6sn.sage_link().is_isotopic(l6m)    # optional - snappy
     True
 
 But observe that the name conversion to SnapPy does not distinguish orientation
@@ -179,13 +175,14 @@ Using the ``column_type`` of a property::
 
 You can launch web-pages attached to the links::
 
-    sage: K.diagram()                 # not tested
+    sage: # not tested
+    sage: K.diagram()
     True
-    sage: L.diagram(single=True)      # not tested
+    sage: L.diagram(single=True)
     True
-    sage: L.knot_atlas_webpage()      # not tested
+    sage: L.knot_atlas_webpage()
     True
-    sage: K.knotilus_webpage()        # not tested
+    sage: K.knotilus_webpage()
     True
 
 and the description web-pages of the properties::
@@ -1688,7 +1685,7 @@ class KnotInfoBase(Enum):
         return R(eval_knotinfo(conway_polynomial, locals=lc))
 
     @cached_method
-    def khovanov_polynomial(self, var1='q', var2='t', base_ring=ZZ, original=False):
+    def khovanov_polynomial(self, var1='q', var2='t', base_ring=ZZ, original=False, reduced=False, odd=False, KhoHo=False):
         r"""
         Return the Khovanov polynomial according to the value of column
         ``khovanov_polynomial`` for this knot or link as an instance of
@@ -1700,8 +1697,16 @@ class KnotInfoBase(Enum):
         - ``var2`` -- (default: ``'t'``) the second variable
         - ``base_ring`` -- (default: ``ZZ``) the ring of the polynomial's
           coefficients
-        - ``original`` -- boolean (optional, default ``False``) if set to
+        - ``original`` -- boolean (default: ``False``); if set to
           ``True`` the original table entry is returned as a string
+        - ``reduced`` -- boolean (default: ``False``); if set to ``True``
+          the reduced version of the homology is used
+        - ``odd`` -- boolean (default: ``False``); if set to ``True``
+          the odd version of the homology is used
+        - ``KhoHo`` -- boolean (default: ``False`` for knots and ``True``
+          for multi-component links); if set to ``True`` the data calculated
+          using `KhoHo <https://github.com/AShumakovitch/KhoHo>`__ is used
+          (see the note below)
 
         OUTPUT:
 
@@ -1711,23 +1716,25 @@ class KnotInfoBase(Enum):
 
         .. NOTE ::
 
-            The data used here were calculated with the program
-            `KhoHo <https://github.com/AShumakovitch/KhoHo>`__. They are no longer
-            visible on the website as of October 30, 2022. Instead, data
-            computed with `KnotJob <https://www.maths.dur.ac.uk/users/dirk.schuetz/knotjob.html>`__
-            are now displayed. The latter program is more accurate in terms of
-            orientation and reflection as it is based on ``PD`` code.
+            The data used for multi-component links were calculated with the program
+            `KhoHo <https://github.com/AShumakovitch/KhoHo>`__. These can still be
+            used for knots by setting the optional argument ``KhoHo`` to ``True``,
+            even though they will no longer be visible on the Knot website as of
+            October 30, 2022. Otherwise, for knots data calculated with
+            `KnotJob <https://www.maths.dur.ac.uk/users/dirk.schuetz/knotjob.html>`__
+            are used. The latter program is more accurate in terms of orientation
+            and reflection as it is based on ``PD`` code.
 
-            Even if they are not visible on the website, the data produced by
-            ``KhoHo`` are still available in the database. But maybe this will be
-            discontinued (check out the `Python wrapper <https://github.com/soehms/database_knotinfo#readme>`__ for updated information).
-            This interface will be adapted to the changes in an upcoming
-            release.
+            Note that in the future columns that are not visible on the web page may
+            also be removed in the database (see the
+            `Python wrapper <https://github.com/soehms/database_knotinfo#readme>`__
+            for updated information). Therefore, the ``KhoHo`` option cannot be
+            guaranteed to work after upgrading the ``database_knotinfo``-SPKG.
 
-            Since the results of ``KhoHo`` were computed using the ``DT`` notation,
-            the Khovanov polynomial returned by this method belongs to the
+            Furthermore, since the results of ``KhoHo`` were computed using the ``DT``
+            notation, the Khovanov polynomial returned by this option belongs to the
             mirror image of the given knot for a `list of 140 exceptions
-            <https://raw.githubusercontent.com/soehms/database_knotinfo/ main /hints/list_of_mirrored_khovanov_polynonmial.txt>`__.
+            <https://raw.githubusercontent.com/soehms/database_knotinfo/main/hints/list_of_mirrored_khovanov_polynonmial.txt>`__.
 
         EXAMPLES::
 
@@ -1742,6 +1749,35 @@ class KnotInfoBase(Enum):
             sage: L = KnotInfo.L5a1_0
             sage: Lk = L.khovanov_polynomial(); Lk
             q^4*t^2 + t + 2 + 2*q^-2 + q^-2*t^-1 + q^-4*t^-2 + q^-6*t^-2 + q^-8*t^-3
+            sage: L.khovanov_polynomial(original=True)
+             '2 + 2/q^2 + 1/(q^8*t^3) + 1/(q^6*t^2) + 1/(q^4*t^2) + 1/(q^2*t) + t + q^4*t^2'
+
+        Obtaining the reduced homology (for knots only)::
+
+            sage: Kkr = K.khovanov_polynomial(reduced=True); Kkr
+            q^6*t^3 + 2*q^4*t^2 + 2*q^2*t + 3 + 2*q^-2*t^-1 + 2*q^-4*t^-2 + q^-6*t^-3
+            sage: K.khovanov_polynomial(base_ring=QQ, reduced=True) == Kkr
+            True
+            sage: Kkr2 = K.khovanov_polynomial(base_ring=GF(2), reduced=True); Kkr2
+            q^6*t^3 + 1 + q^-6*t^-3
+            sage: KnotInfo.K8_19.inject()                               # optional database_knotinfo
+            Defining K8_19
+            sage: K8kr = K8_19.khovanov_polynomial(reduced=True); K8kr  # optional database_knotinfo
+            q^16*t^5 + q^12*t^4 + q^12*t^3 + q^10*t^2 + q^6
+
+        Obtaining the odd Khovanov homology (for knots only)::
+
+            sage: K.khovanov_polynomial(odd=True) == Kkr
+            True
+            sage: K.khovanov_polynomial(base_ring=QQ, odd=True) == Kkr
+            True
+            sage: K.khovanov_polynomial(base_ring=GF(2), odd=True) == Kkr2
+            True
+            sage: K8ko = K8_19.khovanov_polynomial(odd=True); K8ko     # optional database_knotinfo
+            q^16*t^5 + q^10*t^2 + q^6
+            sage: K8kr == K8ko                                         # optional database_knotinfo
+            False
+
 
         Comparision to Sage's results::
 
@@ -1751,8 +1787,65 @@ class KnotInfoBase(Enum):
             True
             sage: Lk == L.link().khovanov_polynomial()
             True
+
+        TESTS::
+
+            sage: KnotInfo.K0_1.inject()
+            Defining K0_1
+            sage: K0_1.khovanov_polynomial()
+            q + q^-1
+            sage: K0_1.khovanov_polynomial(reduced=True)
+            1
+            sage: K0_1.khovanov_polynomial(odd=True)
+            1
+            sage: K0_1.khovanov_polynomial(base_ring=GF(3), reduced=True)
+            Traceback (most recent call last):
+            ...
+            ValueError: Characteristic 3 of base ring is not valid
+            sage: K0_1.khovanov_polynomial(base_ring=GF(3), odd=True)
+            Traceback (most recent call last):
+            ...
+            ValueError: Characteristic 3 of base ring is not valid
+            sage: L.khovanov_polynomial(base_ring=GF(2))
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: Khovanov polynomial available only for knots in characteristic 2
+
+        REFERENCES:
+
+        - :wikipedia:`Khovanov_homology`
+        - :wikipedia:`Reduced_homology`
+        - [ORS2013]_
         """
-        khovanov_polynomial = self[self.items.khovanov_polynomial]
+        ch = base_ring.characteristic()
+        integral = ch == 0 and base_ring.is_field()
+        if not self.is_knot():
+            # KnotJob calculated results only available for knots
+            KhoHo = True
+        if KhoHo:
+            # use the old results obtained by the KhoHo software
+            khovanov_polynomial = self[self.items.khovanov_polynomial]
+        else:
+            if reduced:
+                if integral:
+                    khovanov_polynomial = self[self.items.khovanov_reduced_integral_polynomial]
+                elif ch == 0:
+                    khovanov_polynomial = self[self.items.khovanov_reduced_rational_polynomial]
+                elif ch == 2:
+                    khovanov_polynomial = self[self.items.khovanov_reduced_mod2_polynomial]
+                else:
+                    raise ValueError('Characteristic %s of base ring is not valid' % ch)
+            elif odd:
+                if integral:
+                    khovanov_polynomial = self[self.items.khovanov_odd_integral_polynomial]
+                elif ch == 0:
+                    khovanov_polynomial = self[self.items.khovanov_odd_rational_polynomial]
+                elif ch == 2:
+                    khovanov_polynomial = self[self.items.khovanov_odd_mod2_polynomial]
+                else:
+                    raise ValueError('Characteristic %s of base ring is not valid' % ch)
+            else:
+                khovanov_polynomial = self[self.items.khovanov_unreduced_integral_polynomial]
 
         if original:
             return khovanov_polynomial
@@ -1762,15 +1855,18 @@ class KnotInfoBase(Enum):
         R = LaurentPolynomialRing(base_ring, var_names)
 
         if not khovanov_polynomial and self.crossing_number() == 0:
-            return R({(1, 0): 1, (-1, 0): 1})
+            if reduced or odd:
+                return R.one()
+            else:
+                return R({(1, 0): 1, (-1, 0): 1})
 
-        ch = base_ring.characteristic()
         if ch == 2:
             if not self.is_knot():
                 raise NotImplementedError('Khovanov polynomial available only for knots in characteristic 2')
-            khovanov_torsion_polynomial = self[self.items.khovanov_torsion_polynomial]
-            khovanov_torsion_polynomial = khovanov_torsion_polynomial.replace('Q', 'q')
-            khovanov_polynomial = '%s + %s' % (khovanov_polynomial, khovanov_torsion_polynomial)
+            if KhoHo:
+                khovanov_torsion_polynomial = self[self.items.khovanov_torsion_polynomial]
+                khovanov_torsion_polynomial = khovanov_torsion_polynomial.replace('Q', 'q')
+                khovanov_polynomial = '%s + %s' % (khovanov_polynomial, khovanov_torsion_polynomial)
 
         if not khovanov_polynomial:
             # given just for links with less than 12 crossings
@@ -1779,14 +1875,18 @@ class KnotInfoBase(Enum):
         from sage.repl.preparse import implicit_mul
         # since implicit_mul does not know about the choice of variable names
         # we have to insert * between them separately
-        for i in ['q', 't',')']:
-            for j in ['q', 't', '(']:
+        for i in ['q', 't', 'T', ')']:
+            for j in ['q', 't', 'T', '(']:
                 khovanov_polynomial = khovanov_polynomial.replace('%s%s' % (i, j), '%s*%s' % (i, j))
         khovanov_polynomial = implicit_mul(khovanov_polynomial)
         gens = R.gens_dict()
         lc = {}
         lc['q'] = gens[var1]
         lc['t'] = gens[var2]
+        if ch == 2:
+            lc['T'] = 1
+        else:
+            lc['T'] = 0
 
         return R(eval_knotinfo(khovanov_polynomial, locals=lc))
 
@@ -1824,14 +1924,6 @@ class KnotInfoBase(Enum):
             coincides with the crossing number as a topological
             invariant.
 
-            But attention: The convention on how the edges are
-            listed are opposite to each other
-
-            - KnotInfo: counter clockwise
-            - Sage:     clockwise
-
-            Therefore, we take the mirror version of the ``pd_notation``!
-
             Furthermore, note that the mirror version may depend
             on the used KnotInfo-notation. For instance, regarding to
             the knot ``5_1`` the Gauss- and the DT-notation refer to
@@ -1866,25 +1958,23 @@ class KnotInfoBase(Enum):
 
         using ``snappy``::
 
-            sage: K7   = KnotInfo.K7_2
-            sage: k7s  = K7.link(snappy=True); k7s     # optional - snappy
-            <Link: 1 comp; 7 cross>
-            sage: K7.link(K7.items.name, snappy=True)  # optional - snappy
-            <Link 7_2: 1 comp; 7 cross>
-            sage: k7sn = _                             # optional - snappy
-            sage: k7s == k7sn                          # optional - snappy
-            False
-            sage: k7s.sage_link().is_isotopic(k7sn.sage_link()) # optional - snappy
-            True
-
-        but observe::
-
             sage: L2  = KnotInfo.L2a1_1
             sage: l2  = L2.link()
             sage: l2s = L2.link(snappy=True).sage_link()  # optional -  snappy
             sage: l2 == l2s                               # optional -  snappy
+            True
+
+        but observe::
+
+            sage: K7   = KnotInfo.K7_2
+            sage: k7s  = K7.link(snappy=True); k7s        # optional - snappy
+            <Link: 1 comp; 7 cross>
+            sage: k7sn = K7.link(K7.items.name, snappy=True); k7sn     # optional - snappy
+            <Link 7_2: 1 comp; 7 cross>
+            sage: k7s.sage_link().is_isotopic(k7sn)       # optional - snappy
             False
-            sage: l2 == l2s.mirror_image()                # optional -  snappy
+            sage: k7snm = k7sn.sage_link().mirror_image() # optional - snappy
+            sage: k7s.sage_link().is_isotopic(k7snm)      # optional - snappy
             True
 
         using ``braid_notation``::
@@ -1905,7 +1995,7 @@ class KnotInfoBase(Enum):
 
             sage: K4_1 = KnotInfo.K4_1
             sage: K4_1.link().pd_code()
-            [[4, 1, 5, 2], [8, 5, 1, 6], [6, 4, 7, 3], [2, 8, 3, 7]]
+            [[4, 2, 5, 1], [8, 6, 1, 5], [6, 3, 7, 4], [2, 7, 3, 8]]
             sage: K4_1.pd_notation()
             [[4, 2, 5, 1], [8, 6, 1, 5], [6, 3, 7, 4], [2, 7, 3, 8]]
 
@@ -1931,8 +2021,7 @@ class KnotInfoBase(Enum):
             from sage.knots.link import Link
 
         if use_item == self.items.pd_notation:
-            pd_code = [[a[0], a[3], a[2], a[1]] for a in self.pd_notation()] # take mirror version, see note above
-            return Link(pd_code)
+            return Link(self.pd_notation())
         elif use_item == self.items.braid_notation:
             return Link(self.braid())
         elif use_item == self.items.name and snappy:
@@ -2329,7 +2418,7 @@ class KnotInfoSeries(UniqueRepresentation, SageObject):
             if K.crossing_number() != cross_nr:
                 continue
             if not is_knot or cross_nr > 10:
-                if K.is_alternating() !=  is_alt:
+                if K.is_alternating() != is_alt:
                     continue
             if is_knot or oriented:
                 res.append(K)
@@ -2489,7 +2578,7 @@ class KnotInfoSeries(UniqueRepresentation, SageObject):
         """
         is_knot  = self._is_knot
         cross_nr = self._crossing_number
-        is_alt   =  self._is_alternating
+        is_alt   = self._is_alternating
         n_unori  = self._name_unoriented
 
         alt = 'a'

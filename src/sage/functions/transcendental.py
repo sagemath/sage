@@ -17,6 +17,7 @@ Number-theoretic functions
 # ****************************************************************************
 import sys
 
+from sage.misc.misc import increase_recursion_limit
 from sage.rings.integer_ring import ZZ
 from sage.rings.real_mpfr import RR
 from sage.rings.real_double import RDF
@@ -209,6 +210,7 @@ class Function_stieltjes(GinacFunction):
                                 sympy='stieltjes'),
                             latex_name=r'\gamma')
 
+
 stieltjes = Function_stieltjes()
 
 
@@ -278,6 +280,7 @@ class Function_HurwitzZeta(BuiltinFunction):
         else:
             raise NotImplementedError('derivative with respect to first '
                                       'argument')
+
 
 hurwitz_zeta_func = Function_HurwitzZeta()
 
@@ -389,7 +392,9 @@ class Function_zetaderiv(GinacFunction):
         """
         return [x, k]
 
+
 zetaderiv = Function_zetaderiv()
+
 
 def zeta_symmetric(s):
     r"""
@@ -444,10 +449,12 @@ def zeta_symmetric(s):
     if s == 1:  # deal with poles, hopefully
         return R(0.5)
 
-    return (s/2 + 1).gamma() *    (s-1) * (R.pi()**(-s/2)) *  s.zeta()
+    return (s/2 + 1).gamma() * (s-1) * (R.pi()**(-s/2)) * s.zeta()
+
 
 import math
 from sage.rings.polynomial.polynomial_real_mpfr_dense import PolynomialRealDense
+
 
 class DickmanRho(BuiltinFunction):
     r"""
@@ -545,9 +552,8 @@ class DickmanRho(BuiltinFunction):
             max = x.parent()(1.1)*x + 10
             abs_prec = (-self.approximate(max).log2() + rel_prec + 2*max.log2()).ceil()
             self._f = {}
-            if sys.getrecursionlimit() < max + 10:
-                sys.setrecursionlimit(int(max) + 10)
-            self._compute_power_series(max.floor(), abs_prec, cache_ring=x.parent())
+            with increase_recursion_limit(int(max)):
+                self._compute_power_series(max.floor(), abs_prec, cache_ring=x.parent())
         return self._f[n](2*(x-n-x.parent()(0.5)))
 
     def power_series(self, n, abs_prec):
@@ -664,5 +670,6 @@ class DickmanRho(BuiltinFunction):
             xi -= y/dydxi
             y = (exp(xi)-1.0)/xi - x
         return (-x*xi + RR(xi).eint()).exp() / (sqrt(2*pi*x)*xi)
+
 
 dickman_rho = DickmanRho()

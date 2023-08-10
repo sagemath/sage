@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.symbolic
 """
 Functional notation support for common calculus methods
 
@@ -25,28 +26,45 @@ EXAMPLES: We illustrate each of the calculus functional functions.
     sage: expand((x - a)^3)
     -a^3 + 3*a^2*x - 3*a*x^2 + x^3
 """
-
 from sage.structure.element import Expression
 
 
-def simplify(f):
+def simplify(f, algorithm="maxima", **kwds):
     r"""
     Simplify the expression `f`.
 
-    EXAMPLES: We simplify the expression `i + x - x`.
+    See the documentation of the
+    :meth:`~sage.symbolic.expression.Expression.simplify` method of symbolic
+    expressions for details on options.
 
-    ::
+    EXAMPLES:
+
+    We simplify the expression `i + x - x`::
 
         sage: f = I + x - x; simplify(f)
         I
 
     In fact, printing `f` yields the same thing - i.e., the
     simplified form.
+
+    Some simplifications are algorithm-specific::
+
+        sage: x, t = var("x, t")
+        sage: ex = 1/2*I*x + 1/2*I*sqrt(x^2 - 1) + 1/2/(I*x + I*sqrt(x^2 - 1))
+        sage: simplify(ex)
+        1/2*I*x + 1/2*I*sqrt(x^2 - 1) + 1/(2*I*x + 2*I*sqrt(x^2 - 1))
+        sage: simplify(ex, algorithm="giac")
+        I*sqrt(x^2 - 1)
     """
+    try:
+        return f.simplify(algorithm=algorithm, **kwds)
+    except (TypeError, AttributeError):
+        pass
     try:
         return f.simplify()
     except AttributeError:
         return f
+
 
 def derivative(f, *args, **kwds):
     r"""
@@ -151,7 +169,9 @@ def derivative(f, *args, **kwds):
         f = SR(f)
     return f.derivative(*args, **kwds)
 
+
 diff = derivative
+
 
 def integral(f, *args, **kwds):
     r"""
@@ -299,7 +319,9 @@ def integral(f, *args, **kwds):
         f = SR(f)
     return f.integral(*args, **kwds)
 
+
 integrate = integral
+
 
 def limit(f, dir=None, taylor=False, **argv):
     r"""
@@ -353,7 +375,9 @@ def limit(f, dir=None, taylor=False, **argv):
         f = SR(f)
     return f.limit(dir=dir, taylor=taylor, **argv)
 
+
 lim = limit
+
 
 def taylor(f, *args):
     """
@@ -396,6 +420,7 @@ def taylor(f, *args):
         from sage.symbolic.ring import SR
         f = SR(f)
     return f.taylor(*args)
+
 
 def expand(x, *args, **kwds):
     """

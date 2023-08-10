@@ -117,7 +117,7 @@ from sage.modules.free_module_element import vector
 from sage.rings.integer_ring import ZZ
 from sage.graphs.graph import Graph
 from sage.combinat.posets.posets import Poset
-from sage.misc.misc import powerset
+from sage.combinat.subset import powerset
 
 
 class PolyhedralComplex(GenericCellComplex):
@@ -1234,7 +1234,7 @@ class PolyhedralComplex(GenericCellComplex):
             if v not in g:
                 raise ValueError(
                     "the polyhedral complex does not contain the given cell")
-            vertices = g.connected_component_containing_vertex(v)
+            vertices = g.connected_component_containing_vertex(v, sort=False)
             facets = [f for f in self.maximal_cell_iterator()
                       if any(vf in f.vertices_matrix().columns()
                              for vf in vertices)]
@@ -1243,7 +1243,7 @@ class PolyhedralComplex(GenericCellComplex):
             if cell not in g:
                 raise ValueError(
                     "the polyhedral complex does not contain the given cell")
-            faces = g.connected_component_containing_vertex(cell)
+            faces = g.connected_component_containing_vertex(cell, sort=False)
             facets = [f for f in self.maximal_cell_iterator()
                       if f in faces]
         return PolyhedralComplex(facets, maximality_check=False,

@@ -218,7 +218,7 @@ from .set_partition_ordered import OrderedSetPartition, OrderedSetPartitions
 lazy_import('sage.combinat.multiset_partition_into_sets_ordered',
             ['OrderedMultisetPartitionIntoSets',
              'OrderedMultisetPartitionsIntoSets'])
-from .subset import Subsets
+from .subset import Subsets, subsets, powerset, uniq
 from .necklace import Necklaces
 lazy_import('sage.combinat.dyck_word', ('DyckWords', 'DyckWord'))
 lazy_import('sage.combinat.nu_dyck_word', ('NuDyckWords', 'NuDyckWord'))
@@ -279,7 +279,7 @@ lazy_import('sage.combinat.finite_state_machine_generators',
 lazy_import('sage.combinat.binary_recurrence_sequences',
             'BinaryRecurrenceSequence')
 lazy_import('sage.combinat.recognizable_series', 'RecognizableSeriesSpace')
-lazy_import('sage.combinat.k_regular_sequence', 'kRegularSequenceSpace')
+lazy_import('sage.combinat.regular_sequence', 'RegularSequenceRing')
 
 # Six Vertex Model
 lazy_import('sage.combinat.six_vertex_model', 'SixVertexModel')

@@ -121,7 +121,7 @@ class CrystalOfLSPaths(UniqueRepresentation, Parent):
     """
 
     @staticmethod
-    def __classcall_private__(cls, starting_weight, cartan_type = None, starting_weight_parent = None):
+    def __classcall_private__(cls, starting_weight, cartan_type=None, starting_weight_parent=None):
         """
         Classcall to mend the input.
 
@@ -150,7 +150,7 @@ class CrystalOfLSPaths(UniqueRepresentation, Parent):
             extended = cartan_type.is_affine()
 
             R = RootSystem(cartan_type)
-            P = R.weight_space(extended = extended)
+            P = R.weight_space(extended=extended)
             Lambda = P.basis()
             offset = R.index_set()[Integer(0)]
             starting_weight = P.sum(starting_weight[j-offset]*Lambda[j] for j in R.index_set())
@@ -162,7 +162,7 @@ class CrystalOfLSPaths(UniqueRepresentation, Parent):
             if starting_weight.parent() != starting_weight_parent:
                 raise ValueError("The passed parent is not equal to parent of the inputted weight!")
 
-        return super().__classcall__(cls, starting_weight, starting_weight_parent = starting_weight_parent)
+        return super().__classcall__(cls, starting_weight, starting_weight_parent=starting_weight_parent)
 
     def __init__(self, starting_weight, starting_weight_parent):
         """
@@ -808,8 +808,8 @@ class CrystalOfProjectedLevelZeroLSPaths(CrystalOfLSPaths):
             w = x.weight()
             return P0.sum(int(c)*P0.basis()[i] for i,c in w if i in P0.index_set())
         if group_components:
-            G = self.digraph(index_set = self.cartan_type().classical().index_set())
-            C = G.connected_components()
+            G = self.digraph(index_set=self.cartan_type().classical().index_set())
+            C = G.connected_components(sort=False)
             return sum(q**(c[0].energy_function())*B.sum(B(weight(b)) for b in c) for c in C)
         return B.sum(q**(b.energy_function())*B(weight(b)) for b in self)
 
@@ -1081,7 +1081,7 @@ class CrystalOfProjectedLevelZeroLSPaths(CrystalOfLSPaths):
                 sage: La = R.weight_space().basis()
                 sage: LS = crystals.ProjectedLevelZeroLSPaths(2*La[1]+La[2])
                 sage: G = LS.digraph(index_set=[1,2])
-                sage: C = G.connected_components()
+                sage: C = G.connected_components(sort=False)
                 sage: [all(c[0].energy_function()==a.energy_function() for a in c) for c in C]
                 [True, True, True, True]
 
@@ -1093,7 +1093,7 @@ class CrystalOfProjectedLevelZeroLSPaths(CrystalOfLSPaths):
                 sage: [(x.weight(), x.energy_function()) for x in hw]
                 [(-2*Lambda[0] + Lambda[2], 0), (-2*Lambda[0] + Lambda[1], 1), (0, 2)]
                 sage: G = LS.digraph(index_set=J)
-                sage: C = G.connected_components()
+                sage: C = G.connected_components(sort=False)
                 sage: [all(c[0].energy_function()==a.energy_function() for a in c) for c in C]
                 [True, True, True]
 
@@ -1101,7 +1101,7 @@ class CrystalOfProjectedLevelZeroLSPaths(CrystalOfLSPaths):
                 sage: La = R.weight_space().basis()
                 sage: LS = crystals.ProjectedLevelZeroLSPaths(La[1]+La[2])
                 sage: G = LS.digraph(index_set=[1,2])
-                sage: C = G.connected_components()
+                sage: C = G.connected_components(sort=False)
                 sage: [all(c[0].energy_function()==a.energy_function() for a in c) for c in C] # long time
                 [True, True, True, True, True, True, True, True, True, True, True, True, True, True, True, True]
 
@@ -1110,7 +1110,7 @@ class CrystalOfProjectedLevelZeroLSPaths(CrystalOfLSPaths):
                 sage: La = R.weight_space().basis()
                 sage: LS = crystals.ProjectedLevelZeroLSPaths(2*La[1]+La[2])
                 sage: G = LS.digraph(index_set=R.cartan_type().classical().index_set())
-                sage: C = G.connected_components()
+                sage: C = G.connected_components(sort=False)
                 sage: [all(c[0].energy_function()==a.energy_function() for a in c) for c in C] # long time
                 [True, True, True, True, True, True, True, True, True, True, True]
 
@@ -1118,7 +1118,7 @@ class CrystalOfProjectedLevelZeroLSPaths(CrystalOfLSPaths):
                 sage: La = R.weight_space().basis()
                 sage: LS = crystals.ProjectedLevelZeroLSPaths(2*La[1]+La[2])
                 sage: G = LS.digraph(index_set=R.cartan_type().classical().index_set())
-                sage: C = G.connected_components()
+                sage: C = G.connected_components(sort=False)
                 sage: [all(c[0].energy_function()==a.energy_function() for a in c) for c in C] # long time
                 [True, True, True, True, True, True, True, True, True, True, True, True, True, True, True,
                 True, True, True, True, True, True, True, True, True, True, True, True, True, True, True, True]

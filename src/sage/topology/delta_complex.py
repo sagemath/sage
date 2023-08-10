@@ -640,14 +640,14 @@ class DeltaComplex(GenericCellComplex):
             empty_simplex = 0
         vertices = self.n_cells(0, subcomplex=subcomplex)
         old = vertices
-        old_real = [x for x in old if x is not None] # get rid of faces not in subcomplex
+        old_real = [x for x in old if x is not None]  # remove faces not in subcomplex
         n = len(old_real)
         differentials[0] = matrix(base_ring, empty_simplex, n, n*empty_simplex*[1])
         # current is list of simplices in dimension dim
         # current_real is list of simplices in dimension dim, with None filtered out
         # old is list of simplices in dimension dim-1
         # old_real is list of simplices in dimension dim-1, with None filtered out
-        for dim in range(1,self.dimension()+1):
+        for dim in range(1, self.dimension()+1):
             current = list(self.n_cells(dim, subcomplex=subcomplex))
             current_real = [x for x in current if x is not None]
             i = 0
@@ -665,10 +665,10 @@ class DeltaComplex(GenericCellComplex):
                 for row in s:
                     if old[row] is not None:
                         actual_row = translate[row]
-                        if (actual_row,col) in mat_dict:
-                            mat_dict[(actual_row,col)] += sign
+                        if (actual_row, col) in mat_dict:
+                            mat_dict[(actual_row, col)] += sign
                         else:
-                            mat_dict[(actual_row,col)] = sign
+                            mat_dict[(actual_row, col)] = sign
                     sign *= -1
                 col += 1
             differentials[dim] = matrix(base_ring, len(old_real), len(current_real), mat_dict)
@@ -827,17 +827,17 @@ class DeltaComplex(GenericCellComplex):
         data.append(self.n_cells(0) + other.n_cells(0))
         bdries = {}
         for l_idx in range(len(self.n_cells(0))):
-            bdries[(0,l_idx,-1,0)] = l_idx
+            bdries[(0, l_idx, -1, 0)] = l_idx
         for r_idx in range(len(other.n_cells(0))):
-            bdries[(-1,0,0,r_idx)] = len(self.n_cells(0)) + r_idx
+            bdries[(-1, 0, 0, r_idx)] = len(self.n_cells(0)) + r_idx
         # dimension of the join:
         maxdim = self.dimension() + other.dimension() + 1
         # now for the d-cells, d>0:
-        for d in range(1,maxdim+1):
+        for d in range(1, maxdim+1):
             d_cells = []
             positions = {}
             new_idx = 0
-            for k in range(-1,d+1):
+            for k in range(-1, d+1):
                 n = d-1-k
                 # d=n+k.  need a k-cell from self and an n-cell from other
                 if k == -1:
@@ -919,11 +919,11 @@ class DeltaComplex(GenericCellComplex):
             sage: S3.homology()
             {0: 0, 1: 0, 2: 0, 3: Z}
         """
-        if n<0:
+        if n < 0:
             raise ValueError("n must be non-negative")
-        if n==0:
+        if n == 0:
             return self
-        if n==1:
+        if n == 1:
             return self.join(delta_complexes.Sphere(0))
         return self.suspension().suspension(int(n-1))
 
@@ -975,8 +975,8 @@ class DeltaComplex(GenericCellComplex):
             for w in other.n_cells(0):
                 # one vertex for each pair (v,w)
                 # store its indices in bdries; store its boundary in vertices
-                bdries[(0,l_idx,0,r_idx, ((0,0),))] = len(vertices)
-                vertices.append(()) # add new vertex (simplex with empty bdry)
+                bdries[(0, l_idx, 0, r_idx, ((0, 0),))] = len(vertices)
+                vertices.append(())  # add new vertex (simplex with empty bdry)
                 r_idx += 1
             l_idx += 1
         data.append(tuple(vertices))
@@ -988,7 +988,7 @@ class DeltaComplex(GenericCellComplex):
         new = {}
         for d in range(1, maxdim+1):
             for k in range(d+1):
-                for n in range(d-k,d+1):
+                for n in range(d-k, d+1):
                     k_idx = 0
                     for k_cell in self.n_cells(k):
                         n_idx = 0
@@ -1011,8 +1011,8 @@ class DeltaComplex(GenericCellComplex):
                                 bdry_list = []
                                 for i in range(d+1):
                                     face_path = path[:i] + path[i+1:]
-                                    if ((i<d and path[i][0] == path[i+1][0]) or
-                                        (i>0 and path[i][0] == path[i-1][0])):
+                                    if ((i < d and path[i][0] == path[i+1][0]) or
+                                            (i > 0 and path[i][0] == path[i-1][0])):
                                         # this k-simplex
                                         k_face_idx = k_idx
                                         k_face_dim = k
@@ -1021,12 +1021,12 @@ class DeltaComplex(GenericCellComplex):
                                         k_face_idx = k_cell[path[i][0]]
                                         k_face_dim = k-1
                                         tail = []
-                                        for j in range(i,d):
+                                        for j in range(i, d):
                                             tail.append((face_path[j][0]-1,
-                                                       face_path[j][1]))
+                                                         face_path[j][1]))
                                         face_path = face_path[:i] + tuple(tail)
-                                    if ((i<d and path[i][1] == path[i+1][1]) or
-                                        (i>0 and path[i][1] == path[i-1][1])):
+                                    if ((i < d and path[i][1] == path[i+1][1]) or
+                                            (i > 0 and path[i][1] == path[i-1][1])):
                                         # this n-simplex
                                         n_face_idx = n_idx
                                         n_face_dim = n
@@ -1035,7 +1035,7 @@ class DeltaComplex(GenericCellComplex):
                                         n_face_idx = n_cell[path[i][1]]
                                         n_face_dim = n-1
                                         tail = []
-                                        for j in range(i,d):
+                                        for j in range(i, d):
                                             tail.append((face_path[j][0],
                                                          face_path[j][1]-1))
                                         face_path = face_path[:i] + tuple(tail)
@@ -1383,10 +1383,10 @@ class DeltaComplex(GenericCellComplex):
             faces_dict = {}
             for cell in n_cells:
                 if n > 1:
-                    faces = [tuple(simplex_cells[n-1][cell[j]]) for j in range(0,n+1)]
-                    one_cell =  dict(zip(faces, self_cells[n][n_cells[cell]]))
+                    faces = [tuple(simplex_cells[n-1][cell[j]]) for j in range(n+1)]
+                    one_cell = dict(zip(faces, self_cells[n][n_cells[cell]]))
                 else:
-                    temp =  dict(zip(cell, self_cells[n][n_cells[cell]]))
+                    temp = dict(zip(cell, self_cells[n][n_cells[cell]]))
                     one_cell = {}
                     for j in temp:
                         one_cell[(j,)] = temp[j]
@@ -1638,7 +1638,7 @@ class DeltaComplexExamples():
         False
     """
 
-    def Sphere(self,n):
+    def Sphere(self, n):
         r"""
         A `\Delta`-complex representation of the `n`-dimensional sphere,
         formed by gluing two `n`-simplices along their boundary,
@@ -1653,9 +1653,8 @@ class DeltaComplexExamples():
             Vector space of dimension 1 over Finite Field of size 3
         """
         if n == 1:
-            return DeltaComplex([ [()], [(0, 0)] ])
-        else:
-            return DeltaComplex({Simplex(n): True, Simplex(range(1,n+2)): Simplex(n)})
+            return DeltaComplex([[()], [(0, 0)]])
+        return DeltaComplex({Simplex(n): True, Simplex(range(1, n+2)): Simplex(n)})
 
     def Torus(self):
         r"""

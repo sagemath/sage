@@ -65,11 +65,9 @@ from cysignals.signals cimport sig_on, sig_off
 import operator
 import fractions
 
-from sage.arith.long cimport pyobject_to_long, integer_check_long_py
+from sage.arith.long cimport integer_check_long_py
 from sage.cpython.string cimport char_to_str, str_to_bytes
 
-import sage.misc.misc as misc
-from sage.structure.sage_object cimport SageObject
 from sage.structure.richcmp cimport rich_to_bool_sgn
 import sage.rings.rational_field
 
@@ -77,7 +75,6 @@ cimport sage.rings.integer as integer
 from .integer cimport Integer
 
 from .integer_ring import ZZ
-from sage.arith.rational_reconstruction cimport mpq_rational_reconstruction
 
 from sage.structure.coerce cimport is_numpy_type
 
@@ -85,19 +82,15 @@ from sage.libs.gmp.pylong cimport mpz_set_pylong
 
 from sage.structure.coerce cimport coercion_model
 from sage.structure.element cimport Element
-from sage.structure.element import coerce_binop
 from sage.structure.parent cimport Parent
 from sage.categories.morphism cimport Morphism
 from sage.categories.map cimport Map
-
 
 
 import sage.rings.real_mpfr
 import sage.rings.real_double
 from libc.stdint cimport uint64_t
 from sage.libs.gmp.binop cimport mpq_add_z, mpq_mul_z, mpq_div_zz
-
-from cpython.int cimport PyInt_AS_LONG
 
 cimport sage.rings.fast_arith
 import sage.rings.fast_arith
@@ -1424,6 +1417,7 @@ cdef class Rational(sage.structure.element.FieldElement):
 
         EXAMPLES::
 
+            sage: x = polygen(QQ, 'x')
             sage: K = NumberField(x^2 - 2, 'beta')                                      # optional - sage.rings.number_field
             sage: (1/7).is_norm(K)                                                      # optional - sage.rings.number_field
             True
@@ -1545,6 +1539,7 @@ cdef class Rational(sage.structure.element.FieldElement):
 
             sage: QQ(2)._bnfisnorm(QuadraticField(-1, 'i'))                             # optional - sage.rings.number_field
             (i + 1, 1)
+            sage: x = polygen(QQ, 'x')
             sage: 7._bnfisnorm(NumberField(x^3 - 2, 'b'))                               # optional - sage.rings.number_field
             (1, 7)
 
@@ -3341,10 +3336,11 @@ cdef class Rational(sage.structure.element.FieldElement):
         mpz_tdiv_q(n.value, mpq_numref(self.value), mpq_denref(self.value))
         return n
 
-    def round(Rational self, mode="away"):
+    def round(Rational self, mode=None):
         """
-        Return the nearest integer to ``self``, rounding away from 0 by
-        default, for consistency with the builtin Python :func:`round`.
+        Return the nearest integer to ``self``, rounding away by default.
+        Deprecation: in the future the default will be changed to rounding to
+        even, for consistency with the builtin Python :func:`round`.
 
         INPUT:
 
@@ -3359,12 +3355,13 @@ cdef class Rational(sage.structure.element.FieldElement):
            - 'even' rounds toward the even integer
            - 'odd' rounds toward the odd integer
 
-
         OUTPUT: Integer
 
         EXAMPLES::
 
             sage: (9/2).round()
+            doctest:...: DeprecationWarning: the default rounding for rationals, currently `away`, will be changed to `even`.
+            See https://github.com/sagemath/sage/issues/35473 for details.
             5
             sage: n = 4/3; n.round()
             1
@@ -3383,6 +3380,12 @@ cdef class Rational(sage.structure.element.FieldElement):
             sage: n.round("odd")
             -3
         """
+        if mode is None:
+            if self.denominator() == 2:
+                from sage.misc.superseded import deprecation
+                deprecation(35473,
+                    "the default rounding for rationals, currently `away`, will be changed to `even`.")
+            mode = "away"
         if not (mode in ['toward', 'away', 'up', 'down', 'even', 'odd']):
             raise ValueError("rounding mode must be one of 'toward', 'away', 'up', 'down', 'even', or 'odd'")
         if self.denominator() == 1:
@@ -4190,7 +4193,7 @@ cdef class Q_to_Z(Map):
 
 cdef class int_to_Q(Morphism):
     r"""
-    A morphism from Python 2 ``int`` to `\QQ`.
+    A morphism from Python 3 ``int`` to `\QQ`.
     """
     def __init__(self):
         """
@@ -4199,57 +4202,6 @@ cdef class int_to_Q(Morphism):
         EXAMPLES::
 
             sage: sage.rings.rational.int_to_Q()
-            Native morphism:
-              From: Set of Python objects of class 'int'
-              To:   Rational Field
-        """
-        from . import rational_field
-        import sage.categories.homset
-        from sage.sets.pythonclass import Set_PythonType
-        Morphism.__init__(self, sage.categories.homset.Hom(Set_PythonType(int), rational_field.QQ))
-
-    cpdef Element _call_(self, a):
-        """
-        Return the image of the morphism on ``a``.
-
-        EXAMPLES::
-
-            sage: f = sage.rings.rational.int_to_Q()
-            sage: f(int(4)) # indirect doctest
-            4
-        """
-        cdef Rational rat
-
-        if type(a) is not int:
-            raise TypeError("must be a Python int object")
-
-        rat = <Rational> Rational.__new__(Rational)
-        mpq_set_si(rat.value, PyInt_AS_LONG(a), 1)
-        return rat
-
-    def _repr_type(self):
-        """
-        Return string that describes the type of morphism.
-
-        EXAMPLES::
-
-            sage: sage.rings.rational.int_to_Q()._repr_type()
-            'Native'
-        """
-        return "Native"
-
-
-cdef class long_to_Q(Morphism):
-    r"""
-    A morphism from Python 2 ``long``/Python 3 ``int`` to `\QQ`.
-    """
-    def __init__(self):
-        """
-        Initialize ``self``.
-
-        EXAMPLES::
-
-            sage: sage.rings.rational.long_to_Q()
             Native morphism:
               From: Set of Python objects of class 'int'
               To:   Rational Field
@@ -4266,7 +4218,7 @@ cdef class long_to_Q(Morphism):
 
         EXAMPLES::
 
-            sage: f = sage.rings.rational.long_to_Q()
+            sage: f = sage.rings.rational.int_to_Q()
             sage: f(4^100)
             1606938044258990275541962092341162602522202993782792835301376
         """
@@ -4292,7 +4244,7 @@ cdef class long_to_Q(Morphism):
 
         EXAMPLES::
 
-            sage: sage.rings.rational.long_to_Q()._repr_type()
+            sage: sage.rings.rational.int_to_Q()._repr_type()
             'Native'
         """
         return "Native"

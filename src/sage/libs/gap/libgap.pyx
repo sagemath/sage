@@ -217,6 +217,7 @@ from .gap_includes cimport *
 from .util cimport *
 from .element cimport *
 
+from sage.cpython.string cimport str_to_bytes
 from sage.structure.parent cimport Parent
 from sage.structure.element cimport Vector
 from sage.rings.integer_ring import ZZ
@@ -309,7 +310,7 @@ class Gap(Parent):
             return make_GapElement_Boolean(self, GAP_True if x else GAP_False)
         elif isinstance(x, int):
             return make_GapElement_Integer(self, make_gap_integer(x))
-        elif isinstance(x, basestring):
+        elif isinstance(x, str):
             return make_GapElement_String(self, make_gap_string(x))
         elif isinstance(x, Path):
             return make_GapElement_String(self, make_gap_string(str(x)))
@@ -397,7 +398,7 @@ class Gap(Parent):
         """
         cdef GapElement elem
 
-        if not isinstance(gap_command, basestring):
+        if not isinstance(gap_command, str):
             gap_command = str(gap_command._libgap_init_())
 
         initialize()
@@ -478,9 +479,7 @@ class Gap(Parent):
             1
             sage: libgap.unset_global('FooBar')
             sage: libgap.get_global('FooBar')
-            Traceback (most recent call last):
-            ...
-            GAPError: Error, VAL_GVAR: No value bound to FooBar
+            NULL
         """
         is_bound = self.function_factory('IsBoundGlobal')
         bind_global = self.function_factory('BindGlobal')
@@ -503,9 +502,7 @@ class Gap(Parent):
             1
             sage: libgap.unset_global('FooBar')
             sage: libgap.get_global('FooBar')
-            Traceback (most recent call last):
-            ...
-            GAPError: Error, VAL_GVAR: No value bound to FooBar
+            NULL
         """
         is_readonlyglobal = self.function_factory('IsReadOnlyGlobal')
         make_readwrite = self.function_factory('MakeReadWriteGlobal')
@@ -535,12 +532,9 @@ class Gap(Parent):
             1
             sage: libgap.unset_global('FooBar')
             sage: libgap.get_global('FooBar')
-            Traceback (most recent call last):
-            ...
-            GAPError: Error, VAL_GVAR: No value bound to FooBar
+            NULL
         """
-        value_global = self.function_factory('ValueGlobal')
-        return value_global(variable)
+        return make_any_gap_element(self, GAP_ValueGlobalVariable(str_to_bytes(variable)))
 
     def global_context(self, variable, value):
         """
@@ -782,9 +776,7 @@ class Gap(Parent):
             sage: libgap.collect()
         """
         initialize()
-        rc = CollectBags(0, 1)
-        if rc != 1:
-            raise RuntimeError('Garbage collection failed.')
+        GAP_CollectBags(1)
 
 
 libgap = Gap()

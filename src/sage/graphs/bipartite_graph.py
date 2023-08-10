@@ -47,6 +47,9 @@ from .graph import Graph
 from sage.rings.integer import Integer
 from sage.misc.decorators import rename_keyword
 from sage.misc.cachefunc import cached_method
+from sage.misc.lazy_import import lazy_import
+
+lazy_import('networkx', ['MultiGraph', 'Graph'], as_=['networkx_MultiGraph', 'networkx_Graph'])
 
 
 class BipartiteGraph(Graph):
@@ -158,7 +161,7 @@ class BipartiteGraph(Graph):
         sage: B = BipartiteGraph(P, partition, check=False)
         sage: B.left
         {0, 1, 2, 3, 4}
-        sage: B.show()                                                                  # optional - sage.plot
+        sage: B.show()                                                                  # needs sage.plot
 
        ::
 
@@ -195,6 +198,7 @@ class BipartiteGraph(Graph):
 
     #. From a reduced adjacency matrix::
 
+        sage: # needs sage.modules
         sage: M = Matrix([(1,1,1,0,0,0,0), (1,0,0,1,1,0,0),
         ....:             (0,1,0,1,0,1,0), (1,1,0,1,0,0,1)])
         sage: M
@@ -221,9 +225,9 @@ class BipartiteGraph(Graph):
 
        ::
 
-        sage: M = Matrix([(1, 1, 2, 0, 0), (0, 2, 1, 1, 1), (0, 1, 2, 1, 1)])
-        sage: B = BipartiteGraph(M, multiedges=True, sparse=True)
-        sage: B.edges(sort=True)
+        sage: M = Matrix([(1, 1, 2, 0, 0), (0, 2, 1, 1, 1), (0, 1, 2, 1, 1)])           # needs sage.modules
+        sage: B = BipartiteGraph(M, multiedges=True, sparse=True)                       # needs sage.modules
+        sage: B.edges(sort=True)                                                        # needs sage.modules
         [(0, 5, None),
          (1, 5, None),
          (1, 6, None),
@@ -241,6 +245,7 @@ class BipartiteGraph(Graph):
 
        ::
 
+         sage: # needs sage.modules sage.rings.finite_rings
          sage: F.<a> = GF(4)
          sage: MS = MatrixSpace(F, 2, 3)
          sage: M = MS.matrix([[0, 1, a + 1], [a, 1, 1]])
@@ -261,7 +266,7 @@ class BipartiteGraph(Graph):
          ....:                  1 2 4 7 \n")
          ....:     f.flush()
          ....:     B = BipartiteGraph(f.name)
-         sage: B.is_isomorphic(H)
+         sage: B.is_isomorphic(H)                                                       # needs sage.modules
          True
 
     #. From a ``graph6`` string::
@@ -304,14 +309,15 @@ class BipartiteGraph(Graph):
          sage: B = BipartiteGraph('F?^T_\n', partition=[[0, 1, 2], [3, 4, 5, 6]], check=False)
          sage: B.left
          {0, 1, 2}
-         sage: B.show()                                                                 # optional - sage.plot
+         sage: B.show()                                                                 # needs sage.plot
 
     #. From a NetworkX bipartite graph::
 
-        sage: import networkx                                                           # optional - networkx
-        sage: G = graphs.OctahedralGraph()                                              # optional - networkx
-        sage: N = networkx.make_clique_bipartite(G.networkx_graph())                    # optional - networkx
-        sage: B = BipartiteGraph(N)                                                     # optional - networkx
+        sage: # needs networkx
+        sage: import networkx
+        sage: G = graphs.OctahedralGraph()
+        sage: N = networkx.make_clique_bipartite(G.networkx_graph())
+        sage: B = BipartiteGraph(N)
 
     TESTS:
 
@@ -325,6 +331,7 @@ class BipartiteGraph(Graph):
     Ensure that we can construct a ``BipartiteGraph`` with isolated vertices via
     the reduced adjacency matrix (:trac:`10356`)::
 
+        sage: # needs sage.modules
         sage: a = BipartiteGraph(matrix(2, 2, [1, 0, 1, 0]))
         sage: a
         Bipartite graph on 4 vertices
@@ -504,8 +511,7 @@ class BipartiteGraph(Graph):
                 if len(left) + len(right) != self.num_verts():
                     raise ValueError("not all vertices appear in partition")
 
-            import networkx
-            if isinstance(data, (networkx.MultiGraph, networkx.Graph)):
+            if isinstance(data, (networkx_MultiGraph, networkx_Graph)):
                 if hasattr(data, "node_type"):
                     # Assume the graph is bipartite
                     self.left = set()
@@ -1207,7 +1213,7 @@ class BipartiteGraph(Graph):
             vertex_in_left[v] = False
 
         # Map each vertex to the connected component it belongs to
-        vertex_to_component = {v: comp for comp in self.connected_components()
+        vertex_to_component = {v: comp for comp in self.connected_components(sort=False)
                                    for v in comp}
 
         for e in edges:
@@ -1289,10 +1295,10 @@ class BipartiteGraph(Graph):
 
         EXAMPLES::
 
-            sage: g = BipartiteGraph(graphs.RandomBipartite(3, 3, .5))
-            sage: g.is_bipartite()
+            sage: g = BipartiteGraph(graphs.RandomBipartite(3, 3, .5))                  # needs numpy
+            sage: g.is_bipartite()                                                      # needs numpy
             True
-            sage: g.is_bipartite(certificate=True)  # random
+            sage: g.is_bipartite(certificate=True)  # random                            # needs numpy
             (True, {(0, 0): 0, (0, 1): 0, (0, 2): 0, (1, 0): 1, (1, 1): 1, (1, 2): 1})
 
         TESTS::
@@ -1464,7 +1470,7 @@ class BipartiteGraph(Graph):
         EXAMPLES::
 
             sage: B = BipartiteGraph(graphs.CycleGraph(20))
-            sage: B.plot()                                                              # optional - sage.plot
+            sage: B.plot()                                                              # needs sage.plot
             Graphics object consisting of 41 graphics primitives
         """
         if "pos" not in kwds:
@@ -1509,14 +1515,16 @@ class BipartiteGraph(Graph):
 
             sage: x = polygen(QQ)
             sage: g = BipartiteGraph(graphs.CompleteBipartiteGraph(16, 16))
-            sage: bool(factorial(16) * laguerre(16, x^2) == g.matching_polynomial(algorithm='rook'))    # optional - sage.symbolic
+            sage: bool(factorial(16) * laguerre(16, x^2)                                # needs sage.symbolic
+            ....:       == g.matching_polynomial(algorithm='rook'))
             True
 
         Compute the matching polynomial of a line with `60` vertices::
 
-            sage: from sage.functions.orthogonal_polys import chebyshev_U                               # optional - sage.symbolic
+            sage: from sage.functions.orthogonal_polys import chebyshev_U               # needs sage.symbolic
             sage: g = next(graphs.trees(60))
-            sage: chebyshev_U(60, x/2) == BipartiteGraph(g).matching_polynomial(algorithm='rook')       # optional - sage.symbolic
+            sage: (chebyshev_U(60, x/2)                                                 # needs sage.symbolic
+            ....:   == BipartiteGraph(g).matching_polynomial(algorithm='rook'))
             True
 
         The matching polynomial of a tree is equal to its characteristic
@@ -1625,7 +1633,7 @@ class BipartiteGraph(Graph):
             sage: B = BipartiteGraph(graphs.CompleteBipartiteGraph(4, 4))
             sage: len(list(B.perfect_matchings()))
             24
-            sage: B.matching_polynomial(algorithm='rook')(0)
+            sage: B.matching_polynomial(algorithm='rook')(0)                            # needs sage.modules
             24
 
         TESTS::
@@ -1701,8 +1709,7 @@ class BipartiteGraph(Graph):
 
         # For each unlabeled matching, we yield all its possible labelings
         for m in rec(G):
-            for pm in itertools.product(*[edges[frozenset(e)] for e in m]):
-                yield pm
+            yield from itertools.product(*[edges[frozenset(e)] for e in m])
 
     def load_afile(self, fname):
         r"""
@@ -1803,6 +1810,7 @@ class BipartiteGraph(Graph):
 
         EXAMPLES::
 
+            sage: # needs sage.modules
             sage: M = Matrix([(1,1,1,0,0,0,0), (1,0,0,1,1,0,0),
             ....:             (0,1,0,1,0,1,0), (1,1,0,1,0,0,1)])
             sage: M
@@ -1822,7 +1830,7 @@ class BipartiteGraph(Graph):
 
             sage: import tempfile
             sage: f = tempfile.NamedTemporaryFile()
-            sage: for order in range(3, 13, 3):
+            sage: for order in range(3, 13, 3):                                         # needs sage.combinat
             ....:     num_chks = int(order / 3)
             ....:     num_vars = order - num_chks
             ....:     partition = (list(range(num_vars)), list(range(num_vars, num_vars+num_chks)))
@@ -1920,11 +1928,11 @@ class BipartiteGraph(Graph):
         Bipartite graphs that are not weighted will return a matrix over ZZ,
         unless a base ring is specified::
 
+            sage: # needs sage.modules
             sage: M = Matrix([(1,1,1,0,0,0,0), (1,0,0,1,1,0,0),
             ....:             (0,1,0,1,0,1,0), (1,1,0,1,0,0,1)])
             sage: B = BipartiteGraph(M)
-            sage: N = B.reduced_adjacency_matrix()
-            sage: N
+            sage: N = B.reduced_adjacency_matrix(); N
             [1 1 1 0 0 0 0]
             [1 0 0 1 1 0 0]
             [0 1 0 1 0 1 0]
@@ -1944,6 +1952,7 @@ class BipartiteGraph(Graph):
         Multi-edge graphs also return a matrix over ZZ,
         unless a base ring is specified::
 
+            sage: # needs sage.modules
             sage: M = Matrix([(1,1,2,0,0), (0,2,1,1,1), (0,1,2,1,1)])
             sage: B = BipartiteGraph(M, multiedges=True, sparse=True)
             sage: N = B.reduced_adjacency_matrix()
@@ -1958,6 +1967,7 @@ class BipartiteGraph(Graph):
         Weighted graphs will return a matrix over the ring given by their
         (first) weights, unless a base ring is specified::
 
+            sage: # needs sage.modules sage.rings.finite_rings
             sage: F.<a> = GF(4)
             sage: MS = MatrixSpace(F, 2, 3)
             sage: M = MS.matrix([[0, 1, a+1], [a, 1, 1]])
@@ -1974,19 +1984,20 @@ class BipartiteGraph(Graph):
         TESTS::
 
             sage: B = BipartiteGraph()
-            sage: B.reduced_adjacency_matrix()
+            sage: B.reduced_adjacency_matrix()                                          # needs sage.modules
             []
-            sage: M = Matrix([[0,0], [0,0]])
-            sage: BipartiteGraph(M).reduced_adjacency_matrix() == M
+            sage: M = Matrix([[0,0], [0,0]])                                            # needs sage.modules
+            sage: BipartiteGraph(M).reduced_adjacency_matrix() == M                     # needs sage.modules
             True
-            sage: M = Matrix([[10,2/3], [0,0]])
-            sage: B = BipartiteGraph(M, weighted=True, sparse=True)
-            sage: M == B.reduced_adjacency_matrix()
+            sage: M = Matrix([[10,2/3], [0,0]])                                         # needs sage.modules
+            sage: B = BipartiteGraph(M, weighted=True, sparse=True)                     # needs sage.modules
+            sage: M == B.reduced_adjacency_matrix()                                     # needs sage.modules
             True
 
         An error is raised if the specified base ring is not compatible with the
         type of the weights of the bipartite graph::
 
+            sage: # needs sage.modules sage.rings.finite_rings
             sage: F.<a> = GF(4)
             sage: MS = MatrixSpace(F, 2, 3)
             sage: M = MS.matrix([[0, 1, a+1], [a, 1, 1]])
@@ -2097,14 +2108,14 @@ class BipartiteGraph(Graph):
         Maximum matching in a cycle graph::
 
             sage: G = BipartiteGraph(graphs.CycleGraph(10))
-            sage: G.matching()
+            sage: G.matching()                                                          # needs networkx
             [(0, 1, None), (2, 3, None), (4, 5, None), (6, 7, None), (8, 9, None)]
 
         The size of a maximum matching in a complete bipartite graph using
         Eppstein::
 
             sage: G = BipartiteGraph(graphs.CompleteBipartiteGraph(4,5))
-            sage: G.matching(algorithm="Eppstein", value_only=True)
+            sage: G.matching(algorithm="Eppstein", value_only=True)                     # needs networkx
             4
 
         TESTS:
@@ -2122,11 +2133,11 @@ class BipartiteGraph(Graph):
 
             sage: G = graphs.CycleGraph(4)
             sage: B = BipartiteGraph([(u,v,2) for u,v in G.edges(sort=True, labels=0)])
-            sage: sorted(B.matching(use_edge_labels=True))
+            sage: sorted(B.matching(use_edge_labels=True))                              # needs networkx
             [(0, 3, 2), (1, 2, 2)]
-            sage: B.matching(use_edge_labels=True, value_only=True)
+            sage: B.matching(use_edge_labels=True, value_only=True)                     # needs networkx
             4
-            sage: B.matching(use_edge_labels=True, value_only=True, algorithm='Edmonds')
+            sage: B.matching(use_edge_labels=True, value_only=True, algorithm='Edmonds')            # needs networkx
             4
             sage: B.matching(use_edge_labels=True, value_only=True, algorithm='LP')
             4
@@ -2138,11 +2149,13 @@ class BipartiteGraph(Graph):
             Traceback (most recent call last):
             ...
             ValueError: use_edge_labels cannot be used with "Hopcroft-Karp" or "Eppstein"
-            sage: B.matching(use_edge_labels=False, value_only=True, algorithm='Hopcroft-Karp')
+            sage: B.matching(use_edge_labels=False, value_only=True,                    # needs networkx
+            ....:            algorithm='Hopcroft-Karp')
             2
-            sage: B.matching(use_edge_labels=False, value_only=True, algorithm='Eppstein')
+            sage: B.matching(use_edge_labels=False, value_only=True,                    # needs networkx
+            ....:            algorithm='Eppstein')
             2
-            sage: B.matching(use_edge_labels=False, value_only=True, algorithm='Edmonds')
+            sage: B.matching(use_edge_labels=False, value_only=True, algorithm='Edmonds')           # needs networkx
             2
             sage: B.matching(use_edge_labels=False, value_only=True, algorithm='LP')
             2
@@ -2153,23 +2166,23 @@ class BipartiteGraph(Graph):
             sage: for e in G.edges(sort=True):
             ....:     G.set_edge_label(e[0], e[1], int(e[0]) + int(e[1]))
             sage: G.allow_multiple_edges(True)
-            sage: G.matching(use_edge_labels=True, value_only=True)
+            sage: G.matching(use_edge_labels=True, value_only=True)                     # needs networkx
             444
 
         Empty bipartite graph and bipartite graphs without edges::
 
             sage: B = BipartiteGraph()
             sage: algorithms = ["Hopcroft-Karp", "Eppstein", "Edmonds", "LP"]
-            sage: not any(B.matching(algorithm=algo) for algo in algorithms)
+            sage: not any(B.matching(algorithm=algo) for algo in algorithms)            # needs networkx
             True
-            sage: all(B.matching(algorithm=algo, value_only=True) == 0 for algo in algorithms)
+            sage: all(B.matching(algorithm=algo, value_only=True) == 0 for algo in algorithms)      # needs networkx
             True
             sage: B.add_vertex(1, left=True)
             sage: B.add_vertex(2, left=True)
             sage: B.add_vertex(3, right=True)
-            sage: not any(B.matching(algorithm=algo) for algo in algorithms)
+            sage: not any(B.matching(algorithm=algo) for algo in algorithms)            # needs networkx
             True
-            sage: all(B.matching(algorithm=algo, value_only=True) == 0 for algo in algorithms)
+            sage: all(B.matching(algorithm=algo, value_only=True) == 0 for algo in algorithms)      # needs networkx
             True
         """
         if algorithm is None:
@@ -2284,13 +2297,14 @@ class BipartiteGraph(Graph):
         On the Cycle Graph::
 
             sage: B = BipartiteGraph(graphs.CycleGraph(6))
-            sage: len(B.vertex_cover())
+            sage: len(B.vertex_cover())                                                 # needs networkx
             3
-            sage: B.vertex_cover(value_only=True)
+            sage: B.vertex_cover(value_only=True)                                       # needs networkx
             3
 
         The two algorithms should return the same result::
 
+           sage: # needs numpy
            sage: g = BipartiteGraph(graphs.RandomBipartite(10, 10, .5))
            sage: vc1 = g.vertex_cover(algorithm="Konig")
            sage: vc2 = g.vertex_cover(algorithm="Cliquer")
@@ -2302,7 +2316,7 @@ class BipartiteGraph(Graph):
         Giving a non connected bipartite graph::
 
             sage: B = BipartiteGraph(graphs.CycleGraph(4) * 2)
-            sage: len(B.vertex_cover())
+            sage: len(B.vertex_cover())                                                 # needs networkx
             4
 
         Empty bipartite graph and bipartite graphs without edges::

@@ -42,12 +42,12 @@ from libc.stdint cimport uint32_t
 from libcpp.queue cimport priority_queue
 from libcpp.pair cimport pair
 from libcpp.vector cimport vector
-from cysignals.signals cimport sig_on, sig_off, sig_check
+from cysignals.signals cimport sig_on, sig_off
 from memory_allocator cimport MemoryAllocator
 
 from sage.graphs.base.static_sparse_graph cimport init_short_digraph
 from sage.graphs.base.static_sparse_graph cimport free_short_digraph
-from sage.graphs.base.static_sparse_graph cimport out_degree, has_edge
+from sage.graphs.base.static_sparse_graph cimport out_degree
 
 
 def _is_valid_lex_BFS_order(G, L):
@@ -338,6 +338,7 @@ def lex_BFS(G, reverse=False, tree=False, initial_vertex=None, algorithm="fast")
 
     Different orderings for different traversals::
 
+        sage: # needs sage.combinat
         sage: G = digraphs.DeBruijn(2,3)
         sage: G.lex_BFS(initial_vertex='000', algorithm="fast")
         ['000', '001', '100', '010', '011', '110', '101', '111']
@@ -541,6 +542,7 @@ def lex_UP(G, reverse=False, tree=False, initial_vertex=None):
 
     Different orderings for different traversals::
 
+        sage: # needs sage.combinat
         sage: G = digraphs.DeBruijn(2,3)
         sage: G.lex_BFS(initial_vertex='000')
         ['000', '001', '100', '010', '011', '110', '101', '111']
@@ -714,6 +716,7 @@ def lex_DFS(G, reverse=False, tree=False, initial_vertex=None):
 
     Different orderings for different traversals::
 
+        sage: # needs sage.combinat
         sage: G = digraphs.DeBruijn(2,3)
         sage: G.lex_BFS(initial_vertex='000')
         ['000', '001', '100', '010', '011', '110', '101', '111']
@@ -889,6 +892,7 @@ def lex_DOWN(G, reverse=False, tree=False, initial_vertex=None):
 
     Different orderings for different traversals::
 
+        sage: # needs sage.combinat
         sage: G = digraphs.DeBruijn(2,3)
         sage: G.lex_BFS(initial_vertex='000')
         ['000', '001', '100', '010', '011', '110', '101', '111']
@@ -2009,7 +2013,7 @@ def maximum_cardinality_search_M(G, initial_vertex=None):
         ....:     if len(X) < k - 1:
         ....:         raise ValueError("something goes wrong")
         sage: G = graphs.RandomGNP(10, .2)
-        sage: cc = G.connected_components()
+        sage: cc = G.connected_components(sort=False)
         sage: _, _, X = G.maximum_cardinality_search_M()
         sage: len(X) >= len(cc) - 1
         True

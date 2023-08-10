@@ -9,6 +9,7 @@ SAGE_SPKG_CONFIGURE([info], [
         AS_IF([makeinfo -c foo 2>&1 | grep -q invalid], [
          dnl makeinfo found, but too old, and  does not support all options that ecl likes to use
          sage_spkg_install_info=yes])
+        rm -f stdin.info
        ])
     ])
 ])

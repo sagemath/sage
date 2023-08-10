@@ -446,6 +446,7 @@ cdef class StaticSparseBackend(CGraphBackend):
 
         ::
 
+            sage: # needs sage.combinat
             sage: g = DiGraph(digraphs.DeBruijn(4, 3), data_structure="static_sparse")
             sage: gi = DiGraph(g, data_structure="static_sparse")
             sage: gi.edges(sort=True)[0]
@@ -456,7 +457,7 @@ cdef class StaticSparseBackend(CGraphBackend):
             ('111', '112', '2'),
             ('111', '113', '3')]
 
-            sage: set(g.edges(sort=False)) == set(gi.edges(sort=False))
+            sage: set(g.edges(sort=False)) == set(gi.edges(sort=False))                 # needs sage.combinat
             True
 
         ::
@@ -671,10 +672,10 @@ cdef class StaticSparseBackend(CGraphBackend):
         ::
 
             sage: from sage.graphs.base.static_sparse_backend import StaticSparseBackend
-            sage: g = StaticSparseBackend(digraphs.DeBruijn(3, 2))
-            sage: g.has_edge('00', '01', '1')
+            sage: g = StaticSparseBackend(digraphs.DeBruijn(3, 2))                      # needs sage.combinat
+            sage: g.has_edge('00', '01', '1')                                           # needs sage.combinat
             True
-            sage: g.has_edge('00', '01', '0')
+            sage: g.has_edge('00', '01', '0')                                           # needs sage.combinat
             False
         """
         try:

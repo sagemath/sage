@@ -38,15 +38,19 @@ Check the fix from :trac:`8323`::
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
+import contextlib
+import functools
 import os
-import time
-import resource
 import pdb
+import sys
 import warnings
 
 from .lazy_string import lazy_string
 from sage.env import DOT_SAGE, HOSTNAME
 from sage.misc.lazy_import import lazy_import
+
+lazy_import("sage.combinat.subset", ["powerset", "subsets", "uniq"],
+            deprecation=35564)
 
 lazy_import("sage.misc.call", ["AttrCallObject", "attrcall", "call_method"],
             deprecation=29869)
@@ -57,6 +61,9 @@ lazy_import("sage.misc.verbose", ["verbose", "set_verbose", "set_verbose_files",
 
 lazy_import("sage.misc.repr", ["coeff_repr", "repr_lincomb"],
             deprecation=29892)
+
+lazy_import("sage.misc.timing", ["cputime", "GlobalCputime", "walltime"],
+            deprecation=35816)
 
 LOCAL_IDENTIFIER = '%s.%s' % (HOSTNAME, os.getpid())
 
@@ -291,233 +298,6 @@ try:
 except KeyError:
     pass
 
-#################################################################
-# timing
-#################################################################
-
-
-def cputime(t=0, subprocesses=False):
-    """
-    Return the time in CPU seconds since Sage started, or with
-    optional argument ``t``, return the time since ``t``. This is how
-    much time Sage has spent using the CPU.  If ``subprocesses=False``
-    this does not count time spent in subprocesses spawned by Sage
-    (e.g., Gap, Singular, etc.). If ``subprocesses=True`` this
-    function tries to take all subprocesses with a working
-    ``cputime()`` implementation into account.
-
-    The measurement for the main Sage process is done via a call to
-    :func:`resource.getrusage()`, so it avoids the wraparound problems in
-    :func:`time.clock()` on Cygwin.
-
-    INPUT:
-
-    - ``t`` - (optional) time in CPU seconds, if ``t`` is a result
-      from an earlier call with ``subprocesses=True``, then
-      ``subprocesses=True`` is assumed.
-
-    - subprocesses -- (optional), include subprocesses (default:
-      ``False``)
-
-    OUTPUT:
-
-    - ``float`` - time in CPU seconds if ``subprocesses=False``
-
-    - :class:`GlobalCputime` - object which holds CPU times of
-      subprocesses otherwise
-
-    EXAMPLES::
-
-        sage: t = cputime()
-        sage: F = gp.factor(2^199-1)
-        sage: cputime(t)          # somewhat random
-        0.010999000000000092
-
-        sage: t = cputime(subprocesses=True)
-        sage: F = gp.factor(2^199-1)
-        sage: cputime(t) # somewhat random
-        0.091999
-
-        sage: w = walltime()
-        sage: F = gp.factor(2^199-1)
-        sage: walltime(w)         # somewhat random
-        0.58425593376159668
-
-    .. NOTE::
-
-        Even with ``subprocesses=True`` there is no guarantee that the
-        CPU time is reported correctly because subprocesses can be
-        started and terminated at any given time.
-    """
-    if isinstance(t, GlobalCputime):
-        subprocesses = True
-
-    if not subprocesses:
-        try:
-            t = float(t)
-        except TypeError:
-            t = 0.0
-        u, s = resource.getrusage(resource.RUSAGE_SELF)[:2]
-        return u + s - t
-    else:
-        from sage.interfaces.quit import expect_objects
-        if t == 0:
-            ret = GlobalCputime(cputime())
-            for s in expect_objects:
-                S = s()
-                if S and S.is_running():
-                    try:
-                        ct = S.cputime()
-                        ret.total += ct
-                        ret.interfaces[s] = ct
-                    except NotImplementedError:
-                        pass
-            return ret
-        else:
-            if not isinstance(t, GlobalCputime):
-                t = GlobalCputime(t)
-            ret = GlobalCputime(cputime() - t.local)
-            for s in expect_objects:
-                S = s()
-                if S and S.is_running():
-                    try:
-                        ct = S.cputime() - t.interfaces.get(s, 0.0)
-                        ret.total += ct
-                        ret.interfaces[s] = ct
-                    except NotImplementedError:
-                        pass
-            return ret
-
-
-class GlobalCputime:
-    """
-    Container for CPU times of subprocesses.
-
-    AUTHOR:
-
-    - Martin Albrecht - (2008-12): initial version
-
-    EXAMPLES:
-
-    Objects of this type are returned if ``subprocesses=True`` is
-    passed to :func:`cputime`::
-
-        sage: cputime(subprocesses=True) # indirect doctest, output random
-        0.2347431
-
-    We can use it to keep track of the CPU time spent in Singular for
-    example::
-
-        sage: t = cputime(subprocesses=True)
-        sage: P = PolynomialRing(QQ,7,'x')
-        sage: I = sage.rings.ideal.Katsura(P)
-        sage: gb = I.groebner_basis() # calls Singular
-        sage: cputime(subprocesses=True) - t # output random
-        0.462987
-
-    For further processing we can then convert this container to a
-    float::
-
-        sage: t = cputime(subprocesses=True)
-        sage: float(t) #output somewhat random
-        2.1088339999999999
-
-    .. SEEALSO::
-
-      :func:`cputime`
-    """
-    def __init__(self, t):
-        """
-        Create a new CPU time object which also keeps track of
-        subprocesses.
-
-        EXAMPLES::
-
-            sage: from sage.misc.misc import GlobalCputime
-            sage: ct = GlobalCputime(0.0); ct
-            0.0...
-        """
-        self.total = t
-        self.local = t
-        self.interfaces = {}
-
-    def __repr__(self):
-        """
-        EXAMPLES::
-
-            sage: cputime(subprocesses=True) # indirect doctest, output random
-            0.2347431
-        """
-        return str(self.total)
-
-    def __add__(self, other):
-        """
-        EXAMPLES::
-
-            sage: t = cputime(subprocesses=True)
-            sage: P = PolynomialRing(QQ,7,'x')
-            sage: I = sage.rings.ideal.Katsura(P)
-            sage: gb = I.groebner_basis() # calls Singular
-            sage: cputime(subprocesses=True) + t # output random
-            2.798708
-        """
-        if not isinstance(other, GlobalCputime):
-            other = GlobalCputime(other)
-        ret = GlobalCputime(self.total + other.total)
-        return ret
-
-    def __sub__(self, other):
-        """
-        EXAMPLES::
-
-            sage: t = cputime(subprocesses=True)
-            sage: P = PolynomialRing(QQ,7,'x')
-            sage: I = sage.rings.ideal.Katsura(P)
-            sage: gb = I.groebner_basis() # calls Singular
-            sage: cputime(subprocesses=True) - t # output random
-            0.462987
-        """
-        if not isinstance(other, GlobalCputime):
-            other = GlobalCputime(other)
-        ret = GlobalCputime(self.total - other.total)
-        return ret
-
-    def __float__(self):
-        """
-        EXAMPLES::
-
-            sage: t = cputime(subprocesses=True)
-            sage: float(t) #output somewhat random
-            2.1088339999999999
-        """
-        return float(self.total)
-
-
-def walltime(t=0):
-    """
-    Return the wall time in second, or with optional argument t, return
-    the wall time since time t. "Wall time" means the time on a wall
-    clock, i.e., the actual time.
-
-    INPUT:
-
-
-    -  ``t`` - (optional) float, time in CPU seconds
-
-    OUTPUT:
-
-    -  ``float`` - time in seconds
-
-
-    EXAMPLES::
-
-        sage: w = walltime()
-        sage: F = factor(2^199-1)
-        sage: walltime(w)   # somewhat random
-        0.8823847770690918
-    """
-    return time.time() - t
-
 
 def union(x, y=None):
     """
@@ -552,53 +332,6 @@ def union(x, y=None):
     if y is None:
         return list(set(x))
     return list(set(x).union(y))
-
-
-def uniq(x):
-    """
-    Return the sublist of all elements in the list x that is sorted and
-    is such that the entries in the sublist are unique.
-
-    EXAMPLES::
-
-        sage: uniq([1, 1, 8, -5, 3, -5, -13, 13, -13])
-        doctest:...: DeprecationWarning: the output of uniq(X) being sorted is deprecated; use sorted(set(X)) instead if you want sorted output
-        See https://github.com/sagemath/sage/issues/27014 for details.
-        [-13, -5, 1, 3, 8, 13]
-    """
-    # After deprecation period, rename _stable_uniq -> uniq
-    from sage.misc.superseded import deprecation
-    deprecation(27014, "the output of uniq(X) being sorted is deprecated; use sorted(set(X)) instead if you want sorted output")
-    return sorted(set(x))
-
-
-def _stable_uniq(L):
-    """
-    Iterate over the elements of ``L``, yielding every element at most
-    once: keep only the first occurrence of any item.
-
-    The items must be hashable.
-
-    INPUT:
-
-    - ``L`` -- iterable
-
-    EXAMPLES::
-
-        sage: from sage.misc.misc import _stable_uniq
-        sage: L = [1, 1, 8, -5, 3, -5, 'a', 'x', 'a']
-        sage: it = _stable_uniq(L)
-        sage: it
-        <generator object _stable_uniq at ...>
-        sage: list(it)
-        [1, 8, -5, 3, 'a', 'x']
-    """
-    seen = set()
-    for x in L:
-        if x in seen:
-            continue
-        yield x
-        seen.add(x)
 
 
 def exactly_one_is_true(iterable):
@@ -1056,69 +789,6 @@ def _some_tuples_sampling(elements, repeat, max_samples, n):
             yield tuple(elements[j] for j in Integer(a).digits(n, padto=repeat))
 
 
-def powerset(X):
-    r"""
-    Iterator over the *list* of all subsets of the iterable X, in no
-    particular order. Each list appears exactly once, up to order.
-
-    INPUT:
-
-    -  ``X`` - an iterable
-
-    OUTPUT: iterator of lists
-
-    EXAMPLES::
-
-        sage: list(powerset([1,2,3]))
-        [[], [1], [2], [1, 2], [3], [1, 3], [2, 3], [1, 2, 3]]
-        sage: [z for z in powerset([0,[1,2]])]
-        [[], [0], [[1, 2]], [0, [1, 2]]]
-
-    Iterating over the power set of an infinite set is also allowed::
-
-        sage: i = 0
-        sage: L = []
-        sage: for x in powerset(ZZ):
-        ....:     if i > 10:
-        ....:         break
-        ....:     else:
-        ....:         i += 1
-        ....:     L.append(x)
-        sage: print(" ".join(str(x) for x in L))
-        [] [0] [1] [0, 1] [-1] [0, -1] [1, -1] [0, 1, -1] [2] [0, 2] [1, 2]
-
-    You may also use subsets as an alias for powerset::
-
-        sage: subsets([1,2,3])
-        <generator object ...powerset at 0x...>
-        sage: list(subsets([1,2,3]))
-        [[], [1], [2], [1, 2], [3], [1, 3], [2, 3], [1, 2, 3]]
-
-        The reason we return lists instead of sets is that the elements of
-        sets must be hashable and many structures on which one wants the
-        powerset consist of non-hashable objects.
-
-    AUTHORS:
-
-    - William Stein
-
-    - Nils Bruin (2006-12-19): rewrite to work for not-necessarily
-      finite objects X.
-    """
-    yield []
-    pairs = []
-    power2 = 1
-    for x in X:
-        pairs.append((power2, x))
-        next_power2 = power2 << 1
-        for w in range(power2, next_power2):
-            yield [x for m, x in pairs if m & w]
-        power2 = next_power2
-
-
-subsets = powerset
-
-
 #################################################################
 # Misc.
 #################################################################
@@ -1465,3 +1135,68 @@ def inject_variable_test(name, value, depth):
         inject_variable(name, value)
     else:
         inject_variable_test(name, value, depth - 1)
+
+
+# from https://stackoverflow.com/questions/4103773/efficient-way-of-having-a-function-only-execute-once-in-a-loop
+def run_once(func):
+    """
+    Runs a function (successfully) only once.
+
+    The running can be reset by setting the ``has_run`` attribute to False
+
+    TESTS::
+
+        sage: from sage.repl.ipython_extension import run_once
+        sage: @run_once
+        ....: def foo(work):
+        ....:     if work:
+        ....:         return 'foo worked'
+        ....:     raise RuntimeError("foo didn't work")
+        sage: foo(False)
+        Traceback (most recent call last):
+        ...
+        RuntimeError: foo didn't work
+        sage: foo(True)
+        'foo worked'
+        sage: foo(False)
+        sage: foo(True)
+    """
+    @functools.wraps(func)
+    def wrapper(*args, **kwargs):
+        if not wrapper.has_run:
+            result = func(*args, **kwargs)
+            wrapper.has_run = True
+            return result
+    wrapper.has_run = False
+    return wrapper
+
+
+@contextlib.contextmanager
+def increase_recursion_limit(increment):
+    r"""
+    Context manager to temporarily change the Python maximum recursion depth.
+
+    INPUT:
+
+    - `increment`: increment to add to the current limit
+
+    EXAMPLES::
+
+        sage: from sage.misc.misc import increase_recursion_limit
+        sage: def rec(n): None if n == 0 else rec(n-1)
+        sage: rec(10000)
+        Traceback (most recent call last):
+        ...
+        RecursionError: maximum recursion depth exceeded...
+        sage: with increase_recursion_limit(10000): rec(10000)
+        sage: rec(10000)
+        Traceback (most recent call last):
+        ...
+        RecursionError: maximum recursion depth exceeded...
+    """
+    old_limit = sys.getrecursionlimit()
+    sys.setrecursionlimit(old_limit + increment)
+    try:
+        yield
+    finally:
+        sys.setrecursionlimit(old_limit)

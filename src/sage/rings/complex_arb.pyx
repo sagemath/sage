@@ -153,9 +153,8 @@ import sage.categories.fields
 cimport sage.rings.abc
 cimport sage.rings.rational
 
-from cpython.float cimport PyFloat_AS_DOUBLE
 from cpython.int cimport PyInt_AS_LONG
-from cpython.object cimport Py_LT, Py_LE, Py_EQ, Py_NE, Py_GT, Py_GE
+from cpython.object cimport Py_EQ, Py_NE
 from cpython.complex cimport PyComplex_FromDoubles
 
 from sage.ext.stdsage cimport PY_NEW
@@ -169,13 +168,13 @@ from sage.libs.arb.acb_hypgeom cimport *
 from sage.libs.arb.acb_elliptic cimport *
 from sage.libs.arb.acb_modular cimport *
 from sage.libs.arb.acb_poly cimport *
-from sage.libs.arb.arf cimport arf_init, arf_get_d, arf_get_mpfr, arf_set_mpfr, arf_clear, arf_set_mag, arf_set, arf_is_nan
-from sage.libs.arb.mag cimport (mag_init, mag_clear, mag_add, mag_set_d,
-        MAG_BITS, mag_is_inf, mag_is_finite, mag_zero, mag_set_ui_2exp_si,
+from sage.libs.arb.arf cimport arf_init, arf_get_d, arf_get_mpfr, arf_clear, arf_set, arf_is_nan
+from sage.libs.arb.mag cimport (mag_init, mag_clear, mag_set_d,
+        MAG_BITS, mag_zero, mag_set_ui_2exp_si,
         mag_mul_2exp_si)
-from sage.libs.flint.fmpz cimport fmpz_t, fmpz_init, fmpz_get_mpz, fmpz_set_mpz, fmpz_clear, fmpz_abs
+from sage.libs.flint.fmpz cimport fmpz_t, fmpz_init, fmpz_get_mpz, fmpz_set_mpz, fmpz_clear
 from sage.libs.flint.fmpq cimport fmpq_t, fmpq_init, fmpq_set_mpq, fmpq_clear
-from sage.libs.gmp.mpz cimport mpz_fits_ulong_p, mpz_fits_slong_p, mpz_get_ui, mpz_get_si, mpz_sgn
+from sage.libs.gmp.mpz cimport mpz_fits_slong_p, mpz_get_si
 from sage.libs.gsl.complex cimport gsl_complex_rect
 from sage.rings.real_double cimport RealDoubleElement
 from sage.rings.complex_double cimport ComplexDoubleElement
@@ -186,13 +185,12 @@ from sage.rings.real_arb import RealBallField
 from sage.rings.real_mpfi cimport RealIntervalField_class
 from sage.rings.real_mpfr cimport RealField_class, RealField, RealNumber
 from sage.rings.ring import Field
-from sage.structure.element cimport Element, ModuleElement
+from sage.structure.element cimport Element
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.arith.long cimport is_small_python_int
 
 from sage.misc.lazy_string import lazy_string
 from sage.misc.superseded import deprecated_function_alias
-from sage.rings.complex_mpfr import ComplexField
 from sage.rings.complex_interval_field import ComplexIntervalField, ComplexIntervalField_class
 from sage.rings.integer_ring import ZZ
 
@@ -549,6 +547,7 @@ class ComplexBallField(UniqueRepresentation, sage.rings.abc.ComplexBallField):
             sage: CBF.convert_map_from(QuadraticField(-2))
             Conversion via _acb_ method map:
             ...
+            sage: x = polygen(ZZ, 'x')
             sage: CBF.coerce_map_from(NumberField(x^7 + 2, 'a',
             ....:                                 embedding=QQbar(-2)^(1/7)))
             Conversion via _acb_ method map:
@@ -1403,7 +1402,6 @@ cdef class ComplexBall(RingElement):
         """
         cdef fmpz_t tmpz
         cdef fmpq_t tmpq
-        cdef long myprec
         cdef bint cplx = False
 
         Element.__init__(self, parent)
@@ -2427,17 +2425,15 @@ cdef class ComplexBall(RingElement):
             False
         """
         cdef ComplexBall lt, rt
-        cdef acb_t difference
 
         lt = left
         rt = right
 
         if op == Py_EQ:
             return acb_eq(lt.value, rt.value)
-        elif op == Py_NE:
+        if op == Py_NE:
             return acb_ne(lt.value, rt.value)
-        elif op == Py_GT or op == Py_GE or op == Py_LT or op == Py_LE:
-            raise TypeError("No order is defined for ComplexBalls.")
+        raise TypeError("No order is defined for ComplexBalls.")
 
     def identical(self, ComplexBall other):
         """
@@ -3932,7 +3928,7 @@ cdef class ComplexBall(RingElement):
         cdef acb_ptr vec_a = _acb_vec_init(p - s)
         cdef acb_ptr vec_b = _acb_vec_init(q + 1 - s)
         cdef long j = 0
-        for i in xrange(p):
+        for i in range(p):
             if i != i1:
                 tmp = self._parent.coerce(a[i])
                 acb_set(&(vec_a[j]), tmp.value)

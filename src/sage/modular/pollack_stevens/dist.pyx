@@ -18,14 +18,14 @@ REFERENCES:
 - [PS2011]_
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2012 Robert Pollack <rpollack@math.bu.edu>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.structure.richcmp cimport richcmp_not_equal, rich_to_bool
 from sage.rings.integer_ring import ZZ
@@ -38,19 +38,9 @@ from sage.matrix.constructor import matrix
 from sage.structure.element cimport Element
 import operator
 from sage.rings.padics.padic_generic import pAdicGeneric
-from sage.rings.padics.padic_capped_absolute_element cimport pAdicCappedAbsoluteElement
-from sage.rings.padics.padic_capped_relative_element cimport pAdicCappedRelativeElement
-from sage.rings.padics.padic_fixed_mod_element cimport pAdicFixedModElement
 from sage.rings.integer cimport Integer
 from sage.misc.verbose import verbose
 from sage.rings.infinity import Infinity
-
-from sage.libs.flint.nmod_poly cimport (nmod_poly_init2_preinv,
-                                        nmod_poly_set_coeff_ui,
-                                        nmod_poly_inv_series,
-                                        nmod_poly_mullow,
-                                        nmod_poly_pow_trunc,
-                                        nmod_poly_get_coeff_ui, nmod_poly_t)
 
 #from sage.libs.flint.ulong_extras cimport *
 
@@ -287,7 +277,7 @@ cdef class Dist(ModuleElement):
                 use_arg = False
             if not z:
                 return False
-            for a in xrange(1, n):
+            for a in range(1, n):
                 if usearg:
                     try:
                         z = self._unscaled_moment(a).is_zero(M - a)

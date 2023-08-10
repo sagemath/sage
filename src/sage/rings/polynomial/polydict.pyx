@@ -41,7 +41,6 @@ from sage.structure.richcmp cimport rich_to_bool
 from functools import reduce
 from pprint import pformat
 
-from sage.arith.power import generic_power
 from sage.misc.latex import latex
 
 
@@ -788,7 +787,6 @@ cdef class PolyDict:
         if not self:
             return "0"
 
-        n = len(vars)
         poly = ""
 
         sort_kwargs = {'reverse': True}
@@ -887,7 +885,6 @@ cdef class PolyDict:
             sage: -x - y
             x + y
         """
-        n = len(vars)
         poly = ""
         sort_kwargs = {'reverse': True}
         if sortkey:
@@ -2354,7 +2351,7 @@ cdef class ETuple:
         """
         if not n:
             raise ZeroDivisionError
-        cdef size_t i, j
+        cdef size_t i
         cdef ETuple result = self._new()
         result._data = <int*> sig_malloc(sizeof(int) * 2 * self._nonzero)
         result._nonzero = 0

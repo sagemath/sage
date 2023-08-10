@@ -944,7 +944,6 @@ from sage.misc.cachefunc import cached_function
 from sage.misc.latex import latex
 from sage.misc.verbose import verbose
 from sage.misc.sageinspect import sage_getargspec
-from sage.rings.qqbar import QQbar
 from sage.rings.integer_ring import ZZ
 from sage.rings.real_mpfr import RR
 from sage.structure.sage_object import SageObject
@@ -9708,7 +9707,7 @@ class FiniteStateMachine(SageObject):
 
         TESTS::
 
-            sage: FiniteStateMachine([('A', 'A', 0)]).plot()
+            sage: FiniteStateMachine([('A', 'A', 0)]).plot()                            # optional - sage.plot
             Graphics object consisting of 3 graphics primitives
         """
         return self.graph(edge_labels='words_in_out').plot()
@@ -9885,7 +9884,7 @@ class FiniteStateMachine(SageObject):
         from sage.arith.misc import binomial
         from sage.symbolic.ring import SR
         if base_ring is None:
-            base_ring = QQbar
+            from sage.rings.qqbar import QQbar as base_ring
         if variable is None:
             variable = SR.symbol('n')
 
@@ -10437,11 +10436,11 @@ class FiniteStateMachine(SageObject):
             and the variance are `\sum_{k\ge 1} k2^{-k}=2` and
             `\sum_{k\ge 1} (k-2)^2 2^{-k}=2`::
 
-                sage: var('k')
+                sage: var('k')                                                          # optional - sage.symbolic
                 k
-                sage: sum(k * 2^(-k), k, 1, infinity)
+                sage: sum(k * 2^(-k), k, 1, infinity)                                   # optional - sage.symbolic
                 2
-                sage: sum((k-2)^2 * 2^(-k), k, 1, infinity)
+                sage: sum((k-2)^2 * 2^(-k), k, 1, infinity)                             # optional - sage.symbolic
                 2
 
             We now compute the same expectation and variance by using a
@@ -11846,13 +11845,13 @@ class Automaton(FiniteStateMachine):
             sage: NAF = Automaton([(0, 0, 0), (0, 1, 1), (0, 1, -1),
             ....:                  (1, 0, 0)], initial_states=[0],
             ....:                 final_states=[0, 1])
-            sage: P_NAF = NAF.shannon_parry_markov_chain()
-            sage: P_NAF.transitions()
+            sage: P_NAF = NAF.shannon_parry_markov_chain()                              # optional - sage.symbolic
+            sage: P_NAF.transitions()                                                   # optional - sage.symbolic
             [Transition from 0 to 0: 1/2|0,
              Transition from 0 to 1: 1/4|1,
              Transition from 0 to 1: 1/4|-1,
              Transition from 1 to 0: 1|0]
-            sage: for s in P_NAF.iter_states():
+            sage: for s in P_NAF.iter_states():                                         # optional - sage.symbolic
             ....:     print(s.color)
             3/4
             3/2
@@ -11860,7 +11859,7 @@ class Automaton(FiniteStateMachine):
         The stationary distribution is also computed and saved as the
         initial probabilities of the returned Markov chain::
 
-            sage: for s in P_NAF.states():
+            sage: for s in P_NAF.states():                                              # optional - sage.symbolic
             ....:     print("{} {}".format(s, s.initial_probability))
             0 2/3
             1 1/3

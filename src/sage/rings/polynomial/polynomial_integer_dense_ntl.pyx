@@ -27,7 +27,6 @@ do::
     sage: K
     Univariate Polynomial Ring in x over Integer Ring (using NTL)
 """
-
 #*****************************************************************************
 #       Copyright (C) 2007 William Stein <wstein@gmail.com>
 #
@@ -35,7 +34,7 @@ do::
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 #*****************************************************************************
 
 from cysignals.memory cimport sig_free
@@ -45,10 +44,9 @@ from sage.ext.cplusplus cimport ccrepr
 include "sage/libs/ntl/decl.pxi"
 
 from sage.rings.polynomial.polynomial_element cimport Polynomial
-from sage.structure.element cimport ModuleElement, Element
+from sage.structure.element cimport Element
 
 from sage.rings.integer_ring import IntegerRing
-from sage.rings.integer_ring cimport IntegerRing_class
 ZZ_sage = IntegerRing()
 
 from sage.libs.ntl.ntl_ZZX cimport ntl_ZZX
@@ -57,7 +55,7 @@ from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
 from sage.rings.integer import Integer
 from sage.rings.integer cimport Integer
-from sage.rings.real_mpfr cimport RealNumber, RealField_class
+from sage.rings.real_mpfr cimport RealNumber
 from sage.rings.real_mpfi cimport RealIntervalFieldElement
 
 from sage.libs.pari.all import pari, pari_gen
@@ -66,7 +64,6 @@ from sage.structure.element import coerce_binop
 
 from sage.rings.fraction_field_element import FractionFieldElement
 from sage.arith.functions import lcm
-import sage.rings.polynomial.polynomial_ring
 
 from sage.libs.ntl.ZZX cimport *
 
@@ -999,15 +996,14 @@ cdef class Polynomial_integer_dense_ntl(Polynomial):
             sage: f = -30*x; f.factor()
             (-1) * 2 * 3 * 5 * x
         """
-        cdef int i
         cdef int deg = ZZX_deg(self.__poly)
-        # it appears that pari has a window from about degrees 30 and 300 in which it beats NTL.
+        # it appears that pari has a window from about degrees 30 and 300
+        # in which it beats NTL.
         c = self.content()
-        g = self//c
+        g = self // c
         if deg < 30 or deg > 300:
-            return c.factor()*g._factor_ntl()
-        else:
-            return c.factor()*g._factor_pari()
+            return c.factor() * g._factor_ntl()
+        return c.factor() * g._factor_pari()
 
     def factor_mod(self, p):
         """

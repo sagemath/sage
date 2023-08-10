@@ -115,8 +115,6 @@ TESTS::
     algebras with different term orderings, yet.
 
 """
-
-from sage.misc.misc_c import prod
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.libs.singular.function import lib, singular_function
 from sage.libs.singular.function cimport RingWrap
@@ -596,7 +594,7 @@ cdef class FreeAlgebra_letterplace(Algebra):
         cdef list tmp
         for i from 0<=i<nblocks:
             base = i*ngens
-            tmp = [(j,E[base+j]) for j in xrange(ngens) if E[base+j]]
+            tmp = [(j, E[base+j]) for j in range(ngens) if E[base+j]]
             if not tmp:
                 continue
             var_ind, exp = tmp[0]
@@ -629,7 +627,7 @@ cdef class FreeAlgebra_letterplace(Algebra):
         cdef list names = self.latex_variable_names()
         for i from 0<=i<nblocks:
             base = i*ngens
-            tmp = [(j,E[base+j]) for j in xrange(ngens) if E[base+j]]
+            tmp = [(j, E[base+j]) for j in range(ngens) if E[base+j]]
             if not tmp:
                 continue
             var_ind, exp = tmp[0]
@@ -863,7 +861,7 @@ cdef class FreeAlgebra_letterplace(Algebra):
             (2)*y*y*y + z*z + t*y
 
         """
-        if isinstance(x, basestring):
+        if isinstance(x, str):
             from sage.misc.sage_eval import sage_eval
             return sage_eval(x, locals=self.gens_dict())
         try:

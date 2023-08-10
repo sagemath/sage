@@ -64,6 +64,7 @@ from sage.misc.latex import latex
 from sage.misc.superseded import deprecation
 from sage.rings.fast_arith import prime_range
 from sage.homology.homology_group import HomologyGroup
+from sage.misc.persist import register_unpickle_override
 
 
 def _latex_module(R, m):
@@ -248,7 +249,7 @@ def ChainComplex(data=None, base_ring=None, grading_group=None,
         data_dict = {}
     elif isinstance(data, dict):  # data is dictionary
         data_dict = data
-    else: # data is list/tuple/iterable
+    else:  # data is list/tuple/iterable
         data_matrices = [x for x in data if isinstance(x, Matrix)]
         if degree != 1:
             raise ValueError('degree must be +1 if the data argument is a list or tuple')
@@ -667,8 +668,8 @@ class ChainComplex_class(Parent):
             sage: TestSuite(C).run()
         """
         if any(d.base_ring() != base_ring or not d.is_immutable() or
-                   (d.ncols(), d.nrows()) == (0, 0)
-                   for d in differentials.values()):
+               (d.ncols(), d.nrows()) == (0, 0)
+               for d in differentials.values()):
             raise ValueError('invalid differentials')
         if degree_of_differential.parent() is not grading_group:
             raise ValueError('the degree_of_differential.parent() must be grading_group')
@@ -1349,15 +1350,15 @@ class ChainComplex_class(Parent):
         d_out_nullity = d_out.ncols() - d_out_rank
 
         if d_in.is_zero():
-            if generators: #Include the generators of the nullspace
-                return [(HomologyGroup(1, base_ring), self({deg:gen}))
+            if generators:  # Include the generators of the nullspace
+                return [(HomologyGroup(1, base_ring), self({deg: gen}))
                         for gen in d_out.right_kernel().basis()]
             else:
                 return HomologyGroup(d_out_nullity, base_ring)
 
         if generators:
             orders, gens = self._homology_generators_snf(d_in, d_out, d_out_rank)
-            answer = [(HomologyGroup(1, base_ring, [order]), self({deg:gen}))
+            answer = [(HomologyGroup(1, base_ring, [order]), self({deg: gen}))
                       for order, gen in zip(orders, gens)]
         else:
             if base_ring.is_field():
@@ -1552,7 +1553,7 @@ class ChainComplex_class(Parent):
                 for i in diff_dict:
                     if diff_dict[i] != 0:
                         differences.append(i)
-                answer.append((p,differences))
+                answer.append((p, differences))
         return answer
 
     def _Hom_(self, other, category=None):
@@ -1690,7 +1691,7 @@ class ChainComplex_class(Parent):
         deprecation(33777, "the CHomP interface is deprecated; hence so is this function")
         deg = self.degree_of_differential()
         if (self.grading_group() != ZZ or
-            (deg != 1 and deg != -1)):
+                (deg != 1 and deg != -1)):
             raise ValueError('CHomP only works on Z-graded chain complexes with '
                              'differential of degree 1 or -1')
         base_ring = self.base_ring()
@@ -1702,7 +1703,7 @@ class ChainComplex_class(Parent):
             diffs = self._flip_().differential()
 
         if len(diffs) == 0:
-            diffs = {0: matrix(ZZ, 0,0)}
+            diffs = {0: matrix(ZZ, 0, 0)}
 
         maxdim = max(diffs)
         mindim = min(diffs)
@@ -2017,7 +2018,7 @@ class ChainComplex_class(Parent):
         diffs = [D.differential() for D in factors]
         keys = reduce(lambda X, d: X.union(d.keys()), diffs, set())
         ret = {k: matrix.block_diagonal([d.get(k, zero) for d in diffs],
-                                         subdivide=subdivide)
+                                        subdivide=subdivide)
                for k in keys}
         return ChainComplex(ret, degree_of_differential=deg_diff,
                             grading_group=self._grading_group)
@@ -2182,32 +2183,32 @@ class ChainComplex_class(Parent):
             # Our choice for tensor products will be x # y = x1 * y + x2 * y + ...
 
             # Generate the data for the differential
-            for a,r in deg:
-                for b,s in degD:
+            for a, r in deg:
+                for b, s in degD:
                     rp = d[a].nrows()
                     sp = dD[b].nrows()
                     if a+b not in diff:
                         diff[a+b] = {}
                     mor = diff[a+b]
                     cur = {}
-                    cur[(a+deg_diff,b)] = []
-                    cur[(a,b+deg_diff)] = []
+                    cur[(a+deg_diff, b)] = []
+                    cur[(a, b+deg_diff)] = []
 
                     for i in range(r):
                         for j in range(s):
                             # \partial x_i \otimes y_j
                             vec = [zero]*(rp*s)
-                            for k,val in enumerate(d[a].column(i)):
+                            for k, val in enumerate(d[a].column(i)):
                                 vec[s*k+j] += val
-                            cur[(a+deg_diff,b)].append(vec)
+                            cur[(a+deg_diff, b)].append(vec)
 
                             # (-1)^a x_i \otimes \partial y_j
                             vec = [zero]*(r*sp)
-                            for k,val in enumerate(dD[b].column(j)):
+                            for k, val in enumerate(dD[b].column(j)):
                                 vec[sp*i+k] += scalar(a) * val
-                            cur[(a,b+deg_diff)].append(vec)
+                            cur[(a, b+deg_diff)].append(vec)
 
-                    mor[a,b] = cur
+                    mor[a, b] = cur
 
             # Parse the data into matrices
             to_delete = []
@@ -2250,5 +2251,5 @@ class ChainComplex_class(Parent):
 
         return ret
 
-from sage.misc.persist import register_unpickle_override
+
 register_unpickle_override('sage.homology.chain_complex', 'ChainComplex', ChainComplex_class)

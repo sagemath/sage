@@ -10,6 +10,7 @@ EXAMPLES:
 Define a polynomial over an absolute number field and perform basic
 operations with them::
 
+    sage: x = polygen(ZZ, 'x')
     sage: N.<a> = NumberField(x^2 - 2)
     sage: K.<x> = N[]
     sage: f = x - a
@@ -126,6 +127,7 @@ class Polynomial_absolute_number_field_dense(Polynomial_generic_dense_field):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: N.<a> = NumberField(x^3 - 1/2, 'a')
             sage: R.<r> = N['r']
             sage: f = (5/4*a^2 - 2*a + 4)*r^2 + (5*a^2 - 81/5*a - 17/2)*r + 4/5*a^2 + 24*a + 6
@@ -235,6 +237,7 @@ class Polynomial_relative_number_field_dense(Polynomial_generic_dense_field):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: f = NumberField([x^2 - 2, x^2 - 3], 'a')['x'].random_element()
             sage: from sage.rings.polynomial.polynomial_number_field import Polynomial_relative_number_field_dense
             sage: isinstance(f, Polynomial_relative_number_field_dense)
@@ -264,12 +267,12 @@ class Polynomial_relative_number_field_dense(Polynomial_generic_dense_field):
 
         EXAMPLES::
 
-            sage: N = QQ[sqrt(2), sqrt(3)]
-            sage: s2, s3 = N.gens()
-            sage: x = polygen(N)
-            sage: f = x^4 - 5*x^2 + 6
-            sage: g = x^3 + (-2*s2 + s3)*x^2 + (-2*s3*s2 + 2)*x + 2*s3
-            sage: gcd(f, g)
+            sage: N = QQ[sqrt(2), sqrt(3)]                                              # optional - sage.symbolic
+            sage: s2, s3 = N.gens()                                                     # optional - sage.symbolic
+            sage: x = polygen(N)                                                        # optional - sage.symbolic
+            sage: f = x^4 - 5*x^2 + 6                                                   # optional - sage.symbolic
+            sage: g = x^3 + (-2*s2 + s3)*x^2 + (-2*s3*s2 + 2)*x + 2*s3                  # optional - sage.symbolic
+            sage: gcd(f, g)                                                             # optional - sage.symbolic
             x^2 + (-sqrt2 + sqrt3)*x - sqrt3*sqrt2
             sage: f.gcd(g)
             x^2 + (-sqrt2 + sqrt3)*x - sqrt3*sqrt2

@@ -47,14 +47,14 @@ This example illustrates generators for a free module over `\ZZ`.
 
 ::
 
-    sage: M = FreeModule(ZZ, 4)
-    sage: M
+    sage: M = FreeModule(ZZ, 4)                                                         # optional - sage.modules
+    sage: M                                                                             # optional - sage.modules
     Ambient free module of rank 4 over the principal ideal domain Integer Ring
-    sage: M.ngens()
+    sage: M.ngens()                                                                     # optional - sage.modules
     4
-    sage: M.gen(0)
+    sage: M.gen(0)                                                                      # optional - sage.modules
     (1, 0, 0, 0)
-    sage: M.gens()
+    sage: M.gens()                                                                      # optional - sage.modules
     ((1, 0, 0, 0), (0, 1, 0, 0), (0, 0, 1, 0), (0, 0, 0, 1))
 """
 
@@ -240,31 +240,31 @@ cdef class ParentWithGens(ParentWithBase):
             6
 
             sage: R.<x> = PolynomialRing(QQ)
-            sage: f = R.hom([5], GF(7))
+            sage: f = R.hom([5], GF(7))                                                 # optional - sage.rings.finite_rings
             Traceback (most recent call last):
             ...
             ValueError: relations do not all (canonically) map to 0 under map determined by images of generators
 
-            sage: R.<x> = PolynomialRing(GF(7))
-            sage: f = R.hom([3], GF(49,'a'))
-            sage: f
+            sage: R.<x> = PolynomialRing(GF(7))                                         # optional - sage.rings.finite_rings
+            sage: f = R.hom([3], GF(49, 'a'))                                           # optional - sage.rings.finite_rings
+            sage: f                                                                     # optional - sage.rings.finite_rings
             Ring morphism:
               From: Univariate Polynomial Ring in x over Finite Field of size 7
               To:   Finite Field in a of size 7^2
               Defn: x |--> 3
-            sage: f(x+6)
+            sage: f(x + 6)                                                              # optional - sage.rings.finite_rings
             2
-            sage: f(x^2+1)
+            sage: f(x^2 + 1)                                                            # optional - sage.rings.finite_rings
             3
 
         EXAMPLES: Natural morphism
 
         ::
 
-            sage: f = ZZ.hom(GF(5))
-            sage: f(7)
+            sage: f = ZZ.hom(GF(5))                                                     # optional - sage.rings.finite_rings
+            sage: f(7)                                                                  # optional - sage.rings.finite_rings
             2
-            sage: f
+            sage: f                                                                     # optional - sage.rings.finite_rings
             Natural morphism:
               From: Integer Ring
               To:   Finite Field of size 5
@@ -280,13 +280,13 @@ cdef class ParentWithGens(ParentWithBase):
 
         You can specify a map on the base ring::
 
-            sage: k = GF(2)
-            sage: R.<a> = k[]
-            sage: l.<a> = k.extension(a^3 + a^2 + 1)
-            sage: R.<b> = l[]
-            sage: m.<b> = l.extension(b^2 + b + a)
-            sage: n.<z> = GF(2^6)
-            sage: m.hom([z^4 + z^3 + 1], base_map=l.hom([z^5 + z^4 + z^2]))
+            sage: k = GF(2)                                                             # optional - sage.rings.finite_rings
+            sage: R.<a> = k[]                                                           # optional - sage.rings.finite_rings
+            sage: l.<a> = k.extension(a^3 + a^2 + 1)                                    # optional - sage.rings.finite_rings
+            sage: R.<b> = l[]                                                           # optional - sage.rings.finite_rings
+            sage: m.<b> = l.extension(b^2 + b + a)                                      # optional - sage.rings.finite_rings
+            sage: n.<z> = GF(2^6)                                                       # optional - sage.rings.finite_rings
+            sage: m.hom([z^4 + z^3 + 1], base_map=l.hom([z^5 + z^4 + z^2]))             # optional - sage.rings.finite_rings
             Ring morphism:
               From: Univariate Quotient Polynomial Ring in b over Finite Field in a of size 2^3 with modulus b^2 + b + a
               To:   Finite Field in z of size 2^6
@@ -335,7 +335,7 @@ cdef class localvars:
 
     EXAMPLES::
 
-        sage: R.<x,y> = PolynomialRing(QQ,2)
+        sage: R.<x,y> = PolynomialRing(QQ, 2)
         sage: with localvars(R, 'z,w'):
         ....:     print(x^3 + y^3 - x*y)
         z^3 + w^3 - z*w
