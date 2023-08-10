@@ -21,6 +21,7 @@ from cysignals.signals cimport sig_check
 MatrixSpace = None
 
 from sage.rings.integer_ring import ZZ
+from sage.rings.integer cimport Integer
 from sage.structure.coerce cimport (coercion_model,
         is_numpy_type, py_scalar_parent)
 from sage.structure.element cimport Element, RingElement, Vector
@@ -925,9 +926,10 @@ cdef class MatrixArgs:
 
         # Non-zero scalar matrices must be square
         if self.typ == MA_ENTRIES_SCALAR:
-            if self.nrows != self.ncols:
-                if self.entries:
+            if self.entries:
+                if self.nrows != self.ncols:
                     raise TypeError("nonzero scalar matrix must be square")
+            else:
                 self.typ = MA_ENTRIES_ZERO
 
         if self.sparse == -1:
@@ -1219,12 +1221,14 @@ cdef class MatrixArgs:
         # hurt to do these first.
         if self.entries is None:
             return MA_ENTRIES_ZERO
+        if isinstance(self.entries, (int, float, complex, Integer)):
+            if self.entries:
+                return MA_ENTRIES_SCALAR
+            return MA_ENTRIES_ZERO
         if isinstance(self.entries, (list, tuple)):
             return self.sequence_type()
         if isinstance(self.entries, dict):
             return MA_ENTRIES_MAPPING
-        if isinstance(self.entries, (int, float, complex)):
-            return MA_ENTRIES_SCALAR
 
         # Note: some objects are callable, iterable and act like a
         # scalar, e.g. polynomials. So the order of these checks
