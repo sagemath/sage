@@ -180,7 +180,7 @@ any simplicial set::
     False
 
     sage: RP6 = simplicial_sets.RealProjectiveSpace(6)                                  # needs sage.groups
-    sage: RP6.homology(reduced=False, base_ring=GF(2))                                  # needs sage.groups sage.modules sage.rings.finite_rings
+    sage: RP6.homology(reduced=False, base_ring=GF(2))                                  # needs sage.groups sage.modules
     {0: Vector space of dimension 1 over Finite Field of size 2,
      1: Vector space of dimension 1 over Finite Field of size 2,
      2: Vector space of dimension 1 over Finite Field of size 2,
