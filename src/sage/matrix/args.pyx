@@ -848,6 +848,24 @@ cdef class MatrixArgs:
             Traceback (most recent call last):
             ...
             ValueError: sequence too short (expected length 6, got 1)
+
+        Check github issue #36065:
+
+            sage: class MyAlgebraicNumber(sage.rings.qqbar.AlgebraicNumber):
+            ....:     def __bool__(self):
+            ....:         raise ValueError
+            sage: matrix(1, 1, MyAlgebraicNumber(0))
+            [0]
+            sage: matrix(1, 1, MyAlgebraicNumber(3))
+            [3]
+            sage: matrix(1, 2, MyAlgebraicNumber(0))
+            Traceback (most recent call last):
+            ...
+            TypeError: scalar matrix must be square if the value cannot be determined to be zero
+            sage: matrix(1, 2, MyAlgebraicNumber(3))
+            Traceback (most recent call last):
+            ...
+            TypeError: scalar matrix must be square if the value cannot be determined to be zero
         """
         self.finalize()
         return self
@@ -925,12 +943,18 @@ cdef class MatrixArgs:
                 raise AssertionError(f"nrows={self.nrows}  ncols={self.ncols}  base={self.base}  type={self.typ}")
 
         # Non-zero scalar matrices must be square
+        # also ensure type is MA_ENTRIES_ZERO for scalar zero matrices
         if self.typ == MA_ENTRIES_SCALAR:
-            if self.entries:
+            try:
+                if not self.entries:
+                    self.typ = MA_ENTRIES_ZERO
+            except Exception:
+                # "not self.entries" has failed, self.entries cannot be determined to be zero
                 if self.nrows != self.ncols:
-                    raise TypeError("nonzero scalar matrix must be square")
-            else:
-                self.typ = MA_ENTRIES_ZERO
+                    raise TypeError("scalar matrix must be square if the value cannot be determined to be zero")
+            if self.typ == MA_ENTRIES_SCALAR and self.nrows != self.ncols:
+                # self.typ is still SCALAR -> "not self.entries" has successfully evaluated, to False
+                raise TypeError("nonzero scalar matrix must be square")
 
         if self.sparse == -1:
             self.sparse = (self.typ & MA_FLAG_SPARSE) != 0
