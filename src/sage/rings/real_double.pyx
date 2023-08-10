@@ -1552,6 +1552,17 @@ cdef class RealDoubleElement(FieldElement):
         """
         return Integer(math.floor(self._value))
 
+    def _floordiv_(self, right):
+        """
+        RDF floor division operator.
+
+        EXAMPLES::
+
+            sage: 2.1 // 3
+            0.00...0
+        """
+        return math.floor(self._div_(right))
+
     def ceil(self):
         """
         Return the ceiling of ``self``.
