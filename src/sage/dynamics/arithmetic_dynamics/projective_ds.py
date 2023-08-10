@@ -2430,19 +2430,19 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
                 x_i = number_field_pt[0]
                 y_i = number_field_pt[1]
 
-                Res = O(f.resultant(normalize=True))
+                Res = O(f.resultant(normalize=True).abs())
 
-                if Res is Integer:
-                    Res = Res.abs()
-                else:
-                    Res = Res.norm()
+                # if Res is Integer:
+                #     Res = Res.abs()
+                # else:
+                #     Res = Res.norm()
 
                 # Compute the error bound as defined in Algorithm 3.1 of [WELLS]
                 if Res > 1:
                     if err_bound is not None:
                         err_bound /= 2
-                        # N = ceil((R(Res.norm()).log().log() - R(d - 1).log() - R(err_bound).log()) / R(d).log())
-                        N = ceil((R(Res).log().log() - R(d - 1).log() - R(err_bound).log()) / R(d).log())
+                        N = ceil((R(Res.norm()).log().log() - R(d - 1).log() - R(err_bound).log()) / R(d).log())
+                        # N = ceil((R(Res).log().log() - R(d - 1).log() - R(err_bound).log()) / R(d).log())
 
                         if N < 1:
                             N = 1
@@ -2457,7 +2457,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
                         x = order_quotient(A(x_i, y_i)).lift()
                         y = order_quotient(B(x_i, y_i)).lift()
                         g = gcd([x, y, Res])
-                        H += R(g).abs().log() / d**(n + 1)
+                        H += R(g.norm()).abs().log() / d**(n + 1)
                         x_i = O(x / g)
                         y_i = O(y / g)
 
@@ -2468,7 +2468,11 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
                 # for the infinite place.
                 h = -H
                 for v in K.places():
-                    h += f.green_function(number_field_pt, v)
+                    if isinstance(v.codomain(), (sage.rings.abc.RealField, sage.rings.abc.RealDoubleField)):
+                        dv = R.one()
+                    else:
+                        dv = R(2)
+                    h += dv * f.green_function(number_field_pt, v)
 
                 # The value returned by Wells' Algorithm may be negative.
                 # As the canonical height is always non-negative, hence return 0 if
