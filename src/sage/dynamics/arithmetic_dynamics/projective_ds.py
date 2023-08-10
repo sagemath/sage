@@ -2286,6 +2286,16 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
 
         ::
 
+            sage: S.<z> = QQ[]
+            sage: K.<v> = NumberField(z^3-5)
+            sage: O = K.maximal_order()
+            sage: P.<x,y> = ProjectiveSpace(K, 1)
+            sage: f = DynamicalSystem([x^2 + 3*y^2, v*y^2])
+            sage: f.canonical_height(P(25*11, 5*v))
+            3.4708559341837528755619744489
+
+        ::
+
             sage: P.<x,y> = ProjectiveSpace(CC, 1)
             sage: f = DynamicalSystem([x, y])
             sage: f.canonical_height(P(1, 0))
@@ -2420,13 +2430,20 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
                 x_i = number_field_pt[0]
                 y_i = number_field_pt[1]
 
-                Res = O(f.resultant(normalize=True)).abs()
+                Res = O(f.resultant(normalize=True))
+
+                if Res is Integer:
+                    Res = Res.abs()
+                else:
+                    Res = Res.norm()
 
                 # Compute the error bound as defined in Algorithm 3.1 of [WELLS]
                 if Res > 1:
                     if err_bound is not None:
                         err_bound /= 2
-                        N = ceil((R(Res.norm()).log().log() - R(d - 1).log() - R(err_bound).log()) / R(d).log())
+                        # N = ceil((R(Res.norm()).log().log() - R(d - 1).log() - R(err_bound).log()) / R(d).log())
+                        N = ceil((R(Res).log().log() - R(d - 1).log() - R(err_bound).log()) / R(d).log())
+
                         if N < 1:
                             N = 1
 
