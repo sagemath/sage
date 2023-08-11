@@ -1277,13 +1277,13 @@ class FiniteDimensionalLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
             from sage.parallel.decorate import parallel
 
             @parallel(ncpus=ncpus)
-            def f1(k):
+            def compute_diff(k):
                 """
-                Return the first term of the coboundary map.
+                Build the k-th differential (in parallel).
                 """
-                Lambda_dim = {i:tuple(X) for i,X in enumerate(combinations(L_dim, k-1), start=len(M_dim))}
+                Lambda_dim_2 = {i:tuple(X) for i,X in enumerate(combinations(L_dim, k-1), start=len(M_dim))}
                 First_space = {X:i for i, X in enumerate(M_dim)}
-                values_cartesian_product = list(itertools.product(First_space.values(), Lambda_dim.values()))
+                values_cartesian_product = list(itertools.product(First_space.values(), Lambda_dim_2.values()))
                 Parentspace = {i: value for i, value in enumerate(values_cartesian_product)}
                 V = VectorSpace(R, len(Parentspace))
         
@@ -1327,14 +1327,8 @@ class FiniteDimensionalLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
                 nrows = len(BigParentspace)
                 ncols = len(Parentspace)
                 MS = MatrixSpace(R, nrows, ncols)
-                final = MS(data).transpose()
-                return final
-            
-            @parallel
-            def f2(k):
-                """
-                Return the second term of the coboundary map.
-                """
+                final = MS(data).transpose()            
+
                 Lambda_dim = {tuple(X): i for i,X in enumerate(combinations(L_dim, k-1))}
                 data = []
                 zero = [0] * len(Lambda_dim)
@@ -1361,14 +1355,7 @@ class FiniteDimensionalLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
                 Mdim = M.dimension()
                 A = matrix.identity(Mdim)
                 A1 = matrix(A.tensor_product(ret))
-                return A1
-
-            @parallel
-            def compute_diff(k):
-                """
-                Build the k-th differential (in parallel).
-                """
-                return f1(k) + f2(k)
+                return A1+final
                 
             from sage.homology.chain_complex import ChainComplex
             
