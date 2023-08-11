@@ -316,14 +316,16 @@ cdef class UniqueFactory(SageObject):
             sage: A = FiniteField(127)
             sage: A is loads(dumps(A)) # indirect doctest
             True
-            sage: B = FiniteField(3^3,'b')                                              # needs sage.rings.finite_rings
-            sage: B is loads(dumps(B))                                                  # needs sage.rings.finite_rings
+
+            sage: # needs sage.rings.finite_rings
+            sage: B = FiniteField(3^3,'b')
+            sage: B is loads(dumps(B))
             True
-            sage: C = FiniteField(2^16,'c')                                             # needs sage.rings.finite_rings
-            sage: C is loads(dumps(C))                                                  # needs sage.rings.finite_rings
+            sage: C = FiniteField(2^16,'c')
+            sage: C is loads(dumps(C))
             True
-            sage: D = FiniteField(3^20,'d')                                             # needs sage.rings.finite_rings
-            sage: D is loads(dumps(D))                                                  # needs sage.rings.finite_rings
+            sage: D = FiniteField(3^20,'d')
+            sage: D is loads(dumps(D))
             True
 
         TESTS::

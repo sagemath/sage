@@ -3261,40 +3261,42 @@ cdef class CommutativeRingElement(RingElement):
 
         EXAMPLES::
 
+            sage: # needs sage.libs.pari
             sage: R.<x> = ZZ[]
-            sage: (x^2).sqrt()                                                          # needs sage.libs.pari
+            sage: (x^2).sqrt()
             x
-            sage: f = x^2 - 4*x + 4; f.sqrt(all=True)                                   # needs sage.libs.pari
+            sage: f = x^2 - 4*x + 4; f.sqrt(all=True)
             [x - 2, -x + 2]
-            sage: sqrtx = x.sqrt(name="y"); sqrtx                                       # needs sage.libs.pari
+            sage: sqrtx = x.sqrt(name="y"); sqrtx
             y
-            sage: sqrtx^2                                                               # needs sage.libs.pari
+            sage: sqrtx^2
             x
-            sage: x.sqrt(all=true, name="y")                                            # needs sage.libs.pari
+            sage: x.sqrt(all=true, name="y")
             [y, -y]
-            sage: x.sqrt(extend=False, all=True)                                        # needs sage.libs.pari
+            sage: x.sqrt(extend=False, all=True)
             []
-            sage: x.sqrt()                                                              # needs sage.libs.pari
+            sage: x.sqrt()
             Traceback (most recent call last):
             ...
             TypeError: Polynomial is not a square. You must specify the name of the square root when using the default extend = True
-            sage: x.sqrt(extend=False)                                                  # needs sage.libs.pari
+            sage: x.sqrt(extend=False)
             Traceback (most recent call last):
             ...
             ValueError: trying to take square root of non-square x with extend = False
 
         TESTS::
 
-            sage: f = (x + 3)^2; f.sqrt()                                               # needs sage.libs.pari
+            sage: # needs sage.libs.pari
+            sage: f = (x + 3)^2; f.sqrt()
             x + 3
-            sage: f = (x + 3)^2; f.sqrt(all=True)                                       # needs sage.libs.pari
+            sage: f = (x + 3)^2; f.sqrt(all=True)
             [x + 3, -x - 3]
-            sage: f = (x^2 - x + 3)^2; f.sqrt()                                         # needs sage.libs.pari
+            sage: f = (x^2 - x + 3)^2; f.sqrt()
             x^2 - x + 3
-            sage: f = (x^2 - x + 3)^6; f.sqrt()                                         # needs sage.libs.pari
+            sage: f = (x^2 - x + 3)^6; f.sqrt()
             x^6 - 3*x^5 + 12*x^4 - 19*x^3 + 36*x^2 - 27*x + 27
             sage: g = (R.random_element(15))^2
-            sage: g.sqrt()^2 == g                                                       # needs sage.libs.pari
+            sage: g.sqrt()^2 == g
             True
 
             sage: # needs sage.libs.pari
@@ -3320,7 +3322,8 @@ cdef class CommutativeRingElement(RingElement):
             sage: (1/(x^2-1)).sqrt()
             Traceback (most recent call last):
             ...
-            TypeError: Polynomial is not a square. You must specify the name of the square root when using the default extend = True
+            TypeError: Polynomial is not a square. You must specify the name
+            of the square root when using the default extend = True
             sage: (1/(x^2-3)).sqrt(extend=False)
             Traceback (most recent call last):
             ...
@@ -3463,7 +3466,9 @@ cdef class Vector(ModuleElementWithMutability):
             sage: parent(vector(QQ['x'], [1,2,3,4]) * vector(QQ['y'], [1,2,3,4]))
             Traceback (most recent call last):
             ...
-            TypeError: unsupported operand parent(s) for *: 'Ambient free module of rank 4 over the principal ideal domain Univariate Polynomial Ring in x over Rational Field' and 'Ambient free module of rank 4 over the principal ideal domain Univariate Polynomial Ring in y over Rational Field'
+            TypeError: unsupported operand parent(s) for *:
+             'Ambient free module of rank 4 over the principal ideal domain Univariate Polynomial Ring in x over Rational Field' and
+             'Ambient free module of rank 4 over the principal ideal domain Univariate Polynomial Ring in y over Rational Field'
 
         Here we test (vector * matrix) multiplication::
 
@@ -3527,7 +3532,9 @@ cdef class Vector(ModuleElementWithMutability):
             sage: parent(vector(QQ['x'], [1,2]) * matrix(QQ['y'], 2, 2, [1,2,3,4]))
             Traceback (most recent call last):
             ...
-            TypeError: unsupported operand parent(s) for *: 'Ambient free module of rank 2 over the principal ideal domain Univariate Polynomial Ring in x over Rational Field' and 'Full MatrixSpace of 2 by 2 dense matrices over Univariate Polynomial Ring in y over Rational Field'
+            TypeError: unsupported operand parent(s) for *:
+             'Ambient free module of rank 2 over the principal ideal domain Univariate Polynomial Ring in x over Rational Field' and
+             'Full MatrixSpace of 2 by 2 dense matrices over Univariate Polynomial Ring in y over Rational Field'
 
         Here we test (vector * scalar) multiplication::
 
@@ -3591,7 +3598,9 @@ cdef class Vector(ModuleElementWithMutability):
             sage: parent(vector(QQ['x'], [1,2]) * QQ['y'](1))
             Traceback (most recent call last):
             ...
-            TypeError: unsupported operand parent(s) for *: 'Ambient free module of rank 2 over the principal ideal domain Univariate Polynomial Ring in x over Rational Field' and 'Univariate Polynomial Ring in y over Rational Field'
+            TypeError: unsupported operand parent(s) for *:
+             'Ambient free module of rank 2 over the principal ideal domain Univariate Polynomial Ring in x over Rational Field' and
+             'Univariate Polynomial Ring in y over Rational Field'
 
         Here we test (scalar * vector) multiplication::
 
@@ -3655,7 +3664,9 @@ cdef class Vector(ModuleElementWithMutability):
             sage: parent(QQ['x'](1) * vector(QQ['y'], [1,2]))
             Traceback (most recent call last):
             ...
-            TypeError: unsupported operand parent(s) for *: 'Univariate Polynomial Ring in x over Rational Field' and 'Ambient free module of rank 2 over the principal ideal domain Univariate Polynomial Ring in y over Rational Field'
+            TypeError: unsupported operand parent(s) for *:
+             'Univariate Polynomial Ring in x over Rational Field' and
+             'Ambient free module of rank 2 over the principal ideal domain Univariate Polynomial Ring in y over Rational Field'
         """
         if have_same_parent(left, right):
             return (<Vector>left)._dot_product_(<Vector>right)
@@ -3711,15 +3722,15 @@ cdef class Vector(ModuleElementWithMutability):
 
         EXAMPLES::
 
-            sage: # needs sage.modules
+            sage: # optional - magma, needs sage.modules
             sage: v = vector([1,2,3])
-            sage: v._magma_init_(magma)                 # optional - magma
+            sage: v._magma_init_(magma)
             '_sage_[...]![1,2,3]'
-            sage: mv = magma(v); mv                     # optional - magma
+            sage: mv = magma(v); mv
             (1 2 3)
-            sage: mv.Type()                             # optional - magma
+            sage: mv.Type()
             ModTupRngElt
-            sage: mv.Parent()                           # optional - magma
+            sage: mv.Parent()
             Full RSpace of degree 3 over Integer Ring
 
             sage: # needs sage.modules
@@ -3733,11 +3744,12 @@ cdef class Vector(ModuleElementWithMutability):
 
         A more demanding example::
 
+            sage: # optional - magma, needs sage.modules
             sage: R.<x,y,z> = QQ[]
-            sage: v = vector([x^3, y, 2/3*z + x/y])                                     # needs sage.modules
-            sage: magma(v)                              # optional - magma              # needs sage.modules
+            sage: v = vector([x^3, y, 2/3*z + x/y])
+            sage: magma(v)
             (            x^3               y (2/3*y*z + x)/y)
-            sage: magma(v).Parent()                     # optional - magma              # needs sage.modules
+            sage: magma(v).Parent()
             Full Vector space of degree 3
              over Multivariate rational function field of rank 3 over Rational Field
         """
@@ -3831,7 +3843,9 @@ cdef class Matrix(ModuleElement):
             sage: parent(matrix(QQ['x'], 2, 2, [1,2,3,4]) * matrix(QQ['y'], 2, 2, [1,2,3,4]))
             Traceback (most recent call last):
             ...
-            TypeError: unsupported operand parent(s) for *: 'Full MatrixSpace of 2 by 2 dense matrices over Univariate Polynomial Ring in x over Rational Field' and 'Full MatrixSpace of 2 by 2 dense matrices over Univariate Polynomial Ring in y over Rational Field'
+            TypeError: unsupported operand parent(s) for *:
+             'Full MatrixSpace of 2 by 2 dense matrices over Univariate Polynomial Ring in x over Rational Field' and
+             'Full MatrixSpace of 2 by 2 dense matrices over Univariate Polynomial Ring in y over Rational Field'
 
         We test that the bug reported in :trac:`27352` has been fixed::
 
@@ -3969,7 +3983,9 @@ cdef class Matrix(ModuleElement):
             sage: parent(matrix(QQ['x'], 2, 2, [1,2,3,4]) * QQ['y'](1))
             Traceback (most recent call last):
             ...
-            TypeError: unsupported operand parent(s) for *: 'Full MatrixSpace of 2 by 2 dense matrices over Univariate Polynomial Ring in x over Rational Field' and 'Univariate Polynomial Ring in y over Rational Field'
+            TypeError: unsupported operand parent(s) for *:
+             'Full MatrixSpace of 2 by 2 dense matrices over Univariate Polynomial Ring in x over Rational Field' and
+             'Univariate Polynomial Ring in y over Rational Field'
 
         Here we test (scalar * matrix) multiplication::
 
@@ -4031,7 +4047,9 @@ cdef class Matrix(ModuleElement):
             sage: parent(QQ['x'](1) * matrix(QQ['y'], 2, 2, [1,2,3,4]))
             Traceback (most recent call last):
             ...
-            TypeError: unsupported operand parent(s) for *: 'Univariate Polynomial Ring in x over Rational Field' and 'Full MatrixSpace of 2 by 2 dense matrices over Univariate Polynomial Ring in y over Rational Field'
+            TypeError: unsupported operand parent(s) for *:
+             'Univariate Polynomial Ring in x over Rational Field' and
+             'Full MatrixSpace of 2 by 2 dense matrices over Univariate Polynomial Ring in y over Rational Field'
 
         Examples with matrices having matrix coefficients::
 
