@@ -111,9 +111,10 @@ def IntegerLattice(basis, lll_reduce=True):
 
     We construct an ideal lattice from an element of an absolute order::
 
-        sage: K.<a>  = CyclotomicField(17)                                              # needs sage.rings.number_field
-        sage: O = K.ring_of_integers()                                                  # needs sage.rings.number_field
-        sage: f = O(-a^15 + a^13 + 4*a^12 - 12*a^11 - 256*a^10 + a^9 - a^7              # needs sage.rings.number_field
+        sage: # needs sage.rings.number_field
+        sage: K.<a>  = CyclotomicField(17)
+        sage: O = K.ring_of_integers()
+        sage: f = O(-a^15 + a^13 + 4*a^12 - 12*a^11 - 256*a^10 + a^9 - a^7
         ....:       - 4*a^6 + a^5 + 210*a^4 + 2*a^3 - 2*a^2 + 2*a - 2)
         sage: from sage.modules.free_module_integer import IntegerLattice
         sage: IntegerLattice(f)
@@ -156,11 +157,12 @@ def IntegerLattice(basis, lll_reduce=True):
 
     Sage also interfaces with fpylll's lattice generator::
 
+        sage: # needs fpylll
         sage: from sage.modules.free_module_integer import IntegerLattice
-        sage: from fpylll import IntegerMatrix                                          # needs fpylll
-        sage: A = IntegerMatrix.random(8, "simdioph", bits=20, bits2=10)                # needs fpylll
-        sage: A = A.to_matrix(matrix(ZZ, 8, 8))                                         # needs fpylll
-        sage: IntegerLattice(A, lll_reduce=False)                                       # needs fpylll
+        sage: from fpylll import IntegerMatrix
+        sage: A = IntegerMatrix.random(8, "simdioph", bits=20, bits2=10)
+        sage: A = A.to_matrix(matrix(ZZ, 8, 8))
+        sage: IntegerLattice(A, lll_reduce=False)
         Free module of degree 8 and rank 8 over Integer Ring
         User basis matrix:
         [   1024  829556  161099   11567  521155  769480  639201  689979]
@@ -202,7 +204,8 @@ class FreeModule_submodule_with_basis_integer(FreeModule_submodule_with_basis_pi
     EXAMPLES::
 
         sage: from sage.modules.free_module_integer import IntegerLattice
-        sage: L = IntegerLattice(sage.crypto.gen_lattice(type='modular', m=10, seed=1337, dual=True)); L
+        sage: L = IntegerLattice(sage.crypto.gen_lattice(type='modular', m=10,
+        ....:                                            seed=1337, dual=True)); L
         Free module of degree 10 and rank 10 over Integer Ring
         User basis matrix:
         [-1  1  2 -2  0  1  0 -1  2  1]
@@ -404,22 +407,19 @@ class FreeModule_submodule_with_basis_integer(FreeModule_submodule_with_basis_pi
 
         EXAMPLES::
 
+            sage: # needs sage.libs.flint
             sage: from sage.modules.free_module_integer import IntegerLattice
             sage: A = sage.crypto.gen_lattice(type='random', n=1, m=60, q=2^60, seed=42)
-            sage: L = IntegerLattice(A, lll_reduce=False)                               # needs sage.libs.flint
-            sage: min(v.norm().n() for v in L.reduced_basis)                            # needs sage.libs.flint
+            sage: L = IntegerLattice(A, lll_reduce=False)
+            sage: min(v.norm().n() for v in L.reduced_basis)
             4.17330740711759e15
-
-            sage: L.LLL()                                                               # needs sage.libs.flint
+            sage: L.LLL()
             60 x 60 dense matrix over Integer Ring (use the '.str()' method to see the entries)
-
-            sage: min(v.norm().n() for v in L.reduced_basis)                            # needs sage.libs.flint
+            sage: min(v.norm().n() for v in L.reduced_basis)
             5.19615242270663
-
-            sage: L.BKZ(block_size=10)                                                  # needs sage.libs.flint
+            sage: L.BKZ(block_size=10)
             60 x 60 dense matrix over Integer Ring (use the '.str()' method to see the entries)
-
-            sage: min(v.norm().n() for v in L.reduced_basis)                            # needs sage.libs.flint
+            sage: min(v.norm().n() for v in L.reduced_basis)
             4.12310562561766
 
         .. NOTE::
@@ -655,7 +655,10 @@ class FreeModule_submodule_with_basis_integer(FreeModule_submodule_with_basis_pi
             sage: L = IntegerLattice([[1, 0], [0, 1]])
             sage: V = L.voronoi_cell()
             sage: V.Vrepresentation()
-            (A vertex at (1/2, -1/2), A vertex at (1/2, 1/2), A vertex at (-1/2, 1/2), A vertex at (-1/2, -1/2))
+            (A vertex at (1/2, -1/2),
+             A vertex at (1/2, 1/2),
+             A vertex at (-1/2, 1/2),
+             A vertex at (-1/2, -1/2))
 
         The volume of the Voronoi cell is the square root of the
         discriminant of the lattice::
@@ -667,8 +670,8 @@ class FreeModule_submodule_with_basis_integer(FreeModule_submodule_with_basis_pi
             [  1  -1   2   1]
             [ -6   0   3   3]
             [ -6 -24  -6  -5]
-            sage: V = L.voronoi_cell() # long time
-            sage: V.volume()           # long time
+            sage: V = L.voronoi_cell()  # long time
+            sage: V.volume()            # long time
             678
             sage: sqrt(L.discriminant())
             678
@@ -678,7 +681,10 @@ class FreeModule_submodule_with_basis_integer(FreeModule_submodule_with_basis_pi
             sage: L = IntegerLattice([[2, 0, 0], [0, 2, 0]])
             sage: V = L.voronoi_cell()
             sage: V.Hrepresentation()
-            (An inequality (-1, 0, 0) x + 1 >= 0, An inequality (0, -1, 0) x + 1 >= 0, An inequality (1, 0, 0) x + 1 >= 0, An inequality (0, 1, 0) x + 1 >= 0)
+            (An inequality (-1, 0, 0) x + 1 >= 0,
+             An inequality (0, -1, 0) x + 1 >= 0,
+             An inequality (1, 0, 0) x + 1 >= 0,
+             An inequality (0, 1, 0) x + 1 >= 0)
 
         ALGORITHM:
 
