@@ -2626,7 +2626,8 @@ cdef class FreeModuleElement(Vector):   # abstract base class
 
             sage: rings = [ZZ, QQ, RDF, ZZ['x']]
             sage: rings += [RR]                                                         # needs sage.rings.real_mpfr
-            sage: rings += [GF(2), GF(3), GF(4)]                                        # needs sage.rings.finite_rings
+            sage: rings += [GF(2), GF(3)]
+            sage: rings += [GF(4)]                                                      # needs sage.rings.finite_rings
             sage: for R in rings:
             ....:     _ = (R**0)().dot_product((R**0)())
         """
@@ -3656,14 +3657,14 @@ cdef class FreeModuleElement(Vector):   # abstract base class
 
         EXAMPLES::
 
-            sage: # needs sage.symbolic
+            sage: # optional - mathematica, needs sage.symbolic
             sage: vector((1,2,3), QQ)._mathematica_init_()
             '{1/1, 2/1, 3/1}'
-            sage: mathematica(vector((1,2,3), QQ))      # optional - mathematica
+            sage: mathematica(vector((1,2,3), QQ))
             {1, 2, 3}
             sage: a = vector(SR, 5, [1, x, x^2, sin(x), pi]); a
             (1, x, x^2, sin(x), pi)
-            sage: a._mathematica_init_()        # optional - mathematica
+            sage: a._mathematica_init_()
             '{1, x, (x)^(2), Sin[x], Pi}'
         """
         return '{' + ', '.join(x._mathematica_init_() for x in self.list()) + '}'

@@ -5606,13 +5606,13 @@ class FreeModule_ambient(FreeModule_generic):
 
         EXAMPLES::
 
-            sage: latex(QQ^3) # indirect doctest
+            sage: latex(QQ^3)   # indirect doctest
             \Bold{Q}^{3}
 
         ::
 
             sage: A = GF(5)^20
-            sage: latex(A)
+            sage: latex(A)      # indirect doctest
             \Bold{F}_{5}^{20}
 
         ::
