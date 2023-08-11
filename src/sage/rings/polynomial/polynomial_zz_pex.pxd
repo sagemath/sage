@@ -6,6 +6,6 @@ ctypedef ZZ_pEContext_ptrs *cparent
 
 include "polynomial_template_header.pxi"
 
-cdef class Polynomial_ZZ_pX(Polynomial_template):
+cdef class Polynomial_ZZ_pEX(Polynomial_template):
     pass
 
