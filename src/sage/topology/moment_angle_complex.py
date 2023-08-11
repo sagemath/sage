@@ -814,3 +814,46 @@ class MomentAngleComplex(UniqueRepresentation, SageObject):
         ]
 
         return not any(one_skeleton.subgraph_search(g) is not None for g in obstruction_graphs)
+
+# just create a method instead of a classs
+class CohomologyRing(CombinatorialFreeModule):
+    def __init__(self, base_ring, moment_angle_complex, category=None):
+        self._complex = moment_angle_complex
+
+        vertices = moment_angle_complex._simplicial_complex.vertices()
+        n = len(vertices)
+        self._graded_indices = {}
+        indices = []
+        for deg in range(moment_angle_complex.dimension() + 1):
+            num_of_gens = 0
+            for i in range(n+1):
+                for x in combinations(vertices, i):
+                    S = moment_angle_complex._simplicial_complex.generated_subcomplex(x, is_mutable=False)
+                    # Because of the empty combination
+                    if len(S.vertices()) > 0:
+                        if isinstance(S.cohomology(deg-i-1, generators=True), list):
+                            num_of_gens += len(S.cohomology(deg-i-1, generators=True))
+
+            indices.extend([(deg, k) for k in range(num_of_gens)])
+            self._graded_indices[deg] = range(num_of_gens)
+
+        CombinatorialFreeModule.__init__(self, base_ring, indices, category=category)
+
+    def basis(self, d=None):
+        if d is None:
+            return Family(self._indices, self.monomial)
+        else:
+            indices = [(d, i) for i in self._graded_indices.get(d, [])]
+            return Family(indices, self.monomial)
+
+    def degree_on_basis(self, i):
+        return i[0]
+
+    def _repr_(self):
+        return "Cohomology module of {} over {}".format(self._complex, self.base_ring())
+
+    def _repr_term(self, i):
+        sym = '^'
+        return 'h{}{{{},{}}}'.format(sym, i[0], i[1])
+
+    _latex_term = _repr_term
