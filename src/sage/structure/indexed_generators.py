@@ -464,16 +464,16 @@ class IndexedGenerators():
 
         TESTS::
 
-            sage: # needs sage.combinat
-            sage: R = NonCommutativeSymmetricFunctions(QQ).R()                          # needs sage.modules
-            sage: ascii_art(R[1,2,2,4])                                                 # needs sage.modules
+            sage: # needs sage.combinat sage.modules
+            sage: R = NonCommutativeSymmetricFunctions(QQ).R()
+            sage: ascii_art(R[1,2,2,4])
             R
                ****
               **
              **
              *
             sage: Partitions.options(diagram_str="#", convention="french")
-            sage: ascii_art(R[1,2,2,4])                                                 # needs sage.modules
+            sage: ascii_art(R[1,2,2,4])
             R
              #
              ##

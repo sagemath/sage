@@ -2000,16 +2000,18 @@ cdef class Element(SageObject):
 
         ::
 
-            sage: (2/3)^I                                                               # needs sage.symbolic
+            sage: # needs sage.symbolic
+            sage: (2/3)^I
             (2/3)^I
-            sage: (2/3)^sqrt(2)                                                         # needs sage.symbolic
+            sage: (2/3)^sqrt(2)
             (2/3)^sqrt(2)
-            sage: var('x,y,z,n')                                                        # needs sage.symbolic
+            sage: var('x,y,z,n')
             (x, y, z, n)
-            sage: (2/3)^(x^n + y^n + z^n)                                               # needs sage.symbolic
+            sage: (2/3)^(x^n + y^n + z^n)
             (2/3)^(x^n + y^n + z^n)
-            sage: (-7/11)^(tan(x)+exp(x))                                               # needs sage.symbolic
+            sage: (-7/11)^(tan(x)+exp(x))
             (-7/11)^(e^x + tan(x))
+
             sage: float(1.2)**(1/2)
             1.0954451150103321
             sage: complex(1,2)**(1/2)                                                   # needs sage.rings.complex_double
@@ -2189,6 +2191,7 @@ cdef class ElementWithCachedMethod(Element):
     category whose element and parent classes define cached methods.
     ::
 
+        sage: # needs sage.misc.cython
         sage: cython_code = ["from sage.structure.element cimport Element, ElementWithCachedMethod",
         ....:     "from sage.structure.richcmp cimport richcmp",
         ....:     "cdef class MyBrokenElement(Element):",
@@ -2225,7 +2228,7 @@ cdef class ElementWithCachedMethod(Element):
         ....:     "from sage.structure.parent cimport Parent",
         ....:     "cdef class MyParent(Parent):",
         ....:     "    Element = MyElement"]
-        sage: cython('\n'.join(cython_code))                                            # needs sage.misc.cython
+        sage: cython('\n'.join(cython_code))
         sage: cython_code = ["from sage.misc.cachefunc import cached_method",
         ....:     "from sage.misc.cachefunc import cached_in_parent_method",
         ....:     "from sage.categories.category import Category",
@@ -2248,11 +2251,11 @@ cdef class ElementWithCachedMethod(Element):
         ....:     "        @cached_method",
         ....:     "        def invert(self, x):",
         ....:     "            return -x"]
-        sage: cython('\n'.join(cython_code))                                            # needs sage.misc.cython
-        sage: C = MyCategory()                                                          # needs sage.misc.cython
-        sage: P = MyParent(category=C)                                                  # needs sage.misc.cython
-        sage: ebroken = MyBrokenElement(P, 5)                                           # needs sage.misc.cython
-        sage: e = MyElement(P, 5)                                                       # needs sage.misc.cython
+        sage: cython('\n'.join(cython_code))
+        sage: C = MyCategory()
+        sage: P = MyParent(category=C)
+        sage: ebroken = MyBrokenElement(P, 5)
+        sage: e = MyElement(P, 5)
 
     The cached methods inherited by ``MyElement`` works::
 
@@ -2892,16 +2895,17 @@ cdef class RingElement(ModuleElement):
 
         For polynomial rings, prime is the same as irreducible::
 
+            sage: # needs sage.libs.singular
             sage: R.<x,y> = QQ[]
-            sage: x.is_prime()                                                          # needs sage.libs.singular
+            sage: x.is_prime()
             True
-            sage: (x^2 + y^3).is_prime()                                                # needs sage.libs.singular
+            sage: (x^2 + y^3).is_prime()
             True
-            sage: (x^2 - y^2).is_prime()                                                # needs sage.libs.singular
+            sage: (x^2 - y^2).is_prime()
             False
-            sage: R(0).is_prime()                                                       # needs sage.libs.singular
+            sage: R(0).is_prime()
             False
-            sage: R(2).is_prime()                                                       # needs sage.libs.singular
+            sage: R(2).is_prime()
             False
 
         For the Gaussian integers::
@@ -3243,11 +3247,11 @@ cdef class CommutativeRingElement(RingElement):
 
         INPUT:
 
-        -  ``extend`` - Whether to make a ring extension containing a square root if ``self`` is not a square (default: ``True``)
+        -  ``extend`` -- Whether to make a ring extension containing a square root if ``self`` is not a square (default: ``True``)
 
-        -  ``all`` - Whether to return a list of all square roots or just a square root (default: False)
+        -  ``all`` -- Whether to return a list of all square roots or just a square root (default: False)
 
-        -  ``name`` - Required when ``extend=True`` and ``self`` is not a square. This will be the name of the generator extension.
+        -  ``name`` -- Required when ``extend=True`` and ``self`` is not a square. This will be the name of the generator extension.
 
         OUTPUT:
 
@@ -3278,7 +3282,8 @@ cdef class CommutativeRingElement(RingElement):
             sage: x.sqrt()
             Traceback (most recent call last):
             ...
-            TypeError: Polynomial is not a square. You must specify the name of the square root when using the default extend = True
+            TypeError: Polynomial is not a square. You must specify the name
+            of the square root when using the default extend = True
             sage: x.sqrt(extend=False)
             Traceback (most recent call last):
             ...
@@ -3733,13 +3738,13 @@ cdef class Vector(ModuleElementWithMutability):
             sage: mv.Parent()
             Full RSpace of degree 3 over Integer Ring
 
-            sage: # needs sage.modules
+            sage: # optional - magma, needs sage.modules
             sage: v = vector(QQ, [1/2, 3/4, 5/6])
-            sage: mv = magma(v); mv                     # optional - magma
+            sage: mv = magma(v); mv
             (1/2 3/4 5/6)
-            sage: mv.Type()                             # optional - magma
+            sage: mv.Type()
             ModTupFldElt
-            sage: mv.Parent()                           # optional - magma
+            sage: mv.Parent()
             Full Vector space of degree 3 over Rational Field
 
         A more demanding example::
