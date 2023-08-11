@@ -3940,9 +3940,9 @@ def MathonPseudocyclicStronglyRegularGraph(t, G=None, L=None):
         sage: # needs sage.modules sage.rings.finite_rings
         sage: G.relabel(range(9))
         sage: G3x3 = graphs.MathonPseudocyclicStronglyRegularGraph(2, G=G, L=L)         # needs sage.groups sage.libs.gap
-        sage: G3x3.is_strongly_regular(parameters=True)
+        sage: G3x3.is_strongly_regular(parameters=True)                                 # needs sage.groups sage.libs.gap
         (441, 220, 109, 110)
-        sage: G3x3.automorphism_group(algorithm="bliss").order()        # optional - bliss
+        sage: G3x3.automorphism_group(algorithm="bliss").order()  # optional - bliss    # needs sage.groups sage.libs.gap
         27
         sage: G9 = graphs.MathonPseudocyclicStronglyRegularGraph(2)
         sage: G9.is_strongly_regular(parameters=True)
