@@ -143,6 +143,24 @@ class SuperLieAlgebra(CombinatorialFreeModule):
 
         return lt.bracket(rt)
 
+    #Returns the degree of a homogeneous expression:
+    def degree_on_basis(self, x):
+        
+        l = [m for m in x]
+        monomials = [y[0] for y in l]
+        dictionary = self.name_degree_map
+        degrees=self._degrees
+
+        values = [dictionary[key] for key in monomials if key in dictionary]
+        
+        if values:
+            if len(values)!=1:
+                return "Not homogeneous"
+            else:
+                return values[0]
+        else:
+            return ZZ.zero()
+
 
     #Morphisms of graded Lie algebras:
 
@@ -202,36 +220,9 @@ class SuperLieAlgebra(CombinatorialFreeModule):
 
     class Element(CombinatorialFreeModule.Element):
          
-        #Returns the degree of the highest-degree monomial in any expression:
         def degree(self):
 
-            l = [m for m in self]
-            monomials = [x[0] for x in l]
-            dictionary = self.parent().name_degree_map
-            degrees = self.parent()._degrees
-
-            values = [dictionary[key] for key in monomials if key in dictionary]
-            if values:
-                return max(values)
-            else:
-                return ZZ.zero()
-            
-        #Returns the degree of a homogeneous expression:
-        def homdegree(self):
-
-            l = [m for m in self]
-            monomials = [x[0] for x in l]
-            dictionary = self.parent().name_degree_map
-            degrees = self.parent()._degrees
-
-            values = [dictionary[key] for key in monomials if key in dictionary]
-            if values:
-                if len(values) != 1:
-                    return "Not homogeneous"
-                else:
-                    return values[0]
-            else:
-                return 0
+            return self.parent().degree_on_basis(self)
 
         def bracket(self, rt):
             P = self.parent()
@@ -293,9 +284,6 @@ class SuperLieAlgebra(CombinatorialFreeModule):
     def _bracket_(self, lhs, rhs):
          return self(lhs).bracket(self(rhs))
 
-    def _homdegree_(self, lhs):
-         return self(lhs).homdegree()
-
     #The following tests ensure that the bracket satisfies the relevant properties.
 
     def _test_antisymmetry(self, **options):
@@ -323,8 +311,8 @@ class SuperLieAlgebra(CombinatorialFreeModule):
         elts = tester.some_elements()
         for x in elts:
                 for y in elts:
-                    if self._bracket_(x,y).homdegree() != 0:
-                        tester.assertEqual(self._homdegree_(x) + self._homdegree_(y), (self._bracket_(x,y)).homdegree())
+                    if self._bracket_(x,y).degree() != 0:
+                        tester.assertEqual(self.degree_on_basis(x) + self.degree_on_basis(y), (self._bracket_(x,y)).degree())
 
 
 
