@@ -439,7 +439,6 @@ from .dot2tex_utils import assert_have_dot2tex
 from sage.misc.decorators import options
 from sage.misc.cachefunc import cached_method
 from sage.misc.prandom import random
-from sage.misc.superseded import deprecation
 from sage.misc.lazy_import import lazy_import, LazyImport
 
 from sage.rings.integer_ring import ZZ
