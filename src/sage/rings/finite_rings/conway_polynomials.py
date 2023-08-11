@@ -161,9 +161,8 @@ class PseudoConwayLattice(WithEqualityById, SageObject):
         """
         TESTS::
 
-            sage: from sage.rings.finite_rings.conway_polynomials import PseudoConwayLattice
-
             sage: # needs sage.rings.finite_rings
+            sage: from sage.rings.finite_rings.conway_polynomials import PseudoConwayLattice
             sage: PCL = PseudoConwayLattice(3)
             sage: PCL.polynomial(3)
             x^3 + 2*x + 1
