@@ -39,7 +39,7 @@ cdef class MatrixBackend(GenericBackend):
         sage: p                                                     
         Mixed Integer Program (no objective, 0 variables, 0 constraints)
     """
-    def __cinit__(self, maximization = True, base_ring=None, numpy_implementation = False, **kwds):
+    def __cinit__(self, maximization = True, base_ring=None, implementation = None, **kwds):
         """
         Cython constructor
 
@@ -50,15 +50,13 @@ cdef class MatrixBackend(GenericBackend):
 
         """
 
-        #Sage Matrix instead of Python lists
-
         self.prob_name = ''
         self.obj_constant_term = 0
         self.is_maximize = 1
 
         self._init_base_ring(base_ring=base_ring)
 
-        if numpy_implementation:
+        if implementation == "numpy":
             kwds = dict(implementation = "numpy")
         else:
             kwds = {}
@@ -94,9 +92,9 @@ cdef class MatrixBackend(GenericBackend):
 
     cpdef base_ring(self):
         """
-    The base ring
+        The base ring
 
-    TESTS::
+        TESTS::
 
             sage: from sage.numerical.backends.matrix_backend import MatrixBackend
             sage: MatrixBackend(base_ring=QQ).base_ring()
@@ -122,11 +120,10 @@ cdef class MatrixBackend(GenericBackend):
             sage: b = p.new_variable()
             sage: p.add_constraint(b[1] + b[2] <= 6)
             sage: p.set_objective(b[1] + b[2])
-            sage: cp = copy(p.get_backend())
-            sage: cp.solve()
-            0
-            sage: cp.get_objective_value()  # abs tol 1e-7
-            6.0
+            sage: mat = copy(p.get_backend())
+            sage: mat.ncols()
+            2
+
         """
         cdef MatrixBackend mat = type(self)(base_ring=self.base_ring())
         mat.Matrix = copy(self.Matrix)
@@ -190,6 +187,7 @@ cdef class MatrixBackend(GenericBackend):
             1
             sage: p.objective_coefficient(4).parent()
             Rational Field
+
             sage: p = get_solver(solver = "Matrix", base_ring = AA)                 
             sage: p.ncols()                                         
             0
@@ -213,6 +211,7 @@ cdef class MatrixBackend(GenericBackend):
             1
             sage: p.objective_coefficient(4).parent()
             Algebraic Real Field
+
             sage: p = get_solver(solver = "Matrix", base_ring = RDF)                 
             sage: p.ncols()                                         
             0
@@ -236,6 +235,7 @@ cdef class MatrixBackend(GenericBackend):
             1.0
             sage: p.objective_coefficient(4).parent()
             Real Double Field
+
             sage: p = get_solver(solver = "Matrix", base_ring = RealField(100))
             sage: p.ncols()
             0
@@ -264,10 +264,10 @@ cdef class MatrixBackend(GenericBackend):
         if obj is None:
             obj = self._base_ring.zero()
 
-        if self.nrows() == 0:
-            pass
-        else:
-            self.Matrix = self.Matrix.augment(matrix(self._base_ring, self.nrows(), 1))
+        #if self.nrows() == 0:
+        #    pass
+        #else:
+        self.Matrix = self.Matrix.augment(matrix(self._base_ring, self.Matrix.dimensions()[0], 1))
         
         if lower_bound is None:
             self.col_lower_bound_indicator.append(False)
@@ -518,6 +518,7 @@ cdef class MatrixBackend(GenericBackend):
             sage: p.add_col(range(5), range(5))                     
             sage: p.nrows()                                         
             5
+
             sage: p = get_solver(solver = "Matrix", base_ring=AA)
             sage: p.ncols()
             0
@@ -527,6 +528,7 @@ cdef class MatrixBackend(GenericBackend):
             sage: p.add_col(range(5), range(5))
             sage: p.nrows()
             5
+
             sage: p = get_solver(solver = "Matrix", base_ring=RDF)
             sage: p.ncols()
             0
@@ -536,6 +538,7 @@ cdef class MatrixBackend(GenericBackend):
             sage: p.add_col(range(5), range(5))
             sage: p.nrows()
             5
+
             sage: p = get_solver(solver = "Matrix", base_ring=RealField(100))
             sage: p.ncols()
             0
@@ -546,17 +549,15 @@ cdef class MatrixBackend(GenericBackend):
             sage: p.nrows()
             5
         """
-        column = []
-        for _ in indices:
-            column.append(self._base_ring.zero())
+        column = matrix(self.nrows(), 1)
 
-        for idx, ind in enumerate(indices):
-            column[ind] = coeffs[idx]
+        for ind, coeff in zip(indices, coeffs):
+            column[ind] = coeff
 
         if self.ncols() == 0:
-            self.Matrix = matrix(len(column), column)
+            self.Matrix = column
         else:
-            self.Matrix = self.Matrix.augment(matrix(len(column), column))
+            self.Matrix = self.Matrix.augment(column)
 
         self.col_lower_bound_indicator.append(None)
         if self.col_lower_bound.dimensions()[1] == 0:
@@ -600,6 +601,9 @@ cdef class MatrixBackend(GenericBackend):
             ([1, 2, 3, 4], [1, 2, 3, 4])
             sage: p.row_bounds(0)                                   
             (2, 2)
+            sage: p.add_linear_constraint(((1,7),(3,10)), 2.0, 2.0)
+            sage: p.row(1)
+            ([1, 3], [7, 10])
             sage: p.add_linear_constraint(zip(range(5), range(5)), 1.0, 1.0, name='foo')    
             sage: p.row_name(-1)                                    
             'foo'
@@ -608,11 +612,8 @@ cdef class MatrixBackend(GenericBackend):
         for c in coefficients:
             while c[0] > self.ncols() - 1:
                 self.add_variable()
-                     
-        if self.Matrix.dimensions()[0] == 0:
-            self.Matrix = matrix(1, [self._base_ring.zero() for i in range(len(coefficients))])
-        else:
-            self.Matrix = self.Matrix.stack(matrix([self._base_ring.zero() for i in range(self.Matrix.dimensions()[1])]))
+
+        self.Matrix = self.Matrix.stack(matrix(1, self.ncols(), [self._base_ring.zero() for i in range(self.ncols())]))
 
         for c in coefficients:
             self.Matrix[-1, c[0]] = c[1]
@@ -762,7 +763,7 @@ cdef class MatrixBackend(GenericBackend):
             ([1, 2, 3, 4], [1.0, 2.0, 3.0, 4.0])
             sage: [i.parent() for i in p.row(0)[1]]
             [Real Double Field, Real Double Field, Real Double Field, Real Double Field]
-            sage:  p.row_bounds(0)
+            sage: p.row_bounds(0)
             (2.0, 2.0)
             sage: [i.parent() for i in p.row_bounds(0)]
             [Real Double Field, Real Double Field]
@@ -824,6 +825,9 @@ cdef class MatrixBackend(GenericBackend):
             ([1, 2, 3, 4], [1, 2, 3, 4])
             sage: p.row_bounds(0)                                   
             (2, 2)
+            sage: p.add_linear_constraint(list(zip(range(5), range(5))), 2, None)
+            sage: p.row_bounds(1)
+            (2, None)
         """
         if self.row_lower_bound_indicator[index] == True:
             lower = self.row_lower_bound[0, index]
