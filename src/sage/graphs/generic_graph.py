@@ -12371,7 +12371,7 @@ class GenericGraph(GenericGraph_pyx):
                     label = None
         return self._backend.has_edge(u, v, label)
 
-    def edges(self, vertices=None, labels=True, sort=None, key=None,
+    def edges(self, vertices=None, labels=True, sort=False, key=None,
               ignore_direction=False, sort_vertices=True):
         r"""
         Return a :class:`~EdgesView` of edges.
@@ -12395,13 +12395,10 @@ class GenericGraph(GenericGraph_pyx):
         - ``labels`` -- boolean (default: ``True``); if ``False``, each edge is
           simply a pair ``(u, v)`` of vertices
 
-        - ``sort`` -- boolean (default: ``None``); if ``True``, edges are sorted
-          according to the default ordering
-
-          As of :trac:`22349`, this argument must be explicitly
-          specified (unless a ``key`` is given); otherwise a warning
-          is printed and ``sort=True`` is used. The default will
-          eventually be changed to ``False``.
+        - ``sort`` -- boolean (default: ``False``); whether to sort edges
+          according the ordering specified with parameter ``key``. If ``False``
+          (default), edges are not sorted. This is the fastest and less memory
+          consuming method for iterating over edges.
 
         - ``key`` -- a function (default: ``None``); a function that takes an
           edge (a pair or a triple, according to the ``labels`` keyword) as its
@@ -12497,7 +12494,7 @@ class GenericGraph(GenericGraph_pyx):
             ....:   G.set_edge_label(e[0], e[1], chr(ord('A') + e[0] + 5 * e[1]))
             sage: G.edges(sort=True)
             [(0, 1, 'F'), (0, 4, 'U'), (1, 2, 'L'), (2, 3, 'R'), (3, 4, 'X')]
-            sage: G.edges(key=lambda x: x[2])
+            sage: G.edges(sort=True, key=lambda x: x[2])
             [(0, 1, 'F'), (1, 2, 'L'), (2, 3, 'R'), (0, 4, 'U'), (3, 4, 'X')]
 
         We can restrict considered edges to those incident to a given set::
@@ -12548,20 +12545,7 @@ class GenericGraph(GenericGraph_pyx):
             sage: G.edge_label(0, 1)[0] += 1
             sage: G.edges(sort=True)
             [(0, 1, [8]), (0, 2, [7])]
-
-        Deprecation warning for ``sort=None`` (:trac:`27408`)::
-
-            sage: G = graphs.HouseGraph()
-            sage: G.edges(sort=None)
-            doctest:...: DeprecationWarning: parameter 'sort' will be set to False by default in the future
-            See https://github.com/sagemath/sage/issues/27408 for details.
-            [(0, 1, None), (0, 2, None), (1, 3, None), (2, 3, None), (2, 4, None), (3, 4, None)]
         """
-        if sort is None:
-            if key is None:
-                deprecation(27408, "parameter 'sort' will be set to False by default in the future")
-            sort = True
-
         if vertices is not None and vertices in self:
             vertices = [vertices]
 
