@@ -2449,9 +2449,9 @@ def random_rref_matrix(parent, num_pivots):
 
         sage: B = random_matrix(FiniteField(7), 4, 4,
         ....:                   algorithm='echelon_form', num_pivots=3); B
-        [1 0 0 0]
-        [0 1 0 6]
-        [0 0 1 4]
+        [1 0 0 5]
+        [0 1 0 2]
+        [0 0 1 6]
         [0 0 0 0]
         sage: B.rank() == 3
         True

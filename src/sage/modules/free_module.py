@@ -2776,7 +2776,7 @@ class FreeModule_generic(Module_free_ambient):
 
             sage: M = ModularSymbols(54)                                                # needs sage.modular
             sage: S = M.cuspidal_subspace()                                             # needs sage.modular
-            sage: K = S.integral_structure(); K
+            sage: K = S.integral_structure(); K                                         # needs sage.modular
             Free module of degree 19 and rank 8 over Integer Ring
             Echelon basis matrix:
             [ 0  1  0  0 -1  0  0  0  0  0  0  0  0  0  0  0  0  0  0]
@@ -2786,12 +2786,12 @@ class FreeModule_generic(Module_free_ambient):
             Echelon basis matrix:
             [ 0  1  1  0 -2  1 -1  1 -1 -2  2  0  0  0  0  0  0  0  0]
             [ 0  0  3  0 -3  2 -1  2 -1 -4  2 -1 -2  1  2  0  0 -1  1]
-            sage: K.coordinate_module(L)
+            sage: K.coordinate_module(L)                                                # needs sage.modular
             Free module of degree 8 and rank 2 over Integer Ring
             User basis matrix:
             [ 1  1  1 -1  1 -1  0  0]
             [ 0  3  2 -1  2 -1 -1 -2]
-            sage: K.coordinate_module(L).basis_matrix() * K.basis_matrix()
+            sage: K.coordinate_module(L).basis_matrix() * K.basis_matrix()              # needs sage.modular
             [ 0  1  1  0 -2  1 -1  1 -1 -2  2  0  0  0  0  0  0  0  0]
             [ 0  0  3  0 -3  2 -1  2 -1 -4  2 -1 -2  1  2  0  0 -1  1]
         """
@@ -3816,7 +3816,7 @@ class FreeModule_generic_pid(FreeModule_generic_domain):
             sage: V = L**3
             sage: W1 = V.span([[0,w/5,0], [1,0,-1/17]], OL)                             # needs sage.rings.number_field
             sage: W2 = V.span([[0,(1-w)/5,0]], OL)                                      # needs sage.rings.number_field
-            sage: W1.intersection(W2)
+            sage: W1.intersection(W2)                                                   # needs sage.rings.number_field
             Free module of degree 3 and rank 1 over Maximal Order in
              Number Field in w with defining polynomial x^2 - x + 2
             Echelon basis matrix:

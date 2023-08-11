@@ -633,7 +633,7 @@ cdef class IndexedFreeModuleElement(ModuleElement):
         TESTS::
 
             sage: TestSuite(F1).run()
-            sage: TestSuite(F).run()
+            sage: TestSuite(F).run()                                                    # needs sage.combinat
         """
         cdef IndexedFreeModuleElement elt = <IndexedFreeModuleElement> other
 
@@ -875,13 +875,14 @@ cdef class IndexedFreeModuleElement(ModuleElement):
             sage: (3/2)*el
             3/2*B[[3, 1, 2]]
 
+            sage: # needs sage.combinat
             sage: P.<q> = QQ['q']
             sage: F = FractionField(P)
-            sage: V = CombinatorialFreeModule(F, Words())                               # needs sage.combinat
-            sage: w = Words()('abc')                                                    # needs sage.combinat
-            sage: (1+q)*V(w)                                                            # needs sage.combinat
+            sage: V = CombinatorialFreeModule(F, Words())
+            sage: w = Words()('abc')
+            sage: (1+q)*V(w)
             (q+1)*B[word: abc]
-            sage: ((1+q)/q)*V(w)                                                        # needs sage.combinat
+            sage: ((1+q)/q)*V(w)
             ((q+1)/q)*B[word: abc]
 
         .. TODO::
