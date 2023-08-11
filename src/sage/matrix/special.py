@@ -2277,19 +2277,19 @@ def companion_matrix(poly, format='right'):
         [ 1  0 -8]
         [ 0  1  4]
 
-        sage: y = var('y')                                                              # needs sage.symbolic
-        sage: q = y^3 - 2*y + 1                                                         # needs sage.symbolic
-        sage: companion_matrix(q)                                                       # needs sage.symbolic
+        sage: # needs sage.symbolic
+        sage: y = var('y')
+        sage: q = y^3 - 2*y + 1
+        sage: companion_matrix(q)
         Traceback (most recent call last):
         ...
         TypeError: input must be a polynomial (not a symbolic expression, see docstring),
         or other iterable, not y^3 - 2*y + 1
-
-        sage: coeff_list = [q(y=0)] + [q.coefficient(y^k)                               # needs sage.symbolic
-        ....:                          for k in range(1, q.degree(y)+1)]
-        sage: coeff_list                                                                # needs sage.symbolic
+        sage: coeff_list = [q(y=0)] + [q.coefficient(y^k)
+        ....:                          for k in range(1, q.degree(y) + 1)]
+        sage: coeff_list
         [1, -2, 0, 1]
-        sage: companion_matrix(coeff_list)                                              # needs sage.symbolic
+        sage: companion_matrix(coeff_list)
         [ 0  0 -1]
         [ 1  0  2]
         [ 0  1  0]
@@ -2431,7 +2431,7 @@ def random_rref_matrix(parent, num_pivots):
 
         sage: from sage.matrix.constructor import random_rref_matrix
         sage: matrix_space = sage.matrix.matrix_space.MatrixSpace(QQ, 5, 6)
-        sage: A = random_rref_matrix(matrix_space, num_pivots=4); A # random
+        sage: A = random_rref_matrix(matrix_space, num_pivots=4); A  # random
         [ 1  0  0 -6  0 -3]
         [ 0  1  0  2  0  3]
         [ 0  0  1 -4  0 -2]
@@ -2617,7 +2617,7 @@ def random_echelonizable_matrix(parent, rank, upper_bound=None, max_tries=100):
         sage: A = random_echelonizable_matrix(matrix_space, rank=4, upper_bound=40)
         sage: A.rank()
         4
-        sage: max(map(abs,A.list()))<40
+        sage: max(map(abs,A.list())) < 40
         True
         sage: A.rref() == A.rref().change_ring(ZZ)
         True
@@ -2858,11 +2858,11 @@ def random_subspaces_matrix(parent, rank=None):
         (5, 7)
         sage: all(x in ZZ for x in A.list())
         True
-        sage: A_expanded=A.augment(identity_matrix(5)).rref()
+        sage: A_expanded = A.augment(identity_matrix(5)).rref()
         sage: all(x in ZZ for x in A_expanded.list())
         True
-        sage: C = A_expanded.submatrix(0,0,A.nrows()-A.nullity(), A.ncols())
-        sage: L = A_expanded.submatrix(A.nrows()-A.nullity(), A.ncols())
+        sage: C = A_expanded.submatrix(0, 0, A.nrows() - A.nullity(), A.ncols())
+        sage: L = A_expanded.submatrix(A.nrows() - A.nullity(), A.ncols())
         sage: A.right_kernel() == C.right_kernel()
         True
         sage: A.row_space() == C.row_space()

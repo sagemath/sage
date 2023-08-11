@@ -349,9 +349,11 @@ cdef class Matrix(Matrix1):
             True
             sage: X
             (-1, 2, 0, 0)
+
+            sage: # needs sage.libs.pari
             sage: A = Matrix(Zmod(128), 2, 3, [5, 29, 33, 64, 0, 7])
             sage: B = vector(Zmod(128), [31,39,56])
-            sage: X = A.solve_left(B); X                                                # needs sage.libs.pari
+            sage: X = A.solve_left(B); X
             (19, 83)
             sage: X * A == B
             True
@@ -393,9 +395,10 @@ cdef class Matrix(Matrix1):
         The vector of constants needs to be compatible with
         the base ring of the coefficient matrix::
 
-            sage: F.<a> = FiniteField(27)                                               # needs sage.rings.finite_rings
-            sage: b = vector(F, [a,a,a,a,a])                                            # needs sage.rings.finite_rings
-            sage: A.solve_left(b)                                                       # needs sage.rings.finite_rings
+            sage: # needs sage.rings.finite_rings
+            sage: F.<a> = FiniteField(27)
+            sage: b = vector(F, [a,a,a,a,a])
+            sage: A.solve_left(b)
             Traceback (most recent call last):
             ...
             TypeError: no common canonical parent for objects with parents: ...
@@ -4126,12 +4129,12 @@ cdef class Matrix(Matrix1):
         We check that number fields are handled by the right routine as part of
         typical right kernel computation. ::
 
-            sage" # needs sage.rings.number_field
-            sage: Q = QuadraticField(-7)                                                # needs sage.rings.number_field
-            sage: a = Q.gen(0)                                                          # needs sage.rings.number_field
-            sage: A = matrix(Q, [[2, 5-a, 15-a, 16+4*a], [2+a, a, -7 + 5*a, -3+3*a]])   # needs sage.rings.number_field
+            sage: # needs sage.rings.number_field
+            sage: Q = QuadraticField(-7)
+            sage: a = Q.gen(0)
+            sage: A = matrix(Q, [[2, 5-a, 15-a, 16+4*a], [2+a, a, -7 + 5*a, -3+3*a]])
             sage: set_verbose(1)
-            sage: A.right_kernel(algorithm='default')                                   # needs sage.rings.number_field
+            sage: A.right_kernel(algorithm='default')
             verbose ...
             verbose 1 (<module>) computing right kernel matrix over a number field for 2x4 matrix
             verbose 1 (<module>) done computing right kernel matrix over a number field for 2x4 matrix
@@ -5686,33 +5689,38 @@ cdef class Matrix(Matrix1):
 
         EXAMPLES::
 
-i           sage: # needs sage.libs.pari
+            sage: # needs sage.libs.pari
             sage: t = matrix(QQ, 3, [3, 0, -2, 0, -2, 0, 0, 0, 0]); t
             [ 3  0 -2]
             [ 0 -2  0]
             [ 0  0  0]
-            sage: t.fcp('X')   # factored charpoly                                      # needs sage.libs.pari
+            sage: t.fcp('X')                # factored charpoly
             (X - 3) * X * (X + 2)
-            sage: v = kernel(t*(t+2)); v   # an invariant subspace
+            sage: v = kernel(t*(t+2)); v    # an invariant subspace
             Vector space of degree 3 and dimension 2 over Rational Field
             Basis matrix:
             [0 1 0]
             [0 0 1]
-            sage: D = t.decomposition_of_subspace(v); D                                 # needs sage.libs.pari
+            sage: D = t.decomposition_of_subspace(v); D
             [ (Vector space of degree 3 and dimension 1 over Rational Field
                 Basis matrix: [0 0 1],
                True),
               (Vector space of degree 3 and dimension 1 over Rational Field
                 Basis matrix: [0 1 0],
                True) ]
-            sage: t.restrict(D[0][0])                                                   # needs sage.libs.pari
+            sage: t.restrict(D[0][0])
             [0]
-            sage: t.restrict(D[1][0])                                                   # needs sage.libs.pari
+            sage: t.restrict(D[1][0])
             [-2]
 
         We do a decomposition over ZZ::
 
-            sage: a = matrix(ZZ, 6, [0, 0, -2, 0, 2, 0, 2, -4, -2, 0, 2, 0, 0, 0, -2, -2, 0, 0, 2, 0, -2, -4, 2, -2, 0, 2, 0, -2, -2, 0, 0, 2, 0, -2, 0, 0])
+            sage: a = matrix(ZZ, 6, [0, 0, -2, 0, 2, 0,
+            ....:                    2, -4, -2, 0, 2, 0,
+            ....:                    0, 0, -2, -2, 0, 0,
+            ....:                    2, 0, -2, -4, 2, -2,
+            ....:                    0, 2, 0, -2, -2, 0,
+            ....:                    0, 2, 0, -2, 0, 0])
             sage: a.decomposition_of_subspace(ZZ^6)                                     # needs sage.libs.pari
             [ (Free module of degree 6 and rank 2 over Integer Ring
                 Echelon basis matrix:
@@ -5730,7 +5738,7 @@ i           sage: # needs sage.libs.pari
         TESTS::
 
             sage: t = matrix(QQ, 3, [3, 0, -2, 0, -2, 0, 0, 0, 0])
-            sage: t.decomposition_of_subspace(v, check_restrict = False) == t.decomposition_of_subspace(v)              # needs sage.libs.pari
+            sage: t.decomposition_of_subspace(v, check_restrict=False) == t.decomposition_of_subspace(v)                # needs sage.libs.pari
             True
         """
         if not sage.modules.free_module.is_FreeModule(M):
@@ -6041,14 +6049,14 @@ i           sage: # needs sage.libs.pari
 
         INPUT:
 
-        - ``format`` - ``None``, ``'all'`` or ``'galois'``
+        - ``format`` -- ``None``, ``'all'`` or ``'galois'``
 
         OUTPUT:
 
         Any format except ``None`` is just passed through.  When the
-        format is ``None`` a choice is made about the style of the output.
+        format is ``None``, a choice is made about the style of the output.
         If there is an algebraically closed field that will contain the
-        possible eigenvalues, then 'all" of the eigenspaces are given.
+        possible eigenvalues, then ``'all'`` of the eigenspaces are given.
 
         However if this is not the case, then only one eigenspace is output
         for each irreducible factor of the characteristic polynomial.
@@ -6100,48 +6108,48 @@ i           sage: # needs sage.libs.pari
         r"""
         Compute the left eigenspaces of a matrix.
 
-        Note that ``eigenspaces_left()`` and ``left_eigenspaces()``
+        Note that :meth:`eigenspaces_left` and :meth:`left_eigenspaces`
         are identical methods.  Here "left" refers to the eigenvectors
         being placed to the left of the matrix.
 
         INPUT:
 
-        - ``self`` - a square matrix over an exact field.  For inexact
+        - ``self`` -- a square matrix over an exact field.  For inexact
           matrices consult the numerical or symbolic matrix classes.
 
-        - ``format`` - default: ``None``
+        - ``format`` -- one of:
 
-          - ``'all'`` - attempts to create every eigenspace.  This will
+          - ``'all'`` -- Attempts to create every eigenspace.  This will
             always be possible for matrices with rational entries.
-          - ``'galois'`` - for each irreducible factor of the characteristic
+          - ``'galois'`` -- For each irreducible factor of the characteristic
             polynomial, a single eigenspace will be output for a
             single root/eigenvalue for the irreducible factor.
-          - ``None`` - Uses the 'all' format if the base ring is contained
+          - ``None`` (default) -- Uses the ``'all'`` format if the base ring is contained
             in an algebraically closed field which is implemented.
-            Otherwise, uses the 'galois' format.
+            Otherwise, uses the ``'galois'`` format.
 
-        - ``var`` - default: 'a' - variable name used to
+        - ``var`` -- string (default: ``'a'``); variable name used to
           represent elements of the root field of each
           irreducible factor of the characteristic polynomial.
-          If var='a', then the root fields will be in terms of
-          a0, a1, a2, ...., where the numbering runs across all
+          If ``var='a'``, then the root fields will be in terms of
+          ``a0, a1, a2, ...``, where the numbering runs across all
           the irreducible factors of the characteristic polynomial,
           even for linear factors.
 
-        - ``algebraic_multiplicity`` - default: False - whether or
-          not to include the algebraic multiplicity of each eigenvalue
+        - ``algebraic_multiplicity`` -- (boolean, default: ``False``);
+          whether to include the algebraic multiplicity of each eigenvalue
           in the output.  See the discussion below.
 
         OUTPUT:
 
-        If algebraic_multiplicity=False, return a list of pairs (e, V)
-        where e is an eigenvalue of the matrix, and V is the corresponding
+        If ``algebraic_multiplicity=False``, return a list of pairs `(e, V)`
+        where `e` is an eigenvalue of the matrix, and `V` is the corresponding
         left eigenspace.  For Galois conjugates of eigenvalues, there
         may be just one representative eigenspace, depending on the
         ``format`` keyword.
 
-        If algebraic_multiplicity=True, return a list of triples (e, V, n)
-        where e and V are as above and n is the algebraic multiplicity of
+        If ``algebraic_multiplicity=True``, return a list of triples `(e, V, n)`
+        where `e` and `V` are as above and `n` is the algebraic multiplicity of
         the eigenvalue.
 
         .. warning::
@@ -6153,10 +6161,10 @@ i           sage: # needs sage.libs.pari
         EXAMPLES:
 
         We compute the left eigenspaces of a `3\times 3`
-        rational matrix. First, we request `all` of the eigenvalues,
-        so the results are in the field of algebraic numbers, `QQbar`.
+        rational matrix. First, we request ``'all'`` of the eigenvalues,
+        so the results are in the field of algebraic numbers, ``QQbar``.
         Then we request just one eigenspace per irreducible factor of
-        the characteristic polynomial with the `galois` keyword.  ::
+        the characteristic polynomial with ``format='galois'``.  ::
 
             sage: A = matrix(QQ, 3, 3, range(9)); A
             [0 1 2]
@@ -6349,15 +6357,15 @@ i           sage: # needs sage.libs.pari
         possible, will raise an error.  Using the ``'galois'``
         format option is more likely to be successful.  ::
 
-            sage: F.<b> = FiniteField(11^2)                                             # needs sage.rings.finite_rings
-            sage: A = matrix(F, [[b + 1, b + 1], [10*b + 4, 5*b + 4]])                  # needs sage.rings.finite_rings
-            sage: A.eigenspaces_left(format='all')                                      # needs sage.rings.finite_rings
+            sage: # needs sage.rings.finite_rings
+            sage: F.<b> = FiniteField(11^2)
+            sage: A = matrix(F, [[b + 1, b + 1], [10*b + 4, 5*b + 4]])
+            sage: A.eigenspaces_left(format='all')
             Traceback (most recent call last):
             ...
             NotImplementedError: unable to construct eigenspaces for eigenvalues outside the base field,
             try the keyword option: format='galois'
-
-            sage: A.eigenspaces_left(format='galois')                                   # needs sage.rings.finite_rings
+            sage: A.eigenspaces_left(format='galois')
             [ (a0,
                Vector space of degree 2 and dimension 1 over
                 Univariate Quotient Polynomial Ring in a0 over
@@ -6526,11 +6534,12 @@ i           sage: # needs sage.libs.pari
 
         We compute the right eigenspaces of a `3\times 3` rational matrix.  ::
 
+            sage: # needs sage.rings.number_field
             sage: A = matrix(QQ, 3, 3, range(9)); A
             [0 1 2]
             [3 4 5]
             [6 7 8]
-            sage: A.eigenspaces_right()                                                 # needs sage.rings.number_field
+            sage: A.eigenspaces_right()
             [ (0,
                Vector space of degree 3 and dimension 1 over Rational Field
                  User basis matrix:
@@ -6543,7 +6552,7 @@ i           sage: # needs sage.libs.pari
                Vector space of degree 3 and dimension 1 over Algebraic Field
                  User basis matrix:
                  [                 1 3.069693845669907? 5.139387691339814?]) ]
-            sage: es = A.eigenspaces_right(format='galois'); es                         # needs sage.rings.number_field
+            sage: es = A.eigenspaces_right(format='galois'); es
             [ (0,
                Vector space of degree 3 and dimension 1 over Rational Field
                  User basis matrix:
@@ -6553,7 +6562,7 @@ i           sage: # needs sage.libs.pari
                 Number Field in a1 with defining polynomial x^2 - 12*x - 18
                  User basis matrix:
                  [           1 1/5*a1 + 2/5 2/5*a1 - 1/5]) ]
-            sage: es = A.eigenspaces_right(format='galois',                             # needs sage.rings.number_field
+            sage: es = A.eigenspaces_right(format='galois',
             ....:                          algebraic_multiplicity=True); es
             [ (0,
                Vector space of degree 3 and dimension 1 over Rational Field
@@ -6566,9 +6575,9 @@ i           sage: # needs sage.libs.pari
                  User basis matrix:
                  [           1 1/5*a1 + 2/5 2/5*a1 - 1/5],
                1) ]
-            sage: e, v, n = es[0]; v = v.basis()[0]                                     # needs sage.rings.number_field
-            sage: delta = v*e - A*v                                                     # needs sage.rings.number_field
-            sage: abs(abs(delta)) < 1e-10                                               # needs sage.rings.number_field
+            sage: e, v, n = es[0]; v = v.basis()[0]
+            sage: delta = v*e - A*v
+            sage: abs(abs(delta)) < 1e-10
             True
 
         The same computation, but with implicit base change to a field::
@@ -6600,11 +6609,12 @@ i           sage: # needs sage.libs.pari
             sage: B.eigenspaces_right()
             Traceback (most recent call last):
             ...
-            NotImplementedError: eigenspaces cannot be computed reliably for inexact rings such as Real Field with 53 bits of precision,
+            NotImplementedError: eigenspaces cannot be computed reliably
+            for inexact rings such as Real Field with 53 bits of precision,
             consult numerical or symbolic matrix classes for other options
 
             sage: em = B.change_ring(RDF).eigenmatrix_right()
-            sage: eigenvalues = em[0]; eigenvalues.dense_matrix() # abs tol 1e-13
+            sage: eigenvalues = em[0]; eigenvalues.dense_matrix()  # abs tol 1e-13
             [13.348469228349522                0.0                0.0]
             [               0.0 -1.348469228349534                0.0]
             [               0.0                0.0                0.0]
@@ -6681,7 +6691,7 @@ i           sage: # needs sage.libs.pari
         then ``QQbar`` elements are returned that represent each separate
         root.
 
-        If the option extend is set to False, only eigenvalues in the base
+        If the option ``extend`` is set to ``False``, only eigenvalues in the base
         ring are considered.
 
         EXAMPLES::
@@ -6734,12 +6744,12 @@ i           sage: # needs sage.libs.pari
 
             sage: e.as_number_field_element()                                           # needs sage.rings.number_field
             (Number Field in a
-             with defining polynomial y^4 - 2*y^3 - 507*y^2 - 3972*y - 4264,
-            a + 7,
-            Ring morphism:
-              From: Number Field in a with defining polynomial y^4 - 2*y^3 - 507*y^2 - 3972*y - 4264
-              To:   Algebraic Real Field
-              Defn: a |--> -15.35066086057957?)
+              with defining polynomial y^4 - 2*y^3 - 507*y^2 - 3972*y - 4264,
+             a + 7,
+             Ring morphism:
+               From: Number Field in a with defining polynomial y^4 - 2*y^3 - 507*y^2 - 3972*y - 4264
+               To:   Algebraic Real Field
+               Defn: a |--> -15.35066086057957?)
 
         Notice the effect of the ``extend`` option.
 
@@ -6863,9 +6873,7 @@ i           sage: # needs sage.libs.pari
              (-1*I, [(1, -1*I, 0)], 1),
              (1*I,  [(1, 1*I, 0)],  1)]
             sage: M.eigenvectors_left(extend=False)                                     # needs sage.rings.number_field
-            [(2, [
-            (0, 0, 1)
-            ], 1)]
+            [(2,    [ (0, 0, 1) ],  1)]
 
         TESTS::
 
@@ -6983,9 +6991,7 @@ i           sage: # needs sage.libs.pari
              (-1.348469228349535?, [(1, 0.1303061543300932?, -0.7393876913398137?)], 1),
              (13.34846922834954?, [(1, 3.069693845669907?, 5.139387691339814?)], 1)]
             sage: A.eigenvectors_right(extend=False)
-            [(0, [
-            (1, -2, 1)
-            ], 1)]
+            [(0, [ (1, -2, 1) ], 1)]
             sage: eval, [evec], mult = es[0]
             sage: delta = eval*evec - A*evec
             sage: abs(abs(delta)) < 1e-10
@@ -7137,7 +7143,7 @@ i           sage: # needs sage.libs.pari
 
             sage: A = matrix(QQ, 3, 3, range(9))
             sage: em = A.change_ring(RDF).eigenmatrix_left()
-            sage: evalues = em[0]; evalues.dense_matrix() # abs tol 1e-13
+            sage: evalues = em[0]; evalues.dense_matrix()  # abs tol 1e-13
             [13.348469228349522                0.0                 0.0]
             [               0.0 -1.348469228349534                 0.0]
             [               0.0                0.0                 0.0]
@@ -7409,8 +7415,8 @@ i           sage: # needs sage.libs.pari
             sage: M.eigenvalue_multiplicity(1)
             0
 
-            sage: M = posets.DiamondPoset(5).coxeter_transformation()                   # needs sage.combinat
-            sage: [M.eigenvalue_multiplicity(x) for x in [-1, 1]]                       # needs sage.combinat
+            sage: M = posets.DiamondPoset(5).coxeter_transformation()                   # needs sage.graphs
+            sage: [M.eigenvalue_multiplicity(x) for x in [-1, 1]]                       # needs sage.graphs
             [3, 2]
 
         TESTS::
@@ -7517,7 +7523,8 @@ i           sage: # needs sage.libs.pari
             sage: C.echelon_form()
             Traceback (most recent call last):
             ...
-            NotImplementedError: Ideal Ideal (2, x + 1) of Univariate Polynomial Ring in x over Integer Ring not principal
+            NotImplementedError: Ideal Ideal (2, x + 1) of Univariate
+            Polynomial Ring in x over Integer Ring not principal
             Echelon form not implemented over 'Univariate Polynomial Ring in x over Integer Ring'.
             sage: C = matrix(3,[2,x,x^2,x+1,3-x,-1,3,2,1/2])
             sage: C.echelon_form()
@@ -7776,8 +7783,8 @@ i           sage: # needs sage.libs.pari
 
         Check that :trac:`34724` is fixed (indirect doctest)::
 
-            sage: a=6.12323399573677e-17
-            sage: m=matrix(RR,[[-a, -1.72508242466029], [ 0.579682446302195, a]])
+            sage: a = 6.12323399573677e-17
+            sage: m = matrix(RR,[[-a, -1.72508242466029], [ 0.579682446302195, a]])
             sage: (~m*m).norm()
             1.0
         """
@@ -18014,7 +18021,7 @@ def _generic_clear_column(m):
         sage: OL = L.ring_of_integers(); w = OL(w)
         sage: m = matrix(OL, 8, 4, [2*w - 2, 2*w + 1, -2, w, 2, -2, -2*w - 2, -2*w + 2, -w + 2, 2*w + 1, -w + 2, -w - 2, -2*w,
         ....:     2*w, -w+ 2, w - 1, -2*w + 2, 2*w + 2, 2*w - 1, -w, 2*w + 2, -w + 2, 2, 2*w -1, w - 4, -2*w - 2, 2*w - 1, 0, 6, 7, 2*w + 1, 14])
-        sage: s,t = m.echelon_form(transformation=True); t*m == s # indirect doctest
+        sage: s,t = m.echelon_form(transformation=True); t*m == s  # indirect doctest
         True
         sage: s[0]
         (w, 0, 0, 0)
