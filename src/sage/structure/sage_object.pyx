@@ -228,23 +228,24 @@ cdef class SageObject:
         Alternatively, you can use the ``%display ascii_art/simple`` magic to
         switch all output to ASCII art and back::
 
+            sage: # needs sage.combinat
             sage: from sage.repl.interpreter import get_test_shell
             sage: shell = get_test_shell()
-            sage: shell.run_cell('tab = StandardTableaux(3)[2]; tab')                               # needs sage.combinat
+            sage: shell.run_cell('tab = StandardTableaux(3)[2]; tab')
             [[1, 2], [3]]
             sage: shell.run_cell('%display ascii_art')
-            sage: shell.run_cell('tab')                                                             # needs sage.combinat
+            sage: shell.run_cell('tab')
             1  2
             3
-            sage: shell.run_cell('Tableaux.options(ascii_art="table", convention="French")')        # needs sage.combinat
-            sage: shell.run_cell('tab')                                                             # needs sage.combinat
+            sage: shell.run_cell('Tableaux.options(ascii_art="table", convention="French")')
+            sage: shell.run_cell('tab')
             +---+
             | 3 |
             +---+---+
             | 1 | 2 |
             +---+---+
             sage: shell.run_cell('%display plain')
-            sage: shell.run_cell('Tableaux.options._reset()')                                       # needs sage.combinat
+            sage: shell.run_cell('Tableaux.options._reset()')
             sage: shell.quit()
 
         TESTS::
@@ -290,23 +291,24 @@ cdef class SageObject:
         Alternatively, you can use the ``%display ascii_art/simple`` magic to
         switch all output to ASCII art and back::
 
+            sage: # needs sage.combinat
             sage: from sage.repl.interpreter import get_test_shell
             sage: shell = get_test_shell()
-            sage: shell.run_cell('tab = StandardTableaux(3)[2]; tab')                               # needs sage.combinat
+            sage: shell.run_cell('tab = StandardTableaux(3)[2]; tab')
             [[1, 2], [3]]
             sage: shell.run_cell('%display ascii_art')
-            sage: shell.run_cell('tab')                                                             # needs sage.combinat
+            sage: shell.run_cell('tab')
             1  2
             3
-            sage: shell.run_cell('Tableaux.options(ascii_art="table", convention="French")')        # needs sage.combinat
-            sage: shell.run_cell('tab')                                                             # needs sage.combinat
+            sage: shell.run_cell('Tableaux.options(ascii_art="table", convention="French")')
+            sage: shell.run_cell('tab')
             +---+
             | 3 |
             +---+---+
             | 1 | 2 |
             +---+---+
             sage: shell.run_cell('%display plain')
-            sage: shell.run_cell('Tableaux.options._reset()')                                       # needs sage.combinat
+            sage: shell.run_cell('Tableaux.options._reset()')
             sage: shell.quit()
 
         TESTS::
@@ -376,20 +378,20 @@ cdef class SageObject:
         caches. This can be achieved by defining an appropriate
         ``_cache_key``::
 
-            sage: hash(b)                                                               # needs sage.rings.padics
+            sage: # needs sage.rings.padics
+            sage: hash(b)
             Traceback (most recent call last):
             ...
             TypeError: unhashable type: 'sage.rings.padics.qadic_flint_CR.qAdicCappedRelativeElement'
             sage: @cached_method
             ....: def f(x): return x==a
-            sage: f(b)                                                                  # needs sage.rings.padics
+            sage: f(b)
             True
-            sage: f(c)  # if b and c were hashable, this would return True              # needs sage.rings.padics
+            sage: f(c)  # if b and c were hashable, this would return True
             False
-
-            sage: b._cache_key()                                                        # needs sage.rings.padics
+            sage: b._cache_key()
             (..., ((0, 1),), 0, 1)
-            sage: c._cache_key()                                                        # needs sage.rings.padics
+            sage: c._cache_key()
             (..., ((0, 1), (1,)), 0, 20)
 
         An implementation must make sure that for elements ``a`` and ``b``,
@@ -399,7 +401,7 @@ cdef class SageObject:
 
             sage: S.<a> = Qq(4)                                                         # needs sage.rings.padics
             sage: d = a + O(2)                                                          # needs sage.rings.padics
-            sage: b._cache_key() == d._cache_key() # this would be True if the parents were not included                # needs sage.rings.padics
+            sage: b._cache_key() == d._cache_key()  # this would be True if the parents were not included               # needs sage.rings.padics
             False
 
         """
@@ -829,26 +831,28 @@ cdef class SageObject:
         Some other examples that illustrate conversion to Magma.
         ::
 
+            sage: # optional - magma, needs sage.symbolic
             sage: n = -3/7
-            sage: m2 = Magma()                                                          # needs sage.symbolic
-            sage: magma(n)                        # optional - magma
+            sage: m2 = Magma()
+            sage: magma(n)
             -3/7
-            sage: magma(n).parent()               # optional - magma
+            sage: magma(n).parent()
             Magma
-            sage: magma(n).parent() is m2         # optional - magma
+            sage: magma(n).parent() is m2
             False
-            sage: magma(n).parent() is magma      # optional - magma
+            sage: magma(n).parent() is magma
             True
 
         This example illustrates caching, which happens automatically
         since K is a Python object::
 
+            sage: # optional - magma, needs sage.symbolic
             sage: x = polygen(ZZ, 'x')
             sage: K.<a> = NumberField(x^3 + 2)                                          # needs sage.rings.number_field
-            sage: magma(K) is magma(K)            # optional - magma
+            sage: magma(K) is magma(K)
             True
-            sage: magma2 = Magma()                                                      # needs sage.symbolic
-            sage: magma(K) is magma2(K)           # optional - magma
+            sage: magma2 = Magma()
+            sage: magma(K) is magma2(K)
             False
         """
         return repr(self)  # default
