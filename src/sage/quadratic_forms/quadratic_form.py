@@ -668,12 +668,14 @@ class QuadraticForm(SageObject):
             sage: Q = QuadraticForm(ZZ, 2, [1,0,5])
             sage: Q.list_external_initializations()
             []
-            sage: T = Q.theta_series()                                                  # needs sage.libs.pari
-            sage: Q.list_external_initializations()                                     # needs sage.libs.pari
+
+            sage: # needs sage.libs.pari
+            sage: T = Q.theta_series()
+            sage: Q.list_external_initializations()
             []
-            sage: Q = QuadraticForm(ZZ, 2, [1,0,5], unsafe_initialization=False,        # needs sage.libs.pari
+            sage: Q = QuadraticForm(ZZ, 2, [1,0,5], unsafe_initialization=False,
             ....:                   number_of_automorphisms=3, determinant=0)
-            sage: Q.list_external_initializations()                                     # needs sage.libs.pari
+            sage: Q.list_external_initializations()
             []
 
         ::
