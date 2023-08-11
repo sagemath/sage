@@ -11332,19 +11332,15 @@ class GenericGraph(GenericGraph_pyx):
         for u in self._backend.iterator_nbrs(vertex):
             yield u
 
-    def vertices(self, sort=None, key=None, degree=None, vertex_property=None):
+    def vertices(self, sort=False, key=None, degree=None, vertex_property=None):
         r"""
         Return a list of the vertices.
 
         INPUT:
 
-        - ``sort`` -- boolean (default: ``None``); if ``True``, vertices are
-          sorted according to the default ordering
-
-          As of :trac:`22349`, this argument must be explicitly
-          specified (unless a ``key`` is given); otherwise a warning
-          is printed and ``sort=True`` is used. The default will
-          eventually be changed to ``False``.
+        - ``sort`` -- boolean (default: ``False``); whether to sort vertices
+          according the ordering specified with parameter ``key``. If ``False``
+          (default), vertices are not sorted.
 
         - ``key`` -- a function (default: ``None``); a function that takes a
           vertex as its one argument and returns a value that can be used for
@@ -11432,20 +11428,7 @@ class GenericGraph(GenericGraph_pyx):
             Traceback (most recent call last):
             ...
             ValueError: sort keyword is False, yet a key function is given
-
-        Deprecation warning for ``sort=None`` (:trac:`22349`)::
-
-            sage: G = graphs.HouseGraph()
-            sage: G.vertices()
-            doctest:...: DeprecationWarning: parameter 'sort' will be set to False by default in the future
-            See https://github.com/sagemath/sage/issues/22349 for details.
-            [0, 1, 2, 3, 4]
         """
-        if sort is None:
-            if key is None:
-                deprecation(22349, "parameter 'sort' will be set to False by default in the future")
-            sort = True
-
         if (not sort) and key:
             raise ValueError('sort keyword is False, yet a key function is given')
 
