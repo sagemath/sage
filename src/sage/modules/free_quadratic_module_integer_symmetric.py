@@ -485,8 +485,9 @@ def IntegralLatticeGluing(Lattices, glue, return_embeddings=False):
 
     Different gluings can be composed::
 
-        sage: D4 = IntegralLattice("D4")                                                # needs sage.graphs
-        sage: D4.discriminant_group()                                                   # needs sage.graphs
+        sage: # needs sage.graphs
+        sage: D4 = IntegralLattice("D4")
+        sage: D4.discriminant_group()
         Finite quadratic module over Integer Ring with invariants (2, 2)
         Gram matrix of the quadratic form with values in Q/2Z:
         [  1 1/2]
@@ -497,23 +498,23 @@ def IntegralLatticeGluing(Lattices, glue, return_embeddings=False):
         Gram matrix of the quadratic form with values in Q/2Z:
         [1/2   0]
         [  0 1/2]
-        sage: g1 = D4.discriminant_group().gens()[0]                                    # needs sage.graphs
+        sage: g1 = D4.discriminant_group().gens()[0]
         sage: g2 = L2.discriminant_group().gens()[0] + L2.discriminant_group().gens()[1]
-        sage: D6, phi = IntegralLatticeGluing([D4, L2], [[g1, g2]], True)               # needs sage.graphs
-        sage: AD6 = D6.discriminant_group()                                             # needs sage.graphs
-        sage: AD6.normal_form()                                                         # needs sage.graphs
+        sage: D6, phi = IntegralLatticeGluing([D4, L2], [[g1, g2]], True)
+        sage: AD6 = D6.discriminant_group()
+        sage: AD6.normal_form()
         Finite quadratic module over Integer Ring with invariants (2, 2)
         Gram matrix of the quadratic form with values in Q/2Z:
         [3/2   0]
         [  0 3/2]
-        sage: f1, g1 = AD6.normal_form().gens()                                         # needs sage.graphs
+        sage: f1, g1 = AD6.normal_form().gens()
         sage: f2, g2 = L2.discriminant_group().gens()
-        sage: E8, psi = IntegralLatticeGluing([D6, L2], [[f1, f2], [g1, g2]], True)     # needs sage.graphs
-        sage: D4embed = E8.sublattice(psi[0](phi[0].image()).basis_matrix())            # needs sage.graphs
-        sage: x = D4([1, 0, 0, 0])                                                      # needs sage.graphs
-        sage: psi[0](phi[0](x)).inner_product(psi[0](phi[0](x))) == x.inner_product(x)  # needs sage.graphs
+        sage: E8, psi = IntegralLatticeGluing([D6, L2], [[f1, f2], [g1, g2]], True)
+        sage: D4embed = E8.sublattice(psi[0](phi[0].image()).basis_matrix())
+        sage: x = D4([1, 0, 0, 0])
+        sage: psi[0](phi[0](x)).inner_product(psi[0](phi[0](x))) == x.inner_product(x)
         True
-        sage: D4embed                                                                   # needs sage.graphs
+        sage: D4embed
         Lattice of degree 8 and rank 4 over Integer Ring
         Basis matrix:
         [1 0 0 0 0 0 0 0]
@@ -1183,21 +1184,21 @@ class FreeQuadraticModule_integer_symmetric(FreeQuadraticModule_submodule_with_b
 
         The group acts from the right on the lattice and its discriminant group::
 
-            sage: # needs sage.graphs
+            sage: # needs sage.graphs sage.libs.gap
             sage: x = A4.an_element()
-            sage: g = Aut.an_element(); g                                               # needs sage.libs.gap
+            sage: g = Aut.an_element(); g
             [-1 -1 -1  0]
             [ 0  0  1  0]
             [ 0  0 -1 -1]
             [ 0  1  1  1]
-            sage: x*g                                                                   # needs sage.libs.gap
+            sage: x*g
             (-1, -1, -1, 0)
-            sage: (x*g).parent() == A4                                                  # needs sage.libs.gap
+            sage: (x*g).parent() == A4
             True
-            sage: (g*x).parent()                                                        # needs sage.libs.gap
+            sage: (g*x).parent()
             Vector space of dimension 4 over Rational Field
-            sage: y = A4.discriminant_group().an_element()                              # needs sage.libs.gap
-            sage: y*g                                                                   # needs sage.libs.gap
+            sage: y = A4.discriminant_group().an_element()
+            sage: y*g
             (4)
 
         If the group is finite we can compute the usual things::
@@ -1463,6 +1464,7 @@ class FreeQuadraticModule_integer_symmetric(FreeQuadraticModule_submodule_with_b
             sage: L = IntegralLattice('A2')                                             # needs sage.graphs
             sage: L.lll() == L                                                          # needs sage.graphs
             True
+
             sage: G = matrix(ZZ, 3, [0,1,0, 1,0,0, 0,0,7])
             sage: V = matrix(ZZ, 3, [-14,-15,-15, -4,1,16, -5,-5,-4])
             sage: L = IntegralLattice(V * G * V.T)

@@ -262,16 +262,18 @@ def neighbor_iteration(seeds, p, mass=None, max_classes=ZZ(10)**3,
         sage: Q = QuadraticForm(ZZ, 3, [1, 0, 0, 2, 1, 3])
         sage: Q.det()
         46
-        sage: mass = Q.conway_mass()                                                    # needs sage.symbolic
-        sage: g1 = neighbor_iteration([Q], 3,   # long time                             # needs sage.symbolic
+
+        sage: # needs sage.symbolic
+        sage: mass = Q.conway_mass()
+        sage: g1 = neighbor_iteration([Q], 3,   # long time
         ....:                         mass=mass, algorithm='random')
-        sage: g2 = neighbor_iteration([Q], 3, algorithm='exhaustion')  # long time
+        sage: g2 = neighbor_iteration([Q], 3, algorithm='exhaustion')   # long time
         sage: g3 = neighbor_iteration([Q], 3, algorithm='orbits')                       # needs sage.libs.gap
-        sage: mass == sum(1/q.number_of_automorphisms() for q in g1)    # long time, needs sage.symbolic
+        sage: mass == sum(1/q.number_of_automorphisms() for q in g1)    # long time
         True
-        sage: mass == sum(1/q.number_of_automorphisms() for q in g2)    # long time, needs sage.symbolic
+        sage: mass == sum(1/q.number_of_automorphisms() for q in g2)    # long time
         True
-        sage: mass == sum(1/q.number_of_automorphisms() for q in g3)                    # needs sage.libs.gap sage.symbolic
+        sage: mass == sum(1/q.number_of_automorphisms() for q in g3)                    # needs sage.libs.gap
         True
 
     TESTS::
@@ -371,12 +373,12 @@ def orbits_lines_mod_p(self, p):
         sage: Q = QuadraticForm(ZZ, 3, [1, 0, 0, 2, 1, 3])
         sage: Q.orbits_lines_mod_p(2)                                                   # needs sage.libs.gap sage.libs.pari
         [(0, 0, 1),
-        (0, 1, 0),
-        (0, 1, 1),
-        (1, 0, 0),
-        (1, 0, 1),
-        (1, 1, 0),
-        (1, 1, 1)]
+         (0, 1, 0),
+         (0, 1, 1),
+         (1, 0, 0),
+         (1, 0, 1),
+         (1, 1, 0),
+         (1, 1, 1)]
     """
     from sage.libs.gap.libgap import libgap
     from sage.rings.finite_rings.finite_field_constructor import FiniteField as GF
