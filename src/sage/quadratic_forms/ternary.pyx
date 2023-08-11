@@ -579,19 +579,20 @@ def _find_zeros_mod_p(a, b, c, r, s, t, p):
 
     EXAMPLES::
 
+        sage: # needs sage.libs.pari
         sage: from sage.quadratic_forms.ternary import _find_zeros_mod_p
         sage: Q = TernaryQF([1, 2, 2, -1, 0, 0])
         sage: p = 1009
-        sage: zeros_1009 = _find_zeros_mod_p(1, 2, 2, -1, 0, 0, p)                      # needs sage.libs.pari
-        sage: len(zeros_1009)                                                           # needs sage.libs.pari
+        sage: zeros_1009 = _find_zeros_mod_p(1, 2, 2, -1, 0, 0, p)
+        sage: len(zeros_1009)
         1010
-        sage: zeros_1009.sort()                                                         # needs sage.libs.pari
-        sage: zeros_1009[0]                                                             # needs sage.libs.pari
+        sage: zeros_1009.sort()
+        sage: zeros_1009[0]
         (0, 32, 1)
         sage: Q((0, 32, 1))
         2018
-        sage: zeros_2 = _find_zeros_mod_p(1, 2, 2, -1, 0, 0, 2)                         # needs sage.libs.pari
-        sage: zeros_2                                                                   # needs sage.libs.pari
+        sage: zeros_2 = _find_zeros_mod_p(1, 2, 2, -1, 0, 0, 2)
+        sage: zeros_2
         [(0, 1, 0), (0, 0, 1), (1, 1, 1)]
     """
     if p == 2:

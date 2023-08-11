@@ -749,32 +749,35 @@ def diagonal_matrix(arg0=None, arg1=None, arg2=None, sparse=True):
 
     NumPy arrays may be used as input. ::
 
-        sage: import numpy                                                              # needs numpy
-        sage: entries = numpy.array([1.2, 5.6]); entries                                # needs numpy
+        sage: # needs numpy
+        sage: import numpy
+        sage: entries = numpy.array([1.2, 5.6]); entries
         array([1.2, 5.6])
-        sage: A = diagonal_matrix(3, entries); A                                        # needs numpy
+        sage: A = diagonal_matrix(3, entries); A
         [1.2 0.0 0.0]
         [0.0 5.6 0.0]
         [0.0 0.0 0.0]
-        sage: A.parent()                                                                # needs numpy
+        sage: A.parent()
         Full MatrixSpace of 3 by 3 sparse matrices over Real Double Field
 
+        sage: # needs numpy
         sage: j = complex(0,1)
-        sage: entries = numpy.array([2.0+j, 8.1, 3.4+2.6*j]); entries                   # needs numpy
+        sage: entries = numpy.array([2.0+j, 8.1, 3.4+2.6*j]); entries
         array([2. +1.j , 8.1+0.j , 3.4+2.6j])
-        sage: A = diagonal_matrix(entries); A                                           # needs numpy
+        sage: A = diagonal_matrix(entries); A
         [2.0 + 1.0*I         0.0         0.0]
         [        0.0         8.1         0.0]
         [        0.0         0.0 3.4 + 2.6*I]
-        sage: A.parent()                                                                # needs numpy
+        sage: A.parent()
         Full MatrixSpace of 3 by 3 sparse matrices over Complex Double Field
 
-        sage: entries = numpy.array([4, 5, 6])                                          # needs numpy
-        sage: A = diagonal_matrix(entries); A                                           # needs numpy
+        sage: # needs numpy
+        sage: entries = numpy.array([4, 5, 6])
+        sage: A = diagonal_matrix(entries); A
         [4 0 0]
         [0 5 0]
         [0 0 6]
-        sage: A.parent()                                                                # needs numpy
+        sage: A.parent()
         Full MatrixSpace of 3 by 3 sparse matrices over Integer Ring
 
         sage: entries = numpy.array([4.1, 5.2, 6.3])                                    # needs numpy
@@ -2449,9 +2452,9 @@ def random_rref_matrix(parent, num_pivots):
 
         sage: B = random_matrix(FiniteField(7), 4, 4,
         ....:                   algorithm='echelon_form', num_pivots=3); B
-        [1 0 0 5]
-        [0 1 0 2]
-        [0 0 1 6]
+        [1 0 0 0]
+        [0 1 0 6]
+        [0 0 1 1]
         [0 0 0 0]
         sage: B.rank() == 3
         True
@@ -3071,10 +3074,12 @@ def random_diagonalizable_matrix(parent,eigenvalues=None,dimensions=None):
         sage: from sage.matrix.constructor import random_diagonalizable_matrix
         sage: matrix_space = sage.matrix.matrix_space.MatrixSpace(QQ, 5)
         sage: A = random_diagonalizable_matrix(matrix_space)
-        sage: eigenvalues = A.eigenvalues()                                             # needs sage.rings.number_field
-        sage: S = A.right_eigenmatrix()[1]                                              # needs sage.rings.number_field
-        sage: eigenvalues2 = (S.inverse()*A*S).diagonal()                               # needs sage.rings.number_field
-        sage: sorted(eigenvalues) == sorted(eigenvalues2)                               # needs sage.rings.number_field
+
+        sage: # needs sage.rings.number_field
+        sage: eigenvalues = A.eigenvalues()
+        sage: S = A.right_eigenmatrix()[1]
+        sage: eigenvalues2 = (S.inverse()*A*S).diagonal()
+        sage: sorted(eigenvalues) == sorted(eigenvalues2)
         True
 
     A diagonalizable matrix with eigenvalues and dimensions designated,
@@ -3090,9 +3095,11 @@ def random_diagonalizable_matrix(parent,eigenvalues=None,dimensions=None):
         True
         sage: all(x in ZZ for x in (B-(6*identity_matrix(6))).rref().list())
         True
-        sage: S = B.right_eigenmatrix()[1]                                              # needs sage.rings.number_field
-        sage: eigenvalues2 = (S.inverse()*B*S).diagonal()                               # needs sage.rings.number_field
-        sage: all(e in eigenvalues for e in eigenvalues2)                               # needs sage.rings.number_field
+
+        sage: # needs sage.rings.number_field
+        sage: S = B.right_eigenmatrix()[1]
+        sage: eigenvalues2 = (S.inverse()*B*S).diagonal()
+        sage: all(e in eigenvalues for e in eigenvalues2)
         True
 
     TESTS:

@@ -883,6 +883,7 @@ class TernaryQF(SageObject):
 
         EXAMPLES::
 
+            sage: # needs sage.libs.pari
             sage: Q = TernaryQF([1, 3, 3, -2, 0, -1]); Q
             Ternary quadratic form with integer coefficients:
             [1 3 3]
@@ -890,18 +891,18 @@ class TernaryQF(SageObject):
             sage: Q.disc()
             29
             sage: v = (9, 7, 1)
-            sage: v in Q.find_zeros_mod_p(11)                                           # needs sage.libs.pari
+            sage: v in Q.find_zeros_mod_p(11)
             True
-            sage: Q11, M = Q.find_p_neighbor_from_vec(11, v, mat=True)                  # needs sage.libs.pari
-            sage: Q11                                                                   # needs sage.libs.pari
+            sage: Q11, M = Q.find_p_neighbor_from_vec(11, v, mat=True)
+            sage: Q11
             Ternary quadratic form with integer coefficients:
             [1 2 4]
             [-1 -1 0]
-            sage: M                                                                     # needs sage.libs.pari
+            sage: M
             [    -1  -5/11   7/11]
             [     0 -10/11   3/11]
             [     0  -3/11  13/11]
-            sage: Q(M) == Q11                                                           # needs sage.libs.pari
+            sage: Q(M) == Q11
             True
         """
         if mat:
@@ -918,21 +919,21 @@ class TernaryQF(SageObject):
 
         EXAMPLES::
 
-            sage: Q0 = TernaryQF([1, 3, 3, -2, 0, -1])
-            sage: Q0
+            sage: # needs sage.libs.pari
+            sage: Q0 = TernaryQF([1, 3, 3, -2, 0, -1]); Q0
             Ternary quadratic form with integer coefficients:
             [1 3 3]
             [-2 0 -1]
-            sage: neig = Q0.find_p_neighbors(5)                                         # needs sage.libs.pari
-            sage: len(neig)                                                             # needs sage.libs.pari
+            sage: neig = Q0.find_p_neighbors(5)
+            sage: len(neig)
             6
             sage: Q1 = TernaryQF([1, 1, 10, 1, 1, 1])
             sage: Q2 = TernaryQF([1, 2, 4, -1, -1, 0])
-            sage: neig.count(Q0)                                                        # needs sage.libs.pari
+            sage: neig.count(Q0)
             2
-            sage: neig.count(Q1)                                                        # needs sage.libs.pari
+            sage: neig.count(Q1)
             1
-            sage: neig.count(Q2)                                                        # needs sage.libs.pari
+            sage: neig.count(Q2)
             3
 
         """
@@ -1669,14 +1670,16 @@ class TernaryQF(SageObject):
             sage: Q = TernaryQF([1, 1, 7, 0, 0, 0])
             sage: Q.is_eisenstein_reduced()
             True
-            sage: auts = Q._automorphisms_reduced_slow()  # long time (3s on sage.math, 2014)
-            sage: len(auts)                               # long time
+
+            sage: # long time
+            sage: auts = Q._automorphisms_reduced_slow()  # 3s on sage.math, 2014
+            sage: len(auts)
             8
-            sage: A = auts[randint(0,7)]                  # long time
-            sage: Q(A) == Q                               # long time
+            sage: A = auts[randint(0,7)]
+            sage: Q(A) == Q
             True
             sage: Q = TernaryQF([3, 4, 5, 3, 3, 2])
-            sage: Q._automorphisms_reduced_slow()         # long time
+            sage: Q._automorphisms_reduced_slow()
             [
             [1 0 0]
             [0 1 0]
