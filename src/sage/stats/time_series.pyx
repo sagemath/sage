@@ -1058,15 +1058,16 @@ cdef class TimeSeries:
 
         EXAMPLES::
 
+            sage: # needs sage.plot
             sage: v = stats.TimeSeries([5,4,1.3,2,8,10,3,-5]); v
             [5.0000, 4.0000, 1.3000, 2.0000, 8.0000, 10.0000, 3.0000, -5.0000]
-            sage: v.plot()                                                              # needs sage.plot
+            sage: v.plot()
             Graphics object consisting of 1 graphics primitive
-            sage: v.plot(points=True)                                                   # needs sage.plot
+            sage: v.plot(points=True)
             Graphics object consisting of 1 graphics primitive
-            sage: v.plot() + v.plot(points=True, rgbcolor='red')                        # needs sage.plot
+            sage: v.plot() + v.plot(points=True, rgbcolor='red')
             Graphics object consisting of 2 graphics primitives
-            sage: v.plot() + v.plot(points=True, rgbcolor='red', pointsize=50)          # needs sage.plot
+            sage: v.plot() + v.plot(points=True, rgbcolor='red', pointsize=50)
             Graphics object consisting of 2 graphics primitives
         """
         from sage.plot.all import line, point
