@@ -1150,15 +1150,16 @@ class FilteredVectorSpace_class(FreeModule_ambient_field):
 
         EXAMPLES::
 
+            sage: # needs sage.groups
             sage: F = FilteredVectorSpace(1, 1) + FilteredVectorSpace(1, 2);  F
             QQ^2 >= QQ^1 >= 0
-            sage: F.exterior_power(1)                                                   # needs sage.groups
+            sage: F.exterior_power(1)
             QQ^2 >= QQ^1 >= 0
-            sage: F.exterior_power(2)                                                   # needs sage.groups
+            sage: F.exterior_power(2)
             QQ^1 >= 0
-            sage: F.exterior_power(3)                                                   # needs sage.groups
+            sage: F.exterior_power(3)
             0
-            sage: F.wedge(2)                                                            # needs sage.groups
+            sage: F.wedge(2)
             QQ^1 >= 0
         """
         return self._power_operation(n, 'antisymmetric')

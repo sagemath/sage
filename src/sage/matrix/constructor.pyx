@@ -456,53 +456,54 @@ def matrix(*args, **kwds):
 
     Check conversion from numpy::
 
-        sage: import numpy                                                              # needs numpy
-        sage: n = numpy.array([[complex(0,1),complex(0,2)], [3,4]], complex)            # needs numpy
-        sage: m = matrix(n); m; m.parent()                                              # needs numpy
+        sage: # needs numpy
+        sage: import numpy
+        sage: n = numpy.array([[complex(0,1),complex(0,2)], [3,4]], complex)
+        sage: m = matrix(n); m; m.parent()
         [1.0*I 2.0*I]
         [  3.0   4.0]
         Full MatrixSpace of 2 by 2 dense matrices over Complex Double Field
-        sage: n = numpy.array([[1,2], [3,4]], 'int32')                                  # needs numpy
-        sage: m = matrix(n); m; m.parent()                                              # needs numpy
+        sage: n = numpy.array([[1,2], [3,4]], 'int32')
+        sage: m = matrix(n); m; m.parent()
         [1 2]
         [3 4]
         Full MatrixSpace of 2 by 2 dense matrices over Integer Ring
-        sage: n = numpy.array([[1,2,3], [4,5,6], [7,8,9]], 'float32')                   # needs numpy
-        sage: m = matrix(n); m; m.parent()                                              # needs numpy
+        sage: n = numpy.array([[1,2,3], [4,5,6], [7,8,9]], 'float32')
+        sage: m = matrix(n); m; m.parent()
         [1.0 2.0 3.0]
         [4.0 5.0 6.0]
         [7.0 8.0 9.0]
         Full MatrixSpace of 3 by 3 dense matrices over Real Double Field
-        sage: n = numpy.matrix([[1,2,3], [4,5,6], [7,8,9]], 'float64')                  # needs numpy
-        sage: m = matrix(n); m; m.parent()                                              # needs numpy
+        sage: n = numpy.matrix([[1,2,3], [4,5,6], [7,8,9]], 'float64')
+        sage: m = matrix(n); m; m.parent()
         [1.0 2.0 3.0]
         [4.0 5.0 6.0]
         [7.0 8.0 9.0]
         Full MatrixSpace of 3 by 3 dense matrices over Real Double Field
-        sage: n = numpy.array([[1,2,3], [4,5,6], [7,8,9]], 'complex64')                 # needs numpy
-        sage: m = matrix(n); m; m.parent()                                              # needs numpy
+        sage: n = numpy.array([[1,2,3], [4,5,6], [7,8,9]], 'complex64')
+        sage: m = matrix(n); m; m.parent()
         [1.0 2.0 3.0]
         [4.0 5.0 6.0]
         [7.0 8.0 9.0]
         Full MatrixSpace of 3 by 3 dense matrices over Complex Double Field
-        sage: n = numpy.matrix([[1,2,3], [4,5,6], [7,8,9]], 'complex128')               # needs numpy
-        sage: m = matrix(n); m; m.parent()                                              # needs numpy
+        sage: n = numpy.matrix([[1,2,3], [4,5,6], [7,8,9]], 'complex128')
+        sage: m = matrix(n); m; m.parent()
         [1.0 2.0 3.0]
         [4.0 5.0 6.0]
         [7.0 8.0 9.0]
         Full MatrixSpace of 3 by 3 dense matrices over Complex Double Field
         sage: a = matrix([[1,2], [3,4]])
-        sage: b = matrix(a.numpy()); b                                                  # needs numpy
+        sage: b = matrix(a.numpy()); b
         [1 2]
         [3 4]
-        sage: a == b                                                                    # needs numpy
+        sage: a == b
         True
-        sage: c = matrix(a.numpy('float32')); c                                         # needs numpy
+        sage: c = matrix(a.numpy('float32')); c
         [1.0 2.0]
         [3.0 4.0]
-        sage: matrix(numpy.array([[5]]))                                                # needs numpy
+        sage: matrix(numpy.array([[5]]))
         [5]
-        sage: matrix(numpy.matrix([[5]]))                                               # needs numpy
+        sage: matrix(numpy.matrix([[5]]))
         [5]
 
     A ring and a numpy array::
