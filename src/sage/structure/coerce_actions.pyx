@@ -145,12 +145,12 @@ cdef class ActedUponAction(GenericAction):
         """
         TESTS::
 
-            sage: # needs sage.modules
+            sage: # needs sage.modular sage.modules
             sage: M = MatrixSpace(ZZ, 2)
-            sage: A = sage.structure.coerce_actions.ActedUponAction(M, Cusps, True)     # needs sage.modular
-            sage: A.act(matrix(ZZ, 2, [1,0,2,-1]), Cusp(1,2))                           # needs sage.modular
+            sage: A = sage.structure.coerce_actions.ActedUponAction(M, Cusps, True)
+            sage: A.act(matrix(ZZ, 2, [1,0,2,-1]), Cusp(1,2))
             Infinity
-            sage: A(matrix(ZZ, 2, [1,0,2,-1]), Cusp(1,2))                               # needs sage.modular
+            sage: A(matrix(ZZ, 2, [1,0,2,-1]), Cusp(1,2))
             Infinity
 
             sage: type(A)                                                               # needs sage.modular sage.modules

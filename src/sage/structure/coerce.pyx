@@ -1492,16 +1492,17 @@ cdef class CoercionModel:
         We check that with :trac:`14058`, parents are still eligible for
         garbage collection after being involved in binary operations::
 
+            sage: # needs sage.libs.pari
             sage: import gc
             sage: T = type(GF(2))
             sage: gc.collect() #random
             852
             sage: N0 = len(list(o for o in gc.get_objects() if type(o) is T))
-            sage: L = [ZZ(1) + GF(p)(1) for p in prime_range(2, 50)]                    # needs sage.rings.finite_rings
+            sage: L = [ZZ(1) + GF(p)(1) for p in prime_range(2, 50)]
             sage: N1 = len(list(o for o in gc.get_objects() if type(o) is T))
-            sage: N1 > N0                                                               # needs sage.rings.finite_rings
+            sage: N1 > N0
             True
-            sage: del L                                                                 # needs sage.rings.finite_rings
+            sage: del L
             sage: gc.collect() #random
             3939
             sage: N2 = len(list(o for o in gc.get_objects() if type(o) is T))
