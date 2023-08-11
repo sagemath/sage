@@ -1075,7 +1075,7 @@ class IncidenceStructure():
         EXAMPLES::
 
             sage: D = IncidenceStructure(4, [[0,2],[1,2,3],[2,3]])
-            sage: D._libgap_()                # optional - gap_packages
+            sage: D._libgap_()                # optional - gap_package_design
             rec( blocks := [ [ 1, 3 ], [ 2, 3, 4 ], [ 3, 4 ] ],
             isBlockDesign := true, v := 4 )
         """
@@ -1538,13 +1538,13 @@ class IncidenceStructure():
 
         Some examples of Witt designs that need the gap database::
 
-            sage: BD = designs.WittDesign(9)         # optional - gap_packages
-            sage: BD.is_t_design(2,9,3,1)            # optional - gap_packages
+            sage: BD = designs.WittDesign(9)         # optional - gap_package_design
+            sage: BD.is_t_design(2,9,3,1)            # optional - gap_package_design
             True
-            sage: W12 = designs.WittDesign(12)       # optional - gap_packages
-            sage: W12.is_t_design(5,12,6,1)          # optional - gap_packages
+            sage: W12 = designs.WittDesign(12)       # optional - gap_package_design
+            sage: W12.is_t_design(5,12,6,1)          # optional - gap_package_design
             True
-            sage: W12.is_t_design(4)                 # optional - gap_packages
+            sage: W12.is_t_design(4)                 # optional - gap_package_design
             True
 
         Further examples::
@@ -1797,12 +1797,12 @@ class IncidenceStructure():
             Incidence structure with 4 points and 3 blocks
             sage: D.dual()                                                              # needs sage.modules
             Incidence structure with 3 points and 4 blocks
-            sage: print(D.dual(algorithm="gap"))            # optional - gap_packages
+            sage: print(D.dual(algorithm="gap"))            # optional - gap_package_design
             Incidence structure with 3 points and 4 blocks
             sage: blocks = [[0,1,2],[0,3,4],[0,5,6],[1,3,5],[1,4,6],[2,3,6],[2,4,5]]
             sage: BD = IncidenceStructure(7, blocks, name="FanoPlane"); BD
             Incidence structure with 7 points and 7 blocks
-            sage: print(BD.dual(algorithm="gap"))           # optional - gap_packages
+            sage: print(BD.dual(algorithm="gap"))           # optional - gap_package_design
             Incidence structure with 7 points and 7 blocks
             sage: BD.dual()                                                             # needs sage.modules
             Incidence structure with 7 points and 7 blocks
