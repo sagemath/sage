@@ -2857,7 +2857,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
             if elog == -sage.rings.infinity.infinity or m**elog == self:
                 return elog
 
-        if (isinstance(m, Rational):
+        if (isinstance(m, Rational)
                 and m.numer() == 1):
             elog = -self.exact_log(m.denom())
             if m**elog == self:
