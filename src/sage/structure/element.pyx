@@ -3243,25 +3243,31 @@ cdef class CommutativeRingElement(RingElement):
 
     def sqrt(self, extend=True, all=False, name=None):
         """
-        It computes the square root.
+        Compute the square root.
 
         INPUT:
 
-        -  ``extend`` -- Whether to make a ring extension containing a square root if ``self`` is not a square (default: ``True``)
+        - ``extend`` -- boolean (default: ``True``); whether to make a ring
+           extension containing a square root if ``self`` is not a square
 
-        -  ``all`` -- Whether to return a list of all square roots or just a square root (default: False)
+        - ``all`` -- boolean (default: ``False``); whether to return a list of
+           all square roots or just a square root
 
-        -  ``name`` -- Required when ``extend=True`` and ``self`` is not a square. This will be the name of the generator extension.
+        - ``name`` -- required when ``extend=True`` and ``self`` is not a
+           square. This will be the name of the generator of the extension.
 
         OUTPUT:
 
-        - if ``all=False`` it returns a square root. (throws an error if ``extend=False`` and ``self`` is not a square)
+        - if ``all=False``, a square root; raises an error if ``extend=False``
+          and ``self`` is not a square
 
-        - if ``all=True`` it returns a list of all the square roots (could be empty if ``extend=False`` and ``self`` is not a square)
+        - if ``all=True``, a list of all the square roots (empty if
+          ``extend=False`` and ``self`` is not a square)
 
         ALGORITHM:
 
-        It uses ``is_square(root=true)`` for the hard part of the work, the rest is just wrapper code.
+        It uses ``is_square(root=true)`` for the hard part of the work, the rest
+        is just wrapper code.
 
         EXAMPLES::
 
@@ -3320,9 +3326,9 @@ cdef class CommutativeRingElement(RingElement):
             y
             sage: sqrtx^2
             1/x
-            sage: (1/x).sqrt(all=true,name="y")
+            sage: (1/x).sqrt(all=true, name="y")
             [y, -y]
-            sage: (1/x).sqrt(extend=False,all=True)
+            sage: (1/x).sqrt(extend=False, all=True)
             []
             sage: (1/(x^2-1)).sqrt()
             Traceback (most recent call last):

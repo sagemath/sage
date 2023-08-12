@@ -2488,23 +2488,24 @@ cdef class Wrapper:
 
         EXAMPLES::
 
+            sage: # needs sage.symbolic
             sage: from sage.ext.fast_callable import ExpressionTreeBuilder, generate_code, InstructionStream
             sage: etb = ExpressionTreeBuilder('x')
             sage: x = etb.var('x')
-            sage: expr = (x+pi) * (x+1)                                                 # needs sage.symbolic
+            sage: expr = (x+pi) * (x+1)
             sage: from sage.ext.interpreters.wrapper_py import metadata, Wrapper_py
             sage: instr_stream = InstructionStream(metadata, 1)
-            sage: generate_code(expr, instr_stream)                                     # needs sage.symbolic
+            sage: generate_code(expr, instr_stream)
             sage: instr_stream.instr('return')
             sage: v = Wrapper_py(instr_stream.get_current())
-            sage: v.get_orig_args()                                                     # needs sage.symbolic
+            sage: v.get_orig_args()
             {'args': 1,
              'code': [0, 0, 1, 0, 4, 0, 0, 1, 1, 4, 6, 2],
              'constants': [pi, 1],
              'domain': None,
              'py_constants': [],
              'stack': 3}
-            sage: v.op_list()                                                           # needs sage.symbolic
+            sage: v.op_list()
             [('load_arg', 0), ('load_const', pi), 'add', ('load_arg', 0), ('load_const', 1), 'add', 'mul', 'return']
         """
 
