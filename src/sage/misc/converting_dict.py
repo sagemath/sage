@@ -26,13 +26,14 @@ arguments which are keys::
 This is used e.g. in the result of a variety, to allow access to the
 result no matter how a generator is identified::
 
+    sage: # needs sage.rings.number_field
     sage: K.<x,y> = QQ[]
     sage: I = ideal([x^2 + 2*y - 5, x + y + 3])
-    sage: V = sorted(I.variety(AA), key=str)                                            # needs sage.rings.number_field
-    sage: v = V[0]                                                                      # needs sage.rings.number_field
-    sage: v['x'], v['y']                                                                # needs sage.rings.number_field
+    sage: V = sorted(I.variety(AA), key=str)
+    sage: v = V[0]
+    sage: v['x'], v['y']
     (-2.464101615137755?, -0.535898384862246?)
-    sage: list(v)[0].parent()                                                           # needs sage.rings.number_field
+    sage: list(v)[0].parent()
     Multivariate Polynomial Ring in x, y over Algebraic Real Field
 """
 # ****************************************************************************

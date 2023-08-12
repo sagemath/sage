@@ -131,14 +131,15 @@ def sage_eval(source, locals=None, cmds='', preparse=True):
 
     ::
 
+        sage: # needs sage.libs.gap
         sage: R.<x> = PolynomialRing(RationalField())
-        sage: gap.eval('R:=PolynomialRing(Rationals,["x"]);')                           # needs sage.libs.gap
+        sage: gap.eval('R:=PolynomialRing(Rationals,["x"]);')
         'Rationals[x]'
-        sage: ff = gap.eval('x:=IndeterminatesOfPolynomialRing(R);; f:=x^2+1;'); ff     # needs sage.libs.gap
+        sage: ff = gap.eval('x:=IndeterminatesOfPolynomialRing(R);; f:=x^2+1;'); ff
         'x^2+1'
-        sage: sage_eval(ff, locals={'x':x})                                             # needs sage.libs.gap
+        sage: sage_eval(ff, locals={'x':x})
         x^2 + 1
-        sage: eval(ff)                                                                  # needs sage.libs.gap
+        sage: eval(ff)
         Traceback (most recent call last):
         ...
         RuntimeError: Use ** for exponentiation, not '^', which means xor
@@ -214,6 +215,7 @@ def sageobj(x, vars=None):
 
         sage: type(sageobj(gp('34/56')))                                                # needs sage.libs.pari
         <class 'sage.rings.rational.Rational'>
+
         sage: n = 5/2
         sage: sageobj(n) is n
         True
@@ -224,17 +226,20 @@ def sageobj(x, vars=None):
 
     This illustrates interfaces::
 
-        sage: f = gp('2/3')                                                             # needs sage.libs.pari
-        sage: type(f)                                                                   # needs sage.libs.pari
+        sage: # needs sage.libs.pari
+        sage: f = gp('2/3')
+        sage: type(f)
         <class 'sage.interfaces.gp.GpElement'>
-        sage: f._sage_()                                                                # needs sage.libs.pari
+        sage: f._sage_()
         2/3
-        sage: type(f._sage_())                                                          # needs sage.libs.pari
+        sage: type(f._sage_())
         <class 'sage.rings.rational.Rational'>
-        sage: a = gap(939393/2433)                                                                  # needs sage.libs.gap
-        sage: a._sage_()                                                                            # needs sage.libs.gap
+
+        sage: # needs sage.libs.gap
+        sage: a = gap(939393/2433)
+        sage: a._sage_()
         313131/811
-        sage: type(a._sage_())                                                                      # needs sage.libs.gap
+        sage: type(a._sage_())
         <class 'sage.rings.rational.Rational'>
     """
     try:

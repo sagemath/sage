@@ -384,6 +384,7 @@ class SageMagics(Magics):
 
         EXAMPLES::
 
+            sage: # needs numpy
             sage: from sage.repl.interpreter import get_test_shell
             sage: shell = get_test_shell()
             sage: shell.run_cell('''
@@ -409,10 +410,10 @@ class SageMagics(Magics):
             ....: ''')
             sage: fib
             <fortran ...>
-            sage: from numpy import array                                               # needs numpy
-            sage: a = array(range(10), dtype=float)                                     # needs numpy
-            sage: fib(a, 10)                                                            # needs numpy
-            sage: a                                                                     # needs numpy
+            sage: from numpy import array
+            sage: a = array(range(10), dtype=float)
+            sage: fib(a, 10)
+            sage: a
             array([  0.,   1.,   1.,   2.,   3.,   5.,   8.,  13.,  21.,  34.])
         """
         from sage.misc.inline_fortran import fortran

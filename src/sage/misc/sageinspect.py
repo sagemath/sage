@@ -1570,23 +1570,24 @@ def sage_getargspec(obj):
     method. We saw an easy example above, namely ``I.groebner_basis``.
     Here is a more difficult one::
 
+        sage: # needs sage.misc.cython
         sage: cython_code = [
         ....: 'cdef class MyClass:',
         ....: '    def _sage_src_(self):',
         ....: '        return "def foo(x, a=\\\')\\\"\\\', b={(2+1):\\\'bar\\\', not 1:3, 3<<4:5}): return\\n"',
         ....: '    def __call__(self, m,n): return "something"']
-        sage: cython('\n'.join(cython_code))                                            # needs sage.misc.cython
-        sage: O = MyClass()                                                             # needs sage.misc.cython
-        sage: print(sage.misc.sageinspect.sage_getsource(O))                            # needs sage.misc.cython
+        sage: cython('\n'.join(cython_code))
+        sage: O = MyClass()
+        sage: print(sage.misc.sageinspect.sage_getsource(O))
         def foo(x, a=')"', b={(2+1):'bar', not 1:3, 3<<4:5}): return
-        sage: spec = sage.misc.sageinspect.sage_getargspec(O)                           # needs sage.misc.cython
-        sage: spec.args, spec.varargs, spec.varkw                                       # needs sage.misc.cython
+        sage: spec = sage.misc.sageinspect.sage_getargspec(O)
+        sage: spec.args, spec.varargs, spec.varkw
         (['x', 'a', 'b'], None, None)
-        sage: spec.defaults[0]                                                          # needs sage.misc.cython
+        sage: spec.defaults[0]
         ')"'
-        sage: sorted(spec.defaults[1].items(), key=lambda x: str(x))                    # needs sage.misc.cython
+        sage: sorted(spec.defaults[1].items(), key=lambda x: str(x))
         [(3, 'bar'), (48, 5), (False, 3)]
-        sage: sage.misc.sageinspect.sage_getargspec(O.__call__)                         # needs sage.misc.cython
+        sage: sage.misc.sageinspect.sage_getargspec(O.__call__)
         FullArgSpec(args=['self', 'm', 'n'], varargs=None, varkw=None, defaults=None,
                     kwonlyargs=[], kwonlydefaults=None, annotations={})
 

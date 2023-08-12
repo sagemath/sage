@@ -967,7 +967,7 @@ class Latex(LatexCall):
 
         sage: latex(x^20 + 1)                                                           # needs sage.symbolic
         x^{20} + 1
-        sage: latex(FiniteField(25,'a'))                                                # needs sage.libs.pari
+        sage: latex(FiniteField(25,'a'))                                                # needs sage.rings.finite_rings
         \Bold{F}_{5^{2}}
         sage: latex("hello")
         \text{\texttt{hello}}
@@ -1216,18 +1216,19 @@ class Latex(LatexCall):
 
         EXAMPLES::
 
-            sage: a = matrix(1, 1, [17])                                                # needs sage.modules
-            sage: latex(a)                                                              # needs sage.modules
+            sage: # needs sage.modules
+            sage: a = matrix(1, 1, [17])
+            sage: latex(a)
             \left(\begin{array}{r}
             17
             \end{array}\right)
             sage: latex.matrix_delimiters("[", "]")
-            sage: latex(a)                                                              # needs sage.modules
+            sage: latex(a)
             \left[\begin{array}{r}
             17
             \end{array}\right]
             sage: latex.matrix_delimiters(left="\\{")
-            sage: latex(a)                                                              # needs sage.modules
+            sage: latex(a)
             \left\{\begin{array}{r}
             17
             \end{array}\right]
@@ -1277,14 +1278,15 @@ class Latex(LatexCall):
 
         EXAMPLES::
 
-            sage: a = vector(QQ, [1,2,3])                                               # needs sage.modules
-            sage: latex(a)                                                              # needs sage.modules
+            sage: # needs sage.modules
+            sage: a = vector(QQ, [1,2,3])
+            sage: latex(a)
             \left(1,\,2,\,3\right)
             sage: latex.vector_delimiters("[", "]")
-            sage: latex(a)                                                              # needs sage.modules
+            sage: latex(a)
             \left[1,\,2,\,3\right]
             sage: latex.vector_delimiters(right="\\}")
-            sage: latex(a)                                                              # needs sage.modules
+            sage: latex(a)
             \left[1,\,2,\,3\right\}
             sage: latex.vector_delimiters()
             ['[', '\\}']
@@ -1322,18 +1324,19 @@ class Latex(LatexCall):
 
         EXAMPLES::
 
-            sage: a = matrix(1, 1, [42])                                                # needs sage.modules
-            sage: latex(a)                                                              # needs sage.modules
+            sage: # needs sage.modules
+            sage: a = matrix(1, 1, [42])
+            sage: latex(a)
             \left(\begin{array}{r}
             42
             \end{array}\right)
             sage: latex.matrix_column_alignment('c')
-            sage: latex(a)                                                              # needs sage.modules
+            sage: latex(a)
             \left(\begin{array}{c}
             42
             \end{array}\right)
             sage: latex.matrix_column_alignment('l')
-            sage: latex(a)                                                              # needs sage.modules
+            sage: latex(a)
             \left(\begin{array}{l}
             42
             \end{array}\right)
@@ -1971,7 +1974,7 @@ def png(x, filename, density=150, debug=False,
 
         sage: from sage.misc.latex import png
         sage: import tempfile
-        sage: with tempfile.NamedTemporaryFile(suffix=".png") as f:     # optional - imagemagick latex, needs sage.plot
+        sage: with tempfile.NamedTemporaryFile(suffix=".png") as f:  # random   # optional - imagemagick latex, needs sage.plot
         ....:     png(ZZ[x], f.name)
     """
     if not pdflatex:

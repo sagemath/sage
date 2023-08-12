@@ -246,17 +246,20 @@ def save(obj, filename, compress=True, **kwargs):
         sage: load(objfile_short)                                                       # needs sage.modules
         [   1    2]
         [   3 -5/2]
-        sage: E = EllipticCurve([-1,0])                                                 # needs sage.plot sage.schemes
-        sage: P = plot(E)                                                               # needs sage.plot sage.schemes
-        sage: save(P, objfile_short)   # saves the plot to "test.sobj"                  # needs sage.plot sage.schemes
-        sage: save(P, filename=os.path.join(d.name, "sage.png"), xmin=-2)               # needs sage.plot sage.schemes
-        sage: save(P, os.path.join(d.name, "filename.with.some.wrong.ext"))             # needs sage.plot sage.schemes
+
+        sage: # needs sage.plot sage.schemes
+        sage: E = EllipticCurve([-1,0])
+        sage: P = plot(E)
+        sage: save(P, objfile_short)   # saves the plot to "test.sobj"
+        sage: save(P, filename=os.path.join(d.name, "sage.png"), xmin=-2)
+        sage: save(P, os.path.join(d.name, "filename.with.some.wrong.ext"))
         Traceback (most recent call last):
         ...
         ValueError: allowed file extensions for images are
         '.eps', '.pdf', '.pgf', '.png', '.ps', '.sobj', '.svg'!
-        sage: print(load(objfile))                                                      # needs sage.plot sage.schemes
+        sage: print(load(objfile))
         Graphics object consisting of 2 graphics primitives
+
         sage: save("A python string", os.path.join(d.name, 'test'))
         sage: load(objfile)
         'A python string'

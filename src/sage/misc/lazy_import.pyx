@@ -667,11 +667,12 @@ cdef class LazyImport():
         """
         TESTS::
 
-            sage: from sympy import Matrix                                              # needs sympy
+            sage: # needs sympy
+            sage: from sympy import Matrix
             sage: import sage.all__sagemath_objects
-            sage: sage.all__sagemath_objects.foo = Matrix([[1,1], [0,1]])               # needs sympy
-            sage: lazy_import('sage.all__sagemath_objects', 'foo')                      # needs sympy
-            sage: foo.__matmul__(foo)                                                   # needs sympy
+            sage: sage.all__sagemath_objects.foo = Matrix([[1,1], [0,1]])
+            sage: lazy_import('sage.all__sagemath_objects', 'foo')
+            sage: foo.__matmul__(foo)
             Matrix([
             [1, 2],
             [0, 1]])

@@ -57,15 +57,16 @@ def reset(vars=None, attached=False):
 
     Confirm that assumptions don't survive a reset (:trac:`10855`)::
 
-        sage: assume(x > 3)                                                             # needs sage.symbolic
-        sage: assumptions()                                                             # needs sage.symbolic
+        sage: # needs sage.symbolic
+        sage: assume(x > 3)
+        sage: assumptions()
         [x > 3]
-        sage: bool(x > 3)                                                               # needs sage.symbolic
+        sage: bool(x > 3)
         True
         sage: reset()
-        sage: assumptions()                                                             # needs sage.symbolic
+        sage: assumptions()
         []
-        sage: bool(x > 3)                                                               # needs sage.symbolic
+        sage: bool(x > 3)
         False
 
     """
