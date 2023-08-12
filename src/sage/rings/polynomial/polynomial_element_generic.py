@@ -362,9 +362,10 @@ class Polynomial_generic_sparse(Polynomial):
         r"""
         EXAMPLES::
 
-            sage: R.<w> = PolynomialRing(CDF, sparse=True)                              # needs sage.rings.complex_double
-            sage: f = CDF(1,2) + w^5 - CDF(pi)*w + CDF(e)                               # needs sage.rings.complex_double sage.symbolic
-            sage: f._repr()   # abs tol 1e-15                                           # needs sage.rings.complex_double sage.symbolic
+            sage: # needs sage.rings.complex_double sage.symbolic
+            sage: R.<w> = PolynomialRing(CDF, sparse=True)
+            sage: f = CDF(1,2) + w^5 - CDF(pi)*w + CDF(e)
+            sage: f._repr()   # abs tol 1e-15
             '1.0*w^5 - 3.141592653589793*w + 3.718281828459045 + 2.0*I'
             sage: f._repr(name='z')   # abs tol 1e-15                                   # needs sage.rings.complex_double sage.symbolic
             '1.0*z^5 - 3.141592653589793*z + 3.718281828459045 + 2.0*I'
@@ -424,16 +425,18 @@ class Polynomial_generic_sparse(Polynomial):
 
         EXAMPLES::
 
+            sage: # needs sage.symbolic
             sage: R.<w> = PolynomialRing(RDF, sparse=True)
-            sage: e = RDF(e)                                                            # needs sage.symbolic
-            sage: f = sum(e^n*w^n for n in range(4)); f   # abs tol 1.1e-14             # needs sage.symbolic
+            sage: e = RDF(e)
+            sage: f = sum(e^n*w^n for n in range(4)); f   # abs tol 1.1e-14
             20.085536923187664*w^3 + 7.3890560989306495*w^2 + 2.718281828459045*w + 1.0
-            sage: f[1]  # abs tol 5e-16                                                 # needs sage.symbolic
+            sage: f[1]  # abs tol 5e-16
             2.718281828459045
-            sage: f[5]                                                                  # needs sage.symbolic
+            sage: f[5]
             0.0
-            sage: f[-1]                                                                 # needs sage.symbolic
+            sage: f[-1]
             0.0
+
             sage: R.<x> = PolynomialRing(RealField(19), sparse=True)                    # needs sage.rings.real_mpfr
             sage: f = (2-3.5*x)^3; f                                                    # needs sage.rings.real_mpfr
             -42.875*x^3 + 73.500*x^2 - 42.000*x + 8.0000
@@ -1075,12 +1078,13 @@ class Polynomial_generic_field(Polynomial_singular_repr,
 
         EXAMPLES::
 
+            sage: # needs sage.rings.number_field
             sage: R.<y> = PolynomialRing(QQ)
-            sage: K.<t> = NumberField(y^2 - 2)                                          # needs sage.rings.number_field
-            sage: P.<x> = PolynomialRing(K)                                             # needs sage.rings.number_field
-            sage: x.quo_rem(K(1))                                                       # needs sage.rings.number_field
+            sage: K.<t> = NumberField(y^2 - 2)
+            sage: P.<x> = PolynomialRing(K)
+            sage: x.quo_rem(K(1))
             (x, 0)
-            sage: x.xgcd(K(1))                                                          # needs sage.rings.number_field
+            sage: x.xgcd(K(1))
             (1, 0, 1)
         """
         P = self.parent()
@@ -1613,6 +1617,5 @@ except ImportError:
     pass
 else:
     from sage.misc.persist import register_unpickle_override
-    register_unpickle_override(
-        'sage.rings.polynomial.polynomial_element_generic',
-        'Polynomial_rational_dense', Polynomial_rational_flint)
+    register_unpickle_override('sage.rings.polynomial.polynomial_element_generic',
+                               'Polynomial_rational_dense', Polynomial_rational_flint)

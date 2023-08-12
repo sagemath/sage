@@ -79,12 +79,13 @@ cdef class PolynomialRingHomomorphism_from_base(RingHomomorphism_from_base):
             sage: F(2 * x, check=True)
             2*x
 
-            sage: k = GF(49, 'z')                                                       # needs sage.rings.finite_rings
+            sage: # needs sage.rings.finite_rings
+            sage: k = GF(49, 'z')
             sage: A = PolynomialRing(GF(7), 'x', sparse=True)
-            sage: B = PolynomialRing(k, 'x', sparse=True)                               # needs sage.rings.finite_rings
-            sage: g = GF(7).hom(k)                                                      # needs sage.rings.finite_rings
-            sage: G = PolynomialRingHomomorphism_from_base(A.Hom(B), g)                 # needs sage.rings.finite_rings
-            sage: G(A.gen()^1000000, True, construct=False)                             # needs sage.rings.finite_rings
+            sage: B = PolynomialRing(k, 'x', sparse=True)
+            sage: g = GF(7).hom(k)
+            sage: G = PolynomialRingHomomorphism_from_base(A.Hom(B), g)
+            sage: G(A.gen()^1000000, True, construct=False)
             x^1000000
 
         """

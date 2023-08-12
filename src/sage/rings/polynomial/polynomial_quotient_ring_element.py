@@ -161,16 +161,17 @@ class PolynomialQuotientRingElement(polynomial_singular_interface.Polynomial_sin
 
         EXAMPLES::
 
+            sage: # needs sage.rings.number_field
             sage: Zx.<x> = ZZ[]
-            sage: K.<i> = NumberField(x^2 + 1)                                          # needs sage.rings.number_field
-            sage: cc = K.hom([-i])                                                      # needs sage.rings.number_field
-            sage: S.<y> = K[]                                                           # needs sage.rings.number_field
-            sage: Q.<q> = S.quotient(y^2*(y-1)*(y-i))                                   # needs sage.rings.number_field
-            sage: T.<t> = S.quotient(y*(y+1))                                           # needs sage.rings.number_field
-            sage: phi = Q.hom([t+1], base_map=cc)                                       # needs sage.rings.number_field
-            sage: phi(q)                                                                # needs sage.rings.number_field
+            sage: K.<i> = NumberField(x^2 + 1)
+            sage: cc = K.hom([-i])
+            sage: S.<y> = K[]
+            sage: Q.<q> = S.quotient(y^2*(y-1)*(y-i))
+            sage: T.<t> = S.quotient(y*(y+1))
+            sage: phi = Q.hom([t+1], base_map=cc)
+            sage: phi(q)
             t + 1
-            sage: phi(i*q)                                                              # needs sage.rings.number_field
+            sage: phi(i*q)
             -i*t - i
         """
         return self._polynomial._im_gens_(codomain, im_gens, base_map=base_map)
@@ -468,15 +469,16 @@ class PolynomialQuotientRingElement(polynomial_singular_interface.Polynomial_sin
 
         EXAMPLES::
 
+            sage: # needs sage.rings.number_field
             sage: R.<x> = PolynomialRing(QQ)
             sage: S.<alpha> = R.quotient(x^3 - 2)
-            sage: F.<a>, f, g = alpha.field_extension()                                 # needs sage.rings.number_field
-            sage: F                                                                     # needs sage.rings.number_field
+            sage: F.<a>, f, g = alpha.field_extension()
+            sage: F
             Number Field in a with defining polynomial x^3 - 2
-            sage: a = F.gen()                                                           # needs sage.rings.number_field
-            sage: f(alpha)                                                              # needs sage.rings.number_field
+            sage: a = F.gen()
+            sage: f(alpha)
             a
-            sage: g(a)                                                                  # needs sage.rings.number_field
+            sage: g(a)
             alpha
 
         Over a finite field, the corresponding field extension is not a
@@ -493,28 +495,30 @@ class PolynomialQuotientRingElement(polynomial_singular_interface.Polynomial_sin
 
         We do an example involving a relative number field::
 
+            sage: # needs sage.rings.number_field
             sage: R.<x> = QQ['x']
-            sage: K.<a> = NumberField(x^3 - 2)                                          # needs sage.rings.number_field
-            sage: S.<X> = K['X']                                                        # needs sage.rings.number_field
-            sage: Q.<b> = S.quo(X^3 + 2*X + 1)                                          # needs sage.rings.number_field
-            sage: F, g, h = b.field_extension('c')                                      # needs sage.rings.number_field
+            sage: K.<a> = NumberField(x^3 - 2)
+            sage: S.<X> = K['X']
+            sage: Q.<b> = S.quo(X^3 + 2*X + 1)
+            sage: F, g, h = b.field_extension('c')
 
         Another more awkward example::
 
+            sage: # needs sage.rings.number_field
             sage: R.<x> = QQ['x']
-            sage: K.<a> = NumberField(x^3 - 2)                                          # needs sage.rings.number_field
-            sage: S.<X> = K['X']                                                        # needs sage.rings.number_field
-            sage: f = (X+a)^3 + 2*(X+a) + 1                                             # needs sage.rings.number_field
-            sage: f                                                                     # needs sage.rings.number_field
+            sage: K.<a> = NumberField(x^3 - 2)
+            sage: S.<X> = K['X']
+            sage: f = (X+a)^3 + 2*(X+a) + 1
+            sage: f
             X^3 + 3*a*X^2 + (3*a^2 + 2)*X + 2*a + 3
-            sage: Q.<z> = S.quo(f)                                                      # needs sage.rings.number_field
-            sage: F.<w>, g, h = z.field_extension()                                     # needs sage.rings.number_field
-            sage: c = g(z)                                                              # needs sage.rings.number_field
-            sage: f(c)                                                                  # needs sage.rings.number_field
+            sage: Q.<z> = S.quo(f)
+            sage: F.<w>, g, h = z.field_extension()
+            sage: c = g(z)
+            sage: f(c)
             0
-            sage: h(g(z))                                                               # needs sage.rings.number_field
+            sage: h(g(z))
             z
-            sage: g(h(w))                                                               # needs sage.rings.number_field
+            sage: g(h(w))
             w
 
         AUTHORS:
@@ -717,16 +721,17 @@ class PolynomialQuotientRingElement(polynomial_singular_interface.Polynomial_sin
 
         We make sure that the previous example works on random examples::
 
+            sage: # needs sage.rings.finite_rings
             sage: p = random_prime(50)
-            sage: K.<u> = GF((p, randrange(1,20)))                                      # needs sage.rings.finite_rings
-            sage: L.<v> = K.extension(randrange(2,20))                                  # needs sage.rings.finite_rings
-            sage: LK = L.over(K)                                                        # needs sage.rings.finite_rings
-            sage: a = L.random_element()                                                # needs sage.rings.finite_rings
-            sage: poly = LK(a).minpoly()  # indirect doctest                            # needs sage.rings.finite_rings
-            sage: poly(a)                                                               # needs sage.rings.finite_rings
+            sage: K.<u> = GF((p, randrange(1,20)))
+            sage: L.<v> = K.extension(randrange(2,20))
+            sage: LK = L.over(K)
+            sage: a = L.random_element()
+            sage: poly = LK(a).minpoly()  # indirect doctest
+            sage: poly(a)
             0
-            sage: abs_deg = a.minpoly().degree()                                        # needs sage.rings.finite_rings
-            sage: poly.degree() == abs_deg // gcd(abs_deg, K.degree())                  # needs sage.rings.finite_rings
+            sage: abs_deg = a.minpoly().degree()
+            sage: poly.degree() == abs_deg // gcd(abs_deg, K.degree())
             True
         """
         poly = self.lift()

@@ -274,13 +274,14 @@ def cyclotomic_value(n, x):
         sage: cyclotomic_value(30, -1.0)                                                # needs sage.rings.real_mpfr
         1.00000000000000
 
-        sage: S.<t> = R.quotient(R.cyclotomic_polynomial(15))                           # needs sage.libs.pari
-        sage: cyclotomic_value(15, t)                                                   # needs sage.libs.pari
+        sage: # needs sage.libs.pari
+        sage: S.<t> = R.quotient(R.cyclotomic_polynomial(15))
+        sage: cyclotomic_value(15, t)
         0
         sage: cyclotomic_value(30, t)                                                   # needs sage.libs.pari
         2*t^7 - 2*t^5 - 2*t^3 + 2*t
-        sage: S.<t> = R.quotient(x^10)                                                  # needs sage.libs.pari
-        sage: cyclotomic_value(2^128 - 1, t)                                            # needs sage.libs.pari
+        sage: S.<t> = R.quotient(x^10)
+        sage: cyclotomic_value(2^128 - 1, t)
         -t^7 - t^6 - t^5 + t^2 + t + 1
         sage: cyclotomic_value(10, mod(3,4))
         1

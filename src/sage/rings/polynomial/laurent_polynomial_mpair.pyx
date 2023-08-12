@@ -1349,15 +1349,15 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
         """
         EXAMPLES::
 
+            sage: # needs sage.symbolic
             sage: R.<x,y> = LaurentPolynomialRing(QQ)
             sage: f = x^3 + y/x
-            sage: g = f._symbolic_(SR); g                                               # needs sage.symbolic
+            sage: g = f._symbolic_(SR); g
             (x^4 + y)/x
-            sage: g(x=2, y=2)                                                           # needs sage.symbolic
+            sage: g(x=2, y=2)
             9
-
-            sage: g = SR(f)                                                             # needs sage.symbolic
-            sage: g(x=2, y=2)                                                           # needs sage.symbolic
+            sage: g = SR(f)
+            sage: g(x=2, y=2)
             9
         """
         d = {repr(g): R.var(g) for g in self._parent.gens()}

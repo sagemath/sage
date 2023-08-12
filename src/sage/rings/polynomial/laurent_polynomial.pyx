@@ -266,29 +266,29 @@ cdef class LaurentPolynomial(CommutativeAlgebraElement):
 
         Examples with different base ring::
 
-            sage: # needs sage.rings.finite_rings
+            sage: # needs sage.modules sage.rings.finite_rings
             sage: R.<r> = GF(9); S.<s> = GF(81)
             sage: h = Hom(R, S)[0]; h
             Ring morphism:
               From: Finite Field in r of size 3^2
               To:   Finite Field in s of size 3^4
               Defn: r |--> 2*s^3 + 2*s^2 + 1
-            sage: T.<X,Y> = LaurentPolynomialRing(R, 2)                                 # needs sage.modules
-            sage: f = r*X + Y                                                           # needs sage.modules
-            sage: g = f.map_coefficients(h); g                                          # needs sage.modules
+            sage: T.<X,Y> = LaurentPolynomialRing(R, 2)
+            sage: f = r*X + Y
+            sage: g = f.map_coefficients(h); g
             (2*s^3 + 2*s^2 + 1)*X + Y
-            sage: g.parent()                                                            # needs sage.modules
+            sage: g.parent()
             Multivariate Laurent Polynomial Ring in X, Y
              over Finite Field in s of size 3^4
             sage: h = lambda x: x.trace()
-            sage: g = f.map_coefficients(h); g                                          # needs sage.modules
+            sage: g = f.map_coefficients(h); g
             X - Y
-            sage: g.parent()                                                            # needs sage.modules
+            sage: g.parent()
             Multivariate Laurent Polynomial Ring in X, Y
              over Finite Field in r of size 3^2
-            sage: g = f.map_coefficients(h, new_base_ring=GF(3)); g                     # needs sage.modules
+            sage: g = f.map_coefficients(h, new_base_ring=GF(3)); g
             X - Y
-            sage: g.parent()                                                            # needs sage.modules
+            sage: g.parent()
             Multivariate Laurent Polynomial Ring in X, Y over Finite Field of size 3
 
         """
@@ -335,12 +335,12 @@ cdef class LaurentPolynomial_univariate(LaurentPolynomial):
 
             sage: # needs sage.rings.padics
             sage: S.<s> = LaurentPolynomialRing(GF(5))
-            sage: T.<t> = PolynomialRing(pAdicRing(5))                                  # needs sage.rings.finite_rings
-            sage: S(t)                                                                  # needs sage.rings.finite_rings
+            sage: T.<t> = PolynomialRing(pAdicRing(5))
+            sage: S(t)
             s
-            sage: parent(S(t))                                                          # needs sage.rings.finite_rings
+            sage: parent(S(t))
             Univariate Laurent Polynomial Ring in s over Finite Field of size 5
-            sage: parent(S(t)[1])                                                       # needs sage.rings.finite_rings
+            sage: parent(S(t)[1])
             Finite Field of size 5
 
         ::
@@ -817,22 +817,22 @@ cdef class LaurentPolynomial_univariate(LaurentPolynomial):
         """
         EXAMPLES::
 
+            sage: # needs sage.symbolic
             sage: R.<x> = LaurentPolynomialRing(QQ)
             sage: f = x^3 + 2/x
-            sage: g = f._symbolic_(SR); g                                               # needs sage.symbolic
+            sage: g = f._symbolic_(SR); g
             (x^4 + 2)/x
-            sage: g(x=2)                                                                # needs sage.symbolic
+            sage: g(x=2)
             9
-
-            sage: g = SR(f)                                                             # needs sage.symbolic
-            sage: g(x=2)                                                                # needs sage.symbolic
+            sage: g = SR(f)
+            sage: g(x=2)
             9
 
         Since :trac:`24072` the symbolic ring does not accept positive
         characteristic::
 
             sage: R.<w> = LaurentPolynomialRing(GF(7))
-            sage: SR(2*w^3 + 1)                                                         # needs sage.rings.finite_rings sage.symbolic
+            sage: SR(2*w^3 + 1)                                                         # needs sage.symbolic
             Traceback (most recent call last):
             ...
             TypeError: positive characteristic not allowed in symbolic computations
