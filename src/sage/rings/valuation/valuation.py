@@ -306,7 +306,8 @@ class InfiniteDiscretePseudoValuation(DiscretePseudoValuation):
 
         EXAMPLES::
 
-            sage: v = QQ.valuation(2)                                                   # needs sage.rings.padics
+            sage: # needs sage.rings.padics
+            sage: v = QQ.valuation(2)
             sage: R.<x> = QQ[]
             sage: v = GaussValuation(R, v)                                              # needs sage.rings.padics
             sage: v.is_discrete_valuation()                                             # needs sage.rings.padics
@@ -435,14 +436,15 @@ class DiscreteValuation(DiscretePseudoValuation):
 
         EXAMPLES::
 
-            sage: v = QQ.valuation(2)                                                   # needs sage.rings.padics
+            sage: # needs sage.rings.padics
+            sage: v = QQ.valuation(2)
             sage: R.<x> = QQ[]
             sage: v.mac_lane_approximants(x^2 + 1)                                      # needs sage.rings.padics
             [[ Gauss valuation induced by 2-adic valuation, v(x + 1) = 1/2 ]]
-            sage: v.mac_lane_approximants(x^2 + 1, required_precision=infinity)         # needs sage.rings.padics
+            sage: v.mac_lane_approximants(x^2 + 1, required_precision=infinity)
             [[ Gauss valuation induced by 2-adic valuation, v(x + 1) = 1/2,
                v(x^2 + 1) = +Infinity ]]
-            sage: v.mac_lane_approximants(x^2 + x + 1)                                  # needs sage.rings.padics
+            sage: v.mac_lane_approximants(x^2 + x + 1)
             [[ Gauss valuation induced by 2-adic valuation, v(x^2 + x + 1) = +Infinity ]]
 
         Note that ``G`` does not need to be irreducible. Here, we detect a
@@ -493,6 +495,7 @@ class DiscreteValuation(DiscretePseudoValuation):
 
         Cases with trivial residue field extensions::
 
+            sage: # needs sage.rings.padics
             sage: K.<x> = FunctionField(QQ)
             sage: S.<y> = K[]
             sage: F = y^2 - x^2 - x^3 - 3
@@ -617,6 +620,7 @@ class DiscreteValuation(DiscretePseudoValuation):
 
         Another problematic case::
 
+            sage: # needs sage.rings.number_field sage.rings.padics
             sage: R.<x> = QQ[]
             sage: Delta = x^12 + 20*x^11 + 154*x^10 + 664*x^9 + 1873*x^8 + 3808*x^7 + 5980*x^6 + 7560*x^5 + 7799*x^4 + 6508*x^3 + 4290*x^2 + 2224*x + 887
             sage: K.<theta> = NumberField(x^6 + 108)                                                # needs sage.rings.number_field
@@ -627,8 +631,8 @@ class DiscreteValuation(DiscretePseudoValuation):
             1
             sage: vK(theta)                                                                         # needs sage.rings.number_field sage.rings.padics
             1/3
-            sage: G = Delta.change_ring(K)                                                          # needs sage.rings.number_field
-            sage: vK.mac_lane_approximants(G)                                                       # needs sage.rings.number_field sage.rings.padics
+            sage: G = Delta.change_ring(K)
+            sage: vK.mac_lane_approximants(G)
             [[ Gauss valuation induced by 2-adic valuation, v(x + 1) = 1/4, v(x^4 + 1/2*theta^4 + 3*theta + 1) = 3/2 ],
              [ Gauss valuation induced by 2-adic valuation, v(x + 1) = 1/4, v(x^4 + 1/2*theta^4 + theta + 1) = 3/2 ],
              [ Gauss valuation induced by 2-adic valuation, v(x + 1) = 1/4, v(x^4 + 2*theta + 1) = 3/2 ]]
