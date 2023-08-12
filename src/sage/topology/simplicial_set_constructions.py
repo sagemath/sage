@@ -727,7 +727,6 @@ class Factors():
 
         EXAMPLES::
 
-            sage:
             sage: S2 = simplicial_sets.Sphere(2)
             sage: S3 = simplicial_sets.Sphere(3)
             sage: S2.wedge(S3).factors() == (S2, S3)
@@ -1217,7 +1216,6 @@ class PushoutOfSimplicialSets(SimplicialSet_arbitrary, UniqueRepresentation):
         `\bar{f}_i: Y_i \to P`; the latter are only implemented in
         Sage when each `Y_i` is finite. ::
 
-            sage:
             sage: P.defining_map(0) == f0
             True
             sage: P.structure_map(1)

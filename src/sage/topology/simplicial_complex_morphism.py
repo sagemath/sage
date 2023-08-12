@@ -361,6 +361,7 @@ class SimplicialComplexMorphism(Morphism):
 
         Some simplicial maps which reverse the orientation of a few simplices::
 
+            sage: # needs sage.modules
             sage: g = {0:1, 1:2, 2:0}
             sage: H(g).associated_chain_complex_morphism()._matrix_dictionary           # needs sage.modules
             {0: [0 0 1]
