@@ -1,4 +1,4 @@
-# sage.doctest: optional - sage.graphs          (because all doctests use the catalog simplicial_complexes)
+# sage.doctest: needs sage.graphs          (because all doctests use the catalog simplicial_complexes)
 r"""
 Induced morphisms on homology
 
@@ -198,7 +198,7 @@ class InducedHomologyMorphism(Morphism):
             sage: id = H.identity()
             sage: id.induced_homology_morphism(QQ).base_ring()
             Rational Field
-            sage: id.induced_homology_morphism(GF(13)).base_ring()                      # optional - sage.rings.finite_rings
+            sage: id.induced_homology_morphism(GF(13)).base_ring()
             Finite Field of size 13
         """
         return self._base_ring
@@ -312,7 +312,7 @@ class InducedHomologyMorphism(Morphism):
             sage: g = Hom(S1, K)({0: 0, 1:0, 2:0})
             sage: f.induced_homology_morphism(QQ) == g.induced_homology_morphism(QQ)
             True
-            sage: f.induced_homology_morphism(QQ) == g.induced_homology_morphism(GF(2))     # optional - sage.rings.finite_rings
+            sage: f.induced_homology_morphism(QQ) == g.induced_homology_morphism(GF(2))
             False
             sage: id = Hom(K, K).identity()   # different domain
             sage: f.induced_homology_morphism(QQ) == id.induced_homology_morphism(QQ)
