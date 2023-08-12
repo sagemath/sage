@@ -130,8 +130,7 @@ cdef class ActOnAction(GenericAction):
             y^2 + x - z
             sage: A(x + 2*y + 3*z, G((1,3,2)))
             2*x + 3*y + z
-
-            sage: type(A)                                                               # needs sage.groups
+            sage: type(A)
             <... 'sage.structure.coerce_actions.ActOnAction'>
         """
         return (<Element>g)._act_on_(x, self._is_left)
@@ -152,8 +151,7 @@ cdef class ActedUponAction(GenericAction):
             Infinity
             sage: A(matrix(ZZ, 2, [1,0,2,-1]), Cusp(1,2))
             Infinity
-
-            sage: type(A)                                                               # needs sage.modular sage.modules
+            sage: type(A)
             <... 'sage.structure.coerce_actions.ActedUponAction'>
         """
         return (<Element>x)._acted_upon_(g, not self._is_left)

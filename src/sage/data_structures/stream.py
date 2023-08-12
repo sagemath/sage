@@ -2526,12 +2526,12 @@ class Stream_cauchy_invert(Stream_unary):
 
             sage: from sage.data_structures.stream import Stream_function, Stream_cauchy_invert
             sage: f = Stream_function(lambda n: GF(7)(n), True, 0)
-            sage: [f[i] for i in range(5)]                                              # needs sage.rings.finite_rings
+            sage: [f[i] for i in range(5)]
             [0, 1, 2, 3, 4]
-            sage: h = Stream_cauchy_invert(f)                                           # needs sage.rings.finite_rings
-            sage: h._approximate_order                                                  # needs sage.rings.finite_rings
+            sage: h = Stream_cauchy_invert(f)
+            sage: h._approximate_order
             -1
-            sage: [h[i] for i in range(-2, 5)]                                          # needs sage.rings.finite_rings
+            sage: [h[i] for i in range(-2, 5)]
             [0, 1, 5, 1, 0, 0, 0]
         """
         try:
