@@ -432,8 +432,6 @@ from sage.features import PythonModule
 lazy_import('sage.graphs.mcqd', ['mcqd'],
             feature=PythonModule('sage.graphs.mcqd', spkg='mcqd'))
 
-from sage.misc.decorators import rename_keyword
-
 
 class Graph(GenericGraph):
     r"""
@@ -6920,7 +6918,6 @@ class Graph(GenericGraph):
         return BipartiteGraph(networkx.make_clique_bipartite(self.networkx_graph(), **kwds))
 
     @doc_index("Algorithmically hard stuff")
-    @rename_keyword(deprecation=32238, verbosity='verbose')
     def independent_set(self, algorithm="Cliquer", value_only=False, reduction_rules=True,
                         solver=None, verbose=0, *, integrality_tolerance=1e-3):
         r"""
@@ -7015,7 +7012,6 @@ class Graph(GenericGraph):
             return [u for u in self if u not in my_cover]
 
     @doc_index("Algorithmically hard stuff")
-    @rename_keyword(deprecation=32238, verbosity='verbose')
     def vertex_cover(self, algorithm="Cliquer", value_only=False,
                      reduction_rules=True, solver=None, verbose=0,
                      *, integrality_tolerance=1e-3):

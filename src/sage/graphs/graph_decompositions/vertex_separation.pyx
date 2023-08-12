@@ -271,7 +271,6 @@ from sage.graphs.graph_decompositions.fast_digraph cimport FastDigraph, compute_
 from libc.stdint cimport uint8_t
 from sage.data_structures.binary_matrix cimport *
 from sage.graphs.base.static_dense_graph cimport dense_graph_init
-from sage.misc.decorators import rename_keyword
 
 
 ###############
@@ -1377,7 +1376,6 @@ def _vertex_separation_MILP_formulation(G, integrality=False, solver=None):
     return p, x, u, y, z
 
 
-@rename_keyword(deprecation=32222, verbosity='verbose')
 def vertex_separation_MILP(G, integrality=False, solver=None, verbose=0,
                            *, integrality_tolerance=1e-3):
     r"""
