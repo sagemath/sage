@@ -1,4 +1,4 @@
-# sage.doctest: optional - sage.rings.padics
+# sage.doctest: needs sage.rings.padics
 r"""
 Local Generic
 

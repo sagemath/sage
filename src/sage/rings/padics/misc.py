@@ -91,25 +91,25 @@ def gauss_sum(a, p, f, prec=20, factored=False, algorithm='pari', parent=None):
     In this example, we verify that `g_3(0) = -1`::
 
         sage: from sage.rings.padics.misc import gauss_sum
-        sage: -gauss_sum(0, 3, 1)                                                       # optional - sage.rings.padics
+        sage: -gauss_sum(0, 3, 1)                                                       # needs sage.rings.padics
         1 + O(pi^40)
 
     Next, we verify that `g_5(a) g_5(-a) = 5 (-1)^a`::
 
         sage: from sage.rings.padics.misc import gauss_sum
-        sage: gauss_sum(2,5,1)^2 - 5                                                    # optional - sage.rings.padics
+        sage: gauss_sum(2,5,1)^2 - 5                                                    # needs sage.rings.padics
         O(pi^84)
-        sage: gauss_sum(1,5,1)*gauss_sum(3,5,1) + 5                                     # optional - sage.rings.padics
+        sage: gauss_sum(1,5,1)*gauss_sum(3,5,1) + 5                                     # needs sage.rings.padics
         O(pi^84)
 
     Finally, we compute a non-trivial value::
 
         sage: from sage.rings.padics.misc import gauss_sum
-        sage: gauss_sum(2,13,2)                                                         # optional - sage.rings.padics
+        sage: gauss_sum(2,13,2)                                                         # needs sage.rings.padics
         6*pi^2 + 7*pi^14 + 11*pi^26 + 3*pi^62 + 6*pi^74 + 3*pi^86 + 5*pi^98 +
         pi^110 + 7*pi^134 + 9*pi^146 + 4*pi^158 + 6*pi^170 + 4*pi^194 +
         pi^206 + 6*pi^218 + 9*pi^230 + O(pi^242)
-        sage: gauss_sum(2,13,2, prec=5, factored=True)                                  # optional - sage.rings.padics
+        sage: gauss_sum(2,13,2, prec=5, factored=True)                                  # needs sage.rings.padics
         (2, 6 + 6*13 + 10*13^2 + O(13^5))
 
     .. SEEALSO::
