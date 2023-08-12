@@ -1,196 +1,195 @@
 {
     "sage.doctest": {
-        "walltime": 1.1920928955078125e-05
+        "walltime": 3.0994415283203125e-05
     },
     "sage.doctest.all": {
-        "walltime": 1.2874603271484375e-05
+        "walltime": 4.124641418457031e-05
     },
     "sage.doctest.control": {
         "failed": true,
         "walltime": 1000000.0
     },
     "sage.doctest.external": {
-        "walltime": 0.09238290786743164
+        "walltime": 0.07589006423950195
     },
     "sage.doctest.fixtures": {
-        "failed": true,
-        "walltime": 0.037396907806396484
+        "walltime": 0.04161477088928223
     },
     "sage.doctest.forker": {
         "failed": true,
-        "walltime": 2.9036412239074707
+        "walltime": 3.1263277530670166
     },
     "sage.doctest.parsing": {
         "failed": true,
-        "walltime": 1.0061588287353516
+        "walltime": 1.0165939331054688
     },
     "sage.doctest.reporting": {
-        "walltime": 0.28805994987487793
+        "walltime": 0.3175969123840332
     },
     "sage.doctest.sources": {
         "failed": true,
-        "walltime": 0.8103640079498291
+        "walltime": 0.8338208198547363
     },
     "sage.doctest.test": {
-        "walltime": 2.308044910430908
+        "walltime": 2.544158935546875
     },
     "sage.doctest.util": {
-        "walltime": 0.6020698547363281
+        "walltime": 0.6333959102630615
     },
     "sage.misc.sage_eval": {
         "failed": true,
-        "walltime": 0.03503894805908203
+        "walltime": 0.053388118743896484
     },
     "sage.misc.sage_input": {
         "failed": true,
-        "walltime": 0.5711359977722168
+        "walltime": 0.633922815322876
     },
     "sage.repl": {
-        "walltime": 1.5974044799804688e-05
+        "walltime": 7.796287536621094e-05
     },
     "sage.repl.all": {
-        "walltime": 1.6927719116210938e-05
+        "walltime": 5.0067901611328125e-05
     },
     "sage.repl.attach": {
-        "walltime": 4.063691139221191
+        "walltime": 4.176033020019531
     },
     "sage.repl.configuration": {
-        "walltime": 3.580157995223999
+        "walltime": 3.6666619777679443
     },
     "sage.repl.display": {
-        "walltime": 1.7881393432617188e-05
+        "walltime": 3.62396240234375e-05
     },
     "sage.repl.display.fancy_repr": {
         "failed": true,
-        "walltime": 0.03377819061279297
+        "walltime": 0.04018902778625488
     },
     "sage.repl.display.formatter": {
-        "walltime": 3.077008008956909
+        "walltime": 3.2456729412078857
     },
     "sage.repl.display.jsmol_iframe": {
-        "walltime": 0.03763270378112793
+        "walltime": 0.04793381690979004
     },
     "sage.repl.display.pretty_print": {
         "failed": true,
-        "walltime": 0.019878864288330078
+        "walltime": 0.02730393409729004
     },
     "sage.repl.display.util": {
-        "walltime": 0.01500082015991211
+        "walltime": 0.019143104553222656
     },
     "sage.repl.image": {
-        "walltime": 0.009230852127075195
+        "walltime": 0.011890888214111328
     },
     "sage.repl.inputhook": {
-        "walltime": 2.8401312828063965
+        "walltime": 2.937437057495117
     },
     "sage.repl.interface_magic": {
         "failed": true,
-        "walltime": 2.821561098098755
+        "walltime": 2.907388210296631
     },
     "sage.repl.interpreter": {
         "failed": true,
-        "walltime": 3.910961866378784
+        "walltime": 4.273844957351685
     },
     "sage.repl.ipython_extension": {
         "failed": true,
-        "walltime": 3.0714738368988037
+        "walltime": 3.6695098876953125
     },
     "sage.repl.ipython_kernel": {
-        "walltime": 1.3113021850585938e-05
+        "walltime": 3.886222839355469e-05
     },
     "sage.repl.ipython_kernel.__main__": {
-        "walltime": 1.5020370483398438e-05
+        "walltime": 3.981590270996094e-05
     },
     "sage.repl.ipython_kernel.all_jupyter": {
-        "walltime": 0.0014872550964355469
+        "walltime": 0.0016360282897949219
     },
     "sage.repl.ipython_kernel.install": {
         "failed": true,
-        "walltime": 2.4241766929626465
+        "walltime": 2.4870638847351074
     },
     "sage.repl.ipython_kernel.interact": {
         "failed": true,
-        "walltime": 2.303104877471924
+        "walltime": 2.3817617893218994
     },
     "sage.repl.ipython_kernel.kernel": {
-        "walltime": 2.3928980827331543
+        "walltime": 2.5394649505615234
     },
     "sage.repl.ipython_kernel.widgets": {
         "failed": true,
-        "walltime": 2.2856409549713135
+        "walltime": 2.363732099533081
     },
     "sage.repl.ipython_kernel.widgets_sagenb": {
         "failed": true,
-        "walltime": 1.9353961944580078
+        "walltime": 1.9983527660369873
     },
     "sage.repl.ipython_tests": {
         "failed": true,
-        "walltime": 1.1672089099884033
+        "walltime": 1.1445958614349365
     },
     "sage.repl.load": {
         "failed": true,
-        "walltime": 0.04596877098083496
+        "walltime": 0.04622602462768555
     },
     "sage.repl.preparse": {
         "failed": true,
-        "walltime": 0.5361199378967285
+        "walltime": 0.6935527324676514
     },
     "sage.repl.prompts": {
-        "walltime": 0.0016682147979736328
+        "walltime": 0.0017600059509277344
     },
     "sage.repl.rich_output": {
-        "walltime": 9.775161743164062e-06
+        "walltime": 5.888938903808594e-05
     },
     "sage.repl.rich_output.backend_base": {
         "failed": true,
-        "walltime": 0.0824289321899414
+        "walltime": 0.09695982933044434
     },
     "sage.repl.rich_output.backend_doctest": {
-        "walltime": 0.04854893684387207
+        "walltime": 0.06019091606140137
     },
     "sage.repl.rich_output.backend_emacs": {
-        "walltime": 0.021325111389160156
+        "walltime": 0.02801799774169922
     },
     "sage.repl.rich_output.backend_ipython": {
-        "walltime": 0.4197371006011963
+        "walltime": 0.5140688419342041
     },
     "sage.repl.rich_output.buffer": {
-        "walltime": 0.05136513710021973
+        "walltime": 0.057984113693237305
     },
     "sage.repl.rich_output.display_manager": {
         "failed": true,
-        "walltime": 0.09068417549133301
+        "walltime": 0.09621620178222656
     },
     "sage.repl.rich_output.output_basic": {
-        "walltime": 0.050901174545288086
+        "walltime": 0.05719709396362305
     },
     "sage.repl.rich_output.output_browser": {
-        "walltime": 0.01867198944091797
+        "walltime": 0.020914316177368164
     },
     "sage.repl.rich_output.output_catalog": {
-        "walltime": 0.0016188621520996094
+        "walltime": 0.0020339488983154297
     },
     "sage.repl.rich_output.output_graphics": {
-        "walltime": 0.04993486404418945
+        "walltime": 0.06133699417114258
     },
     "sage.repl.rich_output.output_graphics3d": {
-        "walltime": 0.05600881576538086
+        "walltime": 0.06472015380859375
     },
     "sage.repl.rich_output.output_video": {
-        "walltime": 0.03778386116027832
+        "walltime": 0.04546976089477539
     },
     "sage.repl.rich_output.preferences": {
-        "walltime": 0.06389713287353516
+        "walltime": 0.07713794708251953
     },
     "sage.repl.rich_output.pretty_print": {
         "failed": true,
-        "walltime": 0.0302579402923584
+        "walltime": 0.03710484504699707
     },
     "sage.repl.rich_output.test_backend": {
         "failed": true,
-        "walltime": 0.03464221954345703
+        "walltime": 0.03967714309692383
     },
     "sage.repl.user_globals": {
-        "walltime": 0.007019996643066406
+        "walltime": 0.007676839828491211
     }
 }
