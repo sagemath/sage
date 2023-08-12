@@ -1619,17 +1619,17 @@ class BinaryQF(SageObject):
 
         Also when using the ``"cornacchia"`` algorithm::
 
-            asge: # needs sage.libs.pari
+            sage: # needs sage.libs.pari
             sage: abc = [1, 0, randrange(1,10^3)]
             sage: Q = BinaryQF(abc)
-            sage: n = random_prime(10^9)                                                # needs sage.libs.pari
-            sage: if randrange(2):                                                      # needs sage.libs.pari
+            sage: n = random_prime(10^9)
+            sage: if randrange(2):
             ....:     n *= 4
-            sage: xy1 = Q.solve_integer(n, algorithm='cornacchia')                      # needs sage.libs.pari
-            sage: xy1 is None or Q(*xy1) == n                                           # needs sage.libs.pari
+            sage: xy1 = Q.solve_integer(n, algorithm='cornacchia')
+            sage: xy1 is None or Q(*xy1) == n
             True
-            sage: xy2 = Q.solve_integer(n)                                              # needs sage.libs.pari
-            sage: (xy1 is None) == (xy2 is None)                                        # needs sage.libs.pari
+            sage: xy2 = Q.solve_integer(n)
+            sage: (xy1 is None) == (xy2 is None)
             True
 
         Test for square discriminants specifically (:trac:`33026`)::
