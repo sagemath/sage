@@ -302,7 +302,7 @@ class LaurentPolynomialRing_generic(CommutativeRing, Parent):
             sage: P == R
             False
         """
-        if type(self) != type(right):
+        if type(self) is not type(right):
             return False
         return self._R == right._R
 

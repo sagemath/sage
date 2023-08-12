@@ -113,7 +113,7 @@ class TateCurve(SageObject):
             sage: eq7 == eq5
             False
         """
-        if type(self) != type(other):
+        if type(self) is not type(other):
             return NotImplemented
 
         return richcmp((self._E, self._p), (other._E, other._p), op)

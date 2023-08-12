@@ -224,7 +224,7 @@ class pAdicLseries(SageObject):
             sage: lp1 == lp3
             False
         """
-        if type(self) != type(other):
+        if type(self) is not type(other):
             return NotImplemented
         return richcmp((self._E, self._p), (other._E, other._p), op)
 

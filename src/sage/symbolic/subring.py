@@ -604,7 +604,7 @@ class GenericSymbolicSubringFunctor(ConstructionFunctor):
             sage: F == F
             True
         """
-        return type(self) == type(other) and self.vars == other.vars
+        return type(self) is type(other) and self.vars == other.vars
 
     def __ne__(self, other):
         r"""
@@ -767,7 +767,7 @@ class SymbolicSubringAcceptingVarsFunctor(GenericSymbolicSubringFunctor):
         """
         if self == other:
             return self
-        elif type(self) == type(other):
+        elif type(self) is type(other):
             return type(self)(self.vars | other.vars)
         elif isinstance(other, SymbolicSubringRejectingVarsFunctor):
             if not (self.vars & other.vars):
@@ -968,7 +968,7 @@ class SymbolicSubringRejectingVarsFunctor(GenericSymbolicSubringFunctor):
         """
         if self == other:
             return self
-        elif type(self) == type(other):
+        elif type(self) is type(other):
             return type(self)(self.vars & other.vars)
         elif isinstance(other, SymbolicSubringAcceptingVarsFunctor):
             if not (self.vars & other.vars):

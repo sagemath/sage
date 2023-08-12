@@ -1741,7 +1741,7 @@ class ResidueReductionMap(Morphism):
             sage: f == g
             True
         """
-        if type(self) != type(other):
+        if type(self) is not type(other):
             return NotImplemented
         return richcmp((self.domain(), self.codomain()), (other.domain(), other.codomain()), op)
 
@@ -1874,7 +1874,7 @@ class ResidueLiftingMap(Morphism):
             sage: f == g
             True
         """
-        if type(self) != type(other):
+        if type(self) is not type(other):
             return NotImplemented
         return richcmp((self.domain(), self.codomain()), (other.domain(), other.codomain()), op)
 
