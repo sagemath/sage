@@ -1524,7 +1524,7 @@ class Graph(GenericGraph):
             sage: G.is_tree(certificate=True)
             (False, [1, 2])
             sage: G.is_tree(certificate=True, output='edge')
-            (False, [(1, 2, 'a'), (2, 1, 'b')])
+            (False, [(1, 2, 'b'), (2, 1, 'a')])
 
         TESTS:
 
@@ -1552,6 +1552,16 @@ class Graph(GenericGraph):
             (False, [0])
             sage: G.is_tree(certificate=True, output='edge')
             (False, [(0, 0, None)])
+
+        Case of edges with incomparable types (see :trac:`35903`)::
+
+            sage: G = Graph(multiedges=True)
+            sage: G.add_cycle(['A', 1, 2, 3])
+            sage: G.add_cycle(['A', 1, 2, 3])
+            sage: G.is_tree(certificate=True, output='vertex')
+            (False, ['A', 1])
+            sage: G.is_tree(certificate=True, output='edge')
+            (False, [('A', 1, None), (1, 'A', None)])
         """
         if output not in ['vertex', 'edge']:
             raise ValueError('output must be either vertex or edge')
@@ -1569,12 +1579,18 @@ class Graph(GenericGraph):
                     return False, L[:1]
 
             if self.has_multiple_edges():
+                multiple_edges = self.multiple_edges(sort=False)
                 if output == 'vertex':
-                    return (False, list(self.multiple_edges(sort=True)[0][:2]))
-                edge1, edge2 = self.multiple_edges(sort=True)[:2]
-                if edge1[0] != edge2[0]:
-                    return (False, [edge1, edge2])
-                return (False, [edge1, (edge2[1], edge2[0], edge2[2])])
+                    return (False, list(multiple_edges[0][:2]))
+                # Search for 2 edges between u and v.
+                # We do this way to handle the case of edges with incomparable
+                # types
+                u1, v1, w1 = multiple_edges[0]
+                for u2, v2, w2 in multiple_edges[1:]:
+                    if u1 == u2 and v1 == v2:
+                        return (False, [(u1, v1, w1), (v2, u2, w2)])
+                    elif u1 == v2 and v1 == u2:
+                        return (False, [(u1, v1, w1), (u2, v2, w2)])
 
             if output == 'edge':
                 if self.allows_multiple_edges():
