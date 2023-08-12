@@ -423,8 +423,10 @@ cpdef bint is_numpy_type(t):
     EXAMPLES::
 
         sage: from sage.structure.coerce import is_numpy_type
-        sage: import numpy                                                              # needs numpy
-        sage: is_numpy_type(numpy.int16)                                                # needs numpy
+
+        sage: # needs numpy
+        sage: import numpy
+        sage: is_numpy_type(numpy.int16)
         True
         sage: is_numpy_type(numpy.floating)                                             # needs numpy
         True
@@ -432,6 +434,7 @@ cpdef bint is_numpy_type(t):
         True
         sage: is_numpy_type(numpy.matrix)                                               # needs numpy
         True
+
         sage: is_numpy_type(int)
         False
         sage: is_numpy_type(Integer)
@@ -923,10 +926,11 @@ cdef class CoercionModel:
     cpdef analyse(self, xp, yp, op=mul):
         """
         Emulate the process of doing arithmetic between xp and yp, returning
-        a list of steps and the parent that the result will live in. The
-        ``explain`` function is easier to use, but if one wants access to
+        a list of steps and the parent that the result will live in.
+
+        The :meth:`explain` method is easier to use, but if one wants access to
         the actual morphism and action objects (rather than their string
-        representations) then this is the function to use.
+        representations), then this is the function to use.
 
         EXAMPLES::
 
@@ -934,9 +938,11 @@ cdef class CoercionModel:
             sage: GF7 = GF(7)
             sage: steps, res = cm.analyse(GF7, ZZ)
             sage: steps
-            ['Coercion on right operand via', Natural morphism:
+            ['Coercion on right operand via',
+             Natural morphism:
               From: Integer Ring
-              To:   Finite Field of size 7, 'Arithmetic performed after coercions.']
+              To:   Finite Field of size 7,
+             'Arithmetic performed after coercions.']
             sage: res
             Finite Field of size 7
             sage: f = steps[1]; type(f)
@@ -1016,9 +1022,10 @@ cdef class CoercionModel:
 
     def common_parent(self, *args):
         """
-        Computes a common parent for all the inputs. It's essentially
-        an `n`-ary canonical coercion except it can operate on parents
-        rather than just elements.
+        Compute a common parent for all the inputs.
+
+        It's essentially an `n`-ary canonical coercion except it can
+        operate on parents rather than just elements.
 
         INPUT:
 
@@ -1027,7 +1034,7 @@ cdef class CoercionModel:
         OUTPUT:
 
         A :class:`Parent` into which each input should coerce, or raises a
-        ``TypeError`` if no such :class:`Parent` can be found.
+        :class:`TypeError` if no such :class:`Parent` can be found.
 
         EXAMPLES::
 
@@ -1122,23 +1129,25 @@ cdef class CoercionModel:
 
     cpdef bin_op(self, x, y, op):
         """
-        Execute the operation op on x and y. It first looks for an action
-        corresponding to op, and failing that, it tries to coerces x and y
-        into a common parent and calls op on them.
+        Execute the operation ``op`` on `x` and `y`.
 
-        If it cannot make sense of the operation, a TypeError is raised.
+        It first looks for an action
+        corresponding to ``op``, and failing that, it tries to coerce `x` and `y`
+        into a common parent and calls ``op`` on them.
+
+        If it cannot make sense of the operation, a :class:`TypeError` is raised.
 
         INPUT:
 
-        - ``x``  - the left operand
+        - ``x`` -- the left operand
 
-        - ``y``  - the right operand
+        - ``y`` -- the right operand
 
-        - ``op`` - a python function taking 2 arguments
+        - ``op`` -- a python function taking 2 arguments
 
           .. NOTE::
 
-             op is often an arithmetic operation, but need not be so.
+             ``op`` is often an arithmetic operation, but need not be so.
 
         EXAMPLES::
 
@@ -1268,26 +1277,28 @@ cdef class CoercionModel:
 
     cpdef canonical_coercion(self, x, y):
         r"""
-        Given two elements x and y, with parents S and R respectively,
-        find a common parent Z such that there are coercions
-        `f: S \mapsto Z` and `g: R \mapsto Z` and return `f(x), g(y)`
+        Given two elements `x` and `y`, with parents `S` and `R` respectively,
+        find a common parent `Z` such that there are coercions
+        `f: S \to Z` and `g: R \to Z` and return `f(x), g(y)`,
         which will have the same parent.
 
-        Raises a type error if no such Z can be found.
+        Raises a type error if no such `Z` can be found.
 
         EXAMPLES::
 
             sage: cm = sage.structure.element.get_coercion_model()
             sage: cm.canonical_coercion(mod(2, 10), 17)
             (2, 7)
-            sage: x, y = cm.canonical_coercion(1/2, matrix(ZZ, 2, 2, range(4)))         # needs sage.modules
-            sage: x                                                                     # needs sage.modules
+
+            sage: # needs sage.modules
+            sage: x, y = cm.canonical_coercion(1/2, matrix(ZZ, 2, 2, range(4)))
+            sage: x
             [1/2   0]
             [  0 1/2]
-            sage: y                                                                     # needs sage.modules
+            sage: y
             [0 1]
             [2 3]
-            sage: parent(x) is parent(y)                                                # needs sage.modules
+            sage: parent(x) is parent(y)
             True
 
         There is some support for non-Sage datatypes as well::
@@ -1295,7 +1306,6 @@ cdef class CoercionModel:
             sage: x, y = cm.canonical_coercion(int(5), 10)
             sage: type(x), type(y)
             (<class 'sage.rings.integer.Integer'>, <class 'sage.rings.integer.Integer'>)
-
 
             sage: x, y = cm.canonical_coercion(int(5), complex(3))
             sage: type(x), type(y)
@@ -1411,7 +1421,6 @@ cdef class CoercionModel:
 
         raise TypeError("no common canonical parent for objects with parents: '%s' and '%s'"%(xp, yp))
 
-
     cpdef coercion_maps(self, R, S):
         r"""
         Give two parents `R` and `S`, return a pair of coercion maps
@@ -1471,12 +1480,14 @@ cdef class CoercionModel:
             False
             sage: cm = sage.structure.element.get_coercion_model()
             sage: cm.coercion_maps(V, W)
-            (None, (map internal to coercion system -- copy before use)
+            (None,
+             (map internal to coercion system -- copy before use)
              Coercion map:
                From: Vector space of dimension 3 over Rational Field
                To:   Vector space of dimension 3 over Rational Field)
             sage: cm.coercion_maps(W, V)
-            (None, (map internal to coercion system -- copy before use)
+            (None,
+             (map internal to coercion system -- copy before use)
              Coercion map:
                From: Vector space of dimension 3 over Rational Field
                To:   Vector space of dimension 3 over Rational Field)
@@ -1492,17 +1503,18 @@ cdef class CoercionModel:
         We check that with :trac:`14058`, parents are still eligible for
         garbage collection after being involved in binary operations::
 
+            sage: # needs sage.libs.pari
             sage: import gc
             sage: T = type(GF(2))
-            sage: gc.collect() #random
+            sage: gc.collect()  # random
             852
             sage: N0 = len(list(o for o in gc.get_objects() if type(o) is T))
-            sage: L = [ZZ(1) + GF(p)(1) for p in prime_range(2, 50)]                    # needs sage.rings.finite_rings
+            sage: L = [ZZ(1) + GF(p)(1) for p in prime_range(2, 50)]
             sage: N1 = len(list(o for o in gc.get_objects() if type(o) is T))
-            sage: N1 > N0                                                               # needs sage.rings.finite_rings
+            sage: N1 > N0
             True
-            sage: del L                                                                 # needs sage.rings.finite_rings
-            sage: gc.collect() #random
+            sage: del L
+            sage: gc.collect()  # random
             3939
             sage: N2 = len(list(o for o in gc.get_objects() if type(o) is T))
             sage: N2 - N0
@@ -1560,7 +1572,7 @@ cdef class CoercionModel:
 
     cpdef verify_coercion_maps(self, R, S, homs, bint fix=False):
         """
-        Make sure this is a valid pair of homomorphisms from R and S to a common parent.
+        Make sure this is a valid pair of homomorphisms from `R` and `S` to a common parent.
         This function is used to protect the user against buggy parents.
 
         EXAMPLES::
@@ -1630,7 +1642,7 @@ cdef class CoercionModel:
     cpdef discover_coercion(self, R, S):
         """
         This actually implements the finding of coercion maps as described in
-        the ``coercion_maps`` method.
+        the :meth:`coercion_maps` method.
 
         EXAMPLES::
 
@@ -1810,15 +1822,15 @@ cdef class CoercionModel:
         """
         INPUT:
 
-        - ``R`` - the left Parent (or type)
-        - ``S`` - the right Parent (or type)
-        - ``op`` - the operand, typically an element of the operator module
-        - ``r`` - (optional) element of R
-        - ``s`` - (optional) element of S.
+        - ``R`` -- the left :class:`Parent` (or type)
+        - ``S`` -- the right :class:`Parent` (or type)
+        - ``op`` -- the operand, typically an element of the :mod:`operator` module
+        - ``r`` -- (optional) element of `R`
+        - ``s`` -- (optional) element of `S`.
 
         OUTPUT:
 
-        - An action A such that s op r is given by A(s,r).
+        - An action `A` such that `s` ``op`` `r` is given by `A(s,r)`.
 
         The steps taken are illustrated below.
 
@@ -1832,13 +1844,14 @@ cdef class CoercionModel:
             True
             sage: cm = sage.structure.element.get_coercion_model()
 
-        If R or S is a Parent, ask it for an action by/on R::
+        If `R` or `S` is a :class:`Parent`, ask it for an action by/on `R`::
 
             sage: cm.discover_action(ZZ, P, operator.mul)
             Left scalar multiplication by Integer Ring on
              Univariate Polynomial Ring in x over Integer Ring
 
-        If R or S a type, recursively call get_action with the Sage versions of R and/or S::
+        If `R` or `S` a type, recursively call :meth:`get_action`
+        with the Sage versions of `R` and/or `S`::
 
             sage: cm.discover_action(P, int, operator.mul)
             Right scalar multiplication by Integer Ring on
@@ -1847,7 +1860,7 @@ cdef class CoercionModel:
               From: Set of Python objects of class 'int'
               To:   Integer Ring
 
-        If op is division, look for action on right by inverse::
+        If ``op`` is division, look for action on ``right`` by inverse::
 
             sage: cm.discover_action(P, ZZ, operator.truediv)
             Right inverse action by Rational Field on

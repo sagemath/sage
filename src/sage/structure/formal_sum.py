@@ -1,4 +1,3 @@
-# sage.doctest: needs sage.modules
 """
 Formal sums
 

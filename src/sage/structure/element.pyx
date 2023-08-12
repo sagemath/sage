@@ -2000,16 +2000,18 @@ cdef class Element(SageObject):
 
         ::
 
-            sage: (2/3)^I                                                               # needs sage.symbolic
+            sage: # needs sage.symbolic
+            sage: (2/3)^I
             (2/3)^I
-            sage: (2/3)^sqrt(2)                                                         # needs sage.symbolic
+            sage: (2/3)^sqrt(2)
             (2/3)^sqrt(2)
-            sage: var('x,y,z,n')                                                        # needs sage.symbolic
+            sage: var('x,y,z,n')
             (x, y, z, n)
-            sage: (2/3)^(x^n + y^n + z^n)                                               # needs sage.symbolic
+            sage: (2/3)^(x^n + y^n + z^n)
             (2/3)^(x^n + y^n + z^n)
-            sage: (-7/11)^(tan(x)+exp(x))                                               # needs sage.symbolic
+            sage: (-7/11)^(tan(x)+exp(x))
             (-7/11)^(e^x + tan(x))
+
             sage: float(1.2)**(1/2)
             1.0954451150103321
             sage: complex(1,2)**(1/2)                                                   # needs sage.rings.complex_double
@@ -2189,6 +2191,7 @@ cdef class ElementWithCachedMethod(Element):
     category whose element and parent classes define cached methods.
     ::
 
+        sage: # needs sage.misc.cython
         sage: cython_code = ["from sage.structure.element cimport Element, ElementWithCachedMethod",
         ....:     "from sage.structure.richcmp cimport richcmp",
         ....:     "cdef class MyBrokenElement(Element):",
@@ -2225,7 +2228,7 @@ cdef class ElementWithCachedMethod(Element):
         ....:     "from sage.structure.parent cimport Parent",
         ....:     "cdef class MyParent(Parent):",
         ....:     "    Element = MyElement"]
-        sage: cython('\n'.join(cython_code))                                            # needs sage.misc.cython
+        sage: cython('\n'.join(cython_code))
         sage: cython_code = ["from sage.misc.cachefunc import cached_method",
         ....:     "from sage.misc.cachefunc import cached_in_parent_method",
         ....:     "from sage.categories.category import Category",
@@ -2248,11 +2251,11 @@ cdef class ElementWithCachedMethod(Element):
         ....:     "        @cached_method",
         ....:     "        def invert(self, x):",
         ....:     "            return -x"]
-        sage: cython('\n'.join(cython_code))                                            # needs sage.misc.cython
-        sage: C = MyCategory()                                                          # needs sage.misc.cython
-        sage: P = MyParent(category=C)                                                  # needs sage.misc.cython
-        sage: ebroken = MyBrokenElement(P, 5)                                           # needs sage.misc.cython
-        sage: e = MyElement(P, 5)                                                       # needs sage.misc.cython
+        sage: cython('\n'.join(cython_code))
+        sage: C = MyCategory()
+        sage: P = MyParent(category=C)
+        sage: ebroken = MyBrokenElement(P, 5)
+        sage: e = MyElement(P, 5)
 
     The cached methods inherited by ``MyElement`` works::
 
@@ -2892,16 +2895,17 @@ cdef class RingElement(ModuleElement):
 
         For polynomial rings, prime is the same as irreducible::
 
+            sage: # needs sage.libs.singular
             sage: R.<x,y> = QQ[]
-            sage: x.is_prime()                                                          # needs sage.libs.singular
+            sage: x.is_prime()
             True
-            sage: (x^2 + y^3).is_prime()                                                # needs sage.libs.singular
+            sage: (x^2 + y^3).is_prime()
             True
-            sage: (x^2 - y^2).is_prime()                                                # needs sage.libs.singular
+            sage: (x^2 - y^2).is_prime()
             False
-            sage: R(0).is_prime()                                                       # needs sage.libs.singular
+            sage: R(0).is_prime()
             False
-            sage: R(2).is_prime()                                                       # needs sage.libs.singular
+            sage: R(2).is_prime()
             False
 
         For the Gaussian integers::
@@ -3239,55 +3243,64 @@ cdef class CommutativeRingElement(RingElement):
 
     def sqrt(self, extend=True, all=False, name=None):
         """
-        It computes the square root.
+        Compute the square root.
 
         INPUT:
 
-        -  ``extend`` - Whether to make a ring extension containing a square root if ``self`` is not a square (default: ``True``)
+        - ``extend`` -- boolean (default: ``True``); whether to make a ring
+           extension containing a square root if ``self`` is not a square
 
-        -  ``all`` - Whether to return a list of all square roots or just a square root (default: False)
+        - ``all`` -- boolean (default: ``False``); whether to return a list of
+           all square roots or just a square root
 
-        -  ``name`` - Required when ``extend=True`` and ``self`` is not a square. This will be the name of the generator extension.
+        - ``name`` -- required when ``extend=True`` and ``self`` is not a
+           square. This will be the name of the generator of the extension.
 
         OUTPUT:
 
-        - if ``all=False`` it returns a square root. (throws an error if ``extend=False`` and ``self`` is not a square)
+        - if ``all=False``, a square root; raises an error if ``extend=False``
+          and ``self`` is not a square
 
-        - if ``all=True`` it returns a list of all the square roots (could be empty if ``extend=False`` and ``self`` is not a square)
+        - if ``all=True``, a list of all the square roots (empty if
+          ``extend=False`` and ``self`` is not a square)
 
         ALGORITHM:
 
-        It uses ``is_square(root=true)`` for the hard part of the work, the rest is just wrapper code.
+        It uses ``is_square(root=true)`` for the hard part of the work, the rest
+        is just wrapper code.
 
         EXAMPLES::
 
+            sage: # needs sage.libs.pari
             sage: R.<x> = ZZ[]
             sage: (x^2).sqrt()                                                          # needs sage.libs.pari
             x
-            sage: f = x^2 - 4*x + 4; f.sqrt(all=True)                                   # needs sage.libs.pari
+            sage: f = x^2 - 4*x + 4; f.sqrt(all=True)
             [x - 2, -x + 2]
-            sage: sqrtx = x.sqrt(name="y"); sqrtx                                       # needs sage.libs.pari
+            sage: sqrtx = x.sqrt(name="y"); sqrtx
             y
             sage: sqrtx^2                                                               # needs sage.libs.pari
             x
-            sage: x.sqrt(all=true, name="y")                                            # needs sage.libs.pari
+            sage: x.sqrt(all=true, name="y")
             [y, -y]
-            sage: x.sqrt(extend=False, all=True)                                        # needs sage.libs.pari
+            sage: x.sqrt(extend=False, all=True)
             []
             sage: x.sqrt()                                                              # needs sage.libs.pari
             Traceback (most recent call last):
             ...
-            TypeError: Polynomial is not a square. You must specify the name of the square root when using the default extend = True
-            sage: x.sqrt(extend=False)                                                  # needs sage.libs.pari
+            TypeError: Polynomial is not a square. You must specify the name
+            of the square root when using the default extend = True
+            sage: x.sqrt(extend=False)
             Traceback (most recent call last):
             ...
             ValueError: trying to take square root of non-square x with extend = False
 
         TESTS::
 
-            sage: f = (x + 3)^2; f.sqrt()                                               # needs sage.libs.pari
+            sage: # needs sage.libs.pari
+            sage: f = (x + 3)^2; f.sqrt()
             x + 3
-            sage: f = (x + 3)^2; f.sqrt(all=True)                                       # needs sage.libs.pari
+            sage: f = (x + 3)^2; f.sqrt(all=True)
             [x + 3, -x - 3]
             sage: f = (x^2 - x + 3)^2; f.sqrt()                                         # needs sage.libs.pari
             x^2 - x + 3
@@ -3313,14 +3326,15 @@ cdef class CommutativeRingElement(RingElement):
             y
             sage: sqrtx^2
             1/x
-            sage: (1/x).sqrt(all=true,name="y")
+            sage: (1/x).sqrt(all=true, name="y")
             [y, -y]
-            sage: (1/x).sqrt(extend=False,all=True)
+            sage: (1/x).sqrt(extend=False, all=True)
             []
             sage: (1/(x^2-1)).sqrt()
             Traceback (most recent call last):
             ...
-            TypeError: Polynomial is not a square. You must specify the name of the square root when using the default extend = True
+            TypeError: Polynomial is not a square. You must specify the name
+            of the square root when using the default extend = True
             sage: (1/(x^2-3)).sqrt(extend=False)
             Traceback (most recent call last):
             ...
@@ -3719,33 +3733,34 @@ cdef class Vector(ModuleElementWithMutability):
 
         EXAMPLES::
 
-            sage: # needs sage.modules
+            sage: # optional - magma, needs sage.modules
             sage: v = vector([1,2,3])
-            sage: v._magma_init_(magma)                 # optional - magma
+            sage: v._magma_init_(magma)
             '_sage_[...]![1,2,3]'
-            sage: mv = magma(v); mv                     # optional - magma
+            sage: mv = magma(v); mv
             (1 2 3)
-            sage: mv.Type()                             # optional - magma
+            sage: mv.Type()
             ModTupRngElt
-            sage: mv.Parent()                           # optional - magma
+            sage: mv.Parent()
             Full RSpace of degree 3 over Integer Ring
 
-            sage: # needs sage.modules
+            sage: # optional - magma, needs sage.modules
             sage: v = vector(QQ, [1/2, 3/4, 5/6])
-            sage: mv = magma(v); mv                     # optional - magma
+            sage: mv = magma(v); mv
             (1/2 3/4 5/6)
-            sage: mv.Type()                             # optional - magma
+            sage: mv.Type()
             ModTupFldElt
-            sage: mv.Parent()                           # optional - magma
+            sage: mv.Parent()
             Full Vector space of degree 3 over Rational Field
 
         A more demanding example::
 
+            sage: # optional - magma, needs sage.modules
             sage: R.<x,y,z> = QQ[]
-            sage: v = vector([x^3, y, 2/3*z + x/y])                                     # needs sage.modules
-            sage: magma(v)                              # optional - magma              # needs sage.modules
+            sage: v = vector([x^3, y, 2/3*z + x/y])
+            sage: magma(v)
             (            x^3               y (2/3*y*z + x)/y)
-            sage: magma(v).Parent()                     # optional - magma              # needs sage.modules
+            sage: magma(v).Parent()
             Full Vector space of degree 3
              over Multivariate rational function field of rank 3 over Rational Field
         """

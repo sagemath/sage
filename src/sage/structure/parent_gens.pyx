@@ -244,18 +244,20 @@ cdef class ParentWithGens(ParentWithBase):
             sage: f = R.hom([5], GF(7))
             Traceback (most recent call last):
             ...
-            ValueError: relations do not all (canonically) map to 0 under map determined by images of generators
+            ValueError: relations do not all (canonically) map to 0
+            under map determined by images of generators
 
+            sage: # needs sage.rings.finite_rings
             sage: R.<x> = PolynomialRing(GF(7))
-            sage: f = R.hom([3], GF(49, 'a'))                                           # needs sage.rings.finite_rings
-            sage: f                                                                     # needs sage.rings.finite_rings
+            sage: f = R.hom([3], GF(49, 'a'))
+            sage: f
             Ring morphism:
               From: Univariate Polynomial Ring in x over Finite Field of size 7
               To:   Finite Field in a of size 7^2
               Defn: x |--> 3
-            sage: f(x + 6)                                                              # needs sage.rings.finite_rings
+            sage: f(x + 6)
             2
-            sage: f(x^2 + 1)                                                            # needs sage.rings.finite_rings
+            sage: f(x^2 + 1)
             3
 
         EXAMPLES: Natural morphism
@@ -281,15 +283,17 @@ cdef class ParentWithGens(ParentWithBase):
 
         You can specify a map on the base ring::
 
+            sage: # needs sage.rings.finite_rings
             sage: k = GF(2)
             sage: R.<a> = k[]
-            sage: l.<a> = k.extension(a^3 + a^2 + 1)                                    # needs sage.rings.finite_rings
-            sage: R.<b> = l[]                                                           # needs sage.rings.finite_rings
-            sage: m.<b> = l.extension(b^2 + b + a)                                      # needs sage.rings.finite_rings
-            sage: n.<z> = GF(2^6)                                                       # needs sage.rings.finite_rings
-            sage: m.hom([z^4 + z^3 + 1], base_map=l.hom([z^5 + z^4 + z^2]))             # needs sage.rings.finite_rings
+            sage: l.<a> = k.extension(a^3 + a^2 + 1)
+            sage: R.<b> = l[]
+            sage: m.<b> = l.extension(b^2 + b + a)
+            sage: n.<z> = GF(2^6)
+            sage: m.hom([z^4 + z^3 + 1], base_map=l.hom([z^5 + z^4 + z^2]))
             Ring morphism:
-              From: Univariate Quotient Polynomial Ring in b over Finite Field in a of size 2^3 with modulus b^2 + b + a
+              From: Univariate Quotient Polynomial Ring in b over
+                    Finite Field in a of size 2^3 with modulus b^2 + b + a
               To:   Finite Field in z of size 2^6
               Defn: b |--> z^4 + z^3 + 1
                     with map of base ring

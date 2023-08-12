@@ -1386,16 +1386,17 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
             ValueError: relations do not all (canonically) map to 0
             under map determined by images of generators
 
+            sage: # needs sage.rings.finite_rings
             sage: R.<x> = PolynomialRing(GF(7))
-            sage: f = R.hom([3], GF(49,'a'))                                            # needs sage.rings.finite_rings
-            sage: f                                                                     # needs sage.rings.finite_rings
+            sage: f = R.hom([3], GF(49,'a'))
+            sage: f
             Ring morphism:
               From: Univariate Polynomial Ring in x over Finite Field of size 7
               To:   Finite Field in a of size 7^2
               Defn: x |--> 3
-            sage: f(x + 6)                                                              # needs sage.rings.finite_rings
+            sage: f(x + 6)
             2
-            sage: f(x^2 + 1)                                                            # needs sage.rings.finite_rings
+            sage: f(x^2 + 1)
             3
 
         Natural morphism::
@@ -1823,13 +1824,14 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
 
         Some more advanced examples::
 
+            sage: # needs sage.rings.number_field
             sage: x = QQ['x'].0
             sage: t = abs(ZZ.random_element(10^6))
-            sage: K = NumberField(x^2 + 2*3*7*11, "a"+str(t))                           # needs sage.rings.number_field
-            sage: a = K.gen()                                                           # needs sage.rings.number_field
-            sage: K_into_MS = K.hom([a.matrix()])                                       # needs sage.rings.number_field
-            sage: K._unset_coercions_used()                                             # needs sage.rings.number_field
-            sage: K.register_embedding(K_into_MS)                                       # needs sage.rings.number_field
+            sage: K = NumberField(x^2 + 2*3*7*11, "a"+str(t))
+            sage: a = K.gen()
+            sage: K_into_MS = K.hom([a.matrix()])
+            sage: K._unset_coercions_used()
+            sage: K.register_embedding(K_into_MS)
 
             sage: # needs sage.rings.number_field
             sage: L = NumberField(x^2 + 2*3*7*11*19*31,
@@ -2131,13 +2133,14 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
 
         The following was fixed in :trac:`12969`::
 
+            sage: # needs sage.combinat sage.modules
             sage: R = QQ['q,t'].fraction_field()
-            sage: Sym = sage.combinat.sf.sf.SymmetricFunctions(R)                       # needs sage.combinat sage.modules
-            sage: H = Sym.macdonald().H()                                               # needs sage.combinat sage.modules
-            sage: P = Sym.macdonald().P()                                               # needs sage.combinat sage.modules
-            sage: m = Sym.monomial()                                                    # needs sage.combinat sage.modules
-            sage: Ht = Sym.macdonald().Ht()                                             # needs sage.combinat sage.modules
-            sage: phi = m.coerce_map_from(P)                                            # needs sage.combinat sage.modules
+            sage: Sym = sage.combinat.sf.sf.SymmetricFunctions(R)
+            sage: H = Sym.macdonald().H()
+            sage: P = Sym.macdonald().P()
+            sage: m = Sym.monomial()
+            sage: Ht = Sym.macdonald().Ht()
+            sage: phi = m.coerce_map_from(P)
         """
         return copy(self._internal_coerce_map_from(S))
 
@@ -2167,16 +2170,17 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
               From: Integer Ring
               To:   Rational Field
 
+            sage: # needs sage.combinat sage.modules
             sage: R = QQ['q,t'].fraction_field()
-            sage: Sym = sage.combinat.sf.sf.SymmetricFunctions(R)                       # needs sage.combinat sage.modules
-            sage: P = Sym.macdonald().P()                                               # needs sage.combinat sage.modules
-            sage: Ht = Sym.macdonald().Ht()                                             # needs sage.combinat sage.modules
-            sage: Ht._internal_coerce_map_from(P)                                       # needs sage.combinat sage.modules
+            sage: Sym = sage.combinat.sf.sf.SymmetricFunctions(R)
+            sage: P = Sym.macdonald().P()
+            sage: Ht = Sym.macdonald().Ht()
+            sage: Ht._internal_coerce_map_from(P)
             (map internal to coercion system -- copy before use)
             Composite map:
               From: Symmetric Functions over Fraction Field of Multivariate Polynomial Ring in q, t over Rational Field in the Macdonald P basis
               To:   Symmetric Functions over Fraction Field of Multivariate Polynomial Ring in q, t over Rational Field in the Macdonald Ht basis
-            sage: copy(Ht._internal_coerce_map_from(P))                                 # needs sage.combinat sage.modules
+            sage: copy(Ht._internal_coerce_map_from(P))
             Composite map:
               From: Symmetric Functions over Fraction Field of Multivariate Polynomial Ring in q, t over Rational Field in the Macdonald P basis
               To:   Symmetric Functions over Fraction Field of Multivariate Polynomial Ring in q, t over Rational Field in the Macdonald Ht basis
