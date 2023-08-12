@@ -1085,6 +1085,14 @@ class SageDocTestParser(doctest.DocTestParser):
             "P = polytopes.associahedron(['A',3])\n",
             "P = polytopes.associahedron(['A',Integer(3)])\n"),
             '\n']
+
+            sage: example4 = '::\n\n        sage: C.minimum_distance(algorithm="guava")  # optional - guava\n        ...\n        24\n\n'
+            sage: parsed4 = DTP.parse(example4)
+            sage: dte = parsed4[1]
+            sage: dte.sage_source
+            'C.minimum_distance(algorithm="guava")  # optional - guava\n'
+            sage: dte.want
+            '...\n24\n'
         """
         # Regular expressions
         find_sage_prompt = re.compile(r"^(\s*)sage: ", re.M)
@@ -1092,7 +1100,7 @@ class SageDocTestParser(doctest.DocTestParser):
         find_python_continuation = re.compile(r"^(\s*)\.\.\.([^\.])", re.M)
         python_prompt = re.compile(r"^(\s*)>>>", re.M)
         backslash_replacer = re.compile(r"""(\s*)sage:(.*)\\\ *
-\ *(((\.){4}:)|((\.){3}))?\ *""")
+\ *((\.){4}:)?\ *""")
 
         # The following are used to allow ... at the beginning of output
         ellipsis_tag = "<TEMP_ELLIPSIS_TAG>"

@@ -912,8 +912,7 @@ class AbstractLinearCode(AbstractLinearCodeNoMetric):
 
             sage: C = codes.HammingCode(GF(2), 5)
             sage: C.covering_radius()                           # optional - gap_package_guava
-            ...
-            1
+            ...1
 
             sage: C = codes.random_linear_code(GF(263), 5, 1)
             sage: C.covering_radius()                           # optional - gap_package_guava
@@ -1376,8 +1375,7 @@ class AbstractLinearCode(AbstractLinearCodeNoMetric):
             3
             sage: libgap.SetAllInfoLevels(0)         # to suppress extra info messages  # needs sage.libs.gap
             sage: C.minimum_distance(algorithm="guava")         # optional - gap_package_guava
-            ...
-            3
+            ...3
 
         TESTS::
 
