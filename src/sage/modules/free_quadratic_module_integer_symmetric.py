@@ -1048,8 +1048,9 @@ class FreeQuadraticModule_integer_symmetric(FreeQuadraticModule_submodule_with_b
 
         TESTS::
 
+            sage: # needs sage.libs.flint (otherwise timeout)
             sage: L = IntegralLattice(matrix.diagonal([2,4,4,8]))
-            sage: L.maximal_overlattice().is_even()                                     # needs sage.libs.flint
+            sage: L.maximal_overlattice().is_even()
             True
 
         """

@@ -407,7 +407,7 @@ class FreeModule_submodule_with_basis_integer(FreeModule_submodule_with_basis_pi
 
         EXAMPLES::
 
-            sage: # needs sage.libs.flint
+            sage: # needs sage.libs.flint (o/w timeout)
             sage: from sage.modules.free_module_integer import IntegerLattice
             sage: A = sage.crypto.gen_lattice(type='random', n=1, m=60, q=2^60, seed=42)
             sage: L = IntegerLattice(A, lll_reduce=False)
