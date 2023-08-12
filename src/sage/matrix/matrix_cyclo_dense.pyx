@@ -814,7 +814,6 @@ cdef class Matrix_cyclo_dense(Matrix_dense):
         A._matrix = -self._matrix
         return A
 
-
     ########################################################################
     # LEVEL 3 functionality (Optional)
     #    * __deepcopy__
@@ -824,6 +823,7 @@ cdef class Matrix_cyclo_dense(Matrix_dense):
     #    * Specialized echelon form
     #    * tensor product
     ########################################################################
+
     def set_immutable(self):
         """
         Change this matrix so that it is immutable.

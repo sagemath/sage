@@ -528,14 +528,13 @@ cdef class SageObject:
         """
         return type(self)
 
-
-    #############################################################################
+    ##########################################################################
     # Test framework
-    #############################################################################
+    ##########################################################################
 
     def _tester(self, **options):
         """
-        Returns a gadget attached to ``self`` providing testing utilities.
+        Return a gadget attached to ``self`` providing testing utilities.
 
         This is used by :class:`sage.misc.sage_unittest.TestSuite` and the
         ``_test_*`` methods.

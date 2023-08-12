@@ -581,26 +581,25 @@ cdef class Matrix(sage.structure.element.Matrix):
 
         self.set_unsafe(i, j, elt + self.get_unsafe(i, j))
 
+    ##     def _get_very_unsafe(self, i, j):
+    ##         r"""
+    ##         Entry access, but potentially fast since it might be without
+    ##         bounds checking.  (I know of no cases where this is actually
+    ##         faster.)
 
-##     def _get_very_unsafe(self, i, j):
-##         r"""
-##         Entry access, but potentially fast since it might be without
-##         bounds checking.  (I know of no cases where this is actually
-##         faster.)
+    ##         This function it can very easily !! SEG FAULT !! if you call
+    ##         it with invalid input.  Use with *extreme* caution.
 
-##         This function it can very easily !! SEG FAULT !! if you call
-##         it with invalid input.  Use with *extreme* caution.
+    ##         EXAMPLES::
+    ##
+    ##             sage: a = matrix(ZZ,2,range(4))
+    ##             sage: a._get_very_unsafe(0,1)
+    ##             1
 
-##         EXAMPLES::
-##
-##             sage: a = matrix(ZZ,2,range(4))
-##             sage: a._get_very_unsafe(0,1)
-##             1
-
-##         If you do \code{a.\_get\_very\_unsafe(0,10)} you'll very likely crash Sage
-##         completely.
-##         """
-##         return self.get_unsafe(i, j)
+    ##         If you do \code{a.\_get\_very\_unsafe(0,10)} you'll very likely crash Sage
+    ##         completely.
+    ##         """
+    ##         return self.get_unsafe(i, j)
 
     def __iter__(self):
         """
@@ -2239,11 +2238,10 @@ cdef class Matrix(sage.structure.element.Matrix):
 
         return "\\left" + matrix_delimiters[0] + "\\begin{array}{%s}\n"%format + s + "\n\\end{array}\\right" + matrix_delimiters[1]
 
-
-
     ###################################################
     ## Basic Properties
     ###################################################
+
     def ncols(self):
         """
         Return the number of columns of this matrix.
@@ -2311,21 +2309,19 @@ cdef class Matrix(sage.structure.element.Matrix):
         """
         return (self._nrows,self._ncols)
 
-
     ###################################################
     # Functions
     ###################################################
+
     def act_on_polynomial(self, f):
         r"""
         Return the polynomial f(self\*x).
 
         INPUT:
 
-
         -  ``self`` - an nxn matrix
 
         -  ``f`` - a polynomial in n variables x=(x1,...,xn)
-
 
         OUTPUT: The polynomial f(self\*x).
 

@@ -45,10 +45,12 @@ cdef class Node:
     cdef fmpz_poly_t LMult
     cdef fmpz_poly_t RMult
     cdef fmpz_poly_t LeftFHS
+
     def __cinit__(self):
         fmpz_poly_init(self.LMult)
         fmpz_poly_init(self.RMult)
         fmpz_poly_init(self.LeftFHS)
+
     def __dealloc__(self):
         fmpz_poly_clear(self.LMult)
         fmpz_poly_clear(self.RMult)

@@ -1197,7 +1197,6 @@ cdef class GabowEdgeConnectivity:
         raise ValueError("the value of the edge connectivity has not been "
                          "properly computed. This may result from an interruption")
 
-
     #
     # Packing arborescences
     #

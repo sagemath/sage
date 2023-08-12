@@ -1,13 +1,12 @@
 """
 Binary trees
 
-Implements a binary tree in Cython.
+This implements a binary tree in Cython.
 
 AUTHORS:
 
 - Tom Boothby (2007-02-15).  Initial version free for any use (public domain).
 """
-
 from cysignals.memory cimport sig_malloc, sig_free
 
 from cpython.ref cimport PyObject, Py_INCREF, Py_XDECREF
@@ -186,6 +185,7 @@ cdef class BinaryTree:
     """
     def __cinit__(BinaryTree self):
         self.head = NULL
+
     def __dealloc__(BinaryTree self):
         """
         TESTS:
@@ -212,8 +212,11 @@ cdef class BinaryTree:
 
     def insert(BinaryTree self, object key, object value = None):
         """
-        Inserts a key-value pair into the BinaryTree.  Duplicate keys are ignored.
-        The first parameter, key, should be an int, or coercible (one-to-one) into an int.
+        Insert a key-value pair into the BinaryTree.
+
+        Duplicate keys are ignored.
+        The first parameter, key, should be an int, or coercible (one-to-one)
+        into an int.
 
         EXAMPLES::
 
@@ -234,9 +237,10 @@ cdef class BinaryTree:
             self.head = BinaryTreeNode(ckey, value)
         else:
             binary_tree_insert(self.head, ckey, value)
+
     def delete(BinaryTree self, int key):
         """
-        Removes a the node corresponding to key, and returns the value
+        Remove a the node corresponding to key, and return the value
         associated with it.
 
         EXAMPLES::
@@ -277,9 +281,10 @@ cdef class BinaryTree:
             return r
         else:
             return binary_tree_delete(self.head, key)
+
     def get(BinaryTree self, int key):
         """
-        Returns the value associated with the key given.
+        Return the value associated with the key given.
 
         EXAMPLES::
 
@@ -295,10 +300,11 @@ cdef class BinaryTree:
             return None
         else:
             return binary_tree_get(self.head, key)
+
     def contains(BinaryTree self, int key):
         """
-        Returns True if a node with the given key exists
-        in the tree, and False otherwise.
+        Return ``True`` if a node with the given key exists
+        in the tree, and ``False`` otherwise.
 
         EXAMPLES::
 
@@ -317,9 +323,10 @@ cdef class BinaryTree:
                 return True
             else:
                 return False
+
     def get_max(BinaryTree self):
         """
-        Returns the value of the node with the maximal key value.
+        Return the value of the node with the maximal key value.
         """
         cdef binary_tree_node *cur
         if self.head == NULL:
@@ -328,9 +335,10 @@ cdef class BinaryTree:
         while cur.right != NULL:
             cur = cur.right
         return <object>cur.value
+
     def get_min(BinaryTree self):
         """
-        Returns the value of the node with the minimal key value.
+        Return the value of the node with the minimal key value.
         """
         cdef binary_tree_node *cur
         if self.head == NULL:
@@ -339,10 +347,11 @@ cdef class BinaryTree:
         while cur.left != NULL:
             cur = cur.left
         return <object>cur.value
+
     def pop_max(BinaryTree self):
         """
-        Returns the value of the node with the maximal key value,
-        and removes that node from the tree.
+        Return the value of the node with the maximal key value,
+        and remove that node from the tree.
 
         EXAMPLES::
 
@@ -379,10 +388,11 @@ cdef class BinaryTree:
         max = <object>cur.right.value
         cur.right = binary_tree_right_excise(cur.right)
         return max
+
     def pop_min(BinaryTree self):
         """
-        Returns the value of the node with the minimal key value,
-        and removes that node from the tree.
+        Return the value of the node with the minimal key value,
+        and remove that node from the tree.
 
         EXAMPLES::
 
@@ -422,7 +432,7 @@ cdef class BinaryTree:
 
     def is_empty(BinaryTree self):
         """
-        Returns True if the tree has no nodes.
+        Return ``True`` if the tree has no nodes.
 
         EXAMPLES::
 
@@ -438,7 +448,9 @@ cdef class BinaryTree:
 
     def keys(BinaryTree self, order="inorder"):
         """
-        Returns the keys sorted according to "order" parameter, which can be one of
+        Return the keys sorted according to "order" parameter.
+
+        The order can be one of
         "inorder", "preorder", or "postorder"
         """
         if self.head == NULL:
@@ -455,7 +467,9 @@ cdef class BinaryTree:
 
     def values(BinaryTree self, order="inorder"):
         """
-        Returns the keys sorted according to "order" parameter, which can be one of
+        Return the keys sorted according to "order" parameter.
+
+        The order can be one of
         "inorder", "preorder", or "postorder"
         """
         if self.head == NULL:
@@ -473,13 +487,12 @@ cdef class BinaryTree:
     def _headkey_(BinaryTree self):
         """
         Used by the stress tester.  Don't think a user would care.
+
         Email tom if you care what the headkey is.
         """
         if self.head == NULL:
             return 0
-        else:
-            return self.head.key
-
+        return self.head.key
 
 
 class Test:
@@ -488,11 +501,13 @@ class Test:
 
     def binary_tree(self, values = 100, cycles = 100000):
         """
-        Performs a sequence of random operations, given random inputs
-        to stress test the binary tree structure.  This was useful during
-        development to find memory leaks / segfaults.  Cycles should be
-        at least 100 times as large as values, or the delete, contains,
-        and get methods won't hit very often.
+        Perform a sequence of random operations, given random inputs
+        to stress test the binary tree structure.
+
+        This was useful during development to find memory leaks /
+        segfaults.  Cycles should be at least 100 times as large as
+        values, or the delete, contains, and get methods won't hit
+        very often.
 
         INPUT:
 
@@ -509,7 +524,7 @@ class Test:
         for i in range(cycles):
             r = randint(0, 8)
             s = randint(0, values)
-            if r==1:
+            if r == 1:
                 t.insert(s)
             elif r == 2:
                 t.delete(t._headkey_())

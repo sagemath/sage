@@ -268,7 +268,6 @@ cdef class Matrix_rational_sparse(Matrix_sparse):
         mpq_clear(s)
         return ans
 
-
     ########################################################################
     # def _pickle(self):
     # def _unpickle(self, data, int version):   # use version >= 0
@@ -281,20 +280,21 @@ cdef class Matrix_rational_sparse(Matrix_sparse):
     # def _multiply_classical(left, matrix.Matrix _right):
     # def _list(self):
 
-# TODO
-##     cpdef _lmul_(self, Element right):
-##         """
-##         EXAMPLES::
-##
-##             sage: a = matrix(QQ,2,range(6))
-##             sage: (3/4) * a
-##             [   0  3/4  3/2]
-##             [ 9/4    3 15/4]
-##         """
+    # TODO
+    ##     cpdef _lmul_(self, Element right):
+    ##         """
+    ##         EXAMPLES::
+    ##
+    ##             sage: a = matrix(QQ,2,range(6))
+    ##             sage: (3/4) * a
+    ##             [   0  3/4  3/2]
+    ##             [ 9/4    3 15/4]
+    ##         """
 
     def _dict(self):
         """
         Unsafe version of the dict method, mainly for internal use.
+
         This may return the dict of elements, but as an *unsafe*
         reference to the underlying dict of the object.  It might
         be dangerous if you change entries of the returned dict.
@@ -313,7 +313,6 @@ cdef class Matrix_rational_sparse(Matrix_sparse):
         self.cache('dict', d)
         return d
 
-
     ########################################################################
     # LEVEL 3 functionality (Optional)
     #    * cdef _sub_
@@ -325,7 +324,7 @@ cdef class Matrix_rational_sparse(Matrix_sparse):
 
     def _nonzero_positions_by_row(self, copy=True):
         """
-        Returns the list of pairs (i,j) such that self[i,j] != 0.
+        Return the list of pairs (i,j) such that self[i,j] != 0.
 
         It is safe to change the resulting list (unless you give the option copy=False).
 

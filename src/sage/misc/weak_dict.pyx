@@ -162,6 +162,7 @@ cdef class WeakValueDictEraser:
      - Nils Bruin (2013-11)
     """
     cdef D
+
     def __init__(self, D):
         """
         INPUT:

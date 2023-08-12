@@ -1043,6 +1043,7 @@ cdef class Parser:
 cdef class LookupNameMaker:
     cdef object names
     cdef object fallback
+
     def __init__(self, names, fallback=None):
         """
         This class wraps a dictionary as a callable for use in creating names.

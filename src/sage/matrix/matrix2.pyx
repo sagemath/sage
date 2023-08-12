@@ -112,7 +112,9 @@ def ideal_or_fractional(R, *args):
         R = R.number_field()
     return R.ideal(*args)
 
+
 _Fields = Fields()
+
 
 cdef class Matrix(Matrix1):
     """

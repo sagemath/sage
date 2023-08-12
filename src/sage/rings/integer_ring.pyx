@@ -1455,10 +1455,10 @@ cdef class IntegerRing_class(PrincipalIdealDomain):
 
         return roots
 
+    #################################
+    #  Coercions to interfaces
+    #################################
 
-    #################################
-    ## Coercions to interfaces
-    #################################
     def _gap_init_(self):
         """
         Return a GAP representation of ``self``.

@@ -645,9 +645,12 @@ def matrix(*args, **kwds):
         M.set_immutable()
     return M
 
+
 Matrix = matrix
 
+
 from .special import *
+
 
 @matrix_method
 class options(GlobalOptions):

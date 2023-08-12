@@ -379,7 +379,6 @@ class ComplexField_class(sage.rings.abc.ComplexField):
         """
         return ComplexField(prec)
 
-
     # very useful to cache this.
     def _real_field(self):
         """
@@ -2069,7 +2068,6 @@ cdef class ComplexNumber(sage.structure.element.FieldElement):
         elif abs(abs(self) - 1) > 0.1:  # clearly not a root of unity
             return infinity.infinity
         raise NotImplementedError("order of element not known")
-
 
     ########################################################################
     # Plotting
