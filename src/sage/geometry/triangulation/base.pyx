@@ -18,7 +18,7 @@ AUTHORS:
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 ########################################################################
 
 from sage.misc.fast_methods cimport hash_by_id
@@ -76,7 +76,6 @@ cdef class Point(SageObject):
     cdef object _point_configuration
     cdef object _reduced_affine_vector, _reduced_projective_vector
 
-
     def __init__(self, point_configuration, i, projective, affine, reduced):
         r"""
         Construct a :class:`Point`.
@@ -129,7 +128,6 @@ cdef class Point(SageObject):
         """
         return self._point_configuration
 
-
     def __iter__(self):
         r"""
         Iterate through the affine ambient space coordinates of the point.
@@ -160,7 +158,6 @@ cdef class Point(SageObject):
         """
         return len(self._affine)
 
-
     cpdef index(self):
         """
         Return the index of the point in the point configuration.
@@ -174,7 +171,6 @@ cdef class Point(SageObject):
             2
         """
         return self._index
-
 
     cpdef projective(self):
         r"""
@@ -202,7 +198,6 @@ cdef class Point(SageObject):
         """
         return self._projective
 
-
     cpdef affine(self):
         r"""
         Return the affine coordinates of the point in the ambient space.
@@ -228,7 +223,6 @@ cdef class Point(SageObject):
             (2, 2)
         """
         return self._affine
-
 
     cpdef reduced_affine(self):
         r"""
@@ -257,7 +251,6 @@ cdef class Point(SageObject):
         """
         return self._reduced_affine
 
-
     cpdef reduced_projective(self):
         r"""
         Return the projective coordinates of the point on the hyperplane
@@ -285,7 +278,6 @@ cdef class Point(SageObject):
         """
         return tuple(self._reduced_affine)+(1,)
 
-
     cpdef reduced_affine_vector(self):
         """
         Return the affine coordinates of the point on the hyperplane
@@ -312,7 +304,6 @@ cdef class Point(SageObject):
             (2, 2)
         """
         return self._reduced_affine_vector
-
 
     cpdef reduced_projective_vector(self):
         """
@@ -359,7 +350,7 @@ cdef class Point(SageObject):
             sage: p._repr_()
             'P(0, 0)'
         """
-        return 'P'+str(self._affine)
+        return 'P' + str(self._affine)
 
 
 ########################################################################
@@ -398,14 +389,12 @@ cdef class PointConfiguration_base(Parent):
         self._init_points(points)
         self._is_affine = defined_affine
 
-
     cdef tuple _pts
     cdef int _ambient_dim
     cdef int _dim
     cdef object _base_ring
     cdef bint _is_affine
     cdef object _reduced_affine_vector_space, _reduced_projective_vector_space
-
 
     cdef _init_points(self, tuple projective_points):
         """
@@ -449,20 +438,20 @@ cdef class PointConfiguration_base(Parent):
         else:
             raise NotImplementedError  # TODO
 
-        if n>1:
+        if n > 1:
             # shift first point to origin
-            red = matrix([ aff.column(i)-aff.column(0) for i in range(n) ]).transpose()
+            red = matrix([aff.column(i)-aff.column(0) for i in range(n)]).transpose()
             # pick linearly independent rows
-            red = matrix([ red.row(i) for i in red.pivot_rows()])
+            red = matrix([red.row(i) for i in red.pivot_rows()])
         else:
-            red = matrix(0,1)
+            red = matrix(0, 1)
         self._dim = red.nrows()
 
         from sage.modules.free_module import VectorSpace
         self._reduced_affine_vector_space = VectorSpace(self._base_ring.fraction_field(), self._dim)
         self._reduced_projective_vector_space = VectorSpace(self._base_ring.fraction_field(), self._dim+1)
         self._pts = tuple([Point(self, i, proj.column(i),
-                                aff.column(i), red.column(i))
+                                 aff.column(i), red.column(i))
                            for i in range(n)])
 
     def __hash__(self):
@@ -497,7 +486,6 @@ cdef class PointConfiguration_base(Parent):
         """
         return self._reduced_affine_vector_space
 
-
     cpdef reduced_projective_vector_space(self):
         """
         Return the vector space that is spanned by the homogeneous
@@ -519,7 +507,6 @@ cdef class PointConfiguration_base(Parent):
         """
         return self._reduced_projective_vector_space
 
-
     cpdef ambient_dim(self):
         """
         Return the dimension of the ambient space of the point
@@ -537,11 +524,9 @@ cdef class PointConfiguration_base(Parent):
         """
         return self._ambient_dim
 
-
     cpdef dim(self):
         """
-        Return the actual dimension of the point
-        configuration.
+        Return the actual dimension of the point configuration.
 
         See also :meth:`ambient_dim`
 
@@ -554,7 +539,6 @@ cdef class PointConfiguration_base(Parent):
             0
         """
         return self._dim
-
 
     cpdef base_ring(self):
         r"""
@@ -581,10 +565,9 @@ cdef class PointConfiguration_base(Parent):
         """
         return self._base_ring
 
-
     cpdef bint is_affine(self):
         """
-        Whether the configuration is defined by affine points.
+        Return whether the configuration is defined by affine points.
 
         OUTPUT:
 
@@ -603,7 +586,6 @@ cdef class PointConfiguration_base(Parent):
         """
         return self._is_affine
 
-
     def _assert_is_affine(self):
         """
         Raise a ``ValueError`` if the point configuration is not
@@ -621,7 +603,6 @@ cdef class PointConfiguration_base(Parent):
         """
         if not self.is_affine():
             raise ValueError('The point configuration contains projective points.')
-
 
     def __getitem__(self, i):
         """
@@ -651,7 +632,6 @@ cdef class PointConfiguration_base(Parent):
         """
         return self._pts[i]
 
-
     cpdef n_points(self):
         """
         Return the number of points.
@@ -673,14 +653,13 @@ cdef class PointConfiguration_base(Parent):
         """
         return len(self._pts)
 
-
     cpdef points(self):
         """
         Return a list of the points.
 
         OUTPUT:
 
-        Returns a list of the points. See also the :meth:`__iter__`
+        A list of the points. See also the :meth:`__iter__`
         method, which returns the corresponding generator.
 
         EXAMPLES::
@@ -698,7 +677,6 @@ cdef class PointConfiguration_base(Parent):
             P(-1, -1)
         """
         return self._pts
-
 
     def point(self, i):
         """
@@ -753,10 +731,9 @@ cdef class PointConfiguration_base(Parent):
         """
         return len(self._pts)
 
-
     cpdef simplex_to_int(self, simplex):
         r"""
-        Returns an integer that uniquely identifies the given simplex.
+        Return an integer that uniquely identifies the given simplex.
 
         See also the inverse method :meth:`int_to_simplex`.
 
@@ -790,19 +767,18 @@ cdef class PointConfiguration_base(Parent):
         cdef int k = 1
         cdef int n = self.n_points()
         cdef int d = len(simplex)
-        assert d==self.dim()+1
+        assert d == self.dim()+1
         cdef int i, j
-        for i in range(1,d+1):
+        for i in range(1, d+1):
             l = simplex[i-1]+1
-            for j in range(k,l):
-                s += binomial(n-j,d-i)
+            for j in range(k, l):
+                s += binomial(n-j, d-i)
             k = l+1
         return s
 
-
     cpdef int_to_simplex(self, int s):
         r"""
-        Reverses the enumeration of possible simplices in
+        Reverse the enumeration of possible simplices in
         :meth:`simplex_to_int`.
 
         The enumeration is compatible with [PUNTOS]_.
@@ -930,7 +906,6 @@ cdef class ConnectedTriangulationsIterator(SageObject):
 
     cdef triangulations_ptr _tp
 
-
     def __cinit__(self):
         """
         The Cython constructor.
@@ -943,7 +918,6 @@ cdef class ConnectedTriangulationsIterator(SageObject):
             <sage.geometry.triangulation.base.ConnectedTriangulationsIterator object at ...>
         """
         self._tp = NULL
-
 
     def __init__(self, point_configuration, seed=None, star=None, fine=False):
         r"""
@@ -978,13 +952,11 @@ cdef class ConnectedTriangulationsIterator(SageObject):
                                        enumerated_simplices_seed,
                                        point_configuration.bistellar_flips())
 
-
     def __dealloc__(self):
         r"""
         The Cython destructor.
         """
         delete_triangulations(self._tp)
-
 
     def __iter__(self):
         r"""
