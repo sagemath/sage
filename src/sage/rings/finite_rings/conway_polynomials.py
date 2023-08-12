@@ -11,10 +11,13 @@ AUTHORS:
 """
 
 from sage.misc.fast_methods import WithEqualityById
+from sage.misc.lazy_import import lazy_import
 from sage.structure.sage_object import SageObject
 from sage.rings.finite_rings.finite_field_constructor import FiniteField
 from sage.rings.integer import Integer
-import sage.databases.conway
+
+lazy_import('sage.databases.conway', 'ConwayPolynomials')
+
 
 def conway_polynomial(p, n):
     """
@@ -45,11 +48,11 @@ def conway_polynomial(p, n):
 
     EXAMPLES::
 
-        sage: conway_polynomial(2,5)
+        sage: conway_polynomial(2,5)                                                    # needs conway_polynomials
         x^5 + x^2 + 1
-        sage: conway_polynomial(101,5)
+        sage: conway_polynomial(101,5)                                                  # needs conway_polynomials
         x^5 + 2*x + 99
-        sage: conway_polynomial(97,101)
+        sage: conway_polynomial(97,101)                                                 # needs conway_polynomials
         Traceback (most recent call last):
         ...
         RuntimeError: requested Conway polynomial not in database.
@@ -57,7 +60,7 @@ def conway_polynomial(p, n):
     (p, n) = (int(p), int(n))
     R = FiniteField(p)['x']
     try:
-        return R(sage.databases.conway.ConwayPolynomials()[p][n])
+        return R(ConwayPolynomials()[p][n])
     except KeyError:
         raise RuntimeError("requested Conway polynomial not in database.")
 
@@ -82,7 +85,7 @@ def exists_conway_polynomial(p, n):
 
     EXAMPLES::
 
-        sage: exists_conway_polynomial(2,3)
+        sage: exists_conway_polynomial(2,3)                                             # needs conway_polynomials
         True
         sage: exists_conway_polynomial(2,-1)
         False
@@ -91,7 +94,10 @@ def exists_conway_polynomial(p, n):
         sage: exists_conway_polynomial(6,6)
         False
     """
-    return sage.databases.conway.ConwayPolynomials().has_polynomial(p,n)
+    try:
+        return ConwayPolynomials().has_polynomial(p,n)
+    except ImportError:
+        return False
 
 class PseudoConwayLattice(WithEqualityById, SageObject):
     r"""
@@ -127,6 +133,7 @@ class PseudoConwayLattice(WithEqualityById, SageObject):
 
     EXAMPLES::
 
+        sage: # needs sage.rings.finite_rings
         sage: from sage.rings.finite_rings.conway_polynomials import PseudoConwayLattice
         sage: PCL = PseudoConwayLattice(2, use_database=False)
         sage: PCL.polynomial(3)
@@ -154,11 +161,13 @@ class PseudoConwayLattice(WithEqualityById, SageObject):
         """
         TESTS::
 
+            sage: # needs sage.rings.finite_rings
             sage: from sage.rings.finite_rings.conway_polynomials import PseudoConwayLattice
             sage: PCL = PseudoConwayLattice(3)
             sage: PCL.polynomial(3)
             x^3 + 2*x + 1
 
+            sage: # needs sage.rings.finite_rings
             sage: PCL = PseudoConwayLattice(5, use_database=False)
             sage: PCL.polynomial(12)
             x^12 + 4*x^11 + 2*x^10 + 4*x^9 + 2*x^8 + 2*x^7 + 4*x^6 + x^5 + 2*x^4 + 2*x^2 + x + 2
@@ -171,9 +180,13 @@ class PseudoConwayLattice(WithEqualityById, SageObject):
         from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
         self.ring = PolynomialRing(FiniteField(p), 'x')
         if use_database:
-            C = sage.databases.conway.ConwayPolynomials()
-            self.nodes = {n: self.ring(C.polynomial(p, n))
-                          for n in C.degrees(p)}
+            try:
+                C = ConwayPolynomials()
+            except ImportError:
+                self.nodes = {}
+            else:
+                self.nodes = {n: self.ring(C.polynomial(p, n))
+                              for n in C.degrees(p)}
         else:
             self.nodes = {}
 
@@ -199,6 +212,7 @@ class PseudoConwayLattice(WithEqualityById, SageObject):
 
         EXAMPLES::
 
+            sage: # needs sage.rings.finite_rings
             sage: from sage.rings.finite_rings.conway_polynomials import PseudoConwayLattice
             sage: PCL = PseudoConwayLattice(2, use_database=False)
             sage: PCL.polynomial(3)
@@ -267,6 +281,7 @@ class PseudoConwayLattice(WithEqualityById, SageObject):
 
         EXAMPLES::
 
+            sage: # needs sage.rings.finite_rings
             sage: from sage.rings.finite_rings.conway_polynomials import PseudoConwayLattice
             sage: PCL = PseudoConwayLattice(2, use_database=False)
             sage: PCL.check_consistency(6)
@@ -301,6 +316,7 @@ def _find_pow_of_frobenius(p, n, x, y):
 
     EXAMPLES::
 
+        sage: # needs sage.rings.finite_rings
         sage: from sage.rings.finite_rings.conway_polynomials import _find_pow_of_frobenius
         sage: K.<a> = GF(3^14)
         sage: x = K.multiplicative_generator()
@@ -380,6 +396,7 @@ def _frobenius_shift(K, generators, check_only=False):
 
     EXAMPLES::
 
+        sage: # needs sage.libs.ntl sage.rings.finite_rings
         sage: R.<x> = GF(2)[]
         sage: f30 = x^30 + x^28 + x^27 + x^25 + x^24 + x^20 + x^19 + x^18 + x^16 + x^15 + x^12 + x^10 + x^7 + x^2 + 1
         sage: f20 = x^20 + x^19 + x^15 + x^13 + x^12 + x^11 + x^9 + x^8 + x^7 + x^4 + x^2 + x + 1
