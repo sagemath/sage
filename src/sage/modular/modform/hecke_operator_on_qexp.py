@@ -14,11 +14,13 @@ Hecke operators on `q`-expansions
 from sage.arith.misc import divisors, gcd
 from sage.matrix.constructor import matrix
 from sage.matrix.matrix_space import MatrixSpace
+from sage.misc.lazy_import import lazy_import
 from sage.rings.infinity import Infinity
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
-from sage.rings.number_field.number_field import CyclotomicField
 from sage.rings.power_series_ring_element import is_PowerSeries
+
+lazy_import('sage.rings.number_field.number_field', 'CyclotomicField')
 
 from sage.modular.dirichlet import DirichletGroup, is_DirichletCharacter
 from .element import is_ModularFormElement

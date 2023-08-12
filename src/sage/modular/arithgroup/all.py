@@ -9,7 +9,8 @@ from .congroup_gamma0 import Gamma0_constructor as Gamma0, is_Gamma0
 from .congroup_gamma import Gamma_constructor as Gamma, is_Gamma
 from .congroup_sl2z import SL2Z, is_SL2Z
 
-from .arithgroup_perm import ArithmeticSubgroup_Permutation
+from sage.misc.lazy_import import lazy_import
+lazy_import('sage.modular.arithgroup.arithgroup_perm', 'ArithmeticSubgroup_Permutation')
 
 from .congroup import (degeneracy_coset_representatives_gamma0,
                             degeneracy_coset_representatives_gamma1)

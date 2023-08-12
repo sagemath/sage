@@ -42,15 +42,17 @@ import operator
 from sage.arith.misc import next_prime, gcd, kronecker
 from sage.categories.action import Action
 from sage.misc.cachefunc import cached_method
+from sage.misc.lazy_import import lazy_import
 from sage.misc.verbose import verbose
 from sage.rings.integer_ring import ZZ
-from sage.rings.padics.factory import Qp
-from sage.rings.padics.padic_generic import pAdicGeneric
 from sage.rings.padics.precision_error import PrecisionError
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.rational_field import QQ
 from sage.structure.element import ModuleElement
 from sage.structure.richcmp import op_EQ, op_NE
+
+lazy_import('sage.rings.padics.factory', 'Qp')
+lazy_import('sage.rings.padics.padic_generic', 'pAdicGeneric')
 
 from .manin_map import ManinMap
 from .sigma0 import Sigma0

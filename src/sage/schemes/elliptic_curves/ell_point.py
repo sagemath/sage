@@ -122,13 +122,15 @@ import math
 from sage.rings.padics.factory import Qp
 from sage.rings.padics.precision_error import PrecisionError
 
-import sage.rings.all as rings
 import sage.rings.abc
+
+from sage.rings.infinity import Infinity as oo
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
+from sage.rings.rational_field import QQ
+from sage.rings.real_mpfr import RealField
+from sage.rings.real_mpfr import RR
 import sage.groups.generic as generic
-from sage.libs.pari.all import pari, PariError
-from cypari2.pari_instance import prec_words_to_bits
 from sage.structure.sequence import Sequence
 from sage.structure.richcmp import richcmp
 
@@ -141,7 +143,11 @@ from sage.schemes.generic.morphism import is_SchemeMorphism
 
 from .constructor import EllipticCurve
 
-oo = rings.infinity       # infinity
+try:
+    from sage.libs.pari.all import pari, PariError
+    from cypari2.pari_instance import prec_words_to_bits
+except ImportError:
+    PariError = ()
 
 
 class EllipticCurvePoint(SchemeMorphism_point_projective_ring):
@@ -2293,9 +2299,9 @@ class EllipticCurvePoint_number_field(EllipticCurvePoint_field):
         K = E.base_field()
         if e is None:
             try:
-                e = K.embeddings(rings.RealField())[0]
+                e = K.embeddings(RealField())[0]
             except IndexError:
-                e = K.embeddings(rings.ComplexField())[0]
+                e = K.embeddings(ComplexField())[0]
 
         # If there is only one component, the result is True:
         if not isinstance(e.codomain(), sage.rings.abc.RealField):  # complex embedding
@@ -2405,7 +2411,7 @@ class EllipticCurvePoint_number_field(EllipticCurvePoint_field):
         xyz = list(Q)
         e = min([c.valuation(P) for c in xyz])
         if e != 0:
-            if K is rings.QQ:
+            if K is QQ:
                 pi = P
             else:
                 pi = K.uniformizer(P)
@@ -2711,30 +2717,30 @@ class EllipticCurvePoint_number_field(EllipticCurvePoint_field):
             1.06248137652528
         """
         if self.has_finite_order():
-            return rings.QQ(0)
+            return QQ(0)
 
         E = self.curve()
         K = E.base_ring()
 
         if precision is None:
-            precision = rings.RealField().precision()
+            precision = RealField().precision()
 
         known_prec = -1
         try:
             height = self.__height
             known_prec = height.prec()
             if known_prec > precision:
-                height = rings.RealField(precision)(height)
+                height = RealField(precision)(height)
         except AttributeError:
             pass
 
         if known_prec < precision:
-            if algorithm == 'pari' and K is rings.QQ:
+            if algorithm == 'pari' and K is QQ:
                 Emin = E.minimal_model()
                 iso = E.isomorphism_to(Emin)
                 P = iso(self)
                 h = Emin.pari_curve().ellheight(P, precision=precision)
-                height = rings.RealField(precision)(h)
+                height = RealField(precision)(h)
             else:
                 height = (self.non_archimedean_local_height(prec=precision)
                           + self.archimedean_local_height(prec=precision))
@@ -2868,8 +2874,8 @@ class EllipticCurvePoint_number_field(EllipticCurvePoint_field):
 
             if prec is None:
                 prec = 53
-            if K is rings.QQ:
-                v = K.embeddings(rings.RR)[0]
+            if K is QQ:
+                v = K.embeddings(RR)[0]
                 h = self.archimedean_local_height(v, prec+10)
             else:
                 r1, r2 = K.signature()
@@ -2885,7 +2891,7 @@ class EllipticCurvePoint_number_field(EllipticCurvePoint_field):
         prec_v = v.codomain().prec()
         if prec is None:
             prec = prec_v
-        if K is rings.QQ:
+        if K is QQ:
             v = K.embeddings(RealField())[0]
         v_inf = refine_embedding(v, Infinity)
         v_is_real = v_inf(K.gen()).imag().is_zero()
@@ -2943,7 +2949,7 @@ class EllipticCurvePoint_number_field(EllipticCurvePoint_field):
             beta = False
         lam = -t.abs().log()
         mu = 0
-        four_to_n = rings.QQ(1)
+        four_to_n = QQ(1)
 
         for n in range(nterms):
             if beta:
@@ -3079,14 +3085,14 @@ class EllipticCurvePoint_number_field(EllipticCurvePoint_field):
             -2/3*log(2)
         """
         if prec:
-            log = lambda x: rings.RealField(prec)(x).log()
+            log = lambda x: RealField(prec)(x).log()
         else:
             from sage.functions.log import log
 
         if v is None:
             D = self.curve().discriminant()
             K = self.curve().base_ring()
-            if K is rings.QQ:
+            if K is QQ:
                 factorD = D.factor()
                 if self[0] == 0:
                     c = 1
@@ -3149,9 +3155,9 @@ class EllipticCurvePoint_number_field(EllipticCurvePoint_field):
             r = -C/4
         r -= offset/6
         if not r:
-            return rings.QQ.zero()
+            return QQ.zero()
         else:
-            if E.base_ring() is rings.QQ:
+            if E.base_ring() is QQ:
                 Nv = Integer(v)
             else:
                 Nv = v.norm()

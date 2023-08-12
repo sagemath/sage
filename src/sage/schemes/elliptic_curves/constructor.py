@@ -23,7 +23,9 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-import sage.rings.all as rings
+from sage.rings.integer_ring import ZZ
+from sage.rings.rational_field import QQ
+from sage.rings.rational_field import RationalField
 
 import sage.rings.abc
 from sage.rings.polynomial.multi_polynomial_ring import is_MPolynomialRing
@@ -421,7 +423,7 @@ class EllipticCurveFactory(UniqueFactory):
             x = x.lhs() - x.rhs()
 
         if isinstance(parent(x), sage.rings.abc.SymbolicRing):
-            x = x._polynomial_(rings.QQ['x', 'y'])
+            x = x._polynomial_(QQ['x', 'y'])
 
         if isinstance(x, MPolynomial):
             if y is None:
@@ -448,8 +450,8 @@ class EllipticCurveFactory(UniqueFactory):
 
         if R is None:
             R = Sequence(x).universe()
-            if R in (rings.ZZ, int):
-                R = rings.QQ
+            if R in (ZZ, int):
+                R = QQ
 
         return (R, tuple(R(a) for a in x)), kwds
 
@@ -471,7 +473,7 @@ class EllipticCurveFactory(UniqueFactory):
         """
         R, x = key
 
-        if R is rings.QQ:
+        if R is QQ:
             from .ell_rational_field import EllipticCurve_rational_field
             return EllipticCurve_rational_field(x, **kwds)
         elif isinstance(R, NumberField):
@@ -597,7 +599,7 @@ def EllipticCurve_from_c4c6(c4, c6):
     try:
         K = c4.parent()
     except AttributeError:
-        K = rings.RationalField()
+        K = RationalField()
     if K not in _Fields:
         K = K.fraction_field()
     return EllipticCurve([-K(c4)/K(48), -K(c6)/K(864)])
@@ -692,7 +694,7 @@ def coefficients_from_j(j, minimal_twist=True):
     try:
         K = j.parent()
     except AttributeError:
-        K = rings.RationalField()
+        K = RationalField()
     if K not in _Fields:
         K = K.fraction_field()
 
@@ -708,7 +710,7 @@ def coefficients_from_j(j, minimal_twist=True):
         else:
             return Sequence([0, j, 0, 0, -j**2], universe=K)
 
-    if K is rings.RationalField():
+    if K is RationalField():
         # we construct the minimal twist, i.e. the curve with minimal
         # conductor with this j_invariant:
         if j == 0:

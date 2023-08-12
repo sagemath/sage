@@ -17,13 +17,15 @@ AUTHORS:
 # ****************************************************************************
 
 from sage.misc.latex import latex
+from sage.misc.lazy_import import lazy_import
 from sage.misc.misc_c import prod
 from sage.misc.cachefunc import cached_method
 
 from sage.rings.integer_ring import ZZ
 from sage.rings.infinity import infinity
 from sage.rings.cc import CC
-from sage.rings.qqbar import AA, QQbar
+
+lazy_import('sage.rings.qqbar', 'AA')
 
 from sage.groups.matrix_gps.group_element import MatrixGroupElement_generic
 from sage.geometry.hyperbolic_space.hyperbolic_interface import HyperbolicPlane
@@ -771,6 +773,8 @@ class HeckeTriangleGroupElement(MatrixGroupElement_generic):
         if self.is_elliptic():
             if self.parent().n() == infinity:
                 raise NotImplementedError
+
+            from sage.rings.qqbar import QQbar
 
             emb = self.root_extension_embedding(QQbar)
             p = self.fixed_points()[0]
@@ -3223,26 +3227,26 @@ class HeckeTriangleGroupElement(MatrixGroupElement_generic):
         INPUT:
 
         - ``f``   -- A function in ``tau`` (or an object for which
-                     evaluation at ``self.acton(tau)`` makes sense.
+          evaluation at ``self.acton(tau)`` makes sense.
 
         - ``tau`` -- Where to evaluate the result.
-                     This should be a valid argument for :meth:`acton`.
+          This should be a valid argument for :meth:`acton`.
 
-                     If ``tau`` is a point of ``HyperbolicPlane()`` then
-                     its coordinates in the upper half plane model are used.
+          If ``tau`` is a point of ``HyperbolicPlane()`` then
+          its coordinates in the upper half plane model are used.
 
-                     Default: ``None`` in which case ``f`` has to be
-                     a rational function / polynomial in one variable and
-                     the generator of the polynomial ring is used for ``tau``.
-                     That way ``slash`` acts on rational functions / polynomials.
+          Default: ``None`` in which case ``f`` has to be
+          a rational function / polynomial in one variable and
+          the generator of the polynomial ring is used for ``tau``.
+          That way ``slash`` acts on rational functions / polynomials.
 
         - ``k``   -- An even integer.
 
-                     Default: ``None`` in which case ``f`` either
-                     has to be a rational function / polynomial in one
-                     variable (then -degree is used).
-                     Or ``f`` needs to have a ``weight`` attribute which
-                     is then used.
+          Default: ``None`` in which case ``f`` either
+          has to be a rational function / polynomial in one
+          variable (then -degree is used).
+          Or ``f`` needs to have a ``weight`` attribute which
+          is then used.
 
         EXAMPLES::
 
@@ -3321,4 +3325,5 @@ class HeckeTriangleGroupElement(MatrixGroupElement_generic):
             sage: el.as_hyperbolic_plane_isometry("KM").parent()
             Set of Morphisms from Hyperbolic plane in the Klein Disk Model to Hyperbolic plane in the Klein Disk Model in Category of hyperbolic models of Hyperbolic plane
         """
+        from sage.geometry.hyperbolic_space.hyperbolic_interface import HyperbolicPlane
         return HyperbolicPlane().UHP().get_isometry(self._matrix).to_model(model)
