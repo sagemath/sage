@@ -2450,7 +2450,7 @@ def random_rref_matrix(parent, num_pivots):
 
     Matrices can be generated over other exact rings. ::
 
-        sage: B = random_matrix(FiniteField(7), 4, 4,
+        sage: B = random_matrix(FiniteField(7), 4, 4,  # random
         ....:                   algorithm='echelon_form', num_pivots=3); B
         [1 0 0 0]
         [0 1 0 6]
