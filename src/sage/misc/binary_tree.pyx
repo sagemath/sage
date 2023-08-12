@@ -128,14 +128,14 @@ cdef binary_tree_node *binary_tree_head_excise(binary_tree_node *self):
     if self.left == NULL:
         return self.right
     if right:
-        #move right branch to left, return left
+        # move right branch to left, return left
         cur = self.left
         while cur.right != NULL:
             cur = cur.right
         cur.right = self.right
         cur = self.left
     else:
-        #move left branch to right, return right
+        # move left branch to right, return right
         cur = self.right
         while cur.left != NULL:
             cur = cur.left
@@ -206,15 +206,15 @@ cdef class BinaryTree:
             ....:     return [(k,v) for (k,v) in post.items() if v>10]
             sage: test()   # indirect doctest
             []
-
         """
         binary_tree_dealloc(self.head)
 
-    def insert(BinaryTree self, object key, object value = None):
+    def insert(BinaryTree self, object key, object value=None):
         """
         Insert a key-value pair into the BinaryTree.
 
         Duplicate keys are ignored.
+
         The first parameter, key, should be an int, or coercible (one-to-one)
         into an int.
 
@@ -298,13 +298,11 @@ cdef class BinaryTree:
         """
         if self.head == NULL:
             return None
-        else:
-            return binary_tree_get(self.head, key)
+        return binary_tree_get(self.head, key)
 
     def contains(BinaryTree self, int key):
         """
-        Return ``True`` if a node with the given key exists
-        in the tree, and ``False`` otherwise.
+        Return whether a node with the given key exists in the tree.
 
         EXAMPLES::
 
@@ -318,11 +316,7 @@ cdef class BinaryTree:
         """
         if self.head == NULL:
             return False
-        else:
-            if binary_tree_get(self.head, key) is not None:
-                return True
-            else:
-                return False
+        return binary_tree_get(self.head, key) is not None
 
     def get_max(BinaryTree self):
         """
@@ -432,7 +426,7 @@ cdef class BinaryTree:
 
     def is_empty(BinaryTree self):
         """
-        Return ``True`` if the tree has no nodes.
+        Return whether the tree has no nodes.
 
         EXAMPLES::
 
