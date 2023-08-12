@@ -331,11 +331,17 @@ cdef class TwoSumNode(SumNode):
             sage: result, certificate = M3.is_totally_unimodular(certificate=True); certificate
             TwoSumNode (9×9) with 2 children
     """
-    pass
+    def block_matrix_form(self):
+        M1, M2 = self.summand_matrices()
+        x, y= len(M1.columns()), len(M2.rows())
+        return Matrix_cmr_chr_sparse.two_sum(M1, M2, x - 1, y - 1)
 
 cdef class ThreeSumNode(SumNode):
 
-    pass
+    def block_matrix_form(self):
+        M1, M2 = self.summand_matrices()
+        x, y= len(M1.columns()), len(M2.columns())
+        return Matrix_cmr_chr_sparse.two_sum(M1, M2, x - 1, x-2, y - 1, y - 2)
 
 
 cdef class BaseGraphicNode(DecompositionNode):
@@ -421,7 +427,7 @@ cdef class SeriesParallelReductionNode(DecompositionNode):
 cdef class SpecialLeafNode(DecompositionNode):
 
     @cached_method
-    def matroid(self):
+    def _matroid(self):
         r"""
 
         """

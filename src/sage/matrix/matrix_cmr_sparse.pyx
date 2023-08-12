@@ -444,35 +444,27 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
         and 'first_col_index2' being the indices of the column vectors of the matrix, which are identical except for one row
         having a 0 in one column and the other a non-zero entry in that row. The method assumes the nonzero entry is one. The same assumptions
         are made for 'second_mat' and its input index variables.
-        
+
         EXAMPLES::
 
             sage: from sage.matrix.matrix_cmr_sparse import Matrix_cmr_chr_sparse
-            sage: M1 = Matrix_cmr_chr_sparse(MatrixSpace(ZZ, 5, 5, sparse=True),
-            ....:                          [[1, 0, -1, 0, 1], [1, 1, 0, -1, 1], [0, 0, 1, 1, 1], 
-            ....:                           [1, 1, -1, 0, 0], [-1, -1, 0, 0,1]]); M1
-            [ 1  0 -1  0  1]
-            [ 1  1  0 -1  1]
-            [ 0  0  1  1  1]
-            [ 1  1 -1  0  0]
-            [-1 -1  0  0  1]
-            sage: M2 = Matrix_cmr_chr_sparse(MatrixSpace(ZZ, 5, 5, sparse=True),
+            sage: M = Matrix_cmr_chr_sparse(MatrixSpace(ZZ, 5, 5, sparse=True),
             ....:                      [[1, 1, 1, 1, 1], [1, 1, 1, 0, 0], [1, 0, 1, 1, 0],
-            ....:                       [0, 0, 0, 1, 1], [1, 1, 0, 0, 1]]); M2
+            ....:                       [0, 0, 0, 1, 1], [1, 1, 0, 0, 1]]); M
             [1 1 1 1 1]
             [1 1 1 0 0]
             [1 0 1 1 0]
             [0 0 0 1 1]
             [1 1 0 0 1]
-            sage: M3 = Matrix_cmr_chr_sparse.three_sum(M1, M2, 0, 1, 0, 1); M3
-            [ 0 -1  1  1  1  0]
-            [ 1  1  1  0  0  0]
-            [-1  0  0  1  1  0]
-            [ 0  0  1 -1 -1  0]
-            [-1  0  1  1  1  1]
-            [-1  0  1  1  0  0]
-            [-1  0  1  0  1  1]
-            [ 1  0 -1  0  0  1]
+            sage: M3 = Matrix_cmr_chr_sparse.three_sum(M, M, 0, 1, 0, 1); M3
+            [1 1 1 1 1 0]
+            [1 0 0 1 1 0]
+            [0 1 1 0 0 0]
+            [0 0 1 1 1 0]
+            [1 1 0 1 1 1]
+            [1 1 0 1 0 0]
+            [0 0 0 0 1 1]
+            [1 1 0 0 0 1]
         """
         fc = len(first_mat.columns())
         sc = len(second_mat.columns())
@@ -496,7 +488,10 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
                 subcol2 = tuple(first_col2[k] for k in fir_nrows if k != i)
                 if subcol1 == subcol2:
                     valid1 = True
-                    first_row_index = i 
+                    if i == fr:
+                        first_row_index = i - 1
+                    else:
+                        first_row_index = i
                     break
         for i in sec_nrows:
             if (second_col1[i] == 1 and second_col2[i] == 0) or (second_col1[i] == 0 and second_col2[i] == 1):
@@ -504,7 +499,10 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
                 subcol2 = tuple(second_col2[k] for k in sec_nrows if k != i)
                 if subcol1 == subcol2:
                     valid2 = True
-                    second_row_index = i 
+                    if i == sr:
+                        second_row_index = i - 1
+                    else:
+                        second_row_index = i
                     break
         if not (valid1 and valid2):
             raise ValueError('indicated columns of Matrices are not of appropriate form for 3-sum')
@@ -533,7 +531,7 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
             u = list(second_subrows[i])
             r.extend(u)
             row_list.append(r)
-        return Matrix_cmr_chr_sparse._from_data(row_list, immutable = False)  
+        return Matrix_cmr_chr_sparse._from_data(row_list, immutable=False)
 
     def delete_rows(self, indices):
         rows = self.rows()
