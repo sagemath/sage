@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.symbolic
 """
 Streamline plots
 """
@@ -199,7 +200,8 @@ def streamline_plot(f_g, xrange, yrange, **options):
 
     We increase the density of the plot::
 
-        sage: streamline_plot((y, (cos(x)-2) * sin(x)), (x,-pi,pi), (y,-pi,pi), density=2)
+        sage: streamline_plot((y, (cos(x)-2) * sin(x)),
+        ....:                 (x,-pi,pi), (y,-pi,pi), density=2)
         Graphics object consisting of 1 graphics primitive
 
     .. PLOT::
@@ -211,7 +213,8 @@ def streamline_plot(f_g, xrange, yrange, **options):
     We ignore function values that are infinite or NaN::
 
         sage: x, y = var('x y')
-        sage: streamline_plot((-x/sqrt(x^2+y^2), -y/sqrt(x^2+y^2)), (x,-10,10), (y,-10,10))
+        sage: streamline_plot((-x/sqrt(x^2+y^2), -y/sqrt(x^2+y^2)),
+        ....:                 (x,-10,10), (y,-10,10))
         Graphics object consisting of 1 graphics primitive
 
     .. PLOT::
@@ -225,7 +228,7 @@ def streamline_plot(f_g, xrange, yrange, **options):
 
         sage: streamline_plot((x, y), (x,-2,2), (y,-2,2), xmax=10)
         Graphics object consisting of 1 graphics primitive
-        sage: streamline_plot((x, y), (x,-2,2), (y,-2,2)).show(xmax=10) # These are equivalent
+        sage: streamline_plot((x, y), (x,-2,2), (y,-2,2)).show(xmax=10)  # These are equivalent
 
     .. PLOT::
 
@@ -248,7 +251,8 @@ def streamline_plot(f_g, xrange, yrange, **options):
     We choose some particular points the streamlines pass through::
 
         sage: pts = [[1, 1], [-2, 2], [1, -3/2]]
-        sage: g = streamline_plot((x + y) / sqrt(x^2 + y^2), (x,-3,3), (y,-3,3), start_points=pts)
+        sage: g = streamline_plot((x + y) / sqrt(x^2 + y^2),
+        ....:                     (x,-3,3), (y,-3,3), start_points=pts)
         sage: g += point(pts, color='red')
         sage: g
         Graphics object consisting of 2 graphics primitives
