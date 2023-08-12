@@ -300,11 +300,15 @@ class MomentAngleComplex(SageObject, UniqueRepresentation):
 
         EXAMPLES::
 
-            sage: Z = MomentAngleComplex([[0,1,2], [1,2,3]]); Z
-            Moment-angle complex of Simplicial complex with vertex set (0, 1, 2, 3) and facets {(0, 1, 2), (1, 2, 3)}
+            sage: Z = MomentAngleComplex([[0,1,2], [1,3]]); Z
+            Moment-angle complex of Simplicial complex with vertex set (0, 1, 2, 3) and facets {(1, 3), (0, 1, 2)}
             sage: Z.cubical_complex()
-            Cubical complex with 256 vertices and 6481 cubes
+            Cubical complex with 256 vertices and 6409 cubes
             sage: dim(Z.cubical_complex()) == dim(Z)
+            True
+            sage: Z = MomentAngleComplex([[0,1], [1,2], [2,0], [1,3]]); Z
+            Moment-angle complex of Simplicial complex with vertex set (0, 1, 2, 3) and facets {(0, 1), (0, 2), (1, 2), (1, 3)}
+            sage: Z.betti() == Z.cubical_complex().betti()  # long time
             True
 
         We can now work with moment-angle complexes as concrete cubical complexes.
@@ -335,7 +339,7 @@ class MomentAngleComplex(SageObject, UniqueRepresentation):
         return self._simplicial_complex
 
     def components(self):
-        """
+        r"""
         Return the dictionary of components of ``self``, indexed by facets
         of the associated simplicial complex.
 
@@ -354,9 +358,9 @@ class MomentAngleComplex(SageObject, UniqueRepresentation):
             {(0, 1, 2): [The 2-simplex, The 2-simplex, The 2-simplex]}
             sage: Z = MomentAngleComplex([[0], [1]]); Z
             Moment-angle complex of Simplicial complex with vertex set (0, 1) and facets {(0,), (1,)}
-            sage: Z.components()
-            {(1,): [Minimal triangulation of the 1-sphere, The 2-simplex],
-             (0,): [The 2-simplex, Minimal triangulation of the 1-sphere]}
+            sage: sorted(Z.components().items())
+            [((0,), [The 2-simplex, Minimal triangulation of the 1-sphere]),
+             ((1,), [Minimal triangulation of the 1-sphere, The 2-simplex])]
 
         We interpret the output of this method by taking the product
         of all the elements in each list, and then taking the union
@@ -364,23 +368,27 @@ class MomentAngleComplex(SageObject, UniqueRepresentation):
         `\mathcal{Z} = S^1 \times D^2 \cup D^2 \times S^1 = \partial (D^2 \times D^2) = \partial D^4 = S^3`::
 
             sage: Z = MomentAngleComplex([[0,1], [1,2], [2,3], [3,0]])
-            sage: dict(sorted(Z.components().items()))
-            {(0, 1): [The 2-simplex,
-              The 2-simplex,
-              Minimal triangulation of the 1-sphere,
-              Minimal triangulation of the 1-sphere],
-             (0, 3): [The 2-simplex,
-              Minimal triangulation of the 1-sphere,
-              Minimal triangulation of the 1-sphere,
-              The 2-simplex],
-             (1, 2): [Minimal triangulation of the 1-sphere,
-              The 2-simplex,
-              The 2-simplex,
-              Minimal triangulation of the 1-sphere],
-             (2, 3): [Minimal triangulation of the 1-sphere,
-              Minimal triangulation of the 1-sphere,
-              The 2-simplex,
-              The 2-simplex]}
+            sage: sorted(Z.components().items())
+            [((0, 1),
+              [The 2-simplex,
+               The 2-simplex,
+               Minimal triangulation of the 1-sphere,
+               Minimal triangulation of the 1-sphere]),
+             ((0, 3),
+              [The 2-simplex,
+               Minimal triangulation of the 1-sphere,
+               Minimal triangulation of the 1-sphere,
+               The 2-simplex]),
+             ((1, 2),
+              [Minimal triangulation of the 1-sphere,
+               The 2-simplex,
+               The 2-simplex,
+               Minimal triangulation of the 1-sphere]),
+             ((2, 3),
+              [Minimal triangulation of the 1-sphere,
+               Minimal triangulation of the 1-sphere,
+               The 2-simplex,
+               The 2-simplex])]
 
         It is not that difficult to prove that the previous moment-angle complex
         is homeomorphic to a product of two 3-spheres. We can look at the
