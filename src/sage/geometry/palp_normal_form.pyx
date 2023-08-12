@@ -385,7 +385,7 @@ def _palp_canonical_order(vertices, PM_max, permutations):
         if not k == i:
             M_max[i], M_max[k] = M_max[k], M_max[i]
             S_max[i], S_max[k] = S_max[k], S_max[i]
-            p_c = S_v((1 + i, 1 + k), check=False) * p_c
+            p_c = p_c._transpose_left(1 + i, 1 + k)
     # Create array of possible NFs.
     permutations = [p_c * l[1] for l in permutations.values()]
     if isinstance(vertices, Matrix):
