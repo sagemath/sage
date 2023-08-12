@@ -117,7 +117,7 @@ class FiniteField_ntl_gf2e(FiniteField):
             sage: k2.<a> = GF(2^17)
             sage: k1 == k2
             False
-            sage: k3.<a> = GF(2^16, impl="pari_ffelt")
+            sage: k3.<a> = GF(2^16, implementation="pari_ffelt")
             sage: k1 == k3
             False
 
@@ -252,9 +252,9 @@ class FiniteField_ntl_gf2e(FiniteField):
 
         TESTS::
 
-            sage: GF(2, impl='ntl').gen()
+            sage: GF(2, implementation='ntl').gen()
             1
-            sage: GF(2, impl='ntl', modulus=polygen(GF(2)) ).gen()
+            sage: GF(2, implementation='ntl', modulus=polygen(GF(2)) ).gen()
             0
             sage: GF(2^19, 'a').gen(1)
             Traceback (most recent call last):

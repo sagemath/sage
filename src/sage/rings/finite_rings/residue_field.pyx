@@ -300,7 +300,7 @@ class ResidueFieldFactory(UniqueFactory):
         sage: K.residue_field(K.ideal(3))                                               # optional - sage.rings.number_field
         Residue field of Fractional ideal (3)
     """
-    def create_key_and_extra_args(self, p, names = None, check=True, impl=None, **kwds):
+    def create_key_and_extra_args(self, p, names = None, check=True, implementation=None, **kwds):
         """
         Return a tuple containing the key (uniquely defining data)
         and any extra arguments.
@@ -345,7 +345,7 @@ class ResidueFieldFactory(UniqueFactory):
                 names = None
         if names is None and p.ring() is not ZZ:
             names = '%sbar' % p.ring().fraction_field().variable_name()
-        key = (p, names, impl)
+        key = (p, names, implementation)
         return key, kwds
 
     def create_object(self, version, key, **kwds):
@@ -361,7 +361,7 @@ class ResidueFieldFactory(UniqueFactory):
             sage: ResidueField(P) is ResidueField(P)  # indirect doctest                # optional - sage.rings.number_field
             True
         """
-        p, names, impl = key
+        p, names, implementation = key
         pring = p.ring()
 
         if pring is ZZ:
@@ -371,17 +371,17 @@ class ResidueFieldFactory(UniqueFactory):
             Kbase = pring.base_ring()
             f = p.gen()
             characteristic = Kbase.order()
-            if f.degree() == 1 and Kbase.is_prime_field() and (impl is None or impl == 'modn'):
+            if f.degree() == 1 and Kbase.is_prime_field() and (implementation is None or implementation == 'modn'):
                 return ResidueFiniteField_prime_modn(p, None, Kbase.order(), None, None, None)
             else:
                 q = characteristic**(f.degree())
-                if q < zech_log_bound and (impl is None or impl == 'givaro'):
+                if q < zech_log_bound and (implementation is None or implementation == 'givaro'):
                     from .residue_field_givaro import ResidueFiniteField_givaro
                     return ResidueFiniteField_givaro(p, q, names, f, None, None, None)
-                elif (q % 2 == 0) and (impl is None or impl == 'ntl'):
+                elif (q % 2 == 0) and (implementation is None or implementation == 'ntl'):
                     from .residue_field_ntl_gf2e import ResidueFiniteField_ntl_gf2e
                     return ResidueFiniteField_ntl_gf2e(q, names, f, "poly", p, None, None, None)
-                elif impl is None or impl == 'pari':
+                elif implementation is None or implementation == 'pari':
                     from .residue_field_pari_ffelt import ResidueFiniteField_pari_ffelt
                     return ResidueFiniteField_pari_ffelt(p, characteristic, names, f, None, None, None)
                 else:
@@ -437,13 +437,13 @@ class ResidueFieldFactory(UniqueFactory):
             return ResidueFiniteField_prime_modn(p, names, p.smallest_integer(), to_vs, to_order, PB)
         else:
             q = characteristic**(f.degree())
-            if q < zech_log_bound and (impl is None or impl == 'givaro'):
+            if q < zech_log_bound and (implementation is None or implementation == 'givaro'):
                 from .residue_field_givaro import ResidueFiniteField_givaro
                 return ResidueFiniteField_givaro(p, q, names, f, to_vs, to_order, PB)
-            elif (q % 2 == 0) and (impl is None or impl == 'ntl'):
+            elif (q % 2 == 0) and (implementation is None or implementation == 'ntl'):
                 from .residue_field_ntl_gf2e import ResidueFiniteField_ntl_gf2e
                 return ResidueFiniteField_ntl_gf2e(q, names, f, "poly", p, to_vs, to_order, PB)
-            elif impl is None or impl == 'pari':
+            elif implementation is None or implementation == 'pari':
                 from .residue_field_pari_ffelt import ResidueFiniteField_pari_ffelt
                 return ResidueFiniteField_pari_ffelt(p, characteristic, names, f, to_vs, to_order, PB)
             else:
