@@ -412,12 +412,13 @@ cdef class Cylinder(ParametricSurface):
 
     Some gears::
 
+        sage: # needs sage.symbolic
         sage: G = Cylinder(1, .5) + Cylinder(.25, 3).translate(0, 0, -3)
-        sage: G += sum(Cylinder(.2, 1).translate(cos(2*pi*n/9), sin(2*pi*n/9), 0)       # needs sage.symbolic
+        sage: G += sum(Cylinder(.2, 1).translate(cos(2*pi*n/9), sin(2*pi*n/9), 0)
         ....:          for n in [1..9])
-        sage: G += G.translate(2.3, 0, -.5)                                             # needs sage.symbolic
-        sage: G += G.translate(3.5, 2, -1)                                              # needs sage.symbolic
-        sage: G.show(aspect_ratio=1, frame=False)                                       # needs sage.symbolic
+        sage: G += G.translate(2.3, 0, -.5)
+        sage: G += G.translate(3.5, 2, -1)
+        sage: G.show(aspect_ratio=1, frame=False)
 
     .. PLOT::
 

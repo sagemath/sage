@@ -389,7 +389,7 @@ def line2d(points, **options):
 
     A line with no points or one point::
 
-        sage: line([])      #returns an empty plot
+        sage: line([])      # returns an empty plot
         Graphics object consisting of 0 graphics primitives
         sage: import numpy; line(numpy.array([]))                                       # needs numpy
         Graphics object consisting of 0 graphics primitives

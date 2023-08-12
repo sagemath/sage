@@ -1890,10 +1890,11 @@ class Graphics(WithEqualityById, SageObject):
 
         ::
 
-            sage: y = x^5 + 4*x^4 - 10*x^3 - 40*x^2 + 9*x + 36                          # needs sage.symbolic
-            sage: p = plot(y, -4.1, 1.1)                                                # needs sage.symbolic
-            sage: xlines = lambda a, b: [z for z, m in y.roots()]                       # needs sage.symbolic
-            sage: p.show(gridlines=[xlines, [0]], frame=True, axes=False)               # needs sage.symbolic
+            sage: # needs sage.symbolic
+            sage: y = x^5 + 4*x^4 - 10*x^3 - 40*x^2 + 9*x + 36
+            sage: p = plot(y, -4.1, 1.1)
+            sage: xlines = lambda a, b: [z for z, m in y.roots()]
+            sage: p.show(gridlines=[xlines, [0]], frame=True, axes=False)
 
         Change the style of all the grid lines.
 
