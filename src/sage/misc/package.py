@@ -543,7 +543,7 @@ def package_versions(package_type, local=False):
         sage: std = package_versions('standard', local=True)
         sage: 'gap' in std
         True
-        sage: std['zlib']
+        sage: std['zlib']  # random
         ('1.2.11.p0', '1.2.11.p0')
     """
     return {pkg.name: (pkg.installed_version, pkg.remote_version) for pkg in list_packages(package_type, local=local).values()}
