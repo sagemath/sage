@@ -480,9 +480,9 @@ def root_from_approx(f, a):
         sage: root_from_approx(x^2 + 1, CC(0))
         -1*I
 
-        sage: root_from_approx(x^2 - 2, sqrt(2))
+        sage: root_from_approx(x^2 - 2, sqrt(2))                                        # needs sage.symbolic
         sqrt(2)
-        sage: root_from_approx(x^2 - 2, sqrt(3))
+        sage: root_from_approx(x^2 - 2, sqrt(3))                                        # needs sage.symbolic
         Traceback (most recent call last):
         ...
         ValueError: sqrt(3) is not a root of x^2 - 2

@@ -738,7 +738,8 @@ class NumberFieldFractionalIdeal_rel(NumberFieldFractionalIdeal):
             sage: K.ideal(2).ramification_index()
             Traceback (most recent call last):
             ...
-            NotImplementedError: For an ideal in a relative number field you must use relative_ramification_index or absolute_ramification_index as appropriate
+            NotImplementedError: For an ideal in a relative number field you must use
+            relative_ramification_index or absolute_ramification_index as appropriate
         """
         raise NotImplementedError("For an ideal in a relative number field you must use relative_ramification_index or absolute_ramification_index as appropriate")
 
