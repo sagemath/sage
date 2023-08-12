@@ -3679,7 +3679,8 @@ class DiGraph(GenericGraph):
 
         Using a different order for the edges of the graph::
 
-            sage: fl = G.flow_polytope(edges=G.edges(key=lambda x: x[0] - x[1])); fl    # needs sage.geometry.polyhedron
+            sage: ordered_edges = G.edges(sort=True, key=lambda x: x[0] - x[1])
+            sage: fl = G.flow_polytope(edges=ordered_edges); fl                         # needs sage.geometry.polyhedron
             A 1-dimensional polyhedron in QQ^4 defined as the convex hull of 2 vertices
             sage: fl.vertices()                                                         # needs sage.geometry.polyhedron
             (A vertex at (0, 1, 1, 0), A vertex at (1, 0, 0, 1))
