@@ -25,7 +25,7 @@ from sage.structure.sage_object import SageObject
 from sage.structure.unique_representation import UniqueRepresentation
 from .cubical_complex import CubicalComplex, cubical_complexes
 from .simplicial_complex import SimplicialComplex, copy
-from .simplicial_complex_examples import Sphere, Simplex
+from sage.topology import simplicial_complex_catalog as simplicial_complexes
 from itertools import combinations
 
 # Future TODO's:
@@ -219,9 +219,9 @@ class MomentAngleComplex(SageObject, UniqueRepresentation):
             Y = []
             for j in vertices:
                 if j in facet:
-                    Y.append(Simplex(2))
+                    Y.append(simplicial_complexes.Simplex(2))
                 else:
-                    Y.append(Sphere(1))
+                    Y.append(simplicial_complexes.Sphere(1))
 
             self._components[facet] = Y
 
@@ -258,9 +258,9 @@ class MomentAngleComplex(SageObject, UniqueRepresentation):
 
         moment_angle_complex = CubicalComplex()
         for component in self._components.values():
-            x = D[0] if component[0] == Simplex(2) else S[0]
+            x = D[0] if component[0] == simplicial_complexes.Simplex(2) else S[0]
             for j in range(1, len(component)):
-                y = D[j] if component[j] == Simplex(2) else S[j]
+                y = D[j] if component[j] == simplicial_complexes.Simplex(2) else S[j]
                 x = x.product(y)
             moment_angle_complex = union(moment_angle_complex, x)
 
@@ -352,6 +352,17 @@ class MomentAngleComplex(SageObject, UniqueRepresentation):
             Moment-angle complex of Simplicial complex with vertex set (0, 1, 2) and facets {(0, 1, 2)}
             sage: M.components()
             {(0, 1, 2): [The 2-simplex, The 2-simplex, The 2-simplex]}
+            sage: Z = MomentAngleComplex([[0], [1]]); Z
+            Moment-angle complex of Simplicial complex with vertex set (0, 1) and facets {(0,), (1,)}
+            sage: Z.components()
+            {(1,): [Minimal triangulation of the 1-sphere, The 2-simplex],
+             (0,): [The 2-simplex, Minimal triangulation of the 1-sphere]}
+
+        We interpret the output of this method by taking the product
+        of all the elements in each list, and then taking the union
+        of all products. From the previous example, we have
+        `\mathcal{Z} = S^1 \times D^2 \cup D^2 \times S^1 = \partial (D^2 \times D^2) = \partial D^4 = S^3`::
+
             sage: Z = MomentAngleComplex([[0,1], [1,2], [2,3], [3,0]])
             sage: dict(sorted(Z.components().items()))
             {(0, 1): [The 2-simplex,
@@ -375,8 +386,8 @@ class MomentAngleComplex(SageObject, UniqueRepresentation):
         is homeomorphic to a product of two 3-spheres. We can look at the
         cohomologies to try and validate whether this makes sense::
 
-            sage: from sage.topology.simplicial_complex_examples import Sphere as S
-            sage: product_of_spheres = S(3).product(S(3))
+            sage: S3 = simplicial_complexes.Sphere(3)
+            sage: product_of_spheres = S3.product(S3)
             sage: Z.cohomology()
             {0: 0, 1: 0, 2: 0, 3: Z x Z, 4: 0, 5: 0, 6: Z}
             sage: Z.cohomology() == product_of_spheres.cohomology()
