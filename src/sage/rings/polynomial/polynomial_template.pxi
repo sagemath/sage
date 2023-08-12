@@ -214,6 +214,7 @@ cdef class Polynomial_template(Polynomial):
         The following has been a problem in a preliminary version of
         :trac:`12313`::
 
+            sage: # needs sage.rings.finite_rings
             sage: K.<z> = GF(4)
             sage: P.<x> = K[]
             sage: del P
@@ -778,7 +779,7 @@ cdef class Polynomial_template(Polynomial):
 
             sage: P.<x> = PolynomialRing(GF(7))
             sage: f = 3*x^2 + 2*x + 5
-            sage: singular(f)
+            sage: singular(f)                                                           # needs sage.libs.singular
             3*x^2+2*x-2
         """
         self.parent()._singular_(singular).set_ring()  # this is expensive
