@@ -1190,15 +1190,17 @@ class Module_free_ambient(Module):
 
         More exotic comparisons::
 
-            sage: R1 = ZZ[sqrt(2)]                                                      # needs sage.symbolic
-            sage: F1 = R1^3                                                             # needs sage.symbolic
-            sage: V1 = F1.span([[sqrt(2), sqrt(2), 0]])                                 # needs sage.symbolic
+            sage: # needs sage.symbolic
+            sage: R1 = ZZ[sqrt(2)]
+            sage: F1 = R1^3
+            sage: V1 = F1.span([[sqrt(2), sqrt(2), 0]])
             sage: F2 = ZZ^3
             sage: V2 = F2.span([[2,2,0]])
             sage: V2 <= V1  # Different ambient vector spaces                           # needs sage.symbolic
             False
             sage: V1 <= V2                                                              # needs sage.symbolic
             False
+
             sage: R2.<x> = GF(5)[]
             sage: F3 = R2^3
             sage: V3 = F3.span([[x^5 - 1, 1 + x + x^2 + x^3 + x^4, 0]])
@@ -1821,8 +1823,7 @@ class Module_free_ambient(Module):
             sage: S.<x,y,z> = PolynomialRing(QQ)
             sage: M = S**2
             sage: N = M.submodule([vector([x - y, z]), vector([y * z, x * z])])
-            sage: res = N.free_resolution()                                             # needs sage.libs.singular
-            sage: res                                                                   # needs sage.libs.singular
+            sage: res = N.free_resolution(); res                                        # needs sage.libs.singular
             S^2 <-- S^2 <-- 0
             sage: ascii_art(res.chain_complex())                                        # needs sage.libs.singular
                         [x - y   y*z]
@@ -1916,7 +1917,7 @@ class FreeModule_generic(Module_free_ambient):
         sage: V = GF(5)**20; V.category()
         Category of enumerated finite dimensional vector spaces with basis over
          (finite enumerated fields and subquotients of monoids and quotients of semigroups)
-        sage: FreeModule(ZZ, 3).category()
+        sage: FreeModule(ZZ,3).category()
         Category of finite dimensional modules with basis over
          (euclidean domains and infinite enumerated sets
           and metric spaces)
@@ -2477,17 +2478,20 @@ class FreeModule_generic(Module_free_ambient):
 
         EXAMPLES::
 
-            sage: k.<a> = FiniteField(9)                                                # needs sage.rings.finite_rings
-            sage: V = VectorSpace(k, 3)                                                 # needs sage.rings.finite_rings
-            sage: V.cardinality()                                                       # needs sage.rings.finite_rings
+            sage: # needs sage.rings.finite_rings
+            sage: k.<a> = FiniteField(9)
+            sage: V = VectorSpace(k, 3)
+            sage: V.cardinality()
             729
-            sage: W = V.span([[1,2,1], [0,1,1]])                                        # needs sage.rings.finite_rings
-            sage: W.cardinality()                                                       # needs sage.rings.finite_rings
+            sage: W = V.span([[1,2,1], [0,1,1]])
+            sage: W.cardinality()
             81
+
             sage: R = IntegerModRing(12)
             sage: M = FreeModule(R, 2)
             sage: M.cardinality()
             144
+
             sage: (QQ^3).cardinality()
             +Infinity
 
@@ -2785,8 +2789,9 @@ class FreeModule_generic(Module_free_ambient):
         function to write a submodule in terms of integral cuspidal modular
         symbols::
 
-            sage: M = ModularSymbols(54)                                                # needs sage.modular
-            sage: S = M.cuspidal_subspace()                                             # needs sage.modular
+            sage: # needs sage.modular
+            sage: M = ModularSymbols(54)
+            sage: S = M.cuspidal_subspace()
             sage: K = S.integral_structure(); K
             Free module of degree 19 and rank 8 over Integer Ring
             Echelon basis matrix:
@@ -3362,78 +3367,80 @@ class FreeModule_generic(Module_free_ambient):
 
         ::
 
+            sage: # optional - magma
             sage: A = matrix([[1,0],[0,-1]])
             sage: M = FreeModule(ZZ,2,inner_product_matrix=A); M
             Ambient free quadratic module of rank 2 over the principal ideal domain Integer Ring
             Inner product matrix:
             [ 1  0]
             [ 0 -1]
-            sage: M._magma_init_(magma)                         # optional - magma
+            sage: M._magma_init_(magma)
             'RSpace(_sage_[...],2,_sage_ref...)'
-            sage: m = magma(M); m                               # optional - magma
+            sage: m = magma(M); m
             Full RSpace of degree 2 over Integer Ring
             Inner Product Matrix:
             [ 1  0]
             [ 0 -1]
-            sage: m.Type()                                      # optional - magma
+            sage: m.Type()
             ModTupRng
-            sage: m.sage()                                      # optional - magma
+            sage: m.sage()
             Ambient free quadratic module of rank 2 over the principal ideal domain Integer Ring
             Inner product matrix:
             [ 1  0]
             [ 0 -1]
-            sage: m.sage() is M                                 # optional - magma
+            sage: m.sage() is M
             True
 
         Now over a field::
 
+            sage: # optional - magma
             sage: N = FreeModule(QQ,2,inner_product_matrix=A); N
             Ambient quadratic space of dimension 2 over Rational Field
             Inner product matrix:
             [ 1  0]
             [ 0 -1]
-            sage: n = magma(N); n                               # optional - magma
+            sage: n = magma(N); n
             Full Vector space of degree 2 over Rational Field
             Inner Product Matrix:
             [ 1  0]
             [ 0 -1]
-            sage: n.Type()                                      # optional - magma
+            sage: n.Type()
             ModTupFld
-            sage: n.sage()                                      # optional - magma
+            sage: n.sage()
             Ambient quadratic space of dimension 2 over Rational Field
             Inner product matrix:
             [ 1  0]
             [ 0 -1]
-            sage: n.sage() is N                                 # optional - magma
+            sage: n.sage() is N
             True
 
         How about some inexact fields::
 
-            sage: # needs sage.symbolic
+            sage: # optional - magma, needs sage.symbolic
             sage: v = vector(RR, [1, pi, 5/6])
             sage: F = v.parent()
-            sage: M = magma(F); M                               # optional - magma
+            sage: M = magma(F); M
             Full Vector space of degree 3 over Real field of precision 15
-            sage: M.Type()                                      # optional - magma
+            sage: M.Type()
             ModTupFld
-            sage: m = M.sage(); m                               # optional - magma
+            sage: m = M.sage(); m
             Vector space of dimension 3 over Real Field with 53 bits of precision
-            sage: m is F                                        # optional - magma
+            sage: m is F
             True
 
         For interval fields, we can convert to Magma but there is no
         interval field in Magma so we cannot convert back::
 
-            sage: # needs sage.symbolic
+            sage: # optional - magma, needs sage.symbolic
             sage: v = vector(RealIntervalField(100), [1, pi, 0.125])
             sage: F = v.parent()
-            sage: M = magma(v.parent()); M                      # optional - magma
+            sage: M = magma(v.parent()); M
             Full Vector space of degree 3 over Real field of precision 30
-            sage: M.Type()                                      # optional - magma
+            sage: M.Type()
             ModTupFld
-            sage: m = M.sage(); m                               # optional - magma
+            sage: m = M.sage(); m
             Vector space of dimension 3 over Real Field with 100 bits of precision
-            sage: m is F                                        # optional - magma
+            sage: m is F
             False
         """
         K = magma(self.base_ring())
@@ -3448,7 +3455,7 @@ class FreeModule_generic(Module_free_ambient):
         EXAMPLES::
 
             sage: R = QQ^2
-            sage: macaulay2(R) # optional - macaulay2
+            sage: macaulay2(R)          # optional - macaulay2
               2
             QQ
         """
@@ -3821,6 +3828,7 @@ class FreeModule_generic_pid(FreeModule_generic_domain):
 
         We intersect two modules over the ring of integers of a number field::
 
+            sage: # needs sage.rings.number_field
             sage: x = polygen(ZZ, 'x')
             sage: L.<w> = NumberField(x^2 - x + 2)                                      # needs sage.rings.number_field
             sage: OL = L.ring_of_integers()
@@ -5611,13 +5619,13 @@ class FreeModule_ambient(FreeModule_generic):
 
         EXAMPLES::
 
-            sage: latex(QQ^3) # indirect doctest
+            sage: latex(QQ^3)   # indirect doctest
             \Bold{Q}^{3}
 
         ::
 
             sage: A = GF(5)^20
-            sage: latex(A)
+            sage: latex(A)      # indirect doctest
             \Bold{F}_{5}^{20}
 
         ::

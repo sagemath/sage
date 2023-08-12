@@ -854,17 +854,17 @@ class TorsionQuadraticModule(FGP_Module_class, CachedRepresentation):
 
         We compute the kernel of the action of the orthogonal group of `L` on the discriminant group::
 
-            sage: # needs sage.combinat
+            sage: # needs sage.combinat sage.groups
             sage: L = IntegralLattice('A4')
-            sage: O = L.orthogonal_group()                                              # needs sage.groups
-            sage: D = L.discriminant_group()                                            # needs sage.groups
-            sage: Obar = D.orthogonal_group(O.gens())                                   # needs sage.groups
-            sage: O.order()                                                             # needs sage.groups
+            sage: O = L.orthogonal_group()
+            sage: D = L.discriminant_group()
+            sage: Obar = D.orthogonal_group(O.gens())
+            sage: O.order()
             240
-            sage: Obar.order()                                                          # needs sage.groups
+            sage: Obar.order()
             2
-            sage: phi = O.hom(Obar.gens())                                              # needs sage.groups
-            sage: phi.kernel().order()                                                  # needs sage.groups
+            sage: phi = O.hom(Obar.gens())
+            sage: phi.kernel().order()
             120
         """
         from sage.groups.fqf_orthogonal import FqfOrthogonalGroup, _isom_fqf

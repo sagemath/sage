@@ -563,18 +563,19 @@ def is_hyperbolic(self, p):
 
     EXAMPLES::
 
+        sage: # needs sage.libs.pari
         sage: Q = DiagonalQuadraticForm(ZZ, [1,1])
-        sage: Q.is_hyperbolic(-1)                                                       # needs sage.libs.pari
+        sage: Q.is_hyperbolic(-1)
         False
-        sage: Q.is_hyperbolic(2)                                                        # needs sage.libs.pari
+        sage: Q.is_hyperbolic(2)
         False
-        sage: Q.is_hyperbolic(3)                                                        # needs sage.libs.pari
+        sage: Q.is_hyperbolic(3)
         False
-        sage: Q.is_hyperbolic(5)     # Here -1 is a square, so it's true.               # needs sage.libs.pari
+        sage: Q.is_hyperbolic(5)     # Here -1 is a square, so it's true.
         True
-        sage: Q.is_hyperbolic(7)                                                        # needs sage.libs.pari
+        sage: Q.is_hyperbolic(7)
         False
-        sage: Q.is_hyperbolic(13)    # Here -1 is a square, so it's true.               # needs sage.libs.pari
+        sage: Q.is_hyperbolic(13)    # Here -1 is a square, so it's true.
         True
     """
     # False for odd-dim'l forms

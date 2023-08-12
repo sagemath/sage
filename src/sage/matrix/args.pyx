@@ -208,27 +208,29 @@ cdef class MatrixArgs:
         sage: ma.matrix()
         [1 2]
         [3 4]
-        sage: ma = MatrixArgs(QQ, entries=pari("[1,2;3,4]")); ma.finalized()            # needs sage.libs.pari
+
+        sage: # needs sage.libs.pari
+        sage: ma = MatrixArgs(QQ, entries=pari("[1,2;3,4]")); ma.finalized()
         <MatrixArgs for Full MatrixSpace of 2 by 2 dense matrices
          over Rational Field; typ=SEQ_FLAT; entries=[1, 2, 3, 4]>
         sage: ma.matrix()
         [1 2]
         [3 4]
-        sage: ma = MatrixArgs(QQ, 2, 2, entries=pari("[1,2,3,4]")); ma.finalized()      # needs sage.libs.pari
+        sage: ma = MatrixArgs(QQ, 2, 2, entries=pari("[1,2,3,4]")); ma.finalized()
         <MatrixArgs for Full MatrixSpace of 2 by 2 dense matrices
          over Rational Field; typ=SEQ_FLAT; entries=[1, 2, 3, 4]>
         sage: ma.matrix()
         [1 2]
         [3 4]
-        sage: ma = MatrixArgs(QQ, 2, 2, entries=pari("3/5")); ma.finalized()            # needs sage.libs.pari
+        sage: ma = MatrixArgs(QQ, 2, 2, entries=pari("3/5")); ma.finalized()
         <MatrixArgs for Full MatrixSpace of 2 by 2 dense matrices
          over Rational Field; typ=SCALAR; entries=3/5>
-        sage: ma.matrix()                                                               # needs sage.libs.pari
+        sage: ma.matrix()
         [3/5   0]
         [  0 3/5]
-        sage: ma = MatrixArgs(entries=matrix(2,2)); ma.finalized()
-        <MatrixArgs for Full MatrixSpace of 2 by 2 dense matrices
-         over Integer Ring; typ=MATRIX; entries=[0 0]
+
+        sage: ma = MatrixArgs(entries=matrix(2,2)); ma.finalized(); ma.matrix()
+        <MatrixArgs for Full MatrixSpace of 2 by 2 dense matrices over Integer Ring; typ=MATRIX; entries=[0 0]
         [0 0]>
         sage: ma.matrix()
         [0 0]
@@ -245,33 +247,37 @@ cdef class MatrixArgs:
         sage: ma.matrix()
         [1 2]
         [3 4]
-        sage: from numpy import array                                                   # needs numpy
-        sage: ma = MatrixArgs(array([[1,2],[3,4]])); ma.finalized()                     # needs numpy
+
+        sage: # needs numpy
+        sage: from numpy import array
+        sage: ma = MatrixArgs(array([[1,2],[3,4]])); ma.finalized()
         <MatrixArgs for Full MatrixSpace of 2 by 2 dense matrices
          over Integer Ring; typ=SEQ_SEQ; entries=array([[1, 2], [3, 4]])>
         sage: ma.matrix()
         [1 2]
         [3 4]
-        sage: ma = MatrixArgs(array([[1.,2.],[3.,4.]])); ma.finalized()                 # needs numpy
+        sage: ma = MatrixArgs(array([[1.,2.],[3.,4.]])); ma.finalized()
         <MatrixArgs for Full MatrixSpace of 2 by 2 dense matrices
          over Real Double Field; typ=MATRIX; entries=[1.0 2.0]
                                                      [3.0 4.0]>
         sage: ma.matrix()
         [1.0 2.0]
         [3.0 4.0]
-        sage: ma = MatrixArgs(RealField(20), array([[1.,2.],[3.,4.]])); ma.finalized()  # needs numpy
+        sage: ma = MatrixArgs(RealField(20), array([[1.,2.],[3.,4.]])); ma.finalized()
         <MatrixArgs for Full MatrixSpace of 2 by 2 dense matrices over Real Field
          with 20 bits of precision; typ=MATRIX; entries=[1.0 2.0]
                                                         [3.0 4.0]>
-        sage: ma.matrix()                                                               # needs numpy
+        sage: ma.matrix()
         [1.0000 2.0000]
         [3.0000 4.0000]
-        sage: ma = MatrixArgs(graphs.CycleGraph(3)); ma.finalized()                     # needs sage.graphs
+
+        sage: # needs sage.graphs
+        sage: ma = MatrixArgs(graphs.CycleGraph(3)); ma.finalized()
         <MatrixArgs for Full MatrixSpace of 3 by 3 dense matrices
          over Integer Ring; typ=MATRIX; entries=[0 1 1]
                                                 [1 0 1]
                                                 [1 1 0]>
-        sage: ma.matrix()                                                               # needs sage.graphs
+        sage: ma.matrix()
         [0 1 1]
         [1 0 1]
         [1 1 0]

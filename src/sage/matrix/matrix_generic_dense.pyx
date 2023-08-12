@@ -69,10 +69,11 @@ cdef class Matrix_generic_dense(matrix_dense.Matrix_dense):
         We check that the problem related to :trac:`9049` is not an issue any
         more::
 
+            sage: # needs sage.rings.number_field
             sage: S.<t> = PolynomialRing(QQ)
-            sage: F.<q> = QQ.extension(t^4 + 1)                                         # needs sage.rings.number_field
-            sage: R.<x,y> = PolynomialRing(F)                                           # needs sage.rings.number_field
-            sage: M = MatrixSpace(R, 1, 2)                                              # needs sage.rings.number_field
+            sage: F.<q> = QQ.extension(t^4 + 1)
+            sage: R.<x,y> = PolynomialRing(F)
+            sage: M = MatrixSpace(R, 1, 2)
             sage: from sage.matrix.matrix_generic_dense import Matrix_generic_dense
             sage: Matrix_generic_dense(M, (x, y), True, True)                           # needs sage.rings.number_field
             [x y]

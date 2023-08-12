@@ -1150,6 +1150,7 @@ class FilteredVectorSpace_class(FreeModule_ambient_field):
 
         EXAMPLES::
 
+            sage: # needs sage.groups
             sage: F = FilteredVectorSpace(1, 1) + FilteredVectorSpace(1, 2);  F
             QQ^2 >= QQ^1 >= 0
             sage: F.exterior_power(1)                                                   # needs sage.groups

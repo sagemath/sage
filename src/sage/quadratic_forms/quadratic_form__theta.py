@@ -287,6 +287,7 @@ def theta_series_degree_2(Q, prec):
 
     EXAMPLES::
 
+        sage: # needs sage.symbolic
         sage: Q2 = QuadraticForm(ZZ, 4, [1,1,1,1, 1,0,0, 1,0, 1])
         sage: S = Q2.theta_series_degree_2(10)                                          # needs sage.symbolic
         sage: S[(0,0,2)]                                                                # needs sage.symbolic

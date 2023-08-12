@@ -875,6 +875,7 @@ cdef class IndexedFreeModuleElement(ModuleElement):
             sage: (3/2)*el
             3/2*B[[3, 1, 2]]
 
+            sage: # needs sage.combinat
             sage: P.<q> = QQ['q']
             sage: F = FractionField(P)
             sage: V = CombinatorialFreeModule(F, Words())                               # needs sage.combinat

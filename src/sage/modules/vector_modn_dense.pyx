@@ -81,6 +81,7 @@ TESTS::
 
 Test that :trac:`28042` is fixed::
 
+    sage: # needs sage.rings.finite_rings
     sage: p = 193379
     sage: K = GF(p)                                                                     # needs sage.rings.finite_rings
     sage: a = K(1)                                                                      # needs sage.rings.finite_rings
@@ -88,7 +89,7 @@ Test that :trac:`28042` is fixed::
     sage: c = K(109320)                                                                 # needs sage.rings.finite_rings
     sage: d = K(167667)                                                                 # needs sage.rings.finite_rings
     sage: e = 103937
-    sage: a*c + b*d - e                                                                 # needs sage.rings.finite_rings
+    sage: a*c + b*d - e
     102041
     sage: vector([a,b]) * vector([c,d]) - e                                             # needs sage.rings.finite_rings
     102041

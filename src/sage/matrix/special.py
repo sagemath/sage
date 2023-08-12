@@ -749,8 +749,9 @@ def diagonal_matrix(arg0=None, arg1=None, arg2=None, sparse=True):
 
     NumPy arrays may be used as input. ::
 
-        sage: import numpy                                                              # needs numpy
-        sage: entries = numpy.array([1.2, 5.6]); entries                                # needs numpy
+        sage: # needs numpy
+        sage: import numpy
+        sage: entries = numpy.array([1.2, 5.6]); entries
         array([1.2, 5.6])
         sage: A = diagonal_matrix(3, entries); A                                        # needs numpy
         [1.2 0.0 0.0]
@@ -759,6 +760,7 @@ def diagonal_matrix(arg0=None, arg1=None, arg2=None, sparse=True):
         sage: A.parent()                                                                # needs numpy
         Full MatrixSpace of 3 by 3 sparse matrices over Real Double Field
 
+        sage: # needs numpy
         sage: j = complex(0,1)
         sage: entries = numpy.array([2.0+j, 8.1, 3.4+2.6*j]); entries                   # needs numpy
         array([2. +1.j , 8.1+0.j , 3.4+2.6j])
@@ -769,8 +771,9 @@ def diagonal_matrix(arg0=None, arg1=None, arg2=None, sparse=True):
         sage: A.parent()                                                                # needs numpy
         Full MatrixSpace of 3 by 3 sparse matrices over Complex Double Field
 
-        sage: entries = numpy.array([4, 5, 6])                                          # needs numpy
-        sage: A = diagonal_matrix(entries); A                                           # needs numpy
+        sage: # needs numpy
+        sage: entries = numpy.array([4, 5, 6])
+        sage: A = diagonal_matrix(entries); A
         [4 0 0]
         [0 5 0]
         [0 0 6]
@@ -2274,17 +2277,17 @@ def companion_matrix(poly, format='right'):
         [ 1  0 -8]
         [ 0  1  4]
 
-        sage: y = var('y')                                                              # needs sage.symbolic
-        sage: q = y^3 - 2*y + 1                                                         # needs sage.symbolic
-        sage: companion_matrix(q)                                                       # needs sage.symbolic
+        sage: # needs sage.symbolic
+        sage: y = var('y')
+        sage: q = y^3 - 2*y + 1
+        sage: companion_matrix(q)
         Traceback (most recent call last):
         ...
         TypeError: input must be a polynomial (not a symbolic expression, see docstring),
         or other iterable, not y^3 - 2*y + 1
-
-        sage: coeff_list = [q(y=0)] + [q.coefficient(y^k)                               # needs sage.symbolic
-        ....:                          for k in range(1, q.degree(y)+1)]
-        sage: coeff_list                                                                # needs sage.symbolic
+        sage: coeff_list = [q(y=0)] + [q.coefficient(y^k)
+        ....:                          for k in range(1, q.degree(y) + 1)]
+        sage: coeff_list
         [1, -2, 0, 1]
         sage: companion_matrix(coeff_list)                                              # needs sage.symbolic
         [ 0  0 -1]
@@ -2428,7 +2431,7 @@ def random_rref_matrix(parent, num_pivots):
 
         sage: from sage.matrix.constructor import random_rref_matrix
         sage: matrix_space = sage.matrix.matrix_space.MatrixSpace(QQ, 5, 6)
-        sage: A = random_rref_matrix(matrix_space, num_pivots=4); A # random
+        sage: A = random_rref_matrix(matrix_space, num_pivots=4); A  # random
         [ 1  0  0 -6  0 -3]
         [ 0  1  0  2  0  3]
         [ 0  0  1 -4  0 -2]
@@ -2447,11 +2450,11 @@ def random_rref_matrix(parent, num_pivots):
 
     Matrices can be generated over other exact rings. ::
 
-        sage: B = random_matrix(FiniteField(7), 4, 4,
+        sage: B = random_matrix(FiniteField(7), 4, 4,  # random
         ....:                   algorithm='echelon_form', num_pivots=3); B
         [1 0 0 0]
         [0 1 0 6]
-        [0 0 1 4]
+        [0 0 1 1]
         [0 0 0 0]
         sage: B.rank() == 3
         True
@@ -2614,7 +2617,7 @@ def random_echelonizable_matrix(parent, rank, upper_bound=None, max_tries=100):
         sage: A = random_echelonizable_matrix(matrix_space, rank=4, upper_bound=40)
         sage: A.rank()
         4
-        sage: max(map(abs,A.list()))<40
+        sage: max(map(abs,A.list())) < 40
         True
         sage: A.rref() == A.rref().change_ring(ZZ)
         True
@@ -2855,11 +2858,11 @@ def random_subspaces_matrix(parent, rank=None):
         (5, 7)
         sage: all(x in ZZ for x in A.list())
         True
-        sage: A_expanded=A.augment(identity_matrix(5)).rref()
+        sage: A_expanded = A.augment(identity_matrix(5)).rref()
         sage: all(x in ZZ for x in A_expanded.list())
         True
-        sage: C = A_expanded.submatrix(0,0,A.nrows()-A.nullity(), A.ncols())
-        sage: L = A_expanded.submatrix(A.nrows()-A.nullity(), A.ncols())
+        sage: C = A_expanded.submatrix(0, 0, A.nrows() - A.nullity(), A.ncols())
+        sage: L = A_expanded.submatrix(A.nrows() - A.nullity(), A.ncols())
         sage: A.right_kernel() == C.right_kernel()
         True
         sage: A.row_space() == C.row_space()
@@ -3071,10 +3074,12 @@ def random_diagonalizable_matrix(parent,eigenvalues=None,dimensions=None):
         sage: from sage.matrix.constructor import random_diagonalizable_matrix
         sage: matrix_space = sage.matrix.matrix_space.MatrixSpace(QQ, 5)
         sage: A = random_diagonalizable_matrix(matrix_space)
-        sage: eigenvalues = A.eigenvalues()                                             # needs sage.rings.number_field
-        sage: S = A.right_eigenmatrix()[1]                                              # needs sage.rings.number_field
-        sage: eigenvalues2 = (S.inverse()*A*S).diagonal()                               # needs sage.rings.number_field
-        sage: sorted(eigenvalues) == sorted(eigenvalues2)                               # needs sage.rings.number_field
+
+        sage: # needs sage.rings.number_field
+        sage: eigenvalues = A.eigenvalues()
+        sage: S = A.right_eigenmatrix()[1]
+        sage: eigenvalues2 = (S.inverse()*A*S).diagonal()
+        sage: sorted(eigenvalues) == sorted(eigenvalues2)
         True
 
     A diagonalizable matrix with eigenvalues and dimensions designated,
@@ -3090,9 +3095,11 @@ def random_diagonalizable_matrix(parent,eigenvalues=None,dimensions=None):
         True
         sage: all(x in ZZ for x in (B-(6*identity_matrix(6))).rref().list())
         True
-        sage: S = B.right_eigenmatrix()[1]                                              # needs sage.rings.number_field
-        sage: eigenvalues2 = (S.inverse()*B*S).diagonal()                               # needs sage.rings.number_field
-        sage: all(e in eigenvalues for e in eigenvalues2)                               # needs sage.rings.number_field
+
+        sage: # needs sage.rings.number_field
+        sage: S = B.right_eigenmatrix()[1]
+        sage: eigenvalues2 = (S.inverse()*B*S).diagonal()
+        sage: all(e in eigenvalues for e in eigenvalues2)
         True
 
     TESTS:

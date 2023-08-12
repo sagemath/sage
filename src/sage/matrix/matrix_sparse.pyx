@@ -672,13 +672,15 @@ cdef class Matrix_sparse(matrix.Matrix):
         EXAMPLES::
 
             sage: m = matrix(ZZ, 10000, {(1,2): 17}, sparse=True)
-            sage: k.<a> = GF(9)                                                         # needs sage.rings.finite_rings
+
+            sage: # needs sage.rings.finite_rings
+            sage: k.<a> = GF(9)
             sage: f = lambda x: k(x)
-            sage: n = m.apply_map(f)                                                    # needs sage.rings.finite_rings
-            sage: n.parent()                                                            # needs sage.rings.finite_rings
+            sage: n = m.apply_map(f)
+            sage: n.parent()
             Full MatrixSpace of 10000 by 10000 sparse matrices
              over Finite Field in a of size 3^2
-            sage: n[1, 2]                                                               # needs sage.rings.finite_rings
+            sage: n[1, 2]
             2
 
         An example where the codomain is explicitly specified.

@@ -29,7 +29,7 @@ matrix can be described as acting on vectors placed to the right.  ::
     Vector space morphism represented by the matrix:
     [-1  2  3]
     [ 4  2  0]
-    Domain: Vector space of dimension 2 over Rational Field
+    Domain:   Vector space of dimension 2 over Rational Field
     Codomain: Vector space of dimension 3 over Rational Field
     sage: phi([2, -3])
     (-14, -2, 6)
@@ -38,6 +38,7 @@ A symbolic function can be used to specify the "rule" for a
 linear transformation, along with explicit descriptions of the
 domain and codomain.  ::
 
+    sage: # needs sage.symbolic
     sage: F = Integers(13)
     sage: D = F^3
     sage: C = F^2
@@ -65,7 +66,7 @@ homspace to create a linear transformation.  See
     [ 2 -1]
     [ 4  0]
     [ 3  7]
-    Domain: Vector space of dimension 4 over Rational Field
+    Domain:   Vector space of dimension 4 over Rational Field
     Codomain: Vector space of dimension 2 over Rational Field
 
 A homomorphism may also be created via a method on the domain.  ::
@@ -81,10 +82,10 @@ A homomorphism may also be created via a method on the domain.  ::
     Vector space morphism represented by the matrix:
     [  sqrt3       1]
     [2*sqrt3       2]
-    Domain: Vector space of dimension 2 over Number Field in sqrt3
-             with defining polynomial x^2 - 3 with sqrt3 = 1.732050807568878?
+    Domain:   Vector space of dimension 2 over Number Field in sqrt3
+              with defining polynomial x^2 - 3 with sqrt3 = 1.732050807568878?
     Codomain: Vector space of dimension 2 over Number Field in sqrt3
-               with defining polynomial x^2 - 3 with sqrt3 = 1.732050807568878?
+              with defining polynomial x^2 - 3 with sqrt3 = 1.732050807568878?
     sage: psi([1, 4])
     (9*sqrt3, 9)
 
@@ -167,7 +168,7 @@ relative to the bases of both the domain and codomain. ::
     [0 0 1 0 0 1 0 0 0 1]
     [0 0 0 1 0 1 1 0 0 0]
     [0 0 0 0 1 0 1 1 0 0]
-    Domain: Vector space of dimension 10 over Rational Field
+    Domain:   Vector space of dimension 10 over Rational Field
     Codomain: Vector space of dimension 10 over Rational Field
 
     sage: # needs sage.graphs
@@ -189,43 +190,42 @@ relative to the bases of both the domain and codomain. ::
     [6 6 6 5 4 4 2 1 1 1]
     [6 6 6 6 5 4 3 1 0 0]
     [3 3 3 3 3 2 2 1 0 0]
-    Domain: Vector space of degree 10 and dimension 10 over Rational Field
-    User basis matrix:
-    [1 1 0 0 0 0 0 0 0 0]
-    [0 1 1 0 0 0 0 0 0 0]
-    [0 0 1 1 0 0 0 0 0 0]
-    [0 0 0 1 1 0 0 0 0 0]
-    [0 0 0 0 1 1 0 0 0 0]
-    [0 0 0 0 0 1 1 0 0 0]
-    [0 0 0 0 0 0 1 1 0 0]
-    [0 0 0 0 0 0 0 1 1 0]
-    [0 0 0 0 0 0 0 0 1 1]
-    [0 0 0 0 0 0 0 0 0 1]
+    Domain:   Vector space of degree 10 and dimension 10 over Rational Field
+              User basis matrix:
+              [1 1 0 0 0 0 0 0 0 0]
+              [0 1 1 0 0 0 0 0 0 0]
+              [0 0 1 1 0 0 0 0 0 0]
+              [0 0 0 1 1 0 0 0 0 0]
+              [0 0 0 0 1 1 0 0 0 0]
+              [0 0 0 0 0 1 1 0 0 0]
+              [0 0 0 0 0 0 1 1 0 0]
+              [0 0 0 0 0 0 0 1 1 0]
+              [0 0 0 0 0 0 0 0 1 1]
+              [0 0 0 0 0 0 0 0 0 1]
     Codomain: Vector space of degree 10 and dimension 10 over Rational Field
-    User basis matrix:
-    [ 1  0  0  0  0  0  0  0  0  0]
-    [-1  1  0  0  0  0  0  0  0  0]
-    [ 0 -1  1  0  0  0  0  0  0  0]
-    [ 0  0 -1  1  0  0  0  0  0  0]
-    [ 0  0  0 -1  1  0  0  0  0  0]
-    [ 0  0  0  0 -1  1  0  0  0  0]
-    [ 0  0  0  0  0 -1  1  0  0  0]
-    [ 0  0  0  0  0  0 -1  1  0  0]
-    [ 0  0  0  0  0  0  0 -1  1  0]
-    [ 0  0  0  0  0  0  0  0 -1  1]
+              User basis matrix:
+              [ 1  0  0  0  0  0  0  0  0  0]
+              [-1  1  0  0  0  0  0  0  0  0]
+              [ 0 -1  1  0  0  0  0  0  0  0]
+              [ 0  0 -1  1  0  0  0  0  0  0]
+              [ 0  0  0 -1  1  0  0  0  0  0]
+              [ 0  0  0  0 -1  1  0  0  0  0]
+              [ 0  0  0  0  0 -1  1  0  0  0]
+              [ 0  0  0  0  0  0 -1  1  0  0]
+              [ 0  0  0  0  0  0  0 -1  1  0]
+              [ 0  0  0  0  0  0  0  0 -1  1]
 
 An endomorphism is a linear transformation with an equal domain and codomain,
 and here each needs to have the same basis.  We are using a
 matrix that has well-behaved eigenvalues, as part of showing that these
 do not change as the representation changes.  ::
 
-    sage: A = graphs.PetersenGraph().adjacency_matrix()                                 # needs sage.graphs
+    sage: # needs sage.graphs
+    sage: A = graphs.PetersenGraph().adjacency_matrix()
     sage: V = QQ^10
     sage: phi = linear_transformation(V, V, A)                                          # needs sage.graphs
     sage: phi.eigenvalues()                                                             # needs sage.graphs
     [3, -2, -2, -2, -2, 1, 1, 1, 1, 1]
-
-    sage: # needs sage.graphs
     sage: B1 = [V.gen(i) + V.gen(i+1) for i in range(9)] + [V.gen(9)]
     sage: C = V.subspace_with_basis(B1)
     sage: zeta = phi.restrict(C)
@@ -241,32 +241,31 @@ do not change as the representation changes.  ::
     [ 0  0  1  0  0  2 -1  1 -1  2]
     [ 0  0  0  1  0  1  1  0  0  0]
     [ 0  0  0  0  1 -1  2 -1  1 -1]
-    Domain: Vector space of degree 10 and dimension 10 over Rational Field
-    User basis matrix:
-    [1 1 0 0 0 0 0 0 0 0]
-    [0 1 1 0 0 0 0 0 0 0]
-    [0 0 1 1 0 0 0 0 0 0]
-    [0 0 0 1 1 0 0 0 0 0]
-    [0 0 0 0 1 1 0 0 0 0]
-    [0 0 0 0 0 1 1 0 0 0]
-    [0 0 0 0 0 0 1 1 0 0]
-    [0 0 0 0 0 0 0 1 1 0]
-    [0 0 0 0 0 0 0 0 1 1]
-    [0 0 0 0 0 0 0 0 0 1]
+    Domain:   Vector space of degree 10 and dimension 10 over Rational Field
+              User basis matrix:
+              [1 1 0 0 0 0 0 0 0 0]
+              [0 1 1 0 0 0 0 0 0 0]
+              [0 0 1 1 0 0 0 0 0 0]
+              [0 0 0 1 1 0 0 0 0 0]
+              [0 0 0 0 1 1 0 0 0 0]
+              [0 0 0 0 0 1 1 0 0 0]
+              [0 0 0 0 0 0 1 1 0 0]
+              [0 0 0 0 0 0 0 1 1 0]
+              [0 0 0 0 0 0 0 0 1 1]
+              [0 0 0 0 0 0 0 0 0 1]
     Codomain: Vector space of degree 10 and dimension 10 over Rational Field
-    User basis matrix:
-    [1 1 0 0 0 0 0 0 0 0]
-    [0 1 1 0 0 0 0 0 0 0]
-    [0 0 1 1 0 0 0 0 0 0]
-    [0 0 0 1 1 0 0 0 0 0]
-    [0 0 0 0 1 1 0 0 0 0]
-    [0 0 0 0 0 1 1 0 0 0]
-    [0 0 0 0 0 0 1 1 0 0]
-    [0 0 0 0 0 0 0 1 1 0]
-    [0 0 0 0 0 0 0 0 1 1]
-    [0 0 0 0 0 0 0 0 0 1]
-
-    sage: zeta.eigenvalues()                                                            # needs sage.graphs
+              User basis matrix:
+              [1 1 0 0 0 0 0 0 0 0]
+              [0 1 1 0 0 0 0 0 0 0]
+              [0 0 1 1 0 0 0 0 0 0]
+              [0 0 0 1 1 0 0 0 0 0]
+              [0 0 0 0 1 1 0 0 0 0]
+              [0 0 0 0 0 1 1 0 0 0]
+              [0 0 0 0 0 0 1 1 0 0]
+              [0 0 0 0 0 0 0 1 1 0]
+              [0 0 0 0 0 0 0 0 1 1]
+              [0 0 0 0 0 0 0 0 0 1]
+    sage: zeta.eigenvalues()
     [3, -2, -2, -2, -2, 1, 1, 1, 1, 1]
 
 Equality
@@ -509,7 +508,7 @@ def linear_transformation(arg0, arg1=None, arg2=None, side='left'):
         [2 0]
         [0 5]
         [1 0]
-        Domain: Vector space of dimension 3 over Rational Field
+        Domain:   Vector space of dimension 3 over Rational Field
         Codomain: Vector space of dimension 2 over Rational Field
 
         sage: phi == rho
@@ -683,8 +682,9 @@ def linear_transformation(arg0, arg1=None, arg2=None, side='left'):
         ValueError: symbolic function must be linear in all the inputs:
         unable to convert y to a rational
 
-        sage: x, y = var('x y')                                                         # needs sage.symbolic
-        sage: f(x, y) = [x, 2*y]                                                        # needs sage.symbolic
+        sage: # needs sage.symbolic
+        sage: x, y = var('x y')
+        sage: f(x, y) = [x, 2*y]
         sage: C = (QQ^2).span([vector(QQ, [1, 1])])
         sage: linear_transformation(QQ^2, C, f)
         Traceback (most recent call last):
@@ -830,7 +830,7 @@ class VectorSpaceMorphism(free_module_morphism.FreeModuleMorphism):
             [0 1]
             [2 3]
             [4 5]
-            Domain: Vector space of dimension 3 over Rational Field
+            Domain:   Vector space of dimension 3 over Rational Field
             Codomain: Vector space of dimension 2 over Rational Field
 
         See the constructor,

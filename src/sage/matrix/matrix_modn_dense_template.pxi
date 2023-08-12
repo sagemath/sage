@@ -462,7 +462,7 @@ cdef class Matrix_modn_dense_template(Matrix_dense):
         TESTS::
 
             sage: import gc
-            sage: for i in range(10):                                                   # needs sage.libs.pari
+            sage: for i in range(10):                                                   # needs sage.rings.finite_rings
             ....:      A = random_matrix(GF(7),1000,1000)
             ....:      B = random_matrix(Integers(10),1000,1000)
             ....:      C = random_matrix(GF(16007),1000,1000)
@@ -508,7 +508,7 @@ cdef class Matrix_modn_dense_template(Matrix_dense):
             [6 5]
             [4 2]
 
-            sage: Matrix(GF(6434383), 2, 2, [-1, int(-2), GF(7)(-3), 1/4])              # needs sage.libs.pari
+            sage: Matrix(GF(6434383), 2, 2, [-1, int(-2), GF(7)(-3), 1/4])              # needs sage.rings.finite_rings
             [6434382 6434381]
             [      4 1608596]
 
@@ -668,7 +668,8 @@ cdef class Matrix_modn_dense_template(Matrix_dense):
 
         And for larger modulus::
 
-            sage: A = random_matrix(GF(1009), 51, 5)                                    # needs sage.libs.pari
+            sage: # needs sage.rings.finite_rings
+            sage: A = random_matrix(GF(1009), 51, 5)
             sage: data, version = A._pickle()
             sage: B = A.parent()(0)
             sage: B._unpickle(data, version)
@@ -1061,8 +1062,8 @@ cdef class Matrix_modn_dense_template(Matrix_dense):
 
         ::
 
-            sage: A = random_matrix(GF(16007),2,2)                                      # needs sage.libs.pari
-            sage: B = random_matrix(GF(16007),2,2)                                      # needs sage.libs.pari
+            sage: A = random_matrix(GF(16007),2,2)                                      # needs sage.rings.finite_rings
+            sage: B = random_matrix(GF(16007),2,2)                                      # needs sage.rings.finite_rings
             sage: C = A*B
             sage: all(C[i, j] == sum(A[i, k]*B[k, j] for k in range(2)) for i in range(2) for j in range(2))
             True
@@ -1073,7 +1074,7 @@ cdef class Matrix_modn_dense_template(Matrix_dense):
 
         ::
 
-            sage: # needs sage.libs.pari
+            sage: # needs sage.rings.finite_rings
             sage: A = random_matrix(GF(15991), 201, 117)
             sage: B = random_matrix(GF(15991), 117, 195)
             sage: C = random_matrix(GF(15991), 201, 117)
@@ -1088,7 +1089,7 @@ cdef class Matrix_modn_dense_template(Matrix_dense):
 
         ::
 
-            sage: A = random_matrix(GF(16007), 200, 200)                                # needs sage.libs.pari
+            sage: A = random_matrix(GF(16007), 200, 200)                                # needs sage.rings.finite_rings
             sage: MS = parent(A)
             sage: (MS(0) * A) == 0
             True
@@ -1161,13 +1162,13 @@ cdef class Matrix_modn_dense_template(Matrix_dense):
             sage: matrix(v*A) == matrix(v)*A
             True
 
-            sage: A = random_matrix(GF(4796509), 10, 20)                                # needs sage.libs.pari
-            sage: v = random_vector(GF(4796509), 10)                                    # needs sage.libs.pari
+            sage: A = random_matrix(GF(4796509), 10, 20)                                # needs sage.rings.finite_rings
+            sage: v = random_vector(GF(4796509), 10)                                    # needs sage.rings.finite_rings
             sage: matrix(v*A) == matrix(v)*A
             True
 
             sage: A = random_matrix(Integers(16337), 10, 20)
-            sage: v = random_vector(Integers(16337), 10)                                # needs sage.libs.pari
+            sage: v = random_vector(Integers(16337), 10)                                # needs sage.rings.finite_rings
             sage: matrix(v*A) == matrix(v)*A
             True
 
@@ -1214,13 +1215,13 @@ cdef class Matrix_modn_dense_template(Matrix_dense):
             sage: matrix(A*v).transpose() == A*matrix(v).transpose()
             True
 
-            sage: A = random_matrix(GF(4796509), 10, 20)                                # needs sage.libs.pari
-            sage: v = random_vector(GF(4796509), 20)                                    # needs sage.libs.pari
+            sage: A = random_matrix(GF(4796509), 10, 20)                                # needs sage.rings.finite_rings
+            sage: v = random_vector(GF(4796509), 20)                                    # needs sage.rings.finite_rings
             sage: matrix(A*v).transpose() == A*matrix(v).transpose()
             True
 
             sage: A = random_matrix(Integers(16337), 10, 20)
-            sage: v = random_vector(Integers(16337), 20)                                # needs sage.libs.pari
+            sage: v = random_vector(Integers(16337), 20)                                # needs sage.rings.finite_rings
             sage: matrix(A*v).transpose() == A*matrix(v).transpose()
             True
         """
@@ -1290,7 +1291,7 @@ cdef class Matrix_modn_dense_template(Matrix_dense):
 
         ::
 
-            sage: A = random_matrix(GF(2916337), 7, 7)                                  # needs sage.libs.pari
+            sage: A = random_matrix(GF(2916337), 7, 7)                                  # needs sage.rings.finite_rings
             sage: B = copy(A)
             sage: char_p = A.characteristic_polynomial()
             sage: char_p(A) == 0
@@ -1332,24 +1333,24 @@ cdef class Matrix_modn_dense_template(Matrix_dense):
             sage: A.minimal_polynomial()                                                # needs sage.libs.pari
             x
 
-            sage: A = random_matrix(GF(4198973), 0, 0)                                  # needs sage.libs.pari
-            sage: A.minimal_polynomial()                                                # needs sage.libs.pari
+            sage: A = random_matrix(GF(4198973), 0, 0)                                  # needs sage.rings.finite_rings
+            sage: A.minimal_polynomial()                                                # needs sage.rings.finite_rings
             1
 
-            sage: A = random_matrix(GF(4198973), 0, 1)                                  # needs sage.libs.pari
-            sage: A.minimal_polynomial()                                                # needs sage.libs.pari
+            sage: A = random_matrix(GF(4198973), 0, 1)                                  # needs sage.rings.finite_rings
+            sage: A.minimal_polynomial()                                                # needs sage.rings.finite_rings
             Traceback (most recent call last):
             ...
             ValueError: matrix must be square
 
-            sage: A = random_matrix(GF(4198973), 1, 0)                                  # needs sage.libs.pari
-            sage: A.minimal_polynomial()                                                # needs sage.libs.pari
+            sage: A = random_matrix(GF(4198973), 1, 0)                                  # needs sage.rings.finite_rings
+            sage: A.minimal_polynomial()                                                # needs sage.rings.finite_rings
             Traceback (most recent call last):
             ...
             ValueError: matrix must be square
 
-            sage: A = matrix(GF(4198973), 10, 10)                                       # needs sage.libs.pari
-            sage: A.minimal_polynomial()                                                # needs sage.libs.pari
+            sage: A = matrix(GF(4198973), 10, 10)                                       # needs sage.rings.finite_rings
+            sage: A.minimal_polynomial()                                                # needs sage.rings.finite_rings
             x
 
             sage: A = Mat(GF(7),3,3)([0, 1, 2] * 3)
@@ -1444,7 +1445,7 @@ cdef class Matrix_modn_dense_template(Matrix_dense):
 
         ::
 
-            sage: A = random_matrix(GF(1214471), 10, 10)                                # needs sage.libs.pari
+            sage: A = random_matrix(GF(1214471), 10, 10)                                # needs sage.rings.finite_rings
             sage: B = copy(A)
             sage: min_p = A.minimal_polynomial(proof=True)
             sage: min_p(A) == 0
@@ -1480,24 +1481,24 @@ cdef class Matrix_modn_dense_template(Matrix_dense):
 
         ::
 
-            sage: A = random_matrix(GF(2535919), 0, 0)                                  # needs sage.libs.pari
-            sage: A.minimal_polynomial()                                                # needs sage.libs.pari
+            sage: A = random_matrix(GF(2535919), 0, 0)                                  # needs sage.rings.finite_rings
+            sage: A.minimal_polynomial()                                                # needs sage.rings.finite_rings
             1
 
-            sage: A = random_matrix(GF(2535919), 0, 1)                                  # needs sage.libs.pari
-            sage: A.minimal_polynomial()                                                # needs sage.libs.pari
+            sage: A = random_matrix(GF(2535919), 0, 1)                                  # needs sage.rings.finite_rings
+            sage: A.minimal_polynomial()                                                # needs sage.rings.finite_rings
             Traceback (most recent call last):
             ...
             ValueError: matrix must be square
 
-            sage: A = random_matrix(GF(2535919), 1, 0)                                  # needs sage.libs.pari
-            sage: A.minimal_polynomial()                                                # needs sage.libs.pari
+            sage: A = random_matrix(GF(2535919), 1, 0)                                  # needs sage.rings.finite_rings
+            sage: A.minimal_polynomial()                                                # needs sage.rings.finite_rings
             Traceback (most recent call last):
             ...
             ValueError: matrix must be square
 
-            sage: A = matrix(GF(2535919), 10, 10)                                       # needs sage.libs.pari
-            sage: A.minimal_polynomial()                                                # needs sage.libs.pari
+            sage: A = matrix(GF(2535919), 10, 10)                                       # needs sage.rings.finite_rings
+            sage: A.minimal_polynomial()                                                # needs sage.rings.finite_rings
             x
 
         EXAMPLES::
@@ -1640,7 +1641,8 @@ cdef class Matrix_modn_dense_template(Matrix_dense):
 
         ::
 
-            sage: A = random_matrix(GF(16007), 10, 20)                                  # needs sage.libs.pari
+            sage: # needs sage.rings.finite_rings
+            sage: A = random_matrix(GF(16007), 10, 20)
             sage: E = A.echelon_form()
             sage: A.row_space() == E.row_space()
             True
@@ -1657,7 +1659,8 @@ cdef class Matrix_modn_dense_template(Matrix_dense):
 
         Parallel computation::
 
-            sage: A = random_matrix(GF(65521),100,200)                                  # needs sage.libs.pari
+            sage: # needs sage.rings.finite_rings
+            sage: A = random_matrix(GF(65521),100,200)
             sage: Parallelism().set('linbox', nproc=2)
             sage: E = A.echelon_form()
             sage: Parallelism().set('linbox', nproc=1) # switch off parallelization
@@ -1688,7 +1691,9 @@ cdef class Matrix_modn_dense_template(Matrix_dense):
             [0 0 0 0 0 0 0 0 0 0]
             [0 0 0 0 0 0 0 0 0 0]
             [0 0 0 0 0 0 0 0 0 0]
-            sage: A = random_matrix(GF(16007),  0, 10)                                  # needs sage.libs.pari
+
+            sage: # needs sage.rings.finite_rings
+            sage: A = random_matrix(GF(16007),  0, 10)
             sage: A.echelon_form()
             []
             sage: A = random_matrix(GF(16007), 10,  0)                                  # needs sage.libs.pari
@@ -2127,7 +2132,8 @@ cdef class Matrix_modn_dense_template(Matrix_dense):
 
         ::
 
-            sage: A = random_matrix(GF(16007), 100, 100)                                # needs sage.libs.pari
+            sage: # needs sage.rings.finite_rings
+            sage: A = random_matrix(GF(16007), 100, 100)
             sage: B = copy(A)
             sage: A.rank()
             100
@@ -2148,7 +2154,9 @@ cdef class Matrix_modn_dense_template(Matrix_dense):
             sage: A = random_matrix(GF(7), 0, 1)
             sage: A.rank()
             0
-            sage: A = random_matrix(GF(16007), 0, 0)                                    # needs sage.libs.pari
+
+            sage: # needs sage.rings.finite_rings
+            sage: A = random_matrix(GF(16007), 0, 0)
             sage: A.rank()
             0
             sage: A = random_matrix(GF(16007), 1, 0)                                    # needs sage.libs.pari
@@ -2194,27 +2202,27 @@ cdef class Matrix_modn_dense_template(Matrix_dense):
 
         ::
 
-            sage: A = random_matrix(GF(16007), 10, 10)                                  # needs sage.libs.pari
-            sage: A.determinant().parent() is GF(16007)                                 # needs sage.libs.pari
+            sage: # needs sage.rings.finite_rings
+            sage: A = random_matrix(GF(16007), 10, 10)
+            sage: A.determinant().parent() is GF(16007)
             True
 
         ::
 
-            sage: A = random_matrix(GF(16007), 100, 100)                                # needs sage.libs.pari
-            sage: A.determinant().parent() is GF(16007)                                 # needs sage.libs.pari
+            sage: # needs sage.rings.finite_rings
+            sage: A = random_matrix(GF(16007), 100, 100)
+            sage: A.determinant().parent() is GF(16007)
             True
-
-
-            sage: A.determinant() == A.transpose().determinant()                        # needs sage.libs.pari
+            sage: A.determinant() == A.transpose().determinant()
             True
-
-            sage: B = random_matrix(GF(16007), 100, 100)                                # needs sage.libs.pari
-            sage: (A*B).determinant() == A.determinant() * B.determinant()              # needs sage.libs.pari
+            sage: B = random_matrix(GF(16007), 100, 100)
+            sage: (A*B).determinant() == A.determinant() * B.determinant()
             True
 
         Parallel computation::
 
-            sage: A = random_matrix(GF(65521),200)                                      # needs sage.libs.pari
+            sage: # needs sage.rings.finite_rings
+            sage: A = random_matrix(GF(65521),200)
             sage: B = copy(A)
             sage: Parallelism().set('linbox', nproc=2)
             sage: d = A.determinant()                                                   # needs sage.libs.pari
@@ -2241,20 +2249,18 @@ cdef class Matrix_modn_dense_template(Matrix_dense):
             sage: A = matrix(GF(7), 5, 5); A.det()                                      # needs sage.libs.pari
             0
 
-            sage: A = random_matrix(GF(16007), 0, 0); A.det()                           # needs sage.libs.pari
+            sage: # needs sage.rings.finite_rings
+            sage: A = random_matrix(GF(16007), 0, 0); A.det()
             1
-
-            sage: A = random_matrix(GF(16007), 0, 1); A.det()                           # needs sage.libs.pari
+            sage: A = random_matrix(GF(16007), 0, 1); A.det()
             Traceback (most recent call last):
             ...
             ValueError: self must be a square matrix
-
-            sage: A = random_matrix(GF(16007), 1, 0); A.det()                           # needs sage.libs.pari
+            sage: A = random_matrix(GF(16007), 1, 0); A.det()
             Traceback (most recent call last):
             ...
             ValueError: self must be a square matrix
-
-            sage: A = matrix(GF(16007), 5, 5); A.det()                                  # needs sage.libs.pari
+            sage: A = matrix(GF(16007), 5, 5); A.det()
             0
         """
         if self._nrows != self._ncols:
@@ -2739,7 +2745,8 @@ cdef class Matrix_modn_dense_template(Matrix_dense):
             sage: A.lift().parent()
             Full MatrixSpace of 2 by 3 dense matrices over Integer Ring
 
-            sage: A = matrix(GF(16007),2,3,[1..6])                                      # needs sage.libs.pari
+            sage: # needs sage.rings.finite_rings
+            sage: A = matrix(GF(16007),2,3,[1..6])
             sage: A.lift()
             [1 2 3]
             [4 5 6]
@@ -3082,15 +3089,14 @@ cdef class Matrix_modn_dense_template(Matrix_dense):
             sage: bool(A)
             False
 
-            sage: A = matrix(GF(16007), 0, 0)                                           # needs sage.libs.pari
+            sage: # needs sage.rings.finite_rings
+            sage: A = matrix(GF(16007), 0, 0)
             sage: A.is_zero()
             True
-
-            sage: A = matrix(GF(16007), 1, 0)                                           # needs sage.libs.pari
+            sage: A = matrix(GF(16007), 1, 0)
             sage: A.is_zero()
             True
-
-            sage: A = matrix(GF(16007), 0, 1)                                           # needs sage.libs.pari
+            sage: A = matrix(GF(16007), 0, 1)
             sage: A.is_zero()
             True
         """
@@ -3110,8 +3116,8 @@ cdef class Matrix_modn_dense_template(Matrix_dense):
 
         EXAMPLES::
 
-            sage: M = Matrix(GF(49), 2, [1,2,-2,0])                                     # needs sage.libs.pari
-            sage: M.zero_pattern_matrix()  # indirect doctest                           # needs sage.libs.pari
+            sage: M = Matrix(GF(49), 2, [1,2,-2,0])                                     # needs sage.rings.finite_rings
+            sage: M.zero_pattern_matrix()  # indirect doctest                           # needs sage.rings.finite_rings
             [0 0]
             [0 1]
 

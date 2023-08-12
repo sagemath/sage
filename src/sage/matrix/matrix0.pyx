@@ -1927,11 +1927,12 @@ cdef class Matrix(sage.structure.element.Matrix):
 
         Prior to :trac:`11544` this could take a full minute to run (2011). ::
 
+            sage: # needs sage.rings.number_field
             sage: A = matrix(QQ, 4, 4, [1, 2, -2, 2, 1, 0, -1, -1, 0, -1, 1, 1, -1, 2, 1/2, 0])
-            sage: e = A.eigenvalues()[3]                                                # needs sage.rings.number_field
-            sage: K = (A - e).kernel()                                                  # needs sage.rings.number_field
-            sage: P = K.basis_matrix()                                                  # needs sage.rings.number_field
-            sage: P.str()                                                               # needs sage.rings.number_field
+            sage: e = A.eigenvalues()[3]
+            sage: K = (A - e).kernel()
+            sage: P = K.basis_matrix()
+            sage: P.str()
             '[              1.000000000000000? + 0.?e-17*I  -2.116651487479748? + 0.0255565807096352?*I -0.2585224251020429? + 0.2886023409047535?*I  -0.4847545623533090? - 1.871890760086142?*I]'
 
         Use single-row delimiters where appropriate::
@@ -2947,7 +2948,7 @@ cdef class Matrix(sage.structure.element.Matrix):
             Traceback (most recent call last):
             ...
             TypeError: Multiplying row by Symbolic Ring element cannot be done over
-             Rational Field, use change_ring or with_added_multiple_of_row instead.
+            Rational Field, use change_ring or with_added_multiple_of_row instead.
         """
         self.check_row_bounds_and_mutability(i,j)
         try:
@@ -3251,8 +3252,8 @@ cdef class Matrix(sage.structure.element.Matrix):
             sage: a.rescale_col(2, 1/2)
             Traceback (most recent call last):
             ...
-            TypeError: Rescaling column by Rational Field element cannot be done over
-            Integer Ring, use change_ring or with_rescaled_col instead.
+            TypeError: Rescaling column by Rational Field element cannot be done
+            over Integer Ring, use change_ring or with_rescaled_col instead.
 
         To rescale the matrix by 1/2, you must change the base ring to the
         rationals::
@@ -3944,7 +3945,7 @@ cdef class Matrix(sage.structure.element.Matrix):
 
     def is_symmetric(self):
         """
-        Return True if this is a symmetric matrix.
+        Return ``True`` if this is a symmetric matrix.
 
         A symmetric matrix is necessarily square.
 
@@ -4905,7 +4906,7 @@ cdef class Matrix(sage.structure.element.Matrix):
         Over finite fields::
 
             sage: A = matrix(GF(59), 3, [10,56,39,53,56,33,58,24,55])
-            sage: A.multiplicative_order()                                              # needs sage.rings.finite_rings
+            sage: A.multiplicative_order()                                              # needs sage.groups
             580
             sage: (A^580).is_one()
             True
@@ -5247,7 +5248,7 @@ cdef class Matrix(sage.structure.element.Matrix):
             sage: R.<x,y> = FreeAlgebra(QQ,2)
             sage: a = matrix(2, 2, [1,2,x*y,y*x])
             sage: b = matrix(2, 2, [1,2,y*x,y*x])
-            sage: a - b # indirect doctest
+            sage: a - b  # indirect doctest
             [        0         0]
             [x*y - y*x         0]
 
@@ -5320,11 +5321,12 @@ cdef class Matrix(sage.structure.element.Matrix):
             [          x*y         x^2*y         x*y^2]
             [     -x^2*y^2 x^2*y + x*y^2 x^2*y - x*y^2]
 
-            sage: R.<x,y> = FreeAlgebra(ZZ,2)                                           # needs sage.combinat
+            sage: # needs sage.combinat
+            sage: R.<x,y> = FreeAlgebra(ZZ,2)
             sage: a = matrix(R, 2, 3, [1,x,y, -x*y,x+y,x-y]); a
             [    1     x     y]
             [ -x*y x + y x - y]
-            sage: (x*y) * a  # indirect doctest                                         # needs sage.combinat
+            sage: (x*y) * a  # indirect doctest
             [          x*y         x*y*x         x*y^2]
             [     -x*y*x*y x*y*x + x*y^2 x*y*x - x*y^2]
         """
@@ -5365,8 +5367,9 @@ cdef class Matrix(sage.structure.element.Matrix):
             [  x*y   y^2]
             [x^2*y   y^3]
 
-            sage: R.<x,y> = FreeAlgebra(ZZ,2)                                           # needs sage.combinat
-            sage: a = matrix(R, 2, 3, [1,x,y, -x*y,x+y,x-y]); a                         # needs sage.combinat
+            sage: # needs sage.combinat
+            sage: R.<x,y> = FreeAlgebra(ZZ,2)
+            sage: a = matrix(R, 2, 3, [1,x,y, -x*y,x+y,x-y]); a
             [    1     x     y]
             [ -x*y x + y x - y]
             sage: a * (x*y)                                                             # needs sage.combinat
@@ -5678,8 +5681,9 @@ cdef class Matrix(sage.structure.element.Matrix):
 
         Matrices over p-adics. See :trac:`17272` ::
 
-            sage: R = ZpCA(5, 5, print_mode='val-unit')                                 # needs sage.rings.padics
-            sage: A = matrix(R, 3, 3, [250,2369,1147,106,927,362,90,398,2483])          # needs sage.rings.padics
+            sage: # needs sage.rings.padics
+            sage: R = ZpCA(5, 5, print_mode='val-unit')
+            sage: A = matrix(R, 3, 3, [250,2369,1147,106,927,362,90,398,2483])
             sage: A
             [5^3 * 2 + O(5^5)    2369 + O(5^5)    1147 + O(5^5)]
             [    106 + O(5^5)     927 + O(5^5)     362 + O(5^5)]

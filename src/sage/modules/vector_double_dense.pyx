@@ -7,7 +7,8 @@ Complex Double Field
 
 EXAMPLES::
 
-    sage: v = vector(CDF,[(1,-1), (2,pi), (3,5)]); v                                    # needs sage.symbolic
+    sage: # needs sage.symbolic
+    sage: v = vector(CDF,[(1,-1), (2,pi), (3,5)]); v
     (1.0 - 1.0*I, 2.0 + 3.141592653589793*I, 3.0 + 5.0*I)
     sage: type(v)                                                                       # needs sage.symbolic
     <class 'sage.modules.vector_complex_double_dense.Vector_complex_double_dense'>
@@ -18,6 +19,7 @@ EXAMPLES::
     (5.0, 2.0 + 3.141592653589793*I, 3.0 + 5.0*I)
     sage: loads(dumps(v)) == v                                                          # needs sage.symbolic
     True
+
     sage: v = vector(RDF, [1,2,3,4]); v
     (1.0, 2.0, 3.0, 4.0)
     sage: loads(dumps(v)) == v

@@ -1058,6 +1058,7 @@ cdef class TimeSeries:
 
         EXAMPLES::
 
+            sage: # needs sage.plot
             sage: v = stats.TimeSeries([5,4,1.3,2,8,10,3,-5]); v
             [5.0000, 4.0000, 1.3000, 2.0000, 8.0000, 10.0000, 3.0000, -5.0000]
             sage: v.plot()                                                              # needs sage.plot
