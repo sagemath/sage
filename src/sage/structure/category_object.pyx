@@ -188,7 +188,7 @@ cdef class CategoryObject(SageObject):
         if self._category is None:
             self._init_category_(category)
             return
-        if not (type(category) == tuple or type(category) == list):
+        if not isinstance(category, (tuple, list)):
             category = [category]
         self._category = self._category.join([self._category]+list(category))
 
