@@ -554,10 +554,10 @@ class InterfaceShellTransformer(PrefilterTransformer):
         Since :trac:`28439`, this also works with more complicated expressions
         containing nested parentheses::
 
-            sage: # needs sage.libs.gap
-            sage: shell = interface_shell_embed(gap)                                    # needs sage.symbolic
+            sage: # needs sage.libs.gap sage.symbolic
+            sage: shell = interface_shell_embed(gap)
             sage: shell.user_ns = locals()
-            sage: ift = InterfaceShellTransformer(shell=shell, config=shell.config,     # needs sage.symbolic
+            sage: ift = InterfaceShellTransformer(shell=shell, config=shell.config,
             ....:     prefilter_manager=shell.prefilter_manager)
             sage: line = '2 + sage((1+2)*gap(-(5-3)^2).sage()) - gap(1+(2-1))'
             sage: line = ift.preparse_imports_from_sage(line)
