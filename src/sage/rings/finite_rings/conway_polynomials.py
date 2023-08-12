@@ -161,6 +161,7 @@ class PseudoConwayLattice(WithEqualityById, SageObject):
         """
         TESTS::
 
+            sage: # needs sage.rings.finite_rings
             sage: from sage.rings.finite_rings.conway_polynomials import PseudoConwayLattice
 
             sage: # needs sage.rings.finite_rings

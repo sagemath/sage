@@ -1563,8 +1563,8 @@ cdef class LiftingMap(Section):
             sage: R.<t> = GF(2)[]; h = t^5 + t^2 + 1
             sage: k.<a> = R.residue_field(h)
             sage: K = R.fraction_field()
-            sage: L = k.lift_map(); L.codomain()                                        # needs sage.libs.ntl
-            Univariate Polynomial Ring in t over Finite Field of size 2 (using GF2X)
+            sage: L = k.lift_map(); L.codomain()
+            Univariate Polynomial Ring in t over Finite Field of size 2...
         """
         self._K = reduction._K
         self._F = reduction._F   # finite field
