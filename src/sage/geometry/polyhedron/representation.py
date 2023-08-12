@@ -799,8 +799,8 @@ class Inequality(Hrepresentation):
             sage: Q = Polyhedron(ieqs=[[0,2,0,3]])
             sage: Q.inequalities()[0].is_facet_defining_inequality(P)
             True
-            sage: Q = Polyhedron(ieqs=[[0,AA(2).sqrt(),0,3]])                   # optional - sage.rings.number_field
-            sage: Q.inequalities()[0].is_facet_defining_inequality(P)           # optional - sage.rings.number_field
+            sage: Q = Polyhedron(ieqs=[[0,AA(2).sqrt(),0,3]])                           # needs sage.rings.number_field
+            sage: Q.inequalities()[0].is_facet_defining_inequality(P)
             True
             sage: Q = Polyhedron(ieqs=[[1,1,0,0]])
             sage: Q.inequalities()[0].is_facet_defining_inequality(P)
@@ -902,9 +902,9 @@ class Inequality(Hrepresentation):
         Test that :trac:`21105` has been fixed::
 
             sage: x = polygen(ZZ, 'x')
-            sage: K.<cbrt2> = NumberField(x^3 - 2, 'a', embedding=1.26)                 # optional - sage.rings.number_field
-            sage: P = Polyhedron(vertices=[(1,1,cbrt2),(cbrt2,1,1)])                    # optional - sage.rings.number_field
-            sage: P.inequalities()                                                      # optional - sage.rings.number_field
+            sage: K.<cbrt2> = NumberField(x^3 - 2, 'a', embedding=1.26)                 # needs sage.rings.number_field
+            sage: P = Polyhedron(vertices=[(1,1,cbrt2),(cbrt2,1,1)])                    # needs sage.rings.number_field
+            sage: P.inequalities()                                                      # needs sage.rings.number_field
             (An inequality (-cbrt2^2 - cbrt2 - 1, 0, 0) x + cbrt2^2 + cbrt2 + 2 >= 0,
              An inequality (cbrt2^2 + cbrt2 + 1, 0, 0) x - cbrt2^2 + cbrt2 + 1 >= 0)
         """
@@ -994,7 +994,7 @@ class Inequality(Hrepresentation):
 
         EXAMPLES::
 
-            sage: p = Polyhedron(vertices = [[0,0,0],[1,1,0],[1,2,0]])
+            sage: p = Polyhedron(vertices=[[0,0,0],[1,1,0],[1,2,0]])
             sage: a = next(p.inequality_generator())
             sage: a.outer_normal()
             (1, -1, 0)
