@@ -668,7 +668,7 @@ cdef class Matrix_modn_dense_template(Matrix_dense):
 
         And for larger modulus::
 
-	    sage: # needs sage.rings.finite_rings
+            sage: # needs sage.rings.finite_rings
             sage: A = random_matrix(GF(1009), 51, 5)
             sage: data, version = A._pickle()
             sage: B = A.parent()(0)
