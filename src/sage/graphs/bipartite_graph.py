@@ -45,7 +45,6 @@ import itertools
 from .generic_graph import GenericGraph
 from .graph import Graph
 from sage.rings.integer import Integer
-from sage.misc.decorators import rename_keyword
 from sage.misc.cachefunc import cached_method
 from sage.misc.lazy_import import lazy_import
 
@@ -2226,7 +2225,6 @@ class BipartiteGraph(Graph):
             raise ValueError('algorithm must be "Hopcroft-Karp", '
                              '"Eppstein", "Edmonds" or "LP"')
 
-    @rename_keyword(deprecation=32238, verbosity='verbose')
     def vertex_cover(self, algorithm="Konig", value_only=False,
                      reduction_rules=True, solver=None, verbose=0,
                      *, integrality_tolerance=1e-3):
