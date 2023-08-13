@@ -86,17 +86,17 @@ cdef class MPolynomial(CommutativePolynomial):
 
             sage: # needs sage.libs.flint sage.rings.real_mpfr
             sage: a = RR['x,y'](1)
-            sage: RBF(a)                                                                # needs sage.libs.flint
+            sage: RBF(a)
             1.000000000000000
             sage: RIF(a)
             1
-            sage: CBF(a)                                                                # needs sage.libs.flint
+            sage: CBF(a)
             1.000000000000000
             sage: CIF(a)
             1
             sage: CBF(RR['x,y'](1))  # indirect doctest
             1.000000000000000
-            sage: CBF(ZZ['x,y'].gen(0))                                                 # needs sage.libs.flint
+            sage: CBF(ZZ['x,y'].gen(0))
             Traceback (most recent call last):
             ...
             TypeError: unable to convert non-constant polynomial x to Complex ball field with 53 bits of precision
@@ -2020,10 +2020,10 @@ cdef class MPolynomial(CommutativePolynomial):
             sage: # needs sage.modules
             sage: R = PolynomialRing(QQ, 'a', 5)
             sage: f = R.random_element(terms=20)
-            sage: w = random_vector(ZZ,5)                                               # needs sage.modules
-            sage: d1 = f.weighted_degree(w)                                             # needs sage.modules
-            sage: d2 = (f*1.0).weighted_degree(w)                                       # needs sage.modules
-            sage: d1 == d2                                                              # needs sage.modules
+            sage: w = random_vector(ZZ,5)
+            sage: d1 = f.weighted_degree(w)
+            sage: d2 = (f*1.0).weighted_degree(w)
+            sage: d1 == d2
             True
         """
         if self.is_zero():

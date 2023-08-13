@@ -1182,12 +1182,12 @@ cdef class MPolynomialRing_base(sage.rings.ring.CommutativeRing):
             sage: M = random_matrix(QQ['x,y,z'], 2, 2)
             sage: all(a.degree() <= 2 for a in M.list())
             True
-            sage: all(len(list(a)) <= 5 for a in M.list())                              # needs sage.modules
+            sage: all(len(list(a)) <= 5 for a in M.list())
             True
             sage: M = random_matrix(QQ['x,y,z'], 2, 2, terms=1, degree=2)
             sage: all(a.degree() <= 2 for a in M.list())
             True
-            sage: all(len(list(a)) <= 1 for a in M.list())                              # needs sage.modules
+            sage: all(len(list(a)) <= 1 for a in M.list())
             True
 
             sage: P.random_element(0, 1) in QQ

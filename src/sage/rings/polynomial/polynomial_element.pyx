@@ -4229,12 +4229,12 @@ cdef class Polynomial(CommutativePolynomial):
 
             sage: # needs numpy
             sage: R.<x> = RDF[]
-            sage: (-2*x^2 - 1).factor()                                                 # needs numpy
+            sage: (-2*x^2 - 1).factor()
             (-2.0) * (x^2 + 0.5000000000000001)
-            sage: (-2*x^2 - 1).factor().expand()                                        # needs numpy
+            sage: (-2*x^2 - 1).factor().expand()
             -2.0*x^2 - 1.0000000000000002
             sage: f = (x - 1)^3
-            sage: f.factor()  # abs tol 2e-5                                            # needs numpy
+            sage: f.factor()  # abs tol 2e-5
             (x - 1.0000065719436413) * (x^2 - 1.9999934280563585*x + 0.9999934280995487)
 
         The above output is incorrect because it relies on the
@@ -4343,7 +4343,7 @@ cdef class Polynomial(CommutativePolynomial):
             sage: G = f.factor(); G
             (x + x) * (x + 2*x + 1) * (x^4 + (x + 2)*x^3 + (2*x + 2)*x + 2)
             * (x^4 + 2*x*x^3 + (x + 1)*x + 2)
-            sage: prod(G) == f                                                          # needs sage.rings.finite_rings
+            sage: prod(G) == f
             True
 
         ::
@@ -4415,7 +4415,7 @@ cdef class Polynomial(CommutativePolynomial):
             <BLANKLINE>
             Entering nffactor:
             ...
-            sage: pari.default("debug", 0)                                              # needs sage.libs.pari
+            sage: pari.default("debug", 0)
 
         Test that :trac:`10369` is fixed::
 
@@ -7762,13 +7762,13 @@ cdef class Polynomial(CommutativePolynomial):
             sage: # needs numpy sage.rings.real_mpfr
             sage: x = RR['x'].0
             sage: f = x^3 - 2
-            sage: f.roots()                                                             # needs numpy
+            sage: f.roots()
             [(1.25992104989487, 1)]
             sage: f.factor()
             (x - 1.25992104989487) * (x^2 + 1.25992104989487*x + 1.58740105196820)
-            sage: x = RealField(100)['x'].0                                             # needs sage.rings.real_mpfr
+            sage: x = RealField(100)['x'].0
             sage: f = x^3 - 2
-            sage: f.roots()                                                             # needs numpy
+            sage: f.roots()
             [(1.2599210498948731647672106073, 1)]
 
         ::
@@ -7807,10 +7807,10 @@ cdef class Polynomial(CommutativePolynomial):
             sage: # needs numpy sage.rings.real_mpfr
             sage: x = RR['x'].0
             sage: f = x^2 - 1e100
-            sage: f.roots()                                                             # needs numpy
+            sage: f.roots()
             [(-1.00000000000000e50, 1), (1.00000000000000e50, 1)]
             sage: f = x^10 - 2 * (5*x - 1)^2
-            sage: f.roots(multiplicities=False)                                         # needs numpy
+            sage: f.roots(multiplicities=False)
             [-1.6772670339941..., 0.19995479628..., 0.20004530611..., 1.5763035161844...]
 
         ::
@@ -7819,7 +7819,7 @@ cdef class Polynomial(CommutativePolynomial):
             sage: x = CC['x'].0
             sage: i = CC.0
             sage: f = (x - 1) * (x - i)
-            sage: f.roots(multiplicities=False)                                         # needs numpy
+            sage: f.roots(multiplicities=False)
             [1.00000000000000, 1.00000000000000*I]
             sage: g = (x - 1.33 + 1.33*i) * (x - 2.66 - 2.66*i)
             sage: g.roots(multiplicities=False)
@@ -7900,16 +7900,16 @@ cdef class Polynomial(CommutativePolynomial):
             sage: R.<x> = CDF[]
             sage: f = R.cyclotomic_polynomial(5); f
             x^4 + x^3 + x^2 + x + 1.0
-            sage: f.roots(multiplicities=False)  # abs tol 1e-9                         # needs numpy
+            sage: f.roots(multiplicities=False)  # abs tol 1e-9
             [-0.8090169943749469 - 0.5877852522924724*I, -0.8090169943749473 + 0.5877852522924724*I,
              0.30901699437494773 - 0.951056516295154*I, 0.30901699437494756 + 0.9510565162951525*I]
-            sage: [z^5 for z in f.roots(multiplicities=False)]  # abs tol 2e-14         # needs numpy
+            sage: [z^5 for z in f.roots(multiplicities=False)]  # abs tol 2e-14
             [0.9999999999999957 - 1.2864981197413038e-15*I, 0.9999999999999976 + 3.062854959141552e-15*I,
              1.0000000000000024 + 1.1331077795295987e-15*I, 0.9999999999999953 - 2.0212861992297117e-15*I]
-            sage: f = CDF['x']([1,2,3,4]); f                                            # needs sage.rings.complex_double
+            sage: f = CDF['x']([1,2,3,4]); f
             4.0*x^3 + 3.0*x^2 + 2.0*x + 1.0
-            sage: r = f.roots(multiplicities=False)                                     # needs numpy
-            sage: [f(a).abs() for a in r]  # abs tol 1e-14                              # needs numpy
+            sage: r = f.roots(multiplicities=False)
+            sage: [f(a).abs() for a in r]  # abs tol 1e-14
             [2.574630599127759e-15, 1.457101633618084e-15, 1.1443916996305594e-15]
 
         Another example over RDF::
@@ -7927,22 +7927,22 @@ cdef class Polynomial(CommutativePolynomial):
             sage: i = CDF.0
             sage: f = x^3 + 2*i; f
             x^3 + 2.0*I
-            sage: f.roots()                                                             # needs numpy
+            sage: f.roots()
             [(-1.09112363597172... - 0.62996052494743...*I, 1),
              (...1.25992104989487...*I, 1),
              (1.09112363597172... - 0.62996052494743...*I, 1)]
-            sage: f.roots(multiplicities=False)                                         # needs numpy
+            sage: f.roots(multiplicities=False)
             [-1.09112363597172... - 0.62996052494743...*I, ...1.25992104989487...*I,
               1.09112363597172... - 0.62996052494743...*I]
-            sage: [abs(f(z)) for z in f.roots(multiplicities=False)]  # abs tol 1e-14   # needs numpy
+            sage: [abs(f(z)) for z in f.roots(multiplicities=False)]  # abs tol 1e-14
             [8.95090418262362e-16, 8.728374398092689e-16, 1.0235750533041806e-15]
-            sage: f = i*x^3 + 2; f                                                      # needs sage.rings.real_mpfr
+            sage: f = i*x^3 + 2; f
             I*x^3 + 2.0
-            sage: f.roots()                                                             # needs numpy
+            sage: f.roots()
             [(-1.09112363597172... + 0.62996052494743...*I, 1),
              (...1.25992104989487...*I, 1),
              (1.09112363597172... + 0.62996052494743...*I, 1)]
-            sage: abs(f(f.roots()[0][0]))  # abs tol 1e-13                              # needs numpy
+            sage: abs(f(f.roots()[0][0]))  # abs tol 1e-13
             1.1102230246251565e-16
 
         Examples using real root isolation::
@@ -9833,13 +9833,13 @@ cdef class Polynomial(CommutativePolynomial):
 
             sage: # needs sage.libs.pari
             sage: R.<x> = ZZ[]
-            sage: (2*x).is_squarefree()                                                 # needs sage.libs.pari
+            sage: (2*x).is_squarefree()
             True
-            sage: (4*x).is_squarefree()                                                 # needs sage.libs.pari
+            sage: (4*x).is_squarefree()
             False
-            sage: (2*x^2).is_squarefree()                                               # needs sage.libs.pari
+            sage: (2*x^2).is_squarefree()
             False
-            sage: R(0).is_squarefree()                                                  # needs sage.libs.pari
+            sage: R(0).is_squarefree()
             False
 
             sage: S.<y> = QQ[]

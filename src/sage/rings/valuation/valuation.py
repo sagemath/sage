@@ -309,11 +309,11 @@ class InfiniteDiscretePseudoValuation(DiscretePseudoValuation):
             sage: # needs sage.rings.padics
             sage: v = QQ.valuation(2)
             sage: R.<x> = QQ[]
-            sage: v = GaussValuation(R, v)                                              # needs sage.rings.padics
-            sage: v.is_discrete_valuation()                                             # needs sage.rings.padics
+            sage: v = GaussValuation(R, v)
+            sage: v.is_discrete_valuation()
             True
-            sage: w = v.augmentation(x, infinity)                                       # needs sage.rings.padics
-            sage: w.is_discrete_valuation()                                             # needs sage.rings.padics
+            sage: w = v.augmentation(x, infinity)
+            sage: w.is_discrete_valuation()
             False
 
         """
@@ -439,7 +439,7 @@ class DiscreteValuation(DiscretePseudoValuation):
             sage: # needs sage.rings.padics
             sage: v = QQ.valuation(2)
             sage: R.<x> = QQ[]
-            sage: v.mac_lane_approximants(x^2 + 1)                                      # needs sage.rings.padics
+            sage: v.mac_lane_approximants(x^2 + 1)
             [[ Gauss valuation induced by 2-adic valuation, v(x + 1) = 1/2 ]]
             sage: v.mac_lane_approximants(x^2 + 1, required_precision=infinity)
             [[ Gauss valuation induced by 2-adic valuation, v(x + 1) = 1/2,
@@ -499,10 +499,10 @@ class DiscreteValuation(DiscretePseudoValuation):
             sage: K.<x> = FunctionField(QQ)
             sage: S.<y> = K[]
             sage: F = y^2 - x^2 - x^3 - 3
-            sage: v0 = GaussValuation(K._ring, QQ.valuation(3))                                     # needs sage.rings.padics
-            sage: v1 = v0.augmentation(K._ring.gen(),1/3)                                           # needs sage.rings.padics
-            sage: mu0 = valuations.FunctionFieldValuation(K, v1)                                    # needs sage.rings.padics
-            sage: mu0.mac_lane_approximants(F)                                                      # needs sage.rings.padics
+            sage: v0 = GaussValuation(K._ring, QQ.valuation(3))
+            sage: v1 = v0.augmentation(K._ring.gen(),1/3)
+            sage: mu0 = valuations.FunctionFieldValuation(K, v1)
+            sage: mu0.mac_lane_approximants(F)
             [[ Gauss valuation induced by Valuation on rational function field induced by [ Gauss valuation induced by 3-adic valuation, v(x) = 1/3 ], v(y + 2*x) = 2/3 ],
              [ Gauss valuation induced by Valuation on rational function field induced by [ Gauss valuation induced by 3-adic valuation, v(x) = 1/3 ], v(y + x) = 2/3 ]]
 
@@ -623,13 +623,13 @@ class DiscreteValuation(DiscretePseudoValuation):
             sage: # needs sage.rings.number_field sage.rings.padics
             sage: R.<x> = QQ[]
             sage: Delta = x^12 + 20*x^11 + 154*x^10 + 664*x^9 + 1873*x^8 + 3808*x^7 + 5980*x^6 + 7560*x^5 + 7799*x^4 + 6508*x^3 + 4290*x^2 + 2224*x + 887
-            sage: K.<theta> = NumberField(x^6 + 108)                                                # needs sage.rings.number_field
-            sage: K.is_galois()                                                                     # needs sage.rings.number_field
+            sage: K.<theta> = NumberField(x^6 + 108)
+            sage: K.is_galois()
             True
-            sage: vK = QQ.valuation(2).extension(K)                                                 # needs sage.rings.number_field sage.rings.padics
-            sage: vK(2)                                                                             # needs sage.rings.number_field sage.rings.padics
+            sage: vK = QQ.valuation(2).extension(K)
+            sage: vK(2)
             1
-            sage: vK(theta)                                                                         # needs sage.rings.number_field sage.rings.padics
+            sage: vK(theta)
             1/3
             sage: G = Delta.change_ring(K)
             sage: vK.mac_lane_approximants(G)

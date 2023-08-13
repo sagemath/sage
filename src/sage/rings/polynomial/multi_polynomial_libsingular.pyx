@@ -427,7 +427,7 @@ cdef class MPolynomialRing_libsingular(MPolynomialRing_base):
             sage: # needs sage.rings.function_field
             sage: import gc
             sage: from sage.rings.polynomial.multi_polynomial_libsingular import MPolynomialRing_libsingular
-            sage: from sage.libs.singular.ring import ring_refcount_dict                # needs sage.rings.function_field
+            sage: from sage.libs.singular.ring import ring_refcount_dict
             sage: gc.collect()  # random output
             sage: n = len(ring_refcount_dict)
             sage: R = MPolynomialRing_libsingular(GF(547), 2, ('x', 'y'),
@@ -2065,8 +2065,8 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
             sage: k.<a> = GF(2^4)
             sage: R.<x> = PolynomialRing(k, 1)
             sage: f = R(1)
-            sage: S.<y> = PolynomialRing(k, 1)                                          # needs sage.rings.finite_rings
-            sage: f(y).parent()                                                         # needs sage.rings.finite_rings
+            sage: S.<y> = PolynomialRing(k, 1)
+            sage: f(y).parent()
             Multivariate Polynomial Ring in y over Finite Field in a of size 2^4
         """
         cdef Element sage_res
@@ -4297,7 +4297,7 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
             sage: p=x^8*y^3 + x^2*y^9 + a*x^9 + a*x*y^4
             sage: q=y^11 + (a)*y^10 + (a + 1)*x*y^3
             sage: f = p*q
-            sage: f.factor()                                                            # needs sage.rings.finite_rings
+            sage: f.factor()
             x * y^3 * (y^8 + a*y^7 + (a + 1)*x) * (x^7*y^3 + x*y^9 + a*x^8 + a*y^4)
 
         We test several examples which were known to return wrong
@@ -4789,7 +4789,7 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
             sage: g = x + y
             sage: g.gcd(f)
             1
-            sage: x.gcd(R.change_ring(GF(3)).gen())                                     # needs sage.rings.finite_rings
+            sage: x.gcd(R.change_ring(GF(3)).gen())
             x
 
             sage: Pol.<x,y,z> = ZZ[]
@@ -5208,11 +5208,11 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
 
             sage: # needs sage.rings.number_field
             sage: Zx.<x> = ZZ[]
-            sage: K.<i> = NumberField(x^2 + 1)                                          # needs sage.rings.number_field
-            sage: cc = K.hom([-i])                                                      # needs sage.rings.number_field
-            sage: R.<x,y> = K[]                                                         # needs sage.rings.number_field
-            sage: phi = R.hom([y,x], base_map=cc)                                       # needs sage.rings.number_field
-            sage: phi(x + i*y)                                                          # needs sage.rings.number_field
+            sage: K.<i> = NumberField(x^2 + 1)
+            sage: cc = K.hom([-i])
+            sage: R.<x,y> = K[]
+            sage: phi = R.hom([y,x], base_map=cc)
+            sage: phi(x + i*y)
             (-i)*x + y
         """
         #TODO: very slow
@@ -5589,11 +5589,11 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
 
             sage: # needs sage.rings.number_field
             sage: R.<x> = QQ[]
-            sage: K.<k> = NumberField(x^2 - 5)                                          # needs sage.rings.number_field
-            sage: T.<t,w> = K[]                                                         # needs sage.rings.number_field
-            sage: I = K.ideal(3)                                                        # needs sage.rings.number_field
-            sage: f = 1/3*t*w + 3                                                       # needs sage.rings.number_field
-            sage: f.local_height(I)                                                     # needs sage.rings.number_field
+            sage: K.<k> = NumberField(x^2 - 5)
+            sage: T.<t,w> = K[]
+            sage: I = K.ideal(3)
+            sage: f = 1/3*t*w + 3
+            sage: f.local_height(I)
             1.09861228866811
 
         ::
@@ -5637,10 +5637,10 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
 
             sage: # needs sage.rings.number_field
             sage: R.<x> = QQ[]
-            sage: K.<k> = NumberField(x^2 - 5)                                          # needs sage.rings.number_field
-            sage: T.<t,w> = K[]                                                         # needs sage.rings.number_field
-            sage: f = 1/2*t*w + 3                                                       # needs sage.rings.number_field
-            sage: f.local_height_arch(1, prec=52)                                       # needs sage.rings.number_field
+            sage: K.<k> = NumberField(x^2 - 5)
+            sage: T.<t,w> = K[]
+            sage: f = 1/2*t*w + 3
+            sage: f.local_height_arch(1, prec=52)
             1.09861228866811
 
         ::

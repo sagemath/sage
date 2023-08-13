@@ -105,7 +105,7 @@ class GaloisGroup_v1(SageObject):
             sage: H = GaloisGroup_v1(L.absolute_polynomial().galois_group(pari_group=True), L)
             sage: H == G
             False
-            sage: H == H                                                                # needs sage.symbolic
+            sage: H == H
             True
             sage: G == G
             True
@@ -136,7 +136,7 @@ class GaloisGroup_v1(SageObject):
             sage: H = GaloisGroup_v1(L.absolute_polynomial().galois_group(pari_group=True), L)
             sage: H != G
             True
-            sage: H != H                                                                # needs sage.symbolic
+            sage: H != H
             False
             sage: G != G
             False

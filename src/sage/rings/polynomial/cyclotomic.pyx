@@ -278,7 +278,7 @@ def cyclotomic_value(n, x):
         sage: S.<t> = R.quotient(R.cyclotomic_polynomial(15))
         sage: cyclotomic_value(15, t)
         0
-        sage: cyclotomic_value(30, t)                                                   # needs sage.libs.pari
+        sage: cyclotomic_value(30, t)
         2*t^7 - 2*t^5 - 2*t^3 + 2*t
         sage: S.<t> = R.quotient(x^10)
         sage: cyclotomic_value(2^128 - 1, t)
