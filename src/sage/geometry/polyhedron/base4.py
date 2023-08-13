@@ -95,7 +95,7 @@ class Polyhedron_base4(Polyhedron_base3):
             sage: P = polytopes.cube()
             sage: G = P.vertex_facet_graph(); G
             Digraph on 14 vertices
-            sage: G.vertices(key = lambda v: str(v))
+            sage: G.vertices(sort=True, key=lambda v: str(v))
             [A vertex at (-1, -1, -1),
              A vertex at (-1, -1, 1),
              A vertex at (-1, 1, -1),

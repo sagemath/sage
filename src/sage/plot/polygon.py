@@ -31,11 +31,11 @@ class Polygon(GraphicPrimitive_xydata):
 
     INPUT:
 
-    - xdata -- list of `x`-coordinates of points defining Polygon
+    - ``xdata`` -- list of `x`-coordinates of points defining Polygon
 
-    - ydata -- list of `y`-coordinates of points defining Polygon
+    - ``ydata`` -- list of `y`-coordinates of points defining Polygon
 
-    - options -- dict of valid plot options to pass to constructor
+    - ``options`` -- dict of valid plot options to pass to constructor
 
     EXAMPLES:
 
@@ -198,7 +198,8 @@ class Polygon(GraphicPrimitive_xydata):
 
         A pentagon::
 
-            sage: polygon([(cos(t), sin(t)) for t in srange(0, 2*pi, 2*pi/5)]).plot3d()
+            sage: polygon([(cos(t), sin(t))                                             # needs sage.symbolic
+            ....:          for t in srange(0, 2*pi, 2*pi/5)]).plot3d()
             Graphics3d Object
 
         .. PLOT::
@@ -364,8 +365,8 @@ def polygon2d(points, **options):
     For filled polygons, one can use different colors for the border
     and the interior as follows::
 
-        sage: L = [[0,0]]+[[i/100, 1.1+cos(i/20)] for i in range(100)]+[[1,0]]
-        sage: polygon2d(L, color="limegreen", edgecolor="black", axes=False)
+        sage: L = [[0,0]]+[[i/100, 1.1+cos(i/20)] for i in range(100)]+[[1,0]]          # needs sage.symbolic
+        sage: polygon2d(L, color="limegreen", edgecolor="black", axes=False)            # needs sage.symbolic
         Graphics object consisting of 1 graphics primitive
 
     .. PLOT::
@@ -388,8 +389,8 @@ def polygon2d(points, **options):
 
     An aperiodic monotile, [Smi2023]_::
 
-        sage: s = sqrt(3)
-        sage: polygon2d([[0, 0], [0, s], [1, s], [3/2, 3/2*s], [3, s], [3, 0], [4, 0],
+        sage: s = sqrt(3)                                                               # needs sage.symbolic
+        sage: polygon2d([[0, 0], [0, s], [1, s], [3/2, 3/2*s], [3, s], [3, 0], [4, 0],  # needs sage.symbolic
         ....:            [9/2, -1/2*s], [3, -s], [3/2, -1/2*s], [1, -s], [-1, -s],
         ....:            [-3/2, -1/2*s]], axes=False)
         Graphics object consisting of 1 graphics primitive
@@ -403,8 +404,8 @@ def polygon2d(points, **options):
 
     A purple hexagon::
 
-        sage: L = [[cos(pi*i/3),sin(pi*i/3)] for i in range(6)]
-        sage: polygon2d(L, rgbcolor=(1,0,1))
+        sage: L = [[cos(pi*i/3),sin(pi*i/3)] for i in range(6)]                         # needs sage.symbolic
+        sage: polygon2d(L, rgbcolor=(1,0,1))                                            # needs sage.symbolic
         Graphics object consisting of 1 graphics primitive
 
     .. PLOT::
@@ -415,8 +416,9 @@ def polygon2d(points, **options):
 
     A green deltoid::
 
-        sage: L = [[-1+cos(pi*i/100)*(1+cos(pi*i/100)),2*sin(pi*i/100)*(1-cos(pi*i/100))] for i in range(200)]
-        sage: polygon2d(L, rgbcolor=(1/8,3/4,1/2))
+        sage: L = [[-1+cos(pi*i/100)*(1+cos(pi*i/100)),                                 # needs sage.symbolic
+        ....:       2*sin(pi*i/100)*(1-cos(pi*i/100))] for i in range(200)]
+        sage: polygon2d(L, rgbcolor=(1/8,3/4,1/2))                                      # needs sage.symbolic
         Graphics object consisting of 1 graphics primitive
 
     .. PLOT::
@@ -427,8 +429,9 @@ def polygon2d(points, **options):
 
     A blue hypotrochoid::
 
-        sage: L = [[6*cos(pi*i/100)+5*cos((6/2)*pi*i/100),6*sin(pi*i/100)-5*sin((6/2)*pi*i/100)] for i in range(200)]
-        sage: polygon2d(L, rgbcolor=(1/8,1/4,1/2))
+        sage: L = [[6*cos(pi*i/100)+5*cos((6/2)*pi*i/100),                              # needs sage.symbolic
+        ....:       6*sin(pi*i/100)-5*sin((6/2)*pi*i/100)] for i in range(200)]
+        sage: polygon2d(L, rgbcolor=(1/8,1/4,1/2))                                      # needs sage.symbolic
         Graphics object consisting of 1 graphics primitive
 
     .. PLOT::
@@ -440,8 +443,9 @@ def polygon2d(points, **options):
     Another one::
 
         sage: n = 4; h = 5; b = 2
-        sage: L = [[n*cos(pi*i/100)+h*cos((n/b)*pi*i/100),n*sin(pi*i/100)-h*sin((n/b)*pi*i/100)] for i in range(200)]
-        sage: polygon2d(L, rgbcolor=(1/8,1/4,3/4))
+        sage: L = [[n*cos(pi*i/100)+h*cos((n/b)*pi*i/100),                              # needs sage.symbolic
+        ....:       n*sin(pi*i/100)-h*sin((n/b)*pi*i/100)] for i in range(200)]
+        sage: polygon2d(L, rgbcolor=(1/8,1/4,3/4))                                      # needs sage.symbolic
         Graphics object consisting of 1 graphics primitive
 
     .. PLOT::
@@ -454,8 +458,9 @@ def polygon2d(points, **options):
     A purple epicycloid::
 
         sage: m = 9; b = 1
-        sage: L = [[m*cos(pi*i/100)+b*cos((m/b)*pi*i/100),m*sin(pi*i/100)-b*sin((m/b)*pi*i/100)] for i in range(200)]
-        sage: polygon2d(L, rgbcolor=(7/8,1/4,3/4))
+        sage: L = [[m*cos(pi*i/100)+b*cos((m/b)*pi*i/100),                              # needs sage.symbolic
+        ....:       m*sin(pi*i/100)-b*sin((m/b)*pi*i/100)] for i in range(200)]
+        sage: polygon2d(L, rgbcolor=(7/8,1/4,3/4))                                      # needs sage.symbolic
         Graphics object consisting of 1 graphics primitive
 
     .. PLOT::
@@ -467,8 +472,8 @@ def polygon2d(points, **options):
 
     A brown astroid::
 
-        sage: L = [[cos(pi*i/100)^3,sin(pi*i/100)^3] for i in range(200)]
-        sage: polygon2d(L, rgbcolor=(3/4,1/4,1/4))
+        sage: L = [[cos(pi*i/100)^3, sin(pi*i/100)^3] for i in range(200)]              # needs sage.symbolic
+        sage: polygon2d(L, rgbcolor=(3/4,1/4,1/4))                                      # needs sage.symbolic
         Graphics object consisting of 1 graphics primitive
 
     .. PLOT::
@@ -479,8 +484,9 @@ def polygon2d(points, **options):
 
     And, my favorite, a greenish blob::
 
-        sage: L = [[cos(pi*i/100)*(1+cos(pi*i/50)), sin(pi*i/100)*(1+sin(pi*i/50))] for i in range(200)]
-        sage: polygon2d(L, rgbcolor=(1/8,3/4,1/2))
+        sage: L = [[cos(pi*i/100)*(1+cos(pi*i/50)),                                     # needs sage.symbolic
+        ....:       sin(pi*i/100)*(1+sin(pi*i/50))] for i in range(200)]
+        sage: polygon2d(L, rgbcolor=(1/8,3/4,1/2))                                      # needs sage.symbolic
         Graphics object consisting of 1 graphics primitive
 
     .. PLOT::
@@ -491,8 +497,9 @@ def polygon2d(points, **options):
 
     This one is for my wife::
 
-        sage: L = [[sin(pi*i/100)+sin(pi*i/50),-(1+cos(pi*i/100)+cos(pi*i/50))] for i in range(-100,100)]
-        sage: polygon2d(L, rgbcolor=(1,1/4,1/2))
+        sage: L = [[sin(pi*i/100)+sin(pi*i/50),                                         # needs sage.symbolic
+        ....:       -(1+cos(pi*i/100)+cos(pi*i/50))] for i in range(-100,100)]
+        sage: polygon2d(L, rgbcolor=(1,1/4,1/2))                                        # needs sage.symbolic
         Graphics object consisting of 1 graphics primitive
 
     .. PLOT::
@@ -503,7 +510,7 @@ def polygon2d(points, **options):
 
     One can do the same one with a colored legend label::
 
-        sage: polygon2d(L, color='red', legend_label='For you!', legend_color='red')
+        sage: polygon2d(L, color='red', legend_label='For you!', legend_color='red')    # needs sage.symbolic
         Graphics object consisting of 1 graphics primitive
 
     .. PLOT::

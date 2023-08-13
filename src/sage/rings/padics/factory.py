@@ -975,10 +975,10 @@ def Qq(q, prec=None, type='capped-rel', modulus=None, names=None,
 
     2. The modulus can also be given as a **symbolic expression**. ::
 
-        sage: x = var('x')
-        sage: X.<a> = Qq(27, modulus = x^3 + 2*x + 1); X.modulus()
+        sage: x = var('x')                                                              # needs sage.symbolic
+        sage: X.<a> = Qq(27, modulus = x^3 + 2*x + 1); X.modulus()                      # needs sage.symbolic
         (1 + O(3^20))*x^3 + O(3^20)*x^2 + (2 + O(3^20))*x + 1 + O(3^20)
-        sage: X == R
+        sage: X == R                                                                    # needs sage.symbolic
         True
 
       By default, the polynomial chosen is the standard lift of the
@@ -2225,10 +2225,10 @@ def Zq(q, prec=None, type='capped-rel', modulus=None, names=None,
 
     2. The modulus can also be given as a **symbolic expression**. ::
 
-        sage: x = var('x')
-        sage: X.<a> = Zq(27, modulus = x^3 + 2*x + 1); X.modulus()
+        sage: x = var('x')                                                              # needs sage.symbolic
+        sage: X.<a> = Zq(27, modulus = x^3 + 2*x + 1); X.modulus()                      # needs sage.symbolic
         (1 + O(3^20))*x^3 + O(3^20)*x^2 + (2 + O(3^20))*x + 1 + O(3^20)
-        sage: X == R
+        sage: X == R                                                                    # needs sage.symbolic
         True
 
       By default, the polynomial chosen is the standard lift of the

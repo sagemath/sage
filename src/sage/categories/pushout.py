@@ -202,7 +202,7 @@ class ConstructionFunctor(Functor):
             sage: I == I        # indirect doctest
             True
         """
-        return type(self) == type(other)
+        return type(self) is type(other)
 
     def __ne__(self, other):
         """
@@ -525,7 +525,7 @@ class CompositeConstructionFunctor(ConstructionFunctor):
         if isinstance(other, CompositeConstructionFunctor):
             return self.all == other.all
         else:
-            return type(self) == type(other)
+            return type(self) is type(other)
 
     def __ne__(self, other):
         """
@@ -677,7 +677,7 @@ class IdentityConstructionFunctor(ConstructionFunctor):
             sage: I == QQ.construction()[0]
             False
         """
-        c = (type(self) == type(other))
+        c = (type(self) is type(other))
         if not c:
             if isinstance(other, IdentityFunctor_generic):
                 return True
@@ -2986,7 +2986,7 @@ class QuotientFunctor(ConstructionFunctor):
         """
         if not isinstance(other, QuotientFunctor):
             return False
-        return (type(self) == type(other) and
+        return (type(self) is type(other) and
                 self.domain() == other.domain() and
                 self.codomain() == other.codomain() and
                 self.names == other.names and

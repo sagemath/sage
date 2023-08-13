@@ -30,7 +30,7 @@ cdef extern from "planarity/graph.h":
     cdef int gp_SortVertices(graphP theGraph)
 
 
-def is_planar(g, kuratowski=False, set_pos=False, set_embedding=False, circular=None):
+def is_planar(g, kuratowski=False, set_pos=False, set_embedding=False):
     r"""
     Check whether ``g`` is planar using Boyer's planarity algorithm.
 
@@ -54,8 +54,6 @@ def is_planar(g, kuratowski=False, set_pos=False, set_embedding=False, circular=
     - ``set_embedding`` -- boolean (default: ``False``); whether to record the
       combinatorial embedding returned (see
       :meth:`~sage.graphs.generic_graph.GenericGraph.get_embedding`)
-
-    - ``circular`` -- deprecated argument
 
     EXAMPLES::
 
@@ -99,10 +97,6 @@ def is_planar(g, kuratowski=False, set_pos=False, set_embedding=False, circular=
 
     """
     g._scream_if_not_simple()
-    if circular is not None:
-        from sage.misc.superseded import deprecation
-        deprecation(33759, 'the circular argument of is_planar is deprecated and has no effect')
-
     if set_pos and not g.is_connected():
         raise ValueError("is_planar() cannot set vertex positions for a disconnected graph")
 

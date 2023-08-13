@@ -1071,6 +1071,28 @@ class SageDocTestParser(doctest.DocTestParser):
             '',
             (None, '5 # optional guava\n', 'Integer(5) # optional guava\n'),
             '']
+
+        TESTS::
+
+            sage: parse("::\n\n    sage: # needs sage.combinat\n    sage: from sage.geometry.polyhedron.combinatorial_polyhedron.conversions \\\n    ....:         import incidence_matrix_to_bit_rep_of_Vrep\n    sage: P = polytopes.associahedron(['A',3])\n\n")
+            ['::\n\n',
+            '',
+            (None,
+            'from sage.geometry.polyhedron.combinatorial_polyhedron.conversions import incidence_matrix_to_bit_rep_of_Vrep\n',
+            'from sage.geometry.polyhedron.combinatorial_polyhedron.conversions import incidence_matrix_to_bit_rep_of_Vrep\n'),
+            '',
+            (None,
+            "P = polytopes.associahedron(['A',3])\n",
+            "P = polytopes.associahedron(['A',Integer(3)])\n"),
+            '\n']
+
+            sage: example4 = '::\n\n        sage: C.minimum_distance(algorithm="guava")  # optional - guava\n        ...\n        24\n\n'
+            sage: parsed4 = DTP.parse(example4)
+            sage: dte = parsed4[1]
+            sage: dte.sage_source
+            'C.minimum_distance(algorithm="guava")  # optional - guava\n'
+            sage: dte.want
+            '...\n24\n'
         """
         # Regular expressions
         find_sage_prompt = re.compile(r"^(\s*)sage: ", re.M)
@@ -1078,7 +1100,7 @@ class SageDocTestParser(doctest.DocTestParser):
         find_python_continuation = re.compile(r"^(\s*)\.\.\.([^\.])", re.M)
         python_prompt = re.compile(r"^(\s*)>>>", re.M)
         backslash_replacer = re.compile(r"""(\s*)sage:(.*)\\\ *
-\ *(((\.){4}:)|((\.){3}))?\ *""")
+\ *((\.){4}:)?\ *""")
 
         # The following are used to allow ... at the beginning of output
         ellipsis_tag = "<TEMP_ELLIPSIS_TAG>"
@@ -1087,13 +1109,8 @@ class SageDocTestParser(doctest.DocTestParser):
         # doctest system.
         m = backslash_replacer.search(string)
         while m is not None:
-            next_prompt = find_sage_prompt.search(string, m.end())
             g = m.groups()
-            if next_prompt:
-                future = string[m.end():next_prompt.start()] + '\n' + string[next_prompt.start():]
-            else:
-                future = string[m.end():]
-            string = string[:m.start()] + g[0] + "sage:" + g[1] + future
+            string = string[:m.start()] + g[0] + "sage:" + g[1] + string[m.end():]
             m = backslash_replacer.search(string, m.start())
 
         replace_ellipsis = not python_prompt.search(string)

@@ -1,4 +1,4 @@
-# sage.doctest: optional - sage.rings.finite_rings
+# sage.doctest: needs sage.rings.finite_rings
 """
 Base class for finite field elements
 
@@ -711,23 +711,23 @@ cdef class FinitePolyExtElement(FiniteRingElement):
 
         EXAMPLES::
 
-            sage: k.<a> = FiniteField(9, impl='givaro', modulus='primitive')
-            sage: a.is_square()
+            sage: k.<a> = FiniteField(9, impl='givaro', modulus='primitive')            # needs sage.libs.linbox
+            sage: a.is_square()                                                         # needs sage.libs.linbox
             False
-            sage: (a**2).is_square()
+            sage: (a**2).is_square()                                                    # needs sage.libs.linbox
             True
-            sage: k.<a> = FiniteField(4, impl='ntl', modulus='primitive')
-            sage: (a**2).is_square()
+            sage: k.<a> = FiniteField(4, impl='ntl', modulus='primitive')               # needs sage.libs.ntl
+            sage: (a**2).is_square()                                                    # needs sage.libs.ntl
             True
-            sage: k.<a> = FiniteField(17^5, impl='pari_ffelt', modulus='primitive')
-            sage: a.is_square()
+            sage: k.<a> = FiniteField(17^5, impl='pari_ffelt', modulus='primitive')     # needs sage.libs.pari
+            sage: a.is_square()                                                         # needs sage.libs.pari
             False
-            sage: (a**2).is_square()
+            sage: (a**2).is_square()                                                    # needs sage.libs.pari
             True
 
         ::
 
-            sage: k(0).is_square()
+            sage: k(0).is_square()                                                      # needs sage.libs.linbox
             True
         """
         K = self.parent()
@@ -1049,6 +1049,7 @@ cdef class FinitePolyExtElement(FiniteRingElement):
 
         TESTS::
 
+            sage: # needs sage.modules
             sage: p = random_prime(2^99)
             sage: k = randrange(2,10)
             sage: F.<t> = GF((p, k))
@@ -1086,7 +1087,7 @@ cdef class Cache_base(SageObject):
         EXAMPLES::
 
             sage: k.<a> = GF(2^48)
-            sage: k._cache.fetch_int(2^33 + 2 + 1)
+            sage: k._cache.fetch_int(2^33 + 2 + 1)                                      # needs sage.libs.ntl
             a^33 + a + 1
         """
         raise NotImplementedError("this must be implemented by subclasses")

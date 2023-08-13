@@ -435,7 +435,7 @@ dr_cache = {}
 
 cdef class interval_bernstein_polynomial_integer(interval_bernstein_polynomial):
     """
-    This is the subclass of interval_bernstein_polynomial where
+    This is the subclass of :class:`interval_bernstein_polynomial` where
     polynomial coefficients are represented using integers.
 
     In this integer representation, each coefficient is represented by
@@ -443,8 +443,8 @@ cdef class interval_bernstein_polynomial_integer(interval_bernstein_polynomial):
     E (which is a machine integer).  These represent the coefficients
     A*2^n <= c < (A+E)*2^n.
 
-    (Note that mk_ibpi is a simple helper function for creating
-    elements of interval_bernstein_polynomial_integer in doctests.)
+    (Note that :func:`mk_ibpi is a simple helper` function for creating
+    elements of :class:`interval_bernstein_polynomial_integer` in doctests.)
 
     EXAMPLES::
 
@@ -455,11 +455,13 @@ cdef class interval_bernstein_polynomial_integer(interval_bernstein_polynomial):
         <IBP: (1, 2, 3) + [0 .. 5)>
         sage: bp.variations()
         (0, 0)
-        sage: bp = mk_ibpi([-3, -1, 1, -1, -3, -1], lower=1, upper=5/4, usign=1, error=2, scale_log2=-3, level=2, slope_err=RIF(pi)); print(bp)
+        sage: bp = mk_ibpi([-3, -1, 1, -1, -3, -1], lower=1, upper=5/4, usign=1,        # needs sage.symbolic
+        ....:              error=2, scale_log2=-3, level=2, slope_err=RIF(pi)); print(bp)
         degree 5 IBP with 2-bit coefficients
-        sage: bp
-        <IBP: ((-3, -1, 1, -1, -3, -1) + [0 .. 2)) * 2^-3 over [1 .. 5/4]; usign 1; level 2; slope_err 3.141592653589794?>
-        sage: bp.variations()
+        sage: bp                                                                        # needs sage.symbolic
+        <IBP: ((-3, -1, 1, -1, -3, -1) + [0 .. 2)) * 2^-3 over [1 .. 5/4]; usign 1;
+              level 2; slope_err 3.141592653589794?>
+        sage: bp.variations()                                                           # needs sage.symbolic
         (3, 3)
     """
 
@@ -1330,7 +1332,7 @@ def intvec_to_doublevec(Vector_integer_dense b, long err):
 
 cdef class interval_bernstein_polynomial_float(interval_bernstein_polynomial):
     """
-    This is the subclass of interval_bernstein_polynomial where
+    This is the subclass of :class:`interval_bernstein_polynomial` where
     polynomial coefficients are represented using floating-point numbers.
 
     In the floating-point representation, each coefficient is represented
@@ -1341,8 +1343,8 @@ cdef class interval_bernstein_polynomial_float(interval_bernstein_polynomial):
     Note that we always have E1 <= 0 <= E2.  Also, each floating-point
     coefficient has absolute value less than one.
 
-    (Note that mk_ibpf is a simple helper function for creating
-    elements of interval_bernstein_polynomial_float in doctests.)
+    (Note that :func:`mk_ibpf` is a simple helper function for creating
+    elements of :class:`interval_bernstein_polynomial_float` in doctests.)
 
     EXAMPLES::
 
@@ -1353,11 +1355,14 @@ cdef class interval_bernstein_polynomial_float(interval_bernstein_polynomial):
         <IBP: (0.1, 0.2, 0.3) + [0.0 .. 0.5]>
         sage: bp.variations()
         (0, 0)
-        sage: bp = mk_ibpf([-0.3, -0.1, 0.1, -0.1, -0.3, -0.1], lower=1, upper=5/4, usign=1, pos_err=0.2, scale_log2=-3, level=2, slope_err=RIF(pi)); print(bp)
+        sage: bp = mk_ibpf([-0.3, -0.1, 0.1, -0.1, -0.3, -0.1],                         # needs sage.symbolic
+        ....:              lower=1, upper=5/4, usign=1, pos_err=0.2,
+        ....:              scale_log2=-3, level=2, slope_err=RIF(pi)); print(bp)
         degree 5 IBP with floating-point coefficients
-        sage: bp
-        <IBP: ((-0.3, -0.1, 0.1, -0.1, -0.3, -0.1) + [0.0 .. 0.2]) * 2^-3 over [1 .. 5/4]; usign 1; level 2; slope_err 3.141592653589794?>
-        sage: bp.variations()
+        sage: bp                                                                        # needs sage.symbolic
+        <IBP: ((-0.3, -0.1, 0.1, -0.1, -0.3, -0.1) + [0.0 .. 0.2]) * 2^-3
+              over [1 .. 5/4]; usign 1; level 2; slope_err 3.141592653589794?>
+        sage: bp.variations()                                                           # needs sage.symbolic
         (3, 3)
     """
 
@@ -1560,13 +1565,13 @@ cdef class interval_bernstein_polynomial_float(interval_bernstein_polynomial):
 
         INPUT:
 
-        - ``mid`` -- where to split the Bernstein basis region; 0 < mid < 1
-        - ``msign`` -- default 0 (unknown); the sign of this polynomial at mid
+        - ``mid`` -- where to split the Bernstein basis region; ``0 < mid < 1``
+        - ``msign`` -- default 0 (unknown); the sign of this polynomial at ``mid``
 
         OUTPUT:
 
         - ``bp1``, ``bp2`` -- the new interval Bernstein polynomials
-        - ``ok`` -- a boolean; True if the sign of the original polynomial at mid is known
+        - ``ok`` -- a boolean; ``True`` if the sign of the original polynomial at ``mid`` is known
 
         EXAMPLES::
 
@@ -1679,7 +1684,7 @@ cdef class interval_bernstein_polynomial_float(interval_bernstein_polynomial):
 def mk_ibpf(coeffs, lower=0, upper=1, lsign=0, usign=0, neg_err=0, pos_err=0,
             scale_log2=0, level=0, slope_err=RIF(0)):
     """
-    A simple wrapper for creating interval_bernstein_polynomial_float
+    A simple wrapper for creating :class:`interval_bernstein_polynomial_float`
     objects with coercions, defaults, etc.
 
     For use in doctests.

@@ -1506,8 +1506,8 @@ cdef class Polynomial_rational_flint(Polynomial):
 
         Check that :trac:`28187` is fixed::
 
-            sage: x = var("x")
-            sage: f._derivative(x)
+            sage: x = var("x")                                                          # needs sage.symbolic
+            sage: f._derivative(x)                                                      # needs sage.symbolic
             4*x^3 - 1
         """
         cdef Polynomial_rational_flint der

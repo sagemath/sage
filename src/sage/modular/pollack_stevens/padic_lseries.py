@@ -21,12 +21,14 @@ All this is carefully explained in [PS2011]_.
 # ****************************************************************************
 
 from sage.arith.misc import kronecker, binomial
+from sage.misc.lazy_import import lazy_import
 from sage.rings.integer_ring import ZZ
-from sage.rings.padics.factory import Qp as pAdicField
 from sage.rings.padics.precision_error import PrecisionError
 from sage.rings.power_series_ring import PowerSeriesRing
 from sage.rings.rational_field import QQ
 from sage.structure.sage_object import SageObject
+
+lazy_import('sage.rings.padics.factory', 'Qp', as_='pAdicField')
 
 
 class pAdicLseries(SageObject):

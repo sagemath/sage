@@ -925,8 +925,8 @@ class DiGraph(GenericGraph):
     # Properties
 
     def is_directed_acyclic(self, certificate=False):
-        """
-        Return whether the digraph is acyclic or not.
+        r"""
+        Check whether the digraph is acyclic or not.
 
         A directed graph is acyclic if for any vertex `v`, there is no directed
         path that starts and ends at `v`. Every directed acyclic graph (DAG)
@@ -945,8 +945,8 @@ class DiGraph(GenericGraph):
         * When ``certificate=True``:
 
           * If the graph is acyclic, returns a pair ``(True, ordering)`` where
-            ``ordering`` is a list of the vertices such that ``u`` appears
-            before ``v`` in ``ordering`` if ``u, v`` is an edge.
+            ``ordering`` is a list of the vertices such that `u` appears
+            before `v` in ``ordering`` if `uv` is an edge.
 
           * Else, returns a pair ``(False, cycle)`` where ``cycle`` is a list of
             vertices representing a circuit in the graph.
@@ -1274,8 +1274,7 @@ class DiGraph(GenericGraph):
             return self._backend.in_degree(vertices)
         elif labels:
             return {v: d for v, d in self.in_degree_iterator(vertices, labels=labels)}
-        else:
-            return list(self.in_degree_iterator(vertices, labels=labels))
+        return list(self.in_degree_iterator(vertices, labels=labels))
 
     def in_degree_iterator(self, vertices=None, labels=False):
         """
@@ -1345,8 +1344,7 @@ class DiGraph(GenericGraph):
             return self._backend.out_degree(vertices)
         elif labels:
             return {v: d for v, d in self.out_degree_iterator(vertices, labels=labels)}
-        else:
-            return list(self.out_degree_iterator(vertices, labels=labels))
+        return list(self.out_degree_iterator(vertices, labels=labels))
 
     def out_degree_iterator(self, vertices=None, labels=False):
         """
@@ -1636,14 +1634,16 @@ class DiGraph(GenericGraph):
         if self.has_loops():
             # We solve the problem on a copy without loops of the digraph
             D = DiGraph(self.edges(sort=False), multiedges=self.allows_multiple_edges(), loops=True)
-            D.allow_loops(False)
+            loops = D.loops(labels=None)
+            D.delete_edges(loops)
+            D.allow_loops(False, check=False)
             FAS = D.feedback_edge_set(constraint_generation=constraint_generation,
                                       value_only=value_only, solver=solver, verbose=verbose,
                                       integrality_tolerance=integrality_tolerance)
             if value_only:
-                return FAS + self.number_of_loops()
+                return FAS + len(loops)
             else:
-                return FAS + self.loops(labels=None)
+                return FAS + loops
 
         if not self.is_strongly_connected():
             # If the digraph is not strongly connected, we solve the problem on
@@ -1652,6 +1652,8 @@ class DiGraph(GenericGraph):
             FAS = 0 if value_only else []
 
             for h in self.strongly_connected_components_subgraphs():
+                if not h.size():
+                    continue
                 if value_only:
                     FAS += h.feedback_edge_set(constraint_generation=constraint_generation,
                                                value_only=True, solver=solver, verbose=verbose,
@@ -1696,9 +1698,8 @@ class DiGraph(GenericGraph):
                 if isok:
                     if value_only:
                         return sum(1 for e in self.edge_iterator(labels=False) if val[e])
-                    else:
-                        # listing the edges contained in the MFAS
-                        return [e for e in self.edge_iterator(labels=False) if val[e]]
+                    # listing the edges contained in the MFAS
+                    return [e for e in self.edge_iterator(labels=False) if val[e]]
 
                 # There is a circuit left. Let's add the corresponding
                 # constraint !
@@ -1741,28 +1742,92 @@ class DiGraph(GenericGraph):
 
             if value_only:
                 return sum(1 for e in self.edge_iterator(labels=False) if b_sol[e])
-            else:
-                return [e for e in self.edge_iterator(labels=False) if b_sol[e]]
+            return [e for e in self.edge_iterator(labels=False) if b_sol[e]]
 
     # Construction
 
-    def reverse(self):
+    def reverse(self, immutable=None):
         """
         Return a copy of digraph with edges reversed in direction.
 
+        INPUT:
+
+        - ``immutable`` -- boolean (default: ``None``); whether to return an
+          immutable digraph or not. By default (``None``), the returned digraph
+          has the same setting than ``self``. That is, if ``self`` is immutable,
+          the returned digraph also is.
+
         EXAMPLES::
 
-            sage: D = DiGraph({0: [1,2,3], 1: [0,2], 2: [3], 3: [4], 4: [0,5], 5: [1]})
-            sage: D.reverse()
+            sage: adj = {0: [1,2,3], 1: [0,2], 2: [3], 3: [4], 4: [0,5], 5: [1]}
+            sage: D = DiGraph(adj)
+            sage: R = D.reverse(); R
             Reverse of (): Digraph on 6 vertices
+            sage: H = R.reverse()
+            sage: adj == H.to_dictionary()
+            True
+
+        TESTS::
+
+            sage: adj = {0: [1, 1], 1: [1]}
+            sage: D = DiGraph(adj, immutable=True, multiedges=True, loops=True)
+            sage: R = D.reverse()
+            sage: R.is_immutable() and R.allows_loops() and R.allows_multiple_edges()
+            True
+            sage: adj == R.reverse().to_dictionary(multiple_edges=True)
+            True
+
+        Check the behavior of parameter ``immutable``::
+
+            sage: D = DiGraph([(0, 1)], immutable=False)
+            sage: R = D.reverse()
+            sage: R.is_immutable()
+            False
+            sage: R = D.reverse(immutable=True)
+            sage: R.is_immutable()
+            True
+            sage: H = R.reverse()
+            sage: H.is_immutable()
+            True
+            sage: H = R.reverse(immutable=False)
+            sage: H.is_immutable()
+            False
         """
-        H = DiGraph(multiedges=self.allows_multiple_edges(), loops=self.allows_loops())
+        from sage.graphs.base.dense_graph import DenseGraphBackend
+        if isinstance(self._backend, DenseGraphBackend):
+            data_structure = "dense"
+        else:
+            data_structure = "sparse"
+
+        H = DiGraph(data_structure=data_structure,
+                    multiedges=self.allows_multiple_edges(), loops=self.allows_loops(),
+                    pos=copy(self._pos), weighted=self.weighted(),
+                    hash_labels=self._hash_labels)
         H.add_vertices(self)
         H.add_edges((v, u, d) for u, v, d in self.edge_iterator())
         name = self.name()
         if name is None:
             name = ''
         H.name("Reverse of (%s)" % name)
+
+        attributes_to_copy = ('_assoc', '_embedding')
+        for attr in attributes_to_copy:
+            if hasattr(self, attr):
+                copy_attr = {}
+                old_attr = getattr(self, attr)
+                if isinstance(old_attr, dict):
+                    for v, value in old_attr.items():
+                        try:
+                            copy_attr[v] = value.copy()
+                        except AttributeError:
+                            copy_attr[v] = copy(value)
+                    setattr(H, attr, copy_attr)
+                else:
+                    setattr(H, attr, copy(old_attr))
+
+        if immutable or (immutable is None and self.is_immutable()):
+            return H.copy(immutable=True)
+
         return H
 
     def reverse_edge(self, u, v=None, label=None, inplace=True, multiedges=None):
@@ -3614,7 +3679,8 @@ class DiGraph(GenericGraph):
 
         Using a different order for the edges of the graph::
 
-            sage: fl = G.flow_polytope(edges=G.edges(key=lambda x: x[0] - x[1])); fl    # needs sage.geometry.polyhedron
+            sage: ordered_edges = G.edges(sort=True, key=lambda x: x[0] - x[1])
+            sage: fl = G.flow_polytope(edges=ordered_edges); fl                         # needs sage.geometry.polyhedron
             A 1-dimensional polyhedron in QQ^4 defined as the convex hull of 2 vertices
             sage: fl.vertices()                                                         # needs sage.geometry.polyhedron
             (A vertex at (0, 1, 1, 0), A vertex at (1, 0, 0, 1))

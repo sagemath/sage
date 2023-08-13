@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.graphs
 from .simplicial_complex import SimplicialComplex, Simplex
 
 from .simplicial_complex_morphism import SimplicialComplexMorphism

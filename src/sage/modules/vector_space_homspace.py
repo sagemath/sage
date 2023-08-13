@@ -191,7 +191,7 @@ TESTS::
 #                  http://www.gnu.org/licenses/
 ####################################################################################
 
-import sage.matrix.all as matrix
+from sage.matrix.constructor import matrix
 import sage.modules.free_module_homspace
 
 # This module initially overrides just the minimum functionality necessary
@@ -384,7 +384,7 @@ class VectorSpaceHomspace(sage.modules.free_module_homspace.FreeModuleHomspace):
                 msg = 'function cannot be applied properly to some basis element because\n' + e.args[0]
                 raise ValueError(msg)
             try:
-                A = matrix.matrix(D.dimension(), C.dimension(), [C.coordinates(C(a)) for a in images])
+                A = matrix(D.dimension(), C.dimension(), [C.coordinates(C(a)) for a in images])
             except (ArithmeticError, TypeError) as e:
                 msg = 'some image of the function is not in the codomain, because\n' + e.args[0]
                 raise ArithmeticError(msg)
@@ -396,7 +396,7 @@ class VectorSpaceHomspace(sage.modules.free_module_homspace.FreeModuleHomspace):
                 raise ValueError(msg.format(len(D.basis()), len(A)))
             try:
                 v = [C(a) for a in A]
-                A = matrix.matrix(D.dimension(), C.dimension(), [C.coordinates(a) for a in v])
+                A = matrix(D.dimension(), C.dimension(), [C.coordinates(a) for a in v])
             except (ArithmeticError, TypeError) as e:
                 msg = 'some proposed image is not in the codomain, because\n' + e.args[0]
                 raise ArithmeticError(msg)

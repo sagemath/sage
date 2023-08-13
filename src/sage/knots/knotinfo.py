@@ -2551,7 +2551,7 @@ class KnotInfoSeries(UniqueRepresentation, SageObject):
             True
         """
         if self._name_unoriented:
-            if type(item) == str:
+            if isinstance(item, str):
                 # allow input as dual number according to naming
                 item = int(item, 2)
             return self[item]

@@ -1,4 +1,4 @@
-# sage.doctest: optional - sage.libs.ntl sage.rings.finite_rings
+# sage.doctest: needs sage.libs.ntl sage.rings.finite_rings
 # distutils: libraries = NTL_LIBRARIES gmp
 # distutils: extra_compile_args = NTL_CFLAGS
 # distutils: include_dirs = NTL_INCDIR
@@ -237,7 +237,7 @@ cdef class Polynomial_ZZ_pEX(Polynomial_template):
             sage: F.<x> = GF(4)
             sage: P.<y> = F[]
             sage: p = y^4 + x*y^3 + y^2 + (x + 1)*y + x + 1
-            sage: SR(p)                                                                 # optional - sage.symbolic
+            sage: SR(p)                                                                 # needs sage.symbolic
             Traceback (most recent call last):
             ...
             TypeError: positive characteristic not allowed in symbolic computations

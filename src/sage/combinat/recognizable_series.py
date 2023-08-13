@@ -2095,7 +2095,7 @@ class RecognizableSeriesSpace(UniqueRepresentation, Parent):
         if isinstance(data, int) and data == 0:
             return self._zero_()
 
-        if type(data) == self.element_class and data.parent() == self:
+        if isinstance(data, self.element_class) and data.parent() == self:
             element = data
 
         elif isinstance(data, RecognizableSeries):

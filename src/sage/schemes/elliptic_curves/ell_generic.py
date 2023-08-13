@@ -55,6 +55,7 @@ AUTHORS:
 import math
 
 import sage.rings.abc
+from sage.rings.finite_rings.integer_mod import mod
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.polynomial.polynomial_ring import polygen, polygens
 from sage.rings.polynomial.polynomial_element import polynomial_is_variable
@@ -64,7 +65,13 @@ import sage.groups.additive_abelian.additive_abelian_group as groups
 import sage.groups.generic as generic
 
 from sage.arith.functions import lcm
-import sage.rings.all as rings
+from sage.rings.integer import Integer
+from sage.rings.big_oh import O
+from sage.rings.infinity import Infinity as oo
+from sage.rings.rational import Rational
+from sage.rings.finite_rings.finite_field_constructor import FiniteField as GF
+from sage.rings.rational_field import RationalField
+from sage.rings.real_mpfr import RealField
 from sage.misc.cachefunc import cached_method
 from sage.misc.fast_methods import WithEqualityById
 
@@ -81,9 +88,6 @@ from . import weierstrass_morphism as wm
 
 sqrt = math.sqrt
 exp = math.exp
-
-oo = rings.infinity       # infinity
-O = rings.O         # big oh
 
 
 def is_EllipticCurve(x):
@@ -575,8 +579,8 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
             # characteristic of the base ring. if so, coerce the point to
             # infinity.
             characteristic = self.base_ring().characteristic()
-            if characteristic != 0 and isinstance(args[0][0], rings.Rational) and isinstance(args[0][1], rings.Rational):
-                if rings.mod(args[0][0].denominator(),characteristic) == 0 or rings.mod(args[0][1].denominator(),characteristic) == 0:
+            if characteristic != 0 and isinstance(args[0][0], Rational) and isinstance(args[0][1], Rational):
+                if mod(args[0][0].denominator(),characteristic) == 0 or mod(args[0][1].denominator(),characteristic) == 0:
                     return self._reduce_point(args[0], characteristic)
             args = tuple(args[0])
 
@@ -632,10 +636,10 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
         \code{EllipticCurve._reduce_point}
         """
         if R.is_zero():
-            return R.curve().change_ring(rings.GF(p))(0)
+            return R.curve().change_ring(GF(p))(0)
         x, y = R.xy()
         d = lcm(x.denominator(), y.denominator())
-        return R.curve().change_ring(rings.GF(p))([x*d, y*d, d])
+        return R.curve().change_ring(GF(p))([x*d, y*d, d])
 
     def is_x_coord(self, x):
         r"""
@@ -1018,7 +1022,7 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
             sage: E._EllipticCurve_generic__is_over_RationalField()                         # optional - sage.rings.finite_rings
             False
         """
-        return isinstance(self.base_ring(), rings.RationalField)
+        return isinstance(self.base_ring(), RationalField)
 
     def is_on_curve(self, x, y):
         r"""
@@ -1936,7 +1940,7 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
             if not (isinstance(x, tuple) and len(x) == 2):
                 raise ValueError("x should be a tuple of length 2 (or None) when two_torsion_multiplicity is 1")
 
-        m = rings.Integer(m)
+        m = Integer(m)
 
         if x is None:
             try:
@@ -2099,7 +2103,7 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
             sage: E._multiple_x_numerator(5)                                            # optional - sage.rings.finite_rings
             x^25 + 65037*x^23 + 55137*x^22 + ... + 813*x^2 + 10220*x + 42539
         """
-        n = rings.Integer(n).abs()
+        n = Integer(n).abs()
         if not n:
             raise ValueError("n must be nonzero")
 
@@ -2195,7 +2199,7 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
             sage: E._multiple_x_denominator(5)                                          # optional - sage.rings.finite_rings
             25*x^24 + 3100*x^22 + 19000*x^21 + ... + 24111*x^2 + 52039*x + 56726
         """
-        n = rings.Integer(n).abs()
+        n = Integer(n).abs()
         if not n:
             raise ValueError("n must be nonzero")
 
@@ -2321,7 +2325,7 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
             sage: assert(E(eval(f,P)) == 2*P)                                           # optional - sage.rings.finite_rings
         """
         # Coerce the input m to be an integer
-        m = rings.Integer(m)
+        m = Integer(m)
         if m == 0:
             raise ValueError("m must be a non-zero integer")
 
@@ -3168,7 +3172,7 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
             NotImplementedError: plotting of curves over Complex Field
             with 53 bits of precision is not implemented yet
         """
-        RR = rings.RealField()
+        RR = RealField()
         K = self.base_ring()
         if not RR.has_coerce_map_from(K):
             raise NotImplementedError("plotting of curves over %s is not implemented yet" % K)
@@ -3372,7 +3376,7 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
             sage: [t[1] for t in E._p_primary_torsion_basis(2)]  # long time (3s on sage.math, 2011)        # optional - sage.rings.finite_rings
             [16, 1]
         """
-        p = rings.Integer(p)
+        p = Integer(p)
         if not p.is_prime():
             raise ValueError("p (=%s) should be prime" % p)
 
@@ -3385,7 +3389,7 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
 
         # First find the p-torsion:
         Ep = self(0).division_points(p)
-        p_rank = rings.Integer(len(Ep)).exact_log(p)
+        p_rank = Integer(len(Ep)).exact_log(p)
         assert p_rank in [0, 1, 2]
 
         if p_rank == 0:

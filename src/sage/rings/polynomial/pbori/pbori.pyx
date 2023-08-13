@@ -3719,7 +3719,7 @@ cdef class BooleanPolynomial(MPolynomial):
             sage: g = R(1)
             sage: h = g.univariate_polynomial(); h
             1
-            sage: h.parent()
+            sage: h.parent()                                                            # needs sage.libs.ntl
             Univariate Polynomial Ring in x over Finite Field of size 2 (using GF2X)
         """
         if not self.is_univariate():
@@ -3915,9 +3915,9 @@ cdef class BooleanPolynomial(MPolynomial):
 
         Evaluation of polynomials can be used fully symbolic::
 
-            sage: f(x=var('a'),y=var('b'),z=var('c'))
+            sage: f(x=var('a'), y=var('b'), z=var('c'))                                 # needs sage.symbolic
             a*b + c + 1
-            sage: f(var('a'),var('b'),1)
+            sage: f(var('a'), var('b'), 1)                                              # needs sage.symbolic
             a*b
         """
         P = self._parent
@@ -3996,9 +3996,9 @@ cdef class BooleanPolynomial(MPolynomial):
 
         This method can work fully symbolic::
 
-            sage: f.subs(x=var('a'),y=var('b'),z=var('c'))
+            sage: f.subs(x=var('a'), y=var('b'), z=var('c'))                            # needs sage.symbolic
             a*b + b*c + c + 1
-            sage: f.subs({'x':var('a'),'y':var('b'),'z':var('c')})
+            sage: f.subs({'x': var('a'), 'y': var('b'), 'z': var('c')})                 # needs sage.symbolic
             a*b + b*c + c + 1
         """
         P = self._parent

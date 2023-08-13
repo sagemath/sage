@@ -51,7 +51,18 @@
   # Keep in sync with SAGE_ROOT/src/sage/misc/replace_dot_all.py
   pattern: 'from\s+sage(|[.](arith|categories|combinat|crypto|databases|data_structures|dynamics|ext|game_theory|games|geometry|graphs|groups|interfaces|manifolds|matrix|matroids|misc|modules|monoids|numerical|probability|quadratic_forms|quivers|rings|sat|schemes|sets|stats|symbolic|tensor)[a-z0-9_.]*|[.]libs)[.]all\s+import'
   # imports from .all are allowed in all.py; also allow in some modules that need sage.all
-  filePattern: '(.*/|)(?!(all|benchmark|dev_tools|parsing|sage_eval))[^/.]*[.](py|pyx|pxi)$'
+  filePattern: '(.*/|)(?!(all|benchmark|dev_tools|parsing|sage_eval|explain_pickle|.*_test))[^/.]*[.](py|pyx|pxi)$'
+
+- name: 'namespace_pkg_all_import_2: Module-level import of .all of a namespace package'
+  hint: |
+    Sage library code should not import sage.PAC.KAGE.all when sage.PAC.KAGE is an implicit
+    namespace package. Type import_statements("SOME_IDENTIFIER") to find a more specific import,
+    and rewrite the import statement as "from sage.PAC.KAGE.MODULE import ..."
+    or "lazy_import('sage.PAC.KAGE.MODULE', '...')".
+  # Keep in sync with above; but for now we ignore sage.{arith,categories}
+  pattern: '^import\s+sage(|[.](combinat|crypto|databases|data_structures|dynamics|ext|game_theory|games|geometry|graphs|groups|interfaces|manifolds|matrix|matroids|misc|modules|monoids|numerical|probability|quadratic_forms|quivers|rings|sat|schemes|sets|stats|symbolic|tensor)[a-z0-9_.]*|[.]libs)[.]all'
+  # imports from .all are allowed in all.py; also allow in some modules that need sage.all
+  filePattern: '(.*/|)(?!(all|benchmark|dev_tools|parsing|sage_eval|explain_pickle|.*_test))[^/.]*[.](py|pyx|pxi)$'
 
 # Magic doctest comments
 

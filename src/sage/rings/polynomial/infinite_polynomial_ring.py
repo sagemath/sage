@@ -86,10 +86,10 @@ Of course, we provide the usual polynomial arithmetic::
 There is a permutation action on the variables, by permuting positive
 variable indices::
 
-    sage: P = Permutation(((10,1)))                                                     # optional - sage.combinat
-    sage: p^P                                                                           # optional - sage.combinat
+    sage: P = Permutation(((10,1)))
+    sage: p^P
     x_5*x_1^2 + 3*x_1^2*y_10 + 2*x_1^2
-    sage: p2^P                                                                          # optional - sage.combinat
+    sage: p2^P
     alpha_5*alpha_1^2 + 3*alpha_1^2*beta_10 + 2*alpha_1^2
 
 Note that `x_0^P = x_0`, since the permutations only change *positive*
@@ -103,7 +103,7 @@ multiplication by ring elements and permutation of variables. If the
 base ring is a field, one can compute Symmetric Groebner Bases::
 
     sage: J = A * (alpha[1]*beta[2])
-    sage: J.groebner_basis()                                                            # optional - sage.combinat
+    sage: J.groebner_basis()                                                            # needs sage.combinat sage.libs.singular
     [alpha_1*beta_2, alpha_2*beta_1]
 
 For more details, see :class:`~sage.rings.polynomial.symmetric_ideal.SymmetricIdeal`.
@@ -810,8 +810,8 @@ class InfinitePolynomialRing_sparse(CommutativeRing):
 
         EXAMPLES::
 
-            sage: R.<x,y> = InfinitePolynomialRing(GF(5))                               # optional - sage.rings.finite_rings
-            sage: R.construction()                                                      # optional - sage.rings.finite_rings
+            sage: R.<x,y> = InfinitePolynomialRing(GF(5))
+            sage: R.construction()
             [InfPoly{[x,y], "lex", "dense"}, Finite Field of size 5]
 
         """
@@ -1109,10 +1109,10 @@ class InfinitePolynomialRing_sparse(CommutativeRing):
 
         TESTS::
 
-            sage: R = InfinitePolynomialRing(GF(2))                                     # optional - sage.rings.finite_rings
-            sage: R                                                                     # optional - sage.rings.finite_rings
+            sage: R = InfinitePolynomialRing(GF(2))
+            sage: R
             Infinite polynomial ring in x over Finite Field of size 2
-            sage: R.is_noetherian()                                                     # optional - sage.rings.finite_rings
+            sage: R.is_noetherian()
             False
 
             sage: R.<x> = InfinitePolynomialRing(QQ)
@@ -1136,10 +1136,10 @@ class InfinitePolynomialRing_sparse(CommutativeRing):
 
         TESTS::
 
-            sage: R = InfinitePolynomialRing(GF(2))                                     # optional - sage.rings.finite_rings
-            sage: R                                                                     # optional - sage.rings.finite_rings
+            sage: R = InfinitePolynomialRing(GF(2))
+            sage: R
             Infinite polynomial ring in x over Finite Field of size 2
-            sage: R.is_field()                                                          # optional - sage.rings.finite_rings
+            sage: R.is_field()
             False
 
         :trac:`9443`::
@@ -1230,8 +1230,8 @@ class InfinitePolynomialRing_sparse(CommutativeRing):
             x_1
             sage: X.gen() is X.gen(0)
             True
-            sage: XX = InfinitePolynomialRing(GF(5))                                    # optional - sage.rings.finite_rings
-            sage: XX.gen(0) is XX.gen()                                                 # optional - sage.rings.finite_rings
+            sage: XX = InfinitePolynomialRing(GF(5))
+            sage: XX.gen(0) is XX.gen()
             True
         """
         if i is not None and i > len(self._names):
@@ -1297,10 +1297,10 @@ class InfinitePolynomialRing_sparse(CommutativeRing):
 
         EXAMPLES::
 
-            sage: X.<x,y> = InfinitePolynomialRing(GF(25,'a'))                          # optional - sage.rings.finite_rings
-            sage: X                                                                     # optional - sage.rings.finite_rings
+            sage: X.<x,y> = InfinitePolynomialRing(GF(25,'a'))                          # needs sage.rings.finite_rings
+            sage: X                                                                     # needs sage.rings.finite_rings
             Infinite polynomial ring in x, y over Finite Field in a of size 5^2
-            sage: X.characteristic()                                                    # optional - sage.rings.finite_rings
+            sage: X.characteristic()                                                    # needs sage.rings.finite_rings
             5
 
         """
@@ -1349,8 +1349,8 @@ class InfinitePolynomialRing_sparse(CommutativeRing):
 
         EXAMPLES::
 
-            sage: R.<x> = InfinitePolynomialRing(GF(2))                                 # optional - sage.rings.finite_rings
-            sage: R.order()                                                             # optional - sage.rings.finite_rings
+            sage: R.<x> = InfinitePolynomialRing(GF(2))
+            sage: R.order()
             +Infinity
         """
         from sage.rings.infinity import Infinity
@@ -1363,12 +1363,13 @@ class InfinitePolynomialRing_sparse(CommutativeRing):
 
         EXAMPLES::
 
-            sage: R.<x> = InfinitePolynomialRing(GF(2))                                 # optional - sage.rings.finite_rings
-            sage: R.key_basis()                                                         # optional - sage.rings.finite_rings
+            sage: R.<x> = InfinitePolynomialRing(GF(2))
+            sage: R.key_basis()                                                         # needs sage.combinat
             Key polynomial basis over Finite Field of size 2
         """
         from sage.combinat.key_polynomial import KeyPolynomialBasis
         return KeyPolynomialBasis(self)
+
 
 class InfinitePolynomialGen(SageObject):
     """
@@ -1572,8 +1573,8 @@ class InfinitePolynomialRing_dense(InfinitePolynomialRing_sparse):
 
         EXAMPLES::
 
-            sage: R.<x,y> = InfinitePolynomialRing(GF(5))                               # optional - sage.rings.finite_rings
-            sage: R.construction()                                                      # optional - sage.rings.finite_rings
+            sage: R.<x,y> = InfinitePolynomialRing(GF(5))
+            sage: R.construction()
             [InfPoly{[x,y], "lex", "dense"}, Finite Field of size 5]
         """
         return [InfinitePolynomialFunctor(self._names, self._order, 'dense'), self._base]

@@ -245,8 +245,8 @@ def ProjectiveGeometryDesign(n, d, F, algorithm=None, point_coordinates=True, ch
 
     Check that the constructor using gap also works::
 
-        sage: BD = designs.ProjectiveGeometryDesign(2, 1, GF(2), algorithm="gap")  # optional - gap_packages (design package)
-        sage: BD.is_t_design(return_parameters=True)                               # optional - gap_packages (design package)
+        sage: BD = designs.ProjectiveGeometryDesign(2, 1, GF(2), algorithm="gap")  # optional - gap_package_design
+        sage: BD.is_t_design(return_parameters=True)                               # optional - gap_package_design
         (True, (2, 7, 3, 1))
     """
     try:
@@ -934,12 +934,12 @@ def WittDesign(n):
 
     EXAMPLES::
 
-        sage: BD = designs.WittDesign(9)             # optional - gap_packages (design package)
-        sage: BD.is_t_design(return_parameters=True) # optional - gap_packages (design package)
+        sage: BD = designs.WittDesign(9)                # optional - gap_package_design
+        sage: BD.is_t_design(return_parameters=True)    # optional - gap_package_design
         (True, (2, 9, 3, 1))
-        sage: BD                             # optional - gap_packages (design package)
+        sage: BD                                        # optional - gap_package_design
         Incidence structure with 9 points and 12 blocks
-        sage: print(BD)                      # optional - gap_packages (design package)
+        sage: print(BD)                                 # optional - gap_package_design
         Incidence structure with 9 points and 12 blocks
     """
     libgap.load_package("design")

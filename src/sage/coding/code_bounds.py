@@ -255,11 +255,11 @@ def codesize_upper_bound(n, d, q, algorithm=None):
         93
         sage: codes.bounds.codesize_upper_bound(24,8,2,algorithm="LP")
         4096
-        sage: codes.bounds.codesize_upper_bound(10,3,2,algorithm="gap")  # optional - gap_packages (Guava package)
+        sage: codes.bounds.codesize_upper_bound(10,3,2,algorithm="gap")  # optional - gap_package_guava
         85
         sage: codes.bounds.codesize_upper_bound(11,3,4,algorithm=None)
         123361
-        sage: codes.bounds.codesize_upper_bound(11,3,4,algorithm="gap")  # optional - gap_packages (Guava package)
+        sage: codes.bounds.codesize_upper_bound(11,3,4,algorithm="gap")  # optional - gap_package_guava
         123361
         sage: codes.bounds.codesize_upper_bound(11,3,4,algorithm="LP")
         109226
@@ -270,7 +270,7 @@ def codesize_upper_bound(n, d, q, algorithm=None):
 
         sage: codes.bounds.codesize_upper_bound(19,10,2)
         20
-        sage: codes.bounds.codesize_upper_bound(19,10,2,algorithm="gap") # optional - gap_packages (Guava package)
+        sage: codes.bounds.codesize_upper_bound(19,10,2,algorithm="gap") # optional - gap_package_guava
         20
 
     Meaningless parameters are rejected::
@@ -379,7 +379,7 @@ def plotkin_upper_bound(n,q,d, algorithm=None):
 
         sage: codes.bounds.plotkin_upper_bound(10,2,3)
         192
-        sage: codes.bounds.plotkin_upper_bound(10,2,3,algorithm="gap")  # optional - gap_packages (Guava package)
+        sage: codes.bounds.plotkin_upper_bound(10,2,3,algorithm="gap")  # optional - gap_package_guava
         192
     """
     _check_n_q_d(n, q, d, field_based=False)
@@ -430,7 +430,7 @@ def griesmer_upper_bound(n,q,d,algorithm=None):
 
         sage: codes.bounds.griesmer_upper_bound(10,2,3)
         128
-        sage: codes.bounds.griesmer_upper_bound(10,2,3,algorithm="gap")  # optional - gap_packages (Guava package)
+        sage: codes.bounds.griesmer_upper_bound(10,2,3,algorithm="gap")  # optional - gap_package_guava
         128
 
     TESTS::
@@ -471,7 +471,7 @@ def elias_upper_bound(n,q,d,algorithm=None):
 
         sage: codes.bounds.elias_upper_bound(10,2,3)
         232
-        sage: codes.bounds.elias_upper_bound(10,2,3,algorithm="gap")  # optional - gap_packages (Guava package)
+        sage: codes.bounds.elias_upper_bound(10,2,3,algorithm="gap")  # optional - gap_package_guava
         232
     """
     _check_n_q_d(n, q, d, field_based=False)

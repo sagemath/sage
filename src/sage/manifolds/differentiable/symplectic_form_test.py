@@ -35,7 +35,7 @@ class TestGenericSymplecticForm:
 
     def test_new_instance_same_type(self, omega: SymplecticForm):
         omega1 = omega._new_instance()  # type: ignore reportPrivateUsage
-        assert type(omega1) == type(omega)
+        assert type(omega1) is type(omega)
 
     def test_new_instance_same_parent(self, omega: SymplecticForm):
         omega1 = omega._new_instance()  # type: ignore reportPrivateUsage

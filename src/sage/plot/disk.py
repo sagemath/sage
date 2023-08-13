@@ -46,10 +46,12 @@ class Disk(GraphicPrimitive):
 
     Note this should normally be used indirectly via ``disk``::
 
+        sage: from math import pi
         sage: from sage.plot.disk import Disk
         sage: D = Disk((1,2), 2, (pi/2,pi), {'zorder':3})
         sage: D
-        Disk defined by (1.0,2.0) with r=2.0 spanning (1.5707963267..., 3.1415926535...) radians
+        Disk defined by (1.0,2.0) with r=2.0
+         spanning (1.5707963267..., 3.1415926535...) radians
         sage: D.options()['zorder']
         3
         sage: D.x
@@ -68,6 +70,7 @@ class Disk(GraphicPrimitive):
 
         EXAMPLES::
 
+            sage: from math import pi
             sage: D = disk((2,3), 1, (pi/2, pi), fill=False, color='red', thickness=1, alpha=.5)
             sage: D[0].x
             2.0
@@ -95,6 +98,7 @@ class Disk(GraphicPrimitive):
 
         EXAMPLES::
 
+            sage: from math import pi
             sage: D = disk((5,4), 1, (pi/2, pi))
             sage: d = D.get_minmax_data()
             sage: d['xmin']
@@ -118,6 +122,7 @@ class Disk(GraphicPrimitive):
 
         EXAMPLES::
 
+            sage: from math import pi
             sage: p = disk((3, 3), 1, (0, pi/2))
             sage: p[0]._allowed_options()['alpha']
             'How transparent the figure is.'
@@ -139,6 +144,7 @@ class Disk(GraphicPrimitive):
 
         EXAMPLES::
 
+            sage: from math import pi
             sage: P = disk((3, 3), 1, (0, pi/2))
             sage: p = P[0]; p
             Disk defined by (3.0,3.0) with r=1.0 spanning (0.0, 1.5707963267...) radians
@@ -149,6 +155,7 @@ class Disk(GraphicPrimitive):
         """
         TESTS::
 
+            sage: from math import pi
             sage: D = disk((2,-1), 2, (0, pi), color='black', thickness=3, fill=False); D
             Graphics object consisting of 1 graphics primitive
 
@@ -192,6 +199,7 @@ class Disk(GraphicPrimitive):
 
         EXAMPLES::
 
+            sage: from math import pi
             sage: disk((0,0), 1, (0, pi/2)).plot3d()
             Graphics3d Object
             sage: disk((0,0), 1, (0, pi/2)).plot3d(z=2)
@@ -253,12 +261,13 @@ def disk(point, radius, angle, **options):
 
     Make some dangerous disks::
 
+        sage: from math import pi
         sage: bl = disk((0.0,0.0), 1, (pi, 3*pi/2), color='yellow')
         sage: tr = disk((0.0,0.0), 1, (0, pi/2), color='yellow')
         sage: tl = disk((0.0,0.0), 1, (pi/2, pi), color='black')
         sage: br = disk((0.0,0.0), 1, (3*pi/2, 2*pi), color='black')
-        sage: P  = tl+tr+bl+br
-        sage: P.show(xmin=-2,xmax=2,ymin=-2,ymax=2)
+        sage: P  = tl + tr + bl + br
+        sage: P.show(xmin=-2, xmax=2, ymin=-2, ymax=2)
 
     .. PLOT::
 
@@ -318,9 +327,11 @@ def disk(point, radius, angle, **options):
 
     Extra options will get passed on to ``show()``, as long as they are valid::
 
-        sage: disk((0, 0), 5, (0, pi/2), xmin=0, xmax=5, ymin=0, ymax=5, figsize=(2,2), rgbcolor=(1, 0, 1))
+        sage: disk((0, 0), 5, (0, pi/2), rgbcolor=(1, 0, 1),
+        ....:      xmin=0, xmax=5, ymin=0, ymax=5, figsize=(2,2))
         Graphics object consisting of 1 graphics primitive
-        sage: disk((0, 0), 5, (0, pi/2), rgbcolor=(1, 0, 1)).show(xmin=0, xmax=5, ymin=0, ymax=5, figsize=(2,2)) # These are equivalent
+        sage: disk((0, 0), 5, (0, pi/2), rgbcolor=(1, 0, 1)).show(  # These are equivalent
+        ....:     xmin=0, xmax=5, ymin=0, ymax=5, figsize=(2,2))
 
     TESTS:
 

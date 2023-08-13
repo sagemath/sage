@@ -2775,7 +2775,7 @@ class AbstractGrowthGroupFunctor(ConstructionFunctor):
             sage: F == G
             False
         """
-        return type(self) == type(other) and self.var == other.var
+        return type(self) is type(other) and self.var == other.var
 
     def __ne__(self, other):
         r"""
