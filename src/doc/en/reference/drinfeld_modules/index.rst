@@ -1,12 +1,19 @@
-Drinfeld modules
-====================================
+*************************************
+Drinfeld modules and Anderson motives
+*************************************
 
-SageMath include facilities to manipulate Drinfeld modules and their morphisms. The
-main entry point is the class
-:class:`sage.rings.function_field.drinfeld_modules.drinfeld_module.DrinfeldModule`.
+SageMath include facilities to manipulate Drinfeld modules and Anderson motives.
+The main entry points are the classes
+:class:`sage.rings.function_field.drinfeld_modules.drinfeld_module.DrinfeldModule`
+and
+:class:`sage.rings.function_field.drinfeld_modules.anderson_motive.AndersonMotive`.
+
 
 Drinfeld modules
-----------------
+================
+
+Constructors
+------------
 
 .. toctree::
    :maxdepth: 2
@@ -39,5 +46,14 @@ The category of Drinfeld modules
    :maxdepth: 2
 
    sage/categories/drinfeld_modules
+
+Anderson motives
+================
+
+.. toctree::
+   :maxdepth: 2
+
+   sage/rings/function_field/drinfeld_modules/anderson_motive
+
 
 .. include:: ../footer.txt
