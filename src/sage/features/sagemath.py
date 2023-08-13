@@ -381,7 +381,9 @@ class sage__libs__flint(JoinFeature):
         """
         JoinFeature.__init__(self, 'sage.libs.flint',
                              [PythonModule('sage.libs.flint.flint'),
-                              PythonModule('sage.libs.arb.arith')],
+                              PythonModule('sage.libs.arb.arith'),
+                              PythonModule('sage.graphs.chrompoly'),
+                              PythonModule('sage.graphs.matchpoly')],
                              spkg='sagemath_flint', type='standard')
 
 
