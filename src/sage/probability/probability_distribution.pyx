@@ -3,12 +3,12 @@ Probability Distributions
 
 This module provides three types of probability distributions:
 
-- ``RealDistribution``: various real-valued probability distributions.
+- :class:`RealDistribution`: various real-valued probability distributions.
 
-- ``SphericalDistribution``: uniformly distributed points on the
+- :class:`SphericalDistribution`: uniformly distributed points on the
   surface of an `n-1` sphere in `n` dimensional euclidean space.
 
-- ``GeneralDiscreteDistribution``: user-defined discrete distributions.
+- :class:`GeneralDiscreteDistribution`: user-defined discrete distributions.
 
 AUTHORS:
 
@@ -114,8 +114,8 @@ cdef class ProbabilityDistribution:
             sage: from sage.probability.probability_distribution import GeneralDiscreteDistribution
             sage: P = [0.3, 0.4, 0.3]
             sage: X = GeneralDiscreteDistribution(P)
-            sage: h, b = X.generate_histogram_data(bins = 10)
-            sage: h  # rel tol 1e-08
+            sage: h, b = X.generate_histogram_data(bins=10)                             # needs sage.plot
+            sage: h  # rel tol 1e-08                                                    # needs sage.plot
             [1.6299999999999999,
              0.0,
              0.0,
@@ -126,7 +126,7 @@ cdef class ProbabilityDistribution:
              0.0,
              0.0,
              1.4650000000000003]
-            sage: b
+            sage: b                                                                     # needs sage.plot
             [0.0,
              0.2,
              0.4,
@@ -151,12 +151,12 @@ cdef class ProbabilityDistribution:
 
         INPUT:
 
-        - ``name`` - file to save the histogram plot (as a PNG).
+        - ``name`` -- file to save the histogram plot (as a PNG).
 
-        - ``num_samples`` - (optional) number of times to sample from
+        - ``num_samples`` -- (optional) number of times to sample from
           the probability distribution
 
-        - ``bins`` - (optional) number of bins to divide the samples
+        - ``bins`` -- (optional) number of bins to divide the samples
           into.
 
         EXAMPLES:
@@ -167,7 +167,7 @@ cdef class ProbabilityDistribution:
             sage: import tempfile
             sage: P = [0.3, 0.4, 0.3]
             sage: X = GeneralDiscreteDistribution(P)
-            sage: with tempfile.NamedTemporaryFile() as f:
+            sage: with tempfile.NamedTemporaryFile() as f:                              # needs sage.plot
             ....:     X.generate_histogram_plot(f.name)
         """
         import pylab
@@ -179,11 +179,11 @@ cdef class ProbabilityDistribution:
 cdef class SphericalDistribution(ProbabilityDistribution):
     """
     This class is capable of producing random points uniformly distributed
-    on the surface of an ``n-1`` sphere in ``n`` dimensional euclidean space. The
-    dimension, ``n`` is selected via the keyword ``dimension``. The random
+    on the surface of an `(n-1)`-sphere in `n`-dimensional euclidean space. The
+    dimension `n` is selected via the keyword ``dimension``. The random
     number generator which drives it can be selected using the keyword
-    ``rng``. Valid choices are ``default`` which uses the Mersenne-Twister,
-    ``luxury`` which uses RANDLXS, and ``taus`` which uses the tausworth
+    ``rng``. Valid choices are ``'default'`` which uses the Mersenne-Twister,
+    ``'luxury'`` which uses RANDLXS, and ``'taus'`` which uses the tausworth
     generator. The default dimension is ``3``.
 
     EXAMPLES::
@@ -319,10 +319,16 @@ cdef class SphericalDistribution(ProbabilityDistribution):
 
             sage: T = SphericalDistribution(seed = 0)
             sage: [T.get_random_element() for _ in range(4)]  # rel tol 4e-16
-            [(0.07961564104639995, -0.05237671627581255, 0.9954486572862178), (0.4123599490593727, 0.5606817859360097, -0.7180495855658982), (-0.9619860891623148, -0.2726473494040498, -0.015690351211529927), (0.5674297579435619, -0.011206783800420301, -0.8233455397322326)]
+            [(0.07961564104639995, -0.05237671627581255, 0.9954486572862178),
+             (0.4123599490593727, 0.5606817859360097, -0.7180495855658982),
+             (-0.9619860891623148, -0.2726473494040498, -0.015690351211529927),
+             (0.5674297579435619, -0.011206783800420301, -0.8233455397322326)]
             sage: T.reset_distribution()
             sage: [T.get_random_element() for _ in range(4)]  # rel tol 4e-16
-            [(0.07961564104639995, -0.05237671627581255, 0.9954486572862178), (0.4123599490593727, 0.5606817859360097, -0.7180495855658982), (-0.9619860891623148, -0.2726473494040498, -0.015690351211529927), (0.5674297579435619, -0.011206783800420301, -0.8233455397322326)]
+            [(0.07961564104639995, -0.05237671627581255, 0.9954486572862178),
+             (0.4123599490593727, 0.5606817859360097, -0.7180495855658982),
+             (-0.9619860891623148, -0.2726473494040498, -0.015690351211529927),
+             (0.5674297579435619, -0.011206783800420301, -0.8233455397322326)]
         """
         if self.r != NULL:
             gsl_rng_free(self.r)
@@ -332,7 +338,7 @@ cdef class SphericalDistribution(ProbabilityDistribution):
 
 cdef class RealDistribution(ProbabilityDistribution):
     """
-    The ``RealDistribution`` class provides a number of routines for sampling
+    The :class:`RealDistribution` class provides a number of routines for sampling
     from and analyzing and visualizing probability distributions.
     For precise definitions of the distributions and their parameters
     see the gsl reference manuals chapter on random number generators
@@ -597,8 +603,8 @@ cdef class RealDistribution(ProbabilityDistribution):
 
     def set_random_number_generator(self, rng = 'default'):
         """
-        Set the gsl random number generator to be one of ``default``,
-        ``luxury``, or ``taus``.
+        Set the gsl random number generator to be one of ``'default'``,
+        ``'luxury'``, or ``'taus'``.
 
         EXAMPLES::
 
@@ -957,7 +963,7 @@ cdef class RealDistribution(ProbabilityDistribution):
         EXAMPLES::
 
             sage: T = RealDistribution('uniform', [0, 2])
-            sage: P = T.plot()
+            sage: P = T.plot()                                                          # needs sage.plot
         """
         from sage.plot.plot import plot
         return plot(self.distribution_function, *args, **kwds)
