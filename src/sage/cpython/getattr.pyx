@@ -37,7 +37,7 @@ cdef extern from "Python.h":
 
 cdef class AttributeErrorMessage:
     """
-    Tries to emulate the standard Python ``AttributeError`` message.
+    Tries to emulate the standard Python :class:`AttributeError` message.
 
     .. NOTE::
 
@@ -68,7 +68,7 @@ cdef class AttributeErrorMessage:
 
     TESTS:
 
-    The error message used for the ``AttributeError`` is a unique object
+    The error message used for the :class:`AttributeError` is a unique object
     and is changed inplace. This is for reasons of efficiency.
     Hence, if one really needs the error message as a string, then one should
     make a copy of its string representation before it changes. ::
@@ -240,7 +240,7 @@ cpdef getattr_from_other_class(self, cls, name):
 
     - ``name`` -- a string
 
-    If self is an instance of cls, raises an ``AttributeError``, to
+    If self is an instance of cls, raises an :class:`AttributeError`, to
     avoid a double lookup. This function is intended to be called from
     __getattr__, and so should not be called if name is an attribute
     of self.
@@ -300,7 +300,7 @@ cpdef getattr_from_other_class(self, cls, name):
         TypeError: descriptor '__weakref__' for 'A' objects doesn't apply
         to ...'sage.rings.integer.Integer' object
 
-    When this occurs, an ``AttributeError`` is raised::
+    When this occurs, an :class:`AttributeError` is raised::
 
         sage: getattr_from_other_class(1, A, "__weakref__")
         Traceback (most recent call last):
@@ -367,7 +367,7 @@ cpdef getattr_from_other_class(self, cls, name):
         # Not a descriptor
         return attribute
     # Conditionally defined lazy_attributes don't work well with fake subclasses
-    # (a TypeError is raised if the lazy attribute is not defined).
+    # (a :class:`TypeError` is raised if the lazy attribute is not defined).
     # For the moment, we ignore that when this occurs.
     # Other descriptors (including __weakref__) also break.
     try:

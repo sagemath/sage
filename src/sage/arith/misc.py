@@ -58,7 +58,7 @@ def algdep(z, degree, known_bits=None, use_bits=None, known_digits=None,
     is not found, then ``None`` will be returned. If ``proof=True`` then
     the result is returned only if it can be proved correct (i.e. the
     only possible minimal polynomial satisfying the height bound, or no
-    such polynomial exists). Otherwise a ``ValueError`` is raised
+    such polynomial exists). Otherwise a :class:`ValueError` is raised
     indicating that higher precision is required.
 
     ALGORITHM: Uses LLL for real/complex inputs, PARI C-library
@@ -4252,7 +4252,7 @@ def primitive_root(n, check=True):
     """
     Return a positive integer that generates the multiplicative group
     of integers modulo `n`, if one exists; otherwise, raise a
-    ``ValueError``.
+    :class:`ValueError`.
 
     A primitive root exists if `n=4` or `n=p^k` or `n=2p^k`, where `p`
     is an odd prime and `k` is a nonnegative number.
@@ -5298,7 +5298,7 @@ def integer_trunc(i):
 def two_squares(n):
     """
     Write the integer `n` as a sum of two integer squares if possible;
-    otherwise raise a ``ValueError``.
+    otherwise raise a :class:`ValueError`.
 
     INPUT:
 
@@ -5420,7 +5420,7 @@ def two_squares(n):
 def three_squares(n):
     """
     Write the integer `n` as a sum of three integer squares if possible;
-    otherwise raise a ``ValueError``.
+    otherwise raise a :class:`ValueError`.
 
     INPUT:
 
@@ -5639,7 +5639,7 @@ def four_squares(n):
 def sum_of_k_squares(k, n):
     """
     Write the integer `n` as a sum of `k` integer squares if possible;
-    otherwise raise a ``ValueError``.
+    otherwise raise a :class:`ValueError`.
 
     INPUT:
 

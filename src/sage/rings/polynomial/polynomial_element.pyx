@@ -2889,8 +2889,7 @@ cdef class Polynomial(CommutativePolynomial):
 
         -  ``value`` - value to set the n-th coefficient to
 
-
-        OUTPUT: an IndexError is always raised.
+        OUTPUT: an :class:`IndexError` is always raised.
 
         EXAMPLES::
 

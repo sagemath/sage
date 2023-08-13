@@ -3372,8 +3372,9 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
         r"""
         Return a dynamical system conjugate to this one with affine (n, m) preperiodic points.
 
-        If the base ring of this dynamical system is finite, there may not be a model
-        with affine preperiodic points, in which case a ValueError is thrown.
+        If the base ring of this dynamical system is finite, there may
+        not be a model with affine preperiodic points, in which case a
+        :class:`ValueError` is raised.
 
         INPUT:
 

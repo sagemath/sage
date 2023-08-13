@@ -596,7 +596,7 @@ class RationalFunctionField(FunctionField):
     def gen(self, n=0):
         """
         Return the ``n``-th generator of the function field.  If ``n`` is not
-        0, then an IndexError is raised.
+        0, then an :class:` IndexError` is raised.
 
         EXAMPLES::
 

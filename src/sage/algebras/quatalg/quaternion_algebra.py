@@ -2792,8 +2792,8 @@ class QuaternionFractionalIdeal_rational(QuaternionFractionalIdeal):
         .. NOTE::
 
            Currently, `p` must satisfy a bunch of conditions, or a
-           ``NotImplementedError`` is raised.  In particular, `p` must be
-           odd and unramified in the quaternion algebra, must be
+           :class:`NotImplementedError` is raised.  In particular, `p` must
+           be odd and unramified in the quaternion algebra, must be
            coprime to the index of the right order in the maximal
            order, and also coprime to the normal of self.  (The Brandt
            modules code has a more general algorithm in some cases.)

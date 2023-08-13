@@ -1125,7 +1125,7 @@ cdef class Map(Element):
         OUTPUT:
 
         An element of Hom(X, Z) obtained by composing self with `\phi`.  If
-        no canonical `\phi` exists, a TypeError is raised.
+        no canonical `\phi` exists, a :class:`TypeError` is raised.
 
         EXAMPLES::
 
@@ -1169,7 +1169,7 @@ cdef class Map(Element):
         OUTPUT:
 
         An element of Hom(X, Z) obtained by composing self with `\phi`.  If
-        no canonical `\phi` exists, a TypeError is raised.
+        no canonical `\phi` exists, a :class:`TypeError` is raised.
 
         EXAMPLES::
 

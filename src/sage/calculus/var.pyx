@@ -36,7 +36,7 @@ def var(*args, **kwds):
     If a single symbolic variable was created, the variable
     itself. Otherwise, a tuple of symbolic variables. The variable
     names are checked to be valid Python identifiers and a
-    ``ValueError`` is raised otherwise.
+    :class:`ValueError` is raised otherwise.
 
     EXAMPLES:
 

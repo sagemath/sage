@@ -331,7 +331,7 @@ class InfinitePolynomialRingFactory(UniqueFactory):
             sage: _[0].all
             [FractionField, InfPoly{[x], "lex", "dense"}]
 
-        If it is attempted to use no generator, a ValueError is raised::
+        If it is attempted to use no generator, a :class:`ValueError` is raised::
 
             sage: InfinitePolynomialRing.create_key(ZZ, names=[])
             Traceback (most recent call last):

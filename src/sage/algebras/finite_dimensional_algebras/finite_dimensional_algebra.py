@@ -740,7 +740,7 @@ class FiniteDimensionalAlgebra(UniqueRepresentation, Algebra):
 
         - :class:`~sage.algebras.finite_dimensional_algebras.finite_dimensional_algebra_ideal.FiniteDimensionalAlgebraIdeal`;
           the unique maximal ideal of ``self``.  If ``self`` is not a local
-          algebra, a ``ValueError`` is raised.
+          algebra, a :class:`ValueError` is raised.
 
         EXAMPLES::
 

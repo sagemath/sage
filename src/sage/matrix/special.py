@@ -266,7 +266,7 @@ def random_matrix(ring, nrows, ncols=None, algorithm='randomize', implementation
         An upper bound on the absolute value of the entries may be set
         when the ``algorithm`` is ``echelonizable`` or ``unimodular``.
         In these cases it is possible for this constructor to fail with
-        a ``ValueError``.   If you *must* have this routine return
+        a :class:`ValueError`.  If you *must* have this routine return
         successfully, do not set ``upper_bound``.  This behavior can
         be partially controlled by a ``max_tries`` keyword.
 
@@ -1546,7 +1546,7 @@ def _determine_block_matrix_grid(sub_matrices):
     Non-zero scalars are considered to be square matrices of any size,
     and zeroes are considered to be zero matrices of any size.
 
-    A ValueError is raised if there is insufficient or
+    A :class:`ValueError` is raised if there is insufficient or
     conflicting information.
 
     TESTS::

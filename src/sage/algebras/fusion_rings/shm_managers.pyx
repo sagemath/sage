@@ -422,7 +422,7 @@ cdef class FvarsHandler:
 
     .. NOTE::
 
-        If you ever encounter an ``OverflowError`` when running the
+        If you ever encounter an :class:`OverflowError` when running the
         :meth:`FMatrix.find_orthogonal_solution` solver, consider
         increasing the parameter ``n_bytes``.
 
