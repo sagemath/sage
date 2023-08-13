@@ -4451,7 +4451,7 @@ cdef class TernaryMatroid(LinearMatroid):
         """
         if certificate:
             return self._is_isomorphic(other), self._isomorphism(other)
-        if type(other) == TernaryMatroid:
+        if isinstance(other, TernaryMatroid):
             return self.is_field_isomorphic(other)
         else:
             return LinearMatroid._is_isomorphic(self, other)
@@ -6152,7 +6152,7 @@ cdef class RegularMatroid(LinearMatroid):
         """
         if certificate:
             return self._is_isomorphic(other), self._isomorphism(other)
-        if type(other) == RegularMatroid:
+        if isinstance(other, RegularMatroid):
             return self.is_field_isomorphic(other)
         else:
             return LinearMatroid._is_isomorphic(self, other)
