@@ -6,13 +6,15 @@ class MPolynomial_subring(MPolynomialRing_libsingular):
 
     def __init__(self, parent_ring, gens):
         # assert parent ring is immutable ?
-        self.generators=[self._element_constructor_(gen) for gen in gens]
-        self.parent_ring=parent_ring
         self._hom=PolynomialRing(parent_ring.base_ring(), len(gens), "a").hom(gens)
+        self.generators=[self._element_constructor_(gen) for gen in gens]
+        self.parent_ring=parent_ring        
         self._ideal=self._hom.kernel()         
         self._zero_element = self._element_constructor_(0)         
         self._one_element = self._element_constructor_(1)
         self._homdomain = self._hom.domain()   
+
+
 
 
     #########################
