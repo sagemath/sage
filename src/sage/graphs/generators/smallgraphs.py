@@ -456,7 +456,7 @@ def Cell600(embedding=1):
     EXAMPLES::
 
         sage: # long time
-        sage: g = graphs.Cell600()
+        sage: g = graphs.Cell600()                                                      # needs sage.rings.number_field
         sage: g.size()
         720
         sage: g.is_regular(12)
@@ -532,7 +532,7 @@ def Cell120():
     EXAMPLES::
 
         sage: # long time
-        sage: g = graphs.Cell120()
+        sage: g = graphs.Cell120()                                                      # needs sage.rings.number_field
         sage: g.size()
         1200
         sage: g.is_regular(4)
@@ -912,7 +912,7 @@ def Balaban11Cage(embedding=1):
         sage: g3 = graphs.Balaban11Cage(embedding=3)                                    # needs networkx
         sage: g1.show(figsize=[10,10])          # long time                             # needs sage.plot
         sage: g2.show(figsize=[10,10])          # long time                             # needs networkx sage.plot
-        sage: g3.show(figsize=[10,10])          # long time                             # needs sage.plot
+        sage: g3.show(figsize=[10,10])          # long time                             # needs networkx sage.plot
 
     Proof that the embeddings are the same graph::
 
@@ -1066,7 +1066,7 @@ def BidiakisCube():
 
         sage: g = graphs.BidiakisCube(); g
         Bidiakis cube: Graph on 12 vertices
-        sage: g.show()  # long time
+        sage: g.show()                          # long time                             # needs sage.plot
         sage: g.order()
         12
         sage: g.size()
@@ -1297,7 +1297,7 @@ def BrinkmannGraph():
 
         sage: G = graphs.BrinkmannGraph(); G
         Brinkmann graph: Graph on 21 vertices
-        sage: G.show()  # long time
+        sage: G.show()                          # long time                             # needs sage.plot
         sage: G.order()
         21
         sage: G.size()
@@ -2184,7 +2184,7 @@ def EllinghamHorton54Graph():
 
     TESTS::
 
-        sage: g.show()  # long time
+        sage: g.show()                          # long time                             # needs sage.plot
     """
     edge_dict = {
         0: [1, 11, 15], 1: [2, 47], 2: [3, 13], 3: [4, 8], 4: [5, 15],
@@ -2425,7 +2425,7 @@ def FlowerSnark():
 
     Now show it::
 
-        sage: F.show()  # long time
+        sage: F.show()                          # long time                             # needs sage.plot
     """
     d = {0: [1, 14, 15], 1: [2, 11], 2: [3, 7], 3: [2, 4, 16], 4: [5, 14],
          5: [6, 10], 6: [5, 7, 17], 8: [7, 9, 13], 9: [10, 18], 11: [10, 12],
@@ -2844,7 +2844,7 @@ def HeawoodGraph():
         Heawood graph: Graph on 14 vertices
         sage: H.graph6_string()
         'MhEGHC@AI?_PC@_G_'
-        sage: (graphs.HeawoodGraph()).show()  # long time
+        sage: (graphs.HeawoodGraph()).show()    # long time                             # needs sage.plot
 
     TESTS::
 
@@ -3303,7 +3303,7 @@ def KrackhardtKiteGraph():
     Construct and show a Krackhardt kite graph ::
 
         sage: g = graphs.KrackhardtKiteGraph()
-        sage: g.show()  # long time
+        sage: g.show()                          # long time                             # needs sage.plot
 
     TESTS::
 
@@ -4534,7 +4534,7 @@ def TutteGraph():
         69
         sage: g.is_planar()
         True
-        sage: g.vertex_connectivity()  # long time
+        sage: g.vertex_connectivity()           # long time                             # needs sage.numerical.mip
         3
         sage: g.girth()
         4
@@ -4755,17 +4755,17 @@ def MathonStronglyRegularGraph(t):
     EXAMPLES::
 
         sage: from sage.graphs.generators.smallgraphs import MathonStronglyRegularGraph
-        sage: G = MathonStronglyRegularGraph(0)        # long time
+        sage: G = MathonStronglyRegularGraph(0)         # long time                     # needs sage.libs.gap
         sage: G.is_strongly_regular(parameters=True)   # long time
         (784, 243, 82, 72)
 
     TESTS::
 
         sage: # long time
-        sage: G = graphs.MathonStronglyRegularGraph(1)
+        sage: G = graphs.MathonStronglyRegularGraph(1)                                  # needs sage.libs.gap
         sage: G.is_strongly_regular(parameters=True)
         (784, 270, 98, 90)
-        sage: G = graphs.MathonStronglyRegularGraph(2)
+        sage: G = graphs.MathonStronglyRegularGraph(2)                                  # needs sage.libs.gap
         sage: G.is_strongly_regular(parameters=True)
         (784, 297, 116, 110)
 
@@ -4789,7 +4789,7 @@ def JankoKharaghaniGraph(v):
 
     EXAMPLES::
 
-        sage: g = graphs.JankoKharaghaniGraph(936)  # long time
+        sage: g = graphs.JankoKharaghaniGraph(936)      # long time                     # needs sage.libs.pari
         sage: g.is_strongly_regular(parameters=True)  # long time
         (936, 375, 150, 150)
 
@@ -4881,7 +4881,7 @@ def JankoKharaghaniTonchevGraph():
 
     EXAMPLES::
 
-        sage: Gamma=graphs.JankoKharaghaniTonchevGraph()  # long time
+        sage: Gamma=graphs.JankoKharaghaniTonchevGraph()        # long time             # needs sage.libs.gap
         sage: Gamma.is_strongly_regular(parameters=True)  # long time
         (324, 153, 72, 72)
     """
