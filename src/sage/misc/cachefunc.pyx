@@ -694,10 +694,11 @@ cdef class CachedFunction():
             'number_of_partitions'
             sage: 'partitions' in sage.misc.sageinspect.sage_getdoc(g)                  # optional - sage.combinat
             True
-            sage: g(5)                                                                  # optional - sage.combinat
+            sage: g(5)                                                                  # optional - sage.combinat sage.libs.flint
             7
-            sage: g.cache                                                               # optional - sage.combinat
+            sage: g.cache                                                               # optional - sage.combinat sage.libs.flint
             {((5, 'default'), ()): 7}
+
             sage: def f(t=1): print(t)
             sage: h = CachedFunction(f)
             sage: w = walltime()
@@ -951,15 +952,15 @@ cdef class CachedFunction():
         TESTS::
 
             sage: g = CachedFunction(number_of_partitions)                              # optional - sage.combinat
-            sage: a = g(5)                                                              # optional - sage.combinat
-            sage: g.cache                                                               # optional - sage.combinat
+            sage: a = g(5)                                                              # optional - sage.combinat sage.libs.flint
+            sage: g.cache                                                               # optional - sage.combinat sage.libs.flint
             {((5, 'default'), ()): 7}
-            sage: a = g(10^5)   # indirect doctest                                      # optional - sage.combinat
-            sage: a == number_of_partitions(10^5)                                       # optional - sage.combinat
+            sage: a = g(10^5)   # indirect doctest                                      # optional - sage.combinat sage.libs.flint
+            sage: a == number_of_partitions(10^5)                                       # optional - sage.combinat sage.libs.flint
             True
-            sage: a is g(10^5)                                                          # optional - sage.combinat
+            sage: a is g(10^5)                                                          # optional - sage.combinat sage.libs.flint
             True
-            sage: a is number_of_partitions(10^5)                                       # optional - sage.combinat
+            sage: a is number_of_partitions(10^5)                                       # optional - sage.combinat sage.libs.flint
             True
 
         Check that :trac:`16316` has been fixed, i.e., caching works for
@@ -1075,14 +1076,14 @@ cdef class CachedFunction():
 
         EXAMPLES::
 
-            sage: g = CachedFunction(number_of_partitions)                      # optional - sage.combinat
-            sage: a = g(5)                                                      # optional - sage.combinat
-            sage: g.cache                                                       # optional - sage.combinat
+            sage: g = CachedFunction(number_of_partitions)                              # optional - sage.combinat sage.libs.flint
+            sage: a = g(5)                                                              # optional - sage.combinat sage.libs.flint
+            sage: g.cache                                                               # optional - sage.combinat sage.libs.flint
             {((5, 'default'), ()): 7}
-            sage: g.set_cache(17, 5)                                            # optional - sage.combinat
-            sage: g.cache                                                       # optional - sage.combinat
+            sage: g.set_cache(17, 5)                                                    # optional - sage.combinat sage.libs.flint
+            sage: g.cache                                                               # optional - sage.combinat sage.libs.flint
             {((5, 'default'), ()): 17}
-            sage: g(5)                                                          # optional - sage.combinat
+            sage: g(5)                                                                  # optional - sage.combinat sage.libs.flint
             17
 
         TESTS:
