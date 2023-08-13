@@ -345,7 +345,7 @@ def test_random_elements(level=MAX_LEVEL, trials=1):
         -12
         ----
 
-        sage: # needs sage.rings.number_field sage.rings.finite_rings sage.rings.padics
+        sage: # needs sage.rings.finite_rings sage.rings.number_field sage.rings.padics
         sage: sage.rings.tests.test_random_elements(trials=10)
         survived 0 tests...
         sage: sage.rings.tests.test_random_elements(trials=1000)  # long time (5 seconds)
@@ -385,7 +385,7 @@ def test_random_arith(level=MAX_LEVEL, trials=1):
 
     EXAMPLES::
 
-        sage: # needs sage.rings.number_field sage.rings.finite_rings sage.rings.padics
+        sage: # needs sage.rings.finite_rings sage.rings.number_field sage.rings.padics
         sage: import sage.rings.tests
         sage: sage.rings.tests.test_random_arith(trials=2, seed=0)
         survived 0 tests
