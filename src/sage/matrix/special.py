@@ -1295,12 +1295,12 @@ def elementary_matrix(arg0, arg1=None, **kwds):
         Full MatrixSpace of 4 by 4 dense matrices over
          Number Field in I with defining polynomial x^2 + 1 with I = 1*I
 
-        sage: # needs sage.rings.complex_double
+        sage: # needs sage.rings.complex_double sage.symbolic
         sage: E = elementary_matrix(4, row1=1, scale=CDF(I))
         sage: E.parent()
         Full MatrixSpace of 4 by 4 dense matrices over Complex Double Field
 
-        sage: # needs sage.rings.number_field
+        sage: # needs sage.rings.number_field sage.symbolic
         sage: E = elementary_matrix(4, row1=1, scale=QQbar(I))
         sage: E.parent()
         Full MatrixSpace of 4 by 4 dense matrices over Algebraic Field
