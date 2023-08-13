@@ -68,6 +68,7 @@ from IPython.core.magic import Magics, magics_class, line_magic, cell_magic
 from sage.repl.load import load_wrap
 from sage.env import SAGE_IMPORTALL, SAGE_STARTUP_FILE
 from sage.misc.lazy_import import LazyImport
+from sage.misc.misc import run_once
 
 @magics_class
 class SageMagics(Magics):
@@ -581,41 +582,6 @@ class SageJupyterCustomizations(SageCustomizations):
         """
         from .ipython_kernel import all_jupyter
         return all_jupyter
-
-
-# from https://stackoverflow.com/questions/4103773/efficient-way-of-having-a-function-only-execute-once-in-a-loop
-from functools import wraps
-def run_once(func):
-    """
-    Runs a function (successfully) only once.
-
-    The running can be reset by setting the ``has_run`` attribute to False
-
-    TESTS::
-
-        sage: from sage.repl.ipython_extension import run_once
-        sage: @run_once
-        ....: def foo(work):
-        ....:     if work:
-        ....:         return 'foo worked'
-        ....:     raise RuntimeError("foo didn't work")
-        sage: foo(False)
-        Traceback (most recent call last):
-        ...
-        RuntimeError: foo didn't work
-        sage: foo(True)
-        'foo worked'
-        sage: foo(False)
-        sage: foo(True)
-    """
-    @wraps(func)
-    def wrapper(*args, **kwargs):
-        if not wrapper.has_run:
-            result = func(*args, **kwargs)
-            wrapper.has_run = True
-            return result
-    wrapper.has_run = False
-    return wrapper
 
 
 @run_once

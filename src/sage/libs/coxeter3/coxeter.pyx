@@ -86,8 +86,10 @@ cdef class String:
             sage: all([tb > ta1, tb >= ta1, tb >= tb])                 # optional - coxeter3
             True
         """
-        if type(other) != type(self):
-            return False
+        if type(other) is not type(self):
+            if op in (Py_LT, Py_LE, Py_GT, Py_GE):
+                return NotImplemented
+            return op == Py_NE
 
         s = repr(self)
         o = repr(other)
@@ -199,8 +201,10 @@ cdef class Type:
             sage: all([tb > ta1, tb >= ta1, tb >= tb])                 # optional - coxeter3
             True
         """
-        if type(other) != type(self):
-            return False
+        if type(other) is not type(self):
+            if op in (Py_LT, Py_LE, Py_GT, Py_GE):
+                return NotImplemented
+            return op == Py_NE
 
         s = repr(self)
         o = repr(other)
@@ -363,8 +367,10 @@ cdef class CoxGroup(SageObject):
             sage: B4 >= A5                                                              # optional - coxeter3
             True
         """
-        if type(other) != type(self):
-            return False
+        if type(other) is not type(self):
+            if op in (Py_LT, Py_LE, Py_GT, Py_GE):
+                return NotImplemented
+            return op == Py_NE
 
         s_t = self.type()
         o_t = other.type()
@@ -839,8 +845,10 @@ cdef class CoxGroupElement:
             sage: w1 != v1                                        # optional - coxeter3
             True
         """
-        if type(other) != type(self):
-            return False
+        if type(other) is not type(self):
+            if op in (Py_LT, Py_LE, Py_GT, Py_GE):
+                return NotImplemented
+            return op == Py_NE
 
         s_p = self.parent_group()
         o_p = other.parent_group()

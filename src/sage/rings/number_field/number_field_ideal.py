@@ -1,5 +1,5 @@
 # sage_setup: distribution = sagemath-ntl
-# sage.doctest: optional - sage.libs.pari
+# sage.doctest: needs sage.libs.pari sage.rings.number_field
 """
 Number Field Ideals
 
@@ -2758,7 +2758,7 @@ class NumberFieldFractionalIdeal(MultiplicativeGroupElement, NumberFieldIdeal, I
         G = self.idealstar(2)
         invs = G.invariants()
 
-        from sage.matrix.constructor import Matrix as matrix
+        from sage.matrix.constructor import matrix
         from sage.matrix.special import identity_matrix
         from sage.matrix.special import zero_matrix
         from sage.matrix.special import diagonal_matrix

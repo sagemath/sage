@@ -135,7 +135,7 @@ class PermutationGroup_unique(CachedRepresentation, PermutationGroup_generic):
 
         EXAMPLES::
 
-            sage: SymmetricGroup(['a','b']).domain() #indirect doctest
+            sage: SymmetricGroup(['a','b']).domain()  # indirect doctest
             {'a', 'b'}
         """
         domain = kwds.pop('domain', None)
@@ -680,7 +680,7 @@ class AlternatingGroup(PermutationGroup_symalt):
             Alternating group of order 6!/2 as a permutation group
             sage: G.category()
             Category of finite enumerated permutation groups
-            sage: TestSuite(G).run() # long time
+            sage: TestSuite(G).run()  # long time
 
             sage: G = AlternatingGroup([1,2,4,5])
             sage: G
@@ -1064,14 +1064,15 @@ class JankoGroup(PermutationGroup_unique):
 
         EXAMPLES::
 
-            sage: G = groups.permutation.Janko(1); G # optional - gap_packages internet
+            sage: G = groups.permutation.Janko(1); G                            # optional - gap_package_atlasrep internet
             Janko group J1 of order 175560 as a permutation group
 
         TESTS::
 
-            sage: G.category() # optional - gap_packages internet
+            sage: G.category()                                                  # optional - gap_package_atlasrep internet
             Category of finite enumerated permutation groups
-            sage: TestSuite(G).run(skip=["_test_enumerated_set_contains", "_test_enumerated_set_iter_list"]) # optional - gap_packages internet
+            sage: TestSuite(G).run(skip=["_test_enumerated_set_contains",       # optional - gap_package_atlasrep internet
+            ....:                        "_test_enumerated_set_iter_list"])
         """
         if n not in [1, 2, 3]:
             raise ValueError("n must belong to {1,2,3}")
@@ -1084,7 +1085,7 @@ class JankoGroup(PermutationGroup_unique):
         """
         EXAMPLES::
 
-            sage: G = groups.permutation.Janko(1); G # optional - gap_packages internet
+            sage: G = groups.permutation.Janko(1); G                            # optional - gap_package_atlasrep internet
             Janko group J1 of order 175560 as a permutation group
         """
         return "Janko group J%s of order %s as a permutation group" % (self._n, self.order())
@@ -1097,14 +1098,15 @@ class SuzukiSporadicGroup(PermutationGroup_unique):
 
         EXAMPLES::
 
-            sage: G = groups.permutation.SuzukiSporadic(); G # optional - gap_packages internet
+            sage: G = groups.permutation.SuzukiSporadic(); G                    # optional - gap_package_atlasrep internet
             Sporadic Suzuki group acting on 1782 points
 
         TESTS::
 
-            sage: G.category() # optional - gap_packages internet
+            sage: G.category() # optional - gap_package_atlasrep internet
             Category of finite enumerated permutation groups
-            sage: TestSuite(G).run(skip=["_test_enumerated_set_contains", "_test_enumerated_set_iter_list"]) # optional - gap_packages internet
+            sage: TestSuite(G).run(skip=["_test_enumerated_set_contains",       # optional - gap_package_atlasrep internet
+            ....:                        "_test_enumerated_set_iter_list"])
         """
         libgap.load_package("atlasrep")
         PermutationGroup_generic.__init__(self, gap_group='AtlasGroup("Suz")')
@@ -1113,7 +1115,7 @@ class SuzukiSporadicGroup(PermutationGroup_unique):
         """
         EXAMPLES::
 
-            sage: G = groups.permutation.SuzukiSporadic(); G # optional - gap_packages internet
+            sage: G = groups.permutation.SuzukiSporadic(); G                    # optional - gap_package_atlasrep internet
             Sporadic Suzuki group acting on 1782 points
         """
         return "Sporadic Suzuki group acting on 1782 points"
@@ -1988,7 +1990,7 @@ class TransitiveGroupsAll(DisjointUnionEnumeratedSets):
         """
         TESTS::
 
-            sage: TransitiveGroups() # indirect doctest
+            sage: TransitiveGroups()  # indirect doctest
             Transitive Groups
         """
         return "Transitive Groups"
@@ -2102,7 +2104,7 @@ class TransitiveGroupsOfDegree(CachedRepresentation, Parent):
         """
         EXAMPLES::
 
-            sage: list(TransitiveGroups(5)) # indirect doctest
+            sage: list(TransitiveGroups(5))  # indirect doctest
             [Transitive group number 1 of degree 5,
              Transitive group number 2 of degree 5,
              Transitive group number 3 of degree 5,
@@ -2376,7 +2378,7 @@ class PrimitiveGroupsAll(DisjointUnionEnumeratedSets):
 
     The following test is broken, see :trac:`22576`::
 
-        sage: TestSuite(PrimitiveGroups()).run() # known bug # long time
+        sage: TestSuite(PrimitiveGroups()).run()  # known bug, long time
     """
     def __init__(self):
         """
@@ -2400,7 +2402,7 @@ class PrimitiveGroupsAll(DisjointUnionEnumeratedSets):
 
         TESTS::
 
-            sage: PrimitiveGroups() # indirect doctest
+            sage: PrimitiveGroups()  # indirect doctest
             Primitive Groups
         """
         return "Primitive Groups"
@@ -2534,7 +2536,7 @@ class PrimitiveGroupsOfDegree(CachedRepresentation, Parent):
         """
         EXAMPLES::
 
-            sage: list(PrimitiveGroups(5)) # indirect doctest
+            sage: list(PrimitiveGroups(5))  # indirect doctest
             [C(5), D(2*5), AGL(1, 5), A(5), S(5)]
         """
         for n in range(1, self.cardinality() + 1):
@@ -2651,7 +2653,7 @@ class PGL(PermutationGroup_plg):
 
             sage: G.category()
             Category of finite enumerated permutation groups
-            sage: TestSuite(G).run() # long time
+            sage: TestSuite(G).run()  # long time
 
         TESTS::
 
@@ -2719,7 +2721,7 @@ class PSL(PermutationGroup_plg):
 
             sage: G.category()
             Category of finite enumerated permutation groups
-            sage: TestSuite(G).run() # long time
+            sage: TestSuite(G).run()  # long time
 
         TESTS::
 
@@ -2785,7 +2787,7 @@ class PSL(PermutationGroup_plg):
         EXAMPLES::
 
             sage: G = PSL(2,13)
-            sage: G.ramification_module_decomposition_hurwitz_curve() # random, optional - gap_packages
+            sage: G.ramification_module_decomposition_hurwitz_curve()  # random, optional - gap_packages
             [0, 7, 7, 12, 12, 12, 13, 15, 14]
 
         This means, for example, that the trivial representation does not
@@ -2835,7 +2837,7 @@ class PSL(PermutationGroup_plg):
         EXAMPLES::
 
             sage: G = PSL(2,7)
-            sage: G.ramification_module_decomposition_modular_curve() # random, optional - gap_packages
+            sage: G.ramification_module_decomposition_modular_curve()  # random, optional - gap_packages
             [0, 4, 3, 6, 7, 8]
 
         This means, for example, that the trivial representation does not

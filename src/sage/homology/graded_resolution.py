@@ -1,4 +1,4 @@
-# sage.doctest: optional - sage.libs.singular
+# sage.doctest: needs sage.libs.singular
 r"""
 Graded free resolutions
 
@@ -47,7 +47,7 @@ An example of multigraded resolution from Example 9.1 of [MilStu2005]_::
     sage: R.<s,t> = QQ[]
     sage: S.<a,b,c,d> = QQ[]
     sage: phi = S.hom([s, s*t, s*t^2, s*t^3])
-    sage: I = phi.kernel(); I
+    sage: I = phi.kernel(); I                                                           # needs sage.rings.function_field
     Ideal (c^2 - b*d, b*c - a*d, b^2 - a*c) of
      Multivariate Polynomial Ring in a, b, c, d over Rational Field
     sage: P3 = ProjectiveSpace(S)

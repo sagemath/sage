@@ -572,7 +572,7 @@ cpdef bandwidth_heuristics(g, algorithm='cuthill_mckee'):
         from sage.graphs.base.boost_graph import bandwidth_heuristics
         sage: bandwidth_heuristics(Graph())
         (0, [])
-        sage: bandwidth_heuristics(graphs.RandomGNM(10,0))                              # optional - networkx
+        sage: bandwidth_heuristics(graphs.RandomGNM(10,0))                              # needs networkx
         (0, [0, 1, 2, 3, 4, 5, 6, 7, 8, 9])
 
     """
@@ -1964,8 +1964,8 @@ cpdef diameter_DHV(g, weight_function=None, check_weight=True):
 
     TESTS::
 
-        sage: G = graphs.RandomBarabasiAlbert(17,6)                                     # optional - networkx
-        sage: diameter_DHV(G) == G.diameter(algorithm = 'Dijkstra_Boost')               # optional - networkx
+        sage: G = graphs.RandomBarabasiAlbert(17,6)                                     # needs networkx
+        sage: diameter_DHV(G) == G.diameter(algorithm = 'Dijkstra_Boost')               # needs networkx
         True
         sage: G = Graph([(0,1,-1)], weighted=True)
         sage: diameter_DHV(G)

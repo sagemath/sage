@@ -47,7 +47,7 @@ cdef class Polynomial_complex_arb(Polynomial):
         sage: type(x)
         <class 'sage.rings.polynomial.polynomial_complex_arb.Polynomial_complex_arb'>
 
-        sage: Pol(), Pol(1), Pol([0,1,2]), Pol({1: pi, 3: i})
+        sage: Pol(), Pol(1), Pol([0,1,2]), Pol({1: pi, 3: i})                           # needs sage.symbolic
         (0,
          1.000000000000000,
          2.000000000000000*x^2 + x,
@@ -125,9 +125,9 @@ cdef class Polynomial_complex_arb(Polynomial):
             x + 2.000000000000000
             sage: Polynomial_complex_arb(Pol, QQ['x'](0))
             0
-            sage: Polynomial_complex_arb(Pol, {10: pi})
+            sage: Polynomial_complex_arb(Pol, {10: pi})                                 # needs sage.symbolic
             ([3.141592653589793 +/- ...e-16])*x^10
-            sage: Polynomial_complex_arb(Pol, pi)
+            sage: Polynomial_complex_arb(Pol, pi)                                       # needs sage.symbolic
             [3.141592653589793 +/- ...e-16]
         """
         cdef ComplexBall ball
@@ -383,8 +383,11 @@ cdef class Polynomial_complex_arb(Polynomial):
 
             sage: Pol.<x> = CBF[]
 
-            sage: (x^3/7 - CBF(i)).quo_rem(x + CBF(pi))
-            (([0.1428571428571428 +/- ...e-17])*x^2 + ([-0.448798950512828 +/- ...e-16])*x + [1.409943485869908 +/- ...e-16], [-4.42946809718569 +/- ...e-15] - I)
+            sage: (x^3/7 - CBF(i)).quo_rem(x + CBF(pi))                                 # needs sage.symbolic
+            (([0.1428571428571428 +/- ...e-17])*x^2
+               + ([-0.448798950512828 +/- ...e-16])*x
+               + [1.409943485869908 +/- ...e-16],
+             [-4.42946809718569 +/- ...e-15] - I)
 
             sage: Pol(0).quo_rem(x + 1)
             (0, 0)
@@ -661,7 +664,7 @@ cdef class Polynomial_complex_arb(Polynomial):
             0.5000000000000000*x^2 + x + 1.000000000000000
             sage: (1 + x/3)._log_series(3)._exp_series(3)
             ([+/- ...e-17])*x^2 + ([0.3333333333333333 +/- ...e-17])*x + 1.000000000000000
-            sage: (CBF(0, pi) + x)._exp_series(4)
+            sage: (CBF(0, pi) + x)._exp_series(4)                                       # needs sage.symbolic
             ([-0.166...] + [+/- ...]*I)*x^3 + ([-0.500...] + [+/- ...]*I)*x^2
             + ([-1.000...] + [+/- ...]*I)*x + [-1.000...] + [+/- ...]*I
         """
@@ -911,7 +914,7 @@ cdef class Polynomial_complex_arb(Polynomial):
 
             sage: Pol.<x> = CBF[]
             sage: pol = x^2 - 1
-            sage: pol(CBF(pi))
+            sage: pol(CBF(pi))                                                          # needs sage.symbolic
             [8.86960440108936 +/- ...e-15]
             sage: pol(x^3 + 1)
             x^6 + 2.000000000000000*x^3
