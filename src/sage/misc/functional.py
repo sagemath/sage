@@ -1884,9 +1884,8 @@ def _do_sqrt(x, prec=None, extend=True, all=False):
 
     -  ``x`` -- a number
 
-    -  ``prec`` -- ``None`` (default) or a positive integer
-       (bits of precision) If not ``None``, then compute the square root
-       numerically to prec bits of precision.
+    -  ``prec`` -- a positive integer (default: ``None``); when specified,
+       compute the square root with ``prec`` bits of precision
 
     -  ``extend`` -- bool (default: ``True``); this is a placeholder, and is
        always ignored since in the symbolic ring everything
