@@ -121,7 +121,7 @@ cdef class Group(sage.structure.parent.Parent):
 
         EXAMPLES::
 
-            sage: SL(2, 7).is_commutative()                                             # needs sage.modules sage.rings.finite_rings
+            sage: SL(2, 7).is_commutative()                                             # needs sage.libs.gap sage.modules
             False
         """
         return self.is_abelian()
