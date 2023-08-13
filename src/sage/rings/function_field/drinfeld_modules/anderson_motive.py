@@ -33,7 +33,7 @@ just passing in the base ring::
     [1]
 
 We can create (positive or negative) twists.
-For example, the Carlitz module can be defined as follows::
+For example, the Carlitz motive can be defined as follows::
 
     sage: C = F(1)
     sage: C
@@ -105,9 +105,9 @@ exterior power::
 
 The L-function assciated to an Anderson motive is computed
 thanks to the method :meth:`Lfunction`.
-This method takes as input a place of `\FF_q[t]` (encoded
+This method takes as input a place of `\mathbb F_q[t]` (encoded
 either by ``infinity`` for the place at infinity, an element
-of `\FF_q` for a rational place ot an irreducible polynomial
+of `\mathbb F_q` for a rational place ot an irreducible polynomial
 for a general finite place) and a precision::
 
     sage: F(-3).Lfunction(infinity, prec=20)
@@ -123,7 +123,7 @@ In the output:
 
 - the variable `u` corresponds to a uniformizer of the completion
   of `\mathbb F_q[t]` at the given place: when the place is infinity,
-  we have `u = 1/t` whereas, when the place is finite given by 
+  we have `u = 1/t` whereas, when the place is finite given by
   irreducible polynomial `\mathfrak p(t)`, we have `u = \mathfrak p(t)`,
 
 - the variable `a` is the image of `t` in the residue field,
@@ -131,7 +131,8 @@ In the output:
 - the variable `x` is the variable of the L-function.
 
 It is possible to evaluate the `L`-function at a given `x` by just
-passing in ``x = value``::
+passing in ``x = value`` (this is often faster than computing the
+complete `L`-function and then evaluating it)::
 
     sage: F(-3).Lfunction(infinity, prec=100, x=1)
     1 + 4*u^15 + 2*u^19 + 4*u^23 + 4*u^35 + 2*u^39 + 4*u^43 + 4*u^55 + 2*u^59 + 4*u^63 + 4*u^75 + 2*u^79 + 4*u^83 + u^90 + 3*u^94 + 4*u^95 + u^98 + 2*u^99 + O(u^100)
