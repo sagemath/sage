@@ -101,11 +101,11 @@ cdef class Matrix(Matrix0):
             sage: g = gap(A)  # indirect doctest
             sage: g
             [ [ 0, 1, 2 ], [ 3, 4, 5 ], [ 6, 7, 8 ] ]
-            sage: g.CharacteristicPolynomial()                                          # needs sage.libs.gap
+            sage: g.CharacteristicPolynomial()
             x_1^3-12*x_1^2-18*x_1
-            sage: A.characteristic_polynomial()                                         # needs sage.libs.gap
+            sage: A.characteristic_polynomial()
             x^3 - 12*x^2 - 18*x
-            sage: matrix(QQ, g) == A                                                    # needs sage.libs.gap
+            sage: matrix(QQ, g) == A
             True
 
         Particularly difficult is the case of matrices over cyclotomic
@@ -584,11 +584,11 @@ cdef class Matrix(Matrix0):
             sage: M = matrix([[sin(x), cos(x)], [-cos(x), sin(x)]]); M
             [ sin(x)  cos(x)]
             [-cos(x)  sin(x)]
-            sage: sM = M._sympy_(); sM                                                  # needs sympy sage.symbolic
+            sage: sM = M._sympy_(); sM
             Matrix([
             [ sin(x), cos(x)],
             [-cos(x), sin(x)]])
-            sage: sM.subs(x, pi/4)                                                      # needs sympy sage.symbolic
+            sage: sM.subs(x, pi/4)
             Matrix([
             [ sqrt(2)/2, sqrt(2)/2],
             [-sqrt(2)/2, sqrt(2)/2]])
@@ -690,15 +690,15 @@ cdef class Matrix(Matrix0):
             array([[ 0,  1,  2,  3],
                    [ 4,  5,  6,  7],
                    [ 8,  9, 10, 11]])
-            sage: a.numpy('f')                                                          # needs numpy
+            sage: a.numpy('f')
             array([[  0.,   1.,   2.,   3.],
                    [  4.,   5.,   6.,   7.],
                    [  8.,   9.,  10.,  11.]], dtype=float32)
-            sage: a.numpy('d')                                                          # needs numpy
+            sage: a.numpy('d')
             array([[  0.,   1.,   2.,   3.],
                    [  4.,   5.,   6.,   7.],
                    [  8.,   9.,  10.,  11.]])
-            sage: a.numpy('B')                                                          # needs numpy
+            sage: a.numpy('B')
             array([[ 0,  1,  2,  3],
                    [ 4,  5,  6,  7],
                    [ 8,  9, 10, 11]], dtype=uint8)
@@ -723,10 +723,10 @@ cdef class Matrix(Matrix0):
             array([[ 0,  1,  2,  3],
                    [ 4,  5,  6,  7],
                    [ 8,  9, 10, 11]])
-            sage: b.dtype                                                               # needs numpy
+            sage: b.dtype
             dtype('int32')  # 32-bit
             dtype('int64')  # 64-bit
-            sage: b.shape                                                               # needs numpy
+            sage: b.shape
             (3, 4)
         """
         import numpy

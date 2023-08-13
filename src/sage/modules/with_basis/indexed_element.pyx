@@ -878,11 +878,11 @@ cdef class IndexedFreeModuleElement(ModuleElement):
             sage: # needs sage.combinat
             sage: P.<q> = QQ['q']
             sage: F = FractionField(P)
-            sage: V = CombinatorialFreeModule(F, Words())                               # needs sage.combinat
-            sage: w = Words()('abc')                                                    # needs sage.combinat
-            sage: (1+q)*V(w)                                                            # needs sage.combinat
+            sage: V = CombinatorialFreeModule(F, Words())
+            sage: w = Words()('abc')
+            sage: (1+q)*V(w)
             (q+1)*B[word: abc]
-            sage: ((1+q)/q)*V(w)                                                        # needs sage.combinat
+            sage: ((1+q)/q)*V(w)
             ((q+1)/q)*B[word: abc]
 
         .. TODO::

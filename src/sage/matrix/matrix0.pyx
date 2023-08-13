@@ -5372,7 +5372,7 @@ cdef class Matrix(sage.structure.element.Matrix):
             sage: a = matrix(R, 2, 3, [1,x,y, -x*y,x+y,x-y]); a
             [    1     x     y]
             [ -x*y x + y x - y]
-            sage: a * (x*y)                                                             # needs sage.combinat
+            sage: a * (x*y)
             [          x*y         x^2*y         y*x*y]
             [     -x*y*x*y x^2*y + y*x*y x^2*y - y*x*y]
         """

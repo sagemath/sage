@@ -403,7 +403,7 @@ def random_matrix(ring, nrows, ncols=None, algorithm='randomize', implementation
     One can prescribe a specific matrix implementation::
 
         sage: K.<a> = FiniteField(2^8)                                                  # needs sage.rings.finite_rings
-        sage: type(random_matrix(K, 2, 5))                                              # needs sage.rings.finite_rings sage.libs.m4ri
+        sage: type(random_matrix(K, 2, 5))                                              # needs sage.libs.m4ri sage.rings.finite_rings
         <class 'sage.matrix.matrix_gf2e_dense.Matrix_gf2e_dense'>
         sage: type(random_matrix(K, 2, 5, implementation="generic"))                    # needs sage.rings.finite_rings
         <class 'sage.matrix.matrix_generic_dense.Matrix_generic_dense'>
@@ -757,22 +757,22 @@ def diagonal_matrix(arg0=None, arg1=None, arg2=None, sparse=True):
         sage: import numpy
         sage: entries = numpy.array([1.2, 5.6]); entries
         array([1.2, 5.6])
-        sage: A = diagonal_matrix(3, entries); A                                        # needs numpy
+        sage: A = diagonal_matrix(3, entries); A
         [1.2 0.0 0.0]
         [0.0 5.6 0.0]
         [0.0 0.0 0.0]
-        sage: A.parent()                                                                # needs numpy
+        sage: A.parent()
         Full MatrixSpace of 3 by 3 sparse matrices over Real Double Field
 
         sage: # needs numpy
         sage: j = complex(0,1)
-        sage: entries = numpy.array([2.0+j, 8.1, 3.4+2.6*j]); entries                   # needs numpy
+        sage: entries = numpy.array([2.0+j, 8.1, 3.4+2.6*j]); entries
         array([2. +1.j , 8.1+0.j , 3.4+2.6j])
-        sage: A = diagonal_matrix(entries); A                                           # needs numpy
+        sage: A = diagonal_matrix(entries); A
         [2.0 + 1.0*I         0.0         0.0]
         [        0.0         8.1         0.0]
         [        0.0         0.0 3.4 + 2.6*I]
-        sage: A.parent()                                                                # needs numpy
+        sage: A.parent()
         Full MatrixSpace of 3 by 3 sparse matrices over Complex Double Field
 
         sage: # needs numpy
@@ -781,7 +781,7 @@ def diagonal_matrix(arg0=None, arg1=None, arg2=None, sparse=True):
         [4 0 0]
         [0 5 0]
         [0 0 6]
-        sage: A.parent()                                                                # needs numpy
+        sage: A.parent()
         Full MatrixSpace of 3 by 3 sparse matrices over Integer Ring
 
         sage: entries = numpy.array([4.1, 5.2, 6.3])                                    # needs numpy
@@ -2297,7 +2297,7 @@ def companion_matrix(poly, format='right'):
         ....:                          for k in range(1, q.degree(y) + 1)]
         sage: coeff_list
         [1, -2, 0, 1]
-        sage: companion_matrix(coeff_list)                                              # needs sage.symbolic
+        sage: companion_matrix(coeff_list)
         [ 0  0 -1]
         [ 1  0  2]
         [ 0  1  0]

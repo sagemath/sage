@@ -1084,9 +1084,9 @@ cdef class FreeModuleElement(Vector):   # abstract base class
 
             sage: # needs numpy
             sage: v = vector([1,2,3])
-            sage: v.numpy()                                                             # needs numpy
+            sage: v.numpy()
             array([1, 2, 3], dtype=object)
-            sage: v.numpy() * v.numpy()                                                 # needs numpy
+            sage: v.numpy() * v.numpy()
             array([1, 4, 9], dtype=object)
 
             sage: vector(QQ, [1, 2, 5/6]).numpy()                                       # needs numpy
@@ -1097,14 +1097,14 @@ cdef class FreeModuleElement(Vector):   # abstract base class
 
             sage: # needs numpy
             sage: v = vector(QQ, [1, 2, 5/6])
-            sage: v.numpy()                                                             # needs numpy
+            sage: v.numpy()
             array([1, 2, 5/6], dtype=object)
-            sage: v.numpy(dtype=float)                                                  # needs numpy
+            sage: v.numpy(dtype=float)
             array([1.        , 2.        , 0.83333333])
-            sage: v.numpy(dtype=int)                                                    # needs numpy
+            sage: v.numpy(dtype=int)
             array([1, 2, 0])
-            sage: import numpy                                                          # needs numpy
-            sage: v.numpy(dtype=numpy.uint8)                                            # needs numpy
+            sage: import numpy
+            sage: v.numpy(dtype=numpy.uint8)
             array([1, 2, 0], dtype=uint8)
 
         Passing a dtype of None will let numpy choose a native type, which can
@@ -1727,13 +1727,13 @@ cdef class FreeModuleElement(Vector):   # abstract base class
 
             sage: # needs sage.symbolic
             sage: v = vector(QQ, [3, 5])
-            sage: nrm = v.norm(); nrm                                                   # needs sage.symbolic
+            sage: nrm = v.norm(); nrm
             sqrt(34)
-            sage: nrm.parent()                                                          # needs sage.symbolic
+            sage: nrm.parent()
             Symbolic Ring
-            sage: numeric = N(nrm); numeric                                             # needs sage.symbolic
+            sage: numeric = N(nrm); numeric
             5.83095189484...
-            sage: numeric.parent()                                                      # needs sage.symbolic
+            sage: numeric.parent()
             Real Field with 53 bits of precision
 
         TESTS:
@@ -2798,8 +2798,8 @@ cdef class FreeModuleElement(Vector):   # abstract base class
             True
             sage: vh.is_alternating()
             True
-            sage: v = random_vector(F, 7)                                               # needs sage.rings.finite_rings
-            sage: w = random_vector(F, 7)                                               # needs sage.rings.finite_rings
+            sage: v = random_vector(F, 7)
+            sage: w = random_vector(F, 7)
             sage: vh = v.cross_product_matrix()
             sage: vh*w == v.cross_product(w)
             True
@@ -2807,7 +2807,7 @@ cdef class FreeModuleElement(Vector):   # abstract base class
             True
             sage: vh.is_alternating()
             True
-            sage: random_vector(F, 5).cross_product_matrix()                            # needs sage.rings.finite_rings
+            sage: random_vector(F, 5).cross_product_matrix()
             Traceback (most recent call last):
             ...
             TypeError: Cross product only defined for vectors of length three or seven, not 5
@@ -3664,7 +3664,7 @@ cdef class FreeModuleElement(Vector):   # abstract base class
             {1, 2, 3}
             sage: a = vector(SR, 5, [1, x, x^2, sin(x), pi]); a
             (1, x, x^2, sin(x), pi)
-            sage: a._mathematica_init_()        # optional - mathematica
+            sage: a._mathematica_init_()
             '{1, x, (x)^(2), Sin[x], Pi}'
         """
         return '{' + ', '.join(x._mathematica_init_() for x in self.list()) + '}'
@@ -4730,11 +4730,11 @@ cdef class FreeModuleElement_generic_sparse(FreeModuleElement):
             sage: # needs sage.symbolic
             sage: FreeModuleElement_generic_sparse(S(RR,5), {0:-1, 2:2/3, 3:pi, 4:oo})
             (-1.00000000000000, 0.000000000000000, 0.666666666666667, 3.14159265358979, +infinity)
-            sage: FreeModuleElement_generic_sparse(S(RR,5), [-1,0,2/3,pi,oo])           # needs sage.symbolic
+            sage: FreeModuleElement_generic_sparse(S(RR,5), [-1,0,2/3,pi,oo])
             (-1.00000000000000, 0.000000000000000, 0.666666666666667, 3.14159265358979, +infinity)
-            sage: FreeModuleElement_generic_sparse(S(RR,5), (-1,0,2/3,pi,oo))           # needs sage.symbolic
+            sage: FreeModuleElement_generic_sparse(S(RR,5), (-1,0,2/3,pi,oo))
             (-1.00000000000000, 0.000000000000000, 0.666666666666667, 3.14159265358979, +infinity)
-            sage: FreeModuleElement_generic_sparse(S(RR,5), Sequence([-1,0,2/3,pi,oo]))             # needs sage.symbolic
+            sage: FreeModuleElement_generic_sparse(S(RR,5), Sequence([-1,0,2/3,pi,oo]))
             (-1.00000000000000, 0.000000000000000, 0.666666666666667, 3.14159265358979, +infinity)
 
             sage: FreeModuleElement_generic_sparse(S(RR,0), 0)

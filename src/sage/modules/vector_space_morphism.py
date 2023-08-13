@@ -42,12 +42,12 @@ domain and codomain.  ::
     sage: F = Integers(13)
     sage: D = F^3
     sage: C = F^2
-    sage: x, y, z = var('x y z')                                                        # needs sage.symbolic
-    sage: f(x, y, z) = [2*x + 3*y + 5*z, x + z]                                         # needs sage.symbolic
-    sage: rho = linear_transformation(D, C, f)                                          # needs sage.symbolic
-    sage: f(1, 2, 3)                                                                    # needs sage.symbolic
+    sage: x, y, z = var('x y z')
+    sage: f(x, y, z) = [2*x + 3*y + 5*z, x + z]
+    sage: rho = linear_transformation(D, C, f)
+    sage: f(1, 2, 3)
     (23, 4)
-    sage: rho([1, 2, 3])                                                                # needs sage.symbolic
+    sage: rho([1, 2, 3])
     (10, 4)
 
 A "vector space homspace" is the set of all linear transformations
@@ -223,8 +223,8 @@ do not change as the representation changes.  ::
     sage: # needs sage.graphs
     sage: A = graphs.PetersenGraph().adjacency_matrix()
     sage: V = QQ^10
-    sage: phi = linear_transformation(V, V, A)                                          # needs sage.graphs
-    sage: phi.eigenvalues()                                                             # needs sage.graphs
+    sage: phi = linear_transformation(V, V, A)
+    sage: phi.eigenvalues()
     [3, -2, -2, -2, -2, 1, 1, 1, 1, 1]
     sage: B1 = [V.gen(i) + V.gen(i+1) for i in range(9)] + [V.gen(9)]
     sage: C = V.subspace_with_basis(B1)

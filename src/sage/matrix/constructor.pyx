@@ -496,14 +496,14 @@ def matrix(*args, **kwds):
         sage: b = matrix(a.numpy()); b
         [1 2]
         [3 4]
-        sage: a == b                                                                    # needs numpy
+        sage: a == b
         True
-        sage: c = matrix(a.numpy('float32')); c                                         # needs numpy
+        sage: c = matrix(a.numpy('float32')); c
         [1.0 2.0]
         [3.0 4.0]
-        sage: matrix(numpy.array([[5]]))                                                # needs numpy
+        sage: matrix(numpy.array([[5]]))
         [5]
-        sage: matrix(numpy.matrix([[5]]))                                               # needs numpy
+        sage: matrix(numpy.matrix([[5]]))
         [5]
 
     A ring and a numpy array::

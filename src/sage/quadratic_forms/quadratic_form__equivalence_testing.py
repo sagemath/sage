@@ -59,17 +59,17 @@ def is_globally_equivalent_to(self, other, return_matrix=False):
         sage: Q1 = QuadraticForm(ZZ, 3, [1, 0, -1, 2, -1, 5])
         sage: Q2 = QuadraticForm(ZZ, 3, [2, 1, 2, 2, 1, 3])
         sage: Q3 = QuadraticForm(ZZ, 3, [8, 6, 5, 3, 4, 2])
-        sage: Q1.is_globally_equivalent_to(Q2)                                          # needs sage.libs.pari
+        sage: Q1.is_globally_equivalent_to(Q2)
         False
-        sage: Q1.is_globally_equivalent_to(Q2, return_matrix=True)                      # needs sage.libs.pari
+        sage: Q1.is_globally_equivalent_to(Q2, return_matrix=True)
         False
-        sage: Q1.is_globally_equivalent_to(Q3)                                          # needs sage.libs.pari
+        sage: Q1.is_globally_equivalent_to(Q3)
         True
-        sage: M = Q1.is_globally_equivalent_to(Q3, True); M                             # needs sage.libs.pari
+        sage: M = Q1.is_globally_equivalent_to(Q3, True); M
         [-1 -1  0]
         [ 1  1  1]
         [-1  0  0]
-        sage: Q1(M) == Q3                                                               # needs sage.libs.pari
+        sage: Q1(M) == Q3
         True
 
     ::

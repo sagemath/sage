@@ -75,7 +75,7 @@ cdef class Matrix_generic_dense(matrix_dense.Matrix_dense):
             sage: R.<x,y> = PolynomialRing(F)
             sage: M = MatrixSpace(R, 1, 2)
             sage: from sage.matrix.matrix_generic_dense import Matrix_generic_dense
-            sage: Matrix_generic_dense(M, (x, y), True, True)                           # needs sage.rings.number_field
+            sage: Matrix_generic_dense(M, (x, y), True, True)
             [x y]
         """
         ma = MatrixArgs_init(parent, entries)

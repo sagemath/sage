@@ -1196,9 +1196,9 @@ class Module_free_ambient(Module):
             sage: V1 = F1.span([[sqrt(2), sqrt(2), 0]])
             sage: F2 = ZZ^3
             sage: V2 = F2.span([[2,2,0]])
-            sage: V2 <= V1  # Different ambient vector spaces                           # needs sage.symbolic
+            sage: V2 <= V1  # Different ambient vector spaces
             False
-            sage: V1 <= V2                                                              # needs sage.symbolic
+            sage: V1 <= V2
             False
 
             sage: R2.<x> = GF(5)[]
@@ -2797,7 +2797,7 @@ class FreeModule_generic(Module_free_ambient):
             Echelon basis matrix:
             [ 0  1  0  0 -1  0  0  0  0  0  0  0  0  0  0  0  0  0  0]
             ...
-            sage: L = M[0].integral_structure(); L                                      # needs sage.modular
+            sage: L = M[0].integral_structure(); L
             Free module of degree 19 and rank 2 over Integer Ring
             Echelon basis matrix:
             [ 0  1  1  0 -2  1 -1  1 -1 -2  2  0  0  0  0  0  0  0  0]
@@ -3830,11 +3830,11 @@ class FreeModule_generic_pid(FreeModule_generic_domain):
 
             sage: # needs sage.rings.number_field
             sage: x = polygen(ZZ, 'x')
-            sage: L.<w> = NumberField(x^2 - x + 2)                                      # needs sage.rings.number_field
+            sage: L.<w> = NumberField(x^2 - x + 2)
             sage: OL = L.ring_of_integers()
             sage: V = L**3
-            sage: W1 = V.span([[0,w/5,0], [1,0,-1/17]], OL)                             # needs sage.rings.number_field
-            sage: W2 = V.span([[0,(1-w)/5,0]], OL)                                      # needs sage.rings.number_field
+            sage: W1 = V.span([[0,w/5,0], [1,0,-1/17]], OL)
+            sage: W2 = V.span([[0,(1-w)/5,0]], OL)
             sage: W1.intersection(W2)
             Free module of degree 3 and rank 1 over Maximal Order in
              Number Field in w with defining polynomial x^2 - x + 2
