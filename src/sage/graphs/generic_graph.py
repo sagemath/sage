@@ -959,7 +959,7 @@ class GenericGraph(GenericGraph_pyx):
             [1 1 0 0 0]
             [1 1 0 0 0]
             [1 1 0 0 0]
-            sage: factor(m.charpoly())                                                  # needs sage.modules
+            sage: factor(m.charpoly())                                                  # needs sage.libs.pari sage.modules
             x^3 * (x^2 - 6)
         """
         return self.am(vertices=vertices, base_ring=R)
@@ -1983,7 +1983,7 @@ class GenericGraph(GenericGraph_pyx):
 
         A different matrix implementation::
 
-            sage: graphs.PathGraph(5).adjacency_matrix(sparse=False,                    # needs sage.modules
+            sage: graphs.PathGraph(5).adjacency_matrix(sparse=False,                    # needs numpy sage.modules
             ....:                                      implementation='numpy')
             [0 1 0 0 0]
             [1 0 1 0 0]
@@ -6811,13 +6811,13 @@ class GenericGraph(GenericGraph_pyx):
 
             sage: g = graphs.RandomGNP(30, .5)
             sage: first5 = g.vertices(sort=True)[:5]
-            sage: st = g.steiner_tree(first5)
-            sage: st.is_tree()
+            sage: st = g.steiner_tree(first5)                                           # needs sage.numerical.mip
+            sage: st.is_tree()                                                          # needs sage.numerical.mip
             True
 
         And all the 5 vertices are contained in this tree ::
 
-            sage: all(v in st for v in first5)
+            sage: all(v in st for v in first5)                                          # needs sage.numerical.mip
             True
 
         An exception is raised when the problem is impossible, i.e.  if the
@@ -7024,7 +7024,7 @@ class GenericGraph(GenericGraph_pyx):
             sage: d6 += r'@ADA@AAg?GAQW?[aIaSwHYcD@qQb@Dd?\hJTI@OHlJ_?C_OEIKoeC'
             sage: d6 += r'R@_BC?Q??YBFosqITEA?IvCU_'
             sage: G = DiGraph(d6, format='dig6')
-            sage: G.edge_connectivity()
+            sage: G.edge_connectivity()                                                 # needs sage.numerical.mip
             5
             sage: G.edge_disjoint_spanning_trees(5)     # long time                     # needs sage.numerical.mip
             [Digraph on 28 vertices,
@@ -7055,11 +7055,12 @@ class GenericGraph(GenericGraph_pyx):
 
         Choice of the algorithm::
 
-            sage: Graph().edge_disjoint_spanning_trees(0, algorithm=None)               # needs sage.numerical.mip
+            sage: # needs sage.numerical.mip
+            sage: Graph().edge_disjoint_spanning_trees(0, algorithm=None)
             []
             sage: Graph().edge_disjoint_spanning_trees(0, algorithm="Roskind-Tarjan")
             []
-            sage: Graph().edge_disjoint_spanning_trees(0, algorithm="MILP")             # needs sage.numerical.mip
+            sage: Graph().edge_disjoint_spanning_trees(0, algorithm="MILP")
             []
             sage: Graph().edge_disjoint_spanning_trees(0, algorithm="foo")
             Traceback (most recent call last):
@@ -7067,7 +7068,7 @@ class GenericGraph(GenericGraph_pyx):
             ValueError: algorithm must be None, "Rosking-Tarjan" or "MILP" for undirected graphs
             sage: DiGraph().edge_disjoint_spanning_trees(0, algorithm=None)
             []
-            sage: DiGraph().edge_disjoint_spanning_trees(0, algorithm="MILP")           # needs sage.numerical.mip
+            sage: DiGraph().edge_disjoint_spanning_trees(0, algorithm="MILP")
             []
             sage: DiGraph().edge_disjoint_spanning_trees(0, algorithm="foo")
             Traceback (most recent call last):
@@ -7284,7 +7285,8 @@ class GenericGraph(GenericGraph_pyx):
 
         The two sides of the edge cut are obviously shorter paths::
 
-           sage: value,edges,[set1,set2] = g.edge_cut(0, 14, use_edge_labels=True, vertices=True)
+           sage: value, edges, [set1, set2] = g.edge_cut(0, 14, use_edge_labels=True,
+           ....:                                         vertices=True)
            sage: g.subgraph(set1).is_isomorphic(graphs.PathGraph(len(set1)))
            True
            sage: g.subgraph(set2).is_isomorphic(graphs.PathGraph(len(set2)))
@@ -7307,7 +7309,7 @@ class GenericGraph(GenericGraph_pyx):
            sage: g = graphs.RandomGNP(20,.3)
            sage: for u,v in g.edges(sort=True, labels=False):
            ....:    g.set_edge_label(u,v,round(random(),5))
-           sage: g.edge_cut(0, 1, algorithm="FF") == g.edge_cut(0, 1, algorithm="LP")
+           sage: g.edge_cut(0, 1, algorithm="FF") == g.edge_cut(0, 1, algorithm="LP")   # needs sage.numerical.mip
            True
            sage: g.edge_cut(0, 1, algorithm="FF") == g.edge_cut(0, 1, algorithm="igraph") # optional - python_igraph
            True
@@ -7315,7 +7317,7 @@ class GenericGraph(GenericGraph_pyx):
         Rounded return value when using the LP method::
 
            sage: g = graphs.PappusGraph()
-           sage: g.edge_cut(1, 2, value_only=True, algorithm="LP")
+           sage: g.edge_cut(1, 2, value_only=True, algorithm="LP")                      # needs sage.numerical.mip
            3
 
         :trac:`12797`::
@@ -7326,7 +7328,7 @@ class GenericGraph(GenericGraph_pyx):
             sage: G = DiGraph([(0, 3, 1), (0, 4, 1), (2, 1, 1), (3, 2, 1), (4, 2, 1)])
             sage: G.edge_cut(0, 1, value_only=False, use_edge_labels=True)
             [1, [(2, 1, 1)]]
-            sage: G.edge_cut(0, 1, value_only=False, use_edge_labels=True, algorithm='LP')
+            sage: G.edge_cut(0, 1, value_only=False, use_edge_labels=True, algorithm='LP')          # needs sage.numerical.mip
             (1, [(2, 1)])
         """
         self._scream_if_not_simple(allow_loops=True)
@@ -9523,8 +9525,8 @@ class GenericGraph(GenericGraph_pyx):
            sage: for u, v in g.edge_iterator(labels=False):
            ....:    g.set_edge_label(u, v, round(random(), 5))
            sage: flow_ff = g.flow(0, 1, algorithm="FF")
-           sage: flow_lp = g.flow(0, 1, algorithm="LP")
-           sage: abs(flow_ff - flow_lp) < 0.01
+           sage: flow_lp = g.flow(0, 1, algorithm="LP")                                 # needs sage.numerical.mip
+           sage: abs(flow_ff - flow_lp) < 0.01                                          # needs sage.numerical.mip
            True
            sage: flow_igraph = g.flow(0, 1, algorithm="igraph") # optional python_igraph
            sage: abs(flow_ff - flow_igraph) < 0.00001           # optional python_igraph
@@ -12369,7 +12371,7 @@ class GenericGraph(GenericGraph_pyx):
             ....:         9: [6, 11], 10: [9, 1], 11: [10, 6], 12: [13, 6],
             ....:         13: [16, 2], 14: [10, -6], 15: [0, -10], 16: [14, -6],
             ....:         17: [16, -10], 18: [6, -4]}
-            sage: SD.plot(pos=posn, vertex_size=400, vertex_colors={'#FFFFFF':list(range(1,19))}, edge_labels=True).show() # long time
+            sage: SD.plot(pos=posn, vertex_size=400, vertex_colors={'#FFFFFF':list(range(1,19))}, edge_labels=True).show()  # long time, needs sage.plot
 
         ::
 
@@ -15632,7 +15634,7 @@ class GenericGraph(GenericGraph_pyx):
             sage: G.distance(0,1)
             +Infinity
             sage: G = Graph({ 0: {1: 1}, 1: {2: 1}, 2: {3: 1}, 3: {4: 2}, 4: {0: 2}}, sparse = True)
-            sage: G.plot(edge_labels=True).show() # long time
+            sage: G.plot(edge_labels=True).show()       # long time                     # needs sage.plot
             sage: G.distance(0, 3)
             2
             sage: G.distance(0, 3, by_weight=True)
@@ -16650,7 +16652,7 @@ class GenericGraph(GenericGraph_pyx):
             []
             sage: G = Graph({0: {1: 1}, 1: {2: 1}, 2: {3: 1}, 3: {4: 2}, 4: {0: 2}},
             ....:           sparse=True)
-            sage: G.plot(edge_labels=True).show() # long time
+            sage: G.plot(edge_labels=True).show()       # long time                     # needs sage.plot
             sage: G.shortest_path(0, 3)
             [0, 4, 3]
             sage: G.shortest_path(0, 3, by_weight=True)
@@ -16837,7 +16839,7 @@ class GenericGraph(GenericGraph_pyx):
             +Infinity
             sage: G = Graph({0: {1: 1}, 1: {2: 1}, 2: {3: 1}, 3: {4: 2}, 4: {0: 2}},
             ....:           sparse=True)
-            sage: G.plot(edge_labels=True).show()  # long time
+            sage: G.plot(edge_labels=True).show()       # long time                     # needs sage.plot
             sage: G.shortest_path_length(0, 3)
             2
             sage: G.shortest_path_length(0, 3, by_weight=True)
@@ -17145,7 +17147,7 @@ class GenericGraph(GenericGraph_pyx):
              9: [0, 10, 9], 10: [0, 10], 11: [0, 10, 11], 18: [0, 19, 18],
              19: [0, 19]}
             sage: G = Graph( { 0: {1: 1}, 1: {2: 1}, 2: {3: 1}, 3: {4: 2}, 4: {0: 2} }, sparse=True)
-            sage: G.plot(edge_labels=True).show() # long time
+            sage: G.plot(edge_labels=True).show()       # long time                     # needs sage.plot
             sage: G.shortest_paths(0, by_weight=True)
             {0: [0], 1: [0, 1], 2: [0, 1, 2], 3: [0, 1, 2, 3], 4: [0, 4]}
 
@@ -17556,8 +17558,8 @@ class GenericGraph(GenericGraph_pyx):
         Some standard examples (see :meth:`~GenericGraph.shortest_paths` for
         more examples on how to use the input variables)::
 
-            sage: G = Graph( { 0: {1: 1}, 1: {2: 1}, 2: {3: 1}, 3: {4: 2}, 4: {0: 2} }, sparse=True)
-            sage: G.plot(edge_labels=True).show() # long time
+            sage: G = Graph({0: {1: 1}, 1: {2: 1}, 2: {3: 1}, 3: {4: 2}, 4: {0: 2}}, sparse=True)
+            sage: G.plot(edge_labels=True).show()       # long time                     # needs sage.plot
             sage: dist, pred = G.shortest_path_all_pairs(by_weight = True)
             sage: dist
             {0: {0: 0, 1: 1, 2: 2, 3: 3, 4: 2},
@@ -19087,7 +19089,7 @@ class GenericGraph(GenericGraph_pyx):
             Graph on 10 vertices
             sage: T.size()
             10
-            sage: T.plot() # long time
+            sage: T.plot()                      # long time                             # needs sage.plot
             Graphics object consisting of 21 graphics primitives
 
         ::
@@ -19098,7 +19100,7 @@ class GenericGraph(GenericGraph_pyx):
             Graph on 200 vertices
             sage: T.size()
             900
-            sage: T.plot() # long time
+            sage: T.plot()                      # long time                             # needs sage.plot
             Graphics object consisting of 1101 graphics primitives
 
         TESTS:
@@ -19168,7 +19170,7 @@ class GenericGraph(GenericGraph_pyx):
             sage: C = graphs.CycleGraph(5)
             sage: L = C.lexicographic_product(Z); L
             Graph on 10 vertices
-            sage: L.plot() # long time
+            sage: L.plot()                      # long time                             # needs sage.plot
             Graphics object consisting of 36 graphics primitives
 
         ::
@@ -19177,7 +19179,7 @@ class GenericGraph(GenericGraph_pyx):
             sage: P = graphs.PetersenGraph()
             sage: L = D.lexicographic_product(P); L
             Graph on 200 vertices
-            sage: L.plot() # long time
+            sage: L.plot()                      # long time                             # needs sage.plot
             Graphics object consisting of 3501 graphics primitives
 
         TESTS:
@@ -19248,7 +19250,7 @@ class GenericGraph(GenericGraph_pyx):
             sage: C = graphs.CycleGraph(5)
             sage: S = C.strong_product(Z); S
             Graph on 10 vertices
-            sage: S.plot() # long time
+            sage: S.plot()                      # long time                             # needs sage.plot
             Graphics object consisting of 36 graphics primitives
 
         ::
@@ -19257,7 +19259,7 @@ class GenericGraph(GenericGraph_pyx):
             sage: P = graphs.PetersenGraph()
             sage: S = D.strong_product(P); S
             Graph on 200 vertices
-            sage: S.plot() # long time
+            sage: S.plot()                      # long time                             # needs sage.plot
             Graphics object consisting of 1701 graphics primitives
 
         TESTS:
@@ -19328,7 +19330,7 @@ class GenericGraph(GenericGraph_pyx):
             sage: Z = graphs.CompleteGraph(2)
             sage: D = Z.disjunctive_product(Z); D
             Graph on 4 vertices
-            sage: D.plot() # long time
+            sage: D.plot()                      # long time                             # needs sage.plot
             Graphics object consisting of 11 graphics primitives
 
         ::
@@ -19336,7 +19338,7 @@ class GenericGraph(GenericGraph_pyx):
             sage: C = graphs.CycleGraph(5)
             sage: D = C.disjunctive_product(Z); D
             Graph on 10 vertices
-            sage: D.plot() # long time
+            sage: D.plot()                      # long time                             # needs sage.plot
             Graphics object consisting of 46 graphics primitives
 
         TESTS:
@@ -23601,7 +23603,7 @@ class GenericGraph(GenericGraph_pyx):
             sage: position_E = {}
             sage: for vert in position_D:
             ....:  position_E[b[vert]] = position_D[vert]
-            sage: graphics_array([D.plot(pos=position_D), E.plot(pos=position_E)]).show() # long time
+            sage: graphics_array([D.plot(pos=position_D), E.plot(pos=position_E)]).show()  # long time, needs sage.plot
 
         ::
 
@@ -24587,7 +24589,7 @@ class GenericGraph(GenericGraph_pyx):
         all 4 vertices have the same centrality) ::
 
             sage: G = graphs.CycleGraph(4)
-            sage: G.katz_centrality(1/20)                                               # needs sage.modules
+            sage: G.katz_centrality(1/20)                                               # needs sage.modules sage.rings.number_field
             {0: 1/9, 1: 1/9, 2: 1/9, 3: 1/9}
 
         Note that in the below example the nodes having indegree `0` also have
@@ -24596,7 +24598,7 @@ class GenericGraph(GenericGraph_pyx):
 
             sage: G = DiGraph({1: [10], 2:[10,11], 3:[10,11], 4:[], 5:[11, 4], 6:[11],
             ....:              7:[10,11], 8:[10,11], 9:[10], 10:[11, 5, 8], 11:[6]})
-            sage: G.katz_centrality(.85)  # rel tol 1e-14                               # needs sage.modules
+            sage: G.katz_centrality(.85)  # rel tol 1e-14                               # needs sage.modules sage.rings.number_field
             {1: 0.000000000000000,
              2: 0.000000000000000,
              3: 0.000000000000000,
@@ -24617,7 +24619,7 @@ class GenericGraph(GenericGraph_pyx):
 
         TESTS::
 
-            sage: # needs sage.modules
+            sage: # needs sage.modules sage.rings.number_field
             sage: graphs.PathGraph(3).katz_centrality(1/20)
             {0: 11/199, 1: 21/199, 2: 11/199}
             sage: graphs.PathGraph(4).katz_centrality(1/20)

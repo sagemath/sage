@@ -614,7 +614,7 @@ def BarbellGraph(n1, n2):
 
         sage: g = graphs.BarbellGraph(9, 4); g
         Barbell graph: Graph on 22 vertices
-        sage: g.show()  # long time
+        sage: g.show()                          # long time                             # needs sage.plot
 
     An ``n1 >= 2``, ``n2 >= 0`` barbell graph has order ``2*n1 + n2``. It
     has the complete graph on ``n1`` vertices as a subgraph. It also has
@@ -712,7 +712,7 @@ def LollipopGraph(n1, n2):
 
         sage: g = graphs.LollipopGraph(13,4); g
         Lollipop graph: Graph on 17 vertices
-        sage: g.show()  # long time
+        sage: g.show()                          # long time                             # needs sage.plot
 
     TESTS::
 
@@ -785,7 +785,7 @@ def TadpoleGraph(n1, n2):
 
         sage: g = graphs.TadpoleGraph(13, 4); g
         Tadpole graph: Graph on 17 vertices
-        sage: g.show()  # long time
+        sage: g.show()                          # long time                             # needs sage.plot
 
     TESTS::
 
@@ -877,7 +877,7 @@ def DipoleGraph(n):
 
         sage: g = graphs.DipoleGraph(13); g
         Dipole graph: Multi-graph on 2 vertices
-        sage: g.show()  # long time
+        sage: g.show()                          # long time                             # needs sage.plot
 
     TESTS::
 
@@ -935,7 +935,7 @@ def BubbleSortGraph(n):
 
         sage: g = graphs.BubbleSortGraph(4); g
         Bubble sort: Graph on 24 vertices
-        sage: g.plot()  # long time
+        sage: g.plot()                          # long time                             # needs sage.plot
         Graphics object consisting of 61 graphics primitives
 
     The bubble sort graph on `n = 1` symbol is the trivial graph `K_1`::
@@ -1313,9 +1313,9 @@ def GoethalsSeidelGraph(k, r):
 
     EXAMPLES::
 
-        sage: graphs.GoethalsSeidelGraph(3,3)                                           # needs sage.modules
+        sage: graphs.GoethalsSeidelGraph(3,3)                                           # needs sage.combinat sage.modules
         Graph on 28 vertices
-        sage: graphs.GoethalsSeidelGraph(3,3).is_strongly_regular(parameters=True)      # needs sage.modules
+        sage: graphs.GoethalsSeidelGraph(3,3).is_strongly_regular(parameters=True)      # needs sage.combinat sage.modules
         (28, 15, 6, 10)
     """
     from sage.combinat.designs.bibd import balanced_incomplete_block_design
@@ -2137,7 +2137,7 @@ def HyperStarGraph(n, k):
         sage: g = graphs.HyperStarGraph(6,3)
         sage: sorted(g.neighbors('011100'))
         ['101100', '110100', '111000']
-        sage: g.plot()  # long time
+        sage: g.plot()                          # long time                             # needs sage.plot
         Graphics object consisting of 51 graphics primitives
 
     TESTS::
@@ -2406,7 +2406,7 @@ def NKStarGraph(n, k):
     EXAMPLES::
 
         sage: g = graphs.NKStarGraph(4,2)
-        sage: g.plot()  # long time
+        sage: g.plot()                          # long time                             # needs sage.plot
         Graphics object consisting of 31 graphics primitives
 
     REFERENCES:
@@ -2465,7 +2465,7 @@ def NStarGraph(n):
     EXAMPLES::
 
         sage: g = graphs.NStarGraph(4)
-        sage: g.plot()  # long time
+        sage: g.plot()                          # long time                             # needs sage.plot
         Graphics object consisting of 61 graphics primitives
 
     REFERENCES:
@@ -2639,7 +2639,7 @@ def SquaredSkewHadamardMatrixGraph(n):
 
     EXAMPLES::
 
-        sage: # needs sage.modules
+        sage: # needs sage.combinat sage.modules
         sage: G = graphs.SquaredSkewHadamardMatrixGraph(4)
         sage: G.is_strongly_regular(parameters=True)
         (225, 112, 55, 56)
@@ -2693,7 +2693,7 @@ def SwitchedSquaredSkewHadamardMatrixGraph(n):
 
     EXAMPLES::
 
-        sage: # needs sage.modules
+        sage: # needs sage.combinat sage.modules
         sage: g = graphs.SwitchedSquaredSkewHadamardMatrixGraph(4)
         sage: g.is_strongly_regular(parameters=True)
         (226, 105, 48, 49)
@@ -3841,13 +3841,13 @@ def MathonPseudocyclicMergingGraph(M, t):
 
         sage: from sage.graphs.generators.families import MathonPseudocyclicMergingGraph as mer
         sage: from sage.graphs.generators.smallgraphs import _EllipticLinesProjectivePlaneScheme as ES
-        sage: G = mer(ES(3), 0)  # long time
+        sage: G = mer(ES(3), 0)                 # long time                             # needs sage.libs.gap
         sage: G.is_strongly_regular(parameters=True)    # long time
         (784, 243, 82, 72)
-        sage: G = mer(ES(3), 1)  # long time
+        sage: G = mer(ES(3), 1)                 # long time                             # needs sage.libs.gap
         sage: G.is_strongly_regular(parameters=True)    # long time
         (784, 270, 98, 90)
-        sage: G = mer(ES(3), 2)  # long time
+        sage: G = mer(ES(3), 2)                 # long time                             # needs sage.libs.gap
         sage: G.is_strongly_regular(parameters=True)    # long time
         (784, 297, 116, 110)
         sage: G = mer(ES(2), 2)                                                         # needs sage.libs.gap

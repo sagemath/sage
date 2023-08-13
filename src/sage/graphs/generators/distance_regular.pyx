@@ -321,8 +321,8 @@ def LargeWittGraph():
 
     EXAMPLES::
 
-        sage: g = graphs.LargeWittGraph()                                               # needs sage.modules
-        sage: g.is_distance_regular(True)                                               # needs sage.modules
+        sage: g = graphs.LargeWittGraph()                                               # needs sage.libs.pari sage.modules
+        sage: g.is_distance_regular(True)                                               # needs sage.libs.pari sage.modules
         ([30, 28, 24, None], [None, 1, 3, 15])
 
     REFERENCES:
@@ -359,7 +359,7 @@ def TruncatedWittGraph():
 
     EXAMPLES::
 
-         sage: G = graphs.TruncatedWittGraph()  # long time                             # needs sage.modules
+         sage: G = graphs.TruncatedWittGraph()  # long time                             # needs sage.libs.pari sage.modules
          sage: G.is_distance_regular(True)      # long time (due to above)              # needs sage.modules
          ([15, 14, 12, None], [None, 1, 1, 9])
 
@@ -388,8 +388,8 @@ def DoublyTruncatedWittGraph():
 
     EXAMPLES::
 
-         sage: G = graphs.DoublyTruncatedWittGraph()                                    # needs sage.modules
-         sage: G.is_distance_regular(True)                                              # needs sage.modules
+         sage: G = graphs.DoublyTruncatedWittGraph()                                    # needs sage.libs.pari sage.modules
+         sage: G.is_distance_regular(True)                                              # needs sage.libs.pari sage.modules
          ([7, 6, 4, 4, None], [None, 1, 1, 1, 6])
 
     REFERENCES:
@@ -2143,7 +2143,7 @@ def graph_with_classical_parameters(int d, int b, alpha_in, beta_in, int gamma):
         Half 4 Cube: Graph on 8 vertices
         sage: graph_with_classical_parameters(3, 2, 0, 2, 9)                            # needs sage.libs.gap
         Symplectic Dual Polar Graph DSp(6, 2): Graph on 135 vertices
-        sage: graph_with_classical_parameters(3, 2, 2, 14, 7)  # long time
+        sage: graph_with_classical_parameters(3, 2, 2, 14, 7)   # long time             # needs sage.symbolic
         Grassmann graph J_2(6, 3): Graph on 1395 vertices
         sage: graph_with_classical_parameters(3, -2, -2, 6, 6)  # optional - gap_package_atlasrep internet
         Generalised hexagon of order (2, 8): Graph on 819 vertices
