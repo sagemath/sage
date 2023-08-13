@@ -26,8 +26,9 @@ arguments which are keys::
 This is used e.g. in the result of a variety, to allow access to the
 result no matter how a generator is identified::
 
+    sage: # needs sage.rings.number_field
     sage: K.<x,y> = QQ[]
-    sage: I = ideal([x^2+2*y-5,x+y+3])
+    sage: I = ideal([x^2 + 2*y - 5, x + y + 3])
     sage: V = sorted(I.variety(AA), key=str)
     sage: v = V[0]
     sage: v['x'], v['y']
