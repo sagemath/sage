@@ -1230,10 +1230,6 @@ class CoxeterGroups(Category_singleton):
                 x = x.apply_simple_reflection_right(antiD[rnd])
             return x
 
-        # TODO: Groups() should have inverse() call __invert__
-        # With strong doc stating that this is just a convenience for the user
-        # and links to ~ / __invert__
-
         # parabolic_subgroup
 
         def _test_simple_projections(self, **options):
