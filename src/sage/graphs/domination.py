@@ -413,9 +413,32 @@ def dominating_sets(g, k=1, independent=False, total=False, connected=False,
         # no two adjacent vertices are in the set
         for u, v in g.edge_iterator(labels=None):
             p.add_constraint(b[u] + b[v], max=1)
-
+            
     if connected:
-        add_mtz_constraints(g, p, b)
+        E = set(frozenset(e) for e in g.edge_iterator(labels=False))
+        # edges used in the spanning tree
+        edge = p.new_variable(binary=True, name='e')
+        # relaxed edges to test for acyclicity
+        r_edge = p.new_variable(nonnegative=True, name='re')
+
+        # 1. We want a tree
+        p.add_constraint(p.sum(edge[fe] for fe in E)
+                         == p.sum(b[u] for u in g) - 1)
+
+        # 2. An edge can be in the tree if its end vertices are selected
+        for fe in E:
+            u, v = fe
+            p.add_constraint(edge[fe] <= b[u])
+            p.add_constraint(edge[fe] <= b[v])
+
+        # 3. Subtour elimination constraints
+        for fe in E:
+            u, v = fe
+            p.add_constraint(edge[fe] <= r_edge[u, v] + r_edge[v, u])
+
+        eps = 1 / (5 * Integer(g.order()))
+        for v in g:
+            p.add_constraint(p.sum(r_edge[u, v] for u in g.neighbor_iterator(v)), max=1 - eps)
 
     # Minimizes the number of vertices used
     p.set_objective(p.sum(b[v] for v in g))
@@ -436,64 +459,6 @@ def dominating_sets(g, k=1, independent=False, total=False, connected=False,
         best = len(dom)
         # Prevent finding twice a solution
         p.add_constraint(p.sum(b[u] for u in dom) <= best - 1)
-
-def add_mtz_constraints(g, p, x):
-    r"""
-    Add Miller-Tucker-Zemlin connectivity constraints to a MILP.
-
-    INPUT:
-
-    - ``g`` -- a graph
-
-    - ``p`` -- a MILP
-
-    - ``x`` -- an ``MIPVariable`` representing the vertices of ``g`` in the solution set
-
-    REFERENCES:
-
-    For information on MTZ constraints and the method used here, see [FW2012]_.
-    """
-    g = g.to_directed()
-
-    y = p.new_variable(binary=True)
-    u = p.new_variable(nonnegative=True)
-
-    n = g.order() - 1
-    g.add_vertices([n+1, n+2])
-
-    for v in range(n+1):
-        g.add_edge((n+1, v))
-        g.add_edge((n+2, v))
-    g.add_edge((n+1, n+2))
-
-    # MTZ connectivity constraints #
-    p.add_constraint(p.sum(y[n+2, i] for i in range(n+1)), min=1, max=1)
-
-    for j in range(n+1):
-        p.add_constraint(
-            p.sum(y[i, j] for i, u in g.edge_iterator(labels=False) if u == j),
-            min=1,
-            max=1
-        )
-
-    for i, j in g.edge_iterator(labels=False):
-        if i <= n:
-            p.add_constraint(y[n+1, i] + y[i, j], max=1)
-            p.add_constraint((n+1)*y[i, j] + u[i] - u[j] + (n-1)*y[j, i], max=n)
-        else:
-            p.add_constraint((n+1)*y[i, j] + u[i] - u[j], max=n)
-
-    p.add_constraint(y[n+1, n+2], min=1, max=1)
-
-    p.add_constraint(u[n+1], min=0, max=0)
-    for i in g:
-        if i == n+1:
-            continue
-        p.add_constraint(u[i], min=1, max=n+1)
-
-    for i in range(n+1):
-        p.add_constraint(x[i] + y[n+1, i], min=1, max=1)
-
 
 def dominating_set(g, k=1, independent=False, total=False, connected=False, value_only=False,
                    solver=None, verbose=0, *, integrality_tolerance=1e-3):
