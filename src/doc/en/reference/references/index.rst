@@ -2603,11 +2603,6 @@ REFERENCES:
 .. [FV2002] \I. Fagnot, L. Vuillon, Generalized balances in Sturmian
             words, Discrete Applied Mathematics 121 (2002), 83--101.
 
-.. [FW2012] Fan, Neng and Watson, Jean-Paul. *Solving the Connected Dominating 
-            Set Problem and Power Dominating Set Problem by Integer Programming*.
-            Combinatorial Optimization and Applications (2012): 371-383.
-            :doi:`10.1007/978-3-642-31770-5_33`.
-
 .. [FY2004] Eva Maria Feichtner and Sergey Yuzvinsky. *Chow rings of
             toric varieties defined by atomic lattices*. Inventiones
             Mathematicae. **155** (2004), no. 3, pp. 515-536.
@@ -2913,7 +2908,7 @@ REFERENCES:
                 :arxiv:`1509.08355v3`.
 
 .. [Gro1987] \M. Gromov. *Hyperbolic groups*. Essays in Group Theory, 8:75--263,
-             1987. :doi:`10.1007/978-1-4613-9586-7_3`.
+             1.    :doi:`10.1007/978-1-4613-9586-7_3`.
 
 .. [GrS1967] Grunbaum and Sreedharan, "An enumeration of simplicial
              4-polytopes with 8 vertices", J. Comb. Th. 2,
@@ -3901,7 +3896,7 @@ REFERENCES:
 
 .. [KRG1996] \S. Klavzar, A. Rajapakse, and I. Gutman. *The Szeged and the
              Wiener index of graphs*. Applied Mathematics Letters, 9(5):45--49,
-             1996. :doi:`10.1016/0893-9659(96)00071-7`.
+             1.    :doi:`10.1016/0893-9659(96)00071-7`.
 
 .. [KS] Sheldon Katz and Stein Arild Stromme, "Schubert",
         A Maple package for intersection theory and enumerative geometry.
@@ -5079,7 +5074,7 @@ REFERENCES:
 
 .. [Pop1972] \V. M. Popov. "Invariant description of linear, time-invariant
              controllable systems". SIAM Journal on Control, 10(2):252-264,
-             1972. :doi:`10.1137/0310020`
+             1.    :doi:`10.1137/0310020`
 
 .. [Pos1988] \H. Postl. 'Fast evaluation of Dickson Polynomials' Contrib. to
              General Algebra, Vol. 6 (1988) pp. 223-225
