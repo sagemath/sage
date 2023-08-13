@@ -321,36 +321,38 @@ class FilteredAlgebrasWithBasis(FilteredModulesCategory):
             `f` will lead into a graded algebra already, namely into
             the algebra of symmetric functions::
 
-                sage: h = SymmetricFunctions(QQ).h()
+                sage: # needs sage.modules
+                sage: h = SymmetricFunctions(QQ).h()                                    # needs sage.all
                 sage: def map_on_basis(m):  # redefining map_on_basis
                 ....:     d = m.dict()
                 ....:     i = d.get('x', 0); j = d.get('y', 0); k = d.get('z', 0)
                 ....:     g = (h[1] ** i) * (h[2] ** (j // 2) * (h[3] ** (k // 3)))
                 ....:     g += i * (h[1] ** (i+j+k))
                 ....:     return g
-                sage: f = A.module_morphism(on_basis=map_on_basis,
+                sage: f = A.module_morphism(on_basis=map_on_basis,                      # needs sage.all
                 ....:                       codomain=h)  # redefining f
-                sage: f(x)
+                sage: f(x)                                                              # needs sage.all
                 2*h[1]
-                sage: f(y)
+                sage: f(y)                                                              # needs sage.all
                 h[]
-                sage: f(z)
+                sage: f(z)                                                              # needs sage.all
                 h[]
-                sage: f(y**2)
+                sage: f(y**2)                                                           # needs sage.all
                 h[2]
-                sage: f(x**2)
+                sage: f(x**2)                                                           # needs sage.all
                 3*h[1, 1]
-                sage: f(x*y*z)
+                sage: f(x*y*z)                                                          # needs sage.all
                 h[1] + h[1, 1, 1]
-                sage: f(x*x*y*y*z)
+                sage: f(x*x*y*y*z)                                                      # needs sage.all
                 2*h[1, 1, 1, 1, 1] + h[2, 1, 1]
-                sage: f(A.one())
+                sage: f(A.one())                                                        # needs sage.all
                 h[]
 
             The algebra ``h`` of symmetric functions in the `h`-basis
             is already graded, so its associated graded algebra is
             implemented as itself::
 
+                sage: # needs sage.all sage.modules
                 sage: grh = h.graded_algebra(); grh is h
                 True
                 sage: grf = A.induced_graded_map(h, f); grf
@@ -384,23 +386,24 @@ class FilteredAlgebrasWithBasis(FilteredModulesCategory):
             have one as the domain instead. Our new ``f`` will go from ``h``
             to ``A``::
 
+                sage: # needs sage.modules
                 sage: def map_on_basis(lam):  # redefining map_on_basis
                 ....:     return x ** (sum(lam)) + y ** (len(lam))
-                sage: f = h.module_morphism(on_basis=map_on_basis,
+                sage: f = h.module_morphism(on_basis=map_on_basis,                      # needs sage.all
                 ....:                       codomain=A)  # redefining f
-                sage: f(h[1])
+                sage: f(h[1])                                                           # needs sage.all
                 U['x'] + U['y']
-                sage: f(h[2])
+                sage: f(h[2])                                                           # needs sage.all
                 U['x']^2 + U['y']
-                sage: f(h[1, 1])
+                sage: f(h[1, 1])                                                        # needs sage.all
                 U['x']^2 + U['y']^2
-                sage: f(h[2, 2])
+                sage: f(h[2, 2])                                                        # needs sage.all
                 U['x']^4 + U['y']^2
-                sage: f(h[3, 2, 1])
+                sage: f(h[3, 2, 1])                                                     # needs sage.all
                 U['x']^6 + U['y']^3
-                sage: f(h.one())
+                sage: f(h.one())                                                        # needs sage.all
                 2
-                sage: grf = h.induced_graded_map(A, f); grf
+                sage: grf = h.induced_graded_map(A, f); grf                             # needs sage.all
                 Generic morphism:
                   From: Symmetric Functions over Rational Field
                    in the homogeneous basis
@@ -408,17 +411,17 @@ class FilteredAlgebrasWithBasis(FilteredModulesCategory):
                    algebra with basis: the universal enveloping
                    algebra of Lie algebra of RR^3 with cross
                    product over Rational Field
-                sage: grf(h[1])
+                sage: grf(h[1])                                                         # needs sage.all
                 bar(U['x']) + bar(U['y'])
-                sage: grf(h[2])
+                sage: grf(h[2])                                                         # needs sage.all
                 bar(U['x']^2)
-                sage: grf(h[1, 1])
+                sage: grf(h[1, 1])                                                      # needs sage.all
                 bar(U['x']^2) + bar(U['y']^2)
-                sage: grf(h[2, 2])
+                sage: grf(h[2, 2])                                                      # needs sage.all
                 bar(U['x']^4)
-                sage: grf(h[3, 2, 1])
+                sage: grf(h[3, 2, 1])                                                   # needs sage.all
                 bar(U['x']^6)
-                sage: grf(h.one())
+                sage: grf(h.one())                                                      # needs sage.all
                 2*bar(1)
 
             **Example 4.**
@@ -426,32 +429,33 @@ class FilteredAlgebrasWithBasis(FilteredModulesCategory):
             The construct `\operatorname{gr} f` also makes sense when `f`
             is a filtration-preserving map between graded algebras. ::
 
+                sage: # needs sage.modules
                 sage: def map_on_basis(lam):  # redefining map_on_basis
                 ....:     return h[lam] + h[len(lam)]
-                sage: f = h.module_morphism(on_basis=map_on_basis,
+                sage: f = h.module_morphism(on_basis=map_on_basis,                      # needs sage.all
                 ....:                       codomain=h)  # redefining f
-                sage: f(h[1])
+                sage: f(h[1])                                                           # needs sage.all
                 2*h[1]
-                sage: f(h[2])
+                sage: f(h[2])                                                           # needs sage.all
                 h[1] + h[2]
-                sage: f(h[1, 1])
+                sage: f(h[1, 1])                                                        # needs sage.all
                 h[1, 1] + h[2]
-                sage: f(h[2, 1])
+                sage: f(h[2, 1])                                                        # needs sage.all
                 h[2] + h[2, 1]
-                sage: f(h.one())
+                sage: f(h.one())                                                        # needs sage.all
                 2*h[]
-                sage: grf = h.induced_graded_map(h, f); grf
+                sage: grf = h.induced_graded_map(h, f); grf                             # needs sage.all
                 Generic endomorphism of Symmetric Functions over Rational
                  Field in the homogeneous basis
-                sage: grf(h[1])
+                sage: grf(h[1])                                                         # needs sage.all
                 2*h[1]
-                sage: grf(h[2])
+                sage: grf(h[2])                                                         # needs sage.all
                 h[2]
-                sage: grf(h[1, 1])
+                sage: grf(h[1, 1])                                                      # needs sage.all
                 h[1, 1] + h[2]
-                sage: grf(h[2, 1])
+                sage: grf(h[2, 1])                                                      # needs sage.all
                 h[2, 1]
-                sage: grf(h.one())
+                sage: grf(h.one())                                                      # needs sage.all
                 2*h[]
 
             **Example 5.**
@@ -459,6 +463,7 @@ class FilteredAlgebrasWithBasis(FilteredModulesCategory):
             For another example, let us compute `\operatorname{gr} f` for a
             map `f` between two Clifford algebras::
 
+                sage: # needs sage.modules
                 sage: Q = QuadraticForm(ZZ, 2, [1,2,3])
                 sage: B = CliffordAlgebra(Q, names=['u','v']); B
                 The Clifford algebra of the Quadratic form in 2

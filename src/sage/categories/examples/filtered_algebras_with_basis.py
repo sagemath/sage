@@ -50,7 +50,7 @@ class PBWBasisCrossProduct(CombinatorialFreeModule):
 
             sage: A = AlgebrasWithBasis(QQ).Filtered().example()
             sage: x,y,z = A.algebra_generators()
-            sage: TestSuite(A).run(elements=[x*y+z])
+            sage: TestSuite(A).run(elements=[x*y+z])                                    # needs sage.symbolic
         """
         I = IndexedFreeAbelianMonoid(['x', 'y', 'z'], prefix='U')
 
@@ -160,7 +160,7 @@ class PBWBasisCrossProduct(CombinatorialFreeModule):
             U['x']*U['y']
             sage: y*x
             U['x']*U['y'] - U['z']
-            sage: x*y*x
+            sage: x*y*x                                                                 # needs sage.symbolic
             U['x']^2*U['y'] - U['x']*U['z']
             sage: z*y*x
             U['x']*U['y']*U['z'] - U['x']^2 + U['y']^2 - U['z']^2
