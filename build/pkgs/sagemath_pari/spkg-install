@@ -22,7 +22,7 @@ rm -Rf build
 DIST_DIR="$(mktemp -d)"
 python3 -m build --outdir "$DIST_DIR"/dist . || sdh_die "Failure building sdist and wheel"
 ls -l "$DIST_DIR"/dist/*.tar.gz
-wheel=$(cd "$DIST_DIR" && sdh_store_wheel . && echo $wheel)
+wheel=$(cd "$DIST_DIR" && sdh_store_wheel . >&2 && echo $wheel)
 ls -l "$wheel"
 
 if [ "$SAGE_CHECK" != no ]; then

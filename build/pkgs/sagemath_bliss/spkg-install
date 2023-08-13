@@ -21,14 +21,14 @@ python3 -m build --outdir "$DIST_DIR"/dist . || sdh_die "Failure building sdist 
 
 if [ "$SAGE_EDITABLE" = yes ]; then
     # SAGE_ROOT/src/setup.py installs everything, nothing to do...
-    wheel=$(cd "$DIST_DIR" && sdh_store_wheel . && echo $wheel)
+    wheel=$(cd "$DIST_DIR" && sdh_store_wheel . >&2 && echo $wheel)
 else
     if [ "$SAGE_WHEELS" = yes ]; then
         # Modularized install via wheels
         wheel=$(cd "$DIST_DIR" && sdh_store_and_pip_install_wheel . && echo $wheel)
     else
         # Legacy direct installation
-        wheel=$(cd "$DIST_DIR" && sdh_store_wheel . && echo $wheel)
+        wheel=$(cd "$DIST_DIR" && sdh_store_wheel . >&2 && echo $wheel)
     fi
 fi
 
