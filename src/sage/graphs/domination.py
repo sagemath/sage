@@ -261,8 +261,8 @@ def dominating_sets(g, k=1, independent=False, total=False, connected=False,
     - ``total`` -- boolean (default: ``False``); when ``True``, computes total
       dominating sets (see the See the :wikipedia:`Dominating_set`)
 
-    - ``connected`` -- boolean (default: ``False``); when ``True``, computes connected
-      dominating sets (see :wikipedia:`Connected_dominating_set`)
+    - ``connected`` -- boolean (default: ``False``); when ``True``, computes
+      connected dominating sets (see :wikipedia:`Connected_dominating_set`)
 
     - ``solver`` -- string (default: ``None``); specify a Mixed Integer Linear
       Programming (MILP) solver to be used. If set to ``None``, the default one
@@ -358,6 +358,12 @@ def dominating_sets(g, k=1, independent=False, total=False, connected=False,
          [3, 5, 6, 8],
          [4, 6, 7, 9]]
 
+    Subgraph induced by the dominating set is connected::
+
+        sage: G = graphs.PetersenGraph()
+        sage: all(G.subgraph(vertices=dom).is_connected() for dom in G.dominating_set(k=1, connected=True))
+        True
+
     Minimum distance-k connected dominating sets of the Tietze graph::
 
         sage: G = graphs.TietzeGraph()
@@ -422,7 +428,7 @@ def dominating_sets(g, k=1, independent=False, total=False, connected=False,
         # no two adjacent vertices are in the set
         for u, v in g.edge_iterator(labels=None):
             p.add_constraint(b[u] + b[v], max=1)
-            
+
     if connected:
         E = set(frozenset(e) for e in g.edge_iterator(labels=False))
         # edges used in the spanning tree
@@ -505,6 +511,9 @@ def dominating_set(g, k=1, independent=False, total=False, connected=False, valu
 
     - ``total`` -- boolean (default: ``False``); when ``True``, computes a total
       dominating set (see the See the :wikipedia:`Dominating_set`)
+
+     - ``connected`` -- boolean (default: ``False``); when ``True``, computes a
+      connected dominating set (see :wikipedia:`Connected_dominating_set`)
 
     - ``value_only`` -- boolean (default: ``False``); whether to only return the
       cardinality of the computed dominating set, or to return its list of
