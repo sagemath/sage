@@ -121,8 +121,8 @@ class FiniteDimensionalModulesWithBasis(CategoryWithAxiom_over_base_ring):
                 sage: Ax  = F.annihilator([x]);   Ax .rename("Ax")
                 sage: Ay  = F.annihilator([y]);   Ay .rename("Ay")
                 sage: Axy = F.annihilator([x,y]); Axy.rename("Axy")
-                sage: P = Poset(([A, Ax, Ay, Axy], attrcall("is_submodule")))           # needs sage.combinat sage.graphs
-                sage: sorted(P.cover_relations(), key=str)                              # needs sage.combinat sage.graphs
+                sage: P = Poset(([A, Ax, Ay, Axy], attrcall("is_submodule")))           # needs sage.graphs
+                sage: sorted(P.cover_relations(), key=str)                              # needs sage.graphs
                 [[Ax, A], [Axy, Ax], [Axy, Ay], [Ay, A]]
             """
             return self.submodule(self.annihilator_basis(S, action, side),

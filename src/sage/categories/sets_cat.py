@@ -3040,9 +3040,9 @@ Please use, e.g., S.algebra(QQ, category=Semigroups())""".format(self))
                 Check that we are consistent no matter which basis is
                 created first::
 
-                    sage: M = posets.BooleanLattice(4).moebius_algebra(QQ)              # needs sage.combinat sage.graphs sage.modules
-                    sage: I = M.I()                                                     # needs sage.combinat sage.graphs sage.modules
-                    sage: M._an_element_()                                              # needs sage.combinat sage.graphs sage.modules
+                    sage: M = posets.BooleanLattice(4).moebius_algebra(QQ)              # needs sage.graphs sage.modules
+                    sage: I = M.I()                                                     # needs sage.graphs sage.modules
+                    sage: M._an_element_()                                              # needs sage.graphs sage.modules
                     2*E[0] + 2*E[1] + 3*E[2]
                 """
                 return self.a_realization().an_element()

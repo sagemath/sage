@@ -1693,7 +1693,7 @@ class CoxeterGroups(Category_singleton):
                 sage: W = CoxeterGroups().example()
                 sage: s = W.simple_reflections()
                 sage: w = s[0] * s[2]
-                sage: sorted(w.reduced_words_iter())                                    # needs sage.combinat
+                sage: sorted(w.reduced_words_iter())
                 [[0, 2], [2, 0]]
             """
             return self.parent().braid_orbit_iter(self.reduced_word())
@@ -1718,7 +1718,7 @@ class CoxeterGroups(Category_singleton):
                 sage: W = CoxeterGroups().example()
                 sage: s = W.simple_reflections()
                 sage: w = s[0] * s[2]
-                sage: sorted(w.reduced_words())                                         # needs sage.combinat sage.modules
+                sage: sorted(w.reduced_words())                                         # needs sage.modules
                 [[0, 2], [2, 0]]
 
                 sage: W = WeylGroup(['E', 6])                                           # needs sage.combinat sage.groups
