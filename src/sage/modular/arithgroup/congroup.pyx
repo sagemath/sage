@@ -132,7 +132,7 @@ def degeneracy_coset_representatives_gamma0(int N, int M, int t):
         dd = dd / g
         # Test if we've found a new coset representative.
         is_new = 1
-        for i from 0 <= i < k:
+        for i in range(k):
             j = 4*i
             if (R[j+1]*aa - R[j]*bb) % t == 0 and \
                (R[j+3]*cc - R[j+2]*dd) % Ndivt == 0:
@@ -237,7 +237,7 @@ def degeneracy_coset_representatives_gamma1(int N, int M, int t):
             continue
         # Test if we've found a new coset representative.
         is_new = 1
-        for i from 0 <= i < k:
+        for i in range(k):
             j = 4*i
             if (R[j] - aa) % t == 0 and \
                (R[j+1] - bb) % t == 0 and \
@@ -258,7 +258,7 @@ def degeneracy_coset_representatives_gamma1(int N, int M, int t):
 
     # Return the list left multiplied by T.
     S = []
-    for i from 0 <= i < k:
+    for i in range(k):
         j = 4*i
         S.append([R[j], R[j+1], R[j+2]*t, R[j+3]*t])
     sig_free(R)
