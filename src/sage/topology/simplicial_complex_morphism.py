@@ -363,7 +363,7 @@ class SimplicialComplexMorphism(Morphism):
 
             sage: # needs sage.modules
             sage: g = {0:1, 1:2, 2:0}
-            sage: H(g).associated_chain_complex_morphism()._matrix_dictionary           # needs sage.modules
+            sage: H(g).associated_chain_complex_morphism()._matrix_dictionary
             {0: [0 0 1]
                 [1 0 0]
                 [0 1 0]
@@ -377,7 +377,7 @@ class SimplicialComplexMorphism(Morphism):
              2: []}
             sage: X = SimplicialComplex([[0, 1]], is_mutable=False)
             sage: g = {0:1, 1:0}
-            sage: Hom(X, X)(X).associated_chain_complex_morphism()._matrix_dictionary   # needs sage.modules
+            sage: Hom(X, X)(X).associated_chain_complex_morphism()._matrix_dictionary
             {0: [0 1]
                 [1 0],
              1: [-1]}

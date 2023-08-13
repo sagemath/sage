@@ -1000,7 +1000,7 @@ cdef class RecursivelyEnumeratedSet_generic(Parent):
             sage: def f(a):
             ....:     return [a + 1, a + I]
             sage: C = RecursivelyEnumeratedSet([0], f, structure='graded')
-            sage: C.to_digraph(max_depth=4)                                             # needs sage.graphs
+            sage: C.to_digraph(max_depth=4)                                             # needs sage.graphs sage.symbolic
             Looped multi-digraph on 21 vertices
         """
         successors = self.successors

@@ -227,6 +227,8 @@ class GenericCellComplex(SageObject):
             sage: K = SimplicialComplex([[1,2,3], [2,3,4]])
             sage: Z._n_cells_sorted(2, subcomplex=K)
             [(1, 2, 4), (1, 3, 4)]
+
+            sage: # needs sage.symbolic
             sage: S = SimplicialComplex([[complex(i), complex(1)]])
             sage: S._n_cells_sorted(0)
             [((1+0j),), (1j,)]
