@@ -22,9 +22,9 @@ Obtain a face from a face lattice index::
 
     sage: P = polytopes.simplex(2)
     sage: C = CombinatorialPolyhedron(P)
-    sage: sorted(C.face_lattice()._elements)                                    # optional - sage.combinat
+    sage: sorted(C.face_lattice()._elements)                                            # needs sage.combinat
     [0, 1, 2, 3, 4, 5, 6, 7]
-    sage: face = C.face_by_face_lattice_index(0); face                          # optional - sage.combinat
+    sage: face = C.face_by_face_lattice_index(0); face
     A -1-dimensional face of a 2-dimensional combinatorial polyhedron
 
 Obtain further information regarding a face::
@@ -97,10 +97,10 @@ cdef class CombinatorialFace(SageObject):
 
     Obtain a combinatorial face from an index of the face lattice::
 
-        sage: F = C.face_lattice()                                              # optional - sage.combinat
-        sage: F._elements[3]                                                    # optional - sage.combinat
+        sage: F = C.face_lattice()                                                      # needs sage.combinat
+        sage: F._elements[3]                                                            # needs sage.combinat
         34
-        sage: C.face_by_face_lattice_index(29)                                  # optional - sage.combinat
+        sage: C.face_by_face_lattice_index(29)
         A 1-dimensional face of a 5-dimensional combinatorial polyhedron
 
     Obtain the dimension of a combinatorial face::
@@ -260,15 +260,16 @@ cdef class CombinatorialFace(SageObject):
 
         EXAMPLES::
 
-            sage: P = polytopes.permutahedron(6)                          # optional - sage.combinat
-            sage: C = CombinatorialPolyhedron(P)                          # optional - sage.combinat
-            sage: it = C.face_generator(dimension=3, algorithm='primal')  # optional - sage.combinat
-            sage: face = next(it)                                         # optional - sage.combinat
-            sage: face.__repr__()                                         # optional - sage.combinat
+            sage: # needs sage.combinat
+            sage: P = polytopes.permutahedron(6)
+            sage: C = CombinatorialPolyhedron(P)
+            sage: it = C.face_generator(dimension=3, algorithm='primal')
+            sage: face = next(it)
+            sage: face.__repr__()
             'A 3-dimensional face of a 5-dimensional combinatorial polyhedron'
-            sage: it = C.face_generator(dimension=3, algorithm='dual')    # optional - sage.combinat
-            sage: face = next(it)                                         # optional - sage.combinat
-            sage: face.__repr__()                                         # optional - sage.combinat
+            sage: it = C.face_generator(dimension=3, algorithm='dual')
+            sage: face = next(it)
+            sage: face.__repr__()
             'A 3-dimensional face of a 5-dimensional combinatorial polyhedron'
         """
         return "A {}-dimensional face of a {}-dimensional combinatorial polyhedron"\
@@ -318,15 +319,16 @@ cdef class CombinatorialFace(SageObject):
 
         TESTS::
 
-            sage: P = polytopes.permutahedron(5)                                # optional - sage.combinat
-            sage: C = CombinatorialPolyhedron(P)                                # optional - sage.combinat
-            sage: F = C.face_lattice()                                          # optional - sage.combinat
-            sage: G = F.relabel(C.face_by_face_lattice_index)                   # optional - sage.combinat
+            sage: # needs sage.combinat
+            sage: P = polytopes.permutahedron(5)
+            sage: C = CombinatorialPolyhedron(P)
+            sage: F = C.face_lattice()
+            sage: G = F.relabel(C.face_by_face_lattice_index)
 
             sage: P = polytopes.cyclic_polytope(4,10)
             sage: C = CombinatorialPolyhedron(P)
-            sage: F = C.face_lattice()                                          # optional - sage.combinat
-            sage: G = F.relabel(C.face_by_face_lattice_index)                   # optional - sage.combinat
+            sage: F = C.face_lattice()                                                  # needs sage.combinat
+            sage: G = F.relabel(C.face_by_face_lattice_index)                           # needs sage.combinat
         """
         return self._hash_index
 
@@ -349,7 +351,7 @@ cdef class CombinatorialFace(SageObject):
             sage: F2 = C.face_by_face_lattice_index(1)
             sage: F1 < F2
             True
-            sage: for i,j in Combinations(range(28), 2):   # optional - sage.combinat
+            sage: for i,j in Combinations(range(28), 2):
             ....:     F1 = C.face_by_face_lattice_index(i)
             ....:     F2 = C.face_by_face_lattice_index(j)
             ....:     if F1.dim() != F2.dim():
@@ -361,7 +363,7 @@ cdef class CombinatorialFace(SageObject):
             sage: F2 = C.face_by_face_lattice_index(1)
             sage: F1 < F2
             True
-            sage: for i,j in Combinations(range(28), 2):   # optional - sage.combinat
+            sage: for i,j in Combinations(range(28), 2):
             ....:     F1 = C.face_by_face_lattice_index(i)
             ....:     F2 = C.face_by_face_lattice_index(j)
             ....:     if F1.dim() != F2.dim():
@@ -501,16 +503,17 @@ cdef class CombinatorialFace(SageObject):
 
         EXAMPLES::
 
-            sage: P = polytopes.associahedron(['A', 3])  # optional - sage.combinat
-            sage: C = CombinatorialPolyhedron(P)         # optional - sage.combinat
-            sage: it = C.face_generator()                # optional - sage.combinat
-            sage: face = next(it)                        # optional - sage.combinat
-            sage: face.dimension()                       # optional - sage.combinat
+            sage: # needs sage.combinat
+            sage: P = polytopes.associahedron(['A', 3])
+            sage: C = CombinatorialPolyhedron(P)
+            sage: it = C.face_generator()
+            sage: face = next(it)
+            sage: face.dimension()
             2
 
         ``dim`` is an alias::
 
-            sage: face.dim()                             # optional - sage.combinat
+            sage: face.dim()                                                            # needs sage.combinat
             2
         """
         if self._dual:
@@ -545,19 +548,20 @@ cdef class CombinatorialFace(SageObject):
 
         EXAMPLES::
 
-            sage: P = polytopes.permutahedron(5)         # optional - sage.combinat
-            sage: C = CombinatorialPolyhedron(P)         # optional - sage.combinat
-            sage: it = C.face_generator(dimension=2)     # optional - sage.combinat
-            sage: face = next(it)                        # optional - sage.combinat
-            sage: face.ambient_Vrepresentation()         # optional - sage.combinat
+            sage: # needs sage.combinat
+            sage: P = polytopes.permutahedron(5)
+            sage: C = CombinatorialPolyhedron(P)
+            sage: it = C.face_generator(dimension=2)
+            sage: face = next(it)
+            sage: face.ambient_Vrepresentation()
             (A vertex at (1, 3, 2, 5, 4),
              A vertex at (2, 3, 1, 5, 4),
              A vertex at (3, 1, 2, 5, 4),
              A vertex at (3, 2, 1, 5, 4),
              A vertex at (2, 1, 3, 5, 4),
              A vertex at (1, 2, 3, 5, 4))
-            sage: face = next(it)                        # optional - sage.combinat
-            sage: face.ambient_Vrepresentation()         # optional - sage.combinat
+            sage: face = next(it)
+            sage: face.ambient_Vrepresentation()
             (A vertex at (2, 1, 4, 5, 3),
              A vertex at (3, 2, 4, 5, 1),
              A vertex at (3, 1, 4, 5, 2),
@@ -609,13 +613,14 @@ cdef class CombinatorialFace(SageObject):
 
         EXAMPLES::
 
-            sage: P = polytopes.permutahedron(5)         # optional - sage.combinat
-            sage: C = CombinatorialPolyhedron(P)         # optional - sage.combinat
-            sage: it = C.face_generator(dimension=2)     # optional - sage.combinat
-            sage: face = next(it)                        # optional - sage.combinat
-            sage: next(it).ambient_V_indices()           # optional - sage.combinat
+            sage: # needs sage.combinat
+            sage: P = polytopes.permutahedron(5)
+            sage: C = CombinatorialPolyhedron(P)
+            sage: it = C.face_generator(dimension=2)
+            sage: face = next(it)
+            sage: next(it).ambient_V_indices()
             (32, 91, 92, 93, 94, 95)
-            sage: next(it).ambient_V_indices()           # optional - sage.combinat
+            sage: next(it).ambient_V_indices()
             (32, 89, 90, 94)
 
             sage: C = CombinatorialPolyhedron([[0,1,2],[0,1,3],[0,2,3],[1,2,3]])
@@ -688,14 +693,15 @@ cdef class CombinatorialFace(SageObject):
 
         EXAMPLES::
 
-            sage: P = polytopes.permutahedron(5)         # optional - sage.combinat
-            sage: C = CombinatorialPolyhedron(P)         # optional - sage.combinat
-            sage: it = C.face_generator(2)               # optional - sage.combinat
-            sage: next(it).ambient_Hrepresentation()     # optional - sage.combinat
+            sage: # needs sage.combinat
+            sage: P = polytopes.permutahedron(5)
+            sage: C = CombinatorialPolyhedron(P)
+            sage: it = C.face_generator(2)
+            sage: next(it).ambient_Hrepresentation()
             (An inequality (1, 1, 1, 0, 0) x - 6 >= 0,
              An inequality (0, 0, 0, -1, 0) x + 5 >= 0,
              An equation (1, 1, 1, 1, 1) x - 15 == 0)
-            sage: next(it).ambient_Hrepresentation()     # optional - sage.combinat
+            sage: next(it).ambient_Hrepresentation()
             (An inequality (0, 0, -1, -1, 0) x + 9 >= 0,
              An inequality (0, 0, 0, -1, 0) x + 5 >= 0,
              An equation (1, 1, 1, 1, 1) x - 15 == 0)
@@ -748,21 +754,22 @@ cdef class CombinatorialFace(SageObject):
 
         EXAMPLES::
 
-            sage: P = polytopes.permutahedron(5)                # optional - sage.combinat
-            sage: C = CombinatorialPolyhedron(P)                # optional - sage.combinat
-            sage: it = C.face_generator(2)                      # optional - sage.combinat
-            sage: face = next(it)                               # optional - sage.combinat
-            sage: face.ambient_H_indices(add_equations=False)   # optional - sage.combinat
+            sage: # needs sage.combinat
+            sage: P = polytopes.permutahedron(5)
+            sage: C = CombinatorialPolyhedron(P)
+            sage: it = C.face_generator(2)
+            sage: face = next(it)
+            sage: face.ambient_H_indices(add_equations=False)
             (28, 29)
-            sage: face2 = next(it)                              # optional - sage.combinat
-            sage: face2.ambient_H_indices(add_equations=False)  # optional - sage.combinat
+            sage: face2 = next(it)
+            sage: face2.ambient_H_indices(add_equations=False)
             (25, 29)
 
         Add the indices of the equation::
 
-            sage: face.ambient_H_indices(add_equations=True)    # optional - sage.combinat
+            sage: face.ambient_H_indices(add_equations=True)                            # needs sage.combinat
             (28, 29, 30)
-            sage: face2.ambient_H_indices(add_equations=True)   # optional - sage.combinat
+            sage: face2.ambient_H_indices(add_equations=True)                           # needs sage.combinat
             (25, 29, 30)
 
         Another example::
@@ -828,13 +835,14 @@ cdef class CombinatorialFace(SageObject):
 
         Specifying whether to count the equations or not::
 
-            sage: P = polytopes.permutahedron(5)                    # optional - sage.combinat
-            sage: C = CombinatorialPolyhedron(P)                    # optional - sage.combinat
-            sage: it = C.face_generator(2)                          # optional - sage.combinat
-            sage: f = next(it)                                      # optional - sage.combinat
-            sage: f.n_ambient_Hrepresentation(add_equations=True)   # optional - sage.combinat
+            sage: # needs sage.combinat
+            sage: P = polytopes.permutahedron(5)
+            sage: C = CombinatorialPolyhedron(P)
+            sage: it = C.face_generator(2)
+            sage: f = next(it)
+            sage: f.n_ambient_Hrepresentation(add_equations=True)
             3
-            sage: f.n_ambient_Hrepresentation(add_equations=False)  # optional - sage.combinat
+            sage: f.n_ambient_Hrepresentation(add_equations=False)
             2
 
         TESTS::
@@ -877,7 +885,7 @@ cdef class CombinatorialFace(SageObject):
             sage: F.f_vector()
             (1, 5, 10, 10, 5, 1)
             sage: F_alt = polytopes.cyclic_polytope(4,5).combinatorial_polyhedron()
-            sage: F_alt.vertex_facet_graph().is_isomorphic(F.vertex_facet_graph())  # optional - sage.graphs
+            sage: F_alt.vertex_facet_graph().is_isomorphic(F.vertex_facet_graph())      # needs sage.graphs
             True
 
         Obtaining the quotient::

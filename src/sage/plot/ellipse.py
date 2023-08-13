@@ -41,6 +41,7 @@ class Ellipse(GraphicPrimitive):
 
     Note that this construction should be done using ``ellipse``::
 
+        sage: from math import pi
         sage: from sage.plot.ellipse import Ellipse
         sage: Ellipse(0, 0, 2, 1, pi/4, {})
         Ellipse centered at (0.0, 0.0) with radii (2.0, 1.0) and angle 0.78539816339...
@@ -94,6 +95,7 @@ class Ellipse(GraphicPrimitive):
 
         The same example with a rotation of angle `\pi/2`::
 
+            sage: from math import pi
             sage: p = ellipse((-2, 3), 1, 2, pi/2)
             sage: d = p.get_minmax_data()
             sage: d['xmin']
@@ -178,6 +180,7 @@ class Ellipse(GraphicPrimitive):
 
         TESTS::
 
+            sage: from math import pi
             sage: ellipse((0,0),3,1,pi/6,fill=True,alpha=0.3)
             Graphics object consisting of 1 graphics primitive
 
@@ -280,7 +283,8 @@ def ellipse(center, r1, r2, angle=0, **options):
 
     More complicated examples with tilted axes and drawing options::
 
-        sage: ellipse((0,0),3,1,pi/6,fill=True,alpha=0.3,linestyle="dashed")
+        sage: from math import pi
+        sage: ellipse((0,0), 3, 1, pi/6, fill=True, alpha=0.3, linestyle="dashed")
         Graphics object consisting of 1 graphics primitive
 
     .. PLOT::
