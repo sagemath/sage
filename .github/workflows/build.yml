@@ -71,6 +71,7 @@ jobs:
       - name: Incremental build, test changed files (sage -t --new)
         id: incremental
         run: |
+          echo ::add-matcher::.github/workflows/doctest-problem-matcher.json
           # Now re-bootstrap and build. The build is incremental because we were careful with the timestamps.
           # We run tests with "sage -t --new"; this only tests the uncommitted changes.
           ./bootstrap && make build && ./sage -t --new -p2
