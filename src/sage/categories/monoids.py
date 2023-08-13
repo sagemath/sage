@@ -377,6 +377,8 @@ class Monoids(CategoryWithAxiom):
             This is an alias for inversion, which can also be invoked
             by ``~x`` for an element ``x``.
 
+            Nota Bene: Element classes should implement ``__invert__`` only.
+
             EXAMPLES::
 
                 sage: AA(sqrt(~2)).inverse()                                            # optional - sage.symbolic sage.rings.number_field

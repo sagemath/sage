@@ -513,9 +513,10 @@ class CoxeterGroups(Category_singleton):
 
             from sage.categories.finite_coxeter_groups import FiniteCoxeterGroups
             default_category = FiniteEnumeratedSets() if self in FiniteCoxeterGroups() else EnumeratedSets()
+            cat = default_category.or_subcategory(category)
             return RecursivelyEnumeratedSet_forest((self.one(),), succ,
-                algorithm='breadth',
-                category=default_category.or_subcategory(category))
+                                                   algorithm='breadth',
+                                                   category=cat)
 
         @cached_method
         def coxeter_element(self):
@@ -2236,7 +2237,6 @@ class CoxeterGroups(Category_singleton):
             if not predicate(W.one()):
                 from sage.sets.finite_enumerated_set import FiniteEnumeratedSet
                 return FiniteEnumeratedSet([])
-            s = W.simple_reflections()
 
             def succ(u_v):
                 u, v = u_v
@@ -2372,7 +2372,7 @@ class CoxeterGroups(Category_singleton):
             wi = self.apply_simple_reflection(i, side='right')
             return [(u.apply_simple_reflection(i, side='right'),
                      r.apply_conjugation_by_simple_reflection(i))
-                    for u,r in wi.bruhat_lower_covers_reflections()
+                    for u, r in wi.bruhat_lower_covers_reflections()
                     if not u.has_descent(i, side='right')] + [
                 (wi, self.parent().simple_reflection(i))]
 
@@ -3109,7 +3109,7 @@ class CoxeterGroups(Category_singleton):
 
             The cell computation uses the optional package ``coxeter3`` in
             the background if available to speed up the computation,
-            even in the different implementations implementations::
+            even in the different implementations::
 
                 sage: W = WeylGroup('A3', prefix='s')                    # optional - coxeter3
                 sage: s1,s2,s3 = W.simple_reflections()                  # optional - coxeter3
