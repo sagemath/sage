@@ -355,7 +355,7 @@ class FilteredAlgebrasWithBasis(FilteredModulesCategory):
                 sage: # needs sage.all sage.modules
                 sage: grh = h.graded_algebra(); grh is h
                 True
-                sage: grf = A.induced_graded_map(h, f); grf                             # needs sage.all
+                sage: grf = A.induced_graded_map(h, f); grf
                 Generic morphism:
                   From: Graded Algebra of An example of a filtered
                    algebra with basis: the universal enveloping
@@ -363,21 +363,21 @@ class FilteredAlgebrasWithBasis(FilteredModulesCategory):
                    product over Rational Field
                   To:   Symmetric Functions over Rational Field
                    in the homogeneous basis
-                sage: grf(xx)                                                           # needs sage.all
+                sage: grf(xx)
                 2*h[1]
-                sage: grf(yy)                                                           # needs sage.all
+                sage: grf(yy)
                 0
-                sage: grf(zz)                                                           # needs sage.all
+                sage: grf(zz)
                 0
-                sage: grf(yy**2)                                                        # needs sage.all
+                sage: grf(yy**2)
                 h[2]
-                sage: grf(xx**2)                                                        # needs sage.all
+                sage: grf(xx**2)
                 3*h[1, 1]
-                sage: grf(xx*yy*zz)                                                     # needs sage.all
+                sage: grf(xx*yy*zz)
                 h[1, 1, 1]
-                sage: grf(xx*xx*yy*yy*zz)                                               # needs sage.all
+                sage: grf(xx*xx*yy*yy*zz)
                 2*h[1, 1, 1, 1, 1]
-                sage: grf(grA.one())                                                    # needs sage.all
+                sage: grf(grA.one())
                 h[]
 
             **Example 3.**
