@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.symbolic
 """
 Contour plots
 """

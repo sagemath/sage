@@ -935,6 +935,15 @@ written.
   Sage does not know about the function ``AA()`` by default, so it needs to be
   imported before it is tested. Hence the first line in the example.
 
+  All blocks within the same docstring are linked: Variables set
+  in a doctest keep their values for the remaining doctests within the
+  same docstring. It is good practice to use different variable names for different
+  values, as it makes the data flow in the examples easier to understand
+  for human readers.  (It also makes the data flow analysis in the
+  Sage doctester more precise.)  In particular, when unrelated examples
+  appear in the same docstring, do not use the same variable name
+  for both examples.
+
 - **Preparsing:** As in Sage's console, `4/3` returns `4/3` and not
   `1.3333333333333333` as in Python 3.8. Testing occurs with full Sage
   preparsing of input within the standard Sage shell environment, as
@@ -957,6 +966,78 @@ written.
       3
       5
       7
+
+- **Wrap long doctest lines:** Note that all doctests in EXAMPLES blocks
+  get formatted as part of our HTML and PDF reference manuals. Our HTML manuals
+  are formatted using the responsive design provided by the
+  :ref:`Furo theme <spkg_furo>`. Even when the browser window is expanded to
+  make use of the full width of a wide desktop screen, the style will not
+  allow code boxes to grow arbitrarily wide.
+
+  It is best to wrap long lines when possible so that readers do not have to
+  scroll horizontally (back and forth) to follow an example.
+
+  - Try to wrap long lines somewhere around columns 80 to 88
+    and try to never exceed column 95 in the source file.
+    (Columns numbers are from the left margin in the source file;
+    these rules work no matter how deep the docstring may be nested
+    because also the formatted output will be nested.)
+
+  - If you have to break an expression at a place that is not already
+    nested in parentheses, wrap it in parentheses::
+
+      sage: (len(list(Permutations(['a', 'b', 'c', 'd', 'e', 'f', 'g'])))
+      ....:    == len(list(Permutations(7))))
+      True
+
+  - If the output in your only example is very wide and cannot be reasonably
+    reformatted to fit (for example, large symbolic matrices or numbers with many digits),
+    consider showing a smaller example first.
+
+  - No need to wrap long ``import`` statements. Typically, the ``import`` statements
+    are not the interesting parts of the doctests. Users only need to be able to
+    copy-paste them into a Sage session or source file::
+
+      sage: from sage.rings.polynomial.multi_polynomial_ring import MPolynomialRing_polydict, MPolynomialRing_polydict_domain  # this is fine
+
+  - Wrap and indent long output to maximize readability in the source code
+    and in the HTML output. But do not wrap strings::
+
+      sage: from sage.schemes.generic.algebraic_scheme import AlgebraicScheme_quasi
+      sage: P.<x, y, z> = ProjectiveSpace(2, ZZ)
+      sage: S = P.subscheme([])
+      sage: T = P.subscheme([x - y])
+      sage: U = AlgebraicScheme_quasi(S, T); U
+      Quasi-projective subscheme X - Y of Projective Space of dimension 2
+       over Integer Ring,
+        where X is defined by: (no polynomials)
+          and Y is defined by: x - y
+      sage: U._repr_()                                                                                                                                                    # this is fine
+      'Quasi-projective subscheme X - Y of Projective Space of dimension 2 over Integer Ring, where X is defined by:\n  (no polynomials)\nand Y is defined by:\n  x - y'
+
+    Also, if there is no whitespace in the doctest output where you could wrap the line,
+    do not add such whitespace. Just don't wrap the line::
+
+      sage: B47 = RibbonGraph(4,7, bipartite=True); B47
+      Ribbon graph of genus 9 and 1 boundary components
+      sage: B47.sigma()                                                                                                                                                           # this is fine
+      (1,2,3,4,5,6,7)(8,9,10,11,12,13,14)(15,16,17,18,19,20,21)(22,23,24,25,26,27,28)(29,30,31,32)(33,34,35,36)(37,38,39,40)(41,42,43,44)(45,46,47,48)(49,50,51,52)(53,54,55,56)
+
+  - Doctest tags for modularization purposes such as ``# needs sage.modules``
+    (see :ref:`section-further_conventions`) should be aligned at column 88.
+    Clean lines from consistent alignment help reduce visual clutter.
+    Moreover, at the maximum window width, only the word ``# needs`` will be
+    visible in the HTML output without horizontal scrolling, striking a
+    thoughtfully chosen balance between presenting
+    the information and reducing visual clutter. (How much can be seen may be
+    browser-dependent, of course.) In visually dense doctests, you can try to sculpt out visual space to separate
+    the test commands from the annotation.
+
+  - Doctest tags such as ``# optional - pynormaliz`` that make the doctest
+    conditional on the presence of optional packages, on the other hand,
+    should be aligned so that they are visible without having to scroll horizontally.
+    The :ref:`doctest fixer <section-fixdoctests-optional-needs>` uses
+    tab stops at columns 48, 56, 64, ... for these tags.
 
 - **Python3 print:** Python3 syntax for print must be used in Sage
   code and doctests. If you use an old-style print in doctests, it
@@ -1131,34 +1212,15 @@ framework. Here is a comprehensive list:
      Neither of this applies to files or directories which are explicitly given
      as command line arguments: those are always tested.
 
-- **optional:** A line flagged with ``optional - keyword`` is not tested unless
-  the ``--optional=keyword`` flag is passed to ``sage -t`` (see
+- **optional/needs:** A line tagged with ``optional - FEATURE``
+  or ``needs FEATURE`` is not tested unless the ``--optional=KEYWORD`` flag
+  is passed to ``sage -t`` (see
   :ref:`section-optional-doctest-flag`). The main applications are:
 
   - **optional packages:** When a line requires an optional package to be
     installed (e.g. the ``sloane_database`` package)::
 
       sage: SloaneEncyclopedia[60843]    # optional - sloane_database
-
-    .. NOTE::
-
-       If one of the first 10 lines of a file starts with any of
-       ``r""" sage.doctest: optional - keyword``
-       (or ``""" sage.doctest: optional - keyword``
-       or ``# sage.doctest: optional - keyword``
-       or ``% sage.doctest: optional - keyword``
-       or ``.. sage.doctest: optional - keyword``,
-       or any of these with different spacing),
-       then that file will be skipped unless
-       the ``--optional=keyword`` flag is passed to ``sage -t``.
-
-       This does not apply to files which are explicitly given
-       as command line arguments: those are always tested.
-
-       If you add such a line to a file, you are strongly encouraged
-       to add a note to the module-level documentation, saying that
-       the doctests in this file will be skipped unless the
-       appropriate conditions are met.
 
   - **internet:** For lines that require an internet connection::
 
@@ -1167,8 +1229,8 @@ framework. Here is a comprehensive list:
        n-state Turing machine can make on an initially blank tape before
        eventually halting.
 
-  - **bug:** For lines that describe bugs. Alternatively, use ``# known bug``
-    instead: it is an alias for ``optional bug``.
+  - **known bugs:** For lines that describe known bugs, you can use ``# optional - bug``,
+    although ``# known bug`` is preferred.
 
     .. CODE-BLOCK:: rest
 
@@ -1179,20 +1241,54 @@ framework. Here is a comprehensive list:
             sage: 2+2  # known bug
             5
 
+  - **modularization:** To enable
+    :ref:`separate testing of the distribution packages <section-doctesting-venv>`
+    of the modularized Sage library, doctests that depend on features provided
+    by other distribution packages can be tagged ``# needs FEATURE``.
+    For example:
+
+    .. CODE-BLOCK:: rest
+
+        Consider the following calculation::
+
+            sage: a = AA(2).sqrt()  # needs sage.rings.number_field
+            sage: b = sqrt(3)       # needs sage.symbolic
+            sage: a + AA(b)         # needs sage.rings.number_field sage.symbolic
+            3.146264369941973?
+
   .. NOTE::
 
-      - Any words after ``# optional`` are interpreted as a list of
+      - Any words after ``# optional`` and ``# needs``  are interpreted as a list of
         package (spkg) names or other feature tags, separated by spaces.
 
       - Any punctuation other than underscores (``_``) and periods (``.``),
         that is, commas, hyphens, semicolons, ..., after the
         first word ends the list of packages.  Hyphens or colons between the
         word ``optional`` and the first package name are allowed.  Therefore,
-        you should not write ``optional: needs package CHomP`` but simply
-        ``optional: CHomP``.
+        you should not write ``# optional - depends on package CHomP`` but simply
+        ``# optional - CHomP``.
 
-      - Optional tags are case-insensitive, so you could also write ``optional:
+      - Optional tags are case-insensitive, so you could also write ``# optional -
         chOMP``.
+
+  If ``# optional`` or ``# needs`` is placed right after the ``sage:`` prompt,
+  it is a block-scoped tag, which applies to all doctest lines until
+  a blank line is encountered.
+
+  These tags can also be applied to an entire file. If one of the first 10 lines
+  of a file starts with any of ``r""" sage.doctest: optional - FEATURE``,
+  ``# sage.doctest: needs FEATURE``, or ``.. sage.doctest: optional - FEATURE``
+  (in ``.rst`` files), etc., then this applies to all doctests in this file.
+
+  When a file is skipped that was explicitly given as a command line argument,
+  a warning is displayed.
+
+  .. NOTE::
+
+       If you add such a line to a file, you are strongly encouraged
+       to add a note to the module-level documentation, saying that
+       the doctests in this file will be skipped unless the
+       appropriate conditions are met.
 
 - **indirect doctest:** in the docstring of a function ``A(...)``, a line
   calling ``A`` and in which the name ``A`` does not appear should have this

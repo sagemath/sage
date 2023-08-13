@@ -486,7 +486,7 @@ class GenericProduct(CartesianProductPoset, GenericGrowthGroup):
         elif data is None:
             raise ValueError('%s cannot be converted.' % (data,))
 
-        elif type(data) == self.element_class and data.parent() == self:
+        elif type(data) is self.element_class and data.parent() == self:
             return data
 
         elif isinstance(data, str):

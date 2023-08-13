@@ -125,18 +125,20 @@ def treedecomposition_exact(G, lb=-1):
 
     EXAMPLES::
 
-        sage: import sage.graphs.graph_decompositions.tdlib as tdlib # optional - tdlib
-        sage: G = graphs.HouseGraph()                                # optional - tdlib
-        sage: T = tdlib.treedecomposition_exact(G)                   # optional - tdlib
-        sage: T.show(vertex_size=2000)                               # optional - tdlib
+        sage: # optional - tdlib
+        sage: import sage.graphs.graph_decompositions.tdlib as tdlib
+        sage: G = graphs.HouseGraph()
+        sage: T = tdlib.treedecomposition_exact(G)
+        sage: T.show(vertex_size=2000)
 
     TESTS::
 
-        sage: import sage.graphs.graph_decompositions.tdlib as tdlib # optional - tdlib
-        sage: G = graphs.HouseGraph()                                # optional - tdlib
-        sage: T = tdlib.treedecomposition_exact(G)                   # optional - tdlib
-        sage: G = graphs.PetersenGraph()                             # optional - tdlib
-        sage: T = tdlib.treedecomposition_exact(G)                   # optional - tdlib
+        sage: # optional - tdlib
+        sage: import sage.graphs.graph_decompositions.tdlib as tdlib
+        sage: G = graphs.HouseGraph()
+        sage: T = tdlib.treedecomposition_exact(G)
+        sage: G = graphs.PetersenGraph()
+        sage: T = tdlib.treedecomposition_exact(G)
 
     """
     cdef vector[unsigned int] V_G, E_G, E_T
@@ -175,10 +177,11 @@ def get_width(T):
 
     EXAMPLES::
 
-        sage: import sage.graphs.graph_decompositions.tdlib as tdlib # optional - tdlib
-        sage: G = graphs.PetersenGraph()                             # optional - tdlib
-        sage: T = tdlib.treedecomposition_exact(G)                   # optional - tdlib
-        sage: tdlib.get_width(T)                                     # optional - tdlib
+        sage: # optional - tdlib
+        sage: import sage.graphs.graph_decompositions.tdlib as tdlib
+        sage: G = graphs.PetersenGraph()
+        sage: T = tdlib.treedecomposition_exact(G)
+        sage: tdlib.get_width(T)
         4
     """
     return (max(len(x) for x in T) - 1) if T else -1

@@ -901,7 +901,7 @@ class ManifoldSubset(UniqueRepresentation, Parent):
             sage: U = M.open_subset('U'); V = M.open_subset('V'); W = M.open_subset('W')
             sage: D = M.subset_digraph(); D
             Digraph on 4 vertices
-            sage: D.edges(key=lambda e: (e[0]._name, e[1]._name))
+            sage: D.edges(sort=True, key=lambda e: (e[0]._name, e[1]._name))
             [(Set {U} of open subsets of the 3-dimensional differentiable manifold M,
               Set {M} of open subsets of the 3-dimensional differentiable manifold M,
               None),

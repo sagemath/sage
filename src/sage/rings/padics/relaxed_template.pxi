@@ -811,7 +811,7 @@ cdef class RelaxedElement(pAdicGenericElement):
 
     def __bool__(self):
         r"""
-        Return ``True`` if this element is indistinguishable from zero.
+        Return ``True`` if this element is distinguishable from zero.
 
         TESTS::
 

@@ -731,16 +731,15 @@ def ToricCode(P,F):
          [36, 5] linear code over GF(7)
          sage: C.minimum_distance()
          24
-         sage: C.minimum_distance(algorithm="guava")  # optional - gap_packages (Guava package)
-         ...
-         24
+         sage: C.minimum_distance(algorithm="guava")  # optional - gap_package_guava
+         ...24
          sage: C = codes.ToricCode([[-2,-2],[-1,-2],[-1,-1],[-1,0],
          ....:                      [0,-1],[0,0],[0,1],[1,-1],[1,0]], GF(5))
          sage: C
          [16, 9] linear code over GF(5)
          sage: C.minimum_distance()
          6
-         sage: C.minimum_distance(algorithm="guava")  # optional - gap_packages (Guava package)
+         sage: C.minimum_distance(algorithm="guava")  # optional - gap_package_guava
          6
          sage: C = codes.ToricCode([[0,0],[1,1],[1,2],[1,3],[1,4],[2,1],
          ....:                      [2,2],[2,3],[3,1],[3,2],[4,1]], GF(8,"a"))

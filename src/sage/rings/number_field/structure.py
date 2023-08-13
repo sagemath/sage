@@ -84,8 +84,8 @@ class NumberFieldStructure(UniqueRepresentation):
         sage: NumberFieldStructure(K) is NumberFieldStructure(L)
         False
         sage: from sage.rings.number_field.structure import NameChange
-        sage: KK.<j> = NumberField(x^2+1, structure=NameChange(K))
-        sage: LL.<j> = NumberField(x^2+1, structure=NameChange(L))
+        sage: KK.<j> = NumberField(x^2 + 1, structure=NameChange(K))
+        sage: LL.<j> = NumberField(x^2 + 1, structure=NameChange(L))
         sage: KK is LL
         False
 

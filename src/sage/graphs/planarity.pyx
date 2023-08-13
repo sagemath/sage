@@ -30,7 +30,7 @@ cdef extern from "planarity/graph.h":
     cdef int gp_SortVertices(graphP theGraph)
 
 
-def is_planar(g, kuratowski=False, set_pos=False, set_embedding=False, circular=None):
+def is_planar(g, kuratowski=False, set_pos=False, set_embedding=False):
     r"""
     Check whether ``g`` is planar using Boyer's planarity algorithm.
 
@@ -55,8 +55,6 @@ def is_planar(g, kuratowski=False, set_pos=False, set_embedding=False, circular=
       combinatorial embedding returned (see
       :meth:`~sage.graphs.generic_graph.GenericGraph.get_embedding`)
 
-    - ``circular`` -- deprecated argument
-
     EXAMPLES::
 
         sage: G = graphs.DodecahedralGraph()
@@ -72,17 +70,18 @@ def is_planar(g, kuratowski=False, set_pos=False, set_embedding=False, circular=
     vertices.  In fact, to try to track down a segfault, we do it
     twice. ::
 
-        sage: import networkx.generators.atlas  # long time                                             # optional - networkx
-        sage: atlas_graphs = [Graph(i) for i in networkx.generators.atlas.graph_atlas_g()] # long time  # optional - networkx
-        sage: a = [i for i in [1..1252] if atlas_graphs[i].is_planar()] # long time                     # optional - networkx
-        sage: b = [i for i in [1..1252] if atlas_graphs[i].is_planar()] # long time                     # optional - networkx
-        sage: a == b # long time                                                                        # optional - networkx
+        sage: # long time, needs networkx
+        sage: import networkx.generators.atlas
+        sage: atlas_graphs = [Graph(i) for i in networkx.generators.atlas.graph_atlas_g()]
+        sage: a = [i for i in [1..1252] if atlas_graphs[i].is_planar()]
+        sage: b = [i for i in [1..1252] if atlas_graphs[i].is_planar()]
+        sage: a == b
         True
 
     There were some problems with ``set_pos`` stability in the past,
     so let's check if this runs without exception::
 
-        sage: for i, g in enumerate(atlas_graphs):           # long time                                # optional - networkx
+        sage: for i, g in enumerate(atlas_graphs):      # long time                     # needs networkx
         ....:     if (not g.is_connected() or i == 0):
         ....:         continue
         ....:     _ = g.is_planar(set_embedding=True, set_pos=True)
@@ -97,10 +96,6 @@ def is_planar(g, kuratowski=False, set_pos=False, set_embedding=False, circular=
             ....:     assert (hasattr(G, '_pos') and G._pos is not None) == set_pos, (set_embedding, set_pos)
 
     """
-    if circular is not None:
-        from sage.misc.superseded import deprecation
-        deprecation(33759, 'the circular argument of is_planar is deprecated and has no effect')
-
     if set_pos and not g.is_connected():
         raise ValueError("is_planar() cannot set vertex positions for a disconnected graph")
 

@@ -120,7 +120,7 @@ def graph6_to_plot(graph6):
     EXAMPLES::
 
         sage: from sage.graphs.graph_database import graph6_to_plot
-        sage: type(graph6_to_plot('D??'))                                               # optional - sage.plot
+        sage: type(graph6_to_plot('D??'))                                               # needs sage.plot
         <class 'sage.plot.graphics.Graphics'>
     """
     g = Graph(str(graph6))

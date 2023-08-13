@@ -122,13 +122,15 @@ import math
 from sage.rings.padics.factory import Qp
 from sage.rings.padics.precision_error import PrecisionError
 
-import sage.rings.all as rings
 import sage.rings.abc
+
+from sage.rings.infinity import Infinity as oo
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
+from sage.rings.rational_field import QQ
+from sage.rings.real_mpfr import RealField
+from sage.rings.real_mpfr import RR
 import sage.groups.generic as generic
-from sage.libs.pari.all import pari, PariError
-from cypari2.pari_instance import prec_words_to_bits
 from sage.structure.sequence import Sequence
 from sage.structure.richcmp import richcmp
 
@@ -141,7 +143,11 @@ from sage.schemes.generic.morphism import is_SchemeMorphism
 
 from .constructor import EllipticCurve
 
-oo = rings.infinity       # infinity
+try:
+    from sage.libs.pari.all import pari, PariError
+    from cypari2.pari_instance import prec_words_to_bits
+except ImportError:
+    PariError = ()
 
 
 class EllipticCurvePoint(SchemeMorphism_point_projective_ring):
@@ -1182,16 +1188,24 @@ class EllipticCurvePoint_field(SchemeMorphism_point_abelian_variety_field):
             pts = Q.division_points(p)
         return (Q, k)
 
-    def set_order(self, value, *, check=True):
+    def set_order(self, value=None, *, multiple=None, check=True):
         r"""
-        Set the value of ``self._order`` to ``value``.
+        Set the cached order of this point (i.e., the value of
+        ``self._order``) to the given ``value``.
 
-        Use this when you know a priori the order of this point to avoid a
-        potentially expensive order calculation.
+        Alternatively, when ``multiple`` is given, this method will
+        first run :func:`~sage.groups.generic.order_from_multiple`
+        to determine the exact order from the given multiple of the
+        point order, then cache the result.
+
+        Use this when you know a priori the order of this point, or
+        a multiple of the order, to avoid a potentially expensive
+        order calculation.
 
         INPUT:
 
         - ``value`` -- positive integer
+        - ``multiple`` -- positive integer; mutually exclusive with ``value``
 
         OUTPUT: ``None``
 
@@ -1206,6 +1220,10 @@ class EllipticCurvePoint_field(SchemeMorphism_point_abelian_variety_field):
             sage: G.set_order(2)                                                        # optional - sage.rings.finite_rings
             sage: 2*G                                                                   # optional - sage.rings.finite_rings
             (0 : 1 : 0)
+            sage: G = E(0, 6)                                                           # optional - sage.rings.finite_rings
+            sage: G.set_order(multiple=12)                                              # optional - sage.rings.finite_rings
+            sage: G._order                                                              # optional - sage.rings.finite_rings
+            3
 
         We now give a more interesting case, the NIST-P521 curve. Its
         order is too big to calculate with Sage, and takes a long time
@@ -1227,7 +1245,31 @@ class EllipticCurvePoint_field(SchemeMorphism_point_abelian_variety_field):
             (0 : 1 : 0)
             sage: proof.arithmetic(prev_proof_state) # restore state
 
-        It is an error to pass a `value` equal to `0`::
+        Using ``.set_order()`` with a ``multiple=`` argument can
+        be used to compute a point's order *significantly* faster
+        than calling :meth:`order` if the point is already known
+        to be `m`-torsion::
+
+            sage: F.<a> = GF((10007, 23))
+            sage: E = EllipticCurve(F, [9,9])
+            sage: n = E.order()
+            sage: m = 5 * 47 * 139 * 1427 * 2027 * 4831 * 275449 * 29523031
+            sage: assert m.divides(n)
+            sage: P = n/m * E.lift_x(6747+a)
+            sage: assert m * P == 0
+            sage: P.set_order(multiple=m)   # compute exact order
+            sage: factor(m // P.order())    # order is now cached
+            47 * 139
+
+        The algorithm used internally for this functionality is
+        :meth:`~sage.groups.generic.order_from_multiple`.
+        Indeed, simply calling :meth:`order` on ``P`` would take
+        much longer since factoring ``n`` is fairly expensive::
+
+            sage: n == m * 6670822796985115651 * 441770032618665681677 * 9289973478285634606114927
+            True
+
+        It is an error to pass a ``value`` equal to `0`::
 
             sage: E = EllipticCurve(GF(7), [0, 1])  # This curve has order 12           # optional - sage.rings.finite_rings
             sage: G = E.random_point()                                                  # optional - sage.rings.finite_rings
@@ -1251,9 +1293,8 @@ class EllipticCurvePoint_field(SchemeMorphism_point_abelian_variety_field):
             ...
             ValueError: Value 11 illegal: 11 * (5 : 0 : 1) is not the identity
 
-        However, ``set_order`` can be fooled, though it's not likely in "real cases
-        of interest". For instance, the order can be set to a multiple the
-        actual order::
+        However, ``set_order`` can be fooled. For instance, the order
+        can be set to a multiple the actual order::
 
             sage: E = EllipticCurve(GF(7), [0, 1])  # This curve has order 12           # optional - sage.rings.finite_rings
             sage: G = E(5, 0)   # G has order 2                                         # optional - sage.rings.finite_rings
@@ -1261,10 +1302,44 @@ class EllipticCurvePoint_field(SchemeMorphism_point_abelian_variety_field):
             sage: G.order()                                                             # optional - sage.rings.finite_rings
             8
 
+        TESTS:
+
+        Check that some invalid inputs are caught::
+
+            sage: E = EllipticCurve(GF(101), [5,5])
+            sage: P = E.lift_x(11)
+            sage: P.set_order(17, multiple=119)
+            Traceback (most recent call last):
+            ...
+            ValueError: cannot pass both value and multiple
+            sage: P.set_order(17)
+            sage: P.set_order(multiple=119+1)
+            Traceback (most recent call last):
+            ...
+            ValueError: previously cached order 17 does not divide given multiple 120
+            sage: P.set_order(119)
+            Traceback (most recent call last):
+            ...
+            ValueError: value 119 contradicts previously cached order 17
+
         AUTHORS:
 
         - Mariah Lenox (2011-02-16)
+        - Lorenz Panny (2022): add ``multiple=`` option
         """
+        if multiple is not None:
+            if value is not None:
+                raise ValueError('cannot pass both value and multiple')
+
+            if hasattr(self, '_order'):  # already known
+                if check and not self._order.divides(multiple):
+                    raise ValueError(f'previously cached order {self._order} does not divide given multiple {multiple}')
+                return
+
+            from sage.groups.generic import order_from_multiple
+            value = order_from_multiple(self, multiple, check=check)
+            check = False
+
         value = Integer(value)
 
         if check:
@@ -1277,6 +1352,9 @@ class EllipticCurvePoint_field(SchemeMorphism_point_abelian_variety_field):
                 raise ValueError('Value %s illegal: outside max Hasse bound' % value)
             if value * self != E(0):
                 raise ValueError('Value %s illegal: %s * %s is not the identity' % (value, value, self))
+            if hasattr(self, '_order') and self._order != value:  # already known
+                raise ValueError(f'value {value} contradicts previously cached order {self._order}')
+
         self._order = value
 
     # #############################  end  ################################
@@ -2293,9 +2371,9 @@ class EllipticCurvePoint_number_field(EllipticCurvePoint_field):
         K = E.base_field()
         if e is None:
             try:
-                e = K.embeddings(rings.RealField())[0]
+                e = K.embeddings(RealField())[0]
             except IndexError:
-                e = K.embeddings(rings.ComplexField())[0]
+                e = K.embeddings(ComplexField())[0]
 
         # If there is only one component, the result is True:
         if not isinstance(e.codomain(), sage.rings.abc.RealField):  # complex embedding
@@ -2405,7 +2483,7 @@ class EllipticCurvePoint_number_field(EllipticCurvePoint_field):
         xyz = list(Q)
         e = min([c.valuation(P) for c in xyz])
         if e != 0:
-            if K is rings.QQ:
+            if K is QQ:
                 pi = P
             else:
                 pi = K.uniformizer(P)
@@ -2711,30 +2789,30 @@ class EllipticCurvePoint_number_field(EllipticCurvePoint_field):
             1.06248137652528
         """
         if self.has_finite_order():
-            return rings.QQ(0)
+            return QQ(0)
 
         E = self.curve()
         K = E.base_ring()
 
         if precision is None:
-            precision = rings.RealField().precision()
+            precision = RealField().precision()
 
         known_prec = -1
         try:
             height = self.__height
             known_prec = height.prec()
             if known_prec > precision:
-                height = rings.RealField(precision)(height)
+                height = RealField(precision)(height)
         except AttributeError:
             pass
 
         if known_prec < precision:
-            if algorithm == 'pari' and K is rings.QQ:
+            if algorithm == 'pari' and K is QQ:
                 Emin = E.minimal_model()
                 iso = E.isomorphism_to(Emin)
                 P = iso(self)
                 h = Emin.pari_curve().ellheight(P, precision=precision)
-                height = rings.RealField(precision)(h)
+                height = RealField(precision)(h)
             else:
                 height = (self.non_archimedean_local_height(prec=precision)
                           + self.archimedean_local_height(prec=precision))
@@ -2868,8 +2946,8 @@ class EllipticCurvePoint_number_field(EllipticCurvePoint_field):
 
             if prec is None:
                 prec = 53
-            if K is rings.QQ:
-                v = K.embeddings(rings.RR)[0]
+            if K is QQ:
+                v = K.embeddings(RR)[0]
                 h = self.archimedean_local_height(v, prec+10)
             else:
                 r1, r2 = K.signature()
@@ -2885,7 +2963,7 @@ class EllipticCurvePoint_number_field(EllipticCurvePoint_field):
         prec_v = v.codomain().prec()
         if prec is None:
             prec = prec_v
-        if K is rings.QQ:
+        if K is QQ:
             v = K.embeddings(RealField())[0]
         v_inf = refine_embedding(v, Infinity)
         v_is_real = v_inf(K.gen()).imag().is_zero()
@@ -2943,7 +3021,7 @@ class EllipticCurvePoint_number_field(EllipticCurvePoint_field):
             beta = False
         lam = -t.abs().log()
         mu = 0
-        four_to_n = rings.QQ(1)
+        four_to_n = QQ(1)
 
         for n in range(nterms):
             if beta:
@@ -3079,14 +3157,14 @@ class EllipticCurvePoint_number_field(EllipticCurvePoint_field):
             -2/3*log(2)
         """
         if prec:
-            log = lambda x: rings.RealField(prec)(x).log()
+            log = lambda x: RealField(prec)(x).log()
         else:
             from sage.functions.log import log
 
         if v is None:
             D = self.curve().discriminant()
             K = self.curve().base_ring()
-            if K is rings.QQ:
+            if K is QQ:
                 factorD = D.factor()
                 if self[0] == 0:
                     c = 1
@@ -3149,9 +3227,9 @@ class EllipticCurvePoint_number_field(EllipticCurvePoint_field):
             r = -C/4
         r -= offset/6
         if not r:
-            return rings.QQ.zero()
+            return QQ.zero()
         else:
-            if E.base_ring() is rings.QQ:
+            if E.base_ring() is QQ:
                 Nv = Integer(v)
             else:
                 Nv = v.norm()

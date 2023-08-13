@@ -98,7 +98,7 @@ def unicode_art(*obj, **kwds):
             ⎮ x + π
             ⌡
         sage: ident = lambda n: identity_matrix(ZZ, n)
-        sage: unicode_art(ident(1), ident(2), ident(3), sep=' : ')
+        sage: unicode_art(ident(1), ident(2), ident(3), sep=' : ')                      # needs sage.modules
                       ⎛1 0 0⎞
               ⎛1 0⎞   ⎜0 1 0⎟
         (1) : ⎝0 1⎠ : ⎝0 0 1⎠
@@ -107,7 +107,7 @@ def unicode_art(*obj, **kwds):
     an unicode art separator::
 
         sage: sep_line = unicode_art('\n'.join(' ⎟ ' for _ in range(5)), baseline=5)
-        sage: unicode_art(*AlternatingSignMatrices(3),
+        sage: unicode_art(*AlternatingSignMatrices(3),                                  # needs sage.combinat sage.modules
         ....:             separator=sep_line, sep_baseline=1)
                 ⎟         ⎟         ⎟            ⎟         ⎟         ⎟
         ⎛1 0 0⎞ ⎟ ⎛0 1 0⎞ ⎟ ⎛1 0 0⎞ ⎟ ⎛ 0  1  0⎞ ⎟ ⎛0 0 1⎞ ⎟ ⎛0 1 0⎞ ⎟ ⎛0 0 1⎞

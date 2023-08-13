@@ -45,9 +45,11 @@ class GaloisGroup_v1(SageObject):
 
     EXAMPLES::
 
+        sage: # needs sage.symbolic
         sage: from sage.rings.number_field.galois_group import GaloisGroup_v1
         sage: K = QQ[2^(1/3)]
-        sage: G = GaloisGroup_v1(K.absolute_polynomial().galois_group(pari_group=True), K); G
+        sage: pK = K.absolute_polynomial()
+        sage: G = GaloisGroup_v1(pK.galois_group(pari_group=True), K); G
         ...DeprecationWarning: GaloisGroup_v1 is deprecated; please use GaloisGroup_v2
         See https://github.com/sagemath/sage/issues/28782 for details.
         Galois group PARI group [6, -1, 2, "S3"] of degree 3 of the
@@ -96,6 +98,8 @@ class GaloisGroup_v1(SageObject):
             sage: G = GaloisGroup_v1(K.absolute_polynomial().galois_group(pari_group=True), K)
             ...DeprecationWarning: GaloisGroup_v1 is deprecated; please use GaloisGroup_v2
             See https://github.com/sagemath/sage/issues/28782 for details.
+
+            sage: # needs sage.symbolic
             sage: L = QQ[sqrt(2)]
             sage: H = GaloisGroup_v1(L.absolute_polynomial().galois_group(pari_group=True), L)
             sage: H == G
@@ -125,6 +129,8 @@ class GaloisGroup_v1(SageObject):
             sage: G = GaloisGroup_v1(K.absolute_polynomial().galois_group(pari_group=True), K)
             ...DeprecationWarning: GaloisGroup_v1 is deprecated; please use GaloisGroup_v2
             See https://github.com/sagemath/sage/issues/28782 for details.
+
+            sage: # needs sage.symbolic
             sage: L = QQ[sqrt(2)]
             sage: H = GaloisGroup_v1(L.absolute_polynomial().galois_group(pari_group=True), L)
             sage: H != G

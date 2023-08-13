@@ -59,9 +59,9 @@ def normalize_names_markov(names, markov_trace_version):
     if markov_trace_version:
         names = normalize_names(4, names)
     else:
-        if type(names) == tuple:
+        if isinstance(names, tuple):
             names = list(names)
-        if type(names) == list and len(names) > 3:
+        if isinstance(names, list) and len(names) > 3:
             names = normalize_names(3, names[0:3])
         else:
             names = normalize_names(3, names)
@@ -641,10 +641,10 @@ class CubicHeckeExtensionRing(LaurentPolynomialRing_mpair):
         # corresponding specialized extension ring.
         # ----------------------------------------------------------------------
 
-        if type(im_cubic_equation_roots) == tuple:
+        if isinstance(im_cubic_equation_roots, tuple):
             im_cubic_equation_roots = list(im_cubic_equation_roots)
 
-        if type(im_cubic_equation_roots) != list:
+        if not isinstance(im_cubic_equation_roots, list):
             raise TypeError('cubic_equation_roots must be a list of three elements')
 
         if len(im_cubic_equation_roots) != 3:
@@ -1226,10 +1226,10 @@ class CubicHeckeRingOfDefinition(Localization):
         # ----------------------------------------------------------------------
         # setting the base_ring  according to the cubic_equation_parameters
         # ----------------------------------------------------------------------
-        if type(im_cubic_equation_parameters) == tuple:
+        if isinstance(im_cubic_equation_parameters, tuple):
             im_cubic_equation_parameters = list(im_cubic_equation_parameters)
 
-        if type(im_cubic_equation_parameters) != list:
+        if not isinstance(im_cubic_equation_parameters, list):
             raise TypeError('cubic_equation_parameters must be a list of three elements')
 
         if len(im_cubic_equation_parameters) != 3:

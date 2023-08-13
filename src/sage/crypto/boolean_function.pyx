@@ -67,7 +67,7 @@ cdef walsh_hadamard(long *f, int ldn):
     cdef long n, ldm, m, mh, t1, t2, r, j, u, v
     n = 1 << ldn
     for ldm in range(1, ldn+1):
-        m  = (1 << ldm)
+        m = (1 << ldm)
         mh = m // 2
         # If this is ``for r in range(0, n, m):``, then Cython generates horrible C code
         for 0 <= r < n by m:
@@ -101,7 +101,7 @@ cdef long yellow_code(unsigned long a):
     cdef unsigned long r = a
     while(s):
         sig_check()
-        r ^= ( (r&m) << s )
+        r ^= (r&m) << s
         s >>= 1
         m ^= (m<<s)
     return r
@@ -136,7 +136,7 @@ cdef reed_muller(mp_limb_t* f, int ldn):
         f[r] = yellow_code(f[r])
     # inter word transform
     for ldm in range(1, ldn+1):
-        m  = 1 << ldm
+        m = 1 << ldm
         mh = m // 2
         # If this is ``for r in range(0, n, m):``, then Cython generates horrible C code
         for 0 <= r < n by m:
@@ -296,7 +296,7 @@ cdef class BooleanFunction(SageObject):
                 raise ValueError("the length of the truth table must be a power of 2")
         from types import GeneratorType
         if isinstance(x, (list,tuple,GeneratorType)):
-        # initialisation from a truth table
+            # initialisation from a truth table
 
             # first, check the length
             L = ZZ(len(x))
@@ -308,20 +308,21 @@ cdef class BooleanFunction(SageObject):
             # then, initialize our bitset
             bitset_init(self._truth_table, <mp_bitcnt_t> L)
             for i in range(L):
-                bitset_set_to(self._truth_table, i, x[i])#int(x[i])&1)
+                bitset_set_to(self._truth_table, i, x[i])  # int(x[i])&1)
 
         elif isinstance(x, BooleanPolynomial):
-        # initialisation from a Boolean polynomial
+            # initialisation from a Boolean polynomial
             self._nvariables = ZZ(x.parent().ngens())
             bitset_init(self._truth_table, <mp_bitcnt_t> (1<<self._nvariables))
             bitset_zero(self._truth_table)
             for m in x:
-                i = sum( [1<<k for k in m.iterindex()] )
+                i = sum([1<<k for k in m.iterindex()])
                 bitset_set(self._truth_table, i)
-            reed_muller(self._truth_table.bits, ZZ(self._truth_table.limbs).exact_log(2) )
+            reed_muller(self._truth_table.bits,
+                        ZZ(self._truth_table.limbs).exact_log(2))
 
         elif isinstance(x, (int, Integer)):
-        # initialisation to the zero function
+            # initialisation to the zero function
             self._nvariables = ZZ(x)
             bitset_init(self._truth_table, <mp_bitcnt_t> (1<<self._nvariables))
             bitset_zero(self._truth_table)
@@ -338,10 +339,10 @@ cdef class BooleanFunction(SageObject):
                     FiniteField_givaro = ()
                 if isinstance(K, FiniteField_givaro):  # the ordering is not the same in this case
                     for u in K:
-                        bitset_set_to(self._truth_table, ZZ(u._vector_().list(),2) , (x(u)).trace())
+                        bitset_set_to(self._truth_table, ZZ(u._vector_().list(),2), (x(u)).trace())
                 else:
                     for i,u in enumerate(K):
-                        bitset_set_to(self._truth_table, i , (x(u)).trace())
+                        bitset_set_to(self._truth_table, i, (x(u)).trace())
         elif isinstance(x, BooleanFunction):
             self._nvariables = x.nvariables()
             bitset_init(self._truth_table, <mp_bitcnt_t> (1<<self._nvariables))
@@ -372,7 +373,7 @@ cdef class BooleanFunction(SageObject):
         EXAMPLES::
 
             sage: from sage.crypto.boolean_function import BooleanFunction
-            sage: B=BooleanFunction([0, 1, 1, 0, 1, 0, 0, 0])
+            sage: B = BooleanFunction([0, 1, 1, 0, 1, 0, 0, 0])
             sage: (~B).truth_table(format='int')
             (1, 0, 0, 1, 0, 1, 1, 1)
         """
@@ -388,8 +389,8 @@ cdef class BooleanFunction(SageObject):
         EXAMPLES::
 
             sage: from sage.crypto.boolean_function import BooleanFunction
-            sage: A=BooleanFunction([0, 1, 0, 1, 1, 0, 0, 1])
-            sage: B=BooleanFunction([0, 1, 1, 0, 1, 0, 0, 0])
+            sage: A = BooleanFunction([0, 1, 0, 1, 1, 0, 0, 1])
+            sage: B = BooleanFunction([0, 1, 1, 0, 1, 0, 0, 0])
             sage: (A+B).truth_table(format='int')
             (0, 0, 1, 1, 0, 0, 0, 1)
 
@@ -406,7 +407,7 @@ cdef class BooleanFunction(SageObject):
             ...
             ValueError: the two Boolean functions must have the same number of variables
         """
-        if (self.nvariables() != other.nvariables() ):
+        if self.nvariables() != other.nvariables():
             raise ValueError("the two Boolean functions must have the same number of variables")
         cdef BooleanFunction res = BooleanFunction(self)
         bitset_xor(res._truth_table, res._truth_table, other._truth_table)
@@ -420,8 +421,8 @@ cdef class BooleanFunction(SageObject):
         EXAMPLES::
 
             sage: from sage.crypto.boolean_function import BooleanFunction
-            sage: A=BooleanFunction([0, 1, 0, 1, 1, 0, 0, 1])
-            sage: B=BooleanFunction([0, 1, 1, 0, 1, 0, 0, 0])
+            sage: A = BooleanFunction([0, 1, 0, 1, 1, 0, 0, 1])
+            sage: B = BooleanFunction([0, 1, 1, 0, 1, 0, 0, 0])
             sage: (A*B).truth_table(format='int')
             (0, 1, 0, 0, 1, 0, 0, 0)
 
@@ -438,7 +439,7 @@ cdef class BooleanFunction(SageObject):
             ...
             ValueError: the two Boolean functions must have the same number of variables
         """
-        if (self.nvariables() != other.nvariables() ):
+        if self.nvariables() != other.nvariables():
             raise ValueError("the two Boolean functions must have the same number of variables")
         cdef BooleanFunction res = BooleanFunction(self)
         bitset_and(res._truth_table, res._truth_table, other._truth_table)
@@ -452,8 +453,8 @@ cdef class BooleanFunction(SageObject):
         EXAMPLES::
 
             sage: from sage.crypto.boolean_function import BooleanFunction
-            sage: A=BooleanFunction([0, 1, 0, 1])
-            sage: B=BooleanFunction([0, 1, 1, 0])
+            sage: A = BooleanFunction([0, 1, 0, 1])
+            sage: B = BooleanFunction([0, 1, 1, 0])
             sage: (A|B).truth_table(format='int')
             (0, 1, 0, 1, 0, 1, 1, 0)
 
@@ -482,11 +483,12 @@ cdef class BooleanFunction(SageObject):
                 res[i+L]=other[i]
             return res
 
-        memcpy(res._truth_table.bits             , self._truth_table.bits, nb_limbs * sizeof(unsigned long))
-        memcpy(&(res._truth_table.bits[nb_limbs]), other._truth_table.bits, nb_limbs * sizeof(unsigned long))
+        memcpy(res._truth_table.bits,
+               self._truth_table.bits, nb_limbs * sizeof(unsigned long))
+        memcpy(&(res._truth_table.bits[nb_limbs]),
+               other._truth_table.bits, nb_limbs * sizeof(unsigned long))
 
         return res
-
 
     def algebraic_normal_form(self):
         """
@@ -517,14 +519,14 @@ cdef class BooleanFunction(SageObject):
         for i in range(anf.limbs):
             if anf.bits[i]:
                 inf = i*sizeof(long)*8
-                sup = min( (i+1)*sizeof(long)*8 , (1<<self._nvariables) )
+                sup = min((i+1)*sizeof(long)*8, (1<<self._nvariables))
                 for j in range(inf, sup):
                     if bitset_in(anf,j):
                         m = R(1)
                         for k in range(self._nvariables):
                             if (j>>k)&1:
                                 m *= G[k]
-                        P+=m
+                        P += m
         bitset_free(anf)
         return P
 
@@ -710,7 +712,7 @@ cdef class BooleanFunction(SageObject):
         cdef mp_bitcnt_t i,n
 
         if self._walsh_hadamard_transform is None:
-            n =  self._truth_table.size
+            n = self._truth_table.size
             temp = <long *>sig_malloc(sizeof(long)*n)
 
             for i in range(n):
@@ -748,7 +750,7 @@ cdef class BooleanFunction(SageObject):
 
     def is_balanced(self):
         """
-        Return True if the function takes the value True half of the time.
+        Return ``True`` if the function takes the value ``True`` half of the time.
 
         EXAMPLES::
 
@@ -764,8 +766,10 @@ cdef class BooleanFunction(SageObject):
 
     def is_symmetric(self):
         """
-        Return True if the function is symmetric, i.e. invariant under
-        permutation of its input bits. Another way to see it is that the
+        Return ``True`` if the function is symmetric, i.e. invariant under
+        permutation of its input bits.
+
+        Another way to see it is that the
         output depends only on the Hamming weight of the input.
 
         EXAMPLES::
@@ -781,18 +785,19 @@ cdef class BooleanFunction(SageObject):
             True
         """
         cdef mp_bitcnt_t i
-        cdef list T = [ self(2**i-1) for i in range(self._nvariables+1) ]
+        cdef list T = [self(2**i-1) for i in range(self._nvariables+1)]
         for i in range(1 << self._nvariables):
             sig_check()
-            if T[ hamming_weight(i) ] != bitset_in(self._truth_table, i):
+            if T[hamming_weight(i)] != bitset_in(self._truth_table, i):
                 return False
         return True
 
     def nonlinearity(self):
         """
-        Return the nonlinearity of the function. This is the distance
-        to the linear functions, or the number of output ones need to
-        change to obtain a linear function.
+        Return the nonlinearity of the function.
+
+        This is the distance to the linear functions, or the number of
+        output ones need to change to obtain a linear function.
 
         EXAMPLES::
 
@@ -808,12 +813,12 @@ cdef class BooleanFunction(SageObject):
         cdef long w
         if self._nonlinearity is None:
             self._nonlinearity = \
-                ( (1<<self._nvariables) - max( [abs(w) for w in self.walsh_hadamard_transform()] ) ) >> 1
+                ((1<<self._nvariables) - max(abs(w) for w in self.walsh_hadamard_transform())) >> 1
         return self._nonlinearity
 
     def is_bent(self):
         """
-        Return True if the function is bent.
+        Return ``True`` if the function is bent.
 
         EXAMPLES::
 
@@ -832,7 +837,7 @@ cdef class BooleanFunction(SageObject):
         correlation immune of order `m`.
 
         A Boolean function is said to be correlation immune of order
-        `m` , if the output of the function is statistically
+        `m`, if the output of the function is statistically
         independent of the combination of any m of its inputs.
 
         EXAMPLES::
@@ -849,7 +854,7 @@ cdef class BooleanFunction(SageObject):
             for i in range(len(W)):
                 sig_check()
                 if W[i]:
-                    c = min( c , hamming_weight(i) )
+                    c = min(c, hamming_weight(i))
             self._correlation_immunity = ZZ(c-1)
         return self._correlation_immunity
 
@@ -891,7 +896,7 @@ cdef class BooleanFunction(SageObject):
         cdef long i
 
         if self._autocorrelation is None:
-            n =  self._truth_table.size
+            n = self._truth_table.size
             temp = <long *>sig_malloc(sizeof(long)*n)
             W = self.walsh_hadamard_transform()
 
@@ -952,7 +957,7 @@ cdef class BooleanFunction(SageObject):
         cdef long a
         if self._absolute_indicator is None:
             D = self.autocorrelation()
-            self._absolute_indicator = max([ abs(a) for a in D[1:] ])
+            self._absolute_indicator = max([abs(a) for a in D[1:]])
         return self._absolute_indicator
 
     absolut_indicator = deprecated_function_alias(28001, absolute_indicator)
@@ -1315,9 +1320,9 @@ cdef class BooleanFunction(SageObject):
         EXAMPLES::
 
             sage: from sage.crypto.boolean_function import BooleanFunction
-            sage: B=BooleanFunction([0,0,1,1])
-            sage: B[0]=1
-            sage: B[2]=(3**17 == 9)
+            sage: B = BooleanFunction([0,0,1,1])
+            sage: B[0] = 1
+            sage: B[2] = (3**17 == 9)
             sage: [b for b in B]
             [True, False, False, True]
 
@@ -1338,7 +1343,7 @@ cdef class BooleanFunction(SageObject):
         EXAMPLES::
 
             sage: from sage.crypto.boolean_function import BooleanFunction
-            sage: B=BooleanFunction([0,1,1,1])
+            sage: B = BooleanFunction([0,1,1,1])
             sage: [ int(B[i]) for i in range(len(B)) ]
             [0, 1, 1, 1]
         """
@@ -1377,6 +1382,7 @@ cdef class BooleanFunction(SageObject):
         """
         return unpickle_BooleanFunction, (self.truth_table(format='hex'),)
 
+
 def unpickle_BooleanFunction(bool_list):
     """
     Specific function to unpickle Boolean functions.
@@ -1389,6 +1395,7 @@ def unpickle_BooleanFunction(bool_list):
         True
     """
     return BooleanFunction(bool_list)
+
 
 cdef class BooleanFunctionIterator:
     cdef long index, last

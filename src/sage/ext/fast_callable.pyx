@@ -493,7 +493,7 @@ def _builder_and_stream(vars, domain):
         sage: _builder_and_stream(["x", "y"], ZZ)
         (<class 'sage.ext.interpreters.wrapper_el.Wrapper_el'>,
          <sage.ext.fast_callable.InstructionStream object at 0x...>)
-        sage: _builder_and_stream(["x", "y"], RR)                                       # optional - sage.rings.real_mpfr
+        sage: _builder_and_stream(["x", "y"], RR)                                       # needs sage.rings.real_mpfr
         (<class 'sage.ext.interpreters.wrapper_rr.Wrapper_rr'>,
          <sage.ext.fast_callable.InstructionStream object at 0x...>)
 
@@ -503,7 +503,7 @@ def _builder_and_stream(vars, domain):
     interpreter::
 
         sage: domain = RDF
-        sage: from sage.structure.element import Element as domain                      # optional - sage.modules
+        sage: from sage.structure.element import Element as domain                      # needs sage.modules
         sage: _builder_and_stream(["x", "y"], domain)
         (<class 'sage.ext.interpreters.wrapper_el.Wrapper_el'>,
          <sage.ext.fast_callable.InstructionStream object at 0x...>)
@@ -1622,7 +1622,7 @@ class IntegerPowerFunction():
             sage: cube = IntegerPowerFunction(3)
             sage: cube
             (^3)
-            sage: cube(AA(7)^(1/3))
+            sage: cube(AA(7)^(1/3))                                                     # needs sage.rings.number_field
             7.000000000000000?
             sage: cube.exponent
             3
@@ -1820,18 +1820,18 @@ cpdef generate_code(Expression expr, InstructionStream stream):
         25
         sage: fc.op_list()
         [('load_arg', 0), ('load_arg', 1), ('py_call', <function my_norm at 0x...>, 2), 'return']
-        sage: fc = fast_callable(expr)                                                  # optional - sage.symbolic
-        sage: fc(3.0r)                                                                  # optional - sage.symbolic
+        sage: fc = fast_callable(expr)                                                  # needs sage.symbolic
+        sage: fc(3.0r)                                                                  # needs sage.symbolic
         4.0*pi + 12.0
-        sage: fc = fast_callable(x+3, domain=ZZ)                                        # optional - sage.symbolic
-        sage: fc(4)                                                                     # optional - sage.symbolic
+        sage: fc = fast_callable(x+3, domain=ZZ)                                        # needs sage.symbolic
+        sage: fc(4)                                                                     # needs sage.symbolic
         7
-        sage: fc = fast_callable(x/3, domain=ZZ)                                        # optional - sage.symbolic
-        sage: fc(4)                                                                     # optional - sage.symbolic
+        sage: fc = fast_callable(x/3, domain=ZZ)                                        # needs sage.symbolic
+        sage: fc(4)                                                                     # needs sage.symbolic
         Traceback (most recent call last):
         ...
         TypeError: no conversion of this rational to integer
-        sage: fc(6)                                                                     # optional - sage.symbolic
+        sage: fc(6)                                                                     # needs sage.symbolic
         2
         sage: fc = fast_callable(etb.call(sin, x), domain=ZZ)
         sage: fc(0)

@@ -1,4 +1,4 @@
-# sage.doctest: optional - sage.rings.number_field
+# sage.doctest: needs sage.rings.number_field
 """
 Base class for all number fields
 
@@ -135,13 +135,15 @@ cdef class NumberField(Field):
         else:
             codomain_other = other
 
-        from sage.rings.qqbar import AA
-        if codomain_self is AA and codomain_other is AA:
-            return AA
-
-        from sage.rings.qqbar import QQbar
-        if codomain_self in (AA, QQbar) and codomain_other in (AA, QQbar):
-            return QQbar
+        try:
+            from sage.rings.qqbar import AA, QQbar
+        except ImportError:
+            pass
+        else:
+            if codomain_self is AA and codomain_other is AA:
+                return AA
+            if codomain_self in (AA, QQbar) and codomain_other in (AA, QQbar):
+                return QQbar
 
     def ring_of_integers(self, *args, **kwds):
         r"""

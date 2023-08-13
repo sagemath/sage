@@ -35,7 +35,7 @@ the faces in a particular dimension, use the
 or :meth:`~sage.geometry.polyhedron.base.face_lattice` to get the
 whole face lattice as a poset::
 
-    sage: P.face_lattice()                                                              # optional - sage.combinat
+    sage: P.face_lattice()                                                              # needs sage.combinat
     Finite lattice containing 28 elements
 
 The faces are printed in shorthand notation where each integer is the
@@ -404,7 +404,7 @@ class PolyhedronFace(ConvexSet_closed):
         EXAMPLES::
 
             sage: square = polytopes.hypercube(2)
-            sage: for face in square.face_lattice():                                    # optional - sage.combinat
+            sage: for face in square.face_lattice():                                    # needs sage.combinat
             ....:     print(face.ambient_Hrepresentation())
             (An inequality (-1, 0) x + 1 >= 0, An inequality (0, -1) x + 1 >= 0,
              An inequality (1, 0) x + 1 >= 0, An inequality (0, 1) x + 1 >= 0)
@@ -445,7 +445,7 @@ class PolyhedronFace(ConvexSet_closed):
         EXAMPLES::
 
             sage: square = polytopes.hypercube(2)
-            sage: for fl in square.face_lattice():                                      # optional - sage.combinat
+            sage: for fl in square.face_lattice():                                      # needs sage.combinat
             ....:     print(fl.ambient_Vrepresentation())
             ()
             (A vertex at (1, -1),)
@@ -478,14 +478,14 @@ class PolyhedronFace(ConvexSet_closed):
         EXAMPLES::
 
             sage: p = polytopes.cross_polytope(4)
-            sage: face = p.face_lattice()[5]; face                                      # optional - sage.combinat
+            sage: face = p.face_lattice()[5]; face                                      # needs sage.combinat
             A 1-dimensional face of a Polyhedron in ZZ^4 defined as the convex hull of 2 vertices
-            sage: face.ambient_Hrepresentation()                                        # optional - sage.combinat
+            sage: face.ambient_Hrepresentation()                                        # needs sage.combinat
             (An inequality (1, -1, 1, -1) x + 1 >= 0,
              An inequality (1, 1, 1, 1) x + 1 >= 0,
              An inequality (1, 1, 1, -1) x + 1 >= 0,
              An inequality (1, -1, 1, 1) x + 1 >= 0)
-            sage: face.n_ambient_Hrepresentation()                                      # optional - sage.combinat
+            sage: face.n_ambient_Hrepresentation()                                      # needs sage.combinat
             4
         """
         return len(self.ambient_Hrepresentation())
@@ -504,11 +504,11 @@ class PolyhedronFace(ConvexSet_closed):
         EXAMPLES::
 
             sage: p = polytopes.cross_polytope(4)
-            sage: face = p.face_lattice()[5]; face                                      # optional - sage.combinat
+            sage: face = p.face_lattice()[5]; face                                      # needs sage.combinat
             A 1-dimensional face of a Polyhedron in ZZ^4 defined as the convex hull of 2 vertices
-            sage: face.ambient_Vrepresentation()                                        # optional - sage.combinat
+            sage: face.ambient_Vrepresentation()                                        # needs sage.combinat
             (A vertex at (-1, 0, 0, 0), A vertex at (0, 0, -1, 0))
-            sage: face.n_ambient_Vrepresentation()                                      # optional - sage.combinat
+            sage: face.n_ambient_Vrepresentation()                                      # needs sage.combinat
             2
         """
         return len(self.ambient_Vrepresentation())
@@ -593,8 +593,8 @@ class PolyhedronFace(ConvexSet_closed):
 
         EXAMPLES::
 
-            sage: fl = polytopes.dodecahedron().face_lattice()                          # optional - sage.combinat sage.rings.number_field
-            sage: sorted(x.dim() for x in fl)                                           # optional - sage.combinat sage.rings.number_field
+            sage: fl = polytopes.dodecahedron().face_lattice()                          # needs sage.combinat sage.rings.number_field
+            sage: sorted(x.dim() for x in fl)                                           # needs sage.combinat sage.rings.number_field
             [-1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
               1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
               1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 3]
@@ -628,8 +628,8 @@ class PolyhedronFace(ConvexSet_closed):
         EXAMPLES::
 
             sage: square = polytopes.hypercube(2)
-            sage: a_face = list( square.face_lattice() )[8]                     # optional - sage.combinat
-            sage: a_face.__repr__()                                             # optional - sage.combinat
+            sage: a_face = list( square.face_lattice() )[8]                             # needs sage.combinat
+            sage: a_face.__repr__()                                                     # needs sage.combinat
             'A 1-dimensional face of a Polyhedron in ZZ^2 defined as the convex hull of 2 vertices'
         """
         desc = ''
@@ -705,7 +705,7 @@ class PolyhedronFace(ConvexSet_closed):
              Polyhedron in QQ^2 defined as the convex hull of 1 vertex and 1 line
             sage: line.ambient_vector_space()
             Vector space of dimension 2 over Rational Field
-            sage: line.ambient_vector_space(AA)                                         # optional - sage.rings.number_field
+            sage: line.ambient_vector_space(AA)                                         # needs sage.rings.number_field
             Vector space of dimension 2 over Algebraic Real Field
         """
         return self.polyhedron().ambient_vector_space(base_field=base_field)

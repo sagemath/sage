@@ -951,7 +951,7 @@ class ToricLattice_ambient(ToricLattice_generic, FreeModule_ambient_pid):
         """
         if self is right:
             return rich_to_bool(op, 0)
-        if type(self) != type(right):
+        if type(self) is not type(right):
             return NotImplemented
 
         lx = self.rank()
@@ -1068,7 +1068,7 @@ class ToricLattice_ambient(ToricLattice_generic, FreeModule_ambient_pid):
         EXAMPLES::
 
             sage: N = ToricLattice(3)
-            sage: N.plot()  # optional - sage.plot
+            sage: N.plot()                                                              # needs sage.plot
             Graphics3d Object
         """
         if "show_lattice" not in options:
@@ -1215,12 +1215,12 @@ class ToricLattice_sublattice_with_basis(ToricLattice_generic,
 
             sage: N = ToricLattice(3)
             sage: sublattice = N.submodule_with_basis([(1,1,0), (3,2,1)])
-            sage: sublattice.plot()  # optional - sage.plot
+            sage: sublattice.plot()                                                     # needs sage.plot
             Graphics3d Object
 
         Now we plot both the ambient lattice and its sublattice::
 
-            sage: N.plot() + sublattice.plot(point_color="red")  # optional - sage.plot
+            sage: N.plot() + sublattice.plot(point_color="red")                         # needs sage.plot
             Graphics3d Object
         """
         if "show_lattice" not in options:

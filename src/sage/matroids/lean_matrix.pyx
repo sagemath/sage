@@ -396,7 +396,7 @@ cdef class LeanMatrix:
         cdef long i
         cdef LeanMatrix A
         if isinstance(left, LeanMatrix):
-            if type(left) == type(right):
+            if type(left) is type(right):
                 return (<LeanMatrix>left)._matrix_times_matrix_(right)
             else:
                 return NotImplemented
@@ -457,7 +457,7 @@ cdef class LeanMatrix:
             return NotImplemented
         if not isinstance(left, LeanMatrix) or not isinstance(right, LeanMatrix):
             return NotImplemented
-        if type(left) != type(right):
+        if type(left) is not type(right):
             return NotImplemented
         if op == Py_EQ:
             res = True

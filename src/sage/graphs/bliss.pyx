@@ -67,8 +67,8 @@ cdef extern from "bliss_cpp/bliss_find_automorphisms.h":
 
 cdef int encoding_numbits(int n):
     r"""
-    Return the number of bits needed to encode the ``n`` numbers from ``1`` to ``n``. In
-    other words, the last bit set in ``n``.
+    Return the number of bits needed to encode the `n` numbers from `1` to
+    `n`. In other words, the last bit set in `n`.
     """
     if n <= 0:
         return 0
@@ -437,12 +437,13 @@ cpdef canonical_form(G, partition=None, return_graph=False, use_edge_labels=True
         sage: g.is_isomorphic(canonical_form(g, return_graph=True))         # optional - bliss
         True
 
-        sage: g1 = graphs.RandomGNP(100, .4)                                # optional - bliss
-        sage: r = Permutations(range(100)).random_element()                 # optional - bliss
-        sage: g2 = Graph([(r[u],r[v]) for u,v in g1.edges(sort=True, labels=False)])   # optional - bliss
-        sage: g1 = canonical_form(g1, return_graph=True)                    # optional - bliss
-        sage: g2 = canonical_form(g2, return_graph=True)                    # optional - bliss
-        sage: g2 == g2                                                      # optional - bliss
+        sage: # optional - bliss
+        sage: g1 = graphs.RandomGNP(100, .4)
+        sage: r = Permutations(range(100)).random_element()
+        sage: g2 = Graph([(r[u],r[v]) for u,v in g1.edges(sort=True, labels=False)])
+        sage: g1 = canonical_form(g1, return_graph=True)
+        sage: g2 = canonical_form(g2, return_graph=True)
+        sage: g2 == g2
         True
 
         sage: g = Graph({1: [2]})
@@ -476,11 +477,12 @@ cpdef canonical_form(G, partition=None, return_graph=False, use_edge_labels=True
     Check that it works with non hashable non sortable edge labels (relying
     on string representations of the labels)::
 
-        sage: g1 = Graph([(0, 1, matrix(ZZ, 2)), (0, 2, RDF.pi()), (1, 2, 'a')])        # optional - sage.modules
-        sage: g2 = Graph([(1, 2, matrix(ZZ, 2)), (2, 0, RDF.pi()), (0, 1, 'a')])        # optional - sage.modules
-        sage: g1can = canonical_form(g1, use_edge_labels=True)                    # optional - bliss sage.modules
-        sage: g2can = canonical_form(g2, use_edge_labels=True)                    # optional - bliss sage.modules
-        sage: g1can == g2can                                                      # optional - bliss sage.modules
+        sage: # needs sage.modules
+        sage: g1 = Graph([(0, 1, matrix(ZZ, 2)), (0, 2, RDF.pi()), (1, 2, 'a')])
+        sage: g2 = Graph([(1, 2, matrix(ZZ, 2)), (2, 0, RDF.pi()), (0, 1, 'a')])
+        sage: g1can = canonical_form(g1, use_edge_labels=True)              # optional - bliss
+        sage: g2can = canonical_form(g2, use_edge_labels=True)              # optional - bliss
+        sage: g1can == g2can                                                # optional - bliss
         True
 
     Check that :trac:`32395` is fixed::
@@ -664,12 +666,12 @@ cpdef automorphism_group(G, partition=None, use_edge_labels=True):
 
     - ``G`` -- a Sage graph
 
-    - ``partition`` -- ``list``(default: ``None``); a partition of the vertices
+    - ``partition`` -- ``list`` (default: ``None``); a partition of the vertices
       of ``G`` into color classes. Defaults to ``None``, which is equivalent to
       a partition of size 1.
 
-    - ``use_edge_labels`` -- boolean (default: ``True``); whether to consider edge
-      labels
+    - ``use_edge_labels`` -- boolean (default: ``True``); whether to consider
+      edge labels
 
     EXAMPLES::
 
@@ -677,44 +679,45 @@ cpdef automorphism_group(G, partition=None, use_edge_labels=True):
 
     Computing the automorphism group of a graph or digraph::
 
-        sage: G = graphs.CompleteMultipartiteGraph([1, 1, 1, 2])                # optional - bliss
-        sage: automorphism_group(G).cardinality()                               # optional - bliss
+        sage: # optional - bliss
+        sage: G = graphs.CompleteMultipartiteGraph([1, 1, 1, 2])
+        sage: automorphism_group(G).cardinality()
         12
-        sage: D = DiGraph(G.edges(sort=True))                                   # optional - bliss
-        sage: automorphism_group(D).cardinality()                               # optional - bliss
+        sage: D = DiGraph(G.edges(sort=True))
+        sage: automorphism_group(D).cardinality()
         2
 
-    Observe that the order 12 is given by permuting the first three vertices, or the last two
-    in the case of a graph, while only the latter two are possible in the case of a directed
-    graph.
+    Observe that the order 12 is given by permuting the first three vertices, or
+    the last two in the case of a graph, while only the latter two are possible
+    in the case of a directed graph.
 
     Partitioning the vertices into classes::
 
-        sage: G = graphs.CompleteMultipartiteGraph([3, 2])                      # optional - bliss
-        sage: automorphism_group(G).cardinality()                               # optional - bliss
+        sage: # optional - bliss
+        sage: G = graphs.CompleteMultipartiteGraph([3, 2])
+        sage: automorphism_group(G).cardinality()
         12
-        sage: automorphism_group(G,partition=[[0],[1],[2],[3,4]]).cardinality() # optional - bliss
+        sage: automorphism_group(G,partition=[[0],[1],[2],[3,4]]).cardinality()
         2
-        sage: automorphism_group(G,partition=[[0],[1,2],[3,4]]).cardinality()   # optional - bliss
+        sage: automorphism_group(G,partition=[[0],[1,2],[3,4]]).cardinality()
         4
-
-        sage: automorphism_group(G,partition=[[1,2],[0,3],[4]]).cardinality()   # optional - bliss
+        sage: automorphism_group(G,partition=[[1,2],[0,3],[4]]).cardinality()
         2
 
     Partitioning the edges into classes::
 
-        sage: G = Graph(graphs.CompleteMultipartiteGraph([8, 2]), sparse=True)  # optional - bliss
-        sage: for i,j in G.edges(labels=False, sort=False):                     # optional - bliss
+        sage: # optional - bliss
+        sage: G = Graph(graphs.CompleteMultipartiteGraph([8, 2]), sparse=True)
+        sage: for i,j in G.edges(labels=False, sort=False):
         ....:     if 0 <= i < 3:
         ....:         G.set_edge_label(i, j, "A")
         ....:     if 3 <= i < 6:
         ....:         G.set_edge_label(i, j, "B")
         ....:     if 6 <= i < 8:
         ....:         G.set_edge_label(i, j, "C")
-
-        sage: factor(automorphism_group(G).cardinality())                       # optional - bliss
+        sage: factor(automorphism_group(G).cardinality())
         2^4 * 3^2
-        sage: automorphism_group(G,[[0],[1],[2,3],[4,5],[6,7],[8],[9]]).cardinality()   # optional - bliss
+        sage: automorphism_group(G,[[0],[1],[2,3],[4,5],[6,7],[8],[9]]).cardinality()
         4
 
     TESTS::
@@ -724,66 +727,73 @@ cpdef automorphism_group(G, partition=None, use_edge_labels=True):
         sage: automorphism_group(G).is_isomorphic(G.automorphism_group())       # optional - bliss
         True
 
-        sage: G = graphs.HeawoodGraph()                                         # optional - bliss
-        sage: p = G.bipartite_sets()                                            # optional - bliss
-        sage: A = G.automorphism_group(partition=[list(p[0]), list(p[1])])      # optional - bliss
-        sage: automorphism_group(G, partition=p).is_isomorphic(A)               # optional - bliss
+        sage: # optional - bliss
+        sage: G = graphs.HeawoodGraph()
+        sage: p = G.bipartite_sets()
+        sage: A = G.automorphism_group(partition=[list(p[0]), list(p[1])])
+        sage: automorphism_group(G, partition=p).is_isomorphic(A)
         True
 
-        sage: G = graphs.CompleteMultipartiteGraph([5,7,11])
+        sage: G = graphs.CompleteMultipartiteGraph([5, 7, 11])
         sage: B = automorphism_group(G)                                         # optional - bliss
-        sage: B.cardinality() == prod(factorial(n) for n in [5,7,11])           # optional - bliss
+        sage: B.cardinality() == prod(factorial(n) for n in [5, 7, 11])         # optional - bliss
         True
 
-        sage: G = Graph(graphs.CompleteMultipartiteGraph([8,8,8,5]),sparse=True)# optional - bliss
-        sage: for i,j in G.edges(labels=False, sort=False):                     # optional - bliss
+        sage: # optional - bliss
+        sage: G = Graph(graphs.CompleteMultipartiteGraph([8,8,8,5]),sparse=True)
+        sage: for i,j in G.edges(labels=False, sort=False):
         ....:     if 0 <= i < 3:
         ....:         G.set_edge_label(i, j, "A")
         ....:     if 3 <= i < 6:
         ....:         G.set_edge_label(i, j, "B")
         ....:     if 6 <= i < 8:
         ....:         G.set_edge_label(i, j, "C")
-        sage: automorphism_group(G).cardinality() == prod( factorial(n) for n in [3,3,2,8,8,5,2] )  # optional - bliss
+        sage: card = automorphism_group(G).cardinality()
+        sage: card == prod(factorial(n) for n in [3, 3, 2, 8, 8, 5, 2])
         True
-        sage: automorphism_group(G, use_edge_labels=False).cardinality() == prod( factorial(n) for n in [8,8,8,5,3] )  # optional - bliss
+        sage: card = automorphism_group(G, use_edge_labels=False).cardinality()
+        sage: card == prod(factorial(n) for n in [8, 8, 8, 5, 3])
         True
-        sage: automorphism_group(G,[[0 .. 7],[8 .. 11],[12 .. 28]]).cardinality() == prod( factorial(n) for n in [3,3,2,4,4,8,5] )  # optional - bliss
-        True
-
-        sage: G = Graph()                                                       # optional - bliss
-        sage: G.add_edges((i,j,"A") for i in range(0, 2) for j in range(14,20)) # optional - bliss
-        sage: G.add_edges((i,j,"B") for i in range(2, 5) for j in range(14,20)) # optional - bliss
-        sage: G.add_edges((i,j,"C") for i in range(5, 9) for j in range(14,20)) # optional - bliss
-        sage: G.add_edges((i,j,"D") for i in range(9,14) for j in range(14,20)) # optional - bliss
-        sage: A = automorphism_group(G)                                         # optional - bliss
-        sage: print(A.gens())                                                   # random, optional - bliss
-        [(9,13), (18,19), (17,18), (16,17), (15,16), (14,15), (12,9), (11,12),
-         (10,11), (7,8), (6,7), (5,6), (3,4), (2,3), (0,1)]
-        sage: A.cardinality() == prod(factorial(n) for n in [2,3,4,5,6])        # optional - bliss
+        sage: card = automorphism_group(G, [[0 .. 7], [8 .. 11] ,[12 .. 28]]).cardinality()
+        sage: card == prod(factorial(n) for n in [3, 3, 2, 4, 4, 8, 5])
         True
 
+        sage: # optional - bliss
+        sage: G = Graph()
+        sage: G.add_edges((i,j,"A") for i in range(0, 2) for j in range(14,20))
+        sage: G.add_edges((i,j,"B") for i in range(2, 5) for j in range(14,20))
+        sage: G.add_edges((i,j,"C") for i in range(5, 9) for j in range(14,20))
+        sage: G.add_edges((i,j,"D") for i in range(9,14) for j in range(14,20))
+        sage: A = automorphism_group(G)
+        sage: print(A.gens())               # random
+        ((12,13), (11,12), (10,11), (9,10), (7,8), (6,7), (5,6), (3,4),
+         (2,3), (1,0), (18,19), (17,18), (16,17), (15,16), (14,15))
+        sage: A.cardinality() == prod(factorial(n) for n in [2,3,4,5,6])
+        True
+
+        sage: # optional - bliss
+        sage: G = Graph()
         sage: alpha = "abcdefghijklmnopqrstuvwxyz"
-
-        sage: G = Graph()                                                       # optional - bliss
-        sage: G.add_edges((alpha[i],alpha[j],"A") for i in range(0, 2) for j in range(14,20))   # optional - bliss
-        sage: G.add_edges((alpha[i],alpha[j],"B") for i in range(2, 5) for j in range(14,20))   # optional - bliss
-        sage: G.add_edges((alpha[i],alpha[j],"C") for i in range(5, 9) for j in range(14,20))   # optional - bliss
-        sage: G.add_edges((alpha[i],alpha[j],"D") for i in range(9,14) for j in range(14,20))   # optional - bliss
-        sage: A = automorphism_group(G)                                         # optional - bliss
-        sage: print(A.gens())                                                   # random, optional - bliss
-        [('r','t'), ('s','r'), ('p','s'), ('q','p'), ('o','q'), ('l','n'),
-         ('m','l'), ('j','m'), ('k','j'), ('i','h'), ('f','i'), ('g','f'),
-         ('e','d'), ('c','e'), ('a','b')]
-        sage: A.cardinality() == prod(factorial(n) for n in [2,3,4,5,6])        # optional - bliss
+        sage: G.add_edges((alpha[i],alpha[j],"A") for i in range(0, 2) for j in range(14,20))
+        sage: G.add_edges((alpha[i],alpha[j],"B") for i in range(2, 5) for j in range(14,20))
+        sage: G.add_edges((alpha[i],alpha[j],"C") for i in range(5, 9) for j in range(14,20))
+        sage: G.add_edges((alpha[i],alpha[j],"D") for i in range(9,14) for j in range(14,20))
+        sage: A = automorphism_group(G)
+        sage: print(A.gens())
+        (('m','n'), ('l','m'), ('k','l'), ('j','k'), ('h','i'),
+         ('g','h'), ('f','g'), ('d','e'), ('c','d'), ('s','t'),
+         ('r','s'), ('q','r'), ('p','q'), ('o','p'), ('a','b'))
+        sage: A.cardinality() == prod(factorial(n) for n in [2, 3, 4, 5, 6])
         True
 
-        sage: gg = graphs.CompleteGraph(5)                                      # optional - bliss
-        sage: gg.allow_loops(True)                                              # optional - bliss
-        sage: gg.add_edge(0,0)                                                  # optional - bliss
-        sage: gg.add_edge(1,1)                                                  # optional - bliss
-        sage: automorphism_group(gg).cardinality()                              # optional - bliss
+        sage: # optional - bliss
+        sage: gg = graphs.CompleteGraph(5)
+        sage: gg.allow_loops(True)
+        sage: gg.add_edge(0, 0)
+        sage: gg.add_edge(1, 1)
+        sage: automorphism_group(gg).cardinality()
         12
-        sage: automorphism_group(gg,[[0],[1,2,3,4]]).cardinality()              # optional - bliss
+        sage: automorphism_group(gg, [[0], [1, 2, 3, 4]]).cardinality()
         6
     """
     # We need this to convert the numbers from <unsigned int> to

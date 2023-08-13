@@ -474,8 +474,8 @@ cpdef rectangular_box_points(list box_min, list box_max,
 
     Long ints and non-integral polyhedra are explicitly allowed::
 
-        sage: polytope = Polyhedron([[1], [10*pi.n()]], base_ring=RDF)                  # optional - sage.symbolic
-        sage: len(rectangular_box_points([-100], [100], polytope))                      # optional - sage.symbolic
+        sage: polytope = Polyhedron([[1], [10*pi.n()]], base_ring=RDF)                  # needs sage.symbolic
+        sage: len(rectangular_box_points([-100], [100], polytope))                      # needs sage.symbolic
         31
 
         sage: halfplane = Polyhedron(ieqs=[(-1,1,0)])
@@ -488,15 +488,16 @@ cpdef rectangular_box_points(list box_min, list box_max,
 
     Using a PPL polyhedron::
 
-        sage: from ppl import Variable, Generator_System, C_Polyhedron, point           # optional - pplpy
-        sage: gs = Generator_System()                                                   # optional - pplpy
-        sage: x = Variable(0); y = Variable(1); z = Variable(2)                         # optional - pplpy
-        sage: gs.insert(point(0*x + 1*y + 0*z))                                         # optional - pplpy
-        sage: gs.insert(point(0*x + 1*y + 3*z))                                         # optional - pplpy
-        sage: gs.insert(point(3*x + 1*y + 0*z))                                         # optional - pplpy
-        sage: gs.insert(point(3*x + 1*y + 3*z))                                         # optional - pplpy
-        sage: poly = C_Polyhedron(gs)                                                   # optional - pplpy
-        sage: rectangular_box_points([0]*3, [3]*3, poly)                                # optional - pplpy
+        sage: # needs pplpy
+        sage: from ppl import Variable, Generator_System, C_Polyhedron, point
+        sage: gs = Generator_System()
+        sage: x = Variable(0); y = Variable(1); z = Variable(2)
+        sage: gs.insert(point(0*x + 1*y + 0*z))
+        sage: gs.insert(point(0*x + 1*y + 3*z))
+        sage: gs.insert(point(3*x + 1*y + 0*z))
+        sage: gs.insert(point(3*x + 1*y + 3*z))
+        sage: poly = C_Polyhedron(gs)
+        sage: rectangular_box_points([0]*3, [3]*3, poly)
         ((0, 1, 0), (0, 1, 1), (0, 1, 2), (0, 1, 3), (1, 1, 0), (1, 1, 1), (1, 1, 2), (1, 1, 3),
          (2, 1, 0), (2, 1, 1), (2, 1, 2), (2, 1, 3), (3, 1, 0), (3, 1, 1), (3, 1, 2), (3, 1, 3))
 
@@ -739,7 +740,7 @@ cdef class Inequality_generic:
     EXAMPLES::
 
         sage: from sage.geometry.integral_points import Inequality_generic
-        sage: Inequality_generic([2 * pi, sqrt(3), 7/2], -5.5)                          # optional - sage.symbolic
+        sage: Inequality_generic([2 * pi, sqrt(3), 7/2], -5.5)                          # needs sage.symbolic
         generic: (2*pi, sqrt(3), 7/2) x + -5.50000000000000 >= 0
     """
 
@@ -761,7 +762,7 @@ cdef class Inequality_generic:
         EXAMPLES::
 
             sage: from sage.geometry.integral_points import Inequality_generic
-            sage: Inequality_generic([2 * pi, sqrt(3), 7/2], -5.5)                      # optional - sage.symbolic
+            sage: Inequality_generic([2 * pi, sqrt(3), 7/2], -5.5)                      # needs sage.symbolic
             generic: (2*pi, sqrt(3), 7/2) x + -5.50000000000000 >= 0
         """
         self.A = A
@@ -1131,16 +1132,17 @@ cdef class InequalityCollection:
 
         EXAMPLES::
 
-            sage: from ppl import Variable, Generator_System, C_Polyhedron, point       # optional - pplpy
-            sage: gs = Generator_System()                                               # optional - pplpy
-            sage: x = Variable(0); y = Variable(1); z = Variable(2)                     # optional - pplpy
-            sage: gs.insert(point(0*x + 0*y + 1*z))                                     # optional - pplpy
-            sage: gs.insert(point(0*x + 3*y + 1*z))                                     # optional - pplpy
-            sage: gs.insert(point(3*x + 0*y + 1*z))                                     # optional - pplpy
-            sage: gs.insert(point(3*x + 3*y + 1*z))                                     # optional - pplpy
-            sage: poly = C_Polyhedron(gs)                                               # optional - pplpy
-            sage: from sage.geometry.integral_points import InequalityCollection        # optional - pplpy
-            sage: InequalityCollection(poly, [0,2,1], [0]*3, [3]*3 )                    # optional - pplpy
+            sage: # needs pplpy
+            sage: from ppl import Variable, Generator_System, C_Polyhedron, point
+            sage: gs = Generator_System()
+            sage: x = Variable(0); y = Variable(1); z = Variable(2)
+            sage: gs.insert(point(0*x + 0*y + 1*z))
+            sage: gs.insert(point(0*x + 3*y + 1*z))
+            sage: gs.insert(point(3*x + 0*y + 1*z))
+            sage: gs.insert(point(3*x + 3*y + 1*z))
+            sage: poly = C_Polyhedron(gs)
+            sage: from sage.geometry.integral_points import InequalityCollection
+            sage: InequalityCollection(poly, [0,2,1], [0]*3, [3]*3 )
             The collection of inequalities
             integer: (0, 1, 0) x + -1 >= 0
             integer: (0, -1, 0) x + 1 >= 0
@@ -1191,8 +1193,8 @@ cdef class InequalityCollection:
         Check that :trac:`21037` is fixed::
 
             sage: P = Polyhedron(vertices=((0, 0), (17,3)))
-            sage: P += 1/1000*polytopes.regular_polygon(5)                              # optional - sage.rings.number_field
-            sage: P.integral_points()                                                   # optional - sage.rings.number_field
+            sage: P += 1/1000*polytopes.regular_polygon(5)                              # needs sage.rings.number_field
+            sage: P.integral_points()                                                   # needs sage.rings.number_field
             ((0, 0), (17, 3))
         """
         cdef list A

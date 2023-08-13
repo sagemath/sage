@@ -62,23 +62,21 @@ import sage.modules.free_module_element as free_module_element
 import sage.rings.abc
 
 from sage.arith.functions import lcm
-from sage.arith.misc import bernoulli, kronecker, factor, gcd, fundamental_discriminant, euler_phi, valuation
+from sage.arith.misc import bernoulli, binomial, factorial, kronecker, factor, gcd, fundamental_discriminant, euler_phi, valuation
 from sage.categories.map import Map
 from sage.categories.objects import Objects
-from sage.functions.other import binomial, factorial
-from sage.libs.pari import pari
 from sage.misc.cachefunc import cached_method
 from sage.misc.fast_methods import WithEqualityById
 from sage.misc.functional import round
+from sage.misc.lazy_import import lazy_import
 from sage.misc.misc_c import prod
 from sage.modules.free_module import FreeModule
 from sage.rings.finite_rings.integer_mod import Mod
 from sage.rings.finite_rings.integer_mod_ring import IntegerModRing
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
-from sage.rings.number_field.number_field import CyclotomicField, NumberField, NumberField_generic
 from sage.rings.power_series_ring import PowerSeriesRing
-from sage.rings.rational_field import RationalField, QQ, is_RationalField
+from sage.rings.rational_field import QQ, is_RationalField
 from sage.rings.ring import is_Ring
 from sage.structure.element import MultiplicativeGroupElement
 from sage.structure.factory import UniqueFactory
@@ -87,8 +85,11 @@ from sage.structure.parent import Parent
 from sage.structure.richcmp import richcmp
 from sage.structure.sequence import Sequence
 
+lazy_import('sage.libs.pari', 'pari')
+lazy_import('sage.rings.number_field.number_field', ['CyclotomicField', 'NumberField', 'NumberField_generic'])
 
-def trivial_character(N, base_ring=RationalField()):
+
+def trivial_character(N, base_ring=QQ):
     r"""
     Return the trivial character of the given modulus, with values in the given
     base ring.
@@ -135,14 +136,14 @@ def kronecker_character(d):
         raise ValueError("d must be nonzero")
 
     D = fundamental_discriminant(d)
-    G = DirichletGroup(abs(D), RationalField())
+    G = DirichletGroup(abs(D), QQ)
     return G([kronecker(D, u) for u in G.unit_gens()])
 
 
 def kronecker_character_upside_down(d):
     """
     Return the quadratic Dirichlet character (./d) of conductor d, for
-    d0.
+    d > 0.
 
     EXAMPLES::
 
@@ -157,11 +158,11 @@ def kronecker_character_upside_down(d):
     if d <= 0:
         raise ValueError("d must be positive")
 
-    G = DirichletGroup(d, RationalField())
+    G = DirichletGroup(d, QQ)
     return G([kronecker(u.lift(), d) for u in G.unit_gens()])
 
 
-def is_DirichletCharacter(x):
+def is_DirichletCharacter(x) -> bool:
     r"""
     Return ``True`` if ``x`` is of type ``DirichletCharacter``.
 
@@ -639,7 +640,7 @@ class DirichletCharacter(MultiplicativeGroupElement):
         .. MATH::
 
             \sum_{a=1}^N \frac{\varepsilon(a) t e^{at}}{e^{Nt}-1}
-            = sum_{k=0}^{\infty} \frac{B_{k,\varepsilon}}{k!} t^k.
+            = \sum_{k=0}^{\infty} \frac{B_{k,\varepsilon}}{k!} t^k.
 
         ALGORITHM:
 
@@ -707,8 +708,9 @@ class DirichletCharacter(MultiplicativeGroupElement):
 
             def S(n):
                 return sum(v[r] * r**n for r in range(1, N))
-            ber = K(sum(binomial(k, j) * bernoulli(j, **opts) *
-                        N**(j - 1) * S(k - j) for j in range(k + 1)))
+
+            ber = sum(binomial(k, j) * bernoulli(j, **opts) *
+                      N**(j - 1) * S(k - j) for j in range(k + 1))
         elif algorithm == "definition":
             # This is better since it computes the same thing, but requires
             # no arith in a poly ring over a number field.
@@ -721,7 +723,7 @@ class DirichletCharacter(MultiplicativeGroupElement):
             h = [0] + [g * ((n * t).exp(prec)) for n in range(1, N + 1)]
             ber = sum([self(a) * h[a][k] for a in range(1, N + 1)]) * factorial(k)
         else:
-            raise ValueError("algorithm = '%s' unknown" % algorithm)
+            raise ValueError(f"algorithm = '{algorithm}' unknown")
 
         if cache:
             self.__bernoulli[k] = ber
@@ -913,9 +915,6 @@ class DirichletCharacter(MultiplicativeGroupElement):
 
         # this algorithm was written by Francis Clarke see issue #9407
 
-        from sage.rings.finite_rings.integer_mod_ring import IntegerModRing
-        from sage.rings.integer_ring import IntegerRing
-        ZZ = IntegerRing()
         from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
         from sage.matrix.constructor import matrix
 
@@ -998,7 +997,7 @@ class DirichletCharacter(MultiplicativeGroupElement):
             G, chi = self._pari_init_()
             K = pari.charker(G, chi)
             H = pari.galoissubcyclo(G, K)
-            P = PolynomialRing(RationalField(), "x")
+            P = PolynomialRing(QQ, "x")
             x = P.gen()
             return H.sage({"x": x})
 
@@ -2943,7 +2942,7 @@ class DirichletGroup_class(WithEqualityById, Parent):
         if p == 0:
             Auts = [e for e in range(1, n) if gcd(e, n) == 1]
         else:
-            if not ZZ(p).is_prime():
+            if not Integer(p).is_prime():
                 raise NotImplementedError("Automorphisms for finite non-field base rings not implemented")
             # The automorphisms in characteristic p are
             # k-th powering for
